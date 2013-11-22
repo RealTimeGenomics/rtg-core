@@ -533,8 +533,8 @@ public final class Aview extends AbstractCli {
 
           final int refLength = record.getLength();
           newRefPosition = Math.min(refPosition + refLength, correctEnd);
-          // Count displayed inserts between start and end of displayed call
-          final int displayedRefInserts = getInsertsBetween(refPosition - correctStart, newRefPosition - correctStart); // From one past ref position to new position
+          // Count displayed inserts between start and end of displayed call, including insert at the terminal coordinate
+          final int displayedRefInserts = getInsertsBetween(refPosition - correctStart, Math.min(newRefPosition + 1, correctEnd) - correctStart); // From one past ref position to new position. Also grab adjacent insert
           final int refDisplayLength = refLength + displayedRefInserts;
 
           String name;
@@ -563,7 +563,7 @@ public final class Aview extends AbstractCli {
           // Now output the region itself.
           line.append(mDisplayHelper.decorate(name, DisplayHelper.BLACK, BED_BG));
           if (highlightMask != null) {
-            for (int i = 0; i < name.length(); i++) {
+            for (int i = 0; i < name.length() && (charPosition + i) < highlightMask.length; i++) {
               highlightMask[charPosition + i] = true;
             }
           }
@@ -643,7 +643,7 @@ public final class Aview extends AbstractCli {
           final int refLength = var.referenceLength();
           newRefPosition = Math.min(refPosition + refLength, correctEnd);
           // Count displayed inserts between start and end of displayed call
-          final int displayedRefInserts = getInsertsBetween(refPosition - correctStart, newRefPosition - correctStart); // From one past ref position to new position
+          final int displayedRefInserts = getInsertsBetween(refPosition - correctStart,  Math.min(newRefPosition + 1, correctEnd) - correctStart); // From one past ref position to new position (also grab subsequent insert for use if need be)
           final int refDisplayLength = refLength + displayedRefInserts;
 
           // If the call is shorter than the actual number of reference bases, illustrate this by extending to the number of reference bases
