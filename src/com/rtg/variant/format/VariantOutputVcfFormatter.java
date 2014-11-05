@@ -311,7 +311,7 @@ public class VariantOutputVcfFormatter {
   private static void setMulticallQuality(Variant call, VcfRecord rec) {
     if (call.getNonIdentityPosterior() == null) {
       rec.setQuality(VcfRecord.MISSING);
-    } else if (call.isSame()) { // XXX See Bug 1582, should really be something like (rec.getAltCalls().size() == 0)
+    } else if (rec.getAltCalls().size() == 0) {
       rec.setQuality(Utils.realFormat(PosteriorUtils.nonIdentityPhredIfy(call.getNonIdentityPosterior()), 1));
     } else {
       rec.setQuality(Utils.realFormat(PosteriorUtils.phredIfy(call.getNonIdentityPosterior()), 1));
@@ -322,7 +322,7 @@ public class VariantOutputVcfFormatter {
     if (call.getSample(0).getName() != null) {
       if (call.getNonIdentityPosterior() == null) {
         rec.setQuality(VcfRecord.MISSING);
-      } else if (call.getSample(0).isIdentity()) { // XXX See above regarding Bug 1582. This one is probably OK unless there are edge cases.
+      } else if (rec.getAltCalls().size() == 0) {
         rec.setQuality(Utils.realFormat(PosteriorUtils.nonIdentityPhredIfy(call.getNonIdentityPosterior()), 1));
       } else {
         rec.setQuality(Utils.realFormat(PosteriorUtils.phredIfy(call.getNonIdentityPosterior()), 1));
