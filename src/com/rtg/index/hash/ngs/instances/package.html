@@ -1,0 +1,14 @@
+<body>
+<p>Hashing functions for particular read lengths and different split window
+patterns. The following combinations are currently implemented.
+<table border="1">
+<tr><th>class name</th> <th>length</th> <th>window</th> <th>substitutions</th> <th>indels</th> <th>masks</th> <th>indel masks</th> <th>comment</th></tr>
+<tr><td>SplitL4w4s0e0</td> <td>4</td> <td>4</td> <td>0</td> <td>0</td> <td>1</td> <td>1</td> <td>stupid only for testing</td></tr>
+<tr><td>SplitL4w2s1e1</td> <td>4</td> <td>2</td> <td>1</td> <td>1</td> <td>1</td> <td>1</td> <td></td></tr>
+<tr><td>SplitL4w2s1e1b</td> <td>4</td> <td>2</td> <td>1</td> <td>1</td> <td>1</td> <td>1</td> <td>Handles more cases than above but no more guarantees</td></tr>
+<tr><td>SplitL36w18s1e1</td> <td>36</td> <td>18</td> <td>1</td> <td>1</td> <td>2</td> <td>2</td> <td></td></tr>
+<tr><td>SplitL36w18s2e1</td> <td>36</td> <td>18</td> <td>2</td> <td>1</td> <td>6</td> <td>6</td> <td></td></tr>
+<tr><td>SplitL36w12s2e2</td> <td>36</td> <td>12</td> <td>2</td> <td>2</td> <td>3</td> <td>3</td> <td></td></tr>
+<tr><td>SplitL36w12s3e3</td> <td>36</td> <td>12</td> <td>3</td> <td>3</td> <td>8</td> <td>14</td> <td></td></tr>
+</table>
+</body>

@@ -1,0 +1,44 @@
+<strong>Command Line: </strong> $commandLine <br/>
+#if ($reference)
+<strong>Reference: </strong> $reference <br/>
+#end
+<br/>
+<table>
+  #foreach ($count in $variantCountNames)
+    <tr><th align="right">${count}</th><td align="right">${variantCountValues.get($foreach.index)}</td></tr>
+  #end
+  #if ($perSampleValues.size() > 1)
+    <tr><td>&nbsp</td></tr>
+    <tr>
+    <th align="right" style="margin-top: 0.5em">Sample: </td>
+    #foreach ($sample in $perSampleValues.keySet())
+      <th align="right">$sample</th>
+    #end
+    </tr>
+  #end
+  #foreach ($name in $perSampleNames)
+    #set($index = $foreach.index)
+    <tr>
+    <th align="right">$name</th>
+    #foreach ($value in $perSampleValues)
+        #if ($value.get($index))
+          <td align="right" style="padding-left: 1em">${value.get($index)}</td>
+        #else
+          <td align="right">-</td>
+        #end
+    #end
+    </tr>
+  #end
+</table>
+
+<table>
+  #if ($altAlleleCounts)
+    #foreach ($thing in $altAlleleCounts)
+      #if ($foreach.index == 0)
+        <tr><td>Number of Alleles</td><td>$foreach.index</td><td>$thing</td></tr>
+      #else
+        <tr><td></td><td>rah $foreach.index</td><td>$thing</td></tr>
+      #end
+    #end
+  #end
+</table>

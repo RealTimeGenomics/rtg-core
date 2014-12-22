@@ -1,0 +1,49 @@
+#CL	calibrate C:\Workspace\slim\internal\com\rtg\regression\data\calibrate\unmated.chr22.sam.gz -t C:\Workspace\slim\internal\com\rtg\regression\data\calibrate\chr22 -c basequality
+@del:readgroup1	0	3	2
+@del:readgroup2	0	1	1
+@del:readgroup3	0	11
+@ins:readgroup1	0	4	1
+@ins:readgroup2	0	7
+@ins:readgroup3	0	4
+@mnp:readgroup1	0	1376	86	6
+@mnp:readgroup2	0	1305	103	5
+@mnp:readgroup3	0	1354	106	5
+@nh:readgroup1	0	1981	303	281	188	156
+@nh:readgroup2	0	1988	309	286	183	142
+@nh:readgroup3	0	2013	301	268	177	149
+@covar	basequality	equal	diff	ins	del
+2	467	270	2	1
+3	78	25	0	0
+4	1298	558	1	0
+5	1602	427	1	0
+6	1296	336	0	0
+7	2411	498	0	0
+8	1543	197	0	0
+9	1611	180	0	0
+10	1912	169	0	0
+11	1827	154	1	0
+12	2152	119	1	1
+13	2064	104	0	0
+14	2041	66	0	0
+15	2131	67	0	0
+16	2527	56	0	0
+17	2483	53	0	0
+18	3262	62	1	0
+19	3532	65	0	0
+20	3434	289	1	0
+21	2911	39	0	0
+22	4005	37	1	0
+23	3677	41	0	0
+24	3634	31	0	0
+25	4040	37	0	0
+26	2460	30	0	0
+27	2116	22	0	0
+28	5305	37	1	0
+29	12580	87	1	1
+30	16424	86	0	0
+31	49473	224	2	3
+32	52395	248	3	14
+33	11385	52	1	1
+34	1085	5	0	0
+35	578	1	0	0
+36	321	1	0	0

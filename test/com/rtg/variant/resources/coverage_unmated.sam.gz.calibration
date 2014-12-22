@@ -1,0 +1,7 @@
+#Version vPOST-2.4 build b1400d0 (2011-12-22), calibrate v2.0
+#CL	map -t ref -i reads -o map --sam-rg @RG\tID:TEST\tPL:ILLUMINA\tSM:test
+@mnp:TEST	0	1
+@nh:TEST	0	5
+@covar	readgroup	basequality	sequence	equal	diff	ins	del
+TEST	20	simulatedSequence1	29	1	0	0
+TEST	20	simulatedSequence2	20	0	0	0

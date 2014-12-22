@@ -1,0 +1,19 @@
+##fileformat=VCFv4.1
+##fileDate=20121211
+##source=RTGvPOST-2.7 build c5deca9 (2012-12-11)
+##CL=snp -o snp -t c:\Workspace\rtg\internal/com/rtg/regression/data/snp_chr22/tiny/template_sdf --Xpriors human -m default --max-hits 1 c:\Workspace\rtg\internal/com/rtg/regression/data/snp_chr22/input/mated.sam.gz c:\Workspace\rtg\internal/com/rtg/regression/data/snp_chr22/input/unmated.sam.gz -Z
+##RUN-ID=984e69ac-c8ee-43f5-8a50-8ed63ffa3d16
+##reference=c:\Workspace\rtg\internal\com\rtg\regression\data\snp_chr22\tiny\template_sdf
+##contig=<ID=1,length=70070>
+##contig=<ID=2,length=70070>
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=ZX,Number=A,Type=Integer,Description="Test format field with alt allele values">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	SAMPLEA
+1	100	.	G	A,C	386.1	PASS	.	GT:ZX	1/2:1,2
+1	130	.	GATTTGGGGTTTTTGGT	G	50.0	PASS	.	GT	0/1
+1	137	.	G	A,*	386.1	PASS	.	GT:ZX	1/2:1,2
+1	153	.	G	T,A	429.5	PASS	.	GT:ZX	1/2:1,2
+2	66	.	T	C	687.5	PASS	.	GT:ZX	1/0:1,2
+2	70	.	AGGAGGAGAGAGAGAGAGAGAGAGAGAGTTATTAGATGT	A	50.0	PASS	.	GT	0/1
+2	80	.	T	C,*	687.5	PASS	.	GT:ZX	1/2:1
+2	180	.	T	C	687.5	PASS	.	GT:ZX	1/1:1

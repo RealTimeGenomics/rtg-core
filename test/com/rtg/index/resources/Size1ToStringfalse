@@ -1,0 +1,44 @@
+IndexImplementation
+Hash Bits=16
+Threshold=2
+Initial Number of hashes=1
+Number of hash codes=1
+
+Memory Usage	bytes	length
+		2	1	Hash
+		4	1	Value
+		6	6	Initial Position
+		4	16	Bit vector
+		16		Total
+Hash counts	0	1	2
+		1	1	1
+Bucket counts	0	1	2
+		1	1	1
+
+	Hash	Value
+[0]	0	0
+
+Frozen
+                             0      0.0% Total search calls
+                             0      0.0% Misses detected by bit vector
+                             0      0.0% Hits detected by bit vector
+                             0      0.0% Misses on probing hash index
+                             0      0.0% Hits on probing hash index
+                             0      0.0% Hits where some entry found
+
+
+                             0 Total finds
+
+Initial position
+pointer bits=2
+shift bits=14
+length=6
+Index [6]
+[0]     0,     1,     1,     1,     1,     1
+
+
+Bit vector
+HashBitVector bits=16 vectorBits=4 shift=12
+BitVector[16]
+[0]	 1000000000 000000
+

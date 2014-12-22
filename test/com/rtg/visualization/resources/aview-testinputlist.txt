@@ -1,0 +1,13 @@
+[36m  LOC:[39m g1:11-14
+       [49m     1        [49m
+       [49m56789012345678[49m
+             |[4m [24m|
+[36m  REF:[39m [49mcgactggtcagcta[49m
+[36m  GEN:[39m       [30m[42mC[49m[39m        (1) SM:SAMPLE snps.vcf
+[36m  GEN:[39m [49m      [30m[42mT[49m[39m       [49m (1) SM:SAMPLE snps.vcf
+[36m CALL:[39m       [30m[43mC[49m[39m        (2) SM:SAMPLE snps.vcf
+[36m CALL:[39m [49m      [30m[43mT[49m[39m       [49m (2) SM:SAMPLE snps.vcf
+[36m READ:[39m [1mCGACTG[30m[43mG[49m[39mT      [22m >  SE NH:1 AS:1
+[36m READ:[39m [49m[1m GACTG[30m[43mG[49m[39mTC     [22m[49m >  SE NH:1 AS:1
+[36m READ:[39m [1m GACTG[30m[43mG[49m[39mTC     [22m >  SE NH:1 AS:1
+[36m READ:[39m [49m[1m      [30m[43mG[49m[39mTCAGCTA[22m[49m >  SE NH:1 AS:1

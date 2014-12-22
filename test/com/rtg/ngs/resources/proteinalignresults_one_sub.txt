@@ -1,0 +1,9 @@
+#template-name	frame	read-id	template-position	%identity	template-protein	read-protein	match	alignment-score	bit-score	e-score
+templateName	-1	4	1	100	kwrknrkskknq	kwrknrkskknq	kwrknrkskknq	-67	30.4	1.5E-8
+templateName	+1	0	1	91	kwrknrkskknq	kwrknrqskknq	kwrknr+skknq	-63	28.9	4.5E-8
+templateName	-3	5	2	90	wrknrkskknq	crknrkskknq	 rknrkskknq	-49	23.5	1.9E-6
+templateName	-2	6	2	90	wrknrkskknq	wpknrkskknq	w knrkskknq	-55	25.8	3.8E-7
+templateName	-1	7	2	91	wrknrkskknqr	wrnnrkskknqr	wr nrkskknqr	-62	28.5	5.8E-8
+templateName	+3	1	2	90	wrknrkskknq	wrkdrkskknq	wrk+rkskknq	-57	26.6	2.2E-7
+templateName	+1	3	2	91	wrknrkskknqr	wrknrkstknqr	wrknrks knqr	-61	28.1	7.6E-8
+templateName	+3	8	10	100	knqrnynhdaa	knqrnynhdaa	knqrnynhdaa	-62	28.5	5.8E-8

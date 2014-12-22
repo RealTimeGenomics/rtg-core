@@ -1,0 +1,9 @@
+VCF INFO field DUR not contained in the specified rule set.
+VCF INFO field DP does not match the expected meta-data type.
+VCF INFO field DPR does not match the expected number of values.
+VCF FORMAT field DP does not match the expected number of values.
+VCF FORMAT field AVR does not match the expected meta-data type.
+
+Number of fields in headers that conflict with rule definitions:  4
+               Number of fields in headers not defined in rules:  1
+

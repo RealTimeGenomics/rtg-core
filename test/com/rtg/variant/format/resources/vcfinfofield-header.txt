@@ -1,0 +1,23 @@
+##INFO=<ID=SOMATIC,Number=1,Type=String,Description="Indicates the variant is a somatic mutation">
+##INFO=<ID=LOH,Number=1,Type=Float,Description="Indicates whether or not variant is a potential loss of heterozygosity">
+##INFO=<ID=RSS,Number=1,Type=Float,Description="RTG somatic call score">
+##INFO=<ID=NCS,Number=1,Type=Float,Description="RTG normal cancer score">
+##INFO=<ID=DISEASE,Number=1,Type=String,Description="Indicates the variant is linked to the disease">
+##INFO=<ID=RDS,Number=1,Type=Float,Description="RTG disease call score">
+##INFO=<ID=DPS,Number=1,Type=Float,Description="RTG disease presence score">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Combined read depth for variant over all samples">
+##INFO=<ID=DPR,Number=1,Type=Float,Description="Ratio of combined read depth for variant to expected combined read depth">
+##INFO=<ID=XRX,Number=0,Type=Flag,Description="RTG variant was called using complex caller">
+##INFO=<ID=RCE,Number=0,Type=Flag,Description="RTG variant is equivalent to the previous variant">
+##INFO=<ID=CT,Number=1,Type=Integer,Description="Coverage threshold that was applied">
+##INFO=<ID=RTRM,Number=0,Type=Flag,Description="Complex called variant was trimmed">
+##INFO=<ID=RSPLT,Number=1,Type=Integer,Description="Complex called variant was split">
+##INFO=<ID=NREF,Number=0,Type=Flag,Description="REF was not considered a valid allele during calling">
+##INFO=<ID=IC,Number=1,Type=Float,Description="Inbreeding Coefficient">
+##INFO=<ID=EP,Number=1,Type=Float,Description="Phred scaled probability that site is not in Hardy-Weinberg equilibrium">
+##INFO=<ID=LAL,Number=1,Type=Integer,Description="Length of longest allele">
+##INFO=<ID=QD,Number=1,Type=Float,Description="QUAL / DP">
+##INFO=<ID=NAA,Number=1,Type=Integer,Description="Number of alternative alleles">
+##INFO=<ID=AC,Number=A,Type=Integer,Description="Allele count in genotypes, for each alternative allele, in the same order as listed">
+##INFO=<ID=AN,Number=1,Type=Integer,Description="Total number of alleles in called genotypes">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO

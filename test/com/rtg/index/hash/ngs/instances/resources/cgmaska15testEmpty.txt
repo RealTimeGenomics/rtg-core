@@ -1,0 +1,3 @@
+CG l=35 w=18 a=1.5
+number windows=6
+set name=1234 length=23

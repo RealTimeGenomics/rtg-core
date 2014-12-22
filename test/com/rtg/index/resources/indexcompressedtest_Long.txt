@@ -1,0 +1,44 @@
+IndexImplementation
+Hash Bits=64
+Threshold=2147483647
+Initial Number of hashes=8
+Number of hash codes=8
+
+Memory Usage	bytes	length
+		64	8	Hash
+		32	8	Value
+		10	10	Initial Position
+		32	256	Bit vector
+		138		Total
+Hash counts	0	1	2
+		8	8	8
+Bucket counts	0	1	2
+		5	8	20
+
+	Hash	Value
+[0]	0	8
+[1]	2305843009213693951	1
+[2]	1	2
+[3]	2	3
+[4]	5	4
+[5]	42	5
+[6]	2305843009213693951	6
+[7]	2305843009213693951	7
+
+Frozen
+Performance statistics not available.
+Initial position
+pointer bits=3
+shift bits=61
+length=10
+Index [10]
+[0]     0,     1,     1,     1,     2,     6,     7,     7,     8,     8
+
+
+Bit vector
+HashBitVector bits=64 vectorBits=8 shift=56
+BitVector[256]
+[0]	 1000000000 0000000000 0000000000 0000000000 0000000000 0000000000 0001000000 0000000000 0000000000 0000000000
+[100]	 0000000000 0000000000 0000000110 0000000000 0000000000 0000000000 0000000000 0000000000 0000000000 0000000000
+[200]	 0000000000 0000000000 0000000000 0000000000 0000000000 000001
+

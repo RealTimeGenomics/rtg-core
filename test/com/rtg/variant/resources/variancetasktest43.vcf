@@ -1,0 +1,30 @@
+##fileformat=VCFv4.1
+##contig=<ID=g1,length=20>
+##contig=<ID=gempty,length=0>
+##FILTER=<ID=OC,Description="Coverage threshold exceeded">
+##FILTER=<ID=a10.0,Description="Ambiguity exceeded 10.0">
+##FILTER=<ID=RC,Description="RTG variant is a complex region">
+##FILTER=<ID=RX,Description="RTG variant contained within hypercomplex region">
+##FILTER=<ID=RCEQUIV,Description="RTG variant is equivalent to the previous variant">
+##FILTER=<ID=OTHER,Description="Variant is invalid for unknown reasons">
+##INFO=<ID=DPR,Number=1,Type=Float,Description="Ratio of combined read depth for variant to expected combined read depth">
+##INFO=<ID=XRX,Number=0,Type=Flag,Description="RTG variant was called using complex caller">
+##INFO=<ID=RCE,Number=0,Type=Flag,Description="RTG variant is equivalent to the previous variant">
+##INFO=<ID=CT,Number=1,Type=Integer,Description="Coverage threshold that was applied">
+##INFO=<ID=NREF,Number=0,Type=Flag,Description="REF was not considered a valid allele during calling">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
+##FORMAT=<ID=DPR,Number=1,Type=Float,Description="Ratio of read depth to expected read depth">
+##FORMAT=<ID=RE,Number=1,Type=Float,Description="RTG Total Error">
+##FORMAT=<ID=AR,Number=1,Type=Float,Description="Ambiguity Ratio">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype Quality">
+##FORMAT=<ID=ABP,Number=1,Type=Float,Description="Phred scaled probability that allele imbalance is present">
+##FORMAT=<ID=SBP,Number=1,Type=Float,Description="Phred scaled probability that strand bias is present">
+##FORMAT=<ID=RPB,Number=1,Type=Float,Description="Phred scaled probability that read position bias is present">
+##FORMAT=<ID=PPB,Number=1,Type=Float,Description="Phred scaled probability that there is a bias in the proportion of alignments that are properly paired">
+##FORMAT=<ID=PUR,Number=1,Type=Float,Description="Ratio of placed unmapped reads to mapped reads">
+##FORMAT=<ID=RS,Number=.,Type=String,Description="RTG Support Statistics">
+##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
+##FORMAT=<ID=GL,Number=G,Type=Float,Description="Log_10 scaled genotype likelihoods. As defined in VCF specifications">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	TEST
+g1	9	.	T	C	69.1	a10.0	.	GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:GL	1/1:5:0.541:0.200:11:0.00:10.86:10.86:0.00:C,5,0.541:0,5:-6.91,-1.10,-0.04

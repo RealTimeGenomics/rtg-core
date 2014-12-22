@@ -1,0 +1,5 @@
+version	0.0
+command	test
+contigOverlap	0
+contig	deleted	true if this contig has been deleted
+path	deleted	true if this path has been deleted

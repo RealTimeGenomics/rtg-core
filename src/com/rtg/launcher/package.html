@@ -1,0 +1,47 @@
+<html>
+  <body>
+    <p>Classes for use with SLIM modules</p>
+    <h2>How to construct a top level module</h2>
+    If you are constructing a new Slim top level module called "XX" then the things that you have to do are:<br/>
+    <ul>
+    <li>Create a new enumeration in <code>SlimModule</code> called "XX". There are lots of examples in there which use a CLI class.
+    </li>
+    <li>Construct a class which inherits from <code>CLI&lt;P&gt; </code> and is called <code>XX</code>. 
+        <code>CLI</code> requires the following methods to be implemented by the particular instances (it uses them to do a lot of tricky stuff):
+        <ul> 
+            <li><code>applicationName</code>returns a unique human readable name for the module usually "XX".</li>
+            <li><code>initListeners</code>initializes the listeners used to report errors and progress (this is a mess and can probably be replaced)</li>
+            <li><code>initFlags</code>initializes the command line flags</li>
+            <li><code>makeParams</code>constructs a <code>Params</code> object that encapsulates all the state necessary to run the module</li>
+            <li><code>task</code>constructs a <code>Runnable</code> object to execute the operation.</li>
+        </ul>
+        <p>
+        It is intended that the <code>XX</code> class will contain explicit code to initialize the flags and to decode them and use them
+        to build the <code>XXParams</code> object.
+        </p>
+        CLI will also contain a <code>main</code> that allows the module to be run directly by developers rather than through the
+        module system. Such a main will look like:
+        <pre>
+  public static void main(final String[] args) {
+    new XX().mainExit(args);
+  }
+        </pre>
+    </li>
+    <li>Implement an <code>XXParams</code> class which inherits from <code>CLIParams</code> to carry the state necessary to execute the task. 
+        The <code>XXParams</code> object will use the <a href="http://twit88.com/blog/2008/08/31/java-create-immutable-object-using-builder-pattern/">Builder Pattern</a> for construction and commitment to an immutable object.
+     </li>
+     <li>Implement a <code>Runnable</code> class to execute the operation called <code>XXTask</code>. 
+         By convention this takes an <code>XXParams</code> object and an 
+         <code>OutputStream</code> as arguments to the constructor, 
+         and this constructor is then called from within <code>XX</code>. 
+     </li>
+    </ul>
+    <br>
+    A simple example is provided by the classes:
+    <ul>
+        <li><code>Position</code></li>
+        <li><code>PositionParams</code></li>
+        <li><code>PositionTask</code></li>
+    </ul>
+  </body>
+</html>

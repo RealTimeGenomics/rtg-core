@@ -1,0 +1,8 @@
+#template-name	frame	read-id	template-start	template-end	template-length	read-start	read-end	read-length	template-protein	read-protein	alignment	identical	%identical	positive	%positive	mismatches	raw-score	bit-score	e-score
+simulatedSequence1+1	-3	0	9	30	3333	3	68	70	p*wnrc**gpgyektr*tt*sr	p*wnrc**gpgyektr*tt*sr	p*wnrc**gpgyektr*tt*sr	22	100	22	100	0	-108	46.2	2.5e-10
+simulatedSequence1+1	-3	1	9	30	3333	3	68	70	p*wnrc**gpgyektr*tt*sr	p*wnrc**gpgyektr*tt*st	p*wnrc**gpgyektr*tt*s	21	95	21	95	1	-102	43.9	1.2e-9
+simulatedSequence1+1	-1	2	10	32	3333	2	70	70	*wnrc**gpgyektr*tt*srew	vesmlmrtrvtektr*tt*srew	  +        ektr*tt*srew	12	52	13	57	10	-32	16.9	1.6e-1
+#read 3 had 6 results with score-indel 4
+simulatedSequence1+1	+1	4	17	33	3333	1	69	70	g------pgyektr*tt*srewl	gidanedqgtektr*tt*srewl	g       g ektr*tt*srewl	15	65	15	65	8	-54	25.4	4.5e-4
+simulatedSequence1+1	+2	5	12	34	3333	2	70	70	nrc**gpgyektr*tt*srewlp	nrc**gpgyektr*tt*srewlp	nrc**gpgyektr*tt*srewlp	23	100	23	100	0	-116	49.3	2.9e-11
+simulatedSequence1+1	+2	6	19	41	3333	2	70	70	gyektr*tt*srewlplpdgsph	gyektr*tt*srewlplpdgsph	gyektr*tt*srewlplpdgsph	23	100	23	100	0	-123	52.0	4.5e-12

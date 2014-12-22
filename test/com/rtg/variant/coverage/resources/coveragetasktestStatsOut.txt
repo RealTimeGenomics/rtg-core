@@ -1,0 +1,5 @@
+Coverage per region:
+   depth  breadth  covered  size         name
+  2.0000   0.8000       16    20           g1
+  1.1176   0.3824       13    34           g2
+  1.4444   0.5370       29    54  all regions

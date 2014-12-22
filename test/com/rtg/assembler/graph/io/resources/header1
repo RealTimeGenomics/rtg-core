@@ -1,0 +1,7 @@
+version	0.0
+command	test
+contigOverlap	0
+contig	foo	foo comment
+contig	bar	bar comment
+path	boo	comment boo
+path	oob	comment oob

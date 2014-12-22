@@ -1,0 +1,240 @@
+TBLASTN 2.2.16 [Mar-25-2007]
+
+
+Reference: Altschul, Stephen F., Thomas L. Madden, Alejandro A. Schaffer, 
+Jinghui Zhang, Zheng Zhang, Webb Miller, and David J. Lipman (1997), 
+"Gapped BLAST and PSI-BLAST: a new generation of protein database search
+programs",  Nucleic Acids Res. 25:3389-3402.
+
+Query= null+1
+         (11 letters)
+
+Database: testDna_new2.fa 
+           1 sequences; 41 total letters
+
+Searching..................................................done
+
+
+
+                                                                 Score    E
+Sequences producing significant alignments:                      (bits) Value
+
+Test1                                                                  25   4e-006
+
+>Test1
+          Length = 41
+
+ Score = 25.4 bits (54), Expect = 4e-006
+ Identities = 10/11 (90%), Positives = 10/11 (90%)
+ Frame = +1
+
+Query: 1  JMLKRTCQRVE 11
+           MLKRTCQRVE
+Sbjct: 7  VMLKRTCQRVE 39
+
+
+TBLASTN 2.2.16 [Mar-25-2007]
+
+
+Reference: Altschul, Stephen F., Thomas L. Madden, Alejandro A. Schaffer, 
+Jinghui Zhang, Zheng Zhang, Webb Miller, and David J. Lipman (1997), 
+"Gapped BLAST and PSI-BLAST: a new generation of protein database search
+programs",  Nucleic Acids Res. 25:3389-3402.
+
+Query= null+2
+         (11 letters)
+
+Database: testDna_new2.fa 
+           1 sequences; 41 total letters
+
+Searching..................................................done
+
+
+
+                                                                 Score    E
+Sequences producing significant alignments:                      (bits) Value
+
+Test1                                                                  24   8e-006
+
+>Test1
+          Length = 41
+
+ Score = 24.3 bits (51), Expect = 8e-006
+ Identities = 10/11 (90%), Positives = 10/11 (90%)
+ Frame = +2
+
+Query: 1  *CPSERVNEWR 11
+          *C SERVNEWR
+Sbjct: 8  *C*SERVNEWR 40
+
+
+TBLASTN 2.2.16 [Mar-25-2007]
+
+
+Reference: Altschul, Stephen F., Thomas L. Madden, Alejandro A. Schaffer, 
+Jinghui Zhang, Zheng Zhang, Webb Miller, and David J. Lipman (1997), 
+"Gapped BLAST and PSI-BLAST: a new generation of protein database search
+programs",  Nucleic Acids Res. 25:3389-3402.
+
+Query= null+3
+         (11 letters)
+
+Database: testDna_new2.fa 
+           1 sequences; 41 total letters
+
+Searching..................................................done
+
+
+
+                                                                 Score    E
+Sequences producing significant alignments:                      (bits) Value
+
+Test1                                                                  25   5e-006
+
+>Test1
+          Length = 41
+
+ Score = 25.0 bits (53), Expect = 5e-006
+ Identities = 11/11 (100%), Positives = 11/11 (100%)
+ Frame = +3
+
+Query: 1  DAEANVSTSGE 11
+          DAEANVSTSGE
+Sbjct: 9  DAEANVSTSGE 41
+
+
+TBLASTN 2.2.16 [Mar-25-2007]
+
+
+Reference: Altschul, Stephen F., Thomas L. Madden, Alejandro A. Schaffer, 
+Jinghui Zhang, Zheng Zhang, Webb Miller, and David J. Lipman (1997), 
+"Gapped BLAST and PSI-BLAST: a new generation of protein database search
+programs",  Nucleic Acids Res. 25:3389-3402.
+
+Query= null-1
+         (10 letters)
+
+Database: testDna_new2.fa 
+           1 sequences; 41 total letters
+
+Searching..................................................done
+
+
+
+                                                                 Score    E
+Sequences producing significant alignments:                      (bits) Value
+
+Test1                                                                  19   3e-004
+
+>Test1
+          Length = 41
+
+ Score = 18.9 bits (37), Expect = 3e-004
+ Identities = 10/11 (90%), Positives = 10/11 (90%), Gaps = 1/11 (9%)
+ Frame = -1
+
+Query: 1  LSTR-HVRFSI 10
+          LSTR HVRFSI
+Sbjct: 41 LSTR*HVRFSI 9
+
+
+TBLASTN 2.2.16 [Mar-25-2007]
+
+
+Reference: Altschul, Stephen F., Thomas L. Madden, Alejandro A. Schaffer, 
+Jinghui Zhang, Zheng Zhang, Webb Miller, and David J. Lipman (1997), 
+"Gapped BLAST and PSI-BLAST: a new generation of protein database search
+programs",  Nucleic Acids Res. 25:3389-3402.
+
+Query= null-2
+         (11 letters)
+
+Database: testDna_new2.fa 
+           1 sequences; 41 total letters
+
+Searching..................................................done
+
+
+
+                                                                 Score    E
+Sequences producing significant alignments:                      (bits) Value
+
+Test1                                                                  25   6e-006
+
+>Test1
+          Length = 41
+
+ Score = 24.6 bits (52), Expect = 6e-006
+ Identities = 11/11 (100%), Positives = 11/11 (100%)
+ Frame = -2
+
+Query: 1  SPLVDTFASAS 11
+          SPLVDTFASAS
+Sbjct: 40 SPLVDTFASAS 8
+
+
+TBLASTN 2.2.16 [Mar-25-2007]
+
+
+Reference: Altschul, Stephen F., Thomas L. Madden, Alejandro A. Schaffer, 
+Jinghui Zhang, Zheng Zhang, Webb Miller, and David J. Lipman (1997), 
+"Gapped BLAST and PSI-BLAST: a new generation of protein database search
+programs",  Nucleic Acids Res. 25:3389-3402.
+
+Query= null-3
+         (11 letters)
+
+Database: testDna_new2.fa 
+           1 sequences; 41 total letters
+
+Searching..................................................done
+
+
+
+                                                                 Score    E
+Sequences producing significant alignments:                      (bits) Value
+
+Test1                                                                  24   8e-006
+
+>Test1
+          Length = 41
+
+ Score = 24.3 bits (51), Expect = 8e-006
+ Identities = 10/10 (100%), Positives = 10/10 (100%)
+ Frame = -3
+
+Query: 1  LHSLTRSLQH 10
+          LHSLTRSLQH
+Sbjct: 39 LHSLTRSLQH 10
+
+
+  Database: testDna_new2.fa
+    Posted date:  Dec 16, 2008  3:28 PM
+  Number of letters in database: 41
+  Number of sequences in database:  1
+  
+Lambda     K      H
+   0.338    0.138    0.406 
+
+Gapped
+Lambda     K      H
+   0.267   0.0410    0.140 
+
+
+Matrix: BLOSUM62
+Gap Penalties: Existence: 11, Extension: 1
+Number of Sequences: 1
+Number of Hits to DB: 46
+Number of extensions: 6
+Number of successful extensions: 6
+Number of sequences better than 10.0: 1
+Number of HSP's gapped: 6
+Number of HSP's successfully gapped: 6
+Length of database: 13
+Neighboring words threshold: 13
+Window for multiple hits: 40
+X1: 1 ( 0.5 bits)
+X2: 38 (14.6 bits)
+X3: 64 (24.7 bits)
+S1: 1 ( 3.3 bits)
+S2: 1 ( 5.0 bits)

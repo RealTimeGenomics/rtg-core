@@ -1,0 +1,29 @@
+IndexImplementation
+Hash Bits=16
+Threshold=2147483647
+Initial Number of hashes=0
+Number of hash codes=0
+
+Memory Usage	bytes	length
+		20	10	Hash
+		40	10	Value
+		10	10	Initial Position
+		32	256	Bit vector
+		102		Total
+Hash counts	0	1	2
+		0	0	0
+Bucket counts	0	1	2
+		0	0	0
+Gaseous
+
+
+Memory Usage	bytes	length
+		20	10	Hash
+		40	10	Value
+		10	10	Initial Position
+		32	256	Bit vector
+		102		Total
+Hash counts	0	1	2
+		0	0	0
+Bucket counts	0	1	2
+		0	0	0

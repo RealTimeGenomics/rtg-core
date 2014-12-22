@@ -1,0 +1,40 @@
+##fileformat=VCFv4.1
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##SAMPLE=<ID=Father,Description="Father",Sex=MALE>
+##SAMPLE=<ID=Mother,Description="Mother",Sex=FEMALE>
+##SAMPLE=<ID=d1,Description="d1",Sex=FEMALE>
+##SAMPLE=<ID=d2,Description="d2",Sex=FEMALE>
+##SAMPLE=<ID=d3,Description="d3",Sex=FEMALE>
+##SAMPLE=<ID=s4,Description="s4",Sex=MALE>
+##SAMPLE=<ID=s5,Description="s5",Sex=MALE>
+##SAMPLE=<ID=s6,Description="s6",Sex=MALE>
+##SAMPLE=<ID=d7,Description="d7",Sex=FEMALE>
+##SAMPLE=<ID=s8,Description="s8",Sex=MALE>
+##SAMPLE=<ID=d9,Description="d9",Sex=FEMALE>
+##SAMPLE=<ID=s10,Description="s10",Sex=MALE>
+##SAMPLE=<ID=s11,Description="s11",Sex=MALE>
+##contig=<ID=1,length=249250621>
+##contig=<ID=2,length=243199373>
+##contig=<ID=X,length=243199373>
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	Father	Mother	d1	d2	d3	s4	s5	s6	d7	s8	d9	s10	s11
+X	2	1	A	C	.	.	.	GT	0/1	0/1	1/0	1/1	1/0	0/0	0/1	0/1	1/0	0/0	1/1	0/1	0/0
+X	3	1	A	C	.	.	.	GT	1/1	0/1	1/0	1/1	1/0	1/0	1/1	1/1	1/0	1/0	1/1	1/1	1/0
+X	4	1	A	C	.	.	.	GT	0/1	1/1	1/1	1/1	1/1	0/1	0/1	0/1	1/1	0/1	1/1	0/1	0/1
+X	5	1	A	C	.	.	.	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+X	6	1	A	C	.	.	.	GT	1/1	1/0	1/1	1/0	1/1	1/1	1/0	1/0	1/1	1/1	1/0	1/0	1/1
+X	7	1	A	C	.	.	.	GT	0/1	1/1	1/1	1/1	1/1	0/1	0/1	0/1	1/1	0/1	1/1	0/1	0/1
+X	8	1	A	C	.	.	.	GT	0/1	0/0	1/0	1/0	1/0	0/0	0/0	0/0	1/0	0/0	1/0	0/0	0/0
+X	9	1	A	C	.	.	.	GT	0/1	1/0	1/1	1/0	1/1	0/1	0/0	0/0	1/1	0/1	1/0	0/0	0/1
+X	10	1	A	C	.	.	.	GT	0/1	1/0	1/1	1/1	1/1	0/1	0/0	0/0	1/1	0/1	1/0	0/0	0/1
+X	11	1	A	C	.	.	.	GT	1/1	0/1	1/0	1/0	1/0	1/0	1/1	1/1	1/0	1/0	1/1	1/1	1/0
+X	12	1	A	C	.	.	.	GT	0/1	0/0	1/0	1/0	1/0	0/0	0/0	0/0	1/0	0/0	1/0	0/0	0/0
+X	13	1	A	C	.	.	.	GT	0/1	1/0	1/1	1/1	1/1	0/1	0/0	0/0	1/1	0/1	1/0	0/0	0/1
+X	14	1	A	C	.	.	.	GT	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0	0/0
+X	15	1	A	C	.	.	.	GT	0/1	0/1	1/1	0/1	0/1	0/1	0/1	0/0	1/0	0/1	1/0	0/1	0/1
+X	20	1	A	C	.	.	.	GT	0	0/1	0/1	0/0	0/0	0	0	0	0/0	0	0/0	0	0
+X	22	1	A	C	.	.	.	GT	0	0/1	0/1	0/0	0/0	0	0	0	0/0	0	0/0	0	0
+X	23	1	A	C	.	.	.	GT	0	0/1	0/1	0/0	0/0	0	0	0	0/0	0	0/0	0	0
+X	24	1	A	C	.	.	.	GT	0	0/1	0/1	0/0	0/0	0	0	0	0/0	0	0/0	0	0
+X	25	1	A	C	.	.	.	GT	0	0/1	0/1	0/0	0/0	0	0	0	0/0	0	0/0	0	0
+X	568924	1	A	C	.	.	.	GT	0	0/1	0/1	0/0	0/0	0	0	0	0/0	0	0/0	0	0
+X	568950	1	A	C	.	.	.	GT	0	0/1	0/0	0/0	0/0	0	0	0	0/0	0	0/0	0	0

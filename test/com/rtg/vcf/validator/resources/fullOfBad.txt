@@ -1,0 +1,49 @@
+VCF INFO field DUR not contained in the specified rule set.
+VCF FORMAT field DUR not contained in the specified rule set.
+
+chr21	125	.	A	G	NaN	PASS	DP=2090	GT:DP:AVR	0/0:621:0.2412	0/0:549:0.2850	0/1:920:0.1978
+QUAL value is invalid.
+
+chr21	425	.	A	G	Infinity	PASS	DP=2090	GT:DP:AVR	0/0:621:0.2412	0/0:549:0.2850	0/1:920:0.1978
+QUAL value is invalid.
+
+chr21	525	.	A	G	132.6	PASS	DP=2090;FOO	GT:DP:AVR	0/0:621:0.2412	0/0:549:0.2850	0/1:920:0.1978
+VCF INFO field FOO not present in the header.
+
+chr21	625	.	A	G	132.6	PASS	DP=-20	GT:DP:AVR	0/0:-1:0.2412	0/0:549:0.2850	0/1:920:0.1978
+One or more values for the INFO field DP is outside the expected range of values.
+One or more values for the FORMAT field DP is outside the expected range of values.
+
+chr21	725	.	A	G	132.6	BLAH	DP=bar	GT:DP:AVR	0/0:621:0.2412	0/0:549:0.2850	0/1:920:0.1978
+VCF FILTER field + BLAH not present in the header.
+Value in INFO field DP not in the correct number format.
+
+chr21	825	.	A	G	NaN	PASS	DP=-1;FOO	GT:DP:AVR:BAR	0/0:-1:0.2412:B	0/0:549:0.2850:B	0/1:920:1.2:B
+One or more values for the INFO field DP is outside the expected range of values.
+VCF INFO field FOO not present in the header.
+One or more values for the FORMAT field DP is outside the expected range of values.
+One or more values for the FORMAT field AVR is outside the expected range of values.
+VCF FORMAT field BAR not present in the header.
+QUAL value is invalid.
+
+chr21	925	.	A	G	132.6	PASS	DP=-20	GT:DP:AVR	0/0:-1:0.2412	0/0:549:0.2850	0/1:920:0.1978
+One or more values for the INFO field DP is outside the expected range of values.
+One or more values for the FORMAT field DP is outside the expected range of values.
+
+chr21	1025	.	A	G	132.6	PASS	DP=-20	GT:DP:AVR	0/0:-1:0.2412	0/0:549:0.2850	0/1:920:0.1978
+One or more values for the INFO field DP is outside the expected range of values.
+One or more values for the FORMAT field DP is outside the expected range of values.
+
+chr21	1125	.	A	G	132.6	PASS	DP=-20	GT:DP:AVR	0/0:-1:0.2412	0/0:549:0.2850	0/1:920:0.1978
+One or more values for the INFO field DP is outside the expected range of values.
+One or more values for the FORMAT field DP is outside the expected range of values.
+
+chr21	1225	.	A	G	132.6	PASS	DP=-20	GT:DP:AVR	0/0:-1:0.2412	0/0:549:0.2850	0/1:920:0.1978
+One or more values for the INFO field DP is outside the expected range of values.
+One or more values for the FORMAT field DP is outside the expected range of values.
+
+ Number of fields in headers not defined in rules:   2
+Number of fields in records not defined in header:   4
+       Number of records with invalid QUAL fields:   3
+                  Total number of invalid records:  12
+

@@ -1,0 +1,14 @@
+#ASSEMBLY_ID	GS000001152-ASM
+#DBSNP_BUILD	dbSNP build 130
+#FORMAT_VERSION	1.3
+#GENERATED_AT	2010-Sep-25 04:20:13.034199
+#GENERATED_BY	dbsnptool
+#GENOME_REFERENCE	NCBI build 36
+#SAMPLE	GS00225-DNA_H01
+#SOFTWARE_VERSION	1.8.0.32
+#TYPE	VAR-ANNOTATION
+#name	position	type	reference	prediction	posterior	coverage	correction	support_statistics
+chr1	1	x	=	?	0	0	0.000
+chr1	909	x	=	?	0	0	0.000
+chr1	994	x	=	?	0	0	0.000
+chr1	1009	x	=	?	0	0	0.000

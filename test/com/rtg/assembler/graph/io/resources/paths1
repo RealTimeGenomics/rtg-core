@@ -1,0 +1,8 @@
+path	1
+contigs	1	-2
+path	2
+contigs	2	-3	4
+path	3	boo=p3
+contigs	-3	5	6
+path	4
+contigs	3	7

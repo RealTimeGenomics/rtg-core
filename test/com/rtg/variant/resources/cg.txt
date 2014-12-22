@@ -1,0 +1,19 @@
+#ASSEMBLY_ID	GS000001152-ASM
+#DBSNP_BUILD	dbSNP build 130
+#FORMAT_VERSION	1.3
+#GENERATED_AT	2010-Sep-25 04:20:13.034199
+#GENERATED_BY	dbsnptool
+#GENOME_REFERENCE	NCBI build 36
+#SAMPLE	GS00225-DNA_H01
+#SOFTWARE_VERSION	1.8.0.32
+#TYPE	VAR-ANNOTATION
+
+>locus	ploidy	allele	sequence	begin	end	varType	reference	alleleSeq	totalScore	hapLink	xRef
+1	2	all	chr1	0	901	no-call	=	?			
+2	2	all	chr1	901	908	ref	=	=			
+3	2	all	chr1	908	979	no-call	=	?			
+4	2	all	chr1	979	993	ref	=	=			
+5	2	all	chr1	993	1000	no-call	=	?			
+6	2	all	chr1	1000	1008	ref	=	=			
+7	2	all	chr1	1008	1115	no-call	=	?			
+8	2	all	chr1	1115	1132	ref	=	=			

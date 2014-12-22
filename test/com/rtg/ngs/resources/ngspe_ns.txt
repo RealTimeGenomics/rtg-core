@@ -1,0 +1,2 @@
+0	99	genome	1	55	1X3=	=	9	12	NGGT	*	AS:i:0	NM:i:1	XA:i:0	IH:i:1	NH:i:1
+0	147	genome	9	55	1X1=1X1=	=	1	-12	NCNA	*	AS:i:0	NM:i:2	XA:i:0	IH:i:1	NH:i:1

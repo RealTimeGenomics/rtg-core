@@ -1,0 +1,77 @@
+##fileformat=VCFv4.1
+##fileDate=20130313
+##contig=<ID=1,length=249250621>
+##contig=<ID=2,length=243199373>
+##contig=<ID=3,length=198022430>
+##contig=<ID=4,length=191154276>
+##contig=<ID=5,length=180915260>
+##contig=<ID=6,length=171115067>
+##contig=<ID=7,length=159138663>
+##contig=<ID=8,length=146364022>
+##contig=<ID=9,length=141213431>
+##contig=<ID=10,length=135534747>
+##contig=<ID=11,length=135006516>
+##contig=<ID=12,length=133851895>
+##contig=<ID=13,length=115169878>
+##contig=<ID=14,length=107349540>
+##contig=<ID=15,length=102531392>
+##contig=<ID=16,length=90354753>
+##contig=<ID=17,length=81195210>
+##contig=<ID=18,length=78077248>
+##contig=<ID=19,length=59128983>
+##contig=<ID=20,length=63025520>
+##contig=<ID=21,length=48129895>
+##contig=<ID=22,length=51304566>
+##contig=<ID=X,length=155270560>
+##contig=<ID=Y,length=59373566>
+##contig=<ID=MT,length=16569>
+##INFO=<ID=XRX,Number=0,Type=Flag,Description="RTG variant was called using complex caller">
+##INFO=<ID=RCE,Number=0,Type=Flag,Description="RTG variant is equivalent to the previous variant">
+##INFO=<ID=CT,Number=1,Type=Integer,Description="Coverage threshold that was applied">
+##INFO=<ID=BAD1,Number=.,Type=Integer,Description="BAD">
+##INFO=<ID=BAD2,Number=2,Type=Integer,Description="BADER">
+##INFO=<ID=BAD4,Number=1,Type=Integer,Description="BADEST">
+##FILTER=<ID=OC,Description="Coverage threshold exceeded">
+##FILTER=<ID=a10.0,Description="Ambiguity exceeded 10.0">
+##FILTER=<ID=RC,Description="RTG variant is a complex region">
+##FILTER=<ID=RX,Description="RTG variant contained within hypercomplex region">
+##FILTER=<ID=RCEQUIV,Description="RTG variant is equivalent to the previous variant">
+##FILTER=<ID=OTHER,Description="Variant is invalid for unknown reasons">
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##FORMAT=<ID=DP,Number=1,Type=Integer,Description="Read Depth">
+##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype Quality">
+##FORMAT=<ID=OGQ,Number=1,Type=Integer,Description="Original Genotype Quality">
+##FORMAT=<ID=RE,Number=1,Type=Float,Description="RTG Total Error">
+##FORMAT=<ID=AR,Number=1,Type=Float,Description="Ambiguity Ratio">
+##FORMAT=<ID=AB,Number=1,Type=Float,Description="Allele Balance">
+##FORMAT=<ID=RS,Number=.,Type=String,Description="RTG Support Statistics">
+##FORMAT=<ID=AVR,Number=1,Type=Float,Description="GT/Complex variant score">
+##FORMAT=<ID=BAD3,Number=3,Type=Float,Description="BAD BAD BAD">
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	NA12878
+22	16050116	.	G	C	50.3	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	1/0:39:29.025:0.744:0.564:26:50:C,17,13.015,G,22,16.010:25.6
+22	16050159	.	C	T	142.4	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	0/1:47:29.034:0.617:0.681:73:142:C,32,21.022,T,15,8.012:72.7
+22	16050252	.	A	T	123.3	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	0/1:47:27.037:0.574:0.745:63:123:A,35,22.023,T,12,5.014:63.0
+22	16051940	.	T	G	35.5	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	1/0:47:22.397:0.447:0.809:18:36:G,9,0.539,T,38,21.858:18.4
+22	16051968	.	C	A	126.2	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	1/0:43:29.341:0.674:0.651:60:118:A,15,7.204,C,28,22.137:60.4
+22	16052171	.	C	CAAACAAAC	451.1	PASS	XRX;RCE	GT:DP:RE:GQ:OGQ:AVR	0/1:31:0.026:55:226:54.7
+22	16052193	.	A	AACAAACAA	748.5	RCEQUIV	XRX;RCE	GT:DP:RE:GQ:OGQ:AVR	0/1:35:2.015:55:226:54.7
+22	16052239	.	A	G	132.7	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	0/1:37:7.059:0.189:0.595:68:133:A,22,0.043,G,15,7.016:68.1
+22	16052513	.	G	C	460.8	PASS	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	1/0:43:1.210:0.023:0.512:236:461:C,21,1.104,G,22,0.106:236.0
+22	16052618	.	G	A	601.2	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	1/0:48:12.131:0.250:0.375:155:303:A,30,7.047,G,18,5.084:155.1
+22	16053659	.	A	C	710.8	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	0/1:79:19.543:0.241:0.392:364:711:A,31,0.481,C,48,19.062:364.0
+22	16054667	.	C	G	435.3	PASS	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	0/1:39:2.373:0.051:0.487:217:424:C,19,1.244,G,20,1.129:217.1
+22	16054740	.	A	G	640.8	PASS	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	0/1:44:1.093:0.023:0.409:236:461:A,18,0.031,G,26,1.063:236.0
+22	16055942	.	C	T	413.0	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	0/1:53:7.223:0.132:0.528:211:413:C,28,0.190,T,25,7.033:211.5
+22	16057248	.	G	A	506.7	PASS	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	1/0:54:0.375:0.000:0.593:259:507:A,22,0.048,G,32,0.327:259.6
+22	16058070	.	A	G	844.6	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	1/1:41:13.226:0.317:0.000:165:83:G,41,13.226:166.0
+22	16058415	.	A	G	119.2	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	0/1:35:10.046:0.286:0.514:61:119:A,18,0.034,G,17,10.012:60.9
+22	16058766	.	GA	AG	292.5	a10.0	XRX	GT:DP:RE:GQ:OGQ:AVR	1/0:72:37.065:71:292:70.7
+22	16059081	.	A	G	155.9	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	0/1:38:4.361:0.105:0.632:80:156:A,24,0.219,G,14,4.142:79.9
+22	16059753	.	A	T	591.1	PASS	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	0/1:53:0.370:0.000:0.509:303:591:A,27,0.196,G,1,0.063,T,25,0.111:302.6
+22	16060178	.	G	A	272.9	PASS	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	1/0:36:2.168:0.056:0.639:140:273:A,13,0.056,G,23,2.111:139.8
+22	16060518	.	TT	TCTT,TTTC	562.5	PASS	XRX	GT:DP:RE:GQ:OGQ:AVR	1/2:27:0.210:3:13:3.1
+22	16060797	.	A	C	225.3	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	0/1:27:8.198:0.296:0.333:109:212:A,9,0.178,C,18,8.019:108.5
+22	16061250	.	T	C	1095.6	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	1/1:48:13.070:0.271:0.000:208:104:C,48,13.070:208.0
+22	16061648	.	C	A	7.5	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	1/0:37:25.083:0.676:0.811:4:7:A,7,4.067,C,30,21.016:3.6
+22	16063154	.	T	G	408.7	PASS	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	1/0:47:0.377:0.000:0.617:209:409:G,18,0.030,T,29,0.346:209.4
+22	16064335	.	T	C	328.8	a10.0	.	GT:DP:RE:AR:AB:GQ:OGQ:RS:AVR	1/0:84:55.344:0.655:0.464:161:315:C,45,30.155,T,39,25.188:161.3

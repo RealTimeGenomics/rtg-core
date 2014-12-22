@@ -1,0 +1,15 @@
+##fileformat=VCFv4.1
+##fileDate=20130624
+##source=handmade
+##CL=notepad++.exe
+##RUN-ID=16fd3065-1574-4753-a358-de3b641dfe69
+##TEMPLATE-SDF-ID=3f642190-1b3e-45b4-b8f2-1af6bc71284f
+##reference=c:\Workspace\rtg\internal\com\rtg\regression\data\family\sub21
+##contig=<ID=chr21,length=10000>
+##FORMAT=<ID=GT,Number=1,Type=String,Description="Genotype">
+##SAMPLE=<ID=NA19239,Sex=MALE>
+##SAMPLE=<ID=NA19238,Sex=FEMALE>
+##SAMPLE=<ID=NA19240,Sex=FEMALE>
+##PEDIGREE=<Child=NA19240,Mother=NA19238,Father=NA19239>
+#CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	NA19239	NA19238	NA19240
+chr21	125	.	A	G	132.6	PASS	.	GT	0/0	0/0	0/1

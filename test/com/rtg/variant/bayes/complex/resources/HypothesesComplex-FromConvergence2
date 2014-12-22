@@ -1,0 +1,7 @@
+6
+new Hyp(":", 0.000),
+new Hyp("AA:AA", -22.467),
+new Hyp("TGCTAA:TGCTAA", -36.113),
+new Hyp(":AA", -23.257),
+new Hyp("AA:TGCTAA", -56.247),
+new Hyp(":TGCTAA", -36.902),

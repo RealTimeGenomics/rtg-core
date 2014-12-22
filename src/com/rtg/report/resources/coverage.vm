@@ -1,0 +1,37 @@
+
+#if ($commandLine)<p><strong>Command Line:</strong> ${commandLine}</p>#end
+
+<h3 style="clear: both">Coverage</h3>
+<div style="max-width: 954px; overflow: auto">
+  <div style="float: left; padding-right: 5px">
+    <img src="${resourceDir}/${coveragePng}" alt="Coverage"/>
+  </div>
+  <div style="overflow:auto; max-height:240px;max-width:310px;border: 1px solid black">
+    <table>
+      <tr><th>Coverage level</th><th>Percentage</th></tr>
+      #foreach ($doubleList in $levelsData)
+        <tr><td align="right">$foreach.index</td><td align="right">$numberTool.format("#0.00",$doubleList.get(1))</td></tr>
+      #end
+    </table>
+  </div>
+</div>
+
+<h3 style="clear: both">Cumulative Coverage</h3>
+<div style="max-width: 954px; overflow: auto">
+  <div style="float: left; padding-right: 5px">
+    <img src="${resourceDir}/${cumulativeCoveragePng}" alt="Cumulative coverage"/>
+  </div>
+  <div style="overflow:auto; max-height:240px;max-width:310px;border: 1px solid black">
+    <table>
+      <tr><th>Coverage level</th><th>Cumulative Percentage</th></tr>
+      #foreach ($doubleList in $levelsData)
+        <tr><td align="right">$foreach.index</td><td align="right">$numberTool.format("#0.00",$doubleList.get(2))</td></tr>
+      #end
+    </table>
+  </div>
+</div>
+
+<p>
+<a href="${statsTsv}">Stats output file</a><br />
+<a href="${levelsTsv}">Levels output file</a>
+</p>

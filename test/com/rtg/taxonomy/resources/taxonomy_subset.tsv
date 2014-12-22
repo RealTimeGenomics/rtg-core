@@ -1,0 +1,14 @@
+#RTG taxonomy version 1.0
+#taxID	parentID	rank	name
+1	-1	no rank	root
+131567	1	no rank	cellular organisms
+2	131567	superkingdom	Bacteria
+1117	2	phylum	Cyanobacteria
+1118	1117	order	Chroococcales
+1129	1118	genus	Synechococcus
+321327	1129	species	Synechococcus sp. JA-3-3Ab
+321332	1129	species	Synechococcus sp. JA-2-3B'a(2-13)
+43988	1118	genus	Cyanothece
+41431	43988	species	Cyanothece sp. PCC 8801
+395961	43988	species	Cyanothece sp. PCC 7425
+395962	43988	species	Cyanothece sp. PCC 8802

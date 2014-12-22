@@ -1,0 +1,15 @@
+  LOC: g1:1-12
+                1        
+       123456789012345678
+       |         |
+  REF: aaatcgactggtcagcta
+  GEN:           C        (1) SM:SAMPLE snps.vcf
+  GEN:           T        (1) SM:SAMPLE snps.vcf
+ CALL:           C        (2) SM:SAMPLE snps.vcf
+ CALL:           T        (2) SM:SAMPLE snps.vcf
+ READ:      GACTGGTC      >  SE NH:1 AS:1 A 255
+ READ:      GACTGGTC      >  SE NH:1 AS:1 A 255
+ READ:           GTCAGCTA >  SE NH:1 AS:1 A 255
+ READ:   ATCGACTG         >  SE NH:1 AS:0 B 255
+ READ:   ATCGACTG         >  SE NH:1 AS:0 B 255
+ READ:     CGACTGGT       >  SE NH:1 AS:1 B 255

@@ -1,0 +1,12 @@
+Usage: rtg map [OPTION]... -o DIR -t SDF -i SDF
+               [OPTION]... -o DIR -t SDF -l SDF -r SDF
+
+Optional flags: 
+      --Xbam                     write BAM instead of SAM
+      --Xexclude                 do not write repeated reads
+      --Xhelp                    print help on extended command-line flag usage
+      --Xmask=STRING             mask class name
+      --Xscoreindel=INT          set max score indel for topn threshold
+                                 (Default is 7)
+      --Xtemp-files=DIR          directory for temporary SAM files
+      --Xtemp-files-gzipped=BOOL gzip temporary SAM files (Default is false)

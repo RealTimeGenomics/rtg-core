@@ -1,0 +1,10 @@
+#template-name	frame	read-id	template-start	template-end	template-length	read-start	read-end	read-length	template-protein	read-protein	alignment	identical	%identical	positive	%positive	mismatches	raw-score	bit-score	e-score
+templateName	-1	4	1	12	22	1	36	36	kwrknrkskknq	kwrknrkskknq	kwrknrkskknq	12	100	12	100	0	-67	30.4	1.5e-8
+templateName	+1	0	1	12	22	1	36	36	kwrknrkskknq	kwrknrkskknq	kwrknrkskknq	12	100	12	100	0	-67	30.4	1.5e-8
+templateName	-1	7	2	13	22	1	36	36	wrknrkskknqr	wrknrkskknqr	wrknrkskknqr	12	100	12	100	0	-67	30.4	1.5e-8
+templateName	+3	1	2	12	22	3	35	36	wrknrkskknq	wrknrkskknq	wrknrkskknq	11	100	11	100	0	-62	28.5	5.8e-8
+templateName	-2	6	2	12	22	3	35	36	wrknrkskknq	wrknrkskknq	wrknrkskknq	11	100	11	100	0	-62	28.5	5.8e-8
+templateName	+2	2	2	12	22	2	34	36	wrknrkskknq	wrknrkskknq	wrknrkskknq	11	100	11	100	0	-62	28.5	5.8e-8
+templateName	-3	5	2	12	22	2	34	36	wrknrkskknq	wrknrkskknq	wrknrkskknq	11	100	11	100	0	-62	28.5	5.8e-8
+templateName	+1	3	2	13	22	1	36	36	wrknrkskknqr	wrknrkskknqr	wrknrkskknqr	12	100	12	100	0	-67	30.4	1.5e-8
+templateName	+3	8	10	20	22	3	35	36	knqrnynhdaa	knqrnynhdaa	knqrnynhdaa	11	100	11	100	0	-62	28.5	5.8e-8

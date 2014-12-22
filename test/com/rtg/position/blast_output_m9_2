@@ -1,0 +1,30 @@
+# TBLASTN 2.2.16 [Mar-25-2007]
+# Query: null+1
+# Database: testDna_new2.fa
+# Fields: Query id, Subject id, % identity, alignment length, mismatches, gap openings, q. start, q. end, s. start, s. end, e-value, bit score
+null+1	Test1	90.91	11	1	0	1	11	7	39	4e-006	25.4
+# TBLASTN 2.2.16 [Mar-25-2007]
+# Query: null+2
+# Database: testDna_new2.fa
+# Fields: Query id, Subject id, % identity, alignment length, mismatches, gap openings, q. start, q. end, s. start, s. end, e-value, bit score
+null+2	Test1	90.91	11	1	0	1	11	8	40	8e-006	24.3
+# TBLASTN 2.2.16 [Mar-25-2007]
+# Query: null+3
+# Database: testDna_new2.fa
+# Fields: Query id, Subject id, % identity, alignment length, mismatches, gap openings, q. start, q. end, s. start, s. end, e-value, bit score
+null+3	Test1	100.00	11	0	0	1	11	9	41	5e-006	25.0
+# TBLASTN 2.2.16 [Mar-25-2007]
+# Query: null-1
+# Database: testDna_new2.fa
+# Fields: Query id, Subject id, % identity, alignment length, mismatches, gap openings, q. start, q. end, s. start, s. end, e-value, bit score
+null-1	Test1	90.91	11	0	1	1	10	41	9	3e-004	18.9
+# TBLASTN 2.2.16 [Mar-25-2007]
+# Query: null-2
+# Database: testDna_new2.fa
+# Fields: Query id, Subject id, % identity, alignment length, mismatches, gap openings, q. start, q. end, s. start, s. end, e-value, bit score
+null-2	Test1	100.00	11	0	0	1	11	40	8	6e-006	24.6
+# TBLASTN 2.2.16 [Mar-25-2007]
+# Query: null-3
+# Database: testDna_new2.fa
+# Fields: Query id, Subject id, % identity, alignment length, mismatches, gap openings, q. start, q. end, s. start, s. end, e-value, bit score
+null-3	Test1	100.00	10	0	0	1	10	39	10	8e-006	24.3

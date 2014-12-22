@@ -1,0 +1,35 @@
+aacctccacctcccaggttcaat_____tgattctccttg_cctcaccctc_tcgagtagctgggattaca
+                GTTCA  _____            _          _                   
+                   CAAT_____TGATTCTCTTGAcCCT       _TCGAGTAGCT        
+                 TTCAAT_____TGAT       G_CCTCACCCT _TGGCGAGGCT         
+                       _____            _          _        CTAGT      
+                       _____            _          _      AGCTG        
+                 TTCAAT_____TGAT      TG_CCTCACCCTC_TGGAGTAG           
+                       _____            _          _      AGTTG        
+                 TTCAAT_____TGAT      TG_CCTCACCCTC_CCTTGTAG           
+                       _____            _          _      AGCTG        
+                 TTCAAG_____CGAT      TG_CCTCACCCTC_TCGAGTAG           
+                 TTCAC _____            _          _                   
+                     AC_____TATCTCTACCTG_CCTCAC    _ CGAGTAGCTG        
+                 TTCAA _____            _          _                   
+                    AAT_____TGATTCTCC-TG_TCTCTT    _ CAAATACCT         
+                 TTGAA _____            _          _                   
+                    AA-_____TGAATGAACTTG_CCTCAC    _ CGAGTAGCT         
+                 GT-AT _____            _          _                   
+                    GAT_____TGATTCAGCGAG_AGGCCC    _ CGAGTAGCT         
+                 ACTAA _____            _          _                   
+                    AATagagcTGATT-TCCTTG_C      CTC_TCGAGT        
+                  TCAAT_____            _          _                   
+                      T_____TGATTCTC-TGG_GCTGGCCG  _   AGTAGCTGG       
+                  TCAAG_____            _          _                   
+                     AT_____TGATTCTCC-TG_CCCCCCC   _  GAGTAGCTG        
+                  TCAAT_____            _          _                   
+                     AT_____TGATTCTCCTTG_CCTCAG    _ CGAGTAGCTG        
+                   CAAT_____TGATTC      _CCTCACCCTC_   AGTTGCTCAA      
+                       _____            _          _           AAAAT   
+                       _____            _          _        GCTTC      
+                   CAAT_____TGATTC      _CCTCACCCTCaTCTCAGAGC         
+                      T_____TGAC        _          _                   
+                       _____ GAAGAT--TGA_CCTCACCCTC_T      GCTGGGAT    
+                       _____ GATTC      _          _                   
+                       _____     CTCCT-G_CCTCACCCTC_TCGA     TGGGATTAC 

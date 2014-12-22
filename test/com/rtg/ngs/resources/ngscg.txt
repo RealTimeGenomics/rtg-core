@@ -1,0 +1,3 @@
+0	67	genome	1	255	4=	=	9	8	AGGT	3456	AS:i:0	NM:i:0	XA:i:0	IH:i:1
+0	131	genome	9	255	4=	=	1	-8	TAGC	3456	AS:i:0	NM:i:0	XA:i:0	IH:i:1
+

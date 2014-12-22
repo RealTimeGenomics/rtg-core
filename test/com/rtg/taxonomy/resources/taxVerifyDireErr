@@ -1,0 +1,3 @@
+1 sequences in the taxonomy lookup file are not in the SDF
+1 sequences in the SDF are not in the taxonomy lookup file
+Error: 2 sequence names are not in both the SDF and the taxonomy lookup
