@@ -60,9 +60,6 @@ public class SvCliUtilsTest extends TestCase {
         , "-Z,", "--no-gzip", "do not gzip the output"
         , "-T,", "--threads=INT", "number of threads. Defaults to the number of available cores"
         );
-    TestUtils.containsAll(flags.getExtendedUsageString().replaceAll("\\s+", " ")
-        , "--Xhelp", "print help on extended command-line flag usage"
-        );
     final Flag regionFlag = flags.getFlag("region");
     assertNull(regionFlag.getChar());
   }

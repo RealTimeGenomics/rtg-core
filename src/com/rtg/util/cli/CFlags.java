@@ -1147,6 +1147,10 @@ public final class CFlags {
     final WrappingStringBuilder usage = new WrappingStringBuilder();
     usage.setWrapWidth(width);
     appendUsageHeader(usage);
+    usage.append(LS);
+    usage.setWrapIndent(6);
+    usage.wrapText("Note: Extended command line options are often experimental and untested. These options may come and go between releases. Use them with caution!");
+    usage.append(LS);
     appendLongFlagUsage(usage, true);
     return usage.toString();
   }

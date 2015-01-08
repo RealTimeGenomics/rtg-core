@@ -639,10 +639,12 @@ public class CFlagsTest extends TestCase {
     bos.reset();
     f.setFlags("--Xhelp");
     err.flush();
-    assertEquals("Usage:  [OPTION]..." + LS + LS + "Optional flags: " + LS
-        + "      --Xhelp     print help on extended command-line flag usage" + LS
-        + "      --Xoptional Test of --X options" + LS
-        + LS + "", bos.toString());
+    TestUtils.containsAll(bos.toString(),
+      "Usage:  [OPTION]...",
+      "Use them with caution",
+      "Optional flags: ",
+      "      --Xhelp     print help on extended command-line flag usage",
+      "      --Xoptional Test of --X options");
   }
 
   public void testUnregister() {
