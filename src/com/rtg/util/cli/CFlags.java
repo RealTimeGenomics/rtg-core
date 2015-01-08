@@ -77,16 +77,16 @@ public final class CFlags {
     int defaultWidth = 80;
 
     try { // Have a crack at working out a larger default value
-      final Process p = Runtime.getRuntime().exec("printenv TERMCAP");
+      final Process p = Runtime.getRuntime().exec("stty -f /dev/tty size");
       try {
         p.waitFor();
         final InputStream is = p.getInputStream();
         final byte[] b = new byte[is.available()];
         if (is.read(b) == b.length) {
           final String columnsEnv = new String(b).toUpperCase(Locale.getDefault());
-          final Matcher m = Pattern.compile(":CO#([0-9]+):").matcher(columnsEnv);
+          final Matcher m = Pattern.compile("([0-9]+) ([0-9]+)").matcher(columnsEnv);
           if (m.find()) {
-            defaultWidth = Integer.parseInt(m.group(1));
+            defaultWidth = Math.max(Integer.parseInt(m.group(2)), defaultWidth);
           }
         }
       } finally {
