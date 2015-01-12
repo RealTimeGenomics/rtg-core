@@ -231,8 +231,8 @@ public class EvidenceComplex extends Evidence {
   private void set(final int index, final double poss) {
     assert mArithmetic.isValidPoss(poss);
     mProb[index] = mArithmetic.poss2Prob(poss);
-    //    System.err.println(index + ":" + mArithmetic.poss2Prob(poss) + ":" + mArithmetic.poss2Prob(mHypotheses.prior(index)));
     final double hypPrior = mHypotheses.p(index);
+    //System.err.println(index + ":" + mArithmetic.poss2Prob(poss) + ":" + mArithmetic.poss2Prob(hypPrior));
     assert mArithmetic.isValidPoss(hypPrior);
     mPE = mArithmetic.add(mPE, mArithmetic.multiply(hypPrior, poss));
     assert mArithmetic.isValidPoss(mPE);

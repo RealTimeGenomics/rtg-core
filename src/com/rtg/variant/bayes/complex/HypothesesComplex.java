@@ -181,15 +181,18 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
   /**
    * This diagram shows the relationship of the different variables when doing the all-paths matching.
    * <img src="doc-files/makeInitialPriors.jpg" />
+   * @param description description for hypotheses
+   * @param haploid true for a haploid situation
    * @param cot region on reference being replaced by the hypotheses.
    * @param arithmetic implementation to use for arithmetic
+   * @param refHyp index of reference hypothesis
+   * @param genomePriors genome prior information
    * @return the prior possibilities for transitions between haploid hypotheses.
    */
   static double[] makePriorsAllPaths(DescriptionComplex description, boolean haploid, final ComplexTemplate cot, PossibilityArithmetic arithmetic, int refHyp, GenomePriorParams genomePriors) {
     // Compute likelihood of the alleles themselves arising
     final AllPaths sm = initScoreFastUnderflow(RealignParamsGenome.SINGLETON);
-    //new ScoreFastUnderflow(RealignParamsGenome.SINGLETON);
-    final int hypExtension = Math.max(5, description.maxLength() + 1);
+    final int hypExtension = Math.max(5, Math.max(description.maxLength() + 1, cot.getLength() + 1));
     final int start = cot.getStart() - hypExtension;
     final int end = cot.getStart() + hypExtension;
     final int e0Hx = cot.getEnd() - hypExtension;
@@ -245,11 +248,11 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
       altFreqInitial = altFreqInitial * PRIORS_ALT_BIAS;
 
       final double refFreq = 1.0 - altFreqInitial;
-      final double altFreq = altFreqInitial / (haploidPriors.length - 1); // Distribute evenly among all alt alleles
+      final double altFreq = haploidPriors.length == 1 ? 1.0 : altFreqInitial / (haploidPriors.length - 1); // Distribute evenly among all alt alleles
 
       final double[] haploidFrequencies = new double[description.size()];
       for (int i = 0; i < haploidFrequencies.length; i++) {
-        haploidFrequencies[i] = arithmetic.prob2Poss((i == refHyp) ? refFreq : altFreq);
+        haploidFrequencies[i] = arithmetic.prob2Poss(i == refHyp ? refFreq : altFreq);
       }
 
       final Code code =  new CodeDiploid(description.size());

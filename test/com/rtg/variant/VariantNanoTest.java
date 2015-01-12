@@ -1614,7 +1614,6 @@ public class VariantNanoTest extends TestCase {
 
   //test AVR and thresholding
   public void test69() throws Exception {
-
     try (TestDirectory test = new TestDirectory()) {
       final File avr = new File(test, "avr");
       FileHelper.resourceToFile("com/rtg/variant/avr/resources/default.avr", avr);
@@ -1638,6 +1637,16 @@ public class VariantNanoTest extends TestCase {
 
     final String sam = FileHelper.resourceToString("com/rtg/variant/resources/n-mappings.sam");
     check(tmpl, sam, 70, "", "", 0, 2, null, true, -1L);
+  }
+
+  // Test situation where N's on ref and evicence is shorter sequence of AAAAA.  See Bug#1591
+  public void testIndelWithUnknownRef() throws Exception {
+    final String tmpl = ">ref\n"
+    + "AGTTAAAGAGTGAAACCCTGATAGTCTTACCCCAAGGCCAAAGTCCTATTTTATTATTTTTATATTCTTACTATATATTATACAAATCTTCATTGCAA"
+    + "GTTTNNNNNNNNNNNNNNNNNNNNAAGTAAAAACATAAGAAATCTAATTTTTGTATATAAAAGCTGTAAACTAAATTATATATATACACATACATACA"
+    + "TACGTGTGTGTGTGTATATATATATACATATATAACCTATGGATTAGGAAAATTTATTGCTTCAACAAACTAAGGGGATTACTTCCCATAAAATTAGT\n";
+    final String sam = FileHelper.resourceToString("com/rtg/variant/resources/n2-mappings.sam");
+    check(tmpl, sam, 71, "", "", 0, 2, null, true, -1L);
   }
 
   //See bugzilla #1524, this test replicates the problem that shows up in 2.7 but has been fixed at some point and so now works

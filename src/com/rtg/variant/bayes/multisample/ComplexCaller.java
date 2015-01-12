@@ -107,6 +107,7 @@ final class ComplexCaller {
           }
         }
 
+
         // Make the calls
         final MultisampleJointCaller complexJointCaller = mConfig.getComplexJointCaller(sspHyp.get(models.get(0)), mParams, cot); /// The first argument is only needed by the cancer caller -- seems bogus.
         final Variant variant;
@@ -177,7 +178,7 @@ final class ComplexCaller {
       return null;
     }
     final HypothesesComplex hypHap = HypothesesComplex.makeComplexHypotheses(cot, matches, LogApproximatePossibility.SINGLETON, true, mParams, mConfig.getSiteSpecificPriors());
-    if (hypHap.size() <= 1) {
+    if (hypHap.size() == 0 || (hypHap.size() == 1 && hypHap.reference() == 0)) {
       Diagnostic.userLog("Can not create hypothesis to cover region " + cot.toString());
       if (mParams.callLevel() == VariantOutputLevel.ALL) {
         calls.add(makeDummyCall(cot, 0, matches.size()));

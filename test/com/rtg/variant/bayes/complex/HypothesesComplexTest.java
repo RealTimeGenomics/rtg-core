@@ -15,6 +15,7 @@ package com.rtg.variant.bayes.complex;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.TreeSet;
 
 import com.rtg.mode.DNA;
@@ -35,6 +36,7 @@ import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.bayes.multisample.population.SiteSpecificPriors;
 import com.rtg.variant.match.AlignmentMatch;
+import com.rtg.variant.match.Match;
 import com.rtg.variant.util.VariantUtils;
 import com.rtg.variant.util.arithmetic.LogPossibility;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
@@ -545,6 +547,13 @@ public class HypothesesComplexTest extends TestCase {
     for (int i = 0; i <= 2; i++) {
       ml.add(match("CAAAATCCCAAG", 40));
     }
+  }
+
+  public void testIndelAndUnknownRefBug1591() {
+    final ComplexTemplate cot = new ComplexTemplate(new byte[1000], "ref", 468, 510);
+    final Match m = new AlignmentMatch(null, "AAAAA", null, 20, 0, 5, 0);
+    final DescriptionComplex desc = new DescriptionComplex(Collections.singletonList(m));
+    assertNotNull(HypothesesComplex.makePriorsAllPaths(desc, true, cot, SimplePossibility.SINGLETON, -1, new GenomePriorParamsBuilder().create()));
   }
 
   // TODO Following test should be enabled after fixing TODO in HypothesesComplex.createDescription method

@@ -148,7 +148,7 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
     mMatch = new double[mMaxLength + 1][mMaxWidth];
     mInsert = new double[mMaxLength + 1][mMaxWidth];
     mDelete = new double[mMaxLength + 1][mMaxWidth];
-    mEndScores = new double[width];
+    mEndScores = new double[mMaxWidth];
   }
 
   /**
