@@ -608,7 +608,7 @@ public final class SamValidator {
       } else {
         assert n > 0;
         for (int j = 0; j < n; j++) {
-          if (tPos > template.length && c != SamUtils.CIGAR_SOFT_CLIP) {
+          if (tPos >= template.length && c != SamUtils.CIGAR_SOFT_CLIP) {
             mErr.println("Template length exceeded but read does not indicate soft clipping, " + samRecord.toString());
             return -1;
           }
