@@ -12,7 +12,7 @@
 
 package com.rtg.assembler.graph.implementation;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.rtg.assembler.graph.Contig;
@@ -92,11 +92,11 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
 
   private final Map<String, String> mContigAttributes;
 
-  private final Map<Pair<String, Long>, String> mContigAttributeMap = new HashMap<>();
+  private final Map<Pair<String, Long>, String> mContigAttributeMap = new LinkedHashMap<>();
 
   private final Map<String, String> mPathAttributes;
 
-  private final Map<Pair<String, Long>, String> mPathAttributeMap = new HashMap<>();
+  private final Map<Pair<String, Long>, String> mPathAttributeMap = new LinkedHashMap<>();
 
   /**
    * @param contigOverlap the number of bases adjacent contigs overlap
@@ -105,9 +105,9 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
    */
   public GraphImplementation(int contigOverlap, final Map<String, String> contigAttributes, final Map<String, String> pathAttributes) {
     mContigOverlap = contigOverlap;
-    mContigAttributes = new HashMap<>();
+    mContigAttributes = new LinkedHashMap<>();
     mContigAttributes.putAll(contigAttributes);
-    mPathAttributes = new HashMap<>();
+    mPathAttributes = new LinkedHashMap<>();
     mPathAttributes.putAll(pathAttributes);
     mPathAttributes.put("deleted", "true if this path has been deleted");
     mContigAttributes.put("deleted", "true if this contig has been deleted");

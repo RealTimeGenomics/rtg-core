@@ -100,7 +100,7 @@ public class GraphToPlotTest extends AbstractCliTest {
       + "{simpleCount: 0, overlapCount: 0, contigs: [4, 3, 6]}" + LS
       + "";
 
-  public void testDotFile() {
+  public void testDotFile() throws IOException {
     MemoryPrintStream graphOut = new MemoryPrintStream();
     MemoryPrintStream linksOut = new MemoryPrintStream();
     Map<String, String> contigAttr = new HashMap<>();
@@ -124,7 +124,8 @@ public class GraphToPlotTest extends AbstractCliTest {
     graph.setPathAttribute(1, GraphKmerAttribute.READ_COUNT, "2");
     graph.setContigAttribute(1, GraphKmerAttribute.READ_COUNT, "3");
     GraphToPlot.writeDotFile(graph, graphOut.printStream(), linksOut.printStream(), 2, 3L);
-    assertEquals(EXPECTED_DOTFILE, graphOut.toString());
+    mNano.check("graph-to-plot-dot.txt", graphOut.toString());
+    //assertEquals(EXPECTED_DOTFILE, graphOut.toString());
     assertEquals(EXPECTED_LONG_PATHS, linksOut.toString());
 
   }
@@ -192,7 +193,7 @@ public class GraphToPlotTest extends AbstractCliTest {
       + "node1 -> node0[];" + LS
       + "}" + LS;
 
-  public void testPalindrome() {
+  public void testPalindrome() throws IOException {
     MemoryPrintStream graphOut = new MemoryPrintStream();
     MemoryPrintStream linksOut = new MemoryPrintStream();
     Map<String, String> contigAttr = new HashMap<>();
@@ -211,7 +212,8 @@ public class GraphToPlotTest extends AbstractCliTest {
     graph.setPathAttribute(1, GraphKmerAttribute.READ_COUNT, "2");
     graph.setContigAttribute(1, GraphKmerAttribute.READ_COUNT, "3");
     GraphToPlot.writeDotFile(graph, graphOut.printStream(), linksOut.printStream(), 2, 1L);
-    assertEquals(EXPECTED_PALINDROME, graphOut.toString());
+    mNano.check("graph-to-plot-palindrome.txt", graphOut.toString());
+    //assertEquals(EXPECTED_PALINDROME, graphOut.toString());
   }
   static final String EXPECTED_CROSS = ""
       + "digraph contigGraph {" + LS
@@ -227,7 +229,7 @@ public class GraphToPlotTest extends AbstractCliTest {
       + "node1 -> node3[label=\"2\"];" + LS
       + "}" + LS;
 
-  public void testCross() {
+  public void testCross() throws IOException {
     MemoryPrintStream graphOut = new MemoryPrintStream();
     MemoryPrintStream linksOut = new MemoryPrintStream();
     Map<String, String> contigAttr = new HashMap<>();
@@ -238,7 +240,8 @@ public class GraphToPlotTest extends AbstractCliTest {
     graph.setPathAttribute(1, GraphKmerAttribute.READ_COUNT, "2");
     graph.setContigAttribute(1, GraphKmerAttribute.READ_COUNT, "3");
     GraphToPlot.writeDotFile(graph, graphOut.printStream(), linksOut.printStream(), 2, 1L);
-    assertEquals(EXPECTED_CROSS, graphOut.toString());
+    mNano.check("graph-to-plot-cross.txt", graphOut.toString());
+    //assertEquals(EXPECTED_CROSS, graphOut.toString());
   }
 
   public static MutableGraph makeGraph(String[] contigs, long[][] paths) {

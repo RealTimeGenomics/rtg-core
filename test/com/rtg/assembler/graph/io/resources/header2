@@ -5,9 +5,9 @@ guid	00000000-0000-002a-0000-000000000065
 contigOverlap	0
 inputguid	00000000-0000-0015-0000-000000000067
 inputguid	00000000-0000-0001-0000-000000000001
+contig	con1	comment1
 contig	con2	comment2
 contig	deleted	true if this contig has been deleted
-contig	con1	comment1
-path	path2	pcomment2
 path	path1	pcomment1
+path	path2	pcomment2
 path	deleted	true if this path has been deleted

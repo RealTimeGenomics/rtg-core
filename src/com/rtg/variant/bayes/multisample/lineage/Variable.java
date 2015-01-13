@@ -16,7 +16,7 @@ import com.rtg.util.Utils;
 /**
  * Name of a discrete random variable.
  */
-public class Variable {
+public class Variable implements Comparable<Variable> {
 
   private final int mSize;
   private final String mName;
@@ -56,5 +56,10 @@ public class Variable {
   @Override
   public String toString() {
     return mName;
+  }
+
+  @Override
+  public int compareTo(Variable o) {
+    return mName.compareTo(o.mName);
   }
 }

@@ -31,7 +31,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.mode.DnaUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.BadSuperCigarException;
@@ -40,11 +39,12 @@ import com.rtg.sam.SamBamConstants;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.Environment;
 import com.rtg.util.Histogram;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.ReferenceRegions;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.AsynchInputStream;
 
 import net.sf.samtools.SAMRecord;
@@ -556,8 +556,8 @@ public class Calibrator {
     for (final String label : histogramLabels) {
       writeHistogram(label, getHistogram(label), out);
     }
-    for (final Map.Entry<String, Integer> entry : mSequenceLengths.entrySet()) {
-      out.write(REFERENCE_SIZE + "\t" + entry.getValue() + "\t" + entry.getKey() + StringUtils.LS);
+    for (final String sequence : new TreeSet<>(mSequenceLengths.keySet())) {
+      out.write(REFERENCE_SIZE + "\t" + mSequenceLengths.get(sequence) + "\t" + sequence + StringUtils.LS);
     }
 
     out.write(COVAR + "\t" + toString() + STATS_COLUMNS + StringUtils.LS);  // tab separated

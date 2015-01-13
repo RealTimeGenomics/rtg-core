@@ -336,7 +336,7 @@ public class GenomeRelationships {
     sb.append("digraph Ped {\n" + "  ratio =\"auto\";\n" + "  mincross = 2.0;\n" + "  labelloc = \"t\";\n" + "  label=\"").append(title).append("\";\n").append("\n");
 
     final HashSet<Relationship> seen = new HashSet<>();
-    final HashSet<String> seenGenomes = new HashSet<>();
+    final HashSet<String> seenGenomes = new LinkedHashSet<>();
     final Map<String, String> nodeIds = new HashMap<>();
 
     // Output family specific stuff (i.e. node representing a marriage, with children coming off that)

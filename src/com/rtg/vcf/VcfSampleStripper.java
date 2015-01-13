@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.vcf.header.VcfHeader;
@@ -26,7 +27,7 @@ public class VcfSampleStripper implements VcfAnnotator {
 
   private final boolean mRemoveAll;
   private final boolean mKeepMode;
-  private final HashSet<String> mSamples;
+  private final Set<String> mSamples;
   private int[] mSampleIdsToRemove = null;
 
   /**
@@ -44,7 +45,7 @@ public class VcfSampleStripper implements VcfAnnotator {
    * @param sampleList the list of sample names
    * @param keep true to keep values in the list, false to remove them
    */
-  VcfSampleStripper(HashSet<String> sampleList, boolean keep) {
+  VcfSampleStripper(Set<String> sampleList, boolean keep) {
     mRemoveAll = false;
     mKeepMode = keep;
     mSamples = sampleList;

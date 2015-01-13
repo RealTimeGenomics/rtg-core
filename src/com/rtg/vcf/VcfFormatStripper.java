@@ -12,9 +12,9 @@
 package com.rtg.vcf;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import com.rtg.vcf.header.FormatField;
 import com.rtg.vcf.header.VcfHeader;
@@ -25,7 +25,7 @@ import com.rtg.vcf.header.VcfHeader;
 public class VcfFormatStripper implements VcfAnnotator {
 
   private final boolean mKeepMode;
-  private final HashSet<String> mFormats;
+  private final Set<String> mFormats;
 
   private boolean mKeepRecord = true;
 
@@ -34,7 +34,7 @@ public class VcfFormatStripper implements VcfAnnotator {
    * @param formatList the list of format field ids
    * @param keep true to keep values in the list, false to remove them
    */
-  VcfFormatStripper(HashSet<String> formatList, boolean keep) {
+  VcfFormatStripper(Set<String> formatList, boolean keep) {
     mKeepMode = keep;
     mFormats = formatList;
   }

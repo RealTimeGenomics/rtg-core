@@ -11,8 +11,8 @@
  */
 package com.rtg.vcf;
 
-import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import com.rtg.vcf.header.FilterField;
 import com.rtg.vcf.header.VcfHeader;
@@ -24,7 +24,7 @@ public class VcfFilterStripper implements VcfAnnotator {
 
   private final boolean mRemoveAll;
   private final boolean mKeepMode;
-  private final HashSet<String> mFilters;
+  private final Set<String> mFilters;
 
   /**
    * Remove all filters from header and records
@@ -41,7 +41,7 @@ public class VcfFilterStripper implements VcfAnnotator {
    * @param filterList the list of filter ids
    * @param keep true to keep values in the list, false to remove them
    */
-  VcfFilterStripper(HashSet<String> filterList, boolean keep) {
+  VcfFilterStripper(Set<String> filterList, boolean keep) {
     mRemoveAll = false;
     mKeepMode = keep;
     mFilters = filterList;

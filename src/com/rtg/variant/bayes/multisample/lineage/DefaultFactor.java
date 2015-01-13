@@ -13,11 +13,13 @@ package com.rtg.variant.bayes.multisample.lineage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.rtg.util.Pair;
 import com.rtg.util.StringUtils;
@@ -308,7 +310,7 @@ public class DefaultFactor extends AbstractFactor implements ToDefaultFactor {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-    final List<Variable> scope = new ArrayList<>(scope());
+    final Collection<Variable> scope = new TreeSet<>(scope());
     sb.append(StringUtils.join("\t", scope)).append("\t").append("Value").append(StringUtils.LS);
     final Map<Variable, Integer> map = new HashMap<>(scope.size());
     for (int i = 0; i < mPoss.length; i++) {

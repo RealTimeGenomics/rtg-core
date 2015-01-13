@@ -17,11 +17,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.rtg.assembler.graph.Graph;
 import com.rtg.assembler.graph.GraphFactory;
@@ -39,10 +40,10 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
 import com.rtg.util.store.StoreDirProxy;
 /**
- * Read in a graph from our file format and spit out a file compatible with Lei Chen's visualisation
+ * Read in a graph from our file format and spit out in an alternative visualisation format
  */
 public final class GraphToPlot extends LoggedCli {
-  static class Node {
+  static class Node implements Comparable<Node> {
     String mShape;
     final long mContigId;
     String mColor;
@@ -97,9 +98,14 @@ public final class GraphToPlot extends LoggedCli {
       sb.append("];");
       return sb.toString();
     }
+
+    @Override
+    public int compareTo(Node o) {
+      return Long.compare(mContigId, o.mContigId);
+    }
   }
 
-  static class Link {
+  static class Link implements Comparable<Link> {
     long mFrom;
     long mTo;
     boolean mReverse;
@@ -148,6 +154,11 @@ public final class GraphToPlot extends LoggedCli {
     @Override
     public int hashCode() {
       return Utils.pairHashContinuous(LongUtils.hashCode(mFrom), LongUtils.hashCode(mTo), Boolean.valueOf(mReverse).hashCode());
+    }
+
+    @Override
+    public int compareTo(Link o) {
+      return Long.compare(mFrom, o.mFrom) != 0 ? Long.compare(mFrom, o.mFrom) : Long.compare(mTo, o.mTo);
     }
   }
 
@@ -253,7 +264,7 @@ public final class GraphToPlot extends LoggedCli {
   private static void writeGraph(Graph graph, Set<Node> nodes, Set<Long> paths, PrintStream out) {
     out.println("digraph contigGraph {");
     out.println("graph [rankdir=LR, ratio=fill]");
-    final Map<Long, Long> translated = new HashMap<>();
+    final Map<Long, Long> translated = new LinkedHashMap<>();
     long i = 0;
     for (Node node : nodes) {
       translated.put(node.mContigId, i);
@@ -261,7 +272,7 @@ public final class GraphToPlot extends LoggedCli {
       i++;
     }
 
-    final Set<Link> links = new HashSet<>();
+    final Set<Link> links = new TreeSet<>();
     for (long pathId : paths) {
       for (int j = 1; j < graph.pathLength(pathId); j++)  {
         final long first = graph.pathContig(pathId, j - 1);
@@ -344,7 +355,7 @@ public final class GraphToPlot extends LoggedCli {
     return next;
   }
   private static Set<Node> collectNodes(Graph graph, int depth, long start) {
-    final Set<Node> nodes = new HashSet<>();
+    final Set<Node> nodes = new TreeSet<>();
     Set<Node> current = new HashSet<>();
     Set<Node> next = new HashSet<>();
     final Node startNode = new Node(start, graph);

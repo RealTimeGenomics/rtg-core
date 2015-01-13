@@ -12,9 +12,9 @@
 package com.rtg.vcf;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import com.rtg.vcf.header.InfoField;
 import com.rtg.vcf.header.VcfHeader;
@@ -26,7 +26,7 @@ public class VcfInfoStripper implements VcfAnnotator {
 
   private final boolean mRemoveAll;
   private final boolean mKeepMode;
-  private final HashSet<String> mInfos;
+  private final Set<String> mInfos;
 
   /**
    * Remove all info fields from header and records
@@ -43,7 +43,7 @@ public class VcfInfoStripper implements VcfAnnotator {
    * @param infoList the list of info field ids
    * @param keep true to keep values in the list, false to remove them
    */
-  VcfInfoStripper(HashSet<String> infoList, boolean keep) {
+  VcfInfoStripper(Set<String> infoList, boolean keep) {
     mRemoveAll = false;
     mKeepMode = keep;
     mInfos = infoList;

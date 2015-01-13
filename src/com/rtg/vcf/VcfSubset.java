@@ -20,8 +20,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
@@ -147,9 +148,9 @@ public class VcfSubset extends AbstractCli {
 
     abstract List<? extends IdField<?>> getHeaderFields(VcfHeader header);
 
-    void additionalChecks(HashSet<String> flagValues, VcfHeader header) { }
+    void additionalChecks(Set<String> flagValues, VcfHeader header) { }
     abstract VcfAnnotator makeAnnotator(boolean removeAll);
-    abstract VcfAnnotator makeAnnotator(HashSet<String> fieldIdsSet, boolean keep);
+    abstract VcfAnnotator makeAnnotator(Set<String> fieldIdsSet, boolean keep);
 
     private VcfAnnotator processFlags(List<VcfAnnotator> annotators, VcfHeader header, String removeFlag, String keepFlag, String fieldname) {
       return processFlags(annotators, header, removeFlag, keepFlag, null, fieldname, true);
@@ -171,18 +172,18 @@ public class VcfSubset extends AbstractCli {
             keep = true;
           }
 
-          final HashSet<String> infosset = new HashSet<>();
+          final Set<String> infosset = new LinkedHashSet<>();
           for (Object anInfoslist : infoslist) {
             infosset.add((String) anInfoslist);
           }
 
           if (checkHeader) {
-            final HashSet<String> infoHeaderStrings = new HashSet<>();
+            final Set<String> infoHeaderStrings = new LinkedHashSet<>();
             for (IdField<?> infoField : getHeaderFields(header)) {
               infoHeaderStrings.add(infoField.getId());
             }
 
-            final HashSet<String> infossetdup = new HashSet<>(infosset);
+            final Set<String> infossetdup = new LinkedHashSet<>(infosset);
             infossetdup.removeAll(infoHeaderStrings);
 
             if (infossetdup.size() > 0) {
@@ -229,11 +230,11 @@ public class VcfSubset extends AbstractCli {
           return new VcfSampleStripper(removeAll);
         }
         @Override
-        VcfAnnotator makeAnnotator(HashSet<String> fieldIdsSet, boolean keep) {
+        VcfAnnotator makeAnnotator(Set<String> fieldIdsSet, boolean keep) {
           return new VcfSampleStripper(fieldIdsSet, keep);
         }
         @Override
-        void additionalChecks(HashSet<String> flagValues, VcfHeader header) {
+        void additionalChecks(Set<String> flagValues, VcfHeader header) {
           boolean fail = false;
           final StringBuilder sb = new StringBuilder();
           for (String value : flagValues) {
@@ -259,7 +260,7 @@ public class VcfSubset extends AbstractCli {
           return new VcfInfoStripper(removeAll);
         }
         @Override
-        VcfAnnotator makeAnnotator(HashSet<String> fieldIdsSet, boolean keep) {
+        VcfAnnotator makeAnnotator(Set<String> fieldIdsSet, boolean keep) {
           return new VcfInfoStripper(fieldIdsSet, keep);
         }
       };
@@ -275,7 +276,7 @@ public class VcfSubset extends AbstractCli {
           return new VcfFilterStripper(removeAll);
         }
         @Override
-        VcfAnnotator makeAnnotator(HashSet<String> fieldIdsSet, boolean keep) {
+        VcfAnnotator makeAnnotator(Set<String> fieldIdsSet, boolean keep) {
           return new VcfFilterStripper(fieldIdsSet, keep);
         }
       };
@@ -291,7 +292,7 @@ public class VcfSubset extends AbstractCli {
           throw new UnsupportedOperationException("Cannot remove all formats.");
         }
         @Override
-        VcfAnnotator makeAnnotator(HashSet<String> fieldIdsSet, boolean keep) {
+        VcfAnnotator makeAnnotator(Set<String> fieldIdsSet, boolean keep) {
           return new VcfFormatStripper(fieldIdsSet, keep);
         }
       };

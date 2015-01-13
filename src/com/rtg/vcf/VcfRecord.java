@@ -17,8 +17,8 @@ import static com.rtg.util.StringUtils.TAB;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -87,7 +87,7 @@ public class VcfRecord implements SequenceNameLocus {
     merged.mSequence = records[0].mSequence;
     merged.mStart = records[0].mStart;
 
-    final HashSet<String> uniqueIds = new HashSet<>();
+    final Set<String> uniqueIds = new LinkedHashSet<>();
     for (final VcfRecord vcf : records) {
       if (merged.mRefCall == null || merged.mRefCall.length() < vcf.mRefCall.length()) {
         merged.mRefCall = vcf.mRefCall;
