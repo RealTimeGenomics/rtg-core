@@ -124,40 +124,38 @@
   <target name="compile" depends="compile-test" description="Compile all Java source code."/>
 
   <!--
-       This target puts a property value into a file, but only if it
+       This definition puts a property value into a file, but only if it
        is different to the value that is already there, in order to
        prevent the triggering of expensive targets multiple times.
   -->
-  <target name="set-version-file">
-    <loadfile property="old-version.value" srcFile="${version.file}" failonerror="false"/>
-    <if>
-      <not>
-        <equals arg1="${old-version.value}" arg2="${version.value}"/>
-      </not>
-      <then>
-        <echo message="Setting ${version.file} to ${version.value}"/>
-        <echo file="${version.file}" message="${version.value}"/>
-      </then>
-    </if>
-  </target>
+  <macrodef name="set-version-file">
+    <attribute name="version.file"/>
+    <attribute name="version.value"/>
+    <sequential>
+      <loadfile property="old-version.value" srcFile="@{version.file}" failonerror="false" quiet="true"/>
+      <if>
+        <not>
+          <equals arg1="${old-version.value}" arg2="@{version.value}"/>
+        </not>
+        <then>
+          <echo message="Setting @{version.file} to @{version.value}"/>
+          <echo file="@{version.file}" message="@{version.value}"/>
+        </then>
+      </if>
+    </sequential>
+  </macrodef>
 
   <target name="set-rtg-build-version" depends="init,rtg-vcs-info">
-    <antcall target="set-version-file">
-      <param name="version.file" value="${build.src}/com/rtg/slim.version"/>
-      <param name="version.value" value="${rtg.vcs.commit.revision}"/>
-    </antcall>
+    <set-version-file version.file="${build.src}/com/rtg/slim.version"
+                      version.value="${rtg.vcs.commit.revision}"/>
     <tstamp> <format property="build.time" pattern="yyyy-MM-dd" /></tstamp>
-    <antcall target="set-version-file">
-      <param name="version.file" value="${build.src}/com/rtg/build.time"/>
-      <param name="version.value" value="${build.time}"/>
-    </antcall>
+    <set-version-file version.file="${build.src}/com/rtg/build.time"
+                      version.value="${build.time}"/>
   </target>
 
   <target name="set-rtg-build-product">
-    <antcall target="set-version-file">
-      <param name="version.file" value="${build.misc}/com/rtg/product.name"/>
-      <param name="version.value" value="${product}"/>
-    </antcall>
+    <set-version-file version.file="${build.misc}/com/rtg/product.name"
+                      version.value="${product}"/>
   </target>
 
   <union id="jar-src">
