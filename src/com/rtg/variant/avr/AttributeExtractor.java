@@ -52,7 +52,7 @@ import com.rtg.vcf.header.VcfHeader;
 public class AttributeExtractor {
 
   /**
-     */
+   */
   public static final class IncompatibleHeaderException extends Exception {
     /**
      * Construct an exception with given message.
@@ -177,7 +177,11 @@ public class AttributeExtractor {
   public double[] getInstance(VcfRecord record, int sampleNumber) {
     final double[] res = new double[mAnnotations.length];
     for (int i = 0; i < res.length; i++) {
-      res[i] = mAttributes[i].encodeValue(mAnnotations[i].getValue(record, sampleNumber));
+      try {
+        res[i] = mAttributes[i].encodeValue(mAnnotations[i].getValue(record, sampleNumber));
+      } catch (final NumberFormatException e) {
+        throw new NoTalkbackSlimException("Problem parsing a number in a VCF record:\n" + record.toString() + "\n" + e.getMessage());
+      }
       if (Double.isNaN(res[i])) {
         mMissingValueCounts[i]++;
       }
