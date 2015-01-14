@@ -44,14 +44,16 @@ public class BufferedOutputStreamFixTest extends TestCase {
   }
 
   public void test() {
-    //first test if the bug still exists in java
-    try {
-      try (final BufferedOutputStream bos = new BufferedOutputStream(new BadOutputStream())) {
-        bos.write("token".getBytes());
-      }
-    } catch (IOException e) {
-      fail("Seems java has fixed their bug");
-    }
+    //Java7 contains this bug, and it appears to have been fixed in Java8.
+    //first test if the bug still exists in the java being run
+//    try {
+//      try (final BufferedOutputStream bos = new BufferedOutputStream(new BadOutputStream())) {
+//        bos.write("token".getBytes());
+//      }
+//    } catch (IOException e) {
+//      System.err.println("Seems java has now fixed their bug in FilterOutputStream");
+//    }
+
     //then check we fixed it
     try {
       try (final BufferedOutputStream bos = new BufferedOutputStreamFix(new BadOutputStream())) {

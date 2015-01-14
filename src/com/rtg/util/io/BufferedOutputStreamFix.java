@@ -16,8 +16,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 /**
- * {@link BufferedOutputStream} extends {@link java.io.FilterOutputStream} which has a serious bug in it's close
- * method (silently ignores IOException). This class provides a working version.
+ * {@link BufferedOutputStream} extends {@link java.io.FilterOutputStream} which (in Java 7) has a serious bug in it's close
+ * method (silently ignores IOException). This class provides a working version. The bug has been fixed in Java 8.
  */
 public class BufferedOutputStreamFix extends BufferedOutputStream {
 
