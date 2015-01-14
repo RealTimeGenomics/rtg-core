@@ -290,7 +290,7 @@ public class RamMapFunctionalTest extends TestCase {
         assertFalse(mated.contains("\n2"));
         assertTrue(mated.contains("\n1"));
         TestUtils.containsAll(mated, "@HD\tVN:1.4\tSO:coordinate",
-                                     "@RG\tID:L23\tPL:IONTORRENT\tSM:NA123",
+                                     "@RG\tID:L23\tSM:NA123\tPL:IONTORRENT",
                                      "@PG\tID:rtg",
                                      "@CO\tTEMPLATE-SDF-ID:",
                                      "@CO\tREAD-SDF-ID:",

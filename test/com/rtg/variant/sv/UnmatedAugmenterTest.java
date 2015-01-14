@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.InputStream;
 
 import com.rtg.util.Resources;
+import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
@@ -49,24 +50,18 @@ public class UnmatedAugmenterTest extends TestCase {
   public void testMain() throws Exception {
     final File in = new File(mFile, "in.sam");
     final File out = new File(mFile, "out.sam");
-    InputStream stream = Resources.getResourceAsStream("com/rtg/sam/resources/unmated.sam");
-    try {
+    try (final InputStream stream = Resources.getResourceAsStream("com/rtg/sam/resources/unmated.sam")) {
       FileHelper.streamToFile(stream, in);
-    } finally {
-      stream.close();
     }
     final String exp;
-    stream = Resources.getResourceAsStream("com/rtg/sam/resources/augmented.sam");
-    try {
+    try (final InputStream stream = Resources.getResourceAsStream("com/rtg/sam/resources/augmented.sam")) {
       exp = FileUtils.streamToString(stream);
-    } finally {
-      stream.close();
     }
     final UnmatedAugmenter un = new UnmatedAugmenter();
     un.augmentUnmated(in, out, false, null);
     final String outStr = FileUtils.fileToString(out);
-    final String expNoPg = exp.replaceAll("@PG.*\n", "");
-    final String outStrNoPg = outStr.replaceAll("@PG.*\n", "");
+    final String expNoPg = StringUtils.grepMinusV(StringUtils.grepMinusV(exp, "^@PG"), "^@RG");
+    final String outStrNoPg = StringUtils.grepMinusV(StringUtils.grepMinusV(outStr, "^@PG"), "^@RG");
     assertEquals(expNoPg, outStrNoPg);
     assertTrue(outStr, outStr.contains("@PG\tID:rtg"));
   }
@@ -78,31 +73,18 @@ public class UnmatedAugmenterTest extends TestCase {
     final File outunmated = new File(mFile, "outunmated.sam");
     final File outunmapped = new File(mFile, "outunmapped.sam");
 
-
-    InputStream stream = Resources.getResourceAsStream("com/rtg/sam/resources/mergemated.sam");
-    try {
+    try (final InputStream stream = Resources.getResourceAsStream("com/rtg/sam/resources/mergemated.sam")) {
       FileHelper.streamToFile(stream, mated);
-    } finally {
-      stream.close();
     }
-    stream = Resources.getResourceAsStream("com/rtg/sam/resources/mergeunmated.sam");
-    try {
+    try (final InputStream stream = Resources.getResourceAsStream("com/rtg/sam/resources/mergeunmated.sam")) {
       FileHelper.streamToFile(stream, unmated);
-    } finally {
-      stream.close();
     }
-    stream = Resources.getResourceAsStream("com/rtg/sam/resources/mergeunmapped.sam.gz");
-    try {
+    try (final InputStream stream = Resources.getResourceAsStream("com/rtg/sam/resources/mergeunmapped.sam.gz")) {
       FileHelper.streamToFile(stream, unmapped);
-    } finally {
-      stream.close();
     }
     final String exp;
-    stream = Resources.getResourceAsStream("com/rtg/sam/resources/mergeunmapped-aug.sam");
-    try {
+    try (final InputStream stream = Resources.getResourceAsStream("com/rtg/sam/resources/mergeunmapped-aug.sam")) {
       exp = FileUtils.streamToString(stream);
-    } finally {
-      stream.close();
     }
     final UnmatedAugmenter un = new UnmatedAugmenter();
     final ReadGroupStatsCalculator calc = new ReadGroupStatsCalculator();
@@ -110,8 +92,8 @@ public class UnmatedAugmenterTest extends TestCase {
     un.augmentUnmated(unmated, outunmated, false, calc);
     un.augmentUnmapped(unmapped, outunmapped, false, calc);
     final String outUnmappedStr = FileUtils.fileToString(outunmapped);
-    final String expNoPg = exp.replaceAll("@PG.*\n", "");
-    final String outStrNoPg = outUnmappedStr.replaceAll("@PG.*\n", "");
+    final String expNoPg = StringUtils.grepMinusV(StringUtils.grepMinusV(exp, "^@PG"), "^@RG");
+    final String outStrNoPg = StringUtils.grepMinusV(StringUtils.grepMinusV(outUnmappedStr, "^@PG"), "^@RG");
     assertEquals(expNoPg, outStrNoPg);
     assertTrue(outUnmappedStr, outUnmappedStr.contains("@PG\tID:slim"));
   }

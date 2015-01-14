@@ -368,7 +368,7 @@ public class FormatCliTest extends AbstractCliTest {
       final MemoryPrintStream mpsout = new MemoryPrintStream();
 
           final File outputDir = new File(tempDir, JUNITOUT);
-          runFormat(outputDir, new String[] {"-o",  outputDir.getPath(), "-f", "fasta", "-l" , raw1.getPath(), "-r", raw2.getPath(), "--duster", "--exclude", "y", "--sam-rg", "@RG\\tID:id\\tSM:sm\\tPL:ILLUMINA"}, "@RG\tID:id\tPL:ILLUMINA\tSM:sm", mpsout, mps);
+          runFormat(outputDir, new String[] {"-o",  outputDir.getPath(), "-f", "fasta", "-l" , raw1.getPath(), "-r", raw2.getPath(), "--duster", "--exclude", "y", "--sam-rg", "@RG\\tID:id\\tSM:sm\\tPL:ILLUMINA"}, "@RG\tID:id\tSM:sm\tPL:ILLUMINA", mpsout, mps);
           TestUtils.containsAll(mpsout.toString()
               , "Formatting paired-end FASTA data"
               , "Input Data" + StringUtils.LS
@@ -761,7 +761,7 @@ public class FormatCliTest extends AbstractCliTest {
       final File input = new File(dir, "input.sam");
       final File output = new File(dir, "output");
       final String[] args = {input.getPath(), "-o", output.getPath(), "-f", "sam-pe"};
-      final String expected = "@RG\tID:rg1\tPL:ILLUMINA\tSM:sm1";
+      final String expected = "@RG\tID:rg1\tSM:sm1\tPL:ILLUMINA";
       FileHelper.resourceToFile("com/rtg/sam/resources/mated.sam", input);
       final MemoryPrintStream out = new MemoryPrintStream();
       final MemoryPrintStream err = new MemoryPrintStream();
@@ -796,7 +796,7 @@ public class FormatCliTest extends AbstractCliTest {
     try (TestDirectory dir = new TestDirectory()) {
       final File input = new File(dir, "input.sam");
       final File output = new File(dir, "output");
-      final String expected = "@RG\tID:rg2\tPL:Sturdy\tSM:doggy";
+      final String expected = "@RG\tID:rg2\tSM:doggy\tPL:Sturdy";
       final String[] args = {input.getPath(), "-o", output.getPath(), "-f", "sam-pe", "--select-read-group", "rg2"};
       FileHelper.resourceToFile("com/rtg/reader/resources/mated.sam", input);
       final MemoryPrintStream out = new MemoryPrintStream();
@@ -852,7 +852,7 @@ public class FormatCliTest extends AbstractCliTest {
       FileHelper.resourceToFile("com/rtg/sam/resources/mated.sam", input2);
       final MemoryPrintStream out = new MemoryPrintStream();
       final MemoryPrintStream err = new MemoryPrintStream();
-      final String expected = "@RG\tID:rg1\tPL:ILLUMINA\tSM:sm1";
+      final String expected = "@RG\tID:rg1\tSM:sm1\tPL:ILLUMINA";
       runFormat(output, args, expected, out, err);
     }
   }
