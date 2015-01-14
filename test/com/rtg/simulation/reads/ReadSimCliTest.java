@@ -21,6 +21,7 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.machine.MachineType;
 import com.rtg.util.test.FileHelper;
 
@@ -80,8 +81,7 @@ public class ReadSimCliTest extends AbstractCliTest {
   }
 
   public void testExecReads() throws Exception {
-    final File tmpDir = FileUtils.createTempDir("readsimclitest", "exec");
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory("readsimclitest")) {
       final File genomeDir = new File(tmpDir, "genome");
       final File outDir = new File(tmpDir, "out");
 
@@ -97,14 +97,11 @@ public class ReadSimCliTest extends AbstractCliTest {
       assertEquals("Generated 2 reads, effective coverage 0.08" + StringUtils.LS
           + "Total action count:\t4" + StringUtils.LS
           + "Match count:\t4\t100.00%" + StringUtils.LS + StringUtils.LS, outstr);
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 
   public void testExecCoverage() throws Exception {
-    final File tmpDir = FileUtils.createTempDir("readsimclitest", "exec");
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory("readsimclitest")) {
       final File genomeDir = new File(tmpDir, "genome");
       final File outDir = new File(tmpDir, "out");
 
@@ -144,13 +141,10 @@ public class ReadSimCliTest extends AbstractCliTest {
           "T                  : 252",
           "Total residues     : 980"
       );
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
   public void testExecCoverageNs() throws Exception {
-    final File tmpDir = FileUtils.createTempDir("readsimclitest", "exec");
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory("readsimclitest")) {
       final File genomeDir = new File(tmpDir, "genome");
       final File outDir = new File(tmpDir, "out");
 
@@ -186,8 +180,6 @@ public class ReadSimCliTest extends AbstractCliTest {
       final String res = StringUtils.grep(mps.toString(), "^N *:");
       final String count = res.replaceAll("^N *: ", "").replaceAll(StringUtils.LS, "");
       assertTrue(Integer.parseInt(count) > 100);
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 

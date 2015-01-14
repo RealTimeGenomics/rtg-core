@@ -695,24 +695,22 @@ public class ReadSimCli extends LoggedCli {
           }
 
           Diagnostic.userLog("ReadSimParams" + LS + " input=" + input + LS + (twinInput == null ? "" : " diploid=" + twinInput + LS) + " machine=" + getMachineType() + LS + " output=" + outputDirectory() + LS + (mFlags.isSet(READS) ? " num-reads=" + mFlags.getValue(READS) + LS : "") + (mFlags.isSet(COVERAGE) ? " coverage=" + mFlags.getValue(COVERAGE) + LS : "") + (selectionProb == null ? "" : " distribution=" + Arrays.toString(selectionProb) + LS) + " allow-unknowns=" + mFlags.isSet(ALLOW_UNKNOWNS) + LS + " max-fragment=" + mFlags.getValue(MAX_FRAGMENT) + LS + " min-fragment=" + mFlags.getValue(MIN_FRAGMENT) + LS + " seed=" + seed + LS + LS + mPriors.toString() + LS);
-          try (ReadWriter internal = createReadWriter(m)) {
-            try (ReadWriter rw = getNFilter(internal)) {
-              m.setReadWriter(rw);
-              gf.setMachine(m);
-              // Run generation
-              if (mFlags.isSet(READS)) {
-                fragmentByCount(gf, rw);
-              } else {
-                fragmentByCoverage(totalResidues, gf, m);
-              }
-              final double effectiveCoverage = (double) m.residues() / totalResidues;
-              Diagnostic.info("Generated " + rw.readsWritten() + " reads, effective coverage " + Utils.realFormat(effectiveCoverage, 2));
-              if (selectionProb != null) {
-                FileUtils.stringToFile(gf.fractionStatistics(), new File(outputDirectory(), "fractions.tsv"));
-              }
-              //writeTemplateMappingFile(getTemplateMapping(reader, twinReader));
-              Diagnostic.info(m.formatActionsHistogram());
+          try (ReadWriter rw = getNFilter(createReadWriter(m))) {
+            m.setReadWriter(rw);
+            gf.setMachine(m);
+            // Run generation
+            if (mFlags.isSet(READS)) {
+              fragmentByCount(gf, rw);
+            } else {
+              fragmentByCoverage(totalResidues, gf, m);
             }
+            final double effectiveCoverage = (double) m.residues() / totalResidues;
+            Diagnostic.info("Generated " + rw.readsWritten() + " reads, effective coverage " + Utils.realFormat(effectiveCoverage, 2));
+            if (selectionProb != null) {
+              FileUtils.stringToFile(gf.fractionStatistics(), new File(outputDirectory(), "fractions.tsv"));
+            }
+            //writeTemplateMappingFile(getTemplateMapping(reader, twinReader));
+            Diagnostic.info(m.formatActionsHistogram());
           }
         } finally {
           if (twinReader != null) {
