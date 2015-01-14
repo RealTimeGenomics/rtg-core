@@ -132,6 +132,7 @@
     <attribute name="version.file"/>
     <attribute name="version.value"/>
     <sequential>
+      <local name="old-version.value"/>
       <loadfile property="old-version.value" srcFile="@{version.file}" failonerror="false" quiet="true"/>
       <if>
         <not>
