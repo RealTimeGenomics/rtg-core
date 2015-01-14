@@ -104,18 +104,7 @@ public class VcfRecordTabixCallable implements Callable<LoadedVariants> {
         list.add(v);
       }
     }
-    final LoadedVariants ret = new LoadedVariants();
-    ret.mVariants = list;
-    ret.mSkippedDuringLoading = skipped;
-    return ret;
+    return new LoadedVariants(list, skipped);
   }
-}
-
-/**
- * A simple holder for loaded results plus stats about how many variants were skipped.
- */
-class LoadedVariants {
-  int mSkippedDuringLoading = 0;
-  List<DetectedVariant> mVariants = null;
 }
 

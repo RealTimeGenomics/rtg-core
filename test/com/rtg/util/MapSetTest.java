@@ -117,7 +117,7 @@ public class MapSetTest extends TestCase {
     msb.put("a", 1);
     msb.put("b", 2);
     msb.put("a", 1);
-    TestUtils.equalsHashTest(new MapSet[][] {{ms0}, {msa, msb}});
+    TestUtils.equalsHashTest(new MapSet<?, ?>[][] {{ms0}, {msa, msb}});
     assertFalse(msa.equals(new Object()));
   }
 

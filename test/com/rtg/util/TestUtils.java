@@ -59,12 +59,12 @@ public final class TestUtils {
       @Override
       public Object run() {
         try {
-          final Method values = clazz.getMethod("values", new Class[] {});
+          final Method values = clazz.getMethod("values");
           values.setAccessible(true);
           final Object[] r = (Object[]) values.invoke(null);
           Assert.assertEquals(expectedToString, Arrays.toString(r));
 
-          final Method valueOf = clazz.getMethod("valueOf", new Class[] {String.class});
+          final Method valueOf = clazz.getMethod("valueOf", String.class);
           valueOf.setAccessible(true);
 
 
@@ -109,12 +109,12 @@ public final class TestUtils {
       @Override
       public Object run() {
         try {
-          final Method values = clazz.getMethod("values", new Class[] {});
+          final Method values = clazz.getMethod("values");
           values.setAccessible(true);
           final Object[] r = (Object[]) values.invoke(null);
           Assert.assertEquals(expectedToString, Arrays.toString(r));
 
-          final Method valueOf = clazz.getMethod("valueOf", new Class[] {String.class});
+          final Method valueOf = clazz.getMethod("valueOf", String.class);
           valueOf.setAccessible(true);
 
 
