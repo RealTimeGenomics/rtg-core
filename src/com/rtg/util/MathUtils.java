@@ -399,4 +399,22 @@ public final class MathUtils {
     return Math.pow(10.0, -phred / 10.0);
   }
 
+  private static final String OVER = String.valueOf(Integer.MAX_VALUE);
+  private static final String UNDER = String.valueOf(-Integer.MAX_VALUE); // Deliberately not Integer.MIN_VALUE
+
+  /**
+   * Return a long as a string but capped as a 32-bit signed value.
+   * (e.g. for compatibility with BCF).  Note 0x80000000 is reserved
+   * in BCF for missing value.
+   * @param val value
+   * @return string representation
+   */
+  public static String cappedInt(final long val) {
+    if (val >= Integer.MAX_VALUE) {
+      return OVER;
+    } else if (val <= -Integer.MIN_VALUE) {
+      return UNDER;
+    }
+    return Long.toString(val);
+  }
 }

@@ -176,7 +176,7 @@ public enum VcfFormatField {
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      rec.addFormatAndSample(name(), Long.toString(MathUtils.round(PosteriorUtils.phredIfy(sample.getPosterior()))));
+      rec.addFormatAndSample(name(), MathUtils.cappedInt(MathUtils.round(PosteriorUtils.phredIfy(sample.getPosterior()))));
     }
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
@@ -221,7 +221,7 @@ public enum VcfFormatField {
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      rec.addFormatAndSample(name(), Long.toString(MathUtils.round(PosteriorUtils.phredIfy(sample.getDeNovoPosterior()))));
+      rec.addFormatAndSample(name(), MathUtils.cappedInt(MathUtils.round(PosteriorUtils.phredIfy(sample.getDeNovoPosterior()))));
     }
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {

@@ -293,4 +293,18 @@ public class MathUtilsTest extends TestCase {
     assertEquals(1, MathUtils.round(0.999999));
     assertEquals(1, MathUtils.round(1));
   }
+
+  public void testCappedInt() {
+    assertEquals("0", MathUtils.cappedInt(0));
+    assertEquals("1", MathUtils.cappedInt(1));
+    assertEquals("-1", MathUtils.cappedInt(-1));
+    assertEquals(String.valueOf(Integer.MAX_VALUE - 1), MathUtils.cappedInt(Integer.MAX_VALUE - 1));
+    assertEquals(String.valueOf(Integer.MAX_VALUE), MathUtils.cappedInt(Integer.MAX_VALUE));
+    assertEquals(String.valueOf(-Integer.MAX_VALUE), MathUtils.cappedInt(-Integer.MAX_VALUE));
+    assertEquals(String.valueOf(-Integer.MAX_VALUE + 1), MathUtils.cappedInt(-Integer.MAX_VALUE + 1));
+    assertEquals(String.valueOf(-Integer.MAX_VALUE), MathUtils.cappedInt(Integer.MIN_VALUE));
+    assertEquals(String.valueOf(Integer.MAX_VALUE), MathUtils.cappedInt(Long.MAX_VALUE));
+    assertEquals(String.valueOf(-Integer.MAX_VALUE), MathUtils.cappedInt(-Long.MAX_VALUE));
+    assertEquals(String.valueOf(-Integer.MAX_VALUE), MathUtils.cappedInt(Long.MIN_VALUE));
+  }
 }
