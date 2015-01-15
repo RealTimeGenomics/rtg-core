@@ -39,6 +39,7 @@ public final class LongUtils {
    * @return true iff <code>n1</code> &lt; <code>n2</code>.
    */
   public static boolean isLessThanUnsigned(long n1, long n2) {
+    // Note Java 8 offers Long.compareUnsigned that could replace this
     return (n1 < n2) ^ ((n1 < 0) != (n2 < 0));
   }
 
