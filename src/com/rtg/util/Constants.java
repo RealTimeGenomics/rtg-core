@@ -12,7 +12,7 @@
 package com.rtg.util;
 
 /**
- * Various constants applying globally to SLIM.
+ * Various constants applying globally to RTG.
  *
  */
 public final class Constants {
@@ -39,6 +39,9 @@ public final class Constants {
 
   /** Support email address */
   public static final String SUPPORT_EMAIL_ADDR = "support" + BASE_EMAIL_ADDR;
+
+  /** Manual crash reporting email address */
+  public static final String TALKBACK_EMAIL_ADDR = "rtg-talkback" + BASE_EMAIL_ADDR;
 
   /** Maximum threads to allow from automatic thread assignment **/
   public static final int MAX_IO_THREADS = 4;

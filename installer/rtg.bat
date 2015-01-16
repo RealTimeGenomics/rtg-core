@@ -2,10 +2,34 @@
 
 setlocal ENABLEEXTENSIONS
 
+REM --- START OF USER SETTINGS ---
+
 REM   Amount of memory to allocate to RTG.  Use G suffix for gigabytes
 REM   If not set, will default to 90% of available RAM
-REM   for example following sets maximum memory to 4 GB
+REM   for example, the following sets maximum memory to 4 GB
 REM   SET RTG_MEM=4G
+SET RTG_MEM=
+
+REM   If RTG_MEM is not defined use this percentage of total RAM
+SET RTG_MEM_PCT=90
+
+REM   Attempt to send crash logs to Real Time Genomics, true to enable, false to disable
+SET RTG_TALKBACK=true
+
+REM   Enable simple usage logging, true to enable, false to disable. Default is no logging
+SET RTG_USAGE=
+
+REM   Server URL when usage logging to server. Default is to use RTG hosted server.
+SET RTG_USAGE_HOST=
+
+REM   If performing single-user file-based usage logging, this specifies the directory to log to.
+SET RTG_USAGE_DIR=
+
+REM   List of optional fields to add to usage logging (when enabled).
+REM   If unset do not add any of these fields. (commandline may contain information 
+REM   considered sensitive)
+REM   SET RTG_USAGE_OPTIONAL=username,hostname,commandline
+SET RTG_USAGE_OPTIONAL=username,hostname
 
 REM   Proxy host if needed, blank otherwise
 SET PROXY_HOST=
@@ -13,40 +37,24 @@ SET PROXY_HOST=
 REM   Proxy port if needed, blank otherwise
 SET PROXY_PORT=
 
-REM   Additional JVM options (e.g.: "-Djava.io.tmpdir=XXYY -XX:+UseLargePages")
-SET RTG_JAVA_OPTS=
-
-REM   Maximum memory for rtg to use (e.g. 48g)
-SET RTG_MEM=
-
-REM   If RTG_MEM is not defined use this percentage of total RAM
-SET RTG_MEM_PCT=90
-
-REM   Attempt to send crash logs to realtime genomics, "true" to enable
-SET RTG_TALKBACK=
-
-REM   Attempt to send simple usage logs to realtime genomics, "true" to enable
-SET RTG_USAGE=
-
-REM   Server URL when usage logging to server
-SET RTG_USAGE_HOST=
-
-REM   Destination directory when performing single-user file-based usage logging
-SET RTG_USAGE_DIR=
-
-REM   Optional fields to add to usage logging. e.g. username,hostname,commandline
-SET RTG_USAGE_OPTIONAL=
-
 REM   Directory in which to look for pipeline reference datasets
 SET RTG_REFERENCES_DIR=
 
 REM   Directory in which to look for pipeline reference datasets
 SET RTG_MODELS_DIR=
 
-REM   Default number of threads to use
+REM   Additional JVM options (e.g.: "-Djava.io.tmpdir=XXYY -XX:+UseLargePages")
+SET RTG_JAVA_OPTS=
+
+REM   Set the number of threads to use when not otherwise specified via command line flags. 
+REM   The default behavior is to allocate one thread per machine core.
 SET RTG_DEFAULT_THREADS=
 
+
+
 REM --- END OF USER SETTINGS ---
+
+
  
 REM   location of RTG jar file
 SET RTG_JAR="%~dp0RTG.jar"
@@ -107,11 +115,9 @@ GOTO :no
 
 SET ACCEPTED_NAME="%~dp0%.license_accepted"
 
-SET ACCEPTED_TALKBACK_NAME="%~dp0%.talkback_accepted"
-
 SET ACCEPTED_USAGE_NAME="%~dp0%.usage_accepted"
 
-SET EULA="%~dp0%EULA.txt"
+SET EULA="%~dp0%LICENSE.txt"
 
 IF EXIST %ACCEPTED_NAME% GOTO :setvars
 
@@ -132,32 +138,19 @@ GOTO :no
 
 echo %date% - %time% >%ACCEPTED_NAME%
 
-SET /P TALKBACK_ANSWER=Would you like to enable automatic crash reporting (y/n)? 
-echo.
-IF /i {%TALKBACK_ANSWER%}=={y} (GOTO :talkback_yes)
-IF /i {%TALKBACK_ANSWER%}=={yes} (GOTO :talkback_yes)
-
-GOTO :talkback_no
-
-:talkback_yes
-echo true >%ACCEPTED_TALKBACK_NAME%
-
-REM   Try and send a post-install talkback
-echo Testing talkback connectivity...
+REM   First run only, perform test of crash-reporting
 %RTG_JAVA% %PROXY_HOST% %PROXY_PORT% -Xmx%RTG_MIN_MEM% -cp %RTG_JAR% com.rtg.util.diagnostic.SimpleTalkback "Post-install talkback test"
 IF %ERRORLEVEL% NEQ 0 (
-     echo Initial talkback did not succeed, probably due to firewall issues.
+     echo Initial crash-report connectivity test did not succeed, probably due to firewall issues.
      echo You will be asked to manually submit any error logs.
 )
 echo.
-GOTO :usage
-
-:talkback_no
-echo Automatic crash reporting disabled.
-echo.
-<nul (SET /P foo=false) >%ACCEPTED_TALKBACK_NAME%
 
 :usage
+echo RTG has a facility to automatically send basic usage information to Real
+echo Time Genomics. This does not contain confidential information such as
+echo command-line parameters or dataset contents.
+echo.
 SET /P USAGE_ANSWER=Would you like to enable automatic simple usage reporting (y/n)? 
 echo.
 IF /i {%USAGE_ANSWER%}=={y} (GOTO :usage_yes)
@@ -167,29 +160,30 @@ GOTO :usage_no
 
 :usage_yes
 <nul (SET /P FOO=true) >%ACCEPTED_USAGE_NAME%
-GOTO :setvars
+GOTO :firstrun_end
 
 :usage_no
 echo Automatic usage reporting disabled.
 echo.
 <nul (SET /P FOO=false) >%ACCEPTED_USAGE_NAME%
-GOTO :setvars
+GOTO :firstrun_end
 
 :no64bit
-echo RTG requires 64 bit version of windows
+echo RTG requires a 64 bit version of Windows
 
 :no
 IF DEFINED PAUSE_ON_CLOSE pause
 exit /b 1
 
+:firstrun_end
+
+echo Initial configuration complete.  Advanced user configuration is 
+echo available by editing settings in rtg.bat
+echo.
+
 :setvars
 
-IF "%RTG_TALKBACK%" == "" (
-    IF EXIST %ACCEPTED_TALKBACK_NAME% SET /P TALKBACK_ANSWER=<%ACCEPTED_TALKBACK_NAME%
-) ELSE (
-    SET TALKBACK_ANSWER=%RTG_TALKBACK%
-)
-SET RTG_TALKBACK=-Dtalkback=%TALKBACK_ANSWER%
+SET RTG_TALKBACK=-Dtalkback=%RTG_TALKBACK%
 
 IF "%RTG_USAGE%" == "" (
     IF EXIST %ACCEPTED_USAGE_NAME% SET /P USAGE_ANSWER=<%ACCEPTED_USAGE_NAME%

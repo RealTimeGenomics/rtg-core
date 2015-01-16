@@ -58,6 +58,7 @@ if [ ! -r "$THIS_DIR/rtg.cfg" ] ; then
 
     # Default crash reporting to true. The user can alter this in the rtg.cfg if they wish.
     RTG_TALKBACK=true
+    TEST_TALKBACK=y
 
     # Find out if the user would like to submit usage information.
     cat <<EOF
@@ -86,19 +87,19 @@ EOF
 # multi-machine environment, this file can be used to achieve
 # machine-specific configuration either by placing in /etc/rtg.cfg on
 # each machine or in the rtg installation directory values with the
-# name rtg.\$(hostname -s).cfg
+# name rtg.\$(hostname -s).cfg, e.g. rtg.$(hostname -s).cfg
 
 
-# The path to the java executable (need not be full path if in $PATH).
+# The path to the java executable (need not be full path if in \$PATH).
 # If unset, RTG will use the bundled JRE if present, otherwise
-# will expect java to be on $PATH
+# will expect java to be on \$PATH
 # RTG_JAVA="java"
 
 # Amount of memory to allocate to RTG.  Use G suffix for gigabytes.
 # If unset, allow RTG to use up to 90% of available RAM (see RTG_MEM_PCT)
 # RTG_MEM="4G"
 # Note that memory allocation can also be overridden on a per-command basis, e.g:
-# $ rtg RTG_MEM=24G population ...
+# \$ rtg RTG_MEM=24G population ...
 
 # If RTG_MEM is unset, use this percentage of total RAM. 
 # The default is 90 percent.
@@ -117,10 +118,11 @@ RTG_USAGE=$RTG_USAGE
 # If performing single-user file-based usage logging, this specifies the directory to log to.
 # RTG_USAGE_DIR=
 
-# List of optional fields to add to usage logging.
-# If unset (the default) do not add these fields (as this may contain information 
+# List of optional fields to add to usage logging (when enabled).
+# If unset do not add any of these fields. (commandline may contain information 
 # considered sensitive)
 # RTG_USAGE_OPTIONAL=username,hostname,commandline
+RTG_USAGE_OPTIONAL=username,hostname
 
 
 # Allows specification of the HTTP proxy to use for
@@ -142,11 +144,15 @@ RTG_USAGE=$RTG_USAGE
 
 
 # Set the number of threads to use when not otherwise specified via command line flags. 
-# The default behavior is to one thread per machine core.
+# The default behavior is to allocate one thread per machine core.
 # RTG_DEFAULT_THREADS=1
 
 
 EOF
+    echo
+    echo "Initial configuration complete.  Advanced user configuration is"
+    echo "available by editing settings in rtg.cfg"
+    echo
 fi
 
 # Set other defaults
@@ -241,6 +247,13 @@ fi
 
 if [ ! -z "$RTG_TALKBACK" ]; then
     RTG_TALKBACK="-Dtalkback=$RTG_TALKBACK"
+    if [ "$TEST_TALKBACK" == "y" ]; then  # First run only, perform test of crash reporting
+        if ! "$RTG_JAVA" $RTG_USAGE $RTG_TALKBACK $RTG_PROXY $RTG_MIN_MEM -cp "$RTG_JAR" com.rtg.util.diagnostic.SimpleTalkback "Post-install talkback test"; then
+            echo "Initial crash-report connectivity test did not succeed, probably due to firewall issues."
+            echo "You will be asked to manually submit any error logs."
+        fi
+        echo
+    fi
 fi
 
 if [ -z "$RTG_MEM" ] ; then
@@ -266,7 +279,11 @@ fi
 HSLOG=./hs_err_pid$$.log
 "$RTG_JAVA" -Djava.library.path="$THIS_DIR" -XX:ErrorFile=$HSLOG $RTG_JAVA_OPTS "$RTG_REFERENCES_DIR" "$RTG_MODELS_DIR" $RTG_USAGE $RTG_TALKBACK $RTG_DEFAULT_THREADS -Xmx$RTG_MEM $RTG_PROXY -jar "$RTG_JAR" "$@"
 ECODE=$?
-if [ -f $HSLOG ]; then
-  "$RTG_JAVA" $RTG_TALKBACK $RTG_PROXY $RTG_MIN_MEM -cp "$RTG_JAR" com.rtg.util.diagnostic.SimpleTalkback "$HSLOG" "$@"
+if [ -f "$HSLOG" ]; then
+    if grep -q "insufficient memory" "$HSLOG"; then
+        echo "The operating system did not make requested memory available to the JVM.  Try removing other jobs on this machine, adjusting allocated memory appropriate to currently available memory, or adjusting command parameters to reduce memory requirements. More information is contained in the file: $HSLOG" >&2
+    else
+        "$RTG_JAVA" $RTG_TALKBACK $RTG_PROXY $RTG_MIN_MEM -cp "$RTG_JAR" com.rtg.util.diagnostic.SimpleTalkback "$HSLOG" "$@"
+    fi
 fi
 exit $ECODE

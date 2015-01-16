@@ -39,6 +39,7 @@ import com.rtg.util.io.FileUtils;
  *
  */
 public final class Talkback {
+
   //private constructor as this is a utility class
   private Talkback() {
   }
@@ -98,17 +99,18 @@ public final class Talkback {
         logFile = null;
       }
       final String filename = (logFile != null && logFile.exists()) ? args[0] : "";
-      final int argStart = (!"".equals(filename)) ? 1 : 0;
+      final boolean crashReport = !"".equals(filename);
+      final int argStart = crashReport ? 1 : 0;
 
-      final String subject = "".equals(filename) ? "Talkback" : "JVM Crash";
+      final String subject = crashReport ? "JVM Crash" : "Talkback";
       final String commandLine = args.length > argStart ? Arrays.toString(Arrays.copyOfRange(args, argStart, args.length)) : null;
       final String logContents;
-      if (!"".equals(filename)) {
+      if (crashReport) {
         logContents = getEnvironment() + FileUtils.fileToString(logFile);
       } else {
         logContents = getEnvironment();
       }
-      return postTalkback(subject, sModuleName, commandLine, null, logContents, filename, true);
+      return postTalkback(subject, sModuleName, commandLine, null, logContents, filename, crashReport);
     } catch (final IOException e) {
       System.err.println("An error occurred sending the talkback.");
       return false;
@@ -156,10 +158,11 @@ public final class Talkback {
   }
 
   private static boolean postTalkback(String subject, String moduleName, String commandLine, String stacktrace, String logFull, String filename, boolean prompt) {
+    final boolean hasLogfile = !"".equals(filename);
     if (!sTalkback) {
       if (prompt) {
-        if (!"".equals(filename)) {
-          System.err.println("Please send the log file ('" + filename + "') to Real Time Genomics at rtg-talkback@realtimegenomics.com");
+        if (hasLogfile) {
+          System.err.println("Please send the log file ('" + filename + "') to Real Time Genomics at " + Constants.TALKBACK_EMAIL_ADDR);
         }
       }
       return true;
@@ -172,7 +175,7 @@ public final class Talkback {
 
     if (prompt) {
       String message = "Sending talkback to Real Time Genomics";
-      if (!"".equals(filename)) {
+      if (hasLogfile) {
         message += " (log '" + filename + "')";
       }
       System.err.println(message + "...");
@@ -193,7 +196,14 @@ public final class Talkback {
 
     final boolean status = postTalkback(subject, 5000, postData.toString());
     if (prompt) {
-      System.err.println(status ? "Talkback successfully sent." : "An error occurred sending the talkback.");
+      if (status) {
+        System.err.println("Talkback successfully sent.");
+      } else {
+        System.err.println("An error occurred sending the talkback.");
+        if (hasLogfile) {
+          System.err.println("Please send the log file ('" + filename + "') to Real Time Genomics at " + Constants.TALKBACK_EMAIL_ADDR);
+        }
+      }
     }
     return status;
   }
