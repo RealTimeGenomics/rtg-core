@@ -14,6 +14,7 @@ package com.rtg.launcher;
 import static com.rtg.util.StringUtils.LS;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
@@ -25,21 +26,20 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.FileUtilsTest;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
 
 import junit.framework.TestCase;
 
 /**
- *         Date: 13/10/11
- *         Time: 11:26 AM
+ * Unit tests for command line file list handling
  */
 public class CommandLineFilesTest extends TestCase {
   private File mDir = null;
   private File mOne = null;
   private File mTwo = null;
   private MemoryPrintStream mLog = null;
+
   @Override
   public void setUp() throws IOException {
     mDir = FileUtils.createTempDir("CommandLineFilesTest", "tmpDir");
@@ -48,6 +48,7 @@ public class CommandLineFilesTest extends TestCase {
     mLog = new MemoryPrintStream();
     Diagnostic.setLogStream(mLog.printStream());
   }
+
   @Override
   public void tearDown() {
     FileHelper.deleteAll(mDir);
@@ -59,51 +60,78 @@ public class CommandLineFilesTest extends TestCase {
   }
 
   public CFlags makeFlags() {
-    CFlags flags = new CFlags();
+    final CFlags flags = new CFlags();
     flags.registerRequired(File.class, "FILE", "file list").setMaxCount(Integer.MAX_VALUE).setMinCount(0);
     flags.registerOptional(CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "File list flag");
     return flags;
   }
 
   public void testGetFiles() throws IOException {
-
-    CFlags flags = makeFlags();
+    final CFlags flags = makeFlags();
     flags.setFlags(mOne.getPath(), mTwo.getPath());
-    CommandLineFiles cmf = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null);
-    List<File> files = cmf.getFileList(flags);
+    final CommandLineFiles cmf = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null);
+    final List<File> files = cmf.getFileList(flags);
     assertEquals(2, files.size());
-    FileUtilsTest.fileContains(files, mOne);
-    FileUtilsTest.fileContains(files, mTwo);
+    fileContains(files, mOne);
+    fileContains(files, mTwo);
   }
+
   public void makeFile(File f) throws IOException {
     assertTrue(f.createNewFile());
   }
   public void makeDir(File f) {
     assertTrue(f.mkdir());
   }
+
   public void testInputFileList() throws IOException {
-    File list = new File(mDir, "list");
+    final File list = new File(mDir, "list");
     makeFile(mOne);
     makeFile(mTwo);
-    FileUtils.stringToFile(mTwo + LS + mOne + LS, list);
-    CFlags flags = makeFlags();
+    FileUtils.stringToFile(mTwo + LS
+        + "# please ignore me" + LS
+        + "    " + mOne + LS,
+      list);
+    final CFlags flags = makeFlags();
     flags.setFlags("--" + CommonFlags.INPUT_LIST_FLAG, list.getPath());
-    CommandLineFiles cmf = CommandLineFiles.inputFiles();
-    List<File> files = cmf.getFileList(flags);
+    final CommandLineFiles cmf = CommandLineFiles.inputFiles();
+    final List<File> files = cmf.getFileList(flags);
     assertEquals(2, files.size());
-    FileUtilsTest.fileContains(files, mTwo);
-    FileUtilsTest.fileContains(files, mOne);
+    fileContains(files, mTwo);
+    fileContains(files, mOne);
   }
 
+  public void testInputFileListManyInvalid() throws IOException {
+    final File list = new File(mDir, "list");
+    try (FileWriter fw = new FileWriter(list)) {
+      for (int i = 0; i < 50; i++) {
+        fw.write(new File(mDir, "no-such-file-" + i) + LS);
+      }
+    }
+    final CFlags flags = makeFlags();
+    flags.setFlags("--" + CommonFlags.INPUT_LIST_FLAG, list.getPath());
+    final CommandLineFiles cmf = CommandLineFiles.inputFiles();
+    try {
+      cmf.getFileList(flags);
+      fail();
+    } catch (NoTalkbackSlimException e) {
+      assertEquals(mLog.toString(), "There were more than " + CommandLineFiles.MAX_ERRORS + " invalid input file paths", e.getMessage());
+    }
+  }
+
+  public static void fileContains(List<File> files, File f) {
+    assertTrue("file " + f + " was not contained in the file list: " + files.toString(),  files.contains(f));
+  }
+
+
   public void testInputFiles() throws IOException {
-    CommandLineFiles cmf = CommandLineFiles.inputFiles();
+    final CommandLineFiles cmf = CommandLineFiles.inputFiles();
     makeFile(mOne);
     checkInvalid(cmf, "File not found: \"" + mTwo.getPath() + "\"", 1, defaultFlags());
     makeFile(mTwo);
     checkValid(cmf, defaultFlags());
   }
   public void testExists() throws IOException {
-    CommandLineFiles cmf = new CommandLineFiles(null, null, CommandLineFiles.EXISTS);
+    final CommandLineFiles cmf = new CommandLineFiles(null, null, CommandLineFiles.EXISTS);
     makeFile(mOne);
     checkInvalid(cmf, "File not found: \"" + mTwo.getPath() + "\"", 1, defaultFlags());
     makeFile(mTwo);
@@ -111,8 +139,8 @@ public class CommandLineFilesTest extends TestCase {
   }
 
   public void testRegularFile() throws IOException {
-    CommandLineFiles cmf = new CommandLineFiles(null, null, CommandLineFiles.REGULAR_FILE);
-    CommandLineFiles cmf2 = new CommandLineFiles(null, null, CommandLineFiles.NOT_DIRECTORY);
+    final CommandLineFiles cmf = new CommandLineFiles(null, null, CommandLineFiles.REGULAR_FILE);
+    final CommandLineFiles cmf2 = new CommandLineFiles(null, null, CommandLineFiles.NOT_DIRECTORY);
     makeDir(mOne);
     makeFile(mTwo);
     checkInvalid(cmf, "A file name was expected, but \"" + mOne.getPath() + "\" is not a file", 1, defaultFlags());
@@ -125,7 +153,7 @@ public class CommandLineFilesTest extends TestCase {
   }
 
   public void testDirectory() throws IOException {
-      CommandLineFiles cmf = new CommandLineFiles(null, null, CommandLineFiles.DIRECTORY);
+      final CommandLineFiles cmf = new CommandLineFiles(null, null, CommandLineFiles.DIRECTORY);
       makeDir(mOne);
       makeFile(mTwo);
         checkInvalid(cmf, "The directory \"" + mTwo.getPath() + "\" does not exist", 1, defaultFlags());
@@ -133,8 +161,9 @@ public class CommandLineFilesTest extends TestCase {
       makeDir(mTwo);
       checkValid(cmf, defaultFlags());
   }
+
   public void testSDF() throws IOException {
-      CommandLineFiles cmf = CommandLineFiles.sdfFiles();
+      final CommandLineFiles cmf = CommandLineFiles.sdfFiles();
       makeDir(mOne);
       makeFile(mTwo);
         checkInvalid(cmf, mTwo.getPath() + " is not a valid SDF", 1, defaultFlags());
@@ -144,7 +173,7 @@ public class CommandLineFilesTest extends TestCase {
     }
 
   public void testNotExists() throws IOException {
-    CommandLineFiles cmf = new CommandLineFiles(null, null, CommandLineFiles.DOES_NOT_EXIST);
+    final CommandLineFiles cmf = new CommandLineFiles(null, null, CommandLineFiles.DOES_NOT_EXIST);
     makeFile(mOne);
     checkInvalid(cmf, "The file \"" + mOne.getPath() + "\" already exists", 1, defaultFlags());
     assertTrue(mOne.delete());
@@ -152,7 +181,7 @@ public class CommandLineFilesTest extends TestCase {
   }
 
   public void testTabix() throws IOException {
-    CommandLineFiles cmf = new CommandLineFiles(null, null, CommandLineFiles.TABIX);
+    final CommandLineFiles cmf = new CommandLineFiles(null, null, CommandLineFiles.TABIX);
     makeFile(new File(mOne + TabixIndexer.TABIX_EXTENSION));
     checkInvalid(cmf, "The file \"" + mTwo.getPath() + "\" does not have a tabix index", 1, defaultFlags());
 
@@ -161,19 +190,19 @@ public class CommandLineFilesTest extends TestCase {
   }
 
   public void testVarianceInput() throws IOException {
-    CommandLineFiles cmf = new CommandLineFiles(null, null, CommandLineFiles.VARIANT_INPUT);
+    final CommandLineFiles cmf = new CommandLineFiles(null, null, CommandLineFiles.VARIANT_INPUT);
 
     makeFile(new File(mOne + TabixIndexer.TABIX_EXTENSION));
     checkInvalid(cmf, "The file \"" + mTwo.getPath() + "\" does not have a tabix index", 1, defaultFlags());
     makeFile(new File(mTwo + TabixIndexer.TABIX_EXTENSION));
     checkValid(cmf, defaultFlags());
 
-    File calibrate = new File(mTwo + Recalibrate.EXTENSION);
-    List<File> filesCalibrated = cmf.getFileList(getFlags(new String[] {mOne.getPath(), mTwo.getPath(), calibrate.getPath()}));
+    final File calibrate = new File(mTwo + Recalibrate.EXTENSION);
+    final List<File> filesCalibrated = cmf.getFileList(getFlags(new String[] {mOne.getPath(), mTwo.getPath(), calibrate.getPath()}));
     assertEquals(3, filesCalibrated.size());
 
 
-    CommandLineFiles cmf2 = new CommandLineFiles(null, null, CommandLineFiles.VARIANT_INPUT);
+    final CommandLineFiles cmf2 = new CommandLineFiles(null, null, CommandLineFiles.VARIANT_INPUT);
     final File f = new File(mDir, "test" + SamUtils.BAM_SUFFIX);
     makeFile(f);
     final String[] args = {f.getPath()};
@@ -218,15 +247,15 @@ public class CommandLineFilesTest extends TestCase {
   }
 
   public void checkValid(CommandLineFiles cmf, CFlags flags) throws IOException {
-    List<File> files = cmf.getFileList(flags);
+    final List<File> files = cmf.getFileList(flags);
     assertEquals(2, files.size());
-    FileUtilsTest.fileContains(files, mOne);
-    FileUtilsTest.fileContains(files, mTwo);
+    fileContains(files, mOne);
+    fileContains(files, mTwo);
   }
 
   public void testOutputFile() throws IOException {
-    CommandLineFiles cmf = CommandLineFiles.outputFile();
-    CFlags flags = new CFlags();
+    final CommandLineFiles cmf = CommandLineFiles.outputFile();
+    final CFlags flags = new CFlags();
       flags.registerRequired(CommonFlags.OUTPUT_FLAG, File.class, "FILE", "output").setMaxCount(Integer.MAX_VALUE).setMinCount(0);
 
       final File subdir = new File(mOne, "subdir");
@@ -241,17 +270,17 @@ public class CommandLineFilesTest extends TestCase {
     }
     makeDir(mOne);
     makeDir(mTwo);
-    List<File> files = cmf.getFileList(flags);
+    final List<File> files = cmf.getFileList(flags);
     assertEquals(2, files.size());
-    FileUtilsTest.fileContains(files, subdir);
-    FileUtilsTest.fileContains(files, subdir2);
+    fileContains(files, subdir);
+    fileContains(files, subdir2);
   }
 
   public void testEmpty() throws IOException {
-    CFlags flags = makeFlags();
+    final CFlags flags = makeFlags();
     flags.setFlags();
-    CommandLineFiles cmf = CommandLineFiles.inputFiles();
-    List<File> files = cmf.getFileList(flags);
+    final CommandLineFiles cmf = CommandLineFiles.inputFiles();
+    final List<File> files = cmf.getFileList(flags);
     assertEquals(0, files.size());
   }
 

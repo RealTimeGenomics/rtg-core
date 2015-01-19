@@ -11,7 +11,9 @@
  */
 package com.rtg.launcher;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,7 +28,6 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.util.io.FileUtils;
 
 /**
  * Class for extracting a list of files from a CFlags object following the conventions we tend to use.
@@ -38,7 +39,8 @@ import com.rtg.util.io.FileUtils;
  */
 public class CommandLineFiles {
 
-  private static final int MAX_ERRORS = 5;
+  static final int MAX_ERRORS = 10;
+
   /**
    * Describes a method for checking if a file meets a criteria
    */
@@ -260,6 +262,7 @@ public class CommandLineFiles {
     }
     return true;
   }
+  
   /**
    * Log an error in file validation.
    * @param type the type of error detected
@@ -272,45 +275,52 @@ public class CommandLineFiles {
   }
 
    /**
-   * Get the list of files from the anonymous flag and/or read a list of files from a file.
-   * @param flags the command line flags to parse files from
-   * @return the list of files to process or null if there are missing files in the list
-   * @throws java.io.IOException if reading the file list fails
-   */
+    * Get the list of files from the anonymous flag and/or read a list of files from a file.
+    * @param flags the command line flags to parse files from
+    * @return the list of files to process or null if there are missing files in the list
+    * @throws java.io.IOException if reading the file list fails
+    * @throws NoTalkbackSlimException if too many files fail validation.
+    */
   public List<File> getFileList(CFlags flags) throws IOException {
-    final List<File> files = getFiles(flags);
+    final List<File> files = new ArrayList<>();
     mErrorCount = 0;
-    for (final File f : files) {
-      if (!validate(f)) {
-        mErrorCount++;
-      }
-      if (mErrorCount > MAX_ERRORS) {
-        throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "There were more than " + MAX_ERRORS + " invalid input file paths");
-      }
-    }
-    if (mErrorCount > 0) {
-      throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "There were " + mErrorCount + " invalid input file paths");
-    }
-    return files;
-  }
 
-  private List<File> getFiles(CFlags flags) throws IOException {
-    final List<File> files;
-    if (mListFileFlag != null && flags.isSet(mListFileFlag)) {
-      files = FileUtils.readFileList((File) flags.getValue(mListFileFlag));
-    } else {
-      files = new ArrayList<>();
-    }
     final Collection<Object> fValues;
     if (mSingleInputFlag == null) {
       fValues = flags.getAnonymousValues(0);
     } else {
       fValues = flags.getValues(mSingleInputFlag);
     }
-    for (final Object f : fValues) {
-      files.add((File) f);
+    for (final Object o : fValues) {
+      final File f = (File) o;
+      if (!validate(f)) {
+        if (++mErrorCount > MAX_ERRORS) {
+          throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "There were more than " + MAX_ERRORS + " invalid input file paths");
+        }
+      }
+      files.add(f);
+    }
+
+    if (mListFileFlag != null && flags.isSet(mListFileFlag)) {
+      try (BufferedReader br = new BufferedReader(new FileReader((File) flags.getValue(mListFileFlag)))) {
+        for (String line = br.readLine(); line != null; line = br.readLine()) {
+          line = line.trim();
+          if ((line.length() > 0) && !line.startsWith("#")) {
+            final File f = new File(line);
+            if (!validate(f)) {
+              if (++mErrorCount > MAX_ERRORS) {
+                throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "There were more than " + MAX_ERRORS + " invalid input file paths");
+              }
+            }
+            files.add(f);
+          }
+        }
+      }
+    }
+
+    if (mErrorCount > 0) {
+      throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "There were " + mErrorCount + " invalid input file paths");
     }
     return files;
   }
-
 }

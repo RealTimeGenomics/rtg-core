@@ -24,9 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.util.List;
 
-import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.test.FileHelper;
@@ -458,32 +456,6 @@ public class FileUtilsTest extends TestCase {
     } catch (final EOFException e) {
       // expected
     }
-
-  }
-
-  public void testFileList() throws IOException {
-    final File tmpDir = FileUtils.createTempDir("testFileList", "test");
-    try {
-      final File list = new File(tmpDir, "list");
-      try (FileWriter fw = new FileWriter(list)) {
-        fw.write("monkey" + StringUtils.LS);
-        fw.write("   banana" + StringUtils.LS);
-        fw.write("# please ignore me" + StringUtils.LS);
-        fw.write("moreFiles   " + StringUtils.LS);
-
-      }
-      final List<File> fileList = FileUtils.readFileList(list);
-      assertEquals(3, fileList.size());
-      fileContains(fileList, new File("monkey"));
-      fileContains(fileList, new File("banana"));
-      fileContains(fileList, new File("moreFiles"));
-    } finally {
-      FileHelper.deleteAll(tmpDir);
-    }
-  }
-
-  public static void fileContains(List<File> files, File f) {
-    assertTrue("file " + f + " was not contained in the file list: " + files.toString(),  files.contains(f));
   }
 
   public void testIsGzipFile() throws IOException {

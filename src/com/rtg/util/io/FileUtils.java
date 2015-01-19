@@ -25,8 +25,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.zip.GZIPInputStream;
 
@@ -639,28 +637,6 @@ public final class FileUtils {
    */
   public static OutputStream getStderrAsOutputStream() {
     return javaGetStderrAsOutputStream();
-  }
-
-  /**
-   * Reads a file containing a list of files, one per line. Each line
-   * has whitespace trimmed. Lines that are empty or which start with
-   * a hash character are ignored.
-   *
-   * @param f the input file
-   * @return the list of files
-   * @throws IOException if an exception occurred reading the file
-   */
-  public static List<File> readFileList(final File f) throws IOException {
-    final List<File> files = new ArrayList<>();
-    try (BufferedReader br = new BufferedReader(new FileReader(f))) {
-      for (String line = br.readLine(); line != null; line = br.readLine()) {
-        line = line.trim();
-        if ((line.length() > 0) && !line.startsWith("#")) {
-          files.add(new File(line));
-        }
-      }
-    }
-    return files;
   }
 
   /**
