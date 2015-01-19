@@ -24,7 +24,7 @@ import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.test.FileHelper;
+import com.rtg.util.io.TestDirectory;
 
 /**
  */
@@ -36,23 +36,22 @@ public class DiscordantToolCliTest extends AbstractCliTest {
   }
 
   public void testFlagValidator() throws IOException {
-    String str = checkHandleFlagsErr("-t", "genome-stupid-name", "-o", "output", "-r", "blah.txt", "blah.txt");
-    assertTrue(str, str.contains("The specified SDF, \"genome-stupid-name\", does not exist."));
-    final File tempDir = FileUtils.createTempDir("discordantTool", "flagValidatorTest");
-    try {
-      str = checkHandleFlagsErr("-t", tempDir.getPath(), "-o", "randomdir_output", "-r", "blah.txt", "blah.txt", "-s", "0");
+    String str = checkHandleFlagsErr("-t", "genome-name", "-o", "output", "-r", "blah.txt", "blah.txt");
+    assertTrue(str, str.contains("The specified SDF, \"genome-name\", does not exist."));
+    try (final TestDirectory tempDir = new TestDirectory()) {
+      final File f = new File(tempDir, "blah.txt");
+      assertTrue(f.createNewFile());
+      str = checkHandleFlagsErr("-t", tempDir.getPath(), "-o", "randomdir_output", "-r", f.getPath(), f.getPath(), "-s", "0");
       assertTrue(str, str.contains("Expected a positive integer for parameter \"min-support\"."));
-      str = checkHandleFlagsOut("-t", tempDir.getPath(), "-o", "randomdir_output", "-r", "blah.txt", "blah.txt");
+      str = checkHandleFlagsOut("-t", tempDir.getPath(), "-o", "randomdir_output", "-r",  f.getPath(), f.getPath());
       assertEquals("", str);
-    } finally {
-      assertTrue(FileHelper.deleteAll(tempDir));
     }
   }
 
   public void testMakeParams() throws InvalidParamsException, IOException {
-    final File tempDir = FileUtils.createTempDir("discordantTool", "makeParamsTest");
-    try {
+    try (final TestDirectory tempDir = new TestDirectory()) {
       final File f = new File(tempDir, "blah.txt");
+      assertTrue(f.createNewFile());
       FileUtils.stringToFile("RG1\t200000\t56893\t1991255\t69693925\t55590\t22261070\t9022416526\t55590\t22261070\t9022416526\t5\t55590\t236\t1067", f);
       final File gen = ReaderTestUtils.getDNADir(">g1" + LS + "aaatcgactggtcagctagg" + LS, tempDir);
       final CFlags flags = new CFlags();
@@ -62,8 +61,6 @@ public class DiscordantToolCliTest extends AbstractCliTest {
       flags.setFlags("--template", gen.getPath(), "--output", new File(tempDir, "blah").getPath(), "-r", f.getPath(), f.getPath());
       final DiscordantToolParams params = DiscordantToolCli.makeParams(flags);
       assertTrue(params.genome().reader() instanceof DefaultSequencesReader);
-    } finally {
-      assertTrue(FileHelper.deleteAll(tempDir));
     }
   }
 

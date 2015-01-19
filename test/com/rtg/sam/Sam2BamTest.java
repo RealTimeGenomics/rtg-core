@@ -14,10 +14,11 @@ package com.rtg.sam;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Collection;
 
+import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.AbstractCliTest;
 import com.rtg.launcher.GlobalFlags;
 import com.rtg.util.Resources;
 import com.rtg.util.SingletonPopulatorFactory;
@@ -27,6 +28,7 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.SamRecordPopulator;
 
@@ -34,17 +36,14 @@ import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMRecord;
 import net.sf.samtools.util.CloseableIterator;
 
-import junit.framework.TestCase;
-
 /**
  *
  */
-public class Sam2BamTest extends TestCase {
+public class Sam2BamTest extends AbstractCliTest {
 
   @Override
-  public void setUp() {
-    GlobalFlags.resetAccessedStatus();
-    Diagnostic.setLogStream();
+  protected AbstractCli getCli() {
+    return new Sam2Bam();
   }
 
   private static final String SAMRESOURCE_1 = "com/rtg/sam/resources/mergemated.sam.gz";
@@ -111,25 +110,13 @@ public class Sam2BamTest extends TestCase {
   }
 
   public void testInnerClass() throws IOException {
-    final Appendable out = new StringWriter();
-    final Appendable err = new StringWriter();
-    final CFlags flags = new CFlags("testBamConverter", out, err);
-    Sam2Bam.initFlags(flags);
+    try (final TestDirectory dir = new TestDirectory("bamconverter")) {
+      String err = checkMainInitBadFlags("non-existingfile", "-o", "something");
+      TestUtils.containsAll(err, "non-existingfile");
 
-    final String[] args = {"non-existingfile", "-o", "something"};
-
-    assertFalse(flags.setFlags(args));
-    TestUtils.containsAll(err.toString(), "non-existingfile");
-
-    final File dir = FileUtils.createTempDir("bamconverter", "test");
-    try {
-    final String[] args2 = {dir.getPath(), "-o", "something"};
-    assertFalse(flags.setFlags(args2));
-    TestUtils.containsAll(err.toString(), dir.getPath());
-    } finally {
-      FileHelper.deleteAll(dir);
+      err = checkMainInitBadFlags(dir.getPath(), "-o", "something");
+      TestUtils.containsAll(err, dir.getPath());
     }
-
   }
 
   public void testMisc() throws Exception {
@@ -151,14 +138,12 @@ public class Sam2BamTest extends TestCase {
     assertTrue(flags.getUsageString().contains("name for output BAM file"));
     //assertTrue(flags.getUsageString().contains("Output filename for index"));
 
-    final File tmpDir = FileHelper.createTempDirectory();
-    final File f = new File(tmpDir.getPath() + File.separator + "blah.bam");
-    assertTrue(f.mkdir());
-    try {
-      flags.setFlags("-o", f.getPath(), "blah");
-      assertTrue(flags.getParseMessage().contains(".bam is a directory, must be a file"));
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmpDir));
+    try (TestDirectory tmpDir = new TestDirectory("sam2bam")) {
+      final File f = new File(tmpDir.getPath(), "blahdir.bam");
+      assertTrue(f.mkdir());
+      final File f2 = File.createTempFile("blahfile", "bam", tmpDir);
+      flags.setFlags("-o", f.getPath(), f2.getPath());
+      assertTrue(flags.getParseMessage(), flags.getParseMessage().contains("blahdir.bam is a directory, must be a file"));
     }
   }
 

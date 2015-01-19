@@ -28,6 +28,7 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogRecord;
 import com.rtg.util.io.LogStream;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.bayes.multisample.AbstractCallerCliTest;
 
@@ -54,8 +55,7 @@ public class SingletonCliTest extends AbstractCallerCliTest {
   public void testCoverageLoading() throws InvalidParamsException, IOException, UnindexableDataException {
     final LogStream logStream = new LogRecord();
     Diagnostic.setLogStream(logStream);
-    final File dir = FileUtils.createTempDir("coverage", "varianceCli");
-    try {
+    try (final TestDirectory dir = new TestDirectory()) {
       final File ref = new File(dir, "ref");
       ReaderTestUtils.getReaderDNA(REF, ref, null).close();
       final File mated = new File(dir, "mated.sam.gz");
@@ -69,22 +69,20 @@ public class SingletonCliTest extends AbstractCallerCliTest {
 
       final File out = new File(dir, "snpscalls");
       final String[] args = {
-          "-t", ref.getPath(),
-          "-o", out.getPath(),
-          mated.getPath(),
-          unmated.getPath(),
-          "--filter-depth-multiplier", "3.0"
+        "-t", ref.getPath(),
+        "-o", out.getPath(),
+        mated.getPath(),
+        unmated.getPath(),
+        "--filter-depth-multiplier", "3.0"
       };
       final MemoryPrintStream ps = new MemoryPrintStream();
       assertEquals(ps.toString(), 0, getCli().mainInit(args, ps.outputStream(), ps.printStream()));
       final String log = FileUtils.fileToString(new File(out, "snp.log"));
       //System.err.println(log);
       TestUtils.containsAll(log, "max_coverage_filter=avgSeqCov*3.0", //"max_coverage_threshold=avgSeqCov+(sqrt(avgSeqCov)*3.0)",
-          "Sequence simulatedSequence2 filter on maximum per-sample coverage is 7",
-          "Sequence simulatedSequence1 filter on maximum per-sample coverage is 10" //9"
-          );
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
+        "Sequence simulatedSequence2 filter on maximum per-sample coverage is 7",
+        "Sequence simulatedSequence1 filter on maximum per-sample coverage is 10" //9"
+      );
     }
   }
 
@@ -93,8 +91,7 @@ public class SingletonCliTest extends AbstractCallerCliTest {
 
     final LogStream logStream = new LogRecord();
     Diagnostic.setLogStream(logStream);
-    final File dir = FileUtils.createTempDir("snptest", "bug1508");
-    try {
+    try (final TestDirectory dir = new TestDirectory()) {
       final String refFasta = FileHelper.resourceToString("com/rtg/variant/resources/bug1508_ref.fasta");
       final File ref = new File(dir, "ref");
       ReaderTestUtils.getReaderDNA(refFasta, ref, null).close();
@@ -115,8 +112,6 @@ public class SingletonCliTest extends AbstractCallerCliTest {
       TestUtils.containsAll(log, "16 records processed",
           "Finished successfully"
           );
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 

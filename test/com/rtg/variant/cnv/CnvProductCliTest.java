@@ -20,8 +20,7 @@ import com.rtg.launcher.AbstractCliTest;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.IntegerOrPercentage;
 import com.rtg.util.TestUtils;
-import com.rtg.util.io.FileUtils;
-import com.rtg.util.test.FileHelper;
+import com.rtg.util.io.TestDirectory;
 
 /**
  * Test class
@@ -48,31 +47,8 @@ public class CnvProductCliTest extends AbstractCliTest {
     assertTrue(res.contains("You must provide a value for"));
   }
 
-  public void test2() throws IOException {
-    final File dir = FileUtils.createTempDir("cnvcli", "test");
-    try {
-      final String[] args = {
-          "-i", new File(dir, "base").getPath(),
-          "-i", new File(dir, "base2").getPath(),
-          "-i", new File(dir, "base3").getPath(),
-          "-j", new File(dir, "target").getPath(),
-          "-j", new File(dir, "target2").getPath(),
-          "-j", new File(dir, "target3").getPath(),
-          "-o", new File(dir, "output").getPath(),
-          "-t", prepareTemplate(dir).getPath(),
-          "-b", "10",
-          "-c", "1",
-          "-m", "1"
-      };
-      assertEquals("", checkHandleFlagsOut(args));
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
-    }
-  }
-
   public void test3() throws IOException {
-    final File dir = FileUtils.createTempDir("cnvcli2", "test");
-    try {
+    try (final TestDirectory dir = new TestDirectory("cnvcli")) {
       final File outputdir = new File(dir, "output");
       assertFalse(outputdir.exists());
       final String[] args = {
@@ -84,14 +60,11 @@ public class CnvProductCliTest extends AbstractCliTest {
       };
       final String x = checkHandleFlagsErr(args);
       assertTrue(x, x.contains("The bucket-size flag should be positive."));
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 
   public void testMakeParams() throws Exception {
-    final File dir = FileUtils.createTempDir("cnvcli3", "test");
-    try {
+    try (final TestDirectory dir = new TestDirectory("cnvcli")) {
       final File[] baseExp = {
           new File(dir, "base"),
           new File(dir, "base2"),
@@ -135,9 +108,6 @@ public class CnvProductCliTest extends AbstractCliTest {
       assertTrue(params.mappedTarget().containsAll(Arrays.asList(targetExp)));
       assertEquals(3, params.mappedBase().size());
       assertEquals(3, params.mappedTarget().size());
-
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 
@@ -145,8 +115,7 @@ public class CnvProductCliTest extends AbstractCliTest {
     assertEquals("rtg", mCli.applicationName());
     assertEquals("cnv", mCli.moduleName());
 
-    final File dir = FileUtils.createTempDir("cnvcli3", "test");
-    try {
+    try (final TestDirectory dir = new TestDirectory("cnvcli")) {
       assertTrue(new File(dir, "base").createNewFile());
       assertTrue(new File(dir, "target").createNewFile());
       final String[] args = {
@@ -160,8 +129,6 @@ public class CnvProductCliTest extends AbstractCliTest {
       final CnvProductCli cli = (CnvProductCli) mCli;
       assertTrue(cli.task(cli.makeParams(), TestUtils.getNullOutputStream()) instanceof CnvProductTask);
       assertEquals(new File(dir, "output"), cli.outputDirectory());
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 

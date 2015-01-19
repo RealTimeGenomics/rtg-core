@@ -23,6 +23,7 @@ import com.rtg.launcher.AbstractCliTest;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 /**
@@ -53,31 +54,23 @@ public class SvToolCliTest extends AbstractCliTest {
   private static final String[] EXP_P3 = {"The specified file, ", ", is not an SDF"};
 
   public void testErrorParams() throws IOException, InvalidParamsException {
-    final File tempDir = FileUtils.createTempDir("test", "out");
-    try {
+    try (final TestDirectory tempDir = new TestDirectory()) {
       final File out = new File(tempDir, "out");
-      checkParamsError(new String[] {"-o", out.getPath(), "-t", "blah", "blah.alignments"}, EXP_P1);
+      checkParamsError(new String[]{"-o", out.getPath(), "-t", "blah", "blah.alignments"}, EXP_P1);
       FileHelper.deleteAll(out);
-      final File tmp = File.createTempFile("test", "tmp");
-      try {
-        checkParamsError(new String[] {"-o", out.getPath(), "-t", tmp.getPath(), "blah.alignments"}, EXP_P3);
-        final File gen = FileUtils.createTempDir("test", "genome");
-        try {
-          checkHandleFlagsOut("-o", out.getPath(), "-t", gen.getPath(), "blah.alignments", "-r", "rgfile.txt");
+      final File tmp = File.createTempFile("test", "tmp", tempDir);
+      final File aln = new File(tempDir, "blah.alignments");
+      checkParamsError(new String[]{"-o", out.getPath(), "-t", tmp.getPath(), aln.getPath()}, EXP_P3);
+      final File gen = FileUtils.createTempDir("test", "genome", tempDir);
+      assertTrue(aln.createNewFile());
+      final File rg = new File(tempDir, "rgfile.txt");
+      assertTrue(rg.createNewFile());
+      checkHandleFlagsOut("-o", out.getPath(), "-t", gen.getPath(), aln.getPath(), "-r", rg.getPath());
 
-          assertTrue(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", "rgfile.txt", "blah.alignments", "-b", "0").contains("Expected a positive integer for parameter \"Xbin-size\""));
-          assertTrue(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", "rgfile.txt", "blah.alignments", "-s", "0").contains("Expected a positive integer for parameter \"step\""));
-          assertTrue(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", "rgfile.txt", "blah.alignments", "-f", "0").contains("Expected a positive integer for parameter \"fine-step\""));
-          assertTrue(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", "rgfile.txt", "blah.alignments", "-s", "1").contains("Parameter \"fine-step\" should be smaller than or equal to parameter \"step\""));
-
-        } finally {
-          assertTrue(FileHelper.deleteAll(gen));
-        }
-      } finally {
-        assertTrue(FileHelper.deleteAll(tmp));
-      }
-    } finally {
-      assertTrue(FileHelper.deleteAll(tempDir));
+      assertTrue(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", rg.getPath(), aln.getPath(), "-b", "0").contains("Expected a positive integer for parameter \"Xbin-size\""));
+      assertTrue(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", rg.getPath(), aln.getPath(), "-s", "0").contains("Expected a positive integer for parameter \"step\""));
+      assertTrue(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", rg.getPath(), aln.getPath(), "-f", "0").contains("Expected a positive integer for parameter \"fine-step\""));
+      assertTrue(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", rg.getPath(), aln.getPath(), "-s", "1").contains("Parameter \"fine-step\" should be smaller than or equal to parameter \"step\""));
     }
   }
 

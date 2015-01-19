@@ -15,7 +15,6 @@ package com.rtg.launcher;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -36,8 +35,8 @@ import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
+import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.LongRange;
-import com.rtg.util.io.FileUtils;
 import com.rtg.util.machine.MachineOrientation;
 
 /**
@@ -776,7 +775,10 @@ public final class CommonFlags {
   public static boolean checkFileList(CFlags flags, String fileListFlag, String singleInputFlag, int maxFiles, boolean ignoreCalibrationFiles) {
     final Collection<File> files;
     try {
-      files = getFiles(flags, fileListFlag, singleInputFlag);
+      files = new CommandLineFiles(fileListFlag, singleInputFlag, CommandLineFiles.EXISTS).getFileList(flags);
+    } catch (final NoTalkbackSlimException e) {
+      flags.setParseMessage(e.getMessage());
+      return false;
     } catch (final IOException e) {
       flags.setParseMessage("An error occurred reading " + flags.getValue(fileListFlag));
       return false;
@@ -827,25 +829,6 @@ public final class CommonFlags {
       files.addConstraint(CommandLineFiles.NOT_DIRECTORY); // REGULAR_FILE breaks bash-fu
     }
     return files.getFileList(flags);
-  }
-
-  private static List<File> getFiles(CFlags flags, String fileListFlag, String singleInputFlag) throws IOException {
-    final List<File> files;
-    if (fileListFlag != null && flags.isSet(fileListFlag)) {
-      files = FileUtils.readFileList((File) flags.getValue(fileListFlag));
-    } else {
-      files = new ArrayList<>();
-    }
-    final Collection<Object> fValues;
-    if (singleInputFlag == null) {
-      fValues = flags.getAnonymousValues(0);
-    } else {
-      fValues = flags.getValues(singleInputFlag);
-    }
-    for (final Object f : fValues) {
-      files.add((File) f);
-    }
-    return files;
   }
 
   /**

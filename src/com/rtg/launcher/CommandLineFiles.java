@@ -35,8 +35,6 @@ import com.rtg.util.io.FileUtils;
  * For example if the files should exist add the <code>EXISTS</code> constraint.
  * The first MAX_ERRORS files which don't
  * Not thread safe.
- *         Date: 11/10/11
- *         Time: 3:53 PM
  */
 public class CommandLineFiles {
 
@@ -286,12 +284,16 @@ public class CommandLineFiles {
       if (!validate(f)) {
         mErrorCount++;
       }
+      if (mErrorCount > MAX_ERRORS) {
+        throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "There were more than " + MAX_ERRORS + " invalid input file paths");
+      }
     }
     if (mErrorCount > 0) {
       throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "There were " + mErrorCount + " invalid input file paths");
     }
     return files;
   }
+
   private List<File> getFiles(CFlags flags) throws IOException {
     final List<File> files;
     if (mListFileFlag != null && flags.isSet(mListFileFlag)) {

@@ -220,10 +220,8 @@ public abstract class AbstractCallerCliTest extends AbstractCliTest {
         final int res = getCli().mainInit(args, new ByteArrayOutputStream(), err);
         assertEquals(1, res);
         err.close();
-        final String ex = "Error: File not found: \"output" + StringUtils.FS + "sam.gz\"" + LS
-            + "Error: There were 1 invalid input file paths";
-        // assertEquals(ex, flags.getInvalidFlagMsg());
-        assertEquals(ex + LS, ba.toString());
+        TestUtils.containsAll(ba.toString(), "Error: File not found: \"output" + StringUtils.FS + "sam.gz\"",
+          "Error: There were 1 invalid input file paths");
       } finally {
         assertTrue(FileHelper.deleteAll(outFile));
       }

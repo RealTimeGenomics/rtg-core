@@ -275,7 +275,7 @@ public class CommonFlagsTest extends TestCase {
       final String listFlag = "file-list";
       final File tmp = FileHelper.createTempDirectory();
       try {
-        final File[] files = new File[10];
+        final File[] files = new File[5];
         final File listfile = new File(tmp, "file-list");
         try (FileWriter fw = new FileWriter(listfile)) {
           fw.append("# some kind of header to be ignored").append(StringUtils.LS).append("   ").append(StringUtils.LS); // Test comment skipping
@@ -305,7 +305,7 @@ public class CommonFlagsTest extends TestCase {
           CommonFlags.getFileList(flags, listFlag, null, false);
           fail();
         } catch (final NoTalkbackSlimException e) {
-          assertTrue(e.getMessage().contains("There were 10 invalid input file paths"));
+          assertTrue(e.getMessage(), e.getMessage().contains("There were 5 invalid input file paths"));
         }
         for (int i = 0; i < files.length; i++) {
           assertEquals(i < 5, baos.toString().contains("File not found: \"" + files[i].getPath() + "\""));
@@ -321,7 +321,7 @@ public class CommonFlagsTest extends TestCase {
           CommonFlags.getFileList(flags, listFlag, null, true);
           fail();
         } catch (final NoTalkbackSlimException e) {
-          assertTrue(e.getMessage().contains("There were 10 invalid input file paths"));
+          assertTrue(e.getMessage(), e.getMessage().contains("There were 5 invalid input file paths"));
         }
 
         for (int i = 0; i < files.length; i++) {
@@ -339,7 +339,7 @@ public class CommonFlagsTest extends TestCase {
                   System.err.println(baos.toString());
           fail();
         } catch (final NoTalkbackSlimException e) {
-          assertTrue(e.getMessage().contains("There were 10 invalid input file paths"));
+          assertTrue(e.getMessage(), e.getMessage().contains("There were 5 invalid input file paths"));
         }
         for (int i = 0; i < files.length; i++) {
           assertEquals(i < 5, baos.toString().contains(files[i].getPath() + "\" is not a file"));
@@ -350,7 +350,7 @@ public class CommonFlagsTest extends TestCase {
           CommonFlags.getFileList(flags2, listFlag, null, false);
           fail();
         } catch (final NoTalkbackSlimException e) {
-          assertTrue(e.getMessage(), e.getMessage().contains("There were 10 invalid input file paths"));
+          assertTrue(e.getMessage(), e.getMessage().contains("There were 5 invalid input file paths"));
         }
         for (int i = 0; i < files.length; i++) {
           assertEquals(i < 5, baos.toString().contains(files[i].getPath() + "\" is not a file"));
@@ -373,27 +373,35 @@ public class CommonFlagsTest extends TestCase {
     }
   }
 
-  public void testCheckFile() {
-    final CFlags flags = new CFlags("blah", TestUtils.getNullPrintStream(), TestUtils.getNullPrintStream());
-    final Flag inFlag = flags.registerRequired(File.class, "FILE", "");
-    inFlag.setMinCount(0);
-    inFlag.setMaxCount(Integer.MAX_VALUE);
-    flags.registerOptional("input", File.class, "FILE", "i");
+  public void testCheckFile() throws IOException {
+    try (TestDirectory dir = new TestDirectory("commonflags")) {
+      final CFlags flags = new CFlags("blah", TestUtils.getNullPrintStream(), TestUtils.getNullPrintStream());
+      final Flag inFlag = flags.registerRequired(File.class, "FILE", "");
+      inFlag.setMinCount(0);
+      inFlag.setMaxCount(Integer.MAX_VALUE);
+      flags.registerOptional("input", File.class, "FILE", "i");
 
-    final String[] files = {"bah", "buh"};
-    flags.setFlags(files);
+      final String[] files = new String[2];
+      for (int i = 0; i < 2; i++) {
+        final File f = File.createTempFile("testcheck", "tmp", dir);
+        files[i] = f.getPath();
+      }
+      flags.setFlags(files);
 
-    assertFalse(CommonFlags.checkFileList(flags, "blah", null, 1));
-    assertEquals("More than 1 input files specified.", flags.getParseMessage());
+      assertFalse(CommonFlags.checkFileList(flags, "blah", null, 1));
+      assertEquals("More than 1 input files specified.", flags.getParseMessage());
 
-    flags.setFlags();
+      flags.setFlags();
 
-    CommonFlags.checkFileList(flags, "blah", "input", 5);
-    assertEquals("No input files specified in --blah or --input.", flags.getParseMessage());
+      CommonFlags.checkFileList(flags, "blah", "input", 5);
+      assertEquals("No input files specified in --blah or --input.", flags.getParseMessage());
 
-    flags.setFlags("abcd", "bcde" + Recalibrate.EXTENSION);
-    assertFalse(CommonFlags.checkFileList(flags, "blah", null, 1, false));
-    assertTrue(CommonFlags.checkFileList(flags, "blah", null, 1, true));
+      final File f1 = File.createTempFile("testcheck", "tmp", dir);
+      final File f2 = File.createTempFile("testcheck", Recalibrate.EXTENSION, dir);
+      flags.setFlags(f1.getPath(), f2.getPath());
+      assertFalse(CommonFlags.checkFileList(flags, "blah", null, 1, false));
+      assertTrue(CommonFlags.checkFileList(flags, "blah", null, 1, true));
+    }
   }
 
   public void testReaderRestriction() {
