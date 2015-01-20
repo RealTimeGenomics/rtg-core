@@ -23,6 +23,7 @@ import com.rtg.metagenomics.CompositionMetaPipelineCli;
 import com.rtg.metagenomics.FunctionalMetaPipelineCli;
 import com.rtg.metagenomics.MetagenomicsWrapperCli;
 import com.rtg.metagenomics.SpeciesCli;
+import com.rtg.metagenomics.metasnp.MetaSnpCli;
 import com.rtg.ngs.CgMapCli;
 import com.rtg.ngs.MapCli;
 import com.rtg.ngs.MapFCli;
@@ -184,6 +185,9 @@ public enum CoreCommand {
 
   /** Metagenomics species analysis */
   SPECIES(new Command(new SpeciesCli(), CommandCategory.METAGENOMICS, ReleaseLevel.GA)),
+
+  /** Metagenomics analysis of multiple heterogeneous samples */
+  METASNP(new Command(new MetaSnpCli(), CommandCategory.METAGENOMICS, ReleaseLevel.ALPHA)),
 
   /** groups similar species, also produces similarity matrices */
   SIMILARITY(new Command(new SimilarityCli(), CommandCategory.METAGENOMICS, ReleaseLevel.GA)),
@@ -385,7 +389,7 @@ public enum CoreCommand {
     CNV,
 
     // Metagenomics
-    SPECIES, SIMILARITY,
+    SPECIES, SIMILARITY, METASNP,
 
     //Pipelines
     COMPOSITIONMETA,

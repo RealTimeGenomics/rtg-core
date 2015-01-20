@@ -27,8 +27,6 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
-/**
- */
 public class MetaSnpCliTest extends AbstractCliTest {
 
   private static final Pattern COMPILE = Pattern.compile(" ");

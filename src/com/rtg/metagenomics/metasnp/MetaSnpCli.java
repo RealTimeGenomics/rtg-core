@@ -24,6 +24,7 @@ import java.util.Locale;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
 import com.rtg.mode.DNA;
+import com.rtg.mode.DnaUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.cli.CFlags;
@@ -42,6 +43,7 @@ import com.rtg.vcf.header.VcfHeader;
 import com.rtg.vcf.header.VcfNumber;
 
 /**
+ * Main entry point for <code>metasnp</code>.
  */
 public class MetaSnpCli extends LoggedCli {
 
@@ -54,7 +56,7 @@ public class MetaSnpCli extends LoggedCli {
   /** Flag name for high coverage filter */
   static final String MAX_TOTAL_COVERAGE = "max-total-coverage";
   private static final String BETA = "Xbeta";
-  private static final String MODULE_NAME = "metasnpestimate";
+  private static final String MODULE_NAME = "metasnp";
   private static final String STRAINS = "strains";
   private static final String VISUALISATION = "visualisation";
   private static final String VISUALISATION_PREFIX = "visual";
@@ -82,6 +84,7 @@ public class MetaSnpCli extends LoggedCli {
     betaType.setParameterRange(betaFlagValues());
     mFlags.setValidator(new Validator());
   }
+
   static String[] betaFlagValues() {
     final EmIterate.BetaType[] values = EmIterate.BetaType.values();
     final String[] str = new String[values.length];
@@ -89,8 +92,6 @@ public class MetaSnpCli extends LoggedCli {
       str[i] = values[i].toString().toLowerCase(Locale.getDefault());
     }
     return str;
-
-
   }
 
   @Override
@@ -240,6 +241,7 @@ public class MetaSnpCli extends LoggedCli {
       }
     }
   }
+
   static void writeVcf(List<Byte> refBytes, List<AlleleStatReader.Line> lines, EmIterate.EmResult res, OutputStream out, PossibilityArithmetic arith) throws IOException {
     final VcfHeader header = new VcfHeader();
     header.addCommonHeader();
@@ -279,8 +281,9 @@ public class MetaSnpCli extends LoggedCli {
       }
     }
   }
+
   static String base(int b) {
-    return DNA.values()[b + 1].toString();
+    return String.valueOf(DnaUtils.getBase(b + 1));
   }
 
   @Override
