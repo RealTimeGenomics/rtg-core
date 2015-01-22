@@ -36,5 +36,9 @@ See [doc/ReleaseNotes.txt](doc/ReleaseNotes.txt) for release history details.
 
 ## Support
 
-While some email support will be available which we will do our best to fulfill, if you have support or service requirements, talk to us about our support offerings which include guaranteed response times, training, project advice, priority bug fixes and feature requests.
+Some email support will be available via support@realtimegenomics.com which we will do our best to fulfill. If you have specific support or service requirements, talk to us about our support offerings which include guaranteed response times, training, project advice, priority bug fixes and feature requests.
+
+An [rtg-users](https://groups.google.com/a/realtimegenomics.com/forum/#!forum/rtg-users) discussion group is now available for general questions, tips, and other discusssions.
+
+To be informed of new software releases, subscribe to the low-traffic [rtg-announce](https://groups.google.com/a/realtimegenomics.com/forum/#!forum/rtg-announce) group.
 

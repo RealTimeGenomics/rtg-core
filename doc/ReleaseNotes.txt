@@ -4,6 +4,42 @@ Below are the release notes for RTG Core, upon which RTG.VERSION
 is built.  Not all features described below may be included in this
 product.
 
+RTG Core 3.4.1 (2015-01-22)
+---------------------------
+
+This is primarily a bugfix release:
+
+* snp/family/population: Fixed a crash that could occur when calling
+  across blocks of Ns when the only hypothesis presented by the reads
+  was a deletion of sufficient length.
+
+* snp/family/population: When calling across blocks of Ns, under some
+  circumstances no variant call would be made.
+
+* snp/family/population: Extremely large GQ and DNP FORMAT values are
+  now capped at the maximum permitted by BCF (2147483647). Previously,
+  values above this could occasionally trigger a crash.
+
+* wrapper: Changes to streamline the first run configuration and to
+  bring Unix and Windows wrappers closer to equivalence, including
+  clearer instructions of how to customize initial
+  configuration. Crash reporting is now opt-out rather than opt-in.
+
+* unix wrapper: When the operating system fails to allocate memory to
+  the JVM (typically due to other memory-intensive processes running
+  on the same machine) this is now presented as a user message, rather
+  than triggering a crash report talkback.
+
+* many: input list files are now validated during loading rather than
+  after loading the list. This gives much better error handling in the
+  case where a user accidentally gives the name of an alignment file
+  as an input list file.
+
+* Other improvements and cleanups to documentation.
+
+
+Previous releases:
+
 RTG Core 3.4 (2014-12-20)
 -------------------------
 
@@ -241,9 +277,6 @@ features, see the RTG Operations Manual.
 
 * aview: The flag --dont-display-dots has been renamed to
   --no-dots for consistency.
-
-
-Previous releases:
 
 RTG Core 3.3.2 (2014-04-09)
 ---------------------------
