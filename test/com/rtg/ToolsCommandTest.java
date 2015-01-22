@@ -24,7 +24,7 @@ public class ToolsCommandTest extends TestCase {
   public void testEnum() {
     TestUtils.testEnum(ToolsCommand.class, "[FORMAT, SDF2FASTA, SDF2FASTQ, BGZIP, INDEX, EXTRACT, SDFSTATS, "
             + "SDFSUBSET, SDFSUBSEQ, MENDELIAN, VCFSTATS, VCFMERGE, VCFSUBSET, VCFFILTER, VCFANNOTATE, "
-            + "VCFEVAL, ROCPLOT, VERSION, LICENSE, HELP]");
+            + "VCFEVAL, PEDFILTER, PEDSTATS, ROCPLOT, VERSION, LICENSE, HELP]");
     final HashSet<Command> displayCommands = new HashSet<>();
     Collections.addAll(displayCommands, ToolsCommand.INFO.commands());
     for (ToolsCommand mod : ToolsCommand.values()) {

@@ -15,13 +15,15 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 import com.rtg.graph.RocPlotCli;
-import com.rtg.tabix.BgZip;
 import com.rtg.reader.FormatCli;
 import com.rtg.reader.Sdf2Fasta;
 import com.rtg.reader.Sdf2Fastq;
 import com.rtg.reader.SdfStatistics;
 import com.rtg.reader.SdfSubseq;
 import com.rtg.reader.SdfSubset;
+import com.rtg.relation.PedFilterCli;
+import com.rtg.relation.PedStatsCli;
+import com.rtg.tabix.BgZip;
 import com.rtg.tabix.ExtractCli;
 import com.rtg.tabix.IndexerCli;
 import com.rtg.util.License;
@@ -86,6 +88,12 @@ public enum ToolsCommand {
   /** Evaluates variant calling accuracy on a given baseline variant set */
   VCFEVAL(new Command(new VcfEvalCli(), CommandCategory.UTILITY, ReleaseLevel.GA, License.LICENSE_KEY_PREFIX + "snpsimeval")),
 
+  /** PED filter class */
+  PEDFILTER(new Command(new PedFilterCli(), CommandCategory.UTILITY, ReleaseLevel.BETA)),
+
+  /** PED stats class */
+  PEDSTATS(new Command(new PedStatsCli(), CommandCategory.UTILITY, ReleaseLevel.BETA)),
+
   /** Roc plot tool */
   ROCPLOT(new Command(new RocPlotCli(), CommandCategory.UTILITY, ReleaseLevel.GA)),
 
@@ -123,6 +131,7 @@ public enum ToolsCommand {
     SDFSTATS, SDFSUBSET, SDFSUBSEQ,            // SDF related
     MENDELIAN, VCFSTATS, VCFMERGE,                       // VCF related
     VCFFILTER, VCFANNOTATE, VCFSUBSET, VCFEVAL,
+    PEDFILTER, PEDSTATS,
     ROCPLOT,
 
     VERSION, LICENSE, HELP
