@@ -9,12 +9,22 @@ described in the accompanying RTG Operations Manual.
 Quick Start Instructions
 ========================
 
-RTG software is delivered as a Java application accessed via a wrapper
-script that allows a user to customize initial memory allocation and
-other configuration options. It is recommended that these wrapper
-scripts be used rather than directly accessing the Java JAR.
+RTG software is delivered as a command-line Java application accessed
+via a wrapper script that allows a user to customize initial memory
+allocation and other configuration options. It is recommended that
+these wrapper scripts be used rather than directly accessing the Java
+JAR.
 
 For individual use, follow these quick start instructions.  
+
+No-JRE:
+
+  The no-JRE distribution does not include a Java Runtime Environment
+  and instead uses the system-installed Java.  Ensure that at the
+  command line you can enter 'java -version' and that this command
+  reports a java version of 1.7 or higher before proceeding with the
+  steps below. This may require setting your PATH environment variable
+  to include the location of an appropriate version of java.
 
 Linux/MacOS X:
 
@@ -73,6 +83,14 @@ the entire workspace to the remote system (either stand-alone or cluster).
 
 For data center deployment and instructions for editing scripts, 
 please consult the Administration chapter of the RTG Operations Manual.
+
+A discussion group is now available for general questions, tips, and other
+discussions. It may be viewed or joined at:
+https://groups.google.com/a/realtimegenomics.com/forum/#!forum/rtg-users
+
+To be informed of new software releases, subscribe to the low-traffic
+rtg-announce group at:
+https://groups.google.com/a/realtimegenomics.com/forum/#!forum/rtg-announce
 
 Citing RTG
 ==========
