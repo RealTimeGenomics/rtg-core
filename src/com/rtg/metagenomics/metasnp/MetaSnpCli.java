@@ -55,7 +55,7 @@ public class MetaSnpCli extends LoggedCli {
   static final String MAX_FREQ_FLAG = "max-freq";
   /** Flag name for high coverage filter */
   static final String MAX_TOTAL_COVERAGE = "max-total-coverage";
-  private static final String BETA = "Xbeta";
+  private static final String BETA = "beta";
   private static final String MODULE_NAME = "metasnp";
   private static final String STRAINS = "strains";
   private static final String VISUALISATION = "visualisation";
