@@ -21,6 +21,12 @@ import junit.framework.TestCase;
  */
 public class MendelianAlleleProbabilityDiploidDeNovoTest extends TestCase {
 
+  public void testUniHypothesisLookup() {
+    // Non de novo should give no likelihood
+    final Code code = new CodeDiploid(1);
+    assertEquals(Double.NEGATIVE_INFINITY, MendelianAlleleProbabilityDiploidDeNovo.SINGLETON.probabilityLn(code, code.code(0), code.code(0), code.code(0)));
+  }
+
   public void testProbabilityLnLookup() {
     final Code code = new CodeDiploid(4);
 

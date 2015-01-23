@@ -103,7 +103,7 @@ public final class MendelianAlleleProbabilityHDHDeNovo extends MendelianAllelePr
     assert mo0 == 0;
     final int mo1 = uid.addId(code.bc(mother));
     final int ch0 = uid.addId(code.a(child));
-    assert code.rangeSize() > 1;
+    assert code.rangeSize() > 0;
     return LOOKUP[mo1][ch0] - MendelianAlleleProbabilityDiploidDeNovo.cacheLog(code.rangeSize() - 1);
   }
 

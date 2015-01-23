@@ -24,7 +24,7 @@ public final class MendelianAlleleProbabilityDiploidDeNovo extends MendelianAlle
   static final int CACHE_SIZE = 101;
   static final double[] CACHED_LOGS = new double[CACHE_SIZE];
   static {
-    for (int i = 0; i < CACHE_SIZE; i++) {
+    for (int i = 1; i < CACHE_SIZE; i++) {
       CACHED_LOGS[i] = Math.log(i);
     }
   }
@@ -131,6 +131,7 @@ public final class MendelianAlleleProbabilityDiploidDeNovo extends MendelianAlle
 
   @Override
   public double probabilityLn(Code code, int father, int mother, int child) {
+    assert code.rangeSize() > 0;
     final UniqueId uid = new UniqueId(code.rangeSize());
     final int fa0 = uid.addId(code.a(father));
     assert fa0 == 0;
@@ -139,7 +140,6 @@ public final class MendelianAlleleProbabilityDiploidDeNovo extends MendelianAlle
     final int mo1 = uid.addId(code.bc(mother));
     final int ch0 = uid.addId(code.a(child));
     final int ch1 = uid.addId(code.bc(child));
-    assert code.rangeSize() > 1;
     return LOOKUP[fa1][mo0][mo1][ch0][ch1] - MendelianAlleleProbabilityDiploidDeNovo.cacheLog(code.rangeSize() - 1);
   }
 
