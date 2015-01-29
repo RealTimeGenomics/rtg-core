@@ -68,8 +68,8 @@ public class ChrStatsCli extends AbstractCli {
     mFlags.registerOptional('p', PEDIGREE_FLAG, File.class, "file", "genome relationships PED file").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     mFlags.registerOptional(MapFlags.SEX_FLAG, Sex.class, "sex", "sex setting that the individual was mapped as (when not using pedigree)", Sex.EITHER).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     mFlags.registerOptional('s', SAMPLE_FLAG, String.class, "STRING", "the name of the sample to check (required when multiple samples present)").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    mFlags.registerOptional(SEX_Z_THRESHOLD_FLAG, Double.class, "NUM", "the z-score deviation threshold for sex chromosome consistency", ChrStats.DEFAULT_MIN_SEX_DEVIATIONS).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    mFlags.registerOptional(Z_THRESHOLD_FLAG, Double.class, "NUM", "the z-score deviation threshold for chromosome consistency", ChrStats.DEFAULT_MIN_DEVIATIONS).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    mFlags.registerOptional(SEX_Z_THRESHOLD_FLAG, Double.class, "FLOAT", "the z-score deviation threshold for sex chromosome consistency", ChrStats.DEFAULT_MIN_SEX_DEVIATIONS).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    mFlags.registerOptional(Z_THRESHOLD_FLAG, Double.class, "FLOAT", "the z-score deviation threshold for chromosome consistency", ChrStats.DEFAULT_MIN_DEVIATIONS).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
 //    final Flag anon = new AnonymousFlag("files to process", File.class, "file");
 //    anon.setMaxCount(Integer.MAX_VALUE);
 //    anon.setMinCount(1);
