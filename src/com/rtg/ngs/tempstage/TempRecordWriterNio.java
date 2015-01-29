@@ -39,10 +39,10 @@ public class TempRecordWriterNio implements TempRecordWriter {
 
   @Override
   public void writeRecord(BinaryTempFileRecord rec) throws IOException {
+    mBuffer.clear();
     rec.writeNio(mBuffer);
     mBuffer.flip();
     mOutChannel.write(mBuffer);
-    mBuffer.clear();
   }
 
   @Override

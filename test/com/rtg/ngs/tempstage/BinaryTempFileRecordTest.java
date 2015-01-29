@@ -12,6 +12,7 @@
 
 package com.rtg.ngs.tempstage;
 
+import java.io.BufferedOutputStream;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,7 +23,7 @@ import junit.framework.TestCase;
  */
 public class BinaryTempFileRecordTest extends TestCase {
 
-  public void testBasics() throws IOException {
+  private BinaryTempFileRecord record() {
     final BinaryTempFileRecord bar = new BinaryTempFileRecord(false, true, false, false);
     bar.setAlignmentScore(1);
     bar.setCigarString("30=".getBytes());
@@ -32,6 +33,11 @@ public class BinaryTempFileRecordTest extends TestCase {
     bar.setReferenceId(10);
     bar.setSamFlags((byte) 0);
     bar.setStartPosition(1000);
+    return bar;
+  }
+
+  public void testBasics() throws IOException {
+    final BinaryTempFileRecord bar = record();
     check(bar);
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     TempRecordWriterNio writer = new TempRecordWriterNio(baos);
@@ -66,6 +72,35 @@ public class BinaryTempFileRecordTest extends TestCase {
     assertFalse(bar.isReadPaired());
     assertFalse(bar.isReverseStrand());
     assertFalse(bar.isSentinelRecord());
+  }
+
+  public void testIOExceptionBug1592() throws IOException {
+    final BinaryTempFileRecord bar = record();
+    check(bar);
+    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    final BufferedOutputStream bos = new BufferedOutputStream(baos) {
+      @Override
+      public synchronized void write(int b) throws IOException {
+        throw new IOException("simulated out of disk space");
+      }
+      @Override
+      public synchronized void write(byte[] b, int off, int len) throws IOException {
+        throw new IOException("simulated out of disk space");
+      }
+    };
+    TempRecordWriterNio writer = new TempRecordWriterNio(bos);
+    try {
+      writer.writeRecord(bar);
+      fail();
+    } catch (final IOException e) {
+      assertEquals("simulated out of disk space", e.getMessage());
+    } finally {
+      try {
+        writer.close();
+      } catch (final IOException e) {
+        assertEquals("simulated out of disk space", e.getMessage());
+      }
+    }
   }
 
 }
