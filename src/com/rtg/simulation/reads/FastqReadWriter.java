@@ -114,15 +114,10 @@ public class FastqReadWriter implements ReadWriter {
   }
 
   @Override
+  @SuppressWarnings("try")
   public void close() throws IOException {
-    try {
-      if (mAppendLeft != null) {
-        mAppendLeft.close();
-      }
-    } finally {
-      if (mAppendRight != null) {
-        mAppendRight.close();
-      }
+    try (FileWriter ignored = mAppendLeft; FileWriter ignored2 = mAppendRight) {
+      // we want the sexy closing side effects
     }
   }
 

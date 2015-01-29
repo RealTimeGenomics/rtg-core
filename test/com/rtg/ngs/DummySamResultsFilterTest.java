@@ -19,7 +19,6 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.zip.GZIPOutputStream;
 
-import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.bed.BedUtils;
 import com.rtg.calibrate.CalibratorTest;
 import com.rtg.mode.SequenceType;
@@ -42,6 +41,7 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
@@ -190,8 +190,7 @@ public class DummySamResultsFilterTest extends TestCase {
   }
 
   public void writeTempFile(File out) throws IOException {
-    final TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true, false));
-    try {
+    try (TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true, false))) {
       final BinaryTempFileRecord bar = new BinaryTempFileRecord(true, false, false, false);
 
       bar.setAlignmentScore(3);
@@ -231,8 +230,6 @@ public class DummySamResultsFilterTest extends TestCase {
 
       bar.setSentinelRecord();
       trw.writeRecord(bar);
-    } finally {
-      trw.close();
     }
   }
 
@@ -251,20 +248,17 @@ public class DummySamResultsFilterTest extends TestCase {
       blocker.increment(9, 1); // read 9 is blocked for score=1
       blocker.increment(9, 0);
       blocker.increment(9, 0); // read 9 is just not blocked for score=0
-      final File dir = FileUtils.createTempDir("test", "unmatedSamFilter");
-      OutputStream out = null;
-      try {
+      try (final TestDirectory dir = new TestDirectory("unmatedSamFilter")) {
         final File in1 = File.createTempFile("sam", "_1.gz", dir);
         final File outFile = File.createTempFile("out", ".gz", dir);
-        out = new GZIPOutputStream(new FileOutputStream(outFile));
-
-        writeTempFile(in1);
-
         final StatusListener listener = new StatusListener(numReads);
-        final DummySamResultsFilter filter = new DummySamResultsFilter(blocker, listener);
-        assertEquals("Dummy", filter.getName());
-        filter.filterConcat(makeHeader(), out, null, null, mTemplateReader, false, in1);
-        out.close();
+        try (OutputStream out = new GZIPOutputStream(new FileOutputStream(outFile))) {
+
+          writeTempFile(in1);
+          final DummySamResultsFilter filter = new DummySamResultsFilter(blocker, listener);
+          assertEquals("Dummy", filter.getName());
+          filter.filterConcat(makeHeader(), out, null, null, mTemplateReader, false, in1);
+        }
         final String contents = FileHelper.gzFileToString(outFile);
 //        System.out.println("contents=" + contents);
         assertTrue(TestUtils.sameLines(SAM_UNMATED_EXPECTED_HEADER + SAM_UNMATED_EXPECTED, contents, false));
@@ -283,11 +277,6 @@ public class DummySamResultsFilterTest extends TestCase {
           }
           assertEquals("readId=" + read, expect, listener.getStatus(read));
         }
-      } finally {
-        if (out != null) {
-          out.close();
-        }
-        assertTrue(FileHelper.deleteAll(dir));
       }
     } finally {
       Diagnostic.setLogStream();
@@ -321,22 +310,18 @@ public class DummySamResultsFilterTest extends TestCase {
     blocker.increment(9, 1); // read 9 is blocked for score=1
     blocker.increment(9, 0);
     blocker.increment(9, 0); // read 9 is just not blocked for score=0
-    final File dir = FileUtils.createTempDir("test", "unmatedSamFilter");
-    OutputStream out = null;
-    try {
+    try (final TestDirectory dir = new TestDirectory("unmatedSamFilter")) {
       final File in1 = File.createTempFile("sam", "_1.gz", dir);
-
-      writeTempFile(in1);
-
       final File outFile = File.createTempFile("out", ".gz", dir);
-      out = new GZIPOutputStream(new FileOutputStream(outFile));
-
+      writeTempFile(in1);
       final StatusListener listener = new StatusListener(numReads);
-      final DummySamResultsFilter filter = new DummySamResultsFilter(blocker, listener);
-      filter.setWriteHeader(false);
-      assertEquals("Dummy", filter.getName());
-      filter.filterConcat(makeHeader(), out, null, null, mTemplateReader, false, in1);
-      out.close();
+      try (OutputStream out = new GZIPOutputStream(new FileOutputStream(outFile))) {
+
+        final DummySamResultsFilter filter = new DummySamResultsFilter(blocker, listener);
+        filter.setWriteHeader(false);
+        assertEquals("Dummy", filter.getName());
+        filter.filterConcat(makeHeader(), out, null, null, mTemplateReader, false, in1);
+      }
       final String contents = FileHelper.gzFileToString(outFile);
       //System.out.println("contents=" + contents);
       assertTrue(TestUtils.sameLines(SAM_UNMATED_EXPECTED, contents, false));
@@ -346,16 +331,15 @@ public class DummySamResultsFilterTest extends TestCase {
         final int expect;
         switch (read) {
           case 1:
-          case 9: expect = ReadStatusTracker.UNMATED_FIRST; break;
-          default: expect = 0; break;
+          case 9:
+            expect = ReadStatusTracker.UNMATED_FIRST;
+            break;
+          default:
+            expect = 0;
+            break;
         }
         assertEquals("readId=" + read, expect, listener.getStatus(read));
       }
-    } finally {
-      if (out != null) {
-        out.close();
-      }
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 
@@ -364,39 +348,28 @@ public class DummySamResultsFilterTest extends TestCase {
     Diagnostic.setLogStream();
     final int numReads = 100;
     final MapQScoringReadBlocker blocker = new MapQScoringReadBlocker(numReads, 2);
-    OutputStream out = null;
-    OutputStream calOut = null;
     try (final TestDirectory dir = new TestDirectory()) {
       final File in1 = File.createTempFile("sam", "_1.gz", dir);
       final String templateString = ">chr20\nAGCTAGCTAGCTAGCTAGCT\n";
       //                                     12345678901234567890
       final File temp = new File(dir, "input");
-      try (SequencesReader template = ReaderTestUtils.getReaderDNA(templateString, temp, new SdfId(0))) {
-        writeTempFile(in1);
-        final File outFile = File.createTempFile("out", ".gz", dir);
-        out = new GZIPOutputStream(new FileOutputStream(outFile));
-        final File calFile = new File(outFile.getPath() + ".calibration");
-        calOut = new FileOutputStream(calFile);
+      final File outFile = File.createTempFile("out", ".gz", dir);
+      writeTempFile(in1);
+      final File calFile = new File(outFile.getPath() + ".calibration");
+      try (SequencesReader template = ReaderTestUtils.getReaderDNA(templateString, temp, new SdfId(0));
+           OutputStream out = new GZIPOutputStream(new FileOutputStream(outFile));
+           OutputStream calOut = new FileOutputStream(calFile)) {
 
         final StatusListener listener = new StatusListener(numReads);
         final DummySamResultsFilter filter = new DummySamResultsFilter(blocker, listener);
         assertEquals("Dummy", filter.getName());
         filter.filterConcat(makeHeader(), out, calOut, null, template, false, in1);
-        out.close();
-        calOut.close();
-        final String expected = "#CL\tnull" + StringUtils.LS
-          + "@nh:G1\t0\t5" + StringUtils.LS
-          + "@covar\treadgroup\tbasequality\tsequence\tequal\tdiff\tins\tdel" + StringUtils.LS
-          + "G1\t27\tchr20\t20\t0\t0\t0" + StringUtils.LS;
-        assertEquals(expected, CalibratorTest.stripVersion(FileUtils.fileToString(calFile)));
       }
-    } finally {
-      if (out != null) {
-        out.close();
-      }
-      if (calOut != null) {
-        calOut.close();
-      }
+      final String expected = "#CL\tnull" + StringUtils.LS
+        + "@nh:G1\t0\t5" + StringUtils.LS
+        + "@covar\treadgroup\tbasequality\tsequence\tequal\tdiff\tins\tdel" + StringUtils.LS
+        + "G1\t27\tchr20\t20\t0\t0\t0" + StringUtils.LS;
+      assertEquals(expected, CalibratorTest.stripVersion(FileUtils.fileToString(calFile)));
     }
   }
 
@@ -405,42 +378,31 @@ public class DummySamResultsFilterTest extends TestCase {
     Diagnostic.setLogStream();
     final int numReads = 100;
     final MapQScoringReadBlocker blocker = new MapQScoringReadBlocker(numReads, 2);
-    OutputStream out = null;
-    OutputStream calOut = null;
     try (final TestDirectory dir = new TestDirectory()) {
       final ReferenceRegions referenceRegions = BedUtils.regions(FileUtils.stringToFile("chr20\t2\t10", new File(dir, "regions.bed")));
       final File in1 = File.createTempFile("sam", "_1.gz", dir);
       final String templateString = ">chr20\nAGCTAGCTAGCTAGCTAGCT\n>chr21\nAAAAAACCCCTTTTTGGGGG\n";
       //                                     12345678901234567890          12345678901234567890
       final File temp = new File(dir, "input");
-      try (SequencesReader template = ReaderTestUtils.getReaderDNA(templateString, temp, new SdfId(0))) {
-        writeTempFile(in1);
-        final File outFile = File.createTempFile("out", ".gz", dir);
-        out = new GZIPOutputStream(new FileOutputStream(outFile));
-        final File calFile = new File(outFile.getPath() + ".calibration");
-        calOut = new FileOutputStream(calFile);
+      final File outFile = File.createTempFile("out", ".gz", dir);
+      writeTempFile(in1);
+      final File calFile = new File(outFile.getPath() + ".calibration");
+      try (SequencesReader template = ReaderTestUtils.getReaderDNA(templateString, temp, new SdfId(0));
+        OutputStream out = new GZIPOutputStream(new FileOutputStream(outFile));
+        OutputStream calOut = new FileOutputStream(calFile)) {
 
         final StatusListener listener = new StatusListener(numReads);
         final DummySamResultsFilter filter = new DummySamResultsFilter(blocker, listener);
         assertEquals("Dummy", filter.getName());
         filter.filterConcat(makeHeader(), out, calOut, referenceRegions, template, false, in1);
-        out.close();
-        calOut.close();
-        final String expected = "#CL\tnull" + StringUtils.LS
-          + "@nh:G1\t0\t5" + StringUtils.LS
-          + "@sequence\t8\tchr20" + StringUtils.LS
-          + "@sequence\t0\tchr21" + StringUtils.LS
-          + "@covar\treadgroup\tbasequality\tsequence\tequal\tdiff\tins\tdel" + StringUtils.LS
-          + "G1\t27\tchr20\t16\t0\t0\t0" + StringUtils.LS;
-        assertEquals(expected, CalibratorTest.stripVersion(FileUtils.fileToString(calFile)));
       }
-    } finally {
-      if (out != null) {
-        out.close();
-      }
-      if (calOut != null) {
-        calOut.close();
-      }
+      final String expected = "#CL\tnull" + StringUtils.LS
+        + "@nh:G1\t0\t5" + StringUtils.LS
+        + "@sequence\t8\tchr20" + StringUtils.LS
+        + "@sequence\t0\tchr21" + StringUtils.LS
+        + "@covar\treadgroup\tbasequality\tsequence\tequal\tdiff\tins\tdel" + StringUtils.LS
+        + "G1\t27\tchr20\t16\t0\t0\t0" + StringUtils.LS;
+      assertEquals(expected, CalibratorTest.stripVersion(FileUtils.fileToString(calFile)));
     }
   }
 }

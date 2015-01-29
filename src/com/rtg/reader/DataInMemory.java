@@ -331,8 +331,7 @@ public final class DataInMemory {
           }
           try (FileInputStream fis = new FileInputStream(f)) {
             buf.clear();
-            final FileChannel channel = fis.getChannel();
-            try {
+            try (FileChannel channel = fis.getChannel()) {
               if (mStart > fileStart) {
                 channel.position((mStart - fileStart) * mPointerEntrySize);
               }
@@ -358,8 +357,6 @@ public final class DataInMemory {
               if (j == mPointers[i].length - 1) {
                 mPointers[i][j] = (int) mSeqIndex.dataSize(fn); //I hates teh cast. But this should be fine due to our internal rules about file sizes.
               }
-            } finally {
-              channel.close();
             }
           }
           i++;

@@ -11,11 +11,12 @@
  */
 package com.rtg.ngs.tempstage;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
  */
-public interface TempRecordWriter {
+public interface TempRecordWriter extends Closeable {
 
   /**
    * Write a temp file record to the output stream
@@ -24,9 +25,4 @@ public interface TempRecordWriter {
    */
   void writeRecord(BinaryTempFileRecord rec) throws IOException;
 
-  /**
-   * Close the writer and associated streams
-   * @throws IOException when closing
-   */
-  void close() throws IOException;
 }

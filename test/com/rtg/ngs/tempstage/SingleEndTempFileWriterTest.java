@@ -99,8 +99,7 @@ public class SingleEndTempFileWriterTest extends TestCase {
       final MapQScoringReadBlocker blocker = new MapQScoringReadBlocker((int) params.buildFirstParams().reader().numberSequences(), 10);
 
       try (ByteArrayOutputStream outStream = new ByteArrayOutputStream()) {
-        final SingleEndTempFileWriter w = new SingleEndTempFileWriter(params, new PairedTempFileWriterImplTest.UselessStatusIdListener(), SharedResources.generateSharedResources(params));
-        try {
+        try (SingleEndTempFileWriter w = new SingleEndTempFileWriter(params, new PairedTempFileWriterImplTest.UselessStatusIdListener(), SharedResources.generateSharedResources(params))) {
           w.initialiseAlignments(outStream, blocker);
           w.nextTemplateId(0);
           final boolean result = w.alignmentResult(0, false, 0);
@@ -112,10 +111,8 @@ public class SingleEndTempFileWriterTest extends TestCase {
           //assertEquals(1, record.getHeader().getReadGroups().size());
           //assertEquals("L10", record.getHeader().getReadGroups().get(0).getReadGroupId());
           //assertEquals("NA1234", record.getHeader().getReadGroups().get(0).getSample());
-        } finally {
-          w.close();
+          assertNotNull(w.getBlocker());
         }
-        assertNotNull(w.getBlocker());
       } finally {
         Diagnostic.setLogStream();
         prLog.close();
@@ -197,8 +194,7 @@ public class SingleEndTempFileWriterTest extends TestCase {
     try (ByteArrayOutputStream outStream = new ByteArrayOutputStream()) {
       final MapStatistics stats = new SingleEndMapStatistics(null);
       final MyStatusReadIdListenerImpl listener = new MyStatusReadIdListenerImpl(1, stats);
-      final MySamSingleEndAlignmentWriter w = new MySamSingleEndAlignmentWriter(params, listener, ACTIONS1);
-      try {
+      try (MySamSingleEndAlignmentWriter w = new MySamSingleEndAlignmentWriter(params, listener, ACTIONS1)) {
         final HashingRegion region = new HashingRegion(0, 1, 0, 99, -1, -1);
         w.setClipRegion(region);
         w.initialiseAlignments(outStream, blocker);
@@ -209,10 +205,8 @@ public class SingleEndTempFileWriterTest extends TestCase {
         assertTrue(result);
         w.alignmentResultUnfiltered(0, false, 0);
         listener.calculateStatistics(false, false);
-      } finally {
-        w.close();
+        assertNotNull(w.getBlocker());
       }
-      assertNotNull(w.getBlocker());
     } finally {
       Diagnostic.setLogStream();
       prLog.close();
@@ -253,8 +247,7 @@ public class SingleEndTempFileWriterTest extends TestCase {
     try (ByteArrayOutputStream outStream = new ByteArrayOutputStream()) {
       final MapStatistics stats = new SingleEndMapStatistics(null);
       final MyStatusReadIdListenerImpl listener = new MyStatusReadIdListenerImpl(5, stats);
-      final SingleEndTempFileWriter w = new SingleEndTempFileWriter(params, listener, SharedResources.generateSharedResources(params));
-      try {
+      try (SingleEndTempFileWriter w = new SingleEndTempFileWriter(params, listener, SharedResources.generateSharedResources(params))) {
         final HashingRegion region = new HashingRegion(0, 1, 0, 100, -1, -1);
         w.setClipRegion(region);
 
@@ -320,10 +313,8 @@ public class SingleEndTempFileWriterTest extends TestCase {
         assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MATED_AMBIG_READS, MapStatisticsArm.LEFT));
         assertEquals(20.0, stats.valueAsPercent(MapStatisticsField.UNMATED_AMBIG_READS, MapStatisticsArm.LEFT));
         assertEquals(100.0, stats.valueAsPercent(MapStatisticsField.TOTAL_READS, MapStatisticsArm.LEFT));
-      } finally {
-        w.close();
+        assertNotNull(w.getBlocker());
       }
-      assertNotNull(w.getBlocker());
     } finally {
       Diagnostic.setLogStream();
       prLog.close();
@@ -371,8 +362,7 @@ public class SingleEndTempFileWriterTest extends TestCase {
     try (ByteArrayOutputStream outStream = new ByteArrayOutputStream()) {
       final MapStatistics stats = new SingleEndMapStatistics(null);
       final MyStatusReadIdListenerImpl listener = new MyStatusReadIdListenerImpl(2099, stats);
-      final SingleEndTempFileWriter w = new SingleEndTempFileWriter(params, listener, SharedResources.generateSharedResources(params));
-      try {
+      try (SingleEndTempFileWriter w = new SingleEndTempFileWriter(params, listener, SharedResources.generateSharedResources(params))) {
         final HashingRegion region = new HashingRegion(0, 0, 0, 100, -1, -1);
         w.setClipRegion(region);
 
@@ -401,10 +391,8 @@ public class SingleEndTempFileWriterTest extends TestCase {
         assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MATED_AMBIG_READS, MapStatisticsArm.LEFT));
         assertEquals(100.0, stats.valueAsPercent(MapStatisticsField.UNMATED_AMBIG_READS, MapStatisticsArm.LEFT));
         assertEquals(100.0, stats.valueAsPercent(MapStatisticsField.TOTAL_READS, MapStatisticsArm.LEFT));
-      } finally {
-        w.close();
+        assertNotNull(w.getBlocker());
       }
-      assertNotNull(w.getBlocker());
     } finally {
       Diagnostic.setLogStream();
       prLog.close();

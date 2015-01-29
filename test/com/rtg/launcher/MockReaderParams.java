@@ -30,8 +30,6 @@ public class MockReaderParams extends ReaderParams {
 
   private final SequencesReader mReader;
 
-  private boolean mClosed;
-
   /**
    * Create a new {@link MockReaderParams}
    * @param length mock length for the mock reader.
@@ -64,7 +62,6 @@ public class MockReaderParams extends ReaderParams {
    */
   @Override
   public void close() {
-    mClosed = true;
   }
 
   /**

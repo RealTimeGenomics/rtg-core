@@ -46,13 +46,12 @@ public class TempRecordWriterNio implements TempRecordWriter {
   }
 
   @Override
+  @SuppressWarnings("try")
   public void close() throws IOException {
-    try {
+    try (WritableByteChannel ignored = mOutChannel) {
       final BinaryTempFileRecord sent = new BinaryTempFileRecord(false, false, false, false);
       sent.setSentinelRecord();
       writeRecord(sent);
-    } finally {
-      mOutChannel.close();
     }
   }
 }
