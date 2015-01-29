@@ -42,11 +42,6 @@ public final class NgsMaskParamsExplicit extends ObjectParams implements NgsMask
   }
 
   @Override
-  public boolean closed() {
-    return true;
-  }
-
-  @Override
   public String toString() {
     return "Mask:" + mMask;
   }

@@ -14,6 +14,7 @@ package com.rtg.variant.sv;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,7 +33,7 @@ import com.rtg.util.io.FileUtils;
 
 /**
  */
-public class SvInterestingRegionExtractor {
+public class SvInterestingRegionExtractor implements Closeable {
 
   private static final byte[] TAB_BYTES = StringUtils.TAB.getBytes();
 
@@ -81,7 +82,7 @@ public class SvInterestingRegionExtractor {
     mCurrentTemplateLength = templateLength;
   }
 
-  private static class InterestingRegionEmitter {
+  private static class InterestingRegionEmitter implements Closeable {
     private int mStartPos;
     private int mEndPos = -1;
     private int mChanges;
@@ -174,7 +175,8 @@ public class SvInterestingRegionExtractor {
       mRegions = 0;
     }
 
-    void close() throws IOException {
+    @Override
+    public void close() throws IOException {
       mOutputStream.close();
     }
 
@@ -208,11 +210,10 @@ public class SvInterestingRegionExtractor {
       }
       mCurrentMaxValuePos = NORMAL_POS;
     }
-
-
   }
 
-  void close() throws IOException {
+  @Override
+  public void close() throws IOException {
     mEmitter.close();
   }
 
@@ -242,11 +243,9 @@ public class SvInterestingRegionExtractor {
     final Integer merge = (Integer) flags.getValue("merge-regions");
 
     final boolean gzipOutput = output != null && FileUtils.isGzipFilename(output);
-    final OutputStream outputStream = output != null ? FileUtils.createOutputStream(output, gzipOutput, false) : FileUtils.getStdoutAsOutputStream();
-    final SvInterestingRegionExtractor re = new SvInterestingRegionExtractor(outputStream, merge);
 
     int skipped = 0;
-    try {
+    try (SvInterestingRegionExtractor re = new SvInterestingRegionExtractor(output != null ? FileUtils.createOutputStream(output, gzipOutput, false) : FileUtils.getStdoutAsOutputStream(), merge)) {
       try (BufferedReader br = new BufferedReader(new InputStreamReader(FileUtils.createInputStream(input, false)))) {
         String line;
         double[] values = null;
@@ -278,8 +277,6 @@ public class SvInterestingRegionExtractor {
         //need to emit the last interesting region too, if there is one
         re.setTemplate(null, -1);
       }
-    } finally {
-      re.close();
     }
     if (skipped > 0) {
       System.out.println(skipped + " lines were skipped for being too short.   ");

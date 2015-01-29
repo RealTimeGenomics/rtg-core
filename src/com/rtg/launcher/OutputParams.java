@@ -129,11 +129,6 @@ public class OutputParams extends ObjectParams implements OutputDirParams {
   }
 
   @Override
-  public boolean closed() {
-    return true;
-  }
-
-  @Override
   public void close() {
     // do nothing
   }

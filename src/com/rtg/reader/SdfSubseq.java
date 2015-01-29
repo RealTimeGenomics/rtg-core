@@ -26,12 +26,12 @@ import com.rtg.mode.DNA;
 import com.rtg.mode.DNAFastaSymbolTable;
 import com.rtg.mode.ProteinFastaSymbolTable;
 import com.rtg.mode.SequenceType;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.RegionRestriction;
 
 /**
  * Class returns a subsequence of the residues in the given sequence.
@@ -89,7 +89,6 @@ public final class SdfSubseq extends AbstractCli {
   };
 
   private byte[] mCodeToBytes = null;
-  private SequencesReader mReader = null;
   private Map<String, Long> mNames = null;
   private final AbstractSdfWriter.SequenceNameHandler mHandler = new AbstractSdfWriter.SequenceNameHandler();
 
@@ -120,15 +119,14 @@ public final class SdfSubseq extends AbstractCli {
   @Override
   protected int mainExec(final OutputStream out, final PrintStream err) throws IOException {
     final boolean reverseComplement = mFlags.isSet(REVERSE_FLAG);
-    mReader = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty((File) mFlags.getValue(INPUT_FLAG));
-    if (!mFlags.isSet(SEQ_ID_FLAG) && !mReader.hasNames()) {
-      throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "The input SDF does not have name data.");
-    }
-    if (mFlags.isSet(FASTQ_FLAG) && !mReader.hasQualityData()) {
-      throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "The input SDF does not have quality data.");
-    }
-    try {
-      if (mReader.type() == SequenceType.DNA) {
+    try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty((File) mFlags.getValue(INPUT_FLAG))) {
+      if (!mFlags.isSet(SEQ_ID_FLAG) && !reader.hasNames()) {
+        throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "The input SDF does not have name data.");
+      }
+      if (mFlags.isSet(FASTQ_FLAG) && !reader.hasQualityData()) {
+        throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "The input SDF does not have quality data.");
+      }
+      if (reader.type() == SequenceType.DNA) {
         mCodeToBytes = new DNAFastaSymbolTable().getOrdinalToAsciiTable();
         if (reverseComplement) {
           final byte[] compCodes = new byte[mCodeToBytes.length];
@@ -145,25 +143,22 @@ public final class SdfSubseq extends AbstractCli {
         mCodeToBytes = new ProteinFastaSymbolTable().getOrdinalToAsciiTable();
       }
       if (!mFlags.isSet(SEQ_ID_FLAG)) {
-        mNames = ReaderUtils.getSequenceNameMap(mReader);
+        mNames = ReaderUtils.getSequenceNameMap(reader);
       }
 
       for (Object o : mFlags.getAnonymousValues(0)) {
         final RegionRestriction restriction = new RegionRestriction((String) o);
-        final int result = extractSubseq(restriction, reverseComplement, out, err);
+        final int result = extractSubseq(reader, restriction, reverseComplement, out, err);
         if (result != 0) {
           return result;
         }
       }
-
       out.flush();
-    } finally {
-      mReader.close();
     }
     return 0;
   }
 
-  private int extractSubseq(final RegionRestriction restriction, final boolean reverseComplement, final OutputStream out, final PrintStream err) throws IOException {
+  private int extractSubseq(final SequencesReader reader, final RegionRestriction restriction, final boolean reverseComplement, final OutputStream out, final PrintStream err) throws IOException {
     final int start = restriction.getStart() == RegionRestriction.MISSING ? 0 : restriction.getStart();
     final long sequenceId;
     if (!mFlags.isSet(SEQ_ID_FLAG)) {
@@ -177,18 +172,18 @@ public final class SdfSubseq extends AbstractCli {
     } else {
       sequenceId = Long.parseLong(restriction.getSequenceName());
     }
-    if (sequenceId < 0 || sequenceId >= mReader.numberSequences()) {
-      err.println("The sequence id " + sequenceId + " is out of range, must be from 0 to " + (mReader.numberSequences() - 1) + ".");
+    if (sequenceId < 0 || sequenceId >= reader.numberSequences()) {
+      err.println("The sequence id " + sequenceId + " is out of range, must be from 0 to " + (reader.numberSequences() - 1) + ".");
       return 1;
     }
-    mReader.seek(sequenceId);
-    final int seqlength = mReader.currentLength();
+    reader.seek(sequenceId);
+    final int seqlength = reader.currentLength();
     final int endpos = restriction.getEnd() == RegionRestriction.MISSING ? seqlength : restriction.getEnd(); // Convert from 1-based inclusive to 0-based exclusive
     final int length = endpos - start;
-    if (start > mReader.currentLength()) {
+    if (start > reader.currentLength()) {
       err.println("Supplied start position \"" + (start + 1) + "\" reads past sequence end.");
       return 1;
-    } else if (endpos > mReader.currentLength()) {
+    } else if (endpos > reader.currentLength()) {
       err.println("Supplied end position \"" + endpos + "\" reads past sequence end.");
       return 1;
     }
@@ -199,10 +194,10 @@ public final class SdfSubseq extends AbstractCli {
     }
     if (mFlags.isSet(FASTA_FLAG) || mFlags.isSet(FASTQ_FLAG)) {
       final String name;
-      if (mReader.hasNames()) {
-        name = isCoordsAltered ? mReader.currentName() : mReader.currentFullName();
+      if (reader.hasNames()) {
+        name = isCoordsAltered ? reader.currentName() : reader.currentFullName();
       } else {
-        name = "" + mReader.currentSequenceId();
+        name = "" + reader.currentSequenceId();
       }
       out.write((sequenceNameIdentifier + name).getBytes());
       final String coords = isCoordsAltered ? "[" + (start + 1) + "," + (start + length) + "]" : "";
@@ -213,7 +208,7 @@ public final class SdfSubseq extends AbstractCli {
       out.write(LS_BYTES);
     }
     byte[] buff = new byte[length];
-    mReader.readCurrent(buff, start, length);
+    reader.readCurrent(buff, start, length);
     if (reverseComplement) {
       for (int i = length - 1; i >= 0; i--) {
         out.write(mCodeToBytes[buff[i]]);
@@ -234,7 +229,7 @@ public final class SdfSubseq extends AbstractCli {
       out.write('+');
       out.write(LS_BYTES);
       buff = new byte[length];
-      mReader.readCurrentQuality(buff, start, length);
+      reader.readCurrentQuality(buff, start, length);
       if (reverseComplement) {
         for (int i = length - 1; i >= 0; i--) {
           out.write(buff[i] + 33);

@@ -317,11 +317,7 @@ public class ReadMappingAccuracy extends LoggedCli {
     long unmappedRecords = 0;
     boolean doneHeader = false;
     init();
-    LineWriter recordsOut = null;
-    try {
-      if (mParams.dumpRecords()) {
-        recordsOut = new LineWriter(new OutputStreamWriter(FileUtils.createOutputStream(new File(outputDirectory(), "mappings.sam"))));
-      }
+    try (LineWriter recordsOut = mParams.dumpRecords() ? new LineWriter(new OutputStreamWriter(FileUtils.createOutputStream(new File(outputDirectory(), "mappings.sam")))) : null) {
       final SamFilterParams filterParams = SamFilterOptions.makeFilterParamsBuilder(mFlags).excludeUnmapped(true).excludeUnplaced(true).create();
 
       for (final File f : mParams.samFiles()) {
@@ -351,10 +347,6 @@ public class ReadMappingAccuracy extends LoggedCli {
             itr.close();
           }
         }
-      }
-    } finally {
-      if (recordsOut != null) {
-        recordsOut.close();
       }
     }
     Diagnostic.progress("Processed " + totalRecords + " SAM records in total");

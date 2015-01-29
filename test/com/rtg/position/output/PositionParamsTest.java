@@ -19,11 +19,11 @@ import java.io.IOException;
 import com.rtg.index.IndexUtils;
 import com.rtg.launcher.BuildParams;
 import com.rtg.launcher.BuildTestUtils;
+import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.MockReaderParams;
 import com.rtg.launcher.MockSequenceParams;
 import com.rtg.launcher.ReaderParams;
-import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.ProgramMode;
 import com.rtg.position.PositionUtils;
@@ -226,18 +226,12 @@ public class PositionParamsTest extends TestCase {
           , PositionUtils.memToString(wp)
       );
       wp.close();
-      assertTrue(wp.closed());
       wp.build().sequences().reader();
-      assertTrue(!wp.closed());
       wp.close();
-      assertTrue(wp.closed());
       wp.search().sequences().reader();
-      assertTrue(!wp.closed());
       wp.close();
-      assertTrue(wp.closed());
       wp.build().sequences().reader();
       wp.search().sequences().reader();
-      assertTrue(!wp.closed());
     } finally {
       wp.close();
     }
@@ -348,18 +342,12 @@ public class PositionParamsTest extends TestCase {
           , PositionUtils.memToString(bsp)
       );
       bsp.close();
-      assertTrue(bsp.closed());
       bsp.build().sequences().reader();
-      assertTrue(!bsp.closed());
       bsp.close();
-      assertTrue(bsp.closed());
       bsp.search().sequences().reader();
-      assertTrue(!bsp.closed());
       bsp.close();
-      assertTrue(bsp.closed());
       bsp.build().sequences().reader();
       bsp.search().sequences().reader();
-      assertTrue(!bsp.closed());
     } finally {
       bsp.close();
     }

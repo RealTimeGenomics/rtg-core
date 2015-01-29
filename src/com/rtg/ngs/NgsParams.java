@@ -471,16 +471,6 @@ public class NgsParams extends ModuleParams implements Integrity {
     }
   }
 
-  /**
-   * Check if queries are closed.
-   * @return true iff the queries are currently closed.
-   */
-  @Override
-  @ParamsNoField
-  public boolean closed() {
-    return mBuildFirstParams.closed() && mSearchParams.closed();
-  }
-
   @Override
   @ParamsNoField
   public int hashCode() {

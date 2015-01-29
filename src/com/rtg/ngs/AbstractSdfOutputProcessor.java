@@ -54,23 +54,16 @@ public abstract class AbstractSdfOutputProcessor extends AbstractMapOutputProces
       final int maxLength = reader.maxLength();
       final byte[] dataBuffer = new byte[maxLength];
       final byte[] qualityBuffer = new byte[maxLength];
-      final SdfWriterWrapper alignments = new SdfWriterWrapper(mParams.file(ALIGNMENTS_SDF_FILE), reader, false);
-      try {
-        final SdfWriterWrapper unmapped = new SdfWriterWrapper(mParams.file(UNMAPPED_SDF_FILE), reader, false);
-        try {
-          while (reader.nextSequence()) {
-            if (!mUnmappedTracker.getStatus((int) reader.currentSequenceId(), ReadStatusTracker.UNMAPPED_FIRST)
-                || !mUnmappedTracker.getStatus((int) reader.currentSequenceId(), ReadStatusTracker.UNMAPPED_SECOND)) {
-              alignments.writeCurrentSequence(reader, dataBuffer, qualityBuffer);
-            } else {
-              unmapped.writeCurrentSequence(reader, dataBuffer, qualityBuffer);
-            }
+      try (SdfWriterWrapper alignments = new SdfWriterWrapper(mParams.file(ALIGNMENTS_SDF_FILE), reader, false);
+           SdfWriterWrapper unmapped = new SdfWriterWrapper(mParams.file(UNMAPPED_SDF_FILE), reader, false)) {
+        while (reader.nextSequence()) {
+          if (!mUnmappedTracker.getStatus((int) reader.currentSequenceId(), ReadStatusTracker.UNMAPPED_FIRST)
+            || !mUnmappedTracker.getStatus((int) reader.currentSequenceId(), ReadStatusTracker.UNMAPPED_SECOND)) {
+            alignments.writeCurrentSequence(reader, dataBuffer, qualityBuffer);
+          } else {
+            unmapped.writeCurrentSequence(reader, dataBuffer, qualityBuffer);
           }
-        } finally {
-          unmapped.close();
         }
-      } finally {
-        alignments.close();
       }
       Diagnostic.userLog("Finished SDF output");
     }

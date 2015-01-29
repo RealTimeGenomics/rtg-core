@@ -69,11 +69,6 @@ public class LongReadMaskParams implements NgsMaskParams, Integrity {
   }
 
   @Override
-  public boolean closed() {
-    return true;
-  }
-
-  @Override
   public void close() {
   }
 

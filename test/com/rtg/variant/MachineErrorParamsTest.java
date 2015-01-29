@@ -190,9 +190,4 @@ public class MachineErrorParamsTest extends TestCase {
         params.toString());
   }
 
-  public void testClosedMethod() throws InvalidParamsException, IOException {
-    assertFalse(MachineErrorParams.builder()
-    .errors("testsequencer_errors")
-    .create().closed());
-  }
 }

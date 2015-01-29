@@ -79,15 +79,9 @@ public class VstatsCaller implements MultisampleJointCaller  {
 
   @Override
   public void close() throws IOException {
-    try {
-      mHaploidOutput.write(mHaploidTable.toString().getBytes());
-    } finally {
-      mHaploidOutput.close();
-    }
-    try {
-      mDiploidOutput.write(mDiploidTable.toString().getBytes());
-    } finally {
-      mDiploidOutput.close();
+    try (OutputStream hapOut = mHaploidOutput; OutputStream dipOut = mDiploidOutput) {
+      hapOut.write(mHaploidTable.toString().getBytes());
+      dipOut.write(mDiploidTable.toString().getBytes());
     }
   }
 }

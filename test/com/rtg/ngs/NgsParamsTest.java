@@ -223,18 +223,12 @@ public class NgsParamsTest extends TestCase {
           assertEquals(query.toString(), bsp.searchParams().toString());
 
           bsp.close();
-          assertTrue(bsp.closed());
           bsp.buildFirstParams().reader();
-          assertTrue(!bsp.closed());
           bsp.close();
-          assertTrue(bsp.closed());
           bsp.searchParams().reader();
-          assertTrue(!bsp.closed());
           bsp.close();
-          assertTrue(bsp.closed());
           bsp.buildFirstParams().reader();
           bsp.searchParams().reader();
-          assertTrue(!bsp.closed());
         } finally {
           assertTrue(FileHelper.deleteAll(bsp.directory()));
         }

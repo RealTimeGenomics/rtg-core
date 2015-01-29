@@ -198,8 +198,9 @@ public class SequencesWriter {
     processSequences(true, true);
   }
 
-  private void processSequences(AbstractSdfWriter sdfWriter, LongRange region) throws IOException {
-    try {
+  private void processSequences(AbstractSdfWriter inSdfWriter, LongRange region) throws IOException {
+    try (AbstractSdfWriter sdfWriter = inSdfWriter;
+         SequenceDataSource dataSource = mDataSource) {
       final boolean checkLimit = region != null && region != LongRange.NONE && region.getEnd() != LongRange.MISSING;
       final long seqLimit;
       if (checkLimit) {
@@ -213,33 +214,32 @@ public class SequencesWriter {
       sdfWriter.setReadGroup(mReadGroup);
       sdfWriter.setCommandLine(CommandLine.getCommandLine());
       String name = "";
-      while (mDataSource.nextSequence()) {
+      while (dataSource.nextSequence()) {
         //this is to short circuit processing
         if (checkLimit && sdfWriter.getNumberOfSequences() >= seqLimit) {
           break;
         }
         if (mCheckDuplicateNames) {
-          if (name.equals(mDataSource.name())) {
+          if (name.equals(dataSource.name())) {
             throw new NoTalkbackSlimException("More than one read with the same name in input.");
           }
-          name = mDataSource.name();
+          name = dataSource.name();
         }
         processSingleSequence(sdfWriter);
       }
-      if (mDataSource.getWarningCount() > FastaSequenceDataSource.NUMBER_OF_TIDE_WARNINGS) {
+      if (dataSource.getWarningCount() > FastaSequenceDataSource.NUMBER_OF_TIDE_WARNINGS) {
         Diagnostic.warning(""); //Ugly way to separate the warning.
-        Diagnostic.warning(WarningType.NUMBER_OF_BAD_TIDE, Long.toString(mDataSource.getWarningCount()));
+        Diagnostic.warning(WarningType.NUMBER_OF_BAD_TIDE, Long.toString(dataSource.getWarningCount()));
       }
       if (mEmptySequenceCount > 0) {
         Diagnostic.warning(""); //Ugly way to separate the warning.
         Diagnostic.warning("There were " + mEmptySequenceCount + " sequences with no data.");
       }
     } finally {
-      sdfWriter.close();
-      mTotalLength += sdfWriter.getTotalLength();
-      mNumberOfSequences += sdfWriter.getNumberOfSequences();
-      mMaxLength = sdfWriter.getMaxLength();
-      mMinLength = sdfWriter.getMinLength();
+      mTotalLength += inSdfWriter.getTotalLength();
+      mNumberOfSequences += inSdfWriter.getNumberOfSequences();
+      mMaxLength = inSdfWriter.getMaxLength();
+      mMinLength = inSdfWriter.getMinLength();
     }
   }
 
@@ -254,13 +254,9 @@ public class SequencesWriter {
    * @throws IOException If an I/O error occurs
    */
   public CompressedMemorySequencesReader processSequencesInMemory(File sourceFile, boolean includeQuality, SimplePrereadNames names, SimplePrereadNames suffixes, LongRange region) throws IOException {
-    try {
-      final CompressedMemorySequencesWriter sdfWriter = new CompressedMemorySequencesWriter(sourceFile, mPrereadType, mDataSource.hasQualityData() && includeQuality, names, suffixes, true, mDataSource.type(), region);
-      processSequences(sdfWriter, region);
-      return sdfWriter.getReader();
-    } finally {
-      mDataSource.close();
-    }
+    final CompressedMemorySequencesWriter sdfWriter = new CompressedMemorySequencesWriter(sourceFile, mPrereadType, mDataSource.hasQualityData() && includeQuality, names, suffixes, true, mDataSource.type(), region);
+    processSequences(sdfWriter, region);
+    return sdfWriter.getReader();
   }
 
   /**
@@ -270,12 +266,8 @@ public class SequencesWriter {
    * @throws IOException If an I/O error occurs
    */
   public void processSequences(boolean includeQuality, boolean includeNames) throws IOException {
-    try {
-      final SdfWriter sdfWriter = new SdfWriter(mOutputDir, mSizeLimit, mPrereadType, mDataSource.hasQualityData() && includeQuality, includeNames, mCompressed, mDataSource.type());
-      processSequences(sdfWriter, null);
-    } finally {
-      mDataSource.close();
-    }
+    final SdfWriter sdfWriter = new SdfWriter(mOutputDir, mSizeLimit, mPrereadType, mDataSource.hasQualityData() && includeQuality, includeNames, mCompressed, mDataSource.type());
+    processSequences(sdfWriter, null);
   }
 
   /**

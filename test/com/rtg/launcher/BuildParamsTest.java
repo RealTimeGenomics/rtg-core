@@ -130,9 +130,7 @@ public class BuildParamsTest extends TestCase {
     assertEquals(MEM_EXPECTED, IndexUtils.memToString(ip));
 
     ip.sequences().reader();
-    assertTrue(!ip.closed());
     ip.close();
-    assertTrue(ip.closed());
   }
 
   public void testHashBits0() throws Exception {

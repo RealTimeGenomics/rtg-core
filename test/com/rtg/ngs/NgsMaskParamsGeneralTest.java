@@ -46,9 +46,7 @@ public class NgsMaskParamsGeneralTest extends TestCase {
     a.integrity();
     assertEquals("General Mask: w=12 s=3 i=2 l=1", a.toString());
     assertNotNull(a.maskFactory(36));
-    assertTrue(a.closed());
     a.close();
-    assertTrue(a.closed());
   }
 
   public void testInvalid() {

@@ -73,14 +73,13 @@ public class TsvSequenceDataSource implements CgSequenceDataSource {
   }
 
   @Override
+  @SuppressWarnings("try")
   public void close() throws IOException {
-    try {
-      if (mReader != null) {
-        mReader.close();
-      }
+    try (BufferedReader ignored = mReader) {
+      mReader = null;
     } finally {
-      if (mStream != null) {
-        mStream.close();
+      try (InputStream ignored = mStream) {
+        mStream = null;
       }
     }
   }

@@ -21,6 +21,8 @@ import junit.framework.TestCase;
  */
 public class BufferedOutputStreamFixTest extends TestCase {
 
+  private static final String FLUSH_MSG = "I don't like to flush";
+
   private class BadOutputStream extends OutputStream {
 
     boolean mBadstate = true;
@@ -33,13 +35,13 @@ public class BufferedOutputStreamFixTest extends TestCase {
     public void flush() throws IOException {
       if (mBadstate) {
         mBadstate = false;
-        throw new IOException("it's just how I am");
+        throw new IOException(FLUSH_MSG);
       }
     }
 
     @Override
     public void close() throws IOException {
-      flush();
+      throw new IOException("I don't like to close");
     }
   }
 
@@ -51,7 +53,9 @@ public class BufferedOutputStreamFixTest extends TestCase {
 //        bos.write("token".getBytes());
 //      }
 //    } catch (IOException e) {
-//      System.err.println("Seems java has now fixed their bug in FilterOutputStream");
+//      if (FLUSH_MSG.equals(e.getMessage())) {
+//        System.err.println("Seems java has now fixed their bug in FilterOutputStream");
+//      }
 //    }
 
     //then check we fixed it
@@ -61,7 +65,7 @@ public class BufferedOutputStreamFixTest extends TestCase {
       }
       fail("Should have thrown exception");
     } catch (IOException e) {
-      assertEquals("it's just how I am", e.getMessage());
+      assertEquals(FLUSH_MSG, e.getMessage());
     }
   }
 }

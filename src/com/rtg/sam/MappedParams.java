@@ -116,12 +116,6 @@ public abstract class MappedParams extends OutputModuleParams {
   }
 
   @Override
-  @ParamsNoField
-  public boolean closed() {
-    return mGenome == null || mGenome.closed();
-  }
-
-  @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
     sb.append(mFilterParams.toString()).append(LS);

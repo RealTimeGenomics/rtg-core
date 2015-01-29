@@ -77,7 +77,6 @@ public class DefaultReaderParamsTest extends TestCase {
         final DefaultReaderParams drp = createDefaultReaderParams(f, LongRange.NONE, SequenceMode.PROTEIN);
         final DefaultReaderParams drp2 = createDefaultReaderParams(f, LongRange.NONE, SequenceMode.PROTEIN);
         final DefaultReaderParams drp3 = createDefaultReaderParams(f2, LongRange.NONE, SequenceMode.BIDIRECTIONAL);
-        assertTrue(drp.closed());
         assertEquals(SequenceMode.PROTEIN, drp.mode());
         assertEquals(f, drp.directory());
         assertEquals(5, drp.maxLength());
@@ -92,11 +91,8 @@ public class DefaultReaderParamsTest extends TestCase {
         assertFalse(drp.equals(drp3));
         assertTrue(drp.integrity());
         drp.close();
-        assertTrue(drp.closed());
         drp2.close();
-        assertTrue(drp2.closed());
         drp3.close();
-        assertTrue(drp3.closed());
       } finally {
         FileHelper.deleteAll(f2);
       }

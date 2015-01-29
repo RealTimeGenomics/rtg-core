@@ -65,9 +65,7 @@ public class ExternalCommand {
   }
 
   static String readAll(final InputStream is) throws IOException {
-    try {
-      final InputStreamReader isr = new InputStreamReader(is);
-
+    try (InputStreamReader isr = new InputStreamReader(is)) {
       final StringBuilder sb = new StringBuilder();
       final char[] buffer = new char[4096];
       int length;
@@ -75,8 +73,6 @@ public class ExternalCommand {
         sb.append(buffer, 0, length);
       }
       return sb.toString();
-    } finally {
-      is.close();
     }
   }
 

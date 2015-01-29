@@ -264,10 +264,6 @@ public class ParamsCliTest extends TestCase {
 
   private static class BogusParams implements Params {
     @Override
-    public boolean closed() {
-      return true;
-    }
-    @Override
     public void close() {
     }
   }

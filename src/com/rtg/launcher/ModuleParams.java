@@ -81,12 +81,6 @@ public abstract class ModuleParams extends ObjectParams implements OutputDirPara
   }
 
   @Override
-  @ParamsNoField
-  public boolean closed() {
-    return true;
-  }
-
-  @Override
   public String toString() {
     return name() + LS;
   }

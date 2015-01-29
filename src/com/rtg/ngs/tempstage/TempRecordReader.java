@@ -11,11 +11,12 @@
  */
 package com.rtg.ngs.tempstage;
 
+import java.io.Closeable;
 import java.io.IOException;
 
 /**
  */
-public interface TempRecordReader {
+public interface TempRecordReader extends Closeable {
 
   /**
    * Reads a record from the input stream and inserts the data into a temp file record
@@ -23,12 +24,6 @@ public interface TempRecordReader {
    * @throws IOException if something horrible happens when reading a record
    */
   BinaryTempFileRecord readRecord() throws IOException;
-
-  /**
-   * Close the reader and associated streams
-   * @throws IOException when closing
-   */
-  void close() throws IOException;
 
   /**
    * Return a temp file record factory of the given type

@@ -55,12 +55,6 @@ public abstract class ObjectParams implements Params {
   }
 
   @Override
-  public boolean closed() {
-    // default behavior
-    return false;
-  }
-
-  @Override
   public void close() throws IOException {
     // default - do nothing
   }

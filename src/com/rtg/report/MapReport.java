@@ -408,27 +408,7 @@ public class MapReport extends MapSummaryReport {
           return null;
       }
     }
-    /*
-    void toTsvFile(File output, PlotType type) {
-      final LabelFormatter formatter = getLabelFormatter(type);
-      final PrintWriter out = new PrintWriter(output);
-      try {
-        for (Entry<Integer, Values> e : mMap.entrySet()) {
-          if (formatter != null) {
-            out.print(formatter.format(e.getKey()));
-          } else {
-            out.print(e.getKey());
-          }
-          for (int i = 0; i < mSize; i++) {
-            out.print(StringUtils.TAB + e.getValue().getValue(i));
-          }
-          out.println();
-        }
-      } finally {
-        out.close();
-      }
-    }
-    */
+
     String toHtmlTable(PlotType type) {
       final LabelFormatter formatter = getLabelFormatter(type);
       final StringBuilder sb = new StringBuilder();

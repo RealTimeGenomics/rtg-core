@@ -134,7 +134,6 @@ public class CoverageParamsTest extends TestCase {
       //System.err.println(ccs);
       TestUtils.containsAll(ccs, BASE_PARAMS);
       ccp.close();
-      assertTrue(ccp.closed());
     } finally {
       assertTrue(map.delete());
     }

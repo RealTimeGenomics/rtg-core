@@ -158,8 +158,6 @@ public class VariantParamsTest extends TestCase {
         //System.err.println(ccs);
         TestUtils.containsAll(ccs, exp);
         vp.close();
-        assertTrue(vp.closed());
-
       } finally {
         if (vp != null) {
           FileHelper.deleteAll(vp.genome().directory());

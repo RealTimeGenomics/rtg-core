@@ -157,7 +157,7 @@ public final class SdfStatistics extends AbstractCli {
    * @exception IOException if an error occurs.
    */
   public void performStatistics(File dir, final PrintStream out, final boolean nStats, final boolean pStats, final boolean quality) throws IOException {
-    AnnotatedSequencesReader reader;
+    final AnnotatedSequencesReader reader;
     try {
       reader = SequencesReaderFactory.createDefaultSequencesReader(dir);
     } catch (final FileNotFoundException e) {
@@ -169,8 +169,10 @@ public final class SdfStatistics extends AbstractCli {
         throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "The specified SDF, \"" + dir.getPath() + "\", does not exist.");
       }
     }
-    performStatistics(reader, dir, out, nStats, pStats, quality);
-    printReadMe(reader, out);
+    try (AnnotatedSequencesReader sr = reader) {
+      performStatistics(sr, dir, out, nStats, pStats, quality);
+      printReadMe(sr, out);
+    }
   }
 
   /**
@@ -206,74 +208,70 @@ public final class SdfStatistics extends AbstractCli {
     out.append(Long.toString(reader.sdfVersion()));
     out.append(StringUtils.LS);
 
-    try {
-      if (!pStats) {
-        out.append("Type               : ");
-        out.append(reader.type().toString());
+    if (!pStats) {
+      out.append("Type               : ");
+      out.append(reader.type().toString());
+      out.append(StringUtils.LS);
+      out.append("Source             : ");
+      out.append(reader.getPrereadType().toString());
+      out.append(StringUtils.LS);
+      out.append("Paired arm         : ");
+      out.append(reader.getArm().toString());
+      out.append(StringUtils.LS);
+      final SdfId sdfId = reader.getSdfId();
+      if (sdfId.available()) {
+        out.append("SDF-ID             : ");
+        out.append(sdfId.toString());
         out.append(StringUtils.LS);
-        out.append("Source             : ");
-        out.append(reader.getPrereadType().toString());
-        out.append(StringUtils.LS);
-        out.append("Paired arm         : ");
-        out.append(reader.getArm().toString());
-        out.append(StringUtils.LS);
-        final SdfId sdfId = reader.getSdfId();
-        if (sdfId.available()) {
-          out.append("SDF-ID             : ");
-          out.append(sdfId.toString());
-          out.append(StringUtils.LS);
-        }
-        out.append("Number of sequences: ");
-        out.append(Long.toString(reader.numberSequences()));
-        out.append(StringUtils.LS);
-        final long max = reader.maxLength();
-        final long min = reader.minLength();
-        if (max >= min) {
-          out.append("Maximum length     : ");
-          out.append(Long.toString(max));
-          out.append(StringUtils.LS);
-          out.append("Minimum length     : ");
-          out.append(Long.toString(min));
-          out.append(StringUtils.LS);
-        }
-        out.append("Sequence names     : ");
-        if (reader.hasNames()) {
-          out.append("yes");
-        } else {
-          out.append("no");
-        }
-        out.append(StringUtils.LS);
-        final long[] counts = reader.residueCounts();
-        long sum = 0;
-        for (int i = 0 ; i < counts.length; i++) {
-          out.append((reader.type() == SequenceType.DNA) ? DNA.values()[i].toString() : Protein.values()[i].toString());
-          out.append("                  : ");
-          out.append(Long.toString(counts[i]));
-          out.append(StringUtils.LS);
-          sum += counts[i];
-        }
-        out.append("Total residues     : ");
-        out.append(Long.toString(sum));
-        out.append(StringUtils.LS);
-        if (quality) {
-          printQualityHistogram(reader, out);
-        }
-        out.append("Residue qualities  : ");
-        if (reader.hasQualityData() && reader.hasHistogram()) {
-          out.append("yes");
-        } else {
-          out.append("no");
-        }
-        out.append(StringUtils.LS);
-        if (nStats) {
-          printNBlocks(reader, out);
-        }
-        out.append(StringUtils.LS);
-      } else {
-        printPositionBlock(reader, out);
       }
-    } finally {
-      reader.close();
+      out.append("Number of sequences: ");
+      out.append(Long.toString(reader.numberSequences()));
+      out.append(StringUtils.LS);
+      final long max = reader.maxLength();
+      final long min = reader.minLength();
+      if (max >= min) {
+        out.append("Maximum length     : ");
+        out.append(Long.toString(max));
+        out.append(StringUtils.LS);
+        out.append("Minimum length     : ");
+        out.append(Long.toString(min));
+        out.append(StringUtils.LS);
+      }
+      out.append("Sequence names     : ");
+      if (reader.hasNames()) {
+        out.append("yes");
+      } else {
+        out.append("no");
+      }
+      out.append(StringUtils.LS);
+      final long[] counts = reader.residueCounts();
+      long sum = 0;
+      for (int i = 0 ; i < counts.length; i++) {
+        out.append((reader.type() == SequenceType.DNA) ? DNA.values()[i].toString() : Protein.values()[i].toString());
+        out.append("                  : ");
+        out.append(Long.toString(counts[i]));
+        out.append(StringUtils.LS);
+        sum += counts[i];
+      }
+      out.append("Total residues     : ");
+      out.append(Long.toString(sum));
+      out.append(StringUtils.LS);
+      if (quality) {
+        printQualityHistogram(reader, out);
+      }
+      out.append("Residue qualities  : ");
+      if (reader.hasQualityData() && reader.hasHistogram()) {
+        out.append("yes");
+      } else {
+        out.append("no");
+      }
+      out.append(StringUtils.LS);
+      if (nStats) {
+        printNBlocks(reader, out);
+      }
+      out.append(StringUtils.LS);
+    } else {
+      printPositionBlock(reader, out);
     }
   }
 

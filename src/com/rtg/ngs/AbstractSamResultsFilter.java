@@ -141,18 +141,7 @@ public abstract class AbstractSamResultsFilter {
    * @throws IOException if any IO errors occur
    */
   public void filterConcat(SAMFileHeader header, OutputStream destination, OutputStream calibrationDest, ReferenceRegions referenceRegions, SequencesReader template, boolean deleteTempFiles, File... inputFiles) throws IOException {
-    final SAMFileWriter samWriter;
-    if (mBamOutput && mWriteBogusBamHeader) {
-      final SAMFileHeader basicHeader = new SAMFileHeader();
-      basicHeader.setSortOrder(SAMFileHeader.SortOrder.coordinate);
-      samWriter = new SAMFileWriterFactory().makeBAMWriter(basicHeader, true, destination, true, false, true); //terminate flag irrelevant when preBlockCompressed true
-    } else if (mBamOutput) {
-      samWriter = new SAMFileWriterFactory().makeBAMWriter(header, true, destination, mWriteHeader, false, true); //terminate flag irrelevant when preBlockCompressed true
-    } else {
-      samWriter = new SAMFileWriterFactory().makeSAMWriter(header, true, destination, mWriteHeader);
-    }
-    // final OneShotTimer timer = new OneShotTimer("filterConcat");
-    try {
+    try (SAMFileWriter samWriter = getSAMFileWriter(header, destination)) {
       final byte[] templateBuffer;
       final Calibrator cal;
       if (mStatsCalculator != null) {
@@ -182,9 +171,7 @@ public abstract class AbstractSamResultsFilter {
         //System.out.println("Starting to filter file " + current);
 
         final TempRecordReader.RecordFactory fact = new TempRecordReader.RecordFactory(mPaired, mLegacyCigars, mCG, mUnfiltered);
-        final TempRecordReader recReader;
-        recReader = new TempRecordReaderNio(FileUtils.createGzipInputStream(currentFile, false), fact);
-        try {
+        try (TempRecordReader recReader = new TempRecordReaderNio(FileUtils.createGzipInputStream(currentFile, false), fact)) {
           BinaryTempFileRecord rec;
           while ((rec = recReader.readRecord()) != null) {
             inputRecords++;
@@ -212,8 +199,6 @@ public abstract class AbstractSamResultsFilter {
               outputRecords++;
             }
           } //while
-        } finally {
-          recReader.close();
         }
         final long diff = System.nanoTime() - t0;
         final long length = currentFile.length();
@@ -230,9 +215,21 @@ public abstract class AbstractSamResultsFilter {
       }
 
       Diagnostic.userLog(getName() + " SAM filter outputs " + outputRecords + "/" + inputRecords + " records");
-    } finally {
-      samWriter.close();
     }
+  }
+
+  private SAMFileWriter getSAMFileWriter(SAMFileHeader header, OutputStream destination) {
+    final SAMFileWriter samWriter;
+    if (mBamOutput && mWriteBogusBamHeader) {
+      final SAMFileHeader basicHeader = new SAMFileHeader();
+      basicHeader.setSortOrder(SAMFileHeader.SortOrder.coordinate);
+      samWriter = new SAMFileWriterFactory().makeBAMWriter(basicHeader, true, destination, true, false, true); //terminate flag irrelevant when preBlockCompressed true
+    } else if (mBamOutput) {
+      samWriter = new SAMFileWriterFactory().makeBAMWriter(header, true, destination, mWriteHeader, false, true); //terminate flag irrelevant when preBlockCompressed true
+    } else {
+      samWriter = new SAMFileWriterFactory().makeSAMWriter(header, true, destination, mWriteHeader);
+    }
+    return samWriter;
   }
 
   protected double bytesPerSecond(final long diff, final long length) {

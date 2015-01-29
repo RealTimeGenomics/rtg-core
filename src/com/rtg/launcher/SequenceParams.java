@@ -235,15 +235,6 @@ public final class SequenceParams implements ISequenceParams, Integrity {
     return mRegion.getEnd() - mRegion.getStart();
   }
 
-  /**
-   * Check if reader is closed.
-   * @return true iff the reader is currently closed.
-   */
-  @Override
-  public boolean closed() {
-    return mReaderParams.closed();
-  }
-
   @Override
   public SequencesReader reader() {
     return mReaderParams.reader();

@@ -114,14 +114,11 @@ public final class SimpleArchive {
         output.writeLong(header.mFileSize);
         output.write(nameBytes);
 
-        final FileInputStream fis = new FileInputStream(f);
-        try {
+        try (FileInputStream fis = new FileInputStream(f)) {
           int len;
           while ((len = fis.read(buf)) > 0) {
             output.write(buf, 0, len);
           }
-        } finally {
-          fis.close();
         }
       }
     }

@@ -100,11 +100,6 @@ public class PositionDistributionParams extends ObjectParams implements Integrit
   }
 
   @Override
-  public boolean closed() {
-    return true;
-  }
-
-  @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
     if (!Double.isNaN(mSubsProb) || !Double.isNaN(mIndelOpenProb) || !Double.isNaN(mIndelExtendProb)) {

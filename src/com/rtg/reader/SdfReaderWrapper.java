@@ -16,9 +16,9 @@ import java.io.IOException;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.mode.SequenceType;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.LongRange;
 
 /**
  * Wrapper for SDF readers that can handle single end or paired end reads
@@ -289,20 +289,13 @@ public final class SdfReaderWrapper {
    * Closes the internal Sequence Readers
    * @throws IOException when one of the Sequence Readers close methods fails
    */
+  @SuppressWarnings("try")
   public void close() throws IOException {
-    try {
-      if (mSingle != null) {
-        mSingle.getPrereadType();
-        mSingle.close();
-      }
+    try (SequencesReader ignored = mSingle) {
     } finally {
-      try {
-        if (mLeft != null) {
-          mLeft.close();
-        }
+      try (SequencesReader ignored = mLeft) {
       } finally {
-        if (mRight != null) {
-          mRight.close();
+        try (SequencesReader ignored = mRight) {
         }
       }
     }

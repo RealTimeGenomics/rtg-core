@@ -144,10 +144,9 @@ public final class Cg2Sdf extends LoggedCli {
       names.add(path);
     }
 
-    final ConcatSequenceDataSource<CgSequenceDataSource> dsl = new ConcatSequenceDataSource<>(sources, names);
     int skippedNReads = 0;
     long skippedResidues = 0;
-    try {
+    try (ConcatSequenceDataSource<CgSequenceDataSource> dsl = new ConcatSequenceDataSource<>(sources, names)) {
       final AlternatingSequencesWriter writer = new AlternatingSequencesWriter(dsl, output, Constants.MAX_FILE_SIZE, PrereadType.CG, compress, null);
       writer.setSdfId(sdfId);
       writer.setReadGroup(samReadGroupRecord == null ? null : samReadGroupRecord.toString());
@@ -200,15 +199,13 @@ public final class Cg2Sdf extends LoggedCli {
           printLine("Maximum length     : " + writer.getMaxLength(), summaries);
         }
         //if (maximumNs != null) {
-          //printLine("\nMaximum Ns seen in a side of a retained read: " + maxNs, summaries);
+        //printLine("\nMaximum Ns seen in a side of a retained read: " + maxNs, summaries);
         //}
         if (skippedNReads > 0) {
           printLine("", summaries);
           printLine("There were " + skippedNReads + " pairs skipped due to filters", summaries);
         }
       }
-    } finally {
-      dsl.close();
     }
   }
 
@@ -227,8 +224,7 @@ public final class Cg2Sdf extends LoggedCli {
     final PrintStream outStream = new PrintStream(out);
     try {
       final File output = (File) mFlags.getValue(OUTPUT_FLAG);
-      final PrintStream summaryStream = new PrintStream(new FileOutputStream(new File(output, CommonFlags.SUMMARY_FILE)));
-      try {
+      try (PrintStream summaryStream = new PrintStream(new FileOutputStream(new File(output, CommonFlags.SUMMARY_FILE)))) {
         final Collection<File> inputFiles = CommonFlags.getFileList(mFlags, CommonFlags.INPUT_LIST_FLAG, null, false);
         final Integer maximumNs = (Integer) mFlags.getValue(MAXIMUM_NS);
 
@@ -259,8 +255,6 @@ public final class Cg2Sdf extends LoggedCli {
           }
         }
         return 0;
-      } finally {
-        summaryStream.close();
       }
     } finally {
       outStream.flush();

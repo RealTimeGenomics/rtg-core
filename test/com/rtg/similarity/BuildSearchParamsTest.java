@@ -169,13 +169,9 @@ public class BuildSearchParamsTest extends TestCase {
         );
 
         bsp.close();
-        assertTrue(bsp.closed());
         bsp.build().sequences().reader();
-        assertTrue(!bsp.closed());
         bsp.close();
-        assertTrue(bsp.closed());
         bsp.build().sequences().reader();
-        assertTrue(!bsp.closed());
       } finally {
         bsp.close();
       }

@@ -29,7 +29,6 @@ import com.rtg.launcher.LoggedCli;
 import com.rtg.launcher.OutputParams;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
@@ -39,6 +38,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.diagnostic.Timer;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.BufferedOutputStreamFix;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
@@ -209,62 +209,48 @@ CommonFlags.initNoGzip(flags);
       firstOnlyHeader.addMetaInformationLine("##INFO=<ID=SF,Number=.,Type=String,Description=\"Source File (index into sourceFiles)\">");
 
       Diagnostic.progress("Start loading second file...");
-      final VcfReader secondReader = VcfReader.openVcfReader(second, region);
-      try {
+      try (VcfReader secondReader = VcfReader.openVcfReader(second, region)) {
         final VcfHeader secondOnlyHeader = secondReader.getHeader().copy();
         secondOnlyHeader.addMetaInformationLine("##sourceFiles=0:" + first.getPath() + ",1:" + second.getPath());
         secondOnlyHeader.addMetaInformationLine("##INFO=<ID=SF,Number=.,Type=String,Description=\"Source File (index into sourceFiles)\">");
         final VcfHeader combinedHeader = VcfHeaderMerge.mergeHeaders(firstReader.getHeader(), secondReader.getHeader(), forceMerge);
         combinedHeader.addMetaInformationLine("##sourceFiles=0:" + first.getPath() + ",1:" + second.getPath());
         combinedHeader.addMetaInformationLine("##INFO=<ID=SF,Number=.,Type=String,Description=\"Source File (index into sourceFiles)\">");
-        final BufferedWriter secondOnlyWriter = new BufferedWriter(new OutputStreamWriter(output.outStream(SECOND_ONLY_OUT)));
-        try {
+        try (BufferedWriter secondOnlyWriter = new BufferedWriter(new OutputStreamWriter(output.outStream(SECOND_ONLY_OUT)));
+             BufferedWriter sameWriter = new BufferedWriter(new OutputStreamWriter(output.outStream(SAME_OUT)));
+             BufferedWriter differentWriter = new BufferedWriter(new OutputStreamWriter(output.outStream(DIFFERENT_OUT)))) {
           writeHeader(secondOnlyWriter, secondOnlyHeader);
-          final BufferedWriter sameWriter = new BufferedWriter(new OutputStreamWriter(output.outStream(SAME_OUT)));
-          try {
-            writeHeader(sameWriter, combinedHeader);
-            final BufferedWriter differentWriter = new BufferedWriter(new OutputStreamWriter(output.outStream(DIFFERENT_OUT)));
-            try {
-              writeHeader(differentWriter, combinedHeader);
-              while (secondReader.hasNext()) {
-                totalSecondCount++;
-                final VcfRecord vc = secondReader.next();
-                vc.addInfo("SF", "1");
-                final String key = vc.getSequenceName() + "_" + (vc.getOneBasedStart());
-                //System.err.println("key2" + key);
-                if (map.containsKey(key)) {
-                  final List<LineHolder> list = map.get(key);
-                  for (LineHolder lh : list) {
-                    lh.mMatched = true;
-                    final VcfRecord vcFirst = lh.mLine;
-                    vcFirst.addInfo("SF", "0");
-                    if (!compareAlts || comparePredictions(vcfRecordToPrediction(vcFirst), vcfRecordToPrediction(vc))) {
-                      //System.err.println("same " + key);
-                      sameCount++;
-                      write(sameWriter, vcFirst);
-                      write(sameWriter, vc);
-                    } else {
-                      differentCount++;
-                      write(differentWriter, vcFirst);
-                      write(differentWriter, vc);
-                    }
-                  }
+          writeHeader(sameWriter, combinedHeader);
+          writeHeader(differentWriter, combinedHeader);
+          while (secondReader.hasNext()) {
+            totalSecondCount++;
+            final VcfRecord vc = secondReader.next();
+            vc.addInfo("SF", "1");
+            final String key = vc.getSequenceName() + "_" + vc.getOneBasedStart();
+            //System.err.println("key2" + key);
+            if (map.containsKey(key)) {
+              final List<LineHolder> list = map.get(key);
+              for (LineHolder lh : list) {
+                lh.mMatched = true;
+                final VcfRecord vcFirst = lh.mLine;
+                vcFirst.addInfo("SF", "0");
+                if (!compareAlts || comparePredictions(vcfRecordToPrediction(vcFirst), vcfRecordToPrediction(vc))) {
+                  //System.err.println("same " + key);
+                  sameCount++;
+                  write(sameWriter, vcFirst);
+                  write(sameWriter, vc);
                 } else {
-                  secondOnlyCount++;
-                  write(secondOnlyWriter, vc);
+                  differentCount++;
+                  write(differentWriter, vcFirst);
+                  write(differentWriter, vc);
                 }
               }
-            } finally {
-              differentWriter.close();
+            } else {
+              secondOnlyCount++;
+              write(secondOnlyWriter, vc);
             }
-          } finally {
-            sameWriter.close();
           }
-        } finally {
-          secondOnlyWriter.close();
         }
-      } finally {
-        secondReader.close();
       }
     }
     try (BufferedWriter firstOnlyWriter = new BufferedWriter(new OutputStreamWriter(output.outStream(FIRST_ONLY_OUT)))) {
@@ -347,7 +333,7 @@ CommonFlags.initNoGzip(flags);
       totalFirstCount++;
       final VcfRecord vc = vorr.next();
       //map.put(l.getReference() + l.getLocation(), value)
-      final String key = vc.getSequenceName() + "_" + (vc.getOneBasedStart());
+      final String key = vc.getSequenceName() + "_" + vc.getOneBasedStart();
       //System.err.println("key1" + key);
       if (map.containsKey(key)) {
         final List<LineHolder> list = map.get(key);

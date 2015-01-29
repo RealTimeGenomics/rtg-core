@@ -747,48 +747,43 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
   }
 
   @Override
+  @SuppressWarnings("try")
   protected void exec() throws IOException {
     try {
       SamUtils.checkUberHeaderAgainstReference(mReferenceSequences, mParams.uberHeader(), !mParams.ignoreIncompatibleSamHeaders());
       init();
-      try {
-        final Map<String, Long> sequenceNameMap = ReaderUtils.getSequenceNameMap(mReferenceSequences);
-        for (final SAMSequenceRecord r : mSequences) {
-          final String sequenceName = r.getSequenceName(); //mReferenceSequences.name(l);
-          // Only process this sequence if we are doing them all, or if it is
-          // in the restriction specified by the user
-          if (!mWrapper.context().hasRegions() || mWrapper.context().referenceRanges().containsSequence(sequenceName)) {
-            if (!sequenceNameMap.containsKey(sequenceName)) { //this means our SDF does not have reference
-              throw new NoTalkbackSlimException("Reference SDF does not contain sequence '" + sequenceName + "'");
-            }
-            final long sdfSeqId = sequenceNameMap.get(sequenceName);
-            final int sequenceLength = mReferenceSequences.length(sdfSeqId);
-            mWrapper.setSequenceId(r.getSequenceIndex());
-            if (mWrapper.hasNext()) {
-              assert sequenceLength == r.getSequenceLength() : "" + sequenceLength + " != " + r.getSequenceLength();
-              final byte[] sequenceNt = new byte[sequenceLength];
-              mReferenceSequences.read(sdfSeqId, sequenceNt);
-              processAnEntireSequence(sequenceName, sequenceNt);
-            }
+      final Map<String, Long> sequenceNameMap = ReaderUtils.getSequenceNameMap(mReferenceSequences);
+      for (final SAMSequenceRecord r : mSequences) {
+        final String sequenceName = r.getSequenceName(); //mReferenceSequences.name(l);
+        // Only process this sequence if we are doing them all, or if it is
+        // in the restriction specified by the user
+        if (!mWrapper.context().hasRegions() || mWrapper.context().referenceRanges().containsSequence(sequenceName)) {
+          if (!sequenceNameMap.containsKey(sequenceName)) { //this means our SDF does not have reference
+            throw new NoTalkbackSlimException("Reference SDF does not contain sequence '" + sequenceName + "'");
+          }
+          final long sdfSeqId = sequenceNameMap.get(sequenceName);
+          final int sequenceLength = mReferenceSequences.length(sdfSeqId);
+          mWrapper.setSequenceId(r.getSequenceIndex());
+          if (mWrapper.hasNext()) {
+            assert sequenceLength == r.getSequenceLength() : "" + sequenceLength + " != " + r.getSequenceLength();
+            final byte[] sequenceNt = new byte[sequenceLength];
+            mReferenceSequences.read(sdfSeqId, sequenceNt);
+            processAnEntireSequence(sequenceName, sequenceNt);
           }
         }
-        logRecordCounts();
-        mStatistics.setExcessiveCoverageCount(mExcessiveCoverageCount);
-        mStatistics.setExcessiveHypothesesCount(mExcessiveHypothesesCount);
-        mStatistics.setNoHypothesesCount(mNoHypothesesCount);
-      } finally {
-        mReferenceSequences.close();
       }
+      logRecordCounts();
+      mStatistics.setExcessiveCoverageCount(mExcessiveCoverageCount);
+      mStatistics.setExcessiveHypothesesCount(mExcessiveHypothesesCount);
+      mStatistics.setNoHypothesesCount(mNoHypothesesCount);
     } finally {
-      if (mOut != null) {
-        mOut.close();
-      }
-      mBedOut.close();
-      if (mConfig != null) {
-        mConfig.close();
-      }
-      if (mWrapper != null) {
-        mWrapper.close();
+      try (VcfWriter ignored1 = mOut;
+           OutputStream ignored2 = mBedOut;
+           ThreadedMultifileIteratorWrapper<VariantAlignmentRecord> ignored3 = mWrapper;
+           SequencesReader ignored4 = mReferenceSequences) {  // We want the sexy closing side effects.
+        if (mConfig != null) {
+          mConfig.close();
+        }
       }
     }
     if (mParams.blockCompressed() && mParams.outputIndex()) {

@@ -149,9 +149,7 @@ public final class SamCommandHelper {
    * @throws java.io.IOException if IO falls over when reading the SAM file
    */
   public static SAMReadGroupRecord validateSelectedSamRG(File rgFile, String selectReadGroup) throws IOException {
-    final BufferedInputStream bis;
-    bis = FileUtils.createInputStream(rgFile, false);
-    try {
+    try (BufferedInputStream bis = FileUtils.createInputStream(rgFile, false)) {
       final SAMFileReader sfr = new SAMFileReader(bis);
       final List<SAMReadGroupRecord> readGroups = sfr.getFileHeader().getReadGroups();
       final int readGroupCount = readGroups.size();
@@ -167,8 +165,6 @@ public final class SamCommandHelper {
         }
       }
       throw new InvalidParamsException("No read group information matching \"" + selectReadGroup + "\" present in the input file \"" + rgFile.getPath() + "\"");
-    } finally {
-      bis.close();
     }
 
   }

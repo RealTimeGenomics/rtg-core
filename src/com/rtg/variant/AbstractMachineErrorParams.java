@@ -159,9 +159,4 @@ public abstract class AbstractMachineErrorParams implements Params {
   @Override
   public void close() throws IOException { }
 
-  @Override
-  public boolean closed() {
-    return false;
-  }
-
 }

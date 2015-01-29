@@ -15,6 +15,7 @@ import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -91,51 +92,15 @@ public class BgZip extends AbstractCli {
 
     for (Object o : mFlags.getAnonymousValues(0)) {
       final File f = (File) o;
-      final String outputFilename = getOutputFilename(f, mFlags.isSet(DECOMPRESS_FLAG));
       final boolean stdin = CommonFlags.isStdio(f);
       final boolean stdout = mFlags.isSet(STDOUT_FLAG) || stdin;
-      if (!stdin) {
-        if (!f.exists()) {
-          throw new NoTalkbackSlimException("The specified file, \"" + f.getPath() + "\" does not exist.");
-        } else if (mFlags.isSet(DECOMPRESS_FLAG) && !FileUtils.isGzipFilename(f)) {
-          throw new NoTalkbackSlimException("Input file not in GZIP format");
-        } else if (!mFlags.isSet(FORCE_FLAG) && !stdout) { //if we aren't forcibly overwriting files
-          final File outfile = new File(outputFilename);
-          if (outfile.exists()) {
-            throw new NoTalkbackSlimException("Output file \"" + outfile.getPath() + "\" already exists.");
+      try (final InputStream is = getInputStream(f, stdin)) {
+        try (OutputStream os = getOutputStream(out, f, stdout)) {
+          final byte[] buf = new byte[FileUtils.BUFFER_SIZE];
+          int bytesRead;
+          while ((bytesRead = is.read(buf)) != -1) {
+            os.write(buf, 0, bytesRead);
           }
-        }
-      }
-
-      final InputStream is;
-      if (stdin) {
-        is = System.in;
-      } else {
-        is = mFlags.isSet(DECOMPRESS_FLAG) ? FileUtils.createGzipInputStream(f, true) : new FileInputStream(f);
-      }
-      OutputStream os = null;
-      try {
-
-        if (mFlags.isSet(DECOMPRESS_FLAG)) {
-          os = stdout ? out : new FileOutputStream(outputFilename);
-        } else {
-          final File file = new File(f.getPath() + FileUtils.GZ_SUFFIX);
-          os = stdout
-            ? new BlockCompressedOutputStream(out, null, (Integer) mFlags.getValue(LEVEL_FLAG), !mFlags.isSet(NO_TERMINATE_FLAG))
-            : new BlockCompressedOutputStream(new FileOutputStream(file), file, (Integer) mFlags.getValue(LEVEL_FLAG), !mFlags.isSet(NO_TERMINATE_FLAG));
-        }
-        final byte[] buf = new byte[FileUtils.BUFFER_SIZE];
-        int bytesRead;
-        while ((bytesRead = is.read(buf)) != -1) {
-          os.write(buf, 0, bytesRead);
-        }
-      } finally {
-        try {
-          if (os != null) {
-            os.close();
-          }
-        } finally {
-          is.close();
         }
       }
       if (!stdout) {
@@ -145,5 +110,36 @@ public class BgZip extends AbstractCli {
       }
     }
     return 0;
+  }
+
+  private InputStream getInputStream(File f, boolean stdin) throws IOException {
+    if (!stdin) {
+      if (!f.exists()) {
+        throw new NoTalkbackSlimException("The specified file, \"" + f.getPath() + "\" does not exist.");
+      } else if (mFlags.isSet(DECOMPRESS_FLAG) && !FileUtils.isGzipFilename(f)) {
+        throw new NoTalkbackSlimException("Input file not in GZIP format");
+      }
+    }
+    return stdin ? System.in : mFlags.isSet(DECOMPRESS_FLAG) ? FileUtils.createGzipInputStream(f, true) : new FileInputStream(f);
+  }
+
+  private OutputStream getOutputStream(OutputStream out, File f, boolean stdout) throws FileNotFoundException {
+    final OutputStream os;
+    final String outputFilename = getOutputFilename(f, mFlags.isSet(DECOMPRESS_FLAG));
+    if (!stdout && !mFlags.isSet(FORCE_FLAG)) { //if we aren't forcibly overwriting files
+      final File outfile = new File(outputFilename);
+      if (outfile.exists()) {
+        throw new NoTalkbackSlimException("Output file \"" + outfile.getPath() + "\" already exists.");
+      }
+    }
+    if (mFlags.isSet(DECOMPRESS_FLAG)) {
+      os = stdout ? out : new FileOutputStream(outputFilename);
+    } else {
+      final File file = new File(f.getPath() + FileUtils.GZ_SUFFIX);
+      os = stdout
+        ? new BlockCompressedOutputStream(out, null, (Integer) mFlags.getValue(LEVEL_FLAG), !mFlags.isSet(NO_TERMINATE_FLAG))
+        : new BlockCompressedOutputStream(new FileOutputStream(file), file, (Integer) mFlags.getValue(LEVEL_FLAG), !mFlags.isSet(NO_TERMINATE_FLAG));
+    }
+    return os;
   }
 }

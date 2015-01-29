@@ -116,12 +116,13 @@ public class DefaultOutputProcessor implements OutputProcessor {
   }
 
   @Override
+  @SuppressWarnings("try")
   public void close() throws IOException {
     if (mOut != null) {
-      mOut.close();
+      try (final OutputStreamWriter ignored = mOut) {
+        mOut = null;
+      }
     }
-
-    mOut = null;
   }
 
 

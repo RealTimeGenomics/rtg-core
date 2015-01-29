@@ -238,8 +238,9 @@ public class PairedTempFileWriterImpl extends AbstractTempFileWriter implements 
   @Override
   public void closeMated() throws IOException {
     if (mBinarizableRecordWriter != null) {
-      try {
-        final int over = mBinarizableRecordWriter.getMaxCapacityUsed();
+      try (SmartTempFileWriter o = mBinarizableRecordWriter) {
+        mBinarizableRecordWriter = null;
+        final int over = o.getMaxCapacityUsed();
         //System.err.println("Overflow is " + over);
         //System.err.println("Dups: " +  mBinarizableRecordWriter.getDuplicateCount());
         final int scoreTotal = mMatedMaxScorePassed + mMatedMaxScoreFailed;
@@ -249,19 +250,18 @@ public class PairedTempFileWriterImpl extends AbstractTempFileWriter implements 
         Diagnostic.developerLog("Alignments computed: " + mMatedNonCachedAlignment + " cached:" + mMatedCachedAlignment + " total, " + (100.0 * mMatedCachedAlignment / alTotal) + " %");
 
         Diagnostic.userLog("Reordering buffer used capacity of " + over + " records");
-        Diagnostic.userLog("Duplicates detected during SAM writing: " + mBinarizableRecordWriter.getDuplicateCount());
-      } finally {
-        mBinarizableRecordWriter.close();
-        mBinarizableRecordWriter = null;
+        Diagnostic.userLog("Duplicates detected during SAM writing: " + o.getDuplicateCount());
       }
     }
   }
 
   @Override
+  @SuppressWarnings("try")
   public void closeUnmated() throws IOException {
     if (mBinarizableRecordUnmatedWriter != null) {
-      mBinarizableRecordUnmatedWriter.close();
-      mBinarizableRecordUnmatedWriter = null;
+      try (SmartTempFileWriter ignored = mBinarizableRecordUnmatedWriter) {
+        mBinarizableRecordUnmatedWriter = null;
+      }
     }
   }
 

@@ -65,8 +65,10 @@ public class AlternatingSequencesWriter extends SequencesWriter {
     super(source, namesToExclude, type, compressed);
   }
 
-  private void processSequences(AbstractSdfWriter sdfWriterLeft, AbstractSdfWriter sdfWriterRight, LongRange region) throws IOException {
-    try {
+  private void processSequences(AbstractSdfWriter inSdfWriterLeft, AbstractSdfWriter inSdfWriterRight, LongRange region) throws IOException {
+    try (SequenceDataSource dataSource = mDataSource;
+    AbstractSdfWriter sdfWriterLeft = inSdfWriterLeft;
+    AbstractSdfWriter sdfWriterRight = inSdfWriterRight) {
       final boolean checkLimit = region != null && region != LongRange.NONE && region.getEnd() != LongRange.MISSING;
       final long seqLimit;
       if (checkLimit) {
@@ -86,35 +88,30 @@ public class AlternatingSequencesWriter extends SequencesWriter {
       sdfWriterRight.setCommandLine(CommandLine.getCommandLine());
 
       String name = "";
-      while (mDataSource.nextSequence()) {
+      while (dataSource.nextSequence()) {
         //this is to short circuit processing
         if (checkLimit && sdfWriterLeft.getNumberOfSequences() >= seqLimit) {
           break;
         }
         if (mCheckDuplicateNames) {
-          if (name.equals(mDataSource.name())) {
+          if (name.equals(dataSource.name())) {
             throw new NoTalkbackSlimException("More than one read-pair with the same name in input.");
           }
-          name = mDataSource.name();
+          name = dataSource.name();
         }
         processSingleSequence(sdfWriterLeft);
-        if (!mDataSource.nextSequence()) {
+        if (!dataSource.nextSequence()) {
           throw new NoTalkbackSlimException("Input source had uneven number of records.");
         }
         processSingleSequence(sdfWriterRight);
       }
 
-      if (mDataSource.getWarningCount() > FastaSequenceDataSource.NUMBER_OF_TIDE_WARNINGS) {
+      if (dataSource.getWarningCount() > FastaSequenceDataSource.NUMBER_OF_TIDE_WARNINGS) {
         Diagnostic.warning(""); //Ugly way to separate the warning.
-        Diagnostic.warning(WarningType.NUMBER_OF_BAD_TIDE, Long.toString(mDataSource.getWarningCount()));
+        Diagnostic.warning(WarningType.NUMBER_OF_BAD_TIDE, Long.toString(dataSource.getWarningCount()));
       }
     } finally {
-      try {
-        sdfWriterLeft.close();
-      } finally {
-        sdfWriterRight.close();
-      }
-      calculateStats(sdfWriterLeft, sdfWriterRight);
+      calculateStats(inSdfWriterLeft, inSdfWriterRight);
     }
   }
 
@@ -129,16 +126,12 @@ public class AlternatingSequencesWriter extends SequencesWriter {
    * @throws IOException If an I/O error occurs
    */
   public CompressedMemorySequencesReader[] processSequencesInMemoryPaired(File sourceFile, boolean includeQuality, SimplePrereadNames names, SimplePrereadNames suffixes, LongRange region) throws IOException {
-    try {
-      final CompressedMemorySequencesWriter sdfWriterLeft = new CompressedMemorySequencesWriter(sourceFile, mPrereadType, mDataSource.hasQualityData() && includeQuality, names, suffixes, true, mDataSource.type(), region);
-      final RightSimplePrereadNames rNames = names == null ? null : new RightSimplePrereadNames(names);
-      final RightSimplePrereadNames rSuffixes = names == null ? null : new RightSimplePrereadNames(suffixes);
-      final CompressedMemorySequencesWriter sdfWriterRight = new CompressedMemorySequencesWriter(sourceFile, mPrereadType, mDataSource.hasQualityData() && includeQuality, rNames, rSuffixes, true, mDataSource.type(), region);
-      processSequences(sdfWriterLeft, sdfWriterRight, region);
-      return new CompressedMemorySequencesReader[] {sdfWriterLeft.getReader(), sdfWriterRight.getReader()};
-    } finally {
-      mDataSource.close();
-    }
+    final CompressedMemorySequencesWriter sdfWriterLeft = new CompressedMemorySequencesWriter(sourceFile, mPrereadType, mDataSource.hasQualityData() && includeQuality, names, suffixes, true, mDataSource.type(), region);
+    final RightSimplePrereadNames rNames = names == null ? null : new RightSimplePrereadNames(names);
+    final RightSimplePrereadNames rSuffixes = names == null ? null : new RightSimplePrereadNames(suffixes);
+    final CompressedMemorySequencesWriter sdfWriterRight = new CompressedMemorySequencesWriter(sourceFile, mPrereadType, mDataSource.hasQualityData() && includeQuality, rNames, rSuffixes, true, mDataSource.type(), region);
+    processSequences(sdfWriterLeft, sdfWriterRight, region);
+    return new CompressedMemorySequencesReader[] {sdfWriterLeft.getReader(), sdfWriterRight.getReader()};
   }
 
 
@@ -146,13 +139,9 @@ public class AlternatingSequencesWriter extends SequencesWriter {
   public void processSequences(boolean includeQuality, boolean includeNames) throws IOException {
     final File outputDirLeft = new File(mOutputDir, "left");
     final File outputDirRight = new File(mOutputDir, "right");
-    try {
-      final SdfWriter sdfWriterLeft = new SdfWriter(outputDirLeft, mSizeLimit, mPrereadType, mDataSource.hasQualityData() && includeQuality, includeNames, mCompressed, mDataSource.type());
-      final SdfWriter sdfWriterRight = new SdfWriter(outputDirRight, mSizeLimit, mPrereadType, mDataSource.hasQualityData() && includeQuality, includeNames, mCompressed, mDataSource.type());
-      processSequences(sdfWriterLeft, sdfWriterRight, null);
-    } finally {
-      mDataSource.close();
-    }
+    final SdfWriter sdfWriterLeft = new SdfWriter(outputDirLeft, mSizeLimit, mPrereadType, mDataSource.hasQualityData() && includeQuality, includeNames, mCompressed, mDataSource.type());
+    final SdfWriter sdfWriterRight = new SdfWriter(outputDirRight, mSizeLimit, mPrereadType, mDataSource.hasQualityData() && includeQuality, includeNames, mCompressed, mDataSource.type());
+    processSequences(sdfWriterLeft, sdfWriterRight, null);
   }
 
   private void calculateStats(AbstractSdfWriter left, AbstractSdfWriter right) {

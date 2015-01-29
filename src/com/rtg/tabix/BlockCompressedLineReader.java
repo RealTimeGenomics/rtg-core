@@ -187,23 +187,4 @@ public class BlockCompressedLineReader implements LineReader {
     mInit = true;
   }
 
-  /*
-  public static void main(String[] args) {
-    final File f = new File(args[0]);
-    final SamPositionReader spr = new SamPositionReader(new BlockCompressedLineReader(new BlockCompressedInputStream(f)), 0);
-    try {
-      int refIndex = -2;
-      while (spr.hasNext()) {
-        spr.next();
-        int currId = spr.getReferenceId();
-        if (currId != refIndex) {
-          refIndex = currId;
-          System.err.println(refIndex + " : " + spr.getVirtualOffset());
-        }
-      }
-    } finally {
-      spr.close();
-    }
-  }
-  */
 }

@@ -284,15 +284,11 @@ public final class CnvRatio {
     return (blockPos - 1) * mBucketSize;
   }
 
+  @SuppressWarnings("try")
   void closeOutputs() throws IOException {
-    try {
-      if (mRatio != null) {
-        mRatio.close();
-      }
-    } finally {
-      if (mCnvOut != null) {
-        mCnvOut.close();
-      }
+    try (OutputStream ignored = mRatio; OutputStream ignored2 = mCnvOut) {
+      mRatio = null;
+      mCnvOut = null;
     }
   }
 }

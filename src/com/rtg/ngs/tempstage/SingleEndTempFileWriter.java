@@ -64,17 +64,15 @@ public class SingleEndTempFileWriter extends AbstractTempFileWriter {
    */
   public void closeAlignments() throws IOException {
     if (mBinarizableRecordWriter != null) {
-      try {
-        final int over = mBinarizableRecordWriter.getMaxCapacityUsed();
+      try (SmartTempFileWriter t = mBinarizableRecordWriter) {
+        mBinarizableRecordWriter = null;
+        final int over = t.getMaxCapacityUsed();
         //System.err.println("Overflow is " + over);
         //System.err.println("Dups: " +  mBinarizableRecordWriter.getDuplicateCount());
         Diagnostic.userLog("Alignment score filter (" + mMatedMaxMismatches + "): " + mMaxScorePassed + " passed, " + (mMaxScorePassed + mMaxScoreFailed) + " total.");
 
         Diagnostic.userLog("Reordering buffer used capacity of " + over + " records");
-        Diagnostic.userLog("Duplicates detected during SAM writing: " + mBinarizableRecordWriter.getDuplicateCount());
-      } finally {
-        mBinarizableRecordWriter.close();
-        mBinarizableRecordWriter = null;
+        Diagnostic.userLog("Duplicates detected during SAM writing: " + t.getDuplicateCount());
       }
     }
   }

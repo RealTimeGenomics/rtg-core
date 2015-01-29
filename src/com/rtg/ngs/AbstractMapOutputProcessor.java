@@ -111,10 +111,9 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
     final ArrayList<File> retCalibrate = new ArrayList<>();
     final FileAndStream unmappedOut = getUnmappedFileAndStream(isFinalUnmapped, suppressSam, "unrescued");
     Diagnostic.progress("UnmappedProcess: Starting 1 Jobs");
-    try {
-      final UnmappedSamAlignmentWriter unmappedNoPositionSamWriter = new UnmappedSamAlignmentWriter(mParams.outputParams().tempFilesDirectory(), mSharedResources.getHeader());
+    try (final OutputStream unmappedOutStream = unmappedOut.mStream) {
       final UnmappedSamRecordFactory unmappedSamRecordFactory = new UnmappedSamRecordFactory(mParams, mSharedResources);
-      try {
+      try (UnmappedSamAlignmentWriter unmappedNoPositionSamWriter = new UnmappedSamAlignmentWriter(mParams.outputParams().tempFilesDirectory(), mSharedResources.getHeader())) {
         if (!unfiltered) {
           if (mPaired) {
             unmappedSamRecordFactory.setAugmenterInfo(mAugmenterMerger, mStatsMerger);
@@ -123,7 +122,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
         }
 
         final boolean bam = mParams.outputParams().bam();
-        unmappedNoPositionSamWriter.initialiseUnmapped(unmappedOut.mStream, bam, mAugmenterMerger == null, isFinalUnmapped);
+        unmappedNoPositionSamWriter.initialiseUnmapped(unmappedOutStream, bam, mAugmenterMerger == null, isFinalUnmapped);
         if (!isFinalUnmapped) {
           //alignment file unification mode
           final int numberIntermediateFiles = AbstractMulticoreFilterConcat.numberIntermediateFiles(mParams.numberThreads(), mRegions.size());
@@ -149,11 +148,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
           final RecordToWriter rtw = new SimpleRecordToWriter(unmappedNoPositionSamWriter);
           writeUnmappedRecords(unmappedSamRecordFactory, rtw);
         }
-      } finally {
-        unmappedNoPositionSamWriter.close();
       }
-    } finally {
-      unmappedOut.mStream.close();
     }
     final File indexFile;
     final File calibrateFile;

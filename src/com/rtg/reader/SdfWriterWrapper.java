@@ -11,6 +11,7 @@
  */
 package com.rtg.reader;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 
@@ -24,7 +25,7 @@ import com.rtg.util.io.FileUtils;
  *
  */
 @TestClass(value = {"com.rtg.reader.SdfSplitterTest", "com.rtg.ngs.DummySdfOutputProcessorTest"})
-public final class SdfWriterWrapper {
+public final class SdfWriterWrapper implements Closeable {
 
   private final boolean mIsPaired;
   private final boolean mHasQuality;
@@ -125,6 +126,7 @@ public final class SdfWriterWrapper {
    * Close method for the writers.
    * @throws IOException whenever
    */
+  @Override
   public void close() throws IOException {
     if (mLeft != null) {
       mLeft.close();

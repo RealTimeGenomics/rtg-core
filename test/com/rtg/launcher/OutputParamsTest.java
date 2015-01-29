@@ -27,9 +27,7 @@ public class OutputParamsTest extends ObjectParamsTest {
     final CFlags flags = new CFlags("testOutputParams", out, null);
     OutputParams.initFlags(flags);
     flags.setFlags(args);
-    final OutputParams params = new OutputParams((File) flags.getValue(CommonFlags.OUTPUT_FLAG), flags.isSet(BuildCommon.PROGRESS_FLAG), !flags.isSet(CommonFlags.NO_GZIP));
-    assertTrue(params.closed());
-    return params;
+    return new OutputParams((File) flags.getValue(CommonFlags.OUTPUT_FLAG), flags.isSet(BuildCommon.PROGRESS_FLAG), !flags.isSet(CommonFlags.NO_GZIP));
   }
 
 }

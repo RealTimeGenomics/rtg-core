@@ -101,11 +101,9 @@ public class ReaderParamsTest extends TestCase {
     assertTrue(dirStr.contains("test") && dirStr.contains("unit"));
     assertEquals(4, sp.maxLength());
     final SequencesReader reader = sp.reader();
-    assertTrue(!sp.closed());
     assertEquals(reader.path(), sp.directory());
     assertEquals(reader.type(), sp.mode().type());
     sp.close();
-    assertTrue(sp.closed());
     assertTrue(sp.toString().startsWith("SequenceParams mode=BIDIRECTIONAL directory="));
 
   }

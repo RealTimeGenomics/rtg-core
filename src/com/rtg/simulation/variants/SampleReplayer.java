@@ -90,9 +90,8 @@ public class SampleReplayer {
     final StringBuilder referenceThing = new StringBuilder();
     referenceThing.append("version 1").append(StringUtils.LS);
     referenceThing.append("either\tdef\tnone\tlinear").append(StringUtils.LS);
-    final SdfWriter sdf = new SdfWriter(outputDir, Constants.MAX_FILE_SIZE, PrereadType.UNKNOWN, false, true, true, SequenceType.DNA);
-    sdf.setCommandLine(CommandLine.getCommandLine());
-    try {
+    try (SdfWriter sdf = new SdfWriter(outputDir, Constants.MAX_FILE_SIZE, PrereadType.UNKNOWN, false, true, true, SequenceType.DNA)) {
+      sdf.setCommandLine(CommandLine.getCommandLine());
       final ReferenceGenome rg = new ReferenceGenome(mReference, sex, DefaultFallback.DIPLOID);
       for (long i = 0; i < mReference.numberSequences(); i++) {
         final ReferenceSequence refSeq = rg.sequence(mReference.name(i));
@@ -108,8 +107,6 @@ public class SampleReplayer {
         }
         replaySequence(sampleVcf, sdf, count, i, sampleNum, header);
       }
-    } finally {
-      sdf.close();
     }
     final File referenceFileName = new File(outputDir, ReferenceGenome.REFERENCE_FILE);
     FileUtils.stringToFile(referenceThing.toString(), referenceFileName);

@@ -103,13 +103,9 @@ public final class NBlockDetector {
     final File dir = new File(args[0]);
     final File output = new File(args[1]);
     final int blockSize = Integer.parseInt(args[2]);
-    try (FileOutputStream outputStream = new FileOutputStream(output)) {
-      final SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReader(dir);
-      try {
-        detectNs(reader, blockSize, outputStream);
-      } finally {
-        reader.close();
-      }
+    try (FileOutputStream outputStream = new FileOutputStream(output);
+      SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReader(dir)) {
+      detectNs(reader, blockSize, outputStream);
     }
   }
 }

@@ -39,13 +39,12 @@ public class BufferedOutputStreamFix extends BufferedOutputStream {
   }
 
   @Override
+  @SuppressWarnings("try")
   public void close() throws IOException {
     if (!mClosed) {
       mClosed = true;
-      try {
+      try (OutputStream ignored = out) {
         flush();
-      } finally {
-        out.close();
       }
     }
   }

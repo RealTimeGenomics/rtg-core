@@ -102,13 +102,6 @@ public final class BreakpointPatternParams extends ModuleParams {
     return new File(mDirectory, name);
   }
 
-
-  @Override
-  @ParamsNoField
-  public boolean closed() {
-    return false;
-  }
-
   @Override
   @ParamsNoField
   public void close() {

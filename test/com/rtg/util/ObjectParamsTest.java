@@ -65,7 +65,6 @@ public class ObjectParamsTest extends TestCase {
     OutputParams.initFlags(flags);
     flags.setFlags(args);
     final OutputParams params = new MockParams(flags, 1);
-    assertTrue(params.closed());
     assertNotNull(params.objects());
     return params;
   }

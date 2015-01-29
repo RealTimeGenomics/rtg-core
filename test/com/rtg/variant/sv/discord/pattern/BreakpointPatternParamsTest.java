@@ -15,8 +15,8 @@ package com.rtg.variant.sv.discord.pattern;
 import java.io.File;
 import java.io.IOException;
 
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.TestUtils;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.test.FileHelper;
 import com.rtg.util.test.params.TestParams;
 
@@ -67,9 +67,5 @@ public class BreakpointPatternParamsTest extends TestCase {
     } finally {
       FileHelper.deleteAll(tmp);
     }
-  }
-  public void testClosed() {
-    final BreakpointPatternParams params = BreakpointPatternParams.builder().create();
-    assertFalse(params.closed());
   }
 }

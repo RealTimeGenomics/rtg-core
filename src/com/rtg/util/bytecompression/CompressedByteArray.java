@@ -340,8 +340,7 @@ public final class CompressedByteArray extends ByteArray implements Integrity {
     final long totLongs = ret.mData.length();
     long startLong = 0;
     try (FileInputStream stream = new FileInputStream(file)) {
-      final FileChannel channel = stream.getChannel();
-      try {
+      try (FileChannel channel = stream.getChannel()) {
         if (startSeekPos > 0) {
           channel.position(startSeekPos);
         }
@@ -359,8 +358,6 @@ public final class CompressedByteArray extends ByteArray implements Integrity {
           dataLoadPosition += dataAdvance;
           buf.compact();
         }
-      } finally {
-        channel.close();
       }
     }
     return ret;

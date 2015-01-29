@@ -65,13 +65,10 @@ public class MappedParamsTest extends TestCase {
       MockMappedParams def = MockMappedParams.builder().outputParams(new OutputParams(tempDir, false, true)).create();
       assertNotNull(def.filterParams());
       assertNull(def.genome());
-      assertTrue(def.closed());
       def.close();
       def = MockMappedParams.builder().outputParams(new OutputParams(tempDir, false, true)).genome(new MockSequenceParams(new MockReaderParams(1, 1, SequenceMode.BIDIRECTIONAL))).create();
       assertNotNull(def.genome());
-      assertFalse(def.closed());
       def.close();
-      assertTrue(def.closed());
     } finally {
       assertTrue(FileHelper.deleteAll(tempDir));
     }

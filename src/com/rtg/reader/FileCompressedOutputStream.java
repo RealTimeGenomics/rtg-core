@@ -114,15 +114,13 @@ public class FileCompressedOutputStream extends OutputStream {
    */
   @Override
   public void close() throws IOException {
-    try {
+    try (final DataOutputStream out = mStream) {
       for (int i = 0; i < mBufferInUse; i++) {
-        mStream.writeLong(mBuffer[i]);
+        out.writeLong(mBuffer[i]);
       }
-      mStream.writeLong(0L); //reader is slightly dumb
+      out.writeLong(0L); //reader is slightly dumb
 
       mBufferInUse = 0;
-    } finally {
-      mStream.close();
     }
   }
 

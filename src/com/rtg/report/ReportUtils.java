@@ -79,22 +79,19 @@ public final class ReportUtils {
     final InputStream is = Resources.getResourceAsStream(templateFile);
 
     try (BufferedReader br = new BufferedReader(new InputStreamReader(is))) {
-      final LineWriter pw = new LineWriter(new OutputStreamWriter(output));
-      fillTemplate(replacements, br, pw);
+      try (final LineWriter pw = new LineWriter(new OutputStreamWriter(output))) {
+        fillTemplate(replacements, br, pw);
+      }
     }
   }
 
   static void fillTemplate(Map<String, String> replacements, BufferedReader br, LineWriter pw) throws IOException {
-    try {
-      String line;
-      while ((line = br.readLine()) != null) {
-        for (Map.Entry<String, String> entry : replacements.entrySet()) {
-          line = line.replace(entry.getKey(), entry.getValue());
-        }
-        pw.writeln(line);
+    String line;
+    while ((line = br.readLine()) != null) {
+      for (Map.Entry<String, String> entry : replacements.entrySet()) {
+        line = line.replace(entry.getKey(), entry.getValue());
       }
-    } finally {
-      pw.close();
+      pw.writeln(line);
     }
   }
 }

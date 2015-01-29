@@ -58,9 +58,7 @@ public class ModuleParamsTest extends TestCase {
     final Appendable out = new StringWriter();
     final CFlags flags = new CFlags(name, out, null);
     flags.setFlags(args);
-    final ModuleParams params = new MockModuleParams(flags);
-    assertTrue(params.closed());
-    return params;
+    return new MockModuleParams(flags);
   }
 
   public void testEquals() throws Exception {

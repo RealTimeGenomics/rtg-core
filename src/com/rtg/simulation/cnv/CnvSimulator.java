@@ -518,8 +518,7 @@ public class CnvSimulator {
   }
 
   private void outputBreakPointsToInfoFile() throws IOException {
-    final OutputStream cnvOutput = mCnvOutput;
-    try {
+    try (OutputStream cnvOutput = mCnvOutput) {
       cnvOutput.write(headerLines().getBytes());
       for (int i = 0; i < mRegionSequences.size(); i++) {
         for (int j = 0; j < mRegionSequences.get(i).size(); j++) {
@@ -531,8 +530,6 @@ public class CnvSimulator {
           cnvOutput.write(currentRegion.toBytes(i, seqName));
         }
       }
-    } finally {
-      cnvOutput.close();
     }
   }
 

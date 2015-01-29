@@ -107,15 +107,6 @@ public class DefaultReaderParams extends ReaderParams implements Integrity {
   }
 
   /**
-   * Check if reader is closed.
-   * @return true iff the reader is currently closed.
-   */
-  @Override
-  public boolean closed() {
-    return mReader == null;
-  }
-
-  /**
    * If necessary close the reader.
    * @throws IOException If an IO error occurs
    */

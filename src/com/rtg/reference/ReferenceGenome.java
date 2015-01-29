@@ -104,8 +104,14 @@ public class ReferenceGenome {
    * @throws IOException when actual I/O error or problems in file definition.
    */
   public ReferenceGenome(final SequencesReader genome, final Sex sex, DefaultFallback fallback) throws IOException {
-    final File ref = new File(genome.path(), REFERENCE_FILE);
+    try (BufferedReader r = getReferenceReader(genome, fallback)) {
+      parse(names(genome), r, sex);
+    }
+  }
+
+  private static BufferedReader getReferenceReader(SequencesReader genome, DefaultFallback fallback) throws IOException {
     final BufferedReader r;
+    final File ref = new File(genome.path(), REFERENCE_FILE);
     if (ref.exists()) {
       final InputStreamReader isr = new InputStreamReader(new BufferedInputStream(new FileInputStream(ref)));
       r = new BufferedReader(isr);
@@ -120,11 +126,7 @@ public class ReferenceGenome {
         throw new IOException("No reference file found");
       }
     }
-    try {
-      parse(names(genome), r, sex);
-    } finally {
-      r.close();
-    }
+    return r;
   }
 
   /**

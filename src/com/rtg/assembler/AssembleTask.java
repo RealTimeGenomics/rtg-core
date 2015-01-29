@@ -29,13 +29,11 @@ import com.rtg.assembler.graph.io.GraphWriter;
 import com.rtg.launcher.ParamsTask;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReaderFactory;
-import com.rtg.util.intervals.LongRange;
-import com.rtg.util.NullStreamUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.util.io.FileUtils;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.store.StoreDirProxy;
 
 /**
@@ -130,17 +128,7 @@ final class AssembleTask extends ParamsTask<AssembleParams, GraphMapStatistics> 
           .numberThreads(assembleParams.numberThreads())
           .directory(assembleParams.directory())
           .create();
-      PrintStream alignments;
-      if (assembleParams.alignments()) {
-        alignments = new PrintStream(FileUtils.createOutputStream(new File(assembleParams.directory(), "alignments" + FileUtils.GZ_SUFFIX), true));
-      } else {
-        alignments = NullStreamUtils.getNullPrintStream();
-      }
-      try {
-        GraphMapTask.run(graph, readPairSources, params, stats);
-      } finally {
-        alignments.close();
-      }
+      GraphMapTask.run(graph, readPairSources, params, stats);
     }
   }
 

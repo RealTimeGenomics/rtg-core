@@ -118,10 +118,8 @@ public final class PrereadVerifier {
    * @throws IOException if an IO error occurs
    */
   public static boolean verifyDir(final File f) throws IOException {
-    SequencesReader reader = null;
-    try {
+    try (SequencesReader reader = SequencesReaderFactory.createMemorySequencesReader(f, true, true, LongRange.NONE)) {
       //reader = SequencesReaderFactory.createDefaultSequencesReader(f);
-      reader = SequencesReaderFactory.createMemorySequencesReader(f, true, true, LongRange.NONE);
       //reader.globalIntegrity();
       return verify(reader, f);
     } catch (final IOException e) {
@@ -131,10 +129,6 @@ public final class PrereadVerifier {
       //failed to create reader
       Diagnostic.error(ErrorType.SDF_VERIFICATION_FAILED);
       return false;
-    } finally {
-      if (reader != null) {
-        reader.close();
-      }
     }
   }
 

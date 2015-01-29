@@ -373,8 +373,7 @@ public final class BitwiseByteArray extends ByteArray implements Integrity {
     int dataArray = 0;
     long absolutePosition = startSeekPos;
     try (FileInputStream stream = new FileInputStream(file)) {
-      final FileChannel channel = stream.getChannel();
-      try {
+      try (FileChannel channel = stream.getChannel()) {
         if (startSeekPos > 0) {
           channel.position(startSeekPos);
         }
@@ -402,8 +401,6 @@ public final class BitwiseByteArray extends ByteArray implements Integrity {
           //          mValuesSet = mSize;
           buf.compact();
         }
-      } finally {
-        channel.close();
       }
     }
 

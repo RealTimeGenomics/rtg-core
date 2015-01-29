@@ -129,15 +129,6 @@ public class MockSequenceParams extends IntegralAbstract implements ISequencePar
   }
 
   /**
-   * Check if reader is closed.
-   * @return true iff the reader is currently closed.
-   */
-  @Override
-  public boolean closed() {
-    return mReaderParams.closed();
-  }
-
-  /**
    * Get a SequencesReader for this sequence.
    * @return a SequencesReader for this sequence. A single reader is returned on succesive calls.
    */

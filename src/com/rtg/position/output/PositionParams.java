@@ -402,15 +402,6 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
   }
 
   /**
-   * Check if queries are closed.
-   * @return true iff the queries are currently closed.
-   */
-  @Override
-  public boolean closed() {
-    return mBuildParams.closed() && mSearchParams.closed();
-  }
-
-  /**
    * Get the name of the logfile.
    * @return the name of the logfile.
    */

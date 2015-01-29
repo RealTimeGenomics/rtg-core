@@ -228,20 +228,9 @@ public class VcfValidatorCli extends AbstractCli {
   }
 
   private void readRules(File rulesFile) throws IOException {
-    final InputStream rulesStream;
-    if (rulesFile == null) {
-      rulesStream = Resources.getResourceAsStream("com/rtg/vcf/validator/rules.properties");
-      if (rulesStream == null) {
-        throw new IOException("Unable to load validation rules resource.");
-      }
-    } else {
-      rulesStream = new FileInputStream(rulesFile);
-    }
     final Properties pr = new Properties();
-    try {
+    try (InputStream rulesStream = getRulesStream(rulesFile)) {
       pr.load(rulesStream);
-    } finally {
-      rulesStream.close();
     }
 
     final Map<String, Map<String, String>> infoDefinitions = new HashMap<>();
@@ -275,6 +264,19 @@ public class VcfValidatorCli extends AbstractCli {
     for (Entry<String, Map<String, String>> format : formatDefinitions.entrySet()) {
       mFormatRules.put(format.getKey(), createRuleSet(FieldType.FORMAT, format.getKey(), format.getValue()));
     }
+  }
+
+  private InputStream getRulesStream(File rulesFile) throws IOException {
+    final InputStream rulesStream;
+    if (rulesFile == null) {
+      rulesStream = Resources.getResourceAsStream("com/rtg/vcf/validator/rules.properties");
+      if (rulesStream == null) {
+        throw new IOException("Unable to load validation rules resource.");
+      }
+    } else {
+      rulesStream = new FileInputStream(rulesFile);
+    }
+    return rulesStream;
   }
 
   private RuleSet<?> createRuleSet(FieldType type, String name, Map<String, String> rules) throws IOException {

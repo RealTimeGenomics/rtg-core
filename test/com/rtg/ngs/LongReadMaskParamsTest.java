@@ -26,7 +26,6 @@ public class LongReadMaskParamsTest extends TestCase {
     assertEquals(2, lrmp.getIndels());
     assertEquals(3, lrmp.getIndelLength());
 
-    assertTrue(lrmp.closed());
     assertTrue(lrmp.isValid(readLength));
     assertEquals("Long read Mask: w=25 s=1 i=2 l=3", lrmp.toString());
 

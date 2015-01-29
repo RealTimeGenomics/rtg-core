@@ -32,13 +32,6 @@ public abstract class ReaderParams implements Params, Closeable {
   public abstract SequenceMode mode();
 
   /**
-   * Check if reader is closed.
-   * @return true iff the reader is currently closed.
-   */
-  @Override
-  public abstract boolean closed();
-
-  /**
    * Get a SequencesReader for this sequence.
    * @return a SequencesReader for this sequence. A single reader is returned on succesive calls.
    */

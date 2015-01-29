@@ -154,11 +154,8 @@ public final class SdfFilter {
 
     final boolean hasQuality = leftReader.hasQualityData() && rightReader.hasQualityData();
 
-    final SdfWriter leftWriter = new SdfWriter(leftOut, Constants.MAX_FILE_SIZE,
-                                               leftReader.getPrereadType(), hasQuality, true, leftReader.compressed(), leftReader.type());
-    final SdfWriter rightWriter = new SdfWriter(rightOut, Constants.MAX_FILE_SIZE,
-                                                rightReader.getPrereadType(), hasQuality, true, rightReader.compressed(), rightReader.type());
-    try {
+    try (SdfWriter rightWriter = new SdfWriter(rightOut, Constants.MAX_FILE_SIZE, rightReader.getPrereadType(), hasQuality, true, rightReader.compressed(), rightReader.type());
+         SdfWriter leftWriter = new SdfWriter(leftOut, Constants.MAX_FILE_SIZE, leftReader.getPrereadType(), hasQuality, true, leftReader.compressed(), leftReader.type())) {
       // Force arms so user can use filter to switch arms if desired
       leftWriter.setPrereadArm(PrereadArm.LEFT);
       leftWriter.setSdfId(leftReader.getSdfId());
@@ -193,9 +190,9 @@ public final class SdfFilter {
 
         if (leftNpos == -1 && rightNpos == -1) {
           writeSequence(leftWriter, leftReader.currentName(),
-                        leftSequence, hasQuality ? leftSequenceQuality : null, leftLength);
+            leftSequence, hasQuality ? leftSequenceQuality : null, leftLength);
           writeSequence(rightWriter, rightReader.currentName(),
-                        rightSequence, hasQuality ? rightSequenceQuality : null, rightLength);
+            rightSequence, hasQuality ? rightSequenceQuality : null, rightLength);
         } else {
           final int firstValid = leftReader.type().firstValid();
 
@@ -223,9 +220,9 @@ public final class SdfFilter {
                 leftSequence[leftNpos] = (byte) i;
 
                 writeSequence(leftWriter, leftReader.currentName() + suffix,
-                              leftSequence, hasQuality ? leftSequenceQuality : null, leftLength);
+                  leftSequence, hasQuality ? leftSequenceQuality : null, leftLength);
                 writeSequence(rightWriter, rightReader.currentName() + suffix,
-                              rightSequence, hasQuality ? rightSequenceQuality : null, rightLength);
+                  rightSequence, hasQuality ? rightSequenceQuality : null, rightLength);
               }
 
               // restore the N to the left side
@@ -238,9 +235,9 @@ public final class SdfFilter {
                 rightSequence[rightNpos] = (byte) i;
 
                 writeSequence(leftWriter, leftReader.currentName() + suffix,
-                              leftSequence, hasQuality ? leftSequenceQuality : null, leftLength);
+                  leftSequence, hasQuality ? leftSequenceQuality : null, leftLength);
                 writeSequence(rightWriter, rightReader.currentName() + suffix,
-                              rightSequence, hasQuality ? rightSequenceQuality : null, rightLength);
+                  rightSequence, hasQuality ? rightSequenceQuality : null, rightLength);
               }
             }
           } else {
@@ -252,20 +249,17 @@ public final class SdfFilter {
                 leftSequence[leftNpos] = (byte) i;
               }
               writeSequence(leftWriter, leftReader.currentName() + suffix,
-                            leftSequence, hasQuality ? leftSequenceQuality : null, leftLength);
+                leftSequence, hasQuality ? leftSequenceQuality : null, leftLength);
 
               if (rightNpos != -1) {
                 rightSequence[rightNpos] = (byte) i;
               }
               writeSequence(rightWriter, rightReader.currentName() + suffix,
-                            rightSequence, hasQuality ? rightSequenceQuality : null, rightLength);
+                rightSequence, hasQuality ? rightSequenceQuality : null, rightLength);
             }
           }
         }
       }
-    } finally {
-      leftWriter.close();
-      rightWriter.close();
     }
   }
 
@@ -329,16 +323,12 @@ public final class SdfFilter {
             filter.expand(input, output, n, input.getArm());
           }
         } else {
-          try (SequencesReader leftReader = reader((File) flags.getValue(LEFT_INPUT_FLAG), flags.isSet(RC_FLAG))) {
-            final SequencesReader rightReader = reader((File) flags.getValue(RIGHT_INPUT_FLAG), flags.isSet(RC_FLAG));
-            try {
-              FileUtils.ensureOutputDirectory(output);
-              final File leftOut = new File(output, "left");
-              final File rightOut = new File(output, "right");
-              filter.expandPair(leftReader, rightReader, leftOut, rightOut, n, flags.isSet(ALTERNATE_FLAG));
-            } finally {
-              rightReader.close();
-            }
+          try (final SequencesReader leftReader = reader((File) flags.getValue(LEFT_INPUT_FLAG), flags.isSet(RC_FLAG));
+               final SequencesReader rightReader = reader((File) flags.getValue(RIGHT_INPUT_FLAG), flags.isSet(RC_FLAG))) {
+            FileUtils.ensureOutputDirectory(output);
+            final File leftOut = new File(output, "left");
+            final File rightOut = new File(output, "right");
+            filter.expandPair(leftReader, rightReader, leftOut, rightOut, n, flags.isSet(ALTERNATE_FLAG));
           }
         }
 

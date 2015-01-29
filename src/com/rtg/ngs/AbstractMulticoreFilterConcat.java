@@ -303,17 +303,14 @@ public abstract class AbstractMulticoreFilterConcat {
     public void run() throws IOException {
       final IORunnableProxy indexProxy = new IORunnableProxy(mIndexRunner);
       final Thread indexThread = new Thread(indexProxy);
-      try {
+      try (final OutputStream out = mOut;
+           final OutputStream calOut = mCalOut;
+           final SequencesReader template = mTemplate) {
         if (mIndexRunner != null) {
           indexThread.start();
         }
-        mFilter.filterConcat(mHeader, mOut, mCalOut, mRegions, mTemplate, true, mFiles);
+        mFilter.filterConcat(mHeader, out, calOut, mRegions, template, true, mFiles);
       } finally {
-        mOut.close();
-        if (mCalOut != null) {
-          mCalOut.close();
-        }
-        mTemplate.close();
         if (mIndexRunner != null) {
           try {
             indexThread.join();

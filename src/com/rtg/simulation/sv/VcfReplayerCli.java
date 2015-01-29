@@ -130,18 +130,14 @@ public class VcfReplayerCli extends AbstractCli {
     // TODO: Check we got complementary pairs of Adjacency objects
     // TODO: check that every named chromosome is one of the chromosomes in our reference.
     SdfUtils.validateHasNames(template);
-    final SequencesReader reader = SequencesReaderFactory.createMemorySequencesReader(template, true, LongRange.NONE);
-    SdfUtils.validateNoDuplicates(reader, template, false);
+    try (SequencesReader reader = SequencesReaderFactory.createMemorySequencesReader(template, true, LongRange.NONE)) {
+      SdfUtils.validateNoDuplicates(reader, template, false);
 
-    try {
-      try (SdfWriter w1 = new SdfWriter(new File(output, "left"), com.rtg.util.Constants.MAX_FILE_SIZE, reader.getPrereadType(), false, true, true, reader.type())) {
-        try (SdfWriter w2 = new SdfWriter(new File(output, "right"), com.rtg.util.Constants.MAX_FILE_SIZE, reader.getPrereadType(), false, true, true, reader.type())) {
-          doWork(setA, reader, w1);
-          doWork(setB, reader, w2);
-        }
+      try (SdfWriter w1 = new SdfWriter(new File(output, "left"), com.rtg.util.Constants.MAX_FILE_SIZE, reader.getPrereadType(), false, true, true, reader.type());
+           SdfWriter w2 = new SdfWriter(new File(output, "right"), com.rtg.util.Constants.MAX_FILE_SIZE, reader.getPrereadType(), false, true, true, reader.type())) {
+        doWork(setA, reader, w1);
+        doWork(setB, reader, w2);
       }
-    } finally {
-      reader.close();
     }
   }
 

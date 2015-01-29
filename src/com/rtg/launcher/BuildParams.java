@@ -320,15 +320,6 @@ public final class BuildParams extends CreateParams implements Params {
     mSequenceParams.close();
   }
 
-  /**
-   * Check if queries are closed.
-   * @return true iff the queries are currently closed.
-   */
-  @Override
-  public boolean closed() {
-    return mSequenceParams.closed();
-  }
-
   @Override
   public int hashCode() {
     return Utils.pairHash(super.hashCode(), Utils.pairHash(Utils.pairHash(mSequenceParams.hashCode(), mTypeBits), Utils.pairHash(mWindowSize, mStepSize)));

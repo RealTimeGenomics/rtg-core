@@ -268,13 +268,9 @@ public class SamRename extends AbstractCli {
           final SAMFileWriterFactory fact = new SAMFileWriterFactory();
           fact.setMaxRecordsInRam(5000000);
           fact.setTempDirectory(sortTempDir);
-          final SAMFileWriter writer;
-          if (outFile.getName().endsWith(".bam")) {
-            writer = fact.makeBAMWriter(header, true, baseOutStream, false);
-          } else {
-            writer = fact.makeSAMWriter(header, true, baseOutStream);
-          }
-          try {
+          try (SAMFileWriter writer = outFile.getName().endsWith(".bam")
+            ? fact.makeBAMWriter(header, true, baseOutStream, false)
+            : fact.makeSAMWriter(header, true, baseOutStream)) {
             for (SAMRecord line : read) {
               final String nameInNumbers = line.getReadName();
               final int samIndex = Integer.parseInt(nameInNumbers);
@@ -318,8 +314,6 @@ public class SamRename extends AbstractCli {
             }
           } catch (final NumberFormatException e) {
             throw new NoTalkbackSlimException(ErrorType.SAM_BAD_FORMAT, resultsFile.getAbsolutePath(), "The read ids are not numbers.");
-          } finally {
-            writer.close();
           }
         }
       }

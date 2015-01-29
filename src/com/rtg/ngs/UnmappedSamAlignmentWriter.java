@@ -25,7 +25,7 @@ import net.sf.samtools.SAMRecord;
 /**
  * The alignment writer for unmapped sam files
  */
-public class UnmappedSamAlignmentWriter {
+public class UnmappedSamAlignmentWriter implements AutoCloseable {
 
   private static final int MAX_RECORDS_IN_RAM = 5000000;
 
@@ -75,6 +75,7 @@ public class UnmappedSamAlignmentWriter {
   /**
    * Closes unmapped output
    */
+  @Override
   public void close() {
     if (mSamUnmappedWriter != null) {
       mSamUnmappedWriter.close();

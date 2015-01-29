@@ -111,9 +111,8 @@ public class RocContainer {
     for (int i = 0; i < mOutputFiles.size(); i++) {
       double tp = 0.0;
       int fp = 0;
-      final OutputStream os = FileUtils.createOutputStream(FileUtils.getZippedFileName(zip, mOutputFiles.get(i)), zip);
-      rocHeader(os, totalBaselineVariants);
-      try {
+      try (OutputStream os = FileUtils.createOutputStream(FileUtils.getZippedFileName(zip, mOutputFiles.get(i)), zip)) {
+        rocHeader(os, totalBaselineVariants);
         for (final Map.Entry<Double, RocPoint> me : mRocs.get(i).entrySet()) {
           final RocPoint p = me.getValue();
           tp += p.mTp;
@@ -127,8 +126,6 @@ public class RocContainer {
           sb.append(StringUtils.LS);
           os.write(sb.toString().getBytes());
         }
-      } finally {
-        os.close();
       }
     }
 

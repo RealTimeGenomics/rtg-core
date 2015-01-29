@@ -217,45 +217,37 @@ public final class CnvSimulatorCli extends LoggedCli {
       try (OutputStream mappingOutput = FileUtils.createOutputStream(getMappingFile(flags, gzip), gzip, false); SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(input)) {
         final PrereadType pType = dsr.getPrereadType();
 
-        final SdfWriter output = new SdfWriter(outputDirectory, Constants.MAX_FILE_SIZE, pType, false, true, !flags.isSet(NO_GZIP), dsr.type());
-        try {
-          final SdfWriter twin = new SdfWriter(twinDirectory, Constants.MAX_FILE_SIZE, pType, false, true, !flags.isSet(NO_GZIP), dsr.type());
-          try {
+        try (SdfWriter output = new SdfWriter(outputDirectory, Constants.MAX_FILE_SIZE, pType, false, true, !flags.isSet(NO_GZIP), dsr.type());
+             SdfWriter twin = new SdfWriter(twinDirectory, Constants.MAX_FILE_SIZE, pType, false, true, !flags.isSet(NO_GZIP), dsr.type())) {
 
-            final PortableRandom random;
-            if (mFlags.isSet(SEED)) {
-              random = new PortableRandom((Integer) mFlags.getValue(SEED));
-            } else {
-              random = new PortableRandom();
-            }
-            CnvPriorParams priors;
-            priors = CnvPriorParams.builder()
-              .cnvpriors((String) mFlags.getValue(PRIORS_FLAG))
-              .create();
-            if (mFlags.isSet(SET_CNV_LENGTH)) {
-              simulator = new CnvSimulator(dsr, output, twin, mappingOutput, random, priors,
-                (double) mFlags.getValue(CNV_PERCENT),
-                (mFlags.isSet(CNV_COUNT)) ? (int) mFlags.getValue(CNV_COUNT) : Integer.MAX_VALUE);
-              simulator.generate(parseCnvLengthSetting((String) mFlags.getValue(SET_CNV_LENGTH)));
-            } else if (mFlags.isSet(SET_CNV)) {
-              simulator = new CnvSimulator(dsr, output, twin, mappingOutput, random, priors,
-                -1.0,
-                mFlags.getValues(SET_CNV).size());
-              final FixedRegion[] fixedRegions = getRegionArray(mFlags.getValues(SET_CNV));
-              simulator.generate(fixedRegions);
-            } else {
-              simulator = new CnvSimulator(dsr, output, twin, mappingOutput, random, priors,
-                (double) mFlags.getValue(CNV_PERCENT),
-                (mFlags.isSet(CNV_COUNT)) ? (int) mFlags.getValue(CNV_COUNT) : Integer.MAX_VALUE);
-              simulator.generate();
-            }
-            simulator.outputHistograms(out);
-            return 0;
-          } finally {
-            twin.close();
+          final PortableRandom random;
+          if (mFlags.isSet(SEED)) {
+            random = new PortableRandom((Integer) mFlags.getValue(SEED));
+          } else {
+            random = new PortableRandom();
           }
-        } finally {
-          output.close();
+          final CnvPriorParams priors = CnvPriorParams.builder()
+            .cnvpriors((String) mFlags.getValue(PRIORS_FLAG))
+            .create();
+          if (mFlags.isSet(SET_CNV_LENGTH)) {
+            simulator = new CnvSimulator(dsr, output, twin, mappingOutput, random, priors,
+              (double) mFlags.getValue(CNV_PERCENT),
+              (mFlags.isSet(CNV_COUNT)) ? (int) mFlags.getValue(CNV_COUNT) : Integer.MAX_VALUE);
+            simulator.generate(parseCnvLengthSetting((String) mFlags.getValue(SET_CNV_LENGTH)));
+          } else if (mFlags.isSet(SET_CNV)) {
+            simulator = new CnvSimulator(dsr, output, twin, mappingOutput, random, priors,
+              -1.0,
+              mFlags.getValues(SET_CNV).size());
+            final FixedRegion[] fixedRegions = getRegionArray(mFlags.getValues(SET_CNV));
+            simulator.generate(fixedRegions);
+          } else {
+            simulator = new CnvSimulator(dsr, output, twin, mappingOutput, random, priors,
+              (double) mFlags.getValue(CNV_PERCENT),
+              (mFlags.isSet(CNV_COUNT)) ? (int) mFlags.getValue(CNV_COUNT) : Integer.MAX_VALUE);
+            simulator.generate();
+          }
+          simulator.outputHistograms(out);
+          return 0;
         }
       }
     } catch (final FileNotFoundException e) {

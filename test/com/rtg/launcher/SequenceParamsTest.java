@@ -122,11 +122,9 @@ public class SequenceParamsTest extends TestCase {
     assertEquals(4, sp.numberSequences());
     assertEquals(4, sp.maxLength());
     final SequencesReader reader = sp.reader();
-    assertTrue(!sp.closed());
     assertEquals(reader.path(), sp.directory());
     assertEquals(reader.type(), sp.mode().type());
     sp.close();
-    assertTrue(sp.closed());
     assertTrue(sp.toString().startsWith("SequenceParams mode=BIDIRECTIONAL region=[(0:-1), (4:-1)] directory="));
 
   }
@@ -140,11 +138,9 @@ public class SequenceParamsTest extends TestCase {
     assertEquals(3, sp.region().getEnd());
     assertEquals(1, sp.numberSequences());
     final SequencesReader reader = sp.reader();
-    assertTrue(!sp.closed());
     assertEquals(reader.path(), sp.directory());
     assertEquals(reader.type(), sp.mode().type());
     sp.close();
-    assertTrue(sp.closed());
     assertTrue(sp.toString(), sp.toString().startsWith("SequenceParams mode=BIDIRECTIONAL region=[(2:-1), (3:-1)] directory="));
   }
 
@@ -157,11 +153,9 @@ public class SequenceParamsTest extends TestCase {
     assertEquals(3, sp.region().getEnd());
     assertEquals(1, sp.numberSequences());
     final SequencesReader reader = sp.reader();
-    assertTrue(!sp.closed());
     assertEquals(reader.path(), sp.directory());
     assertEquals(reader.type(), sp.mode().type());
     sp.close();
-    assertTrue(sp.closed());
     assertTrue(sp.toString().startsWith("SequenceParams mode=BIDIRECTIONAL region=[(2:-1), (3:-1)] directory="));
   }
 
@@ -173,11 +167,9 @@ public class SequenceParamsTest extends TestCase {
     assertEquals(2, sp.region().getEnd());
     assertEquals(0, sp.numberSequences());
     final SequencesReader reader = sp.reader();
-    assertTrue(!sp.closed());
     assertEquals(reader.path(), sp.directory());
     assertEquals(reader.type(), sp.mode().type());
     sp.close();
-    assertTrue(sp.closed());
     assertTrue(sp.toString().startsWith("SequenceParams mode=BIDIRECTIONAL region=[(2:-1), (2:-1)] directory="));
   }
 

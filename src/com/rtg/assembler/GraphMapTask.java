@@ -27,11 +27,10 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.assembler.graph.MutableGraph;
 import com.rtg.assembler.graph.io.GraphWriter;
 import com.rtg.launcher.ParamsTask;
-import com.rtg.util.intervals.LongRange;
-import com.rtg.util.NullStreamUtils;
 import com.rtg.util.SimpleThreadPool;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.store.StoreDirProxy;
 
 /**
@@ -65,18 +64,8 @@ public class GraphMapTask extends ParamsTask<GraphMapParams, GraphMapStatistics>
         final ReadPairSource readPairSource = ReadPairSourceMatePair.makeSource(readDir, LongRange.NONE);
         reads.add(readPairSource);
       }
-      final PrintStream alignments;
-      if (mParams.alignmentFile() == null) {
-        alignments = NullStreamUtils.getNullPrintStream();
-      } else {
-        alignments = new PrintStream(new FileOutputStream(mParams.alignmentFile()));
-      }
-      try {
-        run(graph, reads, mParams, mStatistics);
-        GraphWriter.write(graph, outProxy, CommandLine.getCommandLine(), Collections.<UUID>emptySet());
-      } finally {
-        alignments.close();
-      }
+      run(graph, reads, mParams, mStatistics);
+      GraphWriter.write(graph, outProxy, CommandLine.getCommandLine(), Collections.<UUID>emptySet());
     } finally {
       for (ReadPairSource reader : reads) {
         reader.close();

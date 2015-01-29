@@ -723,22 +723,6 @@ public final class FileUtils {
     return ByteArrayIOUtils.bytesToIntBigEndian(bytes, 0);
   }
 
-  /*
-  public static boolean isBzip2File(File f) {
-    final FileInputStream fis = new FileInputStream(f);
-    try {
-      byte[] buf = new byte[3];
-      int rem = 3;
-      int len;
-      while ((len = fis.read(buf, 3 - rem, rem)) > 0) {
-        rem -= len;
-      }
-      return buf[0] == (byte) 'B' && buf[1] == (byte) 'Z' && buf[2] == (byte) 'h';
-    } finally {
-      fis.close();
-    }
-  }
-   */
   /**
    * @param file file to check
    * @return true if has <code>BZIP2</code> file extension
@@ -873,11 +857,10 @@ public final class FileUtils {
     }
 
     @Override
+    @SuppressWarnings("try")
     public void close() throws IOException {
-      try {
+      try (OutputStream ignored = mOut2) {
         mOut1.close();
-      } finally {
-        mOut2.close();
       }
     }
 

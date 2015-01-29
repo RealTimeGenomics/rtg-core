@@ -96,13 +96,11 @@ public class FileBitwiseOutputStream extends OutputStream {
    */
   @Override
   public void close() throws IOException {
-    try {
+    try (DataOutputStream out = mStream) {
       for (int i = 0; i < mBufferInUse; i++) {
-        mStream.writeLong(mBuffer[i]);
+        out.writeLong(mBuffer[i]);
       }
       mBufferInUse = 0;
-    } finally {
-      mStream.close();
     }
   }
 

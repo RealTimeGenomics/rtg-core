@@ -40,8 +40,6 @@ public class NgsMaskParamsExplicitTest extends TestCase {
     a.integrity();
     assertEquals("Mask:SplitL4w4s0e0", a.toString());
     assertNotNull(a.maskFactory(33));
-    assertTrue(a.closed());
     a.close();
-    assertTrue(a.closed());
   }
 }

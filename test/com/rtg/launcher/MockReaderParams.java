@@ -68,14 +68,6 @@ public class MockReaderParams extends ReaderParams {
   }
 
   /**
-   * @see ReaderParams#closed()
-   */
-  @Override
-  public boolean closed() {
-    return mClosed;
-  }
-
-  /**
    * @see ReaderParams#directory()
    */
   @Override

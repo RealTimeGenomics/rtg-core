@@ -432,7 +432,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
       @Override
       public void run() throws IOException {
         final Thread indexThread = mIndexProxy == null ? null : new Thread(mIndexProxy);
-        try {
+        try (final OutputStream out = mOut) {
           if (indexThread != null) {
             indexThread.start();
           }
@@ -440,27 +440,16 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
           final SAMFileHeader basicHeader = new SAMFileHeader();
           basicHeader.setSortOrder(SAMFileHeader.SortOrder.coordinate);
           try (SAMFileReader reader = new SAMFileReader(FileUtils.createFileInputStream(mIntermediateFile, false), mHeader)) {
-            final SAMFileWriter writer;
-            if (mBamOutput && mWriteBogusHeader) {
-              writer = new SAMFileWriterFactory().makeBAMWriter(basicHeader, true, mOut, true, false, true);
-            } else if (mBamOutput) {
-              writer = new SAMFileWriterFactory().makeBAMWriter(mHeader, true, mOut, mWriteHeader, false, true);
-            } else {
-              writer = new SAMFileWriterFactory().makeSAMWriter(mHeader, true, mOut, mWriteHeader);
-            }
-            try {
+            try (SAMFileWriter writer = getSAMFileWriter(basicHeader, out)) {
               final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(mIntermediateFile.getPath(), reader, true);
               while (it.hasNext()) {
                 final SAMRecord rec = it.next();
                 mAugmenter.updateUnmatedRecord(rec);
                 writer.addAlignment(rec);
               }
-            } finally {
-              writer.close();
             }
           }
         } finally {
-          mOut.close();
           if (indexThread != null) {
             try {
               indexThread.join();
@@ -474,6 +463,18 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
         if (!(mIntermediateFile.canWrite() && mIntermediateFile.delete() && mIntermediateAugmentFile.renameTo(mIntermediateFile))) {
           throw new SlimException("Unable to rename intermediate file: \"" + mIntermediateAugmentFile + "\" to \"" + mIntermediateFile + "\"");
         }
+      }
+
+      private SAMFileWriter getSAMFileWriter(SAMFileHeader basicHeader, OutputStream out) {
+        final SAMFileWriter writer;
+        if (mBamOutput && mWriteBogusHeader) {
+          writer = new SAMFileWriterFactory().makeBAMWriter(basicHeader, true, out, true, false, true);
+        } else if (mBamOutput) {
+          writer = new SAMFileWriterFactory().makeBAMWriter(mHeader, true, out, mWriteHeader, false, true);
+        } else {
+          writer = new SAMFileWriterFactory().makeSAMWriter(mHeader, true, out, mWriteHeader);
+        }
+        return writer;
       }
     }
   }

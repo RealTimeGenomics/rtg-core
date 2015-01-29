@@ -316,7 +316,7 @@ CommonFlags.initNoGzip(flags);
     final long startId = mFlags.isSet(START_SEQUENCE) ? (Long) mFlags.getValue(START_SEQUENCE) : LongRange.MISSING;
     final long endId = calculatedRegion != null ? calculatedRegion.getEnd() : (mFlags.isSet(END_SEQUENCE) ? (Long) mFlags.getValue(END_SEQUENCE) : LongRange.MISSING);
     final LongRange r = SequencesReaderFactory.resolveRange(input, new LongRange(startId, endId));
-    SequencesReader reader;
+    final SequencesReader reader;
     try {
       reader = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(input, r);
     } catch (final FileNotFoundException e) {
@@ -329,10 +329,8 @@ CommonFlags.initNoGzip(flags);
         throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "The specified SDF, \"" + input.getPath() + "\", does not exist.");
       }
     }
-    try {
-      doPrereadToFasta(reader, prefix, postfix);
-    } finally {
-      reader.close();
+    try (SequencesReader reader2 = reader) {
+      doPrereadToFasta(reader2, prefix, postfix);
     }
     return r;
   }

@@ -145,11 +145,8 @@ public class MapxRename extends AbstractCli {
       outfile = new File(outfileName);
     }
 
-    final SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(sdfReads);
-    try {
+    try (SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(sdfReads)) {
       renameFile(infile, outfile, new PrereadNames(sdfReads, LongRange.NONE), sr.getSdfId());
-    } finally {
-      sr.close();
     }
     out.write(("Rename complete." + StringUtils.LS).getBytes());
     return 0;
@@ -181,7 +178,7 @@ public class MapxRename extends AbstractCli {
         throw new NoTalkbackSlimException("This file has already been renamed");
       } else if ((line.startsWith("#")
           && line.contains(ProteinOutputProcessor.HEADER_COL_NAME_READID))
-          || (line.equals(ProteinOutputProcessor.UNMAPPED_HEADER))) {
+          || line.equals(ProteinOutputProcessor.UNMAPPED_HEADER)) {
         return header;
       }
     }
@@ -223,8 +220,7 @@ public class MapxRename extends AbstractCli {
     int idColumn = -1;
     try (BufferedReader read = new BufferedReader(new InputStreamReader(FileUtils.createInputStream(resultsFile, false)))) {
       final OutputStream baseOutStream = FileUtils.createOutputStream(renamedFile, FileUtils.isGzipFilename(renamedFile), false);
-      final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(baseOutStream));
-      try {
+      try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(baseOutStream))) {
         final ArrayList<String> header = readHeader(read);
 
         // Set id column, num cols from the header line
@@ -270,8 +266,6 @@ public class MapxRename extends AbstractCli {
           writer.write(line);
           writer.newLine();
         }
-      } finally {
-        writer.close();
       }
     }
   }

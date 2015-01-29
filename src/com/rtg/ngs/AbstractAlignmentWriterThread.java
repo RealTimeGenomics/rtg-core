@@ -51,9 +51,9 @@ abstract class AbstractAlignmentWriterThread implements IORunnable {
   public void run() throws IOException {
     final HashingRegion region = mWorkload.toRegion();
     final String name = getName() + region;
-    mSamWriter.setClipRegion(region);
-    Diagnostic.userLog(name + " starting, hits:" + mWorkload.mChunkStart + "-" + mWorkload.mChunkEnd);
-    try {
+    try (final AbstractTempFileWriter out = mSamWriter) {
+      out.setClipRegion(region);
+      Diagnostic.userLog(name + " starting, hits:" + mWorkload.mChunkStart + "-" + mWorkload.mChunkEnd);
       int templateId = -1;
       for (long i = mWorkload.getChunkStart(); i > -1 && i < mResults.size() && i < mWorkload.getChunkEnd(); i++) {
         if ((i & 0xFFFL) == 0) {
@@ -61,12 +61,10 @@ abstract class AbstractAlignmentWriterThread implements IORunnable {
         }
         if (templateId != mResults.getTemplateId(i)) {
           templateId = mResults.getTemplateId(i);
-          mSamWriter.nextTemplateId(templateId);
+          out.nextTemplateId(templateId);
         }
         handleResult(templateId, mResults.getEncodedReadId(i), mResults.getPosition(i), mResults.isReverse(i));
       }
-    } finally {
-      mSamWriter.close();
     }
     Diagnostic.userLog(name + " finished");
   }

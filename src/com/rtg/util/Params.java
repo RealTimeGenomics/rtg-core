@@ -19,10 +19,4 @@ import java.io.Closeable;
  */
 public interface Params extends Closeable {
 
-  /**
-   * Get status of underlying files.
-   * @return true iff all underlying file objects are closed.
-   */
-  boolean closed();
-
 }

@@ -86,11 +86,10 @@ public final class ProteinScoringMatrix extends ScoringMatrix {
       mScores[i] = new int[len];
     }
     final String res = "com/rtg/mode/" + mat;
-    final InputStream in = Resources.getResourceAsStream(res);
-    if (in == null) {
-      throw new MissingResourceException("Could not find:" + res, ProteinScoringMatrix.class.getName(), res);
-    }
-    try {
+    try (InputStream in = Resources.getResourceAsStream(res)) {
+      if (in == null) {
+        throw new MissingResourceException("Could not find:" + res, ProteinScoringMatrix.class.getName(), res);
+      }
       try (BufferedReader re = new BufferedReader(new InputStreamReader(in))) {
         try {
           parse(re);
@@ -98,9 +97,7 @@ public final class ProteinScoringMatrix extends ScoringMatrix {
           throw new MissingResourceException("Malformed resource: " + res + " message: " + e.getMessage(), ProteinScoringMatrix.class.getName(), res);
         }
         final String resProps = "com/rtg/mode/" + mat + ".properties";
-        InputStream inProps = null;
-        try {
-          inProps = Resources.getResourceAsStream(resProps);
+        try (final InputStream inProps = Resources.getResourceAsStream(resProps)) {
           if (inProps == null) {
             throw new MissingResourceException("Could not find:" + resProps, ProteinScoringMatrix.class.getName(), resProps);
           }
@@ -123,14 +120,8 @@ public final class ProteinScoringMatrix extends ScoringMatrix {
           mExtend = getDouble(mat, pr, "EXTEND");
           mExpected = getDouble(mat, pr, "EXPECTED");
           mMax = findMax();
-        } finally {
-          if (inProps != null) {
-            inProps.close();
-          }
         }
       }
-    } finally {
-      in.close();
     }
     assert integrity();
   }

@@ -35,8 +35,6 @@ public class CnvProductParamsTest extends TestCase {
     final CnvProductParams params = builder.create();
     assertNotNull(params);
     assertEquals(100, params.bucketSize());
-    assertTrue(params.closed());
-
     assertNull(params.directory());
 
     try {
