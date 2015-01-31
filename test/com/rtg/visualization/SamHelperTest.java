@@ -86,14 +86,6 @@ public class SamHelperTest extends TestCase {
       for (int i = 0; i < rec.size(); i++) {
           assertEquals(rec.get(i).getAlignmentStart(), location[i]);
       }
-      alignments[0] = new File(f, AviewTest.ALIGNMENTS_SAM_FILE_NAME);
-      p = new AviewParamsBuilder().alignments(alignments).region("g1:4-5").create();
-      try {
-        SamHelper.loadAlignments(p);
-        fail();
-      } catch (NoTalkbackSlimException e) {
-        assertEquals("File " + alignments[0].getPath() + " is not indexed", e.getMessage());
-      }
     } finally {
       AviewTest.deleteBrokenBam(f);
     }

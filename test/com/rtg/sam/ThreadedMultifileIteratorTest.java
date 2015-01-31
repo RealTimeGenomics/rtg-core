@@ -62,7 +62,12 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
   static final String SAM_HEAD1 = ""
     + "@HD" + TAB + "VN:1.0" + TAB + "SO:coordinate\n"
     + "@SQ" + TAB + "SN:gi" + TAB + "LN:30\n";
+  static final String SAM_HEAD2 = ""
+    + "@HD" + TAB + "VN:1.0" + TAB + "SO:coordinate\n"
+    + "@SQ" + TAB + "SN:gi" + TAB + "LN:300\n";
   static final String SAM_TAIL = TAB + "0" + TAB + "gi" + TAB + "%d" + TAB + "255" + TAB + "10M" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "AAAAAAAAAA" + TAB +  "IB7?*III<I" + TAB + "AS:i:0" + TAB + "IH:i:1" + LS
+    ;
+  static final String SAM_TAIL2 = TAB + "0" + TAB + "gi2" + TAB + "%d" + TAB + "255" + TAB + "10M" + TAB + "*" + TAB + "0" + LS
     ;
 
   public void testFailureInRecords() throws IOException {
@@ -108,6 +113,7 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
     }
   }
 
+  @SuppressWarnings("try")
   public void testFailureDuringSetup() throws IOException {
     Diagnostic.setLogStream(TestUtils.getNullPrintStream());
     try {
@@ -118,12 +124,14 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
           sam.append("readA").append(i).append(String.format(SAM_TAIL, i));
         }
         final File ffsam = new File(mDir, "alignments" + j + ".sam");
-        final File ff = new File(mDir, "alignments" + j + ".bam");
         FileUtils.stringToFile(sam.toString(), ffsam);
-        Sam2Bam.convertSamToBam(ff, BamIndexer.indexFileName(ff), ffsam);
-        files.add(ff);
-        assertTrue(BamIndexer.indexFileName(ff).delete()); // Remove the indexes
+        files.add(ffsam);
       }
+      final File incompatible = new File(mDir, "alignments-incompat.sam");
+      final StringBuilder sam = new StringBuilder(SAM_HEAD1);
+      sam.append("readA-bad").append(String.format(SAM_TAIL2, 22));
+      FileUtils.stringToFile(sam.toString(), incompatible);
+
       try {
         // This factory is just to induce some lag during the job scheduling (not the execution)
         final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<SAMRecord>(new SamRecordPopulator()) {
@@ -137,17 +145,16 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
             return super.populator();
           }
         };
-        try (ThreadedMultifileIterator<SAMRecord> iterator = new ThreadedMultifileIterator<>(files, 20, pf, SamFilterParams.builder().restriction("gi").create(), SamUtils.getUberHeader(files))) {
-          while (iterator.hasNext()) {
-            final SAMRecord sr = iterator.next();
-            //System.out.println(sr.getReadName());
-            assertFalse(sr.getReadName().equals("readB12"));
-          }
+        final SAMFileHeader uberHeader = SamUtils.getUberHeader(files);
+        assertTrue(SamUtils.checkHeaderDictionary(uberHeader, SamUtils.getSingleHeader(incompatible)));
+        files.add(incompatible);
+        try (ThreadedMultifileIterator<SAMRecord> ignored = new ThreadedMultifileIterator<>(files, 2, pf, SamFilterParams.builder().create(), uberHeader)) {
+          fail("This test needs to trigger an exception during iterator setup");
         }
-        fail("Expected an exception");
+        fail("This test needs to trigger an exception during iterator setup");
       } catch (final NoTalkbackSlimException e) {
-        // expected detect missing index file
-        assertTrue(e.getMessage().contains("is not indexed")); // This must be the true cause of the failure, not the SlimAbortException that other workers produce when aborting.
+        // expected exception about truncated sam record line
+        assertTrue(e.getMessage().contains("Not enough fields")); // This must be the true cause of the failure, not a SlimAbortException that other workers produce when aborting.
       }
     } finally {
       Diagnostic.setLogStream();

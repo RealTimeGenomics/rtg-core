@@ -120,13 +120,19 @@ public class DefaultSamFilterTest extends TestCase {
 
     // These ones use a restriction which will remove some records prior to being seen by DefaultSamFilter
 
-    try {
-      check(SamFilterParams.builder().maxAlignmentCount(-1).maxUnmatedAlignmentScore(new IntegerOrPercentage(0)).restriction("simulatedSequence1").create(), 12, 10, false);
-      fail();
-    } catch (NoTalkbackSlimException e) {
-      assertTrue(e.getMessage().contains("is not indexed"));
+    check(SamFilterParams.builder().maxAlignmentCount(-1).maxUnmatedAlignmentScore(new IntegerOrPercentage(0)).restriction("simulatedSequence1").create(), 6, 5, true); // Indexed results
+    if (MultifileIterator.FALLBACK) { // Non-indexed uses fallback iterator
+      check(SamFilterParams.builder().maxAlignmentCount(-1).maxUnmatedAlignmentScore(new IntegerOrPercentage(0)).restriction("simulatedSequence1").create(), 6, 5, false);
+    } else {
+      try {
+        check(SamFilterParams.builder().maxAlignmentCount(-1).maxUnmatedAlignmentScore(new IntegerOrPercentage(0)).restriction("simulatedSequence1").create(), 6, 5, false);
+        fail();
+      } catch (NoTalkbackSlimException e) {
+        assertTrue(e.getMessage().contains("is not indexed"));
+      }
+
     }
-    check(SamFilterParams.builder().maxAlignmentCount(-1).maxUnmatedAlignmentScore(new IntegerOrPercentage(0)).restriction("simulatedSequence1").create(), 6, 5, true);
+
     check(SamFilterParams.builder().maxAlignmentCount(-1).restriction("simulatedSequence1:90-145").create(), 6, 0, true);
   }
 

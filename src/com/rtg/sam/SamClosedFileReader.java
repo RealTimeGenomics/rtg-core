@@ -53,8 +53,8 @@ public final class SamClosedFileReader extends AbstractSamRecordIterator {
   public SamClosedFileReader(File file, ReferenceRanges regions, SAMFileHeader header) throws IOException {
     super(header);
     SamUtils.logRunId(header);
+    mIsBam = SamUtils.isBAMFile(file);
     mFile = file;
-    mIsBam = SamUtils.isBAMFile(mFile);
     mStream = new ClosedFileInputStream(mFile);
     mRegions = regions;
     mIterator = obtainIteratorInternal();

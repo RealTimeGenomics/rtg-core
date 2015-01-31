@@ -70,6 +70,9 @@ public final class GlobalFlags {
   /** Allow SAM file loading when sam header is not coordinate sorted */
   public static final String SAM_IGNORE_SORT_ORDER_FLAG = "com.rtg.sam.ignore-header-sortorder";
 
+  /** Allow fallback to a slower alternative when reading non-indexed SAM files with region restrictions requested */
+  public static final String SAM_ALLOW_FALLBACK_FOR_NON_INDEXED_REGIONS = "com.rtg.sam.allow-region-fallback";
+
   /** Maximum number of hits at a given position in the sliding window collector */
   //see bug #1476 for consequences of this on larger datasets
   public static final String SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG = "com.rtg.pairedend.SlidingWindow.max-hits-per-position";
@@ -142,6 +145,7 @@ public final class GlobalFlags {
     registerFlag(MAP_KEEP_TEMPORARY_FILES);
     registerFlag(SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG, Integer.class, 1000);
     registerFlag(SAM_IGNORE_SORT_ORDER_FLAG);
+    registerFlag(SAM_ALLOW_FALLBACK_FOR_NON_INDEXED_REGIONS);
 
     // Aligners / all-paths
     registerFlag(DEFAULT_INDEL_LENGTH_FLAG, Integer.class, 7);

@@ -19,6 +19,8 @@ import java.util.Queue;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import com.rtg.launcher.GlobalFlags;
+import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
@@ -33,6 +35,8 @@ import net.sf.samtools.SAMRecord;
 /**
  */
 class MultifileIterator implements RecordIterator<SAMRecord> {
+
+  static final boolean FALLBACK = GlobalFlags.isSet(GlobalFlags.SAM_ALLOW_FALLBACK_FOR_NON_INDEXED_REGIONS);
 
   private static final double MEGABYTE = 1 << 20;
 
@@ -81,10 +85,11 @@ class MultifileIterator implements RecordIterator<SAMRecord> {
       for (final File file : context.files()) {
         totalFileLength += file.length();
         final RecordIterator<SAMRecord> adaptor;    // Initial source of (possibly region-restricted) SAMRecords
-        if (file.isFile()) {
+        final boolean streamOk = context.referenceRanges() == null || context.referenceRanges().allAvailable();
+        if (file.isFile() && (!FALLBACK || streamOk || isIndexed(file))) {
           adaptor = new SamClosedFileReader(file, context.referenceRanges(), context.header());
         } else { // Fall back to SamFileAndRecord for non-file (i.e. pipes)
-          //Diagnostic.warning("Using fallback for non-file sam source");
+          Diagnostic.userLog("Using fallback for non-file or non-indexed SAM source: " + file.toString());
           adaptor = new SamFileReaderAdaptor(new SAMFileReader(FileUtils.createInputStream(file, true)), context.referenceRanges());
         }
         final SamFileAndRecord sfr = new SamFileAndRecord(file.getPath(), fileCount++, adaptor); // Adds invalid record skipping and input source tracking
@@ -109,6 +114,14 @@ class MultifileIterator implements RecordIterator<SAMRecord> {
     mTotalRawInputLength = totalFileLength; // so we can report MB/s at the end
 
     mHeader = context.header();
+  }
+
+  static boolean isIndexed(File file) throws IOException {
+    if (SamUtils.isBAMFile(file)) {
+      return BamIndexer.indexFileName(file).exists() || BamIndexer.secondaryIndexFileName(file).exists();
+    } else {
+      return TabixIndexer.indexFileName(file).exists();
+    }
   }
 
   @Override
