@@ -95,7 +95,7 @@ import com.rtg.zooma.ZoomaNativeMapReadsCli;
 import com.rtg.zooma.ZoomaNativeMapfReadsCli;
 
 /**
- * An enum of all the modules that form part of RTG Core
+ * Commands available in RTG Core.
  */
 public final class CoreCommand {
 

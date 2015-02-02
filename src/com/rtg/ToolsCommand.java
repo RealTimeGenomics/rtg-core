@@ -36,7 +36,7 @@ import com.rtg.vcf.VcfMerge;
 import com.rtg.vcf.VcfSubset;
 
 /**
- * Commands available in the free tools product
+ * Commands available in the free tools product.
  */
 public final class ToolsCommand {
 
