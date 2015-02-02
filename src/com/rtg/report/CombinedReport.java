@@ -126,11 +126,13 @@ public class CombinedReport {
   static String template(Map<String, String> replacements, String templateName) throws IOException {
     final StringBuilder body = new StringBuilder();
     final String templateFile = ReportUtils.TEMPLATE_DIR + "/" + templateName;
-    try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-         LineWriter writer = new LineWriter(new OutputStreamWriter(baos));
-         BufferedReader template = new BufferedReader(new InputStreamReader(Resources.getResourceAsStream(SpeciesReport.class, templateFile)))
-    ) {
-      ReportUtils.fillTemplate(replacements, template, writer);
+    try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+      try (
+        LineWriter writer = new LineWriter(new OutputStreamWriter(baos));
+        BufferedReader template = new BufferedReader(new InputStreamReader(Resources.getResourceAsStream(SpeciesReport.class, templateFile)))
+      ) {
+        ReportUtils.fillTemplate(replacements, template, writer);
+      }
       body.append(baos.toString());
     }
     return body.toString();
