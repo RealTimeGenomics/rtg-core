@@ -48,7 +48,7 @@ public class HelpCommandTest extends TestCase {
         continue;
       }
       assertTrue("Did not contain " + mod.getCategory().toString(), output.contains(ResourceBundle.getBundle("com.rtg.Usage", Locale.getDefault()).getString(mod.getCategory().toString() + "_CAT_DESC")));
-      if (CoreCommand.HELP.module() != mod) {
+      if (CoreCommand.HELP != mod) {
         assertTrue("Did not contain " + mod.toString().toLowerCase(Locale.getDefault()), output.contains("\t" + mod.toString().toLowerCase(Locale.getDefault())));
       }
     }
@@ -68,7 +68,7 @@ public class HelpCommandTest extends TestCase {
     final PrintStream ps = new PrintStream(bos);
     System.setErr(ps);
     try {
-      HelpCommand.outputUnlicensedModule(CoreCommand.GENOMESIM.module());
+      HelpCommand.outputUnlicensedModule(CoreCommand.GENOMESIM);
       fail();
     } catch (RuntimeException e) {
       //expected
@@ -124,7 +124,7 @@ public class HelpCommandTest extends TestCase {
         shortestName = mod.toString();
       }
       assertTrue("Did not contain " + mod.getCategory().toString(), output.contains(ResourceBundle.getBundle("com.rtg.Usage", Locale.getDefault()).getString(mod.getCategory().toString() + "_CAT_DESC")));
-      if (CoreCommand.HELP.module() != mod) {
+      if (CoreCommand.HELP != mod) {
         assertTrue("Did not contain " + mod.toString().toLowerCase(Locale.getDefault()), output.contains(mod.toString().toLowerCase(Locale.getDefault())));
       }
     }
@@ -132,7 +132,7 @@ public class HelpCommandTest extends TestCase {
 
   public void testModuleHelp() throws IOException {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    CoreCommand.FORMAT.module().mainInit(new String[]{"-h"}, out, null);
+    CoreCommand.FORMAT.mainInit(new String[]{"-h"}, out, null);
 
     final ByteArrayOutputStream bhelp = new ByteArrayOutputStream();
     final ByteArrayOutputStream bhelpout = new ByteArrayOutputStream();
@@ -167,7 +167,7 @@ public class HelpCommandTest extends TestCase {
         longestName = mod.toString();
       }
       assertTrue("Did not contain " + mod.getCategory().toString(), output.contains(ResourceBundle.getBundle("com.rtg.Usage", Locale.getDefault()).getString(mod.getCategory().toString() + "_CAT_DESC")));
-      if (CoreCommand.HELP.module() != mod) {
+      if (CoreCommand.HELP != mod) {
         assertTrue("Did not contain " + mod.toString().toLowerCase(Locale.getDefault()), output.contains(mod.toString().toLowerCase(Locale.getDefault())));
       }
     }
@@ -191,6 +191,6 @@ public class HelpCommandTest extends TestCase {
 
   public void testLongestLengthModule() {
     assertEquals(0, HelpCommand.getLongestLengthModule(new Command[0]));
-    assertEquals(6, HelpCommand.getLongestLengthModule(new Command[]{CoreCommand.FORMAT.module()}));
+    assertEquals(6, HelpCommand.getLongestLengthModule(new Command[]{CoreCommand.FORMAT}));
   }
 }

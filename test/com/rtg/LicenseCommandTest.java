@@ -95,7 +95,7 @@ public class LicenseCommandTest extends TestCase {
 
   public void testLongestLengthModule() {
     assertEquals(3, LicenseCommand.getLongestLengthModule(new Command[0], "abc"));
-    assertEquals(6, LicenseCommand.getLongestLengthModule(new Command[]{CoreCommand.FORMAT.module()}, "abc"));
+    assertEquals(6, LicenseCommand.getLongestLengthModule(new Command[]{CoreCommand.FORMAT}, "abc"));
   }
 
   public static Test suite() {

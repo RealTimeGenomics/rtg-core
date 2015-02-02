@@ -14,15 +14,11 @@ package com.rtg;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Collections;
-import java.util.HashSet;
 
 import com.rtg.launcher.GlobalFlags;
 import com.rtg.util.TestUtils;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Tests corresponding class
@@ -34,134 +30,122 @@ public class CoreCommandTest extends TestCase {
     GlobalFlags.resetAccessedStatus();
   }
 
-  public void testEnum() {
-    // Enum, not display order
-    TestUtils.testEnum(CoreCommand.class, "[FORMAT, CG2SDF, SDF2FASTA, SDF2FASTQ, SDF2QUALA, MAP, MAPF, CGMAP, ZBUILD, ZMAP, ZMAPF, MAPX, ASSEMBLE, ADDPACBIO, "
-      + "SVPREP, SV, DISCORD, COVERAGE, SNP, MULTISNP, FAMILY, SOMATIC, POPULATION, LINEAGE, AVRBUILD, AVRPREDICT, CNV, CALIBRATE, SPECIES, METASNP, SIMILARITY, COMPOSITION-META-PIPELINE, FUNCTIONAL-META-PIPELINE, COMPOSITION-FUNCTIONAL-META-PIPELINE, GENOMESIM, CGSIM, READSIM, READSIMEVAL, SNPSIM, POPSIM, SAMPLESIM, CHILDSIM, DENOVOSIM, SAMPLEREPLAY, VCFEVAL, CNVSIM, CNVSIMEVAL, BGZIP, INDEX, EXTRACT, AVIEW, SDFSTATS, SDFSPLIT, SDFSUBSET, SDFSUBSEQ, SAM2BAM, SAMMERGE, SAMSTATS, SAMRENAME, MAPXRENAME, CHRSTATS, VCFFILTER, VCFANNOTATE, SNPINTERSECT, NCBI2TAX, TAXFILTER, TAXSTATS, MENDELIAN, PHASINGSEARCH, PHASINGEVAL, VCFSTATS, VCFMERGE, VCFSUBSET, PEDFILTER, PEDSTATS, AVRSTATS, ROCPLOT, USAGESERVER, VERSION, LICENSE, HELP]");
-    final HashSet<Command> displayCommands = new HashSet<>();
-    Collections.addAll(displayCommands, CoreCommand.INFO.commands());
-    for (CoreCommand mod : CoreCommand.values()) {
-      assertTrue(displayCommands.contains(mod.module()));
-    }
-  }
-
   public void testUsage() throws IOException {
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    CoreCommand.FORMAT.module().mainInit(new String[]{"-h"}, baos, null);
+    CoreCommand.FORMAT.mainInit(new String[]{"-h"}, baos, null);
     baos.flush();
     TestUtils.containsAll(baos.toString().replaceAll("\\s+", " "), "Usage: rtg format [OPTION]... -o SDF FILE+",
         "-h, --help print help on command-line flag usage");
-    assertEquals("FORMAT", CoreCommand.FORMAT.module().getCommandName());
+    assertEquals("FORMAT", CoreCommand.FORMAT.getCommandName());
     assertEquals("FORMAT", CoreCommand.FORMAT.toString());
-    assertEquals(CommandCategory.FORMAT, CoreCommand.FORMAT.module().getCategory());
-    assertEquals(CoreCommand.FORMAT, CoreCommand.valueOf("FORMAT"));
+    assertEquals(CommandCategory.FORMAT, CoreCommand.FORMAT.getCategory());
   }
 
   public void testModules() {
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     final PrintStream ps = new PrintStream(baos);
-    assertEquals(0, CoreCommand.VERSION.module().mainInit(new String[0], baos, ps));
-    assertEquals(0, CoreCommand.LICENSE.module().mainInit(new String[0], baos, ps));
-    assertEquals(0, CoreCommand.HELP.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.CG2SDF.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.CGMAP.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.CGSIM.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.CNV.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.CALIBRATE.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.MENDELIAN.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.CNVSIM.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.COVERAGE.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.CHRSTATS.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.FORMAT.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.GENOMESIM.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.MAPX.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.COMPOSITIONMETA.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.FUNCTIONALMETA.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.METAGENOMICS.module().mainInit(new String[0], baos, ps));
+    assertEquals(0, CoreCommand.VERSION.mainInit(new String[0], baos, ps));
+    assertEquals(0, CoreCommand.LICENSE.mainInit(new String[0], baos, ps));
+    assertEquals(0, CoreCommand.HELP.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.CG2SDF.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.CGMAP.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.CGSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.CNV.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.CALIBRATE.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.MENDELIAN.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.CNVSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.COVERAGE.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.CHRSTATS.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.FORMAT.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.GENOMESIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.MAPX.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.COMPOSITIONMETA.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.FUNCTIONALMETA.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.METAGENOMICS.mainInit(new String[0], baos, ps));
 
-    assertEquals(1, CoreCommand.SIMILARITY.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.MAP.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.MAPF.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.READSIM.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SAM2BAM.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SAMRENAME.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SAMMERGE.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.MAPXRENAME.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SAMSTATS.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SDF2FASTA.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SDF2FASTQ.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SDF2QUALA.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SDFSUBSET.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SDFSUBSEQ.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SDFSPLIT.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SDFSTATS.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.VCFFILTER.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.VCFANNOTATE.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SNPINTERSECT.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.TAXFILTER.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.NCBI2TAX.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.TAXSTATS.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.VCFSTATS.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.VCFMERGE.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SNPSIM.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.POPSIM.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SAMPLESIM.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.CHILDSIM.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.DENOVOSIM.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SAMPLEREPLAY.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.VCFEVAL.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SINGLETON.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.READSIM.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.CNVSIM.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.READSIMEVAL.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.CNVSIMEVAL.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.ASSEMBLE.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.ADDPACBIO.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.INDEX.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.AVIEW.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SPECIES.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.METASNP.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SVPREP.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SV.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.DISCORD.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.MULTI_VARIANT.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.MULTI_FAMILY.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.MULTI_SOMATIC.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.MULTI_POPULATION.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.BGZIP.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.EXTRACT.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.AVRBUILD.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.AVRPREDICT.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.AVRSTATS.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.PEDFILTER.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.PEDSTATS.module().mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.VCFSUBSET.module().mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SIMILARITY.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.MAP.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.MAPF.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.READSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SAM2BAM.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SAMRENAME.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SAMMERGE.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.MAPXRENAME.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SAMSTATS.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SDF2FASTA.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SDF2FASTQ.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SDF2QUALA.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SDFSUBSET.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SDFSUBSEQ.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SDFSPLIT.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SDFSTATS.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.VCFFILTER.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.VCFANNOTATE.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SNPINTERSECT.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.TAXFILTER.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.NCBI2TAX.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.TAXSTATS.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.VCFSTATS.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.VCFMERGE.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SNPSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.POPSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SAMPLESIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.CHILDSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.DENOVOSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SAMPLEREPLAY.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.VCFEVAL.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SINGLETON.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.READSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.CNVSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.READSIMEVAL.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.CNVSIMEVAL.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.ASSEMBLE.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.ADDPACBIO.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.INDEX.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.AVIEW.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SPECIES.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.METASNP.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SVPREP.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SV.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.DISCORD.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.MULTI_VARIANT.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.MULTI_FAMILY.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.MULTI_SOMATIC.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.MULTI_POPULATION.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.BGZIP.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.EXTRACT.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.AVRBUILD.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.AVRPREDICT.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.AVRSTATS.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.PEDFILTER.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.PEDSTATS.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.VCFSUBSET.mainInit(new String[0], baos, ps));
   }
 
   public void testModuleHelp() {
     final String[] helpArgs = {"--help"};
-    for (final CoreCommand module : CoreCommand.values()) {
+    for (final Command module : CoreCommand.INFO.commands()) {
       if ((module == CoreCommand.VERSION) || (module == CoreCommand.LICENSE) || (module == CoreCommand.HELP)) {
         continue; // These modules have no help
       }
       GlobalFlags.resetAccessedStatus();
       final ByteArrayOutputStream baos = new ByteArrayOutputStream();
       final PrintStream ps = new PrintStream(baos);
-      module.module().mainInit(helpArgs, baos, ps);
-      assertTrue(module.module().getCommandName() + " produces no help output: " + baos.toString(), baos.toString().contains("Usage"));
+      module.mainInit(helpArgs, baos, ps);
+      assertTrue(module.getCommandName() + " produces no help output: " + baos.toString(), baos.toString().contains("Usage"));
     }
   }
 
   public void testReleaseLevel() {
-    for (CoreCommand cmd : CoreCommand.values()) {
-      final Command mod = cmd.module();
+    for (Command cmd : CoreCommand.INFO.commands()) {
+      final Command mod = cmd;
       switch (mod.getReleaseLevel()) {
         case ALPHA:
-          assertTrue(cmd.name(), mod.isHidden());
+          assertTrue(cmd.getCommandName(), mod.isHidden());
           break;
         case BETA:
         case GA:
-          assertFalse(cmd.name(), mod.isHidden());
+          assertFalse(cmd.getCommandName(), mod.isHidden());
           break;
         default:
           break;
@@ -170,18 +154,6 @@ public class CoreCommandTest extends TestCase {
   }
 
   public void testSpecificLicenceFlags() {
-    assertEquals("enable_rtg", CoreCommand.VERSION.module().getLicenceKeyName());
-  }
-
-  public static Test suite() {
-    return new TestSuite(CoreCommandTest.class);
-  }
-
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(CoreCommandTest.class));
+    assertEquals("enable_rtg", CoreCommand.VERSION.getLicenceKeyName());
   }
 }

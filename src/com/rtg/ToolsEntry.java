@@ -33,6 +33,6 @@ public final class ToolsEntry extends AbstractCliEntry {
 
   @Override
   protected int help(String[] shiftArgs, OutputStream out, PrintStream err) {
-    return ToolsCommand.HELP.module().mainInit(shiftArgs, out, err);
+    return ToolsCommand.HELP.mainInit(shiftArgs, out, err);
   }
 }

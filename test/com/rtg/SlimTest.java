@@ -83,7 +83,7 @@ public class SlimTest extends TestCase {
     final ByteArrayOutputStream berr = new ByteArrayOutputStream();
 
     try (PrintStream err = new PrintStream(berr)) {
-      assertEquals(1, new Slim().intMain(new String[]{CoreCommand.FORMAT.module().getCommandName()}, bout, err));
+      assertEquals(1, new Slim().intMain(new String[]{CoreCommand.FORMAT.getCommandName()}, bout, err));
     } finally {
       try {
         bout.close();
@@ -104,7 +104,7 @@ public class SlimTest extends TestCase {
     final ByteArrayOutputStream busage = new ByteArrayOutputStream();
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     try (PrintStream usage = new PrintStream(busage)) {
-      CoreCommand.FORMAT.module().mainInit(new String[0], out, usage);  //spits out expected error from format into usage stream
+      CoreCommand.FORMAT.mainInit(new String[0], out, usage);  //spits out expected error from format into usage stream
     } finally {
       try {
         busage.close();
@@ -388,7 +388,7 @@ public class SlimTest extends TestCase {
   }
 
   public void testErrorMessage() {
-    assertEquals("The " + CoreCommand.FORMAT.module().getCommandName() + " command has not been enabled by your current license.\nPlease contact " + Constants.SUPPORT_EMAIL_ADDR + " to have this command licensed.", Slim.getErrorMessage(CoreCommand.FORMAT.module()));
+    assertEquals("The " + CoreCommand.FORMAT.getCommandName() + " command has not been enabled by your current license.\nPlease contact " + Constants.SUPPORT_EMAIL_ADDR + " to have this command licensed.", Slim.getErrorMessage(CoreCommand.FORMAT));
   }
 
   @Override

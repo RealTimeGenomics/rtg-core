@@ -29,7 +29,7 @@ public final class Slim extends AbstractCliEntry {
 
   @Override
   protected int help(String[] shiftArgs, OutputStream out, PrintStream err) {
-    return CoreCommand.HELP.module().mainInit(shiftArgs, out, err);
+    return CoreCommand.HELP.mainInit(shiftArgs, out, err);
   }
 
   @Override
