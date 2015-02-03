@@ -31,7 +31,10 @@ public final class EvidenceQFactory implements CachedEvidenceFactory {
       for (int i = 0; i < NUM_HYPOTHESIS; i++) {
         for (int j = 0; j < MAX_MAPQ; j++) {
           for (int k = 0; k < MAX_PHRED; k++) {
-            MEMO[s][i][j][k] = new EvidenceQ(DescriptionSnp.SINGLETON, i, VariantUtils.phredToProb(j), VariantUtils.phredToProb(k), s >= 3, (s % 3) >= 1, (s % 3) == 2, false);
+            final boolean isForward = s >= 3;
+            final boolean isReadPaired = (s % 3) >= 1;
+            final boolean isMated = (s % 3) == 2;
+            MEMO[s][i][j][k] = new EvidenceQ(DescriptionSnp.SINGLETON, i, VariantUtils.phredToProb(j), VariantUtils.phredToProb(k), isForward, isReadPaired, isMated, false);
           }
         }
       }

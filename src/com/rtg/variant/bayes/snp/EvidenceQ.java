@@ -23,7 +23,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 /**
  * Generates a distribution from a primary prediction and a q value.
  */
-public class EvidenceQ extends Evidence {
+public final class EvidenceQ extends Evidence {
 
   private final int mRead;
 
