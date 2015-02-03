@@ -42,7 +42,7 @@ public final class MultisampleUtils {
       if (params.calibrator() != null) {
         return new CalibratedMachineErrorChooser(params.calibrator());
       } else {
-        return new ReadGroupMachineErrorChooser(params.mapped());
+        return new ReadGroupMachineErrorChooser(params.uberHeader());
       }
     } else {
       return new DefaultMachineErrorChooser(errorName);

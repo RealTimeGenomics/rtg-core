@@ -11,9 +11,7 @@
  */
 package com.rtg.variant;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -26,7 +24,6 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.util.VariantUtils;
 
 import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileReader;
 import net.sf.samtools.SAMReadGroupRecord;
 
 /**
@@ -43,43 +40,15 @@ public class ReadGroupMachineErrorChooser implements MachineErrorChooserInterfac
    */
   public ReadGroupMachineErrorChooser(SAMFileHeader header) throws IOException {
     try {
-      final List<SAMReadGroupRecord> groups = header.getReadGroups();
-      if (groups.isEmpty()) {
-        throw new NoTalkbackSlimException("No read groups found. Unable to determine machine error rate.");
-      }
-      addReadGroups(groups);
+      addReadGroups(header.getReadGroups());
     } catch (final InvalidParamsException e) {
       throw new NoTalkbackSlimException(e.getMessage());
     }
-  }
-
-  /**
-   * @param samInputs SAM files (with read groups).
-   * @throws IOException when reading SAM headers.
-   */
-  public ReadGroupMachineErrorChooser(final File[] samInputs) throws IOException {
-    try {
-      for (final File file : samInputs) {
-        try (SAMFileReader reader = new SAMFileReader(file)) {
-          addReadGroups(reader.getFileHeader().getReadGroups());
-        }
-      }
-    } catch (final InvalidParamsException e) {
-      throw new NoTalkbackSlimException(e.getMessage());
-    }
-  }
-
-  /**
-   * @param samInputs SAM files (with read groups).
-   * @throws IOException when reading SAM headers.
-   */
-  public ReadGroupMachineErrorChooser(final Collection<File> samInputs) throws IOException {
-    this(samInputs.toArray(new File[samInputs.size()]));
   }
 
   private void addReadGroups(final List<SAMReadGroupRecord> groups) throws InvalidParamsException, IOException {
     if (groups.size() == 0) {
-      throw new NoTalkbackSlimException("No read groups found. Unable to determine machine error rate.");
+      throw new NoTalkbackSlimException("No read groups found. Unable to determine machine error rate. Try explicitly specifying machine type");
     }
     for (final SAMReadGroupRecord record : groups) {
       final String fPlatform = record.getPlatform();

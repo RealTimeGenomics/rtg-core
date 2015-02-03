@@ -34,6 +34,7 @@ import com.rtg.variant.match.AlignmentMatch;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
 import net.sf.samtools.SAMFileHeader;
+import net.sf.samtools.SAMReadGroupRecord;
 import net.sf.samtools.SAMRecord;
 
 import junit.framework.TestCase;
@@ -55,6 +56,11 @@ public class MultisampleUtilsTest extends TestCase {
     final ArrayList<File> mapped = new ArrayList<>();
     final VariantParamsBuilder b = new VariantParamsBuilder();
     b.mapped(mapped);
+    final SAMFileHeader header = new SAMFileHeader();
+    final SAMReadGroupRecord rg = new SAMReadGroupRecord("rg1");
+    rg.setPlatform("illumina");
+    header.addReadGroup(rg);
+    b.uberHeader(header);
     final MachineErrorChooserInterface chooser = MultisampleUtils.chooser(b.create());
     assertTrue(chooser instanceof ReadGroupMachineErrorChooser);
   }
