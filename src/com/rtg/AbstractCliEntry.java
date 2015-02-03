@@ -129,7 +129,9 @@ public abstract class AbstractCliEntry {
 
   protected abstract Command getSlimModule(String arg);
 
-  protected abstract int help(String[] shiftArgs, OutputStream out, PrintStream err);
+  protected int help(String[] shiftArgs, OutputStream out, PrintStream err) {
+    return getSlimModule("HELP").mainInit(shiftArgs, out, err);
+  }
 
   static String getErrorMessage(Command module) {
     return "The " + module.getCommandName()

@@ -12,9 +12,6 @@
 package com.rtg;
 
 
-import java.io.OutputStream;
-import java.io.PrintStream;
-
 /**
  * Entry point for all RTG command line modules
  */
@@ -25,11 +22,6 @@ public final class Slim extends AbstractCliEntry {
    */
   public static void main(String[] args) {
     new Slim().mainImpl(args);
-  }
-
-  @Override
-  protected int help(String[] shiftArgs, OutputStream out, PrintStream err) {
-    return CoreCommand.HELP.mainInit(shiftArgs, out, err);
   }
 
   @Override

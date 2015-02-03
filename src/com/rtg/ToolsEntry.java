@@ -11,9 +11,6 @@
  */
 package com.rtg;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
-
 /**
  * Entry point for RTG tools
  */
@@ -29,10 +26,5 @@ public final class ToolsEntry extends AbstractCliEntry {
   @Override
   protected Command getSlimModule(String arg) {
     return ToolsCommand.INFO.findModuleWithExpansion(arg);
-  }
-
-  @Override
-  protected int help(String[] shiftArgs, OutputStream out, PrintStream err) {
-    return ToolsCommand.HELP.mainInit(shiftArgs, out, err);
   }
 }
