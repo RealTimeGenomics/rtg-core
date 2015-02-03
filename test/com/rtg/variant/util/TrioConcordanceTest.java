@@ -16,7 +16,6 @@ import java.io.IOException;
 import junit.framework.TestCase;
 
 /**
- * @author Dave Ware
  */
 public class TrioConcordanceTest extends TestCase {
 
@@ -45,7 +44,6 @@ public class TrioConcordanceTest extends TestCase {
     assertEquals(TrioConcordance.Status.OK, tc.getStatus(105, 99.5));
     tc.add(new Genotype("1/1"), new Genotype("0/."), new Genotype("0/0"));
     assertEquals(TrioConcordance.Status.FATHER, tc.getStatus(105, 99.5));
-
   }
 
 }
