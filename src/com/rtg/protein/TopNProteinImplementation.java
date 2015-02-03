@@ -11,12 +11,14 @@
  */
 package com.rtg.protein;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.array.objectindex.ObjectCreate;
 import com.rtg.util.array.objectindex.ObjectIndex;
 
 /**
  * <code>topn</code> implementation for protein
  */
+@TestClass("com.rtg.protein.TopNProteinOutputProcessorTest")
 public final class TopNProteinImplementation {
 
   private static final int NUMBER_OF_THREAD_LOCKS = 1 << 16;
