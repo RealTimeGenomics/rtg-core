@@ -12,12 +12,9 @@
 package com.rtg.variant.bayes.snp;
 
 
-import com.rtg.reference.Ploidy;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantParams;
-import com.rtg.variant.VariantSample;
 
 /**
  * Maintains counts for indels from CIGAR format input.
@@ -37,30 +34,25 @@ public class IndelMatcher extends EvidenceMatcher<IndelDetector> {
    * Output matching categories and move one step in buffer.
    * @param refName name of reference sequence
    * @param startPos position in reference sequence (zero based).
-   * @param endPos end position in reference sequence (zero based).
    * @param params if true then write supporting evidence and all calls even if
    * same or below threshold.
    * @return Variant object, or null if the call was not interesting.
    */
-  public Variant output(String refName, int startPos, int endPos, VariantParams params) {
+  public Variant output(String refName, int startPos, VariantParams params) {
     final IndelDetector indelDetector = step(startPos);
 
     if (indelDetector != null) {
       final int minIndelCount = indelDetector.minIndelCount(params.indelTriggerFraction());
-      final Ploidy ploidy = params.ploidy() == DefaultFallback.HAPLOID ? Ploidy.HAPLOID : Ploidy.DIPLOID;
       //System.err.println("@" + startPos + " nic=" + model.nonIndelCount() + " mic=" + minIndelCount + " nti=" + model.nonTrivialInsertCount() + " ntd=" + model.nonTrivialDeletionCount() + " itf=" + params.indelTriggerFraction());
-      int newEnd = endPos;
+      int newEnd = startPos;
       if (indelDetector.nonTrivialDeletionCount() >= minIndelCount) {
         newEnd++;
       }
-      final VariantLocus locus = new VariantLocus(refName, startPos, newEnd);
-      final Variant call = new Variant(locus, new VariantSample(ploidy)); //ugh... no idea what the variant sample should be in this case
       if (indelDetector.nonTrivialInsertCount() >= minIndelCount || indelDetector.nonTrivialDeletionCount() >= minIndelCount) {
+        final VariantLocus locus = new VariantLocus(refName, startPos, newEnd);
+        final Variant call = new Variant(locus);
         call.setInteresting();
-      }
-      call.setIndel(indelDetector.maxIndelLength());
-
-      if (call.isInteresting()) {
+        call.setIndel(indelDetector.maxIndelLength());
         return call;
       }
       return null;

@@ -62,7 +62,7 @@ public class IndividualSampleProcessor<D extends Description> {
     return mMatcherIndel.step(start);
   }
 
-  Variant indelOutput(String refName, int start, int end, VariantParams params) {
-    return mMatcherIndel.output(refName, start, end, params);
+  Variant indelOutput(String refName, int start, VariantParams params) {
+    return mMatcherIndel.output(refName, start, params);
   }
 }

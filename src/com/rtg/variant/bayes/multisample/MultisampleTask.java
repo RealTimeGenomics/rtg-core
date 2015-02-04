@@ -193,7 +193,7 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
   private Variant stepIndels(String refName, IndividualSampleProcessor<?>[] ssProcessors, int pos) {
     Variant v = null;
     for (IndividualSampleProcessor<?> processor : ssProcessors) {
-      final Variant current = processor.indelOutput(refName, pos, pos, mParams);
+      final Variant current = processor.indelOutput(refName, pos, mParams);
       if (v == null || (current != null && current.getLocus().getLength() > v.getLocus().getLength())) {
         v = current;
       }

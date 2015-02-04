@@ -34,6 +34,6 @@ public class IndelMatcherTest extends TestCase {
     m.match(0, new EvidenceIndel(phred, EvidenceIndel.INSERT, 0));
     m.match(0, new EvidenceIndel(phred, EvidenceIndel.INSERT, 0));
     m.match(1, null);
-    assertNotNull(m.output("foo", 0, 1, params));
+    assertNotNull(m.output("foo", 0, params));
   }
 }
