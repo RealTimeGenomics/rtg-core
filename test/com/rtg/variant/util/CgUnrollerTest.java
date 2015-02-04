@@ -23,6 +23,7 @@ import java.util.Locale;
 import com.rtg.launcher.GlobalFlags;
 import com.rtg.mode.DnaUtils;
 import com.rtg.ngs.CgMapCli;
+import com.rtg.reader.FastaUtils;
 import com.rtg.reader.PrereadArm;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.sam.SamFileAndRecord;
@@ -64,8 +65,10 @@ public class CgUnrollerTest extends TestCase {
     final CgUnroller.OrientedRead read = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     final String readx = new StringBuilder("GTTCCAGCACTTGAAAAAACTGTCTTTCTTTTTTC").reverse().toString();
     final String qual = new StringBuilder("9899441797:<<;;=<<;:::::;545778:::9").reverse().toString();
+    final byte[] qual2 = FastaUtils.asciiToRawQuality(qual);
 
-    assertTrue("expected : " + Arrays.toString(qual.getBytes()) + "\nactual : " + Arrays.toString(read.getQuality()), Arrays.equals(qual.getBytes(), read.getQuality()));
+    assertTrue("expected : " + Arrays.toString(FastaUtils.rawToAsciiQuality(qual.getBytes())) + "\nactual : " + Arrays.toString(read.getQuality()),
+      Arrays.equals(qual2, read.getQuality()));
     assertTrue("expected : " + Arrays.toString(readx.getBytes()) + "\nactual : " + Arrays.toString(read.getRead()), Arrays.equals(readx.getBytes(), read.getRead()));
   }
 
@@ -78,22 +81,22 @@ public class CgUnrollerTest extends TestCase {
     final CgUnroller.OrientedRead a = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), null);
     assertFalse(a.isCgOverlapOnLeft());
     assertEquals("GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT", new String(a.getRead()));
-    assertEquals("2/452222!25.,0,86.152525-048163527/", new String(a.getQuality()));
+    assertEquals("2/452222!25.,0,86.152525-048163527/", new String(FastaUtils.rawToAsciiQuality(a.getQuality())));
     rec.setFirstOfPairFlag(true);
     final CgUnroller.OrientedRead b = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), null);
     assertTrue(b.isCgOverlapOnLeft());
     assertEquals("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG", new String(b.getRead()));
-    assertEquals("/725361840-525251.68,0,.52!222254/2", new String(b.getQuality()));
+    assertEquals("/725361840-525251.68,0,.52!222254/2", new String(FastaUtils.rawToAsciiQuality(b.getQuality())));
     rec.setReadNegativeStrandFlag(true);
     final CgUnroller.OrientedRead c = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), null);
     assertFalse(c.isCgOverlapOnLeft());
     assertEquals("GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT", new String(c.getRead()));
-    assertEquals("2/452222!25.,0,86.152525-048163527/", new String(c.getQuality()));
+    assertEquals("2/452222!25.,0,86.152525-048163527/", new String(FastaUtils.rawToAsciiQuality(c.getQuality())));
     rec.setFirstOfPairFlag(false);
     final CgUnroller.OrientedRead d = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), null);
     assertTrue(d.isCgOverlapOnLeft());
     assertEquals("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG", new String(d.getRead()));
-    assertEquals("/725361840-525251.68,0,.52!222254/2", new String(d.getQuality()));
+    assertEquals("/725361840-525251.68,0,.52!222254/2", new String(FastaUtils.rawToAsciiQuality(d.getQuality())));
   }
 
   public void testCgUnrollNoOverlapWithSuperCigarForNoGoodReason() {
@@ -109,25 +112,25 @@ public class CgUnrollerTest extends TestCase {
     assertNotNull(a);      //not convinced that this can't return the expected result, but this case shouldn't happen in the real world anyway.
     assertFalse(a.isCgOverlapOnLeft());
     assertEquals("GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT", new String(a.getRead()));
-    assertEquals("2/452222!25.,0,86.152525-048163527/", new String(a.getQuality()));
+    assertEquals("2/452222!25.,0,86.152525-048163527/", new String(FastaUtils.rawToAsciiQuality(a.getQuality())));
     rec.setFirstOfPairFlag(true);
     final CgUnroller.OrientedRead b = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertNotNull(b);
     assertTrue(b.isCgOverlapOnLeft());
     assertEquals("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG", new String(b.getRead()));
-    assertEquals("/725361840-525251.68,0,.52!222254/2", new String(b.getQuality()));
+    assertEquals("/725361840-525251.68,0,.52!222254/2", new String(FastaUtils.rawToAsciiQuality(b.getQuality())));
     rec.setReadNegativeStrandFlag(true);
     final CgUnroller.OrientedRead c = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertNotNull(c);
     assertFalse(c.isCgOverlapOnLeft());
     assertEquals("GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT", new String(c.getRead()));
-    assertEquals("2/452222!25.,0,86.152525-048163527/", new String(c.getQuality()));
+    assertEquals("2/452222!25.,0,86.152525-048163527/", new String(FastaUtils.rawToAsciiQuality(c.getQuality())));
     rec.setFirstOfPairFlag(false);
     final CgUnroller.OrientedRead d = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertNotNull(d);
     assertTrue(d.isCgOverlapOnLeft());
     assertEquals("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG", new String(d.getRead()));
-    assertEquals("/725361840-525251.68,0,.52!222254/2", new String(d.getQuality()));
+    assertEquals("/725361840-525251.68,0,.52!222254/2", new String(FastaUtils.rawToAsciiQuality(d.getQuality())));
   }
 
   public void testCgUnrollTooLong() {
@@ -189,22 +192,22 @@ public class CgUnrollerTest extends TestCase {
     final CgUnroller.OrientedRead a = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertFalse(a.isCgOverlapOnLeft());
     assertEquals("GGGAAACCACAGTATAAAATGGTCAGAGTTTAGGA", new String(a.getRead()));
-    assertEquals(".6431011/1.772/42560*-+4-22*,1,5/42", new String(a.getQuality()));
+    assertEquals(".6431011/1.772/42560*-+4-22*,1,5/42", new String(FastaUtils.rawToAsciiQuality(a.getQuality())));
     rec.setFirstOfPairFlag(true);
     final CgUnroller.OrientedRead b = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertTrue(b.isCgOverlapOnLeft());
     assertEquals("AGGATTTGAGACTGGTAAAATATGACACCAAAGGG", new String(b.getRead()));
-    assertEquals("24/5,1,*22-4+-*06524/277.1/1101346.", new String(b.getQuality()));
+    assertEquals("24/5,1,*22-4+-*06524/277.1/1101346.", new String(FastaUtils.rawToAsciiQuality(b.getQuality())));
     rec.setReadNegativeStrandFlag(true);
     final CgUnroller.OrientedRead c = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertFalse(c.isCgOverlapOnLeft());
     assertEquals("GGGAAACCACAGTATAAAATGGTCAGAGTTTAGGA", new String(c.getRead()));
-    assertEquals(".6431011/1.772/42560*-+4-22*,1,5/42", new String(c.getQuality()));
+    assertEquals(".6431011/1.772/42560*-+4-22*,1,5/42", new String(FastaUtils.rawToAsciiQuality(c.getQuality())));
     rec.setFirstOfPairFlag(false);
     final CgUnroller.OrientedRead d = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertTrue(d.isCgOverlapOnLeft());
     assertEquals("AGGATTTGAGACTGGTAAAATATGACACCAAAGGG", new String(d.getRead()));
-    assertEquals("24/5,1,*22-4+-*06524/277.1/1101346.", new String(d.getQuality()));
+    assertEquals("24/5,1,*22-4+-*06524/277.1/1101346.", new String(FastaUtils.rawToAsciiQuality(d.getQuality())));
   }
 
   public void testCgUnrollOverlap2() {
@@ -223,22 +226,22 @@ public class CgUnrollerTest extends TestCase {
     final CgUnroller.OrientedRead a = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertFalse(a.isCgOverlapOnLeft());
     assertEquals("AGATTTTTCCTGCAAACTTTAGTATTGACAAAANG", new String(a.getRead()));
-    assertEquals("5425#+-,.55.-.+613252165-05521/20!1", new String(a.getQuality()));
+    assertEquals("5425#+-,.55.-.+613252165-05521/20!1", new String(FastaUtils.rawToAsciiQuality(a.getQuality())));
     rec.setFirstOfPairFlag(true);
     final CgUnroller.OrientedRead b = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertTrue(b.isCgOverlapOnLeft());
     assertEquals("GNAAAACAGTTATGATTTCAAACGTCCTTTTTAGA", new String(b.getRead()));
-    assertEquals("1!02/12550-561252316+.-.55.,-+#5245", new String(b.getQuality()));
+    assertEquals("1!02/12550-561252316+.-.55.,-+#5245", new String(FastaUtils.rawToAsciiQuality(b.getQuality())));
     rec.setReadNegativeStrandFlag(true);
     final CgUnroller.OrientedRead c = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertFalse(c.isCgOverlapOnLeft());
     assertEquals("AGATTTTTCCTGCAAACTTTAGTATTGACAAAANG", new String(c.getRead()));
-    assertEquals("5425#+-,.55.-.+613252165-05521/20!1", new String(c.getQuality()));
+    assertEquals("5425#+-,.55.-.+613252165-05521/20!1", new String(FastaUtils.rawToAsciiQuality(c.getQuality())));
     rec.setFirstOfPairFlag(false);
     final CgUnroller.OrientedRead d = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertTrue(d.isCgOverlapOnLeft());
     assertEquals("GNAAAACAGTTATGATTTCAAACGTCCTTTTTAGA", new String(d.getRead()));
-    assertEquals("1!02/12550-561252316+.-.55.,-+#5245", new String(d.getQuality()));
+    assertEquals("1!02/12550-561252316+.-.55.,-+#5245", new String(FastaUtils.rawToAsciiQuality(d.getQuality())));
   }
 
   public void testCgUnrollOverlap2Oldschool() {
@@ -254,22 +257,22 @@ public class CgUnrollerTest extends TestCase {
     final CgUnroller.OrientedRead a = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertFalse(a.isCgOverlapOnLeft());
     assertEquals("AGATTTTTCCTGCAAACTTTAGTATTGACAAAANG", new String(a.getRead()));
-    assertEquals("5425#+-,.55.-.+613252165-05521/20!1", new String(a.getQuality()));
+    assertEquals("5425#+-,.55.-.+613252165-05521/20!1", new String(FastaUtils.rawToAsciiQuality(a.getQuality())));
     rec.setFirstOfPairFlag(true);
     final CgUnroller.OrientedRead b = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertTrue(b.isCgOverlapOnLeft());
     assertEquals("GNAAAACAGTTATGATTTCAAACGTCCTTTTTAGA", new String(b.getRead()));
-    assertEquals("1!02/12550-561252316+.-.55.,-+#5245", new String(b.getQuality()));
+    assertEquals("1!02/12550-561252316+.-.55.,-+#5245", new String(FastaUtils.rawToAsciiQuality(b.getQuality())));
     rec.setReadNegativeStrandFlag(true);
     final CgUnroller.OrientedRead c = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertFalse(c.isCgOverlapOnLeft());
     assertEquals("AGATTTTTCCTGCAAACTTTAGTATTGACAAAANG", new String(c.getRead()));
-    assertEquals("5425#+-,.55.-.+613252165-05521/20!1", new String(c.getQuality()));
+    assertEquals("5425#+-,.55.-.+613252165-05521/20!1", new String(FastaUtils.rawToAsciiQuality(c.getQuality())));
     rec.setFirstOfPairFlag(false);
     final CgUnroller.OrientedRead d = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertTrue(d.isCgOverlapOnLeft());
     assertEquals("GNAAAACAGTTATGATTTCAAACGTCCTTTTTAGA", new String(d.getRead()));
-    assertEquals("1!02/12550-561252316+.-.55.,-+#5245", new String(d.getQuality()));
+    assertEquals("1!02/12550-561252316+.-.55.,-+#5245", new String(FastaUtils.rawToAsciiQuality(d.getQuality())));
   }
 
   public void testCgUnrollNoOverlapNoQuality() {
@@ -530,7 +533,7 @@ public class CgUnrollerTest extends TestCase {
     }
     assertEquals(expQual.length(), or.getQuality().length);
     for (int i = 0; i < expQual.length(); i++) {
-      assertEquals(expQual.charAt(i), or.getQuality()[i]);
+      assertEquals(expQual.charAt(i), FastaUtils.rawToAsciiQuality(or.getQuality()[i]));
     }
   }
 

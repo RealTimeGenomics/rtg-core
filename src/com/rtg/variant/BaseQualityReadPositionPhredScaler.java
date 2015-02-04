@@ -79,9 +79,8 @@ class BaseQualityReadPositionPhredScaler implements PhredScaler {
   }
 
   @Override
-  public int getPhred(char qualChar, int readPosition) {
-
-    final int qualIndex = (int) qualChar - (int) '!';
+  public int getPhred(byte quality, int readPosition) {
+    final int qualIndex = quality & 0xFF;
     if (qualIndex >= mCurve.length) {
       return mCurve[mCurve.length - 1][readPosition];
     }

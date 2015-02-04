@@ -13,6 +13,7 @@ package com.rtg.variant.match;
 
 import java.io.IOException;
 
+import com.rtg.reader.FastaUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.ReadGroupMachineErrorChooser;
@@ -59,6 +60,7 @@ public class AlignmentMatchTest extends TestCase {
     Diagnostic.setLogStream();
     final String read = "ACGT";   // we use the "CGT" part
     final String qualities = "!!%`";  // that is, 0,0,4,63.
+    final byte[] qScores = FastaUtils.asciiToRawQuality(qualities.toCharArray());
     final SAMFileHeader hdr = new SAMFileHeader();
     final SAMReadGroupRecord illumina = new SAMReadGroupRecord("Illumina");
     illumina.setSample("sample1");
@@ -73,7 +75,7 @@ public class AlignmentMatchTest extends TestCase {
     final ReadGroupMachineErrorChooser chooser = new ReadGroupMachineErrorChooser(hdr);
 
     // no qualities
-    AlignmentMatch ins = new AlignmentMatch(var, null, read, null, 20, 1, 3, 7);
+    AlignmentMatch ins = new AlignmentMatch(var, null, read, null, 20, 1, 3, 7, true, true);
     ins.integrity();
     assertEquals("CGT", ins.toString());
     assertEquals(3, ins.length());
@@ -84,7 +86,7 @@ public class AlignmentMatchTest extends TestCase {
     assertEquals(VariantUtils.phredToProb(20), ins.baseError(2), 1E-14);
     assertEquals(VariantUtils.phredToProb(7), ins.mapError(), 1E-14);
 
-    ins = new AlignmentMatch(var, null, read, qualities, 20, 1, 3, 7);
+    ins = new AlignmentMatch(var, null, read, qScores, 20, 1, 3, 7, true, true);
     assertEquals(VariantUtils.phredToProb(0), ins.baseError(0), 1E-14);
     assertEquals(VariantUtils.phredToProb(4), ins.baseError(1), 1E-14);
     assertEquals(VariantUtils.phredToProb(63), ins.baseError(2), 1E-14);
@@ -92,7 +94,7 @@ public class AlignmentMatchTest extends TestCase {
 
     // no read group in SAM record, so no quality correction curve
     try {
-      new AlignmentMatch(var, chooser, read, qualities, 20, 1, 3, 7);
+      new AlignmentMatch(var, chooser, read, qScores, 20, 1, 3, 7, true, true);
       fail();
     } catch (final NoTalkbackSlimException ntse) {
       //expected
@@ -100,7 +102,7 @@ public class AlignmentMatchTest extends TestCase {
 
     // Illumina correction curve
     rec.setAttribute("RG", "Illumina");
-    ins = new AlignmentMatch(new VariantAlignmentRecord(rec), chooser, read, qualities, 20, 1, 3, 7);
+    ins = new AlignmentMatch(new VariantAlignmentRecord(rec), chooser, read, qScores, 20, 1, 3, 7, true, true);
     ins.integrity();
     assertEquals(VariantUtils.phredToProb(0), ins.baseError(0), 1E-14);
     assertEquals(VariantUtils.phredToProb(4), ins.baseError(1), 1E-14);
@@ -109,7 +111,7 @@ public class AlignmentMatchTest extends TestCase {
 
     // Complete Genomics correction curve
     rec.setAttribute("RG", "CG");
-    ins = new AlignmentMatch(new VariantAlignmentRecord(rec), chooser, read, qualities, 20, 1, 3, 7);
+    ins = new AlignmentMatch(new VariantAlignmentRecord(rec), chooser, read, qScores, 20, 1, 3, 7, true, true);
     ins.integrity();
     assertEquals(VariantUtils.phredToProb(0), ins.baseError(0), 1E-14);
     assertEquals(VariantUtils.phredToProb(5), ins.baseError(1), 1E-14);
@@ -118,7 +120,7 @@ public class AlignmentMatchTest extends TestCase {
   }
 
   public void test() {
-    final AlignmentMatch ins = new AlignmentMatch(null, "ACGTACGT", "ABCDABCD", 0, 3, 3, 7, false, true);
+    final AlignmentMatch ins = new AlignmentMatch(null, null, "ACGTACGT", FastaUtils.asciiToRawQuality("ABCDABCD"), 0, 3, 3, 7, false, true);
     ins.integrity();
     assertFalse(ins.isFixedLeft());
     assertTrue(ins.isFixedRight());

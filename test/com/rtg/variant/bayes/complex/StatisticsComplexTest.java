@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.rtg.reader.FastaUtils;
 import com.rtg.util.MathUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.NoQualityException;
@@ -46,7 +47,7 @@ public class StatisticsComplexTest extends TestCase {
     for (int i = 0; i < length; i++) {
       sb.append('`');
     }
-    return new AlignmentMatch(new VariantAlignmentRecord(sam), ins, sb.toString(), 0, 0, length, mapq, fixedLeft, fixedRight);
+    return new AlignmentMatch(new VariantAlignmentRecord(sam), null, ins, FastaUtils.asciiToRawQuality(sb.toString()), 0, 0, length, mapq, fixedLeft, fixedRight);
   }
   static AlignmentMatch match(final String ins, int mapq) {
     return match(ins, mapq, true, true);

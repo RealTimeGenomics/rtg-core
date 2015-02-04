@@ -69,7 +69,7 @@ class ReadPositionPhredScaler implements PhredScaler {
   }
 
   @Override
-  public int getPhred(char qualChar, int readPosition) {
+  public int getPhred(byte quality, int readPosition) {
     return mCurve[readPosition];
   }
 

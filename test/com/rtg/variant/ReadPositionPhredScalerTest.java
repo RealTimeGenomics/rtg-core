@@ -55,9 +55,9 @@ public class ReadPositionPhredScalerTest extends TestCase {
 
       thisQuery[0] = c.initQuery();
       final ReadPositionPhredScaler bqps = new ReadPositionPhredScaler(c, thisQuery[0]);
-      assertEquals(14, bqps.getPhred((char) 0, 0));
-      assertEquals(16, bqps.getPhred((char) 0, 1));
-      assertEquals(15, bqps.getPhred((char) 0, 2));
+      assertEquals(14, bqps.getPhred((byte) 0, 0));
+      assertEquals(16, bqps.getPhred((byte) 0, 1));
+      assertEquals(15, bqps.getPhred((byte) 0, 2));
     } finally {
       FileHelper.deleteAll(dir);
     }

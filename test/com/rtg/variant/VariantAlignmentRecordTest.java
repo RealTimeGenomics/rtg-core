@@ -32,8 +32,8 @@ public class VariantAlignmentRecordTest extends TestCase {
     rec.setCigarString("2M2D2M");
     rec.setMappingQuality(43);
     rec.setAttribute("NH", 2);
-    final byte[] q = {65, 66, 67, 68};
-    rec.setBaseQualityString(new String(q));
+    final byte[] q = {32, 33, 34, 35};
+    rec.setBaseQualities(q);
     rec.setInferredInsertSize(-232);
     final VariantAlignmentRecord r = new VariantAlignmentRecord(rec);
     assertTrue(Arrays.equals("TATT".getBytes(), r.getRead()));

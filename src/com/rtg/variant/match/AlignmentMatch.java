@@ -11,6 +11,7 @@
  */
 package com.rtg.variant.match;
 
+import com.rtg.reader.FastaUtils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.Integrity;
 import com.rtg.variant.AbstractMachineErrorParams;
@@ -41,7 +42,7 @@ public class AlignmentMatch extends Match implements Integrity {
 
 
   /**
-   * For testing only, as it does not use a <code>MachineErrorChooser</code>, so does no quality curve correction.
+   * For testing only, as it uses ascii qualities and does not use a <code>MachineErrorChooser</code>, so does no quality curve correction.
    * A new single nucleotide difference match.
    *
    * @param var associated alignment record (if any).
@@ -53,41 +54,7 @@ public class AlignmentMatch extends Match implements Integrity {
    * @param readScore Phred quality of read mapping
    */
   public AlignmentMatch(final VariantAlignmentRecord var, final String readNt, final String qScore, final int qDefault, final int start, final int length, final int readScore) {
-    this(var, null, readNt, qScore, qDefault, start, length, readScore, true, true);
-  }
-
-  /**
-   * A new single nucleotide difference match
-   * @param var associated alignment record (if any).
-   * @param chooser Machine error chooser (if null, then no quality correction is done)
-   * @param readNt read nucleotides
-   * @param qScore Phred quality of read nucleotides
-   * @param qDefault default Phred quality of read nucleotides Used if <code>qScore</code> null)
-   * @param start zero-based offset into read nucleotides
-   * @param length length of read region
-   * @param readScore Phred quality of read mapping
-   */
-  public AlignmentMatch(final VariantAlignmentRecord var, final MachineErrorChooserInterface chooser, final String readNt, final String qScore, final int qDefault, final int start, final int length, final int readScore) {
-    this(var, chooser, readNt, qScore, qDefault, start, length, readScore, true, true);
-  }
-
-  /**
-   * For testing only, as it does not use a <code>MachineErrorChooser</code>, so does no quality curve correction.
-   * A new single nucleotide difference match.
-   *
-   * @param var associated alignment record (if any).
-   * @param readNt read nucleotides
-   * @param qScore Phred quality of read nucleotides
-   * @param qDefault default Phred quality of read nucleotides Used if <code>qScore</code> null)
-   * @param start zero-based offset into read nucleotides
-   * @param length length of read region
-   * @param readScore Phred quality of read mapping
-   * @param fixedLeft true if read is fixed (anchored) at left end.
-   * @param fixedRight true if read is fixed (anchored) at right end.
-   *
-   */
-  public AlignmentMatch(final VariantAlignmentRecord var, final String readNt, final String qScore, final int qDefault, final int start, final int length, final int readScore, final boolean fixedLeft, final boolean fixedRight) {
-    this(var, null, readNt, qScore, qDefault, start, length, readScore, fixedLeft, fixedRight);
+    this(var, null, readNt, FastaUtils.asciiToRawQuality(qScore), qDefault, start, length, readScore, true, true);
   }
 
   /**
@@ -95,7 +62,7 @@ public class AlignmentMatch extends Match implements Integrity {
    * @param var associated alignment record (if any).
    * @param chooser Machine error chooser (if null, no quality correction is done)
    * @param readNt read nucleotides
-   * @param qScore Phred quality of read nucleotides
+   * @param qScore binary Phred quality of read nucleotides
    * @param qDefault default Phred quality of read nucleotides (used if <code>qScore</code> null)
    * @param start zero-based offset into read nucleotides
    * @param length length of read region
@@ -103,7 +70,7 @@ public class AlignmentMatch extends Match implements Integrity {
    * @param fixedLeft true if read is fixed (anchored) at left end.
    * @param fixedRight true if read is fixed (anchored) at right end.
    */
-  public AlignmentMatch(final VariantAlignmentRecord var, final MachineErrorChooserInterface chooser, final String readNt, final String qScore, final int qDefault, final int start, final int length, final int readScore, final boolean fixedLeft, final boolean fixedRight) {
+  public AlignmentMatch(final VariantAlignmentRecord var, final MachineErrorChooserInterface chooser, final String readNt, final byte[] qScore, final int qDefault, final int start, final int length, final int readScore, final boolean fixedLeft, final boolean fixedRight) {
     super();
     mAlignmentRecord = var;
     final AbstractMachineErrorParams me = chooser == null ? null : chooser.machineErrors(var);
@@ -113,15 +80,15 @@ public class AlignmentMatch extends Match implements Integrity {
     } else {
       mBaseError = new double[length];
       for (int k = 0; k < mBaseError.length; k++) {
-        final char scoreChar = qScore.charAt(k + start);
+        final byte scoreChar = qScore[k + start];
         // apply machine error calibration curve for appropriate read group if possible
-        final int phred = me == null ? scoreChar - '!' : me.getPhred(scoreChar, k + start);
+        final int phred = me == null ? scoreChar : me.getPhred(scoreChar, k + start);
         assert 0 <= phred && phred < 255;
         mBaseError[k] = 1.0 - (1.0 - VariantUtils.phredToProb(phred));
       }
     }
     // apply correct machine error calibration curve to qDefault, if possible
-    mQualityDefault = 1.0 - (1.0 - VariantUtils.phredToProb(me == null ? qDefault : me.getPhred((char) (qDefault + '!'), 0)));
+    mQualityDefault = 1.0 - (1.0 - VariantUtils.phredToProb(me == null ? qDefault : me.getPhred((byte) qDefault, 0)));
     mFixedLeft = fixedLeft;
     mFixedRight = fixedRight;
     mReadNt = new int[length];

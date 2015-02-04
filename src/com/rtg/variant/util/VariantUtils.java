@@ -316,8 +316,8 @@ public final class VariantUtils {
     sb.append("gapDistribution: ").append(Arrays.toString(p.gapDistribution())).append(StringUtils.LS);
     sb.append("smallGapDistribution: ").append(Arrays.toString(p.smallGapDistribution())).append(StringUtils.LS);
     sb.append("quality curve: ");
-    for (int q = 0; q < 64; q++) {
-      sb.append(p.getPhred((char) ('!' + q), 0)).append(",");
+    for (byte q = 0; q < 64; q++) {
+      sb.append(p.getPhred(q, 0)).append(",");
     }
     sb.append(StringUtils.LS);
     return sb.toString();
@@ -363,11 +363,11 @@ public final class VariantUtils {
     sb.append(StringUtils.LS);
 
     sb.append("quality_curve = ");
-    for (int q = 0; q < 64; q++) {
+    for (byte q = 0; q < 64; q++) {
       if (q != 0) {
         sb.append(", ");
       }
-      sb.append(p.getPhred((char) ('!' + q), 0));
+      sb.append(p.getPhred(q, 0));
     }
     sb.append(StringUtils.LS);
     sb.append(StringUtils.LS);

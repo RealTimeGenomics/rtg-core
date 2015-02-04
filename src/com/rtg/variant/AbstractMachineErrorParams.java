@@ -14,6 +14,7 @@ package com.rtg.variant;
 import java.io.IOException;
 
 import com.reeltwo.jumble.annotations.TestClass;
+import com.rtg.reader.FastaUtils;
 import com.rtg.util.Params;
 import com.rtg.util.machine.MachineType;
 import com.rtg.variant.realign.RealignParams;
@@ -25,13 +26,26 @@ import com.rtg.variant.realign.RealignParams;
 public abstract class AbstractMachineErrorParams implements Params {
 
   /**
-   * Get a phred score from a quality character optionally
+   * Get a phred score from an ASCII quality character optionally
    * correcting it.
    * @param qualChar  original quality character.
    * @param readPos position on read of <code>qualChar</code>
    * @return the possibly corrected phred score.
    */
-  public abstract int getPhred(final char qualChar, int readPos);
+  public final int getPhred(final char qualChar, int readPos) {
+    assert qualChar >= FastaUtils.PHRED_LOWER_LIMIT_CHAR;
+    final byte rawQuality = (byte) (qualChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR);
+    return getPhred(rawQuality, readPos);
+  }
+
+  /**
+   * Get a phred score from a binary quality value optionally
+   * correcting it.
+   * @param quality original quality value.
+   * @param readPos position on read of <code>qualChar</code>
+   * @return the possibly corrected phred score.
+   */
+  public abstract int getPhred(final byte quality, int readPos);
 
   /**
    * Get the flag to indicate if CG outer base trimming is to be used.

@@ -32,7 +32,7 @@ import java.util.Map;
 
 import com.reeltwo.jumble.annotations.JumbleIgnore;
 import com.rtg.alignment.CgGotohEditDistance;
-import com.rtg.reader.FastqSequenceDataSource;
+import com.rtg.reader.FastaUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.Constants;
@@ -545,7 +545,7 @@ public final class SamUtils {
    */
   public static byte[] expandCgSuperCigarQualities(byte[] samQualities, byte[] qualityBuffer, String qualityOverlap, boolean first, boolean reverseCompliment, boolean phredifyQualityOverlap) throws BadSuperCigarException {
     assert qualityBuffer.length == SamUtils.CG_RAW_READ_LENGTH;
-    final int overlapQualityOffset = phredifyQualityOverlap ? FastqSequenceDataSource.PHRED_LOWER_LIMIT_CHAR : 0;
+    final int overlapQualityOffset = phredifyQualityOverlap ? FastaUtils.PHRED_LOWER_LIMIT_CHAR : 0;
     final int xqlength = qualityOverlap == null ? 0 : qualityOverlap.length();
     if (samQualities.length + xqlength != qualityBuffer.length) {
       throw new BadSuperCigarException("SAM record qualities plus " + SamUtils.CG_OVERLAP_QUALITY + " not expected length. Was: " + (samQualities.length + xqlength) + " expected: " + qualityBuffer.length);

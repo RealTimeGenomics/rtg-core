@@ -49,16 +49,14 @@ public class AlignmentEnvironmentCG extends AbstractAlignmentEnvironment {
     }
     mQuality = new double[len];
     final byte[] qChar = orient.getQuality();
-    final String quality = qChar == null ? null : new String(qChar);
-    if (quality == null) {
+    if (qChar == null) {
       final double qDef = VariantUtils.phredToProb(params.qDefault());
       for (int i = 0; i < len; i++) {
         mQuality[i] = qDef;
       }
     } else {
       for (int i = 0; i < len; i++) {
-        final char ch = quality.charAt(i);
-        final int phred = me.getPhred(ch, i);
+        final int phred = me.getPhred(qChar[i], i);
         mQuality[i] = VariantUtils.phredToProb(phred);
       }
     }

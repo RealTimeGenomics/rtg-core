@@ -43,8 +43,7 @@ public final class AlignmentEnvironmentRead extends AbstractAlignmentEnvironment
       }
     } else {
       for (int i = 0; i < len; i++) {
-        final char ch = (char) quality[i];
-        final int phred = me.getPhred(ch, i);
+        final int phred = me.getPhred(quality[i], i);
         mQuality[i] = VariantUtils.phredToProb(phred);
       }
     }

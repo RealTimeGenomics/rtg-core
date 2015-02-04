@@ -55,13 +55,13 @@ public class BaseQualityReadPositionPhredScalerTest extends TestCase {
 
       thisQuery[0] = c.initQuery();
       final BaseQualityReadPositionPhredScaler bqps = new BaseQualityReadPositionPhredScaler(c, thisQuery[0]);
-      assertEquals(14, bqps.getPhred((char) (0 + '!'), 0));
-      assertEquals(15, bqps.getPhred((char) (1 + '!'), 0));
-      assertEquals(15, bqps.getPhred((char) (2 + '!'), 0));
-      assertEquals(15, bqps.getPhred((char) (0 + '!'), 1));
-      assertEquals(16, bqps.getPhred((char) (1 + '!'), 1));
-      assertEquals(15, bqps.getPhred((char) (2 + '!'), 1));
-      assertEquals(15, bqps.getPhred((char) (200 + '!'), 1));
+      assertEquals(14, bqps.getPhred((byte) 0, 0));
+      assertEquals(15, bqps.getPhred((byte) 1, 0));
+      assertEquals(15, bqps.getPhred((byte) 2, 0));
+      assertEquals(15, bqps.getPhred((byte) 0, 1));
+      assertEquals(16, bqps.getPhred((byte) 1, 1));
+      assertEquals(15, bqps.getPhred((byte) 2, 1));
+      assertEquals(15, bqps.getPhred((byte) 200, 1));
     } finally {
       FileHelper.deleteAll(dir);
     }

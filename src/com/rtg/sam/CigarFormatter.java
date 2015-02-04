@@ -12,6 +12,8 @@
 package com.rtg.sam;
 
 
+import java.io.ByteArrayOutputStream;
+
 import com.rtg.alignment.ActionsHelper;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantAlignmentRecord;
@@ -314,7 +316,8 @@ public final class CigarFormatter {
     //scan through the subregion setting flags about what has been seen
     //and building up the string for the subregion
     final StringBuilder sb = new StringBuilder();
-    final StringBuilder qb = qual.length == 0 ? null : new StringBuilder();
+    //final StringBuilder qb = qual.length == 0 ? null : new StringBuilder();
+    final ByteArrayOutputStream qb = qual.length == 0 ? null : new ByteArrayOutputStream();
     boolean leftN = refPos > start;
     boolean validNt = false;
     boolean rightN = false;
@@ -341,7 +344,7 @@ public final class CigarFormatter {
               //this duplicates the 'I' case below
               sb.append((char) read[readPos]);
               if (qb != null) {
-                qb.append((char) qual[readPos]);
+                qb.write(qual[readPos]);
               }
               readPos++;
               //valid
@@ -354,7 +357,7 @@ public final class CigarFormatter {
               }
               sb.append((char) read[readPos]);
               if (qb != null) {
-                qb.append((char) qual[readPos]);
+                qb.write(qual[readPos]);
               }
               readPos++;
               //valid
@@ -397,7 +400,7 @@ public final class CigarFormatter {
       //all Ns - no useful match can be returned.
       return null;
     }
-    final String quality = qb == null ? null : qb.toString();
+    final byte[] quality = qb == null ? null : qb.toByteArray();
     final String rs = sb.toString();
     final AlignmentMatch match = new AlignmentMatch(alignmentRecord, chooser, rs, quality, params.qDefault(), 0, rs.length(), VariantUtils.readScoreFromAlignmentRecord(alignmentRecord, params), !leftN, !rightN);
     match.setBasesLeftOfMatch(startInRead);

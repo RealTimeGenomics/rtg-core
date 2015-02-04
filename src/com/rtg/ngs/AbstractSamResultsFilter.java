@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.rtg.reader.FastaUtils;
 import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
@@ -23,7 +24,6 @@ import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.ngs.tempstage.BinaryTempFileRecord;
 import com.rtg.ngs.tempstage.TempRecordReader;
 import com.rtg.ngs.tempstage.TempRecordReaderNio;
-import com.rtg.reader.FastqSequenceDataSource;
 import com.rtg.reader.PrereadNamesInterface;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.ReadGroupUtils;
@@ -296,7 +296,7 @@ public abstract class AbstractSamResultsFilter {
       mGQLength = discard;
       mQualStringLength = length - discard;
       for (int i = 0; i < mGQLength; i++) {
-        mGQBuffer[i] += FastqSequenceDataSource.PHRED_LOWER_LIMIT_CHAR;
+        mGQBuffer[i] += FastaUtils.PHRED_LOWER_LIMIT_CHAR;
       }
     } else {
       final int length = reader.readQuality(readId, mQualBuffer);

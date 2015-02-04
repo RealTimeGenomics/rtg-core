@@ -16,7 +16,7 @@ import java.util.Arrays;
 import com.rtg.alignment.CgGotohEditDistance;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
-import com.rtg.reader.FastqSequenceDataSource;
+import com.rtg.reader.FastaUtils;
 import com.rtg.util.Utils;
 
 import net.sf.samtools.SAMRecord;
@@ -30,7 +30,7 @@ public final class SamValidatorCgHelper {
 
   static byte[] expandCgCigarQualities(byte[] samQualities, byte[] qualityBuffer, String gq, int[] cggc, boolean first, boolean reverseCompliment, boolean phredifyQualityOverlap) {
     assert qualityBuffer.length == SamUtils.CG_RAW_READ_LENGTH;
-    final int overlapQualityOffset = phredifyQualityOverlap ? FastqSequenceDataSource.PHRED_LOWER_LIMIT_CHAR : 0;
+    final int overlapQualityOffset = phredifyQualityOverlap ? FastaUtils.PHRED_LOWER_LIMIT_CHAR : 0;
     final int xqlength = gq == null ? 0 : gq.length();
     if (samQualities.length + xqlength != qualityBuffer.length) {
       return null;

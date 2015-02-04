@@ -17,12 +17,12 @@ package com.rtg.variant;
 interface PhredScaler {
 
   /**
-   * Get a phred score from a quality character optionally
+   * Get a phred score from a binary quality optionally
    * correcting it.
-   * @param qualChar  original quality character.
+   * @param qual original quality value.
    * @param readPosition position on read of <code>qualChar</code>
    * @return the possibly corrected phred score.
    */
-  int getPhred(char qualChar, int readPosition);
+  int getPhred(byte qual, int readPosition);
 }
 

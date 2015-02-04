@@ -11,6 +11,8 @@
  */
 package com.rtg.variant.match;
 
+import com.rtg.reader.FastaUtils;
+
 import junit.framework.TestCase;
 
 /**
@@ -18,27 +20,27 @@ import junit.framework.TestCase;
 public class MatchTest extends TestCase {
 
   public void testToString1() {
-    final Match ma = new AlignmentMatch(null, "ACGT", null, 10, 0, 4, 10, false, false);
+    final Match ma = new AlignmentMatch(null, null, "ACGT", null, 10, 0, 4, 10, false, false);
     assertEquals("~ACGT~", ma.toString());
   }
 
   public void testToString2() {
-    final Match ma = new AlignmentMatch(null, "ACGT", null, 10, 0, 4, 10, true, false);
+    final Match ma = new AlignmentMatch(null, null, "ACGT", null, 10, 0, 4, 10, true, false);
     assertEquals("ACGT~", ma.toString());
   }
 
   public void testToString3() {
-    final Match ma = new AlignmentMatch(null, "ACGT", null, 10, 0, 4, 10, false, true);
+    final Match ma = new AlignmentMatch(null, null, "ACGT", null, 10, 0, 4, 10, false, true);
     assertEquals("~ACGT", ma.toString());
   }
 
   public void testToString4() {
-    final Match ma = new AlignmentMatch(null, "ACGT", null, 10, 0, 4, 10, true, true);
+    final Match ma = new AlignmentMatch(null, null, "ACGT", null, 10, 0, 4, 10, true, true);
     assertEquals("ACGT", ma.toString());
   }
 
   public void testQualityString() {
-    final Match ma = new AlignmentMatch(null, "ACGT", "!%$#", 10, 0, 4, 10, false, false);
+    final Match ma = new AlignmentMatch(null, null, "ACGT", FastaUtils.asciiToRawQuality("!%$#"), 10, 0, 4, 10, false, false);
     assertEquals("[0.00, 0.40, 0.30, 0.20, ]", ma.qualityString());
   }
 

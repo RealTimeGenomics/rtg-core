@@ -11,9 +11,7 @@
  */
 package com.rtg.variant;
 
-import java.util.Arrays;
-
-import com.rtg.reader.FastqSequenceDataSource;
+import com.rtg.reader.FastaUtils;
 import com.rtg.sam.MateInfo;
 import com.rtg.sam.ReaderRecord;
 import com.rtg.sam.SamUtils;
@@ -87,14 +85,23 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
     mGenome = genome;
     mFragmentLength = record.getInferredInsertSize();
     mBases = record.getReadBases();
+
+
+
     final byte[] baseQualities = record.getBaseQualities();
     if (baseQualities.length == 0) {
       mQuality = baseQualities;
     } else {
-      mQuality = Arrays.copyOf(baseQualities, baseQualities.length);
-      for (int i = 0; i < mQuality.length; i++) {
-        mQuality[i] += FastqSequenceDataSource.PHRED_LOWER_LIMIT_CHAR;
-      }
+      mQuality = baseQualities;
+
+      // Perform recalibration at this point?
+      //mQuality = Arrays.copyOf(baseQualities, baseQualities.length);
+      //final AbstractMachineErrorParams me = chooser == null ? null : chooser.machineErrors(var);
+      //final int phred = me == null ? scoreChar - '!' : me.getPhred(scoreChar, k + start);
+
+//      for (int i = 0; i < mQuality.length; i++) {
+//        mQuality[i] += FastqSequenceDataSource.PHRED_LOWER_LIMIT_CHAR;
+//      }
     }
     mCigar = record.getCigarString();
     mMappingQuality = (byte) record.getMappingQuality();
@@ -152,7 +159,7 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
   }
 
   /**
-   * Get the ASCII phred quality values as a byte array.
+   * Get the binary phred quality values as a byte array.
    * @return quality
    */
   public byte[] getQuality() {
@@ -222,7 +229,7 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
 
   @Override
   public String toString() {
-    return getStart() + " " + getCigar() + " " + new String(getRead()) + " " + new String(getQuality());
+    return getStart() + " " + getCigar() + " " + new String(getRead()) + " " + new String(FastaUtils.rawToAsciiQuality(getQuality()));
   }
 
   @Override

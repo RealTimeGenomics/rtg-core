@@ -317,8 +317,8 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
   }
 
   @Override
-  public int getPhred(char qualChar, int readPos) {
-    return Math.min(QUE_HACK_LIMIT, mScaler.getPhred(qualChar, readPos));
+  public int getPhred(byte quality, int readPos) {
+    return Math.min(QUE_HACK_LIMIT, mScaler.getPhred(quality, readPos));
   }
 
   @Override

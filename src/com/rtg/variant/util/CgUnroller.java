@@ -12,6 +12,7 @@
 package com.rtg.variant.util;
 
 import com.rtg.alignment.CgGotohEditDistance;
+import com.rtg.reader.FastaUtils;
 import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.StringUtils;
@@ -92,7 +93,7 @@ public final class CgUnroller {
     }
 
     final String samRead = new String(rec.getRead());
-    final String samQualities = new String(rec.getQuality());
+    final String samQualities = new String(FastaUtils.rawToAsciiQuality(rec.getQuality())); // Convert this function to work natively in raw qualities
     final boolean hasQuality = samQualities.length() != 0;
     final int samLength = samRead.length();
     if (hasQuality && samLength != samQualities.length()) {
@@ -167,7 +168,7 @@ public final class CgUnroller {
       reversedRead = StringUtils.reverse(expandedRead);
       reversedQual = StringUtils.reverse(expandedQual);
     }
-    return new CgUnroller.OrientedRead(reversedRead.getBytes(), hasQuality ? reversedQual.getBytes() : null, cgOverlapOnLeft);
+    return new CgUnroller.OrientedRead(reversedRead.getBytes(), hasQuality ? FastaUtils.asciiToRawQuality(reversedQual) : null, cgOverlapOnLeft);
   }
 
 }

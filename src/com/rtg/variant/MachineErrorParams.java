@@ -208,8 +208,7 @@ public final class MachineErrorParams extends AbstractMachineErrorParams impleme
   }
 
   @Override
-  public int getPhred(final char charAt, int readPos) {
-    final int rawQuality = charAt - '!';
+  public int getPhred(final byte rawQuality, int readPos) {
     if (mQualityCurve != null) {
       if (rawQuality >= mQualityCurve.length) {
         return mQualityCurve[mQualityCurve.length - 1];

@@ -124,7 +124,7 @@ public class CigarParserModel implements ReadParserInterface {
       if (mQualities != null && getReadPosition() >= mQualities.length) {
         throw new BadSuperCigarException("readPos " + getReadPosition() + " > qual.len in SAM record");
       }
-      return mQualities == null ? mDefaultQuality : mMe.getPhred((char) mQualities[getReadPosition()], getReadPosition());
+      return mQualities == null ? mDefaultQuality : mMe.getPhred(mQualities[getReadPosition()], getReadPosition());
     }
 
     void setAdditional(AbstractMachineErrorParams me, int mapScore, int defaultQuality, boolean isCgOverlapLeft, boolean isForward, boolean isReadPaired, boolean isMated, boolean isUnmapped) {

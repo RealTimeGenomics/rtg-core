@@ -31,17 +31,12 @@ public class FastqSequenceDataSource extends FastaSequenceDataSource {
 
   private static final int MAX_SEQUENCE_LABEL_MISMATCH_WARNINGS = 10;
 
-  /** PHRED highest allowed value */
-  public static final int PHRED_UPPER_LIMIT_CHAR = '~';
-  /** PHRED lowest allowed value */
-  public static final int PHRED_LOWER_LIMIT_CHAR = '!';
-
   private byte[] mQualityBuffer;
   private int mQualityBufferPosition;
 
   private boolean mQualityWarned;
 
-  private final byte[] mQualityTable = new byte[PHRED_UPPER_LIMIT_CHAR - PHRED_LOWER_LIMIT_CHAR + 1];
+  private final byte[] mQualityTable = new byte[FastaUtils.PHRED_UPPER_LIMIT_CHAR - FastaUtils.PHRED_LOWER_LIMIT_CHAR + 1];
 
   private int mSequenceCount = 0;
 
@@ -61,8 +56,8 @@ public class FastqSequenceDataSource extends FastaSequenceDataSource {
 
   private void initQualityTable(final FastQScoreType scoreType) {
     if (scoreType.equals(FastQScoreType.SOLEXA)) {
-      for (char c = (char) PHRED_LOWER_LIMIT_CHAR; c <= PHRED_UPPER_LIMIT_CHAR; c++) {
-        mQualityTable[c - PHRED_LOWER_LIMIT_CHAR] = (byte) (10 * Math.log10(1 + Math.pow(10, (c - 64) / 10.0)) + 0.5);
+      for (char c = (char) FastaUtils.PHRED_LOWER_LIMIT_CHAR; c <= FastaUtils.PHRED_UPPER_LIMIT_CHAR; c++) {
+        mQualityTable[c - FastaUtils.PHRED_LOWER_LIMIT_CHAR] = (byte) (10 * Math.log10(1 + Math.pow(10, (c - 64) / 10.0)) + 0.5);
       }
     } else {
       for (int i = 0; i < mQualityTable.length; i++) {
@@ -207,7 +202,7 @@ public class FastqSequenceDataSource extends FastaSequenceDataSource {
   }
 
   private boolean isQualityCharacter(final byte c) {
-    return c >= PHRED_LOWER_LIMIT_CHAR && c <= PHRED_UPPER_LIMIT_CHAR;
+    return c >= FastaUtils.PHRED_LOWER_LIMIT_CHAR && c <= FastaUtils.PHRED_UPPER_LIMIT_CHAR;
   }
 
   private void ensureQualityBuffer() {
@@ -240,7 +235,7 @@ public class FastqSequenceDataSource extends FastaSequenceDataSource {
         if (mScoreType.equals(FastQScoreType.SOLEXA1_3)) {
           qualityValue = (byte) (inputByte - '@');
         } else {
-          qualityValue = (byte) (inputByte - PHRED_LOWER_LIMIT_CHAR);
+          qualityValue = (byte) (inputByte - FastaUtils.PHRED_LOWER_LIMIT_CHAR);
         }
         if (qualityValue < 0 || qualityValue >= mQualityTable.length || (mScoreType.equals(FastQScoreType.SOLEXA) && inputByte < (byte) 59)) {
           throw new NoTalkbackSlimException(ErrorType.INVALID_QUALITY);

@@ -45,6 +45,7 @@ public class AllTests extends TestCase {
     suite.addTestSuite(DataFileOpenerFactoryTest.class);
     suite.addTestSuite(DataInMemoryTest.class);
     suite.addTestSuite(EmptyStringPrereadNamesTest.class);
+    suite.addTestSuite(FastaUtilsTest.class);
     suite.addTestSuite(FastaSequenceDataSourceTest.class);
     suite.addTestSuite(FastqSequenceDataSourceTest.class);
     suite.addTestSuite(FileBitwiseInputStreamTest.class);

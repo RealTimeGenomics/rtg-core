@@ -96,11 +96,11 @@ public class TauImplementationTest extends TestCase {
   public void testTaul() {
     //see diploidcomplexscorertest.xls for details and testTau3
     final TauImplementation tau = getMockTau();
-    final Match m1 = new AlignmentMatch(null, "AC", null, 10, 0, 2, 20, true, false);
+    final Match m1 = new AlignmentMatch(null, null, "AC", null, 10, 0, 2, 20, true, false);
     assertEquals(0.260806, tau.taul(m1, "AC"), 0.000001);
     assertEquals(0.260806, tau.probability(m1, "AC"), 0.000001);
 
-    final Match m2 = new AlignmentMatch(null, "A", null, 10, 0, 1, 20, true, false);
+    final Match m2 = new AlignmentMatch(null, null, "A", null, 10, 0, 1, 20, true, false);
     assertEquals(0.334389, tau.taul(m2, "AC"), 0.000001);
     assertEquals(0.334389, tau.probability(m2, "AC"), 0.000001);
   }
@@ -108,11 +108,11 @@ public class TauImplementationTest extends TestCase {
   public void testTaur() {
     //see diploidcomplexscorertest.xls for details and testTau3, testTaul
     final TauImplementation tau = getMockTau();
-    final Match m1 = new AlignmentMatch(null, "AC", null, 10, 0, 2, 20, false, true);
+    final Match m1 = new AlignmentMatch(null, null, "AC", null, 10, 0, 2, 20, false, true);
     assertEquals(0.260806, tau.taur(m1, "AC"), 0.000001);
     assertEquals(0.260806, tau.probability(m1, "AC"), 0.000001);
 
-    final Match m2 = new AlignmentMatch(null, "A", null, 10, 0, 1, 20, false, true);
+    final Match m2 = new AlignmentMatch(null, null, "A", null, 10, 0, 1, 20, false, true);
     assertEquals(0.054167, tau.taur(m2, "AC"), 0.000001);
     assertEquals(0.054167, tau.probability(m2, "AC"), 0.000001);
   }
@@ -120,7 +120,7 @@ public class TauImplementationTest extends TestCase {
   public void testTaub() {
     //see diploidcomplexscorertest.xls for details and testTau3, testTaul
     final TauImplementation tau = getMockTau();
-    final Match m1 = new AlignmentMatch(null, "AC", null, 10, 0, 2, 20, false, false);
+    final Match m1 = new AlignmentMatch(null, null, "AC", null, 10, 0, 2, 20, false, false);
     assertEquals(0.265528, tau.taub(m1, "AC"), 0.000001);
     assertEquals(0.265528, tau.probability(m1, "AC"), 0.000001);
   }
