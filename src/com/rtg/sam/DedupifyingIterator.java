@@ -104,7 +104,7 @@ public class DedupifyingIterator<T extends ReaderRecord<T> & MateInfo> implement
 
     @Override
     public int hashCode() {
-      return Utils.pairHashContinuous(firstRef(), firstPos(), secondRef(), secondPos(), mMated ? 1 : 0);
+      return Utils.pairHash(firstRef(), firstPos(), secondRef(), secondPos(), mMated ? 1 : 0);
     }
 
   }

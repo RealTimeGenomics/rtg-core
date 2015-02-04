@@ -17,6 +17,7 @@ import com.rtg.reader.FastqSequenceDataSource;
 import com.rtg.sam.MateInfo;
 import com.rtg.sam.ReaderRecord;
 import com.rtg.sam.SamUtils;
+import com.rtg.util.CompareHelper;
 import com.rtg.util.intervals.SequenceIdLocusSimple;
 
 import net.sf.samtools.SAMReadGroupRecord;
@@ -226,9 +227,12 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
 
   @Override
   public int disambiguateDuplicate(VariantAlignmentRecord rec) {
-    final String thisStr = getStart() + " " + getCigar() + " " + new String(getRead()) + " " + new String(getQuality());
-    final String thatStr = rec.getStart() + " " + rec.getCigar() + " " + new String(rec.getRead()) + " " + new String(rec.getQuality());
-    return thisStr.compareTo(thatStr);
+    final CompareHelper helper = new CompareHelper()
+      .compare(getStart(), rec.getStart())
+      .compare(getCigar(), rec.getCigar())
+      .compare(compare(getRead(), rec.getRead()))
+      .compare(compare(getQuality(), rec.getQuality()));
+    return helper.result();
   }
 
   private static int compare(final byte[] a, final byte[] b) {

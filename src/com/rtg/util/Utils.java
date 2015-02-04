@@ -209,8 +209,56 @@ public final class Utils {
   }
 
   /**
-   * repeatedly applies {@link Utils#pairHash(int, int)} until all values have
-   * been combined
+   * Produce a one-one onto mapping from three integers to an integer.
+   * Only fails because of finite precision of integers. Taken to be a good way of
+   * combining hashes.
+   * @param i first integer.
+   * @param j second integer.
+   * @param k third integer.
+   * @return combined integer.
+   */
+  public static int pairHash(int i, int j, int k) {
+    final int t = pairHash(i, j);
+    return pairHash(t, k);
+  }
+
+  /**
+   * Produce a one-one onto mapping from four integers to an integer.
+   * Only fails because of finite precision of integers. Taken to be a good way of
+   * combining hashes.
+   * @param i first integer.
+   * @param j second integer.
+   * @param k third integer.
+   * @param l fourth integer.
+   * @return combined integer.
+   */
+  public static int pairHash(int i, int j, int k, int l) {
+    int t = pairHash(i, j);
+    t = pairHash(t, k);
+    return pairHash(t, l);
+  }
+
+  /**
+   * Produce a one-one onto mapping from five integers to an integer.
+   * Only fails because of finite precision of integers. Taken to be a good way of
+   * combining hashes.
+   * @param i first integer.
+   * @param j second integer.
+   * @param k third integer.
+   * @param l fourth integer.
+   * @param m fifth integer.
+   * @return combined integer.
+   */
+  public static int pairHash(int i, int j, int k, int l, int m) {
+    int t = pairHash(i, j);
+    t = pairHash(t, k);
+    t = pairHash(t, l);
+    return pairHash(t, m);
+  }
+
+  /**
+   * Repeatedly applies {@link Utils#pairHash(int, int)} until all values have
+   * been combined. Note that unrolled cases of pairHash are provided for up to five integers.
    * @param vals the values to turn into one hash
    * @return the hash
    */

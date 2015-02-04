@@ -20,7 +20,7 @@ import java.util.List;
  *         Date: 24/02/12
  *         Time: 10:43 AM
  */
-public class CompareHelper {
+public final class CompareHelper {
   private int mCurrent = 0;
 
   /**
@@ -80,6 +80,19 @@ public class CompareHelper {
       }
     }
     mCurrent = Integer.valueOf(list1.length).compareTo(list2.length);
+    return this;
+  }
+
+  /**
+   * Add a result of an externally called comparison.
+   * @param external result of some external attribute comparison
+   * @return this for chaining purposes
+   */
+  public CompareHelper compare(int external) {
+    if (mCurrent != 0) {
+      return this;
+    }
+    mCurrent = external;
     return this;
   }
 
