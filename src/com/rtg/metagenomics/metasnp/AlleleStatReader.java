@@ -32,15 +32,15 @@ class AlleleStatReader implements AutoCloseable {
     mReader.close();
   }
   static class Line {
-    private static final int NUM_FIELDS = 11;
+    private static final int NUM_FIELDS = 7;
     String mSequence;
     int mPosition;
     byte mReference;
     int[][] mCounts = new int[4][];
     Line(String str, int lineNumber) throws IOException {
       final String[] fields = StringUtils.split(str, '\t');
-      if (fields.length != NUM_FIELDS) {
-        throw new IOException("Error on line: " + lineNumber + " Expected " + NUM_FIELDS + " columns but found " + fields.length + " ");
+      if (fields.length < NUM_FIELDS) {
+        throw new IOException("Error on line: " + lineNumber + " Expected at least " + NUM_FIELDS + " columns but found " + fields.length + " ");
       }
       try {
       mSequence = fields[0];
