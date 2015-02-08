@@ -23,6 +23,8 @@ import com.rtg.variant.bayes.ReferenceBasedFactory;
  */
 public class ReferenceBasedBuffer<D> extends IntegralAbstract {
 
+  private static final int INITIAL_LENGTH = 150;
+
   protected final ReferenceBasedFactory<D> mFactory;
 
   private D[] mBuffer;
@@ -39,8 +41,18 @@ public class ReferenceBasedBuffer<D> extends IntegralAbstract {
    * @param start of region being processed on template (0 based)
    */
   public ReferenceBasedBuffer(final ReferenceBasedFactory<D> factory, final byte[] template, int start) {
+    this(INITIAL_LENGTH, factory, template, start);
+  }
+
+  /**
+   * @param initialCapacity initial buffer length
+   * @param factory for creating objects in buffer.
+   * @param template nucleotides.
+   * @param start of region being processed on template (0 based)
+   */
+  public ReferenceBasedBuffer(int initialCapacity, final ReferenceBasedFactory<D> factory, final byte[] template, int start) {
     mFactory = factory;
-    mBuffer = makeArray(1);
+    mBuffer = makeArray(initialCapacity);
     mTemplate = template;
     mBase = start;
     mCurrent = 0;

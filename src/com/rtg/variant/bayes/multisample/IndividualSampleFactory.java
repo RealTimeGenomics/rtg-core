@@ -96,7 +96,7 @@ public class IndividualSampleFactory<D extends Description> {
   IndividualSampleProcessor<?> make(final String name, final byte[] template, int start, int end) {
     final ReferenceBasedBuffer<ModelInterface<D>> buffer = makeBuffer(name, template, start, end);
     final EvidenceMatcher<ModelInterface<D>> matcherCurrent = new EvidenceMatcher<>(buffer, new EvidenceQFactory());
-    final IndelMatcher indelMatcher = new IndelMatcher(template, start);
+    final IndelMatcher indelMatcher = new IndelMatcher(template, start, end);
     final SamToMatch toMatch = new SamToMatchCigar(mParams, new CigarParserModel(matcherCurrent, indelMatcher, start, end, mParams), mChooser);
     return new IndividualSampleProcessor<>(template, matcherCurrent, indelMatcher, toMatch);
   }
@@ -105,13 +105,13 @@ public class IndividualSampleFactory<D extends Description> {
     final SequenceNameLocusSimple region = new SequenceNameLocusSimple(name, start, end);
     final int parBoundary = PAR_AWARE ? mSexMemo.getParBoundary(mSex, region) : -1;
     if (parBoundary == -1) {
-      return new ReferenceBasedBuffer<>(selectFactory(name, start), template, start);
+      return new ReferenceBasedBuffer<>(end - start, selectFactory(name, start), template, start);
     } else {
       // Make a special buffer that switches factories when it crosses the PAR boundary. The assumption is that there is only ever one such boundary within a chunk.
       Diagnostic.developerLog("Creating a " + mSex + " PAR-aware boundary chunk " + region + " crossing at " + (parBoundary + 1)
           + " from " + mSexMemo.getEffectivePloidy(mSex, name, start)
           + " to " + mSexMemo.getEffectivePloidy(mSex, name, end));
-      return new SwitchingReferenceBasedBuffer<>(selectFactory(name, start), selectFactory(name, end), parBoundary, template, start);
+      return new SwitchingReferenceBasedBuffer<>(end - start, selectFactory(name, start), selectFactory(name, end), parBoundary, template, start);
     }
   }
 

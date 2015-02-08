@@ -200,10 +200,11 @@ public class ReferenceBasedBufferTest extends TestCase {
       + "[23]     null" + LS
       + "" + LS
       ;
+
   public void test() {
 
     final byte[] template = {1, 2, 3, 4, 3, 2, 1, 2, 0, 4, 3, 2, 1, 2, 3, 4, 3, 2, 1, 2, 3, 4, 3, 2, 1, 2, 3, 4, 3, 2, 1};
-    final ReferenceBasedBuffer<ModelInterface<Description>> cb = new ReferenceBasedBuffer<>(new Fac(), template, 0);
+    final ReferenceBasedBuffer<ModelInterface<Description>> cb = new ReferenceBasedBuffer<>(1, new Fac(), template, 0);
     cb.globalIntegrity();
     assertEquals(INIT, cb.toString());
     assertEquals(0, cb.base());

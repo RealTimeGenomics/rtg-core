@@ -91,7 +91,7 @@ public class EvidenceMatcherTest extends TestCase {
   public void test1() throws InvalidParamsException, IOException {
     final ModelFactory<Description, ?> factory = new MockModelFactory();
     final byte[] template = {1, 2, 3, 4, 0};
-    final EvidenceMatcher<ModelInterface<Description>> bm = new EvidenceMatcher<>(new ReferenceBasedBuffer<>(factory, template, 0), new EvidenceQFactory());
+    final EvidenceMatcher<ModelInterface<Description>> bm = new EvidenceMatcher<>(new ReferenceBasedBuffer<>(1, factory, template, 0), new EvidenceQFactory());
     assertEquals(INIT, bm.toString());
     final int phred = 63;
     final double q = VariantUtils.phredToProb(phred);

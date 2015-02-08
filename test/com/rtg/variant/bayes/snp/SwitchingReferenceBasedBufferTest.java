@@ -46,7 +46,7 @@ public class SwitchingReferenceBasedBufferTest extends TestCase {
 
   public void test() {
     final byte[] template = {1, 2, 3, 4, 3, 2, 1, 2, 0, 4, 3, 2, 1, 2, 3, 4, 3, 2, 1, 2, 3, 4, 3, 2, 1, 2, 3, 4, 3, 2, 1};
-    final ReferenceBasedBuffer<MockModel> cb = new SwitchingReferenceBasedBuffer<>(new Fac("A"), new Fac("B"), 9, template, 0);
+    final ReferenceBasedBuffer<MockModel> cb = new SwitchingReferenceBasedBuffer<>(1, new Fac("A"), new Fac("B"), 9, template, 0);
 
     assertEquals(0, cb.base());
     assertEquals("A:0:3", cb.get(3).toString());

@@ -22,14 +22,15 @@ public class SwitchingReferenceBasedBuffer<D> extends ReferenceBasedBuffer<D> {
   private final int mSwitchPoint;
 
   /**
+   * @param initialCapacity starting buffer length
    * @param firstFactory for creating objects in buffer.
    * @param secondFactory for creating objects in buffer.
    * @param switchPoint the first coordinate to get objects made by the second factory.
    * @param template nucleotides.
    * @param start of region being processed on template (0 based)
    */
-  public SwitchingReferenceBasedBuffer(ReferenceBasedFactory<D> firstFactory, ReferenceBasedFactory<D> secondFactory, int switchPoint, byte[] template, int start) {
-    super(firstFactory, template, start);    //To change body of overridden methods use File | Settings | File Templates.
+  public SwitchingReferenceBasedBuffer(int initialCapacity, ReferenceBasedFactory<D> firstFactory, ReferenceBasedFactory<D> secondFactory, int switchPoint, byte[] template, int start) {
+    super(initialCapacity, firstFactory, template, start);    //To change body of overridden methods use File | Settings | File Templates.
     mSecondFactory = secondFactory;
     mSwitchPoint = switchPoint;
   }
