@@ -178,18 +178,6 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
     this(params, DEFAULT_CONFIGURATOR, defaultOutput, statistics, usageMetric);
   }
 
-  private List<ModelInterface<?>> stepModels(final IndividualSampleProcessor<?>[] ssProcessors, int pos) {
-    final List<ModelInterface<?>> models = new ArrayList<>();
-    for (final IndividualSampleProcessor<?> ssProcessor : ssProcessors) {
-      models.add(ssProcessor.step(pos));
-    }
-    return models;
-  }
-  private void mindlesslyAdvanceIndels(final IndividualSampleProcessor<?>[] ssProcessors, int pos) {
-    for (final IndividualSampleProcessor<?> ssProcessor : ssProcessors) {
-      ssProcessor.stepIndel(pos);
-    }
-  }
   private Variant stepIndels(String refName, IndividualSampleProcessor<?>[] ssProcessors, int pos) {
     Variant v = null;
     for (IndividualSampleProcessor<?> processor : ssProcessors) {
@@ -258,13 +246,18 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
           addRangeStatuses(statusInterval, ranges, rangeIndex, end);
         }
 
+        final List<ModelInterface<?>> models = new ArrayList<>(ssProcessors.length);
         for (int pos = start; pos < end; ) {
           if (statusInterval.contains(pos)) {
             final byte status = statusInterval.get(pos);
             final int oldpos = pos;
             do {
-              stepModels(ssProcessors, pos);
-              mindlesslyAdvanceIndels(ssProcessors, pos);
+              for (final IndividualSampleProcessor<?> ssProcessor1 : ssProcessors) {
+                ssProcessor1.step(pos);
+              }
+              for (final IndividualSampleProcessor<?> ssProcessor : ssProcessors) {
+                ssProcessor.stepIndel(pos);
+              }
             } while (++pos < end && statusInterval.get(pos) == status);
             if (status == OVERFLOW) {
               final VariantLocus overflowLocus = new VariantLocus(refName, oldpos, pos);
@@ -277,7 +270,10 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
             if (v != null) {
               calls.add(v);
             }
-            final List<ModelInterface<?>> models = stepModels(ssProcessors, pos);
+            models.clear();
+            for (final IndividualSampleProcessor<?> ssProcessor : ssProcessors) {
+              models.add(ssProcessor.step(pos));
+            }
 
             int refHyp = Integer.MIN_VALUE;
             for (ModelInterface<?> m : models) {
