@@ -35,14 +35,19 @@ public class ModelCancerFactoryTest extends TestCase {
     mo.increment(di);
   }
 
-  public void testDiploid() {
+  private void checkRef(final int refNt) {
     final GenomePriorParams params = GenomePriorParams.builder().create();
     final ModelCancerFactory mf = new ModelCancerFactory(params, 0.0, false);
     mf.globalIntegrity();
-    final ModelInterface<Description> mo = mf.make(0);
+    final ModelInterface<Description> mo = mf.make(refNt);
     assertEquals(100, mo.size());
     final EvidenceInterface di = new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0, 0, 0.1, 0.1, true, false, false, false);
     mo.increment(di);
+  }
+
+  public void testDiploid() {
+    checkRef(0);
+    checkRef(-1);
   }
 
 }
