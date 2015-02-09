@@ -141,8 +141,7 @@ public final class EmIterate {
       scores = new ArrayList<>();
       int percent = 0;
       int lastReport = 0;
-      final double[][] outerTheta = AlphaSelector.computeThetaLookup(xi, arith, arith.prob2Poss(
-          1 - error), arith.prob2Poss(error / 3));
+      final double[][] outerTheta = AlphaSelector.computeThetaLookup(xi, arith, arith.prob2Poss(1 - error), arith.prob2Poss(error / 3));
       for (int x = 0; x < evidence.size(); x++) {
 
         final AlphaScore alphaScore =  AlphaSelector.alphaPosition(ref.get(x), pAlpha, evidence.get(x), outerTheta, arith, xi[0].length);

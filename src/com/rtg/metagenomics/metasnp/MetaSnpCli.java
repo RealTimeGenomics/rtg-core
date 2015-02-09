@@ -80,7 +80,7 @@ public class MetaSnpCli extends LoggedCli {
     mFlags.registerOptional(MIN_TOTAL_COVERAGE, Integer.class, "INT", "minimum coverage threshold");
     mFlags.registerOptional('v', VISUALISATION, "produce visualisation files");
     mFlags.registerOptional('i', ITERATIONS, Integer.class, "INT", "number of iterations to attempt convergence", 10);
-    final Flag betaType = mFlags.registerOptional(BETA, String.class, "string", "hypothesis probability method", "static");
+    final Flag betaType = mFlags.registerOptional(BETA, String.class, "string", "hypothesis probability method", "reestimate");
     betaType.setParameterRange(betaFlagValues());
     mFlags.setValidator(new Validator());
   }
