@@ -37,6 +37,6 @@ public class ProbAlphaSimpleBeta implements ProbAlpha {
 
   @Override
   public String toString() {
-    return "ProbAlphaSimpleBeta{" + "mBeta=" + Arrays.toString(mBeta) + '}';
+    return "ProbAlphaSimpleBeta{" + "beta: " + Arrays.toString(mBeta) + '}';
   }
 }
