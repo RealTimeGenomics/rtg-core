@@ -41,6 +41,8 @@ public abstract class AbstractIndexReader implements LocusIndex {
 
   private static final int LINEAR_INDEX_SHIFT = 14;
 
+  private static final int MAX_COORD = 1 << 29;
+
 
   protected final File mIndexFile;
 
@@ -153,8 +155,8 @@ public abstract class AbstractIndexReader implements LocusIndex {
       final SequenceNameLocus region = new SequenceNameLocusSimple(seqName, range.getStart(), range.getEnd());
 
       final int beg = (region.getStart() <= -1 || region.getStart() == Integer.MIN_VALUE) ? 0 : region.getStart();
-      final int end = (region.getEnd() <= -1 || region.getEnd() == Integer.MAX_VALUE) ? (1 << 29) : region.getEnd();
-      if (end > 1<<29 || beg > 1<<29) {
+      final int end = (region.getEnd() <= -1 || region.getEnd() == Integer.MAX_VALUE) ? MAX_COORD : region.getEnd();
+      if (end > MAX_COORD || beg > MAX_COORD) {
         throw new NoTalkbackSlimException("The requested region " + region + " contains coordinates greater than can be addressed by tabix/bam indexes");
       }
       final int linearBeg = beg >> LINEAR_INDEX_SHIFT;
