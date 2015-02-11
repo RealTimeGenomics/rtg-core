@@ -19,6 +19,7 @@ import java.util.Map;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.sam.SamRangeUtils;
+import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.intervals.SequenceNameLocus;
@@ -153,6 +154,9 @@ public abstract class AbstractIndexReader implements LocusIndex {
 
       final int beg = (region.getStart() <= -1 || region.getStart() == Integer.MIN_VALUE) ? 0 : region.getStart();
       final int end = (region.getEnd() <= -1 || region.getEnd() == Integer.MAX_VALUE) ? (1 << 29) : region.getEnd();
+      if (end > 1<<29 || beg > 1<<29) {
+        throw new NoTalkbackSlimException("The requested region " + region + " contains coordinates greater than can be addressed by tabix/bam indexes");
+      }
       final int linearBeg = beg >> LINEAR_INDEX_SHIFT;
       reg2bins(bins, beg, end);
 
