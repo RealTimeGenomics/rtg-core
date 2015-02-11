@@ -334,10 +334,26 @@
     </copy>
   </target>
 
+  <zipfileset id="common-resources" dir="${public.core.basedir}/installer/resources/common" includes="**/*" />
+  <zipfileset id="avr-resources" dir="${public.core.basedir}/installer/resources" includes="models/**/*" />
+
+  <union id="core-resources">
+    <zipfileset refid="common-resources" />
+    <zipfileset refid="avr-resources" />
+    <zipfileset dir="${public.core.basedir}/installer/resources/core" includes="**/*" />
+  </union>
+
+  <union id="tools-resources">
+    <zipfileset refid="common-resources" />
+    <zipfileset dir="${public.core.basedir}/installer/resources/tools" includes="**/*" />
+  </union>
+
   <target name="zip-base" depends="zip-init,zip-jars,zip-text">
     <zip destfile="${zipfile.base}" duplicate="fail">
-      <zipfileset prefix="${zipversion}" dir="${public.core.basedir}/installer/resources/common" includes="**/*" />
-      <zipfileset prefix="${zipversion}" dir="${public.core.basedir}/installer/resources/${resources}" includes="**/*" />
+      <mappedresources>
+        <union refid="${resources}-resources"/>
+        <globmapper from="*" to="${zipversion}/*"/>
+      </mappedresources>
       <zipfileset prefix="${zipversion}" dir="${build.text}" includes="*.txt" />
       <zipfileset fullpath="${zipversion}/RTG.jar" dir="${build.dir}" includes="${rtg-jar-for-zip}"/>
       <zipfileset fullpath="${zipversion}/third-party/gzipfix.jar" dir="${src.lib.dir}" includes="gzipfix.jar" />
