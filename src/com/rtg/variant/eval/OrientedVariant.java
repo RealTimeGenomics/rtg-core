@@ -12,10 +12,10 @@
 
 package com.rtg.variant.eval;
 
-import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
+import com.rtg.util.intervals.SequenceNameLocus;
 
 /**
  * Reference to a variant that selects one side of heterozygous cases and
@@ -82,7 +82,6 @@ public class OrientedVariant extends IntegralAbstract implements Comparable<Orie
   @Override
   public void toString(StringBuilder sb) {
     sb.append(mVariant.toString());
-    sb.append(" ");
     sb.append(mIsAlleleA ? "+" : "-");
   }
 

@@ -68,10 +68,10 @@ public class DetectedVariantTest extends TestCase {
     allDetections.add(dv3);
     final DetectedVariant[] variantArray = allDetections.toArray(new DetectedVariant[allDetections.size()]);
     Arrays.sort(variantArray, new SequenceNameLocusComparator());
-    assertEquals("someKindOfName:23-24 T", variantArray[0].toString());
-    assertEquals("someKindOfName:24-25 T", variantArray[1].toString());
-    assertEquals("someOtherKindOfName:19-20 T", variantArray[2].toString());
-    assertEquals("someOtherKindOfName:55-56 T", variantArray[3].toString());
+    assertEquals("someKindOfName:23-24 (T)", variantArray[0].toString());
+    assertEquals("someKindOfName:24-25 (T)", variantArray[1].toString());
+    assertEquals("someOtherKindOfName:19-20 (T)", variantArray[2].toString());
+    assertEquals("someOtherKindOfName:55-56 (T)", variantArray[3].toString());
     final SequenceNameLocusComparator comparator = new SequenceNameLocusComparator();
     assertEquals(0, comparator.compare(dv1, dv1));
     assertEquals(-1, comparator.compare(dv1, dv2));

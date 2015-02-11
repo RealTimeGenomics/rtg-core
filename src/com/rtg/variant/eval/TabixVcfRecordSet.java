@@ -132,7 +132,7 @@ class TabixVcfRecordSet implements VariantSet {
       mBaselineSkipped += baseVars.mSkippedDuringLoading;
       mCallsSkipped += calledVars.mSkippedDuringLoading;
       Diagnostic.userLog("Reference " + mCurrentNameLength.getA() + " baseline contains " + map.get(VariantSetType.BASELINE).size() + " variants.");
-      Diagnostic.userLog("Reference " + mCurrentNameLength.getA() + " calls contains " + map.get(VariantSetType.BASELINE).size() + " variants.");
+      Diagnostic.userLog("Reference " + mCurrentNameLength.getA() + " calls contains " + map.get(VariantSetType.CALLS).size() + " variants.");
     } catch (final ExecutionException e) {
       throw new NoTalkbackSlimException(e.getCause(), ErrorType.INFO_ERROR, e.getCause().getMessage());
     } catch (final InterruptedException e) {

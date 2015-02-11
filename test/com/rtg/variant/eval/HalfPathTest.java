@@ -12,8 +12,6 @@
 
 package com.rtg.variant.eval;
 
-import static com.rtg.util.StringUtils.LS;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,19 +27,6 @@ import junit.framework.TestCase;
  * Test the corresponding class
  */
 public class HalfPathTest extends TestCase {
-
-  public void test() {
-    final HalfPath half = new HalfPath(new byte[0]);
-    half.integrity();
-    final String exp = ""
-      + " plus:-1" + LS
-      + "included:" + LS
-      + "[]" + LS
-      + "excluded:" + LS
-      + "[]" + LS
-      ;
-    assertEquals(exp, half.toString());
-  }
 
   private static <T> List<T> asList(BasicLinkedListNode<T> vals) {
     final ArrayList<T> list = new ArrayList<>();
@@ -238,7 +223,7 @@ public class HalfPathTest extends TestCase {
     path.include(new OrientedVariant(new MockVariant(8, 9, new byte[] {3}, new byte[] {4}), true));
     TestUtils.containsAll(path.toString()
         , "included:"
-        , "[8:9 G:T +, 3:4 G:T +]"
+        , "[8:9 G:T+, 3:4 G:T+]"
         , "excluded:"
         , "[5:6 C:T, 5:6 C:T]");
 
