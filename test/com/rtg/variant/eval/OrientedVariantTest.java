@@ -22,7 +22,7 @@ public class OrientedVariantTest extends TestCase {
   public void test() {
     final Variant v = new MockVariant(0, 0, new byte[] {0, 1, 2}, null);
     final OrientedVariant ov = new OrientedVariant(v, true);
-    assertEquals("0:0 NAC +", ov.toString());
+    assertEquals("0:0 NAC+", ov.toString());
     assertTrue(ov.equals(ov));
     assertEquals(-1, ov.getStart());
     assertEquals(-1, ov.getEnd());
@@ -30,7 +30,7 @@ public class OrientedVariantTest extends TestCase {
     assertEquals(3, ov.ntAlleleA().length);
     assertNull(ov.ntAlleleB());
     final OrientedVariant ov2 = new OrientedVariant(new MockVariant(1, 2, new byte[] {1, 1, 1}, new byte[] {2, 2, 2}), false);
-    assertEquals("1:2 AAA:CCC -", ov2.toString());
+    assertEquals("1:2 AAA:CCC-", ov2.toString());
     assertFalse(ov.equals(ov2));
     assertFalse(ov.hashCode() == ov2.hashCode());
     assertTrue(ov.isAlleleA());

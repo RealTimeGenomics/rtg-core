@@ -188,7 +188,7 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
       return mHaplotypeB.nt();
     }
   }
-  void  moveForward(int position) {
+  void moveForward(int position) {
     if (mHaplotypeB != null) {
       mHaplotypeB.moveForward(position);
     }
@@ -234,19 +234,18 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
 
   @Override
   public void toString(StringBuilder sb) {
-    sb.append(" plus:");
+    sb.append(" +:");
     sb.append(mHaplotypeA.templatePosition());
-    sb.append(LS);
     if (mHaplotypeB != null) {
-      sb.append("minus:");
+      sb.append(" -:");
       sb.append(mHaplotypeB.templatePosition());
-      sb.append(LS);
     }
-    sb.append("included:").append(LS);
-    sb.append(varListToString(mIncluded));
     sb.append(LS);
-    sb.append("excluded:").append(LS);
-    sb.append(varListToString(mExcluded));
+    sb.append("included:");
+    sb.append(listToString(mIncluded));
+    sb.append(LS);
+    sb.append("excluded:");
+    sb.append(listToString(mExcluded));
     sb.append(LS);
   }
   @Override
@@ -258,7 +257,7 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
     });
   }
 
-  static <T> String varListToString(BasicLinkedListNode<T> list) {
+  static <T> String listToString(BasicLinkedListNode<T> list) {
     final StringBuilder sb = new StringBuilder();
     sb.append("[");
     String join = "";

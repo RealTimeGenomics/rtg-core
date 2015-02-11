@@ -22,11 +22,11 @@ import java.util.Stack;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.util.BasicLinkedListNode;
 import com.rtg.util.Pair;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.integrity.IntegralAbstract;
 
 /**
@@ -35,7 +35,8 @@ import com.rtg.util.integrity.IntegralAbstract;
  *
  */
 public class Path extends IntegralAbstract implements Comparable<Path> {
-  private static final int MAX_COMPLEXITY = 5000;
+
+  private static final int MAX_COMPLEXITY = GlobalFlags.getIntegerValue(GlobalFlags.VCFEVAL_MAX_PATHS);
 
   private final HalfPath mCalledPath;
   private final HalfPath mBaselinePath;
@@ -185,11 +186,19 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
     int maxPaths = 0;
     String maxPathsRegion = "";
     int currentMax = 0;
+    int currentMaxPos = 0;
+    Path lastSyncPath = null;
     int lastSyncPos = 0;
+    String lastWarnMessage = null;
     while (sortedPaths.size() > 0) {
       currentMax = Math.max(currentMax, sortedPaths.size());
-      final Path head = sortedPaths.pollFirst();
+      Path head = sortedPaths.pollFirst();
+      //System.err.println("Size: " + (sortedPaths.size() + 1) + " Range:" + (lastSyncPos + 1) + "-" + (currentMaxPos + 1) + "\n\nHead: " + head);
       if (sortedPaths.size() == 0) { // Only one path currently in play
+        if (lastWarnMessage != null) { // Issue a warning if we encountered problems during the previous region
+          Diagnostic.warning(lastWarnMessage);
+          lastWarnMessage = null;
+        }
         final int currentSyncPos = head.mCalledPath.getPosition();
         if (currentMax > maxPaths) {
           maxPathsRegion = templateName + ":" + (lastSyncPos + 1) + "-" + (currentSyncPos + 1);
@@ -198,9 +207,12 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
         }
         currentMax = 0;
         lastSyncPos = currentSyncPos;
+        lastSyncPath = head;
       } else if (sortedPaths.size() > MAX_COMPLEXITY) {
-        final int currentMaxPos = Math.max(head.mCalledPath.getPosition(), head.mBaselinePath.getPosition());
-        throw new NoTalkbackSlimException("Evaluation got far too hard around reference sequence " + templateName + ":" + (lastSyncPos + 1) + "-" + (currentMaxPos + 1) + ". Look at the variants in (and after) this region, and try filtering these out.");
+        lastWarnMessage = "Evaluation too complex (" + sortedPaths.size() + " unresolved paths) at reference region " + templateName + ":" + (lastSyncPos + 1) + "-" + (currentMaxPos + 2) + ". Variants in this region will not be included in results. You may want to manually examine the calls in this region, and filter these out.";
+        sortedPaths.clear();    // Drop all paths currently in play
+        head = lastSyncPath;    // Create new head containing path up until last sync point
+        head.moveForward(currentMaxPos + 1);  // Skip to currentMaxPos
       }
       if (head.finished()) {
         // Path is done. Remember the best
@@ -210,12 +222,14 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
       }
       final Variant aVar = nextVariant(head.mCalledPath, calledMap);
       if (aVar != null && head.mCalledPath.isNew(aVar)) {
+        currentMaxPos = Math.max(currentMaxPos, aVar.getStart());
         //Adding a new variant to A side
         addIfBetter(head.addAVariant(aVar), sortedPaths);
         continue;
       }
       final Variant bVar = nextVariant(head.mBaselinePath, baselineMap);
       if (bVar != null && head.mBaselinePath.isNew(bVar)) {
+        currentMaxPos = Math.max(currentMaxPos, bVar.getStart());
         //Adding a new variant to B side
         addIfBetter(head.addBVariant(bVar), sortedPaths);
         continue;
@@ -231,6 +245,7 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
         addIfBetter(head, sortedPaths);
       }
     }
+    //System.err.println("Best: " + best);
     Diagnostic.userLog("Reference " + templateName + " had maximum path complexity of " + maxPaths + " at " + maxPathsRegion);
     return best;
   }
@@ -464,8 +479,7 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
 
   @Override
   public String toString() {
-
-    return "Path: called=" + mCalledPath + " baseline=" + mBaselinePath + HalfPath.varListToString(this.mSyncPointList);
+    return "Path:" + LS + "baseline=" + mBaselinePath + "called=" + mCalledPath + "syncpoints=" + HalfPath.listToString(this.mSyncPointList);
   }
   public List<SyncPoint> getSyncPoints() {
     return getSyncPointsList(mSyncPointList, getCalledIncluded(), getBaselineIncluded());
@@ -485,12 +499,12 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
       final int loc = stack.pop();
       int baseLineCount = 0;
       int calledCount = 0;
-      while (baseLine.size() > basePos && baseLine.get(basePos).variant().getStart() <= loc) {
+      while (basePos < baseLine.size() && baseLine.get(basePos).variant().getStart() <= loc) {
         baseLineCount++;
         basePos++;
       }
 
-      while (called.size() > callPos && called.get(callPos).variant().getStart() <= loc) {
+      while (callPos < called.size() && called.get(callPos).variant().getStart() <= loc) {
         calledCount++;
         callPos++;
       }

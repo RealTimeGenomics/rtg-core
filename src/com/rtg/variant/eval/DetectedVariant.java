@@ -133,12 +133,13 @@ public class DetectedVariant implements Comparable<DetectedVariant>, Variant {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-    sb.append(getSequenceName()).append(":").append(getStart() + 1).append("-").append(getEnd() + 1).append(" ");
+    sb.append(getSequenceName()).append(":").append(getStart() + 1).append("-").append(getEnd() + 1).append(" (");
     sb.append(DnaUtils.bytesToSequenceIncCG(ntAlleleA()));
     final byte[] bAllele = ntAlleleB();
     if (bAllele != null) {
       sb.append(":").append(DnaUtils.bytesToSequenceIncCG(bAllele));
     }
+    sb.append(")");
     return sb.toString();
   }
 

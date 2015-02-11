@@ -113,6 +113,9 @@ public final class GlobalFlags {
   /** Should the random tree builder push missing values down during the build process. */
   public static final String TRAIN_ON_MISSING_VALUES = "com.rtg.ml.train-on-missing";
 
+  /** Specify the maximum number of simultaneous paths before vcfeval skips a region */
+  public static final String VCFEVAL_MAX_PATHS = "com.rtg.variant.eval.max-paths";
+
   /** Turn on alternate ROC slope calculation */
   public static final String ALTERNATE_ROC_SLOPE_CALCULATION = "com.rtg.variant.eval.RocSlope.alt-roc-slope";
 
@@ -169,6 +172,7 @@ public final class GlobalFlags {
     // when there are lots of missing values.
     registerFlag(TRAIN_ON_MISSING_VALUES, Boolean.class, false);
 
+    registerFlag(VCFEVAL_MAX_PATHS, Integer.class, 5000);
     registerFlag(ALTERNATE_ROC_SLOPE_CALCULATION);
     registerFlag(GZIP_LEVEL, Integer.class, AdjustableGZIPOutputStream.DEFAULT_GZIP_LEVEL);
   }
