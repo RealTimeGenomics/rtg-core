@@ -18,6 +18,8 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 
+import net.sf.samtools.SAMException;
+
 /**
  * Has a unique id and can execute some code.
  * @param <J> the type of the job identifiers.
@@ -48,12 +50,10 @@ public abstract class Job<J extends JobId<? extends JobId<?>>> extends IntegralA
   public final Result runCatch() throws IOException {
     try {
       return run();
-    } catch (final NoTalkbackSlimException e) {
+    } catch (final NoTalkbackSlimException | SAMException e) {
       throw e;
     } catch (final RuntimeException e) {
       throw new RuntimeException("Job " + toString(), e);
-    } catch (final IOException e) {
-      throw new IOException("Job " + toString(), e);
     }
   }
 
