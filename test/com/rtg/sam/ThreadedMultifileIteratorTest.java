@@ -62,9 +62,6 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
   static final String SAM_HEAD1 = ""
     + "@HD" + TAB + "VN:1.0" + TAB + "SO:coordinate\n"
     + "@SQ" + TAB + "SN:gi" + TAB + "LN:30\n";
-  static final String SAM_HEAD2 = ""
-    + "@HD" + TAB + "VN:1.0" + TAB + "SO:coordinate\n"
-    + "@SQ" + TAB + "SN:gi" + TAB + "LN:300\n";
   static final String SAM_TAIL = TAB + "0" + TAB + "gi" + TAB + "%d" + TAB + "255" + TAB + "10M" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "AAAAAAAAAA" + TAB +  "IB7?*III<I" + TAB + "AS:i:0" + TAB + "IH:i:1" + LS
     ;
   static final String SAM_TAIL2 = TAB + "0" + TAB + "gi2" + TAB + "%d" + TAB + "255" + TAB + "10M" + TAB + "*" + TAB + "0" + LS
