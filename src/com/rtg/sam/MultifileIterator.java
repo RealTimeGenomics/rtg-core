@@ -15,9 +15,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
+import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import com.rtg.launcher.GlobalFlags;
 import com.rtg.tabix.TabixIndexer;
@@ -40,7 +39,7 @@ class MultifileIterator implements RecordIterator<SAMRecord> {
 
   private static final double MEGABYTE = 1 << 20;
 
-  private final SortedSet<SamFileAndRecord> mLeftmostPriorityQueue = new TreeSet<>();
+  private final PriorityQueue<SamFileAndRecord> mLeftmostPriorityQueue = new PriorityQueue<>();
   private final Queue<SamFileAndRecord> mOriginals = new LinkedList<>();
   private final SAMFileHeader mHeader;
   private final SamFilterParams mFilterParams;
@@ -228,9 +227,8 @@ class MultifileIterator implements RecordIterator<SAMRecord> {
     final long start = System.nanoTime();
     boolean hasNext = false;
     while (!mLeftmostPriorityQueue.isEmpty()) {
-      final SamFileAndRecord first = mLeftmostPriorityQueue.first();
       // Need to remove and re-add to priority queue to ensure correct queue behaviour
-      mLeftmostPriorityQueue.remove(first);
+      final SamFileAndRecord first = mLeftmostPriorityQueue.poll();
       final SAMRecord next = first.next();
       assert next != null;
       if (first.hasNext()) {
