@@ -20,7 +20,7 @@ public final class SamCompareUtils {
 
   private SamCompareUtils() { }
 
-  private static final int reverse3bits(final int x) {
+  private static int reverse3bits(final int x) {
     // Take last three bits abc of x and return bca
     return (0b111_011_101_001_110_010_100_000 >>> ((x & 7) * 3)) & 7;
   }
