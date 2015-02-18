@@ -18,9 +18,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.PriorityQueue;
 import java.util.Queue;
-import java.util.SortedSet;
-import java.util.TreeSet;
 import java.util.Vector;
 
 import com.rtg.util.IORunnable;
@@ -53,7 +52,7 @@ public final class ThreadedMultifileIterator<T> implements RecordIterator<T> {
 
   private SimpleThreadPool mPool;
   /** Every member has a valid current record and its position is after the current position.  WARNING: never mutate a member of the set.  Instead, remove and re-add. */
-  private final SortedSet<MultifileIteratorRunner<T>> mLeftmostRecordIteratorSet = new TreeSet<>();
+  private final PriorityQueue<MultifileIteratorRunner<T>> mLeftmostRecordIteratorSet = new PriorityQueue<>();
 
   /** All the runners.  Queue used for sharpen reasons */
   private final Queue<MultifileIteratorRunner<T>> mOriginals = new LinkedList<>();
@@ -168,12 +167,11 @@ public final class ThreadedMultifileIterator<T> implements RecordIterator<T> {
 
   @Override
   public T next() {
-    final MultifileIteratorRunner<T> first = mLeftmostRecordIteratorSet.first();
-    mLeftmostRecordIteratorSet.remove(first);
+    final MultifileIteratorRunner<T> first = mLeftmostRecordIteratorSet.poll();
     try {
       final T next = first.next();
       if (first.hasNext()) {
-        mLeftmostRecordIteratorSet.add(first); // TODO: could replace sorted set with minheap, to avoid object churn.
+        mLeftmostRecordIteratorSet.add(first);
       }
       return next;
     } catch (ProgramState.SlimAbortException e) {

@@ -25,7 +25,7 @@ import net.sf.samtools.SAMRecord;
  * Adds some support to SkipInvalidRecordsIterator to allow externally coordinated reading of multiple SAM files.
  */
 
-public class SamFileAndRecord extends SkipInvalidRecordsIterator implements Comparable<SamFileAndRecord>, Integrity {
+public final class SamFileAndRecord extends SkipInvalidRecordsIterator implements Comparable<SamFileAndRecord>, Integrity {
 
   private final int mId;
   private final String mPath;
@@ -101,10 +101,6 @@ public class SamFileAndRecord extends SkipInvalidRecordsIterator implements Comp
     }
     assert this == that;
     return 0;
-  }
-
-  String orderToString() {
-    return ("index=" + mRecord.getReferenceIndex()) + " start=" + mRecord.getAlignmentStart() + " id=" + mId;
   }
 
   @Override

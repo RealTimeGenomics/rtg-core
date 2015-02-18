@@ -82,7 +82,6 @@ public class SkipInvalidRecordsIteratorTest extends TestCase {
       final List<SAMSequenceRecord> seqs = dict.getSequences();
       assertEquals(2, seqs.size());
       assertEquals("SamFileAndRecord:42 line=1 file=" + sam.getPath() + " record=" + SAM_REC_OK1_FORMAT, sfr.toString());
-      assertEquals("index=0 start=2 id=42", sfr.orderToString());
       try {
         assertTrue(sfr.hasNext());
         assertNotNull(sfr.next());
