@@ -52,5 +52,10 @@ public class SamCompareUtilsTest extends TestCase {
     rec2.setReadUnmappedFlag(true);
     assertEquals(0, SamCompareUtils.compareSamRecords(rec1, rec2));
     assertEquals(0, SamCompareUtils.compareSamRecords(rec2, rec1));
+    rec1.setReferenceIndex(-1);
+    assertEquals(1, SamCompareUtils.compareSamRecords(rec1, rec2));
+    assertEquals(-1, SamCompareUtils.compareSamRecords(rec2, rec1));
+    rec2.setReferenceIndex(-1);
+    assertEquals(0, SamCompareUtils.compareSamRecords(rec2, rec1));
   }
 }

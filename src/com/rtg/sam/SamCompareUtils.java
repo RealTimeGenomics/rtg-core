@@ -20,6 +20,11 @@ public final class SamCompareUtils {
 
   private SamCompareUtils() { }
 
+  private static final int reverse3bits(final int x) {
+    // Take last three bits abc of x and return bca
+    return (0b111_011_101_001_110_010_100_000 >>> ((x & 7) * 3)) & 7;
+  }
+
   /**
    * Compares SAM records on reference index, start position and if paired, mated vs unmated.
    * @param a first record
@@ -27,54 +32,42 @@ public final class SamCompareUtils {
    * @return -1 if first record comes before second record, 1 if the converse. 0 for equal on compared values
    */
   public static int compareSamRecords(SAMRecord a, SAMRecord b) {
-    final int thisRef = a.getReferenceIndex();
-    final int thatRef = b.getReferenceIndex();
-    if (thisRef == -1 && thatRef != -1) {
-      return +1;
-    } else if (thatRef == -1 && thisRef != -1) {
-      return -1;
-    }
-    //System.err.println("ref this=" + thisRef + " that=" + thatRef);
-    if (thisRef < thatRef) {
-      return -1;
-    }
-    if (thisRef > thatRef) {
-      return +1;
+    final int thisRef = a.getReferenceIndex() & 0x7FFFFFFF; // makes -1 a bignum
+    final int thatRef = b.getReferenceIndex() & 0x7FFFFFFF;
+    final int rc = Integer.compare(thisRef, thatRef);
+    if (rc != 0) {
+      return rc;
     }
 
-    final int thisStart = a.getAlignmentStart();
-    final int thatStart = b.getAlignmentStart();
-    //System.err.println("start this=" + thisStart + " that=" + thatStart);
-    if (thisStart < thatStart) {
-      return -1;
-    }
-    if (thisStart > thatStart) {
-      return +1;
-    }
-    if (a.getReadPairedFlag() && !b.getReadPairedFlag()) {
-      return -1;
-    } else if (b.getReadPairedFlag() && !a.getReadPairedFlag()) {
-      return 1;
-    }
-    if (a.getReadPairedFlag() && b.getReadPairedFlag()) {
-      final boolean thisMated = a.getProperPairFlag();
-      final boolean thatMated = b.getProperPairFlag();
-      if (thisMated && !thatMated) {
-        return -1;
-      }
-      if (!thisMated && thatMated) {
-        return 1;
-      }
-    }
-    final boolean thisUnmapped = a.getReadUnmappedFlag();
-    final boolean thatUnmapped = b.getReadUnmappedFlag();
-    if (thisUnmapped && !thatUnmapped) {
-      return 1;
-    }
-    if (!thisUnmapped && thatUnmapped) {
-      return -1;
+    final int ac = Integer.compare(a.getAlignmentStart(), b.getAlignmentStart());
+    if (ac != 0) {
+      return ac;
     }
 
-    return 0;
+    // Do this ... (this one doesn't have same ordering as original)
+    //return Integer.compare(~a.getFlags(), ~b.getFlags());
+
+    // or this ...
+    // Following compares READ_PAIRED_FLAG, PORPER_PAIRED_FLAG, UNMAPPED_FLAG in that order.
+    // The ^3 toggles values to get the ordering we require
+    // The reverse makes sure comparison is in the order we require
+    return Integer.compare(reverse3bits(a.getFlags() ^ 3), reverse3bits(b.getFlags() ^ 3));
+
+    // or this ...
+
+//    final int rpc = Boolean.compare(b.getReadPairedFlag(), a.getReadPairedFlag());
+//    if (rpc != 0) {
+//      return rpc;
+//    }
+//
+//    if (a.getReadPairedFlag()) {
+//      assert b.getReadPairedFlag();
+//      final int mc = Boolean.compare(b.getProperPairFlag(), a.getProperPairFlag());
+//      if (mc != 0) {
+//        return mc;
+//      }
+//    }
+//
+//    return Boolean.compare(a.getReadUnmappedFlag(), b.getReadUnmappedFlag());
   }
 }
