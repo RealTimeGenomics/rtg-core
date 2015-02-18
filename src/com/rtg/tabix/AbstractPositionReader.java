@@ -201,6 +201,20 @@ abstract class AbstractPositionReader implements BlockCompressedPositionReader {
     return mCurrentLine.substring(pos1 + 1, pos2);
   }
 
+  /**
+   * Get the value from the given column of the current record as an integer
+   * @param col zero base column
+   * @return the value
+   */
+  protected int getIntColumn(int col) throws IOException {
+    try {
+      return Integer.parseInt(getColumn(col));
+    } catch (final IllegalArgumentException e) {
+      //illegal argument == badly formed column
+      throw new IOException("Data file did not contain an integer in column " + (col + 1) + " on line: " + mCurrentLine);
+    }
+  }
+
   private void populateTabs(int colNo) {
     while (mTabsUsed <= colNo + 1) {
       int pos = mTabs[mTabsUsed - 1] + 1;

@@ -40,13 +40,9 @@ class VcfPositionReader extends AbstractPositionReader {
 
   @Override
   protected void setStartAndLength() throws IOException {
-    try {
-      mStartPosition = Integer.parseInt(getColumn(START_POS_COLUMN)) - 1;
-      if (mStartPosition < 0) {
-        mStartPosition = 0;
-      }
-    } catch (NumberFormatException e) {
-      throw new IOException("Data file did not contain start position in column " + (START_POS_COLUMN + 1) + " on line: " + getRecord());
+    mStartPosition = getIntColumn(START_POS_COLUMN) - 1;
+    if (mStartPosition < 0) {
+      mStartPosition = 0;
     }
     final String ref = getColumn(REF_COLUMN);
 

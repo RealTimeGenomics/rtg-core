@@ -67,16 +67,16 @@ public class VcfReaderTest extends TestCase {
   }
 
   static final String[] BAD_RECORD = {
-    "chr1   123    .    G    A    29    PASS",                                 "record",
-    "chr1   123    foo  G    A    29    PASS    X=yy;DP=7    GT:GQ",           "record",
-    "chr1   123    foo  G    A    29    PASS    NS=3;DP=7    GT:GQ   0|0:34",  "record",
+    "chr1   123    .    G    A    29    PASS",                                   // Missing INFO column
+    "chr1   .      .    G    A    29    PASS    DP=7",                           // Missing INFO column
+    "chr1   123    foo  G    A    29    PASS    X=yy;DP=7    GT:GQ",             // HEADER0 says should not be any samples
+    "chr1   123    foo  G    A    29    PASS    NS=3;DP=7    GT:GQ   0|0:34",    // HEADER0 says should not be any samples
   };
 
   public void testBadRecords() {
-    for (int i = 0; i < BAD_RECORD.length; i += 2) {
-      final String badrec = BAD_RECORD[i].replaceAll("  *", TAB);
-      checkIoException(HEADER0 + badrec + LS,
-        "Invalid VCF record");
+    for (final String recText : BAD_RECORD) {
+      final String badrec = recText.replaceAll("  *", TAB);
+      checkIoException(HEADER0 + badrec + LS, "Invalid VCF record");
     }
   }
 

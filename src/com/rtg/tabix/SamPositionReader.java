@@ -43,7 +43,7 @@ class SamPositionReader extends AbstractPositionReader {
 
   @Override
   protected void setStartAndLength() throws IOException {
-    mStartPosition = Integer.parseInt(getColumn(START_POS_COLUMN)) - 1;
+    mStartPosition = getIntColumn(START_POS_COLUMN) - 1;
     if (mStartPosition < 0) {
       mStartPosition = 0;
     }

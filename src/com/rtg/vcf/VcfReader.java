@@ -159,7 +159,7 @@ public class VcfReader implements Closeable {
       }
     }
     if (header.getVersionLine() == null) {
-      throw new IOException("no file format line found");
+      throw new IOException("No file format line found");
     }
     return header;
   }
@@ -173,7 +173,7 @@ public class VcfReader implements Closeable {
     final VcfRecord rec = new VcfRecord();
     final String[] field = StringUtils.split(line, '\t');
     if (field.length < 8) {
-      throw new IllegalArgumentException("Invalid VCF record, expected at least 8 fields on line: " + line);
+      throw new IllegalArgumentException("Expected at least 8 fields");
     }
     rec.setSequence(StringUtils.deepCopy(field[CHROM_FIELD]));
     rec.setStart(Integer.parseInt(field[POS_FIELD]) - 1);
@@ -210,14 +210,14 @@ public class VcfReader implements Closeable {
     // now parse each sample field.
     if (field.length > 8) {
       if (field.length == 9) {
-        throw new IllegalArgumentException("Invalid VCF record, format field exists without sample fields");
+        throw new IllegalArgumentException("Format field exists without sample fields");
       }
       final String[] genotypes = StringUtils.split(field[8], ':');
       rec.setNumberOfSamples(field.length - 9);
       for (int sample = 9; sample < field.length; sample++) {
         final String[] svalues = StringUtils.split(field[sample], ':');
         if (svalues.length > genotypes.length) {
-          throw new IllegalArgumentException("Invalid VCF record, column " + (sample + 1) + " does not have the same number of values as specified in the format column. Field=" + field[sample] + " record: " + line);
+          throw new IllegalArgumentException("Column " + (sample + 1) + " does not have the same number of values as specified in the format column. Field=" + field[sample]);
         }
         for (int i = 0; i < svalues.length; i++) {
           rec.addFormatAndSample(genotypes[i], svalues[i]);
@@ -284,11 +284,11 @@ public class VcfReader implements Closeable {
     try {
       mCurrent = vcfLineToRecord(line);
       if (mCurrent.getNumberOfSamples() != mNumSamples) {
-        throw new IOException("Invalid VCF record, expected " + mNumSamples + " samples, but there were " + mCurrent.getNumberOfSamples());
+        throw new IOException("Invalid VCF record. Expected " + mNumSamples + " samples, but there were " + mCurrent.getNumberOfSamples() + " on line:" + line);
       }
     } catch (final IllegalArgumentException e) {
       //illegal argument == badly formed record
-      throw new IOException(e.getMessage() + " line:" + line, e);
+      throw new IOException("Invalid VCF record. " + e.getMessage() + " on line:" + line, e);
     }
     return true;
   }
