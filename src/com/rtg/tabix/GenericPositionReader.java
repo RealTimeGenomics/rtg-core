@@ -48,12 +48,12 @@ public class GenericPositionReader extends AbstractPositionReader {
 
   @Override
   protected void setStartAndLength() throws IOException {
-    mStartPosition = Integer.parseInt(getColumn(mStartCol)) - (mOneBased ? 1 : 0);
-    if (mEndCol != mStartCol) {
-      mLengthOnReference = Integer.parseInt(getColumn(mEndCol)) - mStartPosition;
-    } else {
-      mLengthOnReference = 1;
-    }
+      mStartPosition = getIntColumn(mStartCol) - (mOneBased ? 1 : 0);
+      if (mEndCol != mStartCol) {
+        mLengthOnReference = getIntColumn(mEndCol) - mStartPosition;
+      } else {
+        mLengthOnReference = 1;
+      }
   }
 
 }

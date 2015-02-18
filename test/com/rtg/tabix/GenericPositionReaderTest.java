@@ -28,16 +28,23 @@ import junit.framework.TestCase;
  */
 public class GenericPositionReaderTest extends TestCase {
 
- private static final String SNP_FILE = "#name\tposition\ttype\treference\tprediction\tposterior\tcoverage\tcorrection\tsupport_statistics" + StringUtils.LS
-          + "simulatedSequence1\t184\te\tT\tA:T\t5.0\t19\t0.378\tA\t6\t0.119\tT\t13\t0.259" + StringUtils.LS
-          + "simulatedSequence1\t2180\te\tC\tG:T\t28.7\t35\t0.697\tG\t18\t0.358\tT\t17\t0.338" + StringUtils.LS;
-  public void testSomeMethod() throws IOException {
+  private static final String SNP_FILE = "#name\tposition\ttype\treference\tprediction\tposterior\tcoverage\tcorrection\tsupport_statistics" + StringUtils.LS
+    + "simulatedSequence1\t184\te\tT\tA:T\t5.0\t19\t0.378\tA\t6\t0.119\tT\t13\t0.259" + StringUtils.LS
+    + "simulatedSequence1\t2180\te\tC\tG:T\t28.7\t35\t0.697\tG\t18\t0.358\tT\t17\t0.338" + StringUtils.LS;
+
+  private static final String INVALID = "simulatedSequence1\t2180.9\te\tC\tG:T\t28.7\t35\t0.697\tG\t18\t0.358\tT\t17\t0.338" + StringUtils.LS;
+
+  private static GenericPositionReader makeGpr(String contents) throws IOException {
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    final BlockCompressedOutputStream out = new BlockCompressedOutputStream(baos, null);
-    out.write(SNP_FILE.getBytes());
-    out.close();
+    try (final BlockCompressedOutputStream out = new BlockCompressedOutputStream(baos, null)) {
+      out.write(contents.getBytes());
+    }
     final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-    try (GenericPositionReader gpr = new GenericPositionReader(new BlockCompressedLineReader(new BlockCompressedInputStream(bais)), new TabixIndexer.TabixOptions(TabixIndexer.TabixOptions.FORMAT_GENERIC, 0, 1, 1, '#', 0, false))) {
+    return new GenericPositionReader(new BlockCompressedLineReader(new BlockCompressedInputStream(bais)), new TabixIndexer.TabixOptions(TabixIndexer.TabixOptions.FORMAT_GENERIC, 0, 1, 1, '#', 0, false));
+  }
+
+  public void testNormalRetrieval() throws IOException {
+    try (GenericPositionReader gpr = makeGpr(SNP_FILE)) {
       final int[] pos = {183, 2179};
       final int[] len = {1, 1};
       int i = 0;
@@ -49,6 +56,17 @@ public class GenericPositionReaderTest extends TestCase {
         i++;
       }
       assertEquals(2, i);
+    }
+  }
+
+  public void testNiceException() throws IOException {
+    try (GenericPositionReader gpr = makeGpr(SNP_FILE + INVALID)) {
+      while (gpr.hasNext()) {
+        gpr.next();
+      }
+      fail("Expected exception");
+    } catch (IOException e) {
+      assertTrue(e.getMessage().contains("did not contain an integer"));
     }
   }
 
