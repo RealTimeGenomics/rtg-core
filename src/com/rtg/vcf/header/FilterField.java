@@ -31,10 +31,8 @@ public class FilterField implements IdField<FilterField> {
    */
   public FilterField(String line) {
     final HashMap<String, String> temp = VcfHeader.parseMetaLine(line, FILTER_LINE_PATTERN);
+    VcfHeader.checkRequiredMetaKeys(temp, line, "ID", "Description");
     mId = temp.get("ID");
-    if (mId == null) {
-      throw new IllegalArgumentException("Expected ID field on line: " + line);
-    }
     mDescription = temp.get("Description");
   }
 

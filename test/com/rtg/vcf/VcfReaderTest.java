@@ -40,6 +40,7 @@ public class VcfReaderTest extends TestCase {
     "#CHROM\tPOS\tID\tREF\tALT\tqual\tFILTER\tINFO",
     "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER",
     "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT", // needs some sample IDs
+    "##INFO=<Description=foo>" + LS + "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO",
   };
 
   public void testBadHdr() throws Exception {
@@ -51,7 +52,7 @@ public class VcfReaderTest extends TestCase {
         new VcfReader(new BufferedReader(in)).hasNext();
         fail();
       } catch (final NoTalkbackSlimException ex) {
-        TestUtils.containsAll(ex.getMessage(), "VCF", "Header");
+        TestUtils.containsAll(ex.getMessage(), "VCF", "header");
       }
     }
   }

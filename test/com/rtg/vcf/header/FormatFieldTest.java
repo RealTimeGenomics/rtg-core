@@ -11,6 +11,8 @@
  */
 package com.rtg.vcf.header;
 
+import com.rtg.util.diagnostic.NoTalkbackSlimException;
+
 import junit.framework.TestCase;
 
 /**
@@ -47,5 +49,14 @@ public class FormatFieldTest extends TestCase {
     assertEquals(f2, f2.superSet(f2));
     assertNull(f2.superSet(f));
     assertNull(f.superSet(f2));
+
+
+    final String io3 = "##FORMAT=<ID=%$&*,Type=Flag,Description=\"oh rearry\">";
+    try {
+      new FormatField(io3);
+      fail("Should detect missing Number sub field");
+    } catch (NoTalkbackSlimException e) {
+      // expected
+    }
   }
 }

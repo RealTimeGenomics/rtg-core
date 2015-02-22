@@ -33,10 +33,8 @@ public class FormatField implements IdField<FormatField> {
    */
   public FormatField(String line) {
     final HashMap<String, String> temp = VcfHeader.parseMetaLine(line, FORMAT_LINE_PATTERN);
+    VcfHeader.checkRequiredMetaKeys(temp, line, "ID", "Type", "Number", "Description");
     mId = temp.get("ID");
-    if (mId == null) {
-      throw new IllegalArgumentException("Expected ID field on line: " + line);
-    }
     mType = MetaType.parseValue(temp.get("Type"));
     mNumber = new VcfNumber(temp.get("Number"));
     mDescription = temp.get("Description");
