@@ -33,21 +33,27 @@ public class VcfNumber {
    * @param number number field from a meta line
    */
   public VcfNumber(String number) {
-    if (number.equals("A")) {
-      mType = VcfNumberType.ALTS;
-      mNumber = -1;
-    } else if (number.equals("R")) {
-      mType = VcfNumberType.REF_ALTS;
-      mNumber = -1;
-    } else if (number.equals("G")) {
-      mType = VcfNumberType.GENOTYPES;
-      mNumber = -1;
-    } else if (number.equals(".")) {
-      mType = VcfNumberType.UNKNOWN;
-      mNumber = -1;
-    } else {
-      mType = VcfNumberType.INTEGER;
-      mNumber = Integer.parseInt(number);
+    switch (number) {
+      case "A":
+        mType = VcfNumberType.ALTS;
+        mNumber = -1;
+        break;
+      case "R":
+        mType = VcfNumberType.REF_ALTS;
+        mNumber = -1;
+        break;
+      case "G":
+        mType = VcfNumberType.GENOTYPES;
+        mNumber = -1;
+        break;
+      case ".":
+        mType = VcfNumberType.UNKNOWN;
+        mNumber = -1;
+        break;
+      default:
+        mType = VcfNumberType.INTEGER;
+        mNumber = Integer.parseInt(number);
+        break;
     }
   }
   @Override

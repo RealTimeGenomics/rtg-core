@@ -78,7 +78,7 @@ public class SegregationVcfAnnotatorTest extends TestCase {
       fail("Allowed conflicing header line");
     } catch (NoTalkbackSlimException e) {
       //expected
-      assertEquals("A VCF info field SGP which is incompatible is already present in the VCF header.", e.getMessage());
+      assertEquals("A VCF INFO field SGP which is incompatible is already present in the VCF header.", e.getMessage());
     }
   }
 

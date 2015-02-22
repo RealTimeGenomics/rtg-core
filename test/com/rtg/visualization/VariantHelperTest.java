@@ -82,7 +82,7 @@ public class VariantHelperTest extends TestCase {
         VariantHelper.loadSnpRange(snpmap, snps, new RegionRestriction("g1", 1, 4));
         fail();
       } catch (NoTalkbackSlimException ex) {
-        assertEquals("VCF Header line contains format field but no sample fields", ex.getMessage());
+        assertEquals("VCF header line contains format field but no sample fields", ex.getMessage());
       }
 
     } finally {

@@ -37,10 +37,8 @@ public class SampleField implements IdField<SampleField> {
    */
   public SampleField(String line) {
     final HashMap<String, String> temp = VcfHeader.parseMetaLine(line, SAMPLE_LINE_PATTERN);
+    VcfHeader.checkRequiredMetaKeys(temp, line, "ID");
     mId = temp.get("ID");
-    if (mId == null) {
-      throw new IllegalArgumentException("Expected ID field on line: " + line);
-    }
     mGenomes = temp.get("Genomes");
     mMixture = temp.get("Mixture");
     mDescription = temp.get("Description");

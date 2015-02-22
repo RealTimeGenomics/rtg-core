@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -289,7 +290,7 @@ public class VcfHeader {
         if (f.getType() == field.getType() && f.getNumber().equals(field.getNumber())) {
           return; // Field already present
         } else {
-          throw new NoTalkbackSlimException("A VCF info field " + field.getId() + " which is incompatible is already present in the VCF header.");
+          throw new NoTalkbackSlimException("A VCF INFO field " + field.getId() + " which is incompatible is already present in the VCF header.");
         }
       }
     }
@@ -306,7 +307,7 @@ public class VcfHeader {
         if (f.getType() == field.getType() && f.getNumber().equals(field.getNumber())) {
           return; // Field already present
         } else {
-          throw new NoTalkbackSlimException("A VCF format field " + field.getId() + " which is incompatible is already present in the VCF header.");
+          throw new NoTalkbackSlimException("A VCF FORMAT field " + field.getId() + " which is incompatible is already present in the VCF header.");
         }
       }
     }
@@ -430,14 +431,14 @@ public class VcfHeader {
   public VcfHeader addColumnHeaderLine(String line) {
     final String[] split = line.split("\t");
     if (split.length < 8) {
-      throw new NoTalkbackSlimException("VCF Header line missing required columns");
+      throw new NoTalkbackSlimException("VCF header line missing required columns");
     }
     if (split.length == 9) {
-     throw new NoTalkbackSlimException("VCF Header line contains format field but no sample fields");
+     throw new NoTalkbackSlimException("VCF header line contains format field but no sample fields");
     }
     for (int i = 0; i < 8; i++) {
       if (!split[i].equals(HEADER_COLUMNS[i])) {
-        throw new NoTalkbackSlimException("Incorrect VCF Header column " + (i + 1) + " expected \"" + HEADER_COLUMNS[i] + "\" was \"" + split[i] + "\"");
+        throw new NoTalkbackSlimException("Incorrect VCF header column " + (i + 1) + " expected \"" + HEADER_COLUMNS[i] + "\" was \"" + split[i] + "\"");
       }
     }
     if (split.length > 9) {
@@ -706,7 +707,7 @@ public class VcfHeader {
   static LinkedHashMap<String, String> parseMetaLine(String line, Pattern linePattern) {
     final Matcher m = linePattern.matcher(line.trim());
     if (!m.matches()) {
-      throw new IllegalArgumentException("Did not parse: " + line);
+      throw new NoTalkbackSlimException("Could not parse header line: " + line);
     }
     final LinkedHashMap<String, String> ret = new LinkedHashMap<>(4);
     //        V----------------------------------V
@@ -727,11 +728,20 @@ public class VcfHeader {
           final String key = keyValMatcher.group(1).trim();
           ret.put(key, keyValMatcher.group(2).trim());
         } else {
-          throw new IllegalArgumentException("Did not parse: " + line);
+          throw new NoTalkbackSlimException("Could not parse header line: " + line);
         }
       }
       inner = inner.substring(keyValMatcher.end());
     }
     return ret;
   }
+
+  static void checkRequiredMetaKeys(Map<String, String> provided, String line, String... required) {
+    for (String key : required) {
+      if (!provided.containsKey(key)) {
+        throw new NoTalkbackSlimException("VCF header missing " + key + " declaration on line: " + line);
+      }
+    }
+  }
+
 }
