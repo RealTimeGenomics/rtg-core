@@ -236,7 +236,7 @@ public final class Environment {
    * @return the full version string
    */
   public static String getVersion() {
-    return getProductName() + " Core " + getCoreVersion();
+    return getProductName() + " / Core " + getCoreVersion();
   }
 
   /**
@@ -245,7 +245,7 @@ public final class Environment {
   public static String getCoreVersion() {
     final String buildtime = getVersion("com/rtg/build.time");
     final String release = getRelease();
-    return "v" + release + " build " + getBuild() + " (" + buildtime + ")";
+    return release + " build " + getBuild() + " (" + buildtime + ")";
   }
 
   /**

@@ -83,7 +83,7 @@
   </target>
 
   <property name="vcs.info.cmd" value="git"/>
-  <property name="vcs.info.args" value="describe --abbrev --dirty --always"/>
+  <property name="vcs.info.args" value="rev-list --abbrev-commit -n 1 HEAD"/>
 
   <target name="rtg-vcs-info" depends="init" unless="rtg.vcs.commit.revision">
     <exec executable="${vcs.info.cmd}" outputproperty="rtg.vcs.commit.revision" dir="${public.core.basedir}">

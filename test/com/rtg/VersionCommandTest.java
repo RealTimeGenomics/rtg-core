@@ -75,12 +75,12 @@ public class VersionCommandTest extends TestCase {
     }
 
     final String versionOut = bout.toString();
-    assertTrue(versionOut.startsWith("Product: " + Environment.getProductName() + StringUtils.LS
-        + "Core Version: " + Environment.getCoreVersion() + StringUtils.LS));
+    assertTrue(versionOut.startsWith("Product: " + Environment.getProductName()));
     ramStringTest(versionOut);
 
     TestUtils.containsAll(versionOut, "License: " + License.getMessage() + StringUtils.LS,
         "JVM: ",
+        "Core Version: " + Environment.getCoreVersion(),
         "Contact: " + Constants.SUPPORT_EMAIL_ADDR + StringUtils.LS,
         "Patents / Patents pending:",
         "Citation:",
