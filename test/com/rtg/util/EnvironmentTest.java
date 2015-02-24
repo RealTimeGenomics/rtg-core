@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -153,13 +152,12 @@ public class EnvironmentTest extends TestCase {
 
   public void testVersion() {
     final String product = Environment.getVersion("com/rtg/product.name");
-    final String svn = Environment.getVersion("com/rtg/slim.version");
-    final ResourceBundle environment = ResourceBundle.getBundle("com.rtg.util.Environment", Locale.getDefault());
-    String version = environment.getString("VERSION");
+    final String version = Environment.getVersion("com/rtg/build.version");
+    final String build = Environment.getVersion("com/rtg/build.version");
     final String time = Environment.getVersion("com/rtg/build.time");
     //System.err.println(Environment.getVersion());
-    assertEquals(version, Environment.getRelease());
-    assertEquals(product + " / Core " + version + " build " + svn + " (" + time + ")", Environment.getVersion());
+    assertEquals(version, Environment.getProductVersion());
+    assertEquals(product + " " + version + " / Core " + build + " (" + time + ")", Environment.getVersion());
     assertFalse(Environment.getVersion().contains("cannot"));
 
   }

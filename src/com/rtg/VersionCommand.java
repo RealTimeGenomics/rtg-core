@@ -135,7 +135,7 @@ public final class VersionCommand {
    */
   public static String getVersion() {
     final StringBuilder sb = new StringBuilder();
-    sb.append(PROGRAM_STR + " ").append(Environment.getProductName()).append(LS);
+    sb.append(PROGRAM_STR + " ").append(Environment.getProductName()).append(" ").append(Environment.getProductVersion()).append(LS);
     sb.append(VERSION_STR + " ").append(Environment.getCoreVersion()).append(LS);
     if (License.checkLicense()) {
       sb.append(RAM_STR).append(" ").append(getRamString()).append(LS);

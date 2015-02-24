@@ -21,11 +21,8 @@ import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
 import java.util.Properties;
-import java.util.ResourceBundle;
 
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
@@ -212,48 +209,34 @@ public final class Environment {
   }
 
   /**
-   * @return the build string
+   * Example: <code>"RTG Metagenomics"</code>
+   * @return the product name
    */
-  public static String getBuild() {
-    return getVersion("com/rtg/slim.version");
+  public static String getProductName() {
+    return getVersion("com/rtg/product.name");
   }
 
   /**
-   * @return the release number as a string
+   * @return the product release number as a string
    */
-  public static String getRelease() {
-    String version;
-    final ResourceBundle environment = ResourceBundle.getBundle("com.rtg.util.Environment", Locale.getDefault());
-    try {
-      version = environment.getString("VERSION");
-    } catch (final MissingResourceException ex) {
-      version = VERSION_NOT_FOUND;
-    }
-    return version;
+  public static String getProductVersion() {
+    return getVersion("com/rtg/product.version");
   }
 
   /**
-   * @return the full version string
+   * @return one-line full version string incorporating product and core versions
    */
   public static String getVersion() {
-    return getProductName() + " / Core " + getCoreVersion();
+    return getProductName() + " " + getProductVersion() + " / Core " + getCoreVersion();
   }
 
   /**
    * @return the core version string
    */
   public static String getCoreVersion() {
+    final String buildversion = getVersion("com/rtg/build.version");
     final String buildtime = getVersion("com/rtg/build.time");
-    final String release = getRelease();
-    return release + " build " + getBuild() + " (" + buildtime + ")";
-  }
-
-  /**
-   * Example: <code>"RTG Metagenomics v1.0"</code>
-   * @return the product name
-   */
-  public static String getProductName() {
-    return getVersion("com/rtg/product.name");
+    return buildversion + " (" + buildtime + ")";
   }
 
   /**

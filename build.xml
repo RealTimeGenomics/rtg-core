@@ -25,6 +25,7 @@
   </taskdef>
 
   <property name="product" value="RTG Core Non-Commercial" />
+  <property name="product.version" value="3.4.1" />
   <property name="resources" value="core" />
 
   <property name="regression.update" value=""/> <!-- Empty means don't update nano-regression results -->
@@ -154,7 +155,7 @@
   </macrodef>
 
   <target name="set-rtg-build-version" depends="init,rtg-vcs-info">
-    <set-version-file version.file="${build.src}/com/rtg/slim.version"
+    <set-version-file version.file="${build.src}/com/rtg/build.version"
                       version.value="${rtg.vcs.commit.revision}"/>
     <tstamp> <format property="build.time" pattern="yyyy-MM-dd" /></tstamp>
     <set-version-file version.file="${build.src}/com/rtg/build.time"
@@ -162,6 +163,8 @@
   </target>
 
   <target name="set-rtg-build-product">
+    <set-version-file version.file="${build.misc}/com/rtg/product.version"
+                      version.value="${product.version}"/>
     <set-version-file version.file="${build.misc}/com/rtg/product.name"
                       version.value="${product}"/>
   </target>
@@ -210,7 +213,7 @@
         <attribute name="Class-Path" value="."/>
       </manifest>
       <fileset dir="${build.misc}">
-        <include name="com/rtg/product.name" />
+        <include name="com/rtg/**" />
       </fileset>
       <zipfileset src="${build.dir}/rtg-bare.jar"/>
     </jar>
@@ -306,8 +309,8 @@
     <property name="almostproductfilename" value="${product}" />
     <lowercase name="productfilename" value="${almostproductfilename}" />
     <condition property="zipversion"
-               value="${productfilename}"
-               else="${productfilename}-${buildinfo.VERSION}-${rtg.vcs.commit.revision}">
+               else="${productfilename}-${product.version}"
+               value="${productfilename}-${rtg.vcs.commit.revision}">
       <istrue value="${release.build}"/>
     </condition>
 
