@@ -36,7 +36,6 @@ import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.RegionRestriction;
-import com.rtg.util.io.LogFile;
 import com.rtg.variant.bayes.multisample.MultisampleCli;
 
 import net.sf.samtools.SAMFileHeader;
@@ -49,7 +48,6 @@ public class ChrStatsCli extends AbstractCli {
   private static final String PEDIGREE_FLAG = "pedigree";
   private static final String SAMPLE_FLAG = "sample";
 
-  private static final String LOG_FILE = "chrstats.log";
   private static final String SEX_Z_THRESHOLD_FLAG = "sex-z-threshold";
   private static final String Z_THRESHOLD_FLAG = "z-threshold";
 
@@ -98,7 +96,6 @@ public class ChrStatsCli extends AbstractCli {
 
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
-    Diagnostic.setLogStream(new LogFile(new File(LOG_FILE)));
     final File genomeFile = (File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG);
     SdfUtils.validateHasNames(genomeFile);
     final SequenceParams genomeParams = SequenceParams.builder().directory(genomeFile).useMemReader(false).mode(SequenceMode.UNIDIRECTIONAL).create();
