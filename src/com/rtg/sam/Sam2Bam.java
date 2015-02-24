@@ -148,7 +148,7 @@ public class Sam2Bam extends AbstractCli {
     try {
       BamIndexer.saveBamIndex(outFile, indexFile);
     } catch (final UnindexableDataException e) {
-      Diagnostic.info("Cannot create BAM index: " + e.getMessage());
+      Diagnostic.warning("Cannot create BAM index: " + e.getMessage());
     }
     if (calibrationFiles.size() > 0 && calibrationFiles.size() == samFiles.size()) {
       final Calibrator c = new Calibrator(Calibrator.getCovariateSet(calibrationFiles.iterator().next()), null);
