@@ -159,7 +159,7 @@ public class EnvironmentTest extends TestCase {
     final String time = Environment.getVersion("com/rtg/build.time");
     //System.err.println(Environment.getVersion());
     assertEquals(version, Environment.getRelease());
-    assertEquals(product + " Core v" + version + " build " + svn + " (" + time + ")", Environment.getVersion());
+    assertEquals(product + " / Core " + version + " build " + svn + " (" + time + ")", Environment.getVersion());
     assertFalse(Environment.getVersion().contains("cannot"));
 
   }
