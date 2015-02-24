@@ -259,7 +259,7 @@ public class ChrStats {
   public void chrStatsCheckAndReport(final CalibratedPerSequenceExpectedCoverage calibrator, final String sample, final Sex sex) throws IOException {
     final TextTable table = initTable();
     addRow(table, sample, sex, runCheckAndReport(calibrator, sample, sex));
-    Diagnostic.warning(table.toString());
+    Diagnostic.info(table.toString());
   }
 
   /**
@@ -274,6 +274,6 @@ public class ChrStats {
       final Sex sex = pedigree.getSex(sample);
       addRow(table, sample, sex, runCheckAndReport(calibrator, sample, sex));
     }
-    System.out.print(table.toString());
+    Diagnostic.info(table.toString());
   }
 }
