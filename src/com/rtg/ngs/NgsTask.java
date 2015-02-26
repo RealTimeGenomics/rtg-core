@@ -158,9 +158,11 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
           final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getSequenceLengthMap(mParams.searchParams().reader(), (RegionRestriction) null);
           final CalibratedPerSequenceExpectedCoverage expectedCoverages = new CalibratedPerSequenceExpectedCoverage(c, sequenceLengthMap, readGroupToSampleId, null);
           final ChrStats cc = new ChrStats(mParams.searchParams().reader());
-          final ChrStats.ChrStatsResult res = cc.runCheckAndReport(expectedCoverages, sample, mParams.sex());
-          if (res.getObservedSex() != null && res.getClaimedSex() != res.getObservedSex()) {
-            Diagnostic.warning(sample + " specified " + ChrStats.sexString(res.getClaimedSex()) + " but appears to be " + ChrStats.sexString(res.getObservedSex()));
+          if (cc.referenceOk()) {
+            final ChrStats.ChrStatsResult res = cc.runCheckAndReport(expectedCoverages, sample, mParams.sex());
+            if (res.getObservedSex() != null && res.getClaimedSex() != res.getObservedSex()) {
+              Diagnostic.warning(sample + " specified " + ChrStats.sexString(res.getClaimedSex()) + " but appears to be " + ChrStats.sexString(res.getObservedSex()));
+            }
           }
         }
       }

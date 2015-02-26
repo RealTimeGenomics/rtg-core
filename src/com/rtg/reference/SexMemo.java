@@ -81,6 +81,16 @@ public class SexMemo {
   }
 
   /**
+   * Get the reference genome information for the supplied sex
+   * @param sex the sex of interest
+   * @return the reference genome information
+   */
+  public ReferenceGenome referenceGenome(Sex sex) {
+    return mReferences[sex.ordinal()];
+  }
+
+
+  /**
    * Ploidy to be used during calling for this sex/reference/position combination.
    *
    * @param sex of the sample.

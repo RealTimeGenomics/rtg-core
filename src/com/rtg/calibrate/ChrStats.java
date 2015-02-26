@@ -20,6 +20,7 @@ import com.rtg.reference.Ploidy;
 import com.rtg.reference.ReferenceGenome;
 import com.rtg.reference.ReferenceSequence;
 import com.rtg.reference.Sex;
+import com.rtg.reference.SexMemo;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.util.TextTable;
 import com.rtg.util.Utils;
@@ -30,7 +31,7 @@ import com.rtg.util.diagnostic.Diagnostic;
  */
 public class ChrStats {
 
-  private static final long MIN_SPECIFIED_SEQUENCES = 5;
+  static final long MIN_SPECIFIED_SEQUENCES = 5;
   static final double DEFAULT_MIN_SEX_DEVIATIONS = 5;
   static final double DEFAULT_MIN_DEVIATIONS = 10;
   private static final String INCONSISTENT = " ** INCONSISTENT **";
@@ -70,28 +71,56 @@ public class ChrStats {
     NF.setMinimumFractionDigits(2);
   }
 
-  private final SequencesReader mGenomeReader;
+  private final SexMemo mSexMemo;
   private final double mMinSexDeviations;
   private final double mMinDeviations;
+  private final boolean mReferenceOk;
 
   /**
    * Construct a new coverage checker reporting at a given number of deviations.
    * @param genomeReader genome related information
    * @param sexDeviations deviations needed before a potential sex problem is reported
    * @param deviations deviations needed to count as bad
+   * @throws IOException if an I/O error occurs.
    */
-  public ChrStats(final SequencesReader genomeReader, final double sexDeviations, double deviations) {
-    mGenomeReader = genomeReader;
+  public ChrStats(final SequencesReader genomeReader, final double sexDeviations, double deviations) throws IOException {
     mMinSexDeviations = sexDeviations;
     mMinDeviations = deviations;
+    // If the fallback fires below, then the checking will be disabled because the number
+    // of specified sequences will be 0.  But this way prevents an exception from occurring if
+    // there is no reference.txt file present in the template SDF.
+    mSexMemo = new SexMemo(genomeReader, ReferenceGenome.DefaultFallback.DIPLOID);
+    boolean refOk = true;
+    for (Sex sex : Sex.values()) {
+      if (countSpecifiedSequences(mSexMemo.referenceGenome(sex)) < MIN_SPECIFIED_SEQUENCES) {
+        refOk = false;
+      }
+    }
+    mReferenceOk = refOk;
   }
 
   /**
    * Construct a new coverage checker.
    * @param genomeParams genome related information
+   * @throws IOException if an I/O error occurs.
    */
-  public ChrStats(final SequencesReader genomeParams) {
+  public ChrStats(final SequencesReader genomeParams) throws IOException {
     this(genomeParams, DEFAULT_MIN_SEX_DEVIATIONS, DEFAULT_MIN_DEVIATIONS);
+  }
+
+  /** @return true if the reference contains enough chromosome to start making checks */
+  public boolean referenceOk() {
+    return mReferenceOk;
+  }
+
+  static int countSpecifiedSequences(ReferenceGenome referenceGenome) {
+    int numSpecifiedSequences = 0;
+    for (final ReferenceSequence seq : referenceGenome.sequences()) {
+      if (seq.isSpecified() && seq.ploidy() == Ploidy.DIPLOID) {
+        numSpecifiedSequences++;
+      }
+    }
+    return numSpecifiedSequences;
   }
 
   /**
@@ -104,12 +133,12 @@ public class ChrStats {
    * @param log should the results of the calculation be logged
    * @return true iff the sample has a coverage anomaly when treated as the specified sex
    */
-  ChrStatsResult coverageCheck(final CalibratedPerSequenceExpectedCoverage calibrator, final String sample, final Sex sex, final boolean log) throws IOException {
+  ChrStatsResult coverageCheck(final CalibratedPerSequenceExpectedCoverage calibrator, final String sample, final Sex sex, final boolean log) {
+    if (!referenceOk()) {
+      throw new IllegalStateException("Cannot perform coverage check when reference is not fully specified");
+    }
     Diagnostic.userLog("Starting check of " + sample + " for sex=" + sex + " with autosome-z-threshold=" + mMinDeviations + " and sex-z-threshold=" + mMinSexDeviations);
-    // If the fallback fires below, then the test will not end up happening because the number
-    // of specified sequences will be 0.  But this way prevents an exception from occurring if
-    // there is no reference.txt file present in the template SDF.
-    final ReferenceGenome referenceGenome = new ReferenceGenome(mGenomeReader, sex, ReferenceGenome.DefaultFallback.DIPLOID);
+    final ReferenceGenome referenceGenome = mSexMemo.referenceGenome(sex);
     int numSpecifiedSequences = 0;
     double sumCoverage = 0;
     double sumCoverageSquares = 0;
@@ -121,9 +150,6 @@ public class ChrStats {
         sumCoverageSquares += coverage * coverage;
         numSpecifiedSequences++;
       }
-    }
-    if (numSpecifiedSequences < MIN_SPECIFIED_SEQUENCES) {
-      return new ChrStatsResult(sex, true, 0, numSpecifiedSequences, 0); // Not enough specified sequences to reliably make these checks
     }
     final double meanDip = sumCoverage / numSpecifiedSequences;
     final double varDip = sumCoverageSquares / numSpecifiedSequences - meanDip * meanDip;
@@ -191,9 +217,8 @@ public class ChrStats {
    * @param sample names of sample
    * @param sex claimed sex for the sample
    * @return results
-   * @throws IOException if an I/O error occurs.
    */
-  public ChrStatsResult runCheckAndReport(final CalibratedPerSequenceExpectedCoverage calibrator, final String sample, final Sex sex) throws IOException {
+  public ChrStatsResult runCheckAndReport(final CalibratedPerSequenceExpectedCoverage calibrator, final String sample, final Sex sex) {
     if (calibrator.containsSample(sample)) {
       // First run with the claimed sex including reporting of anamolous results
       final ChrStatsResult res = coverageCheck(calibrator, sample, sex, true);
@@ -254,9 +279,8 @@ public class ChrStats {
    * @param calibrator calibrator containing coverage information to use
    * @param sample names of sample
    * @param sex claimed sex for the sample
-   * @throws java.io.IOException if an I/O error occurs
    */
-  public void chrStatsCheckAndReport(final CalibratedPerSequenceExpectedCoverage calibrator, final String sample, final Sex sex) throws IOException {
+  public void chrStatsCheckAndReport(final CalibratedPerSequenceExpectedCoverage calibrator, final String sample, final Sex sex) {
     final TextTable table = initTable();
     addRow(table, sample, sex, runCheckAndReport(calibrator, sample, sex));
     Diagnostic.info(table.toString());
@@ -268,7 +292,7 @@ public class ChrStats {
    * @param samples names of samples
    * @param pedigree pedigree information
    */
-  void chrStatsCheck(final CalibratedPerSequenceExpectedCoverage calibrator, final Set<String> samples, final GenomeRelationships pedigree) throws IOException {
+  void chrStatsCheck(final CalibratedPerSequenceExpectedCoverage calibrator, final Set<String> samples, final GenomeRelationships pedigree) {
     final TextTable table = initTable();
     for (final String sample : samples) {
       final Sex sex = pedigree.getSex(sample);

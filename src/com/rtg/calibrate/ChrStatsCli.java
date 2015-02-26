@@ -115,10 +115,16 @@ public class ChrStatsCli extends AbstractCli {
     if (c == null) {
       throw new RuntimeException("Could not load calibration information"); // Runtime as above checks have ensured there are calibration files
     } else {
+      final ChrStats cc = new ChrStats(genomeParams.reader(), (Double) mFlags.getValue(SEX_Z_THRESHOLD_FLAG), (Double) mFlags.getValue(Z_THRESHOLD_FLAG));
+      if (!cc.referenceOk()) {
+        throw new NoTalkbackSlimException("The supplied reference does not contain genome chromosome information. For more information, see the user manual.");
+      }
+
+      final GenomeRelationships pedigree = mFlags.isSet(PEDIGREE_FLAG) ? GenomeRelationships.loadGenomeRelationships((File) mFlags.getValue(PEDIGREE_FLAG)) : null;
+
       final Map<String, String> readGroupToSampleId = SamUtils.getReadGroupToSampleId(uberHeader);
       final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getSequenceLengthMap(genomeParams.reader(), (RegionRestriction) null);
       final CalibratedPerSequenceExpectedCoverage expectedCoverages = new CalibratedPerSequenceExpectedCoverage(c, sequenceLengthMap, readGroupToSampleId, null);
-      final ChrStats cc = new ChrStats(genomeParams.reader(), (Double) mFlags.getValue(SEX_Z_THRESHOLD_FLAG), (Double) mFlags.getValue(Z_THRESHOLD_FLAG));
       final Set<String> samples = expectedCoverages.samples();
       if (samples.size() == 0) {
         throw new NoTalkbackSlimException("No sample information contained in mapping headers");
@@ -126,15 +132,15 @@ public class ChrStatsCli extends AbstractCli {
         // Single sample mode
         final String sample = mFlags.isSet(SAMPLE_FLAG) ? (String) mFlags.getValue(SAMPLE_FLAG) : samples.iterator().next();
         final Sex sex;
-        if (mFlags.isSet(PEDIGREE_FLAG)) {
-          sex = GenomeRelationships.loadGenomeRelationships((File) mFlags.getValue(PEDIGREE_FLAG)).getSex(sample);
+        if (pedigree != null) {
+          sex = pedigree.getSex(sample);
         } else {
           sex = (Sex) mFlags.getValue(MapFlags.SEX_FLAG);
         }
         cc.chrStatsCheckAndReport(expectedCoverages, sample, sex);
       } else {
         // Multiple samples
-        if (!mFlags.isSet(PEDIGREE_FLAG)) {
+        if (pedigree == null) {
           throw new NoTalkbackSlimException("Multiple samples present. Please specify sample sex information via --" + PEDIGREE_FLAG);
         }
         cc.chrStatsCheck(expectedCoverages, samples, GenomeRelationships.loadGenomeRelationships((File) mFlags.getValue(PEDIGREE_FLAG)));
