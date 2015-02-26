@@ -16,6 +16,7 @@ import com.rtg.sam.MateInfo;
 import com.rtg.sam.ReaderRecord;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.CompareHelper;
+import com.rtg.util.MathUtils;
 import com.rtg.util.intervals.SequenceIdLocusSimple;
 
 import net.sf.samtools.SAMReadGroupRecord;
@@ -87,7 +88,6 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
     mBases = record.getReadBases();
 
 
-
     final byte[] baseQualities = record.getBaseQualities();
     if (baseQualities.length == 0) {
       mQuality = baseQualities;
@@ -106,10 +106,8 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
     mCigar = record.getCigarString();
     mMappingQuality = (byte) record.getMappingQuality();
     mReadGroup = record.getReadGroup();
-    final Integer v = SamUtils.getNHOrIH(record);
-    mAmbiguity = v == null ? -1 : v;
-    final Integer as = record.getIntegerAttribute("AS");
-    mAlignmentScore = as == null ? -1 : as;
+    mAmbiguity = MathUtils.unboxNatural(SamUtils.getNHOrIH(record));
+    mAlignmentScore = MathUtils.unboxNatural(record.getIntegerAttribute("AS"));
     mSuperCigar = record.getStringAttribute(SamUtils.CG_SUPER_CIGAR);
     mMateSequenceId = record.getMateReferenceIndex();
     int f = record.getReadPairedFlag() && record.getProperPairFlag() ? 1 : 0;

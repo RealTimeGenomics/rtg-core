@@ -417,4 +417,13 @@ public final class MathUtils {
     }
     return Long.toString(val);
   }
+
+  /**
+   * Given non-negative or null return primitive int or -1.
+   * @param x value to get primitive for
+   * @return -1 for null otherwise <code>x</code>.
+   */
+  public static int unboxNatural(final Integer x) {
+    return x == null ? -1 : x;
+  }
 }
