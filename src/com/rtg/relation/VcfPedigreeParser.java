@@ -136,7 +136,7 @@ public final class VcfPedigreeParser {
    * @param pedigree the relationships
    */
   public static void addPedigreeFields(VcfHeader vcf, GenomeRelationships pedigree) {
-    addPedigreeFields(vcf, pedigree, pedigree.filter(new GenomeRelationships.PrimaryGenomeFilter(pedigree)).genomes());
+    addPedigreeFields(vcf, pedigree, pedigree.filterByGenomes(new GenomeRelationships.PrimaryGenomeFilter(pedigree)).genomes());
   }
 
   /**

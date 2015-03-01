@@ -116,7 +116,7 @@ public class PopulationCli extends AbstractMultisampleCli {
     final File relfile = (File) mFlags.getValue(PEDIGREE_FLAG);
     GenomeRelationships gr = GenomeRelationships.loadGenomeRelationships(relfile);
     if (mFlags.isSet(REMOVE_RELATIONSHIPS_FLAG)) {
-      gr = gr.filter(new Relationship.NotFilter(new Relationship.RelationshipTypeFilter(Relationship.RelationshipType.PARENT_CHILD)));
+      gr = gr.filterByRelationships(new Relationship.NotFilter(new Relationship.RelationshipTypeFilter(Relationship.RelationshipType.PARENT_CHILD)));
     }
     return gr;
   }

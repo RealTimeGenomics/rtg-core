@@ -54,10 +54,10 @@ public class PedFilterCli extends AbstractCli {
     GenomeRelationships pedigree = GenomeRelationships.loadGenomeRelationships(pedFile);
 
     if (mFlags.isSet(KEEP_PRIMARY)) {
-      pedigree = pedigree.filter(new GenomeRelationships.PrimaryGenomeFilter(pedigree));
+      pedigree = pedigree.filterByGenomes(new GenomeRelationships.PrimaryGenomeFilter(pedigree));
     }
     if (mFlags.isSet(REMOVE_PARENTAGE)) {
-      pedigree = pedigree.filter(new Relationship.NotFilter(new Relationship.RelationshipTypeFilter(Relationship.RelationshipType.PARENT_CHILD)));
+      pedigree = pedigree.filterByRelationships(new Relationship.NotFilter(new Relationship.RelationshipTypeFilter(Relationship.RelationshipType.PARENT_CHILD)));
     }
 
     try (LineWriter w = new LineWriter(new OutputStreamWriter(out))) {
@@ -65,7 +65,7 @@ public class PedFilterCli extends AbstractCli {
         final VcfHeader header = new VcfHeader();
         header.addCommonHeader();
         VcfPedigreeParser.addPedigreeFields(header, pedigree);
-        for (String sample : pedigree.filter(new GenomeRelationships.PrimaryGenomeFilter(pedigree)).genomes()) {
+        for (String sample : pedigree.filterByGenomes(new GenomeRelationships.PrimaryGenomeFilter(pedigree)).genomes()) {
           header.addSampleName(sample);
         }
         w.write(header.toString());

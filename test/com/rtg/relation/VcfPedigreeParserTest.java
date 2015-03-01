@@ -58,7 +58,7 @@ public class VcfPedigreeParserTest extends TestCase {
       final VcfHeader header = new VcfHeader();
       header.addLine(VcfHeader.VERSION_LINE);
       VcfPedigreeParser.addPedigreeFields(header, ped);
-      for (String sample : ped.filter(new GenomeRelationships.PrimaryGenomeFilter(ped)).genomes()) {
+      for (String sample : ped.filterByGenomes(new GenomeRelationships.PrimaryGenomeFilter(ped)).genomes()) {
         header.addSampleName(sample);
       }
       mNano.check("vcffromped.vcf", header.toString());
@@ -72,7 +72,7 @@ public class VcfPedigreeParserTest extends TestCase {
       final VcfHeader header = new VcfHeader();
       header.addLine(VcfHeader.VERSION_LINE);
       VcfPedigreeParser.addPedigreeFields(header, ped);
-      for (String sample : ped.filter(new GenomeRelationships.PrimaryGenomeFilter(ped)).genomes()) {
+      for (String sample : ped.filterByGenomes(new GenomeRelationships.PrimaryGenomeFilter(ped)).genomes()) {
         header.addSampleName(sample);
       }
       mNano.check("vcffromped.vcf", header.toString());
@@ -86,7 +86,7 @@ public class VcfPedigreeParserTest extends TestCase {
       final VcfHeader header = new VcfHeader();
       header.addLine(VcfHeader.VERSION_LINE);
       VcfPedigreeParser.addPedigreeFields(header, ped);
-      for (String sample : ped.filter(new GenomeRelationships.PrimaryGenomeFilter(ped)).genomes()) {
+      for (String sample : ped.filterByGenomes(new GenomeRelationships.PrimaryGenomeFilter(ped)).genomes()) {
         header.addSampleName(sample);
       }
       mNano.check("derived.vcf", header.toString());

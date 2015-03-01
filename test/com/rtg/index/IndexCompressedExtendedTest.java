@@ -93,22 +93,22 @@ public class IndexCompressedExtendedTest extends TestCase {
   public void testScanEmpty() throws IOException {
     final IndexCompressed hi = getIndex(10L, 67, 2);
     try {
-      hi.scan((FinderHashValueExtended) null);
+      hi.scanAll(null);
       fail();
     } catch (final IllegalStateException e) {
 
     }
     hi.freeze();
     hi.freeze();
-    hi.scan(
-        new FinderHashValueExtended() {
-          @Override
-          public void found(long[] hash, long value) {
-            //System.err.println("hash=" + hash + " value=" + value);
-            fail();
-          }
+    hi.scanAll(
+      new FinderHashValueExtended() {
+        @Override
+        public void found(long[] hash, long value) {
+          //System.err.println("hash=" + hash + " value=" + value);
+          fail();
         }
-        );
+      }
+    );
   }
 
   public final void testTrickySize0() {

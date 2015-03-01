@@ -332,15 +332,15 @@ public class VcfValidatorCli extends AbstractCli {
   private NumericRuleSet<?> createNumericRuleSet(String name, FieldType type, VcfNumber number, MetaType metaType, Map<String, String> rules) throws RuleValidationException {
     final NumericRuleSet<?> returnRules;
     if (metaType == MetaType.FLOAT) {
-      returnRules = new NumericRuleSet<>(name, type, number, metaType, new DoubleConverter());
+      returnRules = getFloatRuleSet(name, type, number, metaType);
+    } else {
+      returnRules = getLongRuleSet(name, type, number, metaType);
       if (!(rules.containsKey("ALLOWINF") && Boolean.parseBoolean(rules.get("ALLOWINF")))) {
         returnRules.addInfinityRule();
       }
       if (!(rules.containsKey("ALLOWNAN") && Boolean.parseBoolean(rules.get("ALLOWNAN")))) {
         returnRules.addNaNRule();
       }
-    } else {
-      returnRules = new NumericRuleSet<>(name, type, number, metaType, new LongConverter());
     }
     if (rules.containsKey("GTE")) {
       returnRules.addGreaterThanEqualRule(rules.get("GTE"));
@@ -355,6 +355,14 @@ public class VcfValidatorCli extends AbstractCli {
       returnRules.addLessThanRule(rules.get("LT"));
     }
     return returnRules;
+  }
+
+  private NumericRuleSet<Long> getLongRuleSet(String name, FieldType type, VcfNumber number, MetaType metaType) {
+    return new NumericRuleSet<>(name, type, number, metaType, new LongConverter());
+  }
+
+  private NumericRuleSet<Double> getFloatRuleSet(String name, FieldType type, VcfNumber number, MetaType metaType) {
+    return new NumericRuleSet<>(name, type, number, metaType, new DoubleConverter());
   }
 
   @Override

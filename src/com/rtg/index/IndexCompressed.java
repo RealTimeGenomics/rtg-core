@@ -562,7 +562,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   }
 
   @Override
-  public void scan(FinderHashValueExtended finder) throws IOException, IllegalStateException {
+  public void scanAll(FinderHashValueExtended finder) throws IOException, IllegalStateException {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }

@@ -256,7 +256,7 @@ public class GenomeRelationships {
    * @param filters the filter criterion
    * @return a filtered version of this GenomeRelationships
    */
-  public GenomeRelationships filter(RelationshipFilter... filters) {
+  public GenomeRelationships filterByRelationships(RelationshipFilter... filters) {
     final GenomeRelationships result = new GenomeRelationships();
     for (final String genome : genomes()) {
       result.addGenome(genome).putAll(getProperties(genome));
@@ -273,7 +273,7 @@ public class GenomeRelationships {
    * @param filters the filter criterion
    * @return a filtered version of this GenomeRelationships
    */
-  public GenomeRelationships filter(GenomeFilter... filters) {
+  public GenomeRelationships filterByGenomes(GenomeFilter... filters) {
     final GenomeRelationships result = new GenomeRelationships();
     for (final String genome : genomes(filters)) {
       result.addGenome(genome).putAll(getProperties(genome));

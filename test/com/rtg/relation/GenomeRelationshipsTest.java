@@ -140,7 +140,7 @@ public class GenomeRelationshipsTest extends TestCase {
     GenomeRelationships genomeRelationships = makeFamily();
     assertEquals(5, genomeRelationships.genomes().length);
 
-    GenomeRelationships individuals = genomeRelationships.filter(new Relationship.NotFilter(new RelationshipTypeFilter(RelationshipType.PARENT_CHILD)));
+    GenomeRelationships individuals = genomeRelationships.filterByRelationships(new Relationship.NotFilter(new RelationshipTypeFilter(RelationshipType.PARENT_CHILD)));
     assertEquals(5, individuals.genomes().length);
     assertEquals(0, individuals.relationships(RelationshipType.PARENT_CHILD).length);
   }

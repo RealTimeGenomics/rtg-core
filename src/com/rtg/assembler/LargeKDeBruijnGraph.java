@@ -64,7 +64,7 @@ public class LargeKDeBruijnGraph extends AbstractKDeBruijnGraph {
   protected void transferCounts(final IndexExtended initialIndex, final IndexExtended countIndex) {
     try {
       final LocalFinderHashValue finder = new LocalFinderHashValue(countIndex);
-      initialIndex.scan(finder);
+      initialIndex.scanAll(finder);
       finder.atEnd();
       countIndex.freeze();
     } catch (final Exception e) {
