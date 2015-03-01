@@ -4,6 +4,40 @@ Below are the release notes for RTG Core, upon which RTG.VERSION
 is built.  Not all features described below may be included in this
 product.
 
+RTG Core 3.4.2 (2015-03-02)
+---------------------------
+
+This is primarily a bugfix release:
+
+* somatic: Fix a crash that could occur when calling across Ns in the
+  reference.
+
+* snp/family/population/somatic: Under some circumstances, I/O
+  exceptions could trigger a crash talkback rather than being
+  presented as a regular user-level error message for the user to act
+  on.
+
+* chrstats: Fixed inconsistent output destinations between
+  single-sample vs multiple sample case, and do not create a log file
+  for this command in the current directory.
+
+* chrstats: Detect when the user has not set up a reference SDF with
+  chromosome specification information and provide an appropriate
+  error message indicating how to correct the situation.
+
+* many: Improved error handling when requesting indexed region
+  retrieval of BED/VCF/SAM files for coordinates outside the range
+  that can be addressed by tabix/bam indexes.
+
+* many: Improved error handling when errors are encountered during VCF
+  header parsing, providing more information on where the problem was.
+
+* many: Improved error handling when errors are encountered during
+  tabix indexing.
+
+
+Previous releases:
+
 RTG Core 3.4.1 (2015-01-22)
 ---------------------------
 
@@ -36,9 +70,6 @@ This is primarily a bugfix release:
   as an input list file.
 
 * Other improvements and cleanups to documentation.
-
-
-Previous releases:
 
 RTG Core 3.4 (2014-12-20)
 -------------------------
