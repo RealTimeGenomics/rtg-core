@@ -112,10 +112,7 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
     mAlignmentScore = as == null ? -1 : as;
     mSuperCigar = record.getStringAttribute(SamUtils.CG_SUPER_CIGAR);
     mMateSequenceId = record.getMateReferenceIndex();
-    byte f = 0;
-    if (record.getReadPairedFlag() && record.getProperPairFlag()) {
-      f += 1;
-    }
+    int f = record.getReadPairedFlag() && record.getProperPairFlag() ? 1 : 0;
     if (record.getReadPairedFlag()) {
       f += 2;
       if (record.getFirstOfPairFlag() ^ record.getReadNegativeStrandFlag()) { //CG stupidity
@@ -128,7 +125,7 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
     if (record.getReadUnmappedFlag()) {
       f += 16;
     }
-    mFlag = f;
+    mFlag = (byte) f;
 
     mOverlapQuality = mSuperCigar == null
       ? SamUtils.allowEmpty(record.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY))

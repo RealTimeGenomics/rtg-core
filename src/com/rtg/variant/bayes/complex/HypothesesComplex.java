@@ -115,6 +115,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     } catch (final IllegalArgumentException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
       throw new SlimException(e);
     }
+    //return new ScoreFastUnderflow(params);
   }
 
   private static Environment initEnvironmentCombined(AlignmentEnvironment samEnv, int zeroBasedStartPos, int maxShift, AlignmentEnvironment templateEnv) {
@@ -123,6 +124,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     } catch (final IllegalArgumentException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
       throw new SlimException(e);
     }
+    //return new EnvironmentCombined(samEnv, zeroBasedStartPos, maxShift, templateEnv);
   }
   /*******************END BLOCK********************/
 

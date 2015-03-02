@@ -109,6 +109,15 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     return mHypotheses.arithmetic();
   }
 
+  private void increment(EvidenceQ evidence) {
+    for (int i = 0; i < size(); i++) {
+      final double v = evidence.logEvidentialProbability(i);
+      if (v > 0) {
+        return;
+      }
+      mPosteriors[i] = arithmetic().multiply(mPosteriors[i], arithmetic().ln2Poss(v));
+    }
+  }
 
   @Override
   public void increment(EvidenceInterface evidence) {
@@ -118,13 +127,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     }
     if (evidence instanceof EvidenceQ) {
       // EvidenceQ objects have precomputed evidence probabilities
-      for (int i = 0; i < size(); i++) {
-        final double v = ((EvidenceQ) evidence).logEvidentialProbability(i);
-        if (v > 0) {
-          return;
-        }
-        mPosteriors[i] = arithmetic().multiply(mPosteriors[i], arithmetic().ln2Poss(v));
-      }
+      increment((EvidenceQ) evidence);
     } else {
       final double r = evidence.mapError();
       final double rc = 1.0 - r;
@@ -134,7 +137,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
       }
       final Code code = hypotheses().code();
       final double pE = evidence.pe();
-      assert pE >= 0 && pE <= 1;
+      //assert pE >= 0 && pE <= 1;
       final double pEr = r * pE;
       for (int i = 0; i < size(); i++) {
         final double prob;
@@ -153,9 +156,9 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
 
         final double pr = prob * rc + pEr;
         //System.err.println("i=" + i + " pr=" + pr + " prob=" + prob + " rc=" + rc + " r=" + r + " pE=" + pE);
-        assert pr > 0.0; // : "pr=" + pr + " prob=" + prob + " rc=" + rc + " r=" + r + " pE=" + pE;
+        //assert pr > 0.0; // : "pr=" + pr + " prob=" + prob + " rc=" + rc + " r=" + r + " pE=" + pE;
         final double np = arithmetic().multiply(mPosteriors[i], arithmetic().prob2Poss(pr));
-        assert arithmetic().isValidPoss(np);
+        //assert arithmetic().isValidPoss(np);
         mPosteriors[i] = np;
       }
     }
