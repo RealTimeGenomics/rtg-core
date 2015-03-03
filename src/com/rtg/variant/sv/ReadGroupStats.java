@@ -67,6 +67,7 @@ public class ReadGroupStats {
   /**
    * Reads a set of read group priors.
    *
+   * @param remap optional read group id remapping (used to merge read group ids)
    * @param files the files containing the priors.
    * @return a map from read group name to a ReadGroupStats object.
    * @exception IOException if an error occurs.

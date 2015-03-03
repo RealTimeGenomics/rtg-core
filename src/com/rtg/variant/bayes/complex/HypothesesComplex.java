@@ -180,7 +180,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
 
   /**
    * This diagram shows the relationship of the different variables when doing the all-paths matching.
-   * <img src="doc-files/makeInitialPriors.jpg" />
+   * <img src="doc-files/makeInitialPriors.jpg" alt="image">
    * @param description description for hypotheses
    * @param haploid true for a haploid situation
    * @param cot region on reference being replaced by the hypotheses.

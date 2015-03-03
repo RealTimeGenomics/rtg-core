@@ -42,11 +42,11 @@ public class StatisticsComplex extends StatisticsDouble {
   }
 
   @Override
-  protected double errorIncrement(EvidenceInterface distribution) {
-    if (distribution instanceof EvidenceComplex) {
-      return ((EvidenceComplex) distribution).match().correction();
+  protected double errorIncrement(EvidenceInterface evidence) {
+    if (evidence instanceof EvidenceComplex) {
+      return ((EvidenceComplex) evidence).match().correction();
     }
-    return super.errorIncrement(distribution);
+    return super.errorIncrement(evidence);
   }
 
 

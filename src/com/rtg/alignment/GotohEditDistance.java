@@ -723,7 +723,12 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
     return templateResidue == readResidue ? 0 : mSubstitutionPenalty;
   }
 
-  /** The most recent match was the same residues. */
+  /**
+   * The most recent match was the same residues.
+   * @param refNt the reference residue
+   * @param readNt the read residue
+   * @return true if neither residue is missing and they are the same
+   */
   protected final boolean isSame(final int refNt, final int readNt) {
     return !(refNt == DnaUtils.UNKNOWN_RESIDUE || readNt == DnaUtils.UNKNOWN_RESIDUE) && refNt == readNt;
   }

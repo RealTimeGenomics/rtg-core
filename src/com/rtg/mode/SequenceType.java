@@ -143,7 +143,7 @@ public abstract class SequenceType implements Serializable, PseudoEnum {
    * The number of bits needed to encode the valid values.
    * That is
    * <pre>
-   * 2^bits >= numberKnownCodes and 2^(bits -1) < numberKnownCodes
+   * 2^bits gt;= numberKnownCodes and 2^(bits -1) &lt; numberKnownCodes
    * </pre>
    * @return minimum number of bits needed to encode the valid values.
    */

@@ -22,7 +22,7 @@ import com.rtg.index.hash.ngs.TemplateCall;
 /**
  * Intended for testing.
  * <br>
- * <table>
+ * <table summary="mask cases">
  * <tr> <th>window</th> <th> id </th> </tr>
  * <tr> <td><code>ooxx</code></td>  <td> 0 </td> </tr>
  * <tr> <td><code>oxxo</code></td>  <td> 1 </td> </tr>

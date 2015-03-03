@@ -72,7 +72,8 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
    * @param buildLengths lengths of sequences.
    * @param out where to write the output.
    * @param writer where to write output for unmapped reads
-   * @param bucketInfo bucket info     @throws IOException If an I/O error occurs
+   * @param bucketInfo bucket info
+   * @param repeatFreq the repeat frequency threshold
    */
   GappedOutput(final PositionParams params, GappedRegionFactory<G> regionFactory, GapScorer scorer, final ImmutableIntArray buildLengths, final Appendable out, final PositionWriter writer, final GapBucketsInfo bucketInfo, int repeatFreq) {
     super(params, out);

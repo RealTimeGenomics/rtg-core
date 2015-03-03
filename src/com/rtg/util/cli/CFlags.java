@@ -33,9 +33,8 @@ import com.rtg.util.StringUtils;
 /**
  * This class is a handy utility for dealing with command line flags. It allows
  * syntactic and type-checking of flags. Here is some example usage:
- * <p>
  *
- * <code><pre>
+ * <pre>
  * public static void main(final String[] args) {
  *   // Create the CFlags
  *   CFlags flags = new CFlags(&quot;java Example&quot;);
@@ -60,7 +59,7 @@ import com.rtg.util.StringUtils;
  *   // Rest of your code follows here.
  *
  * }
- * </pre></code>
+ * </pre>
  *
  */
 public final class CFlags {

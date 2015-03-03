@@ -273,9 +273,9 @@ public enum MachineOrientation {
   /**
    * check orientation of pairs against required orientation
    * @param firstOnReferenceReverse true if smallest start position mapped read is reverse complement
-   * @param firstOnReferenceLeft true if smallest start position mapped read is from &quot;left&quot arm
+   * @param firstOnReferenceLeft true if smallest start position mapped read is from &quot;left&quot; arm
    * @param secondOnReferenceReverse true if greatest start position mapped read is reverse complement
-   * @param secondOnReferenceLeft true if greatest start position mapped read is from &quot;left&quot arm
+   * @param secondOnReferenceLeft true if greatest start position mapped read is from &quot;left&quot; arm
    * @return true if read arms obey required pair orientation
    */
   public abstract boolean orientationOkay(boolean firstOnReferenceReverse, boolean firstOnReferenceLeft, boolean secondOnReferenceReverse, boolean secondOnReferenceLeft);

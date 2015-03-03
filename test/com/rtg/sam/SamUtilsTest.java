@@ -355,6 +355,7 @@ public class SamUtilsTest extends TestCase {
       SamUtils.logRunId(header);
       assertTrue(mps.toString().contains("Referenced SAM file with RUN-ID: booyahhhhh"));
       mps.reset();
+      assertEquals("", mps.toString().trim());
       SamUtils.logRunId(header);
       assertEquals("", mps.toString().trim());
     } finally {

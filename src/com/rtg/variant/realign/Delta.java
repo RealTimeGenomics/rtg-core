@@ -142,7 +142,7 @@ public abstract class Delta extends IntegralAbstract implements DeltaInterface {
     mReverse.toString(sb);
   }
 
-  /** <code>setEnv</code> needs to be called before calling this. */
+  // <code>setEnv</code> needs to be called before calling this.
   String combinedToString() {
     final StringBuilder sb = new StringBuilder();
     combinedToString(sb);

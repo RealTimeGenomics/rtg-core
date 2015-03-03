@@ -29,6 +29,7 @@ import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
+import com.rtg.util.PortableRandom;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
@@ -253,10 +254,7 @@ CommonFlags.initNoGzip(flags);
   }
 
   GenomeMutator getMutator(Integer seed, boolean verbose, boolean simpleMnps, int minDistance, VariantParams variantParams, String sample) {
-    if (seed == null) {
-      return new GenomeMutator(verbose, simpleMnps, minDistance, variantParams, sample);
-    }
-    return new GenomeMutator(seed, verbose, simpleMnps, minDistance, variantParams, sample);
+    return new GenomeMutator(seed == null ? new PortableRandom() : new PortableRandom(seed), verbose, simpleMnps, minDistance, variantParams, sample);
   }
 
   /**

@@ -71,7 +71,7 @@ public final class MultiFamilyOrdering {
   /**
    * Create an ordering for a set of families such that any family appears before
    * a family that represents the next generation of one of its children members.
-   * <br />
+   * <br>
    * As a side effect we also set the number of mates parents have in the family object
    * @param families the families to order
    * @return the ordered families

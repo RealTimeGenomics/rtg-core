@@ -547,6 +547,7 @@ public enum VcfFormatField {
    * @param rec the VCF record for which the FORMAT field value will be added.
    * @param call the variant data to use to update the VCF record.
    * @param sample the variant sample to output the value for.
+   * @param sampleName the name of the sample to update.
    * @param params the variant output options params.
    * @param includePrevNt true when including previous NT in VCF output, false otherwise.
    */

@@ -205,7 +205,6 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
     mEqual = equal;
   }
 
-  /** Compute family marginals assuming priors have already corrected for number of alleles. E.g. via site-specific priors or via EM optimization */
   /**
    * Testing context only
    * Compute family marginals assuming priors have already corrected for number of alleles. E.g. via site-specific priors or via EM optimization
@@ -215,12 +214,8 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
     final BContainer[] bs = initialB();
     computeAlleles(as, bs);
   }
-  /** Compute family marginals assuming priors have already corrected for number of alleles. E.g. via site-specific priors or via EM optimization */
-  /**
-   * Testing context only
-   * Compute family marginals assuming priors have already corrected for number of alleles. E.g. via site-specific priors or via EM optimization
-   */
-  void computeAlleles(Factor<?>[] as, BContainer[] bs) {
+
+  private void computeAlleles(Factor<?>[] as, BContainer[] bs) {
     final Factor<?>[] childAs = computeChildAs(as, bs);
     System.arraycopy(childAs, 0, as, 2, childAs.length);
     final Factor<?>[] parentBs = computeParentBs(as, bs);

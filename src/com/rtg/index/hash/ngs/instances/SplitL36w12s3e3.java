@@ -25,7 +25,7 @@ import com.rtg.index.hash.ngs.TemplateCall;
  * Guaranteed to find all triple substitutions.
  * Guaranteed to find all triple indels.
  * <br>
- * <table>
+ * <table summary="mask cases">
  * <tr> <th>window</th> <th> id </th> <th> indel </th></tr>
  * <tr> <td><code>ooooxx</code></td>  <td> 0 </td> <td> 1 </td></tr>
  * <tr> <td><code>oooxxo</code></td>  <td> 1 </td> <td> 1 </td></tr>

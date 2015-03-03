@@ -16,8 +16,7 @@ import java.util.Stack;
 /**
  * An <code>ObjectFilter</code> that rejects instances of particular
  * classes. This implementation only compares exact classes, not
- * interfaces or subclasses.<p>
- *
+ * interfaces or subclasses.
  */
 public class ExcludeClassFilter {
 

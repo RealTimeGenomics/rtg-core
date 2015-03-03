@@ -61,6 +61,8 @@ abstract class AbstractStreamManager {
    * @param indexFile Name of file containing index
    * @param dataPrefix Filename prefix for data
    * @param pointerPrefix Filename prefix for pointers
+   * @param dataIndexVersion the version with which to interpret the data
+   * @param opener file opener implementation
    * @throws IOException If an I/O Error occurs
    */
   AbstractStreamManager(final File dir, final long numbersequences, final String indexFile, final String dataPrefix, final String pointerPrefix, long dataIndexVersion, DataFileOpener opener) throws IOException {
@@ -95,6 +97,8 @@ abstract class AbstractStreamManager {
 
   /**
    * Seeks to the given sequence number
+   * @param seqNum the sequence to seek to
+   * @throws IOException When IO errors occur
    */
   void seek(final long seqNum) throws IOException {
     if (seqNum < 0) {

@@ -211,7 +211,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
    * The following diagram illustrates the relationship of the various parts.
    * More detailed diagrams are given for individual methods below.
    * <br>
-   * <img src="doc-files/singleIndelGeneral.jpg" />
+   * <img src="doc-files/singleIndelGeneral.jpg" alt="explanatory image">
    * @param read the encoded read bases
    * @param rLen length of read (assumed that given read is at least this long)
    * @param template the encoded template
@@ -428,7 +428,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
   }
 
   /**
-   * <img src="doc-files/singleIndelForwardPositive.jpg" />
+   * <img src="doc-files/singleIndelForwardPositive.jpg" alt="explanatory image">
    * @param rStart start position for part of read to be explored (zero based).
    * @param rEnd end position for part of read to be explored (zero based, exclusive).
    * @param tEnd  end position for template (zero based, exclusive).
@@ -459,7 +459,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
   }
 
   /**
-   * <img src="doc-files/singleIndelForwardNegative.jpg" />
+   * <img src="doc-files/singleIndelForwardNegative.jpg" alt="explanatory image" >
    * @param rStart start position for read (zero based).
    * @param rEnd end position for read (zero based, exclusive).
    * @param tEnd  end position for template (zero based, exclusive).
@@ -502,7 +502,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
   }
 
   /**
-   * <img src="doc-files/singleIndelReversePositive.jpg" />
+   * <img src="doc-files/singleIndelReversePositive.jpg" alt="explanatory image" >
    * @param rStart start position for read (zero based).
    * @param rEnd end position to be explored on read (zero based, exclusive).
    * @param tStart  start position for template (zero based).
@@ -543,7 +543,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
   }
 
   /**
-   * <img src="doc-files/singleIndelReverseNegative.jpg" />
+   * <img src="doc-files/singleIndelReverseNegative.jpg" alt="explanatory image" >
    * @param rStart start position for read (zero based).
    * @param rEnd end position for read (zero based, exclusive).
    * @param tStart  start position for template (zero based).

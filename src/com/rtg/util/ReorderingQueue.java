@@ -64,12 +64,14 @@ public abstract class ReorderingQueue<T> implements AutoCloseable {
 
   /**
    * This method causes the record to actually leave the building
+   * @param rec the record
    * @throws IOException if an IO exception occurs
    */
   protected abstract void flushRecord(T rec) throws IOException;
 
   /**
    * Called when a record is seen that cannot be output due to reordering failure (buffer size too small).
+   * @param rec the record
    */
   protected abstract void reportReorderingFailure(T rec);
 

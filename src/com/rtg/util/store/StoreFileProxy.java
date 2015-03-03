@@ -32,9 +32,11 @@ public class StoreFileProxy extends IntegralAbstract implements StoreFile {
   private final File mFile;
 
   private final String mName;
+
   /**
    * Construct <code>StoreDirectory</code> rooted at the specified file.
    * @param file name of a file to be constructed.
+   * @param name the name to associate with the file
    */
   StoreFileProxy(final File file, final String name) {
     mFile = file;

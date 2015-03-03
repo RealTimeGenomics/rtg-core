@@ -100,6 +100,7 @@ public abstract class WeightedLattice extends IntegralAbstract {
   /**
    * Check if two lattices are approximately equal.
    * @param that lattice being checked.
+   * @param tolerance the amount of tolerance in the comparison
    * @return true iff the two lattices have all weights within tolerance of each other..
    */
   boolean approxEqual(final WeightedLattice that, final double tolerance) {

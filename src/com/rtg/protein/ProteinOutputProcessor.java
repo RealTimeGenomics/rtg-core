@@ -246,6 +246,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
    * @param readAndFrame read id and frame
    * @param plen length in protein space
    * @return false if result should be discarded
+   * @throws java.io.IOException if an I/O error occurs
    */
     protected boolean retainResult(final int[] res, final int readId, final int templateId, final int readAndFrame, final int plen) throws IOException {
        final int alignmentScore = ActionsHelper.alignmentScore(res);
@@ -399,7 +400,11 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
     return (int) (plen * 0.6 + 0.5);
   }
 
-  /** Switch to another template */
+  /**
+   * Switch to another template
+   * @param templateId the id of the next template sequence
+   * @throws java.io.IOException if an I/O error occurs
+   */
   protected void nextTemplateId(long templateId) throws IOException {
     mCurrentTemplateId = templateId;
     mTemplate.seek(templateId);

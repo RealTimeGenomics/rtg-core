@@ -88,6 +88,7 @@ public class DefaultFactor extends AbstractFactor implements ToDefaultFactor {
    * Create a unit factor for the given scope.  That is, the factor that is everywhere one.
    * @param arith arithmetic
    * @param scope variables
+   * @return the unit factor
    */
   static DefaultFactor unit(final PossibilityArithmetic arith, final Set<Variable> scope) {
     final DefaultFactor f = new DefaultFactor(arith, scope);

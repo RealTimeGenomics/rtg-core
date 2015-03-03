@@ -17,7 +17,7 @@ import com.rtg.util.integrity.Exam;
 
 /**
  * Square distribution, <code>rate1</code> at left and <code>rate2</code> at right.
- * <img src="doc-files/notch.jpg" />
+ * <img src="doc-files/notch.jpg" alt="image">
  */
 public class DistributionStep extends Distribution {
 

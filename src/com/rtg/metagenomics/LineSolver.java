@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. Real Time Genomics Limited.
+ * Copyright (c) 2015. Real Time Genomics Limited.
  *
  * Use of this source code is bound by the Real Time Genomics Limited Software Licence Agreement
  * for Academic Non-commercial Research Purposes only.
@@ -11,58 +11,18 @@
  */
 package com.rtg.metagenomics;
 
-import com.rtg.util.diagnostic.Diagnostic;
-
 /**
+ * Interface for different types of root finding mechanisms.
+ * Looks for a zero in the function.
  */
-final class LineSolver {
-
-  static final double RELATIVE_THRESHOLD = 0.01;
-
-  private final boolean mVeryVerbose;
-
-  private final AbstractSolver mSolver;
+public interface LineSolver {
 
   /**
-   * Constructor setting verbose debugging output.
-   * @param veryVerbose verbose output.
+   * Finds point where line crosses y at 0.  Assumes this is at a point where x is greater than 0.
+   * @param line line the process
+   * @param relThreshold termination threshold
+   * @return cross over point
    */
-  public LineSolver(AbstractSolver solver, boolean veryVerbose) {
-    if (solver == null) {
-      throw new NullPointerException("null solver given.");
-    }
-    mSolver = solver;
-    mVeryVerbose = veryVerbose;
-  }
+  double solveLine(Line line, double relThreshold);
 
-  public double solveLine(final Line line, final double relThreshold) {
-    final Line vline = new LineVerbose(line, mVeryVerbose);
-    final double x = mSolver.solveLine(vline, relThreshold);
-
-    assert x >= 0.0 && AbstractSolver.isFinite(x);
-    //assert x == 0.0 || line.value(x) <= 0.0;
-    return x;
-  }
-
-  private static class LineVerbose extends Line {
-    private final Line mProxy;
-    private final boolean mVeryVerbose;
-    /**
-     * @param proxy proxy line
-     * @param veryVerbose print very verbose information
-     */
-    public LineVerbose(Line proxy, boolean veryVerbose) {
-      super();
-      mProxy = proxy;
-      mVeryVerbose = veryVerbose;
-    }
-    @Override
-    public double value(double x) {
-      final double v = mProxy.value(x);
-      if (mVeryVerbose) {
-        Diagnostic.developerLog("lineValue x: " + x + " v: " + v);
-      }
-      return v;
-    }
-  }
 }

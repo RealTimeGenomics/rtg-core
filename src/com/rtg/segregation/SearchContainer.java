@@ -45,8 +45,10 @@ class SearchContainer extends IntegralAbstract implements Comparable<SearchConta
    * @param score smaller is better.
    * @param lastOK last container that is phase compatible.
    * @param block the current block.
+   * @param pattern the pattern for this block
    * @param type of the container.
    * @param xo cross over - null unless search type is <code>XO</code>.
+   * @param id unique identifier
    */
   SearchContainer(SearchContainer prevLink, double score, SearchContainer lastOK, SegregationBlock block, PatternArray pattern, SearchType type, CrossOver xo, long id) {
     mPrevLink = prevLink;
@@ -67,7 +69,7 @@ class SearchContainer extends IntegralAbstract implements Comparable<SearchConta
     return mScore;
   }
 
-  /** The pattern of this block and any previous phase compatible containers. May be more precise than individual blocks. */
+  /** @return the pattern of this block and any previous phase compatible containers. May be more precise than individual blocks. */
   PatternArray pattern() {
     return mPattern;
   }

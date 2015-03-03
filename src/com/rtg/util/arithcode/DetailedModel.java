@@ -35,8 +35,8 @@ interface DetailedModel extends ArithCodeModel {
    * Calculates <code>{low count, high count, total count}</code> for
    * the given symbol in the current context.
    * The cumulative counts
-   * in the return must be such that <code>0 <= low count < high
-   * count <= total count</code>.
+   * in the return must be such that <code>0 &lt;= low count &lt; high
+   * count &lt;= total count</code>.
    * <P>
    * This method will be called exactly once for each symbol being
    * encoded or decoded, and the calls will be made in the order in

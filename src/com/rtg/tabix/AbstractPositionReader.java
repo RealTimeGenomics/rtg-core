@@ -88,6 +88,7 @@ abstract class AbstractPositionReader implements BlockCompressedPositionReader {
   /**
    * implementors should set the {@link AbstractPositionReader#mReferenceName} field to
    * the name of the reference sequence that applies to the current record
+   * @throws java.io.IOException if there is an I/O problem
    */
   protected abstract void setReferenceName() throws IOException;
 
@@ -95,6 +96,7 @@ abstract class AbstractPositionReader implements BlockCompressedPositionReader {
    * implementors should set the {@link AbstractPositionReader#mStartPosition} field to
    * the start position (0-based) on the reference of the current record and the {@link AbstractPositionReader#mLengthOnReference}
    * field to the length of the region the current record applies to
+   * @throws java.io.IOException if there is an I/O problem
    */
   protected abstract void setStartAndLength() throws IOException;
 
@@ -190,6 +192,7 @@ abstract class AbstractPositionReader implements BlockCompressedPositionReader {
    * Get the value from the given column of the current record
    * @param col zero base column
    * @return the value
+   * @throws java.io.IOException if there is an I/O problem
    */
   protected String getColumn(int col) throws IOException {
     populateTabs(col);
@@ -205,6 +208,7 @@ abstract class AbstractPositionReader implements BlockCompressedPositionReader {
    * Get the value from the given column of the current record as an integer
    * @param col zero base column
    * @return the value
+   * @throws java.io.IOException if there is an I/O problem
    */
   protected int getIntColumn(int col) throws IOException {
     try {

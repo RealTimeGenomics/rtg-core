@@ -26,7 +26,7 @@ import com.rtg.index.hash.ngs.TemplateCall;
  * l = 51 w = 15 s = 3 e = 2
  *
  * <br>
- * <table border="1">
+ * <table summary="mask cases" border="1">
  * <tr> <th>window</th> <th> id </th> <th> indel </th></tr>
  * <tr>  <td> 0000000111</td> <td> 0</td> <td> 1</td> </tr>
  * <tr>  <td> 0000001110</td> <td> 1</td> <td> 1</td> </tr>

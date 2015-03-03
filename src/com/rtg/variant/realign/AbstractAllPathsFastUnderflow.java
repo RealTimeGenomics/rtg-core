@@ -46,6 +46,7 @@ public abstract class AbstractAllPathsFastUnderflow extends IntegralAbstract imp
    * Make a new scoring matrix.
    * @param arith helper object that does the arithmetic so that this code can be independent of the representation.
    * @param params the gap probabilities to use.
+   * @return the new matrix
    */
   protected abstract AllPaths makeMatrix(final PossibilityArithmetic arith, final RealignParams params);
 

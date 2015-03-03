@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.Queue;
 
 import com.rtg.util.Pair;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.RegionRestriction;
 
 /**
  * Parsing for reference file.
@@ -64,6 +64,7 @@ class ReferenceParse {
 
   /**
    * Test if lengths of regions the same.
+   * @param sequenceLengths map containing sequence lengths, used to resolve unresolved lengths in regions
    * @param r1 first region to be checked.
    * @param r2 second region to be tested.
    * @return true iff their lengths are the same.

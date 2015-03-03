@@ -175,6 +175,7 @@ public class GraphAligner {
    * @param currentContigId contig to match against
    * @param contigPosition position within the contig to start matching
    * @param increment which direction to travel along both contig and read (+1 for forwards, -1 for backwards)
+   * @param currentScore contain the score computed so far
    * @return a pair containing the length of the matched sequence and the number of mismatches
    */
   ContigAlignment alignDirectedSingleContig(byte[] read, int readPos, long currentContigId, int contigPosition, int increment, int currentScore) {

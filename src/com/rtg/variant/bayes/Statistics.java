@@ -57,23 +57,23 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
 
   /**
    * Increment the statistics.
-   * @param distribution with probabilities for hypotheses.
+   * @param evidence with probabilities for hypotheses.
    * @param reference code for reference allele
    */
-  public final void increment(final EvidenceInterface distribution, int reference) {
-    if (distribution.isUnmapped()) {
+  public final void increment(final EvidenceInterface evidence, int reference) {
+    if (evidence.isUnmapped()) {
       mCountUnmapped++;
       return; // Don't increment any other stats for unmapped evidence
     }
 
-    final int read = distribution.read();
+    final int read = evidence.read();
     int bestHyp = read;
     if (read == EvidenceInterface.NULL) {
       bestHyp = -1;
       double bestprob = 0.0;
       for (int i = 0; i < mDescription.size(); i++) {
-        if (i == 0 || distribution.probability(i) > bestprob) {
-          bestprob = distribution.probability(i);
+        if (i == 0 || evidence.probability(i) > bestprob) {
+          bestprob = evidence.probability(i);
           bestHyp = i;
         }
       }
@@ -83,28 +83,28 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
     }
 
     // Used for short circuit detection, integer increments OK
-    if (distribution.read() != reference) {
+    if (evidence.read() != reference) {
       mNonRefCount++;
     }
 
     // Used for internally self-consistent stats calculations, so can be integer increments
-    final boolean left = distribution.getReadBasesLeft() >= distribution.getReadBasesRight();
-    final boolean right = distribution.getReadBasesRight() >= distribution.getReadBasesLeft();
+    final boolean left = evidence.getReadBasesLeft() >= evidence.getReadBasesRight();
+    final boolean right = evidence.getReadBasesRight() >= evidence.getReadBasesLeft();
     if (left) {
       mCountLeft++;
     }
     if (right) {
       mCountRight++;
     }
-    incrementBest(distribution, bestHyp);
+    incrementBest(evidence, bestHyp);
   }
 
   /**
    * Increment the statistics.
-   * @param distribution with probabilities for hypotheses.
+   * @param evidence with probabilities for hypotheses.
    * @param bestHyp code for the best hypothesis supported by this piece of evidence
    */
-  protected abstract void incrementBest(final EvidenceInterface distribution, int bestHyp);
+  protected abstract void incrementBest(final EvidenceInterface evidence, int bestHyp);
 
   /**
    * @return the effective coverage for the model

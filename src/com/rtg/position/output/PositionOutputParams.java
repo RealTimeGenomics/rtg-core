@@ -117,20 +117,6 @@ public class PositionOutputParams extends ObjectParams implements OutputDirParam
     return mTopN;
   }
 
-  /**
-   * Check if a and b are equal when either can be null.
-   * @return true iff a and b are equal including being both null.
-   */
-  static boolean equalNull(final Object a, final Object b) {
-    if (a == b) {
-      return true;
-    }
-    if (a == null || b == null) {
-      return false;
-    }
-    return a.equals(b);
-  }
-
   @Override
   public String toString() {
     return "outputDir=" + mOutDir + " format=" + mFormatType + " zip=" + mZip

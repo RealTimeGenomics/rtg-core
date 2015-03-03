@@ -23,7 +23,7 @@ import java.util.NoSuchElementException;
  * This is in the form of the total fixed memory used by each instance
  * of the class and a list of all fields declared for the class
  * (locally and in superclasses and irrespective of protections). Can
- * be run from command line: <p>
+ * be run from command line:
  *
  * <pre>
  * java com.rtg.util.memory.ClassMemory CLASSNAME

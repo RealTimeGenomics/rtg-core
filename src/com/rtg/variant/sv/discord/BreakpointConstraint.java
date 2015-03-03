@@ -27,12 +27,12 @@ import net.sf.samtools.SAMRecord;
  * The diagrams below illustrate the conventions used in representing the possible range of values
  * (via <code>gapMean()</code> and <code>gapStdDEv()</code>) and the various reads alignments that can give rise to the different cases.
  *
- * <img src="doc-files/BreakpointDiagrams/Slide5.jpg" />
- * <img src="doc-files/BreakpointDiagrams/Slide1.jpg" />
- * <img src="doc-files/BreakpointDiagrams/Slide2.jpg" />
- * <img src="doc-files/BreakpointDiagrams/Slide3.jpg" />
- * <img src="doc-files/BreakpointDiagrams/Slide4.jpg" />
- * <img src="doc-files/BreakpointDiagrams/Slide7.jpg" />
+ * <img src="doc-files/BreakpointDiagrams/Slide5.jpg" alt="image">
+ * <img src="doc-files/BreakpointDiagrams/Slide1.jpg" alt="image">
+ * <img src="doc-files/BreakpointDiagrams/Slide2.jpg" alt="image">
+ * <img src="doc-files/BreakpointDiagrams/Slide3.jpg" alt="image">
+ * <img src="doc-files/BreakpointDiagrams/Slide4.jpg" alt="image">
+ * <img src="doc-files/BreakpointDiagrams/Slide7.jpg" alt="image">
  *
  */
 public final class BreakpointConstraint extends AbstractBreakpointGeometry {

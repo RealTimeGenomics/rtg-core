@@ -18,10 +18,10 @@ import java.util.Arrays;
 import java.util.zip.CRC32;
 
 import com.rtg.mode.SequenceType;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.Integrity;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.ByteArrayIOUtils;
 import com.rtg.util.io.IOUtils;
 import com.rtg.util.io.SeekableStream;
@@ -580,11 +580,12 @@ public final class DefaultSequencesReader extends AbstractSequencesReader implem
    * a scratch array to read data into.
    *
    * @param raf File to read from
-   * @param buffer scratch buffer, should be length multiple of 4
+   * @param buffer scratch buffer, should be length multiple of <code>entrySize</code>
    * @param lengths array to read integers into, all but last contain lengths not pointers
    * @param initSeqNo position to start reading integers into
    * @param initPos starting position in file
    * @param endPos ending position in file
+   * @param entrySize the number of bytes for each entry
    * @return position after last read into array
    * @throws java.io.IOException We be reading from files here, you know what to expect.
    */

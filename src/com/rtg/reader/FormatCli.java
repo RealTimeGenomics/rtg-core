@@ -44,7 +44,6 @@ import com.rtg.sam.SamFilterParams;
 import com.rtg.util.Constants;
 import com.rtg.util.IORunnable;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.SimpleThreadPool;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
@@ -56,6 +55,7 @@ import com.rtg.util.diagnostic.InformationType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.diagnostic.SlimException;
 import com.rtg.util.diagnostic.WarningType;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.InputFileUtils;
 import com.rtg.util.io.LogStream;
 
@@ -63,7 +63,7 @@ import net.sf.samtools.SAMReadGroupRecord;
 
 /**
  * Perform the prereading of sequence data, into a format that is understood
- * by SLIM.<p>
+ * by RTG.
  *
  */
 public final class FormatCli extends LoggedCli {

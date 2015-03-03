@@ -86,7 +86,7 @@ public class MemoryUsage {
   public static final int LONG_ARRAY = 8;
   /** The size of one double when inside an array. */
   public static final int DOUBLE_ARRAY = 8;
-  /** All objects encountered via hard references. Set<Object> */
+  /** All objects encountered via hard references. Set&lt;Object&gt; */
   protected transient IdentitySet mHardrefs = null;
   /**
    * Objects encountered as Reference(s). They are held as Reference(s)
@@ -549,8 +549,8 @@ public class MemoryUsage {
   }
 
   /**
-   * An iterator over all the Map&lt;Class<?>,Count&gt; of statistics vs Class
-   * for memory only accessible via soft(also phantom and weak)
+   * An iterator over all the Map&lt;Class&lt;?&gt;,Count&gt; of statistics vs Class
+   * for memory only accessible via soft (also phantom and weak)
    * references.
    * @return The soft iterator value
    */

@@ -15,6 +15,7 @@ package com.rtg.util;
 import java.util.List;
 
 /**
+ * Calculates mean and standard deviation from samples.
  */
 public class StandardDeviation {
   private double mSum = 0;
@@ -55,7 +56,6 @@ public class StandardDeviation {
 
   /**
    * Calculates mean
-   * <code></code>
    * @return mean
    */
   public double mean() {

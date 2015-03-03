@@ -77,9 +77,7 @@ public class MemScore extends IntegralAbstract {
   }
 
 
-  /**
-   * @return bitwise difference in the arguments.
-   */
+  // return bitwise difference in the arguments.
   static long simpleDiff(final long a0, final long a1, final long b0, final long b1) {
     //System.err.println("a0=" + com.rtg.util.Utils.toBitsSep(a0));
     //System.err.println("a1=" + com.rtg.util.Utils.toBitsSep(a1));

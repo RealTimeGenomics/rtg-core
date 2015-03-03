@@ -27,6 +27,7 @@ public class HypothesesDisease extends Hypotheses<Description> {
   private final double mDisease;
 
   /**
+   * @param description the base descriptions
    * @param noDiseasePrior prior probability that there is no disease explanation.
    * @param ref the reference in a code for <code>description</code>.
    */

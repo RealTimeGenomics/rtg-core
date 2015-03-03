@@ -39,6 +39,7 @@ public final class MD5Utils {
   /**
    * Read all of the input stream and return it's MD5 digest.
    * @param in input stream to be read
+   * @param bufferLength length of buffer to read at a time
    * @return MD5 digest.
    * @throws IOException when reading input stream.
    */

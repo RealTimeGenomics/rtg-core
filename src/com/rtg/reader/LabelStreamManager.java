@@ -20,26 +20,15 @@ import java.io.IOException;
  * should only be used by DefaultSequencesReader
  */
 class LabelStreamManager extends AbstractStreamManager {
-  /**
-   * Creates a the stream manager
-   * @param dir Directory containing sequence data
-   * @param numberSequences Number of sequences in directory
-   * @throws IOException If an I/O Error occurs
-   */
+
   LabelStreamManager(final File dir, final long numberSequences, final String indexFile, final String dataPrefix, final String pointerPrefix, long dataIndexVersion, DataFileOpenerFactory openerFactory) throws IOException {
     super(dir, numberSequences, indexFile, dataPrefix, pointerPrefix, dataIndexVersion, openerFactory.getLabelOpener());
   }
 
-  /**
-   * Creates a stream manager for names
-   */
   static LabelStreamManager getNameStreamManager(File dir, long numberSequences, long dataIndexVersion, DataFileOpenerFactory openerFactory) throws IOException {
     return new LabelStreamManager(dir, numberSequences, SdfFileUtils.LABEL_INDEX_FILENAME, SdfFileUtils.LABEL_DATA_FILENAME, SdfFileUtils.LABEL_POINTER_FILENAME, dataIndexVersion, openerFactory);
   }
 
-  /**
-   * Creates a stream manager for name suffixes
-   */
   static LabelStreamManager getSuffixStreamManager(File dir, long numberSequences, long dataIndexVersion, DataFileOpenerFactory openerFactory) throws IOException {
     return new LabelStreamManager(dir, numberSequences, SdfFileUtils.LABEL_SUFFIX_INDEX_FILENAME, SdfFileUtils.LABEL_SUFFIX_DATA_FILENAME, SdfFileUtils.LABEL_SUFFIX_POINTER_FILENAME, dataIndexVersion, openerFactory);
   }

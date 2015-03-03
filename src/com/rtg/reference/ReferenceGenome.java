@@ -39,7 +39,7 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
  * The first line starts with a keyword "version", with the second field being a string containing no white space.
  * It is assumed that version numbers are ordered on normal String collating order.
  * Each remaining line starts with a sex field (one of &quot;male&quot;, &quot;female&quot;, &quot;either&quot;)
- * and then a type specifier one of <code>&quot;def&quot;</code> (default), <code>&quot;seq&quot</code>; (sequence),
+ * and then a type specifier one of <code>&quot;def&quot;</code> (default), <code>&quot;seq&quot;</code>; (sequence),
  * <code>&quot;dup&quot;</code> (duplicate).
  * The order of these lines is immaterial.
  */

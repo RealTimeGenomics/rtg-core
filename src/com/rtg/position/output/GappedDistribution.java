@@ -233,7 +233,7 @@ public class GappedDistribution extends IntegralAbstract {
       maxd[i] = mx;
     }
     //System.err.println(Arrays.toString(maxd));
-    final GapProbabilitiesScorer gapProbabilities = new GapProbabilitiesScorer(0, gapThreshold, probs, maxd);
+    final GapProbabilitiesScorer gapProbabilities = new GapProbabilitiesScorer(gapThreshold, probs, maxd);
     gapProbabilities.globalIntegrity();
     return gapProbabilities;
   }

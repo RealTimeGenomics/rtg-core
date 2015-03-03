@@ -350,7 +350,7 @@ public class VariantSample {
    * Produce a set containing the pair of strings
    * @param a first string
    * @param b second string
-   * @return a set containing a & b
+   * @return a set containing a &amp; b
    */
   public static Set<String> pairSet(String a, String b) {
     final Set<String> set = new HashSet<>();

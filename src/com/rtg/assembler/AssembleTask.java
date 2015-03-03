@@ -60,6 +60,7 @@ final class AssembleTask extends ParamsTask<AssembleParams, GraphMapStatistics> 
    * Run all steps in assemble process
    * @param assembleParams parameters containing all the assembly options
    * @param printStream output goes here
+   * @param stats statistics object to populate.
    * @throws IOException when some terrible tragedy occurs in the assembly IO
    */
   public static void assemble(AssembleParams assembleParams, PrintStream printStream, GraphMapStatistics stats) throws IOException {

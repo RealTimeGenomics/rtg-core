@@ -142,7 +142,7 @@ public class GapProbabilitiesScorerTest extends TestCase {
    * Also maxDelta on first row.
    */
   public void testDelta() {
-    final GapProbabilitiesScorer gp = new GapProbabilitiesScorer(0, 0.1, new double[][]{{0.0, 0.1, 0.1}}, new double[] {0.1});
+    final GapProbabilitiesScorer gp = new GapProbabilitiesScorer(0.1, new double[][]{{0.0, 0.1, 0.1}}, new double[] {0.1});
     gp.globalIntegrity();
     assertEquals(-2, gp.minDelta());
     assertEquals(-1, gp.maxDelta());
@@ -152,7 +152,7 @@ public class GapProbabilitiesScorerTest extends TestCase {
    * Use a weird underlying distrbution to force the maxDelta to be negative.
    */
   public void testMaxDelta() {
-    final GapProbabilitiesScorer gp = new GapProbabilitiesScorer(0, 0.1, new double[][]{{0.0, 0.0, 0.0}, {0.0, 0.1, 0.1}}, new double[] {0.0, 0.1});
+    final GapProbabilitiesScorer gp = new GapProbabilitiesScorer(0.1, new double[][]{{0.0, 0.0, 0.0}, {0.0, 0.1, 0.1}}, new double[] {0.0, 0.1});
     gp.globalIntegrity();
     assertEquals(-1, gp.minDelta());
     assertEquals(0, gp.maxDelta());
@@ -162,7 +162,7 @@ public class GapProbabilitiesScorerTest extends TestCase {
    * Use an all zero underlying distrbution to force the maxDelta and minDelta to be very large/small.
    */
   public void testEmptyDelta() {
-    final GapProbabilitiesScorer gp = new GapProbabilitiesScorer(0, 0.1, new double[][]{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}}, new double[] {0.0, 0.0});
+    final GapProbabilitiesScorer gp = new GapProbabilitiesScorer(0.1, new double[][]{{0.0, 0.0, 0.0}, {0.0, 0.0, 0.0}}, new double[] {0.0, 0.0});
     gp.globalIntegrity();
     assertEquals(Integer.MAX_VALUE, gp.minDelta());
     assertEquals(Integer.MIN_VALUE, gp.maxDelta());

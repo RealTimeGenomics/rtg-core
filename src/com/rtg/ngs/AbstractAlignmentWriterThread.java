@@ -38,6 +38,9 @@ abstract class AbstractAlignmentWriterThread implements IORunnable {
    *
    * @param writer an <code>AbstractSamAlignmentWriter</code> that will receive the results to write
    * @param results the set of all results to be aligned and written, which will be partitioned among the threads
+   * @param chunkStart start position of this chunk of output
+   * @param chunkEnd end position of this chunk of output
+   * @param region contains region info regarding padding etc.
    * @param threadNumber the number of this thread
    */
   AbstractAlignmentWriterThread(AbstractTempFileWriter writer, MatchResult results, long chunkStart, long chunkEnd, HashingRegion region, int threadNumber) {

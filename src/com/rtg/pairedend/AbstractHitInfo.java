@@ -32,6 +32,9 @@ public abstract class AbstractHitInfo<T extends AbstractHitInfo<T>> {
 
   /**
    * @param first true if hit is from &quot;left&quot; read arm. That is, first in sequencing
+   * @param reverseComplement true if read hit on reverse frame
+   * @param readId the read ID
+   * @param templateStart position of the hit
    */
   void setValues(final boolean first, final boolean reverseComplement, int readId, final int templateStart) {
     mFirst = first;

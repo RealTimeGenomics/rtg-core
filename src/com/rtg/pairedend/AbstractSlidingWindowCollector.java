@@ -126,7 +126,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
     return x + 1;
   }
 
-  /** Calculate an index into <code>mReadsLookup</code> hash table. */
+  // Calculate an index into <code>mReadsLookup</code> hash table.
   int readHash(long readId, boolean first) {
     return ((int) readId & mReadsLookupMask) ^ (first ? 1 : 0);
   }
@@ -341,6 +341,8 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
    * Clear all the hits at a position in the window that is about to slide out.
    * Clears the slot in the window along with any other hits
    * in the hash table that have a position that will also be cleared.
+   * @param hits the hit list
+   * @param size the number of currently used elements
    */
   void clearHits(final ArrayList<T> hits, int size) {
     final int count = hits.size();

@@ -109,7 +109,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
    * The following diagram illustrates the relationship of the various parts.
    * More detailed diagrams are given for individual methods below.
    * <br>
-   * <img src="doc-files/singleIndelGeneral.jpg" />
+   * <img src="doc-files/singleIndelGeneral.jpg" alt="explanatory image">
    * @param read the encoded read bases
    * @param rLen length of read (assumed that given read is at least this long)
    * @param template the encoded template

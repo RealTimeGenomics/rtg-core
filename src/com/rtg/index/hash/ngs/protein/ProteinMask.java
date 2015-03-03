@@ -251,7 +251,6 @@ public class ProteinMask extends ImplementHashFunction {
     sb.append("Mask l=").append(readLength()).append(" w=").append(mSkeleton.windowBits() / 2).append(" s=").append(mSkeleton.substitutions()).append(" i=").append(mSkeleton.indels());
   }
 
-  /** For use by unit tests. */
   boolean integrity(int soFar, long... vs) {
     Exam.assertEquals(soFar, mSoFar);
     Exam.assertEquals(vs.length, mValuesF.length);

@@ -19,12 +19,12 @@ package com.rtg.variant.bayes;
  * This is done in two steps. The diagram below shows the numbering of a mathematically simpler triangular code.
  * This uses pairs <code>i, j where i + j &lt; l</code>. We use the variable <code>k = i + j</code>.
  * <Br>
- * <img src="doc-files/diagrams/trimmed1.jpg" />
+ * <img src="doc-files/diagrams/trimmed1.jpg" alt="image">
  * <br><br>
  * The diagram below shows the numbering for the final a, b code which is obtained by transformation from the
  * triangular code.
  * <br>
- * <img src="doc-files/diagrams/trimmed2.jpg" />
+ * <img src="doc-files/diagrams/trimmed2.jpg" alt="image">
  */
 public final class CodeDiploid implements Code {
   /** Table of <code>k(n)</code> values. */

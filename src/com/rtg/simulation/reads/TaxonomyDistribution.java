@@ -34,9 +34,8 @@ import com.rtg.util.diagnostic.Diagnostic;
  */
 public class TaxonomyDistribution {
   enum DistributionType {
-    ABUNDANCE
-    , DNA_FRACTION
-
+    ABUNDANCE,
+    DNA_FRACTION
   }
   private final double[] mDistribution;
 
@@ -52,6 +51,7 @@ public class TaxonomyDistribution {
    * @param taxonomyDist input stream specifying the relative DNA fraction of taxonomy ids
    * @param taxonLookup mapping from sequence name to taxonomy id
    * @param reader reader providing length and name information
+   * @param type specifies how to interpret the loaded distribution
    * @throws IOException if either the input stream parsing or sequence reader fails
    */
   TaxonomyDistribution(InputStream taxonomyDist, Map<String, Integer> taxonLookup, SequencesReader reader, DistributionType type) throws IOException {

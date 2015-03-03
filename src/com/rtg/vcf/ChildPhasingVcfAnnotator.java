@@ -93,6 +93,10 @@ public class ChildPhasingVcfAnnotator implements VcfAnnotator {
    * Assumes input obeys mendelian constraints.
    * If the call cannot be phased, returns null.
    * If the call can be phased, it is ordered such that the father allele comes first (this is for consistency with our child sim tools).
+   * @param fatherCall the genotype call of the father
+   * @param motherCall the genotype call of the mother
+   * @param childCall the genotype call of the child
+   * @return the child genotype call, or null if it could not be phased
    */
   static String phaseDiploidCall(String fatherCall, String motherCall, String childCall) {
     final int[] childAlleles = VcfUtils.splitGt(childCall);

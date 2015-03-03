@@ -80,7 +80,7 @@ class NameFilePair {
 
   /**
    * Closes internal OutputStreams
-   * @throws IOException
+   * @throws IOException When IO errors occur
    */
   public void close() throws IOException {
     mNameData.close();

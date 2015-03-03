@@ -53,7 +53,7 @@ public final class Exam {
    * dont depend on assertions being enabled.
    * @param check if false then throw an error.
    * @return true iff the check passed.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertTrue(final boolean check) {
     if (!check) {
@@ -69,7 +69,7 @@ public final class Exam {
    * dont depend on assertions being enabled.
    * @param check if true then throw an error.
    * @return true iff the check passed.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertFalse(final boolean check) {
     if (check) {
@@ -86,7 +86,7 @@ public final class Exam {
    * @param check if false then throw an error.
    * @param msg message to be included with the exception.
    * @return true iff the check passed.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertTrue(final String msg, final boolean check) {
     if (!check) {
@@ -103,7 +103,7 @@ public final class Exam {
    * @param check if false then throw an error.
    * @param msg message to be included with the exception.
    * @return true iff the check passed.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertFalse(final String msg, final boolean check) {
     if (check) {
@@ -116,7 +116,7 @@ public final class Exam {
    * Assert that object isnt null.
    * @param obj object to be checked.
    * @return true iff obj is not null.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertNotNull(final Object obj) {
     if (obj == null) {
@@ -130,7 +130,7 @@ public final class Exam {
    * @param msg a message.
    * @param obj object to be checked.
    * @return true iff obj is not null.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertNotNull(final String msg, final Object obj) {
     if (obj == null) {
@@ -145,7 +145,7 @@ public final class Exam {
    * @param a parameter
    * @param b parameter
    * @return true iff (a == b or a.equals(b))
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertEquals(final String msg, final Object a, final Object b) {
     if (a == b) {
@@ -162,7 +162,7 @@ public final class Exam {
    * @param a parameter
    * @param b parameter
    * @return true iff (a == b)
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertEquals(final Object a, final Object b) {
     if (a == b) {
@@ -179,7 +179,7 @@ public final class Exam {
    * @param a parameter
    * @param b parameter
    * @return true iff (a == b)
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertEquals(final int a, final int b) {
     if (a == b) {
@@ -194,7 +194,7 @@ public final class Exam {
    * @param a parameter
    * @param b parameter
    * @return true iff (a == b)
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertEquals(final String msg, final long a, final long b) {
     if (a == b) {
@@ -208,7 +208,7 @@ public final class Exam {
    * @param a parameter
    * @param b parameter
    * @return true iff (a == b)
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertEquals(final long a, final long b) {
     if (a == b) {
@@ -222,7 +222,7 @@ public final class Exam {
    * @param a parameter
    * @param b parameter
    * @return true iff (a == b)
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertEquals(final double a, final double b) {
     if (Double.isNaN(a) && Double.isNaN(b)) {
@@ -238,7 +238,7 @@ public final class Exam {
    * Check if a double is a finite number (not NaN or infinite).
    * @param a parameter
    * @return true iff a finite.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertIsNumber(final double a) {
     if (!Double.isInfinite(a) && !Double.isNaN(a)) {
@@ -253,7 +253,7 @@ public final class Exam {
    * @param b parameter
    * @param tolerance allowance for difference between a and b.
    * @return true iff (a == b)
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertEquals(final double a, final double b, final double tolerance) {
     assertIsNumber(a);
@@ -271,7 +271,7 @@ public final class Exam {
    * @param b parameter
    * @param tolerance allowance for difference between a and b.
    * @return true iff (a == b)
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertEquals(final String msg, final double a, final double b, final double tolerance) {
     assertIsNumber(a);
@@ -288,7 +288,7 @@ public final class Exam {
    * @param b parameter
    * @param tolerance allowance for difference between a and b.
    * @return true iff (a == b)
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean checkEquals(final double a, final double b, final double tolerance) {
     assertIsNumber(a);
@@ -300,7 +300,7 @@ public final class Exam {
    * Check that array in ascending order.
    * @param a array to be checked.
    * @return true if array in correct order.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertSorted(final double[] a) {
     for (int i = 1; i < a.length; i++) {
@@ -313,7 +313,7 @@ public final class Exam {
    * Check that array in descending order.
    * @param a array to be checked.
    * @return true if array in correct order.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertDescending(final double[] a) {
     for (int i = 1; i < a.length; i++) {
@@ -326,7 +326,7 @@ public final class Exam {
    * Assert that the array contains a valid probability distribution that sums to 1.0.
    * @param da array to be checked.
    * @return true if all correct.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertDistribution(final double[] da) {
     double sum = 0.0;
@@ -346,7 +346,7 @@ public final class Exam {
    * @param da array to be checked.
    * @param tolerance when checking individual values and total.
    * @return true if all correct.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertDistribution(final double[] da, final double tolerance) {
     double sum = 0.0;
@@ -365,7 +365,7 @@ public final class Exam {
    * Assert that the array contains valid probabilities.
    * @param da array to be checked.
    * @return true if all correct.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertProbabilities(final double[] da) {
     for (final double d : da) {
@@ -379,7 +379,7 @@ public final class Exam {
    * probability and the last element is 1.0.
    * @param da array to be checked.
    * @return true if all correct.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertCumulative(final double[] da) {
     final double tolerance = 0.000001;
@@ -400,7 +400,7 @@ public final class Exam {
    * Assert that p is a probability (can be 0.0 and 1.0 with a tolerance).
    * @param p value to be checked.
    * @return true if ok.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertProbability(final double p) {
     if (p >= 0.0 && p <= 1.000001 && !Double.isNaN(p)) {
@@ -413,7 +413,7 @@ public final class Exam {
    * Assert that p is a probability (strictly greater than 0.0).
    * @param p value to be checked.
    * @return true if ok.
-   * @throws AssertionError
+   * @throws AssertionError if the assertion failed
    */
   public static boolean assertStrictProbability(final double p) {
     if (p > 0.0 && p <= 1.0 && !Double.isNaN(p)) {

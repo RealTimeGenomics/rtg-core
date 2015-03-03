@@ -36,7 +36,7 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(FunctionalMetaPipelineCliTest.class);
     suite.addTestSuite(IdSetTest.class);
     suite.addTestSuite(LLineTest.class);
-    suite.addTestSuite(LineSolverTest.class);
+    suite.addTestSuite(LoggingLineSolverTest.class);
     suite.addTestSuite(LineTest.class);
     suite.addTestSuite(LinearInterpolationSolverTest.class);
     suite.addTestSuite(MetaPipelineParamsTest.class);

@@ -33,6 +33,7 @@ public class SamAssistanceSimple implements SamAssistance {
   /**
    * @param cigar string.
    * @param read nucleotides of read.
+   * @param template nucleotides of template
    * @param readStart where the read starts on the template (in screen co-ordinates).
    * @param displayDots if lines match display dot
    * @return return a string with a display of the current read.

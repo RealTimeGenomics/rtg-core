@@ -334,6 +334,8 @@ public final class TabixIndexer {
   /**
    * Saves given <code>TABIX</code> index to given stream
    * @param indexs index to write
+   * @param ops supplies the tabix indexing configuration
+   * @param names the list of sequence names
    * @param output destination
    * @throws IOException if an IO Error occurs
    */

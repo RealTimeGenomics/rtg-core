@@ -12,13 +12,24 @@
 package com.rtg.util.arithcode;
 
 /**
- * <P>A singleton uniform distribution byte model.  Provides a single
+ * A singleton uniform distribution byte model.  Provides a single
  * static member that is a non-adaptive model assigning equal
  * likelihood to all 256 bytes.
- *
- * @version 1.0
  */
 public final class UniformModel implements DetailedModel {
+
+  /**
+   * A re-usable uniform model.
+   */
+  public static final UniformModel MODEL = new UniformModel(256);
+
+  /**
+   * Construct a uniform model.
+   * @param numOutcomes the number of alternatives to encode
+   */
+  UniformModel(final int numOutcomes) {
+    mNumOutcomes = numOutcomes;
+  }
 
   private final int mNumOutcomes;
 
@@ -50,17 +61,4 @@ public final class UniformModel implements DetailedModel {
     result[1] = symbol + 1;
     result[2] = mNumOutcomes;
   }
-
-  /**
-   * A re-usable uniform model.
-   */
-  public static final UniformModel MODEL = new UniformModel(256);
-
-  /**
-   * Construct a uniform model.
-   */
-  UniformModel(final int numOutcomes) {
-    mNumOutcomes = numOutcomes;
-  }
-
 }

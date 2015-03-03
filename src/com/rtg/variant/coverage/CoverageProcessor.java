@@ -29,7 +29,7 @@ public interface CoverageProcessor {
    * @param name sequence name
    * @param position position on sequence
    * @param ih1 count of <code>IH=1</code> records
-   * @param ihgt1 count of <code>IH>1</code> records
+   * @param ihgt1 count of <code>IH&gt;1</code> records
    * @param coverage coverage at position
    * @throws IOException if an IO error occurs
    */

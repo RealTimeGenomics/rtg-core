@@ -32,7 +32,7 @@ import com.rtg.variant.dna.DNARange;
  * Uses index arrays. Not very object oriented but trades this with memory and speed efficiency.
  * The following diagram shows the relationship between the different tricky parts of the
  * data structures (doesn't include some parts like the deletions or the attributes).
- * <img src="doc-files/GraphImplementationDS/Slide1.jpg" />
+ * <img src="doc-files/GraphImplementationDS/Slide1.jpg" alt="image">
  */
 public class GraphImplementation extends IntegralAbstract implements MutableGraph {
 

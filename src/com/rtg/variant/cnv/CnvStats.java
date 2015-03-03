@@ -202,9 +202,7 @@ public class CnvStats {
     return ret;
   }
 
-  /**
-   * Removes points that lie in the center of a group of regions with the same copy number.
-   */
+  // Removes points that lie in the center of a group of regions with the same copy number.
   void collapseCnvRegionLines(final ArrayList<CnvRegionLine> list) {
     int i = 0;
     while (i < list.size() - 1) {

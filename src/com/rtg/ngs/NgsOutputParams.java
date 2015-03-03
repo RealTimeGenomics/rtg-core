@@ -15,10 +15,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
+import com.rtg.util.intervals.ReferenceRegions;
 
 import net.sf.samtools.SAMReadGroupRecord;
 
@@ -225,7 +225,7 @@ public class NgsOutputParams extends IntegralAbstract {
   /**
    * Get the error limit. Used in output to limit what is written out.
    *
-   * @return the error limit (&gte;0).
+   * @return the error limit (&ge;0).
    */
   public int errorLimit() {
     return mFilterParams.errorLimit();

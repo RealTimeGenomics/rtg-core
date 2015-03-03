@@ -196,6 +196,7 @@ public final class EditDistanceFactory {
    * Calculate how wide the lower-bound window should be.
    *
    * @param minReadLength minimum read length
+   * @param maxShiftFactor determines max shift for the given read length
    * @return width of lower bound window (word size).
    */
   protected static int calculateLowerBoundValue(int minReadLength, MaxShiftFactor maxShiftFactor) {

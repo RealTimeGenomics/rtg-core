@@ -35,6 +35,7 @@ public final class DistributionUtils {
    * @param rate the maximum rate multiplied by the distribution.
    * @param mean of normal distribution.
    * @param stdDev standard deviation of normal distribution.
+   * @param reverse if true return the reverse distribution.
    * @return the distribution.
    */
   static Distribution distribution(final int lo, final int hi, final double rate, final double mean, final double stdDev, boolean reverse) {
@@ -50,6 +51,7 @@ public final class DistributionUtils {
    * constant to the left and decreasing to 0.0 on the right.
    * @param lo low index in distribution.
    * @param hi high index in distribution.
+   * @param rate the maximum rate multiplied by the distribution.
    * @param mean of normal distribution.
    * @param stdDev standard deviation of normal distribution.
    * @return the distribution.

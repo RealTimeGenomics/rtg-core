@@ -60,7 +60,6 @@ public final class PrereadVerifier {
    * @param out stdout where Duster output is written.
    * @param err where error and warning messages are written for user consumption.
    * @return exit code - 0 if all ok - 1 if command line arguments failed.
-   * @throws SlimException
    */
   static int mainInit(final String[] args, final PrintStream out, final PrintStream err) {
     return mainExec(args, out, err, PrereadVerifier.initialLog(APPLICATION_NAME));

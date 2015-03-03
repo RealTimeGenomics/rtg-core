@@ -33,8 +33,6 @@ public class GapProbabilitiesScorer extends IntegralAbstract implements GapScore
     return log;
   }
 
-  protected final int mOffset;
-
   protected final double[][] mScoreDistribution;
 
   protected final double[] mScoreMaxDistribution;
@@ -43,10 +41,10 @@ public class GapProbabilitiesScorer extends IntegralAbstract implements GapScore
 
   /**
    * @param gapThreshold threshold
+   * @param distribution the gap probability distribution for each offset
    * @param maxDistr maximum probability for each build offset.
    */
-  GapProbabilitiesScorer(final int offset, final double gapThreshold, final double[][] distribution, final double[] maxDistr) {
-    mOffset = offset;
+  GapProbabilitiesScorer(final double gapThreshold, final double[][] distribution, final double[] maxDistr) {
     mScoreDistribution = new double[distribution.length][];
     for (int i = 0; i < distribution.length; i++) {
       final int length = distribution[i].length;
@@ -117,7 +115,7 @@ public class GapProbabilitiesScorer extends IntegralAbstract implements GapScore
   public int maxDelta() {
     int m = Integer.MIN_VALUE;
     for (int is = 0; is < mScoreDistribution.length; is++) {
-      final int i = mOffset + is;
+      final int i = is;
       for (int j = 0; j < mRowLength; j++) {
         final int delta = i - j;
         if (mScoreDistribution[is][j] > Double.NEGATIVE_INFINITY && delta > m) {
@@ -136,7 +134,7 @@ public class GapProbabilitiesScorer extends IntegralAbstract implements GapScore
   public int minDelta() {
     int m = Integer.MAX_VALUE;
     for (int is = 0; is < mScoreDistribution.length; is++) {
-      final int i = mOffset + is;
+      final int i = is;
       for (int j = mRowLength - 1; j >= 0; j--) {
         final int delta = i - j;
         if (mScoreDistribution[is][j] > Double.NEGATIVE_INFINITY && delta < m) {
@@ -156,7 +154,7 @@ public class GapProbabilitiesScorer extends IntegralAbstract implements GapScore
   public void toString(final StringBuilder sb) {
     sb.append(INDEX_FORMAT.blanks()).append("  ");
     for (int is = 0; is < mScoreDistribution.length; is++) {
-      final int i = mOffset + is;
+      final int i = is;
       sb.append("  [").append(INDEX_FORMAT.format(i)).append("]");
     }
     sb.append(StringUtils.LS);
@@ -184,7 +182,6 @@ public class GapProbabilitiesScorer extends IntegralAbstract implements GapScore
 
   @Override
   public boolean integrity() {
-    Exam.assertTrue(mOffset >= 0);
     Exam.assertTrue(mScoreDistribution.length > 0);
     return true;
   }
@@ -201,7 +198,5 @@ public class GapProbabilitiesScorer extends IntegralAbstract implements GapScore
   @Override
   public void close() {
   }
-
-
 
 }

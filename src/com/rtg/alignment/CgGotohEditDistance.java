@@ -388,6 +388,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
    * Calculate the match/mismatch cost at a given row and for a specified nucleotide.
    * @param i zero-based read position
    * @param nt nucleotide (assumed to be on template, 0=N...4=T).
+   * @param isWithinTemplate true if the position is on the template
    * @return the probability
    */
   double matchEqTe(int i, byte nt, boolean isWithinTemplate) {

@@ -432,6 +432,7 @@ public class SuperCigarParser {
    * Process one 'I' command, which means that a nucleotide appears
    * in the read only, and is missing from the template.
    * @param readNt the current read nucleotide
+   * @throws BadSuperCigarException when a bad cigar is encountered
    */
   protected void doReadOnly(int readNt) throws BadSuperCigarException {
   }
@@ -440,6 +441,7 @@ public class SuperCigarParser {
    * Process one 'D' command, which means that a nucleotide appears
    * in the template only, and is missing from the read.
    * @param templateNt the current template nucleotide
+   * @throws BadSuperCigarException when a bad cigar is encountered
    */
   protected void doTemplateOnly(int templateNt) throws BadSuperCigarException {
   }
@@ -448,6 +450,7 @@ public class SuperCigarParser {
    * Process one mismatch.
    * @param readNt the current read base
    * @param templateNt the current template base
+   * @throws BadSuperCigarException when a bad cigar is encountered
    */
   protected void doSubstitution(int readNt, int templateNt) throws BadSuperCigarException {
   }
@@ -456,6 +459,7 @@ public class SuperCigarParser {
    * Process one equality command.
    * @param readNt the current read base
    * @param nt nucleotide of the read and the template.
+   * @throws BadSuperCigarException when a bad cigar is encountered
    */
   protected void doEquality(int readNt, int nt) throws BadSuperCigarException {
   }
@@ -470,11 +474,13 @@ public class SuperCigarParser {
    * Process one Unknown nucleotide in the template
    * @param readNt the current read base
    * @param templateNt the current template base
+   * @throws BadSuperCigarException when a bad cigar is encountered
    */
   protected void doUnknownOnTemplate(int readNt, int templateNt) throws BadSuperCigarException {  }
 
   /**
    * Process one Unknown nucleotide in the read
+   * @throws BadSuperCigarException when a bad cigar is encountered
    */
   protected void doUnknownOnRead() throws BadSuperCigarException {  }
 }

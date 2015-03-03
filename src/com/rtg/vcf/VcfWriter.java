@@ -79,6 +79,7 @@ public class VcfWriter implements Closeable {
 
   /**
    * write current header to output stream
+   * @throws java.io.IOException if there is an I/O problem
    */
   protected void writeHeader() throws IOException {
     mOut.write(mHeader.toString().getBytes());

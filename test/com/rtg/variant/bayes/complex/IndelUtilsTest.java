@@ -11,10 +11,6 @@
  */
 package com.rtg.variant.bayes.complex;
 
-import static com.rtg.util.StringUtils.LS;
-
-import java.util.Iterator;
-
 import com.rtg.util.Utils;
 
 import junit.framework.TestCase;
@@ -54,61 +50,4 @@ public class IndelUtilsTest extends TestCase {
     final double[] f = IndelUtils.unFlatten(new double[] {0.5, 0.5});
     assertEquals("[0.000, 1.000]", Utils.realFormat(f, 3));
   }
-
-  /**
-   * Test method for {@link com.rtg.variant.bayes.complex.IndelUtils#allDeletions(java.lang.String)}.
-   */
-  public final void testAllDeletions0() {
-    final Iterator<String> it = IndelUtils.allDeletions("");
-    assertFalse(it.hasNext());
-  }
-
-  /**
-   * Test method for {@link com.rtg.variant.bayes.complex.IndelUtils#allDeletions(java.lang.String)}.
-   */
-  public final void testAllDeletions() {
-    final StringBuilder sb = new StringBuilder();
-    final Iterator<String> it = IndelUtils.allDeletions("xyz");
-    while (it.hasNext()) {
-      sb.append(it.next()).append(LS);
-    }
-    assertEquals("yz" + LS + "xz" + LS + "xy" + LS, sb.toString());
-  }
-
-  /**
-   * Test method for {@link com.rtg.variant.bayes.complex.IndelUtils#allInsertions(java.lang.String, java.lang.String)}.
-   */
-  public final void testAllInsertionsBad() {
-    try {
-      IndelUtils.allInsertions("xy", "");
-      fail();
-    } catch (final IllegalArgumentException e) {
-      // expectedk
-    }
-  }
-
-  /**
-   * Test method for {@link com.rtg.variant.bayes.complex.IndelUtils#allInsertions(java.lang.String, java.lang.String)}.
-   */
-  public final void testAllInsertions0() {
-    final StringBuilder sb = new StringBuilder();
-    final Iterator<String> it = IndelUtils.allInsertions("", "ab");
-    while (it.hasNext()) {
-      sb.append(it.next()).append(LS);
-    }
-    assertEquals("a" + LS + "b" + LS, sb.toString());
-  }
-
-  /**
-   * Test method for {@link com.rtg.variant.bayes.complex.IndelUtils#allInsertions(java.lang.String, java.lang.String)}.
-   */
-  public final void testAllInsertions() {
-    final StringBuilder sb = new StringBuilder();
-    final Iterator<String> it = IndelUtils.allInsertions("x", "ab");
-    while (it.hasNext()) {
-      sb.append(it.next()).append(LS);
-    }
-    assertEquals("ax" + LS + "bx" + LS + "xa" + LS + "xb" + LS, sb.toString());
-  }
-
 }

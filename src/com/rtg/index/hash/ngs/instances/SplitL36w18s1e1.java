@@ -26,7 +26,7 @@ import com.rtg.index.hash.ngs.TemplateCall;
  * Two split windows with the following patterns (blocks of size 18).
  * Does not explicitly handle indels.
  * <br>
- * <table>
+ * <table summary="mask cases">
  * <tr> <th>window</th> <th> id </th> <th> indel </th> </tr>
  * <tr> <td><code>ox</code></td>  <td> 0 </td> <td> 1 </td></tr>
  * <tr> <td><code>xo</code></td>  <td> 1 </td> <td> 1 </td></tr>

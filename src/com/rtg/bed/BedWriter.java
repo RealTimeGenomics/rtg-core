@@ -54,6 +54,7 @@ public class BedWriter implements Closeable {
 
   /**
    * Write a line as a comment (will automatically be prepended with comment char)
+   * @param line the comment line
    * @throws java.io.IOException if error
    */
   protected void writeComment(String line) throws IOException {
@@ -63,6 +64,7 @@ public class BedWriter implements Closeable {
 
   /**
    * Write an extra line (e.g. track line) to output stream
+   * @param line the line to output
    * @throws java.io.IOException if error
    */
   protected void writeLine(String line) throws IOException {

@@ -54,7 +54,7 @@ abstract class PointerFileHandler {
    * @param pointerInFile index in file of pointer desired
    * @param pointerRoller access to stream containing pointers
    * @param index index for data files
-   * @throws IOException
+   * @throws IOException When IO errors occur
    */
   abstract void initialisePosition(int currentFile, long pointerInFile, AbstractStreamManager.RollingFile pointerRoller, DataFileIndex index) throws IOException;
 

@@ -81,7 +81,7 @@ public final class ReferenceHelper {
    *
    * @param templateFile SDF containing template
    * @param template hash map
-   * @param err error to print statistics on, can be <code>>null</code>
+   * @param err error to print statistics on, can be <code>null</code>
    * @throws IOException if error
    */
   public static void loadTemplate(final File templateFile, final HashMap<String, byte[]> template, final PrintStream err) throws IOException {

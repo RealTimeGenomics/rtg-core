@@ -222,7 +222,11 @@ public class RocPlotCli extends AbstractCli {
     }
   }
 
-  /** Extract the directory name of a file. This is sometimes used as a default name when displaying tracks etc */
+  /**
+   * Extracts the directory name of a file. This is sometimes used as a default name when displaying tracks etc
+   * @param file the file
+   * @return the directory name
+   */
   static String defaultNameFromFile(File file) {
     return file.getParentFile() != null ? file.getParentFile().getName() : file.getPath();
   }

@@ -390,6 +390,7 @@ public class Species extends IntegralAbstract {
    * Compute L in frequency space.
    *
    * @param r current position (in frequency space).
+   * @param blockInfo current block genomes and fragment counts
    * @return L.
    */
   static double ll(final Vector r, final BlockInfo blockInfo) {
@@ -446,10 +447,10 @@ public class Species extends IntegralAbstract {
   private Pair<Vector, Double> solveLine(final Vector r, final Vector delta) {
     final Line line = new SpeciesLine(r, delta, mBlockInfo);
     //final Line line = new SpeciesLineLinearDeriv(r, delta, mBlockInfo);
-    final AbstractSolver solver = new LinearInterpolationSolver();
-    //final AbstractSolver solver = new NewtonRaphsonSolver(false);
-    final LineSolver ls = new LineSolver(solver, mBlockInfo.isVerbose());
-    final double d = ls.solveLine(line, LineSolver.RELATIVE_THRESHOLD);
+    final LineSolver solver = new LinearInterpolationSolver();
+    //final LineSolver solver = new NewtonRaphsonSolver(false);
+    final LineSolver ls = new LoggingLineSolver(solver, mBlockInfo.isVerbose());
+    final double d = ls.solveLine(line, LoggingLineSolver.RELATIVE_THRESHOLD);
     //final double d = ls.solveLine(line, L_TERMINATION_TARGET);
     if (d == 0.0) {
       return null;
@@ -461,7 +462,7 @@ public class Species extends IntegralAbstract {
   private Pair<Vector, Double> solveLineRobust(final Vector r, final Vector delta) {
     final Line line = new LLine(r, delta, mBlockInfo);
     final Minimizer ls = new Minimizer();
-    final double d = ls.solveLine(line, LineSolver.RELATIVE_THRESHOLD);
+    final double d = ls.solveLine(line, LoggingLineSolver.RELATIVE_THRESHOLD);
     if (d == 0.0) {
       return null;
     }

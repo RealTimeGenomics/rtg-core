@@ -137,9 +137,7 @@ public class CnvSimulator {
       mRegionPos = pos;
     }
   }
-  /**
-   * generate the CNVs; normal generate using priors
-   */
+
   protected void generate() throws IOException {
 
     assert mPriors != null;
@@ -167,9 +165,6 @@ public class CnvSimulator {
     }
   }
 
-  /**
-   * generate the CNVs; use fixed length of regions
-   */
   protected void generate(final String[] lengthAndVariance) throws IOException, InvalidParamsException {
     initialize();
     try {
@@ -209,9 +204,6 @@ public class CnvSimulator {
     outputBreakPointsToInfoFile();
   }
 
-  /**
-   * generate the CNVs; only generate CNVs given per flags
-   */
   protected void generate(final FixedRegion[] fixedRegions) throws IOException, InvalidParamsException {
 
     assert mPriors == null;
@@ -573,9 +565,6 @@ public class CnvSimulator {
         +  percentString(mTotalCnvedLength, mTotalSequenceLength) + StringUtils.LS).getBytes());
   }
 
-  /**
-   * @return string for a percent value
-   */
   protected static String percentString(final long seqLengthCnved, final long seqLength) {
     return Utils.realFormat(((double) seqLengthCnved / (double) seqLength) * 100, 2) + "%";
   }
@@ -629,16 +618,12 @@ public class CnvSimulator {
   }
 
   /**
-   * get index according to the magnitude of the value
+   * @param value value to find the magnitude of
+   * @param maxIndex upper bound on the index
+   * @return index according to the magnitude of the value
    */
   static int getMagnitudeIndex(final int value, final int maxIndex) {
-    int index = 0;
-    int magnitude = 1;
-    while (value >= magnitude && index < maxIndex) {
-      magnitude *= 10;
-      index++;
-    }
-    return index;
+    return (value > 0) ? Math.min(maxIndex, 1 + (int) Math.log10(value)) : 0;
   }
 
   /** Header line for CNV bed file. */
@@ -704,6 +689,7 @@ public class CnvSimulator {
 
 
   /**
+   * @param rand value between 0 and 1
    * @param power of which magnitude the length is
    * @return new length to use for CNV
    */
@@ -711,9 +697,6 @@ public class CnvSimulator {
     return (long) (rand * Math.pow(10, (double) power + 1) + 1);
   }
 
-  /**
-   *
-   */
   @Override
   public String toString() {
     final StringBuilder line = new StringBuilder();

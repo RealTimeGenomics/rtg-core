@@ -244,6 +244,7 @@ public abstract class AbstractGappedRegion<G extends AbstractGappedRegion<G>> ex
   /**
    * Get the bucket after applying an offset to the delta.
    * This is computed using the end points of the build and query sequences.
+   * @param delta the delta
    * @return the bucket.
    */
   long bucket(final int delta) {
@@ -256,6 +257,7 @@ public abstract class AbstractGappedRegion<G extends AbstractGappedRegion<G>> ex
    * This is computed using the end points of the build and query sequences.
    * It differs from bucket in that it doesnt wrap at the ends so the
    * returned value may lie outside the first to last range.
+   * @param delta the delta
    * @return the bucket.
    */
   long bucketEx(final int delta) {

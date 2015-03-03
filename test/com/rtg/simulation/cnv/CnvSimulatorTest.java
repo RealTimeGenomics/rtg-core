@@ -41,12 +41,8 @@ import com.rtg.util.test.NotRandomRandom;
 
 import junit.framework.TestCase;
 
-/**
- */
 public class CnvSimulatorTest extends TestCase {
 
-  /**
-   */
   public CnvSimulatorTest(String name) {
     super(name);
   }

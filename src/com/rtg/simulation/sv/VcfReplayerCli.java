@@ -174,11 +174,8 @@ public class VcfReplayerCli extends AbstractCli {
 //    }
   }
 
-
-/**
- * Follows breakpoint adjacencies to generates one chromosome.
- */
-  protected void generateChromosome(int chrNum, String chromoName, boolean fwd, Map<String, TreeSet<Adjacency>> set, ArrayList<String> nameToNum, SequencesReader reader, final Set<String> doneEnds, SdfWriter writer) throws IOException {
+  
+protected void generateChromosome(int chrNum, String chromoName, boolean fwd, Map<String, TreeSet<Adjacency>> set, ArrayList<String> nameToNum, SequencesReader reader, final Set<String> doneEnds, SdfWriter writer) throws IOException {
     String chrName = chromoName;
     reader.seek(chrNum);
     int currentChr = chrNum;

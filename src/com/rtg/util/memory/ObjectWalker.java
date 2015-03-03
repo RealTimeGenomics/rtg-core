@@ -18,8 +18,7 @@ import java.util.Iterator;
 import java.util.Stack;
 
 /**
- * Visits each of the objects reachable from a particular object.<p>
- *
+ * Visits each of the objects reachable from a particular object.
  */
 public class ObjectWalker {
 

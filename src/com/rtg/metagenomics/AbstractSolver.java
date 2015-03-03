@@ -17,7 +17,7 @@ import com.rtg.util.diagnostic.Diagnostic;
  * Base class for different types of root finding mechanisms.
  * Looks for a zero in the function.
  */
-public abstract class AbstractSolver {
+public abstract class AbstractSolver implements LineSolver {
   final boolean mVeryVerbose;
 
   /**
@@ -60,7 +60,7 @@ public abstract class AbstractSolver {
    * @param relThreshold termination threshold
    * @return cross over point
    */
-  double solveLine(Line line, double relThreshold) {
+  public double solveLine(Line line, double relThreshold) {
     if (mVeryVerbose) {
       Diagnostic.developerLog("starting solveLine");
     }

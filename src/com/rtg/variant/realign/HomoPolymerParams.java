@@ -49,7 +49,7 @@ public class HomoPolymerParams extends IntegralAbstract {
    *  <li>tag is one of A+T or C+G
    *  <li>i the line number for the tag
    *  <li>counts starting at 1 up to some n.
-   *  <ul>
+   *  </ul>
    *
    * @param in the input file being read.
    * @return array of counts. The indices are: 0..1 - A+T or C+G, template length, read length.
@@ -175,7 +175,8 @@ public class HomoPolymerParams extends IntegralAbstract {
    * @param arithmetic possibility arithmetic - the transition results are returned in valid values for this arithmetic.
    * @param minR the shortest length of a repeat in a read which is treated as a homopolymer.
    * @param minT the shortest length of a repeat in a template which is treated as a homopolymer.
-   * @param transitions contains text with arrays of counts for A+T and C+G
+   * @param transitions contains arrays of transition probabilities for A+T and C+G
+   * @param complements as for transitions but containing the complement probabilities
    */
   HomoPolymerParams(final PossibilityArithmetic arithmetic, final int minR, final int minT, final double[][][] transitions,  final double[][][] complements) {
     mArithmetic = arithmetic;

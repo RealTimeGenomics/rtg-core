@@ -88,6 +88,7 @@ public abstract class BayesianSignal {
    * returned by the above methods.
    * @param state the read-group state
    * @param reverse if true, the signal should reverse the window inputs.
+   * @param columnLabel a string prefix to use in debug output file naming.
    * @return pairings suitable for using as inputs to a bayesian signal.
    */
   protected List<DistrSam> makeInputs(ReadGroupState state, boolean reverse, String columnLabel) {

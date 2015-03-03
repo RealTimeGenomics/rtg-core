@@ -41,8 +41,8 @@ public final class RegionUtils {
   private RegionUtils() { } //prevent instantiation
 
   /**
-   * Create a region object by reading from a reader with the format for each line:<br/>
-   *  name start end<br/>
+   * Create a region object by reading from a reader with the format for each line:<br>
+   *  name start end<br>
    *  The name is ignored and the start and end are included in the regions.
    * @param reader from the input is taken from.
    * @return the region object (never null).

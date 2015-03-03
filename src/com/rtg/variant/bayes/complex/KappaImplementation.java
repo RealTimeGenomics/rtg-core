@@ -41,6 +41,7 @@ public class KappaImplementation  extends AbstractKappa {
   /**
    * Simple constructor directly from parameters.
    * @param params used for construction.
+   * @param indelLengthDecay rate at which indel priors decrease beyond the end of the explicit distributions.
    */
   //Used only for testing
   KappaImplementation(final AbstractMachineErrorParams params, final double indelLengthDecay) {

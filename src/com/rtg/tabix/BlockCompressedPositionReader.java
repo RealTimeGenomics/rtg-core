@@ -64,13 +64,13 @@ public interface BlockCompressedPositionReader extends Closeable {
   int getReferenceId();
 
   /**
-   * Note: virtual file offset defined as <code>offset_into_file_of_compressed_block << 16 | offset_into_uncompressed_block</code>
+   * Note: virtual file offset defined as <code>offset_into_file_of_compressed_block &lt;&lt; 16 | offset_into_uncompressed_block</code>
    * @return the virtual file offset of the start of the current record.
    */
   long getVirtualOffset();
 
   /**
-   * Note: virtual file offset defined as <code>offset_into_file_of_compressed_block << 16 | offset_into_uncompressed_block</code>
+   * Note: virtual file offset defined as <code>offset_into_file_of_compressed_block &lt;&lt; 16 | offset_into_uncompressed_block</code>
    * @return the virtual file offset of the start of the next record.
    */
   long getNextVirtualOffset();

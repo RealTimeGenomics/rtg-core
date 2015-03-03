@@ -19,7 +19,10 @@ import com.rtg.launcher.BuildParams;
  */
 public class GappedRegion extends AbstractGappedRegion<GappedRegion> {
   /**
-   *  Construct a concrete implementation of Abstract Gapped region avoiding bizarre type declaration recursion
+   * Construct a concrete implementation of Abstract Gapped region avoiding bizarre type declaration recursion
+   * @param id an identifier unique within a particular <code>GappedOutput</code> object.
+   * @param params parameters for the query.
+   * @param distribution probability distribution for gap probabilities.
    */
   GappedRegion(final int id, final BuildParams params, final GapScorer distribution) {
     super(id, params, distribution);

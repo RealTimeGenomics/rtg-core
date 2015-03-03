@@ -159,11 +159,7 @@ public class SequencesWriter {
 //    }
 //  }
 
-  /**
-   * Writes a single sequence.
-   * @throws IOException if an I/O error occurs.
-   */
-  void processSingleSequence(final AbstractSdfWriter mSdfWriter) throws IOException {
+  void processSingleSequence(final AbstractSdfWriter sdfWriter) throws IOException {
     final String label = mDataSource.name();
 
     //filtering, not related to format of data
@@ -184,9 +180,9 @@ public class SequencesWriter {
 //    if (length == 0 && mSkipEmptySequences) {
 //      noSequenceWarning(label);
 //    } else {
-      mSdfWriter.startSequence(label);
-      mSdfWriter.write(mDataSource.sequenceData(), mDataSource.qualityData(), length);  //may write 0 length
-      mSdfWriter.endSequence();
+      sdfWriter.startSequence(label);
+      sdfWriter.write(mDataSource.sequenceData(), mDataSource.qualityData(), length);  //may write 0 length
+      sdfWriter.endSequence();
 //    }
   }
 

@@ -534,6 +534,8 @@ public class Flag implements Comparable<Flag> {
    * appropriate Object. This default implementation knows how to convert
    * based on the parameter type for several common types. Override for custom
    * parsing.
+   * @param valueStr the value to parse
+   * @return the parsed value
    */
   Object parseValue(final String valueStr) {
     return mParameterType == null ? Boolean.TRUE : Flag.instanceHelper(mParameterType, valueStr);
@@ -560,7 +562,7 @@ public class Flag implements Comparable<Flag> {
     return -1;
   }
 
-  /** Make a compact usage string (prefers char name if present). */
+  /** @return a compact usage string (prefers char name if present). */
   String getCompactFlagUsage() {
     final StringBuilder sb = new StringBuilder();
     if (getChar() != null) {
@@ -575,7 +577,7 @@ public class Flag implements Comparable<Flag> {
     return sb.toString();
   }
 
-  /** Make a usage string. */
+  /** @return a usage string. */
   String getFlagUsage() {
     final StringBuilder sb = new StringBuilder();
     sb.append(CFlags.LONG_FLAG_PREFIX).append(getName());

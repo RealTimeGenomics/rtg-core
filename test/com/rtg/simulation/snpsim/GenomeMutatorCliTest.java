@@ -23,6 +23,7 @@ import com.rtg.launcher.BuildTestUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reference.Sex;
 import com.rtg.tabix.TabixIndexer;
+import com.rtg.util.PortableRandom;
 import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.TestCFlags;
@@ -61,7 +62,7 @@ public class GenomeMutatorCliTest extends AbstractCliTest {
     return new GenomeMutatorCli() {
       @Override
       GenomeMutator getMutator(Integer seed, boolean verbose, boolean simpleMnps, int minDistance, VariantParams params, String sample) {
-        return new GenomeMutator(verbose, simpleMnps, 1, params, sample) {
+        return new GenomeMutator(new PortableRandom(), verbose, simpleMnps, 1, params, sample) {
           @Override
           int mutatePriors(SequencesReader input, Sex sex, File outputDirectory, File twinDirectory, OutputStream mappingOutput) throws IOException {
             if (twinDirectory != null) {

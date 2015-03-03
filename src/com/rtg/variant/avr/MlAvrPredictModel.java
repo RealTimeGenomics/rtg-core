@@ -77,6 +77,7 @@ public class MlAvrPredictModel extends AbstractPredictModel {
 
   /**
    * Constructor used for building model from scratch with model builder mechanism.
+   * @param classifier the classifier to wrap
    */
   MlAvrPredictModel(PredictClassifier classifier) {
     super();

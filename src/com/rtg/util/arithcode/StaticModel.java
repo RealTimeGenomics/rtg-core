@@ -14,15 +14,27 @@ package com.rtg.util.arithcode;
 import java.util.Arrays;
 
 /**
- * <P>Model where counts for each symbol are provided externally.
- *
- * @version 1.0
+ * Model where counts for each symbol are provided externally.
  */
 public final class StaticModel implements DetailedModel {
 
   private final int mTotalCount;
 
   private final int[] mCounts;
+
+  /**
+   * Construct a uniform model.
+   * @param counts supply frequency information for each alternative
+   */
+  StaticModel(final int[] counts) {
+    mCounts = new int[counts.length + 1];
+    int sofar = 0;
+    for (int i = 1; i <= counts.length; i++) {
+      sofar += counts[i - 1] + 1;
+      mCounts[i] = sofar;
+    }
+    mTotalCount = mCounts[mCounts.length - 1];
+  }
 
   @Override
   public int totalCount() {
@@ -57,18 +69,4 @@ public final class StaticModel implements DetailedModel {
     decoder.removeSymbolFromStream(mCounts[symbol], mCounts[symbol + 1], mTotalCount);
     return symbol;
   }
-
-  /**
-   * Construct a uniform model.
-   */
-  StaticModel(final int[] counts) {
-    mCounts = new int[counts.length + 1];
-    int sofar = 0;
-    for (int i = 1; i <= counts.length; i++) {
-      sofar += counts[i - 1] + 1;
-      mCounts[i] = sofar;
-    }
-    mTotalCount = mCounts[mCounts.length - 1];
-  }
-
 }

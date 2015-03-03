@@ -138,9 +138,9 @@ public abstract class AbstractMulticoreFilterConcat {
    * Filters and concatenates the supplied temp files to the supplied
    * out file using multiple threads.
    *
-   *
    * @param tempFiles the <code>Files</code> to be filtered and concatenated
    * @param outFile the destination <code>File</code>
+   * @param header contains SAM header structure
    * @param outputParams parameters describing calibration settings
    * @return list of files at current stage of processing. Should be single SAM/BAM file unless <code>delayMerge</code> is set, in which case it is the filtered SAM/BAM files
    * @exception IOException if an error occurs.

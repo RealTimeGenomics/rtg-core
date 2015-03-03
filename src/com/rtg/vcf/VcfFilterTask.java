@@ -201,6 +201,8 @@ class VcfFilterTask {
 
   /**
    * Main filtering function...
+   * @param record the record to apply filters to
+   * @return false if the record failed filters
    */
   boolean accept(VcfRecord record) {
     mVcfFilterStatistics.increment(Stat.TOTAL_COUNT);
@@ -290,6 +292,8 @@ class VcfFilterTask {
 
   /**
    * Writes any remaining SNP lines
+   * @param writer the destination
+   * @throws java.io.IOException if there is an I/O problem
    */
   void flush(VcfWriter writer) throws IOException {
     if (mPrevRecord != null) {

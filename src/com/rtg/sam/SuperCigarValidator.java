@@ -96,7 +96,7 @@ public class SuperCigarValidator extends SuperCigarParser {
   }
 
   /**
-   * @throws BadSuperCigarException
+   * @throws BadSuperCigarException if the cigar is not valid
    */
   @Override
   public void parse() throws BadSuperCigarException {

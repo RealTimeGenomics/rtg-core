@@ -38,25 +38,25 @@ public class StatisticsInt extends Statistics<AlleleStatisticsInt> {
   }
 
   @Override
-  protected void incrementBest(final EvidenceInterface distribution, int bestHyp) {
+  protected void incrementBest(final EvidenceInterface evidence, int bestHyp) {
 
-    final double r = distribution.mapError();
-    final double q = distribution.error();
+    final double r = evidence.mapError();
+    final double q = evidence.error();
     final double errorIncrement = r + (1.0 - r) * q;
 
-    if (distribution.mapError() >= Model.AMBIGUITY_THRESHOLD) {
+    if (evidence.mapError() >= Model.AMBIGUITY_THRESHOLD) {
       mAmbiguous++;
     }
 
-    if (distribution.isReadPaired()) {
-      if (distribution.isMated()) {
+    if (evidence.isReadPaired()) {
+      if (evidence.isMated()) {
         mMatedCount++;
       } else {
         mUnmatedCount++;
       }
     }
 
-    mCounts.increment(distribution, bestHyp, errorIncrement);
+    mCounts.increment(evidence, bestHyp, errorIncrement);
     mTotalCoverage++;
     mTotalError += errorIncrement;
   }

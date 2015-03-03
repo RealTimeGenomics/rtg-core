@@ -279,7 +279,7 @@ public final class NgsFilterParams extends IntegralAbstract implements Serializa
   /**
    * Get the error limit used with score-indel. Used in output to limit what is written out.
    *
-   * @return the error limit (&gte;0).
+   * @return the error limit (&ge;0).
    */
   public int errorLimit() {
     return mErrorLimit;

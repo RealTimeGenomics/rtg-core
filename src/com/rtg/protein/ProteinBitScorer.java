@@ -37,6 +37,7 @@ final class ProteinBitScorer {
 
   /**
    * Create a protein percent identity estimator.
+   * @param maxIndel maximum length insert/delete that will have scores calculated
    */
   ProteinBitScorer(final int maxIndel) {
     mMaxIndel = maxIndel;

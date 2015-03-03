@@ -16,8 +16,8 @@ import com.rtg.util.Utils;
 
 /**
  * Maintains a set of counts over the possible nucleotides.
- * <br/><br/>
- * The methods should be called in the order:<br/>
+ * <br><br>
+ * The methods should be called in the order:<br>
  * <code>((reset | constructor) increment* count* )*</code>
  */
 @TestClass("com.rtg.variant.bayes.AlleleStatisticsIntTest")

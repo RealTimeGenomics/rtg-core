@@ -28,7 +28,7 @@ package com.rtg.assembler.graph;
  *    }
  *    final int length = graph.pathLength(path);
  *    final int index = iter.contigIndex();
- *    assert 0 <= index && index < length;
+ *    assert 0 &lt;= index &amp;&amp; index &lt; length;
  *    assert graph.pathContig(path, index) == contigId;
  * }
  * </pre>

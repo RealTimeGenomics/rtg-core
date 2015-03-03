@@ -62,16 +62,5 @@ public class PositionOutputParamsTest extends TestCase {
     assertEquals(OutputFormatType.SEGMENT, a1.format());
     assertEquals(1, a1.topN());
   }
-
-  public void testEqualNull() {
-    assertTrue(PositionOutputParams.equalNull(null, null));
-    assertTrue(PositionOutputParams.equalNull(42, 42));
-    final Integer t = 42;
-    assertTrue(PositionOutputParams.equalNull(t, t));
-
-    assertFalse(PositionOutputParams.equalNull(42, 43));
-    assertFalse(PositionOutputParams.equalNull(null, new Object()));
-    assertFalse(PositionOutputParams.equalNull(new Object(), null));
-  }
 }
 

@@ -23,7 +23,7 @@ import com.rtg.index.hash.ngs.TemplateCall;
  * w=12 s=2 e=2
  * Deals with all 2 errors including indels.
  * <br>
- * <table>
+ * <table summary="mask cases">
  * <tr> <th>window</th> <th> id </th> <th> indel </th></tr>
  * <tr> <td><code>oox</code></td>  <td> 0 </td> <td> 1 </td></tr>
  * <tr> <td><code>oxo</code></td>  <td> 1 </td> <td> 1 </td></tr>

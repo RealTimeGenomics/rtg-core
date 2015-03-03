@@ -134,6 +134,8 @@ class TrioConcordance {
 
 
     /**
+     * @param minVariants the minimum number of variants before a valid test is performed
+     * @param minConcordance the concordance below which is considered inconsistent
      * @return true if the pairwise comparison indicates the samples are not concordant
      */
     boolean isInconsistent(int minVariants, double minConcordance) {

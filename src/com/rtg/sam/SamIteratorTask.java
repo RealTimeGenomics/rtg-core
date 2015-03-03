@@ -74,6 +74,7 @@ public abstract class SamIteratorTask<P extends SingleMappedParams, S extends St
    * Perform optional one-off initialization based on the SAM header. This
    * default implementation does nothing.
    * @param header the SAM header
+   * @throws java.io.IOException if there is an I/O problem
    */
   protected void init(SAMFileHeader header) throws IOException { }
 
@@ -82,6 +83,7 @@ public abstract class SamIteratorTask<P extends SingleMappedParams, S extends St
    *
    * @param rec the record to process.
    * @return true if the record was processed correctly, false if the record contained errors.
+   * @throws java.io.IOException if there is an I/O problem
    */
   protected abstract boolean processRecord(final SAMRecord rec) throws IOException;
 
@@ -105,6 +107,7 @@ public abstract class SamIteratorTask<P extends SingleMappedParams, S extends St
    * a buffer it doesn't purge until it is a certain amount past its last interesting call
    * so it needs a notify after every sequence.
    * this provides the ability to clear the final results (which isn't known in the sub class)
+   * @throws java.io.IOException if there is an I/O problem
    */
   protected abstract void finalPostFlush() throws IOException;
 
@@ -269,6 +272,7 @@ public abstract class SamIteratorTask<P extends SingleMappedParams, S extends St
    * @param templateNameMap the template name map
    * @param name the template name
    * @return the sequences bytes
+   * @throws java.io.IOException if there is an I/O problem
    */
   protected static byte[] getSequenceBytes(final SequencesReader genomeSequences, final Map<String, Long> templateNameMap, final String name) throws IOException {
     final Long sequenceId = templateNameMap.get(name);
@@ -284,6 +288,7 @@ public abstract class SamIteratorTask<P extends SingleMappedParams, S extends St
    * @param templateNameMap the template name map
    * @param name the template name
    * @return the sequences bytes
+   * @throws java.io.IOException if there is an I/O problem
    */
   protected static int getSequenceLength(final SequencesReader genomeSequences, final Map<String, Long> templateNameMap, final String name) throws IOException {
     final Long sequenceId = templateNameMap.get(name);

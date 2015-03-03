@@ -25,7 +25,7 @@ import com.rtg.index.hash.ngs.TemplateCall;
  * Does not handle indels.
  * Intended for testing.
  * <br>
- * <table>
+ * <table summary="mask cases">
  * <tr> <th>window</th> <th> id </th> </tr>
  * <tr> <td><code>xxxx</code></td>  <td> 0 </td> </tr>
  * </table>

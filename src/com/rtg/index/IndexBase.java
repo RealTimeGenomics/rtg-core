@@ -99,7 +99,7 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
   /** Maximum hash count post compact */
   protected int mMaxHashCount = -1;
 
-  /** The maximum hash count in a few bins, < 10, 11-100, 101-1000, 10001-10000, >100000 */
+  /** The maximum hash count in a few bins, &lt; 10, 11-100, 101-1000, 10001-10000, &gt;100000 */
   protected final long[] mMaxHashCountBins = new long[5];
 
   protected long mHashCount0 = 0;

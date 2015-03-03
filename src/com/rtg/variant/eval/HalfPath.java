@@ -43,7 +43,8 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
   }
 
   /**
-   *  Construct an empty <code>HalfPath</code>
+   * Construct an empty <code>HalfPath</code>
+   * @param template the template on which the half path resides
    */
   HalfPath(byte[] template) {
     mHaplotypeA = new HaplotypePlayback(template);
@@ -51,7 +52,8 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
   }
 
   /**
-   *  Construct a child <code>HalfPath</code>
+   * Construct a child <code>HalfPath</code>
+   * @param path the parent half path
    */
   HalfPath(HalfPath path) {
     mIncluded = path.mIncluded;
@@ -217,7 +219,7 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
 
   /**
    * performs a compare of the template position of both haplotypes
-   * @return < 0 if the B haplotype is leading, > 0  if A haplotype is leading, 0 if in the same place
+   * @return &lt; 0 if the B haplotype is leading, &gt; 0  if A haplotype is leading, 0 if in the same place
    */
   public int compareHaplotypePositions() {
     if (mHaplotypeB == null) {

@@ -34,36 +34,42 @@ public class StatisticsDouble extends Statistics<AlleleStatisticsDouble> {
   }
 
   @Override
-  protected void incrementBest(final EvidenceInterface distribution, int bestHyp) {
+  protected void incrementBest(final EvidenceInterface evidence, int bestHyp) {
 
-    final double coverageIncrement = coverageIncrement(distribution);
-    final double errorIncrement = errorIncrement(distribution);
+    final double coverageIncrement = coverageIncrement(evidence);
+    final double errorIncrement = errorIncrement(evidence);
 
-    if (distribution.mapError() >= Model.AMBIGUITY_THRESHOLD) {
+    if (evidence.mapError() >= Model.AMBIGUITY_THRESHOLD) {
       mAmbiguous += coverageIncrement;
     }
-    if (distribution.isReadPaired()) {
-      if (distribution.isMated()) {
+    if (evidence.isReadPaired()) {
+      if (evidence.isMated()) {
         mMatedCount += coverageIncrement;
       } else {
         mUnmatedCount += coverageIncrement;
       }
     }
 
-    mCounts.increment(distribution, bestHyp, errorIncrement, coverageIncrement);
+    mCounts.increment(evidence, bestHyp, errorIncrement, coverageIncrement);
     mTotalCoverage += coverageIncrement;
     mTotalError += errorIncrement;
   }
 
-  /** Return the amount that error statistics should be incremented by for this piece of evidence */
-  protected double errorIncrement(EvidenceInterface distribution) {
-    final double r = distribution.mapError();
-    final double q = distribution.error();
+  /**
+   * @param evidence the evidence
+   * @return the amount that error statistics should be incremented by for this piece of evidence
+   */
+  protected double errorIncrement(EvidenceInterface evidence) {
+    final double r = evidence.mapError();
+    final double q = evidence.error();
     return r + (1.0 - r) * q;
   }
 
-  /** Return the amount that coverage statistics should be incremented by for this piece of evidence */
-  protected double coverageIncrement(EvidenceInterface distribution) {
+  /**
+   * @param evidence the evidence
+   * @return the amount that error statistics should be incremented by for this piece of evidence
+   */
+  protected double coverageIncrement(EvidenceInterface evidence) {
     return 1.0;
   }
 

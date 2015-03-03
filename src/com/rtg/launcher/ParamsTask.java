@@ -80,7 +80,10 @@ public abstract class ParamsTask<P extends ModuleParams, S extends Statistics> i
     }
   }
 
-  /** Subclasses should do all their work here */
+  /**
+   * Subclasses should do all their work here
+   * @throws IOException if there is a problem.
+   */
   protected abstract void exec() throws IOException;
 
   /**

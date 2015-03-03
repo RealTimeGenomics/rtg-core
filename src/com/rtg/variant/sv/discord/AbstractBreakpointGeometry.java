@@ -27,13 +27,13 @@ import com.rtg.util.integrity.IntegralAbstract;
  * of these.
  * <br>
  * An illustration of the conventions used in representing these shapes is given below:
- * <img src="doc-files/BreakpointDiagrams/Slide6.jpg" />
+ * <img src="doc-files/BreakpointDiagrams/Slide6.jpg" alt="image">
  */
 public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
 
   /**
    * Check if a one-dimensional interval overlaps. a0, b0 and a1, b1 form
-   * pairs that can be oriented positively (a < b) or negatively (a > b).
+   * pairs that can be oriented positively (a &lt; b) or negatively (a &gt; b).
    * a = b implies an empty interval (because the b's are exclusive).
    * @param a0 start co-ordinate for first interval (inclusive).
    * @param b0 end co-ordinate for first interval(exclusive).
@@ -275,6 +275,7 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
   /**
    * Generate a graph of the periphery of the geometry suitable for input
    * to gnuplot (that is x,y pairs of the corner points).
+   * @param bg the geometry to plot
    * @return a string for input to gnuplot.
    */
   static String gnuPlot(final AbstractBreakpointGeometry bg) {
@@ -344,7 +345,7 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
 
   /**
    * Check that x is in the range from a (inclusive) to b (exclusive).
-   * Works for either a < b or a > b.
+   * Works for either a &lt; b or a &gt; b.
    * @param a start of range (inclusive).
    * @param b end of range (exclusive).
    * @param x point to be checked
@@ -362,7 +363,7 @@ public abstract class AbstractBreakpointGeometry extends IntegralAbstract {
 
   /**
    * Check that x which is assumed to be an exclusive bound is in the range from a (inclusive) to b (exclusive bound but inclusive because checking another bound).
-   * Works for either a < b or a > b.
+   * Works for either a &lt; b or a &gt; b.
    * @param a start of range (inclusive).
    * @param b end of range (exclusive).
    * @param x exclusive bound to be checked

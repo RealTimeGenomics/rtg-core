@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 
 /**
  */
-public class LineSolverTest extends TestCase {
+public class LoggingLineSolverTest extends TestCase {
 
 
   @Override
@@ -27,8 +27,8 @@ public class LineSolverTest extends TestCase {
     Diagnostic.setLogStream();
   }
 
-  private LineSolver getLineSolver(boolean verbose) {
-    return new LineSolver(new BisectionSolver(verbose), verbose);
+  private LoggingLineSolver getLineSolver(boolean verbose) {
+    return new LoggingLineSolver(new BisectionSolver(verbose), verbose);
   }
 
   private static class LinearLine extends Line {

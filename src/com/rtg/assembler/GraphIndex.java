@@ -31,6 +31,7 @@ public class GraphIndex {
   final ExactHashFunction mBuildFunction;
   final int mWordSize;
   final TreeMap<Long, Long> mPositionDecoder;
+
   GraphIndex(Graph g, int stepSize, int wordSize) {
     mPositionDecoder = ContigPosition.buildDecoder(g);
     long totalHashes = 0;
@@ -127,8 +128,10 @@ public class GraphIndex {
   /**
    * Collect all the hits that occur for each window in this read
    * @param read byte representation of the read
+   * @param graph the graph to search
+   * @param searchFunction the hashing function to use for searching
    * @return A list of lists where each sub-list contains the contigs hit by the hash ending at that read position
-   * @throws IOException
+   * @throws IOException if an I/O error occurs
    */
   List<List<ContigPosition>> hits(byte[] read, Graph graph, ExactHashFunction searchFunction) throws IOException {
     final List<List<ContigPosition>> positions = new ArrayList<>();

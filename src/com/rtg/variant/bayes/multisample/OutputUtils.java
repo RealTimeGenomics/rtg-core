@@ -34,13 +34,13 @@ public final class OutputUtils {
    * @param cx the complex regions extracted from calls.
    * @return the calls in <code>calls</code> that are not included in any of the non-hyper regions in <code>cx</code>.
    */
-  static <T extends Variant> List<T> nonShadowed(List<T> calls, Complexities cx) {
-    final Iterator<T> ita = calls.iterator();
-    final List<T> res = new LinkedList<>();
+  static List<Variant> nonShadowed(List<Variant> calls, Complexities cx) {
+    final Iterator<Variant> ita = calls.iterator();
+    final List<Variant> res = new LinkedList<>();
     final Iterator<ComplexRegion> itb = cx.iterator();
     ComplexRegion cr = step(itb);
     while (ita.hasNext()) {
-      final T call = ita.next();
+      final Variant call = ita.next();
       if (call.isIndel() || call.isOverflow()) {
         continue;
       }
@@ -72,12 +72,12 @@ public final class OutputUtils {
    * @param callsB second list to be merged.
    * @return merged list.
    */
-  static <T extends Variant> List<T> merge(List<T> callsA, List<T> callsB) {
-    final List<T> res = new LinkedList<>();
-    final Iterator<T> itA = callsA.iterator();
-    T callA = itA.hasNext() ? itA.next() : null;
-    final Iterator<T> itB = callsB.iterator();
-    T callB = itB.hasNext() ? itB.next() : null;
+  static List<Variant> merge(List<Variant> callsA, List<Variant> callsB) {
+    final List<Variant> res = new LinkedList<>();
+    final Iterator<Variant> itA = callsA.iterator();
+    Variant callA = itA.hasNext() ? itA.next() : null;
+    final Iterator<Variant> itB = callsB.iterator();
+    Variant callB = itB.hasNext() ? itB.next() : null;
     while (callA != null || callB != null) {
       if (callA == null || (callB != null && callA.getLocus().getStart() > callB.getLocus().getStart())) {
         res.add(callB);

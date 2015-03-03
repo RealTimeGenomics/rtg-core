@@ -41,6 +41,7 @@ final class CommonFormulas {
    * Note it is imperative that the values for the father and mother be given in the correct order.
    * @param eu <code>E(u)</code> values for the FATHER
    * @param ev <code>E(v)</code> values for the MOTHER
+   * @param ha the hypotheses
    * @param aIndex index into c of the current child.
    * @param c <code>C(j,k)_b</code> intermediate values from all siblings includes contributions from Mendelian table, S and B for children (in possibility space).
    * @param m Mendelian table.
@@ -228,6 +229,9 @@ final class CommonFormulas {
   }
 
   /**
+   * @param models the list of models
+   * @param hypotheses the initial priors
+   * @param <T> the type of hypotheses
    * @return initial values for A when no A calculations have been done on samples
    */
   static <T extends HypothesesPrior<?>> Factor<?>[] initialA(List<ModelInterface<?>> models, HaploidDiploidHypotheses<T> hypotheses) {
@@ -246,6 +250,8 @@ final class CommonFormulas {
   }
 
   /**
+   * @param models the list of models
+   * @param bsize the number of mates for each sample
    * @return initial values for B when no B calculations have been done on samples
    */
   static BContainer[] initialB(List<ModelInterface<?>> models, int[] bsize) {

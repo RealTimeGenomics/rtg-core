@@ -396,6 +396,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
    * Get all sequence names in the reader.
    * @param reader sequences from where to get names.
    * @return list of all sequence names in the reader.
+   * @throws IOException When IO errors occur
    */
   static ArrayList<String> makeNames(final SequencesReader reader) throws IOException {
     final ArrayList<String> nodeNames;

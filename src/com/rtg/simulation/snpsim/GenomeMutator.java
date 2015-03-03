@@ -84,25 +84,11 @@ public class GenomeMutator {
   // input parameter rates
   private Double mSnpRate, mMnpRate, mIndelRate;
 
-  /** Constructor, specified seed, default sample */
   GenomeMutator(int seed, boolean verbose, boolean simpleMnps, int minDistance, VariantParams variantParams) {
-    this(seed, verbose, simpleMnps, minDistance, variantParams, "SAMPLE");
+    this(new PortableRandom(seed), verbose, simpleMnps, minDistance, variantParams, "SAMPLE");
   }
 
-  /** Constructor, random seed */
-  GenomeMutator(boolean verbose, boolean simpleMnps, int minDistance, VariantParams variantParams, String sample) {
-    this(new PortableRandom(), verbose, simpleMnps, minDistance, variantParams, sample);
-  }
 
-  /**
-   * Constructor, specific seed
-   * @param seed random number seed
-   */
-  GenomeMutator(int seed, boolean verbose, boolean simpleMnps, int minDistance, VariantParams variantParams, String sample) {
-    this(new PortableRandom(seed), verbose, simpleMnps, minDistance, variantParams, sample);
-  }
-
-  /** Constructor, specific seed */
   GenomeMutator(PortableRandom random, boolean verbose, boolean simpleMnps, int minDistance, VariantParams variantParams, String sample) {
     mSample = sample;
     mRandom = random;

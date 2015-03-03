@@ -31,6 +31,9 @@ class SequenceStreamManager extends AbstractStreamManager {
    * Creates a the stream manager
    * @param dir Directory containing sequence data
    * @param numberSequences Number of sequences in directory
+   * @param quality true if quality data is available
+   * @param mainIndex the index structure
+   * @param openerFactory implementation for opening sequence and quality files.
    * @throws IOException If an I/O Error occurs
    */
   SequenceStreamManager(final File dir, final long numberSequences, final boolean quality, IndexFile mainIndex, DataFileOpenerFactory openerFactory) throws IOException {

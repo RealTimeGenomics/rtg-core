@@ -39,9 +39,6 @@ class FileStreamIterator implements Iterator<InputStream> {
   private File mNextFile;
   private File mLastFile;
 
-  /**
-   * Constructs the iterator
-   */
   FileStreamIterator(final List<File> files, PrereadArm arm) {
     mIt = files.iterator();
     mMaxCount = files.size();

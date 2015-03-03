@@ -11,9 +11,6 @@
  */
 package com.rtg.variant.bayes.complex;
 
-import java.util.Iterator;
-import java.util.NoSuchElementException;
-
 import com.rtg.util.integrity.Exam;
 
 /**
@@ -63,104 +60,6 @@ public final class IndelUtils {
     }
     assert Exam.assertDistribution(res);
     return res;
-  }
-
-  private static final class SubIterator implements Iterator<String> {
-
-    private int mNext = 0;
-
-    private final String mString;
-
-    /**
-     * @param string input string
-     */
-    public SubIterator(final String string) {
-      mString = string;
-    }
-
-    @Override
-    public boolean hasNext() {
-      return mNext < mString.length();
-    }
-
-    @Override
-    public String next() {
-      if (mNext >= mString.length()) {
-        throw new NoSuchElementException();
-      }
-      final String res = mString.substring(0, mNext) + mString.substring(mNext + 1);
-      mNext++;
-      return res;
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException();
-    }
-
-  }
-  /**
-   * Generate all substrings with one character deleted.
-   * @param str from which the substrings are to be generated.
-   * @return Iterator over all substrings.
-   */
-  static Iterator<String> allDeletions(final String str) {
-    return new SubIterator(str);
-  }
-
-  private static final class InsIterator implements Iterator<String> {
-
-    private int mNext = 0;
-
-    private int mAlternate = 0;
-
-    private final String mString;
-
-    private final String mAlternates;
-
-    /**
-     * @param string input string
-     */
-    private InsIterator(final String string, final String alternates) {
-      mString = string;
-      if (alternates.length() == 0) {
-        throw new IllegalArgumentException();
-      }
-      mAlternates = alternates;
-    }
-
-    @Override
-    public boolean hasNext() {
-      return mNext <= mString.length();
-    }
-
-    @Override
-    public String next() {
-      if (mNext > mString.length()) {
-        throw new NoSuchElementException();
-      }
-      final String res = mString.substring(0, mNext) + mAlternates.substring(mAlternate, mAlternate + 1) + mString.substring(mNext);
-      mAlternate++;
-      if (mAlternate == mAlternates.length()) {
-        mAlternate = 0;
-        mNext++;
-      }
-      return res;
-    }
-
-    @Override
-    public void remove() {
-      throw new UnsupportedOperationException();
-    }
-  }
-
-  /**
-   * Generate all substrings with one character deleted.
-   * @param str from which the substrings are to be generated.
-   * @return Iterator over all substrings.
-   */
-  static Iterator<String> allInsertions(final String str, final String alternates) {
-    return new InsIterator(str, alternates);
   }
 
 }

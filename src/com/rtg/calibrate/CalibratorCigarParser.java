@@ -100,7 +100,7 @@ class CalibratorCigarParser extends SuperCigarParser {
   }
 
   /**
-   *  Not thread safe (due to <code>getOrCreateHistogram</code> calls)
+   * Not thread safe (due to <code>getOrCreateHistogram</code> calls)
    * @throws BadSuperCigarException on bad cigar
    */
   @Override

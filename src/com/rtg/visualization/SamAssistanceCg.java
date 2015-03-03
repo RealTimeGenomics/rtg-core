@@ -132,9 +132,6 @@ public class SamAssistanceCg extends SuperCigarParser implements SamAssistance {
     mAviewDisplay.append('N');
   }
 
-  /**
-   * @throws BadSuperCigarException
-   */
   @Override
   public String[] samToReads(final SAMRecord sam, final String template, byte[] templateBytes, final int readStart, final boolean displayDots) throws BadSuperCigarException {
     final String superCigar = sam.getStringAttribute(SamUtils.CG_SUPER_CIGAR);

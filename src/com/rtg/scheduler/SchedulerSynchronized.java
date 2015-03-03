@@ -204,6 +204,7 @@ public class SchedulerSynchronized<J extends JobId<J>> implements Scheduler<J>, 
   /**
    * check if id has all its arguments computed and so is a candidate to be executed.
    * @param id the job identifier being checked.
+   * @return true if id may be executed
    */
   boolean argumentsAvailable(final J id) {
     final Collection<J> from = mDependencies.from(id);

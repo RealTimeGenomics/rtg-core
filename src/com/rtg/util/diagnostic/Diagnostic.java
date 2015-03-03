@@ -316,7 +316,7 @@ public final class Diagnostic {
   }
 
   /**
-   * Get the stream currently used for log messages.
+   * @return the stream currently used for log messages.
    */
   static synchronized PrintStream getLogStream() {
     if ((sLogStream == null) || sLogClosed) {
@@ -326,7 +326,7 @@ public final class Diagnostic {
   }
 
   /**
-   * Get the stream currently used for progress messages.
+   * @return the stream currently used for progress messages.
    */
   static synchronized PrintStream getProgressStream() {
     if (sProgressClosed || sProgressStream == null && (sLogStream == null || sLogStream.file() == null)) {

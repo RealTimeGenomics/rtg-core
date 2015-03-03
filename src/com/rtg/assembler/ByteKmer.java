@@ -47,9 +47,12 @@ public class ByteKmer extends AbstractKmer {
     setSizeBits(packed, s.length());
     return packed;
   }
+
   /**
    * Pack bases from a 1 byte per base array into our compact byte[] representation
    * @param b 1 byte per base representation of the bases
+   * @param start first position in the array to scan
+   * @param end end position, exclusive
    * @return a byte array packed according to the <code>ByteKmer</code> scheme
    */
   static byte[] toPacked(byte[] b, int start, int end) {

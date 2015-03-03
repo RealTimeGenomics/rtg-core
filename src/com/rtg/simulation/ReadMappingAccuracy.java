@@ -66,13 +66,13 @@ import net.sf.samtools.util.CloseableIterator;
  * score (mapped with lower error than was introduced in the simulated data)</li>
  * </ul>
  *
- * Calculates accuracy / sensitivity by following formula <br/>
+ * Calculates accuracy / sensitivity by following formula <br>
  * <ul>
  * <li><b> Accuracy (Precision)</b> - correct / total mapped reads</li>
  * <li><b> Sensitivity (Recall)</b> - correct / total reads</li>
  * </ul>
  *
- * Calculates <b>lenient</b> accuracy / sensitivity by following formula <br/>
+ * Calculates <b>lenient</b> accuracy / sensitivity by following formula <br>
  * <ul>
  * <li><b> Accuracy (Precision)</b> - (correct + better) / total mapped reads</li>
  * <li><b> Sensitivity (Recall)</b> - (correct + better) / total reads</li>

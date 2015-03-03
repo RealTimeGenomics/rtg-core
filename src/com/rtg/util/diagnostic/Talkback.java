@@ -89,6 +89,8 @@ public final class Talkback {
    * A talkback method for wrapper scripts to call. E.g. on JVM crash, or for talkback testing. Assume that first argument is the log file location
    * if not the empty string and all remaining arguments
    * are sent as command line arguments.
+   * @param args line arguments
+   * @return false if the talkback was not sent.
    */
   protected static boolean commandLineTalkback(String[] args) {
     try {

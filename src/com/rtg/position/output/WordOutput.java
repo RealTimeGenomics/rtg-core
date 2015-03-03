@@ -35,6 +35,7 @@ public class WordOutput extends AbstractPositionOutput {
    * This version for testing only.
    * @param subjectFrames frames used for subjects.
    * @param out where to write the output.
+   * @param unmappedOut destination for unmapped sequences
    */
   WordOutput(final Frame[] subjectFrames, final Appendable out, final Appendable unmappedOut) {
     super(subjectFrames, out);

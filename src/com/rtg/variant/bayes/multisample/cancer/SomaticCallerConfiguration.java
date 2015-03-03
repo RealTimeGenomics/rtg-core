@@ -192,7 +192,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
 
   /**
    * This diagram shows the relationship of the different variables when doing the all-paths matching.
-   * <img src="doc-files/makeInitialPriors.jpg" />
+   * <img src="doc-files/makeInitialPriors.jpg" alt="image">
    * @param description haploid hypotheses.
    * @param cot region on reference being replaced by the hypotheses.
    * @return the prior probabilities for transitions between haploid hypotheses.

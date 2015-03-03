@@ -213,6 +213,7 @@ public class IndexQueue extends IntegralAbstract implements Add {
   /**
    * Get an iterator over one of the queues.
    * @param radix specifies which queue to return.
+   * @param radixShifted radix mask
    * @return the iterator.
    */
   QueueIterator iterator(final int radix, final long radixShifted) {

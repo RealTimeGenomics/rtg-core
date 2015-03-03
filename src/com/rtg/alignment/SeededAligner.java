@@ -68,6 +68,7 @@ final class SeededAligner implements UnidirectionalEditDistance {
 
   /**
    * Default constructor
+   * @param ngsParams supplies other penalty configuration
    * @param nullOnLowComplexity true if this should return null for any alignments which trigger the low complexity filter. This is more accurate, but knocks out lots of alignments.
    */
   SeededAligner(NgsParams ngsParams, boolean nullOnLowComplexity) {

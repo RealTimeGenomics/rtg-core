@@ -55,7 +55,7 @@ public class DeletionOverlapFilter implements Iterable<DiscordBedRecord> {
   }
 
   /**
-   * Records A & B overlap if A.start < B.end && A.end > B.start
+   * Records A &amp; B overlap if A.start &lt; B.end &amp;&amp; A.end &gt; B.start
    * We find a set of records with valid start and union them with valid ends.
    * @return the set of non overlapping deletions
    */

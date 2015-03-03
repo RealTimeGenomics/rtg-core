@@ -42,7 +42,7 @@ import net.sf.samtools.SAMReadGroupRecord;
 
 /**
  * Perform the prereading of CG sequence data, into a format that is understood
- * by SLIM.<p>
+ * by RTG.
  *
  */
 public final class Cg2Sdf extends LoggedCli {

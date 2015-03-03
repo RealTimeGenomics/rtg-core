@@ -26,7 +26,7 @@ final class ScoringHelper {
    * Convert a SLIM alignment score (which is a negated raw score)
    * into a BLAST E-score.  We calculate the effective read length
    * using the new BLAST formula described in the
-   * <a href="http://www.ch.embnet.org/software/blast_help.html>BLAST documentation</a>.
+   * <a href="http://www.ch.embnet.org/software/blast_help.html">BLAST documentation</a>.
    *
    * Since our genome database usually contains very long sequences,
    * we use its actual size rather than calculating the effective size
@@ -48,10 +48,11 @@ final class ScoringHelper {
   }
 
   /**
-   * Convert a SLIM alignment score (which is a negated raw score)
+   * Convert a RTG alignment score (which is a negated raw score)
    * into a BLAST bit score.
    *
    * @param alignScore the alignment score is the negated raw score
+   * @param matrix the matrix used to compute the score
    * @return the BLAST bit score
    */
   static double computeBitScore(int alignScore, ProteinScoringMatrix matrix) {
