@@ -345,7 +345,7 @@ public class ReadStatusTracker implements ReadStatusListener {
 
   /**
    * Ensure status for unmapped reads is correctly set
-   * @param paired true if this is paire-end data
+   * @param paired true if this is paired-end data
    */
   void preProcessUnMappedStatistics(boolean paired) {
     Diagnostic.progress("UnmappedPreprocess: Starting 1 Jobs");

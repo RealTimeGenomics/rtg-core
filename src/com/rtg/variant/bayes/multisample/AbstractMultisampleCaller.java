@@ -99,7 +99,7 @@ public abstract class AbstractMultisampleCaller implements MultisampleJointCalle
    * @param models the models to evaluate
    * @param hypotheses hypotheses containing current priors
    * @param <D> the description
-   * @param <T> the hypothesis typea
+   * @param <T> the hypothesis type
    * @return a <code>ComparisonResult</code> containing the evaluated samples
    */
   protected abstract <D extends Description, T extends HypothesesPrior<D>> ComparisonResult makeSamples(List<ModelInterface<?>> models, HaploidDiploidHypotheses<T> hypotheses);

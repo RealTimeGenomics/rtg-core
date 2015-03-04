@@ -258,7 +258,7 @@ public final class Utils {
 
   /**
    * Repeatedly applies {@link Utils#pairHash(int, int)} until all values have
-   * been combined. Note that unrolled cases of pairHash are provided for up to five integers.
+   * been combined. Note that unrolled cases of {@code pairHash} are provided for up to five integers.
    * @param vals the values to turn into one hash
    * @return the hash
    */
