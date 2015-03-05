@@ -323,7 +323,7 @@ public final class SamUtils {
    * Emits the Run id of a SAM header to diagnostic user log
    * @param header the SAM file header
    */
-  public static void logRunId(SAMFileHeader header) {
+  public static synchronized void logRunId(SAMFileHeader header) {
     for (final String comment : header.getComments()) {
       if (comment.replaceAll("@CO\t", "").startsWith(RUN_ID_ATTRIBUTE)) {
         final String stringGuid = comment.substring(comment.indexOf(":") + 1);
