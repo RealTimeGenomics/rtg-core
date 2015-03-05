@@ -19,7 +19,7 @@ import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Populator that passes through SAM records and performs calibration.

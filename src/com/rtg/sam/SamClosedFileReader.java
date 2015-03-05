@@ -23,11 +23,11 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.ClosedFileInputStream;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.util.BlockCompressedInputStream;
-import net.sf.samtools.util.CloseableIterator;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.CloseableIterator;
 
 /**
  * Utility methods for getting a <code>SAMRecord</code> iterator that is backed by a {@link ClosedFileInputStream}. Note there is no

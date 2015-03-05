@@ -60,11 +60,11 @@ import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.InputFileUtils;
 import com.rtg.util.machine.MachineType;
 
-import net.sf.samtools.FileTruncatedException;
-import net.sf.samtools.SAMException;
-import net.sf.samtools.SAMReadGroupRecord;
-import net.sf.samtools.util.RuntimeEOFException;
-import net.sf.samtools.util.RuntimeIOException;
+import htsjdk.samtools.FileTruncatedException;
+import htsjdk.samtools.SAMException;
+import htsjdk.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.util.RuntimeEOFException;
+import htsjdk.samtools.util.RuntimeIOException;
 
 /**
  * Populate parameter objects for Map commands

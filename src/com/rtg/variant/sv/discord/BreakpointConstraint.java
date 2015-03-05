@@ -18,7 +18,7 @@ import com.rtg.util.integrity.Exam;
 import com.rtg.util.machine.MachineOrientation;
 import com.rtg.variant.sv.ReadGroupStats;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Specifies the constraints on the positions of a breakpoint given a single paired end read

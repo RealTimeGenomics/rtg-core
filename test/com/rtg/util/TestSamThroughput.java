@@ -17,10 +17,10 @@ import java.io.OutputStream;
 
 import com.rtg.util.io.FileUtils;
 
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMFileWriterFactory;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMFileWriter;
+import htsjdk.samtools.SAMFileWriterFactory;
+import htsjdk.samtools.SAMRecord;
 
 /**
  */

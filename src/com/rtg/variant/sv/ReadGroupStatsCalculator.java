@@ -36,14 +36,14 @@ import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
 
-import net.sf.samtools.SAMException;
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMReadGroupRecord;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.SAMSequenceRecord;
-import net.sf.samtools.util.RuntimeEOFException;
-import net.sf.samtools.util.RuntimeIOException;
+import htsjdk.samtools.SAMException;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SAMSequenceRecord;
+import htsjdk.samtools.util.RuntimeEOFException;
+import htsjdk.samtools.util.RuntimeIOException;
 
 /**
  * Scans mapping results to calculate per-read group insert size

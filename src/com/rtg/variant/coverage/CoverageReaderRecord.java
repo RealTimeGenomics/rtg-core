@@ -16,7 +16,7 @@ import java.util.BitSet;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.CompareHelper;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  *

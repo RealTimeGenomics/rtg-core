@@ -21,7 +21,7 @@ import java.util.List;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 
-import net.sf.samtools.util.BlockCompressedOutputStream;
+import htsjdk.samtools.util.BlockCompressedOutputStream;
 
 /**
  * Utility methods for indexes

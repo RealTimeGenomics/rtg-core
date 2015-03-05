@@ -36,11 +36,11 @@ import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.AsynchInputStream;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.SAMRecordIterator;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMFileWriter;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecordIterator;
 
 /**
  * Does the stand alone re-calibration.

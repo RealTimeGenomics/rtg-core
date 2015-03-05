@@ -29,7 +29,7 @@ import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.header.VcfHeader;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedInputStream;
 
 /**
  * Reads a <code>.vcf</code> input stream and converts it into VCF records.

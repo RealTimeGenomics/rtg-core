@@ -32,7 +32,7 @@ import java.util.Arrays;
 
 import com.rtg.util.io.ByteArrayIOUtils;
 
-import net.sf.samtools.util.RuntimeIOException;
+import htsjdk.samtools.util.RuntimeIOException;
 
 /**
  * Reads BAM data

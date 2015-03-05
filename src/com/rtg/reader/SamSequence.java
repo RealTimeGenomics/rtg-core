@@ -15,7 +15,7 @@ package com.rtg.reader;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.sam.SamBamConstants;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Minimal wrapper to hold only necessary information about a <code>SAMRecord</code> for the

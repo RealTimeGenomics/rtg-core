@@ -11,7 +11,7 @@
  */
 package com.rtg.sam;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Keep the comparison stuff in one place

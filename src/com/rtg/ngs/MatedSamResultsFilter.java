@@ -24,8 +24,8 @@ import com.rtg.reader.SequencesReader;
 import com.rtg.sam.SamBamConstants;
 import com.rtg.sam.SamUtils;
 
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileWriter;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Concatenates and filters mated SAM records, filtering on the <code>XA</code> attribute.

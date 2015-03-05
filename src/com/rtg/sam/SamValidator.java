@@ -37,10 +37,10 @@ import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
 
-import net.sf.samtools.SAMFileHeader.SortOrder;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMFormatException;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader.SortOrder;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMFormatException;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Verifies a SAM file produced from paired end is sane.

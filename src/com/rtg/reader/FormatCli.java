@@ -59,7 +59,7 @@ import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.InputFileUtils;
 import com.rtg.util.io.LogStream;
 
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
 
 /**
  * Perform the prereading of sequence data, into a format that is understood

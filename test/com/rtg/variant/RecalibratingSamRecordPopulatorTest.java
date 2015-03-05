@@ -19,7 +19,7 @@ import com.rtg.mode.SequenceType;
 import com.rtg.reader.MockSequencesReader;
 import com.rtg.sam.ReadGroupUtils;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

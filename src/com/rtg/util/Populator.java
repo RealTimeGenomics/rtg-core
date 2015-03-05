@@ -11,7 +11,7 @@
  */
 package com.rtg.util;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Interface to populate an object based on the contents of another object.

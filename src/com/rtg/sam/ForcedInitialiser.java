@@ -11,7 +11,7 @@
  */
 package com.rtg.sam;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * An interface for forced initialisation of <code>SAMRecord</code> in

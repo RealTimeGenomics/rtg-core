@@ -19,7 +19,7 @@ import java.util.Map;
 import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.SamUtils;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Given a SAM record, unrolls the reads and stores string representation,

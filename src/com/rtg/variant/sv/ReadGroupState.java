@@ -18,7 +18,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.machine.MachineOrientation;
 import com.rtg.util.machine.MachineType;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Encapsulates per read group state maintained during structural variant calling.

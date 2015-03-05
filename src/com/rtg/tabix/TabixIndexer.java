@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
 import com.rtg.tabix.SequenceIndex.SequenceIndexChunk;
 import com.rtg.util.io.ByteArrayIOUtils;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
-import net.sf.samtools.util.BlockCompressedOutputStream;
+import htsjdk.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedOutputStream;
 
 /**
  * Indexes files for use with <code>TABIX</code>

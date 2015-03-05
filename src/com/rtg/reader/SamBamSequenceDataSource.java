@@ -27,9 +27,9 @@ import com.rtg.sam.SkipInvalidRecordsIterator;
 import com.rtg.util.array.ArrayUtils;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
-import net.sf.samtools.SAMFileHeader.SortOrder;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader.SortOrder;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Sequence data source for SAM and BAM file inputs

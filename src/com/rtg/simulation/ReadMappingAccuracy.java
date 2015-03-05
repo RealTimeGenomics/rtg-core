@@ -46,11 +46,11 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LineWriter;
 import com.rtg.util.io.LogStream;
 
-import net.sf.samtools.SAMException;
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.util.CloseableIterator;
+import htsjdk.samtools.SAMException;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.util.CloseableIterator;
 
 /**
  * Class to calculate

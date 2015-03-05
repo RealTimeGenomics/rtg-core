@@ -11,7 +11,7 @@
  */
 package com.rtg.sam;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Something that either accepts or rejects a single SAM record

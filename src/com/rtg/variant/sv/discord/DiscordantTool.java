@@ -40,11 +40,11 @@ import com.rtg.util.machine.MachineType;
 import com.rtg.variant.sv.ReadGroupStats;
 import com.rtg.vcf.VcfRecord;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMFileWriterFactory;
-import net.sf.samtools.SAMReadGroupRecord;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileWriter;
+import htsjdk.samtools.SAMFileWriterFactory;
+import htsjdk.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  */

@@ -26,8 +26,8 @@ import com.rtg.util.intervals.LongRange;
 import com.rtg.variant.sv.ReadGroupStatsCalculator;
 import com.rtg.variant.sv.UnmatedAugmenter;
 
-import net.sf.samtools.SAMReadGroupRecord;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  */

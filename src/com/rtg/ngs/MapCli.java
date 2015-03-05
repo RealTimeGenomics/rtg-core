@@ -32,7 +32,7 @@ import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.machine.MachineOrientation;
 
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
 
 /**
  * This is the top level module <code>map</code>, It contains all the user parameters with the correct name/syntax.

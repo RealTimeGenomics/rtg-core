@@ -30,7 +30,7 @@ import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
 
-import net.sf.samtools.util.BlockCompressedOutputStream;
+import htsjdk.samtools.util.BlockCompressedOutputStream;
 
 /**
  */

@@ -38,7 +38,7 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.variant.bayes.multisample.MultisampleCli;
 
-import net.sf.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileHeader;
 
 /**
  * Main program for <code>chrstats</code> module.

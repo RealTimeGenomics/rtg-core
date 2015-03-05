@@ -22,7 +22,7 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 import com.rtg.util.test.NanoRegression;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedInputStream;
 
 import junit.framework.TestCase;
 

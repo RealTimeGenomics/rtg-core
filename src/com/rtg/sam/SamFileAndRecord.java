@@ -18,8 +18,8 @@ import com.rtg.launcher.GlobalFlags;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.Integrity;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Adds some support to SkipInvalidRecordsIterator to allow externally coordinated reading of multiple SAM files.

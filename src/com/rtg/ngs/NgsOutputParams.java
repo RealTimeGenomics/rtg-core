@@ -20,7 +20,7 @@ import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 import com.rtg.util.intervals.ReferenceRegions;
 
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
 
 /**
  * Holds all the parameters needed for doing a build and a search.

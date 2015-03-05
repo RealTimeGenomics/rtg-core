@@ -19,7 +19,7 @@ import java.util.Collection;
 import com.rtg.util.PopulatorFactory;
 import com.rtg.util.intervals.RangeList;
 
-import net.sf.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileHeader;
 
 /**
  * Used to prevent having to create a separate ThreadedMultifileIterator for each reference

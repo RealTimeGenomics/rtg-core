@@ -34,9 +34,9 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMSequenceDictionary;
-import net.sf.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMSequenceDictionary;
+import htsjdk.samtools.SAMSequenceRecord;
 
 /**
  * Class holds VCF header lines and sample names

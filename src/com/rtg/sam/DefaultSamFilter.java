@@ -13,7 +13,7 @@ package com.rtg.sam;
 
 import com.rtg.util.IntegerOrPercentage;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Filtering based on a filter parameters.

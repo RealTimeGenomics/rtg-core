@@ -29,8 +29,8 @@ import com.rtg.util.ProgramState;
 import com.rtg.util.SimpleThreadPool;
 import com.rtg.util.io.Partition;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.util.RuntimeIOException;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.util.RuntimeIOException;
 
 /**
  * A multiple threaded <code>SamFileIterator</code> which uses a <code>SortedSet</code> of

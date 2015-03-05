@@ -14,7 +14,7 @@ package com.rtg.visualization;
 
 import com.rtg.sam.BadSuperCigarException;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Uses a SAM record and unfolds it into strings that can be displayed.

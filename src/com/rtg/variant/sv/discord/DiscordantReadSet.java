@@ -19,7 +19,7 @@ import java.util.List;
 
 import com.rtg.util.StringUtils;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  */

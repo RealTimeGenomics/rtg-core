@@ -25,7 +25,7 @@ import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.SamRecordPopulator;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Count mappings to a target genome versus all other genomes.

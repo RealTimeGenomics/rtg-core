@@ -52,10 +52,10 @@ import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.diagnostic.SlimException;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileWriterFactory;
-import net.sf.samtools.SAMProgramRecord;
-import net.sf.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileWriterFactory;
+import htsjdk.samtools.SAMProgramRecord;
+import htsjdk.samtools.SAMSequenceRecord;
 
 /**
  * Prints out statistics about a given preread.

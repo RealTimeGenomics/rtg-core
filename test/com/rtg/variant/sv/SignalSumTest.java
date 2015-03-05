@@ -15,7 +15,7 @@ package com.rtg.variant.sv;
 import com.rtg.util.TestUtils;
 import com.rtg.util.io.MemoryPrintStream;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

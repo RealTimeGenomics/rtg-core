@@ -23,7 +23,7 @@ import com.rtg.util.io.ByteArrayIOUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.IOUtils;
 
-import net.sf.samtools.SAMSequenceDictionary;
+import htsjdk.samtools.SAMSequenceDictionary;
 
 /**
  * Used for reading file block compressed file coordinates from BAM indexes

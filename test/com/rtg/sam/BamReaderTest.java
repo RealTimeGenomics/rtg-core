@@ -20,7 +20,7 @@ import com.rtg.util.Resources;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
-import net.sf.samtools.util.RuntimeIOException;
+import htsjdk.samtools.util.RuntimeIOException;
 
 import junit.framework.TestCase;
 

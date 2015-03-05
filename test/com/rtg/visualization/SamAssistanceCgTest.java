@@ -17,7 +17,7 @@ import com.rtg.mode.DnaUtils;
 import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.SamUtils;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

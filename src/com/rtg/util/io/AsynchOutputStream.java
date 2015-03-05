@@ -15,7 +15,7 @@ package com.rtg.util.io;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import net.sf.samtools.util.RuntimeIOException;
+import htsjdk.samtools.util.RuntimeIOException;
 
 /**
  * An output stream that does the writing in a separate thread.  It

@@ -16,8 +16,8 @@ import java.util.HashMap;
 import com.rtg.util.Populator;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
-import net.sf.samtools.SAMReadGroupRecord;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Populator.

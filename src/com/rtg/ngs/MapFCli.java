@@ -28,7 +28,7 @@ import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.machine.MachineOrientation;
 
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
 
 /**
  * Map filter CLI class

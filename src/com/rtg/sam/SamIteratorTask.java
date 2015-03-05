@@ -27,9 +27,9 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.diagnostic.WarningType;
 import com.rtg.variant.SamRecordPopulator;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.SAMSequenceDictionary;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SAMSequenceDictionary;
 
 /**
  * Iterator over sorted SAM records. This is mostly deprecated in favour of using the tribble method.

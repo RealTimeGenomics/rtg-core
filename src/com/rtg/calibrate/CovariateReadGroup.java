@@ -16,7 +16,7 @@ import java.util.Locale;
 
 import com.rtg.sam.ReadGroupUtils;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * This covariate grows in size as more read groups are encountered.

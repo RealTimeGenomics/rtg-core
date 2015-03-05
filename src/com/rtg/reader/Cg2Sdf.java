@@ -38,7 +38,7 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.LogStream;
 import com.rtg.util.machine.MachineType;
 
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
 
 /**
  * Perform the prereading of CG sequence data, into a format that is understood

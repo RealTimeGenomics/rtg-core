@@ -18,7 +18,7 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 
-import net.sf.samtools.SAMException;
+import htsjdk.samtools.SAMException;
 
 /**
  * Has a unique id and can execute some code.

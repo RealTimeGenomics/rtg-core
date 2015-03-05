@@ -17,7 +17,7 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.launcher.CommonFlags;
 
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
 
 /**
  * A builder class for <code>NgsOutputParams</code>.

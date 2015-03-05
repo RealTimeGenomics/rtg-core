@@ -19,7 +19,7 @@ import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.SuperCigarParser;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Handle super cigars in viewer.

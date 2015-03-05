@@ -31,7 +31,7 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.vcf.VcfUtils;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  */

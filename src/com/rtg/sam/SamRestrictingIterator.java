@@ -17,8 +17,8 @@ import java.util.NoSuchElementException;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.ReferenceRanges;
 
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.util.CloseableIterator;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.util.CloseableIterator;
 
 /**
  * Iterator for skipping records not within target region. Assumes given iterator is sorted.

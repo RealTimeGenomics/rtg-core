@@ -47,10 +47,10 @@ import com.rtg.variant.bayes.multisample.cancer.SomaticCallerConfiguration;
 import com.rtg.variant.bayes.multisample.singleton.SingletonCallerConfiguration;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SAMSequenceRecord;
 
 import junit.framework.TestCase;
 

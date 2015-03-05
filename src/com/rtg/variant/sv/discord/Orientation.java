@@ -14,7 +14,7 @@ package com.rtg.variant.sv.discord;
 
 import com.rtg.util.machine.MachineOrientation;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 
 /**

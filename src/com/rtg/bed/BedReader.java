@@ -26,7 +26,7 @@ import com.rtg.tabix.TabixLineReader;
 import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedInputStream;
 
 /**
  * BED file reader class.

@@ -26,8 +26,8 @@ import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMReadGroupRecord;
 
 /**
  * Contains methods for helping with command line flags and params related to SAM

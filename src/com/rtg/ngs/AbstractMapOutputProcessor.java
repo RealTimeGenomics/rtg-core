@@ -48,7 +48,7 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.variant.sv.ReadGroupStatsCalculator;
 import com.rtg.variant.sv.UnmatedAugmenter;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Class to provide common features between single and paired end output processors for map command.

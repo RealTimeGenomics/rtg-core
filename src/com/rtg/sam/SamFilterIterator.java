@@ -16,8 +16,8 @@ import java.util.NoSuchElementException;
 
 import com.reeltwo.jumble.annotations.TestClass;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Sam iterator that supports filtering

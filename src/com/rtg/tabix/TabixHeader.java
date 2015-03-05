@@ -18,7 +18,7 @@ import com.rtg.tabix.TabixIndexer.TabixOptions;
 import com.rtg.util.io.ByteArrayIOUtils;
 import com.rtg.util.io.IOUtils;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedInputStream;
 
 /**
  * Helper class for header field encapsulation

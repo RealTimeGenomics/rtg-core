@@ -23,7 +23,7 @@ import com.rtg.util.io.TestDirectory;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantAlignmentRecordPopulator;
 
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
 
 import junit.framework.TestCase;
 

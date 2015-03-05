@@ -20,8 +20,8 @@ import com.rtg.variant.MachineErrorParams;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

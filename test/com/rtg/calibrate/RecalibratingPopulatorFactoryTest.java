@@ -16,7 +16,7 @@ import com.rtg.reader.MockSequencesReader;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.Populator;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

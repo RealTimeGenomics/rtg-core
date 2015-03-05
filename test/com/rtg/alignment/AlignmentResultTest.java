@@ -22,7 +22,7 @@ import com.rtg.sam.SamUtils;
 import com.rtg.sam.SamValidator;
 import com.rtg.util.io.MemoryPrintStream;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

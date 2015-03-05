@@ -19,8 +19,8 @@ import com.rtg.util.CompareHelper;
 import com.rtg.util.MathUtils;
 import com.rtg.util.intervals.SequenceIdLocusSimple;
 
-import net.sf.samtools.SAMReadGroupRecord;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Alignment information needed by variant implementations.

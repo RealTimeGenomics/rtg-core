@@ -20,7 +20,7 @@ import java.io.OutputStream;
 import com.rtg.util.Resources;
 import com.rtg.util.io.FileUtils;
 
-import net.sf.samtools.util.BlockCompressedOutputStream;
+import htsjdk.samtools.util.BlockCompressedOutputStream;
 
 /**
  */

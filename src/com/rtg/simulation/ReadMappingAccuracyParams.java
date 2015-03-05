@@ -34,7 +34,7 @@ import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.VcfReader;
 
-import net.sf.samtools.SAMFileReader;
+import htsjdk.samtools.SAMFileReader;
 
 /**
  */

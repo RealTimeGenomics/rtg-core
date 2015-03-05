@@ -35,9 +35,9 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.SamRecordPopulator;
 
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.util.BlockCompressedInputStream;
-import net.sf.samtools.util.BlockCompressedInputStream.FileTermination;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedInputStream.FileTermination;
 
 /**
  *

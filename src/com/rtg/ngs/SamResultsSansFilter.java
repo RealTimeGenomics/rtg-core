@@ -21,8 +21,8 @@ import com.rtg.reader.SequencesReader;
 import com.rtg.sam.SamBamConstants;
 import com.rtg.sam.SamUtils;
 
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileWriter;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Concatenates and filters unmated SAM files, filtering on absolutely nothing.

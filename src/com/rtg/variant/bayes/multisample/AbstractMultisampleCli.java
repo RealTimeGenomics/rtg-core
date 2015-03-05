@@ -65,7 +65,7 @@ import com.rtg.variant.VariantStatistics;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
 
-import net.sf.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileHeader;
 /**
  * Common stuff for multi-genome SNP caller.
  */

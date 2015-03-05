@@ -23,7 +23,7 @@ import com.rtg.util.Populator;
 import com.rtg.util.PopulatorFactory;
 import com.rtg.variant.RecalibratingSamRecordPopulator;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Populator factory where each SAM record populator includes a calibrator.

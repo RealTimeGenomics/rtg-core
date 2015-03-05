@@ -13,7 +13,7 @@ package com.rtg.sam;
 
 import com.rtg.mode.DnaUtils;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

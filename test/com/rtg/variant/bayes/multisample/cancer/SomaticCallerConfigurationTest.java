@@ -32,8 +32,8 @@ import com.rtg.variant.bayes.complex.ComplexTemplate;
 import com.rtg.variant.bayes.snp.DescriptionCommon;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMReadGroupRecord;
 
 import junit.framework.TestCase;
 

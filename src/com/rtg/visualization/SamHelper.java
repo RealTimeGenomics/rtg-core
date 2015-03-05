@@ -34,9 +34,9 @@ import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.SamRecordPopulator;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMReadGroupRecord;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Helper functions

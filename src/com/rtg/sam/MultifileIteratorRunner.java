@@ -22,8 +22,8 @@ import com.rtg.util.IORunnable;
 import com.rtg.util.Populator;
 import com.rtg.util.ProgramState;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * An object to be run in a simple thread pool to get <code>SAMRecords</code>

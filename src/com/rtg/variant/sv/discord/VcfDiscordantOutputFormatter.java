@@ -26,7 +26,7 @@ import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
 import com.rtg.vcf.header.VcfNumber;
 
-import net.sf.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileHeader;
 
 /**
  * Assumes a calling pattern that presents break ends for each template in groups.

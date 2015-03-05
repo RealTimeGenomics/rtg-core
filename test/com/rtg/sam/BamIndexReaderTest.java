@@ -18,7 +18,7 @@ import com.rtg.tabix.VirtualOffsets;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
-import net.sf.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileHeader;
 
 import junit.framework.TestCase;
 

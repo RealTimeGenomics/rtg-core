@@ -26,8 +26,8 @@ import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
 import com.rtg.vcf.header.VcfHeader;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMSequenceRecord;
 
 import junit.framework.TestCase;
 

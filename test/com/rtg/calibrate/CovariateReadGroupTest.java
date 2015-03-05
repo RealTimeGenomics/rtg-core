@@ -12,7 +12,7 @@
 
 package com.rtg.calibrate;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

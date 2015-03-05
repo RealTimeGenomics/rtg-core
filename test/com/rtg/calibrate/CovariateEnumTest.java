@@ -15,9 +15,9 @@ import java.util.Arrays;
 
 import com.rtg.util.TestUtils;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMReadGroupRecord;
-import net.sf.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMSequenceRecord;
 
 import junit.framework.TestCase;
 

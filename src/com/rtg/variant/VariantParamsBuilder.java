@@ -31,7 +31,7 @@ import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
 
-import net.sf.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileHeader;
 
 /**
  * A builder class for <code>VariantParams</code>.

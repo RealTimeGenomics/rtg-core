@@ -19,7 +19,7 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.ReferenceRanges;
 
-import net.sf.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileHeader;
 
 /**
  * When we are about to read sam files, this object just stores the file list, the filter params and the uber header

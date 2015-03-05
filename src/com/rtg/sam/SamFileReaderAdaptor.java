@@ -16,9 +16,9 @@ import java.io.IOException;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.intervals.ReferenceRanges;
 
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.util.CloseableIterator;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.util.CloseableIterator;
 
 /**
  * Wraps around a <code>SAMFileReader</code> iterator, supplying simple region filtering if needed.

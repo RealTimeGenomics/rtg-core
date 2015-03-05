@@ -66,7 +66,7 @@ import com.rtg.util.intervals.LongRange;
 import com.rtg.util.machine.MachineOrientation;
 import com.rtg.util.machine.MachineType;
 
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
 
 /**
  * Top level module to run CG mapping

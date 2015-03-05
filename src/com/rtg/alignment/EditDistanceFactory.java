@@ -30,7 +30,7 @@ import com.rtg.util.machine.MachineType;
 import com.rtg.variant.MachineErrorParamsBuilder;
 import com.rtg.variant.realign.RealignParamsImplementation;
 
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
 
 /**
  * Factory which creates a specific Edit Distance implementation depending on

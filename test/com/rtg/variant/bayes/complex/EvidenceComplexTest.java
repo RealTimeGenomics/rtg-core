@@ -45,8 +45,8 @@ import com.rtg.variant.match.Match;
 import com.rtg.variant.util.arithmetic.LogPossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

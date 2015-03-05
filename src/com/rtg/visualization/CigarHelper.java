@@ -17,7 +17,7 @@ import java.util.Locale;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.SuperCigar;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * This class is used for unrolling <code>CIGARS</code>

@@ -22,8 +22,8 @@ import java.util.List;
 
 import com.rtg.util.io.ByteArrayIOUtils;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
-import net.sf.samtools.util.BlockCompressedOutputStream;
+import htsjdk.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedOutputStream;
 
 /**
  * Methods for merging <code>tabix</code> index files

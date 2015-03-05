@@ -18,7 +18,7 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedInputStream;
 
 import junit.framework.TestCase;
 

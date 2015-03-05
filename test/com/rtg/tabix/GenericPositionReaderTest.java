@@ -18,8 +18,8 @@ import java.io.IOException;
 
 import com.rtg.util.StringUtils;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
-import net.sf.samtools.util.BlockCompressedOutputStream;
+import htsjdk.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedOutputStream;
 
 import junit.framework.TestCase;
 

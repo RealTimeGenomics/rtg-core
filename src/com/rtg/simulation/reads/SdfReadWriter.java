@@ -24,7 +24,7 @@ import com.rtg.util.Constants;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.io.FileUtils;
 
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
 
 /**
  * Write simulated reads to SDF.

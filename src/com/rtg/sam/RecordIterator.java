@@ -14,7 +14,7 @@ package com.rtg.sam;
 import java.io.Closeable;
 import java.util.Iterator;
 
-import net.sf.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileHeader;
 
 /**
  * @param <T> record type

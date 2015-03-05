@@ -14,7 +14,7 @@ package com.rtg.calibrate;
 
 import com.rtg.sam.BadSuperCigarException;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Interface for variables that might influence the quality of a base.

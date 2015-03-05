@@ -23,8 +23,8 @@ import com.rtg.reader.PrereadType;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.SamBamConstants;
 
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileWriter;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Concatenates one or more intermediate single end SAM files and filters out just the

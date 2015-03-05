@@ -19,8 +19,8 @@ import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMRecord;
 
 /**
  */

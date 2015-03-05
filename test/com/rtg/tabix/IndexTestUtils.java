@@ -24,7 +24,7 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.io.ByteArrayIOUtils;
 import com.rtg.util.io.IOUtils;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedInputStream;
 
 /**
  * Useful for testing BAM/TABIX indices

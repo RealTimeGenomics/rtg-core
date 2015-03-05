@@ -14,8 +14,8 @@ package com.rtg.sam;
 
 import com.rtg.util.intervals.RegionRestriction;
 
-import net.sf.samtools.SAMSequenceDictionary;
-import net.sf.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SAMSequenceDictionary;
+import htsjdk.samtools.SAMSequenceRecord;
 
 import junit.framework.TestCase;
 

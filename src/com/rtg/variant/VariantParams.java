@@ -34,7 +34,7 @@ import com.rtg.util.test.params.ParamsNoField;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
 
-import net.sf.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileHeader;
 
 /**
  */

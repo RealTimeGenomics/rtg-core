@@ -47,7 +47,7 @@ import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.AsynchInputStream;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Measures the actual machine error rates observed in SAM files.

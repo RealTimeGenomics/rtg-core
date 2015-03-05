@@ -18,7 +18,7 @@ import com.rtg.sam.SamUtils;
 import com.rtg.util.machine.MachineOrientation;
 import com.rtg.variant.sv.ReadGroupStats;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

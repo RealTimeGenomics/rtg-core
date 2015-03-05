@@ -15,7 +15,7 @@ import com.rtg.sam.MateInfo;
 import com.rtg.sam.ReaderRecord;
 import com.rtg.util.intervals.SequenceIdLocusSimple;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Handles the standard mate start/sequence information as well as the record chaining

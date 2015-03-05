@@ -28,8 +28,8 @@ import com.rtg.variant.bayes.complex.StatisticsComplex;
 import com.rtg.variant.match.AlignmentMatch;
 import com.rtg.variant.util.arithmetic.LogPossibility;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMRecord;
 
 /**
  */

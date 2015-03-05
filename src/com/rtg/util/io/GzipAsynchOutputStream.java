@@ -16,7 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import net.sf.samtools.util.BlockCompressedOutputStream;
+import htsjdk.samtools.util.BlockCompressedOutputStream;
 
 /**
  * An output stream that does the GZIP compression in a separate thread.

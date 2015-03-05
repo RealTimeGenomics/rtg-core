@@ -32,7 +32,7 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Accumulates histogram data from alignments.

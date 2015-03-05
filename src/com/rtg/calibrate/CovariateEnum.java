@@ -18,8 +18,8 @@ import java.util.TreeSet;
 
 import com.rtg.sam.SamUtils;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMReadGroupRecord;
 
 /**
  * Enum for command line input for covariates

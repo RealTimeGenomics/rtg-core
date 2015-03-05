@@ -15,7 +15,7 @@ package com.rtg.variant.sv.discord;
 import com.rtg.util.machine.MachineOrientation;
 import com.rtg.variant.sv.ReadGroupStats;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

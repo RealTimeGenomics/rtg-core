@@ -41,8 +41,8 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
 
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

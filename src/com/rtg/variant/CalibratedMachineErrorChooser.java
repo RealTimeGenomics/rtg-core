@@ -24,7 +24,7 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.machine.MachineType;
 import com.rtg.variant.util.VariantUtils;
 
-import net.sf.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
 
 /**
  * Machine error chooser that uses calibration files.

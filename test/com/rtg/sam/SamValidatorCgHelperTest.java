@@ -15,7 +15,7 @@ import java.util.Arrays;
 
 import com.rtg.mode.DnaUtils;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

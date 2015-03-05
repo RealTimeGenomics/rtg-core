@@ -28,7 +28,7 @@ import com.rtg.variant.util.VariantUtils;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.header.VcfHeader;
 
-import net.sf.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileHeader;
 
 /**
  * Handles the construction of an appropriate VcfHeader object, and conversion from a

@@ -15,7 +15,7 @@ package com.rtg.visualization;
 import com.rtg.mode.DnaUtils;
 import com.rtg.sam.BadSuperCigarException;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

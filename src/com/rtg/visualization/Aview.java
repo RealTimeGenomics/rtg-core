@@ -42,8 +42,8 @@ import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * This class take the read data and lays it out in <code>ASCII</code> mode

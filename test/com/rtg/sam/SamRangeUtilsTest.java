@@ -23,8 +23,8 @@ import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileReader;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileReader;
 
 import junit.framework.TestCase;
 

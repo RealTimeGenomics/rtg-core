@@ -28,9 +28,9 @@ import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.util.intervals.SequenceNameLocusSimple;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMSequenceDictionary;
-import net.sf.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMSequenceDictionary;
+import htsjdk.samtools.SAMSequenceRecord;
 
 /**
  * Utilities for dealing with lists of ranges / regions to be applied when loading SAM.

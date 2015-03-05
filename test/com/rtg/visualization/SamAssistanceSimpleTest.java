@@ -13,8 +13,8 @@ package com.rtg.visualization;
 
 import com.rtg.sam.BadSuperCigarException;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

@@ -14,7 +14,7 @@ package com.rtg.util.machine;
 
 import com.rtg.variant.sv.discord.Orientation;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Enumeration of the orientations of paired reads which is technology dependent.

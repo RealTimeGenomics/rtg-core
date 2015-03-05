@@ -13,7 +13,7 @@ package com.rtg.sam;
 
 import java.util.HashSet;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * A SAM filter which removes duplicate entries of reads which have not been mapped as primary.

@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 import com.rtg.util.Resources;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedInputStream;
 
 import junit.framework.TestCase;
 

@@ -19,7 +19,7 @@ import com.rtg.mode.DnaUtils;
 import com.rtg.reader.FastaUtils;
 import com.rtg.util.Utils;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Takes care of some of the legacy Cg handling for the SamValidator

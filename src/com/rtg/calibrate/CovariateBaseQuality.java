@@ -16,7 +16,7 @@ import java.util.Locale;
 
 import com.rtg.sam.BadSuperCigarException;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * A Covariate variable for the quality of the read base.

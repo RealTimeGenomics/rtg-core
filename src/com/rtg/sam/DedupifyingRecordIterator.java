@@ -13,7 +13,7 @@ package com.rtg.sam;
 
 import java.io.IOException;
 
-import net.sf.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileHeader;
 
 /**
  * Used when one wants the functionality of the duplicate removal around a {@link RecordIterator}.

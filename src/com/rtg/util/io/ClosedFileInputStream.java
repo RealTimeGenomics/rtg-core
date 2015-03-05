@@ -19,7 +19,7 @@ import java.io.RandomAccessFile;
  * Stream that reads file contents into a buffer and then closes file handle until
  * it requires more data. File should only be open during read calls.
  */
-public final class ClosedFileInputStream extends net.sf.samtools.seekablestream.SeekableStream {
+public final class ClosedFileInputStream extends htsjdk.samtools.seekablestream.SeekableStream {
 
   private static final int DEFAULT_BUFFER_SIZE = 1024 * 1024;
 

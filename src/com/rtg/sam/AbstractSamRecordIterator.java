@@ -13,8 +13,8 @@ package com.rtg.sam;
 
 import com.reeltwo.jumble.annotations.TestClass;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Implements the minimal header tracking and record counting likely to be used by any lowest-level <code>SAMRecord</code> RecordIterator

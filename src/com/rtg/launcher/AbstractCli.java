@@ -32,9 +32,9 @@ import com.rtg.util.diagnostic.Talkback;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogFile;
 
-import net.sf.samtools.SAMException;
-import net.sf.samtools.util.RuntimeEOFException;
-import net.sf.samtools.util.RuntimeIOException;
+import htsjdk.samtools.SAMException;
+import htsjdk.samtools.util.RuntimeEOFException;
+import htsjdk.samtools.util.RuntimeIOException;
 
 
 /**

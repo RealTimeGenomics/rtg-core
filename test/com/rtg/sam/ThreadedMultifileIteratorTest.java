@@ -29,9 +29,9 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.SamRecordPopulator;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFormatException;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFormatException;
+import htsjdk.samtools.SAMRecord;
 
 /**
  */

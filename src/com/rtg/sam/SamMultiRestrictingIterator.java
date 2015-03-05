@@ -19,12 +19,12 @@ import com.rtg.tabix.VirtualOffsets;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.SequenceNameLocus;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.util.BlockCompressedInputStream;
-import net.sf.samtools.util.CloseableIterator;
-import net.sf.samtools.util.RuntimeIOException;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.CloseableIterator;
+import htsjdk.samtools.util.RuntimeIOException;
 
 /**
  * Like SamRestrictingIterator but uses VirtualOffsets to perform separate region retrievals.

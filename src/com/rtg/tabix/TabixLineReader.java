@@ -22,8 +22,8 @@ import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.util.io.ClosedFileInputStream;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
-import net.sf.samtools.util.RuntimeIOException;
+import htsjdk.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.RuntimeIOException;
 
 /**
  * A class to wrap the Tabix line reading capability.

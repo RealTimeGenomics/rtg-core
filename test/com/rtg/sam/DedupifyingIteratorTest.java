@@ -20,8 +20,8 @@ import java.util.List;
 import com.rtg.util.Resources;
 import com.rtg.variant.VariantAlignmentRecord;
 
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

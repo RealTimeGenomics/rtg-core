@@ -15,7 +15,7 @@ import java.util.Locale;
 
 import com.rtg.sam.SamUtils;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  */

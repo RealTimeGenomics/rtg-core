@@ -14,10 +14,10 @@ package com.rtg.tabix;
 import java.io.IOException;
 import java.util.Arrays;
 
-import net.sf.samtools.util.BlockCompressedInputStream;
-import net.sf.samtools.util.BlockCompressedStreamConstants;
-import net.sf.samtools.util.LineReader;
-import net.sf.samtools.util.RuntimeIOException;
+import htsjdk.samtools.util.BlockCompressedInputStream;
+import htsjdk.samtools.util.BlockCompressedStreamConstants;
+import htsjdk.samtools.util.LineReader;
+import htsjdk.samtools.util.RuntimeIOException;
 
 /**
  * This class relies on implementation details of {@link BlockCompressedInputStream} namely

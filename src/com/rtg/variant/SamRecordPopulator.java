@@ -15,7 +15,7 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.sam.ForcedInitialiser;
 import com.rtg.util.Populator;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Populator that just passes through SAM records.

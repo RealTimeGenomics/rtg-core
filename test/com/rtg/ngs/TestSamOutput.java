@@ -21,12 +21,12 @@ import com.rtg.sam.SamUtils;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.diagnostic.Timer;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMFileWriterFactory;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.SAMSequenceRecord;
-import net.sf.samtools.SAMValidationError;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileWriter;
+import htsjdk.samtools.SAMFileWriterFactory;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SAMValidationError;
 
 /**
  * Test memory and limits of SAM format.

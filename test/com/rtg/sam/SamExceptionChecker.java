@@ -21,10 +21,10 @@ import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Random;
 
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMFormatException;
-import net.sf.samtools.SAMRecord;
-import net.sf.samtools.util.CloseableIterator;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMFormatException;
+import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.util.CloseableIterator;
 
 /**
  * Test the quality of Picard exception handling when parsing damaged SAM files.

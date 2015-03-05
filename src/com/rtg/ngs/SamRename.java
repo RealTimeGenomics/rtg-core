@@ -42,11 +42,11 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.diagnostic.WarningType;
 import com.rtg.util.io.FileUtils;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMFileReader;
-import net.sf.samtools.SAMFileWriter;
-import net.sf.samtools.SAMFileWriterFactory;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SAMFileWriter;
+import htsjdk.samtools.SAMFileWriterFactory;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Restore original read names in SAM file

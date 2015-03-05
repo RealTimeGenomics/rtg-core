@@ -17,7 +17,7 @@ import com.rtg.alignment.CgGotohEditDistance;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 
 /**

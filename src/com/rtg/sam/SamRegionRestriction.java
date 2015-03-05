@@ -14,7 +14,7 @@ package com.rtg.sam;
 
 import com.rtg.util.intervals.RegionRestriction;
 
-import net.sf.samtools.SAMSequenceDictionary;
+import htsjdk.samtools.SAMSequenceDictionary;
 
 /**
  * Class to handle SAM region restrictions

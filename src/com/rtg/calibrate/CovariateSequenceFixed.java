@@ -15,7 +15,7 @@ package com.rtg.calibrate;
 import java.util.List;
 import java.util.Locale;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * This covariate grows in size as more sequence names are encountered.

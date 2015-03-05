@@ -14,7 +14,7 @@ package com.rtg.visualization;
 import java.util.Arrays;
 import java.util.HashMap;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

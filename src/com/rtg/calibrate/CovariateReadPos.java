@@ -14,7 +14,7 @@ package com.rtg.calibrate;
 
 import java.util.Locale;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * A Covariate variable for the position along the read.

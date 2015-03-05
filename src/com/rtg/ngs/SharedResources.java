@@ -26,10 +26,10 @@ import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMProgramRecord;
-import net.sf.samtools.SAMReadGroupRecord;
-import net.sf.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMProgramRecord;
+import htsjdk.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMSequenceRecord;
 
 /**
  * Resources that can be shared among multiple instances of

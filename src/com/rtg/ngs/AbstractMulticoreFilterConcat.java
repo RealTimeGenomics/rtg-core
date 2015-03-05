@@ -40,7 +40,7 @@ import com.rtg.util.intervals.Range;
 import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.io.FileUtils;
 
-import net.sf.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileHeader;
 
 /**
  * Multicore version of filter concatenation. This class determines

@@ -15,9 +15,9 @@ package com.rtg.variant.sv.discord;
 import com.rtg.util.TestUtils;
 import com.rtg.util.machine.MachineOrientation;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMReadGroupRecord;
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMRecord;
 
 import junit.framework.TestCase;
 

@@ -11,7 +11,7 @@
  */
 package com.rtg.sam;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  * It's a chain of SAM filters

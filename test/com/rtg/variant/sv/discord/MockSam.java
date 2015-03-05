@@ -12,7 +12,7 @@
 
 package com.rtg.variant.sv.discord;
 
-import net.sf.samtools.SAMRecord;
+import htsjdk.samtools.SAMRecord;
 
 /**
  */

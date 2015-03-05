@@ -35,10 +35,10 @@ import com.rtg.variant.VariantSample;
 import com.rtg.variant.bayes.MockGenotypeMeasure;
 import com.rtg.variant.bayes.NoNonIdentityMeasure;
 
-import net.sf.samtools.SAMFileHeader;
-import net.sf.samtools.SAMReadGroupRecord;
-import net.sf.samtools.SAMSequenceDictionary;
-import net.sf.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMReadGroupRecord;
+import htsjdk.samtools.SAMSequenceDictionary;
+import htsjdk.samtools.SAMSequenceRecord;
 
 import junit.framework.TestCase;
 
