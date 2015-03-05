@@ -24,6 +24,7 @@ import java.util.Random;
 import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMFormatException;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.ValidationStringency;
 import htsjdk.samtools.util.CloseableIterator;
 
 /**
@@ -33,10 +34,10 @@ public final class SamExceptionChecker {
 
   private SamExceptionChecker() { }
 
-  private static final SAMFileReader.ValidationStringency[] MODES = {
-    SAMFileReader.ValidationStringency.SILENT,
-    SAMFileReader.ValidationStringency.LENIENT,
-    SAMFileReader.ValidationStringency.STRICT
+  private static final ValidationStringency[] MODES = {
+    ValidationStringency.SILENT,
+    ValidationStringency.LENIENT,
+    ValidationStringency.STRICT
   };
 
   private static final byte[] SAM_INPUT = (""
@@ -106,7 +107,7 @@ public final class SamExceptionChecker {
     // because we need to set the stringency to parse the header.  I don't
     // know why this is not supported in the constructor for SAMFileReader,
     // since this way is dangerous for multithread environments.
-    final SAMFileReader.ValidationStringency oldStringency = SAMFileReader.getDefaultValidationStringency();
+    final ValidationStringency oldStringency = SAMFileReader.getDefaultValidationStringency();
 
 
     // Replace default error stream because LENIENT writes messages to screen,
@@ -119,7 +120,7 @@ public final class SamExceptionChecker {
         // Select a seed, so that same sequence of changes can be applied
         // to each of the stringency modes.
         final long seed = System.nanoTime();
-        for (final SAMFileReader.ValidationStringency stringency : MODES) {
+        for (final ValidationStringency stringency : MODES) {
           if (limit != DEFAULT_LIMIT) {
             System.out.println();
             System.out.println("Mode: " + stringency.toString());

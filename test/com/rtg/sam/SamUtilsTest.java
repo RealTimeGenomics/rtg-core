@@ -14,7 +14,6 @@ package com.rtg.sam;
 import static com.rtg.util.StringUtils.LS;
 import static com.rtg.util.StringUtils.TAB;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -42,10 +41,7 @@ import htsjdk.samtools.Cigar;
 import htsjdk.samtools.CigarElement;
 import htsjdk.samtools.CigarOperator;
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMFileReader;
-import htsjdk.samtools.SAMProgramRecord;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -245,26 +241,6 @@ public class SamUtilsTest extends TestCase {
     }
   }
 
-
-
-  private static final String SAM_HEADER_OLD_PG = ""
-    + "@HD" + TAB + "VN:1.0" + TAB + "SO:coordinate" + NL
-    + "@SQ" + TAB + "SN:g1" + TAB + "LN:20" + NL
-    + "@PG" + TAB + "ID:rtg" + TAB + "CL:map --output mappings_pe_svdel --template template.sdf --input reads_pe_svdel.sdf" + NL
-    + "@PG" + TAB + "ID:rtg" + TAB + "CL:svprep -i mappings_pe_svdel" + NL
-    + "@PG" + TAB + "ID:rtg" + TAB + "CL:svprep2 -i mappings_pe_svdel" + NL
-    ;
-
-  public void testPGMigration() {
-    final ByteArrayInputStream bis = new ByteArrayInputStream(SAM_HEADER_OLD_PG.getBytes());
-    final SAMFileReader reader = new SAMFileReader(bis);
-    SAMProgramRecord prev = null;
-    for (final SAMProgramRecord r : reader.getFileHeader().getProgramRecords()) {
-      assertEquals(r.getProgramName(), "rtg");
-      assertTrue(prev == null || (prev.getId().equals(r.getPreviousProgramGroupId())));
-      prev = r;
-    }
-  }
 
 
   public void testIsBam() throws Exception {
