@@ -29,7 +29,7 @@
 
   <!-- These jars are needed at run time -->
   <fileset id="runtime.libs" dir="${src.lib.dir}">
-    <include name="sam-1.??.jar" />
+    <include name="sam-1.112.jar" />
     <include name="gzipfix.jar" />
     <include name="RPlot.jar" />
     <include name="Jama-1.0.3.jar" />
@@ -171,7 +171,7 @@
       <include name="com/rtg/metagenomics/krona/resources/hidden.png" />
       <include name="com/rtg/metagenomics/krona/resources/loading.gif" />
     </fileset>
-    <zipfileset src="${src.lib.dir}/sam-1.82.jar" excludes="META-INF/**"/>
+    <zipfileset src="${src.lib.dir}/sam-1.112.jar" excludes="META-INF/**"/>
     <zipfileset src="${src.lib.dir}/Jama-1.0.3.jar" excludes="META-INF/**"/>
 
     <zipfileset src="${src.lib.dir}/velocity-1.7.jar" excludes="META-INF/**" />
