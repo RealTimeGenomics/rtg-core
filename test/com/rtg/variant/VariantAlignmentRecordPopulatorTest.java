@@ -22,7 +22,7 @@ import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordIterator;
-
+import htsjdk.samtools.SamReader;
 import junit.framework.TestCase;
 
 /**
@@ -60,7 +60,7 @@ public class VariantAlignmentRecordPopulatorTest extends TestCase {
     try (TestDirectory td = new TestDirectory()) {
       final File samfile = new File(td, "test.sam.gz");
       FileHelper.stringToGzFile(SAM, samfile);
-      try (SAMFileReader sr = new SAMFileReader(samfile)) {
+      try (SamReader sr = new SAMFileReader(samfile)) {
         final SAMRecordIterator iterator = sr.iterator();
         iterator.hasNext();
         final SAMRecord rec = iterator.next();

@@ -38,12 +38,13 @@ import com.rtg.simulation.MutatedSampleOffsets;
 import com.rtg.simulation.SimulatedReadNameParser;
 import com.rtg.simulation.SimulatedReadNameParserFactory;
 import com.rtg.util.Pair;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.RegionRestriction;
 
 import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamReader;
 
 /**
  * This class take the read data and lays it out in <code>ASCII</code> mode
@@ -469,7 +470,7 @@ public final class Aview extends AbstractCli {
   private void processUnmapped(File[] files, String sequenceName, final int correctStart, final int correctEnd) throws IOException {
     final Set<String> unmappedLines = new HashSet<>();
     for (final File file : files) {
-      final SAMFileReader unmappedReader = new SAMFileReader(file);
+      final SamReader unmappedReader = new SAMFileReader(file);
       for (final SAMRecord r : unmappedReader) {
         if (r.getReadUnmappedFlag()) {
           setCurrentReadSdf(r);

@@ -29,6 +29,7 @@ import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMFormatException;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMValidationError;
+import htsjdk.samtools.SamReader;
 import htsjdk.samtools.util.RuntimeIOException;
 
 /**
@@ -95,7 +96,7 @@ public class SkipInvalidRecordsIterator extends AbstractSamRecordIterator {
    * @param silent true to not report warnings
    * @throws IOException if an IO error occurs
    */
-  public SkipInvalidRecordsIterator(String path, final SAMFileReader reader, boolean silent) throws IOException {
+  public SkipInvalidRecordsIterator(String path, final SamReader reader, boolean silent) throws IOException {
     this(path, new SamFileReaderAdaptor(reader, null), silent);
   }
 
@@ -105,7 +106,7 @@ public class SkipInvalidRecordsIterator extends AbstractSamRecordIterator {
    * @param reader to obtain base iterator from
    * @throws IOException if an IO error occurs
    */
-  public SkipInvalidRecordsIterator(String path, SAMFileReader reader) throws IOException {
+  public SkipInvalidRecordsIterator(String path, SamReader reader) throws IOException {
     this(path, new SamFileReaderAdaptor(reader, null));
   }
 
@@ -118,7 +119,7 @@ public class SkipInvalidRecordsIterator extends AbstractSamRecordIterator {
     this(samFile.getPath(), makeSAMFileReader(samFile));
   }
 
-  private static SAMFileReader makeSAMFileReader(File samFile) throws IOException {
+  private static SamReader makeSAMFileReader(File samFile) throws IOException {
     final String samPath = samFile.getPath();
     try {
       return new SAMFileReader(samFile);

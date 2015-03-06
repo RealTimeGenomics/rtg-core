@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.reeltwo.jumble.annotations.TestClass;
-import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SdfUtils;
@@ -34,6 +33,7 @@ import com.rtg.sam.ThreadedMultifileIterator;
 import com.rtg.tabix.IndexingStreamCreator;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.io.AsynchInputStream;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -41,6 +41,7 @@ import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordIterator;
+import htsjdk.samtools.SamReader;
 
 /**
  * Does the stand alone re-calibration.
@@ -92,7 +93,7 @@ public class Recalibrate implements Closeable {
   }
 
   private void doRecalibrate(File samFile, List<CovariateEnum> covs, boolean force) throws IOException {
-    try (SAMFileReader reader = new SAMFileReader(new AsynchInputStream(new FileInputStream(samFile)))) {
+    try (SamReader reader = new SAMFileReader(new AsynchInputStream(new FileInputStream(samFile)))) {
       SamUtils.checkReferenceGuid(reader.getFileHeader(), mTemplateSdfId);
       final Calibrator c = doRecalibrate(reader, CovariateEnum.getCovariates(covs, reader.getFileHeader()));
       final File calibrationFile = new File(samFile.getParent(), samFile.getName() + EXTENSION);
@@ -105,7 +106,7 @@ public class Recalibrate implements Closeable {
     }
   }
 
-  private Calibrator doRecalibrate(SAMFileReader reader, Covariate[] covs) throws IOException {
+  private Calibrator doRecalibrate(SamReader reader, Covariate[] covs) throws IOException {
     final Calibrator c = new Calibrator(covs, mRegions);
     if (mRegions != null) {
       c.setSequenceLengths(Calibrator.getSequenceLengthMap(mTemplate, mRegions));

@@ -19,7 +19,7 @@ import com.rtg.util.intervals.RegionRestriction;
 
 import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
-
+import htsjdk.samtools.SamReader;
 import junit.framework.TestCase;
 
 /**
@@ -40,7 +40,7 @@ public class SamRestrictingIteratorTest extends TestCase {
 
   public void testIterator() {
     ByteArrayInputStream baos = new ByteArrayInputStream(SAM.getBytes());
-    final SAMFileReader reader = new SAMFileReader(baos);
+    final SamReader reader = new SAMFileReader(baos);
     ReferenceRanges ranges = SamRangeUtils.createExplicitReferenceRange(reader.getFileHeader(), new SamRegionRestriction("g1", 22, 23));
     SamRestrictingIterator it = new SamRestrictingIterator(reader.iterator(), ranges); //these positions are 0-based
     int[] expectedLocs = {15, 15, 17, 18, 18, 23};
@@ -68,7 +68,7 @@ public class SamRestrictingIteratorTest extends TestCase {
 
   public void testIterator2() {
     ByteArrayInputStream baos = new ByteArrayInputStream(SAM2.getBytes());
-    final SAMFileReader reader = new SAMFileReader(baos);
+    final SamReader reader = new SAMFileReader(baos);
     ReferenceRanges ranges = SamRangeUtils.createExplicitReferenceRange(reader.getFileHeader(),
       new SamRegionRestriction("g1", 149, 169),
       new SamRegionRestriction("g1", 180, 185),

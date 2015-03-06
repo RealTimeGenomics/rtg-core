@@ -43,7 +43,7 @@ import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
-
+import htsjdk.samtools.SamReader;
 import junit.framework.TestCase;
 
 /**
@@ -181,7 +181,7 @@ public class SamValidatorTest extends TestCase {
       Diagnostic.addListener(dl);
       FileUtils.stringToFile(samHeader, sam);
       try (FileInputStream input = new FileInputStream(sam)) {
-        try (SAMFileReader sfr = new SAMFileReader(input)) {
+        try (SamReader sfr = new SAMFileReader(input)) {
           s.processRecords(null, sfr, false, null, null, null);
           fail("Must fail if not sorted");
         }

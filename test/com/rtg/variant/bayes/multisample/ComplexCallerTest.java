@@ -51,7 +51,7 @@ import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMSequenceRecord;
-
+import htsjdk.samtools.SamReader;
 import junit.framework.TestCase;
 
 /**
@@ -194,9 +194,9 @@ public class ComplexCallerTest extends TestCase {
 
   private class MyCB extends CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord> {
 
-    private List<SAMRecord> readFile(File in) {
+    private List<SAMRecord> readFile(File in) throws IOException {
       final List<SAMRecord> list = new ArrayList<>();
-      try (SAMFileReader r = new SAMFileReader(in)) {
+      try (SamReader r = new SAMFileReader(in)) {
         for (Object aR : r) {
           list.add((SAMRecord) aR);
         }
@@ -206,7 +206,7 @@ public class ComplexCallerTest extends TestCase {
 
     private final List<SAMRecord> mList;
 
-    public MyCB(RecordIterator<VariantAlignmentRecord> recordIt, List<File> samFiles, RegionRestriction restriction, Populator<VariantAlignmentRecord> pop, SAMFileHeader header) {
+    public MyCB(RecordIterator<VariantAlignmentRecord> recordIt, List<File> samFiles, RegionRestriction restriction, Populator<VariantAlignmentRecord> pop, SAMFileHeader header) throws IOException {
       super(recordIt, pop, header.getSequenceIndex("chr21"), restriction.getStart(), Integer.MAX_VALUE);
       assert samFiles.size() == 1;
       mList = readFile(samFiles.get(0));

@@ -51,6 +51,7 @@ import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.SAMFileWriterFactory;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamReader;
 
 /**
  * Thread safe version of super class
@@ -439,7 +440,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
 
           final SAMFileHeader basicHeader = new SAMFileHeader();
           basicHeader.setSortOrder(SAMFileHeader.SortOrder.coordinate);
-          try (SAMFileReader reader = new SAMFileReader(FileUtils.createFileInputStream(mIntermediateFile, false), mHeader)) {
+          try (SamReader reader = new SAMFileReader(FileUtils.createFileInputStream(mIntermediateFile, false), mHeader)) {
             try (SAMFileWriter writer = getSAMFileWriter(basicHeader, out)) {
               final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(mIntermediateFile.getPath(), reader, true);
               while (it.hasNext()) {

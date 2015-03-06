@@ -50,6 +50,7 @@ import htsjdk.samtools.SAMException;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamReader;
 import htsjdk.samtools.util.CloseableIterator;
 
 /**
@@ -321,7 +322,7 @@ public class ReadMappingAccuracy extends LoggedCli {
       final SamFilterParams filterParams = SamFilterOptions.makeFilterParamsBuilder(mFlags).excludeUnmapped(true).excludeUnplaced(true).create();
 
       for (final File f : mParams.samFiles()) {
-        try (final SAMFileReader reader = new SAMFileReader(FileUtils.createInputStream(f, false))) {
+        try (final SamReader reader = new SAMFileReader(FileUtils.createInputStream(f, false))) {
           if (recordsOut != null && !doneHeader) {
             recordsOut.write(reader.getFileHeader().getTextHeader());
             doneHeader = true;

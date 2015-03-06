@@ -58,6 +58,7 @@ import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SamReader;
 import htsjdk.samtools.util.BlockCompressedInputStream;
 import htsjdk.samtools.util.BlockCompressedStreamConstants;
 
@@ -694,10 +695,11 @@ public final class SamUtils {
    * Open file, return header, close file
    * @param f SAM file
    * @return the header
+   * @throws IOException if an I/O error occurs
    */
-  public static SAMFileHeader getSingleHeader(File f) {
+  public static SAMFileHeader getSingleHeader(File f) throws IOException {
     final SAMFileHeader result;
-    try (SAMFileReader sr = new SAMFileReader(f)) {
+    try (SamReader sr = new SAMFileReader(f)) {
       result = sr.getFileHeader();
     }
     return result;
@@ -708,8 +710,9 @@ public final class SamUtils {
    *
    * @param files SAM files
    * @return the combined header
+   * @throws IOException if an I/O error occurs
    */
-  public static SAMFileHeader getUberHeader(Collection<File> files) {
+  public static SAMFileHeader getUberHeader(Collection<File> files) throws IOException {
     return getUberHeader(files, false, null);
   }
 
@@ -720,8 +723,9 @@ public final class SamUtils {
    * @param ignoreHeaderIncompatibility true if should not care about incompatible header
    * @param expectedSamples if non-null, check that headers contain sample information that overlaps the supplied names
    * @return the combined header
+   * @throws IOException if an I/O error occurs
    */
-  public static SAMFileHeader getUberHeader(Collection <File> files, boolean ignoreHeaderIncompatibility, String[] expectedSamples) {
+  public static SAMFileHeader getUberHeader(Collection <File> files, boolean ignoreHeaderIncompatibility, String[] expectedSamples) throws IOException {
     if (files.size() == 0) {
       throw new IllegalArgumentException("File list is empty!");
     }
@@ -734,7 +738,7 @@ public final class SamUtils {
     final HashSet<String> expectedSamplesSet = expectedSamples == null ? null : new HashSet<>(Arrays.asList(expectedSamples));
     boolean guidMismatch = false;
     for (final File file : files) {
-      try (SAMFileReader sfr = new SAMFileReader(file)) {
+      try (SamReader sfr = new SAMFileReader(file)) {
         if (first == null) {
           first = sfr.getFileHeader();
           firstFile = file;

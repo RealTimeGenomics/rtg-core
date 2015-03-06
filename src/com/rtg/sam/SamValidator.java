@@ -31,16 +31,17 @@ import com.rtg.reader.ReadHelper;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 
 import htsjdk.samtools.SAMFileHeader.SortOrder;
 import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMFormatException;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamReader;
 
 /**
  * Verifies a SAM file produced from paired end is sane.
@@ -143,7 +144,7 @@ public final class SamValidator {
           templateReader.seek(0);
           mExpectedMates.clear();
           try (InputStream bis = FileUtils.createInputStream(samFile, false)) {
-            try (SAMFileReader read = new SAMFileReader(bis)) {
+            try (SamReader read = new SAMFileReader(bis)) {
               processRecords(templateReader, read, cgData, countPerRead, pairedRead, mCurrentVariables);
               if (mValidate) {
                 for (final String mate : mExpectedMates) {
@@ -227,7 +228,7 @@ public final class SamValidator {
     }
   }
 
-  int[] processRecords(SequencesReader templateReader, SAMFileReader read, boolean cgData, int[] countPerRead, boolean[] pairedRead, SamStatsVariables variables) throws IOException {
+  int[] processRecords(SequencesReader templateReader, SamReader read, boolean cgData, int[] countPerRead, boolean[] pairedRead, SamStatsVariables variables) throws IOException {
     int prevTemplatePosition = 0;
     String prevTemplateName = null;
     byte[] currTemplate = null;

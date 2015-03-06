@@ -30,6 +30,7 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import htsjdk.samtools.SAMFileHeader.SortOrder;
 import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamReader;
 
 /**
  * Sequence data source for SAM and BAM file inputs
@@ -41,7 +42,7 @@ public class SamBamSequenceDataSource implements SequenceDataSource {
   protected final boolean mPaired;
   protected final boolean mFlattenPaired;
 
-  private SAMFileReader mSamReader;
+  private SamReader mSamReader;
   private RecordIterator<SAMRecord> mSamIterator; //RecordIterator<SAMRecord> of either SkipInvalidRecordsIt or some new SamFilterIterator which dedups
   private int mRecordIndex = 0;
 

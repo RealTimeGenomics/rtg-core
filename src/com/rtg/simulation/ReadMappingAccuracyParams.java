@@ -35,6 +35,7 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.VcfReader;
 
 import htsjdk.samtools.SAMFileReader;
+import htsjdk.samtools.SamReader;
 
 /**
  */
@@ -172,7 +173,7 @@ final class ReadMappingAccuracyParams {
     final SdfId sdfId = ReaderUtils.getSdfId(readDir);
 
     for (final File f : samFiles) {
-      try (SAMFileReader reader = new SAMFileReader(FileUtils.createInputStream(f, false))) {
+      try (SamReader reader = new SAMFileReader(FileUtils.createInputStream(f, false))) {
         SamUtils.checkReadsGuid(reader.getFileHeader(), sdfId);
       }
     }

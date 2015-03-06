@@ -42,6 +42,7 @@ import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SamReader;
 import htsjdk.samtools.util.RuntimeEOFException;
 import htsjdk.samtools.util.RuntimeIOException;
 
@@ -207,7 +208,7 @@ public final class ReadGroupStatsCalculator {
     }
   }
 
-  private void populateStats(File file, SAMFileReader reader) throws IOException {
+  private void populateStats(File file, SamReader reader) throws IOException {
     try (RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(file.getPath(), reader)) {
       while (it.hasNext()) {
         final SAMRecord r = it.next();
@@ -286,7 +287,7 @@ public final class ReadGroupStatsCalculator {
 
   private void processFile(File file) throws IOException {
     try (InputStream stream = FileUtils.createInputStream(file, false)) {
-      try (SAMFileReader reader = new SAMFileReader(stream)) {
+      try (SamReader reader = new SAMFileReader(stream)) {
         setupReadGroups(reader.getFileHeader());
         populateStats(file, reader);
       }

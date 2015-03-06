@@ -24,6 +24,7 @@ import java.util.Random;
 import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMFormatException;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamReader;
 import htsjdk.samtools.ValidationStringency;
 import htsjdk.samtools.util.CloseableIterator;
 
@@ -154,7 +155,7 @@ public final class SamExceptionChecker {
 
             // Now try and iterate over its records using the SAM reader
             try {
-              final SAMFileReader r = new SAMFileReader(new ByteArrayInputStream(mutant));
+              final SamReader r = new SAMFileReader(new ByteArrayInputStream(mutant));
               headerOk++;
               try {
                 final CloseableIterator<SAMRecord> it = r.iterator();

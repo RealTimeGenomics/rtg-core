@@ -22,7 +22,7 @@ import com.rtg.variant.VariantAlignmentRecord;
 
 import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
-
+import htsjdk.samtools.SamReader;
 import junit.framework.TestCase;
 
 /**
@@ -57,8 +57,8 @@ public class DedupifyingIteratorTest extends TestCase {
     try (InputStream in = Resources.getResourceAsStream("com/rtg/sam/resources/duplicates.sam")) {
       final InputStream exp = Resources.getResourceAsStream("com/rtg/sam/resources/deduplicated.sam");
       try {
-        final SAMFileReader inSam = new SAMFileReader(in);
-        final SAMFileReader expSam = new SAMFileReader(exp);
+        final SamReader inSam = new SAMFileReader(in);
+        final SamReader expSam = new SAMFileReader(exp);
         final DedupifyingIterator<VariantAlignmentRecord> inIt = new DedupifyingIterator<>(new VarRecordIterator(inSam.iterator()));
         final Iterator<SAMRecord> expIt = expSam.iterator();
         while (inIt.hasNext() && expIt.hasNext()) {
@@ -158,8 +158,8 @@ public class DedupifyingIteratorTest extends TestCase {
     try {
       final InputStream exp = Resources.getResourceAsStream("com/rtg/sam/resources/deduplicatedSE.sam");
       try {
-        final SAMFileReader inSam = new SAMFileReader(in);
-        final SAMFileReader expSam = new SAMFileReader(exp);
+        final SamReader inSam = new SAMFileReader(in);
+        final SamReader expSam = new SAMFileReader(exp);
         final Iterator<VariantAlignmentRecord> inIt = new DedupifyingIterator<>(new VarRecordIterator(inSam.iterator()));
         final Iterator<SAMRecord> expIt = expSam.iterator();
         while (inIt.hasNext() && expIt.hasNext()) {

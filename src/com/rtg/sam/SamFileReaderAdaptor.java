@@ -16,8 +16,8 @@ import java.io.IOException;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.intervals.ReferenceRanges;
 
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamReader;
 import htsjdk.samtools.util.CloseableIterator;
 
 /**
@@ -25,7 +25,7 @@ import htsjdk.samtools.util.CloseableIterator;
  */
 @TestClass("com.rtg.sam.SamFileAndRecordTest")
 public class SamFileReaderAdaptor extends AbstractSamRecordIterator {
-  private final SAMFileReader mReader;
+  private final SamReader mReader;
   private final CloseableIterator<SAMRecord> mIterator;
   private boolean mIsClosed;
 
@@ -34,7 +34,7 @@ public class SamFileReaderAdaptor extends AbstractSamRecordIterator {
    * @param reader the reader
    * @param regions regions to filter from output, may be null
    */
-  public SamFileReaderAdaptor(SAMFileReader reader, final ReferenceRanges regions) {
+  public SamFileReaderAdaptor(SamReader reader, final ReferenceRanges regions) {
     super(reader.getFileHeader());
     mReader = reader;
     SamUtils.logRunId(mReader.getFileHeader());

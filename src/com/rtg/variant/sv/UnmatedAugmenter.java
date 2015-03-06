@@ -32,9 +32,9 @@ import com.rtg.sam.SkipInvalidRecordsIterator;
 import com.rtg.util.Constants;
 import com.rtg.util.Environment;
 import com.rtg.util.Pair;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.machine.MachineType;
 import com.rtg.util.machine.PairOrientation;
@@ -46,6 +46,7 @@ import htsjdk.samtools.SAMFileWriterFactory;
 import htsjdk.samtools.SAMProgramRecord;
 import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamReader;
 
 /**
  * Adds mating info to records of unique unmated hits with unique unmated hit for pair.
@@ -124,7 +125,7 @@ public final class UnmatedAugmenter {
   }
 
   private void populateMaps(File file) throws IOException {
-    try (SAMFileReader reader = new SAMFileReader(FileUtils.createFileInputStream(file, false))) {
+    try (SamReader reader = new SAMFileReader(FileUtils.createFileInputStream(file, false))) {
       try (RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(file.getPath(), reader)) {
         while (it.hasNext()) {
           processRecord(it.next());
@@ -172,7 +173,7 @@ public final class UnmatedAugmenter {
     }
   }
 
-  private SAMFileHeader constructHeader(SAMFileReader reader, boolean processMachineTypes) {
+  private SAMFileHeader constructHeader(SamReader reader, boolean processMachineTypes) {
     final SAMFileHeader header = reader.getFileHeader();
     final SAMProgramRecord pg = new SAMProgramRecord(Constants.APPLICATION_NAME);
     pg.setProgramVersion(Environment.getVersion());
@@ -206,10 +207,10 @@ public final class UnmatedAugmenter {
     mRgMachineTypes.put(rgId, mt);
   }
 
-  private SAMFileWriter makeWriter(SAMFileReader reader, OutputStream outStream, boolean processMachineTypes, boolean presorted) {
+  private SAMFileWriter makeWriter(SamReader reader, OutputStream outStream, boolean processMachineTypes, boolean presorted) {
     final SAMFileHeader header = constructHeader(reader, processMachineTypes);
     final SAMFileWriter writer;
-    if (reader.isBinary()) {
+    if (reader.type() == SamReader.Type.BAM_TYPE) {
       writer = new SAMFileWriterFactory().makeBAMWriter(header, presorted, outStream, true);
     } else {
       writer = new SAMFileWriterFactory().makeSAMWriter(header, presorted, outStream);
@@ -227,7 +228,7 @@ public final class UnmatedAugmenter {
    */
   public void augmentUnmapped(File unmappedFile, File outputUnmappedFile, boolean zipInput, ReadGroupStatsCalculator calc) throws IOException {
     calc.calculate();
-    try (SAMFileReader reader = new SAMFileReader(FileUtils.createFileInputStream(unmappedFile, false))) {
+    try (SamReader reader = new SAMFileReader(FileUtils.createFileInputStream(unmappedFile, false))) {
       try (OutputStream outStream = FileUtils.createOutputStream(outputUnmappedFile, zipInput)) {
         try (SAMFileWriter writer = makeWriter(reader, outStream, true, false)) {
           final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(unmappedFile.getPath(), reader, true);
@@ -337,7 +338,7 @@ public final class UnmatedAugmenter {
    * @throws IOException in an error occurs while reading file
    */
   public static void populateReadGroupStats(File matedFile, ReadGroupStatsCalculator calc) throws IOException {
-    try (SAMFileReader reader = new SAMFileReader(FileUtils.createFileInputStream(matedFile, false))) {
+    try (SamReader reader = new SAMFileReader(FileUtils.createFileInputStream(matedFile, false))) {
       calc.setupReadGroups(reader.getFileHeader());
 
       //assume any warnings from input are reported the first time we processed so set Skipping iterator to silent mode.
@@ -359,12 +360,12 @@ public final class UnmatedAugmenter {
    */
   public void augmentUnmated(File unmatedFile, File unmatedOutputFile, boolean zipInput, ReadGroupStatsCalculator calc) throws IOException {
     populateMaps(unmatedFile);
-    try (SAMFileReader reader = new SAMFileReader(FileUtils.createFileInputStream(unmatedFile, false))) {
+    try (SamReader reader = new SAMFileReader(FileUtils.createFileInputStream(unmatedFile, false))) {
       if (calc != null) {
         calc.setupReadGroups(reader.getFileHeader());
       }
 
-      try (SAMFileWriter writer = makeWriter(reader, FileUtils.createOutputStream(unmatedOutputFile, zipInput || reader.isBinary()), false, true)) {
+      try (SAMFileWriter writer = makeWriter(reader, FileUtils.createOutputStream(unmatedOutputFile, zipInput || reader.type() == SamReader.Type.BAM_TYPE), false, true)) {
 
         //assume any warnings from input are reported the first time we processed so set Skipping iterator to silent mode.
         final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(unmatedFile.getPath(), reader, true);

@@ -22,7 +22,7 @@ import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
-
+import htsjdk.samtools.SamReader;
 import junit.framework.TestCase;
 
 /**
@@ -46,7 +46,7 @@ public class SamClosedFileReaderTest extends TestCase {
   }
 
   private void check(final File bam) throws IOException {
-    final SAMFileReader normalReader = new SAMFileReader(bam);
+    final SamReader normalReader = new SAMFileReader(bam);
     final Iterator<SAMRecord> norm = normalReader.iterator();
     try {
       try (final RecordIterator<SAMRecord> closed = new SamClosedFileReader(bam, null, normalReader.getFileHeader())) {
@@ -75,7 +75,7 @@ public class SamClosedFileReaderTest extends TestCase {
   }
 
   private void check2(final File sam, File exp) throws IOException {
-    try (SAMFileReader normalReader = new SAMFileReader(exp)) {
+    try (SamReader normalReader = new SAMFileReader(exp)) {
       final SamRegionRestriction rr = new SamRegionRestriction("simulatedSequence2", 10000, 20000);
       final Iterator<SAMRecord> norm = normalReader.query(rr.getSequenceName(), rr.getStart() + 1, rr.getEnd(), false);
       ReferenceRanges ranges = SamRangeUtils.createExplicitReferenceRange(normalReader.getFileHeader(), rr);

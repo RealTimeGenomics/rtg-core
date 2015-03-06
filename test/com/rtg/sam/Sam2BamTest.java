@@ -34,6 +34,7 @@ import com.rtg.variant.SamRecordPopulator;
 
 import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamReader;
 import htsjdk.samtools.util.CloseableIterator;
 
 /**
@@ -81,7 +82,7 @@ public class Sam2BamTest extends AbstractCliTest {
       final File output = new File(dir, "output.bam");
       final File index = new File(dir, "output.bai");
       Sam2Bam.convertSamToBam(output, index, input);
-      try (SAMFileReader reader = new SAMFileReader(output)) {
+      try (SamReader reader = new SAMFileReader(output)) {
         final CloseableIterator<SAMRecord> bIt = reader.iterator();
         try {
           try (RecordIterator<SAMRecord> multi = new ThreadedMultifileIterator<>(input, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {

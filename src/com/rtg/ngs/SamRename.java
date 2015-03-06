@@ -31,7 +31,6 @@ import com.rtg.sam.SamBamConstants;
 import com.rtg.sam.SamUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
@@ -40,6 +39,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.diagnostic.WarningType;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -47,6 +47,7 @@ import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.SAMFileWriterFactory;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamReader;
 
 /**
  * Restore original read names in SAM file
@@ -260,7 +261,7 @@ public class SamRename extends AbstractCli {
     void renameSamFile(final File sortTempDir, final File outFile, final File resultsFile) throws IOException {
       final int offset = mRegion.getStart() > 0 ? (int) mRegion.getStart() : 0;
       try (InputStream bis = FileUtils.createFileInputStream(resultsFile, false)) {
-        final SAMFileReader read = new SAMFileReader(bis);
+        final SamReader read = new SAMFileReader(bis);
         final SAMFileHeader header = read.getFileHeader();
         SamUtils.checkReadsGuid(header, mSdfId);
         SamUtils.addProgramRecord(header);
