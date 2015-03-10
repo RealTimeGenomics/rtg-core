@@ -48,7 +48,6 @@ import com.rtg.variant.bayes.multisample.singleton.SingletonCallerConfiguration;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMSequenceRecord;
 import htsjdk.samtools.SamReader;
@@ -196,7 +195,7 @@ public class ComplexCallerTest extends TestCase {
 
     private List<SAMRecord> readFile(File in) throws IOException {
       final List<SAMRecord> list = new ArrayList<>();
-      try (SamReader r = new SAMFileReader(in)) {
+      try (SamReader r = SamUtils.makeSamReader(in)) {
         for (Object aR : r) {
           list.add((SAMRecord) aR);
         }

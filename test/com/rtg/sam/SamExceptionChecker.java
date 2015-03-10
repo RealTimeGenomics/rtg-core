@@ -21,10 +21,11 @@ import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Random;
 
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMFormatException;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamInputResource;
 import htsjdk.samtools.SamReader;
+import htsjdk.samtools.SamReaderFactory;
 import htsjdk.samtools.ValidationStringency;
 import htsjdk.samtools.util.CloseableIterator;
 
@@ -104,13 +105,6 @@ public final class SamExceptionChecker {
     // Record distinct stack traces, so they can be output later
     final HashSet<String> traces = new HashSet<>();
 
-    // Remember current stringency, so it can be restored.  This is necessary
-    // because we need to set the stringency to parse the header.  I don't
-    // know why this is not supported in the constructor for SAMFileReader,
-    // since this way is dangerous for multithread environments.
-    final ValidationStringency oldStringency = SAMFileReader.getDefaultValidationStringency();
-
-
     // Replace default error stream because LENIENT writes messages to screen,
     // for this checking we just ignore such messages.
     final PrintStream oldErr = System.err;
@@ -126,10 +120,9 @@ public final class SamExceptionChecker {
             System.out.println();
             System.out.println("Mode: " + stringency.toString());
           }
+          final SamReaderFactory factory = SamReaderFactory.make().validationStringency(stringency);
           final Random rnd = new Random(seed);
           final long startTime = System.currentTimeMillis();
-          // Need to set validation this way, only way to do it for header parsing!
-          SAMFileReader.setDefaultValidationStringency(stringency);
 
           // Counters for various types of parsing events
           int format = 0;
@@ -155,19 +148,13 @@ public final class SamExceptionChecker {
 
             // Now try and iterate over its records using the SAM reader
             try {
-              final SamReader r = new SAMFileReader(new ByteArrayInputStream(mutant));
               headerOk++;
-              try {
-                final CloseableIterator<SAMRecord> it = r.iterator();
-                try {
+              try (SamReader r = factory.open(SamInputResource.of(new ByteArrayInputStream(mutant)))) {
+                try (CloseableIterator<SAMRecord> it = r.iterator()) {
                   while (it.hasNext()) {
                     it.next();
                   }
-                } finally {
-                  it.close();
                 }
-              } finally {
-                r.close();
               }
             } catch (final SAMFormatException e) {
               format++;
@@ -214,7 +201,6 @@ public final class SamExceptionChecker {
       }
     } finally {
       System.setErr(oldErr);
-      SAMFileReader.setDefaultValidationStringency(oldStringency);
     }
   }
 

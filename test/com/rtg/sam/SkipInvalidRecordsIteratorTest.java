@@ -117,13 +117,13 @@ public class SkipInvalidRecordsIteratorTest extends TestCase {
     try {
       new SamFileAndRecord(new File("badsam"), 0);
       fail();
-    } catch (final NoTalkbackSlimException e) {
+    } catch (final IOException e) {
       //e.printStackTrace();
     }
     try {
       new SamFileAndRecord(new File("xx" + StringUtils.FS + "badsam"), 0);
       fail();
-    } catch (final NoTalkbackSlimException e) {
+    } catch (final IOException e) {
       //e.printStackTrace();
     }
 

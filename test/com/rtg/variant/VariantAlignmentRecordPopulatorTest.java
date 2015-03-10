@@ -14,12 +14,12 @@ package com.rtg.variant;
 import java.io.File;
 import java.io.IOException;
 
+import com.rtg.sam.SamUtils;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordIterator;
 import htsjdk.samtools.SamReader;
@@ -60,7 +60,7 @@ public class VariantAlignmentRecordPopulatorTest extends TestCase {
     try (TestDirectory td = new TestDirectory()) {
       final File samfile = new File(td, "test.sam.gz");
       FileHelper.stringToGzFile(SAM, samfile);
-      try (SamReader sr = new SAMFileReader(samfile)) {
+      try (SamReader sr = SamUtils.makeSamReader(samfile)) {
         final SAMRecordIterator iterator = sr.iterator();
         iterator.hasNext();
         final SAMRecord rec = iterator.next();

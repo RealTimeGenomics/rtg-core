@@ -23,12 +23,12 @@ import com.rtg.mode.SequenceType;
 import com.rtg.sam.RecordIterator;
 import com.rtg.sam.SamFilter;
 import com.rtg.sam.SamFilterIterator;
+import com.rtg.sam.SamUtils;
 import com.rtg.sam.SkipInvalidRecordsIterator;
 import com.rtg.util.array.ArrayUtils;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
 import htsjdk.samtools.SAMFileHeader.SortOrder;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SamReader;
 
@@ -207,7 +207,7 @@ public class SamBamSequenceDataSource implements SequenceDataSource {
         mSamIterator = null;
         return false;
       }
-      mSamReader = new SAMFileReader(is);
+      mSamReader = SamUtils.makeSamReader(is);
       checkSortOrder();
       final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(mSourceIt.currentFile().getPath(), mSamReader);
       mSamIterator = mFilter == null ? it : new SamFilterIterator(it, mFilter);

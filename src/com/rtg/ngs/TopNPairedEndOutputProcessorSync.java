@@ -34,6 +34,7 @@ import com.rtg.pairedend.SlidingWindowCollector;
 import com.rtg.reader.PrereadNamesInterface;
 import com.rtg.reader.PrereadType;
 import com.rtg.sam.RecordIterator;
+import com.rtg.sam.SamUtils;
 import com.rtg.sam.SkipInvalidRecordsIterator;
 import com.rtg.util.IORunnable;
 import com.rtg.util.IORunnableProxy;
@@ -47,7 +48,6 @@ import com.rtg.variant.sv.ReadGroupStatsCalculator;
 import com.rtg.variant.sv.UnmatedAugmenter;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.SAMFileWriterFactory;
 import htsjdk.samtools.SAMRecord;
@@ -440,7 +440,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
 
           final SAMFileHeader basicHeader = new SAMFileHeader();
           basicHeader.setSortOrder(SAMFileHeader.SortOrder.coordinate);
-          try (SamReader reader = new SAMFileReader(FileUtils.createFileInputStream(mIntermediateFile, false), mHeader)) {
+          try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(mIntermediateFile, false), mHeader)) {
             try (SAMFileWriter writer = getSAMFileWriter(basicHeader, out)) {
               final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(mIntermediateFile.getPath(), reader, true);
               while (it.hasNext()) {

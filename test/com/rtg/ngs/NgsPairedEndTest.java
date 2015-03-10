@@ -208,7 +208,7 @@ public class NgsPairedEndTest extends TestCase {
   }
   public void testSvPrepNamesSDF() throws Exception {
     final String id = "svprep-expected-names.txt";
-    final String[] additionalArgs = {"--read-names"};
+    final String[] additionalArgs = {"--read-names", "-T", "1"};
     checkSvPrepSdf(id, additionalArgs);
   }
 

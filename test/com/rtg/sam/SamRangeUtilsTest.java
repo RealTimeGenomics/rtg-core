@@ -24,7 +24,6 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SamReader;
 import junit.framework.TestCase;
 
@@ -52,9 +51,9 @@ public class SamRangeUtilsTest extends TestCase {
     + "g2\t20\t500\n"
     ;
 
-  public void testCreateSingleRangeList() {
+  public void testCreateSingleRangeList() throws IOException {
     final ByteArrayInputStream bis = new ByteArrayInputStream(SAM_HEADER.getBytes());
-    final SamReader reader = new SAMFileReader(bis);
+    final SamReader reader = SamUtils.makeSamReader(bis);
     final SAMFileHeader header = reader.getFileHeader();
 
     ReferenceRanges refRanges = SamRangeUtils.createExplicitReferenceRange(header, new SamRegionRestriction("g1"));
@@ -77,7 +76,7 @@ public class SamRangeUtilsTest extends TestCase {
   public void testCreateBedRangeList() throws IOException {
     try (final TestDirectory dir = new TestDirectory("samrangeutils")) {
       final ByteArrayInputStream bis = new ByteArrayInputStream(SAM_HEADER.getBytes());
-      final SamReader reader = new SAMFileReader(bis);
+      final SamReader reader = SamUtils.makeSamReader(bis);
       final SAMFileHeader header = reader.getFileHeader();
       final File bedfile = new File(dir, "regions.bed");
       FileUtils.stringToFile(BED_REGIONS, bedfile);
@@ -97,9 +96,9 @@ public class SamRangeUtilsTest extends TestCase {
     }
   }
 
-  public void testCreateFullRangeList() {
+  public void testCreateFullRangeList() throws IOException {
     final ByteArrayInputStream bis = new ByteArrayInputStream(SAM_HEADER.getBytes());
-    final SamReader reader = new SAMFileReader(bis);
+    final SamReader reader = SamUtils.makeSamReader(bis);
     final SAMFileHeader header = reader.getFileHeader();
 
     ReferenceRanges refRanges = SamRangeUtils.createFullReferenceRanges(header);
@@ -114,9 +113,9 @@ public class SamRangeUtilsTest extends TestCase {
     assertNull(seqRanges.find(1000));
   }
 
-  public void testConvertNameToIdKeys() {
+  public void testConvertNameToIdKeys() throws IOException {
     final ByteArrayInputStream bis = new ByteArrayInputStream(SAM_HEADER.getBytes());
-    final SamReader reader = new SAMFileReader(bis);
+    final SamReader reader = SamUtils.makeSamReader(bis);
     final SAMFileHeader header = reader.getFileHeader();
 
     ReferenceRanges refRanges = SamRangeUtils.createFullReferenceRanges(header);
@@ -134,7 +133,7 @@ public class SamRangeUtilsTest extends TestCase {
 
   public void testGetReferenceRanges() throws IOException {
     final ByteArrayInputStream bis = new ByteArrayInputStream(SAM_HEADER.getBytes());
-    final SamReader reader = new SAMFileReader(bis);
+    final SamReader reader = SamUtils.makeSamReader(bis);
     final SAMFileHeader header = reader.getFileHeader();
 
     SamFilterParams params = new SamFilterParams.SamFilterParamsBuilder().create();

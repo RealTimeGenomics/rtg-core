@@ -43,7 +43,6 @@ import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.SAMFileWriterFactory;
 import htsjdk.samtools.SAMRecord;
@@ -261,7 +260,7 @@ public class SamRename extends AbstractCli {
     void renameSamFile(final File sortTempDir, final File outFile, final File resultsFile) throws IOException {
       final int offset = mRegion.getStart() > 0 ? (int) mRegion.getStart() : 0;
       try (InputStream bis = FileUtils.createFileInputStream(resultsFile, false)) {
-        final SamReader read = new SAMFileReader(bis);
+        final SamReader read = SamUtils.makeSamReader(bis);
         final SAMFileHeader header = read.getFileHeader();
         SamUtils.checkReadsGuid(header, mSdfId);
         SamUtils.addProgramRecord(header);

@@ -38,7 +38,6 @@ import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 
 import htsjdk.samtools.SAMFileHeader.SortOrder;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMFormatException;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SamReader;
@@ -144,7 +143,7 @@ public final class SamValidator {
           templateReader.seek(0);
           mExpectedMates.clear();
           try (InputStream bis = FileUtils.createInputStream(samFile, false)) {
-            try (SamReader read = new SAMFileReader(bis)) {
+            try (SamReader read = SamUtils.makeSamReader(bis)) {
               processRecords(templateReader, read, cgData, countPerRead, pairedRead, mCurrentVariables);
               if (mValidate) {
                 for (final String mate : mExpectedMates) {

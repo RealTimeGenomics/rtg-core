@@ -20,8 +20,8 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.SequenceNameLocus;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamReader;
 import htsjdk.samtools.util.BlockCompressedInputStream;
 import htsjdk.samtools.util.CloseableIterator;
 import htsjdk.samtools.util.RuntimeIOException;
@@ -152,7 +152,7 @@ final class SamMultiRestrictingIterator implements CloseableIterator<SAMRecord> 
           clearBuffered();
           mStream.seek(mOffsets.start(mCurrentOffset));
           // Warning: Confusing constructors being used here - the true is only used to force a different constructor
-          mCurrentIt = mIsBam ? new SAMFileReader(mStream, mHeader, true).iterator() : new SAMFileReader(mStream, mHeader).iterator();
+          mCurrentIt = SamUtils.makeSamReader(mStream, mHeader, mIsBam ? SamReader.Type.BAM_TYPE : SamReader.Type.SAM_TYPE).iterator();
 
         //} else {
         //  Diagnostic.developerLog("After region " + mCurrentRegion + ", re-using existing reader for region " + mOffsets.region(mCurrentOffset));

@@ -26,7 +26,6 @@ import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SamReader;
 
@@ -101,7 +100,7 @@ public final class SamCommandHelper {
       bis = new BufferedInputStream(new ByteArrayInputStream(convertedValue.getBytes()));
     }
     try {
-      final SamReader sfr = new SAMFileReader(bis);
+      final SamReader sfr = SamUtils.makeSamReader(bis);
       final List<SAMReadGroupRecord> readGroups = sfr.getFileHeader().getReadGroups();
       final int readGroupCount = readGroups.size();
       if (readGroupCount == 0) {
@@ -151,7 +150,7 @@ public final class SamCommandHelper {
    */
   public static SAMReadGroupRecord validateSelectedSamRG(File rgFile, String selectReadGroup) throws IOException {
     try (BufferedInputStream bis = FileUtils.createInputStream(rgFile, false)) {
-      final SamReader sfr = new SAMFileReader(bis);
+      final SamReader sfr = SamUtils.makeSamReader(bis);
       final List<SAMReadGroupRecord> readGroups = sfr.getFileHeader().getReadGroups();
       final int readGroupCount = readGroups.size();
       if (readGroupCount == 0) {

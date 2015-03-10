@@ -40,7 +40,6 @@ import com.rtg.util.machine.MachineType;
 import com.rtg.util.machine.PairOrientation;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.SAMFileWriterFactory;
 import htsjdk.samtools.SAMProgramRecord;
@@ -125,7 +124,7 @@ public final class UnmatedAugmenter {
   }
 
   private void populateMaps(File file) throws IOException {
-    try (SamReader reader = new SAMFileReader(FileUtils.createFileInputStream(file, false))) {
+    try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(file, false))) {
       try (RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(file.getPath(), reader)) {
         while (it.hasNext()) {
           processRecord(it.next());
@@ -228,7 +227,7 @@ public final class UnmatedAugmenter {
    */
   public void augmentUnmapped(File unmappedFile, File outputUnmappedFile, boolean zipInput, ReadGroupStatsCalculator calc) throws IOException {
     calc.calculate();
-    try (SamReader reader = new SAMFileReader(FileUtils.createFileInputStream(unmappedFile, false))) {
+    try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(unmappedFile, false))) {
       try (OutputStream outStream = FileUtils.createOutputStream(outputUnmappedFile, zipInput)) {
         try (SAMFileWriter writer = makeWriter(reader, outStream, true, false)) {
           final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(unmappedFile.getPath(), reader, true);
@@ -338,7 +337,7 @@ public final class UnmatedAugmenter {
    * @throws IOException in an error occurs while reading file
    */
   public static void populateReadGroupStats(File matedFile, ReadGroupStatsCalculator calc) throws IOException {
-    try (SamReader reader = new SAMFileReader(FileUtils.createFileInputStream(matedFile, false))) {
+    try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(matedFile, false))) {
       calc.setupReadGroups(reader.getFileHeader());
 
       //assume any warnings from input are reported the first time we processed so set Skipping iterator to silent mode.
@@ -360,7 +359,7 @@ public final class UnmatedAugmenter {
    */
   public void augmentUnmated(File unmatedFile, File unmatedOutputFile, boolean zipInput, ReadGroupStatsCalculator calc) throws IOException {
     populateMaps(unmatedFile);
-    try (SamReader reader = new SAMFileReader(FileUtils.createFileInputStream(unmatedFile, false))) {
+    try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(unmatedFile, false))) {
       if (calc != null) {
         calc.setupReadGroups(reader.getFileHeader());
       }

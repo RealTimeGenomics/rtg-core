@@ -14,16 +14,15 @@ package com.rtg.variant;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
+import com.rtg.sam.SamUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.machine.MachineType;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -39,7 +38,7 @@ public class ReadGroupMachineErrorChooserTest extends TestCase {
     + "@RG\tSM:foo\tID:differentyetthesame\tPL:ILLUMINA" + StringUtils.LS;
 
   public void test() throws Exception {
-    final SAMFileHeader header = new SAMFileReader(new ByteArrayInputStream(SAM.getBytes())).getFileHeader();
+    final SAMFileHeader header = SamUtils.makeSamReader(new ByteArrayInputStream(SAM.getBytes())).getFileHeader();
     final MachineErrorChooserInterface m = new ReadGroupMachineErrorChooser(header);
     final SAMRecord s = new SAMRecord(header);
     s.setAttribute("RG", "sounique");
@@ -64,7 +63,7 @@ public class ReadGroupMachineErrorChooserTest extends TestCase {
 
   public void testMissingPlatform() throws IOException {
     Diagnostic.setLogStream();
-    final SAMFileHeader header = new SAMFileReader(new ByteArrayInputStream(SAM_BAD.getBytes())).getFileHeader();
+    final SAMFileHeader header = SamUtils.makeSamReader(new ByteArrayInputStream(SAM_BAD.getBytes())).getFileHeader();
     try {
       new ReadGroupMachineErrorChooser(header);
       fail();
@@ -75,7 +74,7 @@ public class ReadGroupMachineErrorChooserTest extends TestCase {
 
   public void testSamRecord() throws Exception {
     Diagnostic.setLogStream();
-    final SAMFileHeader header = new SAMFileReader(new ByteArrayInputStream(SAM.getBytes())).getFileHeader();
+    final SAMFileHeader header = SamUtils.makeSamReader(new ByteArrayInputStream(SAM.getBytes())).getFileHeader();
     final MachineErrorChooserInterface m = new ReadGroupMachineErrorChooser(header);
     final SAMReadGroupRecord rgr = new SAMReadGroupRecord("somethingelse");
     rgr.setPlatform("IONTORRENT");

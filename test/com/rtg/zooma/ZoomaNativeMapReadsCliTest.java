@@ -18,6 +18,7 @@ import java.util.Arrays;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
 import com.rtg.mode.DnaUtils;
+import com.rtg.sam.SamUtils;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
@@ -26,7 +27,6 @@ import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.RandomDna;
 
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordIterator;
 import htsjdk.samtools.SamReader;
@@ -47,7 +47,7 @@ public class ZoomaNativeMapReadsCliTest extends AbstractCliTest {
   // Inhale a small sam or bam file into a string
   static String samFileToString(File samFile) throws IOException {
     StringBuffer samText = new StringBuffer();
-    try (SamReader reader = new SAMFileReader(FileUtils.createInputStream(samFile, false))) {
+    try (SamReader reader = SamUtils.makeSamReader(samFile)) {
       SAMRecordIterator it = reader.iterator();
       while (it.hasNext()) {
         SAMRecord rec = it.next();

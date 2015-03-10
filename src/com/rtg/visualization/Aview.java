@@ -42,7 +42,6 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.RegionRestriction;
 
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SamReader;
 
@@ -470,7 +469,7 @@ public final class Aview extends AbstractCli {
   private void processUnmapped(File[] files, String sequenceName, final int correctStart, final int correctEnd) throws IOException {
     final Set<String> unmappedLines = new HashSet<>();
     for (final File file : files) {
-      final SamReader unmappedReader = new SAMFileReader(file);
+      final SamReader unmappedReader = SamUtils.makeSamReader(file);
       for (final SAMRecord r : unmappedReader) {
         if (r.getReadUnmappedFlag()) {
           setCurrentReadSdf(r);

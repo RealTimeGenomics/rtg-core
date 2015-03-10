@@ -24,8 +24,8 @@ import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.ClosedFileInputStream;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SamReader;
 import htsjdk.samtools.util.BlockCompressedInputStream;
 import htsjdk.samtools.util.CloseableIterator;
 
@@ -79,9 +79,8 @@ public final class SamClosedFileReader extends AbstractSamRecordIterator {
   }
 
 
-  private CloseableIterator<SAMRecord> primaryIterator(BlockCompressedInputStream bcis) {
-    // Warning: Confusing constructors being used here - the true is only used to force a different constructor
-    return mIsBam ? new SAMFileReader(bcis, mHeader, true).iterator() : new SAMFileReader(bcis, mHeader).iterator();
+  private CloseableIterator<SAMRecord> primaryIterator(BlockCompressedInputStream bcis) throws IOException {
+    return SamUtils.makeSamReader(bcis, mHeader, mIsBam ? SamReader.Type.BAM_TYPE : SamReader.Type.SAM_TYPE).iterator();
   }
 
   /**
@@ -94,7 +93,7 @@ public final class SamClosedFileReader extends AbstractSamRecordIterator {
     // Handle easy case of no restriction
     if (mRegions == null || mRegions.allAvailable()) {
       if (!mIsBam) {
-        return new SAMFileReader(mStream, mHeader).iterator();
+        return SamUtils.makeSamReader(mStream, mHeader).iterator(); // htsjdk will decide whether decompression is required
       } else {
         return primaryIterator(new BlockCompressedInputStream(mStream));
       }
@@ -121,7 +120,7 @@ public final class SamClosedFileReader extends AbstractSamRecordIterator {
     final VirtualOffsets filePointers = index.getFilePointers(mRegions);
 
     if (filePointers == null) {
-      return new SAMFileReader(new ByteArrayInputStream(new byte[0]), mHeader).iterator();
+      return SamUtils.makeSamReader(new ByteArrayInputStream(new byte[0]), mHeader, SamReader.Type.SAM_TYPE).iterator();
     }
 
     //Diagnostic.developerLog("Using virtual offsets for file: " + mFile.toString() + "\t" + filePointers);

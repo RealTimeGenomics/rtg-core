@@ -21,11 +21,11 @@ import static com.rtg.util.StringUtils.LS;
 import java.io.File;
 import java.io.IOException;
 
+import com.rtg.sam.SamUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.util.CloseableIterator;
@@ -128,7 +128,7 @@ public class MachineOrientationTest extends TestCase {
 
       final SAMRecord rec;
       File samfile = new File(inn + FS + OUT_SAM);
-      try (SamReader reader = new SAMFileReader(FileUtils.createInputStream(samfile, false))) {
+      try (SamReader reader = SamUtils.makeSamReader(FileUtils.createInputStream(samfile, false))) {
         final CloseableIterator<SAMRecord> iterator = reader.iterator();
         if (iterator.hasNext()) {
           rec = iterator.next();

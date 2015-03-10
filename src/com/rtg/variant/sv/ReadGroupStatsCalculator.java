@@ -14,7 +14,6 @@ package com.rtg.variant.sv;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,7 +37,6 @@ import com.rtg.util.io.FileUtils;
 
 import htsjdk.samtools.SAMException;
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMSequenceRecord;
@@ -286,11 +284,9 @@ public final class ReadGroupStatsCalculator {
   }
 
   private void processFile(File file) throws IOException {
-    try (InputStream stream = FileUtils.createInputStream(file, false)) {
-      try (SamReader reader = new SAMFileReader(stream)) {
-        setupReadGroups(reader.getFileHeader());
-        populateStats(file, reader);
-      }
+    try (SamReader reader = SamUtils.makeSamReader(FileUtils.createInputStream(file, false))) {
+      setupReadGroups(reader.getFileHeader());
+      populateStats(file, reader);
     } catch (final SAMException e) {
       if (e instanceof RuntimeIOException
           || e instanceof RuntimeEOFException) {

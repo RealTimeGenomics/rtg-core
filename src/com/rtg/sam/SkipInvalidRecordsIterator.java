@@ -15,7 +15,6 @@ package com.rtg.sam;
 import static com.rtg.util.StringUtils.LS;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -25,12 +24,10 @@ import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.diagnostic.WarningType;
 
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMFormatException;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMValidationError;
 import htsjdk.samtools.SamReader;
-import htsjdk.samtools.util.RuntimeIOException;
 
 /**
  * Connects between SamFileReaderAdaptor and <code>RecordIterator</code>, skipping (and warns for) records
@@ -116,20 +113,7 @@ public class SkipInvalidRecordsIterator extends AbstractSamRecordIterator {
    * @throws IOException if an IO Error occurs
    */
   public SkipInvalidRecordsIterator(File samFile) throws IOException {
-    this(samFile.getPath(), makeSAMFileReader(samFile));
-  }
-
-  private static SamReader makeSAMFileReader(File samFile) throws IOException {
-    final String samPath = samFile.getPath();
-    try {
-      return new SAMFileReader(samFile);
-    } catch (final RuntimeIOException e) {
-      if (e.getCause() instanceof FileNotFoundException) {
-        throw new NoTalkbackSlimException(ErrorType.FILE_NOT_FOUND, samPath);
-      } else {
-        throw (IOException) e.getCause();
-      }
-    }
+    this(samFile.getPath(), SamUtils.makeSamReader(samFile));
   }
 
   private void maybeWarn(Throwable t) {

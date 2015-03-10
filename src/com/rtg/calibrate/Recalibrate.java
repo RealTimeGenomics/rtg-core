@@ -37,7 +37,6 @@ import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.io.AsynchInputStream;
 
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordIterator;
@@ -93,7 +92,7 @@ public class Recalibrate implements Closeable {
   }
 
   private void doRecalibrate(File samFile, List<CovariateEnum> covs, boolean force) throws IOException {
-    try (SamReader reader = new SAMFileReader(new AsynchInputStream(new FileInputStream(samFile)))) {
+    try (SamReader reader = SamUtils.makeSamReader(new AsynchInputStream(new FileInputStream(samFile)))) {
       SamUtils.checkReferenceGuid(reader.getFileHeader(), mTemplateSdfId);
       final Calibrator c = doRecalibrate(reader, CovariateEnum.getCovariates(covs, reader.getFileHeader()));
       final File calibrationFile = new File(samFile.getParent(), samFile.getName() + EXTENSION);

@@ -41,7 +41,6 @@ import com.rtg.util.io.LogFile;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
 
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SamReader;
 import htsjdk.samtools.util.CloseableIterator;
@@ -109,7 +108,7 @@ public class SamIteratorTaskTest extends TestCase {
     + "0" + TAB + "0" + TAB + "g1" + TAB +  "3" + TAB + "255" + TAB + "8M" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "ATCGACTG" + TAB + "````````" + TAB + "AS:i:0" + TAB + "IH:i:1" + LS;
   public void testStaticMethods() throws IOException {
     //validateRecord
-    final SamReader samReader = new SAMFileReader(new ByteArrayInputStream(SAMINVALID_IH.getBytes()));
+    final SamReader samReader = SamUtils.makeSamReader(new ByteArrayInputStream(SAMINVALID_IH.getBytes()));
     final CloseableIterator<SAMRecord> records = samReader.iterator();
     DummySamIteratorTask task = new DummySamIteratorTask(new DummySingleMappedParams(new ArrayList<File>(), null, 0));
     assertFalse(task.validateRecord(records.next()));

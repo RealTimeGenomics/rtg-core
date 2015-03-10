@@ -52,15 +52,18 @@ import htsjdk.samtools.Cigar;
 import htsjdk.samtools.CigarElement;
 import htsjdk.samtools.CigarOperator;
 import htsjdk.samtools.SAMFileHeader;
-import htsjdk.samtools.SAMFileReader;
 import htsjdk.samtools.SAMProgramRecord;
 import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
+import htsjdk.samtools.SamInputResource;
 import htsjdk.samtools.SamReader;
+import htsjdk.samtools.SamReaderFactory;
+import htsjdk.samtools.ValidationStringency;
 import htsjdk.samtools.util.BlockCompressedInputStream;
 import htsjdk.samtools.util.BlockCompressedStreamConstants;
+import htsjdk.samtools.util.RuntimeIOException;
 
 /**
  *
@@ -699,7 +702,7 @@ public final class SamUtils {
    */
   public static SAMFileHeader getSingleHeader(File f) throws IOException {
     final SAMFileHeader result;
-    try (SamReader sr = new SAMFileReader(f)) {
+    try (SamReader sr = SamUtils.makeSamReader(f)) {
       result = sr.getFileHeader();
     }
     return result;
@@ -738,7 +741,7 @@ public final class SamUtils {
     final HashSet<String> expectedSamplesSet = expectedSamples == null ? null : new HashSet<>(Arrays.asList(expectedSamples));
     boolean guidMismatch = false;
     for (final File file : files) {
-      try (SamReader sfr = new SAMFileReader(file)) {
+      try (SamReader sfr = SamUtils.makeSamReader(file)) {
         if (first == null) {
           first = sfr.getFileHeader();
           firstFile = file;
@@ -849,4 +852,69 @@ public final class SamUtils {
     }
   }
 
+  private static SamReaderFactory getSamReaderFactory() {
+    return SamReaderFactory.make()
+      .validationStringency(ValidationStringency.SILENT);
+  }
+
+  /**
+   * Entry point for specifically creating a SamReader given a pre-positioned stream, header, and known type
+   * @param stream the stream to read from. Must already be performing decompression if required.
+   * @param headerOverride the pre-determined SAM header
+   * @param assumeType the type of input to assume.
+   * @return the SamReader
+   * @throws IOException if an I/O problem occurs opening the file
+   */
+  public static SamReader makeSamReader(InputStream stream, SAMFileHeader headerOverride, SamReader.Type assumeType) throws IOException {
+    if (assumeType == null) {
+      throw new NullPointerException();
+    }
+    try {
+      return getSamReaderFactory()
+        .open(SamInputResource.of(stream).header(headerOverride).assumeType(assumeType));
+    } catch (final RuntimeIOException e) {
+      throw (IOException) e.getCause();
+    }
+  }
+
+  /**
+   * Entry point for specifically creating a SamReader given a provided stream and header, but let
+   * htsjdk decide the underlying format (including working out whether the input is compressed).
+   * @param stream the stream to read from
+   * @param headerOverride the pre-determined SAM header (or null to use the header from the stream)
+   * @return the SamReader
+   * @throws IOException if an I/O problem occurs opening the file
+   */
+  public static SamReader makeSamReader(InputStream stream, SAMFileHeader headerOverride) throws IOException {
+    try {
+      return getSamReaderFactory().open(SamInputResource.of(stream).header(headerOverride));
+    } catch (final RuntimeIOException e) {
+      throw (IOException) e.getCause();
+    }
+  }
+
+  /**
+   * Entry point for creating SamReaders using our preferences
+   * @param stream the stream to read from
+   * @return the SamReader
+   * @throws IOException if an I/O problem occurs opening the file
+   */
+  public static SamReader makeSamReader(InputStream stream) throws IOException {
+    return makeSamReader(stream, null);
+  }
+
+  /**
+   * Entry point for creating SamReaders using our preferences
+   * @param file the file to open
+   * @return the SamReader
+   * @throws IOException if an I/O problem occurs opening the file
+   */
+  public static SamReader makeSamReader(File file) throws IOException {
+    try {
+      return getSamReaderFactory()
+        .open(file);
+    } catch (final RuntimeIOException e) {
+      throw (IOException) e.getCause();
+    }
+  }
 }
