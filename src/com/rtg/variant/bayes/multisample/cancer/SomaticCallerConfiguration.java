@@ -198,7 +198,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
    * @return the prior probabilities for transitions between haploid hypotheses.
    */
   static double[][] makeSomaticInitialPriors(final Description description, final ComplexTemplate cot) {
-    final int hypExtension = Math.max(5, description.maxLength() + 1);
+    final int hypExtension = Math.max(5, Math.max(description.maxLength() + 1, cot.getLength() + 1));
     final AllPaths sm = new ScoreFastUnderflow(RealignParamsGenome.SINGLETON);
     final double[][] initialPriorsLn = new double[description.size()][description.size()];
     final int start = cot.getStart() - hypExtension;
