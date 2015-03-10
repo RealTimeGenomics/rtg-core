@@ -234,6 +234,19 @@ public class SomaticNanoTest extends TestCase {
     return file;
   }
 
+  // Test situation where N's on ref and evicence is shorter sequence of AAAAA.  See Bug#1591
+  public void testIndelWithUnknownRef() throws Exception {
+    final String tmpl = ">ref\n"
+    + "AGTTAAAGAGTGAAACCCTGATAGTCTTACCCCAAGGCCAAAGTCCTATTTTATTATTTTTATATTCTTACTATATATTATACAAATCTTCATTGCAA"
+    + "GTTTNNNNNNNNNNNNNNNNNNNNAAGTAAAAACATAAGAAATCTAATTTTTGTATATAAAAGCTGTAAACTAAATTATATATATACACATACATACA"
+    + "TACGTGTGTGTGTGTATATATATATACATATATAACCTATGGATTAGGAAAATTTATTGCTTCAACAAACTAAGGGGATTACTTCCCATAAAATTAGT\n";
+    final String sam = FileHelper.resourceToString("com/rtg/variant/resources/n2-mappings.sam");
+    final String sam2 = FileHelper.resourceToString("com/rtg/variant/resources/n2-mappings2.sam");
+    final String relation = "original-derived BACT_SAMPLE CANCER contamination=0";
+    check(tmpl, sam, sam2, relation, "", new String[0], 1386L);
+  }
+
+
   /*
   public void testContaminationBug() {
     //Diagnostic.setLogStream(System.err);
