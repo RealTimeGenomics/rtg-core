@@ -529,7 +529,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
       final File altHeaderFile = (File) mFlags.getValue(X_ALTERNATE_SAM_HEADER);
       uberHeader = SamUtils.getSingleHeader(altHeaderFile);
     } else {
-      uberHeader = SamUtils.getUberHeader(samFiles, mFlags.isSet(X_IGNORE_SAM_HEADER_INCOMPATIBILITY), grf == null ? null : grf.genomes());
+      uberHeader = SamUtils.getUberHeader(genomeParams.reader(), samFiles, mFlags.isSet(X_IGNORE_SAM_HEADER_INCOMPATIBILITY), grf == null ? null : grf.genomes());
     }
     builder.uberHeader(uberHeader);
     builder.referenceRanges(SamRangeUtils.createReferenceRanges(uberHeader, filterParams));

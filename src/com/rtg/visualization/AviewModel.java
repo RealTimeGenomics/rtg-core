@@ -139,7 +139,7 @@ final class AviewModel {
       if (p.end() <= p.start()) {
         throw new NoTalkbackSlimException("start is greater than end. start = " + p.start() + ", end = " + p.end());
       }
-      mRecords = SamHelper.loadAlignments(p);
+      mRecords = SamHelper.loadAlignments(p, reader);
       if (p.sortReads()) {
         SamHelper.sortAlignments(mRecords);
       }

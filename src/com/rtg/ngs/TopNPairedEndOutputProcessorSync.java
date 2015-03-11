@@ -441,7 +441,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
 
           final SAMFileHeader basicHeader = new SAMFileHeader();
           basicHeader.setSortOrder(SAMFileHeader.SortOrder.coordinate);
-          try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(mIntermediateFile, false), mHeader)) {
+          try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(mIntermediateFile, false), null, mHeader)) {
             try (SAMFileWriter writer = getSAMFileWriter(basicHeader, out)) {
               final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(mIntermediateFile.getPath(), reader, true);
               while (it.hasNext()) {

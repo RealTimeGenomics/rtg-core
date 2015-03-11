@@ -32,7 +32,7 @@ public class CircularBufferMultifileSinglePassReaderWindowSyncTest extends Circu
     final List<File> list = Arrays.asList(samFiles);
     final SamRegionRestriction restriction = new SamRegionRestriction("simulatedSequence2", start, end);
     final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), 0, "a", "b", "c");
-    final RecordIterator<VariantAlignmentRecord> it = CircularBufferMultifileSinglePassReaderWindow.defaultIterator(list, new SamFilterParamsBuilder().restriction(restriction).create(), 4, pop);
+    final RecordIterator<VariantAlignmentRecord> it = CircularBufferMultifileSinglePassReaderWindowTest.defaultIterator(list, new SamFilterParamsBuilder().restriction(restriction).create(), pop);
     final CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord> ssrw =
         new CircularBufferMultifileSinglePassReaderWindowSync<>(
             it,

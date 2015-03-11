@@ -14,6 +14,7 @@ package com.rtg.sam;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -24,8 +25,10 @@ import com.rtg.tabix.IndexUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.Pair;
+import com.rtg.util.Populator;
 import com.rtg.util.QuickSort;
 import com.rtg.util.QuickSortIntIntProxy;
+import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
@@ -40,6 +43,26 @@ import junit.framework.TestCase;
  * Test class
  */
 public class CircularBufferMultifileSinglePassReaderWindowTest extends TestCase {
+
+  /**
+   * Utility method to create a RecordIterator, for testing purposes.
+   *
+   * @param <V> the record type
+   * @param samFiles files to read records from
+   * @param filterParams parameters for filtering
+   * @param pop the record populator
+   * @return a RecordIterator
+   * @throws IOException if an IO error occurs
+   */
+  public static <V extends ReaderRecord<V> & MateInfo> RecordIterator<V> defaultIterator(Collection<File> samFiles, SamFilterParams filterParams, Populator<V> pop) throws IOException {
+    final SingletonPopulatorFactory<V> pf = new SingletonPopulatorFactory<>(pop);
+    final SamReadingContext context = new SamReadingContext(samFiles, 4, filterParams, SamUtils.getUberHeader(samFiles), null);
+    RecordIterator<V> it = new ThreadedMultifileIterator<>(context, pf);
+    if (filterParams.findAndRemoveDuplicates()) {
+      it = new DedupifyingRecordIterator<>(it);
+    }
+    return it;
+  }
 
   private static final int[] EXPECTED_FIRST_OVERLAP_5K_8K = {4902, 4928};
   private static final int[] EXPECTED_FIRST_OVERLAP_56K_8K = {5530, 5591, 5596};
@@ -68,6 +91,7 @@ public class CircularBufferMultifileSinglePassReaderWindowTest extends TestCase 
 
   private File mDir;
 
+
   @Override
   protected void setUp() throws Exception {
     Diagnostic.setLogStream();
@@ -86,7 +110,7 @@ public class CircularBufferMultifileSinglePassReaderWindowTest extends TestCase 
     final List<File> list = Arrays.asList(samFiles);
     final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), 0, "a", "b", "c");
     final SamRegionRestriction restriction = new SamRegionRestriction("simulatedSequence1", 0, end);
-    final RecordIterator<VariantAlignmentRecord> it = CircularBufferMultifileSinglePassReaderWindow.defaultIterator(list, new SamFilterParamsBuilder().restriction(restriction).create(), 4, pop);
+    final RecordIterator<VariantAlignmentRecord> it = defaultIterator(list, new SamFilterParamsBuilder().restriction(restriction).create(), pop);
     final CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord> ssrw = new CircularBufferMultifileSinglePassReaderWindow<>(it, pop, SamUtils.getUberHeader(list).getSequenceIndex("simulatedSequence1"), restriction.getStart(), Integer.MAX_VALUE);
     return new Pair<>(ssrw, it);
   }
@@ -95,7 +119,7 @@ public class CircularBufferMultifileSinglePassReaderWindowTest extends TestCase 
     final List<File> list = Arrays.asList(samFiles);
     final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), 0, "a", "b", "c");
     final SamRegionRestriction restriction = new SamRegionRestriction("simulatedSequence2", start, end);
-    final RecordIterator<VariantAlignmentRecord> it = CircularBufferMultifileSinglePassReaderWindow.defaultIterator(list, new SamFilterParamsBuilder().restriction(restriction).create(), 4, pop);
+    final RecordIterator<VariantAlignmentRecord> it = defaultIterator(list, new SamFilterParamsBuilder().restriction(restriction).create(), pop);
     final CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord> ssrw = new CircularBufferMultifileSinglePassReaderWindow<>(it, pop, SamUtils.getUberHeader(list).getSequenceIndex("simulatedSequence2"), restriction.getStart(), Integer.MAX_VALUE);
     return new Pair<>(ssrw, it);
   }
@@ -381,7 +405,7 @@ public class CircularBufferMultifileSinglePassReaderWindowTest extends TestCase 
     FileHelper.resourceToFile("com/rtg/sam/resources/readerWindow1.sam.gz.tbi", tbiFiles[0]);
     final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), 0, "a", "b", "c");
     final SamRegionRestriction region = new SamRegionRestriction("simulatedSequence1", 0, 1000);
-    final RecordIterator<VariantAlignmentRecord> it = CircularBufferMultifileSinglePassReaderWindow.defaultIterator(Arrays.asList(samFiles), new SamFilterParamsBuilder().restriction(region).create(), 4, pop);
+    final RecordIterator<VariantAlignmentRecord> it = defaultIterator(Arrays.asList(samFiles), new SamFilterParamsBuilder().restriction(region).create(), pop);
     final CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord> buf = new CircularBufferMultifileSinglePassReaderWindow<>(it, pop, 0, region.getStart(), 0);
     try {
       int c = 0;

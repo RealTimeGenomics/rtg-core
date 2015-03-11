@@ -23,6 +23,7 @@ import com.rtg.reader.SequencesReader;
 import com.rtg.sam.ReferenceSequenceRequiredException;
 import com.rtg.sam.SamFilterParams;
 import com.rtg.sam.SamMerger;
+import com.rtg.sam.SamReadingContext;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.ThreadedMultifileIterator;
 import com.rtg.tabix.IndexingStreamCreator;
@@ -75,7 +76,7 @@ public class Recalibrate implements Closeable {
   }
 
   private void doRecalibrate(File samFile, List<CovariateEnum> covs, boolean force) throws IOException {
-    try (SamReader reader = SamUtils.makeSamReader(new AsynchInputStream(new FileInputStream(samFile)))) {
+    try (SamReader reader = SamUtils.makeSamReader(new AsynchInputStream(new FileInputStream(samFile)), mTemplate)) {
       SamUtils.checkReferenceGuid(reader.getFileHeader(), mTemplateSdfId);
       final Calibrator c = doRecalibrate(reader, CovariateEnum.getCovariates(covs, reader.getFileHeader()));
       final File calibrationFile = new File(samFile.getParent(), samFile.getName() + EXTENSION);
@@ -101,7 +102,7 @@ public class Recalibrate implements Closeable {
   }
 
   void doMergeRecalibrate(File output, List<File> samFiles, List<CovariateEnum> covs, int threads, boolean force, boolean compress) throws IOException {
-    final SAMFileHeader uberHeader = SamUtils.getUberHeader(samFiles);
+    final SAMFileHeader uberHeader = SamUtils.getUberHeader(mTemplate, samFiles);
     final Covariate[] covariates = CovariateEnum.getCovariates(covs, uberHeader);
     final CalibratingPopulatorFactory rpf = new CalibratingPopulatorFactory(covariates, mRegions, mTemplate);
     final boolean outputBam = output.getName().endsWith(SamUtils.BAM_SUFFIX);
@@ -111,7 +112,8 @@ public class Recalibrate implements Closeable {
       throw new IOException("File: " + calibrationFile + " already exists");
     }
     final TabixIndexer.IndexerFactory indexerFactory = outputBam ? null : new TabixIndexer.SamIndexerFactory();
-    try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(samFiles, threads, rpf, SamFilterParams.builder().create(), SamUtils.getUberHeader(samFiles))) {
+    final SamReadingContext context = new SamReadingContext(samFiles, threads, SamFilterParams.builder().create(), SamUtils.getUberHeader(mTemplate, samFiles), mTemplate);
+    try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, rpf)) {
       final SAMFileHeader header = it.header().clone();
       header.setSortOrder(SAMFileHeader.SortOrder.coordinate);
       SamUtils.addProgramRecord(header);

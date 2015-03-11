@@ -55,13 +55,13 @@ public class SamHelperTest extends TestCase {
       final File[] alignments = {new File(f, AviewTest.ALIGNMENTS_BAM_FILE_NAME)};
       AviewParams p = new AviewParamsBuilder().alignments(alignments).region("gblah:5-6").create();
       try {
-        SamHelper.loadAlignments(p);
+        SamHelper.loadAlignments(p, null);
         fail();
       } catch (NoTalkbackSlimException e) {
         assertTrue(e.getMessage().contains("Unable to apply region \"gblah\" as the specified sequence name does not exist"));
       }
       p = new AviewParamsBuilder().alignments(alignments).region("g1:4-5").create();
-      final ArrayList<SAMRecord> rec = SamHelper.loadAlignments(p);
+      final ArrayList<SAMRecord> rec = SamHelper.loadAlignments(p, null);
       final int[] location = {3, 3, 5};
       assertEquals(location.length, rec.size());
       for (int i = 0; i < rec.size(); i++) {

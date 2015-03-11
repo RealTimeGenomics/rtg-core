@@ -269,7 +269,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     Diagnostic.userLog("Number of taxonomy nodes: " + mTaxonomy.size());
     mSpeciesMap = getSpeciesMap(mSequenceMap, sr, mTaxonomy);
 
-    SamUtils.checkUberHeaderAgainstReference(sr, SamUtils.getUberHeader(mParams.mapped(), true, null), false);
+    SamUtils.checkUberHeaderAgainstReference(sr, SamUtils.getUberHeader(sr, mParams.mapped(), true, null), false);
 
     accumulateMappings(sr);
 
@@ -352,7 +352,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     double mappedSpec = 0.0;
     double mappedReads = 0.0;
     double unmappedReads = 0.0;
-    final SamReadingContext context = new SamReadingContext(mParams.mapped(), 1, mParams.filterParams(), SamUtils.getUberHeader(mParams.mapped()));
+    final SamReadingContext context = new SamReadingContext(mParams.mapped(), 1, mParams.filterParams(), SamUtils.getUberHeader(sr, mParams.mapped()), null); // XXX add CRAM support?
     try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
       while (it.hasNext()) {
         usageStats++;

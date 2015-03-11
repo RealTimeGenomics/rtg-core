@@ -102,6 +102,9 @@ public class Sam2BamTest extends AbstractCliTest {
     }
   }
 
+  public void testConvertCramToBam() {
+
+  }
   public void testInnerClass() throws IOException {
     try (final TestDirectory dir = new TestDirectory("bamconverter")) {
       String err = checkMainInitBadFlags("non-existingfile", "-o", "something");

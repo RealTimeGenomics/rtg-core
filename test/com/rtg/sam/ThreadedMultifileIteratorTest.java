@@ -55,7 +55,7 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
   @Override
   RecordIterator<SAMRecord> getIterator(Collection<File> files) throws IOException {
     final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
-    return new ThreadedMultifileIterator<>(files, 2, pf, SamFilterParams.builder().create(), SamUtils.getUberHeader(files));
+    return new ThreadedMultifileIterator<>(new SamReadingContext(files, 2, SamFilterParams.builder().create(), SamUtils.getUberHeader(files), null), pf);
   }
 
   public static RecordIterator<SAMRecord> getIterator(File dir, String resource) throws IOException {
@@ -71,7 +71,7 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
     }
     final Collection<File> coll = new ArrayList<>();
     coll.add(samFile);
-    final SamReadingContext c = new SamReadingContext(coll, 1, filterParams, SamUtils.getUberHeader(coll));
+    final SamReadingContext c = new SamReadingContext(coll, 1, filterParams, SamUtils.getUberHeader(coll), null);
     return new ThreadedMultifileIterator<>(c, new SingletonPopulatorFactory<>(new SamRecordPopulator()));
   }
 
@@ -132,7 +132,7 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
       }
       try {
         final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
-        try (ThreadedMultifileIterator<SAMRecord> iterator = new ThreadedMultifileIterator<>(files, 2, pf, SamFilterParams.builder().create(), SamUtils.getUberHeader(files))) {
+        try (ThreadedMultifileIterator<SAMRecord> iterator = new ThreadedMultifileIterator<>(new SamReadingContext(files, 2, SamFilterParams.builder().create(), SamUtils.getUberHeader(files), null), pf)) {
           while (iterator.hasNext()) {
             final SAMRecord sr = iterator.next();
             //System.out.println(sr.getReadName());
@@ -182,7 +182,7 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
         final SAMFileHeader uberHeader = SamUtils.getUberHeader(files);
         assertTrue(SamUtils.checkHeaderDictionary(uberHeader, SamUtils.getSingleHeader(incompatible)));
         files.add(incompatible);
-        try (ThreadedMultifileIterator<SAMRecord> ignored = new ThreadedMultifileIterator<>(files, 2, pf, SamFilterParams.builder().create(), uberHeader)) {
+        try (ThreadedMultifileIterator<SAMRecord> ignored = new ThreadedMultifileIterator<>(new SamReadingContext(files, 2, SamFilterParams.builder().create(), uberHeader, null), pf)) {
           fail("This test needs to trigger an exception during iterator setup");
         }
         fail("This test needs to trigger an exception during iterator setup");
@@ -211,7 +211,7 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
     final SAMFileHeader sfh = new SAMFileHeader();
     sfh.setSortOrder(SAMFileHeader.SortOrder.coordinate);
     final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
-    new ThreadedMultifileIterator<>(files, 3, pf, SamFilterParams.builder().create(), sfh);
+    new ThreadedMultifileIterator<>(new SamReadingContext(files, 3, SamFilterParams.builder().create(), sfh, null), pf);
 
     //if we get here, it hasn't exploded. Success.
   }

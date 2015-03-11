@@ -21,6 +21,7 @@ import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Recalibrate;
 import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.reader.SequencesReader;
 import com.rtg.tabix.IndexingStreamCreator;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.SingletonPopulatorFactory;
@@ -72,12 +73,13 @@ public class SamMerger {
    * @param calibrationFiles corresponding calibration files to merge (may be empty)
    * @param output output file, null to use supplied output stream
    * @param out output stream to write sam to (if {@code output} is null), otherwise statistics are written here. may be null
+   * @param reference must be non-null for CRAM support
    * @param header use this header instead of any found in the SAM/BAM file (useful if file has no header, or needs changing).
    * @param writeHeader true if SAM/BAM header should be written to output file
    * @param terminateBlockedGzip true if BAM or block compressed SAM should have terminator block
    * @throws java.io.IOException if an IO error occurs
    */
-  public void mergeSamFiles(Collection<File> samFiles, Collection<File> calibrationFiles, File output, OutputStream out, SAMFileHeader header, boolean writeHeader, boolean terminateBlockedGzip) throws IOException {
+  public void mergeSamFiles(Collection<File> samFiles, Collection<File> calibrationFiles, File output, OutputStream out, SequencesReader reference, SAMFileHeader header, boolean writeHeader, boolean terminateBlockedGzip) throws IOException {
     if (output != null && calibrationFiles.size() > 0 && calibrationFiles.size() != samFiles.size()) {
       Diagnostic.warning("Number of calibration files does not match number of SAM files, will not merge calibration files.");
     }
@@ -87,7 +89,8 @@ public class SamMerger {
     final long recordsIn;
     final long recordsOut;
     final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
-    try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(samFiles, mNumberThreads, pf, mFilterParams, header)) {
+    final SamReadingContext context = new SamReadingContext(samFiles, mNumberThreads, mFilterParams, header, reference);
+    try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, pf)) {
       header.setSortOrder(SAMFileHeader.SortOrder.coordinate);
       if (mAddProgramRecord) {
         SamUtils.addProgramRecord(header);

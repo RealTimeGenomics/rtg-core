@@ -11,15 +11,12 @@
  */
 package com.rtg.sam;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
 import com.rtg.util.Populator;
-import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.diagnostic.Diagnostic;
 
 /**
@@ -51,26 +48,6 @@ public class CircularBufferMultifileSinglePassReaderWindow<T extends ReaderRecor
   private final int mTemplateIndex;
   private List<FlushLocus> mFlushLocus; //union of all disjoint regions that flush has been called on
   private int mFlushedTo; // Fully flushed to this position (both bins and records)
-
-  /**
-   * Utility method to create a RecordIterator, for testing purposes.
-   *
-   * @param <V> the record type
-   * @param samFiles files to read records from
-   * @param filterParams parameters for filtering
-   * @param numReadingThreads no of threads used for reading SAM files
-   * @param pop the record populator
-   * @return a RecordIterator
-   * @throws IOException if an IO error occurs
-   */
-  public static <V extends ReaderRecord<V> & MateInfo> RecordIterator<V> defaultIterator(Collection<File> samFiles, SamFilterParams filterParams, int numReadingThreads, Populator<V> pop) throws IOException {
-    final SingletonPopulatorFactory<V> pf = new SingletonPopulatorFactory<>(pop);
-    RecordIterator<V> it = new ThreadedMultifileIterator<>(samFiles, numReadingThreads, pf, filterParams, SamUtils.getUberHeader(samFiles));
-    if (filterParams.findAndRemoveDuplicates()) {
-      it = new DedupifyingRecordIterator<>(it);
-    }
-    return it;
-  }
 
   /**
    * Note: the supplied record iterator must be closed explicitly by the caller when finished using it as the

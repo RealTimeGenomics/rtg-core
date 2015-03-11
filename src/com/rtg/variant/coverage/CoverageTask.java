@@ -108,9 +108,9 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     final OutputStream os = mParams.bedStream();
     final CoverageWriter coverageWriter = new CoverageWriter(os, mParams);
     coverageWriter.init();
-    final SAMFileHeader uberHeader = SamUtils.getUberHeader(mParams.mapped(), mParams.ignoreIncompatibleSamHeaders(), null);
 
     final SequencesReader reference = mParams.genome() == null ? null : mParams.genome().reader();
+    final SAMFileHeader uberHeader = SamUtils.getUberHeader(reference, mParams.mapped(), mParams.ignoreIncompatibleSamHeaders(), null);
     if (reference != null) {
       SamUtils.checkUberHeaderAgainstReference(reference, uberHeader, false);
       mReferenceNames = ReaderUtils.getSequenceNameMap(reference);
@@ -123,7 +123,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     final Set<String> outputRegionNames = new LinkedHashSet<>();
     try {
       final SingletonPopulatorFactory<CoverageReaderRecord> pf = new SingletonPopulatorFactory<>(new CoverageReaderRecordPopulator(mParams.includeDeletions()));
-      final SamReadingContext context = new SamReadingContext(mParams.mapped(), mParams.ioThreads(), mParams.filterParams(), uberHeader);
+      final SamReadingContext context = new SamReadingContext(mParams.mapped(), mParams.ioThreads(), mParams.filterParams(), uberHeader, reference);
       final ReferenceRanges<String> ranges = context.referenceRanges();
       mWrapper = new ThreadedMultifileIteratorWrapper<>(context, pf);
       for (final SAMSequenceRecord r : uberHeader.getSequenceDictionary().getSequences()) {

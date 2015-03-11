@@ -113,7 +113,7 @@ public class MultisampleTaskTest extends AbstractNanoTest {
         builder.genomePriors(GenomePriorParams.builder().contraryProbability(1).create());
         builder.genomeRelationships(genomeRelationships);
         builder.maxCoverageFilter(new StaticThreshold(100));
-        builder.uberHeader(SamUtils.getUberHeader(mapped, false, genomeRelationships == null ? null : genomeRelationships.genomes()));
+        builder.uberHeader(SamUtils.getUberHeader(null, mapped, false, genomeRelationships == null ? null : genomeRelationships.genomes()));
         final VariantParams p = builder.create();
         final UsageMetric usageMetric = new UsageMetric();
         final MultisampleTask<VariantStatistics> task = new MultisampleTask<>(p, new PopulationCallerConfiguration.Configurator(), bos, new VariantStatistics(null), usageMetric);

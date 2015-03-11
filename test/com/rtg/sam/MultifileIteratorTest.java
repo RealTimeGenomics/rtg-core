@@ -95,7 +95,7 @@ public class MultifileIteratorTest extends TestCase {
   }
 
   RecordIterator<SAMRecord> getIterator(Collection<File> files) throws IOException {
-    return new MultifileIterator(new SamReadingContext(files, 1, new SamFilterParams.SamFilterParamsBuilder().create(), SamUtils.getUberHeader(files)));
+    return new MultifileIterator(new SamReadingContext(files, 1, new SamFilterParams.SamFilterParamsBuilder().create(), SamUtils.getUberHeader(files), null));
   }
 
   public void testSamMultifileIteratorTest() throws IOException {
@@ -421,7 +421,7 @@ public class MultifileIteratorTest extends TestCase {
       FileUtils.stringToFile(SAM_HEAD1 + "r1\t77\t*\t0\t0\t*\t*\t0\t0\tTCAATNGTAG\tCCCFF#2=CF", f);
       final List<File> fileList = new ArrayList<>();
       fileList.add(f);
-      final RecordIterator<?> it = new MultifileIterator(new SamReadingContext(fileList, 1, SamFilterParams.builder().excludeUnmapped(true).create(), SamUtils.getUberHeader(fileList)));
+      final RecordIterator<?> it = new MultifileIterator(new SamReadingContext(fileList, 1, SamFilterParams.builder().excludeUnmapped(true).create(), SamUtils.getUberHeader(fileList), null));
 
       try {
         assertFalse(it.hasNext());

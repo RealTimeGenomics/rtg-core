@@ -136,7 +136,7 @@ public final class SamValidator {
       for (final File samFile : samFiles) {
         mExpectedMates.clear();
         try (InputStream bis = FileUtils.createInputStream(samFile, false)) {
-          try (SamReader read = SamUtils.makeSamReader(bis)) {
+          try (SamReader read = SamUtils.makeSamReader(bis, tr)) {
             processRecords(read, cgData, countPerRead, pairedRead);
             if (mValidate) {
               for (final String mate : mExpectedMates) {

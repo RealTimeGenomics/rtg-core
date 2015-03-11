@@ -20,7 +20,10 @@ import java.util.Map;
 
 import com.rtg.launcher.NoStatistics;
 import com.rtg.launcher.ParamsTask;
+import com.rtg.reader.SequencesReader;
 import com.rtg.sam.RecordIterator;
+import com.rtg.sam.SamReadingContext;
+import com.rtg.sam.SamRecordPopulator;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.ThreadedMultifileIterator;
 import com.rtg.util.SingletonPopulatorFactory;
@@ -28,7 +31,6 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.SlimException;
 import com.rtg.util.intervals.RegionRestriction;
-import com.rtg.sam.SamRecordPopulator;
 import com.rtg.variant.cnv.region.Region;
 import com.rtg.variant.cnv.region.RegionUtils;
 
@@ -63,24 +65,27 @@ public class CnvProductTask extends ParamsTask<CnvProductParams, NoStatistics> {
   protected void exec() throws IOException {
     final ArrayList<File> allFiles = new ArrayList<>(mParams.mappedBase());
     allFiles.addAll(mParams.mappedTarget());
-    final SAMFileHeader header = SamUtils.getUberHeader(allFiles, mParams.ignoreIncompatibleSamHeaders(), null);
+    final SequencesReader reference = (mParams.genome() == null) ? null : mParams.genome().reader();
+    final SAMFileHeader header = SamUtils.getUberHeader(reference, allFiles, mParams.ignoreIncompatibleSamHeaders(), null);
     final SAMSequenceDictionary dict = header.getSequenceDictionary();
     mTemplateNameMap = makeTemplateNameMap(dict);
     setSequenceLengths(makeTemplateLengths(dict));
     final int[][] chunksBase;
     final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
-    try (RecordIterator<SAMRecord> multiIteratorBase = new ThreadedMultifileIterator<>(mParams.mappedBase(), mParams.threads(), pf, mParams.filterParams(), header)) {
+    final SamReadingContext cBase = new SamReadingContext(mParams.mappedBase(), mParams.threads(), mParams.filterParams(), header, reference);
+    try (RecordIterator<SAMRecord> multiIteratorBase = new ThreadedMultifileIterator<>(cBase, pf)) {
       chunksBase = chunkSamFile(multiIteratorBase);
     }
     final int[][] chunksTarget;
-    try (RecordIterator<SAMRecord> multiIteratorTarget = new ThreadedMultifileIterator<>(mParams.mappedTarget(), mParams.threads(), pf, mParams.filterParams(), header)) {
+    final SamReadingContext cTarget = new SamReadingContext(mParams.mappedTarget(), mParams.threads(), mParams.filterParams(), header, reference);
+    try (RecordIterator<SAMRecord> multiIteratorTarget = new ThreadedMultifileIterator<>(cTarget, pf)) {
       chunksTarget = chunkSamFile(multiIteratorTarget);
     }
     final Map<String, Region> nregions;
-    if (mParams.genome() == null) {
+    if (reference == null) {
       nregions = new HashMap<>();
     } else {
-      nregions = RegionUtils.regionsFromSDF(mParams.genome().reader(), mParams.bucketSize());
+      nregions = RegionUtils.regionsFromSDF(reference, mParams.bucketSize());
     }
     new CnvRatio(mParams.magicConstant(), nregions, mTemplateNameMap, mParams, (double) mSumLengths / mRecordCount, mParams.extraPenaltyOff()).exec(chunksBase, chunksTarget);
   }

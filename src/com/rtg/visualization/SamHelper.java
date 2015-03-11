@@ -25,8 +25,10 @@ import java.util.Set;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.mode.DnaUtils;
+import com.rtg.reader.SequencesReader;
 import com.rtg.sam.ReadGroupUtils;
 import com.rtg.sam.SamFilterParams;
+import com.rtg.sam.SamReadingContext;
 import com.rtg.sam.SamRecordPopulator;
 import com.rtg.sam.SamRegionRestriction;
 import com.rtg.sam.SamUtils;
@@ -53,13 +55,13 @@ public final class SamHelper {
     return DnaUtils.reverseComplement(readString);
   }
 
-  static ArrayList<SAMRecord> loadAlignments(final AviewParams params) throws IOException {
+  static ArrayList<SAMRecord> loadAlignments(final AviewParams params, SequencesReader reader) throws IOException {
     final ArrayList<SAMRecord> records = new ArrayList<>();
     final List<File> files = Arrays.asList(params.alignmentsFiles());
     if (files.size() == 0) {
       return records;
     }
-    final SAMFileHeader header = SamUtils.getUberHeader(files);
+    final SAMFileHeader header = SamUtils.getUberHeader(reader, files);
     if (header.getSequence(params.sequenceName()) == null) {
       throw new NoTalkbackSlimException("Unable to apply region \"" + params.sequenceName() + "\" as the specified sequence name does not exist in input files.");
     }
@@ -79,13 +81,14 @@ public final class SamHelper {
       }
     }
 
+    final SamFilterParams sfp = SamFilterParams.builder()
+      .minMapQ(params.minMapQ())
+      .maxMatedAlignmentScore(new IntegerOrPercentage(params.maxMatedAlignmentScore()))
+      .maxUnmatedAlignmentScore(new IntegerOrPercentage(params.maxUnmatedAlignmentScore()))
+      .restriction(new SamRegionRestriction(params.region())).create();
     final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
-    try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(files, 2, pf,
-      SamFilterParams.builder()
-        .minMapQ(params.minMapQ())
-        .maxMatedAlignmentScore(new IntegerOrPercentage(params.maxMatedAlignmentScore()))
-        .maxUnmatedAlignmentScore(new IntegerOrPercentage(params.maxUnmatedAlignmentScore()))
-        .restriction(new SamRegionRestriction(params.region())).create(), header)) {
+    final SamReadingContext context = new SamReadingContext(files, 2, sfp, header, reader);
+    try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, pf)) {
       while (it.hasNext()) {
         final SAMRecord r = it.next();
         if (validIhScore(r, params.maxIhScore())

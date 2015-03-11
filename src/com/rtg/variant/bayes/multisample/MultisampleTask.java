@@ -746,7 +746,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       genomeNames = new String[] {}; // Special case for singleton caller, map all records to 0
     }
     final SingletonPopulatorFactory<VariantAlignmentRecord> pf = new SingletonPopulatorFactory<>(new VariantAlignmentRecordPopulator(MultisampleUtils.chooser(mParams), mParams.minBaseQuality(), genomeNames));
-    mWrapper = new ThreadedMultifileIteratorWrapper<>(new SamReadingContext(mParams.mapped(), mParams.ioThreads(), mParams.filterParams(), mParams.uberHeader()), pf);
+    mWrapper = new ThreadedMultifileIteratorWrapper<>(new SamReadingContext(mParams.mapped(), mParams.ioThreads(), mParams.filterParams(), mParams.uberHeader(), mReferenceSequences), pf);
     final SAMSequenceDictionary dict = mWrapper.header().getSequenceDictionary();
     mSequences = dict.getSequences();
     if (mSequences.size() < 1) {

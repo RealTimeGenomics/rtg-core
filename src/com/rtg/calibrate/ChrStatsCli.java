@@ -123,7 +123,6 @@ public class ChrStatsCli extends AbstractCli {
     }
     Diagnostic.developerLog("Loading calibration information");
     final Calibrator c = Calibrator.initCalibrator(calibrationFiles);
-    final SAMFileHeader uberHeader = SamUtils.getUberHeader(samFiles);
     if (c == null) {
       throw new NoTalkbackSlimException("Could not load calibration information - ensure SAM files have been calibrated"); // Runtime as above checks have ensured there are calibration files
     } else {
@@ -134,6 +133,7 @@ public class ChrStatsCli extends AbstractCli {
           throw new NoTalkbackSlimException("The supplied reference does not contain sufficient genome chromosome information. For more information, see the user manual.");
         }
 
+        final SAMFileHeader uberHeader = SamUtils.getUberHeader(genomeParams.reader(), samFiles);
         final Map<String, String> readGroupToSampleId = SamUtils.getReadGroupToSampleId(uberHeader);
         final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getNonNSequenceLengthMap(genomeParams.reader(), (RegionRestriction) null);
         final CalibratedPerSequenceExpectedCoverage expectedCoverages = new CalibratedPerSequenceExpectedCoverage(c, sequenceLengthMap, readGroupToSampleId, null);

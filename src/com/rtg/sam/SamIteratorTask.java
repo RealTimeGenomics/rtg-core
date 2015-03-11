@@ -125,12 +125,13 @@ public abstract class SamIteratorTask<P extends SingleMappedParams, S extends St
     try {
       final RecordIterator<SAMRecord> iterator;
       // mParam.thread returns T - 1 threads
-      final SAMFileHeader header = SamUtils.getUberHeader(mParams.mapped());
+      final SAMFileHeader header = SamUtils.getUberHeader(mGenomeSequences, mParams.mapped());
       if (mParams.ioThreads() < 1) {
-        iterator = new MultifileIterator(new SamReadingContext(mParams.mapped(), 1, mFilterParams, header));
+        iterator = new MultifileIterator(new SamReadingContext(mParams.mapped(), 1, mFilterParams, header, mGenomeSequences));
       } else {
         final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
-        iterator = new ThreadedMultifileIterator<>(mParams.mapped(), mParams.ioThreads(), pf, mFilterParams, header);
+        final SamReadingContext context = new SamReadingContext(mParams.mapped(), mParams.ioThreads(), mFilterParams, header, mGenomeSequences);
+        iterator = new ThreadedMultifileIterator<>(context, pf);
       }
       try {
         if (mTemplateNameMap != null) {   // Perform header consistency check

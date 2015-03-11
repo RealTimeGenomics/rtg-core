@@ -60,28 +60,14 @@ public final class ThreadedMultifileIterator<T> implements RecordIterator<T> {
   private final SAMFileHeader mHeader;
 
   /**
-   * Constructor for people wanting to run single-threaded without filtering.
+   * Constructor for people wanting to run single-threaded without filtering or CRAM.
    *
    * @param files SAM/BAM files
    * @param populatorFactory populator factory
    * @throws IOException if an IO error occurs
    */
   public ThreadedMultifileIterator(Collection<File> files, PopulatorFactory<T> populatorFactory) throws IOException {
-    this(files, 1, populatorFactory, new SamFilterParams.SamFilterParamsBuilder().create(), SamUtils.getUberHeader(files));
-  }
-
-  /**
-   * Constructor
-   *
-   * @param files SAM/BAM files
-   * @param numThreads the number of threads to use (maximum)
-   * @param populatorFactory populator factory
-   * @param filterParams parameters for filtering
-   * @param headerOverride use this header instead of one present in file. (null to use one in file)
-   * @throws IOException if an IO error occurs
-   */
-  public ThreadedMultifileIterator(Collection<File> files, int numThreads, PopulatorFactory<T> populatorFactory, SamFilterParams filterParams, SAMFileHeader headerOverride) throws IOException {
-    this(new SamReadingContext(files, numThreads, filterParams, headerOverride), populatorFactory);
+    this(new SamReadingContext(files, 1, new SamFilterParams.SamFilterParamsBuilder().create(), SamUtils.getUberHeader(files), null), populatorFactory);
   }
 
   /**
@@ -120,7 +106,7 @@ public final class ThreadedMultifileIterator<T> implements RecordIterator<T> {
       final List<MultifileIteratorRunner<T>> runners = new Vector<>(); // Vector since we need thread-safe addition
       for (final List<File> subFiles : fileLists) {
         final int runnerId = id++;
-        final SamReadingContext subcontext = new SamReadingContext(subFiles, 1, context.filterParams(), context.header(), context.referenceRanges());
+        final SamReadingContext subcontext = new SamReadingContext(subFiles, 1, context.filterParams(), context.header(), context.reference(), context.referenceRanges());
         final Populator<T> populator = populatorFactory.populator();
 
         stp.execute(new IORunnable() {

@@ -24,6 +24,8 @@ import com.rtg.calibrate.SamCalibrationInputs;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommandLineFiles;
 import com.rtg.launcher.CommonFlags;
+import com.rtg.reader.SequencesReader;
+import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
@@ -37,6 +39,7 @@ public class SamMergeCli extends AbstractCli {
 
   private static final String MODULE_NAME = "sammerge";
 
+  private static final String REFERENCE_FLAG = "reference";
   private static final String LEGACY_CIGARS = "legacy-cigars";
   private static final String X_ALTERNATE_SAM_HEADER = "Xalternate-sam-header";
 
@@ -80,6 +83,7 @@ public class SamMergeCli extends AbstractCli {
   protected void initFlags() {
     mFlags.registerExtendedHelp();
     mFlags.setDescription("Merges and filters coordinate-sorted SAM/BAM files.");
+    mFlags.registerOptional('t', CommonFlags.TEMPLATE_FLAG, File.class, "SDF", "SDF containing reference used to decode CRAM input").setCategory(INPUT_OUTPUT);
     CommonFlagCategories.setCategories(mFlags);
     final Flag inFlag = mFlags.registerRequired(File.class, "FILE", "SAM/BAM format files containing coordinate-sorted reads");
     inFlag.setCategory(INPUT_OUTPUT);
@@ -122,6 +126,8 @@ public class SamMergeCli extends AbstractCli {
     if ((output != null) && CommonFlags.isStdio(output)) { // Allow "-" as an alternative for writing to stdout.
       output = null;
     }
+    SequencesReader template = (!mFlags.isSet(CommonFlags.TEMPLATE_FLAG)) ? null : SequencesReaderFactory.createDefaultSequencesReader((File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG));
+
     final Collection<File> inputFiles = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null, CommandLineFiles.EXISTS, CommandLineFiles.NOT_DIRECTORY).getFileList(mFlags);
     final SamMerger merger = new SamMerger(createIndex, gzip, legacy, numberThreads, filterParams, true, false);
     final SamCalibrationInputs inputs = new SamCalibrationInputs(inputFiles, true);
@@ -130,9 +136,9 @@ public class SamMergeCli extends AbstractCli {
       final File altHeaderFile = (File) mFlags.getValue(X_ALTERNATE_SAM_HEADER);
       uberHeader = SamUtils.getSingleHeader(altHeaderFile);
     } else {
-      uberHeader = SamUtils.getUberHeader(inputs.getSamFiles());
+      uberHeader = SamUtils.getUberHeader(template, inputs.getSamFiles());
     }
-    merger.mergeSamFiles(inputs.getSamFiles(), inputs.getCalibrationFiles(), output, out, uberHeader, true, true);
+    merger.mergeSamFiles(inputs.getSamFiles(), inputs.getCalibrationFiles(), output, out, template, uberHeader, true, true);
     return 0;
   }
 

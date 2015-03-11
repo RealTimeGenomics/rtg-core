@@ -24,8 +24,10 @@ import com.rtg.launcher.MockReaderParams;
 import com.rtg.mode.DnaUtils;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
+import com.rtg.reader.SequencesReader;
 import com.rtg.relation.RelationshipsFileParser;
 import com.rtg.sam.CircularBufferMultifileSinglePassReaderWindow;
+import com.rtg.sam.CircularBufferMultifileSinglePassReaderWindowTest;
 import com.rtg.sam.ReaderWindow;
 import com.rtg.sam.RecordIterator;
 import com.rtg.sam.SamFilterParams;
@@ -270,6 +272,7 @@ public class ComplexCallerTest extends TestCase {
     builder.machineErrorName("illumina");
     builder.maxCoverageFilter(new StaticThreshold(300));
     final String template = "AGCATTTTTGAAATTCTCTTTTTGTAATATCTGCAAGTAGACATTTGGAGTACTTTGAGGCCTATTGTGGAAAAGGAAATATCTTCACAGAAAAACTAGATA";
+    final SequencesReader reader = ReaderTestUtils.getReaderDnaMemory(">chr21\n" + template);
     final SamRegionRestriction restriction = new SamRegionRestriction("chr21", 0, template.length());
     builder.filterParams(SamFilterParams.builder().findAndRemoveDuplicates(false).restriction(restriction).create());
 
@@ -279,12 +282,12 @@ public class ComplexCallerTest extends TestCase {
     final SAMFileHeader header = SamUtils.getUberHeader(list);
     final VariantParams params = builder
       .uberHeader(header)
-      .genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(">chr21\n" + template), SequenceMode.UNIDIRECTIONAL))
+      .genome(new MockReaderParams(reader, SequenceMode.UNIDIRECTIONAL))
       .create();
     final AbstractJointCallerConfiguration config = new SingletonCallerConfiguration.Configurator().getConfig(params, null);
 
     final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), 0);
-    final RecordIterator<VariantAlignmentRecord> it = CircularBufferMultifileSinglePassReaderWindow.defaultIterator(list, params.filterParams(), 8, pop);
+    final RecordIterator<VariantAlignmentRecord> it = CircularBufferMultifileSinglePassReaderWindowTest.defaultIterator(list, params.filterParams(), pop);
     final CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord> trib =
        new CircularBufferMultifileSinglePassReaderWindow<>(
            it,
@@ -293,7 +296,7 @@ public class ComplexCallerTest extends TestCase {
             );
     final ComplexCaller caller = new ComplexCaller(params, config);
     final List<Variant> res = caller.makeComplexCalls(new MockComplexities(), trib, DnaUtils.encodeString(template), "chr21");
-    final RecordIterator<VariantAlignmentRecord> it2 = CircularBufferMultifileSinglePassReaderWindow.defaultIterator(list, params.filterParams(), 8, pop);
+    final RecordIterator<VariantAlignmentRecord> it2 = CircularBufferMultifileSinglePassReaderWindowTest.defaultIterator(list, params.filterParams(), pop);
     final CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord> trib2 =
         new MyCB(it2, list,
              restriction,

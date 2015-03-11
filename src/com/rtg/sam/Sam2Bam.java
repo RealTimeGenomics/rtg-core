@@ -46,8 +46,8 @@ import htsjdk.samtools.SAMRecord;
  */
 public class Sam2Bam extends AbstractCli {
 
+  //private static final String TEMPLATE_FLAG = "template";
   private static final String MODULE_NAME = "sam2bam";
-  //private static final String INDEX_FLAG = "index";
   private static final String OUTPUT_FLAG = "output";
 
   @Override
@@ -74,8 +74,8 @@ public class Sam2Bam extends AbstractCli {
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(1);
     inFlag.setMaxCount(Integer.MAX_VALUE);
+    //flags.registerOptional('t', TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the reads have been mapped against (required for CRAM input)").setCategory(INPUT_OUTPUT);
     flags.registerRequired('o', OUTPUT_FLAG, File.class, "file", "name for output BAM file. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
-    //flags.registerOptional('i', INDEX_FLAG, File.class, "file", "Output filename for index").setCategory(INPUT_OUTPUT);
 
     flags.setValidator(VALIDATOR);
   }
