@@ -26,10 +26,6 @@ import junit.framework.TestSuite;
  */
 public class ReverseComplementingReaderTest extends DefaultSequencesReaderTest {
 
-  public ReverseComplementingReaderTest(final String name) {
-    super(name);
-  }
-
   public static Test suite() {
     return new TestSuite(ReverseComplementingReaderTest.class);
   }
@@ -79,19 +75,20 @@ public class ReverseComplementingReaderTest extends DefaultSequencesReaderTest {
     SequencesWriter sw = new SequencesWriter(ds, mDir, 20, PrereadType.UNKNOWN, false);
     sw.processSequences();
     try (SequencesReader dsr = createSequencesReader(mDir)) {
+      final SequencesIterator it = dsr.iterator();
       assertEquals(mDir, dsr.path());
-      assertTrue(dsr.nextSequence());
-      assertEquals(0, dsr.currentSequenceId());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{0, 2, 0, 0, 0, 0, 0, 0});
-      assertTrue(dsr.nextSequence());
-      assertEquals(1, dsr.currentSequenceId());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{3, 2, 1, 4});
+      assertTrue(it.nextSequence());
+      assertEquals(0, it.currentSequenceId());
+      SequencesWriterTest.checkEquals(it, new byte[]{0, 2, 0, 0, 0, 0, 0, 0});
+      assertTrue(it.nextSequence());
+      assertEquals(1, it.currentSequenceId());
+      SequencesWriterTest.checkEquals(it, new byte[]{3, 2, 1, 4});
       assertEquals(1, dsr.residueCounts()[DNA.T.ordinal()]);
       assertEquals(2, dsr.residueCounts()[DNA.C.ordinal()]);
       assertEquals(1, dsr.residueCounts()[DNA.G.ordinal()]);
       assertEquals(1, dsr.residueCounts()[DNA.A.ordinal()]);
       assertEquals(7, dsr.residueCounts()[DNA.N.ordinal()]);
-      assertFalse(dsr.nextSequence());
+      assertFalse(it.nextSequence());
     }
   }
 
@@ -106,20 +103,21 @@ public class ReverseComplementingReaderTest extends DefaultSequencesReaderTest {
 
     //testing the read (stolen from SequencesWriterTest)
     try (SequencesReader dsr = createSequencesReader(mDir)) {
+      final SequencesIterator it = dsr.iterator();
       assertEquals(mDir, dsr.path());
       assertEquals(12, dsr.totalLength());
-      assertTrue(dsr.nextSequence());
-      assertEquals(0, dsr.currentSequenceId());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{0, 2, 0, 1, 2, 1, 3, 4});
-      assertTrue(dsr.nextSequence());
-      assertEquals(1, dsr.currentSequenceId());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{3, 2, 1, 4});
+      assertTrue(it.nextSequence());
+      assertEquals(0, it.currentSequenceId());
+      SequencesWriterTest.checkEquals(it, new byte[]{0, 2, 0, 1, 2, 1, 3, 4});
+      assertTrue(it.nextSequence());
+      assertEquals(1, it.currentSequenceId());
+      SequencesWriterTest.checkEquals(it, new byte[]{3, 2, 1, 4});
       assertEquals(2, dsr.residueCounts()[DNA.N.ordinal()]);
       assertEquals(3, dsr.residueCounts()[DNA.A.ordinal()]);
       assertEquals(2, dsr.residueCounts()[DNA.T.ordinal()]);
       assertEquals(3, dsr.residueCounts()[DNA.C.ordinal()]);
       assertEquals(2, dsr.residueCounts()[DNA.G.ordinal()]);
-      assertFalse(dsr.nextSequence());
+      assertFalse(it.nextSequence());
     }
   }
 
@@ -129,17 +127,18 @@ public class ReverseComplementingReaderTest extends DefaultSequencesReaderTest {
     final FastaSequenceDataSource ds = new FastaSequenceDataSource(al, new DNAFastaSymbolTable());
     final SequencesWriter sw = new SequencesWriter(ds, mDir, 20000, PrereadType.UNKNOWN, false);
     sw.processSequences();
-    try (SequencesReader r = createSequencesReader(mDir)) {
-      assertTrue(r.nextSequence());
+    try (SequencesReader dsr = createSequencesReader(mDir)) {
+      final SequencesIterator it = dsr.iterator();
+      assertTrue(it.nextSequence());
       final byte[] x = new byte[27];
-      assertEquals(6, r.readCurrent(x));
+      assertEquals(6, it.readCurrent(x));
       assertEquals(DNA.T.ordinal(), x[0]);
       assertEquals(DNA.A.ordinal(), x[1]);
       assertEquals(DNA.C.ordinal(), x[2]);
       assertEquals(DNA.N.ordinal(), x[3]);
       assertEquals(DNA.G.ordinal(), x[4]);
       assertEquals(DNA.T.ordinal(), x[5]);
-      assertFalse(r.nextSequence());
+      assertFalse(it.nextSequence());
     }
   }
 }

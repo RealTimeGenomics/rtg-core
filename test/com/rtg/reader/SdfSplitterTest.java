@@ -26,7 +26,7 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.test.FileHelper;
+import com.rtg.util.io.TestDirectory;
 
 import junit.framework.Test;
 import junit.framework.TestSuite;
@@ -142,9 +142,8 @@ public class SdfSplitterTest extends AbstractCliTest {
 
   public void testNotSplitting() throws IOException {
     Diagnostic.setLogStream();
-    File inDir = FileUtils.createTempDir("prereadsplitter", "test.in");
-    File outDir = FileUtils.createTempDir("prereadsplitter", "testout");
-    try {
+    try (TestDirectory inDir = new TestDirectory("prereadsplitter-test.in");
+         TestDirectory outDir = new TestDirectory("prereadsplitter-testout")) {
       ArrayList<InputStream> al = new ArrayList<>();
       al.add(createStream(TEST_INPUT_STRING));
       FastaSequenceDataSource ds = new FastaSequenceDataSource(al,
@@ -155,22 +154,18 @@ public class SdfSplitterTest extends AbstractCliTest {
       inDirs.add(inDir);
       SdfSplitter.split(inDirs, outDir, 100, true, false, false);
       try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(new File(outDir, "000000"))) {
+        assertEquals(EXPECTED_SEQUENCES.length, dsr.numberSequences());
         for (int j = 0; j < EXPECTED_SEQUENCES.length; j++) {
-          assertTrue("j: " + j, dsr.nextSequence());
-          assertEquals("j: " + j, EXPECTED_SEQUENCE_NAMES[j], dsr.currentName());
+          assertEquals("j: " + j, EXPECTED_SEQUENCE_NAMES[j], dsr.name(j));
         }
       }
-    } finally {
-      assertTrue("Unable to delete " + inDir + ": ", FileHelper.deleteAll(inDir));
-      assertTrue("Unable to delete " + outDir + ": ", FileHelper.deleteAll(outDir));
     }
   }
 
   public void testSplitting() throws IOException {
     Diagnostic.setLogStream();
-    File inDir = FileUtils.createTempDir("prereadsplitter", "test.in");
-    File outDir = FileUtils.createTempDir("prereadsplitter", "test.out");
-    try {
+    try (TestDirectory inDir = new TestDirectory("prereadsplitter-test.in");
+         TestDirectory outDir = new TestDirectory("prereadsplitter-testout")) {
       ArrayList<InputStream> al = new ArrayList<>();
       al.add(createStream(TEST_INPUT_STRING));
       FastaSequenceDataSource ds = new FastaSequenceDataSource(al,
@@ -182,25 +177,22 @@ public class SdfSplitterTest extends AbstractCliTest {
       SdfSplitter.split(inDirs, outDir, 1, true, false, false);
       for (int j = 0; j < EXPECTED_SEQUENCES.length; j++) {
         SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(new File(outDir, "00000" + j));
+        SequencesIterator it = dsr.iterator();
         assertEquals("j: " + j, 1, dsr.numberSequences());
         try {
-          assertTrue(dsr.nextSequence());
-          assertEquals("j: " + j, EXPECTED_SEQUENCE_NAMES[j], dsr.currentName());
+          assertTrue(it.nextSequence());
+          assertEquals("j: " + j, EXPECTED_SEQUENCE_NAMES[j], it.currentName());
         } finally {
           dsr.close();
         }
       }
-    } finally {
-      assertTrue("Unable to delete " + inDir + ": ", FileHelper.deleteAll(inDir));
-      assertTrue("Unable to delete " + outDir + ": ", FileHelper.deleteAll(outDir));
     }
   }
 
   public void testMerging() throws IOException {
-    File inDir = FileUtils.createTempDir("prereadsplitter", "test.in");
-    File inDir2 = FileUtils.createTempDir("prereadsplitter", "test.in2");
-    File outDir = FileUtils.createTempDir("prereadsplitter", "testout");
-    try {
+    try (TestDirectory inDir = new TestDirectory("prereadsplitter-test.in");
+         TestDirectory inDir2 = new TestDirectory("prereadsplitter-test.in2");
+         TestDirectory outDir = new TestDirectory("prereadsplitter-testout")) {
       ArrayList<InputStream> al = new ArrayList<>();
       al.add(createStream(TEST_INPUT_STRING));
       FastaSequenceDataSource ds = new FastaSequenceDataSource(al, new DNAFastaSymbolTable());
@@ -218,28 +210,24 @@ public class SdfSplitterTest extends AbstractCliTest {
 
       SdfSplitter.split(inDirs, outDir, 100, false, false, false);
       try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(new File(outDir, "000000"))) {
+        SequencesIterator it = dsr.iterator();
         for (int j = 0; j < EXPECTED_SEQUENCES.length; j++) {
-          assertTrue("j: " + j, dsr.nextSequence());
-          assertEquals("j: " + j, EXPECTED_SEQUENCE_NAMES[j], dsr.currentName());
+          assertTrue("j: " + j, it.nextSequence());
+          assertEquals("j: " + j, EXPECTED_SEQUENCE_NAMES[j], it.currentName());
         }
         for (int j = 0; j < EXPECTED_SEQUENCES_2.length; j++) {
-          assertTrue("j2: " + j, dsr.nextSequence());
-          assertEquals("j2: " + j, EXPECTED_SEQUENCE_NAMES_2[j], dsr.currentName());
+          assertTrue("j2: " + j, it.nextSequence());
+          assertEquals("j2: " + j, EXPECTED_SEQUENCE_NAMES_2[j], it.currentName());
         }
       }
-    } finally {
-      assertTrue("Unable to delete " + inDir + ": ", FileHelper.deleteAll(inDir));
-      assertTrue("Unable to delete " + inDir + ": ", FileHelper.deleteAll(inDir2));
-      assertTrue("Unable to delete " + outDir + ": ", FileHelper.deleteAll(outDir));
     }
   }
 
   public void testDuplicates() throws IOException {
     Diagnostic.setLogStream();
-    final File inDir = FileUtils.createTempDir("prereadsplitter", "test.in");
-    final File inDir2 = FileUtils.createTempDir("prereadsplitter", "test.in2");
-    final File tempDir = FileUtils.createTempDir("prereadsplitter", "testout");
-    try {
+    try (TestDirectory inDir = new TestDirectory("prereadsplitter-test.in");
+         TestDirectory inDir2 = new TestDirectory("prereadsplitter-test.in2");
+         TestDirectory tempDir = new TestDirectory("prereadsplitter-testout")) {
       final File outDir = new File(tempDir, "output");
       final File dupFile = new File(outDir.getAbsolutePath(), "duplicate-names.txt");
       ArrayList<InputStream> al = new ArrayList<>();
@@ -258,22 +246,14 @@ public class SdfSplitterTest extends AbstractCliTest {
       assertTrue(err.contains("Duplicate Sequence Names in Input"));
       final String[] expected = {"bob" + StringUtils.LS, "test" + StringUtils.LS, "hobos" + StringUtils.LS};
       TestUtils.containsAll(FileUtils.fileToString(dupFile), expected);
-    } finally {
-      assertTrue("Unable to delete " + inDir + ": ", FileHelper.deleteAll(inDir));
-      assertTrue("Unable to delete " + inDir2 + ": ", FileHelper.deleteAll(inDir2));
-      assertTrue("Unable to delete " + tempDir + ": ", FileHelper.deleteAll(tempDir));
     }
   }
 
   public void testValidArgs() throws IOException {
-    File inDir = FileUtils.createTempDir("prereadsplitter", "test.in");
-    File outDir = FileUtils.createTempDir("prereadsplitter", "test.out");
-    assertTrue(outDir.delete());
-    try {
+    try (TestDirectory inDir = new TestDirectory("prereadsplitter-test.in");
+         TestDirectory outDir = new TestDirectory("prereadsplitter-testout")) {
+      assertTrue(outDir.delete());
       checkHandleFlagsOut("-n", "1000000", "-o", outDir.getPath(), inDir.getPath());
-    } finally {
-      assertTrue("Unable to delete " + inDir + ": ", !inDir.exists() || FileHelper.deleteAll(inDir));
-      assertTrue("Unable to delete " + outDir + ": ", !outDir.exists() || FileHelper.deleteAll(outDir));
     }
   }
 

@@ -47,8 +47,9 @@ public abstract class PopulationVariantGenerator {
   public interface VariantPositionGenerator {
     /**
      * @return position at which next population variant should be generated
+     * @throws IOException if an IO error occurs
      */
-    SequenceIdLocus nextVariantPosition();
+    SequenceIdLocus nextVariantPosition() throws IOException;
   }
 
   /**

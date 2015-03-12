@@ -199,8 +199,7 @@ public class VcfHeader {
    */
   public void addContigFields(SequencesReader reader) throws IOException {
     for (long i = 0; i < reader.numberSequences(); i++) {
-      reader.seek(i);
-      addLine(META_STRING + "contig=<ID=\"" + reader.currentName() + "\",length=" + reader.currentLength() + ">");
+      addLine(META_STRING + "contig=<ID=\"" + reader.name(i) + "\",length=" + reader.length(i) + ">");
     }
   }
 

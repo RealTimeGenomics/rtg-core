@@ -78,8 +78,7 @@ public final class ProteinReadIndexer {
     for (int pass = 1; pass <= (compressHashes ? 2 : 1); pass++) {
       totalLength = 0; //only use the lengths from the last pass to avoid counting input more than once.
       for (long i = start; i < end; i++) {
-        reader.seek(i);
-        final long length = reader.currentLength();
+        final long length = reader.length(i);
         final long bucket = buckets.bucket(length);
         if (bucket != -1) {
           final int numChunks = countMetaChunks((int) bucket, metaChunkLength, metaChunkOverlap);

@@ -28,13 +28,13 @@ import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.mode.DnaUtils;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LineWriter;
 
@@ -138,39 +138,30 @@ public final class Sdf2Quala extends AbstractCli {
     return r;
   }
 
-  private static byte[] getQuality(final SequencesReader read, final byte def) throws IOException, InvalidParamsException {
-    final byte[] quality = new byte[read.currentLength()];
-    if (read.hasQualityData()) {
-      read.readCurrentQuality(quality);
-    } else if (def >= 0) {
-      Arrays.fill(quality, def);
-    } else {
-      throw new InvalidParamsException(ErrorType.INFO_ERROR, "The input SDF does not have quality data and no default was provided.");
-    }
-    return quality;
-  }
-
-  private static String getSequence(final SequencesReader read) throws IOException {
-    final byte[] buff = new byte[(int) read.maxLength()];
-    read.readCurrent(buff);
-    return DnaUtils.bytesToSequenceIncCG(buff, 0, read.currentLength());
-  }
-
   static void process(final SequencesReader read, final LineWriter seqWriter, LineWriter qualWriter, final boolean rename, final byte def) throws IOException, InvalidParamsException {
-    while (read.nextSequence()) {
-      final String sequenceName = rename || !read.hasNames() ? String.valueOf(read.currentSequenceId()) : read.currentFullName();
+    for (long seq = 0; seq < read.numberSequences(); seq++) {
+      final String sequenceName = rename || !read.hasNames() ? String.valueOf(seq) : read.fullName(seq);
       final String sequenceFastaName = ">" + sequenceName;
       seqWriter.writeln(sequenceFastaName);
-      seqWriter.writeln(getSequence(read));
+      seqWriter.writeln(DnaUtils.bytesToSequenceIncCG(read.read(seq)));
 
       qualWriter.writeln(sequenceFastaName);
-      final byte[] qual = getQuality(read, def);
+
+      final byte[] quality = new byte[read.length(seq)];
+      if (read.hasQualityData()) {
+        read.readQuality(seq, quality);
+      } else if (def >= 0) {
+        Arrays.fill(quality, def);
+      } else {
+        throw new InvalidParamsException(ErrorType.INFO_ERROR, "The input SDF does not have quality data and no default was provided.");
+      }
+
       final StringBuilder sb = new StringBuilder();
-      for (int k = 0; k < qual.length; k++) {
+      for (int k = 0; k < quality.length; k++) {
         if (k > 0) {
           sb.append(" ");
         }
-        sb.append(qual[k]);
+        sb.append(quality[k]);
       }
       qualWriter.writeln(sb.toString());
     }

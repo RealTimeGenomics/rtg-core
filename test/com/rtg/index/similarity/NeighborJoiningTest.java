@@ -371,8 +371,7 @@ public class NeighborJoiningTest extends TestCase {
     final ArrayList<String> nodeNames;
     nodeNames = new ArrayList<>();
     for (int i = 0; i < reader.numberSequences(); i++) {
-      reader.seek(i);
-      nodeNames.add(reader.currentName());
+      nodeNames.add(reader.name(i));
     }
     return nodeNames;
   }

@@ -21,6 +21,13 @@ import com.rtg.mode.SequenceType;
  *
  */
 public interface SequencesReader extends AutoCloseable {
+
+  /**
+   * Get an iterator-style accessor
+   * @return the SequenceIterator
+   */
+  SequencesIterator iterator();
+
   /**
    * Get the type of the sequences (all sequences have the same type (DNA/Protein)).
    * @return the type of the sequences (non-null).
@@ -166,117 +173,15 @@ public interface SequencesReader extends AutoCloseable {
    */
   boolean hasNames();
 
-  /// Sequence fetching methods
-
-  /**
-   * Position the reader at the specified sequence.
-   * If you intend to call {@link SequencesReader#nextSequence()} after this method,
-   * the <code>sequenceId</code> should be (<code>sequenceId - 1</code>).
-   * @param sequenceId the sequence to seek to.
-   * @throws IOException If in I/O error occurs
-   */
-  void seek(long sequenceId) throws IOException;
-
-  /**
-   * Move to the next sequence.
-   * @return true if there is a valid next sequence.
-   * @throws IOException If in I/O error occurs
-   */
-  boolean nextSequence() throws IOException;
-
-  /**
-   * Get the identifier for the current sequence.
-   * Will initially be set to 0 and is incremented by <code>nextSequence()</code>.
-   * @return the identifier for the current sequence ( &gt;= 0).
-   * @throws IllegalStateException if <code>nextSequence()</code> returned false on its last call.
-   */
-  long currentSequenceId() throws IllegalStateException;
-
-  /**
-   * Get the length of the current sequence.
-   * @return the length of the current sequence (&gt; 0).
-   * @throws IllegalStateException if <code>nextSequence()</code> returned false on its last call.
-   */
-  int currentLength() throws IllegalStateException;
-
-  /**
-   * Get the name of the current sequence.
-   * Will never be null and will always be 1 or more characters in length.
-   * The set of characters that can occur in the name will be restricted to the
-   * ASCII numbers 32 to 126 inclusive.
-   * @return the name of the current sequence.
-   * @throws IllegalStateException if <code>nextSequence()</code> returned false on its last call.
-   * @throws IOException If in I/O error occurs
-   */
-  String currentName() throws IllegalStateException, IOException;
-
-  /**
-   * Get the full name of the current sequence. Formally this is the result of the current suffix appended to the current name
-   * Will never be null and will always be 1 or more characters in length.
-   * @return the name of the current sequence.
-   * @throws IllegalStateException if <code>nextSequence()</code> returned false on its last call.
-   * @throws IOException If in I/O error occurs
-   */
-  String currentFullName() throws IllegalStateException, IOException;
-
-  /**
-   * Get the suffix of the current name, normally this will be everything after and including the first whitespace character
-   * from the source data file.
-   * @return the suffix
-   * @throws IllegalStateException if <code>nextSequence()</code> returned false on its last call.
-   * @throws IOException If in I/O error occurs
-   */
-  String currentNameSuffix() throws IllegalStateException, IOException;
-
-  /**
-   * Reads current sequence  into the supplied array.
-   * @param dataOut array to read data into
-   * @return length of sequence
-   * @throws IllegalArgumentException If <code>dataOut</code> does not have enough length to store sequence.
-   * @throws IllegalStateException if <code>nextSequence()</code> returned false on its last call.
-   * @throws IOException If in I/O error occurs
-   */
-  int readCurrent(byte[] dataOut) throws IllegalArgumentException, IllegalStateException, IOException;
-
-  /**
-   * Reads sequence data into the supplied array.
-   * @param dataOut array to read data into
-   * @param start the start offset within the sequence to read from
-   * @param length the number of residues to read
-   * @return length of sequence read
-   * @throws IllegalArgumentException If <code>dataOut</code> does not have enough length to store sequence.
-   * @throws IOException If in I/O error occurs
-   */
-  int readCurrent(byte[] dataOut, int start, int length) throws IllegalArgumentException, IOException;
-
-  /**
-   * Reads current quality into the supplied array.
-   * @param dest array to read data into
-   * @return length of quality, 0 if <code>hasQualityData()</code> is false
-   * @throws IllegalArgumentException If <code>dataOut</code> does not have enough length to store quality.
-   * @throws IllegalStateException if <code>nextSequence()</code> returned false on its last call.
-   * @throws IOException If in I/O error occurs
-   */
-  int readCurrentQuality(byte[] dest) throws IllegalArgumentException, IllegalStateException, IOException;
-
-  /**
-   * Reads current quality into the supplied array.
-   * @param dest array to read data into
-   * @param start the start offset within the sequence to read from
-   * @param length the number of residues to read
-   * @return length of quality, 0 if <code>hasQualityData()</code> is false
-   * @throws IllegalArgumentException If <code>dataOut</code> does not have enough length to store quality.
-   * @throws IllegalStateException if <code>nextSequence()</code> returned false on its last call.
-   * @throws IOException If in I/O error occurs
-   */
-  int readCurrentQuality(byte[] dest, int start, int length) throws IllegalArgumentException, IllegalStateException, IOException;
+  // Direct accessor methods
 
   /**
    * Returns the length of the requested sequence
    * @param sequenceIndex the sequence id
    * @return the length of the requested sequence
+   * @throws IOException if an IO error occurs
    */
-  int length(long sequenceIndex);
+  int length(long sequenceIndex) throws IOException;
 
   /**
    * Get the name of the specified sequence.
@@ -309,6 +214,14 @@ public interface SequencesReader extends AutoCloseable {
   String fullName(long sequenceIndex) throws IOException;
 
   /**
+   * Reads sequence data into the a newly allocated array.
+   * @param sequenceIndex Sequence to read.
+   * @return array containing read data
+   * @throws IOException If in I/O error occurs
+   */
+  byte[] read(long sequenceIndex) throws IOException;
+
+  /**
    * Reads sequence data into the supplied array.
    * @param sequenceIndex Sequence to read.
    * @param dataOut array to read data into
@@ -329,6 +242,14 @@ public interface SequencesReader extends AutoCloseable {
    * @throws IOException If in I/O error occurs
    */
   int read(long sequenceIndex, byte[] dataOut, int start, int length) throws IllegalArgumentException, IOException;
+
+  /**
+   * Reads quality data into a newly allocated array.
+   * @param sequenceIndex Sequence to read quality for.
+   * @return array that the quality data was read into
+   * @throws IOException If in I/O error occurs
+   */
+  byte[] readQuality(long sequenceIndex) throws IOException;
 
   /**
    * Reads quality data into the supplied array.
@@ -398,14 +319,15 @@ public interface SequencesReader extends AutoCloseable {
   boolean compressed();
 
   /**
-   * Reset the Sequences Reader to initial state.
-   */
-   void reset();
-
-   /**
    * Get the contents of the read-me file as a string if this reader has a directory.
    * @return the contents of the read-me, or null if it does not exist.
    * @throws IOException if there is an error reading the file.
-    */
-   String getReadMe() throws IOException;
+   */
+  String getReadMe() throws IOException;
+
+  /**
+   * @return the index containing reader meta data
+   */
+  IndexFile index();
+
 }

@@ -99,7 +99,7 @@ public class ConcatSequenceDataSource<T extends SequenceDataSource> implements S
   }
 
   @Override
-  public int currentLength() {
+  public int currentLength() throws IOException {
     return mCurrent.currentLength();
   }
 

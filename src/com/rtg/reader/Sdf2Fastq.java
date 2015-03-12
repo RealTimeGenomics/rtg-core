@@ -188,29 +188,29 @@ public final class Sdf2Fastq extends AbstractCli {
     if (lineLength < 0) {
       throw new IllegalArgumentException();
     }
-    while (read.nextSequence()) {
+    final byte[] buff = new byte[(int) read.maxLength()];
+    for (long seqId = 0; seqId < read.numberSequences(); seqId++) {
       final StringBuilder name = new StringBuilder("");
       if (rename || !read.hasNames()) {
-        name.append(read.currentSequenceId());
+        name.append(seqId);
       } else {
-        name.append(read.currentFullName());
+        name.append(read.fullName(seqId));
       }
       out.writeln("@" + name.toString());
 
-      final byte[] buff = new byte[(int) read.maxLength()];
-      read.readCurrent(buff);
+      read.read(seqId, buff);
       if (lineLength == 0) {
-        out.writeln(DnaUtils.bytesToSequenceIncCG(buff, 0, read.currentLength()));
+        out.writeln(DnaUtils.bytesToSequenceIncCG(buff, 0, read.length(seqId)));
         out.writeln("+" + name.toString());
-        out.writeln(getScore(read, def));
+        out.writeln(getScore(read, seqId, def));
       } else {
-        final String dna = DnaUtils.bytesToSequenceIncCG(buff, 0, read.currentLength());
+        final String dna = DnaUtils.bytesToSequenceIncCG(buff, 0, read.length(seqId));
         final int dnaLen = dna.length();
         for (long i = 0; i < dnaLen; i += lineLength) {
           out.writeln(dna.substring((int) i, (int) Math.min(i + lineLength, dnaLen)));
         }
         out.writeln("+" + name.toString());
-        final String qual = getScore(read, def);
+        final String qual = getScore(read, seqId, def);
         final int qualLen = qual.length();
         for (long i = 0; i < qualLen; i += lineLength) {
           out.writeln(qual.substring((int) i, (int) Math.min(i + lineLength, qualLen)));
@@ -219,16 +219,14 @@ public final class Sdf2Fastq extends AbstractCli {
     }
   }
 
-  private static String getScore(final SequencesReader read, final int c) throws IOException, InvalidParamsException {
+  private static String getScore(final SequencesReader read, long seqId, final int c) throws IOException, InvalidParamsException {
     if (read.hasQualityData()) {
-      final byte[] quality = new byte[read.currentLength()];
-      read.readCurrentQuality(quality);
-      return getQuality(quality);
+      return getQuality(read.readQuality(seqId));
     } else if (c >= (int) '!') {
       if (sScore == null) {
         sScore = getSimulatedScore(read.maxLength(), (char) c);
       }
-      return sScore.substring(0, read.currentLength());
+      return sScore.substring(0, read.length(seqId));
     } else {
       throw new InvalidParamsException(ErrorType.INFO_ERROR, "The input SDF does not have quality data and no default was provided.");
     }

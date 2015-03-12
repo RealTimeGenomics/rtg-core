@@ -410,8 +410,11 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
         flush(mPreviousStart, mTemplateLength);
         //processLastTemplate();
       }
+      final Long templateId = mTemplateNameMap.get(refName);
+      if (templateId == null) {
+        throw new NoTalkbackSlimException(ErrorType.WRONG_REFERENCE);
+      }
       final int templateLength = getSequenceLength(mGenomeSequences, mTemplateNameMap, refName);
-      mInterestingRegionExtractor.setTemplate(refName, templateLength);
       final String restrictionTemplate = mParams.filterParams().restrictionTemplate();
       if ((restrictionTemplate != null) && restrictionTemplate.equals(refName) && mParams.filterParams().restrictionStart() != -1) {
         mTemplateLength = mParams.filterParams().restrictionEnd();
@@ -420,15 +423,12 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
         mTemplateLength = templateLength;
         mTemplateMin = 0;
       }
-      if (mTemplateLength < 0) {
-        throw new NoTalkbackSlimException(ErrorType.WRONG_REFERENCE);
-      }
+      mInterestingRegionExtractor.setTemplate(refName, templateLength);
+      mTemplate = mGenomeSequences.read(templateId);
       mTemplateName = refName;
-      mTemplate = new byte[templateLength];
       mTemplatePos = mTemplateMin;
       mLastWrite = mTemplateMin;
       mPreviousStart = mTemplateMin;
-      mGenomeSequences.readCurrent(mTemplate); // getSequenceLength has done the seek.
       resetStates(mTemplateMin);
     } else {
       if (start < mPreviousSam) {

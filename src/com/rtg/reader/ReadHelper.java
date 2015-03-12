@@ -33,9 +33,8 @@ public final class ReadHelper {
       return null;
     }
     try {
-      r.seek(readId);
-      final byte[] b = new byte[r.currentLength()];
-      r.readCurrent(b);
+      final byte[] b = new byte[r.length(readId)];
+      r.read(readId, b);
       return b;
     } catch (final IOException ex) {
       // This should not occur in MemorySequencesReader
@@ -55,9 +54,8 @@ public final class ReadHelper {
       if (r == null || !r.hasQualityData()) {
         return null;
       }
-      r.seek(readId);
-      final byte[] b = new byte[r.currentLength()];
-      r.readCurrentQuality(b);
+      final byte[] b = new byte[r.length(readId)];
+      r.readQuality(readId, b);
       return b;
     } catch (final IOException ex) {
       // This should not occur in MemorySequencesReader

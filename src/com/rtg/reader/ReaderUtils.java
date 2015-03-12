@@ -127,6 +127,20 @@ public final class ReaderUtils {
   }
 
   /**
+   * Construct a mapping from sequence name to sequence id.
+   * @param names the sequences reader to construct the map from
+   * @return the map from sequence name to sequence id
+   * @throws IOException if an error occurs during reading
+   */
+  public static Map<String, Long> getSequenceNameMap(final PrereadNamesInterface names) throws IOException {
+    final Map<String, Long> map = new LinkedHashMap<>((int) names.length());
+    for (long i = 0; i < names.length(); i++) {
+      map.put(names.name(i), i);
+    }
+    return map;
+  }
+
+  /**
    * Check if a file is an SDF by attempting to get an SDF id
    * @param f file that may be an SDF
    * @return true if the file represents a readable SDF which has an id

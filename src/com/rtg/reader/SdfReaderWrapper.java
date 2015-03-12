@@ -123,30 +123,21 @@ public final class SdfReaderWrapper {
   }
 
   /**
-   * Convenience method for seeking to a particular sequence id
-   * @param seqId the sequence id to seek to
-   * @throws IOException when one of the sub-readers IOException.
+   * Convenience method.
+   * @param seqId the sequence id to retrieve the name of
+   * @return name of the specified sequence.
+   * @throws IOException whenever
+   * @throws IllegalStateException whenever
    */
-  public void seek(long seqId) throws IOException {
-    if (mIsPaired) {
-      mLeft.seek(seqId);
-      mRight.seek(seqId);
-    } else {
-      mSingle.seek(seqId);
+  public String name(long seqId) throws IllegalStateException, IOException {
+    if (hasNames()) {
+      if (mIsPaired) {
+        return mLeft.name(seqId);
+      } else {
+        return mSingle.name(seqId);
+      }
     }
-  }
-
-  /**
-   * Convenience method for moving the readers on to the next sequence.
-   * @return true if there is another sequence to be read, false otherwise.
-   * @throws IOException when one of the sub-readers IOException.
-   */
-  public boolean nextSequence() throws IOException {
-    if (mIsPaired) {
-      return mLeft.nextSequence() && mRight.nextSequence();
-    } else {
-      return mSingle.nextSequence();
-    }
+    return null;
   }
 
   /**
@@ -206,70 +197,6 @@ public final class SdfReaderWrapper {
       return mLeft.type();
     } else {
       return mSingle.type();
-    }
-  }
-
-  /**
-   * Convenience method.
-   * @return current name.
-   * @throws IOException whenever
-   * @throws IllegalStateException whenever
-   */
-  public String currentName() throws IllegalStateException, IOException {
-    if (hasNames()) {
-      if (mIsPaired) {
-        return mLeft.currentName();
-      } else {
-        return mSingle.currentName();
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Convenience method
-   * @return current full name
-   * @throws IllegalStateException whenever
-   * @throws IOException whenever
-   */
-  public String currentFullName() throws IllegalStateException, IOException {
-    if (hasNames()) {
-      if (mIsPaired) {
-        return mLeft.currentFullName();
-      } else {
-        return mSingle.currentFullName();
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Convenience method.
-   * @return current right arm name.
-   * @throws IOException whenever
-   * @throws IllegalStateException whenever
-   */
-  public String currentRightFullName() throws IllegalStateException, IOException {
-    if (mIsPaired) {
-      if (hasNames()) {
-        return mRight.currentFullName();
-      }
-      return null;
-    } else {
-      throw new UnsupportedOperationException();
-    }
-  }
-
-  /**
-   * Convenience method.
-   * @return current sequence id.
-   * @throws IllegalStateException whenever
-   */
-  public long currentSequenceId() {
-    if (mIsPaired) {
-      return mLeft.currentSequenceId();
-    } else {
-      return mSingle.currentSequenceId();
     }
   }
 

@@ -78,11 +78,11 @@ public class MockArraySequencesReader extends MockSequencesReader {
   }
 
   @Override
-  public String currentName() {
+  public String name(long index) {
     if (mNames == null) {
-      return "seq" + mCurrentSequence;
+      return "seq" + index;
     } else {
-      return mNames[(int) mCurrentSequence];
+      return mNames[(int) index];
     }
   }
 
@@ -107,11 +107,6 @@ public class MockArraySequencesReader extends MockSequencesReader {
       out[i] = (byte) ((i % 4) + 1);
     }
     return out.length;
-  }
-
-  @Override
-  public int readCurrent(final byte[] out) {
-    throw new UnsupportedOperationException();
   }
 
   @Override

@@ -379,10 +379,10 @@ public class HashingRegion implements Serializable, Comparable<HashingRegion> {
     final int[] seqLengths = reader.sequenceLengths(0, reader.numberSequences());
     final ArrayList<Long> sequences = new ArrayList<>();
     for (long id = startId; id < endId; id++) {
-      reader.seek(id);
-      if (rg == null || rg.sequence(reader.currentName()) != null && rg.sequence(reader.currentName()).ploidy() != Ploidy.NONE) {
-        totalLengths += reader.currentLength();
-        sequences.add(reader.currentSequenceId());
+      final String name = reader.name(id);
+      if (rg == null || rg.sequence(name) != null && rg.sequence(reader.name(id)).ploidy() != Ploidy.NONE) {
+        totalLengths += reader.length(id);
+        sequences.add(id);
       }
     }
 

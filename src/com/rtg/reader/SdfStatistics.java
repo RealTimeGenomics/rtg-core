@@ -389,11 +389,11 @@ public final class SdfStatistics extends AbstractCli {
   static void printSequenceNameAndLength(File dir, PrintStream out) throws IOException {
     out.println("Sequence lengths: ");
     try (SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReader(dir)) {
-      while (sr.nextSequence()) {
+      for (long seq = 0; seq < sr.numberSequences(); seq++) {
         if (sr.hasNames()) {
-          out.println(sr.currentName() + "\t" + sr.currentLength());
+          out.println(sr.name(seq) + "\t" + sr.length(seq));
         } else {
-          out.println("sequence_" + sr.currentSequenceId() + "\t" + sr.currentLength());
+          out.println("sequence_" + seq + "\t" + sr.length(seq));
         }
       }
     }

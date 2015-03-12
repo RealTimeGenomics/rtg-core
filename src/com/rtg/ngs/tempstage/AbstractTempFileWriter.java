@@ -116,8 +116,7 @@ public abstract class AbstractTempFileWriter implements Closeable {
       mTemplate = null;
     } else {
 
-      mTemplateReader.seek(templateId);
-      final int templateLength = mTemplateReader.currentLength();
+      final int templateLength = mTemplateReader.length(templateId);
 
       final int startpos = mClipRegion.getReferenceStart(templateId, mTemplatePadding);
       final int endpos = mClipRegion.getReferenceEnd(templateId, mTemplatePadding, templateLength);
@@ -128,14 +127,14 @@ public abstract class AbstractTempFileWriter implements Closeable {
         mTemplateOffset = startpos;
         //        Diagnostic.developerLog("AbstractSamAlignmentWriter Allocating: " + newLength + " bytes");
         mTemplate = new byte[newLength];
-        if (mTemplateReader.readCurrent(mTemplate, startpos, newLength) != newLength) {
+        if (mTemplateReader.read(templateId, mTemplate, startpos, newLength) != newLength) {
           throw new RuntimeException();
         }
       } else {
         mTemplateOffset = 0;
         //        Diagnostic.developerLog("AbstractSamAlignmentWriter Allocating (whole): " + templateLength + " bytes, startpos= " + startpos + " endpos= " + endpos + " newlength=" + newLength);
         mTemplate = new byte[templateLength];
-        if (mTemplateReader.readCurrent(mTemplate) != templateLength) {
+        if (mTemplateReader.read(templateId, mTemplate) != templateLength) {
           throw new RuntimeException();
         }
       }

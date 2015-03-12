@@ -102,14 +102,11 @@ public class MockReaderParams extends ReaderParams {
 
   @Override
   public int[] lengths() throws IOException {
-    final long oldId = mReader.currentSequenceId();
     final int n = (int) mReader.numberSequences();
     final int[] lengths = new int[n];
     for (int i = 0; i < n; i++) {
-      mReader.seek(i);
-      lengths[i] = mReader.currentLength();
+      lengths[i] = mReader.length(i);
     }
-    mReader.seek(oldId);
     return lengths;
   }
 

@@ -11,21 +11,29 @@
  */
 package com.rtg.reader;
 
-import java.io.File;
-import java.io.IOException;
-
-import com.rtg.mode.SequenceType;
-import com.rtg.util.integrity.Exam;
-import com.rtg.util.integrity.IntegralAbstract;
+import com.rtg.mode.DnaUtils;
 
 /**
  */
-public class ArraySequencesReader extends IntegralAbstract implements SequencesReader {
+public class ArraySequencesReader extends DummySequencesReader {
   private final byte[][] mData;
   private final byte[][] mQuality;
   private final int mTotalLength;
 
-  private int mIndex;
+  /**
+   * @param data strings containing ascii DNA sequence
+   */
+  public ArraySequencesReader(final String... data) {
+    this(convertStrings(data), null);
+  }
+
+  private static byte[][] convertStrings(String... data) {
+    final byte[][] result = new byte[data.length][];
+    for (int i = 0; i < data.length; i++) {
+      result[i] = DnaUtils.encodeString(data[i]);
+    }
+    return result;
+  }
 
   /**
    * @param data sequences of nucleotides (0 to 4 convention).
@@ -46,24 +54,6 @@ public class ArraySequencesReader extends IntegralAbstract implements SequencesR
       }
     }
     mTotalLength = tot;
-    mIndex = -1;
-  }
-
-  @Override
-  public void seek(final long sequenceId) {
-    mIndex = (int) sequenceId;
-    assert integrity();
-  }
-
-  @Override
-  public boolean nextSequence() {
-    mIndex++;
-    return mIndex < mData.length;
-  }
-
-  @Override
-  public SequenceType type() {
-    throw new UnsupportedOperationException("Not implemented yet.");
   }
 
   @Override
@@ -98,103 +88,12 @@ public class ArraySequencesReader extends IntegralAbstract implements SequencesR
     return mData.length;
   }
 
-  @Override
-  public long currentSequenceId() {
-    return mIndex;
-  }
 
   @Override
-  public long dataChecksum() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-  @Override
-  public long qualityChecksum() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-  @Override
-  public long nameChecksum() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Override
-  public long[] residueCounts() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Override
-  public long[] histogram() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Override
-  public long[] posHistogram() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Override
-  public double globalQualityAverage() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Override
-  public double[] positionQualityAverage() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Override
-  public long nBlockCount() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Override
-  public long longestNBlock() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Override
-  public boolean hasHistogram() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Override
-  public PrereadArm getArm() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Override
-  public PrereadType getPrereadType() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Override
-  public SdfId getSdfId() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Override
-  public int currentLength() {
-    return mData[mIndex].length;
-  }
-
-  @Override
-  public String currentName() {
-    return "sequence " + mIndex;
-  }
-
-  @Override
-  public String currentFullName() {
-    return currentName();
-  }
-
-  @Override
-  public SequencesReader copy() {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-
-  @Override
-  public File path() {
-    throw new UnsupportedOperationException("Not implemented yet.");
+  public byte[] read(final long sequenceIndex) {
+    final byte[] result = new byte[length(sequenceIndex)];
+    read(sequenceIndex, result);
+    return result;
   }
 
   @Override
@@ -235,26 +134,6 @@ public class ArraySequencesReader extends IntegralAbstract implements SequencesR
   }
 
   @Override
-  public int readCurrent(final byte[] out, final int start, final int length) {
-    return read(mIndex, out, start, length);
-  }
-
-  @Override
-  public int readCurrent(final byte[] dataOut) throws IllegalArgumentException, IllegalStateException {
-    return read(mIndex, dataOut);
-  }
-
-  @Override
-  public void close() {
-    //do nothing
-  }
-
-  @Override
-  public PrereadNames names() {
-    throw new UnsupportedOperationException("Not implemented yet.");
-  }
-
-  @Override
   public long lengthBetween(final long start, final long end) {
     long tot = 0;
     for (int i = (int) start; i < end; i++) {
@@ -283,8 +162,15 @@ public class ArraySequencesReader extends IntegralAbstract implements SequencesR
   }
 
   @Override
+  public byte[] readQuality(final long sequenceIndex) {
+    final byte[] result = new byte[mQuality[(int) sequenceIndex].length];
+    readQuality(sequenceIndex, result);
+    return result;
+  }
+
+  @Override
   public int readQuality(final long sequenceIndex, final byte[] dest) {
-    return readQuality(sequenceIndex, dest, 0, mQuality[mIndex].length);
+    return readQuality(sequenceIndex, dest, 0, mQuality[(int) sequenceIndex].length);
   }
 
   @Override
@@ -292,70 +178,12 @@ public class ArraySequencesReader extends IntegralAbstract implements SequencesR
     if (mQuality == null) {
       throw new IllegalStateException();
     }
-    final byte[] quality = mQuality[mIndex];
+    final byte[] quality = mQuality[(int) sequenceIndex];
     if (start + length > dest.length) {
       throw new IllegalArgumentException();
     }
     System.arraycopy(quality, start, dest, 0, length);
     return length;
-  }
-
-  @Override
-  public int readCurrentQuality(final byte[] dest) throws IllegalArgumentException, IllegalStateException {
-    return readQuality(mIndex, dest);
-  }
-
-  @Override
-  public int readCurrentQuality(byte[] dest, int start, int length) throws IllegalArgumentException, IllegalStateException {
-    return readQuality(mIndex, dest, start, length);
-  }
-
-  @Override
-  public long sdfVersion() {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void toString(final StringBuilder sb) {
-    sb.append("ByteArraySequencesReader");
-  }
-
-  @Override
-  public boolean integrity() {
-    Exam.assertNotNull(mData);
-    Exam.assertTrue(-1 <= mIndex && mIndex < mData.length);
-    Exam.assertTrue(0 <= mTotalLength);
-    return true;
-  }
-
-  @Override
-  public boolean compressed() {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void reset() {
-    mIndex = -1;
-  }
-
-  @Override
-  public String currentNameSuffix() throws IllegalStateException, IOException {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public String nameSuffix(long sequenceIndex) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public long suffixChecksum() {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public String getReadMe() {
-    return null;
   }
 
 }

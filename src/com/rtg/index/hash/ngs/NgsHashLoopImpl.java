@@ -89,10 +89,9 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
 
     assert mode.codeType().firstValid() == 1;
     final byte[] byteBuffer = makeBuffer(reader);
-    reader.seek(start);
     int badLengthCount = 0;
     long totalLength = 0;
-    for (int seq = (int) start; seq < end; seq++, reader.nextSequence()) {
+    for (int seq = (int) start; seq < end; seq++) {
       mUnknownVictim = -1;
       final int readId = encoder.encode(seq);
       final int id2 = encoder.encode((int) (seq - start));
@@ -101,15 +100,15 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
         ProgramState.checkAbort();
       }
       //System.err.println("seq=" + seq);
-      final int currentLength = reader.currentLength();
+      final int currentLength = reader.length(seq);
       if (currentLength != hashFunction.readLength()) {
         if (badLengthCount++ < WRONG_LENGTH_REPORT_LIMIT) {
-          Diagnostic.warning(WarningType.INCORRECT_LENGTH, reader.hasNames() ? reader.currentName() : ("" + reader.currentSequenceId()), reader.currentLength() + "", hashFunction.readLength() + "");
+          Diagnostic.warning(WarningType.INCORRECT_LENGTH, reader.hasNames() ? reader.name(seq) : ("" + seq), currentLength + "", hashFunction.readLength() + "");
         }
         hashFunction.setValues(id2, false);
         continue;
       }
-      final int length = reader.readCurrent(byteBuffer);
+      final int length = reader.read(seq, byteBuffer);
       totalLength += length;
       //System.err.println(Arrays.toString(byteBuffer));
       hashFunction.reset();
@@ -216,9 +215,8 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
     long nt = 0;
     long ntbatch = 0;
     long batchstart = System.currentTimeMillis();
-    reader.seek(start);
-    for (long templateId = start; templateId < end; templateId++, reader.nextSequence()) {
-      final int length = reader.readCurrent(byteBuffer);
+    for (long templateId = start; templateId < end; templateId++) {
+      final int length = reader.read(templateId, byteBuffer);
       hashFunction.reset();
       hashFunction.templateSet(templateId, length);
       for (int endPosition = 0; endPosition < length; endPosition++, nt++) {
@@ -350,8 +348,7 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
       final long padding = getPadding();
       final byte[] byteBuffer = makeBuffer(reader, mRegion, padding);
       for (long templateId = mRegion.getStart(); templateId <= mRegion.getEnd(); templateId++) {
-        reader.seek(templateId);
-        final int length = reader.currentLength(); //reader.readCurrent(byteBuffer);
+        final int length = reader.length(templateId); //reader.readCurrent(byteBuffer);
         final int startPos = mRegion.getReferenceStart(templateId, padding);
         final int endPos = mRegion.getReferenceEnd(templateId, padding, length);
         final int adjStart;
@@ -367,7 +364,7 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
           adjEnd = endPos + MASKED_CALL_PADDING_ADJUSTMENT;
         }
         //final int measuredLength = reader.readCurrent(byteBuffer, startPos, endPos - startPos);
-        final int measuredLength = reader.readCurrent(byteBuffer, adjStart, adjEnd - adjStart);
+        final int measuredLength = reader.read(templateId, byteBuffer, adjStart, adjEnd - adjStart);
 
         //mParent.multiCoreFrameLoop(templateId, func, byteBuffer, measuredLength, startPos, endPos);
         mParent.multiCoreFrameLoop(templateId, func, byteBuffer, measuredLength, adjStart, adjEnd, startPos, endPos);

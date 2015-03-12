@@ -55,9 +55,7 @@ class SequenceEvaluator implements IORunnable {
     if (sequenceId == null) {
       throw new NoTalkbackSlimException("Sequence " + currentName + " is not contained in the reference.");
     }
-    mTemplate.seek(sequenceId);
-    final byte[] template = new byte[mTemplate.currentLength()];
-    mTemplate.readCurrent(template);
+    final byte[] template = mTemplate.read(sequenceId);
 
     final Map<VariantSetType, List<DetectedVariant>> set = setPair.getB();
 

@@ -405,7 +405,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
       TestUtils.containsAll(mps.toString(), "Processing left arm \"" + left.getPath());
       assertEquals(PrereadArm.UNKNOWN, sp.reader().getArm());
       assertTrue(sp.reader().getSdfId().equals(new SdfId(0L)));
-      assertTrue(sp.reader().nextSequence());
+      assertTrue(sp.reader().numberSequences() > 0);
       assertTrue(sp.reader().hasQualityData());
       assertEquals(left, sp.reader().path());
 
@@ -443,7 +443,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
       assertFalse(mps.toString().contains("Sequence names passed checksum"));
       assertEquals(PrereadArm.UNKNOWN, sp[0].reader().getArm());
       assertTrue(sp[0].reader().getSdfId().equals(new SdfId(0L)));
-      assertTrue(sp[0].reader().nextSequence());
+      assertTrue(sp[0].reader().numberSequences() > 0);
       assertTrue(sp[0].reader().hasQualityData());
       assertEquals(input, sp[0].reader().path());
 

@@ -141,7 +141,7 @@ public class FixedStepPopulationVariantGenerator extends PopulationVariantGenera
     }
 
     @Override
-    public SequenceIdLocus nextVariantPosition() {
+    public SequenceIdLocus nextVariantPosition() throws IOException {
       while (mSeq < mReader.numberSequences()) {
         if (mPos >= mReader.length(mSeq)) {
           mSeq++;

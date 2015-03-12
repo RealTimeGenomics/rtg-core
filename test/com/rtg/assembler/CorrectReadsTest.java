@@ -45,17 +45,11 @@ public class CorrectReadsTest extends TestCase {
       CorrectReads.correct(in, out, 6, 2);
 //      System.err.println(Arrays.toString(out.listFiles()));
       try (SequencesReader leftReader = SequencesReaderFactory.createDefaultSequencesReader(new File(out, "left"))) {
-        leftReader.seek(0);
-        final byte[] readLeft = new byte[leftReader.currentLength()];
-        leftReader.readCurrent(readLeft);
-        assertEquals("CCCAGGAGAGG", DnaUtils.bytesToSequenceIncCG(readLeft));
+        assertEquals("CCCAGGAGAGG", DnaUtils.bytesToSequenceIncCG(leftReader.read(0)));
       }
 
       try (SequencesReader rightReader = SequencesReaderFactory.createDefaultSequencesReader(new File(out, "right"))) {
-        rightReader.seek(0);
-        final byte[] readRight = new byte[rightReader.currentLength()];
-        rightReader.readCurrent(readRight);
-        assertEquals("AACGGGGGGTTTTAT", DnaUtils.bytesToSequenceIncCG(readRight));
+        assertEquals("AACGGGGGGTTTTAT", DnaUtils.bytesToSequenceIncCG(rightReader.read(0)));
       }
 
 
@@ -78,11 +72,8 @@ public class CorrectReadsTest extends TestCase {
       CorrectReads.correct(in, out, 6, 2);
 //      System.err.println(Arrays.toString(out.listFiles()));
       try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReader(new File(out, "0"))) {
-        reader.seek(0);
-        while (reader.nextSequence()) {
-          final byte[] readLeft = new byte[reader.currentLength()];
-          reader.readCurrent(readLeft);
-          assertEquals("CCCAGGAGAGG", DnaUtils.bytesToSequenceIncCG(readLeft));
+        for (long seq = 0; seq < reader.numberSequences(); seq++) {
+          assertEquals("CCCAGGAGAGG", DnaUtils.bytesToSequenceIncCG(reader.read(seq)));
         }
       }
     } finally {

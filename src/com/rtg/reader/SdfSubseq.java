@@ -176,14 +176,13 @@ public final class SdfSubseq extends AbstractCli {
       err.println("The sequence id " + sequenceId + " is out of range, must be from 0 to " + (reader.numberSequences() - 1) + ".");
       return 1;
     }
-    reader.seek(sequenceId);
-    final int seqlength = reader.currentLength();
+    final int seqlength = reader.length(sequenceId);
     final int endpos = restriction.getEnd() == RegionRestriction.MISSING ? seqlength : restriction.getEnd(); // Convert from 1-based inclusive to 0-based exclusive
     final int length = endpos - start;
-    if (start > reader.currentLength()) {
+    if (start > seqlength) {
       err.println("Supplied start position \"" + (start + 1) + "\" reads past sequence end.");
       return 1;
-    } else if (endpos > reader.currentLength()) {
+    } else if (endpos > seqlength) {
       err.println("Supplied end position \"" + endpos + "\" reads past sequence end.");
       return 1;
     }
@@ -195,9 +194,9 @@ public final class SdfSubseq extends AbstractCli {
     if (mFlags.isSet(FASTA_FLAG) || mFlags.isSet(FASTQ_FLAG)) {
       final String name;
       if (reader.hasNames()) {
-        name = isCoordsAltered ? reader.currentName() : reader.currentFullName();
+        name = isCoordsAltered ? reader.name(sequenceId) : reader.fullName(sequenceId);
       } else {
-        name = "" + reader.currentSequenceId();
+        name = "" + sequenceId;
       }
       out.write((sequenceNameIdentifier + name).getBytes());
       final String coords = isCoordsAltered ? "[" + (start + 1) + "," + (start + length) + "]" : "";
@@ -208,7 +207,7 @@ public final class SdfSubseq extends AbstractCli {
       out.write(LS_BYTES);
     }
     byte[] buff = new byte[length];
-    reader.readCurrent(buff, start, length);
+    reader.read(sequenceId, buff, start, length);
     if (reverseComplement) {
       for (int i = length - 1; i >= 0; i--) {
         out.write(mCodeToBytes[buff[i]]);
@@ -229,7 +228,7 @@ public final class SdfSubseq extends AbstractCli {
       out.write('+');
       out.write(LS_BYTES);
       buff = new byte[length];
-      reader.readCurrentQuality(buff, start, length);
+      reader.readQuality(sequenceId, buff, start, length);
       if (reverseComplement) {
         for (int i = length - 1; i >= 0; i--) {
           out.write(buff[i] + 33);

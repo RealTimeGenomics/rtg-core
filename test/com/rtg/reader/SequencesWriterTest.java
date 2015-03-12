@@ -28,7 +28,6 @@ import com.rtg.mode.Protein;
 import com.rtg.mode.ProteinFastaSymbolTable;
 import com.rtg.mode.SequenceType;
 import com.rtg.reader.FastqSequenceDataSource.FastQScoreType;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.DiagnosticEvent;
@@ -38,6 +37,7 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.diagnostic.SlimException;
 import com.rtg.util.diagnostic.WarningEvent;
 import com.rtg.util.diagnostic.WarningType;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.test.FileHelper;
 
 import junit.framework.Assert;
@@ -248,15 +248,16 @@ public class SequencesWriterTest extends TestCase {
     try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(mDir)) {
       //dsr.globalIntegrity();
       assertEquals(mDir, dsr.path());
+      final SequencesIterator it = dsr.iterator();
       //assertTrue(dsr.nextSequence());
       final String[] labels = {"1", "2", "3", "4", "5", "6", "7", "8"};
       final byte[][] expected = {{1}, {2}, {3}, {4}, {1}, {2}, {3}, {4}};
       for (int i = 0; i < expected.length; i++) {
-        assertTrue(dsr.nextSequence());
-        assertEquals(labels[i], dsr.currentName());
-        checkEquals(dsr, expected[i]);
+        assertTrue(it.nextSequence());
+        assertEquals(labels[i], it.currentName());
+        checkEquals(it, expected[i]);
       }
-      assertTrue(!dsr.nextSequence());
+      assertTrue(!it.nextSequence());
     }
     final File[] files = mDir.listFiles(new FilenameFilter() {
       @Override
@@ -338,10 +339,11 @@ public class SequencesWriterTest extends TestCase {
     sw.processSequences();
 
     try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(mDir)) {
-      assertTrue(dsr.nextSequence());
-      assertEquals("12345", dsr.currentName());
+      SequencesIterator it = dsr.iterator();
+      assertTrue(it.nextSequence());
+      assertEquals("12345", it.currentName());
       final byte[] q = new byte[6];
-      dsr.readCurrentQuality(q);
+      it.readCurrentQuality(q);
       assertTrue(Arrays.equals(new byte[]{'I' - 33, 'I' - 33, 'I' - 33, 'I' - 33, 'I' - 33, 'I' - 33}, q));
 
       for (int i = 0; i < 6; i++) {
@@ -351,13 +353,13 @@ public class SequencesWriterTest extends TestCase {
     }
   }
 
-  public static void checkEquals(final SequencesReader r, final byte[] expected) throws IOException {
+  public static void checkEquals(final SequencesIterator r, final byte[] expected) throws IOException {
     final byte[] t = new byte[expected.length];
     assertEquals(expected.length, r.readCurrent(t));
     assertTrue(Arrays.equals(expected, t));
   }
 
-  public static void checkQualityEquals(final SequencesReader r, final byte[] expected) throws IOException {
+  public static void checkQualityEquals(final SequencesIterator r, final byte[] expected) throws IOException {
     final byte[] t = new byte[expected.length];
     assertEquals(expected.length, r.readCurrentQuality(t));
     assertTrue(Arrays.equals(expected, t));
@@ -398,18 +400,19 @@ public class SequencesWriterTest extends TestCase {
 
     try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(mDir)) {
       assertEquals(mDir, dsr.path());
-      assertTrue(dsr.nextSequence());
-      assertEquals("1234567890123456789", dsr.currentName());
-      assertEquals(32, dsr.currentLength());
-      checkEquals(dsr, new byte[]{1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 2, 4, 4, 1, 3, 3, 3, 2, 4, 2, 1, 2, 4, 3, 3, 4, 2, 1, 4, 3, 2, 1});
-      assertTrue(dsr.nextSequence());
-      assertEquals("bob", dsr.currentName());
-      assertEquals(17, dsr.currentLength());
-      checkEquals(dsr, new byte[]{4, 1, 3, 4, 4, 2, 1, 3, 2, 1, 4, 2, 3, 1, 4, 2, 1});
-      assertTrue(dsr.nextSequence());
-      assertEquals("hobos", dsr.currentName());
-      assertEquals(20, dsr.currentLength());
-      checkEquals(dsr, new byte[]{1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 1, 1, 1, 2, 2, 2, 1, 1});
+      final SequencesIterator it = dsr.iterator();
+      assertTrue(it.nextSequence());
+      assertEquals("1234567890123456789", it.currentName());
+      assertEquals(32, it.currentLength());
+      checkEquals(it, new byte[]{1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 2, 4, 4, 1, 3, 3, 3, 2, 4, 2, 1, 2, 4, 3, 3, 4, 2, 1, 4, 3, 2, 1});
+      assertTrue(it.nextSequence());
+      assertEquals("bob", it.currentName());
+      assertEquals(17, it.currentLength());
+      checkEquals(it, new byte[]{4, 1, 3, 4, 4, 2, 1, 3, 2, 1, 4, 2, 3, 1, 4, 2, 1});
+      assertTrue(it.nextSequence());
+      assertEquals("hobos", it.currentName());
+      assertEquals(20, it.currentLength());
+      checkEquals(it, new byte[]{1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 1, 1, 1, 2, 2, 2, 1, 1});
     }
   }
 
@@ -462,14 +465,14 @@ public class SequencesWriterTest extends TestCase {
       assertEquals(8, SdfFileUtils.labelPointerFile(mDir, 2).length());
     }
 
-    final SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(mDir);
-    assertTrue(dsr.hasQualityData());
-    try {
+    try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(mDir)) {
+      final SequencesIterator it = dsr.iterator();
+      assertTrue(dsr.hasQualityData());
       assertEquals(mDir, dsr.path());
-      assertTrue(dsr.nextSequence());
-      assertEquals("1234567890123456789", dsr.currentName());
-      assertEquals(32, dsr.currentLength());
-      checkEquals(dsr, new byte[] {1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 2, 4, 4, 1, 3, 3, 3, 2, 4, 2, 1, 2, 4, 3, 3, 4, 2, 1, 4, 3, 2, 1});
+      assertTrue(it.nextSequence());
+      assertEquals("1234567890123456789", it.currentName());
+      assertEquals(32, it.currentLength());
+      checkEquals(it, new byte[]{1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 2, 4, 4, 1, 3, 3, 3, 2, 4, 2, 1, 2, 4, 3, 3, 4, 2, 1, 4, 3, 2, 1});
       byte[] qualExp = new byte[32];
       for (int i = 0; i < 32; i++) {
         final char c = "!!ASDFFSAFASHSKFSDIUR<<SA><>S<<<".charAt(i);
@@ -478,10 +481,10 @@ public class SequencesWriterTest extends TestCase {
           qualExp[i] = 63;
         }
       }
-      checkQualityEquals(dsr, qualExp);
-      assertTrue(dsr.nextSequence());
-      assertEquals("bob", dsr.currentName());
-      assertEquals(17, dsr.currentLength());
+      checkQualityEquals(it, qualExp);
+      assertTrue(it.nextSequence());
+      assertEquals("bob", it.currentName());
+      assertEquals(17, it.currentLength());
 
       qualExp = new byte[17];
       for (int i = 0; i < 17; i++) {
@@ -491,11 +494,11 @@ public class SequencesWriterTest extends TestCase {
           qualExp[i] = 63;
         }
       }
-      checkEquals(dsr, new byte[] {4, 1, 3, 4, 4, 2, 1, 3, 2, 1, 4, 2, 3, 1, 4, 2, 1});
-      checkQualityEquals(dsr, qualExp);
-      assertTrue(dsr.nextSequence());
-      assertEquals("hobos-r", dsr.currentName());
-      assertEquals(20, dsr.currentLength());
+      checkEquals(it, new byte[]{4, 1, 3, 4, 4, 2, 1, 3, 2, 1, 4, 2, 3, 1, 4, 2, 1});
+      checkQualityEquals(it, qualExp);
+      assertTrue(it.nextSequence());
+      assertEquals("hobos-r", it.currentName());
+      assertEquals(20, it.currentLength());
       qualExp = new byte[20];
       for (int i = 0; i < 20; i++) {
         final char c = "ADSFAD[[<<<><<[[;;FS".charAt(i);
@@ -504,11 +507,9 @@ public class SequencesWriterTest extends TestCase {
           qualExp[i] = 63;
         }
       }
-      checkEquals(dsr, new byte[] {1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 1, 1, 1, 2, 2, 2, 1, 1});
-      checkQualityEquals(dsr, qualExp);
+      checkEquals(it, new byte[]{1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 1, 1, 1, 2, 2, 2, 1, 1});
+      checkQualityEquals(it, qualExp);
 
-    } finally {
-      dsr.close();
     }
   }
 
@@ -577,14 +578,15 @@ public class SequencesWriterTest extends TestCase {
 
    //This tests it is read correctly, of course this relies on the fact that the reader works :/
    try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(mDir)) {
+     final SequencesIterator it = dsr.iterator();
      assertEquals(12, dsr.totalLength());
      assertEquals(8, dsr.maxLength());
      assertEquals(4, dsr.minLength());
      assertFalse(dsr.hasQualityData());
-     assertTrue(dsr.nextSequence());
      assertFalse(dsr.hasQualityData());
-     assertTrue(dsr.nextSequence());
-     assertFalse(dsr.nextSequence());
+     assertTrue(it.nextSequence());
+     assertTrue(it.nextSequence());
+     assertFalse(it.nextSequence());
      assertFalse(dsr.hasQualityData());
    }
   }
@@ -708,8 +710,7 @@ public class SequencesWriterTest extends TestCase {
     SequencesReaderFactory.createDefaultSequencesReader(mDir);
     try (SequencesReader sr = SequencesReaderFactory.createMemorySequencesReaderCheckEmpty(mDir, true, true, LongRange.NONE)) {
       assertEquals(1, sr.numberSequences());
-      sr.nextSequence();
-      assertEquals(0, sr.currentLength());
+      assertEquals(0, sr.length(0));
     }
   }
   public void testTwoZeroLengthReads() throws Exception {
@@ -721,10 +722,8 @@ public class SequencesWriterTest extends TestCase {
     SequencesReaderFactory.createDefaultSequencesReader(mDir);
     try (SequencesReader sr = SequencesReaderFactory.createMemorySequencesReaderCheckEmpty(mDir, true, true, LongRange.NONE)) {
       assertEquals(2, sr.numberSequences());
-      sr.nextSequence();
-      assertEquals(0, sr.currentLength());
-      sr.nextSequence();
-      assertEquals(0, sr.currentLength());
+      assertEquals(0, sr.length(0));
+      assertEquals(0, sr.length(1));
     }
   }
 
@@ -738,19 +737,21 @@ public class SequencesWriterTest extends TestCase {
     try {
       try {
         assertEquals(2, sr.numberSequences());
-        sr.nextSequence();
-        assertEquals(4, sr.currentLength());
-        sr.nextSequence();
-        assertEquals(0, sr.currentLength());
+        final SequencesIterator it = sr.iterator();
+        it.nextSequence();
+        assertEquals(4, it.currentLength());
+        it.nextSequence();
+        assertEquals(0, it.currentLength());
       } finally {
         sr.close();
       }
       sr = SequencesReaderFactory.createMemorySequencesReaderCheckEmpty(mDir, true, true, range);
+      final SequencesIterator it = sr.iterator();
       assertEquals(2, sr.numberSequences());
-      sr.nextSequence();
-      assertEquals(4, sr.currentLength());
-      sr.nextSequence();
-      assertEquals(0, sr.currentLength());
+      it.nextSequence();
+      assertEquals(4, it.currentLength());
+      it.nextSequence();
+      assertEquals(0, it.currentLength());
     } finally {
       sr.close();
     }
@@ -778,10 +779,11 @@ public class SequencesWriterTest extends TestCase {
 
     try (SequencesReader sr = SequencesReaderFactory.createMemorySequencesReaderCheckEmpty(mDir, true, true, LongRange.NONE)) {
       assertEquals(2, sr.numberSequences());
-      sr.nextSequence();
-      assertEquals(0, sr.currentLength());
-      sr.nextSequence();
-      assertEquals(4, sr.currentLength());
+      final SequencesIterator it = sr.iterator();
+      it.nextSequence();
+      assertEquals(0, it.currentLength());
+      it.nextSequence();
+      assertEquals(4, it.currentLength());
     }
   }
   public void testZeroLengthReadWithOtherReadsBeforeAndAfter() throws Exception {
@@ -794,12 +796,13 @@ public class SequencesWriterTest extends TestCase {
 
     try (SequencesReader sr = SequencesReaderFactory.createMemorySequencesReaderCheckEmpty(mDir, true, true, LongRange.NONE)) {
       assertEquals(3, sr.numberSequences());
-      sr.nextSequence();
-      assertEquals(5, sr.currentLength());
-      sr.nextSequence();
-      assertEquals(0, sr.currentLength());
-      sr.nextSequence();
-      assertEquals(4, sr.currentLength());
+      final SequencesIterator it = sr.iterator();
+      it.nextSequence();
+      assertEquals(5, it.currentLength());
+      it.nextSequence();
+      assertEquals(0, it.currentLength());
+      it.nextSequence();
+      assertEquals(4, it.currentLength());
     }
   }
 

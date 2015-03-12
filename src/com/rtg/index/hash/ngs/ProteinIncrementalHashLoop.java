@@ -71,13 +71,10 @@ public abstract class ProteinIncrementalHashLoop extends HashLoop {
     final SequencesReader reader = sequences.reader();
     final HashingRegion region = sequences.region();
     final long startSequence;
-    final long endSequence;
     if (region != HashingRegion.NONE) {
       startSequence = region.getStart();
-      endSequence = region.getEnd();
     } else {
       startSequence = 0;
-      endSequence = reader.numberSequences();
     }
     final SequenceMode mode = sequences.mode();
     if (byteBuffer.length < reader.maxLength()) {
@@ -111,21 +108,18 @@ public abstract class ProteinIncrementalHashLoop extends HashLoop {
     final int overhang = reader.type() == SequenceType.DNA ? 0 : readLength - mProteinMask.windowSize();
 
     final long maxSequenceEver = reader.numberSequences();
-    if (startSequence <= endSequence && startSequence < maxSequenceEver) {
-      reader.seek(startSequence);
-    }
     long totalLength = 0;
     for (long seq = startSequence; region.isInRange(seq) && seq < maxSequenceEver; seq++) {
       ProgramState.checkAbort();
       //System.err.println("seq=" + seq + " " +  reader.currentSequenceId() + " " + reader.getClass());
+      final int fullLength = reader.length(seq);
       final int startPos = region.getReferenceStart(seq, 0);
-      final int endPos = region.getReferenceEnd(seq, 0, reader.currentLength());
+      final int endPos = region.getReferenceEnd(seq, 0, fullLength);
       if (byteBuffer.length < endPos - startPos) { //silly programmer error
         throw new IllegalArgumentException("Allocated buffer too short. Allocated length=" + byteBuffer.length + " Required length=" + (endPos - startPos));
       }
-      final int length = reader.readCurrent(byteBuffer, startPos, endPos - startPos);
+      final int length = reader.read(seq, byteBuffer, startPos, endPos - startPos);
 
-      final int fullLength = reader.currentLength();
       totalLength += fullLength;
       //System.err.println("seq=" + seq + " " +  reader.currentSequenceId() + " " + reader.getClass());
       //      readDelay.start();
@@ -167,7 +161,6 @@ public abstract class ProteinIncrementalHashLoop extends HashLoop {
         end();
       }
       //System.err.println("Finished loop");
-      reader.nextSequence();
       endSequence();
 
     }

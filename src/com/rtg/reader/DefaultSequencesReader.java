@@ -161,153 +161,15 @@ public final class DefaultSequencesReader extends AbstractSequencesReader implem
   }
 
 
-  // Iterator-style access methods
-
-  @Override
-  public void reset() {
-    setSeekFlag(false);
-    setReadFlag(true);
-    setReadQualityFlag(true);
-    mSeqNum = mStart;
-  }
-
-  @Override
-  public void seek(final long sequenceId) throws IOException {
-    mSeqNum = sequenceId + mStart;
-    if (!nextSequence()) {
-      throw new IllegalArgumentException("Failed to seek to sequence: " + mSeqNum + " numberOfSequences: " + mIndex.getNumberSequences());
-    }
-    setSeekFlag(true);
-    setReadFlag(false);
-    setReadQualityFlag(false);
-  }
-
-  @Override
-  public boolean nextSequence() throws IOException {
-    //dropBuffer();
-    if (mSeqNum >= mEnd) {
-      setSeekFlag(false);
-      return false;
-    }
-    mSequenceManager.seek(mSeqNum++);
-    setReadFlag(false);
-    setReadQualityFlag(false);
-    setSeekFlag(true);
-    return true;
-  }
-
-  @Override
-  public long currentSequenceId() {
-    checkSeekFlag();
-    return mSeqNum - 1;
-  }
-
-  @Override
-  public int currentLength() {
-    checkSeekFlag();
-    return (int) mSequenceManager.getDataLength();
-  }
-
-  @Override
-  public int readCurrent(final byte[] dataOut) throws IllegalArgumentException, IOException {
-    return readCurrent(dataOut, 0, (int) mSequenceManager.getDataLength());
-  }
-
-  @Override
-  public int readCurrent(byte[] dataOut, int start, int length) throws IllegalArgumentException, IOException {
-    checkReadFlag();
-    checkSeekFlag();
-    setReadFlag(true);
-    final int ret = mSequenceManager.readData(dataOut, start, length);
-    if (mIndex.hasPerSequenceChecksums() && ret == currentLength()) {
-      checkChecksum(dataOut, start, ret, mSequenceManager.sequenceChecksum());
-    }
-    return ret;
-  }
-
-  private void checkChecksum(byte[] data, int offset, int length, byte checksum) throws CorruptSdfException {
-    mChecksum.update(data, offset, length);
-    try {
-      if (checksum != (byte) mChecksum.getValue()) {
-        throw new CorruptSdfException("Checksum failed on sequence: " + currentSequenceId());
-      }
-    } finally {
-      mChecksum.reset();
-    }
-  }
-
-  @Override
-  public int readCurrentQuality(final byte[] dest) throws IllegalArgumentException, IllegalStateException, IOException {
-    return readCurrentQuality(dest, 0, (int) mSequenceManager.getDataLength());
-  }
-
-  @Override
-  public int readCurrentQuality(byte[] dest, int start, int length) throws IllegalArgumentException, IllegalStateException, IOException {
-    if (!mHasQualityData) {
-      return 0;
-    }
-    checkSeekFlag();
-    checkReadQualityFlag();
-    setReadQualityFlag(true);
-    final int ret = mSequenceManager.readQuality(dest, start, length);
-    if (mIndex.hasPerSequenceChecksums() && ret == currentLength()) {
-      checkChecksum(dest, start, ret, mSequenceManager.qualityChecksum());
-    }
-    return ret;
-  }
-
-  @Override
-  public String currentName() throws IOException {
-    if (!mIndex.hasNames()) {
-      throw new IllegalStateException("SDF has no names");
-    }
-    checkSeekFlag();
-    if (mSeqNum < 1 || mSeqNum > mEnd) {
-      return null;
-    }
-    mLabelManager.seek(mSeqNum - 1);
-    return readCurrentString(mLabelManager);
-  }
-
-  @Override
-  public String currentNameSuffix() throws IllegalStateException, IOException {
-    if (!mIndex.hasNames()) {
-      throw new IllegalStateException("SDF has no names");
-    }
-    checkSeekFlag();
-    if (mSeqNum < 1 || mSeqNum > mEnd) {
-      return null;
-    }
-    if (!mIndex.hasSequenceNameSuffixes()) {
-      return "";
-    }
-    mSuffixManager.seek(mSeqNum - 1);
-    return readCurrentString(mSuffixManager);
-  }
-
-  private String readCurrentString(LabelStreamManager manager) throws IOException {
-    final SeekableStream data = manager.getData();
-    final int length = (int) manager.getDataLength();
-    final byte[] bytes = new byte[length];
-    IOUtils.readFully(data, bytes, 0, length); //data.readFully(bytes);
-    if (data.read() != 0) {
-      throw new CorruptSdfException(mDirectory);
-    }
-    return new String(bytes);
-  }
-
-
-
   // Access-by-index methods
-
 
   @Override
   public String name(long sequenceIndex) throws IOException {
     if (!mIndex.hasNames()) {
       throw new IllegalStateException("SDF has no names");
     }
-    mLabelManager.seek(sequenceIndex);
-    return readCurrentString(mLabelManager);
+    mLabelManager.seek(sequenceIndex + mStart);
+    return readStringInternal(mLabelManager);
   }
 
   @Override
@@ -318,8 +180,8 @@ public final class DefaultSequencesReader extends AbstractSequencesReader implem
     if (!mIndex.hasSequenceNameSuffixes()) {
       return "";
     }
-    mSuffixManager.seek(sequenceIndex);
-    return readCurrentString(mSuffixManager);
+    mSuffixManager.seek(sequenceIndex + mStart);
+    return readStringInternal(mSuffixManager);
   }
 
   @Override
@@ -327,10 +189,10 @@ public final class DefaultSequencesReader extends AbstractSequencesReader implem
     if (!mHasQualityData) {
       return 0;
     }
-    mSequenceManager.seek(sequenceIndex);
+    mSequenceManager.seek(sequenceIndex + mStart);
     setSeekFlag(true);
     setReadQualityFlag(false);
-    return readCurrentQuality(dest);
+    return readQualityInternal(dest);
   }
 
   @Override
@@ -338,46 +200,87 @@ public final class DefaultSequencesReader extends AbstractSequencesReader implem
     if (!mHasQualityData) {
       return 0;
     }
-    mSequenceManager.seek(sequenceIndex);
+    mSequenceManager.seek(sequenceIndex + mStart);
     setSeekFlag(true);
     setReadQualityFlag(false);
-    return readCurrentQuality(dest, start, length);
+    return readQualityInternal(dest, start, length);
   }
 
   @Override
-  public int read(final long sequenceIndex, final byte[] dataOut) {
-    try {
-      mSequenceManager.seek(sequenceIndex);
-      setSeekFlag(true);
-      setReadFlag(false);
-      return readCurrent(dataOut);
-    } catch (final IOException e) {
-      throw Diagnostic.ioReadException(e, path().toString());
-    }
+  public int read(final long sequenceIndex, final byte[] dataOut) throws IOException {
+    mSequenceManager.seek(sequenceIndex + mStart);
+    setSeekFlag(true);
+    setReadFlag(false);
+    return readDataInternal(dataOut);
   }
 
   @Override
-  public int read(final long sequenceIndex, final byte[] dataOut, int start, int length) {
-    try {
-      mSequenceManager.seek(sequenceIndex);
-      setSeekFlag(true);
-      setReadFlag(false);
-      return readCurrent(dataOut, start, length);
-    } catch (final IOException e) {
-      throw Diagnostic.ioReadException(e, path().toString());
-    }
+  public int read(final long sequenceIndex, final byte[] dataOut, int start, int length) throws IOException {
+    mSequenceManager.seek(sequenceIndex + mStart);
+    setSeekFlag(true);
+    setReadFlag(false);
+    return readDataInternal(dataOut, start, length);
   }
 
   @Override
-  public int length(long sequenceIndex) {
+  public int length(long sequenceIndex) throws IOException {
+    mSequenceManager.seek(sequenceIndex + mStart);
+    setSeekFlag(true);
+    return (int) mSequenceManager.getDataLength();
+  }
+
+
+
+  private String readStringInternal(LabelStreamManager manager) throws IOException {
+    final SeekableStream data = manager.getData();
+    final int length = (int) manager.getDataLength();
+    final byte[] bytes = new byte[length];
+    IOUtils.readFully(data, bytes, 0, length); //data.readFully(bytes);
+    if (data.read() != 0) {
+      throw new CorruptSdfException(mDirectory);
+    }
+    return new String(bytes);
+  }
+  private int readDataInternal(final byte[] dataOut) throws IllegalArgumentException, IOException {
+    return readDataInternal(dataOut, 0, (int) mSequenceManager.getDataLength());
+  }
+  private int readDataInternal(byte[] dataOut, int start, int length) throws IllegalArgumentException, IOException {
+    checkReadFlag();
+    checkSeekFlag();
+    setReadFlag(true);
+    final int ret = mSequenceManager.readData(dataOut, start, length);
+    if (mIndex.hasPerSequenceChecksums() && ret == mSequenceManager.getDataLength()) {
+      checkChecksum(dataOut, start, ret, mSequenceManager.sequenceChecksum());
+    }
+    return ret;
+  }
+  private int readQualityInternal(final byte[] dest) throws IllegalArgumentException, IllegalStateException, IOException {
+    return readQualityInternal(dest, 0, (int) mSequenceManager.getDataLength());
+  }
+  private int readQualityInternal(byte[] dest, int start, int length) throws IllegalArgumentException, IllegalStateException, IOException {
+    if (!mHasQualityData) {
+      return 0;
+    }
+    checkSeekFlag();
+    checkReadQualityFlag();
+    setReadQualityFlag(true);
+    final int ret = mSequenceManager.readQuality(dest, start, length);
+    if (mIndex.hasPerSequenceChecksums() && ret == mSequenceManager.getDataLength()) {
+      checkChecksum(dest, start, ret, mSequenceManager.qualityChecksum());
+    }
+    return ret;
+  }
+  private void checkChecksum(byte[] data, int offset, int length, byte checksum) throws CorruptSdfException {
+    mChecksum.update(data, offset, length);
     try {
-      mSequenceManager.seek(sequenceIndex);
-      setSeekFlag(true);
-      return currentLength();
-    } catch (final IOException e) {
-      throw Diagnostic.ioReadException(e, path().toString());
+      if (checksum != (byte) mChecksum.getValue()) {
+        throw new CorruptSdfException("Checksum failed on sequence data");
+      }
+    } finally {
+      mChecksum.reset();
     }
   }
+
 
 
   @Override
@@ -679,7 +582,7 @@ public final class DefaultSequencesReader extends AbstractSequencesReader implem
   }
 
   @Override
-  protected IndexFile index() {
+  public IndexFile index() {
     return mIndex;
   }
 

@@ -139,9 +139,8 @@ public class VcfDiscordantOutputFormatter {
         throw new RuntimeException("reference name was not contained in given SDF : " + refName);
       }
       mCurrentSequenceName = refName;
-      mTemplate.seek(id);
-      mCurrentSequence = new byte[mTemplate.currentLength()];
-      mTemplate.readCurrent(mCurrentSequence);
+      mCurrentSequence = new byte[mTemplate.length(id)];
+      mTemplate.read(id, mCurrentSequence);
     }
     assert pos < mCurrentSequence.length : "pos=" + pos + " currentLen=" + mCurrentSequence.length;
     final DNA dna = (pos < 0 || (pos > mCurrentSequence.length - 1)) ? DNA.N : DNA.values()[mCurrentSequence[pos]];

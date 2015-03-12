@@ -161,9 +161,10 @@ public final class SdfFilter {
       leftWriter.setSdfId(leftReader.getSdfId());
       rightWriter.setPrereadArm(PrereadArm.RIGHT);
       rightWriter.setSdfId(rightReader.getSdfId());
-
-      while (leftReader.nextSequence() && rightReader.nextSequence()) {
-        final int leftLength = leftReader.readCurrent(leftSequence);
+      final SequencesIterator leftIt = leftReader.iterator();
+      final SequencesIterator rightIt = rightReader.iterator();
+      while (leftIt.nextSequence() && rightIt.nextSequence()) {
+        final int leftLength = leftIt.readCurrent(leftSequence);
         int leftNpos = -1;
         if (n > 0) {
           for (int i = 0; i < leftLength; i++) {
@@ -173,7 +174,7 @@ public final class SdfFilter {
             }
           }
         }
-        final int rightLength = rightReader.readCurrent(rightSequence);
+        final int rightLength = rightIt.readCurrent(rightSequence);
         int rightNpos = -1;
         if (n > 0) {
           for (int i = 0; i < rightLength; i++) {
@@ -184,14 +185,14 @@ public final class SdfFilter {
           }
         }
         if (hasQuality) {
-          leftReader.readCurrentQuality(leftSequenceQuality);
-          rightReader.readCurrentQuality(rightSequenceQuality);
+          leftIt.readCurrentQuality(leftSequenceQuality);
+          rightIt.readCurrentQuality(rightSequenceQuality);
         }
 
         if (leftNpos == -1 && rightNpos == -1) {
-          writeSequence(leftWriter, leftReader.currentName(),
+          writeSequence(leftWriter, leftIt.currentName(),
             leftSequence, hasQuality ? leftSequenceQuality : null, leftLength);
-          writeSequence(rightWriter, rightReader.currentName(),
+          writeSequence(rightWriter, rightIt.currentName(),
             rightSequence, hasQuality ? rightSequenceQuality : null, rightLength);
         } else {
           final int firstValid = leftReader.type().firstValid();
@@ -219,9 +220,9 @@ public final class SdfFilter {
                 final String suffix = "-exp-left-N->" + values[i];
                 leftSequence[leftNpos] = (byte) i;
 
-                writeSequence(leftWriter, leftReader.currentName() + suffix,
+                writeSequence(leftWriter, leftIt.currentName() + suffix,
                   leftSequence, hasQuality ? leftSequenceQuality : null, leftLength);
-                writeSequence(rightWriter, rightReader.currentName() + suffix,
+                writeSequence(rightWriter, rightIt.currentName() + suffix,
                   rightSequence, hasQuality ? rightSequenceQuality : null, rightLength);
               }
 
@@ -234,9 +235,9 @@ public final class SdfFilter {
                 final String suffix = "-exp-right-N->" + values[i];
                 rightSequence[rightNpos] = (byte) i;
 
-                writeSequence(leftWriter, leftReader.currentName() + suffix,
+                writeSequence(leftWriter, leftIt.currentName() + suffix,
                   leftSequence, hasQuality ? leftSequenceQuality : null, leftLength);
-                writeSequence(rightWriter, rightReader.currentName() + suffix,
+                writeSequence(rightWriter, rightIt.currentName() + suffix,
                   rightSequence, hasQuality ? rightSequenceQuality : null, rightLength);
               }
             }
@@ -248,13 +249,13 @@ public final class SdfFilter {
               if (leftNpos != -1) {
                 leftSequence[leftNpos] = (byte) i;
               }
-              writeSequence(leftWriter, leftReader.currentName() + suffix,
+              writeSequence(leftWriter, leftIt.currentName() + suffix,
                 leftSequence, hasQuality ? leftSequenceQuality : null, leftLength);
 
               if (rightNpos != -1) {
                 rightSequence[rightNpos] = (byte) i;
               }
-              writeSequence(rightWriter, rightReader.currentName() + suffix,
+              writeSequence(rightWriter, rightIt.currentName() + suffix,
                 rightSequence, hasQuality ? rightSequenceQuality : null, rightLength);
             }
           }
@@ -350,7 +351,7 @@ public final class SdfFilter {
   }
 
   private static class Expand1SequenceDataSource implements SequenceDataSource {
-    private final SequencesReader mReader;
+    private final SequencesIterator mIterator;
     private final Residue[] mValues;
     private final byte[] mCurrentSequence;
     private final byte[] mCurrentSequenceQuality;
@@ -362,14 +363,14 @@ public final class SdfFilter {
     private long mMinLength = Long.MAX_VALUE;
 
     public Expand1SequenceDataSource(SequencesReader reader) {
-      mReader = reader;
-      if (mReader.maxLength() > Integer.MAX_VALUE) {
+      mIterator = reader.iterator();
+      if (reader.maxLength() > Integer.MAX_VALUE) {
         throw new IllegalArgumentException("Sequence length too long");
       }
-      mCurrentSequence = new byte[(int) mReader.maxLength()];
-      mCurrentSequenceQuality = new byte[(int) mReader.maxLength()];
+      mCurrentSequence = new byte[(int) reader.maxLength()];
+      mCurrentSequenceQuality = new byte[mCurrentSequence.length];
       mCurrentName = null;
-      if (mReader.type().equals(SequenceType.DNA)) {
+      if (reader.type().equals(SequenceType.DNA)) {
         mValues = DNA.values();
       } else {
         mValues = Protein.values();
@@ -381,7 +382,7 @@ public final class SdfFilter {
 
     @Override
     public SequenceType type() {
-      return mReader.type();
+      return mIterator.reader().type();
     }
 
     @Override
@@ -393,15 +394,15 @@ public final class SdfFilter {
         System.arraycopy(b, 0, mCurrentSequenceQuality, 0, b.length);
         mCurrentName = mNameQueue.remove();
       } else {
-        if (!mReader.nextSequence()) {
+        if (!mIterator.nextSequence()) {
           return false;
         }
-        mReader.readCurrent(mCurrentSequence);
-        mReader.readCurrentQuality(mCurrentSequenceQuality);
-        mCurrentName = mReader.currentName();
-        for (int i = 0; i < mReader.currentLength(); i++) {
+        mIterator.readCurrent(mCurrentSequence);
+        mIterator.readCurrentQuality(mCurrentSequenceQuality);
+        mCurrentName = mIterator.currentName();
+        for (int i = 0; i < mIterator.currentLength(); i++) {
           if (mValues[mCurrentSequence[i]].ignore()) {
-            mCurrentName = expand(mCurrentSequence, mCurrentSequenceQuality, mCurrentName, i, mReader.currentLength());
+            mCurrentName = expand(mCurrentSequence, mCurrentSequenceQuality, mCurrentName, i, mIterator.currentLength());
             break;
           }
         }
@@ -412,7 +413,7 @@ public final class SdfFilter {
     }
 
     private String expand(final byte[] seq, final byte[] quality, final String name, final int pos, final int length) {
-      final int firstValid = mReader.type().firstValid();
+      final int firstValid = mIterator.reader().type().firstValid();
       final byte[] qualityCopy = Arrays.copyOf(quality, length);
       for (int i = firstValid + 1; i < mValues.length; i++) {
         final byte[] seqCopy = Arrays.copyOf(seq, length);
@@ -433,12 +434,12 @@ public final class SdfFilter {
 
     @Override
     public boolean hasQualityData() {
-      return mReader.hasQualityData();
+      return mIterator.reader().hasQualityData();
     }
 
     @Override
     public void close() throws IOException {
-      mReader.close();
+      mIterator.reader().close();
     }
 
     @Override
@@ -452,8 +453,8 @@ public final class SdfFilter {
     }
 
     @Override
-    public int currentLength() {
-      return mReader.currentLength();
+    public int currentLength() throws IOException {
+      return mIterator.currentLength();
     }
 
     @Override
@@ -483,7 +484,7 @@ public final class SdfFilter {
   }
 
   private static class CopyDataSource implements SequenceDataSource {
-    private final SequencesReader mReader;
+    private final SequencesIterator mIterator;
     private final byte[] mCurrentSequence;
     private final byte[] mCurrentSequenceQuality;
     private String mCurrentName;
@@ -491,28 +492,28 @@ public final class SdfFilter {
     private long mMaxLength = Long.MIN_VALUE;
 
     public CopyDataSource(SequencesReader reader) {
-      mReader = reader;
-      if (mReader.maxLength() > Integer.MAX_VALUE) {
+      mIterator = reader.iterator();
+      if (reader.maxLength() > Integer.MAX_VALUE) {
         throw new IllegalArgumentException("Sequence length too long");
       }
-      mCurrentSequence = new byte[(int) mReader.maxLength()];
-      mCurrentSequenceQuality = new byte[(int) mReader.maxLength()];
+      mCurrentSequence = new byte[(int) reader.maxLength()];
+      mCurrentSequenceQuality = new byte[(int) reader.maxLength()];
       mCurrentName = null;
     }
 
     @Override
     public SequenceType type() {
-      return mReader.type();
+      return mIterator.reader().type();
     }
 
     @Override
     public boolean nextSequence() throws IOException {
-      if (!mReader.nextSequence()) {
+      if (!mIterator.nextSequence()) {
         return false;
       }
-      mReader.readCurrent(mCurrentSequence);
-      mReader.readCurrentQuality(mCurrentSequenceQuality);
-      mCurrentName = mReader.currentName();
+      mIterator.readCurrent(mCurrentSequence);
+      mIterator.readCurrentQuality(mCurrentSequenceQuality);
+      mCurrentName = mIterator.currentName();
       mMinLength = Math.min(mMinLength, currentLength());
       mMaxLength = Math.max(mMaxLength, currentLength());
       return true;
@@ -535,12 +536,12 @@ public final class SdfFilter {
 
     @Override
     public boolean hasQualityData() {
-      return mReader.hasQualityData();
+      return mIterator.reader().hasQualityData();
     }
 
     @Override
     public void close() throws IOException {
-      mReader.close();
+      mIterator.reader().close();
     }
 
     @Override
@@ -549,8 +550,8 @@ public final class SdfFilter {
     }
 
     @Override
-    public int currentLength() {
-      return mReader.currentLength();
+    public int currentLength() throws IOException {
+      return mIterator.currentLength();
     }
 
     @Override

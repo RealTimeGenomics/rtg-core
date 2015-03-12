@@ -77,8 +77,9 @@ public abstract class HashLoop {
    * Called for each new sequence.
    * @param seqId the internal id of the sequence.
    * @param length of sequence.
+   * @throws IOException if an IO error occurs
    */
-  public void nextSeq(final int seqId, final int length) {
+  public void nextSeq(final int seqId, final int length) throws IOException {
     //default do nothing;
   }
 

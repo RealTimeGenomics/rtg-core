@@ -24,9 +24,7 @@ public class AllTests extends TestCase {
     final TestSuite suite = new TestSuite("com.rtg.reader");
     suite.addTest(CompressedMemorySequencesReaderTest.suite());
     suite.addTest(DefaultSequencesReaderTest.suite());
-    suite.addTest(DummyStreamManagerTest.suite());
     suite.addTest(IndexFileTest.suite());
-    suite.addTest(LabelStreamManagerTest.suite());
     suite.addTest(FormatCliTest.suite());
     suite.addTest(ReverseComplementingReaderTest.suite());
     suite.addTest(SequenceStreamManagerTest.suite());

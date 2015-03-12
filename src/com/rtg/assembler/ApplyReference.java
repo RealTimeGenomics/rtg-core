@@ -267,17 +267,15 @@ public class ApplyReference {
   public static void main(String[] args) throws IOException {
     final SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReader(new File(args[0]));
     final Graph graph = GraphReader.read(new StoreDirProxy(new File(args[1])));
-    IntegerOrPercentage percentage;
+    final IntegerOrPercentage percentage;
     if (args.length > 2) {
       percentage = IntegerOrPercentage.valueOf(args[2]);
     } else {
       percentage = IntegerOrPercentage.valueOf(3);
     }
     final ApplyReference apply = new ApplyReference(graph, 18, 18, percentage);
-    while (reader.nextSequence()) {
-      final byte[] ref = new byte[reader.currentLength()];
-      reader.readCurrent(ref);
-      apply.referenceSequence(reader.currentName(), ref, System.out);
+    for (int i = 0; i < reader.numberSequences(); i++) {
+      apply.referenceSequence(reader.name(i), reader.read(i), System.out);
 
     }
 

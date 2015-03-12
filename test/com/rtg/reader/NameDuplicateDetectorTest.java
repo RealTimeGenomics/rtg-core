@@ -29,26 +29,12 @@ public class NameDuplicateDetectorTest extends TestCase {
 
   class ArrayDummyNameReader extends DummySequencesReader {
     private final String[] mNames;
-    private int mIndex = -1;
     public ArrayDummyNameReader(String[] names) {
       mNames = names;
     }
     @Override
-    public String currentName() throws IllegalStateException, IOException {
-      return mNames[mIndex];
-    }
-    @Override
-    public String currentFullName() throws IllegalStateException, IOException {
-      return currentName();
-    }
-    @Override
-    public void seek(long sequenceId) {
-      mIndex = (int) sequenceId;
-    }
-    @Override
-    public boolean nextSequence() {
-      mIndex++;
-      return mIndex < mNames.length && mIndex >= 0;
+    public String name(long index) throws IllegalStateException {
+      return mNames[(int) index];
     }
     @Override
     public long numberSequences() {
@@ -78,18 +64,6 @@ public class NameDuplicateDetectorTest extends TestCase {
           return 0;
         }
       };
-    }
-    @Override
-    public long currentSequenceId() {
-      return mIndex;
-    }
-    @Override
-    public String fullName(long index) {
-      return name(index);
-    }
-    @Override
-    public void reset() {
-      mIndex = -1;
     }
   }
 

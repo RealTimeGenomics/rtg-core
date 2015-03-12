@@ -30,24 +30,7 @@ public abstract class DummySequencesReader implements SequencesReader {
   public void close() {  }
   @Override
   public SequencesReader copy() {
-    return null;
-  }
-  @Override
-  public int currentLength() {
-    return 0;
-  }
-  @Override
-  public String currentName() throws IllegalStateException, IOException {
-    return null;
-  }
-  @Override
-  public String currentFullName() throws IllegalStateException, IOException {
-    return currentName();
-  }
-
-  @Override
-  public long currentSequenceId() {
-    return 0;
+    return this;
   }
   @Override
   public long dataChecksum() {
@@ -89,6 +72,8 @@ public abstract class DummySequencesReader implements SequencesReader {
   public long[] histogram() {
     return null;
   }
+
+
   @Override
   public int length(long sequenceIndex) {
     return 0;
@@ -117,10 +102,7 @@ public abstract class DummySequencesReader implements SequencesReader {
   public long nBlockCount() {
     return 0;
   }
-  @Override
-  public boolean nextSequence() {
-    return false;
-  }
+
   @Override
   public long numberSequences() {
     return 0;
@@ -146,6 +128,10 @@ public abstract class DummySequencesReader implements SequencesReader {
     return name(sequenceIndex);
   }
   @Override
+  public byte[] read(long index) {
+    return null;
+  }
+  @Override
   public int read(long sequenceIndex, byte[] dataOut, int start, int length) throws IllegalArgumentException, IOException {
     return 0;
   }
@@ -154,20 +140,8 @@ public abstract class DummySequencesReader implements SequencesReader {
     return 0;
   }
   @Override
-  public int readCurrent(byte[] dataOut, int start, int length) throws IllegalArgumentException, IOException {
-    return 0;
-  }
-  @Override
-  public int readCurrent(byte[] dataOut) throws IllegalArgumentException, IllegalStateException, IOException {
-    return 0;
-  }
-  @Override
-  public int readCurrentQuality(byte[] dest) throws IllegalArgumentException, IllegalStateException, IOException {
-    return 0;
-  }
-  @Override
-  public int readCurrentQuality(byte[] dest, int start, int length) throws IllegalArgumentException, IllegalStateException, IOException {
-    return 0;
+  public byte[] readQuality(long index) {
+    return null;
   }
   @Override
   public int readQuality(long sequenceIndex, byte[] dest) throws IllegalArgumentException, IOException {
@@ -186,10 +160,6 @@ public abstract class DummySequencesReader implements SequencesReader {
     return 0;
   }
   @Override
-  public void seek(long sequenceId) {
-
-  }
-  @Override
   public int[] sequenceLengths(long start, long end) {
     return null;
   }
@@ -205,12 +175,7 @@ public abstract class DummySequencesReader implements SequencesReader {
   public boolean compressed() {
     throw new UnsupportedOperationException("Not supported yet.");
   }
-  @Override
-  public void reset() { }
-  @Override
-  public String currentNameSuffix() throws IllegalStateException, IOException {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
+
   @Override
   public String nameSuffix(long sequenceIndex) {
     throw new UnsupportedOperationException("Not supported yet.");
@@ -221,6 +186,15 @@ public abstract class DummySequencesReader implements SequencesReader {
   }
   @Override
   public String getReadMe() {
+    return null;
+  }
+
+  @Override
+  public SequencesIterator iterator() {
+    return null;
+  }
+  @Override
+  public IndexFile index() {
     return null;
   }
 }

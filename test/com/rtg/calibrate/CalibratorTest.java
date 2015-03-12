@@ -23,25 +23,24 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.mode.DnaUtils;
 import com.rtg.mode.SequenceType;
 import com.rtg.reader.MockArraySequencesReader;
 import com.rtg.reader.MockSequencesReader;
 import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.SamUtils;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.ReferenceRegions;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -902,10 +901,5 @@ public class CalibratorTest extends TestCase {
     checkLengthMap(reader);
   }
 
-  public void testSequencLengthMapAfterStart() throws IOException {
-    final MockSequencesReader reader = new MockArraySequencesReader(SequenceType.DNA, new int[]{0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
-    reader.nextSequence();
-    checkLengthMap(reader);
-  }
 
 }

@@ -175,12 +175,11 @@ public class VcfReplayerCli extends AbstractCli {
   }
 
   
-protected void generateChromosome(int chrNum, String chromoName, boolean fwd, Map<String, TreeSet<Adjacency>> set, ArrayList<String> nameToNum, SequencesReader reader, final Set<String> doneEnds, SdfWriter writer) throws IOException {
+  protected void generateChromosome(int chrNum, String chromoName, boolean fwd, Map<String, TreeSet<Adjacency>> set, ArrayList<String> nameToNum, SequencesReader reader, final Set<String> doneEnds, SdfWriter writer) throws IOException {
     String chrName = chromoName;
-    reader.seek(chrNum);
     int currentChr = chrNum;
     boolean currentForward = fwd;
-    int currentPos = fwd ? 1 : reader.currentLength();
+    int currentPos = fwd ? 1 : reader.length(chrNum);
     if (doneEnds.contains(chrName + ":" + currentPos)) {
       return;
     }
@@ -189,9 +188,7 @@ protected void generateChromosome(int chrNum, String chromoName, boolean fwd, Ma
     }
     writer.startSequence(chrName);
     while (true) {
-      reader.seek(currentChr);
-      final byte[] chromosome = new byte[reader.currentLength()];
-      reader.readCurrent(chromosome);
+      final byte[] chromosome = reader.read(currentChr);
       final int searchFrom = currentPos + (currentForward ? 1 : -1);
       final Adjacency adj = new Adjacency(chrName, searchFrom, currentForward);
       if (VERBOSE) {

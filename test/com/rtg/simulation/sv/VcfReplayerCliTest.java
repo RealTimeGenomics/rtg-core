@@ -127,9 +127,7 @@ public class VcfReplayerCliTest extends TestCase {
       try (SequencesReader r = SequencesReaderFactory.createMemorySequencesReader(left, true, LongRange.NONE)) {
         assertEquals(resultStr.length, r.numberSequences());
         for (int seq = 0; seq < resultStr.length; seq++) {
-          r.seek(seq);
-          final byte[] b = new byte[r.currentLength()];
-          r.readCurrent(b);
+          final byte[] b = r.read(seq);
           assertEquals(resultStr[seq].toUpperCase(Locale.getDefault()), DnaUtils.bytesToSequenceIncCG(b));
         }
       }
@@ -140,9 +138,7 @@ public class VcfReplayerCliTest extends TestCase {
         try (SequencesReader r2 = SequencesReaderFactory.createMemorySequencesReader(right, true, LongRange.NONE)) {
           assertEquals(resultStrB.length, r2.numberSequences());
           for (int seq = 0; seq < resultStrB.length; seq++) {
-            r2.seek(seq);
-            final byte[] b = new byte[r2.currentLength()];
-            r2.readCurrent(b);
+            final byte[] b = r2.read(seq);
             assertEquals(resultStrB[seq].toUpperCase(Locale.getDefault()), DnaUtils.bytesToSequenceIncCG(b));
           }
         }

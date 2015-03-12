@@ -20,6 +20,7 @@ import java.util.List;
 
 import com.rtg.assembler.graph.Graph;
 import com.rtg.reader.ReaderUtils;
+import com.rtg.reader.SequencesIterator;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.util.IntegerOrPercentage;
@@ -29,6 +30,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 /**
 */
 class ReadPairSource implements AutoCloseable {
+  List<SequencesIterator> mIterators;
   List<SequencesReader> mReaders;
   private int mMinInsertSize = -1;
   private int mMaxInsertSize = -1;
@@ -39,6 +41,10 @@ class ReadPairSource implements AutoCloseable {
     }
     mReaders = new ArrayList<>();
     mReaders.addAll(Arrays.asList(readers));
+    mIterators = new ArrayList<>();
+    for (SequencesReader current : mReaders) {
+      mIterators.add(current.iterator());
+    }
     final long readCount = mReaders.get(0).numberSequences();
     for (SequencesReader current : mReaders) {
       if (current.numberSequences() != readCount) {
@@ -49,7 +55,7 @@ class ReadPairSource implements AutoCloseable {
   synchronized List<byte[]> nextFragments() throws IOException {
     //System.out.println(Thread.currentThread());
     final List<byte[]> result = new ArrayList<>();
-    for (SequencesReader reader : mReaders) {
+    for (SequencesIterator reader : mIterators) {
       if (!reader.nextSequence()) {
         return null;
       }
@@ -61,7 +67,7 @@ class ReadPairSource implements AutoCloseable {
   }
 
   void reset() {
-    for (SequencesReader reader : mReaders) {
+    for (SequencesIterator reader : mIterators) {
       reader.reset();
     }
   }

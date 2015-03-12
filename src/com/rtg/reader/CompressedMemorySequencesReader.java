@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.zip.CRC32;
 
 import com.rtg.mode.SequenceType;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.StringUtils;
 import com.rtg.util.array.ArrayUtils;
 import com.rtg.util.array.ExtensibleIndex;
@@ -33,6 +32,7 @@ import com.rtg.util.bytecompression.CompressedByteArray;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.Integrity;
+import com.rtg.util.intervals.LongRange;
 
 /**
  * SequencesReader which caches the entire SDF in memory.
@@ -55,14 +55,18 @@ public class CompressedMemorySequencesReader extends AbstractSequencesReader imp
    * @throws IOException if an I/O error occurs
    */
   public static SequencesReader createSequencesReader(final File dir, final boolean loadNames, boolean loadFullNames, LongRange region) throws IOException {
+    return createSequencesReader(dir, loadNames, loadFullNames, region, DIRECT_SDF_LOAD);
+  }
+
+  static SequencesReader createSequencesReader(final File dir, final boolean loadNames, boolean loadFullNames, LongRange region, boolean directLoad) throws IOException {
     final IndexFile index = new IndexFile(dir);
     if (index.getSequenceType() < 0 || index.getSequenceType() > SequenceType.values().length) {
       throw new CorruptSdfException(dir);
     }
     final SequenceType type = SequenceType.values()[index.getSequenceType()];
     final int range = type.numberKnownCodes() + type.firstValid();
-    if (DIRECT_SDF_LOAD && index.getSequenceEncoding() == IndexFile.SEQUENCE_ENCODING_COMPRESSED) {
-      return new CompressedMemorySequencesReader2(region, dir, index, loadNames, loadFullNames);
+    if (directLoad && index.getSequenceEncoding() == IndexFile.SEQUENCE_ENCODING_COMPRESSED) {
+      return new CompressedMemorySequencesReader2(dir, index, loadNames, loadFullNames, region);
     } else {
       return new CompressedMemorySequencesReader(dir, index, range, loadNames, loadFullNames, region);
     }
@@ -102,17 +106,19 @@ public class CompressedMemorySequencesReader extends AbstractSequencesReader imp
   private final BitwiseByteArray mSeqData;
   private final ByteArray mChecksums;
   private final QualityLoader mQualityLoader;
-  private ByteCompression mQualityData;
-  private ByteArray mQualityChecksums;
-  private final boolean mFullNamesRequested;
-  private PrereadNamesInterface mNames;
-  private PrereadNamesInterface mNameSuffixes;
-  private long mSequenceId;
-  private int mReadCount = 0;    // Number of reads read out (to indicate when to perform checksum check)
-  private int mQualityCount = 0; // Number of qualities read out (to indicate when to perform checksum check)
   private final LongRange mRegion; // Section of the sdf to load
   protected final long mStart; // first sequence to load
   protected final long mEnd; // last sequence to load
+  private final boolean mFullNamesRequested;
+
+  // Delayed initialization
+  private ByteCompression mQualityData;
+  private ByteArray mQualityChecksums;
+  private PrereadNamesInterface mNames;
+  private PrereadNamesInterface mNameSuffixes;
+
+  private int mReadCount = 0;    // Number of reads read out (to indicate when to perform checksum check)
+  private int mQualityCount = 0; // Number of qualities read out (to indicate when to perform checksum check)
 
   /**
    * Shallow copy constructor.
@@ -122,7 +128,6 @@ public class CompressedMemorySequencesReader extends AbstractSequencesReader imp
     mDirectory = cmsr.mDirectory;
     mCanonicalDirectory = cmsr.mCanonicalDirectory;
     mIndex = cmsr.mIndex;
-    mSequenceId = -1;
     mPositions = cmsr.mPositions;
     mChecksums = cmsr.mChecksums;
     mSeqData = cmsr.mSeqData;
@@ -159,7 +164,6 @@ public class CompressedMemorySequencesReader extends AbstractSequencesReader imp
     mChecksums = seqChecksums;
     mQualityChecksums = qualityChecksums;
     mQualityLoader = null;
-    mSequenceId = -1;
     mPositions = positions;
     mNames = names;
     mNameSuffixes = nameSuffixes;
@@ -193,7 +197,6 @@ public class CompressedMemorySequencesReader extends AbstractSequencesReader imp
     mIndex = new IndexFile(Long.MAX_VALUE, type.ordinal(), totalLength, max, min, counts.length);
     mDirectory = null;
     mCanonicalDirectory = null;
-    mSequenceId = -1;
     mNames = new ArrayPrereadNames(labels);
     final int range = type.numberKnownCodes() + type.firstValid();
     mSeqData = new BitwiseByteArray(totalLength, CompressedByteArray.minBits(range));
@@ -231,7 +234,6 @@ public class CompressedMemorySequencesReader extends AbstractSequencesReader imp
         mDirectory = dir;
         mCanonicalDirectory = dir.getCanonicalFile();
         mIndex = index;
-        mSequenceId = -1;
         mRegion = SequencesReaderFactory.resolveRange(index, region);
         mStart = mRegion.getStart();
         mEnd = mRegion.getEnd();
@@ -363,79 +365,9 @@ public class CompressedMemorySequencesReader extends AbstractSequencesReader imp
     return new CompressedMemorySequencesReader(this);
   }
 
-  // Iterator style access methods
-  @Override
-  public void seek(final long sequenceId) {
-    mSequenceId = sequenceId;
-    if (mSequenceId >= numberSequences()) {
-      throw new IllegalArgumentException("Failed to seek to sequence: " + sequenceId + " numberOfSequences: " + numberSequences());
-    }
-  }
 
-  @Override
-  public boolean nextSequence() {
-    mSequenceId++;
-    final long sequences = numberSequences();
-    if (mSequenceId >= sequences) {
-      mSequenceId = sequences;
-      return false;
-    } else {
-      return true;
-    }
-  }
-  private void checkSequenceId() {
-    if (mSequenceId >= numberSequences() || mSequenceId < 0) {
-      throw new IllegalStateException("Last call to nextSequence() or seek() failed and left current information unavailable.");
-    }
-  }
-  @Override
-  public final long currentSequenceId() {
-    return mSequenceId;
-  }
 
-  @Override
-  public final int currentLength() {
-    checkSequenceId();
-    return length(mSequenceId);
-  }
-
-  @Override
-  public final String currentName() throws IllegalStateException, IOException {
-    checkSequenceId();
-    return name(mSequenceId);
-  }
-
-  @Override
-  public String currentNameSuffix() throws IllegalStateException, IOException {
-    checkSequenceId();
-    return nameSuffix(mSequenceId);
-  }
-
-  @Override
-  public final int readCurrent(final byte[] dataOut) throws IllegalArgumentException, IllegalStateException {
-    checkSequenceId();
-    return read(mSequenceId, dataOut);
-  }
-
-  @Override
-  public final int readCurrent(final byte[] dataOut, final int start, final int length) throws IllegalArgumentException, IllegalStateException {
-    checkSequenceId();
-    return read(mSequenceId, dataOut, start, length);
-  }
-
-  @Override
-  public final int readCurrentQuality(final byte[] dest) throws IllegalArgumentException, IllegalStateException, IOException {
-    checkSequenceId();
-    return readQuality(mSequenceId, dest);
-  }
-
-  @Override
-  public final int readCurrentQuality(byte[] dest, int start, int length) throws IllegalArgumentException, IllegalStateException, IOException {
-    checkSequenceId();
-    return readQuality(mSequenceId, dest, start, length);
-  }
-
-  // Direct access methods (should not need to seek or use mSequenceId)
+  // Direct access methods
   @Override
   public final String name(long sequenceIndex) {
     if (!mIndex.hasNames()) {
@@ -444,7 +376,6 @@ public class CompressedMemorySequencesReader extends AbstractSequencesReader imp
     return names().name(sequenceIndex);
   }
 
-  // Direct access methods (should not need to seek or use mSequenceId)
   @Override
   public final String nameSuffix(long sequenceIndex) {
     if (!mIndex.hasNames()) {
@@ -657,15 +588,9 @@ public class CompressedMemorySequencesReader extends AbstractSequencesReader imp
     return mIndex.getSequenceEncoding() == IndexFile.SEQUENCE_ENCODING_COMPRESSED;
   }
 
-  @Override
-  public void reset() {
-    mSequenceId = -1;
-    mReadCount = 0;
-    mQualityCount = 0;
-  }
 
   @Override
-  protected IndexFile index() {
+  public IndexFile index() {
     return mIndex;
   }
 

@@ -42,29 +42,12 @@ import junit.framework.TestSuite;
 public class CompressedMemorySequencesReaderTest extends AbstractSequencesReaderTest {
 
   @Override
-  protected SequencesReader createSequencesReader(final File dir) throws IOException {
-    return CompressedMemorySequencesReader.createSequencesReader(dir, true, false, LongRange.NONE);
-  }
-
-  @Override
-  protected boolean canReadTwice() {
-    return true;
-  }
-
-  public CompressedMemorySequencesReaderTest(final String name) {
-    super(name);
+  protected SequencesReader createSequencesReader(final File dir, LongRange region) throws IOException {
+    return CompressedMemorySequencesReader.createSequencesReader(dir, true, false, region, false);
   }
 
   public static Test suite() {
     return new TestSuite(CompressedMemorySequencesReaderTest.class);
-  }
-
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
   }
 
   public void testCRC() {
@@ -119,24 +102,22 @@ public class CompressedMemorySequencesReaderTest extends AbstractSequencesReader
     final FastaSequenceDataSource ds = new FastaSequenceDataSource(al, new DNAFastaSymbolTable());
     final SequencesWriter sw = new SequencesWriter(ds, mDir, 20, PrereadType.UNKNOWN, false);
     sw.processSequences();
-    final SequencesReader dsr = SequencesReaderFactory.createMemorySequencesReader(mDir, true, LongRange.NONE);
-    assertTrue(((CompressedMemorySequencesReader) dsr).integrity());
-    try {
+    try (SequencesReader dsr = SequencesReaderFactory.createMemorySequencesReader(mDir, true, LongRange.NONE)) {
+      final SequencesIterator it = dsr.iterator();
+      assertTrue(((CompressedMemorySequencesReader) dsr).integrity());
       assertEquals(mDir, dsr.path());
-      assertTrue(dsr.nextSequence());
-      assertEquals("1234567890123456789", dsr.currentName());
-      assertEquals(32, dsr.currentLength());
-      SequencesWriterTest.checkEquals(dsr, new byte[] {1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 2, 4, 4, 1, 3, 3, 3, 2, 4, 2, 1, 2, 4, 3, 3, 4, 2, 1, 4, 3, 2, 1});
-      assertTrue(dsr.nextSequence());
-      assertEquals("bob", dsr.currentName());
-      assertEquals(17, dsr.currentLength());
-      SequencesWriterTest.checkEquals(dsr, new byte[] {4, 1, 3, 4, 4, 2, 1, 3, 2, 1, 4, 2, 3, 1, 4, 2, 1});
-      assertTrue(dsr.nextSequence());
-      assertEquals("hobos", dsr.currentName());
-      assertEquals(20, dsr.currentLength());
-      SequencesWriterTest.checkEquals(dsr, new byte[] {1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 1, 1, 1, 2, 2, 2, 1, 1});
-    } finally {
-      dsr.close();
+      assertTrue(it.nextSequence());
+      assertEquals("1234567890123456789", it.currentName());
+      assertEquals(32, it.currentLength());
+      SequencesWriterTest.checkEquals(it, new byte[]{1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 2, 4, 4, 1, 3, 3, 3, 2, 4, 2, 1, 2, 4, 3, 3, 4, 2, 1, 4, 3, 2, 1});
+      assertTrue(it.nextSequence());
+      assertEquals("bob", it.currentName());
+      assertEquals(17, it.currentLength());
+      SequencesWriterTest.checkEquals(it, new byte[]{4, 1, 3, 4, 4, 2, 1, 3, 2, 1, 4, 2, 3, 1, 4, 2, 1});
+      assertTrue(it.nextSequence());
+      assertEquals("hobos", it.currentName());
+      assertEquals(20, it.currentLength());
+      SequencesWriterTest.checkEquals(it, new byte[]{1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 1, 1, 1, 2, 2, 2, 1, 1});
     }
   }
 
@@ -163,7 +144,7 @@ public class CompressedMemorySequencesReaderTest extends AbstractSequencesReader
 
   private void checkDetails(final CompressedMemorySequencesReader msr) throws IOException {
     assertTrue(msr.integrity());
-    assertEquals(-1L, msr.currentSequenceId());
+    final SequencesIterator it = msr.iterator();
     final StringBuilder sb = new StringBuilder();
     msr.infoString(sb);
     TestUtils.containsAll(sb.toString(),
@@ -175,13 +156,13 @@ public class CompressedMemorySequencesReaderTest extends AbstractSequencesReader
     );
     assertEquals(mDir, msr.path());
     assertEquals(3, msr.numberSequences());
-    msr.seek(1L);
-    assertEquals("bob-the-builder", msr.currentName());
-    assertEquals(1L, msr.currentSequenceId());
-    assertEquals(17, msr.currentLength());
+    it.seek(1L);
+    assertEquals("bob-the-builder", it.currentName());
+    assertEquals(1L, it.currentSequenceId());
+    assertEquals(17, it.currentLength());
     assertEquals(17L + 20L, msr.lengthBetween(1L, 3L));
     final byte[] read = new byte[100];
-    assertEquals(17, msr.readCurrent(read));
+    assertEquals(17, it.readCurrent(read));
     assertEquals(DNA.T.ordinal(), read[0]);
     assertEquals(DNA.A.ordinal(), read[1]);
     assertEquals(DNA.G.ordinal(), read[2]);
@@ -212,14 +193,14 @@ public class CompressedMemorySequencesReaderTest extends AbstractSequencesReader
 
     // seek beyond last sequence
     try {
-      msr.seek(3L);
+      it.seek(3L);
       fail();
     } catch (IllegalArgumentException e) {
       //expected
     }
     // must leave it positioned at a valid sequence
-    msr.seek(2L);
-    assertEquals(2L, msr.currentSequenceId());
+    it.seek(2L);
+    assertEquals(2L, it.currentSequenceId());
   }
 
   public void testFencePost() throws IOException {
@@ -265,7 +246,7 @@ public class CompressedMemorySequencesReaderTest extends AbstractSequencesReader
     SequencesReader reader = ReaderTestUtils.getReaderDNAFastq(POSITIONS_FASTQ, mDir, false);
     reader.close();
 
-    CompressedMemorySequencesReader cmsr = new CompressedMemorySequencesReader(mDir, new IndexFile(mDir), 5, true, false, new LongRange(3, 5));
+    SequencesIterator cmsr = new CompressedMemorySequencesReader(mDir, new IndexFile(mDir), 5, true, false, new LongRange(3, 5)).iterator();
 
     cmsr.nextSequence();
     checkFastq(cmsr, "r3", "ACGTACGTACGTACGTACGT");
@@ -283,12 +264,12 @@ public class CompressedMemorySequencesReaderTest extends AbstractSequencesReader
     // Now this is OK rather than Exception, since our std behaviour is to warn and clip end that are too high back to the available num seqs
   }
 
-  void checkFastq(CompressedMemorySequencesReader cmsr, String name, String read) throws IOException {
-      byte[] readBytes = new byte[cmsr.currentLength()];
-      cmsr.readCurrent(readBytes);
-      assertEquals(name, cmsr.currentName());
+  void checkFastq(SequencesIterator it, String name, String read) throws IOException {
+      byte[] readBytes = new byte[it.currentLength()];
+      it.readCurrent(readBytes);
+      assertEquals(name, it.currentName());
       assertEquals(read, DnaUtils.bytesToSequenceIncCG(readBytes));
-      cmsr.readCurrentQuality(readBytes);
+      it.readCurrentQuality(readBytes);
   }
 
   static final String SMALL_FASTQ = "@r0" + LS + "ACGTACGTACGTACGT" + LS //16 0 file0
@@ -310,7 +291,7 @@ public class CompressedMemorySequencesReaderTest extends AbstractSequencesReader
     SequencesReader reader = ReaderTestUtils.getReaderDNAFastq(POSITIONS_FASTQ, mDir, 20, false);
     reader.close();
 
-    CompressedMemorySequencesReader cmsr = new CompressedMemorySequencesReader(mDir, new IndexFile(mDir), 5, true, false, new LongRange(5, 6));
+    SequencesIterator cmsr = new CompressedMemorySequencesReader(mDir, new IndexFile(mDir), 5, true, false, new LongRange(5, 6)).iterator();
 
     cmsr.nextSequence();
     checkFastq(cmsr, "r5", "ACGTAC");

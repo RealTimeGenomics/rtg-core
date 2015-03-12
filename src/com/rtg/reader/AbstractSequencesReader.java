@@ -26,16 +26,34 @@ public abstract class AbstractSequencesReader implements AnnotatedSequencesReade
 
   private static final String README_FILENAME = "readme.txt";
 
-  protected abstract IndexFile index();
+  @Override
+  public abstract IndexFile index();
 
   @Override
-  public String currentFullName() throws IllegalStateException, IOException {
-    return currentName() + currentNameSuffix();
+  public SequencesIterator iterator() {
+    return new DefaultSequencesIterator(this);
   }
+
+
+  // For Direct sequence access
 
   @Override
   public String fullName(long sequenceIndex) throws IOException {
     return name(sequenceIndex) + nameSuffix(sequenceIndex);
+  }
+
+  @Override
+  public byte[] read(long sequenceIndex) throws IllegalArgumentException, IOException {
+    final byte[] dataOut = new byte[length(sequenceIndex)];
+    read(sequenceIndex, dataOut);
+    return dataOut;
+  }
+
+  @Override
+  public byte[] readQuality(long sequenceIndex) throws IllegalArgumentException, IOException {
+    final byte[] dataOut = new byte[length(sequenceIndex)];
+    readQuality(sequenceIndex, dataOut);
+    return dataOut;
   }
 
   @Override

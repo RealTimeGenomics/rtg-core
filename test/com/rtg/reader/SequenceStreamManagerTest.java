@@ -29,9 +29,6 @@ import junit.framework.TestSuite;
  *
  */
 public class SequenceStreamManagerTest extends DefaultSequencesReaderTest {
-  public SequenceStreamManagerTest(final String name) {
-    super(name);
-  }
 
   public static Test suite() {
     return new TestSuite(SequenceStreamManagerTest.class);
@@ -50,27 +47,21 @@ public class SequenceStreamManagerTest extends DefaultSequencesReaderTest {
     try {
       try (InputStream is = Resources.getResourceAsStream("com/rtg/reader/resources/sdfver8.arch")) {
         SimpleArchive.unpackArchive(is, mDir);
-        final SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReader(mDir);
-        try {
+        try (SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReader(mDir)) {
           byte[] buff = new byte[(int) sr.maxLength()];
-          while (sr.nextSequence()) {
-            sr.readCurrent(buff);
+          for (long seq = 0; seq < sr.numberSequences(); seq++) {
+            sr.read(seq, buff);
           }
-        } finally {
-          sr.close();
         }
-        final RandomAccessFile raf = new RandomAccessFile(new File(mDir, SdfFileUtils.SEQUENCE_DATA_FILENAME + "0"), "rw");
-        try {
+        try (RandomAccessFile raf = new RandomAccessFile(new File(mDir, SdfFileUtils.SEQUENCE_DATA_FILENAME + "0"), "rw")) {
           raf.setLength(raf.length() - 50);
-        } finally {
-          raf.close();
         }
       }
-      try (SequencesReader sr2 = SequencesReaderFactory.createDefaultSequencesReader(mDir)) {
-        byte[] buff2 = new byte[(int) sr2.maxLength()];
+      try (SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReader(mDir)) {
+        byte[] buff = new byte[(int) sr.maxLength()];
         try {
-          while (sr2.nextSequence()) {
-            sr2.readCurrent(buff2);
+          for (long seq = 0; seq < sr.numberSequences(); seq++) {
+            sr.read(seq, buff);
           }
           fail("should have dided horribly");
         } catch (final CorruptSdfException exp) {

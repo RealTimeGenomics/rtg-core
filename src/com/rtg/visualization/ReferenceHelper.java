@@ -86,15 +86,11 @@ public final class ReferenceHelper {
    */
   public static void loadTemplate(final File templateFile, final HashMap<String, byte[]> template, final PrintStream err) throws IOException {
     try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(templateFile)) {
-      int count = 0;
-      while (reader.nextSequence()) {
-        count++;
-        final byte[] b = new byte[reader.currentLength()];
-        reader.readCurrent(b);
-        template.put(reader.currentName(), b);
+      for (long seq = 0; seq < reader.numberSequences(); seq++) {
+        template.put(reader.name(seq), reader.read(seq));
       }
       if (err != null) {
-        err.println("Template loaded : " + count);
+        err.println("Template loaded : " + reader.numberSequences());
       }
     }
   }
@@ -114,11 +110,9 @@ public final class ReferenceHelper {
 
   static byte[] loadSingleTemplate(File templateFile, String sequenceName) throws IOException {
     try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(templateFile)) {
-      while (reader.nextSequence()) {
-        if (reader.currentName().equals(sequenceName)) {
-          final byte[] b = new byte[reader.currentLength()];
-          reader.readCurrent(b);
-          return b;
+      for (long seq = 0; seq < reader.numberSequences(); seq++) {
+        if (reader.name(seq).equals(sequenceName)) {
+          return reader.read(seq);
         }
       }
     }
@@ -127,9 +121,9 @@ public final class ReferenceHelper {
 
   static int templateLength(File templateFile, String sequenceName) throws IOException {
     try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(templateFile)) {
-      while (reader.nextSequence()) {
-        if (reader.currentName().equals(sequenceName)) {
-          return reader.currentLength();
+      for (long seq = 0; seq < reader.numberSequences(); seq++) {
+        if (reader.name(seq).equals(sequenceName)) {
+          return reader.length(seq);
         }
       }
       throw new NoTalkbackSlimException("Given sequence name not found : " + sequenceName);
@@ -138,10 +132,10 @@ public final class ReferenceHelper {
 
   static byte[] loadReference(File templateFile, String sequenceName, int start, int len) throws IOException {
     try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(templateFile)) {
-      while (reader.nextSequence()) {
-        if (reader.currentName().equals(sequenceName)) {
-          final byte[] b = new byte[len];
-          reader.readCurrent(b, start, len);
+      for (long seq = 0; seq < reader.numberSequences(); seq++) {
+        if (reader.name(seq).equals(sequenceName)) {
+          final byte[] b = new byte[len]; // XXX What happens if start + len > length(seq) ?
+          reader.read(seq, b, start, len);
           return b;
         }
       }

@@ -39,72 +39,54 @@ public class CompressedMemorySequencesWriterTest extends TestCase {
   public void testFasta() throws IOException {
     SequencesWriter sw = new SequencesWriter(getFastaSource(FASTA), null, PrereadType.UNKNOWN, true);
     CompressedMemorySequencesReader cmsr = sw.processSequencesInMemory(null, true, new SimplePrereadNames(), new SimplePrereadNames(), LongRange.NONE);
-    assertTrue(cmsr.nextSequence());
-    assertEquals("sequence_the_first", cmsr.currentName());
-    assertEquals(16L, cmsr.currentLength());
-    assertEquals(0L, cmsr.currentSequenceId());
+    assertEquals(2, cmsr.numberSequences());
+    assertEquals("sequence_the_first", cmsr.name(0));
+    assertEquals(16L, cmsr.length(0));
     byte[] exp = {1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4};
-    byte[] res = new byte[16];
-    cmsr.readCurrent(res);
+    byte[] res = cmsr.read(0);
     assertTrue("Exp: " + Arrays.toString(exp) + "\nact: " + Arrays.toString(res), Arrays.equals(exp, res));
-    assertTrue(cmsr.nextSequence());
-    assertEquals("sequence_the_second", cmsr.currentName());
-    assertEquals(20L, cmsr.currentLength());
-    assertEquals(1L, cmsr.currentSequenceId());
+    assertEquals("sequence_the_second", cmsr.name(1));
+    assertEquals(20L, cmsr.length(1));
     exp = new byte[] {2, 3, 1, 4, 2, 3, 1, 4, 2, 3, 1, 4, 2, 3, 1, 4, 2, 3, 1, 4};
-    res = new byte[20];
-    cmsr.readCurrent(res);
+    res = cmsr.read(1);
     assertTrue("Exp: " + Arrays.toString(exp) + "\nact: " + Arrays.toString(res), Arrays.equals(exp, res));
-    assertFalse(cmsr.nextSequence());
   }
 
   public void testFastq() throws IOException {
     SequencesWriter sw = new SequencesWriter(getFastqSource(FASTQ), null, PrereadType.UNKNOWN, true);
     CompressedMemorySequencesReader cmsr = sw.processSequencesInMemory(null, true, new SimplePrereadNames(), new SimplePrereadNames(), LongRange.NONE);
-    assertTrue(cmsr.nextSequence());
-    assertEquals("sequence_the_first", cmsr.currentName());
-    assertEquals(16L, cmsr.currentLength());
-    assertEquals(0L, cmsr.currentSequenceId());
+    assertEquals(2, cmsr.numberSequences());
+    assertEquals("sequence_the_first", cmsr.name(0));
+    assertEquals(16L, cmsr.length(0));
     byte[] exp = {1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4};
-    byte[] res = new byte[16];
-    cmsr.readCurrent(res);
+    byte[] res = cmsr.read(0);
     assertTrue("Exp: " + Arrays.toString(exp) + "\nact: " + Arrays.toString(res), Arrays.equals(exp, res));
     byte[] expQual = {4, 61, 5, 9, 4, 61, 5, 9, 4, 61, 5, 9, 4, 61, 5, 9};
-    byte[] resQual = new byte[16];
-    cmsr.readCurrentQuality(resQual);
-    assertTrue("Exp: " + Arrays.toString(expQual) + "\nact: " + Arrays.toString(resQual), Arrays.equals(expQual, resQual));
-    assertTrue(cmsr.nextSequence());
-    assertEquals("sequence_the_second", cmsr.currentName());
-    assertEquals(20L, cmsr.currentLength());
-    assertEquals(1L, cmsr.currentSequenceId());
-    exp = new byte[] {2, 3, 1, 4, 2, 3, 1, 4, 2, 3, 1, 4, 2, 3, 1, 4, 2, 3, 1, 4};
-    res = new byte[20];
-    cmsr.readCurrent(res);
-    assertTrue("Exp: " + Arrays.toString(exp) + "\nact: " + Arrays.toString(res), Arrays.equals(exp, res));
-    expQual = new byte[] {4, 61, 5, 9, 4, 61, 5, 9, 4, 61, 5, 9, 4, 61, 5, 9, 4, 61, 5, 9};
-    resQual = new byte[20];
-    cmsr.readCurrentQuality(resQual);
+    byte[] resQual = cmsr.readQuality(0);
     assertTrue("Exp: " + Arrays.toString(expQual) + "\nact: " + Arrays.toString(resQual), Arrays.equals(expQual, resQual));
 
-    assertFalse(cmsr.nextSequence());
+    assertEquals("sequence_the_second", cmsr.name(1));
+    assertEquals(20L, cmsr.length(1));
+    exp = new byte[] {2, 3, 1, 4, 2, 3, 1, 4, 2, 3, 1, 4, 2, 3, 1, 4, 2, 3, 1, 4};
+    res = cmsr.read(1);
+    assertTrue("Exp: " + Arrays.toString(exp) + "\nact: " + Arrays.toString(res), Arrays.equals(exp, res));
+    expQual = new byte[] {4, 61, 5, 9, 4, 61, 5, 9, 4, 61, 5, 9, 4, 61, 5, 9, 4, 61, 5, 9};
+    resQual = cmsr.readQuality(1);
+    assertTrue("Exp: " + Arrays.toString(expQual) + "\nact: " + Arrays.toString(resQual), Arrays.equals(expQual, resQual));
   }
 
   public void testFastqRegion() throws IOException {
     SequencesWriter sw = new SequencesWriter(getFastqSource(FASTQ), null, PrereadType.UNKNOWN, true);
     CompressedMemorySequencesReader cmsr = sw.processSequencesInMemory(null, true, new SimplePrereadNames(), new SimplePrereadNames(), new LongRange(0, 1));
-    assertTrue(cmsr.nextSequence());
-    assertEquals("sequence_the_first", cmsr.currentName());
-    assertEquals(16L, cmsr.currentLength());
-    assertEquals(0L, cmsr.currentSequenceId());
+    assertEquals(1, cmsr.numberSequences());
+    assertEquals("sequence_the_first", cmsr.name(0));
+    assertEquals(16L, cmsr.length(0));
     byte[] exp = {1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4};
-    byte[] res = new byte[16];
-    cmsr.readCurrent(res);
+    byte[] res = cmsr.read(0);
     assertTrue("Exp: " + Arrays.toString(exp) + "\nact: " + Arrays.toString(res), Arrays.equals(exp, res));
     byte[] expQual = {4, 61, 5, 9, 4, 61, 5, 9, 4, 61, 5, 9, 4, 61, 5, 9};
-    byte[] resQual = new byte[16];
-    cmsr.readCurrentQuality(resQual);
+    byte[] resQual = cmsr.readQuality(0);
     assertTrue("Exp: " + Arrays.toString(expQual) + "\nact: " + Arrays.toString(resQual), Arrays.equals(expQual, resQual));
-    assertFalse(cmsr.nextSequence());
   }
 
   public void testFastqRegionLarge() throws IOException {
@@ -115,17 +97,12 @@ public class CompressedMemorySequencesWriterTest extends TestCase {
 
     assertTrue("missing out of range message", baos.toString().contains("The end sequence id \"10\" is out of range, it must be from \"1\" to \"2\". Defaulting end to \"2\""));
 
-    assertTrue(cmsr.nextSequence());
-    assertEquals("sequence_the_first", cmsr.currentName());
-    assertEquals(16L, cmsr.currentLength());
-    assertEquals(0L, cmsr.currentSequenceId());
+    assertEquals(2, cmsr.numberSequences());
+    assertEquals("sequence_the_first", cmsr.name(0));
+    assertEquals(16L, cmsr.length(0));
 
-    assertTrue(cmsr.nextSequence());
-    assertEquals("sequence_the_second", cmsr.currentName());
-    assertEquals(20L, cmsr.currentLength());
-    assertEquals(1L, cmsr.currentSequenceId());
-
-    assertFalse(cmsr.nextSequence());
+    assertEquals("sequence_the_second", cmsr.name(1));
+    assertEquals(20L, cmsr.length(1));
   }
 
   private FastaSequenceDataSource getFastaSource(String str) {

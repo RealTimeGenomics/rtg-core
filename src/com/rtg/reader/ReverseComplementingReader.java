@@ -17,14 +17,12 @@ import java.util.Arrays;
 
 import com.rtg.mode.DNA;
 import com.rtg.mode.SequenceType;
-import com.rtg.util.integrity.Exam;
-import com.rtg.util.integrity.Integrity;
 
 /**
  * A wrapper for a sequences reader which reverse complements bases and reverse
  * quality information.
  */
-public final class ReverseComplementingReader implements SequencesReader, Integrity {
+public final class ReverseComplementingReader extends AbstractSequencesReader {
 
   private final SequencesReader mUnderlyingReader;
 
@@ -45,49 +43,6 @@ public final class ReverseComplementingReader implements SequencesReader, Integr
     mUnderlyingReader = reader;
   }
 
-  @Override
-  public long maxLength() {
-    return mUnderlyingReader.maxLength();
-  }
-
-  @Override
-  public long minLength() {
-    return mUnderlyingReader.minLength();
-  }
-
-  @Override
-  public boolean hasQualityData() {
-    return mUnderlyingReader.hasQualityData();
-  }
-
-  @Override
-  public boolean hasNames() {
-    return mUnderlyingReader.hasNames();
-  }
-
-  @Override
-  public int readCurrent(final byte[] dataOut) throws IllegalArgumentException, IOException {
-    final int r = mUnderlyingReader.readCurrent(dataOut);
-    DNA.reverseComplementInPlace(dataOut, 0, r);
-    return r;
-  }
-
-  @Override
-  public int readCurrent(byte[] dataOut, int start, int length) throws IllegalArgumentException, IOException {
-    final int r = mUnderlyingReader.readCurrent(dataOut, start, length);
-    DNA.reverseComplementInPlace(dataOut, start, start + r);
-    return r;
-  }
-
-  @Override
-  public void seek(final long sequenceId) throws IOException {
-    mUnderlyingReader.seek(sequenceId);
-  }
-
-  @Override
-  public boolean nextSequence() throws IOException {
-    return mUnderlyingReader.nextSequence();
-  }
 
   static void reverse(final byte[] x, final int start, final int length) {
     int l = start;
@@ -102,39 +57,12 @@ public final class ReverseComplementingReader implements SequencesReader, Integr
   }
 
   @Override
-  public int readCurrentQuality(final byte[] dest) throws IllegalArgumentException, IllegalStateException, IOException {
-    final int r = mUnderlyingReader.readCurrentQuality(dest);
-    reverse(dest, 0, r);
-    return r;
+  public IndexFile index() {
+    return mUnderlyingReader.index();
   }
 
-  @Override
-  public int readCurrentQuality(byte[] dest, int start, int length) throws IllegalArgumentException, IllegalStateException, IOException {
-    final int r = mUnderlyingReader.readCurrentQuality(dest, start, length);
-    reverse(dest, start, length);
-    return r;
-  }
 
-  @Override
-  public int currentLength() {
-    return mUnderlyingReader.currentLength();
-  }
-
-  @Override
-  public String currentName() throws IOException {
-    return mUnderlyingReader.currentName();
-  }
-
-  @Override
-  public String currentFullName() throws IOException {
-    return currentName();
-  }
-
-  @Override
-  public long currentSequenceId() {
-    return mUnderlyingReader.currentSequenceId();
-  }
-
+  // Direct accessor methods
   @Override
   public int readQuality(final long sequenceIndex, final byte[] dest) throws IllegalArgumentException, IOException {
     final int r = mUnderlyingReader.readQuality(sequenceIndex, dest);
@@ -164,7 +92,7 @@ public final class ReverseComplementingReader implements SequencesReader, Integr
   }
 
   @Override
-  public int length(final long sequenceIndex) {
+  public int length(final long sequenceIndex) throws IOException {
     return mUnderlyingReader.length(sequenceIndex);
   }
 
@@ -179,31 +107,6 @@ public final class ReverseComplementingReader implements SequencesReader, Integr
   }
 
   @Override
-  public long numberSequences() {
-    return mUnderlyingReader.numberSequences();
-  }
-
-  @Override
-  public long totalLength() {
-    return mUnderlyingReader.totalLength();
-  }
-
-  @Override
-  public SequenceType type() {
-    return mUnderlyingReader.type();
-  }
-
-  @Override
-  public boolean integrity() {
-    return Exam.integrity(mUnderlyingReader);
-  }
-
-  @Override
-  public boolean globalIntegrity() {
-    return integrity();
-  }
-
-  @Override
   public File path() {
     return mUnderlyingReader.path();
   }
@@ -213,10 +116,20 @@ public final class ReverseComplementingReader implements SequencesReader, Integr
     mUnderlyingReader.close();
   }
 
+  @Override
+  public PrereadNamesInterface names() throws IOException {
+    return mUnderlyingReader.names();
+  }
+
   private void swap(final long[] x, final int a, final int b) {
     final long t = x[a];
     x[a] = x[b];
     x[b] = t;
+  }
+
+  @Override
+  public long numberSequences() {
+    return mUnderlyingReader.numberSequences();
   }
 
   @Override
@@ -226,24 +139,6 @@ public final class ReverseComplementingReader implements SequencesReader, Integr
     swap(c, DNA.A.ordinal(), DNA.T.ordinal());
     swap(c, DNA.C.ordinal(), DNA.G.ordinal());
     return c;
-  }
-
-  @Override
-  public long dataChecksum() {
-    return mUnderlyingReader.dataChecksum();
-  }
-  @Override
-  public long qualityChecksum() {
-    return mUnderlyingReader.qualityChecksum();
-  }
-  @Override
-  public long nameChecksum() {
-    return mUnderlyingReader.nameChecksum();
-  }
-
-  @Override
-  public PrereadNamesInterface names() throws IOException {
-    return mUnderlyingReader.names();
   }
 
   @Override
@@ -266,51 +161,6 @@ public final class ReverseComplementingReader implements SequencesReader, Integr
   }
 
   @Override
-  public long[] histogram() {
-    return mUnderlyingReader.histogram();
-  }
-
-  @Override
-  public long[] posHistogram() {
-    return mUnderlyingReader.posHistogram();
-  }
-
-  @Override
-  public double globalQualityAverage() {
-    return mUnderlyingReader.globalQualityAverage();
-  }
-
-  @Override
-  public boolean hasHistogram() {
-    return mUnderlyingReader.hasHistogram();
-  }
-
-  @Override
-  public long longestNBlock() {
-    return mUnderlyingReader.longestNBlock();
-  }
-
-  @Override
-  public long nBlockCount() {
-    return mUnderlyingReader.nBlockCount();
-  }
-
-  @Override
-  public PrereadArm getArm() {
-    return mUnderlyingReader.getArm();
-  }
-
-  @Override
-  public PrereadType getPrereadType() {
-    return mUnderlyingReader.getPrereadType();
-  }
-
-  @Override
-  public SdfId getSdfId() {
-    return mUnderlyingReader.getSdfId();
-  }
-
-  @Override
   public double[] positionQualityAverage() {
     final double[] av = mUnderlyingReader.positionQualityAverage();
     int l = 0;
@@ -326,38 +176,13 @@ public final class ReverseComplementingReader implements SequencesReader, Integr
   }
 
   @Override
-  public long sdfVersion() {
-    return mUnderlyingReader.sdfVersion();
-  }
-
-  @Override
   public SequencesReader copy() {
     return new ReverseComplementingReader(mUnderlyingReader.copy());
   }
 
   @Override
-  public boolean compressed() {
-    return mUnderlyingReader.compressed();
-  }
-
-  @Override
-  public void reset() {
-    mUnderlyingReader.reset();
-  }
-
-  @Override
-  public String currentNameSuffix() throws IllegalStateException, IOException {
-    return mUnderlyingReader.currentNameSuffix();
-  }
-
-  @Override
   public String nameSuffix(long sequenceIndex) throws IOException {
     return mUnderlyingReader.nameSuffix(sequenceIndex);
-  }
-
-  @Override
-  public long suffixChecksum() {
-    return mUnderlyingReader.suffixChecksum();
   }
 
   @Override

@@ -820,8 +820,9 @@ public class FormatCliTest extends AbstractCliTest {
         assertEquals(2, rightReader.numberSequences());
 
         final StringBuilder sb = new StringBuilder();
-        while (rightReader.nextSequence()) {
-          sb.append(rightReader.currentName());
+        final SequencesIterator it = rightReader.iterator();
+        while (it.nextSequence()) {
+          sb.append(it.currentName());
         }
         TestUtils.containsAll(sb.toString(), "48218590", "48851323");
       }

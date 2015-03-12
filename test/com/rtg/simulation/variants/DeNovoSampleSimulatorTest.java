@@ -85,18 +85,15 @@ public class DeNovoSampleSimulatorTest extends TestCase {
       FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 30, new Mutator("X"), new PortableRandom(10), 0.5);
       List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
       final File popVcf = new File(dir, "popVcf.vcf.gz");
-      sr.reset();
       PopulationVariantGenerator.writeAsVcf(popVcf, null, variants, sr);
       //String popVarStr = FileHelper.gzFileToString(popVcf);
       //System.out.println("-- Population Variants --");
       //System.out.println(popVarStr);
 
       // Generate a couple of samples w.r.t variants
-      sr.reset();
       SampleSimulator dadsim = new SampleSimulator(sr, new PortableRandom(42), DefaultFallback.DIPLOID);
       File dadVcf = new File(dir, "sample_dad.vcf.gz");
       dadsim.mutateIndividual(popVcf, dadVcf, "dad", Sex.MALE);
-      sr.reset();
       SampleSimulator momsim = new SampleSimulator(sr, new PortableRandom(43), DefaultFallback.DIPLOID);
       File momVcf = new File(dir, "sample_mom.vcf.gz");
       momsim.mutateIndividual(dadVcf, momVcf, "mom", Sex.FEMALE);
@@ -104,12 +101,10 @@ public class DeNovoSampleSimulatorTest extends TestCase {
       GenomePriorParams params = new GenomePriorParamsBuilder().create();
 
       // Now generate genotypes containing de novo variants
-      sr.reset();
       DeNovoSampleSimulator dad2sim = new DeNovoSampleSimulator(sr, params, new PortableRandom(63), DefaultFallback.DIPLOID, 20, false);
       File dad2Vcf = new File(dir, "sample_dad2.vcf.gz");
       dad2sim.mutateIndividual(momVcf, dad2Vcf, "dad", "dad2");
 
-      sr.reset();
       DeNovoSampleSimulator mom2sim = new DeNovoSampleSimulator(sr, params, new PortableRandom(64), DefaultFallback.DIPLOID, 20, false);
       File mom2Vcf = new File(dir, "sample_mom2.vcf.gz");
       mom2sim.mutateIndividual(dad2Vcf, mom2Vcf, "mom", "mom2");

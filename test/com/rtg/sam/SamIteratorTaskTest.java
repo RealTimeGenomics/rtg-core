@@ -117,21 +117,12 @@ public class SamIteratorTaskTest extends TestCase {
     final SequencesReader reader = new MockSequencesReader(SequenceType.DNA, 10, 10);
     final Map<String, Long> names = ReaderUtils.getSequenceNameMap(reader);
 
-    //getTemplate
-    reader.seek(0);
-    assertEquals(1, DummySamIteratorTask.getTemplate(reader).length);
-
     //getSequenceBytes
-    reader.seek(-1);
     assertNull(DummySamIteratorTask.getSequenceBytes(reader, names, "blah"));
-    assertEquals(1, DummySamIteratorTask.getSequenceBytes(reader, names, "seq2").length);
-    assertEquals(2, reader.currentSequenceId());
 
     //getSequenceLength
-    reader.seek(-1);
     assertEquals(-1, DummySamIteratorTask.getSequenceLength(reader, names, "blah"));
     assertEquals(1, DummySamIteratorTask.getSequenceLength(reader, names, "seq3"));
-    assertEquals(3, reader.currentSequenceId());
   }
 
   static final String SAMHD = "@HD" + TAB + "VN:1.0" + TAB + "SO:coordinate" + LS;

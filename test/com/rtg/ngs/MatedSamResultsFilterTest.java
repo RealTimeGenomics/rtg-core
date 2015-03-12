@@ -151,28 +151,8 @@ public class MatedSamResultsFilterTest extends TestCase {
       }
 
       @Override
-      public int readCurrent(byte[] out, int start, int length) {
-        return read(0, out, start, length);
-      }
-
-      @Override
-      public int readCurrent(byte[] out) {
-        return read(0, out, 0, 4);
-      }
-
-      @Override
       public boolean hasQualityData() {
         return true;
-      }
-
-      @Override
-      public int readCurrentQuality(byte[] dest) throws IllegalArgumentException, IllegalStateException {
-        return readQuality(0, dest, 0, 4);
-      }
-
-      @Override
-      public int readCurrentQuality(byte[] dest, int start, int length) throws IllegalArgumentException, IllegalStateException {
-        return readQuality(0, dest, start, length);
       }
 
       @Override

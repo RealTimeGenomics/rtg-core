@@ -42,8 +42,7 @@ public class SequencesReaderIteratorTest extends TestCase {
       for (int i = 0; i < 4; i++) {
         assertTrue(iterator.hasNext());
         final SequencesReader reader = iterator.next();
-        assertTrue(reader.nextSequence());
-        assertEquals("" + i, reader.currentName());
+        assertEquals("" + i, reader.name(0));
         reader.close();
       }
 

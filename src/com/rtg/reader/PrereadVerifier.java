@@ -204,16 +204,13 @@ public final class PrereadVerifier {
   private static long calcChecksumOld(final SequencesReader reader) throws IllegalStateException, IOException {
     final PrereadHashFunction prf = new PrereadHashFunction();
     long totalDone = 0;
-    long numberOfSeq = -1;
     final long totalNumberOfSeq = reader.numberSequences();
     final long totalTides = reader.totalLength();
-    reader.seek(0);
-    do {
-      numberOfSeq++;
+    for (long numberOfSeq = 0; numberOfSeq < totalNumberOfSeq; numberOfSeq++) {
       if (numberOfSeq >= totalNumberOfSeq) {
         return 0;
       }
-      final int currentSeqLen = reader.currentLength();
+      final int currentSeqLen = reader.length(numberOfSeq);
       // Safety for OOM condition in case of corrupt length
       if (currentSeqLen < 0 || currentSeqLen > totalTides) {
         return 0;
@@ -240,8 +237,8 @@ public final class PrereadVerifier {
           prf.irvineHash(b);
         }
       }
-      prf.irvineHash(reader.currentName());
-    } while (reader.nextSequence());
+      prf.irvineHash(reader.name(numberOfSeq));
+    }
     try (FileInputStream seqIndexIn = new FileInputStream(SdfFileUtils.sequenceIndexFile(reader.path()))) {
       prf.irvineHash(seqIndexIn);
     }
@@ -257,21 +254,18 @@ public final class PrereadVerifier {
     final long totalNumberOfSeq = reader.numberSequences();
     final long totalTides = reader.totalLength();
     long totalDone = 0;
-    long numberOfSeq = -1;
-    reader.seek(0);
-    do {
-      numberOfSeq++;
+    for (long numberOfSeq = 0; numberOfSeq < totalNumberOfSeq; numberOfSeq++) {
       if (numberOfSeq >= totalNumberOfSeq) {
         return 0;
       }
-      final int currentSeqLen = reader.currentLength();
+      final int currentSeqLen = reader.length(numberOfSeq);
       // Safety for OOM condition in case of corrupt length
       if (currentSeqLen < 0 || currentSeqLen > totalTides) {
         return 0;
       }
 
       final byte[] data = new byte[currentSeqLen];
-      final int size = reader.readCurrent(data);
+      final int size = reader.read(numberOfSeq, data);
       if (size != currentSeqLen) {
         return 0;
       }
@@ -283,7 +277,7 @@ public final class PrereadVerifier {
         dataf.irvineHash(b);
       }
       dataf.irvineHash((long) currentSeqLen);
-    } while (reader.nextSequence());
+    }
     return dataf.getHash();
   }
 
@@ -292,14 +286,11 @@ public final class PrereadVerifier {
     final long totalNumberOfSeq = reader.numberSequences();
     final long totalTides = reader.totalLength();
     long totalDone = 0;
-    long numberOfSeq = -1;
-    reader.seek(0);
-    do {
-      numberOfSeq++;
+    for (long numberOfSeq = 0; numberOfSeq < totalNumberOfSeq; numberOfSeq++) {
       if (numberOfSeq >= totalNumberOfSeq) {
         return 0;
       }
-      final int currentSeqLen = reader.currentLength();
+      final int currentSeqLen = reader.length(numberOfSeq);
       // Safety for OOM condition in case of corrupt length
       if (currentSeqLen < 0 || currentSeqLen > totalTides) {
         return 0;
@@ -318,7 +309,7 @@ public final class PrereadVerifier {
         qualf.irvineHash(b);
       }
       qualf.irvineHash((long) currentSeqLen);
-    } while (reader.nextSequence());
+    }
     return qualf.getHash();
   }
 
@@ -326,15 +317,16 @@ public final class PrereadVerifier {
     final PrereadHashFunction namef = new PrereadHashFunction();
     final long totalNumberOfSeq = reader.numberSequences();
     long numberOfSeq = -1;
-    reader.seek(0);
+    final SequencesIterator it = reader.iterator();
+    it.seek(0);
     do {
       numberOfSeq++;
       if (numberOfSeq >= totalNumberOfSeq) {
         return 0;
       }
-      namef.irvineHash(reader.currentName());
-      namef.irvineHash(reader.currentName().length());
-    } while (reader.nextSequence());
+      namef.irvineHash(it.currentName());
+      namef.irvineHash(it.currentName().length());
+    } while (it.nextSequence());
     return namef.getHash();
   }
 
@@ -342,15 +334,16 @@ public final class PrereadVerifier {
     final PrereadHashFunction namef = new PrereadHashFunction();
     final long totalNumberOfSeq = reader.numberSequences();
     long numberOfSeq = -1;
-    reader.seek(0);
+    final SequencesIterator it = reader.iterator();
+    it.seek(0);
     do {
       numberOfSeq++;
       if (numberOfSeq >= totalNumberOfSeq) {
         return 0;
       }
-      namef.irvineHash(reader.currentNameSuffix());
-      namef.irvineHash(reader.currentNameSuffix().length());
-    } while (reader.nextSequence());
+      namef.irvineHash(it.currentNameSuffix());
+      namef.irvineHash(it.currentNameSuffix().length());
+    } while (it.nextSequence());
     return namef.getHash();
   }
 

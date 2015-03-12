@@ -44,8 +44,9 @@ public interface SequenceDataSource extends Closeable {
    * Get the length of the current sequence.
    * @return the length of the current sequence (&gt; 0).
    * @throws IllegalStateException if <code>nextSequence()</code> returned false on its last call.
+   * @throws IOException if an IO error occurs
    */
-  int currentLength() throws IllegalStateException;
+  int currentLength() throws IllegalStateException, IOException;
 
   /**
    * Get the name of the current sequence.

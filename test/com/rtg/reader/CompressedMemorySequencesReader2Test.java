@@ -17,17 +17,19 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.StringUtils;
-import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.TestCase;
-
 /**
  */
-public class CompressedMemorySequencesReader2Test extends TestCase {
+public class CompressedMemorySequencesReader2Test extends CompressedMemorySequencesReaderTest {
+
+  @Override
+  protected SequencesReader createSequencesReader(final File dir, LongRange region) throws IOException {
+    return CompressedMemorySequencesReader.createSequencesReader(dir, true, false, region, true);
+  }
 
   private static final String SEQ_DATA = ""
       + "@read0" + StringUtils.LS
@@ -51,18 +53,13 @@ public class CompressedMemorySequencesReader2Test extends TestCase {
       + "+read4" + StringUtils.LS
       + "SLOODPNLR=$NNRQOPSRINRNRSPSOMR" + StringUtils.LS;
 
-  @Override
-  public void setUp() {
-    Diagnostic.setLogStream();
-  }
-
   public void testData() throws IOException {
     final File dir = FileUtils.createTempDir("test", "dir");
     try {
       ReaderTestUtils.getReaderDNAFastq(SEQ_DATA, dir, new SdfId(), 20);
       final IndexFile f = new IndexFile(dir);
 
-      final CompressedMemorySequencesReader2 mem = new CompressedMemorySequencesReader2(new LongRange(0, 5), dir, f, true, true);
+      final CompressedMemorySequencesReader2 mem = new CompressedMemorySequencesReader2(dir, f, true, true, new LongRange(0, 5));
       final FastqSequenceDataSource fastq = new FastqSequenceDataSource(Arrays.asList((InputStream) new ByteArrayInputStream(SEQ_DATA.getBytes())), FastqSequenceDataSource.FastQScoreType.PHRED);
       int i = 0;
       while (fastq.nextSequence()) {
@@ -79,7 +76,6 @@ public class CompressedMemorySequencesReader2Test extends TestCase {
         i++;
       }
       final SequencesReader mem2 = mem.copy();
-      mem2.reset();
       final FastqSequenceDataSource fastq2 = new FastqSequenceDataSource(Arrays.asList((InputStream) new ByteArrayInputStream(SEQ_DATA.getBytes())), FastqSequenceDataSource.FastQScoreType.PHRED);
       int i2 = 0;
       while (fastq2.nextSequence()) {
@@ -107,7 +103,7 @@ public class CompressedMemorySequencesReader2Test extends TestCase {
       final IndexFile f = new IndexFile(dir);
 
       final LongRange region = new LongRange(0, 1);
-      final CompressedMemorySequencesReader2 mem = new CompressedMemorySequencesReader2(region, dir, f, true, true);
+      final CompressedMemorySequencesReader2 mem = new CompressedMemorySequencesReader2(dir, f, true, true, region);
       final CompressedMemorySequencesReader memold = new CompressedMemorySequencesReader(dir, f, 5, true, true, region);
 
       for (int i = 0; i < memold.numberSequences(); i++) {
@@ -143,24 +139,4 @@ public class CompressedMemorySequencesReader2Test extends TestCase {
 //        }
 //  }
 
-  public static void main(String[] args) throws Exception {
-    final File f = new File(args[0]);
-    SequencesReader c = CompressedMemorySequencesReader.createSequencesReader(f, true, false, LongRange.NONE);
-    byte[] buf = new byte[10000000];
-    for (int i = 0; i < 3; i++) {
-      final long numSeqs = c.numberSequences();
-      for (long j = 0; j < numSeqs; j++) {
-        c.seek(j);
-        int pos = 0;
-        while (pos < c.currentLength()) {
-          try {
-            pos += c.readCurrent(buf, pos, Math.min(buf.length, c.currentLength() - pos));
-          } catch (RuntimeException e) {
-            System.err.println("j: " + j + " " + c.currentName() + " " + pos);
-            throw e;
-          }
-        }
-      }
-    }
-  }
 }
