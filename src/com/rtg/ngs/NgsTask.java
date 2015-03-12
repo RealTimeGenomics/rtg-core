@@ -147,7 +147,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
   }
 
   private void chrStatsCheck() throws IOException {
-    if (mParams.outputParams().calibrate()) {
+    if (mParams.outputParams().calibrate() && mParams.sex() != null) {
       // This checking assumes presence of calibration
       final Collection<File> calibrationFiles = findCalibrationFiles(mParams.outputParams().directory());
       if (!calibrationFiles.isEmpty()) {
