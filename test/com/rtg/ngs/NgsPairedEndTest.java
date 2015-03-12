@@ -25,6 +25,7 @@ import com.rtg.mode.SequenceMode;
 import com.rtg.reader.PrereadArm;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
+import com.rtg.reference.ReferenceGenome;
 import com.rtg.usage.UsageMetric;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -64,9 +65,9 @@ public class NgsPairedEndTest extends TestCase {
       + "TAGC" + LS;
 
   private static final String GENOME = ""
-      + ">genome" + LS
-      + "AGGT" + "TATT" + "GCTA" + LS
-      ;
+    + ">genome" + LS
+    + "AGGT" + "TATT" + "GCTA" + LS
+    ;
 
   //One correctly mated pair - end to end test.
   public void test() throws Exception {
@@ -325,5 +326,63 @@ public class NgsPairedEndTest extends TestCase {
     assertTrue(TestUtils.sameLines(test.mExpected, actual, false));
   }
 
+  private static final String GENOME5 = ""
+    + ">genome1" + LS
+    + "AGGT" + "TATT" + "GCTA" + LS
+    + ">genome2" + LS
+    + "AAAA" + "TATT" + "GCTA" + LS
+    + ">genome3" + LS
+    + "CCCC" + "TATT" + "GCTA" + LS
+    + ">genome4" + LS
+    + "GGGG" + "TATT" + "GCTA" + LS
+    + ">genome5" + LS
+    + "TTTT" + "TATT" + "GCTA" + LS
+    ;
 
+  private static final String REFERENCE = ""
+    + "version\t1" + LS
+    + "either\tdef\tdiploid\tlinear" + LS
+    + "either\tseq\tgenome1\tdiploid\tlinear" + LS
+    + "either\tseq\tgenome2\tdiploid\tlinear" + LS
+    + "either\tseq\tgenome3\tdiploid\tlinear" + LS
+    + "either\tseq\tgenome4\tdiploid\tlinear" + LS
+    + "either\tseq\tgenome5\tdiploid\tlinear" + LS
+    ;
+
+  public void testNoSexWithReferenceRelatedBug1596() throws IOException {
+    final File testDir = FileUtils.createTempDir("junit", "test");
+    try {
+      final NanoRegression r = new NanoRegression(this.getClass());
+      try {
+        final File left = FileHelper.stringToGzFile(READ_FIRST, new File(testDir, "left.fa.gz"));
+        final File right = FileHelper.stringToGzFile(READ_SECOND, new File(testDir, "right.fa.gz"));
+        try (TestDirectory sdf = new TestDirectory("referencetest1")) {
+          ReaderTestUtils.getReaderDNA(GENOME5, sdf, null).close();
+          FileUtils.stringToFile(REFERENCE, new File(sdf, ReferenceGenome.REFERENCE_FILE));
+          //System.out.println(Arrays.toString(sdf.listFiles()));
+          final MemoryPrintStream err = new MemoryPrintStream();
+          try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+            final File outDir = new File(testDir, "out");
+            GlobalFlags.resetAccessedStatus();
+            new MapCli().mainInit(new String[] {"-t", sdf.getPath(), "-l", left.getPath(), "-r", right.getPath(),
+              "--format", "fasta", "-w", "4", "-c", "1", "-a", "0", "-b", "0", "--sam",
+              "--sam-rg", "@RG\\tID:READGROUP1\\tSM:BACT_SAMPLE\\tPL:ILLUMINA", "-o", outDir.getPath()}, out, err.printStream());
+            if (err.toString().length() > 0) {
+              System.err.println(err.toString());
+            }
+            //System.out.println(Arrays.toString(outDir.listFiles()));
+            final String log = FileUtils.fileToString(new File(outDir, "map.log"));
+            assertFalse(log, log.contains("tarting check"));
+            final String full = FileHelper.gzFileToString(new File(outDir, NgsOutputParams.ALIGNMENTS_SAM_FILE_NAME + ".gz"));
+            final String actual = TestUtils.stripSAMHeader(full);
+            r.check("no-sex-ref.sam", actual);
+          }
+        }
+      } finally {
+        r.finish();
+      }
+    } finally {
+      FileHelper.deleteAll(testDir);
+    }
+  }
 }

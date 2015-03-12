@@ -75,18 +75,18 @@ public class ReferenceGenomeTest extends TestCase {
     Diagnostic.setLogStream(ps.printStream());
     try (TestDirectory out = new TestDirectory("referencetest1")) {
       try (SequencesReader sr = ReaderTestUtils.getReaderDNA(">s1" + LS + "acgt" + LS
-          + ">s3" + LS + "ac" + LS
-          + ">s2" + LS + "ac" + LS, out, null)) {
+        + ">s3" + LS + "ac" + LS
+        + ">s2" + LS + "ac" + LS, out, null)) {
         final String refStr = ""
-            + "#comment" + LS
-            + "version" + TAB + "0" + LS
-            + LS
-            + "either" + TAB + "def" + TAB + "diploid" + TAB + "linear" + LS
-            + "female" + TAB + "seq" + TAB + "s1" + TAB + "diploid" + TAB + "circular" + LS
-            + "male" + TAB + "seq" + TAB + "s1" + TAB + "haploid" + TAB + "circular" + LS
-            + "male" + TAB + "seq" + TAB + "s2" + TAB + "haploid" + TAB + "circular" + LS
-            + LS
-            + "male" + TAB + "dup" + TAB + "s1:3-4" + TAB + "s2:1-2";
+          + "#comment" + LS
+          + "version" + TAB + "0" + LS
+          + LS
+          + "either" + TAB + "def" + TAB + "diploid" + TAB + "linear" + LS
+          + "female" + TAB + "seq" + TAB + "s1" + TAB + "diploid" + TAB + "circular" + LS
+          + "male" + TAB + "seq" + TAB + "s1" + TAB + "haploid" + TAB + "circular" + LS
+          + "male" + TAB + "seq" + TAB + "s2" + TAB + "haploid" + TAB + "circular" + LS
+          + LS
+          + "male" + TAB + "dup" + TAB + "s1:3-4" + TAB + "s2:1-2";
         final Reader ref = new StringReader(refStr);
         final ReferenceGenome rg = new ReferenceGenome(sr, ref, Sex.MALE);
         final String s1 = ""

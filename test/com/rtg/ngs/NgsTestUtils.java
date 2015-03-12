@@ -105,9 +105,6 @@ public final class NgsTestUtils {
   public static class TestParams {
     static final boolean D_USELONGREADMAPPING = false;
     static final int D_STEPSIZE = -1;
-    static final String D_SUBJECTS = "";
-    static final String D_QUERIES = "";
-    static final String D_EXPECTED = "";
     static final ListenerType D_LISTENER = ListenerType.NULL;
     static final boolean D_PROGRESS = false;
     static final String[] D_ARGSTRING = null;
@@ -211,13 +208,9 @@ public final class NgsTestUtils {
    * exclude and usid are fixed
    */
   public static class NgsFilterPartlyParams {
-    static final OutputFilter D_OUTPUTFILTER = OutputFilter.NONE;
-    static final Double D_SCORE = 0.0; // unused
     static final boolean D_ZIP = false;
-    static final int D_TOPN = 0;
     static final boolean D_EXCLUDEREPEATS = false;
     static final boolean D_USESEQUENCEIDS = false;
-    static final int D_ERRORLIMIT = 0;
 
     private final OutputFilter mOutputFilter;
     private final boolean mZip;
@@ -295,14 +288,6 @@ public final class NgsTestUtils {
       protected OutputStream mRepeats = new ByteArrayOutputStream();
       protected OutputStream mUnmapped = new ByteArrayOutputStream();
 
-      /**
-       * @param stream override unmapped output stream
-       * @return this builder, so calls can be chained.
-       */
-      public OverriddenNgsOutputParamsBuilder unmappedStream(final OutputStream stream) {
-        mUnmapped = stream;
-        return this;
-      }
       /**
        * @param stream override unmapped output stream
        * @return this builder, so calls can be chained.
