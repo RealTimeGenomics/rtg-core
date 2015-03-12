@@ -25,6 +25,7 @@ import java.util.Map;
 import com.rtg.mode.SequenceType;
 import com.rtg.reader.MockSequencesReader;
 import com.rtg.reader.ReaderTestUtils;
+import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.reference.ReferenceGenome.DefaultFallback;
@@ -46,7 +47,7 @@ public class ReferenceGenomeTest extends TestCase {
     final File out = FileUtils.createTempDir("reference", "test1");
     try {
       final SequencesReader sr = ReaderTestUtils.getReaderDNA(">s1" + LS + "acgt" + LS + ">s2" + LS + "ac" + LS, out, null);
-      final Map<String, Integer> names = ReferenceGenome.names(sr);
+      final Map<String, Integer> names = ReaderUtils.getSequenceLengthMap(sr);
       assertEquals(2, names.size());
       assertEquals(4, (int) names.get("s1"));
       assertEquals(2, (int) names.get("s2"));
@@ -62,7 +63,7 @@ public class ReferenceGenomeTest extends TestCase {
     final File out = FileUtils.createTempDir("reference", "test1");
     try {
       final SequencesReader sr = ReaderTestUtils.getReaderDNA("", out, null);
-      final Map<String, Integer> names = ReferenceGenome.names(sr);
+      final Map<String, Integer> names = ReaderUtils.getSequenceLengthMap(sr);
       assertEquals(0, names.size());
       sr.close();
     } finally {

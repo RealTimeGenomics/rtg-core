@@ -18,13 +18,13 @@ import java.io.PrintStream;
 import java.util.Arrays;
 
 import com.rtg.launcher.CommonFlags;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.CliDiagnosticListener;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.SlimException;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogFile;
 import com.rtg.util.io.LogStream;
@@ -271,7 +271,7 @@ public final class PrereadVerifier {
       }
 
       final byte[] data = new byte[currentSeqLen];
-      final int size = reader.read(numberOfSeq, data);
+      final int size = reader.readCurrent(data);
       if (size != currentSeqLen) {
         return 0;
       }
