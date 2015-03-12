@@ -14,7 +14,7 @@ package com.rtg.reader;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import com.rtg.util.diagnostic.ErrorType;
@@ -119,7 +119,7 @@ public final class ReaderUtils {
    * @throws IOException if an error occurs during reading
    */
   public static Map<String, Long> getSequenceNameMap(final SequencesReader sequences) throws IOException {
-    final Map<String, Long> map = new HashMap<>((int) sequences.numberSequences());
+    final Map<String, Long> map = new LinkedHashMap<>((int) sequences.numberSequences());
     for (long i = 0; i < sequences.numberSequences(); i++) {
       map.put(sequences.name(i), i);
     }
@@ -137,5 +137,20 @@ public final class ReaderUtils {
     } catch (IOException e) {
       return false;
     }
+  }
+
+  /**
+   * Get all the sequence names and their lengths.
+   * @param genome reader for SDF file.
+   * @return the map of names to lengths.
+   * @throws IOException if an error occurs during reading
+   */
+  public static Map<String, Integer> getSequenceLengthMap(final SequencesReader genome) throws IOException {
+    final Map<String, Integer> names = new LinkedHashMap<>();
+    final long numberSequences = genome.numberSequences();
+    for (long l = 0; l < numberSequences; l++) {
+      names.put(genome.name(l), genome.length(l));
+    }
+    return names;
   }
 }
