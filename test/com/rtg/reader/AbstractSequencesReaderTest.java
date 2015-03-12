@@ -230,6 +230,7 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
       assertEquals("bob", dsr.currentName());
       assertEquals(17, dsr.currentLength());
       SequencesWriterTest.checkEquals(dsr, new byte[]{4, 1, 3, 4, 4, 2, 1, 3, 2, 1, 4, 2, 3, 1, 4, 2, 1});
+      dsr.reset();
       final byte[] seqs = new byte[32];
       final int amount = dsr.read(0, seqs);
       DNA[] expected = {DNA.A, DNA.C, DNA.G, DNA.T, DNA.G, DNA.T, DNA.G, DNA.T,
@@ -312,6 +313,8 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
       final byte[] exp = getExpectedQuality();
 
       assertTrue(Arrays.equals(exp, qual));
+
+      dsr.reset();
       assertEquals(qual.length, dsr.readQuality(0, qual));
       assertTrue(Arrays.equals(exp, qual));
 

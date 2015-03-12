@@ -24,11 +24,12 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.util.Pair;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.RegionRestriction;
 
 /**
  * Supplies sex dependent information about a reference genome.
@@ -64,23 +65,6 @@ public class ReferenceGenome {
     HAPLOID
   }
 
-  /**
-   * Get all the sequence names and their lengths.
-   * @param genome reader for SDF file.
-   * @return the map of names to lengths.
-   */
-  static LinkedHashMap<String, Integer> names(final SequencesReader genome) {
-    final LinkedHashMap<String, Integer> names = new LinkedHashMap<>();
-    final long numberSequences = genome.numberSequences();
-    try {
-      for (long l = 0; l < numberSequences; l++) {
-        names.put(genome.name(l), genome.length(l));
-      }
-    } catch (final IOException e) {
-      throw new RuntimeException("Error while reading names from genome. " + genome.path().getAbsolutePath(), e);
-    }
-    return names;
-  }
 
   private LinkedHashMap<String, ReferenceSequence> mReferences;
 
@@ -105,7 +89,7 @@ public class ReferenceGenome {
    */
   public ReferenceGenome(final SequencesReader genome, final Sex sex, DefaultFallback fallback) throws IOException {
     try (BufferedReader r = getReferenceReader(genome, fallback)) {
-      parse(names(genome), r, sex);
+      parse(ReaderUtils.getSequenceLengthMap(genome), r, sex);
     }
   }
 
@@ -137,7 +121,7 @@ public class ReferenceGenome {
    * @throws IOException when actual I/O error or problems in file definition.
    */
   public ReferenceGenome(final SequencesReader genome, final Reader reference, final Sex sex) throws IOException {
-    parse(names(genome), reference, sex);
+    parse(ReaderUtils.getSequenceLengthMap(genome), reference, sex);
   }
 
   private void parse(Map<String, Integer> names, final Reader reference, final Sex sex) throws IOException {
