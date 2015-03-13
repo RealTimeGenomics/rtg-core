@@ -26,9 +26,10 @@ import com.rtg.bed.BedUtils;
 import com.rtg.sam.SamUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.Pair;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.RegionRestriction;
+import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.vcf.VcfUtils;
 
 import htsjdk.samtools.SAMRecord;
@@ -140,6 +141,14 @@ final class AviewModel {
     // Scan alignments to auto-expand the range if needed
     RegionRestriction region = expandRegion(mRecords, p.region());
 
+    // Also expand if need be to ensure that we get features within the padded zone
+    if (p.regionPadding() > 0) {
+      final RegionRestriction paddedInitial = new RegionRestriction(region.getSequenceName(),
+        Math.max(0, p.region().getStart() - p.regionPadding()),
+        Math.min(len, p.region().getEnd() + p.regionPadding()));
+      region = union(region, paddedInitial, 0, len);
+    }
+
     // Grab any variants/beds overlapping the new region
     loadTracks(p, region);
 
@@ -171,6 +180,12 @@ final class AviewModel {
 
     mTemplate = ReferenceHelper.loadReference(p.referenceFile(), p.sequenceName(), mZeroBasedStart, mZeroBasedEnd - mZeroBasedStart);
     //System.err.println(DnaUtils.bytesToSequenceIncCG(mTemplate));
+  }
+
+  private RegionRestriction union(SequenceNameLocus a, SequenceNameLocus b, int min, int max) {
+    return new RegionRestriction(a.getSequenceName(),
+      Math.max(min, Math.min(a.getStart(), b.getStart())),
+      Math.min(max, Math.max(a.getEnd(), b.getEnd())));
   }
 
   // Scan records to auto-expand the range if needed
