@@ -19,14 +19,14 @@
 
 
   <property name="build.sysclasspath" value="ignore"/>
-  <taskdef resource="net/sf/antcontrib/antcontrib.properties" />
+  <taskdef resource="net/sf/antcontrib/antlib.xml" />
 
   <property name="product" value="RTG Core Non-Commercial" />
   <property name="resources" value="core" />
 
   <property name="regression.update" value=""/> <!-- Empty means don't update nano-regression results -->
 
-  <property name="htsjdk.jar" value="sam-1.128.jar"/> <!-- This must be build from the RTG fork of htsjdk -->
+  <property name="htsjdk.jar" value="sam-1.128.jar"/> <!-- This must be built from the RTG fork of htsjdk -->
 
   <!-- These jars are needed at run time -->
   <fileset id="runtime.libs" dir="${src.lib.dir}">
