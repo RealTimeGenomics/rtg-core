@@ -52,6 +52,7 @@ public abstract class PointerFileLookup {
    * @return pointer lookup class
    */
   public static PointerFileLookup generateLookup(int[][] pointers) {
+    assert pointers.length > 0;
     if (pointers.length == 1) {
       return new SimplePointerFileLookup(Integer.MAX_VALUE, pointers);
     } else if (pointers.length == 2) {
