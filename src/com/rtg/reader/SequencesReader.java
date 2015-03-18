@@ -24,7 +24,7 @@ public interface SequencesReader extends AutoCloseable {
 
   /**
    * Get an iterator-style accessor
-   * @return the SequenceIterator
+   * @return the SequencesIterator
    */
   SequencesIterator iterator();
 

@@ -79,7 +79,7 @@ public final class SdfWriterWrapper implements Closeable {
   }
 
   /**
-   * Method to write a specified sequence to the destionation.
+   * Method to write a specified sequence to the destination.
    * @param reader the reader being read from.
    * @param seqId the id of the sequence to write.
    * @param dataBuffer an appropriately sized buffer for data.
