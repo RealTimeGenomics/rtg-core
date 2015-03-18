@@ -21,11 +21,15 @@ import com.rtg.util.io.SeekableStream;
  */
 class SequenceStreamManager extends AbstractStreamManager {
 
-  protected RollingFile mQuality;
+  private final RollingFile mQuality;
 
-  protected boolean mOpenQuality;
+  private final boolean mOpenQuality;
 
-  protected final PointerFileHandler mPointerHandler;
+  private final PointerFileHandler mPointerHandler;
+
+  private boolean mDataSeeked = false;
+
+  private boolean mQualitySeeked = false;
 
   /**
    * Creates a the stream manager
@@ -41,6 +45,8 @@ class SequenceStreamManager extends AbstractStreamManager {
     mOpenQuality = quality;
     if (mOpenQuality) {
       mQuality = new DataRollingFile(mDir, SdfFileUtils.SEQUENCE_QUALITY_DATA_FILENAME, mIndex.numberEntries(), mIndex, openerFactory.getQualityOpener());
+    } else {
+      mQuality = null;
     }
     mPointerHandler = PointerFileHandler.getHandler(mainIndex, PointerFileHandler.SEQUENCE_POINTER);
   }
@@ -55,13 +61,13 @@ class SequenceStreamManager extends AbstractStreamManager {
     }
     mDataLength = mPointerHandler.seqLength();
     mData.randomAccessFile().seek(mPointerHandler.seqPosition());
+    mDataSeeked = true;
     if (mOpenQuality) {
       mQuality.randomAccessFile().seek(mPointerHandler.seqPosition());
+      mQualitySeeked = true;
     }
   }
 
-  /**
-   */
   @Override
   protected void openFiles() throws IOException {
     super.openFiles();
@@ -134,10 +140,18 @@ class SequenceStreamManager extends AbstractStreamManager {
   }
 
   int readData(byte[] dataOut, int start, int length) throws IOException {
+    if (!mDataSeeked) {
+      throw new IllegalStateException("readData called with pointer in unknown position.");
+    }
+    mDataSeeked = false;
     return read(dataOut, start, length, mData);
   }
 
   int readQuality(byte[] dataOut, int start, int length) throws IOException {
+    if (!mQualitySeeked) {
+      throw new IllegalStateException("readQuality called with pointer in unknown position.");
+    }
+    mQualitySeeked = false;
     return read(dataOut, start, length, mQuality);
   }
 
