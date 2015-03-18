@@ -36,7 +36,7 @@ public class FormatInteger {
     final StringBuilder sb = new StringBuilder();
     long t = x;
     for (int i = 0; i < 64; i++) {
-      if (i % 8 == 0 && i > 0) {
+      if ((i & 7) == 0 && i > 0) {
         sb.append(":");
       }
       sb.append(t < 0 ? "1" : "0");

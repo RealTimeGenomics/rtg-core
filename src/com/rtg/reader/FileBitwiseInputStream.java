@@ -78,7 +78,7 @@ public class FileBitwiseInputStream extends SeekableStream {
   private int readInternal(byte[] buff, int offset, int length) throws IOException {
     int len = mStream.read(buff, offset, length);
     //read a multiple of 8 bytes to prevent futzing around
-    final int rem = len % 8;
+    final int rem = len & 7;
     if (rem > 0) {
       IOUtils.readFully(mStream, mRawBuffer, offset + len, rem);
       len += rem;

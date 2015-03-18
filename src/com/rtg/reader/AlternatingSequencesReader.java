@@ -258,7 +258,7 @@ public class AlternatingSequencesReader implements SequencesReader {
   @Override
   public void seek(final long sequenceId) throws IOException {
     mSequenceId = sequenceId;
-    mCurrentIsFirst = mSequenceId % 2 == 0;
+    mCurrentIsFirst = (mSequenceId & 1) == 0;
     if (mCurrentIsFirst) {
       mFirst.seek(mSequenceId / 2);
     } else {

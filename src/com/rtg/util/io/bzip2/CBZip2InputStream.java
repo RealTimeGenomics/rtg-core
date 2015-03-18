@@ -262,7 +262,7 @@ public class CBZip2InputStream extends InputStream {
      */
     private int fileBoundaryRead(boolean discard) throws IOException {
       if (discard) {
-        bsR(this.mBsLive % 8); //discard padding bits
+        bsR(this.mBsLive & 7); //discard padding bits
       }
       if (this.mBsLive >= 8) {
         return bsR(8);

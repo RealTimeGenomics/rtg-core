@@ -185,7 +185,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
     for (int i = 0; i < penalties.length; i++) {
       offsets[i] = i / 2 + 1;
       penalties[i] = gapOpenPenalty + offsets[i] * gapExtendPenalty;
-      if (i % 2 == 0) {
+      if ((i & 1) == 0) {
         offsets[i] = -offsets[i];
       }
     }
