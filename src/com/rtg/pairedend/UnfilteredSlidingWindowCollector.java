@@ -46,7 +46,7 @@ public class UnfilteredSlidingWindowCollector extends AbstractSlidingWindowColle
   }
 
   @Override
-  boolean checkPair(UnfilteredHitInfo hit, UnfilteredHitInfo mate) {
+  boolean checkPair(UnfilteredHitInfo hit, UnfilteredHitInfo mate) throws IOException {
     //check the scores, set the ok flagness
     return mWriter.checkScores(hit, mate);
   }

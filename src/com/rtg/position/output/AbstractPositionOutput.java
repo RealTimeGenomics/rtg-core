@@ -103,7 +103,7 @@ public abstract class AbstractPositionOutput extends IntegralAbstract implements
   }
 
   @Override
-  public void nextSequence(int seqId, final int length) {
+  public void nextSequence(int seqId, final int length) throws IOException {
     assert mState == State.SEQUENCE;
     mState = State.QUERY;
     mQueryLength = length;
@@ -113,7 +113,7 @@ public abstract class AbstractPositionOutput extends IntegralAbstract implements
   }
 
   @Override
-  public void nextSequence(int seqId, final int length, final int usedLength, final byte[] sequence) {
+  public void nextSequence(int seqId, final int length, final int usedLength, final byte[] sequence) throws IOException {
     assert length >= usedLength && usedLength >= 0;
     nextSequence(seqId, length);
   }

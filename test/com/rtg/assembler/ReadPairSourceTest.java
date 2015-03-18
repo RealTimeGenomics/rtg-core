@@ -24,8 +24,8 @@ import com.rtg.mode.DnaUtils;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.test.FileHelper;
 
 import junit.framework.TestCase;

@@ -57,13 +57,10 @@ public class ProteinAlignmentResultTest extends TestCase {
       final EditDistance ed = EditDistanceFactory.createProteinEditDistance(new ProteinScoringMatrix());
 
       final SharedProteinResources resx = new SharedProteinResources(new ProteinScoringMatrix(), tem, reads, false);
-      tem.seek(0);
-      final byte[] t = new byte[tem.currentLength()];
-      tem.readCurrent(t);
+      final byte[] t = tem.read(0);
 
-      reads.seek(0);
-      final byte[] b = new byte[reads.currentLength()];
-      final int rlen = reads.readCurrent(b);
+      final byte[] b = reads.read(0);
+      final int rlen = b.length;
 
       final int genomeFrame = 0;
       final Frame frames = TranslatedFrame.FORWARD1;

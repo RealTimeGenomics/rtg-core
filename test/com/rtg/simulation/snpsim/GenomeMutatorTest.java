@@ -43,6 +43,7 @@ import com.rtg.util.diagnostic.DiagnosticEvent;
 import com.rtg.util.diagnostic.DiagnosticListener;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.IOUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.VariantParams;
@@ -312,42 +313,26 @@ public class GenomeMutatorTest extends TestCase {
     private void check(Mutation m1, final int pos, final int numMismatch, final int increase,
         String expectedGenome, boolean testFirst, String mapFileExpected) {
       try {
-        final File temp = FileHelper.createTempDirectory();
-        try {
+        try (final TestDirectory temp = new TestDirectory()) {
           final File mutant = new File(temp, "mutant2");
           final File twinMutant = new File(temp, "twinmutant");
-          final SdfWriter output = new SdfWriter(mutant, 100, PrereadType.UNKNOWN, false, true, false, SequenceType.DNA);
-          final SdfWriter twinOutput = new SdfWriter(twinMutant, 100, PrereadType.UNKNOWN, false, true, false, SequenceType.DNA);
           final byte[] genome = getBytesFromDNA(GENOMESTR);
           mMutantStr = "";
 
-          try {
+          try (SdfWriter output = new SdfWriter(mutant, 100, PrereadType.UNKNOWN, false, true, false, SequenceType.DNA); SdfWriter twinOutput = new SdfWriter(twinMutant, 100, PrereadType.UNKNOWN, false, true, false, SequenceType.DNA)) {
             output.startSequence("seq1");
             twinOutput.startSequence("seq1");
 
-            mutateSequence(output, twinOutput, genome, new Mutation[] {m1}, "seq1");
+            mutateSequence(output, twinOutput, genome, new Mutation[]{m1}, "seq1");
             output.endSequence();
             twinOutput.endSequence();
-          } finally {
-            output.close();
-            twinOutput.close();
-          }
-          final SequencesReader r;
-          if (testFirst) {
-            r = SequencesReaderFactory.createDefaultSequencesReader(mutant);
-          } else {
-            r = SequencesReaderFactory.createDefaultSequencesReader(twinMutant);
           }
           try (SequencesReader t = SequencesReaderFactory.createDefaultSequencesReader(twinMutant)) {
-            assertTrue(t.nextSequence());
-            final byte[] twin = new byte[t.currentLength()];
-            t.readCurrent(twin);
+            t.read(0);
             //System.err.println("Twi: " + Arrays.toString(getDNAFromBytes(twin)));
           }
-          try {
-            assertTrue(r.nextSequence());
-            final byte[] newMutant = new byte[r.currentLength()];
-            r.readCurrent(newMutant);
+          try (SequencesReader r = testFirst ? SequencesReaderFactory.createDefaultSequencesReader(mutant) : SequencesReaderFactory.createDefaultSequencesReader(twinMutant)) {
+            final byte[] newMutant = r.read(0);
             int mutantPos;
             if (pos >= 0) {
               mutantPos = findMismatchPosition(genome, newMutant);
@@ -363,11 +348,7 @@ public class GenomeMutatorTest extends TestCase {
               assertTrue(checkEqualGenome(expectedGenome, getDNAStringFromBytes(newMutant)));
             }
             TestUtils.containsAll(mMutantStr, mapFileExpected);
-          } finally {
-            r.close();
           }
-        } finally {
-          assertTrue(FileHelper.deleteAll(temp));
         }
       } catch (final IOException e) {
         fail(e.getMessage());
@@ -377,44 +358,25 @@ public class GenomeMutatorTest extends TestCase {
     protected void checkMnp(Mutation m1Mnp, final int posMnp,
                             String expectedGenome, boolean testFirst) {
       try {
-        final File temp = FileHelper.createTempDirectory();
-        try {
+        try (final TestDirectory temp = new TestDirectory()) {
           final File mutant = new File(temp, "mutant2");
           final File twinMutant = new File(temp, "twinmutant");
-          final SdfWriter output = new SdfWriter(mutant, 100, PrereadType.UNKNOWN, false, true, false, SequenceType.DNA);
-          final SdfWriter twinOutput = new SdfWriter(twinMutant, 100, PrereadType.UNKNOWN, false, true, false, SequenceType.DNA);
           final String genomeStr = "AAACCCTTT";
           final byte[] genome = getBytesFromDNA(genomeStr);
           mMutantStr = "";
 
-          try {
+          try (SdfWriter twinOutput = new SdfWriter(twinMutant, 100, PrereadType.UNKNOWN, false, true, false, SequenceType.DNA); SdfWriter output = new SdfWriter(mutant, 100, PrereadType.UNKNOWN, false, true, false, SequenceType.DNA)) {
             output.startSequence("seq1");
             twinOutput.startSequence("seq1");
 
-            mutateSequence(output, twinOutput, genome, new Mutation[] {m1Mnp}, "seq1");
+            mutateSequence(output, twinOutput, genome, new Mutation[]{m1Mnp}, "seq1");
             output.endSequence();
             twinOutput.endSequence();
-          } finally {
-            //System.err.println(FileUtils.fileToString(mapping));
-            output.close();
-            twinOutput.close();
           }
-          final SequencesReader r;
-          if (testFirst) {
-            r = SequencesReaderFactory.createDefaultSequencesReader(mutant);
-          } else {
-            r = SequencesReaderFactory.createDefaultSequencesReader(twinMutant);
-          }
-          try (SequencesReader t = SequencesReaderFactory.createDefaultSequencesReader(twinMutant)) {
-            assertTrue(t.nextSequence());
-            final byte[] twin = new byte[t.currentLength()];
-            t.readCurrent(twin);
-            //System.err.println("Twi: " + getDNAFromBytes(twin));
-          }
-          try {
-            assertTrue(r.nextSequence());
-            final byte[] newMutant = new byte[r.currentLength()];
-            r.readCurrent(newMutant);
+          //System.err.println(FileUtils.fileToString(mapping));
+
+          try (SequencesReader r = testFirst ? SequencesReaderFactory.createDefaultSequencesReader(mutant) : SequencesReaderFactory.createDefaultSequencesReader(twinMutant)) {
+            final byte[] newMutant = r.read(0);
             //            System.err.println(Arrays.toString(genome));
             //            System.err.println(Arrays.toString(b));
             //System.err.println("Exp: " + expectedGenome + "\nWas: " + getDNAFromBytes(newMutant));
@@ -426,11 +388,7 @@ public class GenomeMutatorTest extends TestCase {
               assertTrue(checkEqualGenomeStart(expectedGenome, getDNAStringFromBytes(newMutant)));
               assertTrue(checkEqualGenomeEnd(expectedGenome, getDNAStringFromBytes(newMutant)));
             }
-          } finally {
-            r.close();
           }
-        } finally {
-          assertTrue(FileHelper.deleteAll(temp));
         }
       } catch (final IOException e) {
         //System.err.println(e.getMessage());
@@ -596,11 +554,8 @@ public class GenomeMutatorTest extends TestCase {
           final File mutant = new File(temp, "mutant");
           final File mutations = new File(temp, "mutations.mapping");
           gm.setRates(1.0, 0.0, 0.0);
-          final OutputStream os = new FileOutputStream(mutations);
-          try {
+          try (OutputStream os = new FileOutputStream(mutations)) {
             gm.mutateCount(dsr, Sex.EITHER, mutant, null, os, 40);
-          } finally {
-            os.close();
           }
           toFasta(mutant);
           final File output = new File(mutant.getPath() + ".fasta");
@@ -698,11 +653,8 @@ public class GenomeMutatorTest extends TestCase {
         final GenomeMutator gm = new GenomeMutator(1, false, false, 1, TEST_PARAMS);
         final File mutations = new File(mDir, "mutations.mapping");
         final File mutant = new File(mDir, "mutant");
-        final OutputStream s = new FileOutputStream(mutations);
-        try {
+        try (OutputStream s = new FileOutputStream(mutations)) {
           assertEquals(0, gm.mutateRate(dsr, Sex.EITHER, mutant, null, s, 0.1));
-        } finally {
-          s.close();
         }
         TestUtils.containsAll(ERRSTR[0], "Mutation rate is less than 1 mutation per sequence");
       }

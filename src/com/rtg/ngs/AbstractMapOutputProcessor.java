@@ -196,7 +196,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
     }
   }
 
-  protected static Map<Long, RangeList<UnmappedSamAlignmentWriter>> getUnmappedWriterReferenceLookup(ISequenceParams searchParams, List<HashingRegion> regions, Range[] regionRanges, UnmappedSamAlignmentWriter[] outputWriters, UnmappedSamAlignmentWriter unmappedNoPositionSamWriter) {
+  protected static Map<Long, RangeList<UnmappedSamAlignmentWriter>> getUnmappedWriterReferenceLookup(ISequenceParams searchParams, List<HashingRegion> regions, Range[] regionRanges, UnmappedSamAlignmentWriter[] outputWriters, UnmappedSamAlignmentWriter unmappedNoPositionSamWriter) throws IOException {
     final Map<Long, List<RangeList.RangeData<UnmappedSamAlignmentWriter>>> temp = new HashMap<>();
     final Map<Long, RangeList<UnmappedSamAlignmentWriter>> lookup = new HashMap<>();
     for (int rangeIndex = 0; rangeIndex < regionRanges.length; rangeIndex++) {

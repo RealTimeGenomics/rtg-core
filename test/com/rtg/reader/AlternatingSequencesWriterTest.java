@@ -102,15 +102,11 @@ public class AlternatingSequencesWriterTest extends TestCase {
       final TsvSequenceDataSource tsv = new TsvSequenceDataSource(tsvF, 5);
       final AlternatingSequencesWriter alt = new AlternatingSequencesWriter(tsv, null, PrereadType.CG, true);
       final CompressedMemorySequencesReader[] rs = alt.processSequencesInMemoryPaired(tsvF, true, null, null, range);
-      assertTrue(rs[0].nextSequence());
       final byte[] dna = new byte[(int) rs[0].maxLength()];
-      rs[0].readCurrent(dna);
+      rs[0].read(0, dna);
       assertEquals(SEQ_L, DnaUtils.bytesToSequenceIncCG(dna));
-      assertTrue(rs[1].nextSequence());
-      rs[1].readCurrent(dna);
+      rs[1].read(0, dna);
       assertEquals(SEQ_R, DnaUtils.bytesToSequenceIncCG(dna));
-      assertFalse(rs[0].nextSequence());
-      assertFalse(rs[1].nextSequence());
       assertEquals(PrereadType.CG, rs[0].getPrereadType());
       assertEquals(PrereadType.CG, rs[1].getPrereadType());
       assertEquals(tsvF, rs[0].path());

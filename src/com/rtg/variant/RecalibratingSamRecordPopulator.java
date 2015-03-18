@@ -62,8 +62,7 @@ public class RecalibratingSamRecordPopulator extends SamRecordPopulator {
           throw new NoTalkbackSlimException("Sequence " + name + " not found in template");  //user must have edited the sam file and cocked this up.
         }
         try {
-          mTemplate.seek(seqId);
-          final int length = mTemplate.readCurrent(mTemplateBytes);
+          final int length = mTemplate.read(seqId, mTemplateBytes);
           mCalibrator.setTemplate(mTemplateBytes, length);
         } catch (final IOException e) {
           throw new NoTalkbackSlimException("Failed to read sequence " + name + " from template");

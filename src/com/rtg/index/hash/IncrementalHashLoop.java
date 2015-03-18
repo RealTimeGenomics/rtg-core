@@ -56,14 +56,11 @@ public abstract class IncrementalHashLoop extends HashLoop {
     final HashingRegion region = sequences.region();
     final SequencesReader reader = sequences.reader();
     final long startSequence;
-    final long endSequence;
     final int padding = getThreadPadding();
     if (region != HashingRegion.NONE) {
       startSequence = region.getStart();
-      endSequence = region.getEnd();
     } else {
       startSequence = 0;
-      endSequence = reader.numberSequences();
     }
     final SequenceMode mode = sequences.mode();
 
@@ -79,21 +76,19 @@ public abstract class IncrementalHashLoop extends HashLoop {
 
     int internalId = (int) startSequence * frames.length;
     final long maxSequenceEver = reader.numberSequences();
-    if (startSequence <= endSequence && startSequence < maxSequenceEver) {
-      reader.seek(startSequence);
-    }
     long totalLength = 0;
-    for (long seq = startSequence; region.isInRange(seq) && seq < maxSequenceEver; seq++, reader.nextSequence()) {
+    for (long seq = startSequence; region.isInRange(seq) && seq < maxSequenceEver; seq++) {
       ProgramState.checkAbort();
       //System.err.println("seq=" + seq + " " +  reader.currentSequenceId() + " " + reader.getClass());
+      final int currentLength = reader.length(seq);
       final int startPos = region.getReferenceStart(seq, padding);
-      final int endPos = region.getReferenceEnd(seq, padding, reader.currentLength());
+      final int endPos = region.getReferenceEnd(seq, padding, currentLength);
       if (byteBuffer.length < endPos - startPos) { //silly programmer error
         throw new IllegalArgumentException("Allocated buffer too short. Allocated length=" + byteBuffer.length + " Required length=" + (endPos - startPos));
       }
-      final int length = reader.readCurrent(byteBuffer, startPos, endPos - startPos);
+      final int length = reader.read(seq, byteBuffer, startPos, endPos - startPos);
       totalLength += length;
-      nextSeq((int) (seq - startSequence), reader.currentLength()/*length*/);
+      nextSeq((int) (seq - startSequence), length);
       //System.err.println("finished reading");
       //System.err.println(Arrays.toString(byteBuffer));
       for (final Frame frame : frames) {

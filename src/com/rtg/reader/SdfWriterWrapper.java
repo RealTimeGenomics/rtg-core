@@ -29,6 +29,7 @@ public final class SdfWriterWrapper implements Closeable {
 
   private final boolean mIsPaired;
   private final boolean mHasQuality;
+  private final boolean mHasNames;
   final SdfWriter mLeft;
   final SdfWriter mRight;
   final SdfWriter mSingle;
@@ -43,22 +44,22 @@ public final class SdfWriterWrapper implements Closeable {
     assert reader != null;
     mIsPaired = reader.isPaired();
     mHasQuality = reader.hasQualityData();
-    final boolean hasNames = reader.hasNames();
+    mHasNames = reader.hasNames();
 
     if (mIsPaired) {
       FileUtils.ensureOutputDirectory(baseDir);
       mSingle = null;
-      mLeft = new SdfWriter(new File(baseDir, "left"), Constants.MAX_FILE_SIZE, reader.getPrereadType(), mHasQuality, hasNames, forceCompression || reader.left().compressed(), reader.type());
+      mLeft = new SdfWriter(new File(baseDir, "left"), Constants.MAX_FILE_SIZE, reader.getPrereadType(), mHasQuality, mHasNames, forceCompression || reader.left().compressed(), reader.type());
       mLeft.setPrereadArm(reader.left().getArm());
       mLeft.setCommandLine(CommandLine.getCommandLine());
-      mRight = new SdfWriter(new File(baseDir, "right"), Constants.MAX_FILE_SIZE, reader.getPrereadType(), mHasQuality, hasNames, forceCompression || reader.right().compressed(), reader.type());
+      mRight = new SdfWriter(new File(baseDir, "right"), Constants.MAX_FILE_SIZE, reader.getPrereadType(), mHasQuality, mHasNames, forceCompression || reader.right().compressed(), reader.type());
       mRight.setPrereadArm(reader.right().getArm());
       mRight.setCommandLine(CommandLine.getCommandLine());
       mRight.setSdfId(mLeft.getSdfId());
     } else {
       mLeft = null;
       mRight = null;
-      mSingle = new SdfWriter(baseDir, Constants.MAX_FILE_SIZE, reader.getPrereadType(), mHasQuality, hasNames, forceCompression || reader.single().compressed(), reader.type());
+      mSingle = new SdfWriter(baseDir, Constants.MAX_FILE_SIZE, reader.getPrereadType(), mHasQuality, mHasNames, forceCompression || reader.single().compressed(), reader.type());
       mSingle.setPrereadArm(reader.single().getArm());
       mSingle.setCommandLine(CommandLine.getCommandLine());
     }
@@ -78,28 +79,29 @@ public final class SdfWriterWrapper implements Closeable {
   }
 
   /**
-   * Method to write the current reader sequence to file.
+   * Method to write a specified sequence to the destionation.
    * @param reader the reader being read from.
+   * @param seqId the id of the sequence to write.
    * @param dataBuffer an appropriately sized buffer for data.
    * @param qualityBuffer an appropriately sized buffer for quality.
    * @throws IllegalStateException whenever
    * @throws IOException whenever
    */
-  public void writeCurrentSequence(SdfReaderWrapper reader, byte[] dataBuffer, byte[] qualityBuffer) throws IllegalStateException, IOException {
+  public void writeSequence(SdfReaderWrapper reader, long seqId, byte[] dataBuffer, byte[] qualityBuffer) throws IllegalStateException, IOException {
     if (mIsPaired) {
-      writeSequence(reader.left(), mLeft, reader.currentFullName(), dataBuffer, qualityBuffer);
-      writeSequence(reader.right(), mRight, reader.currentRightFullName(), dataBuffer, qualityBuffer);
+      writeSequence(reader.left(), seqId, mLeft, dataBuffer, qualityBuffer);
+      writeSequence(reader.right(), seqId, mRight, dataBuffer, qualityBuffer);
     } else {
-      writeSequence(reader.single(), mSingle, reader.currentFullName(), dataBuffer, qualityBuffer);
+      writeSequence(reader.single(), seqId, mSingle, dataBuffer, qualityBuffer);
     }
   }
 
-  private void writeSequence(SequencesReader reader, SdfWriter writer, String name, byte[] dataBuffer, byte[] qualityBuffer) throws IllegalArgumentException, IllegalStateException, IOException {
-    final int length = reader.readCurrent(dataBuffer);
+  private void writeSequence(SequencesReader reader, long seqId, SdfWriter writer, byte[] dataBuffer, byte[] qualityBuffer) throws IllegalArgumentException, IllegalStateException, IOException {
+    final int length = reader.read(seqId, dataBuffer);
     if (mHasQuality) {
-      reader.readCurrentQuality(qualityBuffer);
+      reader.readQuality(seqId, qualityBuffer);
     }
-    writer.startSequence(name);
+    writer.startSequence(mHasNames ? reader.fullName(seqId) : null);
     writer.write(dataBuffer, mHasQuality ? qualityBuffer : null, length);
     writer.endSequence();
   }

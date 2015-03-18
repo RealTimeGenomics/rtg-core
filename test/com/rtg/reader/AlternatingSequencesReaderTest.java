@@ -24,7 +24,7 @@ public class AlternatingSequencesReaderTest extends TestCase {
   public void testExceptions1() throws IllegalStateException, IOException {
     final SequencesReader first = new MockSequencesReader(SequenceType.DNA, 2L, 10L);
     final SequencesReader second = new MockSequencesReader(SequenceType.DNA, 2L, 10L);
-    final AlternatingSequencesReader reader = new AlternatingSequencesReader(first, second);
+    final SequencesIterator reader = new AlternatingSequencesReader(first, second).iterator();
     try {
       reader.currentLength();
       fail();
@@ -37,7 +37,6 @@ public class AlternatingSequencesReaderTest extends TestCase {
     } catch (IllegalStateException e) {
       //expected
     }
-    reader.close();
   }
 
   public void testExceptions3() throws IllegalStateException, IOException {
@@ -67,13 +66,6 @@ public class AlternatingSequencesReaderTest extends TestCase {
     }
     try {
       reader.copy();
-      fail();
-    } catch (UnsupportedOperationException e) {
-      //expected
-      assertEquals("Not supported yet.", e.getMessage());
-    }
-    try {
-      reader.currentName();
       fail();
     } catch (UnsupportedOperationException e) {
       //expected
@@ -185,55 +177,6 @@ public class AlternatingSequencesReaderTest extends TestCase {
       assertEquals("Not supported yet.", e.getMessage());
     }
     try {
-      reader.length(0);
-      fail();
-    } catch (UnsupportedOperationException e) {
-      //expected
-      assertEquals("Not supported yet.", e.getMessage());
-    }
-    try {
-      reader.read(0, null);
-      fail();
-    } catch (UnsupportedOperationException e) {
-      //expected
-      assertEquals("Not supported yet.", e.getMessage());
-    }
-    try {
-      reader.read(0, null, 0, 0);
-      fail();
-    } catch (UnsupportedOperationException e) {
-      //expected
-      assertEquals("Not supported yet.", e.getMessage());
-    }
-    try {
-      reader.readCurrent(null);
-      fail();
-    } catch (UnsupportedOperationException e) {
-      //expected
-      assertEquals("Not supported yet.", e.getMessage());
-    }
-    try {
-      reader.readCurrent(null, 0, 0);
-      fail();
-    } catch (UnsupportedOperationException e) {
-      //expected
-      assertEquals("Not supported yet.", e.getMessage());
-    }
-    try {
-      reader.readCurrentQuality(null);
-      fail();
-    } catch (UnsupportedOperationException e) {
-      //expected
-      assertEquals("Not supported yet.", e.getMessage());
-    }
-    try {
-      reader.readQuality(0, null);
-      fail();
-    } catch (UnsupportedOperationException e) {
-      //expected
-      assertEquals("Not supported yet.", e.getMessage());
-    }
-    try {
       reader.residueCounts();
       fail();
     } catch (UnsupportedOperationException e) {
@@ -272,8 +215,8 @@ public class AlternatingSequencesReaderTest extends TestCase {
       mReadLength = readLength;
     }
     @Override
-    public int currentLength() {
-      return mReadLength + (int) currentSequenceId();
+    public int length(long index) {
+      return mReadLength + (int) index;
     }
   }
 
@@ -283,19 +226,20 @@ public class AlternatingSequencesReaderTest extends TestCase {
     final AlternatingSequencesReader reader = new AlternatingSequencesReader(first, second);
     assertEquals(4, reader.numberSequences());
     assertEquals(24, reader.totalLength());
-    assertTrue(reader.nextSequence());
-    assertEquals(0, reader.currentSequenceId());
-    assertEquals(6, reader.currentLength());
-    assertTrue(reader.nextSequence());
-    assertEquals(1, reader.currentSequenceId());
-    assertEquals(5, reader.currentLength());
-    assertTrue(reader.nextSequence());
-    assertEquals(2, reader.currentSequenceId());
-    assertEquals(7, reader.currentLength());
-    assertTrue(reader.nextSequence());
-    assertEquals(3, reader.currentSequenceId());
-    assertEquals(6, reader.currentLength());
-    assertFalse(reader.nextSequence());
+    final SequencesIterator it = reader.iterator();
+    assertTrue(it.nextSequence());
+    assertEquals(0, it.currentSequenceId());
+    assertEquals(6, it.currentLength());
+    assertTrue(it.nextSequence());
+    assertEquals(1, it.currentSequenceId());
+    assertEquals(5, it.currentLength());
+    assertTrue(it.nextSequence());
+    assertEquals(2, it.currentSequenceId());
+    assertEquals(7, it.currentLength());
+    assertTrue(it.nextSequence());
+    assertEquals(3, it.currentSequenceId());
+    assertEquals(6, it.currentLength());
+    assertFalse(it.nextSequence());
     reader.close();
   }
 }

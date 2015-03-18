@@ -171,16 +171,15 @@ public class GenomeMutator {
         mMapping = new VcfWriter(mHeader, mappingOutput);
         try {
           for (int i = 0; i < input.numberSequences(); i++) {
-            input.seek(i);
-            final byte[] genomeSeq = new byte[input.currentLength()];
-            final String seqName = input.currentName();
+            final byte[] genomeSeq = new byte[input.length(i)];
+            final String seqName = input.name(i);
             final ReferenceSequence refSeq = rg.sequence(seqName);
             final Ploidy ploidy = twinOutput == null ? Ploidy.HAPLOID : refSeq.ploidy();
             if (ploidy == Ploidy.NONE) { // This sequence is not present in this sex of individual
               continue;
             }
-
-            final Mutation[] sortedLocs = generatePositions(input, rate, genomeSeq, ploidy);
+            final int length = input.read(i, genomeSeq);
+            final Mutation[] sortedLocs = generatePositions(rate, ploidy, genomeSeq, length);
             final SdfWriter h1;
             final SdfWriter h2;
             if (ploidy == Ploidy.HAPLOID && twinOutput != null && refSeq.haploidComplementName() != null) {
@@ -239,15 +238,14 @@ public class GenomeMutator {
   }
 
   /**
-   * @param input the input sequence reader
    * @param rate rate of mutations
-   * @param genomeSeq template sequence
    * @param ploidy the ploidy of this genome sequence
+   * @param genomeSeq template sequence
+   * @param length the length of the template sequence
    * @return a list of mutations
    * @throws IOException
    */
-  private Mutation[] generatePositions(final SequencesReader input, final double rate, final byte[] genomeSeq, Ploidy ploidy) throws IOException {
-    final int length = input.readCurrent(genomeSeq);
+  private Mutation[] generatePositions(final double rate, Ploidy ploidy, final byte[] genomeSeq, int length) throws IOException {
     final int mutationNo = (int) (rate * length);
     final Mutation[] locs = new Mutation[mutationNo];
     int i = 0;
@@ -256,7 +254,7 @@ public class GenomeMutator {
     // as successes for an extended period
     while (i < mutationNo && trying < INVALID_THRESHOLD) {
       final int pos = mRandom.nextInt(length);
-      final Mutation mut = new Mutation(mRandom, pos, mMutationGenerator, input.currentLength(), genomeSeq[pos], ploidy);
+      final Mutation mut = new Mutation(mRandom, pos, mMutationGenerator, length, genomeSeq[pos], ploidy);
       if (validPos(locs, i, mut, genomeSeq)) {
         locs[i] = mut;
         if (ploidy == Ploidy.HAPLOID) {

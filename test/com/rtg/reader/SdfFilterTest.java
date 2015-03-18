@@ -113,16 +113,7 @@ public class SdfFilterTest extends TestCase {
       final SequencesWriter sw = new SequencesWriter(ds, inDir, 20, PrereadType.UNKNOWN, false);
       sw.processSequences();
       SdfFilter.mainInit(new String[] {"-i", inDir.getPath(), "-o", outDir.getPath(), "-n", "1"}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream());
-      try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(outDir)) {
-        for (int j = 0; j < expectedSequences.length; j++) {
-          assertTrue(dsr.nextSequence());
-          assertEquals("j: " + j, expectedSequenceNames[j], dsr.currentName());
-          final byte[] b = new byte[(int) dsr.maxLength()];
-          final int length = dsr.readCurrent(b);
-          assertTrue("j: " + j, Arrays.equals(expectedSequences[j], Arrays.copyOf(b, length)));
-        }
-        assertFalse(dsr.nextSequence());
-      }
+      checkExpected(outDir, expectedSequences, expectedSequenceNames);
     } finally {
       assertTrue("Unable to delete " + tempDir + ": ", FileHelper.deleteAll(tempDir));
     }
@@ -156,17 +147,8 @@ public class SdfFilterTest extends TestCase {
       final FastaSequenceDataSource ds = new FastaSequenceDataSource(al, new DNAFastaSymbolTable());
       final SequencesWriter sw = new SequencesWriter(ds, inDir, 20, PrereadType.UNKNOWN, false);
       sw.processSequences();
-      SdfFilter.mainInit(new String[] {"-i", inDir.getPath(), "-o", outDir.getPath()}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream());
-      try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(outDir)) {
-        for (int j = 0; j < expectedSequences.length; j++) {
-          assertTrue(dsr.nextSequence());
-          assertEquals("j: " + j, expectedSequenceNames[j], dsr.currentName());
-          final byte[] b = new byte[(int) dsr.maxLength()];
-          final int length = dsr.readCurrent(b);
-          assertTrue("j: " + j, Arrays.equals(expectedSequences[j], Arrays.copyOf(b, length)));
-        }
-        assertFalse(dsr.nextSequence());
-      }
+      SdfFilter.mainInit(new String[]{"-i", inDir.getPath(), "-o", outDir.getPath()}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream());
+      checkExpected(outDir, expectedSequences, expectedSequenceNames);
     } finally {
       assertTrue("Unable to delete " + tempDir + ": ", FileHelper.deleteAll(tempDir));
     }
@@ -218,19 +200,19 @@ public class SdfFilterTest extends TestCase {
       sw = new SequencesWriter(ds, rightInDir, 20, PrereadType.UNKNOWN, false);
       sw.processSequences();
       SdfFilter.mainInit(new String[] {"-l", leftInDir.getPath(), "-r", rightInDir.getPath(), "-o", outDir.getPath(), "-n", "1"}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream());
-
-      try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(new File(outDir, "left"))) {
-        for (int j = 0; j < expectedSequences.length; j++) {
-          assertTrue(dsr.nextSequence());
-          assertEquals("j: " + j, expectedSequenceNames[j], dsr.currentName());
-          final byte[] b = new byte[(int) dsr.maxLength()];
-          final int length = dsr.readCurrent(b);
-          assertTrue("j: " + j, Arrays.equals(expectedSequences[j], Arrays.copyOf(b, length)));
-        }
-        assertFalse(dsr.nextSequence());
-      }
+      checkExpected(new File(outDir, "left"), expectedSequences, expectedSequenceNames);
     } finally {
       assertTrue("Unable to delete " + dir + ": ", FileHelper.deleteAll(dir));
+    }
+  }
+
+  private void checkExpected(File outDir, byte[][] expectedSequences, String[] expectedSequenceNames) throws IOException {
+    try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(outDir)) {
+      assertEquals(expectedSequences.length, dsr.numberSequences());
+      for (int j = 0; j < expectedSequences.length; j++) {
+        assertEquals("j: " + j, expectedSequenceNames[j], dsr.name(j));
+        assertTrue("j: " + j, Arrays.equals(expectedSequences[j], dsr.read(j)));
+      }
     }
   }
 
@@ -295,16 +277,7 @@ public class SdfFilterTest extends TestCase {
       sw.processSequences();
       SdfFilter.mainInit(new String[] {"-a", "-l", leftInDir.getPath(), "-r", rightInDir.getPath(), "-o", outDir.getPath(), "-n", "1"}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream());
 
-      try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(new File(outDir, "left"))) {
-        for (int j = 0; j < expectedSequences.length; j++) {
-          assertTrue(dsr.nextSequence());
-          assertEquals("j: " + j, expectedSequenceNames[j], dsr.currentName());
-          final byte[] b = new byte[(int) dsr.maxLength()];
-          final int length = dsr.readCurrent(b);
-          assertEquals("j: " + j, Arrays.toString(expectedSequences[j]), Arrays.toString(Arrays.copyOf(b, length)));
-        }
-        assertFalse(dsr.nextSequence());
-      }
+      checkExpected(new File(outDir, "left"), expectedSequences, expectedSequenceNames);
     } finally {
       assertTrue("Unable to delete " + dir + ": ", FileHelper.deleteAll(dir));
     }
@@ -358,56 +331,24 @@ public class SdfFilterTest extends TestCase {
       sw.processSequences();
       SdfFilter.mainInit(new String[] {"-a", "-l", leftInDir.getPath(), "-r", rightInDir.getPath(), "-o", outDir.getPath(), "-n", "1"}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream());
 
-      SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(new File(outDir, "left"));
-      try {
-        for (int j = 0; j < expectedSequencesWithN.length; j++) {
-          assertTrue(dsr.nextSequence());
-          assertEquals("j: " + j, expectedSequenceNamesLeftWithN[j], dsr.currentName());
-          final byte[] b = new byte[(int) dsr.maxLength()];
-          final int length = dsr.readCurrent(b);
-          assertEquals("j: " + j, Arrays.toString(expectedSequencesWithN[j]), Arrays.toString(Arrays.copyOf(b, length)));
-        }
-        assertFalse(dsr.nextSequence());
-      } finally {
-        dsr.close();
-      }
-      dsr = SequencesReaderFactory.createDefaultSequencesReader(new File(outDir, "right"));
-      try {
-        for (int j = 0; j < expectedSequencesWithoutN.length; j++) {
-          assertTrue(dsr.nextSequence());
-          assertEquals("j: " + j, expectedSequenceNamesLeftWithN[j], dsr.currentName());
-          final byte[] b = new byte[(int) dsr.maxLength()];
-          final int length = dsr.readCurrent(b);
-          assertEquals("j: " + j, Arrays.toString(expectedSequencesWithoutN[j]), Arrays.toString(Arrays.copyOf(b, length)));
-        }
-        assertFalse(dsr.nextSequence());
-      } finally {
-        dsr.close();
-      }
+      checkExpected(new File(outDir, "left"), expectedSequencesWithN, expectedSequenceNamesLeftWithN);
+      checkExpected(new File(outDir, "right"), expectedSequencesWithoutN, expectedSequenceNamesLeftWithN);
 
       assertTrue(FileHelper.deleteAll(outDir));
 
       SdfFilter.mainInit(new String[] {"-a", "-l", leftInDir.getPath(), "-r", rightInDir.getPath(), "-o", outDir.getPath()}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream());
 
-      dsr = SequencesReaderFactory.createDefaultSequencesReader(new File(outDir, "left"));
+      SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(new File(outDir, "left"));
       try {
-        assertTrue(dsr.nextSequence());
-        assertEquals("test", dsr.currentName());
-        final byte[] b = new byte[(int) dsr.maxLength()];
-        final int length = dsr.readCurrent(b);
-        assertEquals(Arrays.toString(makeDNA(withN)), Arrays.toString(Arrays.copyOf(b, length)));
-        assertFalse(dsr.nextSequence());
+        assertEquals("test", dsr.name(0));
+        assertEquals(Arrays.toString(makeDNA(withN)), Arrays.toString(dsr.read(0)));
       } finally {
         dsr.close();
       }
       dsr = SequencesReaderFactory.createDefaultSequencesReader(new File(outDir, "right"));
       try {
-        assertTrue(dsr.nextSequence());
-        assertEquals("test", dsr.currentName());
-        final byte[] b = new byte[(int) dsr.maxLength()];
-        final int length = dsr.readCurrent(b);
-        assertEquals(Arrays.toString(makeDNA(withoutN)), Arrays.toString(Arrays.copyOf(b, length)));
-        assertFalse(dsr.nextSequence());
+        assertEquals("test", dsr.name(0));
+        assertEquals(Arrays.toString(makeDNA(withoutN)), Arrays.toString(dsr.read(0)));
       } finally {
         dsr.close();
       }
@@ -429,32 +370,8 @@ public class SdfFilterTest extends TestCase {
       sw.processSequences();
       SdfFilter.mainInit(new String[] {"-a", "-l", leftInDir.getPath(), "-r", rightInDir.getPath(), "-o", outDir.getPath(), "-n", "1"}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream());
 
-      dsr = SequencesReaderFactory.createDefaultSequencesReader(new File(outDir, "left"));
-      try {
-        for (int j = 0; j < expectedSequencesWithoutN.length; j++) {
-          assertTrue(dsr.nextSequence());
-          assertEquals("j: " + j, expectedSequenceNamesRightWithN[j], dsr.currentName());
-          final byte[] b = new byte[(int) dsr.maxLength()];
-          final int length = dsr.readCurrent(b);
-          assertEquals("j: " + j, Arrays.toString(expectedSequencesWithoutN[j]), Arrays.toString(Arrays.copyOf(b, length)));
-        }
-        assertFalse(dsr.nextSequence());
-      } finally {
-        dsr.close();
-      }
-      dsr = SequencesReaderFactory.createDefaultSequencesReader(new File(outDir, "right"));
-      try {
-        for (int j = 0; j < expectedSequencesWithN.length; j++) {
-          assertTrue(dsr.nextSequence());
-          assertEquals("j: " + j, expectedSequenceNamesRightWithN[j], dsr.currentName());
-          final byte[] b = new byte[(int) dsr.maxLength()];
-          final int length = dsr.readCurrent(b);
-          assertEquals("j: " + j, Arrays.toString(expectedSequencesWithN[j]), Arrays.toString(Arrays.copyOf(b, length)));
-        }
-        assertFalse(dsr.nextSequence());
-      } finally {
-        dsr.close();
-      }
+      checkExpected(new File(outDir, "left"), expectedSequencesWithoutN, expectedSequenceNamesRightWithN);
+      checkExpected(new File(outDir, "right"), expectedSequencesWithN, expectedSequenceNamesRightWithN);
     } finally {
       assertTrue("Unable to delete " + dir + ": ", FileHelper.deleteAll(dir));
     }

@@ -183,8 +183,7 @@ public abstract class AbstractSamResultsFilter {
                   if (!name.equals(lastName)) {
                     lastName = name;
                     final int seqId = rec.getReferenceId();
-                    template.seek(seqId);
-                    final int length = template.readCurrent(templateBuffer);
+                    final int length = template.read(seqId, templateBuffer);
                     cal.setTemplate(templateBuffer, length);
                   }
                   cal.processRead(filteredRecord);

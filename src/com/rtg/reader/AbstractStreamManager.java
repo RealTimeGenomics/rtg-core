@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.io.BufferedRandomAccessFile;
 import com.rtg.util.io.ByteArrayIOUtils;
 import com.rtg.util.io.IOUtils;
@@ -26,6 +27,7 @@ import com.rtg.util.io.SeekableStream;
  * Base implementation of stream manager for reading sequences should only be used by DefaultSequencesReader
  *
  */
+@TestClass("com.rtg.reader.DefaultSequencesReaderTest")
 abstract class AbstractStreamManager {
 
   int readInt(InputStream is) throws IOException {

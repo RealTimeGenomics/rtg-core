@@ -89,8 +89,9 @@ public class UnfilteredTempFileWriter extends AbstractTempFileWriter {
    * Checks whether an unmated hit passes alignment score thresholds
    * @param hit an {@link UnfilteredHitInfo} containing the hit coordinates
    * @return true if result score is acceptable
+   * @throws IOException if an IO error occurs
    */
-  public boolean checkUnmatedScore(UnfilteredHitInfo hit) {
+  public boolean checkUnmatedScore(UnfilteredHitInfo hit) throws IOException {
     final int unmatedMaxScoreHit = getMaxScoreValue(mUnmatedMaxMismatches, hit.readId(), hit.first());
     if (hit.score() != -1) {
       return hit.score() <= unmatedMaxScoreHit;
@@ -112,7 +113,7 @@ public class UnfilteredTempFileWriter extends AbstractTempFileWriter {
     return true;
   }
 
-  private int getMaxScoreValue(IntegerOrPercentage maxIntOrPercent, long readId, boolean first) {
+  private int getMaxScoreValue(IntegerOrPercentage maxIntOrPercent, long readId, boolean first) throws IOException {
     return maxIntOrPercent.getValue(first ? mFirstReader.length(readId) : mSecondReader.length(readId)) * mSubstitutionPenalty;
   }
 
@@ -121,8 +122,9 @@ public class UnfilteredTempFileWriter extends AbstractTempFileWriter {
    * @param hit an {@link UnfilteredHitInfo} containing the hit coordinates
    * @param mate another {@link UnfilteredHitInfo} containing the hit coordinates for the mate
    * @return true if the pair was considered a good pairing
+   * @throws IOException if an IO error occurs
    */
-  public boolean checkScores(UnfilteredHitInfo hit, UnfilteredHitInfo mate) {
+  public boolean checkScores(UnfilteredHitInfo hit, UnfilteredHitInfo mate) throws IOException {
     final int scoreHit;
     final int scoreMate;
     byte[] readHit = null;

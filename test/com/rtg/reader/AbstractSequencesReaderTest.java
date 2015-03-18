@@ -20,11 +20,13 @@ import java.util.Arrays;
 
 import com.rtg.mode.DNA;
 import com.rtg.mode.DNAFastaSymbolTable;
+import com.rtg.mode.DnaUtils;
 import com.rtg.mode.Protein;
 import com.rtg.mode.ProteinFastaSymbolTable;
 import com.rtg.reader.FastqSequenceDataSource.FastQScoreType;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.integrity.Exam;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
@@ -37,23 +39,15 @@ import junit.framework.TestSuite;
  */
 public abstract class AbstractSequencesReaderTest extends TestCase {
 
-  protected abstract SequencesReader createSequencesReader(final File dir) throws IOException;
-  protected abstract boolean canReadTwice();
-
-  public AbstractSequencesReaderTest(final String name) {
-    super(name);
+  protected SequencesReader createSequencesReader(final File dir) throws IOException {
+    return createSequencesReader(dir, LongRange.NONE);
   }
+
+  protected abstract SequencesReader createSequencesReader(final File dir, LongRange region) throws IOException;
+
 
   public static Test suite() {
     return new TestSuite(AbstractSequencesReaderTest.class);
-  }
-
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
   }
 
   protected File mDir;
@@ -74,6 +68,47 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
     return new ByteArrayInputStream(data.getBytes());
   }
 
+  public void testRegions() throws Exception {
+    final ArrayList<InputStream> al = new ArrayList<>();
+    al.add(createStream(">seq1\na\n>seq2\nta\n>seq3\ntag\n>seq4\ntagt\n>seq5\nacctt\n>seq6\natatat"));
+    final FastaSequenceDataSource ds = new FastaSequenceDataSource(al, new DNAFastaSymbolTable());
+    final SequencesWriter sw = new SequencesWriter(ds, mDir, 30, PrereadType.UNKNOWN, false);
+    sw.processSequences();
+    final LongRange region = new LongRange(3, 5);
+    try (SequencesReader dsr = createSequencesReader(mDir, region)) {
+      final SequencesIterator it = dsr.iterator();
+      assertEquals(2, dsr.numberSequences());
+
+      // First sequence should be seq4
+      assertTrue(it.nextSequence());
+      assertEquals("seq4", it.currentName());
+      assertEquals(4, it.currentLength());
+      byte[] data = new byte[it.currentLength()];
+      assertEquals(4, it.readCurrent(data));
+      assertEquals("TAGT", DnaUtils.bytesToSequenceIncCG(data));
+
+      assertEquals(0, it.currentSequenceId()); // Or should it be 3 or 0, as the first sequence in the reader
+
+      // Seek to seq5
+      it.seek(1);                              // Or should this be seek 4??
+      assertEquals("seq5", it.currentName());
+      assertEquals(5, it.currentLength());
+      data = new byte[it.currentLength()];
+      assertEquals(5, it.readCurrent(data));
+      assertEquals("ACCTT", DnaUtils.bytesToSequenceIncCG(data));
+
+      // Direct access to seq4
+      int seqId = 0;                            // Or should this be 3
+      assertEquals("seq4", dsr.name(seqId));
+      assertEquals(4, dsr.length(seqId));
+      data = new byte[dsr.length(seqId)];
+      assertEquals(4, dsr.read(seqId, data));
+      assertEquals("TAGT", DnaUtils.bytesToSequenceIncCG(data));
+
+    }
+  }
+
+
   public void testLabel() throws Exception {
     final ArrayList<InputStream> al = new ArrayList<>();
     al.add(createStream(">test\nacgt\n>bob\ntagt\n>hobos r us\naccc"));
@@ -82,28 +117,29 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
     final SequencesWriter sw = new SequencesWriter(ds, mDir, 30, PrereadType.UNKNOWN, false);
     sw.processSequences();
     try (SequencesReader dsr = createSequencesReader(mDir)) {
+      final SequencesIterator it = dsr.iterator();
       assertTrue(Exam.integrity(dsr));
 
       assertEquals(mDir, dsr.path());
       try {
-        dsr.currentName();
+        it.currentName();
         fail();
       } catch (final IllegalStateException e) {
         assertEquals("Last call to nextSequence() or seek() failed and left current information unavailable.", e.getMessage());
       }
-      assertTrue(dsr.nextSequence());
-      assertEquals("test", dsr.currentName());
-      assertEquals("test", dsr.currentName());
-      assertTrue(dsr.nextSequence());
-      assertEquals("bob", dsr.currentName());
-      assertTrue(dsr.nextSequence());
-      assertEquals("hobos", dsr.currentName());
-      dsr.seek(1);
-      assertEquals("bob", dsr.currentName());
-      dsr.seek(0);
-      assertEquals("test", dsr.currentName());
-      dsr.seek(2);
-      assertEquals("hobos", dsr.currentName());
+      assertTrue(it.nextSequence());
+      assertEquals("test", it.currentName());
+      assertEquals("test", it.currentName());
+      assertTrue(it.nextSequence());
+      assertEquals("bob", it.currentName());
+      assertTrue(it.nextSequence());
+      assertEquals("hobos", it.currentName());
+      it.seek(1);
+      assertEquals("bob", it.currentName());
+      it.seek(0);
+      assertEquals("test", it.currentName());
+      it.seek(2);
+      assertEquals("hobos", it.currentName());
     }
   }
 
@@ -200,37 +236,38 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
 
 
     try (SequencesReader dsr = createSequencesReader(mDir)) {
+      final SequencesIterator it = dsr.iterator();
       assertTrue(Exam.integrity(dsr));
 
       assertEquals(mDir, dsr.path());
       try {
-        dsr.currentName();
+        it.currentName();
         fail();
       } catch (final IllegalStateException e) {
         assertEquals("Last call to nextSequence() or seek() failed and left current information unavailable.", e.getMessage());
       }
-      assertTrue(dsr.nextSequence());
-      assertEquals(0, dsr.currentSequenceId());
-      assertEquals("test", dsr.currentName());
-      assertEquals(32, dsr.currentLength());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 2, 4, 4, 1, 3, 3, 3, 2, 4, 2, 1, 2, 4, 3, 3, 4, 2, 1, 4, 3, 2, 1});
-      assertTrue(dsr.nextSequence());
-      assertEquals(1, dsr.currentSequenceId());
-      assertEquals("bob", dsr.currentName());
-      assertEquals(17, dsr.currentLength());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{4, 1, 3, 4, 4, 2, 1, 3, 2, 1, 4, 2, 3, 1, 4, 2, 1});
-      assertTrue(Exam.integrity(dsr));
-      assertTrue(dsr.nextSequence());
-      assertEquals(2, dsr.currentSequenceId());
-      assertEquals("hobos", dsr.currentName());
-      assertEquals(20, dsr.currentLength());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 1, 1, 1, 2, 2, 2, 1, 1});
-      dsr.seek(1);
-      assertEquals(1, dsr.currentSequenceId());
-      assertEquals("bob", dsr.currentName());
-      assertEquals(17, dsr.currentLength());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{4, 1, 3, 4, 4, 2, 1, 3, 2, 1, 4, 2, 3, 1, 4, 2, 1});
-      dsr.reset();
+      assertTrue(it.nextSequence());
+      assertEquals(0, it.currentSequenceId());
+      assertEquals("test", it.currentName());
+      assertEquals(32, it.currentLength());
+      SequencesWriterTest.checkEquals(it, new byte[]{1, 2, 3, 4, 3, 4, 3, 4, 3, 4, 2, 4, 4, 1, 3, 3, 3, 2, 4, 2, 1, 2, 4, 3, 3, 4, 2, 1, 4, 3, 2, 1});
+      assertTrue(it.nextSequence());
+      assertEquals(1, it.currentSequenceId());
+      assertEquals("bob", it.currentName());
+      assertEquals(17, it.currentLength());
+      SequencesWriterTest.checkEquals(it, new byte[]{4, 1, 3, 4, 4, 2, 1, 3, 2, 1, 4, 2, 3, 1, 4, 2, 1});
+      assertTrue(Exam.integrity(it));
+      assertTrue(it.nextSequence());
+      assertEquals(2, it.currentSequenceId());
+      assertEquals("hobos", it.currentName());
+      assertEquals(20, it.currentLength());
+      SequencesWriterTest.checkEquals(it, new byte[]{1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 1, 2, 1, 1, 1, 2, 2, 2, 1, 1});
+      it.seek(1);
+      assertEquals(1, it.currentSequenceId());
+      assertEquals("bob", it.currentName());
+      assertEquals(17, it.currentLength());
+      SequencesWriterTest.checkEquals(it, new byte[]{4, 1, 3, 4, 4, 2, 1, 3, 2, 1, 4, 2, 3, 1, 4, 2, 1});
+      it.reset();
       final byte[] seqs = new byte[32];
       final int amount = dsr.read(0, seqs);
       DNA[] expected = {DNA.A, DNA.C, DNA.G, DNA.T, DNA.G, DNA.T, DNA.G, DNA.T,
@@ -242,25 +279,25 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
         assertEquals(expected[i].ordinal(), seqs[i]);
       }
       assertTrue(Exam.integrity(dsr));
-      dsr.seek(0);
+      it.seek(0);
       expected = new DNA[]{DNA.A, DNA.C, DNA.G, DNA.T, DNA.G, DNA.T, DNA.G, DNA.T,
         DNA.G, DNA.T, DNA.C, DNA.T, DNA.T, DNA.A, DNA.G, DNA.G, DNA.G, DNA.C, DNA.T,
         DNA.C, DNA.A, DNA.C, DNA.T, DNA.G, DNA.G, DNA.T, DNA.C, DNA.A, DNA.T, DNA.G,
         DNA.C, DNA.A};
       byte[] bytes = new byte[expected.length];
-      dsr.readCurrent(bytes);
+      it.readCurrent(bytes);
       DNA[] dnaValues = DNA.values();
       for (int i = 0; i < bytes.length; i++) {
         assertEquals(expected[i], dnaValues[bytes[i]]);
       }
 
-      dsr.seek(0);
+      it.seek(0);
       expected = new DNA[]{DNA.G, DNA.T, DNA.G, DNA.T,
         DNA.G, DNA.T, DNA.C, DNA.T, DNA.T, DNA.A, DNA.G, DNA.G, DNA.G, DNA.C, DNA.T,
         DNA.C, DNA.A, DNA.C, DNA.T, DNA.G, DNA.G, DNA.T, DNA.C, DNA.A, DNA.T, DNA.G,
         DNA.C, DNA.A};
       bytes = new byte[expected.length];
-      dsr.readCurrent(bytes, 4, expected.length);
+      it.readCurrent(bytes, 4, expected.length);
       dnaValues = DNA.values();
       for (int i = 0; i < bytes.length; i++) {
         assertEquals(expected[i], dnaValues[bytes[i]]);
@@ -280,14 +317,15 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
 
     //testing the read (stolen from SequencesWriterTest)
     try (SequencesReader dsr = createSequencesReader(mDir)) {
+      final SequencesIterator it = dsr.iterator();
       assertEquals(mDir, dsr.path());
-      assertTrue(dsr.nextSequence());
-      assertEquals(0, dsr.currentSequenceId());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{1, 2, 4, 3, 4, 0, 3, 0});
-      assertTrue(dsr.nextSequence());
-      assertEquals(1, dsr.currentSequenceId());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{1, 4, 3, 2});
-      assertFalse(dsr.nextSequence());
+      assertTrue(it.nextSequence());
+      assertEquals(0, it.currentSequenceId());
+      SequencesWriterTest.checkEquals(it, new byte[]{1, 2, 4, 3, 4, 0, 3, 0});
+      assertTrue(it.nextSequence());
+      assertEquals(1, it.currentSequenceId());
+      SequencesWriterTest.checkEquals(it, new byte[]{1, 4, 3, 2});
+      assertFalse(it.nextSequence());
     }
   }
 
@@ -306,30 +344,23 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
     sw.processSequences();
 
     try (SequencesReader dsr = createSequencesReader(mDir)) {
-      assertTrue(dsr.nextSequence());
-      assertEquals("testQuality", dsr.currentName());
-      final byte[] qual = new byte[dsr.currentLength()];
-      assertEquals(qual.length, dsr.readCurrentQuality(qual));
+      final SequencesIterator it = dsr.iterator();
+      assertTrue(it.nextSequence());
+      assertEquals("testQuality", it.currentName());
+      final byte[] qual = new byte[it.currentLength()];
+      assertEquals(qual.length, it.readCurrentQuality(qual));
       final byte[] exp = getExpectedQuality();
 
       assertTrue(Arrays.equals(exp, qual));
 
-      dsr.reset();
+      it.reset();
       assertEquals(qual.length, dsr.readQuality(0, qual));
       assertTrue(Arrays.equals(exp, qual));
 
-      if (!canReadTwice()) {
-        try {
-          dsr.readCurrentQuality(qual);
-          fail();
-        } catch (final IllegalStateException e) {
-          // correct
-        }
-      }
-      dsr.seek(0);
-      assertFalse(dsr.nextSequence());
+      it.seek(0);
+      assertFalse(it.nextSequence());
       try {
-        dsr.readCurrentQuality(qual);
+        it.readCurrentQuality(qual);
         fail();
       } catch (final IllegalStateException e) {
         // correct
@@ -359,11 +390,12 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
     sw.processSequences();
 
     try (SequencesReader dsr = createSequencesReader(mDir)) {
-      assertTrue(dsr.nextSequence());
+      final SequencesIterator it = dsr.iterator();
+      assertTrue(it.nextSequence());
       final byte[] result = new byte[60];
-      assertEquals(60, dsr.currentLength());
-      assertEquals("TotallyUniqueName", dsr.currentName());
-      assertEquals(60, dsr.readCurrentQuality(result));
+      assertEquals(60, it.currentLength());
+      assertEquals("TotallyUniqueName", it.currentName());
+      assertEquals(60, it.readCurrentQuality(result));
       assertTrue(Arrays.equals(expQualBytes, result));
     }
   }
@@ -444,26 +476,19 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
     final SequencesWriter sw1 = new SequencesWriter(ds1, mDir, 20, PrereadType.UNKNOWN, false);
     sw1.processSequences();
 
-    try (SequencesReader dsr2 = createSequencesReader(mDir)) {
-      assertEquals(dsr2.totalLength(), 12);
+    try (SequencesReader dsr = createSequencesReader(mDir)) {
+      final SequencesIterator it = dsr.iterator();
+      assertEquals(dsr.totalLength(), 12);
 
-      dsr2.nextSequence();
-      assertEquals(dsr2.totalLength(), dsr2.currentLength());
-      assertEquals(dsr2.totalLength(), dsr2.maxLength());
-      assertEquals(dsr2.totalLength(), dsr2.minLength());
-      final byte[] bytes = new byte[(int) dsr2.maxLength()];
-      dsr2.readCurrent(bytes);
-      if (!canReadTwice()) {
-        try {
-          dsr2.readCurrent(bytes);
-          fail("Should throw exception");
-        } catch (final IllegalStateException e) {
-          //
-        }
-      }
-      assertTrue(!dsr2.nextSequence());
+      it.nextSequence();
+      assertEquals(dsr.totalLength(), it.currentLength());
+      assertEquals(dsr.totalLength(), dsr.maxLength());
+      assertEquals(dsr.totalLength(), dsr.minLength());
+      final byte[] bytes = new byte[(int) dsr.maxLength()];
+      it.readCurrent(bytes);
+      assertTrue(!it.nextSequence());
       try {
-        dsr2.readCurrent(bytes);
+        it.readCurrent(bytes);
         fail("Should throw exception.");
       } catch (final IllegalStateException e) {
         //
@@ -491,25 +516,12 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
     sw2.processSequences();
 
     try (SequencesReader dsr1 = createSequencesReader(dir1)) {
-      final SequencesReader dsr12 = createSequencesReader(dir1);
-      try {
-        final SequencesReader dsr2 = createSequencesReader(dir2);
-        try {
-          final SequencesReader dsr22 = createSequencesReader(dir2);
-          try {
-            assertTrue(!dsr1.equals(null));
-            assertTrue(!dsr1.equals(dsr2));
-            assertTrue(!dsr2.equals(dsr1));
-            assertTrue(dsr2.equals(dsr22));
-            assertEquals(dsr2.hashCode(), dsr22.hashCode());
-          } finally {
-            dsr22.close();
-          }
-        } finally {
-          dsr2.close();
-        }
-      } finally {
-        dsr12.close();
+      try (SequencesReader dsr2 = createSequencesReader(dir2); SequencesReader dsr22 = createSequencesReader(dir2)) {
+        assertTrue(!dsr1.equals(null));
+        assertTrue(!dsr1.equals(dsr2));
+        assertTrue(!dsr2.equals(dsr1));
+        assertTrue(dsr2.equals(dsr22));
+        assertEquals(dsr2.hashCode(), dsr22.hashCode());
       }
     } finally {
       assertTrue(FileHelper.deleteAll(dir1));
@@ -529,19 +541,21 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
     //testing the read (stolen from SequencesWriterTest)
     try (SequencesReader dsr = createSequencesReader(mDir)) {
       assertEquals(mDir, dsr.path());
+      final SequencesIterator it = dsr.iterator();
+
       assertEquals(12, dsr.totalLength());
-      assertTrue(dsr.nextSequence());
-      assertEquals(0, dsr.currentSequenceId());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{1, 2, 4, 3, 4, 0, 3, 0});
-      assertTrue(dsr.nextSequence());
-      assertEquals(1, dsr.currentSequenceId());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{1, 4, 3, 2});
+      assertTrue(it.nextSequence());
+      assertEquals(0, it.currentSequenceId());
+      SequencesWriterTest.checkEquals(it, new byte[]{1, 2, 4, 3, 4, 0, 3, 0});
+      assertTrue(it.nextSequence());
+      assertEquals(1, it.currentSequenceId());
+      SequencesWriterTest.checkEquals(it, new byte[]{1, 4, 3, 2});
       assertEquals(2, dsr.residueCounts()[DNA.A.ordinal()]);
       assertEquals(2, dsr.residueCounts()[DNA.C.ordinal()]);
       assertEquals(3, dsr.residueCounts()[DNA.G.ordinal()]);
       assertEquals(3, dsr.residueCounts()[DNA.T.ordinal()]);
       assertEquals(2, dsr.residueCounts()[DNA.N.ordinal()]);
-      assertFalse(dsr.nextSequence());
+      assertFalse(it.nextSequence());
     }
   }
 
@@ -558,18 +572,19 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
     //testing the read (stolen from SequencesWriterTest)
     try (SequencesReader dsr = createSequencesReader(mDir)) {
       assertEquals(mDir, dsr.path());
-      assertTrue(dsr.nextSequence());
-      assertEquals(0, dsr.currentSequenceId());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{0, 0, 0, 0, 0, 0, 3, 0});
-      assertTrue(dsr.nextSequence());
-      assertEquals(1, dsr.currentSequenceId());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{1, 4, 3, 2});
+      final SequencesIterator it = dsr.iterator();
+      assertTrue(it.nextSequence());
+      assertEquals(0, it.currentSequenceId());
+      SequencesWriterTest.checkEquals(it, new byte[]{0, 0, 0, 0, 0, 0, 3, 0});
+      assertTrue(it.nextSequence());
+      assertEquals(1, it.currentSequenceId());
+      SequencesWriterTest.checkEquals(it, new byte[]{1, 4, 3, 2});
       assertEquals(1, dsr.residueCounts()[DNA.A.ordinal()]);
       assertEquals(1, dsr.residueCounts()[DNA.C.ordinal()]);
       assertEquals(2, dsr.residueCounts()[DNA.G.ordinal()]);
       assertEquals(1, dsr.residueCounts()[DNA.T.ordinal()]);
       assertEquals(7, dsr.residueCounts()[DNA.N.ordinal()]);
-      assertFalse(dsr.nextSequence());
+      assertFalse(it.nextSequence());
     }
   }
 
@@ -585,17 +600,18 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
     //testing the read (stolen from SequencesWriterTest)
     try (SequencesReader dsr = createSequencesReader(mDir)) {
       assertEquals(mDir, dsr.path());
-      assertTrue(dsr.nextSequence());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{2, 10, 18, 9, 18, 0, 9, 0});
-      assertTrue(dsr.nextSequence());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{2, 18, 9, 6});
+      final SequencesIterator it = dsr.iterator();
+      assertTrue(it.nextSequence());
+      SequencesWriterTest.checkEquals(it, new byte[]{2, 10, 18, 9, 18, 0, 9, 0});
+      assertTrue(it.nextSequence());
+      SequencesWriterTest.checkEquals(it, new byte[]{2, 18, 9, 6});
       assertEquals(2, dsr.residueCounts()[Protein.A.ordinal()]);
       assertEquals(1, dsr.residueCounts()[Protein.C.ordinal()]);
       assertEquals(1, dsr.residueCounts()[Protein.H.ordinal()]);
       assertEquals(3, dsr.residueCounts()[Protein.T.ordinal()]);
       assertEquals(3, dsr.residueCounts()[Protein.G.ordinal()]);
       assertEquals(2, dsr.residueCounts()[Protein.X.ordinal()]);
-      assertFalse(dsr.nextSequence());
+      assertFalse(it.nextSequence());
     }
   }
 
@@ -611,17 +627,18 @@ public abstract class AbstractSequencesReaderTest extends TestCase {
 
     try (SequencesReader dsr = createSequencesReader(mDir)) {
       assertEquals(mDir, dsr.path());
-      assertTrue(dsr.nextSequence());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{0, 10, 0, 0, 0, 0, 9, 0});
-      assertTrue(dsr.nextSequence());
-      SequencesWriterTest.checkEquals(dsr, new byte[]{2, 18, 9, 6});
+      final SequencesIterator it = dsr.iterator();
+      assertTrue(it.nextSequence());
+      SequencesWriterTest.checkEquals(it, new byte[]{0, 10, 0, 0, 0, 0, 9, 0});
+      assertTrue(it.nextSequence());
+      SequencesWriterTest.checkEquals(it, new byte[]{2, 18, 9, 6});
       assertEquals(1, dsr.residueCounts()[Protein.A.ordinal()]);
       assertEquals(1, dsr.residueCounts()[Protein.C.ordinal()]);
       assertEquals(1, dsr.residueCounts()[Protein.H.ordinal()]);
       assertEquals(1, dsr.residueCounts()[Protein.T.ordinal()]);
       assertEquals(2, dsr.residueCounts()[Protein.G.ordinal()]);
       assertEquals(6, dsr.residueCounts()[Protein.X.ordinal()]);
-      assertFalse(dsr.nextSequence());
+      assertFalse(it.nextSequence());
     }
   }
 }

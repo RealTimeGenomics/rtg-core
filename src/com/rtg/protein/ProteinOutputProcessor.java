@@ -290,8 +290,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
     byte[] readProtein = mEnableReadCache ? mSharedStatusCollector.getReadProtein(r) : null;
     if (readProtein == null) {
       // get read, convert to protein, put it in the cache
-      mRead.seek(readId);
-      final int rlen = mRead.readCurrent(mReadWorkspace);
+      final int rlen = mRead.read(readId, mReadWorkspace);
       plen = (rlen - Math.abs(genomeFrame) + 1) / 3;
       readProtein = mEnableReadCache ? new byte[plen] : mProteinWorkspace;
       for (int j = 0, i = 0; j < plen; j++, i += 3) {
@@ -306,7 +305,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
     }
 
 
-    final int chunkToPosition = ProteinReadIndexer.chunkToPosition(chunkId, mRead.currentLength() / 3, mParams.mapXMetaChunkSize(), mParams.mapXMetaChunkOverlap());
+    final int chunkToPosition = ProteinReadIndexer.chunkToPosition(chunkId, mRead.length(readId) / 3, mParams.mapXMetaChunkSize(), mParams.mapXMetaChunkOverlap());
     final int chunkReadStart;
     final int start;
     if (frames.isForward()) {
@@ -407,9 +406,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
    */
   protected void nextTemplateId(long templateId) throws IOException {
     mCurrentTemplateId = templateId;
-    mTemplate.seek(templateId);
-    mCurrentTemplate = new byte[mTemplate.currentLength()];
-    mTemplate.readCurrent(mCurrentTemplate);
+    mCurrentTemplate = mTemplate.read(templateId);
   }
 
   void writeResult(final ProteinAlignmentResult res) throws IOException {

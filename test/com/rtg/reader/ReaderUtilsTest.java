@@ -94,12 +94,6 @@ public class ReaderUtilsTest extends TestCase {
     checkNameMap(reader);
   }
 
-  public void testSequencNameMapAfterStart() throws IOException {
-    final SequencesReader reader = new MockSequencesReader(SequenceType.DNA, 10, 10);
-    reader.nextSequence();
-    checkNameMap(reader);
-  }
-
   private void checkNameMap(SequencesReader reader) throws IOException {
     final Map<String, Long> names = ReaderUtils.getSequenceNameMap(reader);
     assertEquals(10, names.size());

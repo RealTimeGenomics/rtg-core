@@ -77,7 +77,7 @@ public class SearchIncrementalHashLoop extends IncrementalHashLoop {
   }
 
   @Override
-  public void nextSeq(final int seqId, final int length) {
+  public void nextSeq(final int seqId, final int length) throws IOException {
     mOutput.nextSequence(seqId, length);
     if (mOutputReverse != null) {
       mOutputReverse.nextSequence(seqId, length);

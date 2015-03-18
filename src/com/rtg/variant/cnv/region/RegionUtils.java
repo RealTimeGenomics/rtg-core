@@ -106,9 +106,8 @@ public final class RegionUtils {
       final Map<String, Region> map = new HashMap<>();
       final byte[] buf = new byte[(int) reader.maxLength()];
       for (long i = 0; i < reader.numberSequences(); i++) {
-        reader.seek(i);
-        final int length = reader.readCurrent(buf);
-        map.put(reader.currentName(), detectNs(buf, 0, length, blockSize));
+        final int length = reader.read(i, buf);
+        map.put(reader.name(i), detectNs(buf, 0, length, blockSize));
       }
       return map;
     } else {

@@ -169,7 +169,7 @@ public final class SdfSplitter extends LoggedCli {
         } catch (final FileNotFoundException e) {
           throw new NoTalkbackSlimException(ErrorType.FILE_NOT_FOUND, dir.toString());
         }
-        while (reader.nextSequence()) {
+        for (long seq = 0; seq < reader.numberSequences(); seq++) {
           if (writer == null) {
             final String fname;
             fname = String.format("%06d", numOutputs);
@@ -180,8 +180,8 @@ public final class SdfSplitter extends LoggedCli {
               writer.copySourceTemplatesFile(reader);
             }
           }
-          dupDetector.addPair(reader.hasNames() ? reader.currentName() : null, (int) reader.currentSequenceId(), readerNumber);
-          writer.writeCurrentSequence(reader, data, quality);
+          dupDetector.addPair(reader.name(seq), (int) seq, readerNumber);
+          writer.writeSequence(reader, seq, data, quality);
           if (++numSequences == sequencesPerOutput) {
             writer.close();
             writer = null;

@@ -59,7 +59,6 @@ public class SequenceGeneratorTest extends TestCase {
   }
 
   public void testMain() throws Exception {
-
     final PortableRandom rand = new PortableRandom(1);
     final int[] lengths = {2, 5};
     final int[] freq = {1, 1, 1, 1};
@@ -72,10 +71,9 @@ public class SequenceGeneratorTest extends TestCase {
       //System.err.println("" + dsr.maxLength());
       assertEquals(5, dsr.maxLength());
       assertEquals(2, dsr.minLength());
-      assertTrue(dsr.nextSequence());
       final String t = "" + dsr.type();
       assertEquals("DNA", t);
-      assertEquals("simulatedSequence1", dsr.currentName());
+      assertEquals("simulatedSequence1", dsr.name(0));
       assertEquals(2, dsr.numberSequences());
     }
   }

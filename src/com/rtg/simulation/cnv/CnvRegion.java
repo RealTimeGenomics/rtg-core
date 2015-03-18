@@ -126,9 +126,8 @@ public class CnvRegion {
    */
   byte[] getCopy(int k, SequencesReader input) throws IllegalArgumentException, IllegalStateException, IOException {
     final CnvRegion copy = mCopies.get(k);
-    input.seek(copy.mSequenceId);
-    final byte[] genomeSeq = new byte[input.currentLength()];
-    input.readCurrent(genomeSeq);
+    final byte[] genomeSeq = new byte[input.length(copy.mSequenceId)];
+    input.read(copy.mSequenceId, genomeSeq);
     return CnvSimulator.getDnaArray(genomeSeq, copy.mStart, copy.mLength);
   }
 

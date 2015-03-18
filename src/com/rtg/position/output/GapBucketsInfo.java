@@ -94,7 +94,6 @@ public final class GapBucketsInfo extends IntegralAbstract {
     }
     mBucketLast = new long[(int) ns];
     //a cumulative count of the sequence lengths will do it.
-    reader.seek(start);
     long tot = 0;
     long max = 0;
     int j = 0;
@@ -102,7 +101,7 @@ public final class GapBucketsInfo extends IntegralAbstract {
     //System.err.println("bucketScale=" + mBucketScale + " stepSize=" + mStepSize + " ss=" + ss + " gap=" + mGap);
     //System.err.println("seqParams=" + seqParams);
     for (long i = start; i < end; i++) {
-      final int l = (reader.currentLength() + mGap + ss - 1) / ss;
+      final int l = (reader.length(i) + mGap + ss - 1) / ss;
       //System.err.println("l=" + l + " length=" + reader.currentLength());
       for (int n = 0; n < numberFrames; n++) {
         tot += l;
@@ -112,7 +111,6 @@ public final class GapBucketsInfo extends IntegralAbstract {
         mBucketLast[j] = tot - 1;
         j++;
       }
-      reader.nextSequence();
     }
 
     mBucketTotal = tot;

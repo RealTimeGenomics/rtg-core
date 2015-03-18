@@ -14,11 +14,14 @@ package com.rtg.reader;
 import java.io.File;
 import java.io.IOException;
 
+import com.reeltwo.jumble.annotations.TestClass;
+
 
 /**
  * Stream manager for reading labels
  * should only be used by DefaultSequencesReader
  */
+@TestClass("com.rtg.reader.DefaultSequencesReaderTest")
 class LabelStreamManager extends AbstractStreamManager {
 
   LabelStreamManager(final File dir, final long numberSequences, final String indexFile, final String dataPrefix, final String pointerPrefix, long dataIndexVersion, DataFileOpenerFactory openerFactory) throws IOException {

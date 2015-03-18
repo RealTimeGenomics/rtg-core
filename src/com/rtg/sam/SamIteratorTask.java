@@ -279,8 +279,7 @@ public abstract class SamIteratorTask<P extends SingleMappedParams, S extends St
     if (sequenceId == null) {
       return null;
     }
-    genomeSequences.seek(sequenceId);
-    return getTemplate(genomeSequences);
+    return genomeSequences.read(sequenceId);
   }
 
   /**
@@ -295,14 +294,7 @@ public abstract class SamIteratorTask<P extends SingleMappedParams, S extends St
     if (sequenceId == null) {
       return -1;
     }
-    genomeSequences.seek(sequenceId);
-    return genomeSequences.currentLength();
-  }
-
-  protected static byte[] getTemplate(final SequencesReader genomeSequences) throws IOException {
-    final byte[] buff = new byte[genomeSequences.currentLength()];
-    genomeSequences.readCurrent(buff);
-    return buff;
+    return genomeSequences.length(sequenceId);
   }
 }
 

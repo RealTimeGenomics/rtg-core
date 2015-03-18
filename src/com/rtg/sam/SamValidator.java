@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -29,6 +28,7 @@ import com.rtg.ngs.NgsParams;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.ReadHelper;
 import com.rtg.reader.SdfId;
+import com.rtg.reader.SequencesIterator;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.util.Utils;
@@ -140,7 +140,6 @@ public final class SamValidator {
         final int[] countPerRead = mLeftReader == null ? mRightReader == null ? null : new int[(int) mRightReader.numberSequences()] : new int[(int) mLeftReader.numberSequences()];
         final boolean[] pairedRead = mLeftReader == null ? mRightReader == null ? null : new boolean[(int) mRightReader.numberSequences()] : new boolean[(int) mLeftReader.numberSequences()];
         for (final File samFile : samFiles) {
-          templateReader.seek(0);
           mExpectedMates.clear();
           try (InputStream bis = FileUtils.createInputStream(samFile, false)) {
             try (SamReader read = SamUtils.makeSamReader(bis)) {
@@ -233,11 +232,13 @@ public final class SamValidator {
     byte[] currTemplate = null;
     PileUp pileUp = null;
     boolean firstRecord = true;
+    final SequencesIterator tempit = templateReader.iterator();
+    tempit.seek(0);
 
-    for (final Iterator<SAMRecord> it = read.iterator(); it.hasNext(); ) {
+    for (final SAMRecord aRead : read) {
       final SAMRecord samRec;
       try {
-        samRec = it.next();
+        samRec = aRead;
       } catch (final SAMFormatException e) {
         if (++mFormatProblems < 10) {
           mErr.println(e.getMessage());
@@ -293,20 +294,20 @@ public final class SamValidator {
             accumulatePileUp(pileUp, currTemplate.length);
           }
           pileUp = null;
-          while (!templateReader.currentName().equals(samRec.getReferenceName())) {
-            if (!templateReader.nextSequence()) {
+          while (!tempit.currentName().equals(samRec.getReferenceName())) {
+            if (!tempit.nextSequence()) {
               throw new NoTalkbackSlimException(ErrorType.FILE_READ_ERROR, "Sequence for " + samRec.getReferenceName() + " not found in template.");
             }
-            if (!templateReader.currentName().equals(samRec.getReferenceName())) {
-              mErr.println("Template \"" + templateReader.currentName() + "\" had no hits");
+            if (!tempit.currentName().equals(samRec.getReferenceName())) {
+              mErr.println("Template \"" + tempit.currentName() + "\" had no hits");
             }
           }
-          currTemplate = new byte[templateReader.currentLength()];
+          currTemplate = new byte[tempit.currentLength()];
           mSuperCigarValidator.setTemplate(currTemplate, currTemplate.length);
           if (mShowConsensus) {
             pileUp = new PileUp(currTemplate.length);
           }
-          templateReader.readCurrent(currTemplate);
+          tempit.readCurrent(currTemplate);
         }
         final int expectedRet = isAtExpectedRef(currTemplate, samRec, pileUp);
         if (expectedRet == -1) {

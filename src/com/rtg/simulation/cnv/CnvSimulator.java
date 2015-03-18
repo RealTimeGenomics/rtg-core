@@ -160,8 +160,7 @@ public class CnvSimulator {
     mTotalCnvedCount = 0;
     mTotalCnvedLength = 0;
     for (int i = 0; i < mInput.numberSequences(); i++) {
-      mInput.seek(i);
-      mSequenceNames[i] = mInput.currentName();
+      mSequenceNames[i] = mInput.name(i);
     }
   }
 
@@ -429,9 +428,8 @@ public class CnvSimulator {
    */
   private void taskfOutputToGenomeSdfs() throws IOException {
     for (int i = 0; i < mNumberSequences; i++) {
-      mInput.seek(i);
-      final byte[] genomeSeq = new byte[mInput.currentLength()];
-      mInput.readCurrent(genomeSeq);
+      final byte[] genomeSeq = new byte[mInput.length(i)];
+      mInput.read(i, genomeSeq);
       //System.err.println("seek "+ i);
       mOutput.startSequence(mSequenceNames[i]);
       mTwin.startSequence(mSequenceNames[i]);
@@ -517,8 +515,7 @@ public class CnvSimulator {
           final CnvRegion currentRegion = mRegionSequences.get(i).get(j);
           //System.err.println(currentRegion.toString());
           // write info file about generated CNV
-          mInput.seek(i);
-          final String seqName = mInput.currentName();
+          final String seqName = mInput.name(i);
           cnvOutput.write(currentRegion.toBytes(i, seqName));
         }
       }

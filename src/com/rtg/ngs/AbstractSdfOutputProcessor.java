@@ -56,12 +56,12 @@ public abstract class AbstractSdfOutputProcessor extends AbstractMapOutputProces
       final byte[] qualityBuffer = new byte[maxLength];
       try (SdfWriterWrapper alignments = new SdfWriterWrapper(mParams.file(ALIGNMENTS_SDF_FILE), reader, false);
            SdfWriterWrapper unmapped = new SdfWriterWrapper(mParams.file(UNMAPPED_SDF_FILE), reader, false)) {
-        while (reader.nextSequence()) {
-          if (!mUnmappedTracker.getStatus((int) reader.currentSequenceId(), ReadStatusTracker.UNMAPPED_FIRST)
-            || !mUnmappedTracker.getStatus((int) reader.currentSequenceId(), ReadStatusTracker.UNMAPPED_SECOND)) {
-            alignments.writeCurrentSequence(reader, dataBuffer, qualityBuffer);
+        for (long seq = 0; seq < reader.numberSequences(); seq++) {
+          if (!mUnmappedTracker.getStatus((int) seq, ReadStatusTracker.UNMAPPED_FIRST)
+            || !mUnmappedTracker.getStatus((int) seq, ReadStatusTracker.UNMAPPED_SECOND)) {
+            alignments.writeSequence(reader, seq, dataBuffer, qualityBuffer);
           } else {
-            unmapped.writeCurrentSequence(reader, dataBuffer, qualityBuffer);
+            unmapped.writeSequence(reader, seq, dataBuffer, qualityBuffer);
           }
         }
       }

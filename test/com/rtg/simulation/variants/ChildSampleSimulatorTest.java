@@ -96,30 +96,25 @@ public class ChildSampleSimulatorTest extends TestCase {
       FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("X"), new PortableRandom(10), 0.5);
       List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
       final File popVcf = new File(dir, "popVcf.vcf.gz");
-      sr.reset();
       PopulationVariantGenerator.writeAsVcf(popVcf, null, variants, sr);
       //String popVarStr = FileHelper.gzFileToString(popVcf);
       //System.out.println("-- Population Variants --");
       //System.out.println(popVarStr);
 
       // Generate sample w.r.t variants
-      sr.reset();
       SampleSimulator dadsim = new SampleSimulator(sr, new PortableRandom(15), DefaultFallback.DIPLOID);
       File dadVcf = new File(dir, "sample_dad.vcf.gz");
       dadsim.mutateIndividual(popVcf, dadVcf, "dad", Sex.MALE);
 
-      sr.reset();
       SampleSimulator momsim = new SampleSimulator(sr, new PortableRandom(65), DefaultFallback.DIPLOID);
       File momVcf = new File(dir, "sample_mom.vcf.gz");
       momsim.mutateIndividual(dadVcf, momVcf, "mom", Sex.FEMALE);
 
       // Generate children w.r.t variants
-      sr.reset();
       ChildSampleSimulator sonsim = new ChildSampleSimulator(sr, new PortableRandom(76), DefaultFallback.DIPLOID, 0, false);
       File sonVcf = new File(dir, "sample_son.vcf.gz");
       sonsim.mutateIndividual(momVcf, sonVcf, "son", Sex.MALE, "dad", "mom");
 
-      sr.reset();
       ChildSampleSimulator daughtersim = new ChildSampleSimulator(sr, new PortableRandom(13), DefaultFallback.DIPLOID, 0, false);
       File daughterVcf = new File(dir, "sample_daughter.vcf.gz");
       daughtersim.mutateIndividual(sonVcf, daughterVcf, "daughter", Sex.FEMALE, "dad", "mom");

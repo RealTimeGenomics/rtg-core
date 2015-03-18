@@ -123,8 +123,7 @@ public class SampleReplayer {
   // Applies mutations to the specified sequence and writes to the SDF
   private void replaySequence(File sampleVcf, SdfWriter output, int count, long sequenceId, int sampleNum, VcfHeader header) throws IOException {
     for (int i = 0; i < count; i++) {
-      mReference.seek(sequenceId);
-      final String name = mReference.currentName();
+      final String name = mReference.name(sequenceId);
       output.startSequence(deriveName(name, i, count));
       try (VcfReader vcfReader = VcfReader.openVcfReader(sampleVcf, new RegionRestriction(name))) {
         int currentPos = 0;
@@ -139,17 +138,17 @@ public class SampleReplayer {
           final int refEndPosition = vcf.getStart() + vcf.getRefCall().length();
           if (gtInt[i] == 0) {
             if (currentPos > thisPosition) {
-              throw new NoTalkbackSlimException("Encountered ref allele that is overlapped by previous long variant (may be representable using an ALT of \"*\"), currently at " + mReference.currentName() + ":" + (thisPosition + 1) + " already written to " + mReference.currentName() + ":" + (currentPos + 1));
+              throw new NoTalkbackSlimException("Encountered ref allele that is overlapped by previous long variant (may be representable using an ALT of \"*\"), currently at " + name + ":" + (thisPosition + 1) + " already written to " + name + ":" + (currentPos + 1));
             }
           } else if (gtInt[i] > 0) {
             final String allele = vcf.getAltCalls().get(gtInt[i] - 1);
             final VariantType svType = VariantType.getSymbolicAlleleType(allele);
             if (svType != null) {
-              throw new NoTalkbackSlimException("Symbolic variants are not supported, currently at " + mReference.currentName() + ":" + (thisPosition + 1));
+              throw new NoTalkbackSlimException("Symbolic variants are not supported, currently at " + name + ":" + (thisPosition + 1));
             } else if ("*".equals(allele)) {
               // Check that this site is in fact covered by an earlier variant
               if (currentPos <= thisPosition) {
-                throw new NoTalkbackSlimException("Encountered deletion allele \"*\", but site is not covered by an earlier deletion, currently at " + mReference.currentName() + ":" + (thisPosition + 1));
+                throw new NoTalkbackSlimException("Encountered deletion allele \"*\", but site is not covered by an earlier deletion, currently at " + name + ":" + (thisPosition + 1));
               }
             } else {
               //
@@ -160,7 +159,7 @@ public class SampleReplayer {
             }
           }
         }
-        writeRefToPosition(output, sequenceId, currentPos, mReference.currentLength());
+        writeRefToPosition(output, sequenceId, currentPos, mReference.length(sequenceId));
         output.endSequence();
       }
     }
@@ -169,7 +168,8 @@ public class SampleReplayer {
   private void writeRefToPosition(SdfWriter output, long sequenceId, int currentPos, int endPos) throws IOException {
     if (currentPos > endPos) {
       //System.err.println("Overlapping variants not supported, currently at " + mReference.currentName() + ":" + (endPos + 1) + " already written to " + mReference.currentName() + ":" + (currentPos + 1));
-      throw new NoTalkbackSlimException("Overlapping variants not supported, currently at " + mReference.currentName() + ":" + (endPos + 1) + " already written to " + mReference.currentName() + ":" + (currentPos + 1));
+      final String name = mReference.name(sequenceId);
+      throw new NoTalkbackSlimException("Overlapping variants not supported, currently at " + name + ":" + (endPos + 1) + " already written to " + name + ":" + (currentPos + 1));
     }
     int pos = currentPos;
     while (pos < endPos) {

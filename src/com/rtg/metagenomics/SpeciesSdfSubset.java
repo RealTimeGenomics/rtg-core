@@ -98,7 +98,6 @@ public final class SpeciesSdfSubset extends LoggedCli {
       warnInvalidId("" + seqid);
       return;
     }
-    mReader.seek(seqid);
     final int length = mReader.maxLength();
     if (mData == null || mData.length < length) {
       mData = new byte[length];
@@ -106,7 +105,7 @@ public final class SpeciesSdfSubset extends LoggedCli {
         mQualities = new byte[length];
       }
     }
-    mWriter.writeCurrentSequence(mReader, mData, mQualities);
+    mWriter.writeSequence(mReader, seqid, mData, mQualities);
 
     if (++mWritten % 1000 == 0) {
       Diagnostic.progress("Extracted " + mWritten + " sequences");

@@ -187,12 +187,11 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     }
     final int taxonIdBefore = nextId;
     for (long i = 0; i < sr.numberSequences(); i++) {
-      sr.seek(i);
-      final String shortName = sr.currentName();
+      final String shortName = sr.name(i);
       if (!mSequenceMap.containsKey(shortName)) {
         final Integer taxonId = nextId++;
         mSequenceMap.put(shortName, taxonId);
-        mTaxonomy.addNode(taxonId, 1, sr.currentFullName(), "species");
+        mTaxonomy.addNode(taxonId, 1, sr.fullName(i), "species");
       }
     }
     if (nextId > taxonIdBefore) {
@@ -233,11 +232,10 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
       }
     }
     for (long i = 0; i < sr.numberSequences(); i++) {
-      sr.seek(i);
-      final String shortName = sr.currentName();
-      final String suffix = sr.currentNameSuffix();
+      final String shortName = sr.name(i);
+      final String suffix = sr.nameSuffix(i);
       if (!renameMap.containsKey(shortName) && suffix.length() != 0) {
-        renameMap.put(shortName, sr.currentFullName());
+        renameMap.put(shortName, sr.fullName(i));
       }
     }
     if (warningCount >= MAX_WARNING) {

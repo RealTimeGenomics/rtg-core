@@ -389,9 +389,7 @@ public class SdfStatisticsTest extends AbstractCliTest {
   private static byte[][] readAllData(final SequencesReader sr) throws IOException {
     final byte[][] ret = new byte[(int) sr.numberSequences()][];
     for (int i = 0; i < ret.length; i++) {
-      sr.seek(i);
-      ret[i] = new byte[sr.currentLength()];
-      sr.readCurrent(ret[i]);
+      ret[i] = sr.read(i);
     }
     return ret;
   }
@@ -399,9 +397,8 @@ public class SdfStatisticsTest extends AbstractCliTest {
   private static byte[][] readAllQuality(final SequencesReader sr) throws IOException {
     final byte[][] ret = new byte[(int) sr.numberSequences()][];
     for (int i = 0; i < ret.length; i++) {
-      sr.seek(i);
-      ret[i] = new byte[sr.currentLength()];
-      sr.readCurrentQuality(ret[i]);
+      ret[i] = new byte[sr.length(i)];
+      sr.readQuality(i, ret[i]);
     }
     return ret;
   }

@@ -25,10 +25,10 @@ import com.rtg.mode.DNAFastaSymbolTable;
 import com.rtg.mode.DnaUtils;
 import com.rtg.simulation.genome.RandomDistribution;
 import com.rtg.simulation.genome.SequenceGenerator;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
@@ -40,17 +40,8 @@ import junit.framework.TestSuite;
 public class DefaultSequencesReaderTest extends AbstractSequencesReaderTest {
 
   @Override
-  protected SequencesReader createSequencesReader(final File dir) throws IOException {
-    return SequencesReaderFactory.createDefaultSequencesReader(dir, LongRange.NONE);
-  }
-
-  @Override
-  protected boolean canReadTwice() {
-    return false;
-  }
-
-  public DefaultSequencesReaderTest(final String name) {
-    super(name);
+  protected SequencesReader createSequencesReader(final File dir, LongRange region) throws IOException {
+    return SequencesReaderFactory.createDefaultSequencesReader(dir, region);
   }
 
   public static Test suite() {
@@ -142,7 +133,6 @@ public class DefaultSequencesReaderTest extends AbstractSequencesReaderTest {
   }
 
   public void testGenerate() throws Exception {
-
     final PortableRandom rand = new PortableRandom(1);
     final int[] lens = {2, 5};
     final int[] freq = {1, 1, 1, 1};
@@ -155,18 +145,18 @@ public class DefaultSequencesReaderTest extends AbstractSequencesReaderTest {
       //System.err.println("SequenceGeneratorTest\n" + dsr.maxLength());
       assertEquals(5, dsr.maxLength());
       assertEquals(2, dsr.minLength());
-      assertTrue(dsr.nextSequence());
+      assertEquals(2, dsr.numberSequences());
+
       final String t = "" + dsr.type();
       assertEquals("DNA", t);
-      assertEquals("simulatedSequence1", dsr.currentName());
+      assertEquals("simulatedSequence1", dsr.name(0));
       assertEquals(2, dsr.numberSequences());
-      final long len1 = dsr.readCurrent(new byte[2]);
+      final long len1 = dsr.read(0, new byte[2]);
       assertEquals(2, len1);
-      assertTrue(dsr.nextSequence());
-      final long len2 = dsr.readCurrent(new byte[5]);
-      assertEquals("simulatedSequence2", dsr.currentName());
+
+      final long len2 = dsr.read(1, new byte[5]);
+      assertEquals("simulatedSequence2", dsr.name(1));
       assertEquals(5, len2);
-      assertFalse(dsr.nextSequence());
     }
 
   }
@@ -189,8 +179,7 @@ public class DefaultSequencesReaderTest extends AbstractSequencesReaderTest {
     sw.setComment("blah rag");
     sw.processSequences();
     try (SequencesReader r = createSequencesReader(mDir)) {
-      final SequencesReader rCopy = r.copy();
-      try {
+      try (SequencesReader rCopy = r.copy()) {
         assertEquals(r.dataChecksum(), rCopy.dataChecksum());
         assertEquals(r.qualityChecksum(), rCopy.qualityChecksum());
         assertEquals(r.nameChecksum(), rCopy.nameChecksum());
@@ -204,17 +193,6 @@ public class DefaultSequencesReaderTest extends AbstractSequencesReaderTest {
           assertEquals(rCast.comment(), rCopyCast.comment());
           assertEquals("feh -f \"super feh\"", rCopyCast.commandLine());
         }
-        int rCount = 0;
-        while (r.nextSequence()) {
-          rCount++;
-        }
-        int rCopyCount = 0;
-        while (rCopy.nextSequence()) {
-          rCopyCount++;
-        }
-        assertEquals(rCount, rCopyCount);
-      } finally {
-        rCopy.close();
       }
     }
 
@@ -228,15 +206,12 @@ public class DefaultSequencesReaderTest extends AbstractSequencesReaderTest {
   public void testRegion() throws IOException {
     ReaderTestUtils.getReaderDNA(FASTA, mOutDir, new SdfId(0L)).close();
     try (DefaultSequencesReader reader = new DefaultSequencesReader(mOutDir, new LongRange(1, 3))) {
-      reader.nextSequence();
-      byte[] data = new byte[reader.currentLength()];
-      reader.readCurrent(data);
+      assertEquals(2, reader.numberSequences());
+      byte[] data = reader.read(0);
       assertEquals("GCGTA", DnaUtils.bytesToSequenceIncCG(data));
-      reader.nextSequence();
-      data = new byte[reader.currentLength()];
-      reader.readCurrent(data);
+      data = reader.read(1);
       assertEquals("CCGTAC", DnaUtils.bytesToSequenceIncCG(data));
-      assertFalse(reader.nextSequence());
+
       final int[] lengths = reader.sequenceLengths(0, 2);
       assertEquals(2, lengths.length);
       assertEquals(5, lengths[0]);
@@ -260,7 +235,7 @@ public class DefaultSequencesReaderTest extends AbstractSequencesReaderTest {
     ReaderTestUtils.getReaderDNA(FASTA, mOutDir, new SdfId(0L)).close();
     try (final DefaultSequencesReader reader = new DefaultSequencesReader(mOutDir, new LongRange(1, 3))) {
       try {
-        reader.seek(Integer.MIN_VALUE);
+        reader.iterator().seek(Integer.MIN_VALUE);
         fail();
       } catch (final IllegalArgumentException e) {
         // ok

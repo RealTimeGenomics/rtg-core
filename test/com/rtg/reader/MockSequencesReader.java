@@ -11,7 +11,6 @@
  */
 package com.rtg.reader;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
@@ -20,7 +19,7 @@ import com.rtg.mode.SequenceType;
 /**
  * Dummy needed for constructing tests.
  */
-public class MockSequencesReader implements SequencesReader {
+public class MockSequencesReader extends DummySequencesReader {
 
   private static final class SimplePrereadNames extends PrereadNames {
     @Override
@@ -34,8 +33,6 @@ public class MockSequencesReader implements SequencesReader {
   private final long mNumberSequences;
 
   protected long mTotalLength;
-
-  protected long mCurrentSequence = -1;
 
   private int[] mLengths;
 
@@ -99,45 +96,6 @@ public class MockSequencesReader implements SequencesReader {
     }
   }
 
-
-  @Override
-  public int currentLength() {
-    if (mLengths != null && mCurrentSequence >= 0 && mCurrentSequence < mLengths.length) {
-      return mLengths[(int) mCurrentSequence];
-    }
-    return 0;
-  }
-
-  @Override
-  public String currentName() {
-    return "seq" + mCurrentSequence;
-  }
-
-  @Override
-  public String currentFullName() {
-    return currentName();
-  }
-
-  @Override
-  public long currentSequenceId() {
-    return mCurrentSequence;
-  }
-
-  @Override
-  public boolean nextSequence() {
-    mCurrentSequence++;
-    return mCurrentSequence < mNumberSequences;
-  }
-
-  @Override
-  public void seek(final long sequenceId) {
-    mCurrentSequence = sequenceId;
-  }
-
-  @Override
-  public void close() {
-  }
-
   @Override
   public long totalLength() {
     return mTotalLength;
@@ -162,21 +120,8 @@ public class MockSequencesReader implements SequencesReader {
   }
 
   @Override
-  public File path() {
-    return null;
-  }
-
-  @Override
-  public int read(long index, byte[] out) {
-    return 0;
-  }
-  @Override
-  public int read(long index, byte[] out, int start, int length) {
-    return 0;
-  }
-  @Override
   public int length(long index) {
-    if (mLengths != null) {
+    if (mLengths != null && index >= 0 && index < mLengths.length) {
       return mLengths[(int) index];
     }
     return 0;
@@ -188,33 +133,6 @@ public class MockSequencesReader implements SequencesReader {
   @Override
   public String fullName(long index) {
     return name(index);
-  }
-  @Override
-  public int readCurrent(byte[] out, int start, int length) {
-    return 0;
-  }
-
-  @Override
-  public int readCurrent(byte[] out) {
-    return 0;
-  }
-
-  @Override
-  public long[] residueCounts() {
-    return null;
-  }
-
-  @Override
-  public long dataChecksum() {
-    return 0;
-  }
-  @Override
-  public long qualityChecksum() {
-    return 0;
-  }
-  @Override
-  public long nameChecksum() {
-    return 0;
   }
 
   @Override
@@ -239,23 +157,8 @@ public class MockSequencesReader implements SequencesReader {
   }
 
   @Override
-  public boolean hasQualityData() {
-    return false;
-  }
-
-  @Override
   public boolean hasNames() {
     return true;
-  }
-
-  @Override
-  public int readCurrentQuality(final byte[] dest) throws IllegalArgumentException, IllegalStateException {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public int readCurrentQuality(byte[] dest, int start, int length) throws IllegalArgumentException, IllegalStateException {
-    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
@@ -309,54 +212,5 @@ public class MockSequencesReader implements SequencesReader {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
-  @Override
-  public SdfId getSdfId() {
-    return new SdfId();
-  }
-
-  @Override
-  public double[] positionQualityAverage() {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public long sdfVersion() {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public SequencesReader copy() {
-    return this;
-  }
-
-  @Override
-  public boolean compressed() {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void reset() {
-    mCurrentSequence = -1;
-  }
-
-  @Override
-  public String currentNameSuffix() throws IllegalStateException, IOException {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public String nameSuffix(long sequenceIndex) {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public long suffixChecksum() {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public String getReadMe() {
-    return null;
-  }
 
 }

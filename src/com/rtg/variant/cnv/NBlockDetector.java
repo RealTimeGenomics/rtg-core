@@ -49,9 +49,8 @@ public final class NBlockDetector {
     if (sequence.type() == SequenceType.DNA) {
       final byte[] buf = new byte[(int) sequence.maxLength()];
       for (long i = 0; i < sequence.numberSequences(); i++) {
-        sequence.seek(i);
-        final int length = sequence.readCurrent(buf);
-        detectNs(sequence.currentName(), buf, 0, length, blockSize, output);
+        final int length = sequence.read(i, buf);
+        detectNs(sequence.name(i), buf, 0, length, blockSize, output);
       }
     } else {
       throw new UnsupportedOperationException("Only support DNA sequences");

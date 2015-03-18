@@ -58,8 +58,8 @@ public class SdfSubsetTest extends AbstractCliTest {
       final File genomeDir = FileHelper.createTempDirectory();
       try {
         final File out = FileUtils.createTempDir("out", "validate");
-        assertTrue(FileHelper.deleteAll(out));
         try {
+          assertTrue(FileHelper.deleteAll(out));
           ReaderTestUtils.getReaderDNA(">seq1" + StringUtils.LS + "acgt", genomeDir, null).close();
           TestUtils.containsAll(checkHandleFlagsErr("-i", genomeDir.getAbsolutePath(), "-o", out.getPath()), "Sequence ids must be specified, either explicitly, or using --id-file");
         } finally {
@@ -95,13 +95,12 @@ public class SdfSubsetTest extends AbstractCliTest {
         assertEquals(4, dsr.totalLength());
         assertEquals(4, dsr.maxLength());
         assertEquals(4, dsr.minLength());
-        assertTrue(dsr.nextSequence());
+        assertEquals(1, dsr.numberSequences());
         assertNotNull(dsr.getSdfId());
         leftGuid = dsr.getSdfId();
         assertTrue(dsr.hasNames());
-        assertEquals("seq2", dsr.currentName());
+        assertEquals("seq2", dsr.name(0));
         assertFalse(dsr.hasQualityData());
-        assertFalse(dsr.nextSequence());
       } finally {
         dsr.close();
       }
@@ -110,13 +109,12 @@ public class SdfSubsetTest extends AbstractCliTest {
         assertEquals(4, dsr.totalLength());
         assertEquals(4, dsr.maxLength());
         assertEquals(4, dsr.minLength());
-        assertTrue(dsr.nextSequence());
+        assertEquals(1, dsr.numberSequences());
         assertNotNull(dsr.getSdfId());
         assertEquals(leftGuid, dsr.getSdfId());
         assertTrue(dsr.hasNames());
-        assertEquals("seq2", dsr.currentName());
+        assertEquals("seq2", dsr.name(0));
         assertFalse(dsr.hasQualityData());
-        assertFalse(dsr.nextSequence());
       } finally {
         dsr.close();
       }

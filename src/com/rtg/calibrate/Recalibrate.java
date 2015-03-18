@@ -100,7 +100,6 @@ public class Recalibrate implements Closeable {
         throw new IOException("File: " + calibrationFile + " already exists");
       }
       c.writeToFile(calibrationFile);
-      mTemplate.reset();
       mLastName = null;
     }
   }
@@ -110,8 +109,7 @@ public class Recalibrate implements Closeable {
     if (mRegions != null) {
       c.setSequenceLengths(Calibrator.getSequenceLengthMap(mTemplate, mRegions));
     }
-    final SAMRecordIterator it = reader.iterator();
-    try {
+    try (SAMRecordIterator it = reader.iterator()) {
       while (it.hasNext()) {
         final SAMRecord rec = it.next();
         final int flags = rec.getFlags();
@@ -125,14 +123,11 @@ public class Recalibrate implements Closeable {
             throw new NoTalkbackSlimException("Sequence " + name + " not found in template");  //user must have edited the sam file and cocked this up.
           }
           mLastName = name;
-          mTemplate.seek(seqId);
-          final int length = mTemplate.readCurrent(mTemplateBytes);
+          final int length = mTemplate.read(seqId, mTemplateBytes);
           c.setTemplate(mTemplateBytes, length);
         }
         c.processRead(rec);
       }
-    } finally {
-      it.close();
     }
     return c;
   }

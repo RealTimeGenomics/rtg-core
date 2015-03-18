@@ -85,7 +85,6 @@ public final class SdfUtils {
       if (NameDuplicateDetector.checkSequence(reader, null)) {
         throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "Duplicate sequence names detected in SDF: " + sdf);
       }
-      reader.reset();
     } catch (final IOException e) {
       throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "Unable to read SDF: " + sdf + " (" + e.getMessage() + ")");
     }

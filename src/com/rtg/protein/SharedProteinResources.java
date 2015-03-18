@@ -78,8 +78,7 @@ public class SharedProteinResources {
     if (mTemplateReader == null) {
       return -1;
     } else {
-      mTemplateReader.seek(id);
-      return mTemplateReader.currentLength();
+      return mTemplateReader.length(id);
     }
   }
 
@@ -95,8 +94,7 @@ public class SharedProteinResources {
     if (mQueryReader == null) {
       return -1;
     } else {
-      mQueryReader.seek(id);
-      return mQueryReader.currentLength();
+      return mQueryReader.length(id);
     }
   }
 
@@ -123,8 +121,7 @@ public class SharedProteinResources {
       return EMPTY;
     } else if (mQueryReader.type() == SequenceType.DNA) {
       // In this situation, use precomputed array to store intermediate nt version
-      mQueryReader.seek(id);
-      final int length = mQueryReader.readCurrent(mWorkSpace);
+      final int length = mQueryReader.read(id, mWorkSpace);
       // Convert to protein in situ
       final Frame frames = ProteinOutputProcessor.FRAMES_MAPPING[frame + 3];
       final int limit = (length - Math.abs(frame) + 1) / 3;
@@ -133,10 +130,7 @@ public class SharedProteinResources {
       }
       return mWorkSpaceProtein;
     } else {
-      mQueryReader.seek(id);
-      final byte[] read = new byte[mQueryReader.currentLength()];
-      mQueryReader.readCurrent(read);
-      return read;
+      return mQueryReader.read(id);
     }
   }
 
@@ -148,9 +142,7 @@ public class SharedProteinResources {
       if (mTemplateReader == null) {
         mCachedTemplate = EMPTY;
       } else {
-        mTemplateReader.seek(id);
-        mCachedTemplate = new byte[mTemplateReader.currentLength()];
-        mTemplateReader.readCurrent(mCachedTemplate);
+        mCachedTemplate = mTemplateReader.read(id);
       }
       mCachedTemplateId = id;
     }

@@ -15,8 +15,8 @@ import java.io.IOException;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.index.hash.ngs.OutputProcessor;
-import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.HashingRegion;
+import com.rtg.launcher.ISequenceParams;
 import com.rtg.mode.Frame;
 import com.rtg.reader.SequencesReader;
 
@@ -115,15 +115,12 @@ public class OutputProcessorWrapper implements PositionWriter {
     final int lengthFromReader;
     if (mPairedEnd) {
       if ((readId & 1) == 0) {
-        mReader.seek(readId / 2);
-        lengthFromReader = mReader.currentLength();
+        lengthFromReader = mReader.length(readId / 2);
       } else {
-        mReader2.seek(readId / 2);
-        lengthFromReader = mReader2.currentLength();
+        lengthFromReader = mReader2.length(readId / 2);
       }
     } else {
-      mReader.seek(readId);
-      lengthFromReader = mReader.currentLength();
+      lengthFromReader = mReader.length(readId);
     }
     final int readLength;
     if (region.mSubjectFrames.length > 1) {

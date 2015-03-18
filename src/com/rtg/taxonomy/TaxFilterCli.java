@@ -33,6 +33,7 @@ import java.util.Set;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.reader.SdfWriter;
+import com.rtg.reader.SequencesIterator;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.util.Constants;
@@ -151,18 +152,19 @@ public class TaxFilterCli extends AbstractCli {
 
           final byte[] data = new byte[(int) reader.maxLength()];
           final byte[] quality = new byte[(int) reader.maxLength()];
-          while (reader.nextSequence()) {
-            final String name = reader.currentName();
+          final SequencesIterator it = reader.iterator();
+          while (it.nextSequence()) {
+            final String name = it.currentName();
             if (oldSequenceLookup.get(name) == null) {
               throw new NoTalkbackSlimException("Sequence " + name + " is present in the SDF but not in the " + SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE);
             }
             final Integer taxId = sequenceLookup.get(name);
             if (taxId != null && tax.contains(taxId)) {
-              final String fullname = reader.currentFullName();
-              final int length = reader.currentLength();
+              final String fullname = it.currentFullName();
+              final int length = it.currentLength();
               sdfWriter.startSequence(fullname);
-              reader.readCurrent(data);
-              reader.readCurrentQuality(quality);
+              it.readCurrent(data);
+              it.readCurrentQuality(quality);
               sdfWriter.write(data, quality, length);
               sdfWriter.endSequence();
               lookupWriter.writeln(taxId + "\t" + name);

@@ -25,9 +25,6 @@ public class AlternatingSequencesReader implements SequencesReader {
   private final SequencesReader mFirst;
   private final SequencesReader mSecond;
 
-  private long mSequenceId;
-  private boolean mCurrentIsFirst;
-
   /**
    * Constructs a sequence reader which alternates between two given sequence readers.
    * @param first the first sequence reader
@@ -36,7 +33,10 @@ public class AlternatingSequencesReader implements SequencesReader {
   public AlternatingSequencesReader(final SequencesReader first, final SequencesReader second) {
     mFirst = first;
     mSecond = second;
-    mSequenceId = -1;
+  }
+
+  private SequencesReader select(long sequenceIndex) {
+    return (sequenceIndex & 1L) == 0 ? mFirst : mSecond;
   }
 
   @Override
@@ -64,36 +64,6 @@ public class AlternatingSequencesReader implements SequencesReader {
   @Override
   public SequencesReader copy() {
     throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public int currentLength() {
-    if (mSequenceId < 0) {
-      throw new IllegalStateException();
-    }
-    if (mCurrentIsFirst) {
-      return mFirst.currentLength();
-    } else {
-      return mSecond.currentLength();
-    }
-  }
-
-  @Override
-  public String currentName() throws IllegalStateException, IOException {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public String currentFullName() throws IllegalStateException, IOException {
-    return currentName();
-  }
-
-  @Override
-  public long currentSequenceId() {
-    if (mSequenceId < 0) {
-      throw new IllegalStateException();
-    }
-    return mSequenceId;
   }
 
   @Override
@@ -172,15 +142,6 @@ public class AlternatingSequencesReader implements SequencesReader {
   }
 
   @Override
-  public boolean nextSequence() throws IOException {
-    if (mSequenceId + 1 < numberSequences()) {
-      seek(mSequenceId + 1);
-      return true;
-    }
-    return false;
-  }
-
-  @Override
   public long numberSequences() {
     return mFirst.numberSequences() + mSecond.numberSequences();
   }
@@ -196,53 +157,48 @@ public class AlternatingSequencesReader implements SequencesReader {
   }
 
   @Override
-  public int length(long sequenceIndex)  {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public int length(long sequenceIndex) throws IOException {
+    return select(sequenceIndex).length(sequenceIndex / 2);
   }
   @Override
-  public String name(long sequenceIndex)  {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public String name(long sequenceIndex) throws IOException {
+    return select(sequenceIndex).name(sequenceIndex / 2);
   }
   @Override
-  public String fullName(long sequenceIndex)  {
+  public String fullName(long sequenceIndex) throws IOException {
     return name(sequenceIndex);
+  }
+
+  @Override
+  public byte[] read(long sequenceIndex) throws IllegalStateException, IOException {
+    final byte[] result = new byte[length(sequenceIndex)];
+    read(sequenceIndex, result);
+    return result;
   }
   @Override
   public int read(long sequenceIndex, byte[] dataOut) throws IllegalArgumentException, IOException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return read(sequenceIndex, dataOut, 0, length(sequenceIndex));
   }
   @Override
   public int read(long sequenceIndex, byte[] dataOut, int start, int length) throws IllegalArgumentException, IllegalStateException, IOException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return select(sequenceIndex).read(sequenceIndex, dataOut, start, length);
   }
 
-  @Override
-  public int readCurrent(byte[] dataOut) throws IllegalArgumentException, IllegalStateException, IOException {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-  @Override
-  public int readCurrent(byte[] dataOut, int start, int length) throws IllegalArgumentException, IllegalStateException, IOException {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
 
   @Override
-  public int readCurrentQuality(byte[] dest) throws IllegalArgumentException, IllegalStateException, IOException {
-    throw new UnsupportedOperationException("Not supported yet.");
+  public byte[] readQuality(long sequenceIndex) throws IOException {
+    final byte[] result = new byte[length(sequenceIndex)];
+    readQuality(sequenceIndex, result);
+    return result;
   }
-
-  @Override
-  public int readCurrentQuality(byte[] dest, int start, int length) throws IllegalArgumentException, IllegalStateException, IOException {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
   @Override
   public int readQuality(long sequenceIndex, byte[] dest) throws IllegalArgumentException, IOException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return readQuality(sequenceIndex, dest, 0, length(sequenceIndex));
   }
 
   @Override
   public int readQuality(long sequenceIndex, byte[] dest, int start, int length) throws IllegalArgumentException, IOException {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return select(sequenceIndex).readQuality(sequenceIndex, dest, start, length);
   }
 
   @Override
@@ -253,17 +209,6 @@ public class AlternatingSequencesReader implements SequencesReader {
   @Override
   public long sdfVersion() {
     throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void seek(final long sequenceId) throws IOException {
-    mSequenceId = sequenceId;
-    mCurrentIsFirst = (mSequenceId & 1) == 0;
-    if (mCurrentIsFirst) {
-      mFirst.seek(mSequenceId / 2);
-    } else {
-      mSecond.seek(mSequenceId / 2);
-    }
   }
 
   @Override
@@ -287,19 +232,6 @@ public class AlternatingSequencesReader implements SequencesReader {
   }
 
   @Override
-  public void reset() {
-    mFirst.reset();
-    mSecond.reset();
-    mSequenceId = -1;
-    mCurrentIsFirst = false;
-  }
-
-  @Override
-  public String currentNameSuffix() throws IllegalStateException, IOException {
-    throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
   public String nameSuffix(long sequenceIndex) {
     throw new UnsupportedOperationException("Not supported yet.");
   }
@@ -311,6 +243,16 @@ public class AlternatingSequencesReader implements SequencesReader {
 
   @Override
   public String getReadMe() {
+    return null;
+  }
+
+  @Override
+  public SequencesIterator iterator() {
+    return new DefaultSequencesIterator(this);
+  }
+
+  @Override
+  public IndexFile index() {
     return null;
   }
 

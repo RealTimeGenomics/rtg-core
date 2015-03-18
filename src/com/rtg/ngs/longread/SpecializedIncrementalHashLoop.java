@@ -15,8 +15,8 @@ import java.io.IOException;
 
 import com.rtg.index.Index;
 import com.rtg.index.hash.ExactHashFunction;
-import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.HashingRegion;
+import com.rtg.launcher.ISequenceParams;
 import com.rtg.mode.BidirectionalFrame;
 import com.rtg.mode.Frame;
 import com.rtg.mode.SequenceMode;
@@ -52,14 +52,11 @@ public class SpecializedIncrementalHashLoop extends SearchIncrementalHashLoop {
     final HashingRegion region = sequences.region();
     final SequencesReader reader = sequences.reader();
     final long startSequence;
-    final long endSequence;
     final int padding = getThreadPadding();
     if (region != HashingRegion.NONE) {
       startSequence = region.getStart();
-      endSequence = region.getEnd();
     } else {
       startSequence = 0;
-      endSequence = reader.numberSequences();
     }
     final SequenceMode mode = sequences.mode();
     assert mode == SequenceMode.BIDIRECTIONAL;
@@ -72,22 +69,20 @@ public class SpecializedIncrementalHashLoop extends SearchIncrementalHashLoop {
     //System.err.println("start=" + start + " end=" + end + " stepSize=" + stepSize + " step=" + step + " codeIncrement=" + codeIncrement);
 
     final long maxSequenceEver = reader.numberSequences();
-    if (startSequence <= endSequence && startSequence < maxSequenceEver) {
-      reader.seek(startSequence);
-    }
     long totalLength = 0;
     for (long seq = startSequence; region.isInRange(seq) && seq < maxSequenceEver; seq++) {
       ProgramState.checkAbort();
       //System.err.println("seq=" + seq + " " +  reader.currentSequenceId() + " " + reader.getClass());
+      final int fullLength = reader.length(seq);
       final int startPos = region.getReferenceStart(seq, padding);
       final int jstart = jcpAdjustment + startPos;
-      final int endPos = region.getReferenceEnd(seq, padding, reader.currentLength());
+      final int endPos = region.getReferenceEnd(seq, padding, fullLength);
       if (byteBuffer.length < endPos - startPos) { //silly programmer error
         throw new IllegalArgumentException("Allocated buffer too short. Allocated length=" + byteBuffer.length + " Required length=" + (endPos - startPos));
       }
-      final int length = reader.readCurrent(byteBuffer, startPos, endPos - startPos);
+      final int length = reader.read(seq, byteBuffer, startPos, endPos - startPos);
       totalLength += length;
-      nextSeq((int) seq, reader.currentLength(), length, byteBuffer);
+      nextSeq((int) seq, fullLength, length, byteBuffer);
       //System.err.println("finished reading");
       //System.err.println(Arrays.toString(byteBuffer));
       //System.err.println("frame=" + frame);
@@ -114,7 +109,6 @@ public class SpecializedIncrementalHashLoop extends SearchIncrementalHashLoop {
       } //window
       end();
       //System.err.println("Finished loop");
-      reader.nextSequence();
       endSequence();
 
     }
@@ -122,7 +116,7 @@ public class SpecializedIncrementalHashLoop extends SearchIncrementalHashLoop {
     return totalLength;
   }
 
-  private void nextSeq(int seqId, final int length, final int usedLength, final byte[] read) {
+  private void nextSeq(int seqId, final int length, final int usedLength, final byte[] read) throws IOException {
     mOutput.nextSequence(seqId, length, usedLength, read);
     if (mOutputReverse != null) {
       mOutputReverse.nextSequence(seqId, length, usedLength, read);

@@ -45,8 +45,9 @@ public interface PositionOutput {
    * Called when step from one sequence to next in search.
    * @param seqId query sequence id
    * @param length of the current query sequence.
+   * @throws IOException if an IO error occurs
    */
-  void nextSequence(int seqId, int length);
+  void nextSequence(int seqId, int length) throws IOException;
 
   /**
    * Called when step from one sequence to next in search.
@@ -54,8 +55,9 @@ public interface PositionOutput {
    * @param length of the current query sequence (that is, the entire sequence not just the part that is represented in <code>sequence</code>).
    * @param usedLength initial length of <code>sequence</code> that is actually used.
    * @param sequence the query sequence of nucleotides.
+   * @throws IOException if an IO error occurs
    */
-  void nextSequence(int seqId, int length, int usedLength, byte[] sequence);
+  void nextSequence(int seqId, int length, int usedLength, byte[] sequence) throws IOException;
 
   /**
    * Called when step from one frame to next in search.

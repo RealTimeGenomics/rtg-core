@@ -457,8 +457,7 @@ public final class Aview extends AbstractCli {
       final long readId = Long.parseLong(r.getReadName());
       // id looks like an actual ID, so look up it's name from the SDF. We can also
       if (mCurrentReadSdf != null) {
-        mCurrentReadSdf.seek(readId);
-        return mCurrentReadSdf.currentFullName();
+        return mCurrentReadSdf.fullName(readId);
       }
       return null;
     } catch (final NumberFormatException nfe) {

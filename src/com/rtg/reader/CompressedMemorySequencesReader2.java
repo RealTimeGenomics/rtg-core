@@ -14,8 +14,8 @@ package com.rtg.reader;
 import java.io.File;
 import java.io.IOException;
 
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.LongRange;
 
 /**
  * This stores data in memory as it appears on disk. Allowing for direct load (no decompress/re-compress)
@@ -28,7 +28,6 @@ public class CompressedMemorySequencesReader2 extends AbstractSequencesReader {
   private PrereadNamesInterface mNameSuffixes;
   private final DataInMemory mData;
   private final long mNumberSequences;
-  private int mSeqId;
   final File mDirectory;
   private final LongRange mRegion;
   private final long mStart;
@@ -36,14 +35,14 @@ public class CompressedMemorySequencesReader2 extends AbstractSequencesReader {
 
   /**
    * Alternative to other one with similar name
-   * @param region region to restrict to
    * @param directory directory containing SDF
    * @param indexFile index file
    * @param loadNames should we load names
    * @param loadFullNames should we load full names
+   * @param region region to restrict to
    * @throws IOException IO exception occurs
    */
-  CompressedMemorySequencesReader2(LongRange region, File directory, IndexFile indexFile, boolean loadNames, boolean loadFullNames) throws IOException {
+  CompressedMemorySequencesReader2(File directory, IndexFile indexFile, boolean loadNames, boolean loadFullNames, LongRange region) throws IOException {
     mIndexFile = indexFile;
     mRegion = SequencesReaderFactory.resolveRange(indexFile, region);
     mStart = mRegion.getStart();
@@ -53,7 +52,6 @@ public class CompressedMemorySequencesReader2 extends AbstractSequencesReader {
     if (mNumberSequences > Integer.MAX_VALUE) {
       throw new IllegalArgumentException("Too many sequences in region: " + region + ", maximum is: " + Integer.MAX_VALUE);
     }
-    mSeqId = -1;
     mDirectory = directory;
     if (loadNames && mIndexFile.hasNames()) {
       loadNames();
@@ -68,7 +66,6 @@ public class CompressedMemorySequencesReader2 extends AbstractSequencesReader {
     mNameSuffixes = other.mNameSuffixes;
     mData = other.mData.copy();
     mNumberSequences = other.mNumberSequences;
-    mSeqId = -1;
     mDirectory = other.mDirectory;
     mRegion = other.mRegion;
     mStart = other.mStart;
@@ -104,7 +101,7 @@ public class CompressedMemorySequencesReader2 extends AbstractSequencesReader {
   }
 
   @Override
-  protected IndexFile index() {
+  public IndexFile index() {
     return mIndexFile;
   }
 
@@ -118,79 +115,8 @@ public class CompressedMemorySequencesReader2 extends AbstractSequencesReader {
     return mDirectory;
   }
 
-  @Override
-  public void seek(long sequenceId) {
-    if (sequenceId >= mNumberSequences) {
-      throw new IllegalArgumentException("sequenceId should be less than " + mNumberSequences + " : " + sequenceId);
-    }
-    mSeqId = (int) sequenceId;
-  }
 
-  @Override
-  public boolean nextSequence() {
-    mSeqId++;
-    final long sequences = numberSequences();
-    if (mSeqId >= sequences) {
-      mSeqId = (int) sequences;
-      return false;
-    } else {
-      return true;
-    }
-  }
-
-  void checkIdState() {
-    if (mSeqId < 0 || mSeqId >= mNumberSequences)  {
-      throw new IllegalStateException();
-    }
-  }
-
-  @Override
-  public long currentSequenceId() {
-    checkIdState();
-    return mSeqId;
-  }
-
-  @Override
-  public int currentLength() {
-    checkIdState();
-    return mData.length(mSeqId);
-  }
-
-  @Override
-  public String currentName() throws IllegalStateException, IOException {
-    checkIdState();
-    return mNames.name(mSeqId);
-  }
-
-  @Override
-  public String currentNameSuffix() throws IllegalStateException, IOException {
-    checkIdState();
-    return mNameSuffixes.name(mSeqId);
-  }
-
-  @Override
-  public int readCurrent(byte[] dataOut) throws IllegalArgumentException, IllegalStateException, IOException {
-    checkIdState();
-    return mData.readSequence(mSeqId, dataOut, 0, Integer.MAX_VALUE);
-  }
-
-  @Override
-  public int readCurrent(byte[] dataOut, int start, int length) throws IllegalArgumentException, IOException {
-    checkIdState();
-    return mData.readSequence(mSeqId, dataOut, start, length);
-  }
-
-  @Override
-  public int readCurrentQuality(byte[] dest) throws IllegalArgumentException, IllegalStateException, IOException {
-    checkIdState();
-    return mData.readQuality(mSeqId, dest, 0, Integer.MAX_VALUE);
-  }
-
-  @Override
-  public int readCurrentQuality(byte[] dest, int start, int length) throws IllegalArgumentException, IllegalStateException, IOException {
-    checkIdState();
-    return mData.readQuality(mSeqId, dest, start, length);
-  }
+  // Direct access methods
 
   @Override
   public int length(long sequenceIndex) {
@@ -275,10 +201,6 @@ public class CompressedMemorySequencesReader2 extends AbstractSequencesReader {
     return new CompressedMemorySequencesReader2(this);
   }
 
-  @Override
-  public void reset() {
-    mSeqId = -1;
-  }
 
   void initQuality() throws IOException {
     mData.initQuality();

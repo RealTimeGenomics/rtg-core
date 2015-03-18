@@ -13,13 +13,11 @@ package com.rtg.sam;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import com.rtg.alignment.EditDistanceFactory;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
 import com.rtg.ngs.NgsParams;
@@ -32,17 +30,12 @@ import com.rtg.sam.SamValidator.SamStatsVariables;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.DiagnosticEvent;
-import com.rtg.util.diagnostic.DiagnosticListener;
-import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.util.diagnostic.SlimException;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
-import com.rtg.util.test.FileHelper;
+import com.rtg.util.io.TestDirectory;
 
 import htsjdk.samtools.SAMRecord;
-import htsjdk.samtools.SamReader;
 import junit.framework.TestCase;
 
 /**
@@ -138,62 +131,6 @@ public class SamValidatorTest extends TestCase {
     }
   }
 
-  public void testSomeInputs() throws Exception {
-    Diagnostic.setLogStream();
-    final ByteArrayOutputStream os = new ByteArrayOutputStream();
-    final PrintStream newOut = new PrintStream(os);
-    final NgsParams params = new NgsParamsBuilder().gapOpenPenalty(EditDistanceFactory.DEFAULT_GAP_OPEN_PENALTY)
-        .gapExtendPenalty(EditDistanceFactory.DEFAULT_GAP_EXTEND_PENALTY)
-        .substitutionPenalty(EditDistanceFactory.DEFAULT_SUBSTITUTION_PENALTY)
-        .unknownsPenalty(0).create();
-    final SamValidator s = new SamValidator(newOut, newOut, false, false, false, false, false, params, false);
-
-    final String[] errorMsg = {""};
-    //errorMsg[0] = "";
-
-    final DiagnosticListener dl = new DiagnosticListener() {
-      @Override
-      public void handleDiagnosticEvent(final DiagnosticEvent<?> event) {
-        if (ErrorType.FILE_READ_ERROR == event.getType()) {
-          errorMsg[0] = event.getMessage();
-        } else {
-          fail("Unexpected error: " + event.getType());
-        }
-      }
-
-      @Override
-      public void close() {
-      }
-    };
-
-    final File dir = FileUtils.createTempDir("samvaltest", "samfileandrecord");
-    final File sam = new File(dir, "samvalnosort.sam");
-    try {
-      final String tab = "\t";
-      final String samHeader = ""
-        + "@HD" + tab + "VN:1.0" + tab + "SO:unsorted" + StringUtils.LS
-        + "@SQ" + tab + "SN:gi0" + tab + "LN:30" + StringUtils.LS
-        + "@SQ" + tab + "SN:gi1" + tab + "LN:30" + StringUtils.LS
-        + "aa" + tab + "0" + tab + "gi0" + tab + "2" + tab + "255" + tab + "10M" + tab + "*" + tab + "0" + tab + "0" + tab + "AAAAAAAAAA" + tab +  "IB7?*III<I" + tab + "AS:i:0" + tab + "IH:i:1" + StringUtils.LS
-        ;
-
-      Diagnostic.addListener(dl);
-      FileUtils.stringToFile(samHeader, sam);
-      try (FileInputStream input = new FileInputStream(sam)) {
-        try (SamReader sfr = SamUtils.makeSamReader(input)) {
-          s.processRecords(null, sfr, false, null, null, null);
-          fail("Must fail if not sorted");
-        }
-      }
-    } catch (final SlimException e) {
-      e.printErrorNoLog();
-      assertEquals("Error: Problem reading file: \"SAM file must be sorted.\"", errorMsg[0]);
-    } finally {
-      Diagnostic.removeListener(dl);
-      FileHelper.deleteAll(dir);
-    }
-  }
-
   private byte[] stringToDna(final String s) {
     final byte[] b = new byte[s.length()];
     for (int i = 0; i < s.length(); i++) {
@@ -245,8 +182,7 @@ public class SamValidatorTest extends TestCase {
 
   public void testWhole() throws Exception {
     Diagnostic.setLogStream();
-    final File tmpDir = FileUtils.createTempDir("samval", "test");
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory("samval")) {
       final ByteArrayOutputStream baos = new ByteArrayOutputStream();
       try (PrintStream ps = new PrintStream(baos)) {
 
@@ -301,14 +237,11 @@ public class SamValidatorTest extends TestCase {
 
         TestUtils.containsAll(baos.toString(), expected);
       }
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 
   public void testBadInputs() throws Exception {
-    final File tmpDir = FileUtils.createTempDir("samval", "badtest");
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory("samval")) {
       final ByteArrayOutputStream baos = new ByteArrayOutputStream();
       final PrintStream ps = new PrintStream(baos);
       Diagnostic.setLogStream(ps);
@@ -345,12 +278,33 @@ public class SamValidatorTest extends TestCase {
           ps.flush();
           assertTrue(baos.toString().contains("Error: Problem reading file: \"Left reads are CG data, but right reads are not.\""));
         }
+
+        final File sam = new File(tmpDir, "samvalnosort.sam");
+        final String tab = "\t";
+        final String samHeader = ""
+          + "@HD" + tab + "VN:1.0" + tab + "SO:unsorted" + StringUtils.LS
+          + "@SQ" + tab + "SN:gi0" + tab + "LN:30" + StringUtils.LS
+          + "@SQ" + tab + "SN:gi1" + tab + "LN:30" + StringUtils.LS
+          + "aa" + tab + "0" + tab + "gi0" + tab + "2" + tab + "255" + tab + "10M" + tab + "*" + tab + "0" + tab + "0" + tab + "AAAAAAAAAA" + tab +  "IB7?*III<I" + tab + "AS:i:0" + tab + "IH:i:1" + StringUtils.LS
+          ;
+        FileUtils.stringToFile(samHeader, sam);
+        files.clear();
+        files.add(sam);
+        final File rightReadsDir2 = new File(tmpDir, "right2");
+        ReaderTestUtils.getReaderDNA(READS_RIGHT, rightReadsDir2, true, new SdfId(27));
+        try {
+          sv.checkSAMAlign(templateDir, files, leftReadsDir, rightReadsDir2);
+          fail();
+        } catch (final NoTalkbackSlimException ntse) {
+          ntse.logException();
+          ps.flush();
+          assertTrue(baos.toString().contains("Error: Problem reading file: \"SAM file must be sorted.\""));
+        }
+
       } finally {
         Diagnostic.setLogStream();
         ps.close();
       }
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 

@@ -150,12 +150,12 @@ public class Sdf2Fasta extends AbstractCli {
         //final long totalLength = input.totalLength();
         //final PrereadToFasta p2f = new PrereadToFasta(); // for progress
         int c = 0; // file number to write to (if relevant)
-        while (input.nextSequence()) {
+        for (long seq = 0; seq < input.numberSequences(); seq++) {
           if (outputs[c] == null) {
             // i.e. have multiple mChunks
             outputs[c] = getStream(CommonFlags.isStdio(prefix) ? STDIO_NAME : (prefixPath + c + postfix), true, mGzip);
           }
-          final int valid = input.readCurrent(residues);
+          final int valid = input.read(seq, residues);
           // replace internal codes by ASCII bytes in situ
           if (mColorspace) {
             if (!toColorspace(residues, valid)) {
@@ -167,7 +167,7 @@ public class Sdf2Fasta extends AbstractCli {
               residues[i] = mapping[residues[i]];
             }
           }
-          outputs[c].write(">" + (!mRename && input.hasNames() ? input.currentFullName() : ("" + input.currentSequenceId())));
+          outputs[c].write(">" + (!mRename && input.hasNames() ? input.fullName(seq) : ("" + seq))); // XXX For no-names and --start-id, this does not correspond to the original id (need to add start)
           outputs[c].newLine();
           // write actual ASCII bytes to output
           if (mLineLength == 0) {

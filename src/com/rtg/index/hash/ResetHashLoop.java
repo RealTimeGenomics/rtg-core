@@ -56,14 +56,11 @@ public abstract class ResetHashLoop extends HashLoop {
     final HashingRegion region = sequences.region();
     final SequencesReader reader = sequences.reader();
     final long startSequence;
-    final long endSequence;
     final int padding = getThreadPadding();
     if (region == HashingRegion.NONE) {
       startSequence = 0;
-      endSequence = reader.numberSequences();
     } else {
       startSequence = region.getStart();
-      endSequence = region.getEnd();
     }
     final SequenceMode mode = sequences.mode();
     //assert reader.integrity();
@@ -76,22 +73,19 @@ public abstract class ResetHashLoop extends HashLoop {
 
     int internalId = (int) startSequence * frames.length;
     final long maxSequenceEver = reader.numberSequences();
-    if (startSequence <= endSequence && startSequence < maxSequenceEver) {
-      reader.seek(startSequence);
-    }
     long totalLength = 0;
     //System.err.println("start=" + start + " end=" + end + " stepSize=" + stepSize + " step=" + step + " codeIncrement=" + codeIncrement);
-    for (long seq = startSequence; seq < maxSequenceEver && region.isInRange(seq); seq++, reader.nextSequence()) {
+    for (long seq = startSequence; seq < maxSequenceEver && region.isInRange(seq); seq++) {
       //System.err.println("seq=" + seq);
-
+      final int currentLength = reader.length(seq);
       final int startPos = region.getReferenceStart(seq, padding);
-      final int endPos = region.getReferenceEnd(seq, padding, reader.currentLength());
+      final int endPos = region.getReferenceEnd(seq, padding, currentLength);
       if (byteBuffer.length < endPos - startPos) {
         throw new IllegalArgumentException("Allocated buffer too short. Allocated length=" + byteBuffer.length + " Required length=" + (endPos - startPos));
       }
-      final int length = reader.readCurrent(byteBuffer, startPos, endPos - startPos);
+      final int length = reader.read(seq, byteBuffer, startPos, endPos - startPos);
       totalLength += length;
-      nextSeq((int) (seq - startSequence), reader.currentLength()/*length*/);
+      nextSeq((int) (seq - startSequence), currentLength);
       //System.err.println(Arrays.toString(byteBuffer));
       final int limitOffset = mWindowSize * codeIncrement;
       final int limit0 = length - limitOffset;

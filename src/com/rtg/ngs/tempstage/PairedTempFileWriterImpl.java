@@ -178,7 +178,7 @@ public class PairedTempFileWriterImpl extends AbstractTempFileWriter implements 
     }
   }
 
-  boolean checkPairScores(int readId, boolean matchFirst, int matchScore, int mateScore) {
+  boolean checkPairScores(int readId, boolean matchFirst, int matchScore, int mateScore) throws IOException {
     final int comboScore = matchScore + mateScore;
     // In extreme cases the addition might overflow, because this is addition the
     // following test will catch the overflow.
