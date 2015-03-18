@@ -4,6 +4,28 @@ Below are the release notes for RTG Core, upon which RTG.VERSION
 is built.  Not all features described below may be included in this
 product.
 
+RTG Core 3.4.3 (2015-03-19)
+---------------------------
+
+This is primarily a bugfix release:
+
+* map: Fixed a crash that could occur when mapping without any sample
+  sex specified but when using a reference genome containing
+  chromosome sex information.
+
+* somatic: Fixed a rare crash that could occur when calling across
+  blocks of Ns when the only hypothesis presented by the reads was a
+  deletion of sufficient length.
+
+* vcfeval: Improved handling in situations where variants are so dense
+  within a region that there are too many possible haplotypes to
+  feasibly resolve. Previously operation would abort, now a warning is
+  issued and both baseline and called variants within that region are
+  ignored.
+
+
+Previous releases:
+
 RTG Core 3.4.2 (2015-03-02)
 ---------------------------
 
@@ -34,9 +56,6 @@ This is primarily a bugfix release:
 
 * many: Improved error handling when errors are encountered during
   tabix indexing.
-
-
-Previous releases:
 
 RTG Core 3.4.1 (2015-01-22)
 ---------------------------
