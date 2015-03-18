@@ -33,16 +33,11 @@ import com.rtg.util.io.SeekableStream;
  * - Proper error handling
  */
 public final class DefaultSequencesReader extends AbstractSequencesReader implements Integrity {
+
   private final File mDirectory;
   private final File mCanonicalDirectory;
-  /* true iff a call to currentSequence() or readCurrent() should fail. */
-  private boolean mReadFlag = true;
-  /* Record whether quality data has been read since last seek call */
-  private boolean mReadQualityFlag = true;
-  /* false iff a call to the current methods should fail. */
-  private boolean mSeekFlag = false;
   private final boolean mHasQualityData;
-  private long mSeqNum;
+
   //decided to use random access files, this means we have to sort out buffering input (for performance)
   //ourselves but should overall be less complicated than using inputstreams
   private final IndexFile mIndex;
@@ -69,7 +64,6 @@ public final class DefaultSequencesReader extends AbstractSequencesReader implem
     mEnd = mRegion.getEnd();
     assert mEnd >= mStart;
     assert mEnd <= mIndex.getNumberSequences();
-    mSeqNum = mStart;
 
     if (mIndex.getSequenceType() < 0 || mIndex.getSequenceType() > SequenceType.values().length) {
       throw new CorruptSdfException(dir);
@@ -116,51 +110,6 @@ public final class DefaultSequencesReader extends AbstractSequencesReader implem
   }
 
 
-  /** checks if sequence data has been read since seek */
-  private void checkReadFlag() {
-    if (mReadFlag) {
-      throw new IllegalStateException("Last call to currentSequence() or readCurrent() left file pointer in unknown position.");
-    }
-  }
-
-  /**
-   * Designates sequence data file has been read from since seek, meaning pointer is in an unknown position
-   * @param val true if have read, false otherwise
-   */
-  private void setReadFlag(final boolean val) {
-    mReadFlag = val;
-  }
-
-  /** checks if quality data has been read since last seek */
-  private void checkReadQualityFlag() {
-    if (mReadQualityFlag) {
-      throw new IllegalStateException("Last call to readCurrentQuality() left file pointer in unknown position.");
-    }
-  }
-
-  /**
-   * Designates quality data file has been read from since seek, meaning pointer is in an unknown position
-   * @param val true if have read, false otherwise
-   */
-  private void setReadQualityFlag(final boolean val) {
-    mReadQualityFlag = val;
-  }
-
-  /** Check last seek call was successful */
-  private void checkSeekFlag() {
-    if (!mSeekFlag) {
-      throw new IllegalStateException("Last call to nextSequence() or seek() failed and left current information unavailable.");
-    }
-  }
-
-  /**
-   * record result of last seek call
-   */
-  private void setSeekFlag(final boolean val) {
-    mSeekFlag = val;
-  }
-
-
   // Access-by-index methods
 
   @Override
@@ -190,8 +139,6 @@ public final class DefaultSequencesReader extends AbstractSequencesReader implem
       return 0;
     }
     mSequenceManager.seek(sequenceIndex + mStart);
-    setSeekFlag(true);
-    setReadQualityFlag(false);
     return readQualityInternal(dest);
   }
 
@@ -201,31 +148,24 @@ public final class DefaultSequencesReader extends AbstractSequencesReader implem
       return 0;
     }
     mSequenceManager.seek(sequenceIndex + mStart);
-    setSeekFlag(true);
-    setReadQualityFlag(false);
     return readQualityInternal(dest, start, length);
   }
 
   @Override
   public int read(final long sequenceIndex, final byte[] dataOut) throws IOException {
     mSequenceManager.seek(sequenceIndex + mStart);
-    setSeekFlag(true);
-    setReadFlag(false);
     return readDataInternal(dataOut);
   }
 
   @Override
   public int read(final long sequenceIndex, final byte[] dataOut, int start, int length) throws IOException {
     mSequenceManager.seek(sequenceIndex + mStart);
-    setSeekFlag(true);
-    setReadFlag(false);
     return readDataInternal(dataOut, start, length);
   }
 
   @Override
   public int length(long sequenceIndex) throws IOException {
     mSequenceManager.seek(sequenceIndex + mStart);
-    setSeekFlag(true);
     return (int) mSequenceManager.getDataLength();
   }
 
@@ -245,9 +185,6 @@ public final class DefaultSequencesReader extends AbstractSequencesReader implem
     return readDataInternal(dataOut, 0, (int) mSequenceManager.getDataLength());
   }
   private int readDataInternal(byte[] dataOut, int start, int length) throws IllegalArgumentException, IOException {
-    checkReadFlag();
-    checkSeekFlag();
-    setReadFlag(true);
     final int ret = mSequenceManager.readData(dataOut, start, length);
     if (mIndex.hasPerSequenceChecksums() && ret == mSequenceManager.getDataLength()) {
       checkChecksum(dataOut, start, ret, mSequenceManager.sequenceChecksum());
@@ -261,9 +198,6 @@ public final class DefaultSequencesReader extends AbstractSequencesReader implem
     if (!mHasQualityData) {
       return 0;
     }
-    checkSeekFlag();
-    checkReadQualityFlag();
-    setReadQualityFlag(true);
     final int ret = mSequenceManager.readQuality(dest, start, length);
     if (mIndex.hasPerSequenceChecksums() && ret == mSequenceManager.getDataLength()) {
       checkChecksum(dest, start, ret, mSequenceManager.qualityChecksum());
@@ -482,7 +416,7 @@ public final class DefaultSequencesReader extends AbstractSequencesReader implem
     int seqNo = 0;
     for (int i = startFileNo; (endFileNo == -1 || i <= endFileNo) && i < numSequences.length; i++) {
       try (RandomAccessFile raf = new RandomAccessFile(SdfFileUtils.sequencePointerFile(mDirectory, i), "r")) {
-        long pos;
+        final long pos;
         if (i == startFileNo) {
           pos = (internalStart - startLower) * entrySize;
           raf.seek(pos);
