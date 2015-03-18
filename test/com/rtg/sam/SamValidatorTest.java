@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import com.rtg.mode.DNA;
@@ -271,6 +272,7 @@ public class SamValidatorTest extends TestCase {
         final File leftCGReadsDir = new File(tmpDir, "leftcg");
         ReaderTestUtils.getReaderDNAFastqCG("", leftCGReadsDir, PrereadArm.LEFT);
         try {
+          System.out.println(Arrays.toString(leftCGReadsDir.listFiles()));
           sv.checkSAMAlign(templateDir, files, leftCGReadsDir, rightReadsDir);
           fail();
         } catch (final NoTalkbackSlimException ntse) {
