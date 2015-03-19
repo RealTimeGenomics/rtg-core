@@ -103,6 +103,7 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
         }
         fail("Expected an exception");
       } catch (final NoTalkbackSlimException e) {
+        //System.out.println(e.getMessage());
         assertEquals(SAMFormatException.class, e.getCause().getClass());
       }
     } finally {

@@ -43,7 +43,7 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
   private final int mId; // used for tie-breaking
   private final CappedConcurrentLinkedList<Collection<T>> mRecords;
   private final Populator<T> mPopulator;
-  private Iterator<T> mPacketIterator = ((Collection<T>) new ArrayList<T>()).iterator();
+  private Iterator<T> mPacketIterator = new ArrayList<T>().iterator();
   private T mTopRecord = null;
 
   private volatile boolean mVolIsClosing = false;
@@ -105,20 +105,15 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
 
   @Override
   public boolean hasNext() {
-    return mTopRecord != null || mPacketIterator.hasNext() || !mRecords.isEmpty();
+    tryTopNotNull();
+    return mTopRecord != null;
   }
 
   @Override
   public T next() {
-    tryTopNotNull();
     assert mTopRecord != null;
     final T res = mTopRecord;
-    if (mPacketIterator.hasNext()) {
-      mTopRecord = mPacketIterator.next();
-    } else {
-      mTopRecord = null;
-      tryTopNotNull();
-    }
+    mTopRecord = null;
     return res;
   }
 
@@ -138,6 +133,7 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
         }
         mPacketIterator = packet.iterator();
       } else {
+        ProgramState.checkAbort();
         return;
       }
     }
