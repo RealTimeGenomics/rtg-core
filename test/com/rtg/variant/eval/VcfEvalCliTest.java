@@ -14,6 +14,7 @@ package com.rtg.variant.eval;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
@@ -127,21 +128,32 @@ public class VcfEvalCliTest extends AbstractCliTest {
   }
 
   public void testNanoSmall() throws IOException, UnindexableDataException {
-    check("mutationEvalCli_small");
+    check("vcfeval_small", "--sample", "sample1");
   }
 
-  private void check(String id) throws IOException, UnindexableDataException {
+  public void testNanoTooComplex() throws IOException, UnindexableDataException {
+    check("vcfeval_too_complex");
+  }
+
+  private String[] appendArgs(String[] args, String...moreArgs) {
+    final String[] result = Arrays.copyOf(args, args.length + moreArgs.length);
+    System.arraycopy(moreArgs, 0, result, args.length, moreArgs.length);
+    return result;
+  }
+
+  private void check(String id, String... args) throws IOException, UnindexableDataException {
     final File template = new File(mDir, "template");
-    final File mutations = new File(mDir, "mutations.vcf.gz");
+    final File baseline = new File(mDir, "baseline.vcf.gz");
     final File calls = new File(mDir, "calls.vcf.gz");
     final File output = new File(mDir, "output");
     ReaderTestUtils.getReaderDNA(mNano.loadReference(id + "_template.fa"), template, new SdfId(0));
-    FileHelper.stringToGzFile(mNano.loadReference(id + "_mutations.vcf"), mutations);
+    FileHelper.stringToGzFile(mNano.loadReference(id + "_baseline.vcf"), baseline);
     FileHelper.stringToGzFile(mNano.loadReference(id + "_calls.vcf"), calls);
-    new TabixIndexer(mutations).saveVcfIndex();
+    new TabixIndexer(baseline).saveVcfIndex();
     new TabixIndexer(calls).saveVcfIndex();
-    final String out = checkMainInitWarn("-o", output.getPath(), "-c", calls.getPath(), "--sample", "sample1", "-b", mutations.getPath(), "-t", template.getPath(), "-Z");
+    final String stderr = checkMainInitWarn(appendArgs(args, "-o", output.getPath(), "-c", calls.getPath(), "-b", baseline.getPath(), "-t", template.getPath(), "-Z"));
     mNano.check(id + "_weighted_slope.txt", FileUtils.fileToString(new File(output, "weighted_slope.tsv")));
-    mNano.check(id + "out.txt", out);
+    mNano.check(id + "_weighted_roc.txt", FileUtils.fileToString(new File(output, "weighted_roc.tsv")));
+    mNano.check(id + "_err.txt", stderr);
   }
 }

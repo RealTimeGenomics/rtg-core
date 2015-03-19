@@ -1,0 +1,2 @@
+#total baseline variants: 4
+#score	true_positives	false_positives
