@@ -209,7 +209,7 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
         lastSyncPos = currentSyncPos;
         lastSyncPath = head;
       } else if (sortedPaths.size() > MAX_COMPLEXITY) {
-        lastWarnMessage = "Evaluation too complex (" + sortedPaths.size() + " unresolved paths) at reference region " + templateName + ":" + (lastSyncPos + 1) + "-" + (currentMaxPos + 2) + ". Variants in this region will not be included in results. You may want to manually examine the calls in this region, and filter these out.";
+        lastWarnMessage = "Evaluation too complex (" + sortedPaths.size() + " unresolved paths) at reference region " + templateName + ":" + (lastSyncPos + 1) + "-" + (currentMaxPos + 2) + ". Variants in this region will not be included in results.";
         sortedPaths.clear();    // Drop all paths currently in play
         head = lastSyncPath;    // Create new head containing path up until last sync point
         head.moveForward(currentMaxPos + 1);  // Skip to currentMaxPos
