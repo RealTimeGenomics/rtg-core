@@ -17,9 +17,12 @@
   <property name="build.text" location="${build.dir}/text"/>
   <property name="build.misc" location="${build.dir}/misc"/>
 
-
   <property name="build.sysclasspath" value="ignore"/>
-  <taskdef resource="net/sf/antcontrib/antlib.xml" />
+  <taskdef resource="net/sf/antcontrib/antlib.xml">
+    <classpath>
+      <pathelement location="${tools.dir}/ant-contrib-1.0b3.jar"/>
+    </classpath>
+  </taskdef>
 
   <property name="product" value="RTG Core Non-Commercial" />
   <property name="resources" value="core" />

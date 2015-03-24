@@ -12,7 +12,6 @@ If you require a license for commercial use or wish to purchase commercial suppo
 
 * Java 1.7 or later
 * apache ant 1.9 or later
-* ant-contrib.
 
 ## Compile / run unit tests
 
