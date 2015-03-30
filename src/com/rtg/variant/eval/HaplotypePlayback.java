@@ -143,15 +143,16 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
   }
 
   /**
-   * Test if in a variation.
-   * @return true iff not in a variation.
+   * Test if the haplotype is currently within a variant.
+   * @return true iff not in a variant.
    */
   boolean isOnTemplate() {
     return mPositionInVariation == INVALID;
   }
 
   /**
-   * Get the current position in the template.
+   * Get the current position in the template. Use <code>isOnTemplate</code> to determine
+   * whether the haplotype is also within a current variant.
    * 0 based and may be equal to length of template.
    * @return the current position in the template.
    */

@@ -81,7 +81,7 @@ class SequenceEvaluator implements IORunnable {
       Diagnostic.developerLog("Sequence: " + currentName + " has " + calledCalls.size() + " called variants");
 
       //find the best path for variant calls
-      final Path best = Path.bestPath(template, currentName, calledCalls, baseLineCalls);
+      final Path best = PathFinder.bestPath(template, currentName, calledCalls, baseLineCalls);
       //System.out.println(path);
       List<OrientedVariant> truePositives = best.getCalledIncluded();
       final List<OrientedVariant> baselineTruePositives = best.getBaselineIncluded();
