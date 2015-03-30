@@ -543,7 +543,8 @@ public final class Aview extends AbstractCli {
             name = "O";
           } else {
             final StringBuilder sb = new StringBuilder("" + startChar);
-            sb.append(record.getAnnotations()[0].length() > (refDisplayLength - 2) ? record.getAnnotations()[0].substring(0, refDisplayLength - 2) : record.getAnnotations()[0]);
+            final String regionName = record.getAnnotations().length == 0 ? "" : record.getAnnotations()[0];
+            sb.append(regionName.length() > (refDisplayLength - 2) ? regionName.substring(0, refDisplayLength - 2) : regionName);
             while (sb.length() < refDisplayLength - 1) {
               sb.append('-');
             }
