@@ -23,7 +23,7 @@ public class HaplotypePlaybackTest extends TestCase {
   public void testSimpleBase() {
     byte[] template = {1, 1, 1, 1, 1, 1, 2, 1, 1};
     HaplotypePlayback path = new HaplotypePlayback(template);
-    //snp C at 2
+    //snp C at 1
     path.addVariant(new OrientedVariant(new MockVariant(1, 2, new byte[] {2}, null), true));
     //insert G at 4
     path.addVariant(new OrientedVariant(new MockVariant(4, 4, new byte[] {3}, null), true));
@@ -41,12 +41,26 @@ public class HaplotypePlaybackTest extends TestCase {
     path.addVariant(new OrientedVariant(new MockVariant(1, 2, new byte[] {2, 4, 4}, new byte[] {3, 3, 3}), false));
     //insert A -> C:GA at 4
     path.addVariant(new OrientedVariant(new MockVariant(4, 5, new byte[] {2}, new byte[] {3, 1}), true));
-    //delete A -> i:T
+    //delete A -> i:T at 6
     path.addVariant(new OrientedVariant(new MockVariant(6, 7, new byte[] {}, new byte[] {4}), false));
 
-    byte[] expected = {3, 3 , 3, 1, 1, 2, 1, 4, 2, 1, 1};
+    byte[] expected = {3, 3, 3, 1, 1, 2, 1, 4, 2, 1, 1};
     check(expected, path);
   }
+
+  public void testInsertPriorToSnp() {
+    byte[] template = {1, 1, 1, 1, 1, 1, 2, 1, 1};
+    HaplotypePlayback path = new HaplotypePlayback(template);
+    //insert GGG at 2
+    path.addVariant(new OrientedVariant(new MockVariant(2, 2, new byte[] {3, 3, 3}, null), true));
+    //snp C at 2
+    path.addVariant(new OrientedVariant(new MockVariant(2, 3, new byte[] {2}, null), true));
+
+    byte[] expected = {1, 3, 3, 3, 2, 1, 1, 1, 1, 2, 1, 1};
+    check(expected, path);
+  }
+
+
   public void testMoreComplexAlternate() {
                                // 1  2  3  4  5  6  7  8  9
     byte[] template = {1, 1, 1, 1, 1, 1, 2, 1, 1};

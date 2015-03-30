@@ -42,13 +42,13 @@ public class PathTest extends TestCase {
     mutations.add(mutation);
     final MockVariant call = new MockVariant(2, 3, new byte[] {3}, null);
     calls.add(call);
-    final Path best = Path.bestPath(template, "currentName", mutations, calls);
+    final Path best = PathFinder.bestPath(template, "currentName", mutations, calls);
 
     assertTrue(best.getCalledIncluded().get(0).variant().equals(mutation));
     assertTrue(best.getCalledExcluded().isEmpty());
     assertTrue(best.getBaselineIncluded().get(0).variant().equals(call));
     assertTrue(best.getBaselineExcluded().isEmpty());
-    final Path best2 = Path.bestPath(template, "currentName", calls, mutations);
+    final Path best2 = PathFinder.bestPath(template, "currentName", calls, mutations);
     assertTrue(best.equals(best2));
     assertTrue(best2.equals(best));
     assertFalse(best.equals(null));
@@ -93,7 +93,7 @@ public class PathTest extends TestCase {
   }
 
   private void check(byte[] template, List<OrientedVariant> aSide, List<OrientedVariant> bSide) {
-    final Path best = Path.bestPath(template, "currentName", getVariations(aSide), getVariations(bSide));
+    final Path best = PathFinder.bestPath(template, "currentName", getVariations(aSide), getVariations(bSide));
     //System.err.println("*****************************");
     //System.err.println(best);
     //System.err.println("*****************************");
@@ -465,11 +465,11 @@ public class PathTest extends TestCase {
 
     final double[] expectedWeights = {1.0, 1.0};
 
-    Path original = Path.bestPath(template, "currentName", Arrays.asList(a), Arrays.asList(b));
+    Path original = PathFinder.bestPath(template, "currentName", Arrays.asList(a), Arrays.asList(b));
     Path.calculateWeights(original, original.getCalledIncluded(), original.getBaselineIncluded());
     check(original.getCalledIncluded(), expectedWeights);
 
-    Path originalRev = Path.bestPath(template, "currentName", Arrays.asList(b), Arrays.asList(a));
+    Path originalRev = PathFinder.bestPath(template, "currentName", Arrays.asList(b), Arrays.asList(a));
     Path.calculateWeights(originalRev, originalRev.getCalledIncluded(), originalRev.getBaselineIncluded());
     check(originalRev.getCalledIncluded(), expectedWeights);
   }
@@ -497,11 +497,11 @@ public class PathTest extends TestCase {
 
     final double[] expectedWeights = {1.0, 1.0};
 
-    Path original = Path.bestPath(template, "currentName", Arrays.asList(a), Arrays.asList(b));
+    Path original = PathFinder.bestPath(template, "currentName", Arrays.asList(a), Arrays.asList(b));
     Path.calculateWeights(original, original.getCalledIncluded(), original.getBaselineIncluded());
     check(original.getCalledIncluded(), expectedWeights);
 
-    Path originalRev = Path.bestPath(template, "currentName", Arrays.asList(b), Arrays.asList(a));
+    Path originalRev = PathFinder.bestPath(template, "currentName", Arrays.asList(b), Arrays.asList(a));
     Path.calculateWeights(originalRev, originalRev.getCalledIncluded(), originalRev.getBaselineIncluded());
     check(originalRev.getCalledIncluded(), expectedWeights);
   }
@@ -522,7 +522,7 @@ public class PathTest extends TestCase {
 
     final double[] expectedWeights = {0.3333, 0.3333, 0.3333, 1.0};
 
-    Path original = Path.bestPath(template, "currentName", Arrays.asList(a), Arrays.asList(b));
+    Path original = PathFinder.bestPath(template, "currentName", Arrays.asList(a), Arrays.asList(b));
     Path.calculateWeights(original, original.getCalledIncluded(), original.getBaselineIncluded());
     check(original.getCalledIncluded(), expectedWeights);
   }
@@ -533,7 +533,7 @@ public class PathTest extends TestCase {
     final List<OrientedVariant> al = Arrays.asList(a);
     //Testing that having variants outside the template will not attempt to advance the path past the end of the
     //template when the path is in sync
-    Path.bestPath(template, "seq", al, al);
+    PathFinder.bestPath(template, "seq", al, al);
   }
 
   public void testNoInfiniloop() throws Exception {

@@ -35,14 +35,6 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
   private boolean mFinishedTypeB;
 
   /**
-   * Get variant end position.
-   * @return Returns the variant end position.
-   */
-  public int getVariantEndPosition() {
-    return mVariantEndPosition;
-  }
-
-  /**
    * Construct an empty <code>HalfPath</code>
    * @param template the template on which the half path resides
    */
@@ -81,20 +73,24 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
   }
 
   void include(OrientedVariant var) {
+    mIncluded = new BasicLinkedListNode<>(var, mIncluded);
+    mVariantEndPosition = var.variant().getEnd();
+    mLastVariant = var.variant();
+
+    // Lazy creation of the B haplotype
     if (mHaplotypeB == null && var.variant().ntAlleleB() != null) {
       mHaplotypeB = mHaplotypeA.copy();
     }
+
     mHaplotypeA.addVariant(var);
-    mIncluded = new BasicLinkedListNode<>(var, mIncluded);
+
     if (mHaplotypeB != null) {
-      if (var.variant().ntAlleleB() == null) {
+      if (var.variant().ntAlleleB() == null) { // Homozygous variant
         mHaplotypeB.addVariant(var);
-      } else {
+      } else { // Add the other side of the heterozygous variant.
         mHaplotypeB.addVariant(new OrientedVariant(var.variant(), !var.isAlleleA()));
       }
     }
-    mVariantEndPosition = var.variant().getEnd();
-    mLastVariant = var.variant();
 
   }
 
@@ -155,6 +151,14 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
   }
 
   /**
+   * Get variant end position.
+   * @return Returns the variant end position.
+   */
+  public int getVariantEndPosition() {
+    return mVariantEndPosition;
+  }
+
+  /**
    * Retrieve the leading reference so we can add the next variants
    * @return the leading reference
    */
@@ -183,7 +187,7 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
     return nextBase(false);
   }
 
-  private  byte nextBase(boolean haplotypeA) {
+  private byte nextBase(boolean haplotypeA) {
     if (haplotypeA || mHaplotypeB == null) {
       return mHaplotypeA.nt();
     } else {

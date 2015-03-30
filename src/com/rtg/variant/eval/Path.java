@@ -16,13 +16,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Stack;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
-import com.rtg.launcher.GlobalFlags;
 import com.rtg.util.BasicLinkedListNode;
 import com.rtg.util.Pair;
 import com.rtg.util.Utils;
@@ -36,14 +31,11 @@ import com.rtg.util.integrity.IntegralAbstract;
  */
 public class Path extends IntegralAbstract implements Comparable<Path> {
 
-  private static final int MAX_COMPLEXITY = GlobalFlags.getIntegerValue(GlobalFlags.VCFEVAL_MAX_PATHS); // Threshold on number of unresolved paths
-  private static final int MAX_ITERATIONS = GlobalFlags.getIntegerValue(GlobalFlags.VCFEVAL_MAX_ITERATIONS);  // Threshold on number of iterations since last sync point
-
-  private final HalfPath mCalledPath;
-  private final HalfPath mBaselinePath;
+  final HalfPath mCalledPath;
+  final HalfPath mBaselinePath;
   //private final byte[] mTemplate;
 
-  private final BasicLinkedListNode<Integer> mSyncPointList;
+  final BasicLinkedListNode<Integer> mSyncPointList;
 
   static class SyncPoint implements Comparable<SyncPoint> {
     private final int mPos;
@@ -98,14 +90,15 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
    *
    * @param template the template sequence to build a path for.
    */
-  public Path(byte[] template) {
+  Path(byte[] template) {
     //mTemplate = template;
     mCalledPath = new HalfPath(template);
     mBaselinePath = new HalfPath(template);
     mSyncPointList = null;
   }
 
-  private Path(Path parent, BasicLinkedListNode<Integer> syncPoints) {
+
+  Path(Path parent, BasicLinkedListNode<Integer> syncPoints) {
     mCalledPath = new HalfPath(parent.mCalledPath);
     mBaselinePath = new HalfPath(parent.mBaselinePath);
     //mTemplate = parent.mTemplate;
@@ -140,177 +133,6 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
       return false;
     }
     return true;
-  }
-
-  static Path better(Path first, Path second) {
-    final BasicLinkedListNode<OrientedVariant> firstIncluded =  first == null ? null : first.mCalledPath.getIncluded();
-    final BasicLinkedListNode<OrientedVariant> secondIncluded = second == null ? null : second.mCalledPath.getIncluded();
-    final int firstSize = firstIncluded == null ? 0 : firstIncluded.size();
-    final int secondSize = secondIncluded == null ? 0 : secondIncluded.size();
-    if (firstSize == secondSize) {
-      final BasicLinkedListNode<OrientedVariant> firstBaseline =  first == null ? null : first.mBaselinePath.getIncluded();
-      final BasicLinkedListNode<OrientedVariant> secondBaseline = second == null ? null : second.mBaselinePath.getIncluded();
-      final int firstBaseSize = firstBaseline == null ? 0 : firstBaseline.size();
-      final int secondBaseSize = secondBaseline == null ? 0 : secondBaseline.size();
-      if (firstBaseSize == secondBaseSize) {
-        if (firstBaseline != null && secondBaseline != null) {
-          if (firstBaseline.getValue().isAlleleA() && !secondBaseline.getValue().isAlleleA()) {
-            return first;
-          } else if (secondBaseline.getValue().isAlleleA()) {
-            return second;
-          }
-        }
-      }
-      return firstBaseSize > secondBaseSize ? first : second;
-    }
-    return firstSize > secondSize ? first : second;
-  }
-
-  /**
-   * Find the path through the two sequences of variants that best reconciles
-   * them.
-   *
-   * @param template original reference sequence.
-   * @param templateName name of the current reference sequence
-   * @param calledVariants first sequence of variants to be applied to the template.
-   * @param baseLineVariants second sequence of variants to be applied to the template.
-   * @param <T> the type parameter
-   * @return the best path (non-null).
-   */
-  public static <T extends Variant> Path bestPath(byte[] template, String templateName, Collection<T> calledVariants, Collection<T> baseLineVariants) {
-    // make it easy to find variations
-    final TreeMap<Integer, Variant> calledMap = buildMap(calledVariants);
-    final TreeMap<Integer, Variant> baselineMap = buildMap(baseLineVariants);
-    final TreeSet<Path> sortedPaths = new TreeSet<>();
-    sortedPaths.add(new Path(template));
-    Path best = null;
-    int maxPaths = 0;
-    String maxPathsRegion = "";
-    int currentIterations = 0;
-    int currentMaxIterations = 0;
-    int currentMax = 0;
-    int currentMaxPos = 0;
-    Path lastSyncPath = null;
-    int lastSyncPos = 0;
-    String lastWarnMessage = null;
-    while (sortedPaths.size() > 0) {
-      currentMax = Math.max(currentMax, sortedPaths.size());
-      currentMaxIterations = Math.max(currentMaxIterations, currentIterations++);
-      Path head = sortedPaths.pollFirst();
-      //System.err.println("Size: " + (sortedPaths.size() + 1) + " Range:" + (lastSyncPos + 1) + "-" + (currentMaxPos + 1) + "\n\nHead: " + head);
-      if (sortedPaths.size() == 0) { // Only one path currently in play
-        if (lastWarnMessage != null) { // Issue a warning if we encountered problems during the previous region
-          Diagnostic.warning(lastWarnMessage);
-          lastWarnMessage = null;
-        }
-        final int currentSyncPos = head.mCalledPath.getPosition();
-        if (currentMax > maxPaths) {
-          maxPathsRegion = templateName + ":" + (lastSyncPos + 1) + "-" + (currentSyncPos + 1);
-          maxPaths = currentMax;
-          Diagnostic.developerLog("Maximum path complexity now " + maxPaths + ", at " + maxPathsRegion + " with "  + currentIterations + " iterations");
-        }
-        currentMax = 0;
-        currentIterations = 0;
-        lastSyncPos = currentSyncPos;
-        lastSyncPath = head;
-      } else if (sortedPaths.size() > MAX_COMPLEXITY || currentIterations > MAX_ITERATIONS) {
-        lastWarnMessage = "Evaluation too complex (" + sortedPaths.size() + " unresolved paths, " + currentIterations + " iterations) at reference region " + templateName + ":" + (lastSyncPos + 1) + "-" + (currentMaxPos + 2) + ". Variants in this region will not be included in results.";
-        sortedPaths.clear();    // Drop all paths currently in play
-        currentIterations = 0;
-        head = lastSyncPath;    // Create new head containing path up until last sync point
-        head.moveForward(currentMaxPos + 1);  // Skip to currentMaxPos
-      }
-      if (head.finished()) {
-        // Path is done. Remember the best
-        final BasicLinkedListNode<Integer> syncPoints = new BasicLinkedListNode<>(head.mCalledPath.getPosition(), head.mSyncPointList);
-        best = better(best, new Path(head, syncPoints));
-        continue;
-      }
-      final Variant aVar = nextVariant(head.mCalledPath, calledMap);
-      if (aVar != null && head.mCalledPath.isNew(aVar)) {
-        currentMaxPos = Math.max(currentMaxPos, aVar.getStart());
-        //Adding a new variant to A side
-        addIfBetter(head.addAVariant(aVar), sortedPaths);
-        continue;
-      }
-      final Variant bVar = nextVariant(head.mBaselinePath, baselineMap);
-      if (bVar != null && head.mBaselinePath.isNew(bVar)) {
-        currentMaxPos = Math.max(currentMaxPos, bVar.getStart());
-        //Adding a new variant to B side
-        addIfBetter(head.addBVariant(bVar), sortedPaths);
-        continue;
-      }
-
-      head.step();
-
-      if (head.inSync()) {
-        skipToNextVariant(template, calledMap, baselineMap, head);
-      }
-      
-      if (head.matches()) {
-        addIfBetter(head, sortedPaths);
-      }
-    }
-    //System.err.println("Best: " + best);
-    Diagnostic.userLog("Reference " + templateName + " had maximum path complexity of " + maxPaths + " at " + maxPathsRegion);
-    return best;
-  }
-
-  /**
-   * Move the path to just before the next variant
-   * @param template the template to skip along
-   * @param aMap list of variants for the A haplotype
-   * @param bMap list of variants for the B haplotype
-   * @param head the path to skip forward
-   */
-  private static void skipToNextVariant(byte[] template, final TreeMap<Integer, Variant> aMap, final TreeMap<Integer, Variant> bMap, final Path head) {
-    final Variant aNext = futureVariant(head.mCalledPath, aMap);
-    final Variant bNext = futureVariant(head.mBaselinePath, bMap);
-    final int lastTemplatePos = template.length - 1;
-    // -1 because we want to be before the position
-    final int nextPos = Math.min(Math.min(aNext != null ? aNext.getStart() : lastTemplatePos, bNext != null ? bNext.getStart() : lastTemplatePos), lastTemplatePos) - 1;
-    if (nextPos > head.mCalledPath.getPosition()) {
-      head.moveForward(nextPos);
-    }
-  }
-
-  static Variant nextVariant(HalfPath path, Map<Integer, Variant> map) {
-    return map.get(Math.max(path.getVariantEndPosition(), path.getPosition() + 1));
-  }
-  static Variant futureVariant(HalfPath path, TreeMap<Integer, Variant> map) {
-    final Entry<Integer, Variant> entry = map.ceilingEntry(path.getPosition());
-    return entry == null ? null : entry.getValue();
-  }
-
-  private static void addIfBetter(Collection<Path> add, TreeSet<Path> sortedPaths) {
-        for (final Path p : add) {
-          addIfBetter(p, sortedPaths);
-        }
-  }
-
-  private static void addIfBetter(Path add, TreeSet<Path> sortedPaths) {
-    if (sortedPaths.contains(add)) {
-      final Path other = sortedPaths.floor(add);
-      sortedPaths.remove(add);
-      sortedPaths.add(better(add, other));
-    } else {
-      sortedPaths.add(add);
-    }
-  }
-
-  static <T extends Variant> TreeMap<Integer, Variant> buildMap(Collection<T> variations) {
-    final TreeMap<Integer, Variant> map = new TreeMap<>();
-    for (final Variant v : variations) {
-      // TODO when you have an insert immediately prior to a snp/mnp, they end up with the same start position,
-      // but don't trigger the overlapping code during variant loading.
-      // This means that you don't get a warning but the snp/mnp is the only variant that ends up in the map
-      // due to the map.put replacing the existing entry. For now log these to see how often they occur.
-      final Variant oldV = map.put(v.getStart(), v);
-      if (oldV != null) {
-        Diagnostic.developerLog("Variant was bumped due to another variant starting at the same position.\nCurrent variant: " + v + "\nBumped variant:  " + oldV);
-      }
-    }
-    return map;
   }
 
   @Override
@@ -395,19 +217,26 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
     } else {
       syncPoints = this.mSyncPointList;
     }
+
+    // Create a path extension that excludes this variant
     final Path exclude = new Path(this, syncPoints);
     exclude.exclude(side, var);
     paths.add(exclude);
+
+    // Create a path extension that includes this variant in the default phase
     final Path include = new Path(this, syncPoints);
     include.include(side, new OrientedVariant(var, true));
     assert !include.equals(exclude);
     assert include.compareTo(exclude) != 0;
     paths.add(include);
+
+    // If the variant is heterozygous we need to also add the variant in the alternate phase
     if (var.ntAlleleB() != null) {
       final Path hetero = new Path(this, syncPoints);
       hetero.include(side, new OrientedVariant(var, false));
       paths.add(hetero);
     }
+
     return paths;
   }
 
@@ -418,6 +247,7 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
   Collection<Path> addBVariant(Variant var) {
     return addVariant(false, var);
   }
+
   void moveForward(int position) {
     mCalledPath.moveForward(position);
     mBaselinePath.moveForward(position);
