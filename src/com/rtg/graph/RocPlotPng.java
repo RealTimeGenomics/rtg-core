@@ -41,7 +41,7 @@ public final class RocPlotPng {
 
     final ArrayList<String> paths = new ArrayList<>(data.keySet());
 
-    final Graph2D graph = RocPlot.makeGraph(paths, lineWidth, scores, data, title != null ? title : "ROC");
+    final Graph2D graph = new RocPlot.RocGraph2D(paths, lineWidth, scores, data, title != null ? title : "ROC");
     iw.toPNG(pngFile, graph, 800, 600, null);
   }
 

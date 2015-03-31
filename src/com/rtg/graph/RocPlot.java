@@ -14,11 +14,14 @@ package com.rtg.graph;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
+import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -38,6 +41,7 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import javax.swing.AbstractAction;
+import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -65,6 +69,7 @@ import com.reeltwo.plot.KeyPosition;
 import com.reeltwo.plot.Plot2D;
 import com.reeltwo.plot.Point2D;
 import com.reeltwo.plot.PointPlot2D;
+import com.reeltwo.plot.renderer.Mapping;
 import com.reeltwo.plot.ui.PlotPanel;
 import com.reeltwo.plot.ui.ZoomPlotPanel;
 import com.rtg.util.Resources;
@@ -89,7 +94,7 @@ public final class RocPlot {
   private final JPanel mMainPanel;
   /** panel showing plot */
   private final PlotPanel mPlotPanel;
-  private ZoomPlotPanel mZoomPP;
+  private final RocZoomPlotPanel mZoomPP;
   /** a progress bar */
   private final JProgressBar mProgressBar;
   /** pop up menu */
@@ -115,11 +120,13 @@ public final class RocPlot {
   private float mMaxYHi = -1.0f;
 
   private final JScrollPane mScrollPane;
+
+
   /** Creates a new swing plot. */
   RocPlot() {
     mMainPanel = new JPanel();
     mPlotPanel = new PlotPanel(true);
-    mZoomPP = new ZoomPlotPanel(mPlotPanel, mMainPanel);
+    mZoomPP = new RocZoomPlotPanel(mPlotPanel, mMainPanel);
     mZoomPP.setOriginIsMin(true);
     mProgressBar = new JProgressBar(-1, -1);
     mProgressBarDelegate = new ProgressBarDelegate(mProgressBar);
@@ -154,26 +161,6 @@ public final class RocPlot {
     } else {
       System.err.println("Couldn't find file: " + path);
       return null;
-    }
-  }
-
-  private interface ActionCallback {
-    void callback();
-  }
-
-  //Because AbstractAction is Serializable and SamStatisticsPlot is not
-  private static final class Action extends AbstractAction {
-
-    private final ActionCallback mCallback;
-
-    public Action(String name, ActionCallback callback) {
-      super(name, null);
-      mCallback = callback;
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-      mCallback.callback();
     }
   }
 
@@ -314,51 +301,99 @@ public final class RocPlot {
     pane.add(mIconLabel, BorderLayout.NORTH);
   }
 
-  static Graph2D makeGraph(ArrayList<String> lineOrdering, int lineWidth, boolean showScores, Map<String, DataBundle> data, String title) {
-    final Graph2D graph = new Graph2D();
-    graph.setKeyVerticalPosition(KeyPosition.BOTTOM);
-    graph.setKeyHorizontalPosition(KeyPosition.RIGHT);
-    graph.setGrid(true);
-
-    int maxVariants = -1;
-
-    for (int i = 0; i < lineOrdering.size(); i++) {
-      final DataBundle db = data.get(lineOrdering.get(i));
-      if (db.show()) {
-        graph.addPlot(db.getPlot(lineWidth, i));
-        if (showScores) {
-          graph.addPlot(db.getScorePoints(lineWidth, i));
-          graph.addPlot(db.getScoreLabels());
-        }
-        if (db.getTotalVariants() > maxVariants) {
-          maxVariants = db.getTotalVariants();
-        }
+  // Adds the notion of painting a current crosshair position
+  private class RocZoomPlotPanel extends ZoomPlotPanel {
+    private final PlotPanel mPlotPanel;
+    private Point mCrosshair;
+    RocZoomPlotPanel(PlotPanel plotPanel, Container container) {
+      super(plotPanel, container);
+      mPlotPanel = plotPanel;
+    }
+    @Override
+    public void paint(Graphics g) {
+      super.paint(g);
+      if (mCrosshair != null) {
+        g.setColor(Color.BLACK);
+        final int size = 9;
+        g.drawLine(mCrosshair.x - size, mCrosshair.y - size, mCrosshair.x + size, mCrosshair.y + size);
+        g.drawLine(mCrosshair.x - size, mCrosshair.y + size, mCrosshair.x + size, mCrosshair.y - size);
       }
     }
-
-    graph.setLabel(Graph2D.Y, "True Positives");
-    graph.setLabel(Graph2D.X, "False Positives");
-    graph.setTitle(title);
-    if (maxVariants > 0) {
-      graph.setRange(Graph2D.Y, 0, maxVariants);
-      graph.setTitle(title + " (baseline total = " + maxVariants + ")");
-
-      graph.setRange(Graph2D.Y, Graph2D.TWO, 0, 100);
-      graph.setShowTics(Graph2D.Y, Graph2D.TWO, true);
-      graph.setGrid(Graph2D.Y, Graph2D.TWO, false);
-      graph.setLabel(Graph2D.Y, Graph2D.TWO, "%");
-      // dummy plot to show Y2 axis
-      final PointPlot2D pp = new PointPlot2D(Graph2D.ONE, Graph2D.TWO);
-      graph.addPlot(pp);
+    @Override
+    public Action getZoomOutAction() {
+      // This is ugly!
+      final Action delegate = super.getZoomOutAction();
+      return new AbstractAction("Zoom Out") {
+        @Override
+        public void actionPerformed(ActionEvent e) {
+          setCrossHair(null);
+          mProgressBar.setString("");
+          delegate.actionPerformed(e);
+        }
+      };
     }
-    return graph;
+    @Override
+    protected void zoomIn() {
+      setCrossHair(null);
+      mProgressBar.setString("");
+      super.zoomIn();
+    }
+    void setCrossHair(Point p) {
+      mCrosshair = p == null ? null : SwingUtilities.convertPoint(mPlotPanel, p, this);
+    }
+  }
+
+  // Adds the notion of the baseline total number of variants, for calculating sensitivity
+  static class RocGraph2D extends Graph2D {
+    private final int mMaxVariants;
+    RocGraph2D(ArrayList<String> lineOrdering, int lineWidth, boolean showScores, Map<String, DataBundle> data, String title) {
+      setKeyVerticalPosition(KeyPosition.BOTTOM);
+      setKeyHorizontalPosition(KeyPosition.RIGHT);
+      setGrid(true);
+      setLabel(Graph2D.Y, "True Positives");
+      setLabel(Graph2D.X, "False Positives");
+      setTitle(title);
+
+      int maxVariants = -1;
+      for (int i = 0; i < lineOrdering.size(); i++) {
+        final DataBundle db = data.get(lineOrdering.get(i));
+        if (db.show()) {
+          addPlot(db.getPlot(lineWidth, i));
+          if (showScores) {
+            addPlot(db.getScorePoints(lineWidth, i));
+            addPlot(db.getScoreLabels());
+          }
+          if (db.getTotalVariants() > maxVariants) {
+            maxVariants = db.getTotalVariants();
+          }
+        }
+      }
+
+      if (maxVariants > 0) {
+        setRange(Graph2D.Y, 0, maxVariants);
+        setTitle(title + " (baseline total = " + maxVariants + ")");
+
+        setRange(Graph2D.Y, Graph2D.TWO, 0, 100);
+        setShowTics(Graph2D.Y, Graph2D.TWO, true);
+        setGrid(Graph2D.Y, Graph2D.TWO, false);
+        setLabel(Graph2D.Y, Graph2D.TWO, "%");
+        // dummy plot to show Y2 axis
+        final PointPlot2D pp = new PointPlot2D(Graph2D.ONE, Graph2D.TWO);
+        addPlot(pp);
+      }
+      mMaxVariants = maxVariants;
+    }
+
+    public int getMaxVariants() {
+      return mMaxVariants;
+    }
   }
 
   void showCurrentGraph() {
     SwingUtilities.invokeLater(new Runnable() {
       @Override
       public void run() {
-        final Graph2D graph = makeGraph(RocPlot.this.mRocLinesPanel.plotOrder(), RocPlot.this.mLineWidth, RocPlot.this.mShowScores, RocPlot.this.mData, RocPlot.this.mTitleEntry.getText());
+        final Graph2D graph = new RocGraph2D(RocPlot.this.mRocLinesPanel.plotOrder(), RocPlot.this.mLineWidth, RocPlot.this.mShowScores, RocPlot.this.mData, RocPlot.this.mTitleEntry.getText());
         maintainZoomMax(graph);
         graph.addPlot(invisibleGraph());
         mZoomPP.setGraph(graph, true);
@@ -497,6 +532,27 @@ public final class RocPlot {
    */
   private class PopupListener extends MouseAdapter {
     @Override
+    public void mouseClicked(MouseEvent e) {
+      final Point p = e.getPoint();
+      final Mapping[] mapping = mPlotPanel.getMapping();
+      final int maxVariants = ((RocGraph2D) mPlotPanel.getGraph()).getMaxVariants();
+      if (mapping != null && mapping.length > 1 && p != null) {
+        final float x = mapping[0].screenToWorld((float) p.getX());
+        final float y = mapping[1].screenToWorld((float) p.getY());
+        if (x >= 0 && y >= 0 && (x + y > 0)) {
+          String message = String.format("TP=%.0f FP=%.0f Precision=%.2f%%", y, x, y / (x + y) * 100);
+          if (maxVariants > 0) {
+            message += String.format(" Sensitivity=%.2f%%", y / maxVariants * 100);
+          }
+          mZoomPP.setCrossHair(p);
+          mProgressBar.setString(message);
+        } else {
+          mProgressBar.setString("");
+        }
+      }
+    }
+
+    @Override
     public void mousePressed(MouseEvent e) {
       maybeShowPopup(e);
     }
@@ -514,9 +570,6 @@ public final class RocPlot {
   }
 
 
-
-
-
   void rocStandalone(ArrayList<File> fileList, ArrayList<String> nameList, String title, boolean scores, final boolean hideSidePanel, int lineWidth) throws InterruptedException, InvocationTargetException, IOException {
     final RocPlot rp = new RocPlot();
     rp.setLineWidth(lineWidth);
@@ -527,14 +580,14 @@ public final class RocPlot {
     frame.setGlassPane(rp.mZoomPP);
     frame.getGlassPane().setVisible(true);
     final CountDownLatch lock = new CountDownLatch(1);
-    rp.mPopup.add(new Action("Exit", new ActionCallback() {
+    rp.mPopup.add(new AbstractAction("Exit", null) {
       @Override
-      public void callback() {
+      public void actionPerformed(ActionEvent e) {
         frame.setVisible(false);
         frame.dispose();
         lock.countDown();
       }
-    }));
+    });
     rp.showScores(scores);
     if (title != null) {
       rp.setTitle(title);
@@ -556,7 +609,7 @@ public final class RocPlot {
     SwingUtilities.invokeAndWait(new Runnable() {
       @Override
       public void run() {
-        rp.mZoomPP.setGraph(RocPlot.makeGraph(rp.mRocLinesPanel.plotOrder(), rp.mLineWidth, rp.mShowScores, rp.mData, rp.mTitleEntry.getText()), false);
+        rp.mZoomPP.setGraph(new RocGraph2D(rp.mRocLinesPanel.plotOrder(), rp.mLineWidth, rp.mShowScores, rp.mData, rp.mTitleEntry.getText()), false);
       }
     });
     lock.await();
