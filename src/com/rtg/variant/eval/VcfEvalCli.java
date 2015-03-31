@@ -51,9 +51,11 @@ public class VcfEvalCli extends ParamsCli<VcfEvalParams> {
   private static final String SAMPLE = "sample";
   private static final String SORT_FIELD = "vcf-score-field";
   private static final String SQUASH_PLOIDY = "squash-ploidy";
+  private static final String BASELINE_TP = "baseline-tp";
+  private static final String SLOPE_FILES = "slope-files";
+
   private static final String MAX_LENGTH = "Xmax-length";
   private static final String RTG_STATS = "Xrtg-stats";
-  private static final String BASELINE_TP = "baseline-tp";
 
   /**
    * Compare detected SNPs with the generated SNPs
@@ -82,7 +84,7 @@ public class VcfEvalCli extends ParamsCli<VcfEvalParams> {
   public static void initFlags(final CFlags flags) {
     CommonFlagCategories.setCategories(flags);
     flags.registerExtendedHelp();
-    flags.setDescription("Evaluates called variants for agreement with a baseline variant set.");
+    flags.setDescription("Evaluates called variants for genotype agreement with a baseline variant set irrespective of representational differences. Outputs a weighted ROC file which can be viewed with rtg rocplot and separate VCF files containing false positives (called variants not matched in the baseline), false negatives (baseline variants not matched in the call set), and true positives (called variants matched in the baseline).");
     flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
     flags.registerRequired('b', BASELINE, File.class, "file", "VCF file containing baseline variants").setCategory(INPUT_OUTPUT);
     flags.registerRequired('c', CALLS, File.class, "file", "VCF file containing called variants").setCategory(INPUT_OUTPUT);
@@ -90,13 +92,14 @@ public class VcfEvalCli extends ParamsCli<VcfEvalParams> {
 
     flags.registerOptional(SAMPLE, String.class, "STRING", "the name of the sample to select (required when using multi-sample VCF files)").setCategory(FILTERING);
     flags.registerOptional(ALL_RECORDS, "use all records regardless of filters. Default is to only process records where FILTER is \".\" or \"PASS\"").setCategory(FILTERING);
-    flags.registerOptional(SQUASH_PLOIDY, "treat heterozygous variants as homozygous ALT in both baseline and calls").setCategory(FILTERING);
+    flags.registerOptional(SQUASH_PLOIDY, "treat heterozygous genotypes as homozygous ALT in both baseline and calls").setCategory(FILTERING);
 
     flags.registerOptional('f', SORT_FIELD, String.class, "STRING", "the name of the VCF FORMAT field to use as the ROC score. Also valid are \"QUAL\" or \"INFO=<name>\" to select the named VCF INFO field", VcfUtils.FORMAT_GENOTYPE_QUALITY).setCategory(REPORTING);
     flags.registerOptional('O', SORT_ORDER, RocSortOrder.class, "STRING", "the order in which to sort the ROC scores so that \"good\" scores come before \"bad\" scores", RocSortOrder.DESCENDING).setCategory(REPORTING);
     flags.registerOptional(MAX_LENGTH, Integer.class, "INT", "don't attempt to evaluate variant alternatives longer than this", 1000).setCategory(FILTERING);
     flags.registerOptional(RTG_STATS, "output RTG specific files and statistics").setCategory(REPORTING);
-    flags.registerOptional(BASELINE_TP, "also output a file containing the baseline version of true positive variants").setCategory(REPORTING);
+    flags.registerOptional(BASELINE_TP, "output an additional file containing the baseline version of true positive variants").setCategory(REPORTING);
+    flags.registerOptional(SLOPE_FILES, "output files for ROC slope analysis").setCategory(REPORTING);
 
     CommonFlags.initThreadsFlag(flags);
     CommonFlags.initNoGzip(flags);
@@ -200,6 +203,7 @@ public class VcfEvalCli extends ParamsCli<VcfEvalParams> {
     builder.squashPloidy(mFlags.isSet(SQUASH_PLOIDY));
     builder.rtgStats(mFlags.isSet(RTG_STATS));
     builder.outputBaselineTp(mFlags.isSet(BASELINE_TP));
+    builder.outputSlopeFiles(mFlags.isSet(SLOPE_FILES));
     builder.numberThreads(CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)));
     return builder.create();
   }

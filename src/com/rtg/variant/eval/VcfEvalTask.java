@@ -35,12 +35,12 @@ import com.rtg.reader.SdfId;
 import com.rtg.reader.SdfUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.Pair;
 import com.rtg.util.SimpleThreadPool;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.VcfUtils;
 
@@ -186,7 +186,9 @@ public final class VcfEvalTask extends ParamsTask<VcfEvalParams, NoStatistics> {
     }
     Diagnostic.developerLog("Writing ROC");
     sync.mRoc.writeRocs(sync.mTotalVariants, zip);
-    produceSlopeFiles(params.directory(), zip, params.rtgStats());
+    if (params.outputSlopeFiles()) {
+      produceSlopeFiles(params.directory(), zip, params.rtgStats());
+    }
     writePhasingInfo(sync, params.directory());
   }
 

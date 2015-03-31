@@ -29,7 +29,6 @@ public final class VcfEvalParams extends OutputModuleParams {
     return new VcfEvalParamsBuilder();
   }
 
-
   /**
    * A builder class for <code>VcfEvalParams</code>.
    */
@@ -46,6 +45,7 @@ public final class VcfEvalParams extends OutputModuleParams {
     int mMaxLength = -1;
     boolean mRtgStats = false;
     boolean mOutputBaselineTp = false;
+    boolean mOutputSlopeFiles = false;
 
     @Override
     protected VcfEvalParamsBuilder self() {
@@ -167,6 +167,15 @@ public final class VcfEvalParams extends OutputModuleParams {
     }
 
     /**
+     * @param outputSlopeFiles if set, output the files for ROC slope analysis
+     * @return this builder, so calls can be chained
+     */
+    public VcfEvalParamsBuilder outputSlopeFiles(boolean outputSlopeFiles) {
+      mOutputSlopeFiles = outputSlopeFiles;
+      return self();
+    }
+
+    /**
      * @param outputBaselineTp if set, output the baseline version of the true positives file too
      * @return this builder, so calls can be chained
      */
@@ -197,6 +206,8 @@ public final class VcfEvalParams extends OutputModuleParams {
   private final int mMaxLength;
   private final boolean mRtgStats;
   private final boolean mOutputBaselineTp;
+  private final boolean mOutputSlopeFiles;
+
 
   /**
    * @param builder the builder object.
@@ -214,6 +225,7 @@ public final class VcfEvalParams extends OutputModuleParams {
     mSquashPloidy = builder.mSquashPloidy;
     mMaxLength = builder.mMaxLength;
     mRtgStats = builder.mRtgStats;
+    mOutputSlopeFiles = builder.mOutputSlopeFiles;
     mOutputBaselineTp = builder.mOutputBaselineTp;
   }
 
@@ -299,6 +311,15 @@ public final class VcfEvalParams extends OutputModuleParams {
   public boolean rtgStats() {
     return mRtgStats;
   }
+
+  /**
+   * @return true if slope files should be written
+   */
+  public boolean outputSlopeFiles() {
+    return mOutputSlopeFiles;
+  }
+
+
 
   /**
    * @return true if the baseline version of the true positives file should be output
