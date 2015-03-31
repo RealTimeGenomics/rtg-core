@@ -11,8 +11,6 @@
  */
 package com.rtg.variant.bayes;
 
-import java.util.Arrays;
-
 import com.rtg.util.MathUtils;
 
 /**
@@ -49,9 +47,9 @@ public class AlleleStatisticsInt extends AlleleStatistics<AlleleStatisticsInt> {
     mCountsUnmated = new int[description.size()];
     //mCountsSingle = new int[description.size()];
     mErrors = new double[description.size()];
-    Arrays.fill(mCountsForwards, 0);
-    Arrays.fill(mCountsBackwards, 0);
-    Arrays.fill(mErrors, 0.0);
+    //Arrays.fill(mCountsForwards, 0);
+    //Arrays.fill(mCountsBackwards, 0);
+    //Arrays.fill(mErrors, 0.0);
   }
 
   /**

@@ -210,6 +210,7 @@ public final class Trimming {
           oldDescription = original.getSample(i).getStats().counts().getDescription();
         }
       }
+      // Incrementally build up mapping of old alleles to new alleles
       final LinkedHashMap<String, Integer> alleles = new LinkedHashMap<>();
       final int[] alleleMap = new int[oldDescription.size()];
       for (int i = 0; i < oldDescription.size(); i++) {
@@ -284,8 +285,7 @@ public final class Trimming {
         while (endSplit < length && syndrome[endSplit]) {
           endSplit++;
         }
-        final Variant splitVariant = createVariant(original, startSplit,
-            length - endSplit, splitId++);
+        final Variant splitVariant = createVariant(original, startSplit, length - endSplit, splitId++);
         final Variant variant = denovoCorrector != null ? denovoCorrect(denovoCorrector, splitVariant) : splitVariant;
         list.add(variant);
         startSplit = endSplit + 1;
