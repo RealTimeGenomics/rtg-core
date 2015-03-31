@@ -41,7 +41,6 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 
 import javax.swing.AbstractAction;
-import javax.swing.Action;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -304,7 +303,7 @@ public final class RocPlot {
   // Adds the notion of painting a current crosshair position
   private class RocZoomPlotPanel extends ZoomPlotPanel {
     private final PlotPanel mPlotPanel;
-    private Point mCrosshair;
+    private Point mCrosshair; // In TP / FP coordinates.
     RocZoomPlotPanel(PlotPanel plotPanel, Container container) {
       super(plotPanel, container);
       mPlotPanel = plotPanel;
@@ -312,34 +311,18 @@ public final class RocPlot {
     @Override
     public void paint(Graphics g) {
       super.paint(g);
-      if (mCrosshair != null) {
+      final Mapping[] mapping = mPlotPanel.getMapping();
+      if (mapping != null && mapping.length > 1 && mCrosshair != null) {
+        Point p = new Point((int) mapping[0].worldToScreen(mCrosshair.x), (int) mapping[1].worldToScreen(mCrosshair.y));
+        p = SwingUtilities.convertPoint(mPlotPanel, p, this);
         g.setColor(Color.BLACK);
         final int size = 9;
-        g.drawLine(mCrosshair.x - size, mCrosshair.y - size, mCrosshair.x + size, mCrosshair.y + size);
-        g.drawLine(mCrosshair.x - size, mCrosshair.y + size, mCrosshair.x + size, mCrosshair.y - size);
+        g.drawLine(p.x - size, p.y - size, p.x + size, p.y + size);
+        g.drawLine(p.x - size, p.y + size, p.x + size, p.y - size);
       }
     }
-    @Override
-    public Action getZoomOutAction() {
-      // This is ugly!
-      final Action delegate = super.getZoomOutAction();
-      return new AbstractAction("Zoom Out") {
-        @Override
-        public void actionPerformed(ActionEvent e) {
-          setCrossHair(null);
-          mProgressBar.setString("");
-          delegate.actionPerformed(e);
-        }
-      };
-    }
-    @Override
-    protected void zoomIn() {
-      setCrossHair(null);
-      mProgressBar.setString("");
-      super.zoomIn();
-    }
     void setCrossHair(Point p) {
-      mCrosshair = p == null ? null : SwingUtilities.convertPoint(mPlotPanel, p, this);
+      mCrosshair = p;
     }
   }
 
@@ -544,9 +527,10 @@ public final class RocPlot {
           if (maxVariants > 0) {
             message += String.format(" Sensitivity=%.2f%%", y / maxVariants * 100);
           }
-          mZoomPP.setCrossHair(p);
+          mZoomPP.setCrossHair(new Point((int) x, (int) y));
           mProgressBar.setString(message);
         } else {
+          mZoomPP.setCrossHair(null);
           mProgressBar.setString("");
         }
       }
