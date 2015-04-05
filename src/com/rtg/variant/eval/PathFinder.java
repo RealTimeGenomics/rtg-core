@@ -25,7 +25,10 @@ import com.rtg.util.diagnostic.Diagnostic;
  */
 public class PathFinder {
 
-  private static final int MAX_COMPLEXITY = GlobalFlags.getIntegerValue(GlobalFlags.VCFEVAL_MAX_PATHS);
+  private static final boolean DUMP = false;
+
+  private static final int MAX_COMPLEXITY = GlobalFlags.getIntegerValue(GlobalFlags.VCFEVAL_MAX_PATHS); // Threshold on number of unresolved paths
+  private static final int MAX_ITERATIONS = GlobalFlags.getIntegerValue(GlobalFlags.VCFEVAL_MAX_ITERATIONS);  // Threshold on number of iterations since last sync point
 
   private final byte[] mTemplate;
   private final String mTemplateName;
@@ -61,6 +64,8 @@ public class PathFinder {
     Path best = null;
     int maxPaths = 0;
     String maxPathsRegion = "";
+    int currentIterations = 0;
+    int currentMaxIterations = 0;
     int currentMax = 0;
     int currentMaxPos = 0;
     Path lastSyncPath = null;
@@ -68,28 +73,28 @@ public class PathFinder {
     String lastWarnMessage = null;
     while (sortedPaths.size() > 0) {
       currentMax = Math.max(currentMax, sortedPaths.size());
+      currentMaxIterations = Math.max(currentMaxIterations, currentIterations++);
       Path head = sortedPaths.pollFirst();
-      //System.err.println("Size: " + (sortedPaths.size() + 1) + " Range:" + (lastSyncPos + 1) + "-" + (currentMaxPos + 1) + "\n\nHead: " + head);
+      //if (DUMP) System.err.println("Size: " + (sortedPaths.size() + 1) + " Range:" + (lastSyncPos + 1) + "-" + (currentMaxPos + 1) + " LocalIterations: " + currentIterations + "\n\nHead: " + head);
       if (sortedPaths.size() == 0) { // Only one path currently in play
         if (lastWarnMessage != null) { // Issue a warning if we encountered problems during the previous region
           Diagnostic.warning(lastWarnMessage);
           lastWarnMessage = null;
         }
         final int currentSyncPos = head.mCalledPath.getPosition();
-        if (currentMax > 1) {
-          Diagnostic.developerLog("Most recent +5 region " + mTemplateName + ":" + (lastSyncPos + 1) + "-" + (currentSyncPos + 1));
-        }
         if (currentMax > maxPaths) {
           maxPathsRegion = mTemplateName + ":" + (lastSyncPos + 1) + "-" + (currentSyncPos + 1);
           maxPaths = currentMax;
-          Diagnostic.developerLog("Maximum path complexity now " + maxPaths + ", at " + maxPathsRegion);
+          Diagnostic.developerLog("Maximum path complexity now " + maxPaths + ", at " + maxPathsRegion + " with "  + currentIterations + " iterations");
         }
         currentMax = 0;
+        currentIterations = 0;
         lastSyncPos = currentSyncPos;
         lastSyncPath = head;
-      } else if (sortedPaths.size() > MAX_COMPLEXITY) {
-        lastWarnMessage = "Evaluation too complex (" + sortedPaths.size() + " unresolved paths) at reference region " + mTemplateName + ":" + (lastSyncPos + 1) + "-" + (currentMaxPos + 2) + ". Variants in this region will not be included in results.";
+      } else if (sortedPaths.size() > MAX_COMPLEXITY || currentIterations > MAX_ITERATIONS) {
+        lastWarnMessage = "Evaluation too complex (" + sortedPaths.size() + " unresolved paths, " + currentIterations + " iterations) at reference region " + mTemplateName + ":" + (lastSyncPos + 1) + "-" + (currentMaxPos + 2) + ". Variants in this region will not be included in results.";
         sortedPaths.clear();    // Drop all paths currently in play
+        currentIterations = 0;
         head = lastSyncPath;    // Create new head containing path up until last sync point
         head.moveForward(currentMaxPos + 1);  // Skip to currentMaxPos
       }
@@ -103,7 +108,7 @@ public class PathFinder {
       if (aVar != null && head.mCalledPath.isNew(aVar)) {
         currentMaxPos = Math.max(currentMaxPos, aVar.getStart());
         //Adding a new variant to A side
-        //System.err.println("Add to A " + aVar);
+        if (DUMP) System.err.println("Add alternatives to called " + aVar);
         addIfBetter(head.addAVariant(aVar), sortedPaths);
         continue;
       }
@@ -111,7 +116,7 @@ public class PathFinder {
       if (bVar != null && head.mBaselinePath.isNew(bVar)) {
         currentMaxPos = Math.max(currentMaxPos, bVar.getStart());
         //Adding a new variant to B side
-        //System.err.println("Add to B " + bVar);
+        if (DUMP) System.err.println("Add alternatives to baseline " + bVar);
         addIfBetter(head.addBVariant(bVar), sortedPaths);
         continue;
       }
@@ -119,11 +124,17 @@ public class PathFinder {
       head.step();
 
       if (head.inSync()) {
-        skipToNextVariant(mTemplate, mCalledVariants, mBaseLineVariants, head);
+        skipToNextVariant(head);
+        if (DUMP) System.err.println("In sync, skipping: " + head);
+      } else {
+        if (DUMP) System.err.println("Not in sync");
       }
 
       if (head.matches()) {
+        if (DUMP) System.err.println("Head matches, keeping");
         addIfBetter(head, sortedPaths);
+      } else {
+        if (DUMP) System.err.println("Head mismatch, discard");
       }
     }
     //System.err.println("Best: " + best);
@@ -133,18 +144,16 @@ public class PathFinder {
 
   /**
    * Move the path to just before the next variant
-   * @param template the template to skip along
-   * @param aMap list of variants for the A haplotype
-   * @param bMap list of variants for the B haplotype
    * @param head the path to skip forward
    */
-  private static void skipToNextVariant(byte[] template, final TreeMap<Integer, Variant> aMap, final TreeMap<Integer, Variant> bMap, final Path head) {
-    final Variant aNext = futureVariant(head.mCalledPath, aMap);
-    final Variant bNext = futureVariant(head.mBaselinePath, bMap);
-    final int lastTemplatePos = template.length - 1;
+  private void skipToNextVariant(final Path head) {
+    final Variant aNext = futureVariant(head.mCalledPath, mCalledVariants);
+    final Variant bNext = futureVariant(head.mBaselinePath, mBaseLineVariants);
+    final int lastTemplatePos = mTemplate.length - 1;
     //System.err.println("Skip to next variant " + lastTemplatePos);
     // -1 because we want to be before the position
     final int nextPos = Math.min(Math.min(aNext != null ? aNext.getStart() : lastTemplatePos, bNext != null ? bNext.getStart() : lastTemplatePos), lastTemplatePos) - 1;
+    assert head.mCalledPath.getPosition() == head.mBaselinePath.getPosition();
     if (nextPos > head.mCalledPath.getPosition()) {
       head.moveForward(nextPos);
     }
