@@ -20,6 +20,7 @@ import java.util.List;
 import com.rtg.launcher.OutputParams;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.TabixIndexer;
+import com.rtg.util.Pair;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
@@ -520,10 +521,13 @@ public class PathTest extends TestCase {
       , new OrientedVariant(getDetectedVariant("seq 9 . C T 0.0 PASS . GT 1/1"), true)
     };
 
-    final double[] expectedWeights = {0.3333, 0.3333, 0.3333, 1.0};
+    final double[] expectedWeights = {1, 0, 0, 1.0};
 
     Path original = PathFinder.bestPath(template, "currentName", Arrays.asList(a), Arrays.asList(b));
-    Path.calculateWeights(original, original.getCalledIncluded(), original.getBaselineIncluded());
+    assertEquals(4, original.getCalledIncluded().size()); // The NOP variants are initially TP
+    assertEquals(2, original.getBaselineIncluded().size());
+    Pair<List<OrientedVariant>, List<OrientedVariant>> result = Path.calculateWeights(original, original.getCalledIncluded(), original.getBaselineIncluded());
+    assertEquals(2, result.getA().size()); // The NOP variants have been removed
     check(original.getCalledIncluded(), expectedWeights);
   }
   

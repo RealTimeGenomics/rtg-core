@@ -29,7 +29,7 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
 
   private static final int INVALID = -1;
 
-  /** Sorted list of variations. */
+  /** Sorted list of variations yet to be processed. */
   private final Queue<OrientedVariant> mVariations;
 
   private final byte[] mTemplate;
@@ -38,7 +38,7 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
   private int mTemplatePosition = -1;
 
   /** Position in variation. INVALID if not currently in variation. 0 based. */
-  private int mPositionInVariation;
+  private int mPositionInVariant;
 
   /** Variation that currently in or next one. */
   private OrientedVariant mNextVariant;
@@ -47,7 +47,7 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
     mVariations = new LinkedList<>();
     mTemplate = template;
     mNextVariant = null;
-    mPositionInVariation = INVALID;
+    mPositionInVariant = INVALID;
     assert globalIntegrity();
   }
 
@@ -56,7 +56,7 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
     mTemplate = old.mTemplate;
     mNextVariant = old.mNextVariant;
     mTemplatePosition = old.mTemplatePosition;
-    mPositionInVariation = old.mPositionInVariation;
+    mPositionInVariant = old.mPositionInVariant;
     assert globalIntegrity();
   }
 
@@ -78,10 +78,10 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
    * @return the current nucleotide in this playback.
    */
   byte nt() {
-    if (mPositionInVariation == INVALID) {
+    if (mPositionInVariant == INVALID) {
       return mTemplatePosition < mTemplate.length ? mTemplate[mTemplatePosition] : DnaUtils.UNKNOWN_RESIDUE;
     }
-    return mNextVariant.variant().nt(mNextVariant.isAlleleA())[mPositionInVariation];
+    return mNextVariant.variant().nt(mNextVariant.isAlleleA())[mPositionInVariant];
   }
 
   /**
@@ -103,26 +103,25 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
     if (isOnTemplate()) {
       mTemplatePosition++;
       if (mNextVariant != null && mNextVariant.variant().getStart() == mTemplatePosition) {
-        mPositionInVariation = 0;
+        mPositionInVariant = 0;
       }
     } else {
-      assert mPositionInVariation != INVALID;
-      mPositionInVariation++;
+      assert mPositionInVariant != INVALID;
+      mPositionInVariant++;
     }
     if (mNextVariant == null) {
-      assert mPositionInVariation == INVALID;
+      assert mPositionInVariant == INVALID;
     } else {
       while (true) {
         //dont forget that variations may come back to back
         final byte[] norm = mNextVariant.variant().nt(mNextVariant.isAlleleA());
-        final int effectiveLength = norm.length;
-        if (mPositionInVariation != effectiveLength) {
-          //this also catches the case when mPositionInVariation == INVALID
+        if (mPositionInVariant != norm.length) {
+          //this also catches the case when mPositionInVariant == INVALID
           assert integrity();
           break;
         }
         mTemplatePosition = mNextVariant.variant().getEnd();
-        mPositionInVariation = INVALID;
+        mPositionInVariant = INVALID;
         if (!mVariations.isEmpty()) {
           mNextVariant = mVariations.poll();
         } else {
@@ -134,7 +133,7 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
           assert integrity();
           break;
         }
-        mPositionInVariation = 0;
+        mPositionInVariant = 0;
         //System.err.println("templatePosition=" + mTemplatePosition + " varPosition=" + (mNextVariant.variant().start() - 1));
         assert mTemplatePosition == mNextVariant.variant().getStart();
       }
@@ -147,7 +146,15 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
    * @return true iff not in a variant.
    */
   boolean isOnTemplate() {
-    return mPositionInVariation == INVALID;
+    return mPositionInVariant == INVALID;
+  }
+
+  /**
+   * Get the current position within a variant.
+   * @return the current position within the current variant.
+   */
+  int positionInVariant() {
+    return mPositionInVariant;
   }
 
   /**
@@ -190,7 +197,7 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
 
   @Override
   public String toString() {
-    return "HaplotypePlayback: position=" + templatePosition() + " inPosition=" + mPositionInVariation + LS
+    return "HaplotypePlayback: position=" + templatePosition() + " inPosition=" + mPositionInVariant + LS
     + "current:" + nullToString(mNextVariant) + LS
     + "future:" + mVariations.toString() + LS;
 
@@ -226,14 +233,14 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
     if (mNextVariant == null) {
       Exam.assertTrue(mVariations.isEmpty());
     }
-    if (mPositionInVariation == HaplotypePlayback.INVALID) {
+    if (mPositionInVariant == HaplotypePlayback.INVALID) {
       Exam.assertTrue(toString(), mNextVariant == null || mTemplatePosition <= mNextVariant.variant().getStart());
     } else {
       Exam.assertTrue(mNextVariant != null && mTemplatePosition == mNextVariant.variant().getStart());
-      if (!(0 <= mPositionInVariation && mPositionInVariation < mNextVariant.variant().nt(mNextVariant.isAlleleA()).length)) {
+      if (!(0 <= mPositionInVariant && mPositionInVariant < mNextVariant.variant().nt(mNextVariant.isAlleleA()).length)) {
         System.err.println(this);
       }
-      Exam.assertTrue(0 <= mPositionInVariation && mPositionInVariation < mNextVariant.variant().nt(mNextVariant.isAlleleA()).length);
+      Exam.assertTrue(0 <= mPositionInVariant && mPositionInVariant < mNextVariant.variant().nt(mNextVariant.isAlleleA()).length);
     }
     return true;
   }
@@ -268,7 +275,7 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
     if (current != 0) {
       return current;
     }
-    final int varPos = this.mPositionInVariation - that.mPositionInVariation;
+    final int varPos = this.mPositionInVariant - that.mPositionInVariant;
     if (varPos != 0) {
       return varPos;
     }
@@ -299,7 +306,7 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
 
   @Override
   public int hashCode() {
-    int hash = Utils.hash(new Object[] {this.templatePosition(), this.mNextVariant, this.mPositionInVariation});
+    int hash = Utils.hash(new Object[] {this.templatePosition(), this.mNextVariant, this.mPositionInVariant});
     for (final OrientedVariant v : this.mVariations) {
       hash = Utils.pairHash(hash, v.hashCode());
     }

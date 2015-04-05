@@ -36,6 +36,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.util.test.NanoRegression;
 import com.rtg.variant.PosteriorUtils;
@@ -50,19 +51,22 @@ import junit.framework.TestCase;
 /**
  */
 public class VcfEvalTaskTest extends TestCase {
-  private File mDir = null;
+  private TestDirectory mDir = null;
   NanoRegression mNano = null;
   @Override
   public void setUp() throws IOException {
-    mDir = FileUtils.createTempDir("MutationEval", "mDir");
+    mDir = new TestDirectory("vcfevaltask");
     Diagnostic.setLogStream(TestUtils.getNullPrintStream());
     mNano = new NanoRegression(this.getClass());
   }
 
   @Override
   public void tearDown() throws IOException {
-    FileHelper.deleteAll(mDir);
-    mDir = null;
+    try {
+      mDir.close();
+    } finally {
+      mDir = null;
+    }
     Diagnostic.setLogStream();
     try {
       mNano.finish();
@@ -74,27 +78,27 @@ public class VcfEvalTaskTest extends TestCase {
   private static final String TEMPLATE = ">seq" + StringUtils.LS
     + "ACAGTCACGGTACGTACGTACGTACGT" + StringUtils.LS;
 
-  private static final String[] TP = {"seq 3 . A G 0.0 PASS . GT 1/1"};
-  private static final String[] TP_OUT = TP;
-  private static final String[] FP = {"seq 6 . C T 0.0 PASS . GT 0/1"};
-  private static final String[] FP_OUT =  FP;
-  private static final String[] FN = {"seq 9 . G T 0.0 PASS . GT 1/1"};
-  private static final String[] FN_OUT = FN;
+  private static final String[] SIMPLE_BOTH = {"seq 3 . A G 0.0 PASS . GT 1/1"};
+  private static final String[] TP_OUT = SIMPLE_BOTH;
+  private static final String[] SIMPLE_CALLED_ONLY = {"seq 6 . C T 0.0 PASS . GT 0/1"};
+  private static final String[] FP_OUT = SIMPLE_CALLED_ONLY;
+  private static final String[] SIMPLE_BASELINE_ONLY = {"seq 9 . G T 0.0 PASS . GT 1/1"};
+  private static final String[] FN_OUT = SIMPLE_BASELINE_ONLY;
 
   /** vcf header */
   private static final String CALLS_HEADER = VcfHeader.MINIMAL_HEADER + "\tRTG";
   private static final String MUTATIONS_HEADER = VcfHeader.MINIMAL_HEADER + "\tRTG";
 
   public void test() throws IOException, UnindexableDataException {
-    check(TP, FP, FN, TP_OUT, FP_OUT, FN_OUT, VcfUtils.FORMAT_GENOTYPE_QUALITY);
+    check(SIMPLE_BOTH, SIMPLE_CALLED_ONLY, SIMPLE_BASELINE_ONLY, TP_OUT, FP_OUT, FN_OUT, VcfUtils.FORMAT_GENOTYPE_QUALITY);
   }
 
-  private void check(String[] tp, String[] fp, String[] fn, String[] tpOut, String[] fpOut, String[] fnOut, String sortField) throws IOException, UnindexableDataException {
-    check(TEMPLATE, tp, fp, fn, tpOut, fpOut, fnOut, true, sortField);
-    check(TEMPLATE, tp, fp, fn, tpOut, fpOut, fnOut, false, sortField);
+  private void check(String[] both, String[] calledOnly, String[] baselineOnly, String[] tpOut, String[] fpOut, String[] fnOut, String sortField) throws IOException, UnindexableDataException {
+    check(TEMPLATE, both, calledOnly, baselineOnly, tpOut, fpOut, fnOut, true, sortField);
+    check(TEMPLATE, both, calledOnly, baselineOnly, tpOut, fpOut, fnOut, false, sortField);
   }
-  private void check(String ref, String[] tp, String[] fp, String[] fn, String[] tpOut, String[] fpOut, String[] fnOut, boolean zip, String sortField) throws IOException, UnindexableDataException {
-    createInput(tp, fp, fn);
+  private void check(String ref, String[] both, String[] calledOnly, String[] baselineOnly, String[] tpOut, String[] fpOut, String[] fnOut, boolean zip, String sortField) throws IOException, UnindexableDataException {
+    createInput(both, calledOnly, baselineOnly);
 
     final File calls = new File(mDir, "calls.vcf.gz");
     final File mutations = new File(mDir, "mutations.vcf.gz");
@@ -144,21 +148,21 @@ public class VcfEvalTaskTest extends TestCase {
     return result.replaceAll("\t", " ");
   }
 
-  private void createInput(String[] tp, String[] fp, String[] fn) throws IOException, UnindexableDataException {
+  private void createInput(String[] both, String[] calledOnly, String[] baselineOnly) throws IOException, UnindexableDataException {
     final File calls = new File(mDir, "calls.vcf.gz");
     final File mutations = new File(mDir, "mutations.vcf.gz");
     final TreeMap<DetectedVariant, String> callList = new TreeMap<>();
     final TreeMap<DetectedVariant, String> mutationList = new TreeMap<>();
-    for (final String var : tp) {
+    for (final String var : both) {
       final VcfRecord rec = VcfReader.vcfLineToRecord(var.replaceAll(" ", "\t"));
       callList.put(new DetectedVariant(rec, 0, RocSortValueExtractor.NULL_EXTRACTOR, false), rec.toString());
       mutationList.put(new DetectedVariant(rec, 0, RocSortValueExtractor.NULL_EXTRACTOR, false), rec.toString());
     }
-    for (final String var : fp) {
+    for (final String var : calledOnly) {
       final VcfRecord rec = VcfReader.vcfLineToRecord(var.replaceAll(" ", "\t"));
       callList.put(new DetectedVariant(rec, 0, RocSortValueExtractor.NULL_EXTRACTOR, false), rec.toString());
     }
-    for (final String var : fn) {
+    for (final String var : baselineOnly) {
       final VcfRecord rec = VcfReader.vcfLineToRecord(var.replaceAll(" ", "\t"));
       mutationList.put(new DetectedVariant(rec, 0, RocSortValueExtractor.NULL_EXTRACTOR, false), rec.toString());
     }
@@ -209,20 +213,20 @@ public class VcfEvalTaskTest extends TestCase {
     checkRoc("testroc", TEMPLATE, TP_LARGE, FP_LARGE, FN_LARGE);
   }
 
-  private void checkRoc(String label, String template, String[] tp, String[] fp, String[] fn) throws IOException, UnindexableDataException {
-    checkRoc(label, template, tp, fp, fn, true);
+  private void checkRoc(String label, String template, String[] both, String[] calledOnly, String[] baselineOnly) throws IOException, UnindexableDataException {
+    checkRoc(label, template, both, calledOnly, baselineOnly, true);
   }
 
-  private void checkRoc(String label, String template, String[] tp, String[] fp, String[] fn, boolean checktotal) throws IOException, UnindexableDataException {
-    checkRoc(label, template, tp, fp, fn, checktotal, true);
-    checkRoc(label, template, tp, fp, fn, checktotal, false);
+  private void checkRoc(String label, String template, String[] both, String[] calledOnly, String[] baselineOnly, boolean checktotal) throws IOException, UnindexableDataException {
+    checkRoc(label, template, both, calledOnly, baselineOnly, checktotal, true);
+    checkRoc(label, template, both, calledOnly, baselineOnly, checktotal, false);
   }
-  private void checkRoc(String label, String template, String[] tp, String[] fp, String[] fn, boolean checktotal, boolean rtgStats) throws IOException, UnindexableDataException {
-    createInput(tp, fp, fn);
+  private void checkRoc(String label, String template, String[] both, String[] calledOnly, String[] baselineOnly, boolean checktotal, boolean rtgStats) throws IOException, UnindexableDataException {
+    createInput(both, calledOnly, baselineOnly);
 
     final File calls = new File(mDir, "calls.vcf.gz");
     final File mutations = new File(mDir, "mutations.vcf.gz");
-    final File out = FileUtils.createTempDir("out", "", mDir);
+    final File out = FileUtils.createTempDir("out-rtgstats-" + rtgStats, "", mDir);
     final File genome = new File(mDir, "template");
     ReaderTestUtils.getReaderDNA(template, genome, null).close();
     final VcfEvalParams params = VcfEvalParams.builder().baseLineFile(mutations).callsFile(calls)
@@ -230,8 +234,8 @@ public class VcfEvalTaskTest extends TestCase {
         .rtgStats(rtgStats)
         .create();
     VcfEvalTask.evaluateCalls(params);
-    final int tpCount = tp.length;
-    final int fnCount = fn.length;
+    final int tpCount = both.length;
+    final int fnCount = baselineOnly.length;
 
     checkRocResults(label + "-weighted.tsv", new File(out, VcfEvalTask.FULL_ROC_FILE), checktotal, tpCount, fnCount);
     checkRocResults(label + "-homo.tsv", new File(out, VcfEvalTask.HOMOZYGOUS_FILE), checktotal, tpCount, fnCount);
@@ -267,7 +271,7 @@ public class VcfEvalTaskTest extends TestCase {
   }
 
   private static final String[] EMPTY = {};
-  private static final String[] FP_TRICKY = {
+  private static final String[] CALLED_ONLY_TRICKY = {
       "seq 1 . A T 1 PASS . GT:GQ 1/1:" + PosteriorUtils.phredIfy(1 * MathUtils.LOG_10)
     , "seq 2 . A AT 9 PASS . GT:GQ 1/1:" + PosteriorUtils.phredIfy(9 * MathUtils.LOG_10)
     , "seq 5 . GT G 2 PASS . GT:GQ 1/1:" + PosteriorUtils.phredIfy(2 * MathUtils.LOG_10)
@@ -280,7 +284,7 @@ public class VcfEvalTaskTest extends TestCase {
   private static final String TRICKY_TEMPLATE = ">seq" + StringUtils.LS
       + "ACTTTCCCACGTACGTCCTCT" + StringUtils.LS;
 
-  private static final String[] FN_TRICKY = {
+  private static final String[] BASELINE_ONLY_TRICKY = {
       "seq 5 . TC T 0.0 PASS . GT 1/1"
     , "seq 7 . C CC 0.0 PASS . GT 1/1"
     , "seq 10 . C A 0.0 PASS . GT 1/1"
@@ -292,7 +296,33 @@ public class VcfEvalTaskTest extends TestCase {
   };
 
   public void testROCTricky() throws IOException, UnindexableDataException {
-    checkRoc("tricky", TRICKY_TEMPLATE, EMPTY, FP_TRICKY, FN_TRICKY, false);
+    checkRoc("tricky", TRICKY_TEMPLATE, EMPTY, CALLED_ONLY_TRICKY, BASELINE_ONLY_TRICKY, false);
+  }
+
+  private static final String[] CALLED_ONLY_TRICKY_XRX = {
+    "seq 1 . A T 1 PASS . GT:GQ 1/1:" + PosteriorUtils.phredIfy(1 * MathUtils.LOG_10)
+    , "seq 2 . A AT 9 PASS XRX GT:GQ 1/1:" + PosteriorUtils.phredIfy(9 * MathUtils.LOG_10)
+    , "seq 5 . GT G 2 PASS XRX GT:GQ 1/1:" + PosteriorUtils.phredIfy(2 * MathUtils.LOG_10)
+    , "seq 10 . CGT AGA 3 PASS XRX GT:GQ 1/1:" + PosteriorUtils.phredIfy(3 * MathUtils.LOG_10)
+    , "seq 14 . C A 8 PASS . GT:GQ 1/1:" + PosteriorUtils.phredIfy(8 * MathUtils.LOG_10)
+    , "seq 16 . T A 4 PASS . GT:GQ 1/1:" + PosteriorUtils.phredIfy(4 * MathUtils.LOG_10)
+    , "seq 20 . C A 10 PASS . GT:GQ 0/1:" + PosteriorUtils.phredIfy(10 * MathUtils.LOG_10)
+  };
+
+  private static final String[] BASELINE_ONLY_TRICKY_XRX = {
+    "seq 5 . TC T 0.0 PASS XRX GT 1/1",
+    "seq 7 . C CC 0.0 PASS XRX GT 1/1",
+    "seq 10 . C A 0.0 PASS . GT 1/1",
+    "seq 12 . T A 0.0 PASS . GT 1/1",
+    "seq 14 . CGT AGA 0.0 PASS XRX GT 1/1",
+    "seq 18 . C A 0.0 PASS . GT 1/1",
+    "seq 20 . C A 0.0 PASS . GT 0/1"
+
+  };
+
+  // Same as testROCTricky but checks breakdown of roc files for XRX
+  public void testROCTrickyXRX() throws IOException, UnindexableDataException {
+    checkRoc("trickyxrx", TRICKY_TEMPLATE, EMPTY, CALLED_ONLY_TRICKY_XRX, BASELINE_ONLY_TRICKY_XRX);
   }
 
   private static final String[] FP_EMPTY = {
@@ -302,9 +332,9 @@ public class VcfEvalTaskTest extends TestCase {
   public void testROCEmpty() throws IOException, UnindexableDataException {
     checkRoc("rocempty", TRICKY_TEMPLATE, EMPTY, FP_EMPTY, EMPTY);
   }
-  
+
   public void testOutsideRef() throws IOException, UnindexableDataException {
-    createInput(new String[] {"seq 28 . A G 0.0 PASS . GT 1/1"}, new String[] {"seq 30 . C T 0.0 PASS . GT 0/1"}, new String[] {});
+    createInput(new String[]{"seq 28 . A G 0.0 PASS . GT 1/1"}, new String[]{"seq 30 . C T 0.0 PASS . GT 0/1"}, new String[]{});
     final File calls = new File(mDir, "calls.vcf.gz");
     final File mutations = new File(mDir, "mutations.vcf.gz");
     final File out = FileUtils.createTempDir("outsideRef", "out", mDir);
@@ -327,31 +357,6 @@ public class VcfEvalTaskTest extends TestCase {
         "There were 1 baseline variants skipped due to being too long, overlapping or starting outside the expected reference sequence length.",
         "There were 2 called variants skipped due to being too long, overlapping or starting outside the expected reference sequence length."
         );
-  }
-
-  private static final String[] FP_TRICKY_XRX = {
-    "seq 1 . A T 1 PASS . GT:GQ 1/1:" + PosteriorUtils.phredIfy(1 * MathUtils.LOG_10)
-  , "seq 2 . A AT 9 PASS XRX GT:GQ 1/1:" + PosteriorUtils.phredIfy(9 * MathUtils.LOG_10)
-  , "seq 5 . GT G 2 PASS XRX GT:GQ 1/1:" + PosteriorUtils.phredIfy(2 * MathUtils.LOG_10)
-  , "seq 10 . CGT AGA 3 PASS XRX GT:GQ 1/1:" + PosteriorUtils.phredIfy(3 * MathUtils.LOG_10)
-  , "seq 14 . C A 8 PASS . GT:GQ 1/1:" + PosteriorUtils.phredIfy(8 * MathUtils.LOG_10)
-  , "seq 16 . T A 4 PASS . GT:GQ 1/1:" + PosteriorUtils.phredIfy(4 * MathUtils.LOG_10)
-  , "seq 20 . C A 10 PASS . GT:GQ 0/1:" + PosteriorUtils.phredIfy(10 * MathUtils.LOG_10)
-  };
-
-  private static final String[] FN_TRICKY_XRX = {
-    "seq 5 . TC T 0.0 PASS XRX GT 1/1",
-    "seq 7 . C CC 0.0 PASS XRX GT 1/1",
-    "seq 10 . C A 0.0 PASS . GT 1/1",
-    "seq 12 . T A 0.0 PASS . GT 1/1",
-    "seq 14 . CGT AGA 0.0 PASS XRX GT 1/1",
-    "seq 18 . C A 0.0 PASS . GT 1/1",
-    "seq 20 . C A 0.0 PASS . GT 0/1"
-
-  };
-
-  public void testROCTrickyXRX() throws IOException, UnindexableDataException {
-    checkRoc("trickyxrx", TRICKY_TEMPLATE, EMPTY, FP_TRICKY_XRX, FN_TRICKY_XRX);
   }
 
   public void testGetSdfId() {

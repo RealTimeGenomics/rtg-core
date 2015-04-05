@@ -95,8 +95,9 @@ class SequenceEvaluator implements IORunnable {
       final PhasingResult misPhasings = countMisphasings(best);
       mSynchronize.addPhasings(misPhasings.mMisPhasings, misPhasings.mCorrectPhasings, misPhasings.mUnphaseable);
 
-      // this step is bogus, but currently necessary as sometimes you can have a variant included in the path
-      // but they do not correspond to any variant in baseline. XXX We should debug this.
+      // this step is currently necessary as sometimes you can (rarely) have variants included in the best path
+      // but they do not correspond to any variant in baseline.
+      // E.g. two variants which when both replayed cancel each other out.
       truePositives = calls.getA();
       merge(falsePositives, calls.getB());
 

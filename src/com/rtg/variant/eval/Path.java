@@ -54,7 +54,7 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
 
     @Override
     public String toString() {
-      return "SyncPoint [mPos=" + mPos + ", mCalledTPCount=" + mCalledTPCount + ", mBaselineTPCount=" + mBaselineTPCount + "]";
+      return "SyncPoint [mPos=" + (mPos + 1) + ", mCalledTPCount=" + mCalledTPCount + ", mBaselineTPCount=" + mBaselineTPCount + "]";
     }
 
     @Override
@@ -125,11 +125,16 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
     if (mCalledPath.getPosition() != mBaselinePath.getPosition()) {
       return false;
     }
-    if (mCalledPath.getPosition() <= mCalledPath.getVariantEndPosition()) {
+    if (mCalledPath.getPosition() < mCalledPath.getVariantEndPosition()) {
       return false;
     }
-
-    if (mBaselinePath.getPosition() <= mBaselinePath.getVariantEndPosition()) {
+    if (mBaselinePath.getPosition() < mBaselinePath.getVariantEndPosition()) {
+      return false;
+    }
+    if (!mCalledPath.isOnTemplate()) {
+      return false;
+    }
+    if (!mBaselinePath.isOnTemplate()) {
       return false;
     }
     return true;
@@ -278,10 +283,10 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
   }
 
   boolean matches() {
-    if (!(mCalledPath.finishedHaplotypeA() || mBaselinePath.finishedHaplotypeA()) && mCalledPath.nextHaplotypeABase() != mBaselinePath.nextHaplotypeABase()) {
+    if (!mCalledPath.finishedHaplotypeA() && !mBaselinePath.finishedHaplotypeA() && mCalledPath.nextHaplotypeABase() != mBaselinePath.nextHaplotypeABase()) {
       return false;
     }
-    if (!(mCalledPath.finishedHaplotypeB() || mBaselinePath.finishedHaplotypeB()) && mCalledPath.nextHaplotypeBBase() != mBaselinePath.nextHaplotypeBBase()) {
+    if (!mCalledPath.finishedHaplotypeB() && !mBaselinePath.finishedHaplotypeB() && mCalledPath.nextHaplotypeBBase() != mBaselinePath.nextHaplotypeBBase()) {
       return false;
     }
     return true;
@@ -315,7 +320,7 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
 
   @Override
   public String toString() {
-    return "Path:" + LS + "baseline=" + mBaselinePath + "called=" + mCalledPath + "syncpoints=" + HalfPath.listToString(this.mSyncPointList);
+    return "Path:" + LS + "baseline=" + mBaselinePath + "called=" + mCalledPath + "syncpoints(0-based)=" + HalfPath.listToString(this.mSyncPointList);
   }
   public List<SyncPoint> getSyncPoints() {
     return getSyncPointsList(mSyncPointList, getCalledIncluded(), getBaselineIncluded());
@@ -368,6 +373,7 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
   static Pair<List<OrientedVariant>, List<OrientedVariant>> calculateWeights(final Path best, final List<OrientedVariant> calledTruePositives, final List<OrientedVariant> baseLineTruePositives) {
     assert best.mSyncPointList.size() >= 1;
     final List<SyncPoint> syncpoints = getSyncPointsList(best.mSyncPointList, baseLineTruePositives, calledTruePositives);
+    //Diagnostic.warning("Best path sync points" + syncpoints);
     assert syncpoints.size() == best.mSyncPointList.size();
 
     final List<OrientedVariant> tp = new ArrayList<>();

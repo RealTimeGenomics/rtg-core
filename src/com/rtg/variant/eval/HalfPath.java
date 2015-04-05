@@ -232,6 +232,16 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
     return mHaplotypeA.templatePosition() - mHaplotypeB.templatePosition();
   }
 
+  /**
+   * Check whether this halfpath is fully on the template (i.e. no haplotypes are within a variant)
+   * @return true if the haplotypes are on the template.
+   */
+  public boolean isOnTemplate() {
+    if (mHaplotypeB == null) {
+      return mHaplotypeA.isOnTemplate();
+    }
+    return mHaplotypeA.isOnTemplate() && mHaplotypeB.isOnTemplate();
+  }
 
   @Override
   public boolean equals(Object obj) {
@@ -241,10 +251,16 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
   @Override
   public void toString(StringBuilder sb) {
     sb.append(" +:");
-    sb.append(mHaplotypeA.templatePosition());
+    sb.append(mHaplotypeA.templatePosition() + 1);
+    if (!mHaplotypeA.isOnTemplate()) {
+      sb.append('^').append(mHaplotypeA.positionInVariant());
+    }
     if (mHaplotypeB != null) {
       sb.append(" -:");
-      sb.append(mHaplotypeB.templatePosition());
+      sb.append(mHaplotypeB.templatePosition() + 1);
+      if (!mHaplotypeB.isOnTemplate()) {
+        sb.append('^').append(mHaplotypeB.positionInVariant());
+      }
     }
     sb.append(LS);
     sb.append("included:");
