@@ -36,7 +36,8 @@ import com.rtg.util.integrity.IntegralAbstract;
  */
 public class Path extends IntegralAbstract implements Comparable<Path> {
 
-  private static final int MAX_COMPLEXITY = GlobalFlags.getIntegerValue(GlobalFlags.VCFEVAL_MAX_PATHS);
+  private static final int MAX_COMPLEXITY = GlobalFlags.getIntegerValue(GlobalFlags.VCFEVAL_MAX_PATHS); // Threshold on number of unresolved paths
+  private static final int MAX_ITERATIONS = GlobalFlags.getIntegerValue(GlobalFlags.VCFEVAL_MAX_ITERATIONS);  // Threshold on number of iterations since last sync point
 
   private final HalfPath mCalledPath;
   private final HalfPath mBaselinePath;
@@ -185,6 +186,8 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
     Path best = null;
     int maxPaths = 0;
     String maxPathsRegion = "";
+    int currentIterations = 0;
+    int currentMaxIterations = 0;
     int currentMax = 0;
     int currentMaxPos = 0;
     Path lastSyncPath = null;
@@ -192,6 +195,7 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
     String lastWarnMessage = null;
     while (sortedPaths.size() > 0) {
       currentMax = Math.max(currentMax, sortedPaths.size());
+      currentMaxIterations = Math.max(currentMaxIterations, currentIterations++);
       Path head = sortedPaths.pollFirst();
       //System.err.println("Size: " + (sortedPaths.size() + 1) + " Range:" + (lastSyncPos + 1) + "-" + (currentMaxPos + 1) + "\n\nHead: " + head);
       if (sortedPaths.size() == 0) { // Only one path currently in play
@@ -203,14 +207,16 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
         if (currentMax > maxPaths) {
           maxPathsRegion = templateName + ":" + (lastSyncPos + 1) + "-" + (currentSyncPos + 1);
           maxPaths = currentMax;
-          Diagnostic.developerLog("Maximum path complexity now " + maxPaths + ", at " + maxPathsRegion);
+          Diagnostic.developerLog("Maximum path complexity now " + maxPaths + ", at " + maxPathsRegion + " with "  + currentIterations + " iterations");
         }
         currentMax = 0;
+        currentIterations = 0;
         lastSyncPos = currentSyncPos;
         lastSyncPath = head;
-      } else if (sortedPaths.size() > MAX_COMPLEXITY) {
-        lastWarnMessage = "Evaluation too complex (" + sortedPaths.size() + " unresolved paths) at reference region " + templateName + ":" + (lastSyncPos + 1) + "-" + (currentMaxPos + 2) + ". Variants in this region will not be included in results.";
+      } else if (sortedPaths.size() > MAX_COMPLEXITY || currentIterations > MAX_ITERATIONS) {
+        lastWarnMessage = "Evaluation too complex (" + sortedPaths.size() + " unresolved paths, " + currentIterations + " iterations) at reference region " + templateName + ":" + (lastSyncPos + 1) + "-" + (currentMaxPos + 2) + ". Variants in this region will not be included in results.";
         sortedPaths.clear();    // Drop all paths currently in play
+        currentIterations = 0;
         head = lastSyncPath;    // Create new head containing path up until last sync point
         head.moveForward(currentMaxPos + 1);  // Skip to currentMaxPos
       }

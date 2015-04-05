@@ -116,6 +116,9 @@ public final class GlobalFlags {
   /** Specify the maximum number of simultaneous paths before vcfeval skips a region */
   public static final String VCFEVAL_MAX_PATHS = "com.rtg.variant.eval.max-paths";
 
+  /** Specify the maximum number of iterations since last sync point before vcfeval skips a region */
+  public static final String VCFEVAL_MAX_ITERATIONS = "com.rtg.variant.eval.max-iterations";
+
   /** Turn on alternate ROC slope calculation */
   public static final String ALTERNATE_ROC_SLOPE_CALCULATION = "com.rtg.variant.eval.RocSlope.alt-roc-slope";
 
@@ -173,6 +176,7 @@ public final class GlobalFlags {
     registerFlag(TRAIN_ON_MISSING_VALUES, Boolean.class, false);
 
     registerFlag(VCFEVAL_MAX_PATHS, Integer.class, 5000);
+    registerFlag(VCFEVAL_MAX_ITERATIONS, Integer.class, 10000000);
     registerFlag(ALTERNATE_ROC_SLOPE_CALCULATION);
     registerFlag(GZIP_LEVEL, Integer.class, AdjustableGZIPOutputStream.DEFAULT_GZIP_LEVEL);
   }
