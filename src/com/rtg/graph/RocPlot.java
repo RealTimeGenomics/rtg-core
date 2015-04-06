@@ -301,6 +301,7 @@ public final class RocPlot {
   }
 
   // Adds the notion of painting a current crosshair position
+  @JumbleIgnore
   private class RocZoomPlotPanel extends ZoomPlotPanel {
     private final PlotPanel mPlotPanel;
     private Point mCrosshair; // In TP / FP coordinates.
@@ -327,6 +328,7 @@ public final class RocPlot {
   }
 
   // Adds the notion of the baseline total number of variants, for calculating sensitivity
+  @JumbleIgnore
   static class RocGraph2D extends Graph2D {
     private final int mMaxVariants;
     RocGraph2D(ArrayList<String> lineOrdering, int lineWidth, boolean showScores, Map<String, DataBundle> data, String title) {
