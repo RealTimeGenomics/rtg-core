@@ -515,6 +515,7 @@ public final class RocPlot {
   /**
    * A class required to listen for right-clicks
    */
+  @JumbleIgnore
   private class PopupListener extends MouseAdapter {
     @Override
     public void mouseClicked(MouseEvent e) {
