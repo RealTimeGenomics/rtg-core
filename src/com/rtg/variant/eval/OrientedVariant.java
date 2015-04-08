@@ -49,7 +49,7 @@ public class OrientedVariant extends IntegralAbstract implements Comparable<Orie
 
   @Override
   public int compareTo(OrientedVariant that) {
-    final int varPos = this.variant().getStart() - that.variant().getStart();
+    final int varPos = this.getStart() - that.getStart();
     if (varPos != 0) {
       return varPos;
     }

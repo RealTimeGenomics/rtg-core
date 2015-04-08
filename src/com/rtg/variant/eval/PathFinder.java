@@ -58,7 +58,7 @@ public class PathFinder {
   }
 
   private Path bestPath() {
-    // make it easy to find variations
+    // make it easy to find variants
     final TreeSet<Path> sortedPaths = new TreeSet<>();
     sortedPaths.add(new Path(mTemplate));
     Path best = null;
@@ -168,9 +168,9 @@ public class PathFinder {
     return entry == null ? null : entry.getValue();
   }
 
-  static <T extends Variant> TreeMap<Integer, Variant> buildMap(Collection<T> variations) {
+  static <T extends Variant> TreeMap<Integer, Variant> buildMap(Collection<T> variants) {
     final TreeMap<Integer, Variant> map = new TreeMap<>();
-    for (final Variant v : variations) {
+    for (final Variant v : variants) {
       // TODO when you have a pure insert immediately prior to a snp/mnp, they end up with the same start position,
       // but don't trigger the overlapping code during variant loading.
       // This means that you don't get a warning but the snp/mnp is the only variant that ends up in the map

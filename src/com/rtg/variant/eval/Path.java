@@ -261,25 +261,17 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
   void step() {
     if (mCalledPath.compareHaplotypePositions() > 0) {
       // make B haplotype catch up to A
-      minusStep();
+      mCalledPath.haplotypeBStep();
+      mBaselinePath.haplotypeBStep();
     } else if (mCalledPath.compareHaplotypePositions() < 0) {
       // make A haplotype catch up to B
-      plusStep();
+      mCalledPath.haplotypeAStep();
+      mBaselinePath.haplotypeAStep();
     } else {
       // step both
       mCalledPath.step();
       mBaselinePath.step();
     }
-  }
-
-  void minusStep() {
-    mCalledPath.haplotypeBStep();
-    mBaselinePath.haplotypeBStep();
-  }
-
-  void plusStep() {
-    mCalledPath.haplotypeAStep();
-    mBaselinePath.haplotypeAStep();
   }
 
   boolean matches() {
@@ -340,12 +332,12 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
       final int loc = stack.pop();
       int baseLineCount = 0;
       int calledCount = 0;
-      while (basePos < baseLine.size() && baseLine.get(basePos).variant().getStart() <= loc) {
+      while (basePos < baseLine.size() && baseLine.get(basePos).getStart() <= loc) {
         baseLineCount++;
         basePos++;
       }
 
-      while (callPos < called.size() && called.get(callPos).variant().getStart() <= loc) {
+      while (callPos < called.size() && called.get(callPos).getStart() <= loc) {
         calledCount++;
         callPos++;
       }
