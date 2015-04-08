@@ -63,7 +63,9 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
    * @return true if the variant is later than the last included one.
    */
   public boolean isNew(Variant var) {
-    return mLastVariant == null || mLastVariant.getStart() < var.getStart() || mLastVariant.getEnd() < var.getEnd();
+    return mLastVariant == null
+      || var.getStart() > mLastVariant.getStart()
+      || var.getEnd() > mLastVariant.getEnd();
   }
 
   void exclude(Variant var) {
@@ -74,18 +76,18 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
 
   void include(OrientedVariant var) {
     mIncluded = new BasicLinkedListNode<>(var, mIncluded);
-    mVariantEndPosition = var.variant().getEnd();
+    mVariantEndPosition = var.getEnd();
     mLastVariant = var.variant();
 
     // Lazy creation of the B haplotype
-    if (mHaplotypeB == null && var.variant().ntAlleleB() != null) {
+    if (mHaplotypeB == null && var.ntAlleleB() != null) {
       mHaplotypeB = mHaplotypeA.copy();
     }
 
     mHaplotypeA.addVariant(var);
 
     if (mHaplotypeB != null) {
-      if (var.variant().ntAlleleB() == null) { // Homozygous variant
+      if (var.ntAlleleB() == null) { // Homozygous variant
         mHaplotypeB.addVariant(var);
       } else { // Add the other side of the heterozygous variant.
         mHaplotypeB.addVariant(new OrientedVariant(var.variant(), !var.isAlleleA()));
