@@ -93,7 +93,14 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
         mHaplotypeB.addVariant(new OrientedVariant(var.variant(), !var.isAlleleA()));
       }
     }
+  }
 
+  /**
+   * Test whether a deficit of variant bases are upstream in the queue in order to perform a step
+   * A result of false indicates that no variants need to be immediately enqueued
+   */
+  boolean wantsFutureVariantBases() {
+    return mHaplotypeA.wantsFutureVariantBases() || (mHaplotypeB != null && mHaplotypeB.wantsFutureVariantBases());
   }
 
   void step() {

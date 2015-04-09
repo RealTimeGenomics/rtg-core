@@ -75,7 +75,7 @@ public class PathFinder {
       currentMax = Math.max(currentMax, sortedPaths.size());
       currentMaxIterations = Math.max(currentMaxIterations, currentIterations++);
       Path head = sortedPaths.pollFirst();
-      //if (DUMP) System.err.println("Size: " + (sortedPaths.size() + 1) + " Range:" + (lastSyncPos + 1) + "-" + (currentMaxPos + 1) + " LocalIterations: " + currentIterations + "\n\nHead: " + head);
+      if (DUMP) System.err.println("Size: " + (sortedPaths.size() + 1) + " Range:" + (lastSyncPos + 1) + "-" + (currentMaxPos + 1) + " LocalIterations: " + currentIterations + "\n\nHead: " + head);
       if (sortedPaths.size() == 0) { // Only one path currently in play
         if (lastWarnMessage != null) { // Issue a warning if we encountered problems during the previous region
           Diagnostic.warning(lastWarnMessage);
@@ -160,7 +160,13 @@ public class PathFinder {
   }
 
   static Variant nextVariant(HalfPath path, Map<Integer, Variant> map) {
-    return map.get(Math.max(path.getVariantEndPosition(), path.getPosition() + 1));
+    if (path.wantsFutureVariantBases()) {
+      if (DUMP) System.err.println("Path wants variants, looking ahead");
+      return map.get(Math.max(path.getVariantEndPosition(), path.getPosition() + 1));
+    } else {
+      if (DUMP) System.err.println("Path has enough variants, looking at position");
+      return map.get(path.getPosition() + 1);
+    }
   }
 
   static Variant futureVariant(HalfPath path, TreeMap<Integer, Variant> map) {
