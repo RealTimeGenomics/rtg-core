@@ -93,6 +93,25 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
   }
 
   /**
+   * Test whether a deficit of variant bases are upstream in the queue in order to perform a step.
+   * A result of false indicates that no variants need to be immediately enqueued
+   */
+  boolean wantsFutureVariantBases() {
+    if (mNextVariant == null) {
+      return true;
+    }
+    if (mPositionInVariant != INVALID && mPositionInVariant < mNextVariant.nt(mNextVariant.isAlleleA()).length - 1) {
+      return false;
+    }
+    for (OrientedVariant v : mVariants) {
+      if (v.nt(v.isAlleleA()).length > 0) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
    * Step to the next nucleotide.
    * @throws NoSuchElementException if no more nucleotides available.
    */
