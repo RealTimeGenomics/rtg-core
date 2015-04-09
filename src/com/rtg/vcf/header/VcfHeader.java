@@ -203,12 +203,23 @@ public class VcfHeader {
     }
   }
 
+  private <T extends IdField<T>> void addIdField(List<T> dest, T field) {
+    for (T f : dest) {
+      if (f.getId().equals(field.getId())) {
+        throw new IllegalArgumentException("VCF header contains multiple field declarations with the same ID=" + field.getId() + StringUtils.LS
+          + f.toString() + StringUtils.LS
+          + field.toString());
+      }
+    }
+    dest.add(field);
+  }
+
   /**
    * Add an alt field
    * @param field the new alt field
    */
   public void addAltField(AltField field) {
-    mAltLines.add(field);
+    addIdField(mAltLines, field);
   }
 
   /**
@@ -225,7 +236,7 @@ public class VcfHeader {
    * @param field the filter field
    */
   public void addFilterField(FilterField field) {
-    mFilterLines.add(field);
+    addIdField(mFilterLines, field);
   }
 
   /**
@@ -244,7 +255,7 @@ public class VcfHeader {
    * @param field the new info field
    */
   public void addInfoField(InfoField field) {
-    mInfoLines.add(field);
+    addIdField(mInfoLines, field);
   }
 
   /**
@@ -263,7 +274,7 @@ public class VcfHeader {
    * @param field the new format field
    */
   public void addFormatField(FormatField field) {
-    mFormatLines.add(field);
+    addIdField(mFormatLines, field);
   }
 
   /**
@@ -377,17 +388,17 @@ public class VcfHeader {
   public VcfHeader addMetaInformationLine(String line) {
     if (isMetaLine(line)) {
       if (isContigLine(line)) {
-        mContigLines.add(parseContigLine(line));
+        addIdField(mContigLines, parseContigLine(line));
       } else if (isAltLine(line)) {
-        mAltLines.add(parseAltLine(line));
+        addAltField(parseAltLine(line));
       } else if (isFilterLine(line)) {
-        mFilterLines.add(parseFilterLine(line));
+        addFilterField(parseFilterLine(line));
       } else if (isInfoLine(line)) {
-        mInfoLines.add(parseInfoLine(line));
+        addInfoField(parseInfoLine(line));
       } else if (isFormatLine(line)) {
-        mFormatLines.add(parseFormatLine(line));
+        addFormatField(parseFormatLine(line));
       } else if (isSampleLine(line)) {
-        mSampleLines.add(parseSampleLine(line));
+        addIdField(mSampleLines, parseSampleLine(line));
       } else if (isPedigreeLine(line)) {
         mPedigreeLines.add(parsePedigreeLine(line));
       } else {
