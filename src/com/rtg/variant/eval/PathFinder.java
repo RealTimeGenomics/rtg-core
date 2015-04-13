@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.launcher.GlobalFlags;
 import com.rtg.util.BasicLinkedListNode;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -23,9 +24,10 @@ import com.rtg.util.diagnostic.Diagnostic;
 /**
  * Find the path through the two sequences of variants that best reconciles them.
  */
-public class PathFinder {
+@TestClass("com.rtg.variant.eval.PathTest")
+public final class PathFinder {
 
-  private static final boolean DUMP = false;
+  //private static final boolean DUMP = false;
 
   private static final int MAX_COMPLEXITY = GlobalFlags.getIntegerValue(GlobalFlags.VCFEVAL_MAX_PATHS); // Threshold on number of unresolved paths
   private static final int MAX_ITERATIONS = GlobalFlags.getIntegerValue(GlobalFlags.VCFEVAL_MAX_ITERATIONS);  // Threshold on number of iterations since last sync point
@@ -35,7 +37,7 @@ public class PathFinder {
   private final TreeMap<Integer, Variant> mCalledVariants;
   private final TreeMap<Integer, Variant> mBaseLineVariants;
 
-  <T extends Variant> PathFinder(byte[] template, String templateName, Collection<T> calledVariants, Collection<T> baseLineVariants) {
+  private <T extends Variant> PathFinder(byte[] template, String templateName, Collection<T> calledVariants, Collection<T> baseLineVariants) {
     mTemplate = template;
     mTemplateName = templateName;
     mCalledVariants = buildMap(calledVariants);
@@ -57,7 +59,7 @@ public class PathFinder {
     return new PathFinder(template, templateName, calledVariants, baseLineVariants).bestPath();
   }
 
-  private Path bestPath() {
+  Path bestPath() {
     // make it easy to find variants
     final TreeSet<Path> sortedPaths = new TreeSet<>();
     sortedPaths.add(new Path(mTemplate));
@@ -75,7 +77,7 @@ public class PathFinder {
       currentMax = Math.max(currentMax, sortedPaths.size());
       currentMaxIterations = Math.max(currentMaxIterations, currentIterations++);
       Path head = sortedPaths.pollFirst();
-      if (DUMP) System.err.println("Size: " + (sortedPaths.size() + 1) + " Range:" + (lastSyncPos + 1) + "-" + (currentMaxPos + 1) + " LocalIterations: " + currentIterations + "\n\nHead: " + head);
+      // if (DUMP) System.err.println("Size: " + (sortedPaths.size() + 1) + " Range:" + (lastSyncPos + 1) + "-" + (currentMaxPos + 1) + " LocalIterations: " + currentIterations + "\n\nHead: " + head);
       if (sortedPaths.size() == 0) { // Only one path currently in play
         if (lastWarnMessage != null) { // Issue a warning if we encountered problems during the previous region
           Diagnostic.warning(lastWarnMessage);
@@ -108,7 +110,7 @@ public class PathFinder {
       if (aVar != null && head.mCalledPath.isNew(aVar)) {
         currentMaxPos = Math.max(currentMaxPos, aVar.getStart());
         //Adding a new variant to A side
-        if (DUMP) System.err.println("Add alternatives to called " + aVar);
+        // if (DUMP) System.err.println("Add alternatives to called " + aVar);
         addIfBetter(head.addAVariant(aVar), sortedPaths);
         continue;
       }
@@ -116,7 +118,7 @@ public class PathFinder {
       if (bVar != null && head.mBaselinePath.isNew(bVar)) {
         currentMaxPos = Math.max(currentMaxPos, bVar.getStart());
         //Adding a new variant to B side
-        if (DUMP) System.err.println("Add alternatives to baseline " + bVar);
+        // if (DUMP) System.err.println("Add alternatives to baseline " + bVar);
         addIfBetter(head.addBVariant(bVar), sortedPaths);
         continue;
       }
@@ -125,16 +127,16 @@ public class PathFinder {
 
       if (head.inSync()) {
         skipToNextVariant(head);
-        if (DUMP) System.err.println("In sync, skipping: " + head);
-      } else {
-        if (DUMP) System.err.println("Not in sync");
+        // if (DUMP) System.err.println("In sync, skipping: " + head);
+        // } else {
+        // if (DUMP) System.err.println("Not in sync");
       }
 
       if (head.matches()) {
-        if (DUMP) System.err.println("Head matches, keeping");
+        // if (DUMP) System.err.println("Head matches, keeping");
         addIfBetter(head, sortedPaths);
-      } else {
-        if (DUMP) System.err.println("Head mismatch, discard");
+        // } else {
+        // if (DUMP) System.err.println("Head mismatch, discard");
       }
     }
     //System.err.println("Best: " + best);
@@ -161,10 +163,8 @@ public class PathFinder {
 
   static Variant nextVariant(HalfPath path, Map<Integer, Variant> map) {
     if (path.wantsFutureVariantBases()) {
-      if (DUMP) System.err.println("Path wants variants, looking ahead");
       return map.get(Math.max(path.getVariantEndPosition(), path.getPosition() + 1));
     } else {
-      if (DUMP) System.err.println("Path has enough variants, looking at position");
       return map.get(path.getPosition() + 1);
     }
   }
