@@ -476,7 +476,7 @@ public class PathTest extends TestCase {
   }
 
   static void check(List<OrientedVariant> v, double[] weights) {
-    assertEquals(v.size(), weights.length);
+    assertEquals(weights.length, v.size());
     for (int i = 0; i < v.size(); i++) {
       assertEquals(i + " : " + v.toString(), weights[i], v.get(i).getWeight(), 0.0001);
     }
@@ -509,16 +509,16 @@ public class PathTest extends TestCase {
 
   public void testNop()  {
     final byte[] template = {1, 2, 1, 4, 4, 4, 4, 1, 2, 1};
-    final OrientedVariant[] a = {
-        new OrientedVariant(getDetectedVariant("seq 2 . C T 0.0 PASS . GT 1/1"), true)
-      , new OrientedVariant(getDetectedVariant("seq 3 . AT A 0.0 PASS . GT 1/1"), true)
-      , new OrientedVariant(getDetectedVariant("seq 6 . T TT 0.0 PASS . GT 1/1"), true)
-      , new OrientedVariant(getDetectedVariant("seq 9 . C T 0.0 PASS . GT 1/1"), true)
+    final Variant[] a = {
+        getDetectedVariant("seq 2 . C T 0.0 PASS . GT 1/1")
+      , getDetectedVariant("seq 3 . AT A 0.0 PASS . GT 1/1")
+      , getDetectedVariant("seq 6 . T TT 0.0 PASS . GT 1/1")
+      , getDetectedVariant("seq 9 . C T 0.0 PASS . GT 1/1")
     };
 
-    final OrientedVariant[] b = {
-        new OrientedVariant(getDetectedVariant("seq 2 . C T 0.0 PASS . GT 1/1"), true)
-      , new OrientedVariant(getDetectedVariant("seq 9 . C T 0.0 PASS . GT 1/1"), true)
+    final Variant[] b = {
+        getDetectedVariant("seq 2 . C T 0.0 PASS . GT 1/1")
+      , getDetectedVariant("seq 9 . C T 0.0 PASS . GT 1/1")
     };
 
     final double[] expectedWeights = {1, 0, 0, 1.0};
@@ -530,7 +530,29 @@ public class PathTest extends TestCase {
     assertEquals(2, result.getA().size()); // The NOP variants have been removed
     check(original.getCalledIncluded(), expectedWeights);
   }
-  
+
+
+  public void testInsertPriorToSnp() {
+    byte[] template = {1, 1, 1, 1, 1, 1, 2, 1, 1};
+    final Variant[] a = {
+      //insert GGG at 2
+      getDetectedVariant("seq 1 . A AGGG 0.0 PASS . GT 1/1"),
+      //snp C at 2
+      getDetectedVariant("seq 2 . A C 0.0 PASS . GT 1/1")
+    };
+    final Variant[] b = {
+      //insert A-> GGGC at 2
+      getDetectedVariant("seq 2 . A GGGC 0.0 PASS . GT 1/1")
+    };
+    final double[] expectedWeights = {0.5, 0.5};
+
+    Path original = PathFinder.bestPath(template, "currentName", Arrays.asList(a), Arrays.asList(b));
+    Path.calculateWeights(original, original.getCalledIncluded(), original.getBaselineIncluded());
+    check(original.getCalledIncluded(), expectedWeights);
+  }
+
+
+
   public void testPastEndOfTemplate() {
     final byte[] template = {1, 2, 1, 4, 4, 4, 4, 1, 2, 1};
     final OrientedVariant[] a = {new OrientedVariant(getDetectedVariant("seq 12 . C T 0.0 PASS . GT 1/1"), true)};
