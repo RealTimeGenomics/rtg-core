@@ -94,7 +94,7 @@ public class HaplotypePlayback implements Integrity, Comparable<HaplotypePlaybac
 
   /**
    * Test whether a deficit of variant bases are upstream in the queue in order to perform a step.
-   * A result of false indicates that no variants need to be immediately enqueued
+   * @return false indicates that no variants need to be immediately enqueued
    */
   boolean wantsFutureVariantBases() {
     if (mNextVariant == null) {

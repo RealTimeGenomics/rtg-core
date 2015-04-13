@@ -96,8 +96,8 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
   }
 
   /**
-   * Test whether a deficit of variant bases are upstream in the queue in order to perform a step
-   * A result of false indicates that no variants need to be immediately enqueued
+   * Test whether a deficit of variant bases are upstream in the queue in order to perform a step.
+   * @return false indicates that no variants need to be immediately enqueued
    */
   boolean wantsFutureVariantBases() {
     return mHaplotypeA.wantsFutureVariantBases() || (mHaplotypeB != null && mHaplotypeB.wantsFutureVariantBases());
@@ -242,7 +242,7 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
   }
 
   /**
-   * Check whether this halfpath is fully on the template (i.e. no haplotypes are within a variant)
+   * Check whether this half path is fully on the template (i.e. no haplotypes are within a variant)
    * @return true if the haplotypes are on the template.
    */
   public boolean isOnTemplate() {
