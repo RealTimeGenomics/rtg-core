@@ -63,6 +63,9 @@ public final class VcfUtils {
   /** pass filter flag */
   public static final String FILTER_PASS = "PASS";
 
+  /** missing field (e.g. filter/QUAL) */
+  public static final String MISSING_FIELD = "" + MISSING_VALUE;
+
   /** confidence interval for POS columns */
   public static final String CONFIDENCE_INTERVAL_POS = "CIPOS";
 

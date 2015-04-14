@@ -23,8 +23,8 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.reeltwo.jumble.annotations.TestClass;
-import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.vcf.VcfFilterStatistics.Stat;
 import com.rtg.vcf.header.FilterField;
 import com.rtg.vcf.header.InfoField;
@@ -121,11 +121,10 @@ class VcfFilterTask {
     }
     if (mKeepFilters.size() != 0 || mKeepInfos.size() != 0 || mRemoveFilters.size() != 0 || mRemoveInfos.size() != 0) {
       int index = 0;
-      mFilterTags.put("PASS", index);
-      index++;
+      mFilterTags.put(VcfUtils.FILTER_PASS, index++);
+      mFilterTags.put(VcfUtils.MISSING_FIELD, index++);
       for (final FilterField info : header.getFilterLines()) {
-        mFilterTags.put(info.getId(), index);
-        index++;
+        mFilterTags.put(info.getId(), index++);
       }
       mVcfFilterStatistics.setFilterTags(mFilterTags);
       final Set<String> userFilterTags = new TreeSet<>();
@@ -223,9 +222,15 @@ class VcfFilterTask {
         keep = true;
       }
     }
-    for (final String tag : record.getFilters()) {
-      if (mKeepFilters.contains(tag)) {
+    if (record.getFilters().size() == 0) {
+      if (mKeepFilters.contains(VcfUtils.MISSING_FIELD)) {
         keep = true;
+      }
+    } else {
+      for (final String tag : record.getFilters()) {
+        if (mKeepFilters.contains(tag)) {
+          keep = true;
+        }
       }
     }
     if (!keep) {
@@ -240,11 +245,19 @@ class VcfFilterTask {
         return false;
       }
     }
-    for (final String tag : record.getFilters()) {
-      if (mRemoveFilters.contains(tag)) {
-        mVcfFilterStatistics.incrementFilterTag(tag);
+    if (record.getFilters().size() == 0) {
+      if (mRemoveFilters.contains(VcfUtils.MISSING_FIELD)) {
+        mVcfFilterStatistics.incrementFilterTag(VcfUtils.MISSING_FIELD);
         mNonSampleSpecificFailed = true;
         return false;
+      }
+    } else {
+      for (final String tag : record.getFilters()) {
+        if (mRemoveFilters.contains(tag)) {
+          mVcfFilterStatistics.incrementFilterTag(tag);
+          mNonSampleSpecificFailed = true;
+          return false;
+        }
       }
     }
     if (allSameAsRef(record)) {
