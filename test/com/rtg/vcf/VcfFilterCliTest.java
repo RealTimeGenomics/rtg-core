@@ -397,12 +397,12 @@ public class VcfFilterCliTest extends AbstractCliTest {
       final String o = FileUtils.fileToString(out);
       assertTrue(o.length() > 0);
       TestUtils.containsAll(o,
-          "snp --max-ih=1 -m cg_errors --Xindels --max-as-mated=4 -o snp_mated_cgerrors_indels_as4 -t /rtgshare/data/human/sdf/hg18 map_GS000005015/mated.sam.gz map_GS000005016/mated.sam.gz",
-          VcfHeader.HEADER_LINE,
-          "chr1    44376   .       N       NCT     .       PASS    .       GT:DP:RE:GQ:RS  1/0:4:0.052:12.3:CT,1,0.022,i,3,0.030".replaceAll("\\s+", "\t"),
-          "chr1    45418   .       N       NT      .       PASS    .       GT:DP:RE:GQ:RS  1/0:4:0.536:6.2:T,1,0.506,i,3,0.030".replaceAll("\\s+", "\t"),
-          "chr1    46244   .       T       C       .       PASS    .       GT:DP:RE:GQ:RS  1/1:4:0.287:7.8:C,4,0.287".replaceAll("\\s+", "\t"),
-          "chr1    82299   .       N       NA      .       PASS    .       GT:DP:RE:GQ:RS  1/0:4:0.071:8.6:A,1,0.041,i,3,0.030".replaceAll("\\s+", "\t"));
+        "snp --max-ih=1 -m cg_errors --Xindels --max-as-mated=4 -o snp_mated_cgerrors_indels_as4 -t /rtgshare/data/human/sdf/hg18 map_GS000005015/mated.sam.gz map_GS000005016/mated.sam.gz",
+        VcfHeader.HEADER_LINE,
+        "chr1    44376   .       N       NCT     .       PASS    .       GT:DP:RE:GQ:RS  1/0:4:0.052:12.3:CT,1,0.022,i,3,0.030".replaceAll("\\s+", "\t"),
+        "chr1    45418   .       N       NT      .       PASS    .       GT:DP:RE:GQ:RS  1/0:4:0.536:6.2:T,1,0.506,i,3,0.030".replaceAll("\\s+", "\t"),
+        "chr1    46244   .       T       C       .       PASS    .       GT:DP:RE:GQ:RS  1/1:4:0.287:7.8:C,4,0.287".replaceAll("\\s+", "\t"),
+        "chr1    82299   .       N       NA      .       PASS    .       GT:DP:RE:GQ:RS  1/0:4:0.071:8.6:A,1,0.041,i,3,0.030".replaceAll("\\s+", "\t"));
 
       TestUtils.containsAll(output, "Total records : 27", "Filtered due to posterior : 19", "Filtered due to sample read depth : 4", "Remaining records : 4");
     } finally {
@@ -697,6 +697,17 @@ public class VcfFilterCliTest extends AbstractCliTest {
         args,
         RESOURCES + "snpfiltertest5.vcf",
         "snpfiltertest5_exp_all.vcf"
+    );
+  }
+
+  public void testVcfFilterDotPass() throws IOException {
+    final String[] args = {
+      "--remove-filter", ".", "--remove-filter", "PASS"
+    };
+    runResourceTest(
+      args,
+      RESOURCES + "snpfiltertest5.vcf",
+      "snpfiltertest5_DotPass_exp.vcf"
     );
   }
 
