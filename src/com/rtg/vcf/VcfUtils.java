@@ -20,11 +20,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.annotation.AbstractDerivedAnnotation;
 import com.rtg.vcf.annotation.AbstractDerivedFormatAnnotation;
@@ -311,7 +311,7 @@ public final class VcfUtils {
         }
         return Double.parseDouble(fieldVal);
       } catch (NumberFormatException ex) {
-        throw new NoTalkbackSlimException("Invalid value \"" + fieldVal + "\" in \"" + field + "\". in VCF record :" + rec);
+        throw new NoTalkbackSlimException("Invalid numeric value \"" + fieldVal + "\" in \"" + field + "\" for VCF record :" + rec);
       }
     } else {
       return Double.NaN;
@@ -334,7 +334,7 @@ public final class VcfUtils {
         }
         return Double.parseDouble(fieldVal);
       } catch (NumberFormatException ex) {
-        throw new NoTalkbackSlimException("Invalid value \"" + fieldVal + "\" in \"" + field + "\". in VCF record :" + rec);
+        throw new NoTalkbackSlimException("Invalid numeric value \"" + fieldVal + "\" in \"" + field + "\" for VCF record :" + rec);
       }
     } else {
       return Double.NaN;
