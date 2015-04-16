@@ -11,8 +11,8 @@
  */
 package com.rtg.variant.eval;
 
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -34,14 +34,20 @@ public final class PathFinder {
 
   private final byte[] mTemplate;
   private final String mTemplateName;
-  private final TreeMap<Integer, Variant> mCalledVariants;
-  private final TreeMap<Integer, Variant> mBaseLineVariants;
+  private final Variant[] mCalledVariants;
+  private final Variant[] mBaseLineVariants;
 
   private <T extends Variant> PathFinder(byte[] template, String templateName, Collection<T> calledVariants, Collection<T> baseLineVariants) {
     mTemplate = template;
     mTemplateName = templateName;
-    mCalledVariants = buildMap(calledVariants);
-    mBaseLineVariants = buildMap(baseLineVariants);
+    final TreeMap<Integer, Variant> calledVariants1 = buildMap(calledVariants);
+    final TreeMap<Integer, Variant> baseLineVariants1 = buildMap(baseLineVariants);
+
+    mCalledVariants = calledVariants1.values().toArray(new Variant[calledVariants1.size()]); // XXX For now, keep bumping behaviour
+    Arrays.sort(mCalledVariants, DetectedVariant.NATURAL_COMPARATOR);
+
+    mBaseLineVariants = baseLineVariants1.values().toArray(new Variant[baseLineVariants1.size()]); // XXX For now, keep bumping behaviour
+    Arrays.sort(mBaseLineVariants, DetectedVariant.NATURAL_COMPARATOR);
   }
 
   /**
@@ -98,7 +104,8 @@ public final class PathFinder {
         sortedPaths.clear();    // Drop all paths currently in play
         currentIterations = 0;
         head = lastSyncPath;    // Create new head containing path up until last sync point
-        head.moveForward(currentMaxPos + 1);  // Skip to currentMaxPos
+        skipVariantsTo(head.mCalledPath, mCalledVariants, currentMaxPos + 1);
+        skipVariantsTo(head.mBaselinePath, mBaseLineVariants, currentMaxPos + 1);
       }
       if (head.finished()) {
         // Path is done. Remember the best
@@ -106,20 +113,22 @@ public final class PathFinder {
         best = better(best, new Path(head, syncPoints));
         continue;
       }
-      final Variant aVar = nextVariant(head.mCalledPath, mCalledVariants);
+      final int aVarIndex = nextVariant(head.mCalledPath, mCalledVariants);
+      final Variant aVar = (aVarIndex == -1) ? null : mCalledVariants[aVarIndex];
       if (aVar != null && head.mCalledPath.isNew(aVar)) {
         currentMaxPos = Math.max(currentMaxPos, aVar.getStart());
         //Adding a new variant to A side
         // if (DUMP) System.err.println("Add alternatives to called " + aVar);
-        addIfBetter(head.addAVariant(aVar), sortedPaths);
+        addIfBetter(head.addAVariant(aVar, aVarIndex), sortedPaths);
         continue;
       }
-      final Variant bVar = nextVariant(head.mBaselinePath, mBaseLineVariants);
+      final int bVarIndex = nextVariant(head.mBaselinePath, mBaseLineVariants);
+      final Variant bVar = (bVarIndex == -1) ? null : mBaseLineVariants[bVarIndex];
       if (bVar != null && head.mBaselinePath.isNew(bVar)) {
         currentMaxPos = Math.max(currentMaxPos, bVar.getStart());
         //Adding a new variant to B side
         // if (DUMP) System.err.println("Add alternatives to baseline " + bVar);
-        addIfBetter(head.addBVariant(bVar), sortedPaths);
+        addIfBetter(head.addBVariant(bVar, bVarIndex), sortedPaths);
         continue;
       }
 
@@ -145,33 +154,66 @@ public final class PathFinder {
   }
 
   /**
+   * Move the half path to the specified position, ignoring any intervening variants.
+   * @param path the half path to skip
+   * @param variants all variants
+   * @param maxPos reference position to move to.
+   */
+  private void skipVariantsTo(HalfPath path, Variant[] variants, int maxPos) {
+    int varIndex = path.getVariantIndex();
+    while (varIndex < variants.length && variants[varIndex].getStart() < maxPos) {
+      varIndex++;
+    }
+    varIndex--;
+    Diagnostic.developerLog("Skipped to maxPos: " + maxPos + ". Variant index " + path.getVariantIndex() + " -> " + varIndex);
+    path.setVariantIndex(varIndex);
+    path.moveForward(maxPos);
+  }
+
+
+  /**
    * Move the path to just before the next variant
    * @param head the path to skip forward
    */
   private void skipToNextVariant(final Path head) {
-    final Variant aNext = futureVariant(head.mCalledPath, mCalledVariants);
-    final Variant bNext = futureVariant(head.mBaselinePath, mBaseLineVariants);
+    final int aNext = futureVariantPos(head.mCalledPath, mCalledVariants);
+    final int bNext = futureVariantPos(head.mBaselinePath, mBaseLineVariants);
     final int lastTemplatePos = mTemplate.length - 1;
     //System.err.println("Skip to next variant " + lastTemplatePos);
     // -1 because we want to be before the position
-    final int nextPos = Math.min(Math.min(aNext != null ? aNext.getStart() : lastTemplatePos, bNext != null ? bNext.getStart() : lastTemplatePos), lastTemplatePos) - 1;
+    final int nextPos = Math.min(Math.min(aNext, bNext), lastTemplatePos) - 1;
     assert head.mCalledPath.getPosition() == head.mBaselinePath.getPosition();
     if (nextPos > head.mCalledPath.getPosition()) {
       head.moveForward(nextPos);
     }
   }
 
-  static Variant nextVariant(HalfPath path, Map<Integer, Variant> map) {
-    if (path.wantsFutureVariantBases()) {
-      return map.get(Math.max(path.getVariantEndPosition(), path.getPosition() + 1));
+  /* Gets the next upstream variant position */
+  int futureVariantPos(HalfPath path, Variant[] variants) {
+    int nextIdx = path.getVariantIndex() + 1;
+    if (nextIdx >= variants.length) {
+      return mTemplate.length - 1;
     } else {
-      return map.get(path.getPosition() + 1);
+      return variants[nextIdx].getStart();
     }
   }
 
-  static Variant futureVariant(HalfPath path, TreeMap<Integer, Variant> map) {
-    final Map.Entry<Integer, Variant> entry = map.ceilingEntry(path.getPosition());
-    return entry == null ? null : entry.getValue();
+
+  /* Gets the next variant that should be enqueued to the supplied HalfPath at the current position, or null if there is none  */
+  static int nextVariant(HalfPath path, Variant[] variants) {
+    int nextIdx = path.getVariantIndex() + 1;
+    if (nextIdx >= variants.length) {
+      return -1;
+    }
+    Variant nextVar = variants[nextIdx];
+
+    final int startPos;
+    if (path.wantsFutureVariantBases()) {
+      startPos = Math.max(path.getVariantEndPosition(), path.getPosition() + 1);
+    } else {
+      startPos = path.getPosition() + 1;
+    }
+    return nextVar.getStart() == startPos ? nextIdx : -1;
   }
 
   static <T extends Variant> TreeMap<Integer, Variant> buildMap(Collection<T> variants) {
