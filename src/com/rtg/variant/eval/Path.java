@@ -198,23 +198,23 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
     return getExcluded(mBaselinePath);
   }
 
-  void include(boolean side, OrientedVariant var) {
+  void include(boolean side, OrientedVariant var, int varIndex) {
     if (side) {
-      mCalledPath.include(var);
+      mCalledPath.include(var, varIndex);
     } else {
-      mBaselinePath.include(var);
+      mBaselinePath.include(var, varIndex);
     }
   }
 
-  void exclude(boolean side, Variant var) {
+  void exclude(boolean side, Variant var, int varIndex) {
     if (side) {
-      mCalledPath.exclude(var);
+      mCalledPath.exclude(var, varIndex);
     } else {
-      mBaselinePath.exclude(var);
+      mBaselinePath.exclude(var, varIndex);
     }
   }
 
-  Collection<Path> addVariant(boolean side, Variant var) {
+  Collection<Path> addVariant(boolean side, Variant var, int varIndex) {
     final ArrayList<Path> paths = new ArrayList<>();
     final BasicLinkedListNode<Integer> syncPoints;
     if (this.inSync()) {
@@ -225,12 +225,12 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
 
     // Create a path extension that excludes this variant
     final Path exclude = new Path(this, syncPoints);
-    exclude.exclude(side, var);
+    exclude.exclude(side, var, varIndex);
     paths.add(exclude);
 
     // Create a path extension that includes this variant in the default phase
     final Path include = new Path(this, syncPoints);
-    include.include(side, new OrientedVariant(var, true));
+    include.include(side, new OrientedVariant(var, true), varIndex);
     assert !include.equals(exclude);
     assert include.compareTo(exclude) != 0;
     paths.add(include);
@@ -238,19 +238,19 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
     // If the variant is heterozygous we need to also add the variant in the alternate phase
     if (var.ntAlleleB() != null) {
       final Path hetero = new Path(this, syncPoints);
-      hetero.include(side, new OrientedVariant(var, false));
+      hetero.include(side, new OrientedVariant(var, false), varIndex);
       paths.add(hetero);
     }
 
     return paths;
   }
 
-  Collection<Path> addAVariant(Variant var) {
-    return addVariant(true, var);
+  Collection<Path> addAVariant(Variant var, int varIndex) {
+    return addVariant(true, var, varIndex);
   }
 
-  Collection<Path> addBVariant(Variant var) {
-    return addVariant(false, var);
+  Collection<Path> addBVariant(Variant var, int varIndex) {
+    return addVariant(false, var, varIndex);
   }
 
   void moveForward(int position) {

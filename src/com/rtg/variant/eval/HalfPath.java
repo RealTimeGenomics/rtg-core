@@ -29,6 +29,7 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
   private BasicLinkedListNode<Variant> mExcluded;
 
   private int mVariantEndPosition;
+  private int mVariantIndex = -1;
   Variant mLastVariant = null;
 
   private boolean mFinishedTypeA;
@@ -53,6 +54,7 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
     mHaplotypeA = path.mHaplotypeA.copy();
     mHaplotypeB = path.mHaplotypeB == null ? null : path.mHaplotypeB.copy();
     mVariantEndPosition = path.mVariantEndPosition;
+    mVariantIndex = path.mVariantIndex;
     mLastVariant = path.mLastVariant;
     mFinishedTypeA = path.mFinishedTypeA;
     mFinishedTypeB = path.mFinishedTypeB;
@@ -65,18 +67,22 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
   public boolean isNew(Variant var) {
     return mLastVariant == null
       || var.getStart() > mLastVariant.getStart()
-      || var.getEnd() > mLastVariant.getEnd();
+      || var.getStart() == mLastVariant.getStart() && var.getEnd() > mLastVariant.getEnd();
   }
 
-  void exclude(Variant var) {
+  void exclude(Variant var, int varIndex) {
+    assert varIndex > mVariantIndex;
     mExcluded = new BasicLinkedListNode<>(var, mExcluded);
     mVariantEndPosition = var.getEnd();
+    mVariantIndex = varIndex;
     mLastVariant = var;
   }
 
-  void include(OrientedVariant var) {
+  void include(OrientedVariant var, int varIndex) {
+    assert varIndex > mVariantIndex;
     mIncluded = new BasicLinkedListNode<>(var, mIncluded);
     mVariantEndPosition = var.getEnd();
+    mVariantIndex = varIndex;
     mLastVariant = var.variant();
 
     // Lazy creation of the B haplotype
@@ -157,6 +163,22 @@ public class HalfPath extends IntegralAbstract implements Comparable<HalfPath> {
 
   public BasicLinkedListNode<Variant> getExcluded() {
     return mExcluded;
+  }
+
+  /**
+   * Get variant index.
+   * @return Returns the variant index.
+   */
+  public int getVariantIndex() {
+    return mVariantIndex;
+  }
+
+  /**
+   * Set variant index.
+   * @param index the new variant index.
+   */
+  public void setVariantIndex(int index) {
+    mVariantIndex = index;
   }
 
   /**

@@ -27,28 +27,29 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.vcf.header.VcfHeader;
 
 /**
  */
 public class VcfEvalCliTest extends AbstractCliTest {
-  private File mDir = null;
+  private TestDirectory mDir = null;
 
   @Override
   public void setUp() throws IOException {
     super.setUp();
-    mDir = FileUtils.createTempDir("MutationEval", "mDir");
+    mDir = new TestDirectory("vcfevalcli");
     Diagnostic.setLogStream(TestUtils.getNullPrintStream());
 
   }
 
   @Override
   public void tearDown() throws IOException {
-    super.tearDown();
-    assertTrue(FileHelper.deleteAll(mDir));
+    mDir.close();
     mDir = null;
     Diagnostic.setLogStream();
+    super.tearDown();
   }
 
 
