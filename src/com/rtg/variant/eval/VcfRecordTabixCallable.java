@@ -18,8 +18,8 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import com.rtg.util.Pair;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
@@ -87,15 +87,16 @@ public class VcfRecordTabixCallable implements Callable<LoadedVariants> {
           continue;
         }
 
-        // Skip overlapping variants (this detection code was moved here from Path)
+        // Skip overlapping variants
         final DetectedVariant v = new DetectedVariant(rec, sampleId, mExtractor, mSquashPloidy);
         if (last != null) {
-          // There is tricky case where an
-          // insertion event occurs adjacent to a snp event. There might
-          // still be other situations not properly covered here.
-          final boolean atAnInsert = (v.getStart() == v.getEnd()) ^ (last.getStart() == last.getEnd());
-          if ((atAnInsert && last.getStart() > v.getStart()) || (!atAnInsert && (last.getStart() >= v.getStart() || last.getEnd() > v.getStart()))) {
+          if (v.getStart() < last.getEnd()) {
             Diagnostic.userLog("Overlapping variants aren't supported, skipping current variant from " + label + ".\nPrevious variant: " + last + "\nCurrent variant:  " + v);
+            skipped++;
+            continue;
+          }
+          if ((v.getStart() == last.getStart()) && (v.getStart() == v.getEnd()) && (last.getStart() == last.getEnd())) { // Pure inserts where ordering is ambiguous
+            Diagnostic.userLog("Ambiguous inserts aren't supported, skipping current variant from " + label + ".\nPrevious variant: " + last + "\nCurrent variant:  " + v);
             skipped++;
             continue;
           }
