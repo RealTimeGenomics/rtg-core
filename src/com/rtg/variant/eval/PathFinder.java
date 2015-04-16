@@ -13,7 +13,6 @@ package com.rtg.variant.eval;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.reeltwo.jumble.annotations.TestClass;
@@ -40,13 +39,11 @@ public final class PathFinder {
   private <T extends Variant> PathFinder(byte[] template, String templateName, Collection<T> calledVariants, Collection<T> baseLineVariants) {
     mTemplate = template;
     mTemplateName = templateName;
-    final TreeMap<Integer, Variant> calledVariants1 = buildMap(calledVariants);
-    final TreeMap<Integer, Variant> baseLineVariants1 = buildMap(baseLineVariants);
 
-    mCalledVariants = calledVariants1.values().toArray(new Variant[calledVariants1.size()]); // XXX For now, keep bumping behaviour
+    mCalledVariants = calledVariants.toArray(new Variant[calledVariants.size()]);
     Arrays.sort(mCalledVariants, DetectedVariant.NATURAL_COMPARATOR);
 
-    mBaseLineVariants = baseLineVariants1.values().toArray(new Variant[baseLineVariants1.size()]); // XXX For now, keep bumping behaviour
+    mBaseLineVariants = baseLineVariants.toArray(new Variant[baseLineVariants.size()]);
     Arrays.sort(mBaseLineVariants, DetectedVariant.NATURAL_COMPARATOR);
   }
 
@@ -190,7 +187,7 @@ public final class PathFinder {
 
   /* Gets the next upstream variant position */
   int futureVariantPos(HalfPath path, Variant[] variants) {
-    int nextIdx = path.getVariantIndex() + 1;
+    final int nextIdx = path.getVariantIndex() + 1;
     if (nextIdx >= variants.length) {
       return mTemplate.length - 1;
     } else {
@@ -201,11 +198,11 @@ public final class PathFinder {
 
   /* Gets the next variant that should be enqueued to the supplied HalfPath at the current position, or null if there is none  */
   static int nextVariant(HalfPath path, Variant[] variants) {
-    int nextIdx = path.getVariantIndex() + 1;
+    final int nextIdx = path.getVariantIndex() + 1;
     if (nextIdx >= variants.length) {
       return -1;
     }
-    Variant nextVar = variants[nextIdx];
+    final Variant nextVar = variants[nextIdx];
 
     final int startPos;
     if (path.wantsFutureVariantBases()) {
@@ -214,21 +211,6 @@ public final class PathFinder {
       startPos = path.getPosition() + 1;
     }
     return nextVar.getStart() == startPos ? nextIdx : -1;
-  }
-
-  static <T extends Variant> TreeMap<Integer, Variant> buildMap(Collection<T> variants) {
-    final TreeMap<Integer, Variant> map = new TreeMap<>();
-    for (final Variant v : variants) {
-      // TODO when you have a pure insert immediately prior to a snp/mnp, they end up with the same start position,
-      // but don't trigger the overlapping code during variant loading.
-      // This means that you don't get a warning but the snp/mnp is the only variant that ends up in the map
-      // due to the map.put replacing the existing entry. For now log these to see how often they occur.
-      final Variant oldV = map.put(v.getStart(), v);
-      if (oldV != null) {
-        Diagnostic.developerLog("Variant was bumped due to another variant starting at the same position.\nCurrent variant: " + v + "\nBumped variant:  " + oldV);
-      }
-    }
-    return map;
   }
 
   private static void addIfBetter(Collection<Path> add, TreeSet<Path> sortedPaths) {
