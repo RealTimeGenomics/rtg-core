@@ -64,17 +64,15 @@ final class DataBundle {
   }
 
   void setScoreRange(float min, float max) {
-    final float smin = mScoreMin + (mScoreMin == mScoreMax ? 0.0f : min * (mScoreMax - mScoreMin));
-    final float smax = mScoreMin + (mScoreMin == mScoreMax ? 0.0f : max * (mScoreMax - mScoreMin));
+    final int smin = (int) (min * mScores.length);
+    final int smax = (int) (max * mScores.length);
 
     final ArrayList<Float> scores = new ArrayList<>();
     final ArrayList<Point2D> points = new ArrayList<>();
 
-    for (int i = 0; i < mScores.length; i++) {
-      if (smin <= mScores[i] && mScores[i] <= smax) {
-        scores.add(mScores[i]);
-        points.add(mPoints[i]);
-      }
+    for (int i = smin; i < smax; i++) {
+      scores.add(mScores[i]);
+      points.add(mPoints[i]);
     }
 
     mRangedPoints = points.toArray(new Point2D[points.size()]);
@@ -132,6 +130,10 @@ final class DataBundle {
       posPoints.add(new TextPoint2D(p.getX(), p.getY(), String.format("%.3g", mRangedScores[end])));
     }
     mRangedPosPoints = posPoints.toArray(new TextPoint2D[posPoints.size()]);
+  }
+
+  TextPoint2D getMaxRangedPoint() {
+    return mRangedPosPoints.length == 0 ? null : mRangedPosPoints[mRangedPosPoints.length - 1];
   }
 
   PointPlot2D getPlot(int lineWidth, int colour) {
