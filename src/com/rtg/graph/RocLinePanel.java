@@ -37,6 +37,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.plaf.basic.BasicArrowButton;
 
 import com.reeltwo.jumble.annotations.JumbleIgnore;
+import com.reeltwo.plot.TextPoint2D;
 
 /**
  * A panel that lets you enable or disable showing of a ROC line, rename the ROC line, and has buttons for
@@ -152,8 +153,12 @@ class RocLinePanel extends JPanel {
       @Override
       public void stateChanged(ChangeEvent e) {
         final JSlider slider = (JSlider) e.getSource();
-        mDataBundle.setScoreRange(1.0f - slider.getValue() / 1000.0f, 1.0f);
+        mDataBundle.setScoreRange(0.0f, slider.getValue() / 1000.0f);
         mRocPlot.showCurrentGraph();
+        final TextPoint2D data = mDataBundle.getMaxRangedPoint();
+        if (data != null) {
+          mStatusBar.setString(RocPlot.getTpFpString(data.getY(), data.getX(), mDataBundle.getTotalVariants()) + " Threshold=" + data.getText());
+        }
       }
     });
 

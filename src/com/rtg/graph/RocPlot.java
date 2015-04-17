@@ -523,15 +523,11 @@ public final class RocPlot {
       final Mapping[] mapping = mPlotPanel.getMapping();
       final int maxVariants = ((RocGraph2D) mPlotPanel.getGraph()).getMaxVariants();
       if (mapping != null && mapping.length > 1 && p != null) {
-        final float x = mapping[0].screenToWorld((float) p.getX());
-        final float y = mapping[1].screenToWorld((float) p.getY());
-        if (x >= 0 && y >= 0 && (x + y > 0)) {
-          String message = String.format("TP=%.0f FP=%.0f Precision=%.2f%%", y, x, y / (x + y) * 100);
-          if (maxVariants > 0) {
-            message += String.format(" Sensitivity=%.2f%%", y / maxVariants * 100);
-          }
-          mZoomPP.setCrossHair(new Point((int) x, (int) y));
-          mProgressBar.setString(message);
+        final float fp = mapping[0].screenToWorld((float) p.getX());
+        final float tp = mapping[1].screenToWorld((float) p.getY());
+        if (fp >= 0 && tp >= 0 && (fp + tp > 0)) {
+          mProgressBar.setString(getTpFpString(tp, fp, maxVariants));
+          mZoomPP.setCrossHair(new Point((int) fp, (int) tp));
         } else {
           mZoomPP.setCrossHair(null);
           mProgressBar.setString("");
@@ -554,6 +550,14 @@ public final class RocPlot {
         mPopup.show(e.getComponent(), e.getX(), e.getY());
       }
     }
+  }
+
+  static String getTpFpString(float tp, float fp, int maxVariants) {
+    String message = String.format("TP=%.0f FP=%.0f Precision=%.2f%%", tp, fp, tp / (fp + tp) * 100);
+    if (maxVariants > 0) {
+      message += String.format(" Sensitivity=%.2f%%", tp / maxVariants * 100);
+    }
+    return message;
   }
 
 
