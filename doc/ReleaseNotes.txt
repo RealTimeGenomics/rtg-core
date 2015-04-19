@@ -4,6 +4,40 @@ Below are the release notes for RTG Core, upon which RTG.VERSION
 is built.  Not all features described below may be included in this
 product.
 
+RTG Core 3.4.4 (2015-03-20)
+---------------------------
+
+This release primarily includes bugfixes and minor improvements:
+
+* vcffilter: The --keep-filter and --remove-filter options now
+  recognize '.' as a value that can be filtered on.  For example, to
+  keep only variants that have a FILTER column that corresponds to
+  non-filtered, use -k . -k PASS.
+
+* vcfeval: Enabled skipping over more extremely complex edge cases
+  that could otherwise cause exceedingly long computation times.
+
+* rocplot: Add the ability to click on a point within the graph to
+  show in the status bar the true positives / false positives /
+  precision / sensitivity scores equivalent to that point.
+
+* rocplot: The individual curve sliders that can be used to simulate
+  the effects of various threshold cut-offs did not work very well for
+  curves corresponding to scores with very wide ranges and non-uniform
+  distribution (such as GQ and QUAL often are). These sliders are
+  improved so they work better with these curves, and adjusting the
+  sliders also displays accuracy metrics in the status bar, to aid in
+  threshold selection.
+
+* rocplot: It was sometimes possible to zoom in to negative
+  coordinates.
+
+* aview: Fix display of BED regions that do not have a region name
+  contained within the BED file.
+
+
+Previous releases:
+
 RTG Core 3.4.3 (2015-03-19)
 ---------------------------
 
@@ -22,9 +56,6 @@ This is primarily a bugfix release:
   feasibly resolve. Previously operation would abort, now a warning is
   issued and both baseline and called variants within that region are
   ignored.
-
-
-Previous releases:
 
 RTG Core 3.4.2 (2015-03-02)
 ---------------------------
