@@ -39,7 +39,7 @@ public final class EvidenceQFactory implements CachedEvidenceFactory {
   }
 
   /** Piece of evidence for an unmapped nucleotide. */
-  private static final EvidenceInterface UNMAPPED = new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0, 0, false, false, false, true); // most values irrelevant
+  private static final EvidenceInterface UNMAPPED = new EvidenceQ(DescriptionSnp.SINGLETON, 0, 1.0, 0, false, false, false, true); // most values irrelevant
 
   @Override
   public EvidenceInterface evidence(int readNt, int readBasesLeft, int readBaseRight, int mapQ, int phred, int stateIndex, int maxIndelLength, boolean isUnmapped) {

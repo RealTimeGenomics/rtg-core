@@ -140,6 +140,7 @@ public class EvidenceQFactoryTest extends TestCase {
     final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 3, 0, 0, true);
     assertTrue(p instanceof EvidenceQ);
     assertTrue(p.isUnmapped());
+    assertEquals(1.0, p.mapError());
   }
 
   public void testGetStateIndex() {
