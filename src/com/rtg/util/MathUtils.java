@@ -310,12 +310,12 @@ public final class MathUtils {
   }
 
   /**
-   * Calculates <i>ln</i>(<i>e</i><sup>x</sup> + 1).  Approximates that with x for x &gt; 10 or x &lt; -10 to avoid overflow.
+   * Calculates <i>ln</i>(<i>e</i><sup>x</sup> + 1).  Approximates that with x for x &gt; 10.
    * @param x a number
    * @return <code>ln(e^x + 1)</code>
    */
   public static double logExpPlus1(double x) {
-    return x > 10.0 ? x : x < -10.0 ? 0 : Math.log(Math.exp(x) + 1);
+    return x > 10.0 ? x : Math.log(Math.exp(x) + 1);
   }
 
   /**
@@ -412,7 +412,7 @@ public final class MathUtils {
   public static String cappedInt(final long val) {
     if (val >= Integer.MAX_VALUE) {
       return OVER;
-    } else if (val <= -Integer.MIN_VALUE) {
+    } else if (val <= Integer.MIN_VALUE) {
       return UNDER;
     }
     return Long.toString(val);

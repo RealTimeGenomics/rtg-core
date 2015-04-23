@@ -302,6 +302,7 @@ public class MathUtilsTest extends TestCase {
     assertEquals(String.valueOf(Integer.MAX_VALUE), MathUtils.cappedInt(Integer.MAX_VALUE));
     assertEquals(String.valueOf(-Integer.MAX_VALUE), MathUtils.cappedInt(-Integer.MAX_VALUE));
     assertEquals(String.valueOf(-Integer.MAX_VALUE + 1), MathUtils.cappedInt(-Integer.MAX_VALUE + 1));
+    assertEquals(String.valueOf(-Integer.MAX_VALUE), MathUtils.cappedInt(-Integer.MAX_VALUE - 1));
     assertEquals(String.valueOf(-Integer.MAX_VALUE), MathUtils.cappedInt(Integer.MIN_VALUE));
     assertEquals(String.valueOf(Integer.MAX_VALUE), MathUtils.cappedInt(Long.MAX_VALUE));
     assertEquals(String.valueOf(-Integer.MAX_VALUE), MathUtils.cappedInt(-Long.MAX_VALUE));
