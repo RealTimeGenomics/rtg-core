@@ -282,7 +282,7 @@ public final class VcfUtils {
 
   /**
    * @param rec record to look up
-   * @return true if the record is failed during complex call
+   * @return true if the record was produced by the complex caller
    */
   public static boolean isComplexScored(VcfRecord rec) {
     return rec.getInfo().keySet().contains("XRX");
@@ -345,7 +345,19 @@ public final class VcfUtils {
   }
 
   /**
-   * Tests if the given sample in a record is homozygous or not
+   * Tests if the given sample genotype in a record is homozygous or not
+   * @param rec record to check
+   * @param sample sample number
+   * @return true iff homozygous
+   * @throws NoTalkbackSlimException if the sample is missing GT filed or invalid sample number
+   */
+  public static boolean isSnp(VcfRecord rec, int sample) {
+    final int[] gtArray = validateGT(rec, sample);
+    return isHomozygous(gtArray) && !isIdentity(gtArray);
+  }
+
+  /**
+   * Tests if the given sample genotype in a record is homozygous or not
    * @param rec record to check
    * @param sample sample number
    * @return true iff homozygous
@@ -357,7 +369,7 @@ public final class VcfUtils {
   }
 
   /**
-   * Tests if the given sample in a record is heterozygous or not
+   * Tests if the given sample genotype in a record is heterozygous or not
    * @param rec record to check
    * @param sample sample number
    * @return true iff heterozygous
@@ -369,7 +381,7 @@ public final class VcfUtils {
   }
 
   /**
-   * Tests if the given sample in a record is haploid or not
+   * Tests if the given sample genotype in a record is haploid or not
    * @param rec record to check
    * @param sample sample number
    * @return true iff haploid
@@ -381,7 +393,7 @@ public final class VcfUtils {
   }
 
   /**
-   * Tests if the given sample in a record is diploid or not
+   * Tests if the given sample genotype in a record is diploid or not
    * @param rec record to check
    * @param sample sample number
    * @return true iff diploid
@@ -445,23 +457,8 @@ public final class VcfUtils {
       return true;
     }
     final String gt = rec.getFormatAndSample().get(FORMAT_GENOTYPE).get(sampleId);
-    final int[] gtSplit = splitGt(gt);
-    boolean sameAsRef = true;
-    boolean allMissing = true;
-    int altId = 0;
-    for (int g : gtSplit) {
-      if (g != -1) {
-        allMissing = false;
-        if (g != 0) {
-          sameAsRef = false;
-          altId = g;
-        }
-      }
-    }
-    if (allMissing || sameAsRef) {
-      return true;
-    }
-    return VariantType.getType(rec.getRefCall(), rec.getAltCalls().get(altId - 1)).isSvType(); // Skip SV variants
+    final VariantType type = VariantType.getType(rec, splitGt(gt));
+    return type.isNonVariant() || type.isSvType(); // Skip SV variants
   }
 
   /**
@@ -509,6 +506,16 @@ public final class VcfUtils {
       }
     }
     return true;
+  }
+
+  /**
+   * Get an array containing the set of all alleles as strings. If there is a redundant leading nucleotide, this is
+   * stripped. The reference allele is first.
+   * @param rec the record to get the alleles from
+   * @return an array containing the alleles.
+   */
+  public static String[] getAlleleStrings(VcfRecord rec) {
+    return getAlleleStrings(rec, hasRedundantFirstNucleotide(rec));
   }
 
   /**

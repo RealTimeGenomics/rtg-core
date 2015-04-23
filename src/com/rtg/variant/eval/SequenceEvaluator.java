@@ -82,24 +82,24 @@ class SequenceEvaluator implements IORunnable {
 
       //find the best path for variant calls
       final Path best = PathFinder.bestPath(template, currentName, calledCalls, baseLineCalls);
+
       //System.out.println(path);
       List<OrientedVariant> truePositives = best.getCalledIncluded();
       final List<OrientedVariant> baselineTruePositives = best.getBaselineIncluded();
-
       final List<Variant> falsePositives = best.getCalledExcluded();
       final List<Variant> falseNegatives = best.getBaselineExcluded();
 
-      mSynchronize.addVariants(baselineTruePositives.size() + falseNegatives.size());
-      Diagnostic.developerLog("Writing variants...");
       final Pair<List<OrientedVariant>, List<OrientedVariant>> calls = Path.calculateWeights(best, truePositives, baselineTruePositives);
-      final PhasingResult misPhasings = countMisphasings(best);
-      mSynchronize.addPhasings(misPhasings.mMisPhasings, misPhasings.mCorrectPhasings, misPhasings.mUnphaseable);
-
       // this step is currently necessary as sometimes you can (rarely) have variants included in the best path
-      // but they do not correspond to any variant in baseline.
-      // E.g. two variants which when both replayed cancel each other out.
+      // but they do not correspond to any variant in baseline. // E.g. two variants which when both replayed cancel each other out.
       truePositives = calls.getA();
       merge(falsePositives, calls.getB());
+
+      mSynchronize.addVariants(baselineTruePositives.size() + falseNegatives.size());
+      Diagnostic.developerLog("Writing variants...");
+
+      final PhasingResult misPhasings = countMisphasings(best);
+      mSynchronize.addPhasings(misPhasings.mMisPhasings, misPhasings.mCorrectPhasings, misPhasings.mUnphaseable);
 
       mSynchronize.write(currentName, truePositives, falsePositives, falseNegatives, baselineTruePositives);
       Diagnostic.developerLog("Generating ROC data...");

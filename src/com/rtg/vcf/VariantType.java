@@ -20,29 +20,37 @@ import com.reeltwo.jumble.annotations.TestClass;
 public enum VariantType {
   //Ordered least to most precedence
 
+  /** Missing / No call */
+  NO_CALL(false, false, true),
   /** Equal to reference */
-  UNCHANGED(false, false),
+  UNCHANGED(false, false, true),
   /** Single nucleotide polymorphism */
-  SNP(false, false),
+  SNP(false, false, false),
   /** Multiple nucleotide polymorphism */
-  MNP(false, false),
+  MNP(false, false, false),
   /** Deletion with respect to reference */
-  DELETION(true, false),
+  DELETION(true, false, false),
   /** Insertion with respect to reference */
-  INSERTION(true, false),
+  INSERTION(true, false, false),
   /** Complex indel with deletions and insertions */
-  INDEL(true, false),
+  INDEL(true, false, false),
   /** Structural variant break end */
-  SV_BREAKEND(false, true),
+  SV_BREAKEND(false, true, false),
   /** Structural variant symbolic value */
-  SV_SYMBOLIC(false, true);
+  SV_SYMBOLIC(false, true, false);
 
   private final boolean mIsIndelType;
   private final boolean mIsSvType;
+  private final boolean mIsNonVariant;
 
-  VariantType(boolean isIndelType, boolean isSvType) {
+  VariantType(boolean isIndelType, boolean isSvType, boolean isNonVariant) {
     mIsIndelType = isIndelType;
     mIsSvType = isSvType;
+    mIsNonVariant = isNonVariant;
+  }
+
+  public boolean isNonVariant() {
+    return mIsNonVariant;
   }
 
   public boolean isIndelType() {
@@ -51,6 +59,25 @@ public enum VariantType {
 
   public boolean isSvType() {
     return mIsSvType;
+  }
+
+  /**
+   * Return a single VariantType most indicative of a pair of VariantTypes, to be used to assign a variant
+   * type to a polyploid genotype or a variant record as a whole. This generally takes the more "complex"
+   * of the input types.
+   * @param a a variant type
+   * @param b another variant type
+   * @return the resolved variant type.
+   */
+  public static VariantType getPrecedence(VariantType a, VariantType b) {
+    if (a != b && a.isIndelType() && b.isIndelType()) {
+      // If both variants are not the same and both within the three Indel categories default to INDEL
+      return INDEL;
+    }
+    if (a.ordinal() > b.ordinal()) {
+      return a;
+    }
+    return b;
   }
 
   /**
@@ -75,7 +102,34 @@ public enum VariantType {
   }
 
   /**
-   * Determine the type of variant given a reference allele and an alternative allele
+   * Determine the type of variant given a genotype
+   * @param rec the VCF record containing the allele definitions
+   * @param gtSplit the genotype, as allele indices
+   * @return the type of variant
+   */
+  public static VariantType getType(VcfRecord rec, int[] gtSplit) {
+    boolean allMissing = true;
+    int altId = 0;
+    for (int g : gtSplit) {
+      if (g != -1) {
+        allMissing = false;
+        if (g != 0) {
+          altId = g;
+        }
+      }
+    }
+    if (allMissing) {
+      return VariantType.NO_CALL;
+    }
+    if (altId == 0) {
+      return VariantType.UNCHANGED;
+    }
+    final String[] alleles = VcfUtils.getAlleleStrings(rec);
+    return getType(alleles[0], alleles[altId]);
+  }
+
+  /**
+   * Determine the type of variant given a reference allele and a called/alternative allele
    * @param refAllele the reference allele
    * @param altAllele the alternative allele
    * @return the type of variant

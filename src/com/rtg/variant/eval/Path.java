@@ -352,15 +352,15 @@ public class Path extends IntegralAbstract implements Comparable<Path> {
    *
    *       weight = number of TP in baseline / number of TP in called
    *
-   *  this will assure that the total number of TP we output will always reflect number of TP in baseline file
+   * this will assure that the total number of TP we output will always reflect number of TP in baseline file
    *
-   *  return 2 lists first for TP and second for FP, we create FP calls when current call is included but does not correspond to a TP
+   * return 2 lists first for TP and second for FP, we create FP calls when current call is included but does not correspond to a TP (this can happen when two calls cancel each other out when replayed)
    *
    * @param best best path
    * @param calledTruePositives called true positives
    * @param baseLineTruePositives baseline true positives
    *
-   * @return pair of true positive and false positives
+   * @return pair of called true positive and false positives
    */
   static Pair<List<OrientedVariant>, List<OrientedVariant>> calculateWeights(final Path best, final List<OrientedVariant> calledTruePositives, final List<OrientedVariant> baseLineTruePositives) {
     assert best.mSyncPointList.size() >= 1;

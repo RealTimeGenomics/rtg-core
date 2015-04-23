@@ -267,8 +267,7 @@ public class VariantStatistics extends AbstractStatistics {
       mComplexCalled++;
     }
 
-    final boolean prevNt = VcfUtils.hasRedundantFirstNucleotide(rec);
-    final String[] alleles = VcfUtils.getAlleleStrings(rec, prevNt);
+    final String[] alleles = VcfUtils.getAlleleStrings(rec);
     final String ref = alleles[0];
 
     final HashSet<Integer> altAlleles = new HashSet<>();
@@ -367,7 +366,7 @@ public class VariantStatistics extends AbstractStatistics {
         sampleStats.mHomozygous++;
       }
     }
-    final VariantType precedence = getPrecedence(typeA, typeB);
+    final VariantType precedence = VariantType.getPrecedence(typeA, typeB);
     if (precedence == VariantType.SNP) {
       tallyTransitionTransversionRatio(refA, predA, typeA, sampleStats);
       if (ploidy != Ploidy.HAPLOID) {
@@ -384,17 +383,6 @@ public class VariantStatistics extends AbstractStatistics {
     }
   }
 
-  protected static VariantType getPrecedence(VariantType a, VariantType b) {
-    if (a != b && a.isIndelType() && b.isIndelType()) {
-      // If both variants are not the same and both within the three Indel categories default to INDEL
-      return VariantType.INDEL;
-    }
-    if (a.ordinal() > b.ordinal()) {
-      return a;
-    }
-    return b;
-  }
-
   private void tallyTransitionTransversionRatio(String ref, String pred, VariantType type, PerSampleVariantStatistics sampleStats) {
     if (type == VariantType.SNP) {
       final boolean transition = "AG".contains(ref) && "AG".contains(pred) || "CT".contains(ref) && "CT".contains(pred);
@@ -407,7 +395,7 @@ public class VariantStatistics extends AbstractStatistics {
   }
 
   private void tallyLength(VariantType alleleType, String ref, String pred, PerSampleVariantStatistics sampleStats) {
-    if (alleleType != VariantType.UNCHANGED) {
+    if (!alleleType.isNonVariant() && !alleleType.isSvType()) {
       final int alleleLength;
       switch (alleleType) {
         case UNCHANGED:
