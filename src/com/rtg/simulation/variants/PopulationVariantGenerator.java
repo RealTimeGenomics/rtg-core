@@ -80,8 +80,8 @@ public abstract class PopulationVariantGenerator {
       rec.setStart(getStart());
       rec.setSequence(reference.name(getSequenceId()));
       rec.setRefCall(DnaUtils.bytesToSequenceIncCG(mRef));
-      rec.setQuality(".");
-      rec.setId(".");
+      rec.setQuality(VcfRecord.MISSING);
+      rec.setId(VcfRecord.MISSING);
       for (final byte[] mAllele : mAlleles) {
         rec.addAltCall(DnaUtils.bytesToSequenceIncCG(mAllele));
       }
