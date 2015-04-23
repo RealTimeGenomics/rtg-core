@@ -17,10 +17,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 import com.rtg.vcf.header.VcfHeader;
@@ -34,14 +34,14 @@ public class VariantHelperTest extends TestCase {
 
   private static final String SNP = ""
     + VcfHeader.MINIMAL_HEADER + "\tFOO" + StringUtils.LS
-    + "g1" + "\t" + "1" + "\t" + "." + "\t" + "A" + "\t" + "A" + "\t" + "3.0" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
-    + "g1" + "\t" + "2" + "\t" + "." + "\t" + "A" + "\t" + "A" + "\t" + "3.0" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
-    + "g1" + "\t" + "3" + "\t" + "." + "\t" + "A" + "\t" + "A" + "\t" + "3.8" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
-    + "g1" + "\t" + "4" + "\t" + "." + "\t" + "T" + "\t" + "T" + "\t" + "3.8" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
-    + "g1" + "\t" + "4" + "\t" + "." + "\t" + "A" + "\t" + "A" + "\t" + "4.7" + "\t" + "PASS\t.\tGT\t0/0" + StringUtils.LS
-    + "g1" + "\t" + "5" + "\t" + "." + "\t" + "C" + "\t" + "C" + "\t" + "3.9" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
-    + "g1" + "\t" + "6" + "\t" + "." + "\t" + "G" + "\t" + "G" + "\t" + "4.5" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
-    + "g1" + "\t" + "7" + "\t" + "." + "\t" + "A" + "\t" + "A" + "\t" + "4.7" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
+    + "g1" + "\t" + "1" + "\t" + "." + "\t" + "A" + "\t" + "C" + "\t" + "3.0" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
+    + "g1" + "\t" + "2" + "\t" + "." + "\t" + "A" + "\t" + "G" + "\t" + "3.0" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
+    + "g1" + "\t" + "3" + "\t" + "." + "\t" + "A" + "\t" + "C" + "\t" + "3.8" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
+    + "g1" + "\t" + "4" + "\t" + "." + "\t" + "T" + "\t" + "G" + "\t" + "3.8" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
+    + "g1" + "\t" + "4" + "\t" + "." + "\t" + "A" + "\t" + "C" + "\t" + "4.7" + "\t" + "PASS\t.\tGT\t0/0" + StringUtils.LS
+    + "g1" + "\t" + "5" + "\t" + "." + "\t" + "C" + "\t" + "G" + "\t" + "3.9" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
+    + "g1" + "\t" + "6" + "\t" + "." + "\t" + "G" + "\t" + "C" + "\t" + "4.5" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
+    + "g1" + "\t" + "7" + "\t" + "." + "\t" + "A" + "\t" + "G" + "\t" + "4.7" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
    ;
 
   public final void testLoadSnpRange() throws IOException {
@@ -68,8 +68,8 @@ public class VariantHelperTest extends TestCase {
 
   private static final String SNP_NO_SAMPLE = ""
       + VcfHeader.MINIMAL_HEADER + StringUtils.LS
-      + "g1" + "\t" + "1" + "\t" + "." + "\t" + "A" + "\t" + "A" + "\t" + "3.0" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
-      + "g1" + "\t" + "7" + "\t" + "." + "\t" + "A" + "\t" + "A" + "\t" + "4.7" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
+      + "g1" + "\t" + "1" + "\t" + "." + "\t" + "A" + "\t" + "T" + "\t" + "3.0" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
+      + "g1" + "\t" + "7" + "\t" + "." + "\t" + "A" + "\t" + "T" + "\t" + "4.7" + "\t" + "PASS\t.\tGT\t0/1" + StringUtils.LS
      ;
 
   public void testNoSampleVCF() throws IOException {
@@ -93,8 +93,8 @@ public class VariantHelperTest extends TestCase {
 
   private static final String SNP_MULTI_SAMPLE = ""
       + VcfHeader.MINIMAL_HEADER + "\t" + "SAMPLE1" + "\t" + "SAMPLE2" + StringUtils.LS
-      + "g1" + "\t" + "3" + "\t" + "." + "\t" + "A" + "\t" + "A" + "\t" + "3.0" + "\t" + "PASS\t.\tGT\t0/1\t0/1" + StringUtils.LS
-      + "g1" + "\t" + "7" + "\t" + "." + "\t" + "A" + "\t" + "A" + "\t" + "4.7" + "\t" + "PASS\t.\tGT\t0/1\t1/1" + StringUtils.LS
+      + "g1" + "\t" + "3" + "\t" + "." + "\t" + "A" + "\t" + "T" + "\t" + "3.0" + "\t" + "PASS\t.\tGT\t0/1\t0/1" + StringUtils.LS
+      + "g1" + "\t" + "7" + "\t" + "." + "\t" + "A" + "\t" + "T" + "\t" + "4.7" + "\t" + "PASS\t.\tGT\t0/1\t1/1" + StringUtils.LS
      ;
 
   public void testMultiSampleVCF() throws IOException {
