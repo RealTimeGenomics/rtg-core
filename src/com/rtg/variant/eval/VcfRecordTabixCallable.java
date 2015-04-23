@@ -17,9 +17,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import com.rtg.util.Pair;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.intervals.RegionRestriction;
+import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
@@ -31,6 +30,7 @@ import com.rtg.vcf.header.VcfHeader;
 public class VcfRecordTabixCallable implements Callable<LoadedVariants> {
 
   private final File mInput;
+  private final ReferenceRanges mRanges;
   private final String mSampleName;
   private final String mTemplateName;
   private final int mTemplateLength;
@@ -40,11 +40,15 @@ public class VcfRecordTabixCallable implements Callable<LoadedVariants> {
   private final boolean mSquashPloidy;
   private final int mMaxLength;
 
-  VcfRecordTabixCallable(File file, String sample, Pair<String, Integer> templateNameLength, VariantSetType type, RocSortValueExtractor extractor, boolean passOnly, boolean squashPloidy, int maxLength) {
+  VcfRecordTabixCallable(File file, ReferenceRanges ranges, String templateName, Integer templateLength, VariantSetType type, String sample, RocSortValueExtractor extractor, boolean passOnly, boolean squashPloidy, int maxLength) {
+    if (!ranges.containsSequence(templateName)) {
+      throw new IllegalArgumentException("Ranges supplied do not contain reference sequence " + templateName);
+    }
     mInput = file;
+    mRanges = ranges;
     mSampleName = sample;
-    mTemplateName = templateNameLength.getA();
-    mTemplateLength = templateNameLength.getB();
+    mTemplateName = templateName;
+    mTemplateLength = templateLength;
     mType = type;
     mExtractor = extractor;
     mPassOnly = passOnly;
@@ -56,7 +60,7 @@ public class VcfRecordTabixCallable implements Callable<LoadedVariants> {
   public LoadedVariants call() throws Exception {
     int skipped = 0;
     final List<DetectedVariant> list = new ArrayList<>();
-    try (VcfReader reader = VcfReader.openVcfReader(mInput, new RegionRestriction(mTemplateName))) {
+    try (VcfReader reader = VcfReader.openVcfReader(mInput, mRanges)) {
       final VcfHeader header = reader.getHeader();
       final String label = mType == VariantSetType.BASELINE ? "baseline" : "calls";
       final int sampleId = VcfUtils.getSampleIndexOrDie(header, mSampleName, label);

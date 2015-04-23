@@ -14,6 +14,7 @@ package com.rtg.util.intervals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
@@ -145,6 +146,14 @@ public class RangeList<T> {
   private final List<RangeData<T>> mNonEmptyRanges;
 
   /**
+   * Convenience constructor.
+   * @param range a meta-data range to store for searching.
+   */
+  public RangeList(RangeData<T> range) {
+    this(Collections.singletonList(range));
+  }
+
+  /**
    * Constructor.
    * @param ranges the list of meta-data ranges to store for searching.
    */
@@ -156,6 +165,9 @@ public class RangeList<T> {
       // get list of range boundaries
       final HashSet<Integer> pivots = new HashSet<>();
       for (final RangeData<T> range : ranges) {
+        if (range.getMeta() == null) {
+          throw new NullPointerException("Input ranges must have metadata to distinguish from empty regions");
+        }
         pivots.add(range.getStart());
         pivots.add(range.getEnd());
       }

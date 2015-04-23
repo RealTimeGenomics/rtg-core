@@ -33,6 +33,7 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.variant.eval.VcfEvalParams.VcfEvalParamsBuilder;
 import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.annotation.DerivedAnnotations;
@@ -90,8 +91,11 @@ public class VcfEvalCli extends ParamsCli<VcfEvalParams> {
     flags.registerRequired('c', CALLS, File.class, "file", "VCF file containing called variants").setCategory(INPUT_OUTPUT);
     flags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the variants are called against").setCategory(INPUT_OUTPUT);
 
+    flags.registerOptional(CommonFlags.RESTRICTION_FLAG, String.class, "string", "if set, only read VCF records within the specified range. The format is one of <template_name>, <template_name>:start-end or <template_name>:start+length").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(CommonFlags.BED_REGIONS_FLAG, File.class, "File", "if set, only read VCF records that overlap the ranges contained in the specified BED file").setCategory(INPUT_OUTPUT);
+
     flags.registerOptional(SAMPLE, String.class, "STRING", "the name of the sample to select (required when using multi-sample VCF files)").setCategory(FILTERING);
-    flags.registerOptional(ALL_RECORDS, "use all records regardless of filters. Default is to only process records where FILTER is \".\" or \"PASS\"").setCategory(FILTERING);
+    flags.registerOptional(ALL_RECORDS, "use all records regardless of FILTER status. Default is to only process records where FILTER is \".\" or \"PASS\"").setCategory(FILTERING);
     flags.registerOptional(SQUASH_PLOIDY, "treat heterozygous genotypes as homozygous ALT in both baseline and calls").setCategory(FILTERING);
 
     flags.registerOptional('f', SORT_FIELD, String.class, "STRING", "the name of the VCF FORMAT field to use as the ROC score. Also valid are \"QUAL\" or \"INFO=<name>\" to select the named VCF INFO field", VcfUtils.FORMAT_GENOTYPE_QUALITY).setCategory(REPORTING);
@@ -162,7 +166,9 @@ public class VcfEvalCli extends ParamsCli<VcfEvalParams> {
       if (!CommonFlags.validateTemplate(flags)) {
         return false;
       }
-
+      if (!CommonFlags.validateRegions(flags)) {
+        return false;
+      }
       return true;
     }
   }
@@ -196,6 +202,12 @@ public class VcfEvalCli extends ParamsCli<VcfEvalParams> {
     builder.sortOrder((RocSortOrder) mFlags.getValue(SORT_ORDER));
     builder.scoreField((String) mFlags.getValue(SORT_FIELD));
     builder.maxLength((Integer) mFlags.getValue(MAX_LENGTH));
+    if (mFlags.isSet(CommonFlags.RESTRICTION_FLAG)) {
+      builder.restriction(new RegionRestriction((String) mFlags.getValue(CommonFlags.RESTRICTION_FLAG)));
+    }
+    if (mFlags.isSet(CommonFlags.BED_REGIONS_FLAG)) {
+      builder.bedRegionsFile((File) mFlags.getValue(CommonFlags.BED_REGIONS_FLAG));
+    }
     if (mFlags.isSet(SAMPLE)) {
       builder.sampleName((String) mFlags.getValue(SAMPLE));
     }

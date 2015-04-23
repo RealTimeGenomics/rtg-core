@@ -14,10 +14,10 @@ package com.rtg.variant.eval;
 import java.io.File;
 import java.util.List;
 
-import com.rtg.util.Pair;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
@@ -35,10 +35,11 @@ public class VcfRecordTabixCallableTest extends TestCase {
       FileHelper.resourceToFile("com/rtg/sam/resources/snp_only.vcf.gz", input);
       final File tabix = new File(dir, "snp_only.vcf.gz.tbi");
       FileHelper.resourceToFile("com/rtg/sam/resources/snp_only.vcf.gz.tbi", tabix);
-      final VcfRecordTabixCallable runner = new VcfRecordTabixCallable(input, null, new Pair<>("simulatedSequence13", -1), VariantSetType.BASELINE, RocSortValueExtractor.NULL_EXTRACTOR, true, false, 100);
+      ReferenceRanges ranges = new ReferenceRanges(true);
+      final VcfRecordTabixCallable runner = new VcfRecordTabixCallable(input, ranges.forSequence("simulatedSequence13"), "simulatedSequence13", -1, VariantSetType.BASELINE, null, RocSortValueExtractor.NULL_EXTRACTOR, true, false, 100);
       List<DetectedVariant> set = runner.call().mVariants;
       assertEquals(2, set.size());
-      final VcfRecordTabixCallable runner2 = new VcfRecordTabixCallable(input, null, new Pair<>("simulatedSequence2", -1), VariantSetType.BASELINE, RocSortValueExtractor.NULL_EXTRACTOR, true, false, 100);
+      final VcfRecordTabixCallable runner2 = new VcfRecordTabixCallable(input, ranges.forSequence("simulatedSequence2"), "simulatedSequence2", -1, VariantSetType.BASELINE, null, RocSortValueExtractor.NULL_EXTRACTOR, true, false, 100);
       set = runner2.call().mVariants;
       assertEquals(4, set.size());
       assertEquals(215, set.get(0).getStart());
@@ -56,7 +57,8 @@ public class VcfRecordTabixCallableTest extends TestCase {
         FileHelper.resourceToFile("com/rtg/sam/resources/vcf.txt.gz", input);
         final File tabix = new File(dir, "foo.vcf.gz.tbi");
         FileHelper.resourceToFile("com/rtg/sam/resources/vcf.txt.gz.tbi", tabix);
-        final VcfRecordTabixCallable runner = new VcfRecordTabixCallable(input, "asdf", new Pair<>("20", -1), VariantSetType.CALLS, RocSortValueExtractor.NULL_EXTRACTOR, true, false, 100);
+        ReferenceRanges ranges = new ReferenceRanges(true);
+        final VcfRecordTabixCallable runner = new VcfRecordTabixCallable(input, ranges.forSequence("20"), "20", -1, VariantSetType.CALLS, "asdf", RocSortValueExtractor.NULL_EXTRACTOR, true, false, 100);
         try {
           runner.call();
           fail();

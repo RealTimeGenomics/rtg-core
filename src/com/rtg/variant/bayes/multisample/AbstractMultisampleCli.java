@@ -397,9 +397,9 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     builder.genomeRelationships(grf);
     final Collection<File> inputFiles;
     final RegionRestriction simpleRestriction;
-    if (mFlags.isSet(SamFilterOptions.RESTRICTION_FLAG)) {
+    if (mFlags.isSet(CommonFlags.RESTRICTION_FLAG)) {
       inputFiles = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null, CommandLineFiles.EXISTS, CommandLineFiles.VARIANT_INPUT).getFileList(mFlags);
-      simpleRestriction = new RegionRestriction((String) mFlags.getValue(SamFilterOptions.RESTRICTION_FLAG));
+      simpleRestriction = new RegionRestriction((String) mFlags.getValue(CommonFlags.RESTRICTION_FLAG));
     } else {
       inputFiles = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null, CommandLineFiles.EXISTS).getFileList(mFlags);
       simpleRestriction = null;

@@ -23,7 +23,6 @@ import java.util.Collection;
 
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.ParamsCli;
-import com.rtg.sam.SamFilterOptions;
 import com.rtg.util.IORunnable;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.intervals.RegionRestriction;
@@ -109,7 +108,7 @@ public class DeBruijnAssemblerCli extends ParamsCli<DeBruijnParams> {
       if (!checkSdfFileList(flags, files)) {
         return false;
       }
-      if (flags.isSet(SamFilterOptions.RESTRICTION_FLAG) && !RegionRestriction.validateRegion((String) flags.getValue(SamFilterOptions.RESTRICTION_FLAG))) {
+      if (flags.isSet(CommonFlags.RESTRICTION_FLAG) && !RegionRestriction.validateRegion((String) flags.getValue(CommonFlags.RESTRICTION_FLAG))) {
         flags.error("Invalid region specification");
         return false;
       }

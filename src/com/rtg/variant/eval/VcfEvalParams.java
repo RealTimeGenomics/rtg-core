@@ -14,6 +14,7 @@ package com.rtg.variant.eval;
 import java.io.File;
 
 import com.rtg.launcher.OutputModuleParams;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.vcf.VcfUtils;
 
 /**
@@ -46,6 +47,8 @@ public final class VcfEvalParams extends OutputModuleParams {
     boolean mRtgStats = false;
     boolean mOutputBaselineTp = false;
     boolean mOutputSlopeFiles = false;
+    private RegionRestriction mRestriction = null;
+    private File mBedRegionsFile = null;
 
     @Override
     protected VcfEvalParamsBuilder self() {
@@ -185,6 +188,28 @@ public final class VcfEvalParams extends OutputModuleParams {
     }
 
     /**
+     * Sets a restriction on the records that will be processed. The format is a reference sequence name,
+     * followed by an optional range specification. Only records that match the reference name and start
+     * within the range (if specified) will be processed. A name of null indicates no filtering.
+     * @param restriction a reference sequence name
+     * @return this builder, so calls can be chained.
+     */
+    public VcfEvalParamsBuilder restriction(final RegionRestriction restriction) {
+      mRestriction = restriction;
+      return this;
+    }
+
+    /**
+     * Set the bed file to use which specifies regions
+     * @param bedRegionsFile the bed file which specifies regions
+     * @return this builder
+     */
+    public VcfEvalParamsBuilder bedRegionsFile(File bedRegionsFile) {
+      mBedRegionsFile = bedRegionsFile;
+      return this;
+    }
+
+    /**
      * Creates a <code>VcfEvalParams</code> using the current builder
      * configuration.
      * @return the new <code>VcfEvalParams</code>
@@ -197,6 +222,8 @@ public final class VcfEvalParams extends OutputModuleParams {
   private final File mBaselineFile;
   private final File mCallsFile;
   private final File mTemplateFile;
+  private final RegionRestriction mRestriction;
+  private final File mBedRegionsFile;
   private final String mScoreField;
   private final RocSortOrder mSortOrder;
   private final String mSampleName;
@@ -217,6 +244,8 @@ public final class VcfEvalParams extends OutputModuleParams {
     mBaselineFile = builder.mBaselineFile;
     mCallsFile = builder.mCallsFile;
     mTemplateFile = builder.mTemplateFile;
+    mRestriction = builder.mRestriction;
+    mBedRegionsFile = builder.mBedRegionsFile;
     mSortOrder = builder.mSortOrder;
     mScoreField = builder.mScoreField;
     mSampleName = builder.mSampleName;
@@ -251,6 +280,21 @@ public final class VcfEvalParams extends OutputModuleParams {
    */
   public File templateFile() {
     return mTemplateFile;
+  }
+
+
+  /**
+   * @return The region to restrict iteration of the VCF records to.
+   */
+  public RegionRestriction restriction() {
+    return mRestriction;
+  }
+
+  /**
+   * @return a bed file containing the regions to process, or null for no bed region based filtering.
+   */
+  public File bedRegionsFile() {
+    return mBedRegionsFile;
   }
 
   /**

@@ -52,9 +52,7 @@ public class RangeListTest extends TestCase {
     assertEquals("blah", r.getMeta().get(0));
     assertEquals("boo", r.getMeta().get(1));
 
-    final List<RangeList.RangeData<String>> ranges = new ArrayList<>();
-    ranges.add(r);
-    final RangeList<String> search = new RangeList<>(ranges);
+    final RangeList<String> search = new RangeList<>(r);
 
     final List<RangeList.RangeData<String>> newRanges = search.getRangeList();
     assertEquals(0, newRanges.size());
@@ -69,7 +67,6 @@ public class RangeListTest extends TestCase {
     ranges.add(new RangeList.RangeData<>(1, 4, "1-4"));
     ranges.add(new RangeList.RangeData<>(3, 6, "3-6"));
     ranges.add(new RangeList.RangeData<>(30, 120, "30-120"));
-    ranges.add(new RangeData<String>(140, 150));
     final RangeList<String> search = new RangeList<>(ranges);
     List<String> found = search.find(0);
     assertNull(found);

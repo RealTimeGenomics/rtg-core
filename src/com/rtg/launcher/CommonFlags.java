@@ -37,6 +37,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.LongRange;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.machine.MachineOrientation;
 
 /**
@@ -137,6 +138,10 @@ public final class CommonFlags {
   public static final String PARALLEL_UNMATED_PROCESSING_FLAG = "Xparallel-unmated-processing";
   /** flag for suppressing TABIX and BAM index creation */
   public static final String NO_INDEX = "no-index";
+  /** Flag name for restricting operation to within a single region. */
+  public static final String RESTRICTION_FLAG = "region";
+  /** Flag name for restricting operation to within regions contained in a BED file. */
+  public static final String BED_REGIONS_FLAG = "bed-regions";
 
   // Property name that says where to load AVR models from
   static final String ENVIRONMENT_MODELS_DIR = "models.dir";
@@ -910,4 +915,29 @@ public final class CommonFlags {
     return result;
   }
 
+  /**
+   * Check that the region and bed-regions flags are appropriate, if set.
+   * @param flags the flags to check
+   * @return <code>true</code> if all okay <code>false</code> otherwise
+   */
+  public static boolean validateRegions(CFlags flags) {
+    if (flags.isSet(RESTRICTION_FLAG)) {
+      final String region = (String) flags.getValue(RESTRICTION_FLAG);
+      if (!RegionRestriction.validateRegion(region)) {
+        flags.setParseMessage("The value \"" + region + "\" for \"--" + RESTRICTION_FLAG + "\" is malformed.");
+        return false;
+      }
+    }
+    if (flags.isSet(BED_REGIONS_FLAG)) {
+      final File bedRegionsFile = (File) flags.getFlag(BED_REGIONS_FLAG).getValue();
+      if (!bedRegionsFile.exists()) {
+        Diagnostic.error(ErrorType.FILE_NOT_FOUND, "The specified file, \"" + bedRegionsFile.getPath() + "\", does not exist.");
+        return false;
+      }
+    }
+    if (!flags.checkNand(RESTRICTION_FLAG, BED_REGIONS_FLAG)) {
+      return false;
+    }
+    return true;
+  }
 }

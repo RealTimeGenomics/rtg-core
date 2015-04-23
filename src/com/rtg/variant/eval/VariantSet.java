@@ -15,6 +15,7 @@ package com.rtg.variant.eval;
 import java.util.List;
 import java.util.Map;
 
+import com.rtg.util.Pair;
 import com.rtg.vcf.header.VcfHeader;
 
 /**
@@ -25,11 +26,7 @@ public interface VariantSet {
   /**
    * @return the variants for the next sequence or null if there are no more.
    */
-  Map<VariantSetType, List<DetectedVariant>> nextSet();
-  /**
-   * @return name of the current sequence
-   */
-  String currentName();
+  Pair<String, Map<VariantSetType, List<DetectedVariant>>> nextSet();
 
   /**
    * @return header for baseline files

@@ -35,6 +35,7 @@ import com.rtg.util.Pair;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.header.VcfHeader;
 
@@ -47,7 +48,7 @@ class TabixVcfRecordSet implements VariantSet {
   private final File mCallsFile;
   private final String mSampleName;
   private final Collection<Pair<String, Integer>> mNames = new ArrayList<>();
-
+  private final ReferenceRanges mRanges;
   private final VcfHeader mBaseLineHeader;
   private final VcfHeader mCalledHeader;
   private final boolean mPassOnly;
@@ -55,16 +56,16 @@ class TabixVcfRecordSet implements VariantSet {
   private final int mMaxLength;
   private final RocSortValueExtractor mExtractor;
 
-  private Pair<String, Integer> mCurrentNameLength;
   private int mBaselineSkipped;
   private int mCallsSkipped;
 
-  TabixVcfRecordSet(File baselineFile, File calledFile, String sampleName, RocSortValueExtractor extractor, boolean passOnly, boolean squashPloidy, Collection<Pair<String, Integer>> referenceNameOrdering, int maxLength) throws IOException {
+  TabixVcfRecordSet(File baselineFile, File calledFile, ReferenceRanges ranges, Collection<Pair<String, Integer>> referenceNameOrdering, String sampleName, RocSortValueExtractor extractor, boolean passOnly, boolean squashPloidy, int maxLength) throws IOException {
     if (referenceNameOrdering == null) {
       throw new NullPointerException();
     }
     mBaselineFile = baselineFile;
     mCallsFile = calledFile;
+    mRanges = ranges;
     mSampleName = sampleName;
     mBaseLineHeader = VcfUtils.getHeader(baselineFile);
     mCalledHeader = VcfUtils.getHeader(calledFile);
@@ -72,57 +73,63 @@ class TabixVcfRecordSet implements VariantSet {
     mSquashPloidy = squashPloidy;
     mExtractor = extractor;
     mMaxLength = maxLength;
-    final TabixIndexReader baseTir = new TabixIndexReader(TabixIndexer.indexFileName(baselineFile));
+
     final Set<String> basenames = new TreeSet<>();
-    Collections.addAll(basenames, baseTir.sequenceNames());
-    final TabixIndexReader callTir = new TabixIndexReader(TabixIndexer.indexFileName(calledFile));
+    Collections.addAll(basenames, new TabixIndexReader(TabixIndexer.indexFileName(baselineFile)).sequenceNames());
     final Set<String> callnames = new TreeSet<>();
-    Collections.addAll(callnames, callTir.sequenceNames());
+    Collections.addAll(callnames, new TabixIndexReader(TabixIndexer.indexFileName(calledFile)).sequenceNames());
     final Set<String> referenceNames = new HashSet<>();
     for (Pair<String, Integer> orderedNameLength : referenceNameOrdering) {
       final String name = orderedNameLength.getA();
-      referenceNames.add(name);
-      if (basenames.contains(name)) {
-        if (callnames.contains(name)) {
-          mNames.add(orderedNameLength);
+      if (ranges.allAvailable() || ranges.containsSequence(name)) {
+        referenceNames.add(name);
+        if (basenames.contains(name)) {
+          if (callnames.contains(name)) {
+            mNames.add(orderedNameLength);
+          } else {
+            mNames.add(orderedNameLength);
+            Diagnostic.warning("Reference sequence " + name + " is declared in baseline but not declared in calls (variants will be treated as FN).");
+          }
         } else {
-          mNames.add(orderedNameLength);
-          Diagnostic.warning("Reference sequence " + name + " is declared in baseline but not declared in calls (variants will be treated as FN).");
-        }
-      } else {
-        if (callnames.contains(name)) {
-          mNames.add(orderedNameLength);
-          Diagnostic.warning("Reference sequence " + name + " is declared in calls but not declared in baseline (variants will be treated as FP).");
-        } else {
-          Diagnostic.userLog("Skipping reference sequence " + name + " that is used by neither baseline or calls.");
+          if (callnames.contains(name)) {
+            mNames.add(orderedNameLength);
+            Diagnostic.warning("Reference sequence " + name + " is declared in calls but not declared in baseline (variants will be treated as FP).");
+          } else {
+            Diagnostic.userLog("Skipping reference sequence " + name + " that is used by neither baseline or calls.");
+          }
         }
       }
     }
-    for (String name : basenames) {
-      if (!referenceNames.contains(name)) {
-        Diagnostic.warning("Baseline variants for sequence " + name + " will be ignored as this sequence is not contained in the reference.");
+    if (ranges.allAvailable()) {
+      for (String name : basenames) {
+        if (!referenceNames.contains(name)) {
+          Diagnostic.warning("Baseline variants for sequence " + name + " will be ignored as this sequence is not contained in the reference.");
+        }
       }
-    }
-    for (String name : callnames) {
-      if (!referenceNames.contains(name)) {
-        Diagnostic.warning("Call set variants for sequence " + name + " will be ignored as this sequence is not contained in the reference.");
+      for (String name : callnames) {
+        if (!referenceNames.contains(name)) {
+          Diagnostic.warning("Call set variants for sequence " + name + " will be ignored as this sequence is not contained in the reference.");
+        }
       }
     }
   }
 
   @Override
-  public Map<VariantSetType, List<DetectedVariant>> nextSet() {
+  public Pair<String, Map<VariantSetType, List<DetectedVariant>>> nextSet() {
     final Map<VariantSetType, List<DetectedVariant>> map = new HashMap<>();
     final Iterator<Pair<String, Integer>> iterator = mNames.iterator();
     if (!iterator.hasNext()) {
       return null;
     }
-    mCurrentNameLength = iterator.next();
-    mNames.remove(mCurrentNameLength);
+    final Pair<String, Integer> nameLength = iterator.next();
+    mNames.remove(nameLength);
+    final String currentName = nameLength.getA();
+    final int currentLength = nameLength.getB();
     final ExecutorService executor = Executors.newFixedThreadPool(2);
     try {
-      final FutureTask<LoadedVariants> baseFuture = new FutureTask<>(new VcfRecordTabixCallable(mBaselineFile, mSampleName, mCurrentNameLength, VariantSetType.BASELINE, mExtractor, mPassOnly, mSquashPloidy, mMaxLength));
-      final FutureTask<LoadedVariants> callFuture = new FutureTask<>(new VcfRecordTabixCallable(mCallsFile, mSampleName, mCurrentNameLength, VariantSetType.CALLS, mExtractor, mPassOnly, mSquashPloidy, mMaxLength));
+      final ReferenceRanges subRanges = mRanges.forSequence(currentName);
+      final FutureTask<LoadedVariants> baseFuture = new FutureTask<>(new VcfRecordTabixCallable(mBaselineFile, subRanges, currentName, currentLength, VariantSetType.BASELINE, mSampleName, mExtractor, mPassOnly, mSquashPloidy, mMaxLength));
+      final FutureTask<LoadedVariants> callFuture = new FutureTask<>(new VcfRecordTabixCallable(mCallsFile, subRanges, currentName, currentLength, VariantSetType.CALLS, mSampleName, mExtractor, mPassOnly, mSquashPloidy, mMaxLength));
       executor.execute(baseFuture);
       executor.execute(callFuture);
       final LoadedVariants baseVars = baseFuture.get();
@@ -131,8 +138,8 @@ class TabixVcfRecordSet implements VariantSet {
       map.put(VariantSetType.CALLS, calledVars.mVariants);
       mBaselineSkipped += baseVars.mSkippedDuringLoading;
       mCallsSkipped += calledVars.mSkippedDuringLoading;
-      Diagnostic.userLog("Reference " + mCurrentNameLength.getA() + " baseline contains " + map.get(VariantSetType.BASELINE).size() + " variants.");
-      Diagnostic.userLog("Reference " + mCurrentNameLength.getA() + " calls contains " + map.get(VariantSetType.CALLS).size() + " variants.");
+      Diagnostic.userLog("Reference " + currentName + " baseline contains " + map.get(VariantSetType.BASELINE).size() + " variants.");
+      Diagnostic.userLog("Reference " + currentName + " calls contains " + map.get(VariantSetType.CALLS).size() + " variants.");
     } catch (final ExecutionException e) {
       throw new NoTalkbackSlimException(e.getCause(), ErrorType.INFO_ERROR, e.getCause().getMessage());
     } catch (final InterruptedException e) {
@@ -140,12 +147,7 @@ class TabixVcfRecordSet implements VariantSet {
     } finally {
       executor.shutdownNow();
     }
-    return map;
-  }
-
-  @Override
-  public String currentName() {
-    return mCurrentNameLength.getA();
+    return new Pair<>(currentName, map);
   }
 
   @Override

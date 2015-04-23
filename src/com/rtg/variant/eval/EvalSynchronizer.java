@@ -116,15 +116,15 @@ class EvalSynchronizer {
    * @throws IOException when IO fails
    */
   synchronized Pair<String, Map<VariantSetType, List<DetectedVariant>>> nextSet() throws IOException {
-    final Map<VariantSetType, List<DetectedVariant>> set = mVariantSet.nextSet();
+    final Pair<String, Map<VariantSetType, List<DetectedVariant>>> set = mVariantSet.nextSet();
     if (set == null) {
       return null;
     }
-    final String name = mVariantSet.currentName();
+    final String name = set.getA();
     synchronized (mNames) {
       mNames.add(name);
     }
-    return new Pair<>(name, set);
+    return set;
   }
 
   void addRocLine(RocLine line, DetectedVariant v) {

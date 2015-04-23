@@ -231,9 +231,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
     for (Map.Entry<Long, List<RangeList.RangeData<UnmappedSamAlignmentWriter>>> entry : temp.entrySet()) {
       lookup.put(entry.getKey(), new RangeList<>(entry.getValue()));
     }
-    final ArrayList<RangeList.RangeData<UnmappedSamAlignmentWriter>> noPositionRange = new ArrayList<>();
-    noPositionRange.add(new RangeList.RangeData<>(-1, Integer.MAX_VALUE - 1, unmappedNoPositionSamWriter));
-    lookup.put(-1L, new RangeList<>(noPositionRange));
+    lookup.put(-1L, new RangeList<>(new RangeList.RangeData<>(-1, Integer.MAX_VALUE, unmappedNoPositionSamWriter)));
     return lookup;
   }
 

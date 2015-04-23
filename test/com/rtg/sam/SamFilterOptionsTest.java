@@ -13,6 +13,7 @@ package com.rtg.sam;
 
 import java.util.HashSet;
 
+import com.rtg.launcher.CommonFlags;
 import com.rtg.util.IntegerOrPercentage;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.Flag;
@@ -33,7 +34,7 @@ public class SamFilterOptionsTest extends TestCase {
     names.add(SamFilterOptions.MAX_AS_UNMATED_FLAG);
     names.add(SamFilterOptions.EXCLUDE_MATED_FLAG);
     names.add(SamFilterOptions.EXCLUDE_UNMATED_FLAG);
-    names.add(SamFilterOptions.RESTRICTION_FLAG);
+    names.add(CommonFlags.RESTRICTION_FLAG);
     assertEquals(6, names.size());
     assertEquals(0, SamFilterOptions.NO_SINGLE_LETTER);
   }
@@ -123,7 +124,7 @@ public class SamFilterOptionsTest extends TestCase {
     final CFlags flags = new CFlags();
     final Flag f = SamFilterOptions.registerRestrictionFlag(flags);
     assertNotNull(f);
-    assertEquals(f, flags.getFlag(SamFilterOptions.RESTRICTION_FLAG));
+    assertEquals(f, flags.getFlag(CommonFlags.RESTRICTION_FLAG));
     assertEquals(String.class, f.getParameterType());
     assertEquals("STRING", f.getParameterDescription());
     assertTrue(f.getDescription().contains("SAM"));

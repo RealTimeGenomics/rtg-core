@@ -35,12 +35,14 @@ import com.rtg.reader.SdfId;
 import com.rtg.reader.SdfUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
+import com.rtg.sam.SamRangeUtils;
 import com.rtg.util.Pair;
 import com.rtg.util.SimpleThreadPool;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.LongRange;
+import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.VcfUtils;
 
@@ -242,6 +244,20 @@ public final class VcfEvalTask extends ParamsTask<VcfEvalParams, NoStatistics> {
     final File calls = params.callsFile();
     final File baseline = params.baselineFile();
     final String sampleName = params.sampleName();
+    final RocSortValueExtractor extractor = getRocSortValueExtractor(params);
+    final ReferenceRanges ranges;
+    if (params.bedRegionsFile() != null) {
+      Diagnostic.developerLog("Loading BED regions");
+      ranges = SamRangeUtils.createBedReferenceRanges(params.bedRegionsFile());
+    } else if (params.restriction() != null) {
+      ranges = SamRangeUtils.createExplicitReferenceRange(params.restriction());
+    } else {
+      ranges = new ReferenceRanges(true);
+    }
+    return new TabixVcfRecordSet(baseline, calls, ranges, nameOrdering, sampleName, extractor, !params.useAllRecords(), params.squashPloidy(), params.maxLength());
+  }
+
+  private static RocSortValueExtractor getRocSortValueExtractor(VcfEvalParams params) {
     final RocScoreField fieldType;
     final String fieldName;
     final String scoreField = params.scoreField();
@@ -266,8 +282,7 @@ public final class VcfEvalTask extends ParamsTask<VcfEvalParams, NoStatistics> {
       fieldType = RocScoreField.FORMAT;
       fieldName = VcfUtils.FORMAT_GENOTYPE_QUALITY;
     }
-    final RocSortValueExtractor extractor = fieldType.getExtractor(fieldName, params.sortOrder());
-    return new TabixVcfRecordSet(baseline, calls, sampleName, extractor, !params.useAllRecords(), params.squashPloidy(), nameOrdering, params.maxLength());
+    return fieldType.getExtractor(fieldName, params.sortOrder());
   }
 
   static void checkHeader(BufferedReader baselineReader, BufferedReader callsReader, SdfId templateSdfId) throws IOException {

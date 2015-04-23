@@ -28,6 +28,7 @@ import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.MathUtils;
 import com.rtg.util.Pair;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.PosteriorUtils;
@@ -59,7 +60,8 @@ public class TabixVcfRecordSetTest extends TestCase {
       for (int seq = 1; seq < 32; seq++) {
         names.add(new Pair<>("simulatedSequence" + seq, -1));
       }
-      final VariantSet set = new TabixVcfRecordSet(input, out, null, RocSortValueExtractor.NULL_EXTRACTOR, true, false, names, 100);
+      ReferenceRanges ranges = new ReferenceRanges(true);
+      final VariantSet set = new TabixVcfRecordSet(input, out, ranges, names, null, RocSortValueExtractor.NULL_EXTRACTOR, true, false, 100);
 
       final Set<String> expected = new HashSet<>();
       for (int seq = 1; seq < 32; seq++) {
@@ -68,18 +70,18 @@ public class TabixVcfRecordSetTest extends TestCase {
       expected.remove("simulatedSequence12");
       // All other sequences either not contained in reference (N<32), or not in both baseline and calls (45)
 
-      Map<VariantSetType, List<DetectedVariant>> current;
+      Pair<String, Map<VariantSetType, List<DetectedVariant>>> current;
       while ((current = set.nextSet()) != null) {
-        final String currentName = set.currentName();
+        final String currentName = current.getA();
         assertTrue("unexpected sequence <" + currentName + ">", expected.contains(currentName));
         expected.remove(currentName);
         if (currentName.equals("simulatedSequence19")) {
-          assertEquals(1, current.get(VariantSetType.CALLS).size());
-          assertEquals(6, current.get(VariantSetType.BASELINE).size());
+          assertEquals(1, current.getB().get(VariantSetType.CALLS).size());
+          assertEquals(6, current.getB().get(VariantSetType.BASELINE).size());
         }
         if (currentName.equals("simulatedSequence45")) {
-          assertEquals(0, current.get(VariantSetType.BASELINE).size());
-          assertEquals(1, current.get(VariantSetType.CALLS).size());
+          assertEquals(0, current.getB().get(VariantSetType.BASELINE).size());
+          assertEquals(1, current.getB().get(VariantSetType.CALLS).size());
         }
       }
       assertTrue("these sequences weren't used: " + expected, expected.isEmpty());

@@ -17,7 +17,6 @@ import java.io.File;
 
 import com.rtg.launcher.CommonFlags;
 import com.rtg.util.IntegerOrPercentage;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -195,9 +194,6 @@ public final class SamFilterOptions {
     return flags.registerOptional(KEEP_DUPLICATES_FLAG, KEEP_DUPLICATES_DESC).setCategory(SENSITIVITY_TUNING);
   }
 
-  /** Flag name for filtering out uninteresting sequences. */
-  public static final String RESTRICTION_FLAG = "region";
-
   private static final String RESTRICTION_DESC = "if set, only process SAM records within the specified range. The format is one of <template_name>, <template_name>:start-end or <template_name>:start+length";
 
   /**
@@ -207,11 +203,8 @@ public final class SamFilterOptions {
    * @return the flag
    */
   public static Flag registerRestrictionFlag(final CFlags flags) {
-    return flags.registerOptional(RESTRICTION_FLAG, String.class, "string", RESTRICTION_DESC).setCategory(SENSITIVITY_TUNING);
+    return flags.registerOptional(CommonFlags.RESTRICTION_FLAG, String.class, "string", RESTRICTION_DESC).setCategory(SENSITIVITY_TUNING);
   }
-
-  /** Flag for a bed region restriction */
-  public static final String BED_REGIONS_FLAG = "bed-regions";
 
   /**
    * Register flag for restricting records to be processed.
@@ -220,7 +213,7 @@ public final class SamFilterOptions {
    * @return the flag
    */
   public static Flag registerBedRestrictionFlag(final CFlags flags) {
-    return flags.registerOptional(BED_REGIONS_FLAG, File.class, "FILE", "BED file containing regions to process").setCategory(SENSITIVITY_TUNING);
+    return flags.registerOptional(CommonFlags.BED_REGIONS_FLAG, File.class, "FILE", "BED file containing regions to process").setCategory(SENSITIVITY_TUNING);
   }
 
 
@@ -286,23 +279,7 @@ public final class SamFilterOptions {
       }
     }
 
-    if (flags.isSet(RESTRICTION_FLAG)) {
-      final String region = (String) flags.getValue(RESTRICTION_FLAG);
-      if (!RegionRestriction.validateRegion(region)) {
-        flags.setParseMessage("The value \"" + region + "\" for \"--" + RESTRICTION_FLAG + "\" is malformed.");
-        return false;
-      }
-    }
-    if (flags.isSet(BED_REGIONS_FLAG)) {
-      final File bedRegionsFile = (File) flags.getFlag(BED_REGIONS_FLAG).getValue();
-      if (!bedRegionsFile.exists()) {
-        Diagnostic.error(ErrorType.FILE_NOT_FOUND,
-          "The specified file, \"" + bedRegionsFile.getPath() + "\", does not exist.");
-        return false;
-      }
-    }
-    if (flags.isSet(BED_REGIONS_FLAG) && flags.isSet(SamFilterOptions.RESTRICTION_FLAG)) {
-      flags.setParseMessage("Can not specify both --" + BED_REGIONS_FLAG + " and --" + SamFilterOptions.RESTRICTION_FLAG);
+    if (!CommonFlags.validateRegions(flags)) {
       return false;
     }
 
@@ -358,11 +335,11 @@ public final class SamFilterOptions {
       builder.excludeDuplicates(flags.isSet(EXCLUDE_DUPLICATES_FLAG));
     }
 
-    if (flags.isSet(RESTRICTION_FLAG)) {
-      builder.restriction((String) flags.getValue(RESTRICTION_FLAG));
+    if (flags.isSet(CommonFlags.RESTRICTION_FLAG)) {
+      builder.restriction((String) flags.getValue(CommonFlags.RESTRICTION_FLAG));
     }
-    if (flags.isSet(BED_REGIONS_FLAG)) {
-      builder.bedRegionsFile((File) flags.getValue(BED_REGIONS_FLAG));
+    if (flags.isSet(CommonFlags.BED_REGIONS_FLAG)) {
+      builder.bedRegionsFile((File) flags.getValue(CommonFlags.BED_REGIONS_FLAG));
     }
 
     return builder;

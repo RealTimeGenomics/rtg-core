@@ -50,7 +50,7 @@ public class SvPatternsCli extends ParamsCli<BreakpointPatternParams> {
       if (!CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)) {
         return false;
       }
-      if (flags.isSet(SamFilterOptions.RESTRICTION_FLAG) && !RegionRestriction.validateRegion((String) flags.getValue(SamFilterOptions.RESTRICTION_FLAG))) {
+      if (flags.isSet(CommonFlags.RESTRICTION_FLAG) && !RegionRestriction.validateRegion((String) flags.getValue(CommonFlags.RESTRICTION_FLAG))) {
         flags.error("Invalid region specification");
         return false;
       }
@@ -70,8 +70,8 @@ public class SvPatternsCli extends ParamsCli<BreakpointPatternParams> {
 
   protected static BreakpointPatternParams makeParamsLocal(CFlags flags) throws IOException {
     final BreakpointPatternParams.Builder builder = BreakpointPatternParams.builder();
-    if (flags.isSet(SamFilterOptions.RESTRICTION_FLAG)) {
-      builder.region(new RegionRestriction((String) flags.getValue(SamFilterOptions.RESTRICTION_FLAG)));
+    if (flags.isSet(CommonFlags.RESTRICTION_FLAG)) {
+      builder.region(new RegionRestriction((String) flags.getValue(CommonFlags.RESTRICTION_FLAG)));
     }
     if (flags.isSet(MAX_FRAGMENT_LENGTH)) {
       builder.fragmentLength((Integer) flags.getValue(MAX_FRAGMENT_LENGTH));

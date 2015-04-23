@@ -63,6 +63,36 @@ public class ReferenceRanges {
 
 
   /**
+   * Return a version of this ReferenceRanges that contains only the regions for the specified sequence
+   * @param seqName the reference sequence
+   * @return a further restricted ReferenceRanges
+   */
+  public ReferenceRanges forSequence(String seqName) {
+    final ReferenceRanges result = new ReferenceRanges(false);
+    final RangeList<String> ranges;
+    if (mAllAvailable) {
+      //throw new UnsupportedOperationException("Cannot create sub-restriction on 'All Available' ranges");
+      ranges = new RangeList<>(new RangeList.RangeData<>(-1, Integer.MAX_VALUE, "seqName"));
+    } else {
+      ranges = mByName.get(seqName);
+    }
+    if (ranges != null) {
+      result.put(seqName, ranges);
+      if (mById != null) {
+        result.mById = new TreeMap<>();
+        for (Map.Entry<Integer, RangeList<String>> entry : mById.entrySet()) {
+          if (entry.getValue() == ranges) {
+            result.mById.put(entry.getKey(), entry.getValue());
+            break;
+          }
+        }
+      }
+    }
+    return result;
+  }
+
+
+  /**
    * Add the supplied range list associated with the given sequence
    * @param seqName the name of the reference sequence
    * @param range the range data for the sequence

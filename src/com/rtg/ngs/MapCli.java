@@ -142,8 +142,8 @@ public class MapCli extends ParamsCli<NgsParams>  {
           Diagnostic.warning("No read group specified, quality calibration output is disabled.");
         } else {
           ngsOutputParamsBuilder.calibrate(true);
-          if (flags.isSet(RecalibrateCli.BED_FILE)) {
-            ngsOutputParamsBuilder.calibrateRegions(BedUtils.regions((File) flags.getValue(RecalibrateCli.BED_FILE)));
+          if (flags.isSet(CommonFlags.BED_REGIONS_FLAG)) {
+            ngsOutputParamsBuilder.calibrateRegions(BedUtils.regions((File) flags.getValue(CommonFlags.BED_REGIONS_FLAG)));
           }
         }
       }
@@ -168,7 +168,7 @@ public class MapCli extends ParamsCli<NgsParams>  {
 
   static NgsFilterParams makeFilterParams(CFlags flags, boolean paired, SAMReadGroupRecord rg) {
     final NgsFilterParams.NgsFilterParamsBuilder ngsFilterParamsBuilder = NgsFilterParams.builder();
-    OutputFilter filter;
+    final OutputFilter filter;
     if (flags.isSet(MapFlags.OUTPUT_NULLFILTERED)) {
       filter = OutputFilter.NULL;
     } else if (flags.isSet(MapFlags.OUTPUT_UNFILTERED)) {

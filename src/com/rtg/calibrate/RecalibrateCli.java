@@ -43,8 +43,6 @@ public class RecalibrateCli extends AbstractCli {
   private static final String FORCE_FLAG = "force";
   private static final String COVARIATE_FLAG = "Xcovariate";
   private static final String MERGE_FLAG = "merge";
-  /** flag for specifying bed files */
-  public static final String BED_FILE = "bed-regions";
 
   private static void initFlags(CFlags flags) {
     flags.registerExtendedHelp();
@@ -107,7 +105,7 @@ public class RecalibrateCli extends AbstractCli {
    * @return the new flag
    */
   public static Flag bedFileFlag(CFlags flags) {
-    return flags.registerOptional(BED_FILE, File.class, "FILE", "restrict calibration to mappings falling within the supplied BED regions").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    return flags.registerOptional(CommonFlags.BED_REGIONS_FLAG, File.class, "FILE", "restrict calibration to mappings falling within the supplied BED regions").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
   }
 
   /**
@@ -116,8 +114,8 @@ public class RecalibrateCli extends AbstractCli {
    * @return true if there is nothing wrong, false otherwise.
    */
   public static boolean checkBedFileFlag(CFlags flags) {
-    if (flags.isSet(BED_FILE)) {
-      final File bedFile = (File) flags.getValue(BED_FILE);
+    if (flags.isSet(CommonFlags.BED_REGIONS_FLAG)) {
+      final File bedFile = (File) flags.getValue(CommonFlags.BED_REGIONS_FLAG);
       if (!bedFile.exists()) {
         flags.setParseMessage("The specified BED file, \"" + bedFile.getPath() + "\", does not exist.");
         return false;
@@ -142,7 +140,7 @@ public class RecalibrateCli extends AbstractCli {
     } else {
       cs = CovariateEnum.DEFAULT_COVARIATES;
     }
-    final ReferenceRegions regions = mFlags.isSet(BED_FILE) ? BedUtils.regions((File) mFlags.getValue(BED_FILE)) : null;
+    final ReferenceRegions regions = mFlags.isSet(CommonFlags.BED_REGIONS_FLAG) ? BedUtils.regions((File) mFlags.getValue(CommonFlags.BED_REGIONS_FLAG)) : null;
     final File templateSdf = (File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG);
     SdfUtils.validateHasNames(templateSdf);
     try (Recalibrate r = new Recalibrate(templateSdf, regions)) {

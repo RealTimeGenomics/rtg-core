@@ -45,7 +45,7 @@ public class EvalSynchronizerTest extends TestCase {
     int mSetId = 0;
 
     @Override
-    public Map<VariantSetType, List<DetectedVariant>> nextSet() {
+    public Pair<String, Map<VariantSetType, List<DetectedVariant>>> nextSet() {
       if (mSetId >= 3) {
         return null;
       }
@@ -54,12 +54,7 @@ public class EvalSynchronizerTest extends TestCase {
       final List<DetectedVariant> empty = Collections.emptyList();
       result.put(VariantSetType.CALLS, empty);
       result.put(VariantSetType.BASELINE, empty);
-      return result;
-    }
-
-    @Override
-    public String currentName() {
-      return "name" + mSetId;  //To change body of implemented methods use File | Settings | File Templates.
+      return new Pair<String, Map<VariantSetType, List<DetectedVariant>>>("name" + mSetId, result);
     }
 
     @Override

@@ -348,8 +348,8 @@ public class CgMapCli extends ParamsCli<NgsParams> {
       } else {
         if (rg != null) {
           ngsOutputParamsBuilder.calibrate(true);
-          if (mFlags.isSet(RecalibrateCli.BED_FILE)) {
-            ngsOutputParamsBuilder.calibrateRegions(BedUtils.regions((File) mFlags.getValue(RecalibrateCli.BED_FILE)));
+          if (mFlags.isSet(CommonFlags.BED_REGIONS_FLAG)) {
+            ngsOutputParamsBuilder.calibrateRegions(BedUtils.regions((File) mFlags.getValue(CommonFlags.BED_REGIONS_FLAG)));
           }
         } else {
           Diagnostic.warning("No read group specified, quality calibration output is disabled.");

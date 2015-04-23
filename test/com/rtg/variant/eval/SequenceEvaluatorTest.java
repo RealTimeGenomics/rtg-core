@@ -24,6 +24,7 @@ import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
+import com.rtg.util.Pair;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
@@ -56,7 +57,7 @@ public class SequenceEvaluatorTest extends TestCase {
       mMap.put(VariantSetType.CALLS, makeVariantList(calls, mCallsVcf));
     }
     @Override
-    public Map<VariantSetType, List<DetectedVariant>> nextSet() {
+    public Pair<String, Map<VariantSetType, List<DetectedVariant>>> nextSet() {
       final Map<VariantSetType, List<DetectedVariant>> map;
       if (!mSent) {
          map = mMap;
@@ -64,12 +65,7 @@ public class SequenceEvaluatorTest extends TestCase {
       } else {
         map = null;
       }
-      return map;
-    }
-
-    @Override
-    public String currentName() {
-      return "10";
+      return new Pair<>("10", map);
     }
 
     @Override

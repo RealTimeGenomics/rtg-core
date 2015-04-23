@@ -13,7 +13,6 @@ package com.rtg.sam;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.rtg.bed.BedRangeLoader;
@@ -107,9 +106,7 @@ public final class SamRangeUtils {
     for (final SAMSequenceRecord r : header.getSequenceDictionary().getSequences()) {
       final int rlen = r.getSequenceLength();
       if (rlen > 0) {
-        final List<RangeList.RangeData<String>> rl = new ArrayList<>();
-        rl.add(new RangeList.RangeData<>(0, rlen, r.getSequenceName()));
-        rangeMap.put(r.getSequenceName(), new RangeList<>(rl));
+        rangeMap.put(r.getSequenceName(), new RangeList<>(new RangeList.RangeData<>(0, rlen, r.getSequenceName())));
       }
     }
     rangeMap.setIdMap(SamUtils.getSequenceIdLookup(header.getSequenceDictionary()));
@@ -124,10 +121,8 @@ public final class SamRangeUtils {
    */
   public static ReferenceRanges createSingleReferenceRange(SAMFileHeader header, SamRegionRestriction regionRestriction) {
     final ReferenceRanges rangeMap = new ReferenceRanges(false);
-    final List<RangeList.RangeData<String>> rl = new ArrayList<>();
     final SequenceNameLocus resolved = resolveRestriction(header.getSequenceDictionary(), regionRestriction);
-    rl.add(new RangeList.RangeData<>(resolved, regionRestriction.toString()));
-    rangeMap.put(resolved.getSequenceName(), new RangeList<>(rl));
+    rangeMap.put(resolved.getSequenceName(), new RangeList<>(new RangeList.RangeData<>(resolved, regionRestriction.toString())));
     rangeMap.setIdMap(SamUtils.getSequenceIdLookup(header.getSequenceDictionary()));
     return rangeMap;
   }
