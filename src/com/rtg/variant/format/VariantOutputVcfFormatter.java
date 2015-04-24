@@ -18,8 +18,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.rtg.relation.VcfPedigreeParser;
+import com.rtg.util.MathUtils;
 import com.rtg.util.StringUtils;
-import com.rtg.util.Utils;
 import com.rtg.variant.PosteriorUtils;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantParams;
@@ -312,9 +312,9 @@ public class VariantOutputVcfFormatter {
     if (call.getNonIdentityPosterior() == null) {
       rec.setQuality(VcfRecord.MISSING);
     } else if (rec.getAltCalls().size() == 0) {
-      rec.setQuality(Utils.realFormat(PosteriorUtils.nonIdentityPhredIfy(call.getNonIdentityPosterior()), 1));
+      rec.setQuality(MathUtils.cappedFloat(PosteriorUtils.nonIdentityPhredIfy(call.getNonIdentityPosterior())));
     } else {
-      rec.setQuality(Utils.realFormat(PosteriorUtils.phredIfy(call.getNonIdentityPosterior()), 1));
+      rec.setQuality(MathUtils.cappedFloat(PosteriorUtils.phredIfy(call.getNonIdentityPosterior())));
     }
   }
 
@@ -323,9 +323,9 @@ public class VariantOutputVcfFormatter {
       if (call.getNonIdentityPosterior() == null) {
         rec.setQuality(VcfRecord.MISSING);
       } else if (rec.getAltCalls().size() == 0) {
-        rec.setQuality(Utils.realFormat(PosteriorUtils.nonIdentityPhredIfy(call.getNonIdentityPosterior()), 1));
+        rec.setQuality(MathUtils.cappedFloat(PosteriorUtils.nonIdentityPhredIfy(call.getNonIdentityPosterior())));
       } else {
-        rec.setQuality(Utils.realFormat(PosteriorUtils.phredIfy(call.getNonIdentityPosterior()), 1));
+        rec.setQuality(MathUtils.cappedFloat(PosteriorUtils.phredIfy(call.getNonIdentityPosterior())));
       }
     } else {
       rec.setQuality(VcfRecord.MISSING);

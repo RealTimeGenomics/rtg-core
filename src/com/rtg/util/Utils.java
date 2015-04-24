@@ -425,12 +425,8 @@ public final class Utils {
    */
   public static String realFormat(final double x, final int dp) {
     assert dp >= 0;
-    //not strictly necessary in java but helps with C# conversion
-    if (Double.isNaN(x)) {
-      return "NaN";
-    }
-    if (Double.isInfinite(x)) {
-      return (x < 0.0 ? "-" : "") + "Infinity";
+    if (Double.isNaN(x) || Double.isInfinite(x)) {
+      return Double.toString(x);
     }
     final String fmt = "%1$01." + dp + "f";
     final String res = String.format(Locale.ROOT, fmt, x);

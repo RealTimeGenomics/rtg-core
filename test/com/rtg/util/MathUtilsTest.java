@@ -261,8 +261,6 @@ public class MathUtilsTest extends TestCase {
       final double y = MathUtils.logExpPlus1(x);
       if (x > 10.0) {
         assertEquals(x, y);
-      } else if (x < -10.0) {
-        assertEquals(0.0, y);
       } else {
         assertEquals(Math.log(Math.exp(x) + 1), y);
       }
@@ -307,6 +305,18 @@ public class MathUtilsTest extends TestCase {
     assertEquals(String.valueOf(Integer.MAX_VALUE), MathUtils.cappedInt(Long.MAX_VALUE));
     assertEquals(String.valueOf(-Integer.MAX_VALUE), MathUtils.cappedInt(-Long.MAX_VALUE));
     assertEquals(String.valueOf(-Integer.MAX_VALUE), MathUtils.cappedInt(Long.MIN_VALUE));
+  }
+
+  public void testCappedFloat() {
+    assertEquals("0.0", MathUtils.cappedFloat(0));
+    assertEquals("1.0", MathUtils.cappedFloat(1));
+    assertEquals("-1.0", MathUtils.cappedFloat(-1));
+    assertEquals("0.0", MathUtils.cappedFloat(Double.MIN_VALUE));
+    assertEquals("NaN", MathUtils.cappedFloat(Double.NaN));
+    assertEquals(String.valueOf(Integer.MAX_VALUE) + ".0", MathUtils.cappedFloat(Double.MAX_VALUE));
+    assertEquals(String.valueOf(Integer.MAX_VALUE) + ".0", MathUtils.cappedFloat(Double.POSITIVE_INFINITY));
+    assertEquals(String.valueOf(-Integer.MAX_VALUE) + ".0", MathUtils.cappedFloat(-Double.MAX_VALUE));
+    assertEquals(String.valueOf(-Integer.MAX_VALUE) + ".0", MathUtils.cappedFloat(Double.NEGATIVE_INFINITY));
   }
 
   public void testUnboxNatural() {

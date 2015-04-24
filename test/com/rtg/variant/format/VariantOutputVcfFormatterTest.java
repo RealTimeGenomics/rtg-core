@@ -39,7 +39,6 @@ import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -209,8 +208,9 @@ public class VariantOutputVcfFormatterTest extends TestCase {
 
     final VariantLocus locus = new VariantLocus("chr10", 2402489, 2402489, "", 'A');
     final Variant v = new Variant(locus, vs);
+    v.setNonIdentityPosterior(Double.POSITIVE_INFINITY);
     final String s = formatter.formatCall(v);
-    assertEquals("chr10\t2402489\t.\tA\tAGT\t.\tPASS\t.\tGT:DP:RE:GQ\t0/1:34:3.428:128\n", s);
+    assertEquals("chr10\t2402489\t.\tA\tAGT\t2147483647.0\tPASS\t.\tGT:DP:RE:GQ\t0/1:34:3.428:128\n", s);
   }
 
   public void testFormatCall() {

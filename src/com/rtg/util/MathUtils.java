@@ -418,6 +418,21 @@ public final class MathUtils {
     return Long.toString(val);
   }
 
+
+  /**
+   * Return a double as a string but capped as within the range of a 32-bit signed integer.
+   * @param val value
+   * @return string representation
+   */
+  public static String cappedFloat(double val) {
+    if (val >= Integer.MAX_VALUE) {
+      return OVER + ".0";
+    } else if (val <= Integer.MIN_VALUE) {
+      return UNDER + ".0";
+    }
+    return Utils.realFormat(val, 1);
+  }
+
   /**
    * Given non-negative or null return primitive int or -1.
    * @param x value to get primitive for
