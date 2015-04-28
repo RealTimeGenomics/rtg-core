@@ -55,6 +55,7 @@ public class CancerConvergenceTest extends TestCase {
     b.genomePriors(GenomePriorParams.builder().create());
     b.genomeRelationships(genomeRelationships);
     b.machineErrorName("illumina");
+    b.lohPrior(1e-20);
     final VariantParams p = b.create();
     return new SomaticCallerConfiguration.Configurator().getConfig(p, new String[] {"TEST", "cancer"});
   }

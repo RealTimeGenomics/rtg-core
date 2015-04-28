@@ -151,7 +151,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
   }
 
   protected static final String EXPECT_ALL_SAME = (""
-      + "chr1 14 . A . . PASS LOH=0.0;RSS=7.5;NCS=75.3;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 0:3:0.293:0.000:100:0.00:6.51:0.00:0.00:A,3,0.293:3 0:3:0.293:0.000:75:0.00:6.51:0.00:0.00:A,3,0.293:3\n"
+      + "chr1 14 . A . . PASS RSS=7.5;NCS=75.3;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 0:3:0.293:0.000:100:0.00:6.51:0.00:0.00:A,3,0.293:3 0:3:0.293:0.000:75:0.00:6.51:0.00:0.00:A,3,0.293:3\n"
       //      + "nc chr1 14 = A NONE 7.5 -7.5" + LS
       //      + "A chr1 14 = A A 10.0 3 0.293 A 3 0.293" + LS
       //      + "C chr1 14 = A A 7.5 3 0.293 A 3 0.293" + LS
@@ -168,7 +168,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
   }
 
   protected static final String EXPECT_NORMAL_EQ_REF = (""
-      + "chr1 14 . A C . PASS SOMATIC=C;LOH=-1.0;RSS=1.0;NCS=10.9;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 0:3:0.293:0.000:36:0.00:6.51:0.00:0.00:A,3,0.293:3,0 1:3:0.293:0.000:11:0.00:6.51:0.00:0.00:C,3,0.293:0,3\n"
+      + "chr1 14 . A C . PASS SOMATIC=C;RSS=1.0;NCS=10.9;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 0:3:0.293:0.000:36:0.00:6.51:0.00:0.00:A,3,0.293:3,0 1:3:0.293:0.000:11:0.00:6.51:0.00:0.00:C,3,0.293:0,3\n"
       //      + "nc chr1 14 / A C 1.0 1.0" + LS
       //      + "A chr1 14 = A A 3.6 3 0.293 A 3 0.293" + LS
       //      + "C chr1 14 o A C 1.1 3 0.293 C 3 0.293" + LS
@@ -185,7 +185,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
   }
 
   protected static final String EXPECT_CANCER_EQ_REF = (""
-      + "chr1 14 . A . . PASS LOH=0.0;RSS=1.4;NCS=14.4;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 0:3:0.293:0.000:14:26.06:.:0.00:0.00:C,3,0.293:0 0:3:0.293:0.000:25:0.00:6.51:0.00:0.00:A,3,0.293:3\n"
+      + "chr1 14 . A . . PASS RSS=1.4;NCS=14.4;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 0:3:0.293:0.000:14:26.06:.:0.00:0.00:C,3,0.293:0 0:3:0.293:0.000:25:0.00:6.51:0.00:0.00:A,3,0.293:3\n"
       //      + "nc chr1 14 = A NONE 1.4 -1.4" + LS
       //      + "A chr1 14 = A A 1.4 3 0.293 C 3 0.293" + LS
       //      + "C chr1 14 = A A 2.5 3 0.293 A 3 0.293" + LS
@@ -202,7 +202,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
   }
 
   protected static final String EXPECT_CANCER_EQ_NORMAL = (""
-      + "chr1 14 . A C . PASS LOH=0.0;RSS=5.5;NCS=55.2;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 1:3:0.293:0.000:55:0.00:6.51:0.00:0.00:C,3,0.293:0,3 1:3:0.293:0.000:65:0.00:6.51:0.00:0.00:C,3,0.293:0,3\n"
+      + "chr1 14 . A C . PASS RSS=5.5;NCS=55.2;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 1:3:0.293:0.000:55:0.00:6.51:0.00:0.00:C,3,0.293:0,3 1:3:0.293:0.000:65:0.00:6.51:0.00:0.00:C,3,0.293:0,3\n"
       //      + "nc chr1 14 = A NONE 5.5 -5.5" + LS
       //      + "A chr1 14 o A C 5.5 3 0.293 C 3 0.293" + LS
       //      + "C chr1 14 o A C 6.5 3 0.293 C 3 0.293" + LS
@@ -219,7 +219,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
   }
 
   protected static final String EXPECT_ALL_DIFFERENT = (""
-      + "chr1 14 . A C,G . PASS SOMATIC=G;LOH=-1.0;RSS=0.7;NCS=8.2;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 1:3:0.293:0.000:11:0.00:6.51:0.00:0.00:C,3,0.293:0,3,0 2:3:0.293:0.000:11:0.00:6.51:0.00:0.00:G,3,0.293:0,0,3\n"
+      + "chr1 14 . A C,G . PASS SOMATIC=G;RSS=0.7;NCS=8.2;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 1:3:0.293:0.000:11:0.00:6.51:0.00:0.00:C,3,0.293:0,3,0 2:3:0.293:0.000:11:0.00:6.51:0.00:0.00:G,3,0.293:0,0,3\n"
       //      + "nc chr1 14 / A G 0.7 0.8" + LS
       //      + "A chr1 14 o A C 1.0 3 0.293 C 3 0.293" + LS
       //      + "C chr1 14 o A G 1.1 3 0.293 G 3 0.293" + LS

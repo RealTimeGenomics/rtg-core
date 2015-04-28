@@ -228,11 +228,11 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       //  - the same for normal and cancer samples, but may be different to the reference.
       //  - looks like an LOH event, even though the LOH prior was 0
       // It is not interesting and should not normally be output,
-      boring = true;
-      cause = "NONE";
       if (mParams.callLevel() != VariantOutputLevel.ALL) {
         return null;
       }
+      boring = true;
+      cause = "NONE";
     } else {
       //TODO cannot be cause if it is equal to reference
       cause = cancerHyp.name(bestCancer);
