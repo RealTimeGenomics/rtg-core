@@ -82,7 +82,7 @@ public abstract class AbstractPosterior extends IntegralAbstract {
 
      mBestNormal = findBest(mNormalMarginal);
      mBestCancer = findBest(mCancerMarginal);
-    }
+  }
 
   private int findBest(double[] marginals) {
     double bestScore = Double.NEGATIVE_INFINITY;

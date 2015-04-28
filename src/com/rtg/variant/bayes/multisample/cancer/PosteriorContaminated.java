@@ -42,7 +42,7 @@ class PosteriorContaminated extends AbstractPosterior {
         final double pj = cancer.posteriorLn0(k);
         final double q = MathUtils.log(qa[i][j]);
         final double t = q + pi + pj;
-        //System.err.println("PosteriorContaminated i=" + i + " j=" + j + " q=" + Utils.realFormat(q, 3) + " pi=" + Utils.realFormat(pi, 3) + " pj=" + Utils.realFormat(pj, 3) + " t=" + Utils.realFormat(t, 3));
+        //System.err.println("PosteriorContaminated i=" + i + " j=" + j + " hypNormal=" + hypotheses.name(i) + " hypCancer=" + hypotheses.name(j) + " q=" + Utils.realFormat(q, 3) + " pi=" + Utils.realFormat(pi, 3) + " pj=" + Utils.realFormat(pj, 3) + " t=" + Utils.realFormat(t, 3));
         mPosterior[i][j] = t;
       }
     }

@@ -35,7 +35,7 @@ public class PosteriorPureTest extends TestCase {
 
   public static void testPosteriorAllDifferent() {
     final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.SEEN_3_C.get(0).hypotheses();
-    final AbstractSomaticCaller ccs = new PureSomaticCaller(CombinedPriorsSnp.makeQ(0.001, 0.0, hypotheses), CombinedPriorsSnp.makeQ(0.001, 0.0, hypotheses), null, null, null);
+    final AbstractSomaticCaller ccs = new PureSomaticCaller(CombinedPriorsSnp.makeQ(0.001, 0.0, hypotheses), CombinedPriorsSnp.makeQ(0.001, 0.0, hypotheses), null);
     ccs.integrity();
 
     final int length = hypotheses.size();
@@ -70,7 +70,7 @@ public class PosteriorPureTest extends TestCase {
 
   public void testPosteriorAllSame() {
     HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.EQUALS_REF_A.get(0).hypotheses();
-    final AbstractSomaticCaller ccs = new PureSomaticCaller(CombinedPriorsSnp.makeQ(0.001, 0.0, hypotheses), CombinedPriorsSnp.makeQ(0.001, 0.0, hypotheses), null, null, null);
+    final AbstractSomaticCaller ccs = new PureSomaticCaller(CombinedPriorsSnp.makeQ(0.001, 0.0, hypotheses), CombinedPriorsSnp.makeQ(0.001, 0.0, hypotheses), null);
     ccs.integrity();
 
     AbstractPosterior post = null;

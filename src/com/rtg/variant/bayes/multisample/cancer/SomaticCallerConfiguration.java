@@ -115,7 +115,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
         jointCaller = new PureSomaticCaller(
             CombinedPriorsSnp.makeQ(mutationRate, loh, haploid.defaultHypotheses(0)),
             CombinedPriorsSnp.makeQ(mutationRate, loh, diploid.defaultHypotheses(0)),
-            originalSampleName, derivedSampleName, params);
+          params);
       } else {
         Diagnostic.userLog("Using contaminated cancer caller");
         individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, params.sex(), sexMemo));
@@ -125,7 +125,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
         jointCaller = new ContaminatedSomaticCaller(
             CombinedPriorsSnp.makeQ(mutationRate, loh, haploid.defaultHypotheses(0)),
             CombinedPriorsSnp.makeQ(mutationRate, loh, diploid.defaultHypotheses(0)),
-            originalSampleName, derivedSampleName, params);
+          params);
       }
       return new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, mutationRate, originalSampleName, derivedSampleName, haploid, diploid, ssp);
     }
@@ -184,9 +184,9 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
     final double[][] qDiploid = complex.haploid() ? null : CombinedPriorsComplex.makeQComplex(mMutationRate, params.lohPrior(), complex, initialPriors);
     //System.err.println(toStringLog(q));
     if (mContamination == 0) {
-      return new PureSomaticCaller(qHaploid, qDiploid, mOriginalSampleName, mDerivedSampleName, params);
+      return new PureSomaticCaller(qHaploid, qDiploid, params);
     } else {
-      return new ContaminatedSomaticCaller(qHaploid, qDiploid, mOriginalSampleName, mDerivedSampleName, params);
+      return new ContaminatedSomaticCaller(qHaploid, qDiploid, params);
     }
   }
 

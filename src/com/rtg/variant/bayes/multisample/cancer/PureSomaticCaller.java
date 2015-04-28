@@ -24,11 +24,9 @@ public class PureSomaticCaller extends AbstractSomaticCaller {
   /**
    * @param qHaploid haploid numbers
    * @param qDiploid diploid numbers
-   * @param normalName the sample name for the normal
-   * @param cancerName the sample name for the cancer
    * @param params variant params
    */
-  public PureSomaticCaller(double[][] qHaploid, double[][] qDiploid, String normalName, String cancerName, VariantParams params) {
+  public PureSomaticCaller(double[][] qHaploid, double[][] qDiploid, VariantParams params) {
     super(qHaploid, qDiploid, params);
   }
 

@@ -29,6 +29,8 @@ class PosteriorPure extends AbstractPosterior {
    */
   PosteriorPure(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses) {
     super(hypotheses);
+    //System.err.println("normal " + normal);
+    //System.err.println("cancer " + cancer);
     for (int i = 0; i < mLength; i++) {
       final double pi = hypotheses.arithmetic().poss2Ln(hypotheses.p(i)) + normal.posteriorLn0(i);
       for (int j = 0; j < mLength; j++) {
@@ -36,7 +38,7 @@ class PosteriorPure extends AbstractPosterior {
         final double q = MathUtils.log(qa[i][j]);
         final double t = q + pi + pj;
         mPosterior[i][j] = t;
-        //System.err.println("PosteriorPure i=" + i + " j=" + j + " q=" + Utils.realFormat(q, 3) + " pi=" + Utils.realFormat(pi, 3) + " pj=" + Utils.realFormat(pj, 3) + " t=" + Utils.realFormat(t, 3));
+        //System.err.println("PosteriorPure i=" + i + " j=" + j + " hypNormal=" + hypotheses.name(i) + " hypCancer=" + hypotheses.name(j) + " q=" + Utils.realFormat(q, 3) + " pi=" + Utils.realFormat(pi, 3) + " pj=" + Utils.realFormat(pj, 3) + " t=" + Utils.realFormat(t, 3));
       }
     }
     postConstruction();
