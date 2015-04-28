@@ -22,7 +22,6 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 public class ContaminatedSomaticCaller extends AbstractSomaticCaller {
 
   /**
-   * @param cancerName the sample name for the cancer
    * @param qHaploid haploid numbers
    * @param qDiploid diploid numbers
    * @param params variant params
