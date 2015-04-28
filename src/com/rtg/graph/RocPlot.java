@@ -552,10 +552,13 @@ public final class RocPlot {
     }
   }
 
-  static String getTpFpString(float tp, float fp, int maxVariants) {
-    String message = String.format("TP=%.0f FP=%.0f Precision=%.2f%%", tp, fp, tp / (fp + tp) * 100);
-    if (maxVariants > 0) {
-      message += String.format(" Sensitivity=%.2f%%", tp / maxVariants * 100);
+  static String getTpFpString(float truePositive, float falsePositive, int totalPositive) {
+    final float precision = truePositive / (falsePositive + truePositive);
+    String message = String.format("TP=%.0f FP=%.0f Precision=%.2f%%", truePositive, falsePositive, precision * 100);
+    if (totalPositive > 0) {
+      final float recall = truePositive / totalPositive;
+      final float fMeasure = 2 * precision * recall / (precision + recall);
+      message += String.format(" Sensitivity=%.2f%% F-measure=%.2f%%", recall * 100, fMeasure * 100);
     }
     return message;
   }
