@@ -211,10 +211,11 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     final int bestCancer = posterior.bestCancer();
     // Simple LOH test based on ploidy of results alone, could be done with Bayesian calculation later
     final double loh = loh(hypotheses, bestNormal, bestCancer);
-        // create individual genome calls
+    // create individual genome calls
     final Ploidy normalPloidy = hypotheses.haploid() ? Ploidy.HAPLOID : Ploidy.DIPLOID;
     final Ploidy cancerPloidy;
     final Hypotheses<?> cancerHyp;
+    final boolean doLoh = mParams.lohPrior() > 0;
     if (loh > 0) {
       cancerPloidy = Ploidy.HAPLOID;
       cancerHyp = normalHypotheses.haploid();
@@ -222,16 +223,16 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       cancerPloidy = normalPloidy;
       cancerHyp = hypotheses;
     }
-    if (sameCall) {
-      // This call is the same for normal and cancer samples, but may be different
-      // to the reference. It is not interesting for INTERESTING output level...
+    if (sameCall || (!doLoh && loh > 0)) {
+      // This call is either
+      //  - the same for normal and cancer samples, but may be different to the reference.
+      //  - looks like an LOH event, even though the LOH prior was 0
+      // It is not interesting and should not normally be output,
       boring = true;
-      if (mParams.callLevel() == VariantOutputLevel.INTERESTING) {
-        // This could be made to use the actual value of loh
-        updateParameterEstimationCounts(null, code, 0, 0, loh);
+      cause = "NONE";
+      if (mParams.callLevel() != VariantOutputLevel.ALL) {
         return null;
       }
-      cause = "NONE";
     } else {
       //TODO cannot be cause if it is equal to reference
       cause = cancerHyp.name(bestCancer);
@@ -260,7 +261,9 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     }
     v.setPossibleCause(cause);
     v.setPossibleCauseScore(ratio);
-    v.setLoh(loh);
+    if (doLoh) {
+      v.setLoh(loh);
+    }
     if (!boring) {
       v.setInteresting();
     }
