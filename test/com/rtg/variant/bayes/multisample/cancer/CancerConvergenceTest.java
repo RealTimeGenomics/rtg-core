@@ -110,7 +110,7 @@ public class CancerConvergenceTest extends TestCase {
         normal2 = r.nextInt(4);
         cancer1 = r.nextInt(4);
         cancer2 = r.nextInt(4);
-      } while ((normal1 == cancer1 && normal2 == cancer2) || (normal1 == cancer2 && normal2 == cancer1));
+      } while ((normal1 == cancer1 && normal2 == cancer2) || (normal1 == cancer2 && normal2 == cancer1) || (cancer1 == cancer2 && cancer1 == ref[0] - 1));
 
 
       //System.out.println("normal = " + normal1 + ":" + normal2 + " cancer = " + cancer1 + ":" + cancer2);

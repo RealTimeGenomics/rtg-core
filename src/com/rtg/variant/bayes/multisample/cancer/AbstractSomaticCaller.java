@@ -220,19 +220,21 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       cancerPloidy = normalPloidy;
       cancerHyp = hypotheses;
     }
-    if (sameCall || (!doLoh && loh > 0)) {
+    final String refAllele = DnaUtils.bytesToSequenceIncCG(ref, position, endPosition - position);
+    final String best = cancerHyp.name(bestCancer);
+    if (sameCall || (!doLoh && loh > 0) || refAllele.equals(best)) {
       // This call is either
       //  - the same for normal and cancer samples, but may be different to the reference.
       //  - looks like an LOH event, even though the LOH prior was 0
-      // It is not interesting and should not normally be output,
+      //  - has cancer sample equal to the reference (and by assumption cannot be a cause of cancer)
+      // It is not interesting and should not normally be output.
       if (mParams.callLevel() != VariantOutputLevel.ALL) {
         return null;
       }
       boring = true;
       cause = "NONE";
     } else {
-      //TODO cannot be cause if it is equal to reference
-      cause = cancerHyp.name(bestCancer);
+      cause = best;
     }
 
     // set the combined call values
@@ -244,7 +246,6 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     final VariantSample normalSample = setCallValues(posterior.normalMeasure(), bestNormal, hypotheses, modelNormal, mParams, normalPloidy);
     final VariantSample cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, cancerHyp, modelCancer, mParams, cancerPloidy);
 
-    final String refAllele = DnaUtils.bytesToSequenceIncCG(ref, position, endPosition - position);
     final VariantLocus locus = new VariantLocus(templateName, position, endPosition, refAllele, VariantUtils.getPreviousRefNt(ref, position));
 
     final Variant v = new Variant(locus, sameCall, normalSample, cancerSample);
