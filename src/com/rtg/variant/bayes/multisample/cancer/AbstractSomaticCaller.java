@@ -17,8 +17,8 @@ import java.io.IOException;
 import java.util.List;
 
 import com.reeltwo.jumble.annotations.TestClass;
+import com.rtg.mode.DnaUtils;
 import com.rtg.reference.Ploidy;
-import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
@@ -38,6 +38,7 @@ import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.Statistics;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.multisample.MultisampleJointCaller;
+import com.rtg.variant.bayes.multisample.Utils;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.bayes.snp.StatisticsSnp;
 import com.rtg.variant.dna.DNARange;
@@ -184,10 +185,6 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     assert DNARange.valid(ref[position], DNARange.N, DNARange.T);
     assert models.size() == 2;
 
-    // TODO: with ALL output we should make a call here
-    if (ref[position] == DNARange.N) {
-      return null;
-    }
     final ModelInterface<?> modelNormal = models.get(0);
     final ModelInterface<?> modelCancer = models.get(1);
     final HypothesesPrior<?> hypotheses = normalHypotheses.get(modelNormal);
@@ -197,8 +194,8 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     // Such calls must never have isInteresting set to true when they are returned
     // so that later complex calling does not muck with them.
 
-    boolean boring = modelNormal.statistics().nonRefCount() == 0 && modelCancer.statistics().nonRefCount() == 0;
-    if (boring && mParams.callLevel() != VariantOutputLevel.ALL) {
+    boolean boring = Utils.hasOnlyRefCoverage(models);
+    if (mParams.callLevel() != VariantOutputLevel.ALL && boring) {
       // Short-circuit case where all evidence matches the reference.
       updateParameterEstimationCounts(null, code, 0, 0, 0);
       return null;
@@ -247,7 +244,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     final VariantSample normalSample = setCallValues(posterior.normalMeasure(), bestNormal, hypotheses, modelNormal, mParams, normalPloidy);
     final VariantSample cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, cancerHyp, modelCancer, mParams, cancerPloidy);
 
-    final String refAllele = hypotheses.description().name(hypotheses.reference());
+    final String refAllele = DnaUtils.bytesToSequenceIncCG(ref, position, endPosition - position);
     final VariantLocus locus = new VariantLocus(templateName, position, endPosition, refAllele, VariantUtils.getPreviousRefNt(ref, position));
 
     final Variant v = new Variant(locus, sameCall, normalSample, cancerSample);
@@ -280,7 +277,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     sb.append("length=").append(qa.length).append(LS);
     for (final double[] aQa : qa) {
       for (final double anAQa : aQa) {
-        sb.append(Utils.realFormat(anAQa, 3)).append(" ");
+        sb.append(com.rtg.util.Utils.realFormat(anAQa, 3)).append(" ");
       }
       sb.append(LS);
     }
