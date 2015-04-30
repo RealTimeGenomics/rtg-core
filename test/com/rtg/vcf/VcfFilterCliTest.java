@@ -711,6 +711,17 @@ public class VcfFilterCliTest extends AbstractCliTest {
     );
   }
 
+  public void testVcfFilterRx() throws IOException {
+    final String[] args = {
+      "--remove-filter", "RX"
+    };
+    runResourceTest(
+      args,
+      RESOURCES + "snpfiltertest5.vcf",
+      "snpfiltertest5_rx_exp.vcf"
+    );
+  }
+
   public void testVcfDensityWindow() throws IOException {
     final String[] args = {
         "--density-window", "10"
