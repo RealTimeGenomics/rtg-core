@@ -14,10 +14,11 @@ package com.rtg.vcf;
 
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Map;
 import java.util.TreeMap;
 
 import com.rtg.launcher.Statistics;
+import com.rtg.util.Counter;
+import com.rtg.util.MultiSet;
 
 /**
  * Encapsulate the counts of filtered VCF records
@@ -47,10 +48,8 @@ class VcfFilterStatistics implements Statistics {
   }
 
   private int[] mValues = new int[Stat.values().length];
-  private int[] mFilteredCount;
-  private int[] mInfoCount;
-  final Map<String, Integer> mFilterTags = new TreeMap<>(); // valid filter tags - input file specific
-  final Map<String, Integer> mInfoTags = new TreeMap<>(); // valid info tags - input file specific
+  final MultiSet<String> mFilterTags = new MultiSet<>(new TreeMap<String, Counter>()); // valid filter tags - input file specific
+  final MultiSet<String> mInfoTags = new MultiSet<>(new TreeMap<String, Counter>()); // valid info tags - input file specific
   private boolean mPosteriorFiltering;
 
   @Override
@@ -61,10 +60,10 @@ class VcfFilterStatistics implements Statistics {
       output.println("Total records : " + get(Stat.TOTAL_COUNT));
 
       for (final String tag : mFilterTags.keySet()) {
-        printCount(output, tag, mFilteredCount[mFilterTags.get(tag)]);
+        printCount(output, tag, mFilterTags.get(tag));
       }
       for (final String tag : mInfoTags.keySet()) {
-        printCount(output, tag, mInfoCount[mInfoTags.get(tag)]);
+        printCount(output, tag, mInfoTags.get(tag));
       }
       printCount(output, "quality", get(Stat.QUALITY_FILTERED_COUNT));
       if (isPosteriorFiltering()) {
@@ -112,10 +111,10 @@ class VcfFilterStatistics implements Statistics {
     mValues[s.ordinal()]++;
   }
   void incrementFilterTag(String tag) {
-    mFilteredCount[mFilterTags.get(tag)]++;
+    mFilterTags.add(tag);
   }
   void incrementInfoTag(String tag) {
-    mInfoCount[mInfoTags.get(tag)]++;
+    mInfoTags.add(tag);
   }
 
   boolean isPosteriorFiltering() {
@@ -124,15 +123,5 @@ class VcfFilterStatistics implements Statistics {
 
   void setPosteriorFiltering(boolean posteriorFiltering) {
     mPosteriorFiltering = posteriorFiltering;
-  }
-
-  void setFilterTags(Map<String, Integer> filterTags) {
-    mFilterTags.putAll(filterTags);
-    mFilteredCount = new int[mFilterTags.size()];
-  }
-
-  void setInfoTags(Map<String, Integer> infoTags) {
-    mInfoTags.putAll(infoTags);
-    mInfoCount = new int[mInfoTags.size()];
   }
 }

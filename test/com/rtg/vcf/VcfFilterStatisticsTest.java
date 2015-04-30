@@ -14,8 +14,6 @@ package com.rtg.vcf;
 
 import static com.rtg.util.StringUtils.LS;
 
-import java.util.Collections;
-
 import com.rtg.util.TestUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.vcf.VcfFilterStatistics.Stat;
@@ -33,8 +31,6 @@ public class VcfFilterStatisticsTest extends TestCase {
 
   public void test() {
     final VcfFilterStatistics stats = new VcfFilterStatistics();
-    stats.setFilterTags(Collections.singletonMap("Foo", 0));
-    stats.setInfoTags(Collections.singletonMap("Bar", 0));
     final MemoryPrintStream stream = new MemoryPrintStream();
     stats.printStatistics(stream.outputStream());
     final String expected = "" + LS

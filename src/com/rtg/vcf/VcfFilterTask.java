@@ -17,9 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.reeltwo.jumble.annotations.TestClass;
@@ -64,8 +62,8 @@ class VcfFilterTask {
   protected final Set<String> mRemoveFilters = new HashSet<>();
 
   // following used during filtering pipeline
-  protected final Map<String, Integer> mFilterTags = new TreeMap<>(); // valid filter tags - input file specific
-  protected final Map<String, Integer> mInfoTags = new TreeMap<>(); // valid info tags - input file specific
+  protected final Set<String> mFilterTags = new TreeSet<>(); // valid filter tags - input file specific
+  protected final Set<String> mInfoTags = new TreeSet<>(); // valid info tags - input file specific
   protected Integer mDensityWindow = null;
   protected VcfRecord mPrevRecord = null;
   protected boolean mPrevDense = false;
@@ -120,33 +118,28 @@ class VcfFilterTask {
       }
     }
     if (mKeepFilters.size() != 0 || mKeepInfos.size() != 0 || mRemoveFilters.size() != 0 || mRemoveInfos.size() != 0) {
-      int index = 0;
-      mFilterTags.put(VcfUtils.FILTER_PASS, index++);
-      mFilterTags.put(VcfUtils.MISSING_FIELD, index++);
+      mFilterTags.add(VcfUtils.FILTER_PASS);
+      mFilterTags.add(VcfUtils.MISSING_FIELD);
       for (final FilterField info : header.getFilterLines()) {
-        mFilterTags.put(info.getId(), index++);
+        mFilterTags.add(info.getId());
       }
-      mVcfFilterStatistics.setFilterTags(mFilterTags);
       final Set<String> userFilterTags = new TreeSet<>();
       userFilterTags.addAll(mKeepFilters);
       userFilterTags.addAll(mRemoveFilters);
       for (final String tag : userFilterTags) {
-        if (!mFilterTags.containsKey(tag)) {
-          throw new NoTalkbackSlimException("Invalid FIELD tag: " + tag + " : " + mFilterTags.keySet().toString());
+        if (!mFilterTags.contains(tag)) {
+          throw new NoTalkbackSlimException("Invalid FIELD tag: " + tag + " : " + mFilterTags.toString());
         }
       }
-      index = 0;
       for (final InfoField info : header.getInfoLines()) {
-        mInfoTags.put(info.getId(), index);
-        index++;
+        mInfoTags.add(info.getId());
       }
-      mVcfFilterStatistics.setInfoTags(mInfoTags);
       final Set<String> userInfoTags = new TreeSet<>();
       userInfoTags.addAll(mKeepInfos);
       userInfoTags.addAll(mRemoveInfos);
       for (final String tag : userInfoTags) {
-        if (!mInfoTags.containsKey(tag)) {
-          throw new NoTalkbackSlimException("Invalid INFO tag: " + tag + " : " + mInfoTags.keySet().toString());
+        if (!mInfoTags.contains(tag)) {
+          throw new NoTalkbackSlimException("Invalid INFO tag: " + tag + " : " + mInfoTags.toString());
         }
       }
     }
