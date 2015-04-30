@@ -39,6 +39,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.prefs.Preferences;
 
 import javax.swing.AbstractAction;
 import javax.swing.Box;
@@ -87,7 +88,11 @@ public final class RocPlot {
   public static final int LINE_WIDTH_MIN = 1;
   /** Maximum allowed line width */
   public static final int LINE_WIDTH_MAX = 10;
-  
+
+  // File chooser stored user-preference keys
+  private static final String CHOOSER_WIDTH = "chooser-width";
+  private static final String CHOOSER_HEIGHT = "chooser-height";
+
   private final ProgressBarDelegate mProgressBarDelegate;
 
   private final JPanel mMainPanel;
@@ -119,6 +124,9 @@ public final class RocPlot {
   private float mMaxYHi = -1.0f;
 
   private final JScrollPane mScrollPane;
+
+  private final JFileChooser mFileChooser = new JFileChooser();
+  private File mFileChooserParent = null;
 
 
   /** Creates a new swing plot. */
@@ -258,24 +266,31 @@ public final class RocPlot {
     });
     mSelectAllCB.setSelected(true);
     mOpenButton.addActionListener(new ActionListener() {
-      private File mFileChooserParent = null;
 
       @Override
       public void actionPerformed(ActionEvent e) {
-        final JFileChooser chooser = new JFileChooser();
         if (mFileChooserParent != null) {
-          chooser.setCurrentDirectory(mFileChooserParent);
+          mFileChooser.setCurrentDirectory(mFileChooserParent);
         }
-        chooser.showOpenDialog(checkControlPanel);
-        final File f = chooser.getSelectedFile();
-        if (f != null) {
-          try {
-            mFileChooserParent = f.getParentFile();
-            loadFile(f, f.getCanonicalFile().getParentFile().getName(), true);
-            updateProgress();
-            showCurrentGraph();
-          } catch (final IOException e1) {
-            JOptionPane.showInternalMessageDialog(checkControlPanel, "Could not open file " + f.getPath());
+
+        final Preferences prefs = Preferences.userNodeForPackage(RocPlot.this.getClass());
+        if (prefs.getInt(CHOOSER_WIDTH, -1) != -1 && prefs.getInt(CHOOSER_HEIGHT, -1) != -1) {
+          mFileChooser.setPreferredSize(new Dimension(prefs.getInt(CHOOSER_WIDTH, 640), prefs.getInt(CHOOSER_HEIGHT, 480)));
+        }
+
+        if (mFileChooser.showOpenDialog(checkControlPanel) == JFileChooser.APPROVE_OPTION) {
+          final File f = mFileChooser.getSelectedFile();
+          if (f != null) {
+            try {
+              loadFile(f, f.getCanonicalFile().getParentFile().getName(), true);
+              updateProgress();
+              showCurrentGraph();
+            } catch (final IOException e1) {
+              JOptionPane.showInternalMessageDialog(checkControlPanel, "Could not open file " + f.getPath());
+            }
+            final Dimension r = mFileChooser.getSize();
+            prefs.putInt(CHOOSER_WIDTH, (int) r.getWidth());
+            prefs.putInt(CHOOSER_HEIGHT, (int) r.getHeight());
           }
         }
       }
@@ -502,6 +517,7 @@ public final class RocPlot {
   }
 
   private void loadFile(final File f, final String name, boolean showProgress) throws IOException {
+    mFileChooserParent = f.getParentFile();
     final DataBundle data = ParseRocFile.loadStream(mProgressBarDelegate, FileUtils.createInputStream(f, false), name, showProgress);
     addLine(f.getAbsolutePath(), data);
   }
