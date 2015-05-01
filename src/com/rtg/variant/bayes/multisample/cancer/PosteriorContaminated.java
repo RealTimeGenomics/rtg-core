@@ -32,7 +32,7 @@ class PosteriorContaminated extends AbstractPosterior {
     super(normal.hypotheses());
     //System.err.println("normal " + normal);
     //System.err.println("cancer " + cancer);
-    assert !cancer.haploid();
+    assert !cancer.haploid(); // The cancer model is a cross-product of normal x cancer hypotheses
     final Code code = cancer.hypotheses().code();
     for (int i = 0; i < mPosterior.length; i++) {
       final double pi = hypotheses.arithmetic().poss2Ln(hypotheses.p(i)) + normal.posteriorLn0(i);
