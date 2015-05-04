@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.OutputParams;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
@@ -237,6 +238,7 @@ public class VcfEvalTaskTest extends TestCase {
     final int tpCount = both.length;
     final int fnCount = baselineOnly.length;
 
+    mNano.check(label + "-summary.txt", FileUtils.fileToString(new File(out, CommonFlags.SUMMARY_FILE)));
     checkRocResults(label + "-weighted.tsv", new File(out, VcfEvalTask.FULL_ROC_FILE), checktotal, tpCount, fnCount);
     checkRocResults(label + "-homo.tsv", new File(out, VcfEvalTask.HOMOZYGOUS_FILE), checktotal, tpCount, fnCount);
     checkRocResults(label + "-hetero.tsv", new File(out, VcfEvalTask.HETEROZYGOUS_FILE), checktotal, tpCount, fnCount);
@@ -351,11 +353,11 @@ public class VcfEvalTaskTest extends TestCase {
       Diagnostic.setLogStream();
     }
     TestUtils.containsAll(ps.toString(),
-        "Variant in calls at seq:28 starts outside the length of the reference sequence (27).",
-        "Variant in baseline at seq:28 starts outside the length of the reference sequence (27).",
-        "Variant in calls at seq:30 starts outside the length of the reference sequence (27).",
-        "There were 1 baseline variants skipped due to being too long, overlapping or starting outside the expected reference sequence length.",
-        "There were 2 called variants skipped due to being too long, overlapping or starting outside the expected reference sequence length."
+      "Variant in calls at seq:28 starts outside the length of the reference sequence (27).",
+      "Variant in baseline at seq:28 starts outside the length of the reference sequence (27).",
+      "Variant in calls at seq:30 starts outside the length of the reference sequence (27).",
+      "There were 1 baseline variants skipped due to being too long, overlapping or starting outside the expected reference sequence length.",
+      "There were 2 called variants skipped due to being too long, overlapping or starting outside the expected reference sequence length."
         );
   }
 

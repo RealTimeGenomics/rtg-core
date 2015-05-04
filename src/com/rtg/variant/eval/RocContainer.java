@@ -22,8 +22,11 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import com.rtg.ml.ContingencyTable;
 import com.rtg.util.StringUtils;
+import com.rtg.util.TextTable;
 import com.rtg.util.Utils;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 
 /**
@@ -83,7 +86,7 @@ public class RocContainer {
         final SortedMap<Double, RocPoint> map = mRocs.get(i);
         final RocFilter filter = mFilters.get(i);
         if (v.filterAccept(filter)) {
-          final RocPoint point = new RocPoint(weight, weight > 0.0 ? 0 : 1);
+          final RocPoint point = new RocPoint(primarySortValue, weight, weight > 0.0 ? 0 : 1);
           final RocPoint old = map.put(primarySortValue, point);
           if (old != null) {
             point.mTp += old.mTp;
@@ -128,14 +131,80 @@ public class RocContainer {
         }
       }
     }
+  }
 
+  void writeSummary(File summaryFile, int truePositives, int falsePositives, int falseNegatives) throws IOException {
+    final String summary;
+    final int totalPositives = truePositives + falseNegatives;
+    if (totalPositives > 0) {
+      final TextTable table = new TextTable();
+      table.addRow("Threshold", "True-pos", "False-pos", "False-neg", "Precision", "Sensitivity", "F-measure");
+      table.addSeparator();
+
+      final int totalRocPositives = truePositives + falseNegatives - mNoScoreVariants;
+      final RocPoint best = (totalRocPositives > 0) ? bestFMeasure(totalRocPositives) : null;
+      if (best == null) {
+        Diagnostic.warning("Not enough ROC data to maximize F-measure, only un-thresholded statistics will be computed.");
+      } else {
+        addRow(table, Utils.realFormat(best.mThreshold, 3), best.mTp, best.mFp, totalRocPositives - best.mTp);
+      }
+      addRow(table, "None", truePositives, falsePositives, falseNegatives);
+      summary = table.toString();
+    } else {
+      summary = "0 total baseline variants, no summary statistics available" + StringUtils.LS;
+    }
+    Diagnostic.info(summary);
+    try (OutputStream os = FileUtils.createOutputStream(summaryFile, false)) {
+      os.write(summary.getBytes());
+    }
+  }
+
+  private static void addRow(final TextTable table, String threshold, double truePositive, double falsePositive, double falseNegative) {
+    final double precision = ContingencyTable.precision(truePositive, falsePositive);
+    final double recall = ContingencyTable.recall(truePositive, falseNegative);
+    table.addRow(threshold,
+      Integer.toString((int) truePositive),
+      Integer.toString((int) falsePositive),
+      Integer.toString((int) falseNegative),
+      Utils.realFormat(precision, 4),
+      Utils.realFormat(recall, 4),
+      Utils.realFormat(ContingencyTable.fMeasure(precision, recall), 4));
+  }
+
+  // Find the threshold entry (from the ALL filter) that maximises f-measure, as an (arbitrary but) fair comparison point
+  RocPoint bestFMeasure(int totalBaselineVariants) {
+    for (int i = 0; i < mFilters.size(); i++) {
+      final RocFilter filter = mFilters.get(i);
+      if (filter == RocFilter.ALL) {
+        double tp = 0.0;
+        int fp = 0;
+        double best = -1;
+        RocPoint bestPoint = null;
+        for (final Map.Entry<Double, RocPoint> me : mRocs.get(i).entrySet()) {
+          final RocPoint p = me.getValue();
+          tp += p.mTp;
+          fp += p.mFp;
+          final double precision = ContingencyTable.precision(tp, fp);
+          final double recall = ContingencyTable.recall(tp, totalBaselineVariants - tp);
+          final double fMeasure = ContingencyTable.fMeasure(precision, recall);
+          if (fMeasure >= best) {
+            best = fMeasure;
+            bestPoint = new RocPoint(p.mThreshold, tp, fp);
+          }
+        }
+        return bestPoint;
+      }
+    }
+    return null;
   }
 
   private static final class RocPoint {
+    double mThreshold;
     double mTp;
     int mFp;
 
-    private RocPoint(double tp, int fp) {
+    private RocPoint(double threshold, double tp, int fp) {
+      mThreshold = threshold;
       mTp = tp;
       mFp = fp;
     }

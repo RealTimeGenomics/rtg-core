@@ -120,7 +120,7 @@ public class EvalSynchronizerTest extends TestCase {
             sync.write("name2", Arrays.asList(new DetectedVariant(VcfReader.vcfLineToRecord(REC1_2), 0, RocSortValueExtractor.NULL_EXTRACTOR, false))
                 , Arrays.asList(new DetectedVariant(VcfReader.vcfLineToRecord(REC3_2), 0, RocSortValueExtractor.NULL_EXTRACTOR, false))
                 , Arrays.asList(new DetectedVariant(VcfReader.vcfLineToRecord(REC5_2), 0, RocSortValueExtractor.NULL_EXTRACTOR, false)), null);
-            sync.addVariants(10);
+            sync.addVariants(10, 0, 0);
           }
         });
         simpleThreadPool.execute(new IORunnable() {
@@ -129,7 +129,7 @@ public class EvalSynchronizerTest extends TestCase {
             sync.write("name1", Arrays.asList(new DetectedVariant(VcfReader.vcfLineToRecord(REC2_1), 0, RocSortValueExtractor.NULL_EXTRACTOR, false))
                 , Arrays.asList(new DetectedVariant(VcfReader.vcfLineToRecord(REC4_1), 0, RocSortValueExtractor.NULL_EXTRACTOR, false))
                 , Arrays.asList(new DetectedVariant(VcfReader.vcfLineToRecord(REC6_1), 0, RocSortValueExtractor.NULL_EXTRACTOR, false)), null);
-            sync.addVariants(22);
+            sync.addVariants(22, 0, 0);
           }
         });
         simpleThreadPool.terminate();
@@ -137,12 +137,12 @@ public class EvalSynchronizerTest extends TestCase {
         assertEquals(REC2_1 + "\n" + REC1_2 + "\n", tp.toString());
         assertEquals(REC4_1 + "\n" + REC3_2 + "\n", fp.toString());
         assertEquals(REC6_1 + "\n" + REC5_2 + "\n", fn.toString());
-        assertEquals(32, sync.mTotalVariants);
+        assertEquals(32, sync.mTruePositives);
         assertEquals("name3", sync.nextSet().getA());
         assertEquals(null, sync.nextSet());
       }
-      assertTrue(mp.toString().contains("Number of baseline variants: 32"));
-      assertTrue(mp.toString().contains("Number of baseline variants: 22") || mp.toString().contains("Number of baseline variants: 10"));
+      assertTrue(mp.toString().contains("Number of baseline variants processed: 32"));
+      assertTrue(mp.toString().contains("Number of baseline variants processed: 22") || mp.toString().contains("Number of baseline variants processed: 10"));
     } finally {
       Diagnostic.setLogStream();
     }

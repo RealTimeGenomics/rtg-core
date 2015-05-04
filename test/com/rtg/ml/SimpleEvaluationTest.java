@@ -26,18 +26,17 @@ public class SimpleEvaluationTest extends TestCase {
 
     PredictClassifier p = b.getClassifier();
     eval.evaluate(p, data);
-    assertEquals(200, eval.correct());
-    assertEquals(200, eval.trueNegatives());
-    assertEquals(100, eval.incorrect());
-    assertEquals(100, eval.falseNegatives());
+    assertEquals(200.0, eval.correct());
+    assertEquals(200.0, eval.trueNegatives());
+    assertEquals(100.0, eval.incorrect());
+    assertEquals(100.0, eval.falseNegatives());
 
-    assertEquals(0, eval.truePositives());
-    assertEquals(0, eval.falsePositives());
+    assertEquals(0.0, eval.truePositives());
+    assertEquals(0.0, eval.falsePositives());
 
-    assertEquals(300, eval.total());
+    assertEquals(300.0, eval.total());
 
     assertEquals(0.67, eval.accuracy(), 0.01);
     assertEquals(0.33, eval.errorRate(), 0.01);
   }
-
 }

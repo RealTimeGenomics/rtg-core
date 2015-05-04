@@ -38,13 +38,15 @@ class EvalSynchronizer {
   private final VariantSet mVariantSet;
 
   final RocContainer mRoc;
+  int mTruePositives = 0;
+  int mFalseNegatives = 0;
+  int mFalsePositives = 0;
   private final OutputStream mTp;
   private final OutputStream mTpBase;
   private final OutputStream mFp;
   private final OutputStream mFn;
   private final File mBaseLineFile;
   private final File mCallsFile;
-  int mTotalVariants = 0;
   private final Object mVariantLock = new Object();
   private final Object mPhasingLock = new Object();
   private int mUnphasable = 0;
@@ -79,12 +81,14 @@ class EvalSynchronizer {
    * @param variants a collection of variants
    * @param vcfReader the VCF reader to get the VCF records from for output
    * @param <T> Type of variant
+   * @return the number of variants written
    * @throws IOException IO exceptions require too many comments.
    */
-  private static <T extends Variant> void writeVariants(OutputStream out, VcfReader vcfReader, Collection<T> variants) throws IOException {
+  private static <T extends Variant> int writeVariants(OutputStream out, VcfReader vcfReader, Collection<T> variants) throws IOException {
     if (variants == null) {
-      return;
+      return 0;
     }
+    int written = 0;
     for (final Variant v : variants) {
       final DetectedVariant dv = (DetectedVariant) (v instanceof OrientedVariant ? ((OrientedVariant) v).variant() : v);
       VcfRecord rec = null;
@@ -104,10 +108,12 @@ class EvalSynchronizer {
       }
       if (rec != null) {
         out.write((rec.toString() + "\n").getBytes());
+        written++;
       } else {
         throw new SlimException("Variant object \"" + v.toString() + "\"" + " does not have a corresponding VCF record in given reader");
       }
     }
+    return written;
   }
 
   /**
@@ -191,13 +197,17 @@ class EvalSynchronizer {
   }
 
   /**
-   * Increment the count of baseline variants in all sequences across threads.
-   * @param variants increase the count of variants by this much.
+   * Increment the count of variants evaluated in all sequences across threads.
+   * @param truePositives increase the count of true positives by this much
+   * @param falsePositives increase the count of false positives by this much
+   * @param falseNegatives increase the count of false negatives by this much
    */
-  void addVariants(int variants) {
+  void addVariants(int truePositives, int falsePositives, int falseNegatives) {
     synchronized (mVariantLock) {
-      mTotalVariants += variants;
-      Diagnostic.developerLog("Number of baseline variants: " + mTotalVariants);
+      mTruePositives += truePositives;
+      mFalseNegatives += falseNegatives;
+      mFalsePositives += falsePositives;
+      Diagnostic.developerLog("Number of baseline variants processed: " + (mTruePositives + mFalseNegatives));
     }
   }
 

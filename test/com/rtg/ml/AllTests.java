@@ -27,6 +27,7 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(InstanceTest.class);
     suite.addTestSuite(MlDataTypeTest.class);
     suite.addTestSuite(MlPredictLoaderTest.class);
+    suite.addTestSuite(ContingencyTableTest.class);
     suite.addTestSuite(SimpleEvaluationTest.class);
     suite.addTestSuite(TrainTestSplitTest.class);
     suite.addTestSuite(ZeroRBuilderTest.class);

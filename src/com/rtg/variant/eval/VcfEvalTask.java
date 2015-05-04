@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.NoStatistics;
 import com.rtg.launcher.ParamsTask;
 import com.rtg.reader.PrereadNamesInterface;
@@ -187,11 +188,13 @@ public final class VcfEvalTask extends ParamsTask<VcfEvalParams, NoStatistics> {
       Diagnostic.warning("There were " + sync.mRoc.getNumberOfIgnoredVariants() + " variants not included in ROC data files due to missing or invalid scores.");
     }
     Diagnostic.developerLog("Writing ROC");
-    sync.mRoc.writeRocs(sync.mTotalVariants, zip);
+    sync.mRoc.writeRocs(sync.mTruePositives + sync.mFalseNegatives, zip);
     if (params.outputSlopeFiles()) {
       produceSlopeFiles(params.directory(), zip, params.rtgStats());
     }
     writePhasingInfo(sync, params.directory());
+
+    sync.mRoc.writeSummary(new File(params.directory(), CommonFlags.SUMMARY_FILE), sync.mTruePositives, sync.mFalsePositives, sync.mFalseNegatives);
   }
 
   private static void writePhasingInfo(EvalSynchronizer sync, File outDir) throws IOException {

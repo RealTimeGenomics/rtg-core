@@ -70,7 +70,7 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
 
   private int mNumThreads = 1;
 
-  private SimpleEvaluation mOobEvaluation = new SimpleEvaluation();
+  private ContingencyTable mOobEvaluation = new SimpleEvaluation();
 
 
   @Override
@@ -121,7 +121,7 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
     final int subsetInst = (int) (numInsts * mSubsetProportion);
     final PortableRandom random = new PortableRandom(mSeed);
     final Attribute[] attributes = dataset.getAttributes();
-    final SimpleEvaluation[] attEvals = new SimpleEvaluation[attributes.length];
+    final ContingencyTable[] attEvals = new ContingencyTable[attributes.length];
     if (mEvaluateImportances) {
       for (int k = 0; k < attEvals.length; k++) {
         attEvals[k] = new SimpleEvaluation();
@@ -133,7 +133,7 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
     final BuildClassifier[] subbuilders = new BuildClassifier[mNumTrees];
     final PredictClassifier[] subpredictors = new PredictClassifier[mNumTrees];
     final PortableRandom[] randoms = new PortableRandom[mNumTrees];
-    final SimpleEvaluation totalEval = new SimpleEvaluation();
+    final ContingencyTable totalEval = new SimpleEvaluation();
 
     for (int i = 0; i < mNumTrees; i++) {
       final int j = i;
@@ -180,14 +180,14 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
     if (mEvaluateImportances) {
       // Calculate attribute scores
       for (int a = 0; a < attributes.length; a++) {
-        final int extraCorrect = mOobEvaluation.correct() - attEvals[a].correct();
+        final int extraCorrect = (int) (mOobEvaluation.correct() - attEvals[a].correct());
         Diagnostic.info("Attribute importance estimate for " + attributes[a].getName() + ": " + Utils.realFormat(100.0 * extraCorrect / mOobEvaluation.correct(), 4)
             + "% (" + extraCorrect + "/" + mOobEvaluation.correct() + ")");
       }
     }
   }
 
-  private void evaluate(SimpleEvaluation totalEval, PredictClassifier submodel, Dataset testSet) {
+  private void evaluate(ContingencyTable totalEval, PredictClassifier submodel, Dataset testSet) {
     final SimpleEvaluation eval = new SimpleEvaluation();
     eval.evaluate(submodel, testSet);
     synchronized (totalEval) {

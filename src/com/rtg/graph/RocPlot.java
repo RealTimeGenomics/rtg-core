@@ -72,6 +72,7 @@ import com.reeltwo.plot.PointPlot2D;
 import com.reeltwo.plot.renderer.Mapping;
 import com.reeltwo.plot.ui.PlotPanel;
 import com.reeltwo.plot.ui.ZoomPlotPanel;
+import com.rtg.ml.ContingencyTable;
 import com.rtg.util.Resources;
 import com.rtg.util.io.FileUtils;
 
@@ -542,7 +543,7 @@ public final class RocPlot {
         final float fp = mapping[0].screenToWorld((float) p.getX());
         final float tp = mapping[1].screenToWorld((float) p.getY());
         if (fp >= 0 && tp >= 0 && (fp + tp > 0)) {
-          mProgressBar.setString(getTpFpString(tp, fp, maxVariants));
+          mProgressBar.setString(getMetricString(tp, fp, maxVariants));
           mZoomPP.setCrossHair(new Point((int) fp, (int) tp));
         } else {
           mZoomPP.setCrossHair(null);
@@ -568,12 +569,13 @@ public final class RocPlot {
     }
   }
 
-  static String getTpFpString(float truePositive, float falsePositive, int totalPositive) {
-    final float precision = truePositive / (falsePositive + truePositive);
+  static String getMetricString(double truePositive, double falsePositive, int totalPositive) {
+    final double precision = ContingencyTable.precision(truePositive, falsePositive);
     String message = String.format("TP=%.0f FP=%.0f Precision=%.2f%%", truePositive, falsePositive, precision * 100);
     if (totalPositive > 0) {
-      final float recall = truePositive / totalPositive;
-      final float fMeasure = 2 * precision * recall / (precision + recall);
+      final double falseNegative = totalPositive - truePositive;
+      final double recall = ContingencyTable.recall(truePositive, falseNegative);
+      final double fMeasure = ContingencyTable.fMeasure(precision, recall);
       message += String.format(" Sensitivity=%.2f%% F-measure=%.2f%%", recall * 100, fMeasure * 100);
     }
     return message;

@@ -95,7 +95,7 @@ class SequenceEvaluator implements IORunnable {
       truePositives = calls.getA();
       merge(falsePositives, calls.getB());
 
-      mSynchronize.addVariants(baselineTruePositives.size() + falseNegatives.size());
+      mSynchronize.addVariants(baselineTruePositives.size(), falsePositives.size(), falseNegatives.size());
       Diagnostic.developerLog("Writing variants...");
 
       final PhasingResult misPhasings = countMisphasings(best);
