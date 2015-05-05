@@ -239,7 +239,7 @@ public final class StringUtils {
    */
   public static String padRight(final String s, final int length) {
     final int pad = length - s.length();
-    return pad > 0 ? s + getSpaceString(pad): s;
+    return pad > 0 ? s + getSpaceString(pad) : s;
   }
 
   /**
