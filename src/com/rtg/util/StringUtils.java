@@ -232,6 +232,17 @@ public final class StringUtils {
   }
 
   /**
+   * Pad a string on the right with spaces till it is at least the specified length.
+   * @param s initial string.
+   * @param length to pad the string to.
+   * @return padded string.
+   */
+  public static String padRight(final String s, final int length) {
+    final int pad = length - s.length();
+    return pad > 0 ? s + getSpaceString(pad): s;
+  }
+
+  /**
    * Pads out two string by inserting spaces between them.
    *
    * @param first left string
