@@ -122,7 +122,7 @@ public final class SnpIntersectionTest extends AbstractCliTest {
       final File input = new File(tempDir, "file");
       assertTrue(input.createNewFile());
       assertFalse(flags.setFlags("-o", new File(tempDir.getPath(), "output").getPath(), "-i", input.getPath(), "-I", tempDir.getPath()));
-      assertTrue(ps.toString(), ps.toString().contains("The file \"" + tempDir.getPath() + "\", specified for \"--input-second\", is not a file."));
+      assertTrue(ps.toString(), ps.toString().contains("The file \"" + tempDir.getPath() + "\", specified for \"--input-second\", is a directory."));
       ps.reset();
       assertFalse(flags.setFlags("-o", new File(tempDir.getPath(), "output").getPath(), "-i", input.getPath(), "-I", input.getPath(), "--region", "chr1:0-10"));
       assertTrue(ps.toString(), ps.toString().contains("The value \"chr1:0-10\" for \"--region\" is not a well formed region."));

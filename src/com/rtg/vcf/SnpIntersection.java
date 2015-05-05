@@ -157,8 +157,8 @@ CommonFlags.initNoGzip(flags);
       Diagnostic.error(ErrorType.INFO_ERROR, "The file \"" + file.getPath() + "\", specified for \"--" + flag + "\", does not exist.");
       return false;
     }
-    if (!file.isFile()) {
-      Diagnostic.error(ErrorType.INFO_ERROR, "The file \"" + file.getPath() + "\", specified for \"--" + flag + "\", is not a file.");
+    if (file.isDirectory()) {
+      Diagnostic.error(ErrorType.INFO_ERROR, "The file \"" + file.getPath() + "\", specified for \"--" + flag + "\", is a directory.");
       return false;
     }
     return true;
