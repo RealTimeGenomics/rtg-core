@@ -77,7 +77,7 @@ public class BuilderCliTest extends AbstractCliTest {
       final File props = new File(dir, "props.txt");
       FileHelper.resourceToFile("com/rtg/variant/avr/resources/gtcomplex.props", props);
 
-      checkMainInitOk("-o", avr.getPath(), "-n", negVcf.getPath(), "-p", posVcf.getPath(), "--Xmodel-type", "gt_complex", "--Xmodel-params", props.getPath());
+      checkMainInitOk("-o", avr.getPath(), "-n", negVcf.getPath(), "-p", posVcf.getPath(), "--qual-annotation", "--Xmodel-type", "gt_complex", "--Xmodel-params", props.getPath());
 
       mf = new ModelFactory(avr, 0.0);
       assertTrue(mf.getModel() instanceof GtQualComplexMultiplierModel);
@@ -88,25 +88,25 @@ public class BuilderCliTest extends AbstractCliTest {
       assertTrue(avr.delete());
       GtQualComplexMultiplierModel model = (GtQualComplexMultiplierModel) mf.getModel();
       TestUtils.containsAll(model.toString(),
-          "multiplier.gq.simple.homozygous\t2.1",
-          "multiplier.gq.simple.heterozygous\t0.612",
-          "multiplier.gq.complex.homozygous\t1.26",
-          "multiplier.gq.complex.heterozygous\t0.342",
-          "multiplier.qual.simple\t0.3",
-          "multiplier.qual.complex\t0.5"
-          );
+        "multiplier.gq.simple.homozygous\t2.1",
+        "multiplier.gq.simple.heterozygous\t0.612",
+        "multiplier.gq.complex.homozygous\t1.26",
+        "multiplier.gq.complex.heterozygous\t0.342",
+        "multiplier.qual.simple\t0.3",
+        "multiplier.qual.complex\t0.5"
+      );
 
       String error = checkMainInitBadFlags("-o", avr.getPath(), "-n", negVcf.getPath(), "-p", posVcf.getPath(), "--Xmodel-type", "gt_complex", "--Xmodel-params", props.getPath(), "--derived-annotations", "NOTDERIVED");
-      assertTrue(error.contains("Invalid value \"NOTDERIVED\" for \"--derived-annotations\""));
+      TestUtils.containsAll(error, "Invalid value \"NOTDERIVED\" for \"--derived-annotations\"");
 
-      error = checkMainInitBadFlags("-o", avr.getPath(), "-n", negVcf.getPath(), "-p", posVcf.getPath(), "--Xmodel-type", "gt_complex", "--Xmodel-params", props.getPath(), "--sample", "SAMPLE");
-      assertTrue(error.contains("Sample name not found in VCF file: SAMPLE : " + posVcf.getPath()));
+      error = checkMainInitBadFlags("-o", avr.getPath(), "-n", negVcf.getPath(), "-p", posVcf.getPath(), "--qual-annotation", "--Xmodel-type", "gt_complex", "--Xmodel-params", props.getPath(), "--sample", "SAMPLE");
+      TestUtils.containsAll(error, "Sample name not found in VCF file: SAMPLE : " + posVcf.getPath());
 
       final File fakeVcf = new File(dir, "fake.vcf");
       FileUtils.stringToFile("##fileformat=VCFv4.1\n#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tNA12878\tNA12888\tNA12345\n", fakeVcf);
 
-      error = checkMainInitBadFlags("-o", avr.getPath(), "-n", fakeVcf.getPath(), "-p", posVcf.getPath());
-      assertTrue(error.contains("Need to specify a sample name for a multi-sample VCF file: " + fakeVcf.getPath()));
+      error = checkMainInitBadFlags("-o", avr.getPath(), "-n", fakeVcf.getPath(), "-p", posVcf.getPath(), "--qual-annotation");
+      TestUtils.containsAll(error, "Need to specify a sample name for a multi-sample VCF file: " + fakeVcf.getPath());
 
     }
   }
