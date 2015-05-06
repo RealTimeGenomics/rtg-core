@@ -58,6 +58,7 @@ public class InfoField implements IdField<InfoField> {
     return mostlyEquals(obj) && mType == ((InfoField) obj).mType;
   }
 
+  // True if no field conflicts preventing merge
   private boolean mostlyEquals(Object obj) {
     if (!(obj instanceof InfoField)) {
       return false;

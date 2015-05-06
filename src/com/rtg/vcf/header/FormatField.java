@@ -68,6 +68,7 @@ public class FormatField implements IdField<FormatField> {
     return mostlyEquals(obj) && mType == ((FormatField) obj).mType;
   }
 
+  // True if no field conflicts preventing merge
   private boolean mostlyEquals(Object obj) {
     if (!(obj instanceof FormatField)) {
       return false;
