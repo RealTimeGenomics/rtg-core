@@ -19,10 +19,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
+import com.rtg.ml.Attribute;
 import com.rtg.ml.BuildClassifier;
 import com.rtg.ml.BuilderFactory;
 import com.rtg.ml.Dataset;
 import com.rtg.ml.Instance;
+import com.rtg.ml.MlDataType;
 import com.rtg.ml.RandomTreeBuilder;
 import com.rtg.ml.ZeroRBuilder;
 import com.rtg.util.Resources;
@@ -39,13 +41,13 @@ import com.rtg.vcf.header.VcfHeader;
 public class MlAvrPredictModelTest extends AbstractPredictModelTest<MlAvrPredictModel> {
   @Override
   MlAvrPredictModel getPredictModel() {
-    Dataset ds = new Dataset();
-    ds.addInstance(new Instance(new double[0], true));
-    ds.addInstance(new Instance(new double[0], false));
+    Dataset ds = new Dataset(new Attribute("empty", MlDataType.DOUBLE));
+    ds.addInstance(new Instance(new double[1], true));
+    ds.addInstance(new Instance(new double[1], false));
     BuildClassifier builder = new ZeroRBuilder();
     builder.build(ds);
     MlAvrPredictModel model = new MlAvrPredictModel(builder.getClassifier());
-    model.setAttributeExtractor(new AttributeExtractor());
+    model.setAttributeExtractor(new AttributeExtractor(new QualAnnotation()));
     return model;
   }
 
