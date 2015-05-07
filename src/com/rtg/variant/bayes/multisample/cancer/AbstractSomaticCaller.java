@@ -245,6 +245,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
 
     final VariantSample normalSample = setCallValues(posterior.normalMeasure(), bestNormal, hypotheses, modelNormal, mParams, normalPloidy);
     final VariantSample cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, cancerHyp, modelCancer, mParams, cancerPloidy);
+    cancerSample.setSomaticScore(ratio);
 
     final VariantLocus locus = new VariantLocus(templateName, position, endPosition, refAllele, VariantUtils.getPreviousRefNt(ref, position));
 
@@ -258,8 +259,6 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       v.addFilter(VariantFilter.AMBIGUITY);
     }
     v.setPossibleCause(cause);
-    v.setPossibleCauseScore(ratio); // todo deprecate this
-    cancerSample.setSomaticScore(ratio);
     if (doLoh) {
       v.setLoh(loh);
     }

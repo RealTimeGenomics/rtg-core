@@ -160,6 +160,14 @@ public class VariantOutputVcfFormatter {
   }
 
   /**
+   * Add these additional info fields to output.
+   * @param extraFormatFields the additional info fields to add.
+   */
+  public void addExtraFormatFields(EnumSet<VcfFormatField> extraFormatFields) {
+    mFormatFields.addAll(extraFormatFields);
+  }
+
+  /**
    * Write VCF header to the output file. This is deprecated, you should instead use VcfWriter.
    * @param out where output is to be written.
    * @param params reified command line parameters.

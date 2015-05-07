@@ -19,14 +19,14 @@ import java.util.List;
 
 import com.rtg.mode.DNA;
 import com.rtg.reference.Ploidy;
+import com.rtg.reference.SexMemo;
 import com.rtg.relation.Relationship;
 import com.rtg.relation.Relationship.RelationshipType;
 import com.rtg.util.MathUtils;
-import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.variant.MachineErrorChooserInterface;
-import com.rtg.reference.SexMemo;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Hypotheses;
@@ -47,6 +47,7 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.bayes.snp.ModelNoneFactory;
 import com.rtg.variant.bayes.snp.ModelSnpFactory;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
+import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
 import com.rtg.variant.realign.AlignmentEnvironment;
 import com.rtg.variant.realign.AlignmentEnvironmentGenomeSubstitution;
@@ -147,7 +148,8 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
   @Override
   public VariantOutputVcfFormatter getOutputFormatter(final VariantParams params) {
     final VariantOutputVcfFormatter f = new VariantOutputVcfFormatter(params, getGenomeNames());
-    f.addExtraInfoFields(EnumSet.of(VcfInfoField.SOMATIC, VcfInfoField.LOH, VcfInfoField.RSS, VcfInfoField.NCS));
+    f.addExtraInfoFields(EnumSet.of(VcfInfoField.SOMATIC, VcfInfoField.LOH, VcfInfoField.NCS));
+    f.addExtraFormatFields(EnumSet.of(VcfFormatField.SSC));
     return f;
   }
 

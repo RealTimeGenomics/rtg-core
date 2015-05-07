@@ -75,7 +75,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
   static final List<ModelInterface<Description>> SEEN_3_G =
       new PureSomaticCallerTest().doReads(3, DNARangeAT.G);
 
-  protected static final String EXPECT_IDENTICAL = "chr1 14 . G A . PASS RSS=2.0;NCS=20.0;DP=2 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 1:1:0.020:0.000:21:0.00:2.17:0.00:0.00:A,1,0.020:0,1 1:1:0.020:0.000:25:0.00:2.17:0.00:0.00:A,1,0.020:0,1\n".replaceAll(" ", "\t");
+  protected static final String EXPECT_IDENTICAL = "chr1\t14\t.\tG\tA\t.\tPASS\tNCS=20.0;DP=2\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC\t1:1:0.020:0.000:21:0.00:2.17:0.00:0.00:A,1,0.020:0,1\t1:1:0.020:0.000:25:0.00:2.17:0.00:0.00:A,1,0.020:0,1:2.0\n";
 
   /**
    * Test that two identical SNP calls are not viewed as cancer.
@@ -97,10 +97,6 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
     final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).create();
     final AbstractSomaticCaller ccs = getSomaticCaller(0.3, simpleHomoHyps(0.7, refCode), "A", "C", params);
     ccs.integrity();
-    //    final MultivarianceCall out = new MultivarianceCall("chr1", 13, 14, VarianceCallType.SNP);
-    //    out.setName("G:A");
-
-
     final List<ModelInterface<?>> models = new ArrayList<>();
     models.add(model0);
     models.add(model1);
@@ -109,7 +105,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
     assertEquals(EXPECT_IDENTICAL, formatter.formatCall(v));
   }
 
-  protected static final String EXPECT_CANCER1 = "chr1 14 . G A,C . PASS SOMATIC=C;RSS=29.3;NCS=293.4;DP=30 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 1:20:0.040:0.000:617:0.00:43.43:0.00:0.00:A,20,0.040:0,20,0 2:10:0.020:0.000:293:0.00:21.71:0.00:0.00:C,10,0.020:0,0,10\n".replaceAll(" ", "\t");
+  protected static final String EXPECT_CANCER1 = "chr1\t14\t.\tG\tA,C\t.\tPASS\tSOMATIC=C;NCS=293.4;DP=30\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC\t1:20:0.040:0.000:617:0.00:43.43:0.00:0.00:A,20,0.040:0,20,0\t2:10:0.020:0.000:293:0.00:21.71:0.00:0.00:C,10,0.020:0,0,10:29.3\n";
 
   /**
    * Test that a successful cancer call is made.
@@ -137,9 +133,6 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
     final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).create();
     final AbstractSomaticCaller ccs = getSomaticCaller(0.003, hypotheses, "A", "C", params);
     ccs.integrity();
-    //    final MultivarianceCall out = new MultivarianceCall("chr1", 13, 14, VarianceCallType.SNP);
-    //    out.setName("G:A");
-
     final List<ModelInterface<?>> models = new ArrayList<>();
     models.add(model0);
     models.add(model1);
@@ -151,7 +144,6 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
   public void testQ() {
     final GenomePriorParams params = GenomePriorParams.builder().create();
     final VariantParams vParams = VariantParams.builder().genomePriors(params).create();
-    //final AbstractCancerComparison ccs = getCancerComparison(0.3, DiploidSnpBayesian.getCategories(params), null, null);
     final AbstractSomaticCaller ccs = getSomaticCaller(0.3, new HypothesesSnp(SimplePossibility.SINGLETON, params, false, 0), null, null, vParams);
     ccs.integrity();
     final String exp = ""

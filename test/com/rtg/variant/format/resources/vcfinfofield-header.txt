@@ -1,6 +1,5 @@
 ##INFO=<ID=SOMATIC,Number=1,Type=String,Description="Indicates the variant is a somatic mutation">
 ##INFO=<ID=LOH,Number=1,Type=Float,Description="Indicates whether or not variant is a potential loss of heterozygosity">
-##INFO=<ID=RSS,Number=1,Type=Float,Description="RTG somatic call score">
 ##INFO=<ID=NCS,Number=1,Type=Float,Description="RTG normal cancer score">
 ##INFO=<ID=DISEASE,Number=1,Type=String,Description="Indicates the variant is linked to the disease">
 ##INFO=<ID=RDS,Number=1,Type=Float,Description="RTG disease call score">

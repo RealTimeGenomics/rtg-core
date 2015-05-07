@@ -60,19 +60,6 @@ public enum VcfInfoField {
       }
     }
   },
-  /** RTG Somatic Score */
-  RSS {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.FLOAT, new VcfNumber("1"), "RTG somatic call score");
-    }
-    @Override
-    public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
-      if (call.getPossibleCauseScore() != null) {
-        rec.addInfo(name(), VariantUtils.formatPosterior(call.getPossibleCauseScore()));
-      }
-    }
-  },
   /** RTG Normal Cancer Score */
   NCS {
     @Override

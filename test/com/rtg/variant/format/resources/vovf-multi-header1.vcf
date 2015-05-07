@@ -11,7 +11,6 @@
 ##FILTER=<ID=RCEQUIV,Description="RTG variant is equivalent to the previous variant">
 ##FILTER=<ID=OTHER,Description="Variant is invalid for unknown reasons">
 ##INFO=<ID=SOMATIC,Number=1,Type=String,Description="Indicates the variant is a somatic mutation">
-##INFO=<ID=RSS,Number=1,Type=Float,Description="RTG somatic call score">
 ##INFO=<ID=DP,Number=1,Type=Integer,Description="Combined read depth for variant over all samples">
 ##INFO=<ID=DPR,Number=1,Type=Float,Description="Ratio of combined read depth for variant to expected combined read depth">
 ##INFO=<ID=XRX,Number=0,Type=Flag,Description="RTG variant was called using complex caller">
@@ -35,6 +34,7 @@
 ##FORMAT=<ID=PUR,Number=1,Type=Float,Description="Ratio of placed unmapped reads to mapped reads">
 ##FORMAT=<ID=RS,Number=.,Type=String,Description="RTG Support Statistics">
 ##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
+##FORMAT=<ID=SSC,Number=1,Type=Float,Description="Somatic score">
 ##FORMAT=<ID=GL,Number=G,Type=Float,Description="Log_10 scaled genotype likelihoods. As defined in VCF specifications">
 ##SAMPLE=<ID=normal,Genomes=normal,Mixture=1.0,Description="Original genome">
 ##SAMPLE=<ID=cancer,Genomes=normal;cancer,Mixture=0.30;0.70,Description="Original genome;Derived genome">

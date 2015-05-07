@@ -39,6 +39,7 @@ import com.rtg.variant.bayes.snp.StatisticsSnp;
 import com.rtg.variant.dna.DNARange;
 import com.rtg.variant.dna.DNARangeAT;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
+import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
@@ -65,7 +66,6 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     };
   }
 
-
   List<ModelInterface<Description>> getNormalModel() {
     final List<ModelInterface<Description>> models = new ArrayList<>();
     for (int ref = 0; ref < 4; ref++) {
@@ -83,7 +83,8 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
 
   protected VariantOutputVcfFormatter getFormatter() {
     final VariantOutputVcfFormatter formatter = new VariantOutputVcfFormatter("normal", "cancer");
-    formatter.addExtraInfoFields(EnumSet.of(VcfInfoField.SOMATIC, VcfInfoField.LOH, VcfInfoField.RSS, VcfInfoField.NCS));
+    formatter.addExtraInfoFields(EnumSet.of(VcfInfoField.SOMATIC, VcfInfoField.LOH, VcfInfoField.NCS));
+    formatter.addExtraFormatFields(EnumSet.of(VcfFormatField.SSC));
     return formatter;
   }
 
@@ -150,92 +151,67 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
         , dump(doNormalReads(3, DNARangeAT.G)));
   }
 
-  protected static final String EXPECT_ALL_SAME = (""
-      + "chr1 14 . A . . PASS RSS=7.5;NCS=75.3;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 0:3:0.293:0.000:100:0.00:6.51:0.00:0.00:A,3,0.293:3 0:3:0.293:0.000:75:0.00:6.51:0.00:0.00:A,3,0.293:3\n"
-      //      + "nc chr1 14 = A NONE 7.5 -7.5" + LS
-      //      + "A chr1 14 = A A 10.0 3 0.293 A 3 0.293" + LS
-      //      + "C chr1 14 = A A 7.5 3 0.293 A 3 0.293" + LS
-      ).replaceAll(" ", "\t");
+  protected static final String EXPECT_ALL_SAME = "chr1\t14\t.\tA\t.\t.\tPASS\tNCS=75.3;DP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC\t0:3:0.293:0.000:100:0.00:6.51:0.00:0.00:A,3,0.293:3\t0:3:0.293:0.000:75:0.00:6.51:0.00:0.00:A,3,0.293:3:7.5\n";
 
   public void testAllSame() throws InvalidParamsException, IOException {
-    testCancer(
-        doNormalReads(3, DNARangeAT.A),
-        doReads(3, DNARangeAT.A),
-        EXPECT_ALL_SAME,
-        "A",
-        "C"
-        );
+    checkCancer(
+      doNormalReads(3, DNARangeAT.A),
+      doReads(3, DNARangeAT.A),
+      EXPECT_ALL_SAME,
+      "A",
+      "C"
+    );
   }
 
-  protected static final String EXPECT_NORMAL_EQ_REF = (""
-      + "chr1 14 . A C . PASS SOMATIC=C;RSS=1.0;NCS=10.9;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 0:3:0.293:0.000:36:0.00:6.51:0.00:0.00:A,3,0.293:3,0 1:3:0.293:0.000:11:0.00:6.51:0.00:0.00:C,3,0.293:0,3\n"
-      //      + "nc chr1 14 / A C 1.0 1.0" + LS
-      //      + "A chr1 14 = A A 3.6 3 0.293 A 3 0.293" + LS
-      //      + "C chr1 14 o A C 1.1 3 0.293 C 3 0.293" + LS
-      ).replaceAll(" ", "\t");
+  protected static final String EXPECT_NORMAL_EQ_REF = "chr1\t14\t.\tA\tC\t.\tPASS\tSOMATIC=C;NCS=10.9;DP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC\t0:3:0.293:0.000:36:0.00:6.51:0.00:0.00:A,3,0.293:3,0\t1:3:0.293:0.000:11:0.00:6.51:0.00:0.00:C,3,0.293:0,3:1.0\n";
 
   public void testNormalEqualsRef() throws InvalidParamsException, IOException {
-    testCancer(
-        doNormalReads(3, DNARangeAT.A),
-        doReads(3, DNARangeAT.C),
-        EXPECT_NORMAL_EQ_REF,
-        "A",
-        "C"
-        );
+    checkCancer(
+      doNormalReads(3, DNARangeAT.A),
+      doReads(3, DNARangeAT.C),
+      EXPECT_NORMAL_EQ_REF,
+      "A",
+      "C"
+    );
   }
 
-  protected static final String EXPECT_CANCER_EQ_REF = (""
-      + "chr1 14 . A . . PASS RSS=1.4;NCS=14.4;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 0:3:0.293:0.000:14:26.06:.:0.00:0.00:C,3,0.293:0 0:3:0.293:0.000:25:0.00:6.51:0.00:0.00:A,3,0.293:3\n"
-      //      + "nc chr1 14 = A NONE 1.4 -1.4" + LS
-      //      + "A chr1 14 = A A 1.4 3 0.293 C 3 0.293" + LS
-      //      + "C chr1 14 = A A 2.5 3 0.293 A 3 0.293" + LS
-      ).replaceAll(" ", "\t");
+  protected static final String EXPECT_CANCER_EQ_REF = "chr1\t14\t.\tA\t.\t.\tPASS\tNCS=14.4;DP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC\t0:3:0.293:0.000:14:26.06:.:0.00:0.00:C,3,0.293:0\t0:3:0.293:0.000:25:0.00:6.51:0.00:0.00:A,3,0.293:3:1.4\n";
 
   public void testCancerEqualsRef() throws InvalidParamsException, IOException {
-    testCancer(
-        doNormalReads(3, DNARangeAT.C),
-        doReads(3, DNARangeAT.A),
-        EXPECT_CANCER_EQ_REF,
-        "A",
-        "C"
-        );
+    checkCancer(
+      doNormalReads(3, DNARangeAT.C),
+      doReads(3, DNARangeAT.A),
+      EXPECT_CANCER_EQ_REF,
+      "A",
+      "C"
+    );
   }
 
-  protected static final String EXPECT_CANCER_EQ_NORMAL = (""
-      + "chr1 14 . A C . PASS RSS=5.5;NCS=55.2;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 1:3:0.293:0.000:55:0.00:6.51:0.00:0.00:C,3,0.293:0,3 1:3:0.293:0.000:65:0.00:6.51:0.00:0.00:C,3,0.293:0,3\n"
-      //      + "nc chr1 14 = A NONE 5.5 -5.5" + LS
-      //      + "A chr1 14 o A C 5.5 3 0.293 C 3 0.293" + LS
-      //      + "C chr1 14 o A C 6.5 3 0.293 C 3 0.293" + LS
-      ).replaceAll(" ", "\t");
+  protected static final String EXPECT_CANCER_EQ_NORMAL = "chr1\t14\t.\tA\tC\t.\tPASS\tNCS=55.2;DP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC\t1:3:0.293:0.000:55:0.00:6.51:0.00:0.00:C,3,0.293:0,3\t1:3:0.293:0.000:65:0.00:6.51:0.00:0.00:C,3,0.293:0,3:5.5\n";
 
   public void testCancerEqualsNormal() throws InvalidParamsException, IOException {
-    testCancer(
-        doNormalReads(3, DNARangeAT.C),
-        doReads(3, DNARangeAT.C),
-        EXPECT_CANCER_EQ_NORMAL,
-        "A",
-        "C"
-        );
+    checkCancer(
+      doNormalReads(3, DNARangeAT.C),
+      doReads(3, DNARangeAT.C),
+      EXPECT_CANCER_EQ_NORMAL,
+      "A",
+      "C"
+    );
   }
 
-  protected static final String EXPECT_ALL_DIFFERENT = (""
-      + "chr1 14 . A C,G . PASS SOMATIC=G;RSS=0.7;NCS=8.2;DP=6 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD 1:3:0.293:0.000:11:0.00:6.51:0.00:0.00:C,3,0.293:0,3,0 2:3:0.293:0.000:11:0.00:6.51:0.00:0.00:G,3,0.293:0,0,3\n"
-      //      + "nc chr1 14 / A G 0.7 0.8" + LS
-      //      + "A chr1 14 o A C 1.0 3 0.293 C 3 0.293" + LS
-      //      + "C chr1 14 o A G 1.1 3 0.293 G 3 0.293" + LS
-      ).replaceAll(" ", "\t");
+  protected static final String EXPECT_ALL_DIFFERENT = "chr1\t14\t.\tA\tC,G\t.\tPASS\tSOMATIC=G;NCS=8.2;DP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC\t1:3:0.293:0.000:11:0.00:6.51:0.00:0.00:C,3,0.293:0,3,0\t2:3:0.293:0.000:11:0.00:6.51:0.00:0.00:G,3,0.293:0,0,3:0.7\n";
 
   public void testAllDifferent() throws InvalidParamsException, IOException {
-    testCancer(
-        doNormalReads(3, DNARangeAT.C),
-        doReads(3, DNARangeAT.G),
-        EXPECT_ALL_DIFFERENT,
-        "A",
-        "C"
-        );
+    checkCancer(
+      doNormalReads(3, DNARangeAT.C),
+      doReads(3, DNARangeAT.G),
+      EXPECT_ALL_DIFFERENT,
+      "A",
+      "C"
+    );
   }
 
-  private void testCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect, String normalName, String cancerName) throws InvalidParamsException, IOException {
+  private void checkCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect, String normalName, String cancerName) throws InvalidParamsException, IOException {
     final int refNt = DNARange.A;
     final int refCode = refNt - 1;
     final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).create();

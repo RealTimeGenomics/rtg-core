@@ -84,7 +84,7 @@ public class SomaticCallerConfigurationTest extends TestCase {
         "##SAMPLE=<ID=cancer,Genomes=TEST;cancer,Mixture=0.30;0.70,Description=\"Original genome;Derived genome\">",
         "##PEDIGREE=<Derived=cancer,Original=TEST>",
         "##INFO=<ID=SOMATIC,Number=1,Type=String,Description=\"Indicates the variant is a somatic mutation\">",
-        "##INFO=<ID=RSS,Number=1,Type=Float,Description=\"RTG somatic call score\">");
+        "##FORMAT=<ID=SSC,Number=1,Type=Float,Description=\"Somatic score\">");
   }
 
 
