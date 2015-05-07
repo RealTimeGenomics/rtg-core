@@ -59,6 +59,7 @@ public class VcfMerge extends AbstractCli {
   private static final String OUTPUT_FLAG = "output";
   private static final String ADD_HEADER_FLAG = "add-header";
   private static final String FORCE_MERGE = "force-merge";
+  private static final String FORCE_MERGE_ALL = "force-merge-all";
   private static final String PRESERVE_FORMATS = "preserve-formats";
   private static final String STATS_FLAG = "stats";
 
@@ -74,7 +75,8 @@ public class VcfMerge extends AbstractCli {
       .setMinCount(1)
       .setMaxCount(Integer.MAX_VALUE)
       .setCategory(INPUT_OUTPUT);
-    final Flag forceMerge = mFlags.registerOptional(FORCE_MERGE, String.class, "STRING", "allow merging of specified header ID even when descriptions do not match").setCategory(CommonFlagCategories.UTILITY);
+    mFlags.registerOptional('F', FORCE_MERGE_ALL, "attempt merging of all non-matching header declarations").setCategory(UTILITY);
+    final Flag forceMerge = mFlags.registerOptional('f', FORCE_MERGE, String.class, "STRING", "allow merging of specified header ID even when descriptions do not match").setCategory(UTILITY);
     forceMerge.setMinCount(0);
     forceMerge.setMaxCount(Integer.MAX_VALUE);
     mFlags.registerOptional(PRESERVE_FORMATS, "if set, variants with different ALTs and unmergeable FORMAT fields will be kept unmerged (Default is to remove those FORMAT fields so the variants can be combined)").setCategory(UTILITY);
@@ -94,6 +96,9 @@ public class VcfMerge extends AbstractCli {
           flags.setParseMessage("The file \"" + output + "\" already exists. Please remove it first or choose a different file");
           return false;
         }
+      }
+      if (!flags.checkNand(FORCE_MERGE_ALL, FORCE_MERGE)) {
+        return false;
       }
       return true;
     }
@@ -120,10 +125,15 @@ public class VcfMerge extends AbstractCli {
         extraHeaderLines.add((String) o);
       }
     }
-    final List<Object> forceMergeRaw = mFlags.getValues(FORCE_MERGE);
-    final HashSet<String> forceMerge = new HashSet<>();
-    for (final Object o : forceMergeRaw) {
-      forceMerge.add((String) o);
+    final HashSet<String> forceMerge;
+    if (mFlags.isSet(FORCE_MERGE_ALL)) {
+      forceMerge = null;
+    } else {
+      final List<Object> forceMergeRaw = mFlags.getValues(FORCE_MERGE);
+      forceMerge = new HashSet<>();
+      for (final Object o : forceMergeRaw) {
+        forceMerge.add((String) o);
+      }
     }
     final boolean gzip = !mFlags.isSet(CommonFlags.NO_GZIP);
     final boolean index = !mFlags.isSet(CommonFlags.NO_INDEX);
@@ -196,7 +206,7 @@ public class VcfMerge extends AbstractCli {
     private int mCurrentRegion = 0;
     private final Set<Integer> mCurrentRecords = new HashSet<>();
 
-    public VcfPositionZipper(RegionRestriction rr, File... vcfFiles) throws IOException {
+    VcfPositionZipper(RegionRestriction rr, File... vcfFiles) throws IOException {
       this(rr, null, null, vcfFiles);
     }
     public VcfPositionZipper(RegionRestriction rr, String[] extraHeaderLines, Set<String> forceMerge, File... vcfFiles) throws IOException {

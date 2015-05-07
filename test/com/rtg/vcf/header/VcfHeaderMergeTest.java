@@ -11,8 +11,10 @@
  */
 package com.rtg.vcf.header;
 
+import java.util.Collections;
 import java.util.HashSet;
 
+import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
@@ -148,13 +150,10 @@ public class VcfHeaderMergeTest extends TestCase {
     b.addMetaInformationLine(FORMAT_META_LINE_1X);
     b.addMetaInformationLine(INFO_META_LINE_1X);
     try {
-      VcfHeaderMerge.mergeHeaders(a, b, null);
+      VcfHeaderMerge.mergeHeaders(a, b, Collections.<String>emptySet());
       fail();
     } catch (NoTalkbackSlimException e) {
-      assertTrue(e.getMessage().contains("Header line"));
-      assertTrue(e.getMessage().contains("incompatible"));
-      assertTrue(e.getMessage().contains("format_1"));
-      assertTrue(e.getMessage().contains("info_1"));
+      TestUtils.containsAll(e.getMessage(), "Header line", "incompatible", "format_1", "info_1");
     }
     a = new VcfHeader();
     a.addMetaInformationLine(VERSION_LINE);
@@ -163,12 +162,10 @@ public class VcfHeaderMergeTest extends TestCase {
     b.addMetaInformationLine(VERSION_LINE);
     b.addMetaInformationLine(INFO_META_LINE_1B);
     try {
-      VcfHeaderMerge.mergeHeaders(a, b, null);
+      VcfHeaderMerge.mergeHeaders(a, b, Collections.<String>emptySet());
       fail();
     } catch (NoTalkbackSlimException e) {
-      assertTrue(e.getMessage().contains("Header line"));
-      assertTrue(e.getMessage().contains("incompatible"));
-      assertTrue(e.getMessage().contains("info_1"));
+      TestUtils.containsAll(e.getMessage(), "Header line", "incompatible", "info_1");
     }
     a = new VcfHeader();
     a.addMetaInformationLine(VERSION_LINE);
@@ -177,14 +174,11 @@ public class VcfHeaderMergeTest extends TestCase {
     b.addMetaInformationLine(VERSION_LINE);
     b.addMetaInformationLine(FILTER_META_LINE_1X);
     try {
-      VcfHeaderMerge.mergeHeaders(a, b, null);
+      VcfHeaderMerge.mergeHeaders(a, b, Collections.<String>emptySet());
       fail();
     } catch (NoTalkbackSlimException e) {
-      assertTrue(e.getMessage().contains("Header line"));
-      assertTrue(e.getMessage().contains("incompatible"));
-      assertTrue(e.getMessage().contains("filter_1"));
+      TestUtils.containsAll(e.getMessage(), "Header line", "incompatible", "filter_1");
     }
-
   }
 
   public void testForce() {
@@ -198,15 +192,26 @@ public class VcfHeaderMergeTest extends TestCase {
     b.addMetaInformationLine(FORMAT_META_LINE_1X);
     b.addMetaInformationLine(INFO_META_LINE_1X);
     b.addSampleName("sample");
-    final HashSet<String> forceMerge = new HashSet<>();
-    forceMerge.add("format_1");
-    forceMerge.add("info_1");
     final String exp = VERSION_LINE + "\n"
             + INFO_META_LINE_1 + "\n"
             + FORMAT_META_LINE_1 + "\n"
             + VcfHeader.HEADER_LINE + "\tsample\n";
-    final VcfHeader c = VcfHeaderMerge.mergeHeaders(a, b, forceMerge);
+    final VcfHeader c = VcfHeaderMerge.mergeHeaders(a, b, null);
     assertEquals(exp, c.toString());
+
+    final HashSet<String> forceMerge = new HashSet<>();
+    forceMerge.add("format_1");
+    try {
+      VcfHeaderMerge.mergeHeaders(a, b, forceMerge);
+      fail();
+    } catch (NoTalkbackSlimException e) {
+      TestUtils.containsAll(e.getMessage(), "Header line", "incompatible", "info_1");
+    }
+
+    forceMerge.add("info_1");
+    final VcfHeader d = VcfHeaderMerge.mergeHeaders(a, b, forceMerge);
+    assertEquals(exp, d.toString());
+
   }
 
 }

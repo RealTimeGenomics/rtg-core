@@ -39,7 +39,7 @@ public final class VcfHeaderMerge {
    * The header line itself will contain the first headers samples, followed by the second headers unique samples
    * @param first first header
    * @param second second header
-   * @param forceMerge set of header IDs we should force merge
+   * @param forceMerge set of header IDs we should force merge, supply empty set to merge none, or null to force merge all.
    * @return merged header
    */
   public static VcfHeader mergeHeaders(VcfHeader first, VcfHeader second, Set<String> forceMerge) {
@@ -114,7 +114,7 @@ public final class VcfHeaderMerge {
       if (secondVal != null) {
         final T superSet = t.superSet(secondVal);
         if (superSet == null) {
-          if (forceMerge == null || !forceMerge.contains(t.getId())) {
+          if (forceMerge != null && !forceMerge.contains(t.getId())) {
             errors.add("Header line: " + StringUtils.LS + t.toString() + StringUtils.LS + "is incompatible with" + StringUtils.LS + secondVal.toString());
           } else {
             ret.add(t);
