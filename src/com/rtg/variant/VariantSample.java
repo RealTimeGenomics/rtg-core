@@ -277,6 +277,17 @@ public class VariantSample {
     return getDoubleInfoHelper(VariantFormatEnum.HOEFFDING_READ_POSITION);
   }
 
+  /**
+   * @param val somatic score
+   */
+  public void setSomaticScore(Double val) {
+    setDoubleInfoHelper(VariantFormatEnum.SOMATIC_SCORE, val);
+  }
+
+  public Double getSomaticScore() {
+    return getDoubleInfoHelper(VariantFormatEnum.SOMATIC_SCORE);
+  }
+
   public String getStatisticsString() {
     return mInfo[VariantFormatEnum.STATISTICS.ordinal()] == null ? null : mInfo[VariantFormatEnum.STATISTICS.ordinal()].stringValue();
   }

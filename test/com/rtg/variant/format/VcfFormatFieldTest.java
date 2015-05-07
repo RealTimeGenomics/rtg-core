@@ -46,7 +46,7 @@ import junit.framework.TestCase;
 public class VcfFormatFieldTest extends TestCase {
 
   public void testEnum() {
-    TestUtils.testEnum(VcfFormatField.class, "[GT, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, PUR, RS, AD, GL, GQD, ZY, PD]");
+    TestUtils.testEnum(VcfFormatField.class, "[GT, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, PUR, RS, AD, SSC, GL, GQD, ZY, PD]");
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.AD)) {
       assertFalse(field.isVcfAnnotator());
     }
@@ -62,28 +62,29 @@ public class VcfFormatFieldTest extends TestCase {
       field.updateHeader(header);
     }
     final String expected = ""
-        + "##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n"
-        + "##FORMAT=<ID=DP,Number=1,Type=Integer,Description=\"Read Depth\">\n"
-        + "##FORMAT=<ID=DPR,Number=1,Type=Float,Description=\"Ratio of read depth to expected read depth\">\n"
-        + "##FORMAT=<ID=RE,Number=1,Type=Float,Description=\"RTG Total Error\">\n"
-        + "##FORMAT=<ID=AR,Number=1,Type=Float,Description=\"Ambiguity Ratio\">\n"
-        + "##FORMAT=<ID=RQ,Number=1,Type=Float,Description=\"RTG sample quality\">\n"
-        + "##FORMAT=<ID=GQ,Number=1,Type=Integer,Description=\"Genotype Quality\">\n"
-        + "##FORMAT=<ID=RP,Number=1,Type=Float,Description=\"RTG Posterior\">\n"
-        + "##FORMAT=<ID=DN,Number=1,Type=Character,Description=\"Indicates whether call is a putative de novo mutation\">\n"
-        + "##FORMAT=<ID=DNP,Number=1,Type=Float,Description=\"Phred scaled probability that the call is due to a de novo mutation\">\n"
-        + "##FORMAT=<ID=ABP,Number=1,Type=Float,Description=\"Phred scaled probability that allele imbalance is present\">\n"
-        + "##FORMAT=<ID=SBP,Number=1,Type=Float,Description=\"Phred scaled probability that strand bias is present\">\n"
-        + "##FORMAT=<ID=RPB,Number=1,Type=Float,Description=\"Phred scaled probability that read position bias is present\">\n"
-        + "##FORMAT=<ID=PPB,Number=1,Type=Float,Description=\"Phred scaled probability that there is a bias in the proportion of alignments that are properly paired\">\n"
-        + "##FORMAT=<ID=PUR,Number=1,Type=Float,Description=\"Ratio of placed unmapped reads to mapped reads\">\n"
-        + "##FORMAT=<ID=RS,Number=.,Type=String,Description=\"RTG Support Statistics\">\n"
-        + "##FORMAT=<ID=AD,Number=.,Type=Integer,Description=\"Allelic depths for the ref and alt alleles in the order listed\">\n"
-        + "##FORMAT=<ID=GL,Number=G,Type=Float,Description=\"Log_10 scaled genotype likelihoods. As defined in VCF specifications\">\n"
-        + "##FORMAT=<ID=GQD,Number=1,Type=Float,Description=\"GQ / DP for a single sample\">\n"
-        + "##FORMAT=<ID=ZY,Number=1,Type=String,Description=\"Zygosity of sample. 'e'=>heterozygous, 'o'=>homozygous\">\n"
-        + "##FORMAT=<ID=PD,Number=1,Type=String,Description=\"Ploidy of sample. 'h'=>haploid, 'd'=>diploid\">\n"
-        + "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n";
+      + "##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n"
+      + "##FORMAT=<ID=DP,Number=1,Type=Integer,Description=\"Read Depth\">\n"
+      + "##FORMAT=<ID=DPR,Number=1,Type=Float,Description=\"Ratio of read depth to expected read depth\">\n"
+      + "##FORMAT=<ID=RE,Number=1,Type=Float,Description=\"RTG Total Error\">\n"
+      + "##FORMAT=<ID=AR,Number=1,Type=Float,Description=\"Ambiguity Ratio\">\n"
+      + "##FORMAT=<ID=RQ,Number=1,Type=Float,Description=\"RTG sample quality\">\n"
+      + "##FORMAT=<ID=GQ,Number=1,Type=Integer,Description=\"Genotype Quality\">\n"
+      + "##FORMAT=<ID=RP,Number=1,Type=Float,Description=\"RTG Posterior\">\n"
+      + "##FORMAT=<ID=DN,Number=1,Type=Character,Description=\"Indicates whether call is a putative de novo mutation\">\n"
+      + "##FORMAT=<ID=DNP,Number=1,Type=Float,Description=\"Phred scaled probability that the call is due to a de novo mutation\">\n"
+      + "##FORMAT=<ID=ABP,Number=1,Type=Float,Description=\"Phred scaled probability that allele imbalance is present\">\n"
+      + "##FORMAT=<ID=SBP,Number=1,Type=Float,Description=\"Phred scaled probability that strand bias is present\">\n"
+      + "##FORMAT=<ID=RPB,Number=1,Type=Float,Description=\"Phred scaled probability that read position bias is present\">\n"
+      + "##FORMAT=<ID=PPB,Number=1,Type=Float,Description=\"Phred scaled probability that there is a bias in the proportion of alignments that are properly paired\">\n"
+      + "##FORMAT=<ID=PUR,Number=1,Type=Float,Description=\"Ratio of placed unmapped reads to mapped reads\">\n"
+      + "##FORMAT=<ID=RS,Number=.,Type=String,Description=\"RTG Support Statistics\">\n"
+      + "##FORMAT=<ID=AD,Number=.,Type=Integer,Description=\"Allelic depths for the ref and alt alleles in the order listed\">\n"
+      + "##FORMAT=<ID=SSC,Number=1,Type=Float,Description=\"Somatic score\">\n"
+      + "##FORMAT=<ID=GL,Number=G,Type=Float,Description=\"Log_10 scaled genotype likelihoods. As defined in VCF specifications\">\n"
+      + "##FORMAT=<ID=GQD,Number=1,Type=Float,Description=\"GQ / DP for a single sample\">\n"
+      + "##FORMAT=<ID=ZY,Number=1,Type=String,Description=\"Zygosity of sample. 'e'=>heterozygous, 'o'=>homozygous\">\n"
+      + "##FORMAT=<ID=PD,Number=1,Type=String,Description=\"Ploidy of sample. 'h'=>haploid, 'd'=>diploid\">\n"
+      + "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n";
 
     assertEquals(expected, header.toString());
   }
@@ -181,6 +182,7 @@ public class VcfFormatFieldTest extends TestCase {
     sample.setStats(new StatisticsSnp(DescriptionSnp.SINGLETON));
     sample.setStatisticsString("Q");
     sample.setPlacedUnmappedRatio(0.42);
+    sample.setSomaticScore(17.0);
     Map<Set<String>, Double> like = new HashMap<>();
     like.put(Collections.singleton("A"), 0.2);
     like.put(VariantSample.pairSet("G", "A"), 0.5);
@@ -193,8 +195,8 @@ public class VcfFormatFieldTest extends TestCase {
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
-
-    assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:4.00:1.00:5.00:0.50:0.42:Q:0,0:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
+    System.out.println(sample.getSomaticScore());
+    assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:4.00:1.00:5.00:0.50:0.42:Q:0,0:7.4:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
 
     sample.setHoeffdingAlleleBalanceHom(3.0);
     rec = new VcfRecord();
@@ -203,7 +205,7 @@ public class VcfFormatFieldTest extends TestCase {
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
-    assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:3.00:1.00:5.00:0.50:0.42:Q:0,0:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
+    assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:3.00:1.00:5.00:0.50:0.42:Q:0,0:7.4:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
 
     rec = new VcfRecord();
     rec.setRefCall("A");
@@ -213,7 +215,7 @@ public class VcfFormatFieldTest extends TestCase {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
 
-    assertEquals("null\t0\t.\tA\t.\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:GL:GQD:ZY:PD\t.", rec.toString());
+    assertEquals("null\t0\t.\tA\t.\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t.", rec.toString());
 
     call = new Variant(new VariantLocus("ref", 2, 3, "A", 'G'), sample);
     call.addFilter(VariantFilter.FAILED_COMPLEX);
@@ -225,7 +227,7 @@ public class VcfFormatFieldTest extends TestCase {
     }
 
     // This is a bit dumb the final 3 format fields haven't been populated not entirely sure why
-    assertEquals("null\t0\t.\tA\t.\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:GL:GQD:ZY:PD\t./.:10:14.286:5.500:5.000:10.4:.:.:.:43:3.00:1.00:5.00:0.50:0.42:Q:0:0.00", rec.toString());
+    assertEquals("null\t0\t.\tA\t.\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t./.:10:14.286:5.500:5.000:10.4:.:.:.:43:3.00:1.00:5.00:0.50:0.42:Q:0:7.4:0.00", rec.toString());
   }
 
   public void testDenovoUpdateRecord() {

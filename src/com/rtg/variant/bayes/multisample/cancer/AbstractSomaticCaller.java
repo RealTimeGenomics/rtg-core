@@ -258,7 +258,8 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       v.addFilter(VariantFilter.AMBIGUITY);
     }
     v.setPossibleCause(cause);
-    v.setPossibleCauseScore(ratio);
+    v.setPossibleCauseScore(ratio); // todo deprecate this
+    cancerSample.setSomaticScore(ratio);
     if (doLoh) {
       v.setLoh(loh);
     }

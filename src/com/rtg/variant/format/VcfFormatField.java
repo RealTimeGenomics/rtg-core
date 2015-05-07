@@ -367,6 +367,24 @@ public enum VcfFormatField {
       return sample != null && sample.getStats() != null;
     }
   },
+  /** Somatic Score */
+  SSC {
+    // Note TCGA VCF 1.2 spec defines this to be an integer 0-255, but that is pretty weak in terms of resolution
+    @Override
+    public void updateHeader(VcfHeader header) {
+      header.addFormatField(name(), MetaType.FLOAT, new VcfNumber("1"), "Somatic score");
+    }
+    @Override
+    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      if (sample.getSomaticScore() != null) {
+        rec.addFormatAndSample(name(), VariantUtils.formatPosterior(sample.getSomaticScore()));
+      }
+    }
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return sample != null && sample.getSomaticScore() != null;
+    }
+  },
 
   // NOTE: VcfAnnotators (derived attributes) below here, non-derived above (convention is to have derived fields after non-derived)
   /** Genotype likelihood field (see VCF spec)  */

@@ -47,7 +47,9 @@ public class VariantSampleInfo {
     /** bound on probability from total unmated/mated ratio, for allele 2 */
     HOEFFDING_UNMATED_BIAS_A2,
     /** Ratio of placed unmapped reads to mapped reads */
-    UNPLACED_RATIO
+    UNPLACED_RATIO,
+    /** Somatic score */
+    SOMATIC_SCORE
   }
 
   private Double mDoubleVal;
