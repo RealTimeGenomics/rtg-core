@@ -29,7 +29,9 @@ import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.util.StringUtils;
 import com.rtg.util.ThreadAware;
+import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
+import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.annotation.DerivedAnnotations;
@@ -80,6 +82,15 @@ public class BuilderCli extends AbstractCli {
     CommonFlags.initThreadsFlag(mFlags);
     mFlags.registerOptional(X_MODEL_TYPE_FLAG, ModelType.class, "TYPE", "specify the type of AVR model to build", ModelType.ML).setCategory(UTILITY);
     mFlags.registerOptional(X_DUMP_MODEL_FLAG, "dump model contents").setCategory(INPUT_OUTPUT);
+    mFlags.setValidator(new Validator() {
+      @Override
+      public boolean isValid(CFlags flags) {
+        if (!flags.checkOr(INFO_ANNOTATIONS_FLAG, FORMAT_ANNOTATIONS_FLAG, QUAL_ANNOTATION_FLAG, DERIVED_ANNOTATIONS_FLAG)) {
+          return false;
+        }
+        return true;
+      }
+    });
   }
 
 

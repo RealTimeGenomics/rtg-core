@@ -30,6 +30,7 @@ public class Dataset {
    * @param attr attributes
    */
   public Dataset(final Attribute... attr) {
+    assert attr.length > 0;
     mAttr = attr;
   }
 

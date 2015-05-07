@@ -12,47 +12,31 @@
 package com.rtg.vcf;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
+import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.AbstractCliTest;
 import com.rtg.tabix.TabixIndexer;
-import com.rtg.tabix.UnindexableDataException;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.StringUtils;
-import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
-import com.rtg.variant.VariantStatistics;
 import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
 import com.rtg.vcf.header.VcfNumber;
 
-import junit.framework.TestCase;
-
 /**
  * Test class
  */
-public class VcfMergeTest extends TestCase {
-
-  private NanoRegression mNano;
+public class VcfMergeTest extends AbstractCliTest {
 
   @Override
-  public void setUp() {
-    Diagnostic.setLogStream();
-    mNano = new NanoRegression(VcfMergeTest.class);
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
+  protected AbstractCli getCli() {
+    return new VcfMerge();
   }
 
   private static final VcfHeader MINIMAL_HEADER;
@@ -77,31 +61,12 @@ public class VcfMergeTest extends TestCase {
     HEADER2.addSampleName("%1$s");
   }
 
-  private static final String VCF_RECORD_FORMAT = "%1$s\t%2$d\t.\t%3$s\t%4$s\t.\tPASS\t%7$s\tGT\t%5$d/%6$d";
-
-  private static String createRecord(String chrom, int pos, String ref, int gt1, int gt2, String info, String... alts) {
-    final String altsStr = StringUtils.implode(alts, ",", false);
-    return String.format(VCF_RECORD_FORMAT, chrom, pos, ref, altsStr, gt1, gt2, info);
-  }
-  private static final String FILE1 = String.format(MINIMAL_HEADER.toString(), "sample1")
-            + createRecord("chr2", 100, "A", 1, 1, ".", "C") + "\n"
-            + createRecord("chr2", 200, "A", 1, 1, ".", "C") + "\n"
-            + createRecord("chr3", 300, "A", 1, 1, ".", "C") + "\n"
-            + createRecord("chr3", 500, "A", 1, 1, ".", "C") + "\n";
-  private static final String FILE2 = String.format(MINIMAL_HEADER.toString(), "sample2")
-            + createRecord("chr3", 200, "A", 1, 1, ".", "G") + "\n"
-            + createRecord("chr3", 500, "A", 1, 1, ".", "G") + "\n"
-            + createRecord("chr2", 100, "A", 1, 1, ".", "G") + "\n"
-            + createRecord("chr2", 900, "A", 1, 1, ".", "G") + "\n";
-  private static final String FILE3 = String.format(HEADER2.toString(), "sample3")
-      + createRecord("chr3", 200, "A", 1, 1, ".", "G") + "\n"
-      + createRecord("chr3", 500, "A", 1, 1, "XRX", "G") + "\n"
-      + createRecord("chr2", 100, "A", 1, 1, "RCE", "G") + "\n"
-      + createRecord("chr2", 900, "A", 1, 1, "CT=123", "G") + "\n";
   public void testZipper() throws Exception {
+    final String resourcea = "vcfmerge-f1.vcf";
+    final String resourceb = "vcfmerge-f2.vcf";
     try (final TestDirectory dir = new TestDirectory("vcfmerge")) {
-      final File f1 = BgzipFileHelper.bytesToBgzipFile(FILE1.getBytes(), new File(dir, "file1.vcf.gz"));
-      final File f2 = BgzipFileHelper.bytesToBgzipFile(FILE2.getBytes(), new File(dir, "file2.vcf.gz"));
+      final File f1 = BgzipFileHelper.bytesToBgzipFile(FileHelper.resourceToString("com/rtg/vcf/resources/" + resourcea).getBytes(), new File(dir, "fileA.vcf.gz"));
+      final File f2 = BgzipFileHelper.bytesToBgzipFile(FileHelper.resourceToString("com/rtg/vcf/resources/" + resourceb).getBytes(), new File(dir, "fileB.vcf.gz"));
       new TabixIndexer(f1, TabixIndexer.indexFileName(f1)).saveVcfIndex();
       new TabixIndexer(f2, TabixIndexer.indexFileName(f2)).saveVcfIndex();
 
@@ -140,52 +105,6 @@ public class VcfMergeTest extends TestCase {
       } finally {
         zipper.close();
       }
-    }
-  }
-
-  public void testMerge() throws Exception {
-    try (final TestDirectory dir = new TestDirectory("vcfmerge")) {
-      final File f1 = BgzipFileHelper.bytesToBgzipFile(FILE1.getBytes(), new File(dir, "file1.vcf.gz"));
-      final File f2 = BgzipFileHelper.bytesToBgzipFile(FILE2.getBytes(), new File(dir, "file2.vcf.gz"));
-      new TabixIndexer(f1, TabixIndexer.indexFileName(f1)).saveVcfIndex();
-      new TabixIndexer(f2, TabixIndexer.indexFileName(f2)).saveVcfIndex();
-      final File output = new File(dir, "out.vcf");
-      VcfMerge.mergeVcfFiles(null, output, false, false, null, new String[]{"##extraline=foo", "##extraline2=bar" }, null, false, f1, f2);
-      String actual = FileUtils.fileToString(output);
-      actual = StringUtils.grepMinusV(actual, "^##(RUN-ID)|(CL)").replaceAll("[\r\n]+", "\n");
-      mNano.check("vcfmerge_testMerge.vcf", actual, false);
-    }
-  }
-
-  public void testMergeFileOrderReversed() throws Exception {
-    try (final TestDirectory dir = new TestDirectory("vcfmerge")) {
-      final File f2 = BgzipFileHelper.bytesToBgzipFile(FILE1.getBytes(), new File(dir, "file1.vcf.gz"));
-      final File f1 = BgzipFileHelper.bytesToBgzipFile(FILE2.getBytes(), new File(dir, "file2.vcf.gz"));
-      new TabixIndexer(f1, TabixIndexer.indexFileName(f1)).saveVcfIndex();
-      new TabixIndexer(f2, TabixIndexer.indexFileName(f2)).saveVcfIndex();
-      final File output = new File(dir, "out.vcf");
-      final VariantStatistics stats = new VariantStatistics(null);
-      VcfMerge.mergeVcfFiles(null, output, true, true, stats, new String[]{"##extraline=foo", "##extraline2=bar" }, null, false, f1, f2);
-      String actual = FileHelper.gzFileToString(new File(dir, "out.vcf.gz"));
-      actual = StringUtils.grepMinusV(actual, "^##(RUN-ID)|(CL)").replaceAll("[\r\n]+", "\n");
-      assertTrue(new File(dir, "out.vcf.gz.tbi").isFile());
-      mNano.check("vcfmerge_testMerge_1.vcf", actual, false);
-      final MemoryPrintStream ps = new MemoryPrintStream();
-      stats.printStatistics(ps.outputStream());
-      mNano.check("vcfmerge_stats.txt", ps.toString());
-    }
-  }
-
-
-  public void testSingleFileMerge() throws Exception {
-    try (final TestDirectory dir = new TestDirectory("vcfmerge")) {
-      final File f1 = BgzipFileHelper.bytesToBgzipFile(FILE3.getBytes(), new File(dir, "file1.vcf.gz"));
-      new TabixIndexer(f1, TabixIndexer.indexFileName(f1)).saveVcfIndex();
-      final File output = new File(dir, "out.vcf");
-      VcfMerge.mergeVcfFiles(null, output, false, false, null, new String[]{"##extraline=foo", "##extraline2=bar" }, null, false, f1);
-      String actual = FileUtils.fileToString(output);
-      actual = StringUtils.grepMinusV(actual, "^##(RUN-ID)|(CL)").replaceAll("[\r\n]+", "\n");
-      mNano.check("vcfmerge_testSingle.vcf", actual, false);
     }
   }
 
@@ -266,59 +185,82 @@ public class VcfMergeTest extends TestCase {
       actual = StringUtils.grepMinusV(actual, "^##(RUN-ID)|(CL)").replaceAll("[\r\n]+", "\n");
       mNano.check("vcfmerge_testSamePos.vcf", actual, false);
     }
-
   }
 
-  public void testMergingVariableNumberFormats() throws IOException, UnindexableDataException {
-    try (final TestDirectory dir = new TestDirectory()) {
-      final File snpsA = BgzipFileHelper.bytesToBgzipFile(FileHelper.resourceToString("com/rtg/vcf/resources/snpsA.vcf").getBytes(), new File(dir, "snpsA.vcf.gz"));
-      new TabixIndexer(snpsA, TabixIndexer.indexFileName(snpsA)).saveVcfIndex();
-      final File snpsB = BgzipFileHelper.bytesToBgzipFile(FileHelper.resourceToString("com/rtg/vcf/resources/snpsB.vcf").getBytes(), new File(dir, "snpsB.vcf.gz"));
-      new TabixIndexer(snpsB, TabixIndexer.indexFileName(snpsB)).saveVcfIndex();
-      final File outFile = new File(dir, "test.vcf");
-      VcfMerge.mergeVcfFiles(null, outFile, false, false, null, new String[]{}, null, true, snpsA, snpsB);
-      String actual = FileUtils.fileToString(outFile);
+
+  public void testSingleFileMerge() throws Exception {
+    final String resourcea = "vcfmerge-f3.vcf";
+    try (final TestDirectory dir = new TestDirectory("vcfmerge")) {
+      final File f1 = BgzipFileHelper.bytesToBgzipFile(FileHelper.resourceToString("com/rtg/vcf/resources/" + resourcea).getBytes(), new File(dir, "fileA.vcf.gz"));
+      new TabixIndexer(f1, TabixIndexer.indexFileName(f1)).saveVcfIndex();
+      final File output = new File(dir, "out.vcf");
+      VcfMerge.mergeVcfFiles(null, output, false, false, null, new String[]{"##extraline=foo", "##extraline2=bar" }, null, false, f1);
+      String actual = FileUtils.fileToString(output);
       actual = StringUtils.grepMinusV(actual, "^##(RUN-ID)|(CL)").replaceAll("[\r\n]+", "\n");
-      mNano.check("mergedAB.vcf", actual, false);
+      mNano.check("vcfmerge_testSingle.vcf", actual, false);
     }
+  }
+
+  public void checkMerge(String id, String resourcea, String resourceb, String... argsIn) throws Exception {
+    try (final TestDirectory dir = new TestDirectory("vcfmerge")) {
+      final File snpsA = BgzipFileHelper.bytesToBgzipFile(FileHelper.resourceToString("com/rtg/vcf/resources/" + resourcea).getBytes(), new File(dir, "fileA.vcf.gz"));
+      new TabixIndexer(snpsA, TabixIndexer.indexFileName(snpsA)).saveVcfIndex();
+      final File snpsB = BgzipFileHelper.bytesToBgzipFile(FileHelper.resourceToString("com/rtg/vcf/resources/" + resourceb).getBytes(), new File(dir, "fileB.vcf.gz"));
+      new TabixIndexer(snpsB, TabixIndexer.indexFileName(snpsB)).saveVcfIndex();
+      final File output = new File(dir, "out.vcf.gz");
+      final List<String> args = new ArrayList<>();
+      args.addAll(Arrays.asList("-o", output.toString(),
+        "--stats",
+        snpsA.toString(), snpsB.toString()));
+      args.addAll(Arrays.asList(argsIn));
+      final String out = checkMainInit(args.toArray(new String[args.size()])).getA();
+      String actual = FileHelper.gzFileToString(output);
+      actual = StringUtils.grepMinusV(actual, "^##(RUN-ID)|(CL)").replaceAll("[\r\n]+", "\n");
+      assertTrue(new File(dir, output.getName() + ".tbi").isFile());
+      mNano.check("vcfmerge_out_" + id + ".vcf", actual, false);
+      mNano.check("vcfmerge_stats_" + id + ".txt", out);
+    }
+  }
+
+  public void testMerge() throws Exception {
+    checkMerge("simple", "vcfmerge-f1.vcf", "vcfmerge-f2.vcf",
+      "-a", "##extraline=foo",
+      "-a", "##extraline2=bar");
+  }
+
+  public void testMergeFileOrderReversed() throws Exception {
+    checkMerge("simple-rev", "vcfmerge-f2.vcf", "vcfmerge-f1.vcf",
+      "-a", "##extraline=foo",
+      "-a", "##extraline2=bar");
+  }
+
+  public void testMergingVariableNumberFormats() throws Exception {
+    checkMerge("numberformats", "snpsA.vcf", "snpsB.vcf", "--preserve-formats");
   }
 
   public void testMergeDrop() throws Exception {
-    try (final TestDirectory dir = new TestDirectory("vcfmerge")) {
-      final File snpsA = BgzipFileHelper.bytesToBgzipFile(FileHelper.resourceToString("com/rtg/vcf/resources/vcfmerge-na12889.vcf").getBytes(), new File(dir, "na12889.vcf.gz"));
-      new TabixIndexer(snpsA, TabixIndexer.indexFileName(snpsA)).saveVcfIndex();
-      final File snpsB = BgzipFileHelper.bytesToBgzipFile(FileHelper.resourceToString("com/rtg/vcf/resources/vcfmerge-na12880.vcf").getBytes(), new File(dir, "na12880.vcf.gz"));
-      new TabixIndexer(snpsB, TabixIndexer.indexFileName(snpsB)).saveVcfIndex();
-      final File output = new File(dir, "out.vcf");
-      final VariantStatistics stats = new VariantStatistics(null);
-      VcfMerge.mergeVcfFiles(null, output, true, true, stats, new String[]{"##extraline=foo", "##extraline2=bar" }, null, false, snpsA, snpsB);
-      String actual = FileHelper.gzFileToString(new File(dir, "out.vcf.gz"));
-      actual = StringUtils.grepMinusV(actual, "^##(RUN-ID)|(CL)").replaceAll("[\r\n]+", "\n");
-      assertTrue(new File(dir, "out.vcf.gz.tbi").isFile());
-      mNano.check("vcfmerge_testMerge_drop.vcf", actual, false);
-      final MemoryPrintStream ps = new MemoryPrintStream();
-      stats.printStatistics(ps.outputStream());
-      mNano.check("vcfmerge_stats_drop.txt", ps.toString());
-    }
+    checkMerge("drop", "vcfmerge-na12889.vcf", "vcfmerge-na12880.vcf",
+      "-a", "##extraline=foo",
+      "-a", "##extraline2=bar");
   }
 
   public void testMergePreserve() throws Exception {
-    try (final TestDirectory dir = new TestDirectory("vcfmerge")) {
-      final File snpsA = BgzipFileHelper.bytesToBgzipFile(FileHelper.resourceToString("com/rtg/vcf/resources/vcfmerge-na12889.vcf").getBytes(), new File(dir, "na12889.vcf.gz"));
-      new TabixIndexer(snpsA, TabixIndexer.indexFileName(snpsA)).saveVcfIndex();
-      final File snpsB = BgzipFileHelper.bytesToBgzipFile(FileHelper.resourceToString("com/rtg/vcf/resources/vcfmerge-na12880.vcf").getBytes(), new File(dir, "na12880.vcf.gz"));
-      new TabixIndexer(snpsB, TabixIndexer.indexFileName(snpsB)).saveVcfIndex();
-      final File output = new File(dir, "out.vcf");
-      final VariantStatistics stats = new VariantStatistics(null);
-      VcfMerge.mergeVcfFiles(null, output, true, true, stats, new String[]{"##extraline=foo", "##extraline2=bar" }, null, true, snpsA, snpsB);
-      String actual = FileHelper.gzFileToString(new File(dir, "out.vcf.gz"));
-      actual = StringUtils.grepMinusV(actual, "^##(RUN-ID)|(CL)").replaceAll("[\r\n]+", "\n");
-      assertTrue(new File(dir, "out.vcf.gz.tbi").isFile());
-      mNano.check("vcfmerge_testMerge_preserve.vcf", actual, false);
-      final MemoryPrintStream ps = new MemoryPrintStream();
-      stats.printStatistics(ps.outputStream());
-      mNano.check("vcfmerge_stats_preserve.txt", ps.toString());
-    }
+    checkMerge("preserve", "vcfmerge-na12889.vcf", "vcfmerge-na12880.vcf",
+      "-a", "##extraline=foo",
+      "-a", "##extraline2=bar", "--preserve-formats");
   }
 
+  public void testForce1() throws Exception {
+    checkMerge("force1", "vcfmerge-f1.vcf", "vcfmerge-f3.vcf",
+      "--force-merge", "GT");
+  }
+
+  public void testForceAll() throws Exception {
+    checkMerge("force-all", "vcfmerge-f1.vcf", "vcfmerge-f3.vcf",
+      "--force-merge-all");
+  }
+
+  public void testFlags() {
+    checkMainInitBadFlags("-f", "-F");
+  }
 }

@@ -68,6 +68,7 @@ public class AttributeExtractor {
   private final Attribute[] mAttributes;
 
   private AttributeExtractor(int numAnnotations) {
+    assert numAnnotations > 0;
     mAnnotations = new Annotation[numAnnotations];
     mMissingValueCounts = new long[numAnnotations];
     mAttributes = new Attribute[numAnnotations];
@@ -78,6 +79,7 @@ public class AttributeExtractor {
    * @param annotations annotations to process
    */
   public AttributeExtractor(Annotation... annotations) {
+    assert annotations.length > 0;
     final TreeSet<Annotation> set = new TreeSet<>(new Comparator<Annotation>() {
       @Override
       public int compare(Annotation o1, Annotation o2) {
@@ -149,7 +151,6 @@ public class AttributeExtractor {
    * @return a dataset with attributes set up.
    */
   Dataset getDataset() {
-
     return new Dataset(mAttributes);
   }
 

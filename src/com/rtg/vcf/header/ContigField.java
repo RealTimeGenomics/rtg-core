@@ -46,15 +46,39 @@ public class ContigField implements IdField<ContigField> {
     mValues = temp;
   }
 
+  ContigField(String id, Integer length) {
+    mId = id;
+    mLength = length;
+    mValues = new LinkedHashMap<>();
+  }
+
   @Override
   public boolean equals(Object obj) {
     if (!(obj instanceof ContigField)) {
       return false;
     }
     final ContigField other = (ContigField) obj;
-    return mId.equals(other.mId) && mValues.equals(other.mValues)
-      && ((mLength == null && other.mLength == null)
-          || (mLength != null && mLength.equals(other.mLength)));
+    return mostlyEquals(other)
+      && ((mLength == null) == (other.mLength == null))
+      && (mLength == null || mLength.equals(other.mLength))
+      && mValues.equals(other.mValues);
+  }
+
+  // True if no conflicting fields preventing merge
+  private boolean mostlyEquals(ContigField other) {
+    if (!mId.equals(other.mId)) {
+      return false;
+    }
+    if (mLength != null && other.mLength != null && !mLength.equals(other.mLength)) {
+      return false;
+    }
+    for (Map.Entry<String, String> entry : mValues.entrySet()) {
+      final String val = other.mValues.get(entry.getKey());
+      if (val != null && !val.equals(entry.getValue())) {
+        return false;
+      }
+    }
+    return true;
   }
 
   @Override
@@ -64,7 +88,16 @@ public class ContigField implements IdField<ContigField> {
 
   @Override
   public ContigField superSet(ContigField other) {
-    return equals(other) ? this : null;
+    if (!mostlyEquals(other)) {
+      return null;
+    }
+    if (equals(other)) {
+      return this;
+    }
+    final ContigField result = new ContigField(mId, mLength != null ? mLength : other.mLength);
+    result.mValues.putAll(mValues);
+    result.mValues.putAll(other.mValues);
+    return result;
   }
 
   /**

@@ -33,5 +33,19 @@ public class ContigFieldTest extends TestCase {
     assertEquals(f2, f2.superSet(f2));
     assertNull(f.superSet(f2));
     assertNull(f2.superSet(f));
+
+    final String io3 = "##contig=<ID=yo,assembly=b37>";
+    final ContigField f3 = new ContigField(io3);
+    assertEquals(io3, f3.toString());
+    assertEquals("yo", f3.getId());
+    assertEquals(null, f3.getLength());
+    assertEquals(f3, f3.superSet(f3));
+    assertNull(f2.superSet(f3));
+    final ContigField f4 = f.superSet(f3);
+    assertEquals("yo", f4.getId());
+    assertEquals(Integer.valueOf(20), f4.getLength());
+    assertEquals("##contig=<ID=yo,length=20,assembly=b37>", f4.toString());
+    final ContigField f5 = f3.superSet(f);
+    assertEquals(f4, f5);
   }
 }
