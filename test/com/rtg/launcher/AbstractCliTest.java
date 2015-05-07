@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringWriter;
 
+import com.rtg.util.Pair;
 import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommandLine;
@@ -131,19 +132,32 @@ public abstract class AbstractCliTest extends TestCase {
 
   /**
    * Runs the main method of the cli class under the assumption that
+   * it should run with return code 0.
+   *
+   * @param args command line arguments.
+   * @return a pair containing the contents of stdout and stderr, respectively.
+   */
+  protected Pair<String, String> checkMainInit(String... args) {
+    final ByteArrayOutputStream out = new ByteArrayOutputStream();
+    final MemoryPrintStream err = new MemoryPrintStream();
+    final int rc = mCli.mainInit(args, out, err.printStream());
+    assertNotNull(mCli.mMainListener);
+    assertEquals(err.toString(), 0, rc);
+    return new Pair<>(out.toString(), err.toString());
+  }
+
+  /**
+   * Runs the main method of the cli class under the assumption that
    * it should run without errors.
    *
    * @param args command line arguments.
    * @return the contents of stdout.
    */
   protected String checkMainInitOk(String... args) {
-    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    final MemoryPrintStream err = new MemoryPrintStream();
-    final int rc = mCli.mainInit(args, out, err.printStream());
-    assertNotNull(mCli.mMainListener);
-    assertEquals("Error: " + err.toString(), "", err.toString());
-    assertEquals(0, rc);
-    return out.toString();
+    final Pair<String, String> res = checkMainInit(args);
+    final String err = res.getB();
+    assertEquals("Error: " + err, "", err);
+    return res.getA();
   }
 
   /**
@@ -154,13 +168,10 @@ public abstract class AbstractCliTest extends TestCase {
    * @return the contents of stderr.
    */
   protected String checkMainInitWarn(String... args) {
-    final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    final MemoryPrintStream err = new MemoryPrintStream();
-    final int rc = mCli.mainInit(args, out, err.printStream());
-    assertNotNull(mCli.mMainListener);
-    assertTrue(err.toString().length() > 0);
-    assertEquals(err.toString(), 0, rc);
-    return err.toString();
+    final Pair<String, String> res = checkMainInit(args);
+    final String err = res.getB();
+    assertTrue(err.length() > 0);
+    return err;
   }
 
   /**
