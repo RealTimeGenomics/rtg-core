@@ -42,8 +42,11 @@ import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.BufferedOutputStreamFix;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
+import com.rtg.vcf.header.InfoField;
+import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
 import com.rtg.vcf.header.VcfHeaderMerge;
+import com.rtg.vcf.header.VcfNumber;
 
 
 /**
@@ -206,16 +209,17 @@ CommonFlags.initNoGzip(flags);
       totalFirstCount = loadFirstSnps(firstReader, map);
       firstOnlyHeader = firstReader.getHeader().copy();
       firstOnlyHeader.addMetaInformationLine("##sourceFiles=0:" + first.getPath() + ",1:" + second.getPath());
-      firstOnlyHeader.addMetaInformationLine("##INFO=<ID=SF,Number=.,Type=String,Description=\"Source File (index into sourceFiles)\">");
+      final InfoField sf = new InfoField("SF", MetaType.STRING, VcfNumber.DOT, "Source File (index into sourceFiles)");
+      firstOnlyHeader.ensureContains(sf);
 
       Diagnostic.progress("Start loading second file...");
       try (VcfReader secondReader = VcfReader.openVcfReader(second, region)) {
         final VcfHeader secondOnlyHeader = secondReader.getHeader().copy();
         secondOnlyHeader.addMetaInformationLine("##sourceFiles=0:" + first.getPath() + ",1:" + second.getPath());
-        secondOnlyHeader.addMetaInformationLine("##INFO=<ID=SF,Number=.,Type=String,Description=\"Source File (index into sourceFiles)\">");
+        secondOnlyHeader.ensureContains(sf);
         final VcfHeader combinedHeader = VcfHeaderMerge.mergeHeaders(firstReader.getHeader(), secondReader.getHeader(), forceMerge);
         combinedHeader.addMetaInformationLine("##sourceFiles=0:" + first.getPath() + ",1:" + second.getPath());
-        combinedHeader.addMetaInformationLine("##INFO=<ID=SF,Number=.,Type=String,Description=\"Source File (index into sourceFiles)\">");
+        combinedHeader.ensureContains(sf);
         try (BufferedWriter secondOnlyWriter = new BufferedWriter(new OutputStreamWriter(output.outStream(SECOND_ONLY_OUT)));
              BufferedWriter sameWriter = new BufferedWriter(new OutputStreamWriter(output.outStream(SAME_OUT)));
              BufferedWriter differentWriter = new BufferedWriter(new OutputStreamWriter(output.outStream(DIFFERENT_OUT)))) {
