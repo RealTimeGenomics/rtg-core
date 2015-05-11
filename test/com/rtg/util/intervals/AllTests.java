@@ -25,6 +25,7 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(StatusIntervalTest.class);
     suite.addTestSuite(RangeTest.class);
     suite.addTestSuite(LongRangeTest.class);
+    suite.addTestSuite(IntervalComparatorTest.class);
     suite.addTestSuite(SequenceIdLocusComparatorTest.class);
     suite.addTestSuite(SequenceIdLocusSimpleTest.class);
     suite.addTestSuite(SequenceNameLocusComparatorTest.class);

@@ -41,7 +41,7 @@ import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.util.test.NanoRegression;
 import com.rtg.variant.PosteriorUtils;
-import com.rtg.variant.eval.SequenceEvaluator.VariantPositionComparator;
+import com.rtg.util.intervals.IntervalComparator;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
@@ -589,7 +589,7 @@ public class VcfEvalTaskTest extends TestCase {
 
 
   public void testPositionComparator() {
-    final VariantPositionComparator vc = new VariantPositionComparator();
+    final IntervalComparator vc = new IntervalComparator();
     final VcfRecord rec = VcfReader.vcfLineToRecord("chr10 11 . G T 182.85 PASS . GT:AD:DP:GQ:PL 0/1:11,14:25:99:168,0,223".replaceAll(" ", "\t"));
     final DetectedVariant v = new DetectedVariant(rec, 0, RocSortValueExtractor.NULL_EXTRACTOR, false);
 
