@@ -35,13 +35,13 @@ public class VcfAnnotatorCliTest extends AbstractCliTest {
 
   public void testFlags() {
     checkHelp("rtg vcfannotate"
-        , "Adds annotations to a VCF file."
+        , "Adds annotations to a VCF file"
         , "-i,", "--input=FILE", "VCF file containing variants"
         , "-o,", "--output=FILE", "output VCF file"
-        , "--bed-ids=FILE", "file in BED format containing variant ids in the name column to be added to the VCF id field. May be specified 0 or more times"
-        , "--bed-info=FILE", "file in BED format containing annotations in the name column to be added to the VCF info field. May be specified 0 or more times"
-        , "--vcf-ids=FILE", "file in VCF format containing variant ids to be added to the VCF id field. May be specified 0 or more times"
-        , "--fill-an-ac", "add or update the AN and AC info fields"
+        , "--bed-ids=FILE", "add variant IDs"
+        , "--bed-info=FILE", "add INFO annotations"
+        , "--vcf-ids=FILE"
+        , "--fill-an-ac", "add or update the AN and AC INFO fields"
         , "-Z,", "--no-gzip", "do not gzip the output"
         , "--no-index", "do not produce indexes for output files"
         );

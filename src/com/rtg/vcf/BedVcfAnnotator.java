@@ -48,16 +48,19 @@ public class BedVcfAnnotator implements VcfAnnotator {
   /** Per chromosome annotations. */
   private final ReferenceRanges mAnnotations;
 
-  private final boolean mAddIds;
+  private final String mInfoId;
+  private final String mInfoDescription;
 
   /**
    * Constructor
-   * @param addIds if true, BED annotations will be added to VCF id column.
+   * @param infoId if non-null, BED annotations will be added as an INFO field with this ID, otherwise add to VCF id column.
+   * @param description if non-null, use this description for the INFO field header, if it doesn't already exist.
    * @param bedFiles BED files containing annotations
    * @throws IOException if the BED file could not be loaded.
    */
-  public BedVcfAnnotator(boolean addIds, Collection<File> bedFiles) throws IOException {
-    mAddIds = addIds;
+  public BedVcfAnnotator(String infoId, String description, Collection<File> bedFiles) throws IOException {
+    mInfoId = infoId;
+    mInfoDescription = description;
     final BedVcfAnnotator.AnnotatorBedLoader bedLoader = new AnnotatorBedLoader();
     bedLoader.loadRanges(bedFiles);
     mAnnotations = bedLoader.getReferenceRanges();
@@ -74,8 +77,8 @@ public class BedVcfAnnotator implements VcfAnnotator {
 
   @Override
   public void updateHeader(VcfHeader header) {
-    if (!mAddIds) {
-      header.ensureContains(new InfoField("ANN", MetaType.STRING, new VcfNumber("."), "Annotation"));
+    if (mInfoId != null) {
+      header.ensureContains(new InfoField(mInfoId, MetaType.STRING, new VcfNumber("."), mInfoDescription));
     }
   }
 
@@ -84,10 +87,10 @@ public class BedVcfAnnotator implements VcfAnnotator {
     final List<String> annotation = annotate(rec.getSequenceName(), rec.getStart());
     if (annotation != null) {
       if (annotation.size() > 0) {
-        if (mAddIds) {
+        if (mInfoId == null) {
           rec.setId(annotation.toArray(new String[annotation.size()]));
         } else {
-          rec.addInfo("ANN", annotation.toArray(new String[annotation.size()]));
+          rec.addInfo(mInfoId, annotation.toArray(new String[annotation.size()]));
         }
       }
     }
