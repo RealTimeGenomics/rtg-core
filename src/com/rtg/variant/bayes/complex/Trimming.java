@@ -40,7 +40,8 @@ public final class Trimming {
 
   private Trimming() { }
 
-  private static HashSet<String> extractAlleles(final Variant variant) {
+  // Can't use Description, as that includes hypotheses that weren't necessarily called.
+  private static HashSet<String> extractCalledAlleles(final Variant variant) {
     final HashSet<String> alleles = new HashSet<>();
     for (int k = 0; k < variant.getNumberOfSamples(); k++) {
       final VariantSample vs = variant.getSample(k);
@@ -138,8 +139,8 @@ public final class Trimming {
       return original;
     }
 
-    // Compute set of alleles and exit if there are none
-    final HashSet<String> catSet = extractAlleles(original);
+    // Compute set of called alleles and exit if there are none
+    final HashSet<String> catSet = extractCalledAlleles(original);
     if (catSet.size() == 0) {
       return original;
     }
@@ -199,7 +200,7 @@ public final class Trimming {
     return result;
   }
 
-  private static Variant createVariant(final Variant original, final int start, final int end, final int id) {
+  private static Variant createSplitVariant(final Variant original, final int start, final int end, final int id) {
     final VariantLocus newLocus = createLocus(original, start, end);
     final VariantSample[] newSamples;
     if (original.getNumberOfSamples() > 0) {
@@ -239,7 +240,7 @@ public final class Trimming {
   static List<Variant> split(final Variant original, DenovoChecker denovoCorrector) {
 
     // Compute set of alleles and exit if there are none
-    final HashSet<String> catSet = extractAlleles(original);
+    final HashSet<String> catSet = extractCalledAlleles(original);
     if (catSet.size() == 0) {
       return Collections.singletonList(original);
     }
@@ -285,7 +286,7 @@ public final class Trimming {
         while (endSplit < length && syndrome[endSplit]) {
           endSplit++;
         }
-        final Variant splitVariant = createVariant(original, startSplit, length - endSplit, splitId++);
+        final Variant splitVariant = createSplitVariant(original, startSplit, length - endSplit, splitId++);
         final Variant variant = denovoCorrector != null ? denovoCorrect(denovoCorrector, splitVariant) : splitVariant;
         list.add(variant);
         startSplit = endSplit + 1;
