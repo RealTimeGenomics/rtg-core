@@ -35,7 +35,7 @@ import junit.framework.TestCase;
 
 /**
  */
-public class SequenceEvaluatorTest extends TestCase {
+public class PhasingEvaluatorTest extends TestCase {
   static List<DetectedVariant> makeVariantList(List<String> variants, StringBuilder sb) {
     final List<DetectedVariant> callList = new ArrayList<>();
     for (String s : variants) {

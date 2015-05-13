@@ -36,7 +36,7 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(RocSlopeTest.class);
     suite.addTestSuite(RocScoreFieldTest.class);
     suite.addTestSuite(RocSortOrderTest.class);
-    suite.addTestSuite(SequenceEvaluatorTest.class);
+    suite.addTestSuite(PhasingEvaluatorTest.class);
     suite.addTestSuite(HaplotypePlaybackTest.class);
     suite.addTestSuite(VcfRecordTabixCallableTest.class);
     suite.addTestSuite(TabixVcfRecordSetTest.class);

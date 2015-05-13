@@ -29,7 +29,7 @@ import com.rtg.util.intervals.IntervalComparator;
 /**
  * Runs all the evaluation for a single reference sequence
  */
-@TestClass({"com.rtg.variant.eval.VcfEvalTaskTest", "com.rtg.variant.eval.SequenceEvaluatorTest"})
+@TestClass({"com.rtg.variant.eval.VcfEvalTaskTest", "com.rtg.variant.eval.PhasingEvaluatorTest"})
 class SequenceEvaluator implements IORunnable {
 
   private final EvalSynchronizer mSynchronize;
