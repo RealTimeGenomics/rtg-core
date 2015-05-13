@@ -18,7 +18,7 @@ import java.util.List;
 /**
  *
  */
-public class PhasingEvaluator {
+public final class PhasingEvaluator {
 
   static class PhasingResult {
     final int mMisPhasings;
@@ -32,7 +32,8 @@ public class PhasingEvaluator {
     }
   }
 
-
+  private PhasingEvaluator() { }
+  
   static PhasingResult countMisphasings(Path best) {
     final CallIterator baseline = new CallIterator(best.getBaselineIncluded(), best.getBaselineExcluded());
     final CallIterator calls = new CallIterator(best.getCalledIncluded(), best.getCalledExcluded());
