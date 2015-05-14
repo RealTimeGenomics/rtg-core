@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.rtg.reference.Ploidy;
+import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.relation.Relationship;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -98,8 +99,15 @@ public final class LineageCallerConfiguration extends AbstractJointCallerConfigu
       final ModelNoneFactory none = new ModelNoneFactory();
       final List<IndividualSampleFactory<?>> individualFactories = new ArrayList<>();
       final SexMemo sexMemo = Utils.createSexMemo(params);
+      Sex lineageSex = null;
       for (String genome : genomes) {
-        individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, genomeRelationships.getSex(genome), sexMemo));
+        final Sex sex = genomeRelationships.getSex(genome);
+        if (lineageSex == null) {
+          lineageSex = sex;
+        } else if (lineageSex != sex) {
+          throw new NoTalkbackSlimException("Lineage requires all samples to have the same sex");
+        }
+        individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, sex, sexMemo));
       }
       return new LineageCallerConfiguration(caller, outputGenomes, individualFactories, chooser, haploid, diploid, ssp);
     }

@@ -25,7 +25,6 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
  * Mendelian for genotype inheritance in a cell lineage.
- *
  */
 public class MendelianLineageFactor extends AbstractFactor implements ToDefaultFactor {
 
