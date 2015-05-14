@@ -55,7 +55,7 @@ public class LineageCliTest extends PopulationCliTest {
   public void testValidator() throws Exception {
     final File tmpDir = FileHelper.createTempDirectory();
     final File tmpFile = FileUtils.stringToFile("original-derived TEST cancer contamination=0.13", FileHelper.createTempFile());
-    final File tmpFile2 = FileUtils.stringToFile("0\toriginal\t0\t0\t1\t0\n0\tleft\toriginal\t0\t2\t0\n0\tright\toriginal\t0\t1\t0\n", FileHelper.createTempFile());
+    final File tmpFile2 = FileUtils.stringToFile("0\toriginal\t0\t0\t1\t0\n0\tleft\toriginal\t0\t1\t0\n0\tright\toriginal\t0\t1\t0\n", FileHelper.createTempFile());
     try {
       checkValidator(tmpDir, tmpFile, tmpFile2, SharedSamConstants.SAM_LINEAGE);
     } finally {
