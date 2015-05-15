@@ -65,9 +65,16 @@ public final class LineageCallerConfiguration extends AbstractJointCallerConfigu
         throw new NoTalkbackSlimException("Number of samples in pedigree and number of output genomes don't match");
       }
       final Lineage.LineageBuilder builder = new Lineage.LineageBuilder();
-      final boolean noRelationships = genomeRelationships.relationships(Relationship.RelationshipType.PARENT_CHILD).length < 1;
+      final boolean noRelationships = genomeRelationships.relationships(Relationship.RelationshipType.PARENT_CHILD).length < 1
+        && genomeRelationships.relationships(Relationship.RelationshipType.ORIGINAL_DERIVED).length < 1;
       if (noRelationships) {
-        throw new NoTalkbackSlimException("Lineage requires at least one parent child relationship");
+        throw new NoTalkbackSlimException("Lineage requires at least one original derived or parent child relationship");
+      }
+      for (Relationship r : genomeRelationships.relationships(Relationship.RelationshipType.ORIGINAL_DERIVED)) {
+        final int childPos = genomes.indexOf(r.second());
+        parents[childPos]++;
+        final int parentPos = genomes.indexOf(r.first());
+        builder.add(parentPos, childPos);
       }
       for (Relationship r : genomeRelationships.relationships(Relationship.RelationshipType.PARENT_CHILD)) {
         final int childPos = genomes.indexOf(r.second());
