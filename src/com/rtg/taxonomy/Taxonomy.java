@@ -42,9 +42,6 @@ public class Taxonomy {
   /** Name for merge nodes */
   private static final String MERGE_NAME = "same";
 
-  /** Default name for taxonomy file. */
-  public static final String TAXONOMY_FILE = "taxonomy.tsv";
-
   private final HashMap<Integer, TaxonNode> mNodes = new HashMap<>();
 
   private String mReason = null;

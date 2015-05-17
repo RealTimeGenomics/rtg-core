@@ -83,7 +83,7 @@ public class TaxFilterCli extends AbstractCli {
 
     final File inputFile = (File) mFlags.getValue(INPUT_FLAG);
     final boolean sdf = inputFile.isDirectory();
-    final File taxFile = sdf ? new File(inputFile, Taxonomy.TAXONOMY_FILE) : inputFile;
+    final File taxFile = sdf ? new File(inputFile, TaxonomyUtils.TAXONOMY_FILE) : inputFile;
 
     if (!taxFile.exists()) {
       throw new NoTalkbackSlimException("Input taxonomy does not exist: " + taxFile);
@@ -115,9 +115,9 @@ public class TaxFilterCli extends AbstractCli {
 
     final File outFile = (File) mFlags.getValue(OUTPUT_FLAG);
     if (sdf) {
-      final File inMappingFile = new File(inputFile, SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE);
+      final File inMappingFile = new File(inputFile, TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE);
       if (!inMappingFile.isFile()) {
-        throw new NoTalkbackSlimException("SDF has no " + SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE + " file");
+        throw new NoTalkbackSlimException("SDF has no " + TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE + " file");
       }
       final Map<String, Integer> sequenceLookupMap = SequenceToTaxonIds.sequenceToIds(inMappingFile);
 
@@ -142,7 +142,7 @@ public class TaxFilterCli extends AbstractCli {
   }
 
   private void writeSdf(File inputFile, File outFile, Taxonomy tax, Map<String, Integer> sequenceLookup, Map<String, Integer> oldSequenceLookup) throws IOException {
-    final File outMappingFile = new File(outFile, SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE);
+    final File outMappingFile = new File(outFile, TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE);
     //err.println("Loaded taxonomy sequence lookup with " + sequenceLookupMap.keySet().size() + " sequences, " + new HashSet<Integer>(sequenceLookupMap.values()).size() + " taxon ids");
     try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(inputFile)) {
       try (SdfWriter sdfWriter = new SdfWriter(outFile, Constants.MAX_FILE_SIZE, reader.getPrereadType(), reader.hasQualityData(), reader.hasNames(), reader.compressed(), reader.type())) {
@@ -156,7 +156,7 @@ public class TaxFilterCli extends AbstractCli {
           while (it.nextSequence()) {
             final String name = it.currentName();
             if (oldSequenceLookup.get(name) == null) {
-              throw new NoTalkbackSlimException("Sequence " + name + " is present in the SDF but not in the " + SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE);
+              throw new NoTalkbackSlimException("Sequence " + name + " is present in the SDF but not in the " + TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE);
             }
             final Integer taxId = sequenceLookup.get(name);
             if (taxId != null && tax.contains(taxId)) {
@@ -173,7 +173,7 @@ public class TaxFilterCli extends AbstractCli {
         }
       }
     }
-    try (Writer outWriter = new OutputStreamWriter(new FileOutputStream(new File(outFile, Taxonomy.TAXONOMY_FILE)))) {
+    try (Writer outWriter = new OutputStreamWriter(new FileOutputStream(new File(outFile, TaxonomyUtils.TAXONOMY_FILE)))) {
       tax.write(outWriter);
     }
   }

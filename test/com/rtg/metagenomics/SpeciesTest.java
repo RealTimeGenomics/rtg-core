@@ -354,7 +354,7 @@ public class SpeciesTest extends TestCase {
         speciesTask.exec();
         fail();
       } catch (NoTalkbackSlimException e) {
-        TestUtils.containsAll(e.getMessage(), "The provided taxonomy file '" + taxonFile.getPath() + "' is invalid: Node 3 does not link to root");
+        TestUtils.containsAll(e.getMessage(), "The taxonomy in the provided SDF is invalid", "Node 3 does not link to root");
 
       }
     }

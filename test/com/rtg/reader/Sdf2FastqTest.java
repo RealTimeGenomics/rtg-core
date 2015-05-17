@@ -11,84 +11,37 @@
  */
 package com.rtg.reader;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStreamWriter;
 
-import com.rtg.util.InvalidParamsException;
+import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.AbstractCliTest;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
-import com.rtg.util.cli.CFlags;
-import com.rtg.util.cli.TestCFlags;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.DiagnosticEvent;
 import com.rtg.util.diagnostic.DiagnosticListener;
 import com.rtg.util.diagnostic.ErrorEvent;
-import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.LineWriter;
-import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Tests for corresponding class.
  */
-public class Sdf2FastqTest extends TestCase {
+public class Sdf2FastqTest extends AbstractCliTest {
 
-  public Sdf2FastqTest(final String name) {
-    super(name);
-  }
-
-  public static Test suite() {
-    return new TestSuite(Sdf2FastqTest.class);
-  }
 
   @Override
-  public void setUp() {
-    Diagnostic.setLogStream();
-  }
-
-  @Override
-  public void tearDown() {
-    Diagnostic.setLogStream();
-  }
-
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
+  protected AbstractCli getCli() {
+    return new Sdf2Fastq();
   }
 
   public void testHelp() {
-    final CFlags flags = new CFlags();
-    new Sdf2Fastq().initFlags(flags);
-    TestCFlags.check(flags,
-                     "output filename (extension added if not present)",
-                     "SDF containing sequences"
-                     );
+    checkHelp("output filename (extension added if not present)",
+      "SDF containing sequences"
+    );
   }
 
-  public void testProcess() throws IOException, InvalidParamsException {
-    ByteArrayOutputStream b = new ByteArrayOutputStream();
-    LineWriter p = new LineWriter(new OutputStreamWriter(b));
-    Sdf2Fastq.process(new ArraySequencesReader(new byte[][] {{1}}, new byte[][] {{0}}), p, false, 0, -1);
-    p.flush();
-    assertEquals("@sequence 0" + StringUtils.LS + "A" + StringUtils.LS + "+sequence 0" + StringUtils.LS + "!" + StringUtils.LS,
-        b.toString());
-
-    b = new ByteArrayOutputStream();
-    p = new LineWriter(new OutputStreamWriter(b));
-    Sdf2Fastq.process(new ArraySequencesReader(new byte[][] {{1, 2, 3, 4}}, new byte[][] {{0, 42, 85, 86}}), p, false, 2, -1);
-    p.flush();
-    assertEquals("@sequence 0" + StringUtils.LS + "AC" + StringUtils.LS + "GT" + StringUtils.LS + "+sequence 0" + StringUtils.LS + "!K" + StringUtils.LS + "vw" + StringUtils.LS,
-        b.toString());
-  }
 
   public void testValidator() {
     final int[] blah = new int[1];
@@ -127,18 +80,11 @@ public class Sdf2FastqTest extends TestCase {
           + "123456" + StringUtils.LS;
 
   public void testFullName() throws IOException {
-    final File dir = FileUtils.createTempDir("testsdf2fasta", "fullname");
-    try {
+    try (TestDirectory dir = new TestDirectory()) {
       final File sdf = ReaderTestUtils.getDNAFastqDir(FULL_NAME_DATA, new File(dir, "sdf"), false);
       final File fasta = new File(dir, "fs.fastq.gz");
-      final MemoryPrintStream out = new MemoryPrintStream();
-      final MemoryPrintStream err = new MemoryPrintStream();
-      final int code = new Sdf2Fastq().mainInit(new String[] {"-i", sdf.getPath(), "-o", fasta.getPath()}, out.outputStream(), err.printStream());
-      assertEquals(err.toString(), 0, code);
-      final String outStr = FileHelper.gzFileToString(fasta);
-      assertEquals(FULL_NAME_DATA, outStr);
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
+      checkMainInitOk("-i", sdf.getPath(), "-o", fasta.getPath());
+      assertEquals(FULL_NAME_DATA, FileHelper.gzFileToString(fasta));
     }
   }
 }

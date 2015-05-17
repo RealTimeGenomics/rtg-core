@@ -126,22 +126,8 @@ public final class SdfSubseq extends AbstractCli {
       if (mFlags.isSet(FASTQ_FLAG) && !reader.hasQualityData()) {
         throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "The input SDF does not have quality data.");
       }
-      if (reader.type() == SequenceType.DNA) {
-        mCodeToBytes = new DNAFastaSymbolTable().getOrdinalToAsciiTable();
-        if (reverseComplement) {
-          final byte[] compCodes = new byte[mCodeToBytes.length];
-          for (final DNA d : DNA.values()) {
-            compCodes[d.ordinal()] = mCodeToBytes[d.complement().ordinal()];
-          }
-          mCodeToBytes = compCodes;
-        }
-      } else {
-        if (reverseComplement) {
-          err.println("--" + REVERSE_FLAG + " cannot be used with protein SDFs.");
-          return 1;
-        }
-        mCodeToBytes = new ProteinFastaSymbolTable().getOrdinalToAsciiTable();
-      }
+      mCodeToBytes = getByteMapping(reader.type(), reverseComplement);
+
       if (!mFlags.isSet(SEQ_ID_FLAG)) {
         mNames = ReaderUtils.getSequenceNameMap(reader);
       }
@@ -248,11 +234,24 @@ public final class SdfSubseq extends AbstractCli {
     return 0;
   }
 
-  /**
-   * @param args arguments
-   */
-  public static void main(final String[] args) {
-    new SdfSubseq().mainExit(args);
+  static byte[] getByteMapping(SequenceType type, boolean reverseComplement) {
+    if (type == SequenceType.DNA) {
+      if (reverseComplement) {
+        final byte[] dnaCodes = new DNAFastaSymbolTable().getOrdinalToAsciiTable();
+        final byte[] compCodes = new byte[dnaCodes.length];
+        for (final DNA d : DNA.values()) {
+          compCodes[d.ordinal()] = dnaCodes[d.complement().ordinal()];
+        }
+        return compCodes;
+      } else {
+        return new DNAFastaSymbolTable().getOrdinalToAsciiTable();
+      }
+    } else {
+      if (reverseComplement) {
+        throw new NoTalkbackSlimException("Reverse complement cannot be used with protein SDFs.");
+      }
+      return new ProteinFastaSymbolTable().getOrdinalToAsciiTable();
+    }
   }
 
 }

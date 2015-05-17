@@ -12,6 +12,7 @@
 package com.rtg.reader;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import com.rtg.util.diagnostic.Diagnostic;
@@ -36,7 +37,18 @@ public final class SequencesReaderFactory {
    * @throws IOException if another I/O related error occurs
    */
   public static synchronized AnnotatedSequencesReader createDefaultSequencesReader(final File dir, LongRange region) throws IOException {
-    return new DefaultSequencesReader(dir, region);
+    try {
+      return new DefaultSequencesReader(dir, region);
+    } catch (final FileNotFoundException e) {
+      // Slightly better I/O reporting than the default provided by AbstractCli
+      if (dir.isDirectory()) {
+        throw new IOException("The specified SDF, \"" + dir.getPath() + "\", does not seem to contain a valid SDF index");
+      } else if (dir.exists()) {
+        throw new IOException("The specified file, \"" + dir.getPath() + "\", is not an SDF.");
+      } else {
+        throw new IOException("The specified SDF, \"" + dir.getPath() + "\", does not exist.");
+      }
+    }
   }
 
   /**
@@ -47,7 +59,7 @@ public final class SequencesReaderFactory {
    * @throws IOException if another I/O related error occurs
    */
   public static synchronized AnnotatedSequencesReader createDefaultSequencesReader(final File dir) throws IOException {
-    return new DefaultSequencesReader(dir, LongRange.NONE);
+    return createDefaultSequencesReader(dir, LongRange.NONE);
   }
 
   /**
@@ -137,8 +149,7 @@ public final class SequencesReaderFactory {
    * @throws NoTalkbackSlimException if the start is out of range.
    */
   public static LongRange resolveRange(final File dir, LongRange range) throws IOException {
-    final IndexFile index = new IndexFile(dir);
-    return resolveRange(index, range);
+    return resolveRange(new IndexFile(dir), range);
   }
 
   /**
@@ -150,18 +161,30 @@ public final class SequencesReaderFactory {
    * @throws NoTalkbackSlimException if the start is out of range.
    */
   public static LongRange resolveRange(IndexFile index, LongRange range) {
+    return resolveRange(range, index.getNumberSequences());
+  }
+
+  /**
+   * Resolves an inital range (supplied by the user, and may have unbounded ends) to the available sequences.
+   * If end is greater than number of sequences it sets end to number of sequences.
+   * @param numberSequences the number of sequences in the SDF
+   * @param range the range
+   * @return the resolved range.
+   * @throws NoTalkbackSlimException if the start is out of range.
+   */
+  public static LongRange resolveRange(LongRange range, long numberSequences) {
     final long start = range.getStart() == LongRange.MISSING ? 0 : range.getStart();
     if (start < 0) {
       throw new IllegalArgumentException();
     }
-    if (start > index.getNumberSequences() || (index.getNumberSequences() != 0 && start == index.getNumberSequences())) {  // Allow start == 0 if empty SDF
-      throw new NoTalkbackSlimException("The start sequence id \"" + start + "\" must be less than than the number of available sequences \"" + index.getNumberSequences() + "\".");
+    if (start > numberSequences || (numberSequences != 0 && start == numberSequences)) {  // Allow start == 0 if empty SDF
+      throw new NoTalkbackSlimException("The start sequence id \"" + start + "\" must be less than than the number of available sequences \"" + numberSequences + "\".");
     }
-    long end = range.getEnd() == LongRange.MISSING ? index.getNumberSequences() : range.getEnd();
-    if (end > index.getNumberSequences()) {
+    long end = range.getEnd() == LongRange.MISSING ? numberSequences : range.getEnd();
+    if (end > numberSequences) {
       Diagnostic.warning("The end sequence id \"" + range.getEnd() + "\" is out of range, it"
-        + " must be from \"" + (start + 1) + "\" to \"" + index.getNumberSequences() + "\". Defaulting end to \"" + index.getNumberSequences() + "\"");
-      end = index.getNumberSequences();
+        + " must be from \"" + (start + 1) + "\" to \"" + numberSequences + "\". Defaulting end to \"" + numberSequences + "\"");
+      end = numberSequences;
     }
     return new LongRange(start, end);
   }

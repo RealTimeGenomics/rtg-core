@@ -30,11 +30,10 @@ import com.rtg.launcher.LoggedCli;
 import com.rtg.reader.AbstractSdfWriter.SequenceNameHandler;
 import com.rtg.reader.Label;
 import com.rtg.reader.ReaderUtils;
-import com.rtg.reader.SdfId;
 import com.rtg.reader.SdfReaderWrapper;
 import com.rtg.reader.SdfWriterWrapper;
-import com.rtg.taxonomy.SequenceToTaxonIds;
 import com.rtg.taxonomy.Taxonomy;
+import com.rtg.taxonomy.TaxonomyUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
@@ -105,7 +104,7 @@ public final class SpeciesSdfSubset extends LoggedCli {
         mQualities = new byte[length];
       }
     }
-    mWriter.writeSequence(mReader, seqid, mData, mQualities);
+    mWriter.writeSequence(seqid, mData, mQualities);
 
     if (++mWritten % 1000 == 0) {
       Diagnostic.progress("Extracted " + mWritten + " sequences");
@@ -133,7 +132,6 @@ public final class SpeciesSdfSubset extends LoggedCli {
 
     final File output = (File) mFlags.getValue(OUTPUT_FLAG);
     mWriter = new SdfWriterWrapper(output, mReader, true);
-    mWriter.setSdfId(new SdfId()); //random.nextLong());
 
     final Taxonomy taxonomy = new Taxonomy();
     final File taxFile = (File) mFlags.getValue(TAXONOMY_FILE_FLAG);
@@ -143,7 +141,7 @@ public final class SpeciesSdfSubset extends LoggedCli {
 
     final SequenceNameHandler snh = new SequenceNameHandler();
 
-    final File taxonomyToNameFile = new File(inputSdf, SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE);
+    final File taxonomyToNameFile = new File(inputSdf, TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE);
     final ArrayList<String> taxIdsToSeqNames = new ArrayList<>();
     try (BufferedReader br = new BufferedReader(new FileReader(taxonomyToNameFile))) {
       String line;
@@ -171,7 +169,7 @@ public final class SpeciesSdfSubset extends LoggedCli {
     mReader.close();
     Diagnostic.progress("Extracted " + mWritten + " sequences");
 
-    final File lookupFile = new File(output, SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE);
+    final File lookupFile = new File(output, TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE);
     Diagnostic.progress("Started writing " + lookupFile.getPath());
     try (BufferedWriter bw = new BufferedWriter(new FileWriter(lookupFile))) {
       for (final String line : taxIdsToSeqNames) {
@@ -181,7 +179,7 @@ public final class SpeciesSdfSubset extends LoggedCli {
     }
     Diagnostic.progress("Finished writing " + lookupFile.getPath());
 
-    final File taxonomyFile = new File(output, Taxonomy.TAXONOMY_FILE);
+    final File taxonomyFile = new File(output, TaxonomyUtils.TAXONOMY_FILE);
     Diagnostic.progress("Started writing " + taxonomyFile.getPath());
     try (BufferedWriter bw = new BufferedWriter(new FileWriter(taxonomyFile))) {
       taxonomy.write(bw);

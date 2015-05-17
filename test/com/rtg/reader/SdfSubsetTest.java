@@ -19,25 +19,13 @@ import com.rtg.launcher.AbstractCliTest;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
-import com.rtg.util.io.FileUtils;
-import com.rtg.util.test.FileHelper;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import com.rtg.util.io.TestDirectory;
 
 /**
  * Test for SdfSubset
  *
  */
 public class SdfSubsetTest extends AbstractCliTest {
-
-  public static Test suite() {
-    return new TestSuite(SdfSubsetTest.class);
-  }
-
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.runAndWait(suite());
-  }
 
   @Override
   protected AbstractCli getCli() {
@@ -47,35 +35,18 @@ public class SdfSubsetTest extends AbstractCliTest {
   public void testHelp() {
     checkHelp("Extracts a subset of sequences from one SDF and outputs them to another SDF.",
               "output SDF",
-              "input SDF",
+              "SDF containing sequences",
               "id of sequence",
-              "file containing sequence ids, or sequence names if names flag is set, one per line");
+              "file containing sequence ids, or sequence names if --names flag is set, one per line");
   }
 
   public void testValidator() throws Exception {
-    final File tempDir = FileUtils.createTempDir("readsimclitest", "checkcli");
-    try {
-      final File genomeDir = FileHelper.createTempDirectory();
-      try {
-        final File out = FileUtils.createTempDir("out", "validate");
-        try {
-          assertTrue(FileHelper.deleteAll(out));
-          ReaderTestUtils.getReaderDNA(">seq1" + StringUtils.LS + "acgt", genomeDir, null).close();
-          TestUtils.containsAll(checkHandleFlagsErr("-i", genomeDir.getAbsolutePath(), "-o", out.getPath()), "Sequence ids must be specified, either explicitly, or using --id-file");
-        } finally {
-          assertTrue(FileHelper.deleteAll(out));
-        }
-      } finally {
-        assertTrue(FileHelper.deleteAll(genomeDir));
-      }
-    } finally {
-      assertTrue(FileHelper.deleteAll(tempDir));
-    }
+    final String err = checkHandleFlagsErr("-i", "genome", "-o", "out");
+    TestUtils.containsAll(err, "Sequences to extract must be specified");
   }
 
   private void checkPairedSplittiness(String... extraParams) throws Exception {
-    final File tempDir = FileUtils.createTempDir("readsimclitest", "checkcli");
-    try {
+    try (final TestDirectory tempDir = new TestDirectory("sdfsubsettest")) {
       final String left = ">seq1" + StringUtils.LS + "acgt" + StringUtils.LS + ">seq2" + StringUtils.LS + "cgta";
       final String right = ">seq1" + StringUtils.LS + "tgca" + StringUtils.LS + ">seq2" + StringUtils.LS + "atgc";
 
@@ -118,9 +89,6 @@ public class SdfSubsetTest extends AbstractCliTest {
       } finally {
         dsr.close();
       }
-
-    } finally {
-      FileHelper.deleteAll(tempDir);
     }
 
   }
@@ -129,5 +97,8 @@ public class SdfSubsetTest extends AbstractCliTest {
   }
   public void testPairedSplittinessNames() throws Exception {
     checkPairedSplittiness("-n", "seq2");
+  }
+  public void testPairedSplittinessRange() throws Exception {
+    checkPairedSplittiness("--start-id", "1", "--end-id", "2");
   }
 }

@@ -56,7 +56,7 @@ public class TaxonomyTest extends TestCase {
     assertNull(tax.getRoot());
     assertEquals(0, tax.subset(new ArrayList<Integer>()).size());
 
-    assertEquals("taxonomy.tsv", Taxonomy.TAXONOMY_FILE);
+    assertEquals("taxonomy.tsv", TaxonomyUtils.TAXONOMY_FILE);
     assertEquals(1, Taxonomy.ROOT_ID);
   }
 

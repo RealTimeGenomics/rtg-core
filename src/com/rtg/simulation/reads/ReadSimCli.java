@@ -38,7 +38,7 @@ import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.sam.SamCommandHelper;
 import com.rtg.simulation.genome.SequenceDistribution;
-import com.rtg.taxonomy.SequenceToTaxonIds;
+import com.rtg.taxonomy.TaxonomyUtils;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.MathUtils;
 import com.rtg.util.PortableRandom;
@@ -630,7 +630,7 @@ public class ReadSimCli extends LoggedCli {
         Diagnostic.userLog("Using taxonomy distribution");
         final TaxonomyDistribution dist;
         try (final FileInputStream is = new FileInputStream((File) mFlags.getValue(TAXONOMY_DISTRIBUTION))) {
-          dist = new TaxonomyDistribution(is, SequenceToTaxonIds.sequenceToIds(new File(reader.path(), SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE)), reader, mFlags.isSet(DNA_FRACTION) ? TaxonomyDistribution.DistributionType.DNA_FRACTION : TaxonomyDistribution.DistributionType.ABUNDANCE);
+          dist = new TaxonomyDistribution(is, TaxonomyUtils.loadTaxonomyMapping(reader), reader, mFlags.isSet(DNA_FRACTION) ? TaxonomyDistribution.DistributionType.DNA_FRACTION : TaxonomyDistribution.DistributionType.ABUNDANCE);
         }
          selectionProb = dist.getDistribution();
         Diagnostic.userLog("Distribution complete");

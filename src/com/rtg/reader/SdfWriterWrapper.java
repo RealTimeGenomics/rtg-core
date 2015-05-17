@@ -11,7 +11,6 @@
  */
 package com.rtg.reader;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 
@@ -25,11 +24,12 @@ import com.rtg.util.io.FileUtils;
  *
  */
 @TestClass(value = {"com.rtg.reader.SdfSplitterTest", "com.rtg.ngs.DummySdfOutputProcessorTest"})
-public final class SdfWriterWrapper implements Closeable {
+public final class SdfWriterWrapper implements WriterWrapper {
 
   private final boolean mIsPaired;
   private final boolean mHasQuality;
   private final boolean mHasNames;
+  private SdfReaderWrapper mReader;
   final SdfWriter mLeft;
   final SdfWriter mRight;
   final SdfWriter mSingle;
@@ -42,6 +42,7 @@ public final class SdfWriterWrapper implements Closeable {
    */
   public SdfWriterWrapper(File baseDir, SdfReaderWrapper reader, boolean forceCompression) {
     assert reader != null;
+    mReader = reader;
     mIsPaired = reader.isPaired();
     mHasQuality = reader.hasQualityData();
     mHasNames = reader.hasNames();
@@ -63,6 +64,15 @@ public final class SdfWriterWrapper implements Closeable {
       mSingle.setPrereadArm(reader.single().getArm());
       mSingle.setCommandLine(CommandLine.getCommandLine());
     }
+    setSdfId(new SdfId());
+  }
+
+  /**
+   * Set a new reader from which sequences will be selected -- only needed for sdfsplit during merge operation!
+   * @param reader
+   */
+  void setReader(SdfReaderWrapper reader) {
+    mReader = reader;
   }
 
   /**
@@ -78,21 +88,13 @@ public final class SdfWriterWrapper implements Closeable {
     }
   }
 
-  /**
-   * Method to write a specified sequence to the destination.
-   * @param reader the reader being read from.
-   * @param seqId the id of the sequence to write.
-   * @param dataBuffer an appropriately sized buffer for data.
-   * @param qualityBuffer an appropriately sized buffer for quality.
-   * @throws IllegalStateException whenever
-   * @throws IOException whenever
-   */
-  public void writeSequence(SdfReaderWrapper reader, long seqId, byte[] dataBuffer, byte[] qualityBuffer) throws IllegalStateException, IOException {
+  @Override
+  public void writeSequence(long seqId, byte[] dataBuffer, byte[] qualityBuffer) throws IllegalStateException, IOException {
     if (mIsPaired) {
-      writeSequence(reader.left(), seqId, mLeft, dataBuffer, qualityBuffer);
-      writeSequence(reader.right(), seqId, mRight, dataBuffer, qualityBuffer);
+      writeSequence(mReader.left(), seqId, mLeft, dataBuffer, qualityBuffer);
+      writeSequence(mReader.right(), seqId, mRight, dataBuffer, qualityBuffer);
     } else {
-      writeSequence(reader.single(), seqId, mSingle, dataBuffer, qualityBuffer);
+      writeSequence(mReader.single(), seqId, mSingle, dataBuffer, qualityBuffer);
     }
   }
 
@@ -124,10 +126,6 @@ public final class SdfWriterWrapper implements Closeable {
     }
   }
 
-  /**
-   * Close method for the writers.
-   * @throws IOException whenever
-   */
   @Override
   public void close() throws IOException {
     if (mLeft != null) {

@@ -53,7 +53,34 @@ public final class Sdf2Quala extends AbstractCli {
   static final String END_SEQUENCE = "end-id";
 
   private static final String QUALA_EXT = ".quala";
-  private static final String FASTA_EXT = Sdf2Fasta.FASTA_EXT_LGE;
+  private static final String FASTA_EXT = ".fasta";
+
+  /**
+   * @return current name of the module
+   */
+  @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  protected void initFlags() {
+    initFlags(mFlags);
+  }
+
+  static void initFlags(final CFlags flags) {
+    flags.registerExtendedHelp();
+    flags.setDescription("Converts SDF data into FASTA/QUALA files.");
+    CommonFlagCategories.setCategories(flags);
+    CommonFlags.initNoGzip(flags);
+    flags.registerRequired('i', INPUT, File.class, "SDF", "SDF containing sequences").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('o', OUTPUT_FILE, File.class, "FILE", "basename for output files (extensions will be added)").setCategory(INPUT_OUTPUT);
+    flags.registerOptional('R', RENAME, "rename the reads to their consecutive number; name of first read in file is '0'").setCategory(UTILITY);
+    flags.registerOptional('q', DEFAULT_QUALITY, Integer.class, "INT", "default quality value to use if the SDF does not contain quality data (0-63)").setCategory(UTILITY);
+    flags.registerOptional(START_SEQUENCE, Long.class, "INT", "inclusive lower bound on sequence id").setCategory(CommonFlagCategories.FILTERING);
+    flags.registerOptional(END_SEQUENCE, Long.class, "INT", "exclusive upper bound on sequence id").setCategory(CommonFlagCategories.FILTERING);
+    flags.setValidator(VALIDATOR);
+  }
 
   private static final Validator VALIDATOR = new Validator() {
     @Override
@@ -75,14 +102,6 @@ public final class Sdf2Quala extends AbstractCli {
       return CommonFlags.validateStartEnd(flags, START_SEQUENCE, END_SEQUENCE);
     }
   };
-
-  /**
-   * @return current name of the module
-   */
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
-  }
 
   /**
    * Convert an SDF to FASTQ
@@ -118,6 +137,13 @@ public final class Sdf2Quala extends AbstractCli {
     final LongRange r = SequencesReaderFactory.resolveRange(preReadDir, new LongRange(startId, endId));
     final boolean rename = mFlags.isSet(RENAME);
     try (SequencesReader read = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(preReadDir, r)) {
+      final byte def = mFlags.isSet(DEFAULT_QUALITY) ? ((Integer) mFlags.getValue(DEFAULT_QUALITY)).byteValue() : -1;
+      if (!read.hasQualityData()) {
+        if (def < 0) {
+          throw new InvalidParamsException(ErrorType.INFO_ERROR, "The input SDF does not have quality data and no default was provided.");
+        }
+      }
+
       final boolean gzip = !mFlags.isSet(NO_GZIP);
       final String seqFileName = basename + FASTA_EXT;
       final String qualFileName = basename + QUALA_EXT;
@@ -125,11 +151,7 @@ public final class Sdf2Quala extends AbstractCli {
       final File qualityOutputFile = gzip ? new File(qualFileName + FileUtils.GZ_SUFFIX) : new File(qualFileName);
       try (LineWriter seqWriter = new LineWriter(new OutputStreamWriter(FileUtils.createOutputStream(sequenceOutputFile, gzip, false)))) {
         try (LineWriter qualWriter = new LineWriter(new OutputStreamWriter(FileUtils.createOutputStream(qualityOutputFile, gzip, false)))) {
-          final byte def = mFlags.isSet(DEFAULT_QUALITY) ? ((Integer) mFlags.getValue(DEFAULT_QUALITY)).byteValue() : -1;
           process(read, seqWriter, qualWriter, rename, def);
-        } catch (InvalidParamsException e) {
-          Sdf2Fastq.warnIfDeletionFails(sequenceOutputFile);
-          throw e;
         }
       }
     } catch (final FileNotFoundException e) {
@@ -138,7 +160,7 @@ public final class Sdf2Quala extends AbstractCli {
     return r;
   }
 
-  static void process(final SequencesReader read, final LineWriter seqWriter, LineWriter qualWriter, final boolean rename, final byte def) throws IOException, InvalidParamsException {
+  static void process(final SequencesReader read, final LineWriter seqWriter, LineWriter qualWriter, final boolean rename, final byte def) throws IOException {
     for (long seq = 0; seq < read.numberSequences(); seq++) {
       final String sequenceName = rename || !read.hasNames() ? String.valueOf(seq) : read.fullName(seq);
       final String sequenceFastaName = ">" + sequenceName;
@@ -150,10 +172,8 @@ public final class Sdf2Quala extends AbstractCli {
       final byte[] quality = new byte[read.length(seq)];
       if (read.hasQualityData()) {
         read.readQuality(seq, quality);
-      } else if (def >= 0) {
-        Arrays.fill(quality, def);
       } else {
-        throw new InvalidParamsException(ErrorType.INFO_ERROR, "The input SDF does not have quality data and no default was provided.");
+        Arrays.fill(quality, def);
       }
 
       final StringBuilder sb = new StringBuilder();
@@ -167,23 +187,5 @@ public final class Sdf2Quala extends AbstractCli {
     }
   }
 
-  @Override
-  protected void initFlags() {
-    initFlags(mFlags);
-  }
-
-  static void initFlags(final CFlags flags) {
-    flags.registerExtendedHelp();
-    flags.setDescription("Converts SDF data into FASTA/QUALA files.");
-    CommonFlagCategories.setCategories(flags);
-    CommonFlags.initNoGzip(flags);
-    flags.registerRequired('i', INPUT, File.class, "SDF", "SDF containing sequences").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('o', OUTPUT_FILE, File.class, "FILE", "basename for output files (extensions will be added)").setCategory(INPUT_OUTPUT);
-    flags.registerOptional('R', RENAME, "rename the reads to their consecutive number; name of first read in file is '0'").setCategory(UTILITY);
-    flags.registerOptional('q', DEFAULT_QUALITY, Integer.class, "INT", "default quality value to use if the SDF does not contain quality data (0-63)").setCategory(UTILITY);
-    flags.registerOptional(START_SEQUENCE, Long.class, "INT", "inclusive lower bound on sequence id").setCategory(CommonFlagCategories.FILTERING);
-    flags.registerOptional(END_SEQUENCE, Long.class, "INT", "exclusive upper bound on sequence id").setCategory(CommonFlagCategories.FILTERING);
-    flags.setValidator(VALIDATOR);
-  }
 
 }

@@ -13,32 +13,34 @@ package com.rtg.reader;
 
 
 import static com.rtg.launcher.CommonFlags.NO_GZIP;
-import static com.rtg.launcher.CommonFlags.STDIO_NAME;
-import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
+import static com.rtg.reader.Sdf2Fasta.END_SEQUENCE;
+import static com.rtg.reader.Sdf2Fasta.ID_FILE_FLAG;
+import static com.rtg.reader.Sdf2Fasta.INPUT;
+import static com.rtg.reader.Sdf2Fasta.LINE_LENGTH;
+import static com.rtg.reader.Sdf2Fasta.NAMES_FLAG;
+import static com.rtg.reader.Sdf2Fasta.OUTPUT;
+import static com.rtg.reader.Sdf2Fasta.RENAME;
+import static com.rtg.reader.Sdf2Fasta.START_SEQUENCE;
+import static com.rtg.reader.Sdf2Fasta.registerTextExtractorFlags;
+import static com.rtg.reader.Sdf2Fasta.validateTextExtractorFlags;
 import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
+import static com.rtg.util.cli.CommonFlagCategories.setCategories;
 
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintStream;
-import java.util.Locale;
+import java.util.Collection;
 
 import com.rtg.launcher.AbstractCli;
-import com.rtg.launcher.CommonFlags;
-import com.rtg.mode.DnaUtils;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.cli.CFlags;
-import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
-import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.util.diagnostic.WarningType;
-import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.LineWriter;
+import com.rtg.util.intervals.LongRange;
 
 /**
  * This class takes format directory and converts to FASTQ format
@@ -47,31 +49,32 @@ public final class Sdf2Fastq extends AbstractCli {
 
   static final String MODULE_NAME = "sdf2fastq";
 
-  static final String INPUT = "input";
-  static final String OUTPUT_FILE = "output";
-  static final String LINE_FLAG = "line-length";
-  static final String RENAME = "Xrename";
   static final String DEFAULT_QUALITY = "default-quality";
 
-  static final String START_SEQUENCE = "start-id";
-  static final String END_SEQUENCE = "end-id";
+  /**
+   * @return current name of the module
+   */
+  @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
 
-  static final String FASTQ_EXT_LGE = ".fastq";
-  static final String FASTQ_EXT_SRT = ".fq";
+  @Override
+  protected void initFlags() {
+    mFlags.registerExtendedHelp();
+    mFlags.setDescription("Converts SDF data into FASTQ file(s).");
+    setCategories(mFlags);
 
-  private static String sScore = null;
+    registerTextExtractorFlags(mFlags);
+
+    mFlags.registerOptional('q', DEFAULT_QUALITY, Integer.class, "INT", "default quality value to use if the SDF does not contain quality data (0-63)").setCategory(UTILITY);
+
+    mFlags.setValidator(VALIDATOR);
+  }
 
   private static final Validator VALIDATOR = new Validator() {
     @Override
     public boolean isValid(final CFlags flags) {
-      if ((Integer) flags.getValue(LINE_FLAG) < 0) {
-        Diagnostic.error(ErrorType.EXPECTED_NONNEGATIVE, LINE_FLAG);
-        return false;
-      }
-      final File input = (File) flags.getValue(INPUT);
-      if (!CommonFlags.validateSDF(input)) {
-        return false;
-      }
       if (flags.isSet(DEFAULT_QUALITY)) {
         final int qual = (Integer) flags.getValue(DEFAULT_QUALITY);
         if (qual < 0) {
@@ -83,204 +86,71 @@ public final class Sdf2Fastq extends AbstractCli {
           return false;
         }
       }
-      return CommonFlags.validateStartEnd(flags, START_SEQUENCE, END_SEQUENCE);
+
+      return validateTextExtractorFlags(flags);
     }
   };
 
-  static void warnIfDeletionFails(final File sequenceOutputFile) {
-    if (sequenceOutputFile != null && sequenceOutputFile.isFile()) {
-      if (sequenceOutputFile.exists() && !sequenceOutputFile.delete()) {
-        Diagnostic.warning(WarningType.INFO_WARNING, "Could not delete file \"" + sequenceOutputFile.getAbsolutePath() + "\"");
-      }
-    }
-  }
 
-  /**
-   * @return current name of the module
-   */
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
-  }
-
-  /**
-   * Convert an SDF to FASTQ
-   *
-   * @param out where the FASTQ file goes
-   * @param err where error messages go
-   * @throws IOException should an IO Error occur
-   * @return 0 for success, 1 for failure
-   */
   @Override
   protected int mainExec(final OutputStream out, final PrintStream err) throws IOException {
-    final File preReadDir = (File) mFlags.getValue(INPUT);
-    String output = mFlags.getValue(OUTPUT_FILE).toString();
-    String ext = FASTQ_EXT_LGE;
-    if (FileUtils.isGzipFilename(output)) {
-      output = output.substring(0, output.length() - FileUtils.GZ_SUFFIX.length());
-    }
-    if (output.toLowerCase(Locale.getDefault()).endsWith(FASTQ_EXT_LGE)) {
-      ext = output.substring(output.length() - FASTQ_EXT_LGE.length());
-      output = output.substring(0, output.length() - FASTQ_EXT_LGE.length());
-    } else if (output.toLowerCase(Locale.getDefault()).endsWith(FASTQ_EXT_SRT)) {
-      ext = output.substring(output.length() - FASTQ_EXT_SRT.length());
-      output = output.substring(0, output.length() - FASTQ_EXT_SRT.length());
-    }
-    final File outputFile = new File(output);
-    final boolean isPaired = ReaderUtils.isPairedEndDirectory(preReadDir);
+    final PrintStream outStream = new PrintStream(out);
     try {
-      if (isPaired) {
-        if (CommonFlags.isStdio(output)) {
-          err.println("Sending paired-end data to stdout is not supported.");
-          return 1;
-        }
-        final LongRange calculatedRegion = doPrereadToFastq(ReaderUtils.getLeftEnd(preReadDir), outputFile.getAbsolutePath() + "_1" + ext, out, null);
-        doPrereadToFastq(ReaderUtils.getRightEnd(preReadDir), outputFile.getAbsolutePath() + "_2" + ext, out, calculatedRegion);
-      } else {
-        doPrereadToFastq(preReadDir, CommonFlags.isStdio(output) ? STDIO_NAME : (outputFile.getAbsolutePath() + ext), out, null);
-      }
-    } catch (InvalidParamsException e) {
-      e.printErrorNoLog();
-      return 1;
-    }
-    return 0;
-  }
-
-  //Calculated region for sloppy end
-  private LongRange doPrereadToFastq(File preReadDir, String output, OutputStream out, LongRange calculatedRegion) throws IOException, InvalidParamsException {
-    final long startId = mFlags.isSet(START_SEQUENCE) ? (Long) mFlags.getValue(START_SEQUENCE) : LongRange.MISSING;
-    final long endId = calculatedRegion != null ? calculatedRegion.getEnd() : (mFlags.isSet(END_SEQUENCE) ? (Long) mFlags.getValue(END_SEQUENCE) : LongRange.MISSING);
-    final LongRange r = SequencesReaderFactory.resolveRange(preReadDir, new LongRange(startId, endId));
-    final boolean rename = mFlags.isSet(RENAME);
-    final SequencesReader read;
-    try {
-      read = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(preReadDir, r);
-    } catch (final FileNotFoundException e) {
-      throw new NoTalkbackSlimException(ErrorType.FILE_NOT_FOUND, preReadDir.toString());
-    }
-
-    final LineWriter p;
-    final File outputFile;
-    if (CommonFlags.isStdio(output)) {
-      outputFile = null;
-      p = new LineWriter(new OutputStreamWriter(out));
-    } else {
+      final int lineLength = (Integer) mFlags.getValue(LINE_LENGTH);
       final boolean gzip = !mFlags.isSet(NO_GZIP);
-      outputFile = gzip ? new File(output + FileUtils.GZ_SUFFIX) : new File(output);
-      p = new LineWriter(new OutputStreamWriter(FileUtils.createOutputStream(outputFile, gzip, false)));
-    }
-
-    try {
+      final boolean rename = mFlags.isSet(RENAME);
       final int def = mFlags.isSet(DEFAULT_QUALITY) ? (Integer) mFlags.getValue(DEFAULT_QUALITY) + (int) '!' : -1;
-      process(read, p, rename, (Integer) mFlags.getValue(LINE_FLAG), def);
-    } catch (InvalidParamsException e) {
-      p.close();
-      warnIfDeletionFails(outputFile);
-      throw e;
+
+      try (SdfReaderWrapper reader = new SdfReaderWrapper((File) mFlags.getValue(INPUT), false, false)) {
+        try (WriterWrapper writer = new FastqWriterWrapper((File) mFlags.getValue(OUTPUT), reader, lineLength, rename, gzip, def)) {
+          final WrapperFilter filter;
+          if (mFlags.isSet(NAMES_FLAG)) {
+            filter = new NameWrapperFilter(reader, writer);
+          } else {
+            filter = new WrapperFilter(reader, writer);
+          }
+
+          boolean doAll = true;
+          if (mFlags.getAnonymousFlag(0).isSet()) {
+            doAll = false;
+            final Collection<Object> seqs = mFlags.getAnonymousValues(0);
+            for (final Object oi : seqs) {
+              filter.transfer((String) oi);
+            }
+          }
+          if (mFlags.isSet(ID_FILE_FLAG)) {
+            doAll = false;
+            try (BufferedReader br = new BufferedReader(new FileReader((File) mFlags.getValue(ID_FILE_FLAG)))) {
+              String line;
+              while ((line = br.readLine()) != null) {
+                line = line.trim();
+                if (line.length() > 0) {
+                  filter.transfer(line);
+                }
+              }
+            }
+          }
+          if (doAll || mFlags.isSet(START_SEQUENCE) || mFlags.isSet(END_SEQUENCE)) {
+            final long startId = mFlags.isSet(START_SEQUENCE) ? (Long) mFlags.getValue(START_SEQUENCE) : LongRange.MISSING;
+            final long endId = mFlags.isSet(END_SEQUENCE) ? (Long) mFlags.getValue(END_SEQUENCE) : LongRange.MISSING;
+            final LongRange r = SequencesReaderFactory.resolveRange(new LongRange(startId, endId), reader.numberSequences());
+            for (long seq = r.getStart(); seq < r.getEnd(); seq++) {
+              filter.transfer(seq);
+            }
+          }
+        }
+      } catch (final IOException e) {
+        // Ignore broken pipe error so we don't die on | head etc.
+        if (!e.getMessage().contains("Broken pipe")) {
+          throw e;
+        }
+      } catch (InvalidParamsException e) {
+        e.printErrorNoLog();
+        return 1;
+      }
+      return 0;
     } finally {
-      read.close();
-      p.close();
+      outStream.flush();
     }
-    return r;
-  }
-
-  static void process(final SequencesReader read, final LineWriter out, final boolean rename, final int lineLength, final int def) throws IOException, InvalidParamsException {
-    if (lineLength < 0) {
-      throw new IllegalArgumentException();
-    }
-    final byte[] buff = new byte[(int) read.maxLength()];
-    for (long seqId = 0; seqId < read.numberSequences(); seqId++) {
-      final StringBuilder name = new StringBuilder("");
-      if (rename || !read.hasNames()) {
-        name.append(seqId);
-      } else {
-        name.append(read.fullName(seqId));
-      }
-      out.writeln("@" + name.toString());
-
-      read.read(seqId, buff);
-      if (lineLength == 0) {
-        out.writeln(DnaUtils.bytesToSequenceIncCG(buff, 0, read.length(seqId)));
-        out.writeln("+" + name.toString());
-        out.writeln(getScore(read, seqId, def));
-      } else {
-        final String dna = DnaUtils.bytesToSequenceIncCG(buff, 0, read.length(seqId));
-        final int dnaLen = dna.length();
-        for (long i = 0; i < dnaLen; i += lineLength) {
-          out.writeln(dna.substring((int) i, (int) Math.min(i + lineLength, dnaLen)));
-        }
-        out.writeln("+" + name.toString());
-        final String qual = getScore(read, seqId, def);
-        final int qualLen = qual.length();
-        for (long i = 0; i < qualLen; i += lineLength) {
-          out.writeln(qual.substring((int) i, (int) Math.min(i + lineLength, qualLen)));
-        }
-      }
-    }
-  }
-
-  private static String getScore(final SequencesReader read, long seqId, final int c) throws IOException, InvalidParamsException {
-    if (read.hasQualityData()) {
-      return getQuality(read.readQuality(seqId));
-    } else if (c >= (int) '!') {
-      if (sScore == null) {
-        sScore = getSimulatedScore(read.maxLength(), (char) c);
-      }
-      return sScore.substring(0, read.length(seqId));
-    } else {
-      throw new InvalidParamsException(ErrorType.INFO_ERROR, "The input SDF does not have quality data and no default was provided.");
-    }
-  }
-
-  /**
-   * Converts an array of bytes into a sanger-encoded quality string
-   *
-   * @param quality buffer containing input qualities
-   * @return the quality string
-   */
-  public static String getQuality(byte[] quality) {
-    final StringBuilder b = new StringBuilder();
-    for (final byte q : quality) {
-      b.append((char) (q + (byte) '!'));
-    }
-    return b.toString();
-  }
-
-  @Override
-  protected void initFlags() {
-    initFlags(mFlags);
-  }
-
-  /**
-   * Initialise a flags object
-   * @param flags the flags object to initialise
-   */
-  public void initFlags(CFlags flags) {
-    flags.registerExtendedHelp();
-    flags.setDescription("Converts SDF data into FASTQ file(s).");
-    CommonFlagCategories.setCategories(flags);
-    flags.registerRequired('i', INPUT, File.class, "SDF", "SDF containing sequences").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('o', OUTPUT_FILE, File.class, "FILE", "output filename (extension added if not present)").setCategory(INPUT_OUTPUT);
-    flags.registerOptional('l', LINE_FLAG, Integer.class, "INT", "maximum number of nucleotides or amino acids to print on a line of fastq output. A value of 0 indicates no limit", 0).setCategory(UTILITY);
-    flags.registerOptional('R', RENAME, "rename the reads to their consecutive number; name of first read in file is '0'").setCategory(UTILITY);
-CommonFlags.initNoGzip(flags);
-    flags.registerOptional('q', DEFAULT_QUALITY, Integer.class, "INT", "default quality value to use if the SDF does not contain quality data (0-63)").setCategory(UTILITY);
-    flags.registerOptional(START_SEQUENCE, Long.class, "INT", "inclusive lower bound on sequence id").setCategory(CommonFlagCategories.FILTERING);
-    flags.registerOptional(END_SEQUENCE, Long.class, "INT", "exclusive upper bound on sequence id").setCategory(CommonFlagCategories.FILTERING);
-    flags.setValidator(VALIDATOR);
-  }
-
-  /**
-   * Simulates a score
-   * @param maxLength the length of the score
-   * @param c the character
-   * @return the score
-   */
-  public static String getSimulatedScore(final long maxLength, final char c) {
-    final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < maxLength; i++) {
-      sb.append(c);
-    }
-    return sb.toString();
   }
 }

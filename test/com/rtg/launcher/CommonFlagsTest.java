@@ -483,7 +483,7 @@ public class CommonFlagsTest extends TestCase {
       mps.reset();
       flags.setFlags("--start", "0", "--end", "" + Long.MAX_VALUE);
       assertFalse(CommonFlags.validateStartEnd(flags, "start", "end"));
-      assertTrue(mps.toString().contains("You have specified too many reads, please specify a range of less than " + Integer.MAX_VALUE + " reads."));
+      assertTrue(mps.toString().contains("You have specified too many sequences, please specify a range of less than " + Integer.MAX_VALUE));
     } finally {
       Diagnostic.setLogStream();
     }
