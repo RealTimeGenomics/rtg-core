@@ -28,10 +28,10 @@ import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
-import com.rtg.variant.SomaticStatistics;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.VariantStatistics;
+import com.rtg.variant.avr.AbstractPredictModel;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 import com.rtg.variant.bayes.multisample.MultisampleTask;
 
@@ -166,7 +166,7 @@ public class SomaticCli extends AbstractMultisampleCli {
 
   @Override
   protected VariantStatistics getStatistics(VariantParams params) {
-    return new SomaticStatistics(params);
+    return new SomaticStatistics(params, AbstractPredictModel.AVR); // todo GQ fallback
   }
 
   @Override

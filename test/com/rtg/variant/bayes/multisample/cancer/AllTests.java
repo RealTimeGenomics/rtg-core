@@ -38,6 +38,8 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(PosteriorPureTest.class);
     suite.addTestSuite(SomaticCliTest.class);
     suite.addTestSuite(SomaticNanoTest.class);
+    suite.addTestSuite(SomaticStatisticsTest.class);
+    suite.addTestSuite(TopScorerTest.class);
 
     return suite;
   }

@@ -25,7 +25,7 @@ import com.rtg.vcf.VariantType;
  *
  */
 @TestClass("com.rtg.variant.VariantStatisticsTest")
-class PerSampleVariantStatistics {
+public class PerSampleVariantStatistics {
 
   private static final int EXP_STEP = 100;
 
@@ -181,7 +181,7 @@ class PerSampleVariantStatistics {
 
   }
 
-  void appendStatistics(StringBuilder sb) {
+  public void appendStatistics(StringBuilder sb) {
     final Pair<List<String>, List<String>> statistics = getStatistics();
     VariantStatistics.printCounts(statistics.getA(), statistics.getB(), sb);
   }

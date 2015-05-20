@@ -49,7 +49,6 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(VariantLocusTest.class);
     suite.addTestSuite(VariantSampleTest.class);
     suite.addTestSuite(VariantSampleInfoTest.class);
-    suite.addTestSuite(SomaticStatisticsTest.class);
     suite.addTestSuite(VcfStatsCliTest.class);
 
     suite.addTest(com.rtg.variant.bayes.AllTests.suite());

@@ -70,7 +70,7 @@ public class SomaticNanoTest extends TestCase {
   private static final String REF_TEST2 = ">test1" + LS
       + "TCGTACGTCT";
 
-  //test an interesting call using cancer caller (homozygous insert)
+  //test an interesting call using cancer caller (homozygous add)
   // Cancer / normal Aviews
   //   TCGTACG_TCT
   //    CGTACGG
@@ -115,7 +115,7 @@ public class SomaticNanoTest extends TestCase {
       + "TCGTACGGTCT"
       ;
 
-  // Long insert case seen as a bug in wild
+  // Long add case seen as a bug in wild
   public void test5() throws Exception {
     checkCancer("5", "5", REF_TEST5, 148L, "--keep-duplicates");
   }
@@ -123,12 +123,12 @@ public class SomaticNanoTest extends TestCase {
   private static final String LONG_INSERT_TEMPLATE = ">chr17" + LS
       + "CATTCCCAAGTCACATGACATCGTTTTGAAACTCTGTCATTCATAAATGGGGCATCCCTTATGACAACAGCGTTATAGTCCGACGGGAGTAAATAAAAACAGCTGTGTTACCATGTCAGCAACCTTGAGGTGCCCATAGGTGAAC";
 
-  // Long insert case seen as a bug in wild - this shouldn't pass
+  // Long add case seen as a bug in wild - this shouldn't pass
   public void testLongInsert() throws Exception {
     checkCancer("LongInsert", "LongInsert", LONG_INSERT_TEMPLATE, 1840L, "--keep-duplicates");
   }
 
-  // Long insert case but N removed from normal evidence
+  // Long add case but N removed from normal evidence
   public void testLongInsertNoN() throws Exception {
     checkCancer("LongInsertNoN", "LongInsertNoN", LONG_INSERT_TEMPLATE, 1840L, "--keep-duplicates");
   }

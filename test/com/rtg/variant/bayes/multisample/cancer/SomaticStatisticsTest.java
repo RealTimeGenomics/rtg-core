@@ -10,7 +10,7 @@
  * be made from time to time by Real Time Genomics Limited.
  */
 
-package com.rtg.variant;
+package com.rtg.variant.bayes.multisample.cancer;
 
 import java.util.Arrays;
 
@@ -20,6 +20,13 @@ import com.rtg.relation.Relationship.RelationshipType;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.variant.GenomePriorParams;
+import com.rtg.variant.Variant;
+import com.rtg.variant.VariantLocus;
+import com.rtg.variant.VariantParams;
+import com.rtg.variant.VariantParamsBuilder;
+import com.rtg.variant.VariantSample;
+import com.rtg.variant.avr.AbstractPredictModel;
 import com.rtg.variant.bayes.MockGenotypeMeasure;
 import com.rtg.variant.bayes.NoNonIdentityMeasure;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
@@ -44,7 +51,7 @@ public class SomaticStatisticsTest extends TestCase {
     final VariantParams p = b.create();
 
     final MemoryPrintStream mps = new MemoryPrintStream();
-    final SomaticStatistics mss = new SomaticStatistics(p);
+    final SomaticStatistics mss = new SomaticStatistics(p, AbstractPredictModel.AVR);
     mss.printStatistics(mps.outputStream());
     assertEquals(""
         + "Passed Filters               : 0" + StringUtils.LS

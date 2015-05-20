@@ -27,7 +27,8 @@ import com.rtg.vcf.header.VcfHeader;
  */
 public abstract class AbstractPredictModel implements VcfAnnotator {
 
-  private static final String DEFAULT_OUTPUT_FIELD_NAME = "AVR";
+  /** Constant used to denote AVR scores in VCF output. */
+  public static final String AVR = "AVR";
 
   private final String mField;
 
@@ -36,7 +37,7 @@ public abstract class AbstractPredictModel implements VcfAnnotator {
    * @param is input stream to read from
    */
   public AbstractPredictModel(InputStream is) {
-    this(is, DEFAULT_OUTPUT_FIELD_NAME);
+    this(is, AVR);
   }
 
   /**
@@ -52,7 +53,7 @@ public abstract class AbstractPredictModel implements VcfAnnotator {
    * Constructor used for building model from scratch with model builder mechanism.
    */
   AbstractPredictModel() {
-    mField = DEFAULT_OUTPUT_FIELD_NAME;
+    mField = AVR;
   }
 
   /**

@@ -425,13 +425,12 @@ public final class VcfUtils {
   }
 
   private static boolean isIdentity(int[] gt) {
-    boolean allIdentity = true;
     for (int g : gt) {
       if (g != 0) {
-        allIdentity = false;
+        return false;
       }
     }
-    return allIdentity;
+    return true;
   }
 
   /**

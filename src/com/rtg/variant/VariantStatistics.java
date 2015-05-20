@@ -67,7 +67,7 @@ public class VariantStatistics extends AbstractStatistics {
     super(outputDirectory);
   }
 
-  final Map<String, PerSampleVariantStatistics> mPerSampleStats = new LinkedHashMap<>();
+  protected final Map<String, PerSampleVariantStatistics> mPerSampleStats = new LinkedHashMap<>();
 
   private List<String> mOnlySample = null; // If set, only accumulate statistics for the named samples
   private Boolean mOnlyKnown = null; // If set, only accumulate statistics for known (or novel if false) variants
@@ -245,7 +245,12 @@ public class VariantStatistics extends AbstractStatistics {
     tallyVariant(rec, header.getSampleNames());
   }
 
-  void tallyVariant(VcfRecord rec, List<String> sampleNames) {
+  /**
+   * Add per sample information for the given VCF record to the statistics
+   * @param rec record to add
+   * @param sampleNames samples to consider
+   */
+  public void tallyVariant(VcfRecord rec, List<String> sampleNames) {
 
     if (mOnlyKnown != null) {
       final boolean currentKnown = !VcfRecord.MISSING.equals(rec.getId());
