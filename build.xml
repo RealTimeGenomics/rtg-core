@@ -88,9 +88,14 @@
   <property name="vcs.info.args" value="rev-list --abbrev-commit -n 1 HEAD"/>
 
   <target name="rtg-vcs-info" depends="init" unless="rtg.vcs.commit.revision">
-    <exec executable="${vcs.info.cmd}" outputproperty="rtg.vcs.commit.revision" dir="${public.core.basedir}">
+    <exec executable="${vcs.info.cmd}" outputproperty="vcs.cmd.out" resultproperty="vcs.cmd.rc" dir="${public.core.basedir}">
       <arg line="${vcs.info.args}"/>
     </exec>
+    <condition property="rtg.vcs.commit.revision"
+               value="unknown"
+               else="${vcs.cmd.out}">
+      <isfailure code="${vcs.cmd.rc}"/>
+    </condition>
     <echo message="Current build revision is ${rtg.vcs.commit.revision}"/>
   </target>
 
