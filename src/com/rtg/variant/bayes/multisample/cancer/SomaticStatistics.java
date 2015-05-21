@@ -17,7 +17,7 @@ import java.util.Arrays;
 import com.rtg.relation.Relationship;
 import com.rtg.relation.Relationship.RelationshipType;
 import com.rtg.util.StringUtils;
-import com.rtg.util.format.FormatReal;
+import com.rtg.util.Utils;
 import com.rtg.variant.PerSampleVariantStatistics;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantStatistics;
@@ -46,13 +46,12 @@ public class SomaticStatistics extends VariantStatistics {
   private static final int[] DIPLOID00 = {0, 0};
   private static final int[] DIPLOID01 = {0, 1};
   private static final int BASIS = 1000;
-  private static final FormatReal FORMAT_REAL = new FormatReal(3, 2);
 
   private final String mRankingField;
   private final String mNormalSampleName;
   private final String mCancerSampleName;
-  private final TopScorer mNormalStore;
-  private final TopScorer mCancerStore;
+  private final Scorer mNormalStore;
+  private final Scorer mCancerStore;
 
   /**
    * Somatic specific variant statistics which only outputs the statistics for the derived sample.
@@ -68,7 +67,7 @@ public class SomaticStatistics extends VariantStatistics {
     mRankingField = rankingField;
     mNormalSampleName = genomeNames[0];
     mCancerSampleName = genomeNames[1];
-    mNormalStore = new TopScorer(BASIS);
+    mNormalStore = new TotalScorer();
     mCancerStore = new TopScorer(BASIS);
   }
 
@@ -82,7 +81,7 @@ public class SomaticStatistics extends VariantStatistics {
     return false;
   }
 
-  private void insert(final TopScorer store, final Double rankingScore, final String alleleDepth) {
+  private void insert(final Scorer store, final Double rankingScore, final String alleleDepth) {
     final String[] alleleCounts = StringUtils.split(alleleDepth, ',');
     store.add(rankingScore, Integer.parseInt(alleleCounts[0]), Integer.parseInt(alleleCounts[1]));
   }
@@ -116,25 +115,19 @@ public class SomaticStatistics extends VariantStatistics {
    * the alt allele was more common than the ref allele.
    */
   private double computeReferenceCorrection() {
-    long ref = 0;
-    long alt = 0;
-    for (int k = 0; k < mNormalStore.size(); k++) {
-      ref += mNormalStore.getRefCount(k);
-      alt += mNormalStore.getAltCount(k);
-    }
+    final long ref = mNormalStore.getTotalRefCount();
+    final long alt = mNormalStore.getTotalAltCount();
     final double total = ref + alt;
     final double correction = total == 0 ? 1 : 2.0 * alt / total;
     assert 0 <= correction;
+    System.out.println("TEMP: ref bias calc numbers: " + correction + " size=" + mNormalStore.size() + " alt=" + alt + " ref=" + ref);
     return correction;
   }
 
   private double computeContaminationEstimate() {
-    long ref = 0;
-    double alt = 0;
-    for (int k = 0; k < mCancerStore.size(); k++) {
-      ref += mCancerStore.getRefCount(k);
-      alt += mCancerStore.getAltCount(k);
-    }
+    final long ref = mCancerStore.getTotalRefCount();
+    double alt = mCancerStore.getTotalAltCount();
+    System.out.println("TEMP: contam calc numbers: size=" + mCancerStore.size() + " alt=" + alt + " ref=" + ref);
     final double refBiasCorrection = computeReferenceCorrection();
     // If the reference bias is 0 (i.e. no alt evidence in the normal), then the best we can
     // do is to assume that there is no reference bias correction.
@@ -168,8 +161,8 @@ public class SomaticStatistics extends VariantStatistics {
       out.append("No Hypotheses                : ").append(mNoHypotheses).append(StringUtils.LS);
     }
     if (mCancerStore.size() != 0) {
-      out.append("Estimated reference bias     : ").append(FORMAT_REAL.format(1 - computeReferenceCorrection())).append(StringUtils.LS);
-      out.append("Estimated contamination      : ").append(FORMAT_REAL.format(computeContaminationEstimate())).append(StringUtils.LS);
+      out.append("Estimated reference bias     : ").append(Utils.realFormat(1 - computeReferenceCorrection(), 2)).append(StringUtils.LS);
+      out.append("Estimated contamination      : ").append(Utils.realFormat(computeContaminationEstimate(), 2)).append(StringUtils.LS);
     }
 
     final PerSampleVariantStatistics derivedSampleStats = mPerSampleStats.get(mCancerSampleName);

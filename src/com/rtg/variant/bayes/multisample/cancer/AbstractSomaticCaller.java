@@ -228,10 +228,12 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       //  - looks like an LOH event, even though the LOH prior was 0
       //  - has cancer sample equal to the reference (and by assumption cannot be a cause of cancer)
       // It is not interesting and should not normally be output.
-      if (mParams.callLevel() != VariantOutputLevel.ALL) {
-        return null;
+      if (!sameCall || hypotheses.reference() == bestNormal) {
+        if (mParams.callLevel() != VariantOutputLevel.ALL) {
+          return null;
+        }
+        boring = true;
       }
-      boring = true;
       cause = "NONE";
     } else {
       cause = best;

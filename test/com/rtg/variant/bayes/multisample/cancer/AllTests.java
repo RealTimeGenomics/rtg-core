@@ -16,7 +16,6 @@ import junit.framework.TestSuite;
 
 /**
  * Test class for all tests in this package.
- *
  */
 public class AllTests extends TestSuite {
 
@@ -40,6 +39,7 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(SomaticNanoTest.class);
     suite.addTestSuite(SomaticStatisticsTest.class);
     suite.addTestSuite(TopScorerTest.class);
+    suite.addTestSuite(TotalScorerTest.class);
 
     return suite;
   }

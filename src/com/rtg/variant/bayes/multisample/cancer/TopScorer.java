@@ -15,7 +15,7 @@ package com.rtg.variant.bayes.multisample.cancer;
  * Remember top scoring items.  Simple array backed implementation.
  * @author Sean A. Irvine
  */
-class TopScorer {
+class TopScorer implements Scorer {
 
   // Expect to insert approx 3e6 records into length 1000.  Hence probability
   // of record in result is 1/3000. On average inserted record will be in
@@ -36,7 +36,8 @@ class TopScorer {
     mAltCount = new int[length];
   }
 
-  void add(final Double score, final int refCount, final int altCount) {
+  @Override
+  public void add(final Double score, final int refCount, final int altCount) {
     if (score != null) {
       final double s = score;
       int pos = mLast;
@@ -56,7 +57,8 @@ class TopScorer {
     }
   }
 
-  int size() {
+  @Override
+  public int size() {
     return mLast;
   }
 
@@ -66,5 +68,23 @@ class TopScorer {
 
   int getAltCount(final int n) {
     return mAltCount[n];
+  }
+
+  private long sum(final int[] array) {
+    long s = 0;
+    for (final int v : array) {
+      s += v;
+    }
+    return s;
+  }
+
+  @Override
+  public long getTotalRefCount() {
+    return sum(mRefCount);
+  }
+
+  @Override
+  public long getTotalAltCount() {
+    return sum(mAltCount);
   }
 }
