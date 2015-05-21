@@ -271,13 +271,13 @@ public class Sdf2FastaTest extends AbstractCliTest {
   }
 
   public void testLineFlag() throws IOException {
-    final String err = checkHandleFlagsErr( "-o", "testFile", "-i", "pf2", "-l", "-5");
+    final String err = checkHandleFlagsErr("-o", "testFile", "-i", "pf2", "-l", "-5");
     assertTrue(err.contains("Error: Expected a nonnegative integer for parameter \"line-length\"."));
   }
 
   public void testInputAsFile() throws IOException {
     final File que = File.createTempFile("p2f", "flag");
-    final String err = checkMainInitBadFlags( "-o", "testFile", "-i", que.getPath());
+    final String err = checkMainInitBadFlags("-o", "testFile", "-i", que.getPath());
     assertTrue(err.contains("Error: The specified file, \"" + que.getPath() + "\", is not an SDF."));
     assertTrue(FileHelper.deleteAll(que));
   }

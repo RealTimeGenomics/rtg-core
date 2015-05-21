@@ -51,6 +51,10 @@ public class FastaWriterWrapper implements WriterWrapper {
    * Convenience wrapper for writing.
    * @param baseOutput base output file name.
    * @param reader the reader that this writer is writing from.
+   * @param lineLength the maximum line length, 0 means no bound.
+   * @param rename if true, rename sequences to their sequence id
+   * @param gzip if true, compress the output.
+   * @throws IOException if there is a problem constructing the writer.
    */
   public FastaWriterWrapper(File baseOutput, SdfReaderWrapper reader, int lineLength, boolean rename, boolean gzip) throws IOException {
     this(baseOutput, reader, lineLength, rename, gzip, EXTS);

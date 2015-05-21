@@ -16,8 +16,6 @@ import static com.rtg.reader.Sdf2Fasta.ID_FILE_FLAG;
 import static com.rtg.reader.Sdf2Fasta.INPUT;
 import static com.rtg.reader.Sdf2Fasta.NAMES_FLAG;
 import static com.rtg.reader.Sdf2Fasta.START_SEQUENCE;
-import static com.rtg.reader.Sdf2Fasta.registerExtractorFlags;
-import static com.rtg.reader.Sdf2Fasta.validateExtractorFlags;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 
 import java.io.BufferedReader;
@@ -55,7 +53,7 @@ public final class SdfSubset extends LoggedCli {
         flags.setParseMessage("Sequences to extract must be specified, either explicitly, or using --" + ID_FILE_FLAG + ", or via --" + START_SEQUENCE + "/--" + END_SEQUENCE);
         return false;
       }
-      return validateExtractorFlags(flags);
+      return Sdf2Fasta.validateExtractorFlags(flags);
     }
   };
 
@@ -63,7 +61,7 @@ public final class SdfSubset extends LoggedCli {
   protected void initFlags() {
     CommonFlagCategories.setCategories(mFlags);
     mFlags.setDescription("Extracts a subset of sequences from one SDF and outputs them to another SDF.");
-    registerExtractorFlags(mFlags);
+    Sdf2Fasta.registerExtractorFlags(mFlags);
     mFlags.registerRequired('o', OUTPUT, File.class, "SDF", "output SDF").setCategory(INPUT_OUTPUT);
 
     mFlags.setValidator(VALIDATOR);

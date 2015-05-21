@@ -68,8 +68,9 @@ public final class SdfWriterWrapper implements WriterWrapper {
   }
 
   /**
-   * Set a new reader from which sequences will be selected -- only needed for sdfsplit during merge operation!
-   * @param reader
+   * Set a new reader from which sequences will be selected -- only
+   * needed for <code>sdfsplit</code> during merge operation!
+   * @param reader the new reader to supply sequence data.
    */
   void setReader(SdfReaderWrapper reader) {
     mReader = reader;

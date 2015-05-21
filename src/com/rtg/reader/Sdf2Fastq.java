@@ -21,10 +21,7 @@ import static com.rtg.reader.Sdf2Fasta.NAMES_FLAG;
 import static com.rtg.reader.Sdf2Fasta.OUTPUT;
 import static com.rtg.reader.Sdf2Fasta.RENAME;
 import static com.rtg.reader.Sdf2Fasta.START_SEQUENCE;
-import static com.rtg.reader.Sdf2Fasta.registerTextExtractorFlags;
-import static com.rtg.reader.Sdf2Fasta.validateTextExtractorFlags;
 import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
-import static com.rtg.util.cli.CommonFlagCategories.setCategories;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -37,6 +34,7 @@ import java.util.Collection;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
+import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
@@ -63,9 +61,9 @@ public final class Sdf2Fastq extends AbstractCli {
   protected void initFlags() {
     mFlags.registerExtendedHelp();
     mFlags.setDescription("Converts SDF data into FASTQ file(s).");
-    setCategories(mFlags);
+    CommonFlagCategories.setCategories(mFlags);
 
-    registerTextExtractorFlags(mFlags);
+    Sdf2Fasta.registerTextExtractorFlags(mFlags);
 
     mFlags.registerOptional('q', DEFAULT_QUALITY, Integer.class, "INT", "default quality value to use if the SDF does not contain quality data (0-63)").setCategory(UTILITY);
 
@@ -87,7 +85,7 @@ public final class Sdf2Fastq extends AbstractCli {
         }
       }
 
-      return validateTextExtractorFlags(flags);
+      return Sdf2Fasta.validateTextExtractorFlags(flags);
     }
   };
 

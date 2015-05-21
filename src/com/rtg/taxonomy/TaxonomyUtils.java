@@ -91,7 +91,7 @@ public final class TaxonomyUtils {
     final Map<String, Long> names = ReaderUtils.getSequenceNameMap(reader);
     final Map<String, Integer> sequenceLookupMap = loadTaxonomyMapping(reader);
     // Invert the map and convert target to IDs
-    MultiMap<Integer, Long> result = new MultiMap<>();
+    final MultiMap<Integer, Long> result = new MultiMap<>();
     for (Map.Entry<String, Integer> entry : sequenceLookupMap.entrySet()) {
       final Long id = names.get(handler.handleSequenceName(entry.getKey()).label());
       if (id != null) {
