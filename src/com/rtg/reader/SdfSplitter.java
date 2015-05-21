@@ -165,6 +165,9 @@ public final class SdfSplitter extends LoggedCli {
       for (final File dir : inDirs) {
         try {
           reader = new SdfReaderWrapper(dir, useMem, false);
+          if (writer != null) {
+            writer.setReader(reader);
+          }
           readerNumber++;
         } catch (final FileNotFoundException e) {
           throw new NoTalkbackSlimException(ErrorType.FILE_NOT_FOUND, dir.toString());
@@ -174,14 +177,13 @@ public final class SdfSplitter extends LoggedCli {
             final String fname;
             fname = String.format("%06d", numOutputs);
             writer = new SdfWriterWrapper(new File(outDir, fname), reader, forceCompression);
-            writer.setSdfId(new SdfId()); //guid + numOutputs);
             numOutputs++;
             if (inDirs.size() == 1) {
               writer.copySourceTemplatesFile(reader);
             }
           }
           dupDetector.addPair(reader.name(seq), (int) seq, readerNumber);
-          writer.writeSequence(reader, seq, data, quality);
+          writer.writeSequence(seq, data, quality);
           if (++numSequences == sequencesPerOutput) {
             writer.close();
             writer = null;

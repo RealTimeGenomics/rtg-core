@@ -17,6 +17,7 @@ import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfStatistics;
+import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
@@ -127,9 +128,8 @@ public class ReadSimCliTest extends AbstractCliTest {
           "seed=17"
       );
 
-      final SdfStatistics ps = new SdfStatistics();
       final MemoryPrintStream mps = new MemoryPrintStream();
-      ps.performStatistics(outDir, mps.printStream(), true, false, false);
+      SdfStatistics.performStatistics(SequencesReaderFactory.createDefaultSequencesReader(outDir), outDir, mps.printStream(), true, false, false);
 
       TestUtils.containsAll(mps.toString(),
           "Maximum length     : 2",
@@ -170,9 +170,8 @@ public class ReadSimCliTest extends AbstractCliTest {
           "seed=17"
       );
 
-      final SdfStatistics ps = new SdfStatistics();
       final MemoryPrintStream mps = new MemoryPrintStream();
-      ps.performStatistics(outDir, mps.printStream(), true, false, false);
+      SdfStatistics.performStatistics(SequencesReaderFactory.createDefaultSequencesReader(outDir), outDir, mps.printStream(), true, false, false);
 
       TestUtils.containsAll(mps.toString(),
           "Total residues     : 980"

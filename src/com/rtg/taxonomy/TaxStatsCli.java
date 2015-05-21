@@ -13,7 +13,6 @@
 package com.rtg.taxonomy;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -27,16 +26,16 @@ import java.util.TreeMap;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
-import com.rtg.reader.IndexFile;
-import com.rtg.reader.PrereadNames;
-import com.rtg.reader.ReaderUtils;
+import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.SequencesReader;
+import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.util.Counter;
 import com.rtg.util.MultiSet;
 import com.rtg.util.TextTable;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
-import com.rtg.util.intervals.LongRange;
+import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
 /**
  * Taxonomy Verification for SDF
@@ -56,148 +55,133 @@ public final class TaxStatsCli extends AbstractCli {
   private boolean mShowDetails;
 
   int testSdf(File sdfFile, PrintStream out, PrintStream err) throws IOException {
-    if (!ReaderUtils.isSDF(sdfFile)) {
-      err.println("Error: " + sdfFile + " is not an SDF");
-      return 1;
-    }
-    final File taxonFile = new File(sdfFile, Taxonomy.TAXONOMY_FILE);
-    final File mappingFile = new File(sdfFile, SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE);
-    if (!taxonFile.isFile()) {
-      err.println("Error: SDF has no " + Taxonomy.TAXONOMY_FILE + " file");
-    }
-    if (!mappingFile.isFile()) {
-      err.println("Error: SDF has no " + SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE + " file");
-    }
-    if (!taxonFile.isFile() || !mappingFile.isFile()) {
-      return 1;
-    }
-    final Map<String, Integer> sequenceLookupMap = SequenceToTaxonIds.sequenceToIds(mappingFile);
-    final Set<Integer> lookupIds = new HashSet<>();
-    lookupIds.addAll(sequenceLookupMap.values());
-    mLookupIdsCount = lookupIds.size();
-    mLookupSeqsCount = sequenceLookupMap.keySet().size();
-    final Set<String> lookupSequences = sequenceLookupMap.keySet();
-    final Set<String> sdfSequences = new HashSet<>();
-    final IndexFile index = new IndexFile(sdfFile);
-    if (!index.hasNames()) {
-      err.println("Error: SDF does not have sequence names");
-      return 1;
-    }
-    final PrereadNames names = new PrereadNames(sdfFile, LongRange.NONE, false);
-    for (long i = 0; i < index.getNumberSequences(); i++) {
-      sdfSequences.add(names.name(i));
-    }
-    mTaxonomy = new Taxonomy();
-    try (final FileInputStream fis = new FileInputStream(taxonFile)) {
-      mTaxonomy.read(fis);
-    }
-    if (!mTaxonomy.isConsistent()) {
-      err.println("Error: Inconsistent taxonomy " + taxonFile);
-      err.println(mTaxonomy.getInconsistencyReason());
-      return 1;
-    }
-    // Scan for counts and report problems
-    int internalSequences = 0;
-    int internalNoRank = 0;
-    int leafNoRank = 0;
-    int leafNodesWithNoSequences = 0;
-    // Scan taxonomy collecing counts
-    final Map<Integer, Integer> notLeafNodeIds = new HashMap<>();
-    for (final TaxonNode current : mTaxonomy.getRoot().depthFirstTraversal()) {
-      final String rank = current.getRank();
-      final boolean isNoRank = "no rank".equals(rank);
-      if (current.isLeaf() && !lookupIds.contains(current.getId())) {
-        leafNodesWithNoSequences++;
+    try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReader(sdfFile)) {
+      if (!TaxonomyUtils.hasTaxonomyInfo(reader)) {
+        throw new NoTalkbackSlimException("SDF does not contain taxonomy information");
       }
-      if (!current.isLeaf() && lookupIds.contains(current.getId())) {
-        internalSequences++;
-        notLeafNodeIds.put(current.getId(), current.numChildren());
+      final Map<String, Integer> sequenceLookupMap = TaxonomyUtils.loadTaxonomyMapping(reader);
+      final Set<Integer> lookupIds = new HashSet<>();
+      lookupIds.addAll(sequenceLookupMap.values());
+      mLookupIdsCount = lookupIds.size();
+      mLookupSeqsCount = sequenceLookupMap.keySet().size();
+      final Set<String> lookupSequences = sequenceLookupMap.keySet();
+      final Set<String> sdfSequences = new HashSet<>();
+      if (!reader.hasNames()) {
+        throw new NoTalkbackSlimException("SDF does not have sequence names");
       }
-      if (isNoRank) {
+      final PrereadNamesInterface names = reader.names();
+      for (long i = 0; i < reader.numberSequences(); i++) {
+        sdfSequences.add(names.name(i));
+      }
+      mTaxonomy = TaxonomyUtils.loadTaxonomy(reader);
+      if (!mTaxonomy.isConsistent()) {
+        err.println("SDF taxonomy is inconsistent");
+        err.println(mTaxonomy.getInconsistencyReason());
+        return 1;
+      }
+      // Scan for counts and report problems
+      int internalSequences = 0;
+      int internalNoRank = 0;
+      int leafNoRank = 0;
+      int leafNodesWithNoSequences = 0;
+      // Scan taxonomy collecing counts
+      final Map<Integer, Integer> notLeafNodeIds = new HashMap<>();
+      for (final TaxonNode current : mTaxonomy.getRoot().depthFirstTraversal()) {
+        final String rank = current.getRank();
+        final boolean isNoRank = "no rank".equals(rank);
+        if (current.isLeaf() && !lookupIds.contains(current.getId())) {
+          leafNodesWithNoSequences++;
+        }
+        if (!current.isLeaf() && lookupIds.contains(current.getId())) {
+          internalSequences++;
+          notLeafNodeIds.put(current.getId(), current.numChildren());
+        }
+        if (isNoRank) {
+          if (current.isLeaf()) {
+            leafNoRank++;
+          } else {
+            internalNoRank++;
+          }
+        }
+        mRankCounts.add(rank);
         if (current.isLeaf()) {
-          leafNoRank++;
+          mRankLeafCounts.add(rank);
+        }
+      }
+      // Scan taxon ids mentioned in lookup checking against taxonomy
+      for (final Integer id : lookupIds) {
+        final TaxonNode current = mTaxonomy.get(id);
+        if (current == null) {
+          mLookupNotInTaxonomyCount++;
         } else {
-          internalNoRank++;
+          if (!current.isLeaf()) {
+            mLookupInternalCount++;
+          }
+          if ("no rank".equals(current.getRank())) {
+            mLookupNoRankCount++;
+          }
         }
       }
-      mRankCounts.add(rank);
-      if (current.isLeaf()) {
-        mRankLeafCounts.add(rank);
-      }
-    }
-    // Scan taxon ids mentioned in lookup checking against taxonomy
-    for (final Integer id : lookupIds) {
-      final TaxonNode current = mTaxonomy.get(id);
-      if (current == null) {
-        mLookupNotInTaxonomyCount++;
-      } else {
-        if (!current.isLeaf()) {
-          mLookupInternalCount++;
-        }
-        if ("no rank".equals(current.getRank())) {
-          mLookupNoRankCount++;
+      // Scan sequence names mentioned in lookup, checking against SDF sequence names
+      int numberSequencesMissing = 0;
+      final List<String> seqs = new ArrayList<>();
+      for (final String lookup : lookupSequences) {
+        if (!sdfSequences.contains(lookup)) {
+          seqs.add(lookup);
+          numberSequencesMissing++;
         }
       }
-    }
-    // Scan sequence names mentioned in lookup, checking against SDF sequence names
-    int numberSequencesMissing = 0;
-    final List<String> seqs = new ArrayList<>();
-    for (final String lookup : lookupSequences) {
-      if (!sdfSequences.contains(lookup)) {
-        seqs.add(lookup);
-        numberSequencesMissing++;
-      }
-    }
-    printList(seqs, " sequences in the taxonomy lookup file are not in the SDF", "Sequences in the taxonomy lookup file that are not in SDF:", err);
-    // Scan sequence names mentioned in SDF, checking against names in lookup
-    seqs.clear();
-    for (final String seq : sdfSequences) {
-      if (!lookupSequences.contains(seq)) {
-        seqs.add(seq);
-        numberSequencesMissing++;
-      }
-    }
-    printList(seqs, " sequences in the SDF are not in the taxonomy lookup file", "Sequences in the SDF that are not in taxonomy lookup file:", err);
-    // Inconsistent / incomplete files
-    if (numberSequencesMissing > 0) {
-      err.println("Error: " + numberSequencesMissing + " sequence names are not in both the SDF and the taxonomy lookup");
-      return 1;
-    }
-    if (mLookupNotInTaxonomyCount > 0) {
-      err.println("Error: " + mLookupNotInTaxonomyCount + " taxon ids in the taxonomy lookup are not in the taxonomy");
-      return 1;
-    }
-    // Warnings reporting
-    if (internalSequences > 0) {
-      err.println("Warning: " + internalSequences + " internal nodes have sequences attached");
-      if (mShowDetails) {
-        err.println("#nodeId\tchild-count\trank\tname");
-        for (final Map.Entry<Integer, Integer> id : notLeafNodeIds.entrySet()) {
-          final TaxonNode node = mTaxonomy.get(id.getKey());
-          err.println(id.getKey() + "\t" + id.getValue() + "\t" + node.getRank() + "\t" + node.getName());
+      printList(seqs, " sequences in the taxonomy lookup file are not in the SDF", "Sequences in the taxonomy lookup file that are not in SDF:", err);
+      // Scan sequence names mentioned in SDF, checking against names in lookup
+      seqs.clear();
+      for (final String seq : sdfSequences) {
+        if (!lookupSequences.contains(seq)) {
+          seqs.add(seq);
+          numberSequencesMissing++;
         }
-        err.println();
       }
-    }
-    if (internalNoRank + leafNoRank > 0) {
-      err.println("Warning: " + (internalNoRank + leafNoRank) + " nodes have no rank");
-      if (internalNoRank > 0) {
-        err.println(internalNoRank + " nodes with no rank are internal nodes");
+      printList(seqs, " sequences in the SDF are not in the taxonomy lookup file", "Sequences in the SDF that are not in taxonomy lookup file:", err);
+      // Inconsistent / incomplete files
+      if (numberSequencesMissing > 0) {
+        err.println("Error: " + numberSequencesMissing + " sequence names are not in both the SDF and the taxonomy lookup");
+        return 1;
       }
-      if (leafNoRank > 0) {
-        err.println(leafNoRank + " nodes with no rank are leaf nodes");
+      if (mLookupNotInTaxonomyCount > 0) {
+        err.println("Error: " + mLookupNotInTaxonomyCount + " taxon ids in the taxonomy lookup are not in the taxonomy");
+        return 1;
       }
-      if (mLookupNoRankCount > 0) {
-        err.println(mLookupNoRankCount + " nodes with no rank have sequences attached");
+      // Warnings reporting
+      if (internalSequences > 0) {
+        err.println("Warning: " + internalSequences + " internal nodes have sequences attached");
+        if (mShowDetails) {
+          err.println("#nodeId\tchild-count\trank\tname");
+          for (final Map.Entry<Integer, Integer> id : notLeafNodeIds.entrySet()) {
+            final TaxonNode node = mTaxonomy.get(id.getKey());
+            err.println(id.getKey() + "\t" + id.getValue() + "\t" + node.getRank() + "\t" + node.getName());
+          }
+          err.println();
+        }
       }
-    }
-    if (leafNodesWithNoSequences > 0) {
-      err.println("Warning: " + leafNodesWithNoSequences + " leaf nodes have no sequences in the SDF");
-    }
+      if (internalNoRank + leafNoRank > 0) {
+        err.println("Warning: " + (internalNoRank + leafNoRank) + " nodes have no rank");
+        if (internalNoRank > 0) {
+          err.println(internalNoRank + " nodes with no rank are internal nodes");
+        }
+        if (leafNoRank > 0) {
+          err.println(leafNoRank + " nodes with no rank are leaf nodes");
+        }
+        if (mLookupNoRankCount > 0) {
+          err.println(mLookupNoRankCount + " nodes with no rank have sequences attached");
+        }
+      }
+      if (leafNodesWithNoSequences > 0) {
+        err.println("Warning: " + leafNodesWithNoSequences + " leaf nodes have no sequences in the SDF");
+      }
 
-    // Report general stats
-    printStats(out);
-    return 0;
+      // Report general stats
+      printStats(out);
+      return 0;
+    }
   }
 
   private void printList(List<String> strs, String summaryLabel, String detailLabel, PrintStream err) {

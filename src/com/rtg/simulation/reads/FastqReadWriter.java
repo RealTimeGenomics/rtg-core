@@ -14,9 +14,11 @@ package com.rtg.simulation.reads;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Writer;
 
 import com.rtg.mode.DnaUtils;
 import com.rtg.reader.SdfId;
+import com.rtg.util.io.LineWriter;
 
 /**
  * FASTQ style read simulator output
@@ -24,8 +26,8 @@ import com.rtg.reader.SdfId;
 public class FastqReadWriter implements ReadWriter {
 
   private Appendable mAppend;
-  private final FileWriter mAppendLeft;
-  private final FileWriter mAppendRight;
+  private final LineWriter mAppendLeft;
+  private final LineWriter mAppendRight;
   private int mTotal = 0;
   private boolean mExpectLeft = true;
 
@@ -47,8 +49,8 @@ public class FastqReadWriter implements ReadWriter {
   public FastqReadWriter(File fastqBaseFileName) throws IOException {
     final String fpath = fastqBaseFileName.getPath();
     final String base = fpath.substring(0, fpath.length() - 3);
-    mAppendLeft = new FileWriter(base + "_1.fq");
-    mAppendRight = new FileWriter(base + "_2.fq");
+    mAppendLeft = new LineWriter(new FileWriter(base + "_1.fq"));
+    mAppendRight = new LineWriter(new FileWriter(base + "_2.fq"));
   }
 
   @Override
@@ -116,7 +118,7 @@ public class FastqReadWriter implements ReadWriter {
   @Override
   @SuppressWarnings("try")
   public void close() throws IOException {
-    try (FileWriter ignored = mAppendLeft; FileWriter ignored2 = mAppendRight) {
+    try (Writer ignored = mAppendLeft; Writer ignored2 = mAppendRight) {
       // we want the sexy closing side effects
     }
   }

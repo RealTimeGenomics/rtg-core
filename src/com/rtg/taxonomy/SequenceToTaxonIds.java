@@ -25,13 +25,10 @@ import com.rtg.util.StringUtils;
  */
 public final class SequenceToTaxonIds {
 
-  /** Default name of taxonomy to sequence name lookup file. */
-  public static final String TAXONOMY_TO_SEQUENCE_FILE = "taxonomy_lookup.tsv";
-
   private SequenceToTaxonIds() { }
 
   /**
-   * Create a map from (short) sequence names to taxon ids supplied as tab separated input
+   * Load a map from (short) sequence names to taxon ids supplied as tab separated input
    * @param tsv the input file
    * @return the map
    * @throws IOException if there are problems reading the input
@@ -41,7 +38,7 @@ public final class SequenceToTaxonIds {
   }
 
   /**
-   * Create a map from (short) sequence names to taxon ids supplied as tab separated input
+   * Load a map from (short) sequence names to taxon ids supplied as tab separated input
    * @param input input source
    * @return the map
    * @throws IOException if there are problems reading the input

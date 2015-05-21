@@ -16,7 +16,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
@@ -48,9 +47,9 @@ import com.rtg.sam.DefaultSamFilter;
 import com.rtg.sam.RecordIterator;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.ThreadedMultifileIterator;
-import com.rtg.taxonomy.SequenceToTaxonIds;
 import com.rtg.taxonomy.TaxonNode;
 import com.rtg.taxonomy.Taxonomy;
+import com.rtg.taxonomy.TaxonomyUtils;
 import com.rtg.usage.UsageMetric;
 import com.rtg.util.BoundedDouble;
 import com.rtg.util.ComparablePair;
@@ -64,7 +63,6 @@ import com.rtg.util.Utils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LineWriter;
 import com.rtg.variant.SamRecordPopulator;
 
@@ -249,17 +247,13 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     Diagnostic.progress("Reading names.");
     final SequencesReader sr = mParams.genome().reader();
 
-    final File taxonFile = new File(sr.path(), Taxonomy.TAXONOMY_FILE);
-    final File mappingFile = new File(sr.path(), SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE);
-    if (taxonFile.exists() && mappingFile.exists()) {
-      mSequenceMap.putAll(SequenceToTaxonIds.sequenceToIds(mappingFile));
-      try (final InputStream is = FileUtils.createInputStream(taxonFile, false)) {
-        final Taxonomy baseTaxonomy = new Taxonomy(is);
-        if (!baseTaxonomy.isConsistent()) {
-          throw new NoTalkbackSlimException("The provided taxonomy file '" + taxonFile.getPath() + "' is invalid: " + baseTaxonomy.getInconsistencyReason());
-        }
-        mTaxonomy = baseTaxonomy.subset(mSequenceMap.values());
+    if (TaxonomyUtils.hasTaxonomyInfo(sr)) {
+      mSequenceMap.putAll(TaxonomyUtils.loadTaxonomyMapping(sr));
+      final Taxonomy baseTaxonomy = TaxonomyUtils.loadTaxonomy(sr);
+      if (!baseTaxonomy.isConsistent()) {
+        throw new NoTalkbackSlimException("The taxonomy in the provided SDF is invalid: " + baseTaxonomy.getInconsistencyReason());
       }
+      mTaxonomy = baseTaxonomy.subset(mSequenceMap.values());
 
       // ensure all sequences accounted for
       final PrereadNamesInterface names = sr.names();
@@ -269,8 +263,6 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
           throw new NoTalkbackSlimException("Reference SDF contains sequences not referenced by sequence lookup");
         }
       }
-    } else if (taxonFile.exists() || mappingFile.exists()) {
-      throw new NoTalkbackSlimException("Reference SDF does not contain both taxonomy and sequences lookup");
     } else {
       buildDefaultTaxonomy(mParams.referenceMap(), sr);
     }

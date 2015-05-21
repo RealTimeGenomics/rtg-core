@@ -61,6 +61,31 @@ public final class FastaUtils {
   }
 
   /**
+   * Converts an array of bytes into a sanger-encoded quality string
+   *
+   * @param quality buffer containing input qualities
+   * @return the quality string
+   */
+  public static String rawToAsciiString(byte[] quality) {
+    return new String(rawToAsciiQuality(quality));
+  }
+
+  /**
+   * Converts an array of bytes into a sanger-encoded quality string
+   *
+   * @param quality buffer containing input qualities
+   * @param length the number of bytes from the input buffer to convert
+   * @return the quality string
+   */
+  public static String rawToAsciiString(byte[] quality, int length) {
+    final StringBuilder b = new StringBuilder();
+    for (int i = 0; i < length; i++) {
+      b.append(rawToAsciiQuality(quality[i]));
+    }
+    return b.toString();
+  }
+
+  /**
    * @param qualities the ASCII quality values
    * @return the raw quality values corresponding to the ASCII quality values
    */
@@ -89,4 +114,5 @@ public final class FastaUtils {
     }
     return result;
   }
+
 }

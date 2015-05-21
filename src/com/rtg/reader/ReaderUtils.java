@@ -107,9 +107,7 @@ public final class ReaderUtils {
    */
   public static SdfId getSdfId(File readDir) throws IOException {
     final File reads = ReaderUtils.isPairedEndDirectory(readDir) ? ReaderUtils.getLeftEnd(readDir) : readDir;
-    try (SequencesReader r = SequencesReaderFactory.createDefaultSequencesReader(reads)) {
-      return r.getSdfId();
-    }
+    return new IndexFile(reads).getSdfId();
   }
 
   /**

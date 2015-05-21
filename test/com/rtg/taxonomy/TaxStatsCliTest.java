@@ -60,8 +60,8 @@ public class TaxStatsCliTest extends AbstractCliTest {
   public void testBasic() throws IOException {
     try (final TestDirectory dir = new TestDirectory()) {
       final File sdf = ReaderTestUtils.getDNADir(REF, new File(dir, "sdf"));
-      FileUtils.stringToFile(TAX, new File(sdf, Taxonomy.TAXONOMY_FILE));
-      FileUtils.stringToFile(TAX_LOOK, new File(sdf, SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE));
+      FileUtils.stringToFile(TAX, new File(sdf, TaxonomyUtils.TAXONOMY_FILE));
+      FileUtils.stringToFile(TAX_LOOK, new File(sdf, TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE));
       final MemoryPrintStream out = new MemoryPrintStream();
       final MemoryPrintStream err = new MemoryPrintStream();
       assertEquals(0, getCli().mainInit(new String[]{sdf.getPath()}, out.outputStream(), err.printStream()));
@@ -78,8 +78,8 @@ public class TaxStatsCliTest extends AbstractCliTest {
   public void testDire() throws IOException {
     try (final TestDirectory dir = new TestDirectory()) {
       final File sdf = ReaderTestUtils.getDNADir(REF, new File(dir, "sdf"));
-      FileUtils.stringToFile(TAX, new File(sdf, Taxonomy.TAXONOMY_FILE));
-      FileUtils.stringToFile(TAX_LOOK_DIRE, new File(sdf, SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE));
+      FileUtils.stringToFile(TAX, new File(sdf, TaxonomyUtils.TAXONOMY_FILE));
+      FileUtils.stringToFile(TAX_LOOK_DIRE, new File(sdf, TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE));
       final MemoryPrintStream out = new MemoryPrintStream();
       final MemoryPrintStream err = new MemoryPrintStream();
       assertEquals(1, getCli().mainInit(new String[]{sdf.getPath()}, out.outputStream(), err.printStream()));
@@ -95,8 +95,8 @@ public class TaxStatsCliTest extends AbstractCliTest {
   public void testDire2() throws IOException {
     try (final TestDirectory dir = new TestDirectory()) {
       final File sdf = ReaderTestUtils.getDNADir(REF, new File(dir, "sdf"));
-      FileUtils.stringToFile(TAX, new File(sdf, Taxonomy.TAXONOMY_FILE));
-      FileUtils.stringToFile(TAX_LOOK_DIRE2, new File(sdf, SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE));
+      FileUtils.stringToFile(TAX, new File(sdf, TaxonomyUtils.TAXONOMY_FILE));
+      FileUtils.stringToFile(TAX_LOOK_DIRE2, new File(sdf, TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE));
       final MemoryPrintStream out = new MemoryPrintStream();
       final MemoryPrintStream err = new MemoryPrintStream();
       assertEquals(1, getCli().mainInit(new String[]{sdf.getPath()}, out.outputStream(), err.printStream()));
@@ -109,7 +109,7 @@ public class TaxStatsCliTest extends AbstractCliTest {
       final MemoryPrintStream out = new MemoryPrintStream();
       final MemoryPrintStream err = new MemoryPrintStream();
       assertEquals(1, getCli().mainInit(new String[]{dir.getPath()}, out.outputStream(), err.printStream()));
-      assertTrue(err.toString().contains("is not an SDF"));
+      assertTrue(err.toString(), err.toString().contains("does not seem to contain a valid SDF"));
     }
   }
 

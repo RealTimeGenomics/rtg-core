@@ -11,6 +11,7 @@
  */
 package com.rtg.reader;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 
@@ -25,7 +26,7 @@ import com.rtg.util.intervals.LongRange;
  *
  */
 @TestClass(value = "com.rtg.reader.SdfSplitterTest")
-public final class SdfReaderWrapper {
+public final class SdfReaderWrapper implements Closeable {
 
   private final boolean mIsPaired;
   private final SequencesReader mSingle;

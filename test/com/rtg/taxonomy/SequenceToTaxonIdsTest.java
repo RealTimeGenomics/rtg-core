@@ -36,6 +36,6 @@ public class SequenceToTaxonIdsTest extends TestCase {
   }
 
   public void testStatics() {
-    assertEquals("taxonomy_lookup.tsv", SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE);
+    assertEquals("taxonomy_lookup.tsv", TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE);
   }
 }

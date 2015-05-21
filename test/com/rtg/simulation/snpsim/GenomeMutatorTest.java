@@ -701,9 +701,7 @@ public class GenomeMutatorTest extends TestCase {
   }
 
   private void toFasta(final File preread) throws IOException {
-    final SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(preread);
-    new Sdf2Fasta().doPrereadToFasta(dsr, preread.getPath(), ".fasta");
-    dsr.close();
+    new Sdf2Fasta().mainInit(new String[] {"-i", preread.toString(), "-Z", "-o", preread.getPath() + ".fasta"}, FileUtils.getStdoutAsOutputStream(), System.out);
   }
 
   private int compareCount(final BufferedReader r1, final BufferedReader r2) throws IOException {

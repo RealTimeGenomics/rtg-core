@@ -59,9 +59,9 @@ public abstract class AbstractSdfOutputProcessor extends AbstractMapOutputProces
         for (long seq = 0; seq < reader.numberSequences(); seq++) {
           if (!mUnmappedTracker.getStatus((int) seq, ReadStatusTracker.UNMAPPED_FIRST)
             || !mUnmappedTracker.getStatus((int) seq, ReadStatusTracker.UNMAPPED_SECOND)) {
-            alignments.writeSequence(reader, seq, dataBuffer, qualityBuffer);
+            alignments.writeSequence(seq, dataBuffer, qualityBuffer);
           } else {
-            unmapped.writeSequence(reader, seq, dataBuffer, qualityBuffer);
+            unmapped.writeSequence(seq, dataBuffer, qualityBuffer);
           }
         }
       }

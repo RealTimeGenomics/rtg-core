@@ -222,7 +222,7 @@ public final class CommonFlags {
         return false;
       }
       if (end - start > Integer.MAX_VALUE) {
-        flags.error("You have specified too many reads, please specify a range of less than " + Integer.MAX_VALUE + " reads.");
+        flags.error("You have specified too many sequences, please specify a range of less than " + Integer.MAX_VALUE);
         return false;
       }
     }

@@ -756,6 +756,20 @@ public final class FileUtils {
   }
 
   /**
+   * Gets a filename extension, including the '.' character.
+   * @param fileName the filename to examine
+   * @return the filename extension, or empty string if none.
+   */
+  public static String getExtension(String fileName) {
+    String extension = "";
+    final int i = fileName.lastIndexOf('.');
+    if (i > 0) {
+      extension = fileName.substring(i);
+    }
+    return extension;
+  }
+
+  /**
    * Checks first 2 bytes for presence of GZIP identifier.
    * Stream is then reset to position it was in before being passed to this method.
    * @param in stream to check

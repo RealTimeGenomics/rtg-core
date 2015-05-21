@@ -195,12 +195,14 @@ public class SdfStatisticsTest extends AbstractCliTest {
     final MemoryPrintStream ps = new MemoryPrintStream();
     final String fasta = ">123456789012345678901\nacgtgtgtgtcttagggctcactggtcatgca\n>bob the buuilder\ntagttcagcatcgatca\n>hobos r us\nnaccccaccccacaaacccaann";
 
-    final File preread = ReaderTestUtils.getDNADir(fasta);
+    final File prereadDir = ReaderTestUtils.getDNADir(fasta);
     try {
-      SdfStatistics.printSequenceNameAndLength(preread, ps.printStream());
-      TestUtils.containsAll(ps.toString(), "123456789012345678901\t32", "bob\t17", "hobos\t23");
+      try (final AnnotatedSequencesReader reader = SequencesReaderFactory.createDefaultSequencesReader(prereadDir)) {
+        SdfStatistics.printSequenceNameAndLength(reader, ps.printStream());
+        TestUtils.containsAll(ps.toString(), "123456789012345678901\t32", "bob\t17", "hobos\t23");
+      }
     } finally {
-      assertTrue(FileHelper.deleteAll(preread));
+      assertTrue(FileHelper.deleteAll(prereadDir));
     }
   }
 
@@ -477,8 +479,7 @@ public class SdfStatisticsTest extends AbstractCliTest {
   }
 
   public void testTaxonomySDF() throws IOException {
-    final File dir = FileUtils.createTempDir("speciessdf", "test");
-    try {
+    try (final TestDirectory dir = new TestDirectory("sdfstats")) {
       // create sdf from sequences.fasta
       final File fullSdf = new File(dir, "sdf_full");
       final File sequences = new File(dir, "sequences.fasta");
@@ -571,9 +572,6 @@ public class SdfStatisticsTest extends AbstractCliTest {
       out.close();
 
       assertEquals(0, err.toString().length());
-
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 

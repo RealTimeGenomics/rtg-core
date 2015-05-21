@@ -16,8 +16,6 @@ import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -37,8 +35,8 @@ import com.rtg.mode.SequenceType;
 import com.rtg.reference.ReferenceGenome;
 import com.rtg.reference.Sex;
 import com.rtg.sam.SamUtils;
-import com.rtg.taxonomy.SequenceToTaxonIds;
 import com.rtg.taxonomy.Taxonomy;
+import com.rtg.taxonomy.TaxonomyUtils;
 import com.rtg.util.Constants;
 import com.rtg.util.Environment;
 import com.rtg.util.MathUtils;
@@ -119,61 +117,32 @@ public final class SdfStatistics extends AbstractCli {
   }
 
   private static final Validator VALIDATOR = new Validator() {
-      @Override
-      public boolean isValid(final CFlags flags) {
+    @Override
+    public boolean isValid(final CFlags flags) {
 
-        final Collection<Object> values = flags.getAnonymousValues(0);
-        for (final Object o : values) {
-          final File f = (File) o;
-          if (!CommonFlags.validateSDF(f)) {
+      final Collection<Object> values = flags.getAnonymousValues(0);
+      for (final Object o : values) {
+        final File f = (File) o;
+        if (!CommonFlags.validateSDF(f)) {
+          return false;
+        }
+        if (flags.isSet(SEX_FLAG) && !CommonFlags.validateSexTemplateReference(flags, SEX_FLAG, null, f)) {
+          return false;
+        }
+        if (flags.isSet(TAXONOMY_FLAG)) {
+          if (!new File(f, TaxonomyUtils.TAXONOMY_FILE).isFile()) {
+            flags.error("--" + TAXONOMY_FLAG + " was specified but " + f + " is missing a '" + TaxonomyUtils.TAXONOMY_FILE + "'");
             return false;
           }
-          if (flags.isSet(SEX_FLAG) && !CommonFlags.validateSexTemplateReference(flags, SEX_FLAG, null, f)) {
+          if (!new File(f, TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE).isFile()) {
+            flags.error("--" + TAXONOMY_FLAG + " was specified but " + f + " is missing a '" + TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE + "'");
             return false;
-          }
-          if (flags.isSet(TAXONOMY_FLAG)) {
-            if (!new File(f, Taxonomy.TAXONOMY_FILE).isFile()) {
-              flags.error("--" + TAXONOMY_FLAG + " was specified but " + f + " is missing a '" + Taxonomy.TAXONOMY_FILE + "'");
-              return false;
-            }
-            if (!new File(f, SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE).isFile()) {
-              flags.error("--" + TAXONOMY_FLAG + " was specified but " + f + " is missing a '" + SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE + "'");
-              return false;
-            }
           }
         }
-        return true;
       }
-    };
-
-  /**
-   * Gathers and prints statistics about a group for slim data files.
-   *
-   * @param dir SDF to print statistics for
-   * @param out where to write statistics to
-   * @param nStats whether to produce statistics on N occurrences
-   * @param pStats whether to produce only statistics regarding position based N occurrences.
-   * @param quality whether to output the quality score per read histogram
-   * @exception IOException if an error occurs.
-   */
-  public void performStatistics(File dir, final PrintStream out, final boolean nStats, final boolean pStats, final boolean quality) throws IOException {
-    final AnnotatedSequencesReader reader;
-    try {
-      reader = SequencesReaderFactory.createDefaultSequencesReader(dir);
-    } catch (final FileNotFoundException e) {
-      if (dir.isDirectory()) {
-        throw new NoTalkbackSlimException(ErrorType.SDF_INDEX_NOT_VALID, dir.toString());
-      } else if (dir.exists()) {
-        throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "The specified file, \"" + dir.getPath() + "\", is not an SDF.");
-      } else {
-        throw new NoTalkbackSlimException(ErrorType.INFO_ERROR, "The specified SDF, \"" + dir.getPath() + "\", does not exist.");
-      }
+      return true;
     }
-    try (AnnotatedSequencesReader sr = reader) {
-      performStatistics(sr, dir, out, nStats, pStats, quality);
-      printReadMe(sr, out);
-    }
-  }
+  };
 
   /**
    * Gather statistics about slim a slim data file and write to an output stream
@@ -273,37 +242,34 @@ public final class SdfStatistics extends AbstractCli {
     } else {
       printPositionBlock(reader, out);
     }
+    printReadMe(reader, out);
   }
 
-  static void printSAMHeader(File dir, final Appendable out) throws IOException {
+  static void printSAMHeader(SequencesReader reader, final Appendable out) throws IOException {
     out.append("SAM Header:").append(StringUtils.LS);
-    try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReader(dir)) {
-      final SAMFileHeader header = new SAMFileHeader();
-      header.setSortOrder(SAMFileHeader.SortOrder.coordinate);
-      final SAMProgramRecord pg = new SAMProgramRecord(Constants.APPLICATION_NAME);
-      pg.setProgramVersion(Environment.getVersion());
-      final int[] lengths = reader.sequenceLengths(0, reader.numberSequences());
-      for (int i = 0; i < lengths.length; i++) {
-        final SAMSequenceRecord record = new SAMSequenceRecord(reader.name(i), lengths[i]);
-        header.addSequence(record);
-      }
-      if (reader.getSdfId().available()) {
-        header.addComment(SamUtils.TEMPLATE_SDF_ATTRIBUTE + reader.getSdfId().toString());
-      }
-      final ByteArrayOutputStream bo = new ByteArrayOutputStream();
-      new SAMFileWriterFactory().makeSAMWriter(header, true, bo).close();
-      out.append(bo.toString());
+    final SAMFileHeader header = new SAMFileHeader();
+    header.setSortOrder(SAMFileHeader.SortOrder.coordinate);
+    final SAMProgramRecord pg = new SAMProgramRecord(Constants.APPLICATION_NAME);
+    pg.setProgramVersion(Environment.getVersion());
+    final int[] lengths = reader.sequenceLengths(0, reader.numberSequences());
+    for (int i = 0; i < lengths.length; i++) {
+      final SAMSequenceRecord record = new SAMSequenceRecord(reader.name(i), lengths[i]);
+      header.addSequence(record);
     }
+    if (reader.getSdfId().available()) {
+      header.addComment(SamUtils.TEMPLATE_SDF_ATTRIBUTE + reader.getSdfId().toString());
+    }
+    final ByteArrayOutputStream bo = new ByteArrayOutputStream();
+    new SAMFileWriterFactory().makeSAMWriter(header, true, bo).close();
+    out.append(bo.toString());
   }
 
 
-  static void printReferenceSequences(File dir, Sex sex, final Appendable out) throws IOException {
-    try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReader(dir)) {
-      final ReferenceGenome rg = new ReferenceGenome(reader, sex);
-      out.append("Sequences for sex=").append(String.valueOf(sex)).append(":").append(StringUtils.LS);
-      out.append(rg.toString()).append(StringUtils.LS);
-      out.append(StringUtils.LS);
-    }
+  static void printReferenceSequences(SequencesReader reader, Sex sex, final Appendable out) throws IOException {
+    final ReferenceGenome rg = new ReferenceGenome(reader, sex);
+    out.append("Sequences for sex=").append(String.valueOf(sex)).append(":").append(StringUtils.LS);
+    out.append(rg.toString()).append(StringUtils.LS);
+    out.append(StringUtils.LS);
     out.append(StringUtils.LS);
   }
 
@@ -319,7 +285,6 @@ public final class SdfStatistics extends AbstractCli {
   }
 
   private static void printQualityHistogram(final SequencesReader reader, final Appendable out) throws IOException {
-
     if (reader.hasQualityData() && reader.hasHistogram()) {
       final double globalQualityAverage = reader.globalQualityAverage();
       out.append("Average quality    : ").append(Utils.realFormat(MathUtils.phred(globalQualityAverage), 1));
@@ -386,18 +351,15 @@ public final class SdfStatistics extends AbstractCli {
     }
   }
 
-  static void printSequenceNameAndLength(File dir, PrintStream out) throws IOException {
+  static void printSequenceNameAndLength(SequencesReader sr, PrintStream out) throws IOException {
     out.println("Sequence lengths: ");
-    try (SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReader(dir)) {
-      for (long seq = 0; seq < sr.numberSequences(); seq++) {
-        if (sr.hasNames()) {
-          out.println(sr.name(seq) + "\t" + sr.length(seq));
-        } else {
-          out.println("sequence_" + seq + "\t" + sr.length(seq));
-        }
+    for (long seq = 0; seq < sr.numberSequences(); seq++) {
+      if (sr.hasNames()) {
+        out.println(sr.name(seq) + "\t" + sr.length(seq));
+      } else {
+        out.println("sequence_" + seq + "\t" + sr.length(seq));
       }
     }
-    out.println();
   }
 
   static void printReadMe(SequencesReader reader, PrintStream out) throws IOException {
@@ -409,17 +371,13 @@ public final class SdfStatistics extends AbstractCli {
     }
   }
 
-  static void printTaxonomyStatistics(File dir, PrintStream out) throws IOException {
-    final Taxonomy tax = new Taxonomy();
-    try (FileInputStream fis = new FileInputStream(new File(dir, Taxonomy.TAXONOMY_FILE))) {
-      tax.read(fis);
-    }
+  static void printTaxonomyStatistics(SequencesReader reader, PrintStream out) throws IOException {
+    final Taxonomy tax = TaxonomyUtils.loadTaxonomy(reader);
     out.append("Taxonomy nodes     : ");
     out.append(Integer.toString(tax.size()));
     out.append(StringUtils.LS);
 
-    final File sequenceTaxonFile = new File(dir, SequenceToTaxonIds.TAXONOMY_TO_SEQUENCE_FILE);
-    final Map<String, Integer> sequenceToId = SequenceToTaxonIds.sequenceToIds(sequenceTaxonFile);
+    final Map<String, Integer> sequenceToId = TaxonomyUtils.loadTaxonomyMapping(reader);
     final Set<Integer> uniqTaxIds = new HashSet<>();
     uniqTaxIds.addAll(sequenceToId.values());
     out.append("Sequence nodes     : ");
@@ -492,21 +450,27 @@ public final class SdfStatistics extends AbstractCli {
     final PrintStream ps = new PrintStream(out);
     try {
       for (File dir : dirs) {
-        performStatistics(dir, ps, mFlags.isSet(NS_FLAG), mFlags.isSet(POSITIONS_FLAG), mFlags.isSet(QS_FLAG));
-        if (mFlags.isSet(NAMES_AND_LENGTHS_FLAG)) {
-          printSequenceNameAndLength(dir, ps);
-        }
-        if (mFlags.isSet(SEX_FLAG)) {
-          for (Object o : mFlags.getValues(SEX_FLAG)) {
-            final Sex s = (Sex) o;
-            printReferenceSequences(dir, s, ps);
+        try (AnnotatedSequencesReader reader = SequencesReaderFactory.createDefaultSequencesReader(dir)) {
+
+          performStatistics(reader, dir, ps, mFlags.isSet(NS_FLAG), mFlags.isSet(POSITIONS_FLAG), mFlags.isSet(QS_FLAG));
+          if (mFlags.isSet(NAMES_AND_LENGTHS_FLAG)) {
+            printSequenceNameAndLength(reader, ps);
           }
-        }
-        if (mFlags.isSet(TAXONOMY_FLAG)) {
-          printTaxonomyStatistics(dir, ps);
-        }
-        if (mFlags.isSet(SAM_FLAG)) {
-          printSAMHeader(dir, ps);
+          if (mFlags.isSet(SEX_FLAG)) {
+            for (Object o : mFlags.getValues(SEX_FLAG)) {
+              final Sex s = (Sex) o;
+              printReferenceSequences(reader, s, ps);
+            }
+          }
+          if (mFlags.isSet(TAXONOMY_FLAG)) {
+            if (!TaxonomyUtils.hasTaxonomyInfo(reader)) {
+              throw new NoTalkbackSlimException("The supplied SDF does not contain taxonomy information");
+            }
+            printTaxonomyStatistics(reader, ps);
+          }
+          if (mFlags.isSet(SAM_FLAG)) {
+            printSAMHeader(reader, ps);
+          }
         }
       }
     } finally {

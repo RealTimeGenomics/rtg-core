@@ -145,7 +145,7 @@ public class SdfSubseqTest extends AbstractCliTest {
       sw.processSequences();
 
       err = checkMainInitBadFlags("-i", protein.toString(), "TEST:1+1", "-r");
-      TestUtils.containsAll(err, "--reverse-complement cannot be used with protein SDFs.");
+      TestUtils.containsAll(err, "Reverse complement cannot be used with protein SDFs.");
     } finally {
       assertTrue(FileHelper.deleteAll(protein));
     }
