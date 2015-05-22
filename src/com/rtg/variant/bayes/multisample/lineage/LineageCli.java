@@ -56,7 +56,7 @@ public class LineageCli extends AbstractMultisampleCli {
         return false;
       }
       final File pedigreeFile = (File) flags.getValue(PEDIGREE_FLAG);
-      if (!pedigreeFile.exists() || !pedigreeFile.isFile()) {
+      if (!pedigreeFile.exists() || pedigreeFile.isDirectory()) {
         flags.setParseMessage("Pedigree file isn't readable");
         return false;
       }
