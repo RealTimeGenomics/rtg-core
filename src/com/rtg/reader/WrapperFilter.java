@@ -11,10 +11,14 @@
  */
 package com.rtg.reader;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.LongRange;
 
 /**
  * Facilitates transferring sequences by ID from a SdfReaderWrapper to a WriterWrapper.
@@ -113,6 +117,36 @@ class WrapperFilter {
       }
     } catch (final NumberFormatException e) {
       warnInvalidSequence(seqRange);
+    }
+  }
+
+  /**
+   * Transfer all the sequences listed in the supplied file, interpreting entries appropriately.
+   * @param idFile file containing sequences to transfer, one per line.
+   * @throws IOException if there was a problem during writing
+   */
+  protected void transferFromFile(File idFile) throws IOException {
+    try (BufferedReader br = new BufferedReader(new FileReader(idFile))) {
+      String line;
+      while ((line = br.readLine()) != null) {
+        line = line.trim();
+        if (line.length() > 0) {
+          transfer(line);
+        }
+      }
+    }
+  }
+
+
+  /**
+   * Transfer all the sequences listed in the specified range
+   * @param range the range of ids to transfer.
+   * @throws IOException if there was a problem during writing
+   */
+  protected void transfer(LongRange range) throws IOException {
+    final LongRange r = SequencesReaderFactory.resolveRange(range, mReader.numberSequences());
+    for (long seq = r.getStart(); seq < r.getEnd(); seq++) {
+      transfer(seq);
     }
   }
 }
