@@ -119,7 +119,7 @@ public class DiseasedFamilyCaller implements MultisampleJointCaller {
       }
       final String refAllele = commonHypotheses.description().name(commonHypotheses.reference());
       final VariantLocus locus = new VariantLocus(templateName, position, endPosition, refAllele, VariantUtils.getPreviousRefNt(ref, position));
-      final Variant v = new Variant(locus, !fp.isInteresting(), samples);
+      final Variant v = new Variant(locus, samples);
       v.setDiseasePresenceScore(fp.anyDiseasePosteriorRatio());
       //v.setNonIdentityPosterior(fp.anyDiseasePosteriorRatio());
       if (overCoverage) {

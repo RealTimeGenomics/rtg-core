@@ -93,7 +93,7 @@ public class ComplexCallerTest extends TestCase {
     final AbstractJointCallerConfiguration config = new SomaticCallerConfiguration.Configurator().getConfig(params, new String[] {"normal", "cancer"});
     final ComplexCaller caller = new ComplexCaller(params, config);
     final List<Variant> list = caller.makeComplexCalls(regions, trib, DnaUtils.encodeString(TEMPLATE), TEMPLATE_NAME);
-    assertEquals(4, list.size());
+    assertEquals(list.toString(), 4, list.size());
 
     assertEquals(4, list.get(0).getLocus().getStart());
     assertEquals(5, list.get(1).getLocus().getStart());

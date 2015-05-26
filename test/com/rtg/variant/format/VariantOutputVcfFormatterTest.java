@@ -450,7 +450,7 @@ public class VariantOutputVcfFormatterTest extends TestCase {
       final VariantLocus locus = new VariantLocus("chr10", 82349, 82350, "C", 'N');
       final Variant v = new Variant(locus, vsNormal, vsCancer);
       String s = formatter.formatCall(v);
-      assertEquals("chr10\t82350\t.\tC\tT\t.\tPASS\tSOMATIC=*;DP=9\tGT:DP:RE:GQ:RP\t0/0:4:0.400:9:0.8\t1/1:5:0.400:10:0.9\n", s);
+      assertEquals("chr10\t82350\t.\tC\tT\t.\tPASS\tDP=9\tGT:DP:RE:GQ:RP\t0/0:4:0.400:9:0.8\t1/1:5:0.400:10:0.9\n", s);
 
       vsCancer = createSample(Ploidy.DIPLOID, "C:T", false, 0.9 * MathUtils.LOG_10, VariantSample.DeNovoStatus.UNSPECIFIED, null, 3.0);
       vsCancer.setCoverage(5);
@@ -460,6 +460,7 @@ public class VariantOutputVcfFormatterTest extends TestCase {
       final Variant v2 = new Variant(locus, vsNormal, vsCancer);
       v2.setNonIdentityPosterior(1.0);
       v2.setPossibleCause("C:T");
+      v2.setNormalCancerScore(4.0);
       s = formatter.formatCall(v2);
       assertEquals("chr10\t82350\t.\tC\tT\t5.7\tPASS\tSOMATIC=C:T;DP=9\tGT:DP:RE:GQ:RP:SSC\t0/0:4:0.400:9:0.8\t0/1:5:0.400:10:0.9:1.7\n", s);
 
@@ -471,6 +472,7 @@ public class VariantOutputVcfFormatterTest extends TestCase {
       final Variant v3 = new Variant(locus, vsNormal, vsCancer);
       v3.setNonIdentityPosterior(1.0);
       v3.setPossibleCause("C:");
+      v3.setNormalCancerScore(4.0);
       s = formatter.formatCall(v3);
       assertEquals("chr10\t82349\t.\tNC\tN\t5.7\tPASS\tSOMATIC=NC:N;DP=9\tGT:DP:RE:GQ:RP:SSC\t0/0:4:0.400:9:0.8\t0/1:5:0.400:10:0.9:1.7\n", s);
 
@@ -479,7 +481,7 @@ public class VariantOutputVcfFormatterTest extends TestCase {
       vsCancer.setCoverageCorrection(0.4);
       vsCancer.setSomaticScore(4.0);
 
-      final Variant v4 = new Variant(locus, true, vsNormal, vsCancer);
+      final Variant v4 = new Variant(locus, vsNormal, vsCancer);
       v4.setNonIdentityPosterior(1.0);
       v4.setPossibleCause("C:");
       s = formatter.formatCall(v4);

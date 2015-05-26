@@ -18,6 +18,7 @@ import com.rtg.relation.Relationship;
 import com.rtg.relation.Relationship.RelationshipType;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.PerSampleVariantStatistics;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantStatistics;
@@ -108,42 +109,38 @@ public class SomaticStatistics extends VariantStatistics {
   }
 
   /*
-   * In the ideal case, the number of alt alleles will be very close to the number of ref
-   * alleles, in which care the correction factor will be 1.  However, in practice, the
-   * number of alt alleles is less than the number of ref alleles and so the correction
-   * is less than 1.  A correction greater than 1 which correspond to a strange case where
-   * the alt allele was more common than the ref allele.
+   * In the ideal case, the count of alt allele evidence will be very close to the count of ref
+   * allele evidence, in which case the alt allele fraction will be 0.5.  However, in practice, due
+   * to reference bias during mapping the count for alt alleles is typically less than the count
+   * for ref alleles and so the resulting alt fraction is less than 0.5.  A fraction greater than 0.5
+   * corresponds to a strange case where the alt allele was more prevalent than the ref allele.
    */
-  private double computeReferenceCorrection() {
+  private double computeAltAlleleFraction() {
     final long ref = mNormalStore.getTotalRefCount();
     final long alt = mNormalStore.getTotalAltCount();
     final double total = ref + alt;
-    final double correction = total == 0 ? 1 : 2.0 * alt / total;
-    assert 0 <= correction;
-    System.out.println("TEMP: ref bias calc numbers: " + correction + " size=" + mNormalStore.size() + " alt=" + alt + " ref=" + ref);
-    return correction;
+    final double altFraction = total == 0 ? 0.5 : alt / total;
+    Diagnostic.developerLog("alt allele fraction: " + altFraction + " size=" + mNormalStore.size() + " altCount=" + alt + " refCount=" + ref);
+    assert 0 <= altFraction && altFraction <= 1;
+    return altFraction;
   }
 
   private double computeContaminationEstimate() {
     final long ref = mCancerStore.getTotalRefCount();
     double alt = mCancerStore.getTotalAltCount();
-    System.out.println("TEMP: contam calc numbers: size=" + mCancerStore.size() + " alt=" + alt + " ref=" + ref);
-    final double refBiasCorrection = computeReferenceCorrection();
-    // If the reference bias is 0 (i.e. no alt evidence in the normal), then the best we can
-    // do is to assume that there is no reference bias correction.
-    if (refBiasCorrection > 0) {
-      alt /= refBiasCorrection;
-    }
     // A simple estimation based on 0/0 -> 0/1 calls in the derived sample, with a reference
     // bias correction applied to the alt allele count.  The final contamination is estimated
     // as 1 - 2 a / (a + r) where "a" is the corrected alt count and "r" is the ref count.
     final double total = ref + alt;
-    // max below is a safety measure to handle the unlikely scenario where the alt count
-    // exceeds the ref count.  Also, in the absence of any information we fallback to an
-    // estimate of 0 contamination.
-    final double contamEstimate = total == 0 ? 0 : Math.max(0, 1 - 2 * alt / total);
-    assert 0 <= contamEstimate && contamEstimate <= 1 : contamEstimate + " " + alt + " " + ref;
-    return contamEstimate;
+    // In the absence of any information assume the sample is pure.
+    final double purityEstimate = total == 0 ? 1 : alt / total;
+    final double normalAltAlleleFraction = computeAltAlleleFraction();
+    // In the case where there is no alt allele information just take the raw purity
+    // estimate.  Otherwise apply a correction based on the normal alt allele information.
+    final double correctedPurityEstimate = normalAltAlleleFraction == 0 ? purityEstimate : Math.max(1, purityEstimate / normalAltAlleleFraction);
+    Diagnostic.developerLog("Purity estimate: " + correctedPurityEstimate + " size=" + mCancerStore.size() + " altCount=" + alt + " refCount=" + ref + " normalAltFraction=" + normalAltAlleleFraction);
+    assert 0 <= correctedPurityEstimate && correctedPurityEstimate <= 1;
+    return 1 - correctedPurityEstimate;
   }
 
   @Override
@@ -161,7 +158,7 @@ public class SomaticStatistics extends VariantStatistics {
       out.append("No Hypotheses                : ").append(mNoHypotheses).append(StringUtils.LS);
     }
     if (mCancerStore.size() != 0) {
-      out.append("Estimated reference bias     : ").append(Utils.realFormat(1 - computeReferenceCorrection(), 2)).append(StringUtils.LS);
+      out.append("Alt fraction in 0/1 calls    : ").append(Utils.realFormat(computeAltAlleleFraction(), 2)).append(StringUtils.LS);
       out.append("Estimated contamination      : ").append(Utils.realFormat(computeContaminationEstimate(), 2)).append(StringUtils.LS);
     }
 

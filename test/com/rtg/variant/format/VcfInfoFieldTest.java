@@ -101,7 +101,7 @@ public class VcfInfoFieldTest extends TestCase {
     sampleB.setCoverage(11);
     final VariantSample sampleC = VariantOutputVcfFormatterTest.createSample(Ploidy.DIPLOID, "G", true, 10.0, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0);
     sampleC.setCoverage(12);
-    final Variant call = new Variant(new VariantLocus("ref", 2, 3, "G", 'C'), false, sampleA, sampleB, sampleC);
+    final Variant call = new Variant(new VariantLocus("ref", 2, 3, "G", 'C'), sampleA, sampleB, sampleC);
     call.setPossibleCause("A");
     call.setPossibleCauseScore(15.0);
     call.setNormalCancerScore(7.5);

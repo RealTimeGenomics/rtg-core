@@ -82,7 +82,6 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
 
   private Double mNonIdentityPosterior = null;
 
-  private final boolean mMultiSampleSame; //TODO: perhaps we can calculate this from the identity values of all samples instead?
   private String mPossibleCause;
   private Double mPossibleCauseScore;
   private Double mNormalCancerScore;
@@ -95,7 +94,15 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
    * @param samples the samples for this call, null if Ploidy.NONE for that sample
    */
   public Variant(VariantLocus locus, int filters, VariantSample... samples) {
-    this(locus, filters, false, samples);
+    if (locus == null) {
+      throw new NullPointerException();
+    }
+    mLocus = locus;
+    mSamples = samples;
+    mFilters = filters;
+    if (samples.length > 0) {
+      setSampleLikelihoods(samples, locus.getRefNts());
+    }
   }
 
   /**
@@ -105,29 +112,6 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
    */
   public Variant(VariantLocus locus, VariantSample... samples) {
     this(locus, 0, samples);
-  }
-
-  /**
-   * No filters applied.
-   * @param locus the locus for this variant
-   * @param same set true if the samples agree with the reference
-   * @param samples the samples for this call, null if Ploidy.NONE for that sample
-   */
-  public Variant(VariantLocus locus, boolean same, VariantSample... samples) {
-    this(locus, 0, same, samples);
-  }
-
-  private Variant(VariantLocus locus, int filters, boolean same, VariantSample... samples) {
-    if (locus == null) {
-      throw new NullPointerException();
-    }
-    mLocus = locus;
-    mSamples = samples;
-    mFilters = filters;
-    mMultiSampleSame = same;
-    if (samples.length > 0) {
-      setSampleLikelihoods(samples, locus.getRefNts());
-    }
   }
 
   private static void setSampleLikelihoods(VariantSample[] samples, String ref) {
@@ -407,10 +391,6 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
 
   public Double getLoh() {
     return mLoh;
-  }
-
-  public boolean isSame() {
-    return mMultiSampleSame;
   }
 
   /**

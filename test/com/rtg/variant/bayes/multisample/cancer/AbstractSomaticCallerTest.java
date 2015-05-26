@@ -151,7 +151,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
         , dump(doNormalReads(3, DNARangeAT.G)));
   }
 
-  protected static final String EXPECT_ALL_SAME = "chr1\t14\t.\tA\t.\t.\tPASS\tNCS=75.3;DP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC\t0:3:0.293:0.000:100:0.00:6.51:0.00:0.00:A,3,0.293:3\t0:3:0.293:0.000:75:0.00:6.51:0.00:0.00:A,3,0.293:3:7.5\n";
+  protected static final String EXPECT_ALL_SAME = "chr1\t14\t.\tA\t.\t.\tPASS\tDP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD\t0:3:0.293:0.000:100:0.00:6.51:0.00:0.00:A,3,0.293:3\t0:3:0.293:0.000:75:0.00:6.51:0.00:0.00:A,3,0.293:3\n";
 
   public void testAllSame() throws InvalidParamsException, IOException {
     checkCancer(
@@ -175,7 +175,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     );
   }
 
-  protected static final String EXPECT_CANCER_EQ_REF = "chr1\t14\t.\tA\t.\t.\tPASS\tNCS=14.4;DP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC\t0:3:0.293:0.000:14:26.06:.:0.00:0.00:C,3,0.293:0\t0:3:0.293:0.000:25:0.00:6.51:0.00:0.00:A,3,0.293:3:1.4\n";
+  protected static final String EXPECT_CANCER_EQ_REF = "chr1\t14\t.\tA\t.\t.\tPASS\tDP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD\t0:3:0.293:0.000:14:26.06:.:0.00:0.00:C,3,0.293:0\t0:3:0.293:0.000:25:0.00:6.51:0.00:0.00:A,3,0.293:3\n";
 
   public void testCancerEqualsRef() throws InvalidParamsException, IOException {
     checkCancer(
@@ -187,7 +187,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     );
   }
 
-  protected static final String EXPECT_CANCER_EQ_NORMAL = "chr1\t14\t.\tA\tC\t.\tPASS\tNCS=55.2;DP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC\t1:3:0.293:0.000:55:0.00:6.51:0.00:0.00:C,3,0.293:0,3\t1:3:0.293:0.000:65:0.00:6.51:0.00:0.00:C,3,0.293:0,3:5.5\n";
+  protected static final String EXPECT_CANCER_EQ_NORMAL = "chr1\t14\t.\tA\tC\t.\tPASS\tDP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD\t1:3:0.293:0.000:55:0.00:6.51:0.00:0.00:C,3,0.293:0,3\t1:3:0.293:0.000:65:0.00:6.51:0.00:0.00:C,3,0.293:0,3\n";
 
   public void testCancerEqualsNormal() throws InvalidParamsException, IOException {
     checkCancer(

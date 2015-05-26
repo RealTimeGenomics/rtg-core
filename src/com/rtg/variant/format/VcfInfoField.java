@@ -42,7 +42,7 @@ public enum VcfInfoField {
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
-      if (!call.isSame()) {
+      if (call.getNormalCancerScore() != null) {
         rec.addInfo(name(), formatPossibleCause(call, includePrevNt));
       }
     }
@@ -81,7 +81,7 @@ public enum VcfInfoField {
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
-      if (!call.isSame()) {
+      if (call.getDiseasePresenceScore() != null) {
         rec.addInfo(name(), formatPossibleCause(call, includePrevNt));
       }
     }

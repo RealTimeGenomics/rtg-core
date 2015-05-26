@@ -28,7 +28,6 @@ import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
-import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.VariantStatistics;
@@ -162,7 +161,6 @@ public class SomaticCli extends AbstractMultisampleCli {
     builder.somaticRate((Double) mFlags.getValue(SOMATIC_FLAG));
     builder.lohPrior((Double) mFlags.getValue(LOH_FLAG));
     builder.sex((Sex) mFlags.getValue(SEX_FLAG));
-    builder.callLevel(VariantOutputLevel.INTERESTING); // TEMP
     return builder;
   }
 

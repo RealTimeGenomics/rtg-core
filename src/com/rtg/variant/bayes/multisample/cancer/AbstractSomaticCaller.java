@@ -23,7 +23,6 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 import com.rtg.variant.Variant;
-import com.rtg.variant.Variant.VariantFilter;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantOutputOptions;
@@ -234,38 +233,37 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
         }
         boring = true;
       }
-      cause = "NONE";
+      cause = null;
     } else {
       cause = best;
     }
 
-    // set the combined call values
+    final VariantSample normalSample = setCallValues(posterior.normalMeasure(), bestNormal, hypotheses, modelNormal, mParams, normalPloidy);
+    final VariantSample cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, cancerHyp, modelCancer, mParams, cancerPloidy);
+    final VariantLocus locus = new VariantLocus(templateName, position, endPosition, refAllele, VariantUtils.getPreviousRefNt(ref, position));
+    final Variant v = new Variant(locus, normalSample, cancerSample);
+    if (modelNormal.statistics().overCoverage(mParams, templateName) || modelCancer.statistics().overCoverage(mParams, templateName)) {
+      v.addFilter(Variant.VariantFilter.COVERAGE);
+      boring = true;
+    } else if (modelNormal.statistics().ambiguous(mParams) || modelCancer.statistics().ambiguous(mParams)) {
+      v.addFilter(Variant.VariantFilter.AMBIGUITY);
+    }
+    if (!boring) {
+      v.setInteresting();
+    }
+    if (doLoh) {
+      v.setLoh(loh);
+    }
+
     final double ratio = posterior.posteriorScore();
     if (ratio < mParams.threshold()) {
       return null;
     }
-
-    final VariantSample normalSample = setCallValues(posterior.normalMeasure(), bestNormal, hypotheses, modelNormal, mParams, normalPloidy);
-    final VariantSample cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, cancerHyp, modelCancer, mParams, cancerPloidy);
-    cancerSample.setSomaticScore(ratio);
-
-    final VariantLocus locus = new VariantLocus(templateName, position, endPosition, refAllele, VariantUtils.getPreviousRefNt(ref, position));
-
-    final Variant v = new Variant(locus, sameCall, normalSample, cancerSample);
-    v.setNormalCancerScore(posterior.ncScore());
-
-    if (modelNormal.statistics().overCoverage(mParams, templateName) || modelCancer.statistics().overCoverage(mParams, templateName)) {
-      v.addFilter(VariantFilter.COVERAGE);
-      boring = true;
-    } else if (modelNormal.statistics().ambiguous(mParams) || modelCancer.statistics().ambiguous(mParams)) {
-      v.addFilter(VariantFilter.AMBIGUITY);
-    }
-    v.setPossibleCause(cause);
-    if (doLoh) {
-      v.setLoh(loh);
-    }
-    if (!boring) {
-      v.setInteresting();
+    if (cause != null) {
+      v.setPossibleCause(cause);
+      // set the combined call values
+      cancerSample.setSomaticScore(ratio);
+      v.setNormalCancerScore(posterior.ncScore());
     }
     updateParameterEstimationCounts(normalPloidy, code, bestNormal, bestCancer, loh);
     if (!v.isFiltered()) {

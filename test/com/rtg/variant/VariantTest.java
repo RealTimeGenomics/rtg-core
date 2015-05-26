@@ -54,7 +54,6 @@ public class VariantTest extends TestCase {
     assertFalse(v.isComplexEquivalent());
     v.setComplexEquivalent();
     assertTrue(v.isComplexEquivalent());
-    assertFalse(v.isSame());
 
     assertFalse(v.isIndel());
     v.setIndel(0);
