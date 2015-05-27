@@ -28,18 +28,15 @@ import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantOutputOptions;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantSample;
-import com.rtg.variant.bayes.AlleleStatistics;
 import com.rtg.variant.bayes.Code;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.GenotypeMeasure;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.ModelInterface;
-import com.rtg.variant.bayes.Statistics;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.multisample.MultisampleJointCaller;
 import com.rtg.variant.bayes.multisample.Utils;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
-import com.rtg.variant.bayes.snp.StatisticsSnp;
 import com.rtg.variant.dna.DNARange;
 import com.rtg.variant.util.VariantUtils;
 
@@ -94,8 +91,6 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
   private double mOneMinusEll = 0;
   private double mMu = 0;
   private double mOneMinusMu = 0;
-  private double mAlpha = 0;
-  private double mOneMinusAlpha = 0;
 
   private void updateParameterEstimationCounts(final Ploidy normalPloidy, final Code code, final int normal, final int cancer, final double loh) {
     // See multiscoring.tex for an explanation.
@@ -131,50 +126,6 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
         mOneMinusMu++;
       } else {
         mMu++;
-      }
-    }
-  }
-
-  private void updateContaminationCounts(final Ploidy normalPloidy, final Code code, ModelInterface<?> modelCancer, final int normal, final int cancer, final double loh) {
-    // See multiscoring.tex for an explanation.
-    // This doesn't examine all possible cases due to difficulty of integration
-    final Statistics<?> statsCancer = modelCancer.statistics();
-    if (!(statsCancer instanceof StatisticsSnp)) {
-      return;
-    }
-    final AlleleStatistics<?> counts = ((StatisticsSnp) statsCancer).counts();
-    if (loh <= 0) {
-      if (normalPloidy == Ploidy.HAPLOID) {
-        if (normal != cancer) {
-          mAlpha += counts.count(normal);
-          mOneMinusAlpha += counts.count(cancer);
-        }
-      } else {
-        final int na = code.a(normal);
-        final int nb = code.bc(normal);
-        final int ca = code.a(cancer);
-        final int cb = code.bc(cancer);
-        if (na == nb) {
-          if (ca != na && cb != na) {
-            mAlpha += counts.count(na);
-            mOneMinusAlpha += 0.5 * counts.count(ca);
-            mOneMinusAlpha += 0.5 * counts.count(cb);
-          }
-        } else if (ca == cb) {
-          if (na != ca && nb != ca) {
-            mAlpha += 0.5 * counts.count(na);
-            mAlpha += 0.5 * counts.count(nb);
-            mOneMinusAlpha += counts.count(ca);
-          }
-        } else {
-          // na != nb && ca != cb;
-          if (ca != na && ca != nb && cb != na && cb != nb) {
-            mAlpha += 0.5 * counts.count(na);
-            mAlpha += 0.5 * counts.count(nb);
-            mOneMinusAlpha += 0.5 * counts.count(ca);
-            mOneMinusAlpha += 0.5 * counts.count(cb);
-          }
-        }
       }
     }
   }
@@ -266,9 +217,6 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       v.setNormalCancerScore(posterior.ncScore());
     }
     updateParameterEstimationCounts(normalPloidy, code, bestNormal, bestCancer, loh);
-    if (!v.isFiltered()) {
-      updateContaminationCounts(normalPloidy, code, modelCancer, bestNormal, bestCancer, loh);
-    }
     return v;
   }
 
@@ -292,10 +240,8 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
   public void endOfSequence() {
     Diagnostic.developerLog("count(l)=" + mEll + " count(1-l)=" + mOneMinusEll);
     Diagnostic.developerLog("count(mu)=" + mMu + " count(1-mu)=" + mOneMinusMu);
-    Diagnostic.developerLog("count(alpha)=" + mAlpha + " count(1-alpha)=" + mOneMinusAlpha);
     Diagnostic.userLog("hat l=" + ((mEll + 1) / (mEll + mOneMinusEll + 2)));
     Diagnostic.userLog("hat mu=" + ((mMu + 1) / (mMu + mOneMinusMu + 2)));
-    Diagnostic.userLog("hat alpha=" + ((mAlpha + 1) / (mAlpha + mOneMinusAlpha + 2)));
   }
 
   @Override
