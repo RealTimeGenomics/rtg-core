@@ -23,13 +23,10 @@ import static com.rtg.reader.Sdf2Fasta.RENAME;
 import static com.rtg.reader.Sdf2Fasta.START_SEQUENCE;
 import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.Collection;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.util.InvalidParamsException;
@@ -111,35 +108,22 @@ public final class Sdf2Fastq extends AbstractCli {
           boolean doAll = true;
           if (mFlags.getAnonymousFlag(0).isSet()) {
             doAll = false;
-            final Collection<Object> seqs = mFlags.getAnonymousValues(0);
-            for (final Object oi : seqs) {
+            for (final Object oi : mFlags.getAnonymousValues(0)) {
               filter.transfer((String) oi);
             }
           }
           if (mFlags.isSet(ID_FILE_FLAG)) {
             doAll = false;
-            try (BufferedReader br = new BufferedReader(new FileReader((File) mFlags.getValue(ID_FILE_FLAG)))) {
-              String line;
-              while ((line = br.readLine()) != null) {
-                line = line.trim();
-                if (line.length() > 0) {
-                  filter.transfer(line);
-                }
-              }
-            }
+            filter.transferFromFile((File) mFlags.getValue(ID_FILE_FLAG));
           }
           if (doAll || mFlags.isSet(START_SEQUENCE) || mFlags.isSet(END_SEQUENCE)) {
             final long startId = mFlags.isSet(START_SEQUENCE) ? (Long) mFlags.getValue(START_SEQUENCE) : LongRange.MISSING;
             final long endId = mFlags.isSet(END_SEQUENCE) ? (Long) mFlags.getValue(END_SEQUENCE) : LongRange.MISSING;
-            final LongRange r = SequencesReaderFactory.resolveRange(new LongRange(startId, endId), reader.numberSequences());
-            for (long seq = r.getStart(); seq < r.getEnd(); seq++) {
-              filter.transfer(seq);
-            }
+            filter.transfer(new LongRange(startId, endId));
           }
         }
       } catch (final IOException e) {
-        // Ignore broken pipe error so we don't die on | head etc.
-        if (!e.getMessage().contains("Broken pipe")) {
+        if (!e.getMessage().contains("Broken pipe")) { // Ignore broken pipe error so we don't die on | head etc.
           throw e;
         }
       } catch (InvalidParamsException e) {

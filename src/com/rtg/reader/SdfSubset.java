@@ -18,9 +18,7 @@ import static com.rtg.reader.Sdf2Fasta.NAMES_FLAG;
 import static com.rtg.reader.Sdf2Fasta.START_SEQUENCE;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
@@ -98,23 +96,12 @@ public final class SdfSubset extends LoggedCli {
           }
         }
         if (mFlags.isSet(ID_FILE_FLAG)) {
-          try (BufferedReader br = new BufferedReader(new FileReader((File) mFlags.getValue(ID_FILE_FLAG)))) {
-            String line;
-            while ((line = br.readLine()) != null) {
-              line = line.trim();
-              if (line.length() > 0) {
-                filter.transfer(line);
-              }
-            }
-          }
+          filter.transferFromFile((File) mFlags.getValue(ID_FILE_FLAG));
         }
         if (mFlags.isSet(START_SEQUENCE) || mFlags.isSet(END_SEQUENCE)) {
           final long startId = mFlags.isSet(START_SEQUENCE) ? (Long) mFlags.getValue(START_SEQUENCE) : LongRange.MISSING;
           final long endId = mFlags.isSet(END_SEQUENCE) ? (Long) mFlags.getValue(END_SEQUENCE) : LongRange.MISSING;
-          final LongRange r = SequencesReaderFactory.resolveRange(new LongRange(startId, endId), reader.numberSequences());
-          for (long seq = r.getStart(); seq < r.getEnd(); seq++) {
-            filter.transfer(seq);
-          }
+          filter.transfer(new LongRange(startId, endId));
         }
 
         Diagnostic.progress("Extracted " + filter.getWritten() + " sequences");
