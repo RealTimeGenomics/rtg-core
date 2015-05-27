@@ -140,7 +140,7 @@ public class SomaticNanoTest extends TestCase {
 
   // Set loh to 0 should not get the LOH call
   public void testNoLoh() throws Exception {
-    checkCancer("Loh", "5", REF_TEST5, 126L, "--keep-duplicates", "--loh", "0.0");
+    checkCancer("Loh", "5b", REF_TEST5, 126L, "--keep-duplicates", "--loh", "0.0");
   }
 
   // Set loh should get the LOH call - original is heterozygous
