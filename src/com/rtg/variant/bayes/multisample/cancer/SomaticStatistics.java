@@ -137,7 +137,7 @@ public class SomaticStatistics extends VariantStatistics {
     final double normalAltAlleleFraction = computeAltAlleleFraction();
     // In the case where there is no alt allele information just take the raw purity
     // estimate.  Otherwise apply a correction based on the normal alt allele information.
-    final double correctedPurityEstimate = normalAltAlleleFraction == 0 ? purityEstimate : Math.max(1, purityEstimate / normalAltAlleleFraction);
+    final double correctedPurityEstimate = normalAltAlleleFraction == 0 ? purityEstimate : Math.max(0, Math.min(1, purityEstimate / normalAltAlleleFraction));
     Diagnostic.developerLog("Purity estimate: " + correctedPurityEstimate + " size=" + mCancerStore.size() + " altCount=" + alt + " refCount=" + ref + " normalAltFraction=" + normalAltAlleleFraction);
     assert 0 <= correctedPurityEstimate && correctedPurityEstimate <= 1;
     return 1 - correctedPurityEstimate;
