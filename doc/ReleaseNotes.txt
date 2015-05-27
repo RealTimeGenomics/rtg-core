@@ -4,6 +4,36 @@ Below are the release notes for RTG Core, upon which RTG.VERSION
 is built.  Not all features described below may be included in this
 product.
 
+RTG Core 3.4.5 (2015-04-22)
+---------------------------
+
+This release primarily includes bugfixes and minor improvements:
+
+* somatic: If the input mappings contained unmapped records with
+  assigned coordinates, these were erroneously being included as
+  evidence, resulting in spurious calls when calling with non-zero
+  contamination specified.
+
+* vcfeval: Implemented an algorithm optimization that permits the
+  evaluation of situations that previous versions would skip over as
+  being too-complex (primarily where there were long runs of abutting
+  variants), as well as yielding a general speed improvement.
+
+* avrbuild: Add checks that the user has specified at least one VCF
+  annotation for use as a predictor attribute.
+
+* vcffilter: Fix bug when filtering on the FILTER declared last in the
+  header for files that contained inadvertent duplicate FILTER header
+  declarations or containing an explicit declaration for the PASS
+  filter.
+
+* rocplot: Minor improvements to file chooser handling, and also
+  include F-measure as an additional accuracy statistic in the status
+  bar.
+
+
+Previous releases:
+
 RTG Core 3.4.4 (2015-03-20)
 ---------------------------
 
@@ -34,9 +64,6 @@ This release primarily includes bugfixes and minor improvements:
 
 * aview: Fix display of BED regions that do not have a region name
   contained within the BED file.
-
-
-Previous releases:
 
 RTG Core 3.4.3 (2015-03-19)
 ---------------------------
