@@ -83,6 +83,7 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.util.VariantUtils;
 import com.rtg.vcf.VcfAnnotator;
+import com.rtg.vcf.VcfFilter;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.VcfWriter;
@@ -102,6 +103,7 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
   private final OutputStream mBedOut;
   private final SexMemo mSexMemo;
   private final List<VcfAnnotator> mAnnotators = new ArrayList<>();
+  private final List<VcfFilter> mFilters = new ArrayList<>();
   protected final SequencesReader mReferenceSequences;
   private AbstractJointCallerConfiguration mConfig;
   private VcfWriter mOut;
@@ -542,8 +544,17 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
             for (final VcfAnnotator annot : mAnnotators) {
               annot.annotate(record);
             }
-            mStatistics.tallyVariant(mVcfHeader, record);
-            mOut.write(record);
+            boolean keep = true;
+            for (final VcfFilter filter : mFilters) {
+              if (filter.accept(record)) {
+                keep = false;
+                break;
+              }
+            }
+            if (keep) {
+              mStatistics.tallyVariant(mVcfHeader, record);
+              mOut.write(record);
+            }
           }
         }
         if (mBuffer.finishedTo() < Math.min(id().time() * mInfo.chunkSize() + mInfo.start(), mInfo.end())) { //flushing should be keeping up with output
@@ -702,11 +713,12 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
 
     mConfig = mConfigurator.getConfig(mParams, mStatistics);
     mAnnotators.addAll(mConfig.getVcfAnnotators());
-
+    // AVR annotator comes last because it wants to use other annotations
     if (mParams.avrModelFile() != null) {
       Diagnostic.userLog("Loading AVR model: " + mParams.avrModelFile());
       mAnnotators.add(new ModelFactory(mParams.avrModelFile(), mParams.minAvrScore()).getModel());
     }
+    mFilters.addAll(mConfig.getVcfFilters());
 
     String[] genomeNames = mConfig.getGenomeNames();
     if (genomeNames.length == 1) {
