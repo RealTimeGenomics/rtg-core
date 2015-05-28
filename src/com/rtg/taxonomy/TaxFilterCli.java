@@ -52,6 +52,7 @@ public class TaxFilterCli extends AbstractCli {
   public static final String MODULE_NAME = "taxfilter";
 
   private static final String SUBSET_FLAG = "subset";
+  private static final String SUBTREE_FLAG = "subtree";
   private static final String REMOVE_FLAG = "remove";
   private static final String INPUT_FLAG = "input";
   private static final String OUTPUT_FLAG = "output";
@@ -67,7 +68,7 @@ public class TaxFilterCli extends AbstractCli {
      */
     @Override
     public boolean isValid(final CFlags flags) {
-      if (!flags.checkOr(SUBSET_FLAG, REMOVE_FLAG, RENAME_NORANK_FLAG, PRUNE_INTERNAL_SEQUENCES_FLAG, PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG)) {
+      if (!flags.checkOr(SUBSET_FLAG, SUBTREE_FLAG, REMOVE_FLAG, RENAME_NORANK_FLAG, PRUNE_INTERNAL_SEQUENCES_FLAG, PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG)) {
         return false;
       }
       if (!flags.checkNand(PRUNE_INTERNAL_SEQUENCES_FLAG, PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG)) {
@@ -78,9 +79,28 @@ public class TaxFilterCli extends AbstractCli {
   }
 
   @Override
-  protected int mainExec(OutputStream out, PrintStream err) throws IOException {
-    Taxonomy tax = new Taxonomy();
+  public String moduleName() {
+    return MODULE_NAME;
+  }
 
+  @Override
+  protected void initFlags() {
+    mFlags.registerExtendedHelp();
+    mFlags.setDescription("Reference taxonomy filtering.");
+    CommonFlagCategories.setCategories(mFlags);
+    mFlags.registerRequired('i', INPUT_FLAG, File.class, CommonFlags.FILE, "taxonomy input. May be either a taxonomy TSV file or an SDF containing taxonomy information").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "filename for output TSV or SDF").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional('s', SUBSET_FLAG, File.class, CommonFlags.FILE, "file containing ids of nodes to include in subset").setCategory(FILTERING);
+    mFlags.registerOptional('S', SUBTREE_FLAG, File.class, CommonFlags.FILE, "file containing ids of nodes to include as subtrees in subset").setCategory(FILTERING);
+    mFlags.registerOptional('r', REMOVE_FLAG, File.class, CommonFlags.FILE, "file containing ids of nodes to remove").setCategory(FILTERING);
+    mFlags.registerOptional('p', PRUNE_INTERNAL_SEQUENCES_FLAG, "when filtering an SDF, exclude sequence data from non-leaf output nodes").setCategory(FILTERING);
+    mFlags.registerOptional('P', PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG, "when filtering an SDF, remove nodes below the first containing sequence data").setCategory(FILTERING);
+    mFlags.registerOptional(RENAME_NORANK_FLAG, File.class, CommonFlags.FILE, "assign a rank to \"no rank\" nodes from file containing id/rank pairs").setCategory(FILTERING);
+    mFlags.setValidator(new TaxonomyFlagValidator());
+  }
+
+  @Override
+  protected int mainExec(OutputStream out, PrintStream err) throws IOException {
     final File inputFile = (File) mFlags.getValue(INPUT_FLAG);
     final boolean sdf = inputFile.isDirectory();
     final File taxFile = sdf ? new File(inputFile, TaxonomyUtils.TAXONOMY_FILE) : inputFile;
@@ -92,22 +112,33 @@ public class TaxFilterCli extends AbstractCli {
     }
 
     //err.print("Reading taxonomy from " + taxFile + "...");
+    final Taxonomy fullTax = new Taxonomy();
     try (FileInputStream fis = new FileInputStream(taxFile)) {
-      tax.read(fis);
+      fullTax.read(fis);
     }
     //err.println(tax.size());
-    if (!tax.isConsistent()) {
-      Diagnostic.error(tax.getInconsistencyReason());
+    if (!fullTax.isConsistent()) {
+      Diagnostic.error(fullTax.getInconsistencyReason());
       throw new NoTalkbackSlimException("Input taxonomy is not complete.");
     }
 
     if (mFlags.isSet(RENAME_NORANK_FLAG)) {
-      renameNoRank(tax, (File) mFlags.getValue(RENAME_NORANK_FLAG));
+      renameNoRank(fullTax, (File) mFlags.getValue(RENAME_NORANK_FLAG));
     }
 
-    if (mFlags.isSet(SUBSET_FLAG)) {
-      tax = doSubset(tax, (File) mFlags.getValue(SUBSET_FLAG));
+    final Taxonomy tax;
+    if (mFlags.isSet(SUBSET_FLAG) || mFlags.isSet(SUBTREE_FLAG)) {
+      tax = new Taxonomy();
+      if (mFlags.isSet(SUBSET_FLAG)) {
+        doSubset(tax, fullTax, (File) mFlags.getValue(SUBSET_FLAG));
+      }
+      if (mFlags.isSet(SUBTREE_FLAG)) {
+        doSubTrees(tax, fullTax, (File) mFlags.getValue(SUBTREE_FLAG));
+      }
+    } else {
+      tax = fullTax;
     }
+
 
     if (mFlags.isSet(REMOVE_FLAG)) {
       doRemoval(tax, (File) mFlags.getValue(REMOVE_FLAG));
@@ -230,15 +261,14 @@ public class TaxFilterCli extends AbstractCli {
     }
   }
 
-  private Taxonomy doSubset(Taxonomy intax, File subsetFile) throws IOException {
+  private void doSubTrees(Taxonomy tax, Taxonomy source, File subtreesFile) throws IOException {
     //err.print("Reading subset ids from " + subsetFile + "...");
-    final Set<Integer> ids = readIds(subsetFile);
+    final Set<Integer> ids = readIds(subtreesFile);
     //err.println(ids.size());
 
     //err.print("Extracting subset...");
-    final Taxonomy tax;
     try {
-      tax = intax.subset(ids);
+      tax.addSubTrees(source, ids);
     } catch (final IllegalArgumentException iae) {
       throw new NoTalkbackSlimException("Invalid subset list:" + iae.getMessage());
     }
@@ -248,7 +278,25 @@ public class TaxFilterCli extends AbstractCli {
       Diagnostic.error(tax.getInconsistencyReason());
       throw new NoTalkbackSlimException("Taxonomy post-subset is not complete.");
     }
-    return tax;
+  }
+
+  private void doSubset(Taxonomy tax, Taxonomy source, File subsetFile) throws IOException {
+    //err.print("Reading subset ids from " + subsetFile + "...");
+    final Set<Integer> ids = readIds(subsetFile);
+    //err.println(ids.size());
+
+    //err.print("Extracting subset...");
+    try {
+      tax.addPaths(source, ids);
+    } catch (final IllegalArgumentException iae) {
+      throw new NoTalkbackSlimException("Invalid subset list:" + iae.getMessage());
+    }
+    //err.println(tax.size());
+
+    if (!tax.isConsistent()) {
+      Diagnostic.error(tax.getInconsistencyReason());
+      throw new NoTalkbackSlimException("Taxonomy post-subset is not complete.");
+    }
   }
 
   private void renameNoRank(Taxonomy tax, File namesFile) throws IOException {
@@ -316,38 +364,5 @@ public class TaxFilterCli extends AbstractCli {
     return ids;
   }
 
-  @Override
-  protected void initFlags() {
-    initFlags(mFlags);
-  }
 
-  /**
-   * set up a flags object for this module
-   * @param flags the flags to set up
-   */
-  private void initFlags(CFlags flags) {
-    flags.registerExtendedHelp();
-    flags.setDescription("Reference taxonomy filtering.");
-    CommonFlagCategories.setCategories(mFlags);
-    flags.registerRequired('i', INPUT_FLAG, File.class, CommonFlags.FILE, "taxonomy input. May be either a taxonomy TSV file or an SDF containing taxonomy information").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "filename for output TSV or SDF").setCategory(INPUT_OUTPUT);
-    flags.registerOptional('s', SUBSET_FLAG, File.class, CommonFlags.FILE, "file containing ids of nodes to include in subset").setCategory(FILTERING);
-    flags.registerOptional('r', REMOVE_FLAG, File.class, CommonFlags.FILE, "file containing ids of nodes to remove").setCategory(FILTERING);
-    flags.registerOptional('p', PRUNE_INTERNAL_SEQUENCES_FLAG, "when filtering an SDF, exclude sequence data from non-leaf output nodes").setCategory(FILTERING);
-    flags.registerOptional('P', PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG, "when filtering an SDF, remove nodes below the first containing sequence data").setCategory(FILTERING);
-    flags.registerOptional(RENAME_NORANK_FLAG, File.class, CommonFlags.FILE, "assign a rank to \"no rank\" nodes from file containing id/rank pairs").setCategory(FILTERING);
-    flags.setValidator(new TaxonomyFlagValidator());
-  }
-
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
-  }
-
-  /**
-   * @param args command line arguments
-   */
-  public static void main(String[] args) {
-    new TaxFilterCli().mainExit(args);
-  }
 }
