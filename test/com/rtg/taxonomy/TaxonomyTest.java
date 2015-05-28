@@ -50,6 +50,18 @@ public class TaxonomyTest extends TestCase {
     }
   }
 
+  public Taxonomy makeTaxonomy() {
+    final Taxonomy tax = new Taxonomy();
+    tax.addNode(1, -1, "root", "root");
+    for (int i = 2; i <= 10; i++) {
+      tax.addNode(i, (i - 2) / 3 + 1, "node" + i, "rank" + i);
+    }
+    assertEquals(10, tax.size());
+    assertNotNull(tax.getRoot());
+    assertTrue(tax.isConsistent());
+    return tax;
+  }
+
   public void testConstructor() {
     final Taxonomy tax = new Taxonomy();
     assertEquals(0, tax.size());
@@ -61,17 +73,7 @@ public class TaxonomyTest extends TestCase {
   }
 
   public void testAddNode() {
-    final Taxonomy tax = new Taxonomy();
-
-    tax.addNode(1, -1, "root", "root");
-    for (int i = 2; i <= 10; i++) {
-      tax.addNode(i, (i - 2) / 3 + 1, "node" + i, "rank" + i);
-    }
-    assertEquals(10, tax.size());
-    assertNotNull(tax.getRoot());
-
-    assertTrue(tax.isConsistent());
-
+    final Taxonomy tax = makeTaxonomy();
     int i = 0;
     int[] ids = {1, 2, 5, 6, 7, 3, 8, 9, 10, 4};
     for (TaxonNode tn : tax.getRoot().depthFirstTraversal()) {
@@ -88,17 +90,25 @@ public class TaxonomyTest extends TestCase {
     assertTrue(tax.isConsistent());
   }
 
-  public void testRemoveSubTree() {
-    final Taxonomy tax = new Taxonomy();
+  public void testSubTree() throws IOException {
+    final Taxonomy tax = makeTaxonomy();
+    final Taxonomy subtree = new Taxonomy();
 
-    tax.addNode(1, -1, "root", "root");
-    for (int i = 2; i <= 10; i++) {
-      tax.addNode(i, (i - 2) / 3 + 1, "node" + i, "rank" + i);
+    subtree.addSubTree(tax, 3);
+    assertTrue(subtree.isConsistent());
+    final int[] ids = {1, 3, 8, 9, 10};
+    assertEquals(ids.length, subtree.size());
+    for (Integer i : ids) {
+      assertTrue(subtree.contains(i));
     }
-    assertEquals(10, tax.size());
-    assertNotNull(tax.getRoot());
-    assertTrue(tax.isConsistent());
 
+    subtree.addSubTree(tax, 4);
+    assertEquals(ids.length + 1, subtree.size());
+    assertTrue(subtree.contains(4));
+  }
+
+  public void testRemoveSubTree() {
+    final Taxonomy tax = makeTaxonomy();
     assertTrue(tax.removeSubTree(3));
     assertEquals(6, tax.size());
     assertFalse(tax.contains(3));
@@ -112,13 +122,7 @@ public class TaxonomyTest extends TestCase {
   }
 
   public void testSubset() {
-    final Taxonomy tax = new Taxonomy();
-
-    tax.addNode(1, -1, "root", "root");
-    for (int i = 2; i <= 10; i++) {
-      tax.addNode(i, (i - 2) / 3 + 1, "node" + i, "rank" + i);
-    }
-
+    final Taxonomy tax = makeTaxonomy();
     final ArrayList<Integer> ids = new ArrayList<>();
     ids.add(2);
     final Taxonomy sub = tax.subset(ids);

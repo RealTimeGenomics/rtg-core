@@ -144,37 +144,80 @@ public class Taxonomy {
   }
 
   /**
+   * Adds the specified node from the source taxonomy, including the path to the root
+   * @param source the source taxonomy
+   * @param taxId the taxon id to copy
+   */
+  public void addPath(Taxonomy source, Integer taxId) {
+    TaxonNode node = source.mNodes.get(taxId);
+    if (node == null) {
+      throw new IllegalArgumentException("Taxonomy does not contain node with id " + taxId);
+    }
+    TaxonNode child = null;
+    while (node != null) { // Walk up to root, adding each
+      TaxonNode current = mNodes.get(node.getId());
+      if (current == null) {
+        current = new TaxonNode(node.getId(), node.getName(), node.getRank());
+        mNodes.put(current.getId(), current);
+        node = node.getParent();
+      } else {
+        node = null; // node already exists so parent must already be entered
+      }
+      current.addChild(child);
+      child = current;
+    }
+  }
+
+  /**
+   * Adds the specified subtree from a source taxonomy to this taxonomy (including the path to the root)
+   * @param source the source taxonomy
+   * @param taxId the taxon id to select subtrees of
+   */
+  public void addSubTree(Taxonomy source, int taxId) {
+    final TaxonNode node = source.mNodes.get(taxId);
+    if (node == null) {
+      throw new IllegalArgumentException("Taxonomy does not contain node with id " + taxId);
+    }
+
+    addPath(source, taxId);
+
+    for (final TaxonNode tn : node.depthFirstTraversal()) {
+      if (!mNodes.containsKey(tn.getId())) {
+        addNode(tn.getId(), tn.getParentId(), tn.getName(), tn.getRank());
+      }
+    }
+  }
+
+  /**
+   * Adds the specified subtrees from a source taxonomy to this taxonomy (including each path to the root)
+   * @param source the source taxonomy
+   * @param ids the taxon ids to select subtrees of
+   */
+  public void addSubTrees(Taxonomy source, Collection<Integer> ids) {
+    for (final Integer taxId : ids) {
+      addSubTree(source, taxId);
+    }
+  }
+
+  /**
+   * Adds the specified nodes from a source taxonomy to this taxonomy (including each path to the root)
+   * @param source the source taxonomy
+   * @param ids the taxon ids to add
+   */
+  public void addPaths(Taxonomy source, Collection<Integer> ids) {
+    for (final Integer taxId : ids) {
+      addPath(source, taxId);
+    }
+  }
+
+  /**
    * Returns a subset of the taxonomy that contains nodes with the given <code>ids</code> and their ancestors back to the root.
    * @param ids taxon ids to include in the subset.
    * @return a new taxonomy subset.
    */
   public Taxonomy subset(Collection<Integer> ids) {
     final Taxonomy subset = new Taxonomy();
-
-    for (final Integer taxId : ids) {
-      TaxonNode node = mNodes.get(taxId);
-      if (node == null) {
-        throw new IllegalArgumentException("Taxonomy does not contain node with id " + taxId);
-      }
-      TaxonNode prev2 = null;
-      while (node != null) {
-        TaxonNode node2 = subset.mNodes.get(node.getId());
-        if (node2 == null) {
-          node2 = new TaxonNode(node.getId(), node.getName(), node.getRank());
-          subset.mNodes.put(node2.getId(), node2);
-//          for (TaxonNode child : node.mChildren) {
-//            if (MERGE_RANK.equals(child.getRank())) {
-//              node2.addChild(new TaxonNode(child.getId(), child.getName(), child.getRank()));
-//            }
-//          }
-          node = node.getParent();
-        } else {
-          node = null; // node already exists so parent must already be entered
-        }
-        node2.addChild(prev2);
-        prev2 = node2;
-      }
-    }
+    subset.addPaths(this, ids);
     return subset;
   }
 
