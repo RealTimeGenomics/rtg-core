@@ -106,7 +106,7 @@ public class ComplexCallerTest extends TestCase {
     final Complexities regions = new Complexities(chunk, "foo", 0, 50, 3, 15, ComplexitiesTest.template(30), true, null);
     Complexities.fixDangling(regions, null);
     Complexities.fixDangling(null, regions);
-    final AbstractJointCallerConfiguration config = new SomaticCallerConfiguration.Configurator().getConfig(params);
+    final AbstractJointCallerConfiguration config = new SomaticCallerConfiguration.Configurator().getConfig(params, null);
     final ComplexCaller caller = new ComplexCaller(params, config);
     final List<Variant> list = caller.makeComplexCalls(regions, trib, DnaUtils.encodeString(TEMPLATE), TEMPLATE_NAME);
     assertEquals(list.toString(), 4, list.size());
@@ -270,7 +270,7 @@ public class ComplexCallerTest extends TestCase {
     //System.err.println(list.size() + " " + in.getPath());
     final SAMFileHeader header = SamUtils.getUberHeader(list);
     final VariantParams params = builder.uberHeader(header).create();
-    final AbstractJointCallerConfiguration config = new SingletonCallerConfiguration.Configurator().getConfig(params);
+    final AbstractJointCallerConfiguration config = new SingletonCallerConfiguration.Configurator().getConfig(params, null);
 
     final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator();
     final RecordIterator<VariantAlignmentRecord> it = CircularBufferMultifileSinglePassReaderWindow.defaultIterator(list, params.filterParams(), 8, pop);

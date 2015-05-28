@@ -29,6 +29,7 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.VariantStatistics;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.Model;
@@ -67,14 +68,8 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
    */
   public static final class Configurator implements JointCallerConfigurator {
 
-    /**
-     * Create a new cancer joint caller
-     * @param params parameters
-     * @throws IOException if error
-     * @return a new {@link SomaticCallerConfiguration}
-     */
     @Override
-    public SomaticCallerConfiguration getConfig(final VariantParams params) throws IOException {
+    public SomaticCallerConfiguration getConfig(final VariantParams params, VariantStatistics statistics) throws IOException {
       final double loh = params.lohPrior();
       final int numberOfGenomes = params.genomeRelationships().genomes().length;
       final Relationship[] derived = params.genomeRelationships().relationships(RelationshipType.ORIGINAL_DERIVED);

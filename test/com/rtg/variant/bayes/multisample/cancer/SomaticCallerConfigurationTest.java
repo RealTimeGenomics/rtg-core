@@ -57,7 +57,7 @@ public class SomaticCallerConfigurationTest extends TestCase {
     b.machineErrorName("illumina");
     final VariantParams p = b.uberHeader(uber).create();
 
-    final SomaticCallerConfiguration config = new SomaticCallerConfiguration.Configurator().getConfig(p);
+    final SomaticCallerConfiguration config = new SomaticCallerConfiguration.Configurator().getConfig(p, null);
     assertNotNull(config.getGenomeNames());
     assertNotNull(config.getJointCaller());
     assertEquals(2, config.numberOfGenomes());
@@ -70,6 +70,8 @@ public class SomaticCallerConfigurationTest extends TestCase {
     assertEquals("TEST", config.getGenomeNames()[0]);
     assertEquals("cancer", config.getGenomeNames()[1]);
     assertTrue(config.handlesPloidy(Ploidy.POLYPLOID));
+    assertTrue(config.getVcfAnnotators().isEmpty());
+    assertTrue(config.getVcfFilters().isEmpty());
 
     final VariantOutputVcfFormatter output = config.getOutputFormatter(p);
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();

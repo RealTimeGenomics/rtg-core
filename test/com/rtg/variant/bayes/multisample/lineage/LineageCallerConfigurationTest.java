@@ -48,7 +48,7 @@ public class LineageCallerConfigurationTest extends TestCase {
         file.addParentChild("zero", "three");
         final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("zero", "one", "two", "three");
         final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").uberHeader(uber).create();
-        final LineageCallerConfiguration config = new LineageCallerConfiguration.Configurator().getConfig(params);
+        final LineageCallerConfiguration config = new LineageCallerConfiguration.Configurator().getConfig(params, null);
         assertNotNull(config.getOutputFormatter(params));
 
         assertFalse(config.getSnpHypotheses(1, null, 0).diploid().haploid());
@@ -109,7 +109,7 @@ public class LineageCallerConfigurationTest extends TestCase {
       final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("zero", "two", "one");
       final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").uberHeader(uber).create();
       try {
-        new LineageCallerConfiguration.Configurator().getConfig(params);
+        new LineageCallerConfiguration.Configurator().getConfig(params, null);
         fail();
       } catch (NoTalkbackSlimException e) {
         //expected
@@ -132,7 +132,7 @@ public class LineageCallerConfigurationTest extends TestCase {
       final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("zero", "two", "one");
       final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").uberHeader(uber).create();
       try {
-        new LineageCallerConfiguration.Configurator().getConfig(params);
+        new LineageCallerConfiguration.Configurator().getConfig(params, null);
         fail();
       } catch (NoTalkbackSlimException e) {
         //expected

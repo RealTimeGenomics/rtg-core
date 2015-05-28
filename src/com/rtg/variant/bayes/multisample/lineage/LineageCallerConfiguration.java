@@ -26,6 +26,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.VariantStatistics;
 import com.rtg.variant.bayes.complex.DenovoChecker;
 import com.rtg.variant.bayes.complex.LineageDenovoChecker;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
@@ -46,14 +47,8 @@ public final class LineageCallerConfiguration extends AbstractJointCallerConfigu
    */
   public static final class Configurator implements JointCallerConfigurator {
 
-    /**
-     * Create a new family joint caller
-     * @param params parameters
-     * @throws java.io.IOException if error
-     * @return a new {@link com.rtg.variant.bayes.multisample.lineage.LineageCallerConfiguration}
-     */
     @Override
-    public LineageCallerConfiguration getConfig(final VariantParams params) throws IOException {
+    public LineageCallerConfiguration getConfig(final VariantParams params, VariantStatistics statistics) throws IOException {
       Diagnostic.userLog("Using Lineage caller");
 
       final String[] outputSampleNames = SamUtils.getSampleNames(params.uberHeader());

@@ -117,27 +117,27 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
   // This configurator tries to guess the appropriate configuration based on the structure of the pedigree
   private static final JointCallerConfigurator DEFAULT_CONFIGURATOR = new JointCallerConfigurator() {
     @Override
-    public AbstractJointCallerConfiguration getConfig(VariantParams params) throws IOException {
+    public AbstractJointCallerConfiguration getConfig(VariantParams params, VariantStatistics statistics) throws IOException {
       final Relationship[] derived = params.genomeRelationships().relationships(RelationshipType.ORIGINAL_DERIVED);
       if (derived.length > 0) {
         final int numberOfGenomes = params.genomeRelationships().genomes().length;
         if (derived.length != 1 || numberOfGenomes != 2) {
           throw new RuntimeException("Single original-derived relationship required in genome relationship file.");
         }
-        return new SomaticCallerConfiguration.Configurator().getConfig(params);
+        return new SomaticCallerConfiguration.Configurator().getConfig(params, statistics);
       } else {
         final Relationship[] parentChild = params.genomeRelationships().relationships(RelationshipType.PARENT_CHILD);
         if (parentChild.length > 0) {
           // We're in family calling mode
           final Family family = Family.getFamily(params.genomeRelationships());
           if (family.isOneParentDiseased()) {
-            return new DiseasedFamilyCallerConfiguration.Configurator().getConfig(params);
+            return new DiseasedFamilyCallerConfiguration.Configurator().getConfig(params, statistics);
           } else {
-            return new FamilyCallerConfiguration.Configurator().getConfig(params);
+            return new FamilyCallerConfiguration.Configurator().getConfig(params, statistics);
           }
         } else {
           // We're in population calling mode
-          return new PopulationCallerConfiguration.Configurator().getConfig(params);
+          return new PopulationCallerConfiguration.Configurator().getConfig(params, statistics);
         }
       }
     }
@@ -700,7 +700,7 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
       Diagnostic.developerLog("New params:" + mParams.toString());
     }
 
-    mConfig = mConfigurator.getConfig(mParams);
+    mConfig = mConfigurator.getConfig(mParams, mStatistics);
     mAnnotators.addAll(mConfig.getVcfAnnotators());
 
     if (mParams.avrModelFile() != null) {

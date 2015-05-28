@@ -46,7 +46,7 @@ public class DiseasedFamilyCallerConfigurationTest extends TestCase {
     b.uberHeader(uber);
     final VariantParams p = b.create();
 
-    final DiseasedFamilyCallerConfiguration config = new DiseasedFamilyCallerConfiguration.Configurator().getConfig(p);
+    final DiseasedFamilyCallerConfiguration config = new DiseasedFamilyCallerConfiguration.Configurator().getConfig(p, null);
     assertNotNull(config.getGenomeNames());
     assertNotNull(config.getJointCaller());
     assertEquals(3, config.numberOfGenomes());

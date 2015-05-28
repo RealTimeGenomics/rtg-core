@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.rtg.reference.SexMemo;
 import com.rtg.relation.ChildFamilyLookup;
 import com.rtg.relation.Family;
 import com.rtg.relation.GenomeRelationships;
@@ -28,8 +29,8 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.GenomeConnectivity;
 import com.rtg.variant.MachineErrorChooserInterface;
-import com.rtg.reference.SexMemo;
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.VariantStatistics;
 import com.rtg.variant.bayes.complex.DenovoChecker;
 import com.rtg.variant.bayes.complex.MendelianDenovoChecker;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
@@ -58,28 +59,10 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
    */
   public static final class Configurator implements JointCallerConfigurator {
 
-    /**
-     * Create a new family joint caller
-     * @param outputGenomes names of genomes to produce calls for
-     * @param params parameters
-     * @throws java.io.IOException if error
-     * @return a new {@link PopulationCallerConfiguration}
-     */
     @Override
-    public PopulationCallerConfiguration getConfig(final VariantParams params) throws IOException {
-      return getConfig(params, Arrays.asList(SamUtils.getSampleNames(params.uberHeader())));
-    }
-
-    /**
-     * Create a new family joint caller
-     * @param params parameters
-     * @param mappedGenomes names of genomes to produce calls for
-     * @throws java.io.IOException if error
-     * @return a new {@link PopulationCallerConfiguration}
-     */
-    public PopulationCallerConfiguration getConfig(VariantParams params, List<String> mappedGenomes) throws IOException {
+    public PopulationCallerConfiguration getConfig(final VariantParams params, VariantStatistics statistics) throws IOException {
       Diagnostic.userLog("Using Population caller");
-
+      final List<String> mappedGenomes = Arrays.asList(SamUtils.getSampleNames(params.uberHeader()));
       final GenomeRelationships genomeRelationships = params.genomeRelationships();
       final List<String> pedGenomes = Arrays.asList(genomeRelationships.genomes());
       final List<String> outputGenomes = new ArrayList<>();

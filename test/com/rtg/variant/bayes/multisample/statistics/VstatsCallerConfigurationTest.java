@@ -49,7 +49,7 @@ public class VstatsCallerConfigurationTest extends TestCase {
         .outputParams(outputParams)
         .uberHeader(new SAMFileHeader())
         .create();
-      final AbstractJointCallerConfiguration config = new VstatsCallerConfiguration.Configurator().getConfig(p);
+      final AbstractJointCallerConfiguration config = new VstatsCallerConfiguration.Configurator().getConfig(p, null);
       assertNotNull(config.getGenomeNames());
       assertNotNull(config.getJointCaller());
       assertEquals(1, config.numberOfGenomes());

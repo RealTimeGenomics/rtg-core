@@ -35,6 +35,7 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.bayes.snp.ModelSnpFactory;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.vcf.VcfAnnotator;
+import com.rtg.vcf.VcfFilter;
 
 /**
  * Warning: it is assumed that this class and its subclasses are immutable
@@ -52,6 +53,7 @@ public abstract class AbstractJointCallerConfiguration {
   private final MachineErrorChooserInterface mMachineErrorChooser;
   private final PopulationHwHypothesesCreator mSiteSpecificPriors;
   private final Collection<VcfAnnotator> mAnnotators = new ArrayList<>();
+  private final Collection<VcfFilter> mFilters = new ArrayList<>();
 
   protected AbstractJointCallerConfiguration(
       MultisampleJointCaller jointCaller,
@@ -135,6 +137,14 @@ public abstract class AbstractJointCallerConfiguration {
    */
   public Collection<VcfAnnotator> getVcfAnnotators() {
     return mAnnotators;
+  }
+
+  /**
+   * Get a list of any VcfFilets to apply to the output
+   * @return a list of VcfFilters
+   * */
+  public Collection<VcfFilter> getVcfFilters() {
+    return mFilters;
   }
 
   // Ploidy can vary throughout the chromosome e.g. PAR regions

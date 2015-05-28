@@ -47,7 +47,7 @@ public class SingletonCallerConfigurationTest extends TestCase {
         .populationPriors(alleleCountFile)
         .uberHeader(new SAMFileHeader())
         .create();
-      final AbstractJointCallerConfiguration config = new SingletonCallerConfiguration.Configurator().getConfig(p);
+      final AbstractJointCallerConfiguration config = new SingletonCallerConfiguration.Configurator().getConfig(p, null);
       assertNotNull(config.getGenomeNames());
       assertNotNull(config.getJointCaller());
       assertEquals(1, config.numberOfGenomes());

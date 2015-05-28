@@ -27,6 +27,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.VariantStatistics;
 import com.rtg.variant.bayes.complex.DenovoChecker;
 import com.rtg.variant.bayes.complex.MendelianDenovoChecker;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
@@ -52,14 +53,8 @@ public final class
    */
   public static final class Configurator implements JointCallerConfigurator {
 
-    /**
-     * Create a new family joint caller
-     * @param params parameters
-     * @throws IOException if error
-     * @return a new {@link FamilyCallerConfiguration}
-     */
     @Override
-    public FamilyCallerConfiguration getConfig(final VariantParams params) throws IOException {
+    public FamilyCallerConfiguration getConfig(final VariantParams params, VariantStatistics statistics) throws IOException {
       Diagnostic.userLog("Using Mendelian caller");
 
       final String[] outputGenomes = SamUtils.getSampleNames(params.uberHeader());

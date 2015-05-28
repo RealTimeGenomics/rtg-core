@@ -61,7 +61,7 @@ public class CancerConvergenceTest extends TestCase {
     b.lohPrior(1e-20);
     b.uberHeader(uber);
     final VariantParams p = b.create();
-    return new SomaticCallerConfiguration.Configurator().getConfig(p);
+    return new SomaticCallerConfiguration.Configurator().getConfig(p, null);
   }
 
   private MultisampleJointCaller getCaller(final SomaticCallerConfiguration jointConfig) {

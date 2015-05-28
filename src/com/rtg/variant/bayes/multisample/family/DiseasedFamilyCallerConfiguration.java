@@ -27,6 +27,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.VariantStatistics;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
 import com.rtg.variant.bayes.multisample.IndividualSampleFactory;
 import com.rtg.variant.bayes.multisample.JointCallerConfigurator;
@@ -48,14 +49,8 @@ public final class DiseasedFamilyCallerConfiguration extends AbstractJointCaller
    */
   public static final class Configurator implements JointCallerConfigurator {
 
-    /**
-     * Create a new disease joint caller
-     * @param params parameters
-     * @return a new {@link DiseasedFamilyCallerConfiguration}
-     * @throws IOException if error
-     */
     @Override
-    public DiseasedFamilyCallerConfiguration getConfig(final VariantParams params) throws IOException {
+    public DiseasedFamilyCallerConfiguration getConfig(final VariantParams params, VariantStatistics statistics) throws IOException {
       Diagnostic.userLog("Using disease caller");
 
       final GenomeRelationships genomeRelationships = params.genomeRelationships();

@@ -15,6 +15,7 @@ package com.rtg.variant.bayes.multisample;
 import java.io.IOException;
 
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.VariantStatistics;
 
 /**
  */
@@ -23,8 +24,9 @@ public interface JointCallerConfigurator {
   /**
    * Creates a configuration for the joint caller
    * @param params params with which to create the configuration
+   * @param statistics overall statistics associated with the joint caller
    * @return an <code>AbstractJointCallerConfiguration</code>
    * @throws IOException in the event of an <code>IOException</code> occurring.
    */
-  AbstractJointCallerConfiguration getConfig(final VariantParams params) throws IOException;
+  AbstractJointCallerConfiguration getConfig(final VariantParams params, VariantStatistics statistics) throws IOException;
 }
