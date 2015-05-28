@@ -347,7 +347,7 @@ public final class VcfFilterCli extends AbstractCli {
     if (mFlags.isSet(MIN_QUALITY) || mFlags.isSet(MAX_QUALITY)) {
       final double minQuality = mFlags.isSet(MIN_QUALITY) ? (Double) mFlags.getValue(MIN_QUALITY) : 0.0;
       final double maxQuality = mFlags.isSet(MAX_QUALITY) ? (Double) mFlags.getValue(MAX_QUALITY) : Double.MAX_VALUE;
-      mVcfFilterTask.mFilters.add(new VcfFilter.QualFilter(mVcfFilterTask.mVcfFilterStatistics, minQuality, maxQuality));
+      mVcfFilterTask.mFilters.add(new AbstractVcfFilter.QualFilter(mVcfFilterTask.mVcfFilterStatistics, minQuality, maxQuality));
     }
     if (mFlags.isSet(MIN_GENOTYPE_QUALITY) || mFlags.isSet(MAX_GENOTYPE_QUALITY)
         || mFlags.isSet(MIN_POSTERIOR_SCORE) || mFlags.isSet(MAX_POSTERIOR_SCORE)) {

@@ -21,7 +21,7 @@ import com.rtg.variant.format.VcfFormatField;
 /**
  */
 @TestClass("com.rtg.vcf.VcfFilterCliTest")
-public abstract class VcfSampleFilter extends VcfFilter {
+public abstract class VcfSampleFilter extends AbstractVcfFilter {
   int[] mSamples = null;
   boolean[] mSampleFailed = null;
   VcfSampleFilter(VcfFilterStatistics stats, Stat stat) {

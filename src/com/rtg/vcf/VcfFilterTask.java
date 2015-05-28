@@ -42,7 +42,7 @@ class VcfFilterTask {
   protected int mEndPosition = -1;
 
   // what to filter on
-  protected List<VcfFilter> mFilters = new ArrayList<>();
+  protected List<AbstractVcfFilter> mFilters = new ArrayList<>();
   protected List<String> mSampleNames = new ArrayList<>();
   protected int[] mSampleIndexes = null;
   protected boolean[] mSampleFailed = null;
@@ -81,7 +81,7 @@ class VcfFilterTask {
   protected void filterVcf(VcfReader reader, VcfWriter writer) throws IOException {
     final VcfHeader header = reader.getHeader();
     checkHeaderFieldFilters(header);
-    for (final VcfFilter filter : mFilters) {
+    for (final AbstractVcfFilter filter : mFilters) {
       if (filter instanceof VcfSampleFilter) {
         ((VcfSampleFilter) filter).setSamples(mSampleIndexes, mSampleFailed);
       }
@@ -258,7 +258,7 @@ class VcfFilterTask {
     if (allSameAsRef(record)) {
       return false;
     }
-    for (final VcfFilter filter : mFilters) {
+    for (final AbstractVcfFilter filter : mFilters) {
       if (!filter.accept(record)) {
         if (!(filter instanceof VcfSampleFilter)) {
           mNonSampleSpecificFailed = true;

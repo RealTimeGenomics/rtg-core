@@ -18,7 +18,7 @@ import com.rtg.vcf.VcfFilterStatistics.Stat;
 
 /**
  */
-public abstract class VcfInfoFilter extends VcfFilter {
+public abstract class VcfInfoFilter extends AbstractVcfFilter {
 
   VcfInfoFilter(VcfFilterStatistics stats, Stat stat) {
     super(stats, stat);

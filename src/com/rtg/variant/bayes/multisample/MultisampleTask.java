@@ -83,7 +83,7 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.util.VariantUtils;
 import com.rtg.vcf.VcfAnnotator;
-import com.rtg.vcf.VcfFilter;
+import com.rtg.vcf.AbstractVcfFilter;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.VcfWriter;
@@ -103,7 +103,7 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
   private final OutputStream mBedOut;
   private final SexMemo mSexMemo;
   private final List<VcfAnnotator> mAnnotators = new ArrayList<>();
-  private final List<VcfFilter> mFilters = new ArrayList<>();
+  private final List<AbstractVcfFilter> mFilters = new ArrayList<>();
   protected final SequencesReader mReferenceSequences;
   private AbstractJointCallerConfiguration mConfig;
   private VcfWriter mOut;
@@ -545,7 +545,7 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
               annot.annotate(record);
             }
             boolean keep = true;
-            for (final VcfFilter filter : mFilters) {
+            for (final AbstractVcfFilter filter : mFilters) {
               if (filter.accept(record)) {
                 keep = false;
                 break;
