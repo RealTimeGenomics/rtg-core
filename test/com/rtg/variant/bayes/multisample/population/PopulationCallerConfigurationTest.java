@@ -24,6 +24,7 @@ import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.AlleleCountsFileConverter;
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.bayes.multisample.ComplexCallerTest;
 import com.rtg.variant.bayes.multisample.IndividualSampleProcessor;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 
@@ -33,8 +34,6 @@ import htsjdk.samtools.SAMReadGroupRecord;
 import junit.framework.TestCase;
 
 /**
- *         Date: 12/03/12
- *         Time: 4:18 PM
  */
 public class PopulationCallerConfigurationTest extends TestCase {
 
@@ -57,8 +56,9 @@ public class PopulationCallerConfigurationTest extends TestCase {
         file.addGenome("one");
         file.addGenome("two");
         file.addGenome("three");
-        final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").populationPriors(alleleCountFile).create();
-        final PopulationCallerConfiguration config = new PopulationCallerConfiguration.Configurator().getConfig(params, new String[] {"two", "one", "three"});
+        final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("two", "one", "three");
+        final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").populationPriors(alleleCountFile).uberHeader(uber).create();
+        final PopulationCallerConfiguration config = new PopulationCallerConfiguration.Configurator().getConfig(params);
         assertNotNull(config.getOutputFormatter(params));
 
         assertFalse(config.getSnpHypotheses(1, null, 0).diploid().haploid());
@@ -92,7 +92,7 @@ public class PopulationCallerConfigurationTest extends TestCase {
         output.writeHeader(bos, params, sfh);
         final String header = bos.toString();
         //System.err.println(header);
-        TestUtils.containsAll(header, "two\tone\tthree");
+        TestUtils.containsAll(header, "one\tthree\ttwo");
       } finally {
         Diagnostic.setLogStream();
       }

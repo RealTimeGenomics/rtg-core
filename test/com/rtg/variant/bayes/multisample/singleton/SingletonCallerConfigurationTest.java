@@ -12,8 +12,6 @@
 
 package com.rtg.variant.bayes.multisample.singleton;
 
-
-
 import java.io.File;
 
 import com.rtg.util.diagnostic.Diagnostic;
@@ -24,6 +22,7 @@ import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
 
+import htsjdk.samtools.SAMFileHeader;
 import junit.framework.TestCase;
 
 /**
@@ -43,11 +42,12 @@ public class SingletonCallerConfigurationTest extends TestCase {
 
       Diagnostic.setLogStream();
       final VariantParams p = VariantParams.builder()
-          .machineErrorName("illumina")
-          .genomePriors(GenomePriorParams.builder().create())
-          .populationPriors(alleleCountFile)
-          .create();
-      final AbstractJointCallerConfiguration config = new SingletonCallerConfiguration.Configurator().getConfig(p, new String[] {});
+        .machineErrorName("illumina")
+        .genomePriors(GenomePriorParams.builder().create())
+        .populationPriors(alleleCountFile)
+        .uberHeader(new SAMFileHeader())
+        .create();
+      final AbstractJointCallerConfiguration config = new SingletonCallerConfiguration.Configurator().getConfig(p);
       assertNotNull(config.getGenomeNames());
       assertNotNull(config.getJointCaller());
       assertEquals(1, config.numberOfGenomes());

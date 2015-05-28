@@ -18,12 +18,13 @@ import java.util.List;
 
 import com.rtg.reference.Ploidy;
 import com.rtg.reference.Sex;
+import com.rtg.reference.SexMemo;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.relation.Relationship;
+import com.rtg.sam.SamUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.MachineErrorChooserInterface;
-import com.rtg.reference.SexMemo;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.complex.DenovoChecker;
 import com.rtg.variant.bayes.complex.LineageDenovoChecker;
@@ -48,20 +49,19 @@ public final class LineageCallerConfiguration extends AbstractJointCallerConfigu
     /**
      * Create a new family joint caller
      * @param params parameters
-     * @param outputGenomes the genomes that will have output
      * @throws java.io.IOException if error
      * @return a new {@link com.rtg.variant.bayes.multisample.lineage.LineageCallerConfiguration}
      */
     @Override
-    public LineageCallerConfiguration getConfig(final VariantParams params, String[] outputGenomes) throws IOException {
+    public LineageCallerConfiguration getConfig(final VariantParams params) throws IOException {
       Diagnostic.userLog("Using Lineage caller");
 
-      final List<String> genomes = new ArrayList<>();
-      genomes.addAll(Arrays.asList(outputGenomes));
-      final int[] parents = new int[outputGenomes.length];
+      final String[] outputSampleNames = SamUtils.getSampleNames(params.uberHeader());
+      final List<String> genomes = Arrays.asList(outputSampleNames);
+      final int[] parents = new int[outputSampleNames.length];
 
       final GenomeRelationships genomeRelationships = params.genomeRelationships();
-      if (outputGenomes.length != genomeRelationships.genomes().length) {
+      if (outputSampleNames.length != genomeRelationships.genomes().length) {
         throw new NoTalkbackSlimException("Number of samples in pedigree and number of output genomes don't match");
       }
       final Lineage.LineageBuilder builder = new Lineage.LineageBuilder();
@@ -84,11 +84,11 @@ public final class LineageCallerConfiguration extends AbstractJointCallerConfigu
       }
       for (int i = 0; i < parents.length; i++) {
         if (parents[i] > 1) {
-          throw new NoTalkbackSlimException("Lineage requires at most one parent per individual, sample '" + outputGenomes[i] + "' had " + parents[i]);
+          throw new NoTalkbackSlimException("Lineage requires at most one parent per individual, sample '" + outputSampleNames[i] + "' had " + parents[i]);
         }
       }
 
-      if (outputGenomes.length == 0) {
+      if (outputSampleNames.length == 0) {
         throw new NoTalkbackSlimException("VCF output for lineage calling needs SAM headers with sample names");
       }
 
@@ -116,7 +116,7 @@ public final class LineageCallerConfiguration extends AbstractJointCallerConfigu
         }
         individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, sex, sexMemo));
       }
-      return new LineageCallerConfiguration(caller, outputGenomes, individualFactories, chooser, haploid, diploid, ssp);
+      return new LineageCallerConfiguration(caller, outputSampleNames, individualFactories, chooser, haploid, diploid, ssp);
     }
   }
 

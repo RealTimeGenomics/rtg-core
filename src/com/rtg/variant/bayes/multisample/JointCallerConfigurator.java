@@ -23,9 +23,8 @@ public interface JointCallerConfigurator {
   /**
    * Creates a configuration for the joint caller
    * @param params params with which to create the configuration
-   * @param outputSampleNames names of samples for which calls should be output
    * @return an <code>AbstractJointCallerConfiguration</code>
    * @throws IOException in the event of an <code>IOException</code> occurring.
    */
-  AbstractJointCallerConfiguration getConfig(final VariantParams params, String[] outputSampleNames) throws IOException;
+  AbstractJointCallerConfiguration getConfig(final VariantParams params) throws IOException;
 }

@@ -48,6 +48,7 @@ import com.rtg.variant.bayes.multisample.singleton.SingletonCallerConfiguration;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 
 import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMSequenceRecord;
 import htsjdk.samtools.SamReader;
@@ -72,6 +73,20 @@ public class ComplexCallerTest extends TestCase {
     mHeader = null;
   }
 
+  private static void addSample(final SAMFileHeader header, final String sampleName) {
+    final SAMReadGroupRecord rg = new SAMReadGroupRecord(sampleName);
+    rg.setSample(sampleName);
+    header.addReadGroup(rg);
+  }
+
+  public static SAMFileHeader makeHeaderWithSamples(final String... sampleNames) {
+    final SAMFileHeader uber = new SAMFileHeader();
+    for (final String sampleName : sampleNames) {
+      addSample(uber, sampleName);
+    }
+    return uber;
+  }
+
   public void testComplexCaller() throws Exception {
     final VariantParamsBuilder builder = new VariantParamsBuilder();
     builder.genomePriors(new GenomePriorParamsBuilder().create());
@@ -79,7 +94,8 @@ public class ComplexCallerTest extends TestCase {
     builder.maxCoverageFilter(new StaticThreshold(100));
     builder.callLevel(VariantOutputLevel.ALL);
     builder.genomeRelationships(RelationshipsFileParser.load(new BufferedReader(new StringReader("original-derived normal cancer contamination=0.5"))));
-    final VariantParams params = builder.create();
+    final SAMFileHeader header = makeHeaderWithSamples("normal", "cancer");
+    final VariantParams params = builder.uberHeader(header).create();
     final ArrayList<Variant> chunk = new ArrayList<>();
     chunk.add(TestUtils.createVariant(4));
     chunk.add(TestUtils.createVariant(5));
@@ -90,7 +106,7 @@ public class ComplexCallerTest extends TestCase {
     final Complexities regions = new Complexities(chunk, "foo", 0, 50, 3, 15, ComplexitiesTest.template(30), true, null);
     Complexities.fixDangling(regions, null);
     Complexities.fixDangling(null, regions);
-    final AbstractJointCallerConfiguration config = new SomaticCallerConfiguration.Configurator().getConfig(params, new String[] {"normal", "cancer"});
+    final AbstractJointCallerConfiguration config = new SomaticCallerConfiguration.Configurator().getConfig(params);
     final ComplexCaller caller = new ComplexCaller(params, config);
     final List<Variant> list = caller.makeComplexCalls(regions, trib, DnaUtils.encodeString(TEMPLATE), TEMPLATE_NAME);
     assertEquals(list.toString(), 4, list.size());
@@ -248,13 +264,13 @@ public class ComplexCallerTest extends TestCase {
     final String template = "AGCATTTTTGAAATTCTCTTTTTGTAATATCTGCAAGTAGACATTTGGAGTACTTTGAGGCCTATTGTGGAAAAGGAAATATCTTCACAGAAAAACTAGATA";
     final SamRegionRestriction restriction = new SamRegionRestriction("chr21", 0, template.length());
     builder.filterParams(SamFilterParams.builder().findAndRemoveDuplicates(false).restriction(restriction).create());
-    final VariantParams params = builder.create();
 
     final List<File> list = new ArrayList<>();
     list.add(in);
     //System.err.println(list.size() + " " + in.getPath());
     final SAMFileHeader header = SamUtils.getUberHeader(list);
-    final AbstractJointCallerConfiguration config = new SingletonCallerConfiguration.Configurator().getConfig(params, SamUtils.getSampleNames(header));
+    final VariantParams params = builder.uberHeader(header).create();
+    final AbstractJointCallerConfiguration config = new SingletonCallerConfiguration.Configurator().getConfig(params);
 
     final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator();
     final RecordIterator<VariantAlignmentRecord> it = CircularBufferMultifileSinglePassReaderWindow.defaultIterator(list, params.filterParams(), 8, pop);

@@ -19,12 +19,13 @@ import java.util.EnumSet;
 import java.util.List;
 
 import com.rtg.reference.Sex;
+import com.rtg.reference.SexMemo;
 import com.rtg.relation.Family;
 import com.rtg.relation.GenomeRelationships;
+import com.rtg.sam.SamUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.MachineErrorChooserInterface;
-import com.rtg.reference.SexMemo;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
 import com.rtg.variant.bayes.multisample.IndividualSampleFactory;
@@ -50,12 +51,11 @@ public final class DiseasedFamilyCallerConfiguration extends AbstractJointCaller
     /**
      * Create a new disease joint caller
      * @param params parameters
-     * @param outputGenomes names of genomes to produce calls for
      * @return a new {@link DiseasedFamilyCallerConfiguration}
      * @throws IOException if error
      */
     @Override
-    public DiseasedFamilyCallerConfiguration getConfig(final VariantParams params, String[] outputGenomes) throws IOException {
+    public DiseasedFamilyCallerConfiguration getConfig(final VariantParams params) throws IOException {
       Diagnostic.userLog("Using disease caller");
 
       final GenomeRelationships genomeRelationships = params.genomeRelationships();
@@ -66,6 +66,7 @@ public final class DiseasedFamilyCallerConfiguration extends AbstractJointCaller
       final Sex[] sexes = new Sex[genomes.length];
       final List<String> childNames = new ArrayList<>();
       childNames.addAll(Arrays.asList(family.getChildren()));
+      final String[] outputGenomes = SamUtils.getSampleNames(params.uberHeader());
       if (outputGenomes.length != genomes.length) {
         throw new NoTalkbackSlimException("Exactly " + genomes.length + " sample names expected in mappings");
       }

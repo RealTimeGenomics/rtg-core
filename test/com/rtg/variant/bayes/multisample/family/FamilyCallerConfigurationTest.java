@@ -29,6 +29,7 @@ import com.rtg.variant.AlleleCountsFileConverter;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
+import com.rtg.variant.bayes.multisample.ComplexCallerTest;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -64,8 +65,8 @@ public class FamilyCallerConfigurationTest extends TestCase {
 
       try {
         final GenomeRelationships rel = GenomeRelationships.loadGenomeRelationships(new BufferedReader(new StringReader(TOOMANY_PED)));
-        final VariantParams p = new VariantParamsBuilder().genomeRelationships(rel).create();
-        new FamilyCallerConfiguration.Configurator().getConfig(p, new String[] {"child", "mother", "father"});
+        final VariantParams p = new VariantParamsBuilder().genomeRelationships(rel).uberHeader(ComplexCallerTest.makeHeaderWithSamples("child", "mother", "father")).create();
+        new FamilyCallerConfiguration.Configurator().getConfig(p);
         fail("Should not have liked the family");
       } catch (NoTalkbackSlimException e) {
         // Expected
@@ -77,9 +78,10 @@ public class FamilyCallerConfigurationTest extends TestCase {
       b.genomeRelationships(rel);
       b.machineErrorName("illumina");
       b.populationPriors(alleleCountFile);
+      b.uberHeader(ComplexCallerTest.makeHeaderWithSamples("child", "mother", "father"));
       final VariantParams p = b.create();
 
-      final FamilyCallerConfiguration config = new FamilyCallerConfiguration.Configurator().getConfig(p, new String[] {"child", "mother", "father"});
+      final FamilyCallerConfiguration config = new FamilyCallerConfiguration.Configurator().getConfig(p);
       assertNotNull(config.getGenomeNames());
       assertNotNull(config.getJointCaller());
       assertEquals(3, config.numberOfGenomes());
@@ -121,33 +123,34 @@ public class FamilyCallerConfigurationTest extends TestCase {
     b.genomePriors(GenomePriorParams.builder().create());
     b.genomeRelationships(rel);
     b.machineErrorName("illumina");
+    b.uberHeader(ComplexCallerTest.makeHeaderWithSamples("child", "mother", "father"));
     final VariantParams p = b.create();
 
-    FamilyCallerConfiguration config = new FamilyCallerConfiguration.Configurator().getConfig(p, new String[] {"child", "mother", "father"});
+    FamilyCallerConfiguration config = new FamilyCallerConfiguration.Configurator().getConfig(p);
     assertEquals(3, config.numberOfGenomes());
 
-    config = new FamilyCallerConfiguration.Configurator().getConfig(p, new String[] {"child", "mother"});
+    config = new FamilyCallerConfiguration.Configurator().getConfig(b.uberHeader(ComplexCallerTest.makeHeaderWithSamples("child", "mother")).create());
     assertEquals(3, config.numberOfGenomes());
 
-    config = new FamilyCallerConfiguration.Configurator().getConfig(p, new String[] {"child", "father"});
+    config = new FamilyCallerConfiguration.Configurator().getConfig(b.uberHeader(ComplexCallerTest.makeHeaderWithSamples("child", "father")).create());
     assertEquals(3, config.numberOfGenomes());
 
     try {
-      new FamilyCallerConfiguration.Configurator().getConfig(p, new String[] {"father", "mother"});
+      new FamilyCallerConfiguration.Configurator().getConfig(b.uberHeader(ComplexCallerTest.makeHeaderWithSamples("father", "mother")).create());
       fail("Accepted childless family");
     } catch (NoTalkbackSlimException e) {
       assertEquals("Not enough family members have mapping data provided", e.getMessage());
     }
 
     try {
-      new FamilyCallerConfiguration.Configurator().getConfig(p, new String[] {"father"});
+      new FamilyCallerConfiguration.Configurator().getConfig(b.uberHeader(ComplexCallerTest.makeHeaderWithSamples("father")).create());
       fail("Accepted father only family");
     } catch (NoTalkbackSlimException e) {
       assertEquals("Not enough family members have mapping data provided", e.getMessage());
     }
 
     try {
-      new FamilyCallerConfiguration.Configurator().getConfig(p, new String[] {"child"});
+      new FamilyCallerConfiguration.Configurator().getConfig(b.uberHeader(ComplexCallerTest.makeHeaderWithSamples("child")).create());
       fail("Accepted child only family");
     } catch (NoTalkbackSlimException e) {
       assertEquals("Not enough family members have mapping data provided", e.getMessage());

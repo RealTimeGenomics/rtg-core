@@ -29,6 +29,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.reeltwo.jumble.annotations.JumbleIgnore;
 import com.rtg.alignment.CgGotohEditDistance;
@@ -587,17 +589,16 @@ public final class SamUtils {
   }
 
   /**
-   * Get a list of the sample names mentioned in the header
+   * Get a list of the sample names mentioned in the header in sorted order.
    * @param header combined sam header
    * @return creates an array of sample names
    */
   public static String[] getSampleNames(final SAMFileHeader header) {
-    final HashSet<String> sampleNames = new HashSet<>();
+    final Set<String> sampleNames = new TreeSet<>();
     for (final SAMReadGroupRecord rec : header.getReadGroups()) {
       if (rec.getSample() != null) {
         sampleNames.add(rec.getSample());
       }
-
     }
     return sampleNames.toArray(new String[sampleNames.size()]);
   }

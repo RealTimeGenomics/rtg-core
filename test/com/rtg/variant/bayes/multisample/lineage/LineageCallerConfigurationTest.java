@@ -20,6 +20,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.bayes.multisample.ComplexCallerTest;
 import com.rtg.variant.bayes.multisample.IndividualSampleProcessor;
 import com.rtg.variant.bayes.multisample.MultisampleJointCaller;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
@@ -45,8 +46,9 @@ public class LineageCallerConfigurationTest extends TestCase {
         file.addParentChild("zero", "one");
         file.addParentChild("one", "two");
         file.addParentChild("zero", "three");
-        final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").create();
-        final LineageCallerConfiguration config = new LineageCallerConfiguration.Configurator().getConfig(params, new String[]{"zero", "two", "one", "three"});
+        final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("zero", "one", "two", "three");
+        final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").uberHeader(uber).create();
+        final LineageCallerConfiguration config = new LineageCallerConfiguration.Configurator().getConfig(params);
         assertNotNull(config.getOutputFormatter(params));
 
         assertFalse(config.getSnpHypotheses(1, null, 0).diploid().haploid());
@@ -59,11 +61,11 @@ public class LineageCallerConfigurationTest extends TestCase {
         final MultisampleJointCaller jointCaller = config.getJointCaller();
         assertTrue(jointCaller.getClass().equals(Lineage.class));
         final Lineage lineage = (Lineage) jointCaller;
-        assertTrue(lineage.isRoot(0));
+        assertTrue(lineage.isRoot(3));
         // int values dictated by out of order used in config parameter above
+        assertEquals(3, lineage.parent(0));
         assertEquals(0, lineage.parent(2));
-        assertEquals(2, lineage.parent(1));
-        assertEquals(0, lineage.parent(3));
+        assertEquals(3, lineage.parent(1));
 
         assertFalse(config.handlesPloidy(Ploidy.POLYPLOID));
         assertTrue(config.handlesPloidy(Ploidy.HAPLOID));
@@ -87,7 +89,7 @@ public class LineageCallerConfigurationTest extends TestCase {
         output.writeHeader(bos, params, sfh);
         final String header = bos.toString();
         //System.err.println(header);
-        TestUtils.containsAll(header, "zero\ttwo\tone\tthree");
+        TestUtils.containsAll(header, "one\tthree\ttwo\tzero");
       } finally {
         Diagnostic.setLogStream();
       }
@@ -104,9 +106,10 @@ public class LineageCallerConfigurationTest extends TestCase {
       file.addGenome("two");
       file.addParentChild("zero", "two");
       file.addParentChild("one", "two");
-      final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").create();
+      final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("zero", "two", "one");
+      final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").uberHeader(uber).create();
       try {
-        new LineageCallerConfiguration.Configurator().getConfig(params, new String[]{"zero", "two", "one"});
+        new LineageCallerConfiguration.Configurator().getConfig(params);
         fail();
       } catch (NoTalkbackSlimException e) {
         //expected
@@ -126,9 +129,10 @@ public class LineageCallerConfigurationTest extends TestCase {
       file.addGenome("zero");
       file.addGenome("one");
       file.addGenome("two");
-      final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").create();
+      final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("zero", "two", "one");
+      final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").uberHeader(uber).create();
       try {
-        new LineageCallerConfiguration.Configurator().getConfig(params, new String[]{"zero", "two", "one"});
+        new LineageCallerConfiguration.Configurator().getConfig(params);
         fail();
       } catch (NoTalkbackSlimException e) {
         //expected

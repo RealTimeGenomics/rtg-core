@@ -23,6 +23,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
+import com.rtg.variant.bayes.multisample.ComplexCallerTest;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -37,13 +38,15 @@ public class DiseasedFamilyCallerConfigurationTest extends TestCase {
   public void testCreation() throws Exception {
     Diagnostic.setLogStream();
     final GenomeRelationships rel = RelationshipsFileParser.load(new BufferedReader(new StringReader(DiseasedFamilyPosteriorTest.RELATIONS1)));
+    final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("father", "mother", "child");
     final VariantParamsBuilder b = new VariantParamsBuilder();
     b.genomePriors(GenomePriorParams.builder().create());
     b.genomeRelationships(rel);
     b.machineErrorName("illumina");
+    b.uberHeader(uber);
     final VariantParams p = b.create();
 
-    final DiseasedFamilyCallerConfiguration config = new DiseasedFamilyCallerConfiguration.Configurator().getConfig(p, new String[] {"father", "mother", "child"});
+    final DiseasedFamilyCallerConfiguration config = new DiseasedFamilyCallerConfiguration.Configurator().getConfig(p);
     assertNotNull(config.getGenomeNames());
     assertNotNull(config.getJointCaller());
     assertEquals(3, config.numberOfGenomes());

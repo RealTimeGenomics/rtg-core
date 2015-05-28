@@ -18,13 +18,14 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.rtg.reference.Sex;
+import com.rtg.reference.SexMemo;
 import com.rtg.relation.ChildFamilyLookup;
 import com.rtg.relation.Family;
 import com.rtg.relation.GenomeRelationships;
+import com.rtg.sam.SamUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.MachineErrorChooserInterface;
-import com.rtg.reference.SexMemo;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.complex.DenovoChecker;
 import com.rtg.variant.bayes.complex.MendelianDenovoChecker;
@@ -54,23 +55,22 @@ public final class
     /**
      * Create a new family joint caller
      * @param params parameters
-     * @param outputGenomes names of genomes to produce calls for
      * @throws IOException if error
      * @return a new {@link FamilyCallerConfiguration}
      */
     @Override
-    public FamilyCallerConfiguration getConfig(final VariantParams params, String[] outputGenomes) throws IOException {
+    public FamilyCallerConfiguration getConfig(final VariantParams params) throws IOException {
       Diagnostic.userLog("Using Mendelian caller");
 
-      final List<String> tmp = new ArrayList<>();
-      tmp.addAll(Arrays.asList(outputGenomes));
-
-      final GenomeRelationships genomeRelationships = params.genomeRelationships();
-      final List<String> calledGenomes = new ArrayList<>();
-
+      final String[] outputGenomes = SamUtils.getSampleNames(params.uberHeader());
       if (outputGenomes.length == 0) {
         throw new NoTalkbackSlimException("VCF output for family calling needs SAM headers with sample names");
       }
+
+      final List<String> tmp = Arrays.asList(outputGenomes);
+
+      final GenomeRelationships genomeRelationships = params.genomeRelationships();
+      final List<String> calledGenomes = new ArrayList<>();
 
       final Family family;
       try {

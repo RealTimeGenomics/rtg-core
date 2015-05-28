@@ -22,6 +22,7 @@ import com.rtg.reference.Ploidy;
 import com.rtg.reference.SexMemo;
 import com.rtg.relation.Relationship;
 import com.rtg.relation.Relationship.RelationshipType;
+import com.rtg.sam.SamUtils;
 import com.rtg.util.MathUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
@@ -69,12 +70,11 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
     /**
      * Create a new cancer joint caller
      * @param params parameters
-     * @param outputGenomes names of genomes to produce calls for
      * @throws IOException if error
      * @return a new {@link SomaticCallerConfiguration}
      */
     @Override
-    public SomaticCallerConfiguration getConfig(final VariantParams params, String[] outputGenomes) throws IOException {
+    public SomaticCallerConfiguration getConfig(final VariantParams params) throws IOException {
       final double loh = params.lohPrior();
       final int numberOfGenomes = params.genomeRelationships().genomes().length;
       final Relationship[] derived = params.genomeRelationships().relationships(RelationshipType.ORIGINAL_DERIVED);
@@ -82,10 +82,11 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
       final String[] genomeNames = {derived[0].first(), derived[0].second()};
       final String originalSampleName = genomeNames[0];
       final String derivedSampleName = genomeNames[1];
-      if (outputGenomes.length != 2) {
+      final String[] outputSampleNames = SamUtils.getSampleNames(params.uberHeader());
+      if (outputSampleNames.length != 2) {
         throw new NoTalkbackSlimException("Exactly two sample names expected in mappings");
       }
-      for (final String mapName : outputGenomes) {
+      for (final String mapName : outputSampleNames) {
         if (!mapName.equals(originalSampleName) && !mapName.equals(derivedSampleName)) {
           throw new NoTalkbackSlimException("Unexpected sample name in mappings: " + mapName);
         }
@@ -128,21 +129,17 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
             CombinedPriorsSnp.makeQ(mutationRate, loh, diploid.defaultHypotheses(0)),
           params);
       }
-      return new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, mutationRate, originalSampleName, derivedSampleName, haploid, diploid, ssp);
+      return new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, mutationRate, haploid, diploid, ssp);
     }
   }
 
   private final double mContamination;
   private final double mMutationRate;
-  private final String mOriginalSampleName;
-  private final String mDerivedSampleName;
 
-  private SomaticCallerConfiguration(MultisampleJointCaller jointCaller, String[] genomeNames, List<IndividualSampleFactory<?>> individualFactories, MachineErrorChooserInterface machineErrorChooser, double contamination, double mutationRate, String originalSampleName, String derivedSampleName, ModelSnpFactory haploid, ModelSnpFactory diploid, PopulationHwHypothesesCreator ssp) {
+  private SomaticCallerConfiguration(MultisampleJointCaller jointCaller, String[] genomeNames, List<IndividualSampleFactory<?>> individualFactories, MachineErrorChooserInterface machineErrorChooser, double contamination, double mutationRate, ModelSnpFactory haploid, ModelSnpFactory diploid, PopulationHwHypothesesCreator ssp) {
     super(jointCaller, genomeNames, individualFactories, machineErrorChooser, haploid, diploid, ssp);
     mContamination = contamination;
     mMutationRate = mutationRate;
-    mOriginalSampleName = originalSampleName;
-    mDerivedSampleName = derivedSampleName;
   }
 
   @Override

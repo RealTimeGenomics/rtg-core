@@ -16,10 +16,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.rtg.reference.SexMemo;
+import com.rtg.sam.SamUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.MachineErrorChooserInterface;
-import com.rtg.reference.SexMemo;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
 import com.rtg.variant.bayes.multisample.IndividualSampleFactory;
@@ -43,14 +44,14 @@ public final class VstatsCallerConfiguration extends AbstractJointCallerConfigur
     /**
      * Creates a new configuration for singleton calling
      * @param params parameters
-     * @param outputSampleNames name to output
      * @return a new {@link VstatsCallerConfiguration}
      * @throws IOException whenever.
      */
     @Override
-    public VstatsCallerConfiguration getConfig(final VariantParams params, String[] outputSampleNames) throws IOException {
+    public VstatsCallerConfiguration getConfig(final VariantParams params) throws IOException {
       Diagnostic.userLog("Using singleton caller");
 
+      final String[] outputSampleNames = SamUtils.getSampleNames(params.uberHeader());
       if (outputSampleNames.length > 1) {
         throw new NoTalkbackSlimException("Multiple samples detected in read group headers, but this command models only one genome");
       }

@@ -24,6 +24,7 @@ import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
 
+import htsjdk.samtools.SAMFileHeader;
 import junit.framework.TestCase;
 
 /**
@@ -42,12 +43,13 @@ public class VstatsCallerConfigurationTest extends TestCase {
       Diagnostic.setLogStream();
       final OutputParams outputParams = new OutputParams(tempDir, false, false);
       final VariantParams p = VariantParams.builder()
-          .machineErrorName("illumina")
-          .genomePriors(GenomePriorParams.builder().create())
-          .noComplexCalls(true)
-          .outputParams(outputParams)
-          .create();
-      final AbstractJointCallerConfiguration config = new VstatsCallerConfiguration.Configurator().getConfig(p, new String[] {});
+        .machineErrorName("illumina")
+        .genomePriors(GenomePriorParams.builder().create())
+        .noComplexCalls(true)
+        .outputParams(outputParams)
+        .uberHeader(new SAMFileHeader())
+        .create();
+      final AbstractJointCallerConfiguration config = new VstatsCallerConfiguration.Configurator().getConfig(p);
       assertNotNull(config.getGenomeNames());
       assertNotNull(config.getJointCaller());
       assertEquals(1, config.numberOfGenomes());

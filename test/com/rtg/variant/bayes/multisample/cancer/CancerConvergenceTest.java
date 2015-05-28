@@ -29,6 +29,7 @@ import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.bayes.EvidenceInterface;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.multisample.ComplexCallerTest;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.multisample.MultisampleJointCaller;
 import com.rtg.variant.bayes.snp.DescriptionSnp;
@@ -39,6 +40,7 @@ import com.rtg.variant.bayes.snp.StatisticsSnp;
 import com.rtg.variant.util.VariantUtils;
 import com.rtg.variant.util.arithmetic.LogPossibility;
 
+import htsjdk.samtools.SAMFileHeader;
 import junit.framework.TestCase;
 
 /**
@@ -51,13 +53,15 @@ public class CancerConvergenceTest extends TestCase {
     genomeRelationships.addGenome("TEST");
     genomeRelationships.addRelationship(RelationshipType.ORIGINAL_DERIVED, "TEST", "cancer").setProperty("contamination", String.valueOf(contamination));
 
+    final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("TEST", "cancer");
     final VariantParamsBuilder b = new VariantParamsBuilder();
     b.genomePriors(GenomePriorParams.builder().create());
     b.genomeRelationships(genomeRelationships);
     b.machineErrorName("illumina");
     b.lohPrior(1e-20);
+    b.uberHeader(uber);
     final VariantParams p = b.create();
-    return new SomaticCallerConfiguration.Configurator().getConfig(p, new String[] {"TEST", "cancer"});
+    return new SomaticCallerConfiguration.Configurator().getConfig(p);
   }
 
   private MultisampleJointCaller getCaller(final SomaticCallerConfiguration jointConfig) {

@@ -29,6 +29,7 @@ import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.complex.ComplexTemplate;
+import com.rtg.variant.bayes.multisample.ComplexCallerTest;
 import com.rtg.variant.bayes.snp.DescriptionCommon;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 
@@ -49,13 +50,14 @@ public class SomaticCallerConfigurationTest extends TestCase {
     genomeRelationships.addGenome("TEST");
     genomeRelationships.addRelationship(RelationshipType.ORIGINAL_DERIVED, "TEST", "cancer").setProperty("contamination", "0.3");
 
+    final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("TEST", "cancer");
     final VariantParamsBuilder b = new VariantParamsBuilder();
     b.genomePriors(GenomePriorParams.builder().create());
     b.genomeRelationships(genomeRelationships);
     b.machineErrorName("illumina");
-    final VariantParams p = b.create();
+    final VariantParams p = b.uberHeader(uber).create();
 
-    final SomaticCallerConfiguration config = new SomaticCallerConfiguration.Configurator().getConfig(p, new String[] {"TEST", "cancer"});
+    final SomaticCallerConfiguration config = new SomaticCallerConfiguration.Configurator().getConfig(p);
     assertNotNull(config.getGenomeNames());
     assertNotNull(config.getJointCaller());
     assertEquals(2, config.numberOfGenomes());

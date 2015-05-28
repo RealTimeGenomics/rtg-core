@@ -22,6 +22,7 @@ import com.rtg.relation.ChildFamilyLookup;
 import com.rtg.relation.Family;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.relation.MultiFamilyOrdering;
+import com.rtg.sam.SamUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
@@ -59,14 +60,14 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
 
     /**
      * Create a new family joint caller
-     * @param params parameters
      * @param outputGenomes names of genomes to produce calls for
+     * @param params parameters
      * @throws java.io.IOException if error
      * @return a new {@link PopulationCallerConfiguration}
      */
     @Override
-    public PopulationCallerConfiguration getConfig(final VariantParams params, String[] outputGenomes) throws IOException {
-      return getConfig(params, Arrays.asList(outputGenomes));
+    public PopulationCallerConfiguration getConfig(final VariantParams params) throws IOException {
+      return getConfig(params, Arrays.asList(SamUtils.getSampleNames(params.uberHeader())));
     }
 
     /**

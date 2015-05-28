@@ -17,8 +17,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import com.rtg.bed.BedUtils;
 import com.rtg.launcher.ParamsTask;
@@ -119,27 +117,27 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
   // This configurator tries to guess the appropriate configuration based on the structure of the pedigree
   private static final JointCallerConfigurator DEFAULT_CONFIGURATOR = new JointCallerConfigurator() {
     @Override
-    public AbstractJointCallerConfiguration getConfig(VariantParams params, String[] outputSampleNames) throws IOException {
+    public AbstractJointCallerConfiguration getConfig(VariantParams params) throws IOException {
       final Relationship[] derived = params.genomeRelationships().relationships(RelationshipType.ORIGINAL_DERIVED);
       if (derived.length > 0) {
         final int numberOfGenomes = params.genomeRelationships().genomes().length;
         if (derived.length != 1 || numberOfGenomes != 2) {
           throw new RuntimeException("Single original-derived relationship required in genome relationship file.");
         }
-        return new SomaticCallerConfiguration.Configurator().getConfig(params, outputSampleNames);
+        return new SomaticCallerConfiguration.Configurator().getConfig(params);
       } else {
         final Relationship[] parentChild = params.genomeRelationships().relationships(RelationshipType.PARENT_CHILD);
         if (parentChild.length > 0) {
           // We're in family calling mode
           final Family family = Family.getFamily(params.genomeRelationships());
           if (family.isOneParentDiseased()) {
-            return new DiseasedFamilyCallerConfiguration.Configurator().getConfig(params, outputSampleNames);
+            return new DiseasedFamilyCallerConfiguration.Configurator().getConfig(params);
           } else {
-            return new FamilyCallerConfiguration.Configurator().getConfig(params, outputSampleNames);
+            return new FamilyCallerConfiguration.Configurator().getConfig(params);
           }
         } else {
           // We're in population calling mode
-          return new PopulationCallerConfiguration.Configurator().getConfig(params, outputSampleNames);
+          return new PopulationCallerConfiguration.Configurator().getConfig(params);
         }
       }
     }
@@ -541,7 +539,7 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
         if (filtered != null) {
           for (final Variant v : filtered) {
             final VcfRecord record = mFormatter.makeVcfRecord(v);
-            for (VcfAnnotator annot : mAnnotators) {
+            for (final VcfAnnotator annot : mAnnotators) {
               annot.annotate(record);
             }
             mStatistics.tallyVariant(mVcfHeader, record);
@@ -702,16 +700,7 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
       Diagnostic.developerLog("New params:" + mParams.toString());
     }
 
-    // Output for every sample for which mappings are provided
-    final Set<String> samples = new TreeSet<>();
-    for (final SAMReadGroupRecord ih : mParams.uberHeader().getReadGroups()) {
-      final String sample = ih.getSample();
-      if (sample != null) {
-        samples.add(sample);
-      }
-    }
-
-    mConfig = mConfigurator.getConfig(mParams, samples.toArray(new String[samples.size()]));
+    mConfig = mConfigurator.getConfig(mParams);
     mAnnotators.addAll(mConfig.getVcfAnnotators());
 
     if (mParams.avrModelFile() != null) {
