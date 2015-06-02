@@ -47,6 +47,6 @@ public class SomaticFilter implements VcfFilter {
   @Override
   public boolean accept(VcfRecord record) {
     mStatistics.countVariant(mVcfHeader, record);
-    return !mSomaticOnly || record.getInfo().get(VcfInfoField.NCS.name()) != null;
+    return !mSomaticOnly || record.getInfo().get(VcfInfoField.SOMATIC.name()) != null;
   }
 }
