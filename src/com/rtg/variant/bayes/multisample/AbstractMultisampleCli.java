@@ -69,7 +69,7 @@ import htsjdk.samtools.SAMFileHeader;
 /**
  * Common stuff for multi-genome SNP caller.
  */
-@TestClass({"com.rtg.variant.bayes.multisample.MultisampleCliTest", "com.rtg.variant.bayes.multisample.singleton.SingletonCliTest"})
+@TestClass({"com.rtg.variant.bayes.multisample.family.FamilyCliTest", "com.rtg.variant.bayes.multisample.singleton.SingletonCliTest"})
 public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
 
   /** Default absolute coverage cutoff. */

@@ -140,7 +140,7 @@ public abstract class AbstractJointCallerConfiguration {
   }
 
   /**
-   * Get a list of any VcfFilets to apply to the output
+   * Get a list of any VcfFilters to apply to the output
    * @return a list of VcfFilters
    */
   public Collection<VcfFilter> getVcfFilters() {

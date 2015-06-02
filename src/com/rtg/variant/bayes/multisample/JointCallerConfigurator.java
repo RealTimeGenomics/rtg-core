@@ -18,7 +18,7 @@ import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantStatistics;
 
 /**
- * @param <V> the type of statistics object used by this joitn caller.
+ * @param <V> the type of statistics object used by this joint caller.
  */
 public interface JointCallerConfigurator<V extends VariantStatistics> {
 
