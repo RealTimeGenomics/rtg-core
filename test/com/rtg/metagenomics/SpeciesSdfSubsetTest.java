@@ -14,50 +14,19 @@ package com.rtg.metagenomics;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
-import com.rtg.launcher.GlobalFlags;
-import com.rtg.reader.FormatCli;
 import com.rtg.reader.Sdf2Fasta;
+import com.rtg.taxonomy.TaxFilterCliTest;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  */
 public class SpeciesSdfSubsetTest extends AbstractCliTest {
-  private NanoRegression mNano;
-
-  @Override
-  public void setUp() throws IOException {
-    super.setUp();
-    GlobalFlags.resetAccessedStatus();
-    mNano = new NanoRegression(SpeciesSdfSubsetTest.class);
-  }
-
-  @Override
-  public void tearDown() throws IOException {
-    super.tearDown();
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
-
-  public static Test suite() {
-    return new TestSuite(SpeciesSdfSubsetTest.class);
-  }
-
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.runAndWait(suite());
-  }
 
   @Override
   protected AbstractCli getCli() {
@@ -72,27 +41,10 @@ public class SpeciesSdfSubsetTest extends AbstractCliTest {
   }
 
   public void testReduce() throws Exception {
-    final File dir = FileUtils.createTempDir("speciessdf", "test");
-    try {
+    try (final TestDirectory dir = new TestDirectory("speciessdf")) {
 
-      // create full sdf from sequences.fasta
-      final File fullSdf = new File(dir, "sdf_full");
-      final File sequences = new File(dir, "sequences.fasta");
-      FileHelper.resourceToFile("com/rtg/metagenomics/resources/sequences.fasta", sequences);
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      MemoryPrintStream err = new MemoryPrintStream();
-      final FormatCli format = new FormatCli();
-      int rc = format.mainInit(new String[] {"-o", fullSdf.getAbsolutePath(), sequences.getAbsolutePath()}, out, err.printStream());
-      assertEquals("Error: " + err.toString(), "", err.toString());
-      assertEquals(0, rc);
-      //System.err.println(out.toString());
-
-      // cp taxonomy files to sdf
-
-      final File taxonomy = new File(fullSdf, "taxonomy.tsv");
-      FileHelper.resourceToFile("com/rtg/metagenomics/resources/taxonomy.tsv", taxonomy);
-      final File taxonomyLookup = new File(fullSdf, "taxonomy_lookup.tsv");
-      FileHelper.resourceToFile("com/rtg/metagenomics/resources/taxonomy_lookup.tsv", taxonomyLookup);
+      // create test metagenomic reference sdf
+      final File fullSdf = TaxFilterCliTest.makeTaxonomySdf(dir);
 
       // call sdfsubset to create new sdf from original sdf and tax file
       final File reducedSdf = new File(dir, "sdf_reduced");
@@ -104,10 +56,10 @@ public class SpeciesSdfSubsetTest extends AbstractCliTest {
       // dump sequences to compare
       final Sdf2Fasta sdf2fasta = new Sdf2Fasta();
 
-      out = new ByteArrayOutputStream();
-      err = new MemoryPrintStream();
+      ByteArrayOutputStream out = new ByteArrayOutputStream();
+      MemoryPrintStream err = new MemoryPrintStream();
       final File reducedSequences = new File(dir, "sequences2.fasta");
-      rc = sdf2fasta.mainInit(new String[] {"-i", reducedSdf.getAbsolutePath(), "-o", reducedSequences.getAbsolutePath(), "-Z"}, out, err.printStream());
+      int rc = sdf2fasta.mainInit(new String[] {"-i", reducedSdf.getAbsolutePath(), "-o", reducedSequences.getAbsolutePath(), "-Z"}, out, err.printStream());
       assertEquals("Error: " + err.toString(), "", err.toString());
       assertEquals(0, rc);
       //System.err.println(out.toString());
@@ -119,8 +71,6 @@ public class SpeciesSdfSubsetTest extends AbstractCliTest {
       mNano.check("taxonomy_remove.tsv", FileUtils.fileToString(reducedTax), false);
       mNano.check("taxonomy_lookup_reduced.tsv", FileUtils.fileToString(reducedTaxLook), false);
       mNano.check("sequences_reduced.fasta", FileUtils.fileToString(reducedSequences), false);
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
 
   }

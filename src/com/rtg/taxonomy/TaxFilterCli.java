@@ -54,6 +54,7 @@ public class TaxFilterCli extends AbstractCli {
   private static final String SUBSET_FLAG = "subset";
   private static final String SUBTREE_FLAG = "subtree";
   private static final String REMOVE_FLAG = "remove";
+  private static final String REMOVE_SEQUENCES_FLAG = "remove-sequences";
   private static final String INPUT_FLAG = "input";
   private static final String OUTPUT_FLAG = "output";
   private static final String RENAME_NORANK_FLAG = "rename-norank";
@@ -68,7 +69,10 @@ public class TaxFilterCli extends AbstractCli {
      */
     @Override
     public boolean isValid(final CFlags flags) {
-      if (!flags.checkOr(SUBSET_FLAG, SUBTREE_FLAG, REMOVE_FLAG, RENAME_NORANK_FLAG, PRUNE_INTERNAL_SEQUENCES_FLAG, PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG)) {
+      if (!flags.checkOr(SUBSET_FLAG, SUBTREE_FLAG,
+        REMOVE_FLAG, REMOVE_SEQUENCES_FLAG,
+        RENAME_NORANK_FLAG,
+        PRUNE_INTERNAL_SEQUENCES_FLAG, PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG)) {
         return false;
       }
       if (!flags.checkNand(PRUNE_INTERNAL_SEQUENCES_FLAG, PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG)) {
@@ -92,7 +96,8 @@ public class TaxFilterCli extends AbstractCli {
     mFlags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "filename for output TSV or SDF").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional('s', SUBSET_FLAG, File.class, CommonFlags.FILE, "file containing ids of nodes to include in subset").setCategory(FILTERING);
     mFlags.registerOptional('S', SUBTREE_FLAG, File.class, CommonFlags.FILE, "file containing ids of nodes to include as subtrees in subset").setCategory(FILTERING);
-    mFlags.registerOptional('r', REMOVE_FLAG, File.class, CommonFlags.FILE, "file containing ids of nodes to remove").setCategory(FILTERING);
+    mFlags.registerOptional('r', REMOVE_FLAG, File.class, CommonFlags.FILE, "file containing ids of nodes to remove from the taxonomy (and sequence data, if any)").setCategory(FILTERING);
+    mFlags.registerOptional('R', REMOVE_SEQUENCES_FLAG, File.class, CommonFlags.FILE, "file containing ids of nodes to remove sequence data from (if any)").setCategory(FILTERING);
     mFlags.registerOptional('p', PRUNE_INTERNAL_SEQUENCES_FLAG, "when filtering an SDF, exclude sequence data from non-leaf output nodes").setCategory(FILTERING);
     mFlags.registerOptional('P', PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG, "when filtering an SDF, remove nodes below the first containing sequence data").setCategory(FILTERING);
     mFlags.registerOptional(RENAME_NORANK_FLAG, File.class, CommonFlags.FILE, "assign a rank to \"no rank\" nodes from file containing id/rank pairs").setCategory(FILTERING);
@@ -109,6 +114,9 @@ public class TaxFilterCli extends AbstractCli {
       throw new NoTalkbackSlimException("Input taxonomy does not exist: " + taxFile);
     } else if (!taxFile.isFile()) {
       throw new NoTalkbackSlimException("Input taxonomy is not a file: " + taxFile);
+    }
+    if (!sdf) {
+      checkSdfOnlyFlags(REMOVE_SEQUENCES_FLAG, PRUNE_INTERNAL_SEQUENCES_FLAG, PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG);
     }
 
     //err.print("Reading taxonomy from " + taxFile + "...");
@@ -152,14 +160,21 @@ public class TaxFilterCli extends AbstractCli {
       }
       final Map<String, Integer> sequenceLookupMap = SequenceToTaxonIds.sequenceToIds(inMappingFile);
 
-      // Create a filtered sequence to id lookup file
-      final Map<String, Integer> newLookup;
+      // Filter lookup to corresond to current taxonomy
+      final Map<String, Integer> newLookup = new HashMap<>();
+      for (final Map.Entry<String, Integer> entry : sequenceLookupMap.entrySet()) {
+        if (tax.contains(entry.getValue())) {
+          newLookup.put(entry.getKey(), entry.getValue());
+        }
+      }
+
+      if (mFlags.isSet(REMOVE_SEQUENCES_FLAG)) {
+        pruneSequenceData(tax, newLookup, (File) mFlags.getValue(REMOVE_SEQUENCES_FLAG));
+      }
       if (mFlags.isSet(PRUNE_INTERNAL_SEQUENCES_FLAG)) {
-        newLookup = pruneInternalSequences(tax, sequenceLookupMap);
+        pruneInternalSequences(tax, newLookup);
       } else if (mFlags.isSet(PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG)) {
-        newLookup = pruneBelowInternalSequences(tax, sequenceLookupMap);
-      } else {
-        newLookup = sequenceLookupMap;
+        pruneBelowInternalSequences(tax, newLookup);
       }
 
       writeSdf(inputFile, outFile, tax, newLookup, sequenceLookupMap);
@@ -170,6 +185,14 @@ public class TaxFilterCli extends AbstractCli {
     }
 
     return 0;
+  }
+
+  private void checkSdfOnlyFlags(String... flags) {
+    for (String flag : flags) {
+      if (mFlags.isSet(flag)) {
+        throw new NoTalkbackSlimException("The --" + flag + " option can only be specified when the input is a SDF");
+      }
+    }
   }
 
   private void writeSdf(File inputFile, File outFile, Taxonomy tax, Map<String, Integer> sequenceLookup, Map<String, Integer> oldSequenceLookup) throws IOException {
@@ -209,9 +232,43 @@ public class TaxFilterCli extends AbstractCli {
     }
   }
 
-  private Map<String, Integer> pruneBelowInternalSequences(Taxonomy tax, Map<String, Integer> sequenceLookupMap) {
-    final Map<String, Integer> newLookup; // First axe off children of any taxon nodes that have sequence
-    for (final Map.Entry<String, Integer> entry : sequenceLookupMap.entrySet()) {
+  private void pruneSequenceData(Taxonomy tax, Map<String, Integer> sequenceLookup, File idFile) throws IOException {
+    final Set<Integer> ids = readIds(idFile);
+    final Set<Integer> taxWithSeq = new HashSet<>();
+    final Set<String> toRemove = new HashSet<>();
+
+    // Collect names to remove corresponding to the tax ids
+    for (final Map.Entry<String, Integer> entry : sequenceLookup.entrySet()) {
+      if (ids.contains(entry.getValue())) {
+        toRemove.add(entry.getKey());
+      } else {
+        taxWithSeq.add(entry.getValue());
+      }
+    }
+
+    // Remove sequences from the lookup
+    for (String seq : toRemove) {
+      sequenceLookup.remove(seq);
+    }
+
+    // For each tax node, if it is a leaf, prune back to first parent either containing sequence data or with multiple children
+    for (Integer id : ids) {
+      TaxonNode node = tax.get(id);
+      if (node != null && node.isLeaf()) {
+        TaxonNode parent = node.getParent();
+        while (parent != null && parent.getChildren().size() == 1 && !taxWithSeq.contains(parent.getId())) {
+          node = parent;
+          parent = node.getParent();
+        }
+        tax.removeSubTree(node.getId());
+      }
+    }
+  }
+
+
+  private void pruneBelowInternalSequences(Taxonomy tax, Map<String, Integer> sequenceLookup) {
+    // Remove the subtrees from the taxonomy
+    for (final Map.Entry<String, Integer> entry : sequenceLookup.entrySet()) {
       if (tax.contains(entry.getValue()) && !tax.get(entry.getValue()).isLeaf()) {
         for (final TaxonNode child : tax.get(entry.getValue()).getChildren()) {
           tax.removeSubTree(child.getId());
@@ -222,26 +279,29 @@ public class TaxFilterCli extends AbstractCli {
       Diagnostic.error(tax.getInconsistencyReason());
       throw new NoTalkbackSlimException("Taxonomy post-prune is not complete.");
     }
-    // Build new lookup from stuff that is still left
-    newLookup = new HashMap<>();
-    for (final Map.Entry<String, Integer> entry : sequenceLookupMap.entrySet()) {
-      if (tax.contains(entry.getValue())) {
-        assert tax.get(entry.getValue()).isLeaf();
-        newLookup.put(entry.getKey(), entry.getValue());
+
+    // Remove entries from the lookup
+    final Set<String> toRemove = new HashSet<>();
+    for (final Map.Entry<String, Integer> entry : sequenceLookup.entrySet()) {
+      if (!tax.contains(entry.getValue())) {
+        toRemove.add(entry.getKey());
       }
     }
-    return newLookup;
+    for (String seq : toRemove) {
+      sequenceLookup.remove(seq);
+    }
   }
 
-  private Map<String, Integer> pruneInternalSequences(Taxonomy tax, Map<String, Integer> sequenceLookupMap) {
-    final Map<String, Integer> newLookup;
-    newLookup = new HashMap<>();
-    for (final Map.Entry<String, Integer> entry : sequenceLookupMap.entrySet()) {
-      if (tax.contains(entry.getValue()) && tax.get(entry.getValue()).isLeaf()) {
-        newLookup.put(entry.getKey(), entry.getValue());
+  private void pruneInternalSequences(Taxonomy tax, Map<String, Integer> sequenceLookup) {
+    final Set<String> toRemove = new HashSet<>();
+    for (final Map.Entry<String, Integer> entry : sequenceLookup.entrySet()) {
+      if (!tax.get(entry.getValue()).isLeaf()) {
+        toRemove.add(entry.getKey());
       }
     }
-    return newLookup;
+    for (String seq : toRemove) {
+      sequenceLookup.remove(seq);
+    }
   }
 
   private void doRemoval(Taxonomy tax, File removeFile) throws IOException {

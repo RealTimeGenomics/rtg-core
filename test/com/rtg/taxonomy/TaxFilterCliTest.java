@@ -14,34 +14,20 @@ package com.rtg.taxonomy;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.reader.ReaderTestUtils;
+import com.rtg.util.Pair;
+import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
 
 /**
  */
 public class TaxFilterCliTest extends AbstractCliTest {
-  private NanoRegression mNano;
-
-  @Override
-  public void setUp() throws IOException {
-    super.setUp();
-    mNano = new NanoRegression(TaxFilterCliTest.class);
-  }
-
-  @Override
-  public void tearDown() throws IOException {
-    super.tearDown();
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
 
   @Override
   public AbstractCli getCli() {
@@ -50,58 +36,101 @@ public class TaxFilterCliTest extends AbstractCliTest {
 
   public void testHelp() {
     checkHelp("Reference taxonomy filtering.",
-              "output=FILE",
-              "input=FILE",
-              "subset=FILE",
-              "remove=FILE",
-              "rename-norank=FILE",
-              "taxonomy input");
+      "output=FILE",
+      "input=FILE",
+      "subset=FILE",
+      "remove=FILE",
+      "rename-norank=FILE",
+      "taxonomy input");
+  }
+
+  public File makeTaxonomy(File dir) throws IOException {
+    final File taxonomy = new File(dir, "tax.tsv");
+    FileHelper.resourceToFile("com/rtg/taxonomy/resources/taxonomy.tsv", taxonomy);
+    return taxonomy;
+  }
+
+  public static File makeTaxonomySdf(File dir) throws IOException {
+    final File fullSdf = new File(dir, "sdf_full");
+
+    // Format the sequence data
+    ReaderTestUtils.getDNADir(FileHelper.resourceToString("com/rtg/metagenomics/resources/sequences.fasta"), fullSdf);
+
+    // cp taxonomy files to sdf
+    FileHelper.resourceToFile("com/rtg/metagenomics/resources/taxonomy.tsv", new File(fullSdf, "taxonomy.tsv"));
+    FileHelper.resourceToFile("com/rtg/metagenomics/resources/taxonomy_lookup.tsv", new File(fullSdf, "taxonomy_lookup.tsv"));
+    return fullSdf;
+  }
+
+  public Pair<String, String> checkResults(TestDirectory dir, String id, boolean sdf, String... extraargs) throws IOException {
+    final File output = new File(dir, id + (sdf ? "_sdf" : "_tsv") + "_output");
+    final File taxInput = sdf ? makeTaxonomySdf(dir) : makeTaxonomy(dir);
+    String[] args = {
+      "-i", taxInput.getAbsolutePath(), "-o", output.getPath()
+    };
+    args = Arrays.copyOf(args, args.length + extraargs.length);
+    System.arraycopy(extraargs, 0, args, args.length - extraargs.length, extraargs.length);
+
+    final Pair<String, String> out = checkMainInit(args);
+
+    mNano.check("taxonomy_" + id + ".tsv", FileUtils.fileToString(sdf ? new File(output, TaxonomyUtils.TAXONOMY_FILE) : output), false);
+    if (sdf) {
+      mNano.check("taxonomy_" + id + "_lookup.tsv", FileUtils.fileToString(new File(output, TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE)), false);
+    }
+
+    return out;
   }
 
   public void testSubset() throws Exception {
     try (TestDirectory dir = new TestDirectory()) {
-      final File taxonomy = new File(dir, "tax.tsv");
-      FileHelper.resourceToFile("com/rtg/taxonomy/resources/taxonomy.tsv", taxonomy);
       final File subsetids = new File(dir, "subset.txt");
       FileHelper.resourceToFile("com/rtg/taxonomy/resources/ids_subset.txt", subsetids);
-      final File output = new File(dir, "output.txt");
+      checkResults(dir, "subset", false, "-s", subsetids.getPath());
+      checkResults(dir, "subset", true, "-s", subsetids.getPath());
+    }
+  }
 
-      final String out = checkMainInitOk("-i", taxonomy.getAbsolutePath(), "-o", output.getPath(), "-s", subsetids.getPath());
-      assertEquals("", out);
-      final String actual = FileUtils.fileToString(output);
-      mNano.check("taxonomy_subset.tsv", actual, false);
+  public void testSubtree() throws Exception {
+    try (TestDirectory dir = new TestDirectory()) {
+      final File subtreeids = new File(dir, "subtree.txt");
+      FileHelper.resourceToFile("com/rtg/taxonomy/resources/ids_subtree.txt", subtreeids);
+      checkResults(dir, "subtree", false, "-S", subtreeids.getPath());
+      checkResults(dir, "subtree", true, "-S", subtreeids.getPath());
     }
   }
 
   public void testRemove() throws Exception {
     try (TestDirectory dir = new TestDirectory()) {
-      final File taxonomy = new File(dir, "tax.tsv");
-      FileHelper.resourceToFile("com/rtg/taxonomy/resources/taxonomy.tsv", taxonomy);
       final File removeids = new File(dir, "remove.txt");
       FileHelper.resourceToFile("com/rtg/taxonomy/resources/ids_remove.txt", removeids);
-      final File output = new File(dir, "output.txt");
 
-      final String out = checkMainInitOk("-i", taxonomy.getAbsolutePath(), "-o", output.getPath(), "-r", removeids.getPath());
-      assertEquals("", out);
-      final String actual = FileUtils.fileToString(output);
-      mNano.check("taxonomy_remove.tsv", actual, false);
+      checkResults(dir, "remove", false, "-r", removeids.getPath());
+      checkResults(dir, "remove", true, "-r", removeids.getPath());
+    }
+  }
+
+  public void testRemoveSequences() throws Exception {
+    try (TestDirectory dir = new TestDirectory()) {
+      final File removeids = new File(dir, "remove.txt");
+      FileHelper.resourceToFile("com/rtg/taxonomy/resources/ids_remove_seqs.txt", removeids);
+
+      checkResults(dir, "remove_sequences", true, "-R", removeids.getPath());
+
+      FileHelper.resourceToFile("com/rtg/taxonomy/resources/ids_remove_all_seqs.txt", removeids);
+      checkResults(dir, "remove_all_sequences", true, "-R", removeids.getPath());
     }
   }
 
   public void testRenameNoRank() throws Exception {
     try (TestDirectory dir = new TestDirectory()) {
-      final File taxonomy = new File(dir, "tax.tsv");
-      FileHelper.resourceToFile("com/rtg/taxonomy/resources/taxonomy.tsv", taxonomy);
       final File rename = new File(dir, "remove.txt");
       FileHelper.resourceToFile("com/rtg/taxonomy/resources/no_rank_rename.txt", rename);
-      final File output = new File(dir, "output.txt");
 
-      final String out = checkMainInitWarn("-i", taxonomy.getAbsolutePath(), "-o", output.getPath(), "--rename-norank", rename.getPath());
-      //assertEquals("", out);
-      assertTrue(out.contains("Node not found in taxonomy: 999999"));
-      assertTrue(out.contains("Node 1118 rank is not \"no rank\": order"));
-      final String actual = FileUtils.fileToString(output);
-      mNano.check("taxonomy_norank_rename.tsv", actual, false);
+      final Pair<String, String> out = checkResults(dir, "norank_rename", false, "--rename-norank", rename.getPath());
+
+      TestUtils.containsAll(out.getB(),
+        "Node not found in taxonomy: 999999",
+        "Node 1118 rank is not \"no rank\": order");
     }
   }
 
