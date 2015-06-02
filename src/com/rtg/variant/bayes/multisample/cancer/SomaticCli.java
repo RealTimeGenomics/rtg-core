@@ -52,6 +52,7 @@ public class SomaticCli extends AbstractMultisampleCli {
   private static final String CONTAMINATION_FLAG = "contamination";
 
   private static final String SEX_FLAG = "sex";
+  private static final String INCLUDE_GERMLINE_FLAG = "Xinclude-germline";
 
   private static final String MISMATCHED_PARAMS_ERROR1 = "Cannot use --" + PEDIGREE_FLAG + " in conjunction with --" + DERIVED_FLAG + ", --" + ORIGINAL_FLAG + ", or --" + CONTAMINATION_FLAG;
   private static final String MISMATCHED_PARAMS_ERROR2 = "All of --" + DERIVED_FLAG + ", --" + ORIGINAL_FLAG + ", and --" + CONTAMINATION_FLAG + " must be specified";
@@ -129,6 +130,7 @@ public class SomaticCli extends AbstractMultisampleCli {
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of individual", Sex.EITHER).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('s', SOMATIC_FLAG, Double.class, "float", "prior probability of a somatic SNP mutation in the derived sample", 0.0001).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(LOH_FLAG, Double.class, "float", "prior probability that a loss of heterozygosity event has occurred", 0.1).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(INCLUDE_GERMLINE_FLAG, "Include germline variants in output VCF").setCategory(SENSITIVITY_TUNING);
     AbstractMultisampleCli.registerComplexPruningFlags(flags);
     flags.addRequiredSet(derivedFlag, originalFlag, contamFlag, inFlag);
     flags.addRequiredSet(derivedFlag, originalFlag, contamFlag, listFlag);
@@ -156,11 +158,11 @@ public class SomaticCli extends AbstractMultisampleCli {
 
   @Override
   protected VariantParamsBuilder makeParamsBuilder() throws InvalidParamsException, IOException {
-    final VariantParamsBuilder builder = super.makeParamsBuilder();
-    builder.somaticRate((Double) mFlags.getValue(SOMATIC_FLAG));
-    builder.lohPrior((Double) mFlags.getValue(LOH_FLAG));
-    builder.sex((Sex) mFlags.getValue(SEX_FLAG));
-    return builder;
+    return super.makeParamsBuilder()
+      .somaticRate((Double) mFlags.getValue(SOMATIC_FLAG))
+      .includeGermlineVariants(mFlags.isSet(INCLUDE_GERMLINE_FLAG))
+      .lohPrior((Double) mFlags.getValue(LOH_FLAG))
+      .sex((Sex) mFlags.getValue(SEX_FLAG));
   }
 
   @Override

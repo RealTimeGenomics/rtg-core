@@ -105,6 +105,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final GenomeRelationships mGenomeRelationships;
   private final GenomeConnectivity mGenomeConnectivity;
   private final double mSomaticRate;
+  private final boolean mIncludeGermlineVariants;
   private final double mNoDiseasePrior;
   private final boolean mUsePropagatingPriors;
   //  private final Map<File, String> mLegacySampleMapping;
@@ -167,6 +168,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mGenomeRelationships = builder.mGenomeRelationships;
     mGenomeConnectivity = builder.mGenomeConnectivity;
     mSomaticRate = builder.mSomaticRate;
+    mIncludeGermlineVariants = builder.mIncludeGermlineVariants;
     mNoDiseasePrior = builder.mNoDiseasePrior;
     //    mLegacySampleMapping = builder.mLegacySampleMapping;
     mLohPrior = builder.mLohPrior;
@@ -550,6 +552,13 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   }
 
   /**
+   * @return true iff germline variants should be included in VCF output during somatic calling.
+   */
+  public boolean includeGermlineVariants() {
+    return mIncludeGermlineVariants;
+  }
+
+  /**
    * @return prior probability that a position does not explain a disease.
    */
   public double noDiseasePrior() {
@@ -679,6 +688,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     .enableTrimSplit(mEnableTrimSplit)
     .genomeRelationships(mGenomeRelationships)
     .somaticRate(mSomaticRate)
+    .includeGermlineVariants(mIncludeGermlineVariants)
     .noDiseasePrior(mNoDiseasePrior)
     .ionTorrent(mIonTorrent)
     .indelTriggerFraction(mIndelTriggerFraction)
@@ -753,7 +763,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
       .append(" prune_hypothesis=").append(mPruneHypotheses)
       .append(" enable_trim_split=").append(mEnableTrimSplit).append(LS
         );  //note currently writing IonTorrent out here is pointless as it is modified after this is printed.
-    sb.append(" somaticRate=").append(somaticRate()).append(" lohPrior=").append(lohPrior()).append(LS);
+    sb.append(" somaticRate=").append(somaticRate()).append(" includeGermlineVariants=").append(includeGermlineVariants()).append(" lohPrior=").append(lohPrior()).append(LS);
     sb.append(" noDiseasePrior=").append(noDiseasePrior()).append(LS);
     sb.append(" Relationships:").append(genomeRelationships()).append(LS);
     sb.append(" max_em_iterations=").append(mMaxEmIterations).append(LS);

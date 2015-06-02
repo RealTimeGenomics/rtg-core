@@ -39,7 +39,6 @@ import htsjdk.samtools.SAMFileHeader;
 @TestClass("com.rtg.variant.VariantParamsTest")
 public final class VariantParamsBuilder extends SingleMappedParamsBuilder<VariantParamsBuilder> {
 
-
   List<String> mImputedSamples = new ArrayList<>();
   Collection<File> mCalibrations;
   int mQDefault = 20;
@@ -94,6 +93,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   double mSomaticRate = 0.3;
   double mNoDiseasePrior = 0.95;
   double mLohPrior = 0.0;
+  boolean mIncludeGermlineVariants = false;
   SAMFileHeader mUberHeader = null;
   ReferenceRanges mReferenceRanges = null;
   File mRegionsFilterBedFile = null;
@@ -522,6 +522,16 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
       throw new IllegalArgumentException();
     }
     mSomaticRate = p;
+    return self();
+  }
+
+  /**
+   * If set, output germline variants in addition to somatic variants during somatic calling.
+   * @param includeGermline true iff germline variants should be output
+   * @return this, for chaining
+   */
+  public VariantParamsBuilder includeGermlineVariants(boolean includeGermline) {
+    mIncludeGermlineVariants = includeGermline;
     return self();
   }
 

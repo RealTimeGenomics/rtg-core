@@ -89,7 +89,7 @@ public class VariantParamsTest extends TestCase {
         " exec_threads=1 io_threads=1" + LS,
         " hyper_complex_threshold=21" + LS,
         " ionTorrent=false prune_hypothesis=false enable_trim_split=true" + LS,
-        " somaticRate=0.3 lohPrior=0.0" + LS,
+        " somaticRate=0.3 includeGermlineVariants=false lohPrior=0.0" + LS,
         " noDiseasePrior=0.95" + LS,
         " Relationships:null" + LS,
         " SamFilterParams minMapQ=-1 maxAlignmentCount=-1 maxMatedAlignmentScore=null maxUnmatedAlignmentScore=null",

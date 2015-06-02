@@ -124,7 +124,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
           params);
       }
       final SomaticCallerConfiguration sc = new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, mutationRate, haploid, diploid, ssp);
-      sc.getVcfFilters().add(new SomaticFilter(statistics, false)); // XXX configure the false
+      sc.getVcfFilters().add(new SomaticFilter(statistics, params.includeGermlineVariants()));
       return sc;
     }
   }
