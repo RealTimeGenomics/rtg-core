@@ -40,7 +40,7 @@ public final class VstatsCallerConfiguration extends AbstractJointCallerConfigur
   /**
    * The factory for this caller.
    */
-  public static final class Configurator implements JointCallerConfigurator {
+  public static final class Configurator implements JointCallerConfigurator<VariantStatistics> {
 
     @Override
     public VstatsCallerConfiguration getConfig(final VariantParams params, VariantStatistics statistics) throws IOException {

@@ -87,10 +87,12 @@ public class SomaticStatistics extends VariantStatistics {
     store.add(rankingScore, Integer.parseInt(alleleCounts[0]), Integer.parseInt(alleleCounts[1]));
   }
 
-  @Override
-  public void tallyVariant(final VcfHeader header, final VcfRecord rec) {
-    super.tallyVariant(header, rec);
-
+  /**
+   * Increment statistics relevant to records even if they are not necessarily output.
+   * @param header VCF header
+   * @param rec the VCF record
+   */
+  public void countVariant(final VcfHeader header, final VcfRecord rec) {
     // Handle the normal sample
     final int normalId = header.getSampleIndex(mNormalSampleName);
     if (isGenotype(rec, normalId, DIPLOID01)) {

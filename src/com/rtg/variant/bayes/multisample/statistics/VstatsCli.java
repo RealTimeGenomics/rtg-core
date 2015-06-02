@@ -112,9 +112,9 @@ public class VstatsCli extends AbstractMultisampleCli {
   }
 
   @Override
-  public ParamsTask<?, ?> task(final VariantParams params, final OutputStream out) throws IOException {
+  protected ParamsTask<?, ?> task(final VariantParams params, final OutputStream out) throws IOException {
     final UsageMetric usageMetric = mUsageMetric == null ? new UsageMetric() : mUsageMetric; //create when null to cover some testing
-    return new MultisampleTask(params, new VstatsCallerConfiguration.Configurator(), out, new VariantStatistics(params.directory()), usageMetric);
+    return new MultisampleTask<>(params, new VstatsCallerConfiguration.Configurator(), out, new VariantStatistics(params.directory()), usageMetric);
   }
 
   /**

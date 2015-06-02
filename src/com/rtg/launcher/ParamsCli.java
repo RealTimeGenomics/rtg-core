@@ -38,8 +38,6 @@ public abstract class ParamsCli<P extends Params> extends LoggedCli {
 
   /**
    * Get a task to execute with the specified parameters.
-   *
-   *
    * @param params the parameters for the current execution.
    * @param out where the standard output is written (depending on parameters may not be used).
    * @return the Task.

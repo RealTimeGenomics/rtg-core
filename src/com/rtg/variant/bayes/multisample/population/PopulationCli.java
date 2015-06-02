@@ -148,9 +148,9 @@ public class PopulationCli extends AbstractMultisampleCli {
   }
 
   @Override
-  public ParamsTask<?, ?> task(final VariantParams params, final OutputStream out) throws IOException {
+  protected ParamsTask<?, ?> task(final VariantParams params, final OutputStream out) throws IOException {
     final UsageMetric usageMetric = mUsageMetric == null ? new UsageMetric() : mUsageMetric; //create when null to cover some testing
-    return new MultisampleTask(params, new PopulationCallerConfiguration.Configurator(), out,  getStatistics(params), usageMetric);
+    return new MultisampleTask<>(params, new PopulationCallerConfiguration.Configurator(), out,  getStatistics(params), usageMetric);
   }
 
   /**

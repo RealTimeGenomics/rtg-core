@@ -45,7 +45,7 @@ public final class LineageCallerConfiguration extends AbstractJointCallerConfigu
   /**
    * The factory for this caller.
    */
-  public static final class Configurator implements JointCallerConfigurator {
+  public static final class Configurator implements JointCallerConfigurator<VariantStatistics> {
 
     @Override
     public LineageCallerConfiguration getConfig(final VariantParams params, VariantStatistics statistics) throws IOException {

@@ -18,8 +18,9 @@ import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantStatistics;
 
 /**
+ * @param <V> the type of statistics object used by this joitn caller.
  */
-public interface JointCallerConfigurator {
+public interface JointCallerConfigurator<V extends VariantStatistics> {
 
   /**
    * Creates a configuration for the joint caller
@@ -28,5 +29,5 @@ public interface JointCallerConfigurator {
    * @return an <code>AbstractJointCallerConfiguration</code>
    * @throws IOException in the event of an <code>IOException</code> occurring.
    */
-  AbstractJointCallerConfiguration getConfig(final VariantParams params, VariantStatistics statistics) throws IOException;
+  AbstractJointCallerConfiguration getConfig(final VariantParams params, V statistics) throws IOException;
 }

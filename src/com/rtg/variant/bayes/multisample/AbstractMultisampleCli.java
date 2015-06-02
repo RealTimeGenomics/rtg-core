@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.reeltwo.jumble.annotations.TestClass;
+import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.SamCalibrationInputs;
 import com.rtg.launcher.BuildCommon;
@@ -36,7 +37,6 @@ import com.rtg.launcher.CommandLineFiles;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.OutputParams;
 import com.rtg.launcher.ParamsCli;
-import com.rtg.launcher.ParamsTask;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.SdfUtils;
@@ -45,15 +45,15 @@ import com.rtg.sam.SamFilterOptions;
 import com.rtg.sam.SamFilterParams;
 import com.rtg.sam.SamRangeUtils;
 import com.rtg.sam.SamUtils;
-import com.rtg.usage.UsageMetric;
+import com.rtg.util.IORunnable;
 import com.rtg.util.IntegerOrPercentage;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
+import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.intervals.RegionRestriction;
-import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
 import com.rtg.variant.CalibratedPerSequenceThreshold;
 import com.rtg.variant.CalibratedPerSequenceThreshold.ThresholdFunction;
 import com.rtg.variant.StaticThreshold;
@@ -232,6 +232,20 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
       }
     }
     return true;
+  }
+
+  /**
+   * Sam file flags (input/file list)
+   * @param flags object to add flag to
+   */
+  public static void addSamFileFlags(CFlags flags) {
+    final Flag inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
+    inFlag.setCategory(INPUT_OUTPUT);
+    inFlag.setMinCount(0);
+    inFlag.setMaxCount(Integer.MAX_VALUE);
+    final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    flags.addRequiredSet(inFlag);
+    flags.addRequiredSet(listFlag);
   }
 
   protected double defaultCoverageCutoffMultiplier() {
@@ -514,8 +528,5 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   }
 
   @Override
-  protected ParamsTask<?, ?> task(final VariantParams params, final OutputStream out) throws IOException {
-    final UsageMetric usageMetric = mUsageMetric == null ? new UsageMetric() : mUsageMetric; //create when null to cover some testing
-    return new MultisampleTask(params, out, getStatistics(params), usageMetric);
-  }
+  protected abstract IORunnable task(VariantParams params, OutputStream out) throws IOException;
 }

@@ -55,6 +55,7 @@ import com.rtg.variant.StaticThreshold;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.VariantStatistics;
+import com.rtg.variant.bayes.multisample.population.PopulationCallerConfiguration;
 import com.rtg.variant.bayes.multisample.population.PopulationNanoTest;
 
 import junit.framework.TestCase;
@@ -134,7 +135,7 @@ public class MultisampleTaskTest extends TestCase {
         builder.uberHeader(SamUtils.getUberHeader(mapped, false, genomeRelationships == null ? null : genomeRelationships.genomes()));
         final VariantParams p = builder.create();
         final UsageMetric usageMetric = new UsageMetric();
-        final MultisampleTask task = new MultisampleTask(p, bos, new VariantStatistics(null), usageMetric);
+        final MultisampleTask<VariantStatistics> task = new MultisampleTask<>(p, new PopulationCallerConfiguration.Configurator(), bos, new VariantStatistics(null), usageMetric);
         final ByteArrayOutputStream berr = new ByteArrayOutputStream();
         try {
           final PrintStream err = new PrintStream(berr);

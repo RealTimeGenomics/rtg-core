@@ -44,7 +44,6 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(HaploidDiploidHypothesesTest.class);
     suite.addTestSuite(IndividualSampleProcessorTest.class);
     suite.addTestSuite(IndividualSampleFactoryTest.class);
-    suite.addTestSuite(MultisampleCliTest.class);
     suite.addTestSuite(MultisampleTaskTest.class);
     suite.addTestSuite(MultisampleTaskSequentialTest.class);
     suite.addTestSuite(MultisampleTaskT1Test.class);

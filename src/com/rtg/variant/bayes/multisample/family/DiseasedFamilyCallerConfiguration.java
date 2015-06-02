@@ -47,7 +47,7 @@ public final class DiseasedFamilyCallerConfiguration extends AbstractJointCaller
   /**
    * The factory for this caller.
    */
-  public static final class Configurator implements JointCallerConfigurator {
+  public static final class Configurator implements JointCallerConfigurator<VariantStatistics> {
 
     @Override
     public DiseasedFamilyCallerConfiguration getConfig(final VariantParams params, VariantStatistics statistics) throws IOException {

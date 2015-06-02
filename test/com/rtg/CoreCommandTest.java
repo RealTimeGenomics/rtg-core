@@ -108,7 +108,6 @@ public class CoreCommandTest extends TestCase {
     assertEquals(1, CoreCommand.SVPREP.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SV.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.DISCORD.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.MULTI_VARIANT.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.MULTI_FAMILY.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.MULTI_SOMATIC.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.MULTI_POPULATION.mainInit(new String[0], baos, ps));

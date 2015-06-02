@@ -30,7 +30,6 @@ import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
-import com.rtg.variant.VariantStatistics;
 import com.rtg.variant.avr.AbstractPredictModel;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 import com.rtg.variant.bayes.multisample.MultisampleTask;
@@ -165,14 +164,14 @@ public class SomaticCli extends AbstractMultisampleCli {
   }
 
   @Override
-  protected VariantStatistics getStatistics(VariantParams params) {
+  protected SomaticStatistics getStatistics(VariantParams params) {
     return new SomaticStatistics(params, AbstractPredictModel.AVR); // todo GQ fallback
   }
 
   @Override
   public ParamsTask<?, ?> task(final VariantParams params, final OutputStream out) throws IOException {
     final UsageMetric usageMetric = mUsageMetric == null ? new UsageMetric() : mUsageMetric; //create when null to cover some testing
-    return new MultisampleTask(params, new SomaticCallerConfiguration.Configurator(), out, getStatistics(params), usageMetric);
+    return new MultisampleTask<>(params, new SomaticCallerConfiguration.Configurator(), out, getStatistics(params), usageMetric);
   }
 
 

@@ -29,7 +29,6 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantParams;
-import com.rtg.variant.VariantStatistics;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.Model;
@@ -66,10 +65,10 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
   /**
    * The factory for this caller.
    */
-  public static final class Configurator implements JointCallerConfigurator {
+  public static final class Configurator implements JointCallerConfigurator<SomaticStatistics> {
 
     @Override
-    public SomaticCallerConfiguration getConfig(final VariantParams params, VariantStatistics statistics) throws IOException {
+    public SomaticCallerConfiguration getConfig(final VariantParams params, SomaticStatistics statistics) throws IOException {
       final double loh = params.lohPrior();
       final int numberOfGenomes = params.genomeRelationships().genomes().length;
       final Relationship[] derived = params.genomeRelationships().relationships(RelationshipType.ORIGINAL_DERIVED);
@@ -124,7 +123,9 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
             CombinedPriorsSnp.makeQ(mutationRate, loh, diploid.defaultHypotheses(0)),
           params);
       }
-      return new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, mutationRate, haploid, diploid, ssp);
+      final SomaticCallerConfiguration sc = new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, mutationRate, haploid, diploid, ssp);
+      sc.getVcfFilters().add(new SomaticFilter(statistics, false)); // XXX configure the false
+      return sc;
     }
   }
 

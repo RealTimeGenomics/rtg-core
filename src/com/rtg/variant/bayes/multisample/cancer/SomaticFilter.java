@@ -11,8 +11,10 @@
  */
 package com.rtg.variant.bayes.multisample.cancer;
 
+import com.rtg.variant.format.VcfInfoField;
 import com.rtg.vcf.VcfFilter;
 import com.rtg.vcf.VcfRecord;
+import com.rtg.vcf.header.VcfHeader;
 
 /**
  * A filter serving two functions in somatic calling. It ensures that all records are passed
@@ -22,11 +24,29 @@ import com.rtg.vcf.VcfRecord;
  */
 public class SomaticFilter implements VcfFilter {
 
+  private final SomaticStatistics mStatistics;
+  private final boolean mSomaticOnly;
+  private VcfHeader mVcfHeader;
+
+  /**
+   * Construct a new filter which counts variants for the purposes of estimating contamination in
+   * the somatic caller and optionally filter records which are not somatic.
+   * @param statistics statistics object for computing contamination estimates
+   * @param somaticOnly true iff only somatic variants are to be retained
+   */
   public SomaticFilter(final SomaticStatistics statistics, final boolean somaticOnly) {
+    mStatistics = statistics;
+    mSomaticOnly = somaticOnly;
+  }
+
+  @Override
+  public void setHeader(VcfHeader vcfHeader) {
+    mVcfHeader = vcfHeader;
   }
 
   @Override
   public boolean accept(VcfRecord record) {
-    return true; // todo
+    mStatistics.countVariant(mVcfHeader, record);
+    return !mSomaticOnly || record.getInfo().get(VcfInfoField.NCS.name()) != null;
   }
 }

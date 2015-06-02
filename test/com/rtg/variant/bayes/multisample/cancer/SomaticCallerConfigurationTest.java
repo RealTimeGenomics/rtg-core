@@ -71,7 +71,7 @@ public class SomaticCallerConfigurationTest extends TestCase {
     assertEquals("cancer", config.getGenomeNames()[1]);
     assertTrue(config.handlesPloidy(Ploidy.POLYPLOID));
     assertTrue(config.getVcfAnnotators().isEmpty());
-    assertTrue(config.getVcfFilters().isEmpty());
+    assertEquals(1, config.getVcfFilters().size());
 
     final VariantOutputVcfFormatter output = config.getOutputFormatter(p);
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();

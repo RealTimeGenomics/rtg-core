@@ -57,7 +57,7 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
   /**
    * The factory for this caller.
    */
-  public static final class Configurator implements JointCallerConfigurator {
+  public static final class Configurator implements JointCallerConfigurator<VariantStatistics> {
 
     @Override
     public PopulationCallerConfiguration getConfig(final VariantParams params, VariantStatistics statistics) throws IOException {

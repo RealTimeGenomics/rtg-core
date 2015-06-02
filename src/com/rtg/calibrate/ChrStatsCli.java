@@ -36,7 +36,7 @@ import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.RegionRestriction;
-import com.rtg.variant.bayes.multisample.MultisampleCli;
+import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 
 import htsjdk.samtools.SAMFileHeader;
 
@@ -61,7 +61,7 @@ public class ChrStatsCli extends AbstractCli {
     mFlags.registerExtendedHelp();
     mFlags.setDescription("Check expected chromosome coverage levels from mapping calibration files.");
     CommonFlagCategories.setCategories(mFlags);
-    MultisampleCli.addSamFileFlags(mFlags);
+    AbstractMultisampleCli.addSamFileFlags(mFlags);
     mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing reference genome").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerOptional('p', PEDIGREE_FLAG, File.class, "file", "genome relationships PED file").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     mFlags.registerOptional(MapFlags.SEX_FLAG, Sex.class, "sex", "sex setting that the individual was mapped as (when not using pedigree)", Sex.EITHER).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);

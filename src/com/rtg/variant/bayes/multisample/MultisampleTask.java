@@ -24,9 +24,6 @@ import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reference.Ploidy;
 import com.rtg.reference.SexMemo;
-import com.rtg.relation.Family;
-import com.rtg.relation.Relationship;
-import com.rtg.relation.Relationship.RelationshipType;
 import com.rtg.sam.CircularBufferMultifileSinglePassReaderWindowSync;
 import com.rtg.sam.ReaderRecord;
 import com.rtg.sam.ReaderWindow;
@@ -71,19 +68,15 @@ import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.complex.IonTorrentCallFilter;
 import com.rtg.variant.bayes.complex.Trimming;
-import com.rtg.variant.bayes.multisample.cancer.SomaticCallerConfiguration;
-import com.rtg.variant.bayes.multisample.family.DiseasedFamilyCallerConfiguration;
-import com.rtg.variant.bayes.multisample.family.FamilyCallerConfiguration;
 import com.rtg.variant.bayes.multisample.multithread.DependenciesMultiSample;
 import com.rtg.variant.bayes.multisample.multithread.EventListMultiSample;
 import com.rtg.variant.bayes.multisample.multithread.JobIdMultisample;
 import com.rtg.variant.bayes.multisample.multithread.MultisampleStatistics;
-import com.rtg.variant.bayes.multisample.population.PopulationCallerConfiguration;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.util.VariantUtils;
 import com.rtg.vcf.VcfAnnotator;
-import com.rtg.vcf.AbstractVcfFilter;
+import com.rtg.vcf.VcfFilter;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.VcfWriter;
@@ -94,8 +87,9 @@ import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
 
 /**
+ * @param <V> type of variant statistics
  */
-public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics> {
+public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<VariantParams, V> {
 
   private static final int ION_TORRENT_HYPER_COMPLEX = 21;
 
@@ -103,7 +97,7 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
   private final OutputStream mBedOut;
   private final SexMemo mSexMemo;
   private final List<VcfAnnotator> mAnnotators = new ArrayList<>();
-  private final List<AbstractVcfFilter> mFilters = new ArrayList<>();
+  private final List<VcfFilter> mFilters = new ArrayList<>();
   protected final SequencesReader mReferenceSequences;
   private AbstractJointCallerConfiguration mConfig;
   private VcfWriter mOut;
@@ -114,36 +108,7 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
   private ReferenceRegions mBedFilterRegions;
   private ParallelProgress mPP = null;
 
-  private final JointCallerConfigurator mConfigurator;
-
-  // This configurator tries to guess the appropriate configuration based on the structure of the pedigree
-  private static final JointCallerConfigurator DEFAULT_CONFIGURATOR = new JointCallerConfigurator() {
-    @Override
-    public AbstractJointCallerConfiguration getConfig(VariantParams params, VariantStatistics statistics) throws IOException {
-      final Relationship[] derived = params.genomeRelationships().relationships(RelationshipType.ORIGINAL_DERIVED);
-      if (derived.length > 0) {
-        final int numberOfGenomes = params.genomeRelationships().genomes().length;
-        if (derived.length != 1 || numberOfGenomes != 2) {
-          throw new RuntimeException("Single original-derived relationship required in genome relationship file.");
-        }
-        return new SomaticCallerConfiguration.Configurator().getConfig(params, statistics);
-      } else {
-        final Relationship[] parentChild = params.genomeRelationships().relationships(RelationshipType.PARENT_CHILD);
-        if (parentChild.length > 0) {
-          // We're in family calling mode
-          final Family family = Family.getFamily(params.genomeRelationships());
-          if (family.isOneParentDiseased()) {
-            return new DiseasedFamilyCallerConfiguration.Configurator().getConfig(params, statistics);
-          } else {
-            return new FamilyCallerConfiguration.Configurator().getConfig(params, statistics);
-          }
-        } else {
-          // We're in population calling mode
-          return new PopulationCallerConfiguration.Configurator().getConfig(params, statistics);
-        }
-      }
-    }
-  };
+  private final JointCallerConfigurator<V> mConfigurator;
 
   /**
    * @param params command line parameters.
@@ -153,7 +118,7 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
    * @param usageMetric count of the number of records read.
    * @throws IOException when writing output.
    */
-  public MultisampleTask(VariantParams params, JointCallerConfigurator configurator, OutputStream defaultOutput, VariantStatistics statistics, UsageMetric usageMetric) throws IOException {
+  public MultisampleTask(VariantParams params, JointCallerConfigurator<V> configurator, OutputStream defaultOutput, V statistics, UsageMetric usageMetric) throws IOException {
     super(params, defaultOutput, statistics, usageMetric);
     if (params.genome() == null) {
       throw new NoTalkbackSlimException(ErrorType.READING_ERROR, "Problem reading");
@@ -165,17 +130,6 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
 
     statistics.setReference(mReferenceSequences.getReadMe() == null ? mReferenceSequences.path().getPath() : mReferenceSequences.getReadMe());
     Diagnostic.developerLog("Genome priors:" + StringUtils.LS + VariantUtils.toGenomePriorProperties(params.genomePriors()));
-  }
-
-  /**
-   * @param params command line parameters.
-   * @param defaultOutput where the calling results are written.
-   * @param statistics the variant statistics collector
-   * @param usageMetric to be updated with the count of the number of nucleotides read.
-   * @throws IOException when writing output.
-   */
-  public MultisampleTask(VariantParams params, OutputStream defaultOutput, VariantStatistics statistics, UsageMetric usageMetric) throws IOException {
-    this(params, DEFAULT_CONFIGURATOR, defaultOutput, statistics, usageMetric);
   }
 
   private Variant stepIndels(String refName, IndividualSampleProcessor<?>[] ssProcessors, int pos) {
@@ -545,8 +499,8 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
               annot.annotate(record);
             }
             boolean keep = true;
-            for (final AbstractVcfFilter filter : mFilters) {
-              if (filter.accept(record)) {
+            for (final VcfFilter filter : mFilters) {
+              if (!filter.accept(record)) {
                 keep = false;
                 break;
               }
@@ -733,8 +687,11 @@ public class MultisampleTask extends ParamsTask<VariantParams, VariantStatistics
     }
     mFormatter = mConfig.getOutputFormatter(mParams);
     mVcfHeader = mFormatter.makeHeader(mParams, mParams.uberHeader());
-    for (VcfAnnotator annot : mAnnotators) {
+    for (final VcfAnnotator annot : mAnnotators) {
       annot.updateHeader(mVcfHeader);
+    }
+    for (final VcfFilter filter : mFilters) {
+      filter.setHeader(mVcfHeader);
     }
     mOut = new VcfWriter(mVcfHeader, mParams.vcfStream());
     mBedFilterRegions = (mParams.regionsFilterBedFile() == null) ? null : BedUtils.regions(mParams.regionsFilterBedFile());

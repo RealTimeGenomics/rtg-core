@@ -15,6 +15,7 @@ package com.rtg.vcf;
 import static com.rtg.vcf.VcfFilterStatistics.Stat;
 
 import com.reeltwo.jumble.annotations.TestClass;
+import com.rtg.vcf.header.VcfHeader;
 
 /**
  * Abstract out process of checking a condition and recording stats about it
@@ -23,15 +24,12 @@ import com.reeltwo.jumble.annotations.TestClass;
 public abstract class AbstractVcfFilter implements VcfFilter {
   final VcfFilterStatistics mStatistics;
   final Stat mStat;
+
   AbstractVcfFilter(VcfFilterStatistics stats, Stat stat) {
     mStatistics = stats;
     mStat = stat;
   }
-  /**
-   * Process a VCF record and record statistics
-   * @param record the VCF record to filter
-   * @return false if the record is unacceptable and should be filtered
-   */
+
   @Override
   public boolean accept(VcfRecord record) {
     if (!acceptCondition(record)) {
@@ -39,6 +37,10 @@ public abstract class AbstractVcfFilter implements VcfFilter {
       return false;
     }
     return true;
+  }
+
+  @Override
+  public void setHeader(VcfHeader header) {
   }
 
   /**

@@ -32,8 +32,6 @@ import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 
 /**
- *         Date: 11/05/12
- *         Time: 10:51 AM
  */
 public class DeBruijnAssemblerCli extends ParamsCli<DeBruijnParams> {
   static final String MODULE_NAME = "debruijn";

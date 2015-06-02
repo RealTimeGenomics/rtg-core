@@ -51,7 +51,7 @@ public final class
   /**
    * The factory for this caller.
    */
-  public static final class Configurator implements JointCallerConfigurator {
+  public static final class Configurator implements JointCallerConfigurator<VariantStatistics> {
 
     @Override
     public FamilyCallerConfiguration getConfig(final VariantParams params, VariantStatistics statistics) throws IOException {

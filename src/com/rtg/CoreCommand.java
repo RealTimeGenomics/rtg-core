@@ -70,7 +70,6 @@ import com.rtg.variant.VcfStatsCli;
 import com.rtg.variant.avr.AvrStatsCli;
 import com.rtg.variant.avr.BuilderCli;
 import com.rtg.variant.avr.PredictCli;
-import com.rtg.variant.bayes.multisample.MultisampleCli;
 import com.rtg.variant.bayes.multisample.cancer.SomaticCli;
 import com.rtg.variant.bayes.multisample.family.FamilyCli;
 import com.rtg.variant.bayes.multisample.lineage.LineageCli;
@@ -157,9 +156,6 @@ public final class CoreCommand {
 
   /** Runs variant calling*/
   static final Command SINGLETON = new Command(new SingletonCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
-
-  /** Runs variant calling on multiple genomes. */
-  static final Command MULTI_VARIANT = new Command(new MultisampleCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
 
   /** Runs mendelian family variant calling. */
   static final Command MULTI_FAMILY = new Command(new FamilyCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
@@ -385,7 +381,7 @@ public final class CoreCommand {
     CALIBRATE, SVPREP, SV, DISCORD, COVERAGE,
 
     // Variant calling
-    SINGLETON, MULTI_VARIANT, MULTI_FAMILY, MULTI_SOMATIC, MULTI_POPULATION,
+    SINGLETON, MULTI_FAMILY, MULTI_SOMATIC, MULTI_POPULATION,
     MULTI_LINEAGE,
     AVRBUILD, AVRPREDICT,
     CNV,
