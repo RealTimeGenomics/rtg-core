@@ -18,12 +18,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import com.rtg.util.intervals.ReferenceRegions;
+import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
 import com.rtg.reference.Ploidy;
 import com.rtg.util.TestUtils;
-import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
+import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.Variant;
 import com.rtg.variant.Variant.VariantFilter;
@@ -195,7 +195,6 @@ public class VcfFormatFieldTest extends TestCase {
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
-    System.out.println(sample.getSomaticScore());
     assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:4.00:1.00:5.00:0.50:0.42:Q:0,0:7.4:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
 
     sample.setHoeffdingAlleleBalanceHom(3.0);
