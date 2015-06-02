@@ -181,11 +181,19 @@ public class PerSampleVariantStatistics {
 
   }
 
+  /**
+   * Append per sample statistics to a buffer.
+   * @param sb buffer to append to
+   */
   public void appendStatistics(StringBuilder sb) {
     final Pair<List<String>, List<String>> statistics = getStatistics();
     VariantStatistics.printCounts(statistics.getA(), statistics.getB(), sb);
   }
 
+  /**
+   * Append per sample histograms to a buffer.
+   * @param sb buffer to append to
+   */
   public void appendHistograms(StringBuilder sb) {
     sb.append("Variant Allele Lengths :").append(StringUtils.LS);
     //sb.append("bin\tSNP\tMNP\tInsert\tDelete\tIndel").append(StringUtils.LS);

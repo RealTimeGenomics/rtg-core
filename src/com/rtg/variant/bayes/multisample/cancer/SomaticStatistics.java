@@ -129,7 +129,7 @@ public class SomaticStatistics extends VariantStatistics {
 
   private double computeContaminationEstimate() {
     final long ref = mCancerStore.getTotalRefCount();
-    double alt = mCancerStore.getTotalAltCount();
+    final double alt = mCancerStore.getTotalAltCount();
     // A simple estimation based on 0/0 -> 0/1 calls in the derived sample, with a reference
     // bias correction applied to the alt allele count.  The final contamination is estimated
     // as 1 - 2 a / (a + r) where "a" is the corrected alt count and "r" is the ref count.

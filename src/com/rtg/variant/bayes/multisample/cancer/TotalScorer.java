@@ -18,7 +18,7 @@ package com.rtg.variant.bayes.multisample.cancer;
 class TotalScorer implements Scorer {
 
   private long mRefCount = 0;
-  private long mAltCount= 0;
+  private long mAltCount = 0;
   private int mCount = 0;
 
   @Override
