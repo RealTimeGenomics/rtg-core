@@ -35,7 +35,7 @@ public class SomaticFilterTest extends TestCase {
       .genomeRelationships(genomeRelationships)
       .create();
     final SomaticStatistics ss = new SomaticStatistics(params, "GQ");
-    final SomaticFilter sf = new SomaticFilter(ss, true);
+    final SomaticFilter sf = new SomaticFilter(ss, false);
     final VcfHeader vcfHeader = new VcfHeader();
     vcfHeader.addSampleName("cancer");
     vcfHeader.addSampleName("normal");

@@ -25,18 +25,18 @@ import com.rtg.vcf.header.VcfHeader;
 public class SomaticFilter implements VcfFilter {
 
   private final SomaticStatistics mStatistics;
-  private final boolean mSomaticOnly;
+  private final boolean mIncludeGermlineVariants;
   private VcfHeader mVcfHeader;
 
   /**
    * Construct a new filter which counts variants for the purposes of estimating contamination in
    * the somatic caller and optionally filter records which are not somatic.
    * @param statistics statistics object for computing contamination estimates
-   * @param somaticOnly true iff only somatic variants are to be retained
+   * @param includeGermline true iff only germline variants are to be retained
    */
-  public SomaticFilter(final SomaticStatistics statistics, final boolean somaticOnly) {
+  public SomaticFilter(final SomaticStatistics statistics, final boolean includeGermline) {
     mStatistics = statistics;
-    mSomaticOnly = somaticOnly;
+    mIncludeGermlineVariants = includeGermline;
   }
 
   @Override
@@ -47,6 +47,6 @@ public class SomaticFilter implements VcfFilter {
   @Override
   public boolean accept(VcfRecord record) {
     mStatistics.countVariant(mVcfHeader, record);
-    return !mSomaticOnly || record.getInfo().get(VcfInfoField.SOMATIC.name()) != null;
+    return mIncludeGermlineVariants || record.getInfo().get(VcfInfoField.SOMATIC.name()) != null;
   }
 }

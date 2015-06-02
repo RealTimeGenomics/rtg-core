@@ -64,7 +64,7 @@ public class SomaticNanoTest extends TestCase {
 
   //test an interesting call using cancer caller (homozygous SNP)
   public void test1() throws Exception {
-    checkCancer("1", "1", REF_TEST1, 6550L, "--all", "--keep-duplicates");
+    checkCancer("1", "1", REF_TEST1, 6550L, "--all", "--keep-duplicates", "--Xinclude-germline");
   }
 
   private static final String REF_TEST2 = ">test1" + LS
@@ -83,7 +83,7 @@ public class SomaticNanoTest extends TestCase {
   //       ACGGTCT
   //       ACGGTCT
   public void test2() throws Exception {
-    checkCancer("2", "2", REF_TEST2, 126L, "--all", "--keep-duplicates");
+    checkCancer("2", "2", REF_TEST2, 126L, "--all", "--keep-duplicates", "--Xinclude-germline");
   }
 
   private static final String REF_TEST3 = ">test1" + LS
@@ -107,7 +107,7 @@ public class SomaticNanoTest extends TestCase {
   // test an interesting call using cancer caller (homozygous SNP with skipping
   // first 50 Nts)
   public void test4() throws Exception {
-    checkCancer("1", "4", REF_TEST1, 2450L, "--all", "--region", "simulatedSequence1:90+10");
+    checkCancer("1", "4", REF_TEST1, 2450L, "--all", "--region", "simulatedSequence1:90+10", "--Xinclude-germline");
   }
 
   private static final String REF_TEST5 = ""
@@ -140,7 +140,7 @@ public class SomaticNanoTest extends TestCase {
 
   // Set loh to 0 should not get the LOH call
   public void testNoLoh() throws Exception {
-    checkCancer("Loh", "5b", REF_TEST5, 126L, "--keep-duplicates", "--loh", "0.0");
+    checkCancer("Loh", "5b", REF_TEST5, 126L, "--keep-duplicates", "--loh", "0.0", "--Xinclude-germline");
   }
 
   // Set loh should get the LOH call - original is heterozygous
@@ -246,60 +246,11 @@ public class SomaticNanoTest extends TestCase {
     check(tmpl, sam, sam2, relation, "", new String[0], 1386L);
   }
 
-
-  /*
-  public void testContaminationBug() {
-    //Diagnostic.setLogStream(System.err);
-    final File tmp = FileUtils.createTempDir("somnano", "tests");
-    try {
-      final File templateDir = new File(tmp, "template");
-      ReaderTestUtils.getDNADir(FileHelper.resourceToString(RESOURCES_DIR + "contaminationbug.ref"), templateDir);
-      final File out = new File(tmp, "output");
-
-      final String sam = FileHelper.resourceToString(RESOURCES_DIR + "contaminationbug.sam");
-      final String calibration = FileHelper.resourceToString(RESOURCES_DIR + "contaminationbug.calibration");
-
-      final File reads = createIndexedSamFile(sam, tmp, "reads");
-      FileUtils.saveFile(new File(tmp, "reads.sam.gz.calibration"), calibration);
-
-      final String[] args1 = {
-          "-t", templateDir.getPath(),
-          "--contamination", "0.1",
-          "--original", "H318-N",
-          "--derived", "H318-T",
-          "-o", out.getPath(),
-          "-Z",
-          reads.getPath()
-      };
-
-      final MemoryPrintStream ps = new MemoryPrintStream();
-
-      final int code = new SomaticCli().mainInit(args1, new ByteArrayOutputStream(), ps.printStream());
-      assertEquals(ps.toString(), 0, code);
-
-      final String result = FileUtils.fileToString(new File(out, "snps.vcf"));
-      final String actual = result.replace("Version", "");
-      final String actualFixed = actual.replaceAll("##CL=.*\n", "")
-          .replaceAll("##TEMPLATE-SDF-ID=.*\n", "")
-          .replaceAll("##RUN-ID=.*\n", "")
-          .replaceAll("##fileDate=.*\n", "")
-          .replaceAll("##reference=.*\n", "")
-          .replaceAll("##INFO=.*\n", "")
-          .replaceAll("##SAMPLE=.*\n", "")
-          .replaceAll("##FORMAT=.*\n", "")
-          .replaceAll("##FILTER=.*\n", "")
-          .replaceAll("##PEDIGREE=.*\n", "")
-          .replaceAll("##fileformat=.*\n", "")
-          .replaceAll("##contig=.*\n", "")
-          .replaceAll("##source=.*\n", "");
-
-      //System.err.println(actualFixed);
-      //final String expectedFinal = FileHelper.resourceToString("com/rtg/variant/bayes/multisample/cancer/resources/somaticnanotest" + expectedPrefix + ".vcf").replaceAll("\r", "");
-      //assertEquals(expectedFinal, actualFixed.replaceAll("\r", ""));
-      mNano.check("contaminationbugtest.vcf", actualFixed, true);
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp));
-    }
+  public void testContaminationBug() throws Exception {
+    // Not clear what this is actually testing
+    final String tmpl = FileHelper.resourceToString(RESOURCES_DIR + "contaminationbug.ref");
+    final String sam = FileHelper.resourceToString(RESOURCES_DIR + "contaminationbug.sam");
+    final String relation = "original-derived H318-N H318-T contamination=0";
+    check(tmpl, sam, sam, relation, "contaminationbugtest", new String[0], 900L);
   }
-   */
 }
