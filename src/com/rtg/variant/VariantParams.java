@@ -95,13 +95,10 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final File mPopulationPriorFile;
   private final int mMaxEmIterations;
   private final int mMaxComplexHypotheses;
-
   private final File mAvrModelFile;
   private final double mMinAvrScore;
-
   private final SAMFileHeader mUberHeader;
   private final ReferenceRanges mReferenceRanges;
-
   private final GenomeRelationships mGenomeRelationships;
   private final GenomeConnectivity mGenomeConnectivity;
   private final double mSomaticRate;
@@ -109,11 +106,8 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final boolean mIncludeGainOfReference;
   private final double mNoDiseasePrior;
   private final boolean mUsePropagatingPriors;
-  //  private final Map<File, String> mLegacySampleMapping;
-
   private final EnumSet<VcfInfoField> mInfoAnnotations;
   private final EnumSet<VcfFormatField> mFormatAnnotations;
-
   private final File mRegionsFilterBedFile;
 
   /**
@@ -158,27 +152,21 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mPruneHypotheses = builder.mPruneHypotheses;
     mIndelTriggerFraction = builder.mIndelTriggerFraction;
     mEnableTrimSplit = builder.mEnableTrimSplit;
-
     mAvrModelFile = builder.mAvrModelFile;
     mMinAvrScore = builder.mMinAvrScore;
-
     mUberHeader = builder.mUberHeader;
     mReferenceRanges = builder.mReferenceRanges;
-
-    //from multisampleparams
     mGenomeRelationships = builder.mGenomeRelationships;
     mGenomeConnectivity = builder.mGenomeConnectivity;
     mSomaticRate = builder.mSomaticRate;
     mIncludeGermlineVariants = builder.mIncludeGermlineVariants;
     mIncludeGainOfReference = builder.mIncludeGainOfReference;
     mNoDiseasePrior = builder.mNoDiseasePrior;
-    //    mLegacySampleMapping = builder.mLegacySampleMapping;
     mLohPrior = builder.mLohPrior;
     mPopulationPriorFile = builder.mPopulationPriorFile;
     mUsePropagatingPriors = builder.mUsePropagatingPriors;
     mMaxEmIterations = builder.mMaxEmIterations;
     mMaxComplexHypotheses = builder.mMaxComplexHypotheses;
-
     mInfoAnnotations = builder.mInfoAnnotations;
     mFormatAnnotations = builder.mFormatAnnotations;
     mRegionsFilterBedFile = builder.mRegionsFilterBedFile;
@@ -651,7 +639,6 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
    * @return a builder
    */
   public VariantParamsBuilder cloneBuilder() {
-
     final VariantParamsBuilder vpb = new VariantParamsBuilder();
     cloneSet(vpb);
     return vpb;
@@ -771,8 +758,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     sb.append(" hyper_complex_threshold=").append(mHyperComplexLength).append(LS);
     sb.append(" ionTorrent=").append(mIonTorrent)
       .append(" prune_hypothesis=").append(mPruneHypotheses)
-      .append(" enable_trim_split=").append(mEnableTrimSplit).append(LS
-        );  //note currently writing IonTorrent out here is pointless as it is modified after this is printed.
+      .append(" enable_trim_split=").append(mEnableTrimSplit).append(LS);  //note currently writing IonTorrent out here is pointless as it is modified after this is printed.
     sb.append(" somaticRate=").append(somaticRate())
       .append(" includeGermlineVariants=").append(includeGermlineVariants())
       .append(" includeGainOfReference=").append(includeGainOfReference())
@@ -786,12 +772,10 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     }
     sb.append(mGenomePriors == null ? "null" : mGenomePriors.toString());
     sb.append(LS);
-
     if (genome() != null) {
       sb.append(pref).append(genome().toString());
       sb.append(LS);
     }
-
     if (outputParams() != null) {
       sb.append(pref).append(outputParams().toString());
       sb.append(LS);
@@ -806,5 +790,4 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     sb.append(" regions_bed_file=").append(mRegionsFilterBedFile).append(LS);
     return sb.toString();
   }
-
 }
