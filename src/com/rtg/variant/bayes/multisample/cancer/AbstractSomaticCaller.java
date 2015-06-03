@@ -41,6 +41,9 @@ import com.rtg.variant.dna.DNARange;
 import com.rtg.variant.util.VariantUtils;
 
 /**
+ * The bulk of the implementation for the somatic caller.  Takes the models from the normal and cancer
+ * samples and examines the joint (possibly contaminated) distribution to determine the best call for
+ * the pair of samples.
  */
 @TestClass(value = {"com.rtg.variant.bayes.multisample.cancer.ContaminatedSomaticCallerTest", "com.rtg.variant.bayes.multisample.cancer.PureSomaticCallerTest"})
 public abstract class AbstractSomaticCaller extends IntegralAbstract implements MultisampleJointCaller {
@@ -172,20 +175,22 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     }
     final String refAllele = DnaUtils.bytesToSequenceIncCG(ref, position, endPosition - position);
     final String best = cancerHyp.name(bestCancer);
-    final boolean gainReference = mParams.includeGainOfReference();
-    if (sameCall || (!doLoh && loh > 0 && !gainReference) || (refAllele.equals(best) && !gainReference)) {
-      // This call is either
-      //  - the same for normal and cancer samples, but may be different to the reference.
-      //  - looks like an LOH event, even though the LOH prior was 0
-      //  - has cancer sample is equal to the reference but different to normal (gain of reference)
-      //     and gain of reference output is disabled
-      // It is not interesting and should not normally be output.
-      if (!sameCall || hypotheses.reference() == bestNormal) {
+    if (sameCall) {
+      // Call is same for both samples.  It still could be a germline call.
+      if (hypotheses.reference() == bestNormal) {
         if (mParams.callLevel() != VariantOutputLevel.ALL) {
+          // Call was same for both samples and equal to the reference, this is really boring
+          // only retain it if ALL mode is active
           return null;
         }
         boring = true;
       }
+      cause = null;
+    } else if (!doLoh && loh > 0) {
+      // Looks like an LOH event, even though the LOH prior was 0, force it to have no cause
+      cause = null;
+    } else if (!mParams.includeGainOfReference() && refAllele.equals(best)) {
+      // Looks like gain of reference, if such calls are not allowed then this should have no cause
       cause = null;
     } else {
       cause = best;
@@ -224,11 +229,11 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
 
   @Override
   public void toString(StringBuilder sb) {
-    final double[][] qa = mQHaploid != null ? mQHaploid : mQDiploid;
-    sb.append("length=").append(qa.length).append(LS);
-    for (final double[] aQa : qa) {
-      for (final double anAQa : aQa) {
-        sb.append(com.rtg.util.Utils.realFormat(anAQa, 3)).append(" ");
+    final double[][] qMatrix = mQHaploid != null ? mQHaploid : mQDiploid;
+    sb.append("length=").append(qMatrix.length).append(LS);
+    for (final double[] q : qMatrix) {
+      for (final double v : q) {
+        sb.append(com.rtg.util.Utils.realFormat(v, 3)).append(" ");
       }
       sb.append(LS);
     }
