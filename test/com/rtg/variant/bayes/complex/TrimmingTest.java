@@ -209,6 +209,21 @@ public class TrimmingTest extends TestCase {
     assertEquals(3, variant.getLocus().getEnd());
   }
 
+  public void testSplitWithSomaticCause() {
+    final VariantParams p = VariantParams.builder().outputNonSnps(false).create();
+    final VariantLocus locus = new VariantLocus("blah", 1, 4, "AGT", '?');
+    final VariantSample vs = getVariantSample(Ploidy.DIPLOID, "CGA:CGT", false, null, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0, getDescription(locus.getRefNts(), "CGA:CGT"));
+    vs.setCoverage(10);
+    vs.setCoverageCorrection(1.0);
+    final Variant v = new Variant(locus, vs);
+    v.setNonIdentityPosterior(2.3);
+    v.setPossibleCause("CGA:CGT");
+    final List<Variant> list = Trimming.trimSplit(p, v, null);
+    assertEquals(2, list.size());
+    assertNull(list.get(0).getPossibleCause());
+    assertEquals("A:T", list.get(1).getPossibleCause());
+  }
+
   public void testOverCoverageGetsSet() {
     Diagnostic.setLogStream();
     final VariantParams p = VariantParams.builder().maxCoverageFilter(new StaticThreshold(2)).create();

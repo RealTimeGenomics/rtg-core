@@ -200,6 +200,20 @@ public final class Trimming {
     return result;
   }
 
+  private static String cleanCause(final String cause) {
+    if (cause == null) {
+      return null;
+    }
+    final int colon = cause.indexOf(':');
+    if (colon < 0) {
+      return cause;
+    }
+    if (cause.substring(0, colon).equals(cause.substring(colon + 1))) {
+      return null;
+    }
+    return cause;
+  }
+
   private static Variant createSplitVariant(final Variant original, final int start, final int end, final int id) {
     final VariantLocus newLocus = createLocus(original, start, end);
     final VariantSample[] newSamples;
@@ -232,7 +246,7 @@ public final class Trimming {
 
     final Variant result = new Variant(newLocus, newSamples);
     Variant.copy(original, result);
-    result.setPossibleCause(createVariantName(start, end, original.getPossibleCause()));
+    result.setPossibleCause(cleanCause(createVariantName(start, end, original.getPossibleCause())));
     result.setSplitId(id);
     return result;
   }
@@ -299,7 +313,7 @@ public final class Trimming {
 
   /**
    * changes the de novo flag from true to false on any sample incorrectly marked as de novo. (note does not do the opposite)
-   *
+   * Also deals with the somatic cause. Some variants after splitting will no longer have a somatic cause.
    * @param variant the variant to check
    * @param checker the de novo checker for the current inheritance scenario
    * @return the corrected variant
@@ -340,15 +354,15 @@ public final class Trimming {
       }
       final Variant newVariant = new Variant(newLocus, newSamples);
       Variant.copy(variant, newVariant);
-      newVariant.setPossibleCause(variant.getPossibleCause());
+      newVariant.setPossibleCause(cleanCause(variant.getPossibleCause()));
       newVariant.setSplitId(variant.getSplitId());
       ret = newVariant;
     }
     return ret;
   }
+
   /**
    * Trims and splits complex calls.
-   *
    *
    * @param params params to check options
    * @param original call to be trimmed and split (may be returned as the answer)
@@ -363,6 +377,4 @@ public final class Trimming {
     }
     return split(trim(original), denovoCorrector);
   }
-
-
 }

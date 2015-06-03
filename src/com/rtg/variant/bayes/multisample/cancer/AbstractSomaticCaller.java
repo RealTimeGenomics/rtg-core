@@ -175,7 +175,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     }
     final String refAllele = DnaUtils.bytesToSequenceIncCG(ref, position, endPosition - position);
     final String best = cancerHyp.name(bestCancer);
-    if (sameCall) {
+    if (sameCall || bestNormal == bestCancer) {
       // Call is same for both samples.  It still could be a germline call.
       if (hypotheses.reference() == bestNormal) {
         if (mParams.callLevel() != VariantOutputLevel.ALL) {

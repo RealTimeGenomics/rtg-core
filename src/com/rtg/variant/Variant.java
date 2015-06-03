@@ -423,7 +423,7 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
     copyTo.setPossibleCauseScore(copyFrom.getPossibleCauseScore());
     copyTo.setNormalCancerScore(copyFrom.getNormalCancerScore());
     copyTo.setDiseasePresenceScore(copyFrom.getDiseasePresenceScore());
-      copyTo.setNonIdentityPosterior(copyFrom.getNonIdentityPosterior());
+    copyTo.setNonIdentityPosterior(copyFrom.getNonIdentityPosterior());
     if (copyFrom.isTrimmed()) {
       copyTo.setTrimmed();
     }
