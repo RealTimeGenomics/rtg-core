@@ -163,18 +163,9 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     final double loh = loh(hypotheses, bestNormal, bestCancer);
     // create individual genome calls
     final Ploidy normalPloidy = hypotheses.haploid() ? Ploidy.HAPLOID : Ploidy.DIPLOID;
-    final Ploidy cancerPloidy;
-    final Hypotheses<?> cancerHyp;
     final boolean doLoh = mParams.lohPrior() > 0;
-    if (loh > 0) {
-      cancerPloidy = Ploidy.HAPLOID;
-      cancerHyp = normalHypotheses.haploid();
-    } else {
-      cancerPloidy = normalPloidy;
-      cancerHyp = hypotheses;
-    }
     final String refAllele = DnaUtils.bytesToSequenceIncCG(ref, position, endPosition - position);
-    final String best = cancerHyp.name(bestCancer);
+    final String best = hypotheses.name(bestCancer);
     if (sameCall || bestNormal == bestCancer) {
       // Call is same for both samples.  It still could be a germline call.
       if (hypotheses.reference() == bestNormal) {
@@ -197,7 +188,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     }
 
     final VariantSample normalSample = setCallValues(posterior.normalMeasure(), bestNormal, hypotheses, modelNormal, mParams, normalPloidy);
-    final VariantSample cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, cancerHyp, modelCancer, mParams, cancerPloidy);
+    final VariantSample cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, hypotheses, modelCancer, mParams, normalPloidy);
     final VariantLocus locus = new VariantLocus(templateName, position, endPosition, refAllele, VariantUtils.getPreviousRefNt(ref, position));
     final Variant v = new Variant(locus, normalSample, cancerSample);
     if (modelNormal.statistics().overCoverage(mParams, templateName) || modelCancer.statistics().overCoverage(mParams, templateName)) {
