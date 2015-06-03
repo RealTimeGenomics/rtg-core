@@ -33,6 +33,7 @@ import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.avr.AbstractPredictModel;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 import com.rtg.variant.bayes.multisample.MultisampleTask;
+import com.rtg.variant.format.VcfFormatField;
 
 /**
  * Somatic caller
@@ -53,6 +54,7 @@ public class SomaticCli extends AbstractMultisampleCli {
 
   private static final String SEX_FLAG = "sex";
   private static final String INCLUDE_GERMLINE_FLAG = "Xinclude-germline";
+  private static final String INCLUDE_GAIN_OF_REFERENCE = "include-gain-of-reference";
 
   private static final String MISMATCHED_PARAMS_ERROR1 = "Cannot use --" + PEDIGREE_FLAG + " in conjunction with --" + DERIVED_FLAG + ", --" + ORIGINAL_FLAG + ", or --" + CONTAMINATION_FLAG;
   private static final String MISMATCHED_PARAMS_ERROR2 = "All of --" + DERIVED_FLAG + ", --" + ORIGINAL_FLAG + ", and --" + CONTAMINATION_FLAG + " must be specified";
@@ -130,7 +132,8 @@ public class SomaticCli extends AbstractMultisampleCli {
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of individual", Sex.EITHER).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('s', SOMATIC_FLAG, Double.class, "float", "prior probability of a somatic SNP mutation in the derived sample", 0.0001).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(LOH_FLAG, Double.class, "float", "prior probability that a loss of heterozygosity event has occurred", 0.1).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(INCLUDE_GERMLINE_FLAG, "Include germline variants in output VCF").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(INCLUDE_GERMLINE_FLAG, "include germline variants in output VCF").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('G', INCLUDE_GAIN_OF_REFERENCE, "include gain of reference somatic calls in output VCF").setCategory(SENSITIVITY_TUNING);
     AbstractMultisampleCli.registerComplexPruningFlags(flags);
     flags.addRequiredSet(derivedFlag, originalFlag, contamFlag, inFlag);
     flags.addRequiredSet(derivedFlag, originalFlag, contamFlag, listFlag);
@@ -161,13 +164,14 @@ public class SomaticCli extends AbstractMultisampleCli {
     return super.makeParamsBuilder()
       .somaticRate((Double) mFlags.getValue(SOMATIC_FLAG))
       .includeGermlineVariants(mFlags.isSet(INCLUDE_GERMLINE_FLAG))
+      .includeGainOfReference(mFlags.isSet(INCLUDE_GAIN_OF_REFERENCE))
       .lohPrior((Double) mFlags.getValue(LOH_FLAG))
       .sex((Sex) mFlags.getValue(SEX_FLAG));
   }
 
   @Override
   protected SomaticStatistics getStatistics(VariantParams params) {
-    return new SomaticStatistics(params, AbstractPredictModel.AVR); // todo GQ fallback
+    return new SomaticStatistics(params, params.avrModelFile() != null ? AbstractPredictModel.AVR : VcfFormatField.GQ.name());
   }
 
   @Override

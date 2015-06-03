@@ -94,6 +94,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   double mNoDiseasePrior = 0.95;
   double mLohPrior = 0.0;
   boolean mIncludeGermlineVariants = false;
+  boolean mIncludeGainOfReference = false;
   SAMFileHeader mUberHeader = null;
   ReferenceRanges mReferenceRanges = null;
   File mRegionsFilterBedFile = null;
@@ -532,6 +533,16 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
    */
   public VariantParamsBuilder includeGermlineVariants(boolean includeGermline) {
     mIncludeGermlineVariants = includeGermline;
+    return self();
+  }
+
+  /**
+   * If set, output should include somatic calls where there has been a gain of the reference allele.
+   * @param includeGainOfReference true iff gain of reference somatic calls should be output
+   * @return this, for chaining
+   */
+  public VariantParamsBuilder includeGainOfReference(boolean includeGainOfReference) {
+    mIncludeGainOfReference = includeGainOfReference;
     return self();
   }
 

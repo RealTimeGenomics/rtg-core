@@ -42,9 +42,10 @@ public class SomaticCliTest extends AbstractCliTest {
 
   public void testInitParams() {
     checkHelp("somatic [OPTION]... -o DIR -t SDF --contamination FLOAT --derived STRING --original STRING FILE+",
-        "sample identifier used in read groups for original",
-        "threshold for ambiguity",
-        "estimated fraction of contamination"
+      "sample identifier used in read groups for original",
+      "threshold for ambiguity",
+      "include gain of reference somatic calls in output VCF",
+      "estimated fraction of contamination"
     );
   }
 

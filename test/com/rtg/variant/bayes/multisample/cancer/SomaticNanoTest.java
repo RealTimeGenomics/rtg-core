@@ -57,14 +57,18 @@ public class SomaticNanoTest extends TestCase {
   }
 
   private static final String REF_TEST1 = ">simulatedSequence1" + LS
-      + "GTGGAAGAGCCTCTCCTAGGATACCATGCGGCTAGGCTAGGCTCGCCCGGCGGTTCCAGGAGCTGGCGAGTGCC"
-      + "TCGTTTCCTTACGTGGGACGCTCAAATTCTGCTCTGGTTGTTTAAACTGAATTAGGGGAAGCTGCTAGCGAACT"
-      + "CTGCCCAAAACAAGAAACAACCCCGTCCTCTTACGCCGTAACCAGCCA";
+    + "GTGGAAGAGCCTCTCCTAGGATACCATGCGGCTAGGCTAGGCTCGCCCGGCGGTTCCAGGAGCTGGCGAGTGCC"
+    + "TCGTTTCCTTACGTGGGACGCTCAAATTCTGCTCTGGTTGTTTAAACTGAATTAGGGGAAGCTGCTAGCGAACT"
+    + "CTGCCCAAAACAAGAAACAACCCCGTCCTCTTACGCCGTAACCAGCCA";
 
 
   //test an interesting call using cancer caller (homozygous SNP)
   public void test1() throws Exception {
     checkCancer("1", "1", REF_TEST1, 6550L, "--all", "--keep-duplicates", "--Xinclude-germline");
+  }
+
+  public void testGainOfReference() throws Exception {
+    checkCancer("6", "6", REF_TEST1, 2680L, "--all", "--keep-duplicates", "--loh", "0.1", "-G");
   }
 
   private static final String REF_TEST2 = ">test1" + LS

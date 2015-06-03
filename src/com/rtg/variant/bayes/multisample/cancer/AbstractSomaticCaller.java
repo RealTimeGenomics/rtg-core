@@ -172,11 +172,13 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     }
     final String refAllele = DnaUtils.bytesToSequenceIncCG(ref, position, endPosition - position);
     final String best = cancerHyp.name(bestCancer);
-    if (sameCall || (!doLoh && loh > 0) || refAllele.equals(best)) {
+    final boolean gainReference = mParams.includeGainOfReference();
+    if (sameCall || (!doLoh && loh > 0 && !gainReference) || (refAllele.equals(best) && !gainReference)) {
       // This call is either
       //  - the same for normal and cancer samples, but may be different to the reference.
       //  - looks like an LOH event, even though the LOH prior was 0
-      //  - has cancer sample equal to the reference (and by assumption cannot be a cause of cancer)
+      //  - has cancer sample is equal to the reference but different to normal (gain of reference)
+      //     and gain of reference output is disabled
       // It is not interesting and should not normally be output.
       if (!sameCall || hypotheses.reference() == bestNormal) {
         if (mParams.callLevel() != VariantOutputLevel.ALL) {
