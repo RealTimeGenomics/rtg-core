@@ -376,13 +376,13 @@ public enum VcfFormatField {
     }
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      if (sample.getSomaticScore() != null) {
-        rec.addFormatAndSample(name(), VariantUtils.formatPosterior(sample.getSomaticScore()));
+      if (sample.getDeNovoPosterior() != null) {
+        rec.addFormatAndSample(name(), VariantUtils.formatPosterior(sample.getDeNovoPosterior()));
       }
     }
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      return sample != null && sample.getSomaticScore() != null;
+      return sample != null && sample.getDeNovoPosterior() != null;
     }
   },
 

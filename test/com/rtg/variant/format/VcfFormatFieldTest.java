@@ -182,7 +182,6 @@ public class VcfFormatFieldTest extends TestCase {
     sample.setStats(new StatisticsSnp(DescriptionSnp.SINGLETON));
     sample.setStatisticsString("Q");
     sample.setPlacedUnmappedRatio(0.42);
-    sample.setSomaticScore(17.0);
     Map<Set<String>, Double> like = new HashMap<>();
     like.put(Collections.singleton("A"), 0.2);
     like.put(VariantSample.pairSet("G", "A"), 0.5);
@@ -195,7 +194,7 @@ public class VcfFormatFieldTest extends TestCase {
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
-    assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:4.00:1.00:5.00:0.50:0.42:Q:0,0:7.4:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
+    assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:4.00:1.00:5.00:0.50:0.42:Q:0,0:4.3:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
 
     sample.setHoeffdingAlleleBalanceHom(3.0);
     rec = new VcfRecord();
@@ -204,7 +203,7 @@ public class VcfFormatFieldTest extends TestCase {
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
-    assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:3.00:1.00:5.00:0.50:0.42:Q:0,0:7.4:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
+    assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:3.00:1.00:5.00:0.50:0.42:Q:0,0:4.3:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
 
     rec = new VcfRecord();
     rec.setRefCall("A");
@@ -226,7 +225,7 @@ public class VcfFormatFieldTest extends TestCase {
     }
 
     // This is a bit dumb the final 3 format fields haven't been populated not entirely sure why
-    assertEquals("null\t0\t.\tA\t.\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t./.:10:14.286:5.500:5.000:10.4:.:.:.:43:3.00:1.00:5.00:0.50:0.42:Q:0:7.4:0.00", rec.toString());
+    assertEquals("null\t0\t.\tA\t.\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t./.:10:14.286:5.500:5.000:10.4:.:.:.:43:3.00:1.00:5.00:0.50:0.42:Q:0:4.3:0.00", rec.toString());
   }
 
   public void testDenovoUpdateRecord() {
