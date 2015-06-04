@@ -13,7 +13,6 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 /**
  * Keeps statistical counts on counts of reference and alternate alleles.
- * @author Sean A. Irvine
  */
 public interface Scorer {
 

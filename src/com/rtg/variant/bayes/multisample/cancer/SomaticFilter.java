@@ -20,7 +20,6 @@ import com.rtg.vcf.header.VcfHeader;
  * A filter serving two functions in somatic calling. It ensures that all records are passed
  * into the SomaticStatistics for accumulation of contamination estimates and controls
  * whether or not non-somatic variants are output.
- * @author Sean A. Irvine
  */
 public class SomaticFilter implements VcfFilter {
 

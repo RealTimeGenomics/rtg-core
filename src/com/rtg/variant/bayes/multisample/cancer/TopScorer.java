@@ -13,7 +13,6 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 /**
  * Remember top scoring items.  Simple array backed implementation.
- * @author Sean A. Irvine
  */
 class TopScorer implements Scorer {
 

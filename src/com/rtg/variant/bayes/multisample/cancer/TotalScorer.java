@@ -13,7 +13,6 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 /**
  * Remember total of all items.
- * @author Sean A. Irvine
  */
 class TotalScorer implements Scorer {
 
