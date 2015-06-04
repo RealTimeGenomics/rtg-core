@@ -93,11 +93,10 @@ public final class Trimming {
         VariantSample.copy(sample, newSamples[k]);
         // Update counts to correspond to the new description
         final Description d = newSamples[k].getStats().counts().getDescription() instanceof DescriptionNone ? DescriptionNone.SINGLETON : newDescription;
-        final Statistics<?> stats = newSamples[k].getStats();
-        stats.remapAlleleStatistics(d, alleleMapping);
+        newSamples[k].setStats((Statistics<?>) newSamples[k].getStats().copy());
+        newSamples[k].getStats().remapAlleleStatistics(d, alleleMapping);
         final Map<Set<String>, Double> newMap = newGenotypeLikelihoods(leftClip, rightClip, sample);
         newSamples[k].setGenotypeLikelihoods(newMap);
-        newSamples[k].setStats(stats);
       } else {
         newSamples[k] = null;
       }
@@ -201,6 +200,7 @@ public final class Trimming {
   }
 
   private static String cleanCause(final String cause) {
+    // XXX this is completely wrong, needs to consider actual samples
     if (cause == null) {
       return null;
     }
@@ -348,14 +348,11 @@ public final class Trimming {
                 ? VariantSample.DeNovoStatus.IS_DE_NOVO : VariantSample.DeNovoStatus.NOT_DE_NOVO;
           }
           newSamples[k] = new VariantSample(sample.getPloidy(), sample.getName(), sample.isIdentity(), sample.getMeasure(), newStatus, sample.getDeNovoPosterior());
-          newSamples[k].setGenotypeLikelihoods(sample.getGenotypeLikelihoods());
           VariantSample.copy(sample, newSamples[k]);
         }
       }
       final Variant newVariant = new Variant(newLocus, newSamples);
       Variant.copy(variant, newVariant);
-      newVariant.setPossibleCause(cleanCause(variant.getPossibleCause()));
-      newVariant.setSplitId(variant.getSplitId());
       ret = newVariant;
     }
     return ret;

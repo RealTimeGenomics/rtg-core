@@ -21,7 +21,7 @@ import com.rtg.variant.bayes.Hypotheses;
  */
 public abstract class CombinedPriorsSnp<D extends Description> extends CombinedPriors<D> {
 
-  static <D extends Description> double[][]  makeQ(final double mutation, double loh, final Hypotheses<D> hypotheses) {
+  static <D extends Description> double[][] makeQ(final double mutation, double loh, final Hypotheses<D> hypotheses) {
     final int length = hypotheses.size();
     final double[][] q = new double[length][length];
     new CombinedPriorsSnp<D>(hypotheses, mutation, loh) {

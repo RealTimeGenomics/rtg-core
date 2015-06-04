@@ -36,11 +36,11 @@ public class LineageDenovoChecker implements DenovoChecker {
 
   @Override
   public boolean isDenovo(Variant variant, int sample) {
-    final VariantSample child = variant.getSample(sample);
-    final int parentId = mLineage.parent(sample);
-    final VariantSample parent = variant.getSample(parentId);
-    final List<String> childAlleles = new ArrayList<>(Arrays.asList(StringUtils.split(child.getName(), ':')));
-    final List<String> parentAlleles = new ArrayList<>(Arrays.asList(StringUtils.split(parent.getName(), ':')));
+    final VariantSample derived = variant.getSample(sample);
+    final int originalId = mLineage.parent(sample);
+    final VariantSample original = variant.getSample(originalId);
+    final List<String> childAlleles = new ArrayList<>(Arrays.asList(StringUtils.split(derived.getName(), ':')));
+    final List<String> parentAlleles = new ArrayList<>(Arrays.asList(StringUtils.split(original.getName(), ':')));
     for (String s : parentAlleles) {
       if (!childAlleles.remove(s)) {
         return true;

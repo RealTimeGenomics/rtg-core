@@ -423,6 +423,7 @@ public class VariantSample {
         copyTo.mInfo[i] = copyFrom.mInfo[i];
       }
     }
-    copyTo.setStats((Statistics<?>) copyFrom.getStats().copy());
+    copyTo.setGenotypeLikelihoods(copyFrom.getGenotypeLikelihoods());
+    copyTo.setStats(copyFrom.getStats());
   }
 }

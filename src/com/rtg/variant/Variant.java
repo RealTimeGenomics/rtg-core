@@ -394,9 +394,7 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
   }
 
   /**
-   * Method to copy all non final fields from one object to another
-   * should ignore copying split id
-   *
+   * Method to copy all non final fields from one object to another.
    * @param copyFrom values to copy from
    * @param copyTo value to copy to
    */
@@ -429,6 +427,7 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
     }
     copyTo.mFilters = copyFrom.mFilters;
     copyTo.setLoh(copyFrom.getLoh());
+    copyTo.setSplitId(copyFrom.getSplitId());
   }
 
   @Override
