@@ -17,11 +17,11 @@ import java.util.List;
 import java.util.Set;
 
 import com.rtg.reference.Ploidy;
+import com.rtg.relation.LineageLookup;
 import com.rtg.util.StringUtils;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantSample;
-import com.rtg.variant.bayes.multisample.lineage.Lineage;
 import com.rtg.variant.bayes.snp.DescriptionCommon;
 
 import junit.framework.TestCase;
@@ -51,8 +51,7 @@ public class LineageDenovoCheckerTest extends TestCase {
 
   }
   public void testDenovoCorrect() {
-    final Lineage lineage = new Lineage.LineageBuilder().add(0, 1).create();
-    final LineageDenovoChecker checker = new LineageDenovoChecker(lineage);
+    final LineageDenovoChecker checker = new LineageDenovoChecker(new LineageLookup(-1, 0));
     assertTrue(isDenovo(checker, "T", new String[] {"T", "T"}, new String[] {"T", "A"}));
     assertTrue(isDenovo(checker, "T", new String[] {"T", "T"}, new String[] {"T", "A"}));
     assertTrue(isDenovo(checker, "A", new String[] {"TT", "TT"}, new String[] {"TT", "A"}));

@@ -27,6 +27,7 @@ public class AllTests extends TestSuite {
     final TestSuite suite = new TestSuite("com.rtg.util.relation");
     suite.addTestSuite(ChildFamilyLookupTest.class);
     suite.addTestSuite(GenomeRelationshipsTest.class);
+    suite.addTestSuite(LineageLookupTest.class);
     suite.addTestSuite(MultiFamilyOrderingTest.class);
     suite.addTestSuite(RelationshipsFileParserTest.class);
     suite.addTestSuite(PedFileParserTest.class);

@@ -15,33 +15,33 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.rtg.relation.LineageLookup;
 import com.rtg.util.StringUtils;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantSample;
-import com.rtg.variant.bayes.multisample.lineage.Lineage;
 
 /**
  * De novo checker that supports cell lineage de novo checking
  */
 public class LineageDenovoChecker implements DenovoChecker {
 
-  final Lineage mLineage;
+  final LineageLookup mLineage;
 
   /**
-   * @param lineage the cell lineage
+   * @param lineage array of length equal to the number of samples, giving the the
+   * sample id of the predecessor (parent or originating sample) for each sample
    */
-  public LineageDenovoChecker(Lineage lineage) {
+  public LineageDenovoChecker(LineageLookup lineage) {
     mLineage = lineage;
   }
 
   @Override
   public boolean isDenovo(Variant variant, int sample) {
     final VariantSample derived = variant.getSample(sample);
-    final int originalId = mLineage.parent(sample);
+    final int originalId = mLineage.getOriginal(sample);
     final VariantSample original = variant.getSample(originalId);
     final List<String> childAlleles = new ArrayList<>(Arrays.asList(StringUtils.split(derived.getName(), ':')));
-    final List<String> parentAlleles = new ArrayList<>(Arrays.asList(StringUtils.split(original.getName(), ':')));
-    for (String s : parentAlleles) {
+    for (final String s : StringUtils.split(original.getName(), ':')) {
       if (!childAlleles.remove(s)) {
         return true;
       }

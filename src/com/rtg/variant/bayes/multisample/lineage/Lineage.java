@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.rtg.relation.LineageLookup;
 import com.rtg.util.Pair;
 import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
@@ -135,7 +136,7 @@ public final class Lineage extends AbstractMultisampleCaller {
   private final Map<Integer, Set<Integer>> mLineageGraph;
   //private final Variable[] mGenotypeVariables;
   private final Variable[] mCoverageVariables;
-  private final int[] mParents;
+  private final LineageLookup mLineageLookup;
   private final double[] mDenovoPriors;
   private final VariantParams mParams;
 
@@ -149,17 +150,18 @@ public final class Lineage extends AbstractMultisampleCaller {
         mCoverageVariables[k] = new Variable("C" + k, MAX_COPY_NUMBER + 1);
       }
     }
-    mParents = new int[max + 1];
-    Arrays.fill(mParents, -1);
+    final int[] parents = new int[max + 1];
+    Arrays.fill(parents, -1);
     for (final Map.Entry<Integer, Set<Integer>> e : mLineageGraph.entrySet()) {
       final int parent = e.getKey();
       for (final int child : e.getValue()) {
-        if (mParents[child] != -1) {
+        if (parents[child] != -1) {
           throw new IllegalArgumentException("Child " + child + " has multiple parents");
         }
-        mParents[child] = parent;
+        parents[child] = parent;
       }
     }
+    mLineageLookup = new LineageLookup(parents);
   }
 
   Set<Integer> children(final int node) {
@@ -167,8 +169,12 @@ public final class Lineage extends AbstractMultisampleCaller {
     return children == null ? Collections.<Integer>emptySet() : children;
   }
 
+  LineageLookup lineageLookup() {
+    return mLineageLookup;
+  }
+
   boolean isRoot(final int node) {
-    return mParents[node] == -1;
+    return mLineageLookup.getOriginal(node) == -1;
   }
 
   /**
@@ -177,7 +183,7 @@ public final class Lineage extends AbstractMultisampleCaller {
    * @return the parent node or -1
    */
   public int parent(final int node) {
-    return mParents[node];
+    return mLineageLookup.getOriginal(node);
   }
 
   Variable getCoverageVariable(final int node) {

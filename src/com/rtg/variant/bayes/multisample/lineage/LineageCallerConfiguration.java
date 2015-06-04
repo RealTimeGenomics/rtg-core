@@ -121,7 +121,7 @@ public final class LineageCallerConfiguration extends AbstractJointCallerConfigu
   LineageDenovoChecker mCorrector;
   private LineageCallerConfiguration(Lineage jointCaller, String[] genomeNames, List<IndividualSampleFactory<?>> individualFactories, MachineErrorChooserInterface machineErrorChooser, ModelSnpFactory haploid, ModelSnpFactory diploid, PopulationHwHypothesesCreator ssp) {
     super(jointCaller, genomeNames, individualFactories, machineErrorChooser, haploid, diploid, ssp);
-    mCorrector = new LineageDenovoChecker(jointCaller);
+    mCorrector = new LineageDenovoChecker(jointCaller.lineageLookup());
   }
 
   @Override
