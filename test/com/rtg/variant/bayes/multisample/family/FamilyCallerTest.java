@@ -14,6 +14,7 @@ package com.rtg.variant.bayes.multisample.family;
 
 
 import java.util.ArrayList;
+import java.util.EnumSet;
 import java.util.List;
 
 import com.rtg.mode.DNA;
@@ -45,6 +46,7 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.bayes.snp.HypothesesSnp;
 import com.rtg.variant.bayes.snp.StatisticsSnp;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
+import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
 import junit.framework.TestCase;
@@ -121,6 +123,7 @@ public class FamilyCallerTest extends TestCase {
     ref[20] = 1;
     final Variant v = fc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploidHypotheses(params, refNt), diploidHypotheses(params, refNt), false, null));
     final VariantOutputVcfFormatter f = new VariantOutputVcfFormatter(vParams, "f", "m", "c1", "c2");
+    f.addExtraFormatFields(EnumSet.of(VcfFormatField.RQ, VcfFormatField.DN, VcfFormatField.DNP));
     assertEquals(f.formatCall(v), 13, f.formatCall(v).split("\t").length);
     mNano.check(nanoPrefix() + "comparison.vcf", f.formatCall(v), false);
   }

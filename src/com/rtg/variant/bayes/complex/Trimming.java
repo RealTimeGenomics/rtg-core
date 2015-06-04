@@ -199,21 +199,6 @@ public final class Trimming {
     return result;
   }
 
-  private static String cleanCause(final String cause) {
-    // XXX this is completely wrong, needs to consider actual samples
-    if (cause == null) {
-      return null;
-    }
-    final int colon = cause.indexOf(':');
-    if (colon < 0) {
-      return cause;
-    }
-    if (cause.substring(0, colon).equals(cause.substring(colon + 1))) {
-      return null;
-    }
-    return cause;
-  }
-
   private static Variant createSplitVariant(final Variant original, final int start, final int end, final int id) {
     final VariantLocus newLocus = createLocus(original, start, end);
     final VariantSample[] newSamples;
@@ -246,7 +231,7 @@ public final class Trimming {
 
     final Variant result = new Variant(newLocus, newSamples);
     Variant.copy(original, result);
-    result.setPossibleCause(cleanCause(createVariantName(start, end, original.getPossibleCause())));
+    result.setPossibleCause(createVariantName(start, end, original.getPossibleCause()));
     result.setSplitId(id);
     return result;
   }

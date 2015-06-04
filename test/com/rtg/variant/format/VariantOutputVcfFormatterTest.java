@@ -593,6 +593,7 @@ public class VariantOutputVcfFormatterTest extends TestCase {
 
     final VariantParams params = new VariantParamsBuilder().genomeRelationships(grf).maxAmbiguity(0.5).vcfRp(true).create();
     final VariantOutputVcfFormatter formatter = new VariantOutputVcfFormatter(params, "FATHER", "MOTHER", "CHILD");
+    formatter.addExtraFormatFields(EnumSet.of(VcfFormatField.RQ, VcfFormatField.DN, VcfFormatField.DNP));
     final SAMFileHeader samHeader = new SAMFileHeader();
     SAMReadGroupRecord readGroup = new SAMReadGroupRecord("F");
     readGroup.setPlatform("Illumina");
@@ -667,6 +668,7 @@ public class VariantOutputVcfFormatterTest extends TestCase {
       sequenceRecord.setAttribute(SAMSequenceRecord.SPECIES_TAG, "timelord");
       samHeader.getSequenceDictionary().addSequence(sequenceRecord);
       formatter.addExtraInfoFields(EnumSet.of(VcfInfoField.DISEASE, VcfInfoField.RDS));
+      formatter.addExtraFormatFields(EnumSet.of(VcfFormatField.RQ, VcfFormatField.DN, VcfFormatField.DNP));
       formatter.writeHeader(mps.outputStream(), params, samHeader);
 
       final String header = mps.toString().replaceAll("##source=.*", "##source=").replaceAll("##RUN-ID=.*", "##RUN-ID=").replaceAll("##fileDate=20.*", "##fileDate=20");

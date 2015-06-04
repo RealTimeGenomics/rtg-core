@@ -38,6 +38,7 @@ import com.rtg.variant.bayes.multisample.population.PopulationHwHypothesesCreato
 import com.rtg.variant.bayes.snp.ModelNoneFactory;
 import com.rtg.variant.bayes.snp.ModelSnpFactory;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
+import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
 
 /**
@@ -110,6 +111,7 @@ public final class DiseasedFamilyCallerConfiguration extends AbstractJointCaller
   @Override
   public VariantOutputVcfFormatter getOutputFormatter(VariantParams params) {
     final VariantOutputVcfFormatter f = new VariantOutputVcfFormatter(params, getGenomeNames());
+    f.addExtraFormatFields(EnumSet.of(VcfFormatField.RQ, VcfFormatField.DN, VcfFormatField.DNP));
     f.addExtraInfoFields(EnumSet.of(VcfInfoField.DISEASE, VcfInfoField.RDS));
     return f;
   }

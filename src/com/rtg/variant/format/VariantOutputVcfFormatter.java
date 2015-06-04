@@ -138,11 +138,6 @@ public class VariantOutputVcfFormatter {
     mFormatFields.add(VcfFormatField.PPB);
     mFormatFields.add(VcfFormatField.PUR);
     mFormatFields.add(VcfFormatField.GL);
-    if (mSampleNames.length > 1 && mSampleColumns != null) {
-      mFormatFields.add(VcfFormatField.RQ);
-      mFormatFields.add(VcfFormatField.DN);
-      mFormatFields.add(VcfFormatField.DNP);
-    }
     if (mParams != null) {
       if (mParams.vcfRp()) {
         mFormatFields.add(VcfFormatField.RP);

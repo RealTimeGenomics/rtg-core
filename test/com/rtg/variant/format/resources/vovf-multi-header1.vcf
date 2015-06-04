@@ -22,11 +22,8 @@
 ##FORMAT=<ID=DPR,Number=1,Type=Float,Description="Ratio of read depth to expected read depth">
 ##FORMAT=<ID=RE,Number=1,Type=Float,Description="RTG Total Error">
 ##FORMAT=<ID=AR,Number=1,Type=Float,Description="Ambiguity Ratio">
-##FORMAT=<ID=RQ,Number=1,Type=Float,Description="RTG sample quality">
 ##FORMAT=<ID=GQ,Number=1,Type=Integer,Description="Genotype Quality">
 ##FORMAT=<ID=RP,Number=1,Type=Float,Description="RTG Posterior">
-##FORMAT=<ID=DN,Number=1,Type=Character,Description="Indicates whether call is a putative de novo mutation">
-##FORMAT=<ID=DNP,Number=1,Type=Float,Description="Phred scaled probability that the call is due to a de novo mutation">
 ##FORMAT=<ID=ABP,Number=1,Type=Float,Description="Phred scaled probability that allele imbalance is present">
 ##FORMAT=<ID=SBP,Number=1,Type=Float,Description="Phred scaled probability that strand bias is present">
 ##FORMAT=<ID=RPB,Number=1,Type=Float,Description="Phred scaled probability that read position bias is present">

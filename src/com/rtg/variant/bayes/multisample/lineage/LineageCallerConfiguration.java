@@ -14,6 +14,7 @@ package com.rtg.variant.bayes.multisample.lineage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 import com.rtg.reference.Ploidy;
@@ -37,6 +38,8 @@ import com.rtg.variant.bayes.multisample.Utils;
 import com.rtg.variant.bayes.multisample.population.PopulationHwHypothesesCreator;
 import com.rtg.variant.bayes.snp.ModelNoneFactory;
 import com.rtg.variant.bayes.snp.ModelSnpFactory;
+import com.rtg.variant.format.VariantOutputVcfFormatter;
+import com.rtg.variant.format.VcfFormatField;
 
 /**
  */
@@ -115,13 +118,17 @@ public final class LineageCallerConfiguration extends AbstractJointCallerConfigu
     }
   }
 
-
-
-
   LineageDenovoChecker mCorrector;
   private LineageCallerConfiguration(Lineage jointCaller, String[] genomeNames, List<IndividualSampleFactory<?>> individualFactories, MachineErrorChooserInterface machineErrorChooser, ModelSnpFactory haploid, ModelSnpFactory diploid, PopulationHwHypothesesCreator ssp) {
     super(jointCaller, genomeNames, individualFactories, machineErrorChooser, haploid, diploid, ssp);
     mCorrector = new LineageDenovoChecker(jointCaller);
+  }
+
+  @Override
+  public VariantOutputVcfFormatter getOutputFormatter(final VariantParams params) {
+    final VariantOutputVcfFormatter f = new VariantOutputVcfFormatter(params, getGenomeNames());
+    f.addExtraFormatFields(EnumSet.of(VcfFormatField.RQ, VcfFormatField.DN, VcfFormatField.DNP));
+    return f;
   }
 
   @Override

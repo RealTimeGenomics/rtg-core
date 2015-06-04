@@ -14,6 +14,7 @@ package com.rtg.variant.bayes.multisample.population;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -44,6 +45,8 @@ import com.rtg.variant.bayes.multisample.family.FamilyCaller;
 import com.rtg.variant.bayes.multisample.forwardbackward.FamilyCallerFB;
 import com.rtg.variant.bayes.snp.ModelNoneFactory;
 import com.rtg.variant.bayes.snp.ModelSnpFactory;
+import com.rtg.variant.format.VariantOutputVcfFormatter;
+import com.rtg.variant.format.VcfFormatField;
 import com.rtg.vcf.ChildPhasingVcfAnnotator;
 import com.rtg.vcf.VcfAnnotator;
 
@@ -174,6 +177,13 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
   private PopulationCallerConfiguration(MultisampleJointCaller jointCaller, String[] genomeNames, List<IndividualSampleFactory<?>> individualFactories, MachineErrorChooserInterface machineErrorChooser, ModelSnpFactory haploid, ModelSnpFactory diploid, PopulationHwHypothesesCreator ssp, ChildFamilyLookup families) {
     super(jointCaller, genomeNames, individualFactories, machineErrorChooser, haploid, diploid, ssp);
     mDenovoCorrect = new MendelianDenovoChecker(families);
+  }
+
+  @Override
+  public VariantOutputVcfFormatter getOutputFormatter(final VariantParams params) {
+    final VariantOutputVcfFormatter f = new VariantOutputVcfFormatter(params, getGenomeNames());
+    f.addExtraFormatFields(EnumSet.of(VcfFormatField.RQ, VcfFormatField.DN, VcfFormatField.DNP));
+    return f;
   }
 
   @Override
