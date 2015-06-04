@@ -22,6 +22,7 @@ import java.util.Set;
 import com.rtg.reference.Ploidy;
 import com.rtg.relation.ChildFamilyLookup;
 import com.rtg.relation.Family;
+import com.rtg.relation.LineageLookup;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.StaticThreshold;
@@ -207,6 +208,25 @@ public class TrimmingTest extends TestCase {
     assertEquals('A', variant.getLocus().getPreviousRefNt());
     assertEquals(2, variant.getLocus().getStart());
     assertEquals(3, variant.getLocus().getEnd());
+  }
+
+  public void testSplitWithSomaticCause() {
+    final VariantParams p = VariantParams.builder().outputNonSnps(false).create();
+    final VariantLocus locus = new VariantLocus("blah", 1, 4, "AGT", '?');
+    final VariantSample normal = getVariantSample(Ploidy.DIPLOID, "CGA:CGA", false, null, VariantSample.DeNovoStatus.UNSPECIFIED, null, getDescription(locus.getRefNts(), "CGA:CGT"));
+    normal.setCoverage(10);
+    normal.setCoverageCorrection(1.0);
+    final VariantSample cancer = getVariantSample(Ploidy.DIPLOID, "CGA:CGT", false, null, VariantSample.DeNovoStatus.IS_DE_NOVO, 10.0, getDescription(locus.getRefNts(), "CGA:CGT"));
+    cancer.setCoverage(10);
+    cancer.setCoverageCorrection(1.0);
+    final Variant v = new Variant(locus, normal, cancer);
+    v.setNonIdentityPosterior(2.3);
+    final LineageDenovoChecker checker = new LineageDenovoChecker(new LineageLookup(-1, 0));
+    final List<Variant> list = Trimming.trimSplit(p, v, checker);
+    assertEquals(2, list.size());
+    assertEquals(VariantSample.DeNovoStatus.NOT_DE_NOVO, list.get(0).getSample(1).isDeNovo());
+    assertEquals(10.0, list.get(1).getSample(1).getDeNovoPosterior());
+    assertEquals(VariantSample.DeNovoStatus.IS_DE_NOVO, list.get(1).getSample(1).isDeNovo());
   }
 
   public void testOverCoverageGetsSet() {

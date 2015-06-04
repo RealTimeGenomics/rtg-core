@@ -127,7 +127,7 @@ public abstract class AbstractJointCallerConfiguration {
    * Get the family (if any) in which given sample is a child.
    * @return the lookup table
    */
-  public DenovoChecker getDenovoCorrector() {
+  public DenovoChecker getDenovoChecker() {
     return null;
   }
 

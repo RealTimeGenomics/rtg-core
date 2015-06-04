@@ -118,10 +118,11 @@ public final class LineageCallerConfiguration extends AbstractJointCallerConfigu
     }
   }
 
-  LineageDenovoChecker mCorrector;
+  private final LineageDenovoChecker mChecker;
+
   private LineageCallerConfiguration(Lineage jointCaller, String[] genomeNames, List<IndividualSampleFactory<?>> individualFactories, MachineErrorChooserInterface machineErrorChooser, ModelSnpFactory haploid, ModelSnpFactory diploid, PopulationHwHypothesesCreator ssp) {
     super(jointCaller, genomeNames, individualFactories, machineErrorChooser, haploid, diploid, ssp);
-    mCorrector = new LineageDenovoChecker(jointCaller.lineageLookup());
+    mChecker = new LineageDenovoChecker(jointCaller.lineageLookup());
   }
 
   @Override
@@ -132,8 +133,8 @@ public final class LineageCallerConfiguration extends AbstractJointCallerConfigu
   }
 
   @Override
-  public DenovoChecker getDenovoCorrector() {
-    return mCorrector;
+  public DenovoChecker getDenovoChecker() {
+    return mChecker;
   }
 
   @Override

@@ -72,8 +72,8 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
    */
   protected abstract AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses);
 
-  private VariantSample setCallValues(GenotypeMeasure posterior, int cat, Hypotheses<?> hypotheses, ModelInterface<?> model, VariantOutputOptions params, Ploidy ploidy, Double dnp) {
-    final VariantSample sample = new VariantSample(ploidy, hypotheses.name(cat), hypotheses.reference() == cat, posterior, VariantSample.DeNovoStatus.UNSPECIFIED, dnp);
+  private VariantSample setCallValues(GenotypeMeasure posterior, int cat, Hypotheses<?> hypotheses, ModelInterface<?> model, VariantOutputOptions params, Ploidy ploidy, VariantSample.DeNovoStatus dns, Double dnp) {
+    final VariantSample sample = new VariantSample(ploidy, hypotheses.name(cat), hypotheses.reference() == cat, posterior, dns, dnp);
     model.statistics().addCountsToSample(sample, model, params);
     return sample;
   }
@@ -178,10 +178,10 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       }
       cause = null;
     } else if (!doLoh && loh > 0) {
-      // Looks like an LOH event, even though the LOH prior was 0, force it to have no cause
+      // LOH event, even though the LOH prior was 0, force it to have no cause
       cause = null;
     } else if (!mParams.includeGainOfReference() && refAllele.equals(best)) {
-      // Looks like gain of reference, if such calls are not allowed then this should have no cause
+      // Gain of reference, if such calls are not allowed then this should have no cause
       cause = null;
     } else {
       cause = best;
@@ -192,8 +192,13 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       return null;
     }
 
-    final VariantSample normalSample = setCallValues(posterior.normalMeasure(), bestNormal, hypotheses, modelNormal, mParams, normalPloidy, null);
-    final VariantSample cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, hypotheses, modelCancer, mParams, normalPloidy, cause != null ? ratio : null);
+    final VariantSample normalSample = setCallValues(posterior.normalMeasure(), bestNormal, hypotheses, modelNormal, mParams, normalPloidy, VariantSample.DeNovoStatus.UNSPECIFIED, null);
+    final VariantSample cancerSample;
+    if (cause == null) {
+      cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, hypotheses, modelCancer, mParams, normalPloidy, VariantSample.DeNovoStatus.NOT_DE_NOVO, null);
+    } else {
+      cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, hypotheses, modelCancer, mParams, normalPloidy, VariantSample.DeNovoStatus.IS_DE_NOVO, ratio);
+    }
     final VariantLocus locus = new VariantLocus(templateName, position, endPosition, refAllele, VariantUtils.getPreviousRefNt(ref, position));
     final Variant v = new Variant(locus, normalSample, cancerSample);
     if (modelNormal.statistics().overCoverage(mParams, templateName) || modelCancer.statistics().overCoverage(mParams, templateName)) {
@@ -210,7 +215,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     }
 
     if (cause != null) {
-      v.setPossibleCause(cause);
+      v.setPossibleCause(cause); // XXX deprecate this - replace with SS format field in output
       // set the combined call somatic score
       v.setNormalCancerScore(posterior.ncScore());
     }

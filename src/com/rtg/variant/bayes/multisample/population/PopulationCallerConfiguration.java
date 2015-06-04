@@ -187,7 +187,7 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
   }
 
   @Override
-  public DenovoChecker getDenovoCorrector() {
+  public DenovoChecker getDenovoChecker() {
     return mDenovoCorrect;
   }
 }

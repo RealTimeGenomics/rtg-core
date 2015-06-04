@@ -526,7 +526,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     final List<Variant> calls = new ArrayList<>();
     for (Variant variant : merged) {
       if (variant.hasCallNames()) {
-        calls.addAll(Trimming.trimSplit(mParams, variant, mConfig.getDenovoCorrector()));
+        calls.addAll(Trimming.trimSplit(mParams, variant, mConfig.getDenovoChecker()));
       } else {
         calls.add(variant);
       }

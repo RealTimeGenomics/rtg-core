@@ -20,6 +20,7 @@ import java.util.List;
 import com.rtg.mode.DNA;
 import com.rtg.reference.Ploidy;
 import com.rtg.reference.SexMemo;
+import com.rtg.relation.LineageLookup;
 import com.rtg.relation.Relationship;
 import com.rtg.relation.Relationship.RelationshipType;
 import com.rtg.sam.SamUtils;
@@ -34,7 +35,9 @@ import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.complex.ComplexTemplate;
+import com.rtg.variant.bayes.complex.DenovoChecker;
 import com.rtg.variant.bayes.complex.DescriptionComplex;
+import com.rtg.variant.bayes.complex.LineageDenovoChecker;
 import com.rtg.variant.bayes.complex.StatisticsComplex;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
@@ -131,11 +134,18 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
 
   private final double mContamination;
   private final double mMutationRate;
+  private final LineageDenovoChecker mChecker;
 
   private SomaticCallerConfiguration(MultisampleJointCaller jointCaller, String[] genomeNames, List<IndividualSampleFactory<?>> individualFactories, MachineErrorChooserInterface machineErrorChooser, double contamination, double mutationRate, ModelSnpFactory haploid, ModelSnpFactory diploid, PopulationHwHypothesesCreator ssp) {
     super(jointCaller, genomeNames, individualFactories, machineErrorChooser, haploid, diploid, ssp);
     mContamination = contamination;
     mMutationRate = mutationRate;
+    mChecker = new LineageDenovoChecker(new LineageLookup(-1, 0)); // normal is sample 0, cancer is sample 1
+  }
+
+  @Override
+  public DenovoChecker getDenovoChecker() {
+    return mChecker;
   }
 
   @Override

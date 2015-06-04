@@ -150,7 +150,7 @@ public final class FamilyCallerConfiguration extends AbstractJointCallerConfigur
   }
 
   @Override
-  public DenovoChecker getDenovoCorrector() {
+  public DenovoChecker getDenovoChecker() {
     return mDenovoCorrector;
   }
 
