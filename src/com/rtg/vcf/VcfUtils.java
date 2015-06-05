@@ -474,6 +474,8 @@ public final class VcfUtils {
       switch (formatAnnotation.getType()) {
         case DOUBLE:
           return new VcfFormatDoubleAnnotator(formatAnnotation);
+        case INTEGER:
+          return new VcfFormatIntegerAnnotator(formatAnnotation);
         case STRING:
           return new VcfFormatStringAnnotator(formatAnnotation);
         default:

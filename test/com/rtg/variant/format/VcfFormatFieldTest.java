@@ -46,7 +46,7 @@ import junit.framework.TestCase;
 public class VcfFormatFieldTest extends TestCase {
 
   public void testEnum() {
-    TestUtils.testEnum(VcfFormatField.class, "[GT, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, PUR, RS, AD, SSC, GL, GQD, ZY, PD]");
+    TestUtils.testEnum(VcfFormatField.class, "[GT, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, PUR, RS, AD, SSC, SS, GL, GQD, ZY, PD]");
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.AD)) {
       assertFalse(field.isVcfAnnotator());
     }
@@ -80,6 +80,7 @@ public class VcfFormatFieldTest extends TestCase {
       + "##FORMAT=<ID=RS,Number=.,Type=String,Description=\"RTG Support Statistics\">\n"
       + "##FORMAT=<ID=AD,Number=.,Type=Integer,Description=\"Allelic depths for the ref and alt alleles in the order listed\">\n"
       + "##FORMAT=<ID=SSC,Number=1,Type=Float,Description=\"Somatic score\">\n"
+      + "##FORMAT=<ID=SS,Number=1,Type=Integer,Description=\"Somatic status relative to original sample\">\n"
       + "##FORMAT=<ID=GL,Number=G,Type=Float,Description=\"Log_10 scaled genotype likelihoods. As defined in VCF specifications\">\n"
       + "##FORMAT=<ID=GQD,Number=1,Type=Float,Description=\"GQ / DP for a single sample\">\n"
       + "##FORMAT=<ID=ZY,Number=1,Type=String,Description=\"Zygosity of sample. 'e'=>heterozygous, 'o'=>homozygous\">\n"
@@ -194,7 +195,7 @@ public class VcfFormatFieldTest extends TestCase {
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
-    assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:4.00:1.00:5.00:0.50:0.42:Q:0,0:4.3:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
+    assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:SS:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:4.00:1.00:5.00:0.50:0.42:Q:0,0:4.3:2:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
 
     sample.setHoeffdingAlleleBalanceHom(3.0);
     rec = new VcfRecord();
@@ -203,7 +204,7 @@ public class VcfFormatFieldTest extends TestCase {
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
-    assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:3.00:1.00:5.00:0.50:0.42:Q:0,0:4.3:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
+    assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:SS:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:3.00:1.00:5.00:0.50:0.42:Q:0,0:4.3:2:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
 
     rec = new VcfRecord();
     rec.setRefCall("A");
@@ -213,7 +214,7 @@ public class VcfFormatFieldTest extends TestCase {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
 
-    assertEquals("null\t0\t.\tA\t.\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t.", rec.toString());
+    assertEquals("null\t0\t.\tA\t.\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:SS:GL:GQD:ZY:PD\t.", rec.toString());
 
     call = new Variant(new VariantLocus("ref", 2, 3, "A", 'G'), sample);
     call.addFilter(VariantFilter.FAILED_COMPLEX);
@@ -225,7 +226,7 @@ public class VcfFormatFieldTest extends TestCase {
     }
 
     // This is a bit dumb the final 3 format fields haven't been populated not entirely sure why
-    assertEquals("null\t0\t.\tA\t.\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:GL:GQD:ZY:PD\t./.:10:14.286:5.500:5.000:10.4:.:.:.:43:3.00:1.00:5.00:0.50:0.42:Q:0:4.3:0.00", rec.toString());
+    assertEquals("null\t0\t.\tA\t.\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:SS:GL:GQD:ZY:PD\t./.:10:14.286:5.500:5.000:10.4:.:.:.:43:3.00:1.00:5.00:0.50:0.42:Q:0:4.3:2:0.00", rec.toString());
   }
 
   public void testDenovoUpdateRecord() {

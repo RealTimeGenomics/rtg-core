@@ -1,5 +1,5 @@
 /*
- * Copyright (c) $today.theyear. Real Time Genomics Limited.
+ * Copyright (c) 2015. Real Time Genomics Limited.
  *
  * Use of this source code is bound by the Real Time Genomics Limited Software Licence Agreement
  * for Academic Non-commercial Research Purposes only.

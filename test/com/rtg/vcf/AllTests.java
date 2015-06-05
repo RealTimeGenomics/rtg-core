@@ -22,8 +22,6 @@ public class AllTests extends TestSuite {
 
   public static Test suite() {
     final TestSuite suite = new TestSuite("com.rtg.vcf");
-
-    //$JUnit-BEGIN$
     suite.addTest(com.rtg.vcf.annotation.AllTests.suite());
     suite.addTest(com.rtg.vcf.header.AllTests.suite());
     suite.addTest(com.rtg.vcf.validator.AllTests.suite());
@@ -36,6 +34,7 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(VcfFilterCliTest.class);
     suite.addTestSuite(VcfFilterStripperTest.class);
     suite.addTestSuite(VcfFormatDoubleAnnotatorTest.class);
+    suite.addTestSuite(VcfFormatIntegerAnnotatorTest.class);
     suite.addTestSuite(VcfFormatStringAnnotatorTest.class);
     suite.addTestSuite(VcfFormatStripperTest.class);
     suite.addTestSuite(VcfInfoDoubleAnnotatorTest.class);
@@ -50,8 +49,6 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(VcfSubsetTest.class);
     suite.addTestSuite(VcfUtilsTest.class);
     suite.addTestSuite(VcfWriterTest.class);
-    //$JUnit-END$
-
     return suite;
   }
 

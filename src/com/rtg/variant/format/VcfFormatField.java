@@ -382,7 +382,28 @@ public enum VcfFormatField {
     }
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      return sample != null && sample.getDeNovoPosterior() != null;
+      return sample != null && sample.isDeNovo() != VariantSample.DeNovoStatus.UNSPECIFIED && sample.getDeNovoPosterior() != null;
+    }
+  },
+  /** Somatic status (loosely after TCGA "specification"). */
+  SS {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      header.addFormatField(name(), MetaType.INTEGER, new VcfNumber("1"), "Somatic status relative to original sample");
+    }
+    @Override
+    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      if (sample.isDeNovo() == VariantSample.DeNovoStatus.IS_DE_NOVO) {
+        rec.addFormatAndSample(name(), "2");
+      } else if (sample.isIdentity()) {
+        rec.addFormatAndSample(name(), "0");
+      } else {
+        rec.addFormatAndSample(name(), "1");
+      }
+    }
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return sample != null && sample.isDeNovo() != VariantSample.DeNovoStatus.UNSPECIFIED;
     }
   },
 
