@@ -29,7 +29,7 @@ public class LineageLookup {
   }
 
   /**
-   * Get the sample id of the sample from which the given sample is derived or -1 if no such orginator exists.
+   * Get the sample id of the sample from which the given sample is derived or -1 if no such original exists.
    * @param sampleId id of sample
    * @return original sample id or -1
    */
