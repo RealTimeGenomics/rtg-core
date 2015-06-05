@@ -16,14 +16,11 @@ import junit.framework.TestSuite;
 
 /**
  * Test class for all tests in this directory.
- *
  */
 public class AllTests extends TestSuite {
 
   public static Test suite() {
     final TestSuite suite = new TestSuite("com.rtg.vcf.annotation");
-
-    //$JUnit-BEGIN$
     suite.addTestSuite(AlleleCountInGenotypesAnnotationTest.class);
     suite.addTestSuite(AnnotationDataTypeTest.class);
     suite.addTestSuite(DerivedAnnotationsTest.class);
@@ -38,8 +35,6 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(PloidyAnnotationTest.class);
     suite.addTestSuite(QualOverDepthAnnotationTest.class);
     suite.addTestSuite(ZygosityAnnotationTest.class);
-    //$JUnit-END$
-
     return suite;
   }
 

@@ -19,12 +19,8 @@ import junit.framework.TestSuite;
  */
 public final class AllTests {
 
-  private AllTests() {
-  }
-
   public static Test suite() {
     final TestSuite suite = new TestSuite(AllTests.class.getName());
-    //$JUnit-BEGIN$
     suite.addTestSuite(AlleleCountsFileReaderTest.class);
     suite.addTestSuite(AlleleCountsTest.class);
     suite.addTestSuite(ConvergencePlotTest.class);
@@ -39,8 +35,6 @@ public final class AllTests {
     suite.addTestSuite(PopulationNanoTest.class);
     suite.addTestSuite(PopulationHwHypothesesCreatorTest.class);
     suite.addTestSuite(PopulationCallerConfigurationTest.class);
-    //$JUnit-END$
     return suite;
   }
-
 }

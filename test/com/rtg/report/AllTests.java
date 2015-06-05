@@ -20,8 +20,7 @@ import junit.framework.TestSuite;
 public class AllTests extends TestSuite {
 
   public static Test suite() {
-    TestSuite suite = new TestSuite(AllTests.class.getName());
-    //$JUnit-BEGIN$
+    final TestSuite suite = new TestSuite(AllTests.class.getName());
     suite.addTestSuite(CombinedReportTest.class);
     suite.addTestSuite(MapFSummaryReportTest.class);
     suite.addTestSuite(MapReportTest.class);
@@ -36,7 +35,6 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(SimilarityReportTest.class);
     suite.addTestSuite(SpeciesReportTest.class);
     suite.addTestSuite(VelocityReportUtilsTest.class);
-    //$JUnit-END$
     return suite;
   }
 

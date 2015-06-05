@@ -19,18 +19,13 @@ import junit.framework.TestSuite;
  */
 public final class AllTests {
 
-  private AllTests() {
-  }
-
   public static Test suite() {
     final TestSuite suite = new TestSuite(AllTests.class.getName());
-    //$JUnit-BEGIN$
     suite.addTestSuite(BContainerTest.class);
     suite.addTestSuite(CommonFormulasTest.class);
     suite.addTestSuite(FamilyCallerFBTest.class);
     suite.addTestSuite(FamilyPosteriorFBTest.class);
     suite.addTestSuite(MutableFactorTest.class);
-    //$JUnit-END$
     return suite;
   }
 

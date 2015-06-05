@@ -19,18 +19,13 @@ import junit.framework.TestSuite;
  */
 public final class AllTests {
 
-  private AllTests() {
-  }
-
   public static Test suite() {
     final TestSuite suite = new TestSuite(AllTests.class.getName());
-    //$JUnit-BEGIN$
     suite.addTestSuite(DependenciesMultiSampleTest.class);
     suite.addTestSuite(EventListMultiSampleTest.class);
     suite.addTestSuite(JobIdMultisampleTest.class);
     suite.addTestSuite(JobTypeTest.class);
     suite.addTestSuite(MultisampleStatisticsTest.class);
-    //$JUnit-END$
     return suite;
   }
 

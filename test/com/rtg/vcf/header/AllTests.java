@@ -16,14 +16,11 @@ import junit.framework.TestSuite;
 
 /**
  * Test class for all tests in this directory.
- *
  */
 public class AllTests extends TestSuite {
 
   public static Test suite() {
     final TestSuite suite = new TestSuite("com.rtg.vcf");
-
-    //$JUnit-BEGIN$
     suite.addTestSuite(ContigFieldTest.class);
     suite.addTestSuite(AltFieldTest.class);
     suite.addTestSuite(FilterFieldTest.class);
@@ -37,12 +34,7 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(VcfHeaderMergeTest.class);
     suite.addTestSuite(VcfNumberTest.class);
     suite.addTestSuite(VcfNumberTypeTest.class);
-    //$JUnit-END$
-
     return suite;
   }
 
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
 }

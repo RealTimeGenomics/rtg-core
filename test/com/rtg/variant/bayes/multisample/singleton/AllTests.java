@@ -19,17 +19,12 @@ import junit.framework.TestSuite;
  */
 public final class AllTests {
 
-  private AllTests() {
-  }
-
   public static Test suite() {
-    TestSuite suite = new TestSuite(AllTests.class.getName());
-    //$JUnit-BEGIN$
+    final TestSuite suite = new TestSuite(AllTests.class.getName());
     suite.addTestSuite(SingletonCallerTest.class);
     suite.addTestSuite(SingletonCliTest.class);
     suite.addTestSuite(SingletonCallerConfigurationTest.class);
     suite.addTestSuite(SingletonValidatorTest.class);
-    //$JUnit-END$
     return suite;
   }
 

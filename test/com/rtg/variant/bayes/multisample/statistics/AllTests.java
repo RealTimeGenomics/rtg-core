@@ -19,18 +19,12 @@ import junit.framework.TestSuite;
  */
 public final class AllTests {
 
-  private AllTests() {
-  }
-
   public static Test suite() {
     final TestSuite suite = new TestSuite(AllTests.class.getName());
-    //$JUnit-BEGIN$
     suite.addTestSuite(AlleleBalanceTableTest.class);
     suite.addTestSuite(VstatsCallerConfigurationTest.class);
     suite.addTestSuite(VstatsCallerTest.class);
     suite.addTestSuite(VstatsCliTest.class);
-    //$JUnit-END$
     return suite;
   }
-
 }

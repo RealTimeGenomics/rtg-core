@@ -16,7 +16,6 @@ import junit.framework.TestSuite;
 
 /**
  * Test class for all tests in this package.
- *
  */
 public class AllTests extends TestSuite {
 
@@ -32,7 +31,6 @@ public class AllTests extends TestSuite {
     suite.addTest(com.rtg.variant.bayes.multisample.singleton.AllTests.suite());
     suite.addTest(com.rtg.variant.bayes.multisample.statistics.AllTests.suite());
 
-    //$JUnit-BEGIN$
     suite.addTestSuite(BedComplexitiesWriterTest.class);
     suite.addTestSuite(ChunkInfoTest.class);
     suite.addTestSuite(ComplexCallerTest.class);
@@ -55,7 +53,7 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(SimpleRepeatMeasurerTest.class);
     suite.addTestSuite(SingleNMerRepeatMeasurerTest.class);
     suite.addTestSuite(UtilsTest.class);
-    //$JUnit-END$
+
     return suite;
   }
 

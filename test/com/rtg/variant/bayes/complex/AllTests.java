@@ -16,14 +16,11 @@ import junit.framework.TestSuite;
 
 /**
  * Test class for all tests in this package.
- *
  */
 public class AllTests extends TestSuite {
 
   public static Test suite() {
     final TestSuite suite = new TestSuite("com.rtg.variant.bayes.snp");
-
-    //$JUnit-BEGIN$
     suite.addTestSuite(ComplexTemplateTest.class);
     suite.addTestSuite(DescriptionComplexTest.class);
     suite.addTestSuite(EvidenceComplexTest.class);
@@ -43,11 +40,6 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(StatisticsComplexTest.class);
     suite.addTestSuite(TauImplementationTest.class);
     suite.addTestSuite(TrimmingTest.class);
-    //$JUnit-END$
     return suite;
-  }
-
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
   }
 }

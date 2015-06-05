@@ -21,7 +21,6 @@ public class AllTests extends TestSuite {
 
   public static Test suite() {
     final TestSuite suite = new TestSuite("com.rtg.variant.sv");
-    //$JUnit-BEGIN$
     suite.addTest(BreakpointConstraintTest.suite());
     suite.addTestSuite(BreakpointGeometryTest.class);
     suite.addTestSuite(BreakpointPositionTest.class);
@@ -42,11 +41,6 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(SmartBedWriterTest.class);
     suite.addTestSuite(SmartVcfWriterTest.class);
     suite.addTest(com.rtg.variant.sv.discord.pattern.AllTests.suite());
-    //$JUnit-END$
     return suite;
-  }
-
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
   }
 }
