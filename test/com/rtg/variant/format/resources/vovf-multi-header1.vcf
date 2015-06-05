@@ -10,7 +10,6 @@
 ##FILTER=<ID=RX,Description="RTG variant contained within hypercomplex region">
 ##FILTER=<ID=RCEQUIV,Description="RTG variant is equivalent to the previous variant">
 ##FILTER=<ID=OTHER,Description="Variant is invalid for unknown reasons">
-##INFO=<ID=SOMATIC,Number=1,Type=String,Description="Indicates the variant is a somatic mutation">
 ##INFO=<ID=DP,Number=1,Type=Integer,Description="Combined read depth for variant over all samples">
 ##INFO=<ID=DPR,Number=1,Type=Float,Description="Ratio of combined read depth for variant to expected combined read depth">
 ##INFO=<ID=XRX,Number=0,Type=Flag,Description="RTG variant was called using complex caller">

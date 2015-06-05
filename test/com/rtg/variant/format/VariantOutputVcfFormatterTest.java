@@ -429,7 +429,6 @@ public class VariantOutputVcfFormatterTest extends TestCase {
       sequenceRecord.setAttribute(SAMSequenceRecord.SPECIES_TAG, "timelord");
       samHeader.getSequenceDictionary().addSequence(sequenceRecord);
 
-      formatter.addExtraInfoFields(EnumSet.of(VcfInfoField.SOMATIC));
       formatter.addExtraFormatFields(EnumSet.of(VcfFormatField.SSC, VcfFormatField.SS));
 
       formatter.writeHeader(mps.outputStream(), params, samHeader);
@@ -461,7 +460,7 @@ public class VariantOutputVcfFormatterTest extends TestCase {
       v2.setPossibleCause("C:T");
       v2.setNormalCancerScore(4.0);
       s = formatter.formatCall(v2);
-      assertEquals("chr10\t82350\t.\tC\tT\t5.7\tPASS\tSOMATIC=C:T;DP=9\tGT:DP:RE:GQ:RP:SSC:SS\t0/0:4:0.400:9:0.8\t0/1:5:0.400:10:0.9:1.7:2\n", s);
+      assertEquals("chr10\t82350\t.\tC\tT\t5.7\tPASS\tDP=9\tGT:DP:RE:GQ:RP:SSC:SS\t0/0:4:0.400:9:0.8\t0/1:5:0.400:10:0.9:1.7:2\n", s);
 
       vsCancer = createSample(Ploidy.DIPLOID, "C:", false, 0.9 * MathUtils.LOG_10, VariantSample.DeNovoStatus.IS_DE_NOVO, 4.0, null);
       vsCancer.setCoverage(5);
@@ -472,7 +471,7 @@ public class VariantOutputVcfFormatterTest extends TestCase {
       v3.setPossibleCause("C:");
       v3.setNormalCancerScore(4.0);
       s = formatter.formatCall(v3);
-      assertEquals("chr10\t82349\t.\tNC\tN\t5.7\tPASS\tSOMATIC=NC:N;DP=9\tGT:DP:RE:GQ:RP:SSC:SS\t0/0:4:0.400:9:0.8\t0/1:5:0.400:10:0.9:1.7:2\n", s);
+      assertEquals("chr10\t82349\t.\tNC\tN\t5.7\tPASS\tDP=9\tGT:DP:RE:GQ:RP:SSC:SS\t0/0:4:0.400:9:0.8\t0/1:5:0.400:10:0.9:1.7:2\n", s);
 
       vsCancer = createSample(Ploidy.DIPLOID, "C", true, 0.9 * MathUtils.LOG_10, VariantSample.DeNovoStatus.NOT_DE_NOVO, 4.0, null);
       vsCancer.setCoverage(5);

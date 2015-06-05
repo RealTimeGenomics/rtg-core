@@ -83,7 +83,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
 
   protected VariantOutputVcfFormatter getFormatter() {
     final VariantOutputVcfFormatter formatter = new VariantOutputVcfFormatter("normal", "cancer");
-    formatter.addExtraInfoFields(EnumSet.of(VcfInfoField.SOMATIC, VcfInfoField.LOH, VcfInfoField.NCS));
+    formatter.addExtraInfoFields(EnumSet.of(VcfInfoField.LOH, VcfInfoField.NCS));
     formatter.addExtraFormatFields(EnumSet.of(VcfFormatField.SSC, VcfFormatField.SS));
     return formatter;
   }
@@ -163,7 +163,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     );
   }
 
-  protected static final String EXPECT_NORMAL_EQ_REF = "chr1\t14\t.\tA\tC\t.\tPASS\tSOMATIC=C;NCS=10.9;DP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC:SS\t0:3:0.293:0.000:36:0.00:6.51:0.00:0.00:A,3,0.293:3,0\t1:3:0.293:0.000:11:0.00:6.51:0.00:0.00:C,3,0.293:0,3:1.0:2\n";
+  protected static final String EXPECT_NORMAL_EQ_REF = "chr1\t14\t.\tA\tC\t.\tPASS\tNCS=10.9;DP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC:SS\t0:3:0.293:0.000:36:0.00:6.51:0.00:0.00:A,3,0.293:3,0\t1:3:0.293:0.000:11:0.00:6.51:0.00:0.00:C,3,0.293:0,3:1.0:2\n";
 
   public void testNormalEqualsRef() throws InvalidParamsException, IOException {
     checkCancer(
@@ -199,7 +199,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     );
   }
 
-  protected static final String EXPECT_ALL_DIFFERENT = "chr1\t14\t.\tA\tC,G\t.\tPASS\tSOMATIC=G;NCS=8.2;DP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC:SS\t1:3:0.293:0.000:11:0.00:6.51:0.00:0.00:C,3,0.293:0,3,0\t2:3:0.293:0.000:11:0.00:6.51:0.00:0.00:G,3,0.293:0,0,3:0.7:2\n";
+  protected static final String EXPECT_ALL_DIFFERENT = "chr1\t14\t.\tA\tC,G\t.\tPASS\tNCS=8.2;DP=6\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC:SS\t1:3:0.293:0.000:11:0.00:6.51:0.00:0.00:C,3,0.293:0,3,0\t2:3:0.293:0.000:11:0.00:6.51:0.00:0.00:G,3,0.293:0,0,3:0.7:2\n";
 
   public void testAllDifferent() throws InvalidParamsException, IOException {
     checkCancer(

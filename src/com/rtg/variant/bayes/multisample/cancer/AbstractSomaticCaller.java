@@ -156,7 +156,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
 
     final AbstractPosterior posterior = makePosterior(modelNormal, modelCancer, hypotheses);
     final boolean sameCall = posterior.isSameCall();
-    final String cause;
+    final boolean isSomatic;
     final int bestNormal = posterior.bestNormal();
     final int bestCancer = posterior.bestCancer();
     // Simple LOH test based on ploidy of results alone, could be done with Bayesian calculation later
@@ -165,7 +165,6 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     final Ploidy normalPloidy = hypotheses.haploid() ? Ploidy.HAPLOID : Ploidy.DIPLOID;
     final boolean doLoh = mParams.lohPrior() > 0;
     final String refAllele = DnaUtils.bytesToSequenceIncCG(ref, position, endPosition - position);
-    final String best = hypotheses.name(bestCancer);
     if (sameCall || bestNormal == bestCancer) {
       // Call is same for both samples.  It still could be a germline call.
       if (hypotheses.reference() == bestNormal) {
@@ -176,15 +175,15 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
         }
         boring = true;
       }
-      cause = null;
+      isSomatic = false;
     } else if (!doLoh && loh > 0) {
       // LOH event, even though the LOH prior was 0, force it to have no cause
-      cause = null;
-    } else if (!mParams.includeGainOfReference() && refAllele.equals(best)) {
+      isSomatic = false;
+    } else if (!mParams.includeGainOfReference() && refAllele.equals(hypotheses.name(bestCancer))) {
       // Gain of reference, if such calls are not allowed then this should have no cause
-      cause = null;
+      isSomatic = false;
     } else {
-      cause = best;
+      isSomatic = true;
     }
 
     final double ratio = posterior.posteriorScore();
@@ -194,10 +193,10 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
 
     final VariantSample normalSample = setCallValues(posterior.normalMeasure(), bestNormal, hypotheses, modelNormal, mParams, normalPloidy, VariantSample.DeNovoStatus.UNSPECIFIED, null);
     final VariantSample cancerSample;
-    if (cause == null) {
-      cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, hypotheses, modelCancer, mParams, normalPloidy, VariantSample.DeNovoStatus.NOT_DE_NOVO, null);
-    } else {
+    if (isSomatic) {
       cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, hypotheses, modelCancer, mParams, normalPloidy, VariantSample.DeNovoStatus.IS_DE_NOVO, ratio);
+    } else {
+      cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, hypotheses, modelCancer, mParams, normalPloidy, VariantSample.DeNovoStatus.NOT_DE_NOVO, null);
     }
     final VariantLocus locus = new VariantLocus(templateName, position, endPosition, refAllele, VariantUtils.getPreviousRefNt(ref, position));
     final Variant v = new Variant(locus, normalSample, cancerSample);
@@ -214,9 +213,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       v.setLoh(loh);
     }
 
-    if (cause != null) {
-      v.setPossibleCause(cause); // XXX deprecate this - replace with SS format field in output
-      // set the combined call somatic score
+    if (isSomatic) {
       v.setNormalCancerScore(posterior.ncScore());
     }
     updateParameterEstimationCounts(normalPloidy, code, bestNormal, bestCancer, loh);

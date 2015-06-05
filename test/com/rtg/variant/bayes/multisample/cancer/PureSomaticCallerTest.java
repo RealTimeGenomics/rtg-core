@@ -105,7 +105,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
     assertEquals(EXPECT_IDENTICAL, formatter.formatCall(v));
   }
 
-  protected static final String EXPECT_CANCER1 = "chr1\t14\t.\tG\tA,C\t.\tPASS\tSOMATIC=C;NCS=293.4;DP=30\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC:SS\t1:20:0.040:0.000:617:0.00:43.43:0.00:0.00:A,20,0.040:0,20,0\t2:10:0.020:0.000:293:0.00:21.71:0.00:0.00:C,10,0.020:0,0,10:29.3:2\n";
+  protected static final String EXPECT_CANCER1 = "chr1\t14\t.\tG\tA,C\t.\tPASS\tNCS=293.4;DP=30\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC:SS\t1:20:0.040:0.000:617:0.00:43.43:0.00:0.00:A,20,0.040:0,20,0\t2:10:0.020:0.000:293:0.00:21.71:0.00:0.00:C,10,0.020:0,0,10:29.3:2\n";
 
   /**
    * Test that a successful cancer call is made.

@@ -34,19 +34,6 @@ import com.rtg.vcf.header.VcfNumber;
  * Enum of VCF INFO field implementations
  */
 public enum VcfInfoField {
-  /** Somatic Mutation */
-  SOMATIC {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.STRING, new VcfNumber("1"), "Indicates the variant is a somatic mutation");
-    }
-    @Override
-    public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
-      if (call.getNormalCancerScore() != null) {
-        rec.addInfo(name(), formatPossibleCause(call, includePrevNt));
-      }
-    }
-  },
   /** Loss Of Heterozygosity */
   LOH {
     @Override

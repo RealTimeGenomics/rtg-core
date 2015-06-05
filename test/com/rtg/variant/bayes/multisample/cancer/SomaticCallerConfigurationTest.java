@@ -85,12 +85,12 @@ public class SomaticCallerConfigurationTest extends TestCase {
     output.writeHeader(bos, p, sfh);
     final String header = bos.toString();
     TestUtils.containsAll(header, "##SAMPLE=<ID=TEST,Genomes=TEST,Mixture=1.0,Description=\"Original genome\">",
-        "##SAMPLE=<ID=cancer,Genomes=TEST;cancer,Mixture=0.30;0.70,Description=\"Original genome;Derived genome\">",
-        "##PEDIGREE=<Derived=cancer,Original=TEST>",
-        "##INFO=<ID=SOMATIC,Number=1,Type=String,Description=\"Indicates the variant is a somatic mutation\">",
-        "##FORMAT=<ID=SSC,Number=1,Type=Float,Description=\"Somatic score\">");
+      "##SAMPLE=<ID=cancer,Genomes=TEST;cancer,Mixture=0.30;0.70,Description=\"Original genome;Derived genome\">",
+      "##PEDIGREE=<Derived=cancer,Original=TEST>",
+      "##FORMAT=<ID=SSC,Number=1,Type=Float,Description=\"Somatic score\">",
+      "##FORMAT=<ID=SS,Number=1,Type=Integer,Description="
+    );
   }
-
 
   private void checkDistribution(final double[][] a) {
     for (int i = 0; i < a.length; i++) {

@@ -11,7 +11,7 @@
  */
 package com.rtg.variant.bayes.multisample.cancer;
 
-import com.rtg.variant.format.VcfInfoField;
+import com.rtg.variant.format.VcfFormatField;
 import com.rtg.vcf.VcfFilter;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.header.VcfHeader;
@@ -46,6 +46,13 @@ public class SomaticFilter implements VcfFilter {
   @Override
   public boolean accept(VcfRecord record) {
     mStatistics.countVariant(mVcfHeader, record);
-    return mIncludeGermlineVariants || record.getInfo().get(VcfInfoField.SOMATIC.name()) != null;
+    if (mIncludeGermlineVariants) {
+      return true;
+    }
+    if (record.getNumberOfSamples() < 2) {
+      return false;
+    }
+    final Integer somaticStatus = record.getSampleInteger(1, VcfFormatField.SS.name());
+    return somaticStatus != null && somaticStatus == 2;
   }
 }

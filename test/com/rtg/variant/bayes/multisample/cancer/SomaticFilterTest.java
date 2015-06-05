@@ -40,8 +40,8 @@ public class SomaticFilterTest extends TestCase {
     vcfHeader.addSampleName("cancer");
     vcfHeader.addSampleName("normal");
     sf.setHeader(vcfHeader);
-    final VcfRecord rec1 = new VcfRecord();
-    rec1.setRefCall("A")
+    final VcfRecord record = new VcfRecord();
+    record.setRefCall("A")
       .setNumberOfSamples(2)
       .setSequence("pretend")
       .setStart(42)
@@ -51,8 +51,9 @@ public class SomaticFilterTest extends TestCase {
       .addFormatAndSample("GQ", "20")
       .addFormatAndSample("AD", "50,0")
       .addFormatAndSample("AD", "25,25");
-    assertFalse(sf.accept(rec1));
-    rec1.setInfo("SOMATIC", "A:C");
-    assertTrue(sf.accept(rec1));
+    assertFalse(sf.accept(record));
+    record.addFormatAndSample("SS", "0")
+      .addFormatAndSample("SS", "2");
+    assertTrue(sf.accept(record));
   }
 }
