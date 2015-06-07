@@ -17,7 +17,7 @@ import junit.framework.TestSuite;
 
 /**
  */
-public class AllTests {
+public class AllTests extends TestSuite {
 
   public static Test suite() {
     final TestSuite suite = new TestSuite(AllTests.class.getName());
