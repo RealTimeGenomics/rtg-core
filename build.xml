@@ -25,7 +25,7 @@
   </taskdef>
 
   <property name="product" value="RTG Core Non-Commercial" />
-  <property name="product.version" value="3.4.1" />
+  <property name="product.version" value="3.4.5-dev" />
   <property name="resources" value="core" />
 
   <property name="regression.update" value=""/> <!-- Empty means don't update nano-regression results -->
