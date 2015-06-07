@@ -44,7 +44,6 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.gzip.GzipUtils;
 import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
-import com.rtg.variant.VariantStatistics;
 import com.rtg.vcf.header.ContigField;
 import com.rtg.vcf.header.FormatField;
 import com.rtg.vcf.header.VcfHeader;

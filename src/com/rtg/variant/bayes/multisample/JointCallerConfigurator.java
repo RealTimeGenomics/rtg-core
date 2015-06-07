@@ -15,7 +15,7 @@ package com.rtg.variant.bayes.multisample;
 import java.io.IOException;
 
 import com.rtg.variant.VariantParams;
-import com.rtg.variant.VariantStatistics;
+import com.rtg.vcf.VariantStatistics;
 
 /**
  * @param <V> the type of statistics object used by this joint caller.

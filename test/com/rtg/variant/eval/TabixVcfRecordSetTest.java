@@ -31,7 +31,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
-import com.rtg.variant.PosteriorUtils;
+import com.rtg.util.PosteriorUtils;
 import com.rtg.vcf.header.VcfHeader;
 
 import junit.framework.TestCase;

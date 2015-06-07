@@ -20,7 +20,7 @@ import java.util.Map;
 import com.rtg.relation.VcfPedigreeParser;
 import com.rtg.util.MathUtils;
 import com.rtg.util.StringUtils;
-import com.rtg.variant.PosteriorUtils;
+import com.rtg.util.PosteriorUtils;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantSample;

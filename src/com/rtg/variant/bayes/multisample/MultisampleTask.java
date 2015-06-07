@@ -63,7 +63,7 @@ import com.rtg.variant.VariantAlignmentRecordPopulator;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
-import com.rtg.variant.VariantStatistics;
+import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.avr.ModelFactory;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.ModelInterface;

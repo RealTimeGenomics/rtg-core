@@ -31,7 +31,6 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(GenomePriorParamsTest.class);
     suite.addTestSuite(MachineErrorParamsTest.class);
     suite.addTestSuite(NoQualityExceptionTest.class);
-    suite.addTestSuite(PosteriorUtilsTest.class);
     suite.addTestSuite(ReadPositionPhredScalerTest.class);
     suite.addTestSuite(ReadGroupMachineErrorChooserTest.class);
     suite.addTestSuite(RecalibratingSamRecordPopulatorTest.class);
@@ -44,12 +43,10 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(VariantAlignmentRecordTest.class);
     suite.addTestSuite(VariantOutputLevelTest.class);
     suite.addTestSuite(VariantParamsTest.class);
-    suite.addTestSuite(VariantStatisticsTest.class);
     suite.addTestSuite(VariantNanoTest.class);
     suite.addTestSuite(VariantLocusTest.class);
     suite.addTestSuite(VariantSampleTest.class);
     suite.addTestSuite(VariantSampleInfoTest.class);
-    suite.addTestSuite(VcfStatsCliTest.class);
 
     suite.addTest(com.rtg.variant.bayes.AllTests.suite());
     suite.addTest(com.rtg.variant.cnv.AllTests.suite());

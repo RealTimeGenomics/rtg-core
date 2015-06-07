@@ -18,7 +18,7 @@ import java.util.Arrays;
 
 import com.rtg.mode.DnaUtils;
 import com.rtg.util.MathUtils;
-import com.rtg.variant.PosteriorUtils;
+import com.rtg.util.PosteriorUtils;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfRecord;
 

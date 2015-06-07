@@ -40,7 +40,7 @@ import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.util.test.NanoRegression;
-import com.rtg.variant.PosteriorUtils;
+import com.rtg.util.PosteriorUtils;
 import com.rtg.util.intervals.IntervalComparator;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfRecord;

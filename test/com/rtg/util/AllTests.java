@@ -83,9 +83,9 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(ObjectParamsTest.class);
     suite.addTestSuite(ParamsBuilderTest.class);
     suite.addTestSuite(PortableRandomTest.class);
+    suite.addTestSuite(PosteriorUtilsTest.class);
     suite.addTestSuite(ProgramStateTest.class);
     suite.addTestSuite(PropertiesUtilsTest.class);
-    suite.addTestSuite(PublicKeyConverterTest.class);
     suite.addTestSuite(QuickSortTest.class);
     suite.addTestSuite(QuickSortDoubleIntProxyTest.class);
     suite.addTestSuite(QuickSortIntIntProxyTest.class);

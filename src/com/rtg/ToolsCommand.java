@@ -27,7 +27,7 @@ import com.rtg.tabix.BgZip;
 import com.rtg.tabix.ExtractCli;
 import com.rtg.tabix.IndexerCli;
 import com.rtg.util.License;
-import com.rtg.variant.VcfStatsCli;
+import com.rtg.vcf.VcfStatsCli;
 import com.rtg.variant.eval.VcfEvalCli;
 import com.rtg.variant.util.MendeliannessChecker;
 import com.rtg.vcf.VcfAnnotatorCli;

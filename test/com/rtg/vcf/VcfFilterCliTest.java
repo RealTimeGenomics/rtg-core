@@ -38,7 +38,7 @@ import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
-import com.rtg.variant.PosteriorUtils;
+import com.rtg.util.PosteriorUtils;
 import com.rtg.variant.VariantParams;
 import com.rtg.vcf.header.VcfHeader;
 

@@ -9,7 +9,7 @@
  * code you accept the terms of that license agreement and any amendments to those terms that may
  * be made from time to time by Real Time Genomics Limited.
  */
-package com.rtg.variant;
+package com.rtg.util;
 
 
 /**

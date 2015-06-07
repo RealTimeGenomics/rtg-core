@@ -16,7 +16,7 @@ import com.rtg.util.Pair;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.variant.CoverageThreshold;
-import com.rtg.variant.PosteriorUtils;
+import com.rtg.util.PosteriorUtils;
 import com.rtg.variant.StaticThreshold;
 import com.rtg.variant.Variant;
 import com.rtg.variant.Variant.VariantFilter;

@@ -9,7 +9,7 @@
  * code you accept the terms of that license agreement and any amendments to those terms that may
  * be made from time to time by Real Time Genomics Limited.
  */
-package com.rtg.variant;
+package com.rtg.vcf;
 
 
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
@@ -29,7 +29,6 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.header.VcfHeader;
 
 /**

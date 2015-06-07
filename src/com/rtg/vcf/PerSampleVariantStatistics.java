@@ -10,7 +10,7 @@
  * be made from time to time by Real Time Genomics Limited.
  */
 
-package com.rtg.variant;
+package com.rtg.vcf;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +19,6 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.Histogram;
 import com.rtg.util.Pair;
 import com.rtg.util.StringUtils;
-import com.rtg.vcf.VariantType;
 
 /**
  *

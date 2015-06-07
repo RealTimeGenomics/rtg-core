@@ -20,7 +20,7 @@ import com.rtg.reference.Ploidy;
 import com.rtg.util.MathUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
-import com.rtg.variant.PosteriorUtils;
+import com.rtg.util.PosteriorUtils;
 import com.rtg.variant.Variant;
 import com.rtg.variant.Variant.VariantFilter;
 import com.rtg.variant.VariantParams;

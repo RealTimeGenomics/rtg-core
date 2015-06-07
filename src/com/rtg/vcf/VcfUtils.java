@@ -102,6 +102,9 @@ public final class VcfUtils {
   /** VCF FORMAT field used to indicate de novo alleles */
   public static final String FORMAT_DENOVO = "DN";
 
+  /** VCF FORMAT field used to indicate de novo score */
+  public static final String FORMAT_DENOVO_SCORE = "DNP";
+
   private static int alleleId(char c) {
     if (c == VcfUtils.MISSING_VALUE) {
       return -1;

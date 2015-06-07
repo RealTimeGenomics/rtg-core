@@ -13,8 +13,6 @@ package com.rtg.launcher;
 
 
 import static com.rtg.launcher.BuildCommon.RESOURCE;
-import static com.rtg.launcher.CommonFlags.INT;
-import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -24,11 +22,9 @@ import java.io.PrintStream;
 import java.util.List;
 
 import com.rtg.calibrate.Recalibrate;
-import com.rtg.ngs.OutputFilter;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.IntegerOrPercentage;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CFlags;
@@ -36,6 +32,7 @@ import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
@@ -131,18 +128,6 @@ public class CommonFlagsTest extends TestCase {
 //      assertTrue(ipe.getMessage().contains(exp));
     }
     Diagnostic.setLogStream();
-  }
-
-  public void testOutputFilter() {
-    final CFlags flags = new CFlags();
-
-    flags.registerOptional('f', CommonFlags.OUTPUT_FILTER_FLAG, String.class, "name", "output filter", "none");
-    flags.registerOptional(CommonFlags.TOPN_RESULTS_FLAG, Integer.class, INT, "set the number of results per read for topn. Allowed values are between 1 and 255", 5).setCategory(REPORTING);
-
-    assertEquals(OutputFilter.NONE, CommonFlags.filter(flags));
-
-    assertTrue(flags.setFlags("-f", "PROTEIN_TOPN", "--" + CommonFlags.TOPN_RESULTS_FLAG, "0"));
-    assertEquals(OutputFilter.PROTEIN_TOPN, CommonFlags.filter(flags));
   }
 
   public void testNegativeRepeatFreq() {

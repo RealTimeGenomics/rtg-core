@@ -24,7 +24,7 @@ import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.AlleleCountsFileConverter;
 import com.rtg.variant.VariantParams;
-import com.rtg.variant.VariantStatistics;
+import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.bayes.multisample.ComplexCallerTest;
 import com.rtg.variant.bayes.multisample.IndividualSampleProcessor;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
