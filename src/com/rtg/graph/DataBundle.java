@@ -27,8 +27,6 @@ final class DataBundle {
 
   private final Point2D[] mPoints;
   private final float[] mScores;
-  private final float mScoreMin;
-  private final float mScoreMax;
 
   private String mTitle;
   private final int mTotalVariants;
@@ -41,9 +39,6 @@ final class DataBundle {
   DataBundle(String title, Point2D[] points, float[] scores, int totalVariants) {
     mPoints = points;
     mScores = scores;
-    mScoreMin = scores.length != 0 ? scores[scores.length - 1] : 0;
-    mScoreMax = scores.length != 0 ? scores[0] : 0;
-
     mTitle = title;
     mTotalVariants = totalVariants;
     mShow = true;
