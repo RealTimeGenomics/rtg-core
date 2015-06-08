@@ -34,7 +34,7 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
 
   @Override
   protected AbstractSomaticCaller getSomaticCaller(final double mutation, Hypotheses<Description> hypotheses, String normalName, String cancerName, VariantParams params) {
-    return new ContaminatedSomaticCaller(CombinedPriorsSnp.makeQ(mutation, 0.0, hypotheses), CombinedPriorsSnp.makeQ(mutation, 0.0, hypotheses), params);
+    return new ContaminatedSomaticCaller(CombinedPriorsComplex.makeQ(mutation, 0.0, hypotheses), CombinedPriorsComplex.makeQ(mutation, 0.0, hypotheses), params);
   }
 
   @Override

@@ -12,6 +12,8 @@
 
 package com.rtg.variant.bayes.multisample.cancer;
 
+import java.util.Arrays;
+
 import com.rtg.util.integrity.Exam;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Hypotheses;
@@ -42,6 +44,16 @@ public abstract class CombinedPriorsComplex<D extends Description> extends Combi
     return norm;
   }
 
+  static double[][] defaultUniformPriors(final int size) {
+    final double snpTransition = 1.0 / (size - 1);
+    final double[][] initialPriors = new double[size][size];
+    for (int k = 0; k < size; k++) {
+      Arrays.fill(initialPriors[k], snpTransition);
+      initialPriors[k][k] = 0;
+    }
+    return initialPriors;
+  }
+
   /**
    * @param mutation probability of a somatic mutation.
    * @param loh probability that there will be a loss of heterozygosity.
@@ -50,7 +62,7 @@ public abstract class CombinedPriorsComplex<D extends Description> extends Combi
    * @return probabilities of somatic transitions between possibly diploid hypotheses.
    * @param <D> description type
    */
-  static <D extends Description> double[][] makeQComplex(final double mutation, double loh, final Hypotheses<D> hypotheses, double[][] initialPriors) {
+  static <D extends Description> double[][] makeQ(final double mutation, double loh, final Hypotheses<D> hypotheses, double[][] initialPriors) {
     final int length = hypotheses.size();
     final double[][] q = new double[length][length];
     new CombinedPriorsComplex<D>(hypotheses, mutation, loh, initialPriors) {
@@ -61,6 +73,20 @@ public abstract class CombinedPriorsComplex<D extends Description> extends Combi
     }.update();
     return q;
   }
+
+  /**
+   * Make the Q matrix for the special case where all transitions are equally likely.
+   * @param mutation probability of a somatic mutation.
+   * @param loh probability that there will be a loss of heterozygosity.
+   * @param hypotheses the set of current hypotheses.
+   * @return probabilities of somatic transitions between possibly diploid hypotheses.
+   * @param <D> description type
+   */
+  static <D extends Description> double[][] makeQ(final double mutation, double loh, final Hypotheses<D> hypotheses) {
+    return makeQ(mutation, loh, hypotheses, defaultUniformPriors(hypotheses.description().size()));
+  }
+
+
 
 
   private final double mMutation;

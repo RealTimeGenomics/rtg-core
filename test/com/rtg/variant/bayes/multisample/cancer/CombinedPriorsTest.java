@@ -27,14 +27,14 @@ import junit.framework.TestCase;
  */
 public class CombinedPriorsTest extends TestCase {
 
-  private static class MockCombine extends CombinedPriorsSnp<DescriptionCommon> {
+  private static class MockCombine extends CombinedPriorsComplex<DescriptionCommon> {
 
     private final StringBuilder mSb = new StringBuilder();
 
     private double mSum = 0.0;
 
     MockCombine(Hypotheses<DescriptionCommon> hypotheses, double mutation, double loh) {
-      super(hypotheses, mutation, loh);
+      super(hypotheses, mutation, loh, CombinedPriorsComplex.defaultUniformPriors(hypotheses.description().size()));
       integrity();
     }
 
@@ -167,6 +167,4 @@ public class CombinedPriorsTest extends TestCase {
         ;
     assertEquals(exp, mc.toString());
   }
-
-
 }

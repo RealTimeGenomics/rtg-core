@@ -57,7 +57,7 @@ public class CombinedPriorsComplexTest extends TestCase {
         {0.25, 0.5, 0.25},
         {0.5 / 3.0, 1.0 / 3.0, 0.5},
     };
-    final double[][] q = CombinedPriorsComplex.makeQComplex(0.5, 0.0, hyp, initialPriors);
+    final double[][] q = CombinedPriorsComplex.makeQ(0.5, 0.0, hyp, initialPriors);
     final int n = hyp.size();
     assertEquals(n, q.length);
     //System.err.println(IntegralAbstract.toString(q));
@@ -80,7 +80,7 @@ public class CombinedPriorsComplexTest extends TestCase {
         {0.25, 0.5, 0.25},
         {0.5 / 3.0, 1.0 / 3.0, 0.5},
     };
-    final double[][] q = CombinedPriorsComplex.makeQComplex(0.3, 0.0, hyp, initialPriors);
+    final double[][] q = CombinedPriorsComplex.makeQ(0.3, 0.0, hyp, initialPriors);
     assertEquals(n, q.length);
     //System.err.println(IntegralAbstract.toString(q));
     for (int i = 0; i < n; i++) {

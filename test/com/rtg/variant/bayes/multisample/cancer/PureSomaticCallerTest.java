@@ -55,7 +55,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
 
   @Override
   protected AbstractSomaticCaller getSomaticCaller(final double mutation, final Hypotheses<Description> hypotheses, String normalName, String cancerName, VariantParams params) {
-    return new PureSomaticCaller(CombinedPriorsSnp.makeQ(mutation, 0.0, hypotheses), CombinedPriorsSnp.makeQ(mutation, 0.0, hypotheses), params);
+    return new PureSomaticCaller(CombinedPriorsComplex.makeQ(mutation, 0.0, hypotheses), CombinedPriorsComplex.makeQ(mutation, 0.0, hypotheses), params);
   }
 
   @Override
