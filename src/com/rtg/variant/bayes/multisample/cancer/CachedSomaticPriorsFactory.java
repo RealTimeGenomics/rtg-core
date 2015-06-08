@@ -16,21 +16,25 @@ import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Hypotheses;
 
 /**
- * Factory for producing somatic priors based on given hypotheses.
+ * Factory for producing somatic priors based on given hypotheses.  This implementation
+ * only computes the Q matrix for powers of 2 of the somatic mutation rate.  Thus, given
+ * mu next lower power of 2 is used for the actual calculation.  These powers of 2 values
+ * are remembered so they can be reused.
  */
 class CachedSomaticPriorsFactory<D extends Description> extends SomaticPriorsFactory<D> {
 
-  private final double[][][] mCache = new double[-Double.MIN_EXPONENT + 1][][];
+  // The +2 below is needed to handle mu < Double.MIN_NORMAL (i.e. 0 and subnormal numbers).
+  private final double[][][] mCache = new double[-Double.MIN_EXPONENT + 2][][];
 
-  /**
-   * Construct a new factory for the specified hypotheses.
-   * @param hypotheses to be mutated.
-   * @param loh probability of loss of heterozygosity.
-   * @param initialPriors initial unnormalized haploid transition probabilities.
-   */
-  CachedSomaticPriorsFactory(final Hypotheses<D> hypotheses, final double loh, final double[][] initialPriors) {
-    super(hypotheses, loh, initialPriors);
-  }
+//  /**
+//   * Construct a new factory for the specified hypotheses.
+//   * @param hypotheses to be mutated.
+//   * @param loh probability of loss of heterozygosity.
+//   * @param initialPriors initial unnormalized haploid transition probabilities.
+//   */
+//  CachedSomaticPriorsFactory(final Hypotheses<D> hypotheses, final double loh, final double[][] initialPriors) {
+//    super(hypotheses, loh, initialPriors);
+//  }
 
   /**
    * Construct a new factory for the specified hypotheses.
@@ -50,12 +54,12 @@ class CachedSomaticPriorsFactory<D extends Description> extends SomaticPriorsFac
     // Binning based on powers of 2, could be precomputed to avoid synchronized
     final int exponent = Math.getExponent(mutation);
     assert exponent <= 1;
-    final int index = 1 - exponent;
-    assert index >= 0 && index <= mCache.length;
+    final int index = -exponent;
+    assert index >= 0 && index < mCache.length : String.valueOf(index);
     synchronized (mCache) {
       if (mCache[index] == null) {
         final double binnedMutation = Math.scalb(1, exponent);
-        assert binnedMutation <= mutation && 2 * binnedMutation >= mutation;
+        assert binnedMutation <= mutation && binnedMutation >= 0.5 * mutation;
         mCache[index] = super.somaticQ(binnedMutation);
       }
       return mCache[index];

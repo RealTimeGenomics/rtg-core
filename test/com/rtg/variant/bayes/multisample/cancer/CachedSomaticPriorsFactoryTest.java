@@ -37,6 +37,17 @@ public class CachedSomaticPriorsFactoryTest extends TestCase {
     assertTrue(qfc == cache.somaticQ(0.5));
     assertTrue(qfc == cache.somaticQ(0.5 + Double.MIN_NORMAL));
     assertFalse(qfc == cache.somaticQ(0.25));
+    // Check that extreme mu doesn't cause an exception
+    cache.somaticQ(1);
+    cache.somaticQ(Double.MIN_VALUE);
+    cache.somaticQ(0.0);
+  }
+
+  public void testBounds() {
+    assertEquals(-1023, Math.getExponent(0.0));
+    assertEquals(-1023, Math.getExponent(Double.MIN_VALUE));
+    assertEquals(-1022, Math.getExponent(Double.MIN_NORMAL));
+    assertEquals(0, Math.getExponent(1.0));
   }
 
 }
