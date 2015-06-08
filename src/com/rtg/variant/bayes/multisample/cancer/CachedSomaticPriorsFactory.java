@@ -24,6 +24,7 @@ import com.rtg.variant.bayes.Hypotheses;
 class CachedSomaticPriorsFactory<D extends Description> extends SomaticPriorsFactory<D> {
 
   // The +2 below is needed to handle mu < Double.MIN_NORMAL (i.e. 0 and subnormal numbers).
+  // Cf. Math.exponent()
   private final double[][][] mCache = new double[-Double.MIN_EXPONENT + 2][][];
 
 //  /**
