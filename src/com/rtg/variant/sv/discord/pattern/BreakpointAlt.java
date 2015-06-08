@@ -22,13 +22,13 @@ class BreakpointAlt {
   final boolean mRemoteUp;
   final String mRemoteChr;
   final int mRemotePos; // 1-based
-  private static final String UP_BRACKET = "]";
-  private static final String DOWN_BRACKET = "[";
+  private static final char UP_BRACKET = ']';
+  private static final char DOWN_BRACKET = '[';
 
   BreakpointAlt(String alt) {
     final int tmpPos;
     final int bracketPos;
-    final String bracket;
+    final char bracket;
 //    System.err.println(alt.indexOf(UP_BRACKET));
     if ((tmpPos = alt.indexOf(UP_BRACKET)) > -1) {
       mRemoteUp = true;
@@ -42,8 +42,8 @@ class BreakpointAlt {
 //    System.err.println("" + " bracketPos=" + bracketPos + " bracket=" + bracket );
     mLocalUp  = !(bracketPos == 0);
     final String remoteString = alt.substring(bracketPos + 1, alt.indexOf(bracket, bracketPos + 1));
-    mRemoteChr = remoteString.substring(0, remoteString.indexOf(":"));
-    mRemotePos = Integer.parseInt(remoteString.substring(remoteString.indexOf(":") + 1));
+    mRemoteChr = remoteString.substring(0, remoteString.indexOf(':'));
+    mRemotePos = Integer.parseInt(remoteString.substring(remoteString.indexOf(':') + 1));
   }
 
   /**

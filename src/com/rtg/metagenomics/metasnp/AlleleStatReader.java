@@ -86,7 +86,7 @@ class AlleleStatReader implements AutoCloseable {
    * @return sample ids as a list
    */
   private List<String> parseSamples(String line) {
-    final String sampleString = line.substring(line.indexOf("=") + 1);
+    final String sampleString = line.substring(line.indexOf('=') + 1);
     final String[] parts = StringUtils.split(sampleString, ',');
     return Arrays.asList(parts);
   }

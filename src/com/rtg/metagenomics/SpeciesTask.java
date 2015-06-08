@@ -159,7 +159,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
           if (line.charAt(0) == SpeciesCli.COMMENT_CHAR) {
             continue;
           }
-          final int tabIndex = line.indexOf("\t");
+          final int tabIndex = line.indexOf('\t');
           if (tabIndex == -1 || tabIndex == 0 || tabIndex == line.length() - 1) {
             throw new NoTalkbackSlimException("The input file " + referenceMap.getPath() + " for relabel-species-file flag contains invalid entry. line: " + line);
           }
@@ -211,7 +211,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
           if (line.charAt(0) == SpeciesCli.COMMENT_CHAR) {
             continue;
           }
-          final int tabIndex = line.indexOf("\t");
+          final int tabIndex = line.indexOf('\t');
           if (tabIndex == -1 || tabIndex == 0 || tabIndex == line.length() - 1) {
             throw new NoTalkbackSlimException("The input file " + referenceMap.getPath() + " for relabel-species-file flag contains invalid entry. line: " + line);
           }

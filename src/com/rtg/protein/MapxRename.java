@@ -198,7 +198,7 @@ public class MapxRename extends AbstractCli {
     for (final String line : header) {
       if (line.startsWith(ProteinOutputProcessor.MAPX_READ_SDF_ID_HEADER + "\t")) {
         try {
-          return new SdfId(line.substring(line.indexOf("\t") + 1));
+          return new SdfId(line.substring(line.indexOf('\t') + 1));
         } catch (final NumberFormatException e) {
           throw new NoTalkbackSlimException("Malformed READ-SDF-ID from mapx header." + e);
         }

@@ -139,7 +139,7 @@ public class FileUsageTrackingClient implements UsageTrackingClient {
       final String currentString = sb.toString();
       final int index = currentString.lastIndexOf(UsageMessage.SIGNATURE);
       if (index == -1) {
-        final int chopIndex = Math.max(currentString.indexOf("\r"), currentString.indexOf("\n"));
+        final int chopIndex = Math.max(currentString.indexOf('\r'), currentString.indexOf('\n'));
         sb.delete(chopIndex + 1, sb.length());
       } else {
         final int lastSlashN = currentString.indexOf('\n', index);

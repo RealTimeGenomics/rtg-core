@@ -138,7 +138,7 @@ public class VcfEvalCli extends ParamsCli<VcfEvalParams> {
       }
       if (flags.isSet(SORT_FIELD)) {
         final String field = (String) flags.getValue(SORT_FIELD);
-        final int pIndex = field.indexOf("=");
+        final int pIndex = field.indexOf('=');
         if (pIndex != -1) {
           final String fieldTypeName = field.substring(0, pIndex).toUpperCase(Locale.getDefault());
           try {

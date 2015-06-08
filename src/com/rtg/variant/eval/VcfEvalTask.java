@@ -266,7 +266,7 @@ public final class VcfEvalTask extends ParamsTask<VcfEvalParams, NoStatistics> {
     final String scoreField = params.scoreField();
     if (scoreField != null) {
       if (scoreField.contains("=")) {
-        final int pIndex = scoreField.indexOf("=");
+        final int pIndex = scoreField.indexOf('=');
         final String fieldTypeName = scoreField.substring(0, pIndex).toUpperCase(Locale.getDefault());
         try {
           fieldType = RocScoreField.valueOf(fieldTypeName);

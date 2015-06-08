@@ -465,7 +465,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
         long numSeqs = 0;
         String line;
         while ((line = inputList.readLine()) != null) {
-          final int spaceIndex = line.indexOf(" ");
+          final int spaceIndex = line.indexOf(' ');
           if (spaceIndex == -1 || spaceIndex == 0 || spaceIndex == line.length() - 1) {
             continue;
           }

@@ -56,7 +56,7 @@ public final class SequenceToTaxonIds {
           throw new IOException("Malformed line: " + line);
         }
         final String name;
-        final int indexOfSpace = parts[1].indexOf(" ");
+        final int indexOfSpace = parts[1].indexOf(' ');
         if (indexOfSpace != -1) {
           name = parts[1].substring(0, indexOfSpace);
         } else {

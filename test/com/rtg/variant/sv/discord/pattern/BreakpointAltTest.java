@@ -15,8 +15,6 @@ package com.rtg.variant.sv.discord.pattern;
 import junit.framework.TestCase;
 
 /**
- *         Date: 15/03/12
- *         Time: 3:29 PM
  */
 public class BreakpointAltTest extends TestCase {
   void check(String orig, String remoteChr, int remotePos, boolean localUp, boolean remoteUp) {

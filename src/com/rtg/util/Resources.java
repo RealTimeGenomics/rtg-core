@@ -118,14 +118,14 @@ public final class Resources {
     } else if (url.getProtocol().equals("jar")) {
       final ArrayList<String> strings = new ArrayList<>();
       assert url.getPath().startsWith("file:");
-      final String jarPath = url.getPath().substring(5, url.getPath().lastIndexOf("!"));
+      final String jarPath = url.getPath().substring(5, url.getPath().lastIndexOf('!'));
       try (JarFile jf = new JarFile(jarPath)) {
         final Enumeration<JarEntry> en = jf.entries();
         while (en.hasMoreElements()) {
           final JarEntry je = en.nextElement();
           if (je.getName().startsWith(dirWithSlash)) {
             final String rest = je.getName().substring(dirWithSlash.length());
-            final int index = rest.indexOf("/");
+            final int index = rest.indexOf('/');
             if (rest.length() > 0 && (index < 0 || (index > 0 && index == rest.length() - 1))) {
               strings.add(je.getName());
             }

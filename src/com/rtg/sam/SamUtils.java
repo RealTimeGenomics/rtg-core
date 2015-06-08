@@ -312,7 +312,7 @@ public final class SamUtils {
   private static SdfId getSdfGuid(List<String> header, String sdfIdLabel) {
     for (final String comment : header) {
       if (comment.replaceAll("@CO\t", "").startsWith(sdfIdLabel)) {
-        final String stringGuid = comment.substring(comment.indexOf(":") + 1);
+        final String stringGuid = comment.substring(comment.indexOf(':') + 1);
         try {
           return new SdfId(stringGuid);
         } catch (final NumberFormatException e) {
@@ -332,7 +332,7 @@ public final class SamUtils {
   public static synchronized void logRunId(SAMFileHeader header) {
     for (final String comment : header.getComments()) {
       if (comment.replaceAll("@CO\t", "").startsWith(RUN_ID_ATTRIBUTE)) {
-        final String stringGuid = comment.substring(comment.indexOf(":") + 1);
+        final String stringGuid = comment.substring(comment.indexOf(':') + 1);
         if (ALREADY_REPORTED_SAM.add(stringGuid)) {
           Diagnostic.userLog("Referenced SAM file with RUN-ID: " + stringGuid);
         }

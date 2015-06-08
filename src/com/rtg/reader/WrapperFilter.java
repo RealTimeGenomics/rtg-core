@@ -89,7 +89,7 @@ class WrapperFilter {
    */
   protected void transfer(String seqRange) throws IOException {
     try {
-      final int rangePos = seqRange.indexOf("-");
+      final int rangePos = seqRange.indexOf('-');
       if (rangePos == -1) {
         transfer(Long.parseLong(seqRange));
       } else {

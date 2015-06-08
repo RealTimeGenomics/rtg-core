@@ -82,7 +82,7 @@ public class HtmlReportHelper {
   public void copyResources(String... resources) throws IOException {
     getResourcesDir();  //ensure resources dir exists
     for (String resource : resources) {
-      final int lastSep = resource.lastIndexOf("/");
+      final int lastSep = resource.lastIndexOf('/');
       final String fileName;
       if (lastSep == -1) {
         fileName = resource;
