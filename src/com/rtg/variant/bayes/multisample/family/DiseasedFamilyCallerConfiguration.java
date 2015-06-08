@@ -27,7 +27,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantParams;
-import com.rtg.variant.VariantStatistics;
+import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
 import com.rtg.variant.bayes.multisample.IndividualSampleFactory;
 import com.rtg.variant.bayes.multisample.JointCallerConfigurator;

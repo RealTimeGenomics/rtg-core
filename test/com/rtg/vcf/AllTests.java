@@ -49,6 +49,8 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(VcfSubsetTest.class);
     suite.addTestSuite(VcfUtilsTest.class);
     suite.addTestSuite(VcfWriterTest.class);
+    suite.addTestSuite(VariantStatisticsTest.class);
+    suite.addTestSuite(VcfStatsCliTest.class);
     return suite;
   }
 

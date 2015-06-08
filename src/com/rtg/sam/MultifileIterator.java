@@ -13,7 +13,6 @@ package com.rtg.sam;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
@@ -49,18 +48,6 @@ class MultifileIterator implements RecordIterator<SAMRecord> {
   private boolean mIsClosed = false;
   private SAMRecord mNextRecordToReturn = null;
 
-
-  /**
-   * Constructor (deprecated)
-   *
-   * @param files SAM/BAM files
-   * @param filterParams filter parameters. may be null for no filtering
-   * @param headerOverride use this header instead of one present in file.
-   * @throws IOException if an IO error occurs
-   */
-  public MultifileIterator(final Collection<File> files, SamFilterParams filterParams, SAMFileHeader headerOverride) throws IOException {
-    this(new SamReadingContext(files, 1, filterParams, headerOverride));
-  }
 
   /**
    * Constructor

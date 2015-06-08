@@ -198,4 +198,9 @@ public class SkipInvalidRecordsIterator extends AbstractSamRecordIterator {
     mWrapped.close();
   }
 
+  @Override
+  public String toString() {
+    return "Iterator: line=" + mRecordCount + " file=" + mPath + " record=" + mRecord.getSAMString().trim();
+  }
+
 }

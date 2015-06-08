@@ -42,7 +42,7 @@ import com.rtg.variant.Variant;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantSample;
-import com.rtg.variant.VariantStatistics;
+import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfWriter;

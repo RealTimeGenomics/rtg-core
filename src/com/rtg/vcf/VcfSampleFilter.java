@@ -15,8 +15,7 @@ import static com.rtg.vcf.VcfFilterStatistics.Stat;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.MathUtils;
-import com.rtg.variant.PosteriorUtils;
-import com.rtg.variant.format.VcfFormatField;
+import com.rtg.util.PosteriorUtils;
 
 /**
  */
@@ -149,7 +148,7 @@ public abstract class VcfSampleFilter extends AbstractVcfFilter {
     boolean acceptCondition(VcfRecord record) {
       assert mSamples.length == 1;
       for (int sampleIndex : mSamples) {
-        if (!"Y".equals(record.getSampleString(sampleIndex, VcfFormatField.DN.name()))) {
+        if (!"Y".equals(record.getSampleString(sampleIndex, VcfUtils.FORMAT_DENOVO))) {
           if (mSampleFailed != null) {
             mSampleFailed[sampleIndex] = true;
           }
@@ -158,13 +157,13 @@ public abstract class VcfSampleFilter extends AbstractVcfFilter {
       }
       boolean result = false;
       for (int sampleIndex : mSamples) {
-        final Double dnp = record.getSampleDouble(sampleIndex, VcfFormatField.DNP.name());
+        final Double dnp = record.getSampleDouble(sampleIndex, VcfUtils.FORMAT_DENOVO_SCORE);
         if (dnp != null) {
           if (dnp >= mMinDenovoScore && dnp <= mMaxDenovoScore) {
             result = true;
             for (int i = 0; i < record.getNumberOfSamples(); i++) {
-              final Double otherDnp = record.getSampleDouble(i, VcfFormatField.DNP.name());
-              final String otherDn = record.getSampleString(i, VcfFormatField.DN.name());
+              final Double otherDnp = record.getSampleDouble(i, VcfUtils.FORMAT_DENOVO_SCORE);
+              final String otherDn = record.getSampleString(i, VcfUtils.FORMAT_DENOVO);
               if (i != sampleIndex && "Y".equals(otherDn) && otherDnp != null && otherDnp >= mMinDenovoScore && otherDnp <= mMaxDenovoScore) {
                 result = false;
               }

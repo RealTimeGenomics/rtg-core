@@ -54,7 +54,7 @@ import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.StaticThreshold;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
-import com.rtg.variant.VariantStatistics;
+import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.bayes.multisample.population.PopulationCallerConfiguration;
 import com.rtg.variant.bayes.multisample.population.PopulationNanoTest;
 

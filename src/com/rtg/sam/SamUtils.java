@@ -710,6 +710,20 @@ public final class SamUtils {
   }
 
   /**
+   * Read header from stream and then close
+   * @param is the InputStream
+   * @return the header
+   * @throws IOException if an I/O error occurs
+   */
+  public static SAMFileHeader getSingleHeader(InputStream is) throws IOException {
+    final SAMFileHeader result;
+    try (SamReader sr = SamUtils.makeSamReader(is, null)) {
+      result = sr.getFileHeader();
+    }
+    return result;
+  }
+
+  /**
    * creates a header with the contents from the first file except the read group information is merged from all headers. Does some checking that headers are compatible
    *
    * @param files SAM files

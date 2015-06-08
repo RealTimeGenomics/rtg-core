@@ -9,7 +9,7 @@
  * code you accept the terms of that license agreement and any amendments to those terms that may
  * be made from time to time by Real Time Genomics Limited.
  */
-package com.rtg.variant;
+package com.rtg.vcf;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,10 +24,11 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
 import com.rtg.util.test.NanoRegression;
+import com.rtg.variant.Variant;
+import com.rtg.variant.VariantLocus;
+import com.rtg.variant.VariantSample;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.format.VariantOutputVcfFormatterTest;
-import com.rtg.vcf.VcfReader;
-import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.header.VcfHeader;
 
 import junit.framework.TestCase;

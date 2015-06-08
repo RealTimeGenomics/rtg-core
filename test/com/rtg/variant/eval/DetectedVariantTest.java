@@ -21,7 +21,7 @@ import java.util.Arrays;
 import com.rtg.mode.DnaUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.intervals.SequenceNameLocusComparator;
-import com.rtg.variant.PosteriorUtils;
+import com.rtg.util.PosteriorUtils;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;

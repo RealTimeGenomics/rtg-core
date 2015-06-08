@@ -263,7 +263,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
     final NgsFilterParams filter = filterBuild.create();
 
     final NgsOutputParamsBuilder outBuild = NgsOutputParams.builder();
-    CommonFlags.buildOutputParams(mFlags, outBuild, filter);
+    outBuild.outputDir((File) mFlags.getValue(OUTPUT_FLAG)).filterParams(filter).sorted(mFlags.isSet(CommonFlags.SORT_FLAG));
     outBuild.tempFilesDir((File) mFlags.getValue(TEMP_DIR));
     outBuild.outputUnmapped(!mFlags.isSet(CommonFlags.NO_UNMAPPED));
     if (mFlags.isSet(XDONT_MERGE_ALIGNMENT_RESULTS)) {

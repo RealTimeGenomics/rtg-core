@@ -66,7 +66,7 @@ import com.rtg.taxonomy.TaxFilterCli;
 import com.rtg.taxonomy.TaxStatsCli;
 import com.rtg.usage.UsageServerCli;
 import com.rtg.util.License;
-import com.rtg.variant.VcfStatsCli;
+import com.rtg.vcf.VcfStatsCli;
 import com.rtg.variant.avr.AvrStatsCli;
 import com.rtg.variant.avr.BuilderCli;
 import com.rtg.variant.avr.PredictCli;

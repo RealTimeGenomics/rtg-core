@@ -12,9 +12,7 @@
 
 package com.rtg.sam;
 
-import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 
 import com.rtg.util.PopulatorFactory;
 import com.rtg.util.intervals.RangeList;
@@ -32,19 +30,6 @@ public class ThreadedMultifileIteratorWrapper<T extends ReaderRecord<T> & MateIn
   private T mNext;
   private int mSequenceId = -1;
   private RangeList<String> mCurrentRangeList;
-
-  /**
-   * Convenience constructor
-   * @param files SAM/BAM files
-   * @param numThreads the number of threads to use (maximum)
-   * @param populatorFactory populator factory for records
-   * @param filterParams parameters for filtering
-   * @param headerOverride use this header instead of one present in file. (null to use one in file)
-   * @throws IOException if an IO error occurs
-   */
-  public ThreadedMultifileIteratorWrapper(Collection<File> files, int numThreads, PopulatorFactory<T> populatorFactory, SamFilterParams filterParams, SAMFileHeader headerOverride) throws IOException {
-    this(new SamReadingContext(files, numThreads, filterParams, headerOverride), populatorFactory);
-  }
 
   /**
    * Constructor

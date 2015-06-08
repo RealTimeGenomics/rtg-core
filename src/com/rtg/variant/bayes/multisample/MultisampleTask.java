@@ -27,6 +27,7 @@ import com.rtg.reference.SexMemo;
 import com.rtg.sam.CircularBufferMultifileSinglePassReaderWindowSync;
 import com.rtg.sam.ReaderRecord;
 import com.rtg.sam.ReaderWindow;
+import com.rtg.sam.SamReadingContext;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.ThreadedMultifileIteratorWrapper;
 import com.rtg.scheduler.EventList;
@@ -62,7 +63,7 @@ import com.rtg.variant.VariantAlignmentRecordPopulator;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
-import com.rtg.variant.VariantStatistics;
+import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.avr.ModelFactory;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.ModelInterface;
@@ -679,7 +680,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       genomeNames = new String[] {}; // Special case for singleton caller, map all records to 0
     }
     final SingletonPopulatorFactory<VariantAlignmentRecord> pf = new SingletonPopulatorFactory<>(new VariantAlignmentRecordPopulator(genomeNames));
-    mWrapper = new ThreadedMultifileIteratorWrapper<>(mParams.mapped(), mParams.ioThreads(), pf, mParams.filterParams(), mParams.uberHeader());
+    mWrapper = new ThreadedMultifileIteratorWrapper<>(new SamReadingContext(mParams.mapped(), mParams.ioThreads(), mParams.filterParams(), mParams.uberHeader()), pf);
     final SAMSequenceDictionary dict = mWrapper.header().getSequenceDictionary();
     mSequences = dict.getSequences();
     if (mSequences.size() < 1) {

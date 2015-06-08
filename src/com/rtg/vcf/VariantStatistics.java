@@ -9,7 +9,7 @@
  * code you accept the terms of that license agreement and any amendments to those terms that may
  * be made from time to time by Real Time Genomics Limited.
  */
-package com.rtg.variant;
+package com.rtg.vcf;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,9 +35,6 @@ import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.Range;
 import com.rtg.util.io.FileUtils;
-import com.rtg.vcf.VariantType;
-import com.rtg.vcf.VcfRecord;
-import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.header.VcfHeader;
 
 /**

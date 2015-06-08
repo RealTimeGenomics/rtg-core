@@ -22,9 +22,6 @@ import java.util.List;
 import org.apache.commons.lang.ArrayUtils;
 
 import com.rtg.calibrate.Recalibrate;
-import com.rtg.ngs.NgsFilterParams;
-import com.rtg.ngs.NgsOutputParamsBuilder;
-import com.rtg.ngs.OutputFilter;
 import com.rtg.reference.ReferenceGenome;
 import com.rtg.util.Constants;
 import com.rtg.util.Environment;
@@ -375,19 +372,6 @@ public final class CommonFlags {
   }
 
   /**
-   * Return the output filter specified by the flags
-   * @param flags the flags
-   * @return the output filter, or none if no filter specified
-   */
-  public static OutputFilter filter(final CFlags flags) {
-    if (flags.getFlag(OUTPUT_FILTER_FLAG) != null) {
-      return OutputFilter.valueOf((String) flags.getValue(OUTPUT_FILTER_FLAG));
-    } else {
-      return OutputFilter.NONE;
-    }
-  }
-
-  /**
    *
    * @param flags shared flags
    */
@@ -643,16 +627,6 @@ public final class CommonFlags {
       }
     }
     return avrModel;
-  }
-
-  /**
-   * Populate {@link NgsOutputParamsBuilder}
-   * @param flags command line flags
-   * @param builder builder to add
-   * @param filterParams ngs filter params
-   */
-  public static void buildOutputParams(final CFlags flags, final NgsOutputParamsBuilder builder, final NgsFilterParams filterParams) {
-    builder.outputDir((File) flags.getValue(OUTPUT_FLAG)).filterParams(filterParams).sorted(flags.isSet(SORT_FLAG));
   }
 
   /**
