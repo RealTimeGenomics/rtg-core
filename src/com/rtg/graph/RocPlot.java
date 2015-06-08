@@ -539,7 +539,7 @@ public final class RocPlot {
       final Point p = e.getPoint();
       final Mapping[] mapping = mPlotPanel.getMapping();
       final int maxVariants = ((RocGraph2D) mPlotPanel.getGraph()).getMaxVariants();
-      if (mapping != null && mapping.length > 1 && p != null) {
+      if (mapping != null && mapping.length > 1) {
         final float fp = mapping[0].screenToWorld((float) p.getX());
         final float tp = mapping[1].screenToWorld((float) p.getY());
         if (fp >= 0 && tp >= 0 && (fp + tp > 0)) {
