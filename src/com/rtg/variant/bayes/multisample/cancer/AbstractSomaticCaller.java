@@ -68,10 +68,10 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
    * @param normal bayesian for the normal genome.
    * @param cancer bayesian for the cancer genome.
    * @param hypotheses the hypotheses containing priors.
-   * @param mu
+   * @param mu somatic mutation rate.
    * @return the posterior.
    */
-  protected abstract AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double mu);
+  protected abstract AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, final double mu);
 
   private VariantSample setCallValues(GenotypeMeasure posterior, int cat, Hypotheses<?> hypotheses, ModelInterface<?> model, VariantOutputOptions params, Ploidy ploidy, VariantSample.DeNovoStatus dns, Double dnp) {
     final VariantSample sample = new VariantSample(ploidy, hypotheses.name(cat), hypotheses.reference() == cat, posterior, dns, dnp);
