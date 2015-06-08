@@ -33,7 +33,7 @@ public class TabixLineReader implements LineReader {
   private static LineReader getDelegate(File input, File tabix, RegionRestriction region) throws IOException {
     final LineReader reader;
     if (region == null) {
-      reader = new NoRestrictionLineReader(input);
+      reader = new SingleRestrictionLineReader(input, new TabixIndexReader(tabix));
     } else {
       reader = new SingleRestrictionLineReader(input, new TabixIndexReader(tabix), region);
     }
@@ -43,7 +43,7 @@ public class TabixLineReader implements LineReader {
   private static LineReader getDelegate(File input, File tabix, ReferenceRanges ranges) throws IOException {
     final LineReader reader;
     if (ranges == null || ranges.allAvailable()) {
-      reader = new NoRestrictionLineReader(input);
+      reader = new SingleRestrictionLineReader(input, new TabixIndexReader(tabix));
     } else {
       reader = new MultiRestrictionLineReader(input, new TabixIndexReader(tabix), ranges);
     }
@@ -100,26 +100,6 @@ public class TabixLineReader implements LineReader {
     return mDelegate.readLine();
   }
 
-
-  // BlockCompressedLineReader implements a different version of LineReader, so we still need this adapter for the simple case
-  private static class NoRestrictionLineReader implements LineReader {
-    private final BlockCompressedLineReader mReader;
-    public NoRestrictionLineReader(File input) throws IOException {
-      mReader = new BlockCompressedLineReader(new BlockCompressedInputStream(input));
-    }
-
-    @Override
-    public String readLine() throws IOException {
-      return mReader.readLine();
-    }
-
-    @Override
-    public void close() throws IOException {
-      mReader.close();
-    }
-  }
-
-
   private static class SingleRestrictionLineReader implements LineReader {
     private final BlockCompressedPositionReader mBCPositionReader;
     private final VirtualOffsets mRange;
@@ -127,6 +107,14 @@ public class TabixLineReader implements LineReader {
     private final int mBeg;
     private final int mEnd;
     private String mCurrent = null;
+    public SingleRestrictionLineReader(File input, TabixIndexReader tir) throws IOException {
+      mSequence = null;
+      mBeg = -1;
+      mEnd = -1;
+      final BlockCompressedLineReader bclr = new BlockCompressedLineReader(new BlockCompressedInputStream(input));
+      mBCPositionReader = tir.getOptions().mFormat == TabixIndexer.TabixOptions.FORMAT_VCF ? new VcfPositionReader(bclr, tir.getOptions().mSkip) : new GenericPositionReader(bclr, tir.getOptions());
+      mRange = new VirtualOffsets(0, 0xFFFFFFFFFFFFFFFFL, null);
+    }
     public SingleRestrictionLineReader(File input, TabixIndexReader tir, RegionRestriction region) throws IOException {
       if (region == null) {
         throw new NullPointerException();
@@ -161,7 +149,9 @@ public class TabixLineReader implements LineReader {
       }
       while (mBCPositionReader.hasNext() && AbstractIndexReader.isLessThanUnsigned(mBCPositionReader.getNextVirtualOffset(), mRange.end(0))) {
         mBCPositionReader.next();
-        if ((mSequence == null || mSequence.equals(mBCPositionReader.getReferenceName())) && (mEnd == -1 || mBCPositionReader.getStartPosition() < mEnd) && (mBeg <= -1 || mBCPositionReader.getStartPosition() + mBCPositionReader.getLengthOnReference() >= mBeg)) {
+        if ((mSequence == null || mSequence.equals(mBCPositionReader.getReferenceName()))
+          && (mEnd == -1 || mBCPositionReader.getStartPosition() < mEnd)
+          && (mBeg <= -1 || mBCPositionReader.getStartPosition() + mBCPositionReader.getLengthOnReference() >= mBeg)) {
           mCurrent = mBCPositionReader.getRecord();
           return true;
         } else if (mEnd != -1 && mBCPositionReader.getStartPosition() >= mEnd) {
