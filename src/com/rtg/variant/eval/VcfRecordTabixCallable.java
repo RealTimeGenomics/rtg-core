@@ -32,7 +32,6 @@ public class VcfRecordTabixCallable implements Callable<LoadedVariants> {
   private final File mInput;
   private final ReferenceRanges mRanges;
   private final String mSampleName;
-  private final String mTemplateName;
   private final int mTemplateLength;
   private final VariantSetType mType;
   private final RocSortValueExtractor mExtractor;
@@ -47,7 +46,6 @@ public class VcfRecordTabixCallable implements Callable<LoadedVariants> {
     mInput = file;
     mRanges = ranges;
     mSampleName = sample;
-    mTemplateName = templateName;
     mTemplateLength = templateLength;
     mType = type;
     mExtractor = extractor;
