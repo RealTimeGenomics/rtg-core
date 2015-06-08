@@ -112,8 +112,8 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
         individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, params.sex(), sexMemo));
         individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, params.sex(), sexMemo));
         jointCaller = new PureSomaticCaller(
-          CombinedPriorsComplex.makeQ(mutationRate, loh, haploid.defaultHypotheses(0)),
-          CombinedPriorsComplex.makeQ(mutationRate, loh, diploid.defaultHypotheses(0)),
+          SomaticPriors.makeQ(mutationRate, loh, haploid.defaultHypotheses(0)),
+          SomaticPriors.makeQ(mutationRate, loh, diploid.defaultHypotheses(0)),
           params);
       } else {
         Diagnostic.userLog("Using contaminated cancer caller");
@@ -122,8 +122,8 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
         final ModelCancerFactory contamDiploid = new ModelCancerFactory(params.genomePriors(), contamination, false);
         individualFactories.add(new IndividualSampleFactory<>(params, chooser, contamHaploid, contamDiploid, none, params.sex(), sexMemo));
         jointCaller = new ContaminatedSomaticCaller(
-          CombinedPriorsComplex.makeQ(mutationRate, loh, haploid.defaultHypotheses(0)),
-          CombinedPriorsComplex.makeQ(mutationRate, loh, diploid.defaultHypotheses(0)),
+          SomaticPriors.makeQ(mutationRate, loh, haploid.defaultHypotheses(0)),
+          SomaticPriors.makeQ(mutationRate, loh, diploid.defaultHypotheses(0)),
           params);
       }
       final SomaticCallerConfiguration sc = new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, mutationRate, haploid, diploid, ssp);
@@ -186,8 +186,8 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
     //System.err.println(complex);
     //System.err.println(toStringLog(initialPriors));
     // Currently this is just computing one Q corresponding to the hypotheses passed in -- it would be better to do both if we want to do multiple ploidys at once in a multiple model situation.
-    final double[][] qHaploid = complex.haploid() ? CombinedPriorsComplex.makeQ(mMutationRate, params.lohPrior(), complex, initialPriors) : null;
-    final double[][] qDiploid = complex.haploid() ? null : CombinedPriorsComplex.makeQ(mMutationRate, params.lohPrior(), complex, initialPriors);
+    final double[][] qHaploid = complex.haploid() ? SomaticPriors.makeQ(mMutationRate, params.lohPrior(), complex, initialPriors) : null;
+    final double[][] qDiploid = complex.haploid() ? null : SomaticPriors.makeQ(mMutationRate, params.lohPrior(), complex, initialPriors);
     //System.err.println(toStringLog(q));
     if (mContamination == 0) {
       return new PureSomaticCaller(qHaploid, qDiploid, params);

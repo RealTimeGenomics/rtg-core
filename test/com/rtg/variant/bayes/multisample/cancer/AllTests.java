@@ -27,8 +27,7 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(CancerConvergenceTest.class);
     suite.addTestSuite(SomaticCallerConfigurationTest.class);
     suite.addTestSuite(CodeCrossTest.class);
-    suite.addTestSuite(CombinedPriorsComplexTest.class);
-    suite.addTestSuite(CombinedPriorsTest.class);
+    suite.addTestSuite(SomaticPriorsTest.class);
     suite.addTestSuite(HypothesesCancerTest.class);
     suite.addTestSuite(ModelCancerContaminationTest.class);
     suite.addTestSuite(ModelCancerFactoryTest.class);

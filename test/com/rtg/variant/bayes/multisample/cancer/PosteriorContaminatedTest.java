@@ -46,7 +46,7 @@ public class PosteriorContaminatedTest extends TestCase {
 
   private AbstractPosterior getContaminatedPosterior(double contamination) {
     final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.SEEN_3_C.get(0).hypotheses();
-    final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(CombinedPriorsComplex.makeQ(0.001, 0.0, hypotheses), CombinedPriorsComplex.makeQ(0.001, 0.0, hypotheses), null);
+    final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(SomaticPriors.makeQ(0.001, 0.0, hypotheses), SomaticPriors.makeQ(0.001, 0.0, hypotheses), null);
     cc.integrity();
     // construct a contaminated cancer bayesian.
     final int numReads = 3;
@@ -91,7 +91,7 @@ public class PosteriorContaminatedTest extends TestCase {
 
   public void testPosteriorAllSame() {
     final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.EQUALS_REF_A.get(0).hypotheses();
-    final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(CombinedPriorsComplex.makeQ(0.001, 0.0, hypotheses), CombinedPriorsComplex.makeQ(0.001, 0.0, hypotheses), null);
+    final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(SomaticPriors.makeQ(0.001, 0.0, hypotheses), SomaticPriors.makeQ(0.001, 0.0, hypotheses), null);
     cc.integrity();
     final int numReads = 3;
     final int refNt = DNARange.A;

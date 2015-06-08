@@ -15,6 +15,7 @@ package com.rtg.variant.bayes.multisample.cancer;
 import static com.rtg.util.StringUtils.LS;
 
 import com.rtg.variant.bayes.Description;
+import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 
 import junit.framework.TestCase;
@@ -33,21 +34,23 @@ public class PosteriorPureTest extends TestCase {
       + "equal=-15.965  notequal=-14.234" + LS
       ;
 
+  @SuppressWarnings("unchecked")
   public static <D extends Description> void testPosteriorAllDifferent() {
-    final HypothesesPrior<D> hypotheses = (HypothesesPrior<D>) PureSomaticCallerTest.SEEN_3_C.get(0).hypotheses();
-    final AbstractSomaticCaller ccs = new PureSomaticCaller(CombinedPriorsComplex.makeQ(0.001, 0.0, hypotheses), CombinedPriorsComplex.makeQ(0.001, 0.0, hypotheses), null);
+    final ModelInterface<Description> model = PureSomaticCallerTest.SEEN_3_C.get(0);
+    final HypothesesPrior<D> hypotheses = (HypothesesPrior<D>) model.hypotheses();
+    final AbstractSomaticCaller ccs = new PureSomaticCaller(SomaticPriors.makeQ(0.001, 0.0, hypotheses), SomaticPriors.makeQ(0.001, 0.0, hypotheses), null);
     ccs.integrity();
 
     final int length = hypotheses.size();
     final double[][] mQ = new double[length][length];
-    new CombinedPriorsComplex<D>(hypotheses, 0.001, 0.0, CombinedPriorsComplex.defaultUniformPriors(hypotheses.description().size())) {
+    new SomaticPriors<D>(hypotheses, 0.001, 0.0, SomaticPriors.defaultUniformPriors(hypotheses.description().size())) {
       @Override
       void update(int i1, int i2, double probability) {
         mQ[i1][i2] += probability;
       }
     }.update();
 
-    final AbstractPosterior post = new PosteriorPure(mQ, PureSomaticCallerTest.SEEN_3_C.get(0), PureSomaticCallerTest.SEEN_3_G.get(0), hypotheses);
+    final AbstractPosterior post = new PosteriorPure(mQ, model, PureSomaticCallerTest.SEEN_3_G.get(0), hypotheses);
     assertEquals(EXPECT_ALL_DIFFERENT, post.toString());
     assertEquals(1, post.bestNormal());
     assertEquals(2, post.bestCancer());
@@ -70,7 +73,7 @@ public class PosteriorPureTest extends TestCase {
 
   public void testPosteriorAllSame() {
     HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.EQUALS_REF_A.get(0).hypotheses();
-    final AbstractSomaticCaller ccs = new PureSomaticCaller(CombinedPriorsComplex.makeQ(0.001, 0.0, hypotheses), CombinedPriorsComplex.makeQ(0.001, 0.0, hypotheses), null);
+    final AbstractSomaticCaller ccs = new PureSomaticCaller(SomaticPriors.makeQ(0.001, 0.0, hypotheses), SomaticPriors.makeQ(0.001, 0.0, hypotheses), null);
     ccs.integrity();
 
     AbstractPosterior post = null;
