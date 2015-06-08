@@ -31,7 +31,7 @@ public class ContaminatedSomaticCaller extends AbstractSomaticCaller {
   }
 
   @Override
-  protected AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double mu) {
+  protected AbstractPosterior makePosterior(ModelInterface<?> normal, ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double mu) {
     return new PosteriorContaminated((normal.haploid() ? mQHaploidFactory : mQDiploidFactory).somaticQ(mu), normal, cancer, hypotheses);
   }
 }

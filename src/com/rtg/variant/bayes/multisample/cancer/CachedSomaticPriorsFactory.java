@@ -46,11 +46,7 @@ class CachedSomaticPriorsFactory<D extends Description> extends SomaticPriorsFac
     super(hypotheses, loh);
   }
 
-  /**
-   * Compute the somatic Q prior matrix for the specified mutation rate.
-   * @param mutation probability of a somatic mutation.
-   * @return probabilities of somatic transitions between possibly diploid hypotheses.
-   */
+  @Override
   double[][] somaticQ(final double mutation) {
     // Binning based on powers of 2, could be precomputed to avoid synchronized
     final int exponent = Math.getExponent(mutation);
@@ -66,6 +62,4 @@ class CachedSomaticPriorsFactory<D extends Description> extends SomaticPriorsFac
       return mCache[index];
     }
   }
-
-
 }

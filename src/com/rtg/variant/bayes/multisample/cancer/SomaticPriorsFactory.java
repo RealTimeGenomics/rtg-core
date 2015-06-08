@@ -23,7 +23,7 @@ import com.rtg.variant.bayes.Hypotheses;
 class SomaticPriorsFactory<D extends Description> {
 
   private static double[][] defaultUniformPriors(final int size) {
-    // Each row is normalized
+    // Each row is normalized with zero probability for the identity
     final double uniform = 1.0 / (size - 1);
     final double[][] initialPriors = new double[size][size];
     for (int k = 0; k < size; k++) {
