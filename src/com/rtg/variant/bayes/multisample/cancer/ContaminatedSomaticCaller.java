@@ -22,16 +22,16 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 public class ContaminatedSomaticCaller extends AbstractSomaticCaller {
 
   /**
-   * @param qHaploid haploid numbers
-   * @param qDiploid diploid numbers
+   * @param qHaploidFactory haploid Q matrix factory
+   * @param qDiploidFactory diploid Q matrix factory
    * @param params variant params
    */
-  public ContaminatedSomaticCaller(double[][] qHaploid, double[][] qDiploid, VariantParams params) {
-    super(qHaploid, qDiploid, params);
+  public ContaminatedSomaticCaller(SomaticPriorsFactory<?> qHaploidFactory, SomaticPriorsFactory<?> qDiploidFactory, VariantParams params) {
+    super(qHaploidFactory, qDiploidFactory, params);
   }
 
   @Override
-  protected AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses) {
-    return new PosteriorContaminated(normal.haploid() ? mQHaploid : mQDiploid, normal, cancer, hypotheses);
+  protected AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double mu) {
+    return new PosteriorContaminated((normal.haploid() ? mQHaploidFactory : mQDiploidFactory).somaticQ(mu), normal, cancer, hypotheses);
   }
 }

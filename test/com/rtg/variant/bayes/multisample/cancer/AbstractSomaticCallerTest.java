@@ -214,7 +214,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
   private void checkCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect, String normalName, String cancerName) throws InvalidParamsException, IOException {
     final int refNt = DNARange.A;
     final int refCode = refNt - 1;
-    final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).create();
+    final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).somaticRate(0.001).create();
     final Hypotheses<D> hypotheses = getCancerHypotheses(0.99, refCode);
     final AbstractSomaticCaller ccs = getSomaticCaller(0.001, hypotheses, normalName, cancerName, params);
     ccs.integrity();

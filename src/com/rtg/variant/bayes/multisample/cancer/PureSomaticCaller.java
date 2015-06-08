@@ -22,16 +22,16 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 public class PureSomaticCaller extends AbstractSomaticCaller {
 
   /**
-   * @param qHaploid haploid numbers
-   * @param qDiploid diploid numbers
+   * @param qHaploidFactory haploid Q matrix factory
+   * @param qDiploidFactory diploid Q matrix factory
    * @param params variant params
    */
-  public PureSomaticCaller(double[][] qHaploid, double[][] qDiploid, VariantParams params) {
-    super(qHaploid, qDiploid, params);
+  public PureSomaticCaller(SomaticPriorsFactory<?> qHaploidFactory, SomaticPriorsFactory<?> qDiploidFactory, VariantParams params) {
+    super(qHaploidFactory, qDiploidFactory, params);
   }
 
   @Override
-  protected AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses) {
-    return new PosteriorPure(normal.haploid() ? mQHaploid : mQDiploid, normal, cancer, hypotheses);
+  protected AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double mu) {
+    return new PosteriorPure((normal.haploid() ? mQHaploidFactory : mQDiploidFactory).somaticQ(mu), normal, cancer, hypotheses);
   }
 }

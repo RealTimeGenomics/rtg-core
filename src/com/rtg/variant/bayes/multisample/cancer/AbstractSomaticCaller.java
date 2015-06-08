@@ -48,18 +48,18 @@ import com.rtg.variant.util.VariantUtils;
 @TestClass(value = {"com.rtg.variant.bayes.multisample.cancer.ContaminatedSomaticCallerTest", "com.rtg.variant.bayes.multisample.cancer.PureSomaticCallerTest"})
 public abstract class AbstractSomaticCaller extends IntegralAbstract implements MultisampleJointCaller {
 
-  protected final double[][] mQHaploid;
-  protected final double[][] mQDiploid;
+  protected final SomaticPriorsFactory<?> mQHaploidFactory;
+  protected final SomaticPriorsFactory<?> mQDiploidFactory;
   private final VariantParams mParams;
 
   /**
-   * @param qHaploid haploid numbers
-   * @param qDiploid diploid numbers
+   * @param qHaploidFactory haploid Q matrix factory
+   * @param qDiploidFactory diploid Q matrix factory
    * @param params variant params
    */
-  public AbstractSomaticCaller(final double[][] qHaploid, double[][] qDiploid, VariantParams params) {
-    mQHaploid = qHaploid;
-    mQDiploid = qDiploid;
+  public AbstractSomaticCaller(final SomaticPriorsFactory<?> qHaploidFactory, SomaticPriorsFactory<?> qDiploidFactory, VariantParams params) {
+    mQHaploidFactory = qHaploidFactory;
+    mQDiploidFactory = qDiploidFactory;
     mParams = params;
   }
 
@@ -68,9 +68,10 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
    * @param normal bayesian for the normal genome.
    * @param cancer bayesian for the cancer genome.
    * @param hypotheses the hypotheses containing priors.
+   * @param mu
    * @return the posterior.
    */
-  protected abstract AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses);
+  protected abstract AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double mu);
 
   private VariantSample setCallValues(GenotypeMeasure posterior, int cat, Hypotheses<?> hypotheses, ModelInterface<?> model, VariantOutputOptions params, Ploidy ploidy, VariantSample.DeNovoStatus dns, Double dnp) {
     final VariantSample sample = new VariantSample(ploidy, hypotheses.name(cat), hypotheses.reference() == cat, posterior, dns, dnp);
@@ -154,7 +155,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       return null;
     }
 
-    final AbstractPosterior posterior = makePosterior(modelNormal, modelCancer, hypotheses);
+    final AbstractPosterior posterior = makePosterior(modelNormal, modelCancer, hypotheses, mParams.somaticRate());
     final boolean sameCall = posterior.isSameCall();
     final boolean isSomatic;
     final int bestNormal = posterior.bestNormal();
@@ -222,7 +223,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
 
   @Override
   public void toString(StringBuilder sb) {
-    final double[][] qMatrix = mQHaploid != null ? mQHaploid : mQDiploid;
+    final double[][] qMatrix = (mQHaploidFactory != null ? mQHaploidFactory : mQDiploidFactory).somaticQ(mParams.somaticRate());
     sb.append("length=").append(qMatrix.length).append(LS);
     for (final double[] q : qMatrix) {
       for (final double v : q) {
@@ -246,12 +247,12 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
 
   @Override
   public boolean integrity() {
-    Exam.assertTrue(mQHaploid != null || mQDiploid != null);
-    if (mQHaploid != null) {
-      checkQ(mQHaploid);
+    Exam.assertTrue(mQHaploidFactory != null || mQDiploidFactory != null);
+    if (mQHaploidFactory != null) {
+      checkQ(mQHaploidFactory.somaticQ(mParams.somaticRate()));
     }
-    if (mQDiploid != null) {
-      checkQ(mQDiploid);
+    if (mQDiploidFactory != null) {
+      checkQ(mQDiploidFactory.somaticQ(mParams.somaticRate()));
     }
     return true;
   }

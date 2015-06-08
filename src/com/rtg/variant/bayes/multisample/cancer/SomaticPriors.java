@@ -94,7 +94,6 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
   private final double mMutation;
   private final double[][] mInitialPriors;
 
-
   /**
    * @param hypotheses to be mutated.
    * @param mutation probability of a single mutation.

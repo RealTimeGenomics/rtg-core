@@ -22,20 +22,22 @@ public class AllTests extends TestSuite {
   public static Test suite() {
     final TestSuite suite = new TestSuite(AllTests.class.getName());
 
-    suite.addTestSuite(ContaminatedSomaticCallerTest.class);
-    suite.addTestSuite(PureSomaticCallerTest.class);
+    suite.addTestSuite(CachedSomaticPriorsFactoryTest.class);
     suite.addTestSuite(CancerConvergenceTest.class);
-    suite.addTestSuite(SomaticCallerConfigurationTest.class);
     suite.addTestSuite(CodeCrossTest.class);
-    suite.addTestSuite(SomaticPriorsTest.class);
+    suite.addTestSuite(ContaminatedSomaticCallerTest.class);
     suite.addTestSuite(HypothesesCancerTest.class);
     suite.addTestSuite(ModelCancerContaminationTest.class);
     suite.addTestSuite(ModelCancerFactoryTest.class);
     suite.addTestSuite(PosteriorContaminatedTest.class);
     suite.addTestSuite(PosteriorPureTest.class);
+    suite.addTestSuite(PureSomaticCallerTest.class);
+    suite.addTestSuite(SomaticCallerConfigurationTest.class);
     suite.addTestSuite(SomaticCliTest.class);
-    suite.addTestSuite(SomaticNanoTest.class);
     suite.addTestSuite(SomaticFilterTest.class);
+    suite.addTestSuite(SomaticNanoTest.class);
+    suite.addTestSuite(SomaticPriorsFactoryTest.class);
+    suite.addTestSuite(SomaticPriorsTest.class);
     suite.addTestSuite(SomaticStatisticsTest.class);
     suite.addTestSuite(TopScorerTest.class);
     suite.addTestSuite(TotalScorerTest.class);

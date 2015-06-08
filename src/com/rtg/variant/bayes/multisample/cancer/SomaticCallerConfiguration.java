@@ -88,7 +88,6 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
           throw new NoTalkbackSlimException("Unexpected sample name in mappings: " + mapName);
         }
       }
-      final double mutationRate = params.somaticRate();
       final Double contam = derived[0].getContamination();
       if (contam == null) {
         throw new RuntimeException("Contamination level not specified in genome relationship file.");
@@ -112,8 +111,8 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
         individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, params.sex(), sexMemo));
         individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, params.sex(), sexMemo));
         jointCaller = new PureSomaticCaller(
-          SomaticPriors.makeQ(mutationRate, loh, haploid.defaultHypotheses(0)),
-          SomaticPriors.makeQ(mutationRate, loh, diploid.defaultHypotheses(0)),
+          new CachedSomaticPriorsFactory<>(haploid.defaultHypotheses(0), loh),
+          new CachedSomaticPriorsFactory<>(diploid.defaultHypotheses(0), loh),
           params);
       } else {
         Diagnostic.userLog("Using contaminated cancer caller");
@@ -122,11 +121,11 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
         final ModelCancerFactory contamDiploid = new ModelCancerFactory(params.genomePriors(), contamination, false);
         individualFactories.add(new IndividualSampleFactory<>(params, chooser, contamHaploid, contamDiploid, none, params.sex(), sexMemo));
         jointCaller = new ContaminatedSomaticCaller(
-          SomaticPriors.makeQ(mutationRate, loh, haploid.defaultHypotheses(0)),
-          SomaticPriors.makeQ(mutationRate, loh, diploid.defaultHypotheses(0)),
+          new CachedSomaticPriorsFactory<>(haploid.defaultHypotheses(0), loh),
+          new CachedSomaticPriorsFactory<>(diploid.defaultHypotheses(0), loh),
           params);
       }
-      final SomaticCallerConfiguration sc = new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, mutationRate, haploid, diploid, ssp);
+      final SomaticCallerConfiguration sc = new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, haploid, diploid, ssp);
       sc.getVcfFilters().add(new SomaticFilter(statistics, params.includeGermlineVariants()));
       return sc;
     }
@@ -134,13 +133,11 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
   }
 
   private final double mContamination;
-  private final double mMutationRate;
   private final LineageDenovoChecker mChecker;
 
-  private SomaticCallerConfiguration(MultisampleJointCaller jointCaller, String[] genomeNames, List<IndividualSampleFactory<?>> individualFactories, MachineErrorChooserInterface machineErrorChooser, double contamination, double mutationRate, ModelSnpFactory haploid, ModelSnpFactory diploid, PopulationHwHypothesesCreator ssp) {
+  private SomaticCallerConfiguration(MultisampleJointCaller jointCaller, String[] genomeNames, List<IndividualSampleFactory<?>> individualFactories, MachineErrorChooserInterface machineErrorChooser, double contamination, ModelSnpFactory haploid, ModelSnpFactory diploid, PopulationHwHypothesesCreator ssp) {
     super(jointCaller, genomeNames, individualFactories, machineErrorChooser, haploid, diploid, ssp);
     mContamination = contamination;
-    mMutationRate = mutationRate;
     mChecker = new LineageDenovoChecker(new LineageLookup(-1, 0)); // normal is sample 0, cancer is sample 1
   }
 
@@ -186,13 +183,13 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
     //System.err.println(complex);
     //System.err.println(toStringLog(initialPriors));
     // Currently this is just computing one Q corresponding to the hypotheses passed in -- it would be better to do both if we want to do multiple ploidys at once in a multiple model situation.
-    final double[][] qHaploid = complex.haploid() ? SomaticPriors.makeQ(mMutationRate, params.lohPrior(), complex, initialPriors) : null;
-    final double[][] qDiploid = complex.haploid() ? null : SomaticPriors.makeQ(mMutationRate, params.lohPrior(), complex, initialPriors);
+    final SomaticPriorsFactory<DescriptionComplex> qHaploidFactory = complex.haploid() ? new SomaticPriorsFactory<>(complex, params.lohPrior(), initialPriors) : null;
+    final SomaticPriorsFactory<DescriptionComplex> qDiploidFactory = complex.haploid() ? null : new SomaticPriorsFactory<>(complex, params.lohPrior(), initialPriors);
     //System.err.println(toStringLog(q));
     if (mContamination == 0) {
-      return new PureSomaticCaller(qHaploid, qDiploid, params);
+      return new PureSomaticCaller(qHaploidFactory, qDiploidFactory, params);
     } else {
-      return new ContaminatedSomaticCaller(qHaploid, qDiploid, params);
+      return new ContaminatedSomaticCaller(qHaploidFactory, qDiploidFactory, params);
     }
   }
 

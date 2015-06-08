@@ -14,6 +14,7 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 import static com.rtg.util.StringUtils.LS;
 
+import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Evidence;
 import com.rtg.variant.bayes.Hypotheses;
@@ -46,7 +47,8 @@ public class PosteriorContaminatedTest extends TestCase {
 
   private AbstractPosterior getContaminatedPosterior(double contamination) {
     final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.SEEN_3_C.get(0).hypotheses();
-    final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(SomaticPriors.makeQ(0.001, 0.0, hypotheses), SomaticPriors.makeQ(0.001, 0.0, hypotheses), null);
+    final VariantParams params = VariantParams.builder().somaticRate(0.001).create();
+    final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params);
     cc.integrity();
     // construct a contaminated cancer bayesian.
     final int numReads = 3;
@@ -64,7 +66,7 @@ public class PosteriorContaminatedTest extends TestCase {
       cancer.increment(evg);
       normal.increment(evc);
     }
-    return new PosteriorContaminated(normal.haploid() ? cc.mQHaploid : cc.mQDiploid, normal, cancer, hypotheses);
+    return new PosteriorContaminated((normal.haploid() ? cc.mQHaploidFactory : cc.mQDiploidFactory).somaticQ(0.001), normal, cancer, hypotheses);
   }
 
   private static final String EXPECT_ALL_DIFFERENT_20 = ""
@@ -91,7 +93,8 @@ public class PosteriorContaminatedTest extends TestCase {
 
   public void testPosteriorAllSame() {
     final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.EQUALS_REF_A.get(0).hypotheses();
-    final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(SomaticPriors.makeQ(0.001, 0.0, hypotheses), SomaticPriors.makeQ(0.001, 0.0, hypotheses), null);
+    final VariantParams params = VariantParams.builder().somaticRate(0.001).create();
+    final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params);
     cc.integrity();
     final int numReads = 3;
     final int refNt = DNARange.A;
@@ -106,7 +109,7 @@ public class PosteriorContaminatedTest extends TestCase {
       cancer.increment(eva);
       normal.increment(eva);
     }
-    final AbstractPosterior post = new PosteriorContaminated(hypotheses.haploid() ? cc.mQHaploid : cc.mQDiploid, PureSomaticCallerTest.EQUALS_REF_A.get(0), cancer, hypotheses);
+    final AbstractPosterior post = new PosteriorContaminated((hypotheses.haploid() ? cc.mQHaploidFactory : cc.mQDiploidFactory).somaticQ(0.001), PureSomaticCallerTest.EQUALS_REF_A.get(0), cancer, hypotheses);
     assertEquals(PosteriorPureTest.EXPECT_ALL_SAME, post.toString());
     assertEquals(0, post.bestNormal());
     assertEquals(0, post.bestCancer());

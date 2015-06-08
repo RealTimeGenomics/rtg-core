@@ -14,6 +14,7 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 import static com.rtg.util.StringUtils.LS;
 
+import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
@@ -38,7 +39,8 @@ public class PosteriorPureTest extends TestCase {
   public static <D extends Description> void testPosteriorAllDifferent() {
     final ModelInterface<Description> model = PureSomaticCallerTest.SEEN_3_C.get(0);
     final HypothesesPrior<D> hypotheses = (HypothesesPrior<D>) model.hypotheses();
-    final AbstractSomaticCaller ccs = new PureSomaticCaller(SomaticPriors.makeQ(0.001, 0.0, hypotheses), SomaticPriors.makeQ(0.001, 0.0, hypotheses), null);
+    final VariantParams params = VariantParams.builder().somaticRate(0.001).create();
+    final AbstractSomaticCaller ccs = new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params);
     ccs.integrity();
 
     final int length = hypotheses.size();
@@ -73,12 +75,13 @@ public class PosteriorPureTest extends TestCase {
 
   public void testPosteriorAllSame() {
     HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.EQUALS_REF_A.get(0).hypotheses();
-    final AbstractSomaticCaller ccs = new PureSomaticCaller(SomaticPriors.makeQ(0.001, 0.0, hypotheses), SomaticPriors.makeQ(0.001, 0.0, hypotheses), null);
+    final VariantParams params = VariantParams.builder().somaticRate(0.001).create();
+    final AbstractSomaticCaller ccs = new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params);
     ccs.integrity();
 
     AbstractPosterior post = null;
     for (int i = 0; i < 1; i++) {
-      post = new PosteriorPure(hypotheses.haploid() ? ccs.mQHaploid : ccs.mQDiploid, PureSomaticCallerTest.EQUALS_REF_A.get(0), PureSomaticCallerTest.EQUALS_REF_A.get(0), hypotheses);
+      post = new PosteriorPure((hypotheses.haploid() ? ccs.mQHaploidFactory : ccs.mQDiploidFactory).somaticQ(0.001), PureSomaticCallerTest.EQUALS_REF_A.get(0), PureSomaticCallerTest.EQUALS_REF_A.get(0), hypotheses);
     }
     assertEquals(EXPECT_ALL_SAME, post.toString());
     assertEquals(0, post.bestNormal());
