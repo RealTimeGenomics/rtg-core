@@ -23,7 +23,7 @@ import com.rtg.util.StringUtils;
 /**
  *
  */
-@TestClass("com.rtg.variant.VariantStatisticsTest")
+@TestClass("com.rtg.vcf.VariantStatisticsTest")
 public class PerSampleVariantStatistics {
 
   private static final int EXP_STEP = 100;

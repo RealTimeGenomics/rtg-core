@@ -16,7 +16,7 @@ import com.reeltwo.jumble.annotations.TestClass;
 /**
  * Enumeration of Variant types
  */
-@TestClass("com.rtg.variant.VariantStatisticsTest")
+@TestClass("com.rtg.vcf.VariantStatisticsTest")
 public enum VariantType {
   //Ordered least to most precedence
 
