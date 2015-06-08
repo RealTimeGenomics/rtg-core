@@ -224,6 +224,9 @@
     <fileset dir="${build.test}">
       <include name="com/**/*.class"/>
     </fileset>
+    <fileset dir="${build.misc}">
+      <include name="com/rtg/**" />
+    </fileset>
     <fileset dir="${test.dir}">
       <include name="com/**/*.txt"/>
       <include name="com/**/*.properties"/>
@@ -236,7 +239,7 @@
     <zipfileset src="${test.lib.dir}/junit.jar" excludes="META-INF/**"/>
   </union>
 
-  <target name="rtg-test-bare.jar" depends="compile,set-rtg-build-version" description="Create jar including tests, no main-class or product name.">
+  <target name="rtg-test-bare.jar" depends="compile,set-rtg-build-version,set-rtg-build-product" description="Create jar including tests, no main-class or product name.">
     <jar destfile="${build.dir}/rtg-test-bare.jar" duplicate="fail">
       <resources refid="jar-test"/>
     </jar>
