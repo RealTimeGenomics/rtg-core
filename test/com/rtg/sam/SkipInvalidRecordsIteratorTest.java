@@ -31,7 +31,6 @@ import com.rtg.util.test.FileHelper;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -74,14 +73,13 @@ public class SkipInvalidRecordsIteratorTest extends TestCase {
     final File sam = new File(dir, SharedSamConstants.OUT_SAM);
     FileUtils.stringToFile(SAM_HEAD1 + SAM_REC_OK1, sam);
 
-    final SamFileAndRecord sfr = new SamFileAndRecord(sam, 42);
-    try {
+    try (SkipInvalidRecordsIterator sfr = new SkipInvalidRecordsIterator(sam)) {
       assertTrue(sfr.hashCode() != 0);
       final SAMSequenceDictionary dict = sfr.header().getSequenceDictionary();
       assertEquals("gi0", dict.getSequence(0).getSequenceName());
       final List<SAMSequenceRecord> seqs = dict.getSequences();
       assertEquals(2, seqs.size());
-      assertEquals("SamFileAndRecord:42 line=1 file=" + sam.getPath() + " record=" + SAM_REC_OK1_FORMAT, sfr.toString());
+      assertEquals("Iterator: line=1 file=" + sam.getPath() + " record=" + SAM_REC_OK1_FORMAT, sfr.toString());
       try {
         assertTrue(sfr.hasNext());
         assertNotNull(sfr.next());
@@ -101,27 +99,19 @@ public class SkipInvalidRecordsIteratorTest extends TestCase {
       } catch (final UnsupportedOperationException e) {
         // expected
       }
-    } finally {
-      sfr.close();
     }
 
     final SkipInvalidRecordsIterator sfr0 = new SkipInvalidRecordsIterator(sam);
     sfr0.close();
 
     try {
-      new SamFileAndRecord(sam, -1);
-      fail();
-    } catch (final RuntimeException e) {
-      //e.printStackTrace();
-    }
-    try {
-      new SamFileAndRecord(new File("badsam"), 0);
+      new SkipInvalidRecordsIterator(new File("badsam"));
       fail();
     } catch (final IOException e) {
       //e.printStackTrace();
     }
     try {
-      new SamFileAndRecord(new File("xx" + StringUtils.FS + "badsam"), 0);
+      new SkipInvalidRecordsIterator(new File("xx" + StringUtils.FS + "badsam"));
       fail();
     } catch (final IOException e) {
       //e.printStackTrace();
@@ -191,8 +181,7 @@ public class SkipInvalidRecordsIteratorTest extends TestCase {
     try {
       Diagnostic.addListener(listener);
       FileUtils.stringToFile(samrecords, sam);
-      final SkipInvalidRecordsIterator sfr = new SkipInvalidRecordsIterator(sam);
-      try {
+      try (SkipInvalidRecordsIterator sfr = new SkipInvalidRecordsIterator(sam)) {
         while (sfr.hasNext()) {
           sfr.next();
           num++;
@@ -203,8 +192,6 @@ public class SkipInvalidRecordsIteratorTest extends TestCase {
         assertEquals(numValid, num);
       } catch (final NoTalkbackSlimException e) {
         fail();
-      } finally {
-        sfr.close();
       }
     } catch (final NoTalkbackSlimException e) {
       fail();
@@ -227,8 +214,7 @@ public class SkipInvalidRecordsIteratorTest extends TestCase {
     try {
       Diagnostic.addListener(listener);
       FileUtils.stringToFile(samrecords, sam);
-      final SkipInvalidRecordsIterator sfr = new SkipInvalidRecordsIterator(sam);
-      try {
+      try (SkipInvalidRecordsIterator sfr = new SkipInvalidRecordsIterator(sam)) {
         while (sfr.hasNext()) {
           final SAMRecord rec = sfr.next();
           if (!rec.getIsValid()) {
@@ -243,8 +229,6 @@ public class SkipInvalidRecordsIteratorTest extends TestCase {
         assertEquals(numValid, sfr.getTotalRecordsCount() - sfr.getFilteredRecordsCount() - sfr.getDuplicateRecordsCount() - sfr.getInvalidRecordsCount());
       } catch (final NoTalkbackSlimException e) {
         fail();
-      } finally {
-        sfr.close();
       }
     } catch (final NoTalkbackSlimException e) {
       fail();

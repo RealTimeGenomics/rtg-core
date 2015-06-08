@@ -128,7 +128,7 @@ public abstract class SamIteratorTask<P extends SingleMappedParams, S extends St
       // mParam.thread returns T - 1 threads
       final SAMFileHeader header = SamUtils.getUberHeader(mParams.mapped());
       if (mParams.ioThreads() < 1) {
-        iterator = new MultifileIterator(mParams.mapped(), mFilterParams, header);
+        iterator = new MultifileIterator(new SamReadingContext(mParams.mapped(), 1, mFilterParams, header));
       } else {
         final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
         iterator = new ThreadedMultifileIterator<>(mParams.mapped(), mParams.ioThreads(), pf, mFilterParams, header);

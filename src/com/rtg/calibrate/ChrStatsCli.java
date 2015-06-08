@@ -111,7 +111,7 @@ public class ChrStatsCli extends AbstractCli {
     }
     Diagnostic.developerLog("Loading calibration information");
     final Calibrator c = Calibrator.initCalibrator(calibrationFiles);
-    final SAMFileHeader uberHeader = SamUtils.getUberHeader(samFiles, false, null);
+    final SAMFileHeader uberHeader = SamUtils.getUberHeader(samFiles);
     if (c == null) {
       throw new RuntimeException("Could not load calibration information"); // Runtime as above checks have ensured there are calibration files
     } else {

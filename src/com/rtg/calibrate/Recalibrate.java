@@ -133,7 +133,7 @@ public class Recalibrate implements Closeable {
   }
 
   void doMergeRecalibrate(File output, List<File> samFiles, List<CovariateEnum> covs, int threads, boolean force, boolean compress) throws IOException {
-    final SAMFileHeader uberHeader = SamUtils.getUberHeader(samFiles, false, null);
+    final SAMFileHeader uberHeader = SamUtils.getUberHeader(samFiles);
     final Covariate[] covariates = CovariateEnum.getCovariates(covs, uberHeader);
     final RecalibratingPopulatorFactory rpf = new RecalibratingPopulatorFactory(covariates, mRegions, mTemplate);
     final boolean outputBam = output.getName().endsWith(SamUtils.BAM_SUFFIX);

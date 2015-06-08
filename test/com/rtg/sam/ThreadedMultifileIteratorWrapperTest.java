@@ -24,7 +24,6 @@ import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantAlignmentRecordPopulator;
 
 import htsjdk.samtools.SAMReadGroupRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -43,7 +42,7 @@ public class ThreadedMultifileIteratorWrapperTest extends TestCase {
       fileList.add(second);
       final SamFilterParams params = SamFilterParams.builder().create();
       final SingletonPopulatorFactory<VariantAlignmentRecord> pf = new SingletonPopulatorFactory<>(new VariantAlignmentRecordPopulator());
-      try (ThreadedMultifileIteratorWrapper<VariantAlignmentRecord> it = new ThreadedMultifileIteratorWrapper<>(fileList, 1, pf, params, SamUtils.getUberHeader(fileList))) {
+      try (ThreadedMultifileIteratorWrapper<VariantAlignmentRecord> it = new ThreadedMultifileIteratorWrapper<>(new SamReadingContext(fileList, 1, params, SamUtils.getUberHeader(fileList)), pf)) {
         it.setSequenceId(0);
         final List<SAMReadGroupRecord> readGroups = it.header().getReadGroups();
         assertEquals(2, readGroups.size());

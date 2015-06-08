@@ -21,6 +21,7 @@ import java.util.Set;
 
 import com.rtg.launcher.ParamsTask;
 import com.rtg.mode.DnaUtils;
+import com.rtg.reader.SequencesReader;
 import com.rtg.sam.CircularBufferMultifileSinglePassReaderWindow;
 import com.rtg.sam.SamReadingContext;
 import com.rtg.sam.SamUtils;
@@ -105,8 +106,9 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     coverageWriter.init();
     final SAMFileHeader uberHeader = SamUtils.getUberHeader(mParams.mapped(), mParams.ignoreIncompatibleSamHeaders(), null);
 
-    if (mParams.genome() != null) {
-      SamUtils.checkUberHeaderAgainstReference(mParams.genome().reader(), uberHeader, mParams.ignoreIncompatibleSamHeaders());
+    final SequencesReader reference = mParams.genome() == null ? null : mParams.genome().reader();
+    if (reference != null) {
+      SamUtils.checkUberHeaderAgainstReference(reference, uberHeader, mParams.ignoreIncompatibleSamHeaders());
     } else {
       Diagnostic.warning("No reference supplied - unable to determine regions of unknown nucleotides.");
     }
@@ -154,7 +156,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     mStatistics.setOutputRegionNames(outputRegionNames);
 
     //this is really a statistics output message, but easier to detect here at the moment...
-    if (mParams.genome() == null) {
+    if (reference == null) {
       Diagnostic.userLog("Reference genome not specified, meaning no non-N counts.");
     }
   }

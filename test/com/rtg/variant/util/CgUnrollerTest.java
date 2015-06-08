@@ -26,8 +26,8 @@ import com.rtg.ngs.CgMapCli;
 import com.rtg.reader.FastaUtils;
 import com.rtg.reader.PrereadArm;
 import com.rtg.reader.ReaderTestUtils;
-import com.rtg.sam.SamFileAndRecord;
 import com.rtg.sam.SamUtils;
+import com.rtg.sam.SkipInvalidRecordsIterator;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
@@ -37,7 +37,6 @@ import com.rtg.variant.VariantAlignmentRecord;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -466,7 +465,7 @@ public class CgUnrollerTest extends TestCase {
   private String unrollCGFromSam(final File samFile, String leftTemplate, String rightTemplate) throws IOException {
     final StringBuilder sb = new StringBuilder();
     final StringBuilder sbCigar = new StringBuilder();
-    final SamFileAndRecord iter = new SamFileAndRecord(samFile, 0);
+    final SkipInvalidRecordsIterator iter = new SkipInvalidRecordsIterator(samFile);
     while (iter.hasNext()) {
       final SAMRecord sam = iter.next();
       final byte[] template = DnaUtils.encodeString(sam.getReferenceName().equals("left") ? leftTemplate : rightTemplate);

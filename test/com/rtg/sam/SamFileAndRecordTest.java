@@ -17,6 +17,7 @@ import java.io.IOException;
 import com.rtg.util.TestUtils;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -34,48 +35,46 @@ public class SamFileAndRecordTest extends SkipInvalidRecordsIteratorTest {
    * Test method for {@link com.rtg.sam.SamFileAndRecord#compareTo(com.rtg.sam.SamFileAndRecord)}.
    */
   public final void testCompareTo() throws IOException {
-    final File dir1 = FileUtils.createTempDir("testSAMFile", "variant");
-    final File sam1 = new File(dir1, SharedSamConstants.OUT_SAM);
-    FileUtils.stringToFile(SkipInvalidRecordsIteratorTest.SAM_HEAD1 + SkipInvalidRecordsIteratorTest.SAM_REC_OK1 + SkipInvalidRecordsIteratorTest.SAM_REC_OK3, sam1);
-    final SamFileAndRecord sfr1 = getSamFileAndRecord(sam1, 1);
+    try (final TestDirectory dir1 = new TestDirectory("testSAMFile1");
+         final TestDirectory dir2 = new TestDirectory("testSAMFile2");
+         final TestDirectory dir3 = new TestDirectory("testSAMFile3")) {
+      final File sam1 = new File(dir1, SharedSamConstants.OUT_SAM);
+      FileUtils.stringToFile(SkipInvalidRecordsIteratorTest.SAM_HEAD1 + SkipInvalidRecordsIteratorTest.SAM_REC_OK1 + SkipInvalidRecordsIteratorTest.SAM_REC_OK3, sam1);
+      try (final SamFileAndRecord sfr1 = getSamFileAndRecord(sam1, 1)) {
 
-    final File dir2 = FileUtils.createTempDir("testSAMFile", "variant");
-    final File sam2 = new File(dir2, SharedSamConstants.OUT_SAM);
-    FileUtils.stringToFile(SkipInvalidRecordsIteratorTest.SAM_HEAD1 + SkipInvalidRecordsIteratorTest.SAM_REC_OK1 + SkipInvalidRecordsIteratorTest.SAM_REC_OK1 + SkipInvalidRecordsIteratorTest.SAM_REC_OK2, sam2);
-    final SamFileAndRecord sfr2 = getSamFileAndRecord(sam2, 2);
+        final File sam2 = new File(dir2, SharedSamConstants.OUT_SAM);
+        FileUtils.stringToFile(SkipInvalidRecordsIteratorTest.SAM_HEAD1 + SkipInvalidRecordsIteratorTest.SAM_REC_OK1 + SkipInvalidRecordsIteratorTest.SAM_REC_OK1 + SkipInvalidRecordsIteratorTest.SAM_REC_OK2, sam2);
+        try (final SamFileAndRecord sfr2 = getSamFileAndRecord(sam2, 2)) {
 
 
-    final File dir3 = FileUtils.createTempDir("testSAMFile", "variant");
-    final File sam3 = new File(dir3, SharedSamConstants.OUT_SAM);
-    FileUtils.stringToFile(SkipInvalidRecordsIteratorTest.SAM_HEAD1 + SkipInvalidRecordsIteratorTest.SAM_REC_OK1 + SkipInvalidRecordsIteratorTest.SAM_REC_OK2 + SkipInvalidRecordsIteratorTest.SAM_REC_OK3, sam3);
-    final SamFileAndRecord sfr3 = getSamFileAndRecord(sam3, 3);
+          final File sam3 = new File(dir3, SharedSamConstants.OUT_SAM);
+          FileUtils.stringToFile(SkipInvalidRecordsIteratorTest.SAM_HEAD1 + SkipInvalidRecordsIteratorTest.SAM_REC_OK1 + SkipInvalidRecordsIteratorTest.SAM_REC_OK2 + SkipInvalidRecordsIteratorTest.SAM_REC_OK3, sam3);
+          try (final SamFileAndRecord sfr3 = getSamFileAndRecord(sam3, 3)) {
 
-    TestUtils.testOrder(new SamFileAndRecord[] {sfr1, sfr2, sfr3}, false);
+            TestUtils.testOrder(new SamFileAndRecord[]{sfr1, sfr2, sfr3}, false);
 
-    sfr2.next();
-    TestUtils.testOrder(new SamFileAndRecord[] {sfr1, sfr2, sfr3}, false);
-    sfr2.next();
-    //System.err.println("" + new SamFileAndRecord[] {sfr1, sfr3, sfr2});
-    TestUtils.testOrder(new SamFileAndRecord[] {sfr1, sfr3, sfr2}, false);
+            sfr2.next();
+            TestUtils.testOrder(new SamFileAndRecord[]{sfr1, sfr2, sfr3}, false);
+            sfr2.next();
+            //System.err.println("" + new SamFileAndRecord[] {sfr1, sfr3, sfr2});
+            TestUtils.testOrder(new SamFileAndRecord[]{sfr1, sfr3, sfr2}, false);
 
-    sfr3.next();
-    TestUtils.testOrder(new SamFileAndRecord[] {sfr1, sfr2, sfr3}, false);
+            sfr3.next();
+            TestUtils.testOrder(new SamFileAndRecord[]{sfr1, sfr2, sfr3}, false);
 
-    sfr1.next();
-    //System.err.println(sfr1.orderToString());
-    //System.err.println(sfr3.orderToString());
-    //System.err.println(sfr2.orderToString());
-    TestUtils.testOrder(new SamFileAndRecord[] {sfr2, sfr3, sfr1}, false);
+            sfr1.next();
+            //System.err.println(sfr1.orderToString());
+            //System.err.println(sfr3.orderToString());
+            //System.err.println(sfr2.orderToString());
+            TestUtils.testOrder(new SamFileAndRecord[]{sfr2, sfr3, sfr1}, false);
 
-    sfr3.next();
-    TestUtils.testOrder(new SamFileAndRecord[] {sfr2, sfr1, sfr3}, false);
+            sfr3.next();
+            TestUtils.testOrder(new SamFileAndRecord[]{sfr2, sfr1, sfr3}, false);
 
-    sfr1.close();
-    sfr2.close();
-    sfr3.close();
-    FileHelper.deleteAll(dir1);
-    FileHelper.deleteAll(dir2);
-    FileHelper.deleteAll(dir3);
+          }
+        }
+      }
+    }
   }
 
 
