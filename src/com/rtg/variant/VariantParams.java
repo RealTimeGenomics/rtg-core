@@ -104,6 +104,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final double mSomaticRate;
   private final boolean mIncludeGermlineVariants;
   private final boolean mIncludeGainOfReference;
+  private final ReferenceRanges<Double> mSiteSpecificSomaticPriors;
   private final double mNoDiseasePrior;
   private final boolean mUsePropagatingPriors;
   private final EnumSet<VcfInfoField> mInfoAnnotations;
@@ -161,6 +162,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mSomaticRate = builder.mSomaticRate;
     mIncludeGermlineVariants = builder.mIncludeGermlineVariants;
     mIncludeGainOfReference = builder.mIncludeGainOfReference;
+    mSiteSpecificSomaticPriors = builder.mSiteSpecificSomaticPriors;
     mNoDiseasePrior = builder.mNoDiseasePrior;
     mLohPrior = builder.mLohPrior;
     mPopulationPriorFile = builder.mPopulationPriorFile;
@@ -556,6 +558,13 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   }
 
   /**
+   * @return site specific somatic priors.
+   */
+  public ReferenceRanges<Double> siteSpecificSomaticPriors() {
+    return mSiteSpecificSomaticPriors;
+  }
+
+  /**
    * @return prior probability that a position does not explain a disease.
    */
   public double noDiseasePrior() {
@@ -686,6 +695,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     .somaticRate(mSomaticRate)
     .includeGermlineVariants(mIncludeGermlineVariants)
     .includeGainOfReference(mIncludeGainOfReference)
+    .siteSpecificSomaticPriors(mSiteSpecificSomaticPriors)
     .noDiseasePrior(mNoDiseasePrior)
     .ionTorrent(mIonTorrent)
     .indelTriggerFraction(mIndelTriggerFraction)
@@ -703,6 +713,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     .infoAnnotations(EnumSet.copyOf(mInfoAnnotations))
     .formatAnnotations(EnumSet.copyOf(mFormatAnnotations))
     .regionsFilterBedFile(mRegionsFilterBedFile)
+    .referenceRanges(mReferenceRanges)
     ;
   }
 

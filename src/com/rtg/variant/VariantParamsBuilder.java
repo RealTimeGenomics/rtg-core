@@ -95,6 +95,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   double mLohPrior = 0.0;
   boolean mIncludeGermlineVariants = false;
   boolean mIncludeGainOfReference = false;
+  ReferenceRanges<Double> mSiteSpecificSomaticPriors = null;
   SAMFileHeader mUberHeader = null;
   ReferenceRanges<String> mReferenceRanges = null;
   File mRegionsFilterBedFile = null;
@@ -556,6 +557,16 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
       throw new IllegalArgumentException();
     }
     mNoDiseasePrior = p;
+    return self();
+  }
+
+  /**
+   * Set site specific somatic priors.
+   * @param priors the reference ranges specifying site specific somatic priors
+   * @return this builder, so calls can be chained.
+   */
+  public VariantParamsBuilder siteSpecificSomaticPriors(final ReferenceRanges<Double> priors) {
+    mSiteSpecificSomaticPriors = priors;
     return self();
   }
 

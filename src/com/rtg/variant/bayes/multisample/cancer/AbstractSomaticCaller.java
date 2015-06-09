@@ -22,6 +22,8 @@ import com.rtg.reference.Ploidy;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
+import com.rtg.util.intervals.RangeList;
+import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantOutputLevel;
@@ -51,6 +53,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
   protected final SomaticPriorsFactory<?> mQHaploidFactory;
   protected final SomaticPriorsFactory<?> mQDiploidFactory;
   private final VariantParams mParams;
+  private final ReferenceRanges<Double> mSiteSpecificSomaticPriors;
 
   /**
    * @param qHaploidFactory haploid Q matrix factory
@@ -61,6 +64,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     mQHaploidFactory = qHaploidFactory;
     mQDiploidFactory = qDiploidFactory;
     mParams = params;
+    mSiteSpecificSomaticPriors = mParams.siteSpecificSomaticPriors();
   }
 
   /**
@@ -77,6 +81,23 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     final VariantSample sample = new VariantSample(ploidy, hypotheses.name(cat), hypotheses.reference() == cat, posterior, dns, dnp);
     model.statistics().addCountsToSample(sample, model, params);
     return sample;
+  }
+
+  private double getSomaticPrior(final String seqName, final int start, final int end) {
+    assert start <= end;
+    // todo consult ref ranges, site specific stuff
+    // todo take better account of start and end
+    if (mSiteSpecificSomaticPriors != null) {
+      final RangeList<Double> rangeList = mSiteSpecificSomaticPriors.get(seqName);
+      if (rangeList != null) {
+        final List<Double> v = rangeList.find(start);
+        // todo averaging or maxing or similar if multiple values
+        if (v.size() == 1) {
+          return v.get(0);
+        }
+      }
+    }
+    return mParams.somaticRate();
   }
 
   private double loh(final Hypotheses<?> hypotheses, final int normal, final int cancer) {
@@ -155,14 +176,13 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       return null;
     }
 
-    final AbstractPosterior posterior = makePosterior(modelNormal, modelCancer, hypotheses, mParams.somaticRate());
+    final AbstractPosterior posterior = makePosterior(modelNormal, modelCancer, hypotheses, getSomaticPrior(templateName, position, endPosition));
     final boolean sameCall = posterior.isSameCall();
     final boolean isSomatic;
     final int bestNormal = posterior.bestNormal();
     final int bestCancer = posterior.bestCancer();
     // Simple LOH test based on ploidy of results alone, could be done with Bayesian calculation later
     final double loh = loh(hypotheses, bestNormal, bestCancer);
-    // create individual genome calls
     final Ploidy normalPloidy = hypotheses.haploid() ? Ploidy.HAPLOID : Ploidy.DIPLOID;
     final boolean doLoh = mParams.lohPrior() > 0;
     final String refAllele = DnaUtils.bytesToSequenceIncCG(ref, position, endPosition - position);

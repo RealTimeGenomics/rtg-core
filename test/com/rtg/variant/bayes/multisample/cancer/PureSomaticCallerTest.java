@@ -42,9 +42,8 @@ import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
 /**
- * This just contains a few extra tests that are specific to <code>CancerComparisonSimple</code>.
+ * This just contains a few extra tests that are specific to <code>PureSomaticCaller</code>.
  * They may be subsumed by the superclass tests.
- *
  */
 public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description> {
 

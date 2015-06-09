@@ -28,6 +28,8 @@ import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
+import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.avr.AbstractPredictModel;
@@ -44,6 +46,7 @@ public class SomaticCli extends AbstractMultisampleCli {
   public static final String MODULE_NAME = "somatic";
 
   private static final String SOMATIC_FLAG = "somatic";
+  private static final String SOMATIC_PRIORS_FLAG = "somatic-priors";
   private static final String LOH_FLAG = "loh";
   // Either this ...
   private static final String PEDIGREE_FLAG = "Xpedigree";
@@ -130,7 +133,8 @@ public class SomaticCli extends AbstractMultisampleCli {
     final Flag derivedFlag = flags.registerOptional(DERIVED_FLAG, String.class, "string", "sample identifier used in read groups for derived sample").setCategory(INPUT_OUTPUT);
     final Flag originalFlag = flags.registerOptional(ORIGINAL_FLAG, String.class, "string", "sample identifier used in read groups for original sample").setCategory(INPUT_OUTPUT);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of individual", Sex.EITHER).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('s', SOMATIC_FLAG, Double.class, "float", "prior probability of a somatic SNP mutation in the derived sample", 0.0001).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('s', SOMATIC_FLAG, Double.class, "float", "default prior probability of a somatic SNP mutation in the derived sample", 0.0001).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(SOMATIC_PRIORS_FLAG, File.class, "file", "if set, use the BED file to generated site specific somatic priors").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(LOH_FLAG, Double.class, "float", "prior probability that a loss of heterozygosity event has occurred", 0.0).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(INCLUDE_GERMLINE_FLAG, "include germline variants in output VCF").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('G', INCLUDE_GAIN_OF_REFERENCE, "include gain of reference somatic calls in output VCF").setCategory(SENSITIVITY_TUNING);
@@ -161,12 +165,23 @@ public class SomaticCli extends AbstractMultisampleCli {
 
   @Override
   protected VariantParamsBuilder makeParamsBuilder() throws InvalidParamsException, IOException {
-    return super.makeParamsBuilder()
+    final VariantParamsBuilder vpb = super.makeParamsBuilder();
+    vpb
       .somaticRate((Double) mFlags.getValue(SOMATIC_FLAG))
       .includeGermlineVariants(mFlags.isSet(INCLUDE_GERMLINE_FLAG))
       .includeGainOfReference(mFlags.isSet(INCLUDE_GAIN_OF_REFERENCE))
       .lohPrior((Double) mFlags.getValue(LOH_FLAG))
       .sex((Sex) mFlags.getValue(SEX_FLAG));
+    if (mFlags.isSet(SOMATIC_PRIORS_FLAG)) {
+      final PriorBedRangeLoader loader = new PriorBedRangeLoader();
+      final File sspBedFile = (File) mFlags.getValue(SOMATIC_PRIORS_FLAG);
+      loader.loadRanges(sspBedFile);
+      final ReferenceRanges<Double> ssp = loader.getReferenceRanges();
+      vpb.siteSpecificSomaticPriors(ssp);
+      Diagnostic.userLog("Loaded site specific somatic priors from " + sspBedFile);
+      // xxx this should be doing some additional checking the headers match?
+    }
+    return vpb;
   }
 
   @Override
