@@ -176,7 +176,6 @@ public class SomaticCli extends AbstractMultisampleCli {
       final PriorBedRangeLoader loader = new PriorBedRangeLoader();
       final File sspBedFile = (File) mFlags.getValue(SOMATIC_PRIORS_FLAG);
       loader.loadRanges(getSimpleRegionRestriction(), sspBedFile);
-      // todo this should probably be doing some additional checking the headers match?
       final ReferenceRanges<Double> ssp = loader.getReferenceRanges();
       vpb.siteSpecificSomaticPriors(ssp);
       Diagnostic.userLog("Loaded site specific somatic priors from " + sspBedFile);

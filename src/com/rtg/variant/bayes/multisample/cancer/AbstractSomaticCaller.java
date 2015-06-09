@@ -12,7 +12,6 @@
 
 package com.rtg.variant.bayes.multisample.cancer;
 
-
 import java.io.IOException;
 import java.util.List;
 
@@ -60,7 +59,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
    * @param qDiploidFactory diploid Q matrix factory
    * @param params variant params
    */
-  public AbstractSomaticCaller(final SomaticPriorsFactory<?> qHaploidFactory, SomaticPriorsFactory<?> qDiploidFactory, VariantParams params) {
+  public AbstractSomaticCaller(final SomaticPriorsFactory<?> qHaploidFactory, final SomaticPriorsFactory<?> qDiploidFactory, final VariantParams params) {
     mQHaploidFactory = qHaploidFactory;
     mQDiploidFactory = qDiploidFactory;
     mParams = params;
@@ -75,7 +74,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
    * @param mu somatic mutation rate.
    * @return the posterior.
    */
-  protected abstract AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, final double mu);
+  protected abstract AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, final HypothesesPrior<?> hypotheses, final double mu);
 
   private VariantSample setCallValues(GenotypeMeasure posterior, int cat, Hypotheses<?> hypotheses, ModelInterface<?> model, VariantOutputOptions params, Ploidy ploidy, VariantSample.DeNovoStatus dns, Double dnp) {
     final VariantSample sample = new VariantSample(ploidy, hypotheses.name(cat), hypotheses.reference() == cat, posterior, dns, dnp);

@@ -89,10 +89,11 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
 
 
     final byte[] baseQualities = record.getBaseQualities();
-    if (baseQualities.length == 0) {
-      mQuality = baseQualities;
-    } else {
-      mQuality = baseQualities;
+    mQuality = baseQualities;
+//    if (baseQualities.length == 0) {
+//      mQuality = baseQualities;
+//    } else {
+//      mQuality = baseQualities;
 
       // Perform recalibration at this point?
       //mQuality = Arrays.copyOf(baseQualities, baseQualities.length);
@@ -102,7 +103,7 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
 //      for (int i = 0; i < mQuality.length; i++) {
 //        mQuality[i] += FastqSequenceDataSource.PHRED_LOWER_LIMIT_CHAR;
 //      }
-    }
+//    }
     mCigar = record.getCigarString();
     mMappingQuality = (byte) record.getMappingQuality();
     mReadGroup = record.getReadGroup();
