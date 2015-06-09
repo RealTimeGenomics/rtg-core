@@ -92,7 +92,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       if (rangeList != null) {
         final List<Double> v = rangeList.find(start);
         // todo averaging or maxing or similar if multiple values
-        if (v.size() == 1) {
+        if (v != null && v.size() == 1) {
           return v.get(0);
         }
       }
