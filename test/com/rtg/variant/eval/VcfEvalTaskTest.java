@@ -25,6 +25,8 @@ import java.util.TreeMap;
 
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.OutputParams;
+import com.rtg.mode.SequenceType;
+import com.rtg.reader.MockSequencesReader;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.tabix.TabixIndexer;
@@ -35,6 +37,7 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
@@ -347,7 +350,8 @@ public class VcfEvalTaskTest extends TestCase {
     Diagnostic.setLogStream(ps.printStream());
     try {
       final VcfEvalParams params = VcfEvalParams.builder().baseLineFile(mutations).callsFile(calls)
-          .templateFile(template).outputParams(new OutputParams(out, false, false)).create();
+        .restriction(new RegionRestriction("seq", 0, 300))
+        .templateFile(template).outputParams(new OutputParams(out, false, false)).create();
       VcfEvalTask.evaluateCalls(params);
     } finally {
       Diagnostic.setLogStream();
@@ -358,7 +362,7 @@ public class VcfEvalTaskTest extends TestCase {
       "Variant in calls at seq:30 starts outside the length of the reference sequence (27).",
       "There were 1 baseline variants skipped due to being too long, overlapping or starting outside the expected reference sequence length.",
       "There were 2 called variants skipped due to being too long, overlapping or starting outside the expected reference sequence length."
-        );
+    );
   }
 
   public void testGetSdfId() {
@@ -455,7 +459,8 @@ public class VcfEvalTaskTest extends TestCase {
       for (int seq = 1; seq < 32; seq++) {
         names.add(new Pair<>("simulatedSequence" + seq, -1));
       }
-      assertTrue(VcfEvalTask.getVariants(VcfEvalParams.builder().callsFile(input).baseLineFile(input).create(), names) instanceof TabixVcfRecordSet);
+      final MockSequencesReader templateReader = new MockSequencesReader(SequenceType.DNA, 32, 27);
+      assertTrue(VcfEvalTask.getVariants(names, VcfEvalParams.builder().callsFile(input).baseLineFile(input).create(), templateReader) instanceof TabixVcfRecordSet);
     } finally {
       FileHelper.deleteAll(dir);
     }

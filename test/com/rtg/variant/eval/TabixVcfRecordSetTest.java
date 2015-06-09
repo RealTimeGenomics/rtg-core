@@ -27,11 +27,12 @@ import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.MathUtils;
 import com.rtg.util.Pair;
+import com.rtg.util.PosteriorUtils;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.PosteriorUtils;
 import com.rtg.vcf.header.VcfHeader;
 
 import junit.framework.TestCase;
@@ -45,6 +46,7 @@ public class TabixVcfRecordSetTest extends TestCase {
     + "simulatedSequence1\t583\t.\tA\tT\t50\tPASS\t.\tGT:GQ\t1/0:" + PosteriorUtils.phredIfy(18.5 * MathUtils.LOG_10) + LS
     + "simulatedSequence19\t637\t.\tG\tC\t50\tPASS\t.\tGT:GQ\t1/0:" + PosteriorUtils.phredIfy(5.3 * MathUtils.LOG_10) + LS
     + "simulatedSequence45\t737\t.\tG\tC\t50\tPASS\t.\tGT:GQ\t1/1:" + PosteriorUtils.phredIfy(7.4 * MathUtils.LOG_10) + LS;
+
   public void testSomeMethod() throws IOException, UnindexableDataException {
     Diagnostic.setLogStream();
     final File dir = FileUtils.createTempDir("tabixVarianceTest", "test");
@@ -60,7 +62,10 @@ public class TabixVcfRecordSetTest extends TestCase {
       for (int seq = 1; seq < 32; seq++) {
         names.add(new Pair<>("simulatedSequence" + seq, -1));
       }
-      ReferenceRanges ranges = new ReferenceRanges(true);
+      ReferenceRanges<String> ranges = new ReferenceRanges<>(false);
+      for (int seq = 1; seq < 32; seq++) {
+        ranges.put("simulatedSequence" + seq, new RangeList<>(new RangeList.RangeData<>(-1, Integer.MAX_VALUE, "simulatedSequence" + seq)));
+      }
       final VariantSet set = new TabixVcfRecordSet(input, out, ranges, names, null, RocSortValueExtractor.NULL_EXTRACTOR, true, false, 100);
 
       final Set<String> expected = new HashSet<>();

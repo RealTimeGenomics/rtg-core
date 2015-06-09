@@ -83,7 +83,7 @@ public abstract class AbstractIndexReader implements LocusIndex {
 
 
   @Override
-  public VirtualOffsets getFilePointers(ReferenceRanges ranges) throws IOException {
+  public VirtualOffsets getFilePointers(ReferenceRanges<String> ranges) throws IOException {
     final VirtualOffsets offsets = new VirtualOffsets();
     for (String seqName : ranges.sequenceNames()) {
       final Integer seqId = mSequenceLookup.get(seqName); // This id may not be the same as header sequence id in the case of tabix.
@@ -111,7 +111,7 @@ public abstract class AbstractIndexReader implements LocusIndex {
    * @param results storage space for offset information
    * @throws java.io.IOException if an IO exception occurs
    */
-  public static void getFilePointers(ReferenceRanges ranges, String seqName, InputStream indexStream, long binsPosition, int binsSize, VirtualOffsets results) throws IOException {
+  public static void getFilePointers(ReferenceRanges<String> ranges, String seqName, InputStream indexStream, long binsPosition, int binsSize, VirtualOffsets results) throws IOException {
 
     //seek to sequence
     FileUtils.skip(indexStream, binsPosition);

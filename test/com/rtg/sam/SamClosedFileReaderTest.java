@@ -77,7 +77,7 @@ public class SamClosedFileReaderTest extends TestCase {
     try (SamReader normalReader = SamUtils.makeSamReader(exp)) {
       final SamRegionRestriction rr = new SamRegionRestriction("simulatedSequence2", 10000, 20000);
       final Iterator<SAMRecord> norm = normalReader.query(rr.getSequenceName(), rr.getStart() + 1, rr.getEnd(), false);
-      ReferenceRanges ranges = SamRangeUtils.createExplicitReferenceRange(normalReader.getFileHeader(), rr);
+      ReferenceRanges<String> ranges = SamRangeUtils.createExplicitReferenceRange(normalReader.getFileHeader(), rr);
       try (final RecordIterator<SAMRecord> closed = new SamClosedFileReader(sam, ranges, normalReader.getFileHeader())) {
         while (norm.hasNext() && closed.hasNext()) {
           final SAMRecord a = norm.next();

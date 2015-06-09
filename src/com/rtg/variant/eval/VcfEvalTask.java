@@ -114,7 +114,7 @@ public final class VcfEvalTask extends ParamsTask<VcfEvalParams, NoStatistics> {
       nameOrdering.add(new Pair<>(templateSequences.names().name(i), templateSequences.length(i)));
     }
 
-    final VariantSet variants = getVariants(params, nameOrdering);
+    final VariantSet variants = getVariants(nameOrdering, params, templateSequences);
     if (!output.exists() && !output.mkdirs()) {
       throw new IOException("Unable to create directory \"" + output.getPath() + "\"");
     }
@@ -238,24 +238,25 @@ public final class VcfEvalTask extends ParamsTask<VcfEvalParams, NoStatistics> {
 
   /**
    * Builds a variant set of the best type for the supplied files
-   * @param params the parameters
    * @param nameOrdering the ordering of the names for output / processing
+   * @param params the parameters
+   * @param templateSequencesReader template sequences
    * @return a VariantSet for the provided files
    * @throws IOException if IO is broken
    */
-  static VariantSet getVariants(VcfEvalParams params, Collection<Pair<String, Integer>> nameOrdering) throws IOException {
+  static VariantSet getVariants(Collection<Pair<String, Integer>> nameOrdering, VcfEvalParams params, SequencesReader templateSequencesReader) throws IOException {
     final File calls = params.callsFile();
     final File baseline = params.baselineFile();
     final String sampleName = params.sampleName();
     final RocSortValueExtractor extractor = getRocSortValueExtractor(params);
-    final ReferenceRanges ranges;
+    final ReferenceRanges<String> ranges;
     if (params.bedRegionsFile() != null) {
       Diagnostic.developerLog("Loading BED regions");
       ranges = SamRangeUtils.createBedReferenceRanges(params.bedRegionsFile());
     } else if (params.restriction() != null) {
       ranges = SamRangeUtils.createExplicitReferenceRange(params.restriction());
     } else {
-      ranges = new ReferenceRanges(true);
+      ranges = SamRangeUtils.createFullReferenceRanges(templateSequencesReader);
     }
     return new TabixVcfRecordSet(baseline, calls, ranges, nameOrdering, sampleName, extractor, !params.useAllRecords(), params.squashPloidy(), params.maxLength());
   }

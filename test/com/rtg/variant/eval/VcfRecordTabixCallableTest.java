@@ -17,6 +17,7 @@ import java.util.List;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
@@ -35,7 +36,9 @@ public class VcfRecordTabixCallableTest extends TestCase {
       FileHelper.resourceToFile("com/rtg/sam/resources/snp_only.vcf.gz", input);
       final File tabix = new File(dir, "snp_only.vcf.gz.tbi");
       FileHelper.resourceToFile("com/rtg/sam/resources/snp_only.vcf.gz.tbi", tabix);
-      ReferenceRanges ranges = new ReferenceRanges(true);
+      final ReferenceRanges<String> ranges = new ReferenceRanges<>(false);
+      ranges.put("simulatedSequence2", new RangeList<>(new RangeList.RangeData<>(-1, Integer.MAX_VALUE, "simulatedSequence2")));
+      ranges.put("simulatedSequence13", new RangeList<>(new RangeList.RangeData<>(-1, Integer.MAX_VALUE, "simulatedSequence13")));
       final VcfRecordTabixCallable runner = new VcfRecordTabixCallable(input, ranges.forSequence("simulatedSequence13"), "simulatedSequence13", -1, VariantSetType.BASELINE, null, RocSortValueExtractor.NULL_EXTRACTOR, true, false, 100);
       List<DetectedVariant> set = runner.call().mVariants;
       assertEquals(2, set.size());
@@ -47,6 +50,7 @@ public class VcfRecordTabixCallableTest extends TestCase {
       FileHelper.deleteAll(dir);
     }
   }
+
   public void testMissingSample() throws Exception {
     final MemoryPrintStream mp = new MemoryPrintStream();
     Diagnostic.setLogStream(mp.printStream());
@@ -57,7 +61,8 @@ public class VcfRecordTabixCallableTest extends TestCase {
         FileHelper.resourceToFile("com/rtg/sam/resources/vcf.txt.gz", input);
         final File tabix = new File(dir, "foo.vcf.gz.tbi");
         FileHelper.resourceToFile("com/rtg/sam/resources/vcf.txt.gz.tbi", tabix);
-        ReferenceRanges ranges = new ReferenceRanges(true);
+        final ReferenceRanges<String> ranges = new ReferenceRanges<>(false);
+        ranges.put("20", new RangeList<>(new RangeList.RangeData<>(-1, Integer.MAX_VALUE, "20")));
         final VcfRecordTabixCallable runner = new VcfRecordTabixCallable(input, ranges.forSequence("20"), "20", -1, VariantSetType.CALLS, "asdf", RocSortValueExtractor.NULL_EXTRACTOR, true, false, 100);
         try {
           runner.call();

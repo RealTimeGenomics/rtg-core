@@ -98,7 +98,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final File mAvrModelFile;
   private final double mMinAvrScore;
   private final SAMFileHeader mUberHeader;
-  private final ReferenceRanges mReferenceRanges;
+  private final ReferenceRanges<String> mReferenceRanges;
   private final GenomeRelationships mGenomeRelationships;
   private final GenomeConnectivity mGenomeConnectivity;
   private final double mSomaticRate;
@@ -516,7 +516,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   /**
    * @return the reference ranges that calling will operate over
    */
-  public ReferenceRanges referenceRanges() {
+  public ReferenceRanges<String> referenceRanges() {
     return mReferenceRanges;
   }
 

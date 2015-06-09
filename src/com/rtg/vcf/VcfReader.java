@@ -102,7 +102,7 @@ public class VcfReader implements Closeable {
    * @return the reader
    * @throws IOException if an IO Error occurs or if trying to apply a region restriction when reading from System.in
    */
-  public static VcfReader openVcfReader(File f, ReferenceRanges ranges) throws IOException {
+  public static VcfReader openVcfReader(File f, ReferenceRanges<String> ranges) throws IOException {
     final boolean stdin = CommonFlags.isStdio(f);
     final VcfReader vcfr;
     if (ranges == null || ranges.allAvailable()) {

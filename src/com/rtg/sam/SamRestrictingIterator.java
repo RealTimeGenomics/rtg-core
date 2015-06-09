@@ -25,7 +25,7 @@ import htsjdk.samtools.util.CloseableIterator;
  */
 public class SamRestrictingIterator implements CloseableIterator<SAMRecord> {
 
-  private final ReferenceRanges mRegions;
+  private final ReferenceRanges<String> mRegions;
   private final CloseableIterator<SAMRecord> mIterator;
 
   private int mTemplate = -1;
@@ -40,7 +40,7 @@ public class SamRestrictingIterator implements CloseableIterator<SAMRecord> {
    * @param iterator source of records
    * @param regions the restriction regions
    */
-  public SamRestrictingIterator(CloseableIterator<SAMRecord> iterator, ReferenceRanges regions) {
+  public SamRestrictingIterator(CloseableIterator<SAMRecord> iterator, ReferenceRanges<String> regions) {
     if (regions == null || iterator == null) {
       throw new NullPointerException();
     }

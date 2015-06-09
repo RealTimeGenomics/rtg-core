@@ -54,7 +54,7 @@ public class SamRangeUtilsTest extends TestCase {
     final ByteArrayInputStream bis = new ByteArrayInputStream(SAM_HEADER.getBytes());
     final SAMFileHeader header = SamUtils.getSingleHeader(bis);
 
-    ReferenceRanges refRanges = SamRangeUtils.createExplicitReferenceRange(header, new SamRegionRestriction("g1"));
+    ReferenceRanges<String> refRanges = SamRangeUtils.createExplicitReferenceRange(header, new SamRegionRestriction("g1"));
 
     assertNull(refRanges.get("g0"));
     assertNull(refRanges.get("g2"));
@@ -77,7 +77,7 @@ public class SamRangeUtilsTest extends TestCase {
       final SAMFileHeader header = SamUtils.getSingleHeader(bis);
       final File bedfile = new File(dir, "regions.bed");
       FileUtils.stringToFile(BED_REGIONS, bedfile);
-      ReferenceRanges refRanges = SamRangeUtils.createBedReferenceRanges(bedfile);
+      ReferenceRanges<String> refRanges = SamRangeUtils.createBedReferenceRanges(bedfile);
       assertNull(refRanges.get("g0"));
       assertNotNull(refRanges.get("g1"));
       assertNotNull(refRanges.get("g2"));
@@ -97,7 +97,7 @@ public class SamRangeUtilsTest extends TestCase {
     final ByteArrayInputStream bis = new ByteArrayInputStream(SAM_HEADER.getBytes());
     final SAMFileHeader header = SamUtils.getSingleHeader(bis);
 
-    ReferenceRanges refRanges = SamRangeUtils.createFullReferenceRanges(header);
+    ReferenceRanges<String> refRanges = SamRangeUtils.createFullReferenceRanges(header);
 
     assertNotNull(refRanges.get("g0"));
     assertNotNull(refRanges.get("g1"));
@@ -113,7 +113,7 @@ public class SamRangeUtilsTest extends TestCase {
     final ByteArrayInputStream bis = new ByteArrayInputStream(SAM_HEADER.getBytes());
     final SAMFileHeader header = SamUtils.getSingleHeader(bis);
 
-    ReferenceRanges refRanges = SamRangeUtils.createFullReferenceRanges(header);
+    ReferenceRanges<String> refRanges = SamRangeUtils.createFullReferenceRanges(header);
     refRanges.setIdMap(SamUtils.getSequenceIdLookup(header.getSequenceDictionary()));
 
     assertNotNull(refRanges.get(0));
@@ -131,7 +131,7 @@ public class SamRangeUtilsTest extends TestCase {
     final SAMFileHeader header = SamUtils.getSingleHeader(bis);
 
     SamFilterParams params = new SamFilterParams.SamFilterParamsBuilder().create();
-    ReferenceRanges refRanges = SamRangeUtils.createReferenceRanges(header, params);
+    ReferenceRanges<String> refRanges = SamRangeUtils.createReferenceRanges(header, params);
     assertEquals(3, refRanges.sequenceNames().size());
 
   }

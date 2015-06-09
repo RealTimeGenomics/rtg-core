@@ -30,7 +30,7 @@ import com.rtg.vcf.header.VcfHeader;
 public class VcfRecordTabixCallable implements Callable<LoadedVariants> {
 
   private final File mInput;
-  private final ReferenceRanges mRanges;
+  private final ReferenceRanges<String> mRanges;
   private final String mSampleName;
   private final int mTemplateLength;
   private final VariantSetType mType;
@@ -39,7 +39,7 @@ public class VcfRecordTabixCallable implements Callable<LoadedVariants> {
   private final boolean mSquashPloidy;
   private final int mMaxLength;
 
-  VcfRecordTabixCallable(File file, ReferenceRanges ranges, String templateName, Integer templateLength, VariantSetType type, String sample, RocSortValueExtractor extractor, boolean passOnly, boolean squashPloidy, int maxLength) {
+  VcfRecordTabixCallable(File file, ReferenceRanges<String> ranges, String templateName, Integer templateLength, VariantSetType type, String sample, RocSortValueExtractor extractor, boolean passOnly, boolean squashPloidy, int maxLength) {
     if (!ranges.containsSequence(templateName)) {
       throw new IllegalArgumentException("Ranges supplied do not contain reference sequence " + templateName);
     }

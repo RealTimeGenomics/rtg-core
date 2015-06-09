@@ -34,7 +34,7 @@ public class SamFileReaderAdaptor extends AbstractSamRecordIterator {
    * @param reader the reader
    * @param regions regions to filter from output, may be null
    */
-  public SamFileReaderAdaptor(SamReader reader, final ReferenceRanges regions) {
+  public SamFileReaderAdaptor(SamReader reader, final ReferenceRanges<String> regions) {
     super(reader.getFileHeader());
     mReader = reader;
     SamUtils.logRunId(mReader.getFileHeader());

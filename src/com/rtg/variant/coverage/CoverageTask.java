@@ -119,7 +119,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     try {
       final SingletonPopulatorFactory<CoverageReaderRecord> pf = new SingletonPopulatorFactory<>(new CoverageReaderRecordPopulator());
       final SamReadingContext context = new SamReadingContext(mParams.mapped(), mParams.ioThreads(), mParams.filterParams(), uberHeader);
-      final ReferenceRanges ranges = context.referenceRanges();
+      final ReferenceRanges<String> ranges = context.referenceRanges();
       mWrapper = new ThreadedMultifileIteratorWrapper<>(context, pf);
       for (final SAMSequenceRecord r : uberHeader.getSequenceDictionary().getSequences()) {
         if (r.getSequenceLength() > 0) {

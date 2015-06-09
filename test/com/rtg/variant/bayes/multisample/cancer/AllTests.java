@@ -31,6 +31,7 @@ public class AllTests extends TestSuite {
     suite.addTestSuite(ModelCancerFactoryTest.class);
     suite.addTestSuite(PosteriorContaminatedTest.class);
     suite.addTestSuite(PosteriorPureTest.class);
+    suite.addTestSuite(PriorBedRangeLoaderTest.class);
     suite.addTestSuite(PureSomaticCallerTest.class);
     suite.addTestSuite(SomaticCallerConfigurationTest.class);
     suite.addTestSuite(SomaticCliTest.class);

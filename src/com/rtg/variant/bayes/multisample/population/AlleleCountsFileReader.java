@@ -78,7 +78,7 @@ public final class AlleleCountsFileReader implements Closeable {
    * @return an AlleleCountsFileReader to read from
    * @throws IOException if bad things occur
    */
-  public static AlleleCountsFileReader openAlleleCountReader(File f, ReferenceRanges ranges) throws IOException {
+  public static AlleleCountsFileReader openAlleleCountReader(File f, ReferenceRanges<String> ranges) throws IOException {
     if (VcfUtils.isVcfExtension(f)) {
       return new AlleleCountsFileReader(VcfReader.openVcfReader(f, ranges));
     } else {

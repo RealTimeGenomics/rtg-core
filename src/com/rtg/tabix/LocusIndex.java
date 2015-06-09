@@ -35,7 +35,7 @@ public interface LocusIndex {
    * @return file pointers for records, or null if no records are indexed for given range
    * @throws IOException if an IO exception occurs
    */
-  VirtualOffsets getFilePointers(ReferenceRanges ranges) throws IOException;
+  VirtualOffsets getFilePointers(ReferenceRanges<String> ranges) throws IOException;
 
 
   /**

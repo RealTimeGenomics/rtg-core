@@ -40,7 +40,7 @@ public class TabixLineReader implements LineReader {
     return reader;
   }
 
-  private static LineReader getDelegate(File input, File tabix, ReferenceRanges ranges) throws IOException {
+  private static LineReader getDelegate(File input, File tabix, ReferenceRanges<String> ranges) throws IOException {
     final LineReader reader;
     if (ranges == null || ranges.allAvailable()) {
       reader = new SingleRestrictionLineReader(input, new TabixIndexReader(tabix));
@@ -71,7 +71,7 @@ public class TabixLineReader implements LineReader {
    * @param ranges the ranges to extract, may be null for no restrictions
    * @throws IOException if an IO error occurs
    */
-  public TabixLineReader(File input, File tabix, ReferenceRanges ranges) throws IOException {
+  public TabixLineReader(File input, File tabix, ReferenceRanges<String> ranges) throws IOException {
     this(getDelegate(input, tabix, ranges));
   }
 
@@ -200,7 +200,7 @@ public class TabixLineReader implements LineReader {
     private int mNextAlignmentStart;
     private int mNextTemplateId;
 
-    public MultiRestrictionLineReader(File input, TabixIndexReader tir, ReferenceRanges ranges) throws IOException {
+    public MultiRestrictionLineReader(File input, TabixIndexReader tir, ReferenceRanges<String> ranges) throws IOException {
       if (ranges == null) {
         throw new NullPointerException();
       }

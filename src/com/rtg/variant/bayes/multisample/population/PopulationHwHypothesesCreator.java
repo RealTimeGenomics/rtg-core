@@ -64,7 +64,7 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
    * @param ranges region restrictions
    * @exception IOException if error
    */
-  PopulationHwHypothesesCreator(final File input, final ModelSnpFactory haploidFactory, final ModelSnpFactory diploidFactory, ReferenceRanges ranges) throws IOException {
+  PopulationHwHypothesesCreator(final File input, final ModelSnpFactory haploidFactory, final ModelSnpFactory diploidFactory, ReferenceRanges<String> ranges) throws IOException {
     mHaploid = haploidFactory;
     mDiploid = diploidFactory;
     mDescription = DescriptionSnp.SINGLETON;
@@ -80,12 +80,12 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
    * @param ranges region restrictions
    * @exception IOException if error
    */
-  public PopulationHwHypothesesCreator(File input, GenomePriorParams genomePriorParams, ReferenceRanges ranges) throws IOException {
+  public PopulationHwHypothesesCreator(File input, GenomePriorParams genomePriorParams, ReferenceRanges<String> ranges) throws IOException {
     this(input, new ModelSnpFactory(genomePriorParams, true), new ModelSnpFactory(genomePriorParams, false), ranges);
   }
 
 
-  private int load(File inputFile, ReferenceRanges ranges) throws IOException {
+  private int load(File inputFile, ReferenceRanges<String> ranges) throws IOException {
     int maxRefLength = 0;
     Diagnostic.developerLog("Loading population-prior allele counts...");
 

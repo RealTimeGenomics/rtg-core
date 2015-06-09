@@ -34,7 +34,7 @@ import com.rtg.vcf.header.VcfNumber;
 @TestClass("com.rtg.vcf.VcfAnnotatorCliTest")
 public class BedVcfAnnotator implements VcfAnnotator {
 
-  private static final class AnnotatorBedLoader extends BedRangeLoader {
+  private static final class AnnotatorBedLoader extends BedRangeLoader<String> {
     private AnnotatorBedLoader() {
       super(1);
     }
@@ -46,7 +46,7 @@ public class BedVcfAnnotator implements VcfAnnotator {
 
 
   /** Per chromosome annotations. */
-  private final ReferenceRanges mAnnotations;
+  private final ReferenceRanges<String> mAnnotations;
 
   private final String mInfoId;
   private final String mInfoDescription;

@@ -41,7 +41,7 @@ public class SamRestrictingIteratorTest extends TestCase {
   public void testIterator() throws IOException {
     ByteArrayInputStream baos = new ByteArrayInputStream(SAM.getBytes());
     final SamReader reader = SamUtils.makeSamReader(baos);
-    ReferenceRanges ranges = SamRangeUtils.createExplicitReferenceRange(reader.getFileHeader(), new SamRegionRestriction("g1", 22, 23));
+    ReferenceRanges<String> ranges = SamRangeUtils.createExplicitReferenceRange(reader.getFileHeader(), new SamRegionRestriction("g1", 22, 23));
     SamRestrictingIterator it = new SamRestrictingIterator(reader.iterator(), ranges); //these positions are 0-based
     int[] expectedLocs = {15, 15, 17, 18, 18, 23};
     int i = 0;
@@ -69,7 +69,7 @@ public class SamRestrictingIteratorTest extends TestCase {
   public void testIterator2() throws IOException {
     ByteArrayInputStream baos = new ByteArrayInputStream(SAM2.getBytes());
     final SamReader reader = SamUtils.makeSamReader(baos);
-    ReferenceRanges ranges = SamRangeUtils.createExplicitReferenceRange(reader.getFileHeader(),
+    ReferenceRanges<String> ranges = SamRangeUtils.createExplicitReferenceRange(reader.getFileHeader(),
       new SamRegionRestriction("g1", 149, 169),
       new SamRegionRestriction("g1", 180, 185),
       new SamRegionRestriction("g1", 186, 189),

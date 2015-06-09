@@ -437,7 +437,7 @@ public final class VcfFilterCli extends AbstractCli {
     } else {
       region = null;
     }
-    final ReferenceRanges ranges;
+    final ReferenceRanges<String> ranges;
     if (mFlags.isSet(CommonFlags.BED_REGIONS_FLAG)) {
       Diagnostic.developerLog("Loading BED regions");
       ranges = SamRangeUtils.createBedReferenceRanges((File) mFlags.getValue(CommonFlags.BED_REGIONS_FLAG));

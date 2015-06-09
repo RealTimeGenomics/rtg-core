@@ -48,7 +48,7 @@ class TabixVcfRecordSet implements VariantSet {
   private final File mCallsFile;
   private final String mSampleName;
   private final Collection<Pair<String, Integer>> mNames = new ArrayList<>();
-  private final ReferenceRanges mRanges;
+  private final ReferenceRanges<String> mRanges;
   private final VcfHeader mBaseLineHeader;
   private final VcfHeader mCalledHeader;
   private final boolean mPassOnly;
@@ -59,7 +59,7 @@ class TabixVcfRecordSet implements VariantSet {
   private int mBaselineSkipped;
   private int mCallsSkipped;
 
-  TabixVcfRecordSet(File baselineFile, File calledFile, ReferenceRanges ranges, Collection<Pair<String, Integer>> referenceNameOrdering, String sampleName, RocSortValueExtractor extractor, boolean passOnly, boolean squashPloidy, int maxLength) throws IOException {
+  TabixVcfRecordSet(File baselineFile, File calledFile, ReferenceRanges<String> ranges, Collection<Pair<String, Integer>> referenceNameOrdering, String sampleName, RocSortValueExtractor extractor, boolean passOnly, boolean squashPloidy, int maxLength) throws IOException {
     if (referenceNameOrdering == null) {
       throw new NullPointerException();
     }
@@ -127,7 +127,7 @@ class TabixVcfRecordSet implements VariantSet {
     final int currentLength = nameLength.getB();
     final ExecutorService executor = Executors.newFixedThreadPool(2);
     try {
-      final ReferenceRanges subRanges = mRanges.forSequence(currentName);
+      final ReferenceRanges<String> subRanges = mRanges.forSequence(currentName);
       final FutureTask<LoadedVariants> baseFuture = new FutureTask<>(new VcfRecordTabixCallable(mBaselineFile, subRanges, currentName, currentLength, VariantSetType.BASELINE, mSampleName, mExtractor, mPassOnly, mSquashPloidy, mMaxLength));
       final FutureTask<LoadedVariants> callFuture = new FutureTask<>(new VcfRecordTabixCallable(mCallsFile, subRanges, currentName, currentLength, VariantSetType.CALLS, mSampleName, mExtractor, mPassOnly, mSquashPloidy, mMaxLength));
       executor.execute(baseFuture);

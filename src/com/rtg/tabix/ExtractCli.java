@@ -169,7 +169,7 @@ public class ExtractCli extends AbstractCli {
     try (final SAMFileWriter writer = new SAMFileWriterFactory().makeSAMWriter(header, true, out, printHeader)) {
       if (!headerOnly) {
         for (final RegionRestriction region : regions) {
-          final ReferenceRanges rangeMap = region == null ? null : SamRangeUtils.createExplicitReferenceRange(region);
+          final ReferenceRanges<String> rangeMap = region == null ? null : SamRangeUtils.createExplicitReferenceRange(region);
           try (RecordIterator<SAMRecord> samfr = new SkipInvalidRecordsIterator(f.getPath(), new SamClosedFileReader(f, rangeMap, header))) {
             while (samfr.hasNext()) {
               writer.addAlignment(samfr.next());

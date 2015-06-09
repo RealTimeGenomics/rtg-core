@@ -25,11 +25,12 @@ import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
 
 /**
+ * @param <T> type of annotation
  */
 @TestClass("com.rtg.vcf.VcfAnnotatorCliTest")
-public abstract class BedRangeLoader {
+public abstract class BedRangeLoader<T> {
 
-  private final ReferenceRanges.Accumulator mRangeData = new ReferenceRanges.Accumulator();
+  private final ReferenceRanges.Accumulator<T> mRangeData = new ReferenceRanges.Accumulator<>();
 
   private final int mMinAnnotations;
   private int mExtendWarningCount = 0;
@@ -81,7 +82,7 @@ public abstract class BedRangeLoader {
    *
    * @return a map of <code>RangeList</code> objects keyed by chromosome name.
    */
-  public ReferenceRanges getReferenceRanges() {
+  public ReferenceRanges<T> getReferenceRanges() {
     return mRangeData.getReferenceRanges();
 
   }
@@ -91,7 +92,7 @@ public abstract class BedRangeLoader {
    * @param rec the bed record.
    * @return the range data item, or null if this record should be skipped
    */
-  protected RangeData<String> getRangeData(BedRecord rec) {
+  protected RangeData<T> getRangeData(BedRecord rec) {
     final int start = rec.getStart();
     int end = rec.getEnd();
     if (end == start) {
@@ -111,6 +112,6 @@ public abstract class BedRangeLoader {
    * @param rec the bed record to return a <code>metadata</code> annotation from
    * @return a <code>metadata</code> annotation
    */
-  protected abstract String getMeta(BedRecord rec);
+  protected abstract T getMeta(BedRecord rec);
 
 }

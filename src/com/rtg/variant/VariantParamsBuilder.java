@@ -96,7 +96,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   boolean mIncludeGermlineVariants = false;
   boolean mIncludeGainOfReference = false;
   SAMFileHeader mUberHeader = null;
-  ReferenceRanges mReferenceRanges = null;
+  ReferenceRanges<String> mReferenceRanges = null;
   File mRegionsFilterBedFile = null;
 
   EnumSet <VcfInfoField> mInfoAnnotations = EnumSet.noneOf(VcfInfoField.class);
@@ -587,7 +587,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
    * @param ranges the reference ranges that calling will operate over
    * @return this builder, so calls can be chained.
    */
-  public VariantParamsBuilder referenceRanges(final ReferenceRanges ranges) {
+  public VariantParamsBuilder referenceRanges(final ReferenceRanges<String> ranges) {
     mReferenceRanges = ranges;
     return self();
   }

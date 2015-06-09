@@ -33,7 +33,7 @@ public class SamReadingContext {
   private final SAMFileHeader mHeader;
   private final int mNumThreads;
 
-  private final ReferenceRanges mReferenceRanges;
+  private final ReferenceRanges<String> mReferenceRanges;
 
   /**
    * Create the reading context, using information in the filter params to resolve restriction regions.
@@ -55,7 +55,7 @@ public class SamReadingContext {
    * @param header the already obtained merged SAM header.
    * @param referenceRanges the already resolved reference ranges to read over.
    */
-  public SamReadingContext(Collection<File> files, int numThreads, SamFilterParams filterParams, SAMFileHeader header, ReferenceRanges referenceRanges) {
+  public SamReadingContext(Collection<File> files, int numThreads, SamFilterParams filterParams, SAMFileHeader header, ReferenceRanges<String> referenceRanges) {
     if (header == null) {
       throw new NullPointerException();
     }
@@ -105,7 +105,7 @@ public class SamReadingContext {
   /**
    * @return the resolved ranges that the reading should operate over, or null if no ranges are being applied.
    */
-  public ReferenceRanges referenceRanges() {
+  public ReferenceRanges<String> referenceRanges() {
     return mReferenceRanges;
   }
 

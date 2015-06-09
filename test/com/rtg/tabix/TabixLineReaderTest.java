@@ -65,7 +65,7 @@ public class TabixLineReaderTest extends TestCase {
     }
   }
 
-  public static String extractRecords(File input, File tabix, ReferenceRanges ranges) throws IOException {
+  public static String extractRecords(File input, File tabix, ReferenceRanges<String> ranges) throws IOException {
     try (MemoryPrintStream mps = new MemoryPrintStream()) {
       final OutputStream out = mps.outputStream();
       try (TabixLineReader reader = new TabixLineReader(input, tabix, ranges)) {
@@ -91,7 +91,7 @@ public class TabixLineReaderTest extends TestCase {
       String result = extractRecords(input, tabix, region);
       mNano.check("tlr-single-region", result);
 
-      final ReferenceRanges ranges = SamRangeUtils.createExplicitReferenceRange(region);
+      final ReferenceRanges<String> ranges = SamRangeUtils.createExplicitReferenceRange(region);
       String result2 = extractRecords(input, tabix, ranges);
       assertEquals(result, result2);
     }
@@ -104,7 +104,7 @@ public class TabixLineReaderTest extends TestCase {
       FileHelper.resourceToFile("com/rtg/sam/resources/snp_only.vcf.gz", input);
       final File tabix = new File(dir, "snp_only.vcf.gz.tbi");
       FileHelper.resourceToFile("com/rtg/sam/resources/snp_only.vcf.gz.tbi", tabix);
-      ReferenceRanges ranges = SamRangeUtils.createExplicitReferenceRange(
+      ReferenceRanges<String> ranges = SamRangeUtils.createExplicitReferenceRange(
         new RegionRestriction("simulatedSequence2", 215, 3345),
         new RegionRestriction("simulatedSequence14", 0, 1567),
         new RegionRestriction("simulatedSequence14", 1567, 10000),
