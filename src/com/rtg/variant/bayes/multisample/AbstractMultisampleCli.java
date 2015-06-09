@@ -406,17 +406,23 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     }
   }
 
+  protected RegionRestriction getSimpleRegionRestriction() {
+    if (mFlags.isSet(CommonFlags.RESTRICTION_FLAG)) {
+      return new RegionRestriction((String) mFlags.getValue(CommonFlags.RESTRICTION_FLAG));
+    } else {
+      return null;
+    }
+  }
+
   private void makeInputParams(final VariantParamsBuilder builder, final SequenceParams genomeParams, SamFilterParams filterParams) throws IOException, InvalidParamsException {
     final GenomeRelationships grf = grf();
     builder.genomeRelationships(grf);
     final Collection<File> inputFiles;
-    final RegionRestriction simpleRestriction;
+    final RegionRestriction simpleRestriction = getSimpleRegionRestriction();
     if (mFlags.isSet(CommonFlags.RESTRICTION_FLAG)) {
       inputFiles = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null, CommandLineFiles.EXISTS, CommandLineFiles.VARIANT_INPUT).getFileList(mFlags);
-      simpleRestriction = new RegionRestriction((String) mFlags.getValue(CommonFlags.RESTRICTION_FLAG));
     } else {
       inputFiles = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null, CommandLineFiles.EXISTS).getFileList(mFlags);
-      simpleRestriction = null;
     }
     final SamCalibrationInputs inputs = new SamCalibrationInputs(inputFiles, !mFlags.isSet(MACHINE_ERRORS_FLAG) && !mFlags.isSet(NO_CALIBRATION));
     final Collection<File> samFiles = inputs.getSamFiles();

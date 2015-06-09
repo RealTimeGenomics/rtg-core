@@ -100,7 +100,7 @@ public class SegregationCheckerCli extends AbstractCli {
 
   private Map<String, RangeList<PatternHolder>> loadBed() throws IOException {
     final Map<String, List<RangeData<PatternHolder>>> ranges = new HashMap<>();
-    try (final BedReader reader = BedReader.openBedReader((File) mFlags.getValue(BED_FLAG), null)) {
+    try (final BedReader reader = BedReader.openBedReader(null, (File) mFlags.getValue(BED_FLAG), 2)) {
       while (reader.hasNext()) {
         final BedRecord rec = reader.next();
         if (!rec.getAnnotations()[0].matches("^[01?]+$") || !rec.getAnnotations()[1].matches("^[01?]+$")) {

@@ -85,8 +85,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
 
   private double getSomaticPrior(final String seqName, final int start, final int end) {
     assert start <= end;
-    // todo consult ref ranges, site specific stuff
-    // todo take better account of start and end
+    // todo take better account of start and end  -- take mean over range?
     if (mSiteSpecificSomaticPriors != null) {
       final RangeList<Double> rangeList = mSiteSpecificSomaticPriors.get(seqName);
       if (rangeList != null) {

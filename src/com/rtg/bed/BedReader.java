@@ -43,7 +43,7 @@ public class BedReader implements Closeable {
    * create a new VCF reader.
    *
    * @param in where to read from
-   * @throws IOException when IO or format errors occur.
+   * @throws IOException when I/O or format errors occur.
    */
   public BedReader(BufferedReader in) throws IOException {
     this(in, 0);
@@ -54,7 +54,7 @@ public class BedReader implements Closeable {
    *
    * @param in where to read from
    * @param minAnnotations the minimum number of annotations to require on each line of a file
-   * @throws IOException when IO or format errors occur.
+   * @throws IOException when I/O or format errors occur.
    */
   public BedReader(BufferedReader in, int minAnnotations) throws IOException {
     mMinAnnotations = minAnnotations;
@@ -62,14 +62,8 @@ public class BedReader implements Closeable {
     mHeader = parseHeader(mIn);
   }
 
-  /**
-   * Read BedRecords from a region of a block-compressed file
-   * @param reader source of record lines
-   * @param bedFile file reader was generated from
-   * @throws IOException if an IO error occurs
-   */
-  public BedReader(TabixLineReader reader, File bedFile) throws IOException {
-    mMinAnnotations = 0;
+  private BedReader(TabixLineReader reader, File bedFile, int minAnnotations) throws IOException {
+    mMinAnnotations = minAnnotations;
     mIn = reader;
     try (BrLineReader headerReader = new BrLineReader(new BufferedReader(new InputStreamReader(new BlockCompressedInputStream(bedFile))))) {
       mHeader = parseHeader(headerReader);
@@ -79,21 +73,22 @@ public class BedReader implements Closeable {
 
   /**
    * Open a <code>bed</code> reader, optionally with a region restriction
-   * @param f <code>BED</code> file, optionally gzipped
    * @param region region to restrict to, null if whole file should be used
+   * @param f <code>BED</code> file, optionally gzipped
+   * @param minAnnotations minimum number of annotation columns needed in BED input
    * @return the reader
-   * @throws IOException if an IO Error occurs
+   * @throws IOException if an I/O error occurs
    */
-  public static BedReader openBedReader(File f, RegionRestriction region) throws IOException {
+  public static BedReader openBedReader(RegionRestriction region, File f, int minAnnotations) throws IOException {
     final boolean stdin = CommonFlags.isStdio(f);
     final BedReader bedr;
     if (region != null) {
       if (stdin) {
         throw new IOException("Cannot apply region restriction when reading from stdin");
       }
-      bedr = new BedReader(new TabixLineReader(f, TabixIndexer.indexFileName(f), region), f);
+      bedr = new BedReader(new TabixLineReader(f, TabixIndexer.indexFileName(f), region), f, minAnnotations);
     } else {
-      bedr = new BedReader(new BufferedReader(new InputStreamReader(stdin ? System.in : FileUtils.createInputStream(f, true))));
+      bedr = new BedReader(new BufferedReader(new InputStreamReader(stdin ? System.in : FileUtils.createInputStream(f, true))), minAnnotations);
     }
     return bedr;
   }

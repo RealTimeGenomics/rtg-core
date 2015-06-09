@@ -175,11 +175,11 @@ public class SomaticCli extends AbstractMultisampleCli {
     if (mFlags.isSet(SOMATIC_PRIORS_FLAG)) {
       final PriorBedRangeLoader loader = new PriorBedRangeLoader();
       final File sspBedFile = (File) mFlags.getValue(SOMATIC_PRIORS_FLAG);
-      loader.loadRanges(sspBedFile);
+      loader.loadRanges(getSimpleRegionRestriction(), sspBedFile);
+      // todo this should probably be doing some additional checking the headers match?
       final ReferenceRanges<Double> ssp = loader.getReferenceRanges();
       vpb.siteSpecificSomaticPriors(ssp);
       Diagnostic.userLog("Loaded site specific somatic priors from " + sspBedFile);
-      // xxx this should be doing some additional checking the headers match?
     }
     return vpb;
   }
@@ -194,6 +194,4 @@ public class SomaticCli extends AbstractMultisampleCli {
     final UsageMetric usageMetric = mUsageMetric == null ? new UsageMetric() : mUsageMetric; //create when null to cover some testing
     return new MultisampleTask<>(params, new SomaticCallerConfiguration.Configurator(), out, getStatistics(params), usageMetric);
   }
-
-
 }

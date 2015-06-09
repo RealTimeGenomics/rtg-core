@@ -61,7 +61,7 @@ public final class BedUtils {
    */
   public static ReferenceRegions regions(File f) throws IOException {
     if (f != null) {
-      try (BedReader reader = BedReader.openBedReader(f, null)) {
+      try (BedReader reader = BedReader.openBedReader(null, f, 0)) {
         return regions(reader);
       }
     } else {

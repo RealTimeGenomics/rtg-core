@@ -42,7 +42,6 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
 
   /** Name of file used for output of called SNPs in VCF format. */
   public static final String VCF_OUT_SUFFIX = "snps.vcf";
-
   /** Name of file used for output of complex regions in BED format. */
   public static final String BED_OUT_SUFFIX = "regions.bed";
 
@@ -462,7 +461,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     return lookAhead;
   }
 
-  /**@return seed for threading environment, can be null */
+  /** @return seed for threading environment, can be null */
   public Long threadingEnvironmentSeed() {
     return mThreadingEnvironmentSeed;
   }
@@ -489,8 +488,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
 
   @Override
   public boolean globalIntegrity() {
-    Exam.assertTrue(integrity());
-    Exam.assertTrue(mGenomePriors == null || mGenomePriors.globalIntegrity());
+    Exam.assertTrue(integrity() && (mGenomePriors == null || mGenomePriors.globalIntegrity()));
     return true;
   }
 
@@ -621,7 +619,6 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     return mMinAvrScore;
   }
 
-
   /**
    * @return set of INFO annotations to output
    */
@@ -727,11 +724,10 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
       sb.append(" mapped reads=[");
       int i = 0;
       for (final File file : mapped) {
-        if (i > 0) {
+        if (i++ > 0) {
           sb.append(", ");
         }
         sb.append(file.getPath());
-        i++;
       }
       sb.append("]");
     }
@@ -781,19 +777,15 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     if (mPopulationPriorFile != null) {
       sb.append(" Population prior=").append(mPopulationPriorFile.getPath()).append(LS);
     }
-    sb.append(mGenomePriors == null ? "null" : mGenomePriors.toString());
-    sb.append(LS);
+    sb.append(mGenomePriors == null ? "null" : mGenomePriors.toString()).append(LS);
     if (genome() != null) {
-      sb.append(pref).append(genome().toString());
-      sb.append(LS);
+      sb.append(pref).append(genome().toString()).append(LS);
     }
     if (outputParams() != null) {
-      sb.append(pref).append(outputParams().toString());
-      sb.append(LS);
+      sb.append(pref).append(outputParams().toString()).append(LS);
     }
     if (filterParams() != null) {
-      sb.append(pref).append(filterParams().toString());
-      sb.append(LS);
+      sb.append(pref).append(filterParams().toString()).append(LS);
     }
     sb.append(" AVR model: ").append(mAvrModelFile == null ? "Not set" : mAvrModelFile.getPath()).append(LS);
     sb.append(" min AVR score=").append(mMinAvrScore).append(LS);

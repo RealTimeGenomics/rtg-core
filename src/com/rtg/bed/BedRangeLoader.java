@@ -12,17 +12,15 @@
 
 package com.rtg.bed;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.Collection;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.RangeList.RangeData;
 import com.rtg.util.intervals.ReferenceRanges;
-import com.rtg.util.io.FileUtils;
+import com.rtg.util.intervals.RegionRestriction;
 
 /**
  * @param <T> type of annotation
@@ -46,7 +44,7 @@ public abstract class BedRangeLoader<T> {
   /**
    * Loads annotations from a set of bed files.
    * @param bedFiles the bed files containing regions to load
-   * @throws IOException if an exception occurs while reading a bed file
+   * @throws IOException if an exception occurs while reading a BED file
    */
   public void loadRanges(Collection<File> bedFiles) throws IOException {
     for (final File bedFile : bedFiles) {
@@ -59,15 +57,23 @@ public abstract class BedRangeLoader<T> {
 
   /**
    * Loads annotations from a bed file.
+   * @param region region to load or null for entire file
    * @param bedFile the bed file containing regions to load
-   * @throws IOException if an exception occurs while reading a bed file
+   * @throws IOException if an exception occurs while reading a BED file
+   */
+  public void loadRanges(RegionRestriction region, File bedFile) throws IOException {
+    try (BedReader reader = BedReader.openBedReader(region, bedFile, mMinAnnotations)) {
+      loadRanges(reader);
+    }
+  }
+
+  /**
+   * Loads annotations from a bed file.
+   * @param bedFile the bed file containing regions to load
+   * @throws IOException if an exception occurs while reading a BED file
    */
   public void loadRanges(File bedFile) throws IOException {
-    try (BufferedReader in = new BufferedReader(new InputStreamReader(FileUtils.createInputStream(bedFile, true)))) {
-      try (BedReader reader = new BedReader(in, mMinAnnotations)) {
-        loadRanges(reader);
-      }
-    }
+    loadRanges(null, bedFile);
   }
 
   private void loadRanges(BedReader reader) throws IOException {
