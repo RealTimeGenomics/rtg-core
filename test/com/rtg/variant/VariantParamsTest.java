@@ -74,7 +74,7 @@ public class VariantParamsTest extends TestCase {
         "VariantParams q_default=20 mated_read_default=20 unmated_read_default=20" + LS,
         " mated_read_max=255 unmated_read_max=255 ignore_map_qualities=false" + LS,
         " hypercomplex_length=21 non_identity_posterior=true" + LS,
-        " machine=null threshold=0.0 vcf_rp=false output_index=true" + LS,
+        " machine=null vcf_rp=false output_index=true" + LS,
         " call_level=INTERESTING indels=true noComplexCalls=false" + LS,
         " interesting_threshold=0.4343" + LS,
         " interesting_separation=4" + LS,
@@ -238,7 +238,6 @@ public class VariantParamsTest extends TestCase {
     assertEquals(params.maxAmbiguity(), vpc.maxAmbiguity());
     assertEquals(params.sex(), vpc.sex());
     assertEquals(params.machineErrorName(), vpc.machineErrorName());
-    assertEquals(params.threshold(), vpc.threshold());
     assertEquals(params.vcfRp(), vpc.vcfRp());
     assertEquals(params.outputIndex(), vpc.outputIndex());
     assertEquals(params.calibrator(), vpc.calibrator());
@@ -293,7 +292,6 @@ public class VariantParamsTest extends TestCase {
     assertFalse(params.ionTorrent());
     assertTrue(params.outputIndex());
     assertFalse(params.vcfRp());
-    assertEquals(0.0, params.threshold());
     assertEquals(21, params.hyperComplexLength());
     assertFalse(params.ignoreReadQualities());
     assertEquals(0.0, params.lohPrior());

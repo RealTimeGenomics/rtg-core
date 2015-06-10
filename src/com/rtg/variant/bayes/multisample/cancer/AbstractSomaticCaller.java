@@ -216,7 +216,8 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     }
 
     final double ratio = posterior.posteriorScore();
-    if (ratio < mParams.threshold()) {
+    if (ratio < 0) {
+      // todo doesn't this return violate the ALL mode output?
       return null;
     }
 

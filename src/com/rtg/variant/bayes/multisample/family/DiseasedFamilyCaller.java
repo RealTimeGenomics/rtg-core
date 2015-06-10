@@ -103,7 +103,7 @@ public class DiseasedFamilyCaller implements MultisampleJointCaller {
     final HypothesisScore bm = fp.bestMother();
 
     final double ratio = bd.posterior();
-    if (ratio < mParams.threshold()) {
+    if (ratio < 0) {
       return null;
     }
 

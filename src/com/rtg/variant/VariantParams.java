@@ -78,7 +78,6 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final Sex mSex;
   private final DefaultFallback mPloidy;
   private final String mMachineErrorName;
-  private final double mThreshold;
   private final boolean mVcfRp;
   private final boolean mOutputIndex;
   private final Calibrator mCalibrator;
@@ -139,7 +138,6 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mMaxAmbiguity = builder.mMaxAmbiguity;
     mSex = builder.mSex;
     mPloidy = builder.mPloidy;
-    mThreshold = builder.mThreshold;
     mVcfRp = builder.mVcfRp;
     mOutputIndex = builder.mOutputIndex;
     mCalibrator = builder.mCalibrator;
@@ -376,15 +374,6 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
    */
   public DefaultFallback ploidy() {
     return mPloidy;
-  }
-
-  /**
-   * Threshold which seems to only be used by the somatic caller ???
-   * @return the threshold
-   */
-  @Override
-  public double threshold() {
-    return mThreshold;
   }
 
   /**
@@ -658,7 +647,6 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     .calibrator(mCalibrator)
     .outputIndex(mOutputIndex)
     .vcfRp(mVcfRp)
-    .threshold(mThreshold)
     .machineErrorName(mMachineErrorName)
     .sex(sex())
     .maxAmbiguity(mMaxAmbiguity)
@@ -740,7 +728,6 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     sb.append(" hypercomplex_length=").append(mHyperComplexLength)
       .append(" non_identity_posterior=").append(nonidentityPosterior()).append(LS);
     sb.append(" machine=").append(mMachineErrorName)
-      .append(" threshold=").append(mThreshold)
       .append(" vcf_rp=").append(mVcfRp)
       .append(" output_index=").append(mOutputIndex).append(LS);
     sb.append(" call_level=").append(mCallLevel)

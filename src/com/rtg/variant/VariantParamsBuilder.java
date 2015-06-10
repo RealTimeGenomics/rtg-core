@@ -65,7 +65,6 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   Sex mSex = Sex.EITHER;
   DefaultFallback mPloidy = DefaultFallback.DIPLOID;
   String mMachineErrorName = null;
-  double mThreshold = 0;
   boolean mVcfRp = false;
   boolean mOutputIndex = true;
   Calibrator mCalibrator = null;
@@ -444,16 +443,6 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
    */
   public VariantParamsBuilder ploidy(final DefaultFallback ploidy) {
     mPloidy = ploidy;
-    return self();
-  }
-
-  /**
-   * Set minimum value of posteriors to be printed.
-   * @param threshold posterior value
-   * @return this builder, so calls can be chained.
-   */
-  public VariantParamsBuilder threshold(final double threshold) {
-    mThreshold = threshold;
     return self();
   }
 

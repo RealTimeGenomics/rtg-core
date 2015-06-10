@@ -92,7 +92,6 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String POPULATION_PRIORS = "population-priors";
 
   private static final String X_PRIORS_FLAG = "Xpriors";
-  private static final String X_THRESHOLD_FLAG = "Xthreshold";
   private static final String X_Q_DEFAULT_FLAG = "Xqdefault";
   private static final String X_INDEL_TRIGGER_FRACTION_FLAG = "Xindel-trigger-fraction";
   private static final String X_IGNORE_QUALITIES_FLAG = "Xignore-qualities";
@@ -287,7 +286,6 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(X_ALT_MULTIPLIER_FLAG, "determine coverage thresholds using avg_cov + multiplier * sqrt(avg_cov)").setCategory(REPORTING); /* old multiplier * avg_cov instead of as */
 
     flags.registerOptional(X_PRIORS_FLAG, String.class, "string", "selects a properties file specifying the priors. Either a file name or one of [human]", "human").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_THRESHOLD_FLAG, Double.class, "float", "minimum joint posterior to produce results for", 0.0).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_IGNORE_QUALITIES_FLAG, "if set, will ignore quality scores associated with reads and use the default instead").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_INDEL_TRIGGER_FRACTION_FLAG, Integer.class, "int", "if set, percentage of bases that must be indel to trigger complex calling", 5).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_CHUNKING_FLAG, Integer.class, "int", "number of nucleotide positions considered per chunk", 1000).setCategory(UTILITY);
@@ -335,7 +333,6 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     final VariantParamsBuilder builder = new VariantParamsBuilder();
     builder.name(mFlags.getName());
     builder.callLevel(mFlags.isSet(ALL_FLAG) ? VariantOutputLevel.ALL : VariantOutputLevel.INTERESTING);
-    builder.threshold((Double) mFlags.getValue(X_THRESHOLD_FLAG));
     builder.chunkSize((Integer) mFlags.getValue(X_CHUNKING_FLAG));
     builder.lookAhead((Integer) mFlags.getValue(X_LOOKAHEAD_FLAG));
     builder.hyperComplexLength((Integer) mFlags.getValue(X_HYPER_COMPLEX_LENGTH_FLAG));

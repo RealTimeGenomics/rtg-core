@@ -1398,7 +1398,7 @@ public class VariantNanoTest extends TestCase {
       final MemoryPrintStream mps = new MemoryPrintStream();
       final int code = new SingletonCli().mainInit(new String[] {"-t", template.getPath(),
           "-o", output.getPath(), sam.getPath(),
-          "--keep-duplicates", "--Xthreshold", "2.5"}, mps.outputStream(), mps.printStream());
+          "--keep-duplicates"}, mps.outputStream(), mps.printStream());
       assertEquals(mps.toString(), 0, code);
 
       final String result = StringUtils.grep(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")), "^[^#]").trim();

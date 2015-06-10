@@ -40,10 +40,4 @@ public interface VariantOutputOptions {
    */
   Double maxAmbiguity();
 
-  /**
-   * Posterior must exceed this to be printed.
-   *
-   * @return posterior threshold
-   */
-  double threshold();
 }
