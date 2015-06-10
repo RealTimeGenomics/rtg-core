@@ -18,6 +18,7 @@ import java.util.List;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.mode.DnaUtils;
 import com.rtg.reference.Ploidy;
+import com.rtg.util.MathUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
@@ -53,6 +54,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
   protected final SomaticPriorsFactory<?> mQDiploidFactory;
   private final VariantParams mParams;
   private final ReferenceRanges<Double> mSiteSpecificSomaticPriors;
+  private final double mInterestingThreshold;
 
   /**
    * @param qHaploidFactory haploid Q matrix factory
@@ -64,6 +66,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     mQDiploidFactory = qDiploidFactory;
     mParams = params;
     mSiteSpecificSomaticPriors = mParams.siteSpecificSomaticPriors();
+    mInterestingThreshold = mParams.interestingThreshold() * MathUtils.LOG_10;
   }
 
   /**
@@ -216,7 +219,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     }
 
     final double ratio = posterior.posteriorScore();
-    if (ratio < 0) {
+    if (ratio < mInterestingThreshold) {
       // todo doesn't this return violate the ALL mode output?
       return null;
     }

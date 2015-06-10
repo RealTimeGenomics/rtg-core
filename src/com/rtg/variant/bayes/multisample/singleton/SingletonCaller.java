@@ -37,12 +37,14 @@ import com.rtg.variant.util.VariantUtils;
 public class SingletonCaller implements MultisampleJointCaller {
 
   private final VariantParams mParams;
+  private final double mInterestingThreshold;
 
   /**
    * @param params variant params
    */
   public SingletonCaller(VariantParams params) {
     mParams = params;
+    mInterestingThreshold = mParams.interestingThreshold() * MathUtils.LOG_10;
   }
 
   @Override
@@ -63,8 +65,7 @@ public class SingletonCaller implements MultisampleJointCaller {
     assert size >= 1;
     final HypothesisScore best = model.best(hyp);
     final boolean changed = hyp.reference() != best.hypothesis();
-    final double interestingThreshold = mParams.interestingThreshold() * MathUtils.LOG_10;
-    final boolean interesting = changed || best.posterior() < interestingThreshold;
+    final boolean interesting = changed || best.posterior() < mInterestingThreshold;
 
     if (!interesting && mParams.callLevel() != VariantOutputLevel.ALL) {
       return null;

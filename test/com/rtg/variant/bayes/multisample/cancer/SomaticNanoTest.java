@@ -149,14 +149,13 @@ public class SomaticNanoTest extends TestCase {
 
   // Set loh should get the LOH call - original is heterozygous
   public void testLohDiploid() throws Exception {
-    checkCancer("LohDiploid", "LohDiploid", REF_TEST5, 126L, "--keep-duplicates", "--loh", "0.1");
+    checkCancer("LohDiploid", "LohDiploid", REF_TEST5, 189L, "--keep-duplicates", "--loh", "0.1");
   }
 
   // Set loh to 1.0 - an important use case - see testLohDiploid
   public void testLohDiploid1() throws Exception {
-    checkCancer("LohDiploid", "LohDiploid1", REF_TEST5, 126L, "--keep-duplicates", "--loh", "1.0");
+    checkCancer("LohDiploid", "LohDiploid1", REF_TEST5, 189L, "--keep-duplicates", "--loh", "1.0");
   }
-
 
   private void checkCancer(final String id, final String template, final long usageExp) throws Exception {
     checkCancer(id, id, template, usageExp);

@@ -169,7 +169,7 @@ public class CancerConvergenceTest extends TestCase {
     for (int k = 7; k < correct00.length; k++) {
       assertTrue(correct00[k] >= k);
       assertTrue(correct01[k] >= k);
-      assertTrue(correct02[k] >= k - 2);
+      assertTrue(correct02[k] >= k - 3);
     }
   }
 
