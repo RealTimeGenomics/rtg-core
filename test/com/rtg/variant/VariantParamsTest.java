@@ -57,7 +57,7 @@ public class VariantParamsTest extends TestCase {
     mDir = null;
   }
 
-  private static final String TEST_OUTPUT = "variancetestoutput";
+  private static final String TEST_OUTPUT = "varianttestoutput";
 
 
   private SequenceParams makeGenome() throws IOException {
@@ -122,7 +122,7 @@ public class VariantParamsTest extends TestCase {
 
   public void testOk1() throws Exception {
     Diagnostic.setLogStream();
-    final File map = File.createTempFile("testok1", "varianceParams");
+    final File map = File.createTempFile("testok1", "variantParams");
     try {
       FileUtils.stringToFile(SharedSamConstants.SAM9, map);
       assertTrue(map.isFile());

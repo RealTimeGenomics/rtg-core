@@ -243,7 +243,6 @@ public class FamilyCallerTest extends TestCase {
     ref[19] = 3; //G previous nt
     ref[20] = 1; //A
     final Variant v = fc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploidHypotheses(params, refNt), diploidHypotheses(params, refNt), false, null));
-    //System.err.println(FORMATTER.formatCall(v.getMultivarianceCall()));
     assertEquals(13, makeFormatter(4).formatCall(v).split("\t").length);
     mNano.check(nanoPrefix() + "comparison5", makeFormatter(4).formatCall(v), false);
   }

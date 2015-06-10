@@ -240,8 +240,8 @@ public class TrimmingTest extends TestCase {
     v.addFilter(VariantFilter.COVERAGE);
     final List<Variant> list = Trimming.trimSplit(p, v, null);
     assertEquals(1, list.size());
-    final Variant varianceCall = list.get(0);
-    assertTrue(varianceCall.isFiltered(VariantFilter.COVERAGE));
+    final Variant variant = list.get(0);
+    assertTrue(variant.isFiltered(VariantFilter.COVERAGE));
   }
 
   private static Variant createVariant(String ref, String cat1, String cat2) {

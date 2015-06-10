@@ -63,7 +63,6 @@ public class DiseasedFamilyCallerTest extends TestCase {
     final List<ModelInterface<?>> models =  FamilyCallerTest.buildFamily(params, 1, "AAAAAAAAAAA", "AAAAAAATTTTTTTT", "AAAAAAAAAAAAAAA", "AAAAAAAATTTTTTTTTTT");
     final VariantParams vParams = new VariantParamsBuilder().maxCoverageFilter(new StaticThreshold(15)).genomePriors(params).create();
     final DiseasedFamilyCaller fc = new DiseasedFamilyCaller(vParams, f, 0.95);
-    //    final MultivarianceCall out = new MultivarianceCall("foo", 20, 21, VarianceCallType.SNP);
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
@@ -90,7 +89,6 @@ public class DiseasedFamilyCallerTest extends TestCase {
     final List<ModelInterface<?>> models =  FamilyCallerTest.buildFamily(params, 1, "AAAAAAAAAAA", "AAAAAAATTTTTTTT", "AAAAAAAAAAAAAAA", "AAAAAAAATTTTTTTTTTT");
     final VariantParams vParams = new VariantParamsBuilder().maxCoverageFilter(new StaticThreshold(5)).callLevel(VariantOutputLevel.ALL).genomePriors(params).create();
     final DiseasedFamilyCaller fc = new DiseasedFamilyCaller(vParams, f, 0.95);
-    //    final MultivarianceCall out = new MultivarianceCall("foo", 20, 21, VarianceCallType.SNP);
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
@@ -110,7 +108,6 @@ public class DiseasedFamilyCallerTest extends TestCase {
     final List<ModelInterface<?>> models =  FamilyCallerTest.buildFamily(params, 1, "AAAAAAAAAAA", "AAAAAAATTTTTTTT", "AAAAAAAAAAAAAAA", "AAAAAAAAAAAAAAAAAA");
     final VariantParams vParams = new VariantParamsBuilder().maxCoverageFilter(new StaticThreshold(15)).genomePriors(params).create();
     final DiseasedFamilyCaller fc = new DiseasedFamilyCaller(vParams, f, 0.95);
-    //    final MultivarianceCall out = new MultivarianceCall("foo", 20, 21, VarianceCallType.SNP);
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
@@ -131,7 +128,6 @@ public class DiseasedFamilyCallerTest extends TestCase {
     .genomePriors(params)
     .create();
     final DiseasedFamilyCaller fc = new DiseasedFamilyCaller(vParams, f, 0.95);
-    //    final MultivarianceCall out = new MultivarianceCall("foo", 20, 21, VarianceCallType.SNP);
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
@@ -139,7 +135,6 @@ public class DiseasedFamilyCallerTest extends TestCase {
     assertNotNull(v);
     final String formatted = makeFormatter(4).formatCall(v);
     assertEquals(13, formatted.split("\t").length);
-    //    assertTrue(formatted, FORMATTER.formatCall(out).contains("disease\tfoo\t21\t=\tA\tNONE"));
     assertTrue(formatted, makeFormatter(4).formatCall(v).contains("foo\t21\t.\tA\tT\t.\tPASS\tDPS=38.3;DP=59\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD\t0/0"));
   }
 

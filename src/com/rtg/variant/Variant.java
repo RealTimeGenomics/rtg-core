@@ -23,9 +23,9 @@ import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.NoNonIdentityMeasure;
 
 /**
- * Container for Variance Locus, parent Call, and n sample Calls.
+ * Container for variant locus, parent call, and n sample calls.
  * Singleton implemented as a single sample.
- * Parent call used to generate Info field in VCF, and sample Calls to generate
+ * Parent call used to generate Info field in VCF, and sample calls to generate
  * sample columns.
  */
 public class Variant extends IntegralAbstract implements Comparable<Variant> {

@@ -82,20 +82,30 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     return sample;
   }
 
-  private double getSomaticPrior(final String seqName, final int start, final int end) {
-    assert start <= end;
-    // todo take better account of start and end  -- take mean over range?
+  private double getSomaticPrior(final String seqName, final int pos) {
     if (mSiteSpecificSomaticPriors != null) {
       final RangeList<Double> rangeList = mSiteSpecificSomaticPriors.get(seqName);
       if (rangeList != null) {
-        final List<Double> v = rangeList.find(start);
-        // todo averaging or maxing or similar if multiple values
+        final List<Double> v = rangeList.find(pos);
+        // todo (geometric?) averaging or maxing or similar if multiple values
         if (v != null && v.size() == 1) {
           return v.get(0);
         }
       }
     }
     return mParams.somaticRate();
+  }
+
+  private double getSomaticPrior(final String seqName, final int start, final int end) {
+    if (end <= start + 1) {
+      return getSomaticPrior(seqName, start); // handles zero and one length regions
+    }
+    // For an extended region choose a prior that is the mean of the point priors in the region
+    double s = 0;
+    for (int k = start; k < end; k++) {
+      s += getSomaticPrior(seqName, k);
+    }
+    return s / (end - start);
   }
 
   private double loh(final Hypotheses<?> hypotheses, final int normal, final int cancer) {
