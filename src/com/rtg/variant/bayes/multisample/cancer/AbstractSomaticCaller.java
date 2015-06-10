@@ -220,8 +220,10 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
 
     final double ratio = posterior.posteriorScore();
     if (ratio < mInterestingThreshold) {
-      // todo doesn't this return violate the ALL mode output?
-      return null;
+      if (mParams.callLevel() != VariantOutputLevel.ALL) {
+        return null;
+      }
+      boring = true;
     }
 
     final VariantSample normalSample = setCallValues(posterior.normalMeasure(), bestNormal, hypotheses, modelNormal, mParams, normalPloidy, VariantSample.DeNovoStatus.UNSPECIFIED, null);
@@ -245,7 +247,6 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     if (doLoh) {
       v.setLoh(loh);
     }
-
     if (isSomatic) {
       v.setNormalCancerScore(posterior.ncScore());
     }
