@@ -15,19 +15,18 @@ package com.rtg.variant.bayes.multisample.cancer;
 import com.rtg.variant.bayes.Code;
 
 /**
- * A code which is a cross product of another code.
- * This assumes the code is not commutative (which it is in the <code>CodeDiploid</code> eg).
+ * A non-commutative code which is a Cartesian cross product of another code.
  */
 public class CodeCross implements Code {
 
   private final int mBaseSize;
-
   private final int mSize;
 
   /**
    * @param size of the underlying code whose product is being taken.
    */
   CodeCross(final int size) {
+    assert size > 0 && size <= 46340;
     mBaseSize = size;
     mSize = mBaseSize * mBaseSize;
   }
@@ -70,7 +69,7 @@ public class CodeCross implements Code {
   @Override
   public int code(int a) {
     if (a >= mBaseSize) {
-      throw new IllegalArgumentException("" + a);
+      throw new IllegalArgumentException(String.valueOf(a));
     }
     return a;
   }
