@@ -77,17 +77,17 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
     return q;
   }
 
-  /**
-   * Make the Q matrix for the special case where all transitions are equally likely.
-   * @param mutation probability of a somatic mutation.
-   * @param loh probability that there will be a loss of heterozygosity.
-   * @param hypotheses the set of current hypotheses.
-   * @return probabilities of somatic transitions between possibly diploid hypotheses.
-   * @param <D> description type
-   */
-  static <D extends Description> double[][] makeQ(final double mutation, double loh, final Hypotheses<D> hypotheses) {
-    return makeQ(mutation, loh, hypotheses, defaultUniformPriors(hypotheses.description().size()));
-  }
+//  /**
+//   * Make the Q matrix for the special case where all transitions are equally likely.
+//   * @param mutation probability of a somatic mutation.
+//   * @param loh probability that there will be a loss of heterozygosity.
+//   * @param hypotheses the set of current hypotheses.
+//   * @return probabilities of somatic transitions between possibly diploid hypotheses.
+//   * @param <D> description type
+//   */
+//  static <D extends Description> double[][] makeQ(final double mutation, double loh, final Hypotheses<D> hypotheses) {
+//    return makeQ(mutation, loh, hypotheses, defaultUniformPriors(hypotheses.description().size()));
+//  }
 
   protected final Hypotheses<?> mHypotheses;
   private final double mLoh;

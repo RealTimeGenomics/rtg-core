@@ -66,8 +66,8 @@ public class SomaticStatistics extends VariantStatistics {
     assert derived.length == 1 || numberOfGenomes == 2;
     final String[] genomeNames = {derived[0].first(), derived[0].second()};
     mRankingField = rankingField;
-    mNormalSampleName = genomeNames[0];
-    mCancerSampleName = genomeNames[1];
+    mNormalSampleName = genomeNames[AbstractSomaticCaller.NORMAL];
+    mCancerSampleName = genomeNames[AbstractSomaticCaller.CANCER];
     mNormalStore = new TotalScorer();
     mCancerStore = new TopScorer(BASIS);
   }

@@ -50,6 +50,9 @@ import com.rtg.variant.util.VariantUtils;
 @TestClass(value = {"com.rtg.variant.bayes.multisample.cancer.ContaminatedSomaticCallerTest", "com.rtg.variant.bayes.multisample.cancer.PureSomaticCallerTest"})
 public abstract class AbstractSomaticCaller extends IntegralAbstract implements MultisampleJointCaller {
 
+  static final int NORMAL = 0;
+  static final int CANCER = 1;
+
   protected final SomaticPriorsFactory<?> mQHaploidFactory;
   protected final SomaticPriorsFactory<?> mQDiploidFactory;
   private final VariantParams mParams;
@@ -171,8 +174,8 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     assert DNARange.valid(ref[position], DNARange.N, DNARange.T);
     assert models.size() == 2;
 
-    final ModelInterface<?> modelNormal = models.get(0);
-    final ModelInterface<?> modelCancer = models.get(1);
+    final ModelInterface<?> modelNormal = models.get(NORMAL);
+    final ModelInterface<?> modelCancer = models.get(CANCER);
     final HypothesesPrior<?> hypotheses = normalHypotheses.get(modelNormal);
     final Code code = hypotheses.code();
 

@@ -52,7 +52,7 @@ public class SomaticFilter implements VcfFilter {
     if (record.getNumberOfSamples() < 2) {
       return false;
     }
-    final Integer somaticStatus = record.getSampleInteger(1, VcfFormatField.SS.name());
+    final Integer somaticStatus = record.getSampleInteger(AbstractSomaticCaller.CANCER, VcfFormatField.SS.name());
     return somaticStatus != null && somaticStatus == 2;
   }
 }
