@@ -77,7 +77,7 @@ public final class EvidenceQ extends Evidence {
       if (code.homozygous(i)) {
         prob = probability(i);
       } else {
-        prob = (probability(code.a(i)) + probability(code.b(i))) / 2.0;
+        prob = 0.5 * (probability(code.a(i)) + probability(code.b(i)));
       }
       if (prob <= 0.0) {
         mEvidentialPossibility[i] = 1;

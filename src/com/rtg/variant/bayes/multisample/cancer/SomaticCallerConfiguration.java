@@ -71,20 +71,20 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
   public static final class Configurator implements JointCallerConfigurator<SomaticStatistics> {
 
     @Override
-    public SomaticCallerConfiguration getConfig(final VariantParams params, SomaticStatistics statistics) throws IOException {
+    public SomaticCallerConfiguration getConfig(final VariantParams params, final SomaticStatistics statistics) throws IOException {
       final double loh = params.lohPrior();
       final int numberOfGenomes = params.genomeRelationships().genomes().length;
       final Relationship[] derived = params.genomeRelationships().relationships(RelationshipType.ORIGINAL_DERIVED);
       assert derived.length == 1 || numberOfGenomes == 2;
       final String[] genomeNames = {derived[0].first(), derived[0].second()};
-      final String originalSampleName = genomeNames[0];
-      final String derivedSampleName = genomeNames[1];
+      final String normalSampleName = genomeNames[AbstractSomaticCaller.NORMAL];
+      final String cancerSampleName = genomeNames[AbstractSomaticCaller.CANCER];
       final String[] outputSampleNames = SamUtils.getSampleNames(params.uberHeader());
       if (outputSampleNames.length != 2) {
         throw new NoTalkbackSlimException("Exactly two sample names expected in mappings");
       }
       for (final String mapName : outputSampleNames) {
-        if (!mapName.equals(originalSampleName) && !mapName.equals(derivedSampleName)) {
+        if (!mapName.equals(normalSampleName) && !mapName.equals(cancerSampleName)) {
           throw new NoTalkbackSlimException("Unexpected sample name in mappings: " + mapName);
         }
       }

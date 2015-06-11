@@ -45,7 +45,7 @@ public class ModelCancerContamination extends Model<Description> {
     mContaminationM = 1.0 - mContamination;
   }
 
-  private double[] oneDprob(EvidenceInterface evidence) {
+  private double[] oneDprob(final EvidenceInterface evidence) {
     final Code code = mSubHypotheses.code();
     final double[] probs = new double[mSubHypotheses.size()];
     for (int i = 0; i < probs.length; i++) {

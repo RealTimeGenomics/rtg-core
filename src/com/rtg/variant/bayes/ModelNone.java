@@ -100,7 +100,7 @@ public final class ModelNone<D extends Description> implements ModelInterface<D>
 
   @Override
   public double p(int code) {
-    return 1;
+    return arithmetic().one();
   }
 
   @Override
