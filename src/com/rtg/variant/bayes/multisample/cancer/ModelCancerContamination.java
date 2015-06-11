@@ -62,14 +62,13 @@ public class ModelCancerContamination extends Model<Description> {
     if (ambiguityShortCircuit(evidence)) {
       return;
     }
-    final double[] probs = oneDprob(evidence);
-    //    System.err.println(java.util.Arrays.toString(probs));
     final double r = evidence.mapError();
     final double rc = 1.0 - r;
     // Avoid case where mapq is 0 which gives a NaN
     if (rc <= 0.0) {
       return;
     }
+    final double[] probs = oneDprob(evidence);
     final double pE = evidence.pe();
     final double pEr = r * pE;
     final Code code = hypotheses().code();
