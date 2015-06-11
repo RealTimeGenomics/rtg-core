@@ -38,7 +38,7 @@ public class ModelCancerContamination extends Model<Description> {
    * @param contamination fraction of cancer sample that is contamination from normal sample.
    * @param statistics for statistics collection
    */
-  public ModelCancerContamination(final HypothesesCancer hyp, final double contamination, Statistics<?> statistics) {
+  public ModelCancerContamination(final HypothesesCancer hyp, final double contamination, final Statistics<?> statistics) {
     super(hyp, statistics);
     mSubHypotheses = hyp.subHypotheses();
     mContamination = contamination;
@@ -49,14 +49,20 @@ public class ModelCancerContamination extends Model<Description> {
     final Code code = mSubHypotheses.code();
     final double[] probs = new double[mSubHypotheses.size()];
     for (int i = 0; i < probs.length; i++) {
-      probs[i] = 0.5 * (evidence.probability(code.a(i)) + evidence.probability(code.bc(i)));
+      final double a = evidence.probability(code.a(i));
+      final double b = evidence.probability(code.bc(i));
+      if (a < 0 || b < 0) {
+        probs[i] = 0;
+      } else {
+        probs[i] = 0.5 * (a + b);
+      }
     }
     //System.err.println(probs.length + " :" + Arrays.toString(probs));
     return probs;
   }
 
   @Override
-  public void increment(EvidenceInterface evidence) {
+  public void increment(final EvidenceInterface evidence) {
     //System.err.println(evidence);
     incrementStatistics(evidence);
     if (ambiguityShortCircuit(evidence)) {
