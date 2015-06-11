@@ -168,6 +168,7 @@ public class SomaticCli extends AbstractMultisampleCli {
     final VariantParamsBuilder vpb = super.makeParamsBuilder();
     vpb
       .somaticRate((Double) mFlags.getValue(SOMATIC_FLAG))
+      .interestingThreshold(0)
       .includeGermlineVariants(mFlags.isSet(INCLUDE_GERMLINE_FLAG))
       .includeGainOfReference(mFlags.isSet(INCLUDE_GAIN_OF_REFERENCE))
       .lohPrior((Double) mFlags.getValue(LOH_FLAG))

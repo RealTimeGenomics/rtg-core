@@ -75,6 +75,7 @@ public class ModelCancerContamination extends Model<Description> {
     for (int i = 0; i < size(); i++) {
       final int a = code.a(i);
       final int b = code.bc(i);
+      // The cross-product is normal x cancer
       final double prob = probs[a] * mContamination + probs[b] * mContaminationM;
       // Phred scores of 0 can result in 0 probabilty, just skip them
       if (prob <= 0.0) {

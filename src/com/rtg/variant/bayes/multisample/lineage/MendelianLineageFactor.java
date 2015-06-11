@@ -141,7 +141,7 @@ public class MendelianLineageFactor extends AbstractFactor implements ToDefaultF
   @Override
   public DefaultFactor asDefault() {
     int factorSize = 1;
-    for (Variable s : mScope) {
+    for (final Variable s : mScope) {
       factorSize *= s.size();
     }
     final double[] poss = new double[factorSize];
