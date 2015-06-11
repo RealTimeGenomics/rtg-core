@@ -45,20 +45,11 @@ public class ModelCancerContamination extends Model<Description> {
     mContaminationM = 1.0 - mContamination;
   }
 
-  double[] oneDprob(EvidenceInterface evidence) {
+  private double[] oneDprob(EvidenceInterface evidence) {
     final Code code = mSubHypotheses.code();
     final double[] probs = new double[mSubHypotheses.size()];
     for (int i = 0; i < probs.length; i++) {
-      final double prob;
-      if (code.homozygous(i)) {
-        prob = evidence.probability(i);
-      } else {
-        final int hypa = code.a(i);
-        final int hypb = code.b(i);
-        prob = (evidence.probability(hypa) + evidence.probability(hypb)) / 2.0;
-      }
-      assert prob > 0.0 && prob <= 1.0 && !Double.isNaN(prob) : prob;
-      probs[i] = prob;
+      probs[i] = 0.5 * (evidence.probability(code.a(i)) + evidence.probability(code.bc(i)));
     }
     //System.err.println(probs.length + " :" + Arrays.toString(probs));
     return probs;

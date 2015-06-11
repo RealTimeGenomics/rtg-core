@@ -67,8 +67,6 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     Arrays.fill(mPosteriors, arithmetic().one());
     //    System.err.println("construct" + hypotheses.getClass().getName());
     //    System.err.println("hyparith" + hypotheses.arithmetic().getClass().getName());
-
-    //    throw new RuntimeException();
   }
 
   @Override
@@ -140,15 +138,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
       //assert pE >= 0 && pE <= 1;
       final double pEr = r * pE;
       for (int i = 0; i < size(); i++) {
-        final double prob;
-        if (code.homozygous(i)) {
-          prob = evidence.probability(i);
-        } else {
-          final int hypa = code.a(i);
-          final int hypb = code.b(i);
-          prob = (evidence.probability(hypa) + evidence.probability(hypb)) / 2.0;
-        }
-
+        final double prob = 0.5 * (evidence.probability(code.a(i)) + evidence.probability(code.bc(i)));
         // Phred scores of 0 can result in 0 probabilty, just skip them
         if (prob <= 0.0) {
           return;
