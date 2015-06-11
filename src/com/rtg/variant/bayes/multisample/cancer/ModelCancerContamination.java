@@ -68,6 +68,9 @@ public class ModelCancerContamination extends Model<Description> {
   public void increment(EvidenceInterface evidence) {
     //System.err.println(evidence);
     incrementStatistics(evidence);
+    if (ambiguityShortCircuit(evidence)) {
+      return;
+    }
     final double[] probs = oneDprob(evidence);
     //    System.err.println(java.util.Arrays.toString(probs));
     final double r = evidence.mapError();

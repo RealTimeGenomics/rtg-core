@@ -24,6 +24,7 @@ import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
 /**
+ * A factory capable of generating model instances for cancer calling.
  */
 public class ModelCancerFactory extends ModelCommonFactory<Description, HypothesesCancer> {
 
