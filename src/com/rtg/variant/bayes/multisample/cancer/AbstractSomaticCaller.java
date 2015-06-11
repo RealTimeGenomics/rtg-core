@@ -259,6 +259,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
 
   @Override
   public void toString(StringBuilder sb) {
+    // Note this dump of Q does not deal with any somatic site-specific priors that might be active
     final double[][] qMatrix = (mQHaploidFactory != null ? mQHaploidFactory : mQDiploidFactory).somaticQ(mParams.somaticRate());
     sb.append("length=").append(qMatrix.length).append(LS);
     for (final double[] q : qMatrix) {

@@ -80,7 +80,7 @@ public class ModelCancerContamination extends Model<Description> {
       if (prob <= 0.0) {
         return;
       }
-      //adjust for mapQ - see theory in scoring.tex
+      // Adjust for mapQ - see theory in scoring.tex
       final double pr = prob * rc + pEr;
       final double np = arithmetic().multiply(mPosteriors[i], arithmetic().prob2Poss(pr));
       assert arithmetic().isValidPoss(np); //: System.err.println("np=" + np + " mPosteriors[i]=" + mPosteriors[i] + " i=" + i + " pr=" + pr + " prob=" + prob + " rc=" + rc + " r=" + r + " pE=" + pE);
