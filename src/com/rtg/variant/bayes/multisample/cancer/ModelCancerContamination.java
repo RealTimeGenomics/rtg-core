@@ -86,6 +86,10 @@ public class ModelCancerContamination extends Model<Description> {
       final int a = code.a(i);
       final int b = code.bc(i);
       final double prob = probs[a] * mContamination + probs[b] * mContaminationM;
+      // Phred scores of 0 can result in 0 probabilty, just skip them
+      if (prob <= 0.0) {
+        return;
+      }
       //adjust for mapQ - see theory in scoring.tex
       final double pr = prob * rc + pEr;
       final double np = arithmetic().multiply(mPosteriors[i], arithmetic().prob2Poss(pr));
