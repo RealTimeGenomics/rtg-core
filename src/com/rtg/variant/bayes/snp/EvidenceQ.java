@@ -73,12 +73,7 @@ public final class EvidenceQ extends Evidence {
     assert pE >= 0 && pE <= 1;
     final double pEr = r * pE;
     for (int i = 0; i < code.size(); i++) {
-      final double prob;
-      if (code.homozygous(i)) {
-        prob = probability(i);
-      } else {
-        prob = 0.5 * (probability(code.a(i)) + probability(code.b(i)));
-      }
+      final double prob = 0.5 * (probability(code.a(i)) + probability(code.bc(i)));
       if (prob <= 0.0) {
         mEvidentialPossibility[i] = 1;
       } else {
