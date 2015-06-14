@@ -49,13 +49,9 @@ public class ModelCancerContamination extends Model<Description> {
     final Code code = mSubHypotheses.code();
     final double[] probs = new double[mSubHypotheses.size()];
     for (int i = 0; i < probs.length; i++) {
-      final double a = evidence.probability(code.a(i));
-      final double b = evidence.probability(code.bc(i));
-      if (a < 0 || b < 0) {
-        probs[i] = 0;
-      } else {
-        probs[i] = 0.5 * (a + b);
-      }
+      final double a = Math.max(0, evidence.probability(code.a(i)));
+      final double b = Math.max(0, evidence.probability(code.bc(i)));
+      probs[i] = 0.5 * (a + b);
     }
     //System.err.println(probs.length + " :" + Arrays.toString(probs));
     return probs;

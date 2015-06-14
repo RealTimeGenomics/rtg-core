@@ -143,17 +143,17 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
     final double notLoh = 1.0 - mLoh;
     final Code code = mHypotheses.code();
     for (int k = 0; k < mHypotheses.size(); k++) {
-      final int c0 = code.a(k);
-      final int c2 = code.bc(k);
-      final double[] mut0 = mut[c0];
-      final double[] mut2 = mut[c2];
+      final int a = code.a(k);
+      final int b = code.bc(k);
+      final double[] mut0 = mut[a];
+      final double[] mut1 = mut[b];
       for (int i = 0; i < mHypotheses.description().size(); i++) {
         final double prob0 = mut0[i] * notLoh;
         for (int j = 0; j < mHypotheses.description().size(); j++) {
-          final double prob2 = mut2[j];
+          final double prob1 = mut1[j];
           final int k2 = code.code(i, j);
-          // System.out.println("  update[" + k + "][" + k2 + "] = " + prob0 + " * " + prob2 + "  =  " + prob0*prob2);
-          update(k, k2, prob0 * prob2);
+          // System.out.println("  update[" + k + "][" + k2 + "] = " + prob0 + " * " + prob1 + "  =  " + prob0*prob1);
+          update(k, k2, prob0 * prob1);
         }
       }
     }
