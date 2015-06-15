@@ -125,6 +125,10 @@ public final class GlobalFlags {
   /** Level of BAM compression to use during recalibration (probably also works for SAM merge). */
   public static final String GZIP_LEVEL = "com.rtg.calibrate.Recalibrate.gzip-level";
 
+  // Somatic caller
+  /** Minimum phred base quality to consider a piece of evidence. */
+  public static final String MIN_BASE_QUALITY = "com.rtg.variant.bayes.multisample.cancer.ModelCancerContamination.min-bq";
+
 
   private static CFlags sFlags;
   private static final Set<String> ACCESSED_FLAGS = new HashSet<>();
@@ -165,6 +169,9 @@ public final class GlobalFlags {
     registerFlag(COMPLEX_REGION_INDEL_EXTENSION, Boolean.class, false);
     registerFlag(COMPLEX_REGION_SIMPLE_REPEAT_LIMIT, Integer.class, 3);
     registerFlag(COMPLEX_REGION_SIMPLE_REPEAT_IMPL, String.class, "default");
+
+    // Somatic caller
+    registerFlag(MIN_BASE_QUALITY, Integer.class, 0);
 
     // Misc calling
     registerFlag(CALLER_N_MIN_DEPTH, Integer.class, 5);

@@ -50,7 +50,7 @@ public final class EvidenceQ extends Evidence {
    * @param description of the underlying haploid hypotheses.
    * @param read the hypothesis corresponding to the read.
    * @param r the probability that the read is not mapped to this position.
-   * @param q the total probability that the reference is not equal to <code>read</code>.
+   * @param q the total probability that the hypothesis is not equal to <code>read</code>.
    * @param isForward true if mapped in forward frame, false otherwise
    * @param isReadPaired true if mapping is from a paired read, false otherwise
    * @param isMated true if mapping from a paired read which is mated, false otherwise
