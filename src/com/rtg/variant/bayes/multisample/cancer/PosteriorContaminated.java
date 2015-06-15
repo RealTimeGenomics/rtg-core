@@ -47,6 +47,8 @@ class PosteriorContaminated extends AbstractPosterior {
         mPosterior[i][j] = t;
       }
     }
+    // After this point the special code for contamination no longer plays any part, mPosterior
+    // is normal x cancer for both contaminated and uncontaminated callers.
     postConstruction();
   }
 

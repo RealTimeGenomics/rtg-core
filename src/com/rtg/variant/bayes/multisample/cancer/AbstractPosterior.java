@@ -66,6 +66,7 @@ public abstract class AbstractPosterior extends IntegralAbstract {
   protected final void postConstruction() {
     // now calculate row/column/diagonal/non-diagonal sums.
     for (int i = 0; i < mLength; i++) {
+      assert mPosterior[i].length == mLength;
       for (int j = 0; j < mLength; j++) {
         final double p = mPosterior[i][j];
         if (i == j) {
@@ -78,10 +79,8 @@ public abstract class AbstractPosterior extends IntegralAbstract {
       }
     }
 
-    //find best
-
-     mBestNormal = findBest(mNormalMarginal);
-     mBestCancer = findBest(mCancerMarginal);
+    mBestNormal = findBest(mNormalMarginal);
+    mBestCancer = findBest(mCancerMarginal);
   }
 
   private int findBest(double[] marginals) {
