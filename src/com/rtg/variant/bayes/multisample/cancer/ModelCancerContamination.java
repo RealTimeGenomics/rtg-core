@@ -12,7 +12,6 @@
 
 package com.rtg.variant.bayes.multisample.cancer;
 
-import com.rtg.launcher.GlobalFlags;
 import com.rtg.util.StringUtils;
 import com.rtg.util.format.FormatReal;
 import com.rtg.util.integrity.Exam;
@@ -22,14 +21,12 @@ import com.rtg.variant.bayes.EvidenceInterface;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.Statistics;
-import com.rtg.variant.util.VariantUtils;
 
 /**
  * Accumulates posteriors for the cancer side of a contaminated cancer sample.
  */
 public class ModelCancerContamination extends Model<Description> {
 
-  private static final double MAX_BASE_ERROR = VariantUtils.phredToProb(GlobalFlags.getIntegerValue(GlobalFlags.MIN_BASE_QUALITY));
   private final Hypotheses<?> mSubHypotheses;
 
   private final double mContamination;
@@ -65,9 +62,6 @@ public class ModelCancerContamination extends Model<Description> {
     //System.err.println(evidence);
     incrementStatistics(evidence);
     if (ambiguityShortCircuit(evidence)) {
-      return;
-    }
-    if (evidence.error() > MAX_BASE_ERROR) {
       return;
     }
     final double r = evidence.mapError();

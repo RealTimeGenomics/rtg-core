@@ -104,6 +104,9 @@ public final class GlobalFlags {
   /** Prior for random hypothesis when using random hypotheses. */
   public static final String ENTROPY_RANDOM_PRIOR_FLAG = "com.rtg.variant.bayes.EntropyRandom.random-prior";
 
+  /** Minimum phred base quality to consider a piece of evidence. */
+  public static final String MIN_BASE_QUALITY = "com.rtg.variant.bayes.Model.min-bq";
+
   //Assembler
   /** If more than this many hits are seen at a position, skip them all. */
   public static final String ASSEMBLER_MAX_HITS_PER_START_POS_FLAG = "com.rtg.assembler.maxhits";
@@ -124,10 +127,6 @@ public final class GlobalFlags {
 
   /** Level of BAM compression to use during recalibration (probably also works for SAM merge). */
   public static final String GZIP_LEVEL = "com.rtg.calibrate.Recalibrate.gzip-level";
-
-  // Somatic caller
-  /** Minimum phred base quality to consider a piece of evidence. */
-  public static final String MIN_BASE_QUALITY = "com.rtg.variant.bayes.multisample.cancer.ModelCancerContamination.min-bq";
 
 
   private static CFlags sFlags;
@@ -170,13 +169,11 @@ public final class GlobalFlags {
     registerFlag(COMPLEX_REGION_SIMPLE_REPEAT_LIMIT, Integer.class, 3);
     registerFlag(COMPLEX_REGION_SIMPLE_REPEAT_IMPL, String.class, "default");
 
-    // Somatic caller
-    registerFlag(MIN_BASE_QUALITY, Integer.class, 0);
-
     // Misc calling
     registerFlag(CALLER_N_MIN_DEPTH, Integer.class, 5);
     registerFlag(FAMILY_CALLER_FALLBACK_FLAG, Boolean.class, false);
     registerFlag(ENTROPY_RANDOM_PRIOR_FLAG, Double.class, 0.0);
+    registerFlag(MIN_BASE_QUALITY, Integer.class, 0);
 
     // AVR, training on missing instances increases time and experience indicates is a bad idea
     // when there are lots of missing values.
