@@ -93,9 +93,15 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       final RangeList<Double> rangeList = mSiteSpecificSomaticPriors.get(seqName);
       if (rangeList != null) {
         final List<Double> v = rangeList.find(pos);
-        // todo (geometric?) averaging or maxing or similar if multiple values
-        if (v != null && v.size() == 1) {
-          return v.get(0);
+        // Take the maximum of the supplied priors
+        if (v != null) {
+          double p = 0;
+          for (final double pv : v) {
+            if (pv > p) {
+              p = pv;
+            }
+          }
+          return p;
         }
       }
     }

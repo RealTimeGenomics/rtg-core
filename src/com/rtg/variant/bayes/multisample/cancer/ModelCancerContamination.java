@@ -67,7 +67,7 @@ public class ModelCancerContamination extends Model<Description> {
     if (ambiguityShortCircuit(evidence)) {
       return;
     }
-    if (evidence.error() > MAX_BASE_ERROR) { // XXX test only temp for now
+    if (evidence.error() > MAX_BASE_ERROR) {
       return;
     }
     final double r = evidence.mapError();
@@ -85,7 +85,7 @@ public class ModelCancerContamination extends Model<Description> {
       final int b = code.bc(i);
       // The cross-product is normal x cancer
       final double prob = probs[a] * mContamination + probs[b] * mContaminationM;
-      // Phred scores of 0 can result in 0 probabilty, just skip them
+      // Phred scores of 0 can result in 0 probability, just skip them
       if (prob <= 0.0) {
         return;
       }
