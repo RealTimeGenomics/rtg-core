@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import com.rtg.util.TestUtils;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.test.FileHelper;
 
 import junit.framework.TestCase;
@@ -24,6 +25,12 @@ import junit.framework.TestCase;
 /**
  */
 public class NgsOutputParamsTest extends TestCase {
+
+  @Override
+  protected void setUp() throws Exception {
+    super.setUp();
+    Diagnostic.setLogStream();
+  }
 
   NgsOutputParams getParams(final int topN, final int errorLimit, final boolean progress, final String logFile, final boolean exclude, final boolean useIds, final boolean tabular, final boolean sorted, final int numFiles) {
     final NgsFilterParams filterParams = NgsFilterParams.builder().outputFilter(OutputFilter.NONE).topN(topN).exclude(exclude).useids(useIds).errorLimit(errorLimit).create();
