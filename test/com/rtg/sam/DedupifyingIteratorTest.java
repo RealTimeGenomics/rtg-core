@@ -54,8 +54,7 @@ public class DedupifyingIteratorTest extends TestCase {
 
   public void testPairedEnd() throws IOException {
     try (InputStream in = Resources.getResourceAsStream("com/rtg/sam/resources/duplicates.sam")) {
-      final InputStream exp = Resources.getResourceAsStream("com/rtg/sam/resources/deduplicated.sam");
-      try {
+      try (InputStream exp = Resources.getResourceAsStream("com/rtg/sam/resources/deduplicated.sam")) {
         final SamReader inSam = SamUtils.makeSamReader(in);
         final SamReader expSam = SamUtils.makeSamReader(exp);
         final DedupifyingIterator<VariantAlignmentRecord> inIt = new DedupifyingIterator<>(new VarRecordIterator(inSam.iterator()));
@@ -68,8 +67,6 @@ public class DedupifyingIteratorTest extends TestCase {
         assertFalse(inIt.hasNext());
         assertFalse(expIt.hasNext());
         assertEquals(6, inIt.numFiltered());
-      } finally {
-        exp.close();
       }
     }
   }

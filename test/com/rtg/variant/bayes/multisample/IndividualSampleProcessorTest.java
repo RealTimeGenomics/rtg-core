@@ -24,13 +24,13 @@ import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reference.Sex;
+import com.rtg.reference.SexMemo;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.DefaultMachineErrorChooser;
 import com.rtg.variant.GenomePriorParams;
-import com.rtg.reference.SexMemo;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
@@ -40,7 +40,6 @@ import com.rtg.variant.bayes.snp.ModelSnpFactory;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -73,7 +72,7 @@ public class IndividualSampleProcessorTest extends TestCase {
             final ArrayList<File> list = new ArrayList<>();
             list.add(samFile);
             b.mapped(list);
-            b.genome(g);
+            b.genome(g.readerParams());
             b.outputParams(new OutputParams(outFile, false, false));
             final GenomePriorParams gpp = GenomePriorParams.builder().create();
             b.genomePriors(gpp);

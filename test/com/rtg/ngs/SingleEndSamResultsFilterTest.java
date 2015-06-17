@@ -208,6 +208,8 @@ public class SingleEndSamResultsFilterTest extends TestCase {
         }
         assertTrue(FileHelper.deleteAll(dir));
       }
+    } finally {
+      Diagnostic.setLogStream();
     }
     final String logString = log.toString();
     //System.err.println(logString);

@@ -32,9 +32,9 @@ import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.reference.ReferenceSequence;
 import com.rtg.reference.Sex;
 import com.rtg.util.Pair;
+import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.RangeList.RangeData;
-import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfWriter;
@@ -57,6 +57,17 @@ public class SegregationCheckerCli extends AbstractCli {
   private static final String MOTHER_FLAG = "mother";
   private static final String OUTPUT_FLAG = "output";
   private static final String REPAIR_FLAG = "repair";
+
+
+  @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return "evaluate a VCF with respect to phasing patterns";
+  }
 
   @Override
   protected void initFlags() {
@@ -125,12 +136,6 @@ public class SegregationCheckerCli extends AbstractCli {
       patterns.put(chrEntry.getKey(), rangeList);
     }
     return patterns;
-  }
-
-
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
   }
 
 }

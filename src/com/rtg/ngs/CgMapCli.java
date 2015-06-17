@@ -12,9 +12,9 @@
 
 package com.rtg.ngs;
 
-import static com.rtg.launcher.CommonFlags.COMPRESS_HASHES_FLAG;
+import static com.rtg.ngs.MapFlags.COMPRESS_HASHES_FLAG;
 import static com.rtg.launcher.CommonFlags.TEMP_DIR;
-import static com.rtg.launcher.CommonFlags.TEMP_FILES_COMPRESSED;
+import static com.rtg.ngs.MapFlags.TEMP_FILES_COMPRESSED;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
@@ -83,14 +83,17 @@ public class CgMapCli extends ParamsCli<NgsParams> {
   private static final String OUTPUT_UNFILTERED = "all-hits";
   private static final String LEGACY_CIGARS = "legacy-cigars";
 
-  /**
-   * @param args arguments
-   */
-  public static void main(final String[] args) {
-    new CgMapCli().mainExit(args);
+  private static final Validator VALIDATOR = new CgMapFlagsValidator();
+
+  @Override
+  public String moduleName() {
+    return MODULE_NAME;
   }
 
-  private static final Validator VALIDATOR = new CgMapFlagsValidator();
+  @Override
+  public String description() {
+    return "read mapping for Complete Genomics data";
+  }
 
   @TestClass("com.rtg.ngs.CgMapFlagsValidatorTest")
   private static class CgMapFlagsValidator implements Validator  {
@@ -99,7 +102,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
       if (!CommonFlags.validateOutputDirectory(flags)) {
         return false;
       }
-      final boolean sdf = flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()).equals(MapFlags.SDF_FORMAT);
+      final boolean sdf = flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()).equals(FormatCli.SDF_FORMAT);
       if (!CommonFlags.validateReads(flags, sdf) || !CommonFlags.validateTemplate(flags)) {
         return false;
       }
@@ -113,8 +116,8 @@ public class CgMapCli extends ParamsCli<NgsParams> {
         return false;
       }
 
-      if (flags.isSet(CommonFlags.XSCORE_INDEL)) {
-        if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.XSCORE_INDEL, 0, CommonFlags.MAX_SCORE)) {
+      if (flags.isSet(MapFlags.XSCORE_INDEL)) {
+        if (!CommonFlags.validateFlagBetweenValues(flags, MapFlags.XSCORE_INDEL, 0, MapFlags.MAX_SCORE)) {
           return false;
         }
       }
@@ -134,7 +137,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
         return false;
       }
 
-      if (!CommonFlags.checkPercentRepeatFrequency(flags)) {
+      if (!MapFlags.checkPercentRepeatFrequency(flags)) {
         return false;
       }
       final String mask = flags.getValue(MASK_FLAG).toString();
@@ -145,7 +148,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
       if (!CommonFlags.validateThreads(flags)) {
         return false;
       }
-      if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.MAX_TOP_RESULTS_FLAG, 1, 255)) {
+      if (!CommonFlags.validateFlagBetweenValues(flags, MapFlags.MAX_TOP_RESULTS_FLAG, 1, 255)) {
         return false;
       }
       if (flags.isSet(MapFlags.BAM_FLAG) && flags.isSet(CommonFlags.NO_GZIP)) {
@@ -176,19 +179,19 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     } else {
       maskFlag.setParameterRange(new String[]{"cgmaska15b1", "cgmaska1b1"});
     }
-    CommonFlags.initPairedEndFlags(mFlags);
-    CommonFlags.initSharedFlagsOnly(mFlags, IntegerOrPercentage.valueOf("95%"), 1, 1000);
+    MapFlags.initPairedEndFlags(mFlags);
+    MapFlags.initSharedFlagsOnly(mFlags, IntegerOrPercentage.valueOf("95%"), 1, 1000);
 
-    mFlags.registerOptional('e', CommonFlags.MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, "INT", "maximum mismatches allowed for mated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_MATED_MISMATCH_THRESHOLD)).setCategory(REPORTING);
-    mFlags.registerOptional('E', CommonFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, "INT", "maximum mismatches allowed for unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_UNMATED_MISMATCH_THRESHOLD)).setCategory(REPORTING);
-    mFlags.registerOptional(CommonFlags.NO_UNMATED, "do not report unmated").setCategory(REPORTING);
-    mFlags.registerOptional(CommonFlags.NO_UNMAPPED, "do not report unmapped").setCategory(REPORTING);
+    mFlags.registerOptional('e', MapFlags.MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, "INT", "maximum mismatches allowed for mated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_MATED_MISMATCH_THRESHOLD)).setCategory(REPORTING);
+    mFlags.registerOptional('E', MapFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, "INT", "maximum mismatches allowed for unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_UNMATED_MISMATCH_THRESHOLD)).setCategory(REPORTING);
+    mFlags.registerOptional(MapFlags.NO_UNMATED, "do not report unmated").setCategory(REPORTING);
+    mFlags.registerOptional(MapFlags.NO_UNMAPPED, "do not report unmapped").setCategory(REPORTING);
 
     mFlags.registerOptional(TEMP_DIR, File.class, "DIR", "directory used for temporary files (Defaults to output directory)").setCategory(UTILITY);
 
-    mFlags.registerOptional('n', CommonFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "maximum number of top equal results output per read", 5).setCategory(REPORTING);
-    final Flag format = mFlags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "format of read data", MapFlags.SDF_FORMAT).setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    format.setParameterRange(new String[] {MapFlags.SDF_FORMAT, MapFlags.TSV_FORMAT});
+    mFlags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "maximum number of top equal results output per read", 5).setCategory(REPORTING);
+    final Flag format = mFlags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "format of read data", FormatCli.SDF_FORMAT).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    format.setParameterRange(new String[] {FormatCli.SDF_FORMAT, FormatCli.TSV_FORMAT});
     mFlags.registerOptional(LEGACY_CIGARS, "use legacy cigars in output").setCategory(UTILITY);
 
     CommonFlags.initReadRange(mFlags);
@@ -198,7 +201,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     //--X flags
     MapFlags.initReadFreqFlag(mFlags, 65535); //disable read frequency blocking
     mFlags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary SAM files", true).setCategory(REPORTING);
-    mFlags.registerOptional(CommonFlags.XSCORE_INDEL, Integer.class, "INT", "maximum score indel threshold", CommonFlags.MAX_SCORE).setCategory(REPORTING);
+    mFlags.registerOptional(MapFlags.XSCORE_INDEL, Integer.class, "INT", "maximum score indel threshold", MapFlags.MAX_SCORE).setCategory(REPORTING);
     mFlags.registerOptional(MAX_TOPN_RESULTS, Integer.class, "INT", "sets the number of results per read for topn. Allowed values are between 1 and 255", 5).setCategory(REPORTING);
     mFlags.registerOptional(XINTSET_WINDOW, Integer.class, "INT", "windows for int set", 1).setCategory(UTILITY);
     mFlags.registerOptional(COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", true).setCategory(UTILITY);
@@ -234,19 +237,19 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     ngsParamBuilder.listeners(listeners)
     .numberThreads(CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)))
     .readFreqThreshold((Integer) mFlags.getValue(MapFlags.READ_FREQUENCY_FLAG))
-    .parallelUnmatedProcessing((Boolean) mFlags.getValue(CommonFlags.PARALLEL_UNMATED_PROCESSING_FLAG));
-    final IntegerOrPercentage repeat = (IntegerOrPercentage) mFlags.getValue(CommonFlags.REPEAT_FREQUENCY_FLAG);
+    .parallelUnmatedProcessing((Boolean) mFlags.getValue(MapFlags.PARALLEL_UNMATED_PROCESSING_FLAG));
+    final IntegerOrPercentage repeat = (IntegerOrPercentage) mFlags.getValue(MapFlags.REPEAT_FREQUENCY_FLAG);
     ngsParamBuilder.useProportionalHashThreshold(repeat.isPercentage());
     if (repeat.isPercentage()) {
       ngsParamBuilder.hashCountThreshold(100 - repeat.getValue(100));
     } else {
       ngsParamBuilder.hashCountThreshold(repeat.getRawValue());
     }
-    ngsParamBuilder.maxHashCountThreshold((Integer) mFlags.getValue(CommonFlags.MAX_REPEAT_FREQUENCY_FLAG));
-    ngsParamBuilder.minHashCountThreshold((Integer) mFlags.getValue(CommonFlags.MIN_REPEAT_FREQUENCY_FLAG));
+    ngsParamBuilder.maxHashCountThreshold((Integer) mFlags.getValue(MapFlags.MAX_REPEAT_FREQUENCY_FLAG));
+    ngsParamBuilder.minHashCountThreshold((Integer) mFlags.getValue(MapFlags.MIN_REPEAT_FREQUENCY_FLAG));
     final File reads = (File) mFlags.getValue(CommonFlags.READS_FLAG);
     final LongRange buildReaderRestriction = CommonFlags.getReaderRestriction(mFlags);
-    final boolean sdfFormat = mFlags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()).equals(MapFlags.SDF_FORMAT);
+    final boolean sdfFormat = mFlags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()).equals(FormatCli.SDF_FORMAT);
     try {
       if (sdfFormat) {
         ngsParamBuilder.buildFirstParams(SequenceParams.builder().directory(ReaderUtils.getLeftEnd(reads)).mode(SequenceMode.UNIDIRECTIONAL).useMemReader(true).readerRestriction(buildReaderRestriction).create());
@@ -271,7 +274,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
       outputParams.calibrateRegions().validateTemplate(tParams.reader());
     }
     try {
-      SdfUtils.validateNoDuplicates(tParams, true);
+      SdfUtils.validateNoDuplicates(tParams.reader(), true);
       ngsParamBuilder.searchParams(tParams)
       .useLongReadMapping(false)
       .outputParams(outputParams)
@@ -322,8 +325,8 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     .outputDir((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG))
     .tempFilesDir((File) mFlags.getValue(TEMP_DIR))
     .filterParams(filterParams)
-    .outputUnmated(!mFlags.isSet(CommonFlags.NO_UNMATED))
-    .outputUnmapped(!mFlags.isSet(CommonFlags.NO_UNMAPPED))
+    .outputUnmated(!mFlags.isSet(MapFlags.NO_UNMATED))
+    .outputUnmapped(!mFlags.isSet(MapFlags.NO_UNMAPPED))
     .sorted(false)
     .bam(!mFlags.isSet(MapFlags.SAM_FLAG))
     .unify(!mFlags.isSet(MapFlags.DONT_UNIFY_FLAG));
@@ -373,8 +376,8 @@ public class CgMapCli extends ParamsCli<NgsParams> {
 
   private NgsFilterParams makeFilterParams() {
     final NgsFilterParams.NgsFilterParamsBuilder ngsFilterParamsBuilder = NgsFilterParams.builder();
-    final IntegerOrPercentage matedMismatches = (IntegerOrPercentage) mFlags.getValue(CommonFlags.MATED_MISMATCH_THRESHOLD);
-    final IntegerOrPercentage unmatedMismatches = (IntegerOrPercentage) mFlags.getValue(CommonFlags.UNMATED_MISMATCH_THRESHOLD);
+    final IntegerOrPercentage matedMismatches = (IntegerOrPercentage) mFlags.getValue(MapFlags.MATED_MISMATCH_THRESHOLD);
+    final IntegerOrPercentage unmatedMismatches = (IntegerOrPercentage) mFlags.getValue(MapFlags.UNMATED_MISMATCH_THRESHOLD);
     final OutputFilter outputFilter;
     if (mFlags.isSet(OUTPUT_UNFILTERED)) {
       outputFilter = OutputFilter.SAM_UNFILTERED;
@@ -384,12 +387,12 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     ngsFilterParamsBuilder.outputFilter(outputFilter)
     .zip(!mFlags.isSet(CommonFlags.NO_GZIP))
     .topN((Integer) mFlags.getValue(MAX_TOPN_RESULTS))
-    .maxTopResults((Integer) mFlags.getValue(CommonFlags.MAX_TOP_RESULTS_FLAG))
+    .maxTopResults((Integer) mFlags.getValue(MapFlags.MAX_TOP_RESULTS_FLAG))
     .exclude(false)
     .useids(false)
     .matedMaxMismatches(matedMismatches)
     .unmatedMaxMismatches(unmatedMismatches)
-    .errorLimit((Integer) mFlags.getValue(CommonFlags.XSCORE_INDEL));
+    .errorLimit((Integer) mFlags.getValue(MapFlags.XSCORE_INDEL));
 
     return ngsFilterParamsBuilder.create();
   }
@@ -399,10 +402,4 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     final UsageMetric usageMetric = mUsageMetric == null ? new UsageMetric() : mUsageMetric; //create when null to cover some testing
     return new NgsTask(params, out, usageMetric);
   }
-
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
-  }
-
 }

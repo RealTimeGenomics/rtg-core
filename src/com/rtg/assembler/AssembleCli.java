@@ -29,6 +29,7 @@ import java.util.List;
 
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.ParamsCli;
+import com.rtg.ngs.MapFlags;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
@@ -46,6 +47,15 @@ import com.rtg.util.diagnostic.ErrorType;
  */
 public class AssembleCli extends ParamsCli<AssembleParams> {
 
+  @Override
+  public String moduleName() {
+    return "assemble";
+  }
+
+  @Override
+  public String description() {
+    return "assemble reads into long sequences";
+  }
 
   @Override
   protected File outputDirectory() {
@@ -125,10 +135,10 @@ public class AssembleCli extends ParamsCli<AssembleParams> {
         flags.error("Couldn't read the file list");
         return false;
       }
-      if (GraphMapCli.ensurePositive(flags, CommonFlags.WORDSIZE_FLAG)) {
+      if (GraphMapCli.ensurePositive(flags, MapFlags.WORDSIZE_FLAG)) {
         return false;
       }
-      if (GraphMapCli.ensurePositive(flags, CommonFlags.STEP_FLAG)) {
+      if (GraphMapCli.ensurePositive(flags, MapFlags.STEP_FLAG)) {
         return false;
       }
       if (GraphMapCli.ensurePositive(flags, KMER_SIZE)) {
@@ -173,8 +183,8 @@ public class AssembleCli extends ParamsCli<AssembleParams> {
         .reads(CommonFlags.getFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, true))
         .reads454(CommonFlags.getFileList(flags, GraphMapCli.INPUT_LIST_FLAG_454, GraphMapCli.FOUR_FIVE_FOUR, true))
         .readsMatePair(CommonFlags.getFileList(flags, GraphMapCli.INPUT_LIST_FLAG_MATE_PAIR, GraphMapCli.MATE_PAIR, true))
-        .wordSize((Integer) flags.getValue(CommonFlags.WORDSIZE_FLAG))
-        .stepSize((Integer) flags.getValue(CommonFlags.STEP_FLAG))
+        .wordSize((Integer) flags.getValue(MapFlags.WORDSIZE_FLAG))
+        .stepSize((Integer) flags.getValue(MapFlags.STEP_FLAG))
         .maxMismatches((IntegerOrPercentage) flags.getValue(GraphMapCli.MISMATCHES))
         .kmerSize((Integer) flags.getValue(DeBruijnAssemblerCli.KMER_SIZE))
         .minHashFrequency((Integer) flags.getValue(DeBruijnAssemblerCli.MIN_HASH_FREQUENCY))
@@ -191,15 +201,4 @@ public class AssembleCli extends ParamsCli<AssembleParams> {
 
   }
 
-  @Override
-  public String moduleName() {
-    return "assemble";
-  }
-  /**
-   * Noddy main.
-   * @param args see usage
-   */
-  public static void main(final String[] args) {
-    new AssembleCli().mainInit(args, System.out, System.err);
-  }
 }

@@ -131,7 +131,7 @@ public class VcfReplayerCli extends AbstractCli {
     // TODO: check that every named chromosome is one of the chromosomes in our reference.
     SdfUtils.validateHasNames(template);
     try (SequencesReader reader = SequencesReaderFactory.createMemorySequencesReader(template, true, LongRange.NONE)) {
-      SdfUtils.validateNoDuplicates(reader, template, false);
+      SdfUtils.validateNoDuplicates(reader, false);
 
       try (SdfWriter w1 = new SdfWriter(new File(output, "left"), com.rtg.util.Constants.MAX_FILE_SIZE, reader.getPrereadType(), false, true, true, reader.type());
            SdfWriter w2 = new SdfWriter(new File(output, "right"), com.rtg.util.Constants.MAX_FILE_SIZE, reader.getPrereadType(), false, true, true, reader.type())) {
@@ -305,6 +305,11 @@ public class VcfReplayerCli extends AbstractCli {
   @Override
   public String moduleName() {
     return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return null;
   }
 
 }

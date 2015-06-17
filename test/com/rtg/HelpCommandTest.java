@@ -15,8 +15,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 
@@ -47,7 +47,7 @@ public class HelpCommandTest extends TestCase {
         assertFalse("Did contain hidden module " + mod.toString().toLowerCase(Locale.getDefault()), output.contains("\t" + mod.toString().toLowerCase(Locale.getDefault()) + " "));
         continue;
       }
-      assertTrue("Did not contain " + mod.getCategory().toString(), output.contains(ResourceBundle.getBundle("com.rtg.Usage", Locale.getDefault()).getString(mod.getCategory().toString() + "_CAT_DESC")));
+      assertTrue("Did not contain " + mod.getCategory().toString(), output.contains(mod.getCategory().getLabel()));
       if (CoreCommand.HELP != mod) {
         assertTrue("Did not contain " + mod.toString().toLowerCase(Locale.getDefault()), output.contains("\t" + mod.toString().toLowerCase(Locale.getDefault())));
       }
@@ -87,6 +87,7 @@ public class HelpCommandTest extends TestCase {
     final ByteArrayOutputStream berr = new ByteArrayOutputStream();
     final PrintStream err = new PrintStream(berr);
     try {
+      GlobalFlags.resetAccessedStatus();
       assertEquals(1, HelpCommand.mainInit(null, baos, err, CoreCommand.INFO));
     } finally {
       baos.close();
@@ -102,6 +103,7 @@ public class HelpCommandTest extends TestCase {
     final ByteArrayOutputStream berr = new ByteArrayOutputStream();
     final PrintStream err = new PrintStream(berr);
     try {
+      GlobalFlags.resetAccessedStatus();
       assertEquals(0, HelpCommand.mainInit(new String[0], baos, err, CoreCommand.INFO));
     } finally {
       baos.close();
@@ -123,7 +125,7 @@ public class HelpCommandTest extends TestCase {
       if (mod.toString().length() < shortestName.length()) {
         shortestName = mod.toString();
       }
-      assertTrue("Did not contain " + mod.getCategory().toString(), output.contains(ResourceBundle.getBundle("com.rtg.Usage", Locale.getDefault()).getString(mod.getCategory().toString() + "_CAT_DESC")));
+      assertTrue("Did not contain " + mod.getCategory().toString(), output.contains(mod.getCategory().getLabel()));
       if (CoreCommand.HELP != mod) {
         assertTrue("Did not contain " + mod.toString().toLowerCase(Locale.getDefault()), output.contains(mod.toString().toLowerCase(Locale.getDefault())));
       }
@@ -132,11 +134,15 @@ public class HelpCommandTest extends TestCase {
 
   public void testModuleHelp() throws IOException {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
-    CoreCommand.FORMAT.mainInit(new String[]{"-h"}, out, null);
+    final ByteArrayOutputStream berr = new ByteArrayOutputStream();
+    final PrintStream err = new PrintStream(berr);
+    GlobalFlags.resetAccessedStatus();
+    ToolsCommand.FORMAT.mainInit(new String[]{"-h"}, out, err);
 
     final ByteArrayOutputStream bhelp = new ByteArrayOutputStream();
     final ByteArrayOutputStream bhelpout = new ByteArrayOutputStream();
     try (PrintStream help = new PrintStream(bhelp)) {
+      GlobalFlags.resetAccessedStatus();
       assertEquals(0, HelpCommand.mainInit(new String[]{"format"}, bhelpout, help, CoreCommand.INFO));
       help.flush();
     } finally {
@@ -151,6 +157,7 @@ public class HelpCommandTest extends TestCase {
     final ByteArrayOutputStream berr = new ByteArrayOutputStream();
     final PrintStream err = new PrintStream(berr);
     try {
+      GlobalFlags.resetAccessedStatus();
       assertEquals(0, HelpCommand.mainInit(new String[]{xflag}, baos, err, CoreCommand.INFO));
     } finally {
       baos.close();
@@ -162,16 +169,18 @@ public class HelpCommandTest extends TestCase {
                                 , "The following commands are available:");
 
     String longestName = "";
+    String desc = "";
     for (Command mod : CoreCommand.INFO.commands()) {
       if (mod.toString().length() > longestName.length()) {
         longestName = mod.toString();
+        desc = mod.getCommandDescription();
       }
-      assertTrue("Did not contain " + mod.getCategory().toString(), output.contains(ResourceBundle.getBundle("com.rtg.Usage", Locale.getDefault()).getString(mod.getCategory().toString() + "_CAT_DESC")));
+      assertTrue("Did not contain " + mod.getCategory().toString(), output.contains(mod.getCategory().getLabel()));
       if (CoreCommand.HELP != mod) {
         assertTrue("Did not contain " + mod.toString().toLowerCase(Locale.getDefault()), output.contains(mod.toString().toLowerCase(Locale.getDefault())));
       }
     }
-    final String exp = longestName.toLowerCase(Locale.getDefault()) + " " + ResourceBundle.getBundle("com.rtg.Usage", Locale.getDefault()).getString(longestName + "_CMD_DESC");
+    final String exp = longestName.toLowerCase(Locale.getDefault()) + " " + desc;
     final String out = output.replaceAll(StringUtils.LS,  "").replaceAll("\\s+", " ");
     assertTrue(exp + "\nNot in \n" + out, out.contains(exp));
   }
@@ -191,6 +200,6 @@ public class HelpCommandTest extends TestCase {
 
   public void testLongestLengthModule() {
     assertEquals(0, HelpCommand.getLongestLengthModule(new Command[0]));
-    assertEquals(6, HelpCommand.getLongestLengthModule(new Command[]{CoreCommand.FORMAT}));
+    assertEquals(6, HelpCommand.getLongestLengthModule(new Command[]{ToolsCommand.FORMAT}));
   }
 }

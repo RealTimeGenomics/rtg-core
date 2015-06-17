@@ -110,7 +110,8 @@ public class DummySdfOutputProcessorTest extends TestCase {
 
       final MemoryPrintStream mps = new MemoryPrintStream();
       final File alignmentsSdf = new File(hitsDir, "alignments.sdf");
-      assertEquals(mps.toString(), 0, new Sdf2Fasta().mainInit(new String[] {"-i", alignmentsSdf.getPath(), "-o", new File(hitsDir, "outfa").getPath(), "-Z"}, mps.outputStream(), mps.printStream()));
+      final int rc = new Sdf2Fasta().mainInit(new String[] {"-i", alignmentsSdf.getPath(), "-o", new File(hitsDir, "outfa").getPath(), "-Z"}, mps.outputStream(), mps.printStream());
+      assertEquals(mps.toString(), 0, rc);
 
       assertEquals(">r1" + StringUtils.LS + TEMP_LEFT + StringUtils.LS
                   + ">r2" + StringUtils.LS + TEMP_LEFT + StringUtils.LS, FileUtils.fileToString(new File(hitsDir, "outfa_1.fasta")));

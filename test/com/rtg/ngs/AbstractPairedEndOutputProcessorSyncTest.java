@@ -33,7 +33,7 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
-import com.rtg.variant.SamRecordPopulator;
+import com.rtg.sam.SamRecordPopulator;
 
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.util.BlockCompressedInputStream;

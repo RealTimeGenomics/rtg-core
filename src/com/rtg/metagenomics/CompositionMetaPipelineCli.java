@@ -17,11 +17,14 @@ package com.rtg.metagenomics;
  */
 public class CompositionMetaPipelineCli extends MetagenomicsWrapperCli {
 
-  private static final String MODULE_NAME = "composition-meta-pipeline";
-
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "composition-meta-pipeline";
+  }
+
+  @Override
+  public String description() {
+    return "run metagenomic composition pipeline";
   }
 
   @Override
@@ -33,12 +36,5 @@ public class CompositionMetaPipelineCli extends MetagenomicsWrapperCli {
   @Override
   boolean hasProtein() {
     return false;
-  }
-  /**
-   * Entry point
-   * @param args command line arguments
-   */
-  public static void main(String[] args) {
-    new CompositionMetaPipelineCli().mainExit(args);
   }
 }

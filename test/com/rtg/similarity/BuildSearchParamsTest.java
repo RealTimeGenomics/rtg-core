@@ -20,10 +20,10 @@ import java.util.List;
 
 import com.rtg.index.params.CountParams;
 import com.rtg.launcher.BuildParams;
-import com.rtg.launcher.BuildTestUtils;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.ProgramMode;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.Pair;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -70,7 +70,7 @@ public class BuildSearchParamsTest extends TestCase {
     final ProgramMode pma = ProgramMode.SLIMN;
     final ProgramMode pmb = ProgramMode.TSLIMX;
 
-    final File subjectDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A1);
+    final File subjectDir = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams subjectaa = SequenceParams.builder().directory(subjectDir).mode(pma.subjectMode()).create();
     final BuildParams buildaa = BuildParams.builder().windowSize(4).stepSize(1).sequences(subjectaa).create();
     final SequenceParams subjectab = SequenceParams.builder().directory(subjectDir).mode(pmb.subjectMode()).create();
@@ -96,11 +96,6 @@ public class BuildSearchParamsTest extends TestCase {
     }
   }
 
-  /** Subject sequence used for the calibration runs.  */
-  public static final String SEQ_DNA_A1 = ""
-    + ">x" + LS
-    + "actg" + LS;
-
   public void testSequencesList() throws Exception {
     Diagnostic.setLogStream();
     final ProgramMode pm = ProgramMode.SLIMN;
@@ -109,27 +104,20 @@ public class BuildSearchParamsTest extends TestCase {
     final File hitDir = FileHelper.createTempDirectory();
     try {
       final CountParams count = new CountParams(hitDir, 5, 10, false);
-      final File subjectDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A1);
+      final File subjectDir = ReaderTestUtils.getDNADir(mDir);
       final SequenceParams subject = SequenceParams.builder().directory(subjectDir).mode(pm.subjectMode()).create();
       final BuildParams build = BuildParams.builder().windowSize(4).stepSize(1).sequences(dummySubjectParams).size(size).create();
-      BuildSearchParams bsp = getParams(pm, subject, build, count, false);
 
-      try {
+      try (BuildSearchParams bsp = getParams(pm, subject, build, count, false)) {
         bsp.integrity();
         assertEquals(4, bsp.bufferLength());
         assertTrue(bsp.sequences() instanceof List);
-      } finally {
-        bsp.close();
       }
 
-      bsp = getParams(pm, subject, build, count, true);
-
-      try {
+      try (BuildSearchParams bsp = getParams(pm, subject, build, count, true)) {
         bsp.integrity();
         assertEquals(0, bsp.bufferLength());
         assertTrue(bsp.sequences() instanceof List);
-      } finally {
-        bsp.close();
       }
     } finally {
       assertTrue(FileHelper.deleteAll(hitDir));
@@ -139,7 +127,7 @@ public class BuildSearchParamsTest extends TestCase {
   public void test() throws Exception {
     Diagnostic.setLogStream();
     final ProgramMode pm = ProgramMode.SLIMN;
-    final File subjectDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A1);
+    final File subjectDir = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams subject = SequenceParams.builder().directory(subjectDir).mode(pm.subjectMode()).create();
     final BuildParams build = BuildParams.builder().windowSize(4).stepSize(1).sequences(subject).create();
 
@@ -147,9 +135,7 @@ public class BuildSearchParamsTest extends TestCase {
     try {
       final CountParams count = new CountParams(hitDir, 5, 10, false);
 
-      final BuildSearchParams bsp = getParams(pm, build, count);
-
-      try {
+      try (BuildSearchParams bsp = getParams(pm, build, count)) {
         bsp.integrity();
 
         assertEquals(pm, bsp.mode());
@@ -165,15 +151,8 @@ public class BuildSearchParamsTest extends TestCase {
             + ".. build={ seq={SequenceParams mode=UNIDIRECTIONAL region=[(0:-1), (1:-1)] directory="
             + build.directory().toString()
             + "}  size=1 hash bits=8 initial pointer bits=2 value bits=31 window=4 step=1}" + LS
-            , bsp.toString()
+          , bsp.toString()
         );
-
-        bsp.close();
-        bsp.build().sequences().reader();
-        bsp.close();
-        bsp.build().sequences().reader();
-      } finally {
-        bsp.close();
       }
     } finally {
       assertTrue(FileHelper.deleteAll(hitDir));

@@ -30,12 +30,12 @@ import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.variant.sv.discord.DiscordantToolCli;
+
 /**
- *         Date: 14/03/12
- *         Time: 3:33 PM
+ * Look for recognizable breakpoint patterns
  */
 public class SvPatternsCli extends ParamsCli<BreakpointPatternParams> {
-  private static final String MODULE_NAME = "svpatterns";
+
   /** Flag name for max fragment length */
   public static final String MAX_FRAGMENT_LENGTH = "max-fragment-length";
   /** Flag name for max same distance */
@@ -56,6 +56,16 @@ public class SvPatternsCli extends ParamsCli<BreakpointPatternParams> {
       }
       return true;
     }
+  }
+
+  @Override
+  public String moduleName() {
+    return "svpatterns";
+  }
+
+  @Override
+  public String description() {
+    return null;
   }
 
   @Override
@@ -112,11 +122,6 @@ public class SvPatternsCli extends ParamsCli<BreakpointPatternParams> {
     flags.registerOptional(MAX_FRAGMENT_LENGTH, Integer.class, "INT", "how far from the breakpoint to look ahead for inversions", BreakpointPatternParams.DEFAULT_FRAGMENT_LENGTH).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(MAX_SAME_DISTANCE, Integer.class, "INT", "how far apart can breakpoints be yet still be considered the same place", BreakpointPatternParams.DEFAULT_SAME_DISTANCE).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(DiscordantToolCli.MIN_BREAKPOINT_DEPTH, Integer.class, "INT", DiscordantToolCli.MIN_SUPPORT_DESCRIPTION, DiscordantToolCli.DEFAULT_MIN_DEPTH).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-  }
-
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
   }
 
   /**

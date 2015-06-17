@@ -45,6 +45,11 @@ public class SampleReplayerCli extends LoggedCli {
   }
 
   @Override
+  public String description() {
+    return "generate the genome corresponding to a sample genotype";
+  }
+
+  @Override
   protected void initFlags() {
     mFlags.setDescription("Generates the genome corresponding to a sample genotype.");
     mFlags.registerExtendedHelp();

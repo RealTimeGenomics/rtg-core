@@ -31,8 +31,8 @@ import com.rtg.variant.bayes.multisample.MultisampleTask;
 /**
  */
 public class LineageCli extends AbstractMultisampleCli {
+
   private static final String PEDIGREE_FLAG = "pedigree";
-  private static final String MODULE_NAME = "lineage";
 
   @Override
   protected GenomeRelationships grf() throws IOException {
@@ -42,7 +42,12 @@ public class LineageCli extends AbstractMultisampleCli {
 
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "lineage";
+  }
+
+  @Override
+  public String description() {
+    return "call de novo variants in a cell lineage";
   }
 
   @Override

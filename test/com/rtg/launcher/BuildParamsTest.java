@@ -64,7 +64,7 @@ public class BuildParamsTest extends TestCase {
   }
 
   BuildParams getParams(final long size, final int windowSize, final int stepSize) throws Exception {
-    final File file = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A);
+    final File file = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams sp = SequenceParams.builder().directory(file).create();
     try {
       return BuildParams.builder().size(size).windowSize(windowSize).stepSize(stepSize).sequences(sp).create();
@@ -75,7 +75,7 @@ public class BuildParamsTest extends TestCase {
   }
 
   public void testSubSequence() throws IOException {
-    final File filea = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_B);
+    final File filea = ReaderTestUtils.getDNASubDir(SEQ_DNA_B, mDir);
     final SequenceParams spa = SequenceParams.builder().directory(filea).create();
     spa.close();
     final BuildParams a = BuildParams.builder().windowSize(4).stepSize(2).sequences(spa).create();
@@ -90,10 +90,10 @@ public class BuildParamsTest extends TestCase {
   }
 
   public void testEquals() throws IOException, ClassNotFoundException {
-    final File filea = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A);
+    final File filea = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams spa = SequenceParams.builder().directory(filea).create();
     spa.close();
-    final File fileb = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A);
+    final File fileb = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams spb = SequenceParams.builder().directory(fileb).create();
     spb.close();
     final BuildParams a1 = BuildParams.builder().size(100).windowSize(4).stepSize(2).sequences(spa).create();
@@ -186,7 +186,7 @@ public class BuildParamsTest extends TestCase {
   public void testBasic1() throws Exception {
     File file = null;
     try {
-      file = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A);
+      file = ReaderTestUtils.getDNADir(mDir);
       try (BuildParams ip = getParams(ProgramMode.SLIMN.subjectMode(), file, 4, 3)) {
         ip.integrity();
         assertEquals(1, ip.size());
@@ -206,7 +206,7 @@ public class BuildParamsTest extends TestCase {
   public void testBasic2() throws Exception {
     File file = null;
     try {
-      file = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A);
+      file = ReaderTestUtils.getDNADir(mDir);
       try (BuildParams ip = getParams(ProgramMode.TSLIMX.subjectMode(), file, 4, 3)) {
         ip.integrity();
         assertEquals(0, ip.size());

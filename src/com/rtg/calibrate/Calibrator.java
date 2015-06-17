@@ -37,6 +37,7 @@ import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.ReadGroupUtils;
 import com.rtg.sam.SamBamConstants;
 import com.rtg.sam.SamUtils;
+import com.rtg.sam.SuperCigarValidator;
 import com.rtg.util.Environment;
 import com.rtg.util.Histogram;
 import com.rtg.util.StringUtils;
@@ -673,7 +674,7 @@ public class Calibrator {
         final boolean rc = (flags & SamBamConstants.SAM_READ_IS_REVERSE) != 0;
         final String xqField = sam.getStringAttribute(SamUtils.CG_OVERLAP_QUALITY);
         if (baseQualities != null && baseQualities.length > 0) {
-          final byte[] samQualities = SamUtils.expandCgSuperCigarQualities(baseQualities, mCgQualities, xqField, first ^ rc, false, true); //rc is always false because we don't want to reverse the array
+          final byte[] samQualities = SuperCigarValidator.expandCgSuperCigarQualities(baseQualities, mCgQualities, xqField, first ^ rc, false, true); //rc is always false because we don't want to reverse the array
           getParser().setQualities(samQualities);
         } else {
           getParser().setQualities(null);

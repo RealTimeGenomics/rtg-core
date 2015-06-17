@@ -58,6 +58,16 @@ public class Consensus extends LoggedCli {
   static final String CONSENSUS_READS = "consensus-reads";
 
 
+  @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return "reduce the complexity of a graph by removing invalid paths";
+  }
+
   /**
    * @param args command line
    */
@@ -107,10 +117,6 @@ public class Consensus extends LoggedCli {
     }
   }
 
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;  //To change body of implemented methods use File | Settings | File Templates.
-  }
   @Override
   protected int mainExec(OutputStream out, LogStream log) throws IOException {
     final File in = (File) mFlags.getAnonymousValue(0);

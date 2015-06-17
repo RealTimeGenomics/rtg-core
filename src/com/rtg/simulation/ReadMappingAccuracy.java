@@ -106,6 +106,16 @@ public class ReadMappingAccuracy extends LoggedCli {
   private int mDupes = 0;
 
   @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return "evaluate accuracy of mapping simulated reads";
+  }
+
+  @Override
   protected void initFlags() {
     ReadMappingAccuracyParams.initFlags(mFlags);
   }
@@ -664,16 +674,6 @@ public class ReadMappingAccuracy extends LoggedCli {
     } catch (final NumberFormatException nfe) {
       return rec.getReadName();
     }
-  }
-
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
-  }
-
-  /** @param args command line arguments */
-  public static void main(String[] args) {
-    new ReadMappingAccuracy().mainExit(args);
   }
 
   private int getNumReads(File seqDir) throws IOException {

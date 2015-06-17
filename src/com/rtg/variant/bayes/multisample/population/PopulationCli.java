@@ -42,8 +42,6 @@ import com.rtg.variant.bayes.multisample.MultisampleTask;
  */
 public class PopulationCli extends AbstractMultisampleCli {
 
-  private static final String MODULE_NAME = "population";
-
   private static final String PEDIGREE_FLAG = "pedigree";
 
   private static final String IMPUTE_FLAG = "impute";
@@ -72,7 +70,12 @@ public class PopulationCli extends AbstractMultisampleCli {
 
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "population";
+  }
+
+  @Override
+  public String description() {
+    return "call variants for multiple potentially-related individuals";
   }
 
   @Override

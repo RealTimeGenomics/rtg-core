@@ -46,8 +46,6 @@ public class CnvStatsCli extends AbstractCli {
   static final String COLLAPSE_CNV = "collapse-cnv";
   //private static final String PRIORS_FLAG = "priors";
 
-  static final String MODULE_NAME = "cnvsimeval";
-
 
   /**
    * Compare detected CNVs with the generated CNVs
@@ -150,7 +148,12 @@ public class CnvStatsCli extends AbstractCli {
 
   @Override
   public String moduleName() {
-     return MODULE_NAME;
+     return "cnvsimeval";
+  }
+
+  @Override
+  public String description() {
+    return "evaluate accuracy of calling CNVs on simulated data";
   }
 
   private BufferedReader getReader(final File f) throws IOException {

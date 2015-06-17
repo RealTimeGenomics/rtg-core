@@ -18,7 +18,6 @@ import java.io.PrintStream;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
-import com.rtg.launcher.BuildTestUtils;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.util.StringUtils;
@@ -81,7 +80,7 @@ public class SamValidatorCliTest extends AbstractCliTest {
   }
 
   public void testFlagValidator() throws IOException {
-    final File template = BuildTestUtils.prereadDNA(mDir, getSequence());
+    final File template = ReaderTestUtils.getDNASubDir(getSequence(), mDir);
     final File pairedReads = FileUtils.createTempDir("temp", "paired", mDir);
     final SdfId sdfId = ReaderTestUtils.createPairedReaderDNA(getSequence(), getSequence(), pairedReads, null);
     final File sam = new File(mDir, "samvalnosort.sam");
@@ -121,7 +120,7 @@ public class SamValidatorCliTest extends AbstractCliTest {
     ByteArrayOutputStream outbaos = new ByteArrayOutputStream();
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     final PrintStream errStr = new PrintStream(baos);
-    final File template = BuildTestUtils.prereadDNA(mDir, getSequence());
+    final File template = ReaderTestUtils.getDNASubDir(getSequence(), mDir);
     final File pairedReads = FileUtils.createTempDir("temp", "paired");
     final SdfId sdfId = ReaderTestUtils.createPairedReaderDNA(getSequence(), getSequence(), pairedReads, null);
 
@@ -182,7 +181,7 @@ public class SamValidatorCliTest extends AbstractCliTest {
   }
 
   public void testEndToEndCG() throws Exception {
-    final File template = BuildTestUtils.prereadDNA(mDir, ">t\nGGATTGAGACTGGTAAAATATGAAGTGACCACCAAAGGGAGCTTGAGAGA\n");
+    final File template = ReaderTestUtils.getDNASubDir(">t\nGGATTGAGACTGGTAAAATATGAAGTGACCACCAAAGGGAGCTTGAGAGA\n", mDir);
 
     final String samstr = ""
             + SAM_HEAD

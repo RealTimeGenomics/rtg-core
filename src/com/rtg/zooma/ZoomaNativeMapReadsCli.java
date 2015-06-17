@@ -18,6 +18,7 @@ import java.io.PrintStream;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
+import com.rtg.ngs.MapFlags;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
 /**
@@ -40,6 +41,11 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
   }
 
   @Override
+  public String description() {
+    return "even faster read mapping";
+  }
+
+  @Override
   protected void initFlags() {
     mFlags.registerOptional('i', INDEX_FLAG, File.class, "FILE", "reference index file", new File("zooma.index.bin"));
     mFlags.registerRequired('l', LEFT_FLAG, File.class, "FILE", "left input file for FASTQ paired end data");
@@ -49,7 +55,7 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
     mFlags.registerOptional('K', OUTPUT_CHUNK_FLAG, Integer.class, "INT", "number of reads per output chunk", 2000000);
     mFlags.registerOptional('k', INPUT_CHUNK_FLAG, Integer.class, "INT", "number of reads per input chunk", 125000);
     mFlags.registerOptional(SAM_RG_FLAG, String.class, "STRING", "string in the form \"@RG\\tID:RG1\\tSM:SAMPLE_NAME\\tPL:ILLUMINA\"");
-    CommonFlags.initFragmentSizeFlags(mFlags);
+    MapFlags.initFragmentSizeFlags(mFlags);
     CommonFlags.initThreadsFlag(mFlags);
   }
 
@@ -84,11 +90,4 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
       (Integer) mFlags.getValue(INPUT_CHUNK_FLAG), (Integer) mFlags.getValue(OUTPUT_CHUNK_FLAG), !mFlags.isSet(NO_QUICK_FLAG));
   }
 
-  /**
-   * Main entry point
-   * @param args command line arguments
-   */
-  public static void main(String[] args) {
-    new ZoomaNativeMapReadsCli().mainExit(args);
-  }
 }

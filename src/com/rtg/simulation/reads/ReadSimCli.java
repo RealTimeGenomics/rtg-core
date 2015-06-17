@@ -348,10 +348,14 @@ public class ReadSimCli extends LoggedCli {
   private PortableRandom mRandom = null;
   private AbstractMachineErrorParams mPriors = null;
 
-  /** @return current name of the module */
   @Override
   public String moduleName() {
     return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return "generate simulated reads from a sequence";
   }
 
   @Override

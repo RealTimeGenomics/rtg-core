@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.rtg.launcher.OutputParams;
+import com.rtg.launcher.ReaderParams;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.metagenomics.SpeciesParams.SpeciesParamsBuilder;
 import com.rtg.mode.SequenceMode;
@@ -50,7 +51,7 @@ public class SpeciesParamsTest extends TestCase {
     final File genomeDir = FileUtils.createTempDir("test", "coverageparams");
     try {
       ReaderTestUtils.getReaderDNA(">t\nacgt", genomeDir, null).close();
-      final SequenceParams genomes = SequenceParams.builder().directory(genomeDir).mode(SequenceMode.UNIDIRECTIONAL).create();
+      final ReaderParams genomes = SequenceParams.builder().directory(genomeDir).mode(SequenceMode.UNIDIRECTIONAL).create().readerParams();
       final File map = File.createTempFile("testok1", "speciesParams");
       try {
         FileUtils.stringToFile(SharedSamConstants.SAM9, map);

@@ -59,6 +59,7 @@ public class GraphMapTest extends TestCase {
 
   @Override
   public void tearDown() {
+    Diagnostic.setLogStream();
     assertTrue(FileHelper.deleteAll(mDir));
     mDir = null;
   }

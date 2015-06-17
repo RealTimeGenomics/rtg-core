@@ -24,13 +24,11 @@ import com.rtg.mode.SequenceMode;
 import com.rtg.reader.FastaSequenceDataSource;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.SequencesWriter;
-import com.rtg.util.intervals.LongRange;
-import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.SlimException;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
 import com.rtg.util.test.MockEventListener;
 
@@ -100,30 +98,6 @@ public class DefaultReaderParamsTest extends TestCase {
       FileHelper.deleteAll(f);
     }
   }
-
-  public void testSloppyEnd() throws IOException {
-    final MemoryPrintStream out = new MemoryPrintStream();
-    Diagnostic.setLogStream(out.printStream());
-    final File f = FileUtils.createTempDir("test", "defreadparampro");
-    try {
-      getReaderDNA(">test\nACGT\n", f);
-      out.reset();
-      final DefaultReaderParams drp = createDefaultReaderParams(f, new LongRange(0, 2), SequenceMode.BIDIRECTIONAL);
-      final LongRange adjustedRegion = drp.adjustedRegion();
-      assertNotNull(adjustedRegion);
-      assertEquals(0, adjustedRegion.getStart());
-      assertEquals(1, adjustedRegion.getEnd());
-      TestUtils.containsAll(out.toString(), "The end sequence id \"2\" is out of range, it must be from \"1\" to \"1\". Defaulting end to \"1\"");
-      out.reset();
-      final DefaultReaderParams drp1 = createDefaultReaderParams(f, new LongRange(0, 1), SequenceMode.BIDIRECTIONAL);
-      assertEquals(1, drp1.adjustedRegion().getEnd());
-      assertFalse(out.toString(), out.toString().contains("The end sequence id"));
-    } finally {
-      Diagnostic.setLogStream();
-      FileHelper.deleteAll(f);
-    }
-  }
-
 
   public void testInvalid() throws IOException {
     final MockEventListener ev = new MockEventListener();

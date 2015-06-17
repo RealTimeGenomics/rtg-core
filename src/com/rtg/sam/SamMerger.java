@@ -26,7 +26,6 @@ import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.variant.SamRecordPopulator;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMFileWriter;

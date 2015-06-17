@@ -38,6 +38,11 @@ import junit.framework.TestCase;
  */
 public class TemplateCallImplementationTest extends TestCase {
 
+  @Override
+  protected void tearDown() throws Exception {
+    Diagnostic.setLogStream();
+  }
+
   private NgsHashFunction getHashFunction(final IndexSet indexes, final TemplateCall tc) {
     final SplitL4w2s1e1 hf = new SplitL4w2s1e1(new ReadCallImplementation(indexes), tc);
     hf.integrity();

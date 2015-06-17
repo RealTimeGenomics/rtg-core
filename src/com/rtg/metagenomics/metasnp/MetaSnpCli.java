@@ -63,9 +63,18 @@ public class MetaSnpCli extends LoggedCli {
   private static final String ITERATIONS = "iterations";
   private static final String ERROR_RATE = "error-rate";
 
-
   private static final String VCF_OUTPUT = "strains.vcf";
   private static final String XI_FILE = "xi.txt";
+
+  @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return "estimate fractions and variants of species in multiple samples";
+  }
 
   @Override
   protected void initFlags() {
@@ -286,10 +295,6 @@ public class MetaSnpCli extends LoggedCli {
     return String.valueOf(DnaUtils.getBase(b + 1));
   }
 
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
-  }
 
   private static class Validator implements com.rtg.util.cli.Validator {
     @Override
@@ -315,11 +320,4 @@ public class MetaSnpCli extends LoggedCli {
     }
   }
 
-  /**
-   * Command line entry point
-   * @param args command line params
-   */
-  public static void main(String[] args) {
-    new MetaSnpCli().mainInit(args, System.out, System.err);
-  }
 }

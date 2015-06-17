@@ -48,7 +48,6 @@ import com.rtg.vcf.validator.RuleSet.StringConverter;
  */
 public class VcfValidatorCli extends AbstractCli {
 
-  private static final String MODULE_NAME = "vcfvalidator";
   private static final String XRULES = "Xrules";
   private static final String XVERBOSE = "Xverbose";
 
@@ -72,6 +71,26 @@ public class VcfValidatorCli extends AbstractCli {
   private boolean mPrintedRecord = false;
   private boolean mCountedRecord = false;
   private boolean mVerbose;
+
+  @Override
+  public String moduleName() {
+    return "vcfvalidator";
+  }
+
+  @Override
+  public String description() {
+    return null;
+  }
+
+  @Override
+  protected void initFlags() {
+    mFlags.setDescription("Validates the contents of a VCF file conform to expected value ranges.");
+    CommonFlagCategories.setCategories(mFlags);
+    mFlags.registerExtendedHelp();
+    mFlags.registerRequired(File.class, "FILE", "VCF format file to be validated").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerOptional(XRULES, File.class, "FILE", "File defining rules for validation of VCF input").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerOptional(XVERBOSE, "Set to output all failed records to error output instead of the first " + MAX_RECORD_WARNINGS).setCategory(CommonFlagCategories.REPORTING);
+  }
 
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
@@ -363,21 +382,6 @@ public class VcfValidatorCli extends AbstractCli {
 
   private NumericRuleSet<Double> getFloatRuleSet(String name, FieldType type, VcfNumber number, MetaType metaType) {
     return new NumericRuleSet<>(name, type, number, metaType, new DoubleConverter());
-  }
-
-  @Override
-  protected void initFlags() {
-    mFlags.setDescription("Validates the contents of a VCF file conform to expected value ranges.");
-    CommonFlagCategories.setCategories(mFlags);
-    mFlags.registerExtendedHelp();
-    mFlags.registerRequired(File.class, "FILE", "VCF format file to be validated").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerOptional(XRULES, File.class, "FILE", "File defining rules for validation of VCF input").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerOptional(XVERBOSE, "Set to output all failed records to error output instead of the first " + MAX_RECORD_WARNINGS).setCategory(CommonFlagCategories.REPORTING);
-  }
-
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
   }
 
   /**

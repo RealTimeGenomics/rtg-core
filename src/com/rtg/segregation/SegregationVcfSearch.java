@@ -79,6 +79,27 @@ public class SegregationVcfSearch extends AbstractCli {
   private static final String NEW_PENALTY_FLAG = "Xnew-penalty";
   private static final String XO_PENALTY_FLAG = "Xxo-penalty";
 
+  private PrintStream mOut = null;
+  private BedWriter mBed = null;
+  private Search mSearch = null;
+  private SegregationBlock mBlock = null;
+  private int mLastLength;
+  private String mLastSeq = null;
+  final Map<String, Integer> mChrLengths = new HashMap<>();
+  private Map<Pair<Sex, String>, ReferenceSequence> mPloidyMap;
+  int mNewPenalty;
+  int mXoPenalty;
+
+  @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return "search for phasing based on segregation analysis";
+  }
+
   @Override
   protected void initFlags() {
     CommonFlagCategories.setCategories(mFlags);
@@ -98,17 +119,6 @@ public class SegregationVcfSearch extends AbstractCli {
     CommonFlags.initNoGzip(mFlags);
     CommonFlags.initIndexFlags(mFlags);
   }
-
-  private PrintStream mOut = null;
-  private BedWriter mBed = null;
-  private Search mSearch = null;
-  private SegregationBlock mBlock = null;
-  private int mLastLength;
-  private String mLastSeq = null;
-  final Map<String, Integer> mChrLengths = new HashMap<>();
-  private Map<Pair<Sex, String>, ReferenceSequence> mPloidyMap;
-  int mNewPenalty;
-  int mXoPenalty;
 
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
@@ -263,11 +273,6 @@ public class SegregationVcfSearch extends AbstractCli {
       index++;
     }
     return sampleSex;
-  }
-
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
   }
 
 }

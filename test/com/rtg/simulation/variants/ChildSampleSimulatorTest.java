@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.List;
 
+import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.AbstractCliTest;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
@@ -26,34 +28,19 @@ import com.rtg.reference.Sex;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
-import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
-import com.rtg.variant.util.MendeliannessChecker;
-
-import junit.framework.TestCase;
+import com.rtg.vcf.mendelian.MendeliannessChecker;
 
 /**
  */
-public class ChildSampleSimulatorTest extends TestCase {
-
-  NanoRegression mNano = null;
-  @Override
-  public void setUp() {
-    Diagnostic.setLogStream();
-    mNano = new NanoRegression(this.getClass());
-  }
+public class ChildSampleSimulatorTest extends AbstractCliTest {
 
   @Override
-  protected void tearDown() throws Exception {
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
+  protected AbstractCli getCli() {
+    return new ChildSampleSimulatorCli();
   }
 
   private static final String REF =

@@ -50,6 +50,11 @@ public class AvrStatsCli extends AbstractCli {
   }
 
   @Override
+  public String description() {
+    return "print statistics about an AVR model";
+  }
+
+  @Override
   protected void initFlags() {
     CommonFlagCategories.setCategories(mFlags);
     mFlags.registerExtendedHelp();

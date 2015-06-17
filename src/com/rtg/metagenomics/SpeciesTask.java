@@ -34,8 +34,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import com.reeltwo.jumble.annotations.TestClass;
-import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.ParamsTask;
+import com.rtg.launcher.ReaderParams;
 import com.rtg.metagenomics.krona.KronaSpeciesNode;
 import com.rtg.metagenomics.krona.KronaSpeciesReportWriter;
 import com.rtg.metagenomics.matrix.Vector;
@@ -64,7 +64,7 @@ import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.LineWriter;
-import com.rtg.variant.SamRecordPopulator;
+import com.rtg.sam.SamRecordPopulator;
 
 import htsjdk.samtools.SAMRecord;
 
@@ -287,8 +287,8 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     final long[] genomeLengths = new long[mSpeciesMap.taxonIds().length];
     final Vector genomeLengthsVector = new VectorSimple(genomeLengths.length);
 
-    final ISequenceParams genomes = mParams.genome();
-    final int[] initGenomeLengths = genomes.readerParams().lengths();
+    final ReaderParams genomes = mParams.genome();
+    final int[] initGenomeLengths = genomes.lengths();
     for (int i = 0; i < initGenomeLengths.length; i++) {
       final int id = mSpeciesMap.id(mSequenceMap.get(genomes.reader().name(i)));
       genomeLengthsVector.incr(id, initGenomeLengths[i]);

@@ -12,14 +12,14 @@
 package com.rtg.protein;
 
 import static com.rtg.launcher.BuildCommon.RESOURCE;
-import static com.rtg.launcher.CommonFlags.COMPRESS_HASHES_FLAG;
-import static com.rtg.launcher.CommonFlags.DEFAULT_TOP_N;
+import static com.rtg.ngs.MapFlags.COMPRESS_HASHES_FLAG;
+import static com.rtg.ngs.MapFlags.DEFAULT_TOP_N;
 import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.launcher.CommonFlags.READS_FLAG;
 import static com.rtg.launcher.CommonFlags.TEMPLATE_FLAG;
 import static com.rtg.launcher.CommonFlags.TEMP_DIR;
-import static com.rtg.launcher.CommonFlags.TEMP_FILES_COMPRESSED;
-import static com.rtg.launcher.CommonFlags.WORDSIZE_FLAG;
+import static com.rtg.ngs.MapFlags.TEMP_FILES_COMPRESSED;
+import static com.rtg.ngs.MapFlags.WORDSIZE_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
@@ -105,8 +105,8 @@ public class MapXCli extends ParamsCli<NgsParams> {
   private static final ArrayList<String> MATRICES = new ArrayList<>();
 
   static {
-    FILTERS.put(CommonFlags.TOPEQUAL, OutputFilter.PROTEIN_TOPEQUAL);
-    FILTERS.put(CommonFlags.TOPN, OutputFilter.PROTEIN_TOPN);
+    FILTERS.put(MapFlags.TOPEQUAL, OutputFilter.PROTEIN_TOPEQUAL);
+    FILTERS.put(MapFlags.TOPN, OutputFilter.PROTEIN_TOPN);
     MATRICES.add("blosum45");
     MATRICES.add("blosum62");
     MATRICES.add("blosum80");
@@ -115,17 +115,32 @@ public class MapXCli extends ParamsCli<NgsParams> {
   /** Max alignment score */
   public static final String MAX_ALIGNMENT_SCORE = "max-alignment-score";
 
+  @Override
+  public String moduleName() {
+    return "mapx";
+  }
+
+  @Override
+  public String description() {
+    return "translated protein search";
+  }
+
+  @Override
+  protected File outputDirectory() {
+    return (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
+  }
+
   @TestClass(value = "com.rtg.protein.MapXValidatorTest")
   private static class MapXValidator implements Validator {
 
     @Override
     public boolean isValid(final CFlags flags) {
-      final String format = flags.isSet(FormatCli.FORMAT_FLAG) ? flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()) : MapFlags.SDF_FORMAT;
-      final boolean sdf = format.equals(MapFlags.SDF_FORMAT);
+      final String format = flags.isSet(FormatCli.FORMAT_FLAG) ? flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()) : FormatCli.SDF_FORMAT;
+      final boolean sdf = format.equals(FormatCli.SDF_FORMAT);
       if (!CommonFlags.validateOutputDirectory(flags) || !CommonFlags.validateReads(flags, sdf)) {
         return false;
       }
-      if (!CommonFlags.validateTemplate(flags) || !CommonFlags.validateThreads(flags) || !CommonFlags.checkPercentRepeatFrequency(flags)) {
+      if (!CommonFlags.validateTemplate(flags) || !CommonFlags.validateThreads(flags) || !MapFlags.checkPercentRepeatFrequency(flags)) {
         return false;
       }
 
@@ -136,8 +151,8 @@ public class MapXCli extends ParamsCli<NgsParams> {
       final int a = (Integer) flags.getValue(MISMATCHES_FLAG);
       final int b = (Integer) flags.getValue(GAPS_FLAG);
       final int c = (Integer) flags.getValue(GAP_LENGTH_FLAG);
-      if (flags.isSet(CommonFlags.WORDSIZE_FLAG)) {
-        if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.WORDSIZE_FLAG, 1, 12)) {
+      if (flags.isSet(WORDSIZE_FLAG)) {
+        if (!CommonFlags.validateFlagBetweenValues(flags, WORDSIZE_FLAG, 1, 12)) {
           return false;
         }
       }
@@ -219,7 +234,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
         flags.setParseMessage("--" + XMETA_CHUNK_OVERLAP + " must be positive and less than " + XMETA_CHUNK_LENGTH);
         return false;
       }
-      if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.MAX_TOP_RESULTS_FLAG, 1, 250)) {
+      if (!CommonFlags.validateFlagBetweenValues(flags, MapFlags.MAX_TOP_RESULTS_FLAG, 1, 250)) {
         return false;
       }
       return true;
@@ -265,7 +280,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
     final NgsOutputParamsBuilder outBuild = NgsOutputParams.builder();
     outBuild.outputDir((File) mFlags.getValue(OUTPUT_FLAG)).filterParams(filter).sorted(mFlags.isSet(CommonFlags.SORT_FLAG));
     outBuild.tempFilesDir((File) mFlags.getValue(TEMP_DIR));
-    outBuild.outputUnmapped(!mFlags.isSet(CommonFlags.NO_UNMAPPED));
+    outBuild.outputUnmapped(!mFlags.isSet(MapFlags.NO_UNMAPPED));
     if (mFlags.isSet(XDONT_MERGE_ALIGNMENT_RESULTS)) {
       outBuild.mergeAlignmentResults(false);
     }
@@ -286,7 +301,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
       ngsParamsBuilder.proteinScoringMatrix(new ProteinScoringMatrix((String) mFlags.getValue(MATRIX_FLAG)));
     }
     ngsParamsBuilder.enableProteinReadCache(mFlags.isSet(READ_CACHE_FLAG));
-    final IntegerOrPercentage repeat = (IntegerOrPercentage) mFlags.getValue(CommonFlags.REPEAT_FREQUENCY_FLAG);
+    final IntegerOrPercentage repeat = (IntegerOrPercentage) mFlags.getValue(MapFlags.REPEAT_FREQUENCY_FLAG);
     ngsParamsBuilder.useProportionalHashThreshold(repeat.isPercentage());
     if (repeat.isPercentage()) {
       ngsParamsBuilder.hashCountThreshold(100 - repeat.getValue(100));
@@ -325,18 +340,18 @@ public class MapXCli extends ParamsCli<NgsParams> {
     final OutputFilter outputFilter = flags.isSet(UNFILTERED_FLAG) ? OutputFilter.PROTEIN_ALL_HITS : FILTERS.get(((String) flags.getValue(CommonFlags.OUTPUT_FILTER_FLAG)).toLowerCase(Locale.getDefault()));
 
     final int maxTopResults;
-    if (flags.isSet(CommonFlags.MAX_TOP_RESULTS_FLAG)) {
-      maxTopResults = (Integer) flags.getValue(CommonFlags.MAX_TOP_RESULTS_FLAG);
+    if (flags.isSet(MapFlags.MAX_TOP_RESULTS_FLAG)) {
+      maxTopResults = (Integer) flags.getValue(MapFlags.MAX_TOP_RESULTS_FLAG);
     } else {
       maxTopResults = DEFAULT_TOP_N;
     }
     final int topN;
-    if (flags.isSet(CommonFlags.TOPN_RESULTS_FLAG)) {
-      topN = (Integer) flags.getValue(CommonFlags.TOPN_RESULTS_FLAG);
+    if (flags.isSet(MapFlags.TOPN_RESULTS_FLAG)) {
+      topN = (Integer) flags.getValue(MapFlags.TOPN_RESULTS_FLAG);
     } else {
       // mapx doesn't use TOPN_FLAG, only MAX_TOP_RESULTS_FLAG
-      if (flags.getFlag(CommonFlags.TOPN_RESULTS_FLAG) == null && flags.isSet(CommonFlags.MAX_TOP_RESULTS_FLAG)) {
-        topN = (Integer) flags.getValue(CommonFlags.MAX_TOP_RESULTS_FLAG);
+      if (flags.getFlag(MapFlags.TOPN_RESULTS_FLAG) == null && flags.isSet(MapFlags.MAX_TOP_RESULTS_FLAG)) {
+        topN = (Integer) flags.getValue(MapFlags.MAX_TOP_RESULTS_FLAG);
       } else {
         topN = Math.max(maxTopResults, DEFAULT_TOP_N);
       }
@@ -354,7 +369,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
     .maxTopResults(maxTopResults)
     .exclude(flags.isSet(CommonFlags.EXCLUDE_FLAG))
     .useids(flags.isSet(CommonFlags.USEIDS_FLAG))
-    .errorLimit(flags.isSet(CommonFlags.XSCORE_INDEL) ? (Integer) flags.getValue(CommonFlags.XSCORE_INDEL) : CommonFlags.MAX_SCORE)
+    .errorLimit(flags.isSet(MapFlags.XSCORE_INDEL) ? (Integer) flags.getValue(MapFlags.XSCORE_INDEL) : MapFlags.MAX_SCORE)
     .matedMaxMismatches((IntegerOrPercentage) flags.getValue(MapXCli.MAX_ALIGNMENT_SCORE))
     .minIdentity(minIdentity)
     .preFilterAlgorithm((Integer) flags.getValue(PRE_FILTER_ALGORITHM))
@@ -368,7 +383,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
     final int i = (Integer) mFlags.getValue(GAPS_FLAG);
     final int l = (Integer) mFlags.getValue(GAP_LENGTH_FLAG);
     final int s = Math.max(subs, i);
-    CommonFlags.validateMaskParams(readLength / 3 - 1, w, s, i, l);
+    MapFlags.validateMaskParams(readLength / 3 - 1, w, s, i, l);
     return new NgsMaskParamsProtein(w, s, i, l);
   }
 
@@ -389,17 +404,17 @@ public class MapXCli extends ParamsCli<NgsParams> {
     CommonFlagCategories.setCategories(flags);
     flags.registerRequired('i', READS_FLAG, File.class, "SDF|FILE", "query read sequences").setCategory(INPUT_OUTPUT);
     flags.registerRequired('t', TEMPLATE_FLAG, File.class, "SDF", "SDF containing database to search").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('o', OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
+    CommonFlags.initOutputDirFlag(flags);
 
     // No Paired End input for MapX
-    final Flag formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", MapFlags.SDF_FORMAT).setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    formatFlag.setParameterRange(new String[] {MapFlags.SDF_FORMAT, MapFlags.FASTA_FORMAT, MapFlags.FASTQ_FORMAT, MapFlags.SAM_SE_FORMAT});
+    final Flag formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", FormatCli.SDF_FORMAT).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    formatFlag.setParameterRange(new String[] {FormatCli.SDF_FORMAT, FormatCli.FASTA_FORMAT, FormatCli.FASTQ_FORMAT, FormatCli.SAM_SE_FORMAT});
 
     final Flag filter = flags.registerOptional('f', CommonFlags.OUTPUT_FILTER_FLAG, String.class, "STRING", "output filter", "topn");
     filter.setCategory(REPORTING);
     filter.setParameterRange(FILTERS.keySet());
     flags.registerOptional(XDONT_MERGE_ALIGNMENT_RESULTS, "does not concat alignment files").setCategory(UTILITY);
-    flags.registerOptional('n', CommonFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "maximum number of topn/topequals results output per read",
+    flags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "maximum number of topn/topequals results output per read",
       DEFAULT_TOP_N).setCategory(REPORTING);
     final Flag matrix = flags.registerOptional(MATRIX_FLAG, String.class, "string", "name of the scoring matrix used during alignment", "blosum62");
     matrix.setCategory(SENSITIVITY_TUNING);
@@ -413,15 +428,15 @@ public class MapXCli extends ParamsCli<NgsParams> {
     flags.registerOptional(COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", true).setCategory(UTILITY);
     flags.registerOptional(TEMP_DIR, File.class, "DIR", "directory used for temporary files (Defaults to output directory)").setCategory(UTILITY);
     flags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary files", true).setCategory(UTILITY);
-    flags.registerOptional(CommonFlags.NO_UNMAPPED, "do not output unmapped reads").setCategory(REPORTING);
-    flags.registerOptional('w', CommonFlags.WORDSIZE_FLAG, Integer.class, "int", "word size", 7).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(MapFlags.NO_UNMAPPED, "do not output unmapped reads").setCategory(REPORTING);
+    flags.registerOptional('w', WORDSIZE_FLAG, Integer.class, "int", "word size", 7).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('a', MISMATCHES_FLAG, Integer.class, "INT", "guaranteed minimum number of identical mismatches which will be detected", 1).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('b', GAPS_FLAG, Integer.class, "INT", "guaranteed minimum number of gaps which will be detected (if this is larger than the minimum number of mismatches then the minimum number of mismatches is increased to the same value)", 0).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('c', GAP_LENGTH_FLAG, Integer.class, "INT", "guaranteed number of positions that will be detected in a single gap", 1).setCategory(SENSITIVITY_TUNING);
     CommonFlags.initThreadsFlag(mFlags);
     CommonFlags.initNoGzip(flags);
     flags.registerOptional('e', MAX_ALIGNMENT_SCORE, IntegerOrPercentage.class, "INT", "maximum alignment score at output (as absolute value or percentage of read length in protein space)", IntegerOrPercentage.valueOf("30%")).setCategory(REPORTING);
-    flags.registerOptional(CommonFlags.REPEAT_FREQUENCY_FLAG, IntegerOrPercentage.class, "INT", RESOURCE.getString("REPEAT_FREQUENCY_DESC"), IntegerOrPercentage.valueOf("95%")).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(MapFlags.REPEAT_FREQUENCY_FLAG, IntegerOrPercentage.class, "INT", RESOURCE.getString("REPEAT_FREQUENCY_DESC"), IntegerOrPercentage.valueOf("95%")).setCategory(SENSITIVITY_TUNING);
 
     flags.registerOptional(OUTPUT_READ_NAMES_FLAG, "use read name in output instead of read id (Uses more RAM)").setCategory(UTILITY);
     flags.registerOptional(SUPPRESS_PROTEIN_OUTPUT_FLAG, "suppress output of sequence protein information").setCategory(UTILITY);
@@ -437,16 +452,6 @@ public class MapXCli extends ParamsCli<NgsParams> {
     CommonFlags.initReadRange(mFlags);
 
     flags.setValidator(new MapXValidator());
-  }
-
-  @Override
-  public String moduleName() {
-    return "mapx";
-  }
-
-  @Override
-  protected File outputDirectory() {
-    return (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
   }
 
   @TestClass("com.rtg.protein.MapXFunctionalTest")

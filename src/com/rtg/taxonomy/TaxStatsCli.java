@@ -54,6 +54,39 @@ public final class TaxStatsCli extends AbstractCli {
   private int mLookupSeqsCount;
   private boolean mShowDetails;
 
+  private static class CliValidator implements Validator {
+    @Override
+    public boolean isValid(CFlags flags) {
+      return CommonFlags.validateSDF((File) flags.getAnonymousValue(0));
+    }
+  }
+
+  @Override
+  public String moduleName() {
+    return "taxstats";
+  }
+
+  @Override
+  public String description() {
+    return "summarize and verify the taxonomy in an SDF";
+  }
+
+  @Override
+  protected void initFlags() {
+    CommonFlagCategories.setCategories(mFlags);
+    mFlags.registerExtendedHelp();
+    mFlags.setDescription("Summarize and perform a verification of a taxonomy within an SDF.");
+    mFlags.registerRequired(File.class, CommonFlags.SDF, "SDF to verify taxonomy for").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerOptional(SHOW_DETAILS_FLAG, "list details of sequences attached to internal nodes of the taxonomy").setCategory(CommonFlagCategories.REPORTING);
+    mFlags.setValidator(new CliValidator());
+  }
+
+  @Override
+  protected int mainExec(OutputStream out, PrintStream err) throws IOException {
+    mShowDetails = mFlags.isSet(SHOW_DETAILS_FLAG);
+    return testSdf((File) mFlags.getAnonymousValue(0), new PrintStream(out), err);
+  }
+
   int testSdf(File sdfFile, PrintStream out, PrintStream err) throws IOException {
     try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReader(sdfFile)) {
       if (!TaxonomyUtils.hasTaxonomyInfo(reader)) {
@@ -233,38 +266,5 @@ public final class TaxStatsCli extends AbstractCli {
     out.println(stable.toString());
   }
 
-  private static class CliValidator implements Validator {
-    @Override
-    public boolean isValid(CFlags flags) {
-      return CommonFlags.validateSDF((File) flags.getAnonymousValue(0));
-    }
-  }
 
-  @Override
-  protected void initFlags() {
-    CommonFlagCategories.setCategories(mFlags);
-    mFlags.registerExtendedHelp();
-    mFlags.setDescription("Summarize and perform a verification of a taxonomy within an SDF.");
-    mFlags.registerRequired(File.class, CommonFlags.SDF, "SDF to verify taxonomy for").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerOptional(SHOW_DETAILS_FLAG, "list details of sequences attached to internal nodes of the taxonomy").setCategory(CommonFlagCategories.REPORTING);
-    mFlags.setValidator(new CliValidator());
-  }
-
-  @Override
-  protected int mainExec(OutputStream out, PrintStream err) throws IOException {
-    mShowDetails = mFlags.isSet(SHOW_DETAILS_FLAG);
-    return testSdf((File) mFlags.getAnonymousValue(0), new PrintStream(out), err);
-  }
-
-  @Override
-  public String moduleName() {
-    return "taxstats";
-  }
-
-  /**
-   * @param args command line arguments
-   */
-  public static void main(String[] args) {
-    System.exit(new TaxFilterCli().mainInit(args, System.out, System.err));
-  }
 }

@@ -22,6 +22,7 @@ import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.ParamsCli;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
+import com.rtg.ngs.MapFlags;
 import com.rtg.util.IORunnable;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
@@ -34,7 +35,6 @@ import com.rtg.variant.sv.SvToolParams.SvToolParamsBuilder;
  */
 public class SvToolCli extends ParamsCli<SvToolParams> {
 
-  private static final String MODULE_NAME = "sv";
   private static final String BIN_SIZE = "Xbin-size";
   private static final String SV_SIMPLE = "simple-signals";
   private static final String FINE_STEP = "fine-step";
@@ -52,16 +52,16 @@ public class SvToolCli extends ParamsCli<SvToolParams> {
         Diagnostic.error(ErrorType.EXPECTED_POSITIVE, BIN_SIZE);
         return false;
       }
-      if ((Integer) flags.getValue(CommonFlags.STEP_FLAG) < 1) {
-        Diagnostic.error(ErrorType.EXPECTED_POSITIVE, CommonFlags.STEP_FLAG);
+      if ((Integer) flags.getValue(MapFlags.STEP_FLAG) < 1) {
+        Diagnostic.error(ErrorType.EXPECTED_POSITIVE, MapFlags.STEP_FLAG);
         return false;
       }
       if ((Integer) flags.getValue(FINE_STEP) < 1) {
         Diagnostic.error(ErrorType.EXPECTED_POSITIVE, FINE_STEP);
         return false;
       }
-      if ((Integer) flags.getValue(FINE_STEP) > (Integer) flags.getValue(CommonFlags.STEP_FLAG)) {
-        flags.error("Parameter \"" + FINE_STEP + "\" should be smaller than or equal to parameter \"" + CommonFlags.STEP_FLAG + "\"");
+      if ((Integer) flags.getValue(FINE_STEP) > (Integer) flags.getValue(MapFlags.STEP_FLAG)) {
+        flags.error("Parameter \"" + FINE_STEP + "\" should be smaller than or equal to parameter \"" + MapFlags.STEP_FLAG + "\"");
         return false;
       }
       return true;
@@ -70,26 +70,27 @@ public class SvToolCli extends ParamsCli<SvToolParams> {
 
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "sv";
+  }
+
+  @Override
+  public String description() {
+    return "find structural variants";
   }
 
   @Override
   protected void initFlags() {
-    initFlags(mFlags);
-  }
-
-  protected static void initFlags(CFlags flags) {
-    SvCliUtils.initCommonFlags(flags);
-    SvCliUtils.initRelabelFlag(flags);
-    flags.setDescription("Analyses SAM records to determine the location of structural variants.");
-    flags.setValidator(new SvToolValidator());
-    flags.registerOptional(SV_SIMPLE, "if set, also output simple signals").setCategory(INPUT_OUTPUT);
-    flags.registerOptional('b', BIN_SIZE, Integer.class, "INT", "bin size used by simple signals", 10).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('s', CommonFlags.STEP_FLAG, Integer.class, "INT", "step size", 100).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('f', FINE_STEP, Integer.class, "INT", "step size in interesting regions", 10).setCategory(SENSITIVITY_TUNING);
+    SvCliUtils.initCommonFlags(mFlags);
+    SvCliUtils.initRelabelFlag(mFlags);
+    mFlags.setDescription("Analyses SAM records to determine the location of structural variants.");
+    mFlags.setValidator(new SvToolValidator());
+    mFlags.registerOptional(SV_SIMPLE, "if set, also output simple signals").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional('b', BIN_SIZE, Integer.class, "INT", "bin size used by simple signals", 10).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional('s', MapFlags.STEP_FLAG, Integer.class, "INT", "step size", 100).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional('f', FINE_STEP, Integer.class, "INT", "step size in interesting regions", 10).setCategory(SENSITIVITY_TUNING);
     //X flags
-    flags.registerOptional(HETEROZYGOUS_FLAG, "if set, also include heterozygous bayesian models").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(CORRECTIONS_FLAG, File.class, "FILE", "file containing per position corrections").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional(HETEROZYGOUS_FLAG, "if set, also include heterozygous bayesian models").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional(CORRECTIONS_FLAG, File.class, "FILE", "file containing per position corrections").setCategory(INPUT_OUTPUT);
   }
 
   @Override
@@ -102,7 +103,7 @@ public class SvToolCli extends ParamsCli<SvToolParams> {
     SvCliUtils.populateCommonParams(builder, SequenceParams.builder().mode(SequenceMode.UNIDIRECTIONAL), flags);
 
     return builder.binSize((Integer) mFlags.getValue(BIN_SIZE))
-        .stepSize((Integer) mFlags.getValue(CommonFlags.STEP_FLAG))
+        .stepSize((Integer) mFlags.getValue(MapFlags.STEP_FLAG))
         .fineStepSize((Integer) mFlags.getValue(FINE_STEP))
         .outputSimple(mFlags.isSet(SV_SIMPLE))
         .heterozygous(mFlags.isSet(HETEROZYGOUS_FLAG))

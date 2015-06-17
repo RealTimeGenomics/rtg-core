@@ -18,9 +18,9 @@ import java.util.Map;
 
 import com.rtg.launcher.OutputParams;
 import com.rtg.sam.DefaultSamFilter;
-import com.rtg.sam.DefaultSamFilterTest;
 import com.rtg.sam.RecordIterator;
 import com.rtg.sam.SamFilterIterator;
+import com.rtg.sam.ThreadedMultifileIteratorTest;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -46,7 +46,7 @@ public class CnvProductTaskTest extends TestCase {
   public void testSequenceLengths() throws IOException {
     final File dir = FileUtils.createTempDir("cnvproducttask2", "test");
     try {
-      try (RecordIterator<SAMRecord> multiIt = DefaultSamFilterTest.getIterator(dir, "com/rtg/variant/cnv/resources/testFilter.sam")) {
+      try (RecordIterator<SAMRecord> multiIt = ThreadedMultifileIteratorTest.getIterator(dir, "com/rtg/variant/cnv/resources/testFilter.sam")) {
         final int[] lengths = CnvProductTask.makeTemplateLengths(multiIt.header().getSequenceDictionary());
         assertEquals(3, lengths.length);
         assertEquals(143000, lengths[0]);
@@ -60,7 +60,7 @@ public class CnvProductTaskTest extends TestCase {
   public void testSequenceNames() throws IOException {
     final File dir = FileUtils.createTempDir("cnvproducttask3", "test");
     try {
-      try (RecordIterator<SAMRecord> multiIt = DefaultSamFilterTest.getIterator(dir, "com/rtg/variant/cnv/resources/testFilter.sam")) {
+      try (RecordIterator<SAMRecord> multiIt = ThreadedMultifileIteratorTest.getIterator(dir, "com/rtg/variant/cnv/resources/testFilter.sam")) {
         final Map<Integer, String> map = CnvProductTask.makeTemplateNameMap(multiIt.header().getSequenceDictionary());
         assertEquals(3, map.size());
         assertEquals("simulatedSequence1", map.get(0));
@@ -111,7 +111,7 @@ public class CnvProductTaskTest extends TestCase {
     final File dir = FileUtils.createTempDir("cnvproducttask4", "test");
     try {
       final CnvProductParams params = CnvProductParams.builder().bucketSize(6).create();
-      try (SamFilterIterator it = new SamFilterIterator(DefaultSamFilterTest.getIterator(dir, "com/rtg/variant/cnv/resources/babySam.sam"), new DefaultSamFilter(params.filterParams()))) {
+      try (SamFilterIterator it = new SamFilterIterator(ThreadedMultifileIteratorTest.getIterator(dir, "com/rtg/variant/cnv/resources/babySam.sam"), new DefaultSamFilter(params.filterParams()))) {
         final CnvProductTask task = new CnvProductTask(params, TestUtils.getNullOutputStream());
         task.setSequenceLengths(CnvProductTask.makeTemplateLengths(it.header().getSequenceDictionary()));
         final int[][] buckets = task.chunkSamFile(it);
@@ -143,7 +143,7 @@ public class CnvProductTaskTest extends TestCase {
     final File dir = FileUtils.createTempDir("cnvproducttask5", "test");
     try {
       final CnvProductParams params = CnvProductParams.builder().bucketSize(5).create();
-      try (SamFilterIterator it = new SamFilterIterator(DefaultSamFilterTest.getIterator(dir, "com/rtg/variant/cnv/resources/babySam.sam"), new DefaultSamFilter(params.filterParams()))) {
+      try (SamFilterIterator it = new SamFilterIterator(ThreadedMultifileIteratorTest.getIterator(dir, "com/rtg/variant/cnv/resources/babySam.sam"), new DefaultSamFilter(params.filterParams()))) {
         final CnvProductTask task = new CnvProductTask(params, TestUtils.getNullOutputStream());
         task.setSequenceLengths(CnvProductTask.makeTemplateLengths(it.header().getSequenceDictionary()));
         final int[][] buckets = task.chunkSamFile(it);
@@ -255,7 +255,7 @@ public class CnvProductTaskTest extends TestCase {
   public void testBloodyBigBucket() throws Exception {
     try (TestDirectory dir = new TestDirectory()) {
       final CnvProductParams params = CnvProductParams.builder().bucketSize(Integer.MAX_VALUE).create();
-      try (SamFilterIterator it = new SamFilterIterator(DefaultSamFilterTest.getIterator(dir, "com/rtg/variant/cnv/resources/babySam.sam"), new DefaultSamFilter(params.filterParams()))) {
+      try (SamFilterIterator it = new SamFilterIterator(ThreadedMultifileIteratorTest.getIterator(dir, "com/rtg/variant/cnv/resources/babySam.sam"), new DefaultSamFilter(params.filterParams()))) {
         final CnvProductTask task = new CnvProductTask(params, TestUtils.getNullOutputStream());
         task.setSequenceLengths(CnvProductTask.makeTemplateLengths(it.header().getSequenceDictionary()));
         final int[][] buckets = task.chunkSamFile(it);

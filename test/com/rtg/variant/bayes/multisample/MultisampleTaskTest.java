@@ -54,9 +54,9 @@ import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.StaticThreshold;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
-import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.bayes.multisample.population.PopulationCallerConfiguration;
 import com.rtg.variant.bayes.multisample.population.PopulationNanoTest;
+import com.rtg.vcf.VariantStatistics;
 
 import junit.framework.TestCase;
 
@@ -76,6 +76,7 @@ public class MultisampleTaskTest extends TestCase {
 
   @Override
   public void tearDown() throws Exception {
+    Diagnostic.setLogStream();
     // clear the module name so later tests don't report SlimException to the Talkback system
     try {
       mNano.finish();
@@ -127,7 +128,7 @@ public class MultisampleTaskTest extends TestCase {
         final ArrayList<File> mapped = new ArrayList<>();
         mapped.add(samFile);
         builder.mapped(mapped);
-        builder.genome(g);
+        builder.genome(g.readerParams());
         builder.outputParams(new OutputParams(outFile, false, false));
         builder.genomePriors(GenomePriorParams.builder().create());
         builder.genomeRelationships(genomeRelationships);

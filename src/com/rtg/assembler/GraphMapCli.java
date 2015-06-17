@@ -12,7 +12,6 @@
 
 package com.rtg.assembler;
 
-import static com.rtg.launcher.BuildCommon.RESOURCE;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
 
@@ -30,6 +29,7 @@ import com.rtg.assembler.graph.implementation.GraphKmerAttribute;
 import com.rtg.assembler.graph.io.GraphReader;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.ParamsCli;
+import com.rtg.ngs.MapFlags;
 import com.rtg.util.IORunnable;
 import com.rtg.util.IntegerOrPercentage;
 import com.rtg.util.InvalidParamsException;
@@ -58,6 +58,16 @@ public class GraphMapCli extends ParamsCli<GraphMapParams> {
   static final String ALIGNMENTS = "Xalignments";
 
   @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return null;
+  }
+
+  @Override
   protected IORunnable task(GraphMapParams params, OutputStream out) {
     return new GraphMapTask(params, out);
   }
@@ -73,8 +83,8 @@ public class GraphMapCli extends ParamsCli<GraphMapParams> {
         .reads(CommonFlags.getFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, true))
         .reads454(CommonFlags.getFileList(flags, INPUT_LIST_FLAG_454, FOUR_FIVE_FOUR, true))
         .readsMatePair(CommonFlags.getFileList(flags, INPUT_LIST_FLAG_MATE_PAIR, MATE_PAIR, true))
-        .wordSize((Integer) flags.getValue(CommonFlags.WORDSIZE_FLAG))
-        .stepSize((Integer) flags.getValue(CommonFlags.STEP_FLAG))
+        .wordSize((Integer) flags.getValue(MapFlags.WORDSIZE_FLAG))
+        .stepSize((Integer) flags.getValue(MapFlags.STEP_FLAG))
         .graph(loadGraph(new StoreDirProxy((File) flags.getValue(GRAPH_FLAG))))
         .numberThreads(CommonFlags.parseThreads((Integer) flags.getValue(CommonFlags.THREADS_FLAG)))
         .maxMismatches((IntegerOrPercentage) flags.getValue(MISMATCHES));
@@ -101,8 +111,8 @@ public class GraphMapCli extends ParamsCli<GraphMapParams> {
 
   protected static void initCommonFlags(CFlags flags) {
     CommonFlags.initThreadsFlag(flags);
-    flags.registerOptional('w', CommonFlags.WORDSIZE_FLAG, Integer.class, "int", "word size", 18).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('s', CommonFlags.STEP_FLAG, Integer.class, "int", "step size", 18).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('w', MapFlags.WORDSIZE_FLAG, Integer.class, "int", "word size", 18).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('s', MapFlags.STEP_FLAG, Integer.class, "int", "step size", 18).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('a', MISMATCHES, IntegerOrPercentage.class, "int", "number of bases that may mismatch in an alignment or percentage of read that may mismatch", new IntegerOrPercentage(0)).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('m', MIN_INSERT, Integer.class, "int", "minimum insert size between fragments").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('M', MAX_INSERT, Integer.class, "int", "maximum insert size between fragments").setCategory(SENSITIVITY_TUNING);
@@ -132,15 +142,11 @@ public class GraphMapCli extends ParamsCli<GraphMapParams> {
     flags.registerExtendedHelp();
     flags.setValidator(new GraphMapValidator());
     initCommonFlags(flags);
-    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
+    CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired('g', GRAPH_FLAG, File.class, "Dir", "graph of the assembly to map against").setCategory(INPUT_OUTPUT);
     flags.registerOptional(ALIGNMENTS, File.class, "file", "alignments will be written to this file").setCategory(INPUT_OUTPUT);
   }
 
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
-  }
   /**
    * Noddy main.
    * @param args see usage
@@ -188,10 +194,10 @@ public class GraphMapCli extends ParamsCli<GraphMapParams> {
         flags.error("specified alignment file already exists");
         return false;
       }
-      if (ensurePositive(flags, CommonFlags.WORDSIZE_FLAG)) {
+      if (ensurePositive(flags, MapFlags.WORDSIZE_FLAG)) {
         return false;
       }
-      if (ensurePositive(flags, CommonFlags.STEP_FLAG)) {
+      if (ensurePositive(flags, MapFlags.STEP_FLAG)) {
         return false;
       }
       final IntegerOrPercentage maxMatedScore = (IntegerOrPercentage) flags.getValue(MISMATCHES);

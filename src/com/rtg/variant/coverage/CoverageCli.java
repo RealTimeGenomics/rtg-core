@@ -11,7 +11,6 @@
  */
 package com.rtg.variant.coverage;
 
-import static com.rtg.launcher.BuildCommon.RESOURCE;
 import static com.rtg.launcher.CommonFlags.NO_GZIP;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
@@ -43,22 +42,14 @@ import com.rtg.util.diagnostic.ErrorType;
  */
 public class CoverageCli extends ParamsCli<CoverageParams> {
 
-  private static final String MODULE_NAME = "coverage";
-
   private static final String TEMPLATE_FLAG = "template";
-
   private static final String SMOOTHING_LEVEL_FLAG = "smoothing";
-
   private static final String ERROR_RATES_FLAG = "Xerror-rates";
-
   private static final String BEDGRAPH_FLAG = "bedgraph";
-
   private static final String PER_BASE_FLAG = "per-base";
   private static final String X_ONLY_MAPPED_FLAG = "Xonly-mapped-templates";
   private static final String X_MIN_COVERAGE_FOR_BREADTH_FLAG = "Xmin-coverage-for-breadth";
-
   private static final String X_IGNORE_SAM_HEADER_INCOMPATIBILITY_FLAG = "Xignore-incompatible-sam-headers";
-
   private static final String X_DISABLE_HTML_REPORT_FLAG = "Xdisable-html-report";
 
   private static class CoverageValidator implements Validator {
@@ -117,7 +108,12 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
 
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "coverage";
+  }
+
+  @Override
+  public String description() {
+    return "calculate depth of coverage from SAM/BAM files";
   }
 
   @Override
@@ -131,7 +127,7 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
     final Flag listFlag = mFlags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
-    mFlags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
+    CommonFlags.initOutputDirFlag(mFlags);
     mFlags.registerOptional('t', TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the reads have been mapped against").setCategory(INPUT_OUTPUT);
     CommonFlags.initNoGzip(mFlags);
     mFlags.registerOptional(PER_BASE_FLAG, "if set, output per-base counts in TSV format (suppresses BED file output)").setCategory(INPUT_OUTPUT);
@@ -164,7 +160,7 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     final OutputParams outParams = new OutputParams((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), mFlags.isSet(BuildCommon.PROGRESS_FLAG), !mFlags.isSet(NO_GZIP));
     builder.outputParams(outParams);
     if (mFlags.isSet(TEMPLATE_FLAG)) {
-      builder.genome(SequenceParams.builder().directory((File) mFlags.getValue(TEMPLATE_FLAG)).mode(SequenceMode.UNIDIRECTIONAL).create());
+      builder.genome(SequenceParams.builder().directory((File) mFlags.getValue(TEMPLATE_FLAG)).mode(SequenceMode.UNIDIRECTIONAL).create().readerParams());
     }
     final Collection<File> inputFiles = CommonFlags.getFileList(mFlags, CommonFlags.INPUT_LIST_FLAG, null, false);
     Diagnostic.userLog("Input SAM files: " + inputFiles);

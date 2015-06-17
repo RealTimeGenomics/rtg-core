@@ -17,6 +17,7 @@ import java.util.Map;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
+import com.rtg.sam.SamRecordPopulator;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
 import htsjdk.samtools.SAMRecord;

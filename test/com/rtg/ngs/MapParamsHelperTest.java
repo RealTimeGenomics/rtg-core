@@ -64,10 +64,10 @@ public class MapParamsHelperTest extends AbstractCliTest {
 
     final File tmpDir = FileUtils.createTempDir("mapparamshelper", "common");
     try {
-      CommonFlags.initMapIOFlags(flags);
-      CommonFlags.initSharedFlagsOnly(flags);
+      MapFlags.initMapIOFlags(flags);
+      MapFlags.initSharedFlagsOnly(flags);
       CommonFlags.initReadRange(flags);
-      CommonFlags.initStepSize(flags);
+      MapFlags.initStepSize(flags);
       flags.registerOptional(MapFlags.THREAD_MULTIPLIER, Integer.class, "INT", "").setCategory(CommonFlagCategories.UTILITY);
       MapFlags.initReadFreqFlag(flags, 3);
 
@@ -78,7 +78,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
                             "-t", r.getPath(),
                             "-o", tmpDir.getPath(),
                             "--" + MapFlags.THREAD_MULTIPLIER, "3",
-                            "--" + CommonFlags.REPEAT_FREQUENCY_FLAG, "33%",
+                            "--" + MapFlags.REPEAT_FREQUENCY_FLAG, "33%",
                             "--" + CommonFlags.END_READ_ID, "2");
 
       err.reset();
@@ -92,7 +92,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
                             "-o", tmpDir.getPath(),
                             "--" + MapFlags.THREAD_MULTIPLIER, "1",
                             "--" + CommonFlags.THREADS_FLAG, "1",
-                            "--" + CommonFlags.REPEAT_FREQUENCY_FLAG, "33%",
+                            "--" + MapFlags.REPEAT_FREQUENCY_FLAG, "33%",
                             "--" + CommonFlags.END_READ_ID, "3");
       assertEquals(3, MapParamsHelper.populateCommonMapParams(npb, flags, 8, 2, false, false));
       assertEquals(2, err.toString().split("The end sequence id \"3\" is out of range, it must be from \"1\" to \"1\". Defaulting end to \"1\"").length - 1);
@@ -150,8 +150,8 @@ public class MapParamsHelperTest extends AbstractCliTest {
     Diagnostic.setLogStream(mps.printStream());
     try {
       final CFlags flags = new CFlags();
-      CommonFlags.initMaskFlagsOnly(flags);
-      CommonFlags.initWordSize(flags, "");
+      MapFlags.initMaskFlagsOnly(flags);
+      MapFlags.initWordSize(flags, "");
       try {
         flags.setFlags("-w", "37", "-a", "1", "-b", "1", "-c", "1");
 
@@ -222,19 +222,19 @@ public class MapParamsHelperTest extends AbstractCliTest {
 
   public void testPopulateAlignmentScores() {
     final CFlags flags = new CFlags();
-    CommonFlags.initMaskFlagsOnly(flags);
+    MapFlags.initMaskFlagsOnly(flags);
     MapFlags.initMapFlags(flags);
     final NgsFilterParamsBuilder npb = new NgsFilterParamsBuilder();
 
-    flags.setFlags("--" + CommonFlags.MAX_ALIGNMENT_MISMATCHES, "3");
+    flags.setFlags("--" + MapFlags.MAX_ALIGNMENT_MISMATCHES, "3");
 
     MapParamsHelper.populateAlignmentScoreSettings(flags, npb, false, null);
 
     assertEquals(new IntegerOrPercentage(3), npb.mMatedMaxMismatches);
     assertEquals(new IntegerOrPercentage(3), npb.mUnmatedMaxMismatches);
 
-    flags.setFlags("--" + CommonFlags.MAX_ALIGNMENT_MISMATCHES, "5%",
-                          "--" + CommonFlags.UNMATED_MISMATCH_THRESHOLD, "7%");
+    flags.setFlags("--" + MapFlags.MAX_ALIGNMENT_MISMATCHES, "5%",
+                          "--" + MapFlags.UNMATED_MISMATCH_THRESHOLD, "7%");
     final MemoryPrintStream mps = new MemoryPrintStream();
     Diagnostic.setLogStream(mps.printStream());
     try {
@@ -243,7 +243,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
       assertEquals(new IntegerOrPercentage("5%"), npb.mMatedMaxMismatches);
       assertEquals(new IntegerOrPercentage("7%"), npb.mUnmatedMaxMismatches);
 
-      TestUtils.containsAll(mps.toString(), "--" + CommonFlags.UNMATED_MISMATCH_THRESHOLD + " should not be greater than --" + CommonFlags.MATED_MISMATCH_THRESHOLD);
+      TestUtils.containsAll(mps.toString(), "--" + MapFlags.UNMATED_MISMATCH_THRESHOLD + " should not be greater than --" + MapFlags.MATED_MISMATCH_THRESHOLD);
     } finally {
       Diagnostic.setLogStream();
     }
@@ -252,9 +252,9 @@ public class MapParamsHelperTest extends AbstractCliTest {
   public void testPopulateAlignmentScoresDefaults() {
     final CFlags flags = new CFlags();
 
-    flags.registerOptional('e', CommonFlags.MAX_ALIGNMENT_MISMATCHES, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings in single-end mode (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("5%")).setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional('E', CommonFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings of unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("10%")).setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(CommonFlags.MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings across mated results, alias for --" + CommonFlags.MAX_ALIGNMENT_MISMATCHES + " (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("15%")).setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional('e', MapFlags.MAX_ALIGNMENT_MISMATCHES, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings in single-end mode (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("5%")).setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional('E', MapFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings of unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("10%")).setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(MapFlags.MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings across mated results, alias for --" + MapFlags.MAX_ALIGNMENT_MISMATCHES + " (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("15%")).setCategory(CommonFlagCategories.REPORTING);
 
 
     final NgsFilterParamsBuilder npb = new NgsFilterParamsBuilder();
@@ -279,9 +279,9 @@ public class MapParamsHelperTest extends AbstractCliTest {
         final CFlags flags = new CFlags();
 
         SamCommandHelper.initSamRg(flags);
-        flags.registerOptional('e', CommonFlags.MAX_ALIGNMENT_MISMATCHES, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings in single-end mode (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("5%")).setCategory(CommonFlagCategories.REPORTING);
-        flags.registerOptional('E', CommonFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings of unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("10%")).setCategory(CommonFlagCategories.REPORTING);
-        flags.registerOptional(CommonFlags.MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings across mated results, alias for --" + CommonFlags.MAX_ALIGNMENT_MISMATCHES + " (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("15%")).setCategory(CommonFlagCategories.REPORTING);
+        flags.registerOptional('e', MapFlags.MAX_ALIGNMENT_MISMATCHES, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings in single-end mode (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("5%")).setCategory(CommonFlagCategories.REPORTING);
+        flags.registerOptional('E', MapFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings of unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("10%")).setCategory(CommonFlagCategories.REPORTING);
+        flags.registerOptional(MapFlags.MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings across mated results, alias for --" + MapFlags.MAX_ALIGNMENT_MISMATCHES + " (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("15%")).setCategory(CommonFlagCategories.REPORTING);
 
         flags.setFlags("--" + SamCommandHelper.SAM_RG, header.getPath());
 
@@ -310,11 +310,11 @@ public class MapParamsHelperTest extends AbstractCliTest {
       final CFlags flags = new CFlags();
 
       SamCommandHelper.initSamRg(flags);
-      flags.registerOptional('e', CommonFlags.MAX_ALIGNMENT_MISMATCHES, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings in single-end mode (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("5%")).setCategory(CommonFlagCategories.REPORTING);
-      flags.registerOptional('E', CommonFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings of unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("10%")).setCategory(CommonFlagCategories.REPORTING);
-      flags.registerOptional(CommonFlags.MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings across mated results, alias for --" + CommonFlags.MAX_ALIGNMENT_MISMATCHES + " (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("15%")).setCategory(CommonFlagCategories.REPORTING);
+      flags.registerOptional('e', MapFlags.MAX_ALIGNMENT_MISMATCHES, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings in single-end mode (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("5%")).setCategory(CommonFlagCategories.REPORTING);
+      flags.registerOptional('E', MapFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings of unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("10%")).setCategory(CommonFlagCategories.REPORTING);
+      flags.registerOptional(MapFlags.MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score for mappings across mated results, alias for --" + MapFlags.MAX_ALIGNMENT_MISMATCHES + " (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("15%")).setCategory(CommonFlagCategories.REPORTING);
 
-      flags.setFlags("--" + SamCommandHelper.SAM_RG, header.getPath(), "-e", "2%", "-E", "3%", "--" + CommonFlags.MATED_MISMATCH_THRESHOLD, "4%");
+      flags.setFlags("--" + SamCommandHelper.SAM_RG, header.getPath(), "-e", "2%", "-E", "3%", "--" + MapFlags.MATED_MISMATCH_THRESHOLD, "4%");
 
       final NgsFilterParamsBuilder npb = new NgsFilterParamsBuilder();
       final SAMReadGroupRecord rg = SamCommandHelper.validateAndCreateSamRG(rgstring, SamCommandHelper.ReadGroupStrictness.REQUIRED);

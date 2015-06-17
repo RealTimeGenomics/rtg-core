@@ -83,7 +83,7 @@ public class SlimTest extends TestCase {
     final ByteArrayOutputStream berr = new ByteArrayOutputStream();
 
     try (PrintStream err = new PrintStream(berr)) {
-      assertEquals(1, new Slim().intMain(new String[]{CoreCommand.FORMAT.getCommandName()}, bout, err));
+      assertEquals(1, new Slim().intMain(new String[]{ToolsCommand.FORMAT.getCommandName()}, bout, err));
     } finally {
       try {
         bout.close();
@@ -104,7 +104,7 @@ public class SlimTest extends TestCase {
     final ByteArrayOutputStream busage = new ByteArrayOutputStream();
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     try (PrintStream usage = new PrintStream(busage)) {
-      CoreCommand.FORMAT.mainInit(new String[0], out, usage);  //spits out expected error from format into usage stream
+      ToolsCommand.FORMAT.mainInit(new String[0], out, usage);  //spits out expected error from format into usage stream
     } finally {
       try {
         busage.close();
@@ -114,58 +114,6 @@ public class SlimTest extends TestCase {
     }
     assertEquals(busage.toString(), berr.toString());
   }
-
-  /*public void testModuleMessageInvalidLicense() {
-    final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-    final PrintStream out = new PrintStream(bout);
-    final ByteArrayOutputStream berr = new ByteArrayOutputStream();
-    final PrintStream err = new PrintStream(berr);
-
-    final ByteArrayOutputStream busage = new ByteArrayOutputStream();
-    final PrintStream usage = new PrintStream(busage);
-    try {
-      Command.FORMAT.printUsage(usage);  //spits out expected error from format into usage stream
-    } finally {
-      try {
-        busage.close();
-      } catch (final IOException e) {
-        //too bad
-      }
-    }
-
-    final String current = ReelTwoLicense.getExpirationDate();
-    final Object obj1 = TestUtils.getField("KEY_LISTENER", ReelTwoLicense.class);
-    assertTrue(obj1 instanceof RegKeyListener);
-    final RegKeyListener rkl = (RegKeyListener) obj1;
-    try {
-      assertFalse(rkl.aboutToExpire(0));
-      assertFalse(rkl.invalidRegKey(null, "hi"));
-
-      try {
-        assertEquals(1, new Slim().intMain(new String[] {Command.FORMAT.name()}, out, err));
-      } finally {
-        try {
-          bout.close();
-        } catch (final IOException e) {
-          // too bad
-        }
-        //out.close();
-        err.close();
-        // too bad
-        try {
-          berr.close();
-        } catch (final IOException e) {
-        }
-      }
-      assertEquals("", bout.toString());
-
-      System.err.println(busage.toString());
-      assertEquals(Version.getVersion() + busage.toString(), berr.toString());
-    } finally {
-      ReelTwoLicenseTest.setExpiryDate(current);
-
-    }
-  }*/
 
   private void checkRunningHelp(final String help) throws Exception {
     final ByteArrayOutputStream bout = new ByteArrayOutputStream();
@@ -388,7 +336,7 @@ public class SlimTest extends TestCase {
   }
 
   public void testErrorMessage() {
-    assertEquals("The " + CoreCommand.FORMAT.getCommandName() + " command has not been enabled by your current license.\nPlease contact " + Constants.SUPPORT_EMAIL_ADDR + " to have this command licensed.", Slim.getErrorMessage(CoreCommand.FORMAT));
+    assertEquals("The " + ToolsCommand.FORMAT.getCommandName() + " command has not been enabled by your current license.\nPlease contact " + Constants.SUPPORT_EMAIL_ADDR + " to have this command licensed.", Slim.getErrorMessage(ToolsCommand.FORMAT));
   }
 
   @Override

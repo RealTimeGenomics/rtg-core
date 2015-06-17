@@ -17,11 +17,14 @@ package com.rtg.metagenomics;
  */
 public class FunctionalMetaPipelineCli extends MetagenomicsWrapperCli {
 
-  private static final String MODULE_NAME = "functional-meta-pipeline";
-
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "functional-meta-pipeline";
+  }
+
+  @Override
+  public String description() {
+    return "run metagenomic functional pipeline";
   }
 
   @Override
@@ -33,12 +36,5 @@ public class FunctionalMetaPipelineCli extends MetagenomicsWrapperCli {
   @Override
   boolean hasSpecies() {
     return false;
-  }
-  /**
-   * Entry point
-   * @param args command line arguments
-   */
-  public static void main(String[] args) {
-    new FunctionalMetaPipelineCli().mainExit(args);
   }
 }

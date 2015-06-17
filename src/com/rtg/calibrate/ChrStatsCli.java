@@ -57,6 +57,11 @@ public class ChrStatsCli extends AbstractCli {
   }
 
   @Override
+  public String description() {
+    return "check expected chromosome coverage levels from mapping calibration files";
+  }
+
+  @Override
   protected void initFlags() {
     mFlags.registerExtendedHelp();
     mFlags.setDescription("Check expected chromosome coverage levels from mapping calibration files.");

@@ -223,9 +223,4 @@ public class DefaultReaderParams extends ReaderParams implements Integrity {
     return true;
   }
 
-  @Override
-  public LongRange adjustedRegion() {
-    reader(); // To force the reader creation
-    return mAdjustedRegion;
-  }
 }

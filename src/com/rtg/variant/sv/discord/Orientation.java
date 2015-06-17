@@ -203,12 +203,76 @@ public enum Orientation {
   }
 
   /**
+   * Determine the constraint direction represented by this SAM record.
    * @param rec the sam record to determine the orientation of
    * @param mo the expected orientation of read arms for the machine type
    * @return the orientation of the sam record
    */
   public static Orientation orientation(SAMRecord rec, MachineOrientation mo) {
-    return mo.orientation(rec);
+    switch (mo) {
+      case FR:
+        if (rec.getReadNegativeStrandFlag()) {
+          if (rec.getMateNegativeStrandFlag()) {
+            return Orientation.DD;
+          } else {
+            return Orientation.DU;
+          }
+        } else {
+          if (rec.getMateNegativeStrandFlag()) {
+            return Orientation.UD;
+          } else {
+            return Orientation.UU;
+          }
+        }
+      case RF:
+        if (rec.getReadNegativeStrandFlag()) {
+          if (rec.getMateNegativeStrandFlag()) {
+            return Orientation.UU;
+          } else {
+            return Orientation.UD;
+          }
+        } else {
+          if (rec.getMateNegativeStrandFlag()) {
+            return Orientation.DU;
+          } else {
+            return Orientation.DD;
+          }
+        }
+      case TANDEM:
+        if (rec.getFirstOfPairFlag()) {
+          if (rec.getReadNegativeStrandFlag()) {
+            if (rec.getMateNegativeStrandFlag()) {
+              return Orientation.DU;
+            } else {
+              return Orientation.DD;
+            }
+          } else {
+            if (rec.getMateNegativeStrandFlag()) {
+              return Orientation.UU;
+            } else {
+              return Orientation.UD; // Normal mated orientation on the forward strand
+            }
+          }
+        } else {
+          if (rec.getReadNegativeStrandFlag()) {
+            if (rec.getMateNegativeStrandFlag()) {
+              return Orientation.UD; // Normal mated orientation on the reverse strand
+            } else {
+              return Orientation.UU;
+            }
+          } else {
+            if (rec.getMateNegativeStrandFlag()) {
+              return Orientation.DD;
+            } else {
+              return Orientation.DU;
+            }
+          }
+        }
+      case ANY:
+      default:
+        break;
+    }
+    throw new UnsupportedOperationException("Not supported.");
   }
 
 }

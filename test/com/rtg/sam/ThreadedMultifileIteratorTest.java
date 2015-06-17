@@ -19,15 +19,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.NoSuchElementException;
 
+import com.rtg.util.IntegerOrPercentage;
 import com.rtg.util.Populator;
 import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-import com.rtg.variant.SamRecordPopulator;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMFormatException;
@@ -37,6 +39,7 @@ import htsjdk.samtools.SAMRecord;
  */
 public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
   private File mDir = null;
+
   @Override
   public void setUp() throws IOException {
     super.setUp();
@@ -55,8 +58,43 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
     return new ThreadedMultifileIterator<>(files, 2, pf, SamFilterParams.builder().create(), SamUtils.getUberHeader(files));
   }
 
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(ThreadedMultifileIteratorTest.class);
+  public static RecordIterator<SAMRecord> getIterator(File dir, String resource) throws IOException {
+    return getIterator(dir, SamFilterParams.builder().create(), resource, false);
+  }
+
+  public static RecordIterator<SAMRecord> getIterator(File dir, SamFilterParams filterParams, String resource, boolean indexed) throws IOException {
+    final File samFile = new File(dir, resource.substring(resource.lastIndexOf("/") + 1));
+    FileUtils.copyResource(resource, samFile);
+    if (indexed) {
+      final String ext = resource.endsWith(".bam") ? ".bai" : ".tbi";
+      FileUtils.copyResource(resource + ext, new File(samFile.getParentFile(), samFile.getName() + ext));
+    }
+    final Collection<File> coll = new ArrayList<>();
+    coll.add(samFile);
+    final SamReadingContext c = new SamReadingContext(coll, 1, filterParams, SamUtils.getUberHeader(coll));
+    return new ThreadedMultifileIterator<>(c, new SingletonPopulatorFactory<>(new SamRecordPopulator()));
+  }
+
+  public static void check(SamFilterParams params, int expectedCount, int expectedFiltered, boolean indexed) throws IOException {
+    try (TestDirectory dir = new TestDirectory("cnvproducttask")) {
+      final RecordIterator<SAMRecord> multiIt = getIterator(dir, params, "com/rtg/variant/cnv/resources/testFilter" + (indexed ? ".bam" : ".sam"), indexed);
+      try (SamFilterIterator it = new SamFilterIterator(multiIt, new DefaultSamFilter(params))) {
+        int count = 0;
+        while (it.hasNext()) {
+          it.next();
+          count++;
+        }
+        assertEquals(expectedCount, count);
+        assertEquals(expectedFiltered, it.getFilteredRecordsCount());
+        assertEquals(false, it.hasNext());
+        try {
+          it.next();
+          fail();
+        } catch (final NoSuchElementException e) {
+          //ignore
+        }
+      }
+    }
   }
 
   static final String SAM_HEAD1 = ""
@@ -179,4 +217,31 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
 
     //if we get here, it hasn't exploded. Success.
   }
+
+
+  public void testFilterIterator() throws IOException {
+    check(SamFilterParams.builder().create(), 22, 0, false);
+    check(SamFilterParams.builder().maxAlignmentCount(-1).maxUnmatedAlignmentScore(new IntegerOrPercentage(0)).create(), 12, 10, false);
+    check(SamFilterParams.builder().maxAlignmentCount(0).maxMatedAlignmentScore(new IntegerOrPercentage(10)).create(), 2, 20, false);
+    check(SamFilterParams.builder().maxAlignmentCount(1).maxMatedAlignmentScore(null).create(), 22, 0, false);
+    check(SamFilterParams.builder().minMapQ(3).excludeUnmapped(true).create(), 17, 5, false);
+
+    // These ones use a restriction which will remove some records prior to being seen by DefaultSamFilter
+
+    check(SamFilterParams.builder().maxAlignmentCount(-1).maxUnmatedAlignmentScore(new IntegerOrPercentage(0)).restriction("simulatedSequence1").create(), 6, 5, true); // Indexed results
+    if (MultifileIterator.FALLBACK) { // Non-indexed uses fallback iterator
+      check(SamFilterParams.builder().maxAlignmentCount(-1).maxUnmatedAlignmentScore(new IntegerOrPercentage(0)).restriction("simulatedSequence1").create(), 6, 5, false);
+    } else {
+      try {
+        check(SamFilterParams.builder().maxAlignmentCount(-1).maxUnmatedAlignmentScore(new IntegerOrPercentage(0)).restriction("simulatedSequence1").create(), 6, 5, false);
+        fail();
+      } catch (NoTalkbackSlimException e) {
+        assertTrue(e.getMessage().contains("is not indexed"));
+      }
+
+    }
+
+    check(SamFilterParams.builder().maxAlignmentCount(-1).restriction("simulatedSequence1:90-145").create(), 6, 0, true);
+  }
+
 }

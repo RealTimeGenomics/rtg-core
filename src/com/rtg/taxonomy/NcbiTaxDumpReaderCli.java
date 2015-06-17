@@ -132,12 +132,14 @@ public class NcbiTaxDumpReaderCli extends AbstractCli {
     }
   }
 
+  @Override
+  public String moduleName() {
+    return "ncbi2tax";
+  }
 
-  /**
-   * @param args command line arguments
-   */
-  public static void main(String[] args) {
-    new NcbiTaxDumpReaderCli().mainExit(args);
+  @Override
+  public String description() {
+    return "create RTG taxonomy from NCBI taxdump files";
   }
 
   @Override
@@ -174,8 +176,4 @@ public class NcbiTaxDumpReaderCli extends AbstractCli {
     return 0;
   }
 
-  @Override
-  public String moduleName() {
-    return "ncbi2tax";
-  }
 }

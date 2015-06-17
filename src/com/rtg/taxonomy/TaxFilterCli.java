@@ -48,9 +48,6 @@ import com.rtg.util.io.LineWriter;
  */
 public class TaxFilterCli extends AbstractCli {
 
-  /** module name */
-  public static final String MODULE_NAME = "taxfilter";
-
   private static final String SUBSET_FLAG = "subset";
   private static final String SUBTREE_FLAG = "subtree";
   private static final String REMOVE_FLAG = "remove";
@@ -84,7 +81,12 @@ public class TaxFilterCli extends AbstractCli {
 
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "taxfilter";
+  }
+
+  @Override
+  public String description() {
+    return "create and manipulate RTG taxonomy files";
   }
 
   @Override

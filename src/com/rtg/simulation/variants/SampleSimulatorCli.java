@@ -54,6 +54,11 @@ public class SampleSimulatorCli extends AbstractCli {
   }
 
   @Override
+  public String description() {
+    return "generate a VCF containing a genotype simulated from a population";
+  }
+
+  @Override
   protected void initFlags() {
     mFlags.setDescription("Generates a VCF containing a genotype simulated from a population.");
     mFlags.registerExtendedHelp();

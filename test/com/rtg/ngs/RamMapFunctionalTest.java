@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.rtg.alignment.EditDistanceFactory;
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.reader.FormatCli;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
@@ -44,6 +45,7 @@ public class RamMapFunctionalTest extends TestCase {
   @Override
   public void setUp() {
     Diagnostic.setLogStream();
+    GlobalFlags.resetAccessedStatus();
     mNano = new NanoRegression(this.getClass(), false);
   }
 

@@ -12,12 +12,11 @@
 package com.rtg.index.similarity;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
  */
-public class BinaryTreeTest extends TestCase {
+public class BinaryTreeTest extends TestSuite {
 
   public static Test suite() {
     final TestSuite suite = new TestSuite();

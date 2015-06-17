@@ -17,11 +17,11 @@ import java.io.File;
 import java.io.IOException;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
-import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.DnaUtils;
 import com.rtg.mode.ProteinScoringMatrix;
 import com.rtg.mode.TranslatedFrame;
+import com.rtg.ngs.MapFlags;
 import com.rtg.ngs.NgsFilterParams;
 import com.rtg.ngs.NgsOutputParams;
 import com.rtg.ngs.NgsParams;
@@ -121,7 +121,7 @@ public class ProteinOutputProcessorTest extends TestCase {
       final NgsFilterParams filter = NgsFilterParams.builder()
       .outputFilter(OutputFilter.PROTEIN_TOPN)
       .useids(true)
-      .errorLimit(CommonFlags.MAX_SCORE)
+      .errorLimit(MapFlags.MAX_SCORE)
       .preFilterMinScore(0)
       .preFilterMinOverlap(0)
       .create();
@@ -200,7 +200,7 @@ public class ProteinOutputProcessorTest extends TestCase {
       final NgsFilterParams filter = NgsFilterParams.builder()
       .outputFilter(OutputFilter.PROTEIN_TOPN)
       .useids(true)
-      .errorLimit(CommonFlags.MAX_SCORE)
+      .errorLimit(MapFlags.MAX_SCORE)
       .preFilterMinScore(0)
       .preFilterMinOverlap(0)
       .create();

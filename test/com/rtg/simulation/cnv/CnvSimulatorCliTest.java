@@ -19,7 +19,7 @@ import java.io.PrintStream;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
-import com.rtg.launcher.BuildTestUtils;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.LogRecord;
@@ -80,7 +80,7 @@ public class CnvSimulatorCliTest extends AbstractCliTest {
     assertTrue(out.delete());
     assertTrue(twin.delete());
     assertTrue(cnvsfile.delete());
-    final File in = BuildTestUtils.prereadDNA(mDir, ">a\nacgtacgatcagcatctgac\n");
+    final File in = ReaderTestUtils.getDNADir(mDir);
     try {
       assertEquals(1, new CnvSimulatorCli().mainInit(new String[0], NULL_STREAM, NULL_PRINTSTREAM));
       assertEquals(1, new CnvSimulatorCli().mainInit(new String[] {"-i", in.getPath()}, NULL_STREAM, NULL_PRINTSTREAM));
@@ -97,7 +97,7 @@ public class CnvSimulatorCliTest extends AbstractCliTest {
     final File out = File.createTempFile("cnvsimulator", "out", mDir);
     final File twin = File.createTempFile("cnvsimulator", "twin", mDir);
     final File cnvsfile = File.createTempFile("cnvsimulator", "test.cnv", mDir);
-    final File in = BuildTestUtils.prereadDNA(mDir, ">a\nacgtacgatcagcatctgac\n");
+    final File in = ReaderTestUtils.getDNADir(mDir);
     try {
       checkFlagsError(new String[] {"--input", new File(mDir, "file is not here").getPath()
               , "--output", out.getPath()

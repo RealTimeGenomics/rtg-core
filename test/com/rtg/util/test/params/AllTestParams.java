@@ -20,7 +20,7 @@ import com.rtg.sam.SingleMappedParamsTest;
 import com.rtg.variant.VariantParamsTest;
 import com.rtg.variant.cnv.CnvProductParamsTest;
 import com.rtg.variant.coverage.CoverageParamsTest;
-import com.rtg.variant.eval.VcfEvalParamsTest;
+import com.rtg.vcf.eval.VcfEvalParamsTest;
 import com.rtg.variant.sv.SvParamsTest;
 import com.rtg.variant.sv.SvToolParamsTest;
 import com.rtg.variant.sv.discord.DiscordantToolParamsTest;

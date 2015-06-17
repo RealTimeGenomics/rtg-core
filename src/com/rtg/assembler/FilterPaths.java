@@ -62,6 +62,16 @@ public class FilterPaths extends LoggedCli {
   }
 
   @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return null;
+  }
+
+  @Override
   protected File outputDirectory() {
     return (File) mFlags.getValue(OUTPUT);
   }
@@ -103,10 +113,6 @@ public class FilterPaths extends LoggedCli {
     }
   }
 
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;  //To change body of implemented methods use File | Settings | File Templates.
-  }
   @Override
   protected int mainExec(OutputStream out, LogStream log) throws IOException {
     final File in = (File) mFlags.getAnonymousValue(0);

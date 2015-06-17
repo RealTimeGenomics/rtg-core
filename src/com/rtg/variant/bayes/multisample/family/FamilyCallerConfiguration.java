@@ -44,7 +44,6 @@ import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
 import com.rtg.vcf.ChildPhasingVcfAnnotator;
-import com.rtg.vcf.SegregationVcfAnnotator;
 
 /**
  */

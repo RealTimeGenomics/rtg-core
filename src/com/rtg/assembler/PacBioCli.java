@@ -12,7 +12,6 @@
 
 package com.rtg.assembler;
 
-import static com.rtg.launcher.BuildCommon.RESOURCE;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 
 import java.io.File;
@@ -32,8 +31,20 @@ import com.rtg.util.cli.Validator;
 /**
  */
 public class PacBioCli extends ParamsCli<PacBioParams> {
+
   static final String MODULE_NAME = "addpacbio";
   static final String TRIM = "trim";
+
+  @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return "add Pacific Biosciences reads to an assembly";
+  }
+
   @Override
   protected IORunnable task(PacBioParams params, OutputStream out) {
     return new PacBio(params, out);
@@ -65,7 +76,7 @@ public class PacBioCli extends ParamsCli<PacBioParams> {
   }
   protected static void initLocalFlags(CFlags flags) {
     CommonFlagCategories.setCategories(flags);
-    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
+    CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired('g', GraphMapCli.GRAPH_FLAG, File.class, "Dir", "graph of the assembly to map against").setCategory(INPUT_OUTPUT);
     flags.registerOptional(TRIM, "before mapping remove any short disconnected sequences from the graph").setCategory(INPUT_OUTPUT);
     final Flag inFlag = flags.registerRequired(File.class, "dir", "SDF directories containing reads to map");
@@ -77,6 +88,7 @@ public class PacBioCli extends ParamsCli<PacBioParams> {
     flags.addRequiredSet(listFlag);
     flags.setValidator(new PacBioValidator());
   }
+
   private static class PacBioValidator implements Validator {
     /**
      * Check the file list and anonymous file input flags.
@@ -109,11 +121,6 @@ public class PacBioCli extends ParamsCli<PacBioParams> {
       return CommonFlags.validateThreads(flags);
     }
 
-  }
-
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
   }
 
   /**

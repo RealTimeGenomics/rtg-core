@@ -35,21 +35,27 @@ import com.rtg.util.io.InputFileUtils;
  */
 public class RecalibrateCli extends AbstractCli {
 
-  @Override
-  protected void initFlags() {
-    initFlags(mFlags);
-  }
-
   private static final String FORCE_FLAG = "force";
   private static final String COVARIATE_FLAG = "Xcovariate";
   private static final String MERGE_FLAG = "merge";
 
-  private static void initFlags(CFlags flags) {
-    flags.registerExtendedHelp();
-    flags.setDescription("Creates quality calibration files for all supplied SAM/BAM files.");
-    CommonFlagCategories.setCategories(flags);
+  @Override
+  public String moduleName() {
+    return "calibrate";
+  }
 
-    flags.setValidator(new Validator() {
+  @Override
+  public String description() {
+    return "create calibration data from SAM/BAM files";
+  }
+
+  @Override
+  protected void initFlags() {
+    mFlags.registerExtendedHelp();
+    mFlags.setDescription("Creates quality calibration files for all supplied SAM/BAM files.");
+    CommonFlagCategories.setCategories(mFlags);
+
+    mFlags.setValidator(new Validator() {
       @Override
       public boolean isValid(CFlags flags) {
         if (!CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)) {
@@ -82,21 +88,21 @@ public class RecalibrateCli extends AbstractCli {
         return true;
       }
     });
-    final Flag inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
+    final Flag inFlag = mFlags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(CommonFlagCategories.INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    CommonFlags.initNoMaxFile(flags);
-    CommonFlags.initThreadsFlag(flags);
-    final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, "SDF", "SDF containing reference genome against which reads were aligned").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerOptional('f', FORCE_FLAG, "force overwriting of calibration files").setCategory(CommonFlagCategories.UTILITY);
-    flags.registerOptional('m', MERGE_FLAG, File.class, "file", "merge records and calibration files").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    bedFileFlag(flags);
-    final Flag covariates = flags.registerOptional('c', COVARIATE_FLAG, CovariateEnum.class, "COVARIATE", "covariates to recalibrate on").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    CommonFlags.initNoMaxFile(mFlags);
+    CommonFlags.initThreadsFlag(mFlags);
+    final Flag listFlag = mFlags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, "SDF", "SDF containing reference genome against which reads were aligned").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerOptional('f', FORCE_FLAG, "force overwriting of calibration files").setCategory(CommonFlagCategories.UTILITY);
+    mFlags.registerOptional('m', MERGE_FLAG, File.class, "file", "merge records and calibration files").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    bedFileFlag(mFlags);
+    final Flag covariates = mFlags.registerOptional('c', COVARIATE_FLAG, CovariateEnum.class, "COVARIATE", "covariates to recalibrate on").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     covariates.setMaxCount(Integer.MAX_VALUE);
-    flags.addRequiredSet(inFlag);
-    flags.addRequiredSet(listFlag);
+    mFlags.addRequiredSet(inFlag);
+    mFlags.addRequiredSet(listFlag);
   }
 
   /**
@@ -155,15 +161,4 @@ public class RecalibrateCli extends AbstractCli {
     return 0;
   }
 
-  @Override
-  public String moduleName() {
-    return "calibrate";
-  }
-
-  /**
-   * @param args command line arguments
-   */
-  public static void main(String[] args) {
-    new RecalibrateCli().mainExit(args);
-  }
 }

@@ -15,7 +15,6 @@ import java.io.File;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.intervals.ReferenceRegions;
-import com.rtg.launcher.CommonFlags;
 
 import htsjdk.samtools.SAMReadGroupRecord;
 
@@ -60,7 +59,7 @@ public class NgsOutputParamsBuilder {
   protected NgsFilterParams mFilterParams = NgsFilterParams.builder()
     .outputFilter(OutputFilter.TOPN_PAIRED_END)
     .useids(true)
-    .errorLimit(CommonFlags.MAX_SCORE)
+    .errorLimit(MapFlags.MAX_SCORE)
     .create();
 
   //this is to set if we dont want to delete intermediate files

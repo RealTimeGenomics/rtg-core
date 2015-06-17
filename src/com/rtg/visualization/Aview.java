@@ -90,15 +90,24 @@ public final class Aview extends AbstractCli {
   private boolean mAlternateBackgrounds = false;
   private int mAlternateCount = 0;
 
+  private boolean mWarnedTemplate = false;
 
-  /**
-   * @param args main
-   */
-  public static void main(final String[] args) {
-    new Aview().mainExit(args);
+
+  @Override
+  public String moduleName() {
+    return "aview";
   }
 
-  private boolean mWarnedTemplate = false;
+  @Override
+  public String description() {
+    return "ASCII read mapping and variant viewer";
+  }
+
+  @Override
+  protected void initFlags() {
+    AviewParams.initFlags(mFlags);
+  }
+
   private void warnInvalidTemplate() {
     if (!mWarnedTemplate) {
       printOnScreen(mDisplayHelper.decorateBackground("WARNING: Supplied template does not match the template used during mapping", DisplayHelper.RED));
@@ -732,11 +741,6 @@ public final class Aview extends AbstractCli {
   }
 
   @Override
-  protected void initFlags() {
-    AviewParams.initFlags(mFlags);
-  }
-
-  @Override
   protected int mainExec(final OutputStream out, final PrintStream err) throws IOException {
     mOut = new PrintStream(out);
     try {
@@ -760,8 +764,4 @@ public final class Aview extends AbstractCli {
     mSimpleAssistant = new SamAssistanceSimple();
   }
 
-  @Override
-  public String moduleName() {
-    return "aview";
-  }
 }

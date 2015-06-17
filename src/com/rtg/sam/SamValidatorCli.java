@@ -58,6 +58,11 @@ public final class SamValidatorCli extends AbstractCli {
   }
 
   @Override
+  public String description() {
+    return "print statistics about a SAM/BAM file";
+  }
+
+  @Override
   protected void initFlags() {
     initFlags(mFlags);
   }

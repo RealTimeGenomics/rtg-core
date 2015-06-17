@@ -13,7 +13,6 @@ package com.rtg.ngs;
 
 import java.io.Serializable;
 
-import com.rtg.launcher.CommonFlags;
 import com.rtg.util.IntegerOrPercentage;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
@@ -125,7 +124,7 @@ public final class NgsFilterParams extends IntegralAbstract implements Serializa
      * @return this builder, so calls can be chained.
      */
     public NgsFilterParamsBuilder errorLimit(final int errorLimit) {
-      if (errorLimit < 0 || errorLimit > CommonFlags.MAX_SCORE) {
+      if (errorLimit < 0 || errorLimit > MapFlags.MAX_SCORE) {
         throw new IllegalArgumentException(" errorLimit=" + errorLimit);
       }
       mErrorLimit = errorLimit;

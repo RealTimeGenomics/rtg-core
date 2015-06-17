@@ -19,8 +19,8 @@ import java.io.PrintStream;
 
 import com.rtg.bed.BedUtils;
 import com.rtg.index.hash.ngs.OutputProcessor;
-import com.rtg.launcher.MockSequenceParams;
 import com.rtg.launcher.HashingRegion;
+import com.rtg.launcher.MockSequenceParams;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.mode.SequenceType;
@@ -265,6 +265,7 @@ public class SamSingleEndOutputProcessorTest extends TestCase {
         TestUtils.containsAll(log.toString(), "TEMP_SAM_0.gz", "TEMP_SAM_1.gz", "TEMP_SAM_2.gz", "TEMP_SAM_3.gz",
         "Writing unmapped records");
       }
+      Diagnostic.setLogStream();
     }
     final File gzFile = new File(new File(mDir, "hitDir"), NgsOutputParams.ALIGNMENTS_SAM_FILE_NAME + FileUtils.GZ_SUFFIX);
     final File outFile = new File(new File(mDir, "hitDir"), NgsOutputParams.ALIGNMENTS_SAM_FILE_NAME);

@@ -60,6 +60,11 @@ public class ChildSampleSimulatorCli extends AbstractCli {
   }
 
   @Override
+  public String description() {
+    return "generate a VCF containing a genotype simulated as a child of two parents";
+  }
+
+  @Override
   protected void initFlags() {
     mFlags.setDescription("Generates a VCF containing a genotype simulated as a child of two parents.");
     mFlags.registerExtendedHelp();

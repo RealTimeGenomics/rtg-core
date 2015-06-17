@@ -44,30 +44,18 @@ import com.rtg.variant.cnv.CnvProductParams.CnvProductParamsBuilder;
  * CLI class for CNV product
  */
 public class CnvProductCli extends ParamsCli<CnvProductParams> {
-  private static final String MODULE_NAME = "cnv";
 
   static final String BUCKET_SIZE_FLAG = "bucket-size";
-
   static final String INPUT_BASELINE_FLAG = "base-file";
-
   static final String INPUT_TEST_FLAG = "test-file";
-
   static final String INPUT_BASELINE_LIST_FLAG = "base-list-file";
-
   static final String INPUT_TEST_LIST_FLAG = "test-list-file";
-
   private static final String TEMPLATE_FLAG = "template";
-
   static final String ALLOW_MULTIPLE_ALIGNMENTS_PER_START_INDEX_FLAG = "Xallow-duplicate-start";
-
   static final String MAGIC_FLAG = "Xmagic-constant";
-
   static final String DIV_FACT_FLAG = "Xdivision-factor";
-
   static final String MUL_FACT_FLAG = "Xmultiplication-factor";
-
   static final String EXTRA_PENALTY_OFF = "Xextra-penalty-off";
-
   private static final String X_IGNORE_SAM_HEADER_INCOMPATIBILITY = "Xignore-incompatible-sam-headers";
 
   private static class CnvProductValidator implements Validator {
@@ -131,7 +119,12 @@ public class CnvProductCli extends ParamsCli<CnvProductParams> {
 
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "cnv";
+  }
+
+  @Override
+  public String description() {
+    return "call CNVs from paired SAM/BAM files";
   }
 
   @Override
@@ -197,7 +190,7 @@ public class CnvProductCli extends ParamsCli<CnvProductParams> {
     builder.extraPenaltyOff(mFlags.isSet(EXTRA_PENALTY_OFF));
     builder.ignoreIncompatibleSamHeaders(mFlags.isSet(X_IGNORE_SAM_HEADER_INCOMPATIBILITY));
     if (mFlags.isSet(TEMPLATE_FLAG)) {
-      builder.genome(SequenceParams.builder().directory((File) mFlags.getValue(TEMPLATE_FLAG)).mode(SequenceMode.UNIDIRECTIONAL).create());
+      builder.genome(SequenceParams.builder().directory((File) mFlags.getValue(TEMPLATE_FLAG)).mode(SequenceMode.UNIDIRECTIONAL).create().readerParams());
     }
     builder.threads(CommonFlags.parseIOThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)));
     final CnvProductParams localParams = builder.filterParams(SamFilterOptions.makeFilterParamsBuilder(mFlags).excludeUnmapped(true).excludeUnplaced(true).create()).create();

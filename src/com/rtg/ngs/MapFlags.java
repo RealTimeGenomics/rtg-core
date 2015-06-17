@@ -22,43 +22,78 @@ import com.rtg.launcher.HashingRegion;
 import com.rtg.reader.FormatCli;
 import com.rtg.reference.Sex;
 import com.rtg.util.IntegerOrPercentage;
+import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
+import com.rtg.util.machine.MachineOrientation;
 
 /**
  * Flags common between different map commands
  */
 public final class MapFlags {
 
+  /** Default word size */
+  public static final int DEFAULT_WORD_SIZE = 22;
+  /** score indel flag */
+  public static final String XSCORE_INDEL = "Xscoreindel";
+  /** flag for whether to compress hashes or not. */
+  public static final String COMPRESS_HASHES_FLAG = "Xcompress-hashes";
+  /** Max top results flag. */
+  public static final String MAX_TOP_RESULTS_FLAG = "max-top-results";
+  /** don't report unmapped */
+  public static final String NO_UNMAPPED = "no-unmapped";
+  /** don't report unmated */
+  public static final String NO_UNMATED = "no-unmated";
+  /** Max allowed mismatches for unmated reads */
+  public static final String UNMATED_MISMATCH_THRESHOLD = "max-unmated-mismatches";
+  /** Max allowed mismatches for mated reads */
+  public static final String MATED_MISMATCH_THRESHOLD = "max-mated-mismatches";
+  /** Mask flag. */
+  public static final String MASK_FLAG = "Xmask";
+  /** Top N reads flag. */
+  public static final String TOPN_RESULTS_FLAG = "Xmax-topn-results";
+  /** Default top n value */
+  public static final int DEFAULT_TOP_N = 10;
+  /** <code>topequal</code> output filter */
+  public static final String TOPEQUAL = "topequal";
+  /** <code>topn</code> output filter */
+  public static final String TOPN = "topn";
+  /** max matches allowed during alignment flag */
+  public static final String MAX_ALIGNMENT_MISMATCHES = "max-mismatches";
+  /** flag for setting the step size */
+  public static final String STEP_FLAG = "step";
+  /** Specify whether temporary files should be compressed */
+  public static final String TEMP_FILES_COMPRESSED = "Xtemp-files-gzipped";
+  /** indel length flag */
+  public static final String INDEL_LENGTH_FLAG = "indel-length";
+  /** substitution flag */
+  public static final String SUBSTITUTIONS_FLAG = "substitutions";
+  /** word size flag */
+  public static final String WORDSIZE_FLAG = "word";
+  /** Repeat frequency flag. */
+  public static final String REPEAT_FREQUENCY_FLAG = "repeat-freq";
+  /** Maximum repeat frequency */
+  public static final String MAX_REPEAT_FREQUENCY_FLAG = "Xmax-repeat-freq";
+  /** Maximum repeat frequency */
+  public static final String MIN_REPEAT_FREQUENCY_FLAG = "Xmin-repeat-freq";
+  /** Force mapping commands to use long read code path instead of short read */
+  public static final String FORCE_LONG_FLAG = "Xforce-long";
+  /** Parallel unmated processing */
+  public static final String PARALLEL_UNMATED_PROCESSING_FLAG = "Xparallel-unmated-processing";
   private static final int MAX_WORD_SIZE = 32; //Integer.valueOf(System.getProperty("rtg.max-word", "32"));
   private static final int MAX_INSERT_SIZE = 1000000000;
+  private static final int BITS_FOR_SCORE1 = 12;
+  /** Maximum value of score that can be stored in top n data structure. */
+  public static final int MAX_SCORE = (1 << BITS_FOR_SCORE1) - 1;
 
   private MapFlags() { }
 
-  /** SDF input format */
-  public static final String SDF_FORMAT = "sdf";
-  /** FASTA input format */
-  public static final String FASTA_FORMAT = "fasta";
-  /** FASTQ input format */
-  public static final String FASTQ_FORMAT = "fastq";
-  /** SAM / BAM paired end input format */
-  public static final String SAM_PE_FORMAT = "sam-pe";
-  /** SAM / BAM single end input format */
-  public static final String SAM_SE_FORMAT = "sam-se";
-  static final String TSV_FORMAT = "tsv";
-  static final String[] FORMAT_OPTIONS = {SDF_FORMAT, FASTA_FORMAT, FASTQ_FORMAT, SAM_SE_FORMAT, SAM_PE_FORMAT};
-  /** Sanger quality format */
-  public static final String SANGER_FORMAT = "sanger";
-  /** Solexa quality format */
-  public static final String SOLEXA_FORMAT = "solexa";
-  /** Illumina quality format */
-  public static final String ILLUMINA_FORMAT = "illumina";
-  static final String[] QUALITY_FORMAT_OPTIONS = {SANGER_FORMAT, SOLEXA_FORMAT, ILLUMINA_FORMAT};
+  static final String[] FORMAT_OPTIONS = {FormatCli.SDF_FORMAT, FormatCli.FASTA_FORMAT, FormatCli.FASTQ_FORMAT, FormatCli.SAM_SE_FORMAT, FormatCli.SAM_PE_FORMAT};
 
-  static final String TEMPLATE_FLAG = "template";
+
   //private static final String INSERT_SIZE_FLAG = "insert-size";
   static final String THREAD_MULTIPLIER = "Xthread-multiplier";
   static final String X_LONG_READ = "Xlong-read";
@@ -66,7 +101,7 @@ public final class MapFlags {
   static final String OUTPUT_NULLFILTERED = "Xnull-filter";
   static final String READ_FREQUENCY_FLAG = "Xread-freq";
   static final String MIN_HITS_FLAG = "Xmin-hits";
-  static final String NO_INMEMORY_TEMPLATE = CommonFlags.NO_INMEMORY_TEMPLATE;
+  static final String NO_INMEMORY_TEMPLATE = "Xno-inmemory-template";
   static final String OUTPUT_READ_NAMES_FLAG = "read-names";
   static final String LEGACY_CIGARS = "legacy-cigars";
   static final String BAM_FLAG = "bam";
@@ -95,11 +130,11 @@ public final class MapFlags {
 
   static void initMapFlags(CFlags flags) {
     flags.getFlag(CommonFlags.INDELS_FLAG).setParameterDefault(1);
-    flags.getFlag(CommonFlags.SUBSTITUTIONS_FLAG).setParameterDefault(1);
+    flags.getFlag(SUBSTITUTIONS_FLAG).setParameterDefault(1);
 
-    flags.registerOptional('e', CommonFlags.MAX_ALIGNMENT_MISMATCHES, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches for mappings in single-end mode (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_MATED_MISMATCH_THRESHOLD)).setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional('E', CommonFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches for mappings of unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_UNMATED_MISMATCH_THRESHOLD)).setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(CommonFlags.MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches for mappings across mated results, alias for --" + CommonFlags.MAX_ALIGNMENT_MISMATCHES + " (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_MATED_MISMATCH_THRESHOLD)).setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional('e', MAX_ALIGNMENT_MISMATCHES, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches for mappings in single-end mode (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_MATED_MISMATCH_THRESHOLD)).setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional('E', UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches for mappings of unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_UNMATED_MISMATCH_THRESHOLD)).setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches for mappings across mated results, alias for --" + MAX_ALIGNMENT_MISMATCHES + " (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_MATED_MISMATCH_THRESHOLD)).setCategory(CommonFlagCategories.REPORTING);
 
     flags.registerOptional(CommonFlags.TEMP_DIR, File.class, "DIR", "directory used for temporary files (Defaults to output directory)").setCategory(CommonFlagCategories.UTILITY);
 
@@ -113,9 +148,9 @@ public final class MapFlags {
 
     flags.registerOptional(THREAD_MULTIPLIER, Integer.class, CommonFlags.INT, "number of work chunks per thread", HashingRegion.DEFAULT_THREAD_MULTIPLIER).setCategory(CommonFlagCategories.UTILITY);
     //flags.registerOptional(INSERT_SIZE_FLAG, Integer.class, INT, "expected insert size for pairs");
-    flags.registerOptional(CommonFlags.TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary SAM files", true).setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary SAM files", true).setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(NO_INMEMORY_TEMPLATE, "do not load the template in memory").setCategory(CommonFlagCategories.UTILITY);
-    flags.registerOptional(CommonFlags.FORCE_LONG_FLAG, "force the use of long read mode").setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(FORCE_LONG_FLAG, "force the use of long read mode").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of sample", null).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(MapFlags.PEDIGREE_FLAG, File.class, "file", "genome relationships pedigree containing sex of sample").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
 
@@ -142,11 +177,21 @@ public final class MapFlags {
    */
   public static void initInputOutputFlags(CFlags flags) {
     final Flag input = flags.registerOptional('i', CommonFlags.READS_FLAG, File.class, CommonFlags.SDF_OR_FILE, "input read set").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, CommonFlags.DIR, BuildCommon.RESOURCE.getString("OUTPUT_DESC")).setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    CommonFlags.initTemplateFlag(flags);
+    CommonFlags.initOutputDirFlag(flags);
+    initTemplateFlag(flags);
 
     initInputFormatFlags(flags);
     flags.addRequiredSet(input);
+  }
+
+  /**
+   * Initialise mapping IO flags (input, output, template)
+   * @param flags shared flags
+   */
+  public static void initMapIOFlags(CFlags flags) {
+    flags.registerRequired('i', CommonFlags.READS_FLAG, File.class, CommonFlags.SDF, BuildCommon.RESOURCE.getString("READS_DESC")).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    initTemplateFlag(flags);
+    CommonFlags.initOutputDirFlag(flags);
   }
 
   /**
@@ -155,10 +200,9 @@ public final class MapFlags {
    */
   public static void initInputFormatFlags(CFlags flags) {
     //mapx already has a -f flag
-    final Flag formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", SDF_FORMAT).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", FormatCli.SDF_FORMAT).setCategory(CommonFlagCategories.INPUT_OUTPUT);
     formatFlag.setParameterRange(FORMAT_OPTIONS);
-    final Flag qualFormatFlag = flags.registerOptional('q', FormatCli.QUALITY_FLAG, String.class, "FORMAT", "format of quality data for fastq files (use sanger for Illumina 1.8+)").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    qualFormatFlag.setParameterRange(QUALITY_FORMAT_OPTIONS);
+    CommonFlags.initQualityFormatFlag(flags);
   }
 
   static void initPairedEndFormatFlags(CFlags flags)  {
@@ -221,8 +265,8 @@ public final class MapFlags {
       flags.setParseMessage("Must set both --" + FormatCli.LEFT_FILE_FLAG + " and --" + FormatCli.RIGHT_FILE_FLAG);
       return false;
     } else {
-      final String format = flags.isSet(FormatCli.FORMAT_FLAG) ? flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()) : SDF_FORMAT;
-      if (format.equals(SAM_SE_FORMAT) || format.equals(SAM_PE_FORMAT)) {
+      final String format = flags.isSet(FormatCli.FORMAT_FLAG) ? flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()) : FormatCli.SDF_FORMAT;
+      if (format.equals(FormatCli.SAM_SE_FORMAT) || format.equals(FormatCli.SAM_PE_FORMAT)) {
         flags.setParseMessage("Do not use left and right flags when using SAM single or paired end input.");
         return false;
       }
@@ -231,15 +275,15 @@ public final class MapFlags {
   }
 
   static boolean validateMapParams(CFlags flags) {
-    final int a = (Integer) flags.getValue(CommonFlags.SUBSTITUTIONS_FLAG);
+    final int a = (Integer) flags.getValue(SUBSTITUTIONS_FLAG);
     final int b = (Integer) flags.getValue(CommonFlags.INDELS_FLAG);
-    final int c = (Integer) flags.getValue(CommonFlags.INDEL_LENGTH_FLAG);
-    if (flags.isSet(CommonFlags.WORDSIZE_FLAG)) {
-      if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.WORDSIZE_FLAG, 1, MAX_WORD_SIZE)) {
+    final int c = (Integer) flags.getValue(INDEL_LENGTH_FLAG);
+    if (flags.isSet(WORDSIZE_FLAG)) {
+      if (!CommonFlags.validateFlagBetweenValues(flags, WORDSIZE_FLAG, 1, MAX_WORD_SIZE)) {
         return false;
       }
     }
-    if (!CommonFlags.validateStepAndWordSize(flags)) {
+    if (!validateStepAndWordSize(flags)) {
       return false;
     }
     if (a < 0) {
@@ -254,7 +298,7 @@ public final class MapFlags {
       Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "-c", c + "", "1");
       return false;
     }
-    if (!CommonFlags.checkPercentRepeatFrequency(flags)) {
+    if (!checkPercentRepeatFrequency(flags)) {
       return false;
     }
 
@@ -268,23 +312,23 @@ public final class MapFlags {
     if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.MIN_FRAGMENT_SIZE, 0, MAX_INSERT_SIZE)) {
       return false;
     }
-    if (flags.isSet(CommonFlags.MATED_MISMATCH_THRESHOLD) && flags.isSet(CommonFlags.MAX_ALIGNMENT_MISMATCHES)) {
-      flags.setParseMessage("--" + CommonFlags.MATED_MISMATCH_THRESHOLD + " is an alias for --" + CommonFlags.MAX_ALIGNMENT_MISMATCHES + ", please only set one");
+    if (flags.isSet(MATED_MISMATCH_THRESHOLD) && flags.isSet(MAX_ALIGNMENT_MISMATCHES)) {
+      flags.setParseMessage("--" + MATED_MISMATCH_THRESHOLD + " is an alias for --" + MAX_ALIGNMENT_MISMATCHES + ", please only set one");
       return false;
     }
-    final IntegerOrPercentage maxMatedScore = (IntegerOrPercentage) flags.getValue(CommonFlags.MATED_MISMATCH_THRESHOLD);
+    final IntegerOrPercentage maxMatedScore = (IntegerOrPercentage) flags.getValue(MATED_MISMATCH_THRESHOLD);
     if (maxMatedScore.getValue(100) < 0) {
-      Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + CommonFlags.MATED_MISMATCH_THRESHOLD, maxMatedScore + "", "0");
+      Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + MATED_MISMATCH_THRESHOLD, maxMatedScore + "", "0");
       return false;
     }
-    final IntegerOrPercentage maxAlignmentScore = (IntegerOrPercentage) flags.getValue(CommonFlags.MAX_ALIGNMENT_MISMATCHES);
+    final IntegerOrPercentage maxAlignmentScore = (IntegerOrPercentage) flags.getValue(MAX_ALIGNMENT_MISMATCHES);
     if (maxAlignmentScore.getValue(100) < 0) {
-      Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + CommonFlags.MAX_ALIGNMENT_MISMATCHES, maxAlignmentScore + "", "0");
+      Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + MAX_ALIGNMENT_MISMATCHES, maxAlignmentScore + "", "0");
       return false;
     }
-    final IntegerOrPercentage maxUnMatedScore = (IntegerOrPercentage) flags.getValue(CommonFlags.UNMATED_MISMATCH_THRESHOLD);
+    final IntegerOrPercentage maxUnMatedScore = (IntegerOrPercentage) flags.getValue(UNMATED_MISMATCH_THRESHOLD);
     if (maxUnMatedScore.getValue(100) < 0) {
-      Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + CommonFlags.UNMATED_MISMATCH_THRESHOLD, maxUnMatedScore + "", "0");
+      Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + UNMATED_MISMATCH_THRESHOLD, maxUnMatedScore + "", "0");
       return false;
     }
 
@@ -296,11 +340,11 @@ public final class MapFlags {
   }
 
   static boolean validateMapInputOutputParams(CFlags flags) {
-    final String format = flags.isSet(FormatCli.FORMAT_FLAG) ? flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()) : SDF_FORMAT;
-    final boolean sdf = format.equals(SDF_FORMAT);
+    final String format = flags.isSet(FormatCli.FORMAT_FLAG) ? flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()) : FormatCli.SDF_FORMAT;
+    final boolean sdf = format.equals(FormatCli.SDF_FORMAT);
     if (sdf) {
       if (!flags.isSet(CommonFlags.READS_FLAG)) {
-        flags.setParseMessage("Must set --" + CommonFlags.READS_FLAG + " when --" + FormatCli.FORMAT_FLAG + " is set to " + SDF_FORMAT);
+        flags.setParseMessage("Must set --" + CommonFlags.READS_FLAG + " when --" + FormatCli.FORMAT_FLAG + " is set to " + FormatCli.SDF_FORMAT);
         return false;
       }
     } else {
@@ -335,12 +379,12 @@ public final class MapFlags {
       flags.setParseMessage("--" + CommonFlags.MAX_FRAGMENT_SIZE + " requires --" + CommonFlags.READS_FLAG + " to be a paired end directory");
       return false;
     }
-    if (flags.isSet(CommonFlags.MATED_MISMATCH_THRESHOLD) && !isPaired) {
-      flags.setParseMessage("--" + CommonFlags.MATED_MISMATCH_THRESHOLD + " requires --" + CommonFlags.READS_FLAG + " to be a paired end directory");
+    if (flags.isSet(MATED_MISMATCH_THRESHOLD) && !isPaired) {
+      flags.setParseMessage("--" + MATED_MISMATCH_THRESHOLD + " requires --" + CommonFlags.READS_FLAG + " to be a paired end directory");
       return false;
     }
-    if (flags.isSet(CommonFlags.UNMATED_MISMATCH_THRESHOLD) && !isPaired) {
-      flags.setParseMessage("--" + CommonFlags.UNMATED_MISMATCH_THRESHOLD + " requires --" + CommonFlags.READS_FLAG + " to be a paired end directory");
+    if (flags.isSet(UNMATED_MISMATCH_THRESHOLD) && !isPaired) {
+      flags.setParseMessage("--" + UNMATED_MISMATCH_THRESHOLD + " requires --" + CommonFlags.READS_FLAG + " to be a paired end directory");
       return false;
     }
     final int min = (Integer) flags.getValue(CommonFlags.MIN_FRAGMENT_SIZE);
@@ -390,5 +434,229 @@ public final class MapFlags {
     }
 
     return true;
+  }
+
+  /**
+   * Initialise shared flags
+   * @param flags shared flags
+   */
+  public static void initSharedFlags(CFlags flags) {
+    initMaskFlags(flags);
+    initSharedFlagsOnly(flags);
+    initStepSize(flags);
+  }
+
+  /**
+   * Initialise shared flags without mask flags
+   * @param flags shared flags
+   */
+  public static void initSharedFlagsOnly(CFlags flags) {
+    initSharedFlagsOnly(flags, IntegerOrPercentage.valueOf("90%"), 1, 1000);
+  }
+
+  /**
+   * Initialise shared flags without mask flags
+   * @param flags shared flags
+   * @param repeat value to set default repeat frequency
+   * @param minRepeat value to set default minimum repeat frequency
+   * @param maxRepeat value to set default max repeat frequency
+   */
+  public static void initSharedFlagsOnly(CFlags flags, IntegerOrPercentage repeat, int minRepeat, int maxRepeat) {
+    flags.registerOptional(REPEAT_FREQUENCY_FLAG, IntegerOrPercentage.class, CommonFlags.INT, BuildCommon.RESOURCE.getString("REPEAT_FREQUENCY_DESC"), repeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(MAX_REPEAT_FREQUENCY_FLAG, Integer.class, CommonFlags.INT, BuildCommon.RESOURCE.getString("MAX_REPEAT_FREQUENCY_DESC"), maxRepeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(MIN_REPEAT_FREQUENCY_FLAG, Integer.class, CommonFlags.INT, BuildCommon.RESOURCE.getString("MIN_REPEAT_FREQUENCY_DESC"), minRepeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    CommonFlags.initNoGzip(flags);
+    flags.registerOptional(PARALLEL_UNMATED_PROCESSING_FLAG, Boolean.class, CommonFlags.BOOL, "run unmated processing in parallel with mated processing", Boolean.FALSE).setCategory(CommonFlagCategories.UTILITY);
+    CommonFlags.initThreadsFlag(flags);
+  }
+
+  /**
+   * Init word size flag with given description.
+   * @param flags flags to add to
+   * @param desc description to register
+   */
+  public static void initWordSize(CFlags flags, String desc) {
+    flags.registerOptional('w', WORDSIZE_FLAG, Integer.class, CommonFlags.INT, desc).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+  }
+
+  /**
+   * Init step size flag
+   * @param flags flags to add to.
+   */
+  public static void initStepSize(CFlags flags) {
+    initStepSize(flags, "step size (Default is word size)");
+  }
+
+  /**
+   * Init step size flag
+   * @param flags flags to add to.
+   * @param desc description for flag
+   */
+  public static void initStepSize(CFlags flags, String desc) {
+    flags.registerOptional('s', STEP_FLAG, Integer.class, CommonFlags.INT, desc).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+  }
+
+  /**
+   * Adds mask flags -w -a -b -c to the given <code>CFlags</code> object
+   * @param flags flags to add to
+   */
+  public static void initMaskFlags(CFlags flags) {
+    initWordSize(flags, "word size (Default is " + DEFAULT_WORD_SIZE + ", or read length / 2, whichever is smaller)");
+    initMaskFlagsOnly(flags);
+  }
+
+  /**
+   * Adds mask flags -a -b -c to the given <code>CFlags</code> object
+   * @param flags flags to add to
+   */
+  public static void initMaskFlagsOnly(CFlags flags) {
+    flags.registerOptional('a', SUBSTITUTIONS_FLAG, Integer.class, CommonFlags.INT, "guaranteed minimum number of substitutions which will be detected").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional('b', CommonFlags.INDELS_FLAG, Integer.class, CommonFlags.INT, "guaranteed minimum number of indels which will be detected").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional('c', INDEL_LENGTH_FLAG, Integer.class, CommonFlags.INT, "guaranteed number of positions that will be detected in a single indel", 1).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+  }
+
+  /**
+   * Initialise flags for paired end specific details (min and max insert sizes)
+   * @param flags shared flags
+   */
+  public static void initFragmentSizeFlags(final CFlags flags) {
+    flags.registerOptional('M', CommonFlags.MAX_FRAGMENT_SIZE, Integer.class, "INT", "maximum permitted fragment size when mating paired reads", 1000).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional('m', CommonFlags.MIN_FRAGMENT_SIZE, Integer.class, "INT", "minimum permitted fragment size when mating paired reads", 0).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+  }
+
+  /**
+   * Initialise flags for paired end specific details (min and max insert sizes)
+   * @param flags shared flags
+   */
+  public static void initPairedEndFlags(final CFlags flags) {
+    flags.registerOptional('d', CommonFlags.PAIR_ORIENTATION_FLAG, MachineOrientation.class, "STRING", "orientation for proper pairs", MachineOrientation.ANY).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    initFragmentSizeFlags(flags);
+  }
+
+  /**
+   * This method checks that the repeat frequency flag is within appropriate boundaries.
+   * @param flags the flags to check
+   * @return <code>true</code> if all okay <code>false</code> otherwise
+   */
+  public static boolean checkRepeatFrequency(CFlags flags) {
+    if (flags.isSet(REPEAT_FREQUENCY_FLAG)) {
+      if (!CommonFlags.validateFlagBetweenValues(flags, REPEAT_FREQUENCY_FLAG, 1, 100000)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * This method checks that the repeat frequency flag is within appropriate boundaries.
+   * @param flags the flags to check
+   * @return <code>true</code> if all okay <code>false</code> otherwise
+   */
+  public static boolean checkPercentRepeatFrequency(CFlags flags) {
+    if (flags.isSet(REPEAT_FREQUENCY_FLAG)) {
+      final IntegerOrPercentage repeat = (IntegerOrPercentage) flags.getValue(REPEAT_FREQUENCY_FLAG);
+      if (repeat.isPercentage()) {
+        if (repeat.getValue(100) < 0) {
+          Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + REPEAT_FREQUENCY_FLAG, repeat + "", "0%");
+          return false;
+        } else if (repeat.getValue(100) > 100) {
+          Diagnostic.error(ErrorType.INVALID_MAX_INTEGER_FLAG_VALUE, "--" + REPEAT_FREQUENCY_FLAG, repeat + "", "100%");
+          return false;
+        }
+      } else {
+        if (repeat.getValue(100) < 1) {
+          Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + REPEAT_FREQUENCY_FLAG, repeat + "", 1 + "");
+          return false;
+        }
+        if (repeat.getValue(100) > 100000) {
+          Diagnostic.error(ErrorType.INVALID_MAX_INTEGER_FLAG_VALUE, "--" + REPEAT_FREQUENCY_FLAG, repeat + "", 100000 + "");
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Initialise the template flag
+   * @param flags shared flags
+   */
+  public static void initTemplateFlag(CFlags flags) {
+    flags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing template to map against").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+  }
+
+  /**
+   * Return the word size based on word size flag or read length
+   * @param flags the flags
+   * @param readLength the read length
+   * @param defWordSize the default max word size
+   * @return the word size
+   */
+  public static int getWordSize(CFlags flags, int readLength, int defWordSize) {
+    if (flags.isSet(WORDSIZE_FLAG)) {
+      return (Integer) flags.getValue(WORDSIZE_FLAG);
+    } else {
+      return Math.min(defWordSize, readLength / 2);
+    }
+  }
+
+  /**
+   * Validate step and word size flags
+   * @param flags shared flags
+   * @return true if valid, otherwise false
+   */
+  public static boolean validateStepAndWordSize(CFlags flags) {
+    final Integer wordSize = flags.isSet(WORDSIZE_FLAG) ? (Integer) flags.getValue(WORDSIZE_FLAG) : null;
+    if (wordSize != null && wordSize < 1) {
+      Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + WORDSIZE_FLAG, Integer.toString(wordSize), "1");
+      return false;
+    }
+    if (flags.isSet(STEP_FLAG)) {
+      final int step = (Integer) flags.getValue(STEP_FLAG);
+      if (step < 1) {
+        Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + STEP_FLAG, Integer.toString(step), "1");
+        return false;
+      }
+    }
+    return true;
+  }
+
+  /**
+   * validate mask parameter
+   * @param readLength read length
+   * @param w word
+   * @param subs substitution
+   * @param i indel
+   * @param l indel length
+   * @throws InvalidParamsException if parameter is not valid
+   */
+  public static void validateMaskParams(final int readLength, final int w, final int subs, final int i, final int l) {
+    if (w <= 0) {
+      throw new InvalidParamsException(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "-w", w + "", "1");
+    }
+    if (subs < 0) {
+      throw new InvalidParamsException(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "-a", subs + "", "0");
+    }
+    if (i < 0) {
+      throw new InvalidParamsException(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "-b", i + "", "0");
+    }
+    if (l <= 0) {
+      throw new InvalidParamsException(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "-c", l + "", "1");
+    }
+    if (readLength < w) {
+      throw new InvalidParamsException(ErrorType.WORD_NOT_LESS_READ, w + "", readLength + "");
+    }
+    if (i > 0 && l > readLength - w) {
+      throw new InvalidParamsException(ErrorType.INVALID_MAX_INTEGER_FLAG_VALUE, "-c", l + "", (readLength - w) + "");
+    }
+    if (i > 0 && l <= 0) {
+      throw new InvalidParamsException(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "-c", l + "", "1");
+    }
+    if (i > readLength - w) {
+      throw new InvalidParamsException(ErrorType.INVALID_MAX_INTEGER_FLAG_VALUE, "-b", i + "", (readLength - w) + "");
+    }
+    if (subs > readLength - w) {
+      throw new InvalidParamsException(ErrorType.INVALID_MAX_INTEGER_FLAG_VALUE, "-a", subs + "", (readLength - w) + "");
+    }
   }
 }

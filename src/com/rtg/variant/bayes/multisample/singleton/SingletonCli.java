@@ -42,9 +42,6 @@ import com.rtg.variant.bayes.multisample.MultisampleTask;
  */
 public class SingletonCli extends AbstractMultisampleCli {
 
-  /** Module name displayed on help */
-  public static final String MODULE_NAME = "snp";
-
   private static final String SEX_FLAG = "sex";
   private static final String PEDIGREE_FLAG = "pedigree";
 
@@ -54,6 +51,16 @@ public class SingletonCli extends AbstractMultisampleCli {
   @Override
   protected GenomeRelationships grf() throws IOException {
     return (mFlags.isSet(PEDIGREE_FLAG)) ? GenomeRelationships.loadGenomeRelationships((File) mFlags.getValue(PEDIGREE_FLAG)) : null;
+  }
+
+  @Override
+  public String moduleName() {
+    return "snp";
+  }
+
+  @Override
+  public String description() {
+    return "call variants from SAM/BAM files";
   }
 
   @Override
@@ -116,10 +123,6 @@ public class SingletonCli extends AbstractMultisampleCli {
     return super.makeParams();
   }
 
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
-  }
 
   @Override
   public ParamsTask<?, ?> task(final VariantParams params, final OutputStream out) throws IOException {

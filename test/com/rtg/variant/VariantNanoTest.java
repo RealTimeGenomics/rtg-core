@@ -47,6 +47,7 @@ import java.util.List;
 
 import com.rtg.Slim;
 import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.sam.SamFilterOptions;
 import com.rtg.sam.SharedSamConstants;
@@ -82,12 +83,14 @@ public class VariantNanoTest extends TestCase {
 
   @Override
   public void setUp() {
+    GlobalFlags.resetAccessedStatus();
     Diagnostic.setLogStream();
     mNano = new NanoRegression(this.getClass(), false);
   }
 
   @Override
   public void tearDown() throws Exception {
+    Diagnostic.setLogStream();
     // clear the module name so later tests don't report SlimException to the
     // Talkback system
     Talkback.setModuleName(null);

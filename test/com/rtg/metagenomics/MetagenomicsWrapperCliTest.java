@@ -24,9 +24,9 @@ import java.util.List;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
-import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
 import com.rtg.metagenomics.MetagenomicsWrapperCli.Platform;
+import com.rtg.ngs.MapFlags;
 import com.rtg.protein.MapXCli;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
@@ -148,7 +148,7 @@ public class MetagenomicsWrapperCliTest extends AbstractCliTest {
       final File species = new File(output, "species");
       final File mapx = new File(output, "mapx1");
       expected.add(Arrays.asList("mapf", "--output", mapf.getPath(), "--template", filter.getPath(), "--sam-rg", "@RG\\tPL:ILLUMINA\\tSM:sample\\tID:id", "--input", readSdf.getPath()));
-      expected.add(Arrays.asList("map", "--output", map.getPath(), "--template", dna.getPath(), "--" + CommonFlags.MAX_ALIGNMENT_MISMATCHES, "10%", "--max-top-results", "100", "--sam-rg", "@RG\\tPL:ILLUMINA\\tSM:sample\\tID:id", "--input", new File(mapf, "unmapped.sdf").getPath()));
+      expected.add(Arrays.asList("map", "--output", map.getPath(), "--template", dna.getPath(), "--" + MapFlags.MAX_ALIGNMENT_MISMATCHES, "10%", "--max-top-results", "100", "--sam-rg", "@RG\\tPL:ILLUMINA\\tSM:sample\\tID:id", "--input", new File(mapf, "unmapped.sdf").getPath()));
       expected.add(Arrays.asList("species", "--output", species.getPath(), "--genomes", dna.getPath(), new File(map, "bazinga.bam").getPath(), new File(map, "random.bam").getPath()));
       expected.add(Arrays.asList("mapx", "--output", mapx.getPath(), "--template", protein.getPath(), "--" + MapXCli.MAX_ALIGNMENT_SCORE, "10%", "--max-top-results", "10", "--input", new File(mapf, "unmapped.sdf").getPath(), "--format", "fastq"));
 

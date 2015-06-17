@@ -13,8 +13,8 @@ package com.rtg.similarity;
 
 import static com.rtg.launcher.BuildCommon.RESOURCE;
 import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
-import static com.rtg.launcher.CommonFlags.STEP_FLAG;
-import static com.rtg.launcher.CommonFlags.WORDSIZE_FLAG;
+import static com.rtg.ngs.MapFlags.STEP_FLAG;
+import static com.rtg.ngs.MapFlags.WORDSIZE_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 
 import java.io.BufferedReader;
@@ -50,6 +50,7 @@ import com.rtg.launcher.ParamsCli;
 import com.rtg.launcher.ParamsTask;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.ProgramMode;
+import com.rtg.ngs.MapFlags;
 import com.rtg.reader.IndexFile;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
@@ -141,16 +142,51 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       if (!CommonFlags.validateOutputDirectory(flags)) {
         return false;
       }
-      if (flags.isSet(CommonFlags.WORDSIZE_FLAG)) {
-        if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.WORDSIZE_FLAG, 1, 32)) {
+      if (flags.isSet(WORDSIZE_FLAG)) {
+        if (!CommonFlags.validateFlagBetweenValues(flags, WORDSIZE_FLAG, 1, 32)) {
           return false;
         }
       }
-      if (!CommonFlags.validateStepAndWordSize(flags)) {
+      if (!MapFlags.validateStepAndWordSize(flags)) {
         return false;
       }
       return true;
     }
+  }
+
+  @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return "calculate similarity matrix and nearest neighbor tree";
+  }
+
+  @Override
+  protected File outputDirectory() {
+    return (File) mFlags.getValue(OUTPUT_FLAG);
+  }
+
+  @Override
+  protected void initFlags() {
+    initFlags(mFlags);
+  }
+
+  protected static void initFlags(CFlags flags) {
+    flags.setValidator(VALIDATOR);
+    flags.setDescription("Produces a similarity matrix and nearest neighbor tree from the input sequences or reads.");
+    CommonFlagCategories.setCategories(flags);
+    CommonFlags.initOutputDirFlag(flags);
+    final Flag inFlag = flags.registerOptional('i', INPUT_FLAG, File.class, "SDF", RESOURCE.getString("SUBJECT_DESC")).setCategory(INPUT_OUTPUT);
+    final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a labeled list of SDF files (1 label and file per line format:[label][space][file])").setCategory(INPUT_OUTPUT);
+    MapFlags.initWordSize(flags, "word size (Default is " + DEFAULT_WORD_SIZE + ")");
+    MapFlags.initStepSize(flags, "step size (Default is " + DEFAULT_STEP_SIZE + ")");
+    flags.registerOptional(UNIQUE_WORDS, "count only unique words").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(MAX_READS_FLAG, Integer.class, "INT", "maximum number of reads to use from each input SDF").setCategory(CommonFlagCategories.UTILITY);
+    flags.addRequiredSet(inFlag);
+    flags.addRequiredSet(listFlag);
   }
 
   protected static class SimilarityTask extends ParamsTask<BuildSearchParams, NoStatistics> {
@@ -566,34 +602,5 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
     return new SimilarityTask(params, out, mUsageMetric);
   }
 
-  @Override
-  protected File outputDirectory() {
-    return (File) mFlags.getValue(OUTPUT_FLAG);
-  }
-
-  @Override
-  protected void initFlags() {
-    initFlags(mFlags);
-  }
-
-  protected static void initFlags(CFlags flags) {
-    flags.setValidator(VALIDATOR);
-    flags.setDescription("Produces a similarity matrix and nearest neighbor tree from the input sequences or reads.");
-    CommonFlagCategories.setCategories(flags);
-    flags.registerRequired('o', OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
-    final Flag inFlag = flags.registerOptional('i', INPUT_FLAG, File.class, "SDF", RESOURCE.getString("SUBJECT_DESC")).setCategory(INPUT_OUTPUT);
-    final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a labeled list of SDF files (1 label and file per line format:[label][space][file])").setCategory(INPUT_OUTPUT);
-    CommonFlags.initWordSize(flags, "word size (Default is " + DEFAULT_WORD_SIZE + ")");
-    CommonFlags.initStepSize(flags, "step size (Default is " + DEFAULT_STEP_SIZE + ")");
-    flags.registerOptional(UNIQUE_WORDS, "count only unique words").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(MAX_READS_FLAG, Integer.class, "INT", "maximum number of reads to use from each input SDF").setCategory(CommonFlagCategories.UTILITY);
-    flags.addRequiredSet(inFlag);
-    flags.addRequiredSet(listFlag);
-  }
-
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
-  }
 }
 

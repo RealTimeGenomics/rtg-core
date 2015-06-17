@@ -212,39 +212,6 @@ public final class CigarFormatter {
   }
 
   /**
-   * Determines the length of reference that this read covers given a cigar.
-   * @param cigar the cigar
-   * @return the length
-   */
-  public static int cigarRefLength(final String cigar) {
-    int refLen = 0;
-    int numStartPos = 0;
-    for (int i = 0; i < cigar.length(); i++) {
-      final char c = cigar.charAt(i);
-      if (c < '0' || c > '9') {
-        switch (c) {
-          case 'M':
-          case 'D':
-          case 'N':
-          case 'P':
-          case '=':
-          case 'X':
-            int mult = 1;
-            for (int j = i - 1; j >= numStartPos; j--) {
-              refLen += mult * (cigar.charAt(j) - '0');
-              mult *= 10;
-            }
-            break;
-          default:
-            break;
-        }
-        numStartPos = i + 1;
-      }
-    }
-    return refLen;
-  }
-
-  /**
    * Extract a match from a read which corresponds to a specified subsequence of the reference.
    * Care is needed to deal correctly with Ns and with partial overlaps by the read to the specified
    * subsequence. This can lead to all possibilities for open ended matches. In some cases a null may be returned

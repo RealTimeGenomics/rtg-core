@@ -19,7 +19,7 @@ import java.io.PrintStream;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
-import com.rtg.launcher.BuildTestUtils;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.simulation.cnv.CnvSimulatorCli;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
@@ -120,7 +120,7 @@ public class CnvStatsCliTest extends AbstractCliTest {
     final File cnvsfile2 = File.createTempFile("cnvsimulator", "test2.cnv", mDir);
     assertTrue(cnvsfile1.delete());
     assertTrue(cnvsfile2.delete());
-    final File in = BuildTestUtils.prereadDNA(mDir, ">a\nacgtacgatcagcatctgac\n");
+    final File in = ReaderTestUtils.getDNADir(mDir);
     try {
       assertEquals(1, new CnvSimulatorCli().mainInit(new String[0], NULL_STREAM, NULL_PRINTSTREAM));
       assertEquals(1, new CnvSimulatorCli().mainInit(new String[] {"-g", cnvsfile1.getPath()}, NULL_STREAM, NULL_PRINTSTREAM));
@@ -149,7 +149,7 @@ public class CnvStatsCliTest extends AbstractCliTest {
 
     final File doesnotexist = File.createTempFile("cnvsimulator", "test1.cnv", mDir);
     assertTrue(doesnotexist.delete());
-    final File in = BuildTestUtils.prereadDNA(mDir, ">a\nacgtacgatcagcatctgac\n");
+    final File in = ReaderTestUtils.getDNADir(mDir);
     try {
       checkErrorMessage(new String[] {"-s", cnvsfileSimulated.getPath(), "-g"}, "Expecting value for flag -g");
       checkErrorMessage(new String[] {"-s", cnvsfileSimulated.getPath(), "-g", doesnotexist.getPath()},

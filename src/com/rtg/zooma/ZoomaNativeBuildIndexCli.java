@@ -35,6 +35,11 @@ public class ZoomaNativeBuildIndexCli extends AbstractCli {
   }
 
   @Override
+  public String description() {
+    return "build an index for use with zmap and zmapf";
+  }
+
+  @Override
   protected void initFlags() {
     mFlags.registerRequired('i', REF_FLAG, File.class, "FILE", "FASTA file for reference");
     mFlags.registerOptional('o', OUTPUT_FLAG, File.class, "FILE", "name of output index file", new File("zooma.index.bin"));
@@ -64,11 +69,4 @@ public class ZoomaNativeBuildIndexCli extends AbstractCli {
     return zooma.buildIndex(indexFile.getPath(), fastaFile.getPath(), include, exclude);
   }
 
-  /**
-   * Main entry point
-   * @param args command line arguments
-   */
-  public static void main(String[] args) {
-    new ZoomaNativeBuildIndexCli().mainExit(args);
-  }
 }

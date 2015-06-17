@@ -39,7 +39,6 @@ import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMSequenceRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -217,21 +216,15 @@ public class MatedSamResultsFilterTest extends TestCase {
       try {
         final File in1 = File.createTempFile("sam", "_1.gz", dir);
 
-        final TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(in1, true));
-        try {
+        try (TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(in1, true))) {
           writeRecords1(trw);
           writeSentinel(trw);
-        } finally {
-          trw.close();
         }
         final File in2 = File.createTempFile("sam", "_2.gz", dir);
-        final TempRecordWriter trw2 = new TempRecordWriterNio(FileUtils.createOutputStream(in2, true));
-        try {
+        try (TempRecordWriter trw2 = new TempRecordWriterNio(FileUtils.createOutputStream(in2, true))) {
           writeRecords2(trw2);
           writeRecords2Extra(trw2);
           writeSentinel(trw2);
-        } finally {
-          trw2.close();
         }
         //FileHelper.stringToGzFile(SAM1, in1);
         //FileHelper.stringToGzFile(SAM2 + SAM2_EXTRA, in2);
@@ -284,11 +277,8 @@ public class MatedSamResultsFilterTest extends TestCase {
 
   public void testFilterConcatEmpty() throws IOException {
     final MemoryPrintStream input = new MemoryPrintStream();
-    final TempRecordWriter trw = new TempRecordWriterNio(new GZIPOutputStream(input.outputStream()));
-    try {
+    try (TempRecordWriter trw = new TempRecordWriterNio(new GZIPOutputStream(input.outputStream()))) {
       writeSentinel(trw);
-    } finally {
-      trw.close();
     }
     final OutputStream log = new ByteArrayOutputStream();
     Diagnostic.setLogStream(new PrintStream(log));
@@ -351,17 +341,14 @@ public class MatedSamResultsFilterTest extends TestCase {
         final File mainOut = FileUtils.createTempDir("cgmap", "test");
         try {
           final File cgleft = new File(mainOut, "cgleft");
-          final SequencesReader lr = ReaderTestUtils.getReaderDNAFastqCG("@s1\nctggttaaaatatgaagtgaccaccatgcttgaga\n+\nABCDEFGHIJKLMNOPQRSTUVWXYZ123456789\n", cgleft, PrereadArm.LEFT);
           final File cgright = new File(mainOut, "cgright");
-          final SequencesReader rr = ReaderTestUtils.getReaderDNAFastqCG("@s1\ntctcaagcatggtggtcacttcatattttaaccag\n+\nABCDEFGHIJKLMNOPQRSTUVWXYZ123456789\n", cgright, PrereadArm.RIGHT);
-          try {
+          try (SequencesReader lr = ReaderTestUtils.getReaderDNAFastqCG("@s1\nctggttaaaatatgaagtgaccaccatgcttgaga\n+\nABCDEFGHIJKLMNOPQRSTUVWXYZ123456789\n", cgleft, PrereadArm.LEFT); SequencesReader rr = ReaderTestUtils.getReaderDNAFastqCG("@s1\ntctcaagcatggtggtcacttcatattttaaccag\n+\nABCDEFGHIJKLMNOPQRSTUVWXYZ123456789\n", cgright, PrereadArm.RIGHT)) {
             final int numReads = 100;
             final MapQScoringReadBlocker blocker = new MapQScoringReadBlocker(numReads, 4);
             final File in1 = File.createTempFile("sam", "_1.gz", mainOut);
             FileUtils.byteArrayToFile(recordsIn, in1);
             final File outFile = File.createTempFile("out", ".gz", mainOut);
-            final OutputStream out = new FileOutputStream(outFile);
-            try {
+            try (OutputStream out = new FileOutputStream(outFile)) {
               for (int k = 0; k < numReads; k++) {
                 blocker.increment(k, 50);
               }
@@ -371,15 +358,10 @@ public class MatedSamResultsFilterTest extends TestCase {
               header.addSequence(new SAMSequenceRecord("chr20", 62435964));
               filter.setHeader(header); //XXX this is dumb V
               filter.filterConcat(header, out, null, null, mTemplateReader, false, in1);
-            } finally {
-              out.close();
             }
             final String contents = FileUtils.fileToString(outFile);
             // System.out.println("contents=" + contents);
             assertTrue(TestUtils.sameLines(samOut, contents, false));
-          } finally {
-            lr.close();
-            rr.close();
           }
         } finally {
           FileHelper.deleteAll(mainOut);
@@ -430,12 +412,9 @@ public class MatedSamResultsFilterTest extends TestCase {
   /** test that quality and XQ (extra quality) fields are calculated correctly from super cigar. */
   public void testCGSuperCigar() throws Exception {
     final MemoryPrintStream mps = new MemoryPrintStream();
-    final TempRecordWriter trw = new TempRecordWriterNio(new GZIPOutputStream(mps.outputStream()));
-    try {
+    try (TempRecordWriter trw = new TempRecordWriterNio(new GZIPOutputStream(mps.outputStream()))) {
       writeCgRecords1(trw);
       writeSentinel(trw);
-    } finally {
-      trw.close();
     }
     checkCG(mps.toByteArray(), EXPECTED_CG_SUPERCIGAR_1, null);
   }
@@ -482,12 +461,9 @@ public class MatedSamResultsFilterTest extends TestCase {
   /** test that quality and XQ (extra quality) fields are calculated correctly from more complex super cigars. */
   public void testCGSuperCigar2() throws Exception {
     final MemoryPrintStream mps = new MemoryPrintStream();
-    final TempRecordWriter trw = new TempRecordWriterNio(new GZIPOutputStream(mps.outputStream()));
-    try {
+    try (TempRecordWriter trw = new TempRecordWriterNio(new GZIPOutputStream(mps.outputStream()))) {
       writeCgRecords2(trw);
       writeSentinel(trw);
-    } finally {
-      trw.close();
     }
     checkCG(mps.toByteArray(), EXPECTED_CG_SUPERCIGAR_2, null);
   }
@@ -533,12 +509,9 @@ public class MatedSamResultsFilterTest extends TestCase {
   /** test that quality field is added, but no XQ is added when no CG overlap (so no super cigar). */
   public void testCGSuperCigar3() throws Exception {
     final MemoryPrintStream mps = new MemoryPrintStream();
-    final TempRecordWriter trw = new TempRecordWriterNio(new GZIPOutputStream(mps.outputStream()));
-    try {
-    writeCgRecords3(trw);
-    writeSentinel(trw);
-    } finally {
-      trw.close();
+    try (TempRecordWriter trw = new TempRecordWriterNio(new GZIPOutputStream(mps.outputStream()))) {
+      writeCgRecords3(trw);
+      writeSentinel(trw);
     }
     checkCG(mps.toByteArray(), EXPECTED_CG_SUPERCIGAR_3, null);
   }
@@ -559,12 +532,9 @@ public class MatedSamResultsFilterTest extends TestCase {
     bpar.setComboScore(4);
     bpar.setMdString(new byte[0]);
     final MemoryPrintStream input = new MemoryPrintStream();
-    final TempRecordWriter trw = new TempRecordWriterNio(new GZIPOutputStream(input.outputStream()));
-    try {
+    try (TempRecordWriter trw = new TempRecordWriterNio(new GZIPOutputStream(input.outputStream()))) {
       trw.writeRecord(bpar);
       writeSentinel(trw);
-    } finally {
-      trw.close();
     }
     final String exp = ""
       + "@HD\tVN:1.4\tSO:coordinate\n"
@@ -581,8 +551,7 @@ public class MatedSamResultsFilterTest extends TestCase {
         final File in1 = File.createTempFile("sam", "_1.gz", mainOut);
         FileUtils.byteArrayToFile(input.toByteArray(), in1);
         final File outFile = File.createTempFile("out", ".gz", mainOut);
-        final OutputStream out = new FileOutputStream(outFile);
-        try {
+        try (OutputStream out = new FileOutputStream(outFile)) {
           for (int k = 0; k < numReads; k++) {
             blocker.increment(k, 50);
           }
@@ -595,8 +564,6 @@ public class MatedSamResultsFilterTest extends TestCase {
 
           final String contents = FileUtils.fileToString(outFile);
           assertTrue(TestUtils.sameLines(exp, contents, false));
-        } finally {
-          out.close();
         }
       }
     } finally {
@@ -630,12 +597,9 @@ public class MatedSamResultsFilterTest extends TestCase {
   /** test that quality and XQ (extra quality) fields are calculated correctly from more complex super cigars. */
   public void testCGQualLengthBug1295() throws Exception {
     final MemoryPrintStream input = new MemoryPrintStream();
-    final TempRecordWriter trw = new TempRecordWriterNio(new GZIPOutputStream(input.outputStream()));
-    try {
+    try (TempRecordWriter trw = new TempRecordWriterNio(new GZIPOutputStream(input.outputStream()))) {
       writeCgRecordsBug1295(trw);
       writeSentinel(trw);
-    } finally {
-      trw.close();
     }
     final MemoryPrintStream mps = new MemoryPrintStream();
     Diagnostic.setLogStream(mps.printStream());
@@ -644,6 +608,8 @@ public class MatedSamResultsFilterTest extends TestCase {
     } catch (final NoTalkbackSlimException ex) {
       System.err.println("ex: " + mps.toString());
       throw ex;
+    } finally {
+      Diagnostic.setLogStream();
     }
   }
 }

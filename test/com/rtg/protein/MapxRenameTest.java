@@ -36,22 +36,6 @@ public class MapxRenameTest extends AbstractCliTest {
   }
 
   /**
-   * @param args command line arguments
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(MapxRenameTest.class);
-  }
-
-  /**
-   * Test of moduleName method.
-   */
-  public void testModuleName() {
-    final String expResult = "mapxrename";
-    final String result = new MapxRename().moduleName();
-    assertEquals(expResult, result);
-  }
-
-  /**
    * Test of mainInit method.
    * @throws IOException if an IO error occurs
    */
@@ -236,6 +220,7 @@ public class MapxRenameTest extends AbstractCliTest {
 
     } finally {
       mps.printStream().close();
+      Diagnostic.setLogStream();
       FileHelper.deleteAll(tempDir);
     }
   }

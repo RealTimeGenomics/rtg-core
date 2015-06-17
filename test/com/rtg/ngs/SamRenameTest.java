@@ -45,13 +45,6 @@ public class SamRenameTest extends AbstractCliTest {
   }
 
   /**
-   * @param args command line arguments
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(SamRenameTest.class);
-  }
-
-  /**
    * Test of moduleName method, of class CgReadSimulator.
    */
   public void testModuleName() {

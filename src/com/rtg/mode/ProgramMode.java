@@ -26,8 +26,7 @@ import com.rtg.util.PseudoEnum;
  * The translation modes possible with the various program modes.
  * Only this subset make any sense.
  */
-public abstract class ProgramMode
-implements Serializable, PseudoEnum {
+public abstract class ProgramMode implements Serializable, PseudoEnum {
 
   /** slimn mode. */
   public static final ProgramMode

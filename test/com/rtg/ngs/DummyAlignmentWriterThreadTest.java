@@ -18,6 +18,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
@@ -60,6 +61,7 @@ public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutpu
 
   @Override
   public void tearDown() throws Exception {
+    GlobalFlags.resetAccessedStatus();
     assertTrue(!mDir.exists() || FileHelper.deleteAll(mDir));
     try {
       mNano.finish();
@@ -229,15 +231,12 @@ public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutpu
         final NgsParams params = getDefaultBuilder(tempDir, false, false, TEMPLATE).numberThreads(numThreads).create();
         final SequencesReader ref = params.searchParams().reader();
         final HashingRegion[] regions = HashingRegion.splitWorkload(ref, params.sex(), 0, ref.numberSequences(), params.numberThreads() * params.threadMultiplier(), HashingRegion.DEFAULT_MIN_CHUNK_SIZE, params.calculateThreadPadding());
-        final TopNPairedEndOutputProcessorSync sync = new TopNPairedEndOutputProcessorSync(params, null, true, true);
-        try {
+        try (TopNPairedEndOutputProcessorSync sync = new TopNPairedEndOutputProcessorSync(params, null, true, true)) {
           for (int i = 0; i < regions.length; i++) {
             stp.execute(new SimpleProcess2(sync, regions[i], i));
           }
           stp.terminate();
           sync.finish();
-        } finally {
-          sync.close();
         }
         final String contentsUnmapped = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(new File(mDir, "hitDir"), NgsOutputParams.UNMAPPED_SAM_FILE_NAME)));
         final String contentsUnmated = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(new File(mDir, "hitDir"), NgsOutputParams.UNMATED_SAM_FILE_NAME)));

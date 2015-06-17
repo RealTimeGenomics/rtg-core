@@ -97,16 +97,16 @@ public final class MapParamsHelper {
 
     final Collection<ListenerType> listeners = new HashSet<>();
     listeners.add(ListenerType.CLI);
-    final IntegerOrPercentage repeat = (IntegerOrPercentage) flags.getValue(CommonFlags.REPEAT_FREQUENCY_FLAG);
+    final IntegerOrPercentage repeat = (IntegerOrPercentage) flags.getValue(MapFlags.REPEAT_FREQUENCY_FLAG);
     ngsParamsBuilder.listeners(listeners)
                     .numberThreads(numberThreads)
                     .threadMultiplier((Integer) flags.getValue(MapFlags.THREAD_MULTIPLIER))
                     .useProportionalHashThreshold(repeat.isPercentage())
                     .readFreqThreshold((Integer) flags.getValue(MapFlags.READ_FREQUENCY_FLAG))
                     .legacyCigars(flags.isSet(MapFlags.LEGACY_CIGARS))
-                    .maxHashCountThreshold((Integer) flags.getValue(CommonFlags.MAX_REPEAT_FREQUENCY_FLAG))
-                    .minHashCountThreshold((Integer) flags.getValue(CommonFlags.MIN_REPEAT_FREQUENCY_FLAG))
-                    .parallelUnmatedProcessing((Boolean) flags.getValue(CommonFlags.PARALLEL_UNMATED_PROCESSING_FLAG));
+                    .maxHashCountThreshold((Integer) flags.getValue(MapFlags.MAX_REPEAT_FREQUENCY_FLAG))
+                    .minHashCountThreshold((Integer) flags.getValue(MapFlags.MIN_REPEAT_FREQUENCY_FLAG))
+                    .parallelUnmatedProcessing((Boolean) flags.getValue(MapFlags.PARALLEL_UNMATED_PROCESSING_FLAG));
     if (repeat.isPercentage()) {
       ngsParamsBuilder.hashCountThreshold(100 - repeat.getValue(100));
     } else {
@@ -123,32 +123,32 @@ public final class MapParamsHelper {
     final IntegerOrPercentage ionTorrentDefaultThreshold = new IntegerOrPercentage("10%");
     if (paired) {
       final IntegerOrPercentage matedAS;
-      if (flags.isSet(CommonFlags.MATED_MISMATCH_THRESHOLD)) {
-        matedAS = (IntegerOrPercentage) flags.getValue(CommonFlags.MATED_MISMATCH_THRESHOLD);
+      if (flags.isSet(MapFlags.MATED_MISMATCH_THRESHOLD)) {
+        matedAS = (IntegerOrPercentage) flags.getValue(MapFlags.MATED_MISMATCH_THRESHOLD);
       } else {
-        if (!flags.isSet(CommonFlags.MAX_ALIGNMENT_MISMATCHES) && isIonTorrent) {
+        if (!flags.isSet(MapFlags.MAX_ALIGNMENT_MISMATCHES) && isIonTorrent) {
           matedAS = ionTorrentDefaultThreshold;
         } else {
-          matedAS = (IntegerOrPercentage) flags.getValue(CommonFlags.MAX_ALIGNMENT_MISMATCHES);  //the defaults for mated alignment threshold and max align score are supposed to be the same
+          matedAS = (IntegerOrPercentage) flags.getValue(MapFlags.MAX_ALIGNMENT_MISMATCHES);  //the defaults for mated alignment threshold and max align score are supposed to be the same
         }
       }
       final IntegerOrPercentage unmatedAS;
-      if (flags.isSet(CommonFlags.UNMATED_MISMATCH_THRESHOLD) || !isIonTorrent) { //if flag is set OR not iontorrent
-        unmatedAS = (IntegerOrPercentage) flags.getValue(CommonFlags.UNMATED_MISMATCH_THRESHOLD);
+      if (flags.isSet(MapFlags.UNMATED_MISMATCH_THRESHOLD) || !isIonTorrent) { //if flag is set OR not iontorrent
+        unmatedAS = (IntegerOrPercentage) flags.getValue(MapFlags.UNMATED_MISMATCH_THRESHOLD);
       } else {  // ie flag is not set AND this is iontorrent
         unmatedAS = ionTorrentDefaultThreshold;
       }
-      if (flags.isSet(CommonFlags.UNMATED_MISMATCH_THRESHOLD) && unmatedAS.compareTo(matedAS) > 0) {
-        Diagnostic.warning("--" + CommonFlags.UNMATED_MISMATCH_THRESHOLD + " should not be greater than --" + CommonFlags.MATED_MISMATCH_THRESHOLD);
+      if (flags.isSet(MapFlags.UNMATED_MISMATCH_THRESHOLD) && unmatedAS.compareTo(matedAS) > 0) {
+        Diagnostic.warning("--" + MapFlags.UNMATED_MISMATCH_THRESHOLD + " should not be greater than --" + MapFlags.MATED_MISMATCH_THRESHOLD);
       }
       ngsFilterParamsBuilder.unmatedMaxMismatches(unmatedAS);
       ngsFilterParamsBuilder.matedMaxMismatches(matedAS);
     } else {
-      if (!flags.isSet(CommonFlags.MAX_ALIGNMENT_MISMATCHES) && isIonTorrent) {
+      if (!flags.isSet(MapFlags.MAX_ALIGNMENT_MISMATCHES) && isIonTorrent) {
         ngsFilterParamsBuilder.matedMaxMismatches(ionTorrentDefaultThreshold).unmatedMaxMismatches(ionTorrentDefaultThreshold);
       } else {
-        ngsFilterParamsBuilder.matedMaxMismatches((IntegerOrPercentage) flags.getValue(CommonFlags.MAX_ALIGNMENT_MISMATCHES))
-              .unmatedMaxMismatches((IntegerOrPercentage) flags.getValue(CommonFlags.MAX_ALIGNMENT_MISMATCHES));
+        ngsFilterParamsBuilder.matedMaxMismatches((IntegerOrPercentage) flags.getValue(MapFlags.MAX_ALIGNMENT_MISMATCHES))
+              .unmatedMaxMismatches((IntegerOrPercentage) flags.getValue(MapFlags.MAX_ALIGNMENT_MISMATCHES));
       }
     }
   }
@@ -179,17 +179,17 @@ public final class MapParamsHelper {
     final InputFormat inFormat;
     if (flags.isSet(FormatCli.FORMAT_FLAG)) {
       format = flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault());
-      qualityFormat = flags.isSet(FormatCli.QUALITY_FLAG) ? flags.getValue(FormatCli.QUALITY_FLAG).toString().toLowerCase(Locale.getDefault()) : null;
+      qualityFormat = flags.isSet(CommonFlags.QUALITY_FLAG) ? flags.getValue(CommonFlags.QUALITY_FLAG).toString().toLowerCase(Locale.getDefault()) : null;
     } else {
-      format = MapFlags.SDF_FORMAT;
+      format = FormatCli.SDF_FORMAT;
       qualityFormat = null;
     }
-    if (format.equals(MapFlags.SDF_FORMAT)) {
+    if (format.equals(FormatCli.SDF_FORMAT)) {
       inFormat = null;
     } else {
       inFormat = FormatCli.getFormat(format, qualityFormat, true);
     }
-    final boolean sdf = format.equals(MapFlags.SDF_FORMAT);
+    final boolean sdf = format.equals(FormatCli.SDF_FORMAT);
     final File reads = (File) flags.getValue(CommonFlags.READS_FLAG);
     final boolean paired;
     if (sdf) {
@@ -216,7 +216,7 @@ public final class MapParamsHelper {
       final ISequenceParams params = ngsParamsBuilder.buildFirstParams();
       maxReadLength = params.reader().maxLength();
       final long minReadLength = params.reader().minLength();
-      useLongReads = flags.isSet(CommonFlags.FORCE_LONG_FLAG)
+      useLongReads = flags.isSet(MapFlags.FORCE_LONG_FLAG)
               || maxReadLength > 63
               || (minReadLength != maxReadLength);
       Diagnostic.userLog("Entering single end read mode read length=" + maxReadLength);
@@ -227,7 +227,7 @@ public final class MapParamsHelper {
       final long rightReadLength = rightParams.reader().maxLength();
       maxReadLength = Math.max(leftReadLength, rightReadLength);
       final long minReadLength = Math.min(leftParams.reader().minLength(), rightParams.reader().minLength());
-      useLongReads = flags.isSet(CommonFlags.FORCE_LONG_FLAG)
+      useLongReads = flags.isSet(MapFlags.FORCE_LONG_FLAG)
               || (maxReadLength > 63)
               || (minReadLength != maxReadLength);
       Diagnostic.userLog("Entering paired end read mode 1st arm read length=" + leftReadLength + " 2nd arm read length=" + rightReadLength);
@@ -260,12 +260,12 @@ public final class MapParamsHelper {
     final InputFormat inFormat;
     if (flags.isSet(FormatCli.FORMAT_FLAG)) {
       format = flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault());
-      qualityFormat = flags.isSet(FormatCli.QUALITY_FLAG) ? flags.getValue(FormatCli.QUALITY_FLAG).toString().toLowerCase(Locale.getDefault()) : null;
+      qualityFormat = flags.isSet(CommonFlags.QUALITY_FLAG) ? flags.getValue(CommonFlags.QUALITY_FLAG).toString().toLowerCase(Locale.getDefault()) : null;
     } else {
-      format = MapFlags.SDF_FORMAT;
+      format = FormatCli.SDF_FORMAT;
       qualityFormat = null;
     }
-    final boolean sdf = format.equals(MapFlags.SDF_FORMAT);
+    final boolean sdf = format.equals(FormatCli.SDF_FORMAT);
     if (sdf) {
       inFormat = null;
     } else {
@@ -319,13 +319,13 @@ public final class MapParamsHelper {
 
   static NgsMaskParams makeMaskParams(final CFlags flags, final int readLength, boolean useLongReads, int defWordSize) {
     final NgsMaskParams maskParams;
-    if (flags.isSet(CommonFlags.MASK_FLAG)) {
-      maskParams = new NgsMaskParamsExplicit((String) flags.getValue(CommonFlags.MASK_FLAG));
+    if (flags.isSet(MapFlags.MASK_FLAG)) {
+      maskParams = new NgsMaskParamsExplicit((String) flags.getValue(MapFlags.MASK_FLAG));
     } else {
-      final int w = CommonFlags.getWordSize(flags, readLength, defWordSize);
-      final int a = (Integer) flags.getValue(CommonFlags.SUBSTITUTIONS_FLAG);
+      final int w = MapFlags.getWordSize(flags, readLength, defWordSize);
+      final int a = (Integer) flags.getValue(MapFlags.SUBSTITUTIONS_FLAG);
       final int b = (Integer) flags.getValue(CommonFlags.INDELS_FLAG);
-      final int c = (Integer) flags.getValue(CommonFlags.INDEL_LENGTH_FLAG);
+      final int c = (Integer) flags.getValue(MapFlags.INDEL_LENGTH_FLAG);
       final int s = Math.max(a, b);
       if (readLength < w) {
         throw new InvalidParamsException(ErrorType.WORD_NOT_LESS_READ, w + "", readLength + "");
@@ -355,14 +355,14 @@ public final class MapParamsHelper {
   }
 
   private static void addLongReadParameters(final CFlags flags, final NgsParamsBuilder ngsParamsBuilder, final long readLength, final int defWordSize, int defStepRatio) {
-    final int w = CommonFlags.getWordSize(flags, (int) readLength, defWordSize);
-    final int subs = (Integer) flags.getValue(CommonFlags.SUBSTITUTIONS_FLAG);
+    final int w = MapFlags.getWordSize(flags, (int) readLength, defWordSize);
+    final int subs = (Integer) flags.getValue(MapFlags.SUBSTITUTIONS_FLAG);
     if (!((readLength / w) >= subs + 1)) {
       throw new InvalidParamsException(ErrorType.INVALID_LONG_READ_PARAMS, Integer.toString(w), Integer.toString(subs));
     }
     final int step;
-    if (flags.isSet(CommonFlags.STEP_FLAG)) {
-      step = (Integer) flags.getValue(CommonFlags.STEP_FLAG);
+    if (flags.isSet(MapFlags.STEP_FLAG)) {
+      step = (Integer) flags.getValue(MapFlags.STEP_FLAG);
     } else {
       step = Math.max(w / defStepRatio, 1);
     }
@@ -372,7 +372,7 @@ public final class MapParamsHelper {
 
   private static FutureTask<SequenceParams> getTemplateFutureTask(NgsParamsBuilder ngsParamsBuilder, CFlags flags, boolean includeFullNames, SequenceMode templateMode) throws IOException {
     final boolean templateMem = !flags.isSet(MapFlags.NO_INMEMORY_TEMPLATE);
-    final File template = (File) flags.getValue(MapFlags.TEMPLATE_FLAG);
+    final File template = (File) flags.getValue(CommonFlags.TEMPLATE_FLAG);
     final Sex sex = getMappingSex(ngsParamsBuilder, flags);
     return new FutureTask<>(new SequenceParamsCallableSdf(template, LongRange.NONE, templateMem, sex, includeFullNames, templateMode));
   }
@@ -415,8 +415,6 @@ public final class MapParamsHelper {
       try {
         FutureTask<SequenceParams> rightTask = null;
         if (buildSecond != null) {
-//        final HashingRegion adjustedRegion = leftTask.get().readerParams().adjustedRegion();
-//        final HashingRegion secondRegion = adjustedRegion == null ? buildRegion : adjustedRegion;
           rightTask = new FutureTask<>(new SequenceParamsCallableSdf(buildSecond, buildRegion, nameParams.includeFullNames() ? nameParams : new NameParams(false, false), readsMode));
           executor.execute(rightTask);
         }
@@ -611,7 +609,7 @@ public final class MapParamsHelper {
         SdfUtils.validateHasNames(mBuild);
         final SequenceParams params = SequenceParams.builder().sex(mSex).directory(mBuild).useMemReader(mUseMemReader).loadNames(true).loadFullNames(mIncludeFullNames).mode(mMode).readerRestriction(mReaderRestriction).create();
         try {
-          SdfUtils.validateNoDuplicates(params, !mReads);
+          SdfUtils.validateNoDuplicates(params.reader(), !mReads);
           return params; // Template
         } catch (final RuntimeException e) {
           try {

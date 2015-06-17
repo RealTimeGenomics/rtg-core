@@ -94,6 +94,16 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
   }
 
   @Override
+  public String moduleName() {
+    return "species";
+  }
+
+  @Override
+  public String description() {
+    return "estimate species frequency in metagenomic samples";
+  }
+
+  @Override
   protected SpeciesParams makeParams() throws InvalidParamsException, IOException {
     final Collection<File> inputFiles = CommonFlags.getFileList(mFlags, CommonFlags.INPUT_LIST_FLAG, null, false);
     Diagnostic.userLog("Input SAM files: " + inputFiles);
@@ -105,17 +115,17 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
     final File referenceMap = mFlags.isSet(RELABEL_SPECIES_FLAG) ? (File) mFlags.getValue(RELABEL_SPECIES_FLAG) : null;
     final double minConfidence = (Double) mFlags.getValue(MIN_CONFIDENCE_VALUE);
     return SpeciesParams.builder()
-        .outputParams(outParams)
-        .mapped(inputFiles)
-        .filterParams(SamFilterOptions.makeFilterParamsBuilder(mFlags).excludeUnmapped(true).excludeUnplaced(true).create())
-        .genome(genomesParams)
-        .minIter(minIter)
-        .verbose(mFlags.isSet(X_VERBOSE))
-        .referenceMap(referenceMap)
-        .printAll(mFlags.isSet(PRINT_ALL))
-        .execThreads(CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)))
-        .minConfidence(minConfidence)
-        .create();
+      .outputParams(outParams)
+      .mapped(inputFiles)
+      .filterParams(SamFilterOptions.makeFilterParamsBuilder(mFlags).excludeUnmapped(true).excludeUnplaced(true).create())
+      .genome(genomesParams.readerParams())
+      .minIter(minIter)
+      .verbose(mFlags.isSet(X_VERBOSE))
+      .referenceMap(referenceMap)
+      .printAll(mFlags.isSet(PRINT_ALL))
+      .execThreads(CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)))
+      .minConfidence(minConfidence)
+      .create();
   }
 
   @Override
@@ -165,19 +175,6 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
     inFlag.setMaxCount(Integer.MAX_VALUE);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
-  }
-
-  @Override
-  public String moduleName() {
-    return "species";
-  }
-
-  /**
-   * Main program for species metagenomics. Use -h to get help.
-   * @param args command line arguments.
-   */
-  public static void main(final String[] args) {
-    new SpeciesCli().mainExit(args);
   }
 
 }

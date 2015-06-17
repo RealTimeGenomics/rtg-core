@@ -31,6 +31,12 @@ import junit.framework.TestCase;
 /**
  */
 public class TaxonomyDistributionTest extends TestCase {
+
+  @Override
+  protected void tearDown() throws Exception {
+    Diagnostic.setLogStream();
+  }
+
   static final String EASY = ""
       + "# HEADER Line should be ignored" + StringUtils.LS
       + "0.5\t0" + StringUtils.LS

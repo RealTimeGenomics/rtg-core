@@ -15,8 +15,8 @@ package com.rtg.variant;
 import java.util.TreeSet;
 
 import com.rtg.sam.BadSuperCigarException;
-import com.rtg.sam.CigarFormatter;
 import com.rtg.sam.ReaderRecord;
+import com.rtg.sam.SamUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
@@ -71,7 +71,7 @@ public class SamToMatchCigar extends IntegralAbstract implements SamToMatch {
 
   @Override
   public int end(final VariantAlignmentRecord rec) {
-    return start(rec) + CigarFormatter.cigarRefLength(rec.getCigar());
+    return start(rec) + SamUtils.cigarRefLength(rec.getCigar());
   }
 
   @Override

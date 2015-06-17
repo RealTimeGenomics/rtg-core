@@ -32,19 +32,19 @@ public class CoreCommandTest extends TestCase {
 
   public void testUsage() throws IOException {
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    CoreCommand.FORMAT.mainInit(new String[]{"-h"}, baos, null);
+    ToolsCommand.FORMAT.mainInit(new String[]{"-h"}, baos, null);
     baos.flush();
     TestUtils.containsAll(baos.toString().replaceAll("\\s+", " "), "Usage: rtg format [OPTION]... -o SDF FILE+",
         "-h, --help print help on command-line flag usage");
-    assertEquals("FORMAT", CoreCommand.FORMAT.getCommandName());
-    assertEquals("FORMAT", CoreCommand.FORMAT.toString());
-    assertEquals(CommandCategory.FORMAT, CoreCommand.FORMAT.getCategory());
+    assertEquals("FORMAT", ToolsCommand.FORMAT.getCommandName());
+    assertEquals("FORMAT", ToolsCommand.FORMAT.toString());
+    assertEquals(CommandCategory.FORMAT, ToolsCommand.FORMAT.getCategory());
   }
 
   public void testModules() {
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     final PrintStream ps = new PrintStream(baos);
-    assertEquals(0, CoreCommand.VERSION.mainInit(new String[0], baos, ps));
+    assertEquals(0, ToolsCommand.VERSION.mainInit(new String[0], baos, ps));
     assertEquals(0, CoreCommand.LICENSE.mainInit(new String[0], baos, ps));
     assertEquals(0, CoreCommand.HELP.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CG2SDF.mainInit(new String[0], baos, ps));
@@ -52,11 +52,11 @@ public class CoreCommandTest extends TestCase {
     assertEquals(1, CoreCommand.CGSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CNV.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CALIBRATE.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.MENDELIAN.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.MENDELIAN.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CNVSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.COVERAGE.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CHRSTATS.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.FORMAT.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.FORMAT.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.GENOMESIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.MAPX.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.COMPOSITIONMETA.mainInit(new String[0], baos, ps));
@@ -72,28 +72,28 @@ public class CoreCommandTest extends TestCase {
     assertEquals(1, CoreCommand.SAMMERGE.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.MAPXRENAME.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SAMSTATS.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SDF2FASTA.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SDF2FASTQ.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.SDF2FASTA.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.SDF2FASTQ.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SDF2QUALA.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SDFSUBSET.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SDFSUBSEQ.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.SDFSUBSET.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.SDFSUBSEQ.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SDFSPLIT.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SDFSTATS.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.VCFFILTER.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.VCFANNOTATE.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.SDFSTATS.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.VCFFILTER.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.VCFANNOTATE.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SNPINTERSECT.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.TAXFILTER.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.NCBI2TAX.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.TAXSTATS.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.VCFSTATS.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.VCFMERGE.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.VCFSTATS.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.VCFMERGE.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SNPSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.POPSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SAMPLESIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CHILDSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.DENOVOSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SAMPLEREPLAY.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.VCFEVAL.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.VCFEVAL.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SINGLETON.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.READSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CNVSIM.mainInit(new String[0], baos, ps));
@@ -101,7 +101,7 @@ public class CoreCommandTest extends TestCase {
     assertEquals(1, CoreCommand.CNVSIMEVAL.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.ASSEMBLE.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.ADDPACBIO.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.INDEX.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.INDEX.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.AVIEW.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SPECIES.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.METASNP.mainInit(new String[0], baos, ps));
@@ -111,20 +111,20 @@ public class CoreCommandTest extends TestCase {
     assertEquals(1, CoreCommand.MULTI_FAMILY.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.MULTI_SOMATIC.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.MULTI_POPULATION.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.BGZIP.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.EXTRACT.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.BGZIP.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.EXTRACT.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.AVRBUILD.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.AVRPREDICT.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.AVRSTATS.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.PEDFILTER.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.PEDSTATS.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.VCFSUBSET.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.PEDFILTER.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.PEDSTATS.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.VCFSUBSET.mainInit(new String[0], baos, ps));
   }
 
   public void testModuleHelp() {
     final String[] helpArgs = {"--help"};
     for (final Command module : CoreCommand.INFO.commands()) {
-      if ((module == CoreCommand.VERSION) || (module == CoreCommand.LICENSE) || (module == CoreCommand.HELP)) {
+      if ((module == ToolsCommand.VERSION) || (module == CoreCommand.LICENSE) || (module == CoreCommand.HELP)) {
         continue; // These modules have no help
       }
       GlobalFlags.resetAccessedStatus();
@@ -153,6 +153,6 @@ public class CoreCommandTest extends TestCase {
   }
 
   public void testSpecificLicenceFlags() {
-    assertEquals("enable_rtg", CoreCommand.VERSION.getLicenceKeyName());
+    assertEquals("enable_rtg", ToolsCommand.VERSION.getLicenceKeyName());
   }
 }

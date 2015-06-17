@@ -14,20 +14,15 @@ package com.rtg;
 
 import java.io.ByteArrayOutputStream;
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 import com.rtg.util.StringUtils;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Test for the <code>License</code> class
  */
 public class LicenseCommandTest extends TestCase {
-
-  private static final ResourceBundle USAGE_RESOURCE = ResourceBundle.getBundle("com.rtg.Usage", Locale.getDefault());
 
   public void testModuleList() {
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -51,7 +46,7 @@ public class LicenseCommandTest extends TestCase {
     for (Command module : CoreCommand.INFO.commands()) {
       if (module.isLicensed() || !module.isHidden()) {
         assertTrue(module.getCommandName() + " not found", contains(result, module.getCommandName(), module.isLicensed(), module.getReleaseLevel(), longestUsageLength));
-        assertTrue(module.getCategory().toString() + " not found", result.contains(StringUtils.LS + StringUtils.LS + USAGE_RESOURCE.getString(module.getCategory().toString() + "_CAT_DESC") + ":" + StringUtils.LS));
+        assertTrue(module.getCategory().toString() + " not found", result.contains(StringUtils.LS + StringUtils.LS + module.getCategory().getLabel() + ":" + StringUtils.LS));
       } else {
         assertFalse(module.getCommandName() + " found!", contains(result, module.getCommandName(), false, module.getReleaseLevel(), longestUsageLength));
       }
@@ -95,14 +90,7 @@ public class LicenseCommandTest extends TestCase {
 
   public void testLongestLengthModule() {
     assertEquals(3, LicenseCommand.getLongestLengthModule(new Command[0], "abc"));
-    assertEquals(6, LicenseCommand.getLongestLengthModule(new Command[]{CoreCommand.FORMAT}, "abc"));
+    assertEquals(6, LicenseCommand.getLongestLengthModule(new Command[]{ToolsCommand.FORMAT}, "abc"));
   }
 
-  public static Test suite() {
-    return new TestSuite(LicenseCommandTest.class);
-  }
-
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(LicenseCommandTest.class));
-  }
 }

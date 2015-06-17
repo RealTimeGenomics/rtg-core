@@ -20,6 +20,9 @@ import com.rtg.index.params.CreateParams;
 import com.rtg.util.IORunnable;
 import com.rtg.util.LongUtils;
 import com.rtg.util.SimpleThreadPool;
+import com.rtg.util.array.ArrayUtils;
+import com.rtg.util.array.IndexSorter;
+import com.rtg.util.array.Swapper;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.OneShotTimer;
 import com.rtg.util.integrity.Exam;
@@ -662,9 +665,9 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
       for (long i = 1; i < mInitialPositionLength - 1; i++) {
         final long lo = mInitialPosition.get(i - 1);
         final long hi = mInitialPosition.get(i);
-        Exam.assertTrue(IndexBase.isSorted(mHash, lo, hi));
+        Exam.assertTrue(ArrayUtils.isSorted(mHash, lo, hi));
       }
-      Exam.assertTrue(IndexBase.isSorted(mInitialPosition, 0, mInitialPositionLength));
+      Exam.assertTrue(ArrayUtils.isSorted(mInitialPosition, 0, mInitialPositionLength));
       //Initial position
       final long first = mInitialPosition.get(0);
       Exam.assertTrue("first=" + first, first >= 0 && first <= mNumHashes);

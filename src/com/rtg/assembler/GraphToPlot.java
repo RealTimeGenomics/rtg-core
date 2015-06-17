@@ -43,6 +43,7 @@ import com.rtg.util.store.StoreDirProxy;
  * Read in a graph from our file format and spit out in an alternative visualisation format
  */
 public final class GraphToPlot extends LoggedCli {
+
   static class Node implements Comparable<Node> {
     String mShape;
     final long mContigId;
@@ -213,6 +214,11 @@ public final class GraphToPlot extends LoggedCli {
   @Override
   public String moduleName() {
     return "graph2plot";
+  }
+
+  @Override
+  public String description() {
+    return null;
   }
 
   private static class Valid implements Validator {

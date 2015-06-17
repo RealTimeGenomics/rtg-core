@@ -16,7 +16,6 @@ import java.io.File;
 import java.util.Collections;
 
 import com.rtg.launcher.MockReaderParams;
-import com.rtg.launcher.MockSequenceParams;
 import com.rtg.launcher.OutputParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.util.TestUtils;
@@ -34,7 +33,7 @@ public class DiscordantToolParamsTest extends TestCase {
   }
 
   public void testDefaults() {
-      final DiscordantToolParams def = DiscordantToolParams.builder().mapped(Collections.<File>emptyList()).outputParams(new OutputParams(new File("blah"), false, false)).genome(new MockSequenceParams(new MockReaderParams(1, 1, SequenceMode.BIDIRECTIONAL))).create();
+      final DiscordantToolParams def = DiscordantToolParams.builder().mapped(Collections.<File>emptyList()).outputParams(new OutputParams(new File("blah"), false, false)).genome(new MockReaderParams(1, 1, SequenceMode.BIDIRECTIONAL)).create();
       assertFalse(def.bedOutput());
       assertFalse(def.debugOutput());
       assertFalse(def.intersectionOnly());
@@ -47,7 +46,6 @@ public class DiscordantToolParamsTest extends TestCase {
           , " intersection-only=" + false
           , " output-tabix-index=" + true
           , " min-breakpoint-depth=" + 0
-          , "    SequenceParams"
           );
   }
 

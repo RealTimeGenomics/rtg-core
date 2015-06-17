@@ -25,6 +25,7 @@ import java.util.Map;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.MockSequenceParams;
 import com.rtg.launcher.NoStatistics;
+import com.rtg.launcher.ReaderParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.mode.SequenceType;
 import com.rtg.reader.MockSequencesReader;
@@ -51,7 +52,7 @@ import junit.framework.TestCase;
 public class SamIteratorTaskTest extends TestCase {
 
   static final class DummySingleMappedParams extends SingleMappedParams {
-    protected DummySingleMappedParams(Collection<File> mapped, ISequenceParams genome, int threads) {
+    protected DummySingleMappedParams(Collection<File> mapped, ReaderParams genome, int threads) {
       super(new SingleMappedParamsTest.MockSingleMappedParamsBuilder().name("DummyBuilder").mapped(mapped).genome(genome).ioThreads(threads).execThreads(1));
     }
     @Override
@@ -249,7 +250,7 @@ public class SamIteratorTaskTest extends TestCase {
     final File outputFile = new File(mTempDir, "output");
     final File progressFile = new File(mTempDir, "progress");
     Diagnostic.setLogStream(new LogFile(outputFile));
-    final DummySamIteratorTask task = new DummySamIteratorTask(new DummySingleMappedParams(mapped, genome, 1));
+    final DummySamIteratorTask task = new DummySamIteratorTask(new DummySingleMappedParams(mapped, genome.readerParams(), 1));
     task.exec();
     //System.err.println(FileUtils.fileToString(progressFile));
     //System.err.println(FileUtils.fileToString(outputFile));
@@ -274,7 +275,7 @@ public class SamIteratorTaskTest extends TestCase {
     final Collection<File> mapped2 = new ArrayList<>();
     final File samFile2 = FileUtils.stringToFile(SAMSEQUENCES4, new File(mTempDir, "sam.sam"));
     mapped2.add(samFile2);
-    final DummySamIteratorTask task2 = new DummySamIteratorTask(new DummySingleMappedParams(mapped2, genome, 1));
+    final DummySamIteratorTask task2 = new DummySamIteratorTask(new DummySingleMappedParams(mapped2, genome.readerParams(), 1));
     try {
       task2.exec();
       fail();

@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Properties;
 
+import com.rtg.util.ContingencyTable;
 import com.rtg.util.IORunnable;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.Seedable;

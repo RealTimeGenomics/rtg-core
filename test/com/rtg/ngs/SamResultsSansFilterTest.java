@@ -37,7 +37,6 @@ import com.rtg.util.test.NanoRegression;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
-
 import junit.framework.TestCase;
 
 
@@ -46,8 +45,7 @@ import junit.framework.TestCase;
 public class SamResultsSansFilterTest extends TestCase {
 
   public void writeTempFile(File out) throws IOException {
-    final TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true, false));
-    try {
+    try (TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true, false))) {
       final BinaryTempFileRecord bar = new BinaryTempFileRecord(true, false, false, true);
 
 //  + "1\t65\t0\t28833\t20\t4M5M\t=\t0\t0\tAGCT\t<<<<\tNM:i:1\tAS:i:3\n"
@@ -96,8 +94,6 @@ public class SamResultsSansFilterTest extends TestCase {
 
       bar.setSentinelRecord();
       trw.writeRecord(bar);
-    } finally {
-      trw.close();
     }
   }
 
@@ -203,6 +199,7 @@ public class SamResultsSansFilterTest extends TestCase {
         }
         assertTrue(FileHelper.deleteAll(dir));
       }
+      Diagnostic.setLogStream(prLog);
     }
     final String logString = log.toString();
     //System.err.println(logString);

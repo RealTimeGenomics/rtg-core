@@ -60,6 +60,11 @@ public class DeNovoSampleSimulatorCli extends AbstractCli {
   }
 
   @Override
+  public String description() {
+    return "generate a VCF containing a derived genotype containing de novo variants";
+  }
+
+  @Override
   protected void initFlags() {
     mFlags.setDescription("Generates a VCF containing a derived genotype containing de novo variants.");
     mFlags.registerExtendedHelp();

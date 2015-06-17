@@ -43,8 +43,6 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
   private static final String SPECIES_REFERENCE_DEFAULT = "species";
   private static final String PROTEIN_REFERENCE_DEFAULT = "protein";
 
-  static final String MODULE_NAME = "composition-functional-meta-pipeline";
-
   static final String PROTEIN = "protein";
   static final String SPECIES = "species";
   static final String INPUT = "input";
@@ -60,6 +58,16 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
   protected static enum Platform {
     ILLUMINA,
     IONTORRENT
+  }
+
+  @Override
+  public String moduleName() {
+    return "composition-functional-meta-pipeline";
+  }
+
+  @Override
+  public String description() {
+    return "run metagenomic composition and functional pipelines";
   }
 
   protected static class MetaWrapperValidator implements Validator {
@@ -148,11 +156,6 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
     }
   }
 
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
-  }
-
   boolean hasSpecies() {
     return true;
   }
@@ -219,14 +222,6 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
     } else {
       return 1;
     }
-  }
-
-  /**
-   * Entry point
-   * @param args command line arguments
-   */
-  public static void main(String[] args) {
-    new MetagenomicsWrapperCli().mainExit(args);
   }
 
   @Override

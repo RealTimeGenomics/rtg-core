@@ -35,7 +35,6 @@ import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.variant.SamRecordPopulator;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMFileWriter;
@@ -54,6 +53,11 @@ public class Sam2Bam extends AbstractCli {
   @Override
   public String moduleName() {
     return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return "convert SAM file to BAM file and create index";
   }
 
   @Override
@@ -127,6 +131,24 @@ public class Sam2Bam extends AbstractCli {
     if (calibrationFiles.size() > 0 && calibrationFiles.size() != samFiles.size()) {
       Diagnostic.warning("Number of calibration files does not match number of SAM files, will not merge calibration files.");
     }
+    convertSamToBamSimple(outFile, indexFile, samFiles);
+    if (calibrationFiles.size() > 0 && calibrationFiles.size() == samFiles.size()) {
+      final Calibrator c = new Calibrator(Calibrator.getCovariateSet(calibrationFiles.iterator().next()), null);
+      for (final File f : calibrationFiles) {
+        c.accumulate(f);
+      }
+      c.writeToFile(new File(outFile.getParent(), outFile.getName() + Recalibrate.EXTENSION));
+    }
+  }
+
+  /**
+   * Convert and merge <code>files</code> into one BAM file <code>outFile</code>, no calibration file handling
+   * @param outFile output BAM file
+   * @param indexFile output BAI file
+   * @param samFiles input files
+   * @throws IOException if an IO error occurs
+   */
+  public static void convertSamToBamSimple(File outFile, File indexFile, Collection<File> samFiles) throws IOException {
     try (RecordIterator<SAMRecord> sam = new ThreadedMultifileIterator<>(samFiles, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
       final SAMFileHeader header = sam.header().clone();
       header.setSortOrder(SAMFileHeader.SortOrder.coordinate);
@@ -149,13 +171,6 @@ public class Sam2Bam extends AbstractCli {
       BamIndexer.saveBamIndex(outFile, indexFile);
     } catch (final UnindexableDataException e) {
       Diagnostic.warning("Cannot create BAM index: " + e.getMessage());
-    }
-    if (calibrationFiles.size() > 0 && calibrationFiles.size() == samFiles.size()) {
-      final Calibrator c = new Calibrator(Calibrator.getCovariateSet(calibrationFiles.iterator().next()), null);
-      for (final File f : calibrationFiles) {
-        c.accumulate(f);
-      }
-      c.writeToFile(new File(outFile.getParent(), outFile.getName() + Recalibrate.EXTENSION));
     }
   }
 

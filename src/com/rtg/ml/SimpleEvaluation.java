@@ -11,6 +11,8 @@
  */
 package com.rtg.ml;
 
+import com.rtg.util.ContingencyTable;
+
 /**
  * Evaluate a classifier with respect to a test dataset.
  */

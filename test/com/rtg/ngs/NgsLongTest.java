@@ -136,16 +136,6 @@ public class NgsLongTest extends TestCase {
   private static final String SEQ_DNA_A = ">x" + LS + "actg" + LS;
 
   //similar to NgsTest.testA1()
-  /*public void testA1Step2() {
-    int stepSize = 2;
-    boolean useLongReads = true;
-    NgsTestUtils.checkLong(new NgsMaskParamsGeneral(4, 4, 0, 0, 1, false),
-                           new NgsTestUtils.TestParams(APPLICATION_NAME,
-                           useLongReads, stepSize, SEQ_DNA_A, SEQ_DNA_A, "x\tF\t0\t1\t0\t0" + LS),
-                           new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.TOPN, 5));
-  } */
-
-  //similar to NgsTest.testA1()
   public void testA1Step4() throws Exception {
     final LogRecord lr = new LogRecord();
     Diagnostic.setLogStream(lr);

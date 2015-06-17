@@ -37,6 +37,16 @@ public class MapFCli extends ParamsCli<NgsParams> {
 
   private static final int DEFAULT_WORD_SIZE = 22;
 
+  @Override
+  public String moduleName() {
+    return "mapf";
+  }
+
+  @Override
+  public String description() {
+    return "read mapping for filtering purposes";
+  }
+
   protected static class MapFTask extends NgsTask {
 
     public MapFTask(NgsParams params, OutputStream defaultOutput, UsageMetric metric) {
@@ -77,17 +87,17 @@ public class MapFCli extends ParamsCli<NgsParams> {
     //CommonFlags.initMapIOFlags(flags);
     MapFlags.initInputOutputFlags(flags);
     MapFlags.initPairedEndFormatFlags(flags);
-    CommonFlags.initSharedFlagsOnly(flags);
-    CommonFlags.initMaskFlagsOnly(flags);
-    CommonFlags.initWordSize(flags, "word size (Default is " + DEFAULT_WORD_SIZE + ")");
-    CommonFlags.initStepSize(flags, "step size (Default is half word size)");
+    MapFlags.initSharedFlagsOnly(flags);
+    MapFlags.initMaskFlagsOnly(flags);
+    MapFlags.initWordSize(flags, "word size (Default is " + DEFAULT_WORD_SIZE + ")");
+    MapFlags.initStepSize(flags, "step size (Default is half word size)");
     MapFlags.initReadFreqFlag(flags, 1);
     MapFlags.initMapFlags(flags);
     MapFlags.initBamOutputFlag(flags, "output the alignment files in BAM format");
     MapFlags.initSamOutputFlag(flags);
     MapFlags.initDontUnifyFlag(flags);
     CommonFlags.initIndexFlags(flags);
-    CommonFlags.initPairedEndFlags(flags);
+    MapFlags.initPairedEndFlags(flags);
     MapFlags.initAlignerPenaltyFlags(flags);
     SamCommandHelper.initSamRg(flags);
   }
@@ -121,7 +131,7 @@ public class MapFCli extends ParamsCli<NgsParams> {
 
     final SAMReadGroupRecord rg = MapParamsHelper.getSAMReadGroupRecord(flags);
     MapParamsHelper.populateAlignmentScoreSettings(flags, ngsFilterParamsBuilder, ReaderUtils.isPairedEndDirectory(input), rg);
-    ngsFilterParamsBuilder.outputFilter(filter).zip(!flags.isSet(CommonFlags.NO_GZIP)).errorLimit(CommonFlags.MAX_SCORE);
+    ngsFilterParamsBuilder.outputFilter(filter).zip(!flags.isSet(CommonFlags.NO_GZIP)).errorLimit(MapFlags.MAX_SCORE);
     final NgsFilterParams filterParams = ngsFilterParamsBuilder.create();
 
     final NgsOutputParams outputParams = makeOutputParamsMapf(flags, filterParams, rg);
@@ -164,11 +174,6 @@ public class MapFCli extends ParamsCli<NgsParams> {
     }
 
     return ngsOutputParamsBuilder.create();
-  }
-
-  @Override
-  public String moduleName() {
-    return "mapf";
   }
 
 }

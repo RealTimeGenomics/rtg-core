@@ -19,6 +19,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.TestUtils;
@@ -41,6 +42,7 @@ public class SomaticNanoTest extends TestCase {
 
   @Override
   public void setUp() {
+    GlobalFlags.resetAccessedStatus();
     Diagnostic.setLogStream();
     mNano = new NanoRegression(this.getClass(), false);
   }

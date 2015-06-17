@@ -72,7 +72,7 @@ public class Recalibrate implements Closeable {
     }
     mRegions = regions;
     mTemplate = SequencesReaderFactory.createDefaultSequencesReader(templateSdf);
-    SdfUtils.validateNoDuplicates(mTemplate, templateSdf, false);
+    SdfUtils.validateNoDuplicates(mTemplate, false);
     if (mRegions != null) {
       mRegions.validateTemplate(mTemplate);
     }

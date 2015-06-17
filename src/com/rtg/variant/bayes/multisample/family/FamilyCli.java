@@ -35,9 +35,6 @@ import com.rtg.variant.bayes.multisample.MultisampleTask;
  */
 public class FamilyCli extends AbstractMultisampleCli {
 
-  /** Module name displayed on help */
-  public static final String MODULE_NAME = "family";
-
   // Either this ...
   private static final String PEDIGREE_FLAG = "pedigree";
 
@@ -112,7 +109,12 @@ public class FamilyCli extends AbstractMultisampleCli {
 
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "family";
+  }
+
+  @Override
+  public String description() {
+    return "call variants for a family following Mendelian inheritance";
   }
 
   @Override

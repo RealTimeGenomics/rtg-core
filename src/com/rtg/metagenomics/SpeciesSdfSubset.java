@@ -69,6 +69,16 @@ public final class SpeciesSdfSubset extends LoggedCli {
   private Map<String, Long> mNames = null;
 
   @Override
+  public String moduleName() {
+    return "speciessdfsubset";
+  }
+
+  @Override
+  public String description() {
+    return null;
+  }
+
+  @Override
   protected void initFlags() {
     CommonFlagCategories.setCategories(mFlags);
     mFlags.setDescription("Extracts a subset of sequences from one SDF and outputs them to another SDF.");
@@ -76,11 +86,6 @@ public final class SpeciesSdfSubset extends LoggedCli {
     mFlags.registerRequired('o', OUTPUT_FLAG, File.class, "SDF", "output SDF").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired('t', TAXONOMY_FILE_FLAG, File.class, "FILE", "file containing taxonomy").setCategory(FILTERING);
     mFlags.setValidator(VALIDATOR);
-  }
-
-  @Override
-  public String moduleName() {
-    return "speciessdfsubset";
   }
 
   @Override

@@ -30,6 +30,16 @@ public class CountAssemblyEnds extends AbstractCli {
 
   private static final String MODULE_NAME = "countends";
 
+  @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return null;
+  }
+
   /**
    * @param args command line
    */
@@ -48,10 +58,6 @@ public class CountAssemblyEnds extends AbstractCli {
     flags.registerRequired(File.class, "DIR", "input graph directory");
   }
 
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;  //To change body of implemented methods use File | Settings | File Templates.
-  }
   @Override
   protected int mainExec(OutputStream out, PrintStream log) throws IOException {
     try (final PrintStream print = new PrintStream(out)) {

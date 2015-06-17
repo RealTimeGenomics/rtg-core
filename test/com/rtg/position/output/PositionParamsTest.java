@@ -18,7 +18,6 @@ import java.io.IOException;
 
 import com.rtg.index.IndexUtils;
 import com.rtg.launcher.BuildParams;
-import com.rtg.launcher.BuildTestUtils;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.MockReaderParams;
@@ -27,6 +26,7 @@ import com.rtg.launcher.ReaderParams;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.ProgramMode;
 import com.rtg.position.PositionUtils;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -115,7 +115,7 @@ public class PositionParamsTest extends TestCase {
     final ProgramMode pma = ProgramMode.SLIMN;
     final ProgramMode pmb = ProgramMode.TSLIMX;
 
-    final File subjectDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A1);
+    final File subjectDir = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams subjectaa = SequenceParams.builder().directory(subjectDir).mode(pma.subjectMode()).create();
     final BuildParams buildaa = BuildParams.builder().windowSize(4).stepSize(1).sequences(subjectaa).create();
     final SequenceParams subjectab = SequenceParams.builder().directory(subjectDir).mode(pmb.subjectMode()).create();
@@ -125,7 +125,7 @@ public class PositionParamsTest extends TestCase {
     final BuildParams buildb = BuildParams.builder().windowSize(4).stepSize(1).sequences(subjectb).create();
 
     final File hitDir = FileHelper.createTempDirectory(mDir);
-    final File queryDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A2);
+    final File queryDir = ReaderTestUtils.getDNASubDir(SEQ_DNA_A2, mDir);
     final SequenceParams querya = SequenceParams.builder().directory(queryDir).mode(pma.queryMode()).create();
     final BuildParams queriesa = BuildParams.builder().windowSize(4).stepSize(1).sequences(querya).create();
 
@@ -157,11 +157,6 @@ public class PositionParamsTest extends TestCase {
     j.close();
   }
 
-  /** Subject sequence used for the calibration runs.  */
-  public static final String SEQ_DNA_A1 = ""
-    + ">x" + LS
-    + "actg" + LS;
-
   /** Query sequence used for the calibration runs.  */
   public static final String SEQ_DNA_A2 = ""
     + ">u" + LS
@@ -183,12 +178,12 @@ public class PositionParamsTest extends TestCase {
 
   public void test() throws Exception {
     final ProgramMode pm = ProgramMode.SLIMN;
-    final File subjectDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A1);
+    final File subjectDir = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams subject = SequenceParams.builder().directory(subjectDir).mode(pm.subjectMode()).create();
     final BuildParams build = BuildParams.builder().windowSize(4).stepSize(1).sequences(subject).create();
 
     final File hitDir = FileHelper.createTempDirectory(mDir);
-    final File queryDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A2);
+    final File queryDir = ReaderTestUtils.getDNASubDir(SEQ_DNA_A2, mDir);
     final SequenceParams query = SequenceParams.builder().directory(queryDir).mode(pm.queryMode()).create();
     final BuildParams queries = BuildParams.builder().windowSize(4).stepSize(1).sequences(query).create();
     final PositionOutputParams outputParams = new PositionOutputParams(hitDir, OutputFormatType.SEGMENT, null, null, false, 1);
@@ -239,12 +234,12 @@ public class PositionParamsTest extends TestCase {
 
   public void testSearchSubSequence() throws Exception {
     final ProgramMode pm = ProgramMode.SLIMN;
-    final File subjectDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A1);
+    final File subjectDir = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams subject = SequenceParams.builder().directory(subjectDir).mode(pm.subjectMode()).create();
     final BuildParams build = BuildParams.builder().windowSize(4).stepSize(1).sequences(subject).create();
 
     final File hitDir = FileHelper.createTempDirectory(mDir);
-    final File queryDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A3);
+    final File queryDir = ReaderTestUtils.getDNASubDir(SEQ_DNA_A3, mDir);
     final SequenceParams query = SequenceParams.builder().directory(queryDir).mode(pm.queryMode()).create();
     final BuildParams queries = BuildParams.builder().windowSize(4).stepSize(1).sequences(query).create();
     final PositionOutputParams outputParams = new PositionOutputParams(hitDir, OutputFormatType.SEGMENT, null, null, false, 1);
@@ -273,12 +268,12 @@ public class PositionParamsTest extends TestCase {
 
   public void testBuildSubSequence() throws Exception {
     final ProgramMode pm = ProgramMode.SLIMN;
-    final File subjectDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A1);
+    final File subjectDir = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams subject = SequenceParams.builder().directory(subjectDir).mode(pm.subjectMode()).create();
     final BuildParams build = BuildParams.builder().windowSize(4).stepSize(1).sequences(subject).create();
 
     final File hitDir = FileHelper.createTempDirectory(mDir);
-    final File queryDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A3);
+    final File queryDir = ReaderTestUtils.getDNASubDir(SEQ_DNA_A3, mDir);
     final SequenceParams query = SequenceParams.builder().directory(queryDir).mode(pm.queryMode()).create();
     final BuildParams queries = BuildParams.builder().windowSize(4).stepSize(1).sequences(query).create();
     final PositionOutputParams outputParams = new PositionOutputParams(hitDir, OutputFormatType.SEGMENT, null, null, false, 1);
@@ -299,12 +294,12 @@ public class PositionParamsTest extends TestCase {
 
   public void test1() throws Exception {
     final ProgramMode pm = ProgramMode.SLIMN;
-    final File subjectDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A1);
+    final File subjectDir = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams subject = SequenceParams.builder().directory(subjectDir).mode(pm.subjectMode()).create();
     final BuildParams build = BuildParams.builder().windowSize(4).stepSize(1).sequences(subject).create();
 
     final File hitDir = FileHelper.createTempDirectory(mDir);
-    final File queryDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A2);
+    final File queryDir = ReaderTestUtils.getDNASubDir(SEQ_DNA_A2, mDir);
     final SequenceParams query = SequenceParams.builder().directory(queryDir).mode(pm.queryMode()).create();
     final BuildParams queries = BuildParams.builder().windowSize(4).stepSize(1).sequences(query).create();
     final PositionOutputParams outputParams = new PositionOutputParams(hitDir, OutputFormatType.SEGMENT, null, null, false, 1);

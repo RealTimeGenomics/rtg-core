@@ -23,8 +23,6 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.variant.bayes.multisample.population.AlleleCounts;
 import com.rtg.variant.bayes.multisample.population.AlleleCountsFileReader;
-import com.rtg.vcf.VcfReader;
-import com.rtg.vcf.VcfRecord;
 
 
 /**
@@ -46,17 +44,11 @@ public class AlleleCountsFileConverter {
    */
   public void convert(File vcfFile, File out) throws IOException {
     Diagnostic.developerLog("Loading variances...");
-    final VcfReader vr = VcfReader.openVcfReader(vcfFile);
-    final boolean supportsANAC = AlleleCountsFileReader.checkSupportsACandAN(vr.getHeader());
-    try {
-      try (OutputStream os = FileUtils.createOutputStream(out, true)) {
-        while (vr.hasNext()) {
-          final VcfRecord record = vr.next();
-          final AlleleCounts alleleCounts = AlleleCountsFileReader.vcfRecordToAlleleCountLine(record, supportsANAC);
-          if (alleleCounts == null) {
-            continue;
-          }
-          os.write(record.getSequenceName().getBytes());
+    try (OutputStream os = FileUtils.createOutputStream(out, true)) {
+      try (AlleleCountsFileReader acr = AlleleCountsFileReader.openAlleleCountReader(vcfFile, null)) {
+        while (acr.next()) {
+          final AlleleCounts alleleCounts = acr.getCurrent();
+          os.write(acr.getCurrentReference().getBytes());
           os.write('\t');
           os.write(Integer.toString(alleleCounts.position() + 1).getBytes());
           os.write('\t');
@@ -77,13 +69,11 @@ public class AlleleCountsFileConverter {
           os.write(StringUtils.LS.getBytes());
         }
       }
-      try {
-        new TabixIndexer(out).saveAlleleCountsIndex();
-      } catch (final UnindexableDataException e) {
-        System.err.println("Cannot produce TABIX index for: " + out + ": " + e.getMessage());
-      }
-    } finally {
-      vr.close();
+    }
+    try {
+      new TabixIndexer(out).saveAlleleCountsIndex();
+    } catch (final UnindexableDataException e) {
+      System.err.println("Cannot produce TABIX index for: " + out + ": " + e.getMessage());
     }
   }
 

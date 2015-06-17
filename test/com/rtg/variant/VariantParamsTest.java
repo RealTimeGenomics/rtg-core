@@ -21,6 +21,7 @@ import java.util.Collections;
 import java.util.List;
 
 import com.rtg.launcher.OutputParams;
+import com.rtg.launcher.ReaderParams;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
@@ -53,6 +54,7 @@ public class VariantParamsTest extends TestCase {
 
   @Override
   public void tearDown() {
+    Diagnostic.setLogStream();
     assertTrue(FileHelper.deleteAll(mDir));
     mDir = null;
   }
@@ -60,10 +62,10 @@ public class VariantParamsTest extends TestCase {
   private static final String TEST_OUTPUT = "varianttestoutput";
 
 
-  private SequenceParams makeGenome() throws IOException {
+  private ReaderParams makeGenome() throws IOException {
     final File subjectsDir = FileUtils.createTempDir("test", "coverageparams", mDir);
     ReaderTestUtils.getReaderDNA(">t\nacgt", subjectsDir, null).close();
-    return SequenceParams.builder().directory(subjectsDir).mode(SequenceMode.UNIDIRECTIONAL).create();
+    return SequenceParams.builder().directory(subjectsDir).mode(SequenceMode.UNIDIRECTIONAL).create().readerParams();
   }
 
   public void testDefaultsWithNonIdentityPosterior() {
@@ -139,7 +141,7 @@ public class VariantParamsTest extends TestCase {
             " interesting_threshold=" + 5.0,
             " interesting_separation=" + 4,
             " heterozygous prior=0.0003000 homozygous prior=0.0003000",
-            " SequenceParams mode=UNIDIRECTIONAL region=[(0:-1), (1:-1)] directory=",
+            " SequenceParams mode=UNIDIRECTIONAL directory=",
             " OutputParams output directory=" + TEST_OUTPUT,
             " progress=" + Boolean.FALSE,
             " zip=" + Boolean.FALSE,

@@ -42,11 +42,14 @@ public class MapCli extends ParamsCli<NgsParams>  {
   static final String MODULE_NAME = "map";
   static final String TOP_RANDOM = "top-random";
 
-  /**
-   * @param args arguments
-   */
-  public static void main(final String[] args) {
-    new MapCli().mainExit(args);
+  @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return "read mapping";
   }
 
   @Override
@@ -61,8 +64,8 @@ public class MapCli extends ParamsCli<NgsParams>  {
     flags.setValidator(new MapFlagsValidator());
     MapFlags.initInputOutputFlags(flags);
     MapFlags.initPairedEndFormatFlags(flags);
-    CommonFlags.initPairedEndFlags(flags);
-    CommonFlags.initSharedFlags(flags);
+    MapFlags.initPairedEndFlags(flags);
+    MapFlags.initSharedFlags(flags);
     SamCommandHelper.initSamRg(flags);
     MapFlags.initMapFlags(flags);
     MapFlags.initSamOutputFlag(flags);
@@ -78,7 +81,7 @@ public class MapCli extends ParamsCli<NgsParams>  {
 
   @Override
   protected NgsParams makeParams() throws InvalidParamsException, IOException {
-    return makeRamMapParams(mFlags, CommonFlags.DEFAULT_WORD_SIZE, 1);
+    return makeRamMapParams(mFlags, MapFlags.DEFAULT_WORD_SIZE, 1);
   }
 
   private static NgsParams makeRamMapParams(CFlags flags, int defWordSize, int defStepRatio) throws InvalidParamsException, IOException {
@@ -103,7 +106,7 @@ public class MapCli extends ParamsCli<NgsParams>  {
     ngsParamsBuilder.pairOrientation((MachineOrientation) flags.getValue(CommonFlags.PAIR_ORIENTATION_FLAG));
     ngsParamsBuilder.maxFragmentLength((Integer) flags.getValue(CommonFlags.MAX_FRAGMENT_SIZE));
     ngsParamsBuilder.minFragmentLength((Integer) flags.getValue(CommonFlags.MIN_FRAGMENT_SIZE));
-    ngsParamsBuilder.compressHashes((Boolean) flags.getValue(CommonFlags.COMPRESS_HASHES_FLAG));
+    ngsParamsBuilder.compressHashes((Boolean) flags.getValue(MapFlags.COMPRESS_HASHES_FLAG));
 
     MapParamsHelper.populateAlignerPenaltiesParams(ngsParamsBuilder, flags);
 
@@ -121,8 +124,8 @@ public class MapCli extends ParamsCli<NgsParams>  {
     .outputDir((File) flags.getValue(CommonFlags.OUTPUT_FLAG))
     .tempFilesDir((File) flags.getValue(CommonFlags.TEMP_DIR))
     .filterParams(filterParams)
-    .outputUnmated(!flags.isSet(CommonFlags.NO_UNMATED))
-    .outputUnmapped(!flags.isSet(CommonFlags.NO_UNMAPPED))
+    .outputUnmated(!flags.isSet(MapFlags.NO_UNMATED))
+    .outputUnmapped(!flags.isSet(MapFlags.NO_UNMAPPED))
     .tabular(false)
     .bam(!flags.isSet(MapFlags.SAM_FLAG))
     .unify(!flags.isSet(MapFlags.DONT_UNIFY_FLAG))
@@ -179,33 +182,33 @@ public class MapCli extends ParamsCli<NgsParams>  {
       filter = OutputFilter.SAM_SINGLE_END;
     }
 
-    final int topN = (Integer) flags.getValue(CommonFlags.TOPN_RESULTS_FLAG);
-    final int maxTopResults = (Integer) flags.getValue(CommonFlags.MAX_TOP_RESULTS_FLAG);
+    final int topN = (Integer) flags.getValue(MapFlags.TOPN_RESULTS_FLAG);
+    final int maxTopResults = (Integer) flags.getValue(MapFlags.MAX_TOP_RESULTS_FLAG);
     ngsFilterParamsBuilder.outputFilter(filter)
     .zip(!flags.isSet(CommonFlags.NO_GZIP))
     .topN(Math.max(topN, maxTopResults))
     .maxTopResults(maxTopResults)
-    .errorLimit((Integer) flags.getValue(CommonFlags.XSCORE_INDEL)) //this used to be default for solexa / illumina short reads
+    .errorLimit((Integer) flags.getValue(MapFlags.XSCORE_INDEL)) //this used to be default for solexa / illumina short reads
     .exclude(flags.isSet(CommonFlags.EXCLUDE_FLAG));
     MapParamsHelper.populateAlignmentScoreSettings(flags, ngsFilterParamsBuilder, paired, rg);
     return ngsFilterParamsBuilder.create();
   }
 
   static void initRamMapFlags(CFlags flags) {
-    flags.registerOptional('n', CommonFlags.MAX_TOP_RESULTS_FLAG, Integer.class, CommonFlags.INT, "maximum number of top equal results output per read", 5).setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(CommonFlags.NO_UNMAPPED, "do not output unmapped reads").setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(CommonFlags.NO_UNMATED, "do not output unmated reads when in paired-end mode").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, CommonFlags.INT, "maximum number of top equal results output per read", 5).setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(MapFlags.NO_UNMAPPED, "do not output unmapped reads").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(MapFlags.NO_UNMATED, "do not output unmated reads when in paired-end mode").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(MapFlags.OUTPUT_UNFILTERED, "output all alignments meeting thresholds instead of applying mating and N limits").setCategory(CommonFlagCategories.REPORTING);
 
     //x flags
     flags.registerOptional(MapFlags.X_LONG_READ, "use the non-default version for long read").setCategory(CommonFlagCategories.UTILITY);
-    flags.registerOptional(CommonFlags.MASK_FLAG, String.class, "STRING", "mask class name").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(CommonFlags.COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", true).setCategory(CommonFlagCategories.UTILITY);
-    flags.registerOptional(CommonFlags.XSCORE_INDEL, Integer.class, CommonFlags.INT, "set max score indel for topn threshold", CommonFlags.MAX_SCORE).setCategory(CommonFlagCategories.REPORTING); //7 was used for illumina mappings
+    flags.registerOptional(MapFlags.MASK_FLAG, String.class, "STRING", "mask class name").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(MapFlags.COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", true).setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(MapFlags.XSCORE_INDEL, Integer.class, CommonFlags.INT, "set max score indel for topn threshold", MapFlags.MAX_SCORE).setCategory(CommonFlagCategories.REPORTING); //7 was used for illumina mappings
     flags.registerOptional(MapFlags.OUTPUT_NULLFILTERED, "write nothing").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(MapFlags.MIN_HITS_FLAG, Integer.class, CommonFlags.INT, "Require this many hits to a logical read position before further processing").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(CommonFlags.EXCLUDE_FLAG, BuildCommon.RESOURCE.getString("EXCLUDE_DESC")).setCategory(CommonFlagCategories.UTILITY);
-    flags.registerOptional(CommonFlags.TOPN_RESULTS_FLAG, Integer.class, CommonFlags.INT, "set the number of results per read for topn. Allowed values are between 1 and 255", 5).setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(MapFlags.TOPN_RESULTS_FLAG, Integer.class, CommonFlags.INT, "set the number of results per read for topn. Allowed values are between 1 and 255", 5).setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(TOP_RANDOM, "output a single random top hit per read").setCategory(CommonFlagCategories.REPORTING);
   }
 
@@ -224,14 +227,14 @@ public class MapCli extends ParamsCli<NgsParams>  {
     }
 
     private static boolean validateRamMapParams(CFlags flags) {
-      if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.TOPN_RESULTS_FLAG, 1, 255)) {
+      if (!CommonFlags.validateFlagBetweenValues(flags, MapFlags.TOPN_RESULTS_FLAG, 1, 255)) {
         return false;
       }
-      if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.MAX_TOP_RESULTS_FLAG, 1, 65535)) {
+      if (!CommonFlags.validateFlagBetweenValues(flags, MapFlags.MAX_TOP_RESULTS_FLAG, 1, 65535)) {
         return false;
       }
-      if (flags.isSet(CommonFlags.XSCORE_INDEL)) {
-        if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.XSCORE_INDEL, 0, CommonFlags.MAX_SCORE)) {
+      if (flags.isSet(MapFlags.XSCORE_INDEL)) {
+        if (!CommonFlags.validateFlagBetweenValues(flags, MapFlags.XSCORE_INDEL, 0, MapFlags.MAX_SCORE)) {
           return false;
         }
       }
@@ -260,11 +263,6 @@ public class MapCli extends ParamsCli<NgsParams>  {
     Diagnostic.userLog(MODULE_NAME + " paired=" + params.paired() + ", long=" + params.useLongReadMapping() + " running NgsTask");
     final UsageMetric usageMetric = mUsageMetric == null ? new UsageMetric() : mUsageMetric; //create when null to cover some testing
     return new NgsTask(params, out, usageMetric);
-  }
-
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
   }
 
 }

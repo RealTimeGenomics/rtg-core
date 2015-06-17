@@ -88,7 +88,7 @@ public class PriorPopulationVariantGenerator extends PopulationVariantGenerator 
         throw new IllegalArgumentException("Bias must be between -1 and 1");
       }
       try {
-        try (BufferedReader r = new BufferedReader(new InputStreamReader(Resources.getResourceAsStream("com/rtg/variant/util/alt.allele.frequency.counts.txt")))) {
+        try (BufferedReader r = new BufferedReader(new InputStreamReader(Resources.getResourceAsStream("com/rtg/simulation/variants/alt.allele.frequency.counts.txt")))) {
           String line;
           final LongChunks cumcounts = new LongChunks(0);
           final IntChunks altfreqs = new IntChunks(0);

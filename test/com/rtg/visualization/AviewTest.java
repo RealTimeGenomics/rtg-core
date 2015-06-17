@@ -20,6 +20,7 @@ import java.io.IOException;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.sam.Sam2Bam;
@@ -81,6 +82,7 @@ public class AviewTest extends AbstractCliTest {
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
       final MemoryPrintStream err = new MemoryPrintStream();
       final int code2 = aview.mainInit(TestUtils.append(args, extraargs), bos, err.printStream());
+      GlobalFlags.resetAccessedStatus();
       assertEquals(err.toString(), 0, code2);
       assertEquals(expectErr, err.toString());
       bos.flush();
@@ -105,7 +107,9 @@ public class AviewTest extends AbstractCliTest {
     final File bam = new File(f, ALIGNMENTS_BAM_FILE_NAME);
     final MemoryPrintStream errStream = new MemoryPrintStream();
     final Sam2Bam bc = new Sam2Bam();
+    GlobalFlags.resetAccessedStatus();
     final int code = bc.mainInit(new String[] {"-o", bam.getPath(), alignments.getPath()}, TestUtils.getNullOutputStream(), errStream.printStream());
+    GlobalFlags.resetAccessedStatus();
     assertEquals(errStream.toString(), 0, code);
   }
 
@@ -187,9 +191,12 @@ public class AviewTest extends AbstractCliTest {
       final MemoryPrintStream errStream = new MemoryPrintStream();
       final Sam2Bam bc = new Sam2Bam();
       final int code = bc.mainInit(new String[] {"-o", bam.getPath(), alignments.getPath()}, TestUtils.getNullOutputStream(), errStream.printStream());
+      GlobalFlags.resetAccessedStatus();
       assertEquals(errStream.toString(), 0, code);
       final MemoryPrintStream result = new MemoryPrintStream();
-      final int code2 = new Aview().mainInit(new String[] {"-t", template.getPath(), "--region", "g1:9", bam.getPath(), "--bed", bed.getPath() + "=mybed", "-c", snps.getPath() + "=mysnps", "--no-color"}, result.outputStream(), errStream.printStream());
+      final int code2 = new Aview().mainInit(new String[] {"-t", template.getPath(), "--region", "g1:9", bam.getPath(), "--bed", bed.getPath() + "=mybed", "-c", snps.getPath() + "=mysnps",
+"--no-color"}, result.outputStream(), errStream.printStream());
+      GlobalFlags.resetAccessedStatus();
       assertEquals(errStream.toString(), 0, code2);
       mNano.check("aview-delete-exp.txt", result.toString());
       //System.err.println(errStream.toString());
@@ -224,6 +231,7 @@ public class AviewTest extends AbstractCliTest {
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
       final MemoryPrintStream err = new MemoryPrintStream();
       final int code2 = aview.mainInit(args, bos, err.printStream());
+      GlobalFlags.resetAccessedStatus();
       assertEquals(err.toString(), 0, code2);
       assertEquals("", err.toString());
       bos.flush();

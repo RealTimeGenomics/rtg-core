@@ -20,7 +20,6 @@ import java.io.OutputStream;
 import java.util.Collections;
 
 import com.rtg.launcher.MockReaderParams;
-import com.rtg.launcher.MockSequenceParams;
 import com.rtg.launcher.OutputParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.util.TestUtils;
@@ -44,7 +43,7 @@ public class SvToolParamsTest extends TestCase {
     Diagnostic.setLogStream();
     final File tempDir = FileUtils.createTempDir("svtoolparams", "test");
     try {
-      final SvToolParams def = SvToolParams.builder().mapped(Collections.<File>emptyList()).outputParams(new OutputParams(tempDir, false, false)).genome(new MockSequenceParams(new MockReaderParams(1, 1, SequenceMode.BIDIRECTIONAL))).create();
+      final SvToolParams def = SvToolParams.builder().mapped(Collections.<File>emptyList()).outputParams(new OutputParams(tempDir, false, false)).genome(new MockReaderParams(1, 1, SequenceMode.BIDIRECTIONAL)).create();
       assertEquals(def.binSize(), 0);
       assertEquals(def.stepSize(), 0);
       assertEquals(def.fineStepSize(), 0);
@@ -65,7 +64,6 @@ public class SvToolParamsTest extends TestCase {
           , " step-size=" + 0
           , " fine-step-size=" + 0
           , " correctionsFile=" + null
-          , "    SequenceParams"
           );
     } finally {
       assertTrue(FileHelper.deleteAll(tempDir));

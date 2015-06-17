@@ -32,7 +32,7 @@ import com.rtg.sam.SamUtils;
 import com.rtg.sam.ThreadedMultifileIterator;
 import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.variant.SamRecordPopulator;
+import com.rtg.sam.SamRecordPopulator;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMReadGroupRecord;

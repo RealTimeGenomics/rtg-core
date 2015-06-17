@@ -15,40 +15,22 @@ package com.rtg.segregation;
 import java.io.File;
 import java.io.IOException;
 
+import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.AbstractCliTest;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reference.ReferenceGenome;
-import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.Talkback;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
-
-import junit.framework.TestCase;
 
 /**
  */
-public class SegregationCheckerCliTest extends TestCase {
-
-  private NanoRegression mNano = null;
+public class SegregationCheckerCliTest extends AbstractCliTest {
 
   @Override
-  public void setUp() {
-    Diagnostic.setLogStream();
-    mNano = new NanoRegression(this.getClass(), false);
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    // clear the module name so later tests don't report SlimException to the
-    // Talkback system
-    Talkback.setModuleName(null);
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
+  protected AbstractCli getCli() {
+    return new SegregationCheckerCli();
   }
 
   public void testNano() throws IOException {
@@ -86,4 +68,5 @@ public class SegregationCheckerCliTest extends TestCase {
       mNano.check("crossovers_annotated_repaired.vcf", result, true);
     }
   }
+
 }

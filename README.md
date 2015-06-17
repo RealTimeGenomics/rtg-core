@@ -13,6 +13,12 @@ If you require a license for commercial use or wish to purchase commercial suppo
 * Java 1.7 or later
 * apache ant 1.9 or later
 
+## Check out source code for RTG Tools and RTG Core
+
+    $ git clone https://github.com/RealTimeGenomics/rtg-tools.git
+    $ git clone https://github.com/RealTimeGenomics/rtg-core.git
+    $ cd rtg-core
+
 ## Compile / run unit tests
 
     $ ant runalltests
@@ -35,9 +41,9 @@ See [doc/ReleaseNotes.txt](doc/ReleaseNotes.txt) for release history details.
 
 ## Support
 
-Some email support will be available via support@realtimegenomics.com which we will do our best to fulfill. If you have specific support or service requirements, talk to us about our support offerings which include guaranteed response times, training, project advice, priority bug fixes and feature requests.
-
 An [rtg-users](https://groups.google.com/a/realtimegenomics.com/forum/#!forum/rtg-users) discussion group is now available for general questions, tips, and other discussions.
 
 To be informed of new software releases, subscribe to the low-traffic [rtg-announce](https://groups.google.com/a/realtimegenomics.com/forum/#!forum/rtg-announce) group.
+
+Some email support will be available via support@realtimegenomics.com which we will do our best to fulfill. If you have specific support or service requirements, talk to us about our support offerings which include guaranteed response times, training, project advice, priority bug fixes and feature requests.
 

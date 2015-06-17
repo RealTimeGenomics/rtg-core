@@ -702,6 +702,7 @@ public class CgGotohEditDistanceTest extends TestCase {
     logContains("RightOverlap", "-4..0", 0, 0, 0, 0, 0);
     logContains("RightSmall", "0..3", 0, 0, 0, 0);
     logContains("RightLarge", "4..8", 0, 0, 0, 0, 0);
+    Diagnostic.setLogStream();
   }
 
   public static void main(String[] args) {

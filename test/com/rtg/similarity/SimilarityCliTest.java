@@ -16,6 +16,7 @@ import static com.rtg.util.StringUtils.LS;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -33,7 +34,6 @@ import com.rtg.index.similarity.IndexSimilarity;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
 import com.rtg.launcher.BuildParams;
-import com.rtg.launcher.BuildTestUtils;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.MockReaderParams;
@@ -102,6 +102,65 @@ public class SimilarityCliTest extends AbstractCliTest {
       + "#rtg " + null + LS + "\tbar\tbaaa" + LS
       + "bar\t1\t0" + LS
       + "baaa\t0\t1" + LS;
+
+  /**
+   * @param inputSequence the sequence
+   * @param dir the dir
+   * @throws IOException if badness
+   */
+  public static void writeDNA(final String inputSequence, final File dir) throws IOException {
+    final ArrayList<InputStream> inputStreams = new ArrayList<>();
+    inputStreams.add(new ByteArrayInputStream(inputSequence.getBytes()));
+    final FastaSequenceDataSource ds = new FastaSequenceDataSource(inputStreams,
+        new DNAFastaSymbolTable());
+    final SequencesWriter sequenceWriter = new SequencesWriter(ds, dir, 20, PrereadType.UNKNOWN, true);
+    sequenceWriter.processSequences();
+  }
+
+  /**
+   * Make sure there are no logs in the working directory.
+   */
+  public static void checkNoLogs() {
+    final File wd = new File(System.getProperty("user.dir"));
+    final File[] logs = wd.listFiles(new FilenameFilter() {
+      @Override
+      public boolean accept(final File dir, final String name) {
+        return name.startsWith("log") && name.endsWith(".log");
+      }
+    });
+    if (logs != null && logs.length > 0) {
+      System.err.println("Found " + logs.length + " logs:");
+      for (final File log : logs) {
+        System.err.println(log);
+      }
+      fail();
+    }
+  }
+
+  /**
+   * Take an array of strings which may contain nulls and return one with
+   * the nulls elided.
+   * Useful when generating command line arguments.
+   * @param args0 to be processed.
+   * @return args0 without the nulls.
+   */
+  public static String[] elideNulls(final String[] args0) {
+    int count = 0;
+    for (final String str : args0) {
+      if (str != null) {
+        count++;
+      }
+    }
+    final String[] args = new String[count];
+    int i = 0;
+    for (final String str : args0) {
+      if (str != null) {
+        args[i] = str;
+        i++;
+      }
+    }
+    return args;
+  }
 
   @Override
   public void setUp() throws IOException {
@@ -219,7 +278,7 @@ public class SimilarityCliTest extends AbstractCliTest {
     final File subjectsDir = FileHelper.createTempDirectory();
     final String errStr;
     try {
-      BuildTestUtils.writeDNA(subjects, subjectsDir);
+      writeDNA(subjects, subjectsDir);
       try (final ByteArrayOutputStream err = new ByteArrayOutputStream()) {
         try (final PrintStream errs = new PrintStream(err)) {
           try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
@@ -229,7 +288,7 @@ public class SimilarityCliTest extends AbstractCliTest {
                 "-w", windowSize + "",
                 "-s", stepSize + ""
             };
-            final String[] args = BuildTestUtils.elideNulls(args0);
+            final String[] args = elideNulls(args0);
             final int ret = new SimilarityCli().mainInit(args, out, errs);
             assertEquals(0, ret);
 
@@ -268,24 +327,24 @@ public class SimilarityCliTest extends AbstractCliTest {
     final String errStr;
     final File subjectsDir = FileHelper.createTempDirectory();
     try {
-      BuildTestUtils.writeDNA(subjects, subjectsDir);
+      writeDNA(subjects, subjectsDir);
       final File outputDir = FileHelper.createTempDirectory();
       try {
         FileHelper.deleteAll(outputDir);
         try (final ByteArrayOutputStream err = new ByteArrayOutputStream()) {
           try (final PrintStream errs = new PrintStream(err)) {
             try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-              BuildTestUtils.checkNoLogs();
+              checkNoLogs();
               final String[] args0 = {
                   "-i", subjectsDir.getPath(),
                   "-o", outputDir.getPath(),
                   "-w", windowSize + "",
                   "-s", stepSize + ""
               };
-              final String[] args = BuildTestUtils.elideNulls(args0);
+              final String[] args = elideNulls(args0);
               final SimilarityCli cli = new SimilarityCli();
               cli.mainInit(args, out, errs);
-              BuildTestUtils.checkNoLogs();
+              checkNoLogs();
 
               final String logStr = FileUtils.fileToString(new File(outputDir, SimilarityCli.MODULE_NAME + ".log"));
               checkLog(logStr);
@@ -596,19 +655,19 @@ public class SimilarityCliTest extends AbstractCliTest {
       throws IOException {
     final File subjectsDir = FileHelper.createTempDirectory();
     try {
-      BuildTestUtils.writeDNA(SEQ_DEFU, subjectsDir);
+      writeDNA(SEQ_DEFU, subjectsDir);
       final File outputDir = FileHelper.createTempDirectory();
       try {
         FileHelper.deleteAll(outputDir);
         final ByteArrayOutputStream ba = new ByteArrayOutputStream();
         final PrintStream err = new PrintStream(ba);
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        BuildTestUtils.checkNoLogs();
+        checkNoLogs();
         new SimilarityCli().mainInit(new String[]
             {"-i", subjectsDir.getPath(), "-o", outputDir.getPath()},
             bout, err
             );
-        BuildTestUtils.checkNoLogs();
+        checkNoLogs();
 
         final String logStr = FileUtils.fileToString(new File(outputDir, SimilarityCli.MODULE_NAME + ".log"));
         checkLog(logStr);
@@ -670,6 +729,7 @@ public class SimilarityCliTest extends AbstractCliTest {
     //System.err.println(logStr);
     assertTrue(logStr2.contains(java.io.IOException.class.getName()));
     assertTrue(logStr2.contains("Error: A problem has occurred while attempting to write information into the directory \"outDir\". Check that this directory exists and that you have permission to write it."));
+    Diagnostic.setLogStream();
   }
 
   public void testMakeNames() throws IOException {

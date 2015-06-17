@@ -40,14 +40,30 @@ public class UnmatedAugmenterCli extends LoggedCli {
   static final String OUTPUT_SUFFIX_FLAG = "Xoutput-suffix";
 
   @Override
-  protected void initFlags() {
-    initFlags(mFlags);
+  public String moduleName() {
+    return "svprep";
   }
 
-  void initFlags(CFlags flags) {
-    flags.setDescription("Prepares SAM files for use with sv module, by finding mate position/frame information for discordant matings and generates the read group statistics.");
-    CommonFlagCategories.setCategories(flags);
-    flags.registerExtendedHelp();
+  @Override
+  public String description() {
+    return "prepare SAM/BAM files for structural variant analysis";
+  }
+
+  @Override
+  protected void mainExit(String[] args) {
+    super.mainExit(args);
+  }
+
+  @Override
+  protected File outputDirectory() {
+    return (File) mFlags.getAnonymousValue(0);
+  }
+
+  @Override
+  protected void initFlags() {
+    mFlags.setDescription("Prepares SAM files for use with sv module, by finding mate position/frame information for discordant matings and generates the read group statistics. This command is not needed with RTG mappings unless automatic svprep was disabled.");
+    CommonFlagCategories.setCategories(mFlags);
+    mFlags.registerExtendedHelp();
     mFlags.registerOptional('s', OUTPUT_SUFFIX_FLAG, String.class, "STRING", "suffix for output file of each input file", ".augmented").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerOptional('k', KEEP_ORIG_FLAG, "keep original file and create augmented file using suffix").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerRequired(File.class, "DIR", "directory containing SAM/BAM format files").setCategory(CommonFlagCategories.INPUT_OUTPUT);
@@ -225,29 +241,6 @@ public class UnmatedAugmenterCli extends LoggedCli {
       throw new NoTalkbackSlimException("File: \"" + ret.getPath() + "\" already exists. Please remove or choose a different suffix.");
     }
     return ret;
-  }
-
-  @Override
-  public String moduleName() {
-    return "svprep";
-  }
-
-  @Override
-  protected void mainExit(String[] args) {
-    super.mainExit(args);
-  }
-
-  @Override
-  protected File outputDirectory() {
-    return (File) mFlags.getAnonymousValue(0);
-  }
-
-  /**
-   * Run from command line
-   * @param args <code>input-file output-file</code>
-   */
-  public static void main(String[] args) {
-    new UnmatedAugmenterCli().mainExit(args);
   }
 
   private static class UnmatedAugmenterValidator implements Validator {

@@ -50,7 +50,7 @@ public class MapCliTest extends AbstractCliTest {
   public final void testInitFlags() {
     checkHelp("maximum number of top equal results output per read (Default is 5",
         "output unmapped reads",
-        "--" + CommonFlags.NO_UNMATED, "do not output unmated reads when in paired-end mode",
+        "--" + MapFlags.NO_UNMATED, "do not output unmated reads when in paired-end mode",
         "--" + MapFlags.OUTPUT_UNFILTERED, "output all alignments meeting thresholds instead of applying mating and N limits"
         );
   }
@@ -171,15 +171,15 @@ public class MapCliTest extends AbstractCliTest {
   public void testFilterParams() {
 
     final CFlags flags = new CFlags();
-    flags.registerOptional(CommonFlags.TOPN_RESULTS_FLAG, Integer.class, CommonFlags.INT, "").setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(CommonFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "").setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(CommonFlags.XSCORE_INDEL, Integer.class, CommonFlags.INT, "").setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(CommonFlags.MAX_ALIGNMENT_MISMATCHES, IntegerOrPercentage.class, CommonFlags.INT, "").setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(CommonFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(MapFlags.TOPN_RESULTS_FLAG, Integer.class, CommonFlags.INT, "").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(MapFlags.XSCORE_INDEL, Integer.class, CommonFlags.INT, "").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(MapFlags.MAX_ALIGNMENT_MISMATCHES, IntegerOrPercentage.class, CommonFlags.INT, "").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(MapFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "").setCategory(CommonFlagCategories.REPORTING);
 
-    flags.setFlags("--" + CommonFlags.TOPN_RESULTS_FLAG, "5",
-                          "--" + CommonFlags.MAX_TOP_RESULTS_FLAG, "3",
-                          "--" + CommonFlags.XSCORE_INDEL, "4");
+    flags.setFlags("--" + MapFlags.TOPN_RESULTS_FLAG, "5",
+                          "--" + MapFlags.MAX_TOP_RESULTS_FLAG, "3",
+                          "--" + MapFlags.XSCORE_INDEL, "4");
     final MemoryPrintStream mps = new MemoryPrintStream();
     Diagnostic.setLogStream(mps.printStream());
     try {

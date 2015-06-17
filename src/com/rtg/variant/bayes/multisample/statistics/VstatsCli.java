@@ -41,13 +41,21 @@ import com.rtg.variant.bayes.multisample.MultisampleTask;
  */
 public class VstatsCli extends AbstractMultisampleCli {
 
-  /** Module name displayed on help */
-  public static final String MODULE_NAME = "vstats";
   private static final String SEX_FLAG = "sex";
   private static final String PLOIDY_FLAG = "ploidy";
 
   @Override
   protected GenomeRelationships grf() {
+    return null;
+  }
+
+  @Override
+  public String moduleName() {
+    return "vstats";
+  }
+
+  @Override
+  public String description() {
     return null;
   }
 
@@ -107,11 +115,6 @@ public class VstatsCli extends AbstractMultisampleCli {
   }
 
   @Override
-  public String moduleName() {
-    return MODULE_NAME;
-  }
-
-  @Override
   protected ParamsTask<?, ?> task(final VariantParams params, final OutputStream out) throws IOException {
     final UsageMetric usageMetric = mUsageMetric == null ? new UsageMetric() : mUsageMetric; //create when null to cover some testing
     return new MultisampleTask<>(params, new VstatsCallerConfiguration.Configurator(), out, new VariantStatistics(params.directory()), usageMetric);
@@ -123,6 +126,4 @@ public class VstatsCli extends AbstractMultisampleCli {
   public static void main(String[] args) {
     new VstatsCli().mainExit(args);
   }
-
-
 }

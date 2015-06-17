@@ -81,6 +81,16 @@ public class SamRename extends AbstractCli {
     }
   }
 
+  @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return "rename read id to read name in SAM/BAM files";
+  }
+
   /**
    * set up a flags object for this module
    * @param flags the flags to set up
@@ -117,25 +127,9 @@ public class SamRename extends AbstractCli {
     }
   }
 
-  /**
-   * main methods
-   * @param args parameter arguments
-   */
-  public static void main(final String[] args) {
-    new SamRename().mainExit(args);
-  }
-
   @Override
   protected void initFlags() {
     initFlags(mFlags);
-  }
-
-  /**
-   * @return current name of the module
-   */
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
   }
 
   @Override
@@ -187,12 +181,6 @@ public class SamRename extends AbstractCli {
     }
     out.write(("Rename complete." + StringUtils.LS).getBytes());
     return 0;
-  }
-
-  //for test access
-  @Override
-  protected boolean handleFlags(String[] args, Appendable out, Appendable err) {
-    return super.handleFlags(args, out, err);
   }
 
   /**

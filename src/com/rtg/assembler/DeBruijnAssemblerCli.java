@@ -12,7 +12,6 @@
 
 package com.rtg.assembler;
 
-import static com.rtg.launcher.BuildCommon.RESOURCE;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
 
@@ -25,11 +24,11 @@ import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.ParamsCli;
 import com.rtg.util.IORunnable;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
+import com.rtg.util.intervals.RegionRestriction;
 
 /**
  */
@@ -40,6 +39,16 @@ public class DeBruijnAssemblerCli extends ParamsCli<DeBruijnParams> {
   static final String MIN_HASH_FREQUENCY = "minimum-kmer-frequency";
   static final String XSTRING_KMER = "Xstring-kmer";
   static final String DIPLOID_RATIO = "preserve-bubbles";
+
+  @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return null;
+  }
 
   @Override
   protected IORunnable task(DeBruijnParams params, OutputStream out) {
@@ -134,7 +143,7 @@ public class DeBruijnAssemblerCli extends ParamsCli<DeBruijnParams> {
   }
 
   protected static void initCommonFlags(CFlags flags) {
-    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
+    CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired('k', KMER_SIZE, Integer.class, "int", "kmer length to build graph nodes from").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('c', MIN_HASH_FREQUENCY, Integer.class, "int", "set minimum kmer frequency to retain, or -1 for automatic threshold", -1).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(DIPLOID_RATIO, Double.class, "float", "avoid merging bubbles where the ratio of kmers on the branches is below this", 0.0).setCategory(SENSITIVITY_TUNING);
@@ -154,11 +163,6 @@ public class DeBruijnAssemblerCli extends ParamsCli<DeBruijnParams> {
     final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SDF directories (1 per line) containing sequences to assemble").setCategory(INPUT_OUTPUT);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
-  }
-
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
   }
 
   /**

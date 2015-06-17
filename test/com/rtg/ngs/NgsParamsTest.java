@@ -18,12 +18,12 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import com.rtg.alignment.AlignerMode;
-import com.rtg.launcher.BuildTestUtils;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.ProgramMode;
 import com.rtg.mode.SequenceMode;
 import com.rtg.position.output.PositionParams;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.MaxShiftFactor;
 import com.rtg.util.StringUtils;
@@ -84,9 +84,9 @@ public class NgsParamsTest extends TestCase {
   }
 
   public void testCloneBuider() throws Exception {
-    final File subjectDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A1);
+    final File subjectDir = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams subjectaa = SequenceParams.builder().directory(subjectDir).mode(SequenceMode.UNIDIRECTIONAL).create();
-    final File queryDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A2);
+    final File queryDir = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams querya = SequenceParams.builder().directory(queryDir).create();
     final NgsFilterParams filterParamsa = NgsFilterParams.builder().outputFilter(OutputFilter.NONE).create();
     final NgsOutputParams outputa = NgsOutputParams.builder().progress(false).outputDir(new File("Foo")).filterParams(filterParamsa).create();
@@ -129,20 +129,20 @@ public class NgsParamsTest extends TestCase {
   }
 
   public void testEquals() throws Exception {
-    final File subjectDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A1);
-    final File subjectDir2 = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A2);
+    final File subjectDir = ReaderTestUtils.getDNADir(mDir);
+    final File subjectDir2 = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams subjectaa = SequenceParams.builder().directory(subjectDir).mode(SequenceMode.UNIDIRECTIONAL).create();
     final SequenceParams subjectab = SequenceParams.builder().directory(subjectDir).mode(SequenceMode.UNIDIRECTIONAL).create();
 
     final SequenceParams subjectb = SequenceParams.builder().directory(subjectDir).mode(SequenceMode.UNIDIRECTIONAL).create();
     final SequenceParams subjectc = SequenceParams.builder().directory(subjectDir2).mode(SequenceMode.UNIDIRECTIONAL).create();
 
-    final File queryDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A2);
+    final File queryDir = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams querya = SequenceParams.builder().directory(queryDir).create();
 
-    final File queryDirb = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A2);
+    final File queryDirb = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams queryba = SequenceParams.builder().directory(queryDirb).create();
-    final File queryDirc = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A2);
+    final File queryDirc = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams querybb = SequenceParams.builder().directory(queryDirc).create();
 
     final NgsFilterParams filterParamsa = NgsFilterParams.builder().outputFilter(OutputFilter.NONE).create();
@@ -186,12 +186,12 @@ public class NgsParamsTest extends TestCase {
     try {
       assertTrue(testFile.delete());
       final ProgramMode pm = ProgramMode.SLIMN;
-      final File subjectDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A1);
+      final File subjectDir = ReaderTestUtils.getDNASubDir(SEQ_DNA_A1, mDir);
       final SequenceParams subject = SequenceParams.builder().directory(subjectDir).mode(pm.subjectMode()).create();
 
       final NgsFilterParams filterParams = NgsFilterParams.builder().outputFilter(OutputFilter.NONE).create();
       final NgsOutputParams count = NgsOutputParams.builder().progress(false).outputDir(testFile).filterParams(filterParams).create();
-      final File queryDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A2);
+      final File queryDir = ReaderTestUtils.getDNASubDir(SEQ_DNA_A2, mDir);
       final SequenceParams query = SequenceParams.builder().directory(queryDir).mode(pm.queryMode()).create();
 
       final NgsParams bsp = getParams(1000, 3, subject, query, count, false);
@@ -246,12 +246,12 @@ public class NgsParamsTest extends TestCase {
     try {
       assertTrue(testFile.delete());
       final ProgramMode pm = ProgramMode.SLIMN;
-      final File subjectDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A1);
+      final File subjectDir = ReaderTestUtils.getDNADir(mDir);
       final SequenceParams subject = SequenceParams.builder().directory(subjectDir).mode(pm.subjectMode()).create();
 
       final NgsFilterParams filterParams = NgsFilterParams.builder().outputFilter(OutputFilter.NONE).zip(true).create();
       final NgsOutputParams outputParams = NgsOutputParams.builder().progress(false).outputDir(testFile).filterParams(filterParams).create();
-      final File queryDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A2);
+      final File queryDir = ReaderTestUtils.getDNADir(mDir);
       final SequenceParams query = SequenceParams.builder().directory(queryDir).mode(pm.queryMode()).create();
 
       try (NgsParams bsp = getParams(1000, 3, subject, query, outputParams, false)) {
@@ -263,8 +263,8 @@ public class NgsParamsTest extends TestCase {
   }
 
   NgsParams makeParams(int w, int a, int b, int c) throws IOException, InvalidParamsException {
-    final File sub = BuildTestUtils.prereadDNA(mDir); //FileUtils.createTempDir("sub", "ngs");
-    final File que = BuildTestUtils.prereadDNA(mDir);
+    final File sub = ReaderTestUtils.getDNADir(mDir); //FileUtils.createTempDir("sub", "ngs");
+    final File que = ReaderTestUtils.getDNADir(mDir);
     final File res = FileUtils.createTempDir("res", "ngs");
     FileHelper.deleteAll(res);
     final NgsParamsBuilder builder = NgsParams.builder();
@@ -325,12 +325,12 @@ public class NgsParamsTest extends TestCase {
     try {
       assertTrue(testFile.delete());
       final ProgramMode pm = ProgramMode.SLIMN;
-      final File subjectDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A1);
+      final File subjectDir = ReaderTestUtils.getDNADir(mDir);
       final SequenceParams subject = SequenceParams.builder().directory(subjectDir).mode(pm.subjectMode()).create();
 
       final NgsFilterParams filterParams = NgsFilterParams.builder().outputFilter(OutputFilter.NONE).create();
       final NgsOutputParams count = NgsOutputParams.builder().progress(false).outputDir(testFile).filterParams(filterParams).create();
-      final File queryDir = BuildTestUtils.prereadDNA(mDir, SEQ_DNA_A2);
+      final File queryDir = ReaderTestUtils.getDNADir(mDir);
       final SequenceParams query = SequenceParams.builder().directory(queryDir).mode(pm.queryMode()).create();
 
       final NgsParams params = getParams(1000, 3, subject, query, count, false);

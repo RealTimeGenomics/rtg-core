@@ -213,13 +213,13 @@ public class CigarFormatterTest extends TestCase {
   }
 
   public void testCigarRefLength() {
-    assertEquals(8, CigarFormatter.cigarRefLength("8M"));
-    assertEquals(8, CigarFormatter.cigarRefLength("4M1I4M"));
-    assertEquals(8, CigarFormatter.cigarRefLength("3M1D4M"));
-    assertEquals(8, CigarFormatter.cigarRefLength("3X1D4="));
-    assertEquals(8, CigarFormatter.cigarRefLength("3M1N4P"));
-    assertEquals(8, CigarFormatter.cigarRefLength("4M1S4M"));
-    assertEquals(0, CigarFormatter.cigarRefLength("13S23I"));
+    assertEquals(8, SamUtils.cigarRefLength("8M"));
+    assertEquals(8, SamUtils.cigarRefLength("4M1I4M"));
+    assertEquals(8, SamUtils.cigarRefLength("3M1D4M"));
+    assertEquals(8, SamUtils.cigarRefLength("3X1D4="));
+    assertEquals(8, SamUtils.cigarRefLength("3M1N4P"));
+    assertEquals(8, SamUtils.cigarRefLength("4M1S4M"));
+    assertEquals(0, SamUtils.cigarRefLength("13S23I"));
   }
 
   public static SAMRecord makeSamRecord(final int alignStart, final String readString, final String cigar) {

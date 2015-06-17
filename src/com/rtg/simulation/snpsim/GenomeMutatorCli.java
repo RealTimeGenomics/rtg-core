@@ -44,14 +44,9 @@ import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 
 /**
- * Command line wrapper for genome mutator
+ * Command line wrapper for genome mutator (deprecated)
  */
 public class GenomeMutatorCli extends LoggedCli {
-
-  //  private static final String SNPSIM_VERSION = "v1.1";
-
-  /** Module name displayed in help */
-  public static final String MODULE_NAME = "snpsim";
 
   private static final String TWIN_DIRECTORY = "diploid";
   private static final String INPUT_DIRECTORY = "input";
@@ -197,12 +192,14 @@ public class GenomeMutatorCli extends LoggedCli {
     }
   }
 
-  /**
-   * @return current name of the module
-   */
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "snpsim";
+  }
+
+  @Override
+  public String description() {
+    return "generate a mutated genome by adding SNPs to a reference";
   }
 
   @Override
@@ -214,7 +211,7 @@ public class GenomeMutatorCli extends LoggedCli {
    * set up a flags object for this module
    * @param flags the flags to set up
    */
-  public void initFlags(CFlags flags) {
+  void initFlags(CFlags flags) {
     flags.registerExtendedHelp();
     flags.setDescription("Creates a simulated mutation of a reference genome. Can generate either haploid or diploid mutations.");
     CommonFlagCategories.setCategories(flags);
@@ -274,7 +271,7 @@ CommonFlags.initNoGzip(flags);
     final GenomeRelationships ped = new GenomeRelationships();
     ped.addGenome(sample, sex);
     final VariantParamsBuilder vpb = new VariantParamsBuilder();
-    vpb.genome(genomeParams);
+    vpb.genome(genomeParams.readerParams());
     vpb.genomeRelationships(ped);
     final VariantParams vp = vpb.create();
 

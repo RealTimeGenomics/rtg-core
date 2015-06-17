@@ -534,6 +534,8 @@ public class SeededAlignerTest extends AbstractUnidirectionalEditDistanceTest {
         "37      0      0      0      0      0      0      0      0      0",
         "0      3      0      0      0      0      0      0      0      0",
         "0      0      1      0      0      0      0      0      0      0");
+    } finally {
+      Diagnostic.setLogStream();
     }
   }
 

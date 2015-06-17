@@ -37,7 +37,6 @@ public class DiscordantToolCli extends ParamsCli<DiscordantToolParams> {
 
   private static final String XDEBUG = "Xdebug-output";
   private static final String BED = "bed";
-  private static final String MODULE_NAME = "discord";
   /** Flag name for minimum support */
   public static final String MIN_BREAKPOINT_DEPTH = "min-support";
   private static final String INTERSECTIONS = "consistent-only";
@@ -63,7 +62,12 @@ public class DiscordantToolCli extends ParamsCli<DiscordantToolParams> {
 
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "discord";
+  }
+
+  @Override
+  public String description() {
+    return "detect structural variant breakends using discordant reads";
   }
 
   @Override

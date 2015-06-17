@@ -28,7 +28,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.SlimException;
 import com.rtg.util.intervals.RegionRestriction;
-import com.rtg.variant.SamRecordPopulator;
+import com.rtg.sam.SamRecordPopulator;
 import com.rtg.variant.cnv.region.Region;
 import com.rtg.variant.cnv.region.RegionUtils;
 

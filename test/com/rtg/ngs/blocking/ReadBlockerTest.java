@@ -40,6 +40,8 @@ public class ReadBlockerTest extends TestCase {
         assertFalse(b.isBlocked(0));
         b.close();
       }
+    } finally {
+      Diagnostic.setLogStream();
     }
     final String s = bos.toString();
     assertTrue(s, s.contains("Statistics of "));

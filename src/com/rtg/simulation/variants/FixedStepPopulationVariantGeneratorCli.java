@@ -42,12 +42,14 @@ public class FixedStepPopulationVariantGeneratorCli extends AbstractCli {
   private static final String SNP_SPECIFICATION = "spec";
   private static final String FREQUENCY = "allele-frequency";
 
-  /**
-   * @return current name of the module
-   */
   @Override
   public String moduleName() {
     return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return null;
   }
 
   @Override

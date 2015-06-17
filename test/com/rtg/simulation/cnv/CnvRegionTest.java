@@ -18,8 +18,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.StringReader;
 
-import com.rtg.launcher.BuildTestUtils;
 import com.rtg.reader.PrereadType;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfWriter;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
@@ -99,7 +99,7 @@ public class CnvRegionTest extends TestCase {
     final String genome = ""
       + ">seq1\n"
       + "AAAAATTTTTGGGGGAAAAATTTTTGGGGGAAAAATTTTTGGGGGAAAAATTTTTGGGGGAAAAA" + StringUtils.LS;
-    final File in = BuildTestUtils.prereadDNA(mDir, genome);
+    final File in = ReaderTestUtils.getDNASubDir(genome, mDir);
     try {
       try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in)) {
         final File cnvs = new File(mDir, "test.cnv");

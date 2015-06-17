@@ -54,30 +54,30 @@ public class GenomeSimulator extends LoggedCli {
   }
 
   @Override
-  protected void initFlags() {
-    initFlags(mFlags);
+  public String description() {
+    return "generate simulated genome sequence";
   }
 
-  // Separated out from above method for ease of testing
-  void initFlags(final CFlags flags) {
+  @Override
+  protected void initFlags() {
     //flags.registerExtendedHelp();
-    flags.setDescription("Simulates a reference genome.");
-    CommonFlagCategories.setCategories(flags);
+    mFlags.setDescription("Simulates a reference genome.");
+    CommonFlagCategories.setCategories(mFlags);
 
-    flags.registerRequired('o', OUTPUT, File.class, "SDF", "output SDF").setCategory(INPUT_OUTPUT);
-    flags.registerOptional('s', SEED, Integer.class, "int", "seed for random number generator").setCategory(UTILITY);
-    final Flag numContigs = flags.registerOptional('n', NUM_CONTIGS, Integer.class, "int", "number of sequences to generate").setCategory(UTILITY);
-    final Flag maxLength = flags.registerOptional(MAX_LENGTH, Integer.class, "int", "maximum sequence length").setCategory(UTILITY);
-    final Flag minLength = flags.registerOptional(MIN_LENGTH, Integer.class, "int", "minimum sequence length").setCategory(UTILITY);
-    final Flag lFlag = flags.registerOptional('l', LENGTH, Integer.class, "int", "length of generated sequence");
+    mFlags.registerRequired('o', OUTPUT, File.class, "SDF", "output SDF").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional('s', SEED, Integer.class, "int", "seed for random number generator").setCategory(UTILITY);
+    final Flag numContigs = mFlags.registerOptional('n', NUM_CONTIGS, Integer.class, "int", "number of sequences to generate").setCategory(UTILITY);
+    final Flag maxLength = mFlags.registerOptional(MAX_LENGTH, Integer.class, "int", "maximum sequence length").setCategory(UTILITY);
+    final Flag minLength = mFlags.registerOptional(MIN_LENGTH, Integer.class, "int", "minimum sequence length").setCategory(UTILITY);
+    final Flag lFlag = mFlags.registerOptional('l', LENGTH, Integer.class, "int", "length of generated sequence");
     lFlag.setMaxCount(Integer.MAX_VALUE);
     lFlag.setCategory(UTILITY);
-    flags.registerOptional(FREQUENCY, String.class, "string", "relative frequencies of A,C,G,T in the generated sequence", "1,1,1,1").setCategory(UTILITY);
-    flags.registerOptional(COMMENT, String.class, "string", "comment to include in the generated SDF").setCategory(UTILITY);
+    mFlags.registerOptional(FREQUENCY, String.class, "string", "relative frequencies of A,C,G,T in the generated sequence", "1,1,1,1").setCategory(UTILITY);
+    mFlags.registerOptional(COMMENT, String.class, "string", "comment to include in the generated SDF").setCategory(UTILITY);
 
-    flags.addRequiredSet(numContigs, minLength, maxLength);
-    flags.addRequiredSet(lFlag);
-    flags.setValidator(new GenomeSimulatorFlagValidator());
+    mFlags.addRequiredSet(numContigs, minLength, maxLength);
+    mFlags.addRequiredSet(lFlag);
+    mFlags.setValidator(new GenomeSimulatorFlagValidator());
   }
 
   private static class GenomeSimulatorFlagValidator implements Validator {
@@ -211,9 +211,6 @@ public class GenomeSimulator extends LoggedCli {
     return 0;
   }
 
-  /**
-   * Generate genomes with specified coverage.
-   */
   @Override
   protected int mainExec(OutputStream out, LogStream log) throws IOException {
     return generateGenome();
@@ -223,16 +220,5 @@ public class GenomeSimulator extends LoggedCli {
   protected File outputDirectory() {
     return (File) mFlags.getValue(OUTPUT);
   }
-
-
-  /**
-   * Generate sequences.
-   *
-   * @param args arguments
-   */
-  public static void main(final String[] args) {
-    new GenomeSimulator().mainExit(args);
-  }
-
 
 }

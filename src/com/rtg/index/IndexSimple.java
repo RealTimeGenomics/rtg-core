@@ -15,6 +15,8 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import com.rtg.index.params.CreateParams;
+import com.rtg.util.array.ArrayUtils;
+import com.rtg.util.array.IndexSorter;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.OneShotTimer;
 import com.rtg.util.integrity.Exam;
@@ -467,8 +469,8 @@ public class IndexSimple extends IndexBase {
       //testing after freeze which includes sorting and construction of
       //overflow, bit vector and initial pointer array
       //hashes sorted
-      Exam.assertTrue(IndexBase.isSorted(mHash, mNumHashes));
-      Exam.assertTrue(IndexBase.isSorted(mInitialPosition, 0, mInitialPositionLength));
+      Exam.assertTrue(ArrayUtils.isSorted(mHash, mNumHashes));
+      Exam.assertTrue(ArrayUtils.isSorted(mInitialPosition, 0, mInitialPositionLength));
       for (long l = 0; l < mNumValues; l++) {
         Exam.assertTrue(mValue.get(l) >= 0);
       }

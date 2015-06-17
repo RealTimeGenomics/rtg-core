@@ -29,6 +29,7 @@ import com.rtg.metagenomics.MetagenomicsWrapperCli.Platform;
 import com.rtg.ngs.AbstractSdfOutputProcessor;
 import com.rtg.ngs.MapCli;
 import com.rtg.ngs.MapFCli;
+import com.rtg.ngs.MapFlags;
 import com.rtg.protein.MapXCli;
 import com.rtg.reader.FormatCli;
 import com.rtg.reader.ReaderUtils;
@@ -210,7 +211,7 @@ class MetagenomicsWrapperTask extends ParamsTask<MetaPipelineParams, NoStatistic
           "--" + CommonFlags.OUTPUT_FLAG, mapxOutput.getPath()
           , "--" + CommonFlags.TEMPLATE_FLAG, mParams.proteinSdf().getPath()
           , "--" + MapXCli.MAX_ALIGNMENT_SCORE, errorRate(mParams.inputPlatform())
-          , "--" + CommonFlags.MAX_TOP_RESULTS_FLAG, "10"
+          , "--" + MapFlags.MAX_TOP_RESULTS_FLAG, "10"
       ));
       mapxFlags.add("--" + CommonFlags.READS_FLAG);
       mapxFlags.add(mapxReads.getPath());
@@ -240,8 +241,8 @@ class MetagenomicsWrapperTask extends ParamsTask<MetaPipelineParams, NoStatistic
     mapArgs.addAll(Arrays.asList(
         "--" + CommonFlags.OUTPUT_FLAG, mapOutput.getPath()
         , "--" + CommonFlags.TEMPLATE_FLAG, mParams.speciesSdf().getPath()
-        , "--" + CommonFlags.MAX_ALIGNMENT_MISMATCHES, errorRate(mParams.inputPlatform())
-        , "--" + CommonFlags.MAX_TOP_RESULTS_FLAG, "100"
+        , "--" + MapFlags.MAX_ALIGNMENT_MISMATCHES, errorRate(mParams.inputPlatform())
+        , "--" + MapFlags.MAX_TOP_RESULTS_FLAG, "100"
         , "--" + SamCommandHelper.SAM_RG, "@RG\\tPL:" + mParams.inputPlatform() + "\\tSM:sample\\tID:id"
     ));
     mapArgs.addAll(mapInput);

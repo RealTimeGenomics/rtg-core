@@ -56,6 +56,16 @@ public class BuilderCli extends AbstractCli {
   private static final String X_NEG_WEIGHT = "Xneg-weight";
 
   @Override
+  public String moduleName() {
+    return "avrbuild";
+  }
+
+  @Override
+  public String description() {
+    return "build an AVR model from training examples";
+  }
+
+  @Override
   protected void initFlags() {
     CommonFlagCategories.setCategories(mFlags);
     mFlags.registerExtendedHelp();
@@ -196,11 +206,6 @@ public class BuilderCli extends AbstractCli {
       sampleNumber = sn;
     }
     return sampleNumber;
-  }
-
-  @Override
-  public String moduleName() {
-    return "avrbuild";
   }
 
 }

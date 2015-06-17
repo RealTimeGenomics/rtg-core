@@ -42,9 +42,6 @@ import com.rtg.variant.format.VcfFormatField;
  */
 public class SomaticCli extends AbstractMultisampleCli {
 
-  /** Module name displayed on help */
-  public static final String MODULE_NAME = "somatic";
-
   private static final String SOMATIC_FLAG = "somatic";
   private static final String SOMATIC_PRIORS_FLAG = "somatic-priors";
   private static final String LOH_FLAG = "loh";
@@ -104,7 +101,12 @@ public class SomaticCli extends AbstractMultisampleCli {
 
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "somatic";
+  }
+
+  @Override
+  public String description() {
+    return "call variants for a tumor/normal pair";
   }
 
   @Override

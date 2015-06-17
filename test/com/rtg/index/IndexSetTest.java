@@ -131,6 +131,11 @@ public class IndexSetTest extends TestCase {
     }
   }
 
+  @Override
+  protected void tearDown() throws Exception {
+    Diagnostic.setLogStream();
+  }
+
   public void testSimpleCase() throws IOException {
     final Index[] indexes = {
         new MockIndex("first")

@@ -43,11 +43,11 @@ import junit.framework.TestCase;
 public class DiscordantToolTest extends TestCase {
   private static final String TAB = "\t";
 
-  protected DiscordantToolParams makeParams(File ref, File input, File output, int minDepth, boolean intersectionOnly, Double ambiguity, Integer coverage) throws InvalidParamsException {
+  protected DiscordantToolParams makeParams(File ref, File input, File output, int minDepth, boolean intersectionOnly) throws InvalidParamsException {
     final DiscordantToolParamsBuilder builder = DiscordantToolParams.builder();
     builder.name("Foo");
     builder.debugOutput(true);
-    builder.genome(SequenceParams.builder().directory(ref).loadNames(true).useMemReader(true).create());
+    builder.genome(SequenceParams.builder().directory(ref).loadNames(true).useMemReader(true).create().readerParams());
     final boolean gzip = false;
     final OutputParams outParams = new OutputParams(output, false, gzip);
     builder.outputParams(outParams);
@@ -101,7 +101,7 @@ public class DiscordantToolTest extends TestCase {
       final File input = new File(dir, "input");
       FileUtils.stringToFile(sam, input);
       final File output = new File(dir, "output");
-      final DiscordantToolParams p = makeParams(seq, input, output, minDepth, intersectionOnly, null, null);
+      final DiscordantToolParams p = makeParams(seq, input, output, minDepth, intersectionOnly);
       final DiscordantTool dt = new DiscordantTool(p, TestUtils.getNullOutputStream());
       dt.exec();
       assertTrue(output.exists());
@@ -194,7 +194,7 @@ public class DiscordantToolTest extends TestCase {
       final File input = new File(dir, "input");
       FileUtils.stringToFile(FLUSH_SAM, input);
       final File output = new File(dir, "output");
-      final DiscordantToolParams p = makeParams(seq, input, output, 1, false, null, null);
+      final DiscordantToolParams p = makeParams(seq, input, output, 1, false);
       final FlushCheck dt = new FlushCheck(p, TestUtils.getNullOutputStream());
       dt.exec();
       assertTrue(output.exists());

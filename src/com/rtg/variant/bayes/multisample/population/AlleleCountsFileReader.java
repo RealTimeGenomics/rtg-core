@@ -23,10 +23,10 @@ import java.util.Map;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.TabixLineReader;
-import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.vcf.VariantType;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfRecord;
@@ -51,7 +51,7 @@ public final class AlleleCountsFileReader implements Closeable {
   private AlleleCounts mCurrent;
   private String mCurrentReference;
 
-  private static Integer sWarnings = 0;
+  private Integer mWarnings = 0;
 
   /**
    * @param reader tabix line reader for non-VCF input
@@ -104,7 +104,7 @@ public final class AlleleCountsFileReader implements Closeable {
     if (mVcfReader != null) { //entirely certain this vcf section can made a lot nicer but don't have time right now
       while (mVcfReader.hasNext()) {
         final VcfRecord rec = mVcfReader.next();
-        mCurrent = vcfRecordToAlleleCountLine(rec, mSupportsANAC);
+        mCurrent = vcfRecordToAlleleCountLine(rec);
         if (mCurrent != null) {
           mCurrentReference = rec.getSequenceName();
           return true;
@@ -183,13 +183,12 @@ public final class AlleleCountsFileReader implements Closeable {
   /**
    * Converts a <code>VCF</code> record into a string conforming to the allele count file format
    * @param vcfRecord a <code>VCF</code> record
-   * @param supportsANAC true if the <code>VCF</code> header defines both AN and AC as info fields
    * @return a string representation of the <code>VCF</code> record in the allele count file format, or null if not possible
    */
-  public static AlleleCounts vcfRecordToAlleleCountLine(VcfRecord vcfRecord, boolean supportsANAC) {
+  public AlleleCounts vcfRecordToAlleleCountLine(VcfRecord vcfRecord) {
     if (VcfRecord.MISSING.equals(vcfRecord.getRefCall())) {
-      sWarnings++;
-      if (sWarnings < 10) {
+      mWarnings++;
+      if (mWarnings < 10) {
         Diagnostic.warning("Empty value in reference field not supported: " + vcfRecord.toString());
       }
       return null;
@@ -203,15 +202,15 @@ public final class AlleleCountsFileReader implements Closeable {
       }
     }
     final Map<String, Integer> countsMap;
-    if (supportsANAC) {
+    if (mSupportsANAC) {
       final Map<String, ArrayList<String>> info = vcfRecord.getInfo();
       if (info.containsKey(AN_INFO_ID) && info.containsKey(AC_INFO_ID)) {
         final ArrayList<String> anValue = info.get(AN_INFO_ID);
         final ArrayList<String> acValue = info.get(AC_INFO_ID);
 
         if (anValue.size() != 1) {
-          sWarnings++;
-          if (sWarnings < 10) {
+          mWarnings++;
+          if (mWarnings < 10) {
             Diagnostic.warning("INFO field " + AN_INFO_ID + " contains too many values: " + vcfRecord.toString());
           }
           return null;
@@ -220,8 +219,8 @@ public final class AlleleCountsFileReader implements Closeable {
         try {
           totalAlleleNumber = Integer.parseInt(anValue.get(0));
         } catch (final NumberFormatException nfe) {
-          sWarnings++;
-          if (sWarnings < 10) {
+          mWarnings++;
+          if (mWarnings < 10) {
             Diagnostic.warning("INFO field " + AN_INFO_ID + " not an integer: " + vcfRecord.toString());
           }
           return null;
@@ -239,8 +238,8 @@ public final class AlleleCountsFileReader implements Closeable {
             countsMap.put(vcfRecord.getAltCalls().get(i), thisAlleleCount);
             totalAllelesSeen += thisAlleleCount;
           } catch (final NumberFormatException nfe) {
-            sWarnings++;
-            if (sWarnings < 10) {
+            mWarnings++;
+            if (mWarnings < 10) {
               Diagnostic.warning("INFO field " + AC_INFO_ID + " contained a non-integer: " + vcfRecord.toString());
             }
             return null;
@@ -257,7 +256,7 @@ public final class AlleleCountsFileReader implements Closeable {
     return new AlleleCounts(vcfRecord.getStart(), countsMap, vcfRecord.getRefCall());
   }
 
-  private static Map<String, Integer> initCountsTheHardWay(VcfRecord vcfRecord) {
+  private Map<String, Integer> initCountsTheHardWay(VcfRecord vcfRecord) {
     final Map<String, Integer> countsMap = new HashMap<>();
 
     final int[] counts = new int[vcfRecord.getAltCalls().size() + 1]; // +1 for the reference allele.
@@ -286,9 +285,9 @@ public final class AlleleCountsFileReader implements Closeable {
     return countsMap;
   }
 
-  private static synchronized void duplicateAlleleWarning(String allele, VcfRecord vcfRecord) {
-    sWarnings++;
-    if (sWarnings < 10) {
+  private synchronized void duplicateAlleleWarning(String allele, VcfRecord vcfRecord) {
+    mWarnings++;
+    if (mWarnings < 10) {
       Diagnostic.warning("Ignoring duplicate allele: " + allele + " in VCF record: " + vcfRecord.toString());
     }
   }
@@ -305,8 +304,8 @@ public final class AlleleCountsFileReader implements Closeable {
     if (mReader != null) {
       mReader.close();
     }
-    if (sWarnings > 0) {
-      Diagnostic.warning(sWarnings + " total warnings during allele counts reading.");
+    if (mWarnings > 0) {
+      Diagnostic.warning(mWarnings + " total warnings during allele counts reading.");
     }
   }
 }

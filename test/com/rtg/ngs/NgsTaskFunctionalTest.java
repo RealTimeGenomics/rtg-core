@@ -23,7 +23,6 @@ import java.io.StringWriter;
 import java.util.Collections;
 
 import com.rtg.index.hash.ngs.NgsHashLoopImpl;
-import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.DnaUtils;
 import com.rtg.mode.SequenceMode;
@@ -93,7 +92,7 @@ public class NgsTaskFunctionalTest extends TestCase {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     final NgsTask ngs;
     try {
-      final NgsParams params = getParams(out, mask, new ParamsParams(subjects, queries, CommonFlags.MAX_SCORE, false, false), numThreads);
+      final NgsParams params = getParams(out, mask, new ParamsParams(subjects, queries, MapFlags.MAX_SCORE, false, false), numThreads);
       ngs = execNgs(params);
     } finally {
       out.close();
@@ -252,7 +251,7 @@ public class NgsTaskFunctionalTest extends TestCase {
   private void checkCGL(final String exp) throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     try {
-      final NgsParams params = getParams(out, new NgsMaskParamsGeneral(12, 1, 1, 1, true), new NgsTestUtils.ParamsParams(SEQ_DNA_CGL_RE, SEQ_DNA_CGL_GE, CommonFlags.MAX_SCORE, false, false), 1);
+      final NgsParams params = getParams(out, new NgsMaskParamsGeneral(12, 1, 1, 1, true), new NgsTestUtils.ParamsParams(SEQ_DNA_CGL_RE, SEQ_DNA_CGL_GE, MapFlags.MAX_SCORE, false, false), 1);
       execNgs(params);
     } finally {
       out.close();
@@ -282,7 +281,7 @@ public class NgsTaskFunctionalTest extends TestCase {
   private void checkC(final int indel, final int l, final String[] exp, final String[] nex) throws Exception {
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     try {
-      final NgsParams params = getParams(out, new NgsMaskParamsGeneral(6, 3, indel, l, false), new NgsTestUtils.ParamsParams(SEQ_DNA_C_RE, SEQ_DNA_C_GE, CommonFlags.MAX_SCORE, false, false), 1);
+      final NgsParams params = getParams(out, new NgsMaskParamsGeneral(6, 3, indel, l, false), new NgsTestUtils.ParamsParams(SEQ_DNA_C_RE, SEQ_DNA_C_GE, MapFlags.MAX_SCORE, false, false), 1);
       execNgs(params);
     } finally {
       out.close();

@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Properties;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.InvalidParamsException;
@@ -48,6 +49,7 @@ public class PopulationNanoTest extends TestCase {
 
   @Override
   public void setUp() {
+    GlobalFlags.resetAccessedStatus();
     Diagnostic.setLogStream();
     mNano = new NanoRegression(PopulationNanoTest.class, false);
   }

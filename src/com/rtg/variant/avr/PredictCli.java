@@ -39,6 +39,16 @@ public class PredictCli extends AbstractCli {
   protected static final String SAMPLE_FLAG = "sample";
 
   @Override
+  public String moduleName() {
+    return "avrpredict";
+  }
+
+  @Override
+  public String description() {
+    return "run AVR on a VCF file";
+  }
+
+  @Override
   protected void initFlags() {
     CommonFlagCategories.setCategories(mFlags);
     CommonFlags.initNoGzip(mFlags);
@@ -118,10 +128,5 @@ public class PredictCli extends AbstractCli {
     }
 
     return 0;
-  }
-
-  @Override
-  public String moduleName() {
-    return "avrpredict";
   }
 }

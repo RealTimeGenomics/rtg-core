@@ -53,6 +53,7 @@ public class LoggingOnlyEditDistanceTest extends TestCase {
     res = lo.calculateEditDistance(DnaUtils.encodeString("AAAGCCCG"), 7, DnaUtils.encodeString("TTTTTGGGGGAAAAACCCCCTTAAAGGCCGTT"), 21, 2, MaxShiftUtils.calculateDefaultMaxShift(read.length), true);
     assertNull(res);
     TestUtils.containsAll(ms.toString(), "ED: AAAGCCCG TTTTGGGGGAAAAACCCCCTTAAAGGCCGTTNNNNNNNNNNNNNNNN 20");
+    Diagnostic.setLogStream();
   }
 
 

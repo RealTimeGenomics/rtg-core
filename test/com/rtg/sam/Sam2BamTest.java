@@ -30,7 +30,6 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-import com.rtg.variant.SamRecordPopulator;
 
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SamReader;

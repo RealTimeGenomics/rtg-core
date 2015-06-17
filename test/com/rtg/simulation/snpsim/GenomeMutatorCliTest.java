@@ -19,7 +19,7 @@ import java.io.PrintStream;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
-import com.rtg.launcher.BuildTestUtils;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reference.Sex;
 import com.rtg.tabix.TabixIndexer;
@@ -135,7 +135,7 @@ public class GenomeMutatorCliTest extends AbstractCliTest {
     try {
       final File mutant = new File(tmp, "mutant");
       final File mutations = new File(tmp, "mutations");
-      final File in = BuildTestUtils.prereadDNA(mDir, ">a\nacgtacgatcagcatctgac\n");
+      final File in = ReaderTestUtils.getDNADir(mDir);
 
       final GenomeMutatorCli cli = getGMCli();
       final ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -156,7 +156,7 @@ public class GenomeMutatorCliTest extends AbstractCliTest {
     try {
       final File mutant = new File(tmp, "mutant");
       final File mutations = new File(tmp, "mutations");
-      final File in = BuildTestUtils.prereadDNA(mDir, ">a\nacgtacgatcagcatctgac\n");
+      final File in = ReaderTestUtils.getDNADir(mDir);
 
       final GenomeMutatorCli cli = getGMCli();
 
@@ -214,7 +214,7 @@ public class GenomeMutatorCliTest extends AbstractCliTest {
     final File tmp = FileUtils.createTempDir("GenomeMutator", "tmp");
     try {
       final File out = new File(tmp, "out");
-      final File in = BuildTestUtils.prereadDNA(mDir, ">a\nacgtacgatcagcatctgac\n");
+      final File in = ReaderTestUtils.getDNADir(mDir);
       final File mutations = new File(tmp, "mutations.txt.gz");
       final GenomeMutatorCli cli = new GenomeMutatorCli();
       final MemoryPrintStream mps = new MemoryPrintStream();

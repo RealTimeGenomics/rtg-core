@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.rtg.launcher.OutputParams;
+import com.rtg.launcher.ReaderParams;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
@@ -54,10 +55,10 @@ public class CoverageParamsTest extends TestCase {
 
   private static final String TEST_OUTPUT = "coveragetestoutput";
 
-  private SequenceParams makeGenome() throws IOException {
+  private ReaderParams makeGenome() throws IOException {
     final File subjectsDir = FileUtils.createTempDir("test", "coverageparams", mDir);
     ReaderTestUtils.getReaderDNA(">t\nacgt", subjectsDir, null).close();
-    return SequenceParams.builder().directory(subjectsDir).mode(SequenceMode.UNIDIRECTIONAL).create();
+    return SequenceParams.builder().directory(subjectsDir).mode(SequenceMode.UNIDIRECTIONAL).create().readerParams();
   }
 
   public void testOmnes() {
@@ -96,7 +97,7 @@ public class CoverageParamsTest extends TestCase {
     "CoverageParams mapped reads=",
     "smoothing=0",
     "error rates=" + Boolean.FALSE.toString(),
-    "    SequenceParams mode=UNIDIRECTIONAL region=[(0:-1), (1:-1)] directory=",
+    "    SequenceParams mode=UNIDIRECTIONAL directory=",
     "OutputParams output directory=",
     "progress=" + Boolean.FALSE + " zip=" + Boolean.TRUE + LS,
     "minCoverageForBreadth=3"

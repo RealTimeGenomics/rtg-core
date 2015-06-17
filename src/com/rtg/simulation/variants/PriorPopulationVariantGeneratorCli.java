@@ -44,12 +44,14 @@ public class PriorPopulationVariantGeneratorCli extends AbstractCli {
   private static final String BIAS_FLAG = "Xbias";
   private static final String RATE_FLAG = "Xrate";
 
-  /**
-   * @return current name of the module
-   */
   @Override
   public String moduleName() {
     return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return "generate a VCF containing simulated population variants";
   }
 
   @Override

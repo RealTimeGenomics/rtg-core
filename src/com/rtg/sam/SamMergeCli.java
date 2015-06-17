@@ -24,11 +24,9 @@ import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommandLineFiles;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.util.cli.CFlags;
-import com.rtg.util.cli.CommandLine;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
-import com.rtg.util.io.FileUtils;
 
 /**
  */
@@ -62,6 +60,16 @@ public class SamMergeCli extends AbstractCli {
       }
       return true;
     }
+  }
+
+  @Override
+  public String moduleName() {
+    return MODULE_NAME;
+  }
+
+  @Override
+  public String description() {
+    return "merge sorted SAM/BAM files";
   }
 
   @Override
@@ -113,24 +121,6 @@ public class SamMergeCli extends AbstractCli {
     final SamMerger merger = new SamMerger(createIndex, gzip, legacy, numberThreads, filterParams, true, false);
     merger.mergeSamFiles(inputFiles, output, out, null, true, true);
     return 0;
-  }
-
-  @Override
-  public String moduleName() {
-    return MODULE_NAME;
-  }
-
-  /**
-   * Merges SAM files.
-   *
-   * @param args a <code>String</code> value
-   */
-  public static void main(String[] args) {
-    final String[] cmdLine = new String[args.length + 1];
-    cmdLine[0] = MODULE_NAME;
-    System.arraycopy(args, 0, cmdLine, 1, args.length);
-    CommandLine.setCommandArgs(cmdLine);
-    new SamMergeCli().mainInit(args, FileUtils.getStdoutAsOutputStream(), System.err);
   }
 
 }

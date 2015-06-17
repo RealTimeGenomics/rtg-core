@@ -21,10 +21,10 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.Arrays;
 
-import com.rtg.launcher.BuildTestUtils;
 import com.rtg.mode.DNA;
 import com.rtg.mode.SequenceType;
 import com.rtg.reader.PrereadType;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.Sdf2Fasta;
 import com.rtg.reader.SdfWriter;
 import com.rtg.reader.SequencesReader;
@@ -547,7 +547,7 @@ public class GenomeMutatorTest extends TestCase {
       final String genomeTides = "ACGTACGATCAGCATCTGACATGCTAACGGTCATCGCGGCATTTACGGCACGTCATAGTCGCATGCGGCATTTATAGCGGCGCGTAAATCGTCATGATTGCAGCTAGCATCGTGTCACA";
 
       final String genome = ">a\n" + genomeTides + "\n";
-      final File in = BuildTestUtils.prereadDNA(mDir, genome);
+      final File in = ReaderTestUtils.getDNASubDir(genome, mDir);
       try {
         try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in)) {
           final GenomeMutator gm = new GenomeMutator(1, false, false, 1, TEST_PARAMS);
@@ -621,7 +621,7 @@ public class GenomeMutatorTest extends TestCase {
       final String genome = ""
           + ">a" + LS
           + "ACGTACG" + LS;
-      final File in = BuildTestUtils.prereadDNA(mDir, genome);
+      final File in = ReaderTestUtils.getDNASubDir(genome, mDir);
       try {
         final SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in);
         final GenomeMutator gm = new GenomeMutator(1, false, false, 1, TEST_PARAMS);
@@ -648,7 +648,7 @@ public class GenomeMutatorTest extends TestCase {
       final String genome = ""
           + ">a" + LS
           + "ACGTGGG" + LS;
-      final File in = BuildTestUtils.prereadDNA(mDir, genome);
+      final File in = ReaderTestUtils.getDNASubDir(genome, mDir);
       try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in)) {
         final GenomeMutator gm = new GenomeMutator(1, false, false, 1, TEST_PARAMS);
         final File mutations = new File(mDir, "mutations.mapping");
@@ -671,7 +671,7 @@ public class GenomeMutatorTest extends TestCase {
           + "ACGTACGATCAGCATCTGACATGCTAACGGTCATCGCGGCATTTACGGCACGTCATAGTCGCATGCGGCATTTATAGCGGCGCGTAAATCGT" + "\n"
           + ">b\n"
           + "CATGATTGCAGCTAGCATCGTGTCACA" + "\n";
-      final File in = BuildTestUtils.prereadDNA(mDir, genome);
+      final File in = ReaderTestUtils.getDNASubDir(genome, mDir);
       try {
         final SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in);
         final GenomeMutator gm = new GenomeMutator(1, false, false, 1, TEST_PARAMS);
@@ -746,7 +746,7 @@ public class GenomeMutatorTest extends TestCase {
     try {
       final String genomeTides = "ACGTACGATCAGCATCTGACATCGGCTACTACGGCATTGCAATCGGCTACGAT";
       final String genome = ">a\n" + genomeTides + "\n";
-      final File in = BuildTestUtils.prereadDNA(mDir, genome);
+      final File in = ReaderTestUtils.getDNASubDir(genome, mDir);
       try {
         try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in)) {
           final File mutations = new File(temp, "mutations.mapping");
@@ -801,7 +801,7 @@ public class GenomeMutatorTest extends TestCase {
       final String genomeTides = "TCTACGCTTAGTACGGCATGCACGATC";
       //final String xxnums      = "012345678901234567890123456";
       final String genome = ">sequence1\n" + genomeTides + "\n";
-      final File in = BuildTestUtils.prereadDNA(mDir, genome);
+      final File in = ReaderTestUtils.getDNASubDir(genome, mDir);
       try {
         for (int s = 1; s < 5; s++) {
           try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in)) {
@@ -890,7 +890,7 @@ public class GenomeMutatorTest extends TestCase {
       final String genomeTides = "TCTACGCTTAGTACGGCATGCACGATC";
       //final String xxnums      = "012345678901234567890123456";
       final String genome = ">sequence1\n" + genomeTides + "\n";
-      final File in = BuildTestUtils.prereadDNA(mDir, genome);
+      final File in = ReaderTestUtils.getDNASubDir(genome, mDir);
       try {
         for (int s = 1; s < 5; s++) {
           try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in)) {
@@ -1001,7 +1001,7 @@ public class GenomeMutatorTest extends TestCase {
       //      + "ACGTACGATCAGCATCTGACATGCTAACGGTCATCGCGGCATTTACGGCACGTCATAGTCGCATGCGGCATTTATAGCGGCGCGTAAATCGT" + "\n"
       //      + ">b\n"
       //      + "CATGATTGCAGCTAGCATCGTGTCACA" + "\n";
-      final File in = BuildTestUtils.prereadDNA(mDir, genome);
+      final File in = ReaderTestUtils.getDNASubDir(genome, mDir);
       try {
         try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in)) {
           final GenomeMutator gm = new GenomeMutator(1, true, false, 1, TEST_PARAMS);
@@ -1041,7 +1041,7 @@ public class GenomeMutatorTest extends TestCase {
     for (int i = 0; i < 125; i++) {
       sb.append("ACGT");
     }
-    final File in = BuildTestUtils.prereadDNA(mDir, sb.toString());
+    final File in = ReaderTestUtils.getDNASubDir(sb.toString(), mDir);
     try {
       try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in)) {
         assertEquals(100, countSnpLines(0.1, dsr));
@@ -1060,7 +1060,7 @@ public class GenomeMutatorTest extends TestCase {
     for (int i = 0; i < 50; i++) {
       sb.append("ACGT");
     }
-    final File in = BuildTestUtils.prereadDNA(mDir, sb.toString());
+    final File in = ReaderTestUtils.getDNASubDir(sb.toString(), mDir);
     try {
       try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in)) {
         assertTrue(countSnpLines(0.1, dsr) < 100);

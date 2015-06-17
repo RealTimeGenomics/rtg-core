@@ -12,7 +12,6 @@
 package com.rtg.variant.bayes.multisample;
 
 
-import static com.rtg.launcher.BuildCommon.RESOURCE;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
@@ -61,9 +60,9 @@ import com.rtg.variant.ThreadingEnvironment;
 import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
-import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
+import com.rtg.vcf.VariantStatistics;
 
 import htsjdk.samtools.SAMFileHeader;
 /**
@@ -260,7 +259,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     CommonFlagCategories.setCategories(flags);
     flags.registerOptional(NO_CALIBRATION, "if set, ignore mapping calibration files").setCategory(INPUT_OUTPUT);
     flags.registerRequired('t', TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the reads have been mapped against").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
+    CommonFlags.initOutputDirFlag(flags);
     CommonFlags.initNoGzip(flags);
     CommonFlags.initThreadsFlag(flags);
     CommonFlags.initIndexFlags(flags);
@@ -393,8 +392,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     SdfUtils.validateHasNames(genomeFile);
     final SequenceParams genomeParams = SequenceParams.builder().directory(genomeFile).mode(SequenceMode.UNIDIRECTIONAL).create();
     try {
-      SdfUtils.validateNoDuplicates(genomeParams, false);
-      builder.genome(genomeParams);
+      SdfUtils.validateNoDuplicates(genomeParams.reader(), false);
+      builder.genome(genomeParams.readerParams());
       makeInputParams(builder, genomeParams, filterParams);
       return builder;
     } catch (final RuntimeException | IOException e) {

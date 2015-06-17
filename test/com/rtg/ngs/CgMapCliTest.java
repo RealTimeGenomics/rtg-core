@@ -12,20 +12,26 @@
 package com.rtg.ngs;
 
 
+import static com.rtg.util.StringUtils.LS;
+
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
 import com.rtg.reader.PrereadArm;
 import com.rtg.reader.ReaderTestUtils;
+import com.rtg.sam.RecordIterator;
+import com.rtg.sam.SkipInvalidRecordsIterator;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
+
+import htsjdk.samtools.SAMRecord;
 
 /**
  * Test {@link CgMapCli}
@@ -151,7 +157,7 @@ public class CgMapCliTest extends AbstractCliTest {
   }
 
 
-  private static final String TEMPLATE = ">template" + StringUtils.LS
+  private static final String TEMPLATE = ">template" + LS
       //1234567890123456789012345678901234567890
       + "tacgtnnnnncatgactgctgcatactgcatgcatgactg"
       + "actgactgcatatgcattcatactcatgatgcatgctgca"
@@ -159,16 +165,16 @@ public class CgMapCliTest extends AbstractCliTest {
       + "gcatgnnnnncatgctactgtacgatcgatcgatcgatcg";
 
   private static final String R_LEFT = "tacgtcatgactgctgcatactgcatgcatgactg";
-  private static final String READ_LEFT = "@left" + StringUtils.LS
-      + R_LEFT + StringUtils.LS
-      + "+left" + StringUtils.LS
+  private static final String READ_LEFT = "@left" + LS
+      + R_LEFT + LS
+      + "+left" + LS
       + "###################################";
   private static final long L_LENGTH = R_LEFT.length();
 
   private static final String R_RIGHT = "gcatgcatgctactgtacgatcgatcgatcgatcg";
-  private static final String READ_RIGHT = "@right" + StringUtils.LS
-      + R_RIGHT + StringUtils.LS
-      + "+right" + StringUtils.LS
+  private static final String READ_RIGHT = "@right" + LS
+      + R_RIGHT + LS
+      + "+right" + LS
       + "###################################";
   private static final long R_LENGTH = R_RIGHT.length();
   private static final long LENGTH = L_LENGTH + R_LENGTH;
@@ -295,4 +301,58 @@ public class CgMapCliTest extends AbstractCliTest {
     }
   }
 
+
+  private static final String CG_QUALITY = "+" + LS + "00000" + "0000000000" + "0000000000" + "0000000000" + LS;
+  public void testCGMapbug1144() throws IOException {
+    //set showBug to true to get the failure for the bug 1144
+    final boolean showBug = false;
+    Diagnostic.setLogStream();
+    final String templateSeq = ">template" + LS + "GACCATCAGGACAAACACATGGATACATGGAGGGGAACACACACAC" + LS;
+    //                                               CAATCAGGAC      GTGGATACATGGAGGGGAAC
+    //                                                                                 ACA AC
+    //System.err.println(templateSeq);
+    final PrintStream err = System.err;
+    final File parent = FileUtils.createTempDir("testbug1144", "overlap2Same");
+    try {
+      if (!showBug) {
+        System.setErr(TestUtils.getNullPrintStream());
+      }
+      final File reads = new File(parent, "reads");
+      final File left = new File(reads, "left");
+      final File right = new File(reads, "right");
+      final String left0 =  "AAAAA AAAAAAAAAA AAAAAAAAAA AAAAAAAAAA"; //Random seq
+      ReaderTestUtils.getReaderDNAFastqCG("@reL" + LS + left0 + CG_QUALITY, left, PrereadArm.LEFT);
+      final String right0 = "CAATCAGGACGTGGATACATGGAGGGGAACACAAC"; //Buggy seq
+      ReaderTestUtils.getReaderDNAFastqCG("@reR" + LS + right0 + CG_QUALITY, right, PrereadArm.RIGHT);
+
+      final File template = new File(parent, "template");
+      ReaderTestUtils.getReaderDNA(templateSeq, template, null);
+      final File output = new File(parent, "out");
+      final CgMapCli cgmap = new CgMapCli();
+      final MemoryPrintStream mps = new MemoryPrintStream();
+      final int code = cgmap.mainInit(new String[] {"-o", output.getPath(), "-i", reads.getPath(), "-t", template.getPath(), "-E", "10", "-Z", "-T", "1", "--sam", "--no-merge"}, mps.outputStream(), mps.printStream());
+      assertEquals(mps.toString(), 0, code);
+      if (showBug) {
+        final String str = dumpSam(new File(output, "unmated.sam"));
+        //System.err.println(str);
+        //not clear what the real alignment should be - the "good" result below assumes an overlap of 2
+        assertTrue(str.contains("GC:Z:28S2G3S")); //bug has GC:Z:30S1G3S
+      }
+    } finally {
+      System.setErr(err);
+      //System.err.println(parent.getPath());
+      FileHelper.deleteAll(parent);
+    }
+  }
+
+  String dumpSam(final File samFile) throws IOException {
+    final StringBuilder sb = new StringBuilder();
+    final RecordIterator<SAMRecord> iter = new SkipInvalidRecordsIterator(samFile);
+    while (iter.hasNext()) {
+      final SAMRecord sam = iter.next();
+      sb.append(sam.getSAMString().trim()).append(LS);
+    }
+    iter.close();
+    return sb.toString();
+  }
 }

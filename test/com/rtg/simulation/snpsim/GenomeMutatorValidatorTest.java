@@ -17,7 +17,6 @@ import java.io.IOException;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
-import com.rtg.launcher.BuildTestUtils;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -130,7 +129,7 @@ public class GenomeMutatorValidatorTest extends AbstractCliTest {
       assertTrue(mutant.delete());
       assertTrue(twin.delete());
       assertTrue(twinmutations.delete());
-      final File in = BuildTestUtils.prereadDNA(mDir, ">a\nacgtacgatcagcatctgac\n");
+      final File in = ReaderTestUtils.getDNADir(mDir);
       checkHandleFlagsErr();
       checkHandleFlagsErr(in.getPath());
       checkHandleFlagsErr("-r", "0.5", "-c", "1", "-o", mutant.getPath(), "-s", mutations.getPath(), "-i", in.getPath());

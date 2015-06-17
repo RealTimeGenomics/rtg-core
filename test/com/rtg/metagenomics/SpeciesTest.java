@@ -95,8 +95,7 @@ public class SpeciesTest extends TestCase {
     };
     final MemoryPrintStream log = new MemoryPrintStream();
     Diagnostic.setLogStream(log.printStream());
-    final MockSequenceParams g = new MockSequenceParams(mrp);
-    final SpeciesParams params = new SpeciesParamsBuilder().genome(g).minIter(10).create();
+    final SpeciesParams params = new SpeciesParamsBuilder().genome(mrp).minIter(10).create();
 
     final BlockInfo blockInfo = new BlockInfo(42, null, frags, sm, new long[]{4, 5, 6, 7, 0}, params.verbose());
     final String fragInfo = ""
@@ -118,7 +117,7 @@ public class SpeciesTest extends TestCase {
       }
     };
     //t.result(out.printStream(), result, blockInfo, null, null, false, new SpeciesStatistics(), taxonomy);
-    t.result(g.reader(), out.lineWriter(), result, blockInfo);
+    t.result(mrp.reader(), out.lineWriter(), result, blockInfo);
     assertTrue(log.toString(), log.toString().contains("Could not determine length of taxonId \"6\", its either not present or the length is 0" + LS));
     Diagnostic.setLogStream();
     //    System.out.println(out.toString());
@@ -165,8 +164,7 @@ public class SpeciesTest extends TestCase {
           return new int[] {4, 5, 6, 7};
         }
       };
-      final MockSequenceParams g = new MockSequenceParams(mrp);
-      final SpeciesParams params = new SpeciesParamsBuilder().genome(g).minIter(10).create();
+      final SpeciesParams params = new SpeciesParamsBuilder().genome(mrp).minIter(10).create();
 
       final HashMap<Integer, SpeciesInfo> speciesInfo = new HashMap<>();
       speciesInfo.put(2, new SpeciesInfo(2L, 4L, 4.562));
@@ -182,7 +180,7 @@ public class SpeciesTest extends TestCase {
           mSpeciesMap = sm;
         }
       };
-      t.result(g.reader(), out.lineWriter(), blockResult, blockInfo);
+      t.result(mrp.reader(), out.lineWriter(), blockResult, blockInfo);
       //    System.out.println(out.toString());
       TestUtils.containsAll(out.toString().replace('\t', ' '),
           SpeciesTask.SPECIES_HEADER.replace('\t',  ' '),
@@ -237,8 +235,7 @@ public class SpeciesTest extends TestCase {
         return new int[] {4, 5, 6, 7};
       }
     };
-    final MockSequenceParams g = new MockSequenceParams(mrp);
-    final SpeciesParams params = new SpeciesParamsBuilder().genome(g).minIter(10).printAll(true).minConfidence(0.0).create();
+    final SpeciesParams params = new SpeciesParamsBuilder().genome(mrp).minIter(10).printAll(true).minConfidence(0.0).create();
 
     final Taxonomy taxonomy = new Taxonomy();
     taxonomy.addNode(1, -1, "root", "none");
@@ -261,7 +258,7 @@ public class SpeciesTest extends TestCase {
       }
     };
 
-    t.result(g.reader(), out.lineWriter(), result, blockInfo);
+    t.result(mrp.reader(), out.lineWriter(), result, blockInfo);
     //    System.out.println(out.toString());
     TestUtils.containsAll(out.toString().replace('\t', ' '),
         "0.8621 0.1308 1.000 0.3472 0.05267 1.000 0.0 0.000 0.000 0 4.56 N 1 2 1 none 0",
@@ -349,7 +346,7 @@ public class SpeciesTest extends TestCase {
         final MemoryPrintStream mps = new MemoryPrintStream();
         final SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReader(species);
         final MockSequenceParams mock = new MockSequenceParams(sr, SequenceMode.BIDIRECTIONAL);
-        final SpeciesParams params = SpeciesParams.builder().genome(mock).create();
+        final SpeciesParams params = SpeciesParams.builder().genome(mock.readerParams()).create();
         final SpeciesTask speciesTask = new SpeciesTask(params, mps.outputStream(), new UsageMetric());
         speciesTask.exec();
         fail();

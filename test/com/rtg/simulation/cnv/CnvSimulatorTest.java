@@ -22,8 +22,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.rtg.launcher.BuildTestUtils;
 import com.rtg.reader.PrereadType;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfWriter;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
@@ -337,13 +337,13 @@ public class CnvSimulatorTest extends TestCase {
       + ">a\n"
       + "AAAAATTTTTCCCCCGGGGG" + StringUtils.LS
       ;
-    final File inOne = BuildTestUtils.prereadDNA(mDir, genomeOne);
+    final File inOne = ReaderTestUtils.getDNASubDir(genomeOne, mDir);
     final String genomeTwo = ""
       + ">a\n"
       + "AAAAATTTTTCCCCCGGGGG" + StringUtils.LS
       + ">b\n"
       + "TTTTTCCCCC" + StringUtils.LS;
-    final File inTwo = BuildTestUtils.prereadDNA(mDir, genomeTwo);
+    final File inTwo = ReaderTestUtils.getDNASubDir(genomeTwo, mDir);
     mDsrOne = SequencesReaderFactory.createDefaultSequencesReader(inOne);
     mDsrTwo = SequencesReaderFactory.createDefaultSequencesReader(inTwo);
 
@@ -421,7 +421,7 @@ public class CnvSimulatorTest extends TestCase {
     final String genome = ""
       + ">a\n"
       + "ACGTACGATCAGCATCTGACATGCTAACGGTCATC" + StringUtils.LS;
-    final File in = BuildTestUtils.prereadDNA(mDir, genome);
+    final File in = ReaderTestUtils.getDNASubDir(genome, mDir);
     try {
       final SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in);
       try {
@@ -519,7 +519,7 @@ public class CnvSimulatorTest extends TestCase {
       + "ATTGCAGCTATTGCAGCTATTGCAGCTATTGCAGCTATTGCAGCTA" + StringUtils.LS
       + ">b" + StringUtils.LS
       + "CATGATTGCAGCTAGCATCGTGTCACA" + StringUtils.LS;
-    final File in = BuildTestUtils.prereadDNA(mDir, genome);
+    final File in = ReaderTestUtils.getDNASubDir(genome, mDir);
     try {
       final SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in);
       try {

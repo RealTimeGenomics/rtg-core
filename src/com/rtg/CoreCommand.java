@@ -11,14 +11,10 @@
  */
 package com.rtg;
 
-import java.io.OutputStream;
-import java.io.PrintStream;
-
 import com.rtg.assembler.AssembleCli;
 import com.rtg.assembler.PacBioCli;
 import com.rtg.calibrate.ChrStatsCli;
 import com.rtg.calibrate.RecalibrateCli;
-import com.rtg.graph.RocPlotCli;
 import com.rtg.metagenomics.CompositionMetaPipelineCli;
 import com.rtg.metagenomics.FunctionalMetaPipelineCli;
 import com.rtg.metagenomics.MetagenomicsWrapperCli;
@@ -31,16 +27,8 @@ import com.rtg.ngs.SamRename;
 import com.rtg.protein.MapXCli;
 import com.rtg.protein.MapxRename;
 import com.rtg.reader.Cg2Sdf;
-import com.rtg.reader.FormatCli;
-import com.rtg.reader.Sdf2Fasta;
-import com.rtg.reader.Sdf2Fastq;
 import com.rtg.reader.Sdf2Quala;
 import com.rtg.reader.SdfSplitter;
-import com.rtg.reader.SdfStatistics;
-import com.rtg.reader.SdfSubseq;
-import com.rtg.reader.SdfSubset;
-import com.rtg.relation.PedFilterCli;
-import com.rtg.relation.PedStatsCli;
 import com.rtg.sam.Sam2Bam;
 import com.rtg.sam.SamMergeCli;
 import com.rtg.sam.SamValidatorCli;
@@ -58,15 +46,10 @@ import com.rtg.simulation.variants.DeNovoSampleSimulatorCli;
 import com.rtg.simulation.variants.PriorPopulationVariantGeneratorCli;
 import com.rtg.simulation.variants.SampleReplayerCli;
 import com.rtg.simulation.variants.SampleSimulatorCli;
-import com.rtg.tabix.BgZip;
-import com.rtg.tabix.ExtractCli;
-import com.rtg.tabix.IndexerCli;
 import com.rtg.taxonomy.NcbiTaxDumpReaderCli;
 import com.rtg.taxonomy.TaxFilterCli;
 import com.rtg.taxonomy.TaxStatsCli;
 import com.rtg.usage.UsageServerCli;
-import com.rtg.util.License;
-import com.rtg.vcf.VcfStatsCli;
 import com.rtg.variant.avr.AvrStatsCli;
 import com.rtg.variant.avr.BuilderCli;
 import com.rtg.variant.avr.PredictCli;
@@ -78,16 +61,10 @@ import com.rtg.variant.bayes.multisample.singleton.SingletonCli;
 import com.rtg.variant.cnv.CnvProductCli;
 import com.rtg.variant.cnv.CnvStatsCli;
 import com.rtg.variant.coverage.CoverageCli;
-import com.rtg.variant.eval.VcfEvalCli;
 import com.rtg.variant.sv.SvToolCli;
 import com.rtg.variant.sv.UnmatedAugmenterCli;
 import com.rtg.variant.sv.discord.DiscordantToolCli;
-import com.rtg.variant.util.MendeliannessChecker;
 import com.rtg.vcf.SnpIntersection;
-import com.rtg.vcf.VcfAnnotatorCli;
-import com.rtg.vcf.VcfFilterCli;
-import com.rtg.vcf.VcfMerge;
-import com.rtg.vcf.VcfSubset;
 import com.rtg.visualization.Aview;
 import com.rtg.zooma.ZoomaNativeBuildIndexCli;
 import com.rtg.zooma.ZoomaNativeMapReadsCli;
@@ -100,17 +77,8 @@ public final class CoreCommand {
 
   private CoreCommand() { }
 
-  /** For formatting data files for use by Slim */
-  static final Command FORMAT = new Command(new FormatCli(), CommandCategory.FORMAT, ReleaseLevel.GA);
-
   /** For formatting complete genomics data files for use by Slim */
   static final Command CG2SDF = new Command(new Cg2Sdf(), CommandCategory.FORMAT, ReleaseLevel.GA);
-
-  /** For converting Slim's data format into FASTA format */
-  static final Command SDF2FASTA = new Command(new Sdf2Fasta(), CommandCategory.FORMAT, ReleaseLevel.GA);
-
-  /** For converting Slim's data format into FASTQ format */
-  static final Command SDF2FASTQ = new Command(new Sdf2Fastq(), CommandCategory.FORMAT, ReleaseLevel.GA);
 
   /** For converting Slim's data format into FASTA/QUALA format */
   static final Command SDF2QUALA = new Command(new Sdf2Quala(), CommandCategory.FORMAT, ReleaseLevel.ALPHA);
@@ -232,38 +200,17 @@ public final class CoreCommand {
   /** Generate a genome SDF corresponding to a genotype contained in a VCF file */
   static final Command SAMPLEREPLAY = new Command(new SampleReplayerCli(), CommandCategory.SIMULATE, ReleaseLevel.BETA);
 
-  /** Evaluates variant calling accuracy on a given baseline variant set */
-  static final Command VCFEVAL = new Command(new VcfEvalCli(), CommandCategory.UTILITY, ReleaseLevel.GA, License.LICENSE_KEY_PREFIX + "snpsimeval");
-
   /** Generate a copy of a genome with a bunch of CNV mutations */
   static final Command CNVSIM = new Command(new CnvSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.ALPHA);
 
   /** Evaluates CNV calling accuracy on simulated CNV data */
   static final Command CNVSIMEVAL = new Command(new CnvStatsCli(), CommandCategory.SIMULATE, ReleaseLevel.ALPHA);
 
-  /** BGZips an input file (for use with index module) */
-  static final Command BGZIP = new Command(new BgZip(), CommandCategory.UTILITY, ReleaseLevel.GA);
-
-  /** Indexes our various output formats that have records based on reference position */
-  static final Command INDEX = new Command(new IndexerCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
-
-  /** Extracts regions from indexed files */
-  static final Command EXTRACT = new Command(new ExtractCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
-
   /** Classic searching with positions, also supports gaps */
   static final Command AVIEW = new Command(new Aview(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
-  /** Print statistics about prereads */
-  static final Command SDFSTATS = new Command(new SdfStatistics(), CommandCategory.UTILITY, ReleaseLevel.GA);
-
   /** Splits an SDF file into parts */
   static final Command SDFSPLIT = new Command(new SdfSplitter(), CommandCategory.UTILITY, ReleaseLevel.GA);
-
-  /** Creates a subset of an SDF file */
-  static final Command SDFSUBSET = new Command(new SdfSubset(), CommandCategory.UTILITY, ReleaseLevel.GA);
-
-  /** Creates a subset of an SDF file */
-  static final Command SDFSUBSEQ = new Command(new SdfSubseq(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Create a BAM file from a SAM file  */
   static final Command SAM2BAM = new Command(new Sam2Bam(), CommandCategory.UTILITY, ReleaseLevel.GA);
@@ -283,12 +230,6 @@ public final class CoreCommand {
   /** Do checking of coverage levels from calibration information */
   static final Command CHRSTATS = new Command(new ChrStatsCli(), CommandCategory.UTILITY, ReleaseLevel.BETA);
 
-  /** SNP filter class */
-  static final Command VCFFILTER = new Command(new VcfFilterCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
-
-  /** SNP filter class */
-  static final Command VCFANNOTATE = new Command(new VcfAnnotatorCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
-
   /** SNP intersection class */
   static final Command SNPINTERSECT = new Command(new SnpIntersection(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
 
@@ -301,68 +242,28 @@ public final class CoreCommand {
   /** Taxonomy verifier */
   static final Command TAXSTATS = new Command(new TaxStatsCli(), CommandCategory.UTILITY, ReleaseLevel.BETA);
 
-  /** Runs stand alone Mendelian checking */
-  static final Command MENDELIAN = new Command(new MendeliannessChecker(), CommandCategory.UTILITY, ReleaseLevel.GA);
-
   /** Search for family phasing using segregation analysis */
   static final Command PHASINGSEARCH = new Command(new SegregationVcfSearch(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
 
   /** Evaluate calls against segregation phasing */
   static final Command PHASINGEVAL = new Command(new SegregationCheckerCli(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
 
-  /** VCF stats class */
-  static final Command VCFSTATS = new Command(new VcfStatsCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
-
-  /** VCF merge class */
-  static final Command VCFMERGE = new Command(new VcfMerge(), CommandCategory.UTILITY, ReleaseLevel.GA);
-
-  /** VCF subset class */
-  static final Command VCFSUBSET = new Command(new VcfSubset(), CommandCategory.UTILITY, ReleaseLevel.GA);
-
-  /** PED filter class */
-  static final Command PEDFILTER = new Command(new PedFilterCli(), CommandCategory.UTILITY, ReleaseLevel.BETA);
-
-  /** PED stats class */
-  static final Command PEDSTATS = new Command(new PedStatsCli(), CommandCategory.UTILITY, ReleaseLevel.BETA);
-
   /** Runs AVR model status. */
   static final Command AVRSTATS = new Command(new AvrStatsCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
-
-  /** Roc plot tool */
-  static final Command ROCPLOT = new Command(new RocPlotCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Usage tracking server */
   static final Command USAGESERVER = new Command(new UsageServerCli(), CommandCategory.UTILITY, ReleaseLevel.BETA);
 
-  /** Print version */
-  static final Command VERSION = new Command(null, "VERSION", CommandCategory.UTILITY, ReleaseLevel.GA, License.RTG_PROGRAM_KEY, null) {
-    @Override
-    public int mainInit(final String[] args, final OutputStream out, final PrintStream err) {
-      return VersionCommand.mainInit(args, out);
-    }
-  };
-
   /** List modules and their license status. */
-  static final Command LICENSE = new Command(null, "LICENSE", CommandCategory.UTILITY, ReleaseLevel.GA, License.RTG_PROGRAM_KEY, null) {
-    @Override
-    public int mainInit(final String[] args, final OutputStream out, final PrintStream err) {
-      return LicenseCommand.mainInit(out, INFO);
-    }
-  };
+  static final LicenseCommand LICENSE = new LicenseCommand();
 
   /** Generate help for user. */
-  static final Command HELP = new Command(null, "HELP", CommandCategory.UTILITY, ReleaseLevel.GA, License.RTG_PROGRAM_KEY, null) {
-    @Override
-    public int mainInit(final String[] args, final OutputStream out, final PrintStream err) {
-      return HelpCommand.mainInit(args, out, err, INFO);
-    }
-  };
-
+  static final HelpCommand HELP = new HelpCommand();
 
   /* This field determines the display order of the commands in the help / license output */
   private static final Command[] DISPLAY_ORDER = {
     // Formatting
-    FORMAT, CG2SDF, SDF2FASTA, SDF2FASTQ, SDF2QUALA,
+    ToolsCommand.FORMAT, CG2SDF, ToolsCommand.SDF2FASTA, ToolsCommand.SDF2FASTQ, SDF2QUALA,
 
     // Mapping
     MAP, MAPF, CGMAP,
@@ -401,21 +302,21 @@ public final class CoreCommand {
     CNVSIM, CNVSIMEVAL,                                  // Structural variant simulation
 
     // Utility
-    BGZIP, INDEX, EXTRACT, AVIEW,                        // General purpose
-    SDFSTATS, SDFSPLIT, SDFSUBSET, SDFSUBSEQ,            // SDF related
+    ToolsCommand.BGZIP, ToolsCommand.INDEX, ToolsCommand.EXTRACT, AVIEW,                        // General purpose
+    ToolsCommand.SDFSTATS, SDFSPLIT, ToolsCommand.SDFSUBSET, ToolsCommand.SDFSUBSEQ,            // SDF related
     SAM2BAM, SAMMERGE, SAMSTATS, SAMRENAME, MAPXRENAME,  // Mapping related
     CHRSTATS,
-    MENDELIAN, PHASINGSEARCH, PHASINGEVAL,
-    VCFSTATS, VCFMERGE,                       // VCF related
-    VCFFILTER, VCFANNOTATE, VCFSUBSET, VCFEVAL, SNPINTERSECT,
-    PEDFILTER, PEDSTATS,
-    AVRSTATS, ROCPLOT,
+    ToolsCommand.MENDELIAN, PHASINGSEARCH, PHASINGEVAL,
+    ToolsCommand.VCFSTATS, ToolsCommand.VCFMERGE,                       // VCF related
+    ToolsCommand.VCFFILTER, ToolsCommand.VCFANNOTATE, ToolsCommand.VCFSUBSET, ToolsCommand.VCFEVAL, SNPINTERSECT,
+    ToolsCommand.PEDFILTER, ToolsCommand.PEDSTATS,
+    AVRSTATS, ToolsCommand.ROCPLOT,
 
     NCBI2TAX, TAXFILTER, TAXSTATS, // Taxonomy
 
     USAGESERVER,
 
-    VERSION, LICENSE, HELP
+    ToolsCommand.VERSION, LICENSE, HELP
   };
 
   /**
@@ -428,4 +329,10 @@ public final class CoreCommand {
       return DISPLAY_ORDER;
     }
   };
+
+  static {
+    LICENSE.setInfo(INFO);
+    HELP.setInfo(INFO);
+  }
+
 }

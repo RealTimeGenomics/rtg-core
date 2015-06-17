@@ -28,6 +28,17 @@ public class CorrectReadsCli extends LoggedCli {
   private static final String THRESHOLD = "threshold";
 
   @Override
+  public String moduleName() {
+    return "correctreads";
+
+  }
+
+  @Override
+  public String description() {
+    return "correct read errors using kmer analysis";
+  }
+
+  @Override
   protected File outputDirectory() {
     return (File) mFlags.getValue(OUTPUT);
   }
@@ -52,12 +63,6 @@ public class CorrectReadsCli extends LoggedCli {
     flags.registerRequired('k', DeBruijnAssemblerCli.KMER_SIZE, Integer.class, "INT", "size of kmer to use in correction");
     flags.registerRequired('o', OUTPUT, File.class, "DIR", "output directory");
     flags.registerOptional('c', THRESHOLD, Integer.class, "INT", "override the calculated frequency threshold");
-  }
-
-  @Override
-  public String moduleName() {
-    return "correctreads";
-
   }
 
   /**

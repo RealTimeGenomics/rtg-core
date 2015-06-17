@@ -36,6 +36,16 @@ public class ExtractPath extends AbstractCli {
 
 
   @Override
+  public String moduleName() {
+    return "ExtractPath";
+  }
+
+  @Override
+  public String description() {
+    return null;
+  }
+
+  @Override
   protected void initFlags() {
     initFlagsLocal(mFlags);
   }
@@ -100,11 +110,6 @@ public class ExtractPath extends AbstractCli {
     flags.registerRequired('k', KMER_SIZE, Integer.class, "INT", "size of the kmer the graph was constructed with");
     flags.registerOptional('s', START, Integer.class, "INT", "trim the first sequence up to this position");
     flags.registerOptional('e', END, Integer.class, "INT", "trim the final sequence at this position");
-  }
-
-  @Override
-  public String moduleName() {
-    return "ExtractPath";
   }
 
   /**

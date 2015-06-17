@@ -17,9 +17,9 @@ import static com.rtg.util.StringUtils.LS;
 import java.io.File;
 import java.io.IOException;
 
-import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.OutputParams;
 import com.rtg.metagenomics.MetagenomicsWrapperCli.Platform;
+import com.rtg.ngs.MapFlags;
 import com.rtg.protein.MapXCli;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
@@ -100,7 +100,7 @@ public class MetagenomicsWrapperTaskTest extends TestCase {
       assertTrue(reportOut.isDirectory());
       TestUtils.containsAll(mOut.toString()
           , "## rtg mapf  --output " + mapfOut.getPath() + " --template " + filter.getPath() + " --sam-rg @RG\\tPL:ILLUMINA\\tSM:sample\\tID:id --input " + readSdf.getPath()
-          , "## rtg map  --output " + mapOut.getPath() + " --template " + species.getPath() + " --" + CommonFlags.MAX_ALIGNMENT_MISMATCHES + " 10% --max-top-results 100 --sam-rg @RG\\tPL:ILLUMINA\\tSM:sample\\tID:id --input " + new File(mapfOut, "unmapped.sdf").getPath()
+          , "## rtg map  --output " + mapOut.getPath() + " --template " + species.getPath() + " --" + MapFlags.MAX_ALIGNMENT_MISMATCHES + " 10% --max-top-results 100 --sam-rg @RG\\tPL:ILLUMINA\\tSM:sample\\tID:id --input " + new File(mapfOut, "unmapped.sdf").getPath()
           , "## rtg species  --output " + speciesOut.getPath() + " --genomes " + species.getPath() + " " + new File(mapOut, "alignments.bam").getPath()
           , "## rtg mapx  --output " + mapxOut.getPath() + " --template " + protein.getPath() + " --" + MapXCli.MAX_ALIGNMENT_SCORE + " 10% --max-top-results 10 --input " + new File(mapfOut, "unmapped.sdf").getPath()
           );
@@ -152,7 +152,7 @@ public class MetagenomicsWrapperTaskTest extends TestCase {
       final File unmappedSdf = new File(mapfOut, "unmapped.sdf");
       TestUtils.containsAll(mOut.toString()
           , "## rtg mapf  --output " + mapfOut.getPath() + " --template " + filter.getPath() + " --sam-rg @RG\\tPL:IONTORRENT\\tSM:sample\\tID:id --format fastq --quality-format sanger --left " + readsLeft.getPath() + " --right " + readsRight.getPath()
-          , "## rtg map  --output " + mapOut.getPath() + " --template " + species.getPath() + " --" + CommonFlags.MAX_ALIGNMENT_MISMATCHES + " 15% --max-top-results 100 --sam-rg @RG\\tPL:IONTORRENT\\tSM:sample\\tID:id --input " + unmappedSdf.getPath()
+          , "## rtg map  --output " + mapOut.getPath() + " --template " + species.getPath() + " --" + MapFlags.MAX_ALIGNMENT_MISMATCHES + " 15% --max-top-results 100 --sam-rg @RG\\tPL:IONTORRENT\\tSM:sample\\tID:id --input " + unmappedSdf.getPath()
           , "## rtg species  --output " + speciesOut.getPath() + " --genomes " + species.getPath() + " " + new File(mapOut, "alignments.bam").getPath()
           , "## rtg mapx  --output " + mapxOut1.getPath() + " --template " + protein.getPath() + " --" + MapXCli.MAX_ALIGNMENT_SCORE + " 15% --max-top-results 10 --input " + new File(unmappedSdf, "left").getPath()
           , "## rtg mapx  --output " + mapxOut2.getPath() + " --template " + protein.getPath() + " --" + MapXCli.MAX_ALIGNMENT_SCORE + " 15% --max-top-results 10 --input " + new File(unmappedSdf, "right").getPath()
@@ -193,7 +193,7 @@ public class MetagenomicsWrapperTaskTest extends TestCase {
       assertTrue(mapxOut2.isDirectory());
       assertTrue(reportOut.isDirectory());
       TestUtils.containsAll(mOut.toString()
-          , "## rtg map  --output " + mapOut.getPath() + " --template " + species.getPath() + " --" + CommonFlags.MAX_ALIGNMENT_MISMATCHES + " 10% --max-top-results 100 --sam-rg @RG\\tPL:ILLUMINA\\tSM:sample\\tID:id --input " + reads.getPath()
+          , "## rtg map  --output " + mapOut.getPath() + " --template " + species.getPath() + " --" + MapFlags.MAX_ALIGNMENT_MISMATCHES + " 10% --max-top-results 100 --sam-rg @RG\\tPL:ILLUMINA\\tSM:sample\\tID:id --input " + reads.getPath()
           , "## rtg species  --output " + speciesOut.getPath() + " --genomes " + species.getPath() + " " + new File(mapOut, "alignments.bam").getPath()
           , "## rtg mapx  --output " + mapxOut1.getPath() + " --template " + protein.getPath() + " --" + MapXCli.MAX_ALIGNMENT_SCORE + " 10% --max-top-results 10 --input " + new File(reads, "left").getPath()
           , "## rtg mapx  --output " + mapxOut2.getPath() + " --template " + protein.getPath() + " --" + MapXCli.MAX_ALIGNMENT_SCORE + " 10% --max-top-results 10 --input " + new File(reads, "right").getPath()

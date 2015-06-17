@@ -45,7 +45,7 @@ public class ProgramModeTest extends TestCase {
     assertEquals(SequenceMode.PROTEIN, SLIMP.subjectMode());
     assertEquals(SequenceType.PROTEIN, SLIMP.translatedType());
     assertEquals(SLIMP, SLIMP.flip());
-    assertEquals("SLIMP", ProgramMode.SLIMP.name());
+    assertEquals("SLIMP", SLIMP.name());
 
     assertEquals(SequenceMode.TRANSLATED, SLIMX.queryMode());
     assertEquals(SequenceMode.PROTEIN, SLIMX.subjectMode());
