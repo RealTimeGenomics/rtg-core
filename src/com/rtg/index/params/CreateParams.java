@@ -289,7 +289,7 @@ public class CreateParams implements Integrity {
   }
 
   private int hashLong(final long l) {
-    return ((int) l) ^ ((int) (l >> 32));
+    return (int) l ^ (int) (l >> 32);
   }
 
   @Override
@@ -433,7 +433,8 @@ public class CreateParams implements Integrity {
     }
 
     /**
-     * ??? surely there is a tradeoff here that needs to be explained
+     * Sets whether to minimise the memory used.
+     * Only use if not intending to search the index.
      * @param ideal if true then minimise total of hash and initial pointer memory
      * @return this builder for chaining purposes
      */
