@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
@@ -61,6 +62,12 @@ public class DummySdfOutputProcessorTest extends TestCase {
     protected FilterConcatIntermediateFiles filterConcatNonMated(MapQScoringReadBlocker blockerLeft, MapQScoringReadBlocker blockerRight, File[] tempFiles, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, PrereadNamesInterface templateNames, File outFile) {
       throw new UnsupportedOperationException();
     }
+  }
+
+  @Override
+  protected void tearDown() throws Exception {
+    super.tearDown();
+    GlobalFlags.resetAccessedStatus();
   }
 
   static final String TEMPLATE = ">t" + StringUtils.LS + "tgcaagacaagagggcctcc" + StringUtils.LS;
@@ -110,6 +117,7 @@ public class DummySdfOutputProcessorTest extends TestCase {
 
       final MemoryPrintStream mps = new MemoryPrintStream();
       final File alignmentsSdf = new File(hitsDir, "alignments.sdf");
+      GlobalFlags.resetAccessedStatus();
       final int rc = new Sdf2Fasta().mainInit(new String[] {"-i", alignmentsSdf.getPath(), "-o", new File(hitsDir, "outfa").getPath(), "-Z"}, mps.outputStream(), mps.printStream());
       assertEquals(mps.toString(), 0, rc);
 
