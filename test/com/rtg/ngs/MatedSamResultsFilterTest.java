@@ -128,8 +128,6 @@ public class MatedSamResultsFilterTest extends TestCase {
   }
 
   private static final String EXPECTED = ""
-    + "@HD\tVN:1.4\tSO:coordinate\n"
-    + "@SQ\tSN:chr20\tLN:62435964\n"
     + "1\t99\tchr20\t28833\t55\t4M5M\t=\t28993\t195\tACGT\t<<<<\tAS:i:0\tNM:i:1\tXA:i:3\tIH:i:1\tNH:i:1\n"
     + "20\t403\tchr20\t28834\t0\t35M\t=\t28701\t-168\tACGT\t<<<<\tAS:i:0\tNM:i:0\tXA:i:4\tIH:i:4\tNH:i:4\n"
     + "59\t147\tchr20\t28834\t55\t35M\t=\t28701\t-168\tACGT\t<<<<\tAS:i:0\tNM:i:0\tXA:i:6\tIH:i:1\tNH:i:1\n";
@@ -258,7 +256,7 @@ public class MatedSamResultsFilterTest extends TestCase {
           ? FileHelper.gzFileToString(outFile)
           : FileUtils.fileToString(outFile);
         //System.out.println("contents=" + contents);
-        assertTrue(TestUtils.sameLines(EXPECTED, contents, false));
+        assertTrue(TestUtils.sameLines(EXPECTED, TestUtils.stripSAMHeader(contents), false));
 
       } finally {
         if (out != null) {
@@ -272,8 +270,6 @@ public class MatedSamResultsFilterTest extends TestCase {
     }
     assertTrue(log.toString().contains("Mated SAM filter outputs 3/6 records"));
   }
-
-  private static final String SAM_EMPTY = "@HD\tVN:1.4\tSO:coordinate\n" + "@SQ\tSN:chr20\tLN:62435964\n";
 
   public void testFilterConcatEmpty() throws IOException {
     final MemoryPrintStream input = new MemoryPrintStream();
@@ -301,7 +297,8 @@ public class MatedSamResultsFilterTest extends TestCase {
       out.close();
       final String contents = FileHelper.gzFileToString(outFile);
       //System.out.println("contents=" + contents);
-      assertTrue(TestUtils.sameLines(SAM_EMPTY, contents, false));
+      assertTrue(contents.startsWith("@HD"));
+      assertTrue(TestUtils.sameLines("", TestUtils.stripSAMHeader(contents), false));
     } finally {
       if (out != null) {
         out.close();
@@ -361,7 +358,7 @@ public class MatedSamResultsFilterTest extends TestCase {
             }
             final String contents = FileUtils.fileToString(outFile);
             // System.out.println("contents=" + contents);
-            assertTrue(TestUtils.sameLines(samOut, contents, false));
+            assertTrue(TestUtils.sameLines(samOut, TestUtils.stripSAMHeader(contents), false));
           }
         } finally {
           FileHelper.deleteAll(mainOut);
@@ -404,8 +401,6 @@ public class MatedSamResultsFilterTest extends TestCase {
     trw.writeRecord(bpar);
   }
   private static final String EXPECTED_CG_SUPERCIGAR_1 = ""
-    + "@HD\tVN:1.4\tSO:coordinate\n"
-    + "@SQ\tSN:chr20\tLN:62435964\n"
     + "0\t67\tchr20\t1\t55\t24=5N2X8=\t=\t0\t0\tCTGGTAAAATATGAAGTGACCACCATGCTTGAGA\tABCDEGHIJKLMNOPQRSTUVWXYZ123456789\tAS:i:2\tXU:Z:5=1B20=5N2X8=\tXR:Z:AT\tXA:i:3\tXQ:Z:F\tIH:i:1\tNH:i:1\n"
     + "0\t147\tchr20\t1\t55\t24=5N2X8=\t=\t0\t0\tCTGGTAAAATATGAAGTGACCACCATGCTTGAGA\t98765321ZYXWVUTSRQPONMLKJIHGFEDCBA\tAS:i:2\tXU:Z:5=1B20=5N2X8=\tXR:Z:AT\tXA:i:3\tXQ:Z:4\tIH:i:1\tNH:i:1\n";
 
@@ -453,8 +448,6 @@ public class MatedSamResultsFilterTest extends TestCase {
 
 
   private static final String EXPECTED_CG_SUPERCIGAR_2 = ""
-    + "@HD\tVN:1.4\tSO:coordinate\n"
-    + "@SQ\tSN:chr20\tLN:62435964\n"
     + "0\t67\tchr20\t1\t55\tblah\t=\t0\t0\tCTGGTAAAATATGAAGTGACCACCATGCTTGA\tABCDEIJKLMNOPQRSTUVWXYZ123456789\tAS:i:2\tXU:Z:2=1X2=3B3=2I25=\tXR:Z:ATT\tXA:i:3\tXQ:Z:FGH\tIH:i:1\tNH:i:1\n"
     + "0\t131\tchr20\t1\t55\tboo\t=\t0\t0\tCTGGTAAAATATGAAGTGACCACCATGCTTG\tABCDEFGHIJKLMNOPQRSTUVWXYZ56789\tAS:i:2\tXU:Z:2=1X4=2I14=3I4=4B2=1D3=\tXR:Z:ACCGGG\tXA:i:3\tXQ:Z:1234\tIH:i:1\tNH:i:1\n";
 
@@ -501,8 +494,6 @@ public class MatedSamResultsFilterTest extends TestCase {
   }
 
   private static final String EXPECTED_CG_SUPERCIGAR_3 = ""
-    + "@HD\tVN:1.4\tSO:coordinate\n"
-    + "@SQ\tSN:chr20\tLN:62435964\n"
     + "0\t67\tchr20\t1\t55\tblah\t=\t0\t0\tCTGGTANAAATATGAAGTGACCACCATGCTTGAGA\tABCDEFGHIJKLMNOPQRSTUVWXYZ123456789\tAS:i:2\tXU:Z:1=3I1=3D3B1=1I28=\tXR:Z:TGGN\tXA:i:4\tIH:i:1\tNH:i:1\n"
     + "0\t131\tchr20\t1\t55\tboo\t=\t0\t0\tCTGGTAAAAATATGAAGTGACCACCATGCTTGAGA\tABCDEFGHIJKLMNOPQRSTUVWXYZ123456789\tAS:i:2\tXA:i:4\tIH:i:1\tNH:i:1\n";
 
@@ -537,8 +528,6 @@ public class MatedSamResultsFilterTest extends TestCase {
       writeSentinel(trw);
     }
     final String exp = ""
-      + "@HD\tVN:1.4\tSO:coordinate\n"
-      + "@SQ\tSN:chr20\tLN:62435964\n"
       + "0\t131\tchr20\t17617\t55\t10=6N18=2I1=\t=\t0\t0\tCGAGTATGGACCTCATAAGTCGGCCCCTGGT\tUZURRSWZSZRYSQRWSQSSURSWSWTSUQV\tAS:i:3\tXU:Z:10=6N20=4B2=2I1=\tXR:Z:GG\tXA:i:4\tXQ:Z:UXTQ\tIH:i:1\tNH:i:1\n";
 
     final File mainOut = FileUtils.createTempDir("cgmap", "test");
@@ -563,7 +552,7 @@ public class MatedSamResultsFilterTest extends TestCase {
           filter.filterConcat(header, out, null, null, mTemplateReader, false, in1);
 
           final String contents = FileUtils.fileToString(outFile);
-          assertTrue(TestUtils.sameLines(exp, contents, false));
+          assertTrue(TestUtils.sameLines(exp, TestUtils.stripSAMHeader(contents), false));
         }
       }
     } finally {
@@ -589,8 +578,6 @@ public class MatedSamResultsFilterTest extends TestCase {
     trw.writeRecord(bpar);
   }
   private static final String EXPECTED_CG_SUPERCIGAR_BUG1295 = ""
-    + "@HD\tVN:1.4\tSO:coordinate\n"
-    + "@SQ\tSN:chr20\tLN:62435964\n"
     + "0 179 chr20 782703  55  3=2I16=6N10=  = 783157  455 TGGCCAGAAAATGCAGAACAAAAGAACAGGG 98765ZYXWVUTSRQPONMLKJIHGFEDCBA  AS:i:3  XU:Z:3=2I4B20=6N10= XR:Z:CC XA:i:3  RG:Z:GS000005305  XQ:Z:4321  IH:i:1  NH:i:1\n".replaceAll(" +", "\t")
     ;
 

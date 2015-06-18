@@ -15,8 +15,6 @@ package com.rtg.variant.sv.discord;
 import com.rtg.util.machine.MachineOrientation;
 import com.rtg.variant.sv.ReadGroupStats;
 
-import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -56,7 +54,7 @@ public class FlipTest extends TestCase {
     TestConstructor(final int firstFlag) {
       assertEquals(113, MAX_GAP);
       assertEquals(87, MIN_GAP);
-      final SAMRecord recFirst = new MockSam();
+      final MockSam recFirst = new MockSam();
       recFirst.setAlignmentStart(START_FIRST);
       recFirst.setAlignmentEnd(START_END_EX - 1);
       recFirst.setMateAlignmentStart(START_SECOND);
@@ -66,7 +64,7 @@ public class FlipTest extends TestCase {
 
       checkFirst();
 
-      final SAMRecord recSecond = new MockSam();
+      final MockSam recSecond = new MockSam();
       recSecond.setAlignmentStart(START_SECOND);
       recSecond.setAlignmentEnd(START_SECOND + LENGTH - 1);
       recSecond.setMateAlignmentStart(START_FIRST);

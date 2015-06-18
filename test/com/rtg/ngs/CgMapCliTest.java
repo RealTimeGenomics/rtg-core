@@ -213,7 +213,7 @@ public class CgMapCliTest extends AbstractCliTest {
 
       final String mated = FileHelper.gzFileToString(new File(out, "mated.sam.gz"));
       //System.err.println(mated);
-      TestUtils.containsAll(mated, "@HD\tVN:1.4\tSO:coordinate",
+      TestUtils.containsAll(mated,
           "@RG\tID:L23\tPL:COMPLETE\tSM:NA123",
           "@PG\tID:rtg",
           "@CO\tTEMPLATE-SDF-ID:",
@@ -221,7 +221,7 @@ public class CgMapCliTest extends AbstractCliTest {
           "@SQ\tSN:template\tLN:160");
       final String unmated = FileHelper.gzFileToString(new File(out, "unmated.sam.gz"));
       //      System.err.println(unmated);
-      TestUtils.containsAll(unmated, "@HD\tVN:1.4\tSO:coordinate",
+      TestUtils.containsAll(unmated,
           "@RG\tID:L23\tPL:COMPLETE\tSM:NA123",
           "@PG\tID:rtg",
           "@CO\tTEMPLATE-SDF-ID:",

@@ -18,8 +18,6 @@ import com.rtg.sam.SamUtils;
 import com.rtg.util.machine.MachineOrientation;
 import com.rtg.variant.sv.ReadGroupStats;
 
-import htsjdk.samtools.SAMRecord;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -57,7 +55,7 @@ public class BreakpointConstraintTest extends TestCase {
   }
   private static BreakpointConstraint makeConstraint(String xSeq, int x, boolean xUp, String ySeq, int y, boolean yUp, double mean) {
     final ReadGroupStats rgs = new MockReadGroupStats(mean);
-    final SAMRecord rec = new MockSam();
+    final MockSam rec = new MockSam();
     rec.setReferenceName(xSeq);
     rec.setAlignmentStart(x);
     rec.setAlignmentEnd(x + 7);
@@ -798,7 +796,7 @@ public class BreakpointConstraintTest extends TestCase {
 
   private static BreakpointConstraint makeMateEnd(int y, final Integer mateEnd) {
     final ReadGroupStats rgs = new MockReadGroupStats(10.0);
-    final SAMRecord rec = new MockSam();
+    final MockSam rec = new MockSam();
     rec.setReferenceName("x");
     rec.setAlignmentStart(10);
     rec.setAlignmentEnd(10 + 7);
@@ -826,7 +824,7 @@ public class BreakpointConstraintTest extends TestCase {
 
   private static BreakpointConstraint makeAS(final boolean first, final Integer as, final Integer mateAS, boolean xUp, boolean yUp) {
     final ReadGroupStats rgs = new MockReadGroupStats(10.0);
-    final SAMRecord rec = new MockSam();
+    final MockSam rec = new MockSam();
     rec.setReferenceName("x");
     rec.setAlignmentStart(10);
     rec.setAlignmentEnd(10 + 7);

@@ -13,12 +13,11 @@
 package com.rtg.variant.sv;
 
 import java.io.File;
-import java.io.InputStream;
 
-import com.rtg.util.Resources;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.util.StringUtils;
-import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -26,76 +25,58 @@ import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMSequenceRecord;
 
-import junit.framework.TestCase;
-
 /**
  * Test class
  */
-public class UnmatedAugmenterTest extends TestCase {
-
-  private File mFile;
-  @Override
-  public void setUp() throws Exception {
-    Diagnostic.setLogStream();
-    mFile = FileUtils.createTempDir("test", "t");
-  }
-
-  @Override
-  public void tearDown() {
-    assertTrue(FileHelper.deleteAll(mFile));
-    mFile = null;
-  }
-
+public class UnmatedAugmenterTest extends AbstractNanoTest {
 
   public void testMain() throws Exception {
-    final File in = new File(mFile, "in.sam");
-    final File out = new File(mFile, "out.sam");
-    try (final InputStream stream = Resources.getResourceAsStream("com/rtg/sam/resources/unmated.sam")) {
-      FileHelper.streamToFile(stream, in);
+    try (TestDirectory temp = new TestDirectory()) {
+      final File in = new File(temp, "in.sam");
+      final File out = new File(temp, "out.sam");
+      FileHelper.resourceToFile("com/rtg/sam/resources/unmated.sam", in);
+      final UnmatedAugmenter un = new UnmatedAugmenter();
+      un.augmentUnmated(in, out, false, null);
+      final String outStr = FileUtils.fileToString(out);
+      final String outStrNoPg = StringUtils.grepMinusV(outStr, "^@PG");
+      mNano.check("augmented.sam", outStrNoPg);
     }
-    final String exp;
-    try (final InputStream stream = Resources.getResourceAsStream("com/rtg/sam/resources/augmented.sam")) {
-      exp = FileUtils.streamToString(stream);
+  }
+
+  public void testGz() throws Exception {
+    try (TestDirectory temp = new TestDirectory()) {
+      final File in = new File(temp, "in.sam.gz");
+      final File out = new File(temp, "out.sam.gz");
+      FileHelper.resourceToGzFile("com/rtg/sam/resources/unmated.sam", in);
+      final UnmatedAugmenter un = new UnmatedAugmenter();
+      un.augmentUnmated(in, out, true, null);
+      final String outStr = FileHelper.gzFileToString(out);
+      final String outStrNoPg = outStr.replaceAll("@PG.*\n", "");
+      mNano.check("augmented.sam", outStrNoPg);
     }
-    final UnmatedAugmenter un = new UnmatedAugmenter();
-    un.augmentUnmated(in, out, false, null);
-    final String outStr = FileUtils.fileToString(out);
-    final String expNoPg = StringUtils.grepMinusV(StringUtils.grepMinusV(exp, "^@PG"), "^@RG");
-    final String outStrNoPg = StringUtils.grepMinusV(StringUtils.grepMinusV(outStr, "^@PG"), "^@RG");
-    assertEquals(expNoPg, outStrNoPg);
-    assertTrue(outStr, outStr.contains("@PG\tID:rtg"));
   }
 
   public void testAugmenting() throws Exception {
-    final File mated = new File(mFile, "mated.sam");
-    final File unmated = new File(mFile, "unmated.sam");
-    final File unmapped = new File(mFile, "unmapped.sam");
-    final File outunmated = new File(mFile, "outunmated.sam");
-    final File outunmapped = new File(mFile, "outunmapped.sam");
+    try (TestDirectory temp = new TestDirectory()) {
+      final File mated = new File(temp, "mated.sam");
+      final File unmated = new File(temp, "unmated.sam");
+      final File unmapped = new File(temp, "unmapped.sam");
+      final File outunmated = new File(temp, "outunmated.sam");
+      final File outunmapped = new File(temp, "outunmapped.sam");
 
-    try (final InputStream stream = Resources.getResourceAsStream("com/rtg/sam/resources/mergemated.sam")) {
-      FileHelper.streamToFile(stream, mated);
+      FileHelper.resourceToFile("com/rtg/sam/resources/mergemated.sam", mated);
+      FileHelper.resourceToFile("com/rtg/sam/resources/mergeunmated.sam", unmated);
+      FileHelper.resourceToFile("com/rtg/sam/resources/mergeunmapped.sam.gz", unmapped);
+
+      final UnmatedAugmenter un = new UnmatedAugmenter();
+      final ReadGroupStatsCalculator calc = new ReadGroupStatsCalculator();
+      UnmatedAugmenter.populateReadGroupStats(mated, calc);
+      un.augmentUnmated(unmated, outunmated, false, calc);
+      un.augmentUnmapped(unmapped, outunmapped, false, calc);
+      final String outUnmappedStr = FileUtils.fileToString(outunmapped);
+      final String outStrNoPg = StringUtils.grepMinusV(outUnmappedStr, "^@PG");
+      mNano.check("mergeunmapped-aug.sam", outStrNoPg);
     }
-    try (final InputStream stream = Resources.getResourceAsStream("com/rtg/sam/resources/mergeunmated.sam")) {
-      FileHelper.streamToFile(stream, unmated);
-    }
-    try (final InputStream stream = Resources.getResourceAsStream("com/rtg/sam/resources/mergeunmapped.sam.gz")) {
-      FileHelper.streamToFile(stream, unmapped);
-    }
-    final String exp;
-    try (final InputStream stream = Resources.getResourceAsStream("com/rtg/sam/resources/mergeunmapped-aug.sam")) {
-      exp = FileUtils.streamToString(stream);
-    }
-    final UnmatedAugmenter un = new UnmatedAugmenter();
-    final ReadGroupStatsCalculator calc = new ReadGroupStatsCalculator();
-    UnmatedAugmenter.populateReadGroupStats(mated, calc);
-    un.augmentUnmated(unmated, outunmated, false, calc);
-    un.augmentUnmapped(unmapped, outunmapped, false, calc);
-    final String outUnmappedStr = FileUtils.fileToString(outunmapped);
-    final String expNoPg = StringUtils.grepMinusV(StringUtils.grepMinusV(exp, "^@PG"), "^@RG");
-    final String outStrNoPg = StringUtils.grepMinusV(StringUtils.grepMinusV(outUnmappedStr, "^@PG"), "^@RG");
-    assertEquals(expNoPg, outStrNoPg);
-    assertTrue(outUnmappedStr, outUnmappedStr.contains("@PG\tID:slim"));
   }
 
   private SAMRecord createSAMRecord(SAMFileHeader header, String readName, int flags, int position) {
@@ -162,18 +143,4 @@ public class UnmatedAugmenterTest extends TestCase {
     assertEquals(insertSize, rec.getInferredInsertSize());
   }
 
-  public void testGz() throws Exception {
-    final File in = new File(mFile, "in.sam.gz");
-    final File out = new File(mFile, "out.sam.gz");
-    FileHelper.resourceToGzFile("com/rtg/sam/resources/unmated.sam", in);
-    final String exp;
-    exp = FileHelper.resourceToString("com/rtg/sam/resources/augmented.sam");
-    final UnmatedAugmenter un = new UnmatedAugmenter();
-    un.augmentUnmated(in, out, true, null);
-    final String outStr = FileHelper.gzFileToString(out);
-    final String expNoPg = exp.replaceAll("@PG.*\n", "");
-    final String outStrNoPg = outStr.replaceAll("@PG.*\n", "");
-    assertEquals(expNoPg, outStrNoPg);
-    assertTrue(outStr.contains("@PG\tID:rtg"));
-  }
 }

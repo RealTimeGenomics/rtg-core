@@ -25,7 +25,7 @@ class MockSam extends SAMRecord {
   public int getAlignmentEnd() {
     return mEnd;
   }
-  @Override
+
   public void setAlignmentEnd(int value) {
     mEnd = value;
   }

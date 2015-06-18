@@ -133,10 +133,9 @@ public class UnmatedAugmenterCliTest extends AbstractCliTest {
     final String exp = FileHelper.resourceToString("com/rtg/sam/resources/augmented.sam");
     final String res = FileUtils.fileToString(mExistsSam);
 
-    final String expNoPg = exp.replaceAll("@PG.*\n", "");
-    final String outStrNoPg = res.replaceAll("@PG.*\n", "");
+    final String expNoPg = TestUtils.stripSAMHeader(exp);
+    final String outStrNoPg = TestUtils.stripSAMHeader(res);
     assertEquals(expNoPg, outStrNoPg);
-    assertTrue(res.contains("@PG\tID:rtg"));
   }
 
   public void testReadGroupStats() throws IOException {

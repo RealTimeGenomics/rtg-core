@@ -147,7 +147,7 @@ public class RamMapFunctionalTest extends TestCase {
         assertEquals(mps.toString(), 0, code);
 
         final String mated = FileHelper.gzFileToString(new File(out, merge ? "alignments.sam.gz" : "mated.sam.gz"));
-        TestUtils.containsAll(mated, "@HD\tVN:1.4\tSO:coordinate",
+        TestUtils.containsAll(mated, "@HD",
                                      "@RG\tID:L23\tSM:NA123",
                                      "@PG\tID:rtg",
                                      "@CO\tTEMPLATE-SDF-ID:",
@@ -160,7 +160,7 @@ public class RamMapFunctionalTest extends TestCase {
         //System.err.println(mated);
         if (!merge) {
           final String unmated = FileHelper.gzFileToString(new File(out, "unmated.sam.gz"));
-          TestUtils.containsAll(unmated, "@HD\tVN:1.4\tSO:coordinate",
+          TestUtils.containsAll(unmated, "@HD",
                                        "@RG\tID:L23\tSM:NA123",
                                        "@PG\tID:rtg",
                                        "@CO\tTEMPLATE-SDF-ID:",
@@ -232,7 +232,7 @@ public class RamMapFunctionalTest extends TestCase {
       assertFalse(mated.contains("\n0"));
       assertFalse(mated.contains("\n2"));
       assertTrue(mated.contains("\n1"));
-      TestUtils.containsAll(mated, "@HD\tVN:1.4\tSO:coordinate",
+      TestUtils.containsAll(mated, "@HD",
           "@RG\tID:L23\tSM:NA123",
           "@PG\tID:rtg",
           "@CO\tTEMPLATE-SDF-ID:",
@@ -241,7 +241,7 @@ public class RamMapFunctionalTest extends TestCase {
       "AS:i:0\tNM:i:0\tXA:i:0\tRG:Z:L23\tIH:i:1");
       //System.err.println(mated);
       final String unmated = FileHelper.gzFileToString(new File(out, "unmated.sam.gz"));
-      TestUtils.containsAll(unmated, "@HD\tVN:1.4\tSO:coordinate",
+      TestUtils.containsAll(unmated, "@HD",
           "@RG\tID:L23\tSM:NA123",
           "@PG\tID:rtg",
           "@CO\tTEMPLATE-SDF-ID:",
@@ -291,7 +291,7 @@ public class RamMapFunctionalTest extends TestCase {
         assertFalse(mated.contains("\n0"));
         assertFalse(mated.contains("\n2"));
         assertTrue(mated.contains("\n1"));
-        TestUtils.containsAll(mated, "@HD\tVN:1.4\tSO:coordinate",
+        TestUtils.containsAll(mated, "@HD",
                                      "@RG\tID:L23\tSM:NA123\tPL:IONTORRENT",
                                      "@PG\tID:rtg",
                                      "@CO\tTEMPLATE-SDF-ID:",
@@ -530,7 +530,7 @@ public class RamMapFunctionalTest extends TestCase {
       assertEquals(mps.toString(), 0, code);
 
       final String mated = FileHelper.gzFileToString(new File(out, "mated.sam.gz"));
-      final String actualFixed = mated.replaceAll("@CO\t.*\n", "").replaceAll("@PG\t.*\n", "");
+      final String actualFixed = TestUtils.stripSAMHeader(mated);
 
       mNano.check("matesamepos.sam", actualFixed, true);
     }

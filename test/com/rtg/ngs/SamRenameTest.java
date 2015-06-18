@@ -185,7 +185,7 @@ public class SamRenameTest extends AbstractCliTest {
   }
 
   private static final String SAM2_HEAD = ""
-    + "@HD" + TB + "VN:1.4" + TB + "SO:coordinate" + "\n"
+    + "@HD" + TB + "VN:1.5" + TB + "SO:coordinate" + "\n"
     + "@SQ" + TB + "SN:g1" + TB + "LN:20" + "\n";
   private static final String SAM2_DATA = ""
     + "0" + TB + "0" + TB + "g1" + TB +  "3" + TB + "255" + TB + "8M" + TB + "*" + TB + "0" + TB + "0" + TB + "ATCGACTG" + TB + "*" + TB + "AS:i:0" + "\n"
@@ -329,13 +329,13 @@ public class SamRenameTest extends AbstractCliTest {
       ReaderTestUtils.getReaderDNA(READS_10, readsDir, null).close();
       final SamRename sr = new SamRename();
       sr.renameSam(readsDir, samIn, samOut, new LongRange(2, 9));
-      assertEquals(SAM2_HEAD + SAM3_DATA_EXP, FileUtils.fileToString(samOut).replaceAll("@PG[^\\n]*\\n", ""));
+      assertEquals(SAM3_DATA_EXP, TestUtils.stripSAMHeader(FileUtils.fileToString(samOut)));
       assertTrue(samOut.delete());
       sr.renameSam(readsDir, samIn, samOut, LongRange.NONE);
-      assertEquals(SAM2_HEAD + SAM3_DATA_EXP, FileUtils.fileToString(samOut).replaceAll("@PG[^\\n]*\\n", ""));
+      assertEquals(SAM3_DATA_EXP, TestUtils.stripSAMHeader(FileUtils.fileToString(samOut)));
       assertTrue(samOut.delete());
       sr.renameSam(readsDir, samIn, samOut, new LongRange(0, 50));
-      assertEquals(SAM2_HEAD + SAM3_DATA_EXP, FileUtils.fileToString(samOut).replaceAll("@PG[^\\n]*\\n", ""));
+      assertEquals(SAM3_DATA_EXP, TestUtils.stripSAMHeader(FileUtils.fileToString(samOut)));
     }
   }
 

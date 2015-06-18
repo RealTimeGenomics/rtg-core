@@ -51,7 +51,6 @@ import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -164,7 +163,6 @@ public class DummySamResultsFilterTest extends TestCase {
     assertEquals("4709.66", Utils.realFormat(filter.bytesPerSecond(29726124, 140), 2));
   }
 
-  private static final String SAM_UNMATED_EXPECTED_HEADER = "@HD\tVN:1.4\tSO:unsorted\n" + "@SQ\tSN:chr20\tLN:62435964\n";
   private static final String SAM_UNMATED_EXPECTED = ""
     + "1\t1\tchr20\t1\t255\t4=\t=\t0\t0\tAGCT\t<<<<\tAS:i:3\tNM:i:1\tRG:Z:G1\tIH:i:1\n"
     + "9\t17\tchr20\t3\t255\t4M\t=\t0\t0\tCTAG\t<<<<\tAS:i:0\tNM:i:0\tRG:Z:G1\tIH:i:2\n";
@@ -261,7 +259,7 @@ public class DummySamResultsFilterTest extends TestCase {
         }
         final String contents = FileHelper.gzFileToString(outFile);
 //        System.out.println("contents=" + contents);
-        assertTrue(TestUtils.sameLines(SAM_UNMATED_EXPECTED_HEADER + SAM_UNMATED_EXPECTED, contents, false));
+        assertTrue(TestUtils.sameLines(SAM_UNMATED_EXPECTED, TestUtils.stripSAMHeader(contents), false));
 
         // now check that the listener has been updated correctly.
         for (int read = 0; read < numReads; read++) {

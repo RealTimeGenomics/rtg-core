@@ -44,7 +44,7 @@ import junit.framework.TestCase;
  */
 public class SingleEndSamResultsFilterTest extends TestCase {
 
-  private static final String SAM_UNMATED_EXPECTED = "@HD\tVN:1.4\tSO:unsorted\n" + "@SQ\tSN:chr20\tLN:62435964\n"
+  private static final String SAM_UNMATED_EXPECTED = ""
   + "3\t272\tchr20\t28734\t0\t35M\t*\t0\t0\tACCT\t<<<<\tAS:i:0\tNM:i:0\tIH:i:2\tNH:i:2\n"
   + "1\t0\tchr20\t28833\t37\t4M5M\t*\t0\t0\tAGCT\t<<<<\tAS:i:3\tNM:i:1\tIH:i:1\tNH:i:1\n";
 
@@ -186,7 +186,7 @@ public class SingleEndSamResultsFilterTest extends TestCase {
         out.close();
         final String contents = FileHelper.gzFileToString(outFile);
         //System.out.println("contents=" + contents);
-        assertTrue(TestUtils.sameLines(SAM_UNMATED_EXPECTED, contents, false));
+        assertTrue(TestUtils.sameLines(SAM_UNMATED_EXPECTED, TestUtils.stripSAMHeader(contents), false));
 
         // now check that the listener has been updated correctly.
         for (int read = 0; read < numReads; read++) {
