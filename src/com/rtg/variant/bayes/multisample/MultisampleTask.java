@@ -233,7 +233,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
             int refHyp = Integer.MIN_VALUE;
             for (ModelInterface<?> m : models) {
               if (m.hypotheses().size() > 0) {
-                refHyp = m.reference(); /// XXX This is still a bit icky. We are assuming that if you have hypotheses all references are the same (maybe not true in cancer)
+                refHyp = m.reference(); // todo This is still a bit icky. We are assuming that if you have hypotheses all references are the same (maybe not true in cancer)
               }
             }
             if (refHyp != Integer.MIN_VALUE) {
