@@ -275,7 +275,7 @@ public class GappedDistribution extends IntegralAbstract {
     Exam.assertTrue(prob(mPeqs));
     Exam.assertTrue(prob(mPiord));
     Exam.assertTrue(prob(mPindel));
-    Exam.assertTrue(1.0 == mPequal + mPsubs + mPiord); //TODO use approx equal
+    Exam.assertEquals(1.0, mPequal + mPsubs + mPiord, 1e-8);
     Exam.assertTrue(mStepSize >= 1);
     Exam.assertTrue(mStepSize <= mWordSize);
     Exam.assertTrue(mMult >= 1);
