@@ -282,7 +282,7 @@ public final class MapParamsHelper {
       if (sdf) {
         makeSequenceParamsMulti(ngsParamsBuilder, flags, reads, null, nameParams, templateMode, readsMode);
       } else {
-        makeOnTheFlySequenceParamsMulti(ngsParamsBuilder, flags, inFormat, new File[]{reads, null}, nameParams, useQuality, templateMode, readsMode, samParams);
+        makeOnTheFlySequenceParamsMulti(ngsParamsBuilder, flags, inFormat, reads, null, nameParams, useQuality, templateMode, readsMode, samParams);
       }
       final ISequenceParams params = ngsParamsBuilder.buildFirstParams();
       if (params.reader().getPrereadType() == PrereadType.CG) {
@@ -294,14 +294,14 @@ public final class MapParamsHelper {
         final File right = ReaderUtils.getRightEnd(reads);
         makeSequenceParamsMulti(ngsParamsBuilder, flags, left, right, nameParams, templateMode, readsMode);
       } else if (inFormat == InputFormat.SAM_PE) {
-        makeOnTheFlySequenceParamsMulti(ngsParamsBuilder, flags, inFormat, new File[]{reads, null}, nameParams, useQuality, templateMode, readsMode, samParams);
+        makeOnTheFlySequenceParamsMulti(ngsParamsBuilder, flags, inFormat, reads, null, nameParams, useQuality, templateMode, readsMode, samParams);
       } else {
         final File leftFile = (File) flags.getValue(FormatCli.LEFT_FILE_FLAG);
         final File rightFile = (File) flags.getValue(FormatCli.RIGHT_FILE_FLAG);
         if (InputFileUtils.checkIdenticalPaths(leftFile, rightFile)) {
           throw new InvalidParamsException("Paths given for --" + FormatCli.LEFT_FILE_FLAG + " and --" + FormatCli.RIGHT_FILE_FLAG + " are the same file.");
         }
-        makeOnTheFlySequenceParamsMulti(ngsParamsBuilder, flags, inFormat, new File[] {leftFile, rightFile}, nameParams, useQuality, templateMode, readsMode, samParams);
+        makeOnTheFlySequenceParamsMulti(ngsParamsBuilder, flags, inFormat, leftFile, rightFile, nameParams, useQuality, templateMode, readsMode, samParams);
       }
       final ISequenceParams leftParams = ngsParamsBuilder.buildFirstParams();
       final ISequenceParams rightParams = ngsParamsBuilder.buildSecondParams();
@@ -462,11 +462,7 @@ public final class MapParamsHelper {
    * Loads template and reads (left and right if paired end) in parallel.
    * @throws IOException if an IO problem occurs.
    */
-  private static void makeOnTheFlySequenceParamsMulti(NgsParamsBuilder ngsParamsBuilder, CFlags flags, InputFormat format, File[] builds, NameParams nameParams, boolean useQuality, SequenceMode templateMode, SequenceMode readsMode, SamSequenceReaderParams samParams) throws InvalidParamsException, IOException {
-    assert builds.length == 2;
-    //TODO icky way of getting within the 8 param limit
-    final File build = builds[0];
-    final File buildSecond = builds[1];
+  private static void makeOnTheFlySequenceParamsMulti(NgsParamsBuilder ngsParamsBuilder, CFlags flags, InputFormat format, File build, File buildSecond, NameParams nameParams, boolean useQuality, SequenceMode templateMode, SequenceMode readsMode, SamSequenceReaderParams samParams) throws InvalidParamsException, IOException {
     final FutureTask<SequenceParams> templateTask = getTemplateFutureTask(ngsParamsBuilder, flags, nameParams.includeFullNames(), templateMode);
     final LongRange buildRegion = CommonFlags.getReaderRestriction(flags);
     final ExecutorService executor = Executors.newFixedThreadPool(3);
