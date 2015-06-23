@@ -26,16 +26,12 @@ import com.rtg.util.StringUtils;
 
 import junit.framework.TestCase;
 
-
-
-
 /**
- * Test SegmentOutput
  */
 public class SegmentOutputTest extends TestCase {
 
   /**
-   * HEader
+   * Header
    */
   public static final String HEADER = "#query-id\t"
     + "query-frame\t"

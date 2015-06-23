@@ -97,9 +97,10 @@ public class SegmentOutput extends AbstractPositionOutput implements SegmentWrit
       //assert delta > 0 : mSearchPosition + ":" + position;
       final int end = delta > mStepSize ? mSearchPosition + mStepSize + 1 : position;
       //System.err.println("SO.setPosition mSearchPosition=" + mSearchPosition + " delta=" + delta + " end=" + end);
-      //TODO minimize number of calls to %
-      for (int i = mSearchPosition + 1; i < end; i++) {
-        final int index = i % mStepSize;
+      for (int i = mSearchPosition + 1, index = i % mStepSize; i < end; i++, index++) {
+        if (index == mStepSize) {
+          index = 0;
+        }
         mCollections[index].flush(this, mFree, mPositions[index]);
         mPositions[index] = NULL;
       }
@@ -128,9 +129,10 @@ public class SegmentOutput extends AbstractPositionOutput implements SegmentWrit
   public void endQuery() throws IOException {
     //System.err.println("SO.endQuery");
     //try and keep the outputs in order
-    //TODO minimize number of calls to %
-    for (int i = mSearchPosition + 1; i < mSearchPosition + mStepSize + 1; i++) {
-      final int index = i % mStepSize;
+    for (int i = mSearchPosition + 1, index = i % mStepSize; i < mSearchPosition + mStepSize + 1; i++, index++) {
+      if (index == mStepSize) {
+        index = 0;
+      }
       //System.err.println("SO.endQuery.flush i=" + i + " index=" + index);
       mCollections[index].flush(this, mFree, mPositions[index]);
       mPositions[index] = NULL;
