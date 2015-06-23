@@ -208,16 +208,17 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
     final int end = cot.getStart() + hypExtension;
     //System.err.println("CancerJointCallerConfiguration start=" + start + " end=" + end);
     final int e0Hx = cot.getEnd() - hypExtension;
+    final byte[][] callBytes = new byte[description.size()][];
     for (int i = 0; i < description.size(); i++) {
-      final byte[] replacei = DNA.stringDNAtoByte(description.name(i)); //TODO cache these
-      final int iLen = replacei.length;
-      final AlignmentEnvironment aei = new AlignmentEnvironmentGenomeSubstitution(start, 0 /*doesn't matter*/, cot, replacei);
+      callBytes[i] = DNA.stringDNAtoByte(description.name(i));
+    }
+    for (int i = 0; i < description.size(); i++) {
+      final int iLen = callBytes[i].length;
+      final AlignmentEnvironment aei = new AlignmentEnvironmentGenomeSubstitution(start, 0 /*doesn't matter*/, cot, callBytes[i]);
       //System.err.println("aei.length=" + aei.length());
       for (int j = 0; j < description.size(); j++) {
-        final byte[] replacej = DNA.stringDNAtoByte(description.name(j));
-        final int jLen = replacej.length;
-
-        final AlignmentEnvironment aej = new AlignmentEnvironmentGenomeSubstitution(start, end, cot, replacej);
+        final int jLen = callBytes[j].length;
+        final AlignmentEnvironment aej = new AlignmentEnvironmentGenomeSubstitution(start, end, cot, callBytes[j]);
         final int s = e0Hx - (iLen + jLen) / 2;
         final int mx = (iLen + jLen + 1) / 2;
         final EnvironmentCombined env = new EnvironmentCombined(aej, s, mx, aei);
