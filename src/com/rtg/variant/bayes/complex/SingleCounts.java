@@ -11,8 +11,6 @@
  */
 package com.rtg.variant.bayes.complex;
 
-import static com.rtg.util.StringUtils.TAB;
-
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
@@ -39,19 +37,18 @@ public class SingleCounts extends IntegralAbstract {
     sb.append(mCount).append(":").append(Utils.realFormat(mCorrection, 3));
   }
 
-  //TODO don't be dumb and return a string like this
-  /**
-   * @return output
-   */
-  public String output() {
-    return TAB + Integer.toString(mCount) + TAB + Utils.realFormat(mCorrection, 3);
-  }
-
   /**
    * @return count
    */
   public int count() {
     return mCount;
+  }
+
+  /**
+   * @return correction
+   */
+  public double correction() {
+    return mCorrection;
   }
 
   @Override

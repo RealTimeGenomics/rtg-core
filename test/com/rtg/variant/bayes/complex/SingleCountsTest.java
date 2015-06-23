@@ -11,8 +11,6 @@
  */
 package com.rtg.variant.bayes.complex;
 
-import static com.rtg.util.StringUtils.TAB;
-
 import java.io.IOException;
 
 import junit.framework.TestCase;
@@ -24,17 +22,14 @@ public class SingleCountsTest extends TestCase {
   public void test() throws IOException {
     final SingleCounts sc = new SingleCounts();
     assertEquals(0, sc.count());
-    check(sc, "0:0.000", TAB + "0" + TAB + "0.000");
+    check(sc, "0:0.000");
     sc.increment(0.01);
     assertEquals(1, sc.count());
-    check(sc, "1:0.010", TAB + "1" + TAB + "0.010");
+    check(sc, "1:0.010");
   }
 
-  private void check(final SingleCounts sc, final String toString,
-      final String outString) {
+  private void check(final SingleCounts sc, final String toString) {
     sc.integrity();
     assertEquals(toString, sc.toString());
-    final String out = sc.output();
-    assertEquals(outString, out);
   }
 }

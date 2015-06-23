@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.rtg.util.Utils;
 import com.rtg.util.integrity.IntegralAbstract;
 import com.rtg.variant.match.Match;
 
@@ -93,8 +94,7 @@ public class MatchMultiSet extends IntegralAbstract {
       }
       sb.append('\t');
       final String na = lowerCase ? name.toLowerCase(Locale.getDefault()) : name;
-      sb.append(na);
-      sb.append(count.output());
+      sb.append(na).append('\t').append(count.count()).append('\t').append(Utils.realFormat(count.correction(), 3));
     }
     return sb.toString();
   }

@@ -69,9 +69,4 @@ public interface Factor<D extends Description> {
    * @return normalized factor
    */
   Factor<D> normalize();
-
-  /*
-   *  TODO
-   *  We need a way to form products of factors.
-   */
 }
