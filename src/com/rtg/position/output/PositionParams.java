@@ -37,12 +37,6 @@ import com.rtg.util.io.FileUtils;
  */
 public class PositionParams extends ObjectParams implements OutputDirParams, Integrity {
 
-
-  /**
-   * Name of the file where unmapped sequences are written.
-   */
-  public static final String UNMAPPED_SUFFIX = "unmapped";
-
   static final String OUT_SUFFIX = "out";
 
 

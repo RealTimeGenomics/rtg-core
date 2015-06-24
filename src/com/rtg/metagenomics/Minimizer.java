@@ -19,9 +19,6 @@ import com.rtg.util.diagnostic.Diagnostic;
  */
 class Minimizer {
 
-  Minimizer() {
-  }
-
   /**
    * Finds point where line is a minimum.  Assumes this is at a point where x is greater than 0.
    * @param line the function being minimized.
