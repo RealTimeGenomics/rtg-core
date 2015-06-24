@@ -43,8 +43,8 @@ public final class Lineage extends AbstractMultisampleCaller {
    */
   public static class LineageBuilder {
 
-    private Map<Integer, Set<Integer>> mLineageGraph = new HashMap<>();
-    private Map<Integer, Double> mDeNovoPriors = new HashMap<>();
+    private final Map<Integer, Set<Integer>> mLineageGraph = new HashMap<>();
+    private final Map<Integer, Double> mDeNovoPriors = new HashMap<>();
     private double mDenovoPriorDefault = 0;
     private int mMaxId = 0;
     boolean mCoverage = false;
@@ -204,7 +204,6 @@ public final class Lineage extends AbstractMultisampleCaller {
         final T h = hypotheses.get(models.get(i));
         rootFactors[i] = new ModelFactor(new Variable("G" + i, h.size()), h);
       }
-
     }
     final ForwardBackwardLineage fb = new ForwardBackwardLineage(models.get(0).arithmetic(), this, rootFactors, models);
     final VariantSample[] samples = new VariantSample[models.size()];

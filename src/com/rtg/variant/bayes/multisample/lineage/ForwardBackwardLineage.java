@@ -27,7 +27,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  */
 public class ForwardBackwardLineage {
 
-  // Althouth there is technically a different de novo variable N_i for each sample
+  // Although there is technically a different de novo variable N_i for each sample
   // they are never used in conjunction, hence we can get away with same variable
   // name to represent it in all samples.
   /** The name of the de novo variable in the Bayesian network. */
@@ -47,7 +47,7 @@ public class ForwardBackwardLineage {
    * @param rootGenotypePrior <code>P(G|C)</code> for the root node
    * @param models singleton models for samples in order of the sample numbers in the lineage
    */
-  ForwardBackwardLineage(final PossibilityArithmetic arith, final Lineage lineage, Factor[] rootGenotypePrior, List<ModelInterface<?>> models) {
+  ForwardBackwardLineage(final PossibilityArithmetic arith, final Lineage lineage, final Factor[] rootGenotypePrior, final List<ModelInterface<?>> models) {
     mLineage = lineage;
     mArith = arith;
     mRootGenotypePrior = rootGenotypePrior;
@@ -60,7 +60,6 @@ public class ForwardBackwardLineage {
   }
 
   private Set<Variable> makeScope(final int node) {
-      // todo is there a better way to do this
     final HashSet<Variable> v = new HashSet<>();
     v.add(getGenotypeVariable(node));
     final Variable coverageVariable = mLineage.getCoverageVariable(node);
@@ -94,7 +93,6 @@ public class ForwardBackwardLineage {
     assert !mLineage.isRoot(node);
     final Factor modelFactor = mModel.get(node); // P(snode|Gnode)
     // TODO Coverage
-    // TODO cache?
     final Factor mendelian = mendelian(node, mLineage.parent(node));
     return modelFactor.multiply(mendelian);
   }
@@ -110,7 +108,6 @@ public class ForwardBackwardLineage {
 
   private Factor psi4(int node) {
     assert !mLineage.isRoot(node);
-    // cache?
     return psi5(node).sumOut(DE_NOVO);
   }
 
@@ -118,7 +115,7 @@ public class ForwardBackwardLineage {
 
   private Factor computePhi1(final int node) {
     Factor product = DefaultFactor.unit(mArith, makeScope(node));
-    // note if there are no children this returns a unit factor "1"
+    // Note if there are no children this returns a unit factor "1"
     for (final int child : mLineage.children(node)) {
       product = product.multiply(phi2(node, child));
     }
@@ -135,7 +132,7 @@ public class ForwardBackwardLineage {
     return f;
   }
 
-  private boolean isIndividual(Variable v, String node) {
+  private boolean isIndividual(final Variable v, final String node) {
     // Assumes variables have one letter "type" followed by individual number
     return v.toString().substring(1).equals(node);
   }

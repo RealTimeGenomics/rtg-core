@@ -20,7 +20,6 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
  * Common parts of factor implementation.
- *
  */
 @TestClass("com.rtg.variant.bayes.multisample.lineage.DefaultFactorTest")
 public abstract class AbstractFactor implements Factor {
@@ -72,7 +71,7 @@ public abstract class AbstractFactor implements Factor {
   }
 
   @Override
-  public Factor condition(Map<Variable, Integer> conditions) {
-    return DefaultFactor.asDefault(this).condition(conditions); //TODO
+  public Factor condition(final Map<Variable, Integer> conditions) {
+    return DefaultFactor.asDefault(this).condition(conditions);
   }
 }
