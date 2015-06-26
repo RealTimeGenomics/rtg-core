@@ -43,8 +43,8 @@ import com.rtg.metagenomics.matrix.VectorSimple;
 import com.rtg.reader.PrereadNamesInterface;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
-import com.rtg.sam.DefaultSamFilter;
-import com.rtg.sam.RecordIterator;
+import com.rtg.sam.SamReadingContext;
+import com.rtg.sam.SamRecordPopulator;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.ThreadedMultifileIterator;
 import com.rtg.taxonomy.TaxonNode;
@@ -64,7 +64,6 @@ import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.LineWriter;
-import com.rtg.sam.SamRecordPopulator;
 
 import htsjdk.samtools.SAMRecord;
 
@@ -356,7 +355,8 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     double mappedSpec = 0.0;
     double mappedReads = 0.0;
     double unmappedReads = 0.0;
-    try (RecordIterator<SAMRecord> it = new ThreadedMultifileIterator<>(mParams.mapped(), new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
+    final SamReadingContext context = new SamReadingContext(mParams.mapped(), 1, mParams.filterParams(), SamUtils.getUberHeader(mParams.mapped()));
+    try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
       while (it.hasNext()) {
         usageStats++;
         final SAMRecord rec = it.next();
@@ -366,8 +366,6 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
           unmappedReads += 1.0;
         } else {
           mappedReads += mappedIncr;
-        }
-        if (DefaultSamFilter.acceptRecord(mParams.filterParams(), rec)) {
           final String readId = rec.getReadName();
           final String sequenceName = rec.getReferenceName();
           final Integer taxonId = mSequenceMap.get(sequenceName);

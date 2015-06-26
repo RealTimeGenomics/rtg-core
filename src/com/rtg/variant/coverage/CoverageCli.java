@@ -165,8 +165,7 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     final Collection<File> inputFiles = CommonFlags.getFileList(mFlags, CommonFlags.INPUT_LIST_FLAG, null, false);
     Diagnostic.userLog("Input SAM files: " + inputFiles);
     builder.mapped(inputFiles);
-    final Integer bsize = (Integer) mFlags.getValue(SMOOTHING_LEVEL_FLAG);
-    builder.smoothing(bsize.intValue());
+    builder.smoothing((Integer) mFlags.getValue(SMOOTHING_LEVEL_FLAG));
     builder.errorRates(mFlags.isSet(ERROR_RATES_FLAG));
     builder.onlyMappedRegions(mFlags.isSet(X_ONLY_MAPPED_FLAG));
     builder.tsvOutput(mFlags.isSet(PER_BASE_FLAG));
@@ -179,7 +178,7 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     if (mFlags.isSet(X_DISABLE_HTML_REPORT_FLAG)) {
       builder.disableHtmlReport(true);
     }
-    return builder.filterParams(SamFilterOptions.makeFilterParamsBuilder(mFlags).excludeUnmapped(true).excludeUnplaced(true).create()).create();
+    return builder.filterParams(SamFilterOptions.makeFilterParamsBuilder(mFlags).excludeUnmapped(true).excludeUnplaced(true).excludeVariantInvalid(true).create()).create();
   }
 
   @Override

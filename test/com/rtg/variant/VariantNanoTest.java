@@ -549,7 +549,7 @@ public class VariantNanoTest extends TestCase {
 
   public void testSamFormatBadIH() throws Exception {
     final String sam = SAM_HEAD1 + SAM_REC_OK1 + SAM_REC_BAD1;
-    checkSamFormatNoError(REF_DOESNTMATTER, sam, makeSkippedWarning(1, 1), new String[] {});
+    checkSamFormatNoError(REF_DOESNTMATTER, sam, makeSkippedWarning(0, 0), new String[] {"1 records skipped due to input filtering criteria"});
   }
 
   public void testSamFormatFirstRecBad() throws Exception {
@@ -590,8 +590,7 @@ public class VariantNanoTest extends TestCase {
 
   public void testSamFormatOneBadCigarThird() throws Exception {
     final String sam = SAM_HEAD1 + SAM_REC_OK1 + SAM_REC_OK1 + SAM_REC_BAD_CIGAR;
-    checkSamFormatNoError(REF_DOESNTMATTER, sam, null, new String[] {}); // makeSkippedWarning(1,
-    // 1));
+    checkSamFormatNoError(REF_DOESNTMATTER, sam, null, new String[] {});
   }
 
   static final String ERRORX = "Wrong reference sequences for given reads.";
@@ -613,7 +612,7 @@ public class VariantNanoTest extends TestCase {
 
   public void testNegativePos() throws Exception {
     final String sam = SAM_HEAD1 + SAM_REC_NEGATIVEPOS;
-    checkSamFormatNoError(REF_DOESNTMATTER, sam, makeSkippedWarning(0, 1), new String[] {});
+    checkSamFormatNoError(REF_DOESNTMATTER, sam, makeSkippedWarning(0, 0), new String[] {"1 records skipped due to input filtering criteria"});
   }
 
   public void testZeroPos() throws Exception {

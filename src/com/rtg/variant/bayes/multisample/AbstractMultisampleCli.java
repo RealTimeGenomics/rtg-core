@@ -345,7 +345,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     builder.vcfRp(mFlags.isSet(X_VCF_RP));
     builder.avrModelFile(CommonFlags.getAvrModel(mFlags, false));
     builder.ignoreQualityScores(mFlags.isSet(X_IGNORE_QUALITIES_FLAG));
-    final SamFilterParams filterParams = SamFilterOptions.makeFilterParamsBuilder(mFlags).excludeUnplaced(true).create();
+    final SamFilterParams filterParams = SamFilterOptions.makeFilterParamsBuilder(mFlags).excludeUnplaced(true).excludeVariantInvalid(true).create();
     builder.filterParams(filterParams);
     if (mFlags.isSet(BED_FILTER_FLAG)) {
       builder.regionsFilterBedFile((File) mFlags.getValue(BED_FILTER_FLAG));

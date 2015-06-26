@@ -117,7 +117,7 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
     return SpeciesParams.builder()
       .outputParams(outParams)
       .mapped(inputFiles)
-      .filterParams(SamFilterOptions.makeFilterParamsBuilder(mFlags).excludeUnmapped(true).excludeUnplaced(true).create())
+      .filterParams(SamFilterOptions.makeFilterParamsBuilder(mFlags).create())
       .genome(genomesParams.readerParams())
       .minIter(minIter)
       .verbose(mFlags.isSet(X_VERBOSE))

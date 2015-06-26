@@ -31,7 +31,7 @@ import htsjdk.samtools.SAMRecord;
 
 /**
  */
-class MultifileIterator implements RecordIterator<SAMRecord> {
+public class MultifileIterator implements RecordIterator<SAMRecord> {
 
   static final boolean FALLBACK = GlobalFlags.isSet(GlobalFlags.SAM_ALLOW_FALLBACK_FOR_NON_INDEXED_REGIONS);
 
@@ -41,6 +41,7 @@ class MultifileIterator implements RecordIterator<SAMRecord> {
   private final Queue<SamFileAndRecord> mOriginals = new LinkedList<>();
   private final SAMFileHeader mHeader;
   private final SamFilterParams mFilterParams;
+  private final SamFilter mFilter;
 
   private final long mTotalRawInputLength;
   private long mTime = 0;
@@ -48,9 +49,8 @@ class MultifileIterator implements RecordIterator<SAMRecord> {
   private boolean mIsClosed = false;
   private SAMRecord mNextRecordToReturn = null;
 
-
   /**
-   * Constructor
+   * Constructor.
    *
    * @param context the SAM reading context
    * @throws IOException if an IO error occurs
@@ -63,6 +63,7 @@ class MultifileIterator implements RecordIterator<SAMRecord> {
       throw new IllegalArgumentException("File list is empty!");
     }
     mFilterParams = context.filterParams();
+    mFilter = mFilterParams == null ? new NoneFilter() : new DefaultSamFilter(mFilterParams);
     int fileCount = 0;
     long totalFileLength = 0;
     SamFileAndRecord first = null;
@@ -97,7 +98,6 @@ class MultifileIterator implements RecordIterator<SAMRecord> {
     }
 
     mTotalRawInputLength = totalFileLength; // so we can report MB/s at the end
-
     mHeader = context.header();
   }
 
@@ -127,33 +127,6 @@ class MultifileIterator implements RecordIterator<SAMRecord> {
   private long mOutputRecords = 0; // Made available to next level
   private static volatile long sReportedInvalidRecords = 0;
 
-  // XXX More things than just the variant caller use this class and they might not want these being dropped
-  // we should have some way to disable this notion of what is valid (or only enable it when doing variant calling)
-  private boolean validRecord(final SAMRecord rec) {
-    final Integer nh = SamUtils.getNHOrIH(rec);
-    return (nh == null || nh > 0) && (rec.getReadUnmappedFlag() || rec.getAlignmentStart() > 0);
-  }
-
-  private boolean filterRecord(final SAMRecord r) {
-    if (mFilterParams == null) {
-      mOutputRecords++;
-      return false;
-    }
-    if (!validRecord(r)) {
-      mInvalidRecords++;
-      if (++sReportedInvalidRecords <= 5) {
-        Diagnostic.warning(WarningType.SAM_BAD_FORMAT_WARNING1, r.getSAMString().trim());
-        Diagnostic.userLog("Invalid record: " + r.getSAMString().trim());
-      }
-      return true;
-    } else if (!DefaultSamFilter.acceptRecord(mFilterParams, r)) {
-      mFilteredRecords++;
-      return true;
-    }
-    mOutputRecords++;
-    return false;
-  }
-
   @Override
   public long getInvalidRecordsCount() {
     long count = 0;
@@ -167,7 +140,7 @@ class MultifileIterator implements RecordIterator<SAMRecord> {
   public long getFilteredRecordsCount() {
     long count = 0;
     for (final SamFileAndRecord sfr : mOriginals) {
-      count += sfr.getInvalidRecordsCount();
+      count += sfr.getFilteredRecordsCount();
     }
     return count + mFilteredRecords;
   }
@@ -220,10 +193,13 @@ class MultifileIterator implements RecordIterator<SAMRecord> {
       if (first.hasNext()) {
         mLeftmostPriorityQueue.add(first);
       }
-      if (!filterRecord(next)) {
+      if (mFilter.acceptRecord(next)) {
+        mOutputRecords++;
         mNextRecordToReturn = next;
         hasNext = true;
         break;
+      } else {
+        mFilteredRecords++;
       }
     }
     mTime += System.nanoTime() - start;
@@ -247,4 +223,5 @@ class MultifileIterator implements RecordIterator<SAMRecord> {
   public SAMFileHeader header() {
     return mHeader;
   }
+
 }

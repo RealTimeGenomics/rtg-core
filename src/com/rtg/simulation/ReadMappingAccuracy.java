@@ -18,7 +18,9 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.io.Writer;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,11 +34,15 @@ import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.reader.SourceTemplateReadWriter;
-import com.rtg.sam.DefaultSamFilter;
+import com.rtg.sam.RecordIterator;
 import com.rtg.sam.SamFilterOptions;
 import com.rtg.sam.SamFilterParams;
+import com.rtg.sam.SamReadingContext;
+import com.rtg.sam.SamRecordPopulator;
 import com.rtg.sam.SamUtils;
+import com.rtg.sam.ThreadedMultifileIterator;
 import com.rtg.util.InvalidParamsException;
+import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
@@ -49,8 +55,6 @@ import com.rtg.util.io.LogStream;
 import htsjdk.samtools.SAMException;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-import htsjdk.samtools.SamReader;
-import htsjdk.samtools.util.CloseableIterator;
 
 /**
  * Class to calculate
@@ -323,44 +327,33 @@ public class ReadMappingAccuracy extends LoggedCli {
 
   private void process(final PrintStream out) throws IOException, InvalidParamsException {
     long totalRecords = 0;
-    long skippedRecords = 0;
     long unmappedRecords = 0;
-    boolean doneHeader = false;
     init();
     try (LineWriter recordsOut = mParams.dumpRecords() ? new LineWriter(new OutputStreamWriter(FileUtils.createOutputStream(new File(outputDirectory(), "mappings.sam")))) : null) {
       final SamFilterParams filterParams = SamFilterOptions.makeFilterParamsBuilder(mFlags).excludeUnmapped(true).excludeUnplaced(true).create();
 
-      for (final File f : mParams.samFiles()) {
-        try (final SamReader reader = SamUtils.makeSamReader(FileUtils.createInputStream(f, false))) {
-          if (recordsOut != null && !doneHeader) {
-            recordsOut.write(reader.getFileHeader().getTextHeader());
-            doneHeader = true;
+      final List<File> inputs = Arrays.asList(mParams.samFiles());
+      final SamReadingContext context = new SamReadingContext(inputs, 1, filterParams, SamUtils.getUberHeader(inputs));
+      try (RecordIterator<SAMRecord> itr = new ThreadedMultifileIterator<>(context, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
+        if (recordsOut != null) {
+          recordsOut.write(itr.header().getTextHeader());
+        }
+        while (itr.hasNext()) {
+          totalRecords++;
+          if (totalRecords % 1000000 == 0) {
+            Diagnostic.progress("Processed " + totalRecords + " SAM records");
           }
-          final CloseableIterator<SAMRecord> itr = reader.iterator();
-          try {
-            while (itr.hasNext()) {
-              totalRecords++;
-              if (totalRecords % 1000000 == 0) {
-                Diagnostic.progress("Processed " + totalRecords + " SAM records");
-              }
-              final SAMRecord rec = itr.next();
-              if (rec.getReadUnmappedFlag()) {
-                unmappedRecords++;
-              } else if (!DefaultSamFilter.acceptRecord(filterParams, rec)) {
-                // ignore records as specified
-                skippedRecords++;
-              } else {
-                processRecord(rec, recordsOut);
-              }
-            }
-          } finally {
-            itr.close();
+          final SAMRecord rec = itr.next();
+          if (rec.getReadUnmappedFlag()) {
+            unmappedRecords++;
+          } else {
+            processRecord(rec, recordsOut);
           }
         }
+        Diagnostic.progress("Processed " + totalRecords + " SAM records in total");
+        printResults(out, totalRecords, unmappedRecords, itr.getFilteredRecordsCount() + itr.getInvalidRecordsCount());
       }
     }
-    Diagnostic.progress("Processed " + totalRecords + " SAM records in total");
-    printResults(out, totalRecords, unmappedRecords, skippedRecords);
   }
 
   int generatedScore(int mismatchPenalty, int gapOpeningPenalty) {

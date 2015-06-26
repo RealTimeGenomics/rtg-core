@@ -142,7 +142,7 @@ public class CoverageTaskTest extends TestCase {
     final String[] args0 = {
         "-c", "1"
     };
-    checkBed(REF_SEQS, SAM10, args0, null, "1 records skipped because of SAM format problems.", "", 0, true, null, null);
+    checkBed(REF_SEQS, SAM10, args0, null, "", "4 records skipped due to input filtering criteria", 0, true, null, null);
   }
 
 
@@ -275,7 +275,7 @@ public class CoverageTaskTest extends TestCase {
         try (InputStream stream = Resources.getResourceAsStream(res)) {
           assertNotNull("Cant find:" + res, stream);
           final String expected = FileUtils.streamToString(stream);
-          assertEquals(expected.replaceAll("\n|\r\n", LS), result.replaceAll("#.*" + StringUtils.LS, ""));
+          assertEquals(expected.replaceAll("\n|\r\n", LS), result.replaceAll("#.*" + LS, ""));
           TestUtils.containsAll(result
                   , "#CL\t" + CommandLine.getCommandLine()
                   , "#Version " + Environment.getVersion() + ", Coverage" + (tsv ? "" : " BED") + " output v1.0"
@@ -352,7 +352,7 @@ public class CoverageTaskTest extends TestCase {
           assertNotNull("Cant find:" + res, stream);
           //System.out.println("actual coverage file contains:\n" + result);
           final String expected = FileUtils.streamToString(stream);
-          assertEquals(expected.replaceAll("\n|\r\n", LS), result.replaceAll("#.*" + StringUtils.LS, ""));
+          assertEquals(expected.replaceAll("\n|\r\n", LS), result.replaceAll("#.*" + LS, ""));
           TestUtils.containsAll(result
                   , CommandLine.getCommandLine() != null ? "#CL\t" + CommandLine.getCommandLine() : ""
                   , "#Version " + Environment.getVersion() + ", Coverage BED output v1.0"

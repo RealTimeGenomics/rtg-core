@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map.Entry;
 import java.util.TreeMap;
@@ -47,9 +48,11 @@ import com.reeltwo.plot.ui.ImageWriter;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.ngs.MapReportData;
 import com.rtg.ngs.MapReportData.DistributionType;
-import com.rtg.sam.DefaultSamFilter;
 import com.rtg.sam.RecordIterator;
 import com.rtg.sam.SamFilterParams;
+import com.rtg.sam.SamReadingContext;
+import com.rtg.sam.SamRecordPopulator;
+import com.rtg.sam.SamUtils;
 import com.rtg.sam.ThreadedMultifileIterator;
 import com.rtg.util.Histogram;
 import com.rtg.util.HtmlReportHelper;
@@ -60,7 +63,6 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
-import com.rtg.sam.SamRecordPopulator;
 
 import htsjdk.samtools.SAMRecord;
 
@@ -90,21 +92,20 @@ public class MapReport extends MapSummaryReport {
   }
 
   private void ensureReportData(File[] inputDirs) throws IOException {
-    long skippedRecords = 0;
     for (final File inputDir : inputDirs) {
       final File reportFile = new File(inputDir, MapReportData.MAP_REPORT_FILE_NAME);
       if (!(reportFile.exists() && checkVersion(reportFile))) {
         final MapReportData reportData = new MapReportData();
-        final File[] samFiles = inputDir.listFiles(new SamBamFilter());
-        if (samFiles.length > 0) {
-          try (final RecordIterator<SAMRecord> it = new ThreadedMultifileIterator<>(Arrays.asList(samFiles), new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
+        final List<File> samFiles = Arrays.asList(inputDir.listFiles(new SamBamFilter()));
+        if (samFiles.size() > 0) {
+          final SamReadingContext context = new SamReadingContext(samFiles, 1, mFilter, SamUtils.getUberHeader(samFiles));
+          try (final RecordIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
             while (it.hasNext()) {
               final SAMRecord next = it.next();
-              if (mFilter != null && !DefaultSamFilter.acceptRecord(mFilter, next)) {
-                skippedRecords++;
-                continue;
-              }
               reportData.processRead(next);
+            }
+            if (it.getFilteredRecordsCount() + it.getInvalidRecordsCount() > 0) {
+              Diagnostic.warning(it.getFilteredRecordsCount() + it.getInvalidRecordsCount() + " SAM records ignored due to filters");
             }
           }
         }
@@ -112,9 +113,6 @@ public class MapReport extends MapSummaryReport {
           reportData.write(ps);
         }
       }
-    }
-    if (skippedRecords > 0) {
-      Diagnostic.warning(skippedRecords + " SAM records ignored due to filters");
     }
   }
 
