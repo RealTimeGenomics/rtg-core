@@ -63,7 +63,7 @@ public class SequenceGeneratorTest extends TestCase {
     final int[] lengths = {2, 5};
     final int[] freq = {1, 1, 1, 1};
     final RandomDistribution rd = new RandomDistribution(freq, rand);
-    final SequenceGenerator sdata = new SequenceGenerator(rand, rd, lengths, mOutDir);
+    final SequenceGenerator sdata = new SequenceGenerator(rand, rd, lengths, mOutDir, GenomeSimulator.DEFAULT_PREFIX);
     final long max = sdata.getSizeLimit();
     assertEquals(1000000000, max);
     sdata.createSequences();

@@ -40,14 +40,16 @@ public class SequenceGenerator {
     private final RandomDistribution mDistribution;
     private long mMaxLength = Long.MIN_VALUE;
     private long mMinLength = Long.MAX_VALUE;
-    Residue[] mResidues = DNA.values();
+    private final Residue[] mResidues = DNA.values();
+    private final String mPrefix;
 
     private byte[] mSequenceData;
 
-    public RandomDataSource(final int[] lengths, final PortableRandom source, final RandomDistribution distribution) {
+    public RandomDataSource(final int[] lengths, final PortableRandom source, final RandomDistribution distribution, String namePrefix) {
       mLengths = lengths;
       mSource = source;
       mDistribution = distribution;
+      mPrefix = namePrefix;
     }
 
     @Override
@@ -56,8 +58,7 @@ public class SequenceGenerator {
 
     @Override
     public String name() {
-      final int num = mSequenceNumber;
-      return DEFAULT_NAME + num;
+      return mPrefix + mSequenceNumber;
     }
 
     @Override
@@ -133,9 +134,6 @@ public class SequenceGenerator {
     }
   }
 
-  //private static final String SEED = "seed";
-  private static final String DEFAULT_NAME = "simulatedSequence";
-
   public long getSizeLimit() {
     return mWriter.getSizeLimit();
   }
@@ -143,14 +141,14 @@ public class SequenceGenerator {
   /**
    * Create a sequence generator with specified seed and nucleotide frequency
    * corresponding to the supplied distribution
-   *
-   * @param generator random number generator
+   *  @param generator random number generator
    * @param distribution relative frequency of a/t/g/c
    * @param lengths array of lengths of the sequences to write
    * @param outDirectory output directory
+   * @param namePrefix prefix to use for generated sequence names
    */
-  public SequenceGenerator(final PortableRandom generator, final RandomDistribution distribution, final int[] lengths, final File outDirectory) {
-    final RandomDataSource dataSource = new RandomDataSource(lengths, generator, distribution);
+  public SequenceGenerator(final PortableRandom generator, final RandomDistribution distribution, final int[] lengths, final File outDirectory, String namePrefix) {
+    final RandomDataSource dataSource = new RandomDataSource(lengths, generator, distribution, namePrefix);
     mWriter = new SequencesWriter(dataSource, outDirectory, Constants.MAX_FILE_SIZE, PrereadType.UNKNOWN, true);
   }
 

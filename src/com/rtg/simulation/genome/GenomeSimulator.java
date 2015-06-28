@@ -37,6 +37,8 @@ public class GenomeSimulator extends LoggedCli {
 
   static final String MODULE_NAME = "genomesim";
 
+  static final String DEFAULT_PREFIX = "simulatedSequence";
+
   static final String SEED = "seed";
   static final String OUTPUT = "output";
     //static final String NO_SEED = "no-seed";
@@ -45,6 +47,7 @@ public class GenomeSimulator extends LoggedCli {
   static final String NUM_CONTIGS = "num-contigs";
   static final String MIN_LENGTH = "min-length";
   static final String MAX_LENGTH = "max-length";
+  static final String PREFIX = "prefix";
   static final String LENGTH = "length";
   static final String COMMENT = "comment";
 
@@ -74,6 +77,7 @@ public class GenomeSimulator extends LoggedCli {
     lFlag.setCategory(UTILITY);
     mFlags.registerOptional(FREQUENCY, String.class, "string", "relative frequencies of A,C,G,T in the generated sequence", "1,1,1,1").setCategory(UTILITY);
     mFlags.registerOptional(COMMENT, String.class, "string", "comment to include in the generated SDF").setCategory(UTILITY);
+    mFlags.registerOptional(PREFIX, String.class, "string", "sequence name prefix", DEFAULT_PREFIX).setCategory(UTILITY);
 
     mFlags.addRequiredSet(numContigs, minLength, maxLength);
     mFlags.addRequiredSet(lFlag);
@@ -205,7 +209,7 @@ public class GenomeSimulator extends LoggedCli {
 
     final RandomDistribution frequencyDistribution = new RandomDistribution(freqDist, rand);
 
-    generator = new SequenceGenerator(rand, frequencyDistribution, lengths, (File) mFlags.getValue(OUTPUT));
+    generator = new SequenceGenerator(rand, frequencyDistribution, lengths, (File) mFlags.getValue(OUTPUT), (String) mFlags.getValue(PREFIX));
     generator.setComment((String) mFlags.getValue(COMMENT));
     generator.createSequences();
     return 0;
