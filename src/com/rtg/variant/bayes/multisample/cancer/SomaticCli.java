@@ -136,7 +136,7 @@ public class SomaticCli extends AbstractMultisampleCli {
     final Flag originalFlag = flags.registerOptional(ORIGINAL_FLAG, String.class, "string", "sample identifier used in read groups for original sample").setCategory(INPUT_OUTPUT);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of individual", Sex.EITHER).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('s', SOMATIC_FLAG, Double.class, "float", "default prior probability of a somatic SNP mutation in the derived sample", 1e-6).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(SOMATIC_PRIORS_FLAG, File.class, "file", "if set, use the BED file to generated site specific somatic priors").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(SOMATIC_PRIORS_FLAG, File.class, "file", "if set, use the BED file to generate site specific somatic priors").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(LOH_FLAG, Double.class, "float", "prior probability that a loss of heterozygosity event has occurred", 0.0).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(INCLUDE_GERMLINE_FLAG, "include germline variants in output VCF").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('G', INCLUDE_GAIN_OF_REFERENCE, "include gain of reference somatic calls in output VCF").setCategory(SENSITIVITY_TUNING);
