@@ -330,7 +330,7 @@ public class ReadMappingAccuracy extends LoggedCli {
     long unmappedRecords = 0;
     init();
     try (LineWriter recordsOut = mParams.dumpRecords() ? new LineWriter(new OutputStreamWriter(FileUtils.createOutputStream(new File(outputDirectory(), "mappings.sam")))) : null) {
-      final SamFilterParams filterParams = SamFilterOptions.makeFilterParamsBuilder(mFlags).excludeUnmapped(true).excludeUnplaced(true).create();
+      final SamFilterParams filterParams = SamFilterOptions.makeFilterParamsBuilder(mFlags).create();
 
       final List<File> inputs = Arrays.asList(mParams.samFiles());
       final SamReadingContext context = new SamReadingContext(inputs, 1, filterParams, SamUtils.getUberHeader(inputs));
