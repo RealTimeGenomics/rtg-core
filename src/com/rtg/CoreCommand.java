@@ -263,7 +263,7 @@ public final class CoreCommand {
   /* This field determines the display order of the commands in the help / license output */
   private static final Command[] DISPLAY_ORDER = {
     // Formatting
-    ToolsCommand.FORMAT, CG2SDF, ToolsCommand.SDF2FASTA, ToolsCommand.SDF2FASTQ, SDF2QUALA,
+    ToolsCommand.FORMAT, CG2SDF, ToolsCommand.SDF2FASTA, ToolsCommand.SDF2FASTQ, ToolsCommand.SDF2SAM, SDF2QUALA,
 
     // Mapping
     MAP, MAPF, CGMAP,
