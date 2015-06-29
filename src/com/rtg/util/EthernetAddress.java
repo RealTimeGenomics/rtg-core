@@ -19,7 +19,6 @@ import java.util.List;
 
 /**
  * Determine the Ethernet address(es) of the current machine.
- *
  */
 public class EthernetAddress {
 

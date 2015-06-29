@@ -17,7 +17,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 /**
- * An unordered multi-set
+ * An unordered multi-set.
  * @param <E> type of elements in the multi-set.
  */
 public class DoubleMultiSet<E> {

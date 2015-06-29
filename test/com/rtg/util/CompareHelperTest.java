@@ -18,8 +18,6 @@ import java.util.List;
 import junit.framework.TestCase;
 
 /**
- *         Date: 24/02/12
- *         Time: 11:09 AM
  */
 public class CompareHelperTest extends TestCase {
   public void testDefault() {

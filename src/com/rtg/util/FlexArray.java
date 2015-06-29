@@ -22,7 +22,7 @@ public class FlexArray<T> {
   private int mSize;
 
   /**
-   * Constructor
+   * Constructor.
    */
   public FlexArray() {
     this(10);

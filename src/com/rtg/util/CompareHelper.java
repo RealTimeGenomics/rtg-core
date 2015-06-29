@@ -17,14 +17,12 @@ import java.util.List;
 /**
  * Attempt at making comparator methods easier to write.
  * Chain calls to compare and take the result at the end.
- *         Date: 24/02/12
- *         Time: 10:43 AM
  */
 public final class CompareHelper {
   private int mCurrent = 0;
 
   /**
-   * Call this once for each pair of values you'd like to sort by
+   * Call this once for each pair of values you would like to sort by
    * Result will be the first non-zero comparison
    * @param o1 first comparable object
    * @param o2 object to compare to
