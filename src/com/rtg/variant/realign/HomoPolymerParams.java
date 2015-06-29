@@ -84,7 +84,7 @@ public class HomoPolymerParams extends IntegralAbstract {
       for (int r = 0; r < cnt.length; r++) {
         cnt[r] = Integer.parseInt(split[r + 2]);
       }
-      temp[tag].set(cnt, t);
+      temp[tag].set(t, cnt);
     }
     final int[][][] res = new int[2][][];
     res[0] = temp[0].toArray(new int[0][]);

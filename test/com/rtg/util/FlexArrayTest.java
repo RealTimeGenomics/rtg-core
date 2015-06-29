@@ -34,7 +34,7 @@ public class FlexArrayTest extends TestCase {
   public void test() {
     final FlexArray<Integer> intArr = new FlexArray<>(0);
     assertEquals(0, intArr.capacity());
-    intArr.set(5, 7);
+    intArr.set(7, 5);
     assertEquals(9, intArr.capacity());
     checkSingleSet(intArr, 7, 0);
     checkSingleSet(intArr, 7, 8);
@@ -45,7 +45,7 @@ public class FlexArrayTest extends TestCase {
   public void test1() {
     final FlexArray<Integer> intArr = new FlexArray<>(0);
     assertEquals(0, intArr.capacity());
-    intArr.set(5, 1);
+    intArr.set(1, 5);
     assertEquals(2, intArr.capacity());
     checkSingleSet(intArr, 1, 0);
     checkSingleSet(intArr, 1, 1);
@@ -56,7 +56,7 @@ public class FlexArrayTest extends TestCase {
   public void test2() {
     final FlexArray<Integer> intArr = new FlexArray<>(4);
     assertEquals(4, intArr.capacity());
-    intArr.set(5, 4);
+    intArr.set(4, 5);
     assertEquals(6, intArr.capacity());
     checkSingleSet(intArr, 4, 0);
     checkSingleSet(intArr, 4, 1);

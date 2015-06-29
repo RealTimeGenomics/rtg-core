@@ -51,10 +51,10 @@ public class FlexArray<T> {
 
   /**
    * Set the arrays value at the given position, expanding the size and capacity if required.
-   * @param obj the value
    * @param index position to set
+   * @param obj the value
    */
-  public void set(T obj, int index) {
+  public void set(int index, T obj) {
     ensureCapacity(index + 1);
     mList[index] = obj;
     if (mSize <= index) {
@@ -92,9 +92,7 @@ public class FlexArray<T> {
     mList = Arrays.copyOf(mList, newSize);
   }
 
-
   int capacity() {
     return mList.length;
   }
-
 }
