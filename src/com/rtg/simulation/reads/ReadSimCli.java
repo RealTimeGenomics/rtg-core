@@ -44,7 +44,6 @@ import com.rtg.util.MathUtils;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.Utils;
 import com.rtg.util.cli.CFlags;
-import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -402,21 +401,21 @@ public class ReadSimCli extends LoggedCli {
     mFlags.addRequiredSet(covFlag);
     mFlags.addRequiredSet(nFlag);
 
-    mFlags.registerOptional('q', QUAL_RANGE, String.class, "string", "set the range of base quality values permitted e.g.: 3-40. Default is fixed qualities corresponding to overall machine base error rate").setCategory(CommonFlagCategories.UTILITY);
+    mFlags.registerOptional('q', QUAL_RANGE, String.class, "string", "set the range of base quality values permitted e.g.: 3-40. Default is fixed qualities corresponding to overall machine base error rate").setCategory(UTILITY);
 
     //reduce wastage
-    mFlags.registerOptional(NO_NAMES, "do not create read names in result sdf").setCategory(CommonFlagCategories.UTILITY);
-    mFlags.registerOptional(NO_QUAL, "do not create read qualities in result sdf").setCategory(CommonFlagCategories.UTILITY);
+    mFlags.registerOptional(NO_NAMES, "do not create read names in result sdf").setCategory(UTILITY);
+    mFlags.registerOptional(NO_QUAL, "do not create read qualities in result sdf").setCategory(UTILITY);
 
     // Override rate options
-    mFlags.registerOptional(MNP_EVENT_RATE, Double.class, "float", "override the overall MNP event rate in the priors").setCategory(CommonFlagCategories.UTILITY);
-    mFlags.registerOptional(INS_EVENT_RATE, Double.class, "float", "override the overall insertion event rate in the priors").setCategory(CommonFlagCategories.UTILITY);
-    mFlags.registerOptional(DEL_EVENT_RATE, Double.class, "float", "override the overall deletion event rate in the priors").setCategory(CommonFlagCategories.UTILITY);
+    mFlags.registerOptional(MNP_EVENT_RATE, Double.class, "float", "override the overall MNP event rate in the priors").setCategory(UTILITY);
+    mFlags.registerOptional(INS_EVENT_RATE, Double.class, "float", "override the overall insertion event rate in the priors").setCategory(UTILITY);
+    mFlags.registerOptional(DEL_EVENT_RATE, Double.class, "float", "override the overall deletion event rate in the priors").setCategory(UTILITY);
     // Limit to bed regions
     mFlags.registerOptional(BED_FILE, File.class, "FILE", "simulate exome capture by only generating reads that lie over the specified regions").setCategory(UTILITY);
 
-    mFlags.registerOptional(PCR_DUP_RATE, Double.class, "float", "set the PCR duplication error rate", 0.0).setCategory(CommonFlagCategories.UTILITY);
-    mFlags.registerOptional(CHIMERA_RATE, Double.class, "float", "set the chimeric fragment error rate", 0.0).setCategory(CommonFlagCategories.UTILITY);
+    mFlags.registerOptional(PCR_DUP_RATE, Double.class, "float", "set the PCR duplication error rate", 0.0).setCategory(UTILITY);
+    mFlags.registerOptional(CHIMERA_RATE, Double.class, "float", "set the chimeric fragment error rate", 0.0).setCategory(UTILITY);
 
     mFlags.setValidator(new ReadSimValidator());
     initMachineFlags();
@@ -770,7 +769,7 @@ public class ReadSimCli extends LoggedCli {
     int written;
     while ((written = writer.readsWritten()) < targetReads) {
       if (written - lastIncrement >= percentageIncrement) {
-        Diagnostic.progress(((int) Math.min(100, written / (double) targetReads * 100.0)) + "% of reads generated");
+        Diagnostic.progress((int) Math.min(100, written / (double) targetReads * 100.0) + "% of reads generated");
         lastIncrement = written;
       }
       gf.makeFragment();

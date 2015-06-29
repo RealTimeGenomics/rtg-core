@@ -24,13 +24,12 @@ import com.rtg.util.integrity.IntegralAbstract;
  */
 public class IntMemo extends IntegralAbstract implements IntFunction {
 
-
-  //care is taken to make this thread safe which includes storing state in the class Pair and updating it
-  //in a single atomic operation. Also there is a short circuit that returns results in the common case
-  ///when the function value is available, this requires the state in an atom so that it can be coherently accessed.
-  //Correctness of this assumes pointer updates are atomic and that the JIT cannot rearrange the order of operations
-  //when executing a constructor and then assigning the result (that is all stores in the constructor occur before
-  //the resultant object is itself stored).
+  // Care is taken to make this thread safe which includes storing state in the class Pair and updating it
+  // in a single atomic operation. Also there is a short circuit that returns results in the common case
+  // when the function value is available, this requires the state in an atom so that it can be coherently accessed.
+  // Correctness of this assumes pointer updates are atomic and that the JIT cannot rearrange the order of operations
+  // when executing a constructor and then assigning the result (that is all stores in the constructor occur before
+  // the resultant object is itself stored).
   private static class Pair {
     private final int mLo;
     private final int[] mMemo;
