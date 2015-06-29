@@ -19,11 +19,11 @@ public class BitPackHelperInt {
   /**
    * Number of bits in a int
    */
-  public static final int INT_BITS = 32;
+  public static final int INT_BITS = Integer.SIZE;
 
-  private int[] mFields;
-  private int[] mShifts;
-  private int[] mMasks;
+  private final int[] mFields;
+  private final int[] mShifts;
+  private final int[] mMasks;
 
   /**
    * Constructs the helper

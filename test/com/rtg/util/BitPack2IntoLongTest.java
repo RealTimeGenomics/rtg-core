@@ -16,15 +16,24 @@ import junit.framework.TestCase;
 /**
  */
 public class BitPack2IntoLongTest extends TestCase {
+
   public void test() {
-    final BitPack2IntoLong bit;
     try {
       new BitPack2IntoLong(64, 1);
       fail();
     } catch (final IllegalArgumentException e) {
-
     }
-    bit = new BitPack2IntoLong(13, 8);
+    try {
+      new BitPack2IntoLong(60, 0);
+      fail();
+    } catch (final IllegalArgumentException e) {
+    }
+    try {
+      new BitPack2IntoLong(0, 60);
+      fail();
+    } catch (final IllegalArgumentException e) {
+    }
+    final BitPack2IntoLong bit = new BitPack2IntoLong(13, 8);
     long value = bit.packValues(34, 90);
     assertEquals(34, bit.getField(0, value));
     assertEquals(90, bit.getField(1, value));
@@ -35,5 +44,4 @@ public class BitPack2IntoLongTest extends TestCase {
     assertEquals(25, bit.getField(0, value));
     assertEquals(11, bit.getField(1, value));
   }
-
 }

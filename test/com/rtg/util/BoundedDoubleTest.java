@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 public class BoundedDoubleTest extends TestCase {
 
   public void testConstruction() {
-    BoundedDouble bd = new BoundedDouble(0.45, 0.2, 0.63);
+    final BoundedDouble bd = new BoundedDouble(0.45, 0.2, 0.63);
     assertEquals(0.2, bd.getLow());
     assertEquals(0.45, bd.getValue());
     assertEquals(0.63, bd.getHigh());

@@ -14,23 +14,17 @@ package com.rtg.util;
 import junit.framework.TestCase;
 
 /**
- *
  */
 public class BitPackHelperIntTest extends TestCase {
 
-  public BitPackHelperIntTest(String testName) {
-    super(testName);
-  }
-
   public void test() {
-    BitPackHelperInt bit;
     try {
       new BitPackHelperInt(32, 1);
       fail();
     } catch (final IllegalArgumentException e) {
 
     }
-    bit = new BitPackHelperInt(6, 7, 8, 11);
+    final BitPackHelperInt bit = new BitPackHelperInt(6, 7, 8, 11);
     int value = bit.packValues(new int[] {34, 90, 255, 1000});
     assertEquals(34, bit.getField(0, value));
     assertEquals(90, bit.getField(1, value));

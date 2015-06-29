@@ -19,11 +19,11 @@ public class BitPackHelperLong {
   /**
    * Number of bits in a long
    */
-  public static final int LONG_BITS = 64;
+  public static final int LONG_BITS = Long.SIZE;
 
-  private int[] mFields;
-  private int[] mShifts;
-  private long[] mMasks;
+  private final int[] mFields;
+  private final int[] mShifts;
+  private final long[] mMasks;
 
   /**
    * Constructs the helper

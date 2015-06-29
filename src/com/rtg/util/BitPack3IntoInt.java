@@ -12,12 +12,12 @@
 package com.rtg.util;
 
 /**
- * Bit pack three values into an integer. NOTE: Do not try to store negative numbers
+ * Bit pack three values into an integer. NOTE: Do not try to store negative numbers.
  */
 public class BitPack3IntoInt {
 
   private final int mA, mB;
-  private final int mMaskA, mMaskB, mMaskC;
+  private final int mMaskB, mMaskC;
 
   /**
    * Constructs the helper.
@@ -27,12 +27,11 @@ public class BitPack3IntoInt {
    * @throws IllegalArgumentException if total size &gt; 32
    */
   public BitPack3IntoInt(final int a, final int b, final int c) {
-    if (a + b + c > 32) {
+    if (a + b + c > 32 || a < 1 || b < 1 || c < 1) {
       throw new IllegalArgumentException();
     }
     mB = c;
     mA = mB + b;
-    mMaskA = (1 << a) - 1;
     mMaskB = (1 << b) - 1;
     mMaskC = (1 << c) - 1;
   }
@@ -46,7 +45,7 @@ public class BitPack3IntoInt {
   public int getField(final int fieldId, final int packedValue) {
     switch (fieldId) {
     case 0:
-      return (packedValue >>> mA) & mMaskA;
+      return packedValue >>> mA;
     case 1:
       return (packedValue >>> mB) & mMaskB;
     default:
@@ -57,13 +56,14 @@ public class BitPack3IntoInt {
   /**
    * Pack all values into an integer.
    * It is the callers responsibility to ensure that the values do not exceed allowed
-   * number of bits. NOTE: Do not try to store negative numbers
+   * number of bits. NOTE: Do not try to store negative numbers.
    * @param a first value
    * @param b second value
    * @param c third value
    * @return packed value
    */
   public int packValues(final int a, final int b, final int c) {
+    assert a >= 0 && b >= 0 && c >= 0;
     return (a << mA) | (b << mB) | c;
   }
 

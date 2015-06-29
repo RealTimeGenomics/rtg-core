@@ -14,23 +14,31 @@ package com.rtg.util;
 import junit.framework.TestCase;
 
 /**
- *
  */
 public class BitPack3IntoIntTest extends TestCase {
 
-  public BitPack3IntoIntTest(String testName) {
-    super(testName);
-  }
-
   public void test() {
-    BitPack3IntoInt bit;
     try {
-      new BitPack3IntoInt(32, 1, 0);
+      new BitPack3IntoInt(31, 1, 1);
       fail();
     } catch (final IllegalArgumentException e) {
-
     }
-    bit = new BitPack3IntoInt(13, 8, 11);
+    try {
+      new BitPack3IntoInt(1, 1, 0);
+      fail();
+    } catch (final IllegalArgumentException e) {
+    }
+    try {
+      new BitPack3IntoInt(1, 0, 1);
+      fail();
+    } catch (final IllegalArgumentException e) {
+    }
+    try {
+      new BitPack3IntoInt(0, 1, 1);
+      fail();
+    } catch (final IllegalArgumentException e) {
+    }
+    final BitPack3IntoInt bit = new BitPack3IntoInt(13, 8, 11);
     int value = bit.packValues(34, 90, 1000);
     assertEquals(34, bit.getField(0, value));
     assertEquals(90, bit.getField(1, value));

@@ -13,11 +13,12 @@ package com.rtg.util;
 
 /**
  * Bit pack four values into a long. NOTE: Do not try to store negative numbers
+ * other than in the first argument.
  */
 public class BitPack3IntoLong {
 
   private final int mA, mB ;
-  private final long mMaskA, mMaskB, mMaskC;
+  private final long mMaskB, mMaskC;
 
   /**
    * Constructs the helper
@@ -27,12 +28,11 @@ public class BitPack3IntoLong {
    * @throws IllegalArgumentException if total size &gt; 64
    */
   public BitPack3IntoLong(int a, int b, int c) {
-    if (a + b + c > 64) {
+    if (a + b + c > 64 || a < 1 || b < 1 || c < 1) {
       throw new IllegalArgumentException();
     }
     mB = c;
     mA = mB + b;
-    mMaskA = (1L << a) - 1;
     mMaskB = (1L << b) - 1;
     mMaskC = (1L << c) - 1;
   }
@@ -46,7 +46,7 @@ public class BitPack3IntoLong {
   public long getField(final int fieldId, final long packedValue) {
     switch (fieldId) {
     case 0:
-      return (packedValue >>> mA) & mMaskA;
+      return packedValue >>> mA;
     case 1:
       return (packedValue >>> mB) & mMaskB;
     default:
@@ -55,13 +55,14 @@ public class BitPack3IntoLong {
   }
 
   /**
-   * Pack all values into a long. NOTE: Do not try to store negative numbers
+   * Pack all values into a long. NOTE: Do not try to store negative numbers.
    * @param a first value
    * @param b second value
    * @param c third value
    * @return packed value
    */
   public long packValues(final long a, final long b, final long c) {
+    assert a >= 0 && b >= 0 && c >= 0;
     return (a << mA) | (b << mB) | c;
   }
 

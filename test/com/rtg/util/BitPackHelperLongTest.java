@@ -14,23 +14,17 @@ package com.rtg.util;
 import junit.framework.TestCase;
 
 /**
- *
  */
 public class BitPackHelperLongTest extends TestCase {
 
-  public BitPackHelperLongTest(String testName) {
-    super(testName);
-  }
-
   public void test() {
-    BitPackHelperLong bit;
     try {
       new BitPackHelperLong(32, 16, 16, 1);
       fail();
     } catch (final IllegalArgumentException e) {
 
     }
-    bit = new BitPackHelperLong(14, 15, 16, 19);
+    final BitPackHelperLong bit = new BitPackHelperLong(14, 15, 16, 19);
     long value = bit.packValues(new long[] {34, 53, 65535, 524287});
     assertEquals(34, bit.getField(0, value));
     assertEquals(53, bit.getField(1, value));

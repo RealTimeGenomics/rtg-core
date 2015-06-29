@@ -13,29 +13,21 @@ package com.rtg.util;
 
 /**
  * Chi-squared statistical test.
- * Taken from Sean's own library of math stuff.
  */
 public final class ChiSquared {
 
   private ChiSquared() {
   }
 
-  /* The natural logarithm of 2. */
   private static final double LN2 = Double.longBitsToDouble(0x3FE62E42FEFA39EFL);
-  /* ln(pi) */
   private static final double LNPI = Math.log(Math.PI);
-  /* Pi times two */
   private static final double TWOPI = 2.0 * Math.PI;
-  /* The square root of 2 pi */
   private static final double SQRT2PI = Math.sqrt(TWOPI);
-  /* ln(sqrt(2 pi)) */
   private static final double LNSQRT2PI = Math.log(SQRT2PI);
   /* 2^-53, minimal number of bits in mantissa */
   private static final double MACHINE_PRECISION = 1.11022302462515654042E-16;
   /* The natural logarithm of the largest finite double. */
   private static final double MAXLOG = Double.longBitsToDouble(0x40862E42FEFA39EFL);
-  // MAXLOG = Math.log(Double.MAX_VALUE);
-  /* The square root of 1/2 */
   private static final double SQRTHALF = Math.sqrt(0.5);
 
   /**

@@ -17,14 +17,16 @@ import junit.framework.TestCase;
 /**
  */
 public class AutoAddMapTest extends TestCase {
+
   private static class TestMap extends AutoAddMap<String, String> {
     @Override
     public String make() {
       return "DEFAULT";
     }
   }
+
   public void testAutoAdd() {
-    TestMap map = new TestMap();
+    final TestMap map = new TestMap();
     assertEquals("DEFAULT", map.getOrAdd("key"));
     assertEquals("DEFAULT", map.getOrAdd("key2"));
     map.put("key", "value");
