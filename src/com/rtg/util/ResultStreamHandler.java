@@ -19,21 +19,21 @@ import java.io.Serializable;
 import com.rtg.util.io.FileUtils;
 
 /**
- * Handle creating streams in a directory
+ * Handle creating streams in a directory.
  */
 public class ResultStreamHandler implements Serializable {
 
   private final File mDir;
-  /** if this is null, use <code>mDir</code> instead. */
+  /** If this is null, use <code>mDir</code> instead. */
   private final File mTempFilesDir;
   private final boolean mZip;
   private final String mZipSuffix;
 
   /**
-   * Constructor
-   * @param dir Directory files are to be created in
-   * @param tempFilesDir Directory where intermediate files will be created
-   * @param zip Whether files should be compressed
+   * Constructor.
+   * @param dir directory files are to be created in
+   * @param tempFilesDir directory where intermediate files will be created
+   * @param zip whether files should be compressed
    * @param zipSuffix suffix to use on compressed files
    */
   public ResultStreamHandler(File dir, File tempFilesDir, boolean zip, String zipSuffix) {
@@ -44,9 +44,9 @@ public class ResultStreamHandler implements Serializable {
   }
 
   /**
-   * Constructor
-   * @param dir Directory files are to be created in
-   * @param zip Whether files should be compressed
+   * Constructor.
+   * @param dir directory files are to be created in
+   * @param zip whether files should be compressed
    * @param zipSuffix suffix to use on compressed files
    */
   public ResultStreamHandler(File dir, boolean zip, String zipSuffix) {

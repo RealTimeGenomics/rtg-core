@@ -14,7 +14,6 @@ package com.rtg.util;
 
 /**
  * Works out maximum aligner band width based on read length and a scaling factor.
- *
  */
 public class MaxShiftFactor {
   private final double mFactor;
@@ -47,15 +46,11 @@ public class MaxShiftFactor {
     return mFactor;
   }
 
-  /**
-   */
   @Override
   public boolean equals(Object o) {
     return o != null && o instanceof MaxShiftFactor && Double.doubleToLongBits(((MaxShiftFactor) o).mFactor) == Double.doubleToLongBits(mFactor);
   }
 
-  /**
-   */
   @Override
   public int hashCode() {
     return Double.valueOf(mFactor).hashCode() - 7;

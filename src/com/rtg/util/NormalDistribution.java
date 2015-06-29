@@ -14,9 +14,7 @@ package com.rtg.util;
 
 
 /**
- * Encapsulates parameters of a <code>NormalDistribution</code> over
- * the integers.
- *
+ * Encapsulates parameters of a <code>NormalDistribution</code> over the integers.
  */
 public class NormalDistribution {
 

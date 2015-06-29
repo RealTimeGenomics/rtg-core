@@ -63,10 +63,7 @@ public class MapSet<K, V> extends IntegralAbstract {
    * @return the keyset
    */
   public Set<K> keySet() {
-    Set<K> ret;
-    //
-    ret = mMap.keySet();
-    return ret;
+    return mMap.keySet();
   }
 
   /**
@@ -77,10 +74,7 @@ public class MapSet<K, V> extends IntegralAbstract {
    */
   public boolean contains(final K key, final V value) {
     final Set<V> set = mMap.get(key);
-    if (set == null) {
-      return false;
-    }
-    return set.contains(value);
+    return set != null && set.contains(value);
   }
 
   /**
@@ -140,7 +134,5 @@ public class MapSet<K, V> extends IntegralAbstract {
     final Map<K, Set<V>> sorted = new TreeMap<>(mMap);
     return sorted.toString();
   }
-
-
 }
 

@@ -50,7 +50,7 @@ public class ReverseDouble implements Comparable<ReverseDouble> {
   @Override
   public int hashCode() {
     final long lb = Double.doubleToRawLongBits(mValue);
-    return ((int) lb) ^ ((int) (lb >> 32));
+    return (int) lb ^ (int) (lb >> 32);
   }
 
   @Override

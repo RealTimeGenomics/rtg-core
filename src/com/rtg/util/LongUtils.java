@@ -26,10 +26,7 @@ public final class LongUtils {
    */
   public static long longMask(final int b) {
     assert Long.SIZE >= b && b >= 0;
-    if (b == 0) {
-      return 0;
-    }
-    return ~0L >>> (Long.SIZE - b);
+    return b == 0 ? 0 : ~0L >>> (Long.SIZE - b);
   }
 
   /**

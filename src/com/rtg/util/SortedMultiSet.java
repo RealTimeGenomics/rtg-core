@@ -17,13 +17,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 /**
- * An ordered multi-set
+ * An ordered multi-set.
  * @param <E> type of elements in the multi-set.
  */
 public class SortedMultiSet<E extends Comparable<E>> extends MultiSet<E> {
 
   /**
-   * Constructor
+   * Constructor.
    */
   public SortedMultiSet() {
     super(new TreeMap<E, Counter>());

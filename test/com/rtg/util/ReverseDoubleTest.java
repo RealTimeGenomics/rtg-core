@@ -14,8 +14,6 @@ package com.rtg.util;
 import junit.framework.TestCase;
 
 /**
- * Tests for <code>Resources</code>.
- *
  */
 public class ReverseDoubleTest extends TestCase {
 
