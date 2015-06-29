@@ -5,8 +5,6 @@
 # of the two samples.
 #
 # Requires: R (version 2.14 or later), ggplot2 (will attempt to install)
-# Author: Mehul Rathod <mehul@realtimegenomics.com>
-# Author: Sean A. Irvine <sean@realtimegenomics.com>
 # Version: 1.0
 
 # Parse the command line arguments.  If they are not what is expected then

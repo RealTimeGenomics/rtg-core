@@ -2,7 +2,6 @@
 # computed by RTG similarity command.
 
 # Requires: R (version 2.15 or later), rgl (will attempt to install)
-#
 # Version: 1.0
 
 
