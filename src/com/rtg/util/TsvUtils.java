@@ -22,12 +22,10 @@ import com.rtg.util.io.FileUtils;
 
 /**
  * Functions to manipulate tab delimited files.
- *
  */
 public final class TsvUtils {
 
   private TsvUtils() {
-
   }
 
   /**
@@ -89,5 +87,4 @@ public final class TsvUtils {
     }
     timer.stopLog();
   }
-
 }

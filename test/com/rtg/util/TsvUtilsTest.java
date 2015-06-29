@@ -24,15 +24,8 @@ import com.rtg.util.test.FileHelper;
 import junit.framework.TestCase;
 
 /**
- * Tests for {@link TsvUtils}
  */
 public class TsvUtilsTest extends TestCase {
-
-  /**
-   */
-  public TsvUtilsTest(String name) {
-    super(name);
-  }
 
   private static final String TXT = ""
     + "0" + TAB + "0" + TAB + "g1" + TAB +  "3" + TAB + "155" + TAB + "6M1D1M" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "ATCGACG" + TAB + "```````" + TAB + "AS:i:0" + LS
