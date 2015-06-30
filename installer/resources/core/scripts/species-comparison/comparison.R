@@ -79,6 +79,7 @@ header <- c("abundance",
             "confidence",
             "coverage_depth",
             "coverage_breadth",
+            "reference_length",
             "mapped_reads",
             "has_reference",
             "taxa_count",
@@ -89,7 +90,7 @@ header <- c("abundance",
 colnames(sample1) <- header
 colnames(sample2) <- header
 
-# We only want a comparison between "species" have sequences associated with
+# We only want a comparison between "species" having sequences associated with
 # them.  This prevents the comparison from getting cluttered from higher
 # taxonomic items.  This is controlled by the has_sequence column in the
 # "species.tsv" file.
