@@ -78,7 +78,7 @@ public class PriorPopulationVariantGeneratorCli extends AbstractCli {
   }
 
   @Override
-  protected int mainExec(OutputStream out, PrintStream err) throws IOException {
+  protected int mainExec(OutputStream output, PrintStream err) throws IOException {
     final CFlags flags = mFlags;
     final PortableRandom random;
     if (flags.isSet(SEED)) {
@@ -94,7 +94,10 @@ public class PriorPopulationVariantGeneratorCli extends AbstractCli {
       return 1;
     }
     final File reference = (File) flags.getValue(REFERENCE_SDF);
-    final File outputVcf = FileUtils.getZippedFileName(!flags.isSet(CommonFlags.NO_GZIP), (File) flags.getValue(OUTPUT_VCF));
+    final File out = (File) flags.getValue(OUTPUT_VCF);
+    final boolean gzip = !flags.isSet(CommonFlags.NO_GZIP);
+    final boolean stdout = CommonFlags.isStdio(out);
+    final File vcfFile = stdout ? null : FileUtils.getZippedFileName(gzip, out);
     try (SequencesReader dsr = SequencesReaderFactory.createMemorySequencesReaderCheckEmpty(reference, true, false, LongRange.NONE)) {
       final int targetVariants;
       if (flags.isSet(RATE_FLAG)) {
@@ -103,7 +106,7 @@ public class PriorPopulationVariantGeneratorCli extends AbstractCli {
         targetVariants = (int) (dsr.totalLength() * priors.rate());
       }
       final PriorPopulationVariantGenerator fs = new PriorPopulationVariantGenerator(dsr, priors, random, (Double) flags.getValue(BIAS_FLAG), targetVariants);
-      PopulationVariantGenerator.writeAsVcf(outputVcf, null, fs.generatePopulation(), dsr);
+      PopulationVariantGenerator.writeAsVcf(vcfFile, output, fs.generatePopulation(), dsr);
     }
     return 0;
   }

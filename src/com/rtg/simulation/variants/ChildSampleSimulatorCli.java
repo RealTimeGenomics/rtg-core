@@ -90,6 +90,12 @@ public class ChildSampleSimulatorCli extends AbstractCli {
 
     @Override
     public boolean isValid(final CFlags cflags) {
+      if (!cflags.checkNand(OUTPUT_SDF, CommonFlags.NO_GZIP)) {
+        return false;
+      }
+      if (!CommonFlags.validateNotStdout((File) cflags.getValue(OUTPUT_VCF))) {
+        return false;
+      }
       return !(cflags.isSet(OUTPUT_SDF) && !CommonFlags.validateOutputDirectory((File) cflags.getValue(OUTPUT_SDF)));
     }
   }

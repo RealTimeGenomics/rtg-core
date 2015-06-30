@@ -86,9 +86,10 @@ public class SampleSimulatorCli extends AbstractCli {
       if (!cflags.checkNand(OUTPUT_SDF, CommonFlags.NO_GZIP)) {
         return false;
       }
-      return true;
+      return CommonFlags.validateNotStdout((File) cflags.getValue(OUTPUT_VCF));
     }
   }
+
 
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
