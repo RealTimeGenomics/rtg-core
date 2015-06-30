@@ -14,7 +14,7 @@ package com.rtg.simulation;
 /**
  * Class stores the results for mappings
  */
-class ReadMappingAccuracyReadStats {
+class ReadSimEvalStatistics {
 
   private static final byte FOUND = 0x01;
   private static final byte MATED = 0x02;
@@ -27,7 +27,7 @@ class ReadMappingAccuracyReadStats {
   private final int mLen;
   private final byte[] mData;
 
-  ReadMappingAccuracyReadStats(int i) {
+  ReadSimEvalStatistics(int i) {
     mLen = i;
     mData = new byte[mLen];
   }

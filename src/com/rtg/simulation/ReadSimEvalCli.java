@@ -83,7 +83,7 @@ import htsjdk.samtools.SAMRecord;
  * </ul>
  *
  */
-public class ReadMappingAccuracy extends LoggedCli {
+public class ReadSimEvalCli extends LoggedCli {
 
   private static final String MODULE_NAME = "readsimeval";
 
@@ -98,10 +98,10 @@ public class ReadMappingAccuracy extends LoggedCli {
   private PrereadNamesInterface mRightNames = null;
   private PrereadNamesInterface mLeftSuffixes = null;
   private PrereadNamesInterface mRightSuffixes = null;
-  private ReadMappingAccuracyParams mParams = null;
+  private ReadSimEvalParams mParams = null;
 
-  ReadMappingAccuracyReadStats mLeftStats;
-  private ReadMappingAccuracyReadStats mRightStats;
+  ReadSimEvalStatistics mLeftStats;
+  private ReadSimEvalStatistics mRightStats;
   private final ReadMappingRoc mRocAs = new ReadMappingRoc();
   private final ReadMappingRoc mRocGs = new ReadMappingRoc();
   private final ReadMappingRoc mRocMapq = new ReadMappingRoc(false);
@@ -121,7 +121,7 @@ public class ReadMappingAccuracy extends LoggedCli {
 
   @Override
   protected void initFlags() {
-    ReadMappingAccuracyParams.initFlags(mFlags);
+    ReadSimEvalParams.initFlags(mFlags);
   }
 
   @Override
@@ -251,7 +251,7 @@ public class ReadMappingAccuracy extends LoggedCli {
     }
     final int id = getId(mParser.readId());
     final boolean isFirst = !mParams.isPaired() || rec.getFirstOfPairFlag();
-    final ReadMappingAccuracyReadStats currentStats = isFirst ? mLeftStats : mRightStats;
+    final ReadSimEvalStatistics currentStats = isFirst ? mLeftStats : mRightStats;
 
     if (mParams.isPaired() && rec.getProperPairFlag()) {
       currentStats.mated(id);
@@ -305,9 +305,9 @@ public class ReadMappingAccuracy extends LoggedCli {
   }
 
   void init() throws IOException, InvalidParamsException {
-    mParams = new ReadMappingAccuracyParams(mFlags);
-    mLeftStats = new ReadMappingAccuracyReadStats(mParams.isPaired() ? getNumReads(ReaderUtils.getLeftEnd(mParams.readDirectory())) : getNumReads(mParams.readDirectory()));
-    mRightStats = mParams.isPaired() ? new ReadMappingAccuracyReadStats(getNumReads(ReaderUtils.getRightEnd(mParams.readDirectory()))) : null;
+    mParams = new ReadSimEvalParams(mFlags);
+    mLeftStats = new ReadSimEvalStatistics(mParams.isPaired() ? getNumReads(ReaderUtils.getLeftEnd(mParams.readDirectory())) : getNumReads(mParams.readDirectory()));
+    mRightStats = mParams.isPaired() ? new ReadSimEvalStatistics(getNumReads(ReaderUtils.getRightEnd(mParams.readDirectory()))) : null;
     if (mParams.mutationsVcf() != null) {
       mOriginalReference = SourceTemplateReadWriter.readMutationMap(mParams.isPaired() ? ReaderUtils.getLeftEnd(mParams.readDirectory()) : mParams.readDirectory());
       if (mOriginalReference == null) {
@@ -441,7 +441,7 @@ public class ReadMappingAccuracy extends LoggedCli {
     }
   }
 
-  private static void updateStats(ReadMappingAccuracyReadStats readStats, int i, SummaryStats2 stats) {
+  private static void updateStats(ReadSimEvalStatistics readStats, int i, SummaryStats2 stats) {
     stats.mTotal++;
     if (readStats.isMultiple(i)) {
       stats.mAndMultiple++;
@@ -450,7 +450,7 @@ public class ReadMappingAccuracy extends LoggedCli {
     }
   }
 
-  private static void updateStats(ReadMappingAccuracyReadStats readStats, int i, SummaryStats stats) {
+  private static void updateStats(ReadSimEvalStatistics readStats, int i, SummaryStats stats) {
     if (readStats.isFound(i)) {
       updateStats(readStats, i, stats.mCorrect);
     } else if (readStats.isMapped(i)) {

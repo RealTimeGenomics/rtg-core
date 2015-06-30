@@ -27,7 +27,7 @@ import com.rtg.util.test.FileHelper;
 
 /**
  */
-public class ReadMappingAccuracyParamsTest extends AbstractCliTest {
+public class ReadSimEvalParamsTest extends AbstractCliTest {
 
   static final String READS = ">read0:1:1234:S1:I0:D0" + StringUtils.LS
      //0123456789012345678901234567890123456789012
@@ -48,7 +48,7 @@ public class ReadMappingAccuracyParamsTest extends AbstractCliTest {
       assertTrue(sam.createNewFile());
 
       final CFlags flags = new CFlags();
-      ReadMappingAccuracyParams.initFlags(flags);
+      ReadSimEvalParams.initFlags(flags);
 
       final String[] args = {"--output", rseDir.getPath(), "--reads", reads.getPath(),
           "--Xmismatch", "4", "-v", "3", "--Xgap-opening", "5", sam.getPath(),
@@ -56,7 +56,7 @@ public class ReadMappingAccuracyParamsTest extends AbstractCliTest {
 
       assertTrue(flags.setFlags(args));
 
-      final ReadMappingAccuracyParams params = new ReadMappingAccuracyParams(flags);
+      final ReadSimEvalParams params = new ReadSimEvalParams(flags);
 
       assertEquals(3, params.variance());
       assertEquals(4, params.misMatchPenalty());
@@ -71,7 +71,7 @@ public class ReadMappingAccuracyParamsTest extends AbstractCliTest {
 
       assertTrue(flags.setFlags(args2));
 
-      final ReadMappingAccuracyParams params2 = new ReadMappingAccuracyParams(flags);
+      final ReadSimEvalParams params2 = new ReadSimEvalParams(flags);
 
       assertEquals(0, params2.variance());
       assertEquals(1, params2.misMatchPenalty());
@@ -84,7 +84,7 @@ public class ReadMappingAccuracyParamsTest extends AbstractCliTest {
 
       assertTrue(flags.setFlags(args2));
 
-      final ReadMappingAccuracyParams params3 = new ReadMappingAccuracyParams(flags);
+      final ReadSimEvalParams params3 = new ReadSimEvalParams(flags);
 
       assertEquals(5, params3.misMatchPenalty());
       assertTrue(params3.verbose());
@@ -110,6 +110,6 @@ public class ReadMappingAccuracyParamsTest extends AbstractCliTest {
 
   @Override
   protected AbstractCli getCli() {
-    return new ReadMappingAccuracy();
+    return new ReadSimEvalCli();
   }
 }

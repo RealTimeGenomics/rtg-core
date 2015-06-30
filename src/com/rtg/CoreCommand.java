@@ -35,7 +35,7 @@ import com.rtg.sam.SamValidatorCli;
 import com.rtg.segregation.SegregationCheckerCli;
 import com.rtg.segregation.SegregationVcfSearch;
 import com.rtg.similarity.SimilarityCli;
-import com.rtg.simulation.ReadMappingAccuracy;
+import com.rtg.simulation.ReadSimEvalCli;
 import com.rtg.simulation.cnv.CnvSimulatorCli;
 import com.rtg.simulation.genome.GenomeSimulator;
 import com.rtg.simulation.reads.CgSimCli;
@@ -177,7 +177,7 @@ public final class CoreCommand {
   static final Command READSIM = new Command(new ReadSimCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
 
   /** Evaluate read mappings and produce ROC. */
-  static final Command READSIMEVAL = new Command(new ReadMappingAccuracy(), CommandCategory.SIMULATE, ReleaseLevel.BETA);
+  static final Command READSIMEVAL = new Command(new ReadSimEvalCli(), CommandCategory.SIMULATE, ReleaseLevel.BETA);
 
   /**
    * Deprecated as it does not correctly allow us to simulate populations.

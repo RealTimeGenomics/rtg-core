@@ -37,9 +37,9 @@ import junit.framework.TestCase;
 
 /**
  */
-public class ReadMappingAccuracyTest extends TestCase {
+public class ReadSimEvalCliTest extends TestCase {
 
-  private static final String READS = ReadMappingAccuracyParamsTest.READS;
+  private static final String READS = ReadSimEvalParamsTest.READS;
 
   private static final String SAM_ENDLINE = "\n";
 
@@ -53,7 +53,7 @@ public class ReadMappingAccuracyTest extends TestCase {
 
   /**
    * Test method for
-   * {@link com.rtg.simulation.ReadMappingAccuracy#mainExec(java.io.OutputStream, java.io.PrintStream)}
+   * {@link ReadSimEvalCli#mainExec(java.io.OutputStream, java.io.PrintStream)}
    * .
    */
   public final void testSingleEnd() throws IOException {
@@ -68,7 +68,7 @@ public class ReadMappingAccuracyTest extends TestCase {
 
       final String[] args = {"--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose", "--score-histogram"};
 
-      final ReadMappingAccuracy ac = new ReadMappingAccuracy();
+      final ReadSimEvalCli ac = new ReadSimEvalCli();
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
       final MemoryPrintStream ps = new MemoryPrintStream();
       try {
@@ -135,7 +135,7 @@ public class ReadMappingAccuracyTest extends TestCase {
 
   /**
    * Test method for
-   * {@link com.rtg.simulation.ReadMappingAccuracy#mainExec(java.io.OutputStream, java.io.PrintStream)}
+   * {@link ReadSimEvalCli#mainExec(java.io.OutputStream, java.io.PrintStream)}
    * .
    */
   public final void testPairedEnd() throws IOException {
@@ -151,7 +151,7 @@ public class ReadMappingAccuracyTest extends TestCase {
 
       final String[] args = {"--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose", "--score-histogram", "--mapq-histogram"};
 
-      final ReadMappingAccuracy ac = new ReadMappingAccuracy();
+      final ReadSimEvalCli ac = new ReadSimEvalCli();
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
       try {
         final MemoryPrintStream ps = new MemoryPrintStream();
@@ -252,7 +252,7 @@ public class ReadMappingAccuracyTest extends TestCase {
 
       final String[] args = {"--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose"};
 
-      final ReadMappingAccuracy ac = new ReadMappingAccuracy();
+      final ReadSimEvalCli ac = new ReadSimEvalCli();
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
       try {
         final MemoryPrintStream ps = new MemoryPrintStream();
@@ -302,7 +302,7 @@ public class ReadMappingAccuracyTest extends TestCase {
 
       final String[] args = {"--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath()};
       try (MemoryPrintStream mps = new MemoryPrintStream()) {
-        final ReadMappingAccuracy ac = new ReadMappingAccuracy();
+        final ReadSimEvalCli ac = new ReadSimEvalCli();
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
           assertEquals(1, ac.mainInit(args, bos, mps.printStream()));
@@ -333,7 +333,7 @@ public class ReadMappingAccuracyTest extends TestCase {
 
       final String[] args = {"--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose"};
 
-      final ReadMappingAccuracy ac = new ReadMappingAccuracy();
+      final ReadSimEvalCli ac = new ReadSimEvalCli();
       final MemoryPrintStream ps = new MemoryPrintStream();
       try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
         assertEquals(1, ac.mainInit(args, bos, ps.printStream()));
@@ -346,7 +346,7 @@ public class ReadMappingAccuracyTest extends TestCase {
   }
 
   public void testSoftClippingAtStart() throws Exception {
-    final ReadMappingAccuracy rma = new ReadMappingAccuracy() {
+    final ReadSimEvalCli rma = new ReadSimEvalCli() {
       @Override
       protected int mainExec(OutputStream out, LogStream log) {
         return 0;
@@ -388,7 +388,7 @@ public class ReadMappingAccuracyTest extends TestCase {
   }
 
   public void testBadSoftClipCigar() throws Exception {
-    final ReadMappingAccuracy rma = new ReadMappingAccuracy() {
+    final ReadSimEvalCli rma = new ReadSimEvalCli() {
       @Override
       protected int mainExec(OutputStream out, LogStream log) {
         return 0;

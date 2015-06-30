@@ -15,11 +15,11 @@ import junit.framework.TestCase;
 
 /**
  */
-public class ReadMappingAccuracyReadStatsTest extends TestCase {
+public class ReadSimEvalStatisticsTest extends TestCase {
 
 
   public void test() {
-    ReadMappingAccuracyReadStats s = new ReadMappingAccuracyReadStats(20);
+    ReadSimEvalStatistics s = new ReadSimEvalStatistics(20);
     assertEquals(s.length(), 20);
     s.found(0);
     assertTrue(s.isFound(0));

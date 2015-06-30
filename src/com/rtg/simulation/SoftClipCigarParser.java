@@ -16,7 +16,7 @@ import com.rtg.sam.SamUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 
 /**
- * Used by <code>ReadMappingAccuracy</code> to evaluate the start position
+ * Used by <code>ReadSimEvalCli</code> to evaluate the start position
  * offset in the soft clipped region at the start of an alignment.
  */
 public class SoftClipCigarParser {

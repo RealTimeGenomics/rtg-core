@@ -16,8 +16,6 @@ import static com.rtg.util.StringUtils.LS;
 import junit.framework.TestCase;
 
 /**
- *
- *
  */
 public class IntMemoTest extends TestCase {
 

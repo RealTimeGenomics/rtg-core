@@ -38,7 +38,7 @@ import htsjdk.samtools.SamReader;
 
 /**
  */
-final class ReadMappingAccuracyParams {
+final class ReadSimEvalParams {
 
   private static final String FILE = "file";
   private static final String READ_SDF = "reads";
@@ -137,7 +137,7 @@ final class ReadMappingAccuracyParams {
   }
 
 
-  public ReadMappingAccuracyParams(final CFlags flags) throws IOException, InvalidParamsException {
+  public ReadSimEvalParams(final CFlags flags) throws IOException, InvalidParamsException {
     mReadDir = (File) flags.getValue(READ_SDF);
     mIsPaired = ReaderUtils.isPairedEndDirectory(mReadDir);
     mSamFiles = getSamFiles(flags);

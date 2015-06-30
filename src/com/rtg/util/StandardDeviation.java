@@ -77,7 +77,7 @@ public class StandardDeviation {
    */
   public static StandardDeviation combine(List<StandardDeviation> deviations) {
     final StandardDeviation combined = new StandardDeviation();
-    for (StandardDeviation deviation : deviations) {
+    for (final StandardDeviation deviation : deviations) {
       combined.mSum += deviation.mSum;
       combined.mSumSquared += deviation.mSumSquared;
       combined.mNumSamples += deviation.mNumSamples;
