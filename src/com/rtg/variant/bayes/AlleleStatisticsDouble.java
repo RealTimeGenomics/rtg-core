@@ -86,8 +86,8 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
    * @return the count.
    */
   @Override
-  public int count(final int index) {
-    return (int) MathUtils.round(mCountsForwards[index] + mCountsBackwards[index]);
+  public double count(final int index) {
+    return mCountsForwards[index] + mCountsBackwards[index];
   }
 
   /**
@@ -101,29 +101,16 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
   }
 
   @Override
-  Double alleleBalanceHomozygous(int allele, int total) {
-    final int observed = (int) MathUtils.round(mCountsForwards[allele] + mCountsBackwards[allele]);
-    return MathUtils.hoeffdingPhred(total, observed, 1.0);
-  }
-
-  @Override
-  Double alleleBalance(int allele1, int allele2) {
-    final int trials = (int) MathUtils.round(mCountsForwards[allele1] + mCountsBackwards[allele2] + mCountsForwards[allele2] + mCountsBackwards[allele1]);
-    final int observed = (int) MathUtils.round(mCountsForwards[allele1] + mCountsBackwards[allele1]);
-    return MathUtils.hoeffdingPhred(trials, observed, 0.5);
-  }
-
-  @Override
   Double strandBias(int allele) {
-    final int trials = (int) MathUtils.round(mCountsForwards[allele] + mCountsBackwards[allele]);
-    final int observed = (int) MathUtils.round(mCountsForwards[allele]);
+    final long trials = MathUtils.round(count(allele));
+    final long observed = MathUtils.round(mCountsForwards[allele]);
     return MathUtils.hoeffdingPhred(trials, observed, 0.5);
   }
 
   @Override
   Double unmatedBias(int allele, double unmatedProbability) {
-    final int trials = (int) MathUtils.round(mCountsMated[allele] + mCountsUnmated[allele]);
-    final int observed = (int) MathUtils.round(mCountsUnmated[allele]);
+    final long trials = MathUtils.round(mCountsMated[allele] + mCountsUnmated[allele]);
+    final long observed = MathUtils.round(mCountsUnmated[allele]);
     return MathUtils.hoeffdingPhred(trials, observed, unmatedProbability);
   }
 

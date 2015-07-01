@@ -35,7 +35,7 @@ public abstract class AbstractAlleleStatisticsTest<T extends AlleleStatistics<T>
   public void test() {
     final T cn = getAlleleStatistics(DescriptionSnp.SINGLETON);
     for (int i = 0; i < 4; i++) {
-      assertEquals(0, cn.count(i));
+      assertEquals(0.0, cn.count(i));
       assertEquals(0.0, cn.error(i));
     }
     //System.err.println(cn.toString());

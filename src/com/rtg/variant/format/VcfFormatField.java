@@ -353,12 +353,12 @@ public enum VcfFormatField {
       if (refDescriptionCode == -1) {
         sb.append(0);
       } else {
-        sb.append(stats.counts().count(refDescriptionCode));
+        sb.append(MathUtils.round(stats.counts().count(refDescriptionCode)));
       }
       for (String altCall : rec.getAltCalls()) {
         final String name = includePrevNt ? altCall.substring(1) : altCall;
         final int altDescriptionCode = description.indexOf(name);
-        sb.append(",").append(stats.counts().count(altDescriptionCode));
+        sb.append(",").append(MathUtils.round(stats.counts().count(altDescriptionCode)));
       }
       rec.addFormatAndSample(name(), sb.toString());
     }

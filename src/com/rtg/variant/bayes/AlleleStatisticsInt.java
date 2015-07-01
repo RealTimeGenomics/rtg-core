@@ -85,7 +85,7 @@ public class AlleleStatisticsInt extends AlleleStatistics<AlleleStatisticsInt> {
    * @return the count.
    */
   @Override
-  public int count(final int index) {
+  public double count(final int index) {
     return mCountsForwards[index] + mCountsBackwards[index];
   }
 
@@ -100,22 +100,9 @@ public class AlleleStatisticsInt extends AlleleStatistics<AlleleStatisticsInt> {
   }
 
   @Override
-  Double alleleBalanceHomozygous(int allele, int total) {
-    final int observed = mCountsForwards[allele] + mCountsBackwards[allele];
-    return MathUtils.hoeffdingPhred(total, observed, 1.0);
-  }
-
-  @Override
-  Double alleleBalance(int allele1, int allele2) {
-    final int trials = mCountsForwards[allele1] + mCountsBackwards[allele2] + mCountsForwards[allele2] + mCountsBackwards[allele1] ;
-    final int observed = mCountsForwards[allele1] + mCountsBackwards[allele1];
-    return MathUtils.hoeffdingPhred(trials, observed, 0.5);
-  }
-
-  @Override
   Double strandBias(int allele) {
-    final int trials = mCountsForwards[allele] + mCountsBackwards[allele];
-    final int observed = mCountsForwards[allele];
+    final long trials = MathUtils.round(count(allele));
+    final long observed = mCountsForwards[allele];
     return MathUtils.hoeffdingPhred(trials, observed, 0.5);
   }
 

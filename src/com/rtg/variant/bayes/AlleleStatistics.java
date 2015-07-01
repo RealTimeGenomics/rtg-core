@@ -12,6 +12,7 @@
 package com.rtg.variant.bayes;
 
 import com.reeltwo.jumble.annotations.TestClass;
+import com.rtg.util.MathUtils;
 import com.rtg.util.Utils;
 
 /**
@@ -49,7 +50,7 @@ public abstract class AlleleStatistics<T extends AlleleStatistics<T>> {
    */
   public final void output(StringBuilder sb, char separator) {
     for (int i = 0; i < mDescription.size(); i++) {
-      final int c = count(i);
+      final long c = MathUtils.round(count(i));
       if (c == 0) {
         continue;
       }
@@ -71,8 +72,8 @@ public abstract class AlleleStatistics<T extends AlleleStatistics<T>> {
     final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < mDescription.size(); i++) {
       sb.append(" [").append(i).append("]  ");
-      final int c = count(i);
-      final String fc = Integer.toString(c);
+      final long c = MathUtils.round(count(i));
+      final String fc = Long.toString(c);
       sb.append(fc);
 
       sb.append("  ");
@@ -88,7 +89,7 @@ public abstract class AlleleStatistics<T extends AlleleStatistics<T>> {
    * @param index whose value to get.
    * @return the count.
    */
-  public abstract int count(final int index);
+  public abstract double count(final int index);
 
   /**
    * Get the current accumulated for the specified index.
@@ -97,9 +98,16 @@ public abstract class AlleleStatistics<T extends AlleleStatistics<T>> {
    */
   public abstract double error(final int index);
 
-  abstract Double alleleBalanceHomozygous(int allele, int total);
 
-  abstract Double alleleBalance(int allele1, int allele2);
+  Double alleleBalanceHomozygous(int allele, int total) {
+    return MathUtils.hoeffdingPhred(total, MathUtils.round(count(allele)), 1.0);
+  }
+
+  Double alleleBalance(int allele1, int allele2) {
+    final long trials = MathUtils.round(count(allele1) + count(allele2));
+    final long observed = MathUtils.round(count(allele1));
+    return MathUtils.hoeffdingPhred(trials, observed, 0.5);
+  }
 
   abstract Double strandBias(int allele);
 

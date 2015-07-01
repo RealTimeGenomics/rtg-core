@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
 
+import com.rtg.util.MathUtils;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.AlleleStatistics;
@@ -62,7 +63,7 @@ public class VstatsCaller implements MultisampleJointCaller  {
     final StatisticsSnp statistics = (StatisticsSnp) model.statistics();
     final AlleleStatistics<?> counts = statistics.counts();
 
-    final int refCount = counts.count(refNt - 1);
+    final int refCount = (int) MathUtils.round(counts.count(refNt - 1));
     final int coverage = statistics.coverage();
     if (model.haploid()) {
       mHaploidTable.update(refCount, coverage);
