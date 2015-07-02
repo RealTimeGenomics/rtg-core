@@ -100,12 +100,12 @@ public abstract class AlleleStatistics<T extends AlleleStatistics<T>> {
 
 
   Double alleleBalanceHomozygous(int allele, int total) {
-    return MathUtils.hoeffdingPhred(total, MathUtils.round(count(allele)), 1.0);
+    return MathUtils.hoeffdingPhred(total, count(allele), 1.0);
   }
 
   Double alleleBalance(int allele1, int allele2) {
-    final long trials = MathUtils.round(count(allele1) + count(allele2));
-    final long observed = MathUtils.round(count(allele1));
+    final double trials = count(allele1) + count(allele2);
+    final double observed = count(allele1);
     return MathUtils.hoeffdingPhred(trials, observed, 0.5);
   }
 
