@@ -29,6 +29,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.variant.MachineErrorChooserInterface;
+import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Hypotheses;
@@ -126,7 +127,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
           params);
       }
       final SomaticCallerConfiguration sc = new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, haploid, diploid, ssp);
-      sc.getVcfFilters().add(new SomaticFilter(statistics, params.includeGermlineVariants()));
+      sc.getVcfFilters().add(new SomaticFilter(statistics, params.includeGermlineVariants() || params.callLevel() == VariantOutputLevel.ALL));
       return sc;
     }
 

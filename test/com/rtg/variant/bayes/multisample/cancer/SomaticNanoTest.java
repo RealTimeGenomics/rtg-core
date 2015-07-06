@@ -70,7 +70,7 @@ public class SomaticNanoTest extends TestCase {
   }
 
   public void testGainOfReference() throws Exception {
-    checkCancer("6", "6", REF_TEST1, 2680L, "--all", "--keep-duplicates", "--loh", "0.1", "-G");
+    checkCancer("6", "6", REF_TEST1, 2680L, "--keep-duplicates", "--loh", "0.1", "-G");
   }
 
   private static final String REF_TEST2 = ">test1" + LS
