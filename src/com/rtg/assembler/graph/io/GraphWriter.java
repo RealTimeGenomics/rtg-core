@@ -20,9 +20,9 @@ import java.io.PrintStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.UUID;
 
 import com.reeltwo.jumble.annotations.TestClass;
@@ -87,7 +87,7 @@ public final class GraphWriter {
 
   private void writeContig() {
     try (final PrintStream ps = new PrintStream(new BoundedStreams(mDir, mMaxLength, "contig.", ".fa"))) {
-      final Set<String> contigAttributes = mGraph.contigAttributes().keySet();
+      final Set<String> contigAttributes = new TreeSet<>(mGraph.contigAttributes().keySet());
       for (long l = 1; l <= mGraph.numberContigs(); l++) {
         if (!mIncludeDeletions && mGraph.contigDeleted(l)) {
           continue;
@@ -117,7 +117,7 @@ public final class GraphWriter {
   }
   private void writePath() {
     try (final PrintStream ps = new PrintStream(new BoundedStreams(mDir, mMaxLength, "path.", ".tsv"))) {
-      final Set<String> pathAttributes = mGraph.pathAttributes().keySet();
+      final Set<String> pathAttributes = new TreeSet<>(mGraph.pathAttributes().keySet());
       for (long l = 1; l <= mGraph.numberPaths(); l++) {
         if (!mIncludeDeletions && mGraph.pathDeleted(l)) {
           continue;
@@ -165,7 +165,7 @@ public final class GraphWriter {
       ps.println("guid" + TAB + uuid.toString());
       ps.println("contigOverlap" + TAB + graph.contigOverlap());
 
-      for (final UUID inputGuid : inputGuids) {
+      for (final UUID inputGuid : new TreeSet<>(inputGuids)) {
         ps.println("inputguid" + TAB + inputGuid);
       }
 
@@ -175,8 +175,8 @@ public final class GraphWriter {
   }
 
   static void writeAttributeKeys(final PrintStream ps, final String key, final Map<String, String> attributes) {
-    for (final Entry<String, String> entry : attributes.entrySet()) {
-      ps.println(key + TAB + entry.getKey() + TAB + entry.getValue());
+    for (final String entry : new TreeSet<>(attributes.keySet())) {
+      ps.println(key + TAB + entry + TAB + attributes.get(entry));
     }
   }
 

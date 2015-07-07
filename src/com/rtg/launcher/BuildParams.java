@@ -19,7 +19,6 @@ import com.rtg.mode.SequenceMode;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.Params;
 import com.rtg.util.Utils;
-import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.integrity.Exam;
 
 /**
@@ -66,7 +65,7 @@ public final class BuildParams extends CreateParams implements Params {
     if (stepSize > windowSize) { // When stepsize is larger than windowsize the above formula may underestimate the number of hashes per sequence by at most one hash per sequence
       size += numSequences;
     }
-    Diagnostic.developerLog("size=" + size + " length=" + length + " l=" + l + " windowSize=" + windowSize + " stepSize=" + stepSize + " codeIncrement=" + codeIncrement + " frames=" + frames);
+    //Diagnostic.developerLog("size=" + size + " length=" + length + " l=" + l + " windowSize=" + windowSize + " stepSize=" + stepSize + " codeIncrement=" + codeIncrement + " frames=" + frames);
     //System.err.println("size=" + size + " length=" + length + " l=" + l + " windowSize=" + windowSize + " stepSize=" + stepSize + " codeIncrement=" + codeIncrement);
     return size;
   }
