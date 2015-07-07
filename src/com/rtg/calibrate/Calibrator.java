@@ -44,6 +44,7 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.diagnostic.SlimException;
 import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.AsynchInputStream;
@@ -193,15 +194,15 @@ public class Calibrator {
    * @return the maximum number of statistics entries in the hypercube.
    */
   protected static int maxSize(Covariate[] vars) {
-    // TODO: check for integer overflow as we multiply the sizes together, and
-    //       throw a 'too many covariates' exception if bigger than about 10 million
-    //       (because each CalibrationStats object is at least 100 bytes).
-    //       Eg. 64 quality values * 1000 long reads * 200 read groups * ...
-    int maxSize = 1;
+    long maxSize = 1;
+    final int maxValue = Integer.MAX_VALUE;
     for (final Covariate var : vars) {
       maxSize *= var.newSize();
+      if (maxSize > maxValue) {
+        throw new SlimException("Too many covariates during calibration");
+      }
     }
-    return maxSize;
+    return (int) maxSize;
   }
 
   /**
