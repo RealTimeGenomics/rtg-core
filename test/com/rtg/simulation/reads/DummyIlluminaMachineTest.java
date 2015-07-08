@@ -50,6 +50,6 @@ public class DummyIlluminaMachineTest extends AbstractMachineTest {
     assertEquals("name/31/F/5.", resF);
     final String resR = m.generateRead("name/", 30, frag, frag.length, false, 6);
     assertEquals("name/51/R/6.", resR);
-    assertEquals(PrereadType.SOLEXA, m.machineType());
+    assertEquals(PrereadType.UNKNOWN, m.machineType());
   }
 }

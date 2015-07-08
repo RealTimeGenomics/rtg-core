@@ -73,11 +73,6 @@ public class SingleEndRandomLengthMachine extends AbstractMachine {
     return false;
   }
 
-  @Override
-  public PrereadType machineType() {
-    return PrereadType.UNKNOWN;
-  }
-
   void updateWorkingSpace(int length) {
     if (mReadBytes.length < length) {
       mReadBytes = new byte[length];

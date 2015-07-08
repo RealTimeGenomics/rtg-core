@@ -14,7 +14,6 @@ package com.rtg.simulation.reads;
 
 import java.io.IOException;
 
-import com.rtg.reader.PrereadType;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.PortableRandom;
 import com.rtg.variant.AbstractMachineErrorParams;
@@ -69,10 +68,5 @@ public abstract class AbstractIlluminaMachine extends AbstractMachine {
 
   @Override
   public abstract boolean isPaired();
-
-  @Override
-  public PrereadType machineType() {
-    return PrereadType.SOLEXA;
-  }
 
 }

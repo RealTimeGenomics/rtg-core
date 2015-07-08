@@ -14,7 +14,6 @@ package com.rtg.simulation.reads;
 
 import java.io.IOException;
 
-import com.rtg.reader.PrereadType;
 import com.rtg.util.PortableRandom;
 import com.rtg.variant.AbstractMachineErrorParams;
 
@@ -70,11 +69,6 @@ public class FourFiveFourPairedEndMachine extends AbstractMachine {
   @Override
   public boolean isPaired() {
     return true;
-  }
-
-  @Override
-  public PrereadType machineType() {
-    return PrereadType.UNKNOWN;
   }
 
   void updateWorkingSpace(int length) {

@@ -14,6 +14,7 @@ package com.rtg.simulation.reads;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.alignment.ActionsHelper;
 import com.rtg.mode.DNA;
+import com.rtg.reader.PrereadType;
 import com.rtg.reader.SdfId;
 import com.rtg.simulation.SimulationUtils;
 import com.rtg.util.MathUtils;
@@ -85,6 +86,11 @@ public abstract class AbstractMachine implements Machine {
     setQualRange(fixedQual, fixedQual);
 
     mActionsHistogram = new long[ActionsHelper.getNumActions()];
+  }
+
+  @Override
+  public PrereadType machineType() {
+    return PrereadType.UNKNOWN;
   }
 
   /**
