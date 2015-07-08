@@ -15,7 +15,6 @@ package com.rtg.simulation.reads;
 import java.io.IOException;
 
 import com.reeltwo.jumble.annotations.TestClass;
-import com.rtg.reader.PrereadType;
 import com.rtg.util.PortableRandom;
 import com.rtg.variant.AbstractMachineErrorParams;
 
