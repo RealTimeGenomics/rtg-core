@@ -276,7 +276,7 @@ public class MapReport extends MapSummaryReport {
     File png = null;
     String table = null;
     if (dt[0].showImage()) {
-      png = new File(helper.getResourcesDir(), sectionTitle + ".png");
+      png = new File(helper.getResourcesDir(), sectionTitle.replace(' ', '-') + ".png");
       dTable.toGraphImage(png, pType);
     }
     if (dt[0].showData()) {
