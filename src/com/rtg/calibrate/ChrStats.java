@@ -159,7 +159,7 @@ public class ChrStats {
     }
     // Iterate again over sequences doing leave one out for diploid chromosomes or
     // corrected comparison with all diploid coverage in the case of haploid chromosomes
-    boolean consistent = true;
+    boolean sexConsistent = true;
     final double stddevDip = Math.sqrt(varDip);
     final long leaveOneOut = numSpecifiedSequences - 1;
     int strangeCount = 0;
@@ -167,6 +167,7 @@ public class ChrStats {
     for (final ReferenceSequence seq : referenceGenome.sequences()) {
       if (seq.isSpecified()) {
         totalCount++;
+        final boolean isAutosome = mSexMemo.isAutosome(seq.name());
         final double coverage = calibrator.expectedCoverage(seq.name(), sample);
         if (seq.ploidy() == Ploidy.DIPLOID) {
           final double mean = (sumCoverage - coverage) / leaveOneOut;
@@ -179,9 +180,9 @@ public class ChrStats {
           final double z = (coverage - mean) / stddev;
           String status = "";
           final double abs = Math.abs(z);
-          if (abs > mMinSexDeviations) {
+          if (!isAutosome && abs > mMinSexDeviations) {
             status = SEX_INCONSISTENT;
-            consistent = false;
+            sexConsistent = false;
           }
           if (abs > mMinDeviations) {
             status = INCONSISTENT;
@@ -194,9 +195,9 @@ public class ChrStats {
           final double z = (2 * coverage - meanDip) / stddevDip;
           String status = "";
           final double abs = Math.abs(z);
-          if (abs > mMinSexDeviations) {
+          if (!isAutosome && abs > mMinSexDeviations) {
             status = SEX_INCONSISTENT;
-            consistent = false;
+            sexConsistent = false;
           }
           if (abs > mMinDeviations) {
             status = INCONSISTENT;
@@ -208,7 +209,7 @@ public class ChrStats {
         }
       }
     }
-    return new ChrStatsResult(sex, consistent, strangeCount, totalCount, meanDip);
+    return new ChrStatsResult(sex, sexConsistent, strangeCount, totalCount, meanDip);
   }
 
   /**

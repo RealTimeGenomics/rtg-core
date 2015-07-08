@@ -122,7 +122,7 @@ public class ChrStatsCli extends AbstractCli {
     } else {
       final ChrStats cc = new ChrStats(genomeParams.reader(), (Double) mFlags.getValue(SEX_Z_THRESHOLD_FLAG), (Double) mFlags.getValue(Z_THRESHOLD_FLAG));
       if (!cc.referenceOk()) {
-        throw new NoTalkbackSlimException("The supplied reference does not contain genome chromosome information. For more information, see the user manual.");
+        throw new NoTalkbackSlimException("The supplied reference does not contain sufficient genome chromosome information. For more information, see the user manual.");
       }
 
       final GenomeRelationships pedigree = mFlags.isSet(PEDIGREE_FLAG) ? GenomeRelationships.loadGenomeRelationships((File) mFlags.getValue(PEDIGREE_FLAG)) : null;
