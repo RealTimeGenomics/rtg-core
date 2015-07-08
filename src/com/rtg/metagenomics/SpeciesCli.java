@@ -17,7 +17,6 @@ import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
 import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
-import static com.rtg.util.cli.CommonFlagCategories.setCategories;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +32,7 @@ import com.rtg.util.Constants;
 import com.rtg.util.IORunnable;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
+import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -153,7 +153,7 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
     flags.setValidator(new SpeciesFlagsValidator());
     flags.setDescription("Calculates a species distribution from a metagenomic sample.");
     flags.registerExtendedHelp();
-    setCategories(flags);
+    CommonFlagCategories.setCategories(flags);
     flags.registerRequired('o', OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
     flags.registerRequired('t', TEMPLATE_FLAG, File.class, "SDF", "SDF containing the genomes").setCategory(INPUT_OUTPUT);
     flags.registerOptional('r', RELABEL_SPECIES_FLAG, File.class, "FILE", "file containing list of species name to reference name mappings (1 mapping per line format: [reference short name][tab][species])").setCategory(INPUT_OUTPUT);
