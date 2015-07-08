@@ -259,7 +259,7 @@ public class ChrStats {
   private static TextTable initTable() {
     final TextTable table = new TextTable();
     table.setAlignment(TextTable.Align.LEFT, TextTable.Align.LEFT, TextTable.Align.LEFT, TextTable.Align.LEFT, TextTable.Align.RIGHT, TextTable.Align.LEFT);
-    table.addRow("sample", "mapped-as", "consistent", "possible", "coverage", "");
+    table.addRow("sample", "specified", "consistent", "possible", "coverage", "");
     table.addSeparator();
     return table;
   }
