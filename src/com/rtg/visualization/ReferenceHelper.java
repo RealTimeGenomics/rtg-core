@@ -134,7 +134,8 @@ public final class ReferenceHelper {
     try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(templateFile)) {
       for (long seq = 0; seq < reader.numberSequences(); seq++) {
         if (reader.name(seq).equals(sequenceName)) {
-          final byte[] b = new byte[len]; // XXX What happens if start + len > length(seq) ?
+          assert start + len <= reader.length(seq); // Caller should ensure start + len <= length(seq)
+          final byte[] b = new byte[len];
           reader.read(seq, b, start, len);
           return b;
         }
