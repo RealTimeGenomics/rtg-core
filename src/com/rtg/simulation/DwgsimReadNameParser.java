@@ -134,8 +134,7 @@ public class DwgsimReadNameParser implements SimulatedReadNameParser {
 
   @Override
   public int templateSet() {
-//    return Integer.parseInt(mFields[TEMPLATE_SET_ID]);
-    return 0; //XXX
+    return 0; // This assumes the generator is operating in a haploid mode.
   }
 
   @Override
