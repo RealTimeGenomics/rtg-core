@@ -99,7 +99,7 @@ public class BinaryTree {
     return mLabel;
   }
 
-  private void modifiedNewHampshire(final int indent, final Appendable out) throws IOException {
+  private void newick(final int indent, final Appendable out) throws IOException {
     for (int k = 0; k < indent; k++) {
       out.append(' ');
     }
@@ -108,11 +108,11 @@ public class BinaryTree {
       out.append(mLabel);
     } else {
       out.append("(").append(StringUtils.LS);
-      mLeft.modifiedNewHampshire(indent + 1, out);
+      mLeft.newick(indent + 1, out);
       out.append(':');
       out.append(NF.format(mLeftDistance));
       out.append(",").append(StringUtils.LS);
-      mRight.modifiedNewHampshire(indent + 1, out);
+      mRight.newick(indent + 1, out);
       out.append(':');
       out.append(NF.format(mRightDistance));
       out.append(StringUtils.LS);
@@ -129,8 +129,8 @@ public class BinaryTree {
    * @param out where to write the tree.
    * @throws IOException if error while writing to out.
    */
-  public void modifiedNewHampshire(final Appendable out) throws IOException {
-    modifiedNewHampshire(0, out);
+  public void newick(final Appendable out) throws IOException {
+    newick(0, out);
     out.append(StringUtils.LS);
   }
 

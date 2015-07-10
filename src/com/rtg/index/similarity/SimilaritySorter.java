@@ -88,7 +88,7 @@ public final class SimilaritySorter extends IntegralAbstract {
 
   /**
    * @param length maximum number of sequence ids that can be recorded.
-   * @param singleton if true then count each hash only once ( as opposed to the product of the number of times it occurs in each genome).
+   * @param singleton if true then count each hash only once (as opposed to the product of the number of times it occurs in each genome).
    */
   public SimilaritySorter(final int length, final boolean singleton) {
     mLength = length;

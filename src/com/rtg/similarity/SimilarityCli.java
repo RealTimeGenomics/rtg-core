@@ -407,7 +407,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
     }
     try {
       if (treeOut != null) {
-        tree.modifiedNewHampshire(treeOut); //now called the Newick format
+        tree.newick(treeOut);
       }
       if (xmlOut != null) {
         tree.phyloXml(xmlOut);

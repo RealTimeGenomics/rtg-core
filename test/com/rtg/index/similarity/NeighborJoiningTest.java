@@ -165,7 +165,7 @@ public class NeighborJoiningTest extends TestCase {
     final BinaryTree tree = nj.neighborJoin(s, buildList(d));
     assertNotNull(tree);
     final Appendable out = new StringWriter();
-    tree.modifiedNewHampshire(out);
+    tree.newick(out);
     final String nh = out.toString();
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     try {
@@ -307,7 +307,7 @@ public class NeighborJoiningTest extends TestCase {
 
     final BinaryTree tree = nj.neighborJoin(na, ma);
     final Appendable out = new StringWriter();
-    tree.modifiedNewHampshire(out);
+    tree.newick(out);
     final String str = out.toString();
     //System.err.println(str);
     final String exp = ""
@@ -347,7 +347,7 @@ public class NeighborJoiningTest extends TestCase {
 
     final BinaryTree tree = nj.neighborJoin(na, ma);
     final Appendable out = new StringWriter();
-    tree.modifiedNewHampshire(out);
+    tree.newick(out);
     final String str = out.toString();
     //System.err.println(str);
     final String exp = ""
