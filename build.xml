@@ -100,9 +100,9 @@
 
   <zipfileset id="avr-resources" dir="${public.core.basedir}/installer/resources" includes="models/**/*" />
   <union id="core-resources">
-    <zipfileset refid="common-resources" />
-    <zipfileset refid="avr-resources" />
-    <zipfileset dir="${public.core.basedir}/installer/resources/core" includes="**/*" />
+    <fileset refid="common-resources" />
+    <fileset refid="avr-resources" />
+    <fileset dir="${public.core.basedir}/installer/resources/core"/>
   </union>
 
 
