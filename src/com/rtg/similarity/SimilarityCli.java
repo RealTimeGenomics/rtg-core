@@ -52,10 +52,14 @@ import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.ProgramMode;
 import com.rtg.ngs.MapFlags;
 import com.rtg.reader.IndexFile;
+import com.rtg.reader.PrereadNamesInterface;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.similarity.BuildSearchParams.BuildSearchParamsBuilder;
+import com.rtg.taxonomy.TaxonNode;
+import com.rtg.taxonomy.Taxonomy;
+import com.rtg.taxonomy.TaxonomyUtils;
 import com.rtg.usage.UsageMetric;
 import com.rtg.util.IORunnable;
 import com.rtg.util.InvalidParamsException;
@@ -227,8 +231,50 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
    */
   static void memToString(final StringBuilder sb, final BuildSearchParams buildSearchParams, final long bufferLength) {
     sb.append(ParamsUtils.memToString("Shared_buffer", bufferLength));
-
     sb.append(IndexUtils.memString(buildSearchParams.build()));
+  }
+
+  private static class IncrementalIdMap extends HashMap<Integer, Integer> {
+    private int mUnused = 0;
+    public int getId(final int v) {
+      final Integer r = get(v);
+      if (r != null) {
+        return r;
+      }
+      put(v, mUnused);
+      // System.err.println("Allocated " + mUnused + " to taxon id=" + v);
+      return mUnused++;
+    }
+  }
+
+  private static Pair<long[], List<String>> sdfToSimIdViaTaxId(final SequencesReader reader) throws IOException {
+    if (TaxonomyUtils.hasTaxonomyInfo(reader)) {
+      Diagnostic.userLog("Using taxonomy information for collating sequences");
+      if (reader.numberSequences() > Integer.MAX_VALUE) {
+        throw new UnsupportedOperationException("Too many sequences");
+      }
+      final long[] sdfIdToSimId = new long[(int) reader.numberSequences()];
+      final List<String> taxonNames = new ArrayList<>();
+      final IncrementalIdMap idMap = new IncrementalIdMap();
+      final Map<String, Integer> seqNameToTaxonIdMap = TaxonomyUtils.loadTaxonomyMapping(reader);
+      final Taxonomy taxonomy = TaxonomyUtils.loadTaxonomy(reader);
+      final PrereadNamesInterface names = reader.names();
+      long seen = -1;
+      for (int k = 0; k < sdfIdToSimId.length; k++) {
+        final int taxonId = seqNameToTaxonIdMap.get(names.name(k));
+        sdfIdToSimId[k] = idMap.getId(taxonId);
+        if (sdfIdToSimId[k] > seen) {
+          // New taxon encountered
+          seen = sdfIdToSimId[k];
+          final TaxonNode tn = taxonomy.get(taxonId);
+          taxonNames.add(tn.getName());
+        }
+      }
+      Diagnostic.userLog("There are " + taxonNames.size() + " species in the reference set");
+      return new Pair<>(sdfIdToSimId, taxonNames);
+    } else {
+      return null;
+    }
   }
 
   /**
@@ -240,22 +286,30 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       final long bufferLength = params.bufferLength();
       Diagnostic.userLog("Usage of memory" + StringUtils.LS + memToString(params, bufferLength));
 
-      //make all the components we need
+      // Make all the components we need
       final IndexSimilarity index = new IndexSimilarity(params.build(), null, false, Integer.MAX_VALUE, 0, params.uniqueWords(), 1);
 
-      //Search the queries and write hits
-      //open the query reader
-
+      // Search the queries and write hits
       final long numSequences;
       final byte[] buffer = makeBuffer(bufferLength);
+      final List<String> names;
       if (params.build().sequences().directory() != null) {
         Diagnostic.progress("Input for index starting");
-        final HashLoop buildLoop = makeBuild(index, params.build(), -1);
-        buildLoop.execLoop(params.build().sequences(), buffer);
-        index.freeze();
-        Diagnostic.progress("Input for post-freeze index starting");
-        buildLoop.execLoop(params.build().sequences(), buffer);
-        numSequences = params.build().sequences().numberSequences();
+        try (final SequencesReader reader = params.build().sequences().reader()) {
+          final Pair<long[], List<String>> sdfToSimId = sdfToSimIdViaTaxId(reader);
+          final HashLoop buildLoop = makeBuild(index, params.build(), -1, sdfToSimId == null ? null : sdfToSimId.getA());
+          buildLoop.execLoop(params.build().sequences(), buffer);
+          index.freeze();
+          Diagnostic.progress("Input for post-freeze index starting");
+          buildLoop.execLoop(params.build().sequences(), buffer);
+          if (sdfToSimId == null) {
+            names = null;
+            numSequences = params.build().sequences().numberSequences();
+          } else {
+            names = sdfToSimId.getB();
+            numSequences = names.size();
+          }
+        }
       } else {
         for (int i = 0; i < params.sequences().size(); i++) {
           final Pair<String, List<SequenceParams>> pair = params.sequences().get(i);
@@ -263,7 +317,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
           for (int j = 0; j < pair.getB().size(); j++) {
             Diagnostic.progress("Input for index label \"" + pair.getA() +  "\" starting directory (" + (j + 1) + "/" + pair.getB().size() + ")");
             final ISequenceParams seqParams = pair.getB().get(j);
-            makeBuild(index, params.build(), i).execLoop(seqParams, buffer);
+            makeBuild(index, params.build(), i, null).execLoop(seqParams, buffer);
             seqParams.close();
           }
         }
@@ -274,14 +328,15 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
           for (int j = 0; j < pair.getB().size(); j++) {
             Diagnostic.progress("Input for post-freeze index label \"" + pair.getA() +  "\" starting directory (" + (j + 1) + "/" + pair.getB().size() + ")");
             final ISequenceParams seqParams = pair.getB().get(j);
-            makeBuild(index, params.build(), i).execLoop(seqParams, buffer);
+            makeBuild(index, params.build(), i, null).execLoop(seqParams, buffer);
             seqParams.close();
           }
         }
+        names = null;
         numSequences = params.sequences().size();
       }
 
-      //build the internal indexes which allow searching to be done
+      // Build the internal indexes which allow searching to be done
       Diagnostic.progress("Input for index finished. Starting indexing");
       index.freeze();
       //System.err.println(index);
@@ -293,7 +348,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
             try (final Writer writeXml = new OutputStreamWriter(params.outStream(XML_SUFFIX))) {
 
               Diagnostic.progress("Indexing finished. Starting similarity.");
-              similarity(index, numSequences, params, params.directory().toString(), writeSimi, writePca, writeTree, writeXml);
+              similarity(index, numSequences, names, params, params.directory().toString(), writeSimi, writePca, writeTree, writeXml);
               Diagnostic.progress("Similarity finished.");
             }
           }
@@ -304,7 +359,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
     }
   }
 
-  protected static HashLoop makeBuild(final Index index, final BuildParams buildParams, final int labelIndex) {
+  protected static HashLoop makeBuild(final Index index, final BuildParams buildParams, final int labelIndex, final long[] sdfIdToTaxonId) {
     final HashLoop subjectHashLoop;
     final boolean dualMode = true;
     final int winBits = buildParams.windowBits();
@@ -312,11 +367,28 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       throw new SlimException(ErrorType.INFO_ERROR, "Word size > 32");
     } else {
       final ExactHashFunction exf = new ExactHashFunction(buildParams, dualMode);
-      if (labelIndex < 0) {
+      if (sdfIdToTaxonId != null) {
         subjectHashLoop = new IncrementalHashLoop(buildParams.stepSize(), exf, dualMode) {
           @Override
           public void hashCall(final long hash, final int internalId, final int stepPosition) {
-            //System.err.println("build hashCall hash=" + hash + " id=" + internalId);
+            throw new UnsupportedOperationException();
+          }
+
+          @Override
+          public void hashCallBidirectional(final long hashForward, final long hashReverse, final int stepPosition, final int internalId) {
+            // todo convert internalId to taxonId
+            if (hashForward < hashReverse) {
+              index.add(hashForward, sdfIdToTaxonId[internalId]);
+            } else {
+              index.add(hashReverse, sdfIdToTaxonId[internalId]);
+            }
+          }
+
+        };
+      } else if (labelIndex < 0) {
+        subjectHashLoop = new IncrementalHashLoop(buildParams.stepSize(), exf, dualMode) {
+          @Override
+          public void hashCall(final long hash, final int internalId, final int stepPosition) {
             throw new UnsupportedOperationException();
           }
 
@@ -329,13 +401,11 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
               index.add(hashReverse, internalId);
             }
           }
-
         };
       } else {
         subjectHashLoop = new IncrementalHashLoop(buildParams.stepSize(), exf, dualMode) {
           @Override
           public void hashCall(final long hash, final int internalId, final int stepPosition) {
-            //System.err.println("build hashCall hash=" + hash + " id=" + internalId + " labelIndex=" + labelIndex);
             throw new UnsupportedOperationException();
           }
 
@@ -363,24 +433,28 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
     return new byte[(int) maxSequence];
   }
 
-  static void similarity(final IndexSimilarity index, final long numSequences, final BuildSearchParams params, final String outDir, final Appendable simiOut, final Appendable pcaOut, final Appendable treeOut, final Appendable xmlOut) throws IOException {
+  static void similarity(final IndexSimilarity index, final long numSequences, List<String> presetNames, final BuildSearchParams params, final String outDir, final Appendable simiOut, final Appendable pcaOut, final Appendable treeOut, final Appendable xmlOut) throws IOException {
+    final List<String> names;
     final OneShotTimer matrixTimer = new OneShotTimer("Ph_similarity_matrix");
     final SimilarityMatrix matrix = index.similarity(numSequences);
     //System.err.println(matrix);
     matrixTimer.stopLog();
 
     final OneShotTimer neighTimer = new OneShotTimer("Ph_similarity_neighbor");
-    //42 so reproduces the old versions behavior for regression
+    // 42 so reproduces the old versions behavior for regression
     final NeighborJoining neigh = new NeighborJoining(42);
     final BinaryTree tree;
-    final ArrayList<String> names;
-    if (params.build().sequences().directory() != null) {
-      names = makeNames(params.build().sequences().reader());
-    } else {
-      names = new ArrayList<>();
-      for (int i = 0; i < params.sequences().size(); i++) {
-        names.add(params.sequences().get(i).getA());
+    if (presetNames == null) {
+      if (params.build().sequences().directory() != null) {
+        names = makeNames(params.build().sequences().reader());
+      } else {
+        names = new ArrayList<>();
+        for (int i = 0; i < params.sequences().size(); i++) {
+          names.add(params.sequences().get(i).getA());
+        }
       }
+    } else {
+      names = presetNames;
     }
     tree = neigh.neighborJoin(names, matrix);
     neighTimer.stopLog();

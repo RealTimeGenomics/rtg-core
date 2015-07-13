@@ -12,6 +12,7 @@
 package com.rtg.index.similarity;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.rtg.util.PortableRandom;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -64,7 +65,7 @@ public class NeighborJoining {
    * @param matrix count of number of hashes in common between pairs of sequences.
    * @return the resulting tree
    */
-  public BinaryTree neighborJoin(final ArrayList<String> nodeNames, final SimilarityMatrix matrix) {
+  public BinaryTree neighborJoin(final List<String> nodeNames, final SimilarityMatrix matrix) {
     final ArrayList<ArrayList<Double>> d = makeArray(matrix);
     return neighborJoin(nodeNames, d);
   }
@@ -110,13 +111,13 @@ public class NeighborJoining {
    * @param d distance matrices
    * @return the resulting tree
    */
-  BinaryTree neighborJoin(final ArrayList<String> nodeNames, final ArrayList<ArrayList<Double>> d) {
+  BinaryTree neighborJoin(final List<String> nodeNames, final ArrayList<ArrayList<Double>> d) {
     final ArrayList<BinaryTree> s = new ArrayList<>();
     for (final String name : nodeNames) {
       s.add(new BinaryTree(null, null, 0, 0, name));
     }
     while (s.size() > 1) {
-      assert d.size() == s.size();
+      assert d.size() == s.size() : "distance size=" + d.size() + " cf. names size=" + s.size();
       // Precompute column sums
       final double[] colSum = new double[d.size()];
       for (int j = 0; j < d.size(); j++) {

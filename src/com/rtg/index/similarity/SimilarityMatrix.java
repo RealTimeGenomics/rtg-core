@@ -11,7 +11,7 @@
  */
 package com.rtg.index.similarity;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
@@ -132,7 +132,7 @@ public class SimilarityMatrix extends IntegralAbstract {
    * @param names the names of the sequences.
    * @return the printable matrix.
    */
-  public String toString(ArrayList<String> names) {
+  public String toString(List<String> names) {
     if (names.size() != mLength) {
       throw new SlimException(ErrorType.INFO_ERROR, "Size of matrix not equal to number of labels provided.");
     }

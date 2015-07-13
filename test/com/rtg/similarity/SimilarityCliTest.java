@@ -705,7 +705,7 @@ public class SimilarityCliTest extends AbstractCliTest {
     final LogStream log1 = new LogRecord();
     Diagnostic.setLogStream(log1);
     try {
-      SimilarityCli.similarity(index, 1, bsp, "outDir", ok, ok2, bad, null);
+      SimilarityCli.similarity(index, 1, null, bsp, "outDir", ok, ok2, bad, null);
       fail();
     } catch (final SlimException e) {
       assertTrue(e.getMessage().contains(java.io.IOException.class.getName()));
@@ -720,7 +720,7 @@ public class SimilarityCliTest extends AbstractCliTest {
     final LogStream log2 = new LogRecord();
     Diagnostic.setLogStream(log2);
     try {
-      SimilarityCli.similarity(index, 1, bsp, "dirOut", bad, ok2, ok, null);
+      SimilarityCli.similarity(index, 1, null, bsp, "dirOut", bad, ok2, ok, null);
       fail();
     } catch (final SlimException e) {
       assertTrue(e.getMessage().contains(java.io.IOException.class.getName()));
@@ -756,18 +756,18 @@ public class SimilarityCliTest extends AbstractCliTest {
       }
     };
     try {
-      SimilarityCli.makeBuild(index, buildParams, -1);
+      SimilarityCli.makeBuild(index, buildParams, -1, null);
       fail();
     } catch (final SlimException e) {
       assertEquals("Word size > 32", e.getMessage());
     }
     buildParams = BuildParams.builder().windowSize(31).stepSize(1).size(0).sequences(dummySubjectParams).create();
-    HashLoop hl = SimilarityCli.makeBuild(index, buildParams, -1);
+    HashLoop hl = SimilarityCli.makeBuild(index, buildParams, -1, null);
     assertNotNull(hl);
     hl.hashCallBidirectional(1, -1, 1, 67);
     hl.hashCallBidirectional(-2, 2, 1, 39);
 
-    hl = SimilarityCli.makeBuild(index, buildParams, 15);
+    hl = SimilarityCli.makeBuild(index, buildParams, 15, null);
     hl.hashCallBidirectional(3, -3, 1, 76);
   }
 
