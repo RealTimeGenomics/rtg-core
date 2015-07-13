@@ -13,8 +13,8 @@
   <property name="resources" value="core" />
   <property name="main.class" value="com.rtg.Slim" />
 
-  <!-- Location of RTG Tools source, here we assume the repo is parallel to core -->
-  <property name="public.tools.basedir" location="${public.core.basedir}/../tools"/>
+  <!-- Location of RTG Tools source, here we assume the repo is parallel to rtg-core -->
+  <property name="public.tools.basedir" location="${public.core.basedir}/../rtg-tools"/>
 
   <!-- Import the tools build.xml -->
   <import file="${public.tools.basedir}/build.xml"/>
