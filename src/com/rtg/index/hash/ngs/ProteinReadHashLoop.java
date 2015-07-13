@@ -37,7 +37,7 @@ public class ProteinReadHashLoop extends ProteinIncrementalHashLoop {
   }
 
   @Override
-  public void hashCallBidirectional(long hashFoward, long hashReverse, int stepPosition, int internalId) {
+  public void hashCallBidirectional(long hashForward, long hashReverse, int stepPosition, int internalId) {
     throw new UnsupportedOperationException("Not supported.");
   }
 

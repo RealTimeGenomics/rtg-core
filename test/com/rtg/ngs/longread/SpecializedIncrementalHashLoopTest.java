@@ -91,7 +91,7 @@ public class SpecializedIncrementalHashLoopTest extends NgsLongTest {
       final SpecializedIncrementalHashLoop sihl = new SpecializedIncrementalHashLoop(2, new MockHashFunction1(2, 2), fpo, (FinderPositionOutput) null, (Index) null, true) {
 
         @Override
-        public void hashCallBidirectional(final long hashFoward, final long hashReverse, final int stepPosition, final int internalId) {
+        public void hashCallBidirectional(final long hashForward, final long hashReverse, final int stepPosition, final int internalId) {
           assertEquals(pos[0]++, stepPosition);
           assertEquals(0, internalId);
         }
@@ -147,7 +147,7 @@ public class SpecializedIncrementalHashLoopTest extends NgsLongTest {
         boolean mSeenFirst = false;
 
         @Override
-        public void hashCallBidirectional(final long hashFoward, final long hashReverse, final int stepPosition, final int internalId) {
+        public void hashCallBidirectional(final long hashForward, final long hashReverse, final int stepPosition, final int internalId) {
           assertEquals(0, internalId);
         }
 

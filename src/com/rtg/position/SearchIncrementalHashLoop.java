@@ -69,8 +69,8 @@ public class SearchIncrementalHashLoop extends IncrementalHashLoop {
   }
 
   @Override
-  public void hashCallBidirectional(final long hashFoward, final long hashReverse, final int stepPosition, final int internalId) throws IOException {
-    hashCall(hashFoward, internalId, stepPosition);
+  public void hashCallBidirectional(final long hashForward, final long hashReverse, final int stepPosition, final int internalId) throws IOException {
+    hashCall(hashForward, internalId, stepPosition);
     mOutputReverse.setPosition(stepPosition);
     mIndex.search(hashReverse, mHitReverse);
     mOutputReverse.endPosition();

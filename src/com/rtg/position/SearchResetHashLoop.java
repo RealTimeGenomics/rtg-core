@@ -78,9 +78,9 @@ public class SearchResetHashLoop extends ResetHashLoop {
   }
 
   @Override
-  public void hashCallBidirectional(final long hashFoward, final long hashReverse, final int stepPosition, final int internalId) throws IOException {
+  public void hashCallBidirectional(final long hashForward, final long hashReverse, final int stepPosition, final int internalId) throws IOException {
     mOutput.setPosition(stepPosition);
-    mIndex.search(hashFoward, mHit);
+    mIndex.search(hashForward, mHit);
     mOutput.endPosition();
     mOutputReverse.setPosition(stepPosition);
     mIndex.search(hashReverse, mHitReverse);

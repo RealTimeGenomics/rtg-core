@@ -45,8 +45,8 @@ public class SearchIncrementalHashLoopTest extends AbstractPositionHashLoopTest 
       }
 
       @Override
-      public void hashCallBidirectional(final long hashFoward, final long hashReverse, final int stepPosition, final int internalId) {
-        hashCall(hashFoward, internalId, stepPosition);
+      public void hashCallBidirectional(final long hashForward, final long hashReverse, final int stepPosition, final int internalId) {
+        hashCall(hashForward, internalId, stepPosition);
         hashCall(hashReverse, internalId + 1, stepPosition);
       }
 
@@ -65,10 +65,8 @@ public class SearchIncrementalHashLoopTest extends AbstractPositionHashLoopTest 
       }
 
       @Override
-      public void hashCallBidirectional(final long hashFoward, final long hashReverse, final int stepPosition, final int internalId) {
+      public void hashCallBidirectional(final long hashForward, final long hashReverse, final int stepPosition, final int internalId) {
       }
-
-
     };
     return hashLoop1;
   }
@@ -87,12 +85,10 @@ public class SearchIncrementalHashLoopTest extends AbstractPositionHashLoopTest 
       }
 
       @Override
-      public void hashCallBidirectional(final long hashFoward, final long hashReverse, final int stepPosition, final int internalId) {
-        hashCall(hashFoward, internalId, stepPosition);
+      public void hashCallBidirectional(final long hashForward, final long hashReverse, final int stepPosition, final int internalId) {
+        hashCall(hashForward, internalId, stepPosition);
         hashCall(hashReverse, internalId + 1, stepPosition);
       }
-
-
     };
     return hashLoop;
   }

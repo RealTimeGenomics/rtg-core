@@ -62,8 +62,7 @@ public class HashLoopTest extends TestCase {
     }
 
     @Override
-    public void hashCallBidirectional(long hashFoward, long hashReverse,
-        int stepPosition, int internalId) {
+    public void hashCallBidirectional(long hashForward, long hashReverse, int stepPosition, int internalId) {
       // do nothing
     }
 
@@ -71,8 +70,6 @@ public class HashLoopTest extends TestCase {
     public void next(long seq, Frame frame) {
       // do nothing
     }
-
-
   }
 
   public final void test() {

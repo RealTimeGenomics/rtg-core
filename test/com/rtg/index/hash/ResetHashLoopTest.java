@@ -42,7 +42,7 @@ public class ResetHashLoopTest extends AbstractHashLoopTest {
     }
 
     @Override
-    public void hashCallBidirectional(long hashFoward, long hashReverse, int stepPosition, int internalId) {
+    public void hashCallBidirectional(long hashForward, long hashReverse, int stepPosition, int internalId) {
     }
 
   }
@@ -81,7 +81,7 @@ public class ResetHashLoopTest extends AbstractHashLoopTest {
       }
 
       @Override
-      public void hashCallBidirectional(long hashFoward, long hashReverse, int stepPosition, int internalId) {
+      public void hashCallBidirectional(long hashForward, long hashReverse, int stepPosition, int internalId) {
       }
     };
   }
@@ -99,8 +99,8 @@ public class ResetHashLoopTest extends AbstractHashLoopTest {
         count[0]++;
       }
       @Override
-      public void hashCallBidirectional(long hashFoward, long hashReverse, int stepPosition, int internalId) {
-        hashCall(hashFoward, internalId, stepPosition);
+      public void hashCallBidirectional(long hashForward, long hashReverse, int stepPosition, int internalId) {
+        hashCall(hashForward, internalId, stepPosition);
         hashCall(hashReverse, internalId + 1, stepPosition);
       }
     };
@@ -146,8 +146,8 @@ public class ResetHashLoopTest extends AbstractHashLoopTest {
         count[0]++;
       }
       @Override
-      public void hashCallBidirectional(long hashFoward, long hashReverse, int stepPosition, int internalId) {
-        hashCall(hashFoward, internalId, stepPosition);
+      public void hashCallBidirectional(long hashForward, long hashReverse, int stepPosition, int internalId) {
+        hashCall(hashForward, internalId, stepPosition);
         hashCall(hashReverse, internalId + 1, stepPosition);
       }
     };

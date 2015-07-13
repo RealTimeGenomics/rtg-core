@@ -63,7 +63,7 @@ public class BuildResetHashLoopTest extends ResetHashLoopTest {
         // do nothing
       }
       @Override
-      public void hashCallBidirectional(long hashFoward, long hashReverse, int stepPosition, int internalId) {
+      public void hashCallBidirectional(long hashForward, long hashReverse, int stepPosition, int internalId) {
       }
     };
   }

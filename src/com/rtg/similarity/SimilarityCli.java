@@ -321,10 +321,10 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
           }
 
           @Override
-          public void hashCallBidirectional(final long hashFoward, final long hashReverse, final int stepPosition, final int internalId) {
-            //System.err.println("hashF=" + hashFoward + " hashR=" + hashReverse + " id=" + internalId);
-            if (hashFoward < hashReverse) {
-              index.add(hashFoward, internalId);
+          public void hashCallBidirectional(final long hashForward, final long hashReverse, final int stepPosition, final int internalId) {
+            //System.err.println("hashF=" + hashForward + " hashR=" + hashReverse + " id=" + internalId);
+            if (hashForward < hashReverse) {
+              index.add(hashForward, internalId);
             } else {
               index.add(hashReverse, internalId);
             }
@@ -340,10 +340,10 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
           }
 
           @Override
-          public void hashCallBidirectional(final long hashFoward, final long hashReverse, final int stepPosition, final int internalId) {
-            //System.err.println("hashF=" + hashFoward + " hashR=" + hashReverse + " id=" + internalId + " labelIndex=" + labelIndex);
-            if (hashFoward < hashReverse) {
-              index.add(hashFoward, labelIndex);
+          public void hashCallBidirectional(final long hashForward, final long hashReverse, final int stepPosition, final int internalId) {
+            //System.err.println("hashF=" + hashForward + " hashR=" + hashReverse + " id=" + internalId + " labelIndex=" + labelIndex);
+            if (hashForward < hashReverse) {
+              index.add(hashForward, labelIndex);
             } else {
               index.add(hashReverse, labelIndex);
             }

@@ -65,7 +65,7 @@ public class EvidenceQFactoryTest extends TestCase {
     assertFalse(p.isUnmapped());
   }
 
-  public void testHighPhredNotFoward() {
+  public void testHighPhredNotForward() {
     final CachedEvidenceFactory fact = new EvidenceQFactory();
     final EvidenceInterface p = fact.evidence(2, 0, 0, 10, 65, fact.getStateIndex(false, false, false), 0, false);
     assertTrue(p instanceof EvidenceQ);

@@ -114,7 +114,7 @@ public class BuildIncrementalHashLoop extends IncrementalHashLoop {
   }
 
   @Override
-  public void hashCallBidirectional(final long hashFoward, final long hashReverse, final int stepPosition, final int internalId) {
+  public void hashCallBidirectional(final long hashForward, final long hashReverse, final int stepPosition, final int internalId) {
     throw new UnsupportedOperationException("Not supported.");
   }
 
