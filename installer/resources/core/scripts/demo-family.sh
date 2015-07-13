@@ -4,7 +4,7 @@
 # family variant calling, using data simulated on the fly.  When
 # running it, give the full path to newly installed RTG, e.g.:
 #
-# demo-family.sh /path/to/rtg
+# demo-family.sh /path/to/rtg-core-NNN/rtg
 #
 # or (if rtg is installed on your $PATH)
 #
@@ -13,7 +13,7 @@
 
 
 if [ ! "$1" ]; then
-    echo "Usage: $0 /path/to/rtg" >&2
+    echo "Usage: $0 /path/to/rtg-core-NNN/rtg" >&2
     exit 1
 fi
 
@@ -39,8 +39,7 @@ if ! $RTG version >/dev/null; then
 
 Could not execute $RTG version. 
 
-For this demo RTG must either be an absolute path or installed on your
-\$PATH
+For this demo the path to RTG must be given as an absolute path.
 
 EOF
     exit 1
@@ -108,6 +107,7 @@ synthetic dataset from scratch:
 * samplesim - generate two founder individuals
 * childsim - simulate offspring of the two founders
 * denovosim - simulate de novo mutations in some of the offspring
+* readsim - simulate next-gen sequencing of the individuals
 
 We will then use RTG alignment and variant calling commands to
 demonstrate sex and pedigree-aware variant calling pipeline using the
@@ -137,11 +137,11 @@ cat<<EOF
 Genome Simulation
 -----------------
 
-First we simulate a reference genome, in this case 10 chromosomes with
-lengths between 40kb and 50kb.  We will be using fixed random number
-seeds during this demo in order to ensure we have deterministic
-results.  (We take reproducability very seriously - so you can be sure
-that you get repeatable results with RTG).
+First we simulate a reference genome by generating random DNA, in this
+case 10 chromosomes with lengths between 40kb and 50kb.  We will be
+using fixed random number seeds during this demo in order to ensure we
+have deterministic results.  (We take reproducability very seriously -
+so you can be sure that you get repeatable results with RTG).
 
 EOF
 pause
@@ -182,12 +182,12 @@ This command has created the reference as an SDF, which is a directory
 structure that allows direct access to individual sequences or parts
 of sequences, as well as containing metadata about the sequences
 contained within.  RTG commands use SDFs for both reference and read
-storage.  Every RTG command accepts the --help option in order to
-display the list of available options.
+storage.
 
 The reference SDF can optionally contain configuration that specifies
 additional genomic information regarding ploidy and sex chromosomes,
 we have also set that up, but here is what the configuration looks like:
+
 
 EOF
 docommand cat reference.sdf/reference.txt
@@ -197,9 +197,9 @@ cat <<EOF
 
 You can find out more information about any SDF by using the RTG
 sdfstats command.  Here we will also request specific information
-about how the reference sequences are interpreted for a male.  (We
-have defined Chr9 as analogous to the human X chromosome and Chr 10 as
-analogous to the human Y chromosome.)
+about how the reference sequences are interpreted for a male by adding
+the flags '--sex male'.  Every RTG command accepts the --help option
+in order to display the list of available options.
 
 EOF
 docommand $RTG sdfstats reference.sdf --sex male
@@ -209,11 +209,17 @@ pause
 
 cat<<EOF
 
+Recall that we have defined Chr9 as analogous to the human X
+chromosome and Chr 10 as analogous to the human Y chromosome, and this
+is reflected in the output.
+
+
 Variant Simulation
 ------------------
 
 Now we will simulate some variants on this reference, using the popsim
-command.
+command.  The output will be a VCF containing these population
+variants.
 
 EOF
 pause
@@ -223,14 +229,17 @@ pause
 cat<<EOF
 
 The generated VCF contains variants with allele frequencies
-annotations that can be used to simulate a member of the
-population.  The types of variants and frequencies are based off
-variants from the 1000 Genomes Project.  We can see example variants
-using rtg extract.
+annotations that can be used to simulate a member of the population.
+The types of variants and frequencies are based off variants from the
+1000 Genomes Project.  We can pull out some example variants using rtg
+extract.  The extract command can be used with any SAM/BAM/BED/VCF
+file that has been coordinate-sorted, block-compressed and indexed
+according to standard NGS practise.  RTG commands automatically index
+output files by default.
 
 EOF
 pause
-docommand $RTG extract pop.vcf.gz Chr9:2000+1000
+docommand $RTG extract --header pop.vcf.gz Chr9:2000+1000
 pause
 
 cat<<EOF
@@ -261,6 +270,7 @@ Let's prune them from the VCF to keep things simple.
 EOF
 pause
 docommand $RTG vcffilter --input pop-2.vcf.gz --output parents.vcf.gz --remove-all-same-as-ref
+docommand $RTG extract --header parents.vcf.gz Chr9:2000+1000
 pause
 
 cat<<EOF
@@ -300,14 +310,17 @@ as the occasional de novo variant (annotated with a DN value of 'Y').
 
 EOF
 pause
-docommand $RTG extract family.vcf.gz Chr9:1-10000
+docommand $RTG extract family.vcf.gz Chr9:10000+10000
 pause
 
 cat<<EOF
 
-If we look at the genome SDF for one of the male samples, we see that
-the chromosomes have been generated according to the appropriate
-ploidy for the sample sex.
+If we use rtg sdfstats --lengths to look at the genome SDF for one of
+the male samples, we see that the chromosomes have been generated
+according to the appropriate ploidy for the sample sex. Each
+chromosome incorporates the appropriate variant alleles specified for
+that sample in the VCF, so you will see slight variations in the
+lengths of diploid pairs.
 
 EOF
 pause
@@ -327,11 +340,12 @@ sequencing of the sample genomes, using RTG readsim.  We will simulate
 2 x 100bp paired-end Illumina sequencing using a mean fragment size of
 300bp, at a sequencing coverage of about 20x for most of our samples
 (since our sample genome SDFs include two copies of each diploid
-chromosome, we instruct the readsim command to use coverage 10).  The
-simulated reads included sequencer errors according to the selected
-machine type, but in this case we will increase the error rates in
-order to make the mapping and variant calling harder.  The results of
-read simulation will be stored in an SDF containing the reads for each
+chromosome, we instruct the readsim command to use coverage 10).  One
+of the samples will be generated at a lower coverage.  The simulated
+reads included sequencer errors according to the selected machine
+type, but in this case we will increase the error rates in order to
+make the mapping and variant calling harder.  The results of read
+simulation will be stored in an SDF containing the reads for each
 sample.
 
 EOF
@@ -355,8 +369,8 @@ cat<<EOF
 The RTG sdfstats command can also be used to retrieve information
 about read sets.  We have included SAM read group information directly
 in the SDF (this information could also be supplied at alignment
-time).  Let's also extract some of the reads in SAM format so you can
-see what they look like.
+time).  Let's also extract some of the reads in SAM format using rtg
+sdf2sam so you can see what they look like.
 
 EOF
 
@@ -379,8 +393,8 @@ an SDF or a SAM file that already contains read group information,
 this is automatically used, otherwise it should be supplied as an
 extra parameter on the command-line.
 
-For the sex-aware pipeline you also need to indicate which sex each
-sample is.  During mapping this can be specified by an explicit --sex
+For the sex-aware pipeline you also need to indicate the sex of each
+sample.  During mapping this can be specified by an explicit --sex
 parameter, but it is easier when dealing with multiple samples to
 store the sex and pedigree information in a PED file.  This is a
 standard format, we will create one and show you now.
@@ -550,7 +564,7 @@ chromosomes).
 
 Now let's use the family caller.  In comparison with the single-sample
 caller, we just need to supply the BAM files containing mappings of
-the other family members.
+the additional family members.
 
 EOF
 pause
@@ -588,8 +602,8 @@ variants, particularly those involving complex situations such as
 block substitutions or indels.  Unlike other tools that compare
 variant positions, alleles, and genotypes directly, RTG vcfeval
 performs comparison at the level of haplotypes by replaying the
-variants into the reference. We will run vcfeval first to evaluate the
-result of single-sample calling, and then to evaluate the family
+variants into the reference.  We will run vcfeval first to evaluate
+the result of single-sample calling, and then to evaluate the family
 called variants for the same sample.
 
 EOF
@@ -616,9 +630,9 @@ specify the --vcf-score-field option to use a different attribute
 
 The RTG rocplot command allows ROC plots for multiple ROC data files
 to be viewed using either an interactive gui, or via creation of a
-static image.  We'll generate a static image now, (As an alternative, you could
-also decompress weighted_roc.tsv.gz file and load it as tab-separated
-file into a spreadsheet or other graphing package.)
+static image.  We'll generate a static image now, (As an alternative,
+you could also decompress weighted_roc.tsv.gz file and load it as
+tab-separated file into a spreadsheet or other graphing package.)
 
 EOF
 pause
@@ -644,7 +658,9 @@ cat<<EOF
 Of all the variants that were suggested to be de novo, there were 0
 false positive and only a couple of false negatives.  We included the
 full call-set in the comparison, so there were a lot of calls that
-would be false positives.
+would be false positives with respect to the list of de novos that we
+generated, so focusing effort on those with good DNP scores makes
+sense when hunting for those de novo variants.
 
 That's it for the demo.  Feel free to look around in the various
 output files that were created inside this demo-family directory, and
