@@ -596,8 +596,6 @@ public class SimilarityCliTest extends AbstractCliTest {
     }
   }
 
-
-
   /* Single sequence. */
   private static final String NT_DEFU = "actgactgactgactgactgactga";
   private static final String SEQ_DEFU = ""
@@ -617,8 +615,7 @@ public class SimilarityCliTest extends AbstractCliTest {
     checkDefMain(simExp, treeExp);
   }
 
-  private void checkDefTask(final String simExp, final String treeExp)
-      throws IOException {
+  private void checkDefTask(final String simExp, final String treeExp) throws IOException {
     Diagnostic.setLogStream();
     final ProgramMode mode = ProgramMode.PHYLOGENY;
     final File outputDir = FileHelper.createTempDirectory();

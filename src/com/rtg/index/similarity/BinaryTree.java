@@ -15,12 +15,13 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.text.DecimalFormat;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.StringUtils;
 
 /**
  * A binary tree holding the results of joining.
- *
  */
+@TestClass("com.rtg.index.similarity.NeighborJoiningTest")
 public class BinaryTree {
 
   static final DecimalFormat NF = new DecimalFormat("0.0000");

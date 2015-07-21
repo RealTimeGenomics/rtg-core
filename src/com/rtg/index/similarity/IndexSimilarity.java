@@ -81,7 +81,6 @@ public final class IndexSimilarity extends IndexCompressed {
         mSimilaritySorter.similarity(matrix);
         //System.err.println(mSimilaritySorter.toString());
         mSimilaritySorter.reset();
-        continue;
       }
     }
       mSimilaritySorter.similarity(matrix);

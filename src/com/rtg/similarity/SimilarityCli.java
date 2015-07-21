@@ -138,7 +138,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
           flags.setParseMessage("The specified list file, \"" + inputList.getPath() + "\", is a directory.");
           return false;
         }
-        if (flags.isSet(MAX_READS_FLAG) && ((Integer) flags.getValue(MAX_READS_FLAG)) < 1) {
+        if (flags.isSet(MAX_READS_FLAG) && (Integer) flags.getValue(MAX_READS_FLAG) < 1) {
           flags.setParseMessage("The --" + MAX_READS_FLAG + " must be greater than 0");
           return false;
         }
@@ -236,7 +236,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
 
   private static class IncrementalIdMap extends HashMap<Integer, Integer> {
     private int mUnused = 0;
-    public int getId(final int v) {
+    int getId(final int v) {
       final Integer r = get(v);
       if (r != null) {
         return r;
@@ -376,7 +376,6 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
 
           @Override
           public void hashCallBidirectional(final long hashForward, final long hashReverse, final int stepPosition, final int internalId) {
-            // todo convert internalId to taxonId
             if (hashForward < hashReverse) {
               index.add(hashForward, sdfIdToTaxonId[internalId]);
             } else {

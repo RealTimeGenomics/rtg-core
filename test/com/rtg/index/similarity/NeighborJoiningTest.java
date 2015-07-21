@@ -29,7 +29,6 @@ import junit.framework.TestCase;
 
 /**
  * Tests the corresponding class.
- *
  */
 public class NeighborJoiningTest extends TestCase {
 
