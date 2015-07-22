@@ -28,7 +28,7 @@ import junit.framework.TestCase;
  */
 public class SequenceLengthBucketsTest extends TestCase {
   private static class MockLengthsReader extends MockSequencesReader {
-    private int[] mLengths;
+    private final int[] mLengths;
     public MockLengthsReader(int[] lengths) {
       super(SequenceType.PROTEIN, lengths.length);
       mLengths = lengths;
@@ -41,8 +41,8 @@ public class SequenceLengthBucketsTest extends TestCase {
   }
 
   public void testBucketing() throws Exception {
-    int[] lengths = {100, 101, 102, 103, 104, 23, 105, 106, 107, 50, 108};
-    SequenceLengthBuckets buckets = new SequenceLengthBuckets(new MockLengthsReader(lengths), 99);
+    final int[] lengths = {100, 101, 102, 103, 104, 23, 105, 106, 107, 50, 108};
+    final SequenceLengthBuckets buckets = new SequenceLengthBuckets(new MockLengthsReader(lengths), 99);
     assertEquals(4, buckets.getBuckets().size());
     assertEquals(2, buckets.getCount(99));
     assertEquals(3, buckets.getCount(102));
@@ -52,10 +52,10 @@ public class SequenceLengthBucketsTest extends TestCase {
   }
 
   public void testBucketList() throws IOException {
-    int[] lengths = {100, 101, 102, 103, 104, 105, 24, 106, 107, 108};
-    SequenceLengthBuckets buckets = new SequenceLengthBuckets(new MockLengthsReader(lengths), 99);
-    Collection<Long> b = buckets.getBuckets();
-    Set<Long> expected = new HashSet<>();
+    final int[] lengths = {100, 101, 102, 103, 104, 105, 24, 106, 107, 108};
+    final SequenceLengthBuckets buckets = new SequenceLengthBuckets(new MockLengthsReader(lengths), 99);
+    final Collection<Long> b = buckets.getBuckets();
+    final Set<Long> expected = new HashSet<>();
     expected.addAll(Arrays.asList(99L, 102L, 105L, 108L));
     assertEquals(expected, b);
   }

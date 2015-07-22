@@ -113,8 +113,7 @@ public class MapxRenameTest extends AbstractCliTest {
       final File map = new File(tempDir, "map");
       FileUtils.stringToFile(MAPX, map);
       final File mapRename = new File(tempDir, "map_rename");
-      String[] args = {map.getPath(), "-i", readsDir.getPath(),
-          "-o", mapRename.getPath()};
+      final String[] args = {map.getPath(), "-i", readsDir.getPath(), "-o", mapRename.getPath()};
       checkMainInitWarn(args);
       assertTrue(mapRename.exists());
     } finally {
@@ -132,8 +131,7 @@ public class MapxRenameTest extends AbstractCliTest {
       final File map = new File(tempDir, "map");
       FileUtils.stringToFile(MAPX, map);
       final File mapRename = new File(tempDir, "map_rename");
-      String[] args = {map.getPath(), "-i", readsDir.getPath(),
-          "--output", mapRename.getPath()};
+      final String[] args = {map.getPath(), "-i", readsDir.getPath(), "--output", mapRename.getPath()};
       checkMainInitWarn(args);
       assertTrue(mapRename.exists());
     } finally {
@@ -149,7 +147,7 @@ public class MapxRenameTest extends AbstractCliTest {
     try {
       final File map = new File(tempDir, "map.tsv");
       FileUtils.stringToFile(MAPX, map);
-      String[] args = {map.getPath(), "-i", readsDir.getPath()};
+      final String[] args = {map.getPath(), "-i", readsDir.getPath()};
       checkMainInitWarn(args);
       final File mapRename = new File(tempDir, "map_rename.tsv");
       assertTrue(mapRename.exists());
@@ -167,7 +165,7 @@ public class MapxRenameTest extends AbstractCliTest {
       final File map = new File(tempDir, "map.tsv.gz");
       FileHelper.stringToGzFile(MAPX, map);
 
-      String[] args = {map.getPath(), "-i", readsDir.getPath()};
+      final String[] args = {map.getPath(), "-i", readsDir.getPath()};
       checkMainInitWarn(args);
       final File mapRename = new File(tempDir, "map_rename.tsv.gz");
       assertTrue(mapRename.exists());
@@ -190,7 +188,7 @@ public class MapxRenameTest extends AbstractCliTest {
 
   static final String READS_FASTA;
   static {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < READS.length; i++) {
       sb.append(">testRead").append(i).append(LS).append(READS[i]).append(LS);
     }
@@ -209,10 +207,10 @@ public class MapxRenameTest extends AbstractCliTest {
       final File unmapped = FileHelper.resourceToFile("com/rtg/protein/resources/unmapped.tsv", new File(tempDir, "unmapped.tsv"));
 
       final String warn = checkMainInitWarn("-i", reads.getAbsolutePath(), unmapped.getAbsolutePath());
-      String actual = FileUtils.fileToString(new File(tempDir, "mapped_rename.tsv"));
+      final String actual = FileUtils.fileToString(new File(tempDir, "mapped_rename.tsv"));
       TestUtils.sameLines(FileHelper.resourceToString("com/rtg/protein/resources/mapped_rename.tsv"),
         actual.substring(actual.indexOf("#template-name")), false);
-      String actualUn = FileUtils.fileToString(new File(tempDir, "unmapped_rename.tsv"));
+      final String actualUn = FileUtils.fileToString(new File(tempDir, "unmapped_rename.tsv"));
       TestUtils.sameLines(FileHelper.resourceToString("com/rtg/protein/resources/unmapped_rename.tsv"),
         actualUn.substring(actualUn.indexOf("#read-name")), false);
 

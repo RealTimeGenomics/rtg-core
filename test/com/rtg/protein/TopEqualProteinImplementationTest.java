@@ -26,17 +26,7 @@ public class TopEqualProteinImplementationTest extends TopEqualProteinOutputProc
   public TopEqualProteinImplementationTest(String name) {
     super(name);
   }
-/*
-  public void testFailCondition() {
-    Diagnostic.setLogStream();
-    try {
-      new TopEqualProteinImplementation(2, Integer.MAX_VALUE);
-    } catch (NoTalkbackSlimException ex) {
 
-      ; // okay
-    }
-  }
- */
   public void testResults() throws IOException, InvalidParamsException {
     final TopEqualProteinImplementation impl = new TopEqualProteinImplementation(2, 3);
     impl.insertResult(getResult(0));

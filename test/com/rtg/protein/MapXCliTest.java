@@ -221,10 +221,10 @@ public class MapXCliTest extends AbstractCliTest {
 
     final CFlags flags = new CFlags("blah", TestUtils.getNullPrintStream(), TestUtils.getNullPrintStream());
     flags.registerOptional('e', MapXCli.MAX_ALIGNMENT_SCORE, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score at output (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("10%")).setCategory(REPORTING);
-    flags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "maximum number of top equal results output per read", 5).setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(MapFlags.XSCORE_INDEL, Integer.class, CommonFlags.INT, "set max score indel for topn threshold", MapFlags.MAX_SCORE).setCategory(CommonFlagCategories.REPORTING); //7 was used for illumina mappings
+    flags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "maximum number of top equal results output per read", 5).setCategory(REPORTING);
+    flags.registerOptional(MapFlags.XSCORE_INDEL, Integer.class, CommonFlags.INT, "set max score indel for topn threshold", MapFlags.MAX_SCORE).setCategory(REPORTING); //7 was used for illumina mappings
     flags.registerOptional(CommonFlags.EXCLUDE_FLAG, BuildCommon.RESOURCE.getString("EXCLUDE_DESC")).setCategory(CommonFlagCategories.UTILITY);
-    flags.registerOptional(MapFlags.TOPN_RESULTS_FLAG, Integer.class, CommonFlags.INT, "set the number of results per read for topn. Allowed values are between 1 and 255", 5).setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(MapFlags.TOPN_RESULTS_FLAG, Integer.class, CommonFlags.INT, "set the number of results per read for topn. Allowed values are between 1 and 255", 5).setCategory(REPORTING);
     flags.registerOptional('P', MapXCli.MIN_IDENTITY_FLAG, Integer.class, "int", "minimum percent identity at output", 60).setCategory(REPORTING);
     final Flag filter = flags.registerOptional('f', CommonFlags.OUTPUT_FILTER_FLAG, String.class, "name", "output filter", "topn");
     filter.setParameterRange(MapXCli.FILTERS.keySet());
@@ -325,27 +325,27 @@ public class MapXCliTest extends AbstractCliTest {
     }
   }
 
-  private static final String PROTEIN_TEMPLATE = ">template_sequence" + StringUtils.LS
+  private static final String PROTEIN_TEMPLATE = ">template_sequence" + LS
       + "WSEITLAVMFAGKWK*HKESKIF*PLPTPSYHSVGPVAHSVCGEYPHCLFAVNSSGVVPTMHRVRLVLSAGNTSCGCGSA"
       + "*RHRSEYA*NL*TGPNGNRTASATEIDGSKNSGCGLTVSEKSEGRQIHTIPKALWPFVLDLQHITSNSTPPQAEMVWVFQ"
       + "AGYKFCPRL*LKYEPVCTRRHSQINVAHSVLPAKIYGGVDALLIIAMCSYGRVNILRSNKIRSSYSRALAMEGTMLIGLT"
-      + "PYLSGRAEPNLSIRIWQ*SRVRQRSHFNKVGTQAPLTRVSRSGKELLTGLA*CNQI*DIYSEVSIVVQDSHRVHGRLHDS*IMGSAAPPANAT" + StringUtils.LS;
+      + "PYLSGRAEPNLSIRIWQ*SRVRQRSHFNKVGTQAPLTRVSRSGKELLTGLA*CNQI*DIYSEVSIVVQDSHRVHGRLHDS*IMGSAAPPANAT" + LS;
 
   private static final String R_1 = "GAGCAACTCCACTCCACCCCAAGCCGAGATGGTCTGGGTATTTCAAGCGGGGTACAAGTT";
-  private static final String READ_1 = ">read9/0/0/simulatedSequence1/435/F/60." + StringUtils.LS
-      + R_1 + StringUtils.LS;
+  private static final String READ_1 = ">read9/0/0/simulatedSequence1/435/F/60." + LS
+      + R_1 + LS;
 
   private static final String R_2 = "TAGGACGGCGTAGGGAGTGGCTAGAAAATCTTCGATTCCTTGTGCTATTTCCACTTACCA";
-  private static final String READ_2 = ">read7/0/0/simulatedSequence1/33/R/60." + StringUtils.LS
-      + R_2 + StringUtils.LS;
+  private static final String READ_2 = ">read7/0/0/simulatedSequence1/33/R/60." + LS
+      + R_2 + LS;
 
   private static final String R_3 = "TCTTCGCGGGCAAGACAGAGTGCGCAACGTTGATCTGTGAGTGTCTGCGTGTGCAAACGGGTTCATACTT";
-  private static final String READ_3 = ">read1/0/0/simulatedSequence1/514/R/70." + StringUtils.LS
-      + R_3 + StringUtils.LS;
+  private static final String READ_3 = ">read1/0/0/simulatedSequence1/514/R/70." + LS
+      + R_3 + LS;
 
   private static final String R_4 = "AGGACTGCATCGGCAACTGAGATCGACGGCAGCAAAAACTCAGGATGTGGTCTGACTGTGTCCGAAAAGTCCGAGGGACGTCAGATTC";
-  private static final String READ_4 = ">read3/0/0/simulatedSequence1/295/F/88." + StringUtils.LS
-      + R_4 + StringUtils.LS;
+  private static final String READ_4 = ">read3/0/0/simulatedSequence1/295/F/88." + LS
+      + R_4 + LS;
   private static final long LENGTH = R_1.length() + R_2.length() + R_3.length() + R_4.length();
 
   public void testVariableLength() throws Exception {

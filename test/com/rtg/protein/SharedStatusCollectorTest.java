@@ -36,8 +36,7 @@ public class SharedStatusCollectorTest extends TestCase {
 
   public void testUnmatedWriting() throws Exception {
     final SharedStatusCollector res = new SharedStatusCollector(1, null);
-
-    ByteArrayOutputStream bos = new ByteArrayOutputStream();
+    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     res.writeUnmapped(bos, null, 0);
     assertEquals("0" + LS, bos.toString());
 

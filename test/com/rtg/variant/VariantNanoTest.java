@@ -1287,7 +1287,7 @@ public class VariantNanoTest extends TestCase {
       final SingletonCli vc = new SingletonCli();
       final int code = vc.mainInit(new String[] {"-t", template.getPath(), "-o", output.getPath(), "-m", "illumina", "--keep-duplicates", sam.getPath()}, mps.outputStream(), mps.printStream());
       assertEquals(mps.toString(), 0, code);
-      final String result = StringUtils.grep(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")), "^[^#]").replaceAll("\n|\r\n", StringUtils.LS);
+      final String result = StringUtils.grep(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")), "^[^#]").replaceAll("\n|\r\n", LS);
 
 
       //turn on following in singleton caller case

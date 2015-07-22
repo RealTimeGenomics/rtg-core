@@ -30,7 +30,6 @@ import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.Environment;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
@@ -40,7 +39,6 @@ import com.rtg.util.test.FileHelper;
 import junit.framework.TestCase;
 
 /**
- * Test Class
  */
 public class ProteinOutputProcessorTest extends TestCase {
 
@@ -48,8 +46,8 @@ public class ProteinOutputProcessorTest extends TestCase {
   private static final String TEMPLATE_PROTEIN = TestUtils.dnaToProtein(TEMPLATE_DNA);
 
   /** test template */
-  public static final String TEMPLATE_FASTA = ">templateName" + StringUtils.LS
-    + TEMPLATE_PROTEIN + StringUtils.LS;
+  public static final String TEMPLATE_FASTA = ">templateName" + LS
+    + TEMPLATE_PROTEIN + LS;
 
   private static final String[] READS_PERFECT = {
     "AAATGGCGCAAAAACAGAAAGTCGAAAAAAAATCAA",
@@ -70,7 +68,7 @@ public class ProteinOutputProcessorTest extends TestCase {
     + "read-start" + TB + "read-end" + TB + "read-length" + TB
     + "template-protein" + TB + "read-protein" + TB + "alignment" + TB
     + "identical" + TB + "%identical" + TB + "positive" + TB + "%positive" + TB + "mismatches" + TB
-    + "raw-score" + TB + "bit-score" + TB + "e-score" + StringUtils.LS
+    + "raw-score" + TB + "bit-score" + TB + "e-score" + LS
 
     + "templateName" + TB + "+1" + TB + "0" + TB
     + "1" + TB + "12" + TB + "22" + TB + "1" + TB + "36" + TB + "36" + TB
@@ -78,18 +76,18 @@ public class ProteinOutputProcessorTest extends TestCase {
     // matches   +matches   mismatches
     + "12" + TB + "100" + TB + "12" + TB + "100" + TB + "0" + TB
     // alignment-    bit-   e-scores
-    + "-67" + TB + "30.4" + TB + "1.5e-8" + StringUtils.LS
+    + "-67" + TB + "30.4" + TB + "1.5e-8" + LS
 
     + "templateName" + TB + "+3" + TB + "1" + TB
     + "2" + TB + "12" + TB + "22" + TB + "3" + TB + "35" + TB + "36" + TB
     + "wrknrkskknq" + TB + "wrknrkskknq" + TB + "wrknrkskknq" + TB
     // matches   +matches   mismatches
     + "11" + TB + "100" + TB + "11" + TB + "100" + TB + "0" + TB
-    + "-62" + TB + "28.5" + TB + "5.8e-8" +  StringUtils.LS;
+    + "-62" + TB + "28.5" + TB + "5.8e-8" +  LS;
   static {
     final StringBuilder sb = new StringBuilder();
     for (int i = 0; i < READS_PERFECT.length; i++) {
-      sb.append(">testRead").append(i).append(StringUtils.LS).append(READS_PERFECT[i]).append(StringUtils.LS);
+      sb.append(">testRead").append(i).append(LS).append(READS_PERFECT[i]).append(LS);
     }
     READS_FASTA_PERFECT = sb.toString();
   }
@@ -165,20 +163,20 @@ public class ProteinOutputProcessorTest extends TestCase {
   + "template-start" + TB + "template-end" + TB + "template-length" + TB
   + "read-start" + TB + "read-end" + TB + "read-length" + TB
   + "identical" + TB + "%identical" + TB + "positive" + TB + "%positive" + TB + "mismatches" + TB
-  + "raw-score" + TB + "bit-score" + TB + "e-score" + StringUtils.LS
+  + "raw-score" + TB + "bit-score" + TB + "e-score" + LS
 
   + "templateName" + TB + "+1" + TB + "0" + TB
   + "1" + TB + "12" + TB + "22" + TB + "1" + TB + "36" + TB + "36" + TB
   // matches   +matches   mismatches
   + "12" + TB + "100" + TB + "12" + TB + "100" + TB + "0" + TB
   // alignment-    bit-   e-scores
-  + "-67" + TB + "30.4" + TB + "1.5e-8" + StringUtils.LS
+  + "-67" + TB + "30.4" + TB + "1.5e-8" + LS
 
   + "templateName" + TB + "+3" + TB + "1" + TB
   + "2" + TB + "12" + TB + "22" + TB + "3" + TB + "35" + TB + "36" + TB
   // matches   +matches   mismatches
   + "11" + TB + "100" + TB + "11" + TB + "100" + TB + "0" + TB
-  + "-62" + TB + "28.5" + TB + "5.8e-8" +  StringUtils.LS;
+  + "-62" + TB + "28.5" + TB + "5.8e-8" +  LS;
 
   /**
    * Test method for {@link com.rtg.protein.ProteinOutputProcessor#process(long, java.lang.String, int, int, int, int)}.
