@@ -19,10 +19,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.mode.DnaUtils;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CommandLine;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
@@ -89,6 +91,12 @@ public class MapXFunctionalTest extends TestCase {
     TEMPLATE_FASTA_2 = sb.toString();
   }
 
+  @Override
+  public void setUp() {
+    GlobalFlags.resetAccessedStatus();
+    Diagnostic.setLogStream();
+  }
+
   public void testPerfectMatch() throws IOException {
     final String expected = FileHelper.resourceToString("com/rtg/protein/resources/mapxtestresults.txt");
     check(MapXCliTest.TEMPLATE_FASTA, READS_FASTA_PERFECT, expected, new String[] {"-a", "1", "-b", "0", "-w", "9", "-T", "1"}, true, LENGTH_FASTA_PERFECT);
@@ -130,6 +138,7 @@ public class MapXFunctionalTest extends TestCase {
       assertTrue(FileHelper.deleteAll(dir));
     }
   }
+
   public void testOneSubMatch() throws IOException {
     final String expected = FileHelper.resourceToString("com/rtg/protein/resources/mapxtestresults_one_sub.txt");
     check(MapXCliTest.TEMPLATE_FASTA, READS_FASTA_ONE_SUB, expected, new String[] {"-a", "1", "-b", "0", "-w", "9", "-T", "1"}, true, LENGTH_FASTA_ONE_SUB);
@@ -383,7 +392,6 @@ public class MapXFunctionalTest extends TestCase {
       final String usageLog = mapXCli.usageLog();
       //System.err.println(usageLog);
       TestUtils.containsAll(usageLog, "[Usage beginning module=mapx runId=", ", Usage end module=mapx runId=", " metric=" + usageMetric + " success=true]");
-
     } finally {
       assertTrue(FileHelper.deleteAll(dir));
     }
