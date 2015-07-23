@@ -587,7 +587,7 @@ public class NgsParams extends ModuleParams implements Integrity {
       maxGap = 1;
     }
     final PositionDistributionParams pdp = new PositionDistributionParams(Double.NaN, Double.NaN, maxGap, maxIndel);
-    final PositionOutputParams pop = new PositionOutputParams(outputParams().directory(), OutputFormatType.NGS, pdp, (double) (-outputParams().errorLimit()), outputParams().isCompressOutput(), outputParams().topN());
+    final PositionOutputParams pop = new PositionOutputParams(outputParams().directory(), OutputFormatType.NGS, pdp, (double) -outputParams().errorLimit(), outputParams().isCompressOutput(), outputParams().topN());
     final BuildParams template = BuildParams.builder().windowSize(maskP.getWordSize()).stepSize(1).sequences(mSearchParams).create();
     final BuildParams reads = BuildParams.builder().windowSize(maskP.getWordSize()).stepSize(mStepSize).sequences(mBuildFirstParams).compressHashes(compressHashes()).create();
     final BuildParams reads2;

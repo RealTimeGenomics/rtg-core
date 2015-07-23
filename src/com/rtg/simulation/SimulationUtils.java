@@ -50,7 +50,7 @@ public final class SimulationUtils {
     assert rand <= 1.0 && rand >= 0.0;
     int len = Arrays.binarySearch(dist, rand);
     if (len < 0) {
-      len = (-len) - 1;
+      len = -len - 1;
     }
     while (len < dist.length && dist[len] == 0.0) {
       len++;

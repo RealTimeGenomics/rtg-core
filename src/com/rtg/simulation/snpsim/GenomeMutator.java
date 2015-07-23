@@ -313,7 +313,7 @@ public class GenomeMutator {
       case SNP:
       case MNP:
       case DELETE:
-        if (pos + maxMutation - 1 + mMinMutationDistance >= (locs[j].mPos)
+        if (pos + maxMutation - 1 + mMinMutationDistance >= locs[j].mPos
             && pos < (locs[j].mPos + maxSeq  - 1 + mMinMutationDistance)) {
           return false;
         }

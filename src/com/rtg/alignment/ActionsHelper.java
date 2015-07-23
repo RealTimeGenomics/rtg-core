@@ -237,7 +237,7 @@ public final class ActionsHelper {
 
     static int currentCommand(int[] actions, int position) {
       final int buf = actions[ACTIONS_START_INDEX + (position >> ACTIONS_PER_INT_SHIFT)];
-      return (buf >>> BITS_PER_ACTION * ((ACTIONS_PER_INT - 1) - (position & ACTIONS_COUNT_MASK))) & SINGLE_ACTION_MASK;
+      return (buf >>> BITS_PER_ACTION * (ACTIONS_PER_INT - 1 - (position & ACTIONS_COUNT_MASK))) & SINGLE_ACTION_MASK;
     }
 
     /** @return the next action command. */

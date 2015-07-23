@@ -202,7 +202,7 @@ public final class GapBucketsInfo extends IntegralAbstract {
     if (delta >= 0) {
       b = first + (delta / mStepSize) % length;
     } else {
-      final int d = (-(delta + 1)) / mStepSize;
+      final int d = -(delta + 1) / mStepSize;
       assert d >= 0;
       b = last - (d % length);
     }
@@ -231,7 +231,7 @@ public final class GapBucketsInfo extends IntegralAbstract {
     if (delta >= 0) {
       b = first + (delta / mStepSize);
     } else {
-      final int d = (-(delta + 1)) / mStepSize;
+      final int d = -(delta + 1) / mStepSize;
       assert d >= 0;
       b = first - d - 1;
     }

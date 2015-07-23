@@ -247,7 +247,7 @@ public class VcfReplayerCli extends AbstractCli {
       // copy and reverse
       //System.out.println("copy rev chr[" + (start - 1 - (b.length-1)) + ".." + (start - 1) + "] into b.  len=" + b.length);
       for (int i = 0; i < b.length; i++) {
-        b[i] = DNA.complement(chromosome[(start - 1) - i]);
+        b[i] = DNA.complement(chromosome[start - 1 - i]);
       }
     }
     w.write(b, null, b.length);

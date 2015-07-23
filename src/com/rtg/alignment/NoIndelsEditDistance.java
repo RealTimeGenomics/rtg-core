@@ -80,7 +80,7 @@ class NoIndelsEditDistance implements UnidirectionalEditDistance {
 
     //ensure workspace is big enough
     if (rlen > mMaxReadLengthSeen) {
-      final int size = ActionsHelper.ACTIONS_START_INDEX + 1 + ((int) (rlen / (double) ActionsHelper.ACTIONS_PER_INT + 0.5));
+      final int size = ActionsHelper.ACTIONS_START_INDEX + 1 + (int) (rlen / (double) ActionsHelper.ACTIONS_PER_INT + 0.5);
       if (mWorkspace == null || mWorkspace.length < size) {
         mWorkspace = new int[size];
       }

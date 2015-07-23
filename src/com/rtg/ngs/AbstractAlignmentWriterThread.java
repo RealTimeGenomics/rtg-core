@@ -178,7 +178,7 @@ abstract class AbstractAlignmentWriterThread implements IORunnable {
     }
     public String makeString() {
       //mSamWriter;
-      return ("results.length= " + mResults.size() + LS) + "thread number= " + mThreadNumber + LS + "thread count= " + mThreadCount + LS + "chunk start= " + mChunkStart + LS + "chunk end= " + mChunkEnd + LS + "clip end position= " + mRegion.getEndClipPosition() + LS + "end id= " + mRegion.getEnd() + LS + "start id= " + mRegion.getStart() + LS + "clip start position= " + mRegion.getStartClipPosition() + LS;
+      return "results.length= " + mResults.size() + LS + "thread number= " + mThreadNumber + LS + "thread count= " + mThreadCount + LS + "chunk start= " + mChunkStart + LS + "chunk end= " + mChunkEnd + LS + "clip end position= " + mRegion.getEndClipPosition() + LS + "end id= " + mRegion.getEnd() + LS + "start id= " + mRegion.getStart() + LS + "clip start position= " + mRegion.getStartClipPosition() + LS;
     }
   }
 }

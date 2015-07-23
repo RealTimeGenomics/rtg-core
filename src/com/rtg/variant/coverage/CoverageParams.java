@@ -281,11 +281,11 @@ public final class CoverageParams extends SingleMappedParams {
 
   @Override
   public String toString() {
-    return ("CoverageParams"
+    return "CoverageParams"
       + " mapped reads=" + mapped().toString()
       + " smoothing=" + mSmoothing
       + " error rates=" + Boolean.valueOf(mErrorRates).toString()
       + " minCoverageForBreadth=" + mMinimumCoverageForBreadth
-      + LS) + super.toString();
+      + LS + super.toString();
   }
 }

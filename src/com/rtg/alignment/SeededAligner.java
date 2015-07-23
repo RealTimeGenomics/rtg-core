@@ -497,7 +497,7 @@ final class SeededAligner implements UnidirectionalEditDistance {
 
       if (mSeeds[0].mX1 != 0) {
         //offset of the first seed between read and template
-        final int offset = (y2 - zeroBasedStart) - x2;
+        final int offset = y2 - zeroBasedStart - x2;
         // then the gap to the start
         final int[] res = mFixedEnd.calculateEditDistanceFixedEnd(read, 0, x2, template, offset + zeroBasedStart, y2, maxScore - curScore, maxShift + Math.abs(offset));
         ActionsHelper.prepend(mWorkspace, res);

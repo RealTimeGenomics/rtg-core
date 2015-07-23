@@ -280,14 +280,14 @@ public final class CnvProductParams extends MappedParams implements Integrity {
 
   @Override
   public String toString() {
-    return ("CnvProductParams"
+    return "CnvProductParams"
       + " baseLineInput=" + mappedBase().toString()
       + " targetInput=" + mappedTarget().toString()
       + " bucketSize=" + mBucketSize
       + " filterStartPositions=" + mFilterStartPositions
       + " divisionFactor=" + mDivisionFactor
       + " multiplicationFactor=" + mMultiplicationFactor
-      + LS) + super.toString();
+      + LS + super.toString();
   }
 
 }

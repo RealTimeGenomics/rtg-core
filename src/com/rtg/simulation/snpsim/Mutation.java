@@ -106,7 +106,7 @@ public class Mutation {
 
       // Heterozygous deletes at the end of the sequence are tricky.
       // Heterozygous both different makes no sense in that case
-      while (sequenceLength - pos == 1 && mType == MutationType.DELETE && (selectedDiffMode != DifferentMode.ONE_ONLY && selectedDiffMode != DifferentMode.HOMOZYGOUS)) {
+      while (sequenceLength - pos == 1 && mType == MutationType.DELETE && selectedDiffMode != DifferentMode.ONE_ONLY && selectedDiffMode != DifferentMode.HOMOZYGOUS) {
         selectedDiffMode = gen.chooseDifferentMode(r, mType);
       }
       mDiffMode = selectedDiffMode;

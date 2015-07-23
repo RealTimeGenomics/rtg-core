@@ -145,7 +145,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
   }
 
   private int getDelete(int refpos, int readpos) {
-    return SCORE_MASK & (int) (mScores[refpos * mRows + readpos]);
+    return SCORE_MASK & (int) mScores[refpos * mRows + readpos];
   }
 
   private void setScores(int refpos, int readpos, int insert, int distance, int delete) {
@@ -674,7 +674,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
           if (cmd == 'I') {
             System.out.print((char) cmd);
           } else {
-            if (refPos == (mTemplatePositionOffset + readPos - maxShift) - 1
+            if (refPos == mTemplatePositionOffset + readPos - maxShift - 1
                 || refPos == (mTemplatePositionOffset + readPos + maxShift)) {
               System.out.print("\\");
             } else {

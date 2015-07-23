@@ -75,7 +75,7 @@ public class ObjectWalker {
 
 
   private void walkInternal(final Object obj) {
-    if ((obj == null) || (mRefs.contains(obj))) {
+    if ((obj == null) || mRefs.contains(obj)) {
       return;
     }
     mRefs.add(obj);

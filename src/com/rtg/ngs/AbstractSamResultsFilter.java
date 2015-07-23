@@ -270,7 +270,7 @@ public abstract class AbstractSamResultsFilter {
       return false;
     }
     boolean result = true;
-    if (mCG && (new String(rec.getSuperCigarString())).contains("B")) {
+    if (mCG && new String(rec.getSuperCigarString()).contains("B")) {
       final int length = reader.readQuality(readId, mQualBuffer);
       assert length == SamUtils.CG_RAW_READ_LENGTH;
       if (reverse) {

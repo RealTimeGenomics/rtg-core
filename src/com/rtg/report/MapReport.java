@@ -178,7 +178,7 @@ public class MapReport extends MapSummaryReport {
       try (BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
         String line;
         while ((line = reader.readLine()) != null) {
-          if (line.startsWith("#Version") && (line.contains(MapReportData.VERSION))) {
+          if (line.startsWith("#Version") && line.contains(MapReportData.VERSION)) {
             return true;
           }
         }
@@ -326,7 +326,7 @@ public class MapReport extends MapSummaryReport {
       if (Float.compare((float) MathUtils.round(f), f) != 0) {
         return "";
       }
-      return mLabels[((int) f) % mLabels.length];
+      return mLabels[(int) f % mLabels.length];
     }
   }
 

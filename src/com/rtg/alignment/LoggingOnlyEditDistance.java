@@ -71,7 +71,7 @@ class LoggingOnlyEditDistance implements UnidirectionalEditDistance {
       //      final int[] gotoh = g.calculateEditDistance(read, rlen, template, zeroBasedStart, maxScore);
       //      sb.append("Gotoh AS: " + gotoh[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
 
-      Diagnostic.developerLog(("LoggingOnlyEditDistance " + mLabel + " " + mCount + ": " + System.identityHashCode(read) + " crc=" + checksum.getValue() + " read.length=" + read.length + " rlen=" + rlen + StringUtils.LS) + "zeroStart=" + zeroBasedStart + " maxScore=" + maxScore + " template.length=" + template.length + " cgLeft=" + cgLeft + StringUtils.LS + "ED: " + DnaUtils.bytesToSequenceIncCG(read) + " " + DnaUtils.bytesToSequenceIncCG(template, Math.max(0, zeroBasedStart - 20), rlen + 40) + " 20");
+      Diagnostic.developerLog("LoggingOnlyEditDistance " + mLabel + " " + mCount + ": " + System.identityHashCode(read) + " crc=" + checksum.getValue() + " read.length=" + read.length + " rlen=" + rlen + StringUtils.LS + "zeroStart=" + zeroBasedStart + " maxScore=" + maxScore + " template.length=" + template.length + " cgLeft=" + cgLeft + StringUtils.LS + "ED: " + DnaUtils.bytesToSequenceIncCG(read) + " " + DnaUtils.bytesToSequenceIncCG(template, Math.max(0, zeroBasedStart - 20), rlen + 40) + " 20");
     }
     return null;
   }

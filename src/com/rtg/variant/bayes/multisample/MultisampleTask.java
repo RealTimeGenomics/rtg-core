@@ -438,7 +438,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
           if (mParams.noComplexCalls()) {
             calls = new ArrayList<>();
             for (final Variant v : complexRegions.getOriginalCalls()) {
-              if (!v.isIndel() && !v.isOverflow() && (v.getLocus().getStart() >= complexRegions.startOfChunk() && v.getLocus().getStart() < complexRegions.endOfChunk())) {
+              if (!v.isIndel() && !v.isOverflow() && v.getLocus().getStart() >= complexRegions.startOfChunk() && v.getLocus().getStart() < complexRegions.endOfChunk()) {
                 calls.add(v);
               }
             }

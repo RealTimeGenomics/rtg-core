@@ -166,7 +166,7 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
   public final Double ambiguityRatio() {
     final int count = coverage();
     if (count > 0) {
-      return ambiguousCount() / ((double) count);
+      return ambiguousCount() / (double) count;
     }
     return null;
   }

@@ -156,7 +156,7 @@ public final class RegionUtils {
    * @return Region defining the germ-line deletions
    */
   public static Region findGermlineDeletesUnderMean(int[] bucketCounts, double factor, Region ignore, boolean penaltyOn) {
-    final double meandiv = (ArrayUtils.sum(bucketCounts) / (double) bucketCounts.length) / factor;
+    final double meandiv = ArrayUtils.sum(bucketCounts) / (double) bucketCounts.length / factor;
     final SortedSet<AbstractCnvRegion> set = new TreeSet<>();
     final LeastSquaresModel lsm = new LeastSquaresModel("", 2, 1, 3.0, penaltyOn, new LSMOutput() {
       @Override

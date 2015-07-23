@@ -179,7 +179,7 @@ public final class MapReportData {
       while ((line = br.readLine()) != null) {
         if (line.startsWith("#")) {
           // hmm any header stuff - like version number...
-          if (line.startsWith("#Version") && (!line.contains(VERSION))) {
+          if (line.startsWith("#Version") && !line.contains(VERSION)) {
             throw new NoTalkbackSlimException("Unsupported map statistics version: " + line);
           } else if (line.startsWith(CL)) {
             mr.mCommandLines.add(line.split("\t", 2)[1]);

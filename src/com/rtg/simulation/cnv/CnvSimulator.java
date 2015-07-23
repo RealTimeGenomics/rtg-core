@@ -124,7 +124,7 @@ public class CnvSimulator {
   protected static class FixedRegionComparator implements Comparator<FixedRegion>, Serializable {
     @Override
     public int compare(final FixedRegion o1, final FixedRegion o2) {
-      return (Integer.valueOf((int) o1.mStartPosNullBased)).compareTo((int) o2.mStartPosNullBased);
+      return Integer.valueOf((int) o1.mStartPosNullBased).compareTo((int) o2.mStartPosNullBased);
     }
   }
 
@@ -587,9 +587,8 @@ public class CnvSimulator {
 
   protected String regionSequencesToString() {
     final StringBuilder sb2 = new StringBuilder();
-    for (int i = 0; i < mRegionSequences.size(); i++) {
-      for (int j = 0; j < mRegionSequences.get(i).size(); j++) {
-        final CnvRegion r = mRegionSequences.get(i).get(j);
+    for (final List<CnvRegion> i : mRegionSequences) {
+      for (final CnvRegion r : i) {
         sb2.append(r.toString());
       }
     }

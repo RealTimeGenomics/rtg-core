@@ -197,7 +197,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
   }
 
   void resizeWorkspace(int size) {
-    final int workspacesize = ActionsHelper.ACTIONS_START_INDEX + 1 + ((int) (size / (double) ActionsHelper.ACTIONS_PER_INT + 0.5));
+    final int workspacesize = ActionsHelper.ACTIONS_START_INDEX + 1 + (int) (size / (double) ActionsHelper.ACTIONS_PER_INT + 0.5);
     mWorkspace = new int[workspacesize];
     mMaxRLenMaxShift = size;
   }

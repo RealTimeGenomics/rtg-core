@@ -157,7 +157,7 @@ public class AssembleCli extends ParamsCli<AssembleParams> {
         flags.error("--" + MAX_INSERT + " should be larger than --" + MIN_INSERT);
         return false;
       }
-      if (((Integer) flags.getValue(KMER_SIZE)) < 1) {
+      if ((Integer) flags.getValue(KMER_SIZE) < 1) {
         flags.error("--" + KMER_SIZE + " should be positive");
         return false;
       }

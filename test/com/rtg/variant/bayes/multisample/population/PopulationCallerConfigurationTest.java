@@ -24,7 +24,6 @@ import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.AlleleCountsFileConverter;
 import com.rtg.variant.VariantParams;
-import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.bayes.multisample.ComplexCallerTest;
 import com.rtg.variant.bayes.multisample.IndividualSampleProcessor;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
@@ -58,7 +57,7 @@ public class PopulationCallerConfigurationTest extends TestCase {
         file.addGenome("three");
         final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("two", "one", "three");
         final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").populationPriors(alleleCountFile).uberHeader(uber).create();
-        final PopulationCallerConfiguration config = new PopulationCallerConfiguration.Configurator().getConfig(params, (VariantStatistics) null);
+        final PopulationCallerConfiguration config = new PopulationCallerConfiguration.Configurator().getConfig(params, null);
         assertNotNull(config.getOutputFormatter(params));
 
         assertFalse(config.getSnpHypotheses(1, null, 0).diploid().haploid());

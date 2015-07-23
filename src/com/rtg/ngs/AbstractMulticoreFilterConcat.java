@@ -215,14 +215,14 @@ public abstract class AbstractMulticoreFilterConcat {
       final boolean keepTempFiles = GlobalFlags.isSet(GlobalFlags.MAP_KEEP_TEMPORARY_FILES);
       Diagnostic.progress(mThreadNamePrefix + "ResultsConcat: Starting " + tot + " Jobs");
       FileUtils.catInSync(outFile, !keepTempFiles, intermediate);
-      Diagnostic.progress(mThreadNamePrefix + "ResultsConcat: " + (++cur) + "/" + tot + " Jobs Finished");
+      Diagnostic.progress(mThreadNamePrefix + "ResultsConcat: " + ++cur + "/" + tot + " Jobs Finished");
       if (createIndex) {
         mergeIndexes(mParams, outFile, intermediateIndexes, dataFileSizes);
-        Diagnostic.progress(mThreadNamePrefix + "ResultsConcat: " + (++cur) + "/" + tot + " Jobs Finished");
+        Diagnostic.progress(mThreadNamePrefix + "ResultsConcat: " + ++cur + "/" + tot + " Jobs Finished");
       }
       if (calibrate) {
         mergeCalibration(outFile, referenceRegions, intermediateCal);
-        Diagnostic.progress(mThreadNamePrefix + "ResultsConcat: " + (++cur) + "/" + tot + " Jobs Finished");
+        Diagnostic.progress(mThreadNamePrefix + "ResultsConcat: " + ++cur + "/" + tot + " Jobs Finished");
       }
     }
     timer.stopLog();

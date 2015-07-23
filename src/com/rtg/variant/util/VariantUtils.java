@@ -171,7 +171,7 @@ public final class VariantUtils {
    *
    * @param x first log to be added.
    * @param y second log to be added.
-   * @return log(exp(x) + exp(y)).
+   * @return <code>log(exp(x) + exp(y))</code>.
    */
   public static double logSumApproximation(final double x, final double y) {
     assert !Double.isNaN(x);

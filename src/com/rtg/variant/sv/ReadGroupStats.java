@@ -81,7 +81,7 @@ public class ReadGroupStats {
         while ((line = br.readLine()) != null) {
           if (line.length() > 0) {
             if (line.startsWith("#")) {
-              if (line.startsWith("#Version") && (!line.contains(ReadGroupStatsCalculator.VERSION))) {
+              if (line.startsWith("#Version") && !line.contains(ReadGroupStatsCalculator.VERSION)) {
                 throw new NoTalkbackSlimException("Unsupported rgstats version: " + line + " - rerun svprep");
               }
             } else {
@@ -162,7 +162,7 @@ public class ReadGroupStats {
     }
     int fnum = 0;
     mReadGroup = parts[fnum++];
-    if ((remap != null) && (remap.containsKey(mReadGroup))) { // If no mapping provided, keep original id
+    if ((remap != null) && remap.containsKey(mReadGroup)) { // If no mapping provided, keep original id
       mReadGroup = remap.get(mReadGroup);
     }
     try {

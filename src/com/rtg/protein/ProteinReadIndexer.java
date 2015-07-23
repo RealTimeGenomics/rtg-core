@@ -162,7 +162,7 @@ public final class ProteinReadIndexer {
       }
     }
     if (longReadCount > 0) {
-      final int virtualReadLength = (params.mapXMetaChunkSize()) * 3;
+      final int virtualReadLength = params.mapXMetaChunkSize() * 3;
       final ReadLengthHashingState rlhs = createHashingState(virtualReadLength, params, indexParamsBuilder, longReadCount, frames, outProcessor, numValues);
       lengthFunctions.put(META_CHUNKED_KEY, rlhs);
     }

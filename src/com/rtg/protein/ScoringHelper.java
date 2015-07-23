@@ -58,7 +58,7 @@ final class ScoringHelper {
   static double computeBitScore(int alignScore, ProteinScoringMatrix matrix) {
     final double lambda = matrix.getLambda();
     final double logK = matrix.getLogK();
-    return (lambda * (-alignScore) - logK) * INVERSE_LOG2;
+    return (lambda * -alignScore - logK) * INVERSE_LOG2;
   }
 
   static int percentage(final int value, final int total) {

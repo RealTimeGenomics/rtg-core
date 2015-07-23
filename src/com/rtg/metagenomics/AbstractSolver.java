@@ -60,6 +60,7 @@ public abstract class AbstractSolver implements LineSolver {
    * @param relThreshold termination threshold
    * @return cross over point
    */
+  @Override
   public double solveLine(Line line, double relThreshold) {
     if (mVeryVerbose) {
       Diagnostic.developerLog("starting solveLine");

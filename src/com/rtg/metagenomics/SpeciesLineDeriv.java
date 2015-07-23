@@ -79,7 +79,7 @@ class SpeciesLineDeriv extends Line {
       //System.err.println("h=" + h + " a=" + a + " b=" + b);
       final int mult = frag.multiplicity();
       v1 -= h * mult;
-      v22 += (h * h) * mult;
+      v22 += h * h * mult;
       final double h2 = a2 / b;
       v21 -= h2  * mult;
     }

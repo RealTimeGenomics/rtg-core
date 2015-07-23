@@ -244,8 +244,8 @@ public class ReadSimEvalCli extends LoggedCli {
     final SdfId mappingRefGuid = getTemplateGuid(rec.getHeader());
     if (!mappingRefGuid.available()) {
       warnNoTemplateInSam();
-    } else if ((mOriginalReference != null) && (!mappingRefGuid.check(mOriginalReference))
-        || (mTemplateMap != null) && (!mappingRefGuid.check(mTemplateMap[mParser.templateSet()]))) {
+    } else if ((mOriginalReference != null) && !mappingRefGuid.check(mOriginalReference)
+        || (mTemplateMap != null) && !mappingRefGuid.check(mTemplateMap[mParser.templateSet()])) {
       warnTemplateMismatchInSam();
       return;
     }

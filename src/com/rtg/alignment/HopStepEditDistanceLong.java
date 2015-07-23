@@ -243,7 +243,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
     if (rlen < mReadLengthCutoff) { //should only use this aligner for longish reads
       return null;
     }
-    checkWorkspace(rlen + (ActionsHelper.ACTIONS_START_INDEX + 1));
+    checkWorkspace(rlen + ActionsHelper.ACTIONS_START_INDEX + 1);
     initEd(read, rlen, template);
     int x = rlen - 1;
     int y = zeroBasedStart + rlen - 1;

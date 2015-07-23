@@ -104,7 +104,7 @@ public class PairedTempFileWriterImpl extends AbstractTempFileWriter implements 
     // status so sliding window collector can boot other pairings
     // containing it
     final int matchReadLength = !matedHitInfo.isFirstRight() ? mFirstReader.length(readId) : mSecondReader.length(readId);
-    if ((score1 > (mMatedMaxMismatches.getValue(matchReadLength)) * mSubstitutionPenalty) || mSharedResources.getBlocker().isBlocked2(readId, score1)) {
+    if ((score1 > mMatedMaxMismatches.getValue(matchReadLength) * mSubstitutionPenalty) || mSharedResources.getBlocker().isBlocked2(readId, score1)) {
       matedHitInfo.setLeftVeryPoor(true);
       return false;
     }

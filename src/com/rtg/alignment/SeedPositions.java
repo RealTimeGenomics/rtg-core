@@ -160,7 +160,7 @@ class SeedPositions {
   }
 
   static void logBadSeed(String message, SeedPositions[] seeds, int i, byte[] read, int readlen, byte[] template, int zeroBasedStart) {
-    Diagnostic.developerLog((message + StringUtils.LS) + DnaUtils.bytesToSequenceIncCG(read) + StringUtils.LS + DnaUtils.bytesToSequenceIncCG(template, zeroBasedStart, readlen) + StringUtils.LS + DnaUtils.bytesToSequenceIncCG(read, seeds[i].mX1, seeds[i].xWidth()) + StringUtils.LS + DnaUtils.bytesToSequenceIncCG(template, zeroBasedStart + seeds[i].mY1, seeds[i].xWidth()) + StringUtils.LS);
+    Diagnostic.developerLog(message + StringUtils.LS + DnaUtils.bytesToSequenceIncCG(read) + StringUtils.LS + DnaUtils.bytesToSequenceIncCG(template, zeroBasedStart, readlen) + StringUtils.LS + DnaUtils.bytesToSequenceIncCG(read, seeds[i].mX1, seeds[i].xWidth()) + StringUtils.LS + DnaUtils.bytesToSequenceIncCG(template, zeroBasedStart + seeds[i].mY1, seeds[i].xWidth()) + StringUtils.LS);
   }
 
   static boolean seedIntegrity(final SeedPositions[] seeds, final int numSeeds, byte[] read, final int readlen, final byte[] template, final int zeroBasedStart) {

@@ -260,13 +260,13 @@ public class ChildSampleSimulator {
     final double crossoverPerBase = mExtraCrossoverFreq / seqLength; // Chance of getting an additional crossover per base
 
     final String desc = "Father=" + fatherPloidy + " + Mother=" + motherPloidy + " -> Child=" + childPloidy;
-    if ((childCount == 1) && (fatherCount == 0 && motherCount == 0)) {
+    if (childCount == 1 && fatherCount == 0 && motherCount == 0) {
       throw new NoTalkbackSlimException("Sequence " + refSeq.name() + ": Illegal ploidy combination " + desc);
     }
-    if ((childCount == 2) && (fatherCount == 0 || motherCount == 0)) {
+    if (childCount == 2 && (fatherCount == 0 || motherCount == 0)) {
       throw new NoTalkbackSlimException("Sequence " + refSeq.name() + ": Illegal ploidy combination " + desc);
     }
-    if ((childCount > 2) || (fatherCount > 2) || (motherCount > 2)) {
+    if (childCount > 2 || fatherCount > 2 || motherCount > 2) {
       throw new NoTalkbackSlimException("Sequence " + refSeq.name() + ": Unsupported ploidy combination" + desc);
     }
     //System.err.println("Sequence " + refSeq.name() + " has ploidy " + desc);

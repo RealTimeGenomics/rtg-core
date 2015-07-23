@@ -119,7 +119,7 @@ public class DeBruijnAssemblerCli extends ParamsCli<DeBruijnParams> {
         flags.error("Invalid region specification");
         return false;
       }
-      if (((Integer) flags.getValue(KMER_SIZE)) < 1) {
+      if ((Integer) flags.getValue(KMER_SIZE) < 1) {
         flags.error("--" + KMER_SIZE + " should be positive");
         return false;
       }

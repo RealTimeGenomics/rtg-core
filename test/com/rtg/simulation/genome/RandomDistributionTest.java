@@ -37,11 +37,11 @@ public class RandomDistributionTest extends TestCase {
     for (int i = 0; i < 1000000; i++) {
       results[dist.nextValue()]++;
     }
-    assertEquals(2, ((double) results[1]) / results[0], 0.1);
-    assertEquals(6, ((double) results[2]) / results[0], 0.1);
-    assertEquals(4, ((double) results[3]) / results[0], 0.1);
+    assertEquals(2, (double) results[1] / results[0], 0.1);
+    assertEquals(6, (double) results[2] / results[0], 0.1);
+    assertEquals(4, (double) results[3] / results[0], 0.1);
     assertEquals(0, results[4]);
-    assertEquals(9, ((double) results[5]) / results[0], 0.1);
+    assertEquals(9, (double) results[5] / results[0], 0.1);
 
   }
 

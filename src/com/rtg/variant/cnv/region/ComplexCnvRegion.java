@@ -83,7 +83,7 @@ final class ComplexCnvRegion extends AbstractCnvRegion implements Integrity {
 
   int index(final int box) {
     assert box >= 0 && box <= mLengthMid;
-    return getStart() + (int) ((((long) box) * mSpanMid + mLengthMid - 1) / mLengthMid);
+    return getStart() + (int) (((long) box * mSpanMid + mLengthMid - 1) / mLengthMid);
   }
 
   @Override

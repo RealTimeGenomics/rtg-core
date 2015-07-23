@@ -55,7 +55,7 @@ public class SimpleOutput extends IntegralAbstract implements LSMOutput {
     mOut.write('\t');
     mOut.write(Utils.realFormat(mean, 3).getBytes());
     mOut.write('\t');
-    mOut.write((Utils.realFormat(stdDev, 3)).getBytes());
+    mOut.write(Utils.realFormat(stdDev, 3).getBytes());
     mOut.write(LSB);
   }
 
