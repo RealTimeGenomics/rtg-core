@@ -34,7 +34,7 @@ public final class MendelianAlleleProbabilityHDDDeNovo extends MendelianAllelePr
 
     // father fixed (haploid)
 
-      for (int j = 0; j <= 0 + 1; j++) { // mother a = 0,1,2
+      for (int j = 0; j <= 1; j++) { // mother a = 0,1,2
         final int mj = Math.max(0, j);
 
         for (int k = 0; k <= mj + 1; k++) { // mother b = 0,1,2,3

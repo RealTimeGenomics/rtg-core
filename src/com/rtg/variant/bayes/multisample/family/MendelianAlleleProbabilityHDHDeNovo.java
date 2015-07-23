@@ -36,7 +36,7 @@ public final class MendelianAlleleProbabilityHDHDeNovo extends MendelianAllelePr
 
     // mother fixed (0)
 
-    for (int k = 0; k <= 0 + 1; k++) { // mother b = 0,1
+    for (int k = 0; k <= 1; k++) { // mother b = 0,1
 
       // Now calculate de novo prob for each child hypothesis
       for (int l = 0; l <= k + 1; l++) { // child a = 0,1,2

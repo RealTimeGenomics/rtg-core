@@ -455,9 +455,9 @@ public class GappedOutputTest extends TestCase {
     so.nextQuery(BidirectionalFrame.REVERSE, 43);
 
     for (int i = 0; i < 12; i += 4) {
-      so.setPosition(i + 0);
+      so.setPosition(i);
       so.hit(0, i + 4);
-      so.hit(1, i + 0);
+      so.hit(1, i);
       so.hit(2, i + 8);
       so.globalIntegrity();
       so.endPosition();
