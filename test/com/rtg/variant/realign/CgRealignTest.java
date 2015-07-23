@@ -15,7 +15,6 @@ package com.rtg.variant.realign;
 import static com.rtg.util.StringUtils.LS;
 
 import com.rtg.mode.DnaUtils;
-import com.rtg.util.StringUtils;
 import com.rtg.variant.realign.ScoreMatrixCGTest.MockRealignParamsCG;
 import com.rtg.variant.util.arithmetic.LogPossibility;
 
@@ -103,7 +102,7 @@ public class CgRealignTest extends TestCase {
       final ProbabilityArray pr = new ProbabilityArray(realign.probabilitiesLn(i));
       sb.append("[").append(i).append("]");
       sb.append(pr);
-      sb.append(StringUtils.LS);
+      sb.append(LS);
 
     }
     assertEquals(expected, sb.toString());

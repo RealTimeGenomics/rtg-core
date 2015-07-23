@@ -22,9 +22,8 @@ import java.util.List;
 
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.ProgramState;
-import com.rtg.util.StringUtils;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.test.FileHelper;
 
 import junit.framework.TestCase;
@@ -121,7 +120,7 @@ public class AsyncKmerIterableTest extends TestCase {
     int mI;
 
     public DeadlyReadPairSource() throws IOException {
-      super(ReaderTestUtils.getReaderDnaMemory(">a" + StringUtils.LS + "G" + StringUtils.LS));
+      super(ReaderTestUtils.getReaderDnaMemory(">a" + LS + "G" + LS));
     }
 
     @Override

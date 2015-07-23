@@ -62,7 +62,7 @@ public class SamMergeCliTest extends AbstractCliTest {
     final File temp = FileUtils.createTempDir("validator", "test");
     try {
       final File fake = new File(temp, "fake.txt.sam");
-      FileUtils.stringToFile(fake.getPath() + StringUtils.LS, fake);
+      FileUtils.stringToFile(fake.getPath() + LS, fake);
       TestUtils.containsAll(checkHandleFlagsErr("-o", "blahOutput").replaceAll("\\s+", " "), "No input files specified.");
       TestUtils.containsAll(checkHandleFlagsErr("-o", fake.getPath(), fake.getPath(), "-Z").replaceAll("\\s+", " "), "The file \"" + fake.getPath() + "\" already exists. Please remove it first or choose a different file");
       TestUtils.containsAll(checkHandleFlagsErr("-o", fake.getPath(), fake.getPath(), "-c", "0").replaceAll("\\s+", " "), "The specified flag \"--max-hits\" has invalid value \"0\". It should be greater than or equal to \"1\".");
@@ -84,12 +84,12 @@ public class SamMergeCliTest extends AbstractCliTest {
       final File ffb = new File(temp, "alignmentsB.sam.gz");
       FileHelper.stringToGzFile(SharedSamConstants.SAM9, ffb);
       new TabixIndexer(ffb, TabixIndexer.indexFileName(ffb)).saveSamIndex();
-      FileUtils.stringToFile(ffa.getPath() + StringUtils.LS + ffb.getPath() + StringUtils.LS, inputFile);
+      FileUtils.stringToFile(ffa.getPath() + LS + ffb.getPath() + LS, inputFile);
 
       final File outFile = new File(temp, "test.sam.gz");
       final String stdout = checkMainInitOk("-I", inputFile.getPath(), "-o", outFile.getPath(), "--region", "g1:1+5");
-      final String expected = "SAM records read:    6" + StringUtils.LS
-                            + "SAM records written: 6" + StringUtils.LS;
+      final String expected = "SAM records read:    6" + LS
+                            + "SAM records written: 6" + LS;
       assertEquals(expected, stdout);
       assertTrue(outFile.exists());
       final String output = FileHelper.gzFileToString(outFile);
@@ -118,7 +118,7 @@ public class SamMergeCliTest extends AbstractCliTest {
       final File ffb = new File(temp, "alignmentsB.sam.gz");
       FileHelper.stringToGzFile(SharedSamConstants.SAM9, ffb);
       new TabixIndexer(ffb, TabixIndexer.indexFileName(ffb)).saveSamIndex();
-      FileUtils.stringToFile(ffa.getPath() + StringUtils.LS + ffb.getPath() + StringUtils.LS, inputFile);
+      FileUtils.stringToFile(ffa.getPath() + LS + ffb.getPath() + LS, inputFile);
 
       final String stdout = checkMainInitOk("-I", inputFile.getPath(), "--region", "g1:1+5");
       TestUtils.containsAll(stdout
@@ -134,10 +134,10 @@ public class SamMergeCliTest extends AbstractCliTest {
   }
 
   private static final String EXPECTED_TABIX_SAM = ""
-   + "52\t0\tchr6\t160560249\t255\t93=\t*\t0\t0\tACAGCAGCAGCAACAACAGTAACAACAGTAGAAATAAGTACAATAGCAATAACAACAGTAATAGCAACAGCAAAAACAATAGCAGCAGTAACA\t*\tAS:i:0\tNM:i:0\tIH:i:1" + StringUtils.LS
-   + "94\t0\tchr6\t160560323\t255\t20=\t*\t0\t0\tAACAATAGCAGCAGTAACAA\t*\tAS:i:0\tNM:i:0\tIH:i:1" + StringUtils.LS
-   + "78\t16\tchr6\t160560324\t255\t51=\t*\t0\t0\tACAATAGCAGCAGTAACAATAACAACAGCAATAGCAGCAACAACAGCAACA\t*\tAS:i:0\tNM:i:0\tIH:i:1" + StringUtils.LS
-   + "87\t16\tchr6\t160560357\t255\t51=\t*\t0\t0\tGCAGCAACAACAGCAACAAGAAAAATGACAATAGCAGCAGCAACAACAGCA\t*\tAS:i:0\tNM:i:0\tIH:i:1" + StringUtils.LS;
+   + "52\t0\tchr6\t160560249\t255\t93=\t*\t0\t0\tACAGCAGCAGCAACAACAGTAACAACAGTAGAAATAAGTACAATAGCAATAACAACAGTAATAGCAACAGCAAAAACAATAGCAGCAGTAACA\t*\tAS:i:0\tNM:i:0\tIH:i:1" + LS
+   + "94\t0\tchr6\t160560323\t255\t20=\t*\t0\t0\tAACAATAGCAGCAGTAACAA\t*\tAS:i:0\tNM:i:0\tIH:i:1" + LS
+   + "78\t16\tchr6\t160560324\t255\t51=\t*\t0\t0\tACAATAGCAGCAGTAACAATAACAACAGCAATAGCAGCAACAACAGCAACA\t*\tAS:i:0\tNM:i:0\tIH:i:1" + LS
+   + "87\t16\tchr6\t160560357\t255\t51=\t*\t0\t0\tGCAGCAACAACAGCAACAAGAAAAATGACAATAGCAGCAGCAACAACAGCA\t*\tAS:i:0\tNM:i:0\tIH:i:1" + LS;
 
 
   public void testTabixHandlingBug() throws IOException {
@@ -170,9 +170,9 @@ public class SamMergeCliTest extends AbstractCliTest {
       final File ffc = new File(temp, "alignmentsC.sam.gz");
       FileHelper.stringToGzFile(SharedSamConstants.SAM9 + SAM_PCR_DUP, ffc);
       new TabixIndexer(ffc, TabixIndexer.indexFileName(ffc)).saveSamIndex();
-      FileUtils.stringToFile(ffa.getPath() + StringUtils.LS
-                             + ffb.getPath() + StringUtils.LS
-                             + ffc.getPath() + StringUtils.LS, inputFile);
+      FileUtils.stringToFile(ffa.getPath() + LS
+                             + ffb.getPath() + LS
+                             + ffc.getPath() + LS, inputFile);
 
       final File outFile = new File(temp, "test.sam.gz");
       final String stdout = checkMainInitOk("-I", inputFile.getPath(), "-o", outFile.getPath());
@@ -204,9 +204,9 @@ public class SamMergeCliTest extends AbstractCliTest {
       final File ffc = new File(temp, "alignmentsC.sam.gz");
       FileHelper.stringToGzFile(SharedSamConstants.SAM9 + SAM_PCR_DUP, ffc);
       new TabixIndexer(ffc, TabixIndexer.indexFileName(ffc)).saveSamIndex();
-      FileUtils.stringToFile(ffa.getPath() + StringUtils.LS
-                             + ffb.getPath() + StringUtils.LS
-                             + ffc.getPath() + StringUtils.LS, inputFile);
+      FileUtils.stringToFile(ffa.getPath() + LS
+                             + ffb.getPath() + LS
+                             + ffc.getPath() + LS, inputFile);
 
       final File outFile = new File(temp, "test.sam.gz");
       final String stdout = checkMainInitOk("-I", inputFile.getPath(), "-o", outFile.getPath(), "--exclude-duplicates", "--exclude-unmapped");

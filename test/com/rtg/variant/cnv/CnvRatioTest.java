@@ -79,11 +79,11 @@ public class CnvRatioTest extends TestCase {
 
   private String stripComments(String file) {
     final StringBuilder bd = new StringBuilder();
-    final String[] lines = file.split(StringUtils.LS);
+    final String[] lines = file.split(LS);
     for (String line : lines) {
       if (!line.startsWith("#")) {
         bd.append(line);
-        bd.append(StringUtils.LS);
+        bd.append(LS);
       }
     }
     return bd.toString();
@@ -91,11 +91,11 @@ public class CnvRatioTest extends TestCase {
 
   private String getComments(String file) {
     final StringBuilder bd = new StringBuilder();
-    final String[] lines = file.split(StringUtils.LS);
+    final String[] lines = file.split(LS);
     for (String line : lines) {
       if (line.startsWith("#")) {
         bd.append(line);
-        bd.append(StringUtils.LS);
+        bd.append(LS);
       }
     }
     return bd.toString();

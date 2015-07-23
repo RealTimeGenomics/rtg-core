@@ -107,12 +107,12 @@ public class SegregationVcfSearch extends AbstractCli {
     mFlags.setDescription("Analyze a VCF to produce phasing segregation information. VCF must only contain samples for the parents and the children of those parents.");
 
     mFlags.registerRequired('t', TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the reads have been mapped against").setCategory(INPUT_OUTPUT);
-    mFlags.registerRequired(VCF_FLAG, File.class, CommonFlags.FILE, "input VCF file to be analyzed").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerRequired(OUTPUT_FLAG, File.class, CommonFlags.FILE, "output text file containing block and crossover information").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerRequired(OUTPUT_REGIONS_FLAG, File.class, CommonFlags.FILE, "output BED file to contain regions of phasing segregation information").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerRequired(VCF_FLAG, File.class, CommonFlags.FILE, "input VCF file to be analyzed").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired(OUTPUT_FLAG, File.class, CommonFlags.FILE, "output text file containing block and crossover information").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired(OUTPUT_REGIONS_FLAG, File.class, CommonFlags.FILE, "output BED file to contain regions of phasing segregation information").setCategory(INPUT_OUTPUT);
 
-    mFlags.registerRequired(FATHER_FLAG, String.class, CommonFlags.STRING, "sample name of the father").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerRequired(MOTHER_FLAG, String.class, CommonFlags.STRING, "sample name of the mother").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerRequired(FATHER_FLAG, String.class, CommonFlags.STRING, "sample name of the father").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired(MOTHER_FLAG, String.class, CommonFlags.STRING, "sample name of the mother").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(NEW_PENALTY_FLAG, Integer.class, CommonFlags.INT, "override penalty for new blocks").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     mFlags.registerOptional(XO_PENALTY_FLAG, Integer.class, CommonFlags.INT, "override penalty for crossovers").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
 

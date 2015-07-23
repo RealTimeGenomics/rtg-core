@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.ChrStats;
 import com.rtg.calibrate.Recalibrate;
@@ -53,16 +54,13 @@ import com.rtg.report.ReportType;
 import com.rtg.usage.UsageMetric;
 import com.rtg.util.Environment;
 import com.rtg.util.MathUtils;
-import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.OneShotTimer;
 import com.rtg.util.intervals.RegionRestriction;
-import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
 
 /**
  * Takes reads and a template and generates mappings.
- *
  */
 public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
 
@@ -226,7 +224,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
       LongReadTask.search(posParams, outProcessor, index);
       outProcessor.finish();
     }
-    Diagnostic.userLog("Index search performance " + StringUtils.LS + index.perfString());
+    Diagnostic.userLog("Index search performance " + LS + index.perfString());
   }
 
   private static void indexThenSearch(final NgsParams params, final MapStatistics statistics, final UsageMetric usageMetric) throws IOException {

@@ -106,7 +106,7 @@ public class AssembleCli extends ParamsCli<AssembleParams> {
         final List<File> files = CommonFlags.getFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, true);
         files.addAll(CommonFlags.getFileList(flags, GraphMapCli.INPUT_LIST_FLAG_MATE_PAIR, GraphMapCli.MATE_PAIR, true));
         files.addAll(CommonFlags.getFileList(flags, GraphMapCli.INPUT_LIST_FLAG_454, GraphMapCli.FOUR_FIVE_FOUR, true));
-        if (flags.isSet(CommonFlags.START_READ_ID) || flags.isSet(CommonFlags.END_READ_ID)) {
+        if (flags.isSet(START_READ_ID) || flags.isSet(END_READ_ID)) {
           if (files.size() != 1) {
             flags.error("Can only specify read range with a single input set of reads");
             return false;
@@ -185,10 +185,10 @@ public class AssembleCli extends ParamsCli<AssembleParams> {
         .readsMatePair(CommonFlags.getFileList(flags, GraphMapCli.INPUT_LIST_FLAG_MATE_PAIR, GraphMapCli.MATE_PAIR, true))
         .wordSize((Integer) flags.getValue(MapFlags.WORDSIZE_FLAG))
         .stepSize((Integer) flags.getValue(MapFlags.STEP_FLAG))
-        .maxMismatches((IntegerOrPercentage) flags.getValue(GraphMapCli.MISMATCHES))
-        .kmerSize((Integer) flags.getValue(DeBruijnAssemblerCli.KMER_SIZE))
+        .maxMismatches((IntegerOrPercentage) flags.getValue(MISMATCHES))
+        .kmerSize((Integer) flags.getValue(KMER_SIZE))
         .minHashFrequency((Integer) flags.getValue(DeBruijnAssemblerCli.MIN_HASH_FREQUENCY))
-        .mergeRatio((Double) flags.getValue(DeBruijnAssemblerCli.DIPLOID_RATIO))
+        .mergeRatio((Double) flags.getValue(DIPLOID_RATIO))
         .minPathReads(flags.isSet(FilterPaths.MIN_PATH) ? (Integer) flags.getValue(FilterPaths.MIN_PATH) : -1)
         .minReadCount(flags.isSet(FilterPaths.READ_COUNT) ? (Integer) flags.getValue(FilterPaths.READ_COUNT) : -1)
         .alignments(flags.isSet(GraphMapCli.ALIGNMENTS))

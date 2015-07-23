@@ -16,7 +16,6 @@ import static com.rtg.util.StringUtils.LS;
 import static com.rtg.util.StringUtils.TAB;
 
 import com.rtg.util.Environment;
-import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CommandLine;
 
 /**
@@ -67,9 +66,9 @@ public class DebugDiscordantOutputFormatter {
     final StringBuilder sb = new StringBuilder();
     sb.append("#Version ").append(Environment.getVersion()).append(", Discordance output ").append(DiscordantTool.DT_OUTPUT_VERSION).append(LS);
     if (CommandLine.getCommandLine() != null) {
-      sb.append("#CL" + TAB).append(CommandLine.getCommandLine()).append(StringUtils.LS);
+      sb.append("#CL" + TAB).append(CommandLine.getCommandLine()).append(LS);
     }
-    sb.append("#RUN-ID" + TAB).append(CommandLine.getRunId()).append(StringUtils.LS);
+    sb.append("#RUN-ID" + TAB).append(CommandLine.getRunId()).append(LS);
     sb.append("#");
     sb.append("count" + TAB);
     sb.append("union:template" + TAB + "start" + TAB + "end" + TAB);
@@ -78,7 +77,7 @@ public class DebugDiscordantOutputFormatter {
     sb.append("intersection:template" + TAB + "start" + TAB + "end" + TAB);
     sb.append("remote" + TAB + "start" + TAB + "end" + TAB);
     sb.append("r" + TAB + "s" + TAB);
-    sb.append(StringUtils.LS);
+    sb.append(LS);
     return sb.toString();
   }
 

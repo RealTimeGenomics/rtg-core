@@ -24,7 +24,6 @@ import com.rtg.launcher.GlobalFlags;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.sam.Sam2Bam;
-import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
@@ -58,9 +57,9 @@ public class AviewTest extends AbstractCliTest {
 
   static final String SNP = ""
 //    + "#name\tposition\ttype\treference\tprediction\tposterior\tcoverage\tcorrection\tsupport_statistics" + StringUtils.LS
-      + VcfHeader.MINIMAL_HEADER + "\tSAMPLE" + StringUtils.LS
+      + VcfHeader.MINIMAL_HEADER + "\tSAMPLE" + LS
 //    + "g1\t11\te\tG\tC:T\t9.3\t4\t0.040\tC\t2\t0.020\tT\t2\t0.020" + StringUtils.LS;
-    + "g1\t11\t.\tG\tC,T\t9.3\tPASS\t.\tGT\t1/2" + StringUtils.LS;
+    + "g1\t11\t.\tG\tC,T\t9.3\tPASS\t.\tGT\t1/2" + LS;
 
   void run(String testname, final String sam, final String... extraargs) throws IOException {
     runWithErr(testname, sam, "", extraargs);
@@ -169,12 +168,12 @@ public class AviewTest extends AbstractCliTest {
           + "0" + T + "0" + T + "g1" + T + "8" + T + "255" + T + "5=" + T + "*" + T + "0" + T + "0" + T + "CTGGT" + T + "&'(``" + T + "AS:i:0" + T + "IH:i:1" + LS;
    static final String SNPDELETE = ""
 //    + "#name\tposition\ttype\treference\tprediction\tposterior\tcoverage\tcorrection\tsupport_statistics" + StringUtils.LS
-      + VcfHeader.MINIMAL_HEADER + "\tSAMPLE" + StringUtils.LS
+      + VcfHeader.MINIMAL_HEADER + "\tSAMPLE" + LS
 //    + "g1\t11\te\tG\tC:T\t9.3\t4\t0.040\tC\t2\t0.020\tT\t2\t0.020" + StringUtils.LS;
-       + "g1\t11\t.\tGTCA\tG\t9.3\tPASS\t.\tGT\t1/1" + StringUtils.LS;
+       + "g1\t11\t.\tGTCA\tG\t9.3\tPASS\t.\tGT\t1/1" + LS;
   static final String BEDDELETE = ""
 //    + chr start end label score
-      + "g1\t10\t13\tcomplex-called" + StringUtils.LS;
+      + "g1\t10\t13\tcomplex-called" + LS;
 
   public void testDeletes() throws Exception {
     try (TestDirectory dir = new TestDirectory()) {
@@ -216,7 +215,7 @@ public class AviewTest extends AbstractCliTest {
       prepareData(f, SAM);
       final String path = new File(f, ALIGNMENTS_BAM_FILE_NAME).getPath();
       final File list = new File(f, "list");
-      FileUtils.stringToFile(path + StringUtils.LS, list);
+      FileUtils.stringToFile(path + LS, list);
       final String[] args = {
           "-I", list.getPath(),
           "-c", new File(f, SNPS_FILE_NAME).getPath(),

@@ -176,7 +176,7 @@ public class DiscordantToolTest extends TestCase {
       final int before = mReadSets.size();
       final int res = super.flush(start, end);
       mFlushPositions.append("Flushing: ").append(mTemplateName).append("[").append(start).append(":").append(end).append("], sizeBefore=").append(before).append(" sizeAfter=").append(mReadSets.size());
-      mFlushPositions.append(StringUtils.LS);
+      mFlushPositions.append(LS);
       return res;
     }
   }

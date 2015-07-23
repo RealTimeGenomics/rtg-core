@@ -21,7 +21,6 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
 import com.rtg.reader.ReaderTestUtils;
-import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
@@ -32,7 +31,6 @@ import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -74,9 +72,9 @@ public class ReadSimEvalCliTest extends TestCase {
       try {
         final int code = ac.mainInit(args, bos, ps.printStream());
         assertEquals(ps.toString(), 0, code);
-        TestUtils.containsAll(ps.toString(), "No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + StringUtils.LS,
-            "No template map present in reads SDF. Cannot verify evaluation is against correct template." + StringUtils.LS,
-            "Missing template SDF ID in SAM header. Cannot verify evaluation is against correct template." + StringUtils.LS
+        TestUtils.containsAll(ps.toString(), "No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + LS,
+            "No template map present in reads SDF. Cannot verify evaluation is against correct template." + LS,
+            "Missing template SDF ID in SAM header. Cannot verify evaluation is against correct template." + LS
             );
       } finally {
         bos.close();
@@ -157,7 +155,7 @@ public class ReadSimEvalCliTest extends TestCase {
         final MemoryPrintStream ps = new MemoryPrintStream();
         final int rc = ac.mainInit(args, bos, ps.printStream());
         assertEquals(ps.toString(), 0, rc);
-        assertTrue(ps.toString().contains("No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + StringUtils.LS));
+        assertTrue(ps.toString().contains("No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + LS));
       } finally {
         bos.close();
       }
@@ -258,7 +256,7 @@ public class ReadSimEvalCliTest extends TestCase {
         final MemoryPrintStream ps = new MemoryPrintStream();
         final int mainInit = ac.mainInit(args, bos, ps.printStream());
         assertEquals(bos.toString() + ps.toString(), 0, mainInit);
-        assertTrue(ps.toString().contains("No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + StringUtils.LS));
+        assertTrue(ps.toString().contains("No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + LS));
       } finally {
         bos.close();
       }

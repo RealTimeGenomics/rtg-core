@@ -289,7 +289,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(X_INDEL_TRIGGER_FRACTION_FLAG, Integer.class, "int", "if set, percentage of bases that must be indel to trigger complex calling", 5).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_CHUNKING_FLAG, Integer.class, "int", "number of nucleotide positions considered per chunk", 1000).setCategory(UTILITY);
     flags.registerOptional(X_LOOKAHEAD_FLAG, Integer.class, "int", "number of chunks to prefetch", 2).setCategory(UTILITY);
-    flags.registerOptional(X_VCF_RP, "include RTG posterior in VCF output").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(X_VCF_RP, "include RTG posterior in VCF output").setCategory(REPORTING);
     flags.registerOptional(X_HYPER_COMPLEX_LENGTH_FLAG, Integer.class, "int", "the length beyond which complex regions are considered hyper complex", Integer.MAX_VALUE).setCategory(SENSITIVITY_TUNING);
     // flags.registerOptional(X_INTERESTING_THRESHOLD_FLAG, Double.class, "float", "posterior threshold below which an identity call is considered interesting", Double.valueOf(1.0 / VariantUtils.LOG_10)).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_INTERESTING_SEPARATION_FLAG, Integer.class, "int", "the maximum distance over which two interesting calls will be considered part of the same complex region", 4).setCategory(SENSITIVITY_TUNING);
@@ -298,7 +298,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(X_R_MAX_FLAG, Integer.class, "int", "for mated reads this is the maximum value that the read quality can have", 255).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_UNMATED_R_MAX_FLAG, Integer.class, "int", "for unmated reads this is the maximum value that the read quality can have", 255).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_THREADING_ENVIRONMENT, String.class, "string", "threading environment to be used. One of [single, random=seed, parallel]", "parallel").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_IO_THREADS, Integer.class, "int", "number of threads to use for IO. Defaults to the number of available cores").setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(X_IO_THREADS, Integer.class, "int", "number of threads to use for IO. Defaults to the number of available cores").setCategory(UTILITY);
     flags.registerOptional(X_NO_COMPLEX_CALLS_FLAG, "turn off attempting calls in complex region").setCategory(INPUT_OUTPUT);
     flags.registerOptional(X_NO_TRIM_SPLIT, "disable trimming and splitting").setCategory(REPORTING);
     flags.registerOptional(X_IGNORE_SAM_HEADER_INCOMPATIBILITY, "ignore incompatible SAM headers when merging SAM results").setCategory(UTILITY);

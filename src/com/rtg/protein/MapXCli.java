@@ -127,7 +127,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
 
   @Override
   protected File outputDirectory() {
-    return (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
+    return (File) mFlags.getValue(OUTPUT_FLAG);
   }
 
   @TestClass(value = "com.rtg.protein.MapXValidatorTest")
@@ -407,7 +407,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
     CommonFlags.initOutputDirFlag(flags);
 
     // No Paired End input for MapX
-    final Flag formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", FormatCli.SDF_FORMAT).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", FormatCli.SDF_FORMAT).setCategory(INPUT_OUTPUT);
     formatFlag.setParameterRange(new String[] {FormatCli.SDF_FORMAT, FormatCli.FASTA_FORMAT, FormatCli.FASTQ_FORMAT, FormatCli.SAM_SE_FORMAT});
 
     final Flag filter = flags.registerOptional('f', CommonFlags.OUTPUT_FILTER_FLAG, String.class, "STRING", "output filter", "topn");

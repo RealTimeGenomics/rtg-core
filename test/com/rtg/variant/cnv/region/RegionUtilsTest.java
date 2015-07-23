@@ -22,7 +22,6 @@ import java.util.Map;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
-import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
@@ -128,27 +127,27 @@ public class RegionUtilsTest extends TestCase {
     assertTrue(f.isInRegion(9));
 }
 
-  private static final String SEQUENCES = ">seq1" + StringUtils.LS
+  private static final String SEQUENCES = ">seq1" + LS
   + "aaaannaaca"
   + "nnnnnnnnnn"
   + "nacacggttc"
   + "ancagttacn"
   + "nncagtcagc"
-  + "atnn" + StringUtils.LS
+  + "atnn" + LS
 
-  + ">seq2" + StringUtils.LS
-  + "nnn" + StringUtils.LS
+  + ">seq2" + LS
+  + "nnn" + LS
 
-  + ">seq3" + StringUtils.LS
+  + ">seq3" + LS
   + "nnnactacga"
-  + "gcatgact" + StringUtils.LS
+  + "gcatgact" + LS
 
-  + ">seq4" + StringUtils.LS
+  + ">seq4" + LS
   + "acgatcagtc"
-  + "agctnnn" + StringUtils.LS
+  + "agctnnn" + LS
 
-  + ">seq5" + StringUtils.LS
-  + "acgtacgtactg" + StringUtils.LS;
+  + ">seq5" + LS
+  + "acgtacgtactg" + LS;
 
   public void testRegionFromSdf() throws IOException {
     final File dir = FileUtils.createTempDir("nblockdetect", "test");

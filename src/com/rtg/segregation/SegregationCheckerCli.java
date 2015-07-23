@@ -75,13 +75,13 @@ public class SegregationCheckerCli extends AbstractCli {
     mFlags.setDescription("Annotate a VCF with phasing segregation information from a BED file.");
 
     mFlags.registerRequired('t', TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the reads have been mapped against").setCategory(INPUT_OUTPUT);
-    mFlags.registerRequired(VCF_FLAG, File.class, CommonFlags.FILE, "input VCF file to be annotated").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerRequired(BED_FLAG, File.class, CommonFlags.FILE, "input BED file containing regions of phasing segregation information").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "output VCF file containing new annotations").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerRequired(VCF_FLAG, File.class, CommonFlags.FILE, "input VCF file to be annotated").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired(BED_FLAG, File.class, CommonFlags.FILE, "input BED file containing regions of phasing segregation information").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "output VCF file containing new annotations").setCategory(INPUT_OUTPUT);
 
-    mFlags.registerRequired(FATHER_FLAG, String.class, CommonFlags.STRING, "sample name of the father").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerRequired(MOTHER_FLAG, String.class, CommonFlags.STRING, "sample name of the mother").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerOptional(REPAIR_FLAG, "if set, repair variants where changing only one family member GT would allow consistency with phasing").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerRequired(FATHER_FLAG, String.class, CommonFlags.STRING, "sample name of the father").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired(MOTHER_FLAG, String.class, CommonFlags.STRING, "sample name of the mother").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional(REPAIR_FLAG, "if set, repair variants where changing only one family member GT would allow consistency with phasing").setCategory(INPUT_OUTPUT);
 
     CommonFlags.initNoGzip(mFlags);
     CommonFlags.initIndexFlags(mFlags);

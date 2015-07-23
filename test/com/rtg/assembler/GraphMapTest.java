@@ -36,7 +36,6 @@ import com.rtg.util.IntegerOrPercentage;
 import com.rtg.util.NullStreamUtils;
 import com.rtg.util.SimpleThreadPool;
 import com.rtg.util.StandardDeviation;
-import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.MemoryPrintStream;
@@ -319,9 +318,9 @@ public class GraphMapTest extends TestCase {
     for (String read: reads) {
       sb.append(">")
           .append(i)
-          .append(StringUtils.LS)
+          .append(LS)
           .append(read)
-          .append(StringUtils.LS);
+          .append(LS);
     }
     return new ReadPairSource(ReaderTestUtils.getReaderDnaMemory(sb.toString()));
   }

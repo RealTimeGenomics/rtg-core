@@ -58,7 +58,7 @@ class SurrogateGappedRegion implements SurrogateRegion {
     final long sequenceId = mBuildSeqId / mNumberFrames;
     final String queryId = queryNames == null ? Long.toString(queryId()) : queryNames.name(queryId());
     final String subjectId = subjectNames == null ? Long.toString(sequenceId) : subjectNames.name(sequenceId);
-      out.append("").append(queryId).append("\t").append(mQueryFrame.display()).append("\t").append(String.valueOf(mQueryStart + 1)).append("\t").append(String.valueOf(mQueryEnd + 1)).append("\t").append(subjectId).append("\t").append(subjectFrame.display()).append("\t").append(String.valueOf(mBuildStart + 1)).append("\t").append(String.valueOf(mBuildEnd + 1)).append(com.rtg.util.StringUtils.LS);
+      out.append("").append(queryId).append("\t").append(mQueryFrame.display()).append("\t").append(String.valueOf(mQueryStart + 1)).append("\t").append(String.valueOf(mQueryEnd + 1)).append("\t").append(subjectId).append("\t").append(subjectFrame.display()).append("\t").append(String.valueOf(mBuildStart + 1)).append("\t").append(String.valueOf(mBuildEnd + 1)).append(LS);
     return true;
   }
 

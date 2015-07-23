@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
-import com.rtg.index.hash.ngs.ReadDecoder;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.ngs.blocking.ReadBlocker;
@@ -588,7 +587,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
 
     @Override
     public void process(long templateId, String frame, int readId, int tStart, int score, int scoreIndel) throws IOException {
-      final int dReadId = ReadDecoder.PAIRED_END.decode(readId);
+      final int dReadId = PAIRED_END.decode(readId);
       final boolean isFirst = PAIRED_END.isFirst(readId);
       if (isFirst) {
         if (mFreqBlockerLeft.isBlocked(dReadId)) {

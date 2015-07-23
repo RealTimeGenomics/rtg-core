@@ -19,7 +19,6 @@ import java.io.IOException;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
-import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
@@ -28,7 +27,6 @@ import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 /**
- * Test class
  */
 public class RecalibrateCliTest extends AbstractCliTest {
 
@@ -41,7 +39,7 @@ public class RecalibrateCliTest extends AbstractCliTest {
           + "#CL\tnull" + LS
           + "@ins:RG1\t0\t0\t0\t1" + LS
           + "@mnp:RG1\t0\t85\t8\t1\t1" + LS
-          + "@nh:RG1\t0\t100" + StringUtils.LS
+          + "@nh:RG1\t0\t100" + LS
           + "@covar\treadgroup\tbasequality\tsequence\tequal\tdiff\tins\tdel" + LS
           + "RG1\t20\tsimulatedSequence1\t9889\t108\t3\t0" + LS;
 
@@ -137,8 +135,8 @@ public class RecalibrateCliTest extends AbstractCliTest {
   }
   private static final String EXPECTED_WITH_BED = ", calibrate v3.0" + LS
                                          + "#CL\tnull" + LS
-                                         + "@nh:RG1\t0\t4" + StringUtils.LS
-                                         + "@sequence\t7\tsimulatedSequence1" + StringUtils.LS
+                                         + "@nh:RG1\t0\t4" + LS
+                                         + "@sequence\t7\tsimulatedSequence1" + LS
                                          + "@covar\treadgroup\tbasequality\tsequence\tequal\tdiff\tins\tdel" + LS
                                          + "RG1\t20\tsimulatedSequence1\t28\t0\t0\t0" + LS;
   public void testWithBed() throws IOException {

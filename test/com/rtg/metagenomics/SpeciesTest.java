@@ -33,7 +33,6 @@ import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.taxonomy.Taxonomy;
 import com.rtg.usage.UsageMetric;
-import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
@@ -325,20 +324,20 @@ public class SpeciesTest extends TestCase {
     checkStdDev(hessian, x, x);
   }
   static final String BROKEN_TAXONOMY = ""
-      + "#RTG taxonomy version 1.0" + StringUtils.LS
-      + "#taxID\tparentID\trank\tname" + StringUtils.LS
-      + "1\t-1\tno rank\troot" + StringUtils.LS
-      + "2\t1\tsuper kingdom\tEukaryota" + StringUtils.LS
-      + "3\t4\tsuper kingdom\tBrokenTaxon" + StringUtils.LS
+      + "#RTG taxonomy version 1.0" + LS
+      + "#taxID\tparentID\trank\tname" + LS
+      + "1\t-1\tno rank\troot" + LS
+      + "2\t1\tsuper kingdom\tEukaryota" + LS
+      + "3\t4\tsuper kingdom\tBrokenTaxon" + LS
     ;
   static final String BROKEN_TAXONOMY_LOOKUP = ""
-      + "3\ta" + StringUtils.LS
+      + "3\ta" + LS
     ;
 
   public void testInvalidTaxonomy() throws IOException {
     try (TestDirectory dir = new TestDirectory()) {
       final File species = new File(dir, "species");
-      ReaderTestUtils.getReaderDNA(">a" + StringUtils.LS + "ACGT", species, new SdfId());
+      ReaderTestUtils.getReaderDNA(">a" + LS + "ACGT", species, new SdfId());
       final File taxonFile = new File(species, "taxonomy.tsv");
       FileUtils.stringToFile(BROKEN_TAXONOMY, taxonFile);
       try {

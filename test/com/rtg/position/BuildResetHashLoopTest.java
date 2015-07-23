@@ -24,16 +24,15 @@ import com.rtg.index.hash.HashFunction;
 import com.rtg.index.hash.HashLoop;
 import com.rtg.index.hash.ResetHashLoop;
 import com.rtg.index.hash.ResetHashLoopTest;
+import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.MockReaderParams;
 import com.rtg.launcher.MockSequenceParams;
 import com.rtg.launcher.ReaderParams;
-import com.rtg.launcher.HashingRegion;
 import com.rtg.mode.SequenceMode;
 import com.rtg.mode.SequenceType;
 import com.rtg.reader.MockSequencesReader;
 import com.rtg.reader.SequencesReader;
-import com.rtg.util.StringUtils;
 import com.rtg.util.array.ImmutableIntArray;
 
 /**
@@ -109,10 +108,10 @@ public class BuildResetHashLoopTest extends ResetHashLoopTest {
    */
   public final void testReadLength() throws IOException {
     final String str = ""
-      + ">x1" + StringUtils.LS
-      + "ACT" + StringUtils.LS
-      + ">x2" + StringUtils.LS
-      + "ACTG" + StringUtils.LS;
+      + ">x1" + LS
+      + "ACT" + LS
+      + ">x2" + LS
+      + "ACTG" + LS;
     try (SequencesReader sr = getReaderDNA(str)) {
       final String exp1 = ""
         + "0" + LS
@@ -197,14 +196,14 @@ public class BuildResetHashLoopTest extends ResetHashLoopTest {
   }
 
   public void testExceptionMessage() throws Exception {
-    final HashLoop loop = new BuildResetHashLoop(15, 1, new ExactHashFunction(15, SequenceMode.UNIDIRECTIONAL.codeType().bits()), (Index) null, 42) {
+    final HashLoop loop = new BuildResetHashLoop(15, 1, new ExactHashFunction(15, UNIDIRECTIONAL.codeType().bits()), (Index) null, 42) {
       @Override
       public void hashCall(final long hash, final int internalId, final int stepPosition) {
         // do nothing
       }
     };
     final SequencesReader sr = new MockSequencesReader(SequenceType.DNA, Integer.MAX_VALUE + 1L);
-    final ReaderParams re = new MockReaderParams(sr, SequenceMode.UNIDIRECTIONAL);
+    final ReaderParams re = new MockReaderParams(sr, UNIDIRECTIONAL);
     final ISequenceParams se = new MockSequenceParams(re, 0, 1) {
       @Override
       public HashingRegion region() {

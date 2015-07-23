@@ -99,9 +99,9 @@ public abstract class AbstractPositionHashLoopTest extends AbstractIncrementalHa
   }
 
   public void testExceptionMessage() throws Exception {
-    final HashLoop loop = getHashLoop1a(15, 1, SequenceMode.UNIDIRECTIONAL.codeType().bits());
+    final HashLoop loop = getHashLoop1a(15, 1, UNIDIRECTIONAL.codeType().bits());
     final SequencesReader sr = new MockSequencesReader(SequenceType.DNA, Integer.MAX_VALUE + 1L);
-    final ReaderParams re = new MockReaderParams(sr, SequenceMode.UNIDIRECTIONAL);
+    final ReaderParams re = new MockReaderParams(sr, UNIDIRECTIONAL);
     final ISequenceParams se = new MockSequenceParams(re, 0, 1) {
       @Override
       public HashingRegion region() {

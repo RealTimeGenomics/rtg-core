@@ -190,7 +190,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     mFlags.registerOptional(TEMP_DIR, File.class, "DIR", "directory used for temporary files (Defaults to output directory)").setCategory(UTILITY);
 
     mFlags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "maximum number of top equal results output per read", 5).setCategory(REPORTING);
-    final Flag format = mFlags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "format of read data", FormatCli.SDF_FORMAT).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag format = mFlags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "format of read data", FormatCli.SDF_FORMAT).setCategory(INPUT_OUTPUT);
     format.setParameterRange(new String[] {FormatCli.SDF_FORMAT, FormatCli.TSV_FORMAT});
     mFlags.registerOptional(LEGACY_CIGARS, "use legacy cigars in output").setCategory(UTILITY);
 
@@ -206,9 +206,9 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     mFlags.registerOptional(XINTSET_WINDOW, Integer.class, "INT", "windows for int set", 1).setCategory(UTILITY);
     mFlags.registerOptional(COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", true).setCategory(UTILITY);
     mFlags.registerOptional(OUTPUT_UNFILTERED, "output all alignments meeting thresholds instead of applying mating and N limits").setCategory(REPORTING);
-    mFlags.registerOptional(MapFlags.N_AS_MISMATCH, "treat unknowns as mismatches").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    mFlags.registerOptional(MapFlags.SEX_FLAG, Sex.class, "sex", "sex of individual", null).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    mFlags.registerOptional(MapFlags.PEDIGREE_FLAG, File.class, "file", "genome relationships pedigree containing sex of sample").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    mFlags.registerOptional(MapFlags.N_AS_MISMATCH, "treat unknowns as mismatches").setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(MapFlags.SEX_FLAG, Sex.class, "sex", "sex of individual", null).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(MapFlags.PEDIGREE_FLAG, File.class, "file", "genome relationships pedigree containing sex of sample").setCategory(SENSITIVITY_TUNING);
     MapFlags.initSamOutputFlag(mFlags);
     MapFlags.initDontUnifyFlag(mFlags);
     MapFlags.initNoCalibrationFlag(mFlags);

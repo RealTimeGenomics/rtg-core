@@ -24,7 +24,6 @@ import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.usage.UsageMetric;
-import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.ListenerType;
 import com.rtg.util.io.FileUtils;
@@ -466,7 +465,7 @@ public final class NgsTestUtils {
     //int count = 0;
     for (final String sub : subs) {
       if (!str.contains(sub)) {
-        sb.append("'").append(sub).append("' was not contained in:").append(str).append(StringUtils.LS);
+        sb.append("'").append(sub).append("' was not contained in:").append(str).append(LS);
         ok = false;
       } else {
         newString = newString.replaceFirst(sub, "xxx");
@@ -475,10 +474,10 @@ public final class NgsTestUtils {
       Assert.assertTrue(sb.toString(), ok);
     }
 
-    final String[] newStrings = newString.split(StringUtils.LS);
+    final String[] newStrings = newString.split(LS);
     for (final String xxx : newStrings) {
       if (!xxx.equals("xxx")) {
-        sb.append("'").append(xxx).append("' was not delivered in results:").append(Arrays.toString(subs)).append(StringUtils.LS);
+        sb.append("'").append(xxx).append("' was not delivered in results:").append(Arrays.toString(subs)).append(LS);
         ok = false;
       }
       Assert.assertTrue(sb.toString(), ok);

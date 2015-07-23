@@ -115,7 +115,7 @@ public class CoverageStatistics extends AbstractStatistics {
       sb.append("Coverage per region:").append(LS);
     appendRow(table, "depth", "breadth", "covered", "size", "name");
   } else {
-    sb.append("#depth\tbreadth\tcovered\tsize\tname").append(StringUtils.LS);
+    sb.append("#depth\tbreadth\tcovered\tsize\tname").append(LS);
   }
     final Collection<String> sortOrder;
     if (mOutputRegions == null) {
@@ -137,7 +137,7 @@ public class CoverageStatistics extends AbstractStatistics {
         } else {
           sb.append(Utils.realFormat(depth, DP)).append('\t').append(Utils.realFormat(breadth, DP)).append('\t')
                   .append(baseCount).append('\t').append(size).append('\t')
-                  .append(regionName).append(StringUtils.LS);
+                  .append(regionName).append(LS);
         }
       }
     }
@@ -151,7 +151,7 @@ public class CoverageStatistics extends AbstractStatistics {
     } else {
       sb.append(Utils.realFormat(totalDepth, DP)).append('\t').append(Utils.realFormat(totalBreadth, DP)).append('\t')
               .append(mTotalCovered).append('\t').append(mTotalBases).append('\t')
-              .append("all regions").append(StringUtils.LS);
+              .append("all regions").append(LS);
     }
     return sb.toString();
   }
@@ -211,7 +211,7 @@ public class CoverageStatistics extends AbstractStatistics {
   void writeLevels(List<List<Double>> data, OutputStream os) throws IOException {
     final StringBuilder sb = new StringBuilder();
     sb.append("#coverage_level\tcount\t%age\t%cumulative");
-    sb.append(StringUtils.LS);
+    sb.append(LS);
 
     String leader = "";
     for (int i = 0; i < data.size(); i++) {
@@ -225,7 +225,7 @@ public class CoverageStatistics extends AbstractStatistics {
       sb.append(Utils.realFormat(datum.get(1), 2)); //%age
       sb.append('\t');
       sb.append(Utils.realFormat(datum.get(2), 2)); //%age cumulative
-      sb.append(StringUtils.LS);
+      sb.append(LS);
 
       if (BUCKET_SIZE > 1) {
         leader = (i * BUCKET_SIZE + 1) + "..";

@@ -32,10 +32,9 @@ import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.ByteUtils;
 import com.rtg.util.Environment;
-import com.rtg.util.intervals.RegionRestriction;
-import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
 import com.rtg.variant.sv.discord.DiscordBedRecord;
 import com.rtg.variant.sv.discord.SmartBedWriter;
@@ -43,8 +42,6 @@ import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfRecord;
 
 /**
- *         Date: 27/01/12
- *         Time: 9:49 AM
  */
 public class SvPatternsTask extends ParamsTask<BreakpointPatternParams, NoStatistics> implements Closeable {
   //private static Pattern PATTERN = Pattern.compile("\\s+");
@@ -222,13 +219,13 @@ public class SvPatternsTask extends ParamsTask<BreakpointPatternParams, NoStatis
     final StringBuilder sb = new StringBuilder();
     sb.append("#Version ").append(Environment.getVersion()).append(", SV Patterns output ").append(SvPatternsTask.SV_OUTPUT_VERSION).append(LS);
     if (CommandLine.getCommandLine() != null) {
-      sb.append("#CL" + TAB).append(CommandLine.getCommandLine()).append(StringUtils.LS);
+      sb.append("#CL" + TAB).append(CommandLine.getCommandLine()).append(LS);
     }
-    sb.append("#RUN-ID" + TAB).append(CommandLine.getRunId()).append(StringUtils.LS);
+    sb.append("#RUN-ID" + TAB).append(CommandLine.getRunId()).append(LS);
     sb.append("#");
     sb.append("sequence" + TAB + "start" + TAB + "end" + TAB);
     sb.append("description" + TAB + "count");
-    sb.append(StringUtils.LS);
+    sb.append(LS);
     output.write(sb.toString().getBytes());
   }
   void setOutput(OutputStream out) {

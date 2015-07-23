@@ -390,7 +390,7 @@ public abstract class AbstractHashLoopTest extends TestCase {
       + ">x" + StringUtils.LS
       + "ACGT" + StringUtils.LS;
     try (SequencesReader sr = getReaderDNA(str)) {
-      checkCount3(sr, 2, 2, SequenceMode.BIDIRECTIONAL,
+      checkCount3(sr, 2, 2, BIDIRECTIONAL,
         new long[]{1, 11, 1, 11},
         new int[]{0, 0, 1, 1}
       );

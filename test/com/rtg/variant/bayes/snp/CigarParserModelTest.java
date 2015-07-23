@@ -21,7 +21,6 @@ import com.rtg.mode.DnaUtils;
 import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.MathUtils;
-import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.machine.MachineType;
 import com.rtg.variant.AbstractMachineErrorParams;
@@ -33,11 +32,9 @@ import com.rtg.variant.bayes.EvidenceInterface;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
- * Test class
  */
 public class CigarParserModelTest extends TestCase {
 
@@ -677,41 +674,41 @@ public class CigarParserModelTest extends TestCase {
       cpm.toMatcher(me, var, 20, tmpl);
 
       assertEquals(""
-        + "ref=2 nt=1 q=11 r=0" + StringUtils.LS  //A,
-        + "ref=3 nt=0 q=0 r=0" + StringUtils.LS //N!
-        + "ref=4 nt=2 q=15 r=0" + StringUtils.LS  //C0
-        + "ref=5 nt=4 q=21 r=0" + StringUtils.LS  //T6
-        + "ref=6 nt=2 q=15 r=0" + StringUtils.LS  //C0
-        + "ref=7 nt=2 q=19 r=0" + StringUtils.LS  //C4
-        + "ref=8 nt=1 q=8 r=0" + StringUtils.LS
-        + "ref=9 nt=3 q=20 r=0" + StringUtils.LS
-        + "ref=10 nt=3 q=20 r=0" + StringUtils.LS
-        + "ref=11 nt=3 q=17 r=0" + StringUtils.LS
-        + "ref=17 nt=3 q=13 r=0" + StringUtils.LS
-        + "ref=18 nt=4 q=21 r=0" + StringUtils.LS
-        + "ref=19 nt=3 q=21 r=0" + StringUtils.LS
-        + "ref=20 nt=1 q=20 r=0" + StringUtils.LS
-        + "ref=21 nt=4 q=16 r=0" + StringUtils.LS
-        + "ref=22 nt=2 q=16 r=0" + StringUtils.LS
-        + "ref=23 nt=4 q=16 r=0" + StringUtils.LS
-        + "ref=24 nt=4 q=15 r=0" + StringUtils.LS
-        + "ref=25 nt=2 q=20 r=0" + StringUtils.LS
-        + "ref=26 nt=2 q=22 r=0" + StringUtils.LS
-        + "ref=27 nt=2 q=11 r=0" + StringUtils.LS
-        + "ref=28 nt=1 q=16 r=0" + StringUtils.LS
-        + "ref=29 nt=2 q=12 r=0" + StringUtils.LS
-        + "ref=30 nt=2 q=13 r=0" + StringUtils.LS
-        + "ref=31 nt=4 q=15 r=0" + StringUtils.LS //T
-        + "ref=32 nt=2 q=19 r=0" + StringUtils.LS //C
-        + "ref=33 nt=1 q=18 r=0" + StringUtils.LS //A
-        + "ref=35 nt=2 q=13 r=0" + StringUtils.LS //C.
-        + "ref=36 nt=2 q=14 r=0" + StringUtils.LS //C/
-        + "ref=37 nt=4 q=20 r=0" + StringUtils.LS //T5
-        + "ref=38 nt=2 q=15 r=0" + StringUtils.LS //C0
-        + "ref=39 nt=2 q=19 r=0" + StringUtils.LS //C4
-        + "ref=40 nt=2 q=19 r=0" + StringUtils.LS, matcher.toString()); //C4
+        + "ref=2 nt=1 q=11 r=0" + LS  //A,
+        + "ref=3 nt=0 q=0 r=0" + LS //N!
+        + "ref=4 nt=2 q=15 r=0" + LS  //C0
+        + "ref=5 nt=4 q=21 r=0" + LS  //T6
+        + "ref=6 nt=2 q=15 r=0" + LS  //C0
+        + "ref=7 nt=2 q=19 r=0" + LS  //C4
+        + "ref=8 nt=1 q=8 r=0" + LS
+        + "ref=9 nt=3 q=20 r=0" + LS
+        + "ref=10 nt=3 q=20 r=0" + LS
+        + "ref=11 nt=3 q=17 r=0" + LS
+        + "ref=17 nt=3 q=13 r=0" + LS
+        + "ref=18 nt=4 q=21 r=0" + LS
+        + "ref=19 nt=3 q=21 r=0" + LS
+        + "ref=20 nt=1 q=20 r=0" + LS
+        + "ref=21 nt=4 q=16 r=0" + LS
+        + "ref=22 nt=2 q=16 r=0" + LS
+        + "ref=23 nt=4 q=16 r=0" + LS
+        + "ref=24 nt=4 q=15 r=0" + LS
+        + "ref=25 nt=2 q=20 r=0" + LS
+        + "ref=26 nt=2 q=22 r=0" + LS
+        + "ref=27 nt=2 q=11 r=0" + LS
+        + "ref=28 nt=1 q=16 r=0" + LS
+        + "ref=29 nt=2 q=12 r=0" + LS
+        + "ref=30 nt=2 q=13 r=0" + LS
+        + "ref=31 nt=4 q=15 r=0" + LS //T
+        + "ref=32 nt=2 q=19 r=0" + LS //C
+        + "ref=33 nt=1 q=18 r=0" + LS //A
+        + "ref=35 nt=2 q=13 r=0" + LS //C.
+        + "ref=36 nt=2 q=14 r=0" + LS //C/
+        + "ref=37 nt=4 q=20 r=0" + LS //T5
+        + "ref=38 nt=2 q=15 r=0" + LS //C0
+        + "ref=39 nt=2 q=19 r=0" + LS //C4
+        + "ref=40 nt=2 q=19 r=0" + LS, matcher.toString()); //C4
 
-      assertEquals("ref=34 n" + StringUtils.LS, matcher.insertString());
+      assertEquals("ref=34 n" + LS, matcher.insertString());
     }
   }
 
@@ -748,39 +745,39 @@ public class CigarParserModelTest extends TestCase {
       cpm.toMatcher(me, var, 20, tmpl);
 
       assertEquals(""
-        + "ref=0 nt=2 q=24 r=0" + StringUtils.LS  //C9
-        + "ref=1 nt=4 q=24 r=0" + StringUtils.LS  //T9
-        + "ref=2 nt=2 q=23 r=0" + StringUtils.LS  //C8
-        + "ref=3 nt=2 q=24 r=0" + StringUtils.LS  //C9
-        + "ref=4 nt=2 q=25 r=0" + StringUtils.LS
-        + "ref=5 nt=1 q=25 r=0" + StringUtils.LS
-        + "ref=6 nt=1 q=25 r=0" + StringUtils.LS
-        + "ref=7 nt=3 q=25 r=0" + StringUtils.LS
-        + "ref=8 nt=4 q=25 r=0" + StringUtils.LS
-        + "ref=9 nt=4 q=25 r=0" + StringUtils.LS
-        + "ref=16 nt=1 q=27 r=0" + StringUtils.LS
-        + "ref=17 nt=4 q=27 r=0" + StringUtils.LS
-        + "ref=18 nt=4 q=27 r=0" + StringUtils.LS
-        + "ref=19 nt=2 q=27 r=0" + StringUtils.LS
-        + "ref=20 nt=4 q=27 r=0" + StringUtils.LS
-        + "ref=21 nt=2 q=26 r=0" + StringUtils.LS
-        + "ref=22 nt=2 q=28 r=0" + StringUtils.LS
-        + "ref=23 nt=4 q=27 r=0" + StringUtils.LS
-        + "ref=24 nt=3 q=27 r=0" + StringUtils.LS
-        + "ref=25 nt=2 q=26 r=0" + StringUtils.LS
-        + "ref=26 nt=2 q=24 r=0" + StringUtils.LS
-        + "ref=27 nt=4 q=25 r=0" + StringUtils.LS
-        + "ref=28 nt=2 q=26 r=0" + StringUtils.LS
-        + "ref=29 nt=1 q=17 r=0" + StringUtils.LS
-        + "ref=30 nt=3 q=13 r=0" + StringUtils.LS
-        + "ref=31 nt=2 q=9 r=0" + StringUtils.LS
-        + "ref=32 nt=2 q=6 r=0" + StringUtils.LS
-        + "ref=33 nt=4 q=17 r=0" + StringUtils.LS //T2
-        + "ref=34 nt=2 q=24 r=0" + StringUtils.LS //C9
-        + "ref=35 nt=4 q=14 r=0" + StringUtils.LS //T/
-        + "ref=36 nt=2 q=23 r=0" + StringUtils.LS //C8
-        + "ref=37 nt=1 q=24 r=0" + StringUtils.LS //A9
-        + "ref=38 nt=1 q=15 r=0" + StringUtils.LS, matcher.toString()); //A0
+        + "ref=0 nt=2 q=24 r=0" + LS  //C9
+        + "ref=1 nt=4 q=24 r=0" + LS  //T9
+        + "ref=2 nt=2 q=23 r=0" + LS  //C8
+        + "ref=3 nt=2 q=24 r=0" + LS  //C9
+        + "ref=4 nt=2 q=25 r=0" + LS
+        + "ref=5 nt=1 q=25 r=0" + LS
+        + "ref=6 nt=1 q=25 r=0" + LS
+        + "ref=7 nt=3 q=25 r=0" + LS
+        + "ref=8 nt=4 q=25 r=0" + LS
+        + "ref=9 nt=4 q=25 r=0" + LS
+        + "ref=16 nt=1 q=27 r=0" + LS
+        + "ref=17 nt=4 q=27 r=0" + LS
+        + "ref=18 nt=4 q=27 r=0" + LS
+        + "ref=19 nt=2 q=27 r=0" + LS
+        + "ref=20 nt=4 q=27 r=0" + LS
+        + "ref=21 nt=2 q=26 r=0" + LS
+        + "ref=22 nt=2 q=28 r=0" + LS
+        + "ref=23 nt=4 q=27 r=0" + LS
+        + "ref=24 nt=3 q=27 r=0" + LS
+        + "ref=25 nt=2 q=26 r=0" + LS
+        + "ref=26 nt=2 q=24 r=0" + LS
+        + "ref=27 nt=4 q=25 r=0" + LS
+        + "ref=28 nt=2 q=26 r=0" + LS
+        + "ref=29 nt=1 q=17 r=0" + LS
+        + "ref=30 nt=3 q=13 r=0" + LS
+        + "ref=31 nt=2 q=9 r=0" + LS
+        + "ref=32 nt=2 q=6 r=0" + LS
+        + "ref=33 nt=4 q=17 r=0" + LS //T2
+        + "ref=34 nt=2 q=24 r=0" + LS //C9
+        + "ref=35 nt=4 q=14 r=0" + LS //T/
+        + "ref=36 nt=2 q=23 r=0" + LS //C8
+        + "ref=37 nt=1 q=24 r=0" + LS //A9
+        + "ref=38 nt=1 q=15 r=0" + LS, matcher.toString()); //A0
 
       assertEquals("", matcher.insertString());
     }
