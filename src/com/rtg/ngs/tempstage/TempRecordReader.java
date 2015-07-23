@@ -28,7 +28,7 @@ public interface TempRecordReader extends Closeable {
   /**
    * Return a temp file record factory of the given type
    */
-  public static class RecordFactory {
+  class RecordFactory {
     private final boolean mPaired;
     private final boolean mLegacy;
     private final boolean mCg;
