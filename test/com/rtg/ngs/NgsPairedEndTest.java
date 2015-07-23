@@ -255,7 +255,7 @@ public class NgsPairedEndTest extends TestCase {
   }
 
   private void checkSvPrepInternal(String id, String[] additionalArgs, String[] args, File outDir) throws IOException {
-    NanoRegression r = new NanoRegression(this.getClass());
+    final NanoRegression r = new NanoRegression(this.getClass());
     try {
       final String[] finalArgs = new String[args.length + additionalArgs.length];
       System.arraycopy(args, 0, finalArgs, 0, args.length);

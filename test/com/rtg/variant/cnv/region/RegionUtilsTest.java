@@ -273,7 +273,7 @@ public class RegionUtilsTest extends TestCase {
   }
 
   public void testNonEmptyIgnoreRegion() {
-    Region r = RegionUtils.findGermlineDeletesUnderMean(new int[] {10, 10, 10, 0, 0, 10, 10, 10, 0, 0, 0}, 3.0, new SimpleCnvRegion(6, 9), false);
+    final Region r = RegionUtils.findGermlineDeletesUnderMean(new int[] {10, 10, 10, 0, 0, 10, 10, 10, 0, 0, 0}, 3.0, new SimpleCnvRegion(6, 9), false);
     for (int i = 1; i <= 8; i++) {
       assertFalse(r.isInRegion(i));
     }

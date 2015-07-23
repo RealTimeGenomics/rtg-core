@@ -70,7 +70,7 @@ public class StoreDirResource extends IntegralAbstract implements StoreDirectory
   public SortedSet<String> children() throws IOException {
     final String parent = mResource + "/";
     final int length = parent.length();
-    String[] resources;
+    final String[] resources;
     try {
       resources = Resources.listResources(parent);
     } catch (final URISyntaxException e) {

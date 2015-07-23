@@ -39,7 +39,7 @@ public class MapReportTest extends AbstractReportTest {
     try (TestDirectory testDir = new TestDirectory()) {
       final File out = FileHelper.createTempDirectory(testDir);
       final File in = FileHelper.createTempDirectory(testDir);
-      MapReportData.Merger data = new MapReportData.Merger();
+      final MapReportData.Merger data = new MapReportData.Merger();
       MapReportDataTest.createMapData(data);
       final MapReportData blended = data.blendReportData();
       try (final PrintStream inputFile = new PrintStream(FileUtils.createOutputStream(new File(in, MapReportData.MAP_REPORT_FILE_NAME)))) {

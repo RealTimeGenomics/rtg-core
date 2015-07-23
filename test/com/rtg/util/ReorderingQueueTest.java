@@ -92,12 +92,12 @@ public class ReorderingQueueTest extends TestCase {
     q.close();
     assertEquals(5, q.mOutput.size());
     for (int i = 0; i < 3; i++) {
-      SimpleRecord r = q.mOutput.get(i);
+      final SimpleRecord r = q.mOutput.get(i);
       assertEquals("a", r.mRef);
       assertEquals(i + 2, r.mPos);
     }
     for (int i = 0; i < 2; i++) {
-      SimpleRecord r = q.mOutput.get(i + 3);
+      final SimpleRecord r = q.mOutput.get(i + 3);
       assertEquals("b", r.mRef);
       assertEquals(i, r.mPos);
     }

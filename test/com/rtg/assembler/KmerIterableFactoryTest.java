@@ -53,7 +53,7 @@ public class KmerIterableFactoryTest extends TestCase {
       try (ReadPairSource source = ReadPairSource.makeSource(tmpDir, LongRange.NONE)) {
         final KmerIterableFactoryInterface factory = new KmerIterableFactory(Collections.singletonList(source), StringKmer.factory(), 4);
         try (KmerIterable kmers = factory.makeIterable()) {
-          Iterator<String> it = KMER2STRING.trans(kmers.iterator());
+          final Iterator<String> it = KMER2STRING.trans(kmers.iterator());
           final Iterator<String> exp = Transform.array2Iterator(new String[]{"ACCG", "CCGT", "CGTT", "GTTC"});
           check(exp, it);
         }

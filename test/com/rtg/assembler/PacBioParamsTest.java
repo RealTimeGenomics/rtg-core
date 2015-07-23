@@ -29,7 +29,7 @@ public class PacBioParamsTest extends TestCase {
   }
 
   public void testToString() {
-    PacBioParams params = PacBioParams.builder().create();
+    final PacBioParams params = PacBioParams.builder().create();
     TestUtils.containsAll(params.toString()
         , " directory=" + null
         , " reads=" + null
@@ -39,9 +39,9 @@ public class PacBioParamsTest extends TestCase {
   }
 
   public void testAssign() {
-    List<File> reads = Arrays.asList(new File("foo"));
-    File graph = new File("graph");
-    File out = new File("out");
+    final List<File> reads = Arrays.asList(new File("foo"));
+    final File graph = new File("graph");
+    final File out = new File("out");
     final PacBioParams pacBioParams = PacBioParams.builder().directory(out).reads(reads).graph(graph).trimGraph(true).create();
     assertEquals(graph, pacBioParams.graph());
     assertEquals(reads, pacBioParams.reads());

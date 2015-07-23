@@ -87,7 +87,7 @@ public class CoverageParamsTest extends TestCase {
 
   public void testTsv() throws IOException {
     final File outDir = new File(mDir, "output");
-    CoverageParams cp = CoverageParams.builder().outputParams(new OutputParams(outDir, false, false)).genome(makeGenome()).tsvOutput(true).create();
+    final CoverageParams cp = CoverageParams.builder().outputParams(new OutputParams(outDir, false, false)).genome(makeGenome()).tsvOutput(true).create();
     assertTrue(cp.tsvOutput());
     assertEquals("coverage.tsv", cp.outFile().getName());
     assertFalse(cp.bedOutput());
@@ -118,7 +118,7 @@ public class CoverageParamsTest extends TestCase {
       FileUtils.stringToFile(SharedSamConstants.SAM9, map);
       assertTrue(map.isFile());
 
-      CoverageParams ccp;
+      final CoverageParams ccp;
       final File outFile = new File(mDir, TEST_OUTPUT);
       assertTrue(outFile.mkdir());
 

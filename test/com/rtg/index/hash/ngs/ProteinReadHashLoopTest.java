@@ -25,8 +25,8 @@ import junit.framework.TestCase;
 public class ProteinReadHashLoopTest extends TestCase {
 
   public void testHashCall() throws IOException {
-    FakeProteinMask mask = new FakeProteinMask(new Skeleton(12, 12, 0, 0, 1), new ReadCallMock(new StringWriter()), new ImplementHashFunctionTest.TemplateCallMock());
-    ProteinReadHashLoop loop = new ProteinReadHashLoop(12, 12, mask);
+    final FakeProteinMask mask = new FakeProteinMask(new Skeleton(12, 12, 0, 0, 1), new ReadCallMock(new StringWriter()), new ImplementHashFunctionTest.TemplateCallMock());
+    final ProteinReadHashLoop loop = new ProteinReadHashLoop(12, 12, mask);
     assertEquals(0, mask.mReadCalls);
     loop.hashCall(0, 0);
     assertEquals(1, mask.mReadCalls);

@@ -47,7 +47,7 @@ public final class TestThroughput {
     public void run() throws IOException {
 
       final int numRecs = Integer.parseInt(mArgs[0]);
-      TempRecordWriter wrt;
+      final TempRecordWriter wrt;
       final File f = File.createTempFile("boo", "yah");
       wrt = new TempRecordWriterNio(FileUtils.createOutputStream(f, true));
       //   final Random r = new Random(75521593);
@@ -69,7 +69,7 @@ public final class TestThroughput {
         wrt.writeRecord(rec);
       }
       wrt.close();
-      TempRecordReader rd;
+      final TempRecordReader rd;
       rd = new TempRecordReaderNio(FileUtils.createGzipInputStream(f, false), new TempRecordReader.RecordFactory(true, false, false, false));
       for (int i = 0; i < numRecs; i++) {
         final BinaryTempFileRecord rec = rd.readRecord();

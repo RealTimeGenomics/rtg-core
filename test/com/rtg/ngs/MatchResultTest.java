@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 public class MatchResultTest extends TestCase {
 
   public final void test() {
-    MatchResult r = new MatchResult(0);
+    final MatchResult r = new MatchResult(0);
     r.addMatchResult(0, 1, 2, true);
     r.addMatchResult(2, 234, 5, true);
     r.addMatchResult(5, 14, 2, true);

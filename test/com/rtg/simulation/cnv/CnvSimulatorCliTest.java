@@ -151,8 +151,8 @@ public class CnvSimulatorCliTest extends AbstractCliTest {
   }
 
   public void checkFlagsError(String[] args, String expectedError) {
-      ByteArrayOutputStream baos = new ByteArrayOutputStream();
-      PrintStream err = new PrintStream(baos);
+      final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+      final PrintStream err = new PrintStream(baos);
       assertEquals(1, new CnvSimulatorCli().mainInit(args, NULL_STREAM, err));
       err.flush();
       TestUtils.containsAll(baos.toString(), expectedError);

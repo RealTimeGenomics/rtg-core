@@ -20,7 +20,7 @@ public class NullOutputProcessorTest extends TestCase {
 
 
   public void testToString() {
-    NullOutputProcessor proc = new NullOutputProcessor();
+    final NullOutputProcessor proc = new NullOutputProcessor();
     assertEquals("NullOutputProcessor", proc.toString());
   }
 

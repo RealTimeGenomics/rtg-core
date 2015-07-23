@@ -42,12 +42,12 @@ public class CommonIOTest extends TestCase {
   }
 
   public void testDeletions() throws IOException {
-    MutableGraph write = GraphMapCliTest.makeGraph(1, new String[]{"ACGT", "GGGG", "AATA"}, new long[][]{{1, 2}, {2, 3}, {1, 3}, {1, -3}});
+    final MutableGraph write = GraphMapCliTest.makeGraph(1, new String[]{"ACGT", "GGGG", "AATA"}, new long[][]{{1, 2}, {2, 3}, {1, 3}, {1, -3}});
     write.deleteContig(2);
     write.deletePath(3);
-    StoreDirectory store = new StoreDirString();
+    final StoreDirectory store = new StoreDirString();
     GraphWriter.writeWithDeleted(write, store, "testing", Collections.<UUID>emptySet());
-    Graph read = GraphReader.read(store);
+    final Graph read = GraphReader.read(store);
     assertEquals("GGGG", ContigString.contigSequenceString(read.contig(2)));
     assertTrue(read.contigDeleted(2));
     assertFalse(read.contigDeleted(1));

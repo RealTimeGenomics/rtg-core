@@ -21,14 +21,14 @@ import junit.framework.TestCase;
 public class IlluminaPairedEndMachineTest extends TestCase {
 
   public void testProcessFragment() throws Exception {
-    IlluminaPairedEndMachine m = new IlluminaPairedEndMachine(42);
+    final IlluminaPairedEndMachine m = new IlluminaPairedEndMachine(42);
     assertTrue(m.isPaired());
-    MemoryPrintStream out = new MemoryPrintStream();
-    FastaReadWriter w = new FastaReadWriter(out.printStream());
+    final MemoryPrintStream out = new MemoryPrintStream();
+    final FastaReadWriter w = new FastaReadWriter(out.printStream());
     m.setReadWriter(w);
     m.setLeftReadLength(5);
     m.setRightReadLength(5);
-    byte[] frag = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    final byte[] frag = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
     m.processFragment("name/", 30, frag, frag.length);
     assertEquals(">0 name/31/F/5./Left\nAAAAA\n>0 name/52/R/5./Right\nTTTTT\n", out.toString());
   }

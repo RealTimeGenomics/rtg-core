@@ -30,8 +30,8 @@ public class AttributeTest extends TestCase {
   public void testEncodingDouble() {
     final Attribute d = new Attribute("tisadouble", MlDataType.DOUBLE);
     final double orig = 3.0;
-    double vala = d.encodeValue(orig);
-    double valb = d.encodeValue(orig);
+    final double vala = d.encodeValue(orig);
+    final double valb = d.encodeValue(orig);
     assertEquals(vala, valb);
     assertEquals(orig, d.decodeValue(vala));
     assertEquals(orig, d.decodeValue(valb));
@@ -40,8 +40,8 @@ public class AttributeTest extends TestCase {
   public void testEncodingBoolean() {
     final Attribute d = new Attribute("tisabool", MlDataType.BOOLEAN);
     final boolean orig = true;
-    double vala = d.encodeValue(orig);
-    double valb = d.encodeValue(orig);
+    final double vala = d.encodeValue(orig);
+    final double valb = d.encodeValue(orig);
     assertEquals(vala, valb);
     assertEquals(orig, d.decodeValue(vala));
     assertEquals(orig, d.decodeValue(valb));
@@ -50,8 +50,8 @@ public class AttributeTest extends TestCase {
   public void testEncodingInteger() {
     final Attribute d = new Attribute("tisanint", MlDataType.INTEGER);
     final int orig = 555356;
-    double vala = d.encodeValue(orig);
-    double valb = d.encodeValue(orig);
+    final double vala = d.encodeValue(orig);
+    final double valb = d.encodeValue(orig);
     assertEquals(vala, valb);
     assertEquals(orig, d.decodeValue(vala));
     assertEquals(orig, d.decodeValue(valb));
@@ -66,8 +66,8 @@ public class AttributeTest extends TestCase {
     d.encodeValue("stringd");
     d.encodeValue("stringe");
     final String orig = "stringc";
-    double vala = d.encodeValue(orig);
-    double valb = d.encodeValue(orig);
+    final double vala = d.encodeValue(orig);
+    final double valb = d.encodeValue(orig);
     assertEquals(vala, valb);
     assertEquals(orig, d.decodeValue(vala));
     assertEquals(orig, d.decodeValue(valb));

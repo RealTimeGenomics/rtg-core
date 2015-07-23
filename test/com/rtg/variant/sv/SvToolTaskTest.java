@@ -52,7 +52,7 @@ public class SvToolTaskTest extends TestCase {
     final File input = FileUtils.createTempDir("testcheck", "sv_in");
     try {
       FileUtils.stringToFile(sam, new File(input, OUT_SAM));
-      File readStatsFile = new File(input, "readstats");
+      final File readStatsFile = new File(input, "readstats");
       FileUtils.stringToFile(readStats, readStatsFile);
       final String outn = output.getPath();
       final String inn = input.getPath();

@@ -84,7 +84,7 @@ public class ProteinSequenceComplexityTest extends TestCase {
   }
 
   private static double complexity(String seq, int length) {
-    int[] counts = new int[27];
+    final int[] counts = new int[27];
     for (int i = 0; i < seq.length(); i++) {
       counts[seq.charAt(i) - 'a']++;
     }

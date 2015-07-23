@@ -37,7 +37,7 @@ public class ReadGroupStatsTest extends TestCase {
       fail();
     } catch (IllegalArgumentException e) {
     }
-    ReadGroupStats rg1 = new ReadGroupStats("id", 1000);
+    final ReadGroupStats rg1 = new ReadGroupStats("id", 1000);
     rg1.addLength(11);
     rg1.addLength(11);
     rg1.addProper();
@@ -53,9 +53,9 @@ public class ReadGroupStatsTest extends TestCase {
     rg1.addUnmated();
     rg1.addUnmated();
     rg1.addUnmated();
-    String line = rg1.countsString();
+    final String line = rg1.countsString();
     //System.out.println(line);
-    ReadGroupStats rg = new ReadGroupStats(null, line);
+    final ReadGroupStats rg = new ReadGroupStats(null, line);
     //System.out.println(rg.toString());
 
     assertEquals("id", rg.id());
@@ -69,7 +69,7 @@ public class ReadGroupStatsTest extends TestCase {
     assertEquals(0.002, rg.unmatedRate(), 0.001);
   }
   public void testParseFile() throws IOException {
-    File f = File.createTempFile("rgstats", "txt");
+    final File f = File.createTempFile("rgstats", "txt");
     try {
       FileUtils.stringToFile("id1\t1000\t2\t22\t242\t2\t200\t25000\t2\t200\t25000\t4\t2\t3\t4\n"
                              + "id2\t1000\t2\t22\t242\t2\t200\t20000\t2\t200\t25000\t4\t2\t3\t4\n"
@@ -80,7 +80,7 @@ public class ReadGroupStatsTest extends TestCase {
       assertNotNull(stats.get("id1"));
       assertNotNull(stats.get("id2"));
 
-      Map<String, String> remap = new HashMap<>();
+      final Map<String, String> remap = new HashMap<>();
       remap.put("id1", "merged");
       remap.put("id2", "merged");
       stats = ReadGroupStats.loadReadGroupStats(remap, f);

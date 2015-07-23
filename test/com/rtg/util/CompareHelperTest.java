@@ -25,7 +25,7 @@ public class CompareHelperTest extends TestCase {
   }
 
   public void testChaining() {
-    CompareHelper ch = new CompareHelper();
+    final CompareHelper ch = new CompareHelper();
     assertEquals(ch, ch.compare(3, 3));
     assertEquals(0, ch.result());
     assertEquals(ch, ch.compare("Foo", "Foo")
@@ -43,10 +43,10 @@ public class CompareHelperTest extends TestCase {
     );
   }
   public void testListCompare() {
-    List<Integer> first = Arrays.asList(1, 2, 3, 4);
-    List<Integer> second = Arrays.asList(1, 2, 3, 4, 5);
-    List<Integer> third = Arrays.asList(1, 2, 4, 4, 5);
-    List<Integer> fourth = Arrays.asList(-1, 2, 4, 4, 5);
+    final List<Integer> first = Arrays.asList(1, 2, 3, 4);
+    final List<Integer> second = Arrays.asList(1, 2, 3, 4, 5);
+    final List<Integer> third = Arrays.asList(1, 2, 4, 4, 5);
+    final List<Integer> fourth = Arrays.asList(-1, 2, 4, 4, 5);
     assertEquals(0, new CompareHelper().compareList(first, first).result());
     assertEquals(0, new CompareHelper().compareList(second, second).result());
     assertEquals(Integer.valueOf(4).compareTo(5), new CompareHelper().compareList(first, second).result());
@@ -54,8 +54,8 @@ public class CompareHelperTest extends TestCase {
     assertEquals(Integer.valueOf(1).compareTo(-1), new CompareHelper().compareList(first, fourth).result());
   }
   public void testListCompareAlreadyDifferent() {
-    List<Integer> first = Arrays.asList(3, 2, 3, 4);
-    List<Integer> second = Arrays.asList(1, 2, 3, 4);
+    final List<Integer> first = Arrays.asList(3, 2, 3, 4);
+    final List<Integer> second = Arrays.asList(1, 2, 3, 4);
     assertEquals("foo".compareTo("bar"), new CompareHelper().compare("foo", "bar").compareList(first, second).result());
   }
 }

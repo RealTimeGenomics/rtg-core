@@ -75,7 +75,7 @@ public class FilteringFragmenterTest extends TestCase {
     bed.add("foo", 20, 29);
     final SequenceDistribution[] dist = {new SequenceDistribution(new double[] {1.0})};
     final SequencesReader[] readers = {ReaderTestUtils.getReaderDnaMemory(">foo" + StringUtils.LS + "ACGTACCCACAGAGATAGACACACGTAGATGACACAGCCATGTCCCGCCATAT")};
-    MockMachine m = new MockMachine();
+    final MockMachine m = new MockMachine();
     final FilteringFragmenter fragmenter = new FilteringFragmenter(bed, 23, dist, readers);
     fragmenter.setMinFragmentSize(2);
     fragmenter.setMaxFragmentSize(2);

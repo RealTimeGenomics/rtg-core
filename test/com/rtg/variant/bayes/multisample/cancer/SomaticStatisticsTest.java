@@ -70,7 +70,7 @@ public class SomaticStatisticsTest extends TestCase {
     final Variant v = new Variant(locus, vs1, vs2);
 
     final String[] sampleNames = {"TEST", "cancer"};
-    VcfRecord rec = new VariantOutputVcfFormatter(sampleNames).makeVcfRecord(v);
+    final VcfRecord rec = new VariantOutputVcfFormatter(sampleNames).makeVcfRecord(v);
 
     mss.tallyVariant(rec, Arrays.asList(sampleNames));
     TestUtils.containsAll(mss.getStatistics(),

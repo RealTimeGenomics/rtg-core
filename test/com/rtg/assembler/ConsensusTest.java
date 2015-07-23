@@ -56,28 +56,28 @@ public class ConsensusTest extends AbstractCliTest {
   }
 
   public void testBuildConsensus() throws IOException {
-    StoreDirString input = new StoreDirString();
-    StoreDirString output = new StoreDirString();
-    Map<String, String> attr = new HashMap<>();
+    final StoreDirString input = new StoreDirString();
+    final StoreDirString output = new StoreDirString();
+    final Map<String, String> attr = new HashMap<>();
     attr.put(GraphKmerAttribute.READ_COUNT, "foo");
 
-    MutableGraph graph = GraphMapCliTest.makeGraph(1, new String[]{"ACGT", "TCGA", "ACCCC", "CGCGCC", "GGGT", "CTTTT"}
+    final MutableGraph graph = GraphMapCliTest.makeGraph(1, new String[]{"ACGT", "TCGA", "ACCCC", "CGCGCC", "GGGT", "CTTTT"}
         , new long[][]{{1, 2, 3, 4}, {5, 2, 3, 6}}
         , attr
         , attr
     );
     graph.setPathAttribute(1, "readCount", "3");
     graph.setPathAttribute(2, "readCount", "3");
-    Set<UUID> set = new HashSet<>();
+    final Set<UUID> set = new HashSet<>();
     GraphWriter.write(graph, input, "written", set);
 
     Consensus.writeConsensus(2, 3, input, output);
-    MutableGraph result = (MutableGraph) GraphReader.read(output);
+    final MutableGraph result = (MutableGraph) GraphReader.read(output);
 //    System.err.println(graphString(result));
     for (long i = 1; i <= 6; i++) {
       assertTrue(result.contigDeleted(i));
     }
-    Graph compact = GraphSorter.sortedGraph(result.compact());
+    final Graph compact = GraphSorter.sortedGraph(result.compact());
     assertEquals(2L, compact.numberContigs());
     assertEquals(graphString(result), "AAAAGGGGTCGACCC", ContigString.contigSequenceString(compact.contig(1)));
     assertEquals(graphString(result), "ACGTCGACCCCGCGCC", ContigString.contigSequenceString(compact.contig(2)));
@@ -85,19 +85,19 @@ public class ConsensusTest extends AbstractCliTest {
   }
 
   public void testNxGraph() {
-    MutableGraph graph = GraphMapCliTest.makeGraph(1, new String[]{"ACGTTCGAACCC", "CGCC", "GGGT", "CTTT"}
+    final MutableGraph graph = GraphMapCliTest.makeGraph(1, new String[]{"ACGTTCGAACCC", "CGCC", "GGGT", "CTTT"}
         , new long[][]{}
     );
-    int[] h = Consensus.nxGraph(graph);
+    final int[] h = Consensus.nxGraph(graph);
     assertEquals(4, h[100]);
     assertEquals(4, h[50]);
     assertEquals(12, h[49]);
   }
   public void testNxGraph2() {
-    MutableGraph graph = GraphMapCliTest.makeGraph(1, new String[]{"ACGTTCGAACCC", "CGCCGGGT", "CTTT"}
+    final MutableGraph graph = GraphMapCliTest.makeGraph(1, new String[]{"ACGTTCGAACCC", "CGCCGGGT", "CTTT"}
         , new long[][]{}
     );
-    int[] h = Consensus.nxGraph(graph);
+    final int[] h = Consensus.nxGraph(graph);
     assertEquals(4, h[100]);
     assertEquals(4, h[84]);
     assertEquals(8, h[83]);
@@ -137,7 +137,7 @@ public class ConsensusTest extends AbstractCliTest {
     long remainder = permutation;
     while (unused.size() > 1) {
       final long factorial = factorial(unused.size() - 1);
-      long currentContig = remainder / factorial;
+      final long currentContig = remainder / factorial;
       final Long key = unused.get((int) currentContig);
       translate.put(key, (long) unused.size());
       order.add(0, key);
@@ -147,12 +147,12 @@ public class ConsensusTest extends AbstractCliTest {
     order.add(0, unused.get(0));
     translate.put(unused.get(0), 1L);
 
-    GraphKmerAttribute current = new GraphKmerAttribute(original.contigOverlap(), original.contigAttributes(), original.pathAttributes());
+    final GraphKmerAttribute current = new GraphKmerAttribute(original.contigOverlap(), original.contigAttributes(), original.pathAttributes());
     for (int i = 0; i < original.numberContigs(); i++) {
       current.addContig(original.contig(order.get(i)));
     }
     for (long path = 1; path <= original.numberPaths(); path++) {
-      long[] contigs = new long[original.pathLength(path)];
+      final long[] contigs = new long[original.pathLength(path)];
       for (int contig = 0; contig < original.pathLength(path); contig++) {
         contigs[contig] = translate.get(original.pathContig(path, contig));
       }
@@ -161,7 +161,7 @@ public class ConsensusTest extends AbstractCliTest {
     return current;
   }
   private GraphKmerAttribute complement(GraphKmerAttribute original, long i) {
-    GraphKmerAttribute current = new GraphKmerAttribute(original.contigOverlap(), original.contigAttributes(), original.pathAttributes());
+    final GraphKmerAttribute current = new GraphKmerAttribute(original.contigOverlap(), original.contigAttributes(), original.pathAttributes());
     for (long contig = 1; contig <= original.numberContigs(); contig++) {
       if (reversed(i, contig)) {
         current.addContig(original.contig(-contig));
@@ -170,9 +170,9 @@ public class ConsensusTest extends AbstractCliTest {
       }
     }
     for (long path = 1; path <= original.numberPaths(); path++) {
-      long[] contigs = new long[original.pathLength(path)];
+      final long[] contigs = new long[original.pathLength(path)];
       for (int contig = 0; contig < original.pathLength(path); contig++) {
-        long contigId = original.pathContig(path, contig);
+        final long contigId = original.pathContig(path, contig);
         if (reversed(i, contigId)) {
           contigs[contig] = -contigId;
         } else {
@@ -192,10 +192,10 @@ public class ConsensusTest extends AbstractCliTest {
     final long fact = factorial(graph.numberContigs());
     for (long i = 0; i < pow; i++) {
       for (long j = 0; j < fact; j++) {
-        GraphKmerAttribute current = permutation(complement(graph, i), j);
+        final GraphKmerAttribute current = permutation(complement(graph, i), j);
         final SequencesReader reads = ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.fasta("TAACGAACCGGTCCAGTA", "TACTGGACCGGTTCGTTA"));
         final PathTracker pathTracker = new PathTracker(new PalindromeTracker(current));
-        GraphMap mapper = new GraphMap(new GraphIndex(current, 5, 5), current, new PairConstraintWriter(NullStreamUtils.getNullPrintStream()), pathTracker);
+        final GraphMap mapper = new GraphMap(new GraphIndex(current, 5, 5), current, new PairConstraintWriter(NullStreamUtils.getNullPrintStream()), pathTracker);
         final AsyncReadPool readPool = new AsyncReadPool("BAR", Collections.singletonList(new ReadPairSource(reads)));
         mapper.mapReads(readPool.sources().get(0), new IntegerOrPercentage(0));
 //      mapper.getStatistics().printStatistics(System.err);

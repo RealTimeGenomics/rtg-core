@@ -67,18 +67,18 @@ public class PriorPopulationVariantGeneratorTest extends TestCase {
       final SequencesReader sr = ReaderTestUtils.getReaderDnaMemory(REF);
 
       // Make some priors that will let things happen more often
-      GenomePriorParams priors = GenomePriorParams.builder()
+      final GenomePriorParams priors = GenomePriorParams.builder()
       .genomeSnpRateHetero(0.05).genomeSnpRateHomo(0.05)           // The priors probably should have just one rather than splitting
       .genomeMnpBaseRateHetero(0.05).genomeMnpBaseRateHomo(0.05)   // The priors probably should have just one rather than splitting
       .genomeIndelEventRate(0.05)
       .create();
 
       // Generate variants
-      PriorPopulationVariantGenerator gen = new PriorPopulationVariantGenerator(sr, new PopulationMutatorPriors(priors), new PortableRandom(10), 1);
-      List<PopulationVariantGenerator.PopulationVariant> variants = gen.generatePopulation();
+      final PriorPopulationVariantGenerator gen = new PriorPopulationVariantGenerator(sr, new PopulationMutatorPriors(priors), new PortableRandom(10), 1);
+      final List<PopulationVariantGenerator.PopulationVariant> variants = gen.generatePopulation();
       final File popVcf = new File(dir, "popVcf.vcf.gz");
       PopulationVariantGenerator.writeAsVcf(popVcf, null, variants, sr);
-      String popVarStr = FileHelper.gzFileToString(popVcf);
+      final String popVarStr = FileHelper.gzFileToString(popVcf);
       //System.out.println("-- Population Variants --");
       //System.out.println(popVarStr);
       final String vars = StringUtils.grepMinusV(popVarStr, "^#");

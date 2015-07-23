@@ -304,7 +304,7 @@ public class DeBruijnGraphBuilder {
     return next;
   }
   static String minimalVersion(String key) {
-    String hash;
+    final String hash;
     final String complement = complement(key);
     if (key.compareTo(complement) < 0) {
       hash = key;

@@ -52,9 +52,9 @@ public class ReadIteratorTest extends TestCase {
     }
   }
   private void check(String[] expected) throws IOException {
-    String fasta = ReaderTestUtils.fasta(expected);
+    final String fasta = ReaderTestUtils.fasta(expected);
     final SequencesReader reader = ReaderTestUtils.getReaderDnaMemory(fasta);
-    AsyncReadPool pool = new AsyncReadPool("ReadIteratorTest", Collections.singletonList(new ReadPairSource(reader)));
+    final AsyncReadPool pool = new AsyncReadPool("ReadIteratorTest", Collections.singletonList(new ReadPairSource(reader)));
     final ReadIterator iterator = new ReadIterator(pool.sources().get(0));
 
     for (final String s : expected) {
@@ -69,24 +69,24 @@ public class ReadIteratorTest extends TestCase {
   }
   public void testPaired() throws IOException {
     Diagnostic.setLogStream();
-    String[] left = {
+    final String[] left = {
         "ACGGGT"
         , "ACCGGT"
         , "AAAAAA"
     };
-    String[] right = {
+    final String[] right = {
         "AAGAGAAGA"
         , "CCCCCC"
         , "CGCGAAGCGC"
     };
-    String leftFasta = ReaderTestUtils.fasta(left);
-    String rightFasta = ReaderTestUtils.fasta(right);
+    final String leftFasta = ReaderTestUtils.fasta(left);
+    final String rightFasta = ReaderTestUtils.fasta(right);
     final ReadPairSource reader = new ReadPairSource(ReaderTestUtils.getReaderDnaMemory(leftFasta), ReaderTestUtils.getReaderDnaMemory(rightFasta));
 
     for (int j = 0; j < 2; j++) {
       reader.reset();
-      AsyncReadPool pool = new AsyncReadPool("ReadIteratorTest", Collections.singletonList(reader));
-      ReadIterator iterator = new ReadIterator(pool.sources().get(0));
+      final AsyncReadPool pool = new AsyncReadPool("ReadIteratorTest", Collections.singletonList(reader));
+      final ReadIterator iterator = new ReadIterator(pool.sources().get(0));
       int i = 0;
       while (iterator.hasNext()) {
         listEquals(new String[] {left[i], right[i]}, iterator.next());

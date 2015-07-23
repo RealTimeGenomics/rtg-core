@@ -30,7 +30,7 @@ public class AssembleParamsTest extends TestCase {
     new TestParams(AssembleParams.class, AssembleParams.Builder.class).check();
   }
   public void testToString() {
-    AssembleParams params = AssembleParams.builder().create();
+    final AssembleParams params = AssembleParams.builder().create();
     TestUtils.containsAll(params.toString()
         , "directory=" + null
         , "reads=[]"
@@ -54,11 +54,11 @@ public class AssembleParamsTest extends TestCase {
     );
   }
   public void testAssign() {
-    List<File> reads = Arrays.asList(new File("reads1"), new File("reads2"));
-    List<File> reads454 = Arrays.asList(new File("reads1a"), new File("reads2a"));
-    List<File> readsMatePair = Arrays.asList(new File("reads1b"), new File("reads2b"));
+    final List<File> reads = Arrays.asList(new File("reads1"), new File("reads2"));
+    final List<File> reads454 = Arrays.asList(new File("reads1a"), new File("reads2a"));
+    final List<File> readsMatePair = Arrays.asList(new File("reads1b"), new File("reads2b"));
     final LongRange r = new LongRange(1, 2);
-    AssembleParams params = AssembleParams.builder()
+    final AssembleParams params = AssembleParams.builder()
         .directory(new File("out"))
         .graph(new File("in"))
         .reads(reads)

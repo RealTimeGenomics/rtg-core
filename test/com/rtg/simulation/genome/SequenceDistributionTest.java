@@ -25,7 +25,7 @@ public class SequenceDistributionTest extends TestCase {
   static final double E = 0.1E-9;
   static final double[] PROB = {0.1, 0.3, 0.1, 0.2, 0.2, 0.1};
   public void testDistribution() {
-    SequenceDistribution dist = new SequenceDistribution(PROB);
+    final SequenceDistribution dist = new SequenceDistribution(PROB);
     check(dist);
   }
   private void check(SequenceDistribution dist) {

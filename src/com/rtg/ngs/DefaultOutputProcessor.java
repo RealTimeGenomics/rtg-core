@@ -84,7 +84,7 @@ public class DefaultOutputProcessor implements OutputProcessor {
    */
   @Override
   public void process(final long templateId, final String frame, final int readId, final int tStart, final int score, final int scoreIndel) throws IOException {
-    String templateName;
+    final String templateName;
     final boolean writeTemplateName = mNames != null;
     if (!mHeaderWritten) {
       mHeaderWritten = true;

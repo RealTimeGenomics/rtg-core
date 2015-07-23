@@ -18,7 +18,7 @@ import junit.framework.TestCase;
  */
 public class BreakpointAltTest extends TestCase {
   void check(String orig, String remoteChr, int remotePos, boolean localUp, boolean remoteUp) {
-    BreakpointAlt b = new BreakpointAlt(orig);
+    final BreakpointAlt b = new BreakpointAlt(orig);
     assertEquals(remoteChr, b.getRemoteChr());
     assertEquals(remotePos, b.getRemotePos());
     assertEquals(localUp, b.isLocalUp());

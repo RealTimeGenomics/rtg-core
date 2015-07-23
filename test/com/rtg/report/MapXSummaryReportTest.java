@@ -22,9 +22,9 @@ import junit.framework.TestCase;
  */
 public class MapXSummaryReportTest extends TestCase {
   public void testMapxSummary() {
-    MapXSummaryReport summary = new MapXSummaryReport();
+    final MapXSummaryReport summary = new MapXSummaryReport();
     summary.setParams(NgsParams.builder().outputParams(NgsOutputParams.builder().filterParams(NgsFilterParams.builder().maxTopResults(42).create()).create()).create());
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     summary.reportingReport(sb);
     assertTrue(sb.toString(), sb.toString().contains("Top 42 positions."));
 

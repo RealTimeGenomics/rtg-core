@@ -186,8 +186,8 @@ public class ReadGroupStatsCalculatorTest extends TestCase {
       final ReadGroupStatsCalculator calculator2 = new ReadGroupStatsCalculator();
       calculator2.merge(calculator);
       calculator2.calculate();
-      ReadGroupStats rgs1 = calculator.getStats("boo_pe");
-      ReadGroupStats rgs2 = calculator2.getStats("boo_pe");
+      final ReadGroupStats rgs1 = calculator.getStats("boo_pe");
+      final ReadGroupStats rgs2 = calculator2.getStats("boo_pe");
 
       assertEquals(rgs1.fragmentMean(), rgs2.fragmentMean());
       assertEquals(rgs1.fragmentStdDev(), rgs2.fragmentStdDev());
@@ -213,7 +213,7 @@ public class ReadGroupStatsCalculatorTest extends TestCase {
   }
 
   public void testBlend() throws IOException {
-    ReadGroupStatsCalculator.Merger merger = new ReadGroupStatsCalculator.Merger();
+    final ReadGroupStatsCalculator.Merger merger = new ReadGroupStatsCalculator.Merger();
     Diagnostic.setLogStream();
     final File tempDir = FileUtils.createTempDir("readgroup", "test");
     try {

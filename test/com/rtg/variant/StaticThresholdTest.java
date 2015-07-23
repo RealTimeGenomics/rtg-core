@@ -19,7 +19,7 @@ import junit.framework.TestCase;
  */
 public class StaticThresholdTest extends TestCase {
   public void testThreshold() {
-        StaticThreshold threshold = new StaticThreshold(60);
+        final StaticThreshold threshold = new StaticThreshold(60);
         assertEquals(60, threshold.thresholdSingle("chr1"));
         assertEquals(60, threshold.thresholdTotal("chr2"));
         assertEquals("60", threshold.toString());

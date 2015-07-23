@@ -21,12 +21,12 @@ import junit.framework.TestCase;
 public class SpeciesStatisticsTest extends TestCase {
 
   public void testStats() {
-    SpeciesStatistics s = new SpeciesStatistics(null);
+    final SpeciesStatistics s = new SpeciesStatistics(null);
     s.mRichness = 5;
     s.mShannon = 2.5;
     s.mPielou = 1;
     s.mInvSimpson = 0.3;
-    String res = s.getStatistics();
+    final String res = s.getStatistics();
     TestUtils.containsAll(res, "Richness", "5", "Shannon", "2.5", "Pielou", "1", "Inverse Simpson", "0.3");
   }
 }

@@ -18,7 +18,7 @@ import junit.framework.TestCase;
  */
 public class PartialAlignmentTest extends TestCase {
   public void test() {
-    PartialAlignment pa = new PartialAlignment(2, 10, 20, 30, 40, 50);
+    final PartialAlignment pa = new PartialAlignment(2, 10, 20, 30, 40, 50);
     assertFalse(pa.equals(null));
     assertFalse(pa.equals("ASDF"));
     assertTrue(pa.equals(pa));
@@ -40,7 +40,7 @@ public class PartialAlignmentTest extends TestCase {
     assertEquals(-916452864, pa.hashCode());
   }
   public void testGetters() {
-    PartialAlignment pa = new PartialAlignment(2, 10, 20, 30, 40, 50);
+    final PartialAlignment pa = new PartialAlignment(2, 10, 20, 30, 40, 50);
     assertEquals(2, pa.getAlignmentScore());
     assertEquals(10, pa.getReadStart());
     assertEquals(20, pa.getReadEnd());

@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 public class NormalDistributionTest extends TestCase {
 
   public void testNormal() {
-    NormalDistribution dist = new NormalDistribution();
+    final NormalDistribution dist = new NormalDistribution();
     dist.add(50);
     dist.add(150);
     assertEquals(100.0, dist.mean());

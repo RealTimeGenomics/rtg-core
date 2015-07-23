@@ -174,7 +174,7 @@ public class GenomeSimulator extends LoggedCli {
     final int[] freqDist;
     final int[] lengths;
     final int numSequences;
-    PortableRandom rand;
+    final PortableRandom rand;
 
     if (!mFlags.isSet(SEED)) {
       rand = new PortableRandom();

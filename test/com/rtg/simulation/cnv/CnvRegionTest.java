@@ -53,9 +53,9 @@ public class CnvRegionTest extends TestCase {
   }
 
   public void test() {
-    CnvRegion region = new CnvRegion(0, 40, 100);
+    final CnvRegion region = new CnvRegion(0, 40, 100);
 
-    CnvRegion region2 = new CnvRegion(0, 40, 0);
+    final CnvRegion region2 = new CnvRegion(0, 40, 0);
     region2.mNumCopies = 9;
     assertEquals(0, region2.getCN());
 
@@ -67,18 +67,18 @@ public class CnvRegionTest extends TestCase {
         region.toString());
 
     final NotRandomRandom mRandom = new NotRandomRandom();
-    CnvRegion regionPriors = new CnvRegion(0, 40, 100, mPriors);
+    final CnvRegion regionPriors = new CnvRegion(0, 40, 100, mPriors);
     assertFalse(regionPriors.isUnpickable(new int[]{1000}, true, -1));
     regionPriors.initializeAsCnved(mRandom);
     assertTrue(regionPriors.isUnpickable(new int[]{1000}, true, -1));
     TestUtils.containsAll(regionPriors.toString(), "copies: 0", "del-1: true", "del-2: true");
-    CnvRegion regionPriors2 = new CnvRegion(0, 40, 100, mPriors);
+    final CnvRegion regionPriors2 = new CnvRegion(0, 40, 100, mPriors);
     regionPriors2.initializeAsCnved(mRandom);
     TestUtils.containsAll(regionPriors2.toString(), "copies: 0", "del-1: true", "del-2: false");
-    CnvRegion regionPriors3 = new CnvRegion(0, 40, 100, mPriors);
+    final CnvRegion regionPriors3 = new CnvRegion(0, 40, 100, mPriors);
     regionPriors3.initializeAsCnved(mRandom);
     TestUtils.containsAll(regionPriors3.toString(), "copies: 1", "del-1: false", "del-2: false");
-    CnvRegion regionPriors6 = new CnvRegion(0, 40, 100, mPriors);
+    final CnvRegion regionPriors6 = new CnvRegion(0, 40, 100, mPriors);
     regionPriors6.initializeAsCnved(mRandom);
     TestUtils.containsAll(regionPriors6.toString(), "copies: 2", "del-1: false", "del-2: false");
     assertEquals(2, CnvRegion.generateNumCopies(mRandom, mPriors, 5));
@@ -88,7 +88,7 @@ public class CnvRegionTest extends TestCase {
 
 
     //System.err.println(regionPriors.toString());
-    CnvRegion region3 = new CnvRegion(0, 40, 0, 0);
+    final CnvRegion region3 = new CnvRegion(0, 40, 0, 0);
     TestUtils.containsAll(region3.toString(), "del-1: true");
     TestUtils.containsAll(region3.toString(), "del-1: true", "del-2: true");
   }

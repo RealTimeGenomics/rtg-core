@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 public class DisplayHelperTest extends TestCase {
 
   public void testGetSpace() {
-    DisplayHelper dh = new DisplayHelper();
+    final DisplayHelper dh = new DisplayHelper();
     assertEquals("      ", dh.getSpaces(6));
     assertEquals("______", dh.getInserts(6));
   }

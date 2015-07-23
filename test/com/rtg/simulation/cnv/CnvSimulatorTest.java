@@ -226,7 +226,7 @@ public class CnvSimulatorTest extends TestCase {
 
       mRegionSequences = new ArrayList<>();
       final ArrayList<CnvRegion> list = new ArrayList<>();
-      CnvRegion copied = new CnvRegion(0, 0, 10, mPriors);
+      final CnvRegion copied = new CnvRegion(0, 0, 10, mPriors);
       copied.mNumCopies = 3;
       list.add(copied);
       list.add(new CnvRegion(0, 10, 20, mPriors));
@@ -235,7 +235,7 @@ public class CnvSimulatorTest extends TestCase {
 
       taskePrepareCopying();
 
-      StringBuilder str  = new StringBuilder();
+      final StringBuilder str  = new StringBuilder();
       for (final List<CnvRegion> mRegionSequence : mRegionSequences) {
         for (final CnvRegion currentRegion : mRegionSequence) {
           //System.err.println(currentRegion.toString());

@@ -66,7 +66,7 @@ public class AbstractPositionWriterTest extends TestCase {
     }
 
     public SurrogateRegion initialize(final MockGappedRegion region, final int queryId, final Frame queryFrame, final double score) {
-      SurrogateRegion ret = super.initialize(region, queryId, queryFrame);
+      final SurrogateRegion ret = super.initialize(region, queryId, queryFrame);
       ((MockSurrogateGappedRegion) ret).mScore = score;
       return ret;
     }

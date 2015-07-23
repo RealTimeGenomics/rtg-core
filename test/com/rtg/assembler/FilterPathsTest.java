@@ -44,7 +44,7 @@ public class FilterPathsTest extends TestCase {
   private MutableGraph baseGraph() {
     final HashMap<String, String> pathAttr = new HashMap<>();
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "count em all");
-    MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A"}, new long[][]{{1, 2}, {1, 3}, {2, 3}, {3, 4}, {1, 4}}, Collections.<String, String>emptyMap(), pathAttr);
+    final MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A"}, new long[][]{{1, 2}, {1, 3}, {2, 3}, {3, 4}, {1, 4}}, Collections.<String, String>emptyMap(), pathAttr);
     g.setPathAttribute(1, GraphKmerAttribute.READ_COUNT, "10");
     g.setPathAttribute(3, GraphKmerAttribute.READ_COUNT, "2");
     g.setPathAttribute(4, GraphKmerAttribute.READ_COUNT, "5");
@@ -58,7 +58,7 @@ public class FilterPathsTest extends TestCase {
   //  / \
   // 3   5
   public void testUnambiguousPathSimplest() {
-    MutableGraph g = simpleCross();
+    final MutableGraph g = simpleCross();
     List<Long> actual = FilterPaths.unambiguousPath(1, 2, g, 10);
     assertEquals(Arrays.asList(1L, 2L, 4L), actual);
 
@@ -69,7 +69,7 @@ public class FilterPathsTest extends TestCase {
     assertEquals(Arrays.asList(-4L, -2L, -1L), actual);
   }
   public void testUnambiguousImprove() {
-    MutableGraph g = simpleCross();
+    final MutableGraph g = simpleCross();
     FilterPaths.improveMultiple(g, 10);
     assertTrue(g.pathDeleted(1));
     assertTrue(g.pathDeleted(2));
@@ -77,24 +77,24 @@ public class FilterPathsTest extends TestCase {
     assertTrue(g.pathDeleted(4));
   }
   public void testUnambiguousExtraPath() {
-    MutableGraph g = simpleCross();
-    long contigId = g.addContig(new ContigString("AA"));
+    final MutableGraph g = simpleCross();
+    final long contigId = g.addContig(new ContigString("AA"));
     g.addPath(new PathArray(1, contigId));
-    List<Long> actual = FilterPaths.unambiguousPath(1, 2, g, 10);
+    final List<Long> actual = FilterPaths.unambiguousPath(1, 2, g, 10);
     assertEquals(Arrays.asList(1L, 2L, 4L), actual);
   }
   public void testUnambiguousExtraPath2() {
-    MutableGraph g = simpleCross();
-    long contigId = g.addContig(new ContigString("AA"));
+    final MutableGraph g = simpleCross();
+    final long contigId = g.addContig(new ContigString("AA"));
     g.addPath(new PathArray(contigId, 1));
-    List<Long> actual = FilterPaths.unambiguousPath(1, 2, g, 10);
+    final List<Long> actual = FilterPaths.unambiguousPath(1, 2, g, 10);
     assertEquals(Arrays.asList(1L, 2L, 4L), actual);
   }
   public void testSimplifyExtraPath() {
-    MutableGraph g = simpleCross();
-    long contigId = g.addContig(new ContigString("AA"));
-    long pathId = g.addPath(new PathArray(contigId, 1));
-    long longerPath = g.addPath(new PathArray(contigId, 1, 2, 4));
+    final MutableGraph g = simpleCross();
+    final long contigId = g.addContig(new ContigString("AA"));
+    final long pathId = g.addPath(new PathArray(contigId, 1));
+    final long longerPath = g.addPath(new PathArray(contigId, 1, 2, 4));
     g.setPathAttribute(longerPath, GraphKmerAttribute.READ_COUNT, "5");
     FilterPaths.improveMultiple(g, 5);
     assertTrue(g.pathDeleted(1));
@@ -107,14 +107,14 @@ public class FilterPathsTest extends TestCase {
   private MutableGraph simpleCross() {
     final HashMap<String, String> pathAttr = new HashMap<>();
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "count em all");
-    MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A", "AA"}, new long[][]{{1, 2}, {3, 2}, {2, 4}, {2, 5}, {1, 2, 4}, {3, 2, 5}}, Collections.<String, String>emptyMap(), pathAttr);
+    final MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A", "AA"}, new long[][]{{1, 2}, {3, 2}, {2, 4}, {2, 5}, {1, 2, 4}, {3, 2, 5}}, Collections.<String, String>emptyMap(), pathAttr);
     g.setPathAttribute(5, GraphKmerAttribute.READ_COUNT, "10");
     g.setPathAttribute(6, GraphKmerAttribute.READ_COUNT, "10");
     return g;
   }
 
   public void testAmbiguousPathSimplest() {
-    MutableGraph g = ambiguousCross();
+    final MutableGraph g = ambiguousCross();
     List<Long> actual = FilterPaths.unambiguousPath(1, 2, g, 10);
     assertEquals(Arrays.asList(1L, 2L), actual);
 
@@ -122,10 +122,10 @@ public class FilterPathsTest extends TestCase {
     assertEquals(Arrays.asList(3L, 2L, 5L), actual);
   }
   public void testBelowCoverage() {
-    MutableGraph g = ambiguousCross();
+    final MutableGraph g = ambiguousCross();
     g.setPathAttribute(5, GraphKmerAttribute.READ_COUNT, "9");
     g.setPathAttribute(6, GraphKmerAttribute.READ_COUNT, "9");
-    List<Long> actual = FilterPaths.unambiguousPath(1, 2, g, 10);
+    final List<Long> actual = FilterPaths.unambiguousPath(1, 2, g, 10);
     assertEquals(0, actual.size());
 
   }
@@ -133,7 +133,7 @@ public class FilterPathsTest extends TestCase {
   private MutableGraph ambiguousCross() {
     final HashMap<String, String> pathAttr = new HashMap<>();
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "count em all");
-    MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A", "AA"}, new long[][]{{1, 2}, {3, 2}, {2, 4}, {2, 5}, {1, 2, 4}, {3, 2, 5}, {1, 2, 5}}, Collections.<String, String>emptyMap(), pathAttr);
+    final MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A", "AA"}, new long[][]{{1, 2}, {3, 2}, {2, 4}, {2, 5}, {1, 2, 4}, {3, 2, 5}, {1, 2, 5}}, Collections.<String, String>emptyMap(), pathAttr);
     g.setPathAttribute(5, GraphKmerAttribute.READ_COUNT, "10");
     g.setPathAttribute(6, GraphKmerAttribute.READ_COUNT, "10");
     return g;
@@ -147,7 +147,7 @@ public class FilterPathsTest extends TestCase {
   public void testUnambiguousPathLonger() {
     final HashMap<String, String> pathAttr = new HashMap<>();
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "count em all");
-    MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A", "AA", "AA"}
+    final MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A", "AA", "AA"}
         , new long[][]{{1, 2}, {3, 2}, {2, 4}, {4, 5}, {4, 6}, {1, 2, 4}, {3, 2, 4}, {1, 2, 4, 5}, {3, 2, 4, 6}, {3, 2, 4, 5}}, Collections.<String, String>emptyMap(), pathAttr);
     g.setPathAttribute(6, GraphKmerAttribute.READ_COUNT, "10");
     g.setPathAttribute(7, GraphKmerAttribute.READ_COUNT, "10");
@@ -166,39 +166,39 @@ public class FilterPathsTest extends TestCase {
   public void testUnambiguousPathReadCount() {
     final HashMap<String, String> pathAttr = new HashMap<>();
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "count em all");
-    MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A", "AA", "AA"}
+    final MutableGraph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "AAAA", "AAA", "A", "AA", "AA"}
         , new long[][]{{1, 2}, {3, 2}, {2, 4}, {4, 5}, {4, 6}, {1, 2, 4}, {3, 2, 4}, {1, 2, 4, 5}, {3, 2, 4, 6}, {3, 2, 4, 5}}, Collections.<String, String>emptyMap(), pathAttr);
     g.setPathAttribute(6, GraphKmerAttribute.READ_COUNT, "1");
     g.setPathAttribute(7, GraphKmerAttribute.READ_COUNT, "10");
     g.setPathAttribute(8, GraphKmerAttribute.READ_COUNT, "9");
     g.setPathAttribute(9, GraphKmerAttribute.READ_COUNT, "10");
-    List<Long> actual = FilterPaths.unambiguousPath(1, 2, g, 10);
+    final List<Long> actual = FilterPaths.unambiguousPath(1, 2, g, 10);
     assertEquals(Arrays.asList(1L, 2L, 4L), actual);
   }
 
   public void testBiDirectional() {
-    MutableGraph g = simpleCross();
-    List<Long> actual = FilterPaths.biDirectional(1, 2, g, 10);
+    final MutableGraph g = simpleCross();
+    final List<Long> actual = FilterPaths.biDirectional(1, 2, g, 10);
     assertEquals(Arrays.asList(1L, 2L, 4L), actual);
   }
 
   public void testBiReverseAmbiguous() {
-    MutableGraph g = simpleCross();
+    final MutableGraph g = simpleCross();
     g.addPath(new PathArray(3, 2, 4));
-    List<Long> actual = FilterPaths.biDirectional(1, 2, g, 10);
+    final List<Long> actual = FilterPaths.biDirectional(1, 2, g, 10);
     assertEquals(Arrays.asList(1L, 2L), actual);
   }
 
   public void testBiDirectionalLonger() {
-    MutableGraph g = simpleCross();
-    long contigId = g.addContig(new ContigString("GGG"));
-    long pathId = g.addPath(new PathArray(contigId, 1, 2, 4));
+    final MutableGraph g = simpleCross();
+    final long contigId = g.addContig(new ContigString("GGG"));
+    final long pathId = g.addPath(new PathArray(contigId, 1, 2, 4));
     g.setPathAttribute(pathId, GraphKmerAttribute.READ_COUNT, "10");
-    List<Long> actual = FilterPaths.biDirectional(1, 2, g, 10);
+    final List<Long> actual = FilterPaths.biDirectional(1, 2, g, 10);
     assertEquals(Arrays.asList(1L, 2L, 4L), actual);
   }
   public void testBiDirectionalAmbiguous() {
-    MutableGraph g = ambiguousCross();
+    final MutableGraph g = ambiguousCross();
     List<Long> actual = FilterPaths.biDirectional(1, 2, g, 10);
     assertEquals(Arrays.asList(1L, 2L), actual);
     actual = FilterPaths.biDirectional(3, 2, g, 10);

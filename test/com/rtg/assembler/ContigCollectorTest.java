@@ -368,11 +368,11 @@ public class ContigCollectorTest extends TestCase {
   public void testCollapseWithLongPaths() throws IOException {
     final HashMap<String, String> pathAttr = new HashMap<>();
     pathAttr.put("readCount", "count em all");
-    GraphKmerAttribute g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "GGGG", "AAA", "A", "AA", "GGGGG"}, new long[][]{{1, 2, 3, 4}, {5, 2, 3, 6}}, Collections.<String, String>emptyMap(), pathAttr);
+    final GraphKmerAttribute g = GraphMapCliTest.makeGraph(0, new String[]{"AAAA", "GGGG", "AAA", "A", "AA", "GGGGG"}, new long[][]{{1, 2, 3, 4}, {5, 2, 3, 6}}, Collections.<String, String>emptyMap(), pathAttr);
     g.setPathAttribute(1, "readCount", "10");
     g.setPathAttribute(2, "readCount", "10");
     new ContigCollector(0, 1, null, null, g).collapse();
-    StoreDirString str = new StoreDirString();
+    final StoreDirString str = new StoreDirString();
     GraphWriter.writeWithDeleted(g, str, "foo", Collections.<UUID>emptySet());
     assertEquals("GGGGAAA", ContigString.contigSequenceString(g.contig(7)));
     assertEquals(Arrays.asList(1L, 7L, 4L), MergeNodes.getPath(g, 3));
@@ -384,14 +384,14 @@ public class ContigCollectorTest extends TestCase {
     pathAttr.put("readCount", "count em all");
     final HashMap<String, String> contigAttr = new HashMap<>();
     contigAttr.put(Consensus.COMBINED, "count em all");
-    GraphKmerAttribute g = GraphMapCliTest.makeGraph(0,
+    final GraphKmerAttribute g = GraphMapCliTest.makeGraph(0,
         new String[]{"AAAA", "GGGG", "AAA", "A", "AA", "GGGGG", "T", "C"}
         , new long[][]{{1, 2, 3, 4}, {5, 2, 3, 6}, {7, 1, 2, 3, 4}, {8, 1, 2, 3, 4}}
         , contigAttr, pathAttr);
     g.setPathAttribute(1, "readCount", "10");
     g.setPathAttribute(2, "readCount", "10");
     new ContigCollector(0, 1, null, null, g).collapse();
-    StoreDirString str = new StoreDirString();
+    final StoreDirString str = new StoreDirString();
     GraphWriter.writeWithDeleted(g, str, "foo", Collections.<UUID>emptySet());
     assertEquals("GGGGAAA", ContigString.contigSequenceString(g.contig(9)));
     assertEquals(Arrays.asList(1L, 9L, 4L), MergeNodes.getPath(g, 5));

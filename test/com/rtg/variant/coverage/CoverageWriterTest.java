@@ -30,9 +30,9 @@ public class CoverageWriterTest extends TestCase {
   private static final String GRAPH_LINE = "track type=bedGraph name=coverage";
 
   public void testBedGraphWriter() throws IOException {
-    MemoryPrintStream out = new MemoryPrintStream();
-    CoverageParams params = CoverageParams.builder().bedgraphOutput(true).create();
-    CoverageWriter cw = new CoverageWriter(out.outputStream(), params);
+    final MemoryPrintStream out = new MemoryPrintStream();
+    final CoverageParams params = CoverageParams.builder().bedgraphOutput(true).create();
+    final CoverageWriter cw = new CoverageWriter(out.outputStream(), params);
     cw.init();
     cw.finalCoverageRegion("hello", 1, 20, 3);
     TestUtils.containsAll(out.toString(),
@@ -45,15 +45,15 @@ public class CoverageWriterTest extends TestCase {
   }
 
   public void testBedWriter() throws IOException {
-    String[] args = CommandLine.getCommandLine() != null ? CommandLine.getCommandArgs() : null;
+    final String[] args = CommandLine.getCommandLine() != null ? CommandLine.getCommandArgs() : null;
     try {
     CommandLine.setCommandArgs("foo", "bar");
-    MemoryPrintStream out = new MemoryPrintStream();
-    CoverageParams params = CoverageParams.builder().create();
-    CoverageWriter cw = new CoverageWriter(out.outputStream(), params);
+    final MemoryPrintStream out = new MemoryPrintStream();
+    final CoverageParams params = CoverageParams.builder().create();
+    final CoverageWriter cw = new CoverageWriter(out.outputStream(), params);
     cw.init();
     cw.finalCoverageRegion("hello", 1, 20, 3);
-    String actual = out.toString();
+    final String actual = out.toString();
     TestUtils.containsAll(actual,
         CoverageWriter.VERSION_STRING,
         "#RUN-ID",
@@ -69,11 +69,11 @@ public class CoverageWriterTest extends TestCase {
     }
   }
   public void testTsvWriter() throws IOException {
-    MemoryPrintStream out = new MemoryPrintStream();
-    CoverageParams params = CoverageParams.builder().tsvOutput(true).create();
-    CoverageWriter cw = new CoverageWriter(out.outputStream(), params);
+    final MemoryPrintStream out = new MemoryPrintStream();
+    final CoverageParams params = CoverageParams.builder().tsvOutput(true).create();
+    final CoverageWriter cw = new CoverageWriter(out.outputStream(), params);
     cw.init();
-    CoverageState cs = new CoverageState("hello", new byte[] {1, 2, 3, 4}, true);
+    final CoverageState cs = new CoverageState("hello", new byte[] {1, 2, 3, 4}, true);
     for (int i = 0; i < 4; i++) {
       cs.incrementIH(i, 1);
       cs.incrementIH(i, 2);
@@ -83,7 +83,7 @@ public class CoverageWriterTest extends TestCase {
     for (int i = 1; i < 4; i++) {
       cw.finalCoveragePosition("hello", i, cs.getIH1(i), cs.getIHgt1(i), cs.getScore(i));
     }
-    String actual = out.toString();
+    final String actual = out.toString();
     TestUtils.containsAll(actual,
         CoverageWriter.VERSION_STRING,
         "#RUN-ID",

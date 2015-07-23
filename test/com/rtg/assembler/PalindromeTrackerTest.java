@@ -20,8 +20,8 @@ import junit.framework.TestCase;
  */
 public class PalindromeTrackerTest extends TestCase {
   public void testPalindromeTracker() {
-    Graph g = GraphMapCliTest.makeGraph(2, new String[] {"ACGT", "AACT", "ATTGTTAACAAT", "ACGCGA", "ACCGGT"}, new long[][] {});
-    PalindromeTracker tracker = new PalindromeTracker(g);
+    final Graph g = GraphMapCliTest.makeGraph(2, new String[] {"ACGT", "AACT", "ATTGTTAACAAT", "ACGCGA", "ACCGGT"}, new long[][] {});
+    final PalindromeTracker tracker = new PalindromeTracker(g);
     assertTrue(tracker.isPalindrome(1));
     assertTrue(tracker.isPalindrome(3));
     assertTrue(tracker.isPalindrome(5));

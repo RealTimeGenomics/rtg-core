@@ -422,7 +422,7 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
       final File sspf = new File(tmpDir, "ssps.vcf.gz");
       BgzipFileHelper.bytesToBgzipFile((VCFHEADER + ssps).getBytes(), sspf);
 
-      File fileToUse;
+      final File fileToUse;
       if (useAlleleCountFile) {
         fileToUse = new File(tmpDir, "allele.ac");
         final AlleleCountsFileConverter blah = new AlleleCountsFileConverter();

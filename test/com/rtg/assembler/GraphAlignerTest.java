@@ -215,14 +215,14 @@ public class GraphAlignerTest extends TestCase {
     final GraphAligner aligner = new GraphAligner(graph, new IntegerOrPercentage(0));
     final byte[] read = DnaUtils.encodeString("AATCTTTG");
     Set<GraphAlignment> alignments = aligner.align(read, 0, new ContigPosition(1, 4, graph));
-    Set<GraphAlignment> expected = makeSet(makeAlignment(Arrays.asList(2L), 0, 7, 0, graph));
+    final Set<GraphAlignment> expected = makeSet(makeAlignment(Arrays.asList(2L), 0, 7, 0, graph));
     assertEquals(expected, alignments);
     alignments = aligner.align(read, 7, new ContigPosition(3, 2, graph));
     assertEquals(expected, alignments);
 
   }
   public void testHighOverlap() {
-    long[][] paths = new long[4][];
+    final long[][] paths = new long[4][];
     for (int i = 0; i < paths.length; i++) {
       paths[i] = new long[] {i + 1, i + 2};
     }
@@ -230,7 +230,7 @@ public class GraphAlignerTest extends TestCase {
     final GraphAligner aligner = new GraphAligner(graph, new IntegerOrPercentage(0));
     final byte[] read = DnaUtils.encodeString("AATCT");
     Set<GraphAlignment> alignments = aligner.align(read, 0, new ContigPosition(1, 2, graph));
-    Set<GraphAlignment> expected = makeSet(makeAlignment(Arrays.asList(3L), 0, 4, 0, graph));
+    final Set<GraphAlignment> expected = makeSet(makeAlignment(Arrays.asList(3L), 0, 4, 0, graph));
     assertEquals(expected, alignments);
     alignments = aligner.align(read, 4, new ContigPosition(5, 2, graph));
     assertEquals(expected, alignments);

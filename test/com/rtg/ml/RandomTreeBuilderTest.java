@@ -32,31 +32,31 @@ public class RandomTreeBuilderTest extends AbstractBuildClassifierTest {
   }
 
   public void testTree() {
-    BuildClassifier b = makeClassifier();
-    Dataset data = TrainTestSplitTest.makeSimpleDataset(200, 100);
+    final BuildClassifier b = makeClassifier();
+    final Dataset data = TrainTestSplitTest.makeSimpleDataset(200, 100);
 
-    TrainTestSplit split = TrainTestSplit.sampleWithReplacement(data, 150, new PortableRandom(42));
+    final TrainTestSplit split = TrainTestSplit.sampleWithReplacement(data, 150, new PortableRandom(42));
     b.build(split.mTrain);
 
-    PredictClassifier p = b.getClassifier();
+    final PredictClassifier p = b.getClassifier();
 
-    String thetree = p.toString(new StringBuilder(), "", data).toString();
+    final String thetree = p.toString(new StringBuilder(), "", data).toString();
     assertNotNull(thetree);
     //System.err.println(thetree);
   }
 
   public void testCircleTree() {
-    BuildClassifier b = makeClassifier();
+    final BuildClassifier b = makeClassifier();
 
-    Dataset data = TrainTestSplitTest.makeCircleDataset(new PortableRandom(42), 100, 200);
+    final Dataset data = TrainTestSplitTest.makeCircleDataset(new PortableRandom(42), 100, 200);
     TrainTestSplitTest.nukeData(data, 0.3);
     b.build(data);
 
-    PredictClassifier p = b.getClassifier();
+    final PredictClassifier p = b.getClassifier();
 
     //System.err.println(p.toString(new StringBuilder(), ""));
 
-    SimpleEvaluation eval = new SimpleEvaluation();
+    final SimpleEvaluation eval = new SimpleEvaluation();
     eval.evaluate(p, data);
     assertEquals(0.8433, eval.accuracy(), 0.01);
   }

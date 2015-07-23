@@ -377,7 +377,7 @@ public class CnvSimulator {
       for (int j = 0; j < mRegionSequences.get(i).size(); j++) {
         final CnvRegion currentRegion = mRegionSequences.get(i).get(j);
         for (int k = 0; k < currentRegion.mNumCopies; k++) {
-          int destinationId;
+          final int destinationId;
           if (mRandom.nextBoolean()) {
             // copied to same sequence
             destinationId = i;

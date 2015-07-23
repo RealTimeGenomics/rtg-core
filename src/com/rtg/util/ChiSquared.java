@@ -485,7 +485,8 @@ public final class ChiSquared {
       return x < 0 ? 2.0 : 0.0;
     }
     z = Math.exp(z);
-    double p, q;
+    final double p;
+    final double q;
     if (ax < 8.0) {
       p = polyeval(ax, ERFCN0);
       q = p1eval(ax, ERFCD0);

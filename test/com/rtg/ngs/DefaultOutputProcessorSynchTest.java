@@ -36,7 +36,7 @@ public class DefaultOutputProcessorSynchTest extends TestCase {
       final ByteArrayOutputStream b = new ByteArrayOutputStream();
       try {
         final DefaultOutputProcessorSynch dop = new DefaultOutputProcessorSynch(NgsParams.builder().outputParams(new NgsTestUtils.OverriddenNgsOutputParams(NgsTestUtils.OverriddenNgsOutputParams.builder().outStream(b).outputDir(dir))).create());
-        OutputProcessor op = dop.threadClone(HashingRegion.NONE);
+        final OutputProcessor op = dop.threadClone(HashingRegion.NONE);
         op.process(1234, "R", 123456, 30000, 2, 0);
         op.threadFinish();
         dop.finish();
@@ -69,7 +69,7 @@ public class DefaultOutputProcessorSynchTest extends TestCase {
     final File temp = FileUtils.createTempDir("dop", "test");
     try {
       ByteArrayOutputStream out = new ByteArrayOutputStream();
-      ArrayList<File> tempFiles = new ArrayList<>();
+      final ArrayList<File> tempFiles = new ArrayList<>();
       tempFiles.add(new File(temp, DefaultOutputProcessorSynch.THREAD_FILE_NAME + 0));
       tempFiles.add(new File(temp, DefaultOutputProcessorSynch.THREAD_FILE_NAME + 1));
       tempFiles.add(new File(temp, DefaultOutputProcessorSynch.THREAD_FILE_NAME + 2));
@@ -104,9 +104,9 @@ public class DefaultOutputProcessorSynchTest extends TestCase {
       final ByteArrayOutputStream b = new ByteArrayOutputStream();
       try {
         final DefaultOutputProcessorSynch dop = new DefaultOutputProcessorSynch(NgsParams.builder().outputParams(new NgsTestUtils.OverriddenNgsOutputParams(NgsTestUtils.OverriddenNgsOutputParams.builder().outStream(b).outputDir(dir))).create());
-        OutputProcessor one = dop.threadClone(new HashingRegion(2, 0, 2, 10, -1, -1));
-        OutputProcessor two = dop.threadClone(new HashingRegion(3, 0, 3, 10, -1, -1));
-        OutputProcessor three = dop.threadClone(new HashingRegion(1, 0, 1, 10, -1, -1));
+        final OutputProcessor one = dop.threadClone(new HashingRegion(2, 0, 2, 10, -1, -1));
+        final OutputProcessor two = dop.threadClone(new HashingRegion(3, 0, 3, 10, -1, -1));
+        final OutputProcessor three = dop.threadClone(new HashingRegion(1, 0, 1, 10, -1, -1));
         one.process(2, "F", 2, 2, 0, 0);
         two.process(3, "F", 3, 2, 0, 0);
         three.process(1, "F", 4, 2, 0, 0);

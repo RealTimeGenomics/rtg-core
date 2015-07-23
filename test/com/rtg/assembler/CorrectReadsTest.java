@@ -28,10 +28,10 @@ import junit.framework.TestCase;
  */
 public class CorrectReadsTest extends TestCase {
   public void testCorrection() throws IOException {
-    File tmpDir = FileHelper.createTempDirectory();
+    final File tmpDir = FileHelper.createTempDirectory();
     try {
-      String[] left = new String[10];
-      String[] right = new String[10];
+      final String[] left = new String[10];
+      final String[] right = new String[10];
       for (int i = 0; i < left.length; i++) {
         left[i] = "CCCAGGAGAGG";
         right[i] = "AACGGGGGGTTTTAT";
@@ -59,14 +59,14 @@ public class CorrectReadsTest extends TestCase {
   }
 
   public void testCorrectionSingleEnd() throws IOException {
-    File tmpDir = FileHelper.createTempDirectory();
+    final File tmpDir = FileHelper.createTempDirectory();
     try {
-      String[] left = new String[10];
+      final String[] left = new String[10];
       for (int i = 0; i < left.length; i++) {
         left[i] = "CCCAGGAGAGG";
       }
       left[0] = "CCCAGGTGAGG";
-      File in = ReaderTestUtils.getDNADir(ReaderTestUtils.fasta(left), new File(tmpDir, "input"));
+      final File in = ReaderTestUtils.getDNADir(ReaderTestUtils.fasta(left), new File(tmpDir, "input"));
 
       final File out = new File(tmpDir, "out");
       CorrectReads.correct(in, out, 6, 2);

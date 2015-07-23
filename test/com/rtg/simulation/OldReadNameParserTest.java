@@ -28,7 +28,7 @@ public class OldReadNameParserTest extends AbstractSimulatedReadNameParserTest {
 
   @Override
   protected String getWellFormedReadName(String tName, int tPos, boolean forward, int rLen) {
-    int newPos = forward ? tPos : tPos + rLen;
+    final int newPos = forward ? tPos : tPos + rLen;
     return "read1:" + tName + ":" + newPos + (forward ? "" : "R") + ":S0:I0:D0";
   }
 

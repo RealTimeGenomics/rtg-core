@@ -83,8 +83,8 @@ public class LineageCliTest extends PopulationCliTest {
       final String samContents = FileHelper.resourceToString(RESOURCES_DIR + sam);
       final File pedigree = new File(tmp, "pedigree.ped");
       FileHelper.resourceToFile(RESOURCES_DIR + ped, pedigree);
-      File samFile = createSam(samContents, tmp, "lineage");
-      File output = new File(tmp, "output");
+      final File samFile = createSam(samContents, tmp, "lineage");
+      final File output = new File(tmp, "output");
 
       final LineageCli cli = new LineageCli();
       final String[] args = {
@@ -99,7 +99,7 @@ public class LineageCliTest extends PopulationCliTest {
         fail(ps.toString());
       }
 
-      String result = StringUtils.grepMinusV(FileHelper.zipFileToString(new File(output, "snps.vcf.gz")), "^#");
+      final String result = StringUtils.grepMinusV(FileHelper.zipFileToString(new File(output, "snps.vcf.gz")), "^#");
       mNano.check(expected, result);
     }
   }

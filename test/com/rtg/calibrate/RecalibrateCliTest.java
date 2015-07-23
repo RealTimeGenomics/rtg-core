@@ -53,7 +53,7 @@ public class RecalibrateCliTest extends AbstractCliTest {
       final File templateDir = new File(dir, "template");
       SimpleArchive.unpackArchive(templateDwa, templateDir);
       final MemoryPrintStream dump = new MemoryPrintStream();
-      int code = getCli().mainInit(new String[] {"-t", templateDir.getPath(), testFile.getPath()}, dump.outputStream(), dump.printStream());
+      final int code = getCli().mainInit(new String[] {"-t", templateDir.getPath(), testFile.getPath()}, dump.outputStream(), dump.printStream());
       assertEquals(dump.toString(), 0, code);
       final File calibrationFile = new File(dir, "test.sam.gz.calibration");
       final String s = FileUtils.fileToString(calibrationFile);
@@ -110,7 +110,7 @@ public class RecalibrateCliTest extends AbstractCliTest {
       final File templateDir = new File(dir, "template");
       SimpleArchive.unpackArchive(templateDwa, templateDir);
       final MemoryPrintStream dump = new MemoryPrintStream();
-      int code = getCli().mainInit(new String[] {"--force", "--template", templateDir.getPath(), testFile.getPath(),
+      final int code = getCli().mainInit(new String[] {"--force", "--template", templateDir.getPath(), testFile.getPath(),
           "--Xcovariate=readposition",
           "--Xcovariate=readgroup",
           "-c", "basequality"},
@@ -149,7 +149,7 @@ public class RecalibrateCliTest extends AbstractCliTest {
       final File templateDir = new File(dir, "template");
       SimpleArchive.unpackArchive(templateDwa, templateDir);
       try (MemoryPrintStream dump = new MemoryPrintStream()) {
-        int code = getCli().mainInit(new String[]{"-t", templateDir.getPath(), testFile.getPath(), "--bed-regions", bedFile.getPath()}, dump.outputStream(), dump.printStream());
+        final int code = getCli().mainInit(new String[]{"-t", templateDir.getPath(), testFile.getPath(), "--bed-regions", bedFile.getPath()}, dump.outputStream(), dump.printStream());
         assertEquals(dump.toString(), 0, code);
         final File calibrationFile = new File(dir, "test.sam.gz.calibration");
         final String s = FileUtils.fileToString(calibrationFile);

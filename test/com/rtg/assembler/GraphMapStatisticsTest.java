@@ -25,7 +25,7 @@ public class GraphMapStatisticsTest extends TestCase {
     }
   }
   public void test() {
-    GraphMapStatistics stats = new GraphMapStatistics(null);
+    final GraphMapStatistics stats = new GraphMapStatistics(null);
     inc(stats, GraphMapStatistics.Stat.AVOIDED_ALIGNMENTS, 3);
     inc(stats, GraphMapStatistics.Stat.CROSS_CONTIG_SINGLE, 30);
     inc(stats, GraphMapStatistics.Stat.SINGLE_END, 40);
@@ -39,13 +39,13 @@ public class GraphMapStatisticsTest extends TestCase {
   }
 
   public void testCombine() {
-    GraphMapStatistics combined = new GraphMapStatistics(null);
-    GraphMapStatistics first = new GraphMapStatistics(null);
+    final GraphMapStatistics combined = new GraphMapStatistics(null);
+    final GraphMapStatistics first = new GraphMapStatistics(null);
     inc(first, GraphMapStatistics.Stat.AVOIDED_ALIGNMENTS, 3);
     inc(first, GraphMapStatistics.Stat.CROSS_CONTIG_SINGLE, 30);
     inc(first, GraphMapStatistics.Stat.SINGLE_END, 40);
     inc(first, GraphMapStatistics.Stat.PAIRED_END, 500);
-    GraphMapStatistics second = new GraphMapStatistics(null);
+    final GraphMapStatistics second = new GraphMapStatistics(null);
     inc(first, GraphMapStatistics.Stat.AVOIDED_ALIGNMENTS, 3);
     inc(first, GraphMapStatistics.Stat.CROSS_CONTIG_SINGLE, 30);
     inc(first, GraphMapStatistics.Stat.SINGLE_END, 40);

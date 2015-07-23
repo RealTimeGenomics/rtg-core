@@ -35,12 +35,12 @@ public class ReadPairSource454Test extends TestCase {
     Diagnostic.setLogStream();
   }
   public void testAligner() throws IOException {
-    SequencesReader reader1 = ReaderTestUtils.getReaderDnaMemory(lines(">1", "AAACCCTTG"));
+    final SequencesReader reader1 = ReaderTestUtils.getReaderDnaMemory(lines(">1", "AAACCCTTG"));
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(2, new String[]{}, new long[][]{});
     assertTrue(new ReadPairSource454(reader1).aligner(graph, new IntegerOrPercentage(2), new GraphTraversions(graph)) instanceof GraphFlowAligner);
   }
   static String lines(String... lines) {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     for (String line : lines) {
       sb.append(line);
       sb.append(LS);
@@ -48,10 +48,10 @@ public class ReadPairSource454Test extends TestCase {
     return sb.toString();
   }
   public void testReads() throws IOException {
-    SequencesReader reader1 = ReaderTestUtils.getReaderDnaMemory(lines(">1", "AAACCCTTG"));
-    SequencesReader reader2 = ReaderTestUtils.getReaderDnaMemory(lines(">1", "ATACGCTTG"));
-    ReadPairSource source = new ReadPairSource454(reader1, reader2);
-    List<byte[]> fragments = source.nextFragments();
+    final SequencesReader reader1 = ReaderTestUtils.getReaderDnaMemory(lines(">1", "AAACCCTTG"));
+    final SequencesReader reader2 = ReaderTestUtils.getReaderDnaMemory(lines(">1", "ATACGCTTG"));
+    final ReadPairSource source = new ReadPairSource454(reader1, reader2);
+    final List<byte[]> fragments = source.nextFragments();
     assertNotNull(fragments);
     ReadPairSourceTest.listEquals(Arrays.asList(DnaUtils.encodeString("AAACCCTTG")
         , DnaUtils.encodeString("CAAGCGTAT")

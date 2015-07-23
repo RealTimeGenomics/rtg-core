@@ -37,7 +37,7 @@ public class SvPatternsCliTest extends AbstractParamsCliTest<BreakpointPatternPa
 
   private static final String EXP_F1 = "Error: You must provide a value for -o DIR" + LS;
   public void testErrorF1() {
-    String err = checkHandleFlagsErr();
+    final String err = checkHandleFlagsErr();
     assertTrue("<" + EXP_F1 + "> was not contained in <" + err + ">", err.contains(EXP_F1));
   }
 
@@ -57,7 +57,7 @@ public class SvPatternsCliTest extends AbstractParamsCliTest<BreakpointPatternPa
       final File tmpFile = FileUtils.stringToFile(in.toString(), FileHelper.createTempFile(tmpDir));
 
       FileHelper.resourceToFile("com/rtg/variant/sv/discord/pattern/resources/discordant_pairs.vcf.gz", in);
-      TabixIndexer tabixIndexer = new TabixIndexer(in, new File(in.getPath() + TabixIndexer.TABIX_EXTENSION));
+      final TabixIndexer tabixIndexer = new TabixIndexer(in, new File(in.getPath() + TabixIndexer.TABIX_EXTENSION));
       tabixIndexer.saveVcfIndex();
 
       final File outDir = new File(tmpDir, "out");
@@ -82,17 +82,17 @@ public class SvPatternsCliTest extends AbstractParamsCliTest<BreakpointPatternPa
       final File tmpFile = FileUtils.stringToFile(in.toString(), FileHelper.createTempFile(tmpDir));
 
       FileHelper.resourceToFile("com/rtg/variant/sv/discord/pattern/resources/discordant_pairs.vcf.gz", in);
-      TabixIndexer tabixIndexer = new TabixIndexer(in, new File(in.getPath() + TabixIndexer.TABIX_EXTENSION));
+      final TabixIndexer tabixIndexer = new TabixIndexer(in, new File(in.getPath() + TabixIndexer.TABIX_EXTENSION));
       tabixIndexer.saveVcfIndex();
 
       final File outDir = new File(tmpDir, "out");
 
-      CFlags flags = new CFlags();
+      final CFlags flags = new CFlags();
       SvPatternsCli.initLocalFlags(flags);
 
       final String region = "chr1:200-500";
       assertTrue(flags.setFlags("-o", outDir.getPath(), "-I", tmpFile.getPath(), "--region", region, "--max-fragment-length", "90000", "--max-same-distance", "1234", "--min-support", "43"));
-      BreakpointPatternParams params = SvPatternsCli.makeParamsLocal(flags);
+      final BreakpointPatternParams params = SvPatternsCli.makeParamsLocal(flags);
       assertEquals(region, params.region().toString());
       assertEquals(1, params.files().size());
       assertEquals(in, params.files().get(0));
@@ -108,16 +108,16 @@ public class SvPatternsCliTest extends AbstractParamsCliTest<BreakpointPatternPa
       final File tmpFile = FileUtils.stringToFile(in.toString(), FileHelper.createTempFile(tmpDir));
 
       FileHelper.resourceToFile("com/rtg/variant/sv/discord/pattern/resources/discordant_pairs.vcf.gz", in);
-      TabixIndexer tabixIndexer = new TabixIndexer(in, new File(in.getPath() + TabixIndexer.TABIX_EXTENSION));
+      final TabixIndexer tabixIndexer = new TabixIndexer(in, new File(in.getPath() + TabixIndexer.TABIX_EXTENSION));
       tabixIndexer.saveVcfIndex();
 
       final File outDir = new File(tmpDir, "out");
 
-      CFlags flags = new CFlags();
+      final CFlags flags = new CFlags();
       SvPatternsCli.initLocalFlags(flags);
 
       assertTrue(flags.setFlags("-o", outDir.getPath(), "-I", tmpFile.getPath()));
-      BreakpointPatternParams params = SvPatternsCli.makeParamsLocal(flags);
+      final BreakpointPatternParams params = SvPatternsCli.makeParamsLocal(flags);
       assertEquals(null, params.region());
       assertEquals(500, params.fragmentLength());
       assertEquals(50, params.sameDistance());

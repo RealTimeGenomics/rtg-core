@@ -50,19 +50,19 @@ public class SvPatternsTaskTest extends TestCase {
       try {
         final File vcfFile = new File(tmpDir, "input.vcf.gz");
         FileHelper.resourceToFile("com/rtg/variant/sv/discord/pattern/resources/discordant_pairs.vcf.gz", vcfFile);
-        TabixIndexer tabixIndexer = new TabixIndexer(vcfFile, new File(vcfFile.getPath() + TabixIndexer.TABIX_EXTENSION));
+        final TabixIndexer tabixIndexer = new TabixIndexer(vcfFile, new File(vcfFile.getPath() + TabixIndexer.TABIX_EXTENSION));
         tabixIndexer.saveVcfIndex();
         final File output = new File(tmpDir, "output");
         assertTrue(output.mkdir());
         final BreakpointPatternParams params = BreakpointPatternParams.builder().directory(output).files(Arrays.asList(vcfFile)).create();
-        MemoryPrintStream mps = new MemoryPrintStream();
-        SvPatternsTask task = new SvPatternsTask(params, mps.outputStream());
+        final MemoryPrintStream mps = new MemoryPrintStream();
+        final SvPatternsTask task = new SvPatternsTask(params, mps.outputStream());
         task.exec();
         assertTrue(output.isDirectory());
         final File bedFile = new File(output, "sv_patterns.bed.gz");
         assertTrue(bedFile.isFile());
         assertTrue(new File(output, "sv_patterns.bed.gz.tbi").isFile());
-        String results = FileHelper.gzFileToString(bedFile);
+        final String results = FileHelper.gzFileToString(bedFile);
         TestUtils.containsAll(results,
             "#CL\tfoo bar baz"
             , "#Version"
@@ -94,9 +94,9 @@ public class SvPatternsTaskTest extends TestCase {
       // This file contains a few records that ought to be filtered as well as the ones from {@code EXPECTED_BREAKPOINTS}
       FileHelper.resourceToFile("com/rtg/variant/sv/discord/pattern/resources/discordant_pairs.vcf.gz", vcfFile);
       final BreakpointPatternParams params = BreakpointPatternParams.builder().files(Arrays.asList(vcfFile)).create();
-      MemoryPrintStream mps = new MemoryPrintStream();
-      SvPatternsTask task = new SvPatternsTask(params, mps.outputStream());
-      BreakpointStore store = task.loadBreakpoints(null, Arrays.asList(vcfFile));
+      final MemoryPrintStream mps = new MemoryPrintStream();
+      final SvPatternsTask task = new SvPatternsTask(params, mps.outputStream());
+      final BreakpointStore store = task.loadBreakpoints(null, Arrays.asList(vcfFile));
       int i = 0;
       for (VcfBreakpoint b : store) {
         assertEquals(EXPECTED_BREAKPOINTS[i], b.toString());
@@ -114,80 +114,80 @@ public class SvPatternsTaskTest extends TestCase {
   }
 
   public void testAnalyzeDelete() throws IOException {
-    BreakpointStore store = new BreakpointStore();
+    final BreakpointStore store = new BreakpointStore();
     store.add(new VcfBreakpoint("a", 10, "a", 5000, true, false, 0));
-    String results = processStore(store);
+    final String results = processStore(store);
     assertEquals(tab("a 10 5000 deletion 0" + LS), results);
   }
 
   public void testOverlapDelete() throws IOException {
-    BreakpointStore store = new BreakpointStore();
+    final BreakpointStore store = new BreakpointStore();
     store.add(new VcfBreakpoint("a", 10, "a", 5000, true, false, 0));
     store.add(new VcfBreakpoint("a", 400, "a", 5000, true, false, 2));
-    String results = processStore(store);
+    final String results = processStore(store);
     assertEquals(tab("a 400 5000 deletion 2" + LS), results);
 
   }
 
   public void testAnalyzeInversion() throws IOException {
-    BreakpointStore store = new BreakpointStore();
+    final BreakpointStore store = new BreakpointStore();
     store.add(new VcfBreakpoint("a", 10, "a", 5000, true, true, 1));
     store.add(new VcfBreakpoint("a", 14, "a", 5002, false, false, 1));
-    String results = processStore(store);
+    final String results = processStore(store);
     assertEquals(tab("a 10 5000 inversion 2" + LS), results);
   }
   public void testSlightlyOffInversion() throws IOException {
-    BreakpointStore store = new BreakpointStore();
+    final BreakpointStore store = new BreakpointStore();
     store.add(new VcfBreakpoint("a", 10, "a", 5000, true, true, 0));
     store.add(new VcfBreakpoint("a", 8, "a", 5002, false, false, 1));
-    String results = processStore(store);
+    final String results = processStore(store);
     assertEquals(tab("a 10 5000 inversion 1" + LS), results);
   }
   public void testNotAnInversion() throws IOException {
-    BreakpointStore store = new BreakpointStore();
+    final BreakpointStore store = new BreakpointStore();
     store.add(new VcfBreakpoint("a", 10, "a", 5000, true, true, 0));
     store.add(new VcfBreakpoint("a", 8, "a", 5002, false, true, 0));
-    String results = processStore(store);
+    final String results = processStore(store);
     assertEquals("", results);
   }
 
 
   public void testAnalyzeCopy() throws IOException {
-    BreakpointStore store = new BreakpointStore();
+    final BreakpointStore store = new BreakpointStore();
     store.add(new VcfBreakpoint("a", 10, "b", 5000, true, true, 3));
     store.add(new VcfBreakpoint("a", 14, "b", 4700, false, false, 0));
-    String results = processStore(store);
+    final String results = processStore(store);
     assertEquals(tab("a 10 14 inserted_copy:b:5000-4700 3" + LS), results);
   }
 
   public void testSlightlyOffCopy() throws IOException {
-    BreakpointStore store = new BreakpointStore();
+    final BreakpointStore store = new BreakpointStore();
     store.add(new VcfBreakpoint("a", 10, "b", 5000, true, true, 0));
     store.add(new VcfBreakpoint("a", 8, "b", 4700, false, false, 0));
-    String results = processStore(store);
+    final String results = processStore(store);
     assertEquals(tab("a 8 10 inserted_copy:b:5000-4700 0" + LS), results);
   }
   public void testNotACopy() throws IOException {
-    BreakpointStore store = new BreakpointStore();
+    final BreakpointStore store = new BreakpointStore();
     store.add(new VcfBreakpoint("a", 10, "b", 5000, true, true, 0));
     store.add(new VcfBreakpoint("a", 14, "b", 4700, false, true, 0));
-    String results = processStore(store);
+    final String results = processStore(store);
     assertEquals("", results);
   }
 
   public void testForwardCopy() throws IOException {
-    BreakpointStore store = new BreakpointStore();
+    final BreakpointStore store = new BreakpointStore();
     store.add(new VcfBreakpoint("a", 10, "b", 4700, true, false, 1));
     store.add(new VcfBreakpoint("a", 14, "b", 5000, false, true, 5));
-    String results = processStore(store);
+    final String results = processStore(store);
     assertEquals(tab("a 10 14 inserted_copy:b:4700-5000 6" + LS), results);
   }
 
   public String processStore(BreakpointStore store) throws IOException {
     final BreakpointPatternParams params = BreakpointPatternParams.builder().create();
-    MemoryPrintStream stdOut = new MemoryPrintStream();
-    MemoryPrintStream bedFile = new MemoryPrintStream();
-    SvPatternsTask task = new SvPatternsTask(params, stdOut.outputStream());
+    final MemoryPrintStream stdOut = new MemoryPrintStream();
+    final MemoryPrintStream bedFile = new MemoryPrintStream();
+    final SvPatternsTask task = new SvPatternsTask(params, stdOut.outputStream());
     task.setOutput(bedFile.outputStream());
     task.processStore(store);
     task.close();

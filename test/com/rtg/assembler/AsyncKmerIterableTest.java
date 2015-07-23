@@ -33,7 +33,7 @@ import junit.framework.TestCase;
  */
 public class AsyncKmerIterableTest extends TestCase {
   public void test() throws IOException {
-    File tmpDir = FileHelper.createTempDirectory();
+    final File tmpDir = FileHelper.createTempDirectory();
     try {
       final String[][] sequences = {
           new String[] {
@@ -51,8 +51,8 @@ public class AsyncKmerIterableTest extends TestCase {
       for (int i = 0; i < sequences.length; i++) {
         final File dir = new File(tmpDir, "" + i);
         files.add(dir);
-        String[] reads = sequences[i];
-        StringBuilder sb = new StringBuilder();
+        final String[] reads = sequences[i];
+        final StringBuilder sb = new StringBuilder();
         for (int j = 0; j < reads.length; j++) {
           sb.append(">")
               .append(j)

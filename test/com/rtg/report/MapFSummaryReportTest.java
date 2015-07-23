@@ -22,9 +22,9 @@ import junit.framework.TestCase;
  */
 public class MapFSummaryReportTest extends TestCase {
   public void testMapxSummary() {
-    MapFSummaryReport summary = new MapFSummaryReport();
+    final MapFSummaryReport summary = new MapFSummaryReport();
     summary.setParams(NgsParams.builder().outputParams(NgsOutputParams.builder().filterParams(NgsFilterParams.builder().maxTopResults(42).create()).create()).create());
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     summary.reportingReport(sb);
     assertEquals("", sb.toString());
 

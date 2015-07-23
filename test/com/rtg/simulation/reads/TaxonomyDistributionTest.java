@@ -44,33 +44,33 @@ public class TaxonomyDistributionTest extends TestCase {
       ;
   public void testEasy() throws IOException {
     final SequencesReader reader = ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.fasta("AAAAA", "AA", "AAA"));
-    InputStream in = new ByteArrayInputStream(EASY.getBytes());
-    Map<String, Integer> taxonLookup = new HashMap<>();
+    final InputStream in = new ByteArrayInputStream(EASY.getBytes());
+    final Map<String, Integer> taxonLookup = new HashMap<>();
     taxonLookup.put("0", 0);
     taxonLookup.put("1", 1);
     taxonLookup.put("2", 2);
-    MemoryPrintStream mps = new MemoryPrintStream();
+    final MemoryPrintStream mps = new MemoryPrintStream();
     Diagnostic.setLogStream(mps.printStream());
-    TaxonomyDistribution dist = new TaxonomyDistribution(in, taxonLookup, reader, TaxonomyDistribution.DistributionType.DNA_FRACTION);
+    final TaxonomyDistribution dist = new TaxonomyDistribution(in, taxonLookup, reader, TaxonomyDistribution.DistributionType.DNA_FRACTION);
     assertTrue(Arrays.equals(new double[]{0.5, 0, 0.5}, dist.getDistribution()));
     assertFalse(mps.toString().contains("Input distribution sums to"));
 
   }
   public void testHarder() throws IOException {
     final SequencesReader reader = ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.fasta("AAAAA", "AA", "AAA", "AA"));
-    InputStream in = new ByteArrayInputStream(EASY.getBytes());
-    Map<String, Integer> taxonLookup = new HashMap<>();
+    final InputStream in = new ByteArrayInputStream(EASY.getBytes());
+    final Map<String, Integer> taxonLookup = new HashMap<>();
     taxonLookup.put("0", 0);
     taxonLookup.put("1", 1);
     taxonLookup.put("2", 2);
     taxonLookup.put("3", 2);
-    TaxonomyDistribution dist = new TaxonomyDistribution(in, taxonLookup, reader, TaxonomyDistribution.DistributionType.DNA_FRACTION);
+    final TaxonomyDistribution dist = new TaxonomyDistribution(in, taxonLookup, reader, TaxonomyDistribution.DistributionType.DNA_FRACTION);
     assertTrue(Arrays.equals(new double[]{0.5, 0, 0.3, 0.2}, dist.getDistribution()));
 
   }
 
   public void testParser() throws IOException {
-    Map<Integer, Double> expected = new HashMap<>();
+    final Map<Integer, Double> expected = new HashMap<>();
     expected.put(0, 0.5);
     expected.put(2, 0.5);
     assertEquals(expected, TaxonomyDistribution.parseTaxonDistribution(new ByteArrayInputStream(EASY.getBytes())));
@@ -134,29 +134,29 @@ public class TaxonomyDistributionTest extends TestCase {
                              + "0.49\t2" + StringUtils.LS
         ;
     final SequencesReader reader = ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.fasta("AAAAA", "AA", "AAA"));
-    InputStream in = new ByteArrayInputStream(malformed.getBytes());
-    Map<String, Integer> taxonLookup = new HashMap<>();
+    final InputStream in = new ByteArrayInputStream(malformed.getBytes());
+    final Map<String, Integer> taxonLookup = new HashMap<>();
     taxonLookup.put("0", 0);
     taxonLookup.put("1", 1);
     taxonLookup.put("2", 2);
-    MemoryPrintStream mps = new MemoryPrintStream();
+    final MemoryPrintStream mps = new MemoryPrintStream();
     Diagnostic.setLogStream(mps.printStream());
-    TaxonomyDistribution dist = new TaxonomyDistribution(in, taxonLookup, reader, TaxonomyDistribution.DistributionType.DNA_FRACTION);
+    final TaxonomyDistribution dist = new TaxonomyDistribution(in, taxonLookup, reader, TaxonomyDistribution.DistributionType.DNA_FRACTION);
     assertTrue(Arrays.equals(new double[]{0.5, 0, 0.5}, dist.getDistribution()));
     TestUtils.containsAll(mps.toString(), "Input distribution sums to: 0.98");
   }
 
   public void testAbundance() throws IOException {
     final SequencesReader reader = ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.fasta("AAAAAA", "AAA", "AA", "AAA"));
-    InputStream in = new ByteArrayInputStream(EASY.getBytes());
-    Map<String, Integer> taxonLookup = new HashMap<>();
+    final InputStream in = new ByteArrayInputStream(EASY.getBytes());
+    final Map<String, Integer> taxonLookup = new HashMap<>();
     taxonLookup.put("0", 0);
     taxonLookup.put("1", 0);
     taxonLookup.put("2", 1);
     taxonLookup.put("3", 2);
-    MemoryPrintStream mps = new MemoryPrintStream();
+    final MemoryPrintStream mps = new MemoryPrintStream();
     Diagnostic.setLogStream(mps.printStream());
-    TaxonomyDistribution dist = new TaxonomyDistribution(in, taxonLookup, reader, TaxonomyDistribution.DistributionType.ABUNDANCE);
+    final TaxonomyDistribution dist = new TaxonomyDistribution(in, taxonLookup, reader, TaxonomyDistribution.DistributionType.ABUNDANCE);
     assertTrue(Arrays.toString(dist.getDistribution()), Arrays.equals(new double[]{0.5, 0.25, 0, 0.25}, dist.getDistribution()));
     assertFalse(mps.toString().contains("Input distribution sums to"));
   }

@@ -132,7 +132,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
   }
 
   private T getHitInfo(int i) {
-    T ret;
+    final T ret;
     if (mReadsWindowInUse[i] < 0 || mReadsWindowInUse[i] == MAX_HITS_PER_POSITION) {
       if (mReadsWindowInUse[i] != -1) {
         Diagnostic.userLog("Max hits per position exceeded at template: " + mReferenceId + " templateStart: " + (mReadsWindow[i].size() > 0 ? "" + mReadsWindow[i].get(0).mTemplateStart : "unknown"));

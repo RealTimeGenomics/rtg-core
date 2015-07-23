@@ -74,7 +74,7 @@ public class PosteriorPureTest extends TestCase {
       ;
 
   public void testPosteriorAllSame() {
-    HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.EQUALS_REF_A.get(0).hypotheses();
+    final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.EQUALS_REF_A.get(0).hypotheses();
     final VariantParams params = VariantParams.builder().somaticRate(0.001).create();
     final AbstractSomaticCaller ccs = new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params);
     ccs.integrity();

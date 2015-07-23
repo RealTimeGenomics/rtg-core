@@ -24,7 +24,7 @@ public class PileUpTest extends TestCase {
   public void testPileUp() {
 
 
-    PileUp pu = new PileUp(10);
+    final PileUp pu = new PileUp(10);
 
     pu.add('t', 3);
     pu.add('a', 5);

@@ -57,7 +57,7 @@ public class SpeciesParamsTest extends TestCase {
         FileUtils.stringToFile(SharedSamConstants.SAM9, map);
         assertTrue(map.isFile());
 
-        SpeciesParams ccp;
+        final SpeciesParams ccp;
         try {
           final File outFile = new File(TEST_OUTPUT);
           assertTrue(outFile.mkdir());

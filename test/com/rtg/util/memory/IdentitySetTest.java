@@ -89,7 +89,7 @@ public class IdentitySetTest extends TestCase {
     for (Integer aTint : tint) {
       assertTrue(set.contains(aTint));
     }
-    Integer[] tint2 = new Integer[5];
+    final Integer[] tint2 = new Integer[5];
     for (int i = 0; i < tint2.length - 1; i++) {
       tint2[i] = tint.length + i;
     }

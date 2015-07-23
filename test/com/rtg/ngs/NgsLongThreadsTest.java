@@ -28,7 +28,7 @@ public class NgsLongThreadsTest extends NgsLongTest {
   }
 
   public static Test suite() {
-    TestSuite suite = new TestSuite();
+    final TestSuite suite = new TestSuite();
 
     suite.addTestSuite(NgsLongThreadsTest.class);
     return suite;

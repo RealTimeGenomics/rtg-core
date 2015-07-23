@@ -32,33 +32,33 @@ public abstract class AbstractBuildClassifierTest extends TestCase {
     d.addInstance(new Instance(new double[] {0.0}, true));
     d.addInstance(new Instance(new double[] {4.2}, false));
 
-    BuildClassifier b = makeClassifier();
+    final BuildClassifier b = makeClassifier();
     b.build(d);
 
-    PredictClassifier p = b.getClassifier();
+    final PredictClassifier p = b.getClassifier();
 
     for (Instance inst : d.getInstances()) {
-      double prob = p.predict(inst.instance());
+      final double prob = p.predict(inst.instance());
       assertTrue(prob >= 0 && prob <= 1.0);
     }
   }
 
   public void testProperties() {
-    BuildClassifier b = makeClassifier();
+    final BuildClassifier b = makeClassifier();
     // Check that empty properties do not blow things up
     b.setProperties(new Properties());
-    Dataset data = TrainTestSplitTest.makeSimpleDataset(100, 100);
+    final Dataset data = TrainTestSplitTest.makeSimpleDataset(100, 100);
     b.build(data);
   }
 
   public void testMultithread() {
-    BuildClassifier b = makeClassifier();
-    Dataset data = TrainTestSplitTest.makeSimpleDataset(100, 100);
+    final BuildClassifier b = makeClassifier();
+    final Dataset data = TrainTestSplitTest.makeSimpleDataset(100, 100);
 
-    TrainTestSplit split = TrainTestSplit.sampleWithReplacement(data, 150, new PortableRandom(42));
+    final TrainTestSplit split = TrainTestSplit.sampleWithReplacement(data, 150, new PortableRandom(42));
     b.build(split.mTrain);
 
-    PredictClassifier p = b.getClassifier();
+    final PredictClassifier p = b.getClassifier();
 
     //System.err.println(p.toString(new StringBuilder(), ""));
 
@@ -68,7 +68,7 @@ public abstract class AbstractBuildClassifierTest extends TestCase {
       for (int threads = 1; threads < 10; threads += 3) {
         ((ThreadAware) b).setNumberOfThreads(threads);
         b.build(split.mTrain);
-        PredictClassifier p2 = b.getClassifier();
+        final PredictClassifier p2 = b.getClassifier();
 
         assertFalse(p == p2);             // But every build must create a new classifier
 

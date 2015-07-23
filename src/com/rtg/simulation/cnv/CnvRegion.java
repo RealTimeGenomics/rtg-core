@@ -106,7 +106,7 @@ public class CnvRegion {
   static int generateNumCopies(PortableRandom random, CnvPriorParams priors, int length) {
     final int magnitudeIndex = CnvSimulator.getMagnitudeIndex(length, 7);
     final double[] distribution = priors.copyNumberThresholds()[magnitudeIndex];
-    int index;
+    final int index;
     index = CnvSimulator.chooseFromAccumDistribution(random.nextDouble(), distribution);
     if (index == 0) {
       return 1;

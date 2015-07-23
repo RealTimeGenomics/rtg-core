@@ -52,7 +52,7 @@ public class CalibratedMachineErrorParamsTest extends TestCase {
     lap.increment(2, 6);
     lap.increment(3, 5);
 
-    double[][] dists = CalibratedMachineErrorParams.histogramsToCgDists(gap, lap);
+    final double[][] dists = CalibratedMachineErrorParams.histogramsToCgDists(gap, lap);
     //gap dists are length 4 + index
     assertEquals((double) 4 / 22, dists[0][0]);
     assertEquals((double) 5 / 22, dists[0][1]);
@@ -103,7 +103,7 @@ public class CalibratedMachineErrorParamsTest extends TestCase {
   static {
     final int totalEqPlusMm = 214733;
     final int totalMm = 4673;
-    double errorRate = (double) totalMm / (double) totalEqPlusMm;
+    final double errorRate = (double) totalMm / (double) totalEqPlusMm;
     TEST_CALIBRATION_QUALITIES.put(2, CalibratedMachineErrorParams.countsToEmpiricalQuality(270, 270 + 467, errorRate));
     TEST_CALIBRATION_QUALITIES.put(20, CalibratedMachineErrorParams.countsToEmpiricalQuality(289, 289 + 3434, errorRate));
     TEST_CALIBRATION_QUALITIES.put(30, CalibratedMachineErrorParams.countsToEmpiricalQuality(86, 86 + 16424, errorRate));

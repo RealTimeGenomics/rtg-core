@@ -49,7 +49,7 @@ public class GenotypeLikelihoodUtilsTest extends TestCase {
     return result;
   }
   public void assertApproxEquals(double[] a, double[] b, double tolerance) {
-    String failMsg = Arrays.toString(a) + " != " + Arrays.toString(b);
+    final String failMsg = Arrays.toString(a) + " != " + Arrays.toString(b);
     if (a.length != b.length) {
       fail(failMsg);
     }

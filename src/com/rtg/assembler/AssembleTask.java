@@ -134,7 +134,7 @@ final class AssembleTask extends ParamsTask<AssembleParams, GraphMapStatistics> 
   }
 
   private static GraphKmerAttribute makeGraph(AssembleParams assembleParams, PrintStream printStream, List<ReadPairSource> readPairSources) throws IOException {
-    GraphKmerAttribute graph;
+    final GraphKmerAttribute graph;
     if (assembleParams.graph() == null) {
       final DeBruijnParams params = DeBruijnParams.builder().mergeRatio(assembleParams.mergeRatio()).minHashFrequency(assembleParams.minHashFrequency()).region(assembleParams.region()).create();
       final File buildDirectory = assembleParams.file("build");

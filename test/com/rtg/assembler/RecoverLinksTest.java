@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 public class RecoverLinksTest extends TestCase {
   public void testLink() {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(5, new String[]{"AAAACCACCACAGTATTAGATG", "AGGGGTGGGTGAGACC", "ATTTTGTTGTG", "TTGGGAGATTGA"}, new long[][]{});
-    ConstraintCache cache = new ConstraintCache();
+    final ConstraintCache cache = new ConstraintCache();
     cache.addConstraint(1, -2, 3, 4, 20);
     cache.addConstraint(-2, 1, 7, 12, 20);
 

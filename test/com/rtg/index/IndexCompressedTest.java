@@ -157,7 +157,7 @@ public class IndexCompressedTest extends AbstractIndexTest {
     final CreateParams params = new CreateParams(51, 8, 8, 3, true, true, true, false);
     final IndexExtended countIndex = new IndexCompressed(params, Integer.MAX_VALUE, false, Integer.MAX_VALUE, 0, 4);
 
-    long[] hashes = {48, 192, 3, 48, 192, 3, 48, 192, 1, 4, 19, 77, 53, 104, 88, 96, 61
+    final long[] hashes = {48, 192, 3, 48, 192, 3, 48, 192, 1, 4, 19, 77, 53, 104, 88, 96, 61
         , 48, 192, 1, 4, 19, 77, 53, 104, 88, 96, 61, 48, 192, 1, 4, 18, 73, 37, 105, 88, 96, 61, 48
         , 192, 1, 4, 18, 73, 37, 105, 88, 96, 61, 13
     };
@@ -179,7 +179,7 @@ public class IndexCompressedTest extends AbstractIndexTest {
       final CreateParams params = new CreateParams(51, 8, 8, 3, true, true, false, false);
       final IndexExtended countIndex = new IndexCompressed(params, Integer.MAX_VALUE, false, Integer.MAX_VALUE, 0, 4);
 
-      long[] hashes = {48, 192, 3, 48, 192, 3, 48, 192, 1, 4, 19, 77, 53, 104, 88, 96, 61
+      final long[] hashes = {48, 192, 3, 48, 192, 3, 48, 192, 1, 4, 19, 77, 53, 104, 88, 96, 61
           , 48, 192, 1, 4, 19, 77, 53, 104, 88, 96, 61, 48, 192, 1, 4, 18, 73, 37, 105, 88, 96, 61, 48
           , 192, 1, 4, 18, 73, 37, 105, 88, 96, 61, 13
       };
@@ -191,7 +191,7 @@ public class IndexCompressedTest extends AbstractIndexTest {
       }
       final FindTest finder = new FindTest();
       countIndex.scan(finder);
-      List<Long> expected = Arrays.asList(1L, 1L, 1L, 1L, 3L, 3L, 4L, 4L, 4L, 4L, 13L, 18L, 18L, 19L, 19L, 37L, 37L, 48L
+      final List<Long> expected = Arrays.asList(1L, 1L, 1L, 1L, 3L, 3L, 4L, 4L, 4L, 4L, 13L, 18L, 18L, 19L, 19L, 37L, 37L, 48L
           , 48L, 48L, 48L, 48L, 48L, 53L, 53L, 61L, 61L, 61L, 61L, 73L, 73L, 77L, 77L, 88L, 88L, 88L, 88L, 96L, 96L, 96L
           , 96L, 104L, 104L, 105L, 105L, 192L, 192L, 192L, 192L, 192L, 192L);
       assertEquals(expected, finder.mHash);

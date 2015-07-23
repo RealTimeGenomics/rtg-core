@@ -18,13 +18,13 @@ import junit.framework.TestCase;
 public class SimpleEvaluationTest extends TestCase {
 
   public void test() {
-    SimpleEvaluation eval = new SimpleEvaluation();
+    final SimpleEvaluation eval = new SimpleEvaluation();
 
-    BuildClassifier b = new ZeroRBuilder();
-    Dataset data = TrainTestSplitTest.makeSimpleDataset(100, 200);
+    final BuildClassifier b = new ZeroRBuilder();
+    final Dataset data = TrainTestSplitTest.makeSimpleDataset(100, 200);
     b.build(data);
 
-    PredictClassifier p = b.getClassifier();
+    final PredictClassifier p = b.getClassifier();
     eval.evaluate(p, data);
     assertEquals(200.0, eval.correct());
     assertEquals(200.0, eval.trueNegatives());

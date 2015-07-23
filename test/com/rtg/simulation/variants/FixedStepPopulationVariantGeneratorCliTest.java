@@ -25,7 +25,7 @@ public class FixedStepPopulationVariantGeneratorCliTest extends AbstractCliTest 
 
   /** Test for an error that will be picked up during flags parsing. */
   private void checkFlagsError(final String[] args, final String exp) {
-    String err = checkHandleFlagsErr(args);
+    final String err = checkHandleFlagsErr(args);
     assertTrue("<" + exp + "> was not in <" + err + ">", err.contains(exp));
   }
 

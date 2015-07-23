@@ -20,7 +20,7 @@ import junit.framework.TestCase;
  */
 public class ConstraintCollectorTest extends TestCase {
   public void testCollect() {
-    ConstraintCollector c = new ConstraintCollector(3, 6);
+    final ConstraintCollector c = new ConstraintCollector(3, 6);
     c.increment(10, 20, 50);
     c.increment(100, 22, 50);
     assertEquals(Arrays.asList(20, -72), c.mConstraint);

@@ -86,7 +86,7 @@ public class SlidingWindowCollector extends AbstractSlidingWindowCollector<HitIn
   }
 
   private MatedHitInfo getMatedHitInfo(int i) {
-    MatedHitInfo ret;
+    final MatedHitInfo ret;
     if (mMatedReadsWindowInUse[i] == MAX_HITS_PER_POSITION - 1) {
         Diagnostic.userLog("Max hits per position exceeded at template: " + mReferenceId + " templateStart: " + (mReadsWindow[i].size() > 0 ? "" + mReadsWindow[i].get(0).mTemplateStart : "unknown"));
     }

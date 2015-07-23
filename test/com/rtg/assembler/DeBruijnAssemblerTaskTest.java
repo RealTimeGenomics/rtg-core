@@ -32,11 +32,11 @@ import junit.framework.TestCase;
  */
 public class DeBruijnAssemblerTaskTest extends TestCase {
   public void test() throws IOException {
-    MemoryPrintStream mps = new MemoryPrintStream();
-    MemoryPrintStream diag = new MemoryPrintStream();
-    File tmpDir = FileHelper.createTempDirectory();
+    final MemoryPrintStream mps = new MemoryPrintStream();
+    final MemoryPrintStream diag = new MemoryPrintStream();
+    final File tmpDir = FileHelper.createTempDirectory();
     try {
-      File sequence = ReaderTestUtils.getDNADir(""
+      final File sequence = ReaderTestUtils.getDNADir(""
           + ">a" + StringUtils.LS + "AAAAAACAACCAAGCAATGAATCGAAAAAA" + StringUtils.LS
           + ">a" + StringUtils.LS + "AAAAAACAACCAAGCAATGAATCGAAAAAAGTGTG" + StringUtils.LS
           + ">a" + StringUtils.LS + "AAAAAACAACCAAGCAATGAATCGAAAAAAGTGTG" + StringUtils.LS
@@ -44,12 +44,12 @@ public class DeBruijnAssemblerTaskTest extends TestCase {
           + ">a" + StringUtils.LS + "AAAAAACAACCAAGCCATGAATCGAAAAAA" + StringUtils.LS
       );
       try {
-        DeBruijnParams params = DeBruijnParams.builder().inputFiles(Arrays.asList(sequence)).directory(tmpDir).kmerSize(6).create();
-        File fileList = new File(tmpDir, "fileList");
+        final DeBruijnParams params = DeBruijnParams.builder().inputFiles(Arrays.asList(sequence)).directory(tmpDir).kmerSize(6).create();
+        final File fileList = new File(tmpDir, "fileList");
         FileUtils.stringToFile(sequence.toString() + StringUtils.LS, fileList);
         Diagnostic.setLogStream(diag.printStream());
         try {
-          DeBruijnAssemblerTask task = new DeBruijnAssemblerTask(params, mps.outputStream());
+          final DeBruijnAssemblerTask task = new DeBruijnAssemblerTask(params, mps.outputStream());
           task.exec();
 //          System.err.println(FileUtils.fileToString(new File(tmpDir, "contigs")));
           TestUtils.containsAll(diag.toString()

@@ -21,7 +21,7 @@ import junit.framework.TestCase;
  */
 public class TraversionTest extends TestCase {
   Set<Long> longs(long... list) {
-    Set<Long> result = new HashSet<>();
+    final Set<Long> result = new HashSet<>();
     for (long l :list) {
       result.add(l);
     }
@@ -29,7 +29,7 @@ public class TraversionTest extends TestCase {
   }
 
   public void test() {
-    Traversion t = new Traversion(longs(1, 2, 3), longs(-1, -2, 3));
+    final Traversion t = new Traversion(longs(1, 2, 3), longs(-1, -2, 3));
     assertEquals(longs(1, 2, 3), t.next());
     assertEquals(longs(-1, -2, 3), t.previous());
   }

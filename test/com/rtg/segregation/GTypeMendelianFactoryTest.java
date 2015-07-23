@@ -50,7 +50,7 @@ public class GTypeMendelianFactoryTest extends TestCase {
   }
 
   public void testDDD() {
-    GTypeMendelian checker = GTypeMendelianFactory.getGTypeMendelian(Ploidy.DIPLOID, Ploidy.DIPLOID, Ploidy.DIPLOID);
+    final GTypeMendelian checker = GTypeMendelianFactory.getGTypeMendelian(Ploidy.DIPLOID, Ploidy.DIPLOID, Ploidy.DIPLOID);
     assertNotNull(checker);
     assertTrue(checker.isMendelian(sA, sA, sA));
     assertFalse(checker.isMendelian(sA, sA, sB));
@@ -65,7 +65,7 @@ public class GTypeMendelianFactoryTest extends TestCase {
   }
 
   public void testHDD() {
-    GTypeMendelian checker = GTypeMendelianFactory.getGTypeMendelian(Ploidy.HAPLOID, Ploidy.DIPLOID, Ploidy.DIPLOID);
+    final GTypeMendelian checker = GTypeMendelianFactory.getGTypeMendelian(Ploidy.HAPLOID, Ploidy.DIPLOID, Ploidy.DIPLOID);
     assertNotNull(checker);
     assertTrue(checker.isMendelian(sG, sA, sA));
     assertFalse(checker.isMendelian(sH, sA, sA));
@@ -74,27 +74,27 @@ public class GTypeMendelianFactoryTest extends TestCase {
   }
 
   public void testHDH() {
-    GTypeMendelian checker = GTypeMendelianFactory.getGTypeMendelian(Ploidy.HAPLOID, Ploidy.DIPLOID, Ploidy.HAPLOID);
+    final GTypeMendelian checker = GTypeMendelianFactory.getGTypeMendelian(Ploidy.HAPLOID, Ploidy.DIPLOID, Ploidy.HAPLOID);
     assertNotNull(checker);
     assertTrue(checker.isMendelian(sG, sA, sG));
     assertFalse(checker.isMendelian(sG, sA, sH));
   }
 
   public void testNHN() {
-    GTypeMendelian checker = GTypeMendelianFactory.getGTypeMendelian(Ploidy.NONE, Ploidy.HAPLOID, Ploidy.NONE);
+    final GTypeMendelian checker = GTypeMendelianFactory.getGTypeMendelian(Ploidy.NONE, Ploidy.HAPLOID, Ploidy.NONE);
     assertNotNull(checker);
     assertTrue(checker.isMendelian(sI, sG, sI));
   }
 
   public void testHNH() {
-    GTypeMendelian checker = GTypeMendelianFactory.getGTypeMendelian(Ploidy.HAPLOID, Ploidy.NONE, Ploidy.HAPLOID);
+    final GTypeMendelian checker = GTypeMendelianFactory.getGTypeMendelian(Ploidy.HAPLOID, Ploidy.NONE, Ploidy.HAPLOID);
     assertNotNull(checker);
     assertTrue(checker.isMendelian(sG, sI, sG));
     assertFalse(checker.isMendelian(sG, sI, sH));
   }
 
   public void testPPP() {
-    GTypeMendelian checker = GTypeMendelianFactory.getGTypeMendelian(Ploidy.POLYPLOID, Ploidy.POLYPLOID, Ploidy.POLYPLOID);
+    final GTypeMendelian checker = GTypeMendelianFactory.getGTypeMendelian(Ploidy.POLYPLOID, Ploidy.POLYPLOID, Ploidy.POLYPLOID);
     assertNotNull(checker);
     assertTrue(checker.isMendelian(sJ, sJ, sJ));
     assertFalse(checker.isMendelian(sK, sJ, sK));

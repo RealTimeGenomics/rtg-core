@@ -41,10 +41,10 @@ public class AlignmentIteratorTest extends TestCase {
     final IntegerOrPercentage mismatches = new IntegerOrPercentage(3);
     final GraphAligner graphAligner = new GraphAligner(graph, mismatches, new GraphTraversions(graph));
     final GraphIndex graphIndex = new GraphIndex(graph, 5, 5);
-    SimpleThreadPool pool = new SimpleThreadPool(1, "AlignmentIteratorTest", true);
+    final SimpleThreadPool pool = new SimpleThreadPool(1, "AlignmentIteratorTest", true);
     final AsyncReadSource readSource = new AsyncReadSource(readPairSource, "testAlignmentIterator");
     pool.execute(readSource);
-    AlignmentIterator iterator = new AlignmentIterator(readSource, graph, graphAligner, graphIndex, graphMapStatistics);
+    final AlignmentIterator iterator = new AlignmentIterator(readSource, graph, graphAligner, graphIndex, graphMapStatistics);
     assertTrue(iterator.hasNext());
     AlignmentIterator.ReadAlignment next = iterator.next();
     assertEquals(0, next.mId);

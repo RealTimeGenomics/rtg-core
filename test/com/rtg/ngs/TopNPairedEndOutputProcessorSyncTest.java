@@ -242,19 +242,19 @@ public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutpu
 
   public void testLargeSequence() throws IOException {
     try (TestDirectory dir = new TestDirectory()) {
-      MockSequencesReader r = new MockSequencesReader(SequenceType.DNA, 10) {
+      final MockSequencesReader r = new MockSequencesReader(SequenceType.DNA, 10) {
         @Override
         public long maxLength() {
           return TabixIndexer.MAXIMUM_REFERENCE_LENGTH + 1;
         }
       };
-      MemoryPrintStream mps = new MemoryPrintStream();
+      final MemoryPrintStream mps = new MemoryPrintStream();
       Diagnostic.setLogStream(mps.printStream());
       try {
-        SequenceParams sequenceParams = new SequenceParams.SequenceParamsBuilder().readerParam(new DefaultReaderParams(r, LongRange.NONE, SequenceMode.BIDIRECTIONAL)).create();
-        NgsOutputParams outputParams = new NgsOutputParamsBuilder().outputIndex(true).bam(false).create();
+        final SequenceParams sequenceParams = new SequenceParams.SequenceParamsBuilder().readerParam(new DefaultReaderParams(r, LongRange.NONE, SequenceMode.BIDIRECTIONAL)).create();
+        final NgsOutputParams outputParams = new NgsOutputParamsBuilder().outputIndex(true).bam(false).create();
         final NgsParams params = new NgsParamsBuilder().searchParams(sequenceParams).outputParams(outputParams).create();
-        SansFilterConcat sans = new SansFilterConcat(params, new ReadStatusTracker(10, new PairedEndMapStatistics(false, null)), 0);
+        final SansFilterConcat sans = new SansFilterConcat(params, new ReadStatusTracker(10, new PairedEndMapStatistics(false, null)), 0);
         final AbstractMulticoreFilterConcat.OutputWrapper streams = sans.createStreams(1, new File[]{new File(dir, "Foo")}, new File[]{new File(dir, "bar")}, false, true, 0);
         try {
           final String s = mps.toString();

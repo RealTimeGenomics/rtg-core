@@ -139,7 +139,7 @@ public class ModelTest extends TestCase {
     //    assertTrue(call.isAllowOutput());
 
     //see numbers above
-    VariantSample vs = call.getSample(0);
+    final VariantSample vs = call.getSample(0);
     assertNotNull(vs.getName());
     assertEquals(0.307, vs.getPosterior(), 0.001);
     assertEquals("G", vs.getName());
@@ -178,7 +178,7 @@ public class ModelTest extends TestCase {
     //    assertTrue(call.isAllowOutput());
 
     //see numbers above
-    VariantSample vs = call.getSample(0);
+    final VariantSample vs = call.getSample(0);
     assertNotNull(vs.getName());
     assertEquals(0.307, vs.getPosterior(), 0.001);
     assertEquals("G", vs.getName());
@@ -209,7 +209,7 @@ public class ModelTest extends TestCase {
     //    assertTrue(call.isAllowOutput());
 
     //see numbers above
-    VariantSample vs = call.getSample(0);
+    final VariantSample vs = call.getSample(0);
     assertNotNull(vs.getName());
     assertEquals(0.307, vs.getPosterior(), 0.001);
     assertEquals("G", vs.getName());
@@ -258,7 +258,7 @@ public class ModelTest extends TestCase {
     assertEquals(3.612, call.getNonIdentityPosterior(), 0.001);
     assertFalse(call.isIndel());
     //    assertTrue(call.isAllowOutput());
-    VariantSample vs = call.getSample(0);
+    final VariantSample vs = call.getSample(0);
     assertNotNull(vs.getName());
     assertEquals(1.108, vs.getPosterior(), 0.001);
     assertEquals("G", vs.getName());
@@ -288,7 +288,7 @@ public class ModelTest extends TestCase {
     assertEquals(2.493, call.getNonIdentityPosterior(), 0.001);
     assertFalse(call.isIndel());
     //    assertTrue(call.isAllowOutput());
-    VariantSample vs = call.getSample(0);
+    final VariantSample vs = call.getSample(0);
     assertNotNull(vs.getName());
     assertEquals(-0.094, vs.getPosterior(), 0.001);
     assertEquals("G", vs.getName());
@@ -341,7 +341,7 @@ public class ModelTest extends TestCase {
     assertFalse(call.isIndel());
     //    assertTrue(call.isAllowOutput());
 
-    VariantSample vs = call.getSample(0);
+    final VariantSample vs = call.getSample(0);
     assertNotNull(vs.getName());
     assertEquals("A", vs.getName());
     assertTrue(vs.isIdentity());

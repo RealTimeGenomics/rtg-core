@@ -42,7 +42,7 @@ public class AnnotationLoaderTest extends TestCase {
   public void testLoad() throws IOException {
     try (final ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
       try (final DataOutputStream dos = new DataOutputStream(baos)) {
-        Annotation[] annos = {
+        final Annotation[] annos = {
             new QualAnnotation(), new InfoAnnotation("info", AnnotationDataType.STRING), new FormatAnnotation("format", AnnotationDataType.INTEGER), new DerivedAnnotation(DerivedAnnotations.IC.getAnnotation())
         };
         for (Annotation anno : annos) {

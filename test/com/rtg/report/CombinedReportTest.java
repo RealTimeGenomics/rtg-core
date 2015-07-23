@@ -34,24 +34,24 @@ public class CombinedReportTest extends TestCase {
   }
 
   public void testLogDetect() throws IOException {
-    String[] types = {"mapf", "mapx", "species", "map"};
+    final String[] types = {"mapf", "mapx", "species", "map"};
     for (String type : types) {
       if (!type.equals("species")) {
         try (TestDirectory dir = new TestDirectory()) {
-          File log = new File(dir, type + ".log");
+          final File log = new File(dir, type + ".log");
           if (!log.createNewFile()) {
             throw new IOException();
           }
-          CombinedReport combined = new CombinedReport(Arrays.<File>asList(dir), dir);
+          final CombinedReport combined = new CombinedReport(Arrays.<File>asList(dir), dir);
 //          System.err.println(type);
           combined.makeReport();
-          String s = FileUtils.fileToString(new File(dir, "index.html"));
+          final String s = FileUtils.fileToString(new File(dir, "index.html"));
           for (String checkType : types) {
             if (checkType.equals(type)) {
-              String expected = "class=\"checked\"> RTG " + checkType;
+              final String expected = "class=\"checked\"> RTG " + checkType;
               assertTrue("<" + expected + "> was not contained in <" + s + ">", s.contains(expected));
             } else {
-              String expected = "class=\"crossed\"> RTG " + checkType;
+              final String expected = "class=\"crossed\"> RTG " + checkType;
               assertTrue("<" + expected + "> was not contained in <" + s + ">", s.contains(expected));
             }
           }

@@ -305,7 +305,7 @@ public class GenomeMutatorTest extends TestCase {
 
     @Override
     VcfRecord mutationLine(SdfWriter h1, SdfWriter h2, String seqName, Mutation m, char prevRefNt, boolean verbose, String... newAndOld) throws IOException {
-      VcfRecord rec = super.mutationLine(h1, h2, seqName, m, prevRefNt, verbose, newAndOld);
+      final VcfRecord rec = super.mutationLine(h1, h2, seqName, m, prevRefNt, verbose, newAndOld);
       mMutantStr = rec.toString();
       return rec;
     }
@@ -333,7 +333,7 @@ public class GenomeMutatorTest extends TestCase {
           }
           try (SequencesReader r = testFirst ? SequencesReaderFactory.createDefaultSequencesReader(mutant) : SequencesReaderFactory.createDefaultSequencesReader(twinMutant)) {
             final byte[] newMutant = r.read(0);
-            int mutantPos;
+            final int mutantPos;
             if (pos >= 0) {
               mutantPos = findMismatchPosition(genome, newMutant);
               if (mutantPos != -1) {

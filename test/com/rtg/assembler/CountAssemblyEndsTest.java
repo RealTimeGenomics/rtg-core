@@ -33,8 +33,8 @@ public class CountAssemblyEndsTest extends AbstractCliTest {
   }
 
   public void testEnds() {
-    Graph g = GraphMapCliTest.makeGraph(0, new String[]{"AACCACCAGT", "TTGTGAGAGTAG", "ACGACAATAT", "ACTTTGTGG"}, new long[][]{{1, 2}, {2, 4}, {1, 3}, {3, 4}});
-    MemoryPrintStream mps = new MemoryPrintStream();
+    final Graph g = GraphMapCliTest.makeGraph(0, new String[]{"AACCACCAGT", "TTGTGAGAGTAG", "ACGACAATAT", "ACTTTGTGG"}, new long[][]{{1, 2}, {2, 4}, {1, 3}, {3, 4}});
+    final MemoryPrintStream mps = new MemoryPrintStream();
     CountAssemblyEnds.showEnds(mps.printStream(), g);
     assertEquals("-1" + LS + "4" + LS, mps.toString());
 

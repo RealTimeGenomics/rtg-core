@@ -73,9 +73,9 @@ public final class CorrectReads {
   }
 
   private static CorrectingMutator.SequenceBases correctRead(CorrectingMutator cm, CorrectingMutator.SequenceBases readBases, int kmerSize, int threshold, DeBruijnGraph graph) {
-    CorrectingMutator.SequenceBases output;
+    final CorrectingMutator.SequenceBases output;
     CorrectingMutator.SequenceBases best = null;
-    int badHash;
+    final int badHash;
     if ((badHash = firstBadHash(readBases, kmerSize, 0, threshold, graph)) != -1) {
       for (CorrectingMutator.SequenceBases mutation : cm.getMutations(readBases, badHash, readBases.length())) {
         if (firstBadHash(mutation, kmerSize, 0, threshold, graph) == -1) {

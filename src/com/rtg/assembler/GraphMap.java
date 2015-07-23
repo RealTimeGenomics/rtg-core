@@ -241,7 +241,7 @@ public class GraphMap {
 
   static int existingReadCount(MutableGraph graph, long pathId) {
     final String readCount = graph.pathAttribute(pathId, GraphKmerAttribute.READ_COUNT);
-    int oldCount;
+    final int oldCount;
     if (readCount == null) {
       oldCount = 0;
     } else {

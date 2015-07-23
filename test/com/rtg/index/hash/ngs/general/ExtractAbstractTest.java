@@ -21,7 +21,7 @@ import junit.framework.TestSuite;
 public class ExtractAbstractTest extends TestCase {
 
   public static Test suite() {
-    TestSuite suite = new TestSuite();
+    final TestSuite suite = new TestSuite();
 
     suite.addTestSuite(SingleMaskTest.class);
     suite.addTestSuite(ExtractAbstractTest.class);

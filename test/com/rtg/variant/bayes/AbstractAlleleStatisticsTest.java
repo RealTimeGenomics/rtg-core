@@ -132,7 +132,7 @@ public abstract class AbstractAlleleStatisticsTest<T extends AlleleStatistics<T>
   }
   public void testAlleleBalance() {
     final T cn = getAlleleStatistics(DescriptionSnp.SINGLETON);
-    Random r = new Random();
+    final Random r = new Random();
     //System.err.println(cn.toString());
     for (int i = 0; i < 10; i++) {
       incrementAlleleStatistics(cn, diStrand(0, 2, 0.0, r.nextBoolean()));

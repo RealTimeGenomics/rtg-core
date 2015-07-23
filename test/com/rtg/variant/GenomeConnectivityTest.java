@@ -27,7 +27,7 @@ public class GenomeConnectivityTest extends TestCase {
   }
 
   public void testGetConnectivity() {
-    GenomeRelationships gr = new GenomeRelationships();
+    final GenomeRelationships gr = new GenomeRelationships();
     gr.addGenome("father");
     gr.addGenome("mother");
     gr.addGenome("son");
@@ -35,7 +35,7 @@ public class GenomeConnectivityTest extends TestCase {
     gr.addParentChild("father", "son");
     gr.addParentChild("mother", "son");
 
-    ArrayList<String> genomes = new ArrayList<>();
+    final ArrayList<String> genomes = new ArrayList<>();
     genomes.add("father");
     genomes.add("mother");
     genomes.add("son");

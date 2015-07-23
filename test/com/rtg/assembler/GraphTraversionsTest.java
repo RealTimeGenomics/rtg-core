@@ -23,14 +23,14 @@ import junit.framework.TestCase;
  */
 public class GraphTraversionsTest extends TestCase {
   Set<Long> longs(long... list) {
-    Set<Long> result = new HashSet<>();
+    final Set<Long> result = new HashSet<>();
     for (long l :list) {
       result.add(l);
     }
     return result;
   }
   public void test() {
-    Graph g = GraphMapCliTest.makeGraph(0, new String[]{"ACGT", "AACC", "ACAA", "GGAT", "ACGGT"}, new long[][]{{1, 2, 3}, {1, 2}, {-4, -3}, {3, 5}});
+    final Graph g = GraphMapCliTest.makeGraph(0, new String[]{"ACGT", "AACC", "ACAA", "GGAT", "ACGGT"}, new long[][]{{1, 2, 3}, {1, 2}, {-4, -3}, {3, 5}});
     final GraphTraversions traversions = new GraphTraversions(g);
     assertEquals(longs(4, 5), traversions.get(3L).next());
     assertEquals(longs(2), traversions.get(3L).previous());
@@ -38,7 +38,7 @@ public class GraphTraversionsTest extends TestCase {
   }
 
   public void testPalindrome() {
-    Graph g = GraphMapCliTest.makeGraph(0, new String[]{"ACGT", "AACC", "ACAA", "GGCC", "ACGGT"}, new long[][]{{-1, 2}, {1, 2}, {3, 4}, {3, -4}, {4, 5}, {-4, 5}});
+    final Graph g = GraphMapCliTest.makeGraph(0, new String[]{"ACGT", "AACC", "ACAA", "GGCC", "ACGGT"}, new long[][]{{-1, 2}, {1, 2}, {3, 4}, {3, -4}, {4, 5}, {-4, 5}});
     final GraphTraversions traversions = new GraphTraversions(g);
     assertEquals(longs(1, -1), traversions.get(2L).previous());
     assertEquals(longs(1, -1), traversions.get(-2L).next());

@@ -25,10 +25,10 @@ public abstract class AbstractSimulatedReadNameParserTest extends TestCase {
   protected abstract String getMalformedReadName();
 
   public void test() throws Exception {
-    SimulatedReadNameParser p = getParser();
+    final SimulatedReadNameParser p = getParser();
     assertFalse(p.setReadInfo(getMalformedReadName(), 10));
 
-    String rname = getWellFormedReadName("mytemplate", 100, true, 10);
+    final String rname = getWellFormedReadName("mytemplate", 100, true, 10);
     assertTrue(p.setReadInfo(rname, 10));
     assertEquals("mytemplate", p.templateName());
     assertEquals(100, p.templatePosition());

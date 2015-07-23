@@ -19,7 +19,7 @@ public class ReadSimEvalStatisticsTest extends TestCase {
 
 
   public void test() {
-    ReadSimEvalStatistics s = new ReadSimEvalStatistics(20);
+    final ReadSimEvalStatistics s = new ReadSimEvalStatistics(20);
     assertEquals(s.length(), 20);
     s.found(0);
     assertTrue(s.isFound(0));

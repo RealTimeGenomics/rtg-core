@@ -30,7 +30,7 @@ public class SimilarityFlagsValidatorTest extends TestCase {
   public void testValidator() throws IOException {
     Diagnostic.setLogStream();
     final MemoryPrintStream err = new MemoryPrintStream();
-    CliDiagnosticListener listener = new CliDiagnosticListener(err.printStream());
+    final CliDiagnosticListener listener = new CliDiagnosticListener(err.printStream());
     Diagnostic.addListener(listener);
     final File tempDir = FileHelper.createTempDirectory();
     try {

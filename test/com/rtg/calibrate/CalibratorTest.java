@@ -825,19 +825,19 @@ public class CalibratorTest extends TestCase {
     cal.accumulate(new ByteArrayInputStream(LENGTHS.getBytes()), "testLengths");
     assertEquals(10000, cal.getSequenceLengths().get("sequence1").intValue());
     assertEquals(1234, cal.getSequenceLengths().get("sequence2").intValue());
-    MemoryPrintStream mps = new MemoryPrintStream();
+    final MemoryPrintStream mps = new MemoryPrintStream();
     cal.writeToStream(mps.printStream());
     assertEquals(LENGTHS, StringUtils.grepMinusV(mps.toString(), "Version"));
-    Map<String, Integer> dummyLengths = new HashMap<>();
+    final Map<String, Integer> dummyLengths = new HashMap<>();
     dummyLengths.put("sequence1", 300);
     cal.setSequenceLengths(dummyLengths);
     assertEquals(300, cal.getSequenceLengths().get("sequence1").intValue());
   }
   public void testBed() throws IOException {
-    ReferenceRegions bed = new ReferenceRegions();
+    final ReferenceRegions bed = new ReferenceRegions();
     bed.add("sequence1", 11, 20);
     final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateSequence()}, bed);
-    Map<String, Integer> dummyLengths = new HashMap<>();
+    final Map<String, Integer> dummyLengths = new HashMap<>();
     dummyLengths.put("sequence1", 10);
     cal.setSequenceLengths(dummyLengths);
     final byte[] t = DnaUtils.encodeString("acgtgtgaggacgtacgtggacgtacgtggacgtacgtggtttttacgtagtagattttagaggaggggagaaaaccacacgagacagtgtgtgt");
@@ -876,7 +876,7 @@ public class CalibratorTest extends TestCase {
     cal.processRead(sam);
     final File tmp2 = File.createTempFile("test", "calibrator2", mDir);
     cal.writeToFile(tmp2);
-    String expected = "#CL\tfoo bar" + LS
+    final String expected = "#CL\tfoo bar" + LS
                       + "@cgover:rg1\t0\t0\t1" + LS
                       + "@nh:rg1\t0\t2" + LS
                       + "@sequence\t10\tsequence1" + LS

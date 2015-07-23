@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 public class ApplyReferenceTest extends TestCase {
   public void testApply() throws IOException {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(3, new String[]{"ACCCAGAGACCAGTGTGACC"}, new long[][]{});
-    ApplyReference apply = new ApplyReference(graph, 4, 4, new IntegerOrPercentage(3));
+    final ApplyReference apply = new ApplyReference(graph, 4, 4, new IntegerOrPercentage(3));
     final List<ApplyReference.AlignmentState> alignments = apply.alignForward(DnaUtils.encodeString("ACCCAGAGACCAGTGTGACCAGTGACGT"), 5, new ContigPosition(1, 5, graph), new GraphTraversions(graph));
     assertEquals(1, alignments.size());
     final ApplyReference.AlignmentState alignmentState = alignments.get(0);
@@ -39,7 +39,7 @@ public class ApplyReferenceTest extends TestCase {
     assertEquals(19, alignmentState.mContigPosition);
     assertEquals(1, alignmentState.mChain.mContigId);
 
-    MemoryPrintStream out = new MemoryPrintStream();
+    final MemoryPrintStream out = new MemoryPrintStream();
     apply.referenceSequence("foo", DnaUtils.encodeString("ACCCAGAGACCAGTGTGACCAGTGACGT"), out.printStream());
     TestUtils.containsAll(out.toString()
         , "-\tfoo\t19\t0\t0\t19\t0\t19\t1\t[]"
@@ -48,7 +48,7 @@ public class ApplyReferenceTest extends TestCase {
 
   public void testApplySplit() throws IOException {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(3, new String[]{"ACCCAGAGAC", "GACCAGTGTGACC"}, new long[][]{{1, 2}});
-    ApplyReference apply = new ApplyReference(graph, 4, 4, new IntegerOrPercentage(3));
+    final ApplyReference apply = new ApplyReference(graph, 4, 4, new IntegerOrPercentage(3));
     final List<ApplyReference.AlignmentState> alignments = apply.alignForward(DnaUtils.encodeString("ACCCAGAGACCAGTGTGACCAGTGACGT"), 5, new ContigPosition(1, 5, graph), new GraphTraversions(graph));
     final ApplyReference.AlignmentState alignmentState = alignments.get(0);
     assertEquals(1, alignments.size());
@@ -59,7 +59,7 @@ public class ApplyReferenceTest extends TestCase {
   }
   public void testApplyBranch() throws IOException {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(3, new String[]{"ACCCAGAGAC", "GACCAGTGTGACC", "GACCACCGTAACC"}, new long[][]{{1, 2}, {1, 3}});
-    ApplyReference apply = new ApplyReference(graph, 4, 4, new IntegerOrPercentage(3));
+    final ApplyReference apply = new ApplyReference(graph, 4, 4, new IntegerOrPercentage(3));
     final List<ApplyReference.AlignmentState> alignments = apply.alignForward(DnaUtils.encodeString("ACCCAGAGACCAGTGTGACCAGTGACGT"), 5, new ContigPosition(1, 5, graph), new GraphTraversions(graph));
     final ApplyReference.AlignmentState alignmentState = alignments.get(0);
     assertEquals(1, alignments.size());
@@ -70,7 +70,7 @@ public class ApplyReferenceTest extends TestCase {
   }
   public void testApplyMulti() throws IOException {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(3, new String[]{"ACCCAGAGAC", "GACCAGTGTGACC", "GACCAGGGTCACC"}, new long[][]{{1, 2}, {1, 3}});
-    ApplyReference apply = new ApplyReference(graph, 4, 4, new IntegerOrPercentage(3));
+    final ApplyReference apply = new ApplyReference(graph, 4, 4, new IntegerOrPercentage(3));
     final List<ApplyReference.AlignmentState> alignments = apply.alignForward(DnaUtils.encodeString("ACCCAGAGACCAGTGTGACCAGTGACGT"), 5, new ContigPosition(1, 5, graph), new GraphTraversions(graph));
     assertEquals(2, alignments.size());
     ApplyReference.AlignmentState alignmentState = alignments.get(0);

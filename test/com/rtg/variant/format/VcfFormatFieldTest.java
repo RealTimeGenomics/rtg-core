@@ -183,7 +183,7 @@ public class VcfFormatFieldTest extends TestCase {
     sample.setStats(new StatisticsSnp(DescriptionSnp.SINGLETON));
     sample.setStatisticsString("Q");
     sample.setPlacedUnmappedRatio(0.42);
-    Map<Set<String>, Double> like = new HashMap<>();
+    final Map<Set<String>, Double> like = new HashMap<>();
     like.put(Collections.singleton("A"), 0.2);
     like.put(VariantSample.pairSet("G", "A"), 0.5);
     like.put(Collections.singleton("G"), 0.2);

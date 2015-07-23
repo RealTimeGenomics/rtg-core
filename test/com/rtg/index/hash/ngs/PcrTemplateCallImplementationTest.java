@@ -52,7 +52,7 @@ public class PcrTemplateCallImplementationTest extends TestCase {
     for (int i = 0; i < dist.length; i++) {
       dist[i] = 4;
     }
-    IndexSet indexSet = new IndexSet(indexes);
+    final IndexSet indexSet = new IndexSet(indexes);
     final PcrTemplateCallImplementation tca = new PcrTemplateCallImplementation(indexSet, dist);
     assertTrue(tca.integrity());
     final PcrTemplateCallImplementation tci = tca.clone();

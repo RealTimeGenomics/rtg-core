@@ -64,21 +64,21 @@ public class PopulationVariantGeneratorTest extends TestCase {
 
   public void testFixedStepXVcfWriting() throws IOException {
     final SequencesReader sr = ReaderTestUtils.getReaderDnaMemory(REF);
-    FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("X"), new PortableRandom(10), 0.5);
-    List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
-    MemoryPrintStream out = new MemoryPrintStream();
+    final FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("X"), new PortableRandom(10), 0.5);
+    final List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
+    final MemoryPrintStream out = new MemoryPrintStream();
     PopulationVariantGenerator.writeAsVcf(null, out.outputStream(), variants, sr);
-    String act = StringUtils.grepMinusV(out.toString(), "((##fileDate)|(##source)|(##CL)|(##TEMPLATE-SDF-ID)|(##RUN-ID))");
+    final String act = StringUtils.grepMinusV(out.toString(), "((##fileDate)|(##source)|(##CL)|(##TEMPLATE-SDF-ID)|(##RUN-ID))");
     mNano.check("population_variant_gen_X.vcf", act, false);
   }
 
   public void testFixedStepHetXVcfWriting() throws IOException {
     final SequencesReader sr = ReaderTestUtils.getReaderDnaMemory(REF);
-    FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("X_X"), new PortableRandom(118), 0.5);
-    List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
-    MemoryPrintStream out = new MemoryPrintStream();
+    final FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("X_X"), new PortableRandom(118), 0.5);
+    final List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
+    final MemoryPrintStream out = new MemoryPrintStream();
     PopulationVariantGenerator.writeAsVcf(null, out.outputStream(), variants, sr);
-    String act = StringUtils.grepMinusV(out.toString(), "((##fileDate)|(##source)|(##CL)|(##TEMPLATE-SDF-ID)|(##RUN-ID))");
+    final String act = StringUtils.grepMinusV(out.toString(), "((##fileDate)|(##source)|(##CL)|(##TEMPLATE-SDF-ID)|(##RUN-ID))");
     mNano.check("population_variant_gen_X_X.vcf", act, false);
   }
 
@@ -87,12 +87,12 @@ public class PopulationVariantGeneratorTest extends TestCase {
     final File tempDir = FileUtils.createTempDir("PVGT", "vcfFileWriting");
     try {
       final SequencesReader sr = ReaderTestUtils.getReaderDnaMemory(REF);
-      FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("I"), new PortableRandom(10), 0.5);
-      List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
+      final FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("I"), new PortableRandom(10), 0.5);
+      final List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
       final File outFile = new File(tempDir, "out.vcf.gz");
       PopulationVariantGenerator.writeAsVcf(outFile, null, variants, sr);
       final String outStr = FileHelper.gzFileToString(outFile);
-      String act = StringUtils.grepMinusV(outStr, "((##fileDate)|(##source)|(##CL)|(##TEMPLATE-SDF-ID)|(##RUN-ID))");
+      final String act = StringUtils.grepMinusV(outStr, "((##fileDate)|(##source)|(##CL)|(##TEMPLATE-SDF-ID)|(##RUN-ID))");
       mNano.check("population_variant_gen_I.vcf", act, false);
     } finally {
       assertTrue(FileHelper.deleteAll(tempDir));

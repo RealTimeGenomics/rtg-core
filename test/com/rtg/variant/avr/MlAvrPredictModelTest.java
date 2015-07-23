@@ -41,12 +41,12 @@ import com.rtg.vcf.header.VcfHeader;
 public class MlAvrPredictModelTest extends AbstractPredictModelTest<MlAvrPredictModel> {
   @Override
   MlAvrPredictModel getPredictModel() {
-    Dataset ds = new Dataset(new Attribute("empty", MlDataType.DOUBLE));
+    final Dataset ds = new Dataset(new Attribute("empty", MlDataType.DOUBLE));
     ds.addInstance(new Instance(new double[1], true));
     ds.addInstance(new Instance(new double[1], false));
-    BuildClassifier builder = new ZeroRBuilder();
+    final BuildClassifier builder = new ZeroRBuilder();
     builder.build(ds);
-    MlAvrPredictModel model = new MlAvrPredictModel(builder.getClassifier());
+    final MlAvrPredictModel model = new MlAvrPredictModel(builder.getClassifier());
     model.setAttributeExtractor(new AttributeExtractor(new QualAnnotation()));
     return model;
   }
@@ -67,7 +67,7 @@ public class MlAvrPredictModelTest extends AbstractPredictModelTest<MlAvrPredict
       final File negVcf = new File(dir, "neg.vcf");
       FileHelper.resourceToFile("com/rtg/variant/avr/resources/negatives.vcf", negVcf);
 
-      Properties params = new Properties();
+      final Properties params = new Properties();
       //params.setProperty(MlAvrModelBuilder.PARAMETER_ML_MODEL_TYPE, BuilderFactory.BuilderType.BAGGED.name());
       //params.setProperty(MlAvrModelBuilder.PARAMETER_ML_MODEL_TYPE, BuilderFactory.BuilderType.ZERO_R.name());
       params.setProperty(MlAvrModelBuilder.PARAMETER_ML_MODEL_TYPE, BuilderFactory.BuilderType.RANDOM_TREE.name());

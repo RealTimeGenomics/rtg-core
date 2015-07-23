@@ -30,7 +30,7 @@ public class MutatorSingleTest extends TestCase {
     }
   }
   private void expandCheck(String subject, String expected) {
-    String actual = MutatorSingle.expandSpec(subject);
+    final String actual = MutatorSingle.expandSpec(subject);
     assertEquals(expected, actual);
   }
   public void testExpand() {

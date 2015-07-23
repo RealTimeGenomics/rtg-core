@@ -66,12 +66,12 @@ public class CnvPriorParamsTest extends TestCase {
       } catch (IllegalArgumentException e) {
         TestUtils.containsAll(e.getMessage(), "rate must be 0.0 .. 1.0, not 1.1");
       }
-      double[] powerDist = powerLengthDistribution();
-      double[] powerThres = SimulationUtils.cumulativeDistribution(powerDist);
+      final double[] powerDist = powerLengthDistribution();
+      final double[] powerThres = SimulationUtils.cumulativeDistribution(powerDist);
       assertTrue(Arrays.equals(powerThres, powerLengthThresholds()));
 
-      double[][] cnDist = copyNumberDistribution();
-      double[][] cnThres = copyNumberThresholds();
+      final double[][] cnDist = copyNumberDistribution();
+      final double[][] cnThres = copyNumberThresholds();
       double[] thres = SimulationUtils.cumulativeDistribution(cnDist[0]);
       assertTrue(Arrays.equals(thres, cnThres[0]));
       thres = SimulationUtils.cumulativeDistribution(cnDist[1]);

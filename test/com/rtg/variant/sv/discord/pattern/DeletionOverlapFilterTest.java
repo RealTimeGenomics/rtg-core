@@ -33,7 +33,7 @@ public class DeletionOverlapFilterTest extends TestCase {
       , "heh\t10\t20"
   };
   public void testOverlap() {
-    DeletionOverlapFilter filter = new DeletionOverlapFilter();
+    final DeletionOverlapFilter filter = new DeletionOverlapFilter();
     filter.add(new DiscordBedRecord("foo", 10, 30));
     filter.add(new DiscordBedRecord("foo", 12, 19));
     filter.add(new DiscordBedRecord("bar", 10, 30));

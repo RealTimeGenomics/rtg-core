@@ -61,7 +61,7 @@ public class UnrolledReadTest extends TestCase {
     //          GAGAGGGANAAAGTTATG       AACATTTATN
     //
     //
-    SAMRecord rec = SamTestHelper.getLegacyCGSamRecord("GACTTTGAGAGGGANAAAGTTATGAACATTTATN", "3=1I1X19=6N10=", "GT", "4S1G29S", "6");
+    final SAMRecord rec = SamTestHelper.getLegacyCGSamRecord("GACTTTGAGAGGGANAAAGTTATGAACATTTATN", "3=1I1X19=6N10=", "GT", "4S1G29S", "6");
     final String template = "GACTTGAGAGGGANAAAGTTATGNNNNNNAACATTTATN";
     final byte[] templateBytes = DnaUtils.encodeString(template);
 
@@ -78,7 +78,7 @@ public class UnrolledReadTest extends TestCase {
    // REF GACTTTGAGAGGGANAAAGTTATGAACATTTATN
    //READ GACTT
    //         TGGAGAGGGANAAAGTTATGAACATTTATN
-    SAMRecord rec2 = SamTestHelper.getLegacyCGSamRecord("GACTTTGAGAGGGANAAAGTTATGAACATTTATN", "4=1X19=6N10=", "GT", "4S1G29S", "6");
+    final SAMRecord rec2 = SamTestHelper.getLegacyCGSamRecord("GACTTTGAGAGGGANAAAGTTATGAACATTTATN", "4=1X19=6N10=", "GT", "4S1G29S", "6");
     final String template2 = "GACTTTGAGAGGGANAAAGTTATGNNNNNNAACATTTATN";
     final byte[] template2Bytes = DnaUtils.encodeString(template2);
 

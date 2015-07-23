@@ -22,7 +22,7 @@ import junit.framework.TestCase;
  */
 public class PreContigTest extends TestCase {
   public void testPreContig() {
-    PreContig contig = new PreContig(3, new ByteKmer("GTC"), 7);
+    final PreContig contig = new PreContig(3, new ByteKmer("GTC"), 7);
     assertEquals(7, contig.mKmerCount);
     assertEquals("GTC", contig.mContig.toString());
     contig.extend(true, new ByteKmer("TCT"), 2);

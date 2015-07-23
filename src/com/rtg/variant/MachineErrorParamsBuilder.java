@@ -195,7 +195,7 @@ public class MachineErrorParamsBuilder {
   }
 
   static double parseDouble(final String prior, final String val, final String key) {
-    double ret;
+    final double ret;
     try {
       ret = Double.valueOf(val);
     } catch (final NumberFormatException e) {

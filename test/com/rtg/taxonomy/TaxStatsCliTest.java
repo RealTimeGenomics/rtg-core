@@ -36,7 +36,7 @@ public class TaxStatsCliTest extends AbstractCliTest {
     try (final TestDirectory dir = new TestDirectory()) {
       final File tmp = new File(dir, "tmp");
       assertTrue(tmp.createNewFile());
-      String err = checkHandleFlagsErr(tmp.getPath());
+      final String err = checkHandleFlagsErr(tmp.getPath());
       TestUtils.containsAll(err, "The specified file,", ", is not an SDF.");
       checkHandleFlags(tmp.getPath());
     }

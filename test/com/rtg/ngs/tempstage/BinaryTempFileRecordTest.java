@@ -40,7 +40,7 @@ public class BinaryTempFileRecordTest extends TestCase {
     final BinaryTempFileRecord bar = record();
     check(bar);
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    TempRecordWriterNio writer = new TempRecordWriterNio(baos);
+    final TempRecordWriterNio writer = new TempRecordWriterNio(baos);
     try {
       writer.writeRecord(bar);
       bar.setSentinelRecord();
@@ -51,7 +51,7 @@ public class BinaryTempFileRecordTest extends TestCase {
     assertTrue(bar.isSentinelRecord());
     final TempRecordReaderNio dis = new TempRecordReaderNio(new ByteArrayInputStream(baos.toByteArray()), new TempRecordReader.RecordFactory(false, true, false, false));
     try {
-      BinaryTempFileRecord rec;
+      final BinaryTempFileRecord rec;
       assertNotNull(rec = dis.readRecord());
       check(rec);
       assertNull(dis.readRecord());
@@ -88,7 +88,7 @@ public class BinaryTempFileRecordTest extends TestCase {
         throw new IOException("simulated out of disk space");
       }
     };
-    TempRecordWriterNio writer = new TempRecordWriterNio(bos);
+    final TempRecordWriterNio writer = new TempRecordWriterNio(bos);
     try {
       writer.writeRecord(bar);
       fail();

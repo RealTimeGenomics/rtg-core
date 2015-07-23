@@ -22,7 +22,7 @@ import junit.framework.TestCase;
  */
 public class ContigPositionTest extends TestCase {
   public void testGraphPosition() {
-    Graph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAAA", "GGGGG", "CCC"}, new long[][]{{1, 2}});
+    final Graph g = GraphMapCliTest.makeGraph(0, new String[]{"AAAAA", "GGGGG", "CCC"}, new long[][]{{1, 2}});
     final TreeMap<Long, Long> positionDecoder = ContigPosition.buildDecoder(g);
     assertEquals(0, new ContigPosition(1, 0, g).encode());
     assertEquals(1, new ContigPosition(1, 1, g).encode());

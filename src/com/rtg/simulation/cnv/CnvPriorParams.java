@@ -139,7 +139,7 @@ public class CnvPriorParams extends ObjectParams {
     }
 
     private static double parseDouble(final String prior, final String val, final String key) {
-      double ret;
+      final double ret;
       try {
         ret = Double.parseDouble(val);
       } catch (final NumberFormatException e) {
@@ -152,7 +152,7 @@ public class CnvPriorParams extends ObjectParams {
     }
 
     private static int parseInteger(final String prior, final String val, final String key) {
-      int ret;
+      final int ret;
       try {
         ret = Integer.parseInt(val);
       } catch (final NumberFormatException e) {

@@ -18,7 +18,7 @@ import junit.framework.TestCase;
  */
 public class AlignmentChainTest extends TestCase {
   public void testAlignmentChain() {
-    AlignmentChain a = new AlignmentChain(4, new AlignmentSection(1, 2, 3), new AlignmentChain(2, new AlignmentSection(3, 4, 5), null));
+    final AlignmentChain a = new AlignmentChain(4, new AlignmentSection(1, 2, 3), new AlignmentChain(2, new AlignmentSection(3, 4, 5), null));
     assertNull(a.mPrevious.mPrevious);
     assertEquals(2, a.mPrevious.mScore);
     assertEquals(4, a.mPrevious.mSection.mStartPosition);

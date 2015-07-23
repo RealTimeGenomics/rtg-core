@@ -17,7 +17,7 @@ import junit.framework.TestCase;
  */
 public class DeduplicatingNStoreTest extends TestCase {
   public void test() {
-    DeduplicatingNStore store = new DeduplicatingNStore(10, 5, 3, 102, 50);
+    final DeduplicatingNStore store = new DeduplicatingNStore(10, 5, 3, 102, 50);
     store.process(0, true, 0, 5, 0);
     store.process(0, true, 0, 400, 0);
     store.process(0, true, 0, 400, 0);
@@ -29,7 +29,7 @@ public class DeduplicatingNStoreTest extends TestCase {
     store.process(0, true, 1, 5, 0);
     store.process(0, true, 1, 7, 0);
     store.process(0, true, 1, 6, 0);
-    MatchResult r = new MatchResult(2);
+    final MatchResult r = new MatchResult(2);
     store.setResults(r, 0);
     store.setResults(r, 1);
     assertEquals(3, r.size());

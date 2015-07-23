@@ -73,8 +73,8 @@ public class UnknownBaseReadWriterTest extends TestCase {
   }
 
   public void test() throws IOException {
-    MockReadWriter internal = new MockReadWriter();
-    ReadWriter rw = new UnknownBaseReadWriter(internal, 0.3, new TestRandom());
+    final MockReadWriter internal = new MockReadWriter();
+    final ReadWriter rw = new UnknownBaseReadWriter(internal, 0.3, new TestRandom());
     byte[] in = {1, 2, 3, 4, 5, 6, 7, 8};
     rw.writeLeftRead("asdf", in, new byte[8], 8);
     assertEquals(1, internal.mFrom);
@@ -98,12 +98,12 @@ public class UnknownBaseReadWriterTest extends TestCase {
   }
 
   public void test2() throws IOException {
-    MockReadWriter internal = new MockReadWriter();
-    ReadWriter rw = new UnknownBaseReadWriter(internal, 0.2, new TestRandom());
-    byte[] in = {1, 2, 3, 4, 5, 6, 7, 8};
+    final MockReadWriter internal = new MockReadWriter();
+    final ReadWriter rw = new UnknownBaseReadWriter(internal, 0.2, new TestRandom());
+    final byte[] in = {1, 2, 3, 4, 5, 6, 7, 8};
     rw.writeLeftRead("asdf", in, new byte[8], 8);
     assertEquals(1, internal.mFrom);
-    byte[] expected = {1, 0, 3, 4, 5, 6, 7, 0};
+    final byte[] expected = {1, 0, 3, 4, 5, 6, 7, 0};
     for (int i = 0; i < internal.mLastData.length; i++) {
       assertEquals(expected[i], internal.mLastData[i]);
     }

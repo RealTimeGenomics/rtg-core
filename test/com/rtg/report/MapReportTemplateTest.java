@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 public class MapReportTemplateTest extends TestCase {
   // Basically just testing that all the parameters are present in the template
   public void testTemplate() throws IOException {
-    MapReportTemplate template = new MapReportTemplate();
+    final MapReportTemplate template = new MapReportTemplate();
     template.mFullName = "fred";
     template.mSummaryFile = "summary";
     template.mSummaryFileTitle = "super original title";

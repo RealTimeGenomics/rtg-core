@@ -18,7 +18,7 @@ import junit.framework.TestCase;
  */
 public class ContigByteTest extends TestCase {
   public void test() {
-    ContigByte contig = new ContigByte(new byte[] {1, 1, 2, 3, 3, 0, 4, 1});
+    final ContigByte contig = new ContigByte(new byte[] {1, 1, 2, 3, 3, 0, 4, 1});
     assertEquals(1, contig.nt(0));
     assertEquals(4, contig.nt(6));
     assertEquals(1, contig.nt(7));

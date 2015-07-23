@@ -127,7 +127,7 @@ public class HypothesesComplexTest extends TestCase {
   }
 
   void checkHypothesis(String id, HypothesesComplex complex) throws IOException {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     sb.append(complex.code().size()).append(StringUtils.LS);
     for (int i = 0; i < complex.code().size(); i++) {
       sb.append("new Hyp(\"").append(complex.name(i)).append("\", ").append(Utils.realFormat(complex.p(i), 3)).append("),").append(StringUtils.LS);

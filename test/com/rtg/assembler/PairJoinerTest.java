@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 public class PairJoinerTest extends TestCase {
   public void testSingleContig() {
     final Graph graph = GraphMapCliTest.makeGraph(0, new String[]{"ACGTTTTTTTGGTTG"}, new long[][]{});
-    PairJoiner joiner = new PairJoiner(graph, 10);
+    final PairJoiner joiner = new PairJoiner(graph, 10);
     Set<GraphAlignment> destinations = new HashSet<>();
     destinations.add(new GraphAlignment(0, 4, Arrays.asList(-1L), 2, graph));
     final GraphAlignment start = new GraphAlignment(0, 3, Arrays.asList(1L), 1, graph);
@@ -70,7 +70,7 @@ public class PairJoinerTest extends TestCase {
     // CCCT    TCCACCG
     //    12345-------
     final Graph graph = getXGraph();
-    PairJoiner joiner = new PairJoiner(graph, 1);
+    final PairJoiner joiner = new PairJoiner(graph, 1);
 
     Set<GraphAlignment> destinations = new HashSet<>();
     final GraphAlignment destination1 = new GraphAlignment(1, 4, Arrays.asList(-3L), 2, graph);
@@ -127,8 +127,8 @@ public class PairJoinerTest extends TestCase {
   public void testLoop() {
 
     final Graph graph = GraphMapCliTest.makeGraph(0, new String[]{"ACGT", "TTTTTT", "TGGTTG"}, new long[][]{{1, 2}, {2, 3}, {2, 2}});
-    PairJoiner joiner = new PairJoiner(graph, 1);
-    Set<GraphAlignment> destinations = new HashSet<>();
+    final PairJoiner joiner = new PairJoiner(graph, 1);
+    final Set<GraphAlignment> destinations = new HashSet<>();
     final GraphAlignment destination = new GraphAlignment(1, 4, Arrays.asList(-3L), 2, graph);
     destinations.add(destination);
     GraphAlignment start = new GraphAlignment(1, 2, Arrays.asList(1L), 1, graph);
@@ -160,15 +160,15 @@ public class PairJoinerTest extends TestCase {
   }
   public void testGodDamnedPalindrome() {
     final Graph graph = GraphMapCliTest.makeGraph(0, new String[]{"ACGT", "TTTTTT", "TATA"}, new long[][]{{1, 2}, {2, 3}, {2, -3}});
-    PairJoiner joiner = new PairJoiner(graph, 1);
+    final PairJoiner joiner = new PairJoiner(graph, 1);
 
     final GraphAlignment destination = new GraphAlignment(1, 4, Arrays.asList(2L), 2, graph);
-    GraphAlignment start = new GraphAlignment(1, 2, Arrays.asList(1L), 1, graph);
-    Set<GraphAlignment> destinations = new HashSet<>();
+    final GraphAlignment start = new GraphAlignment(1, 2, Arrays.asList(1L), 1, graph);
+    final Set<GraphAlignment> destinations = new HashSet<>();
     destinations.add(destination);
 
-    Set<GraphAlignment> actual = joiner.joinAlignments(start, PairJoiner.destinationMap(destinations, graph), 9, 10);
-    List<GraphAlignment> expected = Arrays.asList(
+    final Set<GraphAlignment> actual = joiner.joinAlignments(start, PairJoiner.destinationMap(destinations, graph), 9, 10);
+    final List<GraphAlignment> expected = Arrays.asList(
         new GraphAlignment(1, 4, Arrays.asList(1L, 2L, 3L, -2L), 3, graph)
     );
     checkAlignments(expected, actual);
@@ -176,10 +176,10 @@ public class PairJoinerTest extends TestCase {
 
   public void testGodDamnedPalindromeEnd() {
     final Graph graph = GraphMapCliTest.makeGraph(0, new String[]{"ACCT", "TTTTTT", "TATA", "GGGGG"}, new long[][]{{1, 2}, {2, 3}, {2, -3}, {3, 4}, {-3, 4}});
-    PairJoiner joiner = new PairJoiner(graph, 1);
+    final PairJoiner joiner = new PairJoiner(graph, 1);
 
     final GraphAlignment destination = new GraphAlignment(1, 2, Arrays.asList(-4L, -3L), 2, graph);
-    GraphAlignment start = new GraphAlignment(1, 2, Arrays.asList(1L), 1, graph);
+    final GraphAlignment start = new GraphAlignment(1, 2, Arrays.asList(1L), 1, graph);
     Set<GraphAlignment> destinations = new HashSet<>();
     destinations.add(destination);
 
@@ -201,24 +201,24 @@ public class PairJoinerTest extends TestCase {
 
   public void testComplexEnds() {
     final Graph graph = GraphMapCliTest.makeGraph(0, new String[]{"ACGT", "TTTT", "TATA", "ACCA", "AGGT", "TCCCGGGT", "GAGA"}, new long[][]{{1, 2}, {2, 3}, {3, 4}, {4, 5}, {1, 6}, {7, 5}, {6, 7}});
-    PairJoiner joiner = new PairJoiner(graph, 1);
+    final PairJoiner joiner = new PairJoiner(graph, 1);
 
-    GraphAlignment start = new GraphAlignment(1, 2, Arrays.asList(1L, 2L), 1, graph);
-    GraphAlignment destination = new GraphAlignment(1, 3, Arrays.asList(-5L, -4L), 2, graph);
-    Set<GraphAlignment> destinations = new HashSet<>();
+    final GraphAlignment start = new GraphAlignment(1, 2, Arrays.asList(1L, 2L), 1, graph);
+    final GraphAlignment destination = new GraphAlignment(1, 3, Arrays.asList(-5L, -4L), 2, graph);
+    final Set<GraphAlignment> destinations = new HashSet<>();
     destinations.add(destination);
 
-    Set<GraphAlignment> actual = joiner.joinAlignments(start, PairJoiner.destinationMap(destinations, graph), 3, 40);
-    List<GraphAlignment> expected = Arrays.asList(
+    final Set<GraphAlignment> actual = joiner.joinAlignments(start, PairJoiner.destinationMap(destinations, graph), 3, 40);
+    final List<GraphAlignment> expected = Arrays.asList(
         new GraphAlignment(1, 2, Arrays.asList(1L, 2L, 3L, 4L, 5L), 3, graph)
     );
     checkAlignments(expected, actual);
   }
   public void testWrapperMethod() {
     final Graph graph = getXGraph();
-    PairJoiner joiner = new PairJoiner(graph, 1);
-    Set<GraphAlignment> starts = new HashSet<>();
-    Set<GraphAlignment> destinations = new HashSet<>();
+    final PairJoiner joiner = new PairJoiner(graph, 1);
+    final Set<GraphAlignment> starts = new HashSet<>();
+    final Set<GraphAlignment> destinations = new HashSet<>();
     starts.add(new GraphAlignment(1, 2, Arrays.asList(1L), 1, graph));
     starts.add(new GraphAlignment(1, 2, Arrays.asList(4L), 1, graph));
     destinations.add(new GraphAlignment(1, 4, Arrays.asList(-3L), 2, graph));
@@ -226,8 +226,8 @@ public class PairJoinerTest extends TestCase {
     final ArrayList<Set<GraphAlignment>> sets = new ArrayList<>();
     sets.add(starts);
     sets.add(destinations);
-    Set<GraphAlignment> actual = joiner.paired(sets, 0, 100);
-    List<GraphAlignment> expected = Arrays.asList(
+    final Set<GraphAlignment> actual = joiner.paired(sets, 0, 100);
+    final List<GraphAlignment> expected = Arrays.asList(
         new GraphAlignment(1, 4, Arrays.asList(1L, 2L, 3L), 3, graph)
         , new GraphAlignment(1, 4, Arrays.asList(4L, 2L, 3L), 3, graph)
         , new GraphAlignment(1, 6, Arrays.asList(1L, 2L, 5L), 5, graph)
@@ -262,16 +262,16 @@ public class PairJoinerTest extends TestCase {
         }
         , new long[][]{{1, 2}, {2, 3}}
     );
-    PairJoiner joiner = new PairJoiner(graph, 10);
-    Set<GraphAlignment> starts = new HashSet<>();
-    Set<GraphAlignment> destinations = new HashSet<>();
+    final PairJoiner joiner = new PairJoiner(graph, 10);
+    final Set<GraphAlignment> starts = new HashSet<>();
+    final Set<GraphAlignment> destinations = new HashSet<>();
     starts.add(new GraphAlignment(1, 10, Arrays.asList(1L, 2L, 3L), 1, graph));
     destinations.add(new GraphAlignment(1, 11, Arrays.asList(-3L, -2L, -1L), 1, graph));
     final ArrayList<Set<GraphAlignment>> sets = new ArrayList<>();
     sets.add(starts);
     sets.add(destinations);
     Set<GraphAlignment> actual = joiner.paired(sets, -16, 100);
-    List<GraphAlignment> expected = Arrays.asList(
+    final List<GraphAlignment> expected = Arrays.asList(
         new GraphAlignment(1, 16, Arrays.asList(1L, 2L, 3L), 2, graph)
     );
     checkAlignments(expected, actual);
@@ -288,16 +288,16 @@ public class PairJoinerTest extends TestCase {
         }
         , new long[][]{{1, 2}, {2, 3}}
     );
-    PairJoiner joiner = new PairJoiner(graph, 10);
-    Set<GraphAlignment> starts = new HashSet<>();
-    Set<GraphAlignment> destinations = new HashSet<>();
+    final PairJoiner joiner = new PairJoiner(graph, 10);
+    final Set<GraphAlignment> starts = new HashSet<>();
+    final Set<GraphAlignment> destinations = new HashSet<>();
     starts.add(new GraphAlignment(1, 17, Arrays.asList(1L), 1, graph));
     destinations.add(new GraphAlignment(1, 16, Arrays.asList(-3L), 1, graph));
     final ArrayList<Set<GraphAlignment>> sets = new ArrayList<>();
     sets.add(starts);
     sets.add(destinations);
     Set<GraphAlignment> actual = joiner.paired(sets, -4, 100);
-    List<GraphAlignment> expected = Arrays.asList(
+    final List<GraphAlignment> expected = Arrays.asList(
         new GraphAlignment(1, 16, Arrays.asList(1L, 2L, 3L), 2, graph)
     );
     checkAlignments(expected, actual);
@@ -313,16 +313,16 @@ public class PairJoinerTest extends TestCase {
         }
         , new long[][]{}
     );
-    PairJoiner joiner = new PairJoiner(graph, 10);
-    Set<GraphAlignment> starts = new HashSet<>();
-    Set<GraphAlignment> destinations = new HashSet<>();
+    final PairJoiner joiner = new PairJoiner(graph, 10);
+    final Set<GraphAlignment> starts = new HashSet<>();
+    final Set<GraphAlignment> destinations = new HashSet<>();
     starts.add(new GraphAlignment(1, 15, Arrays.asList(1L), 1, graph));
     destinations.add(new GraphAlignment(1, 15, Arrays.asList(-1L), 1, graph));
     final ArrayList<Set<GraphAlignment>> sets = new ArrayList<>();
     sets.add(starts);
     sets.add(destinations);
     Set<GraphAlignment> actual = joiner.paired(sets, -13, 100);
-    List<GraphAlignment> expected = Arrays.asList(
+    final List<GraphAlignment> expected = Arrays.asList(
         new GraphAlignment(1, 17, Arrays.asList(1L), 2, graph)
     );
     checkAlignments(expected, actual);
@@ -339,16 +339,16 @@ public class PairJoinerTest extends TestCase {
         }
         , new long[][]{{1, 2}, {1, 3}}
     );
-    PairJoiner joiner = new PairJoiner(graph, 10);
-    Set<GraphAlignment> starts = new HashSet<>();
-    Set<GraphAlignment> destinations = new HashSet<>();
+    final PairJoiner joiner = new PairJoiner(graph, 10);
+    final Set<GraphAlignment> starts = new HashSet<>();
+    final Set<GraphAlignment> destinations = new HashSet<>();
     starts.add(new GraphAlignment(1, 12, Arrays.asList(1L, 2L), 1, graph));
     destinations.add(new GraphAlignment(1, 12, Arrays.asList(-3L, -1L), 1, graph));
     final ArrayList<Set<GraphAlignment>> sets = new ArrayList<>();
     sets.add(starts);
     sets.add(destinations);
-    Set<GraphAlignment> actual = joiner.paired(sets, -100, 100);
-    List<GraphAlignment> expected = Collections.emptyList();
+    final Set<GraphAlignment> actual = joiner.paired(sets, -100, 100);
+    final List<GraphAlignment> expected = Collections.emptyList();
     checkAlignments(expected, actual);
   }
   public void testSloptigPalindrome() {
@@ -357,10 +357,10 @@ public class PairJoinerTest extends TestCase {
         }
         , new long[][]{{1, 2}, {2, 3}, {2, -3}, {3, 4}, {-3, 4}, {4, 5}}
     );
-    PairJoiner joiner = new PairJoiner(graph, 1);
+    final PairJoiner joiner = new PairJoiner(graph, 1);
 
-    GraphAlignment destination = new GraphAlignment(0, 2, Arrays.asList(-5L, -4L, 3L, -2L, -1L), 1, graph);
-    GraphAlignment start = new GraphAlignment(1, 3, Arrays.asList(1L, 2L, 3L, 4L, 5L), 1, graph);
+    final GraphAlignment destination = new GraphAlignment(0, 2, Arrays.asList(-5L, -4L, 3L, -2L, -1L), 1, graph);
+    final GraphAlignment start = new GraphAlignment(1, 3, Arrays.asList(1L, 2L, 3L, 4L, 5L), 1, graph);
     Set<GraphAlignment> destinations = new HashSet<>();
     destinations.add(destination);
 
@@ -370,7 +370,7 @@ public class PairJoinerTest extends TestCase {
     );
     checkAlignments(expected, actual);
 
-    GraphAlignment destination2 = new GraphAlignment(0, 2, Arrays.asList(-5L, -4L, -3L, -2L, -1L), 1, graph);
+    final GraphAlignment destination2 = new GraphAlignment(0, 2, Arrays.asList(-5L, -4L, -3L, -2L, -1L), 1, graph);
     destinations = new HashSet<>();
     destinations.add(destination2);
     actual = joiner.joinAlignments(start, PairJoiner.destinationMap(destinations, graph), -30, 20);

@@ -74,7 +74,7 @@ public class SmartVcfWriterTest extends TestCase {
   }
 
   public void testLimitExceeded() throws IOException {
-    MemoryPrintStream mps = orderLimit(10000);
+    final MemoryPrintStream mps = orderLimit(10000);
     TestUtils.containsAll(mps.toString()
         , "VcfRecord dropped due to excessive out-of-order processing"
         , "chr2\t1\t.\ta\tc,t\t12.8\t.\t."
@@ -82,7 +82,7 @@ public class SmartVcfWriterTest extends TestCase {
   }
 
   private MemoryPrintStream orderLimit(int number) throws IOException {
-    MemoryPrintStream mps = new MemoryPrintStream();
+    final MemoryPrintStream mps = new MemoryPrintStream();
     Diagnostic.setLogStream(mps.printStream());
     try {
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -102,7 +102,7 @@ public class SmartVcfWriterTest extends TestCase {
   }
 
   public void testUnderLimit() throws IOException {
-    MemoryPrintStream mps = orderLimit(9999);
+    final MemoryPrintStream mps = orderLimit(9999);
     assertEquals("", mps.toString());
   }
 }

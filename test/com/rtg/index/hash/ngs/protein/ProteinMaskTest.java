@@ -124,8 +124,8 @@ public class ProteinMaskTest extends TestCase {
   }
 
   public void testClone() throws CloneNotSupportedException {
-    ProteinMask mask = dummyMask();
-    ProteinMask mask2 = mask.clone();
+    final ProteinMask mask = dummyMask();
+    final ProteinMask mask2 = mask.clone();
     assertNotNull(mask2);
     assertTrue(mask2 != mask);
     assertEquals(mask.toString(), mask2.toString());
@@ -172,8 +172,8 @@ public class ProteinMaskTest extends TestCase {
   }
 
   public void testFactory() {
-    Skeleton sk = new Skeleton(4, 4, 0, 0, 1);
-    HashFunctionFactory factory = ProteinMask.factory(sk);
+    final Skeleton sk = new Skeleton(4, 4, 0, 0, 1);
+    final HashFunctionFactory factory = ProteinMask.factory(sk);
     assertEquals(20, factory.hashBits());
     assertEquals(20, factory.windowBits());
     assertEquals(4, factory.windowSize());
@@ -181,8 +181,8 @@ public class ProteinMaskTest extends TestCase {
   }
 
   private ProteinMask dummyMask() {
-    StringWriter sb = new StringWriter();
-    HashFunctionFactory factory = ProteinMask.factory(new Skeleton(4, 4, 0, 0, 1));
+    final StringWriter sb = new StringWriter();
+    final HashFunctionFactory factory = ProteinMask.factory(new Skeleton(4, 4, 0, 0, 1));
     return (ProteinMask) factory.create(new ReadCallMock(sb), new TemplateCallMock(sb));
   }
 

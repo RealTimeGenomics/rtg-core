@@ -20,7 +20,7 @@ import junit.framework.TestCase;
  */
 public class StandardDeviationTest extends TestCase {
   public void testStandardDeviation() {
-    StandardDeviation dev = new StandardDeviation();
+    final StandardDeviation dev = new StandardDeviation();
     assertEquals(0.0, dev.standardDeviation());
     assertEquals(0.0, dev.mean());
     dev.addSample(3);
@@ -39,15 +39,15 @@ public class StandardDeviationTest extends TestCase {
   }
 
   public void testCombine() {
-    StandardDeviation first = new StandardDeviation();
-    StandardDeviation second = new StandardDeviation();
+    final StandardDeviation first = new StandardDeviation();
+    final StandardDeviation second = new StandardDeviation();
     for (int i : new int[] {2, 4, 4, 4}) {
       first.addSample(i);
     }
     for (int i : new int[] {5, 5, 7, 9}) {
       second.addSample(i);
     }
-    StandardDeviation dev = StandardDeviation.combine(Arrays.asList(first, new StandardDeviation(), second));
+    final StandardDeviation dev = StandardDeviation.combine(Arrays.asList(first, new StandardDeviation(), second));
     assertEquals(2.0, dev.standardDeviation(), 0.1);
     assertEquals(5.0, dev.mean(), 0.1);
   }

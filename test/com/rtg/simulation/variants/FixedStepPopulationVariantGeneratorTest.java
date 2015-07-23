@@ -40,13 +40,13 @@ public class FixedStepPopulationVariantGeneratorTest extends TestCase {
 
   public void testFixedStepX() throws IOException {
     final SequencesReader sr = ReaderTestUtils.getReaderDnaMemory(REF);
-    FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("X"), new PortableRandom(10), 0.5);
-    List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
+    final FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("X"), new PortableRandom(10), 0.5);
+    final List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
     assertEquals(12, variants.size());
     int e = 0;
     int i = REF.indexOf("c");
     for (; i < REF.length(); i += 10) {
-      PopulationVariantGenerator.PopulationVariant var = variants.get(e);
+      final PopulationVariantGenerator.PopulationVariant var = variants.get(e);
       assertTrue(Arrays.equals(DnaUtils.encodeString(REF.substring(i, i + 1)), var.mRef));
       assertFalse(Arrays.equals(var.mAlleles[0], var.mRef));
       assertEquals(0, var.getSequenceId());
@@ -56,13 +56,13 @@ public class FixedStepPopulationVariantGeneratorTest extends TestCase {
   }
   public void testFixedStepHetX() throws IOException {
     final SequencesReader sr = ReaderTestUtils.getReaderDnaMemory(REF);
-    FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("X_Y"), new PortableRandom(118), 0.5);
-    List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
+    final FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("X_Y"), new PortableRandom(118), 0.5);
+    final List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
     assertEquals(12, variants.size());
     int e = 0;
     int i = REF.indexOf("c");
     for (; i < REF.length(); i += 10) {
-      PopulationVariantGenerator.PopulationVariant var = variants.get(e);
+      final PopulationVariantGenerator.PopulationVariant var = variants.get(e);
       assertTrue(Arrays.equals(DnaUtils.encodeString(REF.substring(i, i + 1)), var.mRef));
       assertTrue(!Arrays.equals(var.mAlleles[0], var.mAlleles[1]));
       assertEquals(0, var.getSequenceId());
@@ -72,13 +72,13 @@ public class FixedStepPopulationVariantGeneratorTest extends TestCase {
   }
   public void testFixedStepI() throws IOException {
     final SequencesReader sr = ReaderTestUtils.getReaderDnaMemory(REF);
-    FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("I"), new PortableRandom(10), 0.5);
-    List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
+    final FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("I"), new PortableRandom(10), 0.5);
+    final List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
     assertEquals(11, variants.size());
     int e = 0;
     int i = REF.indexOf("c") + 10;
     for (; i < REF.length(); i += 10) {
-      PopulationVariantGenerator.PopulationVariant var = variants.get(e);
+      final PopulationVariantGenerator.PopulationVariant var = variants.get(e);
       assertTrue(Arrays.equals(DnaUtils.encodeString(REF.substring(i - 1, i)), var.mRef));
       assertFalse(Arrays.equals(var.mAlleles[0], var.mRef));
       assertEquals(0, var.getSequenceId());

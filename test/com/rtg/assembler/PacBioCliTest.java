@@ -39,7 +39,7 @@ public class PacBioCliTest extends AbstractParamsCliTest<PacBioParams> {
   }
 
   public void testFlags() throws IOException {
-    MutableGraph builtGraph = GraphMapCliTest.makeGraph(29
+    final MutableGraph builtGraph = GraphMapCliTest.makeGraph(29
         , new String[] {"ACGT", "GGGG", "TTAA"}
         , new long[][] {{1, 2}, {3, 2}});
     final File tmpDir = FileHelper.createTempDirectory();
@@ -67,13 +67,13 @@ public class PacBioCliTest extends AbstractParamsCliTest<PacBioParams> {
           FileHelper.deleteAll(output);
           checkMainInitOk("-o", output.toString(), "-I", fileList.toString(), "-g", graph.toString());
 
-          File inputGraph =  new File(tmpDir, "graph");
+          final File inputGraph =  new File(tmpDir, "graph");
           assertTrue(inputGraph.mkdir());
           GraphWriter.write(new GraphKmerAttribute(29), new StoreDirProxy(inputGraph), "foo" , Collections.<UUID>emptySet());
           final CFlags flags =  new CFlags("foo", TestUtils.getNullPrintStream(), TestUtils.getNullPrintStream());
           PacBioCli.initLocalFlags(flags);
           flags.setFlags("-o", output.toString(), "-g", inputGraph.toString(), "-I", fileList.toString());
-          PacBioParams params = PacBioCli.makeParamsLocal(flags);
+          final PacBioParams params = PacBioCli.makeParamsLocal(flags);
           assertEquals(reads, params.reads().get(0));
           assertEquals(output, params.directory());
           assertEquals(inputGraph, params.graph());

@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 public class EquivalentFilterTest extends TestCase {
 
   private Variant getCalls(int start, int end, String bestName) {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     for (int i = start; i < end; i++) {
       sb.append("A");
     }

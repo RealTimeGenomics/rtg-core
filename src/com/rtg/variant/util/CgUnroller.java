@@ -99,8 +99,8 @@ public final class CgUnroller {
     if (hasQuality && samLength != samQualities.length()) {
       return null;
     }
-    String expandedRead;
-    String expandedQual;
+    final String expandedRead;
+    final String expandedQual;
     final String superCigar = rec.getSuperCigar();
     if (superCigar == null) {
       final String gs = rec.getOverlapBases();

@@ -28,16 +28,16 @@ import junit.framework.TestCase;
  */
 public class GraphSorterTest extends TestCase {
   public void testGraphSorter() throws IOException {
-    GraphKmerAttribute a = GraphMapCliTest.makeGraph(4, new String[] {"AAAACCCC", "TTTTTGG", "CCCCC", "ATATA"}, new long[][] {{1, 2}, {2, 3}, {3, 4}});
-    GraphKmerAttribute b = GraphMapCliTest.makeGraph(4, new String[] {"TTTTTGG", "AAAACCCC", "GGGGG", "TATAT"}, new long[][] {{2, 1}, {1, -3}, {-3, -4}});
-    Graph sortedA = GraphSorter.sortedGraph(a);
-    Graph sortedB = GraphSorter.sortedGraph(b);
-    StoreDirString aString = new StoreDirString();
-    StoreDirString bString = new StoreDirString();
+    final GraphKmerAttribute a = GraphMapCliTest.makeGraph(4, new String[] {"AAAACCCC", "TTTTTGG", "CCCCC", "ATATA"}, new long[][] {{1, 2}, {2, 3}, {3, 4}});
+    final GraphKmerAttribute b = GraphMapCliTest.makeGraph(4, new String[] {"TTTTTGG", "AAAACCCC", "GGGGG", "TATAT"}, new long[][] {{2, 1}, {1, -3}, {-3, -4}});
+    final Graph sortedA = GraphSorter.sortedGraph(a);
+    final Graph sortedB = GraphSorter.sortedGraph(b);
+    final StoreDirString aString = new StoreDirString();
+    final StoreDirString bString = new StoreDirString();
     GraphWriter.write(sortedA, aString, "foo", Collections.<UUID>emptySet());
     GraphWriter.write(sortedB, bString, "foo", Collections.<UUID>emptySet());
-    String aFiltered = StringUtils.grepMinusV(aString.toString(), "header.tsv|guid|date");
-    String bFiltered = StringUtils.grepMinusV(bString.toString(), "header.tsv|date|guid");
+    final String aFiltered = StringUtils.grepMinusV(aString.toString(), "header.tsv|guid|date");
+    final String bFiltered = StringUtils.grepMinusV(bString.toString(), "header.tsv|date|guid");
     assertEquals(aFiltered, bFiltered);
 
   }

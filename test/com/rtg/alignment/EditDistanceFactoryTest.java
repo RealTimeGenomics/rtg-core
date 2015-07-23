@@ -106,7 +106,7 @@ public class EditDistanceFactoryTest extends TestCase {
 
   public void testCalculateLowerBoundValue() {
     Diagnostic.setLogStream();
-    MaxShiftFactor msf = new MaxShiftFactor(0.1);
+    final MaxShiftFactor msf = new MaxShiftFactor(0.1);
     assertEquals(3, EditDistanceFactory.calculateLowerBoundValue(36, msf));
     assertEquals(4, EditDistanceFactory.calculateLowerBoundValue(100, msf));
     assertEquals(3, EditDistanceFactory.calculateLowerBoundValue(1000, msf));

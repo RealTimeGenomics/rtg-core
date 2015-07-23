@@ -116,7 +116,7 @@ public class AttributeExtractorTest extends TestCase {
         annotations.add(new FormatAnnotation("GT", AnnotationDataType.STRING));
         annotations.add(new FormatAnnotation("AB", AnnotationDataType.DOUBLE));
         annotations.add(new FormatAnnotation("DP", AnnotationDataType.INTEGER));
-        AttributeExtractor ae = new AttributeExtractor(annotations.toArray(new Annotation[annotations.size()]));
+        final AttributeExtractor ae = new AttributeExtractor(annotations.toArray(new Annotation[annotations.size()]));
         try {
           ae.checkHeader(reader.getHeader());
         } catch (IncompatibleHeaderException ihe) {
@@ -128,7 +128,7 @@ public class AttributeExtractorTest extends TestCase {
         assertNotNull(ds);
 
         reader.hasNext();
-        double[] instance = ae.getInstance(reader.next(), 0);
+        final double[] instance = ae.getInstance(reader.next(), 0);
         assertNotNull(instance);
         assertEquals(7, instance.length);
 //        assertTrue(instance[0] instanceof Double); // AB
@@ -164,7 +164,7 @@ public class AttributeExtractorTest extends TestCase {
         annotations.add(new FormatAnnotation("GT", AnnotationDataType.STRING));
         annotations.add(new FormatAnnotation("AB", AnnotationDataType.DOUBLE));
         annotations.add(new FormatAnnotation("DP", AnnotationDataType.INTEGER));
-        AttributeExtractor ae = new AttributeExtractor(annotations.toArray(new Annotation[annotations.size()]));
+        final AttributeExtractor ae = new AttributeExtractor(annotations.toArray(new Annotation[annotations.size()]));
         try {
           ae.checkHeader(reader.getHeader());
         } catch (IncompatibleHeaderException ihe) {

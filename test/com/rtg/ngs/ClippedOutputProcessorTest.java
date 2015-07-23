@@ -53,8 +53,8 @@ public class ClippedOutputProcessorTest extends TestCase {
   }
 
   public final void test() throws IOException {
-    OutputProcessor op = new MockOutputProcessor();
-    OutputProcessor op2 = op.threadClone(new HashingRegion(5, 10, 20, 5, -1, -1));
+    final OutputProcessor op = new MockOutputProcessor();
+    final OutputProcessor op2 = op.threadClone(new HashingRegion(5, 10, 20, 5, -1, -1));
 
     op2.process(14, null, 1, 24, 0, 0); // Not clipped
     assertEquals(14, mTemplateId);

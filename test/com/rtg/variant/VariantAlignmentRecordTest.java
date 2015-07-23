@@ -76,7 +76,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final SAMFileHeader header = new SAMFileHeader();
     final SAMRecord rec = new SAMRecord(header);
     rec.setReadUnmappedFlag(true);
-    VariantAlignmentRecord r = new VariantAlignmentRecord(rec);
+    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec);
     assertTrue(r.isUnmapped());
   }
 

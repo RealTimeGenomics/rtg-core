@@ -29,12 +29,12 @@ import junit.framework.TestCase;
 public class BinaryTreeClassifierTest extends TestCase {
 
   public void testTreePredictorManual() {
-    BinaryTreeClassifier node2 = new BinaryTreeClassifier(new BinarySplitter("att1", 1, 1.0, MlDataType.BOOLEAN),
+    final BinaryTreeClassifier node2 = new BinaryTreeClassifier(new BinarySplitter("att1", 1, 1.0, MlDataType.BOOLEAN),
         new ZeroRBuilder.ZeroRClassifier(0.7),
         new ZeroRBuilder.ZeroRClassifier(1.0),
         0.2
     );
-    BinaryTreeClassifier classifier = new BinaryTreeClassifier(new BinarySplitter("att0", 0, 3.141, MlDataType.DOUBLE),
+    final BinaryTreeClassifier classifier = new BinaryTreeClassifier(new BinarySplitter("att0", 0, 3.141, MlDataType.DOUBLE),
         new ZeroRBuilder.ZeroRClassifier(0.9),
         node2,
         0.3

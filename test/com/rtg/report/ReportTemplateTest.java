@@ -32,7 +32,7 @@ public class ReportTemplateTest extends TestCase  {
     String mSecondReplacement;
     @Override
     Map<String, String> makeReplacements() {
-      Map<String, String> replacements = new HashMap<>();
+      final Map<String, String> replacements = new HashMap<>();
       replacements.put("REPLACE", mReplace);
       replacements.put("SECOND_REPLACEMENT", mSecondReplacement);
       return replacements;
@@ -64,7 +64,7 @@ public class ReportTemplateTest extends TestCase  {
     String mReplace;
     @Override
     Map<String, String> makeReplacements() {
-      Map<String, String> replacements = new HashMap<>();
+      final Map<String, String> replacements = new HashMap<>();
       replacements.put("REPLACE", mReplace);
       return replacements;
     }
@@ -87,7 +87,7 @@ public class ReportTemplateTest extends TestCase  {
     String mSecondReplacement;
     @Override
     Map<String, String> makeReplacements() {
-      Map<String, String> replacements = new HashMap<>();
+      final Map<String, String> replacements = new HashMap<>();
       replacements.put("SECOND_REPLACEMENT", mSecondReplacement);
       return replacements;
     }
@@ -113,7 +113,7 @@ public class ReportTemplateTest extends TestCase  {
     String mBonus;
     @Override
     Map<String, String> makeReplacements() {
-      Map<String, String> replacements = new HashMap<>();
+      final Map<String, String> replacements = new HashMap<>();
       replacements.put("REPLACE", mReplace);
       replacements.put("SECOND_REPLACEMENT", mSecondReplacement);
       replacements.put("BONUS", mBonus);

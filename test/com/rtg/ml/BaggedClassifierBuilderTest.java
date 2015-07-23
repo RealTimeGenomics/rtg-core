@@ -33,26 +33,26 @@ public class BaggedClassifierBuilderTest extends AbstractBuildClassifierTest {
   }
 
   public void testOob() {
-    BuildClassifier b = makeClassifier();
-    Dataset data = TrainTestSplitTest.makeSimpleDataset(100, 100);
+    final BuildClassifier b = makeClassifier();
+    final Dataset data = TrainTestSplitTest.makeSimpleDataset(100, 100);
     b.build(data);
-    double oob = ((BaggedClassifierBuilder) b).getOutOfBagAccuracy();
+    final double oob = ((BaggedClassifierBuilder) b).getOutOfBagAccuracy();
     assertTrue(oob >= 0 && oob <= 1.0);
     //System.err.println(b.getClassifier().toString(new StringBuilder(), ""));
   }
 
   public void testCircleTree() {
-    BuildClassifier b = makeClassifier();
+    final BuildClassifier b = makeClassifier();
 
-    Dataset data = TrainTestSplitTest.makeCircleDataset(new PortableRandom(42), 100, 200);
+    final Dataset data = TrainTestSplitTest.makeCircleDataset(new PortableRandom(42), 100, 200);
     TrainTestSplitTest.nukeData(data, 0.3);
     b.build(data);
 
-    PredictClassifier p = b.getClassifier();
+    final PredictClassifier p = b.getClassifier();
 
     //System.err.println(p.toString(new StringBuilder(), ""));
 
-    SimpleEvaluation eval = new SimpleEvaluation();
+    final SimpleEvaluation eval = new SimpleEvaluation();
     eval.evaluate(p, data);
     assertEquals(0.84, eval.accuracy(), 0.01);
   }

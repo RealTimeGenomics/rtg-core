@@ -40,7 +40,7 @@ public class GraphMapCliTest extends AbstractParamsCliTest<GraphMapParams> {
     return makeGraph(contigOverlap, contigs, paths, Collections.<String, String>emptyMap(), Collections.<String, String>emptyMap());
   }
   public static GraphKmerAttribute makeGraph(int contigOverlap, String[] contigs, long[][] paths, Map<String, String> contigAttributes, Map<String, String> pathAttributes) {
-    GraphKmerAttribute graph = new GraphKmerAttribute(contigOverlap, contigAttributes, pathAttributes);
+    final GraphKmerAttribute graph = new GraphKmerAttribute(contigOverlap, contigAttributes, pathAttributes);
     graph.addContigAttribute(GraphKmerAttribute.READ_COUNT, "foo");
     graph.addPathAttribute(GraphKmerAttribute.READ_COUNT, "foo");
     for (String c : contigs) {
@@ -52,7 +52,7 @@ public class GraphMapCliTest extends AbstractParamsCliTest<GraphMapParams> {
     return graph;
   }
   public void testFlags() throws IOException {
-    MutableGraph builtGraph = makeGraph(29
+    final MutableGraph builtGraph = makeGraph(29
         , new String[] {"ACGT", "GGGG", "TTAA"}
         , new long[][] {{1, 2}, {3, 2}});
     final File tmpDir = FileHelper.createTempDirectory();
@@ -92,7 +92,7 @@ public class GraphMapCliTest extends AbstractParamsCliTest<GraphMapParams> {
           FileHelper.deleteAll(output);
           checkMainInitOk("-o", output.toString(), "-I", fileList.toString(), "-g", graph.toString());
 
-          File inputGraph =  new File(tmpDir, "graph");
+          final File inputGraph =  new File(tmpDir, "graph");
           assertTrue(inputGraph.mkdir());
           GraphWriter.write(new GraphKmerAttribute(29), new StoreDirProxy(inputGraph), "foo" , Collections.<UUID>emptySet());
           final CFlags flags =  new CFlags("foo", TestUtils.getNullPrintStream(), TestUtils.getNullPrintStream());

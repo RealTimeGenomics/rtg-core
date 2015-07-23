@@ -96,42 +96,42 @@ public class MergeNodesTest extends TestCase {
   public void testMergeNode() {
     final long[][] paths = {{1, 2, 3, 4, 5}, {2, 3, 4}, {3, 4, 5}, {6, 3, 7}};
     final String[] contigs = {"AAAACC", "CCGGT", "GTTTAT", "ATCCTG", "TGACCAC", "ATAGT", "ATCACAC"};
-    MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
+    final MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
         , paths);
-    long newId = contigs.length + 1;
+    final long newId = contigs.length + 1;
     assertEquals(newId, MergeNodes.mergeNodes(graph, 2, longs(2, 3, 4)));
     assertEquals("CCGGTTTATCCTG", ContigString.contigSequenceString(graph.contig(newId)));
     assertTrue(graph.pathDeleted(1));
     assertTrue(graph.pathDeleted(2));
     assertTrue(graph.pathDeleted(3));
     assertFalse(graph.pathDeleted(4));
-    Set<List<Long>> newPaths = new HashSet<>();
+    final Set<List<Long>> newPaths = new HashSet<>();
     for (int i = paths.length + 1; i <= graph.numberPaths(); i++) {
       newPaths.add(MergeNodes.getPath(graph, i));
     }
-    Set<List<Long>> expected = new HashSet<>();
+    final Set<List<Long>> expected = new HashSet<>();
     expected.add(longs(1, newId, 5));
     expected.add(longs(newId, 5));
     assertEquals(expected, newPaths);
   }
 
   void addPath(List<Long> contigs, int readCount, MutableGraph graph) {
-    long id = graph.addPath(new PathArray(contigs));
+    final long id = graph.addPath(new PathArray(contigs));
     graph.setPathAttribute(id, GraphKmerAttribute.READ_COUNT, "" + readCount);
   }
 
   public void testSimplify() {
     final long[][] paths = {{1, 2}, {2, 3}, {4, 2}, {2, 5}};
     final String[] contigs = {"AAAACC", "CCGGT", "GTTTAT", "ATCC", "GTCCAC"};
-    Map <String, String> attr = new HashMap<>();
+    final Map <String, String> attr = new HashMap<>();
     attr.put(GraphKmerAttribute.READ_COUNT, "foo");
-    MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
+    final MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
         , paths, attr, attr);
     addPath(longs(1, 2, 3), 2, graph);
     addPath(longs(4, 2, 5), 2, graph);
-    MergeNodes merge = new MergeNodes(graph, 2, 2);
+    final MergeNodes merge = new MergeNodes(graph, 2, 2);
     merge.simplifyGraph();
-    Graph compact = graph.compact();
+    final Graph compact = graph.compact();
 
     final String[] expected = {"AAAACCGGTTTAT", "ATCCGGTCCAC"};
     finalContigs(expected, compact);
@@ -141,14 +141,14 @@ public class MergeNodesTest extends TestCase {
   public void testUnMergeableExtraPath() {
     final long[][] paths = {{1, 2}, {2, 3}, {4, 2}, {2, 5}};
     final String[] contigs = {"AAAACC", "CCGGT", "GTTTAT", "ATCC", "GTCCAC"};
-    Map <String, String> attr = new HashMap<>();
+    final Map <String, String> attr = new HashMap<>();
     attr.put(GraphKmerAttribute.READ_COUNT, "foo");
-    MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
+    final MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
         , paths, attr, attr);
     addPath(longs(1, 2, 3), 2, graph);
     addPath(longs(4, 2, 5), 2, graph);
     addPath(longs(4, 2, 3), 2, graph);
-    MergeNodes merge = new MergeNodes(graph, 2, 2);
+    final MergeNodes merge = new MergeNodes(graph, 2, 2);
     merge.simplifyGraph();
     contigDeleted(graph, longs());
     final String[] expected = {};
@@ -158,13 +158,13 @@ public class MergeNodesTest extends TestCase {
   public void testUnMergeableExtraNodes() {
     final long[][] paths = {{1, 2}, {2, 3}, {4, 2}, {2, 5}, {1, 6}, {7, 3}};
     final String[] contigs = {"AAAACC", "CCGGT", "GTTTAT", "ATCC", "GTCCAC", "CCGTG", "AGTGT"};
-    Map <String, String> attr = new HashMap<>();
+    final Map <String, String> attr = new HashMap<>();
     attr.put(GraphKmerAttribute.READ_COUNT, "foo");
-    MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
+    final MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
         , paths, attr, attr);
     addPath(longs(1, 2, 3), 2, graph);
     addPath(longs(4, 2, 5), 2, graph);
-    MergeNodes merge = new MergeNodes(graph, 2, 2);
+    final MergeNodes merge = new MergeNodes(graph, 2, 2);
     merge.simplifyGraph();
     contigDeleted(graph, longs(4, 5));
     final String[] expected = {"ATCCGGTCCAC"};
@@ -174,13 +174,13 @@ public class MergeNodesTest extends TestCase {
   public void testUnMergeableExtraNodeLeft() {
     final long[][] paths = {{1, 2}, {2, 3}, {4, 2}, {2, 5}, {1, 6}};
     final String[] contigs = {"AAAACC", "CCGGT", "GTTTAT", "ATCC", "GTCCAC", "CCGTG"};
-    Map <String, String> attr = new HashMap<>();
+    final Map <String, String> attr = new HashMap<>();
     attr.put(GraphKmerAttribute.READ_COUNT, "foo");
-    MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
+    final MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
         , paths, attr, attr);
     addPath(longs(1, 2, 3), 2, graph);
     addPath(longs(4, 2, 5), 2, graph);
-    MergeNodes merge = new MergeNodes(graph, 2, 2);
+    final MergeNodes merge = new MergeNodes(graph, 2, 2);
     merge.simplifyGraph();
     contigDeleted(graph, longs(4, 5));
     final String[] expected = {"ATCCGGTCCAC"};
@@ -190,13 +190,13 @@ public class MergeNodesTest extends TestCase {
   public void testUnMergeableExtraNodeRight() {
     final long[][] paths = {{1, 2}, {2, 3}, {4, 2}, {2, 5}, {6, 3}};
     final String[] contigs = {"AAAACC", "CCGGT", "GTTTAT", "ATCC", "GTCCAC", "CCGTG"};
-    Map <String, String> attr = new HashMap<>();
+    final Map <String, String> attr = new HashMap<>();
     attr.put(GraphKmerAttribute.READ_COUNT, "foo");
-    MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
+    final MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
         , paths, attr, attr);
     addPath(longs(1, 2, 3), 2, graph);
     addPath(longs(4, 2, 5), 2, graph);
-    MergeNodes merge = new MergeNodes(graph, 2, 2);
+    final MergeNodes merge = new MergeNodes(graph, 2, 2);
     merge.simplifyGraph();
     contigDeleted(graph, longs(4, 5));
     final String[] expected = {"ATCCGGTCCAC"};
@@ -207,11 +207,11 @@ public class MergeNodesTest extends TestCase {
   public void testMergeableExtraNodeRight() {
     final long[][] paths = {{1, 2}, {2, 3}, {4, 2}, {2, 5}, {3, 6}};
     final String[] contigs = {"AAAACC", "CCGGT", "GTTTAT", "ATCC", "GTCCAC", "ATGTG"};
-    Map <String, String> attr = new HashMap<>();
+    final Map <String, String> attr = new HashMap<>();
     attr.put(GraphKmerAttribute.READ_COUNT, "foo");
     attr.put(Consensus.COMBINED, "foo");
     attr.put("monkey", "foo");
-    MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
+    final MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
         , paths, attr, attr);
     graph.setPathAttribute(5, GraphKmerAttribute.READ_COUNT, "4");
     graph.setContigAttribute(1, GraphKmerAttribute.K_MER_FREQ, "2");
@@ -222,9 +222,9 @@ public class MergeNodesTest extends TestCase {
     addPath(longs(1, 2, 3), 1, graph);
     addPath(longs(1, 2, 3, 6), 1, graph);
     addPath(longs(4, 2, 5), 2, graph);
-    MergeNodes merge = new MergeNodes(graph, 2, 2);
+    final MergeNodes merge = new MergeNodes(graph, 2, 2);
     merge.simplifyGraph();
-    Graph compact = graph.compact();
+    final Graph compact = graph.compact();
     final String[] expected = {"AAAACCGGTTTATGTG", "ATCCGGTCCAC"};
     finalContigs(expected, graph);
 
@@ -265,19 +265,19 @@ public class MergeNodesTest extends TestCase {
   public void testMergableDouble() throws IOException {
     final long[][] paths = {{1, 2}, {3, 2}, {2, 4}, {4, 5}, {4, 6}};
     final String[] contigs = {"AAAACC", "CCGGT", "ATCC", "GTAGA", "GACCAC", "GAGTG"};
-    Map <String, String> attr = new HashMap<>();
+    final Map <String, String> attr = new HashMap<>();
     attr.put(GraphKmerAttribute.READ_COUNT, "foo");
     attr.put(Consensus.COMBINED, "foo");
-    MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
+    final MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
         , paths, attr, attr);
     addPath(longs(1, 2, 4, 5), 5, graph);
     addPath(longs(3, 2, 4, 6), 5, graph);
-    MergeNodes merge = new MergeNodes(graph, 2, 2);
+    final MergeNodes merge = new MergeNodes(graph, 2, 2);
     merge.simplifyGraph();
     final StoreDirString dir = new StoreDirString();
     GraphWriter.write(graph, dir, "foo", Collections.<UUID>emptySet());
 //    System.err.println(dir);
-    Graph compact = graph.compact();
+    final Graph compact = graph.compact();
     final String[] expected = {"AAAACCGGTAGACCAC", "ATCCGGTAGAGTG"};
     finalContigs(expected, compact);
     assertEquals("1/2/4/5", compact.contigAttribute(1, Consensus.COMBINED));
@@ -318,10 +318,10 @@ public class MergeNodesTest extends TestCase {
   public void testPalindrome() {
     final long[][] paths = {{1, 2}, {1, -2}, {2, 3}, {-2, 3}, {3, 4}};
     final String[] contigs = {"AAAACC", "CCGG", "GGTT", "TTCCCC", "GTTCCCCC"};
-    Map <String, String> attr = new HashMap<>();
+    final Map <String, String> attr = new HashMap<>();
     attr.put(GraphKmerAttribute.READ_COUNT, "foo");
     attr.put(Consensus.COMBINED, "foo");
-    MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
+    final MutableGraph graph = GraphMapCliTest.makeGraph(2, contigs
         , paths, attr, attr);
 
     MergeNodes.updatePaths(graph, 5, Arrays.asList(3L, 4L));

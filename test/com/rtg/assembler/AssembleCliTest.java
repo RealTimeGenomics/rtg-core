@@ -40,7 +40,7 @@ public class AssembleCliTest extends AbstractParamsCliTest<AssembleParams> {
   }
 
   public void testFlags() throws IOException {
-    MutableGraph builtGraph = GraphMapCliTest.makeGraph(29
+    final MutableGraph builtGraph = GraphMapCliTest.makeGraph(29
         , new String[]{"ACGT", "GGGG", "TTAA"}
         , new long[][]{{1, 2}, {3, 2}});
     final File tmpDir = FileHelper.createTempDirectory();
@@ -91,10 +91,10 @@ public class AssembleCliTest extends AbstractParamsCliTest<AssembleParams> {
           FileHelper.deleteAll(output);
           checkMainInitOk("-o", output.toString(), "-I", fileList.toString(), "-g", graph.toString(), "-k", "30", "--consensus-reads", "10");
 
-          File inputGraph =  new File(tmpDir, "graph");
+          final File inputGraph =  new File(tmpDir, "graph");
           assertTrue(inputGraph.mkdir());
           GraphWriter.write(new GraphKmerAttribute(30), new StoreDirProxy(inputGraph), "foo" , Collections.<UUID>emptySet());
-          MemoryPrintStream mps = new MemoryPrintStream();
+          final MemoryPrintStream mps = new MemoryPrintStream();
           CFlags flags =  new CFlags("foo", mps.printStream(), mps.printStream());
           AssembleCli.initLocalFlags(flags);
           assertFalse(mps.toString(), flags.setFlags("-o", output.toString(), "-g", inputGraph.toString(), "-I", fileList.toString(), "-w", "29", "-s", "12", "-k", "30", "--consensus-reads", "10"));

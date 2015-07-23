@@ -46,11 +46,11 @@ public class ZoomaNativeMapReadsCliTest extends AbstractCliTest {
 
   // Inhale a small sam or bam file into a string
   static String samFileToString(File samFile) throws IOException {
-    StringBuffer samText = new StringBuffer();
+    final StringBuffer samText = new StringBuffer();
     try (SamReader reader = SamUtils.makeSamReader(samFile)) {
-      SAMRecordIterator it = reader.iterator();
+      final SAMRecordIterator it = reader.iterator();
       while (it.hasNext()) {
-        SAMRecord rec = it.next();
+        final SAMRecord rec = it.next();
         samText.append(rec.getSAMString());
       }
     }
@@ -82,7 +82,7 @@ public class ZoomaNativeMapReadsCliTest extends AbstractCliTest {
             String orientation = "F1R2";
             if (rand.nextBoolean()) {
               orientation = "F2R1";
-              String t = rbases;
+              final String t = rbases;
               rbases = lbases;
               lbases = t;
             }

@@ -30,15 +30,15 @@ import junit.framework.TestCase;
  */
 public class PathTrackerTest extends TestCase {
   List<Long> longs(long ... longs) {
-    List<Long> result = new ArrayList<>();
+    final List<Long> result = new ArrayList<>();
     for (long l : longs) {
       result.add(l);
     }
     return result;
   }
   public void testTracker() {
-    Graph graph = GraphMapCliTest.makeGraph(0, new String[] {"ACCC", "TTGG", "CGGGG", "ACGT", "AACT", "ATTGTTAACAAT", "ACGCGA", "ACCGGT"}, new long[][] {});
-    PathTracker tracker = new PathTracker(new PalindromeTracker(graph));
+    final Graph graph = GraphMapCliTest.makeGraph(0, new String[] {"ACCC", "TTGG", "CGGGG", "ACGT", "AACT", "ATTGTTAACAAT", "ACGCGA", "ACCGGT"}, new long[][] {});
+    final PathTracker tracker = new PathTracker(new PalindromeTracker(graph));
     tracker.increment(longs(1L, 2L, 3L));
     tracker.increment(longs(-3L, -2L, -1L));
     tracker.increment(longs(1L, 2L, 3L));
@@ -74,11 +74,11 @@ public class PathTrackerTest extends TestCase {
   }
 
   public void testMerge() {
-    MutableGraph graph = GraphMapCliTest.makeGraph(0, new String[] {"ACCC", "TTGG", "CGGGG"}, new long[][] {{1, 2, 3}});
+    final MutableGraph graph = GraphMapCliTest.makeGraph(0, new String[] {"ACCC", "TTGG", "CGGGG"}, new long[][] {{1, 2, 3}});
     graph.addPathAttribute(READ_COUNT, GraphKmerAttribute.READ_COUNT_DESCRIPTION);
     graph.setPathAttribute(1, READ_COUNT, "100");
-    PathTracker tracker1 = new PathTracker(new PalindromeTracker(graph));
-    PathTracker tracker2 = new PathTracker(new PalindromeTracker(graph));
+    final PathTracker tracker1 = new PathTracker(new PalindromeTracker(graph));
+    final PathTracker tracker2 = new PathTracker(new PalindromeTracker(graph));
 
     tracker1.increment(longs(1L, 2L, 3L));
     tracker1.increment(longs(1L, 3L, 3L));

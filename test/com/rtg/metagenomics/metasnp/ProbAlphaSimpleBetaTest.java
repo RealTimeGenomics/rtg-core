@@ -17,7 +17,7 @@ import junit.framework.TestCase;
  */
 public class ProbAlphaSimpleBetaTest extends TestCase {
   public void test() {
-    ProbAlphaSimpleBeta beta = new ProbAlphaSimpleBeta(new double[] {0.01, 0.0002, 0.0003});
+    final ProbAlphaSimpleBeta beta = new ProbAlphaSimpleBeta(new double[] {0.01, 0.0002, 0.0003});
     assertEquals(0.01 * 0.0002 * 0.0003, beta.pAlpha(0, new int[] {1, 1, 1}), 1e-8);
     assertEquals(0.99 * 0.0002 * 0.0003, beta.pAlpha(0, new int[] {0, 1, 1}), 1e-8);
     assertEquals(0.01 * 0.0002 * 0.9997, beta.pAlpha(0, new int[] {1, 1, 0}), 1e-8);

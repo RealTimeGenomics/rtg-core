@@ -81,7 +81,7 @@ public class SamSingleEndOutputProcessor extends AbstractMapOutputProcessor {
     Diagnostic.developerLog(mTopN.histogram());
     final FilterConcatIntermediateFiles alignmentIntFiles = writeAlignments();
 
-    FilterConcatIntermediateFiles unmappedIntFiles;
+    final FilterConcatIntermediateFiles unmappedIntFiles;
     if (mOutputUnmapped) {
       unmappedIntFiles = writeUnmapped(!mParams.outputParams().unify(), false, false);
     } else {

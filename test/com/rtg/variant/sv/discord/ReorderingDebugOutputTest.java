@@ -34,7 +34,7 @@ public class ReorderingDebugOutputTest extends TestCase {
     bg = new BreakpointConstraint(new BreakpointGeometry(Orientation.UU, "f", "s", 43, 50, 142, 150, 190, 198), 0, 10.0);
     final DiscordantReadSet drs2 = new DiscordantReadSet("f", 60, bg);
 
-    MemoryPrintStream mps = new MemoryPrintStream();
+    final MemoryPrintStream mps = new MemoryPrintStream();
     try (ReorderingDebugOutput debug = new ReorderingDebugOutput(new DebugDiscordantOutputFormatter(), mps.outputStream(), 100)) {
       debug.addRecord(drs2);
       debug.addRecord(drs);
@@ -47,7 +47,7 @@ public class ReorderingDebugOutputTest extends TestCase {
   }
 
   public void testLimit() throws IOException {
-    MemoryPrintStream diag = new MemoryPrintStream();
+    final MemoryPrintStream diag = new MemoryPrintStream();
     Diagnostic.setLogStream(diag.printStream());
     try {
       BreakpointConstraint bg = new BreakpointConstraint(new BreakpointGeometry(Orientation.UU, "f", "s", 42, 50, 142, 150, 184, 192), 0, 10.0);
@@ -58,7 +58,7 @@ public class ReorderingDebugOutputTest extends TestCase {
       bg = new BreakpointConstraint(new BreakpointGeometry(Orientation.UU, "f", "s", 41, 150, 142, 150, 190, 292), 0, 10.0);
       final DiscordantReadSet drs3 = new DiscordantReadSet("f", 60, bg);
 
-      MemoryPrintStream mps = new MemoryPrintStream();
+      final MemoryPrintStream mps = new MemoryPrintStream();
       try (ReorderingDebugOutput debug = new ReorderingDebugOutput(new DebugDiscordantOutputFormatter(), mps.outputStream(), 100)) {
         debug.addRecord(drs2);
         debug.addRecord(drs);

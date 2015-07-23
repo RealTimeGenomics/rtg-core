@@ -28,12 +28,12 @@ import junit.framework.TestCase;
  */
 public class GraphFlowAlignerTest extends TestCase {
   Set<GraphAlignment> set(GraphAlignment... alignments) {
-    Set<GraphAlignment> expected = new HashSet<>();
+    final Set<GraphAlignment> expected = new HashSet<>();
     Collections.addAll(expected, alignments);
     return expected;
   }
   List<Long> longs(long... l) {
-    List<Long> expected = new ArrayList<>();
+    final List<Long> expected = new ArrayList<>();
     for (long g : l) {
       expected.add(g);
     }
@@ -41,23 +41,23 @@ public class GraphFlowAlignerTest extends TestCase {
   }
 
   public void testFlowAligner() {
-    Graph graph = GraphMapCliTest.makeGraph(2, new String[]{"ACGTAAAACTGAAACCCTAAACC"}, new long[][]{});
-    GraphFlowAligner aligner = new GraphFlowAligner(graph, new IntegerOrPercentage(10), new GraphTraversions(graph));
+    final Graph graph = GraphMapCliTest.makeGraph(2, new String[]{"ACGTAAAACTGAAACCCTAAACC"}, new long[][]{});
+    final GraphFlowAligner aligner = new GraphFlowAligner(graph, new IntegerOrPercentage(10), new GraphTraversions(graph));
     final Set<GraphAlignment> alignments = aligner.align(DnaUtils.encodeString("AAACTGGGGAACCTAAA"), 0, new ContigPosition(1, 4, graph));
     final Set<GraphAlignment> expected = set(new GraphAlignment(4, 20, longs(1), 6, graph));
     assertEquals(expected, alignments);
   }
 
   public void testMismatchAligner() {
-    Graph graph = GraphMapCliTest.makeGraph(2, new String[]{"ACGTAAAACTGAAACCCTAAACC"}, new long[][]{});
-    GraphFlowAligner aligner = new GraphFlowAligner(graph, new IntegerOrPercentage(10), new GraphTraversions(graph));
+    final Graph graph = GraphMapCliTest.makeGraph(2, new String[]{"ACGTAAAACTGAAACCCTAAACC"}, new long[][]{});
+    final GraphFlowAligner aligner = new GraphFlowAligner(graph, new IntegerOrPercentage(10), new GraphTraversions(graph));
     final Set<GraphAlignment> alignments = aligner.align(DnaUtils.encodeString("AAAACTCAAACCCTAAACC"), 0, new ContigPosition(1, 4, graph));
     final Set<GraphAlignment> expected = set(new GraphAlignment(4, 22, longs(1), 1, graph));
     assertEquals(expected, alignments);
   }
 
   public void testAlignmentScore() {
-    Graph graph = GraphMapCliTest.makeGraph(2, new String[]{"ACGTAAAACTGAAACCCTAAACC"}, new long[][]{});
+    final Graph graph = GraphMapCliTest.makeGraph(2, new String[]{"ACGTAAAACTGAAACCCTAAACC"}, new long[][]{});
     GraphFlowAligner aligner = new GraphFlowAligner(graph, new IntegerOrPercentage(4), new GraphTraversions(graph));
     Set<GraphAlignment> alignments = aligner.align(DnaUtils.encodeString("AAAACTGTTTCCCTAAACC"), 0, new ContigPosition(1, 4, graph));
     Set<GraphAlignment> expected = set();
@@ -70,18 +70,18 @@ public class GraphFlowAlignerTest extends TestCase {
 
   }
   public void testScoreCrossContig() {
-    Graph graph = GraphMapCliTest.makeGraph(2, new String[]{"ACGTAAAA", "AACTGAACCCTAAAG", "AACTGGGGACCCCTTAAG"}, new long[][]{{1, 2}, {1, 3}});
-    GraphFlowAligner aligner = new GraphFlowAligner(graph, new IntegerOrPercentage(5), new GraphTraversions(graph));
-    Set<GraphAlignment> alignments = aligner.align(DnaUtils.encodeString("AAACTGGGGAACCTAAA"), 0, new ContigPosition(1, 4, graph));
-    Set<GraphAlignment> expected = set(
+    final Graph graph = GraphMapCliTest.makeGraph(2, new String[]{"ACGTAAAA", "AACTGAACCCTAAAG", "AACTGGGGACCCCTTAAG"}, new long[][]{{1, 2}, {1, 3}});
+    final GraphFlowAligner aligner = new GraphFlowAligner(graph, new IntegerOrPercentage(5), new GraphTraversions(graph));
+    final Set<GraphAlignment> alignments = aligner.align(DnaUtils.encodeString("AAACTGGGGAACCTAAA"), 0, new ContigPosition(1, 4, graph));
+    final Set<GraphAlignment> expected = set(
         new GraphAlignment(4, 13, longs(1, 2), 5, graph)
     );
     assertEquals(expected, alignments);
   }
 
   public void testFlowAlignerCrossContig() {
-    Graph graph = GraphMapCliTest.makeGraph(2, new String[]{"ACGTAAAA", "AACTGAACCCTAAAG", "AACTGGGGACCCCTTAAG"}, new long[][]{{1, 2}, {1, 3}});
-    GraphFlowAligner aligner = new GraphFlowAligner(graph, new IntegerOrPercentage(15), new GraphTraversions(graph));
+    final Graph graph = GraphMapCliTest.makeGraph(2, new String[]{"ACGTAAAA", "AACTGAACCCTAAAG", "AACTGGGGACCCCTTAAG"}, new long[][]{{1, 2}, {1, 3}});
+    final GraphFlowAligner aligner = new GraphFlowAligner(graph, new IntegerOrPercentage(15), new GraphTraversions(graph));
     Set<GraphAlignment> alignments = aligner.align(DnaUtils.encodeString("AAACTGGGGAACCTAAA"), 0, new ContigPosition(1, 4, graph));
     Set<GraphAlignment> expected = set(
         new GraphAlignment(4, 13, longs(1, 2), 5, graph)

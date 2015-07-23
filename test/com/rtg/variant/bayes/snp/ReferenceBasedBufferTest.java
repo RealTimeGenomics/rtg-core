@@ -48,7 +48,7 @@ public class ReferenceBasedBufferTest extends TestCase {
     private int mCount = 0;
     @Override
     public MockModel make(final int ref) {
-      MockModel model;
+      final MockModel model;
       try {
         model = new MockModel(mCount++, ref);
       } catch (final InvalidParamsException e) {

@@ -23,7 +23,7 @@ public class DummyMapOutputProcessorTest extends TestCase {
 
   public void testSingleResult() {
     //region.NONE (all encompassing region)
-    MatchResult results = new MatchResult(0);
+    final MatchResult results = new MatchResult(0);
     results.addMatchResult(1, 50, 0, false);
     HashingRegion[] regions = {HashingRegion.NONE};
     AbstractMapOutputProcessor.ChunkPair[] chunks;
@@ -64,7 +64,7 @@ public class DummyMapOutputProcessorTest extends TestCase {
 
   public void testMultiResult() {
     //region.NONE (all encompassing region)
-    MatchResult results = new MatchResult(0);
+    final MatchResult results = new MatchResult(0);
     results.addMatchResult(1, 50, 0, false);
     results.addMatchResult(2, 100, 0, false);
     results.addMatchResult(3, 500, 0, false);

@@ -86,7 +86,7 @@ public class BuilderCliTest extends AbstractCliTest {
       assertEquals("", mf.getModelProperties().getProperty(AbstractModelBuilder.MODEL_PROPERTY_DERIVED_ANNOTATIONS));
       assertEquals("GT_COMPLEX", mf.getModelProperties().getProperty(AbstractModelBuilder.MODEL_PROPERTY_TYPE));
       assertTrue(avr.delete());
-      GtQualComplexMultiplierModel model = (GtQualComplexMultiplierModel) mf.getModel();
+      final GtQualComplexMultiplierModel model = (GtQualComplexMultiplierModel) mf.getModel();
       TestUtils.containsAll(model.toString(),
         "multiplier.gq.simple.homozygous\t2.1",
         "multiplier.gq.simple.heterozygous\t0.612",

@@ -21,8 +21,8 @@ import junit.framework.TestCase;
 public class BayesianSignalTest extends TestCase {
 
   public void testCompactConstant() {
-    DistributionConstant d1 = new DistributionConstant(-50, 50, 33.3);
-    DistributionConstant d2 = (DistributionConstant) BayesianSignal.compactDistribution(d1, "");
+    final DistributionConstant d1 = new DistributionConstant(-50, 50, 33.3);
+    final DistributionConstant d2 = (DistributionConstant) BayesianSignal.compactDistribution(d1, "");
 
     assertEquals(d1.lo(), d2.lo());
     assertEquals(d1.hi(), d2.hi());
@@ -31,8 +31,8 @@ public class BayesianSignalTest extends TestCase {
   }
 
   public void testCompactStep() {
-    DistributionStep d1 = new DistributionStep(-50, 50, 3, 33.3, 45.5);
-    DistributionStep d2 = (DistributionStep) BayesianSignal.compactDistribution(d1, "");
+    final DistributionStep d1 = new DistributionStep(-50, 50, 3, 33.3, 45.5);
+    final DistributionStep d2 = (DistributionStep) BayesianSignal.compactDistribution(d1, "");
 
     assertEquals(d1.lo(), d2.lo());
     assertEquals(d1.hi(), d2.hi());

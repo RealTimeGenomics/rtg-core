@@ -30,7 +30,7 @@ public class GraphMapParamsTest extends TestCase {
     new TestParams(GraphMapParams.class, GraphMapParams.Builder.class).check();
   }
   public void testToString() {
-    GraphMapParams params = GraphMapParams.builder().create();
+    final GraphMapParams params = GraphMapParams.builder().create();
     TestUtils.containsAll(params.toString()
         , "directory=" + null
         , "reads=[]"
@@ -47,8 +47,8 @@ public class GraphMapParamsTest extends TestCase {
     );
   }
   public void testAssign() {
-    List<File> reads = Arrays.asList(new File("reads1"), new File("reads2"));
-    GraphMapParams params = GraphMapParams.builder()
+    final List<File> reads = Arrays.asList(new File("reads1"), new File("reads2"));
+    final GraphMapParams params = GraphMapParams.builder()
         .directory(new File("out"))
         .graph(new GraphKmerAttribute(0))
         .reads(reads)

@@ -422,7 +422,7 @@ public class TrimmingTest extends TestCase {
     final Family fam = new Family("father", "mother", "child");
     final ChildFamilyLookup familyLookup = new ChildFamilyLookup(3, fam);
     final MendelianDenovoChecker denovoCorrector = new MendelianDenovoChecker(familyLookup);
-    List<Variant> variants = Trimming.split(v, denovoCorrector);
+    final List<Variant> variants = Trimming.split(v, denovoCorrector);
     final int[] expectedPositions = {1, 3};
     final String[] expectedParentA = {"T:T", "T:C"};
     final String[] expectedParentB = {"T:T", "T:C"};
@@ -441,7 +441,7 @@ public class TrimmingTest extends TestCase {
     final Family fam = new Family("father", "mother", "child");
     final ChildFamilyLookup familyLookup = new ChildFamilyLookup(3, fam);
     final MendelianDenovoChecker denovoCorrector = new MendelianDenovoChecker(familyLookup);
-    List<Variant> variants = Trimming.split(v, denovoCorrector);
+    final List<Variant> variants = Trimming.split(v, denovoCorrector);
     final int[] expectedPositions = {1, 3};
     final String[] expectedParentA = {"T", "T"};
     final String[] expectedParentB = {"T:T", "T:C"};
@@ -460,7 +460,7 @@ public class TrimmingTest extends TestCase {
     final Family fam = new Family("father", "mother", "child");
     final ChildFamilyLookup familyLookup = new ChildFamilyLookup(3, fam);
     final MendelianDenovoChecker denovoCorrector = new MendelianDenovoChecker(familyLookup);
-    List<Variant> variants = Trimming.split(v, denovoCorrector);
+    final List<Variant> variants = Trimming.split(v, denovoCorrector);
     final int[] expectedPositions = {1, 3};
     final String[] expectedParentA = {"T", "C"};
     final String[] expectedParentB = {null, null};

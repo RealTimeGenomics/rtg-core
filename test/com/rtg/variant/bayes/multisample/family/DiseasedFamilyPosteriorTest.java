@@ -269,7 +269,7 @@ public class DiseasedFamilyPosteriorTest extends TestCase {
     final ModelInterface<?> father = make(POST1);
     final ModelInterface<?> mother = make(POST2);
     final ModelInterface<?> child = make(POST1);
-    List<ModelInterface<?>> list = new ArrayList<>();
+    final List<ModelInterface<?>> list = new ArrayList<>();
     list.add(father);
     list.add(mother);
     list.add(child);
@@ -297,7 +297,7 @@ public class DiseasedFamilyPosteriorTest extends TestCase {
     final ModelInterface<?> father = make(POST1);
     final ModelInterface<?> mother = make(POST2);
     final ModelInterface<?> child = make(POST1);
-    List<ModelInterface<?>> list = new ArrayList<>();
+    final List<ModelInterface<?>> list = new ArrayList<>();
     list.add(father);
     list.add(mother);
     list.add(child);
@@ -325,7 +325,7 @@ public class DiseasedFamilyPosteriorTest extends TestCase {
     final ModelInterface<?> father = makeC(POST1C);
     final ModelInterface<?> mother = makeC(POST2C);
     final ModelInterface<?> child = makeC(POST1C);
-    List<ModelInterface<?>> list = new ArrayList<>();
+    final List<ModelInterface<?>> list = new ArrayList<>();
     list.add(father);
     list.add(mother);
     list.add(child);

@@ -46,7 +46,7 @@ import junit.framework.TestCase;
 public class MatedSamResultsFilterTest extends TestCase {
 
   private static void writeRecords1(TempRecordWriter trw) throws IOException {
-    BinaryTempFileRecord bpar = new BinaryTempFileRecord(true, false, false, false);
+    final BinaryTempFileRecord bpar = new BinaryTempFileRecord(true, false, false, false);
     bpar.setReadId(1);
     bpar.setSamFlags((byte) 99);
     bpar.setReferenceId(0);
@@ -72,7 +72,7 @@ public class MatedSamResultsFilterTest extends TestCase {
   }
 
   private static void writeRecords2(TempRecordWriter trw) throws IOException {
-    BinaryTempFileRecord bpar = new BinaryTempFileRecord(true, false, false, false);
+    final BinaryTempFileRecord bpar = new BinaryTempFileRecord(true, false, false, false);
     bpar.setReadId(30);
     bpar.setSamFlags((byte) 99);
     bpar.setReferenceId(0);
@@ -373,7 +373,7 @@ public class MatedSamResultsFilterTest extends TestCase {
   }
 
   private static void writeCgRecords1(TempRecordWriter trw) throws IOException {
-    BinaryTempFileRecord bpar = new BinaryTempFileRecord(true, false, true, false);
+    final BinaryTempFileRecord bpar = new BinaryTempFileRecord(true, false, true, false);
     bpar.setReadId(0);
     bpar.setSamFlags((byte) 67);
     bpar.setReferenceId(0);
@@ -420,7 +420,7 @@ public class MatedSamResultsFilterTest extends TestCase {
   }
 
   private static void writeCgRecords2(TempRecordWriter trw) throws IOException {
-    BinaryTempFileRecord bpar = new BinaryTempFileRecord(true, false, true, false);
+    final BinaryTempFileRecord bpar = new BinaryTempFileRecord(true, false, true, false);
     bpar.setReadId(0);
     bpar.setSamFlags((byte) 67);
     bpar.setReferenceId(0);
@@ -469,7 +469,7 @@ public class MatedSamResultsFilterTest extends TestCase {
   }
 
   private static void writeCgRecords3(TempRecordWriter trw) throws IOException {
-    BinaryTempFileRecord bpar = new BinaryTempFileRecord(true, false, true, false);
+    final BinaryTempFileRecord bpar = new BinaryTempFileRecord(true, false, true, false);
     bpar.setReadId(0);
     bpar.setSamFlags((byte) 67);
     bpar.setReferenceId(0);

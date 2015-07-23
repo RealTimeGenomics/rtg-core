@@ -69,7 +69,7 @@ public class MetaSnpCliTest extends AbstractCliTest {
       final List<Byte> ref = Arrays.asList(new Byte[]{1, 2, 3, 0});
       final List<AlleleStatReader.Line> lines = getLines(LINES);
       final List<AlphaScore> assignments = Arrays.asList(new AlphaScore(0.1, 0.1, 0, 1), new AlphaScore(0.2, 0.2, 2, 3), new AlphaScore(0.3, 0.3, 0, 3), new AlphaScore(0.4, 0.4, 1, 1));
-      EmIterate.EmResult res = new EmIterate.EmResult(new double[][] {{0.1, 0.9}, {0.4, 0.6}}, assignments);
+      final EmIterate.EmResult res = new EmIterate.EmResult(new double[][] {{0.1, 0.9}, {0.4, 0.6}}, assignments);
       MetaSnpCli.writeVcf(ref, lines, res, out, SimplePossibility.SINGLETON);
       assertTrue(out.toString().replaceAll("\t", " ").contains(EXPECTED_VCF));
     }

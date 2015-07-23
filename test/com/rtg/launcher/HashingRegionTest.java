@@ -617,7 +617,7 @@ public class HashingRegionTest extends TestCase {
   }
 
   void checkExclusionAndPadding(ReferenceGenome rg, Map<String, Long> sequenceNameMap, HashingRegion[] expRegion, HashingRegion[] inputRegion) throws IOException {
-    List<HashingRegion> excluded = HashingRegion.excludeDuplicateRegions(rg, inputRegion, sequenceNameMap);
+    final List<HashingRegion> excluded = HashingRegion.excludeDuplicateRegions(rg, inputRegion, sequenceNameMap);
     assertEquals(Arrays.asList(expRegion), excluded);
     for (int i = 0; i < excluded.size(); i++) {
       assertEquals(expRegion[i].getStartPaddedPosition(), excluded.get(i).getStartPaddedPosition());

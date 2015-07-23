@@ -21,11 +21,11 @@ public class TempFileRecordComparatorTest extends TestCase {
 
   public void testComparatorDirectly() {
         final TempFileRecordComparator comp = new TempFileRecordComparator();
-        BinaryTempFileRecord samrec1 = makeRecord(5, 1, false);
-        BinaryTempFileRecord samrec2 = makeRecord(6, 1, false);
-        BinaryTempFileRecord samrec3 = makeRecord(5, 2, false);
-        BinaryTempFileRecord samrec4 = makeRecord(5, 1, true);
-        BinaryTempFileRecord samrec5 = makeRecord(5, 2, true);
+        final BinaryTempFileRecord samrec1 = makeRecord(5, 1, false);
+        final BinaryTempFileRecord samrec2 = makeRecord(6, 1, false);
+        final BinaryTempFileRecord samrec3 = makeRecord(5, 2, false);
+        final BinaryTempFileRecord samrec4 = makeRecord(5, 1, true);
+        final BinaryTempFileRecord samrec5 = makeRecord(5, 2, true);
         assertEquals(-1, comp.compare(samrec1, samrec2));
         assertEquals(1, comp.compare(samrec2, samrec1));
         assertEquals(1, comp.compare(samrec2, samrec3));
@@ -38,7 +38,7 @@ public class TempFileRecordComparatorTest extends TestCase {
 
   BinaryTempFileRecord makeRecord(final int alignStart, final int readId,
                                         final boolean negStrand) {
-    BinaryTempFileRecord rec = new BinaryTempFileRecord(false, false, false, false);
+    final BinaryTempFileRecord rec = new BinaryTempFileRecord(false, false, false, false);
     rec.setStartPosition(alignStart);
     rec.setReadId(readId);
     int samFlags = 0;

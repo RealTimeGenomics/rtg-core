@@ -22,7 +22,7 @@ import junit.framework.TestCase;
  */
 public class PairConstraintWriterTest extends TestCase {
   public void test() {
-    MemoryPrintStream mps = new MemoryPrintStream();
+    final MemoryPrintStream mps = new MemoryPrintStream();
     final PairConstraintWriter pairConstraintWriter = new PairConstraintWriter(mps.printStream());
     pairConstraintWriter.writeConstraint(5, 10, 20, 30, true, false);
     pairConstraintWriter.writeConstraint(5, 12, 20, 30, false, false);

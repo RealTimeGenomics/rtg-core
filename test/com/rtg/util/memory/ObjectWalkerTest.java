@@ -46,14 +46,14 @@ public final class ObjectWalkerTest extends TestCase {
   }
 
   public void testWalking() {
-    WalkableObject wo = new WalkableObject();
-    ObjectWalker ow = new ObjectWalkerImpl();
+    final WalkableObject wo = new WalkableObject();
+    final ObjectWalker ow = new ObjectWalkerImpl();
 
     // Simple walking.
     mCounter = 0;
     ow.walk(wo);
     int expected = 5;
-    String vmName = System.getProperty("java.vm.name", "");
+    final String vmName = System.getProperty("java.vm.name", "");
     if (vmName.startsWith("IBM J9") || vmName.startsWith("BEA JRockit")) {
       expected = 3;
     }
@@ -61,8 +61,8 @@ public final class ObjectWalkerTest extends TestCase {
   }
 
   public void testWalking2() {
-    WalkableObject wo = new WalkableObject();
-    ObjectWalker ow = new ObjectWalkerImpl();
+    final WalkableObject wo = new WalkableObject();
+    final ObjectWalker ow = new ObjectWalkerImpl();
     // Walking without reference following
     ow.setFollowReferences(false);
     mCounter = 0;
@@ -71,8 +71,8 @@ public final class ObjectWalkerTest extends TestCase {
   }
 
   public void testWalking3() {
-    WalkableObject wo = new WalkableObject();
-    ObjectWalker ow = new ObjectWalkerImpl();
+    final WalkableObject wo = new WalkableObject();
+    final ObjectWalker ow = new ObjectWalkerImpl();
     ow.setFollowReferences(false);
     // Walking this test
     mCounter = 0;
@@ -81,13 +81,13 @@ public final class ObjectWalkerTest extends TestCase {
     assertNotNull(mWalkable.mRef);
    // assertNull(mWalkable.mChild);
     ow.walk(this);
-    int expected = 5;
+    final int expected = 5;
     assertEquals(expected, mCounter); // Test bits plus the walkable.
   }
 
   public void testWalking4() {
-    WalkableObject wo = new WalkableObject();
-    ObjectWalker ow = new ObjectWalkerImpl();
+    final WalkableObject wo = new WalkableObject();
+    final ObjectWalker ow = new ObjectWalkerImpl();
     ow.setFollowReferences(false);
     // Walking with filter
     mCounter = 0;
@@ -99,7 +99,7 @@ public final class ObjectWalkerTest extends TestCase {
         }
       });
     ow.walk(this);
-    int expected = 3;
+    final int expected = 3;
     assertEquals(expected, mCounter); // Stop walking past the test
   }
 

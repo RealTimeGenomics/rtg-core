@@ -30,7 +30,7 @@ public class PairedBinaryTempFileRecordTest extends TestCase {
     bar.setSamFlags((byte) 65);
     check(bar);
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    TempRecordWriterNio writer = new TempRecordWriterNio(baos);
+    final TempRecordWriterNio writer = new TempRecordWriterNio(baos);
     try {
       writer.writeRecord(bar);
       bar.setSentinelRecord();
@@ -40,7 +40,7 @@ public class PairedBinaryTempFileRecordTest extends TestCase {
     }
     final TempRecordReaderNio dis = new TempRecordReaderNio(new ByteArrayInputStream(baos.toByteArray()), new TempRecordReader.RecordFactory(true, false, false, false));
     try {
-      BinaryTempFileRecord rec;
+      final BinaryTempFileRecord rec;
       assertNotNull(rec = dis.readRecord());
       check(rec);
       assertNull(dis.readRecord());

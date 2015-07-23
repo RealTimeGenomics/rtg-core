@@ -21,9 +21,9 @@ import junit.framework.TestCase;
 public class GraphCleanupTest extends TestCase {
   public void testClean() {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(4, new String[]{"AAAAA", "TTATTATATA", "ACGTG", "ATCACGTGTAGATAG", "AAAATAAATAACA", "ACGTA", "ACGTG", "ACCGT", "AGGTG", "AGGTG", "ACGAG"}, new long[][]{{2, 3}, {3, 4}, {6, 6}, {8, 7}, {7, 9}, {4, 10}});
-    int deleted = GraphCleanup.clean(5, graph);
+    final int deleted = GraphCleanup.clean(5, graph);
     assertEquals(7, deleted);
-    boolean[]  isDeleted = {true, false, false, false, false, true, true, true, true, true, true};
+    final boolean[]  isDeleted = {true, false, false, false, false, true, true, true, true, true, true};
     assertEquals(isDeleted.length, graph.numberContigs());
     for (long i = 1; i <= graph.numberContigs(); i++) {
       assertEquals(isDeleted[(int) i - 1], graph.contigDeleted(i));

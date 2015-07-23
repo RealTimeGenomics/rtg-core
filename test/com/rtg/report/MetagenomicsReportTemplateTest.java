@@ -20,7 +20,7 @@ import junit.framework.TestCase;
  */
 public class MetagenomicsReportTemplateTest extends TestCase {
   public void testTemplate() throws IOException {
-    MetagenomicsReportTemplate template = new MetagenomicsReportTemplate();
+    final MetagenomicsReportTemplate template = new MetagenomicsReportTemplate();
     template.mSpeciesReport = "species report is here";
     template.mSpecies = "you asked for species to be run";
     template.mVersion = "A version file";

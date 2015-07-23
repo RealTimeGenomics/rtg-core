@@ -23,13 +23,13 @@ import junit.framework.TestCase;
  */
 public class BreakpointStoreTest extends TestCase {
   public void testAdding() {
-    BreakpointStore bs = new BreakpointStore();
+    final BreakpointStore bs = new BreakpointStore();
     bs.add(new VcfBreakpoint("bar", 100, "foo", 20, false, false, 0));
     bs.add(new VcfBreakpoint("foo", 20, "bar", 100, false, false, 0));
     bs.add(new VcfBreakpoint("foo", 22, "bar", 100, false, false, 0));
     bs.add(new VcfBreakpoint("foo", 22, "foo", 101, false, false, 0));
     bs.add(new VcfBreakpoint("foo", 22, "foo", 100, false, false, 0));
-    Iterator<VcfBreakpoint> it = bs.iterator();
+    final Iterator<VcfBreakpoint> it = bs.iterator();
     VcfBreakpoint b = it.next();
     assertEquals("VcfBreakpoint: bar 100 foo 20 false false", b.toString());
     b = it.next();
@@ -43,7 +43,7 @@ public class BreakpointStoreTest extends TestCase {
     assertFalse(it.hasNext());
     b = bs.getMap().get("foo").get("bar").first();
     assertEquals("VcfBreakpoint: foo 20 bar 100 false false", b.toString());
-    List<String> names = bs.getChromosomes();
+    final List<String> names = bs.getChromosomes();
     assertEquals(2, names.size());
     assertEquals("bar", names.get(0));
     assertEquals("foo", names.get(1));

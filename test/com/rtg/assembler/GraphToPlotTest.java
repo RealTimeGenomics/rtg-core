@@ -44,7 +44,7 @@ public class GraphToPlotTest extends AbstractCliTest {
   }
 
   public void test() throws IOException {
-    File tmpDir = FileHelper.createTempDirectory();
+    final File tmpDir = FileHelper.createTempDirectory();
     try {
       TestUtils.containsAll(checkHandleFlagsErr(),
          "Usage: rtg graph2plot [OPTION]... -o DIR -s INT DIR"
@@ -101,15 +101,15 @@ public class GraphToPlotTest extends AbstractCliTest {
       + "";
 
   public void testDotFile() throws IOException {
-    MemoryPrintStream graphOut = new MemoryPrintStream();
-    MemoryPrintStream linksOut = new MemoryPrintStream();
-    Map<String, String> contigAttr = new HashMap<>();
-    Map<String, String> pathAttr = new HashMap<>();
+    final MemoryPrintStream graphOut = new MemoryPrintStream();
+    final MemoryPrintStream linksOut = new MemoryPrintStream();
+    final Map<String, String> contigAttr = new HashMap<>();
+    final Map<String, String> pathAttr = new HashMap<>();
     contigAttr.put(GraphKmerAttribute.READ_COUNT, "desc");
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "desc");
-    GraphKmerAttribute graph = new GraphKmerAttribute(2, contigAttr, pathAttr);
+    final GraphKmerAttribute graph = new GraphKmerAttribute(2, contigAttr, pathAttr);
     for (int i = 0; i < 10; i++) {
-      int length = i + 4;
+      final int length = i + 4;
       contig(graph, length, length * (i + 1));
     }
     graph.addPath(new PathArray(1, -2));
@@ -134,13 +134,13 @@ public class GraphToPlotTest extends AbstractCliTest {
     for (int i = 0; i < length; i++) {
       sb.append('A');
     }
-    long id = graph.addContig(new ContigString(sb.toString()));
+    final long id = graph.addContig(new ContigString(sb.toString()));
     graph.setKmerFreq(id, kmer);
 
 
   }
   public void testOverlappingCount() {
-    MutableGraph graph = makeGraph(
+    final MutableGraph graph = makeGraph(
         new String[]{"AAAAA", "CCCC", "GGGG", "TTTT", "AACC", "AAGG", "AATT"}
         , new long[][]{
              {1, 2}     // 1
@@ -194,15 +194,15 @@ public class GraphToPlotTest extends AbstractCliTest {
       + "}" + LS;
 
   public void testPalindrome() throws IOException {
-    MemoryPrintStream graphOut = new MemoryPrintStream();
-    MemoryPrintStream linksOut = new MemoryPrintStream();
-    Map<String, String> contigAttr = new HashMap<>();
-    Map<String, String> pathAttr = new HashMap<>();
+    final MemoryPrintStream graphOut = new MemoryPrintStream();
+    final MemoryPrintStream linksOut = new MemoryPrintStream();
+    final Map<String, String> contigAttr = new HashMap<>();
+    final Map<String, String> pathAttr = new HashMap<>();
     contigAttr.put(GraphKmerAttribute.READ_COUNT, "desc");
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "desc");
-    GraphKmerAttribute graph = new GraphKmerAttribute(2, contigAttr, pathAttr);
+    final GraphKmerAttribute graph = new GraphKmerAttribute(2, contigAttr, pathAttr);
     for (int i = 0; i < 3; i++) {
-      int length = i + 4;
+      final int length = i + 4;
       contig(graph, length, length * (i + 1));
     }
     graph.addPath(new PathArray(1, 2));
@@ -230,13 +230,13 @@ public class GraphToPlotTest extends AbstractCliTest {
       + "}" + LS;
 
   public void testCross() throws IOException {
-    MemoryPrintStream graphOut = new MemoryPrintStream();
-    MemoryPrintStream linksOut = new MemoryPrintStream();
-    Map<String, String> contigAttr = new HashMap<>();
-    Map<String, String> pathAttr = new HashMap<>();
+    final MemoryPrintStream graphOut = new MemoryPrintStream();
+    final MemoryPrintStream linksOut = new MemoryPrintStream();
+    final Map<String, String> contigAttr = new HashMap<>();
+    final Map<String, String> pathAttr = new HashMap<>();
     contigAttr.put(GraphKmerAttribute.READ_COUNT, "desc");
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "desc");
-    MutableGraph graph = GraphMapCliTest.makeGraph(0, new String[]{"AAA", "AAA", "AAA", "AAA", "AAA"}, new long[][]{{1, 2, 4}, {3, 2, 5}}, contigAttr, pathAttr);
+    final MutableGraph graph = GraphMapCliTest.makeGraph(0, new String[]{"AAA", "AAA", "AAA", "AAA", "AAA"}, new long[][]{{1, 2, 4}, {3, 2, 5}}, contigAttr, pathAttr);
     graph.setPathAttribute(1, GraphKmerAttribute.READ_COUNT, "2");
     graph.setContigAttribute(1, GraphKmerAttribute.READ_COUNT, "3");
     GraphToPlot.writeDotFile(graph, graphOut.printStream(), linksOut.printStream(), 2, 1L);
@@ -245,9 +245,9 @@ public class GraphToPlotTest extends AbstractCliTest {
   }
 
   public static MutableGraph makeGraph(String[] contigs, long[][] paths) {
-    Map<String, String> attributes = new HashMap<>();
+    final Map<String, String> attributes = new HashMap<>();
     attributes.put(GraphKmerAttribute.READ_COUNT, "read count");
-    MutableGraph graph = new GraphKmerAttribute(2, attributes, attributes);
+    final MutableGraph graph = new GraphKmerAttribute(2, attributes, attributes);
     for (String c : contigs) {
       graph.addContig(new ContigString(c));
     }

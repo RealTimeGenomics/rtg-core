@@ -175,7 +175,7 @@ public final class GraphReader {
 
   // Return mappings for contig attributes and path attributes
   private GraphHeader readHeader(final String md5sum) throws IOException {
-    int contigOverlap;
+    final int contigOverlap;
     try {
       final MessageDigest md = MessageDigest.getInstance("MD5");
       final HashMap<String, String> contigAttr = new HashMap<>();

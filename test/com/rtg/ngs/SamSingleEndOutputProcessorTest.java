@@ -119,7 +119,7 @@ public class SamSingleEndOutputProcessorTest extends TestCase {
         final SamSingleEndOutputProcessor sseop = new SamSingleEndOutputProcessor(param, null, false);
         TestUtils.containsAll(sseop.toString(), "SamSingleEndOutputProcessor; topn= TopNImplementation");
         assertTrue(sseop.toString().contains("TopNImplementationSync"));
-        OutputProcessor cloned = sseop.threadClone(HashingRegion.NONE);
+        final OutputProcessor cloned = sseop.threadClone(HashingRegion.NONE);
         cloned.process(0, "F", 0, 1, 0, 0);
         cloned.threadFinish();
         //sseop.process(0, "R", 1, 16, 0, 0);

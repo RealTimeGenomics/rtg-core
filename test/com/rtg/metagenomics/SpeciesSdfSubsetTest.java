@@ -56,10 +56,10 @@ public class SpeciesSdfSubsetTest extends AbstractCliTest {
       // dump sequences to compare
       final Sdf2Fasta sdf2fasta = new Sdf2Fasta();
 
-      ByteArrayOutputStream out = new ByteArrayOutputStream();
-      MemoryPrintStream err = new MemoryPrintStream();
+      final ByteArrayOutputStream out = new ByteArrayOutputStream();
+      final MemoryPrintStream err = new MemoryPrintStream();
       final File reducedSequences = new File(dir, "sequences2.fasta");
-      int rc = sdf2fasta.mainInit(new String[] {"-i", reducedSdf.getAbsolutePath(), "-o", reducedSequences.getAbsolutePath(), "-Z"}, out, err.printStream());
+      final int rc = sdf2fasta.mainInit(new String[] {"-i", reducedSdf.getAbsolutePath(), "-o", reducedSequences.getAbsolutePath(), "-Z"}, out, err.printStream());
       assertEquals("Error: " + err.toString(), "", err.toString());
       assertEquals(0, rc);
       //System.err.println(out.toString());

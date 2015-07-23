@@ -36,7 +36,7 @@ public class AsyncReadSourceTest extends TestCase {
   }
 
   static String fragementToString(List<byte[]> fragments) {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     sb.append("[");
     String join = "";
     for (byte[] b : fragments) {
@@ -56,10 +56,10 @@ public class AsyncReadSourceTest extends TestCase {
   }
 
   public void testReadPairSource() throws IOException {
-    SequencesReader left = ReaderTestUtils.getReaderDnaMemory(ReadPairSourceTest.LEFT_SEQUENCE);
-    SequencesReader middle = ReaderTestUtils.getReaderDnaMemory(">a" + LS + "AAAA" + LS + ">b" + LS + "ATAT" + LS);
-    SequencesReader right = ReaderTestUtils.getReaderDnaMemory(ReadPairSourceTest.RIGHT_SEQUENCE);
-    ReadPairSource source = new ReadPairSource(left, middle, right);
+    final SequencesReader left = ReaderTestUtils.getReaderDnaMemory(ReadPairSourceTest.LEFT_SEQUENCE);
+    final SequencesReader middle = ReaderTestUtils.getReaderDnaMemory(">a" + LS + "AAAA" + LS + ">b" + LS + "ATAT" + LS);
+    final SequencesReader right = ReaderTestUtils.getReaderDnaMemory(ReadPairSourceTest.RIGHT_SEQUENCE);
+    final ReadPairSource source = new ReadPairSource(left, middle, right);
     assertEquals(2, source.numberReads());
     AsyncReadSource async = new AsyncReadSource(source, "testAsyncReadSource");
     SimpleThreadPool pool = new SimpleThreadPool(2, "foo", true);

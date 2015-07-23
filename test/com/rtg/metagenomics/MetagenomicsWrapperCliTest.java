@@ -153,7 +153,7 @@ public class MetagenomicsWrapperCliTest extends AbstractCliTest {
       expected.add(Arrays.asList("mapx", "--output", mapx.getPath(), "--template", protein.getPath(), "--" + MapXCli.MAX_ALIGNMENT_SCORE, "10%", "--max-top-results", "10", "--input", new File(mapf, "unmapped.sdf").getPath(), "--format", "fastq"));
 
       final List<List<String>> commands = generateCommands(flags, output);
-      List<String> modules = new ArrayList<>();
+      final List<String> modules = new ArrayList<>();
       for (List<String> command : commands) {
         modules.add(command.get(0));
       }
@@ -184,9 +184,9 @@ public class MetagenomicsWrapperCliTest extends AbstractCliTest {
       public int runCommand(OutputStream out, LoggedCli module, List<String> args) throws IOException {
         // Create mapf output so that a file can be found for mapping/protein
         // Created here to prevent the wrapper from bailing due to non empty directories
-        File mapfDir = new File(mOutputDir, "map");
-        File sdfFile1 = new File(mapfDir, "random.bam");
-        File sdfFile2 = new File(mapfDir, "bazinga.bam");
+        final File mapfDir = new File(mOutputDir, "map");
+        final File sdfFile1 = new File(mapfDir, "random.bam");
+        final File sdfFile2 = new File(mapfDir, "bazinga.bam");
         if (!mapfDir.exists()) {
           boolean success = true;
           success &= mapfDir.mkdir();
@@ -196,7 +196,7 @@ public class MetagenomicsWrapperCliTest extends AbstractCliTest {
             throw new IOException("Can't create mock files");
           }
         }
-        List<String> flags = new ArrayList<>();
+        final List<String> flags = new ArrayList<>();
         flags.add(module.moduleName());
         flags.addAll(args);
 
@@ -217,7 +217,7 @@ public class MetagenomicsWrapperCliTest extends AbstractCliTest {
   private List<List<String>> generateCommands(String[] flags, File output) {
     final List<List<String>> commands = new ArrayList<>();
     final MetagenomicsWrapperCli cli = new MockMetagenomics(output, commands);
-    MemoryPrintStream mps = new MemoryPrintStream();
+    final MemoryPrintStream mps = new MemoryPrintStream();
     cli.mainInit(flags, mps.outputStream(), mps.printStream());
     return commands;
   }

@@ -90,9 +90,9 @@ public class GraphReaderTest extends TestCase {
     checkGraph(g);
   }
   public void testKnownGraphPlusAttributes() throws IOException {
-    Map<String, String> contigAttrs = new HashMap<>();
+    final Map<String, String> contigAttrs = new HashMap<>();
     contigAttrs.put("hairiness", "how much hair does this contig have");
-    Map<String, String> pathAttrs = new HashMap<>();
+    final Map<String, String> pathAttrs = new HashMap<>();
     pathAttrs.put("BMI", "rough proxy for how fat the path is");
     final StoreDirectory rootDir = new StoreDirResource("com/rtg/assembler/planning/resources");
     final Graph g = GraphReader.read(GraphFactory.KMER, rootDir, contigAttrs, pathAttrs);
@@ -249,7 +249,7 @@ public class GraphReaderTest extends TestCase {
 
   public void testGuid() throws IOException {
 
-    MutableGraph builtGraph = GraphMapCliTest.makeGraph(2
+    final MutableGraph builtGraph = GraphMapCliTest.makeGraph(2
         , new String[]{"ACGT", "GGGG", "TTAA"}
         , new long[][]{{1, 2}, {3, 2}});
     StoreDirString storeDir = new StoreDirString();

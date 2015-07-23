@@ -50,7 +50,7 @@ public class SimilaritySvdTest extends TestCase {
   }
 
   public void testInit() {
-    SimilaritySvd svd = new SimilaritySvd(5);
+    final SimilaritySvd svd = new SimilaritySvd(5);
     assertEquals(-1, svd.getSvdDimension());
     assertEquals(-1, svd.getSvdRowsLength());
     try {
@@ -97,7 +97,7 @@ public class SimilaritySvdTest extends TestCase {
   public void testSerious() throws Exception {
     final File dir = FileUtils.createTempDir("similaritysvd", "test");
     try {
-      SimilaritySvd svd = readFromResource();
+      final SimilaritySvd svd = readFromResource();
 
       svd.decompose(3);
       assertEquals(3, svd.getSvdDimension());
@@ -122,7 +122,7 @@ public class SimilaritySvdTest extends TestCase {
     final SimilaritySvd svd = readFromResource();
 
     int expected = 30;
-    int[] rowsleft = new int[30];
+    final int[] rowsleft = new int[30];
     for (int i = 0; i < rowsleft.length; i++) {
       rowsleft[i] = i;
     }
@@ -150,7 +150,7 @@ public class SimilaritySvdTest extends TestCase {
     final SimilaritySvd svd = readFromResource();
 
     int expected = 30;
-    int[] rowsleft = new int[30];
+    final int[] rowsleft = new int[30];
     for (int i = 0; i < rowsleft.length; i++) {
       rowsleft[i] = i;
     }

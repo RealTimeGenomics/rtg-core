@@ -80,8 +80,8 @@ public class ChildSampleSimulatorTest extends AbstractCliTest {
       FileUtils.stringToFile(REFTXT, new File(sdf, ReferenceGenome.REFERENCE_FILE));
 
       // Generate variants
-      FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("X"), new PortableRandom(10), 0.5);
-      List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
+      final FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("X"), new PortableRandom(10), 0.5);
+      final List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
       final File popVcf = new File(dir, "popVcf.vcf.gz");
       PopulationVariantGenerator.writeAsVcf(popVcf, null, variants, sr);
       //String popVarStr = FileHelper.gzFileToString(popVcf);
@@ -89,21 +89,21 @@ public class ChildSampleSimulatorTest extends AbstractCliTest {
       //System.out.println(popVarStr);
 
       // Generate sample w.r.t variants
-      SampleSimulator dadsim = new SampleSimulator(sr, new PortableRandom(15), DefaultFallback.DIPLOID);
-      File dadVcf = new File(dir, "sample_dad.vcf.gz");
+      final SampleSimulator dadsim = new SampleSimulator(sr, new PortableRandom(15), DefaultFallback.DIPLOID);
+      final File dadVcf = new File(dir, "sample_dad.vcf.gz");
       dadsim.mutateIndividual(popVcf, dadVcf, "dad", Sex.MALE);
 
-      SampleSimulator momsim = new SampleSimulator(sr, new PortableRandom(65), DefaultFallback.DIPLOID);
-      File momVcf = new File(dir, "sample_mom.vcf.gz");
+      final SampleSimulator momsim = new SampleSimulator(sr, new PortableRandom(65), DefaultFallback.DIPLOID);
+      final File momVcf = new File(dir, "sample_mom.vcf.gz");
       momsim.mutateIndividual(dadVcf, momVcf, "mom", Sex.FEMALE);
 
       // Generate children w.r.t variants
-      ChildSampleSimulator sonsim = new ChildSampleSimulator(sr, new PortableRandom(76), DefaultFallback.DIPLOID, 0, false);
-      File sonVcf = new File(dir, "sample_son.vcf.gz");
+      final ChildSampleSimulator sonsim = new ChildSampleSimulator(sr, new PortableRandom(76), DefaultFallback.DIPLOID, 0, false);
+      final File sonVcf = new File(dir, "sample_son.vcf.gz");
       sonsim.mutateIndividual(momVcf, sonVcf, "son", Sex.MALE, "dad", "mom");
 
-      ChildSampleSimulator daughtersim = new ChildSampleSimulator(sr, new PortableRandom(13), DefaultFallback.DIPLOID, 0, false);
-      File daughterVcf = new File(dir, "sample_daughter.vcf.gz");
+      final ChildSampleSimulator daughtersim = new ChildSampleSimulator(sr, new PortableRandom(13), DefaultFallback.DIPLOID, 0, false);
+      final File daughterVcf = new File(dir, "sample_daughter.vcf.gz");
       daughtersim.mutateIndividual(sonVcf, daughterVcf, "daughter", Sex.FEMALE, "dad", "mom");
 
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();

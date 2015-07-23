@@ -30,11 +30,11 @@ import junit.framework.TestCase;
  */
 public class AsyncReadPoolTest extends TestCase {
   public void testPool() throws IOException {
-    MemoryPrintStream logStream = new MemoryPrintStream();
+    final MemoryPrintStream logStream = new MemoryPrintStream();
     Diagnostic.setLogStream(logStream.printStream());
     try {
-      String[] fasta1 = {"ACGT", "CCCG", "ACCC"};
-      String[] fasta2 = {"CCGT", "AAAG", "AATT"};
+      final String[] fasta1 = {"ACGT", "CCCG", "ACCC"};
+      final String[] fasta2 = {"CCGT", "AAAG", "AATT"};
 
       final SequencesReader reader1 = ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.fasta(fasta1));
       final SequencesReader reader2 = ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.fasta(fasta2));

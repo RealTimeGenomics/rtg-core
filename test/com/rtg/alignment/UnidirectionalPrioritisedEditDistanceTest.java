@@ -186,7 +186,7 @@ public class UnidirectionalPrioritisedEditDistanceTest extends AbstractUnidirect
 
   //this test demonstrates hop step edit distance's poisonous influence on the alignment chain. By changing the max score threshold we are able to align with a score better by 3!
   public void testHopStepBadMaxScore() {
-    MemoryPrintStream mps = new MemoryPrintStream();
+    final MemoryPrintStream mps = new MemoryPrintStream();
     Diagnostic.setLogStream(mps.printStream());
     try {
       final byte[] read = DnaUtils.encodeString("CGTTTGAACCGGGGAGGCTGAGGTTGCCGTGAGCCAAGATTGTGCCACTGCACTCTAGCCTGGGCTACAGGGCAAGACTCCATTAAAAAAAAAAAAAAAC");

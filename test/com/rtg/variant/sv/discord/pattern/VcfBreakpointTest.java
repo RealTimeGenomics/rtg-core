@@ -22,7 +22,7 @@ import junit.framework.TestCase;
  */
 public class VcfBreakpointTest extends TestCase {
   public void test() {
-    VcfBreakpoint breakpoint = makeBreakpoint("asdf", 100, "A[chr1:300[");
+    final VcfBreakpoint breakpoint = makeBreakpoint("asdf", 100, "A[chr1:300[");
     assertEquals("VcfBreakpoint: asdf 100 chr1 300 true false", breakpoint.toString());
     assertEquals("asdf", breakpoint.getLocalChr());
     assertEquals(100, breakpoint.getLocalPos());
@@ -47,12 +47,12 @@ public class VcfBreakpointTest extends TestCase {
     assertEquals(-1, breakpoint.compareTo(breakpoint2));
   }
   private static VcfBreakpoint makeBreakpoint(String local, int pos, String alt) {
-    VcfRecord rec = makeRecord(local, pos, alt);
+    final VcfRecord rec = makeRecord(local, pos, alt);
     return new VcfBreakpoint(rec);
   }
 
   private static VcfRecord makeRecord(String local, int pos, String alt) {
-    VcfRecord bar = new VcfRecord();
+    final VcfRecord bar = new VcfRecord();
     bar.setSequence(local);
     bar.setStart(pos - 1);
     bar.addAltCall(alt);
@@ -60,17 +60,17 @@ public class VcfBreakpointTest extends TestCase {
   }
 
   public void testDepth() {
-    VcfRecord rec = makeRecord("foo", 20, "A[chr:200[");
+    final VcfRecord rec = makeRecord("foo", 20, "A[chr:200[");
     rec.addInfo("DP", "5");
     rec.addInfo("DP", "2");
-    VcfBreakpoint breakpoint = new VcfBreakpoint(rec);
+    final VcfBreakpoint breakpoint = new VcfBreakpoint(rec);
     assertEquals(7, breakpoint.getDepth());
 
   }
 
   static final VcfBreakpoint BREAK_POINT = makeBreakpoint("foo", 20, "A[chr1:200[");
   public void testEquals() {
-    VcfBreakpoint b2 = makeBreakpoint("foo", 21, "A[chr1:200[");
+    final VcfBreakpoint b2 = makeBreakpoint("foo", 21, "A[chr1:200[");
     assertFalse(BREAK_POINT.equals(null));
     assertFalse(BREAK_POINT.equals("monkey"));
     assertTrue(BREAK_POINT.equals(BREAK_POINT));

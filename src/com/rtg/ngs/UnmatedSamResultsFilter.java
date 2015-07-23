@@ -100,7 +100,7 @@ public final class UnmatedSamResultsFilter extends AbstractSamResultsFilter {
     assert score >= 0;
 
     if (mHitsToKeep != null) {
-      int encodedReadId;
+      final int encodedReadId;
       if ((flag & SamBamConstants.SAM_READ_IS_FIRST_IN_PAIR) != 0) {
         encodedReadId = ReadEncoder.PAIRED_FIRST.encode(readId);
       } else {

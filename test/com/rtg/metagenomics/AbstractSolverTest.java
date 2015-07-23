@@ -273,7 +273,7 @@ public abstract class AbstractSolverTest extends TestCase {
 
     @Override
     public double[] values(double delta) {
-      double[] res = new double[2];
+      final double[] res = new double[2];
       //int blah = -1;
 
       if (delta <= x(0)) {
@@ -288,8 +288,8 @@ public abstract class AbstractSolverTest extends TestCase {
         double px = x(0);
         double py = y(0);
         for (int i = 1; i < size(); i++) {
-          double x = x(i);
-          double y = y(i);
+          final double x = x(i);
+          final double y = y(i);
           if (delta <= x) {
             res[0] = py + (y - py) * (delta - px) / (x - px);
             res[1] = (y - py) / (x - px);

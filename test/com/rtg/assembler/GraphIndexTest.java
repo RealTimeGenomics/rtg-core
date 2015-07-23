@@ -42,7 +42,7 @@ public class GraphIndexTest extends TestCase {
   public void testBuild() throws IOException {
     final MutableGraph graph = makeGraph(CONTIGS);
     final TreeMap<Long, Long> positionDecoder = ContigPosition.buildDecoder(graph);
-    GraphIndex index = buildIndex(graph);
+    final GraphIndex index = buildIndex(graph);
     List<Long> hits = index.hitContigs(Long.parseLong("01112223", 4));
     assertEquals(1, hits.size());
     assertEquals(1, new ContigPosition(hits.get(0), graph, positionDecoder).mContigId);
@@ -82,8 +82,8 @@ public class GraphIndexTest extends TestCase {
   }
 
   static MutableGraph makeGraph(String[] contigs) {
-    Map<String, String> empty = new HashMap<>();
-    MutableGraph graph = new GraphImplementation(2, empty, empty);
+    final Map<String, String> empty = new HashMap<>();
+    final MutableGraph graph = new GraphImplementation(2, empty, empty);
     for (String contig : contigs) {
       graph.addContig(new ContigString(contig));
     }
@@ -92,11 +92,11 @@ public class GraphIndexTest extends TestCase {
 
   public void testSearch() throws IOException {
     final MutableGraph graph = GraphIndexTest.makeGraph(GraphIndexTest.CONTIGS);
-    GraphIndex index = GraphIndexTest.buildIndex(graph);
+    final GraphIndex index = GraphIndexTest.buildIndex(graph);
     //            |       |       |
     String read = "TGGGTGGTGACGTACGTACGT";
     List<List<ContigPosition>> contigs = index.hits(DnaUtils.encodeString(read), graph, index.getSearchFunction());
-    Map<Integer, List<ContigPosition>> expected = new HashMap<>();
+    final Map<Integer, List<ContigPosition>> expected = new HashMap<>();
     expected.put(14, Arrays.asList(new ContigPosition(1L, 31, graph), new ContigPosition(2L, 31, graph)));
     check(expected, contigs, read.length());
 

@@ -292,7 +292,7 @@ public class SlimTest extends TestCase {
   }
 
   public void testShift() {
-    String[] shifted = Slim.shift(new String[]{"a", "b"});
+    final String[] shifted = Slim.shift(new String[]{"a", "b"});
     assertEquals(1, shifted.length);
     assertEquals("b", shifted[0]);
   }

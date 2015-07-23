@@ -18,7 +18,7 @@ import junit.framework.TestCase;
  */
 public class NullTraversionsTest extends TestCase {
   public void testNullSet() {
-    NullTraversions t = new NullTraversions();
+    final NullTraversions t = new NullTraversions();
     assertTrue(t.get(-20).next().isEmpty());
     assertTrue(t.get(-20).previous().isEmpty());
   }

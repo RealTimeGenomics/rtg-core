@@ -43,8 +43,8 @@ public class PacBioTest extends TestCase {
     assertEquals(0, hitMap.size());
   }
   public void testHitJoining() {
-    long[][] contigs = {{}, {}, {4, 1, 4, 5}, {}, {}, {}, {4, 5}, {1, 4}};
-    int[][] positions = {{}, {}, {4, 10, 19, 6}, {}, {}, {}, {9 - ERROR_FLOOR, 9 + ERROR_FLOOR}, {15 - ERROR_FLOOR, 24 + ERROR_FLOOR}};
+    final long[][] contigs = {{}, {}, {4, 1, 4, 5}, {}, {}, {}, {4, 5}, {1, 4}};
+    final int[][] positions = {{}, {}, {4, 10, 19, 6}, {}, {}, {}, {9 - ERROR_FLOOR, 9 + ERROR_FLOOR}, {15 - ERROR_FLOOR, 24 + ERROR_FLOOR}};
     final PacBio.HitMap hitMap = mapHits(contigs, positions);
     assertEquals(3, hitMap.size());
     assertEquals("[HitCollection[Hit{C10, R2}], HitCollection[Hit{C" + (15 - ERROR_FLOOR) + ", R7}]]", hitMap.get(1L).toString());
@@ -53,8 +53,8 @@ public class PacBioTest extends TestCase {
   }
 
   public void testEqualOffset() {
-    long[][] contigs = {{}, {1}, {}, {1}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {1}};
-    int[][] positions = {{}, {3}, {}, {1}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {15}};
+    final long[][] contigs = {{}, {1}, {}, {1}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {1}};
+    final int[][] positions = {{}, {3}, {}, {1}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {15}};
     final PacBio.HitMap hitMap = mapHits(contigs, positions);
     assertEquals(1, hitMap.size());
     assertEquals("[HitCollection[Hit{C3, R1}], HitCollection[Hit{C1, R3}], HitCollection[Hit{C15, R15}]]", hitMap.get(1L).toString());
@@ -62,23 +62,23 @@ public class PacBioTest extends TestCase {
 
   }
   public void testInsertOffset() {
-    long[][] contigs = {{}, {1}, {}, {1}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {1}, {}};
-    int[][] positions = {{}, {3}, {}, {1}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {15}, {}};
+    final long[][] contigs = {{}, {1}, {}, {1}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {1}, {}};
+    final int[][] positions = {{}, {3}, {}, {1}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {15}, {}};
     final PacBio.HitMap hitMap = mapHits(contigs, positions);
     assertEquals(1, hitMap.size());
     assertEquals("[HitCollection[Hit{C3, R1}, Hit{C15, R14}], HitCollection[Hit{C1, R3}]]", hitMap.get(1L).toString());
   }
   public void testDeleteOffset() {
-    long[][] contigs = {{}, {1}, {}, {1}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {1}};
-    int[][] positions = {{}, {3}, {}, {1}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {14}};
+    final long[][] contigs = {{}, {1}, {}, {1}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {1}};
+    final int[][] positions = {{}, {3}, {}, {1}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {14}};
     final PacBio.HitMap hitMap = mapHits(contigs, positions);
     assertEquals(1, hitMap.size());
     assertEquals("[HitCollection[Hit{C3, R1}], HitCollection[Hit{C1, R3}, Hit{C14, R15}]]", hitMap.get(1L).toString());
   }
 
   public void testRepeatBlock() {
-    long[][] contigs = {{}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}};
-    int[][] positions = {{}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}};
+    final long[][] contigs = {{}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}, {1, 1, 1, 1}};
+    final int[][] positions = {{}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}, {1, 2, 3, 4}};
     final PacBio.HitMap hitMap = mapHits(contigs, positions);
     assertEquals(1, hitMap.size());
     final String actual = hitMap.get(1L).toString();
@@ -102,7 +102,7 @@ public class PacBioTest extends TestCase {
   static final String READ =         "AAAATAACTC-GGCAGTAGGACTCGAACCTACGACATCATGATTAACAGTCATGGGCTAC-ACCAACTGAGCTATG-CGGAATAATCGCGTGGCGACGTCCTACTCTCAC-AAGGACATATA";
   public void testAlignHits() {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(5, new String[]{LONG_CONTIG}, new long[][] {});
-    PacBio.HitCollection hc = new PacBio.HitCollection(1);
+    final PacBio.HitCollection hc = new PacBio.HitCollection(1);
     hc.add(new PacBio.HitPosition(30, 34));
     final byte[] read = DnaUtils.encodeStringWithHyphen(READ);
     final PartialAlignment partialAlignment = PacBio.alignHitRightFixed(hc, graph, read);
@@ -123,7 +123,7 @@ public class PacBioTest extends TestCase {
   static final String SHORTER_READ =         "CTC-GGCAGTAGGACTCGAACCTACGACATCATGATTAACAGTCATGGGCTAC-ACCAACTGAGCTATG-CGGAATAATCGCGTGGCGACGTCCTACTCTCACA";
   public void testAlignHitsShortRead() {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(5, new String[]{LONG_CONTIG}, new long[][] {});
-    PacBio.HitCollection hc = new PacBio.HitCollection(1);
+    final PacBio.HitCollection hc = new PacBio.HitCollection(1);
     hc.add(new PacBio.HitPosition(30, 27));
     final byte[] read = DnaUtils.encodeStringWithHyphen(SHORTER_READ);
     final PartialAlignment partialAlignment = PacBio.alignHitRightFixed(hc, graph, read);
@@ -145,7 +145,7 @@ public class PacBioTest extends TestCase {
   static final String MANY_INSERTS =     "AAACTC-GG-AGT-GGA-TCG-ACCTACGACATCATGATTAACAGTCATGGGCTAC-ACCAACTGA-CTATG-CGGAAT-ATCGCGT-GCGACGT-CTACT-TCAC-AAGGATAA";
   public void testAlignHitsHeapsOfInserts() {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(5, new String[]{LONG_CONTIG}, new long[][] {});
-    PacBio.HitCollection hc = new PacBio.HitCollection(1);
+    final PacBio.HitCollection hc = new PacBio.HitCollection(1);
     hc.add(new PacBio.HitPosition(38, 34));
     final byte[] read = DnaUtils.encodeStringWithHyphen(MANY_INSERTS);
     final PartialAlignment partialAlignment = PacBio.alignHitRightFixed(hc, graph, read);
@@ -169,7 +169,7 @@ public class PacBioTest extends TestCase {
   static final String MANY_DELETES_CONT =       "AACTCCGG-CAGT-AGGA-CTCG-AACCT-ACGACATCATGATTAACAGTCATG-CGCTA-CTACCAACTGAG-CTATGCC-GGAATAA-TCGC-GTGGCGACGTCCTACTCTCACAAAGG".replaceAll("-", "");
   public void testAlignHitsHeapsOfDeletes() {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(5, new String[]{MANY_DELETES_CONT}, new long[][] {});
-    PacBio.HitCollection hc = new PacBio.HitCollection(1);
+    final PacBio.HitCollection hc = new PacBio.HitCollection(1);
     hc.add(new PacBio.HitPosition(43, 45));
     final byte[] read = DnaUtils.encodeStringWithHyphen(MANY_DELETES_READ);
     final PartialAlignment partialAlignment = PacBio.alignHitRightFixed(hc, graph, read);
@@ -196,7 +196,7 @@ public class PacBioTest extends TestCase {
   static final String READ_INSERT =         "AAAATGACTCCCGGCAGTAGGACTCGAACCTACGACATCATGATTAACAGTCATGGGCTACCTACCAACTGAGCTATGCCGGAATAATCGCGTGGCGACGTCCTACTCTCACAAAGGACATATA";
   public void testAlignHitsInserts() {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(5, new String[] {LONG_CONTIG_INSERT}, new long[][] {});
-    PacBio.HitCollection hc = new PacBio.HitCollection(1);
+    final PacBio.HitCollection hc = new PacBio.HitCollection(1);
     hc.add(new PacBio.HitPosition(29, 35));
     final byte[] read = DnaUtils.encodeStringWithHyphen(READ_INSERT);
     final PartialAlignment partialAlignment = PacBio.alignHitRightFixed(hc, graph, read);
@@ -217,7 +217,7 @@ public class PacBioTest extends TestCase {
   static final String SHORTER_READ_INSERT =         "CTCCCGGCAGTAGGACTCGAACCTACGACATCATGATTAACAGTCATGGGCTACCTACCAACTGAGCTATGCCGGAATAATCGCGTGGCGACGTCCTACTCTCACA";
   public void testAlignHitsShortReadInserts() {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(5, new String[]{LONG_CONTIG_INSERT}, new long[][] {});
-    PacBio.HitCollection hc = new PacBio.HitCollection(1);
+    final PacBio.HitCollection hc = new PacBio.HitCollection(1);
     hc.add(new PacBio.HitPosition(27, 26));
     final byte[] read = DnaUtils.encodeStringWithHyphen(SHORTER_READ_INSERT);
     final PartialAlignment partialAlignment = PacBio.alignHitRightFixed(hc, graph, read);
@@ -240,13 +240,13 @@ public class PacBioTest extends TestCase {
   public void testJoinAlignments() {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(5, new String[]{"ACGTGTGTG", "ACCCACACT", "ACCTTAGATAGT", "TTGTTGGA", "GGGGGAGATTTTGAG"}, new long[][] {{1, 2}, {1, 3}, {4, 3}, {3, 5}});
     final List<PartialAlignment> partialAlignments = new ArrayList<>();
-    int part1 = graph.contigLength(1) - 1;
-    int part2Start = part1 - 5;
-    int part2End = part2Start + graph.contigLength(2);
-    int alt2Start = part1 - 5;
-    int alt2End = alt2Start + graph.contigLength(3);
-    int part3Start = alt2End - 5;
-    int part3End = part3Start + graph.contigLength(5) - 2;
+    final int part1 = graph.contigLength(1) - 1;
+    final int part2Start = part1 - 5;
+    final int part2End = part2Start + graph.contigLength(2);
+    final int alt2Start = part1 - 5;
+    final int alt2End = alt2Start + graph.contigLength(3);
+    final int part3Start = alt2End - 5;
+    final int part3End = part3Start + graph.contigLength(5) - 2;
 
 
 
@@ -266,13 +266,13 @@ public class PacBioTest extends TestCase {
 
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(5, new String[]{"ACGTGTGTG", "ACCCACACT", "ACCTTAGATAGT", "TTGTTGGA", "GGGGGAGATTTTGAG"}, new long[][] {{1, 2}, {1, 3}, {4, 3}, {3, 5}});
     final List<PartialAlignment> partialAlignments = new ArrayList<>();
-    int part1 = graph.contigLength(1) - 1;
-    int part2Start = part1 - 5;
-    int part2End = part2Start + graph.contigLength(2);
-    int alt2Start = part1 - 5;
-    int alt2End = alt2Start + graph.contigLength(3);
-    int part3Start = alt2End - 5;
-    int part3End = part3Start + graph.contigLength(5) - 2;
+    final int part1 = graph.contigLength(1) - 1;
+    final int part2Start = part1 - 5;
+    final int part2End = part2Start + graph.contigLength(2);
+    final int alt2Start = part1 - 5;
+    final int alt2End = alt2Start + graph.contigLength(3);
+    final int part3Start = alt2End - 5;
+    final int part3End = part3Start + graph.contigLength(5) - 2;
 
 
 
@@ -292,11 +292,11 @@ public class PacBioTest extends TestCase {
   public void testJoinAlignmentsReplace() {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(5, new String[]{"ACGTGTGTG", "ACCCACACT", "ACCTTAGAT", "TTGTTGGA"}, new long[][] {{1, 2}, {1, 3}, {3, 4}, {2, 4}});
     final List<PartialAlignment> partialAlignments = new ArrayList<>();
-    int part1 = graph.contigLength(1) - 1;
-    int part2Start = part1 - 5;
-    int part2End = part2Start + graph.contigLength(2);
-    int part3Start = part2End - 5;
-    int part3End = part3Start + graph.contigLength(4) - 2;
+    final int part1 = graph.contigLength(1) - 1;
+    final int part2Start = part1 - 5;
+    final int part2End = part2Start + graph.contigLength(2);
+    final int part3Start = part2End - 5;
+    final int part3End = part3Start + graph.contigLength(4) - 2;
     partialAlignments.add(new PartialAlignment(3, 0, part1, 1, 1, graph.contigLength(1)));
     partialAlignments.add(new PartialAlignment(1, 0, part1, 1, 1, graph.contigLength(1)));
     partialAlignments.add(new PartialAlignment(2, part2Start, part2End - 1, 2, 0, graph.contigLength(2)));
@@ -315,8 +315,8 @@ public class PacBioTest extends TestCase {
     assertEquals(3, longListMap.get(4L).get(0).score());
   }
   public void testIsInternal() {
-    Graph g = GraphMapCliTest.makeGraph(4, new String[] {"AAACCGGAG", "AGATAGATGGTA"}, new long[][] {});
-    List<List<ContigPosition>> hits = new ArrayList<>();
+    final Graph g = GraphMapCliTest.makeGraph(4, new String[] {"AAACCGGAG", "AGATAGATGGTA"}, new long[][] {});
+    final List<List<ContigPosition>> hits = new ArrayList<>();
     addEmptyHits(hits, 3);
     hits.add(Arrays.asList(new ContigPosition(2, 3, g)));
     hits.add(Arrays.asList(new ContigPosition(2, 4, g), new ContigPosition(1, 1, g)));
@@ -330,15 +330,15 @@ public class PacBioTest extends TestCase {
     assertFalse(PacBio.isInternal(g, hits));
   }
   public void testIsInternalOverlapStart() {
-    Graph g = GraphMapCliTest.makeGraph(4, new String[] {"AAACCGGAG", "AGATAGATGGTA"}, new long[][] {});
-    List<List<ContigPosition>> hits = new ArrayList<>();
+    final Graph g = GraphMapCliTest.makeGraph(4, new String[] {"AAACCGGAG", "AGATAGATGGTA"}, new long[][] {});
+    final List<List<ContigPosition>> hits = new ArrayList<>();
     addEmptyHits(hits, 4);
     hits.add(Arrays.asList(new ContigPosition(2, 3, g)));
     assertFalse(PacBio.isInternal(g, hits));
   }
   public void testIsInternalOverlapEnd() {
-    Graph g = GraphMapCliTest.makeGraph(4, new String[] {"AAACCGGAG", "AGATAGATGGTA"}, new long[][] {});
-    List<List<ContigPosition>> hits = new ArrayList<>();
+    final Graph g = GraphMapCliTest.makeGraph(4, new String[] {"AAACCGGAG", "AGATAGATGGTA"}, new long[][] {});
+    final List<List<ContigPosition>> hits = new ArrayList<>();
     addEmptyHits(hits, 4);
     hits.add(Arrays.asList(new ContigPosition(2, 8, g)));
     addEmptyHits(hits, 3);
@@ -349,8 +349,8 @@ public class PacBioTest extends TestCase {
   }
 
   public void testNoHits() {
-    Graph g = GraphMapCliTest.makeGraph(4, new String[] {"AAACCGGAG", "AGATAGATGGTA"}, new long[][] {});
-    List<List<ContigPosition>> hits = new ArrayList<>();
+    final Graph g = GraphMapCliTest.makeGraph(4, new String[] {"AAACCGGAG", "AGATAGATGGTA"}, new long[][] {});
+    final List<List<ContigPosition>> hits = new ArrayList<>();
     addEmptyHits(hits, 4);
     assertFalse(PacBio.isInternal(g, hits));
   }
@@ -362,11 +362,11 @@ public class PacBioTest extends TestCase {
   }
 
   public void testBestPath() {
-    PacBioPath first = new PacBioPath(null, new PartialAlignment(2, 0, 20, 1, 11, 21));
-    PacBioPath second = new PacBioPath(first, new PartialAlignment(1, 15, 25, 2, 1, 11));
-    PacBioPath alternate = new PacBioPath(first, new PartialAlignment(3, 15, 25, 3, 1, 11));
-    PacBioPath sameScore = new PacBioPath(first, new PartialAlignment(1, 15, 25, 4, 1, 11));
-    Map<Long, List<PacBioPath>> paths = new HashMap<>();
+    final PacBioPath first = new PacBioPath(null, new PartialAlignment(2, 0, 20, 1, 11, 21));
+    final PacBioPath second = new PacBioPath(first, new PartialAlignment(1, 15, 25, 2, 1, 11));
+    final PacBioPath alternate = new PacBioPath(first, new PartialAlignment(3, 15, 25, 3, 1, 11));
+    final PacBioPath sameScore = new PacBioPath(first, new PartialAlignment(1, 15, 25, 4, 1, 11));
+    final Map<Long, List<PacBioPath>> paths = new HashMap<>();
     paths.put(1L, Arrays.asList(first));
     paths.put(2L, Arrays.asList(second));
     paths.put(3L, Arrays.asList(alternate));
@@ -377,15 +377,15 @@ public class PacBioTest extends TestCase {
   }
 
   public void testEndToEnd() throws IOException {
-    ReadPairSource source = new ReadPairSource(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.fasta(
+    final ReadPairSource source = new ReadPairSource(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.fasta(
         "GAGATATATGATAGATAGACCCCACATAGATACAGGAGGGATTTAGAGGATAGGAGATGGATTGTGGAGCCGTGCCCGCC")));
-    String[] contigs = {
+    final String[] contigs = {
         "ACCGAGATATATGATAGATAGACCCAC"
                     , "GATAGATAGACCCACATAGATACAGGAGGGATTTGAGGATGGAGATGG"
                                                           , "TGAGGATGGAGATGGATTGTGGAGCCGTGCCCGCCCCCAAG"
                                                           , "TGAGGATGGAGATGGATTTTATTACCCCCACACTGGGGGAT"};
-    long[][] paths = {{1, 2}, {2, 3}, {2, 4}};
-    MutableGraph graph = GraphMapCliTest.makeGraph(15, contigs, paths);
+    final long[][] paths = {{1, 2}, {2, 3}, {2, 4}};
+    final MutableGraph graph = GraphMapCliTest.makeGraph(15, contigs, paths);
     new PacBio(PacBioParams.builder().create(), TestUtils.getNullOutputStream()).mapPacBio(source, graph);
     assertEquals(4, graph.numberPaths());
     assertEquals(Arrays.asList(1L, 2L, 3L), PathArray.toList(graph.path(-4)));
@@ -393,9 +393,9 @@ public class PacBioTest extends TestCase {
 
   public void testPrint() {
     // Test insert/delete
-    MemoryPrintStream mps = new MemoryPrintStream();
+    final MemoryPrintStream mps = new MemoryPrintStream();
     PacBio.printAlignment("foo", new byte[] {1, 2, 3, 4, 1, 3, 4}, new byte[] {1, 2, 4, 1, 2, 3, 4}, 1, 1, "=D==I=", mps.printStream());
-    String expected = "foo" + LS
+    final String expected = "foo" + LS
         + "C-TACG" + LS
         + "=D==I=" + LS
         + "CGTA-G" + LS
@@ -406,7 +406,7 @@ public class PacBioTest extends TestCase {
     // Test line wrapping
     final byte[] contig = new byte[160];
     final byte[] read = new byte[160];
-    StringBuilder builder = new StringBuilder();
+    final StringBuilder builder = new StringBuilder();
     for (int i = 0; i < 160; i++) {
       contig[i] = 1;
       read[i] = 2;

@@ -33,24 +33,24 @@ import junit.framework.TestCase;
  */
 public class GraphMapTaskTest extends TestCase {
   public void testReadHitsTask() throws IOException {
-    File tmpDir = FileHelper.createTempDirectory();
+    final File tmpDir = FileHelper.createTempDirectory();
     try {
-      File reads = new File(tmpDir, "reads");
-      File graph = new File(tmpDir, "graph");
+      final File reads = new File(tmpDir, "reads");
+      final File graph = new File(tmpDir, "graph");
       assertTrue(graph.mkdir());
-      File output = new File(tmpDir, "output");
+      final File output = new File(tmpDir, "output");
       assertTrue(output.mkdir());
-      MutableGraph g = GraphMapCliTest.makeGraph(4, new String[]{"ACGTTTT", "TTTTCC", "TTTTAA"}, new long[][]{{1, 2}, {1, 3}});
+      final MutableGraph g = GraphMapCliTest.makeGraph(4, new String[]{"ACGTTTT", "TTTTCC", "TTTTAA"}, new long[][]{{1, 2}, {1, 3}});
       ReaderTestUtils.createPairedReaderDNA(ReadPairSourceTest.LEFT_SEQUENCE, ReadPairSourceTest.RIGHT_SEQUENCE, reads, new SdfId());
-      GraphMapParams params = GraphMapParams.builder()
+      final GraphMapParams params = GraphMapParams.builder()
           .reads(Arrays.asList(reads))
           .graph(g)
           .directory(output)
           .wordSize(4)
           .stepSize(4)
           .create();
-      MemoryPrintStream out = new MemoryPrintStream();
-      MemoryPrintStream mps = new MemoryPrintStream();
+      final MemoryPrintStream out = new MemoryPrintStream();
+      final MemoryPrintStream mps = new MemoryPrintStream();
       Diagnostic.setLogStream(mps.printStream());
       try {
       new GraphMapTask(params, out.printStream()).run();
@@ -70,23 +70,23 @@ public class GraphMapTaskTest extends TestCase {
     }
   }
   public void testReadHitsTask454() throws IOException {
-    File tmpDir = FileHelper.createTempDirectory();
+    final File tmpDir = FileHelper.createTempDirectory();
     try {
-      File reads = new File(tmpDir, "reads");
-      File graph = new File(tmpDir, "graph");
+      final File reads = new File(tmpDir, "reads");
+      final File graph = new File(tmpDir, "graph");
       assertTrue(graph.mkdir());
-      File output = new File(tmpDir, "output");
+      final File output = new File(tmpDir, "output");
       assertTrue(output.mkdir());
-      MutableGraph g = GraphMapCliTest.makeGraph(4, new String[]{"ACGTTTT", "TTTTCC", "TTTTAA"}, new long[][]{{1, 2}, {1, 3}});
+      final MutableGraph g = GraphMapCliTest.makeGraph(4, new String[]{"ACGTTTT", "TTTTCC", "TTTTAA"}, new long[][]{{1, 2}, {1, 3}});
       ReaderTestUtils.createPairedReaderDNA(ReadPairSourceTest.LEFT_SEQUENCE, ReadPairSourceTest.RIGHT_SEQUENCE, reads, new SdfId());
-      GraphMapParams params = GraphMapParams.builder()
+      final GraphMapParams params = GraphMapParams.builder()
           .reads454(Arrays.asList(reads))
           .graph(g)
           .directory(output)
           .wordSize(4)
           .stepSize(4)
           .create();
-      MemoryPrintStream mps = new MemoryPrintStream();
+      final MemoryPrintStream mps = new MemoryPrintStream();
       Diagnostic.setLogStream(mps.printStream());
       try {
         new GraphMapTask(params, TestUtils.getNullOutputStream()).run();
@@ -106,29 +106,29 @@ public class GraphMapTaskTest extends TestCase {
     }
   }
   public void testReadHitsTaskCalculateInsert() throws IOException {
-    File tmpDir = FileHelper.createTempDirectory();
+    final File tmpDir = FileHelper.createTempDirectory();
     try {
-      Map<String, String> readCount = new HashMap<>();
+      final Map<String, String> readCount = new HashMap<>();
       readCount.put(GraphKmerAttribute.READ_COUNT, "count of reads");
-      MutableGraph g = GraphMapCliTest.makeGraph(4, new String[]{"ACAACAC", "CGGGGT", "TCCCCTACTACAGCAG"}, new long[][]{{1, 2}, {2, 3}}, readCount, readCount);
-      MemoryPrintStream mps =  new MemoryPrintStream();
+      final MutableGraph g = GraphMapCliTest.makeGraph(4, new String[]{"ACAACAC", "CGGGGT", "TCCCCTACTACAGCAG"}, new long[][]{{1, 2}, {2, 3}}, readCount, readCount);
+      final MemoryPrintStream mps =  new MemoryPrintStream();
       Diagnostic.setLogStream(mps.printStream());
-      File reads = new File(tmpDir, "reads");
-      File reads2 = new File(tmpDir, "reads2");
-      File reads3 = new File(tmpDir, "reads3");
-      File graph = new File(tmpDir, "graph");
+      final File reads = new File(tmpDir, "reads");
+      final File reads2 = new File(tmpDir, "reads2");
+      final File reads3 = new File(tmpDir, "reads3");
+      final File graph = new File(tmpDir, "graph");
       assertTrue(graph.mkdir());
-      File output = new File(tmpDir, "output");
+      final File output = new File(tmpDir, "output");
       assertTrue(output.mkdir());
       ReaderTestUtils.createPairedReaderDNA(ReaderTestUtils.fasta("TCCCCTACT", "CCTACTA"), ReaderTestUtils.fasta("CTGCTGTAGTA", "CTGCTGTA"), reads, new SdfId());
       ReaderTestUtils.createPairedReaderDNA(ReaderTestUtils.fasta("TCCCCTACT", "CCTACTA"), ReaderTestUtils.fasta("CTGCTGTAGTA", "CTGCTGTA"), reads2, new SdfId());
       // make single end long enough that it will time out if blocked
-      String[] singleEndStrings = new String[1049];
+      final String[] singleEndStrings = new String[1049];
       for (int i = 0; i < 1049; i++) {
         singleEndStrings[i] = "TCCCCTACT";
       }
       ReaderTestUtils.getDNADir(ReaderTestUtils.fasta(singleEndStrings), reads3);
-      GraphMapParams params = GraphMapParams.builder()
+      final GraphMapParams params = GraphMapParams.builder()
           .reads(Arrays.asList(reads, reads2, reads3))
           .graph(g)
           .directory(output)

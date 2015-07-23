@@ -18,8 +18,8 @@ import junit.framework.TestCase;
  */
 public class KmerIteratorTest extends TestCase {
   public void test() {
-    KmerIterator iterator = new KmerIterator(new byte[] {1, 2, 3, 1, 0, 2, 3, 4, 1}, StringKmer.factory(), 4);
-    String[] expected = {
+    final KmerIterator iterator = new KmerIterator(new byte[] {1, 2, 3, 1, 0, 2, 3, 4, 1}, StringKmer.factory(), 4);
+    final String[] expected = {
         "ACGA"
         , "CGTA"
     };
@@ -27,26 +27,26 @@ public class KmerIteratorTest extends TestCase {
   }
 
   public void testEmpty() {
-    KmerIterator iterator = new KmerIterator(new byte[] {}, StringKmer.factory(), 4);
-    String[] expected = {
+    final KmerIterator iterator = new KmerIterator(new byte[] {}, StringKmer.factory(), 4);
+    final String[] expected = {
     };
     check(iterator, expected);
   }
   public void testShort() {
-    KmerIterator iterator = new KmerIterator(new byte[] {1, 2, 3}, StringKmer.factory(), 4);
-    String[] expected = {
+    final KmerIterator iterator = new KmerIterator(new byte[] {1, 2, 3}, StringKmer.factory(), 4);
+    final String[] expected = {
     };
     check(iterator, expected);
   }
   public void testToManyNs() {
-    KmerIterator iterator = new KmerIterator(new byte[] {1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0}, StringKmer.factory(), 4);
-    String[] expected = {
+    final KmerIterator iterator = new KmerIterator(new byte[] {1, 2, 3, 0, 1, 2, 3, 0, 1, 2, 3, 0}, StringKmer.factory(), 4);
+    final String[] expected = {
     };
     check(iterator, expected);
   }
   public void testNStart() {
-    KmerIterator iterator = new KmerIterator(new byte[] {0, 1, 2, 3, 4, 2, 2, 3, 2, 1, 2, 3, 2}, StringKmer.factory(), 4);
-    String[] expected = {
+    final KmerIterator iterator = new KmerIterator(new byte[] {0, 1, 2, 3, 4, 2, 2, 3, 2, 1, 2, 3, 2}, StringKmer.factory(), 4);
+    final String[] expected = {
         "ACGT"
         , "CGTC"
         , "GTCC"

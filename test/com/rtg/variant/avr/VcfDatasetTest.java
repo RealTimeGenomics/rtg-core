@@ -21,7 +21,7 @@ public class VcfDatasetTest extends TestCase {
 
   public void testAnnotate() {
     final File f = new File("boo");
-    VcfDataset d = new VcfDataset(f, 5, true, false, 1.5);
+    final VcfDataset d = new VcfDataset(f, 5, true, false, 1.5);
     assertEquals(f, d.getVcfFile());
     assertEquals(5, d.getSampleNum());
     assertTrue(d.isPositive());

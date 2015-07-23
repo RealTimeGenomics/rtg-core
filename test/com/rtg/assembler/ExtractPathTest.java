@@ -32,8 +32,8 @@ public class ExtractPathTest extends AbstractCliTest {
   }
 
   public void testExtract() {
-    Graph g = GraphMapCliTest.makeGraph(2, new String[]{"AAACCT", "CTTTATATA"}, new long[][]{{1, 2}});
-    MemoryPrintStream mps = new MemoryPrintStream();
+    final Graph g = GraphMapCliTest.makeGraph(2, new String[]{"AAACCT", "CTTTATATA"}, new long[][]{{1, 2}});
+    final MemoryPrintStream mps = new MemoryPrintStream();
     ExtractPath.run(mps.outputStream(), g, 1, 3, 2, 6);
     assertEquals("ACCT|TTATA" + StringUtils.LS, mps.toString());
 

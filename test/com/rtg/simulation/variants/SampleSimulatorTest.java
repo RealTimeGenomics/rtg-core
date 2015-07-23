@@ -54,42 +54,42 @@ public class SampleSimulatorTest extends TestCase {
       final String sref = DnaUtils.bytesToSequenceIncCG(buffr, 0, lenr);
 
       // Generate variants
-      FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("X"), new PortableRandom(10), 0.5);
-      List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
+      final FixedStepPopulationVariantGenerator fixed = new FixedStepPopulationVariantGenerator(sr, 10, new Mutator("X"), new PortableRandom(10), 0.5);
+      final List<PopulationVariantGenerator.PopulationVariant> variants = fixed.generatePopulation();
       final File popVcf = new File(dir, "popVcf.vcf.gz");
       PopulationVariantGenerator.writeAsVcf(popVcf, null, variants, sr);
-      String popVarStr = FileHelper.gzFileToString(popVcf);
+      final String popVarStr = FileHelper.gzFileToString(popVcf);
       //System.out.println("-- Population Variants --");
       //System.out.println(popVarStr);
-      String[] popVars = TestUtils.splitLines(StringUtils.grepMinusV(popVarStr, "^#"));
+      final String[] popVars = TestUtils.splitLines(StringUtils.grepMinusV(popVarStr, "^#"));
       assertEquals(12, popVars.length);
       for (String line : popVars) {
         assertEquals(8, line.split("\t").length);
       }
 
       // Generate sample w.r.t variants
-      SampleSimulator genomemut = new SampleSimulator(sr, new PortableRandom(42), DefaultFallback.DIPLOID);
-      File vcfOutFile = new File(dir, "sample_foo.vcf.gz");
+      final SampleSimulator genomemut = new SampleSimulator(sr, new PortableRandom(42), DefaultFallback.DIPLOID);
+      final File vcfOutFile = new File(dir, "sample_foo.vcf.gz");
       genomemut.mutateIndividual(popVcf, vcfOutFile, "foo", Sex.EITHER);
       String sampleVcf = FileHelper.gzFileToString(vcfOutFile);
       //System.out.println("-- Including sample foo --");
       //System.out.println(sampleVcf);
       sampleVcf = StringUtils.grepMinusV(sampleVcf, "^#");
-      String[] sampleVars = TestUtils.splitLines(sampleVcf);
+      final String[] sampleVars = TestUtils.splitLines(sampleVcf);
       assertEquals(12, sampleVars.length);
       for (String line : sampleVars) {
-        String[] cols = line.split("\t");
+        final String[] cols = line.split("\t");
         assertEquals(10, cols.length);
         assertTrue(cols[cols.length - 1].contains("|")); // Generated genotypes are phased
       }
 
       // Generate SDF corresponding to the sample
-      File outsdf = new File(dir, "outsdf");
-      SampleReplayer vr = new SampleReplayer(sr);
+      final File outsdf = new File(dir, "outsdf");
+      final SampleReplayer vr = new SampleReplayer(sr);
       vr.replaySample(vcfOutFile, outsdf, "foo");
 
-      SequencesReader srOut = SequencesReaderFactory.createMemorySequencesReader(outsdf, true, LongRange.NONE);
-      byte[] buff = new byte[(int) srOut.maxLength()];
+      final SequencesReader srOut = SequencesReaderFactory.createMemorySequencesReader(outsdf, true, LongRange.NONE);
+      final byte[] buff = new byte[(int) srOut.maxLength()];
       /*
       System.out.println("-- Chromosomes for sample foo --");
       for (int i = 0; i < srOut.numberSequences(); i++) {
@@ -100,9 +100,9 @@ public class SampleSimulatorTest extends TestCase {
       */
       assertEquals(2, srOut.numberSequences());
       int len = srOut.read(0, buff);
-      String s1 = DnaUtils.bytesToSequenceIncCG(buff, 0, len);
+      final String s1 = DnaUtils.bytesToSequenceIncCG(buff, 0, len);
       len = srOut.read(1, buff);
-      String s2 = DnaUtils.bytesToSequenceIncCG(buff, 0, len);
+      final String s2 = DnaUtils.bytesToSequenceIncCG(buff, 0, len);
       assertFalse(sref.equals(s1));
       assertFalse(sref.equals(s2));
       assertFalse(s1.equals(s2));

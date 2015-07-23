@@ -42,7 +42,7 @@ public class ReadPairSourceTest extends TestCase {
   }
 
   static String fragementToString(List<byte[]> fragments) {
-    StringBuilder sb = new StringBuilder();
+    final StringBuilder sb = new StringBuilder();
     sb.append("[");
     String join = "";
     for (byte[] b : fragments) {
@@ -62,10 +62,10 @@ public class ReadPairSourceTest extends TestCase {
   }
 
   public void testReadPairSource() throws IOException {
-    SequencesReader left = ReaderTestUtils.getReaderDnaMemory(LEFT_SEQUENCE);
-    SequencesReader middle = ReaderTestUtils.getReaderDnaMemory(">a" + LS + "AAAA" + LS + ">b" + LS + "ATAT" + LS);
-    SequencesReader right = ReaderTestUtils.getReaderDnaMemory(RIGHT_SEQUENCE);
-    ReadPairSource source = new ReadPairSource(left, middle, right);
+    final SequencesReader left = ReaderTestUtils.getReaderDnaMemory(LEFT_SEQUENCE);
+    final SequencesReader middle = ReaderTestUtils.getReaderDnaMemory(">a" + LS + "AAAA" + LS + ">b" + LS + "ATAT" + LS);
+    final SequencesReader right = ReaderTestUtils.getReaderDnaMemory(RIGHT_SEQUENCE);
+    final ReadPairSource source = new ReadPairSource(left, middle, right);
     List<byte[]> fragments = source.nextFragments();
     assertNotNull(fragments);
     listEquals(Arrays.asList(DnaUtils.encodeString("ACGT")
@@ -98,11 +98,11 @@ public class ReadPairSourceTest extends TestCase {
   }
 
   public void testMakeSourceSingle() throws IOException {
-    File tmpDir = FileHelper.createTempDirectory();
+    final File tmpDir = FileHelper.createTempDirectory();
     try {
       ReaderTestUtils.getReaderDNA(LEFT_SEQUENCE, tmpDir, new SdfId());
       final ReadPairSource readPairSource = ReadPairSource.makeSource(tmpDir, LongRange.NONE);
-      List<byte[]> fragments = readPairSource.nextFragments();
+      final List<byte[]> fragments = readPairSource.nextFragments();
       assertNotNull(fragments);
       final List<byte[]> expected = new ArrayList<>();
       expected.add(DnaUtils.encodeString("ACGT"));
@@ -114,11 +114,11 @@ public class ReadPairSourceTest extends TestCase {
   }
 
   public void testMakeSourcePaired() throws IOException {
-    File tmpDir = FileHelper.createTempDirectory();
+    final File tmpDir = FileHelper.createTempDirectory();
     try {
       ReaderTestUtils.createPairedReaderDNA(LEFT_SEQUENCE, RIGHT_SEQUENCE, tmpDir, new SdfId());
       final ReadPairSource readPairSource = ReadPairSource.makeSource(tmpDir, LongRange.NONE);
-      List<byte[]> fragments = readPairSource.nextFragments();
+      final List<byte[]> fragments = readPairSource.nextFragments();
       assertNotNull(fragments);
       listEquals(Arrays.asList(DnaUtils.encodeString("ACGT")
           , DnaUtils.encodeString("CCCCAA")
@@ -136,8 +136,8 @@ public class ReadPairSourceTest extends TestCase {
     } catch (IllegalArgumentException e) {
       // expected
     }
-    SequencesReader left = ReaderTestUtils.getReaderDnaMemory(LEFT_SEQUENCE);
-    SequencesReader empty = ReaderTestUtils.getReaderDnaMemory("");
+    final SequencesReader left = ReaderTestUtils.getReaderDnaMemory(LEFT_SEQUENCE);
+    final SequencesReader empty = ReaderTestUtils.getReaderDnaMemory("");
     try {
       new ReadPairSource(left, empty);
       fail();
@@ -147,9 +147,9 @@ public class ReadPairSourceTest extends TestCase {
   }
 
   public void testSetInsertSizes() throws IOException {
-    SequencesReader left = ReaderTestUtils.getReaderDnaMemory(LEFT_SEQUENCE);
-    SequencesReader right = ReaderTestUtils.getReaderDnaMemory(RIGHT_SEQUENCE);
-    ReadPairSource source = new ReadPairSource(left, right);
+    final SequencesReader left = ReaderTestUtils.getReaderDnaMemory(LEFT_SEQUENCE);
+    final SequencesReader right = ReaderTestUtils.getReaderDnaMemory(RIGHT_SEQUENCE);
+    final ReadPairSource source = new ReadPairSource(left, right);
     assertEquals(-1, source.maxInsertSize());
     assertEquals(-1, source.minInsertSize());
     source.setMaxInsertSize(10);
@@ -161,13 +161,13 @@ public class ReadPairSourceTest extends TestCase {
 
   public void testReset() throws IOException {
     // Test that reset will start at first fragment
-    SequencesReader left = ReaderTestUtils.getReaderDnaMemory(LEFT_SEQUENCE);
-    SequencesReader right = ReaderTestUtils.getReaderDnaMemory(RIGHT_SEQUENCE);
-    ReadPairSource source = new ReadPairSource(left, right);
+    final SequencesReader left = ReaderTestUtils.getReaderDnaMemory(LEFT_SEQUENCE);
+    final SequencesReader right = ReaderTestUtils.getReaderDnaMemory(RIGHT_SEQUENCE);
+    final ReadPairSource source = new ReadPairSource(left, right);
     List<byte[]> fragments = source.nextFragments();
     assertNotNull(fragments);
 
-    List<byte[]> expected = Arrays.asList(DnaUtils.encodeString("ACGT")
+    final List<byte[]> expected = Arrays.asList(DnaUtils.encodeString("ACGT")
         , DnaUtils.encodeString("CCCCAA")
     );
     listEquals(expected, fragments);

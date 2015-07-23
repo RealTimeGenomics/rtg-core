@@ -435,7 +435,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
 
   /** @return threading environment aware look ahead */
   public int threadingLookAhead() {
-    int lookAhead;
+    final int lookAhead;
     switch (threadingEnvironment()) {
       case SINGLE:
         lookAhead = 1;

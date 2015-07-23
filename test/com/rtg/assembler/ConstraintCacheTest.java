@@ -20,7 +20,7 @@ import junit.framework.TestCase;
  */
 public class ConstraintCacheTest extends TestCase {
   public void testCache() {
-    ConstraintCache cache = new ConstraintCache();
+    final ConstraintCache cache = new ConstraintCache();
     cache.addConstraint(4, 5, 199, 2, 200);
     cache.addConstraint(4, 5, 101, 100, 200);
     cache.addConstraint(5, 9, 50, 50, 250);
@@ -33,7 +33,7 @@ public class ConstraintCacheTest extends TestCase {
     assertNull(cache.find(400));
     assertNull(cache.find(400, 600));
 
-    ConstraintCache cache2 = new ConstraintCache();
+    final ConstraintCache cache2 = new ConstraintCache();
     cache.addConstraint(5, 9, 52, 52, 200);
     cache.addConstraint(5, 9, 42, 62, 204);
     cache.addConstraint(6, 8, 42, 62, 150);

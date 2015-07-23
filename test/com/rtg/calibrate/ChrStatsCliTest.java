@@ -40,7 +40,7 @@ public class ChrStatsCliTest extends AbstractCliTest {
       checkHandleFlags("-t", template.getPath(), "--sample=foo", bam.getPath());
       checkHandleFlags("-t", template.getPath(), "-p", ped.getPath(), "--sample=foo", bam.getPath());
 
-      String err = checkHandleFlagsErr("-t", template.getPath(), "-p", ped.getPath(), "--sex=male", bam.getPath());
+      final String err = checkHandleFlagsErr("-t", template.getPath(), "-p", ped.getPath(), "--sex=male", bam.getPath());
       TestUtils.containsAll(err, "Only one of --sex or --pedigree can be set");
     }
   }

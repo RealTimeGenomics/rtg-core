@@ -89,7 +89,7 @@ public class GenomeMutatorPriors {
     double rate = 0;
     final double[] typeRates = new double[5];
     double[] hRates = new double[3];
-    double[] t;
+    final double[] t;
 
     hRates[0] = mPriors.genomeSnpRate(false);
     hRates[1] = mPriors.genomeSnpRate(true) * (1 - VARIANT_DIFFERENT_FACTOR);
@@ -154,7 +154,7 @@ public class GenomeMutatorPriors {
     mPriors = null;
     double rate = 0;
     final double[] typeRates = new double[5];
-    double[] t;
+    final double[] t;
     double snpRate = 0;
     double mnpRate = 0;
     double indelRate = 0;
@@ -305,7 +305,7 @@ public class GenomeMutatorPriors {
    * @return maximum length
    */
   public int maxLength(final MutationType type, final boolean heterozygous) {
-    int len;
+    final int len;
     if (heterozygous) {
       if (type == MutationType.MNP) {
         len = mMnpEteroDist.length;

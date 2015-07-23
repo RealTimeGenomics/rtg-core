@@ -150,7 +150,7 @@ public class VcfInfoFieldTest extends TestCase {
   }
 
   public void testFormatPossibleCause() {
-    Variant call = new Variant(new VariantLocus("ref", 2, 3, "A", 'C'));
+    final Variant call = new Variant(new VariantLocus("ref", 2, 3, "A", 'C'));
     assertEquals("*", VcfInfoField.formatPossibleCause(call, false));
     call.setPossibleCause("G");
     assertEquals("G", VcfInfoField.formatPossibleCause(call, false));

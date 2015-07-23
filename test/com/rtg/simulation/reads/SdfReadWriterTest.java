@@ -30,7 +30,7 @@ public class SdfReadWriterTest extends AbstractTempFileHandler {
   public void testPaired() throws Exception {
     Diagnostic.setLogStream();
     final File sdf = new File(mTempDir, "sdf");
-    SdfReadWriter w = new SdfReadWriter(sdf, true, PrereadType.SOLEXA, true, true);
+    final SdfReadWriter w = new SdfReadWriter(sdf, true, PrereadType.SOLEXA, true, true);
     assertEquals(0, w.readsWritten());
     try {
       w.writeRead("read", new byte[] {1, 2, 3, 4}, new byte[] {1, 2, 3, 4}, 4);
@@ -51,7 +51,7 @@ public class SdfReadWriterTest extends AbstractTempFileHandler {
   public void testSingle() throws Exception {
     Diagnostic.setLogStream();
     final File sdf = new File(mTempDir, "sdf");
-    SdfReadWriter w = new SdfReadWriter(sdf, false, PrereadType.SOLEXA, true, true);
+    final SdfReadWriter w = new SdfReadWriter(sdf, false, PrereadType.SOLEXA, true, true);
     try {
       w.writeLeftRead("read", new byte[] {1, 2, 3, 4}, new byte[] {1, 2, 3, 4}, 4);
       fail();

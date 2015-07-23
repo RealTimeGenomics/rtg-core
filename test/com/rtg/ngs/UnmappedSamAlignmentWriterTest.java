@@ -81,7 +81,7 @@ public class UnmappedSamAlignmentWriterTest extends TestCase {
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
       try {
         final UnmappedSamAlignmentWriter w = new UnmappedSamAlignmentWriter(param.outputParams().tempFilesDirectory(), sr.getHeader());
-        UnmappedSamRecordFactory fact = new UnmappedSamRecordFactory(param, sr);
+        final UnmappedSamRecordFactory fact = new UnmappedSamRecordFactory(param, sr);
         try {
           w.initialiseUnmapped(bos, false, true, true);
           w.unmappedRecord(fact.unmappedResult(0, true, (char) 1, false));

@@ -251,7 +251,7 @@ public class MapxRename extends AbstractCli {
   }
 
   private static String replaceIdWithName(final String[] parts, final int id, final char sep, PrereadNames names) {
-    String line;
+    final String line;
     final int readId = Integer.parseInt(parts[id]);
     parts[id] = names.name(readId);
     final StringBuilder sb = new StringBuilder();
