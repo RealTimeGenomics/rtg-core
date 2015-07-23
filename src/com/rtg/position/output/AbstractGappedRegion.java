@@ -25,7 +25,7 @@ import com.rtg.util.integrity.IntegralAbstract;
 @TestClass("com.rtg.position.output.GappedRegionTest")
 public abstract class AbstractGappedRegion<G extends AbstractGappedRegion<G>> extends IntegralAbstract {
 
-  static enum State {
+  enum State {
     EMPTY, INIT, WRITTEN
   }
 

@@ -33,7 +33,7 @@ enum SearchType {
    * @param code two letter string used when writing blocks.
    * @param bedCode one letter code used in regions file.
    */
-  private SearchType(String code, String bedCode) {
+  SearchType(String code, String bedCode) {
     mCode = code;
     mBedCode = bedCode;
   }

@@ -34,7 +34,7 @@ public final class RegionUtils {
 
   /**
    */
-  static enum State {
+  enum State {
     IN, OUT
   }
 

@@ -33,7 +33,7 @@ public class GraphMapStatistics extends AbstractStatistics {
     }
   }
   /** Statistics represented in this object */
-  public static enum Stat {
+  public enum Stat {
     /** Number of single end reads */
     SINGLE_END("Single end reads"),
     /** Number of paired end reads */

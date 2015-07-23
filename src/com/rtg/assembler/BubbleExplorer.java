@@ -272,7 +272,7 @@ public class BubbleExplorer {
   }
   static final Bubble IMPOSSIBLE_BUBBLE = new Bubble(null, null, BubbleResult.IMPOSSIBLE, 0.0);
   static final Bubble NOT_FOUND_BUBBLE = new Bubble(null, null, BubbleResult.NOT_FOUND, 0.0);
-  static enum BubbleResult {
+  enum BubbleResult {
     FOUND
     , NOT_FOUND
     , IMPOSSIBLE

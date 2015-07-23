@@ -25,7 +25,7 @@ import com.rtg.util.StringUtils;
  */
 public class PacBioStatistics extends AbstractStatistics  {
   /** Statistics represented in this object */
-  public static enum Stat {
+  public enum Stat {
     /** total number of reads */
     TOTAL_READS("Total reads"),
     /** Reads that appear to come from  entirely within a single contig */

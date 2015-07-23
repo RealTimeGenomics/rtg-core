@@ -43,7 +43,7 @@ public class ComplexRegion extends SequenceNameLocusSimple {
     private final String mAbbreviation;
     private final byte[] mDescription;
 
-    private RegionType(String abbreviation, String name) {
+    RegionType(String abbreviation, String name) {
       mAbbreviation = abbreviation;
       mDescription = name.getBytes();
     }

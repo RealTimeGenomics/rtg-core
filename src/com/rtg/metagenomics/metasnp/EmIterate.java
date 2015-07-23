@@ -26,7 +26,7 @@ public final class EmIterate {
   /**
    * Possible beta implementations
    */
-  public static enum BetaType {
+  public enum BetaType {
     /** Use a static value */
     STATIC,
     /** Re-estimate variation each iteration */

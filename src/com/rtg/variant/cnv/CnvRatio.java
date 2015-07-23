@@ -59,7 +59,7 @@ public final class CnvRatio {
   private static final byte[] DIVDREGION = "gdelregion<".getBytes();
   private static final byte[] MULDREGION = "gdelregion>".getBytes();
 
-  static enum State {
+  enum State {
     IN, OUT
   }
 

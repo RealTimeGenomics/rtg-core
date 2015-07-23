@@ -53,7 +53,7 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
 
     private final int mMask;
 
-    private VariantFilter(int mask) {
+    VariantFilter(int mask) {
       mMask = mask;
     }
 

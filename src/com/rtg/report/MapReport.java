@@ -306,7 +306,7 @@ public class MapReport extends MapSummaryReport {
   /**
    * Types of plot available
    */
-  protected static enum PlotType {
+  protected enum PlotType {
     BOX,
     LINE,
     ORI,

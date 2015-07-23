@@ -34,7 +34,7 @@ public enum JobType {
 
   private final int mNumberArgs;
 
-  private JobType(int numberArgs) {
+  JobType(int numberArgs) {
     mNumberArgs = numberArgs;
   }
 

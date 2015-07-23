@@ -125,7 +125,7 @@ public enum VcfFilterField {
   /**
    * @param filter the filter that is being used as a trigger.
    */
-  private VcfFilterField(VariantFilter filter) {
+  VcfFilterField(VariantFilter filter) {
     mFilter = filter;
   }
 

@@ -60,7 +60,7 @@ public final class MapReportData {
   /**
    * Possible distributions in map report
    */
-  public static enum DistributionType {
+  public enum DistributionType {
 
     /** Mapping Counts */
     MAPC ("Mapping Counts By Status", License.isDeveloper(), License.isDeveloper()),
@@ -96,11 +96,11 @@ public final class MapReportData {
     /**
      *
      */
-    private DistributionType(String longName) {
+    DistributionType(String longName) {
       this(longName, true, true);
     }
 
-    private DistributionType(String longName, boolean showData, boolean showImage) {
+    DistributionType(String longName, boolean showData, boolean showImage) {
       mLongName = longName;
       mShowData = showData;
       mShowImage = showImage;

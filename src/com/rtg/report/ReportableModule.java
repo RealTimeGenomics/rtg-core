@@ -28,7 +28,7 @@ public enum ReportableModule {
    * Constructor for a maximum number of input directories for a report type.
    * @param maxInputDirectories maximum input directories for this report type.
    */
-  private ReportableModule(int maxInputDirectories) {
+  ReportableModule(int maxInputDirectories) {
     mMaxInputDirectories = maxInputDirectories;
   }
 

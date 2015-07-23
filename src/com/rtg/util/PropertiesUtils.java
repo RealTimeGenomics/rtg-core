@@ -32,7 +32,7 @@ public final class PropertiesUtils {
   /**
    * Types of properties files, and where they live
    */
-  public static enum PropertyType {
+  public enum PropertyType {
     /** Error property sub-directory **/
    ERROR_PROPERTY(VARIANT_PRIORS + "error/"),
     /** Prior property sub-directory **/
@@ -44,7 +44,7 @@ public final class PropertiesUtils {
 
 
     final String mPath;
-    private PropertyType(String path) {
+    PropertyType(String path) {
       mPath = path;
     }
 

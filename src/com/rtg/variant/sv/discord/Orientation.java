@@ -127,7 +127,7 @@ public enum Orientation {
    * @param x direction of the first read
    * @param y direction of the second read
    */
-  private Orientation(int x, int y) {
+  Orientation(int x, int y) {
     mX = x;
     mY = y;
   }

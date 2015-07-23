@@ -55,7 +55,7 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
   PrintStream mErr;
   MetagenomicsWrapperTask mTask = null;
 
-  protected static enum Platform {
+  protected enum Platform {
     ILLUMINA,
     IONTORRENT
   }
