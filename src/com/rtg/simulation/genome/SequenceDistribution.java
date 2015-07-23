@@ -20,7 +20,7 @@ import com.rtg.reader.SequencesReader;
  * Encapsulate the random selection of sequences
  */
 public class SequenceDistribution {
-  private double[] mCumulative;
+  private final double[] mCumulative;
 
   /**
    * create a sequence distribution based on the ratios provided in <code>nonCumulative</code>

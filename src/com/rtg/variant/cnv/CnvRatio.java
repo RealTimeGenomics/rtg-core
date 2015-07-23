@@ -103,7 +103,7 @@ public final class CnvRatio {
 
   private final double mDivFactor;
   private final double mMeanReadLength;
-  private boolean mExtraPenaltyOff;
+  private final boolean mExtraPenaltyOff;
 
   /**
    * CnvRatio constructor

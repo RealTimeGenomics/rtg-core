@@ -34,7 +34,7 @@ public class LeastSquaresModel extends IntegralAbstract {
   private double[] mSum2;
 
   private int mNext = 1;
-  private boolean mExtraPenaltyOff;
+  private final boolean mExtraPenaltyOff;
 
   /**
    * Constructor

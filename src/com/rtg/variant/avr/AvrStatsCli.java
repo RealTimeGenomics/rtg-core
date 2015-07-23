@@ -65,7 +65,7 @@ public class AvrStatsCli extends AbstractCli {
     CommonFlags.initAvrModel(mFlags, true);
   }
 
-  private ArrayList<Pair<String, String>> mProperties = new ArrayList<>();
+  private final ArrayList<Pair<String, String>> mProperties = new ArrayList<>();
   {
     mProperties.add(new Pair<>("Parameters", MODEL_PROPERTY_COMMAND_LINE));
     mProperties.add(new Pair<>("Date built", MODEL_PROPERTY_DATE));

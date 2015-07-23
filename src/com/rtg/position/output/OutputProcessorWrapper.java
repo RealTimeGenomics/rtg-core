@@ -27,8 +27,8 @@ import com.rtg.reader.SequencesReader;
 public class OutputProcessorWrapper implements PositionWriter {
 
   private final OutputProcessor mEnclosed;
-  private int[] mTemplateLengths;
-  private int mStart;
+  private final int[] mTemplateLengths;
+  private final int mStart;
   private final SequencesReader mReader;
   private final SequencesReader mReader2;
   private final boolean mPairedEnd;

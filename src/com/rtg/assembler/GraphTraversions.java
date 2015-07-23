@@ -23,7 +23,7 @@ import com.rtg.assembler.graph.PathsIterator;
 /**
  */
 public class GraphTraversions {
-  private Map<Long, Traversion> mMap = new HashMap<>();
+  private final Map<Long, Traversion> mMap = new HashMap<>();
   GraphTraversions(Graph g) {
     for (long i = 1; i <= g.numberContigs(); i++) {
       if (g.contigDeleted(i)) {

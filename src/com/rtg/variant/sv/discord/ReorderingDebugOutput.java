@@ -26,8 +26,8 @@ import com.rtg.util.diagnostic.Diagnostic;
 */
 class ReorderingDebugOutput extends ReorderingQueue<DiscordantReadSet> {
 
-  private OutputStream mDebug;
-  private DebugDiscordantOutputFormatter mFormatter;
+  private final OutputStream mDebug;
+  private final DebugDiscordantOutputFormatter mFormatter;
 
   /**
    *

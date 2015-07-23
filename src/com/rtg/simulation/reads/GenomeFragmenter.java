@@ -37,7 +37,7 @@ public class GenomeFragmenter {
   private int mCounter;
   private final SequencesReader[] mReaders;
   private final ReferenceGenome[] mRefGenome;
-  private int[][] mSequenceLengths;
+  private final int[][] mSequenceLengths;
   private boolean mAllowNs;
   private int mMinFragmentSize;
   private int mMaxFragmentSize;
@@ -46,7 +46,7 @@ public class GenomeFragmenter {
   private byte[] mByteBuffer;
   private byte[] mWorkspace;
   private int mWarnCount = 0;
-  private SequenceDistribution[] mSelectionDistributions;
+  private final SequenceDistribution[] mSelectionDistributions;
   private boolean mHasIdentified = false;
   private final int[][] mSequenceCounts;
 

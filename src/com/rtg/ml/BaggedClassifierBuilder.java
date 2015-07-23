@@ -64,7 +64,7 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
   private boolean mEvaluateImportances = true;
 
   /** Because we're a meta-classifier we keep any properties for passing down to child classifiers */
-  private Properties mProperties = new Properties();
+  private final Properties mProperties = new Properties();
 
   // The resulting classifier
   private BaggedClassifier mClassifier = null;

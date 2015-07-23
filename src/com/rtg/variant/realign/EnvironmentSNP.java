@@ -20,8 +20,8 @@ package com.rtg.variant.realign;
  */
 public class EnvironmentSNP extends EnvironmentDecorator {
 
-  private int mPosition;
-  private byte mNucleotide;
+  private final int mPosition;
+  private final byte mNucleotide;
 
   /**
    * @param env the original environment

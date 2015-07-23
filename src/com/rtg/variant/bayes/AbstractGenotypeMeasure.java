@@ -20,7 +20,7 @@ public abstract class AbstractGenotypeMeasure implements GenotypeMeasure {
   private Integer mBest = null;
   private Double mBestPosterior = null;
   private Double mNonIdentity = null;
-  private Hypotheses<?> mHyp;
+  private final Hypotheses<?> mHyp;
 
   /**
    * Constructor

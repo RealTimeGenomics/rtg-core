@@ -27,7 +27,7 @@ import com.rtg.util.diagnostic.Diagnostic;
  *         Time: 2:24 PM
  */
 public class IndexSet {
-  private Index[] mIndexes;
+  private final Index[] mIndexes;
 
   /**
    * Create an index set that encapsulates the provided indexes

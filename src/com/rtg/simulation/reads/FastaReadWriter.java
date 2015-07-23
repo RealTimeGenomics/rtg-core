@@ -21,7 +21,7 @@ import com.rtg.reader.SdfId;
  */
 public class FastaReadWriter implements ReadWriter {
 
-  private Appendable mAppend;
+  private final Appendable mAppend;
   private int mTotal = 0;
   private boolean mExpectLeft = true;
 

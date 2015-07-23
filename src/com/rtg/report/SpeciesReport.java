@@ -273,7 +273,7 @@ public final class SpeciesReport implements Report {
   }
 
   private int mSparkBarCount = 0;
-  private HashMap<String, String> mSparkBarFiles = new HashMap<>();
+  private final HashMap<String, String> mSparkBarFiles = new HashMap<>();
   private static final int MAX_BAR_WIDTH = 64;
   private static final int GAP_WIDTH = 1;
   private static final int IMAGE_HEIGHT = 30;

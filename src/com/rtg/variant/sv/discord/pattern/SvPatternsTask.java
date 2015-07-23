@@ -53,7 +53,7 @@ public class SvPatternsTask extends ParamsTask<BreakpointPatternParams, NoStatis
   private final int mMinDepth;
 
   private OutputStream mOutput;
-  private List<DiscordBedRecord> mBedRecords = new ArrayList<>();
+  private final List<DiscordBedRecord> mBedRecords = new ArrayList<>();
   private final DeletionOverlapFilter mDeletions = new DeletionOverlapFilter();
   private static final String FILE_NAME = "sv_patterns.bed";
   private static final String SV_OUTPUT_VERSION = "0.1";

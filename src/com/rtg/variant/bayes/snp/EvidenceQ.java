@@ -27,9 +27,9 @@ public final class EvidenceQ extends Evidence {
 
   private final int mRead;
 
-  private ThreadLocal<Integer> mReadBasesLeft = new ThreadLocal<>();
+  private final ThreadLocal<Integer> mReadBasesLeft = new ThreadLocal<>();
 
-  private ThreadLocal<Integer> mReadBasesRight = new ThreadLocal<>();
+  private final ThreadLocal<Integer> mReadBasesRight = new ThreadLocal<>();
 
   private final double mQ;
 

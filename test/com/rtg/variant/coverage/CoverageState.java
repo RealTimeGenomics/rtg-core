@@ -23,7 +23,7 @@ import com.rtg.util.MathUtils;
 class CoverageState {
 
   /** The actual bytes of the current template; read only. */
-  private byte[] mTemplate;
+  private final byte[] mTemplate;
 
   /** Number of reads hitting each template position, 32:32 fixed-point arithmetic. */
   private final AtomicLongArray mCoverage;

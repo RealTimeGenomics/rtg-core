@@ -18,7 +18,7 @@ import com.rtg.variant.bayes.Factor;
  */
 public class BContainer {
 
-  private Factor<?>[] mBs;
+  private final Factor<?>[] mBs;
 
   /**
    * @param bs value to initialise to

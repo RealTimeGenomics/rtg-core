@@ -31,7 +31,7 @@ import com.rtg.util.Histogram;
  *         Time: 2:08 PM
  */
 public class BubbleExplorer {
-  private GraphKmerAttribute mGraph;
+  private final GraphKmerAttribute mGraph;
   private static final int COMPLEXITY_THRESHOLD = 100;
   private final double mMergeThreshold;
   private final int mMaxBubbleSize;

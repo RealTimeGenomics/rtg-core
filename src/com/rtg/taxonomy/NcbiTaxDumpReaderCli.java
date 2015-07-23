@@ -45,7 +45,7 @@ public class NcbiTaxDumpReaderCli extends AbstractCli {
   static class NcbiTaxDumpReader {
 
     private final HashSet<Integer> mDeletedIds = new HashSet<>();
-    private HashMap<Integer, String> mNames = new HashMap<>();
+    private final HashMap<Integer, String> mNames = new HashMap<>();
 
     private final Taxonomy mTaxonomy = new Taxonomy();
 

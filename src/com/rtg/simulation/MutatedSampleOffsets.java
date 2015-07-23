@@ -31,7 +31,7 @@ import com.rtg.vcf.VcfUtils;
 @TestClass("com.rtg.simulation.MutatedReferenceReadNameParserTest")
 public final class MutatedSampleOffsets {
 
-  private Map<String, Pair<MutatedOffsets, MutatedOffsets>> mOffsets = new HashMap<>();
+  private final Map<String, Pair<MutatedOffsets, MutatedOffsets>> mOffsets = new HashMap<>();
 
   private MutatedSampleOffsets() { }
 

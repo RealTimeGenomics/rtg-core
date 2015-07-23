@@ -47,8 +47,8 @@ public abstract class ReadEncoder implements PseudoEnum {
     }
   };
 
-  private String mName;
-  private int mOrdinal;
+  private final String mName;
+  private final int mOrdinal;
 
   private ReadEncoder(final int ordinal, final String name) {
     mName = name;

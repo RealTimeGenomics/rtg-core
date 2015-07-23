@@ -36,11 +36,11 @@ public class DefaultReaderParams extends ReaderParams implements Integrity {
 
   private long mMaxLength = -1;
 
-  private boolean mUseMemSeqReader;
+  private final boolean mUseMemSeqReader;
 
-  private boolean mLoadNames;
+  private final boolean mLoadNames;
 
-  private boolean mLoadFullNames;
+  private final boolean mLoadFullNames;
 
   transient SequencesReader mReader = null;
 
