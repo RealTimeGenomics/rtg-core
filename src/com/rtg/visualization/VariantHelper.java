@@ -84,7 +84,7 @@ final class VariantHelper {
           final String sampleName = actualSampleNames.get(i);
           final int sampleIndex = VcfUtils.getSampleIndexOrDie(r.getHeader(), sampleName, input.getPath());
           // Skip non-calls
-          if (VcfUtils.skipRecordForSample(current, sampleIndex, false)) {
+          if (!VcfUtils.hasDefinedVariantGt(current, sampleIndex)) {
             continue;
           }
           final AviewVariant v = new AviewVariant(current, sampleIndex);
