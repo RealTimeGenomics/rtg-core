@@ -123,9 +123,7 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
   }
 
   private long mFilteredRecords = 0; // Removed here due to user criteria
-  private long mInvalidRecords = 0;  // Removed here as invalid according to criteria of the calling program
   private long mOutputRecords = 0; // Made available to next level
-  private static volatile long sReportedInvalidRecords = 0;
 
   @Override
   public long getInvalidRecordsCount() {
@@ -133,7 +131,7 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
     for (final SamFileAndRecord sfr : mOriginals) {
       count += sfr.getInvalidRecordsCount();
     }
-    return count + mInvalidRecords;
+    return count;
   }
 
   @Override

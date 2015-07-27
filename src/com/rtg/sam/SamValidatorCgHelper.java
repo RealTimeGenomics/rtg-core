@@ -60,7 +60,7 @@ public final class SamValidatorCgHelper {
     return qualityBuffer;
   }
 
-  private static byte[] sQualityBuf = new byte[35];
+  private static final byte[] QUALITY_BUF = new byte[35];
 
   static boolean matchesCg(byte[] read, byte[] quality, SAMRecord record, boolean ignoreFragmentSize) {
 
@@ -159,7 +159,7 @@ public final class SamValidatorCgHelper {
 
     // check qualities...
     if (quality != null && record.getBaseQualities() != null) {
-      final byte[] qualExpanded = expandCgCigarQualities(record.getBaseQualities(), sQualityBuf, record.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY), cggc, record.getFirstOfPairFlag(), record.getReadNegativeStrandFlag(), true);
+      final byte[] qualExpanded = expandCgCigarQualities(record.getBaseQualities(), QUALITY_BUF, record.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY), cggc, record.getFirstOfPairFlag(), record.getReadNegativeStrandFlag(), true);
       if (qualExpanded == null) {
         return false;
       }

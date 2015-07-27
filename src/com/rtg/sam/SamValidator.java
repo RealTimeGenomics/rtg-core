@@ -346,13 +346,13 @@ public final class SamValidator {
             mCurrentVariables.mMinInsertSize = Math.abs(insertSize);
           }
           if (variables.mInsertSizes != null && (samRec.getAlignmentStart() < samRec.getMateAlignmentStart() || (samRec.getAlignmentStart() == samRec.getMateAlignmentStart() && samRec.getFirstOfPairFlag()))) {
-            Integer iscount;
+            final Integer isCount;
             if (!variables.mInsertSizes.containsKey(insertSize)) {
-              iscount = 1;
+              isCount = 1;
             } else {
-              iscount = variables.mInsertSizes.get(insertSize) + 1;
+              isCount = variables.mInsertSizes.get(insertSize) + 1;
             }
-            variables.mInsertSizes.put(insertSize, iscount);
+            variables.mInsertSizes.put(insertSize, isCount);
           }
         }
       }
@@ -392,7 +392,7 @@ public final class SamValidator {
     if (map != null) {
       final Integer recordCount = samRec.getIntegerAttribute(attribute);
       if (recordCount != null) {
-        Integer mapCount;
+        final Integer mapCount;
         if (!map.containsKey(recordCount)) {
           mapCount = 1;
         } else {

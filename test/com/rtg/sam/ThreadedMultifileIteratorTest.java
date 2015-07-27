@@ -164,9 +164,7 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
         files.add(ffsam);
       }
       final File incompatible = new File(mDir, "alignments-incompat.sam");
-      final StringBuilder sam = new StringBuilder(SAM_HEAD1);
-      sam.append("readA-bad").append(String.format(SAM_TAIL2, 22));
-      FileUtils.stringToFile(sam.toString(), incompatible);
+      FileUtils.stringToFile(SAM_HEAD1 + "readA-bad" + String.format(SAM_TAIL2, 22), incompatible);
 
       try {
         // This factory is just to induce some lag during the job scheduling (not the execution)

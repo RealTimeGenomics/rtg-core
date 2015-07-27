@@ -100,7 +100,7 @@ public class NgsTaskFunctionalTest extends TestCase {
       Diagnostic.setLogStream();
     }
     if (usageExp != null) {
-      assertEquals(usageExp.longValue(), ngs.usage());
+      assertEquals((long) usageExp, ngs.usage());
     }
     final String outString = out.toString();
     if (!expected.equals("")) {

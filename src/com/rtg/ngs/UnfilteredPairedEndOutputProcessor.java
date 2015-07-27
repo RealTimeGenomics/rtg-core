@@ -23,7 +23,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
-import com.rtg.index.hash.ngs.ReadDecoder;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.ngs.blocking.ReadBlocker;
@@ -264,7 +263,7 @@ public class UnfilteredPairedEndOutputProcessor extends AbstractSdfOutputProcess
 
     @Override
     public void process(final long templateId, final String frame, final int readId, final int tStart, final int score, final int scoreIndel) throws IOException {
-      final int dReadId = ReadDecoder.PAIRED_END.decode(readId);
+      final int dReadId = PAIRED_END.decode(readId);
       final boolean isFirst = PAIRED_END.isFirst(readId);
       if (mFreqBlockerLeft.isBlocked(dReadId) && mFreqBlockerRight.isBlocked(dReadId)) {
         return;

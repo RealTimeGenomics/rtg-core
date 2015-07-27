@@ -219,15 +219,7 @@ public class CnvRegion {
    */
   public byte[] toBytes(int seqId, String seqName) {
     assert seqId == mSequenceId;
-    final StringBuilder line = new StringBuilder();
-    line.append(seqName).append(TB);
-    line.append(mStart).append(TB);
-    line.append(mStart + mLength).append(TB);
-    line.append("cnv").append(TB);
-    line.append(getCN()).append(TB);
-    line.append(DB_CN).append(TB);
-    line.append(Utils.realFormat(ERROR)).append(TB).append(LS);
-    return line.toString().getBytes();
+    return (seqName + TB + mStart + TB + (mStart + mLength) + TB + "cnv" + TB + getCN() + TB + DB_CN + TB + Utils.realFormat(ERROR) + TB + LS).getBytes();
   }
 
   /**

@@ -259,8 +259,7 @@ public class HopStepEditDistanceLongTest extends AbstractUnidirectionalEditDista
   public void testalignkurt1() {
     final String read =           "cacggatcagctctacgttccttACGTTgccacggatcagctctacgttccttgaagcgcGtccgccgaacggcagcaatcactacttacgacatgtctaccc";
     final String tmpl = "ttcaagtgtccacggatcagctctacgttccttgaagcgccacggatcagctctacgttccttgaagcgcatccgccgaacggcagcaatcactacttacgacatgtctaccctcgactcgac";
-    int[] actions = align(read, tmpl, 4, 6, true, 5);
-    actions = align(read, tmpl, 5, 6, false, 5);
+    int[] actions = align(read, tmpl, 5, 6, false, 5);
     assertEquals(6, actions[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
     assertEquals(10, actions[ActionsHelper.TEMPLATE_START_INDEX]);
     actions = align(read, tmpl, 15, 6, false, 5);

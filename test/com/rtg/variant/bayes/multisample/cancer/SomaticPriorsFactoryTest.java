@@ -43,7 +43,6 @@ public class SomaticPriorsFactoryTest extends TestCase {
   public void testDiploid() throws InvalidParamsException, IOException {
     final DescriptionCommon desc = new DescriptionCommon("", "A", "AA");
     final Hypotheses<DescriptionCommon> hyp = new MockHypotheses<>(desc, SimplePossibility.SINGLETON, false, new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, 0);
-    final int n = hyp.size();
     final double[][] initialPriors = {
       {0.5, 0.3, 0.2},
       {0.25, 0.5, 0.25},

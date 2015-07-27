@@ -254,7 +254,7 @@ public class LabellingTest extends TestCase {
       assertNull(actual);
       return;
     }
-    assertEquals(exp.booleanValue(), actual.toString().equals("4_5"));
+    assertEquals((boolean) exp, actual.toString().equals("4_5"));
   }
 
   public void testSimplePhasing() {
