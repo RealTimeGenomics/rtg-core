@@ -45,7 +45,7 @@ public class ZoomaNativeMapReadsCliTest extends AbstractCliTest {
 
   // Inhale a small sam or bam file into a string
   static String samFileToString(File samFile) throws IOException {
-    final StringBuffer samText = new StringBuffer();
+    final StringBuilder samText = new StringBuilder();
     try (final SamReader reader = SamUtils.makeSamReader(samFile)) {
       for (final SAMRecord rec : reader) {
         samText.append(rec.getSAMString());
