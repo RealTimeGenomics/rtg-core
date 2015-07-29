@@ -17,6 +17,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.IndexUtils;
 import com.rtg.tabix.TabixIndexer;
@@ -85,7 +86,7 @@ public class CoverageStatisticsTest extends TestCase {
         final String tmpl = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANAAAAAAAAAANAAAAAAAAAAAAAAAAAAAAAAAAAA";
 
         final File template = ReaderTestUtils.getDNADir(">simulatedSequence1\n" + tmpl + "\n>simulatedSequence2\n" + tmpl + "\n", new File(tmpDir, "template"));
-
+        GlobalFlags.resetAccessedStatus();
         final int code = new CoverageCli().mainInit(new String[]{"-o", output.getPath(), "-s", "0", samFile.getPath(),
                                                                         "--bed-regions", bedRegionsFile.getPath(), "-t", template.getPath()}, mps.outputStream(), mps.printStream());
         assertEquals(mps.toString(), 0, code);
