@@ -205,20 +205,7 @@ public class SomaticNanoTest extends TestCase {
       assertEquals(ps.toString(), 0, code);
 
       final String result = FileUtils.fileToString(new File(out, "snps.vcf"));
-      final String actual = result.replace("Version", "");
-      final String actualFixed = actual.replaceAll("##CL=.*\n", "")
-          .replaceAll("##TEMPLATE-SDF-ID=.*\n", "")
-          .replaceAll("##RUN-ID=.*\n", "")
-          .replaceAll("##fileDate=.*\n", "")
-          .replaceAll("##reference=.*\n", "")
-          .replaceAll("##INFO=.*\n", "")
-          .replaceAll("##SAMPLE=.*\n", "")
-          .replaceAll("##FORMAT=.*\n", "")
-          .replaceAll("##FILTER=.*\n", "")
-          .replaceAll("##PEDIGREE=.*\n", "")
-          .replaceAll("##fileformat=.*\n", "")
-          .replaceAll("##contig=.*\n", "")
-          .replaceAll("##source=.*\n", "");
+      final String actualFixed = TestUtils.stripVcfHeader(result);
 
       //System.err.println(actualFixed);
       //final String expectedFinal = FileHelper.resourceToString("com/rtg/variant/bayes/multisample/cancer/resources/somaticnanotest" + expectedPrefix + ".vcf").replaceAll("\r", "");

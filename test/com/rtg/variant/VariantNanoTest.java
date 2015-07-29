@@ -311,9 +311,7 @@ public class VariantNanoTest extends TestCase {
       }
       if ((errorMsg == null || "".equals(errorMsg)) && (expNum >= 0)) {
         final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
-        final String actual = result.replace("Version", "");
-
-        final String actualFixed = actual.replaceAll("##CL=.*\n", "").replaceAll("##TEMPLATE-SDF-ID=.*\n", "").replaceAll("##RUN-ID=.*\n", "").replaceAll("##fileDate=.*\n", "").replaceAll("##reference=.*\n", "").replaceAll("##source=.*\n", "");
+        final String actualFixed = TestUtils.sanitizeVcfHeader(result);
         //System.err.println(actual);
         //final String expectedFinal = FileHelper.resourceToString("com/rtg/variant/resources/variancetasktest" + expNum + ".vcf").replaceAll("\r", "");
         //final String actualFinal = actualFixed.replaceAll("\r", "");
@@ -360,10 +358,7 @@ public class VariantNanoTest extends TestCase {
       //System.err.println(berr.toString());
       if (errorMsg.equals("")) {
         final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
-        final String actual = result.replace("Version", "");
-        //System.err.println(actual);
-        assertTrue(actual.startsWith("##fileformat="));
-        final String actualFixed = actual.replaceAll("##CL=.*\n", "").replaceAll("##TEMPLATE-SDF-ID=.*\n", "").replaceAll("##RUN-ID=.*\n", "").replaceAll("##fileDate=.*\n", "").replaceAll("##reference=.*\n", "").replaceAll("##source=.*\n", "");
+        final String actualFixed = TestUtils.sanitizeVcfHeader(result);
         mNano.check("variancetasktest" + expNum + ".vcf", actualFixed, false);
       }
     }
@@ -399,7 +394,7 @@ public class VariantNanoTest extends TestCase {
         final String actual = result.replace("Version", "");
         //System.err.println(actual);
         assertTrue(actual.startsWith("##fileformat="));
-        final String actualFixed = actual.replaceAll("##CL=.*\n", "").replaceAll("##TEMPLATE-SDF-ID=.*\n", "").replaceAll("##RUN-ID=.*\n", "").replaceAll("##fileDate=.*\n", "").replaceAll("##reference=.*\n", "").replaceAll("##source=.*\n", "");
+        final String actualFixed = TestUtils.sanitizeVcfHeader(actual);
         mNano.check("variancetasktest" + expNum + ".vcf", actualFixed, false);
       } finally {
         FileHelper.deleteAll(templ);
@@ -1261,9 +1256,7 @@ public class VariantNanoTest extends TestCase {
         assertEquals(errStr, 0, intMain);
         //System.err.println(errStr);
         final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
-        final String actual = result.replace("Version", "");
-        assertTrue(actual, actual.startsWith("##fileformat="));
-        final String actualFixed = actual.replaceAll("##CL=.*\n", "").replaceAll("##TEMPLATE-SDF-ID=.*\n", "").replaceAll("##RUN-ID=.*\n", "").replaceAll("##fileDate=.*\n", "").replaceAll("##reference=.*\n", "").replaceAll("##source=.*\n", "");
+        final String actualFixed = TestUtils.sanitizeVcfHeader(result);
 
         //assertEquals(FileHelper.resourceToString("com/rtg/variant/resources/" + results), actualFixed);
         mNano.check(results, actualFixed, false);
@@ -1668,8 +1661,7 @@ public class VariantNanoTest extends TestCase {
       assertEquals(expectedErr, err.toString());
       mNano.check("bug1524.txt", out.toString());
       final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
-      final String actual = result.replace("Version", "");
-      final String actualFixed = actual.replaceAll("##CL=.*\n", "").replaceAll("##TEMPLATE-SDF-ID=.*\n", "").replaceAll("##RUN-ID=.*\n", "").replaceAll("##fileDate=.*\n", "").replaceAll("##reference=.*\n", "").replaceAll("##source=.*\n", "");
+      final String actualFixed = TestUtils.sanitizeVcfHeader(result);
       mNano.check("bug1524.vcf", actualFixed, false);
     }
   }
