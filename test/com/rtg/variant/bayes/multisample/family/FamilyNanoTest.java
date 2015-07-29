@@ -17,6 +17,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.StringUtils;
@@ -42,6 +43,7 @@ public class FamilyNanoTest extends TestCase {
 
   @Override
   public void setUp() {
+    GlobalFlags.resetAccessedStatus();
     Diagnostic.setLogStream();
     mNano = new NanoRegression(this.getClass(), false);
   }

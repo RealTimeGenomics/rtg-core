@@ -12,9 +12,7 @@
 package com.rtg.sam;
 
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Tests corresponding class
@@ -40,22 +38,5 @@ public class PileUpTest extends TestCase {
     assertEquals(0.9, pu.coverage());
     assertEquals(8, pu.consensus());
   }
-
-  /**
-   */
-  public PileUpTest(final String name) {
-    super(name);
-  }
-  public static Test suite() {
-    return new TestSuite(PileUpTest.class);
-  }
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
-
 
 }

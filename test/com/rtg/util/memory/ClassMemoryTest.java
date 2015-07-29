@@ -14,68 +14,43 @@ package com.rtg.util.memory;
 import java.lang.reflect.Field;
 import java.util.Iterator;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
- * Test class for ClassMemory. <p>
- *
- * Run from the command line with:<p>
- *
- * <code>
- * java junit.textui.TestRunner com.rtg.util.memory.ClassMemoryTest<br>
- * java junit.swingui.TestRunner com.rtg.util.memory.ClassMemoryTest<br>
- * java com.rtg.util.memory.ClassMemoryTest<br>
- * </code>
- *
  */
 public class ClassMemoryTest extends TestCase {
-
-  public ClassMemoryTest(final String s) {
-    super(s);
-  }
-
 
   public void testBooleanPrim() {
     primTst(Boolean.TYPE, MemoryUsage.BOOLEAN_SIZE);
   }
 
-
   public void testBytePrim() {
     primTst(Byte.TYPE, MemoryUsage.BYTE_SIZE);
   }
-
 
   public void testCharPrim() {
     primTst(Character.TYPE, MemoryUsage.CHAR_SIZE);
   }
 
-
   public void testShortPrim() {
     primTst(Short.TYPE, MemoryUsage.SHORT_SIZE);
   }
-
 
   public void testIntPrim() {
     primTst(Integer.TYPE, MemoryUsage.INT_SIZE);
   }
 
-
   public void testFloatPrim() {
     primTst(Float.TYPE, MemoryUsage.FLOAT_SIZE);
   }
-
 
   public void testLongPrim() {
     primTst(Long.TYPE, MemoryUsage.LONG_SIZE);
   }
 
-
   public void testDoublePrim() {
     primTst(Double.TYPE, MemoryUsage.DOUBLE_SIZE);
   }
-
 
   private static void primTst(final Class<?> classId, final int size) {
     final ClassMemory.Info info = ClassMemory.getMemoryInfo(classId);
@@ -100,46 +75,37 @@ public class ClassMemoryTest extends TestCase {
 
   }
 
-
   public void testbooleanArray() {
     primArrayTst(new boolean[0], MemoryUsage.BOOLEAN_ARRAY);
   }
-
 
   public void testbyteArray() {
     primArrayTst(new byte[0], MemoryUsage.BYTE_ARRAY);
   }
 
-
   public void testcharArray() {
     primArrayTst(new char[0], MemoryUsage.CHAR_ARRAY);
   }
-
 
   public void testshortArray() {
     primArrayTst(new short[0], MemoryUsage.SHORT_ARRAY);
   }
 
-
   public void testintArray() {
     primArrayTst(new int[0], MemoryUsage.INT_ARRAY);
   }
-
 
   public void testfloatArray() {
     primArrayTst(new float[0], MemoryUsage.FLOAT_ARRAY);
   }
 
-
   public void testlongArray() {
     primArrayTst(new long[0], MemoryUsage.LONG_ARRAY);
   }
 
-
   public void testdoubleArray() {
     primArrayTst(new double[0], MemoryUsage.DOUBLE_ARRAY);
   }
-
 
   private static void primArrayTst(final Object obj, final int size) {
     final ClassMemory.Info info = ClassMemory.getMemoryInfo(obj.getClass());
@@ -223,44 +189,6 @@ public class ClassMemoryTest extends TestCase {
     assertEquals(0, prims);
 
   }
-
-
-  /** Used by JUnit (called before each test method)  */
-  @Override
-  public void setUp() {
-  }
-
-
-  /** Used by JUnit (called after each test method)  */
-  @Override
-  public void tearDown() {
-  }
-
-
-  /**
-   * Adds tests to suite to be run by main
-   *
-   * @return The test suite.
-   */
-  public static Test suite() {
-    return new TestSuite(ClassMemoryTest.class);
-    //suite.addTest(new ClassMemoryTest("testClassMemory"));
-  }
-
-
-  /**
-   * Main method needed to.create a self runnable class
-   *
-   * @param args The command line arguments.
-   */
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
-
 }
 
 

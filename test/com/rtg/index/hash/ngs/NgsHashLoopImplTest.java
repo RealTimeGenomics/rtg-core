@@ -23,10 +23,10 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 
 import com.rtg.launcher.DefaultReaderParamsTest;
+import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.MockSequenceParams;
 import com.rtg.launcher.ReaderParams;
-import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.DNAFastaSymbolTable;
 import com.rtg.mode.SequenceMode;
@@ -35,17 +35,15 @@ import com.rtg.reader.PrereadType;
 import com.rtg.reader.ReaderLongMock;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesWriter;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.CliDiagnosticListener;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.SlimException;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  */
@@ -63,15 +61,6 @@ public final class NgsHashLoopImplTest extends TestCase {
   public void tearDown() {
     assertTrue(FileHelper.deleteAll(mDir));
     mDir = null;
-  }
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-
-    suite.addTestSuite(com.rtg.index.hash.ngs.NgsHashLoopImplTest.class);
-    //causes problem with jumble?
-    //suite.addTestSuite(com.rtg.ngs.NgsThreadTest.class);
-    return suite;
   }
 
   private ReaderParams getReads(final String inputDnaSequence) throws IOException {

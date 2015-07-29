@@ -14,23 +14,12 @@ package com.rtg.ngs;
 import com.rtg.ngs.NgsTestUtils.NgsFilterPartlyParams;
 import com.rtg.ngs.NgsTestUtils.TestParams;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
- * Test threading for long reads
  */
 public class NgsLongThreadsTest extends NgsLongTest {
 
   @Override
   void checkLong(NgsMaskParams mask, TestParams test, NgsFilterPartlyParams filterParams, boolean containsOnly) throws Exception {
     NgsTestUtils.checkLongThreads(mask, test, filterParams, containsOnly);
-  }
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-
-    suite.addTestSuite(NgsLongThreadsTest.class);
-    return suite;
   }
 }

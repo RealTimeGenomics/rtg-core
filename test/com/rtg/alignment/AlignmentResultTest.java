@@ -23,24 +23,12 @@ import com.rtg.sam.SamValidator;
 import com.rtg.util.io.MemoryPrintStream;
 
 import htsjdk.samtools.SAMRecord;
-
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  */
 public class AlignmentResultTest extends TestCase {
 
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-    suite.addTestSuite(AlignmentResultTest.class);
-    return suite;
-  }
   private byte[] getSequence(final String s) {
     return DnaUtils.encodeArray(s.replaceAll(" ", "").getBytes());
   }

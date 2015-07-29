@@ -11,35 +11,17 @@
  */
 package com.rtg.ngs;
 
-
-
-
 import static com.rtg.util.StringUtils.LS;
 
 import com.rtg.ngs.NgsTestUtils.TestParams;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.LogRecord;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
- * Tests for Long mapping
  */
 public class NgsLongTest extends TestCase {
-
-
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-
-    suite.addTestSuite(NgsLongTest.class);
-    return suite;
-  }
 
   @Override
   public void setUp() {

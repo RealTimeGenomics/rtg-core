@@ -14,9 +14,7 @@ package com.rtg.ngs.blocking;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.MemoryPrintStream;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Tests corresponding class
@@ -25,22 +23,6 @@ public class MapQScoringReadBlockerTest extends TestCase {
 
   protected static final int READ_ID0 = 0;
   protected static final int READ_ID1 = (1 << 16) - 1; // a bigger readid.
-
-  public MapQScoringReadBlockerTest(final String name) {
-    super(name);
-  }
-
-  public static Test suite() {
-    return new TestSuite(MapQScoringReadBlockerTest.class);
-  }
-
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
 
   protected String expectedDiagnosticString() {
     return "blocked pairings";

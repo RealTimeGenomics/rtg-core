@@ -33,13 +33,8 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- *
  */
 public class UnfilteredPairedEndOutputProcessorTest extends AbstractPairedEndOutputProcessorSyncTest {
-
-  public static Test suite() {
-    return new TestSuite(UnfilteredPairedEndOutputProcessorTest.class);
-  }
 
   @Override
   OutputProcessor getPairedEndOutputProcessorSync(NgsParams param, MapStatistics stats, boolean outputUnmated, boolean outputUnmapped)

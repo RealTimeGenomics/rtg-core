@@ -11,30 +11,9 @@
  */
 package com.rtg.ngs.blocking;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
- * Runs the ScoringReadBlocker tests on the synchronized subclass.
- *
  */
 public class MapQScoringReadBlockerSynchTest extends MapQScoringReadBlockerTest {
-
-  public MapQScoringReadBlockerSynchTest(final String name) {
-    super(name);
-  }
-
-  public static Test suite() {
-    return new TestSuite(MapQScoringReadBlockerSynchTest.class);
-  }
-
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
 
   @Override
   protected String expectedToString() {

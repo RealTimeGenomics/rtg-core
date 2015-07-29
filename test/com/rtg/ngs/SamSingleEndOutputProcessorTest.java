@@ -36,26 +36,12 @@ import com.rtg.util.io.IOUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Tests corresponding class
  */
 public class SamSingleEndOutputProcessorTest extends TestCase {
-
-  public static Test suite() {
-    return new TestSuite(SamSingleEndOutputProcessorTest.class);
-  }
-
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
 
   protected File mDir;
   @Override

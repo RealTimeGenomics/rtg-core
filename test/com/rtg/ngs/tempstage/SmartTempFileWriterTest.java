@@ -20,9 +20,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Tests corresponding class.
@@ -149,17 +147,4 @@ public class SmartTempFileWriterTest extends TestCase {
     rec.setSamFlags((byte) samFlags);
     return rec;
   }
-
-
-  public static Test suite() {
-    return new TestSuite(SmartTempFileWriterTest.class);
-  }
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
-
 }

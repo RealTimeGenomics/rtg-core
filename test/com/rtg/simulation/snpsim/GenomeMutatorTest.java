@@ -21,6 +21,7 @@ import java.io.PrintStream;
 import java.io.StringReader;
 import java.util.Arrays;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.mode.DNA;
 import com.rtg.mode.SequenceType;
 import com.rtg.reader.PrereadType;
@@ -67,6 +68,7 @@ public class GenomeMutatorTest extends TestCase {
 
   @Override
   public void setUp() throws IOException, InvalidParamsException {
+    GlobalFlags.resetAccessedStatus();
     mDir = FileHelper.createTempDirectory();
     mPriors = GenomePriorParams.builder().genomePriors("testhumanprior").create();
   }
@@ -527,19 +529,6 @@ public class GenomeMutatorTest extends TestCase {
       assertTrue(compare(m1, m2) < 0);
     }
   }
-
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-
-    suite.addTestSuite(GenomeMutatorTest.class);
-    return suite;
-  }
-  //private static final OutputStream NULL_STREAM = SimpleTestUtils.getNullOutputStream();
-  private static final PrintStream NULL_PRINTSTREAM = TestUtils.getNullPrintStream();
 
   public void testSnpMutator() throws IOException {
     final File temp = FileHelper.createTempDirectory();

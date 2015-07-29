@@ -21,30 +21,11 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.Talkback;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
- * Class to test <code>Slim</code>
- *
  */
 public class SlimTest extends TestCase {
-
-  public SlimTest(final String name) {
-    super(name);
-  }
-
-  public static Test suite() {
-    return new TestSuite(SlimTest.class);
-  }
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
 
   @Override
   public void setUp() {

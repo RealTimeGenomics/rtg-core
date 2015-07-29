@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -49,12 +50,8 @@ public class ReadSimEvalCliTest extends TestCase {
       + "read2:1:56785:S4:I0:D0\t16\t1\t501889\t255\t22=2X29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:2\tNM:i:0\tIH:i:1"
       + SAM_ENDLINE;
 
-  /**
-   * Test method for
-   * {@link ReadSimEvalCli#mainExec(java.io.OutputStream, java.io.PrintStream)}
-   * .
-   */
   public final void testSingleEnd() throws IOException {
+    GlobalFlags.resetAccessedStatus();
     Diagnostic.setLogStream();
     final File topLevel = FileUtils.createTempDir("readmappingaccuracy", "setest");
     try {

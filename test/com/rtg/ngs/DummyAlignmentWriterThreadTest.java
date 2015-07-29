@@ -35,19 +35,11 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 import com.rtg.util.test.NanoRegression;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
- *
- * Tests corresponding class
  */
 public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutputProcessorTest {
-
-  public static Test suite() {
-    return new TestSuite(DummyAlignmentWriterThreadTest.class);
-  }
 
   protected File mDir;
   protected NanoRegression mNano;

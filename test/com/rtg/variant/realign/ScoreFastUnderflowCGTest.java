@@ -16,18 +16,9 @@ import java.util.Arrays;
 
 import com.rtg.util.integrity.Exam;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  */
 public class ScoreFastUnderflowCGTest extends ScoreMatrixCGTest {
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-    suite.addTestSuite(ScoreFastUnderflowCGTest.class);
-    return suite;
-  }
 
   @Override
   protected AllPaths score(Environment env) {

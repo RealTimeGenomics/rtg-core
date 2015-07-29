@@ -40,8 +40,6 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
- * Class to test <code>Slim</code>.
- *
  */
 public class SlidingWindowCollectorTest extends TestCase {
 
@@ -57,23 +55,6 @@ public class SlidingWindowCollectorTest extends TestCase {
   public void tearDown() {
     FileHelper.deleteAll(mDir);
     mDir = null;
-  }
-
-  /**
-   */
-  public SlidingWindowCollectorTest(final String name) {
-    super(name);
-  }
-
-  public static Test suite() {
-    return new TestSuite(SlidingWindowCollectorTest.class);
-  }
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
   }
 
   private static class TestPairedAlignmentWriter implements PairedTempFileWriter {

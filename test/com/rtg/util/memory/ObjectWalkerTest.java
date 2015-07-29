@@ -17,11 +17,8 @@ import java.util.Stack;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
- * JUnit test class. <p>
- *
  */
 public final class ObjectWalkerTest extends TestCase {
 
@@ -35,15 +32,6 @@ public final class ObjectWalkerTest extends TestCase {
   int mCounter = 0;
 
   WalkableObject mWalkable;
-
-  /**
-   * Constructor.
-   *
-   * @param s The test name.
-   */
-  public ObjectWalkerTest(final String s) {
-    super(s);
-  }
 
   public void testWalking() {
     final WalkableObject wo = new WalkableObject();
@@ -110,29 +98,6 @@ public final class ObjectWalkerTest extends TestCase {
   @Override
   public void tearDown() {
     mWalkable = null;
-  }
-
-  /**
-   * Adds tests to suite to be run by main
-   *
-   * @return The test suite.
-   */
-  public static Test suite() {
-    return new TestSuite(ObjectWalkerTest.class);
-  }
-
-
-  /**
-   * Main method needed to make a self runnable class
-   *
-   * @param args The command line arguments.
-   */
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
   }
 
   private class ObjectWalkerImpl extends ObjectWalker {

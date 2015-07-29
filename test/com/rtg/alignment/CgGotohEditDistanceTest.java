@@ -31,9 +31,7 @@ import com.rtg.variant.realign.RealignParams;
 import com.rtg.variant.realign.RealignParamsImplementation;
 import com.rtg.variant.realign.ScoreMatrixCGTest;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  */
@@ -44,12 +42,6 @@ public class CgGotohEditDistanceTest extends TestCase {
   private String mLog;
   private AlignmentResult mAlignment;
   private BinaryTempFileRecord mSamRecord;
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-    suite.addTestSuite(CgGotohEditDistanceTest.class);
-    return suite;
-  }
 
   @Override
   public void setUp() {

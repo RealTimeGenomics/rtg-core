@@ -15,6 +15,7 @@ package com.rtg;
 import java.io.ByteArrayOutputStream;
 import java.util.Locale;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.util.StringUtils;
 
 import junit.framework.TestCase;
@@ -25,6 +26,7 @@ import junit.framework.TestCase;
 public class LicenseCommandTest extends TestCase {
 
   public void testModuleList() {
+    GlobalFlags.resetAccessedStatus();
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     assertEquals(0, LicenseCommand.mainInit(baos, CoreCommand.INFO));
 

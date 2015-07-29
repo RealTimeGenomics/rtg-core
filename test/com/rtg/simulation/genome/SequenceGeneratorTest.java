@@ -20,29 +20,13 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Contains tests for related class
  *
  */
 public class SequenceGeneratorTest extends TestCase {
-
-  /**
-   * Constructor
-   */
-  public SequenceGeneratorTest(final String name) {
-    super(name);
-  }
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-
-    suite.addTestSuite(SequenceGeneratorTest.class);
-    return suite;
-  }
 
   private File mOutDir = null;
 

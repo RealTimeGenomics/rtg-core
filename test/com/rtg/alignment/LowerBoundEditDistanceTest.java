@@ -13,9 +13,6 @@ package com.rtg.alignment;
 
 import com.rtg.mode.DnaUtils;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  */
 public class LowerBoundEditDistanceTest extends AbstractUnidirectionalEditDistanceTest {
@@ -24,17 +21,6 @@ public class LowerBoundEditDistanceTest extends AbstractUnidirectionalEditDistan
   protected UnidirectionalEditDistance getEditDistanceInstance(int gapOpenPenalty, int gapExtendPenalty, int subsPenalty, int unknownsPenalty) {
     return new LowerBoundEditDistance(4, 1, unknownsPenalty);
   }
-
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-    suite.addTestSuite(LowerBoundEditDistanceTest.class);
-    return suite;
-  }
-
 
   /**
    * Simple test

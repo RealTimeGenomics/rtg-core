@@ -12,41 +12,21 @@
 package com.rtg.util.memory;
 
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
- * Test class for IdentitySet. <p>
- *
- * Run from the command line with:<p>
- *
- * <code>
- * java junit.textui.TestRunner com.rtg.util.memory.IdentitySetTest<br>
- * java junit.swingui.TestRunner com.rtg.util.memory.IdentitySetTest<br>
- * java com.rtg.util.memory.IdentitySetTest<br>
- * </code>
- *
  */
 public class IdentitySetTest extends TestCase {
-
-  public IdentitySetTest(final String s) {
-    super(s);
-  }
-
 
   public void testDefault() {
     final IdentitySet set = new IdentitySet();
     tst(set);
   }
 
-
   public void testMin() {
     final IdentitySet set = new IdentitySet(0);
     tst(set);
-    //System.err.println(set.dumpString());
   }
-
 
   public void testBig() {
     final IdentitySet set = new IdentitySet(10000);
@@ -99,32 +79,6 @@ public class IdentitySetTest extends TestCase {
       assertTrue(set.contains(tint2[i]));
     }
   }
-
-
-  /**
-   * Adds tests to suite to be run by main
-   *
-   * @return The test suite.
-   */
-  public static Test suite() {
-    return new TestSuite(IdentitySetTest.class);
-    //suite.addTest(new IdentitySetTest("testIdentitySet"));
-  }
-
-
-  /**
-   * Main method needed to.create a self runnable class
-   *
-   * @param args The command line arguments.
-   */
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
-
 }
 
 

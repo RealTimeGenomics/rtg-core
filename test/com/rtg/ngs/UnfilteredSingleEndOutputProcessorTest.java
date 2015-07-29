@@ -30,26 +30,12 @@ import com.rtg.util.io.IOUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Tests corresponding class
  */
 public class UnfilteredSingleEndOutputProcessorTest extends TestCase {
-
-  public static Test suite() {
-    return new TestSuite(UnfilteredSingleEndOutputProcessorTest.class);
-  }
-
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
 
   protected File mDir;
   @Override

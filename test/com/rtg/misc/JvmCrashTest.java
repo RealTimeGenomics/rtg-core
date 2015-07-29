@@ -15,31 +15,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Crashed the JVM and shows *** glibc detected *** free(): invalid pointer: 0x000000004022b040 ***
  *
  */
 public class JvmCrashTest extends TestCase {
-
-  public JvmCrashTest(final String name) {
-    super(name);
-  }
-
-  public static Test suite() {
-    return new TestSuite(JvmCrashTest.class);
-  }
-
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
 
   public void testJvm() throws IOException {
     runClassBothStreams(134217728, "com.rtg.util.SpawnJvmTest$MaxMem");

@@ -32,12 +32,12 @@ import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.SimpleThreadPool;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
@@ -45,17 +45,9 @@ import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.SAMReadGroupRecord;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
- *
  */
 public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutputProcessorSyncTest {
-
-  public static Test suite() {
-    return new TestSuite(TopNPairedEndOutputProcessorSyncTest.class);
-  }
 
   @Override
   OutputProcessor getPairedEndOutputProcessorSync(NgsParams param, MapStatistics stats, boolean outputUnmated, boolean outputUnmapped) throws IOException {

@@ -36,19 +36,9 @@ import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  */
 public class SpecializedIncrementalHashLoopTest extends NgsLongTest {
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-
-    suite.addTestSuite(SpecializedIncrementalHashLoopTest.class);
-    return suite;
-  }
 
   //private static final String READ_1 = ">read_l/1" + LS
   //+ "TGCCAC" + LS

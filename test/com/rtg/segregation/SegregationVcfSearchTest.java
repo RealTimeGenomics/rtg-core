@@ -17,6 +17,7 @@ import static com.rtg.util.StringUtils.LS;
 import java.io.File;
 import java.io.IOException;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reference.ReferenceGenome;
 import com.rtg.util.TestUtils;
@@ -35,6 +36,7 @@ public class SegregationVcfSearchTest extends TestCase {
 
   public void check(final String exp, final String expBed, final String res, int newPen, int xoPen) throws IOException {
     try (final TestDirectory dir = new TestDirectory()) {
+      GlobalFlags.resetAccessedStatus();
       Diagnostic.setLogStream();
       final File template = ReaderTestUtils.getDNADir(">1\nACGT\n>2\nACGT\n>3\nACGT\n>X\nACGTGAACGTGAACGTGAACGTGAAAAAACGTGAA\n>Y\nACAAACGTGAACGTGAACGTGAAAAGAA", new File(dir, "template"));
       FileUtils.stringToFile("version 1\n"

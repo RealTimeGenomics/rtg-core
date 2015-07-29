@@ -17,23 +17,11 @@ import com.rtg.ngs.NgsParamsBuilder;
 import com.rtg.util.MaxShiftUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  */
 public class LowerBoundEstimatorTest extends TestCase {
-
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-    suite.addTestSuite(LowerBoundEstimatorTest.class);
-    return suite;
-  }
 
   private LowerBoundEstimator align(final String readstring, final String templatestring, final int zeroBasedPos, final int score, final int maxScore, int unknownsPenalty) {
     Diagnostic.setLogStream();

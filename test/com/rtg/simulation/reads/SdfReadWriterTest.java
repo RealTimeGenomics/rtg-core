@@ -14,6 +14,7 @@ package com.rtg.simulation.reads;
 
 import java.io.File;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.Sdf2Fasta;
 import com.rtg.util.StringUtils;
@@ -23,33 +24,37 @@ import com.rtg.util.test.AbstractTempFileHandler;
 import com.rtg.util.test.FileHelper;
 
 /**
- * Test class
  */
 public class SdfReadWriterTest extends AbstractTempFileHandler {
 
-  public void testPaired() throws Exception {
+  @Override
+  public void setUp() throws Exception {
+    super.setUp();
+    GlobalFlags.resetAccessedStatus();
     Diagnostic.setLogStream();
+  }
+
+  public void testPaired() throws Exception {
     final File sdf = new File(mTempDir, "sdf");
     final SdfReadWriter w = new SdfReadWriter(sdf, true, PrereadType.SOLEXA, true, true);
     assertEquals(0, w.readsWritten());
     try {
-      w.writeRead("read", new byte[] {1, 2, 3, 4}, new byte[] {1, 2, 3, 4}, 4);
+      w.writeRead("read", new byte[]{1, 2, 3, 4}, new byte[]{1, 2, 3, 4}, 4);
       fail();
     } catch (final IllegalStateException e) {
       // ok
     }
-    w.writeLeftRead("read", new byte[] {1, 2, 3, 4}, new byte[] {1, 2, 3, 4}, 4);
-    w.writeRightRead("read", new byte[] {1, 2, 3, 4}, new byte[] {1, 2, 3, 4}, 4);
+    w.writeLeftRead("read", new byte[]{1, 2, 3, 4}, new byte[]{1, 2, 3, 4}, 4);
+    w.writeRightRead("read", new byte[]{1, 2, 3, 4}, new byte[]{1, 2, 3, 4}, 4);
     w.close();
     assertEquals(1, w.readsWritten());
     final File fasta = new File(mTempDir, "f.fasta.gz");
-    assertEquals(0, new Sdf2Fasta().mainInit(new String[] {"-i", sdf.getPath(), "-o", fasta.getPath()}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream()));
+    assertEquals(0, new Sdf2Fasta().mainInit(new String[]{"-i", sdf.getPath(), "-o", fasta.getPath()}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream()));
     assertEquals(">0 read" + StringUtils.LS + "ACGT" + StringUtils.LS, FileHelper.gzFileToString(new File(mTempDir, "f_1.fasta.gz")));
     assertEquals(">0 read" + StringUtils.LS + "ACGT" + StringUtils.LS, FileHelper.gzFileToString(new File(mTempDir, "f_2.fasta.gz")));
   }
 
   public void testSingle() throws Exception {
-    Diagnostic.setLogStream();
     final File sdf = new File(mTempDir, "sdf");
     final SdfReadWriter w = new SdfReadWriter(sdf, false, PrereadType.SOLEXA, true, true);
     try {

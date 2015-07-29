@@ -13,21 +13,9 @@ package com.rtg.util.memory;
 
 import java.lang.ref.SoftReference;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
- * Test class for MemoryUsage. <p>
- *
- * Run from the command line with:<p>
- *
- * <code>
- * java junit.textui.TestRunner com.rtg.util.memory.MemoryUsageTest<br>
- * java junit.swingui.TestRunner com.rtg.util.memory.MemoryUsageTest<br>
- * java com.rtg.util.memory.MemoryUsageTest<br>
- * </code>
- *
  */
 public class MemoryUsageTest extends TestCase {
 
@@ -38,53 +26,13 @@ public class MemoryUsageTest extends TestCase {
     protected int mD1, mD2;
   }
 
-
-  /**
-   * Constructor (needed for JUnit compliance)
-   *
-   * @param s Description.
-   */
-  public MemoryUsageTest(final String s) {
-    super(s);
-  }
-
-
-  /**
-   * Adds tests to suite to be run by main
-   *
-   * @return The test suite
-   */
-  public static Test suite() {
-    return new TestSuite(MemoryUsageTest.class);
-    //suite.addTest(new MemoryUsageTest("testMemoryUsage"));
-  }
-
-
-  /**
-   * Main method needed to.create a self runnable class
-   *
-   * @param args The command line arguments
-   */
-  /**
-   * Main to run from tests from command line.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(suite());
-  }
-
-
-  /** A unit test for JUnit  */
   public void testInteger() {
     tstObject(Integer.valueOf(0), MemoryUsage.INT_SIZE);
   }
 
-
-  /** A unit test for JUnit  */
   public void testFoo() {
     tstObject(new MemoryUsageFoo(), 2 * MemoryUsage.INT_SIZE);
   }
-
 
   void tstObject(final Object obj, final int isize) {
     final int size = MemoryUsage.roundUp(MemoryUsage.OBJECT_SIZE + isize);
@@ -99,8 +47,6 @@ public class MemoryUsageTest extends TestCase {
 
   }
 
-
-  /** A unit test for JUnit  */
   public void testIntegerArray() {
     final Integer[] ia = new Integer[]
       {Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(2), Integer.valueOf(3)};
@@ -111,8 +57,6 @@ public class MemoryUsageTest extends TestCase {
     tst(ia, asize + isize);
   }
 
-
-  /** A unit test for JUnit  */
   public void testintArray() {
     final int[] ia = new int[4];
     final int asize = MemoryUsage.roundUp(MemoryUsage.ARRAY_SIZE
@@ -136,8 +80,6 @@ public class MemoryUsageTest extends TestCase {
     tst(ia, asize + isize);
   }
 
-
-  /** A unit test for JUnit  */
   public void testIllegalState() {
     try {
       mMem.getHardIterator();
@@ -220,18 +162,6 @@ public class MemoryUsageTest extends TestCase {
     assertEquals("mem stats\n" + mMem, 0, mMem.getSoftSize());
 
   }
-
-
-
-  /*
-   * Assert that the two memory systems report the same statistics
-   */
-  protected void checkEqual(final MemoryUsage mema, final MemoryUsage memb) {
-    assertEquals(mema.getSize(), memb.getSize());
-    assertEquals(mema.getHardSize(), memb.getHardSize());
-    assertEquals(mema.getSoftSize(), memb.getSoftSize());
-  }
-
 
   /** Used by JUnit (called before each test method)  */
   @Override
