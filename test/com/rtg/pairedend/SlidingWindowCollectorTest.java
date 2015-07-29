@@ -35,9 +35,7 @@ import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.machine.MachineOrientation;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  */

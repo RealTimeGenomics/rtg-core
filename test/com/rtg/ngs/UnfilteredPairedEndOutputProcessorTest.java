@@ -29,9 +29,6 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  */
 public class UnfilteredPairedEndOutputProcessorTest extends AbstractPairedEndOutputProcessorSyncTest {
