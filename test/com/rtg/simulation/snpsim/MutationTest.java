@@ -22,9 +22,6 @@ import junit.framework.TestCase;
  */
 public class MutationTest extends TestCase {
 
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(MutationTest.class);
-  }
   private GenomePriorParams mPriors;
 
   @Override

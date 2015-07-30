@@ -25,8 +25,6 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.TestSuite;
-
 /**
  * Tests corresponding class.
  */
@@ -201,7 +199,4 @@ public class SamValidatorCliTest extends AbstractCliTest {
     assertEquals(emps.toString(), 0, emps.toString().length());
   }
 
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(SamValidatorCliTest.class));
-  }
 }

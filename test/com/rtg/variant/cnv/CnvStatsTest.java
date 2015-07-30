@@ -66,13 +66,6 @@ public class CnvStatsTest extends TestCase {
     return ok;
   }
 
-  /**
-   * @param args command line arguments
-   */
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(CnvStatsTest.class);
-  }
-
   static final String HEADER = ""
     + "#Version" + StringUtils.LS
     + "#Seq" + TB + "position" + TB + "error" + TB + "bp-cn" + TB + "cn" + StringUtils.LS;

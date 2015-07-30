@@ -15,7 +15,6 @@ package com.rtg.index.hash.ngs;
 import com.rtg.util.TestUtils;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  */
@@ -35,10 +34,5 @@ public class ReadEncoderTest extends TestCase {
     assertEquals(0, ReadEncoder.SINGLE_END.encode(0));
     assertEquals(3, ReadEncoder.SINGLE_END.encode(3));
   }
-
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(ReadEncoderTest.class));
-  }
-
 }
 

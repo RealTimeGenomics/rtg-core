@@ -27,9 +27,6 @@ import junit.framework.TestCase;
  */
 public class GenomeMutatorPriorsTest extends TestCase {
 
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(GenomeMutatorPriorsTest.class);
-  }
   private GenomePriorParams mPriors;
   private File mDir;
 

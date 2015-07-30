@@ -15,7 +15,6 @@ package com.rtg.index.hash.ngs;
 import com.rtg.util.TestUtils;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  */
@@ -39,10 +38,5 @@ public class ReadDecoderTest extends TestCase {
     assertTrue(ReadDecoder.SINGLE_END.isFirst(0));
     assertTrue(ReadDecoder.SINGLE_END.isFirst(7));
   }
-
-  public static void main(final String[] args) {
-    junit.textui.TestRunner.run(new TestSuite(ReadDecoderTest.class));
-  }
-
 }
 
