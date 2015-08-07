@@ -34,6 +34,7 @@ import com.rtg.index.similarity.IndexSimilarity;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
 import com.rtg.launcher.BuildParams;
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.MockReaderParams;
@@ -163,13 +164,6 @@ public class SimilarityCliTest extends AbstractCliTest {
   }
 
   @Override
-  public void setUp() throws IOException {
-    super.setUp();
-    //comment this out if you want diagnostics from the test
-    Diagnostic.setLogStream();
-  }
-
-  @Override
   public final void testApplicationName() {
     assertEquals(APP_NAME, new SimilarityCli().applicationName() + " " + new SimilarityCli().moduleName());
   }
@@ -289,6 +283,7 @@ public class SimilarityCliTest extends AbstractCliTest {
                 "-s", stepSize + ""
             };
             final String[] args = elideNulls(args0);
+            GlobalFlags.resetAccessedStatus();
             final int ret = new SimilarityCli().mainInit(args, out, errs);
             assertEquals(0, ret);
 
@@ -660,6 +655,7 @@ public class SimilarityCliTest extends AbstractCliTest {
         final PrintStream err = new PrintStream(ba);
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
         checkNoLogs();
+        GlobalFlags.resetAccessedStatus();
         new SimilarityCli().mainInit(new String[]
             {"-i", subjectsDir.getPath(), "-o", outputDir.getPath()},
             bout, err

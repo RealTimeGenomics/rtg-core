@@ -479,6 +479,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
     } catch (final IOException e) {
       throw new SlimException(e, ErrorType.WRITING_ERROR, outDir);
     }
+    outTimer.stopLog();
 
     if (pcaOut != null) {
       // Do principle component analysis
@@ -503,7 +504,6 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       } catch (final IOException e) {
         throw new SlimException(e, ErrorType.WRITING_ERROR, outDir);
       }
-      outTimer.stopLog();
     }
   }
 
