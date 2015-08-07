@@ -43,6 +43,7 @@ import com.rtg.index.similarity.NeighborJoining;
 import com.rtg.index.similarity.SimilarityMatrix;
 import com.rtg.launcher.BuildParams;
 import com.rtg.launcher.CommonFlags;
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.NoStatistics;
@@ -342,11 +343,12 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       //System.err.println(index);
       Diagnostic.userLog("Memory performance " + StringUtils.LS + index.infoString());
 
-      try (final Writer writeSimi = new OutputStreamWriter(params.outStream(SIMILARITY_SUFFIX))) {
-        try (final Writer writePca = new OutputStreamWriter(params.outStream(PCA_SUFFIX))) {
-          try (final Writer writeTree = new OutputStreamWriter(params.outStream(TREE_SUFFIX))) {
-            try (final Writer writeXml = new OutputStreamWriter(params.outStream(XML_SUFFIX))) {
+      final boolean doPca = GlobalFlags.getBooleanValue(GlobalFlags.SIMILARITY_PCA_FLAG);
 
+      try (final Writer writeSimi = new OutputStreamWriter(params.outStream(SIMILARITY_SUFFIX))) {
+        try (final Writer writeTree = new OutputStreamWriter(params.outStream(TREE_SUFFIX))) {
+          try (final Writer writeXml = new OutputStreamWriter(params.outStream(XML_SUFFIX))) {
+            try (final Writer writePca = doPca ? new OutputStreamWriter(params.outStream(PCA_SUFFIX)) : null) {
               Diagnostic.progress("Indexing finished. Starting similarity.");
               similarity(index, numSequences, names, params, params.directory().toString(), writeSimi, writePca, writeTree, writeXml);
               Diagnostic.progress("Similarity finished.");
@@ -458,26 +460,6 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
     tree = neigh.neighborJoin(names, matrix);
     neighTimer.stopLog();
 
-    // Do principle component analysis
-    final OneShotTimer svdTimer = new OneShotTimer("Ph_SVD_out");
-    final SimilaritySvd simMatrix = new SimilaritySvd(matrix.length());
-    for (int j = 0; j < matrix.length(); j++) {
-      for (int i = 0; i < matrix.length(); i++) {
-        simMatrix.put(i, j, (long) matrix.get(i, j)); // matrix value are integers?
-      }
-      simMatrix.putName(j, names.get(j));
-    }
-    simMatrix.decompose(3);  // want 3 dimensions, mainly for plotting
-    svdTimer.stopLog();
-
-    final OneShotTimer outTimer = new OneShotTimer("Ph_similarity_out");
-    try {
-      simiOut.append("#rtg ").append(CommandLine.getCommandLine());
-      simiOut.append(StringUtils.LS);
-      simiOut.append(matrix.toString(names));
-    } catch (final IOException e) {
-      throw new SlimException(e, ErrorType.WRITING_ERROR, outDir);
-    }
     try {
       if (treeOut != null) {
         tree.newick(treeOut);
@@ -488,17 +470,41 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
     } catch (final IOException e) {
       throw new SlimException(e, ErrorType.WRITING_ERROR, outDir);
     }
+
+    final OneShotTimer outTimer = new OneShotTimer("Ph_similarity_out");
     try {
-      for (int j = 0; j < simMatrix.getSvdRowsLength(); j++) {
-        for (int i = 0; i < simMatrix.getSvdDimension(); i++) {
-          pcaOut.append(Utils.realFormat(simMatrix.getSvdValue(j, i), 4)).append(StringUtils.TAB);
-        }
-        pcaOut.append(simMatrix.getSvdName(j)).append(StringUtils.LS);
-      }
+      simiOut.append("#rtg ").append(CommandLine.getCommandLine());
+      simiOut.append(StringUtils.LS);
+      simiOut.append(matrix.toString(names));
     } catch (final IOException e) {
       throw new SlimException(e, ErrorType.WRITING_ERROR, outDir);
     }
-    outTimer.stopLog();
+
+    if (pcaOut != null) {
+      // Do principle component analysis
+      final OneShotTimer svdTimer = new OneShotTimer("Ph_SVD_out");
+      final SimilaritySvd simMatrix = new SimilaritySvd(matrix.length());
+      for (int j = 0; j < matrix.length(); j++) {
+        for (int i = 0; i < matrix.length(); i++) {
+          simMatrix.put(i, j, (long) matrix.get(i, j)); // matrix value are integers?
+        }
+        simMatrix.putName(j, names.get(j));
+      }
+      simMatrix.decompose(3);  // want 3 dimensions, mainly for plotting
+      svdTimer.stopLog();
+
+      try {
+        for (int j = 0; j < simMatrix.getSvdRowsLength(); j++) {
+          for (int i = 0; i < simMatrix.getSvdDimension(); i++) {
+            pcaOut.append(Utils.realFormat(simMatrix.getSvdValue(j, i), 4)).append(StringUtils.TAB);
+          }
+          pcaOut.append(simMatrix.getSvdName(j)).append(StringUtils.LS);
+        }
+      } catch (final IOException e) {
+        throw new SlimException(e, ErrorType.WRITING_ERROR, outDir);
+      }
+      outTimer.stopLog();
+    }
   }
 
   /**
