@@ -148,7 +148,7 @@ public final class Trimming {
     final String[] cats = catSet.toArray(new String[catSet.size()]);
 
     final int rightClip = StringUtils.longestSuffix(cats);
-    final int leftClip = StringUtils.longestPrefix(cats, rightClip);
+    final int leftClip = StringUtils.longestPrefix(rightClip, cats);
     //final int leftClip = StringUtils.longestPrefix(cats);
     //final int rightClip = StringUtils.longestSuffix(cats, leftClip);
 
