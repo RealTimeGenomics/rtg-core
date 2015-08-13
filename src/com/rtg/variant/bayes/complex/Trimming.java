@@ -54,14 +54,10 @@ public final class Trimming {
     return alleles;
   }
 
-  private static String clip(final String s, final int leftClip, final int rightClip) {
-    return leftClip + rightClip >= s.length() ? "" : s.substring(leftClip, s.length() - rightClip);
-  }
-
   private static VariantLocus createLocus(final Variant original, final int leftClip, final int rightClip) {
     final VariantLocus locus = original.getLocus();
     final char newPrevNt = leftClip == 0 ? locus.getPreviousRefNt() : locus.getRefNts().charAt(leftClip - 1);
-    final String newReference = clip(locus.getRefNts(), leftClip, rightClip);
+    final String newReference = StringUtils.clip(locus.getRefNts(), leftClip, rightClip);
     final int newStart = locus.getStart() + leftClip;
     final int newEnd = locus.getEnd() - rightClip;
     return new VariantLocus(locus.getSequenceName(), newStart, newEnd, newReference, newPrevNt);
@@ -74,12 +70,12 @@ public final class Trimming {
     final int colon = oldName.indexOf(VariantUtils.COLON);
     if (colon >= 0) {
       assert colon >= 0 && oldName.indexOf(VariantUtils.COLON, colon + 1) == -1;
-      final String allele1 = clip(oldName.substring(0, colon), leftClip, rightClip);
-      final String allele2 = clip(oldName.substring(colon + 1), leftClip, rightClip);
+      final String allele1 = StringUtils.clip(oldName.substring(0, colon), leftClip, rightClip);
+      final String allele2 = StringUtils.clip(oldName.substring(colon + 1), leftClip, rightClip);
       return allele1 + VariantUtils.COLON + allele2;
     } else {
       assert oldName.indexOf(VariantUtils.COLON) == -1;
-      return clip(oldName, leftClip, rightClip);
+      return StringUtils.clip(oldName, leftClip, rightClip);
     }
   }
 
@@ -111,7 +107,7 @@ public final class Trimming {
       for (Map.Entry<Set<String>, Double> entry : originalLikelihoods.entrySet()) {
         final Set<String> newSet = new HashSet<>();
         for (String s : entry.getKey()) {
-          newSet.add(clip(s, leftClip, rightClip));
+          newSet.add(StringUtils.clip(s, leftClip, rightClip));
         }
         final Double v = newMap.get(newSet);
         final double existing = v == null ? LogApproximatePossibility.SINGLETON.zero() : v;
@@ -176,7 +172,7 @@ public final class Trimming {
       final String[] alleles = new String[oldDescription.size()];
       final int[] alleleMap = new int[oldDescription.size()];
       for (int i = 0; i < oldDescription.size(); i++) {
-        final String clipped = clip(oldDescription.name(i), leftClip, rightClip);
+        final String clipped = StringUtils.clip(oldDescription.name(i), leftClip, rightClip);
         alleles[i] = clipped;
         alleleMap[i] = i;
       }
@@ -214,7 +210,7 @@ public final class Trimming {
       final LinkedHashMap<String, Integer> alleles = new LinkedHashMap<>();
       final int[] alleleMap = new int[oldDescription.size()];
       for (int i = 0; i < oldDescription.size(); i++) {
-        final String clipped = clip(oldDescription.name(i), start, end);
+        final String clipped = StringUtils.clip(oldDescription.name(i), start, end);
         Integer newPos = alleles.get(clipped);
         if (newPos == null) {
           newPos = alleles.size();
