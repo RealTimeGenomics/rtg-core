@@ -475,7 +475,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
     try {
       simiOut.append("#rtg ").append(CommandLine.getCommandLine());
       simiOut.append(StringUtils.LS);
-      simiOut.append(matrix.toString(names));
+      matrix.write(simiOut, names);
     } catch (final IOException e) {
       throw new SlimException(e, ErrorType.WRITING_ERROR, outDir);
     }

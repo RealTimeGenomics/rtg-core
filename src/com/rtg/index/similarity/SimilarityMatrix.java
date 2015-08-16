@@ -11,6 +11,7 @@
  */
 package com.rtg.index.similarity;
 
+import java.io.IOException;
 import java.util.List;
 
 import com.rtg.util.StringUtils;
@@ -128,28 +129,40 @@ public class SimilarityMatrix extends IntegralAbstract {
   }
 
   /**
+   * Write the contents of this matrix to the given appendable.
+   * @param names the names of the sequences.
+   */
+  public void write(final Appendable out, List<String> names) throws IOException {
+    if (names.size() != mLength) {
+      throw new SlimException(ErrorType.INFO_ERROR, "Size of matrix not equal to number of labels provided.");
+    }
+    final String tab = "\t";
+    for (int i = 0; i < mLength; i++) {
+      out.append(tab);
+      out.append(names.get(i));
+    }
+    out.append(StringUtils.LS);
+    for (int i = 0; i < mLength; i++) {
+      out.append(names.get(i));
+      for (int j = 0; j < mLength; j++) {
+        out.append(tab);
+        out.append(Utils.realFormat(get(i, j), 0));
+      }
+      out.append(StringUtils.LS);
+    }
+  }
+
+  /**
    * Function to turn the matrix into a printable string with appropriate name labels.
    * @param names the names of the sequences.
    * @return the printable matrix.
    */
-  public String toString(List<String> names) {
-    if (names.size() != mLength) {
-      throw new SlimException(ErrorType.INFO_ERROR, "Size of matrix not equal to number of labels provided.");
-    }
+  public String toString(final List<String> names) {
     final StringBuilder sb = new StringBuilder();
-    final String tab = "\t";
-    for (int i = 0; i < mLength; i++) {
-      sb.append(tab);
-      sb.append(names.get(i));
-    }
-    sb.append(StringUtils.LS);
-    for (int i = 0; i < mLength; i++) {
-      sb.append(names.get(i));
-      for (int j = 0; j < mLength; j++) {
-        sb.append(tab);
-        sb.append(Utils.realFormat(get(i, j), 0));
-      }
-      sb.append(StringUtils.LS);
+    try {
+      write(sb, names);
+    } catch (final IOException e) {
+      throw new RuntimeException(e);
     }
     return sb.toString();
   }
