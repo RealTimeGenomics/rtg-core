@@ -66,7 +66,7 @@ public class SvToolTaskTest extends TestCase {
             inn + FS + OUT_SAM,
             "-s", "1", "-f", "1", "--simple-signals"
         };
-        final String[] args = TestUtils.append(svArgs, args0);
+        final String[] args = Utils.append(svArgs, args0);
         final ByteArrayOutputStream berr = new ByteArrayOutputStream();
         final String errStr;
         final int intMain;

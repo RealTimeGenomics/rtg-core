@@ -23,6 +23,7 @@ import com.rtg.launcher.GlobalFlags;
 import com.rtg.mode.DnaUtils;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.TestUtils;
+import com.rtg.util.Utils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
@@ -376,12 +377,12 @@ public class MapXFunctionalTest extends TestCase {
       if (zipped) {
         final String[] args = {"-t", template.getPath(), "-i", reads.getPath(), "-o", output.getPath()};
         final MemoryPrintStream pipes = new MemoryPrintStream();
-        final int code = mapXCli.mainInit(TestUtils.append(args, params), pipes.outputStream(), pipes.printStream());
+        final int code = mapXCli.mainInit(Utils.append(args, params), pipes.outputStream(), pipes.printStream());
         assertEquals(pipes.toString(), 0, code);
         results = FileHelper.gzFileToString(new File(output, "alignments.tsv.gz"));
       } else {
         final String[] args = {"-Z", "-t", template.getPath(), "-i", reads.getPath(), "-o", output.getPath()};
-        assertEquals(0, mapXCli.mainInit(TestUtils.append(args, params), TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream()));
+        assertEquals(0, mapXCli.mainInit(Utils.append(args, params), TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream()));
         results = FileUtils.fileToString(new File(output, "alignments.tsv"));
       }
 
@@ -507,7 +508,7 @@ public class MapXFunctionalTest extends TestCase {
       final ByteArrayOutputStream errBaos = new ByteArrayOutputStream();
       final int code;
       try (PrintStream errStr = new PrintStream(errBaos)) {
-        code = foo.mainInit(TestUtils.append(args, params), TestUtils.getNullOutputStream(), errStr);
+        code = foo.mainInit(Utils.append(args, params), TestUtils.getNullOutputStream(), errStr);
       }
       assertEquals(errBaos.toString(), 0, code);
       //final String results = FileUtils.fileToString(new File(output, "alignments.tsv"));

@@ -267,7 +267,7 @@ public class VariantNanoTest extends TestCase {
       };
       final String[] args1;
       if (args0 != null) {
-        args1 = TestUtils.append(alignArgs, args0);
+        args1 = Utils.append(alignArgs, args0);
       } else {
         args1 = alignArgs;
       }
@@ -275,7 +275,7 @@ public class VariantNanoTest extends TestCase {
       argsv = args1;
       final String[] args;
       if (!Arrays.asList(argsv).contains("-m")) {
-        args = TestUtils.append(argsv, new String[] {"-m", "default"});
+        args = Utils.append(argsv, "-m", "default");
       } else {
         args = argsv;
       }
@@ -345,7 +345,7 @@ public class VariantNanoTest extends TestCase {
       final String outn = output.getPath();
       ReaderTestUtils.getDNADir(refSeq, templ);
       final String[] alignArgs = {"snp", "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-m", "default", "--keep-duplicates", "-Z", sam1.getPath(), sam2.getPath(), sam3.getPath(), };
-      final String[] args = TestUtils.append(alignArgs, args0);
+      final String[] args = Utils.append(alignArgs, args0);
       final ByteArrayOutputStream out = new ByteArrayOutputStream();
       final ByteArrayOutputStream berr = new ByteArrayOutputStream();
       //System.err.println(outn);
@@ -382,7 +382,7 @@ public class VariantNanoTest extends TestCase {
       final File templ = ReaderTestUtils.getDNADir(REF_SEQS);
       try {
         final String[] alignArgs = {"snp", "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-m", "default", "-Z", "--keep-duplicates", inn + FS + OUT_SAM + FileUtils.GZ_SUFFIX, };
-        final String[] args = TestUtils.append(alignArgs, args0);
+        final String[] args = Utils.append(alignArgs, args0);
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final ByteArrayOutputStream berr = new ByteArrayOutputStream();
         final PrintStream err = new PrintStream(berr);
@@ -1174,7 +1174,7 @@ public class VariantNanoTest extends TestCase {
       final File templ = ReaderTestUtils.getDNADir(refSeq);
       try {
         final String[] alignArgs = {"snp", "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-Z", inn.getPath(), };
-        final String[] args = TestUtils.append(alignArgs, args0);
+        final String[] args = Utils.append(alignArgs, args0);
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final ByteArrayOutputStream berr = new ByteArrayOutputStream();
         final String errStr;

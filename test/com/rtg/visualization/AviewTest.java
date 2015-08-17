@@ -25,6 +25,7 @@ import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.sam.Sam2Bam;
 import com.rtg.util.TestUtils;
+import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
@@ -80,7 +81,7 @@ public class AviewTest extends AbstractCliTest {
       assertEquals("aview", aview.moduleName());
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
       final MemoryPrintStream err = new MemoryPrintStream();
-      final int code2 = aview.mainInit(TestUtils.append(args, extraargs), bos, err.printStream());
+      final int code2 = aview.mainInit(Utils.append(args, extraargs), bos, err.printStream());
       GlobalFlags.resetAccessedStatus();
       assertEquals(err.toString(), 0, code2);
       assertEquals(expectErr, err.toString());
