@@ -31,6 +31,7 @@ import com.rtg.util.IORunnable;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
+import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.io.FileUtils;
@@ -68,7 +69,7 @@ public abstract class AbstractCallerCliTest extends AbstractCliTest {
         FileHelper.stringToGzFile(SharedSamConstants.SAM9, map);
         assertTrue(new File(map.getPath() + TabixIndexer.TABIX_EXTENSION).createNewFile());
         final String sub = subjectsDir.getPath();
-        final String[] args = TestUtils.append(args0, new String[] {"-t", sub, "-o", output.getPath(), map.getPath(), "-m", "default"});
+        final String[] args = Utils.append(args0, "-t", sub, "-o", output.getPath(), map.getPath(), "-m", "default");
         final AbstractMultisampleCli v = (AbstractMultisampleCli) mCli;
         checkHandleFlags(args);
         try {
@@ -99,7 +100,7 @@ public abstract class AbstractCallerCliTest extends AbstractCliTest {
         FileHelper.stringToGzFile(SharedSamConstants.SAM9, map);
         assertTrue(new File(map.getPath() + TabixIndexer.TABIX_EXTENSION).createNewFile());
         final String sub = subjectsDir.getPath();
-        final String[] args = TestUtils.append(args0, new String[] {"-t", sub, "-o", new File(output, "snpscalls").getPath(), map.getPath(), "-m", "default"});
+        final String[] args = Utils.append(args0, "-t", sub, "-o", new File(output, "snpscalls").getPath(), map.getPath(), "-m", "default");
         final String res = checkHandleFlagsErr(args);
         TestUtils.containsAll(res, exp);
       } finally {
@@ -199,7 +200,7 @@ public abstract class AbstractCallerCliTest extends AbstractCliTest {
     final File subjectsDir = FileUtils.createTempDir("test", "variant");
     ReaderTestUtils.getReaderDNA(">t0\nacgt", subjectsDir, null).close();
     final String sub = subjectsDir.getPath();
-    final String[] args = TestUtils.append(args0, new String[] {"-t", sub});
+    final String[] args = Utils.append(args0, "-t", sub);
     checkHandleFlagsOut(args);
     final VariantParams vp = ((AbstractMultisampleCli) mCli).makeParams();
     vp.integrity();
@@ -291,7 +292,7 @@ public abstract class AbstractCallerCliTest extends AbstractCliTest {
       BgzipFileHelper.streamToBgzipFile(new ByteArrayInputStream(SAM.getBytes()), map);
       new TabixIndexer(map, new File(inFile, "map.gz.tbi")).saveSamIndex();
 
-      final String[] fullArgs = TestUtils.append(new String[] {"-o", outFile.getPath(), map.getPath(), "-m", "default"}, args);
+      final String[] fullArgs = com.rtg.util.Utils.append(new String[]{"-o", outFile.getPath(), map.getPath(), "-m", "default"}, args);
       final VariantParams vp = getParams(fullArgs);
       try {
         final OutputStream out = new ByteArrayOutputStream();

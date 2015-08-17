@@ -23,6 +23,7 @@ import com.rtg.launcher.GlobalFlags;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.TestUtils;
+import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.Talkback;
 import com.rtg.util.io.FileUtils;
@@ -193,7 +194,7 @@ public class SomaticNanoTest extends TestCase {
 
       final String[] args;
       if (extraArgs != null) {
-        args = TestUtils.append(args1, extraArgs);
+        args = Utils.append(args1, extraArgs);
       } else {
         args = args1;
       }

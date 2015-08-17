@@ -46,6 +46,7 @@ import com.rtg.util.Environment;
 import com.rtg.util.Resources;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
+import com.rtg.util.Utils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
@@ -239,7 +240,7 @@ public class CoverageTaskTest extends TestCase {
               "--Xdisable-html-report"
       };
       CommandLine.setCommandArgs(coverageArgs);
-      final String[] args = TestUtils.append(coverageArgs, args0);
+      final String[] args = Utils.append(coverageArgs, args0);
       final ByteArrayOutputStream out = new ByteArrayOutputStream();
       final ByteArrayOutputStream berr = new ByteArrayOutputStream();
       final String errStr;
@@ -338,7 +339,7 @@ public class CoverageTaskTest extends TestCase {
               sam3.getPath(),
               "--Xdisable-html-report"
       };
-      final String[] args = TestUtils.append(coverageArgs, args0);
+      final String[] args = Utils.append(coverageArgs, args0);
       final ByteArrayOutputStream out = new ByteArrayOutputStream();
       final MemoryPrintStream ms = new MemoryPrintStream();
       //System.err.println(outn);

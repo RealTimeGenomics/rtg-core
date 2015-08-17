@@ -18,8 +18,8 @@ import java.util.Arrays;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
-import com.rtg.util.Pair;
 import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
@@ -62,7 +62,7 @@ public class TaxFilterCliTest extends AbstractCliTest {
     return fullSdf;
   }
 
-  public Pair<String, String> checkResults(TestDirectory dir, String id, boolean sdf, String... extraargs) throws IOException {
+  public MainResult checkResults(TestDirectory dir, String id, boolean sdf, String... extraargs) throws IOException {
     final File output = new File(dir, id + (sdf ? "_sdf" : "_tsv") + "_output");
     final File taxInput = sdf ? makeTaxonomySdf(dir) : makeTaxonomy(dir);
     String[] args = {
@@ -71,14 +71,14 @@ public class TaxFilterCliTest extends AbstractCliTest {
     args = Arrays.copyOf(args, args.length + extraargs.length);
     System.arraycopy(extraargs, 0, args, args.length - extraargs.length, extraargs.length);
 
-    final Pair<String, String> out = checkMainInit(args);
+    final MainResult res = checkMainInit(args);
 
     mNano.check("taxonomy_" + id + ".tsv", FileUtils.fileToString(sdf ? new File(output, TaxonomyUtils.TAXONOMY_FILE) : output), false);
     if (sdf) {
       mNano.check("taxonomy_" + id + "_lookup.tsv", FileUtils.fileToString(new File(output, TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE)), false);
     }
 
-    return out;
+    return res;
   }
 
   public void testSubset() throws Exception {
@@ -126,9 +126,9 @@ public class TaxFilterCliTest extends AbstractCliTest {
       final File rename = new File(dir, "remove.txt");
       FileHelper.resourceToFile("com/rtg/taxonomy/resources/no_rank_rename.txt", rename);
 
-      final Pair<String, String> out = checkResults(dir, "norank_rename", false, "--rename-norank", rename.getPath());
+      final MainResult res = checkResults(dir, "norank_rename", false, "--rename-norank", rename.getPath());
 
-      TestUtils.containsAll(out.getB(),
+      TestUtils.containsAll(res.err(),
         "Node not found in taxonomy: 999999",
         "Node 1118 rank is not \"no rank\": order");
     }

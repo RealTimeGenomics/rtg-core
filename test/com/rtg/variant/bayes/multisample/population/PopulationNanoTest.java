@@ -27,6 +27,7 @@ import com.rtg.util.InvalidParamsException;
 import com.rtg.util.PropertiesUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
+import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.Talkback;
 import com.rtg.util.io.FileUtils;
@@ -169,7 +170,7 @@ public class PopulationNanoTest extends TestCase {
 
       final String[] args;
       if (extraArgs != null) {
-        args = TestUtils.append(baseArgs, extraArgs);
+        args = Utils.append(baseArgs, extraArgs);
       } else {
         args = baseArgs;
       }
