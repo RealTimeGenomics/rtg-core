@@ -130,7 +130,9 @@ public class SimilarityMatrix extends IntegralAbstract {
 
   /**
    * Write the contents of this matrix to the given appendable.
+   * @param out place to write to.
    * @param names the names of the sequences.
+   * @throws IOException if an I/O error occurs.
    */
   public void write(final Appendable out, List<String> names) throws IOException {
     if (names.size() != mLength) {
