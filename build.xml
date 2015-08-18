@@ -109,7 +109,7 @@
   <!-- Override or extra targets -->
 
   <target name="rtg-core.jar" depends="compile-src,set-rtg-build-version,set-rtg-build-product" description="Core jar.">
-    <rtg-jar main="com.rtg.Slim" file="${build.dir}/rtg-core.jar" refid="jar-src"/>
+    <rtg-jar main="${main.class}" file="${build.dir}/rtg-core.jar" refid="jar-src"/>
   </target>
 
 
