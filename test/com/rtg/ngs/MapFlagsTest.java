@@ -263,10 +263,10 @@ public class MapFlagsTest extends TestCase {
     assertNotNull(flags.getFlag(CommonFlags.THREADS_FLAG));
     assertNotNull(flags.getFlag(CommonFlags.NO_GZIP));
 
-    TestUtils.containsAll(flags.getUsageString(500),
+    TestUtils.containsAll(flags.getUsageString(),
       "-s", "step size (Default is word size)",
       RESOURCE.getString("REPEAT_FREQUENCY_DESC"),
-      "-T", "number of threads. Defaults to the number of available cores",
+      "-T", "number of threads",
       "-Z", "do not gzip the output"
     );
   }

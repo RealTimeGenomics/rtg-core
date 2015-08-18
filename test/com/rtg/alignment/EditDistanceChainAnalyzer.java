@@ -487,7 +487,6 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
     final CFlags flags = new CFlags();
     initFlags(flags);
     if (!flags.setFlags(args)) {
-      flags.printExtendedUsage(true);
       System.exit(1);
     }
     final boolean allStats = flags.isSet(ALL_STATS);

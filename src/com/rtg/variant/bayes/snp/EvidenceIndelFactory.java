@@ -21,7 +21,7 @@ import com.rtg.variant.bayes.Model;
 public final class EvidenceIndelFactory implements CachedEvidenceFactory {
 
   //TODO cache these if important
-  private static final boolean COMPLEX_REGION_INDEL_EXTENSION = GlobalFlags.getBooleanValue(GlobalFlags.COMPLEX_REGION_INDEL_EXTENSION);
+  private static final boolean COMPLEX_REGION_INDEL_EXTENSION = GlobalFlags.isSet(GlobalFlags.COMPLEX_REGION_INDEL_EXTENSION);
 
   /** Unique instance of factory. */
   public static final CachedEvidenceFactory SINGLETON = new EvidenceIndelFactory();
