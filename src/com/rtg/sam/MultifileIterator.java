@@ -71,12 +71,16 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
       for (final File file : context.files()) {
         totalFileLength += file.length();
         final RecordIterator<SAMRecord> adaptor;    // Initial source of (possibly region-restricted) SAMRecords
-        final boolean streamOk = context.referenceRanges() == null || context.referenceRanges().allAvailable();
-        if (file.isFile() && (!FALLBACK || streamOk || isIndexed(file))) {
-          adaptor = new SamClosedFileReader(file, context.referenceRanges(), context.header());
-        } else { // Fall back to SamFileAndRecord for non-file (i.e. pipes)
-          Diagnostic.userLog("Using fallback for non-file or non-indexed SAM source: " + file.toString());
-          adaptor = new SamFileReaderAdaptor(SamUtils.makeSamReader(FileUtils.createInputStream(file, true)), context.referenceRanges());
+        try {
+          final boolean streamOk = context.referenceRanges() == null || context.referenceRanges().allAvailable();
+          if (file.isFile() && (!FALLBACK || streamOk || isIndexed(file))) {
+            adaptor = new SamClosedFileReader(file, context.referenceRanges(), context.header());
+          } else { // Fall back to SamFileAndRecord for non-file (i.e. pipes)
+            Diagnostic.userLog("Using fallback for non-file or non-indexed SAM source: " + file.toString());
+            adaptor = new SamFileReaderAdaptor(SamUtils.makeSamReader(FileUtils.createInputStream(file, true)), context.referenceRanges());
+          }
+        } catch (IOException e) {
+          throw new IOException("Problem reading file " + file + ": " + e.getMessage(), e);
         }
         final SamFileAndRecord sfr = new SamFileAndRecord(file.getPath(), fileCount++, adaptor); // Adds invalid record skipping and input source tracking
         if (first == null) {
