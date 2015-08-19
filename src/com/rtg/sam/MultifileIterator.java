@@ -28,6 +28,8 @@ import com.rtg.util.io.FileUtils;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.util.RuntimeEOFException;
+import htsjdk.samtools.util.RuntimeIOException;
 
 /**
  */
@@ -79,8 +81,8 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
             Diagnostic.userLog("Using fallback for non-file or non-indexed SAM source: " + file.toString());
             adaptor = new SamFileReaderAdaptor(SamUtils.makeSamReader(FileUtils.createInputStream(file, true)), context.referenceRanges());
           }
-        } catch (IOException e) {
-          throw new IOException("Problem reading file " + file + ": " + e.getMessage(), e);
+        } catch (IOException | RuntimeIOException | RuntimeEOFException e) {
+          throw new IOException(file.toString() + ": " + e.getMessage(), e);
         }
         final SamFileAndRecord sfr = new SamFileAndRecord(file.getPath(), fileCount++, adaptor); // Adds invalid record skipping and input source tracking
         if (first == null) {
