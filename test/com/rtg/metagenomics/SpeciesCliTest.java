@@ -18,9 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 
-import com.rtg.Slim;
 import com.rtg.launcher.AbstractParamsCliTest;
-import com.rtg.launcher.GlobalFlags;
 import com.rtg.launcher.ParamsCli;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
@@ -41,14 +39,6 @@ import com.rtg.util.test.FileHelper;
 public class SpeciesCliTest extends AbstractParamsCliTest<SpeciesParams> {
 
   private static final String APP_NAME = "rtg species";
-
-  @Override
-  public void setUp() throws IOException {
-    super.setUp();
-    GlobalFlags.resetAccessedStatus();
-    //comment this out if you want diagnostics from the test
-    Diagnostic.setLogStream();
-  }
 
   @Override
   public final void testApplicationName() {
@@ -311,17 +301,9 @@ public class SpeciesCliTest extends AbstractParamsCliTest<SpeciesParams> {
       FileUtils.stringToFile("a1\ta n a\na2\ta n a\nb1\tb\nb2\tb", r);
       final File s = new File(dir, "s.sam");
       FileUtils.stringToFile(SharedSamConstants.SAM_UNSORTED, s);
-      final String[] args = {
-          "species", "-o", o.getPath(), "-t", t.getPath(), "-r", r.getPath(), s.getPath()
-      };
-      final MemoryPrintStream mps = new MemoryPrintStream();
-      try {
-        new Slim().intMain(args, mps.outputStream(), mps.printStream());
-      } finally {
-        mps.close();
-      }
-      //System.err.println(mps.toString());
-      assertTrue(mps.toString().contains("is not sorted in coordinate order."));
+
+      final String err = checkMainInitBadFlags("-o", o.getPath(), "-t", t.getPath(), "-r", r.getPath(), s.getPath());
+      assertTrue(err.contains("is not sorted in coordinate order."));
     } finally {
       assertTrue(FileHelper.deleteAll(dir));
     }

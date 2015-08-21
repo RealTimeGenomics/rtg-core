@@ -16,23 +16,19 @@ import static com.rtg.sam.SharedSamConstants.REF_SEQS;
 import static com.rtg.sam.SharedSamConstants.SAM_UNSORTED;
 import static com.rtg.util.StringUtils.FS;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 
-import com.rtg.Slim;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.Resources;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
-import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.SimpleArchive;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 import junit.framework.TestCase;
@@ -58,26 +54,11 @@ public class SvToolTaskTest extends TestCase {
       final String inn = input.getPath();
       final File templ = ReaderTestUtils.getDNADir(refSeq);
       try {
-        final String[] svArgs = {
-            "sv",
-            "-t", templ.getPath(),
-            "-o", outn,
-            "-r", readStatsFile.toString(),
-            inn + FS + OUT_SAM,
-            "-s", "1", "-f", "1", "--simple-signals"
-        };
-        final String[] args = Utils.append(svArgs, args0);
-        final ByteArrayOutputStream berr = new ByteArrayOutputStream();
-        final String errStr;
-        final int intMain;
-        try (PrintStream err = new PrintStream(berr); ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-          intMain = new Slim().intMain(args, out, err);
-        }
-        errStr = berr.toString();
+        final MainResult res = MainResult.run(new SvToolCli(), "-t", templ.getPath(), "-o", outn, "-r", readStatsFile.toString(), inn + FS + OUT_SAM, "-s", "1", "-f", "1", "--simple-signals");
         //System.err.println("err\n" + errStr);
-        assertEquals("Error" + errStr, errCode, intMain);
+        assertEquals("Error" + res.err(), errCode, res.rc());
         //System.err.println(errStr);
-        TestUtils.containsAll(errStr, errorMsgs);
+        TestUtils.containsAll(res.err(), errorMsgs);
         final String lout = FileUtils.fileToString(new File(outn, "sv.log"));
         if (logMsg != null && !logMsg.equals("")) {
           assertTrue(lout.contains(logMsg));
@@ -138,15 +119,8 @@ public class SvToolTaskTest extends TestCase {
     assertEquals("[21.280, -21.280, -42.995]", Utils.realFormat(n1, 3));
   }
 
-  @Override
-  public void setUp() {
-    Diagnostic.setLogStream();
-    GlobalFlags.resetAccessedStatus();
-  }
-
   public void testInteresting() throws Exception {
-    final File tempDir = FileUtils.createTempDir("testInteresting", "test");
-    try {
+    try (final TestDirectory tempDir = new TestDirectory("svtool")) {
       final File sam = FileHelper.resourceToFile("com/rtg/variant/sv/resources/smallsvMappings.sam.gz", new File(tempDir, "mappings.sam.gz"));
       FileHelper.resourceToFile("com/rtg/variant/sv/resources/smallsvMappings.sam.gz.tbi", new File(tempDir, "mappings.sam.gz.tbi"));
       final File rgstats = FileHelper.resourceToFile("com/rtg/variant/sv/resources/rgstats.txt", new File(tempDir, "rgstats.tsv"));
@@ -155,10 +129,7 @@ public class SvToolTaskTest extends TestCase {
       assertTrue(template.mkdir());
       SimpleArchive.unpackArchive(FileHelper.resourceToFile("com/rtg/variant/sv/resources/smallsvTemplate.dwa", new File(tempDir, "template.dwa")), template);
 
-      final MemoryPrintStream mps = new MemoryPrintStream();
-
-      final String[] args = {
-        "sv",
+      final MainResult res = MainResult.run(new SvToolCli(),
         "--Xheterozygous",
         "--simple-signals",
         "-r", rgstats.getPath(),
@@ -167,10 +138,8 @@ public class SvToolTaskTest extends TestCase {
         "-s", "10",
         "--region", "simulatedSequence1:47400-58600",
         "--fine-step", "1",
-        sam.getPath()
-      };
-      final int result = new Slim().intMain(args, mps.outputStream(), mps.printStream());
-      assertEquals(mps.toString(), 0, result);
+        sam.getPath());
+      assertEquals(res.err(), 0, res.rc());
 
       final String bayes = StringUtils.grep(FileHelper.gzFileToString(new File(output, "sv_bayesian.tsv.gz")), "^[^#]");
 
@@ -200,9 +169,6 @@ public class SvToolTaskTest extends TestCase {
       final File expSimpleFile = FileHelper.resourceToFile("com/rtg/variant/sv/resources/smallsvSimpleExp.txt.gz", new File(tempDir, "expSimple.txt.gz"));
       final String expSimple = StringUtils.grep(FileHelper.gzFileToString(expSimpleFile), "^[^#]");
       assertEquals(expSimple, simple);
-
-    } finally {
-      FileHelper.deleteAll(tempDir);
     }
 
   }

@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
+import com.rtg.launcher.GlobalFlags;
+import com.rtg.util.cli.CommandLine;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
@@ -56,6 +58,8 @@ public abstract class AbstractModelBuilderTest<T extends AbstractModelBuilder<?>
   }
 
   public void testConstructor() {
+    GlobalFlags.resetAccessedStatus();
+    CommandLine.clearCommandArgs();
     final String[] formatAttributes = {"GP", "DP", "RE", "AB", "DP"};
     final String[] infoAttributes = {"XRX", "RCE", "SP", "RCE"};
     final String[] derivedAttributes = {"IC", "EP"};

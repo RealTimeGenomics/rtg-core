@@ -17,6 +17,7 @@ import static com.rtg.util.StringUtils.LS;
 import java.io.File;
 import java.io.IOException;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.launcher.OutputParams;
 import com.rtg.metagenomics.MetagenomicsWrapperCli.Platform;
 import com.rtg.ngs.MapFlags;
@@ -25,6 +26,7 @@ import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.usage.UsageMetric;
 import com.rtg.util.TestUtils;
+import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.CliDiagnosticListener;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
@@ -45,6 +47,8 @@ public class MetagenomicsWrapperTaskTest extends TestCase {
   @Override
   public void setUp() {
     Diagnostic.setLogStream();
+    GlobalFlags.resetAccessedStatus();
+    CommandLine.clearCommandArgs();
     mOut = new MemoryPrintStream();
     mErr = new MemoryPrintStream();
     mListener = new CliDiagnosticListener(mErr.printStream(), mOut.printStream());

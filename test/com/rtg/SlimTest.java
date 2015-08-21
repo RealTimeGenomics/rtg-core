@@ -18,6 +18,7 @@ import java.io.PrintStream;
 import com.rtg.launcher.GlobalFlags;
 import com.rtg.util.Constants;
 import com.rtg.util.TestUtils;
+import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.Talkback;
 
@@ -31,6 +32,15 @@ public class SlimTest extends TestCase {
   public void setUp() {
     Diagnostic.setLogStream();
     GlobalFlags.resetAccessedStatus();
+    CommandLine.clearCommandArgs();
+  }
+
+  @Override
+  public void tearDown() {
+    Diagnostic.setLogStream();
+    GlobalFlags.resetAccessedStatus();
+    CommandLine.clearCommandArgs();
+    Talkback.setModuleName(null);
   }
 
   public void testMessage() {
@@ -318,11 +328,5 @@ public class SlimTest extends TestCase {
 
   public void testErrorMessage() {
     assertEquals("The " + ToolsCommand.FORMAT.getCommandName() + " command has not been enabled by your current license.\nPlease contact " + Constants.SUPPORT_EMAIL_ADDR + " to have this command licensed.", Slim.getErrorMessage(ToolsCommand.FORMAT));
-  }
-
-  @Override
-  public void tearDown() {
-    // clear the module name so later tests don't report SlimException to the Talkback system
-    Talkback.setModuleName(null);
   }
 }

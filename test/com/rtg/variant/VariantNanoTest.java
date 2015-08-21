@@ -47,7 +47,7 @@ import java.util.List;
 
 import com.rtg.Slim;
 import com.rtg.launcher.AbstractCli;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.sam.SamFilterOptions;
 import com.rtg.sam.SharedSamConstants;
@@ -56,20 +56,16 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.Talkback;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
 import com.rtg.variant.bayes.multisample.singleton.SingletonCli;
-
-import junit.framework.TestCase;
 
 /**
  */
-public class VariantNanoTest extends TestCase {
+public class VariantNanoTest extends AbstractNanoTest {
 
   private static final String REF_SEQS67 = ""
       + ">g1" + LS
@@ -78,28 +74,6 @@ public class VariantNanoTest extends TestCase {
       + ">gempty" + LS
       + LS
       ;
-
-  private NanoRegression mNano = null;
-
-  @Override
-  public void setUp() {
-    GlobalFlags.resetAccessedStatus();
-    Diagnostic.setLogStream();
-    mNano = new NanoRegression(this.getClass(), false);
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    Diagnostic.setLogStream();
-    // clear the module name so later tests don't report SlimException to the
-    // Talkback system
-    Talkback.setModuleName(null);
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
 
   public void test1() throws Exception {
     final String[] args0 = {"-a", "--Xno-complex-calls", "--snps-only"};

@@ -19,45 +19,21 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
-import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.Talkback;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
-
-import junit.framework.TestCase;
 
 /**
  */
-public class SomaticNanoTest extends TestCase {
+public class SomaticNanoTest extends AbstractNanoTest {
 
   private static final String RESOURCES_DIR = "com/rtg/variant/bayes/multisample/cancer/resources/";
-  private NanoRegression mNano = null;
-
-  @Override
-  public void setUp() {
-    GlobalFlags.resetAccessedStatus();
-    Diagnostic.setLogStream();
-    mNano = new NanoRegression(this.getClass(), false);
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    // clear the module name so later tests don't report SlimException to the Talkback system
-    Talkback.setModuleName(null);
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
 
   private static final String REF_TEST1 = ">simulatedSequence1" + LS
     + "GTGGAAGAGCCTCTCCTAGGATACCATGCGGCTAGGCTAGGCTCGCCCGGCGGTTCCAGGAGCTGGCGAGTGCC"

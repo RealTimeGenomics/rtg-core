@@ -31,14 +31,13 @@ import static com.rtg.sam.SharedSamConstants.SAM_M;
 import static com.rtg.util.StringUtils.LS;
 import static com.rtg.util.StringUtils.TAB;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
-import java.io.PrintStream;
 
-import com.rtg.Slim;
+import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.AbstractCliTest;
 import com.rtg.launcher.CommonFlags;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.IndexUtils;
 import com.rtg.tabix.TabixIndexer;
@@ -47,22 +46,19 @@ import com.rtg.util.Resources;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
-import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.TestCase;
-
 /**
  */
-public class CoverageTaskTest extends TestCase {
+public class CoverageTaskTest extends AbstractCliTest {
 
   @Override
-  public void setUp() {
-    GlobalFlags.resetAccessedStatus();
+  protected AbstractCli getCli() {
+    return new CoverageCli();
   }
 
   public void test1() throws Exception {
@@ -198,7 +194,7 @@ public class CoverageTaskTest extends TestCase {
     //final String gapExp = FileHelper.resourceToString("com/rtg/variant/coverage/resources/coveragetasktestGapStatsOut.txt"); //This should be reinstated when/if gap histogram is reimplemented
     final String levelsExp = FileHelper.resourceToString("com/rtg/variant/coverage/resources/coveragetasktestLevelsStatsOut.txt");
     //err//assertEquals(expected.replaceAll("\n|\r\n", LS), mStdOutBos.toString());
-    check(REF_SEQS_STATS, SAM_M2, args0, "Stats", new String[] {""}, "", 0, false, null, new String[]{expected.replaceAll("\n|\r\n", LS)}, false, null /*gapExp*/, levelsExp);
+    check(REF_SEQS_STATS, SAM_M2, args0, "Stats", new String[]{""}, "", 0, false, null, new String[]{expected.replaceAll("\n|\r\n", LS)}, false, null /*gapExp*/, levelsExp);
     //System.out.flush();
   }
 
@@ -217,7 +213,7 @@ public class CoverageTaskTest extends TestCase {
 
   private void checkBed(String refSeq, String sam, String[] args0, String expFile,
       String errorMsg, String logMsg, int errCode, boolean gzip, String[] erlines, String[] outString) throws Exception {
-    check(refSeq, sam, args0, expFile, new String[] {errorMsg}, logMsg, errCode, gzip, erlines, outString, false, null, null);
+    check(refSeq, sam, args0, expFile, new String[]{errorMsg}, logMsg, errCode, gzip, erlines, outString, false, null, null);
   }
 
   private void check(String refSeq, String sam, String[] args0, String expFile, String[] errorMsgs, String logMsg,
@@ -232,32 +228,20 @@ public class CoverageTaskTest extends TestCase {
       final String outn = output.getPath();
 
       final File templ = ReaderTestUtils.getDNADir(refSeq, new File(tmpDir, "refSeqDir"));
-      final String[] coverageArgs = {
-              "coverage",
-              "-t", templ.getPath(),
-              "-o", outn,
-              samFileGz.getPath(),
-              "--Xdisable-html-report"
+      final String[] coverageArgs = new String[]{
+        "-t", templ.getPath(),
+        "-o", outn,
+        samFileGz.getPath(),
+        "--Xdisable-html-report"
       };
-      CommandLine.setCommandArgs(coverageArgs);
-      final String[] args = Utils.append(coverageArgs, args0);
-      final ByteArrayOutputStream out = new ByteArrayOutputStream();
-      final ByteArrayOutputStream berr = new ByteArrayOutputStream();
-      final String errStr;
-      final int intMain;
-      try (PrintStream err = new PrintStream(berr)) {
-        intMain = new Slim().intMain(args, out, err);
-      } finally {
-        out.close();
-      }
-      errStr = berr.toString();
-      assertEquals(errStr, errCode, intMain);
+      final MainResult res = MainResult.run(getCli(), Utils.append(coverageArgs, args0));
+      assertEquals(res.err(), errCode, res.rc());
       //System.err.println("out\n" + out.toString() + "end out");
       if (outString != null) {
-        TestUtils.containsAll(out.toString(), outString);
+        TestUtils.containsAll(res.out(), outString);
       }
       //System.err.println(errStr);
-      TestUtils.containsAll(errStr, errorMsgs);
+      TestUtils.containsAll(res.err(), errorMsgs);
       final String lout = FileUtils.fileToString(new File(outn, "coverage.log"));
       if (logMsg != null && !logMsg.equals("")) {
         assertTrue(lout, lout.contains(logMsg));
@@ -272,13 +256,12 @@ public class CoverageTaskTest extends TestCase {
           assertTrue(lout.contains("CoverageIndex"));
         }
         //System.out.println(CoverageParams.NAME + ".txt" + " contains:\n" + result);
-        final String res = "com/rtg/variant/coverage/resources/coveragetasktest" + expFile + ".txt";
-        try (InputStream stream = Resources.getResourceAsStream(res)) {
-          assertNotNull("Cant find:" + res, stream);
+        final String resource = "com/rtg/variant/coverage/resources/coveragetasktest" + expFile + ".txt";
+        try (InputStream stream = Resources.getResourceAsStream(resource)) {
+          assertNotNull("Cant find:" + resource, stream);
           final String expected = FileUtils.streamToString(stream);
           assertEquals(expected.replaceAll("\n|\r\n", LS), result.replaceAll("#.*" + LS, ""));
           TestUtils.containsAll(result
-                  , "#CL\t" + CommandLine.getCommandLine()
                   , "#Version " + Environment.getVersion() + ", Coverage" + (tsv ? "" : " BED") + " output v1.0"
                   , "#RUN-ID\t"
           );
@@ -289,7 +272,7 @@ public class CoverageTaskTest extends TestCase {
         final File summaryFile = new File(outn, "summary.txt");
         assertTrue(summaryFile.exists());
         final String summary = FileHelper.fileToString(summaryFile);
-        TestUtils.containsAll(out.toString(), summary);
+        TestUtils.containsAll(res.out(), summary);
 
         if (gapStr != null) {
           final File gapsFile = new File(outn, "gaps.tsv");
@@ -322,45 +305,34 @@ public class CoverageTaskTest extends TestCase {
 
   private void checkMultifile(final String refSeq, final String[] args0, final int expNum, final String maps1, final String maps2, final String maps3) throws Exception {
     Diagnostic.setLogStream();
-    final String errorMsg = "";
     try (final TestDirectory tmpDir = new TestDirectory()) {
       final File output = new File(tmpDir, "output_dir");
       final File sam1 = saveSamTabixed(new File(tmpDir, OUT_SAM + "1"), maps1);
       final File sam2 = saveSamTabixed(new File(tmpDir, OUT_SAM + "2"), maps2);
       final File sam3 = saveSamTabixed(new File(tmpDir, OUT_SAM + "3"), maps3);
-      final String outn = output.getPath();
       final File templ = ReaderTestUtils.getDNADir(refSeq, new File(tmpDir, "refSeqDir"));
 
       final String[] coverageArgs = {
               "-t", templ.getPath(),
-              "-o", outn,
+              "-o", output.getPath(),
               sam1.getPath(),
               sam2.getPath(),
               sam3.getPath(),
               "--Xdisable-html-report"
       };
-      final String[] args = Utils.append(coverageArgs, args0);
-      final ByteArrayOutputStream out = new ByteArrayOutputStream();
-      final MemoryPrintStream ms = new MemoryPrintStream();
-      //System.err.println(outn);
-      final int code = new CoverageCli().mainInit(args, out, ms.printStream());
-      assertEquals(ms.toString(), 0, code);
-      //assertTrue(berr.toString().contains(errorMsg));
-      if (errorMsg.equals("")) {
-        final String result = FileHelper.gzFileToString(new File(output, CoverageParams.BED_NAME + ".gz"));
-        final String res = "com/rtg/variant/coverage/resources/coveragetasktest" + expNum + ".txt";
-        try (InputStream stream = Resources.getResourceAsStream(res)) {
-          assertNotNull("Cant find:" + res, stream);
-          //System.out.println("actual coverage file contains:\n" + result);
-          final String expected = FileUtils.streamToString(stream);
-          assertEquals(expected.replaceAll("\n|\r\n", LS), result.replaceAll("#.*" + LS, ""));
-          TestUtils.containsAll(result
-                  , CommandLine.getCommandLine() != null ? "#CL\t" + CommandLine.getCommandLine() : ""
-                  , "#Version " + Environment.getVersion() + ", Coverage BED output v1.0"
-                  , "#RUN-ID\t"
-          );
-        }
-
+      final MainResult res = checkMainInit(Utils.append(coverageArgs, args0));
+      assertEquals(res.err(), 0, res.rc());
+      final String result = FileHelper.gzFileToString(new File(output, CoverageParams.BED_NAME + ".gz"));
+      final String resource = "com/rtg/variant/coverage/resources/coveragetasktest" + expNum + ".txt";
+      try (InputStream stream = Resources.getResourceAsStream(resource)) {
+        assertNotNull("Cant find:" + resource, stream);
+        //System.out.println("actual coverage file contains:\n" + result);
+        final String expected = FileUtils.streamToString(stream);
+        assertEquals(expected.replaceAll("\n|\r\n", LS), result.replaceAll("#.*" + LS, ""));
+        TestUtils.containsAll(result
+          , "#Version " + Environment.getVersion() + ", Coverage BED output v1.0"
+          , "#RUN-ID\t"
+        );
       }
     }
   }
@@ -406,9 +378,7 @@ public class CoverageTaskTest extends TestCase {
       new TabixIndexer(samFile).saveSamIndex();
       final MemoryPrintStream mps = new MemoryPrintStream();
       final File output = new File(tmpDir, "output");
-      final int code = new CoverageCli().mainInit(new String[] {"-t", template.getPath(), "-o", output.getPath(), "-s", "0", samFile.getPath(), "--Xdisable-html-report"}, mps.outputStream(), mps.printStream());
-      assertEquals(mps.toString(), 0, code);
-
+      checkMainInitOk("-t", template.getPath(), "-o", output.getPath(), "-s", "0", samFile.getPath(), "--Xdisable-html-report");
       final String res = "com/rtg/variant/coverage/resources/coveragetasktest_clipping.bed";
       final String exp = FileHelper.resourceToString(res);
       final String was = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.BED_NAME + FileUtils.GZ_SUFFIX)), "^#");
@@ -423,8 +393,7 @@ public class CoverageTaskTest extends TestCase {
       new TabixIndexer(samFile).saveSamIndex();
       try (MemoryPrintStream mps = new MemoryPrintStream()) {
         final File output = new File(tmpDir, "output");
-        final int code = new CoverageCli().mainInit(new String[]{"-t", template.getPath(), "-o", output.getPath(), "--per-base", "-s", "0", samFile.getPath(), "--Xdisable-html-report"}, mps.outputStream(), mps.printStream());
-        assertEquals(mps.toString(), 0, code);
+        checkMainInitOk("-t", template.getPath(), "-o", output.getPath(), "--per-base", "-s", "0", samFile.getPath(), "--Xdisable-html-report");
         final String was = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.TSV_NAME + FileUtils.GZ_SUFFIX)), "^#");
         final String res = "com/rtg/variant/coverage/resources/coveragetasktest_clipping.tsv";
         final String exp = FileHelper.resourceToString(res);
@@ -446,51 +415,42 @@ public class CoverageTaskTest extends TestCase {
       final File samFile = new File(tmpDir, "sam.sam.gz");
       IndexUtils.ensureBlockCompressed(FileHelper.resourceToFile("com/rtg/variant/resources/coverage_mated.sam.gz", samFile));
       new TabixIndexer(samFile).saveSamIndex();
-
       final File bedRegionsFile = FileHelper.stringToGzFile(BED_REGIONS, new File(tmpDir, "bedRegions.bed.gz"));
-
       final File output = new File(tmpDir, "output");
-
-      try (MemoryPrintStream mps = new MemoryPrintStream()) {
-        final String tmpl = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANAAAAAAAAAANAAAAAAAAAAAAAAAAAAAAAAAAAA";
-
-        final File template = ReaderTestUtils.getDNADir(">simulatedSequence1\n" + tmpl + "\n>simulatedSequence2\n" + tmpl + "\n", new File(tmpDir, "template"));
-
-        final int code = new CoverageCli().mainInit(new String[]{"-o", output.getPath(), "-s", "0", samFile.getPath(),
-                                                                        "--bed-regions", bedRegionsFile.getPath(), "-t", template.getPath(), "--Xdisable-html-report"}, mps.outputStream(), mps.printStream());
-        assertEquals(mps.toString(), 0, code);
-        final String is = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.BED_NAME + FileUtils.GZ_SUFFIX)), "^#");
-
-        final String exp = "simulatedSequence1\t40\t47\tcoverage:simulatedSequence1:41-47\t2\n"
-                                   + "simulatedSequence1\t55\t56\tcoverage:blah\t1\n"
-                                   + "simulatedSequence1\t56\t60\tcoverage:blah\t2\n"
-                                   + "simulatedSequence1\t60\t62\tcoverage:blah,feh\t2\n"
-                                   + "simulatedSequence1\t62\t65\tcoverage:blah,feh\t3\n"
-                                   + "simulatedSequence1\t65\t66\tcoverage:feh\t3\n"
-                                   + "simulatedSequence1\t66\t70\tcoverage:feh\t2\n"
-                                   + "simulatedSequence1\t70\t71\tcoverage:feh\t1\n"
-                                   + "simulatedSequence1\t71\t72\tcoverage:feh\t2\n"
-                                   + "simulatedSequence1\t72\t73\tcoverage:feh\t1\n"
-                                   + "simulatedSequence1\t73\t75\tcoverage:feh\t2\n"
-                                   + "simulatedSequence2\t17\t20\tcoverage:simulatedSequence2:18-43\t2\n"
-                                   + "simulatedSequence2\t20\t28\tcoverage:simulatedSequence2:18-43\t1\n"
-                                   + "simulatedSequence2\t28\t36\tcoverage:simulatedSequence2:18-43\t2\n"
-                                   + "simulatedSequence2\t36\t38\tcoverage:simulatedSequence2:18-43\t3\n"
-                                   + "simulatedSequence2\t38\t43\tcoverage:simulatedSequence2:18-43\t2\n"
-                                   + "simulatedSequence2\t55\t57\tcoverage:feh\t4\n"
-                                   + "simulatedSequence2\t57\t59\tcoverage:feh\t3\n"
-                                   + "simulatedSequence2\t63\t64\tcoverage:simulatedSequence2:64-94\t3\n"
-                                   + "simulatedSequence2\t64\t65\tcoverage:simulatedSequence2:64-94\t2\n"
-                                   + "simulatedSequence2\t65\t73\tcoverage:simulatedSequence2:64-94\t0\n"
-                                   + "simulatedSequence2\t73\t76\tcoverage:simulatedSequence2:64-94\t1\n"
-                                   + "simulatedSequence2\t76\t85\tcoverage:simulatedSequence2:64-94\t2\n"
-                                   + "simulatedSequence2\t85\t86\tcoverage:simulatedSequence2:64-94\t3\n"
-                                   + "simulatedSequence2\t86\t87\tcoverage:simulatedSequence2:64-94\t2\n"
-                                   + "simulatedSequence2\t87\t90\tcoverage:simulatedSequence2:64-94\t3\n"
-                                   + "simulatedSequence2\t90\t93\tcoverage:simulatedSequence2:64-94\t4\n"
-                                   + "simulatedSequence2\t93\t94\tcoverage:simulatedSequence2:64-94\t3\n";
-        assertEquals(exp.replaceAll("\n|\r\n", LS), is);
-      }
+      final String tmpl = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANAAAAAAAAAANAAAAAAAAAAAAAAAAAAAAAAAAAA";
+      final File template = ReaderTestUtils.getDNADir(">simulatedSequence1\n" + tmpl + "\n>simulatedSequence2\n" + tmpl + "\n", new File(tmpDir, "template"));
+      checkMainInitWarn("-o", output.getPath(), "-s", "0", samFile.getPath(),
+        "--bed-regions", bedRegionsFile.getPath(), "-t", template.getPath(), "--Xdisable-html-report");
+      final String is = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.BED_NAME + FileUtils.GZ_SUFFIX)), "^#");
+      final String exp = "simulatedSequence1\t40\t47\tcoverage:simulatedSequence1:41-47\t2\n"
+        + "simulatedSequence1\t55\t56\tcoverage:blah\t1\n"
+        + "simulatedSequence1\t56\t60\tcoverage:blah\t2\n"
+        + "simulatedSequence1\t60\t62\tcoverage:blah,feh\t2\n"
+        + "simulatedSequence1\t62\t65\tcoverage:blah,feh\t3\n"
+        + "simulatedSequence1\t65\t66\tcoverage:feh\t3\n"
+        + "simulatedSequence1\t66\t70\tcoverage:feh\t2\n"
+        + "simulatedSequence1\t70\t71\tcoverage:feh\t1\n"
+        + "simulatedSequence1\t71\t72\tcoverage:feh\t2\n"
+        + "simulatedSequence1\t72\t73\tcoverage:feh\t1\n"
+        + "simulatedSequence1\t73\t75\tcoverage:feh\t2\n"
+        + "simulatedSequence2\t17\t20\tcoverage:simulatedSequence2:18-43\t2\n"
+        + "simulatedSequence2\t20\t28\tcoverage:simulatedSequence2:18-43\t1\n"
+        + "simulatedSequence2\t28\t36\tcoverage:simulatedSequence2:18-43\t2\n"
+        + "simulatedSequence2\t36\t38\tcoverage:simulatedSequence2:18-43\t3\n"
+        + "simulatedSequence2\t38\t43\tcoverage:simulatedSequence2:18-43\t2\n"
+        + "simulatedSequence2\t55\t57\tcoverage:feh\t4\n"
+        + "simulatedSequence2\t57\t59\tcoverage:feh\t3\n"
+        + "simulatedSequence2\t63\t64\tcoverage:simulatedSequence2:64-94\t3\n"
+        + "simulatedSequence2\t64\t65\tcoverage:simulatedSequence2:64-94\t2\n"
+        + "simulatedSequence2\t65\t73\tcoverage:simulatedSequence2:64-94\t0\n"
+        + "simulatedSequence2\t73\t76\tcoverage:simulatedSequence2:64-94\t1\n"
+        + "simulatedSequence2\t76\t85\tcoverage:simulatedSequence2:64-94\t2\n"
+        + "simulatedSequence2\t85\t86\tcoverage:simulatedSequence2:64-94\t3\n"
+        + "simulatedSequence2\t86\t87\tcoverage:simulatedSequence2:64-94\t2\n"
+        + "simulatedSequence2\t87\t90\tcoverage:simulatedSequence2:64-94\t3\n"
+        + "simulatedSequence2\t90\t93\tcoverage:simulatedSequence2:64-94\t4\n"
+        + "simulatedSequence2\t93\t94\tcoverage:simulatedSequence2:64-94\t3\n";
+      assertEquals(exp.replaceAll("\n|\r\n", LS), is);
     }
   }
 
@@ -499,23 +459,14 @@ public class CoverageTaskTest extends TestCase {
       final File samFile = new File(tmpDir, "sam.sam.gz");
       IndexUtils.ensureBlockCompressed(FileHelper.resourceToFile("com/rtg/variant/resources/coverage_mated.sam.gz", samFile));
       new TabixIndexer(samFile).saveSamIndex();
-
       final File bedRegionsFile = FileHelper.stringToGzFile(BED_REGIONS, new File(tmpDir, "bedRegions.bed.gz"));
-
       final File output = new File(tmpDir, "output");
-
-      try (MemoryPrintStream mps = new MemoryPrintStream()) {
-        final String tmpl = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANAAAAAAAAAANAAAAAAAAAAAAAAAAAAAAAAAAAA";
-
-        final File template = ReaderTestUtils.getDNADir(">simulatedSequence1\n" + tmpl + "\n>simulatedSequence2\n" + tmpl + "\n", new File(tmpDir, "template"));
-
-        final int code = new CoverageCli().mainInit(new String[]{"-o", output.getPath(), "-s", "0", samFile.getPath(), "--per-base",
-                                                                        "--bed-regions", bedRegionsFile.getPath(), "-t", template.getPath(), "--Xdisable-html-report"}, mps.outputStream(), mps.printStream());
-        assertEquals(mps.toString(), 0, code);
-        final String is = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.TSV_NAME + FileUtils.GZ_SUFFIX)), "^#");
-
-        assertEquals(FileHelper.resourceToString("com/rtg/variant/coverage/resources/covBedRegion.tsv").replaceAll("\n|\r\n", LS), is);
-      }
+      final String tmpl = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANAAAAAAAAAANAAAAAAAAAAAAAAAAAAAAAAAAAA";
+      final File template = ReaderTestUtils.getDNADir(">simulatedSequence1\n" + tmpl + "\n>simulatedSequence2\n" + tmpl + "\n", new File(tmpDir, "template"));
+      checkMainInitWarn("-o", output.getPath(), "-s", "0", samFile.getPath(), "--per-base",
+        "--bed-regions", bedRegionsFile.getPath(), "-t", template.getPath(), "--Xdisable-html-report");
+      final String is = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.TSV_NAME + FileUtils.GZ_SUFFIX)), "^#");
+      assertEquals(FileHelper.resourceToString("com/rtg/variant/coverage/resources/covBedRegion.tsv").replaceAll("\n|\r\n", LS), is);
     }
   }
 
@@ -524,30 +475,22 @@ public class CoverageTaskTest extends TestCase {
       final File samFile = new File(tmpDir, "sam.sam.gz");
       IndexUtils.ensureBlockCompressed(FileHelper.resourceToFile("com/rtg/variant/resources/coverage_mated.sam.gz", samFile));
       new TabixIndexer(samFile).saveSamIndex();
-
       final File bedRegionsFile = FileHelper.stringToGzFile(BED_REGIONS, new File(tmpDir, "bedRegions.bed.gz"));
-
       final File output = new File(tmpDir, "output");
+      checkMainInitWarn("-o", output.getPath(), "-s", "0", samFile.getPath(), "--per-base",
+        "--bed-regions", bedRegionsFile.getPath(), "--Xdisable-html-report");
+      final File summary = new File(output, CommonFlags.SUMMARY_FILE);
+      assertTrue(summary.exists());
+      final String exp = "Coverage per region:\n"
+        + "   depth  breadth  covered  size                      name\n"
+        + "  2.0000   1.0000        7     7  simulatedSequence1:41-47\n"
+        + "  2.2000   1.0000       10    10                      blah\n"
+        + "  2.4211   1.0000       19    19                       feh\n"
+        + "  1.7692   1.0000       26    26  simulatedSequence2:18-43\n"
+        + "  1.7742   0.7419       23    31  simulatedSequence2:64-94\n"
+        + "  1.9318   0.9091       80    88               all regions\n";
 
-      try (MemoryPrintStream mps = new MemoryPrintStream()) {
-        final int code = new CoverageCli().mainInit(new String[]{"-o", output.getPath(), "-s", "0", samFile.getPath(), "--per-base",
-                                                                        "--bed-regions", bedRegionsFile.getPath(), "--Xdisable-html-report"}, mps.outputStream(), mps.printStream());
-        assertEquals(mps.toString(), 0, code);
-
-        final File summary = new File(output, CommonFlags.SUMMARY_FILE);
-        assertTrue(summary.exists());
-
-        final String exp = "Coverage per region:\n"
-                         + "   depth  breadth  covered  size                      name\n"
-                         + "  2.0000   1.0000        7     7  simulatedSequence1:41-47\n"
-                         + "  2.2000   1.0000       10    10                      blah\n"
-                         + "  2.4211   1.0000       19    19                       feh\n"
-                         + "  1.7692   1.0000       26    26  simulatedSequence2:18-43\n"
-                         + "  1.7742   0.7419       23    31  simulatedSequence2:64-94\n"
-                         + "  1.9318   0.9091       80    88               all regions\n";
-
-        assertEquals(exp.replaceAll("\n|\r\n", LS), FileUtils.fileToString(summary));
-      }
+      assertEquals(exp.replaceAll("\n|\r\n", LS), FileUtils.fileToString(summary));
     }
   }
 }

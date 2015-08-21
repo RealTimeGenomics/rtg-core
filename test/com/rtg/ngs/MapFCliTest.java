@@ -15,20 +15,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.rtg.Slim;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.ngs.MapFCli.MapFTask;
 import com.rtg.reader.ReaderTestUtils;
+import com.rtg.reader.Sdf2Fasta;
 import com.rtg.reader.SdfId;
 import com.rtg.usage.UsageMetric;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
-import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
@@ -71,7 +70,7 @@ public class MapFCliTest extends AbstractCliTest {
       final File inputFile = new File(tempDir, "input");
       ReaderTestUtils.getReaderDNA(">x\nacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgt", inputFile, new SdfId(5L));
 
-      assertEquals(0, mf.mainInit(new String[] {"-o", outputFile.getPath(), "-i", inputFile.getPath(), "-t", inputFile.getPath(), "--Xforce-long"}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream()));
+      MainResult.run(mf, "-o", outputFile.getPath(), "-i", inputFile.getPath(), "-t", inputFile.getPath(), "--Xforce-long");
       assertEquals("testoutput", mf.outputDirectory().getName());
 
       final NgsParams params = mf.makeParams();
@@ -84,7 +83,7 @@ public class MapFCliTest extends AbstractCliTest {
       FileHelper.deleteAll(outputFile);
 
       //Now can have step > window
-      assertEquals(0, mf.mainInit(new String[] {"-o", outputFile.getPath(), "-i", inputFile.getPath(), "-t", inputFile.getPath(), "--Xforce-long", "--step", "23"}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream()));
+      checkMainInitOk("-o", outputFile.getPath(), "-i", inputFile.getPath(), "-t", inputFile.getPath(), "--Xforce-long", "--step", "23");
       final String usageLog = mf.usageLog();
       //System.err.println(usageLog);
       TestUtils.containsAll(usageLog, "[Usage beginning module=mapf runId=", ", Usage end module=mapf runId=", " metric=116 success=true]");
@@ -94,15 +93,15 @@ public class MapFCliTest extends AbstractCliTest {
   }
 
   public final void testRGMapF() throws InvalidParamsException, IOException {
-
     try (final TestDirectory tempDir = new TestDirectory()) {
       final MapFCli mf = new MapFCli();
       assertEquals("mapf", mf.moduleName());
       final File outputFile = new File(tempDir, "testoutput");
       final File inputFile = new File(tempDir, "input");
       ReaderTestUtils.getReaderDNA(">x\nacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgtacgt", inputFile, new SdfId(5L));
-      assertEquals(0, mf.mainInit(new String[] {"-o", outputFile.getPath(),
-          "-i", inputFile.getPath(), "-t", inputFile.getPath(), "--sam-rg", "@RG\\tPL:IONTORRENT\\tSM:foo\\tID:foo"}, TestUtils.getNullOutputStream(), System.err));
+      MainResult.run(mf,
+        "-o", outputFile.getPath(),
+        "-i", inputFile.getPath(), "-t", inputFile.getPath(), "--sam-rg", "@RG\\tPL:IONTORRENT\\tSM:foo\\tID:foo");
       assertEquals("testoutput", mf.outputDirectory().getName());
       final NgsParams params = mf.makeParams();
       new DummyTask(params, TestUtils.getNullOutputStream()).assertInstanceSE();
@@ -150,73 +149,62 @@ public class MapFCliTest extends AbstractCliTest {
 
   public void testEndToEnd() throws Exception {
     Diagnostic.setLogStream();
-    try (MemoryPrintStream mps = new MemoryPrintStream()) {
-      final File tmpDir = FileUtils.createTempDir("MapFTest", "ksdjf");
 
-      try {
-        final File left = new File(tmpDir, "left");
-        final File right = new File(tmpDir, "right");
-        final File template = FileUtils.createTempDir("template", "ngs", tmpDir);
-        final File out = new File(tmpDir, "out");
+    try (final TestDirectory tmpDir = new TestDirectory("mapftest")) {
+      final File left = new File(tmpDir, "left");
+      final File right = new File(tmpDir, "right");
+      final File template = FileUtils.createTempDir("template", "ngs", tmpDir);
+      final File out = new File(tmpDir, "out");
 
-        ReaderTestUtils.getReaderDNA(READ_LEFT, left, null).close();
-        ReaderTestUtils.getReaderDNA(READ_RIGHT, right, null).close();
-        ReaderTestUtils.getReaderDNA(TEMPLATE, template, null).close();
+      ReaderTestUtils.getReaderDNA(READ_LEFT, left, null).close();
+      ReaderTestUtils.getReaderDNA(READ_RIGHT, right, null).close();
+      ReaderTestUtils.getReaderDNA(TEMPLATE, template, null).close();
 
-        final MapFCli map = new MapFCli();
-        assertEquals(0, map.mainInit(new String[]{"--sam",
-          "-e", "10",
-          "-E", "7",
-          "-w", "4",
-          "-s", "1",
-          "-m", "1",
-          "-i", tmpDir.toString(),
-          "-t", template.toString(),
-          "-o", out.toString(),
-          "--no-gzip",
-          "--" + MapFlags.GAP_OPEN_PENALTY_FLAG, "1",
-          "--" + MapFlags.GAP_EXTEND_PENALTY_FLAG, "1",
-          "--" + MapFlags.MISMATCH_PENALTY_FLAG, "1",
-          "--" + MapFlags.DONT_UNIFY_FLAG,
-          "--" + MapFlags.UNKNOWNS_PENALTY_FLAG, "1",
-          "--" + MapFlags.ALIGNER_MODE_FLAG, "general"
-        }, mps.outputStream(), System.err));
+      checkMainInitOk("--sam",
+        "-e", "10",
+        "-E", "7",
+        "-w", "4",
+        "-s", "1",
+        "-m", "1",
+        "-i", tmpDir.toString(),
+        "-t", template.toString(),
+        "-o", out.toString(),
+        "--no-gzip",
+        "--" + MapFlags.GAP_OPEN_PENALTY_FLAG, "1",
+        "--" + MapFlags.GAP_EXTEND_PENALTY_FLAG, "1",
+        "--" + MapFlags.MISMATCH_PENALTY_FLAG, "1",
+        "--" + MapFlags.DONT_UNIFY_FLAG,
+        "--" + MapFlags.UNKNOWNS_PENALTY_FLAG, "1",
+        "--" + MapFlags.ALIGNER_MODE_FLAG, "general"
+      );
 
-        final String alignments = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(out, "alignments.sam")));
-        final String unmapped = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(out, "unmapped.sam")));
-        mNano.check("mapf-endtoend-alignments", alignments, false);
-        mNano.check("mapf-endtoend-unmapped", unmapped, false);
-        try {
-          final int code = new Slim().intMain(new String[]{"sdf2fasta", "-i", new File(out, "alignments.sdf").toString(), "-o", new File(out, "outfa").toString(), "-Z"}, mps.outputStream(), mps.printStream());
-          assertEquals(mps.toString(), 0, code);
+      final String alignments = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(out, "alignments.sam")));
+      final String unmapped = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(out, "unmapped.sam")));
+      mNano.check("mapf-endtoend-alignments", alignments, false);
+      mNano.check("mapf-endtoend-unmapped", unmapped, false);
+      MainResult res = MainResult.run(new Sdf2Fasta(), "-i", new File(out, "alignments.sdf").toString(), "-o", new File(out, "outfa").toString(), "-Z");
+      assertEquals(res.err(), 0, res.rc());
 
-          assertEquals(">r0" + StringUtils.LS + LEFT_READ_AS2 + StringUtils.LS
-            + ">r1" + StringUtils.LS + LEFT_READ_AS6 + StringUtils.LS
-            + ">r2 a" + StringUtils.LS + LEFT_READ_AS6 + StringUtils.LS
-            + ">r3" + StringUtils.LS + LEFT_READ_AS2 + StringUtils.LS
-            + ">r4 b" + StringUtils.LS + LEFT_READ_AS6 + StringUtils.LS
-            + ">r6 c" + StringUtils.LS + LEFT_READ_AS2 + StringUtils.LS
-            + ">r7" + StringUtils.LS + LEFT_READ_AS11 + StringUtils.LS, FileUtils.fileToString(new File(out, "outfa_1.fasta")));
-          assertEquals(">r0" + StringUtils.LS + RIGHT_READ_AS0 + StringUtils.LS
-            + ">r1" + StringUtils.LS + RIGHT_READ_AS0 + StringUtils.LS
-            + ">r2 a" + StringUtils.LS + RIGHT_READ_AS8 + StringUtils.LS
-            + ">r3" + StringUtils.LS + RIGHT_READ_AS8 + StringUtils.LS
-            + ">r4 b" + StringUtils.LS + RIGHT_READ_AS11 + StringUtils.LS
-            + ">r6 c" + StringUtils.LS + RIGHT_READ_AS11 + StringUtils.LS
-            + ">r7" + StringUtils.LS + RIGHT_READ_AS0 + StringUtils.LS, FileUtils.fileToString(new File(out, "outfa_2.fasta")));
+      assertEquals(">r0" + StringUtils.LS + LEFT_READ_AS2 + StringUtils.LS
+        + ">r1" + StringUtils.LS + LEFT_READ_AS6 + StringUtils.LS
+        + ">r2 a" + StringUtils.LS + LEFT_READ_AS6 + StringUtils.LS
+        + ">r3" + StringUtils.LS + LEFT_READ_AS2 + StringUtils.LS
+        + ">r4 b" + StringUtils.LS + LEFT_READ_AS6 + StringUtils.LS
+        + ">r6 c" + StringUtils.LS + LEFT_READ_AS2 + StringUtils.LS
+        + ">r7" + StringUtils.LS + LEFT_READ_AS11 + StringUtils.LS, FileUtils.fileToString(new File(out, "outfa_1.fasta")));
+      assertEquals(">r0" + StringUtils.LS + RIGHT_READ_AS0 + StringUtils.LS
+        + ">r1" + StringUtils.LS + RIGHT_READ_AS0 + StringUtils.LS
+        + ">r2 a" + StringUtils.LS + RIGHT_READ_AS8 + StringUtils.LS
+        + ">r3" + StringUtils.LS + RIGHT_READ_AS8 + StringUtils.LS
+        + ">r4 b" + StringUtils.LS + RIGHT_READ_AS11 + StringUtils.LS
+        + ">r6 c" + StringUtils.LS + RIGHT_READ_AS11 + StringUtils.LS
+        + ">r7" + StringUtils.LS + RIGHT_READ_AS0 + StringUtils.LS, FileUtils.fileToString(new File(out, "outfa_2.fasta")));
 
-          new Slim().intMain(new String[]{"sdf2fasta", "-i", new File(out, "unmapped.sdf").toString(), "-o", new File(out, "unmappedfa").toString(), "-Z"}, mps.outputStream(), mps.printStream());
+      res = MainResult.run(new Sdf2Fasta(), "-i", new File(out, "unmapped.sdf").toString(), "-o", new File(out, "unmappedfa").toString(), "-Z");
+      assertEquals(res.err(), 0, res.rc());
 
-          assertEquals(">r5" + StringUtils.LS + LEFT_READ_AS11 + StringUtils.LS, FileUtils.fileToString(new File(out, "unmappedfa_1.fasta")));
-          assertEquals(">r5" + StringUtils.LS + RIGHT_READ_AS8 + StringUtils.LS, FileUtils.fileToString(new File(out, "unmappedfa_2.fasta")));
-          TestUtils.containsAll(map.usageLog(), "[Usage beginning module=mapf runId=", ", Usage end module=mapf runId=", " metric=473 success=true]");
-        } finally {
-          CommandLine.clearCommandArgs();
-        }
-      } finally {
-        FileHelper.deleteAll(tmpDir);
-      }
+      assertEquals(">r5" + StringUtils.LS + LEFT_READ_AS11 + StringUtils.LS, FileUtils.fileToString(new File(out, "unmappedfa_1.fasta")));
+      assertEquals(">r5" + StringUtils.LS + RIGHT_READ_AS8 + StringUtils.LS, FileUtils.fileToString(new File(out, "unmappedfa_2.fasta")));
     }
   }
-
 }

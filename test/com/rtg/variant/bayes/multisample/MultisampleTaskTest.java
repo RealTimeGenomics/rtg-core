@@ -26,8 +26,8 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
 
-import com.rtg.Slim;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.AbstractNanoTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.launcher.OutputParams;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
@@ -49,41 +49,21 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.StaticThreshold;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.bayes.multisample.population.PopulationCallerConfiguration;
 import com.rtg.variant.bayes.multisample.population.PopulationNanoTest;
+import com.rtg.variant.bayes.multisample.singleton.SingletonCli;
 import com.rtg.vcf.VariantStatistics;
-
-import junit.framework.TestCase;
 
 /**
  */
-public class MultisampleTaskTest extends TestCase {
+public class MultisampleTaskTest extends AbstractNanoTest {
 
   private static final String RESOURCE_DIR = "com/rtg/variant/bayes/multisample/resources/";
-  private NanoRegression mNano = null;
 
-  @Override
-  protected void setUp() throws Exception {
-    mNano = new NanoRegression(MultisampleTaskTest.class, false);
-    GlobalFlags.resetAccessedStatus();
-    Diagnostic.setLogStream();
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    Diagnostic.setLogStream();
-    // clear the module name so later tests don't report SlimException to the Talkback system
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
   protected VariantParamsBuilder getBuilder() {
     return new VariantParamsBuilder();
   }
@@ -188,46 +168,27 @@ public class MultisampleTaskTest extends TestCase {
       final File output = new File(outroot, "out");
       BgzipFileHelper.streamToBgzipFile(new ByteArrayInputStream(SAM11.getBytes()), file);
       new TabixIndexer(file, new File(input, OUT_SAM + ".gz.tbi")).saveSamIndex();
-      final String outn = output.getPath();
-      final String inn = input.getPath();
-      final File templ = ReaderTestUtils.getDNADir(REF_SEQS11);
-      try {
-        final String[] args = {"snp",
-            "-t", templ.getPath(),
-            "-o", outn,
-            "-Z",
-            "-m", "default", "--keep-duplicates",
-            inn + FS + OUT_SAM + ".gz"
-        };
-        final String[] extraArgs = getArguments();
-        final String[] argsFinal = Utils.append(args, extraArgs);
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final ByteArrayOutputStream berr = new ByteArrayOutputStream();
-        final PrintStream err = new PrintStream(berr);
-        //System.err.println(Arrays.toString(args));
-        try {
-          assertEquals(0, new Slim().intMain(argsFinal, out, err));
-        } finally {
-          err.flush();
-          assertEquals("", berr.toString());
-          err.close();
-        }
-        //System.err.println(FileUtils.fileToString(new File(output, "snps.vcf")));
-        final String result = FileUtils.fileToString(new File(output, "summary.txt"));
-        assertEquals(EXP_STAT, result);
+      final File templ = ReaderTestUtils.getDNADir(REF_SEQS11, new File(input, "dna"));
+      final String[] args = new String[] {
+        "-t", templ.getPath(),
+        "-o", output.getPath(),
+        "-Z",
+        "-m", "default", "--keep-duplicates",
+        input.getPath() + FS + OUT_SAM + ".gz"
+      };
+      final MainResult res = MainResult.run(new SingletonCli(), Utils.append(args, getArguments()));
+      assertEquals("", res.err());
+      assertEquals(EXP_STAT, FileUtils.fileToString(new File(output, "summary.txt")));
 
-        // Test some aspects of html report
-        final HtmlReportHelper helper = new HtmlReportHelper(output, "index");
-        final String report = FileUtils.fileToString(helper.getReportFile());
-        assertFalse(report.contains("Sample:"));
-        assertTrue(report.contains("0.00 (0/4)"));
+      // Test some aspects of html report
+      final HtmlReportHelper helper = new HtmlReportHelper(output, "index");
+      final String report = FileUtils.fileToString(helper.getReportFile());
+      assertFalse(report.contains("Sample:"));
+      assertTrue(report.contains("0.00 (0/4)"));
 
-        final String log = FileUtils.fileToString(new File(output, "snp.log"));
-        //System.err.println(log);
-        TestUtils.containsAll(log, "Timer INCR");
-      } finally {
-        FileHelper.deleteAll(templ);
-      }
+      final String log = FileUtils.fileToString(new File(output, "snp.log"));
+      //System.err.println(log);
+      TestUtils.containsAll(log, "Timer INCR");
     }
   }
 
@@ -241,34 +202,18 @@ public class MultisampleTaskTest extends TestCase {
       final File output = new File(outroot, "out");
       BgzipFileHelper.streamToBgzipFile(new ByteArrayInputStream(SAM11.getBytes()), file);
       new TabixIndexer(file, new File(input, OUT_SAM + ".gz.tbi")).saveSamIndex();
-      final String outn = output.getPath();
-      final String inn = input.getPath();
-      final File templ = ReaderTestUtils.getDNADir(REF_SEQS11);
-      try {
-        final String[] args = {"snp",
-            "-t", templ.getPath(),
-            "-o", outn,
-            "-Z",
-            "-m", "default", "--keep-duplicates",
-            inn + FS + OUT_SAM + ".gz",
-            "--region", "foooo"
-        };
-        final String[] extraArgs = getArguments();
-        final String[] argsFinal = Utils.append(args, extraArgs);
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final ByteArrayOutputStream berr = new ByteArrayOutputStream();
-        final PrintStream err = new PrintStream(berr);
-        //System.err.println(Arrays.toString(args));
-        try {
-          assertEquals(1, new Slim().intMain(argsFinal, out, err));
-        } finally {
-          err.flush();
-          assertEquals("Error: Sequence \"foooo\" referenced in region was not found in the SAM sequence dictionary." + LS, berr.toString());
-          err.close();
-        }
-      } finally {
-        FileHelper.deleteAll(templ);
-      }
+      final File templ = ReaderTestUtils.getDNADir(REF_SEQS11, new File(input, "dna"));
+      final String[] args = {
+        "-t", templ.getPath(),
+        "-o", output.getPath(),
+        "-Z",
+        "-m", "default", "--keep-duplicates",
+        input.getPath() + FS + OUT_SAM + ".gz",
+        "--region", "foooo"
+      };
+      final MainResult res = MainResult.run(new SingletonCli(), Utils.append(args, getArguments()));
+      assertEquals(1, res.rc());
+      assertEquals("Error: Sequence \"foooo\" referenced in region was not found in the SAM sequence dictionary." + LS, res.err());
     }
   }
 

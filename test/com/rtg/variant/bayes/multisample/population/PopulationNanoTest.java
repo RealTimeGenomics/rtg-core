@@ -20,7 +20,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.Properties;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.InvalidParamsException;
@@ -28,8 +28,6 @@ import com.rtg.util.PropertiesUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
-import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.Talkback;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
@@ -37,34 +35,13 @@ import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
 import com.rtg.util.test.NanoRegression;
 
-import junit.framework.TestCase;
-
 /**
  */
-public class PopulationNanoTest extends TestCase {
+public class PopulationNanoTest extends AbstractNanoTest {
 
   private static final String RESOURCES_DIR = "com/rtg/variant/bayes/multisample/family/resources/";
   /** the number of expected bases in denovo tests */
   public static final int FAMILY_DENOVO_METRIC = 9400;
-  private NanoRegression mNano = null;
-
-  @Override
-  public void setUp() {
-    GlobalFlags.resetAccessedStatus();
-    Diagnostic.setLogStream();
-    mNano = new NanoRegression(PopulationNanoTest.class, false);
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    // clear the module name so later tests don't report SlimException to the Talkback system
-    Talkback.setModuleName(null);
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
 
   /** Pedigree file text */
   public static final String FAMILY_PED = ""
