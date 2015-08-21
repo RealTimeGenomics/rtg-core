@@ -17,10 +17,12 @@ import java.io.OutputStream;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import com.rtg.launcher.ParamsTask;
 import com.rtg.mode.DnaUtils;
+import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.CircularBufferMultifileSinglePassReaderWindow;
 import com.rtg.sam.SamReadingContext;
@@ -62,13 +64,14 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
   private CircularBufferMultifileSinglePassReaderWindow<CoverageReaderRecord> mCircularBuffer;
   private ChunkInfo mInfo;
   private int mCurrentReferenceLength;
-  private int mReferenceSequenceIndex;
+  private Long mReferenceSequenceIndex;
   private byte[] mReferenceBytes;
   private byte[] mPrevReferenceBytes;
   private int mChunkStart;
   private int mChunkEnd;
   private int mChunkNumber;
   private ParallelProgress mPP = null;
+  private Map<String, Long> mReferenceNames = null;
 
   private ThreadedMultifileIteratorWrapper<CoverageReaderRecord> mWrapper;
 
@@ -109,6 +112,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     final SequencesReader reference = mParams.genome() == null ? null : mParams.genome().reader();
     if (reference != null) {
       SamUtils.checkUberHeaderAgainstReference(reference, uberHeader, mParams.ignoreIncompatibleSamHeaders());
+      mReferenceNames = ReaderUtils.getSequenceNameMap(reference);
     } else {
       Diagnostic.warning("No reference supplied - unable to determine regions of unknown nucleotides.");
     }
@@ -322,7 +326,9 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
 
   private void setReferenceSequence(SAMSequenceRecord r, int restrictionStart, int restrictionEnd) {
     mCurrentReferenceLength = r.getSequenceLength();
-    mReferenceSequenceIndex = r.getSequenceIndex();
+    if (mParams.genome() != null) {
+      mReferenceSequenceIndex = mReferenceNames.get(r.getSequenceName());
+    }
     final int chunkSize = mParams.smoothing() < (mParams.chunkSize() / 2) ? mParams.chunkSize() : (mParams.smoothing() * 2 + 2);
     mInfo = new ChunkInfo(r.getSequenceLength(), r.getSequenceName(), chunkSize, restrictionStart, restrictionEnd, mParams.execThreads(), 1000);
     if (mCircularBuffer != null) {
@@ -403,7 +409,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
       mChunkStart = mChunkNumber * mInfo.chunkSize() + mInfo.start();
       mChunkEnd = Math.min(mChunkStart + mInfo.chunkSize(), mInfo.end());
       mPrevReferenceBytes = mReferenceBytes;
-      if (mParams.genome() != null) {
+      if (mReferenceSequenceIndex != null) {
         mReferenceBytes = new byte[mInfo.chunkSize()];
         mParams.genome().reader().read(mReferenceSequenceIndex, mReferenceBytes, mChunkStart, mChunkEnd - mChunkStart);
       }
