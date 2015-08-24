@@ -48,7 +48,6 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
@@ -376,7 +375,6 @@ public class CoverageTaskTest extends AbstractCliTest {
       final File template = ReaderTestUtils.getDNADir(">t\nTCGCTAGGTTCGACTTGGTTAACAACAACGCCTGGGGCTTTTTATTCTGGAAAGCAATGCCAGGCAGGGGCAGGTGGCCACTTT\n", new File(tmpDir, "template"));
       final File samFile = IndexUtils.ensureBlockCompressed(FileUtils.stringToFile(SAM_CLIP, new File(tmpDir, "sam.sam")));
       new TabixIndexer(samFile).saveSamIndex();
-      final MemoryPrintStream mps = new MemoryPrintStream();
       final File output = new File(tmpDir, "output");
       checkMainInitOk("-t", template.getPath(), "-o", output.getPath(), "-s", "0", samFile.getPath(), "--Xdisable-html-report");
       final String res = "com/rtg/variant/coverage/resources/coveragetasktest_clipping.bed";
@@ -391,15 +389,12 @@ public class CoverageTaskTest extends AbstractCliTest {
       final File template = ReaderTestUtils.getDNADir(">t\nTCGCTAGGTTCGACTTGGTTAACAACAACGCCTGGGGCTTTTTATTCTGGAAAGCAATGCCAGGCAGGGGCAGGTGGCCACTTT\n", new File(tmpDir, "template"));
       final File samFile = IndexUtils.ensureBlockCompressed(FileUtils.stringToFile(SAM_CLIP, new File(tmpDir, "sam.sam")));
       new TabixIndexer(samFile).saveSamIndex();
-      try (MemoryPrintStream mps = new MemoryPrintStream()) {
-        final File output = new File(tmpDir, "output");
-        checkMainInitOk("-t", template.getPath(), "-o", output.getPath(), "--per-base", "-s", "0", samFile.getPath(), "--Xdisable-html-report");
-        final String was = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.TSV_NAME + FileUtils.GZ_SUFFIX)), "^#");
-        final String res = "com/rtg/variant/coverage/resources/coveragetasktest_clipping.tsv";
-        final String exp = FileHelper.resourceToString(res);
-        assertEquals(exp, was.replaceAll(LS, "\n")); //Bed does not care of EOL chars
-      }
-
+      final File output = new File(tmpDir, "output");
+      checkMainInitOk("-t", template.getPath(), "-o", output.getPath(), "--per-base", "-s", "0", samFile.getPath(), "--Xdisable-html-report");
+      final String was = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.TSV_NAME + FileUtils.GZ_SUFFIX)), "^#");
+      final String res = "com/rtg/variant/coverage/resources/coveragetasktest_clipping.tsv";
+      final String exp = FileHelper.resourceToString(res);
+      assertEquals(exp, was.replaceAll(LS, "\n")); //Bed does not care of EOL chars
     }
   }
 
