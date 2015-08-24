@@ -169,7 +169,7 @@ public class MultisampleTaskTest extends AbstractNanoTest {
       BgzipFileHelper.streamToBgzipFile(new ByteArrayInputStream(SAM11.getBytes()), file);
       new TabixIndexer(file, new File(input, OUT_SAM + ".gz.tbi")).saveSamIndex();
       final File templ = ReaderTestUtils.getDNADir(REF_SEQS11, new File(input, "dna"));
-      final String[] args = new String[] {
+      final String[] args = {
         "-t", templ.getPath(),
         "-o", output.getPath(),
         "-Z",
