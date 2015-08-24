@@ -14,7 +14,6 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 import com.rtg.util.StringUtils;
 import com.rtg.util.format.FormatReal;
-import com.rtg.util.integrity.Exam;
 import com.rtg.variant.bayes.Code;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.EvidenceInterface;
@@ -41,6 +40,9 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
    */
   public ModelCancerContamination(final HypothesesCancer<S> hyp, final double contamination, final Statistics<?> statistics) {
     super(hyp, statistics);
+    if (contamination < 0 || contamination > 1) {
+      throw new IllegalArgumentException("Illegal contamination: " + contamination);
+    }
     mSubHypotheses = hyp.subHypotheses();
     mContamination = contamination;
     mContaminationM = 1.0 - mContamination;
@@ -110,11 +112,4 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
     }
   }
 
-  @Override
-  public boolean integrity() {
-    super.integrity();
-    Exam.assertEquals(1.0, mContamination + mContaminationM, 0.000001);
-    Exam.assertTrue(0.0 <= mContamination && mContamination <= 1.0);
-    return true;
-  }
 }
