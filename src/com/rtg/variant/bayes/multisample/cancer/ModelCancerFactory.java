@@ -48,7 +48,7 @@ public class ModelCancerFactory extends ModelCommonFactory<Description, Hypothes
 
   @Override
   protected ModelInterface<Description> makeModel(final Hypotheses<Description> hyp) {
-    return new ModelCancerContamination((HypothesesCancer) hyp, mContamination, new StatisticsSnp(((HypothesesCancer) hyp).subHypotheses().description()));
+    return new ModelCancerContamination<>((HypothesesCancer<?>) hyp, mContamination, new StatisticsSnp(((HypothesesCancer) hyp).subHypotheses().description()));
   }
 
 }

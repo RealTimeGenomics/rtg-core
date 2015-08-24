@@ -42,7 +42,7 @@ public class ModelCancerContaminationTest extends TestCase {
   public void test1G() {
     final HypothesesCancer<Hypotheses<Description>> hypc = getTestCats();
     final Description desc = hypc.subHypotheses().description();
-    final ModelCancerContamination model = new ModelCancerContamination(hypc, 0.2, new StatisticsSnp(hypc.description()));
+    final ModelCancerContamination<Hypotheses<Description>> model = new ModelCancerContamination<>(hypc, 0.2, new StatisticsSnp(hypc.description()));
     model.integrity();
     final Evidence evg = new EvidenceQ(desc, 2, 0, 0, 0.05, 0.05, true, false, false, false);
     model.increment(evg);

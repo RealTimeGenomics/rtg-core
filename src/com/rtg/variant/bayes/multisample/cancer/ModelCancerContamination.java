@@ -24,10 +24,11 @@ import com.rtg.variant.bayes.Statistics;
 
 /**
  * Accumulates posteriors for the cancer side of a contaminated cancer sample.
+ * @param <S> type of underlying hypotheses
  */
-public class ModelCancerContamination extends Model<Description> {
+public class ModelCancerContamination<S extends Hypotheses<? extends Description>> extends Model<Description> {
 
-  private final Hypotheses<?> mSubHypotheses;
+  private final S mSubHypotheses;
 
   private final double mContamination;
 
@@ -38,7 +39,7 @@ public class ModelCancerContamination extends Model<Description> {
    * @param contamination fraction of cancer sample that is contamination from normal sample.
    * @param statistics for statistics collection
    */
-  public ModelCancerContamination(final HypothesesCancer<?> hyp, final double contamination, final Statistics<?> statistics) {
+  public ModelCancerContamination(final HypothesesCancer<S> hyp, final double contamination, final Statistics<?> statistics) {
     super(hyp, statistics);
     mSubHypotheses = hyp.subHypotheses();
     mContamination = contamination;

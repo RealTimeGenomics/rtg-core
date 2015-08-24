@@ -56,7 +56,7 @@ public class PosteriorContaminatedTest extends TestCase {
     final int refCode = refNt - 1;
     final Hypotheses<Description> simpleHomoHyps = AbstractSomaticCallerTest.simpleHomoHyps(0.99, refCode);
     final HypothesesCancer<Hypotheses<Description>> hypc = new HypothesesCancer<>(simpleHomoHyps, SimplePossibility.SINGLETON);
-    final ModelCancerContamination cancer = new ModelCancerContamination(hypc, contamination, new StatisticsSnp(hypc.description()));
+    final ModelCancerContamination<Hypotheses<Description>> cancer = new ModelCancerContamination<>(hypc, contamination, new StatisticsSnp(hypc.description()));
     final ModelInterface<Description> normal = new Model<>(simpleHomoHyps, new StatisticsSnp(simpleHomoHyps.description()));
     // run through several identical reads
     final Evidence evc = new EvidenceQ(simpleHomoHyps.description(), 1, 0, 0, 0.05, 0.05, true, false, false, false);
@@ -101,7 +101,7 @@ public class PosteriorContaminatedTest extends TestCase {
     final int refCode = refNt - 1;
     final Hypotheses<Description> simpleHomoHyps = AbstractSomaticCallerTest.simpleHomoHyps(0.99, refCode);
     final HypothesesCancer<Hypotheses<Description>> hypc = new HypothesesCancer<>(simpleHomoHyps, SimplePossibility.SINGLETON);
-    final ModelCancerContamination cancer = new ModelCancerContamination(hypc, 0.0, new StatisticsSnp(hypc.description()));
+    final ModelCancerContamination<Hypotheses<Description>> cancer = new ModelCancerContamination<>(hypc, 0.0, new StatisticsSnp(hypc.description()));
     final ModelInterface<Description> normal = new Model<>(simpleHomoHyps, new StatisticsSnp(simpleHomoHyps.description()));
     final Evidence eva = new EvidenceQ(simpleHomoHyps.description(), 0, 0, 0, 0.05, 0.05, true, false, false, false);
     // run through several identical reads
