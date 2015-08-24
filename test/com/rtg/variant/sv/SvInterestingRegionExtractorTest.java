@@ -12,9 +12,12 @@
 package com.rtg.variant.sv;
 
 import java.io.File;
+import java.io.IOException;
 
 import com.rtg.util.TestUtils;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 import junit.framework.TestCase;
@@ -24,9 +27,13 @@ import junit.framework.TestCase;
  */
 public class SvInterestingRegionExtractorTest extends TestCase {
 
+  @Override
+  public void setUp() throws IOException {
+    Diagnostic.setLogStream();
+  }
+
   public void testIRE() throws Exception {
-    final File tmpDir = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory("sviret")) {
       final File out = new File(tmpDir, "blah.bed.gz");
       final File in = new File(tmpDir, "in.txt");
       FileHelper.resourceToFile("com/rtg/variant/sv/resources/sv_int_region.txt", in);
@@ -45,14 +52,11 @@ public class SvInterestingRegionExtractorTest extends TestCase {
 
       final File tabixFile = new File(tmpDir, "blah.bed.gz.tbi");
       assertTrue(tabixFile.exists());
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 
   public void testIREMerge() throws Exception {
-    final File tmpDir = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory("sviret")) {
       final File out = new File(tmpDir, "blah.bed");
       final File in = new File(tmpDir, "in.txt");
       FileHelper.resourceToFile("com/rtg/variant/sv/resources/sv_int_region.txt", in);
@@ -71,8 +75,6 @@ public class SvInterestingRegionExtractorTest extends TestCase {
       assertFalse(tabixFile.exists());
       final File tabixFile2 = new File(tmpDir, "blah.bed.gz.tbi");
       assertFalse(tabixFile2.exists());
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 }

@@ -14,13 +14,14 @@ package com.rtg.simulation;
 
 import static com.rtg.util.StringUtils.LS;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.AbstractCliTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -28,15 +29,20 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LineWriter;
 import com.rtg.util.io.LogStream;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-import junit.framework.TestCase;
 
 /**
  */
-public class ReadSimEvalCliTest extends TestCase {
+public class ReadSimEvalCliTest extends AbstractCliTest {
+
+  @Override
+  protected AbstractCli getCli() {
+    return new ReadSimEvalCli();
+  }
 
   private static final String READS = ReadSimEvalParamsTest.READS;
 
@@ -51,34 +57,21 @@ public class ReadSimEvalCliTest extends TestCase {
       + SAM_ENDLINE;
 
   public final void testSingleEnd() throws IOException {
-    GlobalFlags.resetAccessedStatus();
-    Diagnostic.setLogStream();
-    final File topLevel = FileUtils.createTempDir("readmappingaccuracy", "setest");
-    try {
+    try (final TestDirectory topLevel = new TestDirectory("readmappingaccuracy")) {
       final File reads = new File(topLevel, "reads");
       final File rseDir = new File(topLevel, "rse");
       ReaderTestUtils.getReaderDNA(READS, reads, null).close();
       final File sam = new File(topLevel, "samfile.sam.gz");
       FileHelper.stringToGzFile(SAM, sam);
 
-      final String[] args = {"--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose", "--score-histogram"};
+      final MainResult res = checkMainInit("--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose", "--score-histogram");
 
-      final ReadSimEvalCli ac = new ReadSimEvalCli();
-      final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      final MemoryPrintStream ps = new MemoryPrintStream();
-      try {
-        final int code = ac.mainInit(args, bos, ps.printStream());
-        assertEquals(ps.toString(), 0, code);
-        TestUtils.containsAll(ps.toString(), "No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + LS,
-            "No template map present in reads SDF. Cannot verify evaluation is against correct template." + LS,
-            "Missing template SDF ID in SAM header. Cannot verify evaluation is against correct template." + LS
+      TestUtils.containsAll(res.err(), "No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + LS,
+          "No template map present in reads SDF. Cannot verify evaluation is against correct template." + LS,
+          "Missing template SDF ID in SAM header. Cannot verify evaluation is against correct template." + LS
             );
-      } finally {
-        bos.close();
-      }
 
-      //System.err.println(bos.toString());
-      TestUtils.containsAll(bos.toString(),
+      TestUtils.containsAll(res.out(),
           "Total SAM records = 3",
           "Total reads = 3",
           "mapped reads = 3",
@@ -111,11 +104,7 @@ public class ReadSimEvalCliTest extends TestCase {
           //"3\t0\t0",
           "4\t0.00\t1.00"
           );
-
-    } finally {
-      assertTrue(FileHelper.deleteAll(topLevel));
     }
-
   }
 
   private static final String SAM_PAIRED = "@HD\tVN:1.0\tSO:coordinate" + SAM_ENDLINE
@@ -126,17 +115,13 @@ public class ReadSimEvalCliTest extends TestCase {
       + "read2:1:56785:S4:I0:D0\t89\t1\t501889\t255\t22=2N29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:2\tNM:i:0\tIH:i:1" + SAM_ENDLINE
       ;
 
-
-
   /**
    * Test method for
    * {@link ReadSimEvalCli#mainExec(java.io.OutputStream, java.io.PrintStream)}
    * .
    */
   public final void testPairedEnd() throws IOException {
-    Diagnostic.setLogStream();
-    final File topLevel = FileUtils.createTempDir("readmappingaccuracy", "petest");
-    try {
+    try (final TestDirectory topLevel = new TestDirectory("readmappingaccuracy")) {
       final File reads = new File(topLevel, "reads");
       final File rseDir = new File(topLevel, "rse");
       ReaderTestUtils.getReaderDNA(READS, new File(reads, "left"), null).close();
@@ -144,20 +129,10 @@ public class ReadSimEvalCliTest extends TestCase {
       final File sam = new File(topLevel, "samfile.sam.gz");
       FileHelper.stringToGzFile(SAM_PAIRED, sam);
 
-      final String[] args = {"--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose", "--score-histogram", "--mapq-histogram"};
+      final MainResult res = checkMainInit("--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose", "--score-histogram", "--mapq-histogram");
 
-      final ReadSimEvalCli ac = new ReadSimEvalCli();
-      final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      try {
-        final MemoryPrintStream ps = new MemoryPrintStream();
-        final int rc = ac.mainInit(args, bos, ps.printStream());
-        assertEquals(ps.toString(), 0, rc);
-        assertTrue(ps.toString().contains("No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + LS));
-      } finally {
-        bos.close();
-      }
-      //System.err.println(bos.toString());
-      TestUtils.containsAll(bos.toString(),
+      assertTrue(res.err().contains("No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + LS));
+      TestUtils.containsAll(res.out(),
             "Total SAM records = 3",
             "Total pairs = 3",
             "mated pairs = 0",
@@ -191,22 +166,19 @@ public class ReadSimEvalCliTest extends TestCase {
             "255\t1.00\t2.00"
             );
       TestUtils.containsAll(FileUtils.fileToString(new File(rseDir, "score_hist.tsv")),
-            "Alignment Score Distribution",
-            "Score\ttrue_positives\tfalse_positives",
-            //"0\t0\t0",
-            "1\t1.00\t0.00",
-            "2\t0.00\t2.00",
-            "Generated Score Distribution",
-            "Score\ttrue_positives\tfalse_positives",
-            //"0\t0\t0",
-            "1\t1.00\t0.00",
-            "2\t0.00\t1.00",
-            //"3\t0\t0",
-            "4\t0.00\t1.00"
-            );
-
-    } finally {
-      assertTrue(FileHelper.deleteAll(topLevel));
+        "Alignment Score Distribution",
+        "Score\ttrue_positives\tfalse_positives",
+        //"0\t0\t0",
+        "1\t1.00\t0.00",
+        "2\t0.00\t2.00",
+        "Generated Score Distribution",
+        "Score\ttrue_positives\tfalse_positives",
+        //"0\t0\t0",
+        "1\t1.00\t0.00",
+        "2\t0.00\t1.00",
+        //"3\t0\t0",
+        "4\t0.00\t1.00"
+      );
     }
   }
 
@@ -235,9 +207,7 @@ public class ReadSimEvalCliTest extends TestCase {
       + "read2/0/0/simulatedSequence1/80/R/10. 147 simulatedSequence1 80 55 10= = 66 -24 AGACGGCCCA 5555555555 AS:i:0 NM:i:0 MQ:i:255 XA:i:0 IH:i:1 NH:i:1" + SAM_ENDLINE;
 
   public final void testPairedEndMated() throws IOException {
-    Diagnostic.setLogStream();
-    final File topLevel = FileUtils.createTempDir("readmappingaccuracy", "petest");
-    try {
+    try (final TestDirectory topLevel = new TestDirectory("readmappingaccuracy")) {
       final File reads = new File(topLevel, "reads");
       final File rseDir = new File(topLevel, "rse");
       ReaderTestUtils.getReaderDNA(READ_LEFT, new File(reads, "left"), null).close();
@@ -245,38 +215,25 @@ public class ReadSimEvalCliTest extends TestCase {
       final File sam = new File(topLevel, "samfile.sam.gz");
       FileHelper.stringToGzFile(SAM_PAIRED2.replaceAll(" ", "\t"), sam);
 
-      final String[] args = {"--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose"};
-
-      final ReadSimEvalCli ac = new ReadSimEvalCli();
-      final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      try {
-        final MemoryPrintStream ps = new MemoryPrintStream();
-        final int mainInit = ac.mainInit(args, bos, ps.printStream());
-        assertEquals(bos.toString() + ps.toString(), 0, mainInit);
-        assertTrue(ps.toString().contains("No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + LS));
-      } finally {
-        bos.close();
-      }
+      final MainResult res = checkMainInit("--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose");
+      assertTrue(res.err().contains("No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + LS));
       //System.err.println(bos.toString());
-      TestUtils.containsAll(bos.toString(),
-            "Total SAM records = 6",
-            "Total pairs = 3",
-            "mated pairs = 3",
-            "unmated pairs = 0",
-            "left reads mapped correctly = 3",
-            "left reads mapped incorrectly = 0",
-            "left reads mapped incorrectly with lower alignment score = 0",
-            "right reads mapped correctly = 3",
-            "right reads mapped incorrectly = 0",
-            "right reads mapped incorrectly with lower alignment score = 0",
-            "Accuracy (Precision) = correct / total mapped reads = 100.00",
-            "Sensitivity (Recall) = correct / total reads = 100.00",
-            "Lenient Accuracy (Precision) = (correct + mapped incorrectly with lower alignment score) / total mapped reads = 100.00",
-            "Lenient Sensitivity (Recall) = (correct + mapped incorrectly with lower alignment score) / total reads = 100.00"
-            );
-
-    } finally {
-      assertTrue(FileHelper.deleteAll(topLevel));
+      TestUtils.containsAll(res.out(),
+        "Total SAM records = 6",
+        "Total pairs = 3",
+        "mated pairs = 3",
+        "unmated pairs = 0",
+        "left reads mapped correctly = 3",
+        "left reads mapped incorrectly = 0",
+        "left reads mapped incorrectly with lower alignment score = 0",
+        "right reads mapped correctly = 3",
+        "right reads mapped incorrectly = 0",
+        "right reads mapped incorrectly with lower alignment score = 0",
+        "Accuracy (Precision) = correct / total mapped reads = 100.00",
+        "Sensitivity (Recall) = correct / total reads = 100.00",
+        "Lenient Accuracy (Precision) = (correct + mapped incorrectly with lower alignment score) / total mapped reads = 100.00",
+        "Lenient Sensitivity (Recall) = (correct + mapped incorrectly with lower alignment score) / total reads = 100.00"
+      );
     }
   }
 
@@ -285,9 +242,7 @@ public class ReadSimEvalCliTest extends TestCase {
       + "read0\t89\t1\t1234\t255\t22=1X29=\t*\t0\t0\tACATGCTGCATGCATGCTGATGCTGCTGCTATAGTGATGAATC\t*\tAS:i:1\tNM:i:0\tIH:i:1" + SAM_ENDLINE;
 
   public void testErr() throws IOException {
-    Diagnostic.setLogStream();
-    final File topLevel = FileUtils.createTempDir("readmappingaccuracy", "petest");
-    try {
+    try (final TestDirectory topLevel = new TestDirectory("readmappingaccuracy")) {
       final File reads = new File(topLevel, "reads");
       final File rseDir = new File(topLevel, "rse");
       ReaderTestUtils.getReaderDNA(READS, new File(reads, "left"), null).close();
@@ -295,19 +250,8 @@ public class ReadSimEvalCliTest extends TestCase {
       final File sam = new File(topLevel, "samfile.sam.gz");
       FileHelper.stringToGzFile(SAM_NO_NAME, sam);
 
-      final String[] args = {"--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath()};
-      try (MemoryPrintStream mps = new MemoryPrintStream()) {
-        final ReadSimEvalCli ac = new ReadSimEvalCli();
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        try {
-          assertEquals(1, ac.mainInit(args, bos, mps.printStream()));
-          assertTrue(mps.toString().contains("does not appear to be"));
-        } finally {
-          bos.close();
-        }
-      }
-    } finally {
-      assertTrue(FileHelper.deleteAll(topLevel));
+      final String err = checkMainInitBadFlags("--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath());
+      assertTrue(err.contains("does not appear to be"));
     }
   }
 
@@ -317,26 +261,15 @@ public class ReadSimEvalCliTest extends TestCase {
   + SAM_ENDLINE;
 
   public void testWarning() throws IOException {
-    Diagnostic.setLogStream();
-    final File topLevel = FileUtils.createTempDir("readmappingaccuracy", "setest");
-    try {
+    try (final TestDirectory topLevel = new TestDirectory("readmappingaccuracy")) {
       final File reads = new File(topLevel, "reads");
       final File rseDir = new File(topLevel, "rse");
       ReaderTestUtils.getReaderDNA(READS, reads, null).close();
       final File sam = new File(topLevel, "samfile.sam.gz");
       FileHelper.stringToGzFile(SAM_BROKEN_READNAME, sam);
 
-      final String[] args = {"--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose"};
-
-      final ReadSimEvalCli ac = new ReadSimEvalCli();
-      final MemoryPrintStream ps = new MemoryPrintStream();
-      try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-        assertEquals(1, ac.mainInit(args, bos, ps.printStream()));
-        assertTrue(ps.toString().contains("Read stupid_read_name does not appear to be a simulated read"));
-      }
-
-    } finally {
-      assertTrue(FileHelper.deleteAll(topLevel));
+      final String err = checkMainInitBadFlags("--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose");
+      assertTrue(err.contains("Read stupid_read_name does not appear to be a simulated read"));
     }
   }
 
@@ -347,9 +280,7 @@ public class ReadSimEvalCliTest extends TestCase {
         return 0;
       }
     };
-
-    final File topLevel = FileUtils.createTempDir("readmappingaccuracy", "setest");
-    try {
+    try (final TestDirectory topLevel = new TestDirectory("readmappingaccuracy")) {
       final File reads = new File(topLevel, "reads");
       ReaderTestUtils.getReaderDNA(">read0/0/1/chr1/4730076/R/4.1D8.1D55.1D27.1D6." + LS
           + "TTCCATGGTTTTCTGAGCCTCAGTTTTCTCATCTGAAAAACGGGGATGTCACTCAGCCCTGCACAGGCTGGAAGGATGGTGACCCCCTACCATTACAGGT" + LS, reads, null).close();
@@ -377,8 +308,6 @@ public class ReadSimEvalCliTest extends TestCase {
         assertFalse(rma.mLeftStats.isMultiple(0));
         assertTrue(rma.mLeftStats.isFound(0));
       }
-    } finally {
-      assertTrue(FileHelper.deleteAll(topLevel));
     }
   }
 
@@ -390,8 +319,7 @@ public class ReadSimEvalCliTest extends TestCase {
       }
     };
 
-    final File topLevel = FileUtils.createTempDir("readmappingaccuracy", "setest");
-    try {
+    try (final TestDirectory topLevel = new TestDirectory("readmappingaccuracy")) {
       final File reads = new File(topLevel, "reads");
       ReaderTestUtils.getReaderDNA(">read0/0/1/chr1/4730076/R/4.1D8.1D55.1D27.1D6." + LS
           + "TTCCATGGTTTTCTGAGCCTCAGTTTTCTCATCTGAAAAACGGGGATGTCACTCAGCCCTGCACAGGCTGGAAGGATGGTGACCCCCTACCATTACAGGT" + LS, reads, null).close();
@@ -428,8 +356,6 @@ public class ReadSimEvalCliTest extends TestCase {
           Diagnostic.setLogStream();
         }
       }
-    } finally {
-      assertTrue(FileHelper.deleteAll(topLevel));
     }
   }
 }
