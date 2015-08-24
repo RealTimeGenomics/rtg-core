@@ -26,7 +26,7 @@ import com.rtg.variant.util.arithmetic.SimplePossibility;
 /**
  * A factory capable of generating model instances for cancer calling.
  */
-public class ModelCancerFactory extends ModelCommonFactory<Description, HypothesesCancer> {
+public class ModelCancerFactory extends ModelCommonFactory<Description, HypothesesCancer<HypothesesSnp>> {
 
   private final double mContamination;
 
@@ -39,10 +39,10 @@ public class ModelCancerFactory extends ModelCommonFactory<Description, Hypothes
     super();
     mContamination = contamination;
     final HypothesesSnp unknownHypothesesSnp = new HypothesesSnp(LogApproximatePossibility.SINGLETON, params, haploid, -1);
-    mHypothesisUnknown = new HypothesesCancer(unknownHypothesesSnp, LogApproximatePossibility.SINGLETON);
+    mHypothesisUnknown = new HypothesesCancer<>(unknownHypothesesSnp, LogApproximatePossibility.SINGLETON);
     for (int i = 0; i < DescriptionSnp.SINGLETON.size(); i++) {
       final HypothesesSnp hyp = new HypothesesSnp(SimplePossibility.SINGLETON, params, haploid, i);
-      mHypothesesCache.add(new HypothesesCancer(hyp, LogApproximatePossibility.SINGLETON));
+      mHypothesesCache.add(new HypothesesCancer<>(hyp, LogApproximatePossibility.SINGLETON));
     }
   }
 

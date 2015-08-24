@@ -25,7 +25,7 @@ public class HypothesesCancerTest extends TestCase {
   public void testHaploid() {
     final GenomePriorParams params = GenomePriorParams.builder().create();
     final HypothesesSnp snp = new HypothesesSnp(SimplePossibility.SINGLETON, params, true, 1);
-    final HypothesesCancer hyp = new HypothesesCancer(snp, SimplePossibility.SINGLETON);
+    final HypothesesCancer<HypothesesSnp> hyp = new HypothesesCancer<>(snp, SimplePossibility.SINGLETON);
     assertFalse(hyp.haploid());
     assertEquals(1, hyp.reference());
     assertEquals(snp, hyp.subHypotheses());
@@ -34,7 +34,7 @@ public class HypothesesCancerTest extends TestCase {
   public void testDiploid() {
     final GenomePriorParams params = GenomePriorParams.builder().create();
     final HypothesesSnp snp = new HypothesesSnp(SimplePossibility.SINGLETON, params, false, 2);
-    final HypothesesCancer hyp = new HypothesesCancer(snp, SimplePossibility.SINGLETON);
+    final HypothesesCancer<HypothesesSnp> hyp = new HypothesesCancer<>(snp, SimplePossibility.SINGLETON);
     assertFalse(hyp.haploid());
     assertEquals(2, hyp.reference());
     assertEquals(snp, hyp.subHypotheses());

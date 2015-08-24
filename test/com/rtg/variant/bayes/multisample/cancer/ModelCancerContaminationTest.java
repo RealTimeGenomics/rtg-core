@@ -27,9 +27,9 @@ import junit.framework.TestCase;
  */
 public class ModelCancerContaminationTest extends TestCase {
 
-  private HypothesesCancer getTestCats() {
+  private HypothesesCancer<Hypotheses<Description>> getTestCats() {
     final Hypotheses<Description> hyps = AbstractSomaticCallerTest.simpleHomoHyps(0.99, 0);
-    return new HypothesesCancer(hyps, SimplePossibility.SINGLETON);
+    return new HypothesesCancer<>(hyps, SimplePossibility.SINGLETON);
   }
 
   private static final String EXPECT_1G = ""
@@ -40,7 +40,7 @@ public class ModelCancerContaminationTest extends TestCase {
       + "T:A  -3.564  -3.564  -0.304  -3.564" + LS
       ;
   public void test1G() {
-    final HypothesesCancer hypc = getTestCats();
+    final HypothesesCancer<Hypotheses<Description>> hypc = getTestCats();
     final Description desc = hypc.subHypotheses().description();
     final ModelCancerContamination model = new ModelCancerContamination(hypc, 0.2, new StatisticsSnp(hypc.description()));
     model.integrity();

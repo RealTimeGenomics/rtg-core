@@ -29,7 +29,7 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
   @Override
   protected Hypotheses<Description> getCancerHypotheses(final double same, final int ref) {
     final HypothesesPrior<Description> hyps = simpleHomoHyps(0.99, ref);
-    return new HypothesesCancer(hyps, SimplePossibility.SINGLETON);
+    return new HypothesesCancer<>(hyps, SimplePossibility.SINGLETON);
   }
 
   @Override
@@ -42,7 +42,7 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
     final List<ModelInterface<Description>> models = new ArrayList<>();
     for (int ref = 0; ref < 4; ref++) {
       final Hypotheses<Description> hyps = simpleHomoHyps(0.99, ref);
-      final HypothesesCancer hypc = new HypothesesCancer(hyps, SimplePossibility.SINGLETON);
+      final HypothesesCancer<Hypotheses<Description>> hypc = new HypothesesCancer<>(hyps, SimplePossibility.SINGLETON);
       models.add(new ModelCancerContamination(hypc, 0.0, new StatisticsSnp(hypc.description())));
     }
     return models;

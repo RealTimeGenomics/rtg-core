@@ -38,7 +38,7 @@ public class ModelCancerContamination extends Model<Description> {
    * @param contamination fraction of cancer sample that is contamination from normal sample.
    * @param statistics for statistics collection
    */
-  public ModelCancerContamination(final HypothesesCancer hyp, final double contamination, final Statistics<?> statistics) {
+  public ModelCancerContamination(final HypothesesCancer<?> hyp, final double contamination, final Statistics<?> statistics) {
     super(hyp, statistics);
     mSubHypotheses = hyp.subHypotheses();
     mContamination = contamination;

@@ -173,7 +173,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
         break;
     }
     list.add(new Model<>(complex, new StatisticsComplex(complex.description(), locus.getLength())));
-    list.add(new ModelCancerContamination(new HypothesesCancer(complex, LogApproximatePossibility.SINGLETON), mContamination, new StatisticsComplex(complex.description(), locus.getLength())));
+    list.add(new ModelCancerContamination(new HypothesesCancer<>(complex, LogApproximatePossibility.SINGLETON), mContamination, new StatisticsComplex(complex.description(), locus.getLength())));
     return list;
   }
 

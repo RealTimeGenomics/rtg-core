@@ -19,16 +19,17 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
  * Asymmetric pairs of hypotheses used in contaminated cancer model.
+ * @param <S> type of the underlying hypotheses
  */
-public class HypothesesCancer extends Hypotheses<Description> {
+public class HypothesesCancer<S extends Hypotheses<? extends Description>> extends Hypotheses<Description> {
 
-  private final Hypotheses<?> mSubHypotheses;
+  private final S mSubHypotheses;
 
   /**
    * @param hypotheses underlying hypotheses pairs of which form the cancer hypotheses.
    * @param arithmetic used in calculations and for priors.
    */
-  protected HypothesesCancer(Hypotheses<? extends Description> hypotheses, PossibilityArithmetic arithmetic) {
+  protected HypothesesCancer(S hypotheses, PossibilityArithmetic arithmetic) {
     super(makeCancerDescription(hypotheses), arithmetic, new CodeCross(hypotheses.size()), false);
     mSubHypotheses = hypotheses;
   }
@@ -49,7 +50,7 @@ public class HypothesesCancer extends Hypotheses<Description> {
   /**
    * @return the underlying hypotheses.
    */
-  public Hypotheses<?> subHypotheses() {
+  public S subHypotheses() {
     return mSubHypotheses;
   }
 
