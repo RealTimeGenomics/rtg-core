@@ -57,7 +57,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
   protected final SomaticPriorsFactory<?> mQDiploidFactory;
   private final VariantParams mParams;
   private final ReferenceRanges<Double> mSiteSpecificSomaticPriors;
-  private final double mInterestingThreshold;
+  private final double mIdentityInterestingThreshold;
 
   /**
    * @param qHaploidFactory haploid Q matrix factory
@@ -69,7 +69,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     mQDiploidFactory = qDiploidFactory;
     mParams = params;
     mSiteSpecificSomaticPriors = mParams.siteSpecificSomaticPriors();
-    mInterestingThreshold = mParams.interestingThreshold() * MathUtils.LOG_10;
+    mIdentityInterestingThreshold = mParams.interestingThreshold() * MathUtils.LOG_10;
   }
 
   /**
@@ -206,9 +206,10 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     final Ploidy normalPloidy = hypotheses.haploid() ? Ploidy.HAPLOID : Ploidy.DIPLOID;
     final boolean doLoh = mParams.lohPrior() > 0;
     final String refAllele = DnaUtils.bytesToSequenceIncCG(ref, position, endPosition - position);
+    final double ratio = posterior.posteriorScore();
     if (sameCall || bestNormal == bestCancer) {
       // Call is same for both samples.  It still could be a germline call.
-      if (hypotheses.reference() == bestNormal) {
+      if (hypotheses.reference() == bestNormal && ratio >= mIdentityInterestingThreshold) {
         if (mParams.callLevel() != VariantOutputLevel.ALL) {
           // Call was same for both samples and equal to the reference, this is really boring
           // only retain it if ALL mode is active
@@ -225,14 +226,6 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       isSomatic = false;
     } else {
       isSomatic = true;
-    }
-
-    final double ratio = posterior.posteriorScore();
-    if (ratio < mInterestingThreshold) {
-      if (mParams.callLevel() != VariantOutputLevel.ALL) {
-        return null;
-      }
-      boring = true;
     }
 
     final VariantSample normalSample = setCallValues(posterior.normalMeasure(), bestNormal, hypotheses, modelNormal, mParams, normalPloidy, VariantSample.DeNovoStatus.UNSPECIFIED, null);
