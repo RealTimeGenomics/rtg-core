@@ -12,13 +12,14 @@
 
 package com.rtg.variant.bayes.multisample.cancer;
 
+import static com.rtg.util.StringUtils.LS;
+
 import java.util.Arrays;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.format.FormatReal;
-import com.rtg.util.integrity.IntegralAbstract;
 import com.rtg.variant.bayes.ArrayGenotypeMeasure;
 import com.rtg.variant.bayes.GenotypeMeasure;
 import com.rtg.variant.bayes.Hypotheses;
@@ -27,9 +28,10 @@ import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
+ * Common part of posterior calculations from pure and contaminated somatic calling.
  */
 @TestClass(value = "com.rtg.variant.bayes.multisample.cancer.PosteriorPureTest")
-public abstract class AbstractPosterior extends IntegralAbstract {
+public abstract class AbstractPosterior {
 
   PossibilityArithmetic mArithmetic = LogApproximatePossibility.SINGLETON;
   protected double logSum(final double x, final double y) {
@@ -97,7 +99,8 @@ public abstract class AbstractPosterior extends IntegralAbstract {
   }
 
   @Override
-  public void toString(StringBuilder sb) {
+  public String toString() {
+    final StringBuilder sb = new StringBuilder();
     final FormatReal fmt = new FormatReal(4, 3);
     final int pad = mHypotheses.nameLength();
     for (int i = 0; i < mLength; i++) {
@@ -114,6 +117,7 @@ public abstract class AbstractPosterior extends IntegralAbstract {
     sb.append(LS);
     sb.append("best[").append(mBestNormal).append(",").append(mBestCancer).append("]=").append(Utils.realFormat(mPosterior[mBestNormal][mBestCancer], 3)).append(LS);
     sb.append("equal=").append(Utils.realFormat(mEqual, 3)).append("  notequal=").append(Utils.realFormat(mNotEqual, 3)).append(LS);
+    return sb.toString();
   }
 
   /**
@@ -177,11 +181,6 @@ public abstract class AbstractPosterior extends IntegralAbstract {
    */
   protected GenotypeMeasure cancerMeasure() {
     return new NoNonIdentityMeasure(new ArrayGenotypeMeasure(mArithmetic, mCancerMarginal, mHypotheses));
-  }
-
-  @Override
-  public boolean integrity() {
-    return true;
   }
 
 }
