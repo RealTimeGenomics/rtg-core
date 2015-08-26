@@ -19,6 +19,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import com.rtg.util.TestUtils;
+import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
@@ -26,12 +27,11 @@ import com.rtg.util.test.FileHelper;
 import junit.framework.TestCase;
 
 /**
- *
- *
  */
 public class ModelFactoryTest extends TestCase {
 
   public void testConstructor() throws IOException {
+    CommandLine.clearCommandArgs();
     try {
       new ModelFactory(null, 0.0);
       fail("accepted null file");
