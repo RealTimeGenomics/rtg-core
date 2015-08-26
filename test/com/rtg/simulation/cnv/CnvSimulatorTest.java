@@ -11,17 +11,6 @@
  */
 package com.rtg.simulation.cnv;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfWriter;
@@ -38,8 +27,18 @@ import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 import com.rtg.util.test.NotRandomRandom;
-
 import junit.framework.TestCase;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class CnvSimulatorTest extends TestCase {
 
@@ -302,7 +301,7 @@ public class CnvSimulatorTest extends TestCase {
     try (OutputStream os = new FileOutputStream(mCnvs)) {
       new MyCnvSimOneSequence(mDsrOne, mOutput, mTwin, os, mRandom, mPriors, 10.0, Integer.MAX_VALUE);
     }
-  } //TODO:
+  }
 
   public void testMyCnvSimTwoSequences() throws IOException {
     Diagnostic.setLogStream();
@@ -419,95 +418,71 @@ public class CnvSimulatorTest extends TestCase {
     Diagnostic.setLogStream();
     //final File temp = FileHelper.createTempDirectory();
     final String genome = ""
-      + ">a\n"
-      + "ACGTACGATCAGCATCTGACATGCTAACGGTCATC" + StringUtils.LS;
+        + ">a\n"
+        + "ACGTACGATCAGCATCTGACATGCTAACGGTCATC" + StringUtils.LS;
     final File in = ReaderTestUtils.getDNASubDir(genome, mDir);
-    try {
-      final SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in);
-      try {
-        final File cnvs = new File(mDir, "test.cnv");
-        final File outputDirectory = new File(mDir, "out");
-        final File twinDirectory = new File(mDir, "twin");
+    try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in)) {
+      final File cnvs = new File(mDir, "test.cnv");
+      final File outputDirectory = new File(mDir, "out");
+      final File twinDirectory = new File(mDir, "twin");
 
-        final SdfWriter output = new SdfWriter(outputDirectory, Constants.MAX_FILE_SIZE,
-            PrereadType.UNKNOWN, false, true, false, dsr.type());
+      try (SdfWriter output = new SdfWriter(outputDirectory, Constants.MAX_FILE_SIZE, PrereadType.UNKNOWN, false, true, false, dsr.type());
+           SdfWriter twin = new SdfWriter(twinDirectory, Constants.MAX_FILE_SIZE, PrereadType.UNKNOWN, false, true, false, dsr.type())) {
+        final CnvSimulator cs = new CnvSimulator(dsr, output, twin, new FileOutputStream(cnvs), mRandom, mPriors, 10, Integer.MAX_VALUE);
+        cs.generate();
+        final String csstr = cs.toString();
+        //System.err.println(csstr);
+        TestUtils.containsAll(csstr, "CnvSimulator", "No. breakpoints ",
+            "Sequence 0 No. regions 2", "priors set");
+        final File psFile = new File(mDir, "console");
+        final FileOutputStream ps = new FileOutputStream(psFile);
         try {
-          final SdfWriter twin = new SdfWriter(twinDirectory, Constants.MAX_FILE_SIZE,
-              PrereadType.UNKNOWN, false, true, false, dsr.type());
-          try {
-            final CnvSimulator cs = new CnvSimulator(dsr, output, twin, new FileOutputStream(cnvs), mRandom, mPriors, 10, Integer.MAX_VALUE);
-            cs.generate();
-            final String csstr = cs.toString();
-            //System.err.println(csstr);
-            TestUtils.containsAll(csstr, "CnvSimulator", "No. breakpoints ",
-              "Sequence 0 No. regions 2", "priors set");
-            final File psFile = new File(mDir, "console");
-            final FileOutputStream ps = new FileOutputStream(psFile);
-            try {
-              cs.outputHistograms(ps);
-            } finally {
-              ps.flush();
-              ps.close();
-              final String psfilestr = FileUtils.fileToString(psFile.getPath());
-              TestUtils.containsAll(psfilestr,
-                "Total length",
-                "CNV-count",
-                "CNV-percent",
-                "%",
-                "Sequence",
-                "length",
-                "CNV-count",
-                "CNV-percent",
-                "Lengths of CNV regions",
-                "range of nt-length    : count",
-                "[0               - 0] : ",
-                "[1              - 10] : ",
-                "[11            - 100] : ",
-                "[101         - 1,000] : ",
-                "[1,001      - 10,000] : ",
-                "[1,0001    - 100,000] : ",
-                "[..      - 1,000,000] : ",
-                "[..     - 10,000,000] : ",
-                "[..    - 100,000,000] : ",
-                "[..  - 1,000,000,000] : ");
-            }
-          } finally {
-            twin.close();
-          }
+          cs.outputHistograms(ps);
         } finally {
-
-          output.close();
+          ps.flush();
+          ps.close();
+          final String psfilestr = FileUtils.fileToString(psFile.getPath());
+          TestUtils.containsAll(psfilestr,
+              "Total length",
+              "CNV-count",
+              "CNV-percent",
+              "%",
+              "Sequence",
+              "length",
+              "CNV-count",
+              "CNV-percent",
+              "Lengths of CNV regions",
+              "range of nt-length    : count",
+              "[0               - 0] : ",
+              "[1              - 10] : ",
+              "[11            - 100] : ",
+              "[101         - 1,000] : ",
+              "[1,001      - 10,000] : ",
+              "[1,0001    - 100,000] : ",
+              "[..      - 1,000,000] : ",
+              "[..     - 10,000,000] : ",
+              "[..    - 100,000,000] : ",
+              "[..  - 1,000,000,000] : ");
         }
-        final String cnvfilestr = FileUtils.fileToString(cnvs);
-        //System.err.println(cnvfilestr);
-        TestUtils.containsAll(cnvfilestr, "#Seq" + TB + "start" + TB + "end" + TB + "label" + TB + "cn" + TB + "bp-cn" + TB + "error",
+      }
+      final String cnvfilestr = FileUtils.fileToString(cnvs);
+      //System.err.println(cnvfilestr);
+      TestUtils.containsAll(cnvfilestr, "#Seq" + TB + "start" + TB + "end" + TB + "label" + TB + "cn" + TB + "bp-cn" + TB + "error",
           "a" + TB + "0" + TB + "35" + TB + "cnv" + TB + "2" + TB + "0" + TB + "0.0");
 
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+      final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
-        new CnvFileChecker(new PrintStream(bos), new StringReader(cnvfilestr)).check();
+      new CnvFileChecker(new PrintStream(bos), new StringReader(cnvfilestr)).check();
 
-        bos.close();
+      bos.close();
 
-        assertEquals("", bos.toString());
+      assertEquals("", bos.toString());
 
-        final int totalLength = calculateTotalLength(cnvfilestr);
-        final SequencesReader outputReader = SequencesReaderFactory.createDefaultSequencesReader(outputDirectory);
-        try {
-          final SequencesReader twinReader = SequencesReaderFactory.createDefaultSequencesReader(twinDirectory);
-          try {
-            assertEquals(totalLength, outputReader.totalLength() + twinReader.totalLength());
-          } finally {
-            twinReader.close();
-          }
-        } finally {
-          outputReader.close();
-        }
-      } finally {
-        dsr.close();
-
+      final int totalLength = calculateTotalLength(cnvfilestr);
+      try (SequencesReader outputReader = SequencesReaderFactory.createDefaultSequencesReader(outputDirectory);
+           SequencesReader twinReader = SequencesReaderFactory.createDefaultSequencesReader(twinDirectory)) {
+        assertEquals(totalLength, outputReader.totalLength() + twinReader.totalLength());
       }
-    } finally {
     }
   }
 
@@ -520,56 +495,33 @@ public class CnvSimulatorTest extends TestCase {
       + ">b" + StringUtils.LS
       + "CATGATTGCAGCTAGCATCGTGTCACA" + StringUtils.LS;
     final File in = ReaderTestUtils.getDNASubDir(genome, mDir);
-    try {
-      final SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in);
-      try {
-        final File cnvs = new File(mDir, "test2.cnv");
-        final File outputDirectory = new File(mDir, "out2");
-        final File twinDirectory = new File(mDir, "twin2");
+    try (SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReader(in)) {
+      final File cnvs = new File(mDir, "test2.cnv");
+      final File outputDirectory = new File(mDir, "out2");
+      final File twinDirectory = new File(mDir, "twin2");
 
-        final SdfWriter output = new SdfWriter(outputDirectory, Constants.MAX_FILE_SIZE,
-            PrereadType.UNKNOWN, false, true, false, dsr.type());
-        try {
-          final SdfWriter twin = new SdfWriter(twinDirectory, Constants.MAX_FILE_SIZE,
-              PrereadType.UNKNOWN, false, true, false, dsr.type());
-          try {
-            final CnvSimulator cs = new CnvSimulator(dsr, output, twin, new FileOutputStream(cnvs), mRandom, mPriors, 10,  Integer.MAX_VALUE);
-            //cs.setPriors(mPriors);
-            cs.generate();
-            final String csstr = cs.toString();
-            //System.err.println(csstr);
-            TestUtils.containsAll(csstr, "CnvSimulator", "No. breakpoints ",
-              "Sequence 0", "Sequence 1");
+      try (SdfWriter output = new SdfWriter(outputDirectory, Constants.MAX_FILE_SIZE, PrereadType.UNKNOWN, false, true, false, dsr.type());
+           SdfWriter twin = new SdfWriter(twinDirectory, Constants.MAX_FILE_SIZE, PrereadType.UNKNOWN, false, true, false, dsr.type())) {
+        final CnvSimulator cs = new CnvSimulator(dsr, output, twin, new FileOutputStream(cnvs), mRandom, mPriors, 10, Integer.MAX_VALUE);
+        //cs.setPriors(mPriors);
+        cs.generate();
+        final String csstr = cs.toString();
+        //System.err.println(csstr);
+        TestUtils.containsAll(csstr, "CnvSimulator", "No. breakpoints ",
+            "Sequence 0", "Sequence 1");
 
-          } finally {
-            twin.close();
-          }
-        } finally {
-          output.close();
-        }
-        final String cnvfilestr = FileUtils.fileToString(cnvs);
-        //System.err.println(cnvfilestr);
-        TestUtils.containsAll(cnvfilestr, "#Seq" + TB + "start" + TB + "end" + TB + "label" + TB + "cn" + TB + "bp-cn" + TB + "error",
+      }
+      final String cnvfilestr = FileUtils.fileToString(cnvs);
+      //System.err.println(cnvfilestr);
+      TestUtils.containsAll(cnvfilestr, "#Seq" + TB + "start" + TB + "end" + TB + "label" + TB + "cn" + TB + "bp-cn" + TB + "error",
           "b" + TB + "27" + TB + "27" + TB + "cnv" + TB + "0" + TB + "0" + TB + "0.0");
 
 
-        final int totalLength = calculateTotalLength(cnvfilestr);
-        final SequencesReader outputReader = SequencesReaderFactory.createDefaultSequencesReader(outputDirectory);
-        try {
-          final SequencesReader twinReader = SequencesReaderFactory.createDefaultSequencesReader(twinDirectory);
-          try {
-            assertEquals(totalLength, outputReader.totalLength() + twinReader.totalLength());
-          } finally {
-            twinReader.close();
-          }
-        } finally {
-          outputReader.close();
-        }
-      } finally {
-        dsr.close();
-
+      final int totalLength = calculateTotalLength(cnvfilestr);
+      try (SequencesReader outputReader = SequencesReaderFactory.createDefaultSequencesReader(outputDirectory);
+           SequencesReader twinReader = SequencesReaderFactory.createDefaultSequencesReader(twinDirectory)) {
+        assertEquals(totalLength, outputReader.totalLength() + twinReader.totalLength());
       }
-    } finally {
     }
 
   }
