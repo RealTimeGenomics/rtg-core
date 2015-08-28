@@ -375,8 +375,6 @@ public class GraphMapTest extends TestCase {
     try {
       final MemoryPrintStream mps =  new MemoryPrintStream();
       Diagnostic.setLogStream(mps.printStream());
-      final MemoryPrintStream progress =  new MemoryPrintStream();
-      Diagnostic.setProgressStream(progress.printStream());
       final SequencesReader left = ReaderTestUtils.getReaderDnaMemory(">left" + LS + "CCA" + LS);
       final SequencesReader right = ReaderTestUtils.getReaderDnaMemory(">right" + LS + "ATT" + LS);
       final ReadPairSource source = new ReadPairSource(left, right);
@@ -393,10 +391,6 @@ public class GraphMapTest extends TestCase {
         , "1 Too many pairings"
         , "0 Equivalent alignments skipped"
           );
-      TestUtils.containsAll(progress.toString(),
-          "0/1 (0.0%)"
-          , "1/1 (100.0%)"
-      );
       pool.terminate();
     } finally {
       FileHelper.deleteAll(tmp);
