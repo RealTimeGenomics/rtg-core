@@ -27,14 +27,26 @@ public final class SimulatedReadNameParserFactory {
    * @return the parser, or null if the supplied name does not appear to be a handled format.
    */
   public static SimulatedReadNameParser getParser(String exampleReadName) {
+    final SimulatedReadNameParser parser;
     if (NewestReadNameParser.looksOk(exampleReadName)) {
-      return new NewestReadNameParser();
+      parser = new NewestReadNameParser();
     } else if (NewReadNameParser.looksOk(exampleReadName)) {
-      return new NewReadNameParser();
+      parser = new NewReadNameParser();
     } else if (OldReadNameParser.looksOk(exampleReadName)) {
-      return new OldReadNameParser();
+      parser = new OldReadNameParser();
     } else if (DwgsimReadNameParser.looksOk(exampleReadName)) {
-      return new DwgsimReadNameParser();
+      parser = new DwgsimReadNameParser();
+    } else {
+      parser = null;
+    }
+    if (parser != null) {
+      try {
+        if (parser.setReadInfo(exampleReadName, 0)) {
+          return parser;
+        }
+      } catch (RuntimeException e) {
+        return null;
+      }
     }
     return null;
   }
