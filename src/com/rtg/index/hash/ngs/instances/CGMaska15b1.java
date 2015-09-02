@@ -22,10 +22,8 @@ import com.rtg.util.integrity.Exam;
 /**
  * r=35 s=1
  * Allows for 0, -1, -2 on left hand gap and 5, 6, 7 on right hand gap.
-
  * <a href="doc-files/CGMaska15.jpg">This</a> illustrates the layout of the
  * masks and the calculation of the shift directions and magnitudes.
-
  */
 public class CGMaska15b1 extends AbstractCGMask {
 
