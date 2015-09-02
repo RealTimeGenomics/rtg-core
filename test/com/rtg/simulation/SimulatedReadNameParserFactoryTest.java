@@ -27,9 +27,12 @@ public class SimulatedReadNameParserFactoryTest extends TestCase {
     assertNotNull(p);
     assertTrue(p.getClass().equals(NewReadNameParser.class));
 
-    p = SimulatedReadNameParserFactory.getParser("cgread02:simulatedSequence1:30713R:S0:I0:D0");
+    p = SimulatedReadNameParserFactory.getParser("read02:simulatedSequence1:30713R:S0:I0:D0");
     assertNotNull(p);
     assertTrue(p instanceof OldReadNameParser);
+
+    p = SimulatedReadNameParserFactory.getParser("HISEQ1:18:H8VC6ADXX:2:2104:14516:42086");
+    assertNull(p);
 
     p = SimulatedReadNameParserFactory.getParser("0 frag9/0/0/simulatedSequence1/9068/F/7.1X27.");
     assertNotNull(p);

@@ -20,7 +20,6 @@ import com.rtg.reader.PrereadType;
 import com.rtg.simulation.SimulationUtils;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.PortableRandom;
-import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.MachineErrorParamsBuilder;
@@ -181,7 +180,7 @@ public class CompleteGenomicsMachine extends AbstractMachine {
       final String cigar = getCigar(direction == -1, newStart, length, READ_LENGTH);
       return formatReadName(id, frame, cigar, fragmentStart, newStart);
     }
-    Diagnostic.developerLog(id + " fragmentStart: " + fragmentStart + " length: " + length + " forward: " + forward + " leftArm: " + leftArm);
+    //Diagnostic.developerLog(id + " fragmentStart: " + fragmentStart + " length: " + length + " forward: " + forward + " leftArm: " + leftArm);
     throw new NoTalkbackSlimException("Unable to generate a valid read with given priors in " + NUMBER_TRIES + " attempts");
   }
 
