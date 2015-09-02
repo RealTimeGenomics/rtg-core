@@ -39,6 +39,7 @@ class AviewParamsBuilder {
   protected boolean mSortReadGroup = false;
   protected boolean mPrintReadGroup = false;
   protected boolean mPrintMatePosition = false;
+  protected boolean mUnflattenCgi = false;
   protected String[] mSamples = null;
 
   protected RegionRestriction mRegion = new RegionRestriction("", RegionRestriction.MISSING, RegionRestriction.MISSING);
@@ -47,6 +48,7 @@ class AviewParamsBuilder {
   protected int mMaxMatedAlignmentScore = Integer.MAX_VALUE;
   protected int mMaxUnmatedAlignmentScore = Integer.MAX_VALUE;
   protected int mMaxIhScore = Integer.MAX_VALUE;
+  protected int mMinMapq = 0;
   protected int mMappingTolerance = 0;
   protected int mProjectTrackId = 0;
 
@@ -100,6 +102,11 @@ class AviewParamsBuilder {
     return this;
   }
 
+  AviewParamsBuilder unflattenCgi(boolean unflatten) {
+    mUnflattenCgi = unflatten;
+    return this;
+  }
+
   AviewParamsBuilder projectTrackId(int trackId) {
     mProjectTrackId = trackId;
     return this;
@@ -147,6 +154,11 @@ class AviewParamsBuilder {
 
   AviewParamsBuilder maxIhScore(int maxIhScore) {
     mMaxIhScore = maxIhScore;
+    return this;
+  }
+
+  AviewParamsBuilder minMapq(int minMapq) {
+    mMinMapq = minMapq;
     return this;
   }
 

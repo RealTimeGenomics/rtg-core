@@ -178,9 +178,9 @@ public final class Aview extends AbstractCli {
           }
         }
         final String[] rawRead;
-        if (r.hasAttribute(SamUtils.CG_SUPER_CIGAR)) {
+        if (mParams.unflattenCgi() && r.hasAttribute(SamUtils.CG_SUPER_CIGAR)) {
           rawRead = mCgAssistant.samToReads(r, ref, mModel.template(), readStart, mParams.displayDots());
-        } else if (r.hasAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS)) {
+        } else if (mParams.unflattenCgi() && r.hasAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS)) {
           rawRead = mCgLegacyAssistant.samToReads(r, ref, mModel.template(), readStart, mParams.displayDots());
         } else if (r.getReadUnmappedFlag()) {
           final int bases = Math.min(ref.length() - readStart, r.getReadLength());

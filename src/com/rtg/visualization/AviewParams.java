@@ -48,6 +48,7 @@ class AviewParams {
   static final String MAX_MATED_ALIGNMENT_SCORE = "Xmax-as-mated";
   static final String MAX_UNMATED_ALIGNMENT_SCORE = "Xmax-as-unmated";
   static final String MAX_IH_SCORE = "Xmax-hits";
+  static final String MIN_MAPQ_SCORE = "Xmin-mapq";
 
   static final String PRINT_CIGARS = "print-cigars";
   static final String PRINT_READGROUP = "print-readgroup";
@@ -63,6 +64,7 @@ class AviewParams {
   static final String SORT_READGROUP = "sort-readgroup";
   static final String SORT_READS = "sort-reads";
   static final String PROJECT_TRACK = "project-track";
+  static final String UNFLATTEN = "unflatten";
 
   static final String READS_SDF = "reads";
   static final String UNMAPPED_SAM = "Xunmapped";
@@ -93,6 +95,7 @@ class AviewParams {
     flags.registerOptional(MAX_MATED_ALIGNMENT_SCORE, Integer.class, "INT", "if set, ignore mated SAM records with an alignment score (AS attribute) that exceeds this value").setCategory(CommonFlagCategories.FILTERING);
     flags.registerOptional(MAX_UNMATED_ALIGNMENT_SCORE, Integer.class, "INT", "if set, ignore unmated SAM records with an alignment score (AS attribute) that exceeds this value").setCategory(CommonFlagCategories.FILTERING);
     flags.registerOptional(MAX_IH_SCORE, Integer.class, "INT", "if set, ignore SAM records with a number of hits (NH attribute) that exceeds this value").setCategory(CommonFlagCategories.FILTERING);
+    flags.registerOptional(MIN_MAPQ_SCORE, Integer.class, "INT", "if set, ignore SAM records with a MAPQ score less than this value").setCategory(CommonFlagCategories.FILTERING);
 
     // What to display and how
     flags.registerOptional(PRINT_CIGARS, "print alignment cigars").setCategory(CommonFlagCategories.REPORTING);
@@ -109,6 +112,7 @@ class AviewParams {
     flags.registerOptional(PROJECT_TRACK, Integer.class, "INT", "if set, project highlighting for the specified track down through reads. Default projects the union of tracks").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(SORT_READS, "sort reads on start position").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(SORT_READGROUP, "sort reads first on read group and then on start position").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(UNFLATTEN, "display unflattened CGI reads when present").setCategory(CommonFlagCategories.REPORTING);
 
     // Random extras
     flags.registerOptional(XMAPPING_TOLERANCE, Integer.class, "INT", "variation allowed in start position when determining correctness of simulated read mapping", 0).setCategory(CommonFlagCategories.REPORTING);
@@ -163,6 +167,7 @@ class AviewParams {
   private final int mMaxMatedAlignmentScore;
   private final int mMaxUnmatedAlignmentScore;
   private final int mMaxIhScore;
+  private final int mMinMapq;
   private final int mMappingTolerance;
   private final boolean mPrintCigars;
   private final boolean mPrintReadGroup;
@@ -171,6 +176,7 @@ class AviewParams {
   private final boolean mSortReads;
   private final boolean mSortReadGroup;
   private final boolean mPrintMapQ;
+  private final boolean mUnflattenCgi;
   private final int mProjectTrackId;
 
   AviewParams(AviewParamsBuilder aviewParamsBuilder) {
@@ -187,6 +193,7 @@ class AviewParams {
     mMaxMatedAlignmentScore = aviewParamsBuilder.mMaxMatedAlignmentScore;
     mMaxUnmatedAlignmentScore = aviewParamsBuilder.mMaxUnmatedAlignmentScore;
     mMaxIhScore = aviewParamsBuilder.mMaxIhScore;
+    mMinMapq = aviewParamsBuilder.mMinMapq;
     mMappingTolerance = aviewParamsBuilder.mMappingTolerance;
     mUseTerminalColor = aviewParamsBuilder.mUseTerminalColor;
     mUseHtml = aviewParamsBuilder.mUseHtml;
@@ -201,6 +208,7 @@ class AviewParams {
     mPrintMatePosition = aviewParamsBuilder.mPrintMatePosition;
     mSamples = aviewParamsBuilder.mSamples;
     mPrintMapQ = aviewParamsBuilder.mPrintMapQ;
+    mUnflattenCgi = aviewParamsBuilder.mUnflattenCgi;
     mProjectTrackId = aviewParamsBuilder.mProjectTrackId;
   }
 
@@ -233,6 +241,7 @@ class AviewParams {
      .printReadName(flags.isSet(PRINT_NAMES))
      .printMapQ(flags.isSet(PRINT_MAPQ))
      .useHtml(flags.isSet(HTML))
+     .unflattenCgi(flags.isSet(UNFLATTEN))
      .sortReads(flags.isSet(SORT_READS))
      .sortReadGroup(flags.isSet(SORT_READGROUP))
      .printReadGroup(flags.isSet(PRINT_READGROUP))
@@ -240,6 +249,9 @@ class AviewParams {
      ;
    if (flags.isSet(MAX_IH_SCORE)) {
      builder.maxIhScore((Integer) flags.getValue(MAX_IH_SCORE));
+   }
+   if (flags.isSet(MIN_MAPQ_SCORE)) {
+     builder.minMapq((Integer) flags.getValue(MIN_MAPQ_SCORE));
    }
    if (flags.isSet(MAX_MATED_ALIGNMENT_SCORE)) {
      builder.maxMatedAlignmentScore((Integer) flags.getValue(MAX_MATED_ALIGNMENT_SCORE));
@@ -350,6 +362,9 @@ class AviewParams {
     return mMaxUnmatedAlignmentScore;
   }
 
+  final int minMapq() {
+    return mMinMapq;
+  }
 
   final int maxIhScore() {
     return mMaxIhScore;
@@ -369,6 +384,10 @@ class AviewParams {
 
   final boolean useTerminalColor() {
     return mUseTerminalColor;
+  }
+
+  final boolean unflattenCgi() {
+    return mUnflattenCgi;
   }
 
   final int projectTrackId() {

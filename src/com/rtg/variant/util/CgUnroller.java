@@ -11,7 +11,6 @@
  */
 package com.rtg.variant.util;
 
-import com.rtg.alignment.CgGotohEditDistance;
 import com.rtg.reader.FastaUtils;
 import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.SamUtils;
@@ -36,7 +35,6 @@ public final class CgUnroller {
     private final boolean mCgOverlapOnLeft;
 
     OrientedRead(final byte[] read, final byte[] quality, final boolean cgOverlapOnLeft) {
-      assert read.length == CgGotohEditDistance.CG_RAW_READ_LENGTH;
       mRead = read;
       mQuality = quality;
       mCgOverlapOnLeft = cgOverlapOnLeft;
@@ -66,13 +64,118 @@ public final class CgUnroller {
    * @param end last position of integer (0 based exclusive).
    * @return the integer at the start of the string
    */
-  private static int stringToInt(final String s, final int end) {
+  private static int stringToInt(final String s, final int start, final int end) {
     int t = 0;
-    for (int k = 0; k < end; k++) {
+    for (int k = start; k < end; k++) {
       t *= 10;
       t += s.charAt(k) - '0';
     }
     return t;
+  }
+
+  private static int nextCigarPos(String cigar, int start) {
+    final int end = cigar.length();
+    for (int k = start; k < end; k++) {
+      switch (cigar.charAt(k)) {
+        case 'S':
+        case 'G':
+          return k;
+        default:
+      }
+    }
+    return -1;
+  }
+
+  private static String unrollLegacyRead(final String samRead, final String gs, final String gc) {
+    final int overlap = gs.length();
+    if (overlap == 0) {
+      return samRead;
+    } else {
+      if (gc == null) {
+        return null;
+      }
+      final StringBuilder sbRead = new StringBuilder();
+      int lastCigarPos = 0;
+      int readPos = 0;
+      int attPos = 0;
+      while (true) {
+        final int cigarPos = nextCigarPos(gc, lastCigarPos);
+        if (cigarPos == -1) {
+          break;
+        }
+        final int cigarLen = stringToInt(gc, lastCigarPos, cigarPos);
+        if (cigarLen == 0) {
+          return null;
+        }
+        if (gc.charAt(cigarPos) == 'S') {
+          sbRead.append(samRead.substring(readPos, readPos + cigarLen));
+          lastCigarPos = cigarPos + 1;
+          readPos = readPos + cigarLen;
+        } else {
+          final int consumed = cigarLen * 2;
+          if (attPos + consumed > gs.length()) {
+            return null;
+          }
+          sbRead.append(gs.substring(attPos, attPos + consumed));
+          attPos = attPos + consumed;
+          lastCigarPos = cigarPos + 1;
+          readPos += cigarLen;
+        }
+      }
+      if (readPos != samRead.length() || lastCigarPos != gc.length() || attPos != gs.length()) {
+        return null;
+      }
+      return sbRead.toString();
+    }
+  }
+
+  // This version had a different interpretation of the gq field, where it contained
+  // one set of qualities (getting the other from the flattedened representation)
+  private static String unrollLegacyLegacyQualities(final String samQualities, final String gq, final String gc) {
+    final int overlap = gq.length();
+    final int gslength = overlap * 2;
+    if (overlap == 0) {
+      return samQualities;
+    } else {
+      if (gc == null) {
+        return null;
+      }
+      final StringBuilder sbQual = new StringBuilder();
+      int lastCigarPos = 0;
+      int readPos = 0;
+      int attPos = 0;
+      int att2Pos = 0;
+      while (true) {
+        final int cigarPos = nextCigarPos(gc, lastCigarPos);
+        if (cigarPos == -1) {
+          break;
+        }
+        final int cigarLen = stringToInt(gc, lastCigarPos, cigarPos);
+        if (cigarLen == 0) {
+          return null;
+        }
+        if (gc.charAt(cigarPos) == 'S') {
+          sbQual.append(samQualities.substring(readPos, readPos + cigarLen));
+          lastCigarPos = cigarPos + 1;
+          readPos = readPos + cigarLen;
+        } else {
+          final int consumed = cigarLen * 2;
+          if (attPos + consumed > gslength) {
+            return null;
+          }
+          sbQual.append(samQualities.substring(readPos, readPos + cigarLen));
+          sbQual.append(gq.substring(att2Pos, att2Pos + cigarLen));
+          att2Pos = att2Pos + cigarLen;
+          attPos = attPos + consumed;
+          lastCigarPos = cigarPos + 1;
+          readPos += cigarLen;
+        }
+      }
+      if (readPos != samQualities.length() || lastCigarPos != gc.length() || attPos != gslength) {
+        return null;
+      }
+      return sbQual.toString();
+    }
   }
 
   /**
@@ -105,28 +208,22 @@ public final class CgUnroller {
     if (superCigar == null) {
       final String gs = rec.getOverlapBases();
       final String gq = rec.getOverlapQuality();
+      final String gc = rec.getOverlapInstructions();
       final int overlap = gq.length();
-      if (2 * overlap != gs.length()) {
+      final boolean legacyLegacy = gq.length() == gs.length() / 2;
+      if (!legacyLegacy && overlap != gs.length()) {
         return null;
       }
-      if (overlap + samLength != CgGotohEditDistance.CG_RAW_READ_LENGTH) {
+      expandedRead = unrollLegacyRead(samRead, gs, gc);
+      if (expandedRead == null) {
         return null;
       }
-      if (overlap == 0) {
-        expandedRead = samRead;
-        expandedQual = hasQuality ? samQualities : null;
+      if (!hasQuality) {
+        expandedQual = null;
+      } else if (legacyLegacy) {
+        expandedQual = unrollLegacyLegacyQualities(samQualities, gq, gc);
       } else {
-        final int overlapPos;
-        final String gc = rec.getOverlapInstructions();
-        if (gc == null) {
-          return null;
-        }
-        overlapPos = stringToInt(gc, gc.indexOf('S'));
-        if (overlapPos == 0) {
-          return null;
-        }
-        expandedRead = samRead.substring(0, overlapPos) + gs + samRead.substring(overlapPos + overlap);
-        expandedQual = !hasQuality ? null : samQualities.substring(0, overlapPos + overlap) + gq + samQualities.substring(overlapPos + overlap);
+        expandedQual = unrollLegacyRead(samQualities, gq, gc);
       }
     } else {
       final SuperCigarUnroller unroll = new SuperCigarUnroller();

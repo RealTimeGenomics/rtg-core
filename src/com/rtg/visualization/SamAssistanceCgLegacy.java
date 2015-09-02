@@ -86,13 +86,11 @@ public class SamAssistanceCgLegacy implements SamAssistance {
       return mSimple.samToReads(sam, template, templateBytes, readStart, displayDots);
     }
     final String gs = sam.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES);
-    assert gs.length() > 0 && (gs.length() & 1) == 0;
     final String gc = sam.getStringAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS);
+    final int overLapLength = gs.length() / 2;
+    final int overlapPos = Integer.parseInt(gc.substring(0, gc.indexOf('S'))) + overLapLength;
     final String read = sam.getReadString();
     final String cigar = sam.getCigarString();
-    //System.err.println("sam=" + sam.getReadName() + " " + sam.format());
-    final int overLapLength = gs.length() >> 1;
-    final int overlapPos = Integer.parseInt(gc.substring(0, gc.indexOf('S'))) + overLapLength;
     final String[] cigars = splitCigar(cigar, overlapPos);
     //System.err.println("gs=" + gs + " gc=" + gc);
     //System.err.println("split cigar " + cigar + " into " + java.util.Arrays.toString(cigars));

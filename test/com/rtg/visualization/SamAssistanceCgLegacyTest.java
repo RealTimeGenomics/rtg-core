@@ -48,6 +48,8 @@ public class SamAssistanceCgLegacyTest extends TestCase {
     checkSplitCigar("8=4N3X", 10, "8=4N2X", "1X");
     checkSplitCigar("8=4D3X", 10, "8=4D2X", "1X");
     checkSplitCigar("8S3X", 10, "8S2X", "1X");
+    checkSplitCigar("8=3X5I2=", 10, "8=2X", "1X5I2=");
+    checkSplitCigar("1X5I2=", 5, "1X4I", "1I2=");
 
     try {
       checkSplitCigar("10I5=", 0, null, "10I5=");

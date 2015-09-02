@@ -27,12 +27,12 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.mode.DnaUtils;
 import com.rtg.sam.ReadGroupUtils;
 import com.rtg.sam.SamFilterParams;
+import com.rtg.sam.SamRecordPopulator;
 import com.rtg.sam.SamRegionRestriction;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.ThreadedMultifileIterator;
 import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.sam.SamRecordPopulator;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMReadGroupRecord;
@@ -79,7 +79,10 @@ public final class SamHelper {
     }
 
     final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
-    try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(files, 2, pf, SamFilterParams.builder().restriction(new SamRegionRestriction(params.region())).create(), header)) {
+    try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(files, 2, pf,
+      SamFilterParams.builder()
+        .minMapQ(params.minMapq())
+        .restriction(new SamRegionRestriction(params.region())).create(), header)) {
       while (it.hasNext()) {
         final SAMRecord r = it.next();
         if (validAlignmentScore(r, params.maxMatedAlignmentScore(), params.maxUnmatedAlignmentScore())

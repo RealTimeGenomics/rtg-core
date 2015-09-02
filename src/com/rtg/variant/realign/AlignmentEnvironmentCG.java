@@ -11,6 +11,7 @@
  */
 package com.rtg.variant.realign;
 
+import com.rtg.alignment.CgGotohEditDistance;
 import com.rtg.mode.DNA;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
@@ -38,7 +39,7 @@ public class AlignmentEnvironmentCG extends AbstractAlignmentEnvironment {
     super(var.getStart());
     assert me.isCG();
     final CgUnroller.OrientedRead orient = CgUnroller.unrollCgRead(var, template);
-    if (orient == null) {
+    if (orient == null || orient.getRead().length != CgGotohEditDistance.CG_RAW_READ_LENGTH) {
       throw new NoTalkbackSlimException("Invalid CG alignment record=" + var.toString());
     }
     mRead = DNA.byteDNAtoByte(orient.getRead());
