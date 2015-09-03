@@ -22,7 +22,6 @@ import com.rtg.util.io.FileUtils;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -33,24 +32,6 @@ public class SamHelperTest extends TestCase {
     assertEquals("ACGT", SamHelper.getCorrectComplement(true, "ACGT"));
 
     assertEquals("TTTT", SamHelper.getCorrectComplement(false, "AAAA"));
-  }
-
-  public void testValidAlignment() {
-    final SAMRecord r = new SAMRecord(new SAMFileHeader());
-
-    assertTrue(SamHelper.validAlignmentScore(r, 5, 4));
-    r.setAttribute("AS", 3);
-
-    assertTrue(SamHelper.validAlignmentScore(r, 5, 4));
-    assertFalse(SamHelper.validAlignmentScore(r, 2, 4));
-
-    final SAMRecord r2 = new SAMRecord(new SAMFileHeader());
-    r2.setAttribute("AS", 3);
-    r2.setMateUnmappedFlag(true);
-    r2.setReadPairedFlag(true);
-
-    assertTrue(SamHelper.validAlignmentScore(r2, 2, 4));
-    assertFalse(SamHelper.validAlignmentScore(r2, 2, 2));
   }
 
   public void testValidIH() {

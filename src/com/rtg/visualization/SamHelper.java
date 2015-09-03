@@ -31,6 +31,7 @@ import com.rtg.sam.SamRecordPopulator;
 import com.rtg.sam.SamRegionRestriction;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.ThreadedMultifileIterator;
+import com.rtg.util.IntegerOrPercentage;
 import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
@@ -82,11 +83,12 @@ public final class SamHelper {
     try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(files, 2, pf,
       SamFilterParams.builder()
         .minMapQ(params.minMapq())
+        .maxMatedAlignmentScore(new IntegerOrPercentage(params.maxMatedAlignmentScore()))
+        .maxUnmatedAlignmentScore(new IntegerOrPercentage(params.maxUnmatedAlignmentScore()))
         .restriction(new SamRegionRestriction(params.region())).create(), header)) {
       while (it.hasNext()) {
         final SAMRecord r = it.next();
-        if (validAlignmentScore(r, params.maxMatedAlignmentScore(), params.maxUnmatedAlignmentScore())
-            && validIhScore(r, params.maxIhScore())
+        if (validIhScore(r, params.maxIhScore())
             && validReadGroup(validRGs, r.getStringAttribute(ReadGroupUtils.RG_ATTRIBUTE))) {
           records.add(r);
         }
@@ -147,26 +149,11 @@ public final class SamHelper {
     Collections.sort(records, new AlignmentsWithReadGroupsComparator());
   }
 
-  static boolean validAlignmentScore(SAMRecord r, int maxScore, int unmatedMaxScore) {
-    if (r.getReadPairedFlag() && r.getMateUnmappedFlag()) { //process as unmated
-      return checkMaxScore(r, unmatedMaxScore, SamUtils.ATTRIBUTE_ALIGNMENT_SCORE);
-    }
-    return checkMaxScore(r, maxScore, SamUtils.ATTRIBUTE_ALIGNMENT_SCORE);
-  }
-
   static boolean validIhScore(SAMRecord r, int maxScore) {
     final Integer nh = SamUtils.getNHOrIH(r);
     if (nh == null) {
       return true;
     }
     return nh < maxScore;
-  }
-
-  private static boolean checkMaxScore(SAMRecord r, int maxScore, String attribute) {
-    if (!r.hasAttribute(attribute)) {
-      return true;
-    }
-    final int currentScore = r.getIntegerAttribute(attribute);
-    return currentScore <= maxScore;
   }
 }
