@@ -25,7 +25,7 @@ public class QualAnnotationTest extends TestCase {
     final QualAnnotation qual = new QualAnnotation();
     assertEquals("QUAL", qual.getName());
     assertEquals(AnnotationDataType.DOUBLE, qual.getType());
-    final VcfRecord rec = new VcfRecord();
+    final VcfRecord rec = new VcfRecord("ref", 2, "A");
     assertNull(qual.getValue(rec, -1));
     rec.setQuality(".");
     assertNull(qual.getValue(rec, -1));

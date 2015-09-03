@@ -76,10 +76,7 @@ public abstract class PopulationVariantGenerator {
     VcfRecord toVcfRecord(SequencesReader reference) throws IOException {
       final DecimalFormat f = new DecimalFormat("#.###");
       //collapsePopulationVariant();
-      final VcfRecord rec = new VcfRecord();
-      rec.setStart(getStart());
-      rec.setSequence(reference.name(getSequenceId()));
-      rec.setRefCall(DnaUtils.bytesToSequenceIncCG(mRef));
+      final VcfRecord rec = new VcfRecord(reference.name(getSequenceId()), getStart(), DnaUtils.bytesToSequenceIncCG(mRef));
       rec.setQuality(VcfRecord.MISSING);
       rec.setId(VcfRecord.MISSING);
       for (final byte[] mAllele : mAlleles) {

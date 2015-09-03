@@ -271,14 +271,11 @@ public class MetaSnpCli extends LoggedCli {
             alts.add(assignment1);
           }
         }
-        final VcfRecord record = new VcfRecord();
+        final VcfRecord record = new VcfRecord(line.mSequence, line.mPosition, base(ref));
         final double phred = PosteriorUtils.phredIfy(arith.poss2Ln(res.mAssignments.get(i).mLikelihood));
         record.setInfo("LIKE", "" + Utils.realFormat(phred, 3));
-        record.setSequence(line.mSequence);
-        record.setStart(line.mPosition);
         record.setNumberOfSamples(assignments.length);
         record.addFormat(VcfUtils.FORMAT_GENOTYPE); // Ensure the record has a notion of genotype - strictly we should also initialize any pre-exising sample columns with empty GT
-        record.setRefCall(base(ref));
         for (int alt = 1; alt < alts.size(); alt++) {
           record.addAltCall(base(alts.get(alt)));
         }

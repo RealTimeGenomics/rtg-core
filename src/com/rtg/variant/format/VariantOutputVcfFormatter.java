@@ -233,19 +233,10 @@ public class VariantOutputVcfFormatter {
    * @return the VcfRecord
    */
   public VcfRecord makeVcfRecord(Variant call) {
-    final VcfRecord rec = new VcfRecord();
-
-    rec.setNumberOfSamples(mSampleNames.length);
     //CHROM field
-    rec.setSequence(call.getLocus().getSequenceName());
 
     //whether to include previous nt or not
     final boolean includePreviousNt = includePreviousNt(call);
-
-    rec.setStart(call.getLocus().getStart() - (includePreviousNt ? 1 : 0));
-
-    //ID field
-    rec.setId(VcfRecord.MISSING);
 
     //REF field
     final StringBuilder finalRef = new StringBuilder();
@@ -264,8 +255,13 @@ public class VariantOutputVcfFormatter {
     } else {
       finalRef.append('*');
     }
-    rec.setRefCall(finalRef.toString());
 
+    final VcfRecord rec = new VcfRecord(call.getLocus().getSequenceName(), call.getLocus().getStart() - (includePreviousNt ? 1 : 0), finalRef.toString());
+
+    //ID field
+    rec.setId(VcfRecord.MISSING);
+
+    rec.setNumberOfSamples(mSampleNames.length);
     //FILTER fields
     for (final VcfFilterField filter : mFilterFields) {
       filter.updateRecord(rec, call, mParams);

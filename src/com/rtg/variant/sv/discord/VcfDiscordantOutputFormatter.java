@@ -75,16 +75,13 @@ public class VcfDiscordantOutputFormatter {
   public VcfRecord vcfRecord(DiscordantReadSet readset, int coverage, double ambiguous) throws IOException {
     final boolean unionOnly = readset.getIntersection() == null;
     final BreakpointConstraint geo = unionOnly ? readset.getUnion() : readset.getIntersection();
-    final VcfRecord rec = new VcfRecord();
-    rec.setSequence(geo.getXName());
     final BreakpointPosition pos = geo.position();
     //Use Math.max(x, 0) to fix records that go before the start of the reference
     final int refPosition = Math.max(pos.position(), 0);
     final String cipos = "" + (pos.lo() - refPosition) + "," + (pos.hi() - refPosition);
-    rec.setStart(refPosition);
-    rec.setId(VcfRecord.MISSING);
     final String ref = getRef(geo.getXName(), refPosition);
-    rec.setRefCall(ref);
+    final VcfRecord rec = new VcfRecord(geo.getXName(), refPosition, ref);
+    rec.setId(VcfRecord.MISSING);
     final String alt;
 
     final String bracket;

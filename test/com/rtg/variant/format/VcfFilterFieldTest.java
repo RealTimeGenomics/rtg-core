@@ -69,40 +69,40 @@ public class VcfFilterFieldTest extends TestCase {
     for (VariantFilter filter : VariantFilter.values()) {
       call.addFilter(filter);
     }
-    final VcfRecord rec = new VcfRecord();
+    final VcfRecord rec = new VcfRecord("foo", 0, "c");
     for (VcfFilterField field : VcfFilterField.values()) {
       field.updateRecord(rec, call, params);
     }
 
-    assertEquals("null\t0\t.\tnull\t.\t.\tOC;a10.0;RX;RCEQUIV;IONT;BED\t.", rec.toString());
+    assertEquals("foo\t1\t.\tc\t.\t.\tOC;a10.0;RX;RCEQUIV;IONT;BED\t.", rec.toString());
   }
 
   public void testComplexRegionFilter() {
     final VariantParams params = VariantParams.builder().create();
     final Variant call = new Variant(new VariantLocus("foo", 1, 2, "c", (char) -1));
     call.addFilter(VariantFilter.FAILED_COMPLEX);
-    final VcfRecord rec = new VcfRecord();
+    final VcfRecord rec = new VcfRecord("foo", 0, "c");
     VcfFilterField.RC.updateRecord(rec, call, params);
 
-    assertEquals("null\t0\t.\tnull\t.\t.\tRC\t.", rec.toString());
+    assertEquals("foo\t1\t.\tc\t.\t.\tRC\t.", rec.toString());
   }
 
   public void testOtherFilter() {
     final VariantParams params = VariantParams.builder().create();
     final Variant call = new Variant(new VariantLocus("foo", 1, 2, "c", (char) -1));
     call.addFilter(VariantFilter.OTHER);
-    final VcfRecord rec = new VcfRecord();
+    final VcfRecord rec = new VcfRecord("foo", 0, "c");
     VcfFilterField.OTHER.updateRecord(rec, call, params);
 
-    assertEquals("null\t0\t.\tnull\t.\t.\tOTHER\t.", rec.toString());
+    assertEquals("foo\t1\t.\tc\t.\t.\tOTHER\t.", rec.toString());
   }
 
   public void testPassFilter() {
     final VariantParams params = VariantParams.builder().create();
     final Variant call = new Variant(new VariantLocus("foo", 1, 2, "c", (char) -1));
-    final VcfRecord rec = new VcfRecord();
+    final VcfRecord rec = new VcfRecord("foo", 0, "c");
     VcfFilterField.PASS.updateRecord(rec, call, params);
 
-    assertEquals("null\t0\t.\tnull\t.\t.\tPASS\t.", rec.toString());
+    assertEquals("foo\t1\t.\tc\t.\t.\tPASS\t.", rec.toString());
   }
 }

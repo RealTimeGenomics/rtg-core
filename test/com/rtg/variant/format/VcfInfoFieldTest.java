@@ -16,13 +16,13 @@ import java.io.IOException;
 import java.util.EnumSet;
 import java.util.HashMap;
 
+import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
 import com.rtg.reference.Ploidy;
 import com.rtg.util.TestUtils;
 import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.test.NanoRegression;
-import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
 import com.rtg.variant.Variant;
 import com.rtg.variant.Variant.VariantFilter;
 import com.rtg.variant.VariantLocus;
@@ -88,10 +88,9 @@ public class VcfInfoFieldTest extends TestCase {
 
   public void testRecordUpdate() {
     final VariantParams params = VariantParams.builder().expectedCoverage(new DummyCoverageThreshold()).create();
-    final VcfRecord record = new VcfRecord();
-    record.setNumberOfSamples(3);
-    record.setRefCall("G");
+    final VcfRecord record = new VcfRecord("ref", 2, "G");
     record.addAltCall("A");
+    record.setNumberOfSamples(3);
     record.addFormatAndSample("GT", "1/1");
     record.addFormatAndSample("GT", "0/1");
     record.addFormatAndSample("GT", "0/0");
@@ -119,34 +118,33 @@ public class VcfInfoFieldTest extends TestCase {
     for (VcfInfoField field : VcfInfoField.values()) {
       field.updateRecord(record, call, params, false);
     }
-    assertEquals("null\t0\t.\tG\tA\t123.4\t.\tLOH=20.0;NCS=32.6;DISEASE=A;RDS=6.5;DPS=36.9;DP=33;DPR=47.143;XRX;RCE;CT=2147483647;RTRM;RSPLT=1;IC=0.333;EP=0.724;LAL=1;QD=3.739;NAA=1;AC=3;AN=6\tGT:DP\t1/1:10\t0/1:11\t0/0:12", record.toString());
+    assertEquals("ref\t3\t.\tG\tA\t123.4\t.\tLOH=20.0;NCS=32.6;DISEASE=A;RDS=6.5;DPS=36.9;DP=33;DPR=47.143;XRX;RCE;CT=2147483647;RTRM;RSPLT=1;IC=0.333;EP=0.724;LAL=1;QD=3.739;NAA=1;AC=3;AN=6\tGT:DP\t1/1:10\t0/1:11\t0/0:12", record.toString());
   }
 
   public void testMultiAlleleAC() {
-    final VcfRecord record = new VcfRecord();
+    final VcfRecord record = new VcfRecord("ref", 2, "G");
     record.setNumberOfSamples(3);
-    record.setRefCall("G");
     record.addAltCall("A");
     record.addAltCall("C");
     record.addFormatAndSample("GT", "1/1");
     record.addFormatAndSample("GT", "2/1");
     record.addFormatAndSample("GT", "0/2");
     VcfInfoField.AC.updateRecord(record, null, null, false);
-    assertEquals("null\t0\t.\tG\tA,C\t.\t.\tAC=3,2\tGT\t1/1\t2/1\t0/2", record.toString());
+    assertEquals("ref\t3\t.\tG\tA,C\t.\t.\tAC=3,2\tGT\t1/1\t2/1\t0/2", record.toString());
   }
 
   public void testNoCoverage() {
-    final VcfRecord record = new VcfRecord();
+    final VcfRecord record = new VcfRecord("ref", 2, "A");
     VcfInfoField.DP.updateRecord(record, new Variant(new VariantLocus("ref", 2, 3, "A", 'G')), VariantParams.builder().create(), false);
-    assertEquals("null\t0\t.\tnull\t.\t.\t.\t.", record.toString());
+    assertEquals("ref\t3\t.\tA\t.\t.\t.\t.", record.toString());
   }
 
   public void testDummyCoverageThreshold() {
-    final VcfRecord record = new VcfRecord();
+    final VcfRecord record = new VcfRecord("ref", 2, "A");
     final Variant variant = new Variant(new VariantLocus("ref", 2, 3, "A", 'G'));
     variant.addFilter(VariantFilter.COVERAGE);
     VcfInfoField.CT.updateRecord(record, variant, null, false);
-    assertEquals("null\t0\t.\tnull\t.\t.\t.\tCT=0", record.toString());
+    assertEquals("ref\t3\t.\tA\t.\t.\t.\tCT=0", record.toString());
   }
 
   public void testFormatPossibleCause() {

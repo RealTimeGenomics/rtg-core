@@ -52,9 +52,7 @@ public class VcfBreakpointTest extends TestCase {
   }
 
   private static VcfRecord makeRecord(String local, int pos, String alt) {
-    final VcfRecord bar = new VcfRecord();
-    bar.setSequence(local);
-    bar.setStart(pos - 1);
+    final VcfRecord bar = new VcfRecord(local, pos - 1, "A");
     bar.addAltCall(alt);
     return bar;
   }

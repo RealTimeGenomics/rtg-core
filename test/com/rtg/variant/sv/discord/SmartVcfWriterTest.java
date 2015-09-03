@@ -62,12 +62,9 @@ public class SmartVcfWriterTest extends TestCase {
   }
 
   private static VcfRecord createRecord(String chr, int pos) {
-    final VcfRecord rec = new VcfRecord();
-    rec.setSequence(chr)
-    .setStart(pos - 1)
-    .setId(".")
+    final VcfRecord rec = new VcfRecord(chr, pos - 1, "a");
+    rec.setId(".")
     .setQuality("12.8")
-    .setRefCall("a")
     .addAltCall("c")
     .addAltCall("t");
     return rec;

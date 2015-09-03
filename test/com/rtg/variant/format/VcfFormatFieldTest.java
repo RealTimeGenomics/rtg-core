@@ -109,7 +109,7 @@ public class VcfFormatFieldTest extends TestCase {
   public void testHasValue() {
     final String[] sampleNames = {"SAMPLE"};
     Variant call = new Variant(new VariantLocus("A", 2, 3, "A", 'C'));
-    final VcfRecord rec = new VcfRecord();
+    final VcfRecord rec = new VcfRecord("A", 2, "A");
     rec.setNumberOfSamples(sampleNames.length);
     final VariantParams params = VariantParams.builder().expectedCoverage(new DummyCoverageThreshold()).create();
     assertTrue(VcfFormatField.GT.hasValue(rec, call, null, null, params));
@@ -120,7 +120,6 @@ public class VcfFormatFieldTest extends TestCase {
     for (VcfFormatField field : EnumSet.range(VcfFormatField.DP, VcfFormatField.PD)) {
       assertFalse(field.hasValue(rec, call, sample, null, params));
     }
-    rec.setRefCall("A");
     final double[] measures = {0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.2, 0.1, 0.1};
     final GenotypeMeasure measure = new ArrayGenotypeMeasure(SimplePossibility.SINGLETON, measures, new HypothesesSnp(SimplePossibility.SINGLETON, GenomePriorParams.builder().create(), false, 0));
     sample = new VariantSample(Ploidy.DIPLOID, "A:G", false, measure, VariantSample.DeNovoStatus.IS_DE_NOVO, 10.0);
@@ -189,44 +188,40 @@ public class VcfFormatFieldTest extends TestCase {
     like.put(Collections.singleton("G"), 0.2);
     sample.setGenotypeLikelihoods(like);
     Variant call = new Variant(new VariantLocus("ref", 2, 3, "A", 'G'), sample);
-    VcfRecord rec = new VcfRecord();
-    rec.setRefCall("A");
+    VcfRecord rec = new VcfRecord("ref", 2, "A");
     rec.setNumberOfSamples(sampleNames.length);
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
-    assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:SS:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:4.00:1.00:5.00:0.50:0.42:Q:0,0:4.3:2:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
+    assertEquals("ref\t3\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:SS:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:4.00:1.00:5.00:0.50:0.42:Q:0,0:4.3:2:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
 
     sample.setHoeffdingAlleleBalanceHom(3.0);
-    rec = new VcfRecord();
-    rec.setRefCall("A");
+    rec = new VcfRecord("ref", 2, "A");
     rec.setNumberOfSamples(sampleNames.length);
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
-    assertEquals("null\t0\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:SS:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:3.00:1.00:5.00:0.50:0.42:Q:0,0:4.3:2:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
+    assertEquals("ref\t3\t.\tA\tG\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:SS:GL:GQD:ZY:PD\t0/1:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:3.00:1.00:5.00:0.50:0.42:Q:0,0:4.3:2:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
 
-    rec = new VcfRecord();
-    rec.setRefCall("A");
+    rec = new VcfRecord("ref", 2, "A");
     rec.setNumberOfSamples(sampleNames.length);
     call = new Variant(new VariantLocus("ref", 2, 3, "A", 'G'), (VariantSample) null);
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
 
-    assertEquals("null\t0\t.\tA\t.\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:SS:GL:GQD:ZY:PD\t.", rec.toString());
+    assertEquals("ref\t3\t.\tA\t.\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:SS:GL:GQD:ZY:PD\t.", rec.toString());
 
     call = new Variant(new VariantLocus("ref", 2, 3, "A", 'G'), sample);
     call.addFilter(VariantFilter.FAILED_COMPLEX);
-    rec = new VcfRecord();
-    rec.setRefCall("A");
+    rec = new VcfRecord("ref", 2, "A");
     rec.setNumberOfSamples(sampleNames.length);
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
 
     // This is a bit dumb the final 3 format fields haven't been populated not entirely sure why
-    assertEquals("null\t0\t.\tA\t.\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:SS:GL:GQD:ZY:PD\t./.:10:14.286:5.500:5.000:10.4:.:.:.:43:3.00:1.00:5.00:0.50:0.42:Q:0:4.3:2:0.00", rec.toString());
+    assertEquals("ref\t3\t.\tA\t.\t.\t.\t.\tGT:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:PUR:RS:AD:SSC:SS:GL:GQD:ZY:PD\t./.:10:14.286:5.500:5.000:10.4:.:.:.:43:3.00:1.00:5.00:0.50:0.42:Q:0:4.3:2:0.00", rec.toString());
   }
 
   public void testDenovoUpdateRecord() {
@@ -234,13 +229,13 @@ public class VcfFormatFieldTest extends TestCase {
     final VariantSample sampleA = VariantOutputVcfFormatterTest.createSample(Ploidy.DIPLOID, "A:G", false, 20.0, VariantSample.DeNovoStatus.IS_DE_NOVO, 10.0);
     final VariantSample sampleB = VariantOutputVcfFormatterTest.createSample(Ploidy.DIPLOID, "A:A", true, 20.0, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0);
     final Variant call = new Variant(new VariantLocus("ref", 2, 3, "A", 'G'), sampleA, sampleB);
-    final VcfRecord rec = new VcfRecord();
+    final VcfRecord rec = new VcfRecord("ref", 2, "A");
     rec.setNumberOfSamples(2);
     VcfFormatField.GT.updateRecordSample(rec, call, sampleA, null, params, false);
     VcfFormatField.DN.updateRecordSample(rec, call, sampleA, null, params, false);
     VcfFormatField.GT.updateRecordSample(rec, call, sampleB, null, params, false);
     VcfFormatField.DN.updateRecordSample(rec, call, sampleB, null, params, false);
-    assertEquals("null\t0\t.\tnull\tG\t.\t.\t.\tGT:DN\t0/1:Y\t0/0:N", rec.toString());
+    assertEquals("ref\t3\t.\tA\tG\t.\t.\t.\tGT:DN\t0/1:Y\t0/0:N", rec.toString());
   }
 
   public void testGenotypeUpdateRecord() {
@@ -255,28 +250,28 @@ public class VcfFormatFieldTest extends TestCase {
         VariantOutputVcfFormatterTest.createSample(Ploidy.DIPLOID, null, true, 16.0, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0),
     };
     final Variant call = new Variant(new VariantLocus("ref", 2, 3, "A", 'C'), samples);
-    final VcfRecord rec = new VcfRecord();
+    final VcfRecord rec = new VcfRecord("ref", 2, "A");
     rec.setNumberOfSamples(samples.length);
     for (VariantSample sample : samples) {
       VcfFormatField.GT.updateRecordSample(rec, call, sample, null, params, false);
     }
 
-    assertEquals("null\t0\t.\tnull\tG\t.\t.\t.\tGT\t.\t0/1\t0\t0/0\t1\t1/1\t.\t./.", rec.toString());
+    assertEquals("ref\t3\t.\tA\tG\t.\t.\t.\tGT\t.\t0/1\t0\t0/0\t1\t1/1\t.\t./.", rec.toString());
   }
 
   public void testAddAltCall() {
-    final VcfRecord rec = new VcfRecord();
+    final VcfRecord rec = new VcfRecord("ref", 2, "A");
     assertEquals(0, VcfFormatField.addAltCall("A", "A", null, rec));
-    assertEquals("null\t0\t.\tnull\t.\t.\t.\t.", rec.toString());
+    assertEquals("ref\t3\t.\tA\t.\t.\t.\t.", rec.toString());
     assertEquals(0, VcfFormatField.addAltCall("", "", null, rec));
-    assertEquals("null\t0\t.\tnull\t.\t.\t.\t.", rec.toString());
+    assertEquals("ref\t3\t.\tA\t.\t.\t.\t.", rec.toString());
     assertEquals(1, VcfFormatField.addAltCall("C", "A", null, rec));
-    assertEquals("null\t0\t.\tnull\tC\t.\t.\t.", rec.toString());
+    assertEquals("ref\t3\t.\tA\tC\t.\t.\t.", rec.toString());
     assertEquals(1, VcfFormatField.addAltCall("C", "A", null, rec));
-    assertEquals("null\t0\t.\tnull\tC\t.\t.\t.", rec.toString());
+    assertEquals("ref\t3\t.\tA\tC\t.\t.\t.", rec.toString());
     assertEquals(2, VcfFormatField.addAltCall("C", "A", 'G', rec));
-    assertEquals("null\t0\t.\tnull\tC,GC\t.\t.\t.", rec.toString());
+    assertEquals("ref\t3\t.\tA\tC,GC\t.\t.\t.", rec.toString());
     assertEquals(3, VcfFormatField.addAltCall("", "A", 'G', rec));
-    assertEquals("null\t0\t.\tnull\tC,GC,G\t.\t.\t.", rec.toString());
+    assertEquals("ref\t3\t.\tA\tC,GC,G\t.\t.\t.", rec.toString());
   }
 }
