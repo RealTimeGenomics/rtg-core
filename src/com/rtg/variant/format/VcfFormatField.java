@@ -529,11 +529,66 @@ public enum VcfFormatField {
       return true;
     }
   },
+  /** Contrary observation count */
+  COC {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      COC_ANNOTATOR.updateHeader(header);
+    }
+    @Override
+    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      COC_ANNOTATOR.annotate(rec);
+    }
+
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      for (final String req : CO_REQUIRED) {
+        final List<?> fld = rec.getFormatAndSample().get(req);
+        if (fld == null) {
+          return false;
+        }
+      }
+      return true;
+    }
+    @Override
+    public boolean isVcfAnnotator() {
+      return true;
+    }
+  },
+  /** Contrary observation fraction */
+  COF {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      COF_ANNOTATOR.updateHeader(header);
+    }
+    @Override
+    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      COF_ANNOTATOR.annotate(rec);
+    }
+
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      for (final String req : CO_REQUIRED) {
+        final List<?> fld = rec.getFormatAndSample().get(req);
+        if (fld == null) {
+          return false;
+        }
+      }
+      return true;
+    }
+    @Override
+    public boolean isVcfAnnotator() {
+      return true;
+    }
+  },
   ;
 
   private static final VcfAnnotator GQD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.GQD);
   private static final VcfAnnotator ZY_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.ZY);
   private static final VcfAnnotator PD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.PD);
+  private static final VcfAnnotator COC_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.COC);
+  private static final VcfAnnotator COF_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.COF);
+  private static final String[] CO_REQUIRED = {SS.name(), AD.name(), GT.name()};
 
   /**
    * Update the VCF header with the field description.

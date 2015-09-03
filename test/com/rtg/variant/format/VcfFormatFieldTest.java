@@ -46,7 +46,7 @@ import junit.framework.TestCase;
 public class VcfFormatFieldTest extends TestCase {
 
   public void testEnum() {
-    TestUtils.testEnum(VcfFormatField.class, "[GT, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, PUR, RS, AD, SSC, SS, GL, GQD, ZY, PD]");
+    TestUtils.testEnum(VcfFormatField.class, "[GT, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, PUR, RS, AD, SSC, SS, GL, GQD, ZY, PD, COC, COF]");
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.AD)) {
       assertFalse(field.isVcfAnnotator());
     }
@@ -85,6 +85,8 @@ public class VcfFormatFieldTest extends TestCase {
       + "##FORMAT=<ID=GQD,Number=1,Type=Float,Description=\"GQ / DP for a single sample\">\n"
       + "##FORMAT=<ID=ZY,Number=1,Type=String,Description=\"Zygosity of sample. 'e'=>heterozygous, 'o'=>homozygous\">\n"
       + "##FORMAT=<ID=PD,Number=1,Type=String,Description=\"Ploidy of sample. 'h'=>haploid, 'd'=>diploid\">\n"
+      + "##FORMAT=<ID=COC,Number=1,Type=Integer,Description=\"Contrary observation count\">\n"
+      + "##FORMAT=<ID=COF,Number=1,Type=Float,Description=\"Contrary observation fraction\">\n"
       + "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n";
 
     assertEquals(expected, header.toString());

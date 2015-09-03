@@ -130,7 +130,6 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
       sc.getVcfFilters().add(new SomaticFilter(statistics, params.includeGermlineVariants() || params.callLevel() == VariantOutputLevel.ALL));
       return sc;
     }
-
   }
 
   private final double mContamination;
@@ -151,7 +150,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
   public VariantOutputVcfFormatter getOutputFormatter(final VariantParams params) {
     final VariantOutputVcfFormatter f = new VariantOutputVcfFormatter(params, getGenomeNames());
     f.addExtraInfoFields(EnumSet.of(VcfInfoField.LOH, VcfInfoField.NCS));
-    f.addExtraFormatFields(EnumSet.of(VcfFormatField.SSC, VcfFormatField.SS));
+    f.addExtraFormatFields(EnumSet.of(VcfFormatField.SSC, VcfFormatField.SS, VcfFormatField.COC, VcfFormatField.COF));
     return f;
   }
 
