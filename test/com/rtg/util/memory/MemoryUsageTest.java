@@ -27,7 +27,7 @@ public class MemoryUsageTest extends TestCase {
   }
 
   public void testInteger() {
-    tstObject(Integer.valueOf(0), MemoryUsage.INT_SIZE);
+    tstObject(0, MemoryUsage.INT_SIZE);
   }
 
   public void testFoo() {
@@ -49,7 +49,7 @@ public class MemoryUsageTest extends TestCase {
 
   public void testIntegerArray() {
     final Integer[] ia = new Integer[]
-      {Integer.valueOf(0), Integer.valueOf(1), Integer.valueOf(2), Integer.valueOf(3)};
+      {0, 1, 2, 3};
     final int asize = MemoryUsage.roundUp(MemoryUsage.ARRAY_SIZE
       + 4 * MemoryUsage.REF_SIZE);
     final int isize = 4 * MemoryUsage.roundUp(MemoryUsage.OBJECT_SIZE
@@ -68,9 +68,9 @@ public class MemoryUsageTest extends TestCase {
   /** Test when same object appears more than once.  */
   public void testIntegerDuplicates() {
     final Integer[] ia = new Integer[4];
-    ia[0] = Integer.valueOf(0);
+    ia[0] = 0;
     ia[1] = ia[0];
-    ia[2] = Integer.valueOf(2);
+    ia[2] = 2;
     ia[3] = ia[2];
 
     final int asize = MemoryUsage.roundUp(MemoryUsage.ARRAY_SIZE
@@ -120,13 +120,13 @@ public class MemoryUsageTest extends TestCase {
    */
   public void testSoft() {
     final Object[] ia = new Object[6];
-    final Integer i1 = Integer.valueOf(1);
+    final Integer i1 = 1;
     ia[0] = new SoftReference<>(i1);
     ia[1] = i1;
-    final Integer i2 = Integer.valueOf(2);
+    final Integer i2 = 2;
     ia[2] = new SoftReference<>(i2);
     ia[3] = new SoftReference<>(i2);
-    final SoftReference<?> s = new SoftReference<>(Integer.valueOf(3));
+    final SoftReference<?> s = new SoftReference<>(3);
     ia[4] = s;
     ia[5] = s;
 
