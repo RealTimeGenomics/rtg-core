@@ -32,6 +32,7 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.rtg.mode.DnaUtils;
+import com.rtg.reader.CgUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.ReadGroupUtils;
@@ -89,7 +90,7 @@ public class Calibrator {
   protected byte[] mTemplate;
   protected int mTemplateLength;
   protected byte[] mRead;
-  private final byte[] mCgQualities = new byte[SamUtils.CG_RAW_READ_LENGTH];
+  private final byte[] mCgQualities = new byte[CgUtils.CG_RAW_READ_LENGTH];
   protected SAMRecord mSamRec;
   protected String mReadGroup;
   final ReferenceRegions mRegions;

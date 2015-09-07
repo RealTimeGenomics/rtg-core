@@ -12,7 +12,7 @@
 
 package com.rtg.variant.realign;
 
-import static com.rtg.sam.SamUtils.CG_RAW_READ_LENGTH;
+import static com.rtg.reader.CgUtils.CG_RAW_READ_LENGTH;
 
 import com.rtg.util.diagnostic.SpyCounter;
 import com.rtg.util.integrity.Exam;

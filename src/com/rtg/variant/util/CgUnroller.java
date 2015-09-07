@@ -11,9 +11,10 @@
  */
 package com.rtg.variant.util;
 
+import com.rtg.reader.CgSamBamSequenceDataSource;
+import com.rtg.reader.CgUtils;
 import com.rtg.reader.FastaUtils;
 import com.rtg.sam.BadSuperCigarException;
-import com.rtg.sam.SamUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.VariantAlignmentRecord;
@@ -59,126 +60,6 @@ public final class CgUnroller {
   }
 
   /**
-   * Extract an integer from the start of a string.
-   * @param s string containing the integer.
-   * @param end last position of integer (0 based exclusive).
-   * @return the integer at the start of the string
-   */
-  private static int stringToInt(final String s, final int start, final int end) {
-    int t = 0;
-    for (int k = start; k < end; k++) {
-      t *= 10;
-      t += s.charAt(k) - '0';
-    }
-    return t;
-  }
-
-  private static int nextCigarPos(String cigar, int start) {
-    final int end = cigar.length();
-    for (int k = start; k < end; k++) {
-      switch (cigar.charAt(k)) {
-        case 'S':
-        case 'G':
-          return k;
-        default:
-      }
-    }
-    return -1;
-  }
-
-  private static String unrollLegacyRead(final String samRead, final String gs, final String gc) {
-    final int overlap = gs.length();
-    if (overlap == 0) {
-      return samRead;
-    } else {
-      if (gc == null) {
-        return null;
-      }
-      final StringBuilder sbRead = new StringBuilder();
-      int lastCigarPos = 0;
-      int readPos = 0;
-      int attPos = 0;
-      while (true) {
-        final int cigarPos = nextCigarPos(gc, lastCigarPos);
-        if (cigarPos == -1) {
-          break;
-        }
-        final int cigarLen = stringToInt(gc, lastCigarPos, cigarPos);
-        if (cigarLen == 0) {
-          return null;
-        }
-        if (gc.charAt(cigarPos) == 'S') {
-          sbRead.append(samRead.substring(readPos, readPos + cigarLen));
-          lastCigarPos = cigarPos + 1;
-          readPos = readPos + cigarLen;
-        } else {
-          final int consumed = cigarLen * 2;
-          if (attPos + consumed > gs.length()) {
-            return null;
-          }
-          sbRead.append(gs.substring(attPos, attPos + consumed));
-          attPos = attPos + consumed;
-          lastCigarPos = cigarPos + 1;
-          readPos += cigarLen;
-        }
-      }
-      if (readPos != samRead.length() || lastCigarPos != gc.length() || attPos != gs.length()) {
-        return null;
-      }
-      return sbRead.toString();
-    }
-  }
-
-  // This version had a different interpretation of the gq field, where it contained
-  // one set of qualities (getting the other from the flattedened representation)
-  private static String unrollLegacyLegacyQualities(final String samQualities, final String gq, final String gc) {
-    final int overlap = gq.length();
-    final int gslength = overlap * 2;
-    if (overlap == 0) {
-      return samQualities;
-    } else {
-      if (gc == null) {
-        return null;
-      }
-      final StringBuilder sbQual = new StringBuilder();
-      int lastCigarPos = 0;
-      int readPos = 0;
-      int attPos = 0;
-      int att2Pos = 0;
-      while (true) {
-        final int cigarPos = nextCigarPos(gc, lastCigarPos);
-        if (cigarPos == -1) {
-          break;
-        }
-        final int cigarLen = stringToInt(gc, lastCigarPos, cigarPos);
-        if (cigarLen == 0) {
-          return null;
-        }
-        if (gc.charAt(cigarPos) == 'S') {
-          sbQual.append(samQualities.substring(readPos, readPos + cigarLen));
-          lastCigarPos = cigarPos + 1;
-          readPos = readPos + cigarLen;
-        } else {
-          final int consumed = cigarLen * 2;
-          if (attPos + consumed > gslength) {
-            return null;
-          }
-          sbQual.append(samQualities.substring(readPos, readPos + cigarLen));
-          sbQual.append(gq.substring(att2Pos, att2Pos + cigarLen));
-          att2Pos = att2Pos + cigarLen;
-          attPos = attPos + consumed;
-          lastCigarPos = cigarPos + 1;
-          readPos += cigarLen;
-        }
-      }
-      if (readPos != samQualities.length() || lastCigarPos != gc.length() || attPos != gslength) {
-        return null;
-      }
-      return sbQual.toString();
-    }
-  }
-
-  /**
    * Given a SAM record representing a Complete Genomics mapped read, unroll
    * the overlaps are orient the read with the large gap on the right.
    * If the input record is found to be invalid null is returned.
@@ -214,16 +95,16 @@ public final class CgUnroller {
       if (!legacyLegacy && overlap != gs.length()) {
         return null;
       }
-      expandedRead = unrollLegacyRead(samRead, gs, gc);
+      expandedRead = CgSamBamSequenceDataSource.unrollLegacyRead(samRead, gs, gc);
       if (expandedRead == null) {
         return null;
       }
       if (!hasQuality) {
         expandedQual = null;
       } else if (legacyLegacy) {
-        expandedQual = unrollLegacyLegacyQualities(samQualities, gq, gc);
+        expandedQual = CgSamBamSequenceDataSource.unrollLegacyLegacyQualities(samQualities, gq, gc);
       } else {
-        expandedQual = unrollLegacyRead(samQualities, gq, gc);
+        expandedQual = CgSamBamSequenceDataSource.unrollLegacyRead(samQualities, gq, gc);
       }
     } else {
       final SuperCigarUnroller unroll = new SuperCigarUnroller();
@@ -239,19 +120,19 @@ public final class CgUnroller {
       final int overlapWidth = unroll.getTemplateOverlapEnd() - unroll.getTemplateOverlapStart();
       final int middle = unroll.getReadOverlapMiddle();
       if (hasQuality) {
-        final int overlapPos = middle <= SamUtils.CG_OVERLAP_POSITION ? SamUtils.CG_OVERLAP_POSITION : samLength - SamUtils.CG_OVERLAP_POSITION;
+        final int overlapPos = middle <= CgUtils.CG_OVERLAP_POSITION ? CgUtils.CG_OVERLAP_POSITION : samLength - CgUtils.CG_OVERLAP_POSITION;
         final String overlapQual = rec.getOverlapQuality();
         expandedQual = samQualities.substring(0, overlapPos) + overlapQual + samQualities.substring(overlapPos);
       } else {
         expandedQual = null;
       }
       //System.out.println("unrollCgRead gives RL=" + rec.getRead().length + " read:" + expandedRead + " (len=" + expandedRead.length() + ")" + "               and qual:" + expandedQual + " (overlapWidth=" + overlapWidth + ")" + " middle=" + middle);
-      if (rec.getRead().length != SamUtils.CG_RAW_READ_LENGTH && //if the read in the sam record is the normal cg read length (i.e. no overlap), these further checks are invalid
+      if (rec.getRead().length != CgUtils.CG_RAW_READ_LENGTH && //if the read in the sam record is the normal cg read length (i.e. no overlap), these further checks are invalid
           (overlapWidth <= 0
-           || expandedRead.length() != SamUtils.CG_RAW_READ_LENGTH
+           || expandedRead.length() != CgUtils.CG_RAW_READ_LENGTH
            //          || samLength + overlapWidth != CG_RAW_READ_LENGTH   NOT necessarily true - deletes in the overlap region change this.
            || middle == -1
-           || (expandedQual != null && expandedQual.length() != SamUtils.CG_RAW_READ_LENGTH))) {
+           || (expandedQual != null && expandedQual.length() != CgUtils.CG_RAW_READ_LENGTH))) {
         return null;
       }
     }

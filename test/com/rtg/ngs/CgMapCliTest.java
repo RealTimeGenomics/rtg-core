@@ -280,7 +280,7 @@ public class CgMapCliTest extends AbstractCliTest {
       };
       final MemoryPrintStream ps2 = new MemoryPrintStream();
       assertEquals(1, map.mainInit(args2, TestUtils.getNullOutputStream(), ps2.printStream()));
-      assertTrue(ps2.toString(), ps2.toString().contains("No read group information present in the input file \"" + header.getPath() + "\", please provide file with single read group line"));
+      assertTrue(ps2.toString(), ps2.toString().contains("No read group information present in the input file"));
 
 
       final File header2 = new File(outer, "header2");
@@ -294,7 +294,7 @@ public class CgMapCliTest extends AbstractCliTest {
       };
       final MemoryPrintStream ps3 = new MemoryPrintStream();
       assertEquals(1, map.mainInit(args3, TestUtils.getNullOutputStream(), ps3.printStream()));
-      assertTrue(ps3.toString(), ps3.toString().contains("Multiple read group information present in the input file \"" + header2.getPath() + "\", please provide file with single read group line"));
+      assertTrue(ps3.toString(), ps3.toString().contains("Multiple read groups present in the input file"));
 
     } finally {
       assertTrue(FileHelper.deleteAll(outer));

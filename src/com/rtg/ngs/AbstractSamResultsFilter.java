@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.rtg.reader.CgUtils;
 import com.rtg.reader.FastaUtils;
 import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.calibrate.Calibrator;
@@ -272,24 +273,24 @@ public abstract class AbstractSamResultsFilter {
     boolean result = true;
     if (mCG && new String(rec.getSuperCigarString()).contains("B")) {
       final int length = reader.readQuality(readId, mQualBuffer);
-      assert length == SamUtils.CG_RAW_READ_LENGTH;
+      assert length == CgUtils.CG_RAW_READ_LENGTH;
       if (reverse) {
         Utils.reverseInPlace(mQualBuffer);
       }
-      final int discard = SamUtils.CG_RAW_READ_LENGTH - readLen;
+      final int discard = CgUtils.CG_RAW_READ_LENGTH - readLen;
       if (discard == 0) {
         System.arraycopy(mQualBuffer, 0, mFlattenedQualBuffer, 0, length);
         result = false; // do NOT add the XQ field, since there is no overlap
       } else {
-        final int mainChunkLength = length - (SamUtils.CG_OVERLAP_POSITION + discard);
+        final int mainChunkLength = length - (CgUtils.CG_OVERLAP_POSITION + discard);
         if (first == !reverse) {
-          System.arraycopy(mQualBuffer, 0, mFlattenedQualBuffer, 0, SamUtils.CG_OVERLAP_POSITION);
-          System.arraycopy(mQualBuffer, SamUtils.CG_OVERLAP_POSITION, mGQBuffer, 0, discard);
-          System.arraycopy(mQualBuffer, SamUtils.CG_OVERLAP_POSITION + discard, mFlattenedQualBuffer, SamUtils.CG_OVERLAP_POSITION, mainChunkLength);
+          System.arraycopy(mQualBuffer, 0, mFlattenedQualBuffer, 0, CgUtils.CG_OVERLAP_POSITION);
+          System.arraycopy(mQualBuffer, CgUtils.CG_OVERLAP_POSITION, mGQBuffer, 0, discard);
+          System.arraycopy(mQualBuffer, CgUtils.CG_OVERLAP_POSITION + discard, mFlattenedQualBuffer, CgUtils.CG_OVERLAP_POSITION, mainChunkLength);
         } else {
           System.arraycopy(mQualBuffer, 0, mFlattenedQualBuffer, 0, mainChunkLength);
           System.arraycopy(mQualBuffer, mainChunkLength, mGQBuffer, 0, discard);
-          System.arraycopy(mQualBuffer, length - SamUtils.CG_OVERLAP_POSITION, mFlattenedQualBuffer, mainChunkLength, SamUtils.CG_OVERLAP_POSITION);
+          System.arraycopy(mQualBuffer, length - CgUtils.CG_OVERLAP_POSITION, mFlattenedQualBuffer, mainChunkLength, CgUtils.CG_OVERLAP_POSITION);
         }
       }
       mGQLength = discard;

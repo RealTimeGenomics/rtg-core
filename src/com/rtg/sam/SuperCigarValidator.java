@@ -16,6 +16,7 @@ import java.util.Arrays;
 import com.rtg.alignment.CgGotohEditDistance;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
+import com.rtg.reader.CgUtils;
 import com.rtg.reader.FastaUtils;
 import com.rtg.util.Utils;
 
@@ -30,7 +31,7 @@ public class SuperCigarValidator extends SuperCigarParser {
   private SAMRecord mSamRecord = null;
   private byte[] mSdfRead = null;
   private byte[] mSdfQualities = null;
-  private byte[] mQualities = new byte[SamUtils.CG_RAW_READ_LENGTH];
+  private byte[] mQualities = new byte[CgUtils.CG_RAW_READ_LENGTH];
   private String mXQField;
   private Integer mAlignmentScoreAttr = null;
   private int mAlignmentScore;
@@ -64,7 +65,7 @@ public class SuperCigarValidator extends SuperCigarParser {
    * @throws BadSuperCigarException if the <code>samQualities</code> length plus overlap length does not equal the expected value
    */
   public static byte[] expandCgSuperCigarQualities(byte[] samQualities, byte[] qualityBuffer, String qualityOverlap, boolean first, boolean reverseCompliment, boolean phredifyQualityOverlap) throws BadSuperCigarException {
-    assert qualityBuffer.length == SamUtils.CG_RAW_READ_LENGTH;
+    assert qualityBuffer.length == CgUtils.CG_RAW_READ_LENGTH;
     final int overlapQualityOffset = phredifyQualityOverlap ? FastaUtils.PHRED_LOWER_LIMIT_CHAR : 0;
     final int xqlength = qualityOverlap == null ? 0 : qualityOverlap.length();
     if (samQualities.length + xqlength != qualityBuffer.length) {
