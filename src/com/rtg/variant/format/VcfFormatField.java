@@ -542,13 +542,7 @@ public enum VcfFormatField {
 
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      for (final String req : CO_REQUIRED) {
-        final List<?> fld = rec.getFormatAndSample().get(req);
-        if (fld == null) {
-          return false;
-        }
-      }
-      return true;
+      return hasValueCofCoc(rec);
     }
     @Override
     public boolean isVcfAnnotator() {
@@ -568,13 +562,7 @@ public enum VcfFormatField {
 
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      for (final String req : CO_REQUIRED) {
-        final List<?> fld = rec.getFormatAndSample().get(req);
-        if (fld == null) {
-          return false;
-        }
-      }
-      return true;
+      return hasValueCofCoc(rec);
     }
     @Override
     public boolean isVcfAnnotator() {
@@ -588,7 +576,26 @@ public enum VcfFormatField {
   private static final VcfAnnotator PD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.PD);
   private static final VcfAnnotator COC_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.COC);
   private static final VcfAnnotator COF_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.COF);
-  private static final String[] CO_REQUIRED = {SS.name(), AD.name(), GT.name()};
+
+  private static boolean hasValueCofCoc(final VcfRecord rec) {
+    List<?> fld = rec.getFormatAndSample().get(AD.name());
+    if (fld == null) {
+      return false;
+    }
+    fld = rec.getFormatAndSample().get(GT.name());
+    if (fld == null) {
+      return false;
+    }
+    fld = rec.getFormatAndSample().get(SS.name());
+    if (fld != null) {
+      return true;
+    }
+    fld = rec.getFormatAndSample().get(DN.name());
+    if (fld != null) {
+      return true;
+    }
+    return false;
+  }
 
   /**
    * Update the VCF header with the field description.

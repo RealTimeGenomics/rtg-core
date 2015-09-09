@@ -144,7 +144,7 @@ public final class FamilyCallerConfiguration extends AbstractJointCallerConfigur
   @Override
   public VariantOutputVcfFormatter getOutputFormatter(final VariantParams params) {
     final VariantOutputVcfFormatter f = new VariantOutputVcfFormatter(params, getGenomeNames());
-    f.addExtraFormatFields(EnumSet.of(VcfFormatField.RQ, VcfFormatField.DN, VcfFormatField.DNP));
+    f.addExtraFormatFields(EnumSet.of(VcfFormatField.RQ, VcfFormatField.DN, VcfFormatField.DNP, VcfFormatField.COC, VcfFormatField.COF));
     return f;
   }
 
