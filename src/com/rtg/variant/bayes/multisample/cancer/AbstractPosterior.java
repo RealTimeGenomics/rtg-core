@@ -24,6 +24,7 @@ import com.rtg.variant.bayes.ArrayGenotypeMeasure;
 import com.rtg.variant.bayes.GenotypeMeasure;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.NoNonIdentityMeasure;
+import com.rtg.variant.bayes.Statistics;
 import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
@@ -67,22 +68,50 @@ public abstract class AbstractPosterior {
    */
   protected final void postConstruction() {
     // now calculate row/column/diagonal/non-diagonal sums.
-    for (int i = 0; i < mLength; i++) {
-      assert mPosterior[i].length == mLength;
-      for (int j = 0; j < mLength; j++) {
-        final double p = mPosterior[i][j];
-        if (i == j) {
+    for (int normal = 0; normal < mLength; normal++) {
+      assert mPosterior[normal].length == mLength;
+      for (int cancer = 0; cancer < mLength; cancer++) {
+        final double p = mPosterior[normal][cancer];
+        if (normal == cancer) {
           mEqual = logSum(mEqual, p);
         } else {
           mNotEqual = logSum(mNotEqual, p);
         }
-        mNormalMarginal[i] = logSum(mNormalMarginal[i], p);
-        mCancerMarginal[j] = logSum(mCancerMarginal[j], p);
+        mNormalMarginal[normal] = logSum(mNormalMarginal[normal], p);
+        mCancerMarginal[cancer] = logSum(mCancerMarginal[cancer], p);
       }
     }
 
     mBestNormal = findBest(mNormalMarginal);
     mBestCancer = findBest(mCancerMarginal);
+  }
+
+  protected void contraryEvidenceAdjustment(final Statistics<?> normalStats, final Statistics<?> cancerStats, final double phi, final double psi) {
+    for (int normal = 0; normal < mLength; normal++) {
+      final int normalA = mHypotheses.code().a(normal);
+      final int normalB = mHypotheses.code().bc(normal);
+      for (int cancer = 0; cancer < mLength; cancer++) {
+        if (normal != cancer) { // No adjustment needed in case where hypotheses are the same
+          final int cancerA = mHypotheses.code().a(cancer);
+          final int cancerB = mHypotheses.code().bc(cancer);
+          int contraryNormalCount = 0;
+          int contraryCancerCount = 0;
+          if (cancerA != normalA && cancerA != normalB) {
+            contraryNormalCount += normalStats.counts().count(cancerA);
+          }
+          if (cancerB != cancerA && cancerB != normalA && cancerB != normalB) { // Only for heterozygous
+            contraryNormalCount += normalStats.counts().count(cancerB);
+          }
+          if (normalA != cancerA && normalA != cancerB) {
+            contraryCancerCount += cancerStats.counts().count(normalA);
+          }
+          if (normalB != normalA && normalB != cancerA && normalB != cancerB) { // Only for heterozygous
+            contraryCancerCount += cancerStats.counts().count(normalB);
+          }
+          mPosterior[normal][cancer] += phi * contraryNormalCount + psi * contraryCancerCount;
+        }
+      }
+    }
   }
 
   private int findBest(double[] marginals) {

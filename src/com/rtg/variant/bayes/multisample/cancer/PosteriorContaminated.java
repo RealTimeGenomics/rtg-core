@@ -49,6 +49,9 @@ class PosteriorContaminated extends AbstractPosterior {
     }
     // After this point the special code for contamination no longer plays any part, mPosterior
     // is normal x cancer for both contaminated and uncontaminated callers.
+    final double phi = Math.log(0.0001); // XXX roughly should be prob of machine error
+    final double psi = Math.log(Math.min(1, 0.0001 + 0.2)); // XXX 0.2 should be contamination
+    contraryEvidenceAdjustment(normal.statistics(), cancer.statistics(), phi, psi);
     postConstruction();
   }
 
