@@ -14,6 +14,7 @@ package com.rtg.sam;
 import java.util.Arrays;
 
 import com.rtg.mode.DnaUtils;
+import com.rtg.reader.FastaUtils;
 
 import htsjdk.samtools.SAMRecord;
 
@@ -38,7 +39,7 @@ public class SamValidatorCgHelperTest extends TestCase {
     samrec.setFlags(179);
 
     byte[] blah = SamValidatorCgHelper.expandCgCigarQualities(samrec.getBaseQualities(), new byte[35], samrec.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY), new int[] {3, 2, 28}, samrec.getFirstOfPairFlag(), samrec.getReadNegativeStrandFlag(), true);
-    byte[] exp = DnaUtils.fastqToPhred("3552,./54-3.2,366141+65-38886%%6134");
+    byte[] exp = FastaUtils.asciiToRawQuality("3552,./54-3.2,366141+65-38886%%6134");
     assertTrue(Arrays.toString(exp) + "\n" + Arrays.toString(blah), Arrays.equals(exp, blah));
 
     samrec.setCigarString("23M7N10M");
@@ -52,7 +53,7 @@ public class SamValidatorCgHelperTest extends TestCase {
     samrec.setFlags(67);
 
     blah = SamValidatorCgHelper.expandCgCigarQualities(samrec.getBaseQualities(), new byte[35], samrec.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY), new int[] {3, 2, 28}, samrec.getFirstOfPairFlag(), samrec.getReadNegativeStrandFlag(), true);
-    assertTrue(Arrays.equals(DnaUtils.fastqToPhred("4316%%68883-56+141663,2.3-45/.,2553"), blah));
+    assertTrue(Arrays.equals(FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3-45/.,2553"), blah));
 
     samrec.setCigarString("10M6N24M");
     samrec.setReadString("ACATTCATCACAGACCTGGGCCTGCTGGGCCCCA");
@@ -64,7 +65,7 @@ public class SamValidatorCgHelperTest extends TestCase {
     samrec.setFlags(131);
 
     blah = SamValidatorCgHelper.expandCgCigarQualities(samrec.getBaseQualities(), new byte[35], samrec.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY), new int[] {29, 1, 4}, samrec.getFirstOfPairFlag(), samrec.getReadNegativeStrandFlag(), true);
-    exp = DnaUtils.fastqToPhred(".531337242.875&3158.,2+/./4/-,24550");
+    exp = FastaUtils.asciiToRawQuality(".531337242.875&3158.,2+/./4/-,24550");
     assertTrue(Arrays.toString(exp) + "\n" + Arrays.toString(blah), Arrays.equals(exp, blah));
 
     samrec.setCigarString("10M5N23M");
@@ -78,7 +79,7 @@ public class SamValidatorCgHelperTest extends TestCase {
     samrec.setFlags(115);
 
     blah = SamValidatorCgHelper.expandCgCigarQualities(samrec.getBaseQualities(), new byte[35], samrec.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY), new int[] {28, 2, 3}, samrec.getFirstOfPairFlag(), samrec.getReadNegativeStrandFlag(), true);
-    assertTrue(Arrays.equals(DnaUtils.fastqToPhred("355%62,./54-3.2,366141+65-38886%134"), blah));
+    assertTrue(Arrays.equals(FastaUtils.asciiToRawQuality("355%62,./54-3.2,366141+65-38886%134"), blah));
 
   }
 
@@ -109,7 +110,7 @@ public class SamValidatorCgHelperTest extends TestCase {
     samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY, "6%");
     samrec.setReadNegativeStrandFlag(false);
     samrec.setFlags(67);
-    assertTrue(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("tttgtgtaggtcggataaggcgttc     atccgacacg".replaceAll(" ", "").getBytes()), DnaUtils.fastqToPhred("4316%%68883-56+141663,2.3-45/.,2553"), samrec, false));
+    assertTrue(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("tttgtgtaggtcggataaggcgttc     atccgacacg".replaceAll(" ", "").getBytes()), FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3-45/.,2553"), samrec, false));
     //              "431  %68883-56+141663,2.3-45/.,2553"
 
     // 353     179     NC_000913       4631900 255     23M5N3M1D7M     =       4632182 281     GCTGACCGCCAAAGGTGAGCAACATGAGGTGGC       *       AS:i:2  NM:i:1  MQ:i:255        GS:Z:GAG
@@ -123,7 +124,7 @@ public class SamValidatorCgHelperTest extends TestCase {
     samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY, "6%");
     samrec.setReadNegativeStrandFlag(true);
     samrec.setFlags(179);
-    assertTrue(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("gccacctcat     gttgctcacctttggcggtctcagc".replaceAll(" ", "").getBytes()), DnaUtils.fastqToPhred("3552,./54-3.2,366141+65-38886%%6134"), samrec, false));
+    assertTrue(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("gccacctcat     gttgctcacctttggcggtctcagc".replaceAll(" ", "").getBytes()), FastaUtils.asciiToRawQuality("3552,./54-3.2,366141+65-38886%%6134"), samrec, false));
 
     //Read doesn't match expected value from SDF 861  131     NC_000913       4606315 255     10M5N24M        NC_000913       4605888 -427    GGGCGAGCGTCAACTTTCAGTTAACGCAAAACGG     * AS:i:0  NM:i:0  MQ:i:255        GS:Z:AA GC:Z:29S1G4S    XA:i:0  IH:i:1
     samrec.setCigarString("10M5N24M");
@@ -169,7 +170,7 @@ public class SamValidatorCgHelperTest extends TestCase {
     samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES, "CC");
     samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY, "2");
     samrec.setFlags(131);
-    assertTrue(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("acattcatca     cagacctgggcctgctgggccccca".replaceAll(" ", "").getBytes()), DnaUtils.fastqToPhred(".531337242.875&3158.,2+/./4/-,24550"), samrec, false));
+    assertTrue(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("acattcatca     cagacctgggcctgctgggccccca".replaceAll(" ", "").getBytes()), FastaUtils.asciiToRawQuality(".531337242.875&3158.,2+/./4/-,24550"), samrec, false));
 
 
     samrec.setCigarString("25M6N10M");
@@ -180,7 +181,7 @@ public class SamValidatorCgHelperTest extends TestCase {
     samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES, null);
     samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY, null);
     samrec.setFlags(67);
-    assertTrue(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("tattaggatt     gagactggtaaaatggnccaccaag".replaceAll(" ", "").getBytes()), DnaUtils.fastqToPhred("/725361840-525251.68,0,.52!*/*/54/2"), samrec, false));
+    assertTrue(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("tattaggatt     gagactggtaaaatggnccaccaag".replaceAll(" ", "").getBytes()), FastaUtils.asciiToRawQuality("/725361840-525251.68,0,.52!*/*/54/2"), samrec, false));
 
     //Read doesn't match expected value from SDF 40928        131     paolo-bac       411     255     10M5N16M1I3M2I1M        paolo-bac       93      -318    TTCTCCATTCGAGACGTTGTGAAT    GTGGACTTG       .333,0/60..855041063+.,1014/0*#45       AS:i:7  NM:i:6  MQ:i:255        GS:Z:ACAC       GC:Z:28S2G3S    GQ:Z:06 XA:i:8  IH:i:1
 
@@ -192,7 +193,7 @@ public class SamValidatorCgHelperTest extends TestCase {
     samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES, "ACAC");
     samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY, "06");
     samrec.setFlags(131);
-    assertTrue(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("ttctccattc     gagacgttgtgaatgtggacacttg".replaceAll(" ", "").getBytes()), DnaUtils.fastqToPhred(".333,0/60..855041063+.,1014/0*06#45"), samrec, false));
+    assertTrue(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("ttctccattc     gagacgttgtgaatgtggacacttg".replaceAll(" ", "").getBytes()), FastaUtils.asciiToRawQuality(".333,0/60..855041063+.,1014/0*06#45"), samrec, false));
   }
 
   public void testSomeBadCGStuff() {
@@ -208,8 +209,8 @@ public class SamValidatorCgHelperTest extends TestCase {
     samrec.setReadNegativeStrandFlag(true);
     samrec.setFirstOfPairFlag(true);
     samrec.setFlags(115);
-    assertFalse(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("tttagaagatttaggtaaaagacta     aaatatttta".replaceAll(" ", "").getBytes()), DnaUtils.fastqToPhred("788::71276677769;<;<9;<8;7:9-8998/7"), samrec, false));
-    assertTrue(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("tttagaagatttaggtaaaagacta     aaatatttta".replaceAll(" ", "").getBytes()), DnaUtils.fastqToPhred("788::71276677769;<;<9;<8;7:9-8998/7"), samrec, true));
+    assertFalse(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("tttagaagatttaggtaaaagacta     aaatatttta".replaceAll(" ", "").getBytes()), FastaUtils.asciiToRawQuality("788::71276677769;<;<9;<8;7:9-8998/7"), samrec, false));
+    assertTrue(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("tttagaagatttaggtaaaagacta     aaatatttta".replaceAll(" ", "").getBytes()), FastaUtils.asciiToRawQuality("788::71276677769;<;<9;<8;7:9-8998/7"), samrec, true));
 
     samrec.setCigarString("8=1I1X2=1X11=6N10=");
     samrec.setReadString("ATATGTATATATCAGAGGTTAATAGTTATGAGGA");
@@ -221,8 +222,8 @@ public class SamValidatorCgHelperTest extends TestCase {
     samrec.setReadNegativeStrandFlag(false);
     samrec.setFirstOfPairFlag(true);
     samrec.setFlags(67);
-    assertFalse(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("ATAGTGTATATATCAGAGGTTAATA     GTTATGAGGA".replaceAll(" ", "").getBytes()), DnaUtils.fastqToPhred("2956952025637769;;<;:8.:78888988884"), samrec, false));
-    assertTrue(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("ATAGTGTATATATCAGAGGTTAATA     GTTATGAGGA".replaceAll(" ", "").getBytes()), DnaUtils.fastqToPhred("2956952025637769;;<;:8.:78888988884"), samrec, true));
+    assertFalse(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("ATAGTGTATATATCAGAGGTTAATA     GTTATGAGGA".replaceAll(" ", "").getBytes()), FastaUtils.asciiToRawQuality("2956952025637769;;<;:8.:78888988884"), samrec, false));
+    assertTrue(SamValidatorCgHelper.matchesCg(DnaUtils.encodeArray("ATAGTGTATATATCAGAGGTTAATA     GTTATGAGGA".replaceAll(" ", "").getBytes()), FastaUtils.asciiToRawQuality("2956952025637769;;<;:8.:78888988884"), samrec, true));
 
   }
 }

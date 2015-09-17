@@ -46,9 +46,9 @@ public class CompleteGenomicsMachine extends AbstractMachine {
    */
   public CompleteGenomicsMachine(AbstractMachineErrorParams params, long randomSeed) {
     super(params);
-    mOverlapDistribution = accumDistribution(params.overlapDistribution());
-    mGapDistribution = accumDistribution(params.gapDistribution());
-    mSmallGapDistribution = accumDistribution(params.smallGapDistribution());
+    mOverlapDistribution = SimulationUtils.cumulativeDistribution(params.overlapDistribution());
+    mGapDistribution = SimulationUtils.cumulativeDistribution(params.gapDistribution());
+    mSmallGapDistribution = SimulationUtils.cumulativeDistribution(params.smallGapDistribution());
     mFrameRandom = new PortableRandom(randomSeed);
     mSegmentRandom = new PortableRandom(randomSeed * 3);
     setBuffers();
@@ -62,17 +62,6 @@ public class CompleteGenomicsMachine extends AbstractMachine {
    */
   public CompleteGenomicsMachine(long randomSeed) throws InvalidParamsException, IOException {
     this(new MachineErrorParamsBuilder().errors("complete").create(), randomSeed);
-  }
-
-
-  private static double[] accumDistribution(final double[] dist) {
-    final double[] accumDist = new double[dist.length];
-    double accum = 0.0;
-    for (int i = 0; i < dist.length; i++) {
-      accum += dist[i];
-      accumDist[i] = accum;
-    }
-    return accumDist;
   }
 
   private void setBuffers() {

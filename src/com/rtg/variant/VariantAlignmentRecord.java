@@ -27,6 +27,12 @@ import htsjdk.samtools.SAMRecord;
  */
 public class VariantAlignmentRecord extends SequenceIdLocusSimple implements ReaderRecord<VariantAlignmentRecord>, MateInfo, MapInfo {
 
+  private static final int FLAG_PAIRED = 2;
+  private static final int FLAG_NEGATIVE = 8;
+  private static final int FLAG_UNMAPPED = 16;
+  private static final int FLAG_CG_OVERLAP_LEFT = 4;
+  private static final int FLAG_MATED = 1;
+
   /**
    * Record used to denote an overflow condition, not a true record.
    * @param start 0-based start position of overflow
@@ -41,7 +47,7 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
   private final byte[] mQuality;
   private final String mCigar;
   private final byte mMappingQuality;
-  private final byte mFlag;
+  private final byte mFlag; // Not the same semantics as SAM flag.
   private final int mAmbiguity;
   private final int mAlignmentScore;
   private final int mMateSequenceId;
@@ -111,18 +117,21 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
     mAlignmentScore = MathUtils.unboxNatural(record.getIntegerAttribute("AS"));
     mSuperCigar = record.getStringAttribute(SamUtils.CG_SUPER_CIGAR);
     mMateSequenceId = record.getMateReferenceIndex();
-    int f = record.getReadPairedFlag() && record.getProperPairFlag() ? 1 : 0;
+    int f = 0;
     if (record.getReadPairedFlag()) {
-      f += 2;
+      f += FLAG_PAIRED;
+      if (record.getProperPairFlag()) {
+        f += FLAG_MATED;
+      }
       if (record.getFirstOfPairFlag() ^ record.getReadNegativeStrandFlag()) { //CG stupidity
-        f += 4;
+        f += FLAG_CG_OVERLAP_LEFT;
       }
     }
     if (record.getReadNegativeStrandFlag()) {
-      f += 8;
+      f += FLAG_NEGATIVE;
     }
     if (record.getReadUnmappedFlag()) {
-      f += 16;
+      f += FLAG_UNMAPPED;
     }
     mFlag = (byte) f;
 
@@ -183,23 +192,23 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
 
   @Override
   public boolean isMated() {
-    return (mFlag & 1) != 0;
+    return (mFlag & FLAG_MATED) != 0;
   }
 
   public boolean isReadPaired() {
-    return (mFlag & 2) != 0;
+    return (mFlag & FLAG_PAIRED) != 0;
   }
 
   public boolean isCgOverlapLeft() {
-    return (mFlag & 4) != 0;
+    return (mFlag & FLAG_CG_OVERLAP_LEFT) != 0;
   }
 
   public boolean isNegativeStrand() {
-    return (mFlag & 8) != 0;
+    return (mFlag & FLAG_NEGATIVE) != 0;
   }
 
   public boolean isUnmapped() {
-    return (mFlag & 16) != 0;
+    return (mFlag & FLAG_UNMAPPED) != 0;
   }
 
   // todo hopefully can get rid of this ... by rolling into normal cigar field

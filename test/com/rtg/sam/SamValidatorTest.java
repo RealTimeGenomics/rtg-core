@@ -22,6 +22,7 @@ import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
 import com.rtg.ngs.NgsParams;
 import com.rtg.ngs.NgsParamsBuilder;
+import com.rtg.reader.FastaUtils;
 import com.rtg.reader.PrereadArm;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.ReaderUtils;
@@ -325,8 +326,8 @@ public class SamValidatorTest extends TestCase {
 
       samrec.setBaseQualityString("55663,0/5534.2,898256678.");
 
-      assertFalse(sv.matchesRawRead(DnaUtils.encodeArray("atgtcatcttcctcttctggggcnt".getBytes()), DnaUtils.fastqToPhred("55663,0/5534.2,898256678.3887755562"), samrec, false, false));
-      assertTrue(sv.matchesRawRead(DnaUtils.encodeArray("atgtcatcttcctcttctggggcnt".getBytes()), DnaUtils.fastqToPhred("55663,0/5534.2,898256678."), samrec, false, false));
+      assertFalse(sv.matchesRawRead(DnaUtils.encodeArray("atgtcatcttcctcttctggggcnt".getBytes()), FastaUtils.asciiToRawQuality("55663,0/5534.2,898256678.3887755562"), samrec, false, false));
+      assertTrue(sv.matchesRawRead(DnaUtils.encodeArray("atgtcatcttcctcttctggggcnt".getBytes()), FastaUtils.asciiToRawQuality("55663,0/5534.2,898256678."), samrec, false, false));
 
       template = "GGCACACCTGGAGCCAGCCACCCGCTGGGTCGCACATGGATCTGGTGATATTATTGATAAT";
       samrec.setReadString("GGCACACCTGCCACCCGCTGGGTCGCACATGGA");

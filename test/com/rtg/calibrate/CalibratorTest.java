@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.rtg.mode.DnaUtils;
 import com.rtg.mode.SequenceType;
+import com.rtg.reader.FastaUtils;
 import com.rtg.reader.MockArraySequencesReader;
 import com.rtg.reader.MockSequencesReader;
 import com.rtg.sam.BadSuperCigarException;
@@ -648,7 +649,7 @@ public class CalibratorTest extends TestCase {
 
   class CalibratorQualityTestParser extends Calibrator {
     private int mPos = 0;
-    byte[] mExp = DnaUtils.fastqToPhred("4316%%68883-56+141663,2.3----45/.,2");
+    byte[] mExp = FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3----45/.,2");
 
     public CalibratorQualityTestParser(Covariate[] vars) {
       super(vars, null);
@@ -676,18 +677,18 @@ public class CalibratorTest extends TestCase {
 
     assertEquals(20, parser.getCurrentQuality());
 
-    final byte[] expQual = DnaUtils.fastqToPhred("4316%%68883-56+141663,2.3----45/.,2");
+    final byte[] expQual = FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3----45/.,2");
     cal.setExpectedQuals(expQual);
     parser.setQualities(expQual);
     assertEquals(19, parser.getCurrentQuality());
 
     parser.setTemplate(DnaUtils.encodeString("ACTGACTGACTGACTGACTGACTAGTAGCTAGCTAGTCGATCGCATCGTAGCTAG"));
     parser.setCigar("10=5N25=", null);
-    parser.setQualities(DnaUtils.fastqToPhred("4316%%68883-56+141663,2.3----45/.,2"));
+    parser.setQualities(FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3----45/.,2"));
     parser.parse();
 
     parser.setCigar("5=2B20=6N10=", null);
-    parser.setQualities(DnaUtils.fastqToPhred("4316%%68883-56+141663,2.3----45/.,2"));
+    parser.setQualities(FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3----45/.,2"));
     cal.resetPos();
     parser.parse();
   }
@@ -742,7 +743,7 @@ public class CalibratorTest extends TestCase {
     sam.setBaseQualityString("J316%8883-56+141663,2.3----45/.,2");
     sam.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "%6");
 
-    exp[0] = DnaUtils.fastqToPhred("J316%%68883-56+141663,2.3----45/.,2");
+    exp[0] = FastaUtils.asciiToRawQuality("J316%%68883-56+141663,2.3----45/.,2");
 
     cal.processRead(sam);
 
@@ -756,7 +757,7 @@ public class CalibratorTest extends TestCase {
       sam2.setBaseQualityString("2,./54----3.2,366141+65-3888%613J");
       sam2.setAttribute("RG", "rg1");
       sam2.setAttribute(SamUtils.CG_SUPER_CIGAR, "10=6N20=2B5=");
-      exp[0] = DnaUtils.fastqToPhred("2,./54----3.2,366141+65-3888%6%613J");
+      exp[0] = FastaUtils.asciiToRawQuality("2,./54----3.2,366141+65-3888%6%613J");
       cal.processRead(sam2);
 
       assertTrue(mps.toString(), mps.toString().contains("Ignored SAM record due to SAM record qualities plus XQ not expected length. Was: 33 expected: 35"));
@@ -776,7 +777,7 @@ public class CalibratorTest extends TestCase {
       sam3.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=1B20=5N2=1X5=1X1=");
       sam3.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "4");
 
-      exp[0] = DnaUtils.fastqToPhred("599(:4.5,5:0;:2:<96;8:;6::9#::99938");
+      exp[0] = FastaUtils.asciiToRawQuality("599(:4.5,5:0;:2:<96;8:;6::9#::99938");
       cal.processRead(sam3);
 
       assertEquals(mps.toString(), 0, mps.toString().length()); //check there's no error output at all
@@ -789,7 +790,7 @@ public class CalibratorTest extends TestCase {
       sam4.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "61");
       sam4.setAttribute("RG", "rg1");
       sam4.setAttribute(SamUtils.CG_SUPER_CIGAR, "10=5N7=1I12=2B5=");
-      exp[0] = DnaUtils.fastqToPhred("77:(9978885/5:0<59;4667774636177978");
+      exp[0] = FastaUtils.asciiToRawQuality("77:(9978885/5:0<59;4667774636177978");
       cal.processRead(sam4);
 
       assertEquals(mps.toString(), 0, mps.toString().length()); //check there's no error output at all

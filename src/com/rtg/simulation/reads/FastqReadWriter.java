@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.Writer;
 
 import com.rtg.mode.DnaUtils;
+import com.rtg.reader.FastaUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.util.io.LineWriter;
 
@@ -103,16 +104,8 @@ public class FastqReadWriter implements ReadWriter {
     mAppend.append("+");
     //mAppend.append(name);
     mAppend.append("\n");
-    mAppend.append(toSangerQuality(qual, 0, length));
+    mAppend.append(FastaUtils.rawToAsciiString(qual, 0, length));
     mAppend.append("\n");
-  }
-
-  private static String toSangerQuality(byte[] quality, int start, int length) {
-    final StringBuilder b = new StringBuilder();
-    for (int i = 0; i < length; i++) {
-      b.append((char) (quality[start + i] + (byte) '!'));
-    }
-    return b.toString();
   }
 
   @Override
