@@ -90,6 +90,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final boolean mPruneHypotheses;
   private final boolean mEnableTrimSplit;
   private final double mLohPrior;
+  private final double mContraryProbability;
   private final File mPopulationPriorFile;
   private final int mMaxEmIterations;
   private final int mMaxComplexHypotheses;
@@ -162,6 +163,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mSiteSpecificSomaticPriors = builder.mSiteSpecificSomaticPriors;
     mNoDiseasePrior = builder.mNoDiseasePrior;
     mLohPrior = builder.mLohPrior;
+    mContraryProbability = builder.mContraryProbability;
     mPopulationPriorFile = builder.mPopulationPriorFile;
     mUsePropagatingPriors = builder.mUsePropagatingPriors;
     mMaxEmIterations = builder.mMaxEmIterations;
@@ -566,6 +568,13 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   }
 
   /**
+   * @return probability that a piece of evidence if contrary to a somatic or de novo call.
+   */
+  public double contraryProbability() {
+    return mContraryProbability;
+  }
+
+  /**
    * @return VCF file containing population priors
    */
   public File populationPriorFile() {
@@ -699,6 +708,8 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     .formatAnnotations(EnumSet.copyOf(mFormatAnnotations))
     .regionsFilterBedFile(mRegionsFilterBedFile)
     .referenceRanges(mReferenceRanges)
+    .lohPrior(lohPrior())
+    .contraryProbability(contraryProbability())
     ;
   }
 
@@ -757,6 +768,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
       .append(" includeGermlineVariants=").append(includeGermlineVariants())
       .append(" includeGainOfReference=").append(includeGainOfReference())
       .append(" lohPrior=").append(lohPrior()).append(LS);
+    sb.append(" contraryProbability=").append(contraryProbability()).append(LS);
     sb.append(" noDiseasePrior=").append(noDiseasePrior()).append(LS);
     sb.append(" Relationships:").append(genomeRelationships()).append(LS);
     sb.append(" max_em_iterations=").append(mMaxEmIterations).append(LS);

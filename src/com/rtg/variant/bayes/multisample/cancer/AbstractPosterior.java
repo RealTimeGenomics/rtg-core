@@ -49,11 +49,15 @@ public abstract class AbstractPosterior {
   protected final double[] mCancerMarginal;
   protected int mBestNormal;
   protected int mBestCancer;
+  private final double mPhi;
+  private final double mPsi;
 
   /**
    * @param hypotheses for normal model (cancer is cross-product of this).
+   * @param phi probability of seeing contrary evidence in the original
+   * @param psi probability of seeing contrary evidence in the derived
    */
-  public AbstractPosterior(final Hypotheses<?> hypotheses) {
+  public AbstractPosterior(final Hypotheses<?> hypotheses, final double phi, final double psi) {
     mHypotheses = hypotheses;
     mLength = hypotheses.size();
     mPosterior = new double[mLength][mLength];
@@ -61,6 +65,8 @@ public abstract class AbstractPosterior {
     mCancerMarginal = new double[mLength];
     Arrays.fill(mNormalMarginal, Double.NEGATIVE_INFINITY);
     Arrays.fill(mCancerMarginal, Double.NEGATIVE_INFINITY);
+    mPhi = mArithmetic.prob2Poss(phi);
+    mPsi = mArithmetic.prob2Poss(psi);
   }
 
   /**
@@ -86,7 +92,7 @@ public abstract class AbstractPosterior {
     mBestCancer = findBest(mCancerMarginal);
   }
 
-  protected void contraryEvidenceAdjustment(final Statistics<?> normalStats, final Statistics<?> cancerStats, final double phi, final double psi) {
+  protected void contraryEvidenceAdjustment(final Statistics<?> normalStats, final Statistics<?> cancerStats) {
     for (int normal = 0; normal < mLength; normal++) {
       final int normalA = mHypotheses.code().a(normal);
       final int normalB = mHypotheses.code().bc(normal);
@@ -108,7 +114,7 @@ public abstract class AbstractPosterior {
           if (normalB != normalA && normalB != cancerA && normalB != cancerB) { // Only for heterozygous
             contraryCancerCount += cancerStats.counts().count(normalB);
           }
-          mPosterior[normal][cancer] += phi * contraryNormalCount + psi * contraryCancerCount;
+          mPosterior[normal][cancer] += mPhi * contraryNormalCount + mPsi * contraryCancerCount;
         }
       }
     }

@@ -25,13 +25,15 @@ public class PureSomaticCaller extends AbstractSomaticCaller {
    * @param qHaploidFactory haploid Q matrix factory
    * @param qDiploidFactory diploid Q matrix factory
    * @param params variant params
+   * @param phi probability of seeing contrary evidence in the original
+   * @param psi probability of seeing contrary evidence in the derived
    */
-  public PureSomaticCaller(SomaticPriorsFactory<?> qHaploidFactory, SomaticPriorsFactory<?> qDiploidFactory, VariantParams params) {
-    super(qHaploidFactory, qDiploidFactory, params);
+  public PureSomaticCaller(SomaticPriorsFactory<?> qHaploidFactory, SomaticPriorsFactory<?> qDiploidFactory, VariantParams params, double phi, double psi) {
+    super(qHaploidFactory, qDiploidFactory, params, phi, psi);
   }
 
   @Override
   protected AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double mu) {
-    return new PosteriorPure((normal.haploid() ? mQHaploidFactory : mQDiploidFactory).somaticQ(mu), normal, cancer, hypotheses);
+    return new PosteriorPure((normal.haploid() ? mQHaploidFactory : mQDiploidFactory).somaticQ(mu), normal, cancer, hypotheses, mPhi, mPsi);
   }
 }

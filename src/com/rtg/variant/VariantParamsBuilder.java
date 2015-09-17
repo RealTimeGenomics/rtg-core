@@ -92,6 +92,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   double mSomaticRate = 0.3;
   double mNoDiseasePrior = 0.95;
   double mLohPrior = 0.0;
+  double mContraryProbability = 0.0001;
   boolean mIncludeGermlineVariants = false;
   boolean mIncludeGainOfReference = false;
   ReferenceRanges<Double> mSiteSpecificSomaticPriors = null;
@@ -569,6 +570,20 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
       throw new IllegalArgumentException();
     }
     mLohPrior = p;
+    return self();
+  }
+
+  /**
+   * The probability applied to contrary evidence for a somatic or de novo call.
+   * A value of 1 means that contrary evidence is not further penalized.
+   * @param p probability of contrary evidence
+   * @return this, for chaining
+   */
+  public VariantParamsBuilder contraryProbability(final double p) {
+    if (p <= 0 || p > 1) {
+      throw new IllegalArgumentException();
+    }
+    mContraryProbability = p;
     return self();
   }
 

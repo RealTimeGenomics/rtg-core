@@ -43,7 +43,7 @@ public class SomaticNanoTest extends AbstractNanoTest {
 
   //test an interesting call using cancer caller (homozygous SNP)
   public void test1() throws Exception {
-    checkCancer("1", "1", REF_TEST1, 6550L, "--all", "--keep-duplicates", "--Xinclude-germline", "--loh", "0.1", "--somatic", "0.0001");
+    checkCancer("1", "1", REF_TEST1, 6550L, "--all", "--keep-duplicates", "--Xinclude-germline", "--loh", "0.1", "--somatic", "0.0001", "--Xcontrary", "1");
   }
 
   public void testGainOfReference() throws Exception {

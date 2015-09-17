@@ -25,13 +25,15 @@ public class ContaminatedSomaticCaller extends AbstractSomaticCaller {
    * @param qHaploidFactory haploid Q matrix factory
    * @param qDiploidFactory diploid Q matrix factory
    * @param params variant params
+   * @param phi probability of seeing contrary evidence in the original
+   * @param psi probability of seeing contrary evidence in the derived
    */
-  public ContaminatedSomaticCaller(SomaticPriorsFactory<?> qHaploidFactory, SomaticPriorsFactory<?> qDiploidFactory, VariantParams params) {
-    super(qHaploidFactory, qDiploidFactory, params);
+  public ContaminatedSomaticCaller(SomaticPriorsFactory<?> qHaploidFactory, SomaticPriorsFactory<?> qDiploidFactory, VariantParams params, double phi, double psi) {
+    super(qHaploidFactory, qDiploidFactory, params, phi, psi);
   }
 
   @Override
   protected AbstractPosterior makePosterior(ModelInterface<?> normal, ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double mu) {
-    return new PosteriorContaminated((normal.haploid() ? mQHaploidFactory : mQDiploidFactory).somaticQ(mu), normal, cancer, hypotheses);
+    return new PosteriorContaminated((normal.haploid() ? mQHaploidFactory : mQDiploidFactory).somaticQ(mu), normal, cancer, hypotheses, mPhi, mPsi);
   }
 }

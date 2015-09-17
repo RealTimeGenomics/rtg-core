@@ -58,27 +58,33 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
   private final VariantParams mParams;
   private final ReferenceRanges<Double> mSiteSpecificSomaticPriors;
   private final double mIdentityInterestingThreshold;
+  protected final double mPhi;
+  protected final double mPsi;
 
   /**
    * @param qHaploidFactory haploid Q matrix factory
    * @param qDiploidFactory diploid Q matrix factory
    * @param params variant params
+   * @param phi probability of seeing contrary evidence in the original
+   * @param psi probability of seeing contrary evidence in the derived
    */
-  public AbstractSomaticCaller(final SomaticPriorsFactory<?> qHaploidFactory, final SomaticPriorsFactory<?> qDiploidFactory, final VariantParams params) {
+  public AbstractSomaticCaller(final SomaticPriorsFactory<?> qHaploidFactory, final SomaticPriorsFactory<?> qDiploidFactory, final VariantParams params, final double phi, final double psi) {
     mQHaploidFactory = qHaploidFactory;
     mQDiploidFactory = qDiploidFactory;
     mParams = params;
     mSiteSpecificSomaticPriors = mParams.siteSpecificSomaticPriors();
     mIdentityInterestingThreshold = mParams.interestingThreshold() * MathUtils.LOG_10;
+    mPhi = phi;
+    mPsi = psi;
   }
 
   /**
    * Construct an appropriate posterior. Differs in the contaminated and non-contaminated case.
-   * @param normal bayesian for the normal genome.
-   * @param cancer bayesian for the cancer genome.
-   * @param hypotheses the hypotheses containing priors.
-   * @param mu somatic mutation rate.
-   * @return the posterior.
+   * @param normal bayesian for the normal genome
+   * @param cancer bayesian for the cancer genome
+   * @param hypotheses the hypotheses containing priors
+   * @param mu somatic mutation rate
+   * @return the posterior
    */
   protected abstract AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, final HypothesesPrior<?> hypotheses, final double mu);
 

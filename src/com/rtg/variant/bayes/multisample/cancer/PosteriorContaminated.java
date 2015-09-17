@@ -27,9 +27,11 @@ class PosteriorContaminated extends AbstractPosterior {
    * @param normal model.
    * @param cancer model, has cross product hypotheses to allow for contamination.
    * @param hypotheses the hypotheses containing priors
+   * @param phi probability of seeing contrary evidence in the original
+   * @param psi probability of seeing contrary evidence in the derived
    */
-  PosteriorContaminated(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses) {
-    super(normal.hypotheses());
+  PosteriorContaminated(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi) {
+    super(normal.hypotheses(), phi, psi);
     //System.err.println("normal " + normal);
     //System.err.println("cancer " + cancer);
     assert cancer instanceof ModelCancerContamination;
@@ -49,9 +51,7 @@ class PosteriorContaminated extends AbstractPosterior {
     }
     // After this point the special code for contamination no longer plays any part, mPosterior
     // is normal x cancer for both contaminated and uncontaminated callers.
-    final double phi = Math.log(0.0001); // XXX roughly should be prob of machine error
-    final double psi = Math.log(Math.min(1, 0.0001 + 0.2)); // XXX 0.2 should be contamination
-    contraryEvidenceAdjustment(normal.statistics(), cancer.statistics(), phi, psi);
+    contraryEvidenceAdjustment(normal.statistics(), cancer.statistics());
     postConstruction();
   }
 

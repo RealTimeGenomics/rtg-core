@@ -40,7 +40,7 @@ public class PosteriorPureTest extends TestCase {
     final ModelInterface<Description> model = PureSomaticCallerTest.SEEN_3_C.get(0);
     final HypothesesPrior<D> hypotheses = (HypothesesPrior<D>) model.hypotheses();
     final VariantParams params = VariantParams.builder().somaticRate(0.001).create();
-    final AbstractSomaticCaller ccs = new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params);
+    final AbstractSomaticCaller ccs = new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params, 1, 1);
     ccs.integrity();
 
     final int length = hypotheses.size();
@@ -52,7 +52,7 @@ public class PosteriorPureTest extends TestCase {
       }
     }.update();
 
-    final AbstractPosterior post = new PosteriorPure(mQ, model, PureSomaticCallerTest.SEEN_3_G.get(0), hypotheses);
+    final AbstractPosterior post = new PosteriorPure(mQ, model, PureSomaticCallerTest.SEEN_3_G.get(0), hypotheses, 1, 1);
     assertEquals(EXPECT_ALL_DIFFERENT, post.toString());
     assertEquals(1, post.bestNormal());
     assertEquals(2, post.bestCancer());
@@ -76,12 +76,12 @@ public class PosteriorPureTest extends TestCase {
   public void testPosteriorAllSame() {
     final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.EQUALS_REF_A.get(0).hypotheses();
     final VariantParams params = VariantParams.builder().somaticRate(0.001).create();
-    final AbstractSomaticCaller ccs = new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params);
+    final AbstractSomaticCaller ccs = new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params, 1, 1);
     ccs.integrity();
 
     AbstractPosterior post = null;
     for (int i = 0; i < 1; i++) {
-      post = new PosteriorPure((hypotheses.haploid() ? ccs.mQHaploidFactory : ccs.mQDiploidFactory).somaticQ(0.001), PureSomaticCallerTest.EQUALS_REF_A.get(0), PureSomaticCallerTest.EQUALS_REF_A.get(0), hypotheses);
+      post = new PosteriorPure((hypotheses.haploid() ? ccs.mQHaploidFactory : ccs.mQDiploidFactory).somaticQ(0.001), PureSomaticCallerTest.EQUALS_REF_A.get(0), PureSomaticCallerTest.EQUALS_REF_A.get(0), hypotheses, 1, 1);
     }
     assertEquals(EXPECT_ALL_SAME, post.toString());
     assertEquals(0, post.bestNormal());

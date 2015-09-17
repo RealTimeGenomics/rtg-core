@@ -26,9 +26,11 @@ class PosteriorPure extends AbstractPosterior {
    * @param normal array of normal hypotheses
    * @param cancer array of cancer hypotheses
    * @param hypotheses the hypotheses containing priors
+   * @param phi probability of seeing contrary evidence in the original
+   * @param psi probability of seeing contrary evidence in the derived
    */
-  PosteriorPure(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses) {
-    super(hypotheses);
+  PosteriorPure(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi) {
+    super(hypotheses, psi, psi);
     //System.err.println("normal " + normal);
     //System.err.println("cancer " + cancer);
     for (int i = 0; i < mLength; i++) {
@@ -41,8 +43,7 @@ class PosteriorPure extends AbstractPosterior {
         //System.err.println("PosteriorPure i=" + i + " j=" + j + " hypNormal=" + hypotheses.name(i) + " hypCancer=" + hypotheses.name(j) + " q=" + Utils.realFormat(q, 3) + " pi=" + Utils.realFormat(pi, 3) + " pj=" + Utils.realFormat(pj, 3) + " t=" + Utils.realFormat(t, 3));
       }
     }
-    final double r = Math.log(0.0001); // XXX roughly should be prob of machine error -- via constructor?
-    contraryEvidenceAdjustment(normal.statistics(), cancer.statistics(), r, r);
+    contraryEvidenceAdjustment(normal.statistics(), cancer.statistics());
     postConstruction();
   }
 

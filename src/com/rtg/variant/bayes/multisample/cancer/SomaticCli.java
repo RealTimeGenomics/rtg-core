@@ -22,6 +22,7 @@ import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.ParamsTask;
 import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
+import com.rtg.relation.Relationship;
 import com.rtg.relation.Relationship.RelationshipType;
 import com.rtg.usage.UsageMetric;
 import com.rtg.util.InvalidParamsException;
@@ -50,7 +51,10 @@ public class SomaticCli extends AbstractMultisampleCli {
   // or these
   private static final String DERIVED_FLAG = "derived";
   private static final String ORIGINAL_FLAG = "original";
-  private static final String CONTAMINATION_FLAG = "contamination";
+  private static final String CONTAMINATION_FLAG = Relationship.CONTAMINATION;
+
+  private static final String REVERSE_CONTAMINATION_FLAG = "X" + Relationship.REVERSE_CONTAMINATION;
+  private static final String CONTRARY_FLAG = "Xcontrary-probability";
 
   private static final String SEX_FLAG = "sex";
   private static final String INCLUDE_GERMLINE_FLAG = "Xinclude-germline";
@@ -92,7 +96,17 @@ public class SomaticCli extends AbstractMultisampleCli {
       }
       final double loh = (Double) flags.getValue(LOH_FLAG);
       if (loh < 0 || loh > 1) {
-        flags.error("--" + LOH_FLAG + " should be a probability 0<=s<=1");
+        flags.error("--" + LOH_FLAG + " should be a probability 0<=p<=1");
+        return false;
+      }
+      final double reverse = (Double) flags.getValue(REVERSE_CONTAMINATION_FLAG);
+      if (reverse < 0 || reverse > 1) {
+        flags.error("--" + REVERSE_CONTAMINATION_FLAG + " should be a probability 0<p<1");
+        return false;
+      }
+      final double contrary = (Double) flags.getValue(CONTRARY_FLAG);
+      if (contrary <= 0 || contrary > 1) {
+        flags.error("--" + CONTRARY_FLAG + " should be a probability 0<p<=1");
         return false;
       }
       return true;
@@ -132,6 +146,8 @@ public class SomaticCli extends AbstractMultisampleCli {
     final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     flags.registerOptional('r', PEDIGREE_FLAG, File.class, "file", "relationships file").setCategory(INPUT_OUTPUT);
     final Flag contamFlag = flags.registerOptional(CONTAMINATION_FLAG, Double.class, "float", "estimated fraction of contamination in derived sample").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(REVERSE_CONTAMINATION_FLAG, Double.class, "float", "estimated fraction of derived sample in original sample", 0.0).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(CONTRARY_FLAG, Double.class, "float", "probability used to penalize contrary evidence in somatic calls", 0.0001).setCategory(SENSITIVITY_TUNING);
     final Flag derivedFlag = flags.registerOptional(DERIVED_FLAG, String.class, "string", "sample identifier used in read groups for derived sample").setCategory(INPUT_OUTPUT);
     final Flag originalFlag = flags.registerOptional(ORIGINAL_FLAG, String.class, "string", "sample identifier used in read groups for original sample").setCategory(INPUT_OUTPUT);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of individual", Sex.EITHER).setCategory(SENSITIVITY_TUNING);
@@ -160,7 +176,9 @@ public class SomaticCli extends AbstractMultisampleCli {
       final Sex sex = (Sex) mFlags.getValue(SEX_FLAG);
       ped.addGenome(original, sex);
       ped.addGenome(derived, sex);
-      ped.addRelationship(RelationshipType.ORIGINAL_DERIVED, original, derived).setProperty(CONTAMINATION_FLAG, String.valueOf(mFlags.getValue(CONTAMINATION_FLAG)));
+      final Relationship relationship = ped.addRelationship(RelationshipType.ORIGINAL_DERIVED, original, derived);
+      relationship.setProperty(Relationship.CONTAMINATION, String.valueOf(mFlags.getValue(CONTAMINATION_FLAG)));
+      relationship.setProperty(Relationship.REVERSE_CONTAMINATION, String.valueOf(mFlags.getValue(REVERSE_CONTAMINATION_FLAG)));
       return ped;
     }
   }
@@ -174,6 +192,7 @@ public class SomaticCli extends AbstractMultisampleCli {
       .includeGermlineVariants(mFlags.isSet(INCLUDE_GERMLINE_FLAG))
       .includeGainOfReference(mFlags.isSet(INCLUDE_GAIN_OF_REFERENCE))
       .lohPrior((Double) mFlags.getValue(LOH_FLAG))
+      .contraryProbability((Double) mFlags.getValue(CONTRARY_FLAG))
       .sex((Sex) mFlags.getValue(SEX_FLAG));
     if (mFlags.isSet(SOMATIC_PRIORS_FLAG)) {
       final PriorBedRangeLoader loader = new PriorBedRangeLoader();
