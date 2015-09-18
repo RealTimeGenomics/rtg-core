@@ -93,6 +93,7 @@ public abstract class AbstractPosterior {
   }
 
   protected void contraryEvidenceAdjustment(final Statistics<?> normalStats, final Statistics<?> cancerStats) {
+    // Corresponds to R(H_c | H_n, E_c, E_n) in theory document
     for (int normal = 0; normal < mLength; normal++) {
       final int normalA = mHypotheses.code().a(normal);
       final int normalB = mHypotheses.code().bc(normal);
