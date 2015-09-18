@@ -42,6 +42,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
 
   private static final double[] CG_DEFAULT_OVERLAP_DIST = {0.0, 0.08, 0.84, 0.08, 0.0};
   private static final double[] CG_DEFAULT_SMALL_GAP_DIST = {0.9696969696969697, 0.020202020202020204, 0.010101010101010102, 0.0};
+  private static final double[] CG_DEFAULT_GAP_DIST = {0.0, 0.28, 0.6, 0.12, 0.0};
 
   private static final int QUE_HACK_LIMIT = 255; //use 255 if to effectively ignore
   //  static {
@@ -96,7 +97,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     if (isCG()) {
       if (GAP_HACK) {
         Diagnostic.developerLog("CG gap hack enabled, using default gaps");
-        mErrorGapDist = new double[] {0.0, 0.28, 0.6, 0.12, 0.0};
+        mErrorGapDist = CG_DEFAULT_GAP_DIST;
         mErrorSmallGapDist = CG_DEFAULT_SMALL_GAP_DIST;
         mErrorOverlapDist = CG_DEFAULT_OVERLAP_DIST;
       } else if (calibrator.hasHistogram(Calibrator.CGGAP_DIST, readGroupId)) {
@@ -114,7 +115,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
         mErrorOverlapDist = dists[2];
       } else {
         Diagnostic.developerLog("Calibration file without CG gap information, using default gaps");
-        mErrorGapDist = new double[] {0.0, 0.28, 0.6, 0.12, 0.0};
+        mErrorGapDist = CG_DEFAULT_GAP_DIST;
         mErrorSmallGapDist = CG_DEFAULT_SMALL_GAP_DIST;
         mErrorOverlapDist = CG_DEFAULT_OVERLAP_DIST;
       }
@@ -314,6 +315,11 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
   @Override
   public double[] overlapDistribution() {
     return mErrorOverlapDist;
+  }
+
+  @Override
+  public double[] overlapDistribution2() {
+    throw new UnsupportedOperationException("V2 calibration not yet supported");
   }
 
   @Override

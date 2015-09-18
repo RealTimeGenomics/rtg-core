@@ -24,7 +24,7 @@ public class CgSimCli extends ReadSimCli {
 
   static final String XMACHINE_ERROR_PRIORS = "Xmachine-errors";
 
-  protected static class CgSimValidator extends ReadSimValidator {
+  protected static class CgSimValidator extends ReadSimCliValidator {
     @Override
     protected boolean checkMachines(CFlags cflags) {
       return true;
@@ -57,15 +57,16 @@ public class CgSimCli extends ReadSimCli {
   @Override
   protected void initFlags() {
     super.initFlags();
-    mFlags.setDescription("Simulate mutations in Complete Genomics reads.");
-    mFlags.setCategories(UTILITY, new String[]{INPUT_OUTPUT, CAT_FRAGMENTS, UTILITY});
+    mFlags.setDescription("Simulate Complete Genomics Inc sequencing reads.");
+    mFlags.setCategories(UTILITY, new String[]{INPUT_OUTPUT, CAT_FRAGMENTS, CAT_CG, UTILITY});
     mFlags.setValidator(new CgSimValidator());
-
   }
+
   @Override
   protected void initMachineFlags() {
     mFlags.registerOptional('M', MAX_FRAGMENT, Integer.class, "int", "maximum fragment size", 500).setCategory(CAT_FRAGMENTS);
     mFlags.registerOptional('m', MIN_FRAGMENT, Integer.class, "int", "minimum fragment size", 350).setCategory(CAT_FRAGMENTS);
     mFlags.registerOptional('E', XMACHINE_ERROR_PRIORS, String.class, "string", "override default machine error priors").setCategory(UTILITY);
+    mFlags.registerOptional(CG_READLENGTH, Integer.class, "int", "length of Complete Genomics reads, 35 or 29 bp", 35).setCategory(CAT_CG);
   }
 }

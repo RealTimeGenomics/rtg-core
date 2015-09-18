@@ -16,12 +16,12 @@ import java.io.IOException;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
-import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.machine.MachineType;
 import com.rtg.util.test.FileHelper;
 
@@ -36,14 +36,13 @@ public class CgSimCliTest extends AbstractCliTest {
   }
 
   public void testFlags() {
-    checkHelp("Simulate mutations in Complete Genomics reads.");
+    checkHelp("Simulate Complete Genomics Inc sequencing reads.");
   }
 
 
   public void testCliValidator1() throws IOException, InvalidParamsException {
-    Diagnostic.setLogStream();
-    final File tempDir = FileUtils.createTempDir("readsimclitest", "checkcli");
-    try {
+
+    try (final TestDirectory tempDir = new TestDirectory("cgsimclitest")) {
       final File genomeDir = FileHelper.createTempDirectory();
       try {
         ReaderTestUtils.getReaderDNA(">seq1" + StringUtils.LS + "acgt", genomeDir, null).close();
@@ -52,15 +51,15 @@ public class CgSimCliTest extends AbstractCliTest {
         TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-n", "100"), "You must provide a value for -o SDF");
         TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-c", "0"), "Coverage should be positive");
         TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "0"), "Number of reads should be greater than 0");
-        assertEquals(MachineType.COMPLETE_GENOMICS, new CgSimCli().getMachineType());
+
+        final CgSimCli cli = (CgSimCli) getCli();
+        MainResult.run(cli, "-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1");
+        assertEquals(MachineType.COMPLETE_GENOMICS, cli.getMachineType());
         final CgSimCli.CgSimValidator validator = new CgSimCli.CgSimValidator();
         assertTrue(validator.checkMachines(null));
       } finally {
         assertTrue(FileHelper.deleteAll(genomeDir));
       }
-
-    } finally {
-      assertTrue(FileHelper.deleteAll(tempDir));
     }
   }
 }

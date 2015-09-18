@@ -32,6 +32,11 @@ public class MachineErrorParamsBuilder {
 
   static final boolean CG_TRIM = true; //Boolean.valueOf(System.getProperty("cg-trim", "true"));
 
+  static final double[] CG_DEFAULT_OVERLAP_DIST = MathUtils.renormalize(new int[]{0, 8, 84, 8, 0});
+  static final double[] CG_DEFAULT_GAP_DIST = MathUtils.renormalize(new int[]{0, 27, 64, 9, 0});
+  static final double[] CG_DEFAULT_SMALL_GAP_DIST = MathUtils.renormalize(new int[]{90, 7, 3, 0});
+  static final double[] CG_DEFAULT_OVERLAP2_DIST = MathUtils.renormalize(new int[]{31, 58, 128, 376, 547, 86, 3, 0});
+
   /** The proportion of insertions that are homozygous */
   protected double mErrorMnpEventRate, mErrorInsEventRate, mErrorDelEventRate;
 
@@ -39,18 +44,20 @@ public class MachineErrorParamsBuilder {
 
   protected int[] mQualityCurve;
 
+  // CG v1
   protected double[] mGapDistribution;
-
   protected double[] mSmallGapDistribution;
-
   protected double[] mOverlapDistribution;
+  protected boolean mCGTrimOuterBases;
+
+  // CG v2
+  protected double[] mOverlapDistribution2;
 
   protected MachineType mMachine;
 
   /** True if an explicit CG overlap distribution has been set. */
   protected boolean mCG;
 
-  protected boolean mCGTrimOuterBases;
 
   /**
    * Creates a builder with initial default values from the
@@ -92,6 +99,7 @@ public class MachineErrorParamsBuilder {
     mGapDistribution = errors.gapDistribution();
     mSmallGapDistribution = errors.smallGapDistribution();
     mOverlapDistribution = errors.overlapDistribution();
+    mOverlapDistribution2 = errors.overlapDistribution2();
     mCG = errors.isCG();
     mMachine = errors.machineType();
     mCGTrimOuterBases = errors.cgTrimOuterBases() && CG_TRIM;
@@ -117,8 +125,6 @@ public class MachineErrorParamsBuilder {
     mErrorInsEventRate = GenomePriorParamsBuilder.getDouble(errors, pr, "error_ins_event_rate");
     mErrorDelEventRate = GenomePriorParamsBuilder.getDouble(errors, pr, "error_del_event_rate");
 
-    mCGTrimOuterBases = tryGetBoolean(pr, "cg_trim_outer_bases", false) && CG_TRIM;
-
     // parse the optional quality calibration curve
     if (pr.containsKey(MachineErrorParams.QCALIB_KEY)) {
       final String curve = pr.getProperty(MachineErrorParams.QCALIB_KEY);
@@ -132,20 +138,6 @@ public class MachineErrorParamsBuilder {
       }
       checkQualityCurve(mQualityCurve); // check the values
     }
-    if (pr.containsKey("overlap")) {
-      final String overlap = pr.getProperty("overlap");
-      boolean exception = false;
-      try {
-        mOverlapDistribution = MathUtils.renormalize(ArrayUtils.parseIntArray(overlap));
-      } catch (final NumberFormatException e) {
-        exception = true;
-      }
-      if (exception || mOverlapDistribution.length < 5) {
-        throw new InvalidParamsException(ErrorType.PRIOR_KEY_VALUE_INVALID, overlap, "overlap", errors);
-      }
-    } else {
-      mOverlapDistribution = MathUtils.renormalize(new int[] {0, 8, 84, 8, 0});
-    }
     if (pr.containsKey("machine_type")) {
       try {
         mMachine = MachineType.valueOf(pr.getProperty("machine_type"));
@@ -154,36 +146,31 @@ public class MachineErrorParamsBuilder {
       }
     }
     mCG = mMachine == MachineType.COMPLETE_GENOMICS;
-    if (pr.containsKey("smallgap")) {
-      final String gap = pr.getProperty("smallgap");
-      boolean exception = false;
-      try {
-        mSmallGapDistribution = MathUtils.renormalize(ArrayUtils.parseIntArray(gap));
-      } catch (final NumberFormatException e) {
-        exception = true;
-      }
-      if (exception || mSmallGapDistribution.length < 4) {
-        throw new InvalidParamsException(ErrorType.PRIOR_KEY_VALUE_INVALID, gap, "smallgap", errors);
-      }
-    } else {
-      mSmallGapDistribution = MathUtils.renormalize(new int[] {90, 7, 3, 0});
-    }
-    if (pr.containsKey("gap")) {
-      final String gap = pr.getProperty("gap");
-      boolean exception = false;
-      try {
-        mGapDistribution = MathUtils.renormalize(ArrayUtils.parseIntArray(gap));
-      } catch (final NumberFormatException e) {
-        exception = true;
-      }
-      if (exception || mGapDistribution.length < 5) {
-        throw new InvalidParamsException(ErrorType.PRIOR_KEY_VALUE_INVALID, gap, "gap", errors);
-      }
-    } else {
-      mGapDistribution = MathUtils.renormalize(new int[] {0, 27, 64, 9, 0});
-    }
+    mCGTrimOuterBases = tryGetBoolean(pr, "cg_trim_outer_bases", false) && CG_TRIM;
+    mOverlapDistribution = getDistribution(pr, "overlap", CG_DEFAULT_OVERLAP_DIST, errors);
+    mSmallGapDistribution = getDistribution(pr, "smallgap", CG_DEFAULT_SMALL_GAP_DIST, errors);
+    mGapDistribution = getDistribution(pr, "gap", CG_DEFAULT_GAP_DIST, errors);
+    mOverlapDistribution2 = getDistribution(pr, "overlap_2", CG_DEFAULT_OVERLAP2_DIST, errors);
 
     return this;
+  }
+
+  private double[] getDistribution(Properties pr, String key, double[] defaultDist, String errors) {
+    final double[] dist;
+    if (pr.containsKey(key)) {
+      final String overlap = pr.getProperty(key);
+      try {
+        dist = MathUtils.renormalize(ArrayUtils.parseIntArray(overlap));
+        if (dist.length < defaultDist.length) {
+          throw new InvalidParamsException(ErrorType.PRIOR_KEY_VALUE_INVALID, overlap, "overlap", errors);
+        }
+      } catch (final NumberFormatException e) {
+        throw new InvalidParamsException(ErrorType.PRIOR_KEY_VALUE_INVALID, overlap, "overlap", errors);
+      }
+    } else {
+      dist = defaultDist;
+    }
+    return dist;
   }
 
   private static boolean tryGetBoolean(final Properties pr, final String key, final boolean dfault) {
@@ -326,6 +313,7 @@ public class MachineErrorParamsBuilder {
     checkDistribution(mGapDistribution);
     checkDistribution(mOverlapDistribution);
     checkDistribution(mSmallGapDistribution);
+    checkDistribution(mOverlapDistribution2);
     return new MachineErrorParams(this);
   }
 

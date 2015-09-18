@@ -25,11 +25,11 @@ import com.rtg.variant.MachineErrorParamsBuilder;
 /**
  * Test Class
  */
-public class CompleteGenomicsMachineTest extends AbstractMachineTest {
+public class CompleteGenomicsV1MachineTest extends AbstractMachineTest {
 
   @Override
   protected Machine getMachine(final long seed) throws IOException, InvalidParamsException {
-    return new CompleteGenomicsMachine(seed);
+    return new CompleteGenomicsV1Machine(getPriors(), seed);
   }
 
   @Override
@@ -38,7 +38,7 @@ public class CompleteGenomicsMachineTest extends AbstractMachineTest {
   }
 
   public void test() throws IOException, InvalidParamsException {
-    final CompleteGenomicsMachine m = new CompleteGenomicsMachine(42);
+    final CompleteGenomicsMachine m = (CompleteGenomicsMachine) getMachine(42);
     final MemoryPrintStream out = new MemoryPrintStream();
     final FastaReadWriter w = new FastaReadWriter(out.printStream());
     m.setReadWriter(w);
@@ -55,17 +55,17 @@ public class CompleteGenomicsMachineTest extends AbstractMachineTest {
     mNano.check("cg-results.fa", out.toString(), false);
   }
 
-  private void checkQualities(byte[] quals) {
+  void checkQualities(byte[] quals) {
     for (final byte b : quals) {
       assertTrue("byte outside phred limits: " + b, b >= 0 && b <= CompressedMemorySequencesReader.MAX_QUAL_VALUE);
     }
   }
 
-  private class StatsReadWriter implements ReadWriter {
+  class StatsReadWriter implements ReadWriter {
     private final int[] mBackstep = new int[10];
     private final int[] mSmallSkip = new int[10];
     private final int[] mBigSkip = new int[20];
-    private int mTotal = 0;
+    int mTotal = 0;
 
     private int whatIsTheSkip(final String name, final int pos) {
       int v = 0;
@@ -79,7 +79,7 @@ public class CompleteGenomicsMachineTest extends AbstractMachineTest {
       return v;
     }
 
-    private void augment(final String name) {
+    void augment(final String name) {
       final int b = name.indexOf('B');
       if (b == -1) {
         mBackstep[0]++;
@@ -87,13 +87,15 @@ public class CompleteGenomicsMachineTest extends AbstractMachineTest {
         mBackstep[name.charAt(b - 1) - '0']++;
       }
       final int n1 = name.indexOf('N');
-      final int n2 = name.indexOf('N', n1 + 1);
-      final int s1 = whatIsTheSkip(name, n1);
-      final int s2 = n2 == -1 ? 0 : whatIsTheSkip(name, n2);
-      final int smallSkip = Math.min(s1, s2);
-      final int bigSkip = Math.max(s1, s2);
-      mBigSkip[bigSkip]++;
-      mSmallSkip[smallSkip]++;
+      if (n1 != -1) {
+        final int n2 = name.indexOf('N', n1 + 1);
+        final int s1 = whatIsTheSkip(name, n1);
+        final int s2 = n2 == -1 ? 0 : whatIsTheSkip(name, n2);
+        final int smallSkip = Math.min(s1, s2);
+        final int bigSkip = Math.max(s1, s2);
+        mBigSkip[bigSkip]++;
+        mSmallSkip[smallSkip]++;
+      }
       mTotal++;
     }
 
@@ -140,7 +142,6 @@ public class CompleteGenomicsMachineTest extends AbstractMachineTest {
     public int readsWritten() {
       return mTotal;
     }
-
   }
 
   public void testOverlapDistributions() throws Exception {

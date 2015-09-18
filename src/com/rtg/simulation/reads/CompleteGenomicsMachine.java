@@ -15,29 +15,18 @@ package com.rtg.simulation.reads;
 import java.io.IOException;
 
 import com.rtg.alignment.ActionsHelper;
-import com.rtg.mode.DNA;
 import com.rtg.reader.PrereadType;
-import com.rtg.simulation.SimulationUtils;
-import com.rtg.util.InvalidParamsException;
 import com.rtg.util.PortableRandom;
-import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.AbstractMachineErrorParams;
-import com.rtg.variant.MachineErrorParamsBuilder;
 
 /**
  * Generator for Complete Genomics paired end reads.
  *
  */
-public class CompleteGenomicsMachine extends AbstractMachine {
-
-  private static final int NUMBER_TRIES = 1000;
-  private static final int READ_LENGTH = 35;
+public abstract class CompleteGenomicsMachine extends AbstractMachine {
 
   protected final PortableRandom mFrameRandom;
   protected final PortableRandom mSegmentRandom;
-  protected final double[] mOverlapDistribution;
-  protected final double[] mGapDistribution;
-  protected final double[] mSmallGapDistribution;
 
   /**
    * Constructs with seed and specific priors
@@ -46,31 +35,11 @@ public class CompleteGenomicsMachine extends AbstractMachine {
    */
   public CompleteGenomicsMachine(AbstractMachineErrorParams params, long randomSeed) {
     super(params);
-    mOverlapDistribution = SimulationUtils.cumulativeDistribution(params.overlapDistribution());
-    mGapDistribution = SimulationUtils.cumulativeDistribution(params.gapDistribution());
-    mSmallGapDistribution = SimulationUtils.cumulativeDistribution(params.smallGapDistribution());
     mFrameRandom = new PortableRandom(randomSeed);
     mSegmentRandom = new PortableRandom(randomSeed * 3);
-    setBuffers();
   }
 
-  /**
-   * Constructs with seed and default Illumina priors
-   * @param randomSeed random seed
-   * @throws InvalidParamsException if fails to construct priors
-   * @throws IOException whenever
-   */
-  public CompleteGenomicsMachine(long randomSeed) throws InvalidParamsException, IOException {
-    this(new MachineErrorParamsBuilder().errors("complete").create(), randomSeed);
-  }
-
-  private void setBuffers() {
-    mQualityBytes = new byte[READ_LENGTH];
-    mReadBytes = new byte[READ_LENGTH];
-    mWorkspace = new int[READ_LENGTH];
-  }
-
-  private void reverse() {
+  protected void reverse() {
     for (int left = 0, right = mReadBytesUsed - 1; left < right; left++, right--) {
       // exchange the first and last
       final byte temp = mReadBytes[left];
@@ -79,29 +48,7 @@ public class CompleteGenomicsMachine extends AbstractMachine {
     }
   }
 
-  private int generateOverlapLength() {
-    if ((mOverlapDistribution == null) || (mOverlapDistribution.length != 5)) {
-      return -2;
-    }
-    return SimulationUtils.chooseLength(mOverlapDistribution, mSegmentRandom.nextDouble()) - 4;
-  }
-
-  private int generateGapLength() {
-    if ((mGapDistribution == null) || (mGapDistribution.length != 5)) {
-      return 6;
-    }
-    return SimulationUtils.chooseLength(mGapDistribution, mSegmentRandom.nextDouble()) + 4;
-  }
-
-  private int generateSmallGapLength() {
-    if ((mSmallGapDistribution == null) || (mSmallGapDistribution.length != 4)) {
-      System.err.println("wrong");
-      return 0;
-    }
-    return SimulationUtils.chooseLength(mSmallGapDistribution, mSegmentRandom.nextDouble());
-  }
-
-  private void updateCigarWithPositiveOrNegativeSkip(final int skip) {
+  protected void updateCigarWithPositiveOrNegativeSkip(final int skip) {
     if (skip > 0) {
       // N operation
       addCigarState(skip, ActionsHelper.CG_GAP_IN_READ);
@@ -110,84 +57,6 @@ public class CompleteGenomicsMachine extends AbstractMachine {
       addCigarState(-skip, ActionsHelper.CG_OVERLAP_IN_READ);
     }
   }
-
-  protected String generateRead(String id, int fragmentStart, byte[] data, int length, boolean forward, boolean leftArm) {
-    final int startFrom;
-    final int direction;
-    final char frame;
-    if (forward) {
-      frame = 'F';
-    } else {
-      frame = 'R';
-    }
-    if (leftArm ^ !forward) {
-      direction = 1;
-      startFrom = 0;
-    } else {
-      direction = -1;
-      startFrom = length - 1;
-    }
-    for (int x = 0; x < NUMBER_TRIES; x++) {
-      resetCigar();
-      int refPos = readBases(startFrom, data, length, direction, 5);
-      final int overlap = generateOverlapLength();
-      refPos += overlap * direction;
-      int tLen = direction == 1 ? length - refPos : length - startFrom + refPos;
-      if (refPos < 0 || refPos >= length) {
-        continue;
-      }
-      updateCigarWithPositiveOrNegativeSkip(overlap);
-      refPos = readBases(refPos, data, tLen, direction, 10);
-
-      // Currently hardcoded gap of 0
-      final int smallgap = generateSmallGapLength();
-      refPos += smallgap * direction;
-      tLen = direction == 1 ? length - refPos : length - startFrom + refPos;
-      if (refPos < 0 || refPos >= length) {
-        continue;
-      }
-      updateCigarWithPositiveOrNegativeSkip(smallgap);
-      refPos = readBases(refPos, data, tLen, direction, 10);
-
-      final int gap = generateGapLength();
-      refPos += gap * direction;
-      tLen = direction == 1 ? length - refPos : length - startFrom + refPos;
-      if (refPos < 0 || refPos >= length) {
-        continue;
-      }
-      updateCigarWithPositiveOrNegativeSkip(gap);
-      refPos = readBases(refPos, data, tLen, direction, 10);
-      //System.out.println("Generated overlap:" + overlap + " gap:" + gap);
-
-      final int newStart = Math.min(startFrom, refPos - direction);
-      if (forward ^ direction == 1) {
-        reverse();
-      }
-      if (!forward) {
-        DNA.complementInPlace(mReadBytes, 0, mReadBytesUsed);
-      }
-      final String cigar = getCigar(direction == -1, newStart, length, READ_LENGTH);
-      return formatReadName(id, frame, cigar, fragmentStart, newStart);
-    }
-    //Diagnostic.developerLog(id + " fragmentStart: " + fragmentStart + " length: " + length + " forward: " + forward + " leftArm: " + leftArm);
-    throw new NoTalkbackSlimException("Unable to generate a valid read with given priors in " + NUMBER_TRIES + " attempts");
-  }
-
-  @Override
-  public void processFragment(String id, int fragmentStart, byte[] data, int length) throws IOException {
-    reseedErrorRandom(mFrameRandom.nextLong());
-    final boolean forwardFrame = mFrameRandom.nextBoolean();
-
-    final String nameLeft = generateRead(id, fragmentStart, data, length, forwardFrame, true);
-
-    mReadWriter.writeLeftRead(nameLeft, mReadBytes, mQualityBytes, READ_LENGTH);
-    mResidueCount += READ_LENGTH;
-
-    final String nameRight = generateRead(id, fragmentStart, data, length, forwardFrame, false);
-    mReadWriter.writeRightRead(nameRight, mReadBytes, mQualityBytes, READ_LENGTH);
-    mResidueCount += READ_LENGTH;
-  }
-
 
   @Override
   public boolean isPaired() {
@@ -198,5 +67,22 @@ public class CompleteGenomicsMachine extends AbstractMachine {
   public PrereadType machineType() {
     return PrereadType.CG;
   }
+
+  @Override
+  public void processFragment(String id, int fragmentStart, byte[] data, int length) throws IOException {
+    reseedErrorRandom(mFrameRandom.nextLong());
+    final boolean forwardFrame = mFrameRandom.nextBoolean();
+
+    final String nameLeft = generateRead(id, fragmentStart, data, length, forwardFrame, true);
+
+    mReadWriter.writeLeftRead(nameLeft, mReadBytes, mQualityBytes, mReadBytes.length);
+    mResidueCount += mReadBytes.length;
+
+    final String nameRight = generateRead(id, fragmentStart, data, length, forwardFrame, false);
+    mReadWriter.writeRightRead(nameRight, mReadBytes, mQualityBytes, mReadBytes.length);
+    mResidueCount += mReadBytes.length;
+  }
+
+  protected abstract String generateRead(String id, int fragmentStart, byte[] data, int length, boolean forwardFrame, boolean leftArm);
 
 }

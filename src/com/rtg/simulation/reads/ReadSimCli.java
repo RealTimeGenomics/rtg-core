@@ -28,11 +28,10 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.bed.BedUtils;
-import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
 import com.rtg.mode.SequenceType;
+import com.rtg.reader.CgUtils;
 import com.rtg.reader.PrereadNamesInterface;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
@@ -43,9 +42,7 @@ import com.rtg.util.InvalidParamsException;
 import com.rtg.util.MathUtils;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.Utils;
-import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.Flag;
-import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
@@ -104,245 +101,26 @@ public class ReadSimCli extends LoggedCli {
   static final String MIN_TOTAL_IONTORRENT_LENGTH = "ion-min-total-size";
   static final String MAX_TOTAL_IONTORRENT_LENGTH = "ion-max-total-size";
 
+  // Complete Genomics machine
+  static final String CG_READLENGTH = "cg-read-length";
+
   static final String CAT_FRAGMENTS = "Fragment Generation";
-  private static final String CAT_ILLUMINA_SE = "Illumina SE";
-  private static final String CAT_ILLUMINA_PE = "Illumina PE";
-  private static final String CAT_454_PE = "454 SE/PE";
-  private static final String CAT_ION_SE = "IonTorrent SE";
+  static final String CAT_ILLUMINA_SE = "Illumina SE";
+  static final String CAT_ILLUMINA_PE = "Illumina PE";
+  static final String CAT_454_PE = "454 SE/PE";
+  static final String CAT_ION_SE = "IonTorrent SE";
+  static final String CAT_CG = "Complete Genomics";
 
   private static final String NO_NAMES = "no-names";
   private static final String NO_QUAL = "no-qualities";
 
-  private static final String MNP_EVENT_RATE = "Xmnp-event-rate";
-  private static final String INS_EVENT_RATE = "Xinsert-event-rate";
-  private static final String DEL_EVENT_RATE = "Xdelete-event-rate";
-  private static final String BED_FILE = "Xbed-file";
+  static final String MNP_EVENT_RATE = "Xmnp-event-rate";
+  static final String INS_EVENT_RATE = "Xinsert-event-rate";
+  static final String DEL_EVENT_RATE = "Xdelete-event-rate";
+  static final String BED_FILE = "Xbed-file";
 
   private static final String PCR_DUP_RATE = "Xpcr-duplicate-rate";
   private static final String CHIMERA_RATE = "Xchimera-rate";
-
-
-  private static boolean okProbability(final Object o) {
-    if (!(o instanceof Double)) {
-      return false;
-    }
-    final double d = (Double) o;
-    return d >= 0 && d <= 1;
-  }
-
-  @TestClass("com.rtg.simulation.reads.ReadSimValidatorTest")
-  protected static class ReadSimValidator implements Validator {
-
-    @Override
-    public boolean isValid(final CFlags cflags) {
-
-      if (cflags.isSet(MNP_EVENT_RATE) && !okProbability(cflags.getValue(MNP_EVENT_RATE))) {
-        cflags.setParseMessage("--" + MNP_EVENT_RATE + " must be a value in [0,1]");
-        return false;
-      }
-      if (cflags.isSet(INS_EVENT_RATE) && !okProbability(cflags.getValue(INS_EVENT_RATE))) {
-        cflags.setParseMessage("--" + INS_EVENT_RATE + " must be a value in [0,1]");
-        return false;
-      }
-      if (cflags.isSet(DEL_EVENT_RATE) && !okProbability(cflags.getValue(DEL_EVENT_RATE))) {
-        cflags.setParseMessage("--" + DEL_EVENT_RATE + " must be a value in [0,1]");
-        return false;
-      }
-
-      if (!(cflags.isSet(COVERAGE) ^ cflags.isSet(READS))) {
-        cflags.setParseMessage("Exactly one of --" + COVERAGE + " or --" + READS + " must be specified");
-        return false;
-      }
-      if (cflags.isSet(READS)) {
-        if ((Long) cflags.getValue(READS) <= 0) {
-          cflags.setParseMessage("Number of reads should be greater than 0");
-          return false;
-        }
-      } else if (cflags.isSet(COVERAGE)) {
-        final double coverage = (Double) cflags.getValue(COVERAGE);
-        if (coverage <= 0.0) {
-          cflags.setParseMessage("Coverage should be positive");
-          return false;
-        } else if (coverage > 1000000.0) {
-          cflags.setParseMessage("Coverage cannot be greater than 1000000.0");
-          return false;
-        }
-      }
-      if (!CommonFlags.validateOutputDirectory((File) cflags.getValue(OUTPUT))) {
-        return false;
-      }
-      if (cflags.isSet(DISTRIBUTION) && cflags.isSet(TAXONOMY_DISTRIBUTION)) {
-        cflags.setParseMessage("At most one of --" + DISTRIBUTION + " or --" + TAXONOMY_DISTRIBUTION + " should be set");
-        return false;
-      }
-      if (cflags.isSet(DISTRIBUTION)) {
-        final File distFile = (File) cflags.getValue(DISTRIBUTION);
-        if (!distFile.exists() || distFile.isDirectory()) {
-          cflags.setParseMessage("File: " + distFile + " does not exist");
-          return false;
-        }
-      }
-      if (!cflags.isSet(TAXONOMY_DISTRIBUTION) && (cflags.isSet(ABUNDANCE) || cflags.isSet(DNA_FRACTION))) {
-        cflags.setParseMessage("--" + ABUNDANCE + " and --" + DNA_FRACTION + " are only applicable if using --" + TAXONOMY_DISTRIBUTION);
-        return false;
-      }
-      if (cflags.isSet(TAXONOMY_DISTRIBUTION) && !(cflags.isSet(ABUNDANCE) || cflags.isSet(DNA_FRACTION))) {
-        cflags.setParseMessage("either --" + ABUNDANCE + " or --" + DNA_FRACTION + " must be set if using --" + TAXONOMY_DISTRIBUTION);
-        return false;
-
-      }
-      if (cflags.isSet(ABUNDANCE) && cflags.isSet(DNA_FRACTION)) {
-        cflags.setParseMessage("At most one of --" + ABUNDANCE + " or --" + DNA_FRACTION + " should be set");
-        return false;
-      }
-      if (cflags.isSet(TAXONOMY_DISTRIBUTION)) {
-        final File distFile = (File) cflags.getValue(TAXONOMY_DISTRIBUTION);
-        if (!distFile.exists() || distFile.isDirectory()) {
-          cflags.setParseMessage("File: " + distFile + " does not exist");
-          return false;
-        }
-      }
-
-      if (cflags.isSet(QUAL_RANGE)) {
-        final String range = (String) cflags.getValue(QUAL_RANGE);
-        final String[] vals = range.split("-");
-        if (vals.length != 2) {
-          cflags.setParseMessage("Quality range is not of form qualmin-qualmax");
-          return false;
-        } else {
-          try {
-            final int l = Integer.parseInt(vals[0]);
-            if ((l < 0) || (l > 63)) {
-              cflags.setParseMessage("Minimum quality value must be between 0 and 63");
-              return false;
-            }
-            final int u = Integer.parseInt(vals[1]);
-            if ((u < 0) || (u > 63)) {
-              cflags.setParseMessage("Maximum quality value must be between 0 and 63");
-              return false;
-            }
-            if (l > u) {
-              cflags.setParseMessage("Minimum quality value cannot be greater than maximum quality value");
-              return false;
-            }
-          } catch (final NumberFormatException e) {
-            cflags.setParseMessage("Quality range is not of form qualmin-qualmax");
-            return false;
-          }
-        }
-      }
-      final File f = (File) cflags.getValue(INPUT);
-      if (!f.exists()) {
-        cflags.setParseMessage("The specified SDF, \"" + f.getPath() + "\", does not exist.");
-        return false;
-      }
-      if (!f.isDirectory()) {
-        cflags.setParseMessage("The specified file, \"" + f.getPath() + "\", is not an SDF.");
-        return false;
-      }
-      if (cflags.isSet(TWIN_INPUT)) {
-        final File tf = (File) cflags.getValue(TWIN_INPUT);
-        if (!tf.exists()) {
-          cflags.setParseMessage("The specified SDF, \"" + tf.getPath() + "\", does not exist.");
-          return false;
-        }
-        if (!tf.isDirectory()) {
-          cflags.setParseMessage("The specified file, \"" + tf.getPath() + "\", is not an SDF.");
-          return false;
-        }
-        if (tf.equals(f)) {
-          cflags.setParseMessage("The --" + TWIN_INPUT + " SDF cannot be the same as that given with --" + INPUT);
-          return false;
-        }
-      }
-      if ((Integer) cflags.getValue(MIN_FRAGMENT) > (Integer) cflags.getValue(MAX_FRAGMENT)) {
-        cflags.setParseMessage("--" + MAX_FRAGMENT + " should not be smaller than --" + MIN_FRAGMENT);
-        return false;
-      }
-
-      final File bed = (File) cflags.getValue(BED_FILE);
-      if (cflags.isSet(BED_FILE)) {
-        if (!bed.exists()) {
-          cflags.setParseMessage("The --" + BED_FILE + " specified file doesn't exist: " + bed.getPath());
-          return false;
-        }
-        if (cflags.isSet(COVERAGE)) {
-          cflags.setParseMessage("--" + BED_FILE + " is incompatible with --" + COVERAGE);
-          return false;
-        }
-      }
-
-      return checkMachines(cflags);
-    }
-
-    protected boolean checkMachines(CFlags cflags) {
-      final MachineType mt = MachineType.valueOf(cflags.getValue(MACHINE_TYPE).toString().toLowerCase(Locale.getDefault()));
-      if (mt == MachineType.ILLUMINA_SE) {
-        if (!cflags.checkRequired(READLENGTH)) {
-          return false;
-        }
-        if ((Integer) cflags.getValue(READLENGTH) <= 1) {
-          cflags.setParseMessage("Read length is too small");
-          return false;
-        }
-        if ((Integer) cflags.getValue(READLENGTH) > (Integer) cflags.getValue(MIN_FRAGMENT)) {
-          cflags.error("Read length is too large for selected fragment size");
-          return false;
-        }
-        if (!cflags.checkBanned(LEFT_READLENGTH, RIGHT_READLENGTH, MIN_TOTAL_454_LENGTH, MAX_TOTAL_454_LENGTH, MIN_TOTAL_IONTORRENT_LENGTH, MAX_TOTAL_IONTORRENT_LENGTH)) {
-          return false;
-        }
-      } else if (mt == MachineType.ILLUMINA_PE) {
-        if (!cflags.checkRequired(LEFT_READLENGTH, RIGHT_READLENGTH)) {
-          return false;
-        }
-        if (((Integer) cflags.getValue(LEFT_READLENGTH) <= 1)
-            || ((Integer) cflags.getValue(RIGHT_READLENGTH) <= 1)) {
-          cflags.error("Read length is too small");
-          return false;
-        }
-        if (((Integer) cflags.getValue(LEFT_READLENGTH) > (Integer) cflags.getValue(MIN_FRAGMENT))
-            || ((Integer) cflags.getValue(RIGHT_READLENGTH) > (Integer) cflags.getValue(MIN_FRAGMENT))) {
-          cflags.error("Read length is too large for selected fragment size");
-          return false;
-        }
-        if (!cflags.checkBanned(READLENGTH, MIN_TOTAL_454_LENGTH, MAX_TOTAL_454_LENGTH)) {
-          return false;
-        }
-
-      } else if (mt == MachineType.COMPLETE_GENOMICS) {
-        if (!cflags.checkBanned(READLENGTH, LEFT_READLENGTH, RIGHT_READLENGTH, MIN_TOTAL_454_LENGTH, MAX_TOTAL_454_LENGTH, MIN_TOTAL_IONTORRENT_LENGTH, MAX_TOTAL_IONTORRENT_LENGTH)) {
-          return false;
-        }
-
-      } else if (mt == MachineType.FOURFIVEFOUR_PE || mt == MachineType.FOURFIVEFOUR_SE) {
-        if (!cflags.checkRequired(MIN_TOTAL_454_LENGTH, MAX_TOTAL_454_LENGTH)) {
-          return false;
-        }
-        if (!cflags.checkBanned(READLENGTH, LEFT_READLENGTH, RIGHT_READLENGTH, MIN_TOTAL_IONTORRENT_LENGTH, MAX_TOTAL_IONTORRENT_LENGTH)) {
-          return false;
-        }
-        if ((Integer) cflags.getValue(MAX_TOTAL_454_LENGTH) > (Integer) cflags.getValue(MIN_FRAGMENT)) {
-          cflags.error("Read length is too large for selected fragment size");
-          return false;
-        }
-      } else if (mt == MachineType.IONTORRENT) {
-        if (!cflags.checkRequired(MIN_TOTAL_IONTORRENT_LENGTH, MAX_TOTAL_IONTORRENT_LENGTH)) {
-          return false;
-        }
-        if (!cflags.checkBanned(READLENGTH, LEFT_READLENGTH, RIGHT_READLENGTH, MIN_TOTAL_454_LENGTH, MAX_TOTAL_454_LENGTH)) {
-          return false;
-        }
-        if ((Integer) cflags.getValue(MAX_TOTAL_IONTORRENT_LENGTH) > (Integer) cflags.getValue(MIN_FRAGMENT)) {
-          cflags.error("Read length is too large for selected fragment size");
-          return false;
-        }
-      } else {
-        throw new IllegalArgumentException("Unhandled machine type: " + mt);
-      }
-      return true;
-    }
-  }
 
   private PortableRandom mRandom = null;
   private AbstractMachineErrorParams mPriors = null;
@@ -372,13 +150,13 @@ public class ReadSimCli extends LoggedCli {
   }
 
   protected MachineType getMachineType() {
-    return MachineType.valueOf(mFlags.getValue(MACHINE_TYPE).toString().toLowerCase(Locale.getDefault()));
+    return MachineType.valueOf(mFlags.getValue(MACHINE_TYPE).toString().toLowerCase(Locale.ROOT));
   }
 
   @Override
   protected void initFlags() {
     mFlags.setDescription("Generates reads from a reference genome.");
-    mFlags.setCategories(UTILITY, new String[]{INPUT_OUTPUT, CAT_FRAGMENTS, CAT_ILLUMINA_PE, CAT_ILLUMINA_SE, CAT_454_PE, CAT_ION_SE, UTILITY});
+    mFlags.setCategories(UTILITY, new String[]{INPUT_OUTPUT, CAT_FRAGMENTS, CAT_ILLUMINA_PE, CAT_ILLUMINA_SE, CAT_454_PE, CAT_ION_SE, CAT_CG, UTILITY});
     mFlags.registerExtendedHelp();
     mFlags.registerRequired('o', OUTPUT, File.class, "SDF", "name for reads output SDF").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired('t', INPUT, File.class, "SDF", "SDF containing input genome").setCategory(INPUT_OUTPUT);
@@ -417,15 +195,16 @@ public class ReadSimCli extends LoggedCli {
     mFlags.registerOptional(PCR_DUP_RATE, Double.class, "float", "set the PCR duplication error rate", 0.0).setCategory(UTILITY);
     mFlags.registerOptional(CHIMERA_RATE, Double.class, "float", "set the chimeric fragment error rate", 0.0).setCategory(UTILITY);
 
-    mFlags.setValidator(new ReadSimValidator());
+    mFlags.setValidator(new ReadSimCliValidator());
     initMachineFlags();
   }
   protected void initMachineFlags() {
     initIlluminaFlags();
     init454Flags();
     initIonFlags();
+    initCgFlags();
     final Flag machType = mFlags.registerRequired(MACHINE_TYPE, String.class, "string", "select the sequencing technology to model").setCategory(INPUT_OUTPUT);
-    machType.setParameterRange(new String[] {MachineType.ILLUMINA_SE.name(), MachineType.ILLUMINA_PE.name(), MachineType.COMPLETE_GENOMICS.name(), MachineType.FOURFIVEFOUR_PE.name(), MachineType.FOURFIVEFOUR_SE.name(), MachineType.IONTORRENT.name()});
+    machType.setParameterRange(new String[]{MachineType.ILLUMINA_SE.name(), MachineType.ILLUMINA_PE.name(), MachineType.COMPLETE_GENOMICS.name(), MachineType.FOURFIVEFOUR_PE.name(), MachineType.FOURFIVEFOUR_SE.name(), MachineType.IONTORRENT.name()});
     mFlags.registerOptional('E', MACHINE_ERROR_PRIORS, String.class, "string", "selects the sequencer machine error settings. One of [default, illumina, ls454_se, ls454_pe, complete, iontorrent]").setCategory(UTILITY);
   }
 
@@ -447,6 +226,10 @@ public class ReadSimCli extends LoggedCli {
   protected void initIonFlags() {
     mFlags.registerOptional(MAX_TOTAL_IONTORRENT_LENGTH, Integer.class, "int", "maximum IonTorrent read length").setCategory(CAT_ION_SE);
     mFlags.registerOptional(MIN_TOTAL_IONTORRENT_LENGTH, Integer.class, "int", "minimum IonTorrent read length").setCategory(CAT_ION_SE);
+  }
+
+  protected void initCgFlags() {
+    mFlags.registerOptional(CG_READLENGTH, Integer.class, "int", "length of Complete Genomics reads, 35 or 29 bp", 35).setCategory(CAT_CG);
   }
 
   private Machine createMachine() {
@@ -473,7 +256,14 @@ public class ReadSimCli extends LoggedCli {
       m.setMaxSize((Integer) mFlags.getValue(MAX_TOTAL_454_LENGTH));
       result = m;
     } else if (mt == MachineType.COMPLETE_GENOMICS) {
-      result = new CompleteGenomicsMachine(mPriors, seed);
+      final int length = (Integer) mFlags.getValue(CG_READLENGTH);
+      if (length == CgUtils.CG_RAW_READ_LENGTH) {
+        result = new CompleteGenomicsV1Machine(mPriors, seed);
+      } else if (length == CgUtils.CG2_RAW_LENGTH) {
+        result = new CompleteGenomicsV2Machine(mPriors, seed);
+      } else {
+        throw new IllegalArgumentException("Unsupported CG read length: " + length);
+      }
     } else if (mt == MachineType.IONTORRENT) {
       final IonTorrentSingleEndMachine m = new IonTorrentSingleEndMachine(mPriors, seed);
       m.setMinSize((Integer) mFlags.getValue(MIN_TOTAL_IONTORRENT_LENGTH));
@@ -785,13 +575,5 @@ public class ReadSimCli extends LoggedCli {
       rw = internal;
     }
     return rw;
-  }
-
-  /**
-   * Generate reads with specified coverage.
-   * @param args arguments
-   */
-  public static void main(final String[] args) {
-    new ReadSimCli().mainExit(args);
   }
 }

@@ -23,7 +23,6 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
-import com.rtg.util.machine.MachineType;
 import com.rtg.util.test.FileHelper;
 
 /**
@@ -37,48 +36,38 @@ public class ReadSimCliTest extends AbstractCliTest {
 
   public void testHelp() {
     checkHelp("Generates reads from a reference genome",
-        "File Input/Output",
-        "Fragment Generation",
-        "Illumina PE",
-        "Illumina SE",
-        "454 SE/PE",
-        "Utility",
-        "--machine=STRING", "select the sequencing technology to model (Must be one of [illumina_se, illumina_pe,",
-        "complete_genomics, 454_pe, 454_se, iontorrent])",
-        "--output=SDF", "name for reads output SDF",
-        "--input=SDF", "SDF containing input genome",
-        "--coverage=FLOAT", "coverage, must be positive",
-        "--num-reads=INT", "number of reads to be generated",
-        "--max-fragment-size=INT", "maximum fragment size (Default is 250)",
-        "--min-fragment-size=INT", "minimum fragment size (Default is 200)",
-        "--allow-unknowns", "allow reads to be drawn from template fragments containing unknown nucleotides",
-        "--distribution=FILE", "file containing probability distribution for sequence selection",
-        "--seed", "seed for random number generator",
-        "--comment", "comment to include in the generated SDF",
-        "--read-length=INT", "target read length, must be positive",
-        "--left-read-length=INT", "target read length on the left side",
-        "--right-read-length=INT", "target read length on the right side",
-        "--454-max-total-size=INT", "maximum 454 read length (in paired end case the",
-        "--454-min-total-size=INT", "minimum 454 read length (in paired end case the", "sum of the left and the right read lengths)",
-        "--ion-max-total-size=INT", "maximum IonTorrent read length",
-        "--ion-min-total-size=INT", "minimum IonTorrent read length",
-        "",
-        "--n-rate", "rate that the machine will generate new unknowns in the read"
+      "File Input/Output",
+      "Fragment Generation",
+      "Illumina PE",
+      "Illumina SE",
+      "454 SE/PE",
+      "Utility",
+      "--machine=STRING", "select the sequencing technology to model (Must be one of [illumina_se, illumina_pe,",
+      "complete_genomics, 454_pe, 454_se, iontorrent])",
+      "--output=SDF", "name for reads output SDF",
+      "--input=SDF", "SDF containing input genome",
+      "--coverage=FLOAT", "coverage, must be positive",
+      "--num-reads=INT", "number of reads to be generated",
+      "--max-fragment-size=INT", "maximum fragment size (Default is 250)",
+      "--min-fragment-size=INT", "minimum fragment size (Default is 200)",
+      "--allow-unknowns", "allow reads to be drawn from template fragments containing unknown nucleotides",
+      "--distribution=FILE", "file containing probability distribution for sequence selection",
+      "--seed", "seed for random number generator",
+      "--comment", "comment to include in the generated SDF",
+      "--read-length=INT", "target read length, must be positive",
+      "--left-read-length=INT", "target read length on the left side",
+      "--right-read-length=INT", "target read length on the right side",
+      "--454-max-total-size=INT", "maximum 454 read length (in paired end case the",
+      "--454-min-total-size=INT", "minimum 454 read length (in paired end case the", "sum of the left and the right read lengths)",
+      "--ion-max-total-size=INT", "maximum IonTorrent read length",
+      "--ion-min-total-size=INT", "minimum IonTorrent read length",
+      "--cg-read-length=INT", "length of Complete Genomics",
+      "",
+      "--n-rate", "rate that the machine will generate new unknowns in the read"
     );
     checkExtendedHelp(
-        "--Xmachine-errors=STRING", "selects the sequencer machine error settings. One of [default, illumina, ls454_se, ls454_pe, complete, iontorrent]"
+      "--Xmachine-errors=STRING", "selects the sequencer machine error settings. One of [default, illumina, ls454_se, ls454_pe, complete, iontorrent]"
         );
-  }
-
-  public void testEnum() {
-    TestUtils.testPseudoEnum(MachineType.class, "[illumina_se, illumina_pe, complete_genomics, 454_pe, 454_se, iontorrent]"); //454_se
-    assertEquals("illumina", MachineType.ILLUMINA_SE.priors());
-    assertEquals("illumina", MachineType.ILLUMINA_PE.priors());
-    assertEquals("complete", MachineType.COMPLETE_GENOMICS.priors());
-    assertEquals("ls454_pe", MachineType.FOURFIVEFOUR_PE.priors());
-    assertEquals("ls454_se", MachineType.FOURFIVEFOUR_SE.priors());
-    assertEquals("iontorrent", MachineType.IONTORRENT.priors());
-    assertEquals(6, MachineType.names().length);
   }
 
   public void testExecReads() throws Exception {

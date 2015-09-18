@@ -26,7 +26,7 @@ import com.rtg.util.test.FileHelper;
 
 /**
  */
-public class ReadSimValidatorTest extends AbstractCliTest {
+public class ReadSimCliValidatorTest extends AbstractCliTest {
 
   @Override
   protected AbstractCli getCli() {

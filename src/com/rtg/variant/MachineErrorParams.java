@@ -88,6 +88,8 @@ public final class MachineErrorParams extends AbstractMachineErrorParams impleme
 
   private final double[] mOverlapDistribution;
 
+  private final double[] mOverlapDistribution2;
+
   private final boolean mCG;
 
   private final MachineType mMachine;
@@ -114,6 +116,7 @@ public final class MachineErrorParams extends AbstractMachineErrorParams impleme
     mGapDistribution = builder.mGapDistribution;
     mSmallGapDistribution = builder.mSmallGapDistribution;
     mOverlapDistribution = builder.mOverlapDistribution;
+    mOverlapDistribution2 = builder.mOverlapDistribution2;
     mCG = builder.mCG;
     mMachine = builder.mMachine;
     mCGTrimOuterBases = builder.mCGTrimOuterBases;
@@ -201,6 +204,10 @@ public final class MachineErrorParams extends AbstractMachineErrorParams impleme
     return mSmallGapDistribution;
   }
 
+  @Override
+  public double[] overlapDistribution2() {
+    return mOverlapDistribution2;
+  }
 
   @Override
   public boolean cgTrimOuterBases() {

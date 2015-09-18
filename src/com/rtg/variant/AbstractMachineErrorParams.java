@@ -54,23 +54,30 @@ public abstract class AbstractMachineErrorParams implements Params {
   public abstract boolean cgTrimOuterBases();
 
   /**
-   * Get the small CG gap distribution for 0,1,2,3.
+   * Get the CG v1 small gap distribution for 0,1,2,3.
    * @return the gap distribution, always non-null.
    */
   public abstract double[] smallGapDistribution();
 
   /**
-   * Get the large CG gap distribution for 4,5,6,7,8.
+   * Get the CG v1 large gap distribution for 4,5,6,7,8.
    * @return the gap distribution, always non-null.
    */
   public abstract double[] gapDistribution();
 
   /**
-   * Get the overlap probability distribution for -4,-3,-2,-1,0.
+   * Get the CG v1 overlap probability distribution for -4,-3,-2,-1,0.
    *
    * @return the overlap distribution, always non-null.
    */
   public abstract double[] overlapDistribution();
+
+  /**
+   * Get the CG v2 overlap probability distribution for -7,-6,-5,-4,-3,-2,-1,0.
+   *
+   * @return the overlap distribution, always non-null.
+   */
+  public abstract double[] overlapDistribution2();
 
   /**
    * Return the machine type specified in the priors
