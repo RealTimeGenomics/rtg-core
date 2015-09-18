@@ -27,6 +27,7 @@ import com.rtg.ngs.SamRename;
 import com.rtg.protein.MapXCli;
 import com.rtg.protein.MapxRename;
 import com.rtg.reader.Cg2Sdf;
+import com.rtg.reader.Sdf2Cg;
 import com.rtg.reader.Sdf2Quala;
 import com.rtg.reader.SdfSplitter;
 import com.rtg.sam.Sam2Bam;
@@ -79,6 +80,9 @@ public final class CoreCommand {
 
   /** For formatting complete genomics data files for use by Slim */
   static final Command CG2SDF = new Command(new Cg2Sdf(), CommandCategory.FORMAT, ReleaseLevel.GA);
+
+  /** For converting SDF formatted complete genomics reads back into CG TSV format */
+  static final Command SDF2CG = new Command(new Sdf2Cg(), CommandCategory.FORMAT, ReleaseLevel.ALPHA);
 
   /** For converting Slim's data format into FASTA/QUALA format */
   static final Command SDF2QUALA = new Command(new Sdf2Quala(), CommandCategory.FORMAT, ReleaseLevel.ALPHA);
@@ -263,7 +267,7 @@ public final class CoreCommand {
   /* This field determines the display order of the commands in the help / license output */
   private static final Command[] DISPLAY_ORDER = {
     // Formatting
-    ToolsCommand.FORMAT, CG2SDF, ToolsCommand.SDF2FASTA, ToolsCommand.SDF2FASTQ, ToolsCommand.SDF2SAM, SDF2QUALA,
+    ToolsCommand.FORMAT, CG2SDF, ToolsCommand.SDF2FASTA, ToolsCommand.SDF2FASTQ, ToolsCommand.SDF2SAM, SDF2QUALA, SDF2CG,
 
     // Mapping
     MAP, MAPF, CGMAP,
