@@ -147,7 +147,7 @@ public class SomaticCli extends AbstractMultisampleCli {
     flags.registerOptional('r', PEDIGREE_FLAG, File.class, "file", "relationships file").setCategory(INPUT_OUTPUT);
     final Flag contamFlag = flags.registerOptional(CONTAMINATION_FLAG, Double.class, "float", "estimated fraction of contamination in derived sample").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(REVERSE_CONTAMINATION_FLAG, Double.class, "float", "estimated fraction of derived sample in original sample", 0.0).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(CONTRARY_FLAG, Double.class, "float", "probability used to penalize contrary evidence in somatic calls", 0.0001).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(CONTRARY_FLAG, Double.class, "float", "probability used to penalize contrary evidence in somatic calls", 0.01).setCategory(SENSITIVITY_TUNING);
     final Flag derivedFlag = flags.registerOptional(DERIVED_FLAG, String.class, "string", "sample identifier used in read groups for derived sample").setCategory(INPUT_OUTPUT);
     final Flag originalFlag = flags.registerOptional(ORIGINAL_FLAG, String.class, "string", "sample identifier used in read groups for original sample").setCategory(INPUT_OUTPUT);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of individual", Sex.EITHER).setCategory(SENSITIVITY_TUNING);
