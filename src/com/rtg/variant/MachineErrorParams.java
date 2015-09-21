@@ -117,9 +117,9 @@ public final class MachineErrorParams extends AbstractMachineErrorParams impleme
     mSmallGapDistribution = builder.mSmallGapDistribution;
     mOverlapDistribution = builder.mOverlapDistribution;
     mOverlapDistribution2 = builder.mOverlapDistribution2;
-    mCG = builder.mCG;
     mMachine = builder.mMachine;
-    mCGTrimOuterBases = builder.mCGTrimOuterBases;
+    mCG = mMachine == MachineType.COMPLETE_GENOMICS || mMachine == MachineType.COMPLETE_GENOMICS_2;
+    mCGTrimOuterBases = mMachine == MachineType.COMPLETE_GENOMICS && builder.mCGTrimOuterBases;
     mRealignParams = new RealignParamsImplementation(this);
   }
 

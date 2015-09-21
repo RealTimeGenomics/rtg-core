@@ -14,6 +14,7 @@ package com.rtg.alignment;
 import com.reeltwo.jumble.annotations.JumbleIgnore;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
+import com.rtg.reader.CgUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 
 /**
@@ -66,8 +67,8 @@ public class RcEditDistance implements EditDistance {
       DNA.reverseComplementInPlace(mTemplateRC, 0, mTemplateRC.length);
     }
     final int[] res;
-    // We have to correct for the default gap in CG reads.
-    final int nastyCGHack = mIsCg ? CgGotohEditDistance.CG_INSERT_REGION_DEFAULT_SIZE : 0;
+    // We have to correct for the default gap in CG v1 reads.
+    final int nastyCGHack = mIsCg && rlen == CgUtils.CG_RAW_READ_LENGTH ? CgGotohEditDistance.CG_INSERT_REGION_DEFAULT_SIZE : 0;
     if (mEdRC != null && rc) {
       res = mEdRC.calculateEditDistance(read, rlen, mTemplateRC, mTemplateRC.length - rlen - zeroBasedStart - nastyCGHack, maxScore, maxShift, cgLeft);
     } else {

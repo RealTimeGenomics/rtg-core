@@ -56,32 +56,36 @@ public class CgGotohEditDistanceTest extends TestCase {
     mSamRecord = null;
   }
 
-  protected EditDistance getEditDistanceInstance(int gapOpenPenalty, int gapExtendPenalty, int unknownsPenalty, String errorsFile) {
+  protected EditDistance getEditDistanceInstance(int unknownsPenalty, String errorsFile, boolean v2) {
     try {
       mParams = new RealignParamsImplementation(new MachineErrorParamsBuilder().errors(errorsFile).create());
     } catch (final InvalidParamsException | IOException e) {
       throw new RuntimeException(e);
     }
-    mCgGotoh = new CgGotohEditDistance(7, mParams, unknownsPenalty);
+    mCgGotoh = new CgGotohEditDistance(7, mParams, unknownsPenalty, v2);
     return new RcEditDistance(mCgGotoh);
   }
 
-  protected EditDistance getEditDistanceInstance(int gapOpenPenalty, int gapExtendPenalty, int unknownsPenalty) {
-    return getEditDistanceInstance(gapOpenPenalty, gapExtendPenalty, unknownsPenalty, "cg_test_errors-080412");
+  protected EditDistance getEditDistanceInstance(int unknownsPenalty) {
+    return getEditDistanceInstance(unknownsPenalty, "cg_test_errors-080412", false);
+  }
+
+  protected void checkCG(String read, String template, String x1, String x2, String m, String xCigar, int score, boolean rc, boolean left) {
+    checkCG(read, template, x1, x2, m, xCigar, score, true, rc, 0, left);
   }
 
   protected void checkCG(String read, String template, String x1, String x2,
       String m, String xCigar, int score, boolean first, boolean rc, int start, boolean left) {
-    checkCG(read, template, x1, x2, m, xCigar, score, first, rc, start, left, 0);
+    checkCG(read, template, x1, x2, m, xCigar, score, first, rc, start, left, 0, false);
   }
 
   protected void checkCG(String read, String template, String x1, String x2,
-      String m, String xCigar, int score, boolean first, boolean rc, int start, boolean left, int unknownsPenalty) {
+      String actions, String xCigar, int score, boolean first, boolean rc, int start, boolean left, int unknownsPenalty, boolean v2) {
     final byte[] s1 = DnaUtils.encodeString(read.replaceAll(" ", "").toLowerCase(Locale.ROOT));
     final byte[] s2 = DnaUtils.encodeString(template.replaceAll(" ", "").toLowerCase(Locale.ROOT));
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     Diagnostic.setLogStream(new PrintStream(bos));
-    final EditDistance f = getEditDistanceInstance(1, 1, unknownsPenalty);
+    final EditDistance f = getEditDistanceInstance(unknownsPenalty, "cg_test_errors-080412", v2);
     final int[] v = f.calculateEditDistance(s1, s1.length, s2, start, rc, Integer.MAX_VALUE, 7, left);
     f.logStats();
         //System.out.println(mCgGotoh.toString());
@@ -102,44 +106,34 @@ public class CgGotohEditDistanceTest extends TestCase {
     assertEquals(xCigar, cigar);
 
     assertEquals(x1.replaceAll("\\.", ""), mAlignment.readString());
-    assertEquals(m, ActionsHelper.toString(v));
+    assertEquals(actions, ActionsHelper.toString(v));
 
-//    assertEquals(ss, x1 + "\t" + x2 + "\t" + m, mAlignment.tabularString());
+//    assertEquals(ss, x1 + "\t" + x2 + "\t" + actions, mAlignment.tabularString());
     Diagnostic.setLogStream();
     mLog = bos.toString();
     //System.err.println("log: " + mLog);
 
-    // now check that we get roughly the same alignment if we flip read+template onto the opposite arm.
-    // (this is not always true, but the scores should always be pretty close)
-    final byte[] s1R = DnaUtils.encodeString(reverse(read).replaceAll(" ", "").toLowerCase(Locale.ROOT));
-    final byte[] s2R = DnaUtils.encodeString(reverse(template).replaceAll(" ", "").toLowerCase(Locale.ROOT));
-    assertEquals(s1.length, s1R.length);
-    assertEquals(s2.length, s2R.length);
-    final EditDistance fR = getEditDistanceInstance(1, 1, unknownsPenalty); // because f.logStats() kills it!
-    final int startR = s2.length - (start + s1.length) - 5;
-    final int[] vR = fR.calculateEditDistance(s1R, s1R.length, s2R, startR, rc, Integer.MAX_VALUE, 7, !left);
-        //System.out.println(mCgGotoh.toString());
-        //System.out.println("actions: " + ActionsHelper.toString(vR));
-        //System.err.println("startR: " + startR);
-    assertEquals(ss, score, ActionsHelper.alignmentScore(vR));
-    // the actions strings should be nearly the same, but can have a short reversed segment due to an ambiguous insert/delete position.
-    final String actsLeft = ActionsHelper.toString(v);
-    final String actsLeftRev = reverse(actsLeft);
-    final String acts = ActionsHelper.toString(vR);
-    assertEquals(actsLeftRev.length(), acts.length());
-    assertEquals(actsLeftRev, acts);
-  }
-
-  protected void checkCG(String a, String b, String x1, String x2, String m, String xCigar, int score, boolean rc, boolean left) {
-    checkCG(a, b, x1, x2, m, xCigar, score, true, rc, 0, left);
-  }
-
-  private String reverse(String str) {
-    final StringBuilder sb = new StringBuilder();
-    for (int i = str.length() - 1; i >= 0; i--) {
-      sb.append(str.charAt(i));
+    if (!v2) {
+      // Since v1 reads have symmetric layout, we cancheck that we get roughly the same alignment if we flip read+template onto the opposite arm.
+      // (this is not always true, but the scores should always be pretty close)
+      final byte[] s1R = DnaUtils.encodeString(StringUtils.reverse(read).replaceAll(" ", "").toLowerCase(Locale.ROOT));
+      final byte[] s2R = DnaUtils.encodeString(StringUtils.reverse(template).replaceAll(" ", "").toLowerCase(Locale.ROOT));
+      assertEquals(s1.length, s1R.length);
+      assertEquals(s2.length, s2R.length);
+      final EditDistance fR = getEditDistanceInstance(unknownsPenalty, "cg_test_errors-080412", v2); // because f.logStats() kills it!
+      final int startR = s2.length - (start + s1.length) - (v2 ? 0 : CgGotohEditDistance.CG_INSERT_REGION_DEFAULT_SIZE);
+      final int[] vR = fR.calculateEditDistance(s1R, s1R.length, s2R, startR, rc, Integer.MAX_VALUE, 7, !left);
+//      System.out.println(mCgGotoh.toString());
+//      System.out.println("actions: " + ActionsHelper.toString(vR));
+//      System.err.println("startR: " + startR);
+      assertEquals(ss, score, ActionsHelper.alignmentScore(vR));
+      // the actions strings should be nearly the same, but can have a short reversed segment due to an ambiguous insert/delete position.
+      final String actsLeft = ActionsHelper.toString(v);
+      final String actsLeftRev = StringUtils.reverse(actsLeft);
+      final String acts = ActionsHelper.toString(vR);
+      assertEquals(actsLeftRev.length(), acts.length());
+      assertEquals(actsLeftRev, acts);
     }
-    return sb.toString();
   }
 
   // this is the example in com/rtg/variant/realign/scorematrixtestCG.xls
@@ -333,11 +327,11 @@ public class CgGotohEditDistanceTest extends TestCase {
 
   public void testCGInsert4Mid() {
     checkCG("        ATAAA AAGGCGACAT GATGTCTCGC        TTCAACTTTC",
-        "gggggggataAAA   AAGGCGACAT     TCTCGC TTTTTT TTCAACTTTCCGATTAA",
-        "ATAAAGGCGACATGATGTCTCGC......TTCAACTTTC",
-        "AAAAAGGCGACAT----TCTCGCTTTTTTTTCAACTTTC",
-        "=X===BB==========IIII======NNNNNN==========",
-        "1=1X11=4I6=6N10=", 6, true, false, 7, true);
+      "gggggggataAAA   AAGGCGACAT     TCTCGC TTTTTT TTCAACTTTCCGATTAA",
+      "ATAAAGGCGACATGATGTCTCGC......TTCAACTTTC",
+      "AAAAAGGCGACAT----TCTCGCTTTTTTTTCAACTTTC",
+      "=X===BB==========IIII======NNNNNN==========",
+      "1=1X11=4I6=6N10=", 6, true, false, 7, true);
   }
 
   // overlap of 0 (cg_test_errors priors do allow this!)
@@ -352,22 +346,22 @@ public class CgGotohEditDistanceTest extends TestCase {
   }
   public void testCGOverlap0Rev() {
     checkCG("acgtcacgtcacgtcacgtcacgtc     acgtcacgtc",
-            "gacgtgacgtcccccgacgtgacgtgacgtgacgtgacgt",
-            "ACGTCACGTCACGTCACGTCACGTC.....ACGTCACGTC",
-            "ACGTCACGTCACGTCACGTCACGTCGGGGGACGTCACGTC",
-            "=========================NNNNN==========",
-            "10=5N25=", 0, true, true);
+      "gacgtgacgtcccccgacgtgacgtgacgtgacgtgacgt",
+      "ACGTCACGTCACGTCACGTCACGTC.....ACGTCACGTC",
+      "ACGTCACGTCACGTCACGTCACGTCGGGGGACGTCACGTC",
+      "=========================NNNNN==========",
+      "10=5N25=", 0, true, true);
     assertEquals(0, mAlignment.getStart());
   }
 
   // overlap of 4 (cg_test_errors priors do allow this!)
   public void testCGOverlap4() {
     checkCG("acgtc cgtc aacgtcacgtcacgtc     acgtcacgtc",
-            "acgtc      aacgtcacgtcacgtcgggggacgtcacgtc",
-            "ACGTCAACGTCACGTCACGTC.....ACGTCACGTC",
-            "ACGTCAACGTCACGTCACGTCGGGGGACGTCACGTC",
-            "=====BBBB====================NNNNN==========",
-            "21=5N10=", 0, false, true);
+      "acgtc      aacgtcacgtcacgtcgggggacgtcacgtc",
+      "ACGTCAACGTCACGTCACGTC.....ACGTCACGTC",
+      "ACGTCAACGTCACGTCACGTCGGGGGACGTCACGTC",
+      "=====BBBB====================NNNNN==========",
+      "21=5N10=", 0, false, true);
     assertEquals(1, mSamRecord.getStartPosition());
     assertEquals(0, mAlignment.getStart());
   }
@@ -427,11 +421,11 @@ public class CgGotohEditDistanceTest extends TestCase {
 
   public void testCGSmallGap3() {
     checkCG("acact ctgggggaaa     aacccccttt       acgtcacgtc",
-            "acact   gggggaaa ttt aacccccttt ggggg acgtcacgtc",
-            "ACACTGGGGGAAA...AACCCCCTTT.....ACGTCACGTC",
-            "ACACTGGGGGAAATTTAACCCCCTTTGGGGGACGTCACGTC",
-            "=====BB==========NNN==========NNNNN==========",
-            "13=3N10=5N10=", 0, false, true);
+      "acact   gggggaaa ttt aacccccttt ggggg acgtcacgtc",
+      "ACACTGGGGGAAA...AACCCCCTTT.....ACGTCACGTC",
+      "ACACTGGGGGAAATTTAACCCCCTTTGGGGGACGTCACGTC",
+      "=====BB==========NNN==========NNNNN==========",
+      "13=3N10=5N10=", 0, false, true);
   }
 
   public void testCGSmallGap4() {
@@ -462,11 +456,11 @@ public class CgGotohEditDistanceTest extends TestCase {
 
   public void testCGLargeGap7() {
     checkCG("acact ctgggggaaa aacccccttt         acgtcacgtc",
-            "acact   gggggaaa aacccccttt ggggggg acgtcacgtc",
-            "ACACTGGGGGAAAAACCCCCTTT.......ACGTCACGTC",
-            "ACACTGGGGGAAAAACCCCCTTTGGGGGGGACGTCACGTC",
-            "=====BB====================NNNNNNN==========",
-            "23=7N10=", 0, false, true);
+      "acact   gggggaaa aacccccttt ggggggg acgtcacgtc",
+      "ACACTGGGGGAAAAACCCCCTTT.......ACGTCACGTC",
+      "ACACTGGGGGAAAAACCCCCTTTGGGGGGGACGTCACGTC",
+      "=====BB====================NNNNNNN==========",
+      "23=7N10=", 0, false, true);
     assertEquals(1, mSamRecord.getStartPosition());
   }
 
@@ -499,11 +493,11 @@ public class CgGotohEditDistanceTest extends TestCase {
   public void testCGComplex1() {
     // several MNPs and indels
     checkCG("acact ctgggACaaa  aac cctttgg        acgtcacgtc",
-            "acact   gggggaaa aaacccctttgg gggggg acgtc cgtc",
-            "ACACTGGGACAAA..AACCCTTTGG......ACGTCACGTC",
-            "ACACTGGGGGAAAAAACCCCTTTGGGGGGGGACGTC-CGTC",
-            "=====BB=====XX===NN=X========NNNNNN=====I====",
-            "8=2X3=2N1=1X8=6N5=1I4=", 5, false, true);
+      "acact   gggggaaa aaacccctttgg gggggg acgtc cgtc",
+      "ACACTGGGACAAA..AACCCTTTGG......ACGTCACGTC",
+      "ACACTGGGGGAAAAAACCCCTTTGGGGGGGGACGTC-CGTC",
+      "=====BB=====XX===NN=X========NNNNNN=====I====",
+      "8=2X3=2N1=1X8=6N5=1I4=", 5, false, true);
   }
 
   public void testCGSoftClippingStart() {
@@ -552,7 +546,7 @@ public class CgGotohEditDistanceTest extends TestCase {
             "ATTCTACTANCCCCAACTGAGCCC......AGTAGGAGTA",
             "ATTCTACTTCCCCCAACTGAGCCCAGCAAAAGTAGGAGTA",
             "=====B====XR==============NNNNNN==========",
-            "10=6N14=2X8=", 1, true, true, 0, true, 0);
+            "10=6N14=2X8=", 1, true, true, 0, true, 0, false);
     assertEquals(2, mSamRecord.getStartPosition());
   }
 
@@ -562,7 +556,7 @@ public class CgGotohEditDistanceTest extends TestCase {
             "ATTCTACTANCCCCAACTGAGCCC......AGTAGGAGTA",
             "ATTCTACTTCCCCCAACTGAGCCCAGCAAAAGTAGGAGTA",
             "=====B====XR==============NNNNNN==========",
-            "10=6N14=2X8=", 2, true, true, 0, true, 1);
+            "10=6N14=2X8=", 2, true, true, 0, true, 1, false);
     assertEquals(2, mSamRecord.getStartPosition());
   }
 
@@ -573,6 +567,18 @@ public class CgGotohEditDistanceTest extends TestCase {
             "TGCATGCATGCATGCACATTGCTACAAAAAAATTGCTATGC",
             "==================XX=====NNNNNN==========",
             "18=2X5=6N10=", 2, true, false, 2, true);
+  }
+
+
+  public void testNgsCg2Example() {
+    checkCG("TGCATGCATG"
+            + "    CATGCATGCACAAAGCTAC",
+            "TGCATGCATGCATGCACATTGCTAC",
+            "TGCATGCATGCATGCACAAAGCTAC",
+            "TGCATGCATGCATGCACATTGCTAC",
+            "==========BBBB"
+            +     "============XX=====",
+            "18=2X5=", 2, true, false, 2, true, 1, true);
   }
 
   public void testValidation() {
@@ -702,7 +708,7 @@ public class CgGotohEditDistanceTest extends TestCase {
   }
 
   public void testCGLeftRightSymmetry() {
-    getEditDistanceInstance(1, 1, 0); // new CgGotohEditDistance(7, new ScoreMatrixCGTest.MockRealignParamsCG());
+    getEditDistanceInstance(0); // new CgGotohEditDistance(7, new ScoreMatrixCGTest.MockRealignParamsCG());
     final CgGotohEditDistance ed = mCgGotoh;
     final String[] reads = {
         "ATAAA AAGGCGACAT GCCAATGTGT        TTCAACTTTC",
@@ -739,8 +745,8 @@ public class CgGotohEditDistanceTest extends TestCase {
         final int leftScore = ActionsHelper.alignmentScore(v);
 
         // now check that we get the same alignment score if we flip read+template onto the opposite arm.
-        final byte[] s1R = DnaUtils.encodeString(reverse(read).replaceAll(" ", "").toLowerCase(Locale.ROOT));
-        final byte[] s2R = DnaUtils.encodeString(reverse(tmpl).replaceAll(" ", "").toLowerCase(Locale.ROOT));
+        final byte[] s1R = DnaUtils.encodeString(StringUtils.reverse(read).replaceAll(" ", "").toLowerCase(Locale.ROOT));
+        final byte[] s2R = DnaUtils.encodeString(StringUtils.reverse(tmpl).replaceAll(" ", "").toLowerCase(Locale.ROOT));
         assertEquals(s1.length, s1R.length);
         assertEquals(s2.length, s2R.length);
         final int startR = s2.length - readEnd ;
@@ -1078,7 +1084,7 @@ public class CgGotohEditDistanceTest extends TestCase {
   }
 
   public void testRowOffsetLeftArm() {
-    getEditDistanceInstance(1, 1, 0);
+    getEditDistanceInstance(0);
     final int[] offsets = mCgGotoh.makeRowOffsets(CgGotohEditDistance.LEFT_ARM);
     assertEquals(36, offsets.length);
     final int half = -8; // half of the width of the band (at row 1).
@@ -1094,7 +1100,7 @@ public class CgGotohEditDistanceTest extends TestCase {
   }
 
   public void testRowOffsetRightArm() {
-    getEditDistanceInstance(1, 1, 0);
+    getEditDistanceInstance(0);
     final int[] offsets = mCgGotoh.makeRowOffsets(CgGotohEditDistance.RIGHT_ARM);
     assertEquals(36, offsets.length);
     final int half = -8; // half of the width of the band (at row 1).
@@ -1110,7 +1116,7 @@ public class CgGotohEditDistanceTest extends TestCase {
   }
 
   public void testFixed() {
-    getEditDistanceInstance(1, 1, 0);
+    getEditDistanceInstance(0);
     assertNull(mCgGotoh.calculateEditDistanceFixedStart(null, 0, 0, null, 0, 0, 0));
     assertNull(mCgGotoh.calculateEditDistanceFixedEnd(null, 0, 0, null, 0, 0, 0, 0));
     assertNull(mCgGotoh.calculateEditDistanceFixedBoth(null, 0, 0, null, 0, 0, 0, 0));
@@ -1120,7 +1126,7 @@ public class CgGotohEditDistanceTest extends TestCase {
     final MemoryPrintStream mps = new MemoryPrintStream();
     Diagnostic.setLogStream(mps.printStream());
     try {
-      getEditDistanceInstance(1, 1, 0);
+      getEditDistanceInstance(0);
 
       final byte[] t = DnaUtils.encodeString("gatcatcggcgacatgccattgtgttttttttcaacttt");
       final byte[] s1 = DnaUtils.encodeString("gatcatcggcgacatgccattgtgt     ttcaactttc".replaceAll(" ", ""));
@@ -1141,7 +1147,7 @@ public class CgGotohEditDistanceTest extends TestCase {
         assertEquals(0, actions[ActionsHelper.TEMPLATE_START_INDEX]);
       }
 
-      getEditDistanceInstance(1, 1, 1);
+      getEditDistanceInstance(1);
 
       actions = mCgGotoh.calculateEditDistance(s1, s1.length, t, 0, 10, 5, true);
       if (actions != null) {
@@ -1162,7 +1168,7 @@ public class CgGotohEditDistanceTest extends TestCase {
   }
 
   public void testalign3Mismatches() {
-    getEditDistanceInstance(1, 1, 0);
+    getEditDistanceInstance(0);
 
     final byte[] r = DnaUtils.encodeString("gatcatatatCtatatatatatata     tatataaaac".replaceAll(" ", ""));
     final byte[] t = DnaUtils.encodeString("gatcatataCatatatatatCtata.....tatataaaac");
@@ -1173,7 +1179,7 @@ public class CgGotohEditDistanceTest extends TestCase {
       assertEquals(3, actionsAlignmentScore(actions, false));
       assertEquals(0, actions[ActionsHelper.TEMPLATE_START_INDEX]);
     }
-    getEditDistanceInstance(1, 1, 1);
+    getEditDistanceInstance(1);
     actions = mCgGotoh.calculateEditDistance(r, r.length, t, 0, 10, 3, true);
     if (actions != null) {
       assertEquals("=========XX=========X====NNNNN==========", ActionsHelper.toString(actions));
@@ -1183,7 +1189,7 @@ public class CgGotohEditDistanceTest extends TestCase {
   }
 
   public void testAlignNs() {
-    getEditDistanceInstance(1, 1, 0);
+    getEditDistanceInstance(0);
 
     final byte[] r = DnaUtils.encodeString("gatcatatatNtatatatatNtata     tatataaaac".replaceAll(" ", ""));
     final byte[] t = DnaUtils.encodeString("gatcatataNatatatatatNtata.....tatataaaac");
@@ -1195,7 +1201,7 @@ public class CgGotohEditDistanceTest extends TestCase {
       assertEquals(0, actions[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
       assertEquals(0, actions[ActionsHelper.TEMPLATE_START_INDEX]);
     }
-    getEditDistanceInstance(1, 1, 1);
+    getEditDistanceInstance(1);
     actions = mCgGotoh.calculateEditDistance(r, r.length, t, 0, 10, 3, true);
     if (actions != null) {
       assertEquals("=========TR=========R====NNNNN==========", ActionsHelper.toString(actions));
@@ -1207,7 +1213,7 @@ public class CgGotohEditDistanceTest extends TestCase {
 
   public void testAlignmentScores() {
 
-    getEditDistanceInstance(1, 1, 0, "cg_test_errors");
+    getEditDistanceInstance(0, "cg_test_errors", false);
 //    Claimed alignment is incorrect:
 //      ACCTCCTATGAAAAAACTTCCTACCACTCAC-CCTAG <-- template
 //      ||||||||||      ||||||||||  ||| ||| |
@@ -1253,7 +1259,7 @@ public class CgGotohEditDistanceTest extends TestCase {
     t = DnaUtils.encodeString("GAAGGTTGGGGGAGTGGGAGTTGGTGGCCTACCACTGGGT");
 
 
-    getEditDistanceInstance(1, 1, 1);
+    getEditDistanceInstance(1);
     actions = mCgGotoh.calculateEditDistance(r, r.length, t, 0, 10, 3, false);
 
 //    System.err.println(ActionsHelper.toString(actions) + " as=" + ActionsHelper.alignmentScore(actions));

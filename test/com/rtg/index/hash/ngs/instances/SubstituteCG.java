@@ -12,6 +12,8 @@
 package com.rtg.index.hash.ngs.instances;
 
 
+import static com.rtg.util.StringUtils.LS;
+
 import java.io.IOException;
 
 import com.rtg.index.hash.ngs.HashFunctionFactory;
@@ -25,60 +27,61 @@ import junit.framework.Assert;
  * Check that all possible substitutions in a string are found when filtered via the <code>HashFunction</code>.
  */
 public class SubstituteCG {
+  private static final int PADDING = 8;
   private final String mString;
   private final int mLength;
   private final HashFunctionFactory mHF;
   private final boolean mCheckFound;
-  private final int mInsert;
-  private final int mMaxInsert;
+  private final int mGap;
+  private final int mOverlap;
 
-  private boolean mNoErrors;
+  private int mNotFound;
+  private int mTotal;
+  private StringBuilder mResults = new StringBuilder("not run");
   private final char[] mChars;
   private final char[] mSubstitutions;
 
   /**
-   * For CGMaska0 test.
    * @param string to be used for doing substitution test.
    * @param factory factory for generating mask.
    * @param checkFound if true check that everything is actually found
+   * @param cgGap size of right gap (version 1).
+   * @param cgOverlap size of overlap (version 1 and version 2)
    */
-  public SubstituteCG(final String string, final HashFunctionFactory factory, final boolean checkFound) {
+  public SubstituteCG(final String string, final HashFunctionFactory factory, final boolean checkFound, final int cgGap, int cgOverlap) {
     mString = string;
     mLength = mString.length();
     mChars = new char[mLength];
     mHF = factory;
     mCheckFound = checkFound;
-    mInsert = 6;
-    mMaxInsert = 6;
+    mGap = cgGap;
+    mOverlap = cgOverlap;
     mSubstitutions = new char[mLength];
   }
 
   /**
-   * @param string to be used for doing substitution test.
-   * @param factory factory for generating mask.
-   * @param checkFound if true check that everything is actually found
-   * @param insert size of insert on right gap.
-   */
-  public SubstituteCG(final String string, final HashFunctionFactory factory, final boolean checkFound, final int insert) {
-    mString = string;
-    mLength = mString.length();
-    mChars = new char[mLength];
-    mHF = factory;
-    mCheckFound = checkFound;
-    mInsert = insert;
-    mMaxInsert = 7;
-    mSubstitutions = new char[mLength];
-  }
-
-  /**
-   *
    * @param error Maximum number of errors which will be generated.
+   * @return the number of errors that were not found
    * @throws IOException If an I/O error occurs
    */
-  public void substituteProtected(final int error) throws IOException {
-    mNoErrors = true;
+  public int substituteProtected(final int error) throws IOException {
+    mNotFound = 0;
+    mTotal = 0;
+    mResults = new StringBuilder();
     substitutePrivate(error, 0);
-    Assert.assertTrue(mNoErrors);
+    return mNotFound;
+  }
+
+  @Override
+  public String toString() {
+    return "Missed " + mNotFound + "/" + mTotal;
+  }
+
+  /**
+   * @return textual summary of how many combinations were not found
+   */
+  public String details() {
+    return mResults.toString();
   }
 
   static String repeat(final String rep, final int n) {
@@ -89,10 +92,26 @@ public class SubstituteCG {
     return sb.toString();
   }
 
-  static String cgInsert(final String mutant, final int insert, int maxInsert) {
-    assert 35 == mutant.length();
-    assert 5 <= insert && insert <= 7;
-    return mutant.substring(0, 25) + repeat("a", insert) + mutant.substring(25) + repeat("a", maxInsert - insert);
+  static String cgToTemplate(final String mutant, final int gap, int overlap) {
+    if (29 == mutant.length()) {
+      return repeat("a", PADDING)
+        + mutant.substring(0, 10)
+        + mutant.substring(10 + overlap, mutant.length())
+        + repeat("a", PADDING);
+    } else if (35 == mutant.length()) {
+      final StringBuilder sb = new StringBuilder(repeat("a", PADDING));
+      sb.append(mutant.substring(0, 5));
+      int pos = 5 + overlap;
+      sb.append(mutant.substring(pos, pos + 20 - overlap)); // Dodgy
+      pos += 20 - overlap;
+      sb.append(repeat("a", gap));
+      sb.append(mutant.substring(pos));
+      sb.append(repeat("a", PADDING));
+      return sb.toString();
+    } else {
+      Assert.fail();
+      return null;
+    }
   }
 
   private void substitutePrivate(final int error, final int soFar) throws IOException {
@@ -108,17 +127,18 @@ public class SubstituteCG {
       hf.readAll(0, false);
       hf.reset();
       final String mutant = new String(mChars);
-      for (int ins = mInsert; ins <= mMaxInsert; ins++) {
-        final String muttie = cgInsert(mutant, ins, mMaxInsert);
-        //System.err.println(mutant);
-        //System.err.println(muttie);
-        AbstractSplitTest.encode(hf, muttie);
+      final String muttie = cgToTemplate(mutant, mGap, mOverlap);
+      for (int i = 0; i < muttie.length(); i++) {
+        AbstractSplitTest.encode(hf, muttie, i);
         hf.templateForward(0);
       }
       if (mCheckFound && !tcc.mFoundDone) {
-        System.err.println(new String(mSubstitutions, 0, soFar));
-        mNoErrors = false;
+        mResults.append("R:" + mString + LS);
+        mResults.append("T:" + muttie.substring(PADDING, muttie.length() - PADDING) + LS);
+        mResults.append("  " + new String(mSubstitutions, 0, soFar) + LS);
+        mNotFound++;
       }
+      mTotal++;
       return;
     }
     //make one substitution and as well the non-substitution case

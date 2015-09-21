@@ -60,7 +60,7 @@ public class ProteinMaskTest extends TestCase {
     final SubstituteProtein sub = new SubstituteProtein(protein, f, true);
     sub.substituteProtected(sk.substitutions());
     if (indel > 0) {
-      SubstituteIndel.checkIndel(f, protein, indel, 0/*cg*/, 7);
+      SubstituteIndel.checkIndel(f, protein, indel, 0/*cg*/);
     }
   }
 

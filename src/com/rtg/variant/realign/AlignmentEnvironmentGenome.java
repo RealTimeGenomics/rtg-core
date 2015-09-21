@@ -65,8 +65,8 @@ public final class AlignmentEnvironmentGenome implements AlignmentEnvironment {
   }
 
   @Override
-  public boolean cgOverlapOnLeft() {
-    return true;
+  public boolean isInverted() {
+    return false;
   }
 
 }

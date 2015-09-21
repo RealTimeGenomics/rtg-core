@@ -34,7 +34,6 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
 import htsjdk.samtools.SAMReadGroupRecord;
-
 import junit.framework.TestCase;
 
 
@@ -77,7 +76,7 @@ public class EditDistanceFactoryTest extends TestCase {
         EditDistanceFactory.createEditDistance(params, PrereadType.CG, 10, 20);
         fail();
       } catch (final IllegalArgumentException iae) {
-        assertEquals("CG data only supports " + CgGotohEditDistance.CG_RAW_READ_LENGTH + " length reads", iae.getMessage());
+        assertEquals("CG data requires fixed length reads", iae.getMessage());
       }
 
       final File leftCGReadsDir = new File(tmpDir, "leftcg");

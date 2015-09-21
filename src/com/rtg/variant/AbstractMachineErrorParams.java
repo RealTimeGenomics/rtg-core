@@ -51,7 +51,9 @@ public abstract class AbstractMachineErrorParams implements Params {
    * Get the flag to indicate if CG outer base trimming is to be used.
    * @return the flag - true if trimming is to be used.
    */
-  public abstract boolean cgTrimOuterBases();
+  public boolean cgTrimOuterBases() {
+    return machineType() == MachineType.COMPLETE_GENOMICS && MachineErrorParamsBuilder.CG_TRIM;
+  }
 
   /**
    * Get the CG v1 small gap distribution for 0,1,2,3.

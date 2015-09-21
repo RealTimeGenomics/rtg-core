@@ -140,7 +140,7 @@ public abstract class ImplementHashFunction extends IntegralAbstract implements 
 
   @Override
   public void templateForward(final int endPosition) throws IOException {
-    if (mSoFar >= mReadLength) {
+    if (mSoFar >= mReadLength) { // XXXLen This is an assumption that the template is spanned by mReadLength bases, not true for inserts or for CG reads.
       mTemplateCall.setReverse(false);
       templateAll(endPosition, mValuesF0, mValuesF1);
     }

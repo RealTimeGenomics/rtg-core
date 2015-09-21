@@ -32,7 +32,6 @@ import java.util.Set;
 import java.util.TreeSet;
 
 import com.rtg.mode.DnaUtils;
-import com.rtg.reader.CgUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.ReadGroupUtils;
@@ -90,7 +89,7 @@ public class Calibrator {
   protected byte[] mTemplate;
   protected int mTemplateLength;
   protected byte[] mRead;
-  private final byte[] mCgQualities = new byte[CgUtils.CG_RAW_READ_LENGTH];
+  private byte[] mCgQualities = null;
   protected SAMRecord mSamRec;
   protected String mReadGroup;
   final ReferenceRegions mRegions;
@@ -676,8 +675,12 @@ public class Calibrator {
         final boolean rc = (flags & SamBamConstants.SAM_READ_IS_REVERSE) != 0;
         final String xqField = sam.getStringAttribute(SamUtils.CG_OVERLAP_QUALITY);
         if (baseQualities != null && baseQualities.length > 0) {
-          final byte[] samQualities = SuperCigarValidator.expandCgSuperCigarQualities(baseQualities, mCgQualities, xqField, first ^ rc, false, true); //rc is always false because we don't want to reverse the array
-          getParser().setQualities(samQualities);
+          final int xqlength = xqField == null ? 0 : xqField.length();
+          if (mCgQualities == null || baseQualities.length + xqlength != mCgQualities.length) {
+            mCgQualities = new byte[baseQualities.length + xqlength];
+          }
+          SuperCigarValidator.unrollSuperCigarQualities(mCgQualities, baseQualities, xqField, first, rc);
+          getParser().setQualities(mCgQualities);
         } else {
           getParser().setQualities(null);
         }

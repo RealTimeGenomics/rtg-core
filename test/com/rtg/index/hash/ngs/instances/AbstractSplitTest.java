@@ -19,6 +19,7 @@ import java.util.Collection;
 import com.rtg.index.hash.ngs.NgsHashFunction;
 import com.rtg.index.hash.ngs.ReadCall;
 import com.rtg.index.hash.ngs.TemplateCall;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.mode.DNA;
 import com.rtg.util.MultiMap;
@@ -28,13 +29,11 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
 
-import junit.framework.TestCase;
-
 
 
 /**
  */
-public abstract class AbstractSplitTest extends TestCase {
+public abstract class AbstractSplitTest extends AbstractNanoTest {
 
   static void append(final Appendable ap, final String str) {
     try {
@@ -59,31 +58,12 @@ public abstract class AbstractSplitTest extends TestCase {
 
   public static void encode(final NgsHashFunction hf, final String dna) {
     for (int i = 0; i < dna.length(); i++) {
-      /*
-      final int val;
-      switch (dna.charAt(i) & ~32) {
-      case 'A':
-        val = DNA.A.ordinal();
-        break;
-      case 'C':
-        val = DNA.C.ordinal();
-        break;
-      case 'G':
-        val = DNA.G.ordinal();
-        break;
-      case 'T':
-        val = DNA.T.ordinal();
-        break;
-      case 'N':
-        val = DNA.N.ordinal();
-        break;
-      default:
-        throw new RuntimeException("Unknown value: " + dna.charAt(i));
-      }
-      hf.hashStep((byte) (val -1));
-       */
-      hf.hashStep(ORDINALS[((dna.charAt(i) & 15) >>> 1) ^ 3]);
+      encode(hf, dna, i);
     }
+  }
+
+  public static void encode(final NgsHashFunction hf, final String dna, int pos) {
+    hf.hashStep(ORDINALS[((dna.charAt(pos) & 15) >>> 1) ^ 3]);
   }
 
   /**
@@ -307,6 +287,25 @@ public abstract class AbstractSplitTest extends TestCase {
     encode(hf, dnat);
     hf.templateForward(7);
     assertEquals(expected, sb.toString());
+  }
+
+  protected void checkNano(final String id, final String dnar, final String dnat) throws IOException {
+    final StringWriter sb = new StringWriter();
+    final ReadCall rcall = new ReadCallMock(sb);
+    final TemplateCall call = new TemplateCallMock(sb);
+    final NgsHashFunction hf = getHashFunction(rcall, call);
+    Exam.integrity(hf);
+    sb.append(hf.toString())
+      .append(StringUtils.LS)
+      .append("number windows=")
+      .append(String.valueOf(hf.numberWindows()))
+      .append(StringUtils.LS);
+    hf.templateSet(1234, 23);
+    encode(hf, dnar);
+    hf.readAll(5, false);
+    encode(hf, dnat);
+    hf.templateForward(7);
+    mNano.check(id, sb.toString());
   }
 
   static final char[] CHARS = {'n', 'a', 'c', 'g', 't'};

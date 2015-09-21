@@ -81,19 +81,19 @@ public class CGMaska15b1alt extends AbstractCGMask {
     setHashFunction();
   }
 
-  private static final long MASK_AR_ALT =  ((1L << 18) - 1) << 17; //changed to _ALT
-  private static final long MASK_A0T_ALT =  ((1L << 5) - 1) << 37; //XX
+  private static final long MASK_AR =  ((1L << 18) - 1) << 17;
+  private static final long MASK_A0T =  ((1L << 5) - 1) << 37;
   private static final long MASK_A1T = ((1L << 13) - 1) << 24;
   private static final long MASK_BR =   (1L << 17) - 1;
-  private static final long MASK_B0T_ALT =  ((1L << 7) - 1) << 17; //XX
-  private static final long MASK_B1T_ALT =  (1L << 10) - 1; //XX
+  private static final long MASK_B0T =  ((1L << 7) - 1) << 17;
+  private static final long MASK_B1T =  (1L << 10) - 1;
   private static final long MASK_CR =  ((1L << 17) - 1) << 13;
   private static final long MASK_CT =  ((1L << 17) - 1) << 20;
   private static final long MASK_DR =  ((1L << 17) - 1) << 10;
   private static final long MASK_DT =  ((1L << 17) - 1) << 17;
-  private static final long MASK_E0R_ALT = ((1L <<  5) - 1) << 30; //XX
+  private static final long MASK_E0R = ((1L <<  5) - 1) << 30;
   private static final long MASK_E1R = ((1L << 12) - 1) << 10;
-  private static final long MASK_E0T_ALT = ((1L <<  5) - 1) << 37; //XX
+  private static final long MASK_E0T = ((1L <<  5) - 1) << 37;
   private static final long MASK_E1T = ((1L << 12) - 1) << 17;
   private static final long MASK_F0R = ((1L <<  7) - 1) << 23;
   private static final long MASK_F1R =  (1L << 10) - 1;
@@ -110,8 +110,8 @@ public class CGMaska15b1alt extends AbstractCGMask {
     }
 
     // variables are named l <maskname> <mask subscript> <v0/v1>
-    final long la0 = (v0 & MASK_AR_ALT) << 1;
-    final long la1 = (v1 & MASK_AR_ALT) >>> 17;
+    final long la0 = (v0 & MASK_AR) << 1;
+    final long la1 = (v1 & MASK_AR) >>> 17;
     final long la = la0 | la1;
     mReadCall.readCall(readId, hash(la), 0);
 
@@ -132,8 +132,8 @@ public class CGMaska15b1alt extends AbstractCGMask {
 
     final long le10 = (v0 & MASK_E1R) << 8;
     final long le11 = (v1 & MASK_E1R) >>> 10;
-    final long le00 =  v0 & MASK_E0R_ALT;
-    final long le01 = (v1 & MASK_E0R_ALT) >>> 18;
+    final long le00 =  v0 & MASK_E0R;
+    final long le01 = (v1 & MASK_E0R) >>> 18;
     final long le = le00 | le10 | le01 | le11;
     mReadCall.readCall(readId, hash(le), 4);
 
@@ -146,8 +146,8 @@ public class CGMaska15b1alt extends AbstractCGMask {
   }
 
   static {
-    Exam.assertEquals(MASK_AR_ALT, (MASK_A0T_ALT | MASK_A1T) >>> 7);
-    Exam.assertEquals(MASK_BR, MASK_B0T_ALT >>> 7 | MASK_B1T_ALT);
+    Exam.assertEquals(MASK_AR, (MASK_A0T | MASK_A1T) >>> 7);
+    Exam.assertEquals(MASK_BR, MASK_B0T >>> 7 | MASK_B1T);
   }
 
   @Override
@@ -178,44 +178,44 @@ public class CGMaska15b1alt extends AbstractCGMask {
   //  mTemplateCall.templateCall(endP, hash(lax), 0);
 
   //overlap -1
-  final long la00y = (v0 & (MASK_A0T_ALT >>> 1)) >>> 5;
-  final long la01y = (v1 & (MASK_A0T_ALT >>> 1)) >>> 23;
+  final long la00y = (v0 & (MASK_A0T >>> 1)) >>> 5;
+  final long la01y = (v1 & (MASK_A0T >>> 1)) >>> 23;
   final long lay = la | la00y | la01y;
   mTemplateCall.templateCall(endP/* + 1*/, hash(lay), 0);
 
   //overlap -2
-  final long la00z = (v0 & (MASK_A0T_ALT >>> 2)) >>> 4;
-  final long la01z = (v1 & (MASK_A0T_ALT >>> 2)) >>> 22;
+  final long la00z = (v0 & (MASK_A0T >>> 2)) >>> 4;
+  final long la01z = (v1 & (MASK_A0T >>> 2)) >>> 22;
   final long laz = la | la00z | la01z;
   mTemplateCall.templateCall(endP/* + 2*/, hash(laz), 0);
 
   //overlap -3
-  final long la00w = (v0 & (MASK_A0T_ALT >>> 3)) >>> 3;
-  final long la01w = (v1 & (MASK_A0T_ALT >>> 3)) >>> 21;
+  final long la00w = (v0 & (MASK_A0T >>> 3)) >>> 3;
+  final long la01w = (v1 & (MASK_A0T >>> 3)) >>> 21;
   final long law = la | la00w | la01w;
   mTemplateCall.templateCall(endP/* + 3*/, hash(law), 0);
 
   //System.err.println("templateAll index 1");
   //used by next 3 masks
-  final long lb10 = (v0 & MASK_B1T_ALT) << 18;
-  final long lb11 =  v1 & MASK_B1T_ALT;
+  final long lb10 = (v0 & MASK_B1T) << 18;
+  final long lb11 =  v1 & MASK_B1T;
   final long lb = lb10 | lb11;
 
   //gap = 7
-  final long lb00x = (v0 & MASK_B0T_ALT) << 11;
-  final long lb01x = (v1 & MASK_B0T_ALT) >>> 7;
+  final long lb00x = (v0 & MASK_B0T) << 11;
+  final long lb01x = (v1 & MASK_B0T) >>> 7;
   final long lbx = lb | lb00x | lb01x;
   mTemplateCall.templateCall(endP/* + 1*/, hash(lbx), 1);
 
   //gap = 6
-  final long lb00y = (v0 & (MASK_B0T_ALT >>> 1)) << 12;
-  final long lb01y = (v1 & (MASK_B0T_ALT >>> 1)) >>> 6;
+  final long lb00y = (v0 & (MASK_B0T >>> 1)) << 12;
+  final long lb01y = (v1 & (MASK_B0T >>> 1)) >>> 6;
   final long lby = lb | lb00y | lb01y;
   mTemplateCall.templateCall(endP/* + 2*/, hash(lby), 1);
 
   //gap = 5
-  final long lb00z = (v0 & (MASK_B0T_ALT >>> 2)) << 13;
-  final long lb01z = (v1 & (MASK_B0T_ALT >>> 2)) >>> 5;
+  final long lb00z = (v0 & (MASK_B0T >>> 2)) << 13;
+  final long lb01z = (v1 & (MASK_B0T >>> 2)) >>> 5;
   final long lbz = lb | lb00z | lb01z;
   mTemplateCall.templateCall(endP/* + 3*/, hash(lbz), 1);
 
@@ -241,20 +241,20 @@ public class CGMaska15b1alt extends AbstractCGMask {
   //  mTemplateCall.templateCall(endP, hash(lex), 4);
 
   //overlap = -1
-  final long le00y = (v0 & (MASK_E0T_ALT >>> 1)) >>> 6;
-  final long le01y = (v1 & (MASK_E0T_ALT >>> 1)) >>> 24;
+  final long le00y = (v0 & (MASK_E0T >>> 1)) >>> 6;
+  final long le01y = (v1 & (MASK_E0T >>> 1)) >>> 24;
   final long ley = le00y | le01y | le;
   mTemplateCall.templateCall(endP/* + 1*/, hash(ley), 4);
 
   //overlap = -2
-  final long le00z = (v0 & (MASK_E0T_ALT >>> 2)) >>> 5;
-  final long le01z = (v1 & (MASK_E0T_ALT >>> 2)) >>> 23;
+  final long le00z = (v0 & (MASK_E0T >>> 2)) >>> 5;
+  final long le01z = (v1 & (MASK_E0T >>> 2)) >>> 23;
   final long lez = le00z | le01z | le;
   mTemplateCall.templateCall(endP/* + 2*/, hash(lez), 4);
 
   //overlap = -3
-  final long le00w = (v0 & (MASK_E0T_ALT >>> 3)) >>> 4;
-  final long le01w = (v1 & (MASK_E0T_ALT >>> 3)) >>> 22;
+  final long le00w = (v0 & (MASK_E0T >>> 3)) >>> 4;
+  final long le01w = (v1 & (MASK_E0T >>> 3)) >>> 22;
   final long lew = le00w | le01w | le;
   mTemplateCall.templateCall(endP/* + 3*/, hash(lew), 4);
 

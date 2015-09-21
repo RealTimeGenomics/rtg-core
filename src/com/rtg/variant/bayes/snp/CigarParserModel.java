@@ -13,9 +13,11 @@ package com.rtg.variant.bayes.snp;
 
 
 import com.rtg.mode.DNA;
+import com.rtg.reader.CgUtils;
 import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.SuperCigarParser;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.ReadParserInterface;
 import com.rtg.variant.VariantAlignmentRecord;
@@ -72,6 +74,7 @@ public class CigarParserModel implements ReadParserInterface {
   public void toMatcher(AbstractMachineErrorParams me, VariantAlignmentRecord var, int qdefault, byte[] templateBytes) throws BadSuperCigarException {
     final byte[] qualities;
     try {
+      // Note that we don't use the SuperCigar for CG here, as the overlaps would be treated as double-evidence (whereas allpaths does the right thing).
       mParser.setStandardCigar(var.getCigar(), DNA.byteDNAtoByte(var.getRead()), var.getRead().length);
     } catch (final IllegalArgumentException iae) {
       throw new BadSuperCigarException("Illegal DNA character: " + iae.getMessage());
@@ -81,7 +84,7 @@ public class CigarParserModel implements ReadParserInterface {
     mParser.setTemplateStart(var.getStart());
     mParser.setTemplate(templateBytes);
     mParser.setQualities(qualities);
-    mParser.setAdditional(me, getReadScore(var), qdefault, var.isCgOverlapLeft(), !var.isNegativeStrand(), var.isReadPaired(), var.isMated(), var.isUnmapped());
+    mParser.setAdditional(me, getReadScore(var), qdefault, var.isFirst(), !var.isNegativeStrand(), var.isReadPaired(), var.isMated(), var.isUnmapped());
 
     mParser.parse();
   }
@@ -127,11 +130,12 @@ public class CigarParserModel implements ReadParserInterface {
       return mQualities == null ? mDefaultQuality : mMe.getPhred(mQualities[getReadPosition()], getReadPosition());
     }
 
-    void setAdditional(AbstractMachineErrorParams me, int mapScore, int defaultQuality, boolean isCgOverlapLeft, boolean isForward, boolean isReadPaired, boolean isMated, boolean isUnmapped) {
+    void setAdditional(AbstractMachineErrorParams me, int mapScore, int defaultQuality, boolean isFirst, boolean isForward, boolean isReadPaired, boolean isMated, boolean isUnmapped) {
       mMe = me;
       mMapScore = mapScore;
       mDefaultQuality = defaultQuality;
-      mIsCgOverlapLeft = isCgOverlapLeft;
+      mIsCgOverlapLeft = me.machineType() == MachineType.COMPLETE_GENOMICS && (isFirst ^ !isForward)
+        || me.machineType() == MachineType.COMPLETE_GENOMICS_2 && isForward;
       mIsForward = isForward;
       mIsReadPaired = isReadPaired;
       mIsMated = isMated;
@@ -155,7 +159,7 @@ public class CigarParserModel implements ReadParserInterface {
       }
       //System.err.println("i=" + readNt);
       mInInsertBlock = true;
-      if (mMatcherIndel != null && includeBase(mIsCgOverlapLeft, getReadPosition(), mMe) && mStart <= getTemplatePosition() && getTemplatePosition() < mEnd) {
+      if (mMatcherIndel != null && includeBase(getReadPosition()) && mStart <= getTemplatePosition() && getTemplatePosition() < mEnd) {
         mMatcherIndel.match(getTemplatePosition(), EvidenceIndelFactory.SINGLETON.evidence(EvidenceIndel.INSERT, /*unused*/0, /*unused*/0, mMapScore, /*unused*/0, /*unused*/0, mOperationLength, false));
       }
     }
@@ -163,7 +167,7 @@ public class CigarParserModel implements ReadParserInterface {
     @Override
     protected void doTemplateOnly(int templateNt) {
       //System.err.println("d=" + templateNt);
-      if (mMatcherIndel != null && includeBase(mIsCgOverlapLeft, getReadPosition(), mMe)) {
+      if (mMatcherIndel != null && includeBase(getReadPosition())) {
         if (mStart <= getTemplatePosition() && getTemplatePosition() < mEnd) {
           mMatcherIndel.match(getTemplatePosition(), EvidenceIndelFactory.SINGLETON.evidence(EvidenceIndel.DELETE, /*unused*/0, /*unused*/0, mMapScore, /*unused*/0, /*unused*/0, mOperationLength, false));
         }
@@ -185,7 +189,7 @@ public class CigarParserModel implements ReadParserInterface {
     }
 
     private void doSubstitutionOrEquality(final int readNt) throws BadSuperCigarException {
-      final boolean should = includeBase(mIsCgOverlapLeft, getReadPosition(), mMe);
+      final boolean should = includeBase(getReadPosition());
       if (should && mStart <= getTemplatePosition() && getTemplatePosition() < mEnd) {
         int currentQuality = getCurrentQuality();
         if (ILLUMINA_HOMOPOLYMER_HACK) {
@@ -238,14 +242,14 @@ public class CigarParserModel implements ReadParserInterface {
     }
 
     /**
-     * Provides ability to trim the overlap end of CG data
-     * @param isCgOverlapLeft true if this is CG data and the overlap is on the left
+     * Determine whether a base should be included, allowing the ability to trim the overlap end of CG version 1 reads
      * @param rPos read position
-     * @param me machine error params
      * @return true if this base should be included
      */
-    private boolean includeBase(boolean isCgOverlapLeft, int rPos, AbstractMachineErrorParams me) {
-      return !me.cgTrimOuterBases() || (!isCgOverlapLeft && rPos < 30) || (isCgOverlapLeft && rPos >= (getReadLength() == 0 ? 5 : getReadLength() - 30));
+    private boolean includeBase(int rPos) {
+      return !mMe.cgTrimOuterBases()
+        || (!mIsCgOverlapLeft && rPos < (CgUtils.CG_RAW_READ_LENGTH - CgUtils.CG_OVERLAP_POSITION))
+        || (mIsCgOverlapLeft && rPos >= (getReadLength() == 0 ? CgUtils.CG_OVERLAP_POSITION : getReadLength() - (CgUtils.CG_RAW_READ_LENGTH - CgUtils.CG_OVERLAP_POSITION)));
     }
 
   }

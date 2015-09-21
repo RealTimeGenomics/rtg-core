@@ -290,8 +290,8 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
           final int hitReadLength;
           //Unfortunately these read lengths are approximations of the alignment length, so the thresholding isn't based on the ultimate template length :(
           if (mLeftReader.getPrereadType() == PrereadType.CG) {
-            // we add 4 because the most common CG alignment size along the template is 35 - 2 + 6 = 39.
-            final int expectedCgReadLength = CgUtils.CG_RAW_READ_LENGTH + CgUtils.CG_EXPECTED_LENGTH_OFFSET;
+            // we adjust because the most common CG alignment size along the template depends on gap/overlap structure
+            final int expectedCgReadLength = mLeftReader.maxLength() == CgUtils.CG_RAW_READ_LENGTH ? CgUtils.CG_EXPECTED_LENGTH : CgUtils.CG2_EXPECTED_LENGTH;
             mateReadLength = expectedCgReadLength;
             hitReadLength = expectedCgReadLength;
           } else {

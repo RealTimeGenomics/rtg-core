@@ -55,9 +55,6 @@ public class MachineErrorParamsBuilder {
 
   protected MachineType mMachine;
 
-  /** True if an explicit CG overlap distribution has been set. */
-  protected boolean mCG;
-
 
   /**
    * Creates a builder with initial default values from the
@@ -100,7 +97,6 @@ public class MachineErrorParamsBuilder {
     mSmallGapDistribution = errors.smallGapDistribution();
     mOverlapDistribution = errors.overlapDistribution();
     mOverlapDistribution2 = errors.overlapDistribution2();
-    mCG = errors.isCG();
     mMachine = errors.machineType();
     mCGTrimOuterBases = errors.cgTrimOuterBases() && CG_TRIM;
   }
@@ -145,7 +141,6 @@ public class MachineErrorParamsBuilder {
         mMachine = null;
       }
     }
-    mCG = mMachine == MachineType.COMPLETE_GENOMICS;
     mCGTrimOuterBases = tryGetBoolean(pr, "cg_trim_outer_bases", false) && CG_TRIM;
     mOverlapDistribution = getDistribution(pr, "overlap", CG_DEFAULT_OVERLAP_DIST, errors);
     mSmallGapDistribution = getDistribution(pr, "smallgap", CG_DEFAULT_SMALL_GAP_DIST, errors);
@@ -291,7 +286,6 @@ public class MachineErrorParamsBuilder {
    */
   public MachineErrorParamsBuilder machine(final MachineType machine) {
     mMachine = machine;
-    mCG = machine == MachineType.COMPLETE_GENOMICS;
     return this;
   }
 

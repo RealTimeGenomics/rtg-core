@@ -19,6 +19,8 @@ import com.rtg.index.hash.ngs.NgsHashFunction;
 import com.rtg.index.hash.ngs.ReadCall;
 import com.rtg.index.hash.ngs.TemplateCall;
 
+import junit.framework.Assert;
+
 /**
  */
 public class CGMaska0Test extends AbstractSplitTest {
@@ -114,24 +116,17 @@ public class CGMaska0Test extends AbstractSplitTest {
     assertEquals(hf.numberWindows(), CGMaska0.FACTORY.numberWindows());
   }
 
-  /**
-   * Check that all 0, 1, 2 substitutions on the string are found.
-   */
   public void testAllSubstitutions() throws IOException {
     final String str = "acgacgtgacacccgtacgtaccccgtgacacccg";
     assertEquals(35, str.length());
-    final SubstituteCG sub = new SubstituteCG(str, CGMaska0.FACTORY, true);
-    sub.substituteProtected(1);
+    final SubstituteCG sub = new SubstituteCG(str, CGMaska0.FACTORY, true, 6, 0);
+    Assert.assertEquals(0, sub.substituteProtected(1));
   }
 
-  /**
-   * Check that all 0, 1, 2 substitutions on the string are found.
-   * @throws IOException
-   */
   public void testIndel() throws IOException {
     final String str = "acgacgtgacacccgtacgtaccccgtgacacccg";
     assertEquals(35, str.length());
-    SubstituteIndel.checkIndel(CGMaska0.FACTORY, str, 1);
+    SubstituteIndel.checkIndel(CGMaska0.FACTORY, str, 1, 6);
   }
 }
 

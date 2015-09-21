@@ -25,13 +25,13 @@ import htsjdk.samtools.SAMRecord;
 /**
  * Alignment information needed by variant implementations.
  */
-public class VariantAlignmentRecord extends SequenceIdLocusSimple implements ReaderRecord<VariantAlignmentRecord>, MateInfo, MapInfo {
+public final class VariantAlignmentRecord extends SequenceIdLocusSimple implements ReaderRecord<VariantAlignmentRecord>, MateInfo, MapInfo {
 
+  private static final int FLAG_MATED = 1;
   private static final int FLAG_PAIRED = 2;
+  private static final int FLAG_FIRST = 4;
   private static final int FLAG_NEGATIVE = 8;
   private static final int FLAG_UNMAPPED = 16;
-  private static final int FLAG_CG_OVERLAP_LEFT = 4;
-  private static final int FLAG_MATED = 1;
 
   /**
    * Record used to denote an overflow condition, not a true record.
@@ -123,8 +123,8 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
       if (record.getProperPairFlag()) {
         f += FLAG_MATED;
       }
-      if (record.getFirstOfPairFlag() ^ record.getReadNegativeStrandFlag()) { //CG stupidity
-        f += FLAG_CG_OVERLAP_LEFT;
+      if (record.getFirstOfPairFlag()) {
+        f += FLAG_FIRST;
       }
     }
     if (record.getReadNegativeStrandFlag()) {
@@ -199,8 +199,8 @@ public class VariantAlignmentRecord extends SequenceIdLocusSimple implements Rea
     return (mFlag & FLAG_PAIRED) != 0;
   }
 
-  public boolean isCgOverlapLeft() {
-    return (mFlag & FLAG_CG_OVERLAP_LEFT) != 0;
+  public boolean isFirst() {
+    return (mFlag & FLAG_FIRST) != 0;
   }
 
   public boolean isNegativeStrand() {

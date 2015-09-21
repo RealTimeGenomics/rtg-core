@@ -38,7 +38,7 @@ public class AlignmentEnvironmentCGTest extends TestCase {
     final AbstractMachineErrorParams me = MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).create();
     final AlignmentEnvironment se = new AlignmentEnvironmentCG(new VariantAlignmentRecord(rec), params, me, null);
 
-    assertFalse(se.cgOverlapOnLeft());
+    assertFalse(!se.isInverted());
     final String exp = ""
       + "AlignmentEnvironment read=GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT "
       + "quality=["
@@ -57,7 +57,7 @@ public class AlignmentEnvironmentCGTest extends TestCase {
     final VariantParams params = VariantParams.builder().defaultQuality(10).create();
     final AlignmentEnvironment se = new AlignmentEnvironmentCG(new VariantAlignmentRecord(rec), params, MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).create(), null);
 
-    assertFalse(se.cgOverlapOnLeft());
+    assertFalse(!se.isInverted());
     final String exp = ""
       + "AlignmentEnvironment read=GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT "
       + "quality=["

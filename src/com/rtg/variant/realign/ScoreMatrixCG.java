@@ -42,14 +42,14 @@ public class ScoreMatrixCG extends ScoreMatrix {
     SPY.increment();
   }
 
-  protected final double gapFreqPoss(final int gap, final int width) {
+  private double gapFreqPoss(final int gap, final int width) {
     return mGapDistributionsPoss[gap][width - mParams.gapStart(gap)];
   }
 
   @Override
   public void setEnv(Environment env) {
     super.setEnv(env);
-    if (mLength != CG_RAW_READ_LENGTH) {
+    if (mLength != CG_RAW_READ_LENGTH) { // XXXLen CGv2 needed in this class
       throw new IllegalArgumentException("CG read is not the right length was: " + mLength);
     }
   }

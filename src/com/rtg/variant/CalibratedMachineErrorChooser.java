@@ -35,10 +35,10 @@ public class CalibratedMachineErrorChooser implements MachineErrorChooserInterfa
 
   private static AbstractMachineErrorParams sCompleteParams = null;
 
-  private static synchronized AbstractMachineErrorParams getDefaultCompleteParams() {
+  private static synchronized AbstractMachineErrorParams getDefaultCompleteParams(MachineType mt) {
     if (sCompleteParams == null) {
       try {
-        sCompleteParams = MachineErrorParams.builder("complete").create();
+        sCompleteParams = MachineErrorParams.builder(mt.priors()).create();
       } catch (final IOException e) {
         throw new RuntimeException("Could not load built-in complete genomics error rates");
       } catch (final InvalidParamsException e) {
@@ -75,7 +75,7 @@ public class CalibratedMachineErrorChooser implements MachineErrorChooserInterfa
       final MachineType mt = ReadGroupUtils.platformToMachineType(rg, r.isReadPaired());
       if (mt == MachineType.COMPLETE_GENOMICS && CG_BYPASS_HACK) {
         Diagnostic.developerLog("CG calibration bypass enabled, using default CG errors");
-        cal = getDefaultCompleteParams();
+        cal = getDefaultCompleteParams(mt);
       } else {
         cal = new CalibratedMachineErrorParams(mt, mCalibrator, rgId);
       }

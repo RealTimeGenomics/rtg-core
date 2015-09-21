@@ -26,7 +26,7 @@ public class AlignmentEnvironmentGenomeSubstitutionTest extends TestCase {
     final AlignmentEnvironmentGenomeSubstitution aeg = new AlignmentEnvironmentGenomeSubstitution(3, template.length, cot, new byte[] {1, 3, 2, 1});
     assertEquals(3, aeg.start());
     assertEquals(RealignParamsGenome.SINGLETON.misMatch(), aeg.quality(0));
-    assertTrue(aeg.cgOverlapOnLeft());
+    assertTrue(!aeg.isInverted());
     assertEquals(template.length + 2 - 3, aeg.subsequenceLength());
 
     final byte[] exp = {0, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 1, 3, 2, 1, 2, 3, 4, 1, 2, 3, 4, 0};

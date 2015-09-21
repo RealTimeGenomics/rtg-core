@@ -45,6 +45,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
   private final double[] mErrorGapDist;
   private final double[] mErrorSmallGapDist;
   private final double[] mErrorOverlapDist;
+  private final double[] mErrorOverlap2Dist;
 
   private final double mDelBaseRate;
   private final double mInsBaseRate;
@@ -77,31 +78,36 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     final Histogram mnpHist = calibrator.getHistogram(Calibrator.MNP_DIST, readGroupId);
     mErrorMnpDist = mnpHist != null && mnpHist.getLength() > 1 ? mnpHist.toDistribution() : new double[] {0.0, 1.0};
 
+    double[][] dists = null;
     if (isCG()) {
-      if (calibrator.hasHistogram(Calibrator.CGGAP_DIST, readGroupId)) {
-        final Histogram gapH = calibrator.getHistogram(Calibrator.CGGAP_DIST, readGroupId);
-        //overlap can be all 0s if we are parsing an old-style CG sam file, in which case use default overlap.
-        final Histogram olapH;
+      if (mMachineType == MachineType.COMPLETE_GENOMICS_2) {
         if (calibrator.hasHistogram(Calibrator.CGOVER_DIST, readGroupId)) {
-          olapH = calibrator.getHistogram(Calibrator.CGOVER_DIST, readGroupId);
-        } else {
-          olapH = null;
+          final Histogram olapH = calibrator.getHistogram(Calibrator.CGOVER_DIST, readGroupId);
+          dists = histogramsToCgV2Dists(olapH);
         }
-        final double[][] dists = histogramsToCgDists(gapH, olapH);
-        mErrorGapDist = dists[0];
-        mErrorSmallGapDist = dists[1];
-        mErrorOverlapDist = dists[2];
+      } else if (mMachineType == MachineType.COMPLETE_GENOMICS_2) {
+        if (calibrator.hasHistogram(Calibrator.CGGAP_DIST, readGroupId)) {
+          final Histogram gapH = calibrator.getHistogram(Calibrator.CGGAP_DIST, readGroupId);
+          //overlap can be all 0s if we are parsing an old-style CG sam file, in which case use default overlap.
+          final Histogram olapH;
+          if (calibrator.hasHistogram(Calibrator.CGOVER_DIST, readGroupId)) {
+            olapH = calibrator.getHistogram(Calibrator.CGOVER_DIST, readGroupId);
+          } else {
+            olapH = null;
+          }
+          dists = histogramsToCgV1Dists(gapH, olapH);
+        }
       } else {
-        Diagnostic.developerLog("Calibration file without CG gap information, using default gaps");
-        mErrorGapDist = MachineErrorParamsBuilder.CG_DEFAULT_GAP_DIST;
-        mErrorSmallGapDist = MachineErrorParamsBuilder.CG_DEFAULT_SMALL_GAP_DIST;
-        mErrorOverlapDist = MachineErrorParamsBuilder.CG_DEFAULT_OVERLAP_DIST;
+        throw new RuntimeException("CG calibration not supported for machine type: " + mMachineType.toString());
       }
-    } else {
-      mErrorGapDist = new double[5];
-      mErrorSmallGapDist = new double[4];
-      mErrorOverlapDist = new double[5];
+      if (dists == null) {
+        Diagnostic.developerLog("Calibration file without CG gap/overlap information, using default priors");
+      }
     }
+    mErrorGapDist = dists != null && dists[0] != null ? dists[0] : MachineErrorParamsBuilder.CG_DEFAULT_GAP_DIST;
+    mErrorSmallGapDist = dists != null && dists[1] != null ? dists[1] : MachineErrorParamsBuilder.CG_DEFAULT_SMALL_GAP_DIST;
+    mErrorOverlapDist = dists != null && dists[2] != null ? dists[2] : MachineErrorParamsBuilder.CG_DEFAULT_OVERLAP_DIST;
+    mErrorOverlap2Dist = dists != null && dists[3] != null ? dists[3] : MachineErrorParamsBuilder.CG_DEFAULT_OVERLAP2_DIST;
 
     final CalibrationStats sums = calibrator.getSums(CovariateEnum.READGROUP, readGroupId);
     mMnpBaseRate = (double) sums.getDifferent() / (sums.getEqual() + sums.getDifferent() + 1);
@@ -138,13 +144,13 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
   }
 
   /**
-   * produce distributions for machine error parameters
+   * Produce gap/overlap distributions for CG version 1 data
    * @param gapHistogram histogram with index equal to gap length
    * @param overlapHistogram histogram with index equal to overlap length
-   * @return the three distributions (index 0 for gap distribution, index 1 for small gap distribution, index 2 for overlap distribution)
+   * @return the four distributions (gap, small gap, overlap, overlap 2)
    */
-  static double[][] histogramsToCgDists(Histogram gapHistogram, Histogram overlapHistogram) {
-    //evil mojo to shunt histograms into non-standard yet expected array sizes and orientation
+  static double[][] histogramsToCgV1Dists(Histogram gapHistogram, Histogram overlapHistogram) {
+    //Partition and shunt histograms into expected array sizes and orientation
     //each read must have 1 and only 1 gap of between 4 and 8 (incl) long
     long totalReads = 0;
     for (int i = 4; i < gapHistogram.getLength(); i++) {
@@ -207,12 +213,41 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     } else {
       overlapDist = MachineErrorParamsBuilder.CG_DEFAULT_OVERLAP_DIST;
     }
-    return new double[][] {gapDist, smallGapDist, overlapDist};
+    return new double[][] {gapDist, smallGapDist, overlapDist, MachineErrorParamsBuilder.CG_DEFAULT_OVERLAP2_DIST};
+  }
+
+  /**
+   * Produce gap/overlap distributions for CG version 2 data
+   * @param overlapHistogram histogram with index equal to overlap length
+   * @return the four distributions (gap, small gap, overlap, overlap 2)
+   */
+  static double[][] histogramsToCgV2Dists(Histogram overlapHistogram) {
+    //Shunt histogram into expected array size and orientation
+    final double[] overlapDist;
+    if (overlapHistogram != null) {
+      //each read must have 1 and only 1 overlap of between 0 and 7 (incl) long, again we can't keep track of 0 long whilst counting
+      long totalOverlap = overlapHistogram.getLength(); // For Laplace estimator
+      for (int i = 1; i < overlapHistogram.getLength(); i++) {
+        totalOverlap += overlapHistogram.getValue(i);
+      }
+      if (overlapHistogram.getLength() > 8) {
+        throw new IllegalArgumentException("invalid CG overlap distribution");
+      }
+
+      //machine error params expects overlap distribution in wierd form with index 0 referring to probabilty of gap of 7 long and index 7 referring to probability of gap of 0 long
+      overlapDist = new double[8];
+      for (int i = 0; i < overlapHistogram.getLength(); i++) {
+        overlapDist[7 - i] = (double) (overlapHistogram.getValue(i) + 1) / totalOverlap;
+      }
+    } else {
+      overlapDist = MachineErrorParamsBuilder.CG_DEFAULT_OVERLAP_DIST;
+    }
+    return new double[][] {MachineErrorParamsBuilder.CG_DEFAULT_GAP_DIST, MachineErrorParamsBuilder.CG_DEFAULT_SMALL_GAP_DIST, MachineErrorParamsBuilder.CG_DEFAULT_OVERLAP_DIST, overlapDist};
   }
 
   @Override
   public boolean cgTrimOuterBases() {
-    return isCG() && MachineErrorParamsBuilder.CG_TRIM;
+    return mMachineType == MachineType.COMPLETE_GENOMICS && MachineErrorParamsBuilder.CG_TRIM;
   }
 
   @Override
@@ -278,7 +313,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
 
   @Override
   public double[] overlapDistribution2() {
-    throw new UnsupportedOperationException("V2 calibration not yet supported");
+    return mErrorOverlap2Dist;
   }
 
   @Override
@@ -288,7 +323,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
 
   @Override
   public final boolean isCG() {
-    return mMachineType == MachineType.COMPLETE_GENOMICS;
+    return mMachineType == MachineType.COMPLETE_GENOMICS || mMachineType == MachineType.COMPLETE_GENOMICS_2;
   }
 
   @Override

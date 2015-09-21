@@ -232,6 +232,8 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
         mMachineOrientations.put(srgr.getId(), MachineType.ILLUMINA_PE.orientation());
       } else if (MachineType.COMPLETE_GENOMICS.compatiblePlatform(platform)) {
         mMachineOrientations.put(srgr.getId(), MachineType.COMPLETE_GENOMICS.orientation());
+      } else if (MachineType.COMPLETE_GENOMICS_2.compatiblePlatform(platform)) {
+        mMachineOrientations.put(srgr.getId(), MachineType.COMPLETE_GENOMICS_2.orientation());
       } else {
         throw new NoTalkbackSlimException("Unsupported Platform: " + srgr.getPlatform());
       }

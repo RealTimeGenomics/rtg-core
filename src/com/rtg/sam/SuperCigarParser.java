@@ -109,7 +109,7 @@ public class SuperCigarParser {
   }
 
   /**
-   * @param cigar Standard SAM cigar string (must use X and =, not just M).
+   * @param cigar Standard SAM cigar string (must use X and =, not just M, unless template is also set).
    * @param read  The complete sequence read.  Cannot be null.  The array can be longer than necessary.
    * @param readLength length of the read
    */
@@ -120,7 +120,7 @@ public class SuperCigarParser {
   }
 
   /**
-   * @param cigar Standard SAM cigar string (must use X and =, not just M).
+   * @param cigar Standard SAM cigar string (must use X and =, not just M, unless template is also set).
    * @param read  The complete sequence read.  Cannot be null.
    */
   public void setStandardCigar(String cigar, String read) {

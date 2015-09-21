@@ -28,7 +28,7 @@ import com.rtg.variant.realign.RealignParams;
 import com.rtg.variant.realign.RealignParamsImplementation;
 
 /**
- * This finds good alignments for Complete Genomics reads (length = 35),
+ * This finds good alignments for Complete Genomics reads (length = 35 or 29),
  * taking into consideration the probabilities of varying overlap and gap sizes.
  *
  * It implements the Needleman-Wunsch global alignment algorithm with the improvements
@@ -61,9 +61,10 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
   static final int OVERLAP_GAP = RealignParamsImplementation.CG_OVERLAP;
   static final int SMALL_GAP = RealignParamsImplementation.CG_SMALL_GAP;
   static final int LARGE_GAP = RealignParamsImplementation.CG_LARGE_GAP;
+  static final int OVERLAP2_GAP = RealignParamsImplementation.CG_OVERLAP2;
 
   /** This is indexed by the above three constants. */
-  static final String[] GAP_NAME = {"Overlap", "Small", "Large"};
+  static final String[] GAP_NAME = {"Overlap", "Small", "Large", "Overlap2"};
 
   /** width of each number in the <code>toString</code> output */
   static final int FIELD_WIDTH = 9;
@@ -96,7 +97,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
   protected final int mWidth;
 
   /** Maximum variation in gap size, for recording statistics. */
-  private static final int MAX_GAP = 5;
+  private static final int MAX_GAP = 7;
   /** Which arm of statistics this read should count towards. */
   private int mStatsArm;
   private final int[][] mStats;
@@ -105,8 +106,12 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
 
   /**
    * Index into <code>mRowOffsets</code> to determine which arm we are processing.
+   * For 35 bp reads this means:
    * 0 means left arm <code>(5-overlap-10-smallgap-10-largegap-10)</code>.
    * 1 means right arm <code>(10-largegap-10-smallgap-10-overlap-5)</code>.
+   * For 29 bp reads this means:
+   * 0 means left arm <code>(10-overlap2-19)</code>.
+   * 1 means right arm <code>(10-overlap2-19)</code>.
    */
   private int mArm;
 
@@ -119,17 +124,11 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
   /**
    * <code>mGap[arm][pos]</code> gives the CG gap that happens just before <code>pos</code>
    * (where <code>pos</code> is a one-based read position).
-   * The resulting value will be -1 (no gap), OVERLAP_GAP, SMALL_GAP or LARGE_GAP.
+   * The resulting value will be -1 (no gap), <code>OVERLAP_GAP</code>, <code>SMALL_GAP</code>, <code>LARGE_GAP</code>, or <code>OVERLAP2_GAP</code>.
    */
   private final int[][] mGap;
 
   private final int mUnknownsPenalty;
-
-  /** The length of the final (in forward framing) fragment size. */
-  public static final int CG_FINAL_FRAGMENT_SIZE = 5;
-
-  /** Length of a cg read without default insert region */
-  public static final int CG_RAW_READ_LENGTH = 35;
 
   /** The default size of the insert region for CG data */
   public static final int CG_INSERT_REGION_DEFAULT_SIZE = 5;
@@ -140,9 +139,19 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
    * @param unknownsPenalty penalty for an unknown nucleotide - can only either be 0 or 1 for CG.
    */
   public CgGotohEditDistance(final int maxShift, final RealignParams params, int unknownsPenalty) {
+    this(maxShift, params, unknownsPenalty, false);
+  }
+
+  /**
+   * @param maxShift maximum distance that start and end of alignment can move.
+   * @param params CG probabilities.
+   * @param unknownsPenalty penalty for an unknown nucleotide - can only either be 0 or 1 for CG.
+   * @param v2 true for CG version 2 read structure, otherwise assume version 1 read structure
+   */
+  public CgGotohEditDistance(final int maxShift, final RealignParams params, int unknownsPenalty, boolean v2) {
     assert params.completeGenomics();
     mEnv = null; // set by each edit distance call.
-    mLength = CgGotohEditDistance.CG_RAW_READ_LENGTH;
+    mLength = v2 ? CgUtils.CG2_RAW_READ_LENGTH : CgUtils.CG_RAW_READ_LENGTH;
     mWidth = maxShift * 2 + 1;
     mParams = params;
     mMatchProb = Math.exp(mParams.matchLn());
@@ -155,9 +164,9 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
     mOneMinusDeleteOpen = 1.0 - mDeleteOpenProb;
     mOneMinusInsertExtend = 1.0 - mInsertExtendProb;
     mOneMinusDeleteInsertOpen = 1.0 - mDeleteOpenProb - mInsertOpenProb;
-    mGapStart = new int[3];
-    mGapProb = new double[3][];
-    for (int gap = 0; gap < 3; gap++) {
+    mGapStart = new int[GAP_NAME.length];
+    mGapProb = new double[GAP_NAME.length][];
+    for (int gap = 0; gap < GAP_NAME.length; gap++) {
       mGapStart[gap] = mParams.gapStart(gap);
       mGapProb[gap] = new double[mParams.gapEnd(gap) - mParams.gapStart(gap) + 1];
       for (int i = 0; i < mGapProb[gap].length; i++) {
@@ -170,16 +179,21 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
 
     // set up CG gap positions
     mGap = new int[2][];
-    mGap[LEFT_ARM] = new int[CgGotohEditDistance.CG_RAW_READ_LENGTH + 1];
+    mGap[LEFT_ARM] = new int[mLength + 1];
     Arrays.fill(mGap[LEFT_ARM], -1);
-    mGap[LEFT_ARM][6] = OVERLAP_GAP;
-    mGap[LEFT_ARM][16] = SMALL_GAP;
-    mGap[LEFT_ARM][26] = LARGE_GAP;
-    mGap[RIGHT_ARM] = new int[CgGotohEditDistance.CG_RAW_READ_LENGTH + 1];
+    mGap[RIGHT_ARM] = new int[mLength + 1];
     Arrays.fill(mGap[RIGHT_ARM], -1);
-    mGap[RIGHT_ARM][11] = LARGE_GAP;
-    mGap[RIGHT_ARM][21] = SMALL_GAP;
-    mGap[RIGHT_ARM][31] = OVERLAP_GAP;
+    if (!v2) {
+      mGap[LEFT_ARM][6] = OVERLAP_GAP;
+      mGap[LEFT_ARM][16] = SMALL_GAP;
+      mGap[LEFT_ARM][26] = LARGE_GAP;
+      mGap[RIGHT_ARM][11] = LARGE_GAP;
+      mGap[RIGHT_ARM][21] = SMALL_GAP;
+      mGap[RIGHT_ARM][31] = OVERLAP_GAP;
+    } else {
+      mGap[LEFT_ARM][11] = OVERLAP2_GAP;
+      mGap[RIGHT_ARM][11] = OVERLAP2_GAP;
+    }
     // set up CG row offsets for the most common gap sizes
     mRowOffsets = new int[2][];
     mRowOffsets[LEFT_ARM] = makeRowOffsets(LEFT_ARM);
@@ -199,13 +213,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
    * @param leftArm true for left arm, false for right arm.
    */
   public void setEnv(final Environment env, final boolean leftArm) {
-    if (env.readLength() != mLength) {
-      mLength = env.readLength();
-      final int rows = mLength + 1;
-      mMatch = makeDouble(rows);
-      mInsert = makeDouble(rows);
-      mDelete = makeDouble(rows);
-    }
+    assert env.readLength() == mLength;
     mEnv = env;
     mArm = leftArm ? LEFT_ARM : RIGHT_ARM;
     calculateProbabilities();
@@ -216,9 +224,9 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
    * Calculate all the probabilities in the matrix.
    */
   protected void calculateProbabilities() {
-    assert mLength == CgGotohEditDistance.CG_RAW_READ_LENGTH : "mLength=" + mLength; // it should be a CG read
+    assert mLength == CgUtils.CG_RAW_READ_LENGTH || mLength == CgUtils.CG2_RAW_READ_LENGTH : "mLength=" + mLength; // it should be a CG read
     calculateInitialRow(0, mDeleteOpenProb / mWidth, (1.0 - mDeleteOpenProb) / mWidth);
-    for (int row = 1; row <= CgGotohEditDistance.CG_RAW_READ_LENGTH; row++) {
+    for (int row = 1; row <= mLength; row++) {
       final int gap = mGap[mArm][row];
       if (gap < 0) {
         calculateRow(row); // normal boring row
@@ -247,12 +255,14 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
 
   int[] makeRowOffsets(final int arm) {
     final int maxShift = mWidth >> 1;
-      final int[] result = new int[CgGotohEditDistance.CG_RAW_READ_LENGTH + 1];
+      final int[] result = new int[mLength + 1];
       int offset = -(maxShift + 1);
-      for (int row = 0; row <= CgGotohEditDistance.CG_RAW_READ_LENGTH; row++) {
+      for (int row = 0; row <= mLength; row++) {
         final int gap = mGap[arm][row];
         if (gap == OVERLAP_GAP) {
           offset -= 2;
+        } else if (gap == OVERLAP2_GAP) {
+          offset -= 3;
         } else if (gap == LARGE_GAP) {
           offset += 6;
         }
@@ -686,7 +696,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
       }
     }
     assert bestProb > 0.0;
-    mStats[mStatsArm * 3 + whichGap][bestGap - gapStart]++;
+    mStats[mStatsArm * GAP_NAME.length + whichGap][bestGap - gapStart]++;
     return bestGap;
   }
 
@@ -706,17 +716,20 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
     sb.append(fmt.format(mInsertExtendProb));
     sb.append(StringUtils.LS);
     sb.append("Gap Histograms").append(StringUtils.LS);
-    for (int i = 0; i < 6; i++) {
-      final int arm = i / 3;
-      final int whichGap = i % 3;
-      sb.append(arm == LEFT_ARM ? "Left" : "Right").append(GAP_NAME[whichGap]).append(":\t");
-      final int gapStart = mGapStart[whichGap];
-      final int gapEnd = gapStart + mGapProb[whichGap].length;
-      sb.append(gapStart).append("..").append(gapEnd - 1);
-      for (int width = 0; width < gapEnd - gapStart; width++) {
-        sb.append("\t").append(mStats[i][width]);
+    for (int arm = 0; arm < 2; arm++) {
+      final int startGap = 0;
+      final int endGap = 3;
+      for (int whichGap = startGap; whichGap < endGap; whichGap++) {
+        final int index = arm * GAP_NAME.length + whichGap;
+        sb.append(arm == LEFT_ARM ? "Left" : "Right").append(GAP_NAME[whichGap]).append(":\t");
+        final int gapStart = mGapStart[whichGap];
+        final int gapEnd = gapStart + mGapProb[whichGap].length;
+        sb.append(gapStart).append("..").append(gapEnd - 1);
+        for (int width = 0; width < gapEnd - gapStart; width++) {
+          sb.append("\t").append(mStats[index][width]);
+        }
+        sb.append(StringUtils.LS);
       }
-      sb.append(StringUtils.LS);
     }
     Diagnostic.developerLog(sb.toString());
   }
@@ -724,30 +737,21 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
   @Override
   public int[] calculateEditDistance(byte[] read, int rlen, byte[] template, int zeroBasedStart, int maxScore, int maxShift, boolean cgLeft) {
     // TODO: get read qualities from somewhere
-    assert read.length == CgGotohEditDistance.CG_RAW_READ_LENGTH;
+    assert read.length == mLength;
 //    System.err.println("aligning " + rlen + "@" + zeroBasedStart + " : " + cgLeft);
-    if (cgLeft) {
-      mStatsArm = LEFT_ARM;
-      // we should have five '.' chars 10 positions from the end.
-//      System.arraycopy(read, 0, mRead, 0, 25);
-//      assert read[25] == 6;
-//      assert read[29] == 6;
-//      System.arraycopy(read, 30, mRead, 25, 10);
-      final EnvironmentImplementation env = new EnvironmentImplementation(maxShift, template, zeroBasedStart, read, null);
-      setEnv(env, true);
-    } else {
-      mStatsArm = RIGHT_ARM;
-//      assert read[10] == 5;
-//      assert read[14] == 5;
-//      System.arraycopy(read, 0, mRead, 0, 10);
-//      System.arraycopy(read, 15, mRead, 10, 25);
+    final EnvironmentImplementation env;
+    final boolean isInverted = !cgLeft && rlen == CgUtils.CG_RAW_READ_LENGTH;
+    mStatsArm = cgLeft ? LEFT_ARM : RIGHT_ARM;
+    if (isInverted) {
       // we reverse the read and the template, and then pretend that this is a left arm read.
-      // we add 4 because the most common CG alignment size along the template is 35 - 2 + 6 = 39.
-      final EnvironmentImplementation env = new EnvironmentImplementation(maxShift, template, zeroBasedStart + CgUtils.CG_EXPECTED_LENGTH_OFFSET, read, null);
-      setEnv(new InvertedEnvironment(env), true);
+      // we add an offset because the most common CG alignment size along the template is 35 - 2 + 6 = 39.
+      env = new InvertedEnvironment(new EnvironmentImplementation(maxShift, template, zeroBasedStart + CgUtils.CG_EXPECTED_LENGTH_OFFSET, read, null));
+    } else {
+      env = new EnvironmentImplementation(maxShift, template, zeroBasedStart, read, null);
     }
+    setEnv(env, true);
     mRead = read;
-    mWorkspace = goBackwards(mLength, !cgLeft, mWorkspace);
+    mWorkspace = goBackwards(mLength, isInverted, mWorkspace);
 //    System.err.println("workspace says aligns @" + mWorkspace[ActionsHelper.TEMPLATE_START_INDEX] + " score=" + mWorkspace[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
     return mWorkspace;
   }

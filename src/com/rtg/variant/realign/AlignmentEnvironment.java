@@ -56,6 +56,6 @@ public interface AlignmentEnvironment {
    * corresponds to the overlap being on the left (lower template position).
    * @return true iff the the read is oriented forward.
    */
-  boolean cgOverlapOnLeft();
+  boolean isInverted();
 
 }

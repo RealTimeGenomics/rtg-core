@@ -52,7 +52,7 @@ public class CalibratedMachineErrorParamsTest extends TestCase {
     lap.increment(2, 6);
     lap.increment(3, 5);
 
-    final double[][] dists = CalibratedMachineErrorParams.histogramsToCgDists(gap, lap);
+    final double[][] dists = CalibratedMachineErrorParams.histogramsToCgV1Dists(gap, lap);
     //gap dists are length 4 + index
     assertEquals((double) 4 / 22, dists[0][0]);
     assertEquals((double) 5 / 22, dists[0][1]);

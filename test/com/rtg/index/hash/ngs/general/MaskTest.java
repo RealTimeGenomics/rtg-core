@@ -60,7 +60,7 @@ public class MaskTest extends AbstractSplitTest {
     final Substitute sub = new Substitute(dna, f, true);
     sub.substituteProtected(sk.substitutions());
     if (indel > 0) {
-      SubstituteIndel.checkIndel(f, dna, indel, 0/*cg*/, 7);
+      SubstituteIndel.checkIndel(f, dna, indel, 0/*cg*/);
     }
   }
 

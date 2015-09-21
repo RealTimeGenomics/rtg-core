@@ -51,7 +51,7 @@ public class AlignmentEnvironmentReadTest extends TestCase {
 
     assertEquals(5, se.subsequenceLength());
 
-    assertTrue(se.cgOverlapOnLeft());
+    assertTrue(!se.isInverted());
   }
 
   public void testBug() {

@@ -114,7 +114,7 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
       if (mt == null) {
         throw new NoTalkbackSlimException("Read group with platform specified required");
       } else if (mt.orientation() == null
-          || mt != MachineType.ILLUMINA_PE && mt != MachineType.COMPLETE_GENOMICS //TODO prove other types are ok and this check can be removed
+          || mt != MachineType.ILLUMINA_PE && mt != MachineType.COMPLETE_GENOMICS && mt != MachineType.COMPLETE_GENOMICS_2 //TODO prove other types are ok and this check can be removed
           ) {
         throw new NoTalkbackSlimException("Unsupported platform: " + srgr.getPlatform());
       }

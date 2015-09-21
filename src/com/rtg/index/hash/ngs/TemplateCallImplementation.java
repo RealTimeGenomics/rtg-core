@@ -23,6 +23,7 @@ import com.rtg.index.IntSetWindow;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.mode.SequenceType;
 import com.rtg.ngs.NgsParams;
+import com.rtg.reader.CgUtils;
 import com.rtg.reader.PrereadType;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.integrity.Exam;
@@ -43,7 +44,7 @@ public class TemplateCallImplementation extends IntegralAbstract implements Temp
 
   private final int mErrorLimit;
 
-  private final boolean mIsCG;
+  private final boolean mIsCGV1;
   private final boolean mIsProtein;
 
   private final IndexSet mIndexes;
@@ -73,7 +74,7 @@ public class TemplateCallImplementation extends IntegralAbstract implements Temp
     mIndexes = indexes;
     mOutputProcessor = out;
     mErrorLimit = params.outputParams().errorLimit();
-    mIsCG = params.buildFirstParams().reader().getPrereadType() == PrereadType.CG;
+    mIsCGV1 = params.buildFirstParams().reader().getPrereadType() == PrereadType.CG && params.buildFirstParams().reader().minLength() == CgUtils.CG_RAW_READ_LENGTH;
     mIntSetWindow = params.intSetWindow();
     mIsProtein = params.searchParams() != null && params.searchParams().reader().type() == SequenceType.PROTEIN;
   }
@@ -180,7 +181,7 @@ public class TemplateCallImplementation extends IntegralAbstract implements Temp
         //System.err.println("call score=" + score + " indelScore=" + scoreIndel + " errorLimit=" + mErrorLimit);
         if (scoreIndel <= mErrorLimit) {
           final String frame;
-          if (mIsCG) {
+          if (mIsCGV1) {
             final boolean second = (readId & 1) == 1;
             frame = second == mRC ? "F" : "R";
           } else {

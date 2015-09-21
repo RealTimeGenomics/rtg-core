@@ -33,12 +33,12 @@ public final class CgUnroller {
 
     private final byte[] mRead;
     private final byte[] mQuality;
-    private final boolean mCgOverlapOnLeft;
+    private final boolean mIsInverted;
 
-    OrientedRead(final byte[] read, final byte[] quality, final boolean cgOverlapOnLeft) {
+    OrientedRead(final byte[] read, final byte[] quality, final boolean isInverted) {
       mRead = read;
       mQuality = quality;
-      mCgOverlapOnLeft = cgOverlapOnLeft;
+      mIsInverted = isInverted;
     }
 
     public byte[] getRead() {
@@ -54,14 +54,14 @@ public final class CgUnroller {
       return mQuality;
     }
 
-    public boolean isCgOverlapOnLeft() {
-      return mCgOverlapOnLeft;
+    public boolean isInverted() {
+      return mIsInverted;
     }
   }
 
   /**
    * Given a SAM record representing a Complete Genomics mapped read, unroll
-   * the overlaps are orient the read with the large gap on the right.
+   * the overlaps and orient the read with the overlap on the left.
    * If the input record is found to be invalid null is returned.
    *
    * @param rec SAM record
@@ -86,6 +86,7 @@ public final class CgUnroller {
     final String expandedRead;
     final String expandedQual;
     final String superCigar = rec.getSuperCigar();
+    final boolean v1;
     if (superCigar == null) {
       final String gs = rec.getOverlapBases();
       final String gq = rec.getOverlapQuality();
@@ -99,6 +100,7 @@ public final class CgUnroller {
       if (expandedRead == null) {
         return null;
       }
+      v1 = expandedRead.length() == CgUtils.CG_RAW_READ_LENGTH;
       if (!hasQuality) {
         expandedQual = null;
       } else if (legacyLegacy) {
@@ -117,26 +119,33 @@ public final class CgUnroller {
         return null;
       }
       expandedRead = unroll.getString();      //.replaceAll(" ", "");
+      v1 = expandedRead.length() == CgUtils.CG_RAW_READ_LENGTH;
       final int overlapWidth = unroll.getTemplateOverlapEnd() - unroll.getTemplateOverlapStart();
       final int middle = unroll.getReadOverlapMiddle();
+      if (!v1 && expandedRead.length() != CgUtils.CG2_RAW_READ_LENGTH && expandedRead.length() != CgUtils.CG2_PADDED_LENGTH) {
+        return null;
+      }
+      if (rec.getRead().length != expandedRead.length()
+        && (overlapWidth <= 0
+        //          || samLength + overlapWidth != CG_RAW_READ_LENGTH   NOT necessarily true - deletes in the overlap region change this.
+        || middle == -1)) {
+        return null;
+      }
       if (hasQuality) {
-        final int overlapPos = middle <= CgUtils.CG_OVERLAP_POSITION ? CgUtils.CG_OVERLAP_POSITION : samLength - CgUtils.CG_OVERLAP_POSITION;
+        final int fwdOverlap = v1 ? CgUtils.CG_OVERLAP_POSITION : CgUtils.CG2_OVERLAP_POSITION;
+        final int overlapPos = middle <= fwdOverlap ? fwdOverlap : samLength - fwdOverlap;
         final String overlapQual = rec.getOverlapQuality();
         expandedQual = samQualities.substring(0, overlapPos) + overlapQual + samQualities.substring(overlapPos);
+        if (expandedQual.length() != expandedRead.length()) {
+          return null;
+        }
       } else {
         expandedQual = null;
       }
       //System.out.println("unrollCgRead gives RL=" + rec.getRead().length + " read:" + expandedRead + " (len=" + expandedRead.length() + ")" + "               and qual:" + expandedQual + " (overlapWidth=" + overlapWidth + ")" + " middle=" + middle);
-      if (rec.getRead().length != CgUtils.CG_RAW_READ_LENGTH && //if the read in the sam record is the normal cg read length (i.e. no overlap), these further checks are invalid
-          (overlapWidth <= 0
-           || expandedRead.length() != CgUtils.CG_RAW_READ_LENGTH
-           //          || samLength + overlapWidth != CG_RAW_READ_LENGTH   NOT necessarily true - deletes in the overlap region change this.
-           || middle == -1
-           || (expandedQual != null && expandedQual.length() != CgUtils.CG_RAW_READ_LENGTH))) {
-        return null;
-      }
     }
-    final boolean cgOverlapOnLeft = rec.isCgOverlapLeft();
+    // XXXLen todo, remove padding base if present.
+    final boolean cgOverlapOnLeft = v1 && (rec.isFirst() ^ rec.isNegativeStrand()) || !v1 && !rec.isNegativeStrand();
     final String reversedRead;
     final String reversedQual;
     if (cgOverlapOnLeft) {
@@ -146,7 +155,7 @@ public final class CgUnroller {
       reversedRead = StringUtils.reverse(expandedRead);
       reversedQual = StringUtils.reverse(expandedQual);
     }
-    return new CgUnroller.OrientedRead(reversedRead.getBytes(), hasQuality ? FastaUtils.asciiToRawQuality(reversedQual) : null, cgOverlapOnLeft);
+    return new CgUnroller.OrientedRead(reversedRead.getBytes(), hasQuality ? FastaUtils.asciiToRawQuality(reversedQual) : null, !cgOverlapOnLeft);
   }
 
 }

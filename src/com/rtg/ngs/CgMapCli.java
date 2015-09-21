@@ -12,8 +12,8 @@
 
 package com.rtg.ngs;
 
-import static com.rtg.ngs.MapFlags.COMPRESS_HASHES_FLAG;
 import static com.rtg.launcher.CommonFlags.TEMP_DIR;
+import static com.rtg.ngs.MapFlags.COMPRESS_HASHES_FLAG;
 import static com.rtg.ngs.MapFlags.TEMP_FILES_COMPRESSED;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
@@ -39,6 +39,7 @@ import com.rtg.launcher.ParamsTask;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.AlternatingSequencesWriter;
+import com.rtg.reader.CgUtils;
 import com.rtg.reader.CompressedMemorySequencesReader;
 import com.rtg.reader.FormatCli;
 import com.rtg.reader.PrereadType;
@@ -175,7 +176,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
 
     final Flag maskFlag = mFlags.registerOptional(MASK_FLAG, String.class, "string", "mask to apply", "cgmaska15b1").setCategory(SENSITIVITY_TUNING);
     if (License.isDeveloper()) {
-      maskFlag.setParameterRange(new String[]{"cgmaska15b1", "cgmaska1b1", "cgmaska15b1alt", "cgmaska1b1alt"});
+      maskFlag.setParameterRange(new String[]{"cgmaska15b1", "cgmaska1b1", "cgmaska15b1alt", "cgmaska1b1alt", "cg2maska1", "cg2maska11"});
     } else {
       maskFlag.setParameterRange(new String[]{"cgmaska15b1", "cgmaska1b1"});
     }
@@ -307,10 +308,31 @@ public class CgMapCli extends ParamsCli<NgsParams> {
         throw new InvalidParamsException("Left and right SDFs for read pair must have same number of sequences, actually had: "
             + leftParams.numberSequences() + " and " + rightParams.numberSequences());
       }
-      if (!(leftParams.reader().maxLength() == 35 && leftParams.reader().minLength() == 35)
-          || !(rightParams.reader().maxLength() == 35 && rightParams.reader().minLength() == 35)) {
-        throw new InvalidParamsException("Complete Genomics input has some reads of length other than 35.");
+      final long length = leftParams.reader().maxLength();
+      if (length != leftParams.reader().minLength()
+        || length != rightParams.reader().minLength()
+        || length != rightParams.reader().maxLength()) {
+        throw new InvalidParamsException("Complete Genomics input must have all reads the same length.");
       }
+      if (length != CgUtils.CG_RAW_READ_LENGTH
+        && length != CgUtils.CG2_RAW_READ_LENGTH) {
+        throw new InvalidParamsException("Complete Genomics input must have read length of " + CgUtils.CG_RAW_READ_LENGTH + " or " + CgUtils.CG2_RAW_READ_LENGTH + " bp");
+      }
+
+      final SAMReadGroupRecord samrg = params.outputParams().readGroup();
+      if (samrg != null) {
+        final String platform = samrg.getPlatform();
+        final MachineType mt = length == CgUtils.CG_RAW_READ_LENGTH ? MachineType.COMPLETE_GENOMICS : MachineType.COMPLETE_GENOMICS_2;
+        if (!mt.compatiblePlatform(platform)) {
+          if (platform == null || platform.length() == 0) {
+            Diagnostic.warning("Read group platform not set, defaulting to \"" + mt.platform() + "\"");
+            samrg.setPlatform(mt.platform());
+          } else {
+            Diagnostic.warning("Read group platform is \"" + platform + "\", should be set to \"" + mt.platform() + "\"");
+          }
+        }
+      }
+
       return params;
     } catch (final RuntimeException e) {
       tParams.close();
@@ -334,15 +356,6 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     final SAMReadGroupRecord rg = MapParamsHelper.getSAMReadGroupRecord(mFlags);
     if (rg != null) {
       ngsOutputParamsBuilder.readGroup(rg);
-      final String platform = ngsOutputParamsBuilder.mReadGroupRecord.getPlatform();
-      if (!MachineType.COMPLETE_GENOMICS.compatiblePlatform(platform)) {
-        if (platform == null || platform.length() == 0) {
-          Diagnostic.warning("Read group platform not set, defaulting to \"" + MachineType.COMPLETE_GENOMICS.platform() + "\"");
-          ngsOutputParamsBuilder.mReadGroupRecord.setPlatform(MachineType.COMPLETE_GENOMICS.platform());
-        } else {
-          Diagnostic.warning("Read group platform is \"" + platform + "\", should be set to \"" + MachineType.COMPLETE_GENOMICS.platform() + "\"");
-        }
-      }
     }
     ngsOutputParamsBuilder.calibrate(false);
     if (!mFlags.isSet(MapFlags.NO_CALIBRATION)) {

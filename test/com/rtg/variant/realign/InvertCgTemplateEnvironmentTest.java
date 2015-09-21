@@ -16,6 +16,7 @@ import static com.rtg.util.StringUtils.LS;
 import com.rtg.mode.DNA;
 import com.rtg.util.TestUtils;
 import com.rtg.util.integrity.Exam;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.MachineErrorParams;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
@@ -60,13 +61,8 @@ public class InvertCgTemplateEnvironmentTest extends TestCase {
     assertEquals(35, read.length);
     final AlignmentEnvironment temEnv = new AlignmentEnvironmentGenomeSubstitution(sam.getAlignmentStart() - 1, template.length, new ComplexTemplate(template, "", 20, 20), new byte[] {});
     final Environment env = new InvertCgTemplateEnvironment(
-        new EnvironmentCombined(
-            new AlignmentEnvironmentRead(new VariantAlignmentRecord(sam), params, MachineErrorParams.builder().create())
-            , sam.getAlignmentStart() - 1
-            , 5
-            , temEnv
-            )
-        );
+      new EnvironmentCombined(new AlignmentEnvironmentRead(new VariantAlignmentRecord(sam), params, MachineErrorParams.builder().create()), sam.getAlignmentStart() - 1, 5, temEnv),
+      MachineType.COMPLETE_GENOMICS);
 
     Exam.integrity(env);
     //    final String exp = ""

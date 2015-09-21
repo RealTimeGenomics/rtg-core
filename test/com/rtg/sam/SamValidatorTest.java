@@ -316,6 +316,7 @@ public class SamValidatorTest extends TestCase {
 
     final SAMRecord samrec = new SAMRecord(null);
     try (PrintStream out = new PrintStream(new ByteArrayOutputStream())) {
+      samrec.setReadName("foo");
       samrec.setAlignmentStart(6);
       samrec.setCigarString("4M1D6M1D15M");
       samrec.setReadString("ATGTCATCTTCCTCTTCTGGGGCNT");
@@ -325,86 +326,75 @@ public class SamValidatorTest extends TestCase {
       assertEquals(9, sv.isAtExpectedRef(stringToDna(template), samrec, new PileUp(template.length())));
 
       samrec.setBaseQualityString("55663,0/5534.2,898256678.");
+      assertFalse(sv.matchesRawRead(DnaUtils.encodeArray("atgtcatcttcctcttctggggcnt".getBytes()), FastaUtils.asciiToRawQuality("55663,0/5534.2,898256678.3887755562"), samrec, false));
+      assertTrue(sv.matchesRawRead(DnaUtils.encodeArray("atgtcatcttcctcttctggggcnt".getBytes()), FastaUtils.asciiToRawQuality("55663,0/5534.2,898256678."), samrec, false));
 
-      assertFalse(sv.matchesRawRead(DnaUtils.encodeArray("atgtcatcttcctcttctggggcnt".getBytes()), FastaUtils.asciiToRawQuality("55663,0/5534.2,898256678.3887755562"), samrec, false, false));
-      assertTrue(sv.matchesRawRead(DnaUtils.encodeArray("atgtcatcttcctcttctggggcnt".getBytes()), FastaUtils.asciiToRawQuality("55663,0/5534.2,898256678."), samrec, false, false));
+      setRec(samrec, 67, "23M7N10M", "TTTGTAGGTCGGATAAGGCGTTCATCCGACACG", "431%68883-56+141663,2.3-45/.,2553", "3S2G28S", "GTGT", "6%%6", 0);
+      assertTrue(sv.matchesRawRead(DnaUtils.encodeArray("tttgtgtaggtcggataaggcgttc     atccgacacg".replaceAll(" ", "").getBytes()), FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3-45/.,2553"), samrec, true));
+
+      setRec(samrec, 179, "23M7N10M", "GCTGACCGCCAAAGGTGAGCAACATGAGGTGGC", "431%68883-56+141663,2.3-45/.,2553", "3S2G28S", "GAGA", "6%%6", 1);
+      assertTrue(sv.matchesRawRead(DnaUtils.encodeArray("gccacctcat     gttgctcacctttggcggtctcagc".replaceAll(" ", "").getBytes()), FastaUtils.asciiToRawQuality("3552,./54-3.2,366141+65-38886%%6134"), samrec, true));
+
+      setRec(samrec, 131, "10M5N24M", "GGGCGAGCGTCAACTTTCAGTTAACGCAAAACGG", "", "29S1G4S", "AT", null, 0);
+      assertTrue(sv.matchesRawRead(DnaUtils.encodeArray("gggcgagcgt     caactttcagttaacgcaaatacgg".replaceAll(" ", "").getBytes()), null, samrec, true));
+
+      setRec(samrec, 115, "10M5N16M1D8M", "AACTACGATGATGACGGCGGCGACCCGGCGCGTG", "", "29S1G4S", "GA", null, 1);
+      assertTrue(sv.matchesRawRead(DnaUtils.encodeArray("cacgtcgccgggtcgccgccgtcat     catcgtagtt".replaceAll(" ", "").getBytes()), null, samrec, true));
+
+      setRec(samrec, 115, "10M5N23M", "TCAGCACTTCGATAGAGGTTTTCACCACGTTCC", "", "28S2G3S", "GTGT", null, 0);
+      assertTrue(sv.matchesRawRead(DnaUtils.encodeArray("ggaacacgtggtgaaaacctctatc     gaagtgctga".replaceAll(" ", "").getBytes()), null, samrec, true));
+
+      setRec(samrec, 131, "10M6N24M", "ACATTCATCACAGACCTGGGCCTGCTGGGCCCCA", ".531337242.875&3158.,2+/./4/-,4550", "29S1G4S", "CC", ",2", 0);
+      assertTrue(sv.matchesRawRead(DnaUtils.encodeArray("acattcatca     cagacctgggcctgctgggccccca".replaceAll(" ", "").getBytes()), FastaUtils.asciiToRawQuality(".531337242.875&3158.,2+/./4/-,24550"), samrec, true));
+
+      setRec(samrec, 131, "10M5N16M1I3M2I1M", "TTCTCCATTCGAGACGTTGTGAATGTGGACTTG", ".333,0/60..855041063+.,1014/0*#45", "28S2G3S", "ACAC", "0*06", 6);
+      assertTrue(sv.matchesRawRead(DnaUtils.encodeArray("ttctccattc     gagacgttgtgaatgtggacacttg".replaceAll(" ", "").getBytes()), FastaUtils.asciiToRawQuality(".333,0/60..855041063+.,1014/0*06#45"), samrec, true));
 
       template = "GGCACACCTGGAGCCAGCCACCCGCTGGGTCGCACATGGATCTGGTGATATTATTGATAAT";
-      samrec.setReadString("GGCACACCTGCCACCCGCTGGGTCGCACATGGA");
-      samrec.setAlignmentStart(1);
-      samrec.setCigarString("10M7N23M");
-      samrec.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, 0);
-      samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES, "ATAT");
-      samrec.setAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS, "28S2G3S");  //28 = 35 - 4 - 3
-      samrec.setFlags(115);
+      setRec(samrec, 115, "10M7N23M", "GGCACACCTGCCACCCGCTGGGTCGCACATGGA", "", "28S2G3S", "ATAT", null, 0);
       assertEquals(0, sv.isAtExpectedRef(stringToDna(template), samrec, new PileUp(template.length())));
 
       template = "AACATGACTAAAGTACGTAATTGCGTTCTTGATGCACTTTC";
-      samrec.setReadString("AACATGACTAAAGTACGTAATTGCTGTGCACTTT");
-      samrec.setAlignmentStart(1);
-      samrec.setCigarString("24M5N2M1D8M");
-      samrec.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, 1);
-      samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES, "TT");
-      samrec.setAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS, "4S1G29S");  //29 = 35 - 4 - 2
-      samrec.setFlags(179);
+      setRec(samrec, 179, "24M5N2M1D8M", "AACATGACTAAAGTACGTAATTGCTGTGCACTTT", "", "4S1G29S", "TT", null, 1);
       assertEquals(2, sv.isAtExpectedRef(stringToDna(template), samrec, new PileUp(template.length())));
 
       template = "GCTGGCGTCTGGCTGGGTCGTTGAAACCGCAGGGGACATCT";
-      samrec.setReadString("GCTGGCGTCTGGCTGGGTCGTTGAGGGGACATC");
-      samrec.setAlignmentStart(1);
-      samrec.setCigarString("23M7N10M");
-      samrec.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, 0);
-      samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES, "GGGG");
-      samrec.setAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS, "3S2G28S");
-      samrec.setFlags(67);
+      setRec(samrec, 67, "23M7N10M", "GCTGGCGTCTGGCTGGGTCGTTGAGGGGACATC", "", "3S2G28S", "GGGG", null, 0);
       assertEquals(0, sv.isAtExpectedRef(stringToDna(template), samrec, new PileUp(template.length())));
 
       template = "GGGCGAGCGTTATCTCAACTTTCAGTTAACGCAAAACGGCAAAATGGCGGC";
-      samrec.setReadString("GGGCGAGCGTCAACTTTCAGTTAACGCAAAACGG");
-      samrec.setAlignmentStart(1);
-      samrec.setCigarString("10M5N24M");
-      samrec.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, 0);
-      samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES, "AA");
-      samrec.setAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS, "29S1G4S");
-      samrec.setFlags(131);
+      setRec(samrec, 131, "10M5N24M", "GGGCGAGCGTCAACTTTCAGTTAACGCAAAACGG", "", "29S1G4S", "AA", null, 0);
       assertEquals(0, sv.isAtExpectedRef(stringToDna(template), samrec, new PileUp(template.length())));
 
       template = "CGACGGCGGTGGGATTGCTTCACTATGGGAAAGAGTCACATCTTAACGGTGAAGCTGAAGT";
-      samrec.setReadString("CGACGGCGGTTGCTTCACTATGGGAAAGAGTCCA");
-      samrec.setAlignmentStart(1);
-      samrec.setCigarString("10M5N22M1D2M");
-      samrec.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, 1);
-      samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES, "GG");
-      samrec.setAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS, "29S1G4S");
-      samrec.setFlags(131);
+      setRec(samrec, 131, "10M5N22M1D2M", "CGACGGCGGTTGCTTCACTATGGGAAAGAGTCCA", "", "29S1G4S", "GG", null, 1);
       assertEquals(2, sv.isAtExpectedRef(stringToDna(template), samrec, new PileUp(template.length())));
 
       final PileUp p = new PileUp(template.length());
       template = "ACACTGAGAAAGGGTATCACTTCGTTAGGGTGGCGGCAGC";
-      samrec.setReadString("ACCTGAGAAAGGGTATCACTTCGTTGGCGGCAGC");
-      samrec.setAlignmentStart(1);
-      samrec.setCigarString("2M1D22M5N10M");
-      samrec.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, 1);
-      samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES, "GG");
-      samrec.setAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS, "4S1G29S");
-      samrec.setFlags(67);
+      setRec(samrec, 67, "2M1D22M5N10M", "ACCTGAGAAAGGGTATCACTTCGTTGGCGGCAGC", "", "4S1G29S", "GG", null, 1);
       assertEquals(2, sv.isAtExpectedRef(stringToDna(template), samrec, p));
 
       template = "CTGCTGCACACAACCCCAGTAAATATCGTCGAGGGCCGCC";
-      samrec.setReadString("CTGCTGCACAAGTAAATATCGTCGAGGGCTGCC");
-      samrec.setAlignmentStart(1);
-      samrec.setCigarString("10M7N23M");
-      samrec.setAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE, 1);
-      samrec.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, 1);
-      samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES, "CC");
-      samrec.setAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS, "29S1G4S");
-      samrec.setFlags(131);
+      setRec(samrec, 131, "10M7N23M", "CTGCTGCACAAGTAAATATCGTCGAGGGCTGCC", "", "29S1G4S", "CC", null, 1);
       assertEquals(1, sv.isAtExpectedRef(stringToDna(template), samrec, p));
 
       assertEquals(47, p.consensus());
       assertEquals(67, p.total());
       assertEquals(1.098360655737705, p.coverage());
     }
+  }
+
+  public void setRec(SAMRecord samrec, int flags, String cigar, String bases, String qualities, String instructions, String overlapBases, String overlapQualities, int mismatches) {
+    samrec.setAlignmentStart(1);
+    samrec.setCigarString(cigar);
+    samrec.setReadString(bases);
+    samrec.setBaseQualityString(qualities);
+    samrec.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, mismatches);
+    samrec.setAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS, instructions);
+    samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES, overlapBases);
+    samrec.setAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY, overlapQualities);
+    samrec.setFlags(flags);
   }
 
   public void testCGSoftClip() {

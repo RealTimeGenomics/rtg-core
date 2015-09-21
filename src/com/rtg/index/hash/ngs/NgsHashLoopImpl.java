@@ -103,7 +103,7 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
       final int currentLength = reader.length(seq);
       if (currentLength != hashFunction.readLength()) {
         if (badLengthCount++ < WRONG_LENGTH_REPORT_LIMIT) {
-          Diagnostic.warning(WarningType.INCORRECT_LENGTH, reader.hasNames() ? reader.name(seq) : ("" + seq), currentLength + "", hashFunction.readLength() + "");
+          Diagnostic.warning(WarningType.INCORRECT_LENGTH, reader.names() != null ? reader.name(seq) : ("" + seq), currentLength + "", hashFunction.readLength() + "");
         }
         hashFunction.setValues(id2, false);
         continue;

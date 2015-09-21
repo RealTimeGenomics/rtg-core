@@ -77,13 +77,14 @@ public abstract class ScoreMatrixCGTest extends TestCase {
    */
   public static class MockRealignParamsCG extends ScoreMatrixTest.MockRealignParams {
 
-    static final int[] GAP_START = {-3, 0, 5};
+    static final int[] GAP_START = {-3, 0, 5, -4};
 
     static final double[][] GAP_FREQ =
       {
       {Math.log(0.08), Math.log(0.84), Math.log(0.08)},    // for gap of -3, -2, -1
       {Math.log(0.27), Math.log(0.635), Math.log(0.095)},  // for gap of  0,  1,  2
       {Math.log(0.90), Math.log(0.07), Math.log(0.03)},    // for gap of  5,  6,  7
+      {Math.log(0.08), Math.log(0.84), Math.log(0.08)},    // for gap of -4, -3, -2
       };
 
     @Override

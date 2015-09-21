@@ -55,7 +55,7 @@ public final class AlignmentEnvironmentRead extends AbstractAlignmentEnvironment
   }
 
   @Override
-  public boolean cgOverlapOnLeft() {
-    return true;
+  public boolean isInverted() {
+    return false;
   }
 }

@@ -20,6 +20,7 @@ import com.rtg.mode.ProteinScoringMatrix;
 import com.rtg.ngs.NgsOutputParams;
 import com.rtg.ngs.NgsParams;
 import com.rtg.protein.GotohProteinEditDistance;
+import com.rtg.reader.CgUtils;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.InvalidParamsException;
@@ -50,7 +51,7 @@ public final class EditDistanceFactory {
   // Specify how many reads to log with -D option
   private static final int EDIT_LOGGING_AMOUNT = GlobalFlags.getIntegerValue(GlobalFlags.EDIT_DIST_LOGGING_AMOUNT_FLAG);
 
-  // Priors for cg CG-gotoh
+  // Priors for cg CG-gotoh XXXLen ensure this has OK information for CG v2, and probably just merge with the same default priors that variant calling uses
   private static final String GOTOH_CG_PRIORS = "cg_real_errors";
 
   /** default table for single indel aligner */
@@ -140,11 +141,14 @@ public final class EditDistanceFactory {
     final boolean useSeededAligner = maxReadLength > MIN_LEN_FOR_SEEDED_ALIGNER;
 
     if (prereadType == PrereadType.CG) {
-      if ((maxReadLength == CgGotohEditDistance.CG_RAW_READ_LENGTH) && (minReadLength == maxReadLength)) {
-        Diagnostic.developerLog("Using Gotoh CG aligner");
-        return new RcEditDistance(createCgGotohEditDistance(ngsParams.unknownsPenalty()));
+      if (minReadLength != maxReadLength) {
+        throw new IllegalArgumentException("CG data requires fixed length reads");
       }
-      throw new IllegalArgumentException("CG data only supports " + CgGotohEditDistance.CG_RAW_READ_LENGTH + " length reads");
+      if ((minReadLength == CgUtils.CG_RAW_READ_LENGTH) || (minReadLength == CgUtils.CG2_RAW_READ_LENGTH)) {
+        Diagnostic.developerLog("Using Gotoh CG aligner");
+        return new RcEditDistance(createCgGotohEditDistance(ngsParams.unknownsPenalty(), minReadLength));
+      }
+      throw new IllegalArgumentException("CG data does not support read length of " + minReadLength);
     } else if (useSeededAligner) {
       Diagnostic.developerLog("Using aligner chain");
       final int lbValue = calculateLowerBoundValue(minReadLength, ngsParams.alignerBandWidthFactor());
@@ -184,9 +188,10 @@ public final class EditDistanceFactory {
         new GotohEditDistance(ngsParams))), ngsParams.softClipDistance());
   }
 
-  private static CgGotohEditDistance createCgGotohEditDistance(int unknownsPenalty) {
+  private static CgGotohEditDistance createCgGotohEditDistance(int unknownsPenalty, int readLength) {
     try {
-      return new CgGotohEditDistance(7, new RealignParamsImplementation(new MachineErrorParamsBuilder().errors(GOTOH_CG_PRIORS).create()), unknownsPenalty);
+      final boolean v2 = readLength == CgUtils.CG2_RAW_READ_LENGTH;
+      return new CgGotohEditDistance(7, new RealignParamsImplementation(new MachineErrorParamsBuilder().errors(GOTOH_CG_PRIORS).create()), unknownsPenalty, v2);
     } catch (final InvalidParamsException | IOException e) {
       throw new RuntimeException(e);
     }

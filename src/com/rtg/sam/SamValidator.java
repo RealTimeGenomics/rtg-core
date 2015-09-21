@@ -12,7 +12,6 @@
 package com.rtg.sam;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -25,9 +24,10 @@ import java.util.TreeMap;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
 import com.rtg.ngs.NgsParams;
+import com.rtg.reader.CgSamBamSequenceDataSource;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.ReadHelper;
-import com.rtg.reader.SdfId;
+import com.rtg.reader.SamSequence;
 import com.rtg.reader.SequencesIterator;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
@@ -52,6 +52,7 @@ public final class SamValidator {
   private final boolean mPrintHistograms;
   private final PrintStream mOut;
   private final PrintStream mErr;
+  private SequencesReader mTemplateReader;
   private SequencesReader mLeftReader;
   private SequencesReader mRightReader;
   private final boolean mIgnoreFragmentSizeProblems;
@@ -108,70 +109,53 @@ public final class SamValidator {
   }
 
   void checkSAMAlign(File templateDir, Collection<File> samFiles, File leftReadsDir, File rightReadsDir) throws IOException {
-    try {
-      try (SequencesReader templateReader = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(templateDir)) {
-        boolean cgData = false;
-        SdfId readsGuid = new SdfId(0);
-        try {
-          mLeftReader = SequencesReaderFactory.createMemorySequencesReader(leftReadsDir, false, LongRange.NONE);
-        } catch (final FileNotFoundException e) {
-          throw new NoTalkbackSlimException(ErrorType.SDF_INDEX_NOT_VALID, leftReadsDir.toString());
-        }
-        if (mLeftReader != null) {
-          cgData = mLeftReader.getPrereadType() == PrereadType.CG;
-          readsGuid = mLeftReader.getSdfId();
-        }
-        try {
-          mRightReader = SequencesReaderFactory.createMemorySequencesReader(rightReadsDir, false, LongRange.NONE);
-        } catch (final FileNotFoundException e) {
-          throw new NoTalkbackSlimException(ErrorType.SDF_INDEX_NOT_VALID, rightReadsDir.toString());
-        }
+    try (final SequencesReader tr = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(templateDir);
+         final SequencesReader lr = SequencesReaderFactory.createMemorySequencesReader(leftReadsDir, false, LongRange.NONE);
+         final SequencesReader rr = SequencesReaderFactory.createMemorySequencesReader(rightReadsDir, false, LongRange.NONE)) {
+      mTemplateReader = tr;
+      mLeftReader = lr;
+      mRightReader = rr;
+      boolean cgData = false;
+      int[] countPerRead = null;
+      boolean[] pairedRead = null;
+      if (mLeftReader != null) {
+        cgData = mLeftReader.getPrereadType() == PrereadType.CG;
+        countPerRead = new int[(int) mLeftReader.numberSequences()];
+        pairedRead = new boolean[(int) mLeftReader.numberSequences()];
         if (mRightReader != null) {
-          if (!mRightReader.getSdfId().check(readsGuid)) {
+          if (!mRightReader.getSdfId().check(mLeftReader.getSdfId())) {
             throw new NoTalkbackSlimException(ErrorType.FILE_READ_ERROR, "Left and right reads have different GUIDs - are from different runs.");
           }
           if (cgData && mRightReader.getPrereadType() != PrereadType.CG) {
             throw new NoTalkbackSlimException(ErrorType.FILE_READ_ERROR, "Left reads are CG data, but right reads are not.");
           }
         }
-        if (mLeftReader != null && mRightReader == null) {
-          mSingleEnded = true;
-        }
-        final int[] countPerRead = mLeftReader == null ? mRightReader == null ? null : new int[(int) mRightReader.numberSequences()] : new int[(int) mLeftReader.numberSequences()];
-        final boolean[] pairedRead = mLeftReader == null ? mRightReader == null ? null : new boolean[(int) mRightReader.numberSequences()] : new boolean[(int) mLeftReader.numberSequences()];
-        for (final File samFile : samFiles) {
-          mExpectedMates.clear();
-          try (InputStream bis = FileUtils.createInputStream(samFile, false)) {
-            try (SamReader read = SamUtils.makeSamReader(bis)) {
-              processRecords(templateReader, read, cgData, countPerRead, pairedRead, mCurrentVariables);
-              if (mValidate) {
-                for (final String mate : mExpectedMates) {
-                  mErr.println("Missing mate: " + mate);
-                }
-              }
+      }
+      mSingleEnded = mLeftReader != null && mRightReader == null;
 
-              if (mPerFileStats || samFiles.size() == 1) {
-                printStats(samFile, mCurrentVariables);
+      for (final File samFile : samFiles) {
+        mExpectedMates.clear();
+        try (InputStream bis = FileUtils.createInputStream(samFile, false)) {
+          try (SamReader read = SamUtils.makeSamReader(bis)) {
+            processRecords(read, cgData, countPerRead, pairedRead);
+            if (mValidate) {
+              for (final String mate : mExpectedMates) {
+                mErr.println("Missing mate: " + mate);
               }
             }
+
+            if (mPerFileStats || samFiles.size() == 1) {
+              printStats(samFile, mCurrentVariables);
+            }
           }
-          mTotalVariables.addToTotal(mCurrentVariables);
-          mCurrentVariables = new SamStatsVariables();
         }
-        if (samFiles.size() > 1) {
-          printStats(null, mTotalVariables);
-        }
-        printStats2(countPerRead, pairedRead, mOut, mSingleEnded);
-      } finally {
-        if (mLeftReader != null) {
-          mLeftReader.close();
-        }
-        if (mRightReader != null) {
-          mRightReader.close();
-        }
+        mTotalVariables.addToTotal(mCurrentVariables);
+        mCurrentVariables = new SamStatsVariables();
       }
-    } catch (final FileNotFoundException e) {
-      throw new NoTalkbackSlimException(ErrorType.SDF_INDEX_NOT_VALID, templateDir.toString());
+      if (samFiles.size() > 1) {
+        printStats(null, mTotalVariables);
+      }
+      printStats2(countPerRead, pairedRead, mOut, mSingleEnded);
     }
   }
 
@@ -189,50 +173,13 @@ public final class SamValidator {
     mOut.println();
   }
 
-  private void validate(SAMRecord samRec, int prevTemplatePosition, int readId, boolean first, boolean cgData) {
-    if (samRec.getAlignmentStart() < prevTemplatePosition) {
-      mErr.println("Ordering error: " + samRec.getSAMString().trim());
-    }
-    if (samRec.getReadPairedFlag()) {
-      if (samRec.getFirstOfPairFlag() == samRec.getSecondOfPairFlag()) {
-        mErr.println("Mates from same side " + samRec.getSAMString().trim());
-      }
-      final String mateRef = samRec.getMateReferenceName();
-      if (!samRec.getMateUnmappedFlag() && !"*".equals(mateRef)) {
-        if (!mateRef.equals(samRec.getReferenceName())) {
-          mErr.println("Mate ref name not same as record ref name " + samRec.getSAMString().trim());
-        }
-        final String mateKey = samRec.getMateAlignmentStart() + ":" + samRec.getAlignmentStart() + ":" + samRec.getReadName() + samRec.getSecondOfPairFlag() + samRec.getReadNegativeStrandFlag() + samRec.getMateNegativeStrandFlag() + samRec.getInferredInsertSize();
-        final String key = samRec.getAlignmentStart() + ":" + samRec.getMateAlignmentStart() + ":" + samRec.getReadName() + samRec.getFirstOfPairFlag() + samRec.getMateNegativeStrandFlag() + samRec.getReadNegativeStrandFlag() + -samRec.getInferredInsertSize();
-        if (!mExpectedMates.remove(mateKey)) {
-          mExpectedMates.add(key);
-        }
-      }   //else the mate is unmapped...
-    }
-    if (!matchesRawRead(read(readId, first), qual(readId, first), samRec, cgData, mIgnoreFragmentSizeProblems)) {
-      mErr.println("Read doesn't match expected value from SDF " + samRec.getSAMString().trim());
-    }
-    final Integer ih = samRec.getIntegerAttribute(SamUtils.ATTRIBUTE_IH);
-    if (ih != null && ih <= 0) {
-      mErr.println("IH value invalid " + samRec.getSAMString().trim());
-    }
-    final Integer nh = samRec.getIntegerAttribute(SamUtils.ATTRIBUTE_NH);
-    if (nh != null) {
-      if (nh <= 0) {
-        mErr.println("NH value invalid " + samRec.getSAMString().trim());
-      } else if (ih != null && nh < ih) {
-        mErr.println("NH should be greater than or equal to IH " + samRec.getSAMString().trim());
-      }
-    }
-  }
-
-  int[] processRecords(SequencesReader templateReader, SamReader read, boolean cgData, int[] countPerRead, boolean[] pairedRead, SamStatsVariables variables) throws IOException {
+  int[] processRecords(SamReader read, boolean cgData, int[] countPerRead, boolean[] pairedRead) throws IOException {
     int prevTemplatePosition = 0;
     String prevTemplateName = null;
     byte[] currTemplate = null;
     PileUp pileUp = null;
     boolean firstRecord = true;
-    final SequencesIterator tempit = templateReader.iterator();
+    final SequencesIterator tempit = mTemplateReader.iterator();
     tempit.seek(0);
 
     for (final SAMRecord aRead : read) {
@@ -281,7 +228,7 @@ public final class SamValidator {
       if ("*".equals(refName)) {        // unmapped record
         mCurrentVariables.mUnmappedRecords++;
         if (mValidate) {
-          if (!matchesRawRead(read(readId, first), qual(readId, first), samRec, cgData, mIgnoreFragmentSizeProblems)) {
+          if (!matchesRawRead(read(readId, first), qual(readId, first), samRec, cgData)) {
             mErr.println("Read doesn't match expected value from SDF file " + samRec.getSAMString().trim());
           }
         }
@@ -319,11 +266,11 @@ public final class SamValidator {
         if (mValidate) {
           validate(samRec, prevTemplatePosition, readId, first, cgData);
           if (mPenaltiesSet) {
-            checkAlignmentScore(samRec, variables.mAlignmentScores, expectedRet);
+            checkAlignmentScore(samRec, mCurrentVariables.mAlignmentScores, expectedRet);
           }
         }
-        accumulateAlignmentCounts(samRec, variables.mIH, SamUtils.ATTRIBUTE_IH);
-        accumulateAlignmentCounts(samRec, variables.mNH, SamUtils.ATTRIBUTE_NH);
+        accumulateAlignmentCounts(samRec, mCurrentVariables.mIH, SamUtils.ATTRIBUTE_IH);
+        accumulateAlignmentCounts(samRec, mCurrentVariables.mNH, SamUtils.ATTRIBUTE_NH);
         if (countPerRead != null) {
           countPerRead[readId]++;
         }
@@ -345,14 +292,14 @@ public final class SamValidator {
           if (mCurrentVariables.mMinInsertSize > Math.abs(insertSize)) {
             mCurrentVariables.mMinInsertSize = Math.abs(insertSize);
           }
-          if (variables.mInsertSizes != null && (samRec.getAlignmentStart() < samRec.getMateAlignmentStart() || (samRec.getAlignmentStart() == samRec.getMateAlignmentStart() && samRec.getFirstOfPairFlag()))) {
+          if (mCurrentVariables.mInsertSizes != null && (samRec.getAlignmentStart() < samRec.getMateAlignmentStart() || (samRec.getAlignmentStart() == samRec.getMateAlignmentStart() && samRec.getFirstOfPairFlag()))) {
             final Integer isCount;
-            if (!variables.mInsertSizes.containsKey(insertSize)) {
+            if (!mCurrentVariables.mInsertSizes.containsKey(insertSize)) {
               isCount = 1;
             } else {
-              isCount = variables.mInsertSizes.get(insertSize) + 1;
+              isCount = mCurrentVariables.mInsertSizes.get(insertSize) + 1;
             }
-            variables.mInsertSizes.put(insertSize, isCount);
+            mCurrentVariables.mInsertSizes.put(insertSize, isCount);
           }
         }
       }
@@ -361,31 +308,6 @@ public final class SamValidator {
       accumulatePileUp(pileUp, currTemplate.length);
     }
     return countPerRead;
-  }
-
-  private void checkAlignmentScore(SAMRecord samRec, SortedMap<Integer, Integer> alignmentScoreMap, int computedScore) {
-    final Integer as = samRec.getIntegerAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE);
-    if (alignmentScoreMap != null) {
-      if (as == null) {
-        if (!samRec.getReadUnmappedFlag()) {
-          mErr.println("Record has no alignment score: " + samRec.getSAMString().trim());
-        }
-      } else {
-        final Integer ascount;
-        if (!alignmentScoreMap.containsKey(as)) {
-          ascount = 1;
-        } else {
-          ascount = alignmentScoreMap.get(as) + 1;
-        }
-        alignmentScoreMap.put(as, ascount);
-      }
-    }
-    if (mPenaltiesSet && computedScore != Integer.MIN_VALUE && as != null && !as.equals(computedScore)) {
-      final String superCigar = samRec.getStringAttribute(SamUtils.CG_SUPER_CIGAR);
-      if (superCigar == null) {
-        mErr.println("Record's " + SamUtils.ATTRIBUTE_ALIGNMENT_SCORE + ": " + as + " disagreed with computed score: " + computedScore + ", " + samRec.getSAMString().trim());
-      }
-    }
   }
 
   private void accumulateAlignmentCounts(SAMRecord samRec, SortedMap<Integer, Integer> map, String attribute) {
@@ -512,6 +434,68 @@ public final class SamValidator {
     }
   }
 
+  private void checkAlignmentScore(SAMRecord samRec, SortedMap<Integer, Integer> alignmentScoreMap, int computedScore) {
+    final Integer as = samRec.getIntegerAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE);
+    if (alignmentScoreMap != null) {
+      if (as == null) {
+        if (!samRec.getReadUnmappedFlag()) {
+          mErr.println("Record has no alignment score: " + samRec.getSAMString().trim());
+        }
+      } else {
+        final Integer ascount;
+        if (!alignmentScoreMap.containsKey(as)) {
+          ascount = 1;
+        } else {
+          ascount = alignmentScoreMap.get(as) + 1;
+        }
+        alignmentScoreMap.put(as, ascount);
+      }
+    }
+    if (mPenaltiesSet && computedScore != Integer.MIN_VALUE && as != null && !as.equals(computedScore)) {
+      final String superCigar = samRec.getStringAttribute(SamUtils.CG_SUPER_CIGAR);
+      if (superCigar == null) {
+        mErr.println("Record's " + SamUtils.ATTRIBUTE_ALIGNMENT_SCORE + ": " + as + " disagreed with computed score: " + computedScore + ", " + samRec.getSAMString().trim());
+      }
+    }
+  }
+
+  private void validate(SAMRecord samRec, int prevTemplatePosition, int readId, boolean first, boolean cgData) {
+    if (samRec.getAlignmentStart() < prevTemplatePosition) {
+      mErr.println("Ordering error: " + samRec.getSAMString().trim());
+    }
+    if (samRec.getReadPairedFlag()) {
+      if (samRec.getFirstOfPairFlag() == samRec.getSecondOfPairFlag()) {
+        mErr.println("Mates from same side " + samRec.getSAMString().trim());
+      }
+      final String mateRef = samRec.getMateReferenceName();
+      if (!samRec.getMateUnmappedFlag() && !"*".equals(mateRef)) {
+        if (!mateRef.equals(samRec.getReferenceName())) {
+          mErr.println("Mate ref name not same as record ref name " + samRec.getSAMString().trim());
+        }
+        final String mateKey = samRec.getMateAlignmentStart() + ":" + samRec.getAlignmentStart() + ":" + samRec.getReadName() + samRec.getSecondOfPairFlag() + samRec.getReadNegativeStrandFlag() + samRec.getMateNegativeStrandFlag() + samRec.getInferredInsertSize();
+        final String key = samRec.getAlignmentStart() + ":" + samRec.getMateAlignmentStart() + ":" + samRec.getReadName() + samRec.getFirstOfPairFlag() + samRec.getMateNegativeStrandFlag() + samRec.getReadNegativeStrandFlag() + -samRec.getInferredInsertSize();
+        if (!mExpectedMates.remove(mateKey)) {
+          mExpectedMates.add(key);
+        }
+      }   //else the mate is unmapped...
+    }
+    if (!matchesRawRead(read(readId, first), qual(readId, first), samRec, cgData)) {
+      mErr.println("Read doesn't match expected value from SDF " + samRec.getSAMString().trim());
+    }
+    final Integer ih = samRec.getIntegerAttribute(SamUtils.ATTRIBUTE_IH);
+    if (ih != null && ih <= 0) {
+      mErr.println("IH value invalid " + samRec.getSAMString().trim());
+    }
+    final Integer nh = samRec.getIntegerAttribute(SamUtils.ATTRIBUTE_NH);
+    if (nh != null) {
+      if (nh <= 0) {
+        mErr.println("NH value invalid " + samRec.getSAMString().trim());
+      } else if (ih != null && nh < ih) {
+        mErr.println("NH should be greater than or equal to IH " + samRec.getSAMString().trim());
+      }
+    }
+  }
+
   private boolean matchesGotohCg(byte[] read, byte[] quality, SAMRecord record) {
     mSuperCigarValidator.setTemplateStart(record.getAlignmentStart() - 1);
     try {
@@ -538,39 +522,41 @@ public final class SamValidator {
    * @param quality raw quality data
    * @param record sam record
    * @param cgData true if CG data
-   * @param ignoreFragmentSize true to ignore the CG fragment size
    * @return true if data match
    */
-  boolean matchesRawRead(byte[] read, byte[] quality, SAMRecord record, boolean cgData, boolean ignoreFragmentSize) {
+  boolean matchesRawRead(byte[] read, byte[] quality, SAMRecord record, boolean cgData) {
     if (read == null) {
       return true;
-    } else if (cgData) {
-      final String superCigar = record.getStringAttribute(SamUtils.CG_SUPER_CIGAR);
-      if (superCigar != null) {
+    }
+    final SamSequence s;
+    if (cgData) {
+      if (record.getStringAttribute(SamUtils.CG_SUPER_CIGAR) != null) {
         return matchesGotohCg(read, quality, record);
       }
-      return SamValidatorCgHelper.matchesCg(read, quality, record, ignoreFragmentSize);
+      s = CgSamBamSequenceDataSource.unrollCgRead(record);
+    } else {
+      s = new SamSequence(record);
     }
-    final byte[] recordBytes = record.getReadBases();
-      if (read.length != recordBytes.length) {
-        return false;
-      } else if (quality != null && quality.length != record.getBaseQualities().length) {
-        return false;
-      }
+    final byte[] recordBytes = s.getReadBases();
+    final byte[] recordQualities = s.getBaseQualities();
+    if (read.length != recordBytes.length) {
+      return false;
+    } else if (quality != null && quality.length != recordQualities.length) {
+      return false;
+    }
     if (record.getReadNegativeStrandFlag()) {
       for (int i = 0; i < read.length; i++) {
-
-          if (DnaUtils.getBase(DNA.complement(read[i])) != Character.toUpperCase((char) recordBytes[recordBytes.length - i - 1])) {
-            return false;
-          } else if (quality != null && i < record.getBaseQualities().length && quality[i] != record.getBaseQualities()[recordBytes.length - i - 1]) {
-            return false;
-          }
+        if (DnaUtils.getBase(DNA.complement(read[i])) != Character.toUpperCase((char) recordBytes[recordBytes.length - i - 1])) {
+          return false;
+        } else if (quality != null && i < recordQualities.length && quality[i] != recordQualities[recordBytes.length - i - 1]) {
+          return false;
+        }
       }
     } else {
       for (int i = 0; i < read.length; i++) {
         if (DnaUtils.getBase(read[i]) != Character.toUpperCase((char) recordBytes[i])) {
           return false;
-        } else if (quality != null && i < record.getBaseQualities().length && quality[i] != record.getBaseQualities()[i]) {
+        } else if (quality != null && i < recordQualities.length && quality[i] != recordQualities[i]) {
           return false;
         }
       }

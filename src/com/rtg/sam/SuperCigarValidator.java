@@ -13,7 +13,6 @@ package com.rtg.sam;
 
 import java.util.Arrays;
 
-import com.rtg.alignment.CgGotohEditDistance;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
 import com.rtg.reader.CgUtils;
@@ -31,7 +30,7 @@ public class SuperCigarValidator extends SuperCigarParser {
   private SAMRecord mSamRecord = null;
   private byte[] mSdfRead = null;
   private byte[] mSdfQualities = null;
-  private byte[] mQualities = new byte[CgUtils.CG_RAW_READ_LENGTH];
+  private byte[] mQualities = null;
   private String mXQField;
   private Integer mAlignmentScoreAttr = null;
   private int mAlignmentScore;
@@ -42,7 +41,7 @@ public class SuperCigarValidator extends SuperCigarParser {
 
   private final int mUnknownNt = DNA.N.ordinal();
 
-  private boolean mIsReverseCompliment;
+  private boolean mIsReverseComplement;
 
   private final int mUnknownsPenalty;
 
@@ -54,55 +53,53 @@ public class SuperCigarValidator extends SuperCigarParser {
   }
 
   /**
-   * Expand a SAM record's quality field using Super Cigar quality overlap field.
-   * @param qualityBuffer a 35-long byte array buffer for the expanded quality
-   * @param qualityOverlap the overlap quality values
+   * Expand a SAM record's quality field using Super Cigar quality overlap field. The result will still be
+   * in SAM orientation, so may require reversing if the original read orientation is required.
+   * @param dest the destination buffer for the expanded quality, which must be the correct length for the CG read type.
    * @param samQualities the flattened qualities from the SAM record
-   * @param first true if first of pair
-   * @param reverseCompliment true if reverse compliment
-   * @param phredifyQualityOverlap true if the qualities in the overlap region should be converted to phred scale (i.e. have 33 subtracted)
-   * @return the expanded quality array
+   * @param qualityOverlap the overlap quality values (<code>XQ</code> field)
+   * @param first true if the read is first of pair
+   * @param reverse true if the alignment was in the the reverse orientation
    * @throws BadSuperCigarException if the <code>samQualities</code> length plus overlap length does not equal the expected value
    */
-  public static byte[] expandCgSuperCigarQualities(byte[] samQualities, byte[] qualityBuffer, String qualityOverlap, boolean first, boolean reverseCompliment, boolean phredifyQualityOverlap) throws BadSuperCigarException {
-    assert qualityBuffer.length == CgUtils.CG_RAW_READ_LENGTH;
-    final int overlapQualityOffset = phredifyQualityOverlap ? FastaUtils.PHRED_LOWER_LIMIT_CHAR : 0;
+  public static void unrollSuperCigarQualities(byte[] dest, byte[] samQualities, String qualityOverlap, boolean first, boolean reverse) throws BadSuperCigarException {
     final int xqlength = qualityOverlap == null ? 0 : qualityOverlap.length();
-    if (samQualities.length + xqlength != qualityBuffer.length) {
-      throw new BadSuperCigarException("SAM record qualities plus " + SamUtils.CG_OVERLAP_QUALITY + " not expected length. Was: " + (samQualities.length + xqlength) + " expected: " + qualityBuffer.length);
+    final byte[] xq = qualityOverlap == null ? null : FastaUtils.asciiToRawQuality(qualityOverlap);
+    final int unrollLen = samQualities.length + xqlength;
+    if (unrollLen != CgUtils.CG_RAW_READ_LENGTH && unrollLen != CgUtils.CG2_RAW_READ_LENGTH) {
+      throw new BadSuperCigarException("SAM record qualities plus " + SamUtils.CG_OVERLAP_QUALITY + " not expected length. Was: " + unrollLen + " expected: " + CgUtils.CG_RAW_READ_LENGTH + " or " + CgUtils.CG2_RAW_READ_LENGTH);
     }
-    if ((first && !reverseCompliment) || (reverseCompliment && !first)) {
-      System.arraycopy(samQualities, 0, qualityBuffer, 0, CgGotohEditDistance.CG_FINAL_FRAGMENT_SIZE);
-      for (int i = 0; i < xqlength; i++) {
-        qualityBuffer[CgGotohEditDistance.CG_FINAL_FRAGMENT_SIZE + i] = (byte) (qualityOverlap.charAt(i) - overlapQualityOffset);
-      }
-      System.arraycopy(samQualities, CgGotohEditDistance.CG_FINAL_FRAGMENT_SIZE, qualityBuffer, CgGotohEditDistance.CG_FINAL_FRAGMENT_SIZE + xqlength, samQualities.length - CgGotohEditDistance.CG_FINAL_FRAGMENT_SIZE);
-    } else {
-      System.arraycopy(samQualities, 0, qualityBuffer, 0, samQualities.length - CgGotohEditDistance.CG_FINAL_FRAGMENT_SIZE);
-      for (int i = 0; i < xqlength; i++) {
-        qualityBuffer[samQualities.length - CgGotohEditDistance.CG_FINAL_FRAGMENT_SIZE + i] = (byte) (qualityOverlap.charAt(i) - overlapQualityOffset);
-      }
-      System.arraycopy(samQualities, samQualities.length - CgGotohEditDistance.CG_FINAL_FRAGMENT_SIZE, qualityBuffer, qualityBuffer.length - CgGotohEditDistance.CG_FINAL_FRAGMENT_SIZE, CgGotohEditDistance.CG_FINAL_FRAGMENT_SIZE);
+    assert dest.length == CgUtils.CG_RAW_READ_LENGTH || dest.length == CgUtils.CG2_RAW_READ_LENGTH;
+    final boolean v2 = dest.length == CgUtils.CG2_RAW_READ_LENGTH;
+    final int fwdOverlap = v2 ? CgUtils.CG2_OVERLAP_POSITION : CgUtils.CG_OVERLAP_POSITION;
+    final boolean overlapOnLeft = v2 && !reverse || !v2 && first == !reverse;
+    final int overlapPos = overlapOnLeft ? fwdOverlap : samQualities.length - fwdOverlap;
+    System.arraycopy(samQualities, 0, dest, 0, overlapPos);
+    if (xq != null) {
+      System.arraycopy(xq, 0, dest, overlapPos, xq.length);
     }
-    if (reverseCompliment) {
-      Utils.reverseInPlace(qualityBuffer);
-    }
-    return qualityBuffer;
+    System.arraycopy(samQualities, overlapPos, dest, overlapPos + xqlength, samQualities.length - overlapPos);
   }
 
   void setData(SAMRecord samRecord, byte[] sdfRead, byte[] sdfQualities) throws BadSuperCigarException {
     mSamRecord = samRecord;
     mSdfRead = sdfRead;
     mSdfQualities = sdfQualities;
-    assert mSdfRead.length == CgGotohEditDistance.CG_RAW_READ_LENGTH;
-    assert mSdfQualities.length == CgGotohEditDistance.CG_RAW_READ_LENGTH;
+    assert mSdfRead.length == CgUtils.CG_RAW_READ_LENGTH || mSdfRead.length == CgUtils.CG2_RAW_READ_LENGTH;
+    assert mSdfQualities.length == mSdfRead.length;
 
     super.setCigar(samRecord.getStringAttribute(SamUtils.CG_SUPER_CIGAR), samRecord.getStringAttribute(SamUtils.CG_READ_DELTA));
     setTemplateStart(samRecord.getAlignmentStart() - 1);
-    mIsReverseCompliment = samRecord.getReadNegativeStrandFlag();
+    mIsReverseComplement = samRecord.getReadNegativeStrandFlag();
     mXQField = samRecord.getStringAttribute(SamUtils.CG_OVERLAP_QUALITY);
 
-    mQualities = expandCgSuperCigarQualities(samRecord.getBaseQualities(), mQualities, mXQField, samRecord.getFirstOfPairFlag(), mIsReverseCompliment, true);
+    if (mQualities == null || mQualities.length != mSdfQualities.length) {
+      mQualities = new byte[mSdfQualities.length];
+    }
+    unrollSuperCigarQualities(mQualities, samRecord.getBaseQualities(), mXQField, samRecord.getFirstOfPairFlag(), mIsReverseComplement);
+    if (mIsReverseComplement) {
+      Utils.reverseInPlace(mQualities);
+    }
 
     if (samRecord.hasAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE)) {
       mAlignmentScoreAttr = samRecord.getIntegerAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE);
@@ -171,14 +168,14 @@ public class SuperCigarValidator extends SuperCigarParser {
   private byte getSdfReadNt() {
     byte nt;
 //    do {
-      if ((mIsReverseCompliment && (mSdfRead.length - 1 - getReadPosition()) < 0)
-          || !mIsReverseCompliment && getReadPosition() >= mSdfRead.length) {
+      if ((mIsReverseComplement && (mSdfRead.length - 1 - getReadPosition()) < 0)
+          || !mIsReverseComplement && getReadPosition() >= mSdfRead.length) {
         throw new IllegalStateException("Read too short for actions, " + mSamRecord.getSAMString().trim());
       }
-      nt = mIsReverseCompliment ? mSdfRead[mSdfRead.length - 1 - getReadPosition()] : mSdfRead[getReadPosition()];
+      nt = mIsReverseComplement ? mSdfRead[mSdfRead.length - 1 - getReadPosition()] : mSdfRead[getReadPosition()];
       /*if (nt == DnaUtils.CG_SPACER_VALUE) {
         mReadPos++;
-      } else*/ if (mIsReverseCompliment) {
+      } else*/ if (mIsReverseComplement) {
         nt = DNA.complement(nt);
       }
 //    } while (nt == DnaUtils.CG_SPACER_VALUE);

@@ -20,6 +20,8 @@ import com.rtg.index.hash.ngs.NgsHashFunction;
 import com.rtg.index.hash.ngs.ReadCall;
 import com.rtg.index.hash.ngs.TemplateCall;
 
+import junit.framework.Assert;
+
 /**
  */
 public class CGMaska1b1Test extends AbstractSplitTest {
@@ -167,30 +169,31 @@ public class CGMaska1b1Test extends AbstractSplitTest {
    * Check that all 0, 1 substitutions on the string are found.
    */
   public void testAllSubstitutions7() throws IOException {
-    final String str = "acgacgtgacacccgtacgtaccccgtgacacccg";
+    final String str = "acgacctgacacccgtacgtaccccgtgacacccg";
     assertEquals(35, str.length());
-    final SubstituteCG sub = new SubstituteCG(str, factory(), true, 7/*cg*/);
-    sub.substituteProtected(1);
+    final SubstituteCG sub = new SubstituteCG(str, factory(), true, 7, 1);
+    final int missed = sub.substituteProtected(1);
+    Assert.assertEquals(sub.toString(), 0, missed);
   }
 
   /**
    * Check that all 0, 1, 2 substitutions on the string are found.
    */
   public void testAllSubstitutions6() throws IOException {
-    final String str = "acgacgtgacacccgtacgtaccccgtgacacccg";
+    final String str = "acgacctgacacccgtacgtaccccgtgacacccg";
     assertEquals(35, str.length());
-    final SubstituteCG sub = new SubstituteCG(str, factory(), true, 6/*cg*/);
-    sub.substituteProtected(1);
+    final SubstituteCG sub = new SubstituteCG(str, factory(), true, 6, 1);
+    Assert.assertEquals(0, sub.substituteProtected(1));
   }
 
   /**
    * Check that all 0, 1, 2 substitutions on the string are found.
    */
   public void testAllSubstitutions5() throws IOException {
-    final String str = "acgacgtgacacccgtacgtaccccgtgacacccg";
+    final String str = "acgacctgacacccgtacgtaccccgtgacacccg";
     assertEquals(35, str.length());
-    final SubstituteCG sub = new SubstituteCG(str, factory(), true, 5/*cg*/);
-    sub.substituteProtected(1);
+    final SubstituteCG sub = new SubstituteCG(str, factory(), true, 5, 1);
+    Assert.assertEquals(0, sub.substituteProtected(1));
   }
 
   /**
@@ -200,7 +203,7 @@ public class CGMaska1b1Test extends AbstractSplitTest {
   public void testIndel() throws IOException {
     final String str = "acgacgtgacacccgtacgtaccccgtgacacccg";
     assertEquals(35, str.length());
-    SubstituteIndel.checkIndel(factory(), str, 1, 7/*cg*/);
+    SubstituteIndel.checkIndel(factory(), str, 1, 7);
   }
 
   /** Exact */

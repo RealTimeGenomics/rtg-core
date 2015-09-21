@@ -45,6 +45,7 @@ import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.ParamsTask;
 import com.rtg.ngs.longread.LongReadTask;
 import com.rtg.position.output.PositionParams;
+import com.rtg.reader.CgUtils;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.report.MapFSummaryReport;
@@ -283,8 +284,9 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
     for (int pass = 1; pass <= (indexParams.compressHashes() ? 2 : 1); pass++) {
       totalLength = 0; //only count for one pass
       if (params.paired()) {
+        final boolean cgFlip = params.buildFirstParams().reader().getPrereadType() == PrereadType.CG && params.buildFirstParams().reader().minLength() == CgUtils.CG_RAW_READ_LENGTH;
         final long l1 = shl.readLoop(params.buildFirstParams(), hf, ReadEncoder.PAIRED_FIRST, false);
-        final long l2 = shl.readLoop(params.buildSecondParams(), hf, ReadEncoder.PAIRED_SECOND, params.buildFirstParams().reader().getPrereadType() == PrereadType.CG);
+        final long l2 = shl.readLoop(params.buildSecondParams(), hf, ReadEncoder.PAIRED_SECOND, cgFlip);
         totalLength += l1 + l2;
 
       } else {

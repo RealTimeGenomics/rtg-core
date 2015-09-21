@@ -11,10 +11,10 @@
  */
 package com.rtg.variant.realign;
 
-import com.rtg.alignment.CgGotohEditDistance;
 import com.rtg.mode.DNA;
 import com.rtg.reader.CgUtils;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
@@ -27,7 +27,7 @@ import com.rtg.variant.util.VariantUtils;
  */
 public class AlignmentEnvironmentCG extends AbstractAlignmentEnvironment {
 
-  private final boolean mCgOverlapOnLeft;
+  private final boolean mIsInverted;
 
   /**
    * @param var the alignment record
@@ -39,14 +39,17 @@ public class AlignmentEnvironmentCG extends AbstractAlignmentEnvironment {
     super(var.getStart());
     assert me.isCG();
     final CgUnroller.OrientedRead orient = CgUnroller.unrollCgRead(var, template);
-    if (orient == null || orient.getRead().length != CgGotohEditDistance.CG_RAW_READ_LENGTH) {
+    if (orient == null) {
       throw new NoTalkbackSlimException("Invalid CG alignment record=" + var.toString());
     }
     mRead = DNA.byteDNAtoByte(orient.getRead());
     final int len = mRead.length;
     //System.err.println("CG len=" + len);
-    if (len != CgUtils.CG_RAW_READ_LENGTH) {
-      throw new NoTalkbackSlimException("Invalid CG alignment record=" + var.toString());
+    if (me.machineType() == MachineType.COMPLETE_GENOMICS && len != CgUtils.CG_RAW_READ_LENGTH) {
+      throw new NoTalkbackSlimException("Invalid CG version 1 alignment record=" + var.toString());
+    }
+    if (me.machineType() == MachineType.COMPLETE_GENOMICS_2 && len != CgUtils.CG2_RAW_READ_LENGTH) {
+      throw new NoTalkbackSlimException("Invalid CG version 2 alignment record=" + var.toString());
     }
     mQuality = new double[len];
     final byte[] qChar = orient.getQuality();
@@ -61,7 +64,7 @@ public class AlignmentEnvironmentCG extends AbstractAlignmentEnvironment {
         mQuality[i] = VariantUtils.phredToProb(phred);
       }
     }
-    mCgOverlapOnLeft = orient.isCgOverlapOnLeft();
+    mIsInverted = orient.isInverted();
   }
 
   @Override
@@ -70,7 +73,7 @@ public class AlignmentEnvironmentCG extends AbstractAlignmentEnvironment {
   }
 
   @Override
-  public boolean cgOverlapOnLeft() {
-    return mCgOverlapOnLeft;
+  public boolean isInverted() {
+    return mIsInverted;
   }
 }

@@ -13,9 +13,12 @@
 package com.rtg.variant.realign;
 
 import com.rtg.reader.CgUtils;
+import com.rtg.util.machine.MachineType;
 
 /**
- * An environment with the read and the template reversed.
+ * An environment with the read and the template reversed, used for CG
+ * reads so the gap/overlap layout is consistent.
+ *
  * Note that <code>templatePosition(i)</code> moves DOWN the template
  * as <code>i</code> increase, so <code>templateStart()</code> actually
  * points to the highest position on the template that the read is
@@ -29,21 +32,31 @@ import com.rtg.reader.CgUtils;
  */
 public class InvertCgTemplateEnvironment extends EnvironmentCombined {
 
+  private final int mOffset;
+
   /**
    * @param env environment to be inverted.
+   * @param mt the machine type, to determine whether to do inversion for version 1 or version 2 reads
    */
-  public InvertCgTemplateEnvironment(final EnvironmentCombined env) {
+  public InvertCgTemplateEnvironment(final EnvironmentCombined env, MachineType mt) {
     super(env.mSamEnv, env.mSamEnv.start(), env.maxShift(), env.mTemEnv);
+    if (mt == MachineType.COMPLETE_GENOMICS) {
+      mOffset = CgUtils.CG_EXPECTED_LENGTH - 1;
+    } else if (mt == MachineType.COMPLETE_GENOMICS_2) {
+      mOffset = CgUtils.CG2_EXPECTED_LENGTH - 1;
+    } else {
+      throw new IllegalArgumentException("Unsupported machine type: " + mt);
+    }
   }
 
   @Override
   public byte template(int index) {
-    return super.template(CgUtils.CG_EXPECTED_LENGTH - index - 1);
+    return super.template(mOffset - index);
   }
 
   @Override
   public int absoluteTemplatePosition(int index) {
-    return super.absoluteTemplatePosition(CgUtils.CG_EXPECTED_LENGTH - index - 1);
+    return super.absoluteTemplatePosition(mOffset - index);
   }
 
 

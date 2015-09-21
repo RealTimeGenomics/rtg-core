@@ -30,34 +30,10 @@ public class SubstituteIndel {
    * @param factory for creating mask.
    * @param str to be mutated.
    * @param error number of indels allowed.
+   * @param cgGap number of nt to insert in gap for CG data.
    * @throws IOException when ever.
    */
-  static void checkIndel(final HashFunctionFactory factory, final String str, final int error) throws IOException {
-    checkIndel(factory, str, error, 6, 6);
-  }
-
-  /**
-   * Check all mutations including indels.
-   * @param factory for creating mask.
-   * @param str to be mutated.
-   * @param error number of indels allowed.
-   * @param insertCG number of nt to insert in gap for CG data.
-   * @throws IOException when ever.
-   */
-  static void checkIndel(final HashFunctionFactory factory, final String str, final int error, final int insertCG) throws IOException {
-    checkIndel(factory, str, error, insertCG, 7);
-  }
-
-  /**
-   * Check all mutations including indels.
-   * @param factory for creating mask.
-   * @param str to be mutated.
-   * @param error number of indels allowed.
-   * @param insertCG number of nt to insert in gap for CG data.
-   * @param maxInsert maxiumum number of nt to insert in gap for CG data.
-   * @throws IOException when ever.
-   */
-  public static void checkIndel(final HashFunctionFactory factory, final String str, final int error, final int insertCG, final int maxInsert) throws IOException {
+  public static void checkIndel(final HashFunctionFactory factory, final String str, final int error, final int cgGap) throws IOException {
     final int length = str.length();
     final SubstituteIndel sub = new SubstituteIndel(str, error);
     final Collection<String> templates = sub.substitute(error);
@@ -74,9 +50,11 @@ public class SubstituteIndel {
       final String template = pref + templ + suff;
       for (int i = 0; i + length <= template.length(); i++) {
         final String mutant = template.substring(i, i + length);
-        final String muttie = insertCG > 0 ? SubstituteCG.cgInsert(mutant, insertCG, maxInsert) : mutant;
-        AbstractSplitTest.encode(hf, muttie);
-        hf.templateForward(0);
+        final String muttie = cgGap > 0 ? SubstituteCG.cgToTemplate(mutant, cgGap, 0) : mutant;
+        for (int j = 0; j < muttie.length(); j++) {
+          AbstractSplitTest.encode(hf, muttie, j);
+          hf.templateForward(0);
+        }
         hf.reset();
       }
       if (!tcc.mFound) {
@@ -84,7 +62,6 @@ public class SubstituteIndel {
         System.err.println(template);
         AbstractSplitTest.fail();
       }
-
     }
   }
 

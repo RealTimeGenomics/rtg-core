@@ -88,8 +88,8 @@ public final class AlignmentEnvironmentGenomeSubstitution implements AlignmentEn
   }
 
   @Override
-  public boolean cgOverlapOnLeft() {
-    return true;
+  public boolean isInverted() {
+    return false;
   }
 
 }

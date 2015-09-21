@@ -15,9 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.rtg.reader.CgUtils;
-import com.rtg.reader.FastaUtils;
-import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
 import com.rtg.mode.DnaUtils;
@@ -25,6 +22,8 @@ import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.ngs.tempstage.BinaryTempFileRecord;
 import com.rtg.ngs.tempstage.TempRecordReader;
 import com.rtg.ngs.tempstage.TempRecordReaderNio;
+import com.rtg.reader.CgUtils;
+import com.rtg.reader.FastaUtils;
 import com.rtg.reader.PrereadNamesInterface;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.ReadGroupUtils;
@@ -33,6 +32,7 @@ import com.rtg.sam.SamUtils;
 import com.rtg.util.ProgramState;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.io.FileUtils;
 import com.rtg.variant.sv.ReadGroupStatsCalculator;
 
@@ -273,24 +273,27 @@ public abstract class AbstractSamResultsFilter {
     boolean result = true;
     if (mCG && new String(rec.getSuperCigarString()).contains("B")) {
       final int length = reader.readQuality(readId, mQualBuffer);
-      assert length == CgUtils.CG_RAW_READ_LENGTH;
+      assert length == CgUtils.CG_RAW_READ_LENGTH || length == CgUtils.CG2_RAW_READ_LENGTH;
       if (reverse) {
         Utils.reverseInPlace(mQualBuffer);
       }
-      final int discard = CgUtils.CG_RAW_READ_LENGTH - readLen;
+      final int discard = length - readLen;
       if (discard == 0) {
         System.arraycopy(mQualBuffer, 0, mFlattenedQualBuffer, 0, length);
         result = false; // do NOT add the XQ field, since there is no overlap
       } else {
-        final int mainChunkLength = length - (CgUtils.CG_OVERLAP_POSITION + discard);
-        if (first == !reverse) {
-          System.arraycopy(mQualBuffer, 0, mFlattenedQualBuffer, 0, CgUtils.CG_OVERLAP_POSITION);
-          System.arraycopy(mQualBuffer, CgUtils.CG_OVERLAP_POSITION, mGQBuffer, 0, discard);
-          System.arraycopy(mQualBuffer, CgUtils.CG_OVERLAP_POSITION + discard, mFlattenedQualBuffer, CgUtils.CG_OVERLAP_POSITION, mainChunkLength);
+        final boolean v2 = length == CgUtils.CG2_RAW_READ_LENGTH;
+        final int overlapPos = v2 ? CgUtils.CG2_OVERLAP_POSITION : CgUtils.CG_OVERLAP_POSITION;
+        final int mainChunkLength = length - (overlapPos + discard);
+        final boolean overlapOnLeft = v2 && !reverse || !v2 && first == !reverse;
+        if (overlapOnLeft) {
+          System.arraycopy(mQualBuffer, 0, mFlattenedQualBuffer, 0, overlapPos);
+          System.arraycopy(mQualBuffer, overlapPos, mGQBuffer, 0, discard);
+          System.arraycopy(mQualBuffer, overlapPos + discard, mFlattenedQualBuffer, overlapPos, mainChunkLength);
         } else {
           System.arraycopy(mQualBuffer, 0, mFlattenedQualBuffer, 0, mainChunkLength);
           System.arraycopy(mQualBuffer, mainChunkLength, mGQBuffer, 0, discard);
-          System.arraycopy(mQualBuffer, length - CgUtils.CG_OVERLAP_POSITION, mFlattenedQualBuffer, mainChunkLength, CgUtils.CG_OVERLAP_POSITION);
+          System.arraycopy(mQualBuffer, length - overlapPos, mFlattenedQualBuffer, mainChunkLength, overlapPos);
         }
       }
       mGQLength = discard;

@@ -176,8 +176,8 @@ public class EvidenceComplex extends Evidence {
       final AlignmentEnvironment temEnv = new AlignmentEnvironmentGenomeSubstitution(se.start() - softClipStartOffset, 0 /* doesn't matter */, reference, DNA.stringDNAtoByte(replace));
       final EnvironmentCombined envTmp = new EnvironmentCombined(se, newStart - softClipStartOffset, maxShift, temEnv);
       final Environment env;
-      if (cg && !se.cgOverlapOnLeft()) {
-        env = new InvertCgTemplateEnvironment(envTmp);
+      if (cg && se.isInverted()) {
+        env = new InvertCgTemplateEnvironment(envTmp, me.machineType());
       } else {
         env = envTmp;
       }

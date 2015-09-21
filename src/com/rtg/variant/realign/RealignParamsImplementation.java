@@ -32,6 +32,9 @@ public final class RealignParamsImplementation extends IntegralAbstract implemen
   /** Key for asking about the CG large gap. */
   public static final int CG_LARGE_GAP = 2;
 
+  /** Key for asking about the CG V2 overlap. */
+  public static final int CG_OVERLAP2 = 3;
+
   /**
    * Compute a heuristic decay constant for the distribution.
    * @param distr probability distribution with entry 0 equal to 0.0
@@ -125,11 +128,12 @@ public final class RealignParamsImplementation extends IntegralAbstract implemen
     mMisMatchLn = Math.log(misMatch);
     mMatchLn = Math.log(1.0 - misMatch);
     mCG = params.isCG();
-    mGapDistributions = new double[3][];
-    mGapStart = new int[] {-4, 0, 4};
+    mGapDistributions = new double[4][];
+    mGapStart = new int[] {-4, 0, 4, -7};
     logify(CG_OVERLAP, params.overlapDistribution());
     logify(CG_SMALL_GAP, params.smallGapDistribution());
     logify(CG_LARGE_GAP, params.gapDistribution());
+    logify(CG_OVERLAP2, params.overlapDistribution2());
   }
 
   private void logify(final int whichGap, final double[] probs) {
