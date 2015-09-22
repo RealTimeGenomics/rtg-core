@@ -27,6 +27,7 @@ public class CompleteGenomicsV2Machine extends CompleteGenomicsMachine {
 
   private static final int NUMBER_TRIES = 1000;
   private static final int READ_LENGTH = CgUtils.CG2_RAW_LENGTH;
+  private static final int MAX_DELETE = 20;  // Bring the right arm in from the end of the fragment to allow for some deletion.
 
   protected final PortableRandom mFrameRandom;
   protected final PortableRandom mSegmentRandom;
@@ -61,40 +62,42 @@ public class CompleteGenomicsV2Machine extends CompleteGenomicsMachine {
     final char frame;
     if (forward) {
       frame = 'F';
+      direction = 1;
+      if (leftArm) {
+        startFrom = 0;
+      } else {
+        startFrom = length - (CgUtils.CG2_RAW_LENGTH + MAX_DELETE);
+      }
     } else {
       frame = 'R';
-    }
-    if (forward) {
-      direction = 1;
-      startFrom = 0;
-    } else {
       direction = -1;
-      startFrom = length - 1;
+      if (leftArm) {
+        startFrom = length - 1;
+      } else {
+        startFrom = CgUtils.CG2_RAW_LENGTH + MAX_DELETE;
+      }
     }
     for (int x = 0; x < NUMBER_TRIES; x++) {
       resetCigar();
-      int refPos = readBases(startFrom, data, length, direction, 10);
+      int refPos = readBases(startFrom, data, leftArm ? length : startFrom + 1, direction, CgUtils.CG2_OVERLAP_POSITION);
       final int overlap = generateOverlapLength();
       refPos += overlap * direction;
-      final int tLen = direction == 1 ? length - refPos : length - startFrom + refPos;
+      final int tLen = direction == 1 ? length - refPos : refPos;
       if (refPos < 0 || refPos >= length) {
         continue;
       }
       updateCigarWithPositiveOrNegativeSkip(overlap);
-      refPos = readBases(refPos, data, tLen, direction, 19);
+      refPos = readBases(refPos, data, tLen, direction, READ_LENGTH - CgUtils.CG2_OVERLAP_POSITION);
       //System.out.println("Generated overlap:" + overlap + " gap:" + gap);
 
       final int newStart = Math.min(startFrom, refPos - direction);
-      if (forward ^ direction == 1) {
-        reverse();
-      }
       if (!forward) {
         DNA.complementInPlace(mReadBytes, 0, mReadBytesUsed);
       }
-      final String cigar = getCigar(direction == -1, newStart, length, READ_LENGTH);
+      final String cigar = getCigar(!forward, newStart, length, READ_LENGTH);
+      //System.err.println(id + " fragmentStart: " + fragmentStart + " length: " + length + " forward: " + forward + " leftArm: " + leftArm + " startFrom:" + startFrom + " direction:" + direction);
       return formatReadName(id, frame, cigar, fragmentStart, newStart);
     }
-    //Diagnostic.developerLog(id + " fragmentStart: " + fragmentStart + " length: " + length + " forward: " + forward + " leftArm: " + leftArm);
     throw new NoTalkbackSlimException("Unable to generate a valid read with given priors in " + NUMBER_TRIES + " attempts");
   }
 }

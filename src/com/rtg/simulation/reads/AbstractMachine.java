@@ -11,6 +11,8 @@
  */
 package com.rtg.simulation.reads;
 
+import java.util.Arrays;
+
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.alignment.ActionsHelper;
 import com.rtg.mode.DNA;
@@ -192,6 +194,7 @@ public abstract class AbstractMachine implements Machine {
     mCigarCurrentLength = 0;
     mWorkspace[ActionsHelper.ACTIONS_LENGTH_INDEX] = 0;
     mReadBytesUsed = 0;
+    Arrays.fill(mReadBytes, (byte) 6);
   }
 
   private void addToCigar(StringBuilder sb, int count, int action, boolean prepend) {
