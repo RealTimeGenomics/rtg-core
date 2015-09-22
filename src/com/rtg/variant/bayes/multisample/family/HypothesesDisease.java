@@ -17,6 +17,7 @@ import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
 
 /**
+ * Set of hypotheses with a disease hypothesis.
  */
 public class HypothesesDisease extends Hypotheses<Description> {
 

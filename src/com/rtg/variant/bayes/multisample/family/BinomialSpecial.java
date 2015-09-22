@@ -26,8 +26,8 @@ public final class BinomialSpecial {
   /** Determined by running main and finding first position that overflows an int. */
   static final int LENGTH = 16175;
 
-  //uses a table upt to n = ? which allows the table to be computed using Pascals triangle.
-  //Otherwise it uses logFactorial which is slow but robust.
+  // Uses a table up to n = A_LIMIT which allows the table to be computed using Pascals triangle.
+  // Otherwise it uses logFactorial which is slow but robust.
   private static final long[][] PASCAL = new long[A_LIMIT][LENGTH];
   private static final double[][] PASCAL_LN = new double[A_LIMIT][LENGTH];
   static {
@@ -54,21 +54,5 @@ public final class BinomialSpecial {
     }
     //fall back to the slow way
     return MathUtils.logFactorial(n) - MathUtils.logFactorial(a) - MathUtils.logFactorial(n - a);
-  }
-
-  /**
-   * Print the table to see if there is any overflow.
-   * @param args ignored.
-   */
-  public static void main(final String[] args) {
-    for (int i = 0; i < PASCAL[0].length; i++) {
-      if (PASCAL[5][i] < 0) {
-        for (int j = 0; j < A_LIMIT; j++) {
-          System.err.print(i + " " + PASCAL[j][i] + " ");
-        }
-        System.err.println();
-        break;
-      }
-    }
   }
 }

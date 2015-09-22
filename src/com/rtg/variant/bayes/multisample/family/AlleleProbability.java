@@ -16,7 +16,7 @@ import com.rtg.variant.bayes.Code;
 
 /**
  * Calculates <code>P'dagger'</code>.
- * See the <code>multiScoring.tex</code> documentation for Consistent Mendelian pedigrees
+ * See the <code>multiScoring.tex</code> documentation for consistent Mendelian pedigrees
  */
 public interface AlleleProbability {
 
@@ -25,7 +25,7 @@ public interface AlleleProbability {
    * @param ref the reference code.
    * @param father the hypothesis from the fathers sample.
    * @param mother the hypothesis from the mothers sample.
-   * @return the probability <code>P'dagger'</code>.  See the <code>multiScoring.tex</code> documentation for Consistent Mendelian pedigrees.
+   * @return the probability <code>P'dagger'</code>.  See the <code>multiScoring.tex</code> documentation for consistent Mendelian pedigrees.
    */
   double probabilityLn(Code code, int ref, int father, int mother);
 

@@ -158,13 +158,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
   private void computeAlleles(boolean isDefault) {
     final int haploidSize;
     final int fatherIterations;
-    final int motherIterations;
-    final AlleleProbability ap;
-    if (isDefault) {
-      ap = getAlleleProbability(mFatherPloidy, mMotherPloidy);
-    } else {
-      ap = null;
-    }
+    final AlleleProbability ap= isDefault ? getAlleleProbability(mFatherPloidy, mMotherPloidy) : null;
     final boolean fatherNone = mFatherPloidy == Ploidy.NONE;
     if (fatherNone) {
       fatherIterations = 1;
@@ -174,11 +168,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
       haploidSize = mFatherHypotheses.description().size();
     }
     final boolean motherNone = mMotherPloidy == Ploidy.NONE;
-    if (motherNone) {
-      motherIterations = 1;
-    } else {
-      motherIterations = mMotherHypotheses.size();
-    }
+    final int motherIterations = motherNone ? 1 : mMotherHypotheses.size();
     for (int i = 0; i < fatherIterations; i++) {
       final double fatherpost;
       if (fatherNone) {
@@ -404,13 +394,9 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
       //        remainder = VariantUtils.logSumApproximation(remainder, aHypRem);
     }
 
-    if (bestFather == Double.NEGATIVE_INFINITY  || (bestFather - bestFatherRemainder) <= TERM_THRESHOLD
-        || fatherSum == Double.NEGATIVE_INFINITY  || (fatherSum - fatherRemainder) <= TERM_THRESHOLD
-        || (bestFather - fatherRemainder) <= TERM_THRESHOLD
-        ) {
-      return true;
-    }
-    return false;
+    return bestFather == Double.NEGATIVE_INFINITY || (bestFather - bestFatherRemainder) <= TERM_THRESHOLD
+      || fatherSum == Double.NEGATIVE_INFINITY || (fatherSum - fatherRemainder) <= TERM_THRESHOLD
+      || (bestFather - fatherRemainder) <= TERM_THRESHOLD;
   }
 
   /**
@@ -436,11 +422,8 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
       }
       //        remainder = VariantUtils.logSumApproximation(remainder, aHypRem);
     }
-    if ((referenceHypothesisScore - refFatherRemainder) <= TERM_THRESHOLD
-        || fatherRefSum == Double.NEGATIVE_INFINITY  || (fatherRefSum - fatherRefRemainder) <= TERM_THRESHOLD) {
-      return true;
-    }
-    return false;
+    return (referenceHypothesisScore - refFatherRemainder) <= TERM_THRESHOLD
+      || fatherRefSum == Double.NEGATIVE_INFINITY || (fatherRefSum - fatherRefRemainder) <= TERM_THRESHOLD;
   }
 
   private void computeParentMarginal(boolean isDefault, AlleleProbability ap, int haploidSize, double fatherPost, double motherPost, int currentFather, int currentMother) {

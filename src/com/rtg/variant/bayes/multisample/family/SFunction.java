@@ -62,7 +62,7 @@ public class SFunction extends IntegralAbstract {
   }
 
   @Override
-  public boolean globalIntegrity() {
+  public final boolean globalIntegrity() {
     integrity();
     final WeightedLattice f = mForwardS[mLength];
     f.globalIntegrity();

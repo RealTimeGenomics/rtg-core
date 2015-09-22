@@ -34,7 +34,7 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 
 /**
  * Generates the family comparison. Assumes the output will come in with
- * father and mother bayesians in first two array positions.
+ * father and mother Bayesians in first two array positions.
  */
 public class FamilyCaller extends AbstractMultisampleCaller implements MultisampleJointScorer {
 

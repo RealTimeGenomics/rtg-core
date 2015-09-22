@@ -22,6 +22,7 @@ import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.util.VariantUtils;
 
 /**
+ * Posterior calculation for the family caller.
  */
 public final class FastFamilyPosterior extends FamilyPosterior {
 
