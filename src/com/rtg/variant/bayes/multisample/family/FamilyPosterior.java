@@ -626,7 +626,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
     return mNonIdentity - mIdentity;
   }
 
-  boolean isDenovo(int father, int mother, int childId, int childHypothesis) {
+  final boolean isDenovo(int father, int mother, int childId, int childHypothesis) {
     final ModelInterface<?> childModel = mChildren.get(childId);
     final Hypotheses<?> hypotheses = mHypotheses.get(childModel);
     final MendelianAlleleProbability al = MendelianAlleleProbabilityFactory.COMBINED.getMendelianAlleleProbability(mFatherPloidy, mMotherPloidy, hypotheses.ploidy(), mLogDenovoRefPrior, mLogDenovoNonrefPrior, hypotheses.reference());
