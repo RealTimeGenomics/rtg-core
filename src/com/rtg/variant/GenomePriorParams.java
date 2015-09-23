@@ -73,6 +73,7 @@ public class GenomePriorParams extends ObjectParams implements Integrity {
   private final double mLogDenovoRef;
   private final double mDenovoNonRef;
   private final double mLogDenovoNonRef;
+  private final double mContraryProbability;
 
   private final HashMap<String, HashMap<String, Double>> mPriorMap;
 
@@ -99,6 +100,7 @@ public class GenomePriorParams extends ObjectParams implements Integrity {
     mLogDenovoRef = Math.log(mDenovoRef);
     mLogDenovoNonRef = Math.log(mDenovoNonRef);
     mPriorMap = builder.mPriorMap;
+    mContraryProbability = builder.mContraryProbability;
   }
 
   /**
@@ -256,6 +258,13 @@ public class GenomePriorParams extends ObjectParams implements Integrity {
    */
   public double getAlleleFrequencyLnProbability(int alleleCount) {
     return mAlleleProbabilityLn[alleleCount];
+  }
+
+  /**
+   * @return probability that a piece of evidence if contrary to a somatic or de novo call.
+   */
+  public double contraryProbability() {
+    return mContraryProbability;
   }
 
   @Override

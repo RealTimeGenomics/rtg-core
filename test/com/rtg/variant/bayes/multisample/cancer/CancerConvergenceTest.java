@@ -55,10 +55,10 @@ public class CancerConvergenceTest extends TestCase {
 
     final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("TEST", "cancer");
     final VariantParamsBuilder b = new VariantParamsBuilder();
-    b.genomePriors(GenomePriorParams.builder().create());
+    b.genomePriors(GenomePriorParams.builder().contraryProbability(1).create());
     b.genomeRelationships(genomeRelationships);
     b.machineErrorName("illumina");
-    b.lohPrior(1e-20).contraryProbability(1);
+    b.lohPrior(1e-20);
     b.uberHeader(uber);
     final VariantParams p = b.create();
     return new SomaticCallerConfiguration.Configurator().getConfig(p, null);

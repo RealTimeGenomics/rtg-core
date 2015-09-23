@@ -58,6 +58,7 @@ public class GenomePriorParamsBuilder {
   protected double[] mAlleleProbabilityLn = new double[6]; //allow for up to 5 alleles in complex calling
   protected double mDenovoRef;
   protected double mDenovoNonRef;
+  protected double mContraryProbability = 0.0001;
 
   /**
    * Creates a builder with initial default values from the
@@ -289,6 +290,20 @@ public class GenomePriorParamsBuilder {
    */
   public GenomePriorParamsBuilder denovoNonRef(final double prior) {
     mDenovoNonRef = prior;
+    return this;
+  }
+
+  /**
+   * The probability applied to contrary evidence for a somatic or de novo call.
+   * A value of 1 means that contrary evidence is not further penalized.
+   * @param p probability of contrary evidence
+   * @return this, for chaining
+   */
+  public GenomePriorParamsBuilder contraryProbability(final double p) {
+    if (p <= 0 || p > 1) {
+      throw new IllegalArgumentException();
+    }
+    mContraryProbability = p;
     return this;
   }
 

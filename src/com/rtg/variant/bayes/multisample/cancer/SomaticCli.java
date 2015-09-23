@@ -31,6 +31,7 @@ import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.ReferenceRanges;
+import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.avr.AbstractPredictModel;
@@ -192,7 +193,7 @@ public class SomaticCli extends AbstractMultisampleCli {
       .includeGermlineVariants(mFlags.isSet(INCLUDE_GERMLINE_FLAG))
       .includeGainOfReference(mFlags.isSet(INCLUDE_GAIN_OF_REFERENCE))
       .lohPrior((Double) mFlags.getValue(LOH_FLAG))
-      .contraryProbability((Double) mFlags.getValue(CONTRARY_FLAG))
+      .genomePriors(GenomePriorParams.builder().contraryProbability((Double) mFlags.getValue(CONTRARY_FLAG)).create())
       .sex((Sex) mFlags.getValue(SEX_FLAG));
     if (mFlags.isSet(SOMATIC_PRIORS_FLAG)) {
       final PriorBedRangeLoader loader = new PriorBedRangeLoader();

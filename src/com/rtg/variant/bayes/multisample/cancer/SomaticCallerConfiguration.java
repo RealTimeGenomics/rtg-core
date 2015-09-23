@@ -98,7 +98,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
       final double reverseContamination = reverseContam == null ? 0 : reverseContam;
       final MachineErrorChooserInterface chooser = MultisampleUtils.chooser(params);
       final PopulationHwHypothesesCreator ssp;
-      final double contraryProbability = params.contraryProbability();
+      final double contraryProbability = params.genomePriors().contraryProbability();
       final double phi = Math.min(1, contraryProbability + reverseContamination);
       final double psi = Math.min(1, contraryProbability + contamination);
       if (params.populationPriorFile() != null) {
