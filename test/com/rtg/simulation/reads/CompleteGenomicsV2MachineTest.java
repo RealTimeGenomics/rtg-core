@@ -15,8 +15,11 @@ package com.rtg.simulation.reads;
 import java.io.IOException;
 import java.util.Arrays;
 
+import com.rtg.mode.DnaUtils;
 import com.rtg.util.InvalidParamsException;
+import com.rtg.util.PortableRandom;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.test.RandomDna;
 import com.rtg.variant.AbstractMachineErrorParams;
 
 /**
@@ -46,6 +49,28 @@ public class CompleteGenomicsV2MachineTest extends CompleteGenomicsV1MachineTest
     m.processFragment("name/", 30, frag, frag.length);
     checkQualities(m.mQualityBytes);
     mNano.check("cg-v2-results.fa", out.toString(), false);
+  }
+
+  public void test2() throws IOException, InvalidParamsException {
+    final CompleteGenomicsMachine m = (CompleteGenomicsMachine) getMachine(10);
+    final MemoryPrintStream out = new MemoryPrintStream();
+    final FastaReadWriter w = new FastaReadWriter(out.printStream());
+    m.setReadWriter(w);
+    final String template = RandomDna.random(500, new PortableRandom(33));
+    final byte[] frag = DnaUtils.encodeString(template);
+    m.processFragment("name/", 30, frag, frag.length);
+    checkQualities(m.mQualityBytes);
+    m.processFragment("name/", 30, frag, frag.length);
+    checkQualities(m.mQualityBytes);
+    m.processFragment("name/", 30, frag, frag.length);
+    checkQualities(m.mQualityBytes);
+    m.processFragment("name/", 30, frag, frag.length);
+    checkQualities(m.mQualityBytes);
+    m.processFragment("name/", 30, frag, frag.length);
+    checkQualities(m.mQualityBytes);
+    m.processFragment("name/", 30, frag, frag.length);
+    checkQualities(m.mQualityBytes);
+    mNano.check("cg-v2-results2.fa", out.toString(), false);
   }
 
   class StatsReadWriter extends CompleteGenomicsV1MachineTest.StatsReadWriter {
