@@ -556,8 +556,7 @@ public abstract class AbstractFamilyPosteriorTest extends TestCase {
   //all autosomes with denovo priors son should be called denovo
   // See testdiploiddiploiddiploid_denovo_2 in spreadsheet
   public void testDiploidDiploidDiploidDenovoSonNoPrior() throws InvalidParamsException {
-//    final GenomePriorParams priors = new GenomePriorParamsBuilder().denovoRef(2.3E-3).denovoNonRef(2.3E-6).create();
-    final GenomePriorParams priors = new GenomePriorParamsBuilder().denovoRef(0).denovoNonRef(0).create();
+    final GenomePriorParams priors = new GenomePriorParamsBuilder().denovoRef(0).denovoNonRef(0).contraryProbability(1).create();
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final Description desc = new DescriptionCommon("A", "C");
     final HypothesesPrior<Description> none = new HypothesesNone<>(DescriptionNone.SINGLETON, arith, 0);
@@ -580,11 +579,12 @@ public abstract class AbstractFamilyPosteriorTest extends TestCase {
     assertTrue(fp.isInteresting());
     assertEquals(getExpectedNonIdentity("testDiploidDiploidDiploidDenovoSonNoPrior"), fp.getNonIdentityPosterior(), 1e-4);
   }
+
   /**
    * @return a genome prior params with denovo priors zeroed
    * @throws InvalidParamsException
    */
   public GenomePriorParams getGenomePriorParams() throws InvalidParamsException {
-    return new GenomePriorParamsBuilder().denovoRef(0.0).denovoNonRef(0.0).create();
+    return new GenomePriorParamsBuilder().denovoRef(0.0).denovoNonRef(0.0).contraryProbability(1).create();
   }
 }

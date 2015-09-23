@@ -129,7 +129,7 @@ public class FamilyCallerTest extends TestCase {
   }
 
   private GenomePriorParams getGenomePriorParams() {
-    return new GenomePriorParamsBuilder().denovoRef(0.0).denovoNonRef(0.0).create();
+    return new GenomePriorParamsBuilder().denovoRef(0.0).denovoNonRef(0.0).contraryProbability(1).create();
   }
 
 

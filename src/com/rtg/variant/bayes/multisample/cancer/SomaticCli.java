@@ -55,7 +55,6 @@ public class SomaticCli extends AbstractMultisampleCli {
   private static final String CONTAMINATION_FLAG = Relationship.CONTAMINATION;
 
   private static final String REVERSE_CONTAMINATION_FLAG = "X" + Relationship.REVERSE_CONTAMINATION;
-  private static final String CONTRARY_FLAG = "Xcontrary-probability";
 
   private static final String SEX_FLAG = "sex";
   private static final String INCLUDE_GERMLINE_FLAG = "Xinclude-germline";
@@ -105,11 +104,6 @@ public class SomaticCli extends AbstractMultisampleCli {
         flags.error("--" + REVERSE_CONTAMINATION_FLAG + " should be a probability 0<p<1");
         return false;
       }
-      final double contrary = (Double) flags.getValue(CONTRARY_FLAG);
-      if (contrary <= 0 || contrary > 1) {
-        flags.error("--" + CONTRARY_FLAG + " should be a probability 0<p<=1");
-        return false;
-      }
       return true;
     }
   }
@@ -148,7 +142,6 @@ public class SomaticCli extends AbstractMultisampleCli {
     flags.registerOptional('r', PEDIGREE_FLAG, File.class, "file", "relationships file").setCategory(INPUT_OUTPUT);
     final Flag contamFlag = flags.registerOptional(CONTAMINATION_FLAG, Double.class, "float", "estimated fraction of contamination in derived sample").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(REVERSE_CONTAMINATION_FLAG, Double.class, "float", "estimated fraction of derived sample in original sample", 0.0).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(CONTRARY_FLAG, Double.class, "float", "probability used to penalize contrary evidence in somatic calls", 0.01).setCategory(SENSITIVITY_TUNING);
     final Flag derivedFlag = flags.registerOptional(DERIVED_FLAG, String.class, "string", "sample identifier used in read groups for derived sample").setCategory(INPUT_OUTPUT);
     final Flag originalFlag = flags.registerOptional(ORIGINAL_FLAG, String.class, "string", "sample identifier used in read groups for original sample").setCategory(INPUT_OUTPUT);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of individual", Sex.EITHER).setCategory(SENSITIVITY_TUNING);
@@ -193,7 +186,7 @@ public class SomaticCli extends AbstractMultisampleCli {
       .includeGermlineVariants(mFlags.isSet(INCLUDE_GERMLINE_FLAG))
       .includeGainOfReference(mFlags.isSet(INCLUDE_GAIN_OF_REFERENCE))
       .lohPrior((Double) mFlags.getValue(LOH_FLAG))
-      .genomePriors(GenomePriorParams.builder().contraryProbability((Double) mFlags.getValue(CONTRARY_FLAG)).create())
+      .genomePriors(GenomePriorParams.builder().contraryProbability((Double) mFlags.getValue(X_CONTRARY_FLAG)).create())
       .sex((Sex) mFlags.getValue(SEX_FLAG));
     if (mFlags.isSet(SOMATIC_PRIORS_FLAG)) {
       final PriorBedRangeLoader loader = new PriorBedRangeLoader();

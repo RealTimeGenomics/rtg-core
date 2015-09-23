@@ -110,7 +110,7 @@ public class MultisampleTaskTest extends AbstractNanoTest {
         builder.mapped(mapped);
         builder.genome(g.readerParams());
         builder.outputParams(new OutputParams(outFile, false, false));
-        builder.genomePriors(GenomePriorParams.builder().create());
+        builder.genomePriors(GenomePriorParams.builder().contraryProbability(1).create());
         builder.genomeRelationships(genomeRelationships);
         builder.maxCoverageFilter(new StaticThreshold(100));
         builder.uberHeader(SamUtils.getUberHeader(mapped, false, genomeRelationships == null ? null : genomeRelationships.genomes()));
@@ -236,12 +236,12 @@ public class MultisampleTaskTest extends AbstractNanoTest {
   public void testIndelTriggeringDeletionLength() throws Exception {
     final String testName = "indel_triggering_deletion";
     final String sam = FileHelper.resourceToString(RESOURCE_DIR + testName + ".sam");
-    PopulationNanoTest.check(mNano, PopulationNanoTest.DENOVO_REF, sam, PopulationNanoTest.FAMILY_PED, testName, new String[]{}, 1760, true);
+    PopulationNanoTest.check(mNano, PopulationNanoTest.DENOVO_REF, sam, PopulationNanoTest.FAMILY_PED, testName, new String[]{"--Xcontrary-probability", "1"}, 1760, true);
   }
   public void testIndelTriggeringDeletionReverse() throws Exception {
     final String testName = "indel_triggering_deletion_reverse";
     final String sam = FileHelper.resourceToString(RESOURCE_DIR + testName + ".sam");
-    PopulationNanoTest.check(mNano, PopulationNanoTest.DENOVO_REF, sam, PopulationNanoTest.FAMILY_PED, testName, new String[]{}, 1760, true);
+    PopulationNanoTest.check(mNano, PopulationNanoTest.DENOVO_REF, sam, PopulationNanoTest.FAMILY_PED, testName, new String[]{"--Xcontrary-probability", "1"}, 1760, true);
   }
 
   public void testStartOfReferenceN() throws Exception {

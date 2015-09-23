@@ -38,15 +38,15 @@ public final class FastFamilyPosterior extends FamilyPosterior {
 
     for (int i = 0; i < children; i++) {
       final ModelInterface<?> child = mChildren.get(i);
-      final Hypotheses<?> child1 = mHypotheses.get(child);
+      final Hypotheses<?> childHyp = mHypotheses.get(child);
       // All the references should be the same, so just use the child's since we have it
-      final MendelianAlleleProbability map = MendelianAlleleProbabilityFactory.COMBINED.getMendelianAlleleProbability(mFatherPloidy, mMotherPloidy, child1.ploidy(), mLogDenovoRefPrior, mLogDenovoNonrefPrior, child1.reference());
+      final MendelianAlleleProbability map = MendelianAlleleProbabilityFactory.COMBINED.getMendelianAlleleProbability(mFatherPloidy, mMotherPloidy, childHyp.ploidy(), mLogDenovoRefPrior, mLogDenovoNonrefPrior, childHyp.reference());
       rh[i] = new double[mChildren.get(i).size()];
       Arrays.fill(rh[i], Double.NEGATIVE_INFINITY);
       double ri = Double.NEGATIVE_INFINITY;
       for (int j = 0; j < rh[i].length; j++) {
         final double mendelian = map.probabilityLn(mMaximalCode, father, mother, j);
-        rh[i][j] = child.posteriorLn0(j) + mendelian;
+        rh[i][j] = child.posteriorLn0(j) + mendelian + contraryEvidenceAdjustment(child, father, mother, j);
         ri = VariantUtils.logSumApproximation(ri, rh[i][j]);
       }
       r[i] = ri;

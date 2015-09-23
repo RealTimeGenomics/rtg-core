@@ -509,7 +509,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
   }
 
   public void testDenovoPosterior() throws Exception {
-    mPriors = new GenomePriorParamsBuilder().create();
+    mPriors = new GenomePriorParamsBuilder().contraryProbability(1).create();
     final AbstractFamilyPosterior first = makeFamily("AAAAAAAAAAAAAAAAAA", "AAAAAAAAAAAAAAAAAAA", "AAAAAAAGGGGGGGGGGGGGGGGGGGGGGGGG");
     final AbstractFamilyPosterior second = makeFamily("AAAAAAAAAAAAAAAAAA", "AAAAAAAAAAAAAAAAAAAG", "AAAAAAAAAAGGGGGGGGGGGGGGGGGGGGGGGGG");
     final HypothesisScore firstScore = first.bestChild(0);

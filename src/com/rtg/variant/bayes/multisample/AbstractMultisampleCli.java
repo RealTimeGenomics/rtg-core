@@ -55,6 +55,7 @@ import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.variant.CalibratedPerSequenceThreshold;
 import com.rtg.variant.CalibratedPerSequenceThreshold.ThresholdFunction;
+import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.StaticThreshold;
 import com.rtg.variant.ThreadingEnvironment;
 import com.rtg.variant.VariantOutputLevel;
@@ -110,6 +111,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String X_NO_COMPLEX_CALLS_FLAG = "Xno-complex-calls";
   private static final String X_NO_TRIM_SPLIT = "Xno-trim-split";
   private static final String X_ALT_MULTIPLIER_FLAG = "Xalt-coverage-multiplier";
+  protected static final String X_CONTRARY_FLAG = "Xcontrary-probability";
 
   //
   private static final String X_IGNORE_SAM_HEADER_INCOMPATIBILITY = "Xignore-incompatible-sam-headers";
@@ -221,6 +223,11 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
         return false;
       }
     }
+    final double contrary = (Double) flags.getValue(X_CONTRARY_FLAG);
+    if (contrary <= 0 || contrary > 1) {
+      flags.error("--" + X_CONTRARY_FLAG + " should be a probability 0<p<=1");
+      return false;
+    }
     if (flags.isSet(BED_FILTER_FLAG)) {
       final File bedRegionsFile = (File) flags.getFlag(BED_FILTER_FLAG).getValue();
       if (!bedRegionsFile.exists()) {
@@ -302,6 +309,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(X_NO_COMPLEX_CALLS_FLAG, "turn off attempting calls in complex region").setCategory(INPUT_OUTPUT);
     flags.registerOptional(X_NO_TRIM_SPLIT, "disable trimming and splitting").setCategory(REPORTING);
     flags.registerOptional(X_IGNORE_SAM_HEADER_INCOMPATIBILITY, "ignore incompatible SAM headers when merging SAM results").setCategory(UTILITY);
+    flags.registerOptional(X_CONTRARY_FLAG, Double.class, "float", "probability used to penalize contrary evidence in somatic calls", 0.01).setCategory(SENSITIVITY_TUNING);
 
     //Extra INFO / FORMAT fields
     flags.registerOptional(X_INFO_ANNOTATION_FLAG, VcfInfoField.class, "string", "additional VCF INFO fields").setCategory(REPORTING)
@@ -378,7 +386,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     if (mFlags.getFlag(CommonFlags.FILTER_AVR_FLAG) != null && mFlags.isSet(CommonFlags.FILTER_AVR_FLAG)) {
       builder.minAvrScore((Double) mFlags.getValue(CommonFlags.FILTER_AVR_FLAG));
     }
-    builder.genomePriors((String) mFlags.getValue(X_PRIORS_FLAG));
+    builder.genomePriors(GenomePriorParams.builder().genomePriors((String) mFlags.getValue(X_PRIORS_FLAG)).contraryProbability((Double) mFlags.getValue(X_CONTRARY_FLAG)).create());
     if (mFlags.isSet(MACHINE_ERRORS_FLAG)) {
       builder.machineErrorName((String) mFlags.getValue(MACHINE_ERRORS_FLAG));
     }

@@ -54,7 +54,7 @@ public class FamilyNanoTest extends AbstractNanoTest {
 
     try (TestDirectory dir = new TestDirectory()) {
       final File priors = PopulationNanoTest.makeDenovoPriors(dir, 0.0, 0.0);
-      check(DENOVO_REF, sam, FAMILY_PED, "nodenovo", new String[] {"--Xpriors", priors.getPath()});
+      check(DENOVO_REF, sam, FAMILY_PED, "nodenovo", new String[] {"--Xpriors", priors.getPath(), "--Xcontrary-probability", "1"});
     }
   }
 
@@ -62,7 +62,7 @@ public class FamilyNanoTest extends AbstractNanoTest {
     final String sam = FileHelper.resourceToString(RESOURCES_DIR + "family_denovo.sam");
     try (TestDirectory dir = new TestDirectory()) {
       final File priors = PopulationNanoTest.makeDenovoPriors(dir, 0.002, 0.002);
-      check(DENOVO_REF, sam, FAMILY_PED, "denovo", new String[] {"--Xpriors", priors.getPath()});
+      check(DENOVO_REF, sam, FAMILY_PED, "denovo", new String[] {"--Xpriors", priors.getPath(), "--Xcontrary-probability", "1"});
     }
   }
 
@@ -70,7 +70,7 @@ public class FamilyNanoTest extends AbstractNanoTest {
     final String sam = FileHelper.resourceToString(RESOURCES_DIR + "family_denovo.sam");
     try (TestDirectory dir = new TestDirectory()) {
       final File priors = PopulationNanoTest.makeDenovoPriors(dir, 0.002, 0.0);
-      check(DENOVO_REF, sam, FAMILY_PED, "denovo_hom", new String[] {"--Xpriors", priors.getPath()});
+      check(DENOVO_REF, sam, FAMILY_PED, "denovo_hom", new String[] {"--Xpriors", priors.getPath(), "--Xcontrary-probability", "1"});
     }
   }
 

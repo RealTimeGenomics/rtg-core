@@ -62,7 +62,7 @@ public class PopulationNanoTest extends AbstractNanoTest {
     final String sam = FileHelper.resourceToString(RESOURCES_DIR + "family_denovo.sam");
     try (TestDirectory dir = new TestDirectory()) {
       final File priors = makeDenovoPriors(dir, 0.0, 0.0);
-      check(mNano, DENOVO_REF, sam, FAMILY_PED, "nodenovo", new String[] {"--Xpriors", priors.getPath(), "--Xmax-em-iterations", "50"}, FAMILY_DENOVO_METRIC, false);
+      check(mNano, DENOVO_REF, sam, FAMILY_PED, "nodenovo", new String[] {"--Xpriors", priors.getPath(), "--Xcontrary-probability", "1", "--Xmax-em-iterations", "50"}, FAMILY_DENOVO_METRIC, false);
     }
   }
   public static File makeDenovoPriors(File dir, double reference, double nonReference) throws IOException, InvalidParamsException {
@@ -80,7 +80,7 @@ public class PopulationNanoTest extends AbstractNanoTest {
     final String sam = FileHelper.resourceToString(RESOURCES_DIR + "family_denovo.sam");
     try (TestDirectory dir = new TestDirectory()) {
       final File priors = makeDenovoPriors(dir, 0.002, 0.002);
-      check(mNano, DENOVO_REF, sam, FAMILY_PED, "denovo", new String[] {"--Xpriors", priors.getPath(), "--Xmax-em-iterations", "50"}, FAMILY_DENOVO_METRIC, false);
+      check(mNano, DENOVO_REF, sam, FAMILY_PED, "denovo", new String[] {"--Xpriors", priors.getPath(), "--Xcontrary-probability", "1", "--Xmax-em-iterations", "50"}, FAMILY_DENOVO_METRIC, false);
     }
   }
 
@@ -88,7 +88,7 @@ public class PopulationNanoTest extends AbstractNanoTest {
     final String sam = FileHelper.resourceToString(RESOURCES_DIR + "family_denovo.sam");
     try (TestDirectory dir = new TestDirectory()) {
       final File priors = makeDenovoPriors(dir, 0.002, 0);
-      check(mNano, DENOVO_REF, sam, FAMILY_PED, "denovo_hom", new String[] {"--Xpriors", priors.getPath(), "--Xmax-em-iterations", "50"}, FAMILY_DENOVO_METRIC, false);
+      check(mNano, DENOVO_REF, sam, FAMILY_PED, "denovo_hom", new String[] {"--Xpriors", priors.getPath(), "--Xcontrary-probability", "1", "--Xmax-em-iterations", "50"}, FAMILY_DENOVO_METRIC, false);
     }
   }
 
@@ -96,7 +96,7 @@ public class PopulationNanoTest extends AbstractNanoTest {
     final String sam = FileHelper.resourceToString(RESOURCES_DIR + "family_denovo.sam");
     try (TestDirectory dir = new TestDirectory()) {
       final File priors = makeDenovoPriors(dir, 0.002, 0.000002);
-      check(mNano, DENOVO_REF, sam, FAMILY_PED, "denovo_mixed", new String[] {"--Xpriors", priors.getPath(), "--Xmax-em-iterations", "50"}, FAMILY_DENOVO_METRIC, false);
+      check(mNano, DENOVO_REF, sam, FAMILY_PED, "denovo_mixed", new String[] {"--Xpriors", priors.getPath(), "--Xcontrary-probability", "1", "--Xmax-em-iterations", "50"}, FAMILY_DENOVO_METRIC, false);
     }
   }
 

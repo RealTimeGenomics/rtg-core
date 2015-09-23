@@ -359,7 +359,7 @@ public class PopulationCallerTest extends TestCase {
     // recomputed within the population caller by checking for calls in the final result that didn't match the reference
     // but this recomputed value was not used consistently. An adjacent complex region was not extended to cover this
     // call but then had a previous base prepended resulting in an overlap.
-    final GenomePriorParams params = new GenomePriorParamsBuilder().create();
+    final GenomePriorParams params = new GenomePriorParamsBuilder().contraryProbability(1).create();
     final VariantParams vParams = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).maxAmbiguity(0.3).maxCoverageFilter(new StaticThreshold(50)).genomePriors(params).create();
     final Family[] families = new Family[2];
     families[0] = new Family("0", "1", "2");
