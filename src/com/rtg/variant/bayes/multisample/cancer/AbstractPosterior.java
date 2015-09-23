@@ -101,8 +101,8 @@ public abstract class AbstractPosterior {
         if (normal != cancer) { // No adjustment needed in case where hypotheses are the same
           final int cancerA = mHypotheses.code().a(cancer);
           final int cancerB = mHypotheses.code().bc(cancer);
-          int contraryNormalCount = 0;
-          int contraryCancerCount = 0;
+          double contraryNormalCount = 0;
+          double contraryCancerCount = 0;
           if (cancerA != normalA && cancerA != normalB) {
             contraryNormalCount += normalStats.counts().count(cancerA);
           }
