@@ -15,7 +15,6 @@ package com.rtg.simulation.reads;
 import com.rtg.mode.DNA;
 import com.rtg.reader.CgUtils;
 import com.rtg.simulation.SimulationUtils;
-import com.rtg.util.PortableRandom;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.AbstractMachineErrorParams;
 
@@ -29,8 +28,6 @@ public class CompleteGenomicsV2Machine extends CompleteGenomicsMachine {
   private static final int READ_LENGTH = CgUtils.CG2_RAW_LENGTH;
   private static final int MAX_DELETE = 20;  // Bring the right arm in from the end of the fragment to allow for some deletion.
 
-  protected final PortableRandom mFrameRandom;
-  protected final PortableRandom mSegmentRandom;
   protected final double[] mOverlapDistribution2;
 
   /**
@@ -41,11 +38,9 @@ public class CompleteGenomicsV2Machine extends CompleteGenomicsMachine {
   public CompleteGenomicsV2Machine(AbstractMachineErrorParams params, long randomSeed) {
     super(params, randomSeed);
     mOverlapDistribution2 = SimulationUtils.cumulativeDistribution(params.overlapDistribution2());
-    if (mOverlapDistribution2 == null || mOverlapDistribution2.length != 8) {
+    if (mOverlapDistribution2.length != 8) {
       throw new IllegalArgumentException("Missing or incorrect distribution for CG V2 overlap");
     }
-    mFrameRandom = new PortableRandom(randomSeed);
-    mSegmentRandom = new PortableRandom(randomSeed * 3);
     mQualityBytes = new byte[READ_LENGTH];
     mReadBytes = new byte[READ_LENGTH];
     mWorkspace = new int[READ_LENGTH];

@@ -41,13 +41,13 @@ public class CompleteGenomicsV1Machine extends CompleteGenomicsMachine {
     mOverlapDistribution = SimulationUtils.cumulativeDistribution(params.overlapDistribution());
     mGapDistribution = SimulationUtils.cumulativeDistribution(params.gapDistribution());
     mSmallGapDistribution = SimulationUtils.cumulativeDistribution(params.smallGapDistribution());
-    if (mOverlapDistribution == null || mOverlapDistribution.length != 5) {
+    if (mOverlapDistribution.length != 5) {
       throw new IllegalArgumentException("Missing or incorrect distribution for CG V1 overlap");
     }
-    if (mGapDistribution == null || mGapDistribution.length != 5) {
+    if (mGapDistribution.length != 5) {
       throw new IllegalArgumentException("Missing or incorrect distribution for CG V1 gap");
     }
-    if (mSmallGapDistribution == null || mSmallGapDistribution.length != 4) {
+    if (mSmallGapDistribution.length != 4) {
       throw new IllegalArgumentException("Missing or incorrect distribution for CG V1 small gap");
     }
     mQualityBytes = new byte[READ_LENGTH];

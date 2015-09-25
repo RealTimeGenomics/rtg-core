@@ -14,6 +14,7 @@ package com.rtg.simulation.reads;
 
 import java.io.IOException;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.alignment.ActionsHelper;
 import com.rtg.reader.PrereadType;
 import com.rtg.util.PortableRandom;
@@ -23,6 +24,7 @@ import com.rtg.variant.AbstractMachineErrorParams;
  * Generator for Complete Genomics paired end reads.
  *
  */
+@TestClass("com.rtg.simulation.reads.CompleteGenomicsV1MachineTest")
 public abstract class CompleteGenomicsMachine extends AbstractMachine {
 
   protected final PortableRandom mFrameRandom;
