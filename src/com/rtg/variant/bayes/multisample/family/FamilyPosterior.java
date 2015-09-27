@@ -158,7 +158,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
   private void computeAlleles(boolean isDefault) {
     final int haploidSize;
     final int fatherIterations;
-    final AlleleProbability ap= isDefault ? getAlleleProbability(mFatherPloidy, mMotherPloidy) : null;
+    final AlleleProbability ap = isDefault ? getAlleleProbability(mFatherPloidy, mMotherPloidy) : null;
     final boolean fatherNone = mFatherPloidy == Ploidy.NONE;
     if (fatherNone) {
       fatherIterations = 1;
