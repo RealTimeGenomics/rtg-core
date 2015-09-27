@@ -179,7 +179,7 @@ public class ReadSimCli extends LoggedCli {
     mFlags.addRequiredSet(covFlag);
     mFlags.addRequiredSet(nFlag);
 
-    mFlags.registerOptional('q', QUAL_RANGE, String.class, "string", "set the range of base quality values permitted e.g.: 3-40. Default is fixed qualities corresponding to overall machine base error rate").setCategory(UTILITY);
+    mFlags.registerOptional('q', QUAL_RANGE, String.class, "string", "set the range of base quality values permitted e.g.: 3-40 (Default is fixed qualities corresponding to overall machine base error rate)").setCategory(UTILITY);
 
     //reduce wastage
     mFlags.registerOptional(NO_NAMES, "do not create read names in result sdf").setCategory(UTILITY);

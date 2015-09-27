@@ -90,7 +90,7 @@ class AviewParams {
     // Filtering options
     flags.registerOptional(SAMPLE, String.class, "STRING", "specify name of sample to select").setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.FILTERING);
     flags.registerRequired(REGION, String.class, "STRING", "the region of interest to display. The format is one of <sequence_name>, <sequence_name>:start-end or <sequence_name>:start+length").setCategory(CommonFlagCategories.FILTERING);
-    flags.registerOptional('p', PADDING, Integer.class, "INT", "padding around region of interest. Default is to automatically determine padding to avoid read truncation").setCategory(CommonFlagCategories.FILTERING);
+    flags.registerOptional('p', PADDING, Integer.class, "INT", "padding around region of interest (Default is to automatically determine padding to avoid read truncation)").setCategory(CommonFlagCategories.FILTERING);
 
     flags.registerOptional(MAX_MATED_ALIGNMENT_SCORE, Integer.class, "INT", "if set, ignore mated SAM records with an alignment score (AS attribute) that exceeds this value").setCategory(CommonFlagCategories.FILTERING);
     flags.registerOptional(MAX_UNMATED_ALIGNMENT_SCORE, Integer.class, "INT", "if set, ignore unmated SAM records with an alignment score (AS attribute) that exceeds this value").setCategory(CommonFlagCategories.FILTERING);
@@ -109,7 +109,7 @@ class AviewParams {
     flags.registerOptional(NO_COLOR, "do not use colors").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(HTML, "output as HTML").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(PRINT_REFERENCE_LINE, Integer.class, "INT", "print reference line every N lines", 0).setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(PROJECT_TRACK, Integer.class, "INT", "if set, project highlighting for the specified track down through reads. Default projects the union of tracks").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(PROJECT_TRACK, Integer.class, "INT", "if set, project highlighting for the specified track down through reads (Default projects the union of tracks)").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(SORT_READS, "sort reads on start position").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(SORT_READGROUP, "sort reads first on read group and then on start position").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(UNFLATTEN, "display unflattened CGI reads when present").setCategory(CommonFlagCategories.REPORTING);

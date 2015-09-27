@@ -58,7 +58,7 @@ public class SvCliUtilsTest extends TestCase {
         , "--region=STRING", "if set, only process SAM records within the specified range. The format is one of <template_name>, <template_name>:start-end or <template_name>:start+length"
         , "-h,", "--help", "print help on command-line flag usage"
         , "-Z,", "--no-gzip", "do not gzip the output"
-        , "-T,", "--threads=INT", "number of threads. Defaults to the number of available cores"
+        , "-T,", "--threads=INT", "number of threads (Default is the number of available cores)"
         );
     final Flag regionFlag = flags.getFlag("region");
     assertNull(regionFlag.getChar());

@@ -298,7 +298,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(X_R_MAX_FLAG, Integer.class, "int", "for mated reads this is the maximum value that the read quality can have", 255).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_UNMATED_R_MAX_FLAG, Integer.class, "int", "for unmated reads this is the maximum value that the read quality can have", 255).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_THREADING_ENVIRONMENT, String.class, "string", "threading environment to be used. One of [single, random=seed, parallel]", "parallel").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_IO_THREADS, Integer.class, "int", "number of threads to use for IO. Defaults to the number of available cores").setCategory(UTILITY);
+    flags.registerOptional(X_IO_THREADS, Integer.class, "int", "number of threads to use for IO (Default is the number of available cores)").setCategory(UTILITY);
     flags.registerOptional(X_NO_COMPLEX_CALLS_FLAG, "turn off attempting calls in complex region").setCategory(INPUT_OUTPUT);
     flags.registerOptional(X_NO_TRIM_SPLIT, "disable trimming and splitting").setCategory(REPORTING);
     flags.registerOptional(X_IGNORE_SAM_HEADER_INCOMPATIBILITY, "ignore incompatible SAM headers when merging SAM results").setCategory(UTILITY);

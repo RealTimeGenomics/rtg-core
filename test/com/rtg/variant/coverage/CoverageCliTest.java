@@ -118,7 +118,7 @@ public class CoverageCliTest extends AbstractCliTest {
             , "-s,", "--smoothing", "smooth with this number of neighboring values (0 means no smoothing) (Default is 50)"
             , "-Z,", "--no-gzip", "do not gzip the output"
             , "--per-base", "output per-base counts in TSV format"
-            , "-T,", "--threads=INT", "number of threads. Defaults to the number of available cores"
+            , "-T,", "--threads=INT", "number of threads (Default is the number of available cores)"
             );
     checkExtendedHelp("coverage [OPTION]... -o DIR FILE+"
             , "--Xerror-rates", "report statistics about sequencer error rates"
