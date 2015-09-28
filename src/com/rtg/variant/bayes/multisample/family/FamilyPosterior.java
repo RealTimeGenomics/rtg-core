@@ -550,6 +550,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
     final AlleleStatistics<?> fatherCounts = mFather.statistics().counts();
     final AlleleStatistics<?> motherCounts = mMother.statistics().counts();
     final AlleleStatistics<?> childCounts = childModel.statistics().counts();
+    // XXX is the following code extraction actually the correct thing to do?
     final int childA = mMaximalCode.a(childHyp);
     final int childB = mMaximalCode.bc(childHyp);
     final int fatherA = mMaximalCode.a(fatherHyp);
