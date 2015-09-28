@@ -46,7 +46,7 @@ public final class FastFamilyPosterior extends FamilyPosterior {
       double ri = Double.NEGATIVE_INFINITY;
       for (int j = 0; j < rh[i].length; j++) {
         final double mendelian = map.probabilityLn(mMaximalCode, father, mother, j);
-        rh[i][j] = child.posteriorLn0(j) + mendelian + contraryEvidenceAdjustment(child, father, mother, j);
+        rh[i][j] = child.posteriorLn0(j) + mendelian + contraryEvidenceAdjustment(father, mother, j);
         ri = VariantUtils.logSumApproximation(ri, rh[i][j]);
       }
       r[i] = ri;

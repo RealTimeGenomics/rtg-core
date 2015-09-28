@@ -112,6 +112,8 @@ public class FamilyCallerFB extends AbstractMultisampleCaller implements Multisa
         fpsDenovo[familyIndex] = fpDenovo;
         //
 
+        // todo, this implementation does not have any correction for contrary evidence
+
         for (int c = 0; c < family.numChildren(); c++) {
           as[ids[Family.FIRST_CHILD_INDEX + c]] = newAs[c]; //TODO should we update in the method itself?
         }

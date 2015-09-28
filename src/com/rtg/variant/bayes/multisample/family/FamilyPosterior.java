@@ -543,50 +543,30 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
     return allele < counts.getDescription().size() ? counts.count(allele) : 0;
   }
 
-  protected double contraryEvidenceAdjustment(final ModelInterface<?> childModel, final int fatherHyp, final int motherHyp, final int childHyp) {
-    // XXX cases like mother=0/0 father=1/1 child=0/0; mother = 1/0 father = 2/2/ child = 1/0
-    // XXX implications for ForwardBackward implementation
-    // Corresponds to R(H_c | H_m, H_f, E_c, E_m, E_f) in theory document
-    final AlleleStatistics<?> fatherCounts = mFather.statistics().counts();
-    final AlleleStatistics<?> motherCounts = mMother.statistics().counts();
-    final AlleleStatistics<?> childCounts = childModel.statistics().counts();
-    // XXX is the following code extraction actually the correct thing to do?
-    final int childA = mMaximalCode.a(childHyp);
-    final int childB = mMaximalCode.bc(childHyp);
-    final int fatherA = mMaximalCode.a(fatherHyp);
-    final int fatherB = mMaximalCode.bc(fatherHyp);
-    final int motherA = mMaximalCode.a(motherHyp);
-    final int motherB = mMaximalCode.bc(motherHyp);
-    if (childHyp != fatherHyp && childHyp != motherHyp) { // No adjustment needed in case where hypotheses are the same
-      // This needs to be careful to ensure each piece of contrary evidence is only counted once
-      double contraryCount = 0;
-      if (childA != fatherA && childA != fatherB && childA != motherA && childA != motherB) {
-        // child A allele is not present in hypothesis for either parent
-        contraryCount += safeGetCount(fatherCounts, childA) + safeGetCount(motherCounts, childA);
+  protected double contraryEvidenceAdjustment(final int fatherHyp, final int motherHyp, final int childHyp) {
+    if (mContraryProbabilityLn < 0) { // Efficiency
+      // Corresponds to R(H_c | H_m, H_f, E_c, E_m, E_f) in theory document
+      final AlleleStatistics<?> fatherCounts = mFather.statistics().counts();
+      final AlleleStatistics<?> motherCounts = mMother.statistics().counts();
+      final int childA = mMaximalCode.a(childHyp);
+      final int childB = mMaximalCode.bc(childHyp);
+      final int fatherA = mMaximalCode.a(fatherHyp);
+      final int fatherB = mMaximalCode.bc(fatherHyp);
+      final int motherA = mMaximalCode.a(motherHyp);
+      final int motherB = mMaximalCode.bc(motherHyp);
+      if (childHyp != fatherHyp && childHyp != motherHyp) { // No adjustment needed in case where hypotheses are the same
+        // This needs to be careful to ensure each piece of contrary evidence is only counted once
+        double contraryCount = 0;
+        if (childA != fatherA && childA != fatherB && childA != motherA && childA != motherB) {
+          // child A allele is not present in hypothesis for either parent
+          contraryCount += safeGetCount(fatherCounts, childA) + safeGetCount(motherCounts, childA);
+        }
+        if (childB != childA && childB != fatherA && childB != fatherB && childB != motherA && childB != motherB) {
+          // child heterozygous B allele is not present in hypothesis for either parent
+          contraryCount += safeGetCount(fatherCounts, childB) + safeGetCount(motherCounts, childB);
+        }
+        return mContraryProbabilityLn * contraryCount;
       }
-      if (childB != childA && childB != fatherA && childB != fatherB && childB != motherA && childB != motherB) {
-        // child heterozygous B allele is not present in hypothesis for either parent
-        contraryCount += safeGetCount(fatherCounts, childB) + safeGetCount(motherCounts, childB);
-      }
-      /*
-      if (fatherA >= 0 && fatherA != childA && fatherA != childB) {
-        // Allele A of father not in the child
-        contraryCount += safeGetCount(childCounts, fatherA);
-      }
-      if (fatherB != fatherA && fatherB >= 0 && fatherB != childA && fatherB != childB) {
-        // Allele B of heterozygous father not in the child
-        contraryCount += safeGetCount(childCounts, fatherB);
-      }
-      if (motherA >= 0 && motherA != childA && motherA != childB && motherA != fatherA && motherA != fatherB) {
-        // Allele A of mother not in the child or father
-        contraryCount += safeGetCount(childCounts, motherA);
-      }
-      if (motherB >= 0 && motherB != childA && motherB != childB && motherB != fatherA && motherB != fatherB) {
-        // Allele B of father not in the child or father
-        contraryCount += safeGetCount(childCounts, motherB);
-      }
-      */
-      return mContraryProbabilityLn * contraryCount;
     }
     return 0; // ln(1)
   }
@@ -640,7 +620,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
           if (Double.isInfinite(prior)) {
             continue;
           }
-          final double childMarginal = marginal + child.posteriorLn0(i) + prior + contraryEvidenceAdjustment(child, father, mother, i);
+          final double childMarginal = marginal + child.posteriorLn0(i) + prior + contraryEvidenceAdjustment(father, mother, i);
           assert !Double.isNaN(childMarginal) : marginal + ":" + child.posteriorLn0(i) + ":" + prior;
           childHyps.push(i);
           result = VariantUtils.logSumApproximation(result, calculateMarginalsSlowly(childMarginal, father, mother, childHyps, childCount + 1));
