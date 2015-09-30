@@ -17,14 +17,13 @@ import java.util.Arrays;
 import java.util.Properties;
 
 import com.reeltwo.jumble.annotations.TestClass;
-import com.rtg.alignment.CgGotohEditDistance;
 import com.rtg.launcher.GlobalFlags;
 import com.rtg.ngs.SharedResources;
+import com.rtg.reader.CgUtils;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.machine.MachineOrientation;
-import com.rtg.variant.realign.ScoreMatrixCG;
 
 
 /**
@@ -292,7 +291,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
           //Unfortunately these read lengths are approximations of the alignment length, so the thresholding isn't based on the ultimate template length :(
           if (mLeftReader.getPrereadType() == PrereadType.CG) {
             // we add 4 because the most common CG alignment size along the template is 35 - 2 + 6 = 39.
-            final int expectedCgReadLength = CgGotohEditDistance.CG_RAW_READ_LENGTH + ScoreMatrixCG.EXPECTED_CG_TOTAL_GAP;
+            final int expectedCgReadLength = CgUtils.CG_RAW_READ_LENGTH + CgUtils.CG_EXPECTED_LENGTH_OFFSET;
             mateReadLength = expectedCgReadLength;
             hitReadLength = expectedCgReadLength;
           } else {

@@ -25,7 +25,7 @@ import com.rtg.variant.AbstractMachineErrorParams;
 public class CompleteGenomicsV2Machine extends CompleteGenomicsMachine {
 
   private static final int NUMBER_TRIES = 1000;
-  private static final int READ_LENGTH = CgUtils.CG2_RAW_LENGTH;
+  private static final int READ_LENGTH = CgUtils.CG2_RAW_READ_LENGTH;
   private static final int MAX_DELETE = 20;  // Bring the right arm in from the end of the fragment to allow for some deletion.
 
   protected final double[] mOverlapDistribution2;
@@ -61,7 +61,7 @@ public class CompleteGenomicsV2Machine extends CompleteGenomicsMachine {
       if (leftArm) {
         startFrom = 0;
       } else {
-        startFrom = length - (CgUtils.CG2_RAW_LENGTH + MAX_DELETE);
+        startFrom = length - (CgUtils.CG2_RAW_READ_LENGTH + MAX_DELETE);
       }
     } else {
       frame = 'R';
@@ -69,7 +69,7 @@ public class CompleteGenomicsV2Machine extends CompleteGenomicsMachine {
       if (leftArm) {
         startFrom = length - 1;
       } else {
-        startFrom = CgUtils.CG2_RAW_LENGTH + MAX_DELETE;
+        startFrom = CgUtils.CG2_RAW_READ_LENGTH + MAX_DELETE;
       }
     }
     for (int x = 0; x < NUMBER_TRIES; x++) {

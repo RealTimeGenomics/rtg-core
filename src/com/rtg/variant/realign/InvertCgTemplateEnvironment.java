@@ -12,6 +12,8 @@
 
 package com.rtg.variant.realign;
 
+import com.rtg.reader.CgUtils;
+
 /**
  * An environment with the read and the template reversed.
  * Note that <code>templatePosition(i)</code> moves DOWN the template
@@ -36,12 +38,12 @@ public class InvertCgTemplateEnvironment extends EnvironmentCombined {
 
   @Override
   public byte template(int index) {
-    return super.template(ScoreMatrixCG.EXPECTED_LENGTH - index - 1);
+    return super.template(CgUtils.CG_EXPECTED_LENGTH - index - 1);
   }
 
   @Override
   public int absoluteTemplatePosition(int index) {
-    return super.absoluteTemplatePosition(ScoreMatrixCG.EXPECTED_LENGTH - index - 1);
+    return super.absoluteTemplatePosition(CgUtils.CG_EXPECTED_LENGTH - index - 1);
   }
 
 

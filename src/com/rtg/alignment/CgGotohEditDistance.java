@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import com.rtg.mode.DNA;
+import com.rtg.reader.CgUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.format.FormatReal;
@@ -25,7 +26,6 @@ import com.rtg.variant.realign.EnvironmentImplementation;
 import com.rtg.variant.realign.InvertedEnvironment;
 import com.rtg.variant.realign.RealignParams;
 import com.rtg.variant.realign.RealignParamsImplementation;
-import com.rtg.variant.realign.ScoreMatrixCG;
 
 /**
  * This finds good alignments for Complete Genomics reads (length = 35),
@@ -743,7 +743,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
 //      System.arraycopy(read, 15, mRead, 10, 25);
       // we reverse the read and the template, and then pretend that this is a left arm read.
       // we add 4 because the most common CG alignment size along the template is 35 - 2 + 6 = 39.
-      final EnvironmentImplementation env = new EnvironmentImplementation(maxShift, template, zeroBasedStart + ScoreMatrixCG.EXPECTED_CG_TOTAL_GAP, read, null);
+      final EnvironmentImplementation env = new EnvironmentImplementation(maxShift, template, zeroBasedStart + CgUtils.CG_EXPECTED_LENGTH_OFFSET, read, null);
       setEnv(new InvertedEnvironment(env), true);
     }
     mRead = read;

@@ -259,7 +259,7 @@ public class ReadSimCli extends LoggedCli {
       final int length = (Integer) mFlags.getValue(CG_READLENGTH);
       if (length == CgUtils.CG_RAW_READ_LENGTH) {
         result = new CompleteGenomicsV1Machine(mPriors, seed);
-      } else if (length == CgUtils.CG2_RAW_LENGTH) {
+      } else if (length == CgUtils.CG2_RAW_READ_LENGTH) {
         result = new CompleteGenomicsV2Machine(mPriors, seed);
       } else {
         throw new IllegalArgumentException("Unsupported CG read length: " + length);

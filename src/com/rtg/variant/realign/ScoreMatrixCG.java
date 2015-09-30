@@ -29,17 +29,6 @@ public class ScoreMatrixCG extends ScoreMatrix {
   static final int SMALL_GAP = RealignParamsImplementation.CG_SMALL_GAP;
   static final int LARGE_GAP = RealignParamsImplementation.CG_LARGE_GAP;
 
-  /** Most likely overlap. */
-  public static final int EXPECTED_OVERLAP = 2;
-  /** Most likely length of the small gap. */
-  public static final int EXPECTED_SMALL_GAP = 0;
-  /** Most likely length of the large gap. */
-  public static final int EXPECTED_LARGE_GAP = 6;
-  /** Most likely length of sum of gaps and overlap. */
-  public static final int EXPECTED_CG_TOTAL_GAP = EXPECTED_SMALL_GAP + EXPECTED_LARGE_GAP - EXPECTED_OVERLAP;
-  /** Most likely length of whole CG read. */
-  public static final int EXPECTED_LENGTH = CG_RAW_READ_LENGTH + EXPECTED_CG_TOTAL_GAP;
-
   private static final SpyCounter SPY = new SpyCounter("ScoreMatrixCG");
   private final double[][] mGapDistributionsPoss;
 
