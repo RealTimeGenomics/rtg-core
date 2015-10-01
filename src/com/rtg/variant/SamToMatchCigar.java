@@ -12,8 +12,6 @@
 
 package com.rtg.variant;
 
-import java.util.TreeSet;
-
 import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.ReaderRecord;
 import com.rtg.sam.SamUtils;
@@ -48,7 +46,7 @@ public class SamToMatchCigar extends IntegralAbstract implements SamToMatch {
   }
 
   @Override
-  public boolean process(final byte[] templateBytes, final VariantAlignmentRecord rec, final TreeSet<VariantAlignmentRecord> samComplexContext) {
+  public boolean process(final byte[] templateBytes, final VariantAlignmentRecord rec) {
     final AbstractMachineErrorParams me = mChooser.machineErrors(rec);
     final int readScore = VariantUtils.readScoreFromAlignmentRecord(rec, mParams);
     if (readScore < 0) {
@@ -58,9 +56,6 @@ public class SamToMatchCigar extends IntegralAbstract implements SamToMatch {
     try {
       // System.err.println("read=" + read + " cigar=" + cigarString);
       mParser.toMatcher(me, rec, mQdefault, templateBytes);
-      if (samComplexContext != null) {
-        samComplexContext.add(rec);
-      }
       return true;
     } catch (final BadSuperCigarException e) {
       // Invalid CIGAR

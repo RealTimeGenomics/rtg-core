@@ -11,8 +11,6 @@
  */
 package com.rtg.variant;
 
-import java.util.TreeSet;
-
 import com.rtg.sam.ReaderRecord;
 
 /**
@@ -24,11 +22,9 @@ public interface SamToMatch {
    * are likely to be supplied in constructors).
    * @param templateBytes the nucleotides in the template.
    * @param var alignment record to be processed.
-   * @param varComplexContext record information for complex region logic in
-   *          here.
    * @return true iff the record is processed without error.
    */
-  boolean process(byte[] templateBytes, VariantAlignmentRecord var, TreeSet<VariantAlignmentRecord> varComplexContext);
+  boolean process(byte[] templateBytes, VariantAlignmentRecord var);
 
   /**
    * Get the effective start position of the alignment record. That is, the earliest

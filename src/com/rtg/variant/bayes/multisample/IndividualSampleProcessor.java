@@ -51,7 +51,7 @@ public class IndividualSampleProcessor<D extends Description> {
     if (start < 0 || start >= mTemplateBytes.length) {
       return false;
     }
-    return mToMatch.process(mTemplateBytes, var, null);
+    return mToMatch.process(mTemplateBytes, var);
   }
 
   ModelInterface<D> step(final int start) {

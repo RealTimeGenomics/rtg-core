@@ -11,11 +11,8 @@
  */
 package com.rtg.variant;
 
-import java.util.TreeSet;
-
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -47,9 +44,8 @@ public class SamToMatchCigarTest extends TestCase {
     sam.setReadBases("ACGTN".getBytes());
     sam.setCigarString("4=");
     sam.setAlignmentStart(42);
-    final TreeSet<VariantAlignmentRecord> samComplexContext = new TreeSet<>();
     final VariantAlignmentRecord rec = new VariantAlignmentRecord(sam);
-    assertTrue(stm.process(new byte[] {0, 0}, rec, samComplexContext));
+    assertTrue(stm.process(new byte[] {0, 0}, rec));
     assertEquals("called", parser.toString());
     assertEquals(41, stm.start(rec));
   }
