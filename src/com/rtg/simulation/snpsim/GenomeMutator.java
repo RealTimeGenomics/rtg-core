@@ -42,8 +42,8 @@ import com.rtg.variant.Variant;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantSample;
-import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
+import com.rtg.vcf.VariantStatistics;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfWriter;
 import com.rtg.vcf.header.VcfHeader;
@@ -58,14 +58,6 @@ public class GenomeMutator {
   static final int VALID_RATIO = 10;
   // Burst limit for failed mutation positions.
   static final int INVALID_THRESHOLD = 200;
-
-  private static final byte[] MAPPING;
-  static {
-    MAPPING = new byte[DNA.values().length];
-    for (int i = 0; i < MAPPING.length; i++) {
-      MAPPING[i] = (byte) DNA.values()[i].toString().charAt(0);
-    }
-  }
 
   protected final boolean mVerbose;
   protected final PortableRandom mRandom;
@@ -292,7 +284,7 @@ public class GenomeMutator {
       // check for Ns
       int i = 0;
       while (i < maxMutation) {
-        if (!getNucleotideString(seq, pos + i, 1).equals("N")) {
+        if (!DnaUtils.bytesToSequenceIncCG(seq, pos + i, 1).equals("N")) {
           break;
         }
         i++;
@@ -301,7 +293,7 @@ public class GenomeMutator {
         return false;
       }
     } else {
-      if (getNucleotideString(seq, pos, 1).equals("N")) {
+      if (DnaUtils.bytesToSequenceIncCG(seq, pos, 1).equals("N")) {
         return false;
       }
       maxMutation = 0;
@@ -336,9 +328,10 @@ public class GenomeMutator {
     final int lenMax = m.mLength > m.mLengthTwin ? m.mLength : m.mLengthTwin;
     final String mut1;
     final String mut2;
-    final String old = getNucleotideString(seq, m.mPos, lenMax);
+    final String old = DnaUtils.bytesToSequenceIncCG(seq, m.mPos, lenMax);
 
-    DNA[] dnaArray1 = new DNA[0]; DNA[] dnaArray2 = new DNA[0];
+    DNA[] dnaArray1 = new DNA[0];
+    DNA[] dnaArray2 = new DNA[0];
     if (m.mType == MutationType.SNP && mPriors != null) {
       mut1 = "" + DnaUtils.getBase(m.mBases[0]);
       mut2 = "" + DnaUtils.getBase(m.mBases[1]);
@@ -474,7 +467,7 @@ public class GenomeMutator {
   private int mutateDelete(SdfWriter h1, SdfWriter h2, final byte[] seq, final String seqName, final Mutation m) throws IOException {
     assert m.mType == Mutation.MutationType.DELETE;
     final int maxlen = m.mLength > m.mLengthTwin ? m.mLength : m.mLengthTwin;
-    final String old = getNucleotideString(seq, m.mPos, maxlen);
+    final String old = DnaUtils.bytesToSequenceIncCG(seq, m.mPos, maxlen);
     assert !(h2 == null && m.mLengthTwin != m.mLength);
     final String[] mutations = generateDeletion(m, old, mRandom);
     assert !(h2 == null && m.mGenDiffMode != GenDiffMode.BOTH_SAME);
@@ -583,7 +576,7 @@ public class GenomeMutator {
     final boolean delFirst = nextBoolean(mRandom);
     // prepare deletion
     final int delLen = delFirst ? m.mLength : m.mLengthTwin;
-    final String old = getNucleotideString(seq, m.mPos, delLen);
+    final String old = DnaUtils.bytesToSequenceIncCG(seq, m.mPos, delLen);
 
     final int insLen = delFirst ? m.mLengthTwin : m.mLength;
     final DNA[] dnaArray = new DNA[insLen];
@@ -654,14 +647,6 @@ public class GenomeMutator {
         i++;
       }
     }
-  }
-
-  static String getNucleotideString(final byte[] seq, final int pos, final int length) {
-    final byte[] ret = new byte[length];
-    for (int i = 0; i < length; i++) {
-      ret[i] = MAPPING[seq[pos + i]];
-    }
-    return new String(ret);
   }
 
   private DNA[] getDnaArray(final byte[] seq, final int pos, final int length) {
@@ -743,7 +728,6 @@ public class GenomeMutator {
     }
   }
 
-  /** @return a detailed human readable representation of this object. It is intended that this show internal details of the object structure that may be relevant to an implementor/debugger but not to a user. */
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
