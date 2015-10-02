@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.mode.DNA;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -38,7 +39,6 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
  * Class loads a population VCF and creates hypotheses for positions in VCF file.
- *
  */
 public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
 
@@ -286,6 +286,7 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
 }
 
 // Keeps per base counts in 0-3 space, same as SNP hypotheses
+@TestClass("com.rtg.variant.bayes.multisample.population.PopulationHwHypothesesCreatorTest")
 class SnpDescriptionCounts extends DescriptionCounts {
 
   static final int A = DNA.A.ordinal() - 1;
