@@ -115,7 +115,7 @@ public abstract class PopulationVariantGenerator {
       int retry = 0;
       do {
         if (retry++ >= MAX_RETRIES) {
-          throw new RuntimeException();
+          throw new RuntimeException("Too many tries during variant generation");
         }
         variant = nextPopulationVariant();
       } while (variant != null && !checkValid(variant, ret));
