@@ -24,9 +24,16 @@ public class CgSimCli extends ReadSimCli {
 
   static final String XMACHINE_ERROR_PRIORS = "Xmachine-errors";
 
+  static final String CG_VERSION = "cg-read-version";
+
   protected static class CgSimValidator extends ReadSimCliValidator {
     @Override
     protected boolean checkMachines(CFlags cflags) {
+      final int version = (Integer) cflags.getValue(CG_VERSION);
+      if (version < 1 || version > 2) {
+        cflags.setParseMessage("Version must be 1 or 2");
+        return false;
+      }
       return true;
     }
   }
@@ -51,7 +58,15 @@ public class CgSimCli extends ReadSimCli {
 
   @Override
   protected MachineType getMachineType() {
-    return MachineType.COMPLETE_GENOMICS;
+    final int version = (Integer) mFlags.getValue(CG_VERSION);
+    switch (version) {
+      case 1:
+        return MachineType.COMPLETE_GENOMICS;
+      case 2:
+        return MachineType.COMPLETE_GENOMICS_2;
+      default:
+        throw new UnsupportedOperationException("Unsupported CG version");
+    }
   }
 
   @Override
@@ -67,6 +82,6 @@ public class CgSimCli extends ReadSimCli {
     mFlags.registerOptional('M', MAX_FRAGMENT, Integer.class, "int", "maximum fragment size", 500).setCategory(CAT_FRAGMENTS);
     mFlags.registerOptional('m', MIN_FRAGMENT, Integer.class, "int", "minimum fragment size", 350).setCategory(CAT_FRAGMENTS);
     mFlags.registerOptional('E', XMACHINE_ERROR_PRIORS, String.class, "string", "override default machine error priors").setCategory(UTILITY);
-    mFlags.registerOptional(CG_READLENGTH, Integer.class, "int", "length of Complete Genomics reads, 35 or 29 bp", 35).setCategory(CAT_CG);
+    mFlags.registerOptional(CG_VERSION, Integer.class, "int", "select Complete Genomics read structure version, 1 or 2", 1).setCategory(CAT_CG);
   }
 }

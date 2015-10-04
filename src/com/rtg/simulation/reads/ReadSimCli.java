@@ -31,7 +31,6 @@ import java.util.Map;
 import com.rtg.bed.BedUtils;
 import com.rtg.launcher.LoggedCli;
 import com.rtg.mode.SequenceType;
-import com.rtg.reader.CgUtils;
 import com.rtg.reader.PrereadNamesInterface;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
@@ -100,9 +99,6 @@ public class ReadSimCli extends LoggedCli {
   // iontorrent machine
   static final String MIN_TOTAL_IONTORRENT_LENGTH = "ion-min-total-size";
   static final String MAX_TOTAL_IONTORRENT_LENGTH = "ion-max-total-size";
-
-  // Complete Genomics machine
-  static final String CG_READLENGTH = "cg-read-length";
 
   static final String CAT_FRAGMENTS = "Fragment Generation";
   static final String CAT_ILLUMINA_SE = "Illumina SE";
@@ -202,10 +198,9 @@ public class ReadSimCli extends LoggedCli {
     initIlluminaFlags();
     init454Flags();
     initIonFlags();
-    initCgFlags();
     final Flag machType = mFlags.registerRequired(MACHINE_TYPE, String.class, "string", "select the sequencing technology to model").setCategory(INPUT_OUTPUT);
-    machType.setParameterRange(new String[]{MachineType.ILLUMINA_SE.name(), MachineType.ILLUMINA_PE.name(), MachineType.COMPLETE_GENOMICS.name(), MachineType.FOURFIVEFOUR_PE.name(), MachineType.FOURFIVEFOUR_SE.name(), MachineType.IONTORRENT.name()});
-    mFlags.registerOptional('E', MACHINE_ERROR_PRIORS, String.class, "string", "selects the sequencer machine error settings. One of [default, illumina, ls454_se, ls454_pe, complete, iontorrent]").setCategory(UTILITY);
+    machType.setParameterRange(new String[]{MachineType.ILLUMINA_SE.name(), MachineType.ILLUMINA_PE.name(), MachineType.COMPLETE_GENOMICS.name(), MachineType.COMPLETE_GENOMICS_2.name(), MachineType.FOURFIVEFOUR_PE.name(), MachineType.FOURFIVEFOUR_SE.name(), MachineType.IONTORRENT.name()});
+    mFlags.registerOptional('E', MACHINE_ERROR_PRIORS, String.class, "string", "selects the sequencer machine error settings. One of [default, illumina, ls454_se, ls454_pe, complete, complete_2, iontorrent]").setCategory(UTILITY);
   }
 
   protected void initIlluminaFlags() {
@@ -226,10 +221,6 @@ public class ReadSimCli extends LoggedCli {
   protected void initIonFlags() {
     mFlags.registerOptional(MAX_TOTAL_IONTORRENT_LENGTH, Integer.class, "int", "maximum IonTorrent read length").setCategory(CAT_ION_SE);
     mFlags.registerOptional(MIN_TOTAL_IONTORRENT_LENGTH, Integer.class, "int", "minimum IonTorrent read length").setCategory(CAT_ION_SE);
-  }
-
-  protected void initCgFlags() {
-    mFlags.registerOptional(CG_READLENGTH, Integer.class, "int", "length of Complete Genomics reads, 35 or 29 bp", 35).setCategory(CAT_CG);
   }
 
   private Machine createMachine() {
@@ -256,14 +247,9 @@ public class ReadSimCli extends LoggedCli {
       m.setMaxSize((Integer) mFlags.getValue(MAX_TOTAL_454_LENGTH));
       result = m;
     } else if (mt == MachineType.COMPLETE_GENOMICS) {
-      final int length = (Integer) mFlags.getValue(CG_READLENGTH);
-      if (length == CgUtils.CG_RAW_READ_LENGTH) {
-        result = new CompleteGenomicsV1Machine(mPriors, seed);
-      } else if (length == CgUtils.CG2_RAW_READ_LENGTH) {
-        result = new CompleteGenomicsV2Machine(mPriors, seed);
-      } else {
-        throw new IllegalArgumentException("Unsupported CG read length: " + length);
-      }
+      result = new CompleteGenomicsV1Machine(mPriors, seed);
+    } else if (mt == MachineType.COMPLETE_GENOMICS_2) {
+      result = new CompleteGenomicsV2Machine(mPriors, seed);
     } else if (mt == MachineType.IONTORRENT) {
       final IonTorrentSingleEndMachine m = new IonTorrentSingleEndMachine(mPriors, seed);
       m.setMinSize((Integer) mFlags.getValue(MIN_TOTAL_IONTORRENT_LENGTH));
@@ -334,6 +320,7 @@ public class ReadSimCli extends LoggedCli {
         return machineErrors;
       }
     } catch (final InvalidParamsException e) {
+      mFlags.setParseMessage("Could not load machine priors: " + priorsName);
       return null;
     }
   }
@@ -487,7 +474,7 @@ public class ReadSimCli extends LoggedCli {
             m = createMachine();
           }
 
-          Diagnostic.userLog("ReadSimParams" + LS + " input=" + input + LS + (twinInput == null ? "" : " diploid=" + twinInput + LS) + " machine=" + getMachineType() + LS + " output=" + outputDirectory() + LS + (mFlags.isSet(READS) ? " num-reads=" + mFlags.getValue(READS) + LS : "") + (mFlags.isSet(COVERAGE) ? " coverage=" + mFlags.getValue(COVERAGE) + LS : "") + (selectionProb == null ? "" : " distribution=" + Arrays.toString(selectionProb) + LS) + " allow-unknowns=" + mFlags.isSet(ALLOW_UNKNOWNS) + LS + " max-fragment=" + mFlags.getValue(MAX_FRAGMENT) + LS + " min-fragment=" + mFlags.getValue(MIN_FRAGMENT) + LS + " seed=" + seed + LS + LS + mPriors.toString() + LS);
+          Diagnostic.userLog("ReadSimParams" + LS + " input=" + input + LS + (twinInput == null ? "" : " diploid=" + twinInput + LS) + " machine=" + m.machineType() + LS + " output=" + outputDirectory() + LS + (mFlags.isSet(READS) ? " num-reads=" + mFlags.getValue(READS) + LS : "") + (mFlags.isSet(COVERAGE) ? " coverage=" + mFlags.getValue(COVERAGE) + LS : "") + (selectionProb == null ? "" : " distribution=" + Arrays.toString(selectionProb) + LS) + " allow-unknowns=" + mFlags.isSet(ALLOW_UNKNOWNS) + LS + " max-fragment=" + mFlags.getValue(MAX_FRAGMENT) + LS + " min-fragment=" + mFlags.getValue(MIN_FRAGMENT) + LS + " seed=" + seed + LS + LS + mPriors.toString() + LS);
           try (ReadWriter rw = getNFilter(createReadWriter(m))) {
             m.setReadWriter(rw);
             gf.setMachine(m);

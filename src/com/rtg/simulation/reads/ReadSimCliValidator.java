@@ -209,12 +209,7 @@ class ReadSimCliValidator implements Validator {
         return false;
       }
 
-    } else if (mt == MachineType.COMPLETE_GENOMICS) {
-      final int len = (Integer) cflags.getValue(ReadSimCli.CG_READLENGTH);
-      if (len != 29 && len != 35) {
-        cflags.error("Complete Genomics read length must be 29 or 35");
-        return false;
-      }
+    } else if (mt == MachineType.COMPLETE_GENOMICS || mt == MachineType.COMPLETE_GENOMICS_2) {
       if (!cflags.checkBanned(ReadSimCli.READLENGTH, ReadSimCli.LEFT_READLENGTH, ReadSimCli.RIGHT_READLENGTH, ReadSimCli.MIN_TOTAL_454_LENGTH, ReadSimCli.MAX_TOTAL_454_LENGTH, ReadSimCli.MIN_TOTAL_IONTORRENT_LENGTH, ReadSimCli.MAX_TOTAL_IONTORRENT_LENGTH)) {
         return false;
       }
