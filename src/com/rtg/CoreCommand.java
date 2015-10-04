@@ -41,7 +41,6 @@ import com.rtg.simulation.cnv.CnvSimulatorCli;
 import com.rtg.simulation.genome.GenomeSimulator;
 import com.rtg.simulation.reads.CgSimCli;
 import com.rtg.simulation.reads.ReadSimCli;
-import com.rtg.simulation.snpsim.GenomeMutatorCli;
 import com.rtg.simulation.variants.ChildSampleSimulatorCli;
 import com.rtg.simulation.variants.DeNovoSampleSimulatorCli;
 import com.rtg.simulation.variants.PriorPopulationVariantGeneratorCli;
@@ -183,12 +182,6 @@ public final class CoreCommand {
   /** Evaluate read mappings and produce ROC. */
   static final Command READSIMEVAL = new Command(new ReadSimEvalCli(), CommandCategory.SIMULATE, ReleaseLevel.BETA);
 
-  /**
-   * Deprecated as it does not correctly allow us to simulate populations.
-   * You should now use <code>popsim / samplesim / samplereplay</code>
-   */
-  static final Command SNPSIM = new Command(new GenomeMutatorCli(), CommandCategory.SIMULATE, ReleaseLevel.ALPHA);
-
   /** Generate a VCF containing population variants for a reference */
   static final Command POPSIM = new Command(new PriorPopulationVariantGeneratorCli(), CommandCategory.SIMULATE, ReleaseLevel.BETA);
 
@@ -302,7 +295,7 @@ public final class CoreCommand {
     // Simulation
     GENOMESIM,                                           // Reference simulation
     CGSIM, READSIM, READSIMEVAL,                         // Read simulation
-    SNPSIM, POPSIM, SAMPLESIM, CHILDSIM, DENOVOSIM, SAMPLEREPLAY, // Variant simulation
+    POPSIM, SAMPLESIM, CHILDSIM, DENOVOSIM, SAMPLEREPLAY, // Variant simulation
     CNVSIM, CNVSIMEVAL,                                  // Structural variant simulation
 
     // Utility

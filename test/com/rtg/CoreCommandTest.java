@@ -87,7 +87,6 @@ public class CoreCommandTest extends TestCase {
     assertEquals(1, CoreCommand.TAXSTATS.mainInit(new String[0], baos, ps));
     assertEquals(1, ToolsCommand.VCFSTATS.mainInit(new String[0], baos, ps));
     assertEquals(1, ToolsCommand.VCFMERGE.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SNPSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.POPSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SAMPLESIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CHILDSIM.mainInit(new String[0], baos, ps));
@@ -137,14 +136,13 @@ public class CoreCommandTest extends TestCase {
 
   public void testReleaseLevel() {
     for (Command cmd : CoreCommand.INFO.commands()) {
-      final Command mod = cmd;
-      switch (mod.getReleaseLevel()) {
+      switch (cmd.getReleaseLevel()) {
         case ALPHA:
-          assertTrue(cmd.getCommandName(), mod.isHidden());
+          assertTrue(cmd.getCommandName(), cmd.isHidden());
           break;
         case BETA:
         case GA:
-          assertFalse(cmd.getCommandName(), mod.isHidden());
+          assertFalse(cmd.getCommandName(), cmd.isHidden());
           break;
         default:
           break;
