@@ -377,7 +377,7 @@ public final class MapParamsHelper {
     return new FutureTask<>(new SequenceParamsCallableSdf(template, LongRange.NONE, templateMem, sex, includeFullNames, templateMode));
   }
 
-  private static Sex getMappingSex(NgsParamsBuilder ngsParamsBuilder, CFlags flags) throws IOException {
+  static Sex getMappingSex(NgsParamsBuilder ngsParamsBuilder, CFlags flags) throws IOException {
     final Sex sex;
     if (flags.isSet(MapFlags.PEDIGREE_FLAG)) {
       final SAMReadGroupRecord rg = ngsParamsBuilder.mOutputParams.readGroup();
