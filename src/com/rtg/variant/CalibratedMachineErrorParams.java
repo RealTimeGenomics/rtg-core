@@ -36,23 +36,6 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
   //any phred score lower than 2 theoretically means that all other options are more likely than the observed value.
   private static final int MIN_PHRED_SCORE = 2;
 
-  //  private static final boolean QUE_TEN_HACK = false; //Boolean.valueOf(System.getProperty("cg-q10hack", "false"));
-  private static final boolean GAP_HACK = false; //Boolean.valueOf(System.getProperty("cg-gaphack", "false"));
-  //private static final int[] QUE_TEN_HACK_CURVE = {0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10};
-
-  private static final double[] CG_DEFAULT_OVERLAP_DIST = {0.0, 0.08, 0.84, 0.08, 0.0};
-  private static final double[] CG_DEFAULT_SMALL_GAP_DIST = {0.9696969696969697, 0.020202020202020204, 0.010101010101010102, 0.0};
-  private static final double[] CG_DEFAULT_GAP_DIST = {0.0, 0.28, 0.6, 0.12, 0.0};
-
-  private static final int QUE_HACK_LIMIT = 255; //use 255 if to effectively ignore
-  //  static {
-  //    try {
-  //      QUE_HACK_LIMIT = Integer.parseInt(System.getProperty("q-limit", "255"));
-  //    } catch (final NumberFormatException e) {
-  //      throw new RuntimeException(e);
-  //    }
-  //  }
-
   private final PhredScaler mScaler;
   private final MachineType mMachineType;
 
@@ -95,12 +78,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     mErrorMnpDist = mnpHist != null && mnpHist.getLength() > 1 ? mnpHist.toDistribution() : new double[] {0.0, 1.0};
 
     if (isCG()) {
-      if (GAP_HACK) {
-        Diagnostic.developerLog("CG gap hack enabled, using default gaps");
-        mErrorGapDist = CG_DEFAULT_GAP_DIST;
-        mErrorSmallGapDist = CG_DEFAULT_SMALL_GAP_DIST;
-        mErrorOverlapDist = CG_DEFAULT_OVERLAP_DIST;
-      } else if (calibrator.hasHistogram(Calibrator.CGGAP_DIST, readGroupId)) {
+      if (calibrator.hasHistogram(Calibrator.CGGAP_DIST, readGroupId)) {
         final Histogram gapH = calibrator.getHistogram(Calibrator.CGGAP_DIST, readGroupId);
         //overlap can be all 0s if we are parsing an old-style CG sam file, in which case use default overlap.
         final Histogram olapH;
@@ -115,9 +93,9 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
         mErrorOverlapDist = dists[2];
       } else {
         Diagnostic.developerLog("Calibration file without CG gap information, using default gaps");
-        mErrorGapDist = CG_DEFAULT_GAP_DIST;
-        mErrorSmallGapDist = CG_DEFAULT_SMALL_GAP_DIST;
-        mErrorOverlapDist = CG_DEFAULT_OVERLAP_DIST;
+        mErrorGapDist = MachineErrorParamsBuilder.CG_DEFAULT_GAP_DIST;
+        mErrorSmallGapDist = MachineErrorParamsBuilder.CG_DEFAULT_SMALL_GAP_DIST;
+        mErrorOverlapDist = MachineErrorParamsBuilder.CG_DEFAULT_OVERLAP_DIST;
       }
     } else {
       mErrorGapDist = new double[5];
@@ -218,7 +196,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
       totalSmall += gapHistogram.getValue(i);
     }
     if (totalSmall == 0) {
-      smallGapDist = CG_DEFAULT_SMALL_GAP_DIST;
+      smallGapDist = MachineErrorParamsBuilder.CG_DEFAULT_SMALL_GAP_DIST;
     } else {
       //infer number of 0 long gaps from total reads and counted small gaps
       smallGapDist[0] = (double) (totalReads - totSmallGaps) / (double) totalReads;
@@ -246,7 +224,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
       //again use total to infer number of 0 long overlaps
       overlapDist[4] = (double) (totalReads - totalOverlap) / (double) totalReads;
     } else {
-      overlapDist = CG_DEFAULT_OVERLAP_DIST;
+      overlapDist = MachineErrorParamsBuilder.CG_DEFAULT_OVERLAP_DIST;
     }
     return new double[][] {gapDist, smallGapDist, overlapDist};
   }
@@ -324,7 +302,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
 
   @Override
   public int getPhred(byte quality, int readPos) {
-    return Math.min(QUE_HACK_LIMIT, mScaler.getPhred(quality, readPos));
+    return mScaler.getPhred(quality, readPos);
   }
 
   @Override
