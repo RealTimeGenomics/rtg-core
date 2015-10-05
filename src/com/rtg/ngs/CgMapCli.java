@@ -268,7 +268,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     }
     final File template = (File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG);
     SdfUtils.validateHasNames(template);
-    final Sex sex = mFlags.isSet(MapFlags.SEX_FLAG) ? (Sex) mFlags.getValue(MapFlags.SEX_FLAG) : null;
+    final Sex sex = MapParamsHelper.getMappingSex(ngsParamBuilder, mFlags);
     final SequenceParams tParams = SequenceParams.builder().directory(template).mode(SequenceMode.UNIDIRECTIONAL).sex(sex).loadNames(true).useMemReader(true).create();
     if (outputParams.calibrateRegions() != null) {
       outputParams.calibrateRegions().validateTemplate(tParams.reader());
