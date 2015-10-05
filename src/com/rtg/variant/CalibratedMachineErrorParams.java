@@ -112,28 +112,9 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     mInsEventRate = mInsBaseRate / GenomePriorParamsBuilder.averageLength(mErrorInsDist);
     mDelEventRate = mDelBaseRate / GenomePriorParamsBuilder.averageLength(mErrorDelDist);
 
-    //    if (mMachineType == MachineType.COMPLETE_GENOMICS && QUE_TEN_HACK) {
-    //      Diagnostic.developerLog("CG q10 hack enabled, using q10 scaler");
-    //      mScaler = getCgQueTenHackScaler(readGroupId);
-    //    } else {
     mScaler = getScaler(calibrator, readGroupId);
-    //    }
     mRealignParams = new RealignParamsImplementation(this);
   }
-
-  /*private static PhredScaler getCgQueTenHackScaler(final String readGroup) {
-    Diagnostic.developerLog("Using q10 hack quality curve for read group: " + readGroup + " : " + Arrays.toString(QUE_TEN_HACK_CURVE));
-    return new PhredScaler() {
-      @Override
-      public int getPhred(char qualChar, int readPosition) {
-        final int q = qualChar - '!';
-        if (q >= QUE_TEN_HACK_CURVE.length) {
-          return QUE_TEN_HACK_CURVE[QUE_TEN_HACK_CURVE.length - 1];
-        }
-        return QUE_TEN_HACK_CURVE[q];
-      }
-    };
-  }*/
 
   private static PhredScaler getScaler(Calibrator cal, String readGroup) {
     if (cal.getCovariateIndex(CovariateEnum.BASEQUALITY) == -1) {
