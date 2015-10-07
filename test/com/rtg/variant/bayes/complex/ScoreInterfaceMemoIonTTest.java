@@ -17,8 +17,6 @@ import java.io.StringReader;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.variant.MachineErrorParams;
 import com.rtg.variant.realign.HomoPolymerParams;
-import com.rtg.variant.realign.RealignParams;
-import com.rtg.variant.realign.RealignParamsImplementation;
 import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
@@ -31,10 +29,10 @@ public class ScoreInterfaceMemoIonTTest extends TestCase {
 
   public void test() throws IOException, InvalidParamsException {
     final ScoreInterfaceMemoIonT memo = new ScoreInterfaceMemoIonT(new HomoPolymerParams(SimplePossibility.SINGLETON, 2, 2, new StringReader("")), new HomoPolymerParams(LogApproximatePossibility.SINGLETON, 2, 2, new StringReader("")));
-    final RealignParams p = new RealignParamsImplementation(MachineErrorParams.builder().create());
-    assertTrue(memo.getScoreInterface(p, false) == memo.getScoreInterface(p, false));
+    final MachineErrorParams me = MachineErrorParams.builder().create();
+    assertTrue(memo.getScoreInterface(me) == memo.getScoreInterface(me));
     try {
-      memo.getScoreInterface(p, true);
+      memo.getScoreInterface(MachineErrorParams.builder().errors("complete").create());
       fail();
     } catch (final UnsupportedOperationException e) {
 

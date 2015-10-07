@@ -43,7 +43,7 @@ public class ScoreMatrixCGReverse extends ScoreMatrixReverse {
 
   @Override
   protected int rowOffset(final int row) {
-    return ScoreMatrixCG.rowOffsetCG(row, mEnv.maxShift());
+    return ScoreMatrixCG.rowOffsetCGV1(row, mEnv.maxShift());
   }
 
   /**

@@ -79,7 +79,7 @@ public class AlignmentEnvironmentCGTest extends TestCase {
       new AlignmentEnvironmentCG(new VariantAlignmentRecord(rec), params, MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).create(), null);
       fail();
     } catch (final NoTalkbackSlimException e) {
-      assertTrue(e.getMessage(), e.getMessage().startsWith("Invalid CG alignment record="));
+      assertTrue(e.getMessage(), e.getMessage().startsWith("Invalid CG alignment."));
     }
   }
 }

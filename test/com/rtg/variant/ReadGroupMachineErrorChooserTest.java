@@ -68,7 +68,7 @@ public class ReadGroupMachineErrorChooserTest extends TestCase {
       new ReadGroupMachineErrorChooser(header);
       fail();
     } catch (final NoTalkbackSlimException e) {
-      assertEquals("Read group: sounique has no specified platform. Unable to determine machine error rate.", e.getMessage());
+      assertTrue(e.getMessage().startsWith("Read group: sounique has no specified platform"));
     }
   }
 

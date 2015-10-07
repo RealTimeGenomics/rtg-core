@@ -12,6 +12,7 @@
 
 package com.rtg.variant.realign;
 
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
@@ -60,10 +61,9 @@ public interface RealignParams {
   double misMatchLn();
 
   /**
-   * Check if the complete Genomics specific values are defined.
-   * @return true iff the complete Genomics specific values are defined.
+   * @return the machine type for reads, or null if the parameters do not correspond to reads.
    */
-  boolean completeGenomics();
+  MachineType machineType();
 
   /**
    * The minimum (most negative) width of a given gap.

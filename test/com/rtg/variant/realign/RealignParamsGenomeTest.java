@@ -30,7 +30,7 @@ public class RealignParamsGenomeTest extends TestCase {
     assertEquals(Math.log(r.misMatch()), r.misMatchLn(), 1e-8);
     assertEquals(Math.log(1.0 - r.misMatch()), r.matchLn(), 1e-8);
 
-    assertFalse(r.completeGenomics());
+    assertNull(r.machineType());
     try {
       r.gapStart(0);
       fail();

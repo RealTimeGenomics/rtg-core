@@ -12,8 +12,8 @@
 
 package com.rtg.variant.bayes.complex;
 
+import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.realign.AllPaths;
-import com.rtg.variant.realign.RealignParams;
 
 /**
  */
@@ -21,10 +21,9 @@ public interface ScoreInterfaceMemoInterface {
 
   /**
    * Get a singleton <code>ScoreInterface</code> determined by the read group in <code>params</code> and the Complete Genomics flag.
-   * @param params parameters from read group.
-   * @param isCompleteGenomics true iff this should handle Complete Genomics reads.
+   * @param me machine errors
    * @return the singleton.
    */
-  AllPaths getScoreInterface(final RealignParams params, final boolean isCompleteGenomics);
+  AllPaths getScoreInterface(final AbstractMachineErrorParams me);
 
 }

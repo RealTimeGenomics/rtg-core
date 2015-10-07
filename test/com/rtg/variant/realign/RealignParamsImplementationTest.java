@@ -12,6 +12,7 @@
 package com.rtg.variant.realign;
 
 import com.rtg.util.integrity.Exam;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.MachineErrorParams;
 
@@ -55,7 +56,7 @@ public class RealignParamsImplementationTest extends TestCase {
   public void testCG() {
     final AbstractMachineErrorParams params = MachineErrorParams.builder().create();
     final RealignParams rp = new RealignParamsImplementation(params);
-    assertEquals(false, rp.completeGenomics());
+    assertEquals(false, rp.machineType() == MachineType.COMPLETE_GENOMICS);
     assertEquals(-3, rp.gapStart(RealignParamsImplementation.CG_OVERLAP));
     assertEquals(-1, rp.gapEnd(RealignParamsImplementation.CG_OVERLAP));
     assertEquals(0.08, Math.exp(rp.gapFreqLn(RealignParamsImplementation.CG_OVERLAP, -3)), 1E-16);

@@ -14,9 +14,9 @@ package com.rtg.variant.bayes.complex;
 
 import java.util.HashMap;
 
+import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.realign.AllPaths;
 import com.rtg.variant.realign.HomoPolymerParams;
-import com.rtg.variant.realign.RealignParams;
 import com.rtg.variant.realign.ScoreFastUnderflowHomopolymer;
 
 /**
@@ -27,7 +27,7 @@ public final class ScoreInterfaceMemoIonT implements ScoreInterfaceMemoInterface
 
   private final HomoPolymerParams mHomoParamsLog;
 
-  final HashMap<RealignParams, AllPaths> mCache = new HashMap<>();
+  final HashMap<AbstractMachineErrorParams, AllPaths> mCache = new HashMap<>();
 
 
   /**
@@ -41,15 +41,15 @@ public final class ScoreInterfaceMemoIonT implements ScoreInterfaceMemoInterface
 
 
   @Override
-  public AllPaths getScoreInterface(final RealignParams params, final boolean isCompleteGenomics) {
-    if (isCompleteGenomics) {
+  public AllPaths getScoreInterface(final AbstractMachineErrorParams me) {
+    if (me.isCG()) {
       throw new UnsupportedOperationException();
     }
     AllPaths s;
-    s = mCache.get(params);
+    s = mCache.get(me);
     if (s == null) {
-      s = new ScoreFastUnderflowHomopolymer(params, mHomoParamsSimple, mHomoParamsLog);
-      mCache.put(params, s);
+      s = new ScoreFastUnderflowHomopolymer(me.realignParams(), mHomoParamsSimple, mHomoParamsLog);
+      mCache.put(me, s);
     }
     return s;
   }

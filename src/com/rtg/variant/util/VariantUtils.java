@@ -315,6 +315,7 @@ public final class VariantUtils {
     sb.append("overlapDistribution: ").append(Arrays.toString(p.overlapDistribution())).append(StringUtils.LS);
     sb.append("gapDistribution: ").append(Arrays.toString(p.gapDistribution())).append(StringUtils.LS);
     sb.append("smallGapDistribution: ").append(Arrays.toString(p.smallGapDistribution())).append(StringUtils.LS);
+    sb.append("overlapDistribution2: ").append(Arrays.toString(p.overlapDistribution2())).append(StringUtils.LS);
     sb.append("quality curve: ");
     for (byte q = 0; q < 64; q++) {
       sb.append(p.getPhred(q, 0)).append(",");
@@ -377,6 +378,7 @@ public final class VariantUtils {
       sb.append("overlap = ").append(toString(p.overlapDistribution())).append(StringUtils.LS);
       sb.append("gap = ").append(toString(p.gapDistribution())).append(StringUtils.LS);
       sb.append("smallgap = ").append(toString(p.smallGapDistribution())).append(StringUtils.LS);
+      sb.append("overlap2 = ").append(toString(p.overlapDistribution2())).append(StringUtils.LS);
     }
     return sb.toString();
   }

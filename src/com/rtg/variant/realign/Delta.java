@@ -149,20 +149,23 @@ public abstract class Delta extends IntegralAbstract implements DeltaInterface {
     return sb.toString();
   }
 
+  private static final int FIELD_DP = 3;
+  private static final int FIELD_WIDTH = 3 + FIELD_DP + (FIELD_DP > 0 ? 1 : 0);
+
   private void combinedToString(final StringBuilder sb) {
     final char[] dnaChars = DNA.valueChars();
     final int rowStart = mForward.rowOffset(0);
     final int length = mForward.length();
     final int width = mForward.width();
     final int rowEnd = mForward.rowOffset(length) + width;
-    ScoreMatrix.printTemplateRow(sb, rowStart, rowEnd, mEnv, "Combined");
+    ScoreMatrix.printTemplateRow(sb, rowStart, rowEnd, mEnv, "Combined", FIELD_WIDTH);
     final double total = mForward.total();
     for (int row = 0; row <= length; row++) {
       sb.append(StringUtils.padBetween("[", 5, row + "]"));
       sb.append(row == 0 ? ' ' : dnaChars[mEnv.read(row - 1)]);
       // indent the row, so we line up with the template
       for (int i = 0; i < mForward.rowOffset(row) - rowStart; i++) {
-        sb.append(StringUtils.padLeft("|", 3 * ScoreMatrix.FIELD_WIDTH + 1));
+        sb.append(StringUtils.padLeft("|", 3 * FIELD_WIDTH + 1));
       }
       for (int j = 0; j < width; j++) {
         final double ins = mArithmetic.divide(mArithmetic.multiply(mForward.insert(row, j), mReverse.insert(row, j)), total);
@@ -175,14 +178,14 @@ public abstract class Delta extends IntegralAbstract implements DeltaInterface {
       }
       sb.append(LS);
     }
-    ScoreMatrix.printTemplateRow(sb, rowStart, rowEnd, mEnv, "");
+    ScoreMatrix.printTemplateRow(sb, rowStart, rowEnd, mEnv, "", FIELD_WIDTH);
   }
 
   private static String format(final double x) {
     assert 0.0 <= x && x <= 1.0;
-    final String res = "  " + Utils.realFormat(x, ScoreMatrix.FIELD_WIDTH - 4);
+    final String res = "  " + Utils.realFormat(x, FIELD_DP);
     if (res.equals("  0.000")) {
-      return "       ";
+      return StringUtils.padLeft("", FIELD_WIDTH);
     }
     return res;
   }

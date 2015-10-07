@@ -20,6 +20,8 @@ import com.rtg.util.diagnostic.SpyCounter;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
+import com.rtg.visualization.AnsiDisplayHelper;
+import com.rtg.visualization.DisplayHelper;
 
 /**
  * Calculates a banded matrix of alignment probabilities.
@@ -38,8 +40,9 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
 
   private static final SpyCounter SET_ENV = new SpyCounter("ScoreMatrix setEnv");
   private static final SpyCounter SET_ENV_RESIZE = new SpyCounter("ScoreMatrix setEnv resize");
-  /** width of each number in the <code>toString</code> output */
-  static final int FIELD_WIDTH = 7;
+
+  private static final int FIELD_DP = 0;
+  private static final int FIELD_WIDTH = 3 + FIELD_DP + (FIELD_DP > 0 ? 1 : 0);
 
   protected final RealignParams mParams;
   protected final PossibilityArithmetic mArith;
@@ -169,6 +172,14 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
   }
 
   /**
+   * @param row one-based read position
+   * @return true if the current row is the start of a new read fragment (only used in CG reads)
+   */
+  protected boolean isFragmentStart(final int row) {
+    return false;
+  }
+
+  /**
    * Calculate all the probabilities in the matrix and record the
    * total probability of the read.
    */
@@ -249,25 +260,56 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
       return;
     }
     final char[] dnaChars = DNA.valueChars();
+    final DisplayHelper dh = new AnsiDisplayHelper();
     final int rowStart = rowOffset(0);
     final int rowEnd = rowOffset(mLength) + mWidth;
-    printTemplateRow(sb, rowStart, rowEnd, mEnv, "ScoreMatrix");
+    final double[] itmp = new double[mWidth];
+    final double[] mtmp = new double[mWidth];
+    final double[] dtmp = new double[mWidth];
+    printTemplateRow(sb, rowStart, rowEnd, mEnv, "ScoreMatrix", FIELD_WIDTH);
     for (int row = 0; row <= mLength; row++) {
+      if (isFragmentStart(row)) {
+        // show a horizontal line where the CG gap/overlap happens.
+        sb.append("      ");
+        for (int i = 0; i < (FIELD_WIDTH * 3 + 1) * (rowOffset(row) - rowStart + mWidth); i++) {
+          sb.append('-');
+        }
+        sb.append(LS);
+      }
       sb.append(StringUtils.padBetween("[", 5, row + "]"));
       sb.append(row == 0 ? ' ' : dnaChars[mEnv.read(row - 1)]);
       // indent the row, so we line up with the template
       for (int i = 0; i < rowOffset(row) - rowStart; i++) {
         sb.append(StringUtils.padLeft("|", 3 * FIELD_WIDTH + 1));
       }
-      for (int j = 0; j < mWidth; j++) {
-        sb.append(format(mArith.poss2Ln(mInsert[row][j])));
-        sb.append(format(mArith.poss2Ln(mMatch[row][j])));
-        sb.append(format(mArith.poss2Ln(mDelete[row][j])));
+      int bi = -1, bm = -1, bd = -1;
+      for (int col = 0; col < mWidth; col++) {
+        bi = update(itmp, mArith.poss2Ln(mInsert[row][col]), bi, col);
+        bm = update(mtmp, mArith.poss2Ln(mMatch[row][col]), bm, col);
+        bd = update(dtmp, mArith.poss2Ln(mDelete[row][col]), bd, col);
+      }
+      for (int col = 0; col < mWidth; col++) {
+        sb.append(cell(dh, format(itmp[col]), col == bi, DisplayHelper.MAGENTA));
+        sb.append(cell(dh, format(mtmp[col]), col == bm, DisplayHelper.GREEN));
+        sb.append(cell(dh, format(dtmp[col]), col == bd, DisplayHelper.CYAN));
         sb.append("|");
       }
       sb.append(LS);
     }
-    printTemplateRow(sb, rowStart, rowEnd, mEnv, "");
+    printTemplateRow(sb, rowStart, rowEnd, mEnv, "", FIELD_WIDTH);
+  }
+
+  private static int update(double[] arr, double val, int bestIn, int col) {
+    int best = bestIn;
+    arr[col] = val;
+    if (best == -1 || arr[col] > arr[best]) {
+      best = col;
+    }
+    return best;
+  }
+
+  private static String cell(DisplayHelper dh, String text, boolean mark, int col) {
+    return mark ? dh.decorateForeground(text, col) : text;
   }
 
   static String format(final double x) {
@@ -282,18 +324,18 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
    */
   public static String format(final double x, final int fw) {
     //be careful about outputting -0.0
-    final String fst = Double.isInfinite(x) && x < 0.0 ? "" : x == 0.0 ? Utils.realFormat(0.0, 3) : Utils.realFormat(-x, 3);
+    final String fst = Double.isInfinite(x) && x < 0.0 ? "" : x == 0.0 ? Utils.realFormat(0.0, FIELD_DP) : Utils.realFormat(-x, FIELD_DP);
     return StringUtils.padLeft(fst, fw);
   }
 
-  static void printTemplateRow(final StringBuilder sb, final int rowStart, final int rowEnd, final Environment env, final String msg) {
+  static void printTemplateRow(final StringBuilder sb, final int rowStart, final int rowEnd, final Environment env, final String msg, int fw) {
     // print the header row, showing the template.
     final char[] dnaChars = DNA.valueChars();
-    sb.append(StringUtils.padBetween(msg, 7 + 3 * FIELD_WIDTH, "|"));
+    sb.append(StringUtils.padBetween(msg, 7 + 3 * fw, "|"));
     for (int pos = rowStart + 1; pos <= rowEnd; pos++) {
       sb.append(dnaChars[env.template(pos)]);
-      sb.append(StringUtils.padLeft(Integer.toString(env.absoluteTemplatePosition(pos)), 2 * FIELD_WIDTH - 1));
-      sb.append(StringUtils.padLeft("|", FIELD_WIDTH + 1));
+      sb.append(StringUtils.padLeft(Integer.toString(env.absoluteTemplatePosition(pos)), 2 * fw - 1));
+      sb.append(StringUtils.padLeft("|", fw + 1));
     }
     sb.append(LS);
   }

@@ -35,7 +35,7 @@ public class MachineErrorParamsBuilder {
   static final double[] CG_DEFAULT_OVERLAP_DIST = MathUtils.renormalize(new int[]{0, 8, 84, 8, 0});
   static final double[] CG_DEFAULT_GAP_DIST = MathUtils.renormalize(new int[]{0, 27, 64, 9, 0});
   static final double[] CG_DEFAULT_SMALL_GAP_DIST = MathUtils.renormalize(new int[]{90, 7, 3, 0});
-  static final double[] CG_DEFAULT_OVERLAP2_DIST = MathUtils.renormalize(new int[]{31, 58, 128, 376, 547, 86, 3, 0});
+  static final double[] CG_DEFAULT_OVERLAP2_DIST = MathUtils.renormalize(new int[]{25, 47, 104, 306, 445, 70, 3, 0});
 
   /** The proportion of insertions that are homozygous */
   protected double mErrorMnpEventRate, mErrorInsEventRate, mErrorDelEventRate;
@@ -153,14 +153,14 @@ public class MachineErrorParamsBuilder {
   private double[] getDistribution(Properties pr, String key, double[] defaultDist, String errors) {
     final double[] dist;
     if (pr.containsKey(key)) {
-      final String overlap = pr.getProperty(key);
+      final String distStr = pr.getProperty(key);
       try {
-        dist = MathUtils.renormalize(ArrayUtils.parseIntArray(overlap));
+        dist = MathUtils.renormalize(ArrayUtils.parseIntArray(distStr));
         if (dist.length < defaultDist.length) {
-          throw new InvalidParamsException(ErrorType.PRIOR_KEY_VALUE_INVALID, overlap, "overlap", errors);
+          throw new InvalidParamsException(ErrorType.PRIOR_KEY_VALUE_INVALID, distStr, key, errors);
         }
       } catch (final NumberFormatException e) {
-        throw new InvalidParamsException(ErrorType.PRIOR_KEY_VALUE_INVALID, overlap, "overlap", errors);
+        throw new InvalidParamsException(ErrorType.PRIOR_KEY_VALUE_INVALID, distStr, key, errors);
       }
     } else {
       dist = defaultDist;

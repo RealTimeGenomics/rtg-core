@@ -14,13 +14,14 @@ package com.rtg.variant;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
+import com.rtg.sam.ReadGroupUtils;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.util.VariantUtils;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -53,21 +54,17 @@ public class ReadGroupMachineErrorChooser implements MachineErrorChooserInterfac
     for (final SAMReadGroupRecord record : groups) {
       final String fPlatform = record.getPlatform();
       if (fPlatform != null) {
-        if (fPlatform.equalsIgnoreCase("LS454")) {
-          if (record.getPredictedMedianInsertSize() != null) {
-            mMachineErrors.put(record.getId(), MachineErrorParams.builder("ls454_pe").create());
-          } else {
-            mMachineErrors.put(record.getId(), MachineErrorParams.builder("ls454_se").create());
-          }
+        final MachineType mt = ReadGroupUtils.platformToMachineType(record, record.getPredictedMedianInsertSize() != null);
+        if (mt != null) {
+          mMachineErrors.put(record.getId(), MachineErrorParams.builder(mt.priors()).create());
         } else {
-          mMachineErrors.put(record.getId(), MachineErrorParams.builder(fPlatform.toLowerCase(Locale.ROOT)).create());
+          throw new NoTalkbackSlimException("Read group: " + record.getId() + " has unrecognized platform. Unable to determine machine error rate. Try explicitly specifying machine type");
         }
       } else {
-        throw new NoTalkbackSlimException("Read group: " + record.getId() + " has no specified platform. Unable to determine machine error rate.");
+        throw new NoTalkbackSlimException("Read group: " + record.getId() + " has no specified platform. Unable to determine machine error rate. Try explicitly specifying machine type");
       }
       Diagnostic.developerLog("Machine errors for read group: " + record.getId() + StringUtils.LS + VariantUtils.dumpMachineErrors(mMachineErrors.get(record.getId())));
     }
-
   }
 
   @Override

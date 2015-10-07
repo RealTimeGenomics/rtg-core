@@ -144,7 +144,6 @@ public final class CgUnroller {
       }
       //System.out.println("unrollCgRead gives RL=" + rec.getRead().length + " read:" + expandedRead + " (len=" + expandedRead.length() + ")" + "               and qual:" + expandedQual + " (overlapWidth=" + overlapWidth + ")" + " middle=" + middle);
     }
-    // XXXLen todo, remove padding base if present.
     final boolean cgOverlapOnLeft = v1 && (rec.isFirst() ^ rec.isNegativeStrand()) || !v1 && !rec.isNegativeStrand();
     final String reversedRead;
     final String reversedQual;
@@ -155,7 +154,8 @@ public final class CgUnroller {
       reversedRead = StringUtils.reverse(expandedRead);
       reversedQual = StringUtils.reverse(expandedQual);
     }
-    return new CgUnroller.OrientedRead(reversedRead.getBytes(), hasQuality ? FastaUtils.asciiToRawQuality(reversedQual) : null, !cgOverlapOnLeft);
+    return new CgUnroller.OrientedRead(CgUtils.unPad(reversedRead.getBytes(), !rec.isNegativeStrand()),
+      hasQuality ? CgUtils.unPad(FastaUtils.asciiToRawQuality(reversedQual), !rec.isNegativeStrand()) : null, !cgOverlapOnLeft);
   }
 
 }

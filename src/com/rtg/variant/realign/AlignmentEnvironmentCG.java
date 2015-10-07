@@ -40,16 +40,16 @@ public class AlignmentEnvironmentCG extends AbstractAlignmentEnvironment {
     assert me.isCG();
     final CgUnroller.OrientedRead orient = CgUnroller.unrollCgRead(var, template);
     if (orient == null) {
-      throw new NoTalkbackSlimException("Invalid CG alignment record=" + var.toString());
+      throw new NoTalkbackSlimException("Invalid CG alignment. Could not reconstruct original read. record=" + var.toString());
     }
     mRead = DNA.byteDNAtoByte(orient.getRead());
     final int len = mRead.length;
     //System.err.println("CG len=" + len);
     if (me.machineType() == MachineType.COMPLETE_GENOMICS && len != CgUtils.CG_RAW_READ_LENGTH) {
-      throw new NoTalkbackSlimException("Invalid CG version 1 alignment record=" + var.toString());
+      throw new NoTalkbackSlimException("Invalid CG version 1 alignment. Unexpected reconstructed read length. record=" + var.toString());
     }
     if (me.machineType() == MachineType.COMPLETE_GENOMICS_2 && len != CgUtils.CG2_RAW_READ_LENGTH) {
-      throw new NoTalkbackSlimException("Invalid CG version 2 alignment record=" + var.toString());
+      throw new NoTalkbackSlimException("Invalid CG version 2 alignment. Unexpected reconstructed read length. record=" + var.toString());
     }
     mQuality = new double[len];
     final byte[] qChar = orient.getQuality();

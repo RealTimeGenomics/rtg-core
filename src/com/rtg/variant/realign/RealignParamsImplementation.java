@@ -14,6 +14,7 @@ package com.rtg.variant.realign;
 
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
@@ -94,7 +95,7 @@ public final class RealignParamsImplementation extends IntegralAbstract implemen
 
   private final double mMisMatchLn;
 
-  private final boolean mCG;
+  private final MachineType mMachineType;
 
   private final int[] mGapStart;
   private final double[][] mGapDistributions;
@@ -127,7 +128,7 @@ public final class RealignParamsImplementation extends IntegralAbstract implemen
     final double misMatch = mean(params.errorMnpDistribution()) * params.errorMnpEventRate();
     mMisMatchLn = Math.log(misMatch);
     mMatchLn = Math.log(1.0 - misMatch);
-    mCG = params.isCG();
+    mMachineType = params.machineType();
     mGapDistributions = new double[4][];
     mGapStart = new int[] {-4, 0, 4, -7};
     logify(CG_OVERLAP, params.overlapDistribution());
@@ -207,8 +208,8 @@ public final class RealignParamsImplementation extends IntegralAbstract implemen
   }
 
   @Override
-  public boolean completeGenomics() {
-    return mCG;
+  public MachineType machineType() {
+    return mMachineType;
   }
 
   @Override

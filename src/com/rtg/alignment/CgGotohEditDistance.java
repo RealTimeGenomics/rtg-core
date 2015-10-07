@@ -12,20 +12,23 @@
 package com.rtg.alignment;
 
 import java.util.Arrays;
-import java.util.Locale;
 
 import com.rtg.mode.DNA;
 import com.rtg.reader.CgUtils;
 import com.rtg.util.StringUtils;
+import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.format.FormatReal;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.realign.Environment;
 import com.rtg.variant.realign.EnvironmentImplementation;
 import com.rtg.variant.realign.InvertedEnvironment;
 import com.rtg.variant.realign.RealignParams;
 import com.rtg.variant.realign.RealignParamsImplementation;
+import com.rtg.visualization.AnsiDisplayHelper;
+import com.rtg.visualization.DisplayHelper;
 
 /**
  * This finds good alignments for Complete Genomics reads (length = 35 or 29),
@@ -67,7 +70,8 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
   static final String[] GAP_NAME = {"Overlap", "Small", "Large", "Overlap2"};
 
   /** width of each number in the <code>toString</code> output */
-  static final int FIELD_WIDTH = 9;
+  static final int FIELD_DP = 0;
+  static final int FIELD_WIDTH = 3 + FIELD_DP + (FIELD_DP > 0 ? 1 : 0);
 
   protected final RealignParams mParams;
 
@@ -149,7 +153,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
    * @param v2 true for CG version 2 read structure, otherwise assume version 1 read structure
    */
   public CgGotohEditDistance(final int maxShift, final RealignParams params, int unknownsPenalty, boolean v2) {
-    assert params.completeGenomics();
+    assert params.machineType() == MachineType.COMPLETE_GENOMICS || params.machineType() == MachineType.COMPLETE_GENOMICS_2;
     mEnv = null; // set by each edit distance call.
     mLength = v2 ? CgUtils.CG2_RAW_READ_LENGTH : CgUtils.CG_RAW_READ_LENGTH;
     mWidth = maxShift * 2 + 1;
@@ -253,7 +257,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
     return mRowOffsets[mArm][row];
   }
 
-  int[] makeRowOffsets(final int arm) {
+  final int[] makeRowOffsets(final int arm) {
     final int maxShift = mWidth >> 1;
       final int[] result = new int[mLength + 1];
       int offset = -(maxShift + 1);
@@ -456,28 +460,20 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
     }
   }
 
-  // formats like 1.234e-04
-  static String format(final double x) {
-    final String result;
-    final int expWidth = 4;
-    final int dp = (FIELD_WIDTH - expWidth) / 2;
-    if (x == 0.0) {
-      // avoid outputting -0.0
-      result = "";
-    } else if (Double.isInfinite(x)) {
-      result = (x < 0.0 ? "-" : "") + "inf";
-    } else {
-      final String fmt = "%1$01." + dp + "e";
-      result = String.format(Locale.ROOT, fmt, x);
-    }
-    return extend("", FIELD_WIDTH, result);
+  private static String format(final double x) {
+    final String fst = Double.isInfinite(x) && x < 0.0 ? "" : x == 0.0 ? Utils.realFormat(0.0, FIELD_DP) : Utils.realFormat(-x, FIELD_DP);
+    return StringUtils.padLeft(fst, FIELD_WIDTH);
   }
 
   @Override
   public final void toString(final StringBuilder sb) {
     final char[] dnaChars = DNA.valueChars();
+    final DisplayHelper dh = new AnsiDisplayHelper();
     final int rowStart = rowOffset(0);
     final int rowEnd = rowOffset(mLength) + mWidth;
+    final double[] itmp = new double[mWidth];
+    final double[] mtmp = new double[mWidth];
+    final double[] dtmp = new double[mWidth];
     printTemplateRow(sb, rowStart, rowEnd, mEnv, "ScoreMatrix");
     for (int row = 0; row <= mLength; row++) {
       if (mGap[mArm][row] >= 0) {
@@ -491,16 +487,26 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
       sb.append("[").append(extend("", 3, row + "")).append("]");
       final char re = row == 0 ? ' ' : dnaChars[mEnv.read(row - 1)];
       sb.append(re);
+      int bi = -1, bm = -1, bd = -1;
       for (int tPos = 0; tPos < rowOffset(row) - rowStart + mWidth; tPos++) {
-        final String sep = row > 0 && (tPos + rowStart + 1) % 5 == 0 ? ("" + re) : "|";
+        if (tPos >= rowOffset(row) - rowStart) {
+          final int col = tPos - (rowOffset(row) - rowStart);
+          bi = update(itmp, mInsert[row][col], bi, col);
+          bm = update(mtmp, mMatch[row][col], bm, col);
+          bd = update(dtmp, mDelete[row][col], bd, col);
+        }
+      }
+      for (int tPos = 0; tPos < rowOffset(row) - rowStart + mWidth; tPos++) {
+        //final String sep = row > 0 && (tPos + rowStart + 1) % 5 == 0 ? ("" + re) : "|";
+        final String sep = "|";
         if (tPos < rowOffset(row) - rowStart) {
           // indent the row, so we line up with the template
           sb.append(extend("", 3 * FIELD_WIDTH + 1, sep));
         } else {
           final int col = tPos - (rowOffset(row) - rowStart);
-          sb.append(format(mInsert[row][col]));
-          sb.append(format(mMatch[row][col]));
-          sb.append(format(mDelete[row][col]));
+          sb.append(cell(dh, format(itmp[col]), col == bi, DisplayHelper.MAGENTA));
+          sb.append(cell(dh, format(mtmp[col]), col == bm, DisplayHelper.GREEN));
+          sb.append(cell(dh, format(dtmp[col]), col == bd, DisplayHelper.CYAN));
           sb.append(sep);
         }
       }
@@ -509,8 +515,20 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
     printTemplateRow(sb, rowStart, rowEnd, mEnv, "");
   }
 
+  private static String cell(DisplayHelper dh, String text, boolean mark, int col) {
+    return mark ? dh.decorateForeground(text, col) : text;
+  }
+
+  private static int update(double[] arr, double val, int bestIn, int col) {
+    int best = bestIn;
+    arr[col] = Math.log(val);
+    if (best == -1 || arr[col] > arr[best]) {
+      best = col;
+    }
+    return best;
+  }
+
   static void printTemplateRow(final StringBuilder sb, final int rowStart, final int rowEnd, final Environment env, final String msg) {
-    // print the header row, showing the template.
     final char[] dnaChars = DNA.valueChars();
     sb.append(extend(msg, 7 + 3 * FIELD_WIDTH, "|"));
     for (int pos = rowStart + 1; pos <= rowEnd; pos++) {
@@ -736,7 +754,6 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
 
   @Override
   public int[] calculateEditDistance(byte[] read, int rlen, byte[] template, int zeroBasedStart, int maxScore, int maxShift, boolean cgLeft) {
-    // TODO: get read qualities from somewhere
     assert read.length == mLength;
 //    System.err.println("aligning " + rlen + "@" + zeroBasedStart + " : " + cgLeft);
     final EnvironmentImplementation env;

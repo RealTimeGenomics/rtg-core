@@ -11,42 +11,28 @@
  */
 package com.rtg.variant.realign;
 
-import static com.rtg.util.StringUtils.LS;
-
 import java.io.IOException;
 import java.util.Arrays;
 
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
 import com.rtg.variant.util.arithmetic.LogPossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
 import junit.framework.Test;
-import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 /**
  */
-public class ScoreMatrixTest extends TestCase {
+public class ScoreMatrixTest extends AbstractNanoTest {
 
-  static final String HOMOPOLYMER_EXP = ""
-      + "ScoreMatrix                |G            0       |G            1       |A            2       |C            3       |G            4       |G            5       |G            6       |C            7       |G            8       |T            9       |T           10       |T           11       |N           12       |" + LS
-      + "[  0]          0.001  7.094|         0.001  7.094|         0.001  7.094|         0.001  7.094|         0.001  7.094|" + LS
-      + "[  1]A                     |         3.327  8.316| 10.780  3.327  8.316| 10.598  0.117  8.316|  7.560  3.327  8.316|  8.987  3.327       |" + LS
-      + "[  2]C                     |                     |         7.631 10.900| 15.083  7.630  8.540| 14.901  0.161 10.900|  7.613  7.619 11.808|  9.220  7.634       |" + LS
-      + "[  3]G                     |                     |                     |        12.660 11.629| 20.113 12.404  8.637| 19.713  0.183 14.643|  7.636  7.044 16.114|  9.240  7.504       |" + LS
-      + "[  4]G                     |                     |                     |                     |        16.526 11.738| 23.978  8.828  8.663| 16.281  0.205 15.499|  7.658  6.699 15.984|  9.260 12.432       |" + LS
-      + "[  5]C                     |                     |                     |                     |                     |        16.985 11.761| 24.437 13.211  8.686| 20.659  5.265 15.159| 12.718  6.453 20.912| 13.401 14.490       |" + LS
-      + "[  6]G                     |                     |                     |                     |                     |                     |        11.973 11.787| 19.426  8.892 13.735| 16.335 10.325 14.933| 17.164  6.474 22.971| 13.918 18.332       |" + LS
-      + "[  7]T                     |                     |                     |                     |                     |                     |                     |        16.345 16.375| 23.798 13.945 17.654| 21.380 15.375 14.954| 22.212  6.496 26.813| 13.948 14.147       |" + LS
-      + "[  8]T                     |                     |                     |                     |                     |                     |                     |                     |        20.819 20.583|        18.985 18.052|        14.585 14.976|         6.518 22.627|        13.487       |" + LS
-      + "                           |G            0       |G            1       |A            2       |C            3       |G            4       |G            5       |G            6       |C            7       |G            8       |T            9       |T           10       |T           11       |N           12       |" + LS
-      ;
   //Mark says I have to put my name here so he doesnt get blamed for the next bit of code
   //JC
 
@@ -120,8 +106,8 @@ public class ScoreMatrixTest extends TestCase {
       return Math.log(0.18);
     }
     @Override
-    public boolean completeGenomics() {
-      return false;
+    public MachineType machineType() {
+      return null;
     }
     @Override
     public int gapEnd(final int gap) {
@@ -190,32 +176,16 @@ public class ScoreMatrixTest extends TestCase {
     return score;
   }
 
-  private static final String READ_EXP = ""
-      + "ScoreMatrix                |G            0       |G            1       |A            2       |C            3       |G            4       |T            5       |A            6       |C            7       |G            8       |T            9       |T           10       |T           11       |N           12       |" + LS
-      + "[  0]          0.001  7.094|         0.001  7.094|         0.001  7.094|         0.001  7.094|         0.001  7.094|" + LS
-      + "[  1]A                     |         3.327  8.316| 10.780  3.327  8.316| 10.598  0.117  8.316|  7.560  3.327  8.316|  8.987  3.327       |" + LS
-      + "[  2]C                     |                     |         7.631 10.900| 15.083  7.630  8.540| 14.901  0.161 10.900|  7.613  7.619 11.808|  9.220  7.634       |" + LS
-      + "[  3]G                     |                     |                     |        12.660 11.629| 20.113 12.404  8.637| 19.713  0.183 14.643|  7.636 12.082 16.114|  9.245 12.542       |" + LS
-      + "[  4]C                     |                     |                     |                     |        11.488 11.738| 18.940 13.866  8.663| 20.169  5.243 18.984| 12.696 12.903 21.022| 14.303  9.444       |" + LS
-      + "[  5]G                     |                     |                     |                     |                     |        11.015 11.765| 18.468 13.914 13.723| 19.834 10.303 21.321| 17.731 17.277 17.924| 19.336  9.460       |" + LS
-      + "[  6]A                     |                     |                     |                     |                     |                     |        15.747 16.821| 23.200 13.242 18.780| 20.678 15.363 21.016| 21.824 21.675 17.940| 23.430 14.520       |" + LS
-      + "[  7]C                     |                     |                     |                     |                     |                     |                     |        20.560 21.105| 28.012 13.261 23.278| 20.713 20.416 21.041| 22.319 23.149 23.000| 23.927 19.580       |" + LS
-      + "[  8]G                     |                     |                     |                     |                     |                     |                     |                     |        25.231 21.731|        13.283 24.134|        24.766 26.097|        26.876 28.060|        24.629       |" + LS
-      + "                           |G            0       |G            1       |A            2       |C            3       |G            4       |T            5       |A            6       |C            7       |G            8       |T            9       |T           10       |T           11       |N           12       |" + LS
-      ;
-
   //typical case
   public void test1() throws IOException {
     final AllPaths score = score(env());
-    assertEquals(READ_EXP, score.toString());
+    mNano.check("scorematrix-typical.txt", score.toString());
   }
 
   //homopolymer sequence for checking against tests in HomopolymerMatrixTest
   public void test2() throws IOException {
     final AllPaths score = score(env(READ_H, TEMPLATE_H, 2));
-    final String exp = HOMOPOLYMER_EXP
-        ;
-    assertEquals(exp, score.toString());
+    mNano.check("scorematrix-homopolymer.txt", score.toString());  // This expected result is shared with HomopolymerTest
   }
 
   /*
@@ -260,27 +230,16 @@ public class ScoreMatrixTest extends TestCase {
 
   private static final String SMALL_READ = "ACGCA";
 
-  private static final String SMALL_EXP = ""
-      + "ScoreMatrix                |G            0       |G            1       |A            2       |C            3       |G            4       |T            5       |A            6       |C            7       |G            8       |T            9       |" + LS
-      + "[  0]          0.001  7.094|         0.001  7.094|         0.001  7.094|         0.001  7.094|         0.001  7.094|" + LS
-      + "[  1]A                     |         3.327  8.316| 10.780  3.327  8.316| 10.598  0.117  8.316|  7.560  3.327  8.316|  8.987  3.327       |" + LS
-      + "[  2]C                     |                     |         7.631 10.900| 15.083  7.630  8.540| 14.901  0.161 10.900|  7.613  7.619 11.808|  9.220  7.634       |" + LS
-      + "[  3]G                     |                     |                     |        12.660 11.629| 20.113 12.404  8.637| 19.713  0.183 14.643|  7.636 12.082 16.114|  9.245 12.542       |" + LS
-      + "[  4]C                     |                     |                     |                     |        11.488 11.738| 18.940 13.866  8.663| 20.169  5.243 18.984| 12.696 12.903 21.022| 14.303  9.444       |" + LS
-      + "[  5]A                     |                     |                     |                     |                     |        16.053 11.765|        13.914 13.723|         5.265 21.321|        17.277 17.924|        14.498       |" + LS
-      + "                           |G            0       |G            1       |A            2       |C            3       |G            4       |T            5       |A            6       |C            7       |G            8       |T            9       |" + LS;
-
-
-  public void testSmallMatrix() {
+  public void testSmallMatrix() throws IOException {
     final AllPaths score = new ScoreMatrix(LogPossibility.SINGLETON, new MockRealignParams());
     score.setEnv(env(SMALL_READ, TEMPLATE, 2));
     Exam.globalIntegrity(score);
 
     assertEquals(-5.263277, score.totalScoreLn(), 0.000001);
-    assertEquals(SMALL_EXP, score.toString());
+    mNano.check("scorematrix-small.txt", score.toString());
   }
 
-  public void testMatrixReuse() {
+  public void testMatrixReuse() throws IOException {
 
     final int[] envcalls = new int[1];
     final int[] resizecalls = new int[1];
@@ -305,20 +264,7 @@ public class ScoreMatrixTest extends TestCase {
 
     score.setEnv(env(READ, TEMPLATE, 4));
     score.globalIntegrity();
-    final String exp = ""
-        + "ScoreMatrix                |N           -2       |N           -1       |G            0       |G            1       |A            2       |C            3       |G            4       |T            5       |A            6       |C            7       |G            8       |T            9       |T           10       |T           11       |N           12       |N           13       |N           14       |" + LS
-        + "[  0]          0.001  7.094|         0.001  7.094|         0.001  7.094|         0.001  7.094|         0.001  7.094|         0.001  7.094|         0.001  7.094|         0.001  7.094|         0.001  7.094|" + LS
-        + "[  1]A                     |         1.388  8.316|  8.840  1.388  8.316|  8.658  3.327  8.316|  9.798  3.327  8.316| 10.352  0.117  8.316|  7.557  3.327  8.316|  8.985  3.327  8.316|  9.990  3.327  8.316| 10.415  0.117       |" + LS
-        + "[  2]C                     |                     |         2.775  9.675| 10.227  5.696 10.900| 11.598  7.627 10.900| 13.065  7.630  8.540| 14.164  0.161 10.900|  7.613  7.619 10.900|  9.220  7.628 10.900| 10.815  7.630  8.598| 12.357  0.161       |" + LS
-        + "[  3]G                     |                     |                     |         2.796 13.392| 10.249  5.705 13.886| 11.617 12.642 11.629| 13.225 12.402  8.637| 14.828  0.183 13.885|  7.636 12.071 13.886|  9.245 12.511 11.687| 10.854 12.393  8.642| 12.463  0.183       |" + LS
-        + "[  4]C                     |                     |                     |                     |         7.856 14.126| 15.309 10.756 14.729| 16.675 10.960 11.738| 17.653 13.856  8.663| 19.141  5.243 16.960| 12.695 12.901 14.786| 14.302  9.360 11.743| 15.571 13.772  8.664| 17.163  5.243       |" + LS
-        + "[  5]G                     |                     |                     |                     |                     |        12.914 17.611| 20.367 15.793 14.829| 21.729 10.660 11.764| 18.108 13.914 13.722| 19.541 10.303 17.857| 17.723 17.215 14.795| 19.327  9.304 11.765| 16.741 13.913 13.724| 18.303 10.303       |" + LS
-        + "[  6]A                     |                     |                     |                     |                     |                     |        17.967 17.928| 25.420 19.702 14.852| 26.396 15.480 16.819| 22.926 13.239 18.676| 20.670 15.363 17.896| 21.819 19.903 14.813| 23.409 14.296 16.821| 21.712 18.260 18.784| 23.233 15.363       |" + LS
-        + "[  7]C                     |                     |                     |                     |                     |                     |                     |        22.410 17.953| 29.862 20.099 19.903| 27.532 20.345 21.055| 27.566 13.258 20.940| 20.710 20.356 17.914| 22.315 20.062 19.866| 23.897 19.293 21.877| 25.252 22.907 23.844| 26.832 16.751       |" + LS
-        + "[  8]G                     |                     |                     |                     |                     |                     |                     |                     |        23.196 23.000|        24.466 24.146|        25.065 21.643|        13.279 21.015|        23.018 22.964|        24.388 24.919|        24.285 26.933|        23.959 25.231|        18.138       |" + LS
-        + "                           |N           -2       |N           -1       |G            0       |G            1       |A            2       |C            3       |G            4       |T            5       |A            6       |C            7       |G            8       |T            9       |T           10       |T           11       |N           12       |N           13       |N           14       |" + LS
-        ;
-    assertEquals(exp, score.toString());
+    mNano.check("scorematrix-re-use1.txt", score.toString());
     assertEquals(-13.2705, score.totalScoreLn(), 0.0001);
 
     assertEquals(1, envcalls[0]);
@@ -327,7 +273,7 @@ public class ScoreMatrixTest extends TestCase {
     score.setEnv(env(SMALL_READ, TEMPLATE, 2));
     score.globalIntegrity();
     assertEquals(-5.263277, score.totalScoreLn(), 0.000001);
-    assertEquals(SMALL_EXP, score.toString());
+    mNano.check("scorematrix-re-use2.txt", score.toString());
 
     assertEquals(2, envcalls[0]);
     assertEquals(1, resizecalls[0]);

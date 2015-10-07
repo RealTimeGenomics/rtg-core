@@ -36,7 +36,6 @@ import com.rtg.variant.realign.AllPaths;
 import com.rtg.variant.realign.Environment;
 import com.rtg.variant.realign.EnvironmentCombined;
 import com.rtg.variant.realign.InvertCgTemplateEnvironment;
-import com.rtg.variant.realign.RealignParams;
 import com.rtg.variant.realign.ScoreFastUnderflow;
 import com.rtg.variant.realign.ScoreFastUnderflowCG;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
@@ -51,15 +50,19 @@ public class EvidenceComplex extends Evidence {
   private static final boolean PRINT_EVIDENCE_DETAILS = GlobalFlags.isSet(GlobalFlags.COMPLEX_EVIDENCE_DETAILS);
 
   private static final ScoreInterfaceMemoInterface SCORE_INTERFACE_MEMO;
+
+  // If true, CG allpaths realignment should use the full reconstructed read, otherwise use the flattened representation
+  static final boolean CG_ALLPATHS = GlobalFlags.getBooleanValue(GlobalFlags.COMPLEX_CALLER_UNROLL_CG_FLAG);
+
   static {
     SCORE_INTERFACE_MEMO = new ScoreInterfaceMemo();
   }
 
-  private static AllPaths getAllPaths(final RealignParams rp, final boolean isCG) {
-    if (isCG) {
-      return new ScoreFastUnderflowCG(rp);
+  private static AllPaths getAllPaths(final AbstractMachineErrorParams me) {
+    if (me.isCG() && CG_ALLPATHS) {
+      return new ScoreFastUnderflowCG(me.realignParams());
     }
-    return new ScoreFastUnderflow(rp);
+    return new ScoreFastUnderflow(me.realignParams());
   }
 
   private final int mReference;
@@ -118,12 +121,12 @@ public class EvidenceComplex extends Evidence {
     mProb = new double[size];
     final VariantAlignmentRecord alignmentRecord = match.alignmentRecord();
     final AbstractMachineErrorParams me = chooser.machineErrors(alignmentRecord);
-    final boolean cg = me.isCG();
+    final boolean cg = me.isCG() && CG_ALLPATHS;
     final AllPaths sm;
     if (params.threadingEnvironment() == ThreadingEnvironment.PARALLEL) {
-      sm = getAllPaths(me.realignParams(), cg);
+      sm = getAllPaths(me);
     } else {
-      sm = SCORE_INTERFACE_MEMO.getScoreInterface(me.realignParams(), cg);
+      sm = SCORE_INTERFACE_MEMO.getScoreInterface(me);
     }
 
     final AlignmentEnvironment se;

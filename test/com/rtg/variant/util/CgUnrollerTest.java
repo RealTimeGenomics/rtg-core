@@ -301,7 +301,7 @@ public class CgUnrollerTest extends TestCase {
     rec.setAttribute("GC", "8S2G7S1G9S");
     rec.setReadString("GTGTGCGCCTGTGGTCCAGATGAGGCA");
     rec.setBaseQualityString("566666669:;;;;;<<<<<<<<<<<9");
-    check(template, rec, "GTGTGCGCCTCTGTGGTCCNAGATGAGGCA", "56666666639:;;;;;<<!<<<<<<<<<9", false);
+    check(template, rec, "GTGTGCGCCTCTGTGGTCCAGATGAGGCA", "56666666639:;;;;;<<<<<<<<<<<9", false);
   }
 
   public void testCg2UnrollOverlapSuper() {

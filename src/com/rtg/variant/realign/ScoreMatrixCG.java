@@ -12,10 +12,17 @@
 
 package com.rtg.variant.realign;
 
+import static com.rtg.reader.CgUtils.CG2_EXPECTED_OVERLAP;
+import static com.rtg.reader.CgUtils.CG2_OVERLAP_POSITION;
+import static com.rtg.reader.CgUtils.CG2_RAW_READ_LENGTH;
+import static com.rtg.reader.CgUtils.CG_EXPECTED_LARGE_GAP;
+import static com.rtg.reader.CgUtils.CG_EXPECTED_OVERLAP;
+import static com.rtg.reader.CgUtils.CG_OVERLAP_POSITION;
 import static com.rtg.reader.CgUtils.CG_RAW_READ_LENGTH;
 
 import com.rtg.util.diagnostic.SpyCounter;
 import com.rtg.util.integrity.Exam;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 
@@ -28,9 +35,11 @@ public class ScoreMatrixCG extends ScoreMatrix {
   static final int OVERLAP_GAP = RealignParamsImplementation.CG_OVERLAP;
   static final int SMALL_GAP = RealignParamsImplementation.CG_SMALL_GAP;
   static final int LARGE_GAP = RealignParamsImplementation.CG_LARGE_GAP;
+  static final int OVERLAP2_GAP = RealignParamsImplementation.CG_OVERLAP2;
 
   private static final SpyCounter SPY = new SpyCounter("ScoreMatrixCG");
   private final double[][] mGapDistributionsPoss;
+  private final boolean mVersion1;
 
   /**
    * @param arith helper object that does the arithmetic so that this code can be independent of the representation.
@@ -39,6 +48,7 @@ public class ScoreMatrixCG extends ScoreMatrix {
   public ScoreMatrixCG(final PossibilityArithmetic arith, final RealignParams params) {
     super(arith, params);
     mGapDistributionsPoss = params.gapDistributionPoss(arith);
+    mVersion1 = params.machineType() == MachineType.COMPLETE_GENOMICS;
     SPY.increment();
   }
 
@@ -49,25 +59,43 @@ public class ScoreMatrixCG extends ScoreMatrix {
   @Override
   public void setEnv(Environment env) {
     super.setEnv(env);
-    if (mLength != CG_RAW_READ_LENGTH) { // XXXLen CGv2 needed in this class
+    if (mLength != (mVersion1 ? CG_RAW_READ_LENGTH : CG2_RAW_READ_LENGTH)) {
       throw new IllegalArgumentException("CG read is not the right length was: " + mLength);
     }
   }
 
-  protected static int rowOffsetCG(final int row, final int maxShift) {
+  protected static int rowOffsetCGV1(final int row, final int maxShift) {
     final int diagonal = row - maxShift - 1;
-    if (row <= 5) {
+    if (row <= CG_OVERLAP_POSITION) {
       return diagonal;
     } else if (row <= 25) {
-      return diagonal - 2;
+      return diagonal - CG_EXPECTED_OVERLAP;
     } else {
-      return diagonal - 2 + 6;
+      return diagonal - CG_EXPECTED_OVERLAP + CG_EXPECTED_LARGE_GAP;
+    }
+  }
+
+  protected static int rowOffsetCGV2(final int row, final int maxShift) {
+    final int diagonal = row - maxShift - 1;
+    if (row <= CG2_OVERLAP_POSITION) {
+      return diagonal;
+    } else {
+      return diagonal - CG2_EXPECTED_OVERLAP;
     }
   }
 
   @Override
   protected int rowOffset(final int row) {
-    return rowOffsetCG(row, mEnv.maxShift());
+    return mVersion1 ? rowOffsetCGV1(row, mEnv.maxShift()) : rowOffsetCGV2(row, mEnv.maxShift());
+  }
+
+  @Override
+  protected boolean isFragmentStart(final int row) {
+    if (mVersion1) {
+      return row == 6 || row == 16 || row == 26;
+    } else {
+      return row == 11 || row == 20;
+    }
   }
 
   /**
@@ -137,13 +165,21 @@ public class ScoreMatrixCG extends ScoreMatrix {
   }
 
   /**
-   * The CG version does more complex calculations after each gap (5, 15, 25).
+   * The CG version does more complex calculations after each gap.
    */
   @Override
   protected void calculateProbabilities() {
+    if (mVersion1) {
+      calculateProbabilitiesV1();
+    } else {
+      calculateProbabilitiesV2();
+    }
+  }
+
+  private void calculateProbabilitiesV1() {
     int row = 0;
     calculateInitialRow(row++, mDeleteStartPoss, mMatchStartPoss);
-    while (row <= 5) {
+    while (row <= CG_OVERLAP_POSITION) {
       calculateRow(row++);
     }
     calculateCGGap(row++, OVERLAP_GAP);
@@ -155,6 +191,19 @@ public class ScoreMatrixCG extends ScoreMatrix {
       calculateRow(row++);
     }
     calculateCGGap(row++, LARGE_GAP);
+    while (row <= mLength) {
+      calculateRow(row++);
+    }
+    calculateEnd();
+  }
+
+  private void calculateProbabilitiesV2() {
+    int row = 0;
+    calculateInitialRow(row++, mDeleteStartPoss, mMatchStartPoss);
+    while (row <= CG2_OVERLAP_POSITION) {
+      calculateRow(row++);
+    }
+    calculateCGGap(row++, OVERLAP2_GAP);
     while (row <= mLength) {
       calculateRow(row++);
     }

@@ -15,14 +15,29 @@ package com.rtg.variant.realign;
 import java.util.Arrays;
 
 import com.rtg.util.integrity.Exam;
+import com.rtg.util.machine.MachineType;
+import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
  */
 public class ScoreFastUnderflowCGTest extends ScoreMatrixCGTest {
 
   @Override
+  protected PossibilityArithmetic arith() {
+    return null;
+  }
+
+  @Override
   protected AllPaths score(Environment env) {
     final AllPaths score = new ScoreFastUnderflowCG(new MockRealignParamsCG());
+    score.setEnv(env);
+    Exam.globalIntegrity(score);
+    return score;
+  }
+
+  @Override
+  protected AllPaths scoreV2(final Environment env) {
+    final AllPaths score = new ScoreFastUnderflowCG(new MockRealignParamsCG(MachineType.COMPLETE_GENOMICS_2));
     score.setEnv(env);
     Exam.globalIntegrity(score);
     return score;

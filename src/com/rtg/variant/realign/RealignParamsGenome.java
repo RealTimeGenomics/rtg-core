@@ -12,6 +12,7 @@
 
 package com.rtg.variant.realign;
 
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
@@ -78,8 +79,8 @@ public final class RealignParamsGenome implements RealignParams {
   }
 
   @Override
-  public boolean completeGenomics() {
-    return false;
+  public MachineType machineType() {
+    return null;
   }
 
   @Override
