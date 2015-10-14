@@ -12,6 +12,7 @@
 
 package com.rtg.variant.bayes.complex;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.mode.DNA;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.MaxShiftUtils;
@@ -44,12 +45,11 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 /**
  * Provides evidence for a complex hypothesis by performing an all-paths alignment
  * from an alignment record to each hypothesis.
- *
  */
 public class EvidenceComplex extends Evidence {
 
-  /** print complex evidence scores in for debugging */
-  private static final boolean PRINT_EVIDENCE_DETAILS = false; //Boolean.valueOf(System.getProperty("rtg.print-cx-evidence-details", "false"));
+  /** Print complex evidence scores into the developer log for debugging */
+  private static final boolean PRINT_EVIDENCE_DETAILS = GlobalFlags.isSet(GlobalFlags.COMPLEX_EVIDENCE_DETAILS);
 
   private static final ScoreInterfaceMemoInterface SCORE_INTERFACE_MEMO;
   static {
