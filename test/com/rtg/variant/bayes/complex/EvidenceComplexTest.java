@@ -325,7 +325,7 @@ public class EvidenceComplexTest extends TestCase {
     final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte("GGATCGGGGG"), "", 1, 6);
     final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
     final EvidenceComplex dc = new EvidenceComplex(hyp, mG2, cot, vp, getChooser());
-    assertEquals(EvidenceInterface.NULL, dc.read());
+    assertEquals(EvidenceInterface.NOT_A_HYPOTHESIS, dc.read());
   }
 
   public void testObviousSingleNtInsertionMatchesHeteroCall() throws Exception {

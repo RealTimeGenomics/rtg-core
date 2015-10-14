@@ -66,18 +66,15 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
       return; // Don't increment any other stats for unmapped evidence
     }
 
-    final int read = evidence.read();
-    int bestHyp = read;
-    if (read == EvidenceInterface.NULL) {
-      bestHyp = -1;
-      double bestprob = 0.0;
+    int bestHyp = evidence.read();
+    if (bestHyp == EvidenceInterface.NOT_A_HYPOTHESIS) {
       for (int i = 0; i < mDescription.size(); i++) {
-        if (i == 0 || evidence.probability(i) > bestprob) {
-          bestprob = evidence.probability(i);
+        if (evidence.probability(i) > 0.5) {
           bestHyp = i;
+          break; // There can be at most one hypothesis with probability > 0.5
         }
       }
-      if (bestHyp == -1) {
+      if (bestHyp == EvidenceInterface.NOT_A_HYPOTHESIS) {
         return;
       }
     }

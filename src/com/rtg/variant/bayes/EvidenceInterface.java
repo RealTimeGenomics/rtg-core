@@ -20,7 +20,7 @@ package com.rtg.variant.bayes;
 public interface EvidenceInterface {
 
   /** Invalid hypothesis. */
-  int NULL = -1;
+  int NOT_A_HYPOTHESIS = -1;
 
   /**
    * @param index selects the haploid hypothesis.

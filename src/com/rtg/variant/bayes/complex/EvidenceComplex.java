@@ -167,7 +167,7 @@ public class EvidenceComplex extends Evidence {
     assert adjust >= 0;
 
     final int maxShift = maxShift0 + adjust;
-    int readHyp = EvidenceInterface.NULL;
+    int readHyp = EvidenceInterface.NOT_A_HYPOTHESIS;
     final double[] logScore = new double[size];
     double sum = mArithmetic.zero();
     for (int i = 0; i < size; i++) {
