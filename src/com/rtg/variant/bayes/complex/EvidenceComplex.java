@@ -48,7 +48,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  */
 public class EvidenceComplex extends Evidence {
 
-  /** Print complex evidence scores into the developer log for debugging */
+  /** Print complex evidence scores into the developer log for debugging. */
   private static final boolean PRINT_EVIDENCE_DETAILS = GlobalFlags.isSet(GlobalFlags.COMPLEX_EVIDENCE_DETAILS);
 
   private static final ScoreInterfaceMemoInterface SCORE_INTERFACE_MEMO;
@@ -166,7 +166,6 @@ public class EvidenceComplex extends Evidence {
     //}
     final int adjust = hypotheses.description().maxLength() - hypotheses.description().minLength();
     assert adjust >= 0;
-//    System.err.println("adjust=" + adjust + " maxShift0=" + maxShift0);
 
     final int maxShift = maxShift0 + adjust;
     int readHyp = EvidenceInterface.NULL;
@@ -193,12 +192,15 @@ public class EvidenceComplex extends Evidence {
       }
     }
 
-    //normalize
+    // Normalize
     mLogSum = mArithmetic.poss2Ln(sum);
     for (int i = 0; i < size; i++) {
       final double poss = mArithmetic.divide(logScore[i], sum);
       if (PRINT_EVIDENCE_DETAILS) {
-        Diagnostic.developerLog("Read match=" + match.readString() + " Hyp i=" + i + " name=" + hypotheses.description().name(i) + " : score=" + mArithmetic.poss2Prob(poss));
+        Diagnostic.developerLog("Match: " + (match.isFixedLeft() ? "" : "~") + match.readString() + (match.isFixedRight() ? "" : "~")
+          + " hyp: " + i + " " + hypotheses.description().name(i)
+          + " score: " + mArithmetic.poss2Prob(poss)
+          + " sample: " + match.alignmentRecord().getReadGroup().getSample());
       }
       set(i, poss);
     }
@@ -232,7 +234,6 @@ public class EvidenceComplex extends Evidence {
     assert mArithmetic.isValidPoss(poss);
     mProb[index] = mArithmetic.poss2Prob(poss);
     final double hypPrior = mHypotheses.p(index);
-    //System.err.println(index + ":" + mArithmetic.poss2Prob(poss) + ":" + mArithmetic.poss2Prob(hypPrior));
     assert mArithmetic.isValidPoss(hypPrior);
     mPE = mArithmetic.add(mPE, mArithmetic.multiply(hypPrior, poss));
     assert mArithmetic.isValidPoss(mPE);
