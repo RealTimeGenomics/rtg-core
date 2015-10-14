@@ -17,7 +17,6 @@ import com.rtg.mode.DNA;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.MaxShiftUtils;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.integrity.Exam;
 import com.rtg.util.machine.MachineType;
 import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.MachineErrorChooserInterface;
@@ -275,13 +274,6 @@ public class EvidenceComplex extends Evidence {
   @Override
   public void setReadBasesRight(int readBaseRight) {
     throw new UnsupportedOperationException();
-  }
-
-  @Override
-  public boolean integrity() {
-    super.integrity();
-    Exam.assertEquals(description().size(), mProb.length);
-    return true;
   }
 
   @Override
