@@ -52,9 +52,11 @@ public class StatisticsDoubleTest extends AbstractStatisticsTest {
     }
     return new AlignmentMatch(new VariantAlignmentRecord(sam), null, ins, FastaUtils.asciiToRawQuality(sb.toString()), 0, 0, length, mapq, fixedLeft, fixedRight);
   }
+
   static AlignmentMatch match(final String ins, int mapq) {
     return match(ins, mapq, true, true);
   }
+
   public void testTotals() throws Exception {
     Diagnostic.setLogStream();
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
@@ -65,7 +67,7 @@ public class StatisticsDoubleTest extends AbstractStatisticsTest {
       ml.add(match("G", 20));
     }
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
-    final ComplexTemplate cot = new ComplexTemplate(new byte[] {}, "", 0, 0);
+    final ComplexTemplate cot = new ComplexTemplate(new byte[1], "A", 0, 1);
     final ArrayList<AlignmentMatch> hypMatches = new ArrayList<>();
     hypMatches.add(match("T", 7));
     hypMatches.addAll(ml);
