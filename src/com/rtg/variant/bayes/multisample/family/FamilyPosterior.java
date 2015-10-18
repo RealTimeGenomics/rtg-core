@@ -544,8 +544,8 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
   }
 
   protected double contraryEvidenceAdjustment(final int fatherHyp, final int motherHyp, final int childHyp) {
-    if (mContraryProbabilityLn < 0) { // Efficiency
       // Corresponds to R(H_c | H_m, H_f, E_c, E_m, E_f) in theory document
+    if (mContraryProbabilityLn < 0 && childHyp != fatherHyp && childHyp != motherHyp) { // Efficiency, no adjustment needed in case where hypotheses are the same
       final AlleleStatistics<?> fatherCounts = mFather.statistics().counts();
       final AlleleStatistics<?> motherCounts = mMother.statistics().counts();
       final int childA = mMaximalCode.a(childHyp);
@@ -554,19 +554,17 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
       final int fatherB = mMaximalCode.bc(fatherHyp);
       final int motherA = mMaximalCode.a(motherHyp);
       final int motherB = mMaximalCode.bc(motherHyp);
-      if (childHyp != fatherHyp && childHyp != motherHyp) { // No adjustment needed in case where hypotheses are the same
-        // This needs to be careful to ensure each piece of contrary evidence is only counted once
-        double contraryCount = 0;
-        if (childA != fatherA && childA != fatherB && childA != motherA && childA != motherB) {
-          // child A allele is not present in hypothesis for either parent
-          contraryCount += safeGetCount(fatherCounts, childA) + safeGetCount(motherCounts, childA);
-        }
-        if (childB != childA && childB != fatherA && childB != fatherB && childB != motherA && childB != motherB) {
-          // child heterozygous B allele is not present in hypothesis for either parent
-          contraryCount += safeGetCount(fatherCounts, childB) + safeGetCount(motherCounts, childB);
-        }
-        return mContraryProbabilityLn * contraryCount;
+      // This needs to be careful to ensure each piece of contrary evidence is only counted once
+      double contraryCount = 0;
+      if (childA != fatherA && childA != fatherB && childA != motherA && childA != motherB) {
+        // child A allele is not present in hypothesis for either parent
+        contraryCount += safeGetCount(fatherCounts, childA) + safeGetCount(motherCounts, childA);
       }
+      if (childB != childA && childB != fatherA && childB != fatherB && childB != motherA && childB != motherB) {
+        // child heterozygous B allele is not present in hypothesis for either parent
+        contraryCount += safeGetCount(fatherCounts, childB) + safeGetCount(motherCounts, childB);
+      }
+      return mContraryProbabilityLn * contraryCount;
     }
     return 0; // ln(1)
   }
