@@ -20,12 +20,9 @@ import com.rtg.launcher.AbstractCliTest;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reference.ReferenceGenome;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
-/**
- */
 public class SegregationCheckerCliTest extends AbstractCliTest {
 
   @Override
@@ -37,15 +34,10 @@ public class SegregationCheckerCliTest extends AbstractCliTest {
     try (final TestDirectory dir = new TestDirectory()) {
       final File template = ReaderTestUtils.getDNADir(">1\nACGT\n>2\nACGT\n>3\nACGT", new File(dir, "template"));
       FileUtils.stringToFile("version 1\neither def diploid linear", new File(template, ReferenceGenome.REFERENCE_FILE));
-      final MemoryPrintStream out = new MemoryPrintStream();
-      final MemoryPrintStream err = new MemoryPrintStream();
       final File vcf = FileHelper.resourceToFile("com/rtg/segregation/resources/crossover.vcf", new File(dir, "vcf.vcf"));
       final File bed = FileHelper.resourceToFile("com/rtg/segregation/resources/regions.bed", new File(dir, "regions.bed"));
       final File output = new File(dir, "out.vcf");
-      final SegregationCheckerCli cli = new SegregationCheckerCli();
-      final String[] args = {"--template", template.getPath(), "--bed", bed.getPath(), "--vcf", vcf.getPath(), "--output", output.getPath(), "--father", "Father", "--mother", "Mother", "-Z"};
-      final int ret = cli.mainInit(args, out.outputStream(), err.printStream());
-      assertEquals(err.toString(), 0, ret);
+      checkMainInitOk("--template", template.getPath(), "--bed", bed.getPath(), "--vcf", vcf.getPath(), "--output", output.getPath(), "--father", "Father", "--mother", "Mother", "-Z");
       final String result = FileUtils.fileToString(output);
       mNano.check("crossovers_annotated.vcf", result, true);
     }
@@ -55,15 +47,10 @@ public class SegregationCheckerCliTest extends AbstractCliTest {
     try (final TestDirectory dir = new TestDirectory()) {
       final File template = ReaderTestUtils.getDNADir(">1\nACGT\n>2\nACGT\n>3\nACGT", new File(dir, "template"));
       FileUtils.stringToFile("version 1\neither def diploid linear", new File(template, ReferenceGenome.REFERENCE_FILE));
-      final MemoryPrintStream out = new MemoryPrintStream();
-      final MemoryPrintStream err = new MemoryPrintStream();
       final File vcf = FileHelper.resourceToFile("com/rtg/segregation/resources/crossover.vcf", new File(dir, "vcf.vcf"));
       final File bed = FileHelper.resourceToFile("com/rtg/segregation/resources/regions.bed", new File(dir, "regions.bed"));
       final File output = new File(dir, "out.vcf");
-      final SegregationCheckerCli cli = new SegregationCheckerCli();
-      final String[] args = {"--repair", "--template", template.getPath(), "--bed", bed.getPath(), "--vcf", vcf.getPath(), "--output", output.getPath(), "--father", "Father", "--mother", "Mother", "-Z"};
-      final int ret = cli.mainInit(args, out.outputStream(), err.printStream());
-      assertEquals(err.toString(), 0, ret);
+      checkMainInitOk("--repair", "--template", template.getPath(), "--bed", bed.getPath(), "--vcf", vcf.getPath(), "--output", output.getPath(), "--father", "Father", "--mother", "Mother", "-Z");
       final String result = FileUtils.fileToString(output);
       mNano.check("crossovers_annotated_repaired.vcf", result, true);
     }

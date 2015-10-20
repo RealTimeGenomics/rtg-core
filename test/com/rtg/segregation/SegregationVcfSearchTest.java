@@ -17,6 +17,8 @@ import static com.rtg.util.StringUtils.LS;
 import java.io.File;
 import java.io.IOException;
 
+import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.AbstractCliTest;
 import com.rtg.launcher.GlobalFlags;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reference.ReferenceGenome;
@@ -24,15 +26,15 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.IOUtils;
-import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.TestCase;
+public class SegregationVcfSearchTest extends AbstractCliTest {
 
-/**
- */
-public class SegregationVcfSearchTest extends TestCase {
+  @Override
+  protected AbstractCli getCli() {
+    return new SegregationVcfSearch();
+  }
 
   public void check(final String exp, final String expBed, final String res, int newPen, int xoPen) throws IOException {
     try (final TestDirectory dir = new TestDirectory()) {
@@ -47,19 +49,12 @@ public class SegregationVcfSearchTest extends TestCase {
           + "female seq Y none linear\n"
           + "male dup X:1-16 Y:1-16\n"
           , new File(template, ReferenceGenome.REFERENCE_FILE));
-      final MemoryPrintStream out = new MemoryPrintStream();
-      final MemoryPrintStream err = new MemoryPrintStream();
       final File vcf = FileHelper.resourceToFile(res, new File(dir, "vcf.vcf"));
       final File output = new File(dir, "out.txt");
       final File regions = new File(dir, "regions.bed");
-      final String[] args = {"--vcf", vcf.getPath(), "--template", template.getPath(), "--father", "Father", "--mother", "Mother", "--output", output.getPath(), "--regions-output", regions.getPath(), "-Z", "--Xnew-penalty", "" + newPen, "--Xxo-penalty", "" + xoPen};
-      final int ret = new SegregationVcfSearch().mainInit(args, out.printStream(), err.printStream());
-      assertEquals(err.toString(), 0, ret);
-      //System.err.println(out.toString());
-      //System.err.println(err.toString());
+      checkMainInitOk("--vcf", vcf.getPath(), "--template", template.getPath(), "--father", "Father", "--mother", "Mother", "--output", output.getPath(), "--regions-output", regions.getPath(), "-Z", "--Xnew-penalty", "" + newPen, "--Xxo-penalty", "" + xoPen);
       final String actual = IOUtils.readAll(output);
       assertEquals(exp, actual);
-      assertEquals("", err.toString());
       final String actualRegions = IOUtils.readAll(regions);
       assertEquals(expBed, actualRegions.replace('\t', ' '));
     }
@@ -124,6 +119,7 @@ public class SegregationVcfSearchTest extends TestCase {
         ;
     check(exp, expBed, "com/rtg/segregation/resources/crossover.vcf", 10 , 3);
   }
+
   public void testXChromosomes() throws IOException {
     final String exp = "NS X" + LS
         + "OK X 2 0_1 0_1 0_1 1_1 0_1 0_0 0_1 0_1 0_1 0_0 1_1 0_1 0_0" + LS
@@ -158,6 +154,7 @@ public class SegregationVcfSearchTest extends TestCase {
         ;
     check(exp, expBed, "com/rtg/segregation/resources/Xchromosome.vcf", 10 , 3);
   }
+
   public void testPloidyMismatchWarning() throws IOException {
     try (final TestDirectory dir = new TestDirectory()) {
       Diagnostic.setLogStream();
@@ -169,15 +166,11 @@ public class SegregationVcfSearchTest extends TestCase {
           + "female seq X diploid linear\n"
           + "female seq Y none linear\n"
           , new File(template, ReferenceGenome.REFERENCE_FILE));
-      final MemoryPrintStream out = new MemoryPrintStream();
-      final MemoryPrintStream err = new MemoryPrintStream();
       final File vcf = FileHelper.resourceToFile("com/rtg/segregation/resources/Xchromosome.vcf", new File(dir, "vcf.vcf"));
       final File output = new File(dir, "out.txt");
       final File regions = new File(dir, "regions.bed");
-      final String[] args = {"--vcf", vcf.getPath(), "--template", template.getPath(), "--father", "Father", "--mother", "Mother", "--output", output.getPath(), "--regions-output", regions.getPath(), "-Z", "--Xnew-penalty", "10", "--Xxo-penalty", "3"};
-      final int ret = new SegregationVcfSearch().mainInit(args, out.printStream(), err.printStream());
-      assertEquals(err.toString(), 0, ret);
-      TestUtils.containsAll(err.toString(), "There were 14 variants with genotypes that did not match the expected ploidy in chromosome X");
+      final String err = checkMainInitWarn("--vcf", vcf.getPath(), "--template", template.getPath(), "--father", "Father", "--mother", "Mother", "--output", output.getPath(), "--regions-output", regions.getPath(), "-Z", "--Xnew-penalty", "10", "--Xxo-penalty", "3");
+      TestUtils.containsAll(err, "There were 14 variants with genotypes that did not match the expected ploidy in chromosome X");
     }
   }
 }
