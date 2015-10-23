@@ -92,13 +92,10 @@ class ReadMappingRoc {
 
   // Something that can be plotted with our ROC tools
   public String getRoc(int total) {
-    return "#total baseline variants: " + total + StringUtils.LS
-        + getRoc();
-  }
-
-  public String getRoc() {
     final StringBuilder sb = new StringBuilder();
-    sb.append("#Score\ttrue_positives\tfalse_positives").append(StringUtils.LS);
+    sb.append("#total baseline variants: ").append(total).append(StringUtils.LS);
+    sb.append("#score field: MAPQ").append(StringUtils.LS);
+    sb.append("#score\ttrue_positives\tfalse_positives").append(StringUtils.LS);
     sb.append("255\t0.00\t0.00").append(StringUtils.LS);
     double tpCum = 0;
     double fpCum = 0;
@@ -125,4 +122,5 @@ class ReadMappingRoc {
     }
     return sb.toString();
   }
+
 }

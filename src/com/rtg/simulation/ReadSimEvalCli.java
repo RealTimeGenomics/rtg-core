@@ -414,7 +414,6 @@ public class ReadSimEvalCli extends LoggedCli {
     }
     if (mParams.mapQRoc()) {
       try (Writer rocout = new BufferedWriter(new OutputStreamWriter(FileUtils.createOutputStream(new File(outputDirectory(), "mapq_roc.tsv"))))) {
-        rocout.write("#MAPQ ROC" + StringUtils.LS);
         rocout.write(mRocMapq.getRoc(mLeftStats.length() * (mParams.isPaired() ? 2 : 1)));
       }
     }
