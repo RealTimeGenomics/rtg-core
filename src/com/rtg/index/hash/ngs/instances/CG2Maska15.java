@@ -18,7 +18,6 @@ import com.rtg.index.hash.ngs.NgsHashFunction;
 import com.rtg.index.hash.ngs.ReadCall;
 import com.rtg.index.hash.ngs.TemplateCall;
 import com.rtg.reader.CgUtils;
-import com.rtg.util.Utils;
 
 /**
  * r=29 s=0
@@ -32,7 +31,7 @@ public class CG2Maska15 extends AbstractCGMask {
 
   private static final int NUMBER_BITS = 30;
 
-  private static final int NUMBER_WINDOWS = 6;
+  private static final int NUMBER_WINDOWS = 7;
 
   /**
    * A factory for the outer class.
@@ -75,6 +74,8 @@ public class CG2Maska15 extends AbstractCGMask {
   private static final long MASK_E2 = 0b00000000000000000000000001111;
   private static final long MASK_F0 = 0b10101010100000000000000000000;
   private static final long MASK_F1 = 0b00000000000010101010101010101;
+  private static final long MASK_G0 = 0b01010101010000000000000000000;
+  private static final long MASK_G1 = 0b00000000000101010101010101010;
 
   /**
    * @param readCall used in subclasses to process results of read hits.
@@ -145,10 +146,17 @@ public class CG2Maska15 extends AbstractCGMask {
     final long packedF = lk0 | ll0 | lk1 | ll1;
     mReadCall.readCall(readId, hash(packedF), 5);
 
-//    System.err.println(" MASKFa=" + Utils.toBits(lk0, READ_LENGTH));
-//    System.err.println(" MASKFb=" + Utils.toBits(ll0, READ_LENGTH));
-//    System.err.println(" MASKFc=" + Utils.toBits(lk1, READ_LENGTH));
-//    System.err.println(" MASKFd=" + Utils.toBits(ll1, READ_LENGTH));
+    final long lm0 = v0 & MASK_G0;
+    final long ln0 = (v1 & MASK_G0) >> 1;
+    final long lm1 = v0 & MASK_G1;
+    final long ln1 = (v1 & MASK_G1) >> 1;
+    final long packedG = lm0 | ln0 | lm1 | ln1;
+    mReadCall.readCall(readId, hash(packedG), 6);
+
+//    System.err.println(" MASKGa=" + Utils.toBits(lm0, READ_LENGTH));
+//    System.err.println(" MASKGb=" + Utils.toBits(ln0, READ_LENGTH));
+//    System.err.println(" MASKGc=" + Utils.toBits(lm1, READ_LENGTH));
+//    System.err.println(" MASKGd=" + Utils.toBits(ln1, READ_LENGTH));
   }
 
   private static final long MASKT_A0_1 = MASK_A0 >> 3;
@@ -170,6 +178,10 @@ public class CG2Maska15 extends AbstractCGMask {
   private static final long MASKT_F0_2 = MASKT_F0_1 >> 1;
   private static final long MASKT_F0_3 = MASKT_F0_2 >> 1;
   private static final long MASKT_F1 = MASK_F1;
+  private static final long MASKT_G0_1 = MASK_G0 >> 3;
+  private static final long MASKT_G0_2 = MASKT_G0_1 >> 1;
+  private static final long MASKT_G0_3 = MASKT_G0_2 >> 1;
+  private static final long MASKT_G1 = MASK_G1;
 
   @Override
   public void templateAll(final int endPosition, long v0, long v1) throws IOException {
@@ -285,10 +297,31 @@ public class CG2Maska15 extends AbstractCGMask {
     final long packedF5 = laa0 | lab0 | lw1 | lx1;
     mTemplateCall.templateCall(endP, hash(packedF5), 5);
 
-//    System.err.println("MASKTFa=" + Utils.toBits(lw0, READ_LENGTH));
-//    System.err.println("MASKTFb=" + Utils.toBits(lx0, READ_LENGTH));
-//    System.err.println("MASKTFc=" + Utils.toBits(lw1, READ_LENGTH));
-//    System.err.println("MASKTFd=" + Utils.toBits(lx1, READ_LENGTH));
+    // index 6 (most common overlaps)
+    // Overlap of 3
+    final long lac0 = (v0 & MASKT_G0_1) << 3;
+    final long lad0 = (v1 & MASKT_G0_1) << 2;
+    final long lac1 = v0 & MASKT_G1;
+    final long lad1 = (v1 & MASKT_G1) >> 1;
+    final long packedG3 = lac0 | lad0 | lac1 | lad1;
+    mTemplateCall.templateCall(endP, hash(packedG3), 6);
+
+    // Overlap of 4
+    final long lae0 = (v0 & MASKT_G0_2) << 4;
+    final long laf0 = (v1 & MASKT_G0_2) << 3;
+    final long packedG4 = lae0 | laf0 | lac1 | lad1;
+    mTemplateCall.templateCall(endP, hash(packedG4), 6);
+
+    // Overlap of 5
+    final long lag0 = (v0 & MASKT_G0_3) << 5;
+    final long lah0 = (v1 & MASKT_G0_3) << 4;
+    final long packedG5 = lag0 | lah0 | lac1 | lad1;
+    mTemplateCall.templateCall(endP, hash(packedG5), 6);
+
+//    System.err.println("MASKTGa=" + Utils.toBits(lac0, READ_LENGTH));
+//    System.err.println("MASKTGb=" + Utils.toBits(lad0, READ_LENGTH));
+//    System.err.println("MASKTGc=" + Utils.toBits(lac1, READ_LENGTH));
+//    System.err.println("MASKTGd=" + Utils.toBits(lad1, READ_LENGTH));
 
     mTemplateCall.done();
   }
