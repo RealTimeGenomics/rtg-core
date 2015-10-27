@@ -1,0 +1,3 @@
+CG2 l=29 w=15 e=0
+number windows=5
+set name=1234 length=23

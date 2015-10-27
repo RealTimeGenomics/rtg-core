@@ -176,7 +176,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
 
     final Flag maskFlag = mFlags.registerOptional(MASK_FLAG, String.class, "string", "mask to apply", "cgmaska15b1").setCategory(SENSITIVITY_TUNING);
     if (License.isDeveloper()) {
-      maskFlag.setParameterRange(new String[]{"cgmaska15b1", "cgmaska1b1", "cgmaska15b1alt", "cgmaska1b1alt", "cg2maska1", "cg2maska11"});
+      maskFlag.setParameterRange(new String[]{"cgmaska15b1", "cgmaska1b1", "cgmaska15b1alt", "cgmaska1b1alt", "cg2maska1", "cg2maska11", "cg2maska15"});
     } else {
       maskFlag.setParameterRange(new String[]{"cgmaska15b1", "cgmaska1b1"});
     }
