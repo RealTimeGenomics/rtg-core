@@ -36,7 +36,7 @@ public class CG2Maska15Test extends AbstractSplitTest {
   public void testFactory() {
     assertEquals(30, CG2Maska15.FACTORY.hashBits());
     assertEquals(30, CG2Maska15.FACTORY.windowBits());
-    assertEquals(5, CG2Maska15.FACTORY.numberWindows());
+    assertEquals(6, CG2Maska15.FACTORY.numberWindows());
     final NgsHashFunction hf = CG2Maska15.FACTORY.create(new ReadCallMock(null), new TemplateCallMock(null));
     assertTrue(hf != null);
     assertTrue(hf instanceof CG2Maska15);
@@ -99,7 +99,7 @@ public class CG2Maska15Test extends AbstractSplitTest {
     final int missed1 = sub.substituteProtected(1);
     Assert.assertEquals(sub.toString(), 0, missed1);
     final int missed2 = sub.substituteProtected(2);
-    Assert.assertEquals(sub.toString(), 127, missed2);
+    Assert.assertEquals(sub.toString(), 94, missed2);
   }
 
 //  public void testIndel() throws IOException {

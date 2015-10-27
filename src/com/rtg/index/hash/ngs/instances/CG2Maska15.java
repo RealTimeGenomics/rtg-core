@@ -18,6 +18,7 @@ import com.rtg.index.hash.ngs.NgsHashFunction;
 import com.rtg.index.hash.ngs.ReadCall;
 import com.rtg.index.hash.ngs.TemplateCall;
 import com.rtg.reader.CgUtils;
+import com.rtg.util.Utils;
 
 /**
  * r=29 s=0
@@ -31,7 +32,7 @@ public class CG2Maska15 extends AbstractCGMask {
 
   private static final int NUMBER_BITS = 30;
 
-  private static final int NUMBER_WINDOWS = 5;
+  private static final int NUMBER_WINDOWS = 6;
 
   /**
    * A factory for the outer class.
@@ -72,6 +73,8 @@ public class CG2Maska15 extends AbstractCGMask {
   private static final long MASK_E0 = 0b11111000000000000000000000000;
   private static final long MASK_E1 = 0b00000000000000011111000000000;
   private static final long MASK_E2 = 0b00000000000000000000000001111;
+  private static final long MASK_F0 = 0b10101010100000000000000000000;
+  private static final long MASK_F1 = 0b00000000000010101010101010101;
 
   /**
    * @param readCall used in subclasses to process results of read hits.
@@ -106,25 +109,25 @@ public class CG2Maska15 extends AbstractCGMask {
     final long la1 = (v0 & MASK_A1) << 15;
     final long lb0 = (v1 & MASK_A0) >> 14;
     final long lb1 = v1 & MASK_A1;
-    final long l2x0 = la0 | lb0 | la1 | lb1;
-    mReadCall.readCall(readId, hash(l2x0), 0);
+    final long packedA = la0 | lb0 | la1 | lb1;
+    mReadCall.readCall(readId, hash(packedA), 0);
 
     final long lc = (v0 & MASK_B) << (14 - 5);
     final long ld =  (v1 & MASK_B) >> 5;
-    final long l2x1 = lc | ld;
-    mReadCall.readCall(readId, hash(l2x1), 1);
+    final long packedB = lc | ld;
+    mReadCall.readCall(readId, hash(packedB), 1);
 
     final long le = (v0 & MASK_C) << 14;
     final long lf = v1 & MASK_C;
-    final long l2x2 = le | lf;
-    mReadCall.readCall(readId, hash(l2x2), 2);
+    final long packedC = le | lf;
+    mReadCall.readCall(readId, hash(packedC), 2);
 
     final long lg0 = (v0 & MASK_D0) << 4;
     final long lg1 = (v0 & MASK_D1) << 9;
     final long lh0 = (v1 & MASK_D0) >> (19 - 9);
     final long lh1 = (v1 & MASK_D1) >> 5;
-    final long l2x3 = lg0 | lh0 | lg1 | lh1;
-    mReadCall.readCall(readId, hash(l2x3), 3);
+    final long packedD = lg0 | lh0 | lg1 | lh1;
+    mReadCall.readCall(readId, hash(packedD), 3);
 
     final long li0 = (v0 & MASK_E0) >> 1;
     final long li1 = (v0 & MASK_E1) << 9;
@@ -132,15 +135,20 @@ public class CG2Maska15 extends AbstractCGMask {
     final long lj0 = (v1 & MASK_E0) >> 15;
     final long lj1 = (v1 & MASK_E1) >> 5;
     final long lj2 = v1 & MASK_E2;
-    final long l2x4 = li0 | lj0 | li1 | lj1 | li2 | lj2;
-    mReadCall.readCall(readId, hash(l2x4), 4);
+    final long packedE = li0 | lj0 | li1 | lj1 | li2 | lj2;
+    mReadCall.readCall(readId, hash(packedE), 4);
 
-//    System.err.println(" MASKEa=" + Utils.toBits(li0, READ_LENGTH));
-//    System.err.println(" MASKEb=" + Utils.toBits(li1, READ_LENGTH));
-//    System.err.println(" MASKEc=" + Utils.toBits(li2, READ_LENGTH));
-//    System.err.println(" MASKEd=" + Utils.toBits(lj0, READ_LENGTH));
-//    System.err.println(" MASKEe=" + Utils.toBits(lj1, READ_LENGTH));
-//    System.err.println(" MASKEf=" + Utils.toBits(lj2, READ_LENGTH));
+    final long lk0 = (v0 & MASK_F0) >> 1;
+    final long ll0 = (v1 & MASK_F0) >> 2;
+    final long lk1 = (v0 & MASK_F1) << 1;
+    final long ll1 = v1 & MASK_F1;
+    final long packedF = lk0 | ll0 | lk1 | ll1;
+    mReadCall.readCall(readId, hash(packedF), 5);
+
+//    System.err.println(" MASKFa=" + Utils.toBits(lk0, READ_LENGTH));
+//    System.err.println(" MASKFb=" + Utils.toBits(ll0, READ_LENGTH));
+//    System.err.println(" MASKFc=" + Utils.toBits(lk1, READ_LENGTH));
+//    System.err.println(" MASKFd=" + Utils.toBits(ll1, READ_LENGTH));
   }
 
   private static final long MASKT_A0_1 = MASK_A0 >> 3;
@@ -158,6 +166,10 @@ public class CG2Maska15 extends AbstractCGMask {
   private static final long MASKT_E0_3 = MASKT_E0_2 >> 1;
   private static final long MASKT_E1 = MASK_E1;
   private static final long MASKT_E2 = MASK_E2;
+  private static final long MASKT_F0_1 = MASK_F0 >> 3;
+  private static final long MASKT_F0_2 = MASKT_F0_1 >> 1;
+  private static final long MASKT_F0_3 = MASKT_F0_2 >> 1;
+  private static final long MASKT_F1 = MASK_F1;
 
   @Override
   public void templateAll(final int endPosition, long v0, long v1) throws IOException {
@@ -177,34 +189,34 @@ public class CG2Maska15 extends AbstractCGMask {
     final long lf0 = (v1 & MASKT_A0_1) >> 11;
     final long le1 = (v0 & MASKT_A1) << 15;
     final long lf1 = v1 & MASKT_A1;
-    final long l3x0 = le0 | lf0 | le1 | lf1;
-    mTemplateCall.templateCall(endP, hash(l3x0), 0);
+    final long packedA3 = le0 | lf0 | le1 | lf1;
+    mTemplateCall.templateCall(endP, hash(packedA3), 0);
 
     // Overlap of 4
     final long la0 = (v0 & MASKT_A0_2) << 5;
     final long lb0 = (v1 & MASKT_A0_2) >> 10;
-    final long l4x0 = la0 | lb0 | le1 | lf1;
-    mTemplateCall.templateCall(endP, hash(l4x0), 0);
+    final long packedA4 = la0 | lb0 | le1 | lf1;
+    mTemplateCall.templateCall(endP, hash(packedA4), 0);
 
     // Overlap of 5
     final long lg0 = (v0 & MASKT_A0_3) << 6;
     final long lh0 = (v1 & MASKT_A0_3) >> 9;
-    final long l5x0 = lg0 | lh0 | le1 | lf1;
-    mTemplateCall.templateCall(endP, hash(l5x0), 0);
+    final long packedA5 = lg0 | lh0 | le1 | lf1;
+    mTemplateCall.templateCall(endP, hash(packedA5), 0);
 
 
     // index 1 (doesn't care about overlap variation)
-    final long lc = (v0 & MASKT_B) << (14 - 5);
+    final long lc = (v0 & MASKT_B) << 9;
     final long ld =  (v1 & MASKT_B) >> 5;
-    final long l0x1 = lc | ld;
-    mTemplateCall.templateCall(endP, hash(l0x1), 1);
+    final long packedB = lc | ld;
+    mTemplateCall.templateCall(endP, hash(packedB), 1);
 
 
     // index 2 (doesn't care about overlap variation)
     final long li = (v0 & MASKT_C) << 14;
     final long lj = v1 & MASKT_C;
-    final long l0x2 = li | lj;
-    mTemplateCall.templateCall(endP, hash(l0x2), 2);
+    final long packedC = li | lj;
+    mTemplateCall.templateCall(endP, hash(packedC), 2);
 
 
     // index 3 (most common overlaps)
@@ -213,20 +225,20 @@ public class CG2Maska15 extends AbstractCGMask {
     final long ll0 = (v1 & MASKT_D0_1) >> 7;
     final long lk1 = (v0 & MASKT_D1) << 9;
     final long ll1 = (v1 & MASKT_D1) >> 5;
-    final long l3x3 = lk0 | ll0 | lk1 | ll1;
-    mTemplateCall.templateCall(endP, hash(l3x3), 3);
+    final long packedD3 = lk0 | ll0 | lk1 | ll1;
+    mTemplateCall.templateCall(endP, hash(packedD3), 3);
 
     // Overlap of 4
     final long lm0 = (v0 & MASKT_D0_2) << 8;
     final long ln0 = (v1 & MASKT_D0_2) >> 6;
-    final long l4x3 = lm0 | ln0 | lk1 | ll1;
-    mTemplateCall.templateCall(endP, hash(l4x3), 3);
+    final long packedD4 = lm0 | ln0 | lk1 | ll1;
+    mTemplateCall.templateCall(endP, hash(packedD4), 3);
 
     // Overlap of 5
     final long lo0 = (v0 & MASKT_D0_3) << 9;
     final long lp0 = (v1 & MASKT_D0_3) >> 5;
-    final long l5x3 = lo0 | lp0 | lk1 | ll1;
-    mTemplateCall.templateCall(endP, hash(l5x3), 3);
+    final long packedD5 = lo0 | lp0 | lk1 | ll1;
+    mTemplateCall.templateCall(endP, hash(packedD5), 3);
 
     // index 4 (most common overlaps)
     // Overlap of 3
@@ -237,27 +249,46 @@ public class CG2Maska15 extends AbstractCGMask {
     final long lq2 = (v0 & MASKT_E2) << 14;
     final long lr2 = v1 & MASKT_E2;
     final long l12 = lq1 | lq2 | lr1 | lr2;
-    final long l3x4 = lq0 | lr0 | l12;
-    mTemplateCall.templateCall(endP, hash(l3x4), 4);
+    final long packedE3 = lq0 | lr0 | l12;
+    mTemplateCall.templateCall(endP, hash(packedE3), 4);
 
     // Overlap of 4
     final long ls0 = (v0 & MASKT_E0_2) << 3;
     final long lt0 = (v1 & MASKT_E0_2) >> 11;
-    final long l4x4 = ls0 | lt0 | l12;
-    mTemplateCall.templateCall(endP, hash(l4x4), 4);
+    final long packedE4 = ls0 | lt0 | l12;
+    mTemplateCall.templateCall(endP, hash(packedE4), 4);
 
     // Overlap of 5
     final long lu0 = (v0 & MASKT_E0_3) << 4;
     final long lv0 = (v1 & MASKT_E0_3) >> 10;
-    final long l4x5 = lu0 | lv0 | l12;
-    mTemplateCall.templateCall(endP, hash(l4x5), 4);
+    final long packedE5 = lu0 | lv0 | l12;
+    mTemplateCall.templateCall(endP, hash(packedE5), 4);
 
-//    System.err.println("MASKTDa=" + Utils.toBits(lu0, READ_LENGTH));
-//    System.err.println("MASKTDb=" + Utils.toBits(lq1, READ_LENGTH));
-//    System.err.println("MASKTDc=" + Utils.toBits(lq2, READ_LENGTH));
-//    System.err.println("MASKTDd=" + Utils.toBits(lv0, READ_LENGTH));
-//    System.err.println("MASKTDe=" + Utils.toBits(lr1, READ_LENGTH));
-//    System.err.println("MASKTDf=" + Utils.toBits(lr2, READ_LENGTH));
+    // index 5 (most common overlaps)
+    // Overlap of 3
+    final long lw0 = (v0 & MASKT_F0_1) << 2;
+    final long lx0 = (v1 & MASKT_F0_1) << 1;
+    final long lw1 = (v0 & MASKT_F1) << 1;
+    final long lx1 = v1 & MASKT_F1;
+    final long packedF3 = lw0 | lx0 | lw1 | lx1;
+    mTemplateCall.templateCall(endP, hash(packedF3), 5);
+
+    // Overlap of 4
+    final long ly0 = (v0 & MASKT_F0_2) << 3;
+    final long lz0 = (v1 & MASKT_F0_2) << 2;
+    final long packedF4 = ly0 | lz0 | lw1 | lx1;
+    mTemplateCall.templateCall(endP, hash(packedF4), 5);
+
+    // Overlap of 5
+    final long laa0 = (v0 & MASKT_F0_3) << 4;
+    final long lab0 = (v1 & MASKT_F0_3) << 5;
+    final long packedF5 = laa0 | lab0 | lw1 | lx1;
+    mTemplateCall.templateCall(endP, hash(packedF5), 5);
+
+//    System.err.println("MASKTFa=" + Utils.toBits(lw0, READ_LENGTH));
+//    System.err.println("MASKTFb=" + Utils.toBits(lx0, READ_LENGTH));
+//    System.err.println("MASKTFc=" + Utils.toBits(lw1, READ_LENGTH));
+//    System.err.println("MASKTFd=" + Utils.toBits(lx1, READ_LENGTH));
 
     mTemplateCall.done();
   }
