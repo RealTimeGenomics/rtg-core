@@ -21,7 +21,8 @@ import com.rtg.reader.CgUtils;
 
 /**
  * r=29 s=0
- * Covers all single mismatches, for overlaps of 3, 4, 5.
+ * Covers all single mismatches and most double mismatches, for overlaps of 3, 4, 5.
+ * Note: There is a PDF covering these particular masks.
  */
 public class CG2Maska15 extends AbstractCGMask {
 
