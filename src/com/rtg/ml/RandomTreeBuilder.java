@@ -248,7 +248,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
         break;
       case MISSING:
       default:
-        if (GlobalFlags.getBooleanValue(GlobalFlags.TRAIN_ON_MISSING_VALUES)) {
+        if (GlobalFlags.getBooleanValue(GlobalFlags.AVR_TRAIN_ON_MISSING_VALUES)) {
           // Send instances with missing values down both branches with half weight
           final double halfWeight = 0.5 * inst.weight();
           leftWeight += halfWeight;

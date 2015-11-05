@@ -18,10 +18,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.ml.MlPredictLoader;
 import com.rtg.ml.PredictClassifier;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.header.FilterField;
@@ -130,7 +132,11 @@ public class MlAvrPredictModel extends AbstractPredictModel {
     try {
       mAttributeExtractor.checkHeader(header);
     } catch (AttributeExtractor.IncompatibleHeaderException ihe) {
-      throw new NoTalkbackSlimException("The input VCF header is missing required fields:" + StringUtils.LS + ihe.getMessage());
+      if (GlobalFlags.isSet(GlobalFlags.AVR_ALLOW_UNDECLARED_ATTRIBUTES)) {
+        Diagnostic.warning("VCF does not declare all fields in AVR model, they will be treated as missing values:" + StringUtils.LS + ihe.getMessage());
+      } else {
+        throw new NoTalkbackSlimException("The input VCF header is missing required fields:" + StringUtils.LS + ihe.getMessage());
+      }
     }
 
     if (mPredictionThreshold > 0) {
