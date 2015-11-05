@@ -38,7 +38,7 @@ public enum VcfInfoField {
   LOH {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.FLOAT, new VcfNumber("1"), "Indicates whether or not variant is a potential loss of heterozygosity");
+      header.addInfoField(name(), MetaType.FLOAT, VcfNumber.ONE, "Indicates whether or not variant is a potential loss of heterozygosity");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
@@ -51,7 +51,7 @@ public enum VcfInfoField {
   NCS {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.FLOAT, new VcfNumber("1"), "RTG normal cancer score");
+      header.addInfoField(name(), MetaType.FLOAT, VcfNumber.ONE, "RTG normal cancer score");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
@@ -64,7 +64,7 @@ public enum VcfInfoField {
   DISEASE {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.STRING, new VcfNumber("1"), "Indicates the variant is linked to the disease");
+      header.addInfoField(name(), MetaType.STRING, VcfNumber.ONE, "Indicates the variant is linked to the disease");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
@@ -77,7 +77,7 @@ public enum VcfInfoField {
   RDS {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.FLOAT, new VcfNumber("1"), "RTG disease call score");
+      header.addInfoField(name(), MetaType.FLOAT, VcfNumber.ONE, "RTG disease call score");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
@@ -90,7 +90,7 @@ public enum VcfInfoField {
   DPS {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.FLOAT, new VcfNumber("1"), "RTG disease presence score");
+      header.addInfoField(name(), MetaType.FLOAT, VcfNumber.ONE, "RTG disease presence score");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
@@ -103,7 +103,7 @@ public enum VcfInfoField {
   DP {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.INTEGER, new VcfNumber("1"), "Combined read depth for variant over all samples");
+      header.addInfoField(name(), MetaType.INTEGER, VcfNumber.ONE, "Combined read depth for variant over all samples");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
@@ -117,7 +117,7 @@ public enum VcfInfoField {
   DPR {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.FLOAT, new VcfNumber("1"), "Ratio of combined read depth for variant to expected combined read depth");
+      header.addInfoField(name(), MetaType.FLOAT, VcfNumber.ONE, "Ratio of combined read depth for variant to expected combined read depth");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
@@ -160,7 +160,7 @@ public enum VcfInfoField {
   CT {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.INTEGER, new VcfNumber("1"), "Coverage threshold that was applied");
+      header.addInfoField(name(), MetaType.INTEGER, VcfNumber.ONE, "Coverage threshold that was applied");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
@@ -187,7 +187,7 @@ public enum VcfInfoField {
   RSPLT {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.INTEGER, new VcfNumber("1"), "Complex called variant was split");
+      header.addInfoField(name(), MetaType.INTEGER, VcfNumber.ONE, "Complex called variant was split");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {

@@ -98,7 +98,7 @@ public class SegregationVcfAnnotator implements VcfAnnotator {
         mChildrenIndexes.add(childIndex);
       }
     }
-    header.ensureContains(new InfoField(NAME, MetaType.FLOAT, new VcfNumber("1"), "Segregation probability"));
+    header.ensureContains(new InfoField(NAME, MetaType.FLOAT, VcfNumber.ONE, "Segregation probability"));
   }
 
   @Override

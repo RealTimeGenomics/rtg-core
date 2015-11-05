@@ -49,7 +49,7 @@ public enum VcfFormatField {
   GT {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.STRING, new VcfNumber("1"), "Genotype");
+      header.addFormatField(name(), MetaType.STRING, VcfNumber.ONE, "Genotype");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -94,7 +94,7 @@ public enum VcfFormatField {
   DP {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, new VcfNumber("1"), "Read Depth");
+      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.ONE, "Read Depth");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -111,7 +111,7 @@ public enum VcfFormatField {
   DPR {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, new VcfNumber("1"), "Ratio of read depth to expected read depth");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Ratio of read depth to expected read depth");
     }
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -127,7 +127,7 @@ public enum VcfFormatField {
   RE {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, new VcfNumber("1"), "RTG Total Error");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "RTG Total Error");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -142,7 +142,7 @@ public enum VcfFormatField {
   AR {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, new VcfNumber("1"), "Ambiguity Ratio");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Ambiguity Ratio");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -157,7 +157,7 @@ public enum VcfFormatField {
   RQ {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, new VcfNumber("1"), "RTG sample quality");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "RTG sample quality");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -172,7 +172,7 @@ public enum VcfFormatField {
   GQ {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, new VcfNumber("1"), "Genotype Quality");
+      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.ONE, "Genotype Quality");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -187,7 +187,7 @@ public enum VcfFormatField {
   RP {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, new VcfNumber("1"), "RTG Posterior");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "RTG Posterior");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -202,7 +202,7 @@ public enum VcfFormatField {
   DN {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.CHARACTER, new VcfNumber("1"), "Indicates whether call is a putative de novo mutation");
+      header.addFormatField(name(), MetaType.CHARACTER, VcfNumber.ONE, "Indicates whether call is a putative de novo mutation");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -217,7 +217,7 @@ public enum VcfFormatField {
   DNP {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, new VcfNumber("1"), "Phred scaled probability that the call is due to a de novo mutation");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that the call is due to a de novo mutation");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -233,7 +233,7 @@ public enum VcfFormatField {
     //
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, new VcfNumber("1"), "Phred scaled probability that allele imbalance is present");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that allele imbalance is present");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -253,7 +253,7 @@ public enum VcfFormatField {
     //
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, new VcfNumber("1"), "Phred scaled probability that strand bias is present");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that strand bias is present");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -272,7 +272,7 @@ public enum VcfFormatField {
   RPB {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, new VcfNumber("1"), "Phred scaled probability that read position bias is present");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that read position bias is present");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -287,7 +287,7 @@ public enum VcfFormatField {
   PPB {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, new VcfNumber("1"), "Phred scaled probability that there is a bias in the proportion of alignments that are properly paired");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Phred scaled probability that there is a bias in the proportion of alignments that are properly paired");
     }
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -306,7 +306,7 @@ public enum VcfFormatField {
   PUR {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, new VcfNumber("1"), "Ratio of placed unmapped reads to mapped reads");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Ratio of placed unmapped reads to mapped reads");
     }
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -372,7 +372,7 @@ public enum VcfFormatField {
     // Note TCGA VCF 1.2 spec defines this to be an integer 0-255, but that is pretty weak in terms of resolution
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, new VcfNumber("1"), "Somatic score");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Somatic score");
     }
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -389,7 +389,7 @@ public enum VcfFormatField {
   SS {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.INTEGER, new VcfNumber("1"), "Somatic status relative to original sample");
+      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.ONE, "Somatic status relative to original sample");
     }
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {

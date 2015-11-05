@@ -68,7 +68,7 @@ public class SegregationVcfAnnotatorTest extends TestCase {
 
   public void testUpdateHeaderFailure() {
     final VcfHeader header = new VcfHeader();
-    header.addInfoField("SGP", MetaType.INTEGER, new VcfNumber("1"), "Conflicting Header");
+    header.addInfoField("SGP", MetaType.INTEGER, VcfNumber.ONE, "Conflicting Header");
     header.addSampleName("FATHER").addSampleName("MOTHER").addSampleName("CHILD");
     final Family family = new Family("FATHER", "MOTHER", "CHILD");
     final SegregationVcfAnnotator annotator = new SegregationVcfAnnotator(family);

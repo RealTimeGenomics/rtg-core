@@ -335,8 +335,8 @@ public class SegregationChecker {
   static VcfHeader modifyHeader(final VcfHeader header, boolean repairSimple) {
     header.addInfoField(PHASING_COMPATIBLE, MetaType.FLAG, new VcfNumber("0"), "The phasing of children in this variant is compatible with known phasing pattern");
     header.addInfoField(PHASING_INCOMPATIBLE, MetaType.CHARACTER, VcfNumber.DOT, "The phasing of children in this variant is incompatible with known phasing pattern, 'C' -> consistent or 'I' -> inconsistent for each child in the order of children in the samples.");
-    header.addInfoField(PHASING_INCOMPATIBLE_COUNT, MetaType.INTEGER, new VcfNumber("1"), "Count of the minimum number of inconsistent children.");
-    header.addInfoField(PHASING_QUALITY, MetaType.INTEGER, new VcfNumber("1"), "Phred-scaled probability that the phasing consistency would have been obtained by chance.");
+    header.addInfoField(PHASING_INCOMPATIBLE_COUNT, MetaType.INTEGER, VcfNumber.ONE, "Count of the minimum number of inconsistent children.");
+    header.addInfoField(PHASING_QUALITY, MetaType.INTEGER, VcfNumber.ONE, "Phred-scaled probability that the phasing consistency would have been obtained by chance.");
     header.addInfoField(ALT_FATHER_GT_FIX, MetaType.STRING, VcfNumber.DOT, "List of alternate GT values for father that would make call consistent.");
     header.addInfoField(ALT_MOTHER_GT_FIX, MetaType.STRING, VcfNumber.DOT, "List of alternate GT values for mother that would make call consistent.");
     header.addInfoField(PHASE_GROUP_COUNTS, MetaType.INTEGER, new VcfNumber("4"), "The number of children in each phasing group (00, 01, 10, 11)");
@@ -344,7 +344,7 @@ public class SegregationChecker {
     header.addFilterField(PHASING_INCOMPATIBLE, "This variant has a phasing incompatibility");
     header.addFilterField(PHASING_OUTSIDE, "This variant was outside the regions of known phasing");
     header.addFilterField(FILTER_PLOIDY_MISMATCH, "This variant should be ignored as the genotype ploidy of some of the samples did not match the expected ploidy");
-    header.addFormatField(PHASE_SET, MetaType.INTEGER, new VcfNumber("1"), "Phase set for the genotype");
+    header.addFormatField(PHASE_SET, MetaType.INTEGER, VcfNumber.ONE, "Phase set for the genotype");
 
     if (repairSimple) {
       header.addFilterField(PHASING_REPAIRED, "This variant should be ignored as it has been replaced by a variant with a repair for phasing incompatibility");

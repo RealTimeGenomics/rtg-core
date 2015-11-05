@@ -45,7 +45,7 @@ public class DummyPredictModelTest extends AbstractPredictModelTest<DummyPredict
 
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(getField(), MetaType.FLOAT, new VcfNumber("1"), "AVR score");
+      header.addFormatField(getField(), MetaType.FLOAT, VcfNumber.ONE, "AVR score");
     }
 
     @Override

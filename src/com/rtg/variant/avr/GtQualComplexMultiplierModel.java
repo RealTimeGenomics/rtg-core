@@ -181,7 +181,7 @@ public class GtQualComplexMultiplierModel extends AbstractPredictModel {
   @Override
   public void updateHeader(VcfHeader header) {
     // Nothing to add as modifies existing QUAL and GQ fields.
-    //header.addFormatField(getField(), MetaType.FLOAT, new VcfNumber("1"), "GT/Complex variant score");
+    //header.addFormatField(getField(), MetaType.FLOAT, VcfNumber.ONE, "GT/Complex variant score");
   }
 
   @Override

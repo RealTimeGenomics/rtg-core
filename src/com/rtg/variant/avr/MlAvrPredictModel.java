@@ -136,7 +136,7 @@ public class MlAvrPredictModel extends AbstractPredictModel {
     if (mPredictionThreshold > 0) {
       header.ensureContains(new FilterField(mFilterName, "AVR score below " + mPredictionThreshold));
     }
-    header.ensureContains(new FormatField(getField(), MetaType.FLOAT, new VcfNumber("1"), "AVR score"));
+    header.ensureContains(new FormatField(getField(), MetaType.FLOAT, VcfNumber.ONE, "AVR score"));
   }
 
   @Override

@@ -162,16 +162,16 @@ public class VcfDiscordantOutputFormatter {
     header.addFilterField(FILTER_INCONSISTENT, "Supporting reads are inconsistent as to breakend location");
     header.addInfoField(INFO_CIPOS, MetaType.INTEGER, new VcfNumber("2"), "Confidence interval around POS for imprecise variants");
     header.addInfoField(INFO_IMPRECISE, MetaType.FLAG, new VcfNumber("0"), "Imprecise structural variation");
-    //header.addInfoField(INFO_DIRECTION, MetaType.STRING, new VcfNumber("1"), "Direction for current breakpoint");
-    header.addInfoField(INFO_SVTYPE, MetaType.STRING, new VcfNumber("1"), "Type of structural variant");
-    header.addInfoField(INFO_DP, MetaType.INTEGER, new VcfNumber("1"), "Read Depth");
+    //header.addInfoField(INFO_DIRECTION, MetaType.STRING, VcfNumber.ONE, "Direction for current breakpoint");
+    header.addInfoField(INFO_SVTYPE, MetaType.STRING, VcfNumber.ONE, "Type of structural variant");
+    header.addInfoField(INFO_DP, MetaType.INTEGER, VcfNumber.ONE, "Read Depth");
     if (coverage) {
-      header.addInfoField(INFO_COVERAGE, MetaType.INTEGER, new VcfNumber("1"), "Coverage at start position");
+      header.addInfoField(INFO_COVERAGE, MetaType.INTEGER, VcfNumber.ONE, "Coverage at start position");
     }
     if (ambiguity) {
-      header.addInfoField(INFO_AMBIGUITY, MetaType.INTEGER, new VcfNumber("1"), "Ambiguity at start position");
+      header.addInfoField(INFO_AMBIGUITY, MetaType.INTEGER, VcfNumber.ONE, "Ambiguity at start position");
     }
-    header.addFormatField(VcfUtils.FORMAT_GENOTYPE, MetaType.STRING, new VcfNumber("1"), "Genotype");
+    header.addFormatField(VcfUtils.FORMAT_GENOTYPE, MetaType.STRING, VcfNumber.ONE, "Genotype");
     header.addSampleName(samplename);
     return header;
   }

@@ -36,7 +36,7 @@ public class NumericRuleSetTest extends TestCase {
   }
 
   public void testNumericConversionValidation() {
-    final NumericRuleSet<Double> set = new NumericRuleSet<>("FOO", FieldType.INFO, new VcfNumber("1"), MetaType.FLOAT, new DoubleConverter());
+    final NumericRuleSet<Double> set = new NumericRuleSet<>("FOO", FieldType.INFO, VcfNumber.ONE, MetaType.FLOAT, new DoubleConverter());
     set.addNaNRule();
     set.addInfinityRule();
     try {
@@ -69,7 +69,7 @@ public class NumericRuleSetTest extends TestCase {
   }
 
   public void testLessGreaterThanRules() throws RuleValidationException {
-    final NumericRuleSet<Long> set = new NumericRuleSet<>("FOO", FieldType.INFO, new VcfNumber("1"), MetaType.INTEGER, new LongConverter());
+    final NumericRuleSet<Long> set = new NumericRuleSet<>("FOO", FieldType.INFO, VcfNumber.ONE, MetaType.INTEGER, new LongConverter());
     set.addGreaterThanRule("1");
     set.addLessThanRule("20");
     try {
@@ -105,7 +105,7 @@ public class NumericRuleSetTest extends TestCase {
   }
 
   public void testLessGreaterThanEqualRules() throws RuleValidationException {
-    final NumericRuleSet<Long> set = new NumericRuleSet<>("FOO", FieldType.INFO, new VcfNumber("1"), MetaType.INTEGER, new LongConverter());
+    final NumericRuleSet<Long> set = new NumericRuleSet<>("FOO", FieldType.INFO, VcfNumber.ONE, MetaType.INTEGER, new LongConverter());
     set.addGreaterThanEqualRule("1");
     set.addLessThanEqualRule("20");
     try {

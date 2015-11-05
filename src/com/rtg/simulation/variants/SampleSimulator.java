@@ -88,7 +88,7 @@ public class SampleSimulator {
       }
     }
     if (!foundGt) {
-      header.addFormatField(VcfUtils.FORMAT_GENOTYPE, MetaType.STRING, new VcfNumber("1"), "Genotype");
+      header.addFormatField(VcfUtils.FORMAT_GENOTYPE, MetaType.STRING, VcfNumber.ONE, "Genotype");
     }
     if (sex == Sex.FEMALE || sex == Sex.MALE) {
       header.addLine(VcfHeader.SAMPLE_STRING + "=<ID=" + sample + ",Sex=" + sex.toString() + ">");

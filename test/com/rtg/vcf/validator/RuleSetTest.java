@@ -37,7 +37,7 @@ public class RuleSetTest extends TestCase {
   }
 
   public void testEnumerationRule() {
-    final RuleSet<String> set = new RuleSet<>("FOO", FieldType.INFO, new VcfNumber("1"), MetaType.STRING, new StringConverter());
+    final RuleSet<String> set = new RuleSet<>("FOO", FieldType.INFO, VcfNumber.ONE, MetaType.STRING, new StringConverter());
     try {
       set.addEnumerationRule("a,b,c");
     } catch (RuleValidationException e) {

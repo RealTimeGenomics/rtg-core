@@ -117,7 +117,7 @@ public class DeNovoSampleSimulator {
       throw new NoTalkbackSlimException("input VCF does not contain GT information");
     }
     if (!foundDeNovo) {
-      header.addFormatField(VcfUtils.FORMAT_DENOVO, MetaType.STRING, new VcfNumber("1"), "De novo allele");
+      header.addFormatField(VcfUtils.FORMAT_DENOVO, MetaType.STRING, VcfNumber.ONE, "De novo allele");
     }
     if (mVerbose) {
       Diagnostic.info("Original ID=" + origSample + " Sex=" + originalSex);
