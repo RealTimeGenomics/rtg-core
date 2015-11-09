@@ -268,6 +268,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     }
     final File template = (File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG);
     SdfUtils.validateHasNames(template);
+    ngsParamBuilder.outputParams(outputParams);
     final Sex sex = MapParamsHelper.getMappingSex(ngsParamBuilder, mFlags);
     final SequenceParams tParams = SequenceParams.builder().directory(template).mode(SequenceMode.UNIDIRECTIONAL).sex(sex).loadNames(true).useMemReader(true).create();
     if (outputParams.calibrateRegions() != null) {
@@ -277,7 +278,6 @@ public class CgMapCli extends ParamsCli<NgsParams> {
       SdfUtils.validateNoDuplicates(tParams.reader(), true);
       ngsParamBuilder.searchParams(tParams)
       .useLongReadMapping(false)
-      .outputParams(outputParams)
       .maskParams(maskParams)
       .pairOrientation((MachineOrientation) mFlags.getValue(CommonFlags.PAIR_ORIENTATION_FLAG))
       .maxFragmentLength((Integer) mFlags.getValue(CommonFlags.MAX_FRAGMENT_SIZE))
@@ -384,10 +384,12 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     } else {
       outputFilter = OutputFilter.TOPN_PAIRED_END;
     }
+    final int topN = (Integer) mFlags.getValue(MapFlags.TOPN_RESULTS_FLAG);
+    final int maxTopResults = (Integer) mFlags.getValue(MapFlags.MAX_TOP_RESULTS_FLAG);
     ngsFilterParamsBuilder.outputFilter(outputFilter)
     .zip(!mFlags.isSet(CommonFlags.NO_GZIP))
-    .topN((Integer) mFlags.getValue(MAX_TOPN_RESULTS))
-    .maxTopResults((Integer) mFlags.getValue(MapFlags.MAX_TOP_RESULTS_FLAG))
+    .topN(Math.max(topN, maxTopResults))
+    .maxTopResults(maxTopResults)
     .exclude(false)
     .useids(false)
     .matedMaxMismatches(matedMismatches)
