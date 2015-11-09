@@ -61,9 +61,6 @@ public class MapQScoringReadBlockerSynch extends MapQScoringReadBlocker {
   public void close() {
     super.close();
   }
-
-  /**
-   */
   @Override
   public int increment(final int r, final int score) {
     // sync the rest of the function

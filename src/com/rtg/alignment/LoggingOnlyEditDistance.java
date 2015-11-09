@@ -81,24 +81,15 @@ class LoggingOnlyEditDistance implements UnidirectionalEditDistance {
   public void logStats() {
     //empty
   }
-
-  /**
-   */
   @Override
   public int[] calculateEditDistanceFixedBoth(byte[] read, int readStartPos, int readEndPos, byte[] template, int templateStartPos, int templateEndPos, int maxScore, int maxShift) {
     throw new UnsupportedOperationException();
   }
-
-  /**
-   */
   @Override
   public int[] calculateEditDistanceFixedEnd(final byte[] read, final int readStartPos, final int readEndPos, final byte[] template, final int templateExpectedStartPos,
       final int templateEndPos, final int maxScore, int maxShift) {
     throw new UnsupportedOperationException();
   }
-
-  /**
-   */
   @Override
   public int[] calculateEditDistanceFixedStart(byte[] read, int readStartPos, int readEndPos, byte[] template, int templateStartPos, int maxScore, int maxShift) {
     throw new UnsupportedOperationException();

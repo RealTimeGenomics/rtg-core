@@ -18,21 +18,21 @@ import com.rtg.launcher.HashingRegion;
 import com.rtg.util.integrity.IntegralAbstract;
 
 import junit.framework.TestCase;
-
-/**
- */
 public class ExtractTemplateTest extends TestCase {
 
   private static class TemplateCallMock extends IntegralAbstract implements TemplateCall, Cloneable {
     @Override
     public void templateCall(final int id, final long hash, final int index) {
     }
+
     @Override
     public void done() {
     }
+
     @Override
     public void endSequence() {
     }
+
     @Override
     public void set(final long name, final int length) {
     }
@@ -46,15 +46,16 @@ public class ExtractTemplateTest extends TestCase {
     public boolean isReverse() {
       return false;
     }
+
     @Override
     public void setHashFunction(final NgsHashFunction hashFunction) {
     }
-    /**
-     */
+
     @Override
     public TemplateCall clone() throws CloneNotSupportedException {
       return (TemplateCall) super.clone();
     }
+
     @Override
     public TemplateCall threadClone(final HashingRegion region) {
       if (region != HashingRegion.NONE) {
@@ -66,17 +67,20 @@ public class ExtractTemplateTest extends TestCase {
         throw new RuntimeException(e);
       }
     }
-  @Override
-  public void threadFinish() {
-  }
+
+    @Override
+    public void threadFinish() {
+    }
 
     @Override
     public void toString(final StringBuilder sb) {
     }
+
     @Override
     public boolean integrity() {
       return true;
     }
+
     @Override
     public void logStatistics() {
       // do nothing

@@ -18,6 +18,7 @@ import java.util.List;
 import com.rtg.util.array.ImmutableIntArray;
 
 /**
+ * Output format type.
  */
 public abstract class OutputFormatType implements Serializable {
 
@@ -99,9 +100,6 @@ public abstract class OutputFormatType implements Serializable {
   public int ordinal() {
     return mOrdinal;
   }
-
-  /**
-   */
   @Override
   public String toString() {
     return mName;

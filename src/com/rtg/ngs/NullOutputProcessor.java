@@ -55,9 +55,6 @@ public class NullOutputProcessor implements OutputProcessor {
     }
     Diagnostic.developerLog("NullOutputProcessor total number of hits:" + totalHits);
   }
-
-  /**
-   */
   @Override
   public OutputProcessor threadClone(HashingRegion region) {
     final NullOutputProcessor inner = new NullOutputProcessor();
@@ -69,9 +66,6 @@ public class NullOutputProcessor implements OutputProcessor {
   @Override
   public void threadFinish() {
   }
-
-  /**
-   */
   @Override
   public void close() {
   }

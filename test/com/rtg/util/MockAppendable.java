@@ -13,26 +13,21 @@ package com.rtg.util;
 
 import java.io.IOException;
 
-
 /**
  * Throw IOException on all operations.
  */
 public class MockAppendable implements Appendable {
-  /**
-   */
+
   @Override
   public Appendable append(final char arg0) throws IOException {
     throw new IOException();
   }
-  /**
-   */
+
   @Override
-  public Appendable append(final CharSequence arg0, final int arg1, final int arg2)
-  throws IOException {
+  public Appendable append(final CharSequence arg0, final int arg1, final int arg2) throws IOException {
     throw new IOException();
   }
-  /**
-   */
+
   @Override
   public Appendable append(final CharSequence arg0) throws IOException {
     throw new IOException();

@@ -44,9 +44,6 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
 import junit.framework.TestCase;
-
-/**
- */
 public final class NgsHashLoopImplTest extends TestCase {
 
   private File mDir;
@@ -234,9 +231,6 @@ public final class NgsHashLoopImplTest extends TestCase {
       }
       append(mOut, "set " + id2 + LS);
     }
-
-    /**
-     */
     @Override
     public NgsHashFunction threadClone(final HashingRegion region) {
       mClones++;

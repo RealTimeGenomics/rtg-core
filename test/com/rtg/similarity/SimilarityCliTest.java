@@ -71,9 +71,6 @@ import com.rtg.util.io.LogRecord;
 import com.rtg.util.io.LogStream;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
-
-/**
- */
 public class SimilarityCliTest extends AbstractCliTest {
 
   private static final String APP_NAME = "rtg similarity";
@@ -501,9 +498,6 @@ public class SimilarityCliTest extends AbstractCliTest {
       Exam.assertEquals(ErrorType.SEQUENCE_TOO_LONG, e.getType());
       Exam.assertEquals("2147483648", e.getParams()[0]);
     }
-
-    /**
-     */
     @Override
     public void close() {
     }

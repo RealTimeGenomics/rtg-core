@@ -63,9 +63,6 @@ public final class MaskIndelCount {
     public void templateCall(final int endPosition, final long hash, final int index) {
       mCount++;
     }
-
-    /**
-     */
     @Override
     public TemplateCallCount clone() throws CloneNotSupportedException {
       return (TemplateCallCount) super.clone();

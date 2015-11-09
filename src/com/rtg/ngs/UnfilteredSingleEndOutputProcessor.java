@@ -126,9 +126,6 @@ public class UnfilteredSingleEndOutputProcessor extends AbstractSdfOutputProcess
   protected FilterConcatIntermediateFiles filterConcatNonMated(MapQScoringReadBlocker blockerLeft, MapQScoringReadBlocker blockerRight, File[] tempFiles, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, PrereadNamesInterface templateNames, File outFile) {
     throw new UnsupportedOperationException();
   }
-
-  /**
-   */
   @Override
   public synchronized OutputProcessor threadClone(HashingRegion region) throws IOException {
     super.threadClone(region);
@@ -162,9 +159,6 @@ public class UnfilteredSingleEndOutputProcessor extends AbstractSdfOutputProcess
       close();
     }
   }
-
-  /**
-   */
   @Override
   public void close() throws IOException {
     mFreqBlockerLeft.close();

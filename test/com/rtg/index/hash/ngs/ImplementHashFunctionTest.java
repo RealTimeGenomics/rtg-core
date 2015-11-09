@@ -22,9 +22,6 @@ import com.rtg.util.integrity.IntegralAbstract;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-/**
- */
 public class ImplementHashFunctionTest extends TestCase {
 
   public static Test suite() {
@@ -48,9 +45,11 @@ public class ImplementHashFunctionTest extends TestCase {
     @Override
     public void done() {
     }
+
     @Override
     public void endSequence() {
     }
+
     @Override
     public void set(final long name, final int length) {
     }
@@ -64,21 +63,24 @@ public class ImplementHashFunctionTest extends TestCase {
     public boolean isReverse() {
       return false;
     }
+
     @Override
     public void setHashFunction(final NgsHashFunction hashFunction) {
     }
+
     @Override
     public void templateCall(final int endPosition, final long hash, final int index) {
     }
-    /**
-     */
+
     @Override
     public TemplateCallMock clone() throws CloneNotSupportedException {
       return (TemplateCallMock) super.clone();
     }
+
     @Override
     public void toString(final StringBuilder sb) {
     }
+
     @Override
     public boolean integrity() {
       return true;
@@ -87,15 +89,15 @@ public class ImplementHashFunctionTest extends TestCase {
     @Override
     public TemplateCall threadClone(final HashingRegion region) {
       try {
-      return clone();
+        return clone();
       } catch (final CloneNotSupportedException e) {
         throw new RuntimeException(e);
       }
     }
 
-  @Override
-  public void threadFinish() {
-  }
+    @Override
+    public void threadFinish() {
+    }
 
     @Override
     public void logStatistics() {
@@ -109,9 +111,11 @@ public class ImplementHashFunctionTest extends TestCase {
       public int numberWindows() {
         return 0;
       }
+
       @Override
       public void readAll(final int readId, final long v0, final long v1) {
       }
+
       @Override
       public void templateAll(final int endPosition, final long v0, final long v1) {
       }
@@ -160,9 +164,11 @@ public class ImplementHashFunctionTest extends TestCase {
       public int numberWindows() {
         return 0;
       }
+
       @Override
       public void readAll(final int readId, final long v0, final long v1) {
       }
+
       @Override
       public void templateAll(final int endPosition, final long v0, final long v1) {
       }
@@ -190,9 +196,11 @@ public class ImplementHashFunctionTest extends TestCase {
       public int numberWindows() {
         return 0;
       }
+
       @Override
       public void readAll(final int readId, final long v0, final long v1) {
       }
+
       @Override
       public void templateAll(final int endPosition, final long v0, final long v1) {
       }

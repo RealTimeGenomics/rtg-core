@@ -143,25 +143,16 @@ class NoIndelsEditDistance implements UnidirectionalEditDistance {
     mWorkspace[ActionsHelper.ACTIONS_LENGTH_INDEX] = 0;
     return mWorkspace;
   }
-
-  /**
-   */
   @Override
   public int[] calculateEditDistanceFixedBoth(byte[] read, int readStartPos, int readEndPos, byte[] template, int templateStartPos,
       int templateEndPos, int maxScore, int maxShift) {
     throw new UnsupportedOperationException(); //no good reason this couldn't be supported if desired (as long as length of read and length of template are same)
   }
-
-  /**
-   */
   @Override
   public int[] calculateEditDistanceFixedEnd(byte[] read, int readStartPos, int readEndPos, byte[] template, int templateExpectedStartPos,
       int templateEndPos, int maxScore, int maxShift) {
     throw new UnsupportedOperationException(); //no good reason this couldn't be supported if desired.
   }
-
-  /**
-   */
   @Override
   public int[] calculateEditDistanceFixedStart(byte[] read, int readStartPos, int readEndPos, byte[] template, int templateStartPos, int maxScore, int maxShift) {
     throw new UnsupportedOperationException(); //no good reason this couldn't be supported if desired.

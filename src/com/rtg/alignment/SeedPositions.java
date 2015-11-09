@@ -35,9 +35,6 @@ class SeedPositions {
 
   /** End of template region, zero-based exclusive. */
   int mY2;
-
-  /**
-   */
   @Override
   public String toString() {
     return "[" + mX1 + " " + mX2 + ") [" + mY1 + " " + mY2 + ") ";

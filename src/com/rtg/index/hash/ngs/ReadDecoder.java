@@ -70,9 +70,6 @@ public abstract class ReadDecoder implements PseudoEnum {
    * @return true if first
    */
   public abstract boolean isFirst(int internalId);
-
-  /**
-   */
   @Override
   public String toString() {
     return mName;

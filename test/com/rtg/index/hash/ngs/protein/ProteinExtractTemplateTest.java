@@ -20,9 +20,6 @@ import com.rtg.launcher.HashingRegion;
 import com.rtg.util.integrity.IntegralAbstract;
 
 import junit.framework.TestCase;
-
-/**
- */
 public class ProteinExtractTemplateTest extends TestCase {
 
   private static class TemplateCallMock extends IntegralAbstract implements TemplateCall, Cloneable {
@@ -59,9 +56,6 @@ public class ProteinExtractTemplateTest extends TestCase {
     @Override
     public void setHashFunction(final NgsHashFunction hashFunction) {
     }
-
-    /**
-     */
     @Override
     public TemplateCall clone() throws CloneNotSupportedException {
       return (TemplateCall) super.clone();

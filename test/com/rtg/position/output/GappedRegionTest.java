@@ -40,9 +40,6 @@ public class GappedRegionTest extends AbstractGappedRegionTest<GappedRegion> {
   GappedRegion getRegion(int id, BuildParams params, GapScorer prob, WrappedIntArray buildLengths) {
     return new GappedRegion(id, params, prob);
   }
-
-  /**
-     */
   @Override
   public void setUp() {
     Diagnostic.setLogStream();

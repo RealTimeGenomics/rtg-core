@@ -19,9 +19,6 @@ public class UnfilteredHitInfo extends AbstractHitInfo<UnfilteredHitInfo> {
 
   private boolean mMatedOk = false;
   private boolean mUnmatedOk = false;
-
-  /**
-   */
   @Override
   public void setValues(boolean first, boolean reverseComplement, int readId, int templateStart) {
     super.setValues(first, reverseComplement, readId, templateStart);

@@ -24,9 +24,6 @@ import com.rtg.index.hash.ngs.TemplateCall;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.util.StringUtils;
 
-
-/**
- */
 public final class SubstituteTest extends AbstractSplitTest {
 
   @Override
@@ -37,71 +34,87 @@ public final class SubstituteTest extends AbstractSplitTest {
   static final class HashFunctionMock implements NgsHashFunction, Cloneable {
     private final Appendable mOut;
     final StringBuilder mSB = new StringBuilder();
+
     HashFunctionMock(final Appendable out) {
       mOut = out;
     }
+
     @Override
     public void readAll(final int readId, final boolean reverse) {
     }
+
     @Override
     public int readLength() {
       return 0;
     }
+
     @Override
     public void setReadSequences(final long numberReads) {
     }
+
     @Override
     public void setValues(final int id2, final boolean reverse) {
     }
+
     @Override
     public int fastScore(final int readId) {
       return 0;
     }
+
     @Override
     public int indelScore(final int readId) {
       return 0;
     }
+
     @Override
     public void templateForward(final int endPosition) {
       append(mOut, mSB.toString() + StringUtils.LS);
     }
+
     @Override
     public void templateBidirectional(final int endPosition) {
       append(mOut, mSB.toString() + StringUtils.LS);
     }
+
     @Override
     public void templateReverse(final int endPosition) {
       throw new UnsupportedOperationException();
     }
+
     @Override
     public void endSequence() {
       // do nothing
     }
+
     @Override
     public void templateSet(final long name, final int length) {
     }
+
     @Override
     public void hashStep(final byte code) {
       mSB.append(CHARS[code + 1]);
     }
+
     @Override
     public void hashStep() {
       hashStep((byte) 0);
     }
+
     @Override
     public int numberWindows() {
       return 0;
     }
+
     @Override
     public void reset() {
       mSB.delete(0, mSB.length());
     }
+
     @Override
     public int windowSize() {
       return 0;
     }
-    /**
-     */
+
     @Override
     public NgsHashFunction threadClone(final HashingRegion region) {
       if (region != HashingRegion.NONE) {
@@ -113,6 +126,7 @@ public final class SubstituteTest extends AbstractSplitTest {
         throw new RuntimeException(e);
       }
     }
+
     @Override
     public void threadFinish() {
     }
@@ -124,6 +138,7 @@ public final class SubstituteTest extends AbstractSplitTest {
     public HashFunctionMock clone() throws CloneNotSupportedException {
       return (HashFunctionMock) super.clone();
     }
+
     @Override
     public void logStatistics() {
       // do nothing
@@ -140,14 +155,17 @@ public final class SubstituteTest extends AbstractSplitTest {
       public NgsHashFunction create(final ReadCall readCall, final TemplateCall templateCall) {
         return new HashFunctionMock(sb);
       }
+
       @Override
       public int hashBits() {
         return 0;
       }
+
       @Override
       public int numberWindows() {
         return 0;
       }
+
       @Override
       public int windowBits() {
         return 0;
@@ -172,8 +190,7 @@ public final class SubstituteTest extends AbstractSplitTest {
     + "aag" + StringUtils.LS
     + "aca" + StringUtils.LS
     + "acg" + StringUtils.LS
-    + "ccg" + StringUtils.LS
-    ;
+    + "ccg" + StringUtils.LS;
 
   public void testSubstitute() throws IOException {
     checkSubstitute(0, 1, "acg" + StringUtils.LS);

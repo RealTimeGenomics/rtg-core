@@ -95,9 +95,6 @@ public class SamSingleEndOutputProcessor extends AbstractMapOutputProcessor {
     mReportMerger.blendReportData().write(new File(mParams.outputParams().directory(), MapReportData.MAP_REPORT_FILE_NAME));
 
   }
-
-  /**
-   */
   @Override
   public synchronized OutputProcessor threadClone(HashingRegion region) throws IOException {
     super.threadClone(region);
@@ -189,9 +186,6 @@ public class SamSingleEndOutputProcessor extends AbstractMapOutputProcessor {
     }
     return null;
   }
-
-  /**
-   */
   @Override
   public void close() {
   }

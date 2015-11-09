@@ -77,9 +77,6 @@ public abstract class CovariateStrings extends CovariateImpl {
     }
     return 1;
   }
-
-  /**
-   */
   @Override
   public int valueOf(String value) {
     final Integer index = mIndexMap.get(value);
