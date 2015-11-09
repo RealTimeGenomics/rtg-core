@@ -58,11 +58,7 @@ public final class Blosum62 extends ScoringMatrix {
    */
   public Blosum62() {
     final int len = Protein.values().length;
-    mScores = new int[len][];
-    //C# restrictions
-    for (int i = 0; i < len; i++) {
-      mScores[i] = new int[len];
-    }
+    mScores = new int[len][len];
     try {
       try (BufferedReader re = new BufferedReader(new InputStreamReader(Resources.getResourceAsStream("com/rtg/mode/BLOSUM62")))) {
         parse(re);
