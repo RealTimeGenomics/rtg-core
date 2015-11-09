@@ -53,10 +53,7 @@ public final class IntSetWindow extends IntSet {
     mRange = (int) range;
     mCapacity = capacity;
     mWindow = window;
-    mValues = new int[mWindow][];
-    for (int i = 0; i < mWindow; i++) {
-      mValues[i] = new int[mCapacity];
-    }
+    mValues = new int[mWindow][mCapacity];
     mNext = new int[mWindow];
     mFirst = 0;
     mLast = mWindow - 1;
