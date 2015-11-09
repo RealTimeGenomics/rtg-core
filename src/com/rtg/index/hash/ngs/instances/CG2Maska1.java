@@ -23,7 +23,7 @@ import com.rtg.reader.CgUtils;
  * r=29 s=0
  * Covers all single mismatches outside of overlaps, for overlaps of 3, 4, 5.
  */
-public class CG2Maska1 extends AbstractCGMask {
+public class CG2Maska1 extends AbstractCG2Mask {
 
   private static final int READ_LENGTH = CgUtils.CG2_RAW_READ_LENGTH;
 
@@ -96,8 +96,8 @@ public class CG2Maska1 extends AbstractCGMask {
     final long l2x0 = la0 | lb0 | la1 | lb1;
     mReadCall.readCall(readId, hash(l2x0), 0);
 
-    final long lc = (v0 & MASK_B) << (14 - 5);
-    final long ld =  (v1 & MASK_B) >>> 5;
+    final long lc = (v0 & MASK_B) << 11;
+    final long ld =  (v1 & MASK_B) >>> 3;
     final long l2x1 = lc | ld;
     mReadCall.readCall(readId, hash(l2x1), 1);
   }
@@ -121,8 +121,8 @@ public class CG2Maska1 extends AbstractCGMask {
     final int endP = endPosition + 3;
 
     // index 1 (doesn't care about overlap variation)
-    final long lc = (v0 & MASKT_B) << (14 - 5);
-    final long ld =  (v1 & MASKT_B) >>> 5;
+    final long lc = (v0 & MASKT_B) << 11;
+    final long ld =  (v1 & MASKT_B) >> 3;
     final long l0x1 = lc | ld;
     mTemplateCall.templateCall(endP, hash(l0x1), 1);
 

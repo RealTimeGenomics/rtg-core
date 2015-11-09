@@ -24,7 +24,7 @@ import com.rtg.reader.CgUtils;
  * Covers all single mismatches and most double mismatches, for overlaps of 3, 4, 5.
  * Note: There is a PDF covering these particular masks.
  */
-public class CG2Maska15 extends AbstractCGMask {
+public class CG2Maska15 extends AbstractCG2Mask {
 
   private static final int READ_LENGTH = CgUtils.CG2_RAW_READ_LENGTH;
 
@@ -114,43 +114,43 @@ public class CG2Maska15 extends AbstractCGMask {
     final long packedA = la0 | lb0 | la1 | lb1;
     mReadCall.readCall(readId, hash(packedA), 0);
 
-    final long lc = (v0 & MASK_B) << (14 - 5);
-    final long ld =  (v1 & MASK_B) >> 5;
+    final long lc = (v0 & MASK_B) << 11;
+    final long ld =  (v1 & MASK_B) >> 3;
     final long packedB = lc | ld;
     mReadCall.readCall(readId, hash(packedB), 1);
 
-    final long le = (v0 & MASK_C) << 14;
-    final long lf = v1 & MASK_C;
+    final long le = (v0 & MASK_C) << 16;
+    final long lf = (v1 & MASK_C) << 2;
     final long packedC = le | lf;
     mReadCall.readCall(readId, hash(packedC), 2);
 
-    final long lg0 = (v0 & MASK_D0) << 4;
-    final long lg1 = (v0 & MASK_D1) << 9;
-    final long lh0 = (v1 & MASK_D0) >> (19 - 9);
-    final long lh1 = (v1 & MASK_D1) >> 5;
+    final long lg0 = (v0 & MASK_D0) << 6;
+    final long lg1 = (v0 & MASK_D1) << 11;
+    final long lh0 = (v1 & MASK_D0) >> 8;
+    final long lh1 = (v1 & MASK_D1) >> 3;
     final long packedD = lg0 | lh0 | lg1 | lh1;
     mReadCall.readCall(readId, hash(packedD), 3);
 
-    final long li0 = (v0 & MASK_E0) >> 1;
-    final long li1 = (v0 & MASK_E1) << 9;
-    final long li2 = (v0 & MASK_E2) << 14;
-    final long lj0 = (v1 & MASK_E0) >> 15;
-    final long lj1 = (v1 & MASK_E1) >> 5;
-    final long lj2 = v1 & MASK_E2;
+    final long li0 = (v0 & MASK_E0) << 1;
+    final long li1 = (v0 & MASK_E1) << 11;
+    final long li2 = (v0 & MASK_E2) << 16;
+    final long lj0 = (v1 & MASK_E0) >> 13;
+    final long lj1 = (v1 & MASK_E1) >> 3;
+    final long lj2 = (v1 & MASK_E2) << 2;
     final long packedE = li0 | lj0 | li1 | lj1 | li2 | lj2;
     mReadCall.readCall(readId, hash(packedE), 4);
 
-    final long lk0 = (v0 & MASK_F0) >> 1;
-    final long ll0 = (v1 & MASK_F0) >> 2;
-    final long lk1 = (v0 & MASK_F1) << 1;
-    final long ll1 = v1 & MASK_F1;
+    final long lk0 = (v0 & MASK_F0) << 1;
+    final long ll0 = v1 & MASK_F0;
+    final long lk1 = (v0 & MASK_F1) << 3;
+    final long ll1 = (v1 & MASK_F1) << 2;
     final long packedF = lk0 | ll0 | lk1 | ll1;
     mReadCall.readCall(readId, hash(packedF), 5);
 
-    final long lm0 = v0 & MASK_G0;
-    final long ln0 = (v1 & MASK_G0) >> 1;
-    final long lm1 = v0 & MASK_G1;
-    final long ln1 = (v1 & MASK_G1) >> 1;
+    final long lm0 = (v0 & MASK_G0) << 2;
+    final long ln0 = (v1 & MASK_G0) << 1;
+    final long lm1 = (v0 & MASK_G1) << 2;
+    final long ln1 = (v1 & MASK_G1) << 1;
     final long packedG = lm0 | ln0 | lm1 | ln1;
     mReadCall.readCall(readId, hash(packedG), 6);
 
@@ -219,103 +219,103 @@ public class CG2Maska15 extends AbstractCGMask {
 
 
     // index 1 (doesn't care about overlap variation)
-    final long lc = (v0 & MASKT_B) << 9;
-    final long ld =  (v1 & MASKT_B) >> 5;
+    final long lc = (v0 & MASKT_B) << 11;
+    final long ld =  (v1 & MASKT_B) >> 3;
     final long packedB = lc | ld;
     mTemplateCall.templateCall(endP, hash(packedB), 1);
 
 
     // index 2 (doesn't care about overlap variation)
-    final long li = (v0 & MASKT_C) << 14;
-    final long lj = v1 & MASKT_C;
+    final long li = (v0 & MASKT_C) << 16;
+    final long lj = (v1 & MASKT_C) << 2;
     final long packedC = li | lj;
     mTemplateCall.templateCall(endP, hash(packedC), 2);
 
 
     // index 3 (most common overlaps)
     // Overlap of 3
-    final long lk0 = (v0 & MASKT_D0_1) << 7;
-    final long ll0 = (v1 & MASKT_D0_1) >> 7;
-    final long lk1 = (v0 & MASKT_D1) << 9;
-    final long ll1 = (v1 & MASKT_D1) >> 5;
+    final long lk0 = (v0 & MASKT_D0_1) << 9;
+    final long ll0 = (v1 & MASKT_D0_1) >> 5;
+    final long lk1 = (v0 & MASKT_D1) << 11;
+    final long ll1 = (v1 & MASKT_D1) >> 3;
     final long packedD3 = lk0 | ll0 | lk1 | ll1;
     mTemplateCall.templateCall(endP, hash(packedD3), 3);
 
     // Overlap of 4
-    final long lm0 = (v0 & MASKT_D0_2) << 8;
-    final long ln0 = (v1 & MASKT_D0_2) >> 6;
+    final long lm0 = (v0 & MASKT_D0_2) << 10;
+    final long ln0 = (v1 & MASKT_D0_2) >> 4;
     final long packedD4 = lm0 | ln0 | lk1 | ll1;
     mTemplateCall.templateCall(endP, hash(packedD4), 3);
 
     // Overlap of 5
-    final long lo0 = (v0 & MASKT_D0_3) << 9;
-    final long lp0 = (v1 & MASKT_D0_3) >> 5;
+    final long lo0 = (v0 & MASKT_D0_3) << 11;
+    final long lp0 = (v1 & MASKT_D0_3) >> 3;
     final long packedD5 = lo0 | lp0 | lk1 | ll1;
     mTemplateCall.templateCall(endP, hash(packedD5), 3);
 
     // index 4 (most common overlaps)
     // Overlap of 3
-    final long lq0 = (v0 & MASKT_E0_1) << 2;
-    final long lr0 = (v1 & MASKT_E0_1) >> 12;
-    final long lq1 = (v0 & MASKT_E1) << 9;
-    final long lr1 = (v1 & MASKT_E1) >> 5;
-    final long lq2 = (v0 & MASKT_E2) << 14;
-    final long lr2 = v1 & MASKT_E2;
+    final long lq0 = (v0 & MASKT_E0_1) << 4;
+    final long lr0 = (v1 & MASKT_E0_1) >> 10;
+    final long lq1 = (v0 & MASKT_E1) << 11;
+    final long lr1 = (v1 & MASKT_E1) >> 3;
+    final long lq2 = (v0 & MASKT_E2) << 16;
+    final long lr2 = (v1 & MASKT_E2) << 2;
     final long l12 = lq1 | lq2 | lr1 | lr2;
     final long packedE3 = lq0 | lr0 | l12;
     mTemplateCall.templateCall(endP, hash(packedE3), 4);
 
     // Overlap of 4
-    final long ls0 = (v0 & MASKT_E0_2) << 3;
-    final long lt0 = (v1 & MASKT_E0_2) >> 11;
+    final long ls0 = (v0 & MASKT_E0_2) << 5;
+    final long lt0 = (v1 & MASKT_E0_2) >> 9;
     final long packedE4 = ls0 | lt0 | l12;
     mTemplateCall.templateCall(endP, hash(packedE4), 4);
 
     // Overlap of 5
-    final long lu0 = (v0 & MASKT_E0_3) << 4;
-    final long lv0 = (v1 & MASKT_E0_3) >> 10;
+    final long lu0 = (v0 & MASKT_E0_3) << 6;
+    final long lv0 = (v1 & MASKT_E0_3) >> 8;
     final long packedE5 = lu0 | lv0 | l12;
     mTemplateCall.templateCall(endP, hash(packedE5), 4);
 
     // index 5 (most common overlaps)
     // Overlap of 3
-    final long lw0 = (v0 & MASKT_F0_1) << 2;
-    final long lx0 = (v1 & MASKT_F0_1) << 1;
-    final long lw1 = (v0 & MASKT_F1) << 1;
-    final long lx1 = v1 & MASKT_F1;
+    final long lw0 = (v0 & MASKT_F0_1) << 4;
+    final long lx0 = (v1 & MASKT_F0_1) << 3;
+    final long lw1 = (v0 & MASKT_F1) << 3;
+    final long lx1 = (v1 & MASKT_F1) << 2;
     final long packedF3 = lw0 | lx0 | lw1 | lx1;
     mTemplateCall.templateCall(endP, hash(packedF3), 5);
 
     // Overlap of 4
-    final long ly0 = (v0 & MASKT_F0_2) << 3;
-    final long lz0 = (v1 & MASKT_F0_2) << 2;
+    final long ly0 = (v0 & MASKT_F0_2) << 5;
+    final long lz0 = (v1 & MASKT_F0_2) << 4;
     final long packedF4 = ly0 | lz0 | lw1 | lx1;
     mTemplateCall.templateCall(endP, hash(packedF4), 5);
 
     // Overlap of 5
-    final long laa0 = (v0 & MASKT_F0_3) << 4;
-    final long lab0 = (v1 & MASKT_F0_3) << 5;
+    final long laa0 = (v0 & MASKT_F0_3) << 6;
+    final long lab0 = (v1 & MASKT_F0_3) << 7;
     final long packedF5 = laa0 | lab0 | lw1 | lx1;
     mTemplateCall.templateCall(endP, hash(packedF5), 5);
 
     // index 6 (most common overlaps)
     // Overlap of 3
-    final long lac0 = (v0 & MASKT_G0_1) << 3;
-    final long lad0 = (v1 & MASKT_G0_1) << 2;
-    final long lac1 = v0 & MASKT_G1;
-    final long lad1 = (v1 & MASKT_G1) >> 1;
+    final long lac0 = (v0 & MASKT_G0_1) << 5;
+    final long lad0 = (v1 & MASKT_G0_1) << 4;
+    final long lac1 = (v0 & MASKT_G1) << 2;
+    final long lad1 = (v1 & MASKT_G1) << 1;
     final long packedG3 = lac0 | lad0 | lac1 | lad1;
     mTemplateCall.templateCall(endP, hash(packedG3), 6);
 
     // Overlap of 4
-    final long lae0 = (v0 & MASKT_G0_2) << 4;
-    final long laf0 = (v1 & MASKT_G0_2) << 3;
+    final long lae0 = (v0 & MASKT_G0_2) << 6;
+    final long laf0 = (v1 & MASKT_G0_2) << 5;
     final long packedG4 = lae0 | laf0 | lac1 | lad1;
     mTemplateCall.templateCall(endP, hash(packedG4), 6);
 
     // Overlap of 5
-    final long lag0 = (v0 & MASKT_G0_3) << 5;
-    final long lah0 = (v1 & MASKT_G0_3) << 4;
+    final long lag0 = (v0 & MASKT_G0_3) << 7;
+    final long lah0 = (v1 & MASKT_G0_3) << 6;
     final long packedG5 = lag0 | lah0 | lac1 | lad1;
     mTemplateCall.templateCall(endP, hash(packedG5), 6);
 

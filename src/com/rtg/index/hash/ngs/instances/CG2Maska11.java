@@ -23,7 +23,7 @@ import com.rtg.reader.CgUtils;
  * r=29 s=0
  * Covers all single mismatches, for overlaps of 3, 4, 5.
  */
-public class CG2Maska11 extends AbstractCGMask {
+public class CG2Maska11 extends AbstractCG2Mask {
 
   private static final int READ_LENGTH = CgUtils.CG2_RAW_READ_LENGTH;
 
@@ -99,13 +99,13 @@ public class CG2Maska11 extends AbstractCGMask {
     final long l2x0 = la0 | lb0 | la1 | lb1;
     mReadCall.readCall(readId, hash(l2x0), 0);
 
-    final long lc = (v0 & MASK_B) << (14 - 5);
-    final long ld =  (v1 & MASK_B) >>> 5;
+    final long lc = (v0 & MASK_B) << 11;
+    final long ld =  (v1 & MASK_B) >>> 3;
     final long l2x1 = lc | ld;
     mReadCall.readCall(readId, hash(l2x1), 1);
 
-    final long le = (v0 & MASK_C) << 14;
-    final long lf = v1 & MASK_C;
+    final long le = (v0 & MASK_C) << 16;
+    final long lf = (v1 & MASK_C) << 2;
     final long l2x2 = le | lf;
     mReadCall.readCall(readId, hash(l2x2), 2);
   }
@@ -131,10 +131,10 @@ public class CG2Maska11 extends AbstractCGMask {
 
     // index 0, most common overlaps
     // Overlap of 3
-    final long le1 = (v0 & MASKT_A1) << 15;
-    final long lf1 = v1 & MASKT_A1;
     final long le0 = (v0 & MASKT_A0_1) << 4;
     final long lf0 = (v1 & MASKT_A0_1) >> 11;
+    final long le1 = (v0 & MASKT_A1) << 15;
+    final long lf1 = v1 & MASKT_A1;
     final long l3x0 = le0 | lf0 | le1 | lf1;
     mTemplateCall.templateCall(endP, hash(l3x0), 0);
 
@@ -151,14 +151,14 @@ public class CG2Maska11 extends AbstractCGMask {
     mTemplateCall.templateCall(endP, hash(l5x0), 0);
 
     // index 1 (doesn't care about overlap variation)
-    final long lc = (v0 & MASKT_B) << (14 - 5);
-    final long ld =  (v1 & MASKT_B) >>> 5;
+    final long lc = (v0 & MASKT_B) << 11;
+    final long ld =  (v1 & MASKT_B) >> 3;
     final long l0x1 = lc | ld;
     mTemplateCall.templateCall(endP, hash(l0x1), 1);
 
     // index 2 (doesn't care about overlap variation)
-    final long li = (v0 & MASKT_C) << 14;
-    final long lj = v1 & MASKT_C;
+    final long li = (v0 & MASKT_C) << 16;
+    final long lj = (v1 & MASKT_C) << 2;
     final long l0x2 = li | lj;
     mTemplateCall.templateCall(endP, hash(l0x2), 2);
 
