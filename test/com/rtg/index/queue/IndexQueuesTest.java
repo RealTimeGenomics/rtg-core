@@ -94,12 +94,12 @@ public class IndexQueuesTest extends TestCase {
     }
 
     @Override
-    public long search(final long hash) {
+    public long contains(final long hash) {
       return 0;
     }
 
     @Override
-    public int searchCount(final long hash) {
+    public int count(final long hash) {
       return 0;
     }
 

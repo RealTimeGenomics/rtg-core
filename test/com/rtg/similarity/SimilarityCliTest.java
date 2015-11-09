@@ -1032,11 +1032,11 @@ public class SimilarityCliTest extends AbstractCliTest {
     public void scan(FinderHashValue finder) throws IOException, IllegalStateException {
     }
     @Override
-    public long search(long hash) {
+    public long contains(long hash) {
       return 0;
     }
     @Override
-    public int searchCount(long hash) {
+    public int count(long hash) {
       return 0;
     }
   }

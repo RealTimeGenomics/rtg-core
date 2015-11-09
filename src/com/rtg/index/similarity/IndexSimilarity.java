@@ -44,7 +44,7 @@ public final class IndexSimilarity extends IndexCompressed {
   }
 
   @Override
-  public int searchCount(long hash) {
+  public int count(long hash) {
     throw new UnsupportedOperationException();
   }
 

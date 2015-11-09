@@ -90,9 +90,9 @@ public abstract class AbstractIndexTest extends TestCase {
       //System.err.println(" checkEmpty hash=" + hash);
       index.search(hash, finder);
       if (checkCount) {
-        assertEquals(0, index.searchCount(hash));
+        assertEquals(0, index.count(hash));
       }
-      assertTrue(index.search(hash) < 0);
+      assertTrue(index.contains(hash) < 0);
     }
   }
 
@@ -534,7 +534,7 @@ public abstract class AbstractIndexTest extends TestCase {
   private void checkKeyCount(final IndexBase hi, final long key, final int expected) throws IOException, IllegalStateException {
     final Set<Integer> actual = searchSet(hi, key);
     assertEquals(expected, actual.size());
-    assertEquals(expected, hi.searchCount(key));
+    assertEquals(expected, hi.count(key));
   }
 
   private Set<Integer> searchSet(final IndexBase hi, final long key) throws IOException {
@@ -610,13 +610,13 @@ public abstract class AbstractIndexTest extends TestCase {
       //assertEquals(values, actual);
       assertTrue(actual.equals(values));
       if (checkCount) {
-        final int count = index.searchCount(hash);
+        final int count = index.count(hash);
         //System.err.println("hash=" + hash + " count=" + count);
         assertEquals(actual.size(), count);
       }
     }
     for (final long hash : ms.keySet()) {
-      final long found = index.search(hash);
+      final long found = index.contains(hash);
       assertTrue("hash=" + hash, found >= 0 && found < index.numberEntries());
       assertEquals(hash, index.getHash(found));
     }
@@ -637,7 +637,7 @@ public abstract class AbstractIndexTest extends TestCase {
       final long value = index.getValue(l);
       final long hash = index.getHash(l);
       sv.put(hash, value);
-      final long find = index.search(hash);
+      final long find = index.contains(hash);
       assertEquals(hash, index.getHash(find));
     }
     assertEquals(ms, sv);

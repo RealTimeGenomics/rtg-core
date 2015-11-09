@@ -43,7 +43,7 @@ public class IndexCompressedTest extends AbstractIndexTest {
     hi.add(0, 0);
     hi.freeze();
     assertEquals(IndexState.FROZEN, hi.mState);
-    assertEquals(1, hi.searchCount(0));
+    assertEquals(1, hi.count(0));
   }
 
   /*

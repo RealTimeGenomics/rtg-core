@@ -319,7 +319,7 @@ public class IndexSimple extends IndexBase {
   }
 
   @Override
-  public int searchCount(final long hash) {
+  public int count(final long hash) {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
@@ -362,7 +362,7 @@ public class IndexSimple extends IndexBase {
   }
 
   @Override
-  public long search(final long hash) {
+  public long contains(final long hash) {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }

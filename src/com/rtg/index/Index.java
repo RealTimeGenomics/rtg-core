@@ -53,12 +53,12 @@ public interface Index extends Add {
   void scan(FinderHashValue finder) throws IOException, IllegalStateException;
 
   /**
-   * Search for the supplied hash code.
+   * Determine whether the index contains the supplied hash code.
    * @param hash the hash
    * @return internal location of the hash (if &lt; 0 then not found).
    * @throws IllegalStateException if index has not been frozen.
    */
-  long search(long hash) throws IllegalStateException;
+  long contains(long hash) throws IllegalStateException;
 
   /**
    * Search for the supplied hash code and return the number of hits.
@@ -66,7 +66,7 @@ public interface Index extends Add {
    * @return the number of hits for the hash (&gt;= 0).
    * @throws IllegalStateException if index has not been frozen.
    */
-  int searchCount(final long hash) throws IllegalStateException;
+  int count(long hash) throws IllegalStateException;
 
   /**
    * Get the hash at the found location (see search).

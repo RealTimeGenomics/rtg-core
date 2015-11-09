@@ -504,7 +504,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   }
 
   @Override
-  public int searchCount(final long hash) {
+  public int count(final long hash) {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
@@ -542,7 +542,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   }
 
   @Override
-  public int searchCount(long[] hash) {
+  public int count(long[] hash) {
     throw new UnsupportedOperationException();
   }
 
@@ -584,7 +584,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
 
 
   @Override
-  public long search(final long hash) {
+  public long contains(final long hash) {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
@@ -601,7 +601,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   }
 
   @Override
-  public long search(long[] hash) {
+  public long contains(long[] hash) {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }

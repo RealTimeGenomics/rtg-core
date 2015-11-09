@@ -52,7 +52,7 @@ public class IndexSetTest extends TestCase {
     }
 
     @Override
-    public long search(long hash) {
+    public long contains(long hash) {
       throw new UnsupportedOperationException();
     }
 
@@ -61,7 +61,7 @@ public class IndexSetTest extends TestCase {
       throw new UnsupportedOperationException();
     }
     @Override
-    public int searchCount(long hash) {
+    public int count(long hash) {
       throw new UnsupportedOperationException();
     }
 
