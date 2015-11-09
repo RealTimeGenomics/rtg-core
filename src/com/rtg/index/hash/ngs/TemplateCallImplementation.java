@@ -120,8 +120,6 @@ public class TemplateCallImplementation extends IntegralAbstract implements Temp
     mOutputProcessor.threadFinish();
   }
 
-  /**
-   */
   @Override
   public TemplateCallImplementation clone() throws CloneNotSupportedException {
     final TemplateCallImplementation clone = (TemplateCallImplementation) super.clone();
@@ -183,19 +181,19 @@ public class TemplateCallImplementation extends IntegralAbstract implements Temp
         //System.err.println("rc=" + mRC + " readId=" + readId + " templateLength=" + mTemplateLength + " endPosition=" + mEndPosition);
         final int tzero = mIsProtein ? mEndPosition - mHashFunction.readLength() + 1 : Math.max(0, mEndPosition - mHashFunction.readLength() + 1);
 
-        final int score = mHashFunction.fastScore(readId);
         final int scoreIndel = mHashFunction.indelScore(readId);
         //System.err.println("call score=" + score + " indelScore=" + scoreIndel + " errorLimit=" + mErrorLimit);
         if (scoreIndel <= mErrorLimit) {
           final String frame;
           if (mIsCG) {
             final boolean second = (readId & 1) == 1;
-            frame = second ? (mRC ? "F" : "R") : (mRC ? "R" : "F");
+            frame = second == mRC ? "F" : "R";
           } else {
             frame = mRC ? "R" : "F";
           }
           mProcessStatistics++;
           //System.err.println("calling process");
+          final int score = mHashFunction.fastScore(readId);
           mOutputProcessor.process(mTemplateId, frame, readId, tzero, score, scoreIndel);
         }
       }
