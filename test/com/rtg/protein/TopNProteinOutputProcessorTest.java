@@ -104,8 +104,7 @@ public class TopNProteinOutputProcessorTest extends TestCase {
         p.finish();
         p.close();
       }
-      // Crazy replace to get around C# difference
-      MapXCliTest.checkAlignmentsNoHeader(StringUtils.convertLineEndings(FileHelper.resourceToString("com/rtg/protein/resources/250.txt").replace("null", "" + null)), new File(tmp2, "alignments.tsv"));
+      MapXCliTest.checkAlignmentsNoHeader(StringUtils.convertLineEndings(FileHelper.resourceToString("com/rtg/protein/resources/250.txt")), new File(tmp2, "alignments.tsv"));
     } finally {
       assertTrue(FileHelper.deleteAll(tmp2));
     }

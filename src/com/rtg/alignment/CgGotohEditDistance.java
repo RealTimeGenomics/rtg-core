@@ -451,10 +451,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
     final String result;
     final int expWidth = 4;
     final int dp = (FIELD_WIDTH - expWidth) / 2;
-    //not strictly necessary in Java but helps with C# conversion
-    if (Double.isNaN(x)) {
-      result = "NaN";
-    } else if (x == 0.0) {
+    if (x == 0.0) {
       // avoid outputting -0.0
       result = "";
     } else if (Double.isInfinite(x)) {
