@@ -72,8 +72,6 @@ public class PcrTemplateCallImplementation extends IntegralAbstract implements T
     };
   }
 
-  /**
-   */
   @Override
   public PcrTemplateCallImplementation clone() throws CloneNotSupportedException {
     final PcrTemplateCallImplementation clone = (PcrTemplateCallImplementation) super.clone();

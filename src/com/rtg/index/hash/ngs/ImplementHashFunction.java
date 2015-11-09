@@ -11,9 +11,6 @@
  */
 package com.rtg.index.hash.ngs;
 
-//import com.rtg.index.Utils;
-//
-
 import java.io.IOException;
 
 import com.rtg.index.hash.PrimeUtils;
@@ -116,8 +113,6 @@ public abstract class ImplementHashFunction extends IntegralAbstract implements 
     resetPrivate();
   }
 
-  /**
-   */
   @Override
   public NgsHashFunction threadClone(final HashingRegion region) throws IOException {
     try {
@@ -130,8 +125,6 @@ public abstract class ImplementHashFunction extends IntegralAbstract implements 
     }
   }
 
-  /**
-   */
   @Override
   public void threadFinish() throws IOException {
     mTemplateCall.threadFinish();
