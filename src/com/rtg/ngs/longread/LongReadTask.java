@@ -306,15 +306,6 @@ public final class LongReadTask {
         }
         mOutput.hit(seqId, posn);
       }
-
-      @Override
-      public void toString(final StringBuilder sb) {
-      }
-
-      @Override
-      public boolean integrity() {
-        return true;
-      }
     }
 
     private final Index mIndex;

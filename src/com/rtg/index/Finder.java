@@ -13,12 +13,10 @@ package com.rtg.index;
 
 import java.io.IOException;
 
-import com.rtg.util.integrity.IntegralAbstract;
-
 /**
  * Used to get results back from a <code>HashIndex</code>
  */
-public abstract class Finder extends IntegralAbstract {
+public abstract class Finder {
 
   /**
    * Called once for each entry found.
@@ -26,15 +24,4 @@ public abstract class Finder extends IntegralAbstract {
    * @throws IOException If an I/O error occurs
    */
   public abstract void found(long id) throws IOException;
-
-  @Override
-  public void toString(final StringBuilder sb) {
-    sb.append("Finder");
-  }
-
-  @Override
-  public boolean integrity() {
-    return true;
-  }
-
 }

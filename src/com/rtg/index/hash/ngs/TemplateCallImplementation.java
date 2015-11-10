@@ -88,12 +88,6 @@ public class TemplateCallImplementation extends IntegralAbstract implements Temp
         mHitStatistics++;
         mIS.add((int) readId);
       }
-      @Override
-      public boolean integrity() {
-        super.integrity();
-        Exam.assertTrue(TemplateCallImplementation.this.mHit == this);
-        return true;
-      }
     };
   }
 
@@ -144,7 +138,7 @@ public class TemplateCallImplementation extends IntegralAbstract implements Temp
     Exam.assertTrue(mIndexes != null && mIndexes.size() > 0);
     Exam.assertTrue(mErrorLimit + "", mErrorLimit >= 0);
 //    Assert.assertTrue(mOutputProcessor != null);
-    Exam.assertTrue(mHit != null && mHit.integrity());
+    Exam.assertTrue(mHit != null);
     return true;
   }
 

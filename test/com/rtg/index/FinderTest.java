@@ -11,19 +11,22 @@
  */
 package com.rtg.index;
 
+import java.io.IOException;
+
+import junit.framework.Assert;
 import junit.framework.TestCase;
 
 /**
  */
 public class FinderTest extends TestCase {
 
-  public void test() {
+  public void test() throws IOException {
     final Finder f = new Finder() {
       @Override
       public void found(final long id) {
+        Assert.assertEquals(2, id);
       }
-
     };
-    assertEquals("Finder", f.toString());
+    f.found(2);
   }
 }
