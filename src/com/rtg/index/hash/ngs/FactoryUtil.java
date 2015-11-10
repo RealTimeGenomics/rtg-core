@@ -19,6 +19,8 @@ import java.util.Map;
 import com.rtg.index.hash.ngs.instances.CG2Maska1;
 import com.rtg.index.hash.ngs.instances.CG2Maska11;
 import com.rtg.index.hash.ngs.instances.CG2Maska15;
+import com.rtg.index.hash.ngs.instances.CG2Maskw18;
+import com.rtg.index.hash.ngs.instances.CG2Maskw18a1;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
@@ -41,6 +43,8 @@ public final class FactoryUtil {
     putFactory("CG2Maska1", CG2Maska1.FACTORY);
     putFactory("CG2Maska11", CG2Maska11.FACTORY);
     putFactory("CG2Maska15", CG2Maska15.FACTORY);
+    putFactory("CG2Maskw18", CG2Maskw18.FACTORY);
+    putFactory("CG2Maskw18a1", CG2Maskw18a1.FACTORY);
   }
 
   private static void putFactory(String name, HashFunctionFactory factory) {
