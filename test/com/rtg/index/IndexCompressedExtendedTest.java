@@ -76,8 +76,8 @@ public class IndexCompressedExtendedTest extends TestCase {
     try {
       index.search(extend(0), new Finder() {
         @Override
-        public void found(final long id) {
-          //do nothing
+        public boolean found(final long id) {
+          return true;
         }
       });
       fail();

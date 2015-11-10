@@ -60,7 +60,7 @@ public class PcrTemplateCallImplementation extends IntegralAbstract implements T
   private Finder makeHit() {
     return new Finder() {
       @Override
-      public void found(final long readIdl) {
+      public boolean found(final long readIdl) {
         final int readId = (int) readIdl;
         final int score = mHashFunction.fastScore(readId);
         //System.err.println(" readId=" + readId + " score=" + score);
@@ -68,6 +68,7 @@ public class PcrTemplateCallImplementation extends IntegralAbstract implements T
         if (score < mDistances[readId]) {
           mDistances[readId] = (byte) score;
         }
+        return true;
       }
     };
   }

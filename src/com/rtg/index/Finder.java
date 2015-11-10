@@ -21,7 +21,8 @@ public abstract class Finder {
   /**
    * Called once for each entry found.
    * @param id value found.
+   * @return true iff the user should continue to process more hits
    * @throws IOException If an I/O error occurs
    */
-  public abstract void found(long id) throws IOException;
+  public abstract boolean found(long id) throws IOException;
 }

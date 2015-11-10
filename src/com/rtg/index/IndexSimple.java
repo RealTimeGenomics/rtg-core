@@ -298,9 +298,7 @@ public class IndexSimple extends IndexBase {
       i--;
     }
     long j = i + 1;
-    while (j < high && mHash.get(j) == compressedHash) {
-      //System.err.println(mValue.get(j));
-      finder.found(mValue.get(j));
+    while (j < high && mHash.get(j) == compressedHash && finder.found(mValue.get(j))) {
       mTotalFinds++;
       j++;
     }

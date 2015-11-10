@@ -82,11 +82,12 @@ public class TemplateCallImplementation extends IntegralAbstract implements Temp
     //System.err.println("make Finder:" + System.identityHashCode(finder) + " parent TemplateCallImplementation:" + System.identityHashCode(this));
     return new Finder() {
       @Override
-      public void found(final long readId) throws IOException {
+      public boolean found(final long readId) throws IOException {
         //System.err.println("adding readId=" + readId);
         //System.err.println("readid=" + readId + " " + mIS.toString());
         mHitStatistics++;
         mIS.add((int) readId);
+        return true;
       }
     };
   }

@@ -290,7 +290,7 @@ public final class LongReadTask {
       }
 
       @Override
-      public void found(final long id) throws IOException {
+      public boolean found(final long id) throws IOException {
         //System.err.println("found id=" + id);
         assert mMxs > 0; //if we actually get here then this will be true
         final int seqId = (int) (id / mMxs);
@@ -305,6 +305,7 @@ public final class LongReadTask {
           posn = position;
         }
         mOutput.hit(seqId, posn);
+        return true;
       }
     }
 

@@ -82,8 +82,9 @@ public abstract class AbstractIndexTest extends TestCase {
   protected void checkEmpty(final IndexBase index, final long[] hashes, final boolean checkCount) throws IOException {
     final Finder finder = new Finder() {
       @Override
-      public void found(final long id) {
+      public boolean found(final long id) {
         fail();
+        return true;
       }
     };
     for (final long hash : hashes) {
@@ -541,8 +542,9 @@ public abstract class AbstractIndexTest extends TestCase {
     final Set<Integer> actual = new HashSet<>();
     final Finder finder = new Finder() {
       @Override
-      public void found(final long id) {
+      public boolean found(final long id) {
         actual.add((int) id);
+        return true;
       }
     };
     hi.search(key, finder);
@@ -575,8 +577,8 @@ public abstract class AbstractIndexTest extends TestCase {
     try {
       index.search(0, new Finder() {
         @Override
-        public void found(final long id) {
-          //do nothing
+        public boolean found(final long id) {
+          return true;
         }
       });
       fail();
@@ -602,8 +604,9 @@ public abstract class AbstractIndexTest extends TestCase {
       final Set<Long> actual = new HashSet<>();
       final Finder finder = new Finder() {
         @Override
-        public void found(final long id) {
+        public boolean found(final long id) {
           actual.add(id);
+          return true;
         }
       };
       index.search(hash, finder);

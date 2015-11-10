@@ -23,10 +23,11 @@ public class FinderTest extends TestCase {
   public void test() throws IOException {
     final Finder f = new Finder() {
       @Override
-      public void found(final long id) {
+      public boolean found(final long id) {
         Assert.assertEquals(2, id);
+        return true;
       }
     };
-    f.found(2);
+    assertTrue(f.found(2));
   }
 }

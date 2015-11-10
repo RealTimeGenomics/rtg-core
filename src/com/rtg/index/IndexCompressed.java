@@ -461,9 +461,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
       i--;
     }
     long j = i + 1;
-    while (j < high && mHash.get(j) == compressedHash) {
-      //System.err.println(mValue.get(j));
-      finder.found(mValue.get(j));
+    while (j < high && mHash.get(j) == compressedHash && finder.found(mValue.get(j))) {
       j++;
     }
   }
@@ -496,9 +494,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
       i--;
     }
     long j = i + 1;
-    while (j < high && mHash.get(j) == compressedHash) {
-      //System.err.println(mValue.get(j));
-      finder.found(mValue.get(j));
+    while (j < high && mHash.get(j) == compressedHash && finder.found(mValue.get(j))) {
       j++;
     }
   }

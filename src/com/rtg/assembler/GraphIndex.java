@@ -91,10 +91,12 @@ public class GraphIndex {
     List<Long> mHits = new ArrayList<>();
 
     @Override
-    public void found(long id) {
+    public boolean found(long id) {
       mHits.add(id);
+      return true;
     }
   }
+
   List<Long> hitContigs(long hash) throws IOException {
     final HitList finder = new HitList();
     mIndex.search(hash, finder);
