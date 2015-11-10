@@ -22,10 +22,28 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.integrity.IntegralAbstract;
 
 /**
+ * Mock implementation of index, used for testing.
  */
-final class MockIndex extends IntegralAbstract implements Index {
+public class MockIndex extends IntegralAbstract implements Index {
 
   private final Appendable mOut = new StringWriter();
+  private int mTimesFrozen = 0;
+
+  private final int[] mCounts;
+  private int mI = 0;
+
+  /**
+   * Construct a new mock index with counts.
+   * @param counts the counts
+   */
+  public MockIndex(final int[] counts) {
+    mCounts = counts;
+  }
+
+  /** Construct a new mock index. */
+  public MockIndex() {
+    this(new int[0]);
+  }
 
   @Override
   public void add(final long hash, final long id) {
@@ -43,7 +61,11 @@ final class MockIndex extends IntegralAbstract implements Index {
 
   @Override
   public void freeze() {
-    throw new UnsupportedOperationException();
+    mTimesFrozen++;
+  }
+
+  public int getTimesFrozen() {
+    return mTimesFrozen;
   }
 
   @Override
@@ -58,7 +80,7 @@ final class MockIndex extends IntegralAbstract implements Index {
 
   @Override
   public String infoString() {
-    throw new UnsupportedOperationException();
+    return "";
   }
 
   @Override
@@ -93,7 +115,9 @@ final class MockIndex extends IntegralAbstract implements Index {
 
   @Override
   public int count(final long hash) {
-    throw new UnsupportedOperationException();
+    final int res = mCounts[mI % mCounts.length];
+    mI++;
+    return res;
   }
 
   @Override
@@ -121,7 +145,7 @@ final class MockIndex extends IntegralAbstract implements Index {
 
   @Override
   public int maxHashCount() {
-    throw new UnsupportedOperationException("Not supported yet.");
+    return 10;
   }
 
 

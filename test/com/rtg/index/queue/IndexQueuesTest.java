@@ -13,23 +13,18 @@ package com.rtg.index.queue;
 
 import static com.rtg.util.StringUtils.LS;
 
-import java.io.IOException;
-import java.io.PrintStream;
-
 import com.rtg.index.Add;
-import com.rtg.index.Finder;
-import com.rtg.index.FinderHashValue;
 import com.rtg.index.Index;
+import com.rtg.position.MockIndex;
 import com.rtg.util.diagnostic.Diagnostic;
 
 import junit.framework.TestCase;
-
 
 /**
  */
 public class IndexQueuesTest extends TestCase {
 
-  private static class MockIndex implements Index {
+  private static class MyMockIndex extends MockIndex {
 
     private static final long MASK = (1L << 3) - 1;
 
@@ -41,83 +36,14 @@ public class IndexQueuesTest extends TestCase {
     }
 
     @Override
-    public long bytes() {
-      return 0;
-    }
-
-    @Override
-    public void dumpValues(final PrintStream out) {
-    }
-
-    @Override
     public synchronized void freeze() {
       mSb.append("freeze").append(LS);
-    }
-
-    @Override
-    public long getHash(final long found) {
-      return 0;
-    }
-
-    @Override
-    public long getValue(long found) {
-      return 0;
-    }
-
-
-    @Override
-    public String infoString() {
-      return null;
-    }
-
-    @Override
-    public long numberEntries() {
-      return 0;
-    }
-
-    @Override
-    public long numberHashes() {
-      return 0;
-    }
-
-    @Override
-    public String perfString() {
-      return null;
-    }
-
-    @Override
-    public void search(final long hash, final Finder finder) throws IOException, IllegalStateException {
-    }
-
-    @Override
-    public void scan(FinderHashValue finder) throws IOException, IllegalStateException {
-    }
-
-    @Override
-    public boolean contains(final long hash) {
-      return true;
-    }
-
-    @Override
-    public int count(final long hash) {
-      return 0;
-    }
-
-    @Override
-    public long first(long hash) throws IllegalStateException {
-      return 0;
     }
 
     @Override
     public String toString() {
       return mSb.toString();
     }
-
-    @Override
-    public int maxHashCount() {
-      throw new UnsupportedOperationException("Not supported yet.");
-    }
-
   }
 
   public void test() {
@@ -136,7 +62,7 @@ public class IndexQueuesTest extends TestCase {
     a1.add(h2, 1);
     a0.add(h2, 2);
     a3.add(h2, 3);
-    final Index ix = new MockIndex();
+    final Index ix = new MyMockIndex();
     iq.freeze(ix);
     final String exp = ""
         + "add radix=1 hash=1 id=1" + LS

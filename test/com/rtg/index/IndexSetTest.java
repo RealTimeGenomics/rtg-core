@@ -12,12 +12,12 @@
 package com.rtg.index;
 
 import java.io.IOException;
-import java.io.PrintStream;
 
 import com.rtg.index.params.CreateParams;
 import com.rtg.ngs.NgsOutputParams;
 import com.rtg.ngs.NgsParams;
 import com.rtg.ngs.NgsParamsBuilder;
+import com.rtg.position.MockIndex;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.MemoryPrintStream;
@@ -27,112 +27,6 @@ import junit.framework.TestCase;
 /**
  */
 public class IndexSetTest extends TestCase {
-  private class MockIndex implements Index {
-
-    protected int mTimesFrozen = 0;
-    protected String mName;
-    public MockIndex(String name) {
-      mName = name;
-    }
-    @Override
-    public void add(long hash, long id) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void freeze() {
-      mTimesFrozen++;
-    }
-
-    @Override
-    public void search(long hash, Finder finder) throws IOException, IllegalStateException {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean contains(long hash) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void scan(FinderHashValue finder) throws IOException, IllegalStateException {
-      throw new UnsupportedOperationException();
-    }
-    @Override
-    public int count(long hash) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public long first(long hash) throws IllegalStateException {
-      return 0;
-    }
-
-    @Override
-    public long getHash(long found) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public long getValue(long found) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String perfString() {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public String infoString() {
-      return "infoString has been called!";
-    }
-
-    @Override
-    public long bytes() {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public long numberEntries() {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public long numberHashes() {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void dumpValues(PrintStream out) {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int maxHashCount() {
-      throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) {
-        return true;
-      }
-      if (o == null || getClass() != o.getClass()) {
-        return false;
-      }
-
-      final MockIndex mockIndex = (MockIndex) o;
-
-      return !(mName != null ? !mName.equals(mockIndex.mName) : mockIndex.mName != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-      return mName != null ? mName.hashCode() : 0;
-    }
-  }
 
   @Override
   protected void tearDown() throws Exception {
@@ -141,23 +35,20 @@ public class IndexSetTest extends TestCase {
 
   public void testSimpleCase() throws IOException {
     final Index[] indexes = {
-        new MockIndex("first")
-        , new MockIndex("second")
-        , new MockIndex("third")
+        new MockIndex()
+        , new MockIndex()
+        , new MockIndex()
     };
     final IndexSet is = new IndexSet(indexes);
-    assertEquals("first", ((MockIndex) is.get(0)).mName);
-    assertEquals("second", ((MockIndex) is.get(1)).mName);
-    assertEquals("third", ((MockIndex) is.get(2)).mName);
     assertEquals(3, is.size());
     for (int i = 0; i < 3; i++) {
-      assertEquals(0, ((MockIndex) is.get(i)).mTimesFrozen);
+      assertEquals(0, ((MockIndex) is.get(i)).getTimesFrozen());
     }
     final MemoryPrintStream baos = new MemoryPrintStream();
     Diagnostic.setLogStream(baos.printStream());
     is.freeze(2);
     for (int i = 0; i < 3; i++) {
-      assertEquals(1, ((MockIndex) is.get(i)).mTimesFrozen);
+      assertEquals(1, ((MockIndex) is.get(i)).getTimesFrozen());
     }
     final String str = baos.toString();
     //System.err.println(str);

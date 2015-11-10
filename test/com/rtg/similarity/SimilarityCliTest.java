@@ -24,9 +24,6 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.rtg.index.Finder;
-import com.rtg.index.FinderHashValue;
-import com.rtg.index.Index;
 import com.rtg.index.hash.HashLoop;
 import com.rtg.index.params.CountParams;
 import com.rtg.index.params.CreateParams;
@@ -46,6 +43,7 @@ import com.rtg.mode.DNAFastaSymbolTable;
 import com.rtg.mode.ProgramMode;
 import com.rtg.mode.SequenceMode;
 import com.rtg.mode.SequenceType;
+import com.rtg.position.MockIndex;
 import com.rtg.reader.CompressedMemorySequencesReader;
 import com.rtg.reader.FastaSequenceDataSource;
 import com.rtg.reader.MockArraySequencesReader;
@@ -980,69 +978,6 @@ public class SimilarityCliTest extends AbstractCliTest {
     } finally {
       assertTrue(FileHelper.deleteAll(tempDir));
       Diagnostic.setLogStream();
-    }
-  }
-
-  private static class MockIndex implements Index {
-
-    @Override
-    public void add(long hash, long id) { }
-    @Override
-    public long bytes() {
-      return 0;
-    }
-    @Override
-    public void dumpValues(PrintStream out) {
-    }
-    @Override
-    public void freeze() {
-    }
-    @Override
-    public long getHash(long found) {
-      return 0;
-    }
-    @Override
-    public long getValue(long found) {
-      return 0;
-    }
-    @Override
-    public String infoString() {
-      return null;
-    }
-    @Override
-    public int maxHashCount() {
-      return 0;
-    }
-    @Override
-    public long numberEntries() {
-      return 0;
-    }
-    @Override
-    public long numberHashes() {
-      return 0;
-    }
-    @Override
-    public String perfString() {
-      return null;
-    }
-    @Override
-    public void search(long hash, Finder finder) throws IOException, IllegalStateException {
-    }
-    @Override
-    public void scan(FinderHashValue finder) throws IOException, IllegalStateException {
-    }
-    @Override
-    public boolean contains(long hash) {
-      return true;
-    }
-    @Override
-    public int count(long hash) {
-      return 0;
-    }
-
-    @Override
-    public long first(long hash) throws IllegalStateException {
-      return 0;
     }
   }
 
