@@ -728,7 +728,7 @@ public class SimilarityCliTest extends AbstractCliTest {
   public void testMakeBuild() throws IOException {
     final SequenceParams dummySubjectParams = SequenceParams.builder().region(new HashingRegion(0, 0)).mode(SequenceMode.BIDIRECTIONAL).create();
     BuildParams buildParams = BuildParams.builder().windowSize(33).stepSize(1).size(0).sequences(dummySubjectParams).create();
-    final DummyIndex index = new DummyIndex() {
+    final MockIndex index = new MockIndex() {
       @Override
       public void add(long hash, long id) {
         if (hash == -1) {
@@ -983,7 +983,7 @@ public class SimilarityCliTest extends AbstractCliTest {
     }
   }
 
-  private static class DummyIndex implements Index {
+  private static class MockIndex implements Index {
 
     @Override
     public void add(long hash, long id) { }
@@ -1032,11 +1032,16 @@ public class SimilarityCliTest extends AbstractCliTest {
     public void scan(FinderHashValue finder) throws IOException, IllegalStateException {
     }
     @Override
-    public long contains(long hash) {
-      return 0;
+    public boolean contains(long hash) {
+      return true;
     }
     @Override
     public int count(long hash) {
+      return 0;
+    }
+
+    @Override
+    public long first(long hash) throws IllegalStateException {
       return 0;
     }
   }

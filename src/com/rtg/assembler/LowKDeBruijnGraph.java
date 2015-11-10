@@ -82,7 +82,7 @@ public class LowKDeBruijnGraph extends AbstractKDeBruijnGraph {
   @Override
   protected final long find(Kmer k) {
     final long hash = KmerHash.kmerToHashMin(k);
-    final long search = mIndex.contains(hash);
+    final long search = mIndex.first(hash);
     if (search < 0) {
       throw new RuntimeException();
     }
@@ -93,8 +93,7 @@ public class LowKDeBruijnGraph extends AbstractKDeBruijnGraph {
   public boolean contains(Kmer k) {
     //System.err.println("contains(" + k + ")");
     final long hash = KmerHash.kmerToHashMin(k);
-    final long search = mIndex.contains(hash);
-    if (search < 0) {
+    if (!mIndex.contains(hash)) {
       return false;
     }
     final int frequency = frequency(k);

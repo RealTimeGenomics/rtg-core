@@ -50,10 +50,10 @@ public interface IndexExtended extends Index {
   /**
    * Determine whether the index contains the supplied hash code.
    * @param hash the hash
-   * @return internal location of the hash (if &lt; 0 then not found).
+   * @return true iff the index contains the hash.
    * @throws IllegalStateException if index has not been frozen.
    */
-  long contains(long[] hash) throws IllegalStateException;
+  boolean contains(long[] hash) throws IllegalStateException;
 
   /**
    * Search for the supplied hash code and return the number of hits.
@@ -64,20 +64,19 @@ public interface IndexExtended extends Index {
   int count(long[] hash) throws IllegalStateException;
 
   /**
+   * Find the index of the first occurrence of the hash, or negative if the hash is not in the index.
+   * @param hash the hash to find.
+   * @return internal location of the hash (if &lt; 0 then not found).
+   * @throws IllegalStateException if index has not been frozen.
+   */
+  long first(long[] hash) throws IllegalStateException;
+
+  /**
    * Get the hash at the found location (see search).
    * @param found internal location of the hash (&gt; 0).
    * @return the hash code.
    */
   long[] getHashExtended(long found);
-
-  /**
-   * Get the value associated with the hash at found location (see search). Note that search will only
-   * return a single location even though multiple may be associated with the hash.
-   * @param found internal location of value (&gt;= 0).
-   * @return the value
-   */
-  @Override
-  long getValue(long found);
 }
 
 

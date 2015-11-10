@@ -84,18 +84,17 @@ public class LargeKDeBruijnGraph extends AbstractKDeBruijnGraph {
   @Override
   protected final long find(Kmer k) {
     final long[] hash = KmerHashA.kmerToHashMin(k);
-    final long search = mIndex.contains(hash);
-    if (search < 0) {
+    final long index = mIndex.first(hash);
+    if (index < 0) {
       throw new RuntimeException();
     }
-    return search;
+    return index;
   }
 
   @Override
   public boolean contains(Kmer k) {
     final long[] hash = KmerHashA.kmerToHashMin(k);
-    final long search = mIndex.contains(hash);
-    if (search < 0) {
+    if (!mIndex.contains(hash)) {
       return false;
     }
     final int frequency = frequency(k);

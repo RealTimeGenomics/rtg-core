@@ -93,7 +93,7 @@ public abstract class AbstractIndexTest extends TestCase {
       if (checkCount) {
         assertEquals(0, index.count(hash));
       }
-      assertTrue(index.contains(hash) < 0);
+      assertFalse(index.contains(hash));
     }
   }
 
@@ -619,9 +619,8 @@ public abstract class AbstractIndexTest extends TestCase {
       }
     }
     for (final long hash : ms.keySet()) {
-      final long found = index.contains(hash);
-      assertTrue("hash=" + hash, found >= 0 && found < index.numberEntries());
-      assertEquals(hash, index.getHash(found));
+      final boolean found = index.contains(hash);
+      assertTrue("hash=" + hash, found);
     }
     assertEquals(ms.numberOfKeys(), index.numberHashes());
 
@@ -640,7 +639,7 @@ public abstract class AbstractIndexTest extends TestCase {
       final long value = index.getValue(l);
       final long hash = index.getHash(l);
       sv.put(hash, value);
-      final long find = index.contains(hash);
+      final long find = index.first(hash);
       assertEquals(hash, index.getHash(find));
     }
     assertEquals(ms, sv);

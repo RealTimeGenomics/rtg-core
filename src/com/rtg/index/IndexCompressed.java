@@ -501,40 +501,15 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
 
   @Override
   public int count(final long hash) {
-    if (mState != IndexState.FROZEN) {
-      throw new IllegalStateException();
+    try {
+      final CountingFinder countingFinder = new CountingFinder();
+      search(hash, countingFinder);
+      final long count = countingFinder.getCount();
+      assert count <= Integer.MAX_VALUE;
+      return (int) count;
+    } catch (final IOException e) {
+      throw new RuntimeException("Unpossible: " + e.getMessage()); // CountingFinder has no IOException
     }
-    //System.err.println("compressed searchCount hash=" + hash);
-    if (!mHashVector.get(hash)) {
-      //assert mInitialPosition.binarySearch(hash) < 0 : "hash=" + hash + LS + toString();
-      return 0;
-    }
-    long length = 1;
-    //System.out.println("found = " + found + " qkey=" + hash + " skey=" + mHash.getAsUnsignedLong(found));
-
-    final long start = position(hash);
-    final long low = mInitialPosition.get(start);
-    final long high = mInitialPosition.get(start + 1);
-    assert low <= high; // : "i=" + i + " low=" + low + " high=" + high;
-    final long compressedHash = compressHash(hash);
-    final long found = SearchUtils.binarySearch(mHash, low, high - 1, compressedHash);
-    if (found < 0) {
-      return 0;
-    }
-    assert compressHash(hash) == mHash.get(found) : found;
-    assert hash == decompressHash(start, mHash.get(found)) : found;
-    long i = found - 1;
-    while (i >= low && mHash.get(i) == compressedHash) {
-      i--;
-      length++;
-    }
-    long j = found + 1;
-    while (j < high && mHash.get(j) == compressedHash) {
-      length++;
-      j++;
-    }
-    assert length <= Integer.MAX_VALUE;
-    return (int) length;
   }
 
   @Override
@@ -579,8 +554,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   }
 
 
-  @Override
-  public long contains(final long hash) {
+  private long find(final long hash) {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
@@ -597,7 +571,27 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   }
 
   @Override
-  public long contains(long[] hash) {
+  public boolean contains(final long hash) {
+    return find(hash) >= 0;
+  }
+
+  @Override
+  public long first(long hash) throws IllegalStateException {
+    long index = find(hash);
+    if (index < 0) {
+      return index;
+    }
+    while (true) {
+      index--;
+      if (index < 0 || getHash(index) != hash) {
+        index++;
+        break;
+      }
+    }
+    return index;
+  }
+
+  private long find(long[] hash) {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
@@ -611,6 +605,27 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
     assert low <= high; // : "i=" + i + " low=" + low + " high=" + high;
     final long compressedHash = compressHash(hash);
     return SearchUtils.binarySearch(mHash, low, high - 1, compressedHash);
+  }
+
+  @Override
+  public boolean contains(final long[] hash) {
+    return find(hash) >= 0;
+  }
+
+  @Override
+  public long first(long[] hash) throws IllegalStateException {
+    long index = find(hash);
+    if (index < 0) {
+      return index;
+    }
+    while (true) {
+      index--;
+      if (index < 0 || !Arrays.equals(getHashExtended(index), hash)) {
+        index++;
+        break;
+      }
+    }
+    return index;
   }
 
   @Override

@@ -62,7 +62,7 @@ public final class BitVector extends AbstractBitVector {
       throw new ArrayIndexOutOfBoundsException(index + ":" + mLength);
     }
     final long x = index >> BITS_PER_ENTRY;
-    mArray[(int) x] ^= 1 << (int) (index & MASK);
+    mArray[(int) x] ^= 1 << (int) (index & MASK); // toggles bit not strictly reset
   }
 
 

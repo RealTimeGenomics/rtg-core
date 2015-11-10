@@ -93,7 +93,7 @@ public class IndexCompressedExtendedTest extends TestCase {
   public void testScanEmpty() throws IOException {
     final IndexCompressed hi = getIndex(10L, 67, 2);
     try {
-      hi.scanAll(null);
+      hi.scanAll((FinderHashValueExtended) null);
       fail();
     } catch (final IllegalStateException e) {
 

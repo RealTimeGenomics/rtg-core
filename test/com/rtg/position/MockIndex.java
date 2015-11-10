@@ -87,13 +87,18 @@ final class MockIndex extends IntegralAbstract implements Index {
   }
 
   @Override
-  public long contains(final long hash) {
+  public boolean contains(final long hash) {
     throw new UnsupportedOperationException();
   }
 
   @Override
   public int count(final long hash) {
     throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public long first(long hash) throws IllegalStateException {
+    return 0;
   }
 
   @Override

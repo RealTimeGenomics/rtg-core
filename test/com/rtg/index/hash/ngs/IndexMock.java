@@ -79,6 +79,12 @@ class IndexMock implements Index {
   public int count(final long hash) {
     return 0;
   }
+
+  @Override
+  public long first(long hash) throws IllegalStateException {
+    return 0;
+  }
+
   @Override
   public long getHash(final long found) {
     throw new UnsupportedOperationException();
@@ -90,7 +96,7 @@ class IndexMock implements Index {
   }
 
   @Override
-  public long contains(final long hash) {
+  public boolean contains(final long hash) {
     throw new UnsupportedOperationException();
   }
   @Override

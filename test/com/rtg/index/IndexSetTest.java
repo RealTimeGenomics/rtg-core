@@ -25,8 +25,6 @@ import com.rtg.util.io.MemoryPrintStream;
 import junit.framework.TestCase;
 
 /**
- *         Date: 5/10/11
- *         Time: 3:10 PM
  */
 public class IndexSetTest extends TestCase {
   private class MockIndex implements Index {
@@ -52,7 +50,7 @@ public class IndexSetTest extends TestCase {
     }
 
     @Override
-    public long contains(long hash) {
+    public boolean contains(long hash) {
       throw new UnsupportedOperationException();
     }
 
@@ -63,6 +61,11 @@ public class IndexSetTest extends TestCase {
     @Override
     public int count(long hash) {
       throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public long first(long hash) throws IllegalStateException {
+      return 0;
     }
 
     @Override

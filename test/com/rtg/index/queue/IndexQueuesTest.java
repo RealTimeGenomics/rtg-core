@@ -94,12 +94,17 @@ public class IndexQueuesTest extends TestCase {
     }
 
     @Override
-    public long contains(final long hash) {
-      return 0;
+    public boolean contains(final long hash) {
+      return true;
     }
 
     @Override
     public int count(final long hash) {
+      return 0;
+    }
+
+    @Override
+    public long first(long hash) throws IllegalStateException {
       return 0;
     }
 
