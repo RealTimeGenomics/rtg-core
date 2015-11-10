@@ -98,6 +98,7 @@ public final class Skel extends IntegralAbstract {
 
   @Override
   public void toString(final StringBuilder sb) {
+    //sb.append("0b").append(Utils.toBits(((1L << mLength) - 1) << mRtShift, Long.SIZE)).append(' '); // More visual representation of the skeleton blocks
     sb.append("[").append(mPosition).append("...").append(mPosition - mLength + 1).append("]<<").append(mLeftShift);
   }
 

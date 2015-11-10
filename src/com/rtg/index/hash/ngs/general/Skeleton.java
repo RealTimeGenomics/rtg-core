@@ -312,5 +312,6 @@ public final class Skeleton extends IntegralAbstract {
       System.out.println();
       j++;
     }
+    System.out.println(sk.dumpMask());
   }
 }
