@@ -69,29 +69,6 @@ public interface Index extends Add {
   int count(long hash) throws IllegalStateException;
 
   /**
-   * Find the index of the first occurrence of the hash, or negative if the hash is not in the index.
-   * @param hash the hash to find.
-   * @return internal location of the hash (if &lt; 0 then not found).
-   * @throws IllegalStateException if index has not been frozen.
-   */
-  long first(long hash) throws IllegalStateException;
-
-  /**
-   * Get the hash at the found location (see search).
-   * @param found internal location of the hash (&gt; 0).
-   * @return the hash code.
-   */
-  long getHash(long found);
-
-  /**
-   * Get the value associated with the hash at found location (see search). Note that search will only
-   * return a single location even though multiple may be associated with the hash.
-   * @param found internal location of value (&gt;= 0).
-   * @return the value
-   */
-  long getValue(long found);
-
-  /**
    * Returns a human readable string reporting on
    * performance statistics.
    *
@@ -141,11 +118,34 @@ public interface Index extends Add {
    */
   void dumpValues(final PrintStream out);
 
-
   /**
    * @return Number of occurences of the most frequent hash in the index
    */
   int maxHashCount();
+
+  /**
+   * Find the index of the first occurrence of the hash, or negative if the hash is not in the index.
+   * @param hash the hash to find.
+   * @return internal location of the hash (if &lt; 0 then not found).
+   * @throws IllegalStateException if index has not been frozen.
+   */
+  long first(long hash) throws IllegalStateException;
+
+  /**
+   * Get the hash at the found location (see search).
+   * @param found internal location of the hash (&gt; 0).
+   * @return the hash code.
+   */
+  long getHash(long found);
+
+  /**
+   * Get the value associated with the hash at found location (see search). Note that search will only
+   * return a single location even though multiple may be associated with the hash.
+   * @param found internal location of value (&gt;= 0).
+   * @return the value
+   */
+  long getValue(long found);
+
 }
 
 
