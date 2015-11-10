@@ -116,7 +116,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
     if (mParams.useLongReadMapping()) {
       buildQueryLongRead(mParams, mStatistics, mUsageMetric);
     } else {
-      indexThenSearch(mParams, mStatistics, mUsageMetric);
+      indexThenSearchShortReads(mParams, mStatistics, mUsageMetric);
     }
     logMemStats("Free memory pre-GC ");
     System.gc();
@@ -227,7 +227,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
     Diagnostic.userLog("Index search performance " + LS + index.perfString());
   }
 
-  private static void indexThenSearch(final NgsParams params, final MapStatistics statistics, final UsageMetric usageMetric) throws IOException {
+  private static void indexThenSearchShortReads(final NgsParams params, final MapStatistics statistics, final UsageMetric usageMetric) throws IOException {
     final long pMask = 0x1FFFFL;
     final Integer numberThreads = params.numberThreads();
     final int threadBits = MathUtils.ceilPowerOf2Bits(numberThreads - 1);
