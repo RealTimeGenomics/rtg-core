@@ -235,7 +235,7 @@ public abstract class AbstractPairedEndOutputProcessorSyncTest extends AbstractP
         .buildSecondParams(SequenceParams.builder().directory(rightok).useMemReader(true).create())
         .searchParams(SequenceParams.builder().directory(templateok).useMemReader(true).loadNames(true).create())
         .outputParams(outputParams)
-        .maskParams(new NgsMaskParamsGeneral(4, 1, 1, 1, false))
+        .maskParams(new NgsMaskParamsGeneral(4, 1, 1, 1))
         .substitutionPenalty(1).gapOpenPenalty(1).gapExtendPenalty(1).unknownsPenalty(0)
         .maxFragmentLength(1000).minFragmentLength(0);
   }

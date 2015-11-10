@@ -58,7 +58,7 @@ public class NgsParamsBuilder extends ModuleParamsBuilder<NgsParamsBuilder> {
   boolean mLegacyCigars = false;
   boolean mUseTopRandom = false;
   long mMapXMinReadLength = -1;
-  NgsMaskParams mMaskParams = new NgsMaskParamsGeneral(MapFlags.DEFAULT_WORD_SIZE, 1, 0, 1, false);
+  NgsMaskParams mMaskParams = new NgsMaskParamsGeneral(MapFlags.DEFAULT_WORD_SIZE, 1, 0, 1);
   int mMapXMetaChunkSize = ProteinReadIndexer.DEFAULT_META_CHUNK_LENGTH;
   int mMapXMetaChunkOverlap = ProteinReadIndexer.DEFAULT_META_CHUNK_OVERLAP;
   MachineOrientation mPairOrientation = MachineOrientation.ANY;

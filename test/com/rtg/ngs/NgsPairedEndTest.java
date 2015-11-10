@@ -74,7 +74,7 @@ public class NgsPairedEndTest extends TestCase {
     Diagnostic.setLogStream();
     final int w = 4, a = 0, b = 0, c = 1;
     final boolean cgl = false;
-    checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestPairedEndParams(READ_FIRST, READ_SECOND, GENOME, FileHelper.resourceToString("com/rtg/ngs/resources/ngspe.txt"),
             0, 12, 8L)
         );
@@ -84,7 +84,7 @@ public class NgsPairedEndTest extends TestCase {
     Diagnostic.setLogStream();
     final int w = 4, a = 0, b = 0, c = 1;
     final boolean cgl = false;
-    final NgsMaskParams maskP = new NgsMaskParamsGeneral(w, a, b, c, cgl);
+    final NgsMaskParams maskP = new NgsMaskParamsGeneral(w, a, b, c);
     final NgsTestUtils.TestPairedEndParams testP = new NgsTestUtils.TestPairedEndParams(READ_FIRST, READ_SECOND, GENOME, FileHelper.resourceToString("com/rtg/ngs/resources/ngspe.txt"), 0, 12, 8L);
     final ByteArrayOutputStream matedOut = new ByteArrayOutputStream();
     final NgsParams params = getParamsPairedEnd(matedOut, maskP, testP, false);
@@ -116,7 +116,7 @@ public class NgsPairedEndTest extends TestCase {
     Diagnostic.setLogStream();
     final int w = 4, a = 0, b = 0, c = 1;
     final boolean cgl = false;
-    checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestPairedEndParams(READ_FIRST, READ_SECOND, GENOME, "", 9, 11, 8L)
         );
   }
@@ -126,7 +126,7 @@ public class NgsPairedEndTest extends TestCase {
     Diagnostic.setLogStream();
     final int w = 4, a = 0, b = 0, c = 1;
     final boolean cgl = false;
-    checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestPairedEndParams(READ_FIRST, READ_SECOND, GENOME, "", 0, 8, 8L)
         );
   }
@@ -141,7 +141,7 @@ public class NgsPairedEndTest extends TestCase {
     Diagnostic.setLogStream();
     final int w = 4, a = 0, b = 0, c = 1;
     final boolean cgl = false;
-    checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestPairedEndParams(READ_FIRST, READ_SECOND, GENOME_REVERSE, FileHelper.resourceToString("com/rtg/ngs/resources/ngspe_rev.txt"),
             0,
             12, 8L)
@@ -158,7 +158,7 @@ public class NgsPairedEndTest extends TestCase {
     Diagnostic.setLogStream();
     final int w = 4, a = 0, b = 0, c = 1;
     final boolean cgl = false;
-    checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestPairedEndParams(READ_FIRST, READ_SECOND, GENOME_SIDE, FileHelper.resourceToString("com/rtg/ngs/resources/ngspe_side.txt"),
             0,
             12, 8L)
@@ -183,7 +183,7 @@ public class NgsPairedEndTest extends TestCase {
     Diagnostic.setLogStream();
     final int w = 4, a = 0, b = 0, c = 1;
     final boolean cgl = false;
-    checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestPairedEndParams(READ_LEFT_WITHNS, READ_RIGHT_WITHNS, GENOME_FOR_WITHNS, FileHelper.resourceToString("com/rtg/ngs/resources/ngspe_ns.txt"),
             0, 12, 8L)
         );

@@ -28,7 +28,7 @@ public class NgsMaskParamsProtein extends NgsMaskParamsGeneral {
    * @param indelLength length of indels
    */
   public NgsMaskParamsProtein(final int wordSize, final int substitutions, final int indels, final int indelLength) {
-    super(wordSize, substitutions, indels, indelLength, false);
+    super(wordSize, substitutions, indels, indelLength);
   }
 
   @Override

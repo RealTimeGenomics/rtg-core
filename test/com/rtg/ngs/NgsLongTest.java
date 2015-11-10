@@ -97,7 +97,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 2;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READ_2, TEMP_2, EXP_LONG2NONE, 6),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -123,7 +123,7 @@ public class NgsLongTest extends TestCase {
     Diagnostic.setLogStream(lr);
     final int stepSize = 4;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(4, 0, 0, 1, false),
+    checkLong(new NgsMaskParamsGeneral(4, 0, 0, 1),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, SEQ_DNA_A, SEQ_DNA_A, "x\tF\t0\t1\t0\t0" + LS, 4),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 5), false);
@@ -148,7 +148,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 2;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, SEQ_DNA_ODD_S, SEQ_DNA_ODD_Q, EXP_ODDLONG, 8),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -158,7 +158,7 @@ public class NgsLongTest extends TestCase {
   public void testOddgShortNone() throws Exception {
     final int w = 4, a = 0, b = 0, c = 1;
     final boolean cgl = false;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(SEQ_DNA_ODD_S,
             SEQ_DNA_ODD_Q, EXPECTED_ODD, 8),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -173,7 +173,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 2;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, SEQ_DNA_ODD_S, SEQ_DNA_ODD_Q, EXP_ODDLONG, 8),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -264,7 +264,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 2;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, SEQ_DNA_ODD2_R, SEQ_DNA_ODD2_T, EXP_ODD2_W6, 6),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -275,7 +275,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 2;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, SEQ_DNA_ODD2_R, SEQ_DNA_ODD2_T, EXP_ODD2, 6),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -284,7 +284,7 @@ public class NgsLongTest extends TestCase {
   public void testOdd2ShortNone() throws Exception {
     final int w = 6, a = 0, b = 0, c = 1;
     final boolean cgl = false;
-    NgsTestUtils.checkShort(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    NgsTestUtils.checkShort(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(SEQ_DNA_ODD2_R,
             SEQ_DNA_ODD2_T, EXP_ODD2_W6, 6),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0));
@@ -295,7 +295,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 2;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, SEQ_DNA_ODD2_R, SEQ_DNA_ODD3_T, EXP_ODD3, 6),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -321,7 +321,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 3;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READS_BUG, TEM_BUG, EXP_BUG_LONGS3, 36),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 5), false);
@@ -333,7 +333,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 9;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READS_BUG, TEM_BUG, EXP_BUG_LONGS9, 36),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 5), false);
@@ -352,7 +352,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 1;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READ_3, TEMP_3, EXP_READ3, 4),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -376,7 +376,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 1;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READ_3F, TEMP_3F, EXP_READ3F, 4),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -413,7 +413,7 @@ public class NgsLongTest extends TestCase {
     final int stepSize = 1;
     final boolean useLongReads = true;
     final boolean ignoreOrder = false;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READ_4, TEMP_4, EXP_READ4, 6),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), ignoreOrder);
@@ -465,7 +465,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 4;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READ_5, TEMP_5, EXP_READ5, 12),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -481,7 +481,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 4;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READ_5, TEMP_5_1, EXP_READ5_1, 12),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -495,7 +495,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 4;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READ_5, TEMP_5_2, EXP_READ5_2, 12),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -511,7 +511,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 2;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READ_5, TEMP_5_3, EXP_READ5_3, 12),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -562,7 +562,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 2;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READ_6, TEMP_6, EXP_READ6, 19),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -607,7 +607,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 2;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READ_REVERSE, TEMP_REVERSE, EXP_REVERSE, 19),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -642,7 +642,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 2;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READ_7, TEMP_7, EXP_READ7, 16),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -668,7 +668,7 @@ public class NgsLongTest extends TestCase {
     final boolean cgl = false;
     final int stepSize = 2;
     final boolean useLongReads = true;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READ_NNN, TEMP_NNN, EXP_READNNN, 16),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), false);
@@ -691,7 +691,7 @@ public class NgsLongTest extends TestCase {
     final int stepSize = 1;
     final boolean useLongReads = true;
     boolean ignoreOrder = false;
-    checkLong(new NgsMaskParamsGeneral(w, a, b, c, cgl),
+    checkLong(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestParams(useLongReads,
             stepSize, READ_NNN1, TEMP_NNN1, EXP_READNNN1, 8),
             new NgsTestUtils.NgsFilterPartlyParams(OutputFilter.NONE, 0), ignoreOrder);

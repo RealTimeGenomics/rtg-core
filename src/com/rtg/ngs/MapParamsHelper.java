@@ -345,7 +345,7 @@ public final class MapParamsHelper {
       if (useLongReads) {
         maskParams = new LongReadMaskParams(w, s, b, c);
       } else {
-        maskParams = new NgsMaskParamsGeneral(w, s, b, c, false /* no CG data here */);
+        maskParams = new NgsMaskParamsGeneral(w, s, b, c  /* no CG data here */);
       }
       if (!maskParams.isValid(readLength)) {
         throw new InvalidParamsException(ErrorType.INVALID_MASK_PARAMS);

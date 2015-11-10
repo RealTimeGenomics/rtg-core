@@ -196,7 +196,7 @@ public class NgsTaskTest extends NgsPairedEndTest {
 
   private class DummyMaskParams extends NgsMaskParamsGeneral {
     public DummyMaskParams(int wordSize, int substitutions, int indels, int indelLength, boolean cgl) {
-      super(wordSize, substitutions, indels, indelLength, cgl);
+      super(wordSize, substitutions, indels, indelLength);
     }
     @Override
     public HashFunctionFactory maskFactory(int readLength) {

@@ -266,7 +266,7 @@ public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutpu
     if (paramsExplicit) {
       maskParams = new NgsMaskParamsExplicit("SplitL4w4s0e0");
     } else {
-      maskParams = new NgsMaskParamsGeneral(4, 1, 2, 2, false);
+      maskParams = new NgsMaskParamsGeneral(4, 1, 2, 2);
     }
     final NgsOutputParams outputParams = NgsOutputParams.builder()
     .progress(false).outputDir(hitsDir)

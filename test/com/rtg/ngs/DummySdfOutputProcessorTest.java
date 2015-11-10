@@ -103,7 +103,7 @@ public class DummySdfOutputProcessorTest extends TestCase {
           .buildSecondParams(SequenceParams.builder().directory(rightok).useMemReader(true).loadNames(true).loadFullNames(true).create())
           .searchParams(SequenceParams.builder().directory(templateok).useMemReader(true).loadNames(true).create())
           .outputParams(outputParams)
-          .maskParams(new NgsMaskParamsGeneral(4, 1, 1, 1, false))
+          .maskParams(new NgsMaskParamsGeneral(4, 1, 1, 1))
         .maxFragmentLength(1000).minFragmentLength(0).create();
 
       final BlahOutputProcessor bop = new BlahOutputProcessor(param);

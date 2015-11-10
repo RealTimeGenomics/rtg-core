@@ -139,7 +139,7 @@ public class NgsThreadTest extends NgsTaskFunctionalTest {
         "Thread Search parent Finished",
         "Thread Search 0 Finish ",
     };
-    check(new NgsMaskParamsGeneral(2, 1, 1, 1, false), reads, template, exp, logExp, 4, 4L);
+    check(new NgsMaskParamsGeneral(2, 1, 1, 1), reads, template, exp, logExp, 4, 4L);
   }
 
   @Override
@@ -161,7 +161,7 @@ public class NgsThreadTest extends NgsTaskFunctionalTest {
         "Thread Search parent Finished",
         "Thread Search 0 Finish ",
     };
-    check(new NgsMaskParamsGeneral(2, 1, 1, 1, false), reads, template, exp, logExp, 4, 4L);
+    check(new NgsMaskParamsGeneral(2, 1, 1, 1), reads, template, exp, logExp, 4, 4L);
   }
 
 }

@@ -272,7 +272,7 @@ public class NgsParamsTest extends TestCase {
     builder.buildFirstParams(SequenceParams.builder().directory(sub).mode(SequenceMode.UNIDIRECTIONAL).useMemReader(true).create());
     builder.outputParams(NgsOutputParams.builder().outputDir(res)
         .create());
-    builder.maskParams(new NgsMaskParamsGeneral(w, a, b, c, false));
+    builder.maskParams(new NgsMaskParamsGeneral(w, a, b, c));
     builder.hashCountThreshold(20).numberThreads(1);
     builder.stepSize(w);
     return builder.create();

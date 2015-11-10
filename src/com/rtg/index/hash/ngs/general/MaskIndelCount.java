@@ -107,7 +107,7 @@ public final class MaskIndelCount {
    * @throws IOException If an I/O error occurs
    */
   public static int indelCount(final Skeleton sk) throws IOException {
-    final HashFunctionFactory factory = Mask.factory(sk, false);
+    final HashFunctionFactory factory = Mask.factory(sk);
     final TemplateCallCount template = new TemplateCallCount();
     final NgsHashFunction mask = factory.create(new ReadCallImplementation(null), template);
     for (int j = 0; j < sk.readLength(); j++) {

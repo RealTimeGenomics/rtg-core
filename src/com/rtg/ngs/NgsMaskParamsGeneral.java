@@ -29,22 +29,18 @@ public class NgsMaskParamsGeneral extends ObjectParams implements NgsMaskParams,
 
   protected final int mIndelLength;
 
-  protected final boolean mCGL;
-
 
   /**
    * @param wordSize word size for indexing.
    * @param substitutions guaranteed number of substitutions that will be matched.
    * @param indels guaranteed number of indels that will be matched.
    * @param indelLength maximum length guaranteed to be found for each indel.
-   * @param cgl true if to adjust masks for Complete Genomics Ltd. reads.
    */
-  public NgsMaskParamsGeneral(int wordSize, int substitutions, int indels, int indelLength, boolean cgl) {
+  public NgsMaskParamsGeneral(int wordSize, int substitutions, int indels, int indelLength) {
     mWordSize = wordSize;
     mSubstitutions = substitutions;
     mIndels = indels;
     mIndelLength = indelLength;
-    mCGL = cgl;
     mObjects = new Object[] {mWordSize, mSubstitutions, mIndels, mIndelLength};
 
   }
@@ -88,7 +84,7 @@ public class NgsMaskParamsGeneral extends ObjectParams implements NgsMaskParams,
   @Override
   public HashFunctionFactory maskFactory(int readLength) {
     final Skeleton sk = new Skeleton(readLength, mWordSize, mSubstitutions, mIndels, mIndelLength);
-    return Mask.factory(sk, mCGL);
+    return Mask.factory(sk);
   }
 
   @Override

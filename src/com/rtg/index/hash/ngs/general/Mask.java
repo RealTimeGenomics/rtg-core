@@ -34,17 +34,14 @@ public final class Mask extends ImplementHashFunction {
 
     private final Skeleton mSkeleton;
 
-    private final boolean mCGL;
-
-    MaskFactory(final Skeleton skeleton, final boolean cgl) {
+    MaskFactory(final Skeleton skeleton) {
       mSkeleton = skeleton;
-      mCGL = cgl;
     }
 
     @Override
     public NgsHashFunction create(final ReadCall readCall, final TemplateCall templateCall) {
       //System.err.println("create " + mSkeleton);
-      final Mask mask = new Mask(mSkeleton, readCall, templateCall, mCGL);
+      final Mask mask = new Mask(mSkeleton, readCall, templateCall);
       assert mask.integrity();
       return mask;
     }
@@ -78,23 +75,20 @@ public final class Mask extends ImplementHashFunction {
   /**
    * Construct a factory based on the skeleton.
    * @param sk to be used for factory and ultimately for the mask.
-   * @param cgl is CG
    * @return factory.
    */
-  public static HashFunctionFactory factory(final Skeleton sk, final boolean cgl) {
+  public static HashFunctionFactory factory(final Skeleton sk) {
     if (!sk.valid()) {
       throw new RuntimeException("Invalid skeleton:" + StringUtils.LS + sk);
     }
     Diagnostic.developerLog(sk.dumpMask());
     //System.err.println("skeleton=" + sk);
-    return new MaskFactory(sk, cgl);
+    return new MaskFactory(sk);
   }
 
   private final Skeleton mSkeleton;
 
   private final int mNumberMasks;
-
-  private final boolean mCGL;
 
   private ExtractRead[] mReadMasks;
 
@@ -110,14 +104,12 @@ public final class Mask extends ImplementHashFunction {
    * @param sk the skeleton used to generate the mask.
    * @param readCall used in subclasses to process results of read hits.
    * @param templateCall used in subclasses to process results of template hits.
-   * @param cgl is CG
    */
-  private Mask(final Skeleton sk, final ReadCall readCall, final TemplateCall templateCall, final boolean cgl) {
+  private Mask(final Skeleton sk, final ReadCall readCall, final TemplateCall templateCall) {
     super(sk.readLength(), sk.windowLength(), readCall, templateCall);
 
     mSkeleton = sk;
     mNumberMasks = mSkeleton.numberWindows();
-    mCGL = cgl;
     setHashFunction();
     assert integrity();
   }
@@ -157,45 +149,16 @@ public final class Mask extends ImplementHashFunction {
     }
   }
 
-  private static final long CGL0 = (1L << 10) - 1L;
-  private static final long CGL1 = ((1L << 20) - 1L) << 16;
-  private static final long CGL2 = ((1L << 5) - 1L) << 35;
-
-  /**
-   * Adjust for gaps and duplications in Complete Genomics Ltd. masks.
-   * @param original bits.
-   * @return adjusted bits.
-   */
-  static long cglAdjust(final long original) {
-    final long l0 = original & CGL0;
-    final long l1 = (original & CGL1) >> 6;
-    final long l2 = (original & CGL2) >> 5;
-    //System.err.println(Utils.toBitsSep(l0));
-    //System.err.println(Utils.toBitsSep(l1));
-    //System.err.println(Utils.toBitsSep(l2));
-    return l0 | l1 | l2;
-  }
-
   @Override
   public void templateAll(final int endPosition, long v0, long v1) throws IOException {
     //System.err.println("templateAll endPosition=" + endPosition);
-    final int adj = mCGL ? 5 : 0;
-    if (mSoFar < readLength() + adj) {
+    if (mSoFar < readLength()) {
       return;
     }
 
-    final long w0;
-    final long w1;
-    if (mCGL) {
-      w0 = cglAdjust(v0);
-      w1 = cglAdjust(v1);
-    } else {
-      w0 = v0;
-      w1 = v1;
-    }
     for (int i = 0; i < mNumberMasks; i++) {
       //System.err.println("templateAll mask i=" + i);
-      mTemplateMasks[i].templateCall(endPosition - adj, w0, w1);
+      mTemplateMasks[i].templateCall(endPosition, v0, v1);
     }
 
     mTemplateCall.done();

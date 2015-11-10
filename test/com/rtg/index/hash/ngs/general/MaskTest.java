@@ -23,9 +23,8 @@ import com.rtg.index.hash.ngs.TemplateCall;
 import com.rtg.index.hash.ngs.instances.AbstractSplitTest;
 import com.rtg.index.hash.ngs.instances.Substitute;
 import com.rtg.index.hash.ngs.instances.SubstituteIndel;
-import com.rtg.util.test.RandomDna;
-import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
+import com.rtg.util.test.RandomDna;
 
 /**
  */
@@ -42,7 +41,7 @@ public class MaskTest extends AbstractSplitTest {
     final StringWriter sb = new StringWriter();
     final ReadCall rcall = new ReadCallMock(sb);
     final TemplateCall call = new TemplateCallMock(sb);
-    final HashFunctionFactory f = Mask.factory(sk, false);
+    final HashFunctionFactory f = Mask.factory(sk);
     final NgsHashFunction hf = f.create(rcall, call);
     //System.err.println("NgsHashFunction:" + hf);
     Exam.integrity(hf);
@@ -56,7 +55,7 @@ public class MaskTest extends AbstractSplitTest {
 
   protected void check(final Skeleton sk) throws IOException {
     final String dna = RandomDna.random(sk.readLength());
-    final HashFunctionFactory f = Mask.factory(sk, false);
+    final HashFunctionFactory f = Mask.factory(sk);
     final int indel = sk.indels();
     final Substitute sub = new Substitute(dna, f, true);
     sub.substituteProtected(sk.substitutions());
@@ -77,7 +76,7 @@ public class MaskTest extends AbstractSplitTest {
       + "  Indel length  1" + LS
       ;
     try {
-      Mask.factory(sk, false);
+      Mask.factory(sk);
       fail();
     } catch (final Exception e) {
       assertEquals(exp, e.getMessage());
@@ -184,18 +183,10 @@ public class MaskTest extends AbstractSplitTest {
 
   public void testMaskFactory() {
     final Skeleton sk = new Skeleton(36, 18, 2, 1, 1);
-    final HashFunctionFactory f = Mask.factory(sk, false);
+    final HashFunctionFactory f = Mask.factory(sk);
     assertEquals(36, f.hashBits());
     assertEquals(6, f.numberWindows());
     assertEquals(36, f.windowBits());
   }
 
-  public void testCGLAdjust() {
-    assertEquals(0, Mask.cglAdjust(0L));
-    assertEquals("00000000:00000000:00000000:00000111:11111111:11111111:11111111:11111111", Utils.toBitsSep(Mask.cglAdjust(Utils.fromBits("11111111:11111111:11111111:00000011:11111111"))));
-    assertEquals("00000000:00000000:00000000:00000000:11100011:11111111:11111111:11111111", Utils.toBitsSep(Mask.cglAdjust(Utils.fromBits("00011000:11111111:11111111:00000011:11111111"))));
-    assertEquals("00000000:00000000:00000000:00000000:01110011:11111111:11111111:11111111", Utils.toBitsSep(Mask.cglAdjust(Utils.fromBits("00001100:11111111:11111111:00000011:11111111"))));
-    assertEquals("00000000:00000000:00000000:00000100:01100000:00000000:00000110:00000001", Utils.toBitsSep(Mask.cglAdjust(Utils.fromBits("10001000:00000000:00000001:00000010:00000001"))));
-
-  }
 }

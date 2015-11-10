@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 public class NgsMaskParamsGeneralTest extends TestCase {
 
   NgsMaskParamsGeneral getParams(final int wordsize, final int substitutions, final int indels, final int indelLength) {
-    return new NgsMaskParamsGeneral(wordsize, substitutions, indels, indelLength, false);
+    return new NgsMaskParamsGeneral(wordsize, substitutions, indels, indelLength);
   }
 
   public void testEquals() {
