@@ -73,6 +73,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
   // statistics counters
   private long mDuplicateCount = 0;
   private long mHitCount = 0;
+  private long mMaxHitsExceededCount = 0;
   private int mReferenceCount = 0;
   protected long mReferenceId = 0;
   private long mReferenceLengthTotal = 0; // sum of length of all references
@@ -133,12 +134,15 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
 
   private T getHitInfo(int i) {
     final T ret;
-    if (mReadsWindowInUse[i] < 0 || mReadsWindowInUse[i] == MAX_HITS_PER_POSITION) {
-      if (mReadsWindowInUse[i] != -1) {
+    if (mReadsWindowInUse[i] == MAX_HITS_PER_POSITION) {
+      mMaxHitsExceededCount++;
+      if (mMaxHitsExceededCount < 5) {
         Diagnostic.userLog("Max hits per position exceeded at template: " + mReferenceId + " templateStart: " + (mReadsWindow[i].size() > 0 ? "" + mReadsWindow[i].get(0).mTemplateStart : "unknown"));
-        removeHits(mReadsWindow[i], mReadsWindowInUse[i]);
-        mReadsWindowInUse[i] = -1; // Blacklist the position until it slides off
       }
+      removeHits(mReadsWindow[i], mReadsWindowInUse[i]);
+      mReadsWindowInUse[i] = -1; // Blacklist the position until it slides off
+    }
+    if (mReadsWindowInUse[i] == -1) {
       ret = null;
     } else {
       if (mReadsWindowInUse[i] < mReadsWindow[i].size()) {
@@ -424,6 +428,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
     stats.setProperty("templates", Integer.toString(mReferenceCount));
     stats.setProperty("total_hits", Long.toString(mHitCount));
     stats.setProperty("duplicate_hits", Long.toString(mDuplicateCount));
+    stats.setProperty("max_hits_exceeded", Long.toString(mMaxHitsExceededCount));
     stats.setProperty("template_lengths_total", Long.toString(mReferenceLengthTotal));
 
     for (int i = 0; i < mRightPairCounts.length; i++) {

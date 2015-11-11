@@ -39,6 +39,7 @@ public class SlidingWindowCollector extends AbstractSlidingWindowCollector<HitIn
 
   // statistics counters
   private long mMatingCount = 0;
+  private long mMaxMatedHitsExceededCount = 0;
 
   /**
    * Creates a new <code>SlidingWindowCollector</code> with a
@@ -88,17 +89,20 @@ public class SlidingWindowCollector extends AbstractSlidingWindowCollector<HitIn
   private MatedHitInfo getMatedHitInfo(int i) {
     final MatedHitInfo ret;
     if (mMatedReadsWindowInUse[i] == MAX_HITS_PER_POSITION - 1) {
-        Diagnostic.userLog("Max hits per position exceeded at template: " + mReferenceId + " templateStart: " + (mReadsWindow[i].size() > 0 ? "" + mReadsWindow[i].get(0).mTemplateStart : "unknown"));
+      mMaxMatedHitsExceededCount++;
+      if (mMaxMatedHitsExceededCount < 5) {
+        Diagnostic.userLog("Max mated hits per position exceeded at template: " + mReferenceId + " templateStart: " + (mReadsWindow[i].size() > 0 ? "" + mReadsWindow[i].get(0).mTemplateStart : "unknown"));
+      }
     }
     if (mMatedReadsWindowInUse[i] == MAX_HITS_PER_POSITION) {
-      return null; //sorry, no vacancy.
-    } else if (mMatedReadsWindowInUse[i] < mMatedReadsWindow[i].size()) {
-      ret = mMatedReadsWindow[i].get(mMatedReadsWindowInUse[i]);
+      ret = null; //sorry, no vacancy.
     } else {
-      ret = new MatedHitInfo();
-      mMatedReadsWindow[i].add(ret);
-    }
-    if (mMatedReadsWindowInUse[i] >= 0) {
+      if (mMatedReadsWindowInUse[i] < mMatedReadsWindow[i].size()) {
+        ret = mMatedReadsWindow[i].get(mMatedReadsWindowInUse[i]);
+      } else {
+        ret = new MatedHitInfo();
+        mMatedReadsWindow[i].add(ret);
+      }
       mMatedReadsWindowInUse[i]++;
     }
     return ret;
@@ -193,6 +197,7 @@ public class SlidingWindowCollector extends AbstractSlidingWindowCollector<HitIn
   public Properties getStatistics() {
     final Properties stats = super.getStatistics();
     stats.setProperty("matings", Long.toString(mMatingCount));
+    stats.setProperty("max_mated_hits_exceeded", Long.toString(mMaxMatedHitsExceededCount));
     return stats;
   }
 

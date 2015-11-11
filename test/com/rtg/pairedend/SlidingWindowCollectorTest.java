@@ -282,6 +282,7 @@ public class SlidingWindowCollectorTest extends TestCase {
       final Properties stats = swc.getStatistics();
       assertEquals("5", stats.getProperty("total_hits"));
       assertEquals("3", stats.getProperty("matings"));
+      assertEquals("0", stats.getProperty("max_hits_exceeded"));
       assertEquals("2", stats.getProperty("templates"));
       assertEquals(Integer.toString(11 + 64 + 64), stats.getProperty("window_size"));
       assertEquals("14", stats.getProperty("template_lengths_total"));
