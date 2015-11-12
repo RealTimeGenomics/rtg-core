@@ -408,6 +408,22 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
     return sb.toString();
   }
 
+  /**
+   * Used to output numbers that are part of hit/miss counts.
+   * @param sb buffer where output being placed.
+   * @param count number being displayed.
+   * @param total total number of which count is a percentage
+   * @param msg accompanying message.
+   */
+  protected static void perc(final StringBuilder sb, final long count, long total, final String msg) {
+    LONG_FORMAT.format(sb, count);
+    sb.append("  ");
+    PERC_FORMAT.format(sb, total == 0 ? 0 : (100.0 * (count / (double) total)));
+    sb.append("% ");
+    sb.append(msg);
+    sb.append(LS);
+  }
+
   abstract void perfString(final StringBuilder sb);
 
   @Override

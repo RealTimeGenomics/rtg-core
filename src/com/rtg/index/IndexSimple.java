@@ -383,30 +383,14 @@ public class IndexSimple extends IndexBase {
     return mValue.get(found);
   }
 
-  /**
-   * Used to output numbers that are part of hit/miss counts.
-   *
-   * @param sb buffer where output being placed.
-   * @param count number being displayed.
-   * @param msg accompanying message.
-   */
-  private void perc(final StringBuilder sb, final long count, final String msg) {
-    LONG_FORMAT.format(sb, count);
-    sb.append("  ");
-    PERC_FORMAT.format(sb, mSearchCount == 0 ? 0 : (100.0 * (count / (double) mSearchCount)));
-    sb.append("% ");
-    sb.append(msg);
-    sb.append(LS);
-  }
-
   @Override
   void perfString(final StringBuilder sb) {
-    perc(sb, mSearchCount, "Total search calls");
-    perc(sb, mBitVectorMissCount, "Misses detected by bit vector");
-    perc(sb, mBitVectorHitCount, "Hits detected by bit vector");
-    perc(sb, mMissCount, "Misses on probing hash index");
-    perc(sb, mInitialHitCount, "Hits on probing hash index");
-    perc(sb, mFinalHitCount, "Hits where some entry found");
+    perc(sb, mSearchCount, mSearchCount, "Total search calls");
+    perc(sb, mBitVectorMissCount, mSearchCount, "Misses detected by bit vector");
+    perc(sb, mBitVectorHitCount, mSearchCount, "Hits detected by bit vector");
+    perc(sb, mMissCount, mSearchCount, "Misses on probing hash index");
+    perc(sb, mInitialHitCount, mSearchCount, "Hits on probing hash index");
+    perc(sb, mFinalHitCount, mSearchCount, "Hits where some entry found");
     sb.append(LS);
     sb.append(LS);
     LONG_FORMAT.format(sb, mTotalFinds).append(" Total finds").append(LS);
