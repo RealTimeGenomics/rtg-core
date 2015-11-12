@@ -204,9 +204,11 @@ public class PairedTempFileWriterImpl extends AbstractTempFileWriter implements 
   }
 
   private void pairResult(int readId, AlignmentResult matchResult, AlignmentResult mateResult) throws IOException {
-    // Only actually output if the current side is in the clip
-    // region. Between this and the blocker we may get unbalanced
-    // records but the final filterconcat should make everything consistent
+    // Only actually output if the current side is in the clip region.
+    // Between this and the blocker we may get unbalanced records in an individual file,
+    // but the final filterconcat makes everything consistent.
+    // NOTE: if sliding window mated hit overflow occurs within the padding area,
+    // there is the potential for unbalanced mated records in the final output.
     if (mClipRegion.isInRange(mTemplateId, matchResult.getStart() + mTemplateOffset)) {
       mListener.addStatus(readId, ReadStatusTracker.MATED_ALIGN_SCORE);
 
