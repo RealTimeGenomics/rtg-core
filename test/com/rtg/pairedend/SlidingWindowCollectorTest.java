@@ -753,7 +753,7 @@ public class SlidingWindowCollectorTest extends TestCase {
 
       }
       assertEquals(maxHits, writer.mPairedLeft); //we know we've called checkPair max hits + 1 times, but it should have only called pairResultLeft max hits times.
-      TestUtils.containsAll(mps.toString(), "Max hits per position exceeded at template: 0 templateStart: unknown");
+      TestUtils.containsAll(mps.toString(), "Max mated hits per position exceeded at template: 0 templateStart: unknown");
       swc.mCurrentReferencePosition = 100;
       swc.flushToPosition(110);
 
