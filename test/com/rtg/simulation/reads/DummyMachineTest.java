@@ -15,11 +15,13 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import com.rtg.reader.PrereadType;
+import com.rtg.reader.SdfId;
 import com.rtg.simulation.reads.AbstractMachine.SimErrorType;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.TestUtils;
 import com.rtg.util.io.MemoryPrintStream;
-import com.rtg.variant.AbstractMachineErrorParams;
+import com.rtg.util.machine.MachineType;
+import com.rtg.variant.MachineErrorParams;
 import com.rtg.variant.MachineErrorParamsBuilder;
 
 import junit.framework.TestCase;
@@ -29,8 +31,39 @@ import junit.framework.TestCase;
  */
 public class DummyMachineTest extends TestCase {
 
-  public AbstractMachine getMachine() throws IOException, InvalidParamsException {
-    return new AbstractMachine(new MachineErrorParamsBuilder().errors("illumina").create()) {
+  abstract static class MockMachine implements Machine {
+    @Override
+    public void setQualRange(byte minq, byte maxq) { }
+    @Override
+    public void setReadWriter(ReadWriter rw) { }
+    @Override
+    public void identifyTemplateSet(SdfId... templateIds) { }
+    @Override
+    public void identifyOriginalReference(SdfId referenceId) { }
+    @Override
+    public long residues() {
+      return 0;
+    }
+    @Override
+    public boolean isPaired() {
+      return false;
+    }
+    @Override
+    public PrereadType prereadType() {
+      return PrereadType.UNKNOWN;
+    }
+    @Override
+    public MachineType machineType() {
+      return MachineType.ILLUMINA_PE;
+    }
+    @Override
+    public String formatActionsHistogram() {
+      return null;
+    }
+  }
+
+  AbstractMachine getMachine(MachineErrorParams priors) {
+    return new AbstractMachine(priors) {
       @Override
       public void setReadWriter(ReadWriter rw) {
       }
@@ -42,10 +75,18 @@ public class DummyMachineTest extends TestCase {
         return false;
       }
       @Override
-      public PrereadType machineType() {
+      public PrereadType prereadType() {
+        return null;
+      }
+      @Override
+      public MachineType machineType() {
         return null;
       }
     };
+  }
+
+  public AbstractMachine getMachine() throws IOException, InvalidParamsException {
+    return getMachine(new MachineErrorParamsBuilder().errors("illumina").create());
   }
 
   public void test() throws Exception {
@@ -90,26 +131,7 @@ public class DummyMachineTest extends TestCase {
 
   public void testErrorType() {
     TestUtils.testEnum(SimErrorType.class, "[MNP, INSERT, DELETE, SUBSTITUTE_N, NOERROR]");
-
-    final AbstractMachineErrorParams priors = new MachineErrorParamsBuilder().errorInsEventRate(0.2).errorDelEventRate(0.15).errorMnpEventRate(0.3).create();
-
-    final AbstractMachine am = new AbstractMachine(priors) {
-      @Override
-      public void setReadWriter(ReadWriter rw) {
-      }
-      @Override
-      public void processFragment(String id, int fragmentStart, byte[] data, int length) {
-      }
-      @Override
-      public boolean isPaired() {
-        return false;
-      }
-      @Override
-      public PrereadType machineType() {
-        return null;
-      }
-    };
-
+    final AbstractMachine am = getMachine(new MachineErrorParamsBuilder().errorInsEventRate(0.2).errorDelEventRate(0.15).errorMnpEventRate(0.3).create());
     assertEquals(SimErrorType.INSERT, am.getErrorType(0.0));
     assertEquals(SimErrorType.INSERT, am.getErrorType(0.1999));
     assertEquals(SimErrorType.DELETE, am.getErrorType(0.20));

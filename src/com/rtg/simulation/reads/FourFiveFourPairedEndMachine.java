@@ -15,6 +15,7 @@ package com.rtg.simulation.reads;
 import java.io.IOException;
 
 import com.rtg.util.PortableRandom;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.AbstractMachineErrorParams;
 
 /**
@@ -118,5 +119,10 @@ public class FourFiveFourPairedEndMachine extends AbstractMachine {
     name = formatReadName(id, forward ? 'F' : 'R', cigar, fragmentStart, pos);
     mReadWriter.writeRightRead(name, mReadBytes, mQualityBytes, mReadBytesUsed);
     mResidueCount += mReadBytesUsed;
+  }
+
+  @Override
+  public MachineType machineType() {
+    return MachineType.FOURFIVEFOUR_PE;
   }
 }

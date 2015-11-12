@@ -13,9 +13,6 @@ package com.rtg.simulation.reads;
 
 import java.io.IOException;
 
-import com.rtg.reader.PrereadType;
-import com.rtg.reader.SdfId;
-
 import junit.framework.TestCase;
 
 /**
@@ -26,32 +23,7 @@ public class ErrorMachineTest extends TestCase {
 
     final int[] counts = new int[1];
 
-    final Machine testMachine = new Machine() {
-      @Override
-      public void setQualRange(byte minq, byte maxq) {      }
-      @Override
-      public void setReadWriter(ReadWriter rw) {      }
-      @Override
-      public void identifyTemplateSet(SdfId... templateIds) {      }
-      @Override
-      public void identifyOriginalReference(SdfId referenceId) {      }
-      @Override
-      public long residues() {
-        return 0;
-      }
-      @Override
-      public boolean isPaired() {
-        return false;
-      }
-      @Override
-      public PrereadType machineType() {
-        return PrereadType.UNKNOWN;
-      }
-      @Override
-      public String formatActionsHistogram() {
-        return null;
-      }
-
+    final Machine testMachine = new DummyMachineTest.MockMachine() {
       @Override
       public void processFragment(String id, int fragmentStart, byte[] data, int length) throws IOException {
         assertEquals((counts[0] > 0 ? "dupe-" /*+ (counts[0] + 1))*/ : "") + "blah1", id);
@@ -72,32 +44,7 @@ public class ErrorMachineTest extends TestCase {
 
     final int[] counts = new int[1];
 
-    final Machine testMachine = new Machine() {
-      @Override
-      public void setQualRange(byte minq, byte maxq) {      }
-      @Override
-      public void setReadWriter(ReadWriter rw) {      }
-      @Override
-      public void identifyTemplateSet(SdfId... templateIds) {      }
-      @Override
-      public void identifyOriginalReference(SdfId referenceId) {      }
-      @Override
-      public long residues() {
-        return 0;
-      }
-      @Override
-      public boolean isPaired() {
-        return false;
-      }
-      @Override
-      public PrereadType machineType() {
-        return PrereadType.UNKNOWN;
-      }
-      @Override
-      public String formatActionsHistogram() {
-        return null;
-      }
-
+    final Machine testMachine = new DummyMachineTest.MockMachine() {
       @Override
       public void processFragment(String id, int fragmentStart, byte[] data, int length) throws IOException {
         assertEquals("chimera" + counts[0] + "/", id);

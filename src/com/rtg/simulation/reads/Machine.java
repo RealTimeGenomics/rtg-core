@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.SdfId;
+import com.rtg.util.machine.MachineType;
 
 /**
  * Interface to represent different machines for read simulation.
@@ -73,7 +74,12 @@ public interface Machine {
   /**
    * @return type to use when writing generated reads to SDF
    */
-  PrereadType machineType();
+  PrereadType prereadType();
+
+  /**
+   * @return which type of machine is being simulated.
+   */
+  MachineType machineType();
 
   /**
    * @return a textual representation summary of the actions histogram

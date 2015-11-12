@@ -16,6 +16,7 @@ import com.rtg.mode.DNA;
 import com.rtg.reader.CgUtils;
 import com.rtg.simulation.SimulationUtils;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.AbstractMachineErrorParams;
 
 /**
@@ -130,4 +131,8 @@ public class CompleteGenomicsV1Machine extends CompleteGenomicsMachine {
     throw new NoTalkbackSlimException("Unable to generate a valid read with given priors in " + NUMBER_TRIES + " attempts");
   }
 
+  @Override
+  public MachineType machineType() {
+    return MachineType.COMPLETE_GENOMICS;
+  }
 }

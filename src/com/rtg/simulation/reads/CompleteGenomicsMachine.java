@@ -66,7 +66,7 @@ public abstract class CompleteGenomicsMachine extends AbstractMachine {
   }
 
   @Override
-  public PrereadType machineType() {
+  public PrereadType prereadType() {
     return PrereadType.CG;
   }
 

@@ -14,9 +14,7 @@ package com.rtg.simulation.reads;
 
 import java.io.IOException;
 
-import com.rtg.reader.PrereadType;
 import com.rtg.reader.ReaderTestUtils;
-import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
 import com.rtg.simulation.genome.SequenceDistribution;
 import com.rtg.util.StringUtils;
@@ -27,47 +25,11 @@ import junit.framework.TestCase;
 /**
  */
 public class FilteringFragmenterTest extends TestCase {
-  private static class MockMachine implements Machine {
+  private static class MockMachine extends DummyMachineTest.MockMachine {
     Integer mLastStart;
-    @Override
-    public void setQualRange(byte minq, byte maxq) {
-    }
-
-    @Override
-    public void setReadWriter(ReadWriter rw) {
-    }
-
-    @Override
-    public void identifyTemplateSet(SdfId... templateIds) {
-    }
-
-    @Override
-    public void identifyOriginalReference(SdfId referenceId) {
-    }
-
     @Override
     public void processFragment(String id, int fragmentStart, byte[] data, int length) {
       mLastStart = fragmentStart;
-    }
-
-    @Override
-    public long residues() {
-      return 0;
-    }
-
-    @Override
-    public boolean isPaired() {
-      return false;
-    }
-
-    @Override
-    public PrereadType machineType() {
-      return null;
-    }
-
-    @Override
-    public String formatActionsHistogram() {
-      return null;
     }
   }
   public void test() throws IOException {

@@ -19,6 +19,7 @@ import com.rtg.simulation.SimulationUtils;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.MachineErrorParamsBuilder;
 
@@ -168,5 +169,10 @@ public class IonTorrentSingleEndMachine extends SingleEndRandomLengthMachine {
       sb.append("Of insertions, due to homopolymer:\t").append(mHomopolyErrorCounts[1]).append('\t').append(Utils.realFormat(mHomopolyErrorCounts[1] / (double) total * 100, 2)).append('%').append(StringUtils.LS);
     }
     return sb.toString();
+  }
+
+  @Override
+  public MachineType machineType() {
+    return MachineType.IONTORRENT;
   }
 }

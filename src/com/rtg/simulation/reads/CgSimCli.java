@@ -72,7 +72,7 @@ public class CgSimCli extends ReadSimCli {
   @Override
   protected void initFlags() {
     super.initFlags();
-    mFlags.setDescription("Simulate Complete Genomics Inc sequencing reads.");
+    mFlags.setDescription("Simulate Complete Genomics Inc sequencing reads. Supports the original 35 bp read structure (5-10-10-10), and the newer 29 bp read structure (10-9-10)");
     mFlags.setCategories(UTILITY, new String[]{INPUT_OUTPUT, CAT_FRAGMENTS, CAT_CG, UTILITY});
     mFlags.setValidator(new CgSimValidator());
   }
@@ -82,6 +82,6 @@ public class CgSimCli extends ReadSimCli {
     mFlags.registerOptional('M', MAX_FRAGMENT, Integer.class, "int", "maximum fragment size", 500).setCategory(CAT_FRAGMENTS);
     mFlags.registerOptional('m', MIN_FRAGMENT, Integer.class, "int", "minimum fragment size", 350).setCategory(CAT_FRAGMENTS);
     mFlags.registerOptional('E', XMACHINE_ERROR_PRIORS, String.class, "string", "override default machine error priors").setCategory(UTILITY);
-    mFlags.registerOptional(CG_VERSION, Integer.class, "int", "select Complete Genomics read structure version, 1 or 2", 1).setCategory(CAT_CG);
+    mFlags.registerOptional(CG_VERSION, Integer.class, "int", "select Complete Genomics read structure version, 1 (35 bp) or 2 (29 bp)", 1).setCategory(CAT_CG);
   }
 }

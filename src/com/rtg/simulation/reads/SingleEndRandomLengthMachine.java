@@ -22,7 +22,7 @@ import com.rtg.variant.AbstractMachineErrorParams;
  * single end machine with random read lengths
  */
 @TestClass(value = {"com.rtg.simulation.reads.FourFiveFourSingleEndMachineTest", "com.rtg.simulation.reads.IonTorrentSingleEndMachineTest"})
-public class SingleEndRandomLengthMachine extends AbstractMachine {
+public abstract class SingleEndRandomLengthMachine extends AbstractMachine {
 
   private static final int NUMBER_TRIES = 1000;
 

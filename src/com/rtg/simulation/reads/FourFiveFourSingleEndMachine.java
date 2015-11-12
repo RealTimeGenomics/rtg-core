@@ -15,6 +15,7 @@ package com.rtg.simulation.reads;
 import java.io.IOException;
 
 import com.rtg.util.InvalidParamsException;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.MachineErrorParamsBuilder;
 
@@ -40,5 +41,10 @@ public class FourFiveFourSingleEndMachine extends SingleEndRandomLengthMachine {
    */
   public FourFiveFourSingleEndMachine(long randomSeed) throws InvalidParamsException, IOException {
     this(new MachineErrorParamsBuilder().errors("ls454_se").create(), randomSeed);
+  }
+
+  @Override
+  public MachineType machineType() {
+    return MachineType.FOURFIVEFOUR_SE;
   }
 }

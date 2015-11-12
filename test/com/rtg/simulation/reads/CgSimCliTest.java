@@ -51,12 +51,12 @@ public class CgSimCliTest extends AbstractCliTest {
         TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-n", "100"), "You must provide a value for -o SDF");
         TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-c", "0"), "Coverage should be positive");
         TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "0"), "Number of reads should be greater than 0");
+        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1", "--cg-read-version", "0"), "Version must be 1 or 2");
+        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1", "--cg-read-version", "3"), "Version must be 1 or 2");
 
         final CgSimCli cli = (CgSimCli) getCli();
         MainResult.run(cli, "-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1");
         assertEquals(MachineType.COMPLETE_GENOMICS, cli.getMachineType());
-        final CgSimCli.CgSimValidator validator = new CgSimCli.CgSimValidator();
-        assertTrue(validator.checkMachines(null));
       } finally {
         assertTrue(FileHelper.deleteAll(genomeDir));
       }

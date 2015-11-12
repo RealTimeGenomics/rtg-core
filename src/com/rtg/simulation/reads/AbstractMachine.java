@@ -91,7 +91,7 @@ public abstract class AbstractMachine implements Machine {
   }
 
   @Override
-  public PrereadType machineType() {
+  public PrereadType prereadType() {
     return PrereadType.UNKNOWN;
   }
 

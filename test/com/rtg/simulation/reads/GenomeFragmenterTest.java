@@ -16,9 +16,7 @@ import java.io.File;
 import java.util.Arrays;
 
 import com.rtg.mode.DNA;
-import com.rtg.reader.PrereadType;
 import com.rtg.reader.ReaderTestUtils;
-import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reference.ReferenceGenome;
 import com.rtg.util.ChiSquared;
@@ -36,7 +34,7 @@ import junit.framework.TestCase;
  */
 public class GenomeFragmenterTest extends TestCase {
 
-  private static final class MyMachine implements Machine {
+  private static final class MyMachine extends DummyMachineTest.MockMachine {
 
     private boolean mSeen = false;
     private byte[] mLastFragment;
@@ -51,39 +49,6 @@ public class GenomeFragmenterTest extends TestCase {
       }
       mSeen = true;
       mLastFragment = Arrays.copyOf(data, length);
-    }
-
-    @Override
-    public void setQualRange(byte minq, byte maxq) {
-    }
-
-    @Override
-    public long residues() {
-      return 0;
-    }
-
-    @Override
-    public boolean isPaired() {
-      return false;
-    }
-
-    @Override
-    public PrereadType machineType() {
-      return null;
-    }
-
-    @Override
-    public void setReadWriter(ReadWriter rw) { }
-
-    @Override
-    public void identifyTemplateSet(SdfId... templateIds) { }
-
-    @Override
-    public void identifyOriginalReference(SdfId referenceId) { }
-
-    @Override
-    public String formatActionsHistogram() {
-      return null;
     }
   }
 
@@ -130,47 +95,11 @@ public class GenomeFragmenterTest extends TestCase {
         //final GenomeFragmenter gf = new GenomeFragmenter(42, sr);
         final GenomeFragmenter gf = new GenomeFragmenter(0, sr);
         gf.setMaxFragmentSize(0);
-        gf.setMachine(new Machine() {
+        gf.setMachine(new DummyMachineTest.MockMachine() {
           @Override
           public void processFragment(final String id, final int fragmentStart, final byte[] data, final int length) {
             assertEquals(0, length);
             counts0[fragmentStart]++;
-          }
-
-          @Override
-          public void setQualRange(byte minq, byte maxq) {
-          }
-
-          @Override
-          public long residues() {
-            return 0;
-          }
-
-          @Override
-          public boolean isPaired() {
-            return false;
-          }
-
-          @Override
-          public PrereadType machineType() {
-            return null;
-          }
-
-          @Override
-          public void setReadWriter(ReadWriter rw) {
-          }
-
-          @Override
-          public void identifyTemplateSet(SdfId... templateIds) {
-          }
-
-          @Override
-          public void identifyOriginalReference(SdfId referenceId) {
-          }
-
-          @Override
-          public String formatActionsHistogram() {
-            return null;
           }
         });
         for (long k = 0; k < LOOPS * testSize; k++) {
@@ -198,46 +127,10 @@ public class GenomeFragmenterTest extends TestCase {
         final GenomeFragmenter gf = new GenomeFragmenter(0, sr);
         gf.setMinFragmentSize(20);
         gf.setMaxFragmentSize(10);
-        gf.setMachine(new Machine() {
+        gf.setMachine(new DummyMachineTest.MockMachine() {
           @Override
           public void processFragment(final String id, final int fragmentStart, final byte[] data, final int length) {
             fail(); // should not get here
-          }
-
-          @Override
-          public void setQualRange(byte minq, byte maxq) {
-          }
-
-          @Override
-          public long residues() {
-            return 0;
-          }
-
-          @Override
-          public boolean isPaired() {
-            return false;
-          }
-
-          @Override
-          public PrereadType machineType() {
-            return null;
-          }
-
-          @Override
-          public void setReadWriter(ReadWriter rw) {
-          }
-
-          @Override
-          public void identifyTemplateSet(SdfId... templateIds) {
-          }
-
-          @Override
-          public void identifyOriginalReference(SdfId referenceId) {
-          }
-
-          @Override
-          public String formatActionsHistogram() {
-            return null;
           }
         });
         try {
@@ -263,7 +156,7 @@ public class GenomeFragmenterTest extends TestCase {
         //final GenomeFragmenter gf = new GenomeFragmenter(42, sr);
         final GenomeFragmenter gf = new GenomeFragmenter(0, sr);
         gf.setMaxFragmentSize(0);
-        gf.setMachine(new Machine() {
+        gf.setMachine(new DummyMachineTest.MockMachine() {
           @Override
           public void processFragment(final String id, final int fragmentStart, final byte[] data, final int length) {
             assertEquals(0, length);
@@ -275,42 +168,6 @@ public class GenomeFragmenterTest extends TestCase {
             } else {
               fail();
             }
-          }
-
-          @Override
-          public void setQualRange(byte minq, byte maxq) {
-          }
-
-          @Override
-          public long residues() {
-            return 0;
-          }
-
-          @Override
-          public boolean isPaired() {
-            return false;
-          }
-
-          @Override
-          public PrereadType machineType() {
-            return null;
-          }
-
-          @Override
-          public void setReadWriter(ReadWriter rw) {
-          }
-
-          @Override
-          public void identifyTemplateSet(SdfId... templateIds) {
-          }
-
-          @Override
-          public void identifyOriginalReference(SdfId referenceId) {
-          }
-
-          @Override
-          public String formatActionsHistogram() {
-            return null;
           }
         });
         final int tlim = testSize + testSize / 2;
@@ -346,48 +203,12 @@ public class GenomeFragmenterTest extends TestCase {
         final GenomeFragmenter gf = new GenomeFragmenter(0, sr);
         gf.setMinFragmentSize(min);
         gf.setMaxFragmentSize(max);
-        gf.setMachine(new Machine() {
+        gf.setMachine(new  DummyMachineTest.MockMachine() {
           @Override
           public void processFragment(final String id, final int fragmentStart, final byte[] data, final int length) {
             assertTrue(length >= min);
             assertTrue(length <= max);
             counts0[length]++;
-          }
-
-          @Override
-          public void setQualRange(byte minq, byte maxq) {
-          }
-
-          @Override
-          public long residues() {
-            return 0;
-          }
-
-          @Override
-          public boolean isPaired() {
-            return false;
-          }
-
-          @Override
-          public PrereadType machineType() {
-            return null;
-          }
-
-          @Override
-          public void setReadWriter(ReadWriter rw) {
-          }
-
-          @Override
-          public void identifyTemplateSet(SdfId... templateIds) {
-          }
-
-          @Override
-          public void identifyOriginalReference(SdfId referenceId) {
-          }
-
-          @Override
-          public String formatActionsHistogram() {
-            return null;
           }
         });
         for (long k = 0; k < testSize; k++) {

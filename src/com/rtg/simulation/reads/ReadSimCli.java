@@ -55,6 +55,8 @@ import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.MachineErrorParams;
 import com.rtg.variant.MachineErrorParamsBuilder;
 
+import htsjdk.samtools.SAMReadGroupRecord;
+
 /**
  * Module wrapper for the standard read type generators
  */
@@ -64,7 +66,6 @@ public class ReadSimCli extends LoggedCli {
 
   // Common to all machines
   static final String INPUT = "input";
-  static final String TWIN_INPUT = "Xdiploid-input";
   static final String OUTPUT = "output";
   static final String SEED = "seed";
   static final String COMMENT = "comment";
@@ -156,7 +157,6 @@ public class ReadSimCli extends LoggedCli {
     mFlags.registerExtendedHelp();
     mFlags.registerRequired('o', OUTPUT, File.class, "SDF", "name for reads output SDF").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired('t', INPUT, File.class, "SDF", "SDF containing input genome").setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional('T', TWIN_INPUT, File.class, "SDF", "SDF with second genome for simulating diploid genomes (deprecated)").setCategory(INPUT_OUTPUT);
     final Flag covFlag = mFlags.registerOptional('c', COVERAGE, Double.class, "float", "coverage, must be positive").setCategory(CAT_FRAGMENTS);
     final Flag nFlag = mFlags.registerOptional('n', READS, Long.class, "int", "number of reads to be generated").setCategory(CAT_FRAGMENTS);
 
@@ -279,10 +279,14 @@ public class ReadSimCli extends LoggedCli {
     } else if ("-".equals(f.getName())) {
       return new FastqReadWriter(System.out);
     } else {
-      final SdfReadWriter rw = new SdfReadWriter(f, m.isPaired(), m.machineType(), !mFlags.isSet(NO_NAMES), !mFlags.isSet(NO_QUAL));
+      final SdfReadWriter rw = new SdfReadWriter(f, m.isPaired(), m.prereadType(), !mFlags.isSet(NO_NAMES), !mFlags.isSet(NO_QUAL));
       rw.setComment((String) mFlags.getValue(COMMENT));
       if (mFlags.isSet(SamCommandHelper.SAM_RG)) {
-        rw.setReadGroup(SamCommandHelper.validateAndCreateSamRG((String) mFlags.getValue(SamCommandHelper.SAM_RG), SamCommandHelper.ReadGroupStrictness.REQUIRED));
+        final SAMReadGroupRecord rg = SamCommandHelper.validateAndCreateSamRG((String) mFlags.getValue(SamCommandHelper.SAM_RG), SamCommandHelper.ReadGroupStrictness.REQUIRED);
+        if (rg.getPlatform() != null && !m.machineType().compatiblePlatform(rg.getPlatform())) {
+          Diagnostic.warning("The specified SAM read group platform '" + rg.getPlatform() + "' is not recommended for these sequencer settings. The recommended platform is '" + m.machineType().platform() + '"');
+        }
+        rw.setReadGroup(rg);
       }
       return rw;
     }
@@ -364,10 +368,10 @@ public class ReadSimCli extends LoggedCli {
     return map;
   }
 
-  void checkReadersForFragments(SequencesReader input, SequencesReader twinInput) {
+  void checkReadersForFragments(SequencesReader input) {
     final int minFragment = (Integer) mFlags.getValue(MIN_FRAGMENT);
-    final long minSequenceLength = twinInput == null ? input.minLength() : Math.min(input.minLength(), twinInput.minLength());
-    final long maxSequenceLength = twinInput == null ? input.maxLength() : Math.max(input.maxLength(), twinInput.maxLength());
+    final long minSequenceLength = input.minLength();
+    final long maxSequenceLength = input.maxLength();
     if (minFragment > maxSequenceLength) {
       throw new NoTalkbackSlimException("All template sequences are too short for specified fragment lengths.");
     } else if (minFragment > minSequenceLength) {
@@ -377,9 +381,7 @@ public class ReadSimCli extends LoggedCli {
   @Override
   protected int mainExec(OutputStream out, LogStream log) throws IOException {
     final File input = (File) mFlags.getValue(INPUT);
-    final File twinInput = (File) mFlags.getValue(TWIN_INPUT);
-    try {
-      final SequencesReader reader = SequencesReaderFactory.createMemorySequencesReaderCheckEmpty(input, true, false, LongRange.NONE);
+    try (final SequencesReader reader = SequencesReaderFactory.createMemorySequencesReaderCheckEmpty(input, true, false, LongRange.NONE)) {
       if (reader.numberSequences() > Integer.MAX_VALUE) {
         throw new NoTalkbackSlimException("Too many sequences");
       }
@@ -417,100 +419,66 @@ public class ReadSimCli extends LoggedCli {
       } else {
         selectionProb = null;
       }
-      long totalResidues = reader.totalLength(); // subtract Ns
-      try {
-        final SequencesReader twinReader;
-        if (mFlags.isSet(TWIN_INPUT)) {
-          try {
-            twinReader = SequencesReaderFactory.createMemorySequencesReaderCheckEmpty(twinInput, true, false, LongRange.NONE);
-            if (twinReader.getSdfId().check(reader.getSdfId())) { //  twinReader.getSdfId() != 0 && twinReader.getSdfId() == reader.getSdfId()) {
-              throw new NoTalkbackSlimException("The --" + TWIN_INPUT + " SDF cannot be the same as that given with --" + INPUT);
-            }
-            totalResidues += twinReader.totalLength();
-            totalResidues /= 2; // When using a diploid genome we don't want to count both chromosome copies separately.
-          } catch (final FileNotFoundException e) {
-            throw new NoTalkbackSlimException(ErrorType.SDF_INDEX_NOT_VALID, twinInput.toString());
-          }
-        } else {
-          twinReader = null;
-        }
-        checkReadersForFragments(reader, twinReader);
-        try {
-          if (reader.type() != SequenceType.DNA || twinReader != null && twinReader.type() != SequenceType.DNA) {
-            throw new NoTalkbackSlimException("Input SDFs must be DNA");
-          }
-          if (mFlags.isSet(SEED)) {
-            mRandom = new PortableRandom((Long) mFlags.getValue(SEED));
-          } else {
-            mRandom = new PortableRandom();
-          }
-          final long seed = mRandom.getSeed();
-          mPriors = createPriors();
-          if (mPriors == null) {
-            mFlags.error(mFlags.getInvalidFlagMsg());
-            cleanDirectory();
-            return 1;
-          }
-          // Construct appropriate GenomeFragmenter / Machine / ReadWriter and validate
-          final SequencesReader[] readers;
-          final SequenceDistribution[] distributions;
-          if (twinReader == null) {
-            readers = new SequencesReader[] {reader};
-            distributions = new SequenceDistribution[] {SequenceDistribution.createDistribution(reader, selectionProb)};
-          } else {
-            readers = new SequencesReader[] {reader, twinReader};
-            distributions = new SequenceDistribution[] {SequenceDistribution.createDistribution(reader, selectionProb), SequenceDistribution.createDistribution(twinReader, selectionProb)};
-          }
-
-          final GenomeFragmenter gf = getGenomeFragmenter(readers, distributions);
-
-          final Machine m;
-
-          final Double pcrDupRate = (Double) mFlags.getValue(PCR_DUP_RATE);
-          final Double chimeraRate = (Double) mFlags.getValue(CHIMERA_RATE);
-          if (pcrDupRate > 0.0 || chimeraRate > 0.0) {
-            m = new ErrorMachine(seed, createMachine(), pcrDupRate, chimeraRate);
-          } else {
-            m = createMachine();
-          }
-
-          Diagnostic.userLog("ReadSimParams" + LS + " input=" + input + LS + (twinInput == null ? "" : " diploid=" + twinInput + LS) + " machine=" + m.machineType() + LS + " output=" + outputDirectory() + LS + (mFlags.isSet(READS) ? " num-reads=" + mFlags.getValue(READS) + LS : "") + (mFlags.isSet(COVERAGE) ? " coverage=" + mFlags.getValue(COVERAGE) + LS : "") + (selectionProb == null ? "" : " distribution=" + Arrays.toString(selectionProb) + LS) + " allow-unknowns=" + mFlags.isSet(ALLOW_UNKNOWNS) + LS + " max-fragment=" + mFlags.getValue(MAX_FRAGMENT) + LS + " min-fragment=" + mFlags.getValue(MIN_FRAGMENT) + LS + " seed=" + seed + LS + LS + mPriors.toString() + LS);
-          try (ReadWriter rw = getNFilter(createReadWriter(m))) {
-            m.setReadWriter(rw);
-            gf.setMachine(m);
-            // Run generation
-            if (mFlags.isSet(READS)) {
-              fragmentByCount(gf, rw);
-            } else {
-              fragmentByCoverage(totalResidues, gf, m);
-            }
-            final double effectiveCoverage = (double) m.residues() / totalResidues;
-            Diagnostic.info("Generated " + rw.readsWritten() + " reads, effective coverage " + Utils.realFormat(effectiveCoverage, 2));
-            if (selectionProb != null) {
-              FileUtils.stringToFile(gf.fractionStatistics(), new File(outputDirectory(), "fractions.tsv"));
-            }
-            //writeTemplateMappingFile(getTemplateMapping(reader, twinReader));
-            Diagnostic.info(m.formatActionsHistogram());
-          }
-        } finally {
-          if (twinReader != null) {
-            twinReader.close();
-          }
-        }
-      } catch (final FileNotFoundException e) {
-        throw new NoTalkbackSlimException("Input SDF files are invalid.");
-      } finally {
-        reader.close();
+      checkReadersForFragments(reader);
+      if (reader.type() != SequenceType.DNA) {
+        throw new NoTalkbackSlimException("Input SDF must be DNA");
       }
-    } catch (final SecurityException e) {
-      throw new IOException("Unable to create directory");
+      if (mFlags.isSet(SEED)) {
+        mRandom = new PortableRandom((Long) mFlags.getValue(SEED));
+      } else {
+        mRandom = new PortableRandom();
+      }
+      final long seed = mRandom.getSeed();
+      mPriors = createPriors();
+      if (mPriors == null) {
+        mFlags.error(mFlags.getInvalidFlagMsg());
+        cleanDirectory();
+        return 1;
+      }
+      // Construct appropriate GenomeFragmenter / Machine / ReadWriter and validate
+      final GenomeFragmenter gf = getGenomeFragmenter(reader, SequenceDistribution.createDistribution(reader, selectionProb));
+
+      final Machine m;
+
+      final Double pcrDupRate = (Double) mFlags.getValue(PCR_DUP_RATE);
+      final Double chimeraRate = (Double) mFlags.getValue(CHIMERA_RATE);
+      if (pcrDupRate > 0.0 || chimeraRate > 0.0) {
+        m = new ErrorMachine(seed, createMachine(), pcrDupRate, chimeraRate);
+      } else {
+        m = createMachine();
+      }
+
+      Diagnostic.userLog("ReadSimParams" + LS + " input=" + input + LS + " machine=" + m.prereadType() + LS + " output=" + outputDirectory() + LS + (mFlags.isSet(READS) ? " num-reads=" + mFlags.getValue(READS) + LS : "") + (mFlags.isSet(COVERAGE) ? " coverage=" + mFlags.getValue(COVERAGE) + LS : "") + (selectionProb == null ? "" : " distribution=" + Arrays.toString(selectionProb) + LS) + " allow-unknowns=" + mFlags.isSet(ALLOW_UNKNOWNS) + LS + " max-fragment=" + mFlags.getValue(MAX_FRAGMENT) + LS + " min-fragment=" + mFlags.getValue(MIN_FRAGMENT) + LS + " seed=" + seed + LS + LS + mPriors.toString() + LS);
+      try (ReadWriter rw = getNFilter(createReadWriter(m))) {
+        m.setReadWriter(rw);
+        gf.setMachine(m);
+        // Run generation
+        if (mFlags.isSet(READS)) {
+          fragmentByCount(gf, rw);
+        } else {
+          fragmentByCoverage(reader.totalLength(), gf, m);
+        }
+        final double effectiveCoverage = (double) m.residues() / reader.totalLength();
+        Diagnostic.info("Generated " + rw.readsWritten() + " reads, effective coverage " + Utils.realFormat(effectiveCoverage, 2));
+        if (selectionProb != null) {
+          FileUtils.stringToFile(gf.fractionStatistics(), new File(outputDirectory(), "fractions.tsv"));
+        }
+        //writeTemplateMappingFile(getTemplateMapping(reader, twinReader));
+        Diagnostic.info(m.formatActionsHistogram());
+      }
     } catch (final FileNotFoundException e) {
       throw new NoTalkbackSlimException(ErrorType.SDF_INDEX_NOT_VALID, input.toString());
     }
     return 0;
   }
 
-  private GenomeFragmenter getGenomeFragmenter(SequencesReader[] readers, SequenceDistribution[] distributions) throws IOException {
+  private GenomeFragmenter getGenomeFragmenter(SequencesReader reader, SequenceDistribution distribution) throws IOException {
+    final SequencesReader[] readers = {
+      reader
+    };
+    final SequenceDistribution[] distributions = {
+      distribution
+    };
     final GenomeFragmenter gf;
     if (mFlags.isSet(BED_FILE)) {
       final ReferenceRegions referenceRegions = BedUtils.regions((File) mFlags.getValue(BED_FILE));

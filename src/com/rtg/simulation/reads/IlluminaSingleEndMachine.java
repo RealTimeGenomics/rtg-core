@@ -15,6 +15,7 @@ package com.rtg.simulation.reads;
 import java.io.IOException;
 
 import com.rtg.util.InvalidParamsException;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.AbstractMachineErrorParams;
 
 /**
@@ -67,4 +68,8 @@ public class IlluminaSingleEndMachine extends AbstractIlluminaMachine {
     return false;
   }
 
+  @Override
+  public MachineType machineType() {
+    return MachineType.ILLUMINA_SE;
+  }
 }

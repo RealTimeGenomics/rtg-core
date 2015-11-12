@@ -68,7 +68,6 @@ public class ReadSimCliValidatorTest extends AbstractCliTest {
 
         TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1", "-r", "11", "--machine", "illumina_se", "--max-fragment-size", "10", "--min-fragment-size", "10"), "Read length is too large for selected fragment size");
 
-        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1", "-r", "11", "--machine", "illumina_se", "-T", genomeDir.getPath()), "The --Xdiploid-input SDF cannot be the same as that given with --input");
       } finally {
         assertTrue(FileHelper.deleteAll(genomeDir));
       }

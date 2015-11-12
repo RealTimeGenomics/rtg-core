@@ -139,21 +139,6 @@ class ReadSimCliValidator implements Validator {
       cflags.setParseMessage("The specified file, \"" + f.getPath() + "\", is not an SDF.");
       return false;
     }
-    if (cflags.isSet(ReadSimCli.TWIN_INPUT)) {
-      final File tf = (File) cflags.getValue(ReadSimCli.TWIN_INPUT);
-      if (!tf.exists()) {
-        cflags.setParseMessage("The specified SDF, \"" + tf.getPath() + "\", does not exist.");
-        return false;
-      }
-      if (!tf.isDirectory()) {
-        cflags.setParseMessage("The specified file, \"" + tf.getPath() + "\", is not an SDF.");
-        return false;
-      }
-      if (tf.equals(f)) {
-        cflags.setParseMessage("The --" + ReadSimCli.TWIN_INPUT + " SDF cannot be the same as that given with --" + ReadSimCli.INPUT);
-        return false;
-      }
-    }
     if ((Integer) cflags.getValue(ReadSimCli.MIN_FRAGMENT) > (Integer) cflags.getValue(ReadSimCli.MAX_FRAGMENT)) {
       cflags.setParseMessage("--" + ReadSimCli.MAX_FRAGMENT + " should not be smaller than --" + ReadSimCli.MIN_FRAGMENT);
       return false;

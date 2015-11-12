@@ -43,7 +43,7 @@ public class ReadSimCliTest extends AbstractCliTest {
       "454 SE/PE",
       "Utility",
       "--machine=STRING", "select the sequencing technology to model (Must be one of [illumina_se, illumina_pe,",
-      "complete_genomics, 454_pe, 454_se, iontorrent])",
+      "complete_genomics, complete_genomics_2, 454_pe, 454_se, iontorrent])",
       "--output=SDF", "name for reads output SDF",
       "--input=SDF", "SDF containing input genome",
       "--coverage=FLOAT", "coverage, must be positive",
@@ -61,12 +61,11 @@ public class ReadSimCliTest extends AbstractCliTest {
       "--454-min-total-size=INT", "minimum 454 read length (in paired end case the", "sum of the left and the right read lengths)",
       "--ion-max-total-size=INT", "maximum IonTorrent read length",
       "--ion-min-total-size=INT", "minimum IonTorrent read length",
-      "--cg-read-length=INT", "length of Complete Genomics",
       "",
       "--n-rate", "rate that the machine will generate new unknowns in the read"
     );
     checkExtendedHelp(
-      "--Xmachine-errors=STRING", "selects the sequencer machine error settings. One of [default, illumina, ls454_se, ls454_pe, complete, iontorrent]"
+      "--Xmachine-errors=STRING", "selects the sequencer machine error settings. One of [default, illumina, ls454_se, ls454_pe, complete, complete_2, iontorrent]"
         );
   }
 

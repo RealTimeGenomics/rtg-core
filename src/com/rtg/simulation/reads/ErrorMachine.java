@@ -16,6 +16,7 @@ import java.io.IOException;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.SdfId;
 import com.rtg.util.PortableRandom;
+import com.rtg.util.machine.MachineType;
 
 /**
  * A read simulation machine which introduces additional errors
@@ -112,7 +113,12 @@ public class ErrorMachine implements Machine {
   }
 
   @Override
-  public PrereadType machineType() {
+  public PrereadType prereadType() {
+    return mParentMachine.prereadType();
+  }
+
+  @Override
+  public MachineType machineType() {
     return mParentMachine.machineType();
   }
 
