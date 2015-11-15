@@ -24,6 +24,7 @@ import com.rtg.relation.ChildFamilyLookup;
 import com.rtg.relation.Family;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.relation.MultiFamilyOrdering;
+import com.rtg.relation.PedigreeException;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -31,7 +32,6 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.GenomeConnectivity;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantParams;
-import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.bayes.complex.DenovoChecker;
 import com.rtg.variant.bayes.complex.MendelianDenovoChecker;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
@@ -48,6 +48,7 @@ import com.rtg.variant.bayes.snp.ModelSnpFactory;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.vcf.ChildPhasingVcfAnnotator;
+import com.rtg.vcf.VariantStatistics;
 import com.rtg.vcf.VcfAnnotator;
 
 /**
@@ -148,10 +149,12 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
           }
           Diagnostic.userLog("Identified " + families.size() + " usable families");
           Diagnostic.userLog("Families: " + StringUtils.LS + families);
-          final List<Family> orderedFamilies = MultiFamilyOrdering.orderFamiliesAndSetMates(families);
-//          if (!MultiFamilyOrdering.isMonogamous(orderedFamilies)) {
-//            throw new NoTalkbackSlimException("Pedigree contains non-monogamous families. This is currently unsupported");
-//          }
+          final List<Family> orderedFamilies;
+          try {
+            orderedFamilies = MultiFamilyOrdering.orderFamiliesAndSetMates(families);
+          } catch (PedigreeException e) {
+            throw new NoTalkbackSlimException("The supplied pedigree can not be used: " + e.getMessage());
+          }
           famArray = orderedFamilies.toArray(new Family[orderedFamilies.size()]);
           familyCaller = newParams.usePropagatingPriors() ? new FamilyCallerFB(newParams, famArray) : new FamilyCaller(newParams, famArray);
           annot.add(new ChildPhasingVcfAnnotator(orderedFamilies));
