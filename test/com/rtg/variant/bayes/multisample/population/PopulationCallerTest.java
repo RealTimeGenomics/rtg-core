@@ -29,6 +29,7 @@ import com.rtg.mode.DNA;
 import com.rtg.relation.Family;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.relation.MultiFamilyOrdering;
+import com.rtg.relation.PedigreeException;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.GenomePriorParamsBuilder;
@@ -573,7 +574,7 @@ public class PopulationCallerTest extends TestCase {
                                             + "Lyon_10\tLID57244\tLID57243\tLID57250\t1\t2" + LS
                                             + "Lyon_10\tLID57248\tLID57241\tLID57246\t1\t1" + LS;
 
-  public void testDisagreeingPPPFallbackEMRealWorld() throws IOException {
+  public void testDisagreeingPPPFallbackEMRealWorld() throws IOException, PedigreeException {
     // An attempt to replicate the initial failure. See testDisagreeingPPPFallbackEM above for explanation
     final Map<String, double[]> pedigreeToModel = new HashMap<>();
     // Order of entries "A:A", "C:C", "G:G", "T:T", "A:C", "C:G", "G:T", "A:G", "C:T", "A:T"
