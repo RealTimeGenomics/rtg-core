@@ -40,7 +40,7 @@ public class CGMaska15b1alt extends AbstractCGMask {
   /**
    * A factory for the outer class.
    */
-  static class CG15HashFunctionFactory implements HashFunctionFactory {
+  static class CG15HashFunctionFactory implements CGHashFunctionFactory {
     @Override
     public NgsHashFunction create(final ReadCall readCall, final TemplateCall templateCall) {
       return new CGMaska15b1alt(readCall, templateCall);

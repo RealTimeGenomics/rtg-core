@@ -31,6 +31,8 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.bed.BedUtils;
 import com.rtg.calibrate.RecalibrateCli;
 import com.rtg.index.hash.ngs.FactoryUtil;
+import com.rtg.index.hash.ngs.instances.AbstractCG2Mask;
+import com.rtg.index.hash.ngs.instances.AbstractCGMask;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.DefaultReaderParams;
 import com.rtg.launcher.ISequenceParams;
@@ -232,7 +234,8 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     final NgsOutputParams outputParams = makeOutputParams(filterParams);
 
 
-    final NgsMaskParams maskParams = new NgsMaskParamsExplicit((String) mFlags.getValue(MASK_FLAG));
+    final String maskName = (String) mFlags.getValue(MASK_FLAG);
+    final NgsMaskParams maskParams = new NgsMaskParamsExplicit(maskName);
     final NgsParamsBuilder ngsParamBuilder = NgsParams.builder();
     ngsParamBuilder.name(mFlags.getName());
     ngsParamBuilder.compressHashes((Boolean) mFlags.getValue(COMPRESS_HASHES_FLAG));
@@ -321,7 +324,11 @@ public class CgMapCli extends ParamsCli<NgsParams> {
         && length != CgUtils.CG2_RAW_READ_LENGTH) {
         throw new InvalidParamsException("Complete Genomics input must have read length of " + CgUtils.CG_RAW_READ_LENGTH + " or " + CgUtils.CG2_RAW_READ_LENGTH + " bp");
       }
-
+      if (length == CgUtils.CG_RAW_READ_LENGTH && !(maskParams.maskFactory(-1) instanceof AbstractCGMask.CGHashFunctionFactory)) {
+        throw new InvalidParamsException("Mask '" + maskName + "' is not valid for CG version 1 reads, please select another via --mask");
+      } else if (length == CgUtils.CG2_RAW_READ_LENGTH && !(maskParams.maskFactory(-1) instanceof AbstractCG2Mask.CG2HashFunctionFactory)) {
+        throw new InvalidParamsException("Mask '" + maskName + "' is not valid for CG version 2 reads, please supply another via --mask");
+      }
       final SAMReadGroupRecord samrg = params.outputParams().readGroup();
       if (samrg != null) {
         final String platform = samrg.getPlatform();

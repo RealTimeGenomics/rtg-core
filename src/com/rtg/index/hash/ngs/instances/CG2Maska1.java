@@ -36,7 +36,7 @@ public class CG2Maska1 extends AbstractCG2Mask {
   /**
    * A factory for the outer class.
    */
-  public static final HashFunctionFactory FACTORY = new HashFunctionFactory() {
+  public static final HashFunctionFactory FACTORY = new CG2HashFunctionFactory() {
     @Override
     public NgsHashFunction create(final ReadCall readCall, final TemplateCall templateCall) {
       return new CG2Maska1(readCall, templateCall);

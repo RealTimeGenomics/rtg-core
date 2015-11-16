@@ -11,6 +11,7 @@
  */
 package com.rtg.index.hash.ngs.instances;
 
+import com.rtg.index.hash.ngs.HashFunctionFactory;
 import com.rtg.index.hash.ngs.ImplementHashFunction;
 import com.rtg.index.hash.ngs.ReadCall;
 import com.rtg.index.hash.ngs.TemplateCall;
@@ -18,6 +19,11 @@ import com.rtg.index.hash.ngs.TemplateCall;
 /**
  */
 public abstract class AbstractCG2Mask extends ImplementHashFunction {
+
+  /**
+   * An indicator for factories compatible with CG version 2 reads.
+   */
+  public interface CG2HashFunctionFactory extends HashFunctionFactory { }
 
   /**
    * @param readLength number of nucleotides in a complete read.
