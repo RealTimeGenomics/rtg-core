@@ -14,7 +14,6 @@ package com.rtg.index.hash.ngs;
 import java.io.IOException;
 
 import com.rtg.index.hash.ngs.instances.AbstractSplitTest;
-import com.rtg.index.hash.ngs.instances.SplitL36w18s2e1Test;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.IntegralAbstract;
@@ -26,12 +25,9 @@ public class ImplementHashFunctionTest extends TestCase {
 
   public static Test suite() {
     final TestSuite suite = new TestSuite();
-
-    suite.addTestSuite(SplitL36w18s2e1Test.class);
     suite.addTestSuite(ImplementHashFunctionTest.class);
     suite.addTestSuite(ImplementHashFunctionCloneTest.class);
     suite.addTestSuite(TemplateCallImplementationTest.class);
-
     return suite;
   }
 

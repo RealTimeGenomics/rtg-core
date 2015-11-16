@@ -60,7 +60,7 @@ public class NgsTaskTest extends NgsPairedEndTest {
         final int numberThreads = 1;
         final NgsTaskFunctionalTest ntt = new NgsTaskFunctionalTest();
         ntt.mDir = mDir;
-        try (NgsParams params = ntt.getParams(ba, new NgsMaskParamsExplicit("SplitL4w4s0e0"), new NgsTestUtils.ParamsParams(SEQ_DNA_Y2, SEQ_DNA_Y1, 10, true, false), ListenerType.NULL, OutputFilter.NONE, 1, numberThreads)) {
+        try (NgsParams params = ntt.getParams(ba, new NgsMaskParamsGeneral(4, 0, 0, 1), new NgsTestUtils.ParamsParams(SEQ_DNA_Y2, SEQ_DNA_Y1, 10, true, false), ListenerType.NULL, OutputFilter.NONE, 1, numberThreads)) {
           final int threadBits = MathUtils.ceilPowerOf2Bits(numberThreads - 1);
           assertEquals(8, NgsTask.indexThenSearchShortReads(params, new NgsHashLoopImpl(params.buildFirstParams().numberSequences(), params.outputParams().progress(), 0x3FFFFL, ((0x1FFFFL + 1L) << threadBits) - 1L), null, makeIndexParams(params)));
         }
@@ -214,7 +214,7 @@ public class NgsTaskTest extends NgsPairedEndTest {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final NgsTaskFunctionalTest ntt = new NgsTaskFunctionalTest();
         ntt.mDir = mDir;
-        final NgsParams params = ntt.getParams(out, new NgsMaskParamsExplicit("SplitL4w4s0e0"), new NgsTestUtils.ParamsParams(SEQ_DNA_Y2, SEQ_DNA_Y1, 10, true, false), ListenerType.NULL, OutputFilter.NONE, 1, numberThreads);
+        final NgsParams params = ntt.getParams(out, new NgsMaskParamsGeneral(4, 0, 0, 1), new NgsTestUtils.ParamsParams(SEQ_DNA_Y2, SEQ_DNA_Y1, 10, true, false), ListenerType.NULL, OutputFilter.NONE, 1, numberThreads);
         try {
           final NgsHashLoopDummyImpl hashdummy = new NgsHashLoopDummyImpl();
           try {
@@ -278,19 +278,19 @@ public class NgsTaskTest extends NgsPairedEndTest {
     final OutputStream os = new ByteArrayOutputStream();
     TestPairedEndParams params = new NgsTestUtils.TestPairedEndParams(">test\nACGT\n>test2\nGCTA\n", ">test\nAGCT\n", ">t\na", "", 1, 1, 0L);
     try {
-      new NgsTask(getParamsPairedEnd(os, new NgsMaskParamsExplicit("SplitL4w4s0e0"), params, false), null, new UsageMetric());
+      new NgsTask(getParamsPairedEnd(os, new NgsMaskParamsGeneral(4, 0, 0, 1), params, false), null, new UsageMetric());
       fail();
     } catch (final RuntimeException re) {
       assertEquals("Number of reads in first and second read sets must be equal.", re.getMessage());
     }
     params = new NgsTestUtils.TestPairedEndParams(">test\nACGTT\n", ">test\nAGCT\n", ">t\na", "", 1, 1, 0L);
     try {
-      new NgsTask(getParamsPairedEnd(os, new NgsMaskParamsExplicit("SplitL4w4s0e0"), params, false), null, new UsageMetric());
+      new NgsTask(getParamsPairedEnd(os, new NgsMaskParamsGeneral(4, 0, 0, 1), params, false), null, new UsageMetric());
       fail();
     } catch (final RuntimeException re) {
       assertEquals("Length of reads in first and second read sets must be equal.", re.getMessage());
     }
-    final NgsParams params2 = getParamsPairedEnd(os, new NgsMaskParamsExplicit("SplitL4w4s0e0"), new NgsTestUtils.TestPairedEndParams(">test\nACGT\n", ">test\nAGCT\n", ">t\na", "", 1, 1, 0L), false);
+    final NgsParams params2 = getParamsPairedEnd(os, new NgsMaskParamsGeneral(4, 0, 0, 1), new NgsTestUtils.TestPairedEndParams(">test\nACGT\n", ">test\nAGCT\n", ">t\na", "", 1, 1, 0L), false);
     final NgsTask ngst = new NgsTask(params2, os, new UsageMetric());
     assertEquals(params2, ngst.parameters());
     assertNotNull(ngst.hashCode());

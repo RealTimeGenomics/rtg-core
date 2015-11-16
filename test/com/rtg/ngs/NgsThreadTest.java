@@ -80,7 +80,7 @@ public class NgsThreadTest extends NgsTaskFunctionalTest {
       Diagnostic.setLogStream(pr);
       try {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final NgsParams params = getParams(out, new NgsMaskParamsExplicit("SplitL4w4s0e0"), SEQ_DNA_Y2, SEQ_DNA_Y1, 10/*errorlimit*/, true/*progress*/, ListenerType.NULL, false/*zip*/, OutputFilter.NONE, 1/*topN*/);
+        final NgsParams params = getParams(out, new NgsMaskParamsGeneral(4, 0, 0, 1), SEQ_DNA_Y2, SEQ_DNA_Y1, 10/*errorlimit*/, true/*progress*/, ListenerType.NULL, false/*zip*/, OutputFilter.NONE, 1/*topN*/);
         try {
           execNgs(params);
         } finally {

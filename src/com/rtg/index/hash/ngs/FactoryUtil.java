@@ -30,21 +30,6 @@ public final class FactoryUtil {
   private static final Map<String, HashFunctionFactory> MASK_FACTORIES = new HashMap<>();
 
   static {
-    putFactory("MaskL30w12s3e1", com.rtg.index.hash.ngs.instances.MaskL30w12s3e1.FACTORY);
-    putFactory("MaskL35w15s2e1", com.rtg.index.hash.ngs.instances.MaskL35w15s2e1.FACTORY);
-    putFactory("MaskL36w18s3e1", com.rtg.index.hash.ngs.instances.MaskL36w18s3e1.FACTORY);
-    putFactory("MaskL51w12s3e3", com.rtg.index.hash.ngs.instances.MaskL51w12s3e3.FACTORY);
-    putFactory("MaskL51w15s3e2", com.rtg.index.hash.ngs.instances.MaskL51w15s3e2.FACTORY);
-    putFactory("MaskL51w17s2e2", com.rtg.index.hash.ngs.instances.MaskL51w17s2e2.FACTORY);
-    putFactory("MaskL51w18s2e1", com.rtg.index.hash.ngs.instances.MaskL51w18s2e1.FACTORY);
-    putFactory("SplitL36w12s2e2", com.rtg.index.hash.ngs.instances.SplitL36w12s2e2.FACTORY);
-    putFactory("SplitL36w12s3e2", com.rtg.index.hash.ngs.instances.SplitL36w12s3e2.FACTORY);
-    putFactory("SplitL36w12s3e3", com.rtg.index.hash.ngs.instances.SplitL36w12s3e3.FACTORY);
-    putFactory("SplitL36w18s1e1", com.rtg.index.hash.ngs.instances.SplitL36w18s1e1.FACTORY);
-    putFactory("SplitL36w18s2e1", com.rtg.index.hash.ngs.instances.SplitL36w18s2e1.FACTORY);
-    putFactory("SplitL4w2s1e1", com.rtg.index.hash.ngs.instances.SplitL4w2s1e1.FACTORY);
-    putFactory("SplitL4w2s1e1b", com.rtg.index.hash.ngs.instances.SplitL4w2s1e1b.FACTORY);
-    putFactory("SplitL4w4s0e0", com.rtg.index.hash.ngs.instances.SplitL4w4s0e0.FACTORY);
     putFactory("CGMaska0", com.rtg.index.hash.ngs.instances.CGMaska0.FACTORY);
     putFactory("CGMaska1b1", com.rtg.index.hash.ngs.instances.CGMaska1b1.FACTORY);
     putFactory("CGMaska15b1", com.rtg.index.hash.ngs.instances.CGMaska15b1.FACTORY);

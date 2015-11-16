@@ -94,7 +94,7 @@ public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutpu
     final File tempDir = FileUtils.createTempDir("dummyalignmentwriterthread", "unmatedlocal");
     try {
       final int numThreads = 4;
-      NgsParams params = getDefaultBuilder(tempDir, false, false, TEMPLATE2).numberThreads(numThreads).create();
+      NgsParams params = getDefaultBuilder(tempDir, false, TEMPLATE2).numberThreads(numThreads).create();
       final SamSingleEndOutputProcessor op = new SamSingleEndOutputProcessor(params, null, true);
       final SingleEndTempFileWriter writer = new SingleEndTempFileWriter(params, op.mUnmappedTracker, SharedResources.generateSharedResources(params));
       final MapQScoringReadBlocker blockerLeft = new MapQScoringReadBlocker((int) params.buildFirstParams().reader().numberSequences(), 10);
@@ -112,7 +112,7 @@ public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutpu
         "start id= -1",
         "clip start position= -1");
 
-      params = getDefaultBuilder(tempDir, false, true, TEMPLATE2).numberThreads(numThreads).create();
+      params = getDefaultBuilder(tempDir, false, TEMPLATE2).numberThreads(numThreads).create();
       MatchResult results3 = new MatchResult(1);
       results3.addMatchResult(0, 5, 0, false);
       //assertEquals("templateId=0 position=0 readId=0 reverse=" + Boolean.FALSE, results3[0].toString());
@@ -220,7 +220,7 @@ public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutpu
       try {
         final int numThreads = 4;
         final SimpleThreadPool stp = new SimpleThreadPool(numThreads, "DummyUnmated", true);
-        final NgsParams params = getDefaultBuilder(tempDir, false, false, TEMPLATE).numberThreads(numThreads).create();
+        final NgsParams params = getDefaultBuilder(tempDir, false, TEMPLATE).numberThreads(numThreads).create();
         final SequencesReader ref = params.searchParams().reader();
         final HashingRegion[] regions = HashingRegion.splitWorkload(ref, params.sex(), 0, ref.numberSequences(), params.numberThreads() * params.threadMultiplier(), HashingRegion.DEFAULT_MIN_CHUNK_SIZE, params.calculateThreadPadding());
         try (TopNPairedEndOutputProcessorSync sync = new TopNPairedEndOutputProcessorSync(params, null, true, true)) {
@@ -248,7 +248,7 @@ public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutpu
   static final String READ_LEFT = ">r" + StringUtils.LS + TEMP_LEFT + StringUtils.LS;
   static final String READ_RIGHT = ">r" + StringUtils.LS + TEMP_RIGHT + StringUtils.LS;
 
-  private NgsParamsBuilder getDefaultBuilder(final File tempDir, final boolean gzipOutputs, boolean paramsExplicit, String template) throws IOException {
+  private NgsParamsBuilder getDefaultBuilder(final File tempDir, final boolean gzipOutputs, String template) throws IOException {
     final File templateok = FileUtils.createTempDir("template", "ngs", mDir);
     final File leftok = FileUtils.createTempDir("left", "ngs", mDir);
     final File rightok = FileUtils.createTempDir("right", "ngs", mDir);
@@ -262,12 +262,7 @@ public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutpu
     .topN(10).errorLimit(5).zip(gzipOutputs).create();
 
     //
-    final NgsMaskParams maskParams;
-    if (paramsExplicit) {
-      maskParams = new NgsMaskParamsExplicit("SplitL4w4s0e0");
-    } else {
-      maskParams = new NgsMaskParamsGeneral(4, 1, 2, 2);
-    }
+    final NgsMaskParams maskParams = new NgsMaskParamsGeneral(4, 1, 2, 2);
     final NgsOutputParams outputParams = NgsOutputParams.builder()
     .progress(false).outputDir(hitsDir)
     .tempFilesDir(tempDir).filterParams(filterParams).create();

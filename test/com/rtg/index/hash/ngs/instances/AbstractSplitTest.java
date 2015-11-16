@@ -27,7 +27,6 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
-import com.rtg.util.integrity.IntegralAbstract;
 
 import junit.framework.TestCase;
 
@@ -123,7 +122,7 @@ public abstract class AbstractSplitTest extends TestCase {
   /**
    * Mock <code>TemplateCall</code> and accumulate results.
    */
-  public static class TemplateCallMock extends IntegralAbstract implements TemplateCall, Cloneable {
+  public static class TemplateCallMock implements TemplateCall, Cloneable {
     private final Appendable mOut;
     /**
      * @param out output
@@ -195,19 +194,12 @@ public abstract class AbstractSplitTest extends TestCase {
       return (TemplateCallMock) super.clone();
     }
     @Override
-    public boolean integrity() {
-      return true;
-    }
-    @Override
-    public void toString(final StringBuilder sb) {
-    }
-    @Override
     public void logStatistics() {
       // do nothing
     }
   }
 
-  static class TemplateCallCheck extends IntegralAbstract implements TemplateCall, Cloneable {
+  static class TemplateCallCheck implements TemplateCall, Cloneable {
     private final MultiMap<Pair<Long, Integer>, Integer> mMap;
 
     boolean mFound = false;
@@ -259,21 +251,14 @@ public abstract class AbstractSplitTest extends TestCase {
       }
     }
 
-  @Override
-  public void threadFinish() throws IOException {
-  }
+    @Override
+    public void threadFinish() throws IOException {
+    }
     /**
      */
     @Override
     public TemplateCallCheck clone() throws CloneNotSupportedException {
       return (TemplateCallCheck) super.clone();
-    }
-    @Override
-    public void toString(final StringBuilder sb) {
-    }
-    @Override
-    public boolean integrity() {
-      return true;
     }
     @Override
     public void logStatistics() {

@@ -131,11 +131,6 @@ public class NgsTaskFunctionalTest extends TestCase {
 
   private static final String SEQ_DNA_ODD_Q = "" + ">fooo" + LS + "acgt" + LS + ">fiii" + LS + "aaaa";
 
-  public void testOdd() throws Exception {
-    //Diagnostic.setLogStream(System.err);
-    check(new NgsMaskParamsExplicit("SplitL4w4s0e0"), SEQ_DNA_ODD_S, SEQ_DNA_ODD_Q, "fooo\tF\t0\t1\t0\t0" + LS + "fooo\tR\t0\t1\t0\t0" + LS + "fiii\tF\t1\t1\t0\t0" + LS, null);
-  }
-
   public void testOddg() throws Exception {
     check(new NgsMaskParamsGeneral(4, 0, 0, 1), SEQ_DNA_ODD_S, SEQ_DNA_ODD_Q, "fooo\tF\t0\t1\t0\t0" + LS + "fooo\tR\t0\t1\t0\t0" + LS + "fiii\tF\t1\t1\t0\t0" + LS, null);
   }
@@ -146,41 +141,20 @@ public class NgsTaskFunctionalTest extends TestCase {
 
   private static final String SEQ_DNA_A3 = ">u" + LS + "actg" + LS + ">v" + LS + "agtg" + LS;
 
-  public void testA1() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL4w4s0e0"), SEQ_DNA_A, SEQ_DNA_A, "x\tF\t0\t1\t0\t0" + LS, null);
-  }
-
   public void testA1g() throws Exception {
     check(new NgsMaskParamsGeneral(4, 0, 0, 1), SEQ_DNA_A, SEQ_DNA_A, "x\tF\t0\t1\t0\t0" + LS, null);
-  }
-
-  public void testA2() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL4w2s1e1"), SEQ_DNA_A, SEQ_DNA_A, "x\tF\t0\t1\t0\t0" + LS, null);
   }
 
   public void testA2g() throws Exception {
     check(new NgsMaskParamsGeneral(2, 1, 1, 1), SEQ_DNA_A, SEQ_DNA_A, "x\tF\t0\t1\t0\t0" + LS, null);
   }
 
-  public void testA3() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL4w2s1e1b"), SEQ_DNA_A2, SEQ_DNA_A, "x\tF\t0\t1\t0\t0" + LS + "x\tF\t1\t1\t1\t1" + LS, null);
-  }
-
   public void testA3g() throws Exception {
     check(new NgsMaskParamsGeneral(2, 1, 1, 1), SEQ_DNA_A2, SEQ_DNA_A, "x\tF\t0\t1\t0\t0" + LS + "x\tF\t1\t1\t1\t1" + LS, null);
   }
 
-  public void testA4() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL4w2s1e1b"), SEQ_DNA_A3, SEQ_DNA_A, "x\tF\t0\t1\t0\t0" + LS + "x\tF\t1\t1\t1\t1" + LS, null);
-  }
-
   public void testA4g() throws Exception {
     check(new NgsMaskParamsGeneral(2, 1, 1, 1), SEQ_DNA_A3, SEQ_DNA_A, "x\tF\t0\t1\t0\t0" + LS + "x\tF\t1\t1\t1\t1" + LS, null);
-  }
-
-  public void testA4errorLimit() throws Exception {
-    final NgsParams params = getParams(new ByteArrayOutputStream(), new NgsMaskParamsExplicit("SplitL4w2s1e1b"), new NgsTestUtils.ParamsParams(SEQ_DNA_A3, SEQ_DNA_A, 0, false, false), 1);
-    execNgs(params);
   }
 
   public void testA4errorLimitg() throws Exception {
@@ -203,10 +177,6 @@ public class NgsTaskFunctionalTest extends TestCase {
 
   private static final String SEQ_DNA_B2 = ">u" + LS + "acgt" + LS + ">v" + LS + "acgt" + LS;
 
-  public void testB1() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL4w4s0e0"), SEQ_DNA_B, SEQ_DNA_B, "x\tF\t0\t1\t0\t0" + LS + "x\tR\t0\t1\t0\t0" + LS, null);
-  }
-
   public void testB1g() throws Exception {
     check(new NgsMaskParamsGeneral(4, 0, 0, 1), SEQ_DNA_B, SEQ_DNA_B, "x\tF\t0\t1\t0\t0" + LS + "x\tR\t0\t1\t0\t0" + LS, null);
   }
@@ -221,16 +191,8 @@ public class NgsTaskFunctionalTest extends TestCase {
     check(new NgsMaskParamsGeneral(4, 0, 0, 1), READ_WITHN, TEMP2_FORWITHN, "temp1\tF\t0\t1\t0\t0" + LS, null);
   }
 
-  public void testB2() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL4w2s1e1"), SEQ_DNA_B, SEQ_DNA_B, "x\tF\t0\t1\t0\t0" + LS + "x\tR\t0\t1\t0\t0" + LS, null);
-  }
-
   public void testB2g() throws Exception {
     check(new NgsMaskParamsGeneral(2, 1, 1, 1), SEQ_DNA_B, SEQ_DNA_B, "x\tF\t0\t1\t0\t0" + LS + "x\tR\t0\t1\t0\t0" + LS, null);
-  }
-
-  public void testB3() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL4w2s1e1b"), SEQ_DNA_B2, SEQ_DNA_B, "x\tF\t0\t1\t0\t0" + LS + "x\tF\t1\t1\t0\t0" + LS + "x\tR\t0\t1\t0\t0" + LS + "x\tR\t1\t1\t0\t0" + LS, null);
   }
 
   public void testB3g() throws Exception {
@@ -307,10 +269,6 @@ public class NgsTaskFunctionalTest extends TestCase {
 
   private static final String SEQ_DNA_U2 = ">u" + LS + "actg" + LS;
 
-  public void testU() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL4w2s1e1"), SEQ_DNA_U2, SEQ_DNA_U1, "x\tF\t0\t1\t0\t0" + LS, null);
-  }
-
   public void testUg() throws Exception {
     check(new NgsMaskParamsGeneral(2, 1, 1, 1), SEQ_DNA_U2, SEQ_DNA_U1, "x\tF\t0\t1\t0\t0" + LS, null);
   }
@@ -320,10 +278,6 @@ public class NgsTaskFunctionalTest extends TestCase {
   private static final String SEQ_DNA_V2 = ">u" + LS + "actg" + LS;
 
   /** tzero != tstart case */
-  public void testV() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL4w4s0e0"), SEQ_DNA_V2, SEQ_DNA_V1, "x\tF\t0\t3\t0\t0" + LS, null);
-  }
-
   public void testVg() throws Exception {
     check(new NgsMaskParamsGeneral(4, 0, 0, 1), SEQ_DNA_V2, SEQ_DNA_V1, "x\tF\t0\t3\t0\t0" + LS, null);
   }
@@ -331,11 +285,6 @@ public class NgsTaskFunctionalTest extends TestCase {
   private static final String SEQ_DNA_W1 = ">x" + LS + "actgactg" + LS;
 
   private static final String SEQ_DNA_W2 = ">u" + LS + "actg" + LS;
-
-  /** tzero != 1 case */
-  public void testW() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL4w4s0e0"), SEQ_DNA_W2, SEQ_DNA_W1, "x\tF\t0\t1\t0\t0" + LS + "x\tF\t0\t5\t0\t0" + LS, null);
-  }
 
   /** tzero != 1 case */
   public void testWg() throws Exception {
@@ -362,7 +311,7 @@ public class NgsTaskFunctionalTest extends TestCase {
     };
     Diagnostic.addListener(l);
     try {
-      check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), SEQ_X1, SEQ_X2, "", null);
+      check(new NgsMaskParamsGeneral(18, 2, 1, 1), SEQ_X1, SEQ_X2, "", null);
     } finally {
       Diagnostic.removeListener(l);
     }
@@ -375,11 +324,6 @@ public class NgsTaskFunctionalTest extends TestCase {
   static final String BUG_TEMPLATE = ">bug" + LS + "actg" + LS;
 
   static final String EXPECTED_BUG = "bug\tF\t0\t1\t0\t0" + LS + "bug\tF\t1\t1\t0\t0" + LS + "bug\tF\t9\t1\t1\t1" + LS;
-
-  /** Picks up a bug seen in the wild. */
-  public void testBug() throws Exception {
-    checkBug(new NgsMaskParamsExplicit("SplitL4w2s1e1b"));
-  }
 
   /** Picks up a bug seen in the wild. */
   public void testBugg() throws Exception {
@@ -427,16 +371,8 @@ public class NgsTaskFunctionalTest extends TestCase {
 
   private static final String EXPECTED_BUG2_B = "u\tF\t0\t14\t0\t0" + LS;
 
-  public void testBug2a() throws Exception {
-    check(new NgsMaskParamsExplicit("MaskL51w12s3e3"), BUG2_BUILD, BUG2_BUILD, EXPECTED_BUG2_A, null);
-  }
-
   public void testBug2ag() throws Exception {
     check(new NgsMaskParamsGeneral(12, 3, 3, 1), BUG2_BUILD, BUG2_BUILD, EXPECTED_BUG2_A, null);
-  }
-
-  public void testBug2b() throws Exception {
-    check(new NgsMaskParamsExplicit("MaskL51w12s3e3"), BUG2_BUILD, BUG2_SEARCH, EXPECTED_BUG2_B, null);
   }
 
   public void testBug2bg() throws Exception {
@@ -448,13 +384,6 @@ public class NgsTaskFunctionalTest extends TestCase {
   protected static final String SEQ_DNA_Y2 = ">u" + LS + "actg" + LS + ">v" + LS + "actg" + LS;
 
   protected static final String EXPECTED_Y_Z = "x\tF\t0\t1\t0\t0" + LS + "x\tF\t1\t1\t0\t0" + LS;
-
-  /**
-   * Should be the same as Z
-   */
-  public void testY() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL4w4s0e0"), SEQ_DNA_Y2, SEQ_DNA_Y1, EXPECTED_Y_Z, null);
-  }
 
   /**
    * Should be the same as Z
@@ -477,48 +406,24 @@ public class NgsTaskFunctionalTest extends TestCase {
 
   private static final String TEMPLATE_36_5 = ">t36" + LS + "aaaaaaaaaaaaaaaaaagggggggggggggggggg" + LS;
 
-  public void test36a() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_36, TEMPLATE_36_0, "t36\tF\t0\t1\t18\t18" + LS, null);
-  }
-
   public void test36ag() throws Exception {
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_36, TEMPLATE_36_0, "t36\tF\t0\t1\t18\t18" + LS, null);
-  }
-
-  public void test36b() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_36, TEMPLATE_36_1, "" + "t36\tF\t0\t1\t18\t18" + LS + "t36\tR\t0\t1\t18\t18" + LS, null);
   }
 
   public void test36bg() throws Exception {
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_36, TEMPLATE_36_1, "" + "t36\tF\t0\t1\t18\t18" + LS + "t36\tR\t0\t1\t18\t18" + LS, null);
   }
 
-  public void test36c() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_36, TEMPLATE_36_2, "t36\tF\t0\t1\t18\t18" + LS, null);
-  }
-
   public void test36cg() throws Exception {
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_36, TEMPLATE_36_2, "t36\tF\t0\t1\t18\t18" + LS, null);
-  }
-
-  public void test36d() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_36, TEMPLATE_36_3, "t36\tF\t0\t1\t18\t18" + LS, null);
   }
 
   public void test36dg() throws Exception {
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_36, TEMPLATE_36_3, "t36\tF\t0\t1\t18\t18" + LS, null);
   }
 
-  public void test36e() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_36, TEMPLATE_36_4, "" + "t36\tF\t0\t1\t18\t17" + LS + "t36\tR\t0\t1\t18\t17" + LS, null);
-  }
-
   public void test36eg() throws Exception {
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_36, TEMPLATE_36_4, "" + "t36\tF\t0\t1\t18\t17" + LS + "t36\tR\t0\t1\t18\t17" + LS, null);
-  }
-
-  public void test36f() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_36, TEMPLATE_36_5, "" + "t36\tF\t0\t1\t18\t18" + LS + "t36\tR\t0\t1\t18\t18" + LS, null);
   }
 
   public void test36fg() throws Exception {
@@ -567,19 +472,9 @@ public class NgsTaskFunctionalTest extends TestCase {
   private static final String JUNK_2 =  "gggggcccc";
   private static final String PRE_TEMPLATE = ">t36" + LS + "ctgtac";
 
-  public void test36ba() throws Exception {
-    final String tem = PRE_TEMPLATE + JUNK_1 + JUNK_2 + BLOCK_3 + BLOCK_4 + LS;
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BLOCK, tem, "t36\tF\t0\t7\t13\t11" + LS, null);
-  }
-
   public void test36bag() throws Exception {
     final String tem = PRE_TEMPLATE + JUNK_1 + JUNK_2 + BLOCK_3 + BLOCK_4 + LS;
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_BLOCK, tem, "t36\tF\t0\t7\t13\t11" + LS, null);
-  }
-
-  public void test36bb() throws Exception {
-    final String tem = PRE_TEMPLATE + JUNK_1 + BLOCK_2 + BLOCK_3 + JUNK_2 + LS;
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BLOCK, tem, "t36\tF\t0\t7\t15\t13" + LS, null);
   }
 
   public void test36bbg() throws Exception {
@@ -587,19 +482,9 @@ public class NgsTaskFunctionalTest extends TestCase {
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_BLOCK, tem, "t36\tF\t0\t7\t15\t13" + LS, null);
   }
 
-  public void test36bc() throws Exception {
-    final String tem = PRE_TEMPLATE + BLOCK_1 + BLOCK_2 + JUNK_1 + JUNK_2 + LS;
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BLOCK, tem, "t36\tF\t0\t7\t15\t12" + LS, null);
-  }
-
   public void test36bcg() throws Exception {
     final String tem = PRE_TEMPLATE + BLOCK_1 + BLOCK_2 + JUNK_1 + JUNK_2 + LS;
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_BLOCK, tem, "t36\tF\t0\t7\t15\t12" + LS, null);
-  }
-
-  public void test36bd() throws Exception {
-    final String tem = PRE_TEMPLATE + JUNK_1 + BLOCK_2 + JUNK_2 + BLOCK_4 + LS;
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BLOCK, tem, "t36\tF\t0\t7\t14\t11" + LS, null);
   }
 
   public void test36bdg() throws Exception {
@@ -607,19 +492,9 @@ public class NgsTaskFunctionalTest extends TestCase {
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_BLOCK, tem, "t36\tF\t0\t7\t14\t11" + LS, null);
   }
 
-  public void test36be() throws Exception {
-    final String tem = PRE_TEMPLATE + BLOCK_1 + JUNK_2 + BLOCK_3 + JUNK_1 + LS;
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BLOCK, tem, "t36\tF\t0\t7\t12\t8" + LS, null);
-  }
-
   public void test36beg() throws Exception {
     final String tem = PRE_TEMPLATE + BLOCK_1 + JUNK_2 + BLOCK_3 + JUNK_1 + LS;
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_BLOCK, tem, "t36\tF\t0\t7\t12\t8" + LS, null);
-  }
-
-  public void test36bf() throws Exception {
-    final String tem = PRE_TEMPLATE + BLOCK_1 + JUNK_2 + JUNK_1 + BLOCK_4 + LS;
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BLOCK, tem, "t36\tF\t0\t7\t13\t10" + LS, null);
   }
 
   public void test36bfg() throws Exception {
@@ -661,10 +536,6 @@ public class NgsTaskFunctionalTest extends TestCase {
       + ">t1" + LS
       + "atcg" + LS;
 
-  public void testRC() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL4w4s0e0"), READ_RC, TEMP_RC, "t1\tR\t0\t1\t0\t0" + LS, 4L);
-  }
-
   public void testRCg() throws Exception {
     check(new NgsMaskParamsGeneral(4, 0, 0, 1), READ_RC, TEMP_RC, "t1\tR\t0\t1\t0\t0" + LS, null);
   }
@@ -674,17 +545,11 @@ public class NgsTaskFunctionalTest extends TestCase {
   private static final String TEMP_BUG = ">t1" + LS + "CGCTGGGGATGGGGCTGGCGACGCTGATTGGTCGTAAAA" + LS;
 
   public void testRCBug() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READ_BUG, TEMP_BUG, "t1\tR\t0\t2\t1\t1" + LS, 36L);
+    check(new NgsMaskParamsGeneral(18, 2, 1, 1), READ_BUG, TEMP_BUG, "t1\tR\t0\t2\t1\t1" + LS, 36L);
   }
 
   public void testRCBugg() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READ_BUG, TEMP_BUG, "t1\tR\t0\t2\t1\t1" + LS, null);
-  }
-
-  public void test36rc() throws Exception {
-    final String seq = BLOCK_1 + BLOCK_2 + BLOCK_3 + BLOCK_4;
-    final String tem = PRE_TEMPLATE + reverseComplement(seq) + POST + LS;
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BLOCK, tem, "t36\tR\t0\t7\t0\t0" + LS, (long) seq.length());
+    check(new NgsMaskParamsGeneral(18, 2, 1, 1), READ_BUG, TEMP_BUG, "t1\tR\t0\t2\t1\t1" + LS, null);
   }
 
   public void test36rcg() throws Exception {
@@ -692,21 +557,9 @@ public class NgsTaskFunctionalTest extends TestCase {
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_BLOCK, tem, "t36\tR\t0\t7\t0\t0" + LS, null);
   }
 
-  public void test36rcs() throws Exception {
-    final String tem = PRE_TEMPLATE + reverseComplement(BLOCS_1 + BLOCK_2 + BLOCK_3 + BLOCK_4) + POST + LS;
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BLOCK, tem, "t36\tR\t0\t7\t1\t1" + LS, null);
-  }
-
   public void test36rcsg() throws Exception {
     final String tem = PRE_TEMPLATE + reverseComplement(BLOCS_1 + BLOCK_2 + BLOCK_3 + BLOCK_4) + POST + LS;
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_BLOCK, tem, "t36\tR\t0\t7\t1\t1" + LS, null);
-  }
-
-  public void test36rca() throws Exception {
-    final String seq = JUNK_1 + JUNK_2 + BLOCK_3 + BLOCK_4;
-    final String tem = PRE_TEMPLATE + reverseComplement(seq) + POST + LS;
-    //TODO check this more carefully
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BLOCK, tem, "t36\tR\t0\t7\t13\t11" + LS, (long) seq.length());
   }
 
   public void test36rcag() throws Exception {
@@ -714,20 +567,9 @@ public class NgsTaskFunctionalTest extends TestCase {
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_BLOCK, tem, "t36\tR\t0\t7\t13\t11" + LS, null);
   }
 
-  public void test36rcb() throws Exception {
-    final String tem = PRE_TEMPLATE + reverseComplement(JUNK_1 + BLOCK_2 + BLOCK_3 + JUNK_2) + POST + LS;
-    //TODO check this more carefully
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BLOCK, tem, "t36\tR\t0\t7\t15\t13" + LS, null);
-  }
-
   public void test36rcbg() throws Exception {
     final String tem = PRE_TEMPLATE + reverseComplement(JUNK_1 + BLOCK_2 + BLOCK_3 + JUNK_2) + POST + LS;
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_BLOCK, tem, "t36\tR\t0\t7\t15\t13" + LS, null);
-  }
-
-  public void test36rcc() throws Exception {
-    final String tem = PRE_TEMPLATE + reverseComplement(BLOCK_1 + BLOCK_2 + JUNK_1 + JUNK_2) + POST + LS;
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BLOCK, tem, "t36\tR\t0\t7\t15\t12" + LS, null);
   }
 
   public void test36rccg() throws Exception {
@@ -735,30 +577,14 @@ public class NgsTaskFunctionalTest extends TestCase {
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_BLOCK, tem, "t36\tR\t0\t7\t15\t12" + LS, null);
   }
 
-  public void test36rcd() throws Exception {
-    final String tem = PRE_TEMPLATE + reverseComplement(JUNK_1 + BLOCK_2 + JUNK_2 + BLOCK_4) + POST + LS;
-    //TODO check this more carefully
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BLOCK, tem, "t36\tR\t0\t7\t14\t11" + LS, 36L);
-  }
-
   public void test36rcdg() throws Exception {
     final String tem = PRE_TEMPLATE + reverseComplement(JUNK_1 + BLOCK_2 + JUNK_2 + BLOCK_4) + POST + LS;
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_BLOCK, tem, "t36\tR\t0\t7\t14\t11" + LS, null);
   }
 
-  public void test36rce() throws Exception {
-    final String tem = PRE_TEMPLATE + reverseComplement(BLOCK_1 + JUNK_2 + BLOCK_3 + JUNK_1) + POST + LS;
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BLOCK, tem, "t36\tR\t0\t7\t12\t8" + LS, null);
-  }
-
   public void test36rceg() throws Exception {
     final String tem = PRE_TEMPLATE + reverseComplement(BLOCK_1 + JUNK_2 + BLOCK_3 + JUNK_1) + POST + LS;
     check(new NgsMaskParamsGeneral(18, 2, 1, 1), READS_BLOCK, tem, "t36\tR\t0\t7\t12\t8" + LS, null);
-  }
-
-  public void test36rcf() throws Exception {
-    final String tem = PRE_TEMPLATE + reverseComplement(BLOCK_1 + JUNK_2 + JUNK_1 + BLOCK_4) + POST + LS;
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BLOCK, tem, "t36\tR\t0\t7\t13\t10" + LS, null);
   }
 
   public void test36rcfg() throws Exception {
@@ -769,11 +595,6 @@ public class NgsTaskFunctionalTest extends TestCase {
   static final String READS_BUG = ">read53:gi|48994873|gb|U00096.2|:4415055:S0:I1:D0" + LS + "ACCGTGCGTAATTTTTTATCACGGCTTaTACTTCAT" + LS;
 
   private static final String TEM_BUG = ">tbug" + LS + "cgttACCGTGCGTAATTTTTTATCACGGCTTTACTTCATcc" + LS;
-
-  /** Bug found in the wild. */
-  public void testBug36() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL36w18s2e1"), READS_BUG, TEM_BUG, "tbug\tF\t0\t5\t8\t2" + LS, 36L);
-  }
 
   /** Bug found in the wild. */
   public void testBug36g() throws Exception {
@@ -834,11 +655,6 @@ public class NgsTaskFunctionalTest extends TestCase {
   private static final String TEM_BUGE3 = ">tbug" + LS + TB3 + LS;
 
   /** Bug in e=3 mask. Seen in the wild. */
-  public void testBug36e3() throws Exception {
-    check(new NgsMaskParamsExplicit("SplitL36w12s3e3"), READS_BUGE3, TEM_BUGE3, "tbug\tR\t0\t2\t3\t3" + LS, (long) RB3.length());
-  }
-
-  /** Bug in e=3 mask. Seen in the wild. */
   public void testBug36e3g() throws Exception {
     check(new NgsMaskParamsGeneral(12, 3, 3, 1), READS_BUGE3, TEM_BUGE3, "tbug\tR\t0\t2\t3\t3" + LS,  (long) RB3.length());
   }
@@ -850,7 +666,7 @@ public class NgsTaskFunctionalTest extends TestCase {
       Diagnostic.setLogStream(pr);
       try {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final NgsParams params = getParams(out, new NgsMaskParamsExplicit("SplitL4w4s0e0"), new NgsTestUtils.ParamsParams(SEQ_DNA_Y2, SEQ_DNA_Y1, 10/*errorlimit*/, true/*progress*/, false/*zip*/), ListenerType.NULL,  OutputFilter.NONE, 1/*topN*/, 1);
+        final NgsParams params = getParams(out, new NgsMaskParamsGeneral(4, 0, 0, 1), new NgsTestUtils.ParamsParams(SEQ_DNA_Y2, SEQ_DNA_Y1, 10/*errorlimit*/, true/*progress*/, false/*zip*/), ListenerType.NULL,  OutputFilter.NONE, 1/*topN*/, 1);
         final NgsTask ngs;
         try {
           ngs = execNgs(params);

@@ -11,8 +11,6 @@
  */
 package com.rtg.ngs;
 
-import com.rtg.util.TestUtils;
-
 import junit.framework.TestCase;
 
 /**
@@ -23,22 +21,10 @@ public class NgsMaskParamsExplicitTest extends TestCase {
     return new NgsMaskParamsExplicit(mask);
   }
 
-  public void testEquals() throws Exception {
-
-    final NgsMaskParams a1 = getParams("SplitL4w4s0e0");
-    final NgsMaskParams a2 = getParams("SplitL4w4s0e0");
-    final NgsMaskParams b = getParams("SplitL4w2s1e1b");
-    TestUtils.equalsHashTest(new NgsMaskParams[][] {{a1, a2}, {b}});
-    a1.close();
-    a2.close();
-    b.close();
-  }
-
-
   public void test() throws Exception {
-    final NgsMaskParamsExplicit a = getParams("SplitL4w4s0e0");
+    final NgsMaskParamsExplicit a = getParams("cgmaska1b1");
     a.integrity();
-    assertEquals("Mask:SplitL4w4s0e0", a.toString());
+    assertEquals("Mask:cgmaska1b1", a.toString());
     assertNotNull(a.maskFactory(33));
     a.close();
   }
