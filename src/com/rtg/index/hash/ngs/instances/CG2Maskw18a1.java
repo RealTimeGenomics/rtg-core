@@ -82,7 +82,7 @@ public class CG2Maskw18a1 extends AbstractCG2Mask {
    * @param templateCall used in subclasses to process results of template hits.
    */
   public CG2Maskw18a1(final ReadCall readCall, final TemplateCall templateCall) {
-    super(READ_LENGTH, WINDOW_LENGTH, readCall, templateCall, LONG_BITS - (READ_LENGTH - 4));
+    super(WINDOW_LENGTH, readCall, templateCall);
     setHashFunction();
     /*
     System.err.println("  MASKA=" + Utils.toBits(MASK_A, READ_LENGTH));

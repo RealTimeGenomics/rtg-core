@@ -81,7 +81,7 @@ public class CGMaska1b1 extends AbstractCGMask {
    * @param templateCall used in subclasses to process results of template hits.
    */
   public CGMaska1b1(final ReadCall readCall, final TemplateCall templateCall) {
-    super(READ_LENGTH, WINDOW_LENGTH, readCall, templateCall, LONG_BITS - (READ_LENGTH + 7));
+    super(WINDOW_LENGTH, readCall, templateCall);
     setHashFunction();
   }
 

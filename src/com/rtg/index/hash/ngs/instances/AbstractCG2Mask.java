@@ -15,9 +15,8 @@ import com.rtg.index.hash.ngs.HashFunctionFactory;
 import com.rtg.index.hash.ngs.ImplementHashFunction;
 import com.rtg.index.hash.ngs.ReadCall;
 import com.rtg.index.hash.ngs.TemplateCall;
+import com.rtg.reader.CgUtils;
 
-/**
- */
 public abstract class AbstractCG2Mask extends ImplementHashFunction {
 
   /**
@@ -26,14 +25,12 @@ public abstract class AbstractCG2Mask extends ImplementHashFunction {
   public interface CG2HashFunctionFactory extends HashFunctionFactory { }
 
   /**
-   * @param readLength number of nucleotides in a complete read.
    * @param windowLength number of codes to be included in a window (used when hash called).
    * @param readCall used in subclasses to process results of read hits.
    * @param templateCall used in subclasses to process results of template hits.
-   * @param readLengthReverse how much to shift right when in reverse complement. Needs to be specified explicitly for CG masks.
    */
-  public AbstractCG2Mask(final int readLength, final int windowLength, final ReadCall readCall, final TemplateCall templateCall, final int readLengthReverse) {
-    super(readLength, windowLength, readCall, templateCall, readLengthReverse);
+  public AbstractCG2Mask(final int windowLength, final ReadCall readCall, final TemplateCall templateCall) {
+    super(CgUtils.CG2_RAW_READ_LENGTH, windowLength, readCall, templateCall, LONG_BITS - (CgUtils.CG2_RAW_READ_LENGTH - 4));
   }
 
   private static final long SCORE_MASK0 = 0b00000001111111111111111111L;

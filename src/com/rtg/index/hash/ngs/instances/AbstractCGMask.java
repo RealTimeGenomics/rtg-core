@@ -15,9 +15,8 @@ import com.rtg.index.hash.ngs.HashFunctionFactory;
 import com.rtg.index.hash.ngs.ImplementHashFunction;
 import com.rtg.index.hash.ngs.ReadCall;
 import com.rtg.index.hash.ngs.TemplateCall;
+import com.rtg.reader.CgUtils;
 
-/**
- */
 public abstract class AbstractCGMask extends ImplementHashFunction {
 
   /**
@@ -26,24 +25,12 @@ public abstract class AbstractCGMask extends ImplementHashFunction {
   public interface CGHashFunctionFactory extends HashFunctionFactory { }
 
   /**
-   * @param readLength number of nucleotides in a complete read.
-   * @param windowSize number of codes to be included in a window (used when hash called).
-   * @param readCall used in subclasses to process results of read hits.
-   * @param templateCall used in subclasses to process results of template hits.
-   */
-  public AbstractCGMask(final int readLength, final int windowSize, final ReadCall readCall, final TemplateCall templateCall) {
-    super(readLength, windowSize, readCall, templateCall);
-  }
-
-  /**
-   * @param readLength number of nucleotides in a complete read.
    * @param windowLength number of codes to be included in a window (used when hash called).
    * @param readCall used in subclasses to process results of read hits.
    * @param templateCall used in subclasses to process results of template hits.
-   * @param readLengthReverse how much to shift right when in reverse complement. Needs to be specified explicitly for CG masks.
    */
-  public AbstractCGMask(final int readLength, final int windowLength, final ReadCall readCall, final TemplateCall templateCall, final int readLengthReverse) {
-    super(readLength, windowLength, readCall, templateCall, readLengthReverse);
+  public AbstractCGMask(final int windowLength, final ReadCall readCall, final TemplateCall templateCall) {
+    super(CgUtils.CG_RAW_READ_LENGTH, windowLength, readCall, templateCall, LONG_BITS - (CgUtils.CG_RAW_READ_LENGTH + 7));
   }
 
   private static final long SCORE_MASK0 = 0b00000000000000000000000000000001111111111L; // (1L << 10) - 1;
