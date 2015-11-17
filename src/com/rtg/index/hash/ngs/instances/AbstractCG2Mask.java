@@ -19,7 +19,7 @@ import com.rtg.reader.CgUtils;
 
 /**
  * Base class for masks operating on CG version 2 reads.
- * Provides fastScore and indelScore implementations supporting the most common overlaps of 3 and 4.
+ * Provides {@code fastScore} and {@code indelScore} implementations supporting the most common overlaps of 3 and 4.
  */
 public abstract class AbstractCG2Mask extends ImplementHashFunction {
 
