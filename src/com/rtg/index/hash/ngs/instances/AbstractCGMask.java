@@ -17,6 +17,9 @@ import com.rtg.index.hash.ngs.ReadCall;
 import com.rtg.index.hash.ngs.TemplateCall;
 import com.rtg.reader.CgUtils;
 
+/**
+ * Base class for masks operating on CG version 1 reads.
+ */
 public abstract class AbstractCGMask extends ImplementHashFunction {
 
   /**
