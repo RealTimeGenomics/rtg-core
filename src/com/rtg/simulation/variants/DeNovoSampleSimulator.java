@@ -137,8 +137,9 @@ public class DeNovoSampleSimulator {
     try (VcfWriter vcfOut = new VcfWriter(header, vcfOutFile, null, FileUtils.isGzipFilename(vcfOutFile), true)) {
       final ReferenceGenome refG = new ReferenceGenome(mReference, originalSex, mDefaultPloidy);
 
-      // Generate de novo variants
+      // Generate de novo variants (oblivious of any pre-existing variants)
       final List<PopulationVariantGenerator.PopulationVariant> deNovo = mGenerator.generatePopulation();
+
       for (long i = 0; i < mReference.numberSequences(); i++) {
         final ReferenceSequence refSeq = refG.sequence(mReference.name(i));
 
@@ -212,10 +213,8 @@ public class DeNovoSampleSimulator {
       final PopulationVariantGenerator.PopulationVariant pv = deNovo.remove(0);
       final VcfRecord dv = pv.toVcfRecord(mReference);
       if (dv.getStart() == endPos) {
-        // We could be smarter and merge the records, but this will be so infrequent I am not going to bother
-        if (mVerbose) {
-          Diagnostic.info("Skipping De Novo mutation at " + refSeq.name() + ":" + dv.getOneBasedStart() + " to avoid collision with existing variant.");
-        }
+        // We could be smarter and merge the records, but this will be so infrequent (assuming we're not re-using the same seed as a previous run) let's just warn.
+        Diagnostic.warning("Skipping De Novo mutation at " + refSeq.name() + ":" + dv.getOneBasedStart() + " to avoid collision with existing variant (consider a new RNG seed)");
         continue;
       }
       dv.getInfo().clear(); // To remove AF chosen by the population variant generator
