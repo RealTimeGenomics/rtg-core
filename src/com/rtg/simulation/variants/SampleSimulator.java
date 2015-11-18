@@ -14,6 +14,7 @@ package com.rtg.simulation.variants;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.rtg.reader.SequencesReader;
@@ -21,6 +22,7 @@ import com.rtg.reference.ReferenceGenome;
 import com.rtg.reference.ReferenceGenome.DefaultFallback;
 import com.rtg.reference.ReferenceSequence;
 import com.rtg.reference.Sex;
+import com.rtg.simulation.SimulationUtils;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
@@ -46,6 +48,8 @@ public class SampleSimulator {
   private final PortableRandom mRandom;
   private final DefaultFallback mDefaultPloidy;
   private VariantStatistics mStats = null;
+  private boolean mSeenVariants = false;
+  private int mDefaultAfCount = 0;
 
   /**
    * @param reference input reference data
@@ -103,16 +107,26 @@ public class SampleSimulator {
         mutateSequence(vcfPopFile, vcfOut, refSeq);
       }
     }
+    if (!mSeenVariants) {
+      Diagnostic.warning("No input variants! (is the VCF empty, or against an incorrect reference?)");
+      Diagnostic.info("");
+    } else if (mDefaultAfCount > 0) {
+      Diagnostic.warning("" + mDefaultAfCount + " input records had no allele frequency information.");
+      Diagnostic.info("");
+    }
+
     Diagnostic.info(mStats.getStatistics());
   }
 
   //writes sample to given writer, returns records as list
   private List<VcfRecord> mutateSequence(File vcfPopFile, VcfWriter vcfOut, ReferenceSequence refSeq) throws IOException {
+    Diagnostic.userLog("Simulating mutations on sequence: " + refSeq.name());
     final ArrayList<VcfRecord> sequenceMutations = new ArrayList<>();
     final int ploidyCount = refSeq.ploidy().count() >= 0 ? refSeq.ploidy().count() : 1; //effectively treats polyploid as haploid
     try (VcfReader reader = VcfReader.openVcfReader(vcfPopFile, new RegionRestriction(refSeq.name()))) {
       int lastVariantEnd = -1;
       while (reader.hasNext()) {
+        mSeenVariants = true;
         final VcfRecord v = reader.next();
         v.addFormat(VcfUtils.FORMAT_GENOTYPE); // Ensure the record has a notion of genotype - strictly we should also initialize any pre-exising sample columns with empty GT
         final StringBuilder gt = new StringBuilder();
@@ -120,8 +134,10 @@ public class SampleSimulator {
           final List<String> allFreqStr = v.getInfo().get(VcfUtils.INFO_ALLELE_FREQ);
           final double[] dist;
           if (allFreqStr == null) {
-            Diagnostic.warning("Ignoring record with no allele frequency INFO value: " + v.toString());
-            dist = new double[v.getAltCalls().size() + 1]; //all alt alleles are 0% likely
+            mDefaultAfCount++;
+            final double[] defaultDist = new double[v.getAltCalls().size() + 1];
+            Arrays.fill(defaultDist, 1.0); // All alleles are equally likely
+            dist = SimulationUtils.cumulativeDistribution(defaultDist);
           } else {
             dist = new double[allFreqStr.size() + 1];
             double ac = 0.0;
@@ -130,11 +146,11 @@ public class SampleSimulator {
               dist[i] = ac;
             }
             if (ac > 1.0) {
-              throw new NoTalkbackSlimException("AF probabilities cannot exceed 1.0 : at " + refSeq.name() + ":" + v.getOneBasedStart());
+              throw new NoTalkbackSlimException("Sum of AF probabilities exceeds 1.0 for record " + v);
             }
           }
-
           dist[dist.length - 1] = 1.0; //the reference consumes the rest of the distribution
+
           int variantEnd = lastVariantEnd; // Need to use separate variable while going through the ploidy loop, otherwise we won't make hom variants.
           for (int i = 0; i < ploidyCount; i++) {
             if (gt.length() != 0) {
@@ -149,7 +165,7 @@ public class SampleSimulator {
             }
             final VariantType svType = alleleId == 0 ? null : VariantType.getSymbolicAlleleType(v.getAltCalls().get(alleleId - 1));
             if (svType != null) {
-              System.err.println("Symbolic variant ignored: " + v.toString());
+              Diagnostic.warning("Symbolic variant ignored: " + v);
               variantEnd = Math.max(variantEnd, v.getEnd());
               gt.append(0); // For now, skip symbolic alleles.
             } else {

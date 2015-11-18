@@ -58,6 +58,7 @@ public class DeNovoSampleSimulator {
   private ReferenceGenome mMaleGenome = null;
   private ReferenceGenome mFemaleGenome = null;
   private boolean mVerbose = true;
+  private boolean mSeenVariants = false;
 
   /**
    * @param reference input reference data
@@ -153,6 +154,9 @@ public class DeNovoSampleSimulator {
         outputSequence(vcfInFile, vcfOut, refSeq, seqDeNovo);
       }
     }
+    if (!mSeenVariants) {
+      Diagnostic.warning("No input variants! (is the VCF empty, or against an incorrect reference?)");
+    }
     if (mVerbose) {
       Diagnostic.info(""); // Just to separate the statistics
     }
@@ -182,6 +186,7 @@ public class DeNovoSampleSimulator {
     final ArrayList<VcfRecord> sequenceVariants = new ArrayList<>();
     try (VcfReader reader = VcfReader.openVcfReader(vcfPopFile, new RegionRestriction(refSeq.name()))) {
       while (reader.hasNext()) {
+        mSeenVariants = true;
         final VcfRecord v = reader.next();
         final int nextVariantPos = v.getStart();
 

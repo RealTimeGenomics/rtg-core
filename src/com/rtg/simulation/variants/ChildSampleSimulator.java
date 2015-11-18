@@ -105,6 +105,7 @@ public class ChildSampleSimulator {
   private boolean mHasWarnedOutOfOrder = false;
   private double mExtraCrossoverFreq = 0;
   private boolean mVerbose = true;
+  private boolean mSeenVariants = false;
 
   private static final class ChildStatistics extends VariantStatistics {
 
@@ -214,6 +215,9 @@ public class ChildSampleSimulator {
         mutateSequence(vcfPopFile, vcfOut, refSeq, mReference.length(i));
       }
     }
+    if (!mSeenVariants) {
+      Diagnostic.warning("No input variants! (is the VCF empty, or against an incorrect reference?)");
+    }
     if (mVerbose) {
       Diagnostic.info(""); // Just to separate the statistics
     }
@@ -290,6 +294,7 @@ public class ChildSampleSimulator {
     int lastPos = 0;
     try (VcfReader reader = VcfReader.openVcfReader(vcfPopFile, new RegionRestriction(refSeq.name()))) {
       while (reader.hasNext()) {
+        mSeenVariants = true;
         final VcfRecord v = reader.next();
         // Simulate crossover, assume records are sorted
         final int baseDelta = v.getStart() - lastPos;
