@@ -47,15 +47,15 @@ public class CgSimCliTest extends AbstractCliTest {
       try {
         ReaderTestUtils.getReaderDNA(">seq1" + StringUtils.LS + "acgt", genomeDir, null).close();
         final File reads = new File(tempDir, "reads");
-        TestUtils.containsAll(checkHandleFlagsErr("-o", reads.getPath(), "-n", "100"), "Usage: rtg cgsim [OPTION]... -t SDF -o SDF -c FLOAT", "You must provide a value for -t SDF");
-        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-n", "100"), "You must provide a value for -o SDF");
-        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-c", "0"), "Coverage should be positive");
-        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "0"), "Number of reads should be greater than 0");
+        TestUtils.containsAll(checkHandleFlagsErr("-o", reads.getPath(), "-n", "100"), "Usage: rtg cgsim [OPTION]... -V INT -t SDF -o SDF -c FLOAT", "You must provide values for -V INT -t SDF");
+        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-n", "100"), "You must provide values for -V INT -o SDF");
+        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-c", "0", "-V", "1"), "Coverage should be positive");
+        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "0", "-V", "1"), "Number of reads should be greater than 0");
         TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1", "--cg-read-version", "0"), "Version must be 1 or 2");
         TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1", "--cg-read-version", "3"), "Version must be 1 or 2");
 
         final CgSimCli cli = (CgSimCli) getCli();
-        MainResult.run(cli, "-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1");
+        MainResult.run(cli, "-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1", "-V", "1");
         assertEquals(MachineType.COMPLETE_GENOMICS, cli.getMachineType());
       } finally {
         assertTrue(FileHelper.deleteAll(genomeDir));

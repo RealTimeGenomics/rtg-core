@@ -176,14 +176,15 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     mFlags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", "output directory").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, "SDF", "SDF containing template to map against").setCategory(INPUT_OUTPUT);
 
-    final Flag maskFlag = mFlags.registerOptional(MASK_FLAG, String.class, "string", "mask to apply", "cgmaska15b1").setCategory(SENSITIVITY_TUNING);
+    final Flag maskFlag = mFlags.registerRequired(MASK_FLAG, String.class, "string", "read indexing method").setCategory(SENSITIVITY_TUNING);
     if (License.isDeveloper()) {
       maskFlag.setParameterRange(new String[]{
+        "cg1", "cg1-fast", "cg2",
         "cgmaska15b1", "cgmaska1b1", "cgmaska15b1alt", "cgmaska1b1alt",
         "cg2maska1", "cg2maska11", "cg2maska15", "cg2maskw18", "cg2maskw18a1"
       });
     } else {
-      maskFlag.setParameterRange(new String[]{"cgmaska15b1", "cgmaska1b1"});
+      maskFlag.setParameterRange(new String[]{"cg1", "cg1-fast", "cg2"});
     }
     MapFlags.initPairedEndFlags(mFlags);
     MapFlags.initSharedFlagsOnly(mFlags, IntegerOrPercentage.valueOf("95%"), 1, 1000);

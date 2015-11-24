@@ -59,7 +59,7 @@ public class CgMapFlagsValidatorTest extends AbstractCliTest {
   }
 
   private static final String USAGE = ""
-    + "Usage: rtg cgmap [OPTION]... -i SDF|FILE -o DIR -t SDF" + StringUtils.LS
+    + "Usage: rtg cgmap [OPTION]... -i SDF|FILE --mask STRING -o DIR -t SDF" + StringUtils.LS
     + StringUtils.LS
     + "Try '--help' for more information" + StringUtils.LS;
 
@@ -77,6 +77,7 @@ public class CgMapFlagsValidatorTest extends AbstractCliTest {
       final File out = new File(mainOut, "out");
 
       final String[] args = {"-i", "input",
+                                          "--mask", "cg1",
                                           "-t", template.getPath(),
                                           "-o", out.getPath()
       };
@@ -84,11 +85,11 @@ public class CgMapFlagsValidatorTest extends AbstractCliTest {
       assertTrue(checkHandleFlagsErr(args).contains(USAGE));
       assertTrue(checkHandleFlagsErr(args).contains("The specified SDF, \"input\", does not exist"));
 
-      assertTrue(checkHandleFlagsErr("-i", testfile.toString(), "-t", template.toString(), "-o", out.toString()).contains("The specified file, \"" + testfile.toString() + "\", is not an SDF"));
-      assertTrue(checkHandleFlagsErr("-i", mainOut.toString(), "-t", testfile.toString(), "-o", out.toString()).contains("The specified file, \"" + testfile.toString() + "\", is not an SDF"));
-      assertTrue(checkHandleFlagsErr("-i", cgleft.toString(), "-t", template.toString(), "-o", out.toString()).contains("Inputfile not in paired end format."));
+      assertTrue(checkHandleFlagsErr("-i", testfile.toString(), "-t", template.toString(), "-o", out.toString(), "--mask", "cg1").contains("The specified file, \"" + testfile.toString() + "\", is not an SDF"));
+      assertTrue(checkHandleFlagsErr("-i", mainOut.toString(), "-t", testfile.toString(), "-o", out.toString(), "--mask", "cg1").contains("The specified file, \"" + testfile.toString() + "\", is not an SDF"));
+      assertTrue(checkHandleFlagsErr("-i", cgleft.toString(), "-t", template.toString(), "-o", out.toString(), "--mask", "cg1").contains("Inputfile not in paired end format."));
 
-      checkHandleFlagsOut("-i", mainOut.toString(), "-t", template.toString(), "-o", out.toString());
+      checkHandleFlagsOut("-i", mainOut.toString(), "-t", template.toString(), "-o", out.toString(), "--mask", "cg1");
     } finally {
       assertTrue(FileHelper.deleteAll(mainOut));
     }

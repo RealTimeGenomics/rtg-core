@@ -472,7 +472,7 @@ public class CgUnrollerTest extends TestCase {
       ReaderTestUtils.getReaderDNA(templateSeq, template, null);
       final File output = new File(parent, "out");
       final CgMapCli cgmap = new CgMapCli();
-      assertEquals(0, cgmap.mainInit(new String[] {"-o", output.getPath(), "-i", reads.getPath(), "-t", template.getPath(), "-Z", "-T", "1", "--sam", "--no-merge"}, /*err*/TestUtils.getNullOutputStream(), System.err));
+      assertEquals(0, cgmap.mainInit(new String[] {"-o", output.getPath(), "-i", reads.getPath(), "-t", template.getPath(), "-Z", "-T", "1", "--sam", "--no-merge", "--mask", "cg1"}, /*err*/TestUtils.getNullOutputStream(), System.err));
       // The following lines were failing due to a bug
       final String str = unrollCGFromSam(new File(output, "unmated.sam"), leftStr, rightStr);
       final String exp = (READ_L_F + LS + READ_R_F + LS).toUpperCase(Locale.getDefault());
@@ -518,7 +518,7 @@ public class CgUnrollerTest extends TestCase {
       ReaderTestUtils.getReaderDNA(templateSeq, template, null);
       final File output = new File(parent, "out");
       final CgMapCli cgmap = new CgMapCli();
-      final int code = cgmap.mainInit(new String[] {"-o", output.getPath(), "-i", reads.getPath(), "-t", template.getPath(), "-Z", "-T", "1", "--sam", "--no-merge"}, err.outputStream(), err.printStream());
+      final int code = cgmap.mainInit(new String[] {"-o", output.getPath(), "-i", reads.getPath(), "-t", template.getPath(), "-Z", "-T", "1", "--sam", "--no-merge", "--mask", "cg1"}, err.outputStream(), err.printStream());
       assertEquals(err.toString(), 0, code);
       final String str = unrollCGFromSam(new File(output, "unmated.sam"), leftStr, rightStr);
       final String exp = (leftRead + LS + rightRead + LS).toUpperCase(Locale.getDefault());

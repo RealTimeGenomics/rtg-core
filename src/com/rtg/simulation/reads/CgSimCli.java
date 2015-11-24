@@ -82,6 +82,6 @@ public class CgSimCli extends ReadSimCli {
     mFlags.registerOptional('M', MAX_FRAGMENT, Integer.class, "int", "maximum fragment size", 500).setCategory(CAT_FRAGMENTS);
     mFlags.registerOptional('m', MIN_FRAGMENT, Integer.class, "int", "minimum fragment size", 350).setCategory(CAT_FRAGMENTS);
     mFlags.registerOptional('E', XMACHINE_ERROR_PRIORS, String.class, "string", "override default machine error priors").setCategory(UTILITY);
-    mFlags.registerOptional(CG_VERSION, Integer.class, "int", "select Complete Genomics read structure version, 1 (35 bp) or 2 (29 bp)", 1).setCategory(CAT_CG);
+    mFlags.registerRequired('V', CG_VERSION, Integer.class, "int", "select Complete Genomics read structure version, 1 (35 bp) or 2 (29 bp)").setCategory(CAT_CG);
   }
 }

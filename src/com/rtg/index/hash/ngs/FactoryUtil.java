@@ -45,6 +45,10 @@ public final class FactoryUtil {
     putFactory("CG2Maska15", CG2Maska15.FACTORY);
     putFactory("CG2Maskw18", CG2Maskw18.FACTORY);
     putFactory("CG2Maskw18a1", CG2Maskw18a1.FACTORY);
+    //-------------- public options
+    putFactory("cg1", com.rtg.index.hash.ngs.instances.CGMaska15b1.FACTORY);
+    putFactory("cg1-fast", com.rtg.index.hash.ngs.instances.CGMaska1b1.FACTORY);
+    putFactory("cg2", CG2Maskw18a1.FACTORY);
   }
 
   private static void putFactory(String name, HashFunctionFactory factory) {

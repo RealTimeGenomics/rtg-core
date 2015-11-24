@@ -52,10 +52,10 @@ public class CgMapCliTest extends AbstractCliTest {
   }
 
   public void testCgMapFlags() {
-    checkHelp("-i SDF|FILE -o DIR -t SDF",
+    checkHelp("-i SDF|FILE --mask STRING -o DIR -t SDF",
         "reads",
         "template",
-        "mask to apply",
+        "read indexing method",
         "maximum permitted fragment size when mating",
         "maximum mismatches allowed for mated",
         "maximum mismatches allowed for unmated",
@@ -86,7 +86,7 @@ public class CgMapCliTest extends AbstractCliTest {
       final File out = new File(mainOut, "out");
       final CgMapCli map = (CgMapCli) mCli;
 
-      final String[] args = {"-i", mainOut.getPath(), "-t", template.getPath(), "-o", out.getPath(), "--end-read", "2", "--" + MapFlags.N_AS_MISMATCH};
+      final String[] args = {"-i", mainOut.getPath(), "-t", template.getPath(), "-o", out.getPath(), "--end-read", "2", "--mask", "cg1", "--" + MapFlags.N_AS_MISMATCH};
       checkHandleFlagsOut(args);
 
       try (NgsParams params = map.makeParams()) {
@@ -111,13 +111,13 @@ public class CgMapCliTest extends AbstractCliTest {
         assertEquals(5, params.outputParams().topN());
         assertEquals(4095, params.outputParams().errorLimit());
         assertEquals(1, params.unknownsPenalty());
-        assertTrue(params.maskParams().toString().contains("Mask:cgmask"));
+        assertTrue(params.maskParams().toString().contains("Mask:cg1"));
       }
 
 
       assertTrue(!left.exists() || FileHelper.deleteAll(left));
       ReaderTestUtils.getReaderDNA(">r0\nacgt", left, null).close();
-      checkHandleFlagsOut("-i", mainOut.getPath(), "-t", template.getPath(), "-o", out.getPath());
+      checkHandleFlagsOut("-i", mainOut.getPath(), "-t", template.getPath(), "-o", out.getPath(), "--mask", "cg1");
       try {
         map.makeParams();
         fail("Expected failure on non-cg SDF");
@@ -128,7 +128,7 @@ public class CgMapCliTest extends AbstractCliTest {
       ReaderTestUtils.getReaderDNAFastqCG(inputDnaSequence, left, PrereadArm.LEFT);
       assertTrue(!right.exists() || FileHelper.deleteAll(right));
       ReaderTestUtils.getReaderDNA(">r0\nacgt", right, null).close();
-      checkHandleFlagsOut("-i", mainOut.getPath(), "-t", template.getPath(), "-o", out.getPath());
+      checkHandleFlagsOut("-i", mainOut.getPath(), "-t", template.getPath(), "-o", out.getPath(), "--mask", "cg1");
       try {
         map.makeParams();
         fail("Expected failure on non-cg SDF");
@@ -140,7 +140,7 @@ public class CgMapCliTest extends AbstractCliTest {
       assertTrue(!right.exists() || FileHelper.deleteAll(right));
       ReaderTestUtils.getReaderDNAFastqCG(inputDnaSequence2, right, PrereadArm.RIGHT).close();
       checkHandleFlagsOut("-i", mainOut.getPath(),
-          "-t", template.getPath(), "-o", out.getPath());
+          "-t", template.getPath(), "-o", out.getPath(), "--mask", "cg1");
       try {
         err.reset();
         map.makeParams();
@@ -204,7 +204,7 @@ public class CgMapCliTest extends AbstractCliTest {
           "-o", out.getPath(),
           "-E", "100%", "-m", "0",
           "--sam-rg", header.getPath(),
-          "--mask", "cgmaska15b1",
+          "--mask", "cg1",
           "--" + MapFlags.SAM_FLAG,
           "--" + MapFlags.DONT_UNIFY_FLAG
       };
@@ -260,6 +260,7 @@ public class CgMapCliTest extends AbstractCliTest {
           "-t", template.getPath(),
           "-o", out.getPath(),
           "-E", "100%", "-m", "0",
+          "--mask", "cg1",
           "--sam-rg", "foo"
       };
       final MemoryPrintStream ps = new MemoryPrintStream();
@@ -276,6 +277,7 @@ public class CgMapCliTest extends AbstractCliTest {
           "-t", template.getPath(),
           "-o", out.getPath(),
           "-E", "100%", "-m", "0",
+          "--mask", "cg1",
           "--sam-rg", header.getPath()
       };
       final MemoryPrintStream ps2 = new MemoryPrintStream();
@@ -290,6 +292,7 @@ public class CgMapCliTest extends AbstractCliTest {
           "-t", template.getPath(),
           "-o", out.getPath(),
           "-E", "100%", "-m", "0",
+          "--mask", "cg1",
           "--sam-rg", header2.getPath()
       };
       final MemoryPrintStream ps3 = new MemoryPrintStream();
@@ -330,7 +333,7 @@ public class CgMapCliTest extends AbstractCliTest {
       final File output = new File(parent, "out");
       final CgMapCli cgmap = new CgMapCli();
       final MemoryPrintStream mps = new MemoryPrintStream();
-      final int code = cgmap.mainInit(new String[] {"-o", output.getPath(), "-i", reads.getPath(), "-t", template.getPath(), "-E", "10", "-Z", "-T", "1", "--sam", "--no-merge"}, mps.outputStream(), mps.printStream());
+      final int code = cgmap.mainInit(new String[] {"-o", output.getPath(), "-i", reads.getPath(), "-t", template.getPath(), "-E", "10", "-Z", "-T", "1", "--sam", "--no-merge", "--mask", "cg1"}, mps.outputStream(), mps.printStream());
       assertEquals(mps.toString(), 0, code);
       if (showBug) {
         final String str = dumpSam(new File(output, "unmated.sam"));
