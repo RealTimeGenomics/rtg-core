@@ -263,17 +263,17 @@ public class VcfFormatFieldTest extends TestCase {
 
   public void testAddAltCall() {
     final VcfRecord rec = new VcfRecord("ref", 2, "A");
-    assertEquals(0, VcfFormatField.addAltCall("A", "A", null, rec));
+    assertEquals(0, VcfFormatField.addAltAllele("A", "A", null, rec));
     assertEquals("ref\t3\t.\tA\t.\t.\t.\t.", rec.toString());
-    assertEquals(0, VcfFormatField.addAltCall("", "", null, rec));
+    assertEquals(0, VcfFormatField.addAltAllele("", "", null, rec));
     assertEquals("ref\t3\t.\tA\t.\t.\t.\t.", rec.toString());
-    assertEquals(1, VcfFormatField.addAltCall("C", "A", null, rec));
+    assertEquals(1, VcfFormatField.addAltAllele("C", "A", null, rec));
     assertEquals("ref\t3\t.\tA\tC\t.\t.\t.", rec.toString());
-    assertEquals(1, VcfFormatField.addAltCall("C", "A", null, rec));
+    assertEquals(1, VcfFormatField.addAltAllele("C", "A", null, rec));
     assertEquals("ref\t3\t.\tA\tC\t.\t.\t.", rec.toString());
-    assertEquals(2, VcfFormatField.addAltCall("C", "A", 'G', rec));
+    assertEquals(2, VcfFormatField.addAltAllele("C", "A", 'G', rec));
     assertEquals("ref\t3\t.\tA\tC,GC\t.\t.\t.", rec.toString());
-    assertEquals(3, VcfFormatField.addAltCall("", "A", 'G', rec));
+    assertEquals(3, VcfFormatField.addAltAllele("", "A", 'G', rec));
     assertEquals("ref\t3\t.\tA\tC,GC,G\t.\t.\t.", rec.toString());
   }
 }

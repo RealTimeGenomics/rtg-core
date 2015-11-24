@@ -18,13 +18,14 @@ import java.util.Locale;
 
 import com.rtg.reference.Ploidy;
 import com.rtg.util.MathUtils;
+import com.rtg.util.PosteriorUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
-import com.rtg.util.PosteriorUtils;
 import com.rtg.variant.Variant;
 import com.rtg.variant.Variant.VariantFilter;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantSample;
+import com.rtg.variant.bayes.AlleleStatistics;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Statistics;
 import com.rtg.variant.util.VariantUtils;
@@ -66,13 +67,13 @@ public enum VcfFormatField {
               rec.addFormatAndSample(name(), "0" + VcfUtils.UNPHASED_SEPARATOR + "0");
             }
           } else if (ploidy == Ploidy.HAPLOID) {
-            final int gtnum = addAltCall(name, ref, previousNt, rec);
+            final int gtnum = addAltAllele(name, ref, previousNt, rec);
             rec.addFormatAndSample(name(), "" + gtnum);
           } else {
             final String[] cats = StringUtils.split(name, VariantUtils.COLON);
             assert cats.length == 2 : "Unexpected number of cats: " + cats.length + " " + name;
 
-            rec.addFormatAndSample(name(), String.valueOf(addAltCall(cats[0], ref, previousNt, rec)) + VcfUtils.UNPHASED_SEPARATOR + addAltCall(cats[1], ref, previousNt, rec));
+            rec.addFormatAndSample(name(), String.valueOf(addAltAllele(cats[0], ref, previousNt, rec)) + VcfUtils.UNPHASED_SEPARATOR + addAltAllele(cats[1], ref, previousNt, rec));
           }
         } else {
           if (ploidy == Ploidy.HAPLOID) {
@@ -88,6 +89,32 @@ public enum VcfFormatField {
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
       return true;
+    }
+  },
+  /**
+   * Somatic Variant Allele. For cases where there is an allele which has a count or variant allelic frequency that exceeds call triggering threshold
+   * but which isn't represented in the GT, we may want to add the allele in order to have it included in additional statistics such as <code>AD/VAC/VAF</code>
+   */
+  VA {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      header.addFormatField(name(), MetaType.INTEGER, VcfNumber.ONE, "Variant Allele");
+    }
+    @Override
+    public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      if (sample != null) {
+        final String name = sample.getVariantAllele();
+        if (name != null && !call.isFiltered(VariantFilter.FAILED_COMPLEX)) {
+          final String ref = call.getLocus().getRefNts();
+          final Character previousNt = includePrevNt ? call.getLocus().getPreviousRefNt() : null;
+          final int gtnum = addAltAllele(name, ref, previousNt, rec);
+          rec.addFormatAndSample(name(), "" + gtnum);
+        }
+      }
+    }
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return sample != null && sample.getVariantAllele() != null;
     }
   },
   /** Coverage Depth */
@@ -334,6 +361,40 @@ public enum VcfFormatField {
       return !call.isComplexScored() && sample != null && sample.getStatisticsString() != null && sample.getStatisticsString().trim().length() > 0;
     }
   },
+  /** Allelic Depth, error-corrected */
+  ADE {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.DOT, "Allelic depths for the ref and alt alleles in the order listed, error corrected");
+    }
+    @Override
+    public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      final Statistics<?> stats = sample.getStats();
+      String ref = rec.getRefCall();
+      if (includePrevNt) {
+        ref = ref.substring(1);
+      }
+      final AlleleStatistics<?> counts = stats.counts();
+      final Description description = counts.getDescription();
+      final StringBuilder sb = new StringBuilder();
+      final int refDescriptionCode = description.indexOf(ref);
+      if (refDescriptionCode == -1) {
+        sb.append(0);
+      } else {
+        sb.append(Utils.realFormat(counts.count(refDescriptionCode) - counts.error(refDescriptionCode), 1));
+      }
+      for (String altCall : rec.getAltCalls()) {
+        final String name = includePrevNt ? altCall.substring(1) : altCall;
+        final int altDescriptionCode = description.indexOf(name);
+        sb.append(",").append(Utils.realFormat(counts.count(altDescriptionCode) - counts.error(altDescriptionCode), 1));
+      }
+      rec.addFormatAndSample(name(), sb.toString());
+    }
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return sample != null && sample.getStats() != null;
+    }
+  },
   /** Allelic Depth */
   AD {
     @Override
@@ -569,6 +630,26 @@ public enum VcfFormatField {
       return true;
     }
   },
+  /** Variant Allelic Fraction */
+  VAF {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      VAF_ANNOTATOR.updateHeader(header);
+    }
+    @Override
+    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      VAF_ANNOTATOR.annotate(rec);
+    }
+
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return rec.getFormatAndSample().get(VA.name()) != null && rec.getFormatAndSample().get(AD.name()) != null;
+    }
+    @Override
+    public boolean isVcfAnnotator() {
+      return true;
+    }
+  },
   ;
 
   private static final VcfAnnotator GQD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.GQD);
@@ -576,6 +657,7 @@ public enum VcfFormatField {
   private static final VcfAnnotator PD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.PD);
   private static final VcfAnnotator COC_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.COC);
   private static final VcfAnnotator COF_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.COF);
+  private static final VcfAnnotator VAF_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.VAF);
 
   private static boolean hasValueCofCoc(final VcfRecord rec) {
     List<?> fld = rec.getFormatAndSample().get(AD.name());
@@ -674,7 +756,7 @@ public enum VcfFormatField {
     return false;
   }
 
-  protected static int addAltCall(String alt, String ref, Character previousNt, VcfRecord rec) {
+  protected static int addAltAllele(String alt, String ref, Character previousNt, VcfRecord rec) {
     if (alt.equals(ref)) {
       return 0;
     } else {

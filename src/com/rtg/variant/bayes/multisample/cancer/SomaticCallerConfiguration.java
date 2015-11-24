@@ -132,7 +132,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
           params, phi, psi);
       }
       final SomaticCallerConfiguration sc = new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, haploid, diploid, ssp, phi, psi);
-      sc.getVcfFilters().add(new SomaticFilter(statistics, params.includeGermlineVariants() || params.callLevel() == VariantOutputLevel.ALL));
+      sc.getVcfFilters().add(new SomaticFilter(statistics, !(params.includeGermlineVariants() || params.callLevel() == VariantOutputLevel.ALL)));
       return sc;
     }
   }
@@ -159,7 +159,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
   public VariantOutputVcfFormatter getOutputFormatter(final VariantParams params) {
     final VariantOutputVcfFormatter f = new VariantOutputVcfFormatter(params, getGenomeNames());
     f.addExtraInfoFields(EnumSet.of(VcfInfoField.LOH, VcfInfoField.NCS));
-    f.addExtraFormatFields(EnumSet.of(VcfFormatField.SSC, VcfFormatField.SS, VcfFormatField.COC, VcfFormatField.COF));
+    f.addExtraFormatFields(EnumSet.of(VcfFormatField.SSC, VcfFormatField.SS, VcfFormatField.COC, VcfFormatField.COF, VcfFormatField.VAF));
     return f;
   }
 

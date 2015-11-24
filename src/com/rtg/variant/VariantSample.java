@@ -51,6 +51,7 @@ public class VariantSample {
   //potentially mutable
   private final VariantSampleInfo[] mInfo = new VariantSampleInfo[VariantFormatEnum.values().length];
   private final DeNovoStatus mIsDeNovo;
+  private String mVariantAllele; // The variant allele, used during somatic calling
 
   private final GenotypeMeasure mMeasure;
   private final Double mDeNovoPosterior;
@@ -74,6 +75,7 @@ public class VariantSample {
     mMeasure = measure;
     mIsDeNovo = isDeNovo;
     mDeNovoPosterior = deNovoPosterior;
+    mVariantAllele = null;
   }
 
   /**
@@ -92,6 +94,9 @@ public class VariantSample {
     return mPloidy;
   }
 
+  /**
+   * @return the name of the genotype hypothesis
+   */
   public String getName() {
     return mName;
   }
@@ -127,6 +132,14 @@ public class VariantSample {
 
   public Double getDeNovoPosterior() {
     return mDeNovoPosterior;
+  }
+
+  public String getVariantAllele() {
+    return mVariantAllele;
+  }
+
+  public void setVariantAllele(String name) {
+    mVariantAllele = name;
   }
 
   public Statistics<?> getStats() {
@@ -412,6 +425,7 @@ public class VariantSample {
         copyTo.mInfo[i] = copyFrom.mInfo[i];
       }
     }
+    copyTo.setVariantAllele(copyFrom.getVariantAllele());
     copyTo.setGenotypeLikelihoods(copyFrom.getGenotypeLikelihoods());
     copyTo.setStats(copyFrom.getStats());
   }

@@ -15,6 +15,7 @@ package com.rtg.variant.bayes.multisample.singleton;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
 
 import com.rtg.reference.Sex;
@@ -25,7 +26,6 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantParams;
-import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
 import com.rtg.variant.bayes.multisample.IndividualSampleFactory;
 import com.rtg.variant.bayes.multisample.JointCallerConfigurator;
@@ -35,6 +35,8 @@ import com.rtg.variant.bayes.multisample.population.PopulationHwHypothesesCreato
 import com.rtg.variant.bayes.snp.ModelNoneFactory;
 import com.rtg.variant.bayes.snp.ModelSnpFactory;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
+import com.rtg.variant.format.VcfFormatField;
+import com.rtg.vcf.VariantStatistics;
 
 /**
  */
@@ -87,6 +89,13 @@ public final class SingletonCallerConfiguration extends AbstractJointCallerConfi
       individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, sampleSex, sexMemo));
       return new SingletonCallerConfiguration(singletonCaller, genomeNames, individualFactories, chooser, haploid, diploid, ssp);
     }
+  }
+
+  @Override
+  public VariantOutputVcfFormatter getOutputFormatter(final VariantParams params) {
+    final VariantOutputVcfFormatter f = new VariantOutputVcfFormatter(params, getGenomeNames());
+    f.addExtraFormatFields(EnumSet.of(VcfFormatField.VAF));
+    return f;
   }
 
   SingletonCallerConfiguration(SingletonCaller jointCaller, String[] genomeNames, List<IndividualSampleFactory<?>> individualFactories, MachineErrorChooserInterface machineErrorChooser, ModelSnpFactory haploid, ModelSnpFactory diploid, PopulationHwHypothesesCreator ssp) {

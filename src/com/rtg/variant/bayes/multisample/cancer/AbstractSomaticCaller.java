@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.List;
 
 import com.reeltwo.jumble.annotations.TestClass;
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.mode.DnaUtils;
 import com.rtg.reference.Ploidy;
 import com.rtg.util.MathUtils;
@@ -30,6 +31,7 @@ import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantOutputOptions;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantSample;
+import com.rtg.variant.bayes.AlleleStatistics;
 import com.rtg.variant.bayes.Code;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.GenotypeMeasure;
@@ -52,6 +54,9 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
 
   static final int NORMAL = 0;
   static final int CANCER = 1;
+
+  private static final int MIN_VAC = GlobalFlags.getIntegerValue(GlobalFlags.VARIANT_MIN_AC);
+  private static final double MIN_VAF = GlobalFlags.getDoubleValue(GlobalFlags.VARIANT_MIN_AF);
 
   protected final SomaticPriorsFactory<?> mQHaploidFactory;
   protected final SomaticPriorsFactory<?> mQDiploidFactory;
@@ -213,9 +218,38 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     final boolean doLoh = mParams.lohPrior() > 0;
     final String refAllele = DnaUtils.bytesToSequenceIncCG(ref, position, endPosition - position);
     final double ratio = posterior.posteriorScore();
+
+
+    final AlleleStatistics ac = modelCancer.statistics().counts();
+    final Description description = ac.getDescription();
+    final int refCode = description.indexOf(refAllele);
+    double tot = 0;
+    double vac = 0;
+    int va = -1;
+    boolean tied = false;
+    for (int i = 0; i < description.size(); i++) {
+      final double count = ac.count(i) - ac.error(i);
+      tot += count;
+      //System.err.println("a = " + i + " (" + description.name(i) + ") ac = " + count);
+      if (i != refCode && count >= vac) {
+        tied = count == vac;
+        vac = count;
+        va = i;
+      }
+    }
+    double vaf = 0;
+    if (va != -1) {
+      vaf = vac / tot;
+    }
+    final boolean interesting = vac > MIN_VAC && vaf > MIN_VAF;
+    if (interesting && tied) {
+      System.err.println("Two non-ref alleles met VAC/VAF threshold at " + templateName + ":" + (position + 1));
+      System.err.println("va = " + va + " (" + description.name(va) + ") vac = " + vac + " vaf = " + vaf + " interesting = " + interesting);
+    }
+
     if (sameCall || bestNormal == bestCancer) {
       // Call is same for both samples.  It still could be a germline call.
-      if (hypotheses.reference() == bestNormal && ratio >= mIdentityInterestingThreshold) {
+      if (!interesting && hypotheses.reference() == bestNormal && ratio >= mIdentityInterestingThreshold) {
         if (mParams.callLevel() != VariantOutputLevel.ALL) {
           // Call was same for both samples and equal to the reference, this is really boring
           // only retain it if ALL mode is active
@@ -240,6 +274,9 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, hypotheses, modelCancer, mParams, normalPloidy, VariantSample.DeNovoStatus.IS_DE_NOVO, ratio);
     } else {
       cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, hypotheses, modelCancer, mParams, normalPloidy, VariantSample.DeNovoStatus.NOT_DE_NOVO, null);
+    }
+    if (interesting) {
+      cancerSample.setVariantAllele(description.name(va));
     }
     final VariantLocus locus = new VariantLocus(templateName, position, endPosition, refAllele, VariantUtils.getPreviousRefNt(ref, position));
     final Variant v = new Variant(locus, normalSample, cancerSample);

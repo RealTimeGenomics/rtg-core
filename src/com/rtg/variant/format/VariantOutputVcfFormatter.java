@@ -19,8 +19,8 @@ import java.util.Map;
 
 import com.rtg.relation.VcfPedigreeParser;
 import com.rtg.util.MathUtils;
-import com.rtg.util.StringUtils;
 import com.rtg.util.PosteriorUtils;
+import com.rtg.util.StringUtils;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantSample;
@@ -125,8 +125,10 @@ public class VariantOutputVcfFormatter {
 
   private void initFormatFields() {
     mFormatFields.add(VcfFormatField.GT);
+    mFormatFields.add(VcfFormatField.VA); // XXXLen
     mFormatFields.add(VcfFormatField.DP);
     mFormatFields.add(VcfFormatField.AD);
+    mFormatFields.add(VcfFormatField.ADE); // XXXLen
     mFormatFields.add(VcfFormatField.GQ);
     mFormatFields.add(VcfFormatField.RE);
     mFormatFields.add(VcfFormatField.AR);
@@ -358,7 +360,7 @@ public class VariantOutputVcfFormatter {
     if (ref.length() == 0) {
       return true;
     }
-    if (checkCatLengths(name)) {
+    if (checkCatLengths(name) || sample.getVariantAllele() != null && sample.getVariantAllele().length() == 0) {
       return true;
     }
 

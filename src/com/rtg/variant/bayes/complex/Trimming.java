@@ -41,13 +41,16 @@ public final class Trimming {
   private Trimming() { }
 
   // Can't use Description, as that includes hypotheses that weren't necessarily called.
-  private static HashSet<String> extractCalledAlleles(final Variant variant) {
+  private static HashSet<String> extractAlleles(final Variant variant) {
     final HashSet<String> alleles = new HashSet<>();
     for (int k = 0; k < variant.getNumberOfSamples(); k++) {
       final VariantSample vs = variant.getSample(k);
       if (vs != null) {
         if (!vs.isIdentity()) {
           Collections.addAll(alleles, StringUtils.split(vs.getName(), VariantUtils.COLON));
+        }
+        if (vs.getVariantAllele() != null) {
+          alleles.add(vs.getVariantAllele());
         }
       }
     }
@@ -87,6 +90,7 @@ public final class Trimming {
         final String newName = createVariantName(leftClip, rightClip, sample.getName());
         newSamples[k] = new VariantSample(sample.getPloidy(), newName, sample.isIdentity(), sample.getMeasure(), sample.isDeNovo(), sample.getDeNovoPosterior());
         VariantSample.copy(sample, newSamples[k]);
+        newSamples[k].setVariantAllele(createVariantName(leftClip, rightClip, sample.getVariantAllele()));
         // Update counts to correspond to the new description
         final Description d = newSamples[k].getStats().counts().getDescription() instanceof DescriptionNone ? DescriptionNone.SINGLETON : newDescription;
         newSamples[k].setStats((Statistics<?>) newSamples[k].getStats().copy());
@@ -135,7 +139,7 @@ public final class Trimming {
     }
 
     // Compute set of called alleles and exit if there are none
-    final HashSet<String> catSet = extractCalledAlleles(original);
+    final HashSet<String> catSet = extractAlleles(original);
     if (catSet.size() == 0) {
       return original;
     }
@@ -235,7 +239,7 @@ public final class Trimming {
   static List<Variant> split(final Variant original, DenovoChecker denovoCorrector) {
 
     // Compute set of alleles and exit if there are none
-    final HashSet<String> catSet = extractCalledAlleles(original);
+    final HashSet<String> catSet = extractAlleles(original);
     if (catSet.size() == 0) {
       return Collections.singletonList(original);
     }
