@@ -103,6 +103,61 @@ public class SuperCigarValidatorTest extends TestCase {
 
   }
 
+  public void testCGOverlapWithDeletion() throws Exception {
+    //check that it is OK to not provide XQ if the overlap is deleted from the template
+    final SuperCigarValidator validator = new SuperCigarValidator(0);
+
+    final SAMRecord samrec = new SAMRecord(null);
+
+    samrec.setAlignmentStart(1);
+    samrec.setCigarString("29=");
+    samrec.setReadString("AGGCAGGTAGATCATGAGGTGAAGAGATC");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "19=2B2D10=");
+    samrec.setAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE, 3);
+    samrec.setBaseQualityString("/////////////////////////////");
+    samrec.setFlags(179);
+    final byte[] sdfRead = DnaUtils.encodeString("GATCTCTTCACCTCATGATCTACCTGCCT".replaceAll(" ", ""));
+    final byte[] sdfQualities = FastaUtils.asciiToRawQuality("/////////////////////////////");
+    validator.setData(samrec, sdfRead, sdfQualities);
+    validator.setTemplate(DnaUtils.encodeString("AGGCAGGTAGATCATGAGGTGAAGAGATC"));
+    validator.parse();
+    assertTrue(validator.getInvalidReason(), validator.isValid());
+
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "19=2B2N10=");
+    samrec.setAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE, 0);
+    validator.setData(samrec, sdfRead, sdfQualities);
+    validator.parse();
+    assertTrue(validator.getInvalidReason(), validator.isValid());
+
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "19=2B2H10=");
+    samrec.setAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE, 0);
+    validator.setData(samrec, sdfRead, sdfQualities);
+    validator.parse();
+    assertTrue(validator.getInvalidReason(), validator.isValid());
+
+
+    samrec.setCigarString("19=2D8=");
+    samrec.setReadString("TGGCAGGTAGATCATGAGGAAGAGATC"); //<- this doesn't seem to be checked by anything
+    samrec.setBaseQualityString("/////////////////////////////");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "19=2B1X1=2D8=");
+    samrec.setAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE, 4);
+    samrec.setAttribute(SamUtils.CG_READ_DELTA, "T");
+    validator.setData(samrec, sdfRead, sdfQualities);
+    validator.parse();
+    assertFalse(validator.isValid());
+    assertTrue(validator.getInvalidReason(), validator.getInvalidReason().contains("Overlap described but no XQ field present in SAM record"));
+
+    samrec.setReadString("AGGCAGGTAGATCATGAGGAAGAGATC");
+    samrec.setBaseQualityString("/////////////////////////////");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "19=2B1X1=3X3=2X");
+    samrec.setAttribute(SamUtils.CG_READ_DELTA, "TAAGTC");
+    samrec.setAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE, 6);
+    validator.setData(samrec, sdfRead, sdfQualities);
+    validator.parse();
+    assertFalse(validator.isValid());
+    assertTrue(validator.getInvalidReason(), validator.getInvalidReason().contains("Overlap described but no XQ field present in SAM record"));
+  }
+
   public void testCgOverlap() throws Exception {
     final SuperCigarValidator validator = new SuperCigarValidator(0);
     final SAMRecord samrec = new SAMRecord(null);

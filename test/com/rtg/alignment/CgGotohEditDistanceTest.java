@@ -540,6 +540,20 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
             "18=2X5=", 2, true, false, 2, true, 1, true);
   }
 
+  public void testNgsCg2Example2() {
+    checkCG(
+      "GATCTCTTCACCTCATGATCTACCTGCCT",
+//            "AGGCAGGTAGATCATGAGG"
+//                           + "TGAAGAGATC",
+//            "AGGCAGGTAGATCATGAGGTGAAGAGATC",
+      "GATCTCTTCACCTCATGATCTACCTGCCT",
+            "GATCTCTTCATCATGATCTACCTGCCT",
+            "",
+            "==========DDBB"
+            + "===================",
+            "10=2D17=", 3, true, false, 0,  true, 1, true);
+  }
+
   public void testValidation() {
     checkCG("GTACTGTGTGCGTCCTTGACATCTA     ACCGGCGCCT",
             "GTAGT  GTGCGTCCTTGACATCTAAGGATATCGGCGCCTGA",
