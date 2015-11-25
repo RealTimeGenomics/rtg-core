@@ -65,7 +65,7 @@ public class ReadSimCliTest extends AbstractCliTest {
       "--n-rate", "rate that the machine will generate new unknowns in the read"
     );
     checkExtendedHelp(
-      "--Xmachine-errors=STRING", "selects the sequencer machine error settings. One of [default, illumina, ls454_se, ls454_pe, complete, complete_2, iontorrent]"
+      "--Xmachine-errors=STRING", "selects the sequencer machine error settings. One of [default, illumina, ls454_se, ls454_pe, complete, completegenomics, iontorrent]"
         );
   }
 

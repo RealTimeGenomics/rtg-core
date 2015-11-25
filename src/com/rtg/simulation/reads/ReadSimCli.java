@@ -200,7 +200,7 @@ public class ReadSimCli extends LoggedCli {
     initIonFlags();
     final Flag machType = mFlags.registerRequired(MACHINE_TYPE, String.class, "string", "select the sequencing technology to model").setCategory(INPUT_OUTPUT);
     machType.setParameterRange(new String[]{MachineType.ILLUMINA_SE.name(), MachineType.ILLUMINA_PE.name(), MachineType.COMPLETE_GENOMICS.name(), MachineType.COMPLETE_GENOMICS_2.name(), MachineType.FOURFIVEFOUR_PE.name(), MachineType.FOURFIVEFOUR_SE.name(), MachineType.IONTORRENT.name()});
-    mFlags.registerOptional('E', MACHINE_ERROR_PRIORS, String.class, "string", "selects the sequencer machine error settings. One of [default, illumina, ls454_se, ls454_pe, complete, complete_2, iontorrent]").setCategory(UTILITY);
+    mFlags.registerOptional('E', MACHINE_ERROR_PRIORS, String.class, "string", "selects the sequencer machine error settings. One of [default, illumina, ls454_se, ls454_pe, complete, completegenomics, iontorrent]").setCategory(UTILITY);
   }
 
   protected void initIlluminaFlags() {
