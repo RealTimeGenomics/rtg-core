@@ -45,14 +45,15 @@ public class SuperCigarValidator extends SuperCigarParser {
 
   private final int mUnknownsPenalty;
 
-  //keeps track of how many bases currently appear in overlap and template
-  //(i.e. how long the XQ field should be), this can be 0 even if an overlap exists
-  //if the overlap is immediately followed by an equal number of deletions
-  private int mGapTemplate;
+  //keeps track of whether we are currently replaying a template position
+  //-ve means we are reusing template
+  //+ve means we are skipping template
+  //The basic idea is to check whether an overlap has at least as many deletions
+  //immediately surrounding it.
+  //this doesn't account for certain nasty theoretical alignments however.
+  private int mOverlapTemplate;
 
-  private int mGapSkip;
-
-  private int mCurrentGap;
+  private boolean mReusedTemplate;
 
 
   /**
@@ -122,9 +123,8 @@ public class SuperCigarValidator extends SuperCigarParser {
     mIsValid = true;
     mInvalidReason = null;
     mAlignmentScore = 0;
-    mGapTemplate = 0;
-    mGapSkip = 0;
-    mCurrentGap = 0;
+    mOverlapTemplate = 0;
+    mReusedTemplate = false;
   }
 
   /**
@@ -165,7 +165,7 @@ public class SuperCigarValidator extends SuperCigarParser {
   }
 
   protected void checkOverlap() {
-    if (mGapTemplate > 0 && mXQField == null) {
+    if (mReusedTemplate && mXQField == null) {
       setInvalid("Overlap described but no " + SamUtils.CG_OVERLAP_QUALITY + " field present in SAM record, " + mSamRecord.getSAMString().trim());
     }
   }
@@ -206,7 +206,7 @@ public class SuperCigarValidator extends SuperCigarParser {
 
   @Override
   protected void doReadHardClip() {
-    gapSkip();
+    templateOnlyOp();
   }
 
   @Override
@@ -227,7 +227,7 @@ public class SuperCigarValidator extends SuperCigarParser {
       return;
     }
 
-    mCurrentGap++;
+    mOverlapTemplate--;
 //    System.err.println("Template overlap...");
 //    if (mXQField == null) {
 //      setInvalid("Overlap described but no " + SamUtils.CG_OVERLAP_QUALITY + " field present in SAM record, " + mSamRecord.getSAMString().trim());
@@ -251,7 +251,7 @@ public class SuperCigarValidator extends SuperCigarParser {
   protected void doTemplateOnly(int templateNt) {
     mAlignmentScore += (mPreviousChar == 'D') ? 1 : 2;
     mPreviousChar = 'D';
-    gapSkip();
+    templateOnlyOp();
   }
 
   @Override
@@ -267,7 +267,7 @@ public class SuperCigarValidator extends SuperCigarParser {
       setInvalid(SamUtils.CG_READ_DELTA + " value: " + DnaUtils.getBase(readNt) + " does not match read value: " + DnaUtils.getBase(originalReadNt) + ", " + mSamRecord.getSAMString().trim());
     }
     mAlignmentScore++;
-    gapTemplate();
+    readAndTemplate();
   }
 
   @Override
@@ -281,7 +281,7 @@ public class SuperCigarValidator extends SuperCigarParser {
         setInvalid("Expected match, SDF read=" + DnaUtils.getBase(originalReadNt) + ", template=" + DnaUtils.getBase(nt) + ", " + mSamRecord.getSAMString().trim());
       }
     }
-    gapTemplate();
+    readAndTemplate();
   }
 
   @Override
@@ -332,24 +332,23 @@ public class SuperCigarValidator extends SuperCigarParser {
   @Override
   protected void doUnmapped() {
     super.doUnmapped();
-    gapTemplate();
+    readAndTemplate();
   }
 
   @Override
   protected void doTemplateSkip(int templateNt) {
     super.doTemplateSkip(templateNt);
-    gapSkip();
+    templateOnlyOp();
   }
 
-  private void gapTemplate() {
-    if (mCurrentGap > mGapTemplate + mGapSkip) {
-      mGapTemplate++;
+  private void readAndTemplate() {
+    if (mOverlapTemplate < 0) {
+      mReusedTemplate = true;
+      mOverlapTemplate++;
     }
   }
 
-  private void gapSkip() {
-    if (mCurrentGap > mGapTemplate + mGapSkip) {
-      mGapSkip++;
-    }
+  private void templateOnlyOp() {
+    mOverlapTemplate++;
   }
 }

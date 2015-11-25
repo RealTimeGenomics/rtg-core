@@ -156,7 +156,46 @@ public class SuperCigarValidatorTest extends TestCase {
     validator.parse();
     assertFalse(validator.isValid());
     assertTrue(validator.getInvalidReason(), validator.getInvalidReason().contains("Overlap described but no XQ field present in SAM record"));
+
   }
+
+    public void testCGOverlapWithDeletion2() throws Exception {
+      //check that it is OK to not provide XQ if the overlap is deleted from the template
+      final SuperCigarValidator validator = new SuperCigarValidator(0);
+
+      final SAMRecord samrec = new SAMRecord(null);
+//    GGGCCTGCAC
+//              DDD
+//               BB
+//               TGGCCAAGGAGCTGTGTGA
+//    GGGCCTGCACCTGGCCAAGGAGCTGTGTGA
+//
+      samrec.setAlignmentStart(1);
+      samrec.setCigarString("10=1D19=");
+      samrec.setReadString("GGGCCTGCACTGGCCAAGGAGCTGTGTGA");
+      samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "10=3D2B19=");
+      samrec.setAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE, 4);
+      samrec.setBaseQualityString("/////////////////////////////");
+      samrec.setFlags(131);
+      final byte[] sdfRead = DnaUtils.encodeString("GGGCCTGCACTGGCCAAGGAGCTGTGTGA".replaceAll(" ", ""));
+      final byte[] sdfQualities = FastaUtils.asciiToRawQuality("/////////////////////////////");
+      validator.setData(samrec, sdfRead, sdfQualities);
+      validator.setTemplate(DnaUtils.encodeString("GGGCCTGCACCTGGCCAAGGAGCTGTGTGA"));
+      validator.parse();
+      assertTrue(validator.getInvalidReason(), validator.isValid());
+
+      //theoretical alignment that probably isn't handled:
+//    ACG
+//       DDD
+//          G
+//         BB
+//         C
+//          D
+//           TACGTACGTACGT
+//    ACGTACGTACGTACGTACGT
+//    The overlap actually has a match on either side of it, however no template position is repeated
+//    in a match or mismatch so would not result in a flattened read needing an XQ field.
+    }
 
   public void testCgOverlap() throws Exception {
     final SuperCigarValidator validator = new SuperCigarValidator(0);
