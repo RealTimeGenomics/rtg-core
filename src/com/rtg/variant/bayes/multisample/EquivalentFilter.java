@@ -78,12 +78,9 @@ public class EquivalentFilter {
   }
 
   private boolean complexEquivalent(Variant lastComplex, Variant current, int maxReadLength) {
-//    System.err.println("last: " + lastComplex);
-//    System.err.println("current: " + current);
     if (lastComplex == null || current == null) {
       return false;
     }
-
     // Efficiency, only complex calls can be equivalent
     if (!lastComplex.isComplexScored() || !current.isComplexScored()) {
       return false;
@@ -92,65 +89,56 @@ public class EquivalentFilter {
     if (lastComplex.getNumberOfSamples() != current.getNumberOfSamples()) {
       return false;
     }
-
-    //We might have to consider top level call in deciding this
+    if (Math.abs(current.getLocus().getStart() - lastComplex.getLocus().getStart()) > maxReadLength) {
+      return false;
+    }
+    boolean nonRef = false;
     for (int i = 0; i < lastComplex.getNumberOfSamples(); i++) {
-      if (!complexEquivalentIndividual(lastComplex.getSample(i), current.getSample(i), lastComplex.getLocus(), current.getLocus(), maxReadLength)) {
+      final VariantSample ls = lastComplex.getSample(i);
+      final VariantSample cs = current.getSample(i);
+      if ((ls == null) != (cs == null)) { // This can happen for male model on Y chromosome spanning PAR region boundary. Not equivalent
+        return false;
+      }
+      if (ls == null || cs == null) { // This happens regularly for female model on Y chromosome. Ignore current sample here.
+        continue;
+      }
+      if (ls.getName() == null || cs.getName() == null) { // Overcoverage indicator pseudo-variants
+        return false;
+      }
+      if (!ls.isIdentity() || !cs.isIdentity()) {
+        nonRef = true;
+      }
+      if (!complexEquivalentIndividual(ls, cs, lastComplex.getLocus(), current.getLocus())) {
         return false;
       }
     }
-    return true;
+    return nonRef; // Only variant sites can be complex equivalent
   }
 
-  private boolean complexEquivalentIndividual(VariantSample lastComplex, VariantSample current, VariantLocus lastLocus, VariantLocus currentLocus, int maxReadLength) {
-    //System.err.println("lastComplex=" + lastComplex);
-    //System.err.println("current=" + current);
-    if (lastComplex == null || current == null) {
-      return false;
-    }
-//    if (!lastComplex.isAllowOutput() || !current.isAllowOutput()) {
-//      return false;
-//    }
-    if (Math.abs(currentLocus.getStart() - lastLocus.getStart()) > maxReadLength) {
-      return false;
-    }
-    if (lastComplex.getName() == null || current.getName() == null) {
-      return false;
-    }
-    return checkComplexEquivalent(lastComplex, current, lastLocus, currentLocus);
-  }
-
-  private boolean checkComplexEquivalent(VariantSample lastComplex, VariantSample current, VariantLocus lastLocus, VariantLocus currentLocus) {
+  private boolean complexEquivalentIndividual(VariantSample lastComplex, VariantSample current, VariantLocus lastLocus, VariantLocus currentLocus) {
     final int startPos = lastLocus.getStart();
     final int endPos = currentLocus.getEnd();
     final String template = DnaUtils.bytesToSequenceIncCG(mTemplateBytes, startPos, endPos - startPos);
     final String[] lastPair = VariantUtils.normalizePair(lastComplex.getName());
     final String[] currentPair = VariantUtils.normalizePair(current.getName());
-    // System.err.println("**" + lastComplex);
-    // System.err.println("name=" + lastComplex.getName() + " currentName=" + current.getName());
-    // System.err.println("startPos=" + startPos +" endPos=" + endPos);
-    // Using getOutputPosition() here makes this safe to do post-trimming
     return complexEquivalent(lastPair, lastLocus.getEnd() - lastLocus.getStart(), currentPair, currentLocus.getEnd() - currentLocus.getStart(), template);
   }
 
   /**
+   * Play both calls into the template and see if they are equivalent.
    * @param lastPair the first complex call
    * @param lastLength the length of the first complex call
    * @param currentPair the second complex call
    * @param currentLength the length of the second complex call
-   * @param template the template sequence
-   * @return true if the calls generate an identical template
+   * @param template the template sequence from start of the first call to end of the second call
+   * @return true if the calls can generate identical haplotypes
    */
   private boolean complexEquivalent(String[] lastPair, int lastLength, String[] currentPair, int currentLength, String template) {
     if (lastLength < 0) {
         return false;
     }
-    //System.err.println("lastLength=" + lastLength + " template=\"" + template + "\"");
     final String lastTemplate = template.substring(lastLength);
     final String currentTemplate = template.substring(0, template.length() - currentLength);
-    //    System.err.println(lastTemplate + " " + currentTemplate);
-    //    System.err.println(lastPair[0] + lastTemplate + ":" + currentTemplate + currentPair[0]);
-    //    System.err.println(lastPair[1] + lastTemplate + ":" + currentTemplate + currentPair[1]);
     if ((lastPair[0] + lastTemplate).equals(currentTemplate + currentPair[0]) && (lastPair[1] + lastTemplate).equals(currentTemplate + currentPair[1])) {
       return true;
     }
