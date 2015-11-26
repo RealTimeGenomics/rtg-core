@@ -45,7 +45,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
 
   /** Maximum number of hits at a given position in the sliding window collector */
   //see bug #1476 for consequences of this on larger datasets
-  static final int MAX_HITS_PER_POSITION = GlobalFlags.getIntegerValue(GlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG);
+  protected final int mMaxHitsPerPosition;
 
   final int mWindowSize;
   private final int mMinFragmentLength;
@@ -84,6 +84,13 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
     }
     if (minFragmentLength < 0) {
       throw new IllegalArgumentException("Minimum window size too small: " + minFragmentLength);
+    }
+
+    final int readMillions = (int) (sharedResources.firstReaderCopy().numberSequences() / 1000000);
+    if (GlobalFlags.isSet(GlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG)) {
+      mMaxHitsPerPosition = GlobalFlags.getIntegerValue(GlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG);
+    } else {
+      mMaxHitsPerPosition = 1000 + readMillions * 10;
     }
 
     mMinFragmentLength = minFragmentLength;
@@ -133,7 +140,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
 
   private T getHitInfo(int i) {
     final T ret;
-    if (mReadsWindowInUse[i] == MAX_HITS_PER_POSITION) {
+    if (mReadsWindowInUse[i] == mMaxHitsPerPosition) {
       mMaxHitsExceededCount++;
       if (mMaxHitsExceededCount < 5) {
         Diagnostic.userLog("Max hits per position exceeded at template: " + mReferenceId + " templateStart: " + (mReadsWindow[i].size() > 0 ? "" + mReadsWindow[i].get(0).mTemplateStart : "unknown"));
@@ -428,6 +435,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
     stats.setProperty("total_hits", Long.toString(mHitCount));
     stats.setProperty("duplicate_hits", Long.toString(mDuplicateCount));
     stats.setProperty("max_hits_exceeded", Long.toString(mMaxHitsExceededCount));
+    stats.setProperty("max_hits_threshold", Integer.toString(mMaxHitsPerPosition));
     stats.setProperty("template_lengths_total", Long.toString(mReferenceLengthTotal));
 
     for (int i = 0; i < mRightPairCounts.length; i++) {

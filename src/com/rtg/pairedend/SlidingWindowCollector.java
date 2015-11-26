@@ -88,13 +88,13 @@ public class SlidingWindowCollector extends AbstractSlidingWindowCollector<HitIn
 
   private MatedHitInfo getMatedHitInfo(int i) {
     final MatedHitInfo ret;
-    if (mMatedReadsWindowInUse[i] == MAX_HITS_PER_POSITION - 1) {
+    if (mMatedReadsWindowInUse[i] == mMaxHitsPerPosition - 1) {
       mMaxMatedHitsExceededCount++;
       if (mMaxMatedHitsExceededCount < 5) {
         Diagnostic.userLog("Max mated hits per position exceeded at template: " + mReferenceId + " templateStart: " + (mReadsWindow[i].size() > 0 ? "" + mReadsWindow[i].get(0).mTemplateStart : "unknown"));
       }
     }
-    if (mMatedReadsWindowInUse[i] == MAX_HITS_PER_POSITION) {
+    if (mMatedReadsWindowInUse[i] == mMaxHitsPerPosition) {
       ret = null; //sorry, no vacancy.
     } else {
       if (mMatedReadsWindowInUse[i] < mMatedReadsWindow[i].size()) {
