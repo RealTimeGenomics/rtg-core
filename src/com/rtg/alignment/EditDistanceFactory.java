@@ -51,7 +51,7 @@ public final class EditDistanceFactory {
   // Specify how many reads to log with -D option
   private static final int EDIT_LOGGING_AMOUNT = GlobalFlags.getIntegerValue(GlobalFlags.EDIT_DIST_LOGGING_AMOUNT_FLAG);
 
-  // Priors for cg CG-gotoh XXXLen ensure this has OK information for CG v2, and probably just merge with the same default priors that variant calling uses
+  // Priors for cg CG-gotoh TODO merge with the same default priors that variant calling uses
   private static final String GOTOH_CG_PRIORS = "cg_real_errors";
 
   /** default table for single indel aligner */
