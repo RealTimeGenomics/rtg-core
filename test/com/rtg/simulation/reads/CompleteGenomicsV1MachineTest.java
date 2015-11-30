@@ -146,7 +146,7 @@ public class CompleteGenomicsV1MachineTest extends AbstractMachineTest {
 
   public void testOverlapDistributions() throws Exception {
     try (StatsReadWriter w = new StatsReadWriter()) {
-      final Machine m = getMachine(System.currentTimeMillis());
+      final Machine m = getMachine(42);
       m.setReadWriter(w);
       final byte[] frag = new byte[FRAGMENT_LENGTH];
       Arrays.fill(frag, (byte) 1);
