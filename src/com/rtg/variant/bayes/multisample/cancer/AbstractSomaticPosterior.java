@@ -31,7 +31,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 /**
  * Common part of posterior calculations from pure and contaminated somatic calling.
  */
-@TestClass(value = "com.rtg.variant.bayes.multisample.cancer.PosteriorPureTest")
+@TestClass(value = "com.rtg.variant.bayes.multisample.cancer.SomaticPosteriorPureTest")
 public abstract class AbstractSomaticPosterior {
 
   PossibilityArithmetic mArithmetic = LogApproximatePossibility.SINGLETON;
