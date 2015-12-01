@@ -18,6 +18,10 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
  */
 public class FragmentTooSmallException extends NoTalkbackSlimException {
 
+  /**
+   * @param fragmentLength The length of the fragment the read was to be generated from
+   * @param readLength the target read length
+   */
   public FragmentTooSmallException(int fragmentLength, int readLength) {
     super(String.format("Fragment length (%d) was not large enough to accomodate read of length %d after indels, try increasing fragment length", fragmentLength, readLength));
   }
