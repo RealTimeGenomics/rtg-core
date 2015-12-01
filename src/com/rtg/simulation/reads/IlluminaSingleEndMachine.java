@@ -59,8 +59,12 @@ public class IlluminaSingleEndMachine extends AbstractIlluminaMachine {
   public void processFragment(String id, int fragmentStart, byte[] data, int length) throws IOException {
     reseedErrorRandom(mFrameRandom.nextLong());
     final String name = generateRead(id, fragmentStart, data, length, mFrameRandom.nextBoolean(), mReadLength);
-    mReadWriter.writeRead(name, mReadBytes, mQualityBytes, mReadLength);
-    mResidueCount += mReadLength;
+    if (mReadBytesUsed == mReadLength) {
+      mReadWriter.writeRead(name, mReadBytes, mQualityBytes, mReadLength);
+      mResidueCount += mReadLength;
+    } else {
+      throw new FragmentTooSmallException(length, mReadLength);
+    }
   }
 
   @Override

@@ -75,11 +75,20 @@ public class IlluminaPairedEndMachine extends AbstractIlluminaMachine {
     reseedErrorRandom(mFrameRandom.nextLong());
     final boolean forwardFirst = mFrameRandom.nextBoolean();
     final String nameLeft = generateRead(id, fragmentStart, data, length, forwardFirst, mLeftReadLength);
-    mReadWriter.writeLeftRead(nameLeft, mReadBytes, mQualityBytes, mLeftReadLength);
-    mResidueCount += mLeftReadLength;
+    if (mReadBytesUsed == mLeftReadLength) {
+      mReadWriter.writeLeftRead(nameLeft, mReadBytes, mQualityBytes, mLeftReadLength);
+      mResidueCount += mLeftReadLength;
+    } else {
+      throw new FragmentTooSmallException(length, mLeftReadLength);
+    }
     final String nameRight = generateRead(id, fragmentStart, data, length, !forwardFirst, mRightReadLength);
-    mReadWriter.writeRightRead(nameRight, mReadBytes, mQualityBytes, mRightReadLength);
-    mResidueCount += mRightReadLength;
+
+    if (mReadBytesUsed == mRightReadLength) {
+      mReadWriter.writeRightRead(nameRight, mReadBytes, mQualityBytes, mRightReadLength);
+      mResidueCount += mRightReadLength;
+    } else {
+      throw new FragmentTooSmallException(length, mRightReadLength);
+    }
   }
 
   @Override

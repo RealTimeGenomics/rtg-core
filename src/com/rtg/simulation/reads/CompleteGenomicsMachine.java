@@ -77,12 +77,20 @@ public abstract class CompleteGenomicsMachine extends AbstractMachine {
 
     final String nameLeft = generateRead(id, fragmentStart, data, length, forwardFrame, true);
 
-    mReadWriter.writeLeftRead(nameLeft, mReadBytes, mQualityBytes, mReadBytes.length);
-    mResidueCount += mReadBytes.length;
+    if (mReadBytesUsed == mReadBytes.length) {
+      mReadWriter.writeLeftRead(nameLeft, mReadBytes, mQualityBytes, mReadBytes.length);
+      mResidueCount += mReadBytes.length;
+    } else {
+      throw new FragmentTooSmallException(length, mReadBytes.length);
+    }
 
     final String nameRight = generateRead(id, fragmentStart, data, length, forwardFrame, false);
-    mReadWriter.writeRightRead(nameRight, mReadBytes, mQualityBytes, mReadBytes.length);
-    mResidueCount += mReadBytes.length;
+    if (mReadBytesUsed == mReadBytes.length) {
+      mReadWriter.writeRightRead(nameRight, mReadBytes, mQualityBytes, mReadBytes.length);
+      mResidueCount += mReadBytes.length;
+    } else {
+      throw new FragmentTooSmallException(length, mReadBytes.length);
+    }
   }
 
   protected abstract String generateRead(String id, int fragmentStart, byte[] data, int length, boolean forwardFrame, boolean leftArm);
