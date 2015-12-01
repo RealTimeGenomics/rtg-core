@@ -86,7 +86,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
    * @param mu somatic mutation rate
    * @return the posterior
    */
-  protected abstract AbstractPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, final HypothesesPrior<?> hypotheses, final double mu);
+  protected abstract AbstractSomaticPosterior makePosterior(final ModelInterface<?> normal, final ModelInterface<?> cancer, final HypothesesPrior<?> hypotheses, final double mu);
 
   private VariantSample setCallValues(GenotypeMeasure posterior, int cat, Hypotheses<?> hypotheses, ModelInterface<?> model, VariantOutputOptions params, Ploidy ploidy, VariantSample.DeNovoStatus dns, Double dnp) {
     final VariantSample sample = new VariantSample(ploidy, hypotheses.name(cat), hypotheses.reference() == cat, posterior, dns, dnp);
@@ -202,7 +202,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       return null;
     }
 
-    final AbstractPosterior posterior = makePosterior(modelNormal, modelCancer, hypotheses, getSomaticPrior(templateName, position, endPosition));
+    final AbstractSomaticPosterior posterior = makePosterior(modelNormal, modelCancer, hypotheses, getSomaticPrior(templateName, position, endPosition));
     final boolean sameCall = posterior.isSameCall();
     final boolean isSomatic;
     final int bestNormal = posterior.bestNormal();

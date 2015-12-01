@@ -23,7 +23,7 @@ import junit.framework.TestCase;
 
 /**
  */
-public class PosteriorPureTest extends TestCase {
+public class SomaticPosteriorPureTest extends TestCase {
 
   protected static final String EXPECT_ALL_DIFFERENT = ""
       + "A -21.393 -29.399 -18.974 -29.399 -18.889" + LS
@@ -52,7 +52,7 @@ public class PosteriorPureTest extends TestCase {
       }
     }.update();
 
-    final AbstractPosterior post = new PosteriorPure(mQ, model, PureSomaticCallerTest.SEEN_3_G.get(0), hypotheses, 1, 1);
+    final AbstractSomaticPosterior post = new SomaticPosteriorPure(mQ, model, PureSomaticCallerTest.SEEN_3_G.get(0), hypotheses, 1, 1);
     assertEquals(EXPECT_ALL_DIFFERENT, post.toString());
     assertEquals(1, post.bestNormal());
     assertEquals(2, post.bestCancer());
@@ -79,9 +79,9 @@ public class PosteriorPureTest extends TestCase {
     final AbstractSomaticCaller ccs = new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params, 1, 1);
     ccs.integrity();
 
-    AbstractPosterior post = null;
+    AbstractSomaticPosterior post = null;
     for (int i = 0; i < 1; i++) {
-      post = new PosteriorPure((hypotheses.haploid() ? ccs.mQHaploidFactory : ccs.mQDiploidFactory).somaticQ(0.001), PureSomaticCallerTest.EQUALS_REF_A.get(0), PureSomaticCallerTest.EQUALS_REF_A.get(0), hypotheses, 1, 1);
+      post = new SomaticPosteriorPure((hypotheses.haploid() ? ccs.mQHaploidFactory : ccs.mQDiploidFactory).somaticQ(0.001), PureSomaticCallerTest.EQUALS_REF_A.get(0), PureSomaticCallerTest.EQUALS_REF_A.get(0), hypotheses, 1, 1);
     }
     assertEquals(EXPECT_ALL_SAME, post.toString());
     assertEquals(0, post.bestNormal());

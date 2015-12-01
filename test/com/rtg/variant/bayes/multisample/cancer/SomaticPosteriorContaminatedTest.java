@@ -30,12 +30,12 @@ import junit.framework.TestCase;
 
 /**
  */
-public class PosteriorContaminatedTest extends TestCase {
+public class SomaticPosteriorContaminatedTest extends TestCase {
 
   public void testPosteriorAllDifferent00() {
     final double contamination = 0.0;
-    final AbstractPosterior post = getContaminatedPosterior(contamination);
-    assertEquals(PosteriorPureTest.EXPECT_ALL_DIFFERENT, post.toString());
+    final AbstractSomaticPosterior post = getContaminatedPosterior(contamination);
+    assertEquals(SomaticPosteriorPureTest.EXPECT_ALL_DIFFERENT, post.toString());
     assertEquals(1, post.bestNormal());
     assertEquals(2, post.bestCancer());
     assertEquals(1.6731, post.posteriorScore(), 1e-4);
@@ -45,7 +45,7 @@ public class PosteriorContaminatedTest extends TestCase {
     assertFalse(post.isSameCall());
   }
 
-  private AbstractPosterior getContaminatedPosterior(double contamination) {
+  private AbstractSomaticPosterior getContaminatedPosterior(double contamination) {
     final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.SEEN_3_C.get(0).hypotheses();
     final VariantParams params = VariantParams.builder().somaticRate(0.001).create();
     final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params, 1, 1);
@@ -66,7 +66,7 @@ public class PosteriorContaminatedTest extends TestCase {
       cancer.increment(evg);
       normal.increment(evc);
     }
-    return new PosteriorContaminated((normal.haploid() ? cc.mQHaploidFactory : cc.mQDiploidFactory).somaticQ(0.001), normal, cancer, hypotheses, 1, 1);
+    return new SomaticPosteriorContaminated((normal.haploid() ? cc.mQHaploidFactory : cc.mQDiploidFactory).somaticQ(0.001), normal, cancer, hypotheses, 1, 1);
   }
 
   private static final String EXPECT_ALL_DIFFERENT_20 = ""
@@ -80,7 +80,7 @@ public class PosteriorContaminatedTest extends TestCase {
       ;
   public void testPosteriorAllDifferent20() {
     final double contamination = 0.20;
-    final AbstractPosterior post = getContaminatedPosterior(contamination);
+    final AbstractSomaticPosterior post = getContaminatedPosterior(contamination);
     assertEquals(EXPECT_ALL_DIFFERENT_20, post.toString());
     assertEquals(1, post.bestNormal());
     assertEquals(2, post.bestCancer());
@@ -109,8 +109,8 @@ public class PosteriorContaminatedTest extends TestCase {
       cancer.increment(eva);
       normal.increment(eva);
     }
-    final AbstractPosterior post = new PosteriorContaminated((hypotheses.haploid() ? cc.mQHaploidFactory : cc.mQDiploidFactory).somaticQ(0.001), PureSomaticCallerTest.EQUALS_REF_A.get(0), cancer, hypotheses, 1, 1);
-    assertEquals(PosteriorPureTest.EXPECT_ALL_SAME, post.toString());
+    final AbstractSomaticPosterior post = new SomaticPosteriorContaminated((hypotheses.haploid() ? cc.mQHaploidFactory : cc.mQDiploidFactory).somaticQ(0.001), PureSomaticCallerTest.EQUALS_REF_A.get(0), cancer, hypotheses, 1, 1);
+    assertEquals(SomaticPosteriorPureTest.EXPECT_ALL_SAME, post.toString());
     assertEquals(0, post.bestNormal());
     assertEquals(0, post.bestCancer());
     assertEquals(17.32775, post.posteriorScore(), 1e-4);

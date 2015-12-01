@@ -19,7 +19,7 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 /**
  * Calculate the joint posterior and marginal distributions for cancer.
  */
-class PosteriorPure extends AbstractPosterior {
+class SomaticPosteriorPure extends AbstractSomaticPosterior {
 
   /**
    * @param qa The Q matrix of cancer mutation probabilities.
@@ -29,7 +29,7 @@ class PosteriorPure extends AbstractPosterior {
    * @param phi probability of seeing contrary evidence in the original
    * @param psi probability of seeing contrary evidence in the derived
    */
-  PosteriorPure(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi) {
+  SomaticPosteriorPure(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi) {
     super(hypotheses, psi, psi);
     //System.err.println("normal " + normal);
     //System.err.println("cancer " + cancer);
@@ -40,7 +40,7 @@ class PosteriorPure extends AbstractPosterior {
         final double q = MathUtils.log(qa[i][j]);
         final double t = q + pi + pj;
         mPosterior[i][j] = t;
-        //System.err.println("PosteriorPure i=" + i + " j=" + j + " hypNormal=" + hypotheses.name(i) + " hypCancer=" + hypotheses.name(j) + " q=" + Utils.realFormat(q, 3) + " pi=" + Utils.realFormat(pi, 3) + " pj=" + Utils.realFormat(pj, 3) + " t=" + Utils.realFormat(t, 3));
+        //System.err.println("SomaticPosteriorPure i=" + i + " j=" + j + " hypNormal=" + hypotheses.name(i) + " hypCancer=" + hypotheses.name(j) + " q=" + Utils.realFormat(q, 3) + " pi=" + Utils.realFormat(pi, 3) + " pj=" + Utils.realFormat(pj, 3) + " t=" + Utils.realFormat(t, 3));
       }
     }
     contraryEvidenceAdjustment(normal.statistics(), cancer.statistics());

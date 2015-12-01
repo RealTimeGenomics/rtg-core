@@ -32,7 +32,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  * Common part of posterior calculations from pure and contaminated somatic calling.
  */
 @TestClass(value = "com.rtg.variant.bayes.multisample.cancer.PosteriorPureTest")
-public abstract class AbstractPosterior {
+public abstract class AbstractSomaticPosterior {
 
   PossibilityArithmetic mArithmetic = LogApproximatePossibility.SINGLETON;
   protected double logSum(final double x, final double y) {
@@ -57,7 +57,7 @@ public abstract class AbstractPosterior {
    * @param phi probability of seeing contrary evidence in the original
    * @param psi probability of seeing contrary evidence in the derived
    */
-  public AbstractPosterior(final Hypotheses<?> hypotheses, final double phi, final double psi) {
+  public AbstractSomaticPosterior(final Hypotheses<?> hypotheses, final double phi, final double psi) {
     mHypotheses = hypotheses;
     mLength = hypotheses.size();
     mPosterior = new double[mLength][mLength];
