@@ -81,7 +81,7 @@ public final class CoreCommand {
   static final Command CG2SDF = new Command(new Cg2Sdf(), CommandCategory.FORMAT, ReleaseLevel.GA);
 
   /** For converting SDF formatted complete genomics reads back into CG TSV format */
-  static final Command SDF2CG = new Command(new Sdf2Cg(), CommandCategory.FORMAT, ReleaseLevel.ALPHA);
+  static final Command SDF2CG = new Command(new Sdf2Cg(), CommandCategory.FORMAT, ReleaseLevel.BETA);
 
   /** For converting Slim's data format into FASTA/QUALA format */
   static final Command SDF2QUALA = new Command(new Sdf2Quala(), CommandCategory.FORMAT, ReleaseLevel.ALPHA);
@@ -180,22 +180,22 @@ public final class CoreCommand {
   static final Command READSIM = new Command(new ReadSimCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
 
   /** Evaluate read mappings and produce ROC. */
-  static final Command READSIMEVAL = new Command(new ReadSimEvalCli(), CommandCategory.SIMULATE, ReleaseLevel.BETA);
+  static final Command READSIMEVAL = new Command(new ReadSimEvalCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
 
   /** Generate a VCF containing population variants for a reference */
-  static final Command POPSIM = new Command(new PriorPopulationVariantGeneratorCli(), CommandCategory.SIMULATE, ReleaseLevel.BETA);
+  static final Command POPSIM = new Command(new PriorPopulationVariantGeneratorCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
 
   /** Generate a VCF containing a generated genotype for a new sample according to allele frequencies */
-  static final Command SAMPLESIM = new Command(new SampleSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.BETA);
+  static final Command SAMPLESIM = new Command(new SampleSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
 
   /** Generate a VCF containing a generated child genotype for a new sample from two parents */
-  static final Command CHILDSIM = new Command(new ChildSampleSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.BETA);
+  static final Command CHILDSIM = new Command(new ChildSampleSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
 
   /** Generate a VCF containing a derived genotype containing de novo variants */
-  static final Command DENOVOSIM = new Command(new DeNovoSampleSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.BETA);
+  static final Command DENOVOSIM = new Command(new DeNovoSampleSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
 
   /** Generate a genome SDF corresponding to a genotype contained in a VCF file */
-  static final Command SAMPLEREPLAY = new Command(new SampleReplayerCli(), CommandCategory.SIMULATE, ReleaseLevel.BETA);
+  static final Command SAMPLEREPLAY = new Command(new SampleReplayerCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
 
   /** Generate a copy of a genome with a bunch of CNV mutations */
   static final Command CNVSIM = new Command(new CnvSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.ALPHA);
@@ -225,7 +225,7 @@ public final class CoreCommand {
   static final Command MAPXRENAME = new Command(new MapxRename(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Do checking of coverage levels from calibration information */
-  static final Command CHRSTATS = new Command(new ChrStatsCli(), CommandCategory.UTILITY, ReleaseLevel.BETA);
+  static final Command CHRSTATS = new Command(new ChrStatsCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** SNP intersection class */
   static final Command SNPINTERSECT = new Command(new SnpIntersection(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
@@ -249,7 +249,7 @@ public final class CoreCommand {
   static final Command AVRSTATS = new Command(new AvrStatsCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Usage tracking server */
-  static final Command USAGESERVER = new Command(new UsageServerCli(), CommandCategory.UTILITY, ReleaseLevel.BETA);
+  static final Command USAGESERVER = new Command(new UsageServerCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** List modules and their license status. */
   static final LicenseCommand LICENSE = new LicenseCommand();
