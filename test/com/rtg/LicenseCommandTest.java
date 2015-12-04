@@ -32,7 +32,6 @@ public class LicenseCommandTest extends TestCase {
 
     final String result = baos.toString();
     assertTrue(result.contains("License: "));
-    assertTrue(result.contains("Licensed to: "));
     int longestUsageLength = "Command name".length();
     // Get longest string lengths for use below in pretty-printing.
     for (Command module : CoreCommand.INFO.commands()) {
