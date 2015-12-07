@@ -175,6 +175,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     mFlags.registerRequired('i', CommonFlags.READS_FLAG, File.class, "SDF|FILE", "the Complete Genomics read set").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", "output directory").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, "SDF", "SDF containing template to map against").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional(MapFlags.NO_INMEMORY_TEMPLATE, "do not load the template in memory").setCategory(CommonFlagCategories.UTILITY);
 
     final Flag maskFlag = mFlags.registerRequired(MASK_FLAG, String.class, "string", "read indexing method").setCategory(SENSITIVITY_TUNING);
     if (License.isDeveloper()) {
@@ -275,10 +276,11 @@ public class CgMapCli extends ParamsCli<NgsParams> {
       throw new NoTalkbackSlimException(ErrorType.SDF_INDEX_NOT_VALID, reads.getPath());
     }
     final File template = (File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG);
+    final boolean inMemoryTemplate = !mFlags.isSet(MapFlags.NO_INMEMORY_TEMPLATE);
     SdfUtils.validateHasNames(template);
     ngsParamBuilder.outputParams(outputParams);
     final Sex sex = MapParamsHelper.getMappingSex(ngsParamBuilder, mFlags);
-    final SequenceParams tParams = SequenceParams.builder().directory(template).mode(SequenceMode.UNIDIRECTIONAL).sex(sex).loadNames(true).useMemReader(true).create();
+    final SequenceParams tParams = SequenceParams.builder().directory(template).mode(SequenceMode.UNIDIRECTIONAL).sex(sex).loadNames(true).useMemReader(inMemoryTemplate).create();
     if (outputParams.calibrateRegions() != null) {
       outputParams.calibrateRegions().validateTemplate(tParams.reader());
     }
