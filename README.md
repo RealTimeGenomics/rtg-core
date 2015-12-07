@@ -22,7 +22,7 @@ analysis, here are some of the reasons to use RTG:
   automatically realigning when necessary.
 * Pedigree-aware pipeline, joint Bayesian calling of multiple samples
   in pedigrees with varying degrees of relatedness, from unrelated,
-  trios, quads, larger families, multi-generation pedigrees.
+  trios, quads, half-siblings, larger families, multi-generation pedigrees.
 * Pedigree-aware joint calling automatically includes de novo
   discovery, including specific confidence scoring that the variant is
   de novo. Again, this includes information from larger families where
@@ -37,11 +37,13 @@ analysis, here are some of the reasons to use RTG:
 * Joint Bayesian somatic variant detection, including support for
   contamination, and providing post-calling updated contamination
   estimate. Supports site-specific somatic mutation priors that allow
-  databases such as dbSNP/COSMIC/etc to support the somatic calling.
-* Tools for Q/A and sample checking: coverage analysis, detect
-  chromosome abnormalities, sample mislabelling, incorrect pedigree.
+  databases such as dbSNP/COSMIC/etc. to support the somatic calling.
+* Tools for quality control and sample checking: coverage analysis,
+  detection of chromosome abnormalities, verification of sex, sample
+  mislabelling, incorrect pedigree.
 * Includes sophisticated variant comparison tools for benchmarking and
-  ROC analysis to guide variant scoring and filtering.
+  ROC analysis to guide variant scoring and filtering.  Including tool
+  for visualization of ROC information between runs.
 * Fast and comprehensive metagenomic analysis pipelines.
 * Species frequency composition and abundance analysis, including
   bounds estimates and confidence scores both at the species and
@@ -54,7 +56,7 @@ analysis, here are some of the reasons to use RTG:
   available).
 * Search reads directly against protein databases for functional
   analysis.
-* Reproducible results -- unlike many other tools, the results don't
+* Reproducible results: unlike many other tools, the results don't
   change when you enable multi-threading or when you repeat the same
   run twice.
 
