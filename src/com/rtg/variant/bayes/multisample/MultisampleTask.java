@@ -63,7 +63,6 @@ import com.rtg.variant.VariantAlignmentRecordPopulator;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
-import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.avr.ModelFactory;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.ModelInterface;
@@ -76,6 +75,7 @@ import com.rtg.variant.bayes.multisample.multithread.MultisampleStatistics;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.util.VariantUtils;
+import com.rtg.vcf.VariantStatistics;
 import com.rtg.vcf.VcfAnnotator;
 import com.rtg.vcf.VcfFilter;
 import com.rtg.vcf.VcfRecord;
@@ -359,14 +359,20 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
     private abstract class MultisampleJob extends Job<JobIdMultisample> {
       protected final Result[] mArguments;
-      public MultisampleJob(JobIdMultisample id, Result[] arguments) {
+      private final int mTimeOffset;
+      public MultisampleJob(JobIdMultisample id, Result[] arguments, int timeOffset) {
         super(id);
         mArguments = arguments;
+        mTimeOffset = timeOffset;
       }
 
       @Override
       public String toString() {
-        final int start = id().time() * mInfo.chunkSize() + mInfo.start();
+        // The positions reported here are only a proxy for the true positions, since for example, the DANGLING
+        // job can make adjustments to the positions processed.  The idea is to try and make the position
+        // reported here correspond to the original INCR job used to generate the inputs of this chunk.
+        final int delta = Math.max((id().time() - mTimeOffset) * mInfo.chunkSize(), 0);
+        final int start = Math.min(delta, mInfo.end());
         final int end = Math.min(start + mInfo.chunkSize(), mInfo.end());
         return super.toString() + " " + mRefName + ":" + start + "-" + end;
       }
@@ -380,7 +386,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
     private class IncrJob extends MultisampleJob {
       public IncrJob(JobIdMultisample id, Result[] arguments) {
-        super(id, arguments);
+        super(id, arguments, 0);
       }
 
       @Override
@@ -397,7 +403,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
     private class DanglingJob extends MultisampleJob {
       public DanglingJob(JobIdMultisample id, Result[] arguments) {
-        super(id, arguments);
+        super(id, arguments, 1);
       }
 
       @Override
@@ -411,7 +417,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
     private class BedJob extends MultisampleJob {
       public BedJob(JobIdMultisample id, Result[] arguments) {
-        super(id, arguments);
+        super(id, arguments, 1);
       }
 
       @Override
@@ -426,7 +432,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
     private class ComplexJob extends MultisampleJob {
       public ComplexJob(JobIdMultisample id, Result[] arguments) {
-        super(id, arguments);
+        super(id, arguments, 1);
       }
 
       @Override
@@ -459,7 +465,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
     private class FilterJob extends MultisampleJob {
       public FilterJob(JobIdMultisample id, Result[] arguments) {
-        super(id, arguments);
+        super(id, arguments, 1);
       }
 
       @Override
@@ -487,7 +493,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
     private class OutJob extends MultisampleJob {
       public OutJob(JobIdMultisample id, Result[] arguments) {
-        super(id, arguments);
+        super(id, arguments, 2);
       }
 
       @Override
