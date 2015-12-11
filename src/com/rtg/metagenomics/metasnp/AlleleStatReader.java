@@ -36,7 +36,7 @@ class AlleleStatReader implements AutoCloseable {
     String mSequence;
     int mPosition;
     byte mReference;
-    int[][] mCounts = new int[4][];
+    double[][] mCounts = new double[4][];
     Line(String str, int lineNumber) throws IOException {
       final String[] fields = StringUtils.split(str, '\t');
       if (fields.length < NUM_FIELDS) {
@@ -49,9 +49,9 @@ class AlleleStatReader implements AutoCloseable {
       for (int i = 0; i < 4; i++) {
         final String count = fields[3 + i];
         final String[] samples = StringUtils.split(count, ',');
-        mCounts[i] = new int[samples.length];
+        mCounts[i] = new double[samples.length];
         for (int j = 0; j < samples.length; j++) {
-          mCounts[i][j] = Integer.parseInt(samples[j]);
+          mCounts[i][j] = Double.parseDouble(samples[j]);
         }
       }
       } catch (NumberFormatException e) {

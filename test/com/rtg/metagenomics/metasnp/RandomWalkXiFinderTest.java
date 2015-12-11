@@ -36,7 +36,7 @@ public class RandomWalkXiFinderTest extends TestCase {
 
   public void testEasyBalanced() {
     final RandomWalkXiFinder xiFinder = new RandomWalkXiFinder();
-    final XiScore xis = xiFinder.maximizeSingleSample(AT, Collections.singletonList(new int[][] {{10, 10, 0, 0}}), 0);
+    final XiScore xis = xiFinder.maximizeSingleSample(AT, Collections.singletonList(new double[][] {{10, 10, 0, 0}}), 0);
     final double[] xi = xis.mXi;
     assertEquals(1, xi[0] + xi[1], 1e-10);
     assertEquals(0.5, xi[0], 0.1);
@@ -45,7 +45,7 @@ public class RandomWalkXiFinderTest extends TestCase {
   }
   public void testEasyBalancedCG() {
     final RandomWalkXiFinder xiFinder = new RandomWalkXiFinder();
-    final double[] xi = xiFinder.maximizeSingleSample(Collections.singletonList(new int[] {2, 3}), Collections.singletonList(new int[][] {{0, 0, 10, 10}}), 0).mXi;
+    final double[] xi = xiFinder.maximizeSingleSample(Collections.singletonList(new int[] {2, 3}), Collections.singletonList(new double[][] {{0, 0, 10, 10}}), 0).mXi;
     assertEquals(1, xi[0] + xi[1], 1e-10);
     assertEquals(0.5, xi[0], 0.1);
     assertEquals(0.5, xi[1], 0.1);
@@ -53,7 +53,7 @@ public class RandomWalkXiFinderTest extends TestCase {
 
   public void testEasyUnbalanced() {
     final RandomWalkXiFinder xiFinder = new RandomWalkXiFinder();
-    final double[] xi = xiFinder.maximizeSingleSample(AT, Collections.singletonList(new int[][] {{10, 20, 0, 0}}), 0).mXi;
+    final double[] xi = xiFinder.maximizeSingleSample(AT, Collections.singletonList(new double[][] {{10, 20, 0, 0}}), 0).mXi;
     assertEquals(1, xi[0] + xi[1], 1e-10);
     assertEquals(0.3333, xi[0], 0.1);
     assertEquals(0.6667, xi[1], 0.1);
@@ -61,7 +61,7 @@ public class RandomWalkXiFinderTest extends TestCase {
 
   public void test3StrainsBalanced() {
     final RandomWalkXiFinder xiFinder = new RandomWalkXiFinder();
-    final double[] xi = xiFinder.maximizeSingleSample(Collections.singletonList(new int[] {0, 1, 1}), Collections.singletonList(new int[][] {{10, 10, 0, 0}}), 0).mXi;
+    final double[] xi = xiFinder.maximizeSingleSample(Collections.singletonList(new int[] {0, 1, 1}), Collections.singletonList(new double[][] {{10, 10, 0, 0}}), 0).mXi;
     //System.out.println(java.util.Arrays.toString(xi));
     assertEquals(1, xi[0] + xi[1] + xi[2], 1e-10);
     assertEquals(0.5, xi[0], 0.1);
@@ -70,7 +70,7 @@ public class RandomWalkXiFinderTest extends TestCase {
 
   public void test4StrainsBalanced() {
     final RandomWalkXiFinder xiFinder = new RandomWalkXiFinder();
-    final double[] xi = xiFinder.maximizeSingleSample(Collections.singletonList(new int[] {0, 1, 1, 0}), Collections.singletonList(new int[][] {{10, 10, 0, 0}}), 0).mXi;
+    final double[] xi = xiFinder.maximizeSingleSample(Collections.singletonList(new int[] {0, 1, 1, 0}), Collections.singletonList(new double[][] {{10, 10, 0, 0}}), 0).mXi;
     //System.out.println(java.util.Arrays.toString(xi));
     assertEquals(1, xi[0] + xi[1] + xi[2] + xi[3], 1e-10);
     assertEquals(0.5, xi[0] + xi[3], 0.1);
@@ -79,7 +79,7 @@ public class RandomWalkXiFinderTest extends TestCase {
 
   public void testNoisyBalanced() {
     final RandomWalkXiFinder xiFinder = new RandomWalkXiFinder();
-    final double[] xi = xiFinder.maximizeSingleSample(AT, Collections.singletonList(new int[][] {{50, 50, 2, 0}}), 0).mXi;
+    final double[] xi = xiFinder.maximizeSingleSample(AT, Collections.singletonList(new double[][] {{50, 50, 2, 0}}), 0).mXi;
     //System.out.println(java.util.Arrays.toString(xi));
     assertEquals(1, xi[0] + xi[1], 1e-10);
     assertEquals(0.5, xi[0], 0.1);
@@ -88,7 +88,7 @@ public class RandomWalkXiFinderTest extends TestCase {
 
   public void testThreeAlleles() {
     final RandomWalkXiFinder xiFinder = new RandomWalkXiFinder();
-    final double[] xi = xiFinder.maximizeSingleSample(Collections.singletonList(new int[] {0, 1, 2}), Collections.singletonList(new int[][] {{50, 50, 50, 2}}), 0).mXi;
+    final double[] xi = xiFinder.maximizeSingleSample(Collections.singletonList(new int[] {0, 1, 2}), Collections.singletonList(new double[][] {{50, 50, 50, 2}}), 0).mXi;
     //System.out.println(java.util.Arrays.toString(xi));
     assertEquals(1, xi[0] + xi[1] + xi[2], 1e-10);
     assertEquals(0.333, xi[0], 0.1);
@@ -98,7 +98,7 @@ public class RandomWalkXiFinderTest extends TestCase {
 
   public void testThreePositionEasy() {
     final RandomWalkXiFinder xiFinder = new RandomWalkXiFinder();
-    final int[][] ev = {{5, 5, 5, 0}};
+    final double[][] ev = {{5, 5, 5, 0}};
     final double[] xi = xiFinder.maximizeSingleSample(Arrays.asList(new int[] {0, 1, 2}, new int[] {2, 1, 0}, new int[] {1, 2, 0}), Arrays.asList(ev, ev, ev), 0).mXi;
     //System.out.println(java.util.Arrays.toString(xi));
     assertEquals(1, xi[0] + xi[1] + xi[2], 1e-10);
@@ -109,9 +109,9 @@ public class RandomWalkXiFinderTest extends TestCase {
 
   private void checkThreePositionHardLogArithmetic(final PossibilityArithmetic arith) {
     final RandomWalkXiFinder xiFinder = new RandomWalkXiFinder(arith);
-    final int[][] ev = {{10, 10, 0, 0}};
+    final double[][] ev = {{10, 10, 0, 0}};
     final List<int[]> alpha = Arrays.asList(new int[]{0, 0, 1}, new int[]{0, 1, 0}, new int[]{1, 0, 0});
-    final List<int[][]> evidence = Arrays.asList(ev, ev, ev);
+    final List<double[][]> evidence = Arrays.asList(ev, ev, ev);
     final double[] xi = xiFinder.maximizeSingleSample(alpha, evidence, 0).mXi;
     //System.out.println(java.util.Arrays.toString(xi));
     final double expected = arith.prob2Poss(1.0 / 3.0);
@@ -127,10 +127,10 @@ public class RandomWalkXiFinderTest extends TestCase {
     final PossibilityArithmetic arith = LogPossibility.SINGLETON;
     final RandomWalkXiFinder xiFinder = new RandomWalkXiFinder(arith);
     final List<int[]> alpha = Arrays.asList(new int[]{0, 0, 1}, new int[]{0, 1, 0}, new int[]{1, 0, 0});
-    final List<int[][]> evidence = new ArrayList<>();
-    evidence.add(new int[][] {{20, 10, 0, 0}, {30, 10, 0, 0}});
-    evidence.add(new int[][] {{20, 10, 0, 0}, {20, 20, 0, 0}});
-    evidence.add(new int[][] {{20, 10, 0, 0}, {30, 10, 0, 0}});
+    final List<double[][]> evidence = new ArrayList<>();
+    evidence.add(new double[][] {{20, 10, 0, 0}, {30, 10, 0, 0}});
+    evidence.add(new double[][] {{20, 10, 0, 0}, {20, 20, 0, 0}});
+    evidence.add(new double[][] {{20, 10, 0, 0}, {30, 10, 0, 0}});
     final double expected = arith.prob2Poss(1.0 / 3.0);
     final double[][] xiSamples = xiFinder.maximize(alpha, evidence);
     assertEquals(expected, xiSamples[0][0], 0.1);

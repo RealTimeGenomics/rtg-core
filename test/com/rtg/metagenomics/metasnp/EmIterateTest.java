@@ -33,11 +33,11 @@ public class EmIterateTest extends TestCase {
   public void checkSimple(final boolean updateBeta) {
     final List<Byte> ref = Arrays.asList(new Byte[] {0, 1, 2, 0});
 
-    final List<int[][]> evidence = new ArrayList<>();
-    evidence.add(new int[][] {{0, 0, 100, 200}, {0, 0, 200, 100}});
-    evidence.add(new int[][] {{100, 0, 0, 200}, {200, 0, 0, 100}});
-    evidence.add(new int[][] {{300, 0, 0, 0}, {300, 0, 0, 0}});
-    evidence.add(new int[][] {{0, 100, 0, 200}, {0, 200, 0, 100}});
+    final List<double[][]> evidence = new ArrayList<>();
+    evidence.add(new double[][] {{0, 0, 100, 200}, {0, 0, 200, 100}});
+    evidence.add(new double[][] {{100, 0, 0, 200}, {200, 0, 0, 100}});
+    evidence.add(new double[][] {{300, 0, 0, 0}, {300, 0, 0, 0}});
+    evidence.add(new double[][] {{0, 100, 0, 200}, {0, 200, 0, 100}});
     final int strains = 2;
     final List<EmIterate.EmResult> iterations = EmIterate.iterate(ref, evidence, strains, updateBeta ? EmIterate.BetaType.REESTIMATE : EmIterate.BetaType.STATIC, 0.001);
     final EmIterate.EmResult result = iterations.get(iterations.size() - 1);
@@ -63,11 +63,11 @@ public class EmIterateTest extends TestCase {
   public void testNoisy() {
     final List<Byte> ref = Arrays.asList(new Byte[] {0, 1, 2, 0});
 
-    final List<int[][]> evidence = new ArrayList<>();
-    evidence.add(new int[][] {{2, 0, 100, 200}, {0, 1, 200, 100}});
-    evidence.add(new int[][] {{100, 3, 0, 200}, {200, 0, 2, 100}});
-    evidence.add(new int[][] {{300, 0, 1, 0}, {300, 0, 2, 0}});
-    evidence.add(new int[][] {{0, 100, 5, 200}, {2, 200, 2, 100}});
+    final List<double[][]> evidence = new ArrayList<>();
+    evidence.add(new double[][] {{2, 0, 100, 200}, {0, 1, 200, 100}});
+    evidence.add(new double[][] {{100, 3, 0, 200}, {200, 0, 2, 100}});
+    evidence.add(new double[][] {{300, 0, 1, 0}, {300, 0, 2, 0}});
+    evidence.add(new double[][] {{0, 100, 5, 200}, {2, 200, 2, 100}});
     final int strains = 2;
     final List<EmIterate.EmResult> iterations = EmIterate.iterate(ref, evidence, strains, EmIterate.BetaType.STATIC, 0.001);
     final EmIterate.EmResult result = iterations.get(iterations.size() - 1);

@@ -24,20 +24,20 @@ public class AlphaSelectorTest extends TestCase {
 
   public void test() {
     final double[][] xi = {{0.8, 0.2}, {0.2, 0.8}};
-    final int[][] reads = {{2, 8, 0, 0}, {8, 2, 0, 0}};
+    final double[][] reads = {{2, 8, 0, 0}, {8, 2, 0, 0}};
     final int[] expected = {1, 0};
     check(xi, reads, expected);
   }
   public void testInexact() {
     final double[][] xi = {{0.8, 0.2}, {0.2, 0.8}};
-    final int[][] reads = {{0, 0, 1, 9}, {0, 0, 7, 3}};
+    final double[][] reads = {{0, 0, 1, 9}, {0, 0, 7, 3}};
     final int[] expected = {3, 2};
     check(xi, reads, expected);
   }
 
   public void testNotFirst() {
     final double[][] xi = {{0.8, 0.2}, {0.2, 0.8}};
-    final int[][] reads = {{0, 0, 1, 9}, {0, 0, 7, 3}};
+    final double[][] reads = {{0, 0, 1, 9}, {0, 0, 7, 3}};
     final int[] expected = {3, 2};
     check(xi, reads, expected);
   }
@@ -46,32 +46,32 @@ public class AlphaSelectorTest extends TestCase {
     final double[][] xi = {{0.5, 0.2, 0.3}, {0.1, 0.8, 0.1}};
     // for reads we would use {{0, 0, 2, 8}, {0, 0, 8, 2}} except there isn't quite enough evidence to override the beta.
     //
-    final int[][] reads = {{0, 0, 2, 10}, {0, 0, 8, 4}};
+    final double[][] reads = {{0, 0, 2, 10}, {0, 0, 8, 4}};
     final int[] expected = {3, 2, 3};
     check(xi, reads, expected);
   }
 
   public void test3samples() {
     final double[][] xi = {{0.5, 0.2, 0.3}, {0.1, 0.8, 0.1}, {0.1, 0.3, 0.6}};
-    final int[][] reads = {{0, 0, 3, 7}, {0, 0, 9, 1}, {0, 0, 4, 6}};
+    final double[][] reads = {{0, 0, 3, 7}, {0, 0, 9, 1}, {0, 0, 4, 6}};
     final int[] expected = {3, 2, 3};
     check(xi, reads, expected);
   }
   public void testRefIsLikely() {
     final double[][] xi = {{0.5, 0.2, 0.3}, {0.1, 0.8, 0.1}, {0.1, 0.3, 0.6}};
-    final int[][] reads = {{0, 0, 0, 1}, {0, 0, 1, 0}, {2, 0, 0, 0}};
+    final double[][] reads = {{0, 0, 0, 1}, {0, 0, 1, 0}, {2, 0, 0, 0}};
     final int[] expected = {0, 0, 0};
     check(xi, reads, expected);
 
   }
 
-  private void check(double[][] xi, int[][] reads, int[] expected) {
+  private void check(double[][] xi, double[][] reads, int[] expected) {
     final AlphaScore alphaScore = getAlphaScore(xi, reads);
     final int[] assignments = alphaScore.mCalls;
     assertTrue("expected <" + Arrays.toString(expected) + "> but was <" + Arrays.toString(assignments) + ">", Arrays.equals(expected, assignments));
   }
 
-  private AlphaScore getAlphaScore(double[][] xi, int[][] reads) {
+  private AlphaScore getAlphaScore(double[][] xi, double[][] reads) {
     final int template = 0;
     final double[] beta = new double[xi[0].length];
     Arrays.fill(beta, 0.001);
@@ -91,18 +91,18 @@ public class AlphaSelectorTest extends TestCase {
   public void testScoreConvergence() {
     // Test that evidence closer to the expected ratio gives higher scores
     final double[][] xi = {{0.5, 0.2, 0.3}, {0.1, 0.8, 0.1}, {0.1, 0.3, 0.6}};
-    final int[][] reads = {{0, 0, 3, 7}, {0, 0, 9, 1}, {0, 0, 4, 6}};
-    final int[][][] betterReads = {
+    final double[][] reads = {{0, 0, 3, 7}, {0, 0, 9, 1}, {0, 0, 4, 6}};
+    final double[][][] betterReads = {
         {{0, 0, 3, 8}, {0, 0, 9, 1}, {0, 0, 4, 6}}
         , {{0, 0, 3, 7}, {0, 0, 9, 2}, {0, 0, 4, 6}}
         , {{0, 0, 3, 7}, {0, 0, 9, 1}, {0, 0, 4, 7}}
     };
     final double initialScore = getAlphaScore(xi, reads).mLikelihood;
-    for (int[][] betterRead : betterReads) {
+    for (final double[][] betterRead : betterReads) {
       final double score = getAlphaScore(xi, betterRead).mLikelihood;
       assertTrue("Not better: " + Arrays.deepToString(betterRead), score > initialScore);
     }
-    final int[][][] worseReads = {
+    final double[][][] worseReads = {
         {{0, 0, 4, 7}, {0, 0, 9, 1}, {0, 0, 4, 6}}
         , {{0, 0, 3, 7}, {0, 0, 10, 1}, {0, 0, 4, 6}}
         , {{0, 0, 3, 7}, {0, 0, 9, 1}, {0, 0, 5, 6}}

@@ -123,9 +123,9 @@ public class MetaSnpCli extends LoggedCli {
 
     final double error = (Double) mFlags.getValue(ERROR_RATE);
     int approxLength = 0; // number of lines of input approximates length of genome
-    try (AlleleStatReader reader = new AlleleStatReader(f)) {
+    try (final AlleleStatReader reader = new AlleleStatReader(f)) {
       final List<Byte> ref = new ArrayList<>();
-      final List<int[][]> evidence = new ArrayList<>();
+      final List<double[][]> evidence = new ArrayList<>();
       final List<AlleleStatReader.Line> lines = new ArrayList<>();
       AlleleStatReader.Line line;
       while ((line = reader.nextLine()) != null) {
@@ -133,7 +133,7 @@ public class MetaSnpCli extends LoggedCli {
         final int refByte = line.mReference - 1;
         int nonRefCount = 0;
         int total = 0;
-        final int[][] evidenceArray = new int[line.mCounts[0].length][line.mCounts.length];
+        final double[][] evidenceArray = new double[line.mCounts[0].length][line.mCounts.length];
         for (int i = 0; i < evidenceArray.length; i++) {
           for (int j = 0; j < evidenceArray[i].length; j++) {
             evidenceArray[i][j] = line.mCounts[j][i];
@@ -201,9 +201,9 @@ public class MetaSnpCli extends LoggedCli {
     }
   }
 
-  static void outputVisualisation(List<Byte> refBytes, List<AlleleStatReader.Line> lines, List<int[][]> evidence, EmIterate.EmResult result, OutputStream out) throws IOException {
+  static void outputVisualisation(List<Byte> refBytes, List<AlleleStatReader.Line> lines, List<double[][]> evidence, EmIterate.EmResult result, OutputStream out) throws IOException {
     for (int i = 0; i < refBytes.size(); i++) {
-      final int[][] currentEvidence = evidence.get(i);
+      final double[][] currentEvidence = evidence.get(i);
       final int[] currentAssignments = result.mAssignments.get(i).mCalls;
       final int[] totals = new int[currentEvidence.length];
       for (int sample = 0; sample < currentEvidence.length; sample++) {

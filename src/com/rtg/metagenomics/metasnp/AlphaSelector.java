@@ -44,10 +44,10 @@ public final class AlphaSelector {
    * @param nStrains number of strains
    * @return assignments and a score.
    */
-  static AlphaScore alphaPosition(int referenceAllele, double[] probSpaceBeta, int[][] reads, double[][] thetaLookup, PossibilityArithmetic arith, int nStrains) {
+  static AlphaScore alphaPosition(int referenceAllele, double[] probSpaceBeta, double[][] reads, double[][] thetaLookup, PossibilityArithmetic arith, int nStrains) {
     return alphaPosition(referenceAllele, new ProbAlphaSimpleBeta(probSpaceBeta), reads, thetaLookup, arith, nStrains);
   }
-  static AlphaScore alphaPosition(int referenceAllele, ProbAlpha pAlpha, int[][] reads, double[][] thetaLookup, PossibilityArithmetic arith, int nStrains) {
+  static AlphaScore alphaPosition(int referenceAllele, ProbAlpha pAlpha, double[][] reads, double[][] thetaLookup, PossibilityArithmetic arith, int nStrains) {
     final int[] strainVariants = new int[nStrains];
     int stackPos = 0;
     double bestScore = arith.zero();
@@ -71,7 +71,7 @@ public final class AlphaSelector {
 
       double evidenceScore = arith.one();
       for (int sampleIndex = 0; sampleIndex < reads.length; sampleIndex++) {
-        final int[] sample = reads[sampleIndex];
+        final double[] sample = reads[sampleIndex];
         for (int i = 0; i < sample.length; i++) {
           evidenceScore = arith.multiply(evidenceScore, arith.pow(thetaLookup[sampleIndex][thetaMask[i]], sample[i]));
         }

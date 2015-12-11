@@ -110,7 +110,7 @@ public final class EmIterate {
     return -codeLength + strains * scores.size() * Math.log(4);
   }
 
-  static List<EmResult> iterate(List<Byte> ref, List<int[][]> evidence, int strains, BetaType betaType, double error) {
+  static List<EmResult> iterate(List<Byte> ref, List<double[][]> evidence, int strains, BetaType betaType, double error) {
     return iterate(ref, evidence, strains, ref.size(), LogPossibility.SINGLETON, new FixedIterations(10), betaType, error);
   }
   /**
@@ -125,7 +125,7 @@ public final class EmIterate {
    * @param error error rate
    * @return assignments and predicted xi
    */
-  static List<EmResult> iterate(List<Byte> ref, List<int[][]> evidence, int strains, long approxLength, PossibilityArithmetic arith, Termination terminate, BetaType updateBeta, double error) {
+  static List<EmResult> iterate(List<Byte> ref, List<double[][]> evidence, int strains, long approxLength, PossibilityArithmetic arith, Termination terminate, BetaType updateBeta, double error) {
     final int samples = evidence.get(0).length;
     final double[] beta = new double[strains];
     Arrays.fill(beta, 0.001);

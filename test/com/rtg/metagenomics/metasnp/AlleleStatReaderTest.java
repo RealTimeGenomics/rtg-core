@@ -34,8 +34,8 @@ static final String SIMPLE = "sequence\tposition\treference\ta\tc\tg\tt\taRatio\
       assertEquals("seq", line.mSequence);
       assertEquals(0, line.mPosition);
       assertEquals((byte) 2, line.mReference);
-      assertTrue(Arrays.equals(new int[] {0, 0, 0, 0}, line.mCounts[0]));
-      assertTrue(Arrays.equals(new int[] {88, 122, 104, 134}, line.mCounts[1]));
+      assertTrue(Arrays.equals(new double[] {0, 0, 0, 0}, line.mCounts[0]));
+      assertTrue(Arrays.equals(new double[] {88, 122, 104, 134}, line.mCounts[1]));
       assertNotNull(reader.nextLine());
       assertNotNull(reader.nextLine());
 
@@ -43,8 +43,8 @@ static final String SIMPLE = "sequence\tposition\treference\ta\tc\tg\tt\taRatio\
       assertEquals("seq2", line2.mSequence);
       assertEquals(45, line2.mPosition);
       assertEquals((byte) 4, line2.mReference);
-      assertTrue(Arrays.equals(new int[] {0, 0, 0, 0}, line2.mCounts[0]));
-      assertTrue(Arrays.equals(new int[] {102, 135, 117, 155}, line2.mCounts[3]));
+      assertTrue(Arrays.equals(new double[] {0, 0, 0, 0}, line2.mCounts[0]));
+      assertTrue(Arrays.equals(new double[] {102, 135, 117, 155}, line2.mCounts[3]));
       assertNull(reader.nextLine());
     }
 

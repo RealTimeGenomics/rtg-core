@@ -65,14 +65,14 @@ public class RandomWalkXiFinder {
     return modifiedXi;
   }
 
-  private double[] kurtTransform(final int numStrains, final List<int[]> alpha, final List<int[][]> count, int sample) {
+  private double[] kurtTransform(final int numStrains, final List<int[]> alpha, final List<double[][]> count, int sample) {
     // We want to perform a massive product over all the positions.  Since the
     // product is commutative we can accumulate a count for each possible
     // combination of xi values.  This must be done in a way consistent with
     // the allSums procedure.
     final double[] powers = new double[1 << numStrains];
     final Iterator<int[]> alphaIterator = alpha.iterator();
-    for (final int[][] cnt : count) {
+    for (final double[][] cnt : count) {
       final int[] a = alphaIterator.next();
       for (int allele = 0; allele < cnt[sample].length; allele++) {
         int index = 0;
@@ -115,7 +115,7 @@ public class RandomWalkXiFinder {
     return xi;
   }
 
-  XiScore maximizeSingleSample(final List<int[]> alpha, final List<int[][]> evidence, int sample) {
+  XiScore maximizeSingleSample(final List<int[]> alpha, final List<double[][]> evidence, int sample) {
     // Let Xi=(xi_0,...,xi_n) satisfy 0 <= xi[i] <= 1, sum x[i]=1.
     // Maximize product_x product_a theta_x[a]^count_x[a] where
     //   theta_x[a] = sum_{alpha_x(i)=a} xi[i]
@@ -170,7 +170,7 @@ public class RandomWalkXiFinder {
    * @param evidence allele counts as evidenced in the reads
    * @return best estimate for xi in arithmetic
    */
-  double[][] maximize(final List<int[]> alpha, final List<int[][]> evidence) {
+  double[][] maximize(final List<int[]> alpha, final List<double[][]> evidence) {
     // John's theory says we can maximize each sample independently during this step.
     final double[][] res = new double[evidence.get(0).length][];
     double p = mArith.one();

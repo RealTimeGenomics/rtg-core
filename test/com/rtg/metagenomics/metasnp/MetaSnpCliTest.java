@@ -86,11 +86,11 @@ public class MetaSnpCliTest extends AbstractCliTest {
       final List<AlleleStatReader.Line> lines = getLines(LINES);
       final List<AlphaScore> assignments = Arrays.asList(new AlphaScore(0.1, 0.1, 0, 1), new AlphaScore(0.2, 0.2, 2, 3), new AlphaScore(0.3, 0.3, 0, 3), new AlphaScore(0.4, 0.4, 1, 1));
       final EmIterate.EmResult res = new EmIterate.EmResult(new double[][] {{0.1, 0.9}, {0.4, 0.6}}, assignments);
-      final List<int[][]> evidence = new ArrayList<>();
-      evidence.add(new int[][] {{1, 1, 1, 2}, {1, 0, 0, 4}});
-      evidence.add(new int[][] {{1, 2, 2, 0}, {0, 1, 1, 3}});
-      evidence.add(new int[][] {{2, 1, 2, 0}, {1, 2, 1, 1}});
-      evidence.add(new int[][] {{1, 1, 0, 3}, {2, 1, 1, 1}});
+      final List<double[][]> evidence = new ArrayList<>();
+      evidence.add(new double[][] {{1, 1, 1, 2}, {1, 0, 0, 4}});
+      evidence.add(new double[][] {{1, 2, 2, 0}, {0, 1, 1, 3}});
+      evidence.add(new double[][] {{2, 1, 2, 0}, {1, 2, 1, 1}});
+      evidence.add(new double[][] {{1, 1, 0, 3}, {2, 1, 1, 1}});
       MetaSnpCli.outputVisualisation(ref, lines, evidence, res, out);
       assertEquals(EXPECTED_VISUAL, out.toString().replaceAll("\t", " "));
     }
