@@ -16,6 +16,8 @@ package com.rtg.variant.bayes;
 import java.util.Arrays;
 
 import com.rtg.launcher.GlobalFlags;
+import com.rtg.reference.Ploidy;
+import com.rtg.util.MathUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
@@ -34,6 +36,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
 
   // Factor 1.1 to cover arithmetic error in sum used for error() in EvidenceComplex
   private static final double MAX_BASE_ERROR = VariantUtils.phredToProb(GlobalFlags.getIntegerValue(GlobalFlags.MIN_BASE_QUALITY)) * 1.1;
+  private static final double EXPECTED_ALLELE_FREQUENCY = GlobalFlags.getDoubleValue(GlobalFlags.CALLER_EXPECTED_ALLELE_FREQUENCY);
 
   /**
    * When <code>MAPQ</code> is less than or equal to this then treat as ambiguous.
@@ -162,6 +165,29 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     mStatistics.increment(distribution, mHypotheses.reference());
   }
 
+  protected double alleleBalanceLn(int i) {
+    if (/* hypotheses().ploidy() != Ploidy.DIPLOID && */ hypotheses().ploidy() != Ploidy.HAPLOID) {
+      return 0.0;
+    }
+    final int trials = statistics().coverage();
+    if (trials == 0) {
+      return 1.0;
+    }
+    final double abp;
+    final int a = hypotheses().code().a(i);
+    final int b = hypotheses().code().bc(i);
+    assert a == b; // haploid
+    final AlleleStatistics<?> counts = statistics().counts();
+//    if (a == b) {
+    final double p = a == hypotheses().reference() ? 1 - EXPECTED_ALLELE_FREQUENCY : EXPECTED_ALLELE_FREQUENCY;
+      abp = MathUtils.hoeffdingLn(trials, MathUtils.round(counts.count(a)), p);
+//    } else {
+//      final long observed0 = MathUtils.round(counts.count(a));
+//      final long observed1 = MathUtils.round(counts.count(b));
+//      abp = MathUtils.hoeffdingLn(trials, observed0, 0.5) + MathUtils.hoeffdingLn(trials, observed1, 0.5);
+//    }
+    return abp;
+  }
 
   @Override
   public HypothesisScore best(final HypothesesPrior<?> hypotheses) {
@@ -177,12 +203,12 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
   }
 
   private double posterior(final PossibilityArithmetic arith, final int i, final Factor<?> hypotheses) {
-    return arith.multiply(mPosteriors[i], hypotheses.p(i));
+    return arith.multiply(arith.multiply(mPosteriors[i], arith.ln2Poss(alleleBalanceLn(i))), hypotheses.p(i));
   }
 
   @Override
   public double posteriorLn0(int hyp) {
-    return arithmetic().poss2Ln(mPosteriors[hyp]);
+    return arithmetic().multiply(mPosteriors[hyp], arithmetic().ln2Poss(alleleBalanceLn(hyp)));
   }
 
   @Override
