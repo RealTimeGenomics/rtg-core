@@ -13,7 +13,6 @@
 package com.rtg.variant.bayes.multisample.forwardbackward;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import com.rtg.reference.Ploidy;
@@ -24,7 +23,6 @@ import com.rtg.variant.VariantSample;
 import com.rtg.variant.bayes.ArrayGenotypeMeasure;
 import com.rtg.variant.bayes.Code;
 import com.rtg.variant.bayes.Factor;
-import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.multisample.HypothesisScore;
@@ -44,8 +42,6 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
 
   boolean mEqual;
   protected double mNonIdentity;
-  protected final double[] mIndividualNonIdentity;
-  protected final double[] mIndividualIdentity;
   protected final Code mMaximalCode;
   protected final MendelianAlleleProbabilityFactory mDenovoSubstitutionFactory;
   private Factor<?> mFatherMarginal;
@@ -61,10 +57,6 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
     final double zero = mArithmetic.zero();
     mNonIdentity = zero;
 
-    mIndividualNonIdentity = new double[family.size()];
-    Arrays.fill(mIndividualNonIdentity, zero);
-    mIndividualIdentity = new double[family.size()];
-    Arrays.fill(mIndividualIdentity, zero);
 
     mMaximalCode = mFatherHypotheses.code().size() > mMotherHypotheses.code().size() ? mFatherHypotheses.code() : mMotherHypotheses.code();
  //   assert !hypotheses.isDefault(); //XXX we're ignoring this for now?!?
@@ -114,28 +106,22 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
   void computeMarginals(Factor<?>[] as, BContainer[] bs) {
     final Factor<?> fatherModelVector = CommonFormulas.createMutableFactor(mFather);
     mFatherMarginal = CommonFormulas.computeQ(as[mSampleIds[Family.FATHER_INDEX]], fatherModelVector, bs[mSampleIds[Family.FATHER_INDEX]]);
-    updateIdentityMarginals(mFatherMarginal, Family.FATHER_INDEX);
     mMotherMarginal = CommonFormulas.computeQ(as[mSampleIds[Family.MOTHER_INDEX]], CommonFormulas.createMutableFactor(mMother), bs[mSampleIds[Family.MOTHER_INDEX]]);
-    updateIdentityMarginals(mMotherMarginal, Family.MOTHER_INDEX);
     mChildMarginal = new Factor<?>[mChildren.size()];
     for (int i = 0; i < mChildMarginal.length; i++) {
       mChildMarginal[i] = CommonFormulas.computeQ(as[mSampleIds[Family.FIRST_CHILD_INDEX + i]], CommonFormulas.createMutableFactor(mChildren.get(i)), bs[mSampleIds[Family.FIRST_CHILD_INDEX + i]]);
-      updateIdentityMarginals(mChildMarginal[i], Family.FIRST_CHILD_INDEX + i);
     }
   }
 
   void addMarginals(FamilyPosteriorFB other) {
     mFatherMarginal = addVector(mFatherMarginal, other.mFatherMarginal);
-    updateIdentityMarginals(other.mFatherMarginal, Family.FATHER_INDEX);
     mMotherMarginal = addVector(mMotherMarginal, other.mMotherMarginal);
-    updateIdentityMarginals(other.mMotherMarginal, Family.MOTHER_INDEX);
 
     if (mChildMarginal == null) {
       mChildMarginal = new Factor<?>[mChildren.size()];
     }
     for (int i = 0; i < mChildren.size(); i++) {
       mChildMarginal[i] = addVector(mChildMarginal[i], other.mChildMarginal[i]);
-      updateIdentityMarginals(other.mChildMarginal[i], Family.FIRST_CHILD_INDEX + i);
     }
   }
 
@@ -223,21 +209,6 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
     bs[Family.MOTHER_INDEX].setB(mFamily.getMotherFamilyId(), parentBs[Family.MOTHER_INDEX]);
     computeMarginals(as, bs);
     findBest(new double[mChildren.size()]);
-  }
-
-  void updateIdentityMarginals(Factor<?> v, int index) {
-    final Hypotheses<?> hyp = v.hypotheses();
-    if (!(hyp instanceof HypothesesNone)) {
-      final int ref = hyp.reference();
-      mIndividualIdentity[index] = mArithmetic.add(mIndividualIdentity[index], v.p(ref));
-      for (int h = 0; h < v.size(); h++) {
-        if (h != ref) {
-          mIndividualNonIdentity[index] = mArithmetic.add(mIndividualNonIdentity[index], v.p(h));
-        }
-      }
-
-
-    }
   }
 
   /**
@@ -341,7 +312,6 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
         final Factor<?> av = CommonFormulas.forwardA(mFatherE, mMotherE, model.hypotheses(), a, mC, m);
         ret[a] = av;
         //mChildMarginal[a] = CommonFormulas.dot(av, d[a]);
-        //updateIdentityMarginals(mChildMarginal[a], Family.FIRST_CHILD_INDEX + a);
       }
       return ret;
     }
