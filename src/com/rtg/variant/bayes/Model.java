@@ -180,7 +180,8 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     final AlleleStatistics<?> counts = statistics().counts();
 //    if (a == b) {
     final double p = a == hypotheses().reference() ? 1 - EXPECTED_ALLELE_FREQUENCY : EXPECTED_ALLELE_FREQUENCY;
-      abp = MathUtils.hoeffdingLn(trials, MathUtils.round(counts.count(a)), p);
+    //abp = MathUtils.hoeffdingLn(trials, MathUtils.round(counts.count(a)), p);
+    abp = -MathUtils.logBinomial(p, trials, (int) MathUtils.round(counts.count(a)));
 //    } else {
 //      final long observed0 = MathUtils.round(counts.count(a));
 //      final long observed1 = MathUtils.round(counts.count(b));
