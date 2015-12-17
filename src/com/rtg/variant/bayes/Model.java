@@ -26,6 +26,7 @@ import com.rtg.variant.bayes.multisample.HypothesisScore;
 import com.rtg.variant.bayes.snp.EvidenceQ;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.util.VariantUtils;
+import com.rtg.variant.util.arithmetic.LogPossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
@@ -173,21 +174,22 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     if (trials == 0) {
       return 1.0;
     }
-    final double abp;
     final int a = hypotheses().code().a(i);
     final int b = hypotheses().code().bc(i);
     assert a == b; // haploid
     final AlleleStatistics<?> counts = statistics().counts();
 //    if (a == b) {
+    // This reflection for the case a == ref seems important.
     final double p = a == hypotheses().reference() ? 1 - EXPECTED_ALLELE_FREQUENCY : EXPECTED_ALLELE_FREQUENCY;
     //abp = MathUtils.hoeffdingLn(trials, MathUtils.round(counts.count(a)), p);
-    abp = -MathUtils.logBinomial(p, trials, (int) MathUtils.round(counts.count(a)));
+    final double abp = -MathUtils.logBinomial(p, trials, (int) MathUtils.round(counts.count(a)));
+    final double abq = LogPossibility.SINGLETON.complement(-MathUtils.logBinomial(0.5, trials, (int) MathUtils.round(counts.count(a)))); // germline suppression
 //    } else {
 //      final long observed0 = MathUtils.round(counts.count(a));
 //      final long observed1 = MathUtils.round(counts.count(b));
 //      abp = MathUtils.hoeffdingLn(trials, observed0, 0.5) + MathUtils.hoeffdingLn(trials, observed1, 0.5);
 //    }
-    return abp;
+    return LogPossibility.SINGLETON.multiply(abp, abq);
   }
 
   @Override
