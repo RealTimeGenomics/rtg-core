@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 import com.rtg.launcher.GlobalFlags;
 import com.rtg.reference.Ploidy;
-import com.rtg.util.MathUtils;
+import com.rtg.util.ChiSquared;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
@@ -26,7 +26,6 @@ import com.rtg.variant.bayes.multisample.HypothesisScore;
 import com.rtg.variant.bayes.snp.EvidenceQ;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.util.VariantUtils;
-import com.rtg.variant.util.arithmetic.LogPossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
@@ -166,11 +165,21 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     mStatistics.increment(distribution, mHypotheses.reference());
   }
 
+  private static double logBinomial(final double p, final double nn, final double n) {
+    assert p >= 0.0 && p <= 1.0;
+    assert n >= 0;
+    assert nn >= 0;
+    final double m = nn - n;
+    final double res = n * Math.log(p) + m * Math.log(1.0 - p) + ChiSquared.lgamma(nn) - ChiSquared.lgamma(n) - ChiSquared.lgamma(m);
+    assert res <= 0 && !Double.isNaN(res);
+    return res;
+  }
+
   protected double alleleBalanceLn(int i) {
     if (/* hypotheses().ploidy() != Ploidy.DIPLOID && */ hypotheses().ploidy() != Ploidy.HAPLOID) {
       return 0.0;
     }
-    final int trials = statistics().coverage();
+    final double trials = statistics().coverage() - statistics().totalError();
     if (trials == 0) {
       return 1.0;
     }
@@ -182,14 +191,14 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     // This reflection for the case a == ref seems important.
     final double p = a == hypotheses().reference() ? 1 - EXPECTED_ALLELE_FREQUENCY : EXPECTED_ALLELE_FREQUENCY;
     //abp = MathUtils.hoeffdingLn(trials, MathUtils.round(counts.count(a)), p);
-    final double abp = -MathUtils.logBinomial(p, trials, (int) MathUtils.round(counts.count(a)));
-    final double abq = LogPossibility.SINGLETON.complement(-MathUtils.logBinomial(0.5, trials, (int) MathUtils.round(counts.count(a)))); // germline suppression
+    final double abp = logBinomial(p, trials, counts.count(a) - counts.error(a));
+    //final double abq = LogPossibility.SINGLETON.complement(logBinomial(0.5, trials, (int) MathUtils.round(counts.count(a)))); // germline suppression
 //    } else {
 //      final long observed0 = MathUtils.round(counts.count(a));
 //      final long observed1 = MathUtils.round(counts.count(b));
 //      abp = MathUtils.hoeffdingLn(trials, observed0, 0.5) + MathUtils.hoeffdingLn(trials, observed1, 0.5);
 //    }
-    return LogPossibility.SINGLETON.multiply(abp, abq);
+    return abp;
   }
 
   @Override
