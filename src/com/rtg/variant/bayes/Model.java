@@ -170,6 +170,11 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     assert n >= 0;
     assert nn >= 0;
     final double m = nn - n;
+    if (p == 0) {
+      return n <= 0 ? 0 : Double.NEGATIVE_INFINITY; // Strictly should never have n < 0
+    } else if (p == 1) {
+      return m <= 0 ? 0 : Double.NEGATIVE_INFINITY; // Strictly should never have m < 0
+    }
     final double res = n * Math.log(p) + m * Math.log(1.0 - p) + ChiSquared.lgamma(nn) - ChiSquared.lgamma(n) - ChiSquared.lgamma(m);
     assert res <= 0 && !Double.isNaN(res);
     return res;
