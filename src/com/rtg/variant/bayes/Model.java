@@ -26,7 +26,6 @@ import com.rtg.variant.bayes.multisample.HypothesisScore;
 import com.rtg.variant.bayes.snp.EvidenceQ;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.util.VariantUtils;
-import com.rtg.variant.util.arithmetic.LogPossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
@@ -199,13 +198,14 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     //abp = MathUtils.hoeffdingLn(trials, MathUtils.round(counts.count(a)), p);
     final double vac = counts.count(a) - counts.error(a);
     final double abp = logBinomial(p, trials, vac);
-    final double abq = LogPossibility.SINGLETON.complement(logBinomial(0.5, trials, vac)); // germline suppression
+    //final double abq = LogPossibility.SINGLETON.complement(logBinomial(0.5, trials, vac)); // germline suppression
 //    } else {
 //      final long observed0 = MathUtils.round(counts.count(a));
 //      final long observed1 = MathUtils.round(counts.count(b));
 //      abp = MathUtils.hoeffdingLn(trials, observed0, 0.5) + MathUtils.hoeffdingLn(trials, observed1, 0.5);
 //    }
-    return LogPossibility.SINGLETON.multiply(abp, abq);
+    //return LogPossibility.SINGLETON.multiply(abp, abq);
+    return abp;
   }
 
   @Override
