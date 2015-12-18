@@ -23,6 +23,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -66,6 +67,8 @@ import com.rtg.variant.format.VcfInfoField;
 import com.rtg.vcf.VariantStatistics;
 
 import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMReadGroupRecord;
+
 /**
  * Common stuff for multi-genome SNP caller.
  */
@@ -279,7 +282,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(R_DEFAULT_FLAG, Integer.class, "int", "for mated reads that have no mapping quality supplied use this as the default quality (in Phred format from 0 to 63)", 20).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(UNMATED_R_DEFAULT_FLAG, Integer.class, "int", "for unmated reads that have no mapping quality supplied use this as the default quality (in Phred format from 0 to 63)", 20).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(POPULATION_PRIORS, File.class, "file", "if set, use the VCF file to generate population based site-specific priors").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(COVERAGE_BYPASS_FLAG, Integer.class, "int", "skip calling in sites with combined depth exceeding this fixed value", DEFAULT_COVERAGE_CUTOFF).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(COVERAGE_BYPASS_FLAG, Integer.class, "int", "skip calling in sites with per sample read depth exceeding this value", DEFAULT_COVERAGE_CUTOFF).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(COVERAGE_BYPASS_MULTIPLIER_FLAG, Double.class, "float", "skip calling in sites with combined depth exceeding multiplier * average combined coverage determined from calibration", defaultCoverageCutoffMultiplier()).setCategory(SENSITIVITY_TUNING); //set a coverage threshold for use with the average coverage determined by calibration files. The threshold will be the average coverage + (multiplier * square root of average coverage)
 
     flags.registerOptional(SNPS_ONLY_FLAG, "if set, will output simple SNPs only").setCategory(REPORTING);
@@ -474,7 +477,12 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
       if (mFlags.isSet(FILTER_DEPTH_FLAG)) {
         builder.maxCoverageFilter(new StaticThreshold((Integer) mFlags.getValue(FILTER_DEPTH_FLAG)));
       }
-      builder.maxCoverageBypass(new StaticThreshold((Integer) mFlags.getValue(COVERAGE_BYPASS_FLAG)));
+      final Integer coverageBypassValue = (Integer) mFlags.getValue(COVERAGE_BYPASS_FLAG);
+      final HashSet<String> samples = new HashSet<>();
+      for (final SAMReadGroupRecord rgr : uberHeader.getReadGroups()) {
+        samples.add(rgr.getSample());
+      }
+      builder.maxCoverageBypass(new StaticThreshold(coverageBypassValue, coverageBypassValue * Math.max(1, samples.size())));
     }
     builder.calibrator(c);
   }

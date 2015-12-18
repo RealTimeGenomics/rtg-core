@@ -19,12 +19,23 @@ package com.rtg.variant;
 public class StaticThreshold implements CoverageThreshold {
   private final int mThreshold;
 
+  private final int mTotalThreshold;
+
   /**
    * Construct a threshold object that will always return <code>threshold</code>
    * @param threshold the threshold to return when asked
    */
   public StaticThreshold(int threshold) {
-    mThreshold = threshold;
+    this(threshold, threshold);
+  }
+
+  /**
+   * @param singleThreshold threshold to use for {@link #thresholdSingle(String)}
+   * @param totalThreshold threshold to use for {@link #thresholdTotal(String)}
+   */
+  public StaticThreshold(int singleThreshold, int totalThreshold) {
+    mThreshold = singleThreshold;
+    mTotalThreshold = totalThreshold;
   }
 
   @Override
@@ -34,12 +45,12 @@ public class StaticThreshold implements CoverageThreshold {
 
   @Override
   public int thresholdTotal(String sequenceName) {
-    return mThreshold;
+    return mTotalThreshold;
   }
 
   @Override
   public String toString() {
-    return "" + mThreshold;
+    return "" + mThreshold + ":" + mTotalThreshold;
   }
 
 }
