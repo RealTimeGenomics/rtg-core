@@ -34,10 +34,10 @@ fi
 cd demo-family
 
 echo "Checking RTG is executable" >&2
-if ! $RTG version >/dev/null; then
+if ! "$RTG" version >/dev/null; then
     cat<<EOF >&2
 
-Could not execute $RTG version. 
+Could not execute "$RTG" version. 
 
 For this demo the path to RTG must be given as an absolute path.
 
@@ -145,7 +145,7 @@ so you can be sure that you get repeatable results with RTG).
 
 EOF
 pause
-docommand $RTG genomesim --output reference.sdf --num-contigs 10 --min-length 40000 --max-length 50000 --seed 42 --prefix Chr
+docommand "$RTG" genomesim --output reference.sdf --num-contigs 10 --min-length 40000 --max-length 50000 --seed 42 --prefix Chr
 cat<<EOF >reference.sdf/reference.txt
 # Simulated reference. This file format is described in the user manual
 version 1
@@ -202,7 +202,7 @@ the flags '--sex male'.  Every RTG command accepts the --help option
 in order to display the list of available options.
 
 EOF
-docommand $RTG sdfstats reference.sdf --sex male
+docommand "$RTG" sdfstats reference.sdf --sex male
 pause
 
 
@@ -223,7 +223,7 @@ variants.
 
 EOF
 pause
-docommand $RTG popsim --reference reference.sdf --seed 42 --output pop.vcf.gz
+docommand "$RTG" popsim --reference reference.sdf --seed 42 --output pop.vcf.gz
 pause
 
 cat<<EOF
@@ -239,7 +239,7 @@ output files by default.
 
 EOF
 pause
-docommand $RTG extract --header pop.vcf.gz Chr9:2000+1000
+docommand "$RTG" extract --header pop.vcf.gz Chr9:2000+1000
 pause
 
 cat<<EOF
@@ -256,8 +256,8 @@ later). We will run this twice, to generate each parent.
 
 EOF
 pause
-docommand $RTG samplesim --reference reference.sdf --seed 572 --sex male --sample father --input pop.vcf.gz --output pop-1.vcf.gz --output-sdf genome-father.sdf
-docommand $RTG samplesim --reference reference.sdf --seed 126 --sex female --sample mother --input pop-1.vcf.gz --output pop-2.vcf.gz --output-sdf genome-mother.sdf
+docommand "$RTG" samplesim --reference reference.sdf --seed 572 --sex male --sample father --input pop.vcf.gz --output pop-1.vcf.gz --output-sdf genome-father.sdf
+docommand "$RTG" samplesim --reference reference.sdf --seed 126 --sex female --sample mother --input pop-1.vcf.gz --output pop-2.vcf.gz --output-sdf genome-mother.sdf
 pause
 
 cat<<EOF
@@ -269,8 +269,8 @@ Let's prune them from the VCF to keep things simple.
 
 EOF
 pause
-docommand $RTG vcffilter --input pop-2.vcf.gz --output parents.vcf.gz --remove-all-same-as-ref
-docommand $RTG extract --header parents.vcf.gz Chr9:2000+1000
+docommand "$RTG" vcffilter --input pop-2.vcf.gz --output parents.vcf.gz --remove-all-same-as-ref
+docommand "$RTG" extract --header parents.vcf.gz Chr9:2000+1000
 pause
 
 cat<<EOF
@@ -292,12 +292,12 @@ simulation.
 
 EOF
 pause
-docommand $RTG childsim --reference reference.sdf --seed 837 --input parents.vcf.gz --output family-1.vcf.gz --output-sdf genome-son1.sdf --father father --mother mother --sex male --sample son1
-docommand $RTG childsim --reference reference.sdf --seed 923 --input family-1.vcf.gz --output family-2.vcf.gz --output-sdf genome-son2.sdf --father father --mother mother --sex male --sample son2
-docommand $RTG childsim --reference reference.sdf --seed 269 --input family-2.vcf.gz --output family-3.vcf.gz --output-sdf genome-daughter1.sdf --father father --mother mother --sex female --sample daughter1
-docommand $RTG childsim --reference reference.sdf --seed 284 --input family-3.vcf.gz --output family-4.vcf.gz --father father --mother mother --sex female --sample daughter2-initial
-docommand $RTG denovosim --reference reference.sdf --seed 841 --num-mutations 50 --input family-4.vcf.gz --output family-5.vcf.gz --output-sdf genome-daughter2.sdf --original daughter2-initial --sample daughter2
-docommand $RTG vcfsubset --remove-sample daughter2-initial --input family-5.vcf.gz --output family.vcf.gz
+docommand "$RTG" childsim --reference reference.sdf --seed 837 --input parents.vcf.gz --output family-1.vcf.gz --output-sdf genome-son1.sdf --father father --mother mother --sex male --sample son1
+docommand "$RTG" childsim --reference reference.sdf --seed 923 --input family-1.vcf.gz --output family-2.vcf.gz --output-sdf genome-son2.sdf --father father --mother mother --sex male --sample son2
+docommand "$RTG" childsim --reference reference.sdf --seed 269 --input family-2.vcf.gz --output family-3.vcf.gz --output-sdf genome-daughter1.sdf --father father --mother mother --sex female --sample daughter1
+docommand "$RTG" childsim --reference reference.sdf --seed 284 --input family-3.vcf.gz --output family-4.vcf.gz --father father --mother mother --sex female --sample daughter2-initial
+docommand "$RTG" denovosim --reference reference.sdf --seed 841 --num-mutations 50 --input family-4.vcf.gz --output family-5.vcf.gz --output-sdf genome-daughter2.sdf --original daughter2-initial --sample daughter2
+docommand "$RTG" vcfsubset --remove-sample daughter2-initial --input family-5.vcf.gz --output family.vcf.gz
 rm pop-[0-9]*.vcf* family-[0-9]*.vcf*
 pause
 
@@ -310,7 +310,7 @@ as the occasional de novo variant (annotated with a DN value of 'Y').
 
 EOF
 pause
-docommand $RTG extract family.vcf.gz Chr9:10000+10000
+docommand "$RTG" extract family.vcf.gz Chr9:10000+10000
 pause
 
 cat<<EOF
@@ -324,7 +324,7 @@ lengths of diploid pairs.
 
 EOF
 pause
-docommand $RTG sdfstats --lengths genome-son1.sdf
+docommand "$RTG" sdfstats --lengths genome-son1.sdf
 pause
 
 
@@ -356,11 +356,11 @@ rgcommon="PL:ILLUMINA\tPI:300\tDS:Simulated dataset"
 seed=5643
 for genome in father mother son2 daughter1 daughter2; do
     seed=$[seed + 5]
-    docommand $RTG readsim --input genome-$genome.sdf --output reads-$genome.sdf --seed $seed --sam-rg "@RG\tID:rg_$genome\tSM:$genome\t$rgcommon" --coverage 10 $readsim_opts|| exit 1
+    docommand "$RTG" readsim --input genome-$genome.sdf --output reads-$genome.sdf --seed $seed --sam-rg "@RG\tID:rg_$genome\tSM:$genome\t$rgcommon" --coverage 10 $readsim_opts|| exit 1
 done
 for genome in son1; do
     seed=$[seed + 5]
-    docommand $RTG readsim --input genome-$genome.sdf --output reads-$genome.sdf --seed $seed --sam-rg "@RG\tID:rg_$genome\tSM:$genome\t$rgcommon" --coverage 5 $readsim_opts|| exit 1
+    docommand "$RTG" readsim --input genome-$genome.sdf --output reads-$genome.sdf --seed $seed --sam-rg "@RG\tID:rg_$genome\tSM:$genome\t$rgcommon" --coverage 5 $readsim_opts|| exit 1
 done
 pause
 
@@ -375,8 +375,8 @@ sdf2sam so you can see what they look like.
 EOF
 
 pause
-docommand $RTG sdfstats reads-son1.sdf
-docommand $RTG sdf2sam --input reads-son1.sdf --output - --start-id 0 --end-id 5
+docommand "$RTG" sdfstats reads-son1.sdf
+docommand "$RTG" sdf2sam --input reads-son1.sdf --output - --start-id 0 --end-id 5
 pause
 
 cat<<EOF
@@ -439,7 +439,7 @@ Enough talk, let's map the read data.
 EOF
 pause
 for genome in father mother son1 son2 daughter1 daughter2; do
-    docommand $RTG map --template reference.sdf --input reads-$genome.sdf --output map-$genome --pedigree family.ped
+    docommand "$RTG" map --template reference.sdf --input reads-$genome.sdf --output map-$genome --pedigree family.ped
 done
 pause
 
@@ -466,7 +466,7 @@ in addition to the result files created in the output directory.
 EOF
 pause
 for genome in father mother son1 son2 daughter1 daughter2; do
-    docommand $RTG coverage --template reference.sdf --output coverage-$genome map-$genome/alignments.bam
+    docommand "$RTG" coverage --template reference.sdf --output coverage-$genome map-$genome/alignments.bam
 done
 pause
 
@@ -496,7 +496,7 @@ to get a multi-sample summary.
 
 EOF
 pause
-docommand $RTG chrstats --template reference.sdf --pedigree family.ped map-*/alignments.bam
+docommand "$RTG" chrstats --template reference.sdf --pedigree family.ped map-*/alignments.bam
 pause
 
 cat<<EOF
@@ -508,8 +508,8 @@ the samples incorrectly.
 
 EOF
 pause
-docommand $RTG map --template reference.sdf --input reads-daughter1.sdf --output wrong-map-daughter1 --sex male
-docommand $RTG chrstats --template reference.sdf --sex male wrong-map-daughter1/alignments.bam
+docommand "$RTG" map --template reference.sdf --input reads-daughter1.sdf --output wrong-map-daughter1 --sex male
+docommand "$RTG" chrstats --template reference.sdf --sex male wrong-map-daughter1/alignments.bam
 pause
 
 cat<<EOF
@@ -549,7 +549,7 @@ BAM file created during mapping.
 
 EOF
 pause
-docommand $RTG snp --template reference.sdf --pedigree family.ped --output snp-son1 map-son1/alignments.bam
+docommand "$RTG" snp --template reference.sdf --pedigree family.ped --output snp-son1 map-son1/alignments.bam
 pause
 
 cat<<EOF
@@ -568,7 +568,7 @@ the additional family members.
 
 EOF
 pause
-docommand $RTG family --template reference.sdf --pedigree family.ped --output family-calls map-*/alignments.bam
+docommand "$RTG" family --template reference.sdf --pedigree family.ped --output family-calls map-*/alignments.bam
 pause
 
 cat<<EOF
@@ -586,7 +586,7 @@ concordance and calls inconsistent with Mendelian inheritance.
 
 EOF
 pause
-docommand $RTG mendelian --template reference.sdf --input family-calls/snps.vcf.gz
+docommand "$RTG" mendelian --template reference.sdf --input family-calls/snps.vcf.gz
 pause
 
 cat<<EOF
@@ -608,8 +608,8 @@ called variants for the same sample.
 
 EOF
 pause
-docommand $RTG vcfeval --template reference.sdf --baseline family.vcf.gz --calls snp-son1/snps.vcf.gz --sample son1 -o vcfeval-son1-snp
-docommand $RTG vcfeval --template reference.sdf --baseline family.vcf.gz --calls family-calls/snps.vcf.gz --sample son1 -o vcfeval-son1-family
+docommand "$RTG" vcfeval --template reference.sdf --baseline family.vcf.gz --calls snp-son1/snps.vcf.gz --sample son1 -o vcfeval-son1-snp
+docommand "$RTG" vcfeval --template reference.sdf --baseline family.vcf.gz --calls family-calls/snps.vcf.gz --sample son1 -o vcfeval-son1-family
 pause
 
 cat<<EOF
@@ -636,7 +636,7 @@ tab-separated file into a spreadsheet or other graphing package.)
 
 EOF
 pause
-docommand $RTG rocplot --title ROC-Son1 vcfeval-son1-*/weighted_roc.tsv.gz --png=roc-son1.png
+docommand "$RTG" rocplot --title ROC-Son1 vcfeval-son1-*/weighted_roc.tsv.gz --png=roc-son1.png
 doimage roc-son1.png
 
 cat<<EOF
@@ -649,8 +649,8 @@ that variant, so let's see how we did there.
 
 EOF
 pause
-docommand $RTG vcffilter --input family.vcf.gz --output family-denovo.vcf.gz --min-denovo-score=0 --sample daughter2 
-docommand $RTG vcfeval --template reference.sdf --baseline family-denovo.vcf.gz --calls family-calls/snps.vcf.gz --sample daughter2 --output vcfeval-daughter2-denovo --vcf-score-field DNP
+docommand "$RTG" vcffilter --input family.vcf.gz --output family-denovo.vcf.gz --min-denovo-score=0 --sample daughter2 
+docommand "$RTG" vcfeval --template reference.sdf --baseline family-denovo.vcf.gz --calls family-calls/snps.vcf.gz --sample daughter2 --output vcfeval-daughter2-denovo --vcf-score-field DNP
 pause
 
 cat<<EOF
