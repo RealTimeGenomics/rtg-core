@@ -44,7 +44,7 @@ public class AlleleStatReaderTest extends TestCase {
       assertEquals("seq2", line2.getSequence());
       assertEquals(45, line2.getPosition());
       assertEquals(3, line2.getReferenceIndex());
-      assertEquals("t", line2.getReferenceAllele());
+      assertEquals("T", line2.getReferenceAllele());
       assertTrue(Arrays.equals(new double[]{0, 0, 0, 0}, line2.mCounts[0]));
       assertTrue(Arrays.equals(new double[]{102, 135, 117, 155}, line2.mCounts[3]));
       assertNull(reader.nextLine());

@@ -23,8 +23,6 @@ import java.util.Locale;
 
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
-import com.rtg.mode.DNA;
-import com.rtg.mode.DnaUtils;
 import com.rtg.util.PosteriorUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
@@ -210,12 +208,13 @@ public class MetaSnpCli extends LoggedCli {
       final double[][] currentEvidence = evidence.get(i);
       final int[] currentAssignments = result.mAssignments.get(i).mCalls;
       final int[] totals = new int[currentEvidence.length];
+      final int numAlleles = currentEvidence[0].length;
       for (int sample = 0; sample < currentEvidence.length; sample++) {
-        for (byte allele = 0; allele < 4; allele++) {
+        for (byte allele = 0; allele < numAlleles; allele++) {
           totals[sample] += currentEvidence[sample][allele];
         }
       }
-      for (byte allele = 0; allele < 4; allele++) {
+      for (byte allele = 0; allele < numAlleles; allele++) {
         if (allele == refBytes.get(i)) {
           continue;
         }
@@ -243,8 +242,8 @@ public class MetaSnpCli extends LoggedCli {
         final StringBuilder output = new StringBuilder();
         output.append(lines.get(i).getSequence()).append('\t');
         output.append(lines.get(i).getPosition() + 1).append('\t');
-        output.append(DNA.valueChars()[refBytes.get(i) + 1]).append('\t');
-        output.append(DNA.valueChars()[allele + 1]).append('\t');
+        output.append(lines.get(i).getReferenceAllele()).append('\t');
+        output.append(lines.get(i).mAlleles[allele]).append('\t');
         output.append(color);
         for (double coordinate : coordinates) {
           output.append("\t").append(Utils.realFormat(coordinate));
@@ -275,13 +274,13 @@ public class MetaSnpCli extends LoggedCli {
             alts.add(assignment1);
           }
         }
-        final VcfRecord record = new VcfRecord(line.getSequence(), line.getPosition(), base(ref));
+        final VcfRecord record = new VcfRecord(line.getSequence(), line.getPosition(), line.getReferenceAllele());
         final double phred = PosteriorUtils.phredIfy(arith.poss2Ln(res.mAssignments.get(i).mLikelihood));
         record.setInfo("LIKE", "" + Utils.realFormat(phred, 3));
         record.setNumberOfSamples(assignments.length);
         record.addFormat(VcfUtils.FORMAT_GENOTYPE); // Ensure the record has a notion of genotype - strictly we should also initialize any pre-exising sample columns with empty GT
         for (int alt = 1; alt < alts.size(); alt++) {
-          record.addAltCall(base(alts.get(alt)));
+          record.addAltCall(line.mAlleles[alts.get(alt)]);
         }
         for (int assignment : assignments) {
           record.addFormatAndSample("GT", "" + alts.indexOf(assignment));
@@ -291,11 +290,6 @@ public class MetaSnpCli extends LoggedCli {
       }
     }
   }
-
-  static String base(int b) {
-    return String.valueOf(DnaUtils.getBase(b + 1));
-  }
-
 
   private static class Validator implements com.rtg.util.cli.Validator {
     @Override

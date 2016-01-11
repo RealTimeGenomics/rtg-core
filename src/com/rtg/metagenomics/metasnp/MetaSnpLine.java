@@ -56,7 +56,7 @@ public final class MetaSnpLine {
   }
 
   private static final int NUM_FIELDS = 7;
-  private static final String[] DEFAULT_ALLELES = {"a", "c", "g", "t"};
+  private static final String[] DEFAULT_ALLELES = {"A", "C", "G", "T"};
 
   static MetaSnpLine create(final String str, final int lineNumber) throws IOException {
     final String[] fields = StringUtils.split(str, '\t');
