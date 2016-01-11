@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Source of variants for metasnp.
  */
-public interface MetaSnpReader {
+public interface MetaSnpReader extends AutoCloseable {
 
   /**
    * @return the list of sample names from the header or null if the header is missing
@@ -31,4 +31,6 @@ public interface MetaSnpReader {
    */
   MetaSnpLine nextLine() throws IOException;
 
+  @Override
+  void close() throws IOException;
 }

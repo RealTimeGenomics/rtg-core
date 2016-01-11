@@ -35,13 +35,13 @@ public class MetaSnpLineTest extends TestCase {
     assertEquals(0, line.mCounts[3][0], 1e-9);
   }
 
-  public void testVcfRecord() {
-    final VcfRecord rec = new VcfRecord("chr1", 2, "c"); // position is 0-based in constructor
+  private void fieldTestVcfRecord(final String ad) {
+    final VcfRecord rec = new VcfRecord("chr1", 2, "C"); // position is 0-based in constructor
     rec.setId(".")
       .setQuality("12.8")
       .addAltCall("a")
       .setNumberOfSamples(1)
-      .addFormatAndSample("AD", "6.0,1.9");
+      .addFormatAndSample(ad, "6.0,1.9");
     final MetaSnpLine line = MetaSnpLine.create(rec);
     assertEquals("chr1", line.getSequence());
     assertEquals(2, line.getPosition()); // 0-based
@@ -49,5 +49,10 @@ public class MetaSnpLineTest extends TestCase {
     assertEquals(2, line.mCounts.length);
     assertEquals(6.0, line.mCounts[0][0], 1e-9); // ref allele, c in this case
     assertEquals(1.9, line.mCounts[1][0], 1e-9); // first alt allele, a in this case
+  }
+
+  public void testVcfRecord() {
+    fieldTestVcfRecord("ADE");
+    fieldTestVcfRecord("AD"); // check that the AD fallback also works
   }
 }

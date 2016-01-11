@@ -79,6 +79,7 @@ public final class MetaSnpLine {
     }
   }
 
+  private static final String ADE = "ADE"; // todo replace with proper constant
   private static final String AD = VcfFormatField.AD.name();
 
   static MetaSnpLine create(final VcfRecord rec) {
@@ -90,9 +91,12 @@ public final class MetaSnpLine {
     }
     final double[][] counts = new double[alleles.length][rec.getNumberOfSamples()];
     for (int j = 0; j < rec.getNumberOfSamples(); j++) {
-      final String ade = rec.getSampleString(j, AD); // todo ADE
+      String ade = rec.getSampleString(j, ADE);
       if (ade == null) {
-        throw new UnsupportedOperationException(); // todo AD fallback?
+        ade = rec.getSampleString(j, AD);
+        if (ade == null) {
+          throw new NoTalkbackSlimException("Requires a VCF file with ADE or AD format fields");
+        }
       }
       final String[] perAllele = StringUtils.split(ade, ',');
       if (perAllele.length != alleles.length) {

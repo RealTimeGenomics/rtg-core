@@ -25,6 +25,7 @@ import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
+import com.rtg.util.PosteriorUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.cli.CFlags;
@@ -32,7 +33,6 @@ import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
-import com.rtg.util.PosteriorUtils;
 import com.rtg.variant.util.arithmetic.LogPossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 import com.rtg.vcf.VcfRecord;
@@ -108,6 +108,10 @@ public class MetaSnpCli extends LoggedCli {
     return (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
   }
 
+  private MetaSnpReader getReader(final File file) throws IOException {
+    return VcfUtils.isVcfExtension(file) ? new VcfMetaSnpReader(file) : new AlleleStatReader(file);
+  }
+
   @Override
   protected int mainExec(OutputStream out, LogStream err) throws IOException {
 
@@ -123,7 +127,7 @@ public class MetaSnpCli extends LoggedCli {
 
     final double error = (Double) mFlags.getValue(ERROR_RATE);
     int approxLength = 0; // number of lines of input approximates length of genome
-    try (final AlleleStatReader reader = new AlleleStatReader(f)) {
+    try (final MetaSnpReader reader = getReader(f)) {
       final List<Integer> ref = new ArrayList<>();
       final List<double[][]> evidence = new ArrayList<>();
       final List<MetaSnpLine> lines = new ArrayList<>();
