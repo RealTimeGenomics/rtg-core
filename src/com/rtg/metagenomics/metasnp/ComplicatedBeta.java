@@ -24,7 +24,7 @@ class ComplicatedBeta implements ProbAlpha {
   final int[] mStride;
   final long mTotal;
   final int mStrains;
-  ComplicatedBeta(List<Byte> refBytes, List<int[]> assignments, long length) {
+  ComplicatedBeta(List<Integer> refBytes, List<int[]> assignments, long length) {
     mStrains = assignments.get(0).length;
     mStride = new int[mStrains];
     int possibilities = 1;
@@ -43,7 +43,7 @@ class ComplicatedBeta implements ProbAlpha {
 
     for (int position = 0; position < assignments.size(); position++) {
       final int[] current = assignments.get(position);
-      final byte ref = refBytes.get(position);
+      final int ref = refBytes.get(position);
       final int index = findIndex(ref, current);
       mCounts[index]++;
     }

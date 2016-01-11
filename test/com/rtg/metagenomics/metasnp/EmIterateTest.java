@@ -31,7 +31,7 @@ public class EmIterateTest extends TestCase {
   }
 
   public void checkSimple(final boolean updateBeta) {
-    final List<Byte> ref = Arrays.asList(new Byte[] {0, 1, 2, 0});
+    final List<Integer> ref = Arrays.asList(0, 1, 2, 0);
 
     final List<double[][]> evidence = new ArrayList<>();
     evidence.add(new double[][] {{0, 0, 100, 200}, {0, 0, 200, 100}});
@@ -61,7 +61,7 @@ public class EmIterateTest extends TestCase {
   }
   
   public void testNoisy() {
-    final List<Byte> ref = Arrays.asList(new Byte[] {0, 1, 2, 0});
+    final List<Integer> ref = Arrays.asList(0, 1, 2, 0);
 
     final List<double[][]> evidence = new ArrayList<>();
     evidence.add(new double[][] {{2, 0, 100, 200}, {0, 1, 200, 100}});

@@ -66,8 +66,8 @@ public class MetaSnpCliTest extends AbstractCliTest {
 
   public void testVcfWriting() throws IOException {
     try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-      final List<Byte> ref = Arrays.asList(new Byte[]{1, 2, 3, 0});
-      final List<AlleleStatReader.Line> lines = getLines(LINES);
+      final List<Integer> ref = Arrays.asList(1, 2, 3, 0);
+      final List<MetaSnpLine> lines = getLines(LINES);
       final List<AlphaScore> assignments = Arrays.asList(new AlphaScore(0.1, 0.1, 0, 1), new AlphaScore(0.2, 0.2, 2, 3), new AlphaScore(0.3, 0.3, 0, 3), new AlphaScore(0.4, 0.4, 1, 1));
       final EmIterate.EmResult res = new EmIterate.EmResult(new double[][] {{0.1, 0.9}, {0.4, 0.6}}, assignments);
       MetaSnpCli.writeVcf(ref, lines, res, out, SimplePossibility.SINGLETON);
@@ -82,8 +82,8 @@ public class MetaSnpCliTest extends AbstractCliTest {
 
   public void testVisualisation() throws IOException {
     try (final ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-      final List<Byte> ref = Arrays.asList(new Byte[]{1, 2, 3, 0});
-      final List<AlleleStatReader.Line> lines = getLines(LINES);
+      final List<Integer> ref = Arrays.asList(1, 2, 3, 0);
+      final List<MetaSnpLine> lines = getLines(LINES);
       final List<AlphaScore> assignments = Arrays.asList(new AlphaScore(0.1, 0.1, 0, 1), new AlphaScore(0.2, 0.2, 2, 3), new AlphaScore(0.3, 0.3, 0, 3), new AlphaScore(0.4, 0.4, 1, 1));
       final EmIterate.EmResult res = new EmIterate.EmResult(new double[][] {{0.1, 0.9}, {0.4, 0.6}}, assignments);
       final List<double[][]> evidence = new ArrayList<>();
@@ -96,10 +96,10 @@ public class MetaSnpCliTest extends AbstractCliTest {
     }
 
   }
-  public List<AlleleStatReader.Line> getLines(String ... lines) throws IOException {
-    final List<AlleleStatReader.Line> list = new ArrayList<>();
+  public List<MetaSnpLine> getLines(String ... lines) throws IOException {
+    final List<MetaSnpLine> list = new ArrayList<>();
     for (String line : lines) {
-      list.add(new AlleleStatReader.Line(COMPILE.matcher(line).replaceAll("\t"), 2));
+      list.add(MetaSnpLine.create(COMPILE.matcher(line).replaceAll("\t"), 2));
     }
     return list;
   }

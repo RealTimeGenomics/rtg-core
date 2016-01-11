@@ -19,46 +19,16 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 
-import com.rtg.mode.DNA;
 import com.rtg.util.StringUtils;
 import com.rtg.util.io.FileUtils;
 
 /**
  */
-class AlleleStatReader implements AutoCloseable {
+class AlleleStatReader implements AutoCloseable, MetaSnpReader {
 
   @Override
   public void close() throws IOException {
     mReader.close();
-  }
-  static class Line {
-    private static final int NUM_FIELDS = 7;
-    String mSequence;
-    int mPosition;
-    byte mReference;
-    double[][] mCounts = new double[4][];
-    Line(String str, int lineNumber) throws IOException {
-      final String[] fields = StringUtils.split(str, '\t');
-      if (fields.length < NUM_FIELDS) {
-        throw new IOException("Error on line: " + lineNumber + " Expected at least " + NUM_FIELDS + " columns but found " + fields.length + " ");
-      }
-      try {
-      mSequence = fields[0];
-      mPosition = Integer.parseInt(fields[1]) - 1;
-      mReference = (byte) DNA.valueOf(fields[2]).ordinal();
-      for (int i = 0; i < 4; i++) {
-        final String count = fields[3 + i];
-        final String[] samples = StringUtils.split(count, ',');
-        mCounts[i] = new double[samples.length];
-        for (int j = 0; j < samples.length; j++) {
-          mCounts[i][j] = Double.parseDouble(samples[j]);
-        }
-      }
-      } catch (NumberFormatException e) {
-        throw new IOException("Error on line: " + lineNumber + " " + e.getMessage());
-      }
-
-    }
   }
 
   final BufferedReader mReader;
@@ -91,14 +61,13 @@ class AlleleStatReader implements AutoCloseable {
     return Arrays.asList(parts);
   }
 
-  /**
-   * @return the list of sample names from the header or null if the header is missing
-   */
+  @Override
   public List<String> samples() {
     return mSamples;
   }
 
-  Line nextLine() throws IOException {
+  @Override
+  public MetaSnpLine nextLine() throws IOException {
     String str;
     do {
       str = mReader.readLine();
@@ -107,7 +76,7 @@ class AlleleStatReader implements AutoCloseable {
     if (str == null) {
       return null;
     } else {
-      return new Line(str, mLineNumber++);
+      return MetaSnpLine.create(str, mLineNumber++);
     }
   }
 }

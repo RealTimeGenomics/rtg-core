@@ -57,10 +57,10 @@ public class ComplicatedBetaTest extends TestCase {
     assertEquals(2, beta.getCount(2, new int[] {1, 1, 1}));
     assertEquals(1, beta.getCount(2, new int[]{1, 1, 2}));
   }
-  List<Byte> ref(int ... refInts) {
-    final List<Byte> res = new ArrayList<>();
+  List<Integer> ref(int ... refInts) {
+    final List<Integer> res = new ArrayList<>();
     for (int i : refInts) {
-      res.add((byte) i);
+      res.add(i);
     }
     return res;
   }

@@ -69,7 +69,7 @@ public final class EmIterate {
       return iteration >= mIterations;
     }
   }
-  private static ProbAlpha getProbAlpha(BetaType type, List<Byte> ref, final List<int[]> assignments, long length, double[] staticBeta) {
+  private static ProbAlpha getProbAlpha(BetaType type, List<Integer> ref, final List<int[]> assignments, long length, double[] staticBeta) {
     switch (type) {
       case COMPLEX:
         return new ComplicatedBeta(ref, assignments, length);
@@ -80,7 +80,7 @@ public final class EmIterate {
     }
   }
   
-  private static double[] estimateBeta(List<Byte> ref, final List<int[]> assignments, long length) {
+  private static double[] estimateBeta(List<Integer> ref, final List<int[]> assignments, long length) {
     assert ref.size() == assignments.size();
     assert length >= ref.size() && length > 0;
     final double[] beta = new double[assignments.get(0).length];
@@ -110,7 +110,7 @@ public final class EmIterate {
     return -codeLength + strains * scores.size() * Math.log(4);
   }
 
-  static List<EmResult> iterate(List<Byte> ref, List<double[][]> evidence, int strains, BetaType betaType, double error) {
+  static List<EmResult> iterate(List<Integer> ref, List<double[][]> evidence, int strains, BetaType betaType, double error) {
     return iterate(ref, evidence, strains, ref.size(), LogPossibility.SINGLETON, new FixedIterations(10), betaType, error);
   }
   /**
@@ -125,7 +125,7 @@ public final class EmIterate {
    * @param error error rate
    * @return assignments and predicted xi
    */
-  static List<EmResult> iterate(List<Byte> ref, List<double[][]> evidence, int strains, long approxLength, PossibilityArithmetic arith, Termination terminate, BetaType updateBeta, double error) {
+  static List<EmResult> iterate(List<Integer> ref, List<double[][]> evidence, int strains, long approxLength, PossibilityArithmetic arith, Termination terminate, BetaType updateBeta, double error) {
     final int samples = evidence.get(0).length;
     final double[] beta = new double[strains];
     Arrays.fill(beta, 0.001);

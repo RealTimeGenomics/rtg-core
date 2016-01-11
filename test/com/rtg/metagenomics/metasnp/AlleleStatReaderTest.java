@@ -30,19 +30,19 @@ static final String SIMPLE = "sequence\tposition\treference\ta\tc\tg\tt\taRatio\
 
   public void testSimple() throws IOException {
     try (AlleleStatReader reader = new AlleleStatReader(new ByteArrayInputStream(SIMPLE.getBytes()))) {
-      final AlleleStatReader.Line line = reader.nextLine();
-      assertEquals("seq", line.mSequence);
-      assertEquals(0, line.mPosition);
-      assertEquals((byte) 2, line.mReference);
+      final MetaSnpLine line = reader.nextLine();
+      assertEquals("seq", line.getSequence());
+      assertEquals(0, line.getPosition());
+      assertEquals(1, line.mReference);
       assertTrue(Arrays.equals(new double[] {0, 0, 0, 0}, line.mCounts[0]));
       assertTrue(Arrays.equals(new double[] {88, 122, 104, 134}, line.mCounts[1]));
       assertNotNull(reader.nextLine());
       assertNotNull(reader.nextLine());
 
-      final AlleleStatReader.Line line2 = reader.nextLine();
-      assertEquals("seq2", line2.mSequence);
-      assertEquals(45, line2.mPosition);
-      assertEquals((byte) 4, line2.mReference);
+      final MetaSnpLine line2 = reader.nextLine();
+      assertEquals("seq2", line2.getSequence());
+      assertEquals(45, line2.getPosition());
+      assertEquals(3, line2.mReference);
       assertTrue(Arrays.equals(new double[] {0, 0, 0, 0}, line2.mCounts[0]));
       assertTrue(Arrays.equals(new double[] {102, 135, 117, 155}, line2.mCounts[3]));
       assertNull(reader.nextLine());
