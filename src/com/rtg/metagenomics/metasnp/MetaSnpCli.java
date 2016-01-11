@@ -130,7 +130,7 @@ public class MetaSnpCli extends LoggedCli {
       MetaSnpLine line;
       while ((line = reader.nextLine()) != null) {
         approxLength++;
-        final int refAllele = line.mReference;
+        final int refAllele = line.getReferenceIndex();
         int nonRefCount = 0;
         int total = 0;
         final double[][] evidenceArray = new double[line.mCounts[0].length][line.mCounts.length];

@@ -26,12 +26,7 @@ import com.rtg.util.io.FileUtils;
  */
 class AlleleStatReader implements AutoCloseable, MetaSnpReader {
 
-  @Override
-  public void close() throws IOException {
-    mReader.close();
-  }
-
-  final BufferedReader mReader;
+  private final BufferedReader mReader;
   private int mLineNumber = 1;
   private List<String> mSamples = null;
 
@@ -48,6 +43,11 @@ class AlleleStatReader implements AutoCloseable, MetaSnpReader {
         mSamples = parseSamples(line);
       }
     }
+  }
+
+  @Override
+  public void close() throws IOException {
+    mReader.close();
   }
 
   /**

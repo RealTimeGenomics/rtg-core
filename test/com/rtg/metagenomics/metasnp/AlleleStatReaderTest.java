@@ -33,7 +33,7 @@ static final String SIMPLE = "sequence\tposition\treference\ta\tc\tg\tt\taRatio\
       final MetaSnpLine line = reader.nextLine();
       assertEquals("seq", line.getSequence());
       assertEquals(0, line.getPosition());
-      assertEquals(1, line.mReference);
+      assertEquals(1, line.getReferenceIndex());
       assertTrue(Arrays.equals(new double[] {0, 0, 0, 0}, line.mCounts[0]));
       assertTrue(Arrays.equals(new double[] {88, 122, 104, 134}, line.mCounts[1]));
       assertNotNull(reader.nextLine());
@@ -42,7 +42,8 @@ static final String SIMPLE = "sequence\tposition\treference\ta\tc\tg\tt\taRatio\
       final MetaSnpLine line2 = reader.nextLine();
       assertEquals("seq2", line2.getSequence());
       assertEquals(45, line2.getPosition());
-      assertEquals(3, line2.mReference);
+      assertEquals(3, line2.getReferenceIndex());
+      assertEquals("t", line2.getReferenceAllele());
       assertTrue(Arrays.equals(new double[] {0, 0, 0, 0}, line2.mCounts[0]));
       assertTrue(Arrays.equals(new double[] {102, 135, 117, 155}, line2.mCounts[3]));
       assertNull(reader.nextLine());
