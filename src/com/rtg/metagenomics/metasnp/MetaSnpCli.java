@@ -23,8 +23,7 @@ import java.util.Locale;
 
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
-import com.rtg.mode.DNA;
-import com.rtg.mode.DnaUtils;
+import com.rtg.util.PosteriorUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.cli.CFlags;
@@ -32,7 +31,6 @@ import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
-import com.rtg.util.PosteriorUtils;
 import com.rtg.variant.util.arithmetic.LogPossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 import com.rtg.vcf.VcfRecord;
@@ -108,6 +106,10 @@ public class MetaSnpCli extends LoggedCli {
     return (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
   }
 
+  private MetaSnpReader getReader(final File file) throws IOException {
+    return VcfUtils.isVcfExtension(file) ? new VcfMetaSnpReader(file) : new AlleleStatReader(file);
+  }
+
   @Override
   protected int mainExec(OutputStream out, LogStream err) throws IOException {
 
@@ -123,28 +125,28 @@ public class MetaSnpCli extends LoggedCli {
 
     final double error = (Double) mFlags.getValue(ERROR_RATE);
     int approxLength = 0; // number of lines of input approximates length of genome
-    try (final AlleleStatReader reader = new AlleleStatReader(f)) {
-      final List<Byte> ref = new ArrayList<>();
+    try (final MetaSnpReader reader = getReader(f)) {
+      final List<Integer> ref = new ArrayList<>();
       final List<double[][]> evidence = new ArrayList<>();
-      final List<AlleleStatReader.Line> lines = new ArrayList<>();
-      AlleleStatReader.Line line;
+      final List<MetaSnpLine> lines = new ArrayList<>();
+      MetaSnpLine line;
       while ((line = reader.nextLine()) != null) {
         approxLength++;
-        final int refByte = line.mReference - 1;
+        final int refAllele = line.getReferenceIndex();
         int nonRefCount = 0;
         int total = 0;
         final double[][] evidenceArray = new double[line.mCounts[0].length][line.mCounts.length];
         for (int i = 0; i < evidenceArray.length; i++) {
           for (int j = 0; j < evidenceArray[i].length; j++) {
             evidenceArray[i][j] = line.mCounts[j][i];
-            if (j != refByte) {
+            if (j != refAllele) {
               nonRefCount += line.mCounts[j][i];
             }
             total += line.mCounts[j][i];
           }
         }
-        if (refByte >= 0 && nonRefCount >= minFreq && nonRefCount < maxFreq && total >= minCov && total < maxCov) {
-          ref.add((byte) refByte);
+        if (refAllele >= 0 && nonRefCount >= minFreq && nonRefCount < maxFreq && total >= minCov && total < maxCov) {
+          ref.add(refAllele);
           evidence.add(evidenceArray);
           lines.add(line);
         }
@@ -201,17 +203,18 @@ public class MetaSnpCli extends LoggedCli {
     }
   }
 
-  static void outputVisualisation(List<Byte> refBytes, List<AlleleStatReader.Line> lines, List<double[][]> evidence, EmIterate.EmResult result, OutputStream out) throws IOException {
+  static void outputVisualisation(List<Integer> refBytes, List<MetaSnpLine> lines, List<double[][]> evidence, EmIterate.EmResult result, OutputStream out) throws IOException {
     for (int i = 0; i < refBytes.size(); i++) {
       final double[][] currentEvidence = evidence.get(i);
       final int[] currentAssignments = result.mAssignments.get(i).mCalls;
       final int[] totals = new int[currentEvidence.length];
+      final int numAlleles = currentEvidence[0].length;
       for (int sample = 0; sample < currentEvidence.length; sample++) {
-        for (byte allele = 0; allele < 4; allele++) {
+        for (byte allele = 0; allele < numAlleles; allele++) {
           totals[sample] += currentEvidence[sample][allele];
         }
       }
-      for (byte allele = 0; allele < 4; allele++) {
+      for (byte allele = 0; allele < numAlleles; allele++) {
         if (allele == refBytes.get(i)) {
           continue;
         }
@@ -237,10 +240,10 @@ public class MetaSnpCli extends LoggedCli {
           coordinates[sample] = currentEvidence[sample][allele] / (double) totals[sample];
         }
         final StringBuilder output = new StringBuilder();
-        output.append(lines.get(i).mSequence).append('\t');
-        output.append(lines.get(i).mPosition + 1).append('\t');
-        output.append(DNA.valueChars()[refBytes.get(i) + 1]).append('\t');
-        output.append(DNA.valueChars()[allele + 1]).append('\t');
+        output.append(lines.get(i).getSequence()).append('\t');
+        output.append(lines.get(i).getPosition() + 1).append('\t');
+        output.append(lines.get(i).getReferenceAllele()).append('\t');
+        output.append(lines.get(i).mAlleles[allele]).append('\t');
         output.append(color);
         for (double coordinate : coordinates) {
           output.append("\t").append(Utils.realFormat(coordinate));
@@ -251,7 +254,7 @@ public class MetaSnpCli extends LoggedCli {
     }
   }
 
-  static void writeVcf(List<Byte> refBytes, List<AlleleStatReader.Line> lines, EmIterate.EmResult res, OutputStream out, PossibilityArithmetic arith) throws IOException {
+  static void writeVcf(List<Integer> refBytes, List<MetaSnpLine> lines, EmIterate.EmResult res, OutputStream out, PossibilityArithmetic arith) throws IOException {
     final VcfHeader header = new VcfHeader();
     header.addCommonHeader();
     header.addRunInfo();
@@ -261,23 +264,23 @@ public class MetaSnpCli extends LoggedCli {
     header.addInfoField("LIKE", MetaType.FLOAT, VcfNumber.DOT, "phred scaled likelihood of genotype assignments");
     try (final VcfWriter writer = new VcfWriter(header, out)) {
       for (int i = 0; i < lines.size(); i++) {
-        final AlleleStatReader.Line line = lines.get(i);
+        final MetaSnpLine line = lines.get(i);
         final int[] assignments = res.mAssignments.get(i).mCalls;
-        final byte ref = refBytes.get(i);
+        final int ref = refBytes.get(i);
         final List<Integer> alts = new ArrayList<>();
-        alts.add((int) ref);
+        alts.add(ref);
         for (int assignment1 : assignments) {
           if (!alts.contains(assignment1)) {
             alts.add(assignment1);
           }
         }
-        final VcfRecord record = new VcfRecord(line.mSequence, line.mPosition, base(ref));
+        final VcfRecord record = new VcfRecord(line.getSequence(), line.getPosition(), line.getReferenceAllele());
         final double phred = PosteriorUtils.phredIfy(arith.poss2Ln(res.mAssignments.get(i).mLikelihood));
         record.setInfo("LIKE", "" + Utils.realFormat(phred, 3));
         record.setNumberOfSamples(assignments.length);
         record.addFormat(VcfUtils.FORMAT_GENOTYPE); // Ensure the record has a notion of genotype - strictly we should also initialize any pre-exising sample columns with empty GT
         for (int alt = 1; alt < alts.size(); alt++) {
-          record.addAltCall(base(alts.get(alt)));
+          record.addAltCall(line.mAlleles[alts.get(alt)]);
         }
         for (int assignment : assignments) {
           record.addFormatAndSample("GT", "" + alts.indexOf(assignment));
@@ -287,11 +290,6 @@ public class MetaSnpCli extends LoggedCli {
       }
     }
   }
-
-  static String base(int b) {
-    return String.valueOf(DnaUtils.getBase(b + 1));
-  }
-
 
   private static class Validator implements com.rtg.util.cli.Validator {
     @Override

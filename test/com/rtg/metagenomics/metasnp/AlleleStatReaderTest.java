@@ -22,31 +22,32 @@ import junit.framework.TestCase;
 /**
  */
 public class AlleleStatReaderTest extends TestCase {
-static final String SIMPLE = "sequence\tposition\treference\ta\tc\tg\tt\taRatio\tcRatio\tgRatio\ttRatio" + StringUtils.LS
-                             + "seq\t1\tC\t0,0,0,0\t88,122,104,134\t0,0,0,0\t0,0,0,0\t0.000000,0.000000,0.000000,0.000000\t-1,-1,-1,-1\t0.000000,0.000000,0.000000,0.000000\t0.000000,0.000000,0.000000,0.000000" + StringUtils.LS
-                             + "seq\t2\tG\t0,0,0,0\t0,0,0,0\t93,127,109,137\t0,0,0,0\t0.000000,0.000000,0.000000,0.000000\t0.000000,0.000000,0.000000,0.000000\t-1,-1,-1,-1\t0.000000,0.000000,0.000000,0.000000" + StringUtils.LS
-                             + "seq\t3\tA\t99,130,112,148\t0,0,0,0\t0,0,0,0\t0,0,0,0\t-1,-1,-1,-1\t0.000000,0.000000,0.000000,0.000000\t0.000000,0.000000,0.000000,0.000000\t0.000000,0.000000,0.000000,0.000000" + StringUtils.LS
-                             + "seq2\t46\tT\t0,0,0,0\t0,0,0,0\t0,0,0,0\t102,135,117,155" + StringUtils.LS;
+
+  private static final String SIMPLE = "sequence\tposition\treference\ta\tc\tg\tt\taRatio\tcRatio\tgRatio\ttRatio" + StringUtils.LS
+    + "seq\t1\tC\t0,0,0,0\t88,122,104,134\t0,0,0,0\t0,0,0,0\t0.000000,0.000000,0.000000,0.000000\t-1,-1,-1,-1\t0.000000,0.000000,0.000000,0.000000\t0.000000,0.000000,0.000000,0.000000" + StringUtils.LS
+    + "seq\t2\tG\t0,0,0,0\t0,0,0,0\t93,127,109,137\t0,0,0,0\t0.000000,0.000000,0.000000,0.000000\t0.000000,0.000000,0.000000,0.000000\t-1,-1,-1,-1\t0.000000,0.000000,0.000000,0.000000" + StringUtils.LS
+    + "seq\t3\tA\t99,130,112,148\t0,0,0,0\t0,0,0,0\t0,0,0,0\t-1,-1,-1,-1\t0.000000,0.000000,0.000000,0.000000\t0.000000,0.000000,0.000000,0.000000\t0.000000,0.000000,0.000000,0.000000" + StringUtils.LS
+    + "seq2\t46\tT\t0,0,0,0\t0,0,0,0\t0,0,0,0\t102,135,117,155" + StringUtils.LS;
 
   public void testSimple() throws IOException {
     try (AlleleStatReader reader = new AlleleStatReader(new ByteArrayInputStream(SIMPLE.getBytes()))) {
-      final AlleleStatReader.Line line = reader.nextLine();
-      assertEquals("seq", line.mSequence);
-      assertEquals(0, line.mPosition);
-      assertEquals((byte) 2, line.mReference);
-      assertTrue(Arrays.equals(new double[] {0, 0, 0, 0}, line.mCounts[0]));
-      assertTrue(Arrays.equals(new double[] {88, 122, 104, 134}, line.mCounts[1]));
+      final MetaSnpLine line = reader.nextLine();
+      assertEquals("seq", line.getSequence());
+      assertEquals(0, line.getPosition());
+      assertEquals(1, line.getReferenceIndex());
+      assertTrue(Arrays.equals(new double[]{0, 0, 0, 0}, line.mCounts[0]));
+      assertTrue(Arrays.equals(new double[]{88, 122, 104, 134}, line.mCounts[1]));
       assertNotNull(reader.nextLine());
       assertNotNull(reader.nextLine());
 
-      final AlleleStatReader.Line line2 = reader.nextLine();
-      assertEquals("seq2", line2.mSequence);
-      assertEquals(45, line2.mPosition);
-      assertEquals((byte) 4, line2.mReference);
-      assertTrue(Arrays.equals(new double[] {0, 0, 0, 0}, line2.mCounts[0]));
-      assertTrue(Arrays.equals(new double[] {102, 135, 117, 155}, line2.mCounts[3]));
+      final MetaSnpLine line2 = reader.nextLine();
+      assertEquals("seq2", line2.getSequence());
+      assertEquals(45, line2.getPosition());
+      assertEquals(3, line2.getReferenceIndex());
+      assertEquals("T", line2.getReferenceAllele());
+      assertTrue(Arrays.equals(new double[]{0, 0, 0, 0}, line2.mCounts[0]));
+      assertTrue(Arrays.equals(new double[]{102, 135, 117, 155}, line2.mCounts[3]));
       assertNull(reader.nextLine());
     }
-
   }
 }
