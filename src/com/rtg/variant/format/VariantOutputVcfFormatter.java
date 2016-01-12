@@ -125,10 +125,8 @@ public class VariantOutputVcfFormatter {
 
   private void initFormatFields() {
     mFormatFields.add(VcfFormatField.GT);
-    mFormatFields.add(VcfFormatField.VA); // XXXLen
     mFormatFields.add(VcfFormatField.DP);
     mFormatFields.add(VcfFormatField.AD);
-    mFormatFields.add(VcfFormatField.ADE); // XXXLen
     mFormatFields.add(VcfFormatField.GQ);
     mFormatFields.add(VcfFormatField.RE);
     mFormatFields.add(VcfFormatField.AR);
@@ -143,6 +141,12 @@ public class VariantOutputVcfFormatter {
     if (mParams != null) {
       if (mParams.vcfRp()) {
         mFormatFields.add(VcfFormatField.RP);
+      }
+
+      if (mParams.minVariantAlleleCount() > 0 || mParams.minVariantAlleleFraction() > 0) {
+        mFormatFields.add(VcfFormatField.VA); // XXXLen
+        mFormatFields.add(VcfFormatField.ADE); // XXXLen
+        mFormatFields.add(VcfFormatField.VAF);
       }
       mFormatFields.addAll(mParams.formatAnnotations());
     }

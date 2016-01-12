@@ -108,6 +108,8 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final EnumSet<VcfInfoField> mInfoAnnotations;
   private final EnumSet<VcfFormatField> mFormatAnnotations;
   private final File mRegionsFilterBedFile;
+  private final int mMinVariantAlleleCount;
+  private final double mMinVariantAlleleFraction;
 
   /**
    * @param builder the builder object.
@@ -169,6 +171,8 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mInfoAnnotations = builder.mInfoAnnotations;
     mFormatAnnotations = builder.mFormatAnnotations;
     mRegionsFilterBedFile = builder.mRegionsFilterBedFile;
+    mMinVariantAlleleCount = builder.mMinVariantAlleleCount;
+    mMinVariantAlleleFraction = builder.mMinVariantAlleleFraction;
   }
 
   @Override
@@ -630,6 +634,20 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   }
 
   /**
+   * @return the minimum variant allelic count to output a call. Calls below this threshold will be filtered
+   */
+  public int minVariantAlleleCount() {
+    return mMinVariantAlleleCount;
+  }
+
+  /**
+   * @return the minimum variant allelic fraction output a call. Calls below this threshold will be filtered
+   */
+  public double minVariantAlleleFraction() {
+    return mMinVariantAlleleFraction;
+  }
+
+  /**
    * Create a builder with all the values set to those of this object.
    * @return a builder
    */
@@ -700,6 +718,8 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     .regionsFilterBedFile(mRegionsFilterBedFile)
     .referenceRanges(mReferenceRanges)
     .lohPrior(lohPrior())
+    .minVariantAlleleCount(mMinVariantAlleleCount)
+    .minVariantAlleleFraction(mMinVariantAlleleFraction)
     ;
   }
 
@@ -779,6 +799,8 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     sb.append(" min AVR score=").append(mMinAvrScore).append(LS);
     sb.append(" max_complex_hypotheses=").append(mMaxComplexHypotheses).append(LS);
     sb.append(" regions_bed_file=").append(mRegionsFilterBedFile).append(LS);
+    sb.append(" min_variant_allele_count=").append(mMinVariantAlleleCount).append(LS);
+    sb.append(" min_variant_allele_fraction=").append(mMinVariantAlleleFraction).append(LS);
     return sb.toString();
   }
 }

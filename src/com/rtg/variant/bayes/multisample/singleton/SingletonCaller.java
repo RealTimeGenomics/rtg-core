@@ -15,7 +15,6 @@ package com.rtg.variant.bayes.multisample.singleton;
 
 import java.util.List;
 
-import com.rtg.launcher.GlobalFlags;
 import com.rtg.mode.DnaUtils;
 import com.rtg.reference.Ploidy;
 import com.rtg.util.MathUtils;
@@ -31,6 +30,7 @@ import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.multisample.HypothesisScore;
 import com.rtg.variant.bayes.multisample.MultisampleJointCaller;
 import com.rtg.variant.bayes.multisample.Utils;
+import com.rtg.variant.bayes.multisample.VariantAlleleTrigger;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.util.VariantUtils;
 
@@ -38,11 +38,12 @@ import com.rtg.variant.util.VariantUtils;
  */
 public class SingletonCaller implements MultisampleJointCaller {
 
-  private static final int MIN_VAC = GlobalFlags.getIntegerValue(GlobalFlags.VARIANT_MIN_AC);
-  private static final double MIN_VAF = GlobalFlags.getDoubleValue(GlobalFlags.VARIANT_MIN_AF);
+  private final int mMinVac;
+  private final double mMinVaf;
 
   private final VariantParams mParams;
   private final double mInterestingThreshold;
+  private final VariantAlleleTrigger mVariantAlleleTrigger;
 
   /**
    * @param params variant params
@@ -50,6 +51,9 @@ public class SingletonCaller implements MultisampleJointCaller {
   public SingletonCaller(VariantParams params) {
     mParams = params;
     mInterestingThreshold = mParams.interestingThreshold() * MathUtils.LOG_10;
+    mMinVac = params.minVariantAlleleCount();
+    mMinVaf = params.minVariantAlleleFraction();
+    mVariantAlleleTrigger = new VariantAlleleTrigger(params.minVariantAlleleCount(), params.minVariantAlleleFraction());
   }
 
   @Override
@@ -71,37 +75,14 @@ public class SingletonCaller implements MultisampleJointCaller {
 
     final AlleleStatistics<?> ac = model.statistics().counts();
     final Description description = ac.getDescription();
-    final int refCode = description.indexOf(refAllele);
-    double tot = 0;
-    double vac = 0;
-    int va = -1;
-    boolean tied = false;
-    for (int i = 0; i < description.size(); i++) {
-      final double count = ac.count(i) - ac.error(i);
-      tot += count;
-      if (i != refCode && count >= vac) {
-        tied = count == vac;
-        vac = count;
-        va = i;
-      }
-    }
-    double vaf = 0;
-    if (va != -1) {
-      vaf = vac / tot;
-    }
-
+    final int va = mVariantAlleleTrigger.getVariantAllele(ac, description, refAllele);
 
     final HypothesisScore best = model.best(hyp);
-    //final boolean changed = hyp.reference() != best.hypothesis();
 
-    final boolean interesting = vac > MIN_VAC && vaf > MIN_VAF;
-    if (interesting && tied) {
-      System.err.println("Two non-ref alleles met VAC/VAF threshold at " + templateName + ":" + (position + 1));
-      System.err.println("va = " + va + " (" + description.name(va) + ") vac = " + vac + " vaf = " + vaf + " interesting = " + interesting);
-    }
+    final boolean triggersVa = va != -1;
 
-
-    //final boolean interesting = changed || best.posterior() < mInterestingThreshold;
+    final boolean changed = hyp.reference() != best.hypothesis();
+    final boolean interesting = changed || best.posterior() < mInterestingThreshold || triggersVa;
 
     if (!interesting && mParams.callLevel() != VariantOutputLevel.ALL) {
       return null;
@@ -112,7 +93,9 @@ public class SingletonCaller implements MultisampleJointCaller {
     final Variant v = new Variant(locus, sample);
     if (interesting) {
       v.setInteresting();
-      sample.setVariantAllele(description.name(va));
+      if (va != -1) {
+        sample.setVariantAllele(description.name(va));
+      }
     }
     if (hyp.reference() == -1) {
       if (Utils.totalCoverage(models) < Utils.MIN_DEPTH_FOR_N_CALL) {

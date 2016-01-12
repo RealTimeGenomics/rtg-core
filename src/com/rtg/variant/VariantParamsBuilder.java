@@ -99,6 +99,9 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   ReferenceRanges<String> mReferenceRanges = null;
   File mRegionsFilterBedFile = null;
 
+  int mMinVariantAlleleCount = 0;
+  double mMinVariantAlleleFraction = 0.0;
+
   EnumSet <VcfInfoField> mInfoAnnotations = EnumSet.noneOf(VcfInfoField.class);
   EnumSet<VcfFormatField> mFormatAnnotations = EnumSet.noneOf(VcfFormatField.class);
 
@@ -691,6 +694,24 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
    */
   public VariantParamsBuilder regionsFilterBedFile(File bedFile) {
     mRegionsFilterBedFile = bedFile;
+    return self();
+  }
+
+  /**
+   * @param count filter out results with a variant allele count lower than this
+   * @return this builder, so calls can be chained.
+   */
+  public VariantParamsBuilder minVariantAlleleCount(int count) {
+    mMinVariantAlleleCount = count;
+    return self();
+  }
+
+  /**
+   * @param fraction filter out results with a variant allele count lower than this
+   * @return this builder, so calls can be chained.
+   */
+  public VariantParamsBuilder minVariantAlleleFraction(double fraction) {
+    mMinVariantAlleleFraction = fraction;
     return self();
   }
 }

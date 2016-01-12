@@ -121,6 +121,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
 
   private static final String X_INFO_ANNOTATION_FLAG = "Xinfo-annotation";
   private static final String X_FORMAT_ANNOTATION_FLAG = "Xformat-annotation";
+  private static final String X_MIN_VARIANT_ALLELE_COUNT = "Xmin-vac";
+  private static final String X_MIN_VARIANT_ALLELE_FRACTION = "Xmin-vaf";
 
   /**
    * validate common flags
@@ -319,6 +321,10 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
         .setParameterRange(new String[] {VcfInfoField.IC.name(), VcfInfoField.EP.name(), VcfInfoField.LAL.name(), VcfInfoField.QD.name(), VcfInfoField.NAA.name(), VcfInfoField.AN.name(), VcfInfoField.AC.name(), VcfInfoField.RTRM.name(), VcfInfoField.RSPLT.name(), VcfInfoField.SGP.name()}).setRangeList(true);
     flags.registerOptional(X_FORMAT_ANNOTATION_FLAG, VcfFormatField.class, "string", "additional VCF FORMAT fields").setCategory(REPORTING)
         .setParameterRange(new String[] {VcfFormatField.GQD.name(), VcfFormatField.ZY.name(), VcfFormatField.PD.name()}).setRangeList(true).setRangeList(true);
+
+    // TODO Decide if these should trigger output on ref calls(current) or filter out low VA* not ref calls(some one may ask for this at some stage).
+    flags.registerOptional(X_MIN_VARIANT_ALLELE_COUNT, Integer.class, "int", "minimum variant allelic count to output a call", 0).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_MIN_VARIANT_ALLELE_FRACTION, Double.class, "float", "minimum variant allelic fraction to output a call", 0.0).setCategory(SENSITIVITY_TUNING);
   }
 
   /**
@@ -397,6 +403,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
       final List<File> popPriorVcfFile = new CommandLineFiles(null, POPULATION_PRIORS, CommandLineFiles.EXISTS, CommandLineFiles.NOT_DIRECTORY, CommandLineFiles.TABIX).getFileList(mFlags);
       builder.populationPriors(popPriorVcfFile.get(0));
     }
+    builder.minVariantAlleleCount((Integer) mFlags.getValue(X_MIN_VARIANT_ALLELE_COUNT));
+    builder.minVariantAlleleFraction((Double) mFlags.getValue(X_MIN_VARIANT_ALLELE_FRACTION));
 
     // From here on pretty much needs the genome reader to be loaded
     final File genomeFile = (File) mFlags.getValue(TEMPLATE_FLAG);
