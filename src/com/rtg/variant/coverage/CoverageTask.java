@@ -111,7 +111,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
 
     final SequencesReader reference = mParams.genome() == null ? null : mParams.genome().reader();
     if (reference != null) {
-      SamUtils.checkUberHeaderAgainstReference(reference, uberHeader, mParams.ignoreIncompatibleSamHeaders());
+      SamUtils.checkUberHeaderAgainstReference(reference, uberHeader, false);
       mReferenceNames = ReaderUtils.getSequenceNameMap(reference);
     } else {
       Diagnostic.warning("No reference supplied - unable to determine regions of unknown nucleotides.");
@@ -246,7 +246,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
           //update statistics for this base.
           final double nonSmoothCov = getCoverageForPosition(currentTemplatePosition) * INV_SCALE;
           final byte base = getBaseForPosition(currentTemplatePosition);
-          mStatistics.updateCoverageHistogram(nonSmoothCov, mParams.genome() != null && base == DnaUtils.UNKNOWN_RESIDUE, mParams.minimumCoverageForBreadth());
+          mStatistics.updateCoverageHistogram(nonSmoothCov, mReferenceSequenceIndex != null && base == DnaUtils.UNKNOWN_RESIDUE, mParams.minimumCoverageForBreadth());
 
           if (!refHasCoverage && currCov > 0) {
             refHasCoverage = true;
@@ -344,7 +344,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
   }
 
   private byte getBaseForPosition(int sequencePosition) {
-    if (mParams.genome() == null) {
+    if (mReferenceSequenceIndex == null) {
       return DnaUtils.UNKNOWN_RESIDUE;
     }
     final int currChunkPos = sequencePosition - mChunkStart;
