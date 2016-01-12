@@ -14,9 +14,9 @@ package com.rtg.calibrate;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.Utils;
@@ -46,7 +46,7 @@ public class CalibratedPerSequenceExpectedCoverage {
   public CalibratedPerSequenceExpectedCoverage(Calibrator calibrator, Map<String, Integer> defaultSequenceLengths, Map<String, String> readGroupToSampleId, RegionRestriction restriction) {
     mSequenceSampleCoverages = new HashMap<>();
     mSumCoverages = new HashMap<>();
-    mSamples = Collections.unmodifiableSet(new HashSet<>(readGroupToSampleId.values()));
+    mSamples = Collections.unmodifiableSet(new TreeSet<>(readGroupToSampleId.values()));
     final Map<String, Integer> sequenceLengths = calibrator.hasLengths() ? calibrator.getSequenceLengths() : defaultSequenceLengths;
     if (calibrator.getCovariateIndex(CovariateEnum.SEQUENCE) == -1) { // No per sequence separation in calibration data, calculate per-genome coverage level
       long length = 0;
