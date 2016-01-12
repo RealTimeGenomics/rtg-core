@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.rtg.relation.GenomeRelationships;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantOutputLevel;
@@ -82,7 +83,10 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
   protected abstract Hypotheses<D> getCancerHypotheses(final double same, final int ref);
 
   protected VariantOutputVcfFormatter getFormatter() {
-    final VariantOutputVcfFormatter formatter = new VariantOutputVcfFormatter("normal", "cancer");
+    return getFormatter(null);
+  }
+  protected VariantOutputVcfFormatter getFormatter(VariantParams params) {
+    final VariantOutputVcfFormatter formatter = params == null ?  new VariantOutputVcfFormatter("normal", "cancer") : new VariantOutputVcfFormatter(params, "normal", "cancer");
     formatter.addExtraInfoFields(EnumSet.of(VcfInfoField.LOH, VcfInfoField.NCS));
     formatter.addExtraFormatFields(EnumSet.of(VcfFormatField.SSC, VcfFormatField.SS));
     return formatter;
@@ -212,9 +216,13 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
   }
 
   private void checkCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect, String normalName, String cancerName) throws InvalidParamsException, IOException {
+    final GenomeRelationships genomeRelationships = getGenomeRelationships();
+    final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).somaticRate(0.001).genomeRelationships(genomeRelationships).create();
+    checkCancer(normal, cancer, expect, normalName, cancerName, params);
+  }
+  private void checkCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect, String normalName, String cancerName, VariantParams params) throws InvalidParamsException, IOException {
     final int refNt = DNARange.A;
     final int refCode = refNt - 1;
-    final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).somaticRate(0.001).create();
     final Hypotheses<D> hypotheses = getCancerHypotheses(0.99, refCode);
     final AbstractSomaticCaller ccs = getSomaticCaller(0.001, hypotheses, normalName, cancerName, params);
     ccs.integrity();
@@ -233,7 +241,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
         (HypothesesPrior<Description>) normal.get(refCode).hypotheses(),
         null);
     final Variant v = ccs.makeCall("chr1", 13, 14, ref, models, hyp);
-    final VariantOutputVcfFormatter formatter = getFormatter();
+    final VariantOutputVcfFormatter formatter = getFormatter(params);
     assertEquals(expect, formatter.formatCall(v));
   }
 
@@ -249,5 +257,32 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
 
   protected static String formatExp(double value) {
     return String.format("%.3e", value);
+  }
+
+  protected static final String EXPECT_VAF = "chr1\t14\t.\tA\tG\t.\tPASS\tDP=3\tGT:VA:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:ADE:AD:SS:VAF\t1:.:0:0.000:.:10:.:.:.:.:.:0.0,0.0:0,0\t1:1:3:0.293:0.000:21:0.00:6.51:0.00:0.00:G,3,0.293:0.0,2.7:0,3:1:1.000" + LS;
+  public void testVariantAllele() throws InvalidParamsException, IOException {
+
+    final VariantParams params = new VariantParamsBuilder()
+      .callLevel(VariantOutputLevel.ALL)
+      .somaticRate(0.001)
+      .minVariantAlleleFraction(0.1)
+      .minVariantAlleleCount(1)
+      .genomeRelationships(getGenomeRelationships())
+      .create();
+    checkCancer(
+      doNormalReads(0, DNARangeAT.C),
+      doReads(3, DNARangeAT.G),
+      EXPECT_VAF,
+      "A",
+      "C",
+      params
+    );
+  }
+
+  private GenomeRelationships getGenomeRelationships() {
+    final GenomeRelationships genomeRelationships = new GenomeRelationships();
+    genomeRelationships.addGenome("normal");
+    genomeRelationships.addGenome("cancer");
+    return genomeRelationships;
   }
 }
