@@ -39,10 +39,12 @@ class VcfMetaSnpReader extends VcfReader implements MetaSnpReader {
 
   @Override
   public MetaSnpLine nextLine() throws IOException {
-    if (hasNext()) {
-      return MetaSnpLine.create(next());
-    } else {
-      return null;
+    while (hasNext()) {
+      final MetaSnpLine metaSnpLine = MetaSnpLine.create(next());
+      if (metaSnpLine != null) {
+        return metaSnpLine;
+      }
     }
+    return null;
   }
 }

@@ -19,6 +19,7 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.vcf.VcfRecord;
+import com.rtg.vcf.VcfUtils;
 
 /**
  * Represent a variant and allele counts.
@@ -79,7 +80,7 @@ public final class MetaSnpLine {
     }
   }
 
-  private static final String ADE = "ADE"; // todo replace with proper constant
+  private static final String ADE = "ADE"; // todo replace with VcfFormatField.ADE.name();
   private static final String AD = VcfFormatField.AD.name();
 
   static MetaSnpLine create(final VcfRecord rec) {
@@ -95,8 +96,11 @@ public final class MetaSnpLine {
       if (ade == null) {
         ade = rec.getSampleString(j, AD);
         if (ade == null) {
-          throw new NoTalkbackSlimException("Requires a VCF file with ADE or AD format fields");
+          throw new NoTalkbackSlimException("A VCF file with ADE or AD format fields is required.");
         }
+      }
+      if (VcfUtils.MISSING_FIELD.equals(ade)) {
+        return null; // This record has no AD or ADE, skip it
       }
       final String[] perAllele = StringUtils.split(ade, ',');
       if (perAllele.length != alleles.length) {
