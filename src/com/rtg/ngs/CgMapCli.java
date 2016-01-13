@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Locale;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.bed.BedUtils;
@@ -44,6 +43,7 @@ import com.rtg.reader.AlternatingSequencesWriter;
 import com.rtg.reader.CgUtils;
 import com.rtg.reader.CompressedMemorySequencesReader;
 import com.rtg.reader.FormatCli;
+import com.rtg.reader.InputFormat;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SdfId;
@@ -105,7 +105,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
       if (!CommonFlags.validateOutputDirectory(flags)) {
         return false;
       }
-      final boolean sdf = flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()).equals(FormatCli.SDF_FORMAT);
+      final boolean sdf = FormatCli.SDF_FORMAT.equals(flags.getValue(FormatCli.FORMAT_FLAG));
       if (!CommonFlags.validateReads(flags, sdf) || !CommonFlags.validateTemplate(flags)) {
         return false;
       }
@@ -258,9 +258,8 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     ngsParamBuilder.minHashCountThreshold((Integer) mFlags.getValue(MapFlags.MIN_REPEAT_FREQUENCY_FLAG));
     final File reads = (File) mFlags.getValue(CommonFlags.READS_FLAG);
     final LongRange buildReaderRestriction = CommonFlags.getReaderRestriction(mFlags);
-    final boolean sdfFormat = mFlags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()).equals(FormatCli.SDF_FORMAT);
     try {
-      if (sdfFormat) {
+      if (FormatCli.getFormat(mFlags, true) == InputFormat.SDF) {
         ngsParamBuilder.buildFirstParams(SequenceParams.builder().directory(ReaderUtils.getLeftEnd(reads)).mode(SequenceMode.UNIDIRECTIONAL).useMemReader(true).readerRestriction(buildReaderRestriction).create());
         ngsParamBuilder.buildSecondParams(SequenceParams.builder().directory(ReaderUtils.getRightEnd(reads)).mode(SequenceMode.UNIDIRECTIONAL).useMemReader(true).readerRestriction(buildReaderRestriction).create());
 

@@ -64,6 +64,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
 
     final File tmpDir = FileUtils.createTempDir("mapparamshelper", "common");
     try {
+      MapFlags.initInputFormatFlags(flags);
       MapFlags.initMapIOFlags(flags);
       MapFlags.initSharedFlagsOnly(flags);
       CommonFlags.initReadRange(flags);

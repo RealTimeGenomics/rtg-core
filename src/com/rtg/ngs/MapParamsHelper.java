@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Locale;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -174,28 +173,13 @@ public final class MapParamsHelper {
   }
 
   static boolean isPaired(CFlags flags) {
-    final String format;
-    final String qualityFormat;
-    final InputFormat inFormat;
-    if (flags.isSet(FormatCli.FORMAT_FLAG)) {
-      format = flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault());
-      qualityFormat = flags.isSet(CommonFlags.QUALITY_FLAG) ? flags.getValue(CommonFlags.QUALITY_FLAG).toString().toLowerCase(Locale.getDefault()) : null;
-    } else {
-      format = FormatCli.SDF_FORMAT;
-      qualityFormat = null;
-    }
-    if (format.equals(FormatCli.SDF_FORMAT)) {
-      inFormat = null;
-    } else {
-      inFormat = FormatCli.getFormat(format, qualityFormat, true);
-    }
-    final boolean sdf = format.equals(FormatCli.SDF_FORMAT);
-    final File reads = (File) flags.getValue(CommonFlags.READS_FLAG);
+    final InputFormat inFormat = FormatCli.getFormat(flags, true);
     final boolean paired;
-    if (sdf) {
+    if (inFormat == InputFormat.SDF) {
+      final File reads = (File) flags.getValue(CommonFlags.READS_FLAG);
       paired = ReaderUtils.isPairedEndDirectory(reads);
     } else {
-      paired = !flags.isSet(CommonFlags.READS_FLAG) || inFormat == InputFormat.SAM_PE;
+      paired = !flags.isSet(CommonFlags.READS_FLAG) || inFormat.isPairedSam();
     }
     return paired;
   }
@@ -255,31 +239,11 @@ public final class MapParamsHelper {
    * @throws IOException when other stuff goes wrong
    */
   public static boolean initReaders(NgsParamsBuilder ngsParamsBuilder, CFlags flags, NameParams nameParams, boolean useQuality, SequenceMode templateMode, SequenceMode readsMode, SamSequenceReaderParams samParams) throws InvalidParamsException, IOException {
-    final String format;
-    final String qualityFormat;
-    final InputFormat inFormat;
-    if (flags.isSet(FormatCli.FORMAT_FLAG)) {
-      format = flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault());
-      qualityFormat = flags.isSet(CommonFlags.QUALITY_FLAG) ? flags.getValue(CommonFlags.QUALITY_FLAG).toString().toLowerCase(Locale.getDefault()) : null;
-    } else {
-      format = FormatCli.SDF_FORMAT;
-      qualityFormat = null;
-    }
-    final boolean sdf = format.equals(FormatCli.SDF_FORMAT);
-    if (sdf) {
-      inFormat = null;
-    } else {
-      inFormat = FormatCli.getFormat(format, qualityFormat, useQuality);
-    }
+    final InputFormat inFormat = FormatCli.getFormat(flags, useQuality);
     final File reads = (File) flags.getValue(CommonFlags.READS_FLAG);
-    final boolean paired;
-    if (sdf) {
-      paired = ReaderUtils.isPairedEndDirectory(reads);
-    } else {
-      paired = !flags.isSet(CommonFlags.READS_FLAG) || inFormat == InputFormat.SAM_PE;
-    }
+    final boolean paired = MapParamsHelper.isPaired(flags);
     if (!paired) {
-      if (sdf) {
+      if (inFormat == InputFormat.SDF) {
         makeSequenceParamsMulti(ngsParamsBuilder, flags, reads, null, nameParams, templateMode, readsMode);
       } else {
         makeOnTheFlySequenceParamsMulti(ngsParamsBuilder, flags, inFormat, reads, null, nameParams, useQuality, templateMode, readsMode, samParams);
@@ -289,11 +253,11 @@ public final class MapParamsHelper {
         throw new InvalidParamsException(ErrorType.IS_A_CG_SDF, reads.getPath());
       }
     } else {
-      if (sdf) {
+      if (inFormat == InputFormat.SDF) {
         final File left = ReaderUtils.getLeftEnd(reads);
         final File right = ReaderUtils.getRightEnd(reads);
         makeSequenceParamsMulti(ngsParamsBuilder, flags, left, right, nameParams, templateMode, readsMode);
-      } else if (inFormat == InputFormat.SAM_PE) {
+      } else if (inFormat.isPairedSam()) {
         makeOnTheFlySequenceParamsMulti(ngsParamsBuilder, flags, inFormat, reads, null, nameParams, useQuality, templateMode, readsMode, samParams);
       } else {
         final File leftFile = (File) flags.getValue(FormatCli.LEFT_FILE_FLAG);

@@ -372,19 +372,19 @@ public final class MapFlags {
     //final File input = (File) flags.getValue(CommonFlags.READS_FLAG);
     final boolean isPaired = MapParamsHelper.isPaired(flags); //ReaderUtils.isPairedEndDirectory(input);
     if (flags.isSet(CommonFlags.MIN_FRAGMENT_SIZE) && !isPaired) {
-      flags.setParseMessage("--" + CommonFlags.MIN_FRAGMENT_SIZE + " requires --" + CommonFlags.READS_FLAG + " to be a paired end directory");
+      flags.setParseMessage("--" + CommonFlags.MIN_FRAGMENT_SIZE + " requires paired end input");
       return false;
     }
     if (flags.isSet(CommonFlags.MAX_FRAGMENT_SIZE) && !isPaired) {
-      flags.setParseMessage("--" + CommonFlags.MAX_FRAGMENT_SIZE + " requires --" + CommonFlags.READS_FLAG + " to be a paired end directory");
+      flags.setParseMessage("--" + CommonFlags.MAX_FRAGMENT_SIZE + " requires paired end input");
       return false;
     }
     if (flags.isSet(MATED_MISMATCH_THRESHOLD) && !isPaired) {
-      flags.setParseMessage("--" + MATED_MISMATCH_THRESHOLD + " requires --" + CommonFlags.READS_FLAG + " to be a paired end directory");
+      flags.setParseMessage("--" + MATED_MISMATCH_THRESHOLD + " requires paired end input");
       return false;
     }
     if (flags.isSet(UNMATED_MISMATCH_THRESHOLD) && !isPaired) {
-      flags.setParseMessage("--" + UNMATED_MISMATCH_THRESHOLD + " requires --" + CommonFlags.READS_FLAG + " to be a paired end directory");
+      flags.setParseMessage("--" + UNMATED_MISMATCH_THRESHOLD + " requires paired end input");
       return false;
     }
     final int min = (Integer) flags.getValue(CommonFlags.MIN_FRAGMENT_SIZE);
