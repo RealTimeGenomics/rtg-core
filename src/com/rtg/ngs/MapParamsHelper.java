@@ -544,7 +544,8 @@ public final class MapParamsHelper {
 
     } else {
       final File reads = (File) flags.getValue(CommonFlags.READS_FLAG);
-      if (!flags.isSet(FormatCli.FORMAT_FLAG)) {
+      final String formatName = (String) flags.getValue(FormatCli.FORMAT_FLAG);
+      if (FormatCli.SDF_FORMAT.equals(formatName)) {
         final File sdf;
         if (ReaderUtils.isPairedEndDirectory(reads)) {
           sdf = ReaderUtils.getLeftEnd(reads);
@@ -558,7 +559,7 @@ public final class MapParamsHelper {
         } else {
           rg = null;
         }
-      } else if (SamCommandHelper.isSamInput(flags) && reads.isFile()) {
+      } else if (SamCommandHelper.isSamInput(formatName) && reads.isFile()) {
         // Only try if it is a regular file (not a pipe which can't be opened twice)
         rg = SamCommandHelper.validateAndCreateSamRG(reads.getPath(), SamCommandHelper.ReadGroupStrictness.OPTIONAL);
       } else {
