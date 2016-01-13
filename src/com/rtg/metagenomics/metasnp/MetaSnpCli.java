@@ -290,8 +290,10 @@ public class MetaSnpCli extends LoggedCli {
           record.addFormatAndSample("GT", "" + alts.indexOf(assignment));
           syndrome.append(alts.indexOf(assignment));
         }
-        record.setInfo("SYNDROME", syndrome.toString());
-
+        // Syndrome would not make sense if we ever got more than 10 alleles
+        if (alts.size() < 10) {
+          record.setInfo("SYNDROME", syndrome.toString());
+        }
         writer.write(record);
       }
     }
