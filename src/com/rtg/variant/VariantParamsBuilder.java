@@ -89,12 +89,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
 
   GenomeRelationships mGenomeRelationships = null;
   GenomeConnectivity mGenomeConnectivity = null;
-  double mSomaticRate = 0.3;
   double mNoDiseasePrior = 0.95;
-  double mLohPrior = 0.0;
-  boolean mIncludeGermlineVariants = false;
-  boolean mIncludeGainOfReference = false;
-  ReferenceRanges<Double> mSiteSpecificSomaticPriors = null;
   SAMFileHeader mUberHeader = null;
   ReferenceRanges<String> mReferenceRanges = null;
   File mRegionsFilterBedFile = null;
@@ -104,6 +99,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
 
   EnumSet <VcfInfoField> mInfoAnnotations = EnumSet.noneOf(VcfInfoField.class);
   EnumSet<VcfFormatField> mFormatAnnotations = EnumSet.noneOf(VcfFormatField.class);
+  SomaticParams mSomaticParams = new SomaticParamsBuilder().create();
 
   @Override
   protected VariantParamsBuilder self() {
@@ -507,39 +503,6 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   }
 
   /**
-   * Set the somatic rate
-   * @param p somatic rate
-   * @return this builder, so calls can be chained.
-   */
-  public VariantParamsBuilder somaticRate(final double p) {
-    if (p <= 0 || p >= 1) {
-      throw new IllegalArgumentException();
-    }
-    mSomaticRate = p;
-    return self();
-  }
-
-  /**
-   * If set, output germline variants in addition to somatic variants during somatic calling.
-   * @param includeGermline true iff germline variants should be output
-   * @return this, for chaining
-   */
-  public VariantParamsBuilder includeGermlineVariants(boolean includeGermline) {
-    mIncludeGermlineVariants = includeGermline;
-    return self();
-  }
-
-  /**
-   * If set, output should include somatic calls where there has been a gain of the reference allele.
-   * @param includeGainOfReference true iff gain of reference somatic calls should be output
-   * @return this, for chaining
-   */
-  public VariantParamsBuilder includeGainOfReference(boolean includeGainOfReference) {
-    mIncludeGainOfReference = includeGainOfReference;
-    return self();
-  }
-
-  /**
    * The priors for no disease
    * @param p the priors
    * @return this, for chaining
@@ -549,29 +512,6 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
       throw new IllegalArgumentException();
     }
     mNoDiseasePrior = p;
-    return self();
-  }
-
-  /**
-   * Set site specific somatic priors.
-   * @param priors the reference ranges specifying site specific somatic priors
-   * @return this builder, so calls can be chained.
-   */
-  public VariantParamsBuilder siteSpecificSomaticPriors(final ReferenceRanges<Double> priors) {
-    mSiteSpecificSomaticPriors = priors;
-    return self();
-  }
-
-  /**
-   * The prior probability that a region in cancer has lost heterozygosity.
-   * @param p the priors
-   * @return this, for chaining
-   */
-  public VariantParamsBuilder lohPrior(final double p) {
-    if (p < 0 || p > 1) {
-      throw new IllegalArgumentException();
-    }
-    mLohPrior = p;
     return self();
   }
 
@@ -712,6 +652,15 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
    */
   public VariantParamsBuilder minVariantAlleleFraction(double fraction) {
     mMinVariantAlleleFraction = fraction;
+    return self();
+  }
+
+  /**
+   * @param params the configuration for a somatic caller
+   * @return this builder, so calls can be chained.
+   */
+  public VariantParamsBuilder somaticParams(SomaticParams params) {
+    mSomaticParams = params;
     return self();
   }
 }

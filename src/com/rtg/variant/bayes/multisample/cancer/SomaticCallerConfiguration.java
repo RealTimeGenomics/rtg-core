@@ -29,6 +29,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.variant.MachineErrorChooserInterface;
+import com.rtg.variant.SomaticParams;
 import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.Description;
@@ -73,7 +74,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
 
     @Override
     public SomaticCallerConfiguration getConfig(final VariantParams params, final SomaticStatistics statistics) throws IOException {
-      final double loh = params.lohPrior();
+      final double loh = params.somaticParams().lohPrior();
       final int numberOfGenomes = params.genomeRelationships().genomes().length;
       final Relationship[] derived = params.genomeRelationships().relationships(RelationshipType.ORIGINAL_DERIVED);
       assert derived.length == 1 || numberOfGenomes == 2;
@@ -132,7 +133,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
           params, phi, psi);
       }
       final SomaticCallerConfiguration sc = new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, haploid, diploid, ssp, phi, psi);
-      sc.getVcfFilters().add(new SomaticFilter(statistics, !(params.includeGermlineVariants() || params.callLevel() == VariantOutputLevel.ALL)));
+      sc.getVcfFilters().add(new SomaticFilter(statistics, !(params.somaticParams().includeGermlineVariants() || params.callLevel() == VariantOutputLevel.ALL)));
       return sc;
     }
   }
@@ -192,8 +193,9 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
     //System.err.println(complex);
     //System.err.println(toStringLog(initialPriors));
     // Currently this is just computing one Q corresponding to the hypotheses passed in -- it would be better to do both if we want to do multiple ploidys at once in a multiple model situation.
-    final SomaticPriorsFactory<DescriptionComplex> qHaploidFactory = complex.haploid() ? new SomaticPriorsFactory<>(complex, params.lohPrior(), initialPriors) : null;
-    final SomaticPriorsFactory<DescriptionComplex> qDiploidFactory = complex.haploid() ? null : new SomaticPriorsFactory<>(complex, params.lohPrior(), initialPriors);
+    final SomaticParams somaticParams = params.somaticParams();
+    final SomaticPriorsFactory<DescriptionComplex> qHaploidFactory = complex.haploid() ? new SomaticPriorsFactory<>(complex, somaticParams.lohPrior(), initialPriors) : null;
+    final SomaticPriorsFactory<DescriptionComplex> qDiploidFactory = complex.haploid() ? null : new SomaticPriorsFactory<>(complex, somaticParams.lohPrior(), initialPriors);
     //System.err.println(toStringLog(q));
     if (mContamination == 0) {
       return new PureSomaticCaller(qHaploidFactory, qDiploidFactory, params, mPhi, mPsi);

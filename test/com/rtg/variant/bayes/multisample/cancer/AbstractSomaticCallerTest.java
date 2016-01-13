@@ -21,6 +21,7 @@ import java.util.List;
 
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.util.InvalidParamsException;
+import com.rtg.variant.SomaticParamsBuilder;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
@@ -217,7 +218,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
 
   private void checkCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect, String normalName, String cancerName) throws InvalidParamsException, IOException {
     final GenomeRelationships genomeRelationships = getGenomeRelationships();
-    final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).somaticRate(0.001).genomeRelationships(genomeRelationships).create();
+    final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).somaticParams(new SomaticParamsBuilder().somaticRate(0.001).create()).genomeRelationships(genomeRelationships).create();
     checkCancer(normal, cancer, expect, normalName, cancerName, params);
   }
   private void checkCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect, String normalName, String cancerName, VariantParams params) throws InvalidParamsException, IOException {
@@ -264,7 +265,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
 
     final VariantParams params = new VariantParamsBuilder()
       .callLevel(VariantOutputLevel.ALL)
-      .somaticRate(0.001)
+      .somaticParams(new SomaticParamsBuilder().somaticRate(0.001).create())
       .minVariantAlleleFraction(0.1)
       .minVariantAlleleCount(1)
       .genomeRelationships(getGenomeRelationships())

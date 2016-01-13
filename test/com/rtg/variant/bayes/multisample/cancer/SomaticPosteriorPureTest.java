@@ -14,6 +14,8 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 import static com.rtg.util.StringUtils.LS;
 
+import com.rtg.variant.SomaticParams;
+import com.rtg.variant.SomaticParamsBuilder;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.ModelInterface;
@@ -39,7 +41,7 @@ public class SomaticPosteriorPureTest extends TestCase {
   public static <D extends Description> void testPosteriorAllDifferent() {
     final ModelInterface<Description> model = PureSomaticCallerTest.SEEN_3_C.get(0);
     final HypothesesPrior<D> hypotheses = (HypothesesPrior<D>) model.hypotheses();
-    final VariantParams params = VariantParams.builder().somaticRate(0.001).create();
+    final VariantParams params = VariantParams.builder().somaticParams(getSomaticRateParams(0.001)).create();
     final AbstractSomaticCaller ccs = new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params, 1, 1);
     ccs.integrity();
 
@@ -75,7 +77,7 @@ public class SomaticPosteriorPureTest extends TestCase {
 
   public void testPosteriorAllSame() {
     final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.EQUALS_REF_A.get(0).hypotheses();
-    final VariantParams params = VariantParams.builder().somaticRate(0.001).create();
+    final VariantParams params = VariantParams.builder().somaticParams(getSomaticRateParams(0.001)).create();
     final AbstractSomaticCaller ccs = new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params, 1, 1);
     ccs.integrity();
 
@@ -91,5 +93,9 @@ public class SomaticPosteriorPureTest extends TestCase {
     assertEquals(17.3311, post.cancerMeasure().bestPosterior(), 2e-4);
     assertEquals(-17.328, post.ncScore(), 1e-3);
     assertTrue(post.isSameCall());
+  }
+
+  private static SomaticParams getSomaticRateParams(double somaticRate) {
+    return new SomaticParamsBuilder().somaticRate(somaticRate).create();
   }
 }

@@ -14,6 +14,7 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 import static com.rtg.util.StringUtils.LS;
 
+import com.rtg.variant.SomaticParamsBuilder;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Evidence;
@@ -47,7 +48,7 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
 
   private AbstractSomaticPosterior getContaminatedPosterior(double contamination) {
     final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.SEEN_3_C.get(0).hypotheses();
-    final VariantParams params = VariantParams.builder().somaticRate(0.001).create();
+    final VariantParams params = VariantParams.builder().somaticParams(new SomaticParamsBuilder().somaticRate(0.001).create()).create();
     final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params, 1, 1);
     cc.integrity();
     // construct a contaminated cancer bayesian.
@@ -93,7 +94,7 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
 
   public void testPosteriorAllSame() {
     final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.EQUALS_REF_A.get(0).hypotheses();
-    final VariantParams params = VariantParams.builder().somaticRate(0.001).create();
+    final VariantParams params = VariantParams.builder().somaticParams(new SomaticParamsBuilder().somaticRate(0.001).create()).create();
     final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params, 1, 1);
     cc.integrity();
     final int numReads = 3;

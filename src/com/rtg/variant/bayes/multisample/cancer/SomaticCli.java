@@ -32,6 +32,7 @@ import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.variant.GenomePriorParams;
+import com.rtg.variant.SomaticParamsBuilder;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.avr.AbstractPredictModel;
@@ -179,13 +180,15 @@ public class SomaticCli extends AbstractMultisampleCli {
 
   @Override
   protected VariantParamsBuilder makeParamsBuilder() throws InvalidParamsException, IOException {
-    final VariantParamsBuilder vpb = super.makeParamsBuilder();
-    vpb
+    final SomaticParamsBuilder somaticBuilder = new SomaticParamsBuilder();
+    somaticBuilder
       .somaticRate((Double) mFlags.getValue(SOMATIC_FLAG))
-      .interestingThreshold(0)
       .includeGermlineVariants(mFlags.isSet(INCLUDE_GERMLINE_FLAG))
       .includeGainOfReference(mFlags.isSet(INCLUDE_GAIN_OF_REFERENCE))
-      .lohPrior((Double) mFlags.getValue(LOH_FLAG))
+      .lohPrior((Double) mFlags.getValue(LOH_FLAG));
+    final VariantParamsBuilder vpb = super.makeParamsBuilder();
+    vpb
+      .interestingThreshold(0)
       .genomePriors(GenomePriorParams.builder().contraryProbability((Double) mFlags.getValue(X_CONTRARY_FLAG)).create())
       .sex((Sex) mFlags.getValue(SEX_FLAG));
     if (mFlags.isSet(SOMATIC_PRIORS_FLAG)) {
@@ -193,9 +196,10 @@ public class SomaticCli extends AbstractMultisampleCli {
       final File sspBedFile = (File) mFlags.getValue(SOMATIC_PRIORS_FLAG);
       loader.loadRanges(getSimpleRegionRestriction(), sspBedFile);
       final ReferenceRanges<Double> ssp = loader.getReferenceRanges();
-      vpb.siteSpecificSomaticPriors(ssp);
+      somaticBuilder.siteSpecificSomaticPriors(ssp);
       Diagnostic.userLog("Loaded site specific somatic priors from " + sspBedFile);
     }
+    vpb.somaticParams(somaticBuilder.create());
     return vpb;
   }
 

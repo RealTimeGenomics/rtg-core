@@ -22,6 +22,7 @@ import com.rtg.relation.Relationship.RelationshipType;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.GenomePriorParams;
+import com.rtg.variant.SomaticParamsBuilder;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
@@ -58,7 +59,7 @@ public class CancerConvergenceTest extends TestCase {
     b.genomePriors(GenomePriorParams.builder().contraryProbability(1).create());
     b.genomeRelationships(genomeRelationships);
     b.machineErrorName("illumina");
-    b.lohPrior(1e-20);
+    b.somaticParams(new SomaticParamsBuilder().lohPrior(1e-20).create());
     b.uberHeader(uber);
     final VariantParams p = b.create();
     return new SomaticCallerConfiguration.Configurator().getConfig(p, null);

@@ -75,7 +75,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     mQHaploidFactory = qHaploidFactory;
     mQDiploidFactory = qDiploidFactory;
     mParams = params;
-    mSiteSpecificSomaticPriors = mParams.siteSpecificSomaticPriors();
+    mSiteSpecificSomaticPriors = mParams.somaticParams().siteSpecificSomaticPriors();
     mIdentityInterestingThreshold = mParams.interestingThreshold() * MathUtils.LOG_10;
     mPhi = phi;
     mPsi = psi;
@@ -115,7 +115,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
         }
       }
     }
-    return mParams.somaticRate();
+    return mParams.somaticParams().somaticRate();
   }
 
   private double getSomaticPrior(final String seqName, final int start, final int end) {
@@ -214,7 +214,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     // Simple LOH test based on ploidy of results alone, could be done with Bayesian calculation later
     final double loh = loh(hypotheses, bestNormal, bestCancer);
     final Ploidy normalPloidy = hypotheses.haploid() ? Ploidy.HAPLOID : Ploidy.DIPLOID;
-    final boolean doLoh = mParams.lohPrior() > 0;
+    final boolean doLoh = mParams.somaticParams().lohPrior() > 0;
     final String refAllele = DnaUtils.bytesToSequenceIncCG(ref, position, endPosition - position);
     final double ratio = posterior.posteriorScore();
 
@@ -238,7 +238,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     } else if (!doLoh && loh > 0) {
       // LOH event, even though the LOH prior was 0, force it to have no cause
       isSomatic = false;
-    } else if (!mParams.includeGainOfReference() && refAllele.equals(hypotheses.name(bestCancer))) {
+    } else if (!mParams.somaticParams().includeGainOfReference() && refAllele.equals(hypotheses.name(bestCancer))) {
       // Gain of reference, if such calls are not allowed then this should have no cause
       isSomatic = false;
     } else {
@@ -279,7 +279,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
   @Override
   public void toString(StringBuilder sb) {
     // Note this dump of Q does not deal with any somatic site-specific priors that might be active
-    final double[][] qMatrix = (mQHaploidFactory != null ? mQHaploidFactory : mQDiploidFactory).somaticQ(mParams.somaticRate());
+    final double[][] qMatrix = (mQHaploidFactory != null ? mQHaploidFactory : mQDiploidFactory).somaticQ(mParams.somaticParams().somaticRate());
     sb.append("length=").append(qMatrix.length).append(LS);
     for (final double[] q : qMatrix) {
       for (final double v : q) {
@@ -305,10 +305,10 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
   public boolean integrity() {
     Exam.assertTrue(mQHaploidFactory != null || mQDiploidFactory != null);
     if (mQHaploidFactory != null) {
-      checkQ(mQHaploidFactory.somaticQ(mParams.somaticRate()));
+      checkQ(mQHaploidFactory.somaticQ(mParams.somaticParams().somaticRate()));
     }
     if (mQDiploidFactory != null) {
-      checkQ(mQDiploidFactory.somaticQ(mParams.somaticRate()));
+      checkQ(mQDiploidFactory.somaticQ(mParams.somaticParams().somaticRate()));
     }
     return true;
   }

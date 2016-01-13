@@ -16,7 +16,7 @@ import com.rtg.variant.bayes.AlleleStatistics;
 import com.rtg.variant.bayes.Description;
 
 /**
- * Wrapper class for Variant Allele thresholding.
+ * Wrapper class for Variant Allele threshold checks
  */
 public class VariantAlleleTrigger {
   final int mMinVac;

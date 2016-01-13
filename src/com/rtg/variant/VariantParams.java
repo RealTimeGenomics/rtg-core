@@ -26,6 +26,7 @@ import com.rtg.reference.ReferenceGenome.DefaultFallback;
 import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.sam.SingleMappedParams;
+import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.Integrity;
@@ -89,7 +90,6 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final Long mThreadingEnvironmentSeed;
   private final boolean mPruneHypotheses;
   private final boolean mEnableTrimSplit;
-  private final double mLohPrior;
   private final File mPopulationPriorFile;
   private final int mMaxEmIterations;
   private final int mMaxComplexHypotheses;
@@ -99,10 +99,6 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final ReferenceRanges<String> mReferenceRanges;
   private final GenomeRelationships mGenomeRelationships;
   private final GenomeConnectivity mGenomeConnectivity;
-  private final double mSomaticRate;
-  private final boolean mIncludeGermlineVariants;
-  private final boolean mIncludeGainOfReference;
-  private final ReferenceRanges<Double> mSiteSpecificSomaticPriors;
   private final double mNoDiseasePrior;
   private final boolean mUsePropagatingPriors;
   private final EnumSet<VcfInfoField> mInfoAnnotations;
@@ -110,6 +106,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final File mRegionsFilterBedFile;
   private final int mMinVariantAlleleCount;
   private final double mMinVariantAlleleFraction;
+  private final SomaticParams mSomaticParams;
 
   /**
    * @param builder the builder object.
@@ -158,12 +155,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mReferenceRanges = builder.mReferenceRanges;
     mGenomeRelationships = builder.mGenomeRelationships;
     mGenomeConnectivity = builder.mGenomeConnectivity;
-    mSomaticRate = builder.mSomaticRate;
-    mIncludeGermlineVariants = builder.mIncludeGermlineVariants;
-    mIncludeGainOfReference = builder.mIncludeGainOfReference;
-    mSiteSpecificSomaticPriors = builder.mSiteSpecificSomaticPriors;
     mNoDiseasePrior = builder.mNoDiseasePrior;
-    mLohPrior = builder.mLohPrior;
     mPopulationPriorFile = builder.mPopulationPriorFile;
     mUsePropagatingPriors = builder.mUsePropagatingPriors;
     mMaxEmIterations = builder.mMaxEmIterations;
@@ -173,6 +165,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mRegionsFilterBedFile = builder.mRegionsFilterBedFile;
     mMinVariantAlleleCount = builder.mMinVariantAlleleCount;
     mMinVariantAlleleFraction = builder.mMinVariantAlleleFraction;
+    mSomaticParams = builder.mSomaticParams;
   }
 
   @Override
@@ -528,45 +521,10 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   }
 
   /**
-   * @return expected mutation rate in the cancer cells with respect to somatic cells.
-   */
-  public double somaticRate() {
-    return mSomaticRate;
-  }
-
-  /**
-   * @return true iff germline variants should be included in VCF output during somatic calling.
-   */
-  public boolean includeGermlineVariants() {
-    return mIncludeGermlineVariants;
-  }
-
-  /**
-   * @return true iff gain of reference somatic calls should be output.
-   */
-  public boolean includeGainOfReference() {
-    return mIncludeGainOfReference;
-  }
-
-  /**
-   * @return site specific somatic priors.
-   */
-  public ReferenceRanges<Double> siteSpecificSomaticPriors() {
-    return mSiteSpecificSomaticPriors;
-  }
-
-  /**
    * @return prior probability that a position does not explain a disease.
    */
   public double noDiseasePrior() {
     return mNoDiseasePrior;
-  }
-
-  /**
-   * @return prior probability that a region in a cancer genome has lost heterozygosity.
-   */
-  public double lohPrior() {
-    return mLohPrior;
   }
 
   /**
@@ -646,6 +604,12 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   public double minVariantAlleleFraction() {
     return mMinVariantAlleleFraction;
   }
+  /**
+   * @return the params for somatic specific callers
+   */
+  public SomaticParams somaticParams() {
+    return mSomaticParams;
+  }
 
   /**
    * Create a builder with all the values set to those of this object.
@@ -695,10 +659,6 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     .ploidy(mPloidy)
     .enableTrimSplit(mEnableTrimSplit)
     .genomeRelationships(mGenomeRelationships)
-    .somaticRate(mSomaticRate)
-    .includeGermlineVariants(mIncludeGermlineVariants)
-    .includeGainOfReference(mIncludeGainOfReference)
-    .siteSpecificSomaticPriors(mSiteSpecificSomaticPriors)
     .noDiseasePrior(mNoDiseasePrior)
     .ionTorrent(mIonTorrent)
     .indelTriggerFraction(mIndelTriggerFraction)
@@ -717,9 +677,9 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     .formatAnnotations(EnumSet.copyOf(mFormatAnnotations))
     .regionsFilterBedFile(mRegionsFilterBedFile)
     .referenceRanges(mReferenceRanges)
-    .lohPrior(lohPrior())
     .minVariantAlleleCount(mMinVariantAlleleCount)
     .minVariantAlleleFraction(mMinVariantAlleleFraction)
+    .somaticParams(somaticParams())
     ;
   }
 
@@ -774,11 +734,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     sb.append(" ionTorrent=").append(mIonTorrent)
       .append(" prune_hypothesis=").append(mPruneHypotheses)
       .append(" enable_trim_split=").append(mEnableTrimSplit).append(LS);  //note currently writing IonTorrent out here is pointless as it is modified after this is printed.
-    sb.append(" somaticRate=").append(somaticRate())
-      .append(" includeGermlineVariants=").append(includeGermlineVariants())
-      .append(" includeGainOfReference=").append(includeGainOfReference())
-      .append(" lohPrior=").append(lohPrior()).append(LS);
-    sb.append(" noDiseasePrior=").append(noDiseasePrior()).append(LS);
+    sb.append(" noDiseasePrior=").append(noDiseasePrior()).append(StringUtils.LS);
     sb.append(" Relationships:").append(genomeRelationships()).append(LS);
     sb.append(" max_em_iterations=").append(mMaxEmIterations).append(LS);
     sb.append(" genome_connectivity=").append(mGenomeConnectivity == null ? "null" : mGenomeConnectivity.toString()).append(LS);
@@ -801,6 +757,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     sb.append(" regions_bed_file=").append(mRegionsFilterBedFile).append(LS);
     sb.append(" min_variant_allele_count=").append(mMinVariantAlleleCount).append(LS);
     sb.append(" min_variant_allele_fraction=").append(mMinVariantAlleleFraction).append(LS);
+    sb.append(" somatic_params=").append(mSomaticParams).append(LS);
     return sb.toString();
   }
 }

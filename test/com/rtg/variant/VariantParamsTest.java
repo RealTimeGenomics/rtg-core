@@ -296,7 +296,7 @@ public class VariantParamsTest extends TestCase {
     assertFalse(params.vcfRp());
     assertEquals(21, params.hyperComplexLength());
     assertFalse(params.ignoreReadQualities());
-    assertEquals(0.0, params.lohPrior());
+    assertEquals(0.0, params.somaticParams().lohPrior());
     assertEquals(-1, params.maxEmIterations());
     assertNull(params.genomeConnectivity());
   }
@@ -322,7 +322,7 @@ public class VariantParamsTest extends TestCase {
     vpb.interestingSeparation(4);
     vpb.chunkSize(5000);
     vpb.lookAhead(10);
-    vpb.lohPrior(0.1);
+    vpb.somaticParams(new SomaticParamsBuilder().lohPrior(0.1).create());
     vpb.maxEmIterations(42);
     vpb.genomeConnectivity(GenomeConnectivity.SPARSE);
     final VariantParams params = vpb.create();
@@ -340,7 +340,7 @@ public class VariantParamsTest extends TestCase {
     assertEquals(4, params.interestingSeparation());
     assertEquals(5000, params.chunkSize());
     assertEquals(10, params.lookAhead());
-    assertEquals(0.1, params.lohPrior());
+    assertEquals(0.1, params.somaticParams().lohPrior());
     assertEquals(42, params.maxEmIterations());
     assertEquals(GenomeConnectivity.SPARSE, params.genomeConnectivity());
   }
@@ -379,7 +379,7 @@ public class VariantParamsTest extends TestCase {
 
   public void testMultisampleParams() {
     final VariantParams params = new VariantParamsBuilder().create();
-    assertEquals(0.3, params.somaticRate(), 1e-8);
+    assertEquals(0.3, params.somaticParams().somaticRate(), 1e-8);
     assertEquals(0.95, params.noDiseasePrior(), 1e-8);
   }
 
