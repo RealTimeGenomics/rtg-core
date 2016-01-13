@@ -51,11 +51,12 @@ public class MetaSnpCliTest extends AbstractCliTest {
   }
   static final String EXPECTED_VCF = ""
                                  + "##INFO=<ID=LIKE,Number=.,Type=Float,Description=\"phred scaled likelihood of genotype assignments\">\n"
+                                 + "##INFO=<ID=SYNDROME,Number=.,Type=String,Description=\"packed representation of strain assignment\">\n"
                                  + "#CHROM POS ID REF ALT QUAL FILTER INFO FORMAT Strain0 Strain1\n"
-                                 + "seq 2 . C A . . LIKE=0.414 GT 1 0\n"
-                                 + "seq 9 . G T . . LIKE=0.792 GT 0 1\n"
-                                 + "seq 10 . T A . . LIKE=1.139 GT 1 0\n"
-                                 + "seq 16 . A C . . LIKE=1.461 GT 1 1\n"
+                                 + "seq 2 . C A . . LIKE=0.414;SYNDROME=10 GT 1 0\n"
+                                 + "seq 9 . G T . . LIKE=0.792;SYNDROME=01 GT 0 1\n"
+                                 + "seq 10 . T A . . LIKE=1.139;SYNDROME=10 GT 1 0\n"
+                                 + "seq 16 . A C . . LIKE=1.461;SYNDROME=11 GT 1 1\n"
       ;
   static final String[] LINES =  {
   "seq 2 C 1,4 4,1 0,0 0,0 0.0,0.0 0.0,0.0 0.0,0.0 0.0,0.0"
@@ -71,7 +72,8 @@ public class MetaSnpCliTest extends AbstractCliTest {
       final List<AlphaScore> assignments = Arrays.asList(new AlphaScore(0.1, 0.1, 0, 1), new AlphaScore(0.2, 0.2, 2, 3), new AlphaScore(0.3, 0.3, 0, 3), new AlphaScore(0.4, 0.4, 1, 1));
       final EmIterate.EmResult res = new EmIterate.EmResult(new double[][] {{0.1, 0.9}, {0.4, 0.6}}, assignments);
       MetaSnpCli.writeVcf(ref, lines, res, out, SimplePossibility.SINGLETON);
-      assertTrue(out.toString().replaceAll("\t", " ").contains(EXPECTED_VCF));
+      final String s = out.toString().replaceAll("\t", " ");
+      assertTrue(s, s.contains(EXPECTED_VCF));
     }
 
   }

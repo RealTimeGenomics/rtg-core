@@ -63,6 +63,8 @@ public class MetaSnpCli extends LoggedCli {
 
   private static final String VCF_OUTPUT = "strains.vcf";
   private static final String XI_FILE = "xi.txt";
+  private static final String LIKE = "LIKE";
+  private static final String SYNDROME = "SYNDROME";
 
   @Override
   public String moduleName() {
@@ -261,7 +263,8 @@ public class MetaSnpCli extends LoggedCli {
     for (int i = 0; i < res.mAssignments.get(0).mCalls.length; i++) {
       header.addSampleName("Strain" + i);
     }
-    header.addInfoField("LIKE", MetaType.FLOAT, VcfNumber.DOT, "phred scaled likelihood of genotype assignments");
+    header.addInfoField(LIKE, MetaType.FLOAT, VcfNumber.DOT, "phred scaled likelihood of genotype assignments");
+    header.addInfoField(SYNDROME, MetaType.STRING, VcfNumber.DOT, "packed representation of strain assignment");
     try (final VcfWriter writer = new VcfWriter(header, out)) {
       for (int i = 0; i < lines.size(); i++) {
         final MetaSnpLine line = lines.get(i);
@@ -282,9 +285,12 @@ public class MetaSnpCli extends LoggedCli {
         for (int alt = 1; alt < alts.size(); alt++) {
           record.addAltCall(line.mAlleles[alts.get(alt)]);
         }
+        final StringBuilder syndrome = new StringBuilder();
         for (int assignment : assignments) {
           record.addFormatAndSample("GT", "" + alts.indexOf(assignment));
+          syndrome.append(alts.indexOf(assignment));
         }
+        record.setInfo("SYNDROME", syndrome.toString());
 
         writer.write(record);
       }
