@@ -22,8 +22,8 @@ import junit.framework.TestCase;
  * @author kurt
  */
 public class VariantAlleleTriggerTest extends TestCase {
-  VariantAlleleTrigger mTrigger = new VariantAlleleTrigger(3, 0.5);
-  final DescriptionCommon mDescription = new DescriptionCommon("X", "Y", "Z");
+  static final VariantAlleleTrigger TRIGGER = new VariantAlleleTrigger(3, 0.5);
+  static final DescriptionCommon DESCRIPTION = new DescriptionCommon("X", "Y", "Z");
 
   void evidence(AlleleStatisticsInt stats, int[] counts) {
     for (int read = 0; read < counts.length; read++) {
@@ -33,29 +33,29 @@ public class VariantAlleleTriggerTest extends TestCase {
     }
   }
   public void testVariantAlleleFound() {
-    final AlleleStatisticsInt stats = new AlleleStatisticsInt(mDescription);
+    final AlleleStatisticsInt stats = new AlleleStatisticsInt(DESCRIPTION);
     evidence(stats, new int[] {1, 4});
-    final int variantAllele = mTrigger.getVariantAllele(stats, mDescription, "X");
+    final int variantAllele = TRIGGER.getVariantAllele(stats, DESCRIPTION, "X");
     assertEquals(1, variantAllele);
 
   }
   public void testBelowBothThresholds() {
-    final AlleleStatisticsInt stats = new AlleleStatisticsInt(mDescription);
+    final AlleleStatisticsInt stats = new AlleleStatisticsInt(DESCRIPTION);
     evidence(stats, new int[] {2, 1});
-    final int variantAllele = mTrigger.getVariantAllele(stats, mDescription, "X");
+    final int variantAllele = TRIGGER.getVariantAllele(stats, DESCRIPTION, "X");
     assertEquals(-1, variantAllele);
 
   }
   public void testBelowCountThreshold() {
-    final AlleleStatisticsInt stats = new AlleleStatisticsInt(mDescription);
+    final AlleleStatisticsInt stats = new AlleleStatisticsInt(DESCRIPTION);
     evidence(stats, new int[] {1, 1});
-    final int variantAllele = mTrigger.getVariantAllele(stats, mDescription, "X");
+    final int variantAllele = TRIGGER.getVariantAllele(stats, DESCRIPTION, "X");
     assertEquals(-1, variantAllele);
   }
   public void testBelowFractionTreshold() {
-    final AlleleStatisticsInt stats = new AlleleStatisticsInt(mDescription);
+    final AlleleStatisticsInt stats = new AlleleStatisticsInt(DESCRIPTION);
     evidence(stats, new int[] {9, 4});
-    final int variantAllele = mTrigger.getVariantAllele(stats, mDescription, "X");
+    final int variantAllele = TRIGGER.getVariantAllele(stats, DESCRIPTION, "X");
     assertEquals(-1, variantAllele);
   }
 }
