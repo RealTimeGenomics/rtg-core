@@ -288,12 +288,9 @@ public class MetaSnpCli extends LoggedCli {
         final StringBuilder syndrome = new StringBuilder();
         for (int assignment : assignments) {
           record.addFormatAndSample("GT", "" + alts.indexOf(assignment));
-          syndrome.append(alts.indexOf(assignment));
+          syndrome.append(alts.indexOf(assignment) == 0 ? '0' : '1');
         }
-        // Syndrome would not make sense if we ever got more than 10 alleles
-        if (alts.size() < 10) {
-          record.setInfo("SYNDROME", syndrome.toString());
-        }
+        record.setInfo("SYNDROME", syndrome.toString());
         writer.write(record);
       }
     }
