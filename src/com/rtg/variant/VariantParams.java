@@ -500,7 +500,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   }
 
   /**
-   * @return get the SAM uber header
+   * @return get the SAM uber header (an aggregate form of the individual sam file headers)
    */
   public SAMFileHeader uberHeader() {
     return mUberHeader;

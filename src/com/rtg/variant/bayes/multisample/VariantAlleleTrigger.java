@@ -25,7 +25,7 @@ public class VariantAlleleTrigger {
   /**
    * Create a trigger with the specified thresholds.
    * If both thresholds are zero then Variant Allele handling will be skipped
-   * @param count Require that variant alleles occur more than {@code count} times. Should be >= 0
+   * @param count Require that variant alleles occur more than {@code count} times. Should be &gt;= 0
    * @param fraction  require that the variant makes up at least this fraction of total evidence. Should be between 0.0 and 0.1.
    */
   public VariantAlleleTrigger(int count, double fraction) {
