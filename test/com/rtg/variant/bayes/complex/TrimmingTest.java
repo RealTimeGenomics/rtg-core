@@ -33,6 +33,7 @@ import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantSample;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.snp.DescriptionCommon;
+import com.rtg.variant.bayes.snp.EvidenceQ;
 import com.rtg.variant.bayes.snp.StatisticsSnp;
 import com.rtg.variant.format.VariantOutputVcfFormatterTest;
 
@@ -486,6 +487,62 @@ public class TrimmingTest extends TestCase {
       }
       assertEquals(expectedChild[i], res.getSample(2).getName());
       assertEquals(expectedDenovo[i], res.getSample(2).isDeNovo());
+    }
+  }
+
+  public void testVariantAlleleCrossedSteams() {
+    final String name = "AAG:TAA";
+    final boolean isIdentity = false;
+    final String ref = "AAA";
+    final String cat1 = "AAG";
+    final String cat2 = "TAA";
+    final VariantSample sample = VariantOutputVcfFormatterTest.createSample(Ploidy.DIPLOID, name, isIdentity, 30.5, VariantSample.DeNovoStatus.UNSPECIFIED, null);
+    final String[] alleles = isIdentity ? new String[] {ref} : new String[] {ref, cat1, cat2};
+    final DescriptionCommon description = new DescriptionCommon(alleles);
+    final StatisticsComplex stats = new StatisticsComplex(description, 1);
+
+    increment(description, stats, 0, 4);
+    increment(description, stats, 1, 3);
+    increment(description, stats, 2, 2);
+
+    sample.setStats(stats);
+    final Variant v = new Variant(new VariantLocus("chr", 0, ref.length(), ref, 'N'), sample);
+    final VariantSample sample1 = v.getSample(0);
+    sample1.setVariantAllele("TAA");
+
+    final List<Variant> splits = Trimming.split(v, null);
+    assertEquals("T", splits.get(0).getSample(0).getVariantAllele());
+    assertEquals("G", splits.get(1).getSample(0).getVariantAllele());
+  }
+
+  public void testVariantAlleleNearHomozygous() {
+    final String name = "TAG:TAA";
+    final boolean isIdentity = false;
+    final String ref = "AAA";
+    final String cat1 = "TAA";
+    final String cat2 = "TAG";
+    final VariantSample sample = VariantOutputVcfFormatterTest.createSample(Ploidy.DIPLOID, name, isIdentity, 30.5, VariantSample.DeNovoStatus.UNSPECIFIED, null);
+    final String[] alleles = isIdentity ? new String[] {ref} : new String[] {ref, cat1, cat2};
+    final DescriptionCommon description = new DescriptionCommon(alleles);
+    final StatisticsComplex stats = new StatisticsComplex(description, 1);
+
+    increment(description, stats, 0, 4);
+    increment(description, stats, 1, 3);
+    increment(description, stats, 2, 2);
+
+    sample.setStats(stats);
+    final Variant v = new Variant(new VariantLocus("chr", 0, ref.length(), ref, 'N'), sample);
+    final VariantSample sample1 = v.getSample(0);
+    sample1.setVariantAllele("TAG");
+
+    final List<Variant> splits = Trimming.split(v, null);
+    assertEquals("T", splits.get(0).getSample(0).getVariantAllele());
+    assertEquals("G", splits.get(1).getSample(0).getVariantAllele());
+  }
+
+  private void increment(DescriptionCommon description, StatisticsComplex stats, int read, int count) {
+    for (int i = 0; i < count; i++) {
+      stats.increment(new EvidenceQ(description, read, 2, 2, 0.1, 0.1, true, true, true, false), 0);
     }
   }
 }

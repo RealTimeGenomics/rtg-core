@@ -26,6 +26,7 @@ import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantSample;
+import com.rtg.variant.bayes.AlleleStatistics;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Statistics;
 import com.rtg.variant.bayes.snp.DescriptionCommon;
@@ -82,7 +83,26 @@ public final class Trimming {
     }
   }
 
-  private static VariantSample[] createVariants(final Variant original, final int leftClip, final int rightClip, Description newDescription, int[] alleleMapping) {
+  private static String findVariantAllele(VariantSample sample, String refNts) {
+    final AlleleStatistics<?> counts = sample.getStats().counts();
+    final Description description = counts.getDescription();
+    if (description instanceof DescriptionNone) {
+      return null;
+    }
+
+    int va = -1;
+    double count = 0.0;
+    for (int i = 0; i < description.size(); i++) {
+      if (counts.count(i) > count && !refNts.equals(description.name(i))) {
+        count = counts.count(i);
+        va = i;
+      }
+    }
+    return va == -1 ? null : description.name(va);
+
+  }
+
+  private static VariantSample[] createVariants(final Variant original, final int leftClip, final int rightClip, Description newDescription, int[] alleleMapping, String refNts) {
     final VariantSample[] newSamples = new VariantSample[original.getNumberOfSamples()];
     for (int k = 0; k < newSamples.length; k++) {
       final VariantSample sample = original.getSample(k);
@@ -90,11 +110,11 @@ public final class Trimming {
         final String newName = createVariantName(leftClip, rightClip, sample.getName());
         newSamples[k] = new VariantSample(sample.getPloidy(), newName, sample.isIdentity(), sample.getMeasure(), sample.isDeNovo(), sample.getDeNovoPosterior());
         VariantSample.copy(sample, newSamples[k]);
-        newSamples[k].setVariantAllele(createVariantName(leftClip, rightClip, sample.getVariantAllele()));
         // Update counts to correspond to the new description
         final Description d = newSamples[k].getStats().counts().getDescription() instanceof DescriptionNone ? DescriptionNone.SINGLETON : newDescription;
         newSamples[k].setStats((Statistics<?>) newSamples[k].getStats().copy());
         newSamples[k].getStats().remapAlleleStatistics(d, alleleMapping);
+        newSamples[k].setVariantAllele(findVariantAllele(newSamples[k], refNts));
         final Map<Set<String>, Double> newMap = newGenotypeLikelihoods(leftClip, rightClip, sample);
         newSamples[k].setGenotypeLikelihoods(newMap);
       } else {
@@ -183,7 +203,7 @@ public final class Trimming {
 
       final Description newDescription = new DescriptionCommon(alleles);
       // Create new trimmed samples
-      newSamples = createVariants(original, leftClip, rightClip, newDescription, alleleMap);
+      newSamples = createVariants(original, leftClip, rightClip, newDescription, alleleMap, newLocus.getRefNts());
     } else {
       newSamples = new VariantSample[0];
     }
@@ -224,7 +244,7 @@ public final class Trimming {
       }
 
       final Description newDescription = new DescriptionCommon(alleles.keySet().toArray(new String[alleles.size()]));
-      newSamples = createVariants(original, start, end, newDescription, alleleMap);
+      newSamples = createVariants(original, start, end, newDescription, alleleMap, newLocus.getRefNts());
     } else {
       newSamples = new VariantSample[0];
     }
