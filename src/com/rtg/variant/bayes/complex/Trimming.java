@@ -114,7 +114,9 @@ public final class Trimming {
         final Description d = newSamples[k].getStats().counts().getDescription() instanceof DescriptionNone ? DescriptionNone.SINGLETON : newDescription;
         newSamples[k].setStats((Statistics<?>) newSamples[k].getStats().copy());
         newSamples[k].getStats().remapAlleleStatistics(d, alleleMapping);
-        newSamples[k].setVariantAllele(findVariantAllele(newSamples[k], refNts));
+        if (sample.getVariantAllele() != null) {
+          newSamples[k].setVariantAllele(findVariantAllele(newSamples[k], refNts));
+        }
         final Map<Set<String>, Double> newMap = newGenotypeLikelihoods(leftClip, rightClip, sample);
         newSamples[k].setGenotypeLikelihoods(newMap);
       } else {
