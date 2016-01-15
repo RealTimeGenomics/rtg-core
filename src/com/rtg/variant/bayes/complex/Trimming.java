@@ -140,7 +140,7 @@ public final class Trimming {
    * Trim a variant by removing common prefix and suffix from each call and reference
    * and adjusting all the position information accordingly.
    * @param original the original call
-   * @param variantAlleleTrigger
+   * @param variantAlleleTrigger variant allele detector
    * @return trimmed variant (possibly original if no change made)
    */
   static Variant trim(final Variant original, VariantAlleleTrigger variantAlleleTrigger) {
