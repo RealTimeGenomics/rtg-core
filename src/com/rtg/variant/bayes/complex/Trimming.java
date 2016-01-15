@@ -29,6 +29,7 @@ import com.rtg.variant.VariantSample;
 import com.rtg.variant.bayes.AlleleStatistics;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Statistics;
+import com.rtg.variant.bayes.multisample.VariantAlleleTrigger;
 import com.rtg.variant.bayes.snp.DescriptionCommon;
 import com.rtg.variant.bayes.snp.DescriptionNone;
 import com.rtg.variant.util.VariantUtils;
@@ -83,26 +84,17 @@ public final class Trimming {
     }
   }
 
-  private static String findVariantAllele(VariantSample sample, String refNts) {
+  private static String findVariantAllele(VariantSample sample, String refNts, VariantAlleleTrigger variantAlleleTrigger) {
     final AlleleStatistics<?> counts = sample.getStats().counts();
     final Description description = counts.getDescription();
     if (description instanceof DescriptionNone) {
       return null;
     }
-
-    int va = -1;
-    double count = 0.0;
-    for (int i = 0; i < description.size(); i++) {
-      if (counts.count(i) > count && !refNts.equals(description.name(i))) {
-        count = counts.count(i);
-        va = i;
-      }
-    }
+    final int va = variantAlleleTrigger.getVariantAllele(counts, description, refNts);
     return va == -1 ? null : description.name(va);
-
   }
 
-  private static VariantSample[] createVariants(final Variant original, final int leftClip, final int rightClip, Description newDescription, int[] alleleMapping, String refNts) {
+  private static VariantSample[] createVariants(final Variant original, final int leftClip, final int rightClip, Description newDescription, int[] alleleMapping, String refNts, VariantAlleleTrigger variantAlleleTrigger) {
     final VariantSample[] newSamples = new VariantSample[original.getNumberOfSamples()];
     for (int k = 0; k < newSamples.length; k++) {
       final VariantSample sample = original.getSample(k);
@@ -114,9 +106,7 @@ public final class Trimming {
         final Description d = newSamples[k].getStats().counts().getDescription() instanceof DescriptionNone ? DescriptionNone.SINGLETON : newDescription;
         newSamples[k].setStats((Statistics<?>) newSamples[k].getStats().copy());
         newSamples[k].getStats().remapAlleleStatistics(d, alleleMapping);
-        if (sample.getVariantAllele() != null) {
-          newSamples[k].setVariantAllele(findVariantAllele(newSamples[k], refNts));
-        }
+        newSamples[k].setVariantAllele(findVariantAllele(newSamples[k], refNts, variantAlleleTrigger));
         final Map<Set<String>, Double> newMap = newGenotypeLikelihoods(leftClip, rightClip, sample);
         newSamples[k].setGenotypeLikelihoods(newMap);
       } else {
@@ -150,9 +140,10 @@ public final class Trimming {
    * Trim a variant by removing common prefix and suffix from each call and reference
    * and adjusting all the position information accordingly.
    * @param original the original call
+   * @param variantAlleleTrigger
    * @return trimmed variant (possibly original if no change made)
    */
-  static Variant trim(final Variant original) {
+  static Variant trim(final Variant original, VariantAlleleTrigger variantAlleleTrigger) {
 
     final String ref = original.getLocus().getRefNts();
     if (ref.length() == 0) {
@@ -205,7 +196,7 @@ public final class Trimming {
 
       final Description newDescription = new DescriptionCommon(alleles);
       // Create new trimmed samples
-      newSamples = createVariants(original, leftClip, rightClip, newDescription, alleleMap, newLocus.getRefNts());
+      newSamples = createVariants(original, leftClip, rightClip, newDescription, alleleMap, newLocus.getRefNts(), variantAlleleTrigger);
     } else {
       newSamples = new VariantSample[0];
     }
@@ -221,7 +212,7 @@ public final class Trimming {
     return result;
   }
 
-  private static Variant createSplitVariant(final Variant original, final int start, final int end, final int id) {
+  private static Variant createSplitVariant(final Variant original, final int start, final int end, final int id, VariantAlleleTrigger variantAlleleTrigger) {
     final VariantLocus newLocus = createLocus(original, start, end);
     final VariantSample[] newSamples;
     if (original.getNumberOfSamples() > 0) {
@@ -246,7 +237,7 @@ public final class Trimming {
       }
 
       final Description newDescription = new DescriptionCommon(alleles.keySet().toArray(new String[alleles.size()]));
-      newSamples = createVariants(original, start, end, newDescription, alleleMap, newLocus.getRefNts());
+      newSamples = createVariants(original, start, end, newDescription, alleleMap, newLocus.getRefNts(), variantAlleleTrigger);
     } else {
       newSamples = new VariantSample[0];
     }
@@ -258,7 +249,7 @@ public final class Trimming {
     return result;
   }
 
-  static List<Variant> split(final Variant original, DenovoChecker denovoCorrector) {
+  static List<Variant> split(final Variant original, DenovoChecker denovoCorrector, VariantAlleleTrigger variantAlleleTrigger) {
 
     // Compute set of alleles and exit if there are none
     final HashSet<String> catSet = extractAlleles(original);
@@ -307,7 +298,7 @@ public final class Trimming {
         while (endSplit < length && syndrome[endSplit]) {
           endSplit++;
         }
-        final Variant splitVariant = createSplitVariant(original, startSplit, length - endSplit, splitId++);
+        final Variant splitVariant = createSplitVariant(original, startSplit, length - endSplit, splitId++, variantAlleleTrigger);
         final Variant variant = denovoCorrector != null ? denovoCorrect(denovoCorrector, splitVariant) : splitVariant;
         list.add(variant);
         startSplit = endSplit + 1;
@@ -374,11 +365,12 @@ public final class Trimming {
    * @return a list of calls. There can be more than one if the call can be split into separate calls that line up.
    */
   public static List<Variant> trimSplit(VariantParams params, Variant original, DenovoChecker denovoCorrector) {
+    final VariantAlleleTrigger variantAlleleTrigger = new VariantAlleleTrigger(params.minVariantAlleleCount(), params.minVariantAlleleFraction());
     if (params.callLevel() == VariantOutputLevel.ALL) {
       return Collections.singletonList(original);
     } else if (params.ionTorrent()) {
-      return Collections.singletonList(trim(original));
+      return Collections.singletonList(trim(original, variantAlleleTrigger));
     }
-    return split(trim(original), denovoCorrector);
+    return split(trim(original, variantAlleleTrigger), denovoCorrector, variantAlleleTrigger);
   }
 }

@@ -32,6 +32,7 @@ import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantSample;
 import com.rtg.variant.bayes.Description;
+import com.rtg.variant.bayes.multisample.VariantAlleleTrigger;
 import com.rtg.variant.bayes.snp.DescriptionCommon;
 import com.rtg.variant.bayes.snp.EvidenceQ;
 import com.rtg.variant.bayes.snp.StatisticsSnp;
@@ -42,6 +43,7 @@ import junit.framework.TestCase;
 /**
  */
 public class TrimmingTest extends TestCase {
+  static final VariantAlleleTrigger TRIGGER = new VariantAlleleTrigger(0, 0.0);
 
   public void testSplitHomozygous() {
     final String a = "GTCCTAACT";
@@ -54,7 +56,7 @@ public class TrimmingTest extends TestCase {
     likelihoods.put(Collections.singleton(b), Math.log(0.4));
     v.getSample(0).setGenotypeLikelihoods(likelihoods);
 
-    final List<Variant> list = Trimming.split(v, null);
+    final List<Variant> list = Trimming.split(v, null, TRIGGER);
     assertEquals(3, list.size());
     final Variant first = list.get(0);
     assertEquals("CT", first.getSample(0).getName());
@@ -105,7 +107,7 @@ public class TrimmingTest extends TestCase {
     likelihoods.put(VariantSample.pairSet(b, c), Math.log(0.345));
     v.getSample(0).setGenotypeLikelihoods(likelihoods);
 
-    final List<Variant> list = Trimming.split(v, null);
+    final List<Variant> list = Trimming.split(v, null, TRIGGER);
     assertEquals(3, list.size());
     final Variant first = list.get(0);
     assertEquals("CT:TC", first.getSample(0).getName());
@@ -147,22 +149,22 @@ public class TrimmingTest extends TestCase {
   public void testNonSplit() {
     //homozygous identity
     final Variant v = createVariant("GTCCTAACT", "GTCCTAACT", null);
-    final List<Variant> list = Trimming.split(v, null);
+    final List<Variant> list = Trimming.split(v, null, TRIGGER);
     assertEquals(v, list.get(0));
 
     //heterozygous identity
     final Variant v2 = createVariant("GTCCTAACT", "GTCCTAACT", "GTCCTAACT");
-    final List<Variant> list2 = Trimming.split(v2, null);
+    final List<Variant> list2 = Trimming.split(v2, null, TRIGGER);
     assertEquals(v2, list2.get(0));
 
     //homozygous different lengths
     final Variant v3 = createVariant("GTCCTAACT", "GTCCTAAT", null);
-    final List<Variant> list3 = Trimming.split(v3, null);
+    final List<Variant> list3 = Trimming.split(v3, null, TRIGGER);
     assertEquals(v3, list3.get(0));
 
     //heterozygous different lengths
     final Variant v4 = createVariant("GTCCTAACT", "GTCCTAA", "GTCCTAACTAA");
-    final List<Variant> list4 = Trimming.split(v4, null);
+    final List<Variant> list4 = Trimming.split(v4, null, TRIGGER);
     assertEquals(v4, list4.get(0));
   }
 
@@ -258,17 +260,17 @@ public class TrimmingTest extends TestCase {
   public void testTrimIdentity() {
     //should not trim identity calls
     final Variant v = createVariant("ACC", "ACC", null);
-    assertEquals(v, Trimming.trim(v));
+    assertEquals(v, Trimming.trim(v, TRIGGER));
 
     final Variant v2 = createVariant("ACC", "ACC", "ACC");
-    assertEquals(v2, Trimming.trim(v2));
+    assertEquals(v2, Trimming.trim(v2, TRIGGER));
   }
 
   public void testTrimSimpleSnps() {
     //homozygous
     //                               0123456789
     final Variant v = createVariant("ACGTCTGTCT", "ACCTCTGTCT", null);
-    final Variant trim = Trimming.trim(v);
+    final Variant trim = Trimming.trim(v, TRIGGER);
     assertEquals('C', trim.getLocus().getPreviousRefNt());
     assertEquals("G", trim.getLocus().getRefNts());
     assertEquals(2, trim.getLocus().getStart());
@@ -278,7 +280,7 @@ public class TrimmingTest extends TestCase {
     //heterozygous
     //                                0123456789
     final Variant v2 = createVariant("ACGTCTGTCT", "ACCTCTGTCT", "ACGTCTGTCT");
-    final Variant trim2 = Trimming.trim(v2);
+    final Variant trim2 = Trimming.trim(v2, TRIGGER);
     assertEquals('C', trim2.getLocus().getPreviousRefNt());
     assertEquals("G", trim2.getLocus().getRefNts());
     assertEquals(2, trim2.getLocus().getStart());
@@ -290,7 +292,7 @@ public class TrimmingTest extends TestCase {
     //homozygous delete
     //                                               0123456789
     final Variant vHomozygousDelete = createVariant("ACGTCTGTCT", "ACGTCTGT", null);
-    final Variant trim = Trimming.trim(vHomozygousDelete);
+    final Variant trim = Trimming.trim(vHomozygousDelete, TRIGGER);
     assertEquals('G', trim.getLocus().getPreviousRefNt());
     assertEquals("TC", trim.getLocus().getRefNts());
     assertEquals(7, trim.getLocus().getStart());
@@ -299,7 +301,7 @@ public class TrimmingTest extends TestCase {
 
     //heterozygous deletes
     final Variant vHeterozygousDelete = createVariant("ACGTCTGTCT", "ACGTCTGT", "ACGTCTG");
-    final Variant trim2 = Trimming.trim(vHeterozygousDelete);
+    final Variant trim2 = Trimming.trim(vHeterozygousDelete, TRIGGER);
     assertEquals('G', trim2.getLocus().getPreviousRefNt());
     assertEquals("TCT", trim2.getLocus().getRefNts());
     assertEquals(7, trim2.getLocus().getStart());
@@ -308,7 +310,7 @@ public class TrimmingTest extends TestCase {
 
   //heterozygous deletes
     final Variant vHeterozygousDelete2 = createVariant("ACGTCTGTCT", "ACGTCTG", "ACGTCTGT");
-    final Variant trim3 = Trimming.trim(vHeterozygousDelete2);
+    final Variant trim3 = Trimming.trim(vHeterozygousDelete2, TRIGGER);
     assertEquals('G', trim3.getLocus().getPreviousRefNt());
     assertEquals("TCT", trim3.getLocus().getRefNts());
     assertEquals(":T", trim3.getSample(0).getName());
@@ -318,7 +320,7 @@ public class TrimmingTest extends TestCase {
     //homozygous
     //                                               0123456789
     final Variant vHomozygousInsert = createVariant("ACGTCTGTCT", "ACGTTTCTGTCT", null);
-    final Variant trim = Trimming.trim(vHomozygousInsert);
+    final Variant trim = Trimming.trim(vHomozygousInsert, TRIGGER);
     assertEquals('G', trim.getLocus().getPreviousRefNt());
     assertEquals("", trim.getLocus().getRefNts());
     assertEquals(3, trim.getLocus().getStart());
@@ -328,7 +330,7 @@ public class TrimmingTest extends TestCase {
     //heterozygous
     //                                               0123456789
     final Variant vHeterozyygousInsert = createVariant("ACGTCTGTCT", "ACGTTTCTGTCT", "ACGTCCCTGTCT");
-    final Variant trim2 = Trimming.trim(vHeterozyygousInsert);
+    final Variant trim2 = Trimming.trim(vHeterozyygousInsert, TRIGGER);
     assertEquals('T', trim2.getLocus().getPreviousRefNt());
     assertEquals("", trim2.getLocus().getRefNts());
     assertEquals(4, trim2.getLocus().getStart());
@@ -340,7 +342,7 @@ public class TrimmingTest extends TestCase {
   //homozygous
     //                                               0123456789
     final Variant vHomozygousIndel = createVariant("ACGTCTGTCT", "ACGTTTCTGGCT", null);
-    final Variant trim = Trimming.trim(vHomozygousIndel);
+    final Variant trim = Trimming.trim(vHomozygousIndel, TRIGGER);
     assertEquals('T', trim.getLocus().getPreviousRefNt());
     assertEquals("CTGT", trim.getLocus().getRefNts());
     assertEquals(4, trim.getLocus().getStart());
@@ -354,7 +356,7 @@ public class TrimmingTest extends TestCase {
     // AC|GTCTA----G|T
     //                                                  0123456789
     final Variant vHeterozyygousIndel = createVariant("ACGTCTATCT", "ACCTATTTTCT", "ACGTCTAGT");
-    final Variant trim2 = Trimming.trim(vHeterozyygousIndel);
+    final Variant trim2 = Trimming.trim(vHeterozyygousIndel, TRIGGER);
     assertEquals('C', trim2.getLocus().getPreviousRefNt());
     assertEquals("GTCTATC", trim2.getLocus().getRefNts());
     assertEquals(2, trim2.getLocus().getStart());
@@ -369,7 +371,7 @@ public class TrimmingTest extends TestCase {
     final VariantSample sample2 = getVariantSample(Ploidy.DIPLOID, "ACGTCTGTCT:ACGTTTT", false, 30.5, VariantSample.DeNovoStatus.UNSPECIFIED, null, description);
     final VariantSample sample3 = getVariantSample(Ploidy.DIPLOID, "ACGTCTCT", false, 30.5, VariantSample.DeNovoStatus.UNSPECIFIED, null, description);
     final Variant v = new Variant(locus, sample1, sample2, sample3);
-    final Variant trim = Trimming.trim(v);
+    final Variant trim = Trimming.trim(v, TRIGGER);
     assertEquals('T', trim.getLocus().getPreviousRefNt());
     assertEquals("CCCC", trim.getLocus().getRefNts());
     assertEquals(4, trim.getLocus().getStart());
@@ -383,7 +385,7 @@ public class TrimmingTest extends TestCase {
     final VariantLocus locus = new VariantLocus("chr", 0, "ACGTCCCCT".length(), "ACGTCCCCT", 'N');
     final VariantSample sample1 = getVariantSample(Ploidy.DIPLOID, "ACGTCTGTCT", false, 30.5, VariantSample.DeNovoStatus.UNSPECIFIED, null, getDescription(locus.getRefNts(), "ACGTCTGTCT"));
     final Variant v = new Variant(locus, sample1, null, null);
-    final Variant trim = Trimming.trim(v);
+    final Variant trim = Trimming.trim(v, TRIGGER);
     assertEquals('C', trim.getLocus().getPreviousRefNt());
     assertEquals("CC", trim.getLocus().getRefNts());
     assertEquals(5, trim.getLocus().getStart());
@@ -395,7 +397,7 @@ public class TrimmingTest extends TestCase {
     //homozygous
     //
     final Variant vHomozygousIndel = createVariant("TA", "TAA", null);
-    final Variant trim = Trimming.trim(vHomozygousIndel);
+    final Variant trim = Trimming.trim(vHomozygousIndel, TRIGGER);
     assertEquals('T', trim.getLocus().getPreviousRefNt());
     assertEquals("", trim.getLocus().getRefNts());
     assertEquals(1, trim.getLocus().getStart());
@@ -405,7 +407,7 @@ public class TrimmingTest extends TestCase {
     //heterozygous
     // AC|GTCTA----G|T
     final Variant vHeterozyygousIndel = createVariant("TA", "TAA", "TA");
-    final Variant trim2 = Trimming.trim(vHeterozyygousIndel);
+    final Variant trim2 = Trimming.trim(vHeterozyygousIndel, TRIGGER);
     assertEquals('T', trim2.getLocus().getPreviousRefNt());
     assertEquals("", trim2.getLocus().getRefNts());
     assertEquals(1, trim2.getLocus().getStart());
@@ -423,7 +425,7 @@ public class TrimmingTest extends TestCase {
     final Family fam = new Family("father", "mother", "child");
     final ChildFamilyLookup familyLookup = new ChildFamilyLookup(3, fam);
     final MendelianDenovoChecker denovoCorrector = new MendelianDenovoChecker(familyLookup);
-    final List<Variant> variants = Trimming.split(v, denovoCorrector);
+    final List<Variant> variants = Trimming.split(v, denovoCorrector, TRIGGER);
     final int[] expectedPositions = {1, 3};
     final String[] expectedParentA = {"T:T", "T:C"};
     final String[] expectedParentB = {"T:T", "T:C"};
@@ -442,7 +444,7 @@ public class TrimmingTest extends TestCase {
     final Family fam = new Family("father", "mother", "child");
     final ChildFamilyLookup familyLookup = new ChildFamilyLookup(3, fam);
     final MendelianDenovoChecker denovoCorrector = new MendelianDenovoChecker(familyLookup);
-    final List<Variant> variants = Trimming.split(v, denovoCorrector);
+    final List<Variant> variants = Trimming.split(v, denovoCorrector, TRIGGER);
     final int[] expectedPositions = {1, 3};
     final String[] expectedParentA = {"T", "T"};
     final String[] expectedParentB = {"T:T", "T:C"};
@@ -461,7 +463,7 @@ public class TrimmingTest extends TestCase {
     final Family fam = new Family("father", "mother", "child");
     final ChildFamilyLookup familyLookup = new ChildFamilyLookup(3, fam);
     final MendelianDenovoChecker denovoCorrector = new MendelianDenovoChecker(familyLookup);
-    final List<Variant> variants = Trimming.split(v, denovoCorrector);
+    final List<Variant> variants = Trimming.split(v, denovoCorrector, TRIGGER);
     final int[] expectedPositions = {1, 3};
     final String[] expectedParentA = {"T", "C"};
     final String[] expectedParentB = {null, null};
@@ -510,7 +512,7 @@ public class TrimmingTest extends TestCase {
     final VariantSample sample1 = v.getSample(0);
     sample1.setVariantAllele("TAA");
 
-    final List<Variant> splits = Trimming.split(v, null);
+    final List<Variant> splits = Trimming.split(v, null, new VariantAlleleTrigger(1, 0.1));
     assertEquals("T", splits.get(0).getSample(0).getVariantAllele());
     assertEquals("G", splits.get(1).getSample(0).getVariantAllele());
   }
@@ -535,7 +537,7 @@ public class TrimmingTest extends TestCase {
     final VariantSample sample1 = v.getSample(0);
     sample1.setVariantAllele("TAG");
 
-    final List<Variant> splits = Trimming.split(v, null);
+    final List<Variant> splits = Trimming.split(v, null, new VariantAlleleTrigger(1, 0.1));
     assertEquals("T", splits.get(0).getSample(0).getVariantAllele());
     assertEquals("G", splits.get(1).getSample(0).getVariantAllele());
   }
