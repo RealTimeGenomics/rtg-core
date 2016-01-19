@@ -547,4 +547,30 @@ public class TrimmingTest extends TestCase {
       stats.increment(new EvidenceQ(description, read, 2, 2, 0.1, 0.1, true, true, true, false), 0);
     }
   }
+
+  public void testVariantAlleleTrimOnly() {
+    // There was a bug where the common descriptions weren't combined during trimming. This resulted in a VA = ref if
+    // the third description outnumbered the variant here.
+    final String name = "TAA:AAA";
+    final boolean isIdentity = false;
+    final String ref = "AAA";
+    final String cat1 = "TAA";
+    final String cat2 = "AAC";
+    final VariantSample sample = VariantOutputVcfFormatterTest.createSample(Ploidy.DIPLOID, name, isIdentity, 30.5, VariantSample.DeNovoStatus.UNSPECIFIED, null);
+    final String[] alleles = isIdentity ? new String[] {ref} : new String[] {ref, cat1, cat2};
+    final DescriptionCommon description = new DescriptionCommon(alleles);
+    final StatisticsComplex stats = new StatisticsComplex(description, 1);
+
+    increment(description, stats, 0, 8);
+    increment(description, stats, 1, 4);
+    increment(description, stats, 2, 5);
+
+    sample.setStats(stats);
+    final Variant v = new Variant(new VariantLocus("chr", 0, ref.length(), ref, 'N'), sample);
+    final VariantSample sample1 = v.getSample(0);
+    sample1.setVariantAllele("TAA");
+
+    final Variant split = Trimming.trim(v, new VariantAlleleTrigger(1, 0.1));
+    assertEquals("T", split.getSample(0).getVariantAllele());
+  }
 }
