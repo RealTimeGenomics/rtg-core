@@ -110,8 +110,8 @@ public final class EmIterate {
     return -codeLength + strains * scores.size() * Math.log(4);
   }
 
-  static List<EmResult> iterate(List<Integer> ref, List<double[][]> evidence, int strains, BetaType betaType, double error) {
-    return iterate(ref, evidence, strains, ref.size(), LogPossibility.SINGLETON, new FixedIterations(10), betaType, error);
+  static List<EmResult> iterate(List<Integer> ref, List<double[][]> evidence, int strains, BetaType betaType, double error, double[][] xi) {
+    return iterate(ref, evidence, strains, ref.size(), LogPossibility.SINGLETON, new FixedIterations(10), betaType, error, xi);
   }
   /**
    *
@@ -123,15 +123,15 @@ public final class EmIterate {
    * @param terminate when should we stop
    * @param updateBeta should beta be recomputed each iteration
    * @param error error rate
+   * @param xi priors for xi
    * @return assignments and predicted xi
    */
-  static List<EmResult> iterate(List<Integer> ref, List<double[][]> evidence, int strains, long approxLength, PossibilityArithmetic arith, Termination terminate, BetaType updateBeta, double error) {
-    final int samples = evidence.get(0).length;
+  static List<EmResult> iterate(List<Integer> ref, List<double[][]> evidence, int strains, long approxLength, PossibilityArithmetic arith, Termination terminate, BetaType updateBeta, double error, double[][] xiPrior) {
     final double[] beta = new double[strains];
     Arrays.fill(beta, 0.001);
+    double[][] xi = xiPrior;
     List<AlphaScore> scores;
     List<int[]> assignments;
-    double[][] xi = initXi(samples, strains, arith);
     final RandomWalkXiFinder randomWalkXiFinder = new RandomWalkXiFinder(arith);
     final List<EmResult> results = new ArrayList<>();
     ProbAlpha pAlpha = getProbAlpha(BetaType.STATIC, ref, Collections.<int[]>emptyList(), 0, beta);
@@ -165,11 +165,4 @@ public final class EmIterate {
     return results;
   }
 
-  private static double[][] initXi(int samples, int strains, PossibilityArithmetic arith) {
-    final double[][] xi = new double[samples][strains];
-    for (int i = 0; i < xi.length; i++) {
-      xi[i] = RandomWalkXiFinder.uniformDistribution(strains, arith);
-    }
-    return xi;
-  }
 }

@@ -29,6 +29,7 @@ import com.rtg.util.Utils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
 import com.rtg.variant.util.arithmetic.LogPossibility;
@@ -60,6 +61,7 @@ public class MetaSnpCli extends LoggedCli {
   private static final String VISUALISATION_PREFIX = "visual";
   private static final String ITERATIONS = "iterations";
   private static final String ERROR_RATE = "error-rate";
+  private static final String XI_PRIORS = "Xxi";
 
   private static final String VCF_OUTPUT = "strains.vcf";
   private static final String XI_FILE = "xi.txt";
@@ -89,6 +91,7 @@ public class MetaSnpCli extends LoggedCli {
     mFlags.registerOptional(MIN_TOTAL_COVERAGE, Integer.class, "INT", "minimum coverage threshold");
     mFlags.registerOptional('v', VISUALISATION, "produce visualisation files");
     mFlags.registerOptional('i', ITERATIONS, Integer.class, "INT", "number of iterations to attempt convergence", 10);
+    mFlags.registerOptional(XI_PRIORS, String.class, "FLOAT...", "initial values for the xi matrix");
     final Flag betaType = mFlags.registerOptional(BETA, String.class, "string", "hypothesis probability method", "reestimate");
     betaType.setParameterRange(betaFlagValues());
     mFlags.setValidator(new Validator());
@@ -110,6 +113,36 @@ public class MetaSnpCli extends LoggedCli {
 
   private MetaSnpReader getReader(final File file) throws IOException {
     return VcfUtils.isVcfExtension(file) ? new VcfMetaSnpReader(file) : new AlleleStatReader(file);
+  }
+
+  private static double[][] initXi(final int samples, final int strains, PossibilityArithmetic arith, final String xiPriors) {
+    final String[] xis = StringUtils.split(xiPriors, ',');
+    if (xis.length != samples * strains) {
+      throw new NoTalkbackSlimException("Initial values for xi must have length " + samples + "*" + strains + " = " + samples * strains);
+    }
+    final double[][] xi = new double[samples][strains];
+    try {
+      for (int k = 0, i = 0; k < samples; k++) {
+        for (int j = 0; j < strains; j++, i++) {
+          final double v = Double.parseDouble(xis[i]);
+          if (v <= 0 || Double.isInfinite(v)) {
+            throw new NoTalkbackSlimException("Invalid xi value: " + v);
+          }
+          xi[k][j] = arith.prob2Poss(v);
+        }
+      }
+    } catch (final NumberFormatException e) {
+      throw new NoTalkbackSlimException("Invalid xi values: " + xiPriors);
+    }
+    return xi;
+  }
+
+  static double[][] initXi(int samples, int strains, PossibilityArithmetic arith) {
+    final double[][] xi = new double[samples][strains];
+    for (int i = 0; i < xi.length; i++) {
+      xi[i] = RandomWalkXiFinder.uniformDistribution(strains, arith);
+    }
+    return xi;
   }
 
   @Override
@@ -154,8 +187,10 @@ public class MetaSnpCli extends LoggedCli {
         }
       }
       final PossibilityArithmetic arith = LogPossibility.SINGLETON;
+      final int samples = reader.samples().size();
+      final double[][] xiPriors = mFlags.isSet(XI_PRIORS) ? initXi(samples, strains, arith, (String) mFlags.getValue(XI_PRIORS)) : initXi(samples, strains, arith);
       Diagnostic.info(evidence.size() + " positions passed initial thresholding");
-      final List<EmIterate.EmResult> iterations = EmIterate.iterate(ref, evidence, strains, approxLength, arith, new EmIterate.FixedIterations((Integer) mFlags.getValue(ITERATIONS)), updateBeta, error);
+      final List<EmIterate.EmResult> iterations = EmIterate.iterate(ref, evidence, strains, approxLength, arith, new EmIterate.FixedIterations((Integer) mFlags.getValue(ITERATIONS)), updateBeta, error, xiPriors);
       final EmIterate.EmResult result = iterations.get(iterations.size() - 1);
       final double[][] xi = result.mXi;
       try (PrintStream xiOut = new PrintStream(FileUtils.createOutputStream(new File(outputDirectory, XI_FILE)))) {

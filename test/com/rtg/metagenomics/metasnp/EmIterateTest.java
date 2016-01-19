@@ -39,10 +39,10 @@ public class EmIterateTest extends TestCase {
     evidence.add(new double[][] {{300, 0, 0, 0}, {300, 0, 0, 0}});
     evidence.add(new double[][] {{0, 100, 0, 200}, {0, 200, 0, 100}});
     final int strains = 2;
-    final List<EmIterate.EmResult> iterations = EmIterate.iterate(ref, evidence, strains, updateBeta ? EmIterate.BetaType.REESTIMATE : EmIterate.BetaType.STATIC, 0.001);
+    final PossibilityArithmetic arith = LogApproximatePossibility.SINGLETON;
+    final List<EmIterate.EmResult> iterations = EmIterate.iterate(ref, evidence, strains, updateBeta ? EmIterate.BetaType.REESTIMATE : EmIterate.BetaType.STATIC, 0.001, MetaSnpCli.initXi(2, 2, arith));
     final EmIterate.EmResult result = iterations.get(iterations.size() - 1);
     final double[][] xi = result.mXi;
-    final PossibilityArithmetic arith = LogApproximatePossibility.SINGLETON;
     assertEquals(0.33, arith.poss2Prob(xi[0][0]), 0.01);
     assertEquals(0.66, arith.poss2Prob(xi[0][1]), 0.01);
     assertEquals(0.66, arith.poss2Prob(xi[1][0]), 0.01);
@@ -69,10 +69,10 @@ public class EmIterateTest extends TestCase {
     evidence.add(new double[][] {{300, 0, 1, 0}, {300, 0, 2, 0}});
     evidence.add(new double[][] {{0, 100, 5, 200}, {2, 200, 2, 100}});
     final int strains = 2;
-    final List<EmIterate.EmResult> iterations = EmIterate.iterate(ref, evidence, strains, EmIterate.BetaType.STATIC, 0.001);
+    final PossibilityArithmetic arith = LogApproximatePossibility.SINGLETON;
+    final List<EmIterate.EmResult> iterations = EmIterate.iterate(ref, evidence, strains, EmIterate.BetaType.STATIC, 0.001, MetaSnpCli.initXi(2, 2, arith));
     final EmIterate.EmResult result = iterations.get(iterations.size() - 1);
     final double[][] xi = result.mXi;
-    final PossibilityArithmetic arith = LogApproximatePossibility.SINGLETON;
     assertEquals(0.33, arith.poss2Prob(xi[0][0]), 0.01);
     assertEquals(0.66, arith.poss2Prob(xi[0][1]), 0.01);
     assertEquals(0.66, arith.poss2Prob(xi[1][0]), 0.01);
