@@ -123,7 +123,7 @@ public final class EmIterate {
    * @param terminate when should we stop
    * @param updateBeta should beta be recomputed each iteration
    * @param error error rate
-   * @param xi priors for xi
+   * @param xiPrior priors for xi
    * @return assignments and predicted xi
    */
   static List<EmResult> iterate(List<Integer> ref, List<double[][]> evidence, int strains, long approxLength, PossibilityArithmetic arith, Termination terminate, BetaType updateBeta, double error, double[][] xiPrior) {
