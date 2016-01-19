@@ -17,6 +17,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import com.rtg.launcher.MockReaderParams;
+import com.rtg.mode.SequenceMode;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.relation.Relationship.RelationshipType;
 import com.rtg.util.InvalidParamsException;
@@ -61,6 +64,7 @@ public class CancerConvergenceTest extends TestCase {
     b.machineErrorName("illumina");
     b.somaticParams(new SomaticParamsBuilder().lohPrior(1e-20).create());
     b.uberHeader(uber);
+    b.genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL));
     final VariantParams p = b.create();
     return new SomaticCallerConfiguration.Configurator().getConfig(p, null);
   }

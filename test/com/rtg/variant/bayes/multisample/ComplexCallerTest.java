@@ -20,7 +20,10 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import com.rtg.launcher.MockReaderParams;
 import com.rtg.mode.DnaUtils;
+import com.rtg.mode.SequenceMode;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.relation.RelationshipsFileParser;
 import com.rtg.sam.CircularBufferMultifileSinglePassReaderWindow;
 import com.rtg.sam.ReaderWindow;
@@ -95,7 +98,10 @@ public class ComplexCallerTest extends TestCase {
     builder.callLevel(VariantOutputLevel.ALL);
     builder.genomeRelationships(RelationshipsFileParser.load(new BufferedReader(new StringReader("original-derived normal cancer contamination=0.5"))));
     final SAMFileHeader header = makeHeaderWithSamples("normal", "cancer");
-    final VariantParams params = builder.uberHeader(header).create();
+    final VariantParams params = builder
+      .uberHeader(header)
+      .genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL))
+      .create();
     final ArrayList<Variant> chunk = new ArrayList<>();
     chunk.add(TestUtils.createVariant(4));
     chunk.add(TestUtils.createVariant(5));
@@ -267,7 +273,10 @@ public class ComplexCallerTest extends TestCase {
     list.add(in);
     //System.err.println(list.size() + " " + in.getPath());
     final SAMFileHeader header = SamUtils.getUberHeader(list);
-    final VariantParams params = builder.uberHeader(header).create();
+    final VariantParams params = builder
+      .uberHeader(header)
+      .genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(">chr21\n" + template), SequenceMode.UNIDIRECTIONAL))
+      .create();
     final AbstractJointCallerConfiguration config = new SingletonCallerConfiguration.Configurator().getConfig(params, null);
 
     final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator();

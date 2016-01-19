@@ -17,6 +17,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.StringReader;
 
+import com.rtg.launcher.MockReaderParams;
+import com.rtg.mode.SequenceMode;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reference.Ploidy;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.util.StringUtils;
@@ -34,7 +37,6 @@ import com.rtg.variant.format.VariantOutputVcfFormatter;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMReadGroupRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -79,6 +81,7 @@ public class FamilyCallerConfigurationTest extends TestCase {
       b.machineErrorName("illumina");
       b.populationPriors(alleleCountFile);
       b.uberHeader(ComplexCallerTest.makeHeaderWithSamples("child", "mother", "father"));
+      b.genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL));
       final VariantParams p = b.create();
 
       final FamilyCallerConfiguration config = new FamilyCallerConfiguration.Configurator().getConfig(p, null);
@@ -124,6 +127,7 @@ public class FamilyCallerConfigurationTest extends TestCase {
     b.genomeRelationships(rel);
     b.machineErrorName("illumina");
     b.uberHeader(ComplexCallerTest.makeHeaderWithSamples("child", "mother", "father"));
+    b.genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL));
     final VariantParams p = b.create();
 
     FamilyCallerConfiguration config = new FamilyCallerConfiguration.Configurator().getConfig(p, null);

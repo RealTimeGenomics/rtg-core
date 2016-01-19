@@ -13,10 +13,13 @@
 package com.rtg.variant.bayes.multisample;
 
 
+import com.rtg.launcher.MockReaderParams;
+import com.rtg.mode.SequenceMode;
+import com.rtg.reader.ReaderTestUtils;
+import com.rtg.reference.SexMemo;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.GenomePriorParamsBuilder;
 import com.rtg.variant.MachineErrorChooserInterface;
-import com.rtg.reference.SexMemo;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.bayes.Description;
@@ -32,9 +35,10 @@ public class IndividualSampleFactoryTest extends TestCase {
   public void testFactory() throws Exception {
     Diagnostic.setLogStream();
     final VariantParams params = new VariantParamsBuilder()
-    .genomePriors(new GenomePriorParamsBuilder().create())
-    .machineErrorName("default")
-    .create();
+      .genomePriors(new GenomePriorParamsBuilder().create())
+      .machineErrorName("default")
+      .genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL))
+      .create();
     final ModelSnpFactory diploid = new ModelSnpFactory(params.genomePriors(), false);
     final ModelSnpFactory haploid = new ModelSnpFactory(params.genomePriors(), true);
     final ModelNoneFactory none = new ModelNoneFactory();

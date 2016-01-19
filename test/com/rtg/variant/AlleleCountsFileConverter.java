@@ -43,7 +43,7 @@ public class AlleleCountsFileConverter {
    * @throws IOException if something bad happen
    */
   public void convert(File vcfFile, File out) throws IOException {
-    Diagnostic.developerLog("Loading variances...");
+    Diagnostic.developerLog("Loading variants...");
     try (OutputStream os = FileUtils.createOutputStream(out, true)) {
       try (AlleleCountsFileReader acr = AlleleCountsFileReader.openAlleleCountReader(vcfFile, null)) {
         while (acr.next()) {

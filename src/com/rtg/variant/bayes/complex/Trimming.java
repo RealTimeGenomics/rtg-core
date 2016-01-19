@@ -177,35 +177,7 @@ public final class Trimming {
     // Create new locus, will be "" for case of pure insertion
     final VariantLocus newLocus = createLocus(original, leftClip, rightClip);
 
-    final VariantSample[] newSamples;
-    if (original.getNumberOfSamples() > 0) {
-      //trim description
-      Description oldDescription = DescriptionNone.SINGLETON;
-      for (int i = 0; i < original.getNumberOfSamples(); i++) {
-        if (original.getSample(i) != null && !(original.getSample(i).getStats().counts().getDescription() instanceof DescriptionNone)) {
-          oldDescription = original.getSample(i).getStats().counts().getDescription();
-        }
-      }
-      final String[] alleles = new String[oldDescription.size()];
-      final int[] alleleMap = new int[oldDescription.size()];
-      for (int i = 0; i < oldDescription.size(); i++) {
-        final String clipped = StringUtils.clip(oldDescription.name(i), leftClip, rightClip);
-        alleles[i] = clipped;
-        alleleMap[i] = i;
-      }
-
-      final Description newDescription = new DescriptionCommon(alleles);
-      // Create new trimmed samples
-      newSamples = createVariants(original, leftClip, rightClip, newDescription, alleleMap, newLocus.getRefNts(), variantAlleleTrigger);
-    } else {
-      newSamples = new VariantSample[0];
-    }
-
-    // Create new variant from the new samples
-    final Variant result = new Variant(newLocus, newSamples);
-    Variant.copy(original, result);
-    // This must be done after the copy
-    result.setPossibleCause(createVariantName(leftClip, rightClip, original.getPossibleCause()));
+    final Variant result = getVariant(original, leftClip, rightClip, variantAlleleTrigger, newLocus);
     result.setTrimmed();
     //System.err.println(original);
     //System.err.println(result);
@@ -214,7 +186,13 @@ public final class Trimming {
 
   private static Variant createSplitVariant(final Variant original, final int start, final int end, final int id, VariantAlleleTrigger variantAlleleTrigger) {
     final VariantLocus newLocus = createLocus(original, start, end);
-    final VariantSample[] newSamples;
+    final Variant result = getVariant(original, start, end, variantAlleleTrigger, newLocus);
+    result.setSplitId(id);
+    return result;
+  }
+
+  private static Variant getVariant(Variant original, int start, int end, VariantAlleleTrigger variantAlleleTrigger, VariantLocus newLocus) {
+    final VariantSample[] newSamples1;
     if (original.getNumberOfSamples() > 0) {
       //trim description
       Description oldDescription = DescriptionNone.SINGLETON;
@@ -237,15 +215,14 @@ public final class Trimming {
       }
 
       final Description newDescription = new DescriptionCommon(alleles.keySet().toArray(new String[alleles.size()]));
-      newSamples = createVariants(original, start, end, newDescription, alleleMap, newLocus.getRefNts(), variantAlleleTrigger);
+      newSamples1 = createVariants(original, start, end, newDescription, alleleMap, newLocus.getRefNts(), variantAlleleTrigger);
     } else {
-      newSamples = new VariantSample[0];
+      newSamples1 = new VariantSample[0];
     }
-
+    final VariantSample[] newSamples = newSamples1;
     final Variant result = new Variant(newLocus, newSamples);
     Variant.copy(original, result);
     result.setPossibleCause(createVariantName(start, end, original.getPossibleCause()));
-    result.setSplitId(id);
     return result;
   }
 

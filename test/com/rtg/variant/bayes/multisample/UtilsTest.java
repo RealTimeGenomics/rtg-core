@@ -15,9 +15,6 @@ package com.rtg.variant.bayes.multisample;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import com.rtg.reference.Ploidy;
-import com.rtg.reference.Sex;
-import com.rtg.reference.SexMemo;
 import com.rtg.relation.Family;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.VariantParams;
@@ -32,11 +29,12 @@ public class UtilsTest extends TestCase {
 
   public void testSexMemoNull() throws IOException {
     Diagnostic.setLogStream();
-    final SexMemo sx = Utils.createSexMemo(VariantParams.builder().create());
-    assertEquals(Ploidy.DIPLOID, sx.getEffectivePloidy(Sex.EITHER, "t"));
-    assertEquals(Ploidy.DIPLOID, sx.getEffectivePloidy(Sex.EITHER, "unknown"));
-    assertEquals(Ploidy.DIPLOID, sx.getEffectivePloidy(Sex.MALE, "t"));
-    assertEquals(Ploidy.DIPLOID, sx.getEffectivePloidy(Sex.FEMALE, "t"));
+    try {
+      Utils.createSexMemo(VariantParams.builder().create());
+      fail("expected NPE");
+    } catch (NullPointerException e) {
+      // Expected
+    }
   }
 
   public void testNumberAlleles() {

@@ -15,13 +15,16 @@ package com.rtg.variant.bayes.multisample.population;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 
+import com.rtg.launcher.MockReaderParams;
+import com.rtg.mode.SequenceMode;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reference.Ploidy;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
-import com.rtg.util.test.FileHelper;
 import com.rtg.variant.AlleleCountsFileConverter;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.multisample.ComplexCallerTest;
@@ -37,8 +40,8 @@ import junit.framework.TestCase;
 public class PopulationCallerConfigurationTest extends TestCase {
 
   public void testConfigurator() throws Exception {
-    final File tmp = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory tmp = new TestDirectory()) {
+      Diagnostic.setLogStream();
       final File popFile = new File(tmp, "pop.vcf.gz");
       BgzipFileHelper.resourceToBgzipFile("com/rtg/variant/resources/pop58.vcf", popFile);
 
@@ -56,7 +59,7 @@ public class PopulationCallerConfigurationTest extends TestCase {
         file.addGenome("two");
         file.addGenome("three");
         final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("two", "one", "three");
-        final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").populationPriors(alleleCountFile).uberHeader(uber).create();
+        final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").populationPriors(alleleCountFile).uberHeader(uber).genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL)).create();
         final PopulationCallerConfiguration config = new PopulationCallerConfiguration.Configurator().getConfig(params, null);
         assertNotNull(config.getOutputFormatter(params));
 
@@ -96,8 +99,6 @@ public class PopulationCallerConfigurationTest extends TestCase {
         Diagnostic.setLogStream();
       }
       TestUtils.containsAll(mps.toString(), "Using Population caller");
-    } finally {
-      FileHelper.deleteAll(tmp);
     }
   }
 }
