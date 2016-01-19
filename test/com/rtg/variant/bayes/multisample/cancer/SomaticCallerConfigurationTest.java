@@ -17,6 +17,9 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Random;
 
+import com.rtg.launcher.MockReaderParams;
+import com.rtg.mode.SequenceMode;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reference.Ploidy;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.relation.Relationship.RelationshipType;
@@ -35,7 +38,6 @@ import com.rtg.variant.format.VariantOutputVcfFormatter;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMReadGroupRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -55,6 +57,7 @@ public class SomaticCallerConfigurationTest extends TestCase {
     b.genomePriors(GenomePriorParams.builder().create());
     b.genomeRelationships(genomeRelationships);
     b.machineErrorName("illumina");
+    b.genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL));
     final VariantParams p = b.uberHeader(uber).create();
 
     final SomaticCallerConfiguration config = new SomaticCallerConfiguration.Configurator().getConfig(p, null);

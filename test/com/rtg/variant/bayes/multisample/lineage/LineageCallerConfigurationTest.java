@@ -13,6 +13,9 @@ package com.rtg.variant.bayes.multisample.lineage;
 
 import java.io.ByteArrayOutputStream;
 
+import com.rtg.launcher.MockReaderParams;
+import com.rtg.mode.SequenceMode;
+import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reference.Ploidy;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.util.TestUtils;
@@ -27,7 +30,6 @@ import com.rtg.variant.format.VariantOutputVcfFormatter;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMReadGroupRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -47,7 +49,9 @@ public class LineageCallerConfigurationTest extends TestCase {
         file.addParentChild("one", "two");
         file.addParentChild("zero", "three");
         final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("zero", "one", "two", "three");
-        final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").uberHeader(uber).create();
+        final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").uberHeader(uber)
+          .genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL))
+          .create();
         final LineageCallerConfiguration config = new LineageCallerConfiguration.Configurator().getConfig(params, null);
         assertNotNull(config.getOutputFormatter(params));
 
@@ -107,7 +111,9 @@ public class LineageCallerConfigurationTest extends TestCase {
       file.addParentChild("zero", "two");
       file.addParentChild("one", "two");
       final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("zero", "two", "one");
-      final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").uberHeader(uber).create();
+      final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").uberHeader(uber)
+        .genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL))
+        .create();
       try {
         new LineageCallerConfiguration.Configurator().getConfig(params, null);
         fail();
@@ -130,7 +136,9 @@ public class LineageCallerConfigurationTest extends TestCase {
       file.addGenome("one");
       file.addGenome("two");
       final SAMFileHeader uber = ComplexCallerTest.makeHeaderWithSamples("zero", "two", "one");
-      final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").uberHeader(uber).create();
+      final VariantParams params = VariantParams.builder().genomeRelationships(file).genomePriors("testhumanprior").machineErrorName("illumina").uberHeader(uber)
+        .genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL))
+        .create();
       try {
         new LineageCallerConfiguration.Configurator().getConfig(params, null);
         fail();
