@@ -38,9 +38,6 @@ import com.rtg.variant.util.VariantUtils;
  */
 public class SingletonCaller implements MultisampleJointCaller {
 
-  private final int mMinVac;
-  private final double mMinVaf;
-
   private final VariantParams mParams;
   private final double mInterestingThreshold;
   private final VariantAlleleTrigger mVariantAlleleTrigger;
@@ -51,8 +48,6 @@ public class SingletonCaller implements MultisampleJointCaller {
   public SingletonCaller(VariantParams params) {
     mParams = params;
     mInterestingThreshold = mParams.interestingThreshold() * MathUtils.LOG_10;
-    mMinVac = params.minVariantAlleleCount();
-    mMinVaf = params.minVariantAlleleFraction();
     mVariantAlleleTrigger = new VariantAlleleTrigger(params.minVariantAlleleCount(), params.minVariantAlleleFraction());
   }
 

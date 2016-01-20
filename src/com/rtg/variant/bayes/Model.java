@@ -15,9 +15,9 @@ package com.rtg.variant.bayes;
 
 import java.util.Arrays;
 
+import com.rtg.launcher.AlleleBalanceFactor;
 import com.rtg.launcher.GlobalFlags;
 import com.rtg.reference.Ploidy;
-import com.rtg.util.ChiSquared;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
@@ -38,6 +38,21 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
   private static final double MAX_BASE_ERROR = VariantUtils.phredToProb(GlobalFlags.getIntegerValue(GlobalFlags.MIN_BASE_QUALITY)) * 1.1;
   private static final double EXPECTED_ALLELE_FREQUENCY = GlobalFlags.getDoubleValue(GlobalFlags.CALLER_EXPECTED_ALLELE_FREQUENCY);
 
+  private static final AlleleBalanceProbability ALLELE_BALANCE_PROBABILITY = getAlleleBalanceProbability((AlleleBalanceFactor) GlobalFlags.getFlag(GlobalFlags.ALLELE_BALANCE_FACTOR).getValue());
+
+  public static AlleleBalanceProbability getAlleleBalanceProbability(AlleleBalanceFactor alleleBalanceFactor) {
+    switch(alleleBalanceFactor) {
+      case NONE:
+        return new NoAlleleBalance();
+      case HOEFFDING:
+        return new HoeffdingAlleleBalance();
+      case BINOMIAL:
+        return new BinomialAlleleBalance();
+      default:
+        throw new IllegalArgumentException();
+    }
+  }
+
   /**
    * When <code>MAPQ</code> is less than or equal to this then treat as ambiguous.
    */
@@ -57,6 +72,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
   protected final double[] mPosteriors;
 
   private final Statistics<?> mStatistics;
+  private AlleleBalanceProbability mAlleleBalanceProbability;
 
   protected boolean ambiguityShortCircuit(final EvidenceInterface evidence) {
     return evidence.mapError() >= AMBIGUITY_THRESHOLD || evidence.error() > MAX_BASE_ERROR;
@@ -165,28 +181,13 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     mStatistics.increment(distribution, mHypotheses.reference());
   }
 
-  private static double logBinomial(final double p, final double nn, final double n) {
-    assert p >= 0.0 && p <= 1.0;
-    assert n >= 0;
-    assert nn >= 0;
-    final double m = nn - n;
-    if (p == 0) {
-      return n <= 0 ? 0 : Double.NEGATIVE_INFINITY; // Strictly should never have n < 0
-    } else if (p == 1) {
-      return m <= 0 ? 0 : Double.NEGATIVE_INFINITY; // Strictly should never have m < 0
-    }
-    final double res = n * Math.log(p) + m * Math.log(1.0 - p) + ChiSquared.lgamma(nn + 1) - ChiSquared.lgamma(n + 1) - ChiSquared.lgamma(m + 1);
-    assert res <= 0 && !Double.isNaN(res);
-    return res;
-  }
-
   protected double alleleBalanceLn(int i) {
-    if (/* hypotheses().ploidy() != Ploidy.DIPLOID && */ hypotheses().ploidy() != Ploidy.HAPLOID) {
+    if (hypotheses().ploidy() != Ploidy.DIPLOID && hypotheses().ploidy() != Ploidy.HAPLOID) {
       return 0.0;
     }
     final double trials = statistics().coverage() - statistics().totalError();
     if (trials == 0) {
-      return 1.0;
+      return 0.0;
     }
     final int a = hypotheses().code().a(i);
     final int b = hypotheses().code().bc(i);
@@ -197,7 +198,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     final double p = a == hypotheses().reference() ? 1 - EXPECTED_ALLELE_FREQUENCY : EXPECTED_ALLELE_FREQUENCY;
     //abp = MathUtils.hoeffdingLn(trials, MathUtils.round(counts.count(a)), p);
     final double vac = counts.count(a) - counts.error(a);
-    final double abp = logBinomial(p, trials, vac);
+    final double abp = ALLELE_BALANCE_PROBABILITY.alleleBalanceLn(p, trials, vac);
     //final double abq = LogPossibility.SINGLETON.complement(logBinomial(0.5, trials, vac)); // germline suppression
 //    } else {
 //      final long observed0 = MathUtils.round(counts.count(a));
@@ -227,7 +228,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
 
   @Override
   public double posteriorLn0(int hyp) {
-    return arithmetic().multiply(mPosteriors[hyp], arithmetic().ln2Poss(alleleBalanceLn(hyp)));
+    return arithmetic().poss2Ln(arithmetic().multiply(mPosteriors[hyp], arithmetic().ln2Poss(alleleBalanceLn(hyp))));
   }
 
   @Override

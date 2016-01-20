@@ -132,7 +132,7 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
         next[pos] = "";
       }
       final AbstractFamilyPosterior incremental = makeFamily(next); //, "", "", "C", "", "", "A", "AAACCC");
-      assertEquals(basePosterior, incremental.getNonIdentityPosterior());
+      assertEquals(basePosterior, incremental.getNonIdentityPosterior(), 0.0000001);
     }
   }
   public void testFamilyScalingDenovo() throws Exception {
@@ -152,7 +152,7 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
         next[pos] = "";
       }
       final AbstractFamilyPosterior incremental = makeFamily(next); //, "", "", "C", "", "", "A", "AAACCC");
-      assertEquals(basePosterior, incremental.getNonIdentityPosterior());
+      assertEquals(basePosterior, incremental.getNonIdentityPosterior(), 0.0000001);
     }
   }
 }
