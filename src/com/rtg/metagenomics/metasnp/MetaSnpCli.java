@@ -189,7 +189,7 @@ public class MetaSnpCli extends LoggedCli {
       final PossibilityArithmetic arith = LogPossibility.SINGLETON;
       final int samples = reader.samples().size();
       final double[][] xiPriors = mFlags.isSet(XI_PRIORS) ? initXi(samples, strains, arith, (String) mFlags.getValue(XI_PRIORS)) : initXi(samples, strains, arith);
-      Diagnostic.info(evidence.size() + " positions passed initial thresholding");
+      Diagnostic.info(evidence.size() + "/" + approxLength + " positions passed initial thresholding");
       final List<EmIterate.EmResult> iterations = EmIterate.iterate(ref, evidence, strains, approxLength, arith, new EmIterate.FixedIterations((Integer) mFlags.getValue(ITERATIONS)), updateBeta, error, xiPriors);
       final EmIterate.EmResult result = iterations.get(iterations.size() - 1);
       final double[][] xi = result.mXi;
