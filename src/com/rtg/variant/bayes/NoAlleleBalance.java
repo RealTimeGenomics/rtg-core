@@ -14,12 +14,13 @@ package com.rtg.variant.bayes;
 
 /**
  * Represents not adjusting for allele balance
- * Will return 1 in logspace, so probability will not change
+ * Will return the multiplicative identity in logspace(0), so probability will not change
  * @author kurt
  */
 public class NoAlleleBalance implements AlleleBalanceProbability {
+
   @Override
-  public double alleleBalanceLn(double p, double trials, double count) {
+  public double alleleBalanceLn(int i, Hypotheses<?> hypotheses, Statistics<?> statistics, double expected) {
     return 0.0; // 1 in log space.
   }
 }

@@ -19,10 +19,11 @@ package com.rtg.variant.bayes;
 public interface AlleleBalanceProbability {
 
   /**
-   * @param p expected probability
-   * @param trials number of trials
-   * @param count observed count
-   * @return an estimate of the probability of achieving the observed count given {@code p} and {@code trials}
+   * @param i current hypothesis
+   * @param hypotheses list of hypotheses
+   * @param statistics statistics at current location
+   * @param expected  the expected allele balance
+   * @return the log scaled probability of the observed allele balance given the current hypothesis
    */
-  double alleleBalanceLn(double p, double trials, double count);
+  double alleleBalanceLn(int i, Hypotheses<?> hypotheses, Statistics<?> statistics, double expected);
 }

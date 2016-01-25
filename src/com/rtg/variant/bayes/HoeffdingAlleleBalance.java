@@ -15,11 +15,16 @@ package com.rtg.variant.bayes;
 import com.rtg.util.MathUtils;
 
 /**
+ * Approximate probability of allele balance with Hoeffding's inequality
  * @author kurt
  */
-public class HoeffdingAlleleBalance implements AlleleBalanceProbability {
-  @Override
-  public double alleleBalanceLn(double p, double trials, double count) {
+public class HoeffdingAlleleBalance extends AbstractAlleleBalance {
+  private double alleleBalanceLn(double p, double trials, double count) {
     return MathUtils.hoeffdingLn(trials, count, p);
+  }
+
+  @Override
+  double alleleBalanceHeterozygousLn(double p, double trials, double observed, double observedAlt) {
+    return alleleBalanceLn(p, trials, observed) + alleleBalanceLn(p, trials, observedAlt);
   }
 }

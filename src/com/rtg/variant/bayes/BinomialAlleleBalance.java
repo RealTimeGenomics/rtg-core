@@ -15,27 +15,27 @@ package com.rtg.variant.bayes;
 import com.rtg.util.ChiSquared;
 
 /**
+ * Approximate probability of allele balance as a binomial trial.
  * @author kurt
  */
-public class BinomialAlleleBalance implements AlleleBalanceProbability {
+public class BinomialAlleleBalance extends AbstractAlleleBalance {
 
   private static double logBinomial(final double p, final double nn, final double n) {
     assert p >= 0.0 && p <= 1.0;
     assert n >= 0;
     assert nn >= 0;
     final double m = nn - n;
-    if (p == 0) {
-      return n <= 0 ? 0 : Double.NEGATIVE_INFINITY; // Strictly should never have n < 0
-    } else if (p == 1) {
-      return m <= 0 ? 0 : Double.NEGATIVE_INFINITY; // Strictly should never have m < 0
-    }
     final double res = n * Math.log(p) + m * Math.log(1.0 - p) + ChiSquared.lgamma(nn + 1) - ChiSquared.lgamma(n + 1) - ChiSquared.lgamma(m + 1);
     assert res <= 0 && !Double.isNaN(res);
     return res;
   }
 
   @Override
-  public double alleleBalanceLn(double p, double trials, double count) {
+  double alleleBalanceHeterozygousLn(double p, double trials, double count, double countAlt) {
+    return alleleBalanceLn(p, trials, count) + alleleBalanceLn(p, trials, countAlt);
+  }
+
+  private double alleleBalanceLn(double p, double trials, double count) {
     return logBinomial(p, trials, count);
   }
 }

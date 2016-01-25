@@ -17,7 +17,6 @@ import java.util.Arrays;
 
 import com.rtg.launcher.AlleleBalanceFactor;
 import com.rtg.launcher.GlobalFlags;
-import com.rtg.reference.Ploidy;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
@@ -181,34 +180,6 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     mStatistics.increment(distribution, mHypotheses.reference());
   }
 
-  protected double alleleBalanceLn(int i) {
-    if (hypotheses().ploidy() != Ploidy.DIPLOID && hypotheses().ploidy() != Ploidy.HAPLOID) {
-      return 0.0;
-    }
-    final double trials = statistics().coverage() - statistics().totalError();
-    if (trials == 0) {
-      return 0.0;
-    }
-    final int a = hypotheses().code().a(i);
-    final int b = hypotheses().code().bc(i);
-    assert a == b; // haploid
-    final AlleleStatistics<?> counts = statistics().counts();
-//    if (a == b) {
-    // This reflection for the case a == ref seems important.
-    final double p = a == hypotheses().reference() ? 1 - EXPECTED_ALLELE_FREQUENCY : EXPECTED_ALLELE_FREQUENCY;
-    //abp = MathUtils.hoeffdingLn(trials, MathUtils.round(counts.count(a)), p);
-    final double vac = counts.count(a) - counts.error(a);
-    final double abp = ALLELE_BALANCE_PROBABILITY.alleleBalanceLn(p, trials, vac);
-    //final double abq = LogPossibility.SINGLETON.complement(logBinomial(0.5, trials, vac)); // germline suppression
-//    } else {
-//      final long observed0 = MathUtils.round(counts.count(a));
-//      final long observed1 = MathUtils.round(counts.count(b));
-//      abp = MathUtils.hoeffdingLn(trials, observed0, 0.5) + MathUtils.hoeffdingLn(trials, observed1, 0.5);
-//    }
-    //return LogPossibility.SINGLETON.multiply(abp, abq);
-    return abp;
-  }
-
   @Override
   public HypothesisScore best(final HypothesesPrior<?> hypotheses) {
     if (hypotheses.size() != size()) {
@@ -223,12 +194,12 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
   }
 
   private double posterior(final PossibilityArithmetic arith, final int i, final Factor<?> hypotheses) {
-    return arith.multiply(arith.multiply(mPosteriors[i], arith.ln2Poss(alleleBalanceLn(i))), hypotheses.p(i));
+    return arith.multiply(arith.multiply(mPosteriors[i], arith.ln2Poss(ALLELE_BALANCE_PROBABILITY.alleleBalanceLn(i, hypotheses(), statistics(), EXPECTED_ALLELE_FREQUENCY))), hypotheses.p(i));
   }
 
   @Override
   public double posteriorLn0(int hyp) {
-    return arithmetic().poss2Ln(arithmetic().multiply(mPosteriors[hyp], arithmetic().ln2Poss(alleleBalanceLn(hyp))));
+    return arithmetic().poss2Ln(arithmetic().multiply(mPosteriors[hyp], arithmetic().ln2Poss(ALLELE_BALANCE_PROBABILITY.alleleBalanceLn(hyp, hypotheses(), statistics(), EXPECTED_ALLELE_FREQUENCY))));
   }
 
   @Override
