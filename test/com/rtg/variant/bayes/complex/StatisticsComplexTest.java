@@ -78,6 +78,56 @@ public class StatisticsComplexTest extends TestCase {
     assertEquals(0.029, vs.getCorrection(), 1e-3);
   }
 
+  static AlignmentMatch partialMatch(final String bases, String partialCigar, int mapq, boolean fixedLeft, boolean fixedRight) {
+    final int length = bases.length();
+    final SAMRecord sam = new SAMRecord(new SAMFileHeader());
+    sam.setAlignmentStart(1);
+    sam.setReadString((fixedLeft ? "CCCCC" : "") + bases + (fixedRight ? "GGGGG" : ""));
+    sam.setCigarString((fixedLeft ? "5=" : "") + partialCigar + (fixedRight ? "5=" : ""));
+    final StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < sam.getReadString().length(); i++) {
+      sb.append('`');
+    }
+    final int start = fixedLeft ? 5 : 0;
+    return new AlignmentMatch(new VariantAlignmentRecord(sam), null, sam.getReadString(), FastaUtils.asciiToRawQuality(sb.toString()), 0, start, length, mapq, fixedLeft, fixedRight);
+  }
+
+
+  public void testIncompleteOverlap() throws IOException {
+    final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
+    final ComplexTemplate comtem = new ComplexTemplate(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, "foo", 0, 10);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(comtem, Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), LogPossibility.SINGLETON, true, vp, null);
+    final StatisticsComplex stat = new StatisticsComplex(hyp.description(), comtem.getLength());
+    for (int i = 0; i < 10; i++) {
+      stat.increment(new EvidenceComplex(hyp, partialMatch("AA", "2=", 5, true, false), comtem, vp, EvidenceComplexTest.getChooser()), 0);
+    }
+    assertEquals(2.000, stat.coverage(), 1e-3);
+    assertEquals(0.632, stat.totalError(), 1e-3);
+  }
+
+  public void testIncompleteOverlapOtherEnd() throws IOException {
+    final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
+    final ComplexTemplate comtem = new ComplexTemplate(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, "foo", 0, 10);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(comtem, Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), LogPossibility.SINGLETON, true, vp, null);
+    final StatisticsComplex stat = new StatisticsComplex(hyp.description(), comtem.getLength());
+    for (int i = 0; i < 10; i++) {
+      stat.increment(new EvidenceComplex(hyp, partialMatch("AA", "2=", 5, false, true), comtem, vp, EvidenceComplexTest.getChooser()), 0);
+    }
+    assertEquals(2.000, stat.coverage(), 1e-3);
+    assertEquals(0.632, stat.totalError(), 1e-3);
+  }
+
+  public void testExactCoverage() throws IOException {
+    final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
+    final ComplexTemplate comtem = new ComplexTemplate(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, "foo", 0, 10);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(comtem, Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), LogPossibility.SINGLETON, true, vp, null);
+    final StatisticsComplex stat = new StatisticsComplex(hyp.description(), comtem.getLength());
+    for (int i = 0; i < 12; i++) {
+      stat.increment(new EvidenceComplex(hyp, partialMatch("AA", "2=", 5, true, false), comtem, vp, EvidenceComplexTest.getChooser()), 0);
+    }
+    assertEquals(2.400, stat.exactCoverage(), 1e-3);
+  }
+
   /*
   public void testAmbiguityCount() {
     final StatisticsComplex cmpx = new StatisticsComplex(new DescriptionComplex(Arrays.asList(match("AA", 5))), 0);

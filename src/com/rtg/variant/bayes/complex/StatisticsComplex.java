@@ -44,7 +44,7 @@ public class StatisticsComplex extends StatisticsDouble {
   @Override
   protected double errorIncrement(EvidenceInterface evidence) {
     if (evidence instanceof EvidenceComplex) {
-      return ((EvidenceComplex) evidence).match().correction();
+      return ((EvidenceComplex) evidence).match().correction() * coverageIncrement(((EvidenceComplex) evidence).match());
     }
     return super.errorIncrement(evidence);
   }

@@ -199,6 +199,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
 
   @Override
   public double posteriorLn0(int hyp) {
+    double foo =  arithmetic().poss2Ln(arithmetic().multiply(mPosteriors[hyp], arithmetic().ln2Poss(ALLELE_BALANCE_PROBABILITY.alleleBalanceLn(hyp, hypotheses(), statistics(), EXPECTED_ALLELE_FREQUENCY))));
     return arithmetic().poss2Ln(arithmetic().multiply(mPosteriors[hyp], arithmetic().ln2Poss(ALLELE_BALANCE_PROBABILITY.alleleBalanceLn(hyp, hypotheses(), statistics(), EXPECTED_ALLELE_FREQUENCY))));
   }
 

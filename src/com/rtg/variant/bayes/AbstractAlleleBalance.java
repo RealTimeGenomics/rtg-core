@@ -29,7 +29,10 @@ public abstract class AbstractAlleleBalance implements AlleleBalanceProbability 
       ) {
       return LogPossibility.SINGLETON.one();
     }
-    final double trials = statistics.coverage() - statistics.totalError();
+    final double trials = statistics instanceof  StatisticsDouble ?
+      ((StatisticsDouble) statistics).exactCoverage() :
+      statistics.coverage();
+
     if (trials == 0) {
       return LogPossibility.SINGLETON.one();
     }

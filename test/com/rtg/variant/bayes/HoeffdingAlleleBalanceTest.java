@@ -19,8 +19,12 @@ public class HoeffdingAlleleBalanceTest extends AbstractAlleleBalanceTest {
   public void testAlleleBalanceZeroCoverage() {
     assertEquals(0.0, balance(new int[]{0, 0, 0, 0}, new double[]{0.0, 0.0, 0.0, 0.0}, findIndexByName("B:B")));
   }
-  public void testAlleleBalancePerfectBalance() {
-    assertEquals(0.0, balance(new int[]{9, 9, 0, 0}, new double[]{0.1, 0.1, 0.0, 0.0}, findIndexByName("B:D")), 0.001);
+  public void testAlleleBalancePerfectBalanceNoError() {
+    assertEquals(0.000, balance(new int[]{9, 9, 0, 0}, new double[]{0.0, 0.0, 0.0, 0.0}, findIndexByName("B:D")), 0.001);
+  }
+
+  public void testAlleleBalancePerfectBalanceError() {
+    assertEquals(-0.009, balance(new int[]{9, 9, 0, 0}, new double[]{0.2, 0.2, 0.0, 0.0}, findIndexByName("B:D")), 0.001);
   }
 
   public void testAlleleBalanceUnbalanced() {

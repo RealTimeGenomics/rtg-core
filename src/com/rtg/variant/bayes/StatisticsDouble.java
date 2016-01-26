@@ -90,6 +90,12 @@ public class StatisticsDouble extends Statistics<AlleleStatisticsDouble> {
     return (int) MathUtils.round(mTotalCoverage);
   }
 
+  /**
+   * @return the exact coverage (not rounded)
+   */
+  public double exactCoverage() {
+    return mTotalCoverage;
+  }
 
   /**
    * @return the number of ambiguous reads.
