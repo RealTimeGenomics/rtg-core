@@ -294,7 +294,6 @@ public class MetaSnpCli extends LoggedCli {
   static void writeVcf(List<Integer> refBytes, List<MetaSnpLine> lines, EmIterate.EmResult res, OutputStream out, PossibilityArithmetic arith) throws IOException {
     final VcfHeader header = new VcfHeader();
     header.addCommonHeader();
-    header.addRunInfo();
     for (int i = 0; i < res.mAssignments.get(0).mCalls.length; i++) {
       header.addSampleName("Strain" + i);
     }
