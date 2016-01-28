@@ -313,8 +313,8 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
       final int alignmentScoreReadFixed = ActionsHelper.alignmentScore(actionsReadFixed);
 //      System.err.println("one");
       if (alignmentScoreReadFixed < length) {
-        final int alignmentLengthContig = ActionsHelper.actionsCount(actionsReadFixed) - ActionsHelper.deletionFromReadAndOverlapCount(actionsReadFixed);
-        final int alignmentLengthRead = ActionsHelper.actionsCount(actionsReadFixed) - ActionsHelper.insertionIntoReadAndGapCount(actionsReadFixed);
+        final int alignmentLengthContig = ActionsHelper.templateLength(actionsReadFixed);
+        final int alignmentLengthRead = ActionsHelper.readLength(actionsReadFixed);
         partial = new PartialAlignment(alignmentScoreReadFixed, rStart, rStart + alignmentLengthRead, contigId, cStart, cStart + alignmentLengthContig);
       }
     } else {
@@ -325,8 +325,8 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
       final int alignmentScoreContigFixed = ActionsHelper.alignmentScore(actionsContigFixed);
 //      System.err.println("two");
       if (alignmentScoreContigFixed < length) { // && alignmentScoreContigFixed < alignmentScoreReadFixed) {
-        final int alignmentLengthRead = ActionsHelper.actionsCount(actionsContigFixed) - ActionsHelper.deletionFromReadAndOverlapCount(actionsContigFixed);
-        final int alignmentLengthContig = ActionsHelper.actionsCount(actionsContigFixed) - ActionsHelper.insertionIntoReadAndGapCount(actionsContigFixed);
+        final int alignmentLengthRead = ActionsHelper.templateLength(actionsContigFixed);
+        final int alignmentLengthContig = ActionsHelper.readLength(actionsContigFixed);
         partial = new PartialAlignment(alignmentScoreContigFixed, rStart, rStart + alignmentLengthRead, contigId, cStart, cStart + alignmentLengthContig);
       }
     }
@@ -358,7 +358,7 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
       final int[] actionsReadFixed = pa.alignLeft(read, 0, readPos, contigNt, contigPos);
       final int alignmentScoreReadFixed = ActionsHelper.alignmentScore(actionsReadFixed);
       final int contigStart = ActionsHelper.zeroBasedTemplateStart(actionsReadFixed);
-      final int readStart = readPos - ActionsHelper.actionsCount(actionsReadFixed) + ActionsHelper.insertionIntoReadAndGapCount(actionsReadFixed);
+      final int readStart = readPos - ActionsHelper.readLength(actionsReadFixed);
 //      System.err.println(contigPos + " " + ActionsHelper.actionsCount(actionsReadFixed) + " " + ActionsHelper.deletionFromReadCount(actionsReadFixed));
 //      System.err.println("three");
       // Score should surely be less than the portion aligned
@@ -368,8 +368,8 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
     } else {
       final int[] actionsContigFixed = pa.alignLeft(contigNt, 0, contigPos, read, readPos);
       final int alignmentScoreContigFixed = ActionsHelper.alignmentScore(actionsContigFixed);
-      final int readStart = readPos - ActionsHelper.actionsCount(actionsContigFixed) + ActionsHelper.deletionFromReadAndOverlapCount(actionsContigFixed);
-      final int contigStart = contigPos - ActionsHelper.actionsCount(actionsContigFixed) + ActionsHelper.insertionIntoReadAndGapCount(actionsContigFixed);
+      final int readStart = readPos - ActionsHelper.templateLength(actionsContigFixed);
+      final int contigStart = contigPos - ActionsHelper.readLength(actionsContigFixed);
 //      System.err.println("four");
       if (alignmentScoreContigFixed < contigPos) {
         partial = new PartialAlignment(alignmentScoreContigFixed, readStart, readPos, contigId, contigStart, contigPos);

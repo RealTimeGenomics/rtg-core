@@ -182,11 +182,6 @@ public class AlignmentResult {
     return ActionsHelper.deletionFromReadAndOverlapCount(mActions);
   }
 
-  /** @return the number of actions of this alignment */
-  public int getActionsCount() {
-    return ActionsHelper.actionsCount(mActions);
-  }
-
   /** @return true if reverse */
   public boolean isReverse() {
     return mIsReverse;
@@ -279,9 +274,9 @@ public class AlignmentResult {
   private void addMateInfo(BinaryTempFileRecord rec, AlignmentResult mateResult, int templateOffset) {
     if (mateResult != null) {
       final int thisStart = ActionsHelper.zeroBasedTemplateStart(mActions) + templateOffset;
-      final int thisLength = getActionsCount() - getDeletionsFromReadCount();
+      final int thisLength = ActionsHelper.templateLength(mActions);
       final int mateStart = ActionsHelper.zeroBasedTemplateStart(mateResult.mActions) + templateOffset;
-      final int mateLength = mateResult.getActionsCount() - mateResult.getDeletionsFromReadCount();
+      final int mateLength = ActionsHelper.templateLength(mateResult.mActions);
       final int signedTemplateLength = InsertHelper.tlen(mFirst, thisStart, thisLength, mateStart, mateLength);
       addMateInfo(rec, ActionsHelper.zeroBasedTemplateStart(mateResult.mActions), mateResult.mIsReverse, signedTemplateLength, templateOffset);
     }

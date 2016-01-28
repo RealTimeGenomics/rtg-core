@@ -87,6 +87,21 @@ public class ActionsHelperTest extends TestCase {
     assertEquals(16, ActionsHelper.insertionIntoReadAndGapCount(ActionsHelper.build("DDDDDDDNNNNNNNDD", 0, 0)));
   }
 
+  public void testTemplateLength() {
+    assertEquals(5, ActionsHelper.templateLength(ActionsHelper.build("=====", 0, 0)));
+    assertEquals(5, ActionsHelper.templateLength(ActionsHelper.build("=XXX=", 0, 0)));
+    assertEquals(10, ActionsHelper.templateLength(ActionsHelper.build("=XDNRT====", 0, 0)));
+    assertEquals(10, ActionsHelper.templateLength(ActionsHelper.build("=XDNRT=IISS===", 0, 0)));
+    assertEquals(9, ActionsHelper.templateLength(ActionsHelper.build("=XDNRT=IISS=B==", 0, 0)));
+  }
+
+  public void testReadLength() {
+    assertEquals(5, ActionsHelper.readLength(ActionsHelper.build("=====", 0, 0)));
+    assertEquals(5, ActionsHelper.readLength(ActionsHelper.build("=XXX=", 0, 0)));
+    assertEquals(10, ActionsHelper.readLength(ActionsHelper.build("=XISRT====", 0, 0)));
+    assertEquals(10, ActionsHelper.readLength(ActionsHelper.build("=XISRT==DDNN==", 0, 0)));
+  }
+
   public void testIndelLength() {
     assertEquals(6, ActionsHelper.indelLength(ActionsHelper.build("==X=DDDDDD=X==X==D==I", 0, 0)));
     assertEquals(-1, ActionsHelper.indelLength(ActionsHelper.build("=XXXXXXXXIXX", 0, 0)));

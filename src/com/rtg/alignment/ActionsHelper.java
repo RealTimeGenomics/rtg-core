@@ -373,6 +373,57 @@ public final class ActionsHelper {
   }
 
   /**
+   * @param actions actions array
+   * @return the length on the template covered by the operations in this alignment
+   */
+  public static int templateLength(final int[] actions) {
+    int ret = 0;
+    final CommandIterator ci = new CommandIterator();
+    ci.setActions(actions);
+    while (ci.hasNext()) {
+      switch (ci.next()) {
+        case SAME:
+        case MISMATCH:
+        case DELETION_FROM_REFERENCE:
+        case CG_GAP_IN_READ:
+        case UNKNOWN_TEMPLATE:
+        case UNKNOWN_READ:
+          ret++;
+          break;
+        case CG_OVERLAP_IN_READ:
+          ret--;
+          break;
+        default:
+      }
+    }
+    return ret;
+  }
+
+  /**
+   * @param actions actions array
+   * @return the length on the read covered by the operations in this alignment
+   */
+  public static int readLength(final int[] actions) {
+    int ret = 0;
+    final CommandIterator ci = new CommandIterator();
+    ci.setActions(actions);
+    while (ci.hasNext()) {
+      switch (ci.next()) {
+        case SAME:
+        case MISMATCH:
+        case INSERTION_INTO_REFERENCE:
+        case UNKNOWN_TEMPLATE:
+        case UNKNOWN_READ:
+        case SOFT_CLIP:
+          ret++;
+          break;
+        default:
+      }
+    }
+    return ret;
+  }
+
+  /**
    * Calculates the read length difference due to indels.
    * Deletions result in negative scores, Insertions result in positive scores.
    * @param actions actions array
