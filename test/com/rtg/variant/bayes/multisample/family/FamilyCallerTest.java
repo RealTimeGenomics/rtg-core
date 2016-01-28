@@ -35,6 +35,7 @@ import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.MockGenotypeMeasure;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.multisample.HypothesisScore;
 import com.rtg.variant.bayes.multisample.MultisampleJointCaller;
@@ -137,7 +138,7 @@ public class FamilyCallerTest extends TestCase {
     final Hypotheses<Description> hypotheses = new HypothesesSnp(SimplePossibility.SINGLETON, params, false, refNt - 1);
     final List<ModelInterface<?>> b = new ArrayList<>();
     for (int i = 0; i < members.length; i++) {
-      b.add(new Model<>(hypotheses, new StatisticsSnp(hypotheses.description())));
+      b.add(new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance()));
       increment(b.get(i), members[i]);
     }
     return b;
@@ -319,10 +320,10 @@ public class FamilyCallerTest extends TestCase {
         , "AAAAAAA"
         , "AAAAAAAAA");
     final Hypotheses<Description> hypotheses = haploidHypotheses(params, 1);
-    Model<Description> model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    Model<Description> model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
     increment(model, "CCCCC");
     b.add(Family.FATHER_INDEX, model);
-    model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
     increment(model, "AACCCCC");
     b.add(model);
     final MultisampleJointCaller fc = getFamilyCaller(makeFamily("f", "m", "c1", "c2", "c3", "c4"), vParams);

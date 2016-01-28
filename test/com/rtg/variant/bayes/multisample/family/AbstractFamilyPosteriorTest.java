@@ -26,6 +26,7 @@ import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.multisample.HypothesisScore;
 import com.rtg.variant.bayes.multisample.forwardbackward.FamilyPosteriorFBTest;
@@ -101,7 +102,7 @@ public abstract class AbstractFamilyPosteriorTest extends TestCase {
    */
   public static class MockModel extends Model<Description> {
     public MockModel(final Hypotheses<Description> hyp, final double[] posteriors) {
-      super(hyp, new StatisticsSnp(hyp.description()));
+      super(hyp, new StatisticsSnp(hyp.description()), new NoAlleleBalance());
       assert posteriors.length == mPosteriors.length;
       for (int i = 0; i < posteriors.length; i++) {
         mPosteriors[i] = arithmetic().prob2Poss(posteriors[i]);
@@ -109,7 +110,7 @@ public abstract class AbstractFamilyPosteriorTest extends TestCase {
     }
 
     public MockModel(final Hypotheses<Description> hyp) {
-      super(hyp, new StatisticsSnp(hyp.description()));
+      super(hyp, new StatisticsSnp(hyp.description()), new NoAlleleBalance());
       for (int i = 0; i < mPosteriors.length; i++) {
         mPosteriors[i] = hyp.arithmetic().one();
       }

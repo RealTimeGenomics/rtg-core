@@ -18,6 +18,7 @@ import java.util.List;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
+import com.rtg.variant.bayes.AlleleBalanceProbability;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.Model;
@@ -33,6 +34,14 @@ public abstract class ModelCommonFactory<D extends Description, H extends Hypoth
 
   protected H mHypothesisUnknown = null;
   protected final List<H> mHypothesesCache = new ArrayList<>();
+  private final AlleleBalanceProbability mAlleleBalance;
+
+  /**
+   * @param alleleBalance allele balance probability implementation
+   */
+  protected ModelCommonFactory(AlleleBalanceProbability alleleBalance) {
+    mAlleleBalance = alleleBalance;
+  }
 
   @Override
   public ModelInterface<D> make(final int ref) {
@@ -47,7 +56,7 @@ public abstract class ModelCommonFactory<D extends Description, H extends Hypoth
   }
 
   protected ModelInterface<D> makeModel(final Hypotheses<D> hyp) {
-    return new Model<>(hyp, new StatisticsSnp(hyp.description()));
+    return new Model<>(hyp, new StatisticsSnp(hyp.description()), mAlleleBalance);
   }
 
   @Override
@@ -57,6 +66,10 @@ public abstract class ModelCommonFactory<D extends Description, H extends Hypoth
       Exam.assertEquals(i, mHypothesesCache.get(i).reference());
     }
     return true;
+  }
+
+  public AlleleBalanceProbability getAlleleBalance() {
+    return mAlleleBalance;
   }
 
   @Override

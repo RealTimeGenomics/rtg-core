@@ -20,6 +20,7 @@ import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelFactory;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
 import junit.framework.TestCase;
@@ -33,7 +34,7 @@ public class ReferenceBasedBufferTest extends TestCase {
     private final int mRef;
 
     MockModel(final int id, final int ref) {
-      super(new HypothesesSnp(SimplePossibility.SINGLETON, GenomePriorParams.builder().create(), true, ref), new StatisticsSnp(new HypothesesSnp(SimplePossibility.SINGLETON, GenomePriorParams.builder().create(), true, ref).description()));
+      super(new HypothesesSnp(SimplePossibility.SINGLETON, GenomePriorParams.builder().create(), true, ref), new StatisticsSnp(new HypothesesSnp(SimplePossibility.SINGLETON, GenomePriorParams.builder().create(), true, ref).description()), new NoAlleleBalance());
       mId = id;
       mRef = ref;
     }

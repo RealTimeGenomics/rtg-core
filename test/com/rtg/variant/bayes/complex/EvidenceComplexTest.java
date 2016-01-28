@@ -38,6 +38,7 @@ import com.rtg.variant.bayes.EvidenceInterface;
 import com.rtg.variant.bayes.MockHypotheses;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.complex.HypothesesComplexTest.Hyp;
 import com.rtg.variant.match.AlignmentMatch;
 import com.rtg.variant.match.AlleleAsReadMatch;
@@ -47,7 +48,6 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -78,7 +78,7 @@ public class EvidenceComplexTest extends TestCase {
   }
 
   private ModelInterface<?> getModel(final HypothesesComplex hyp, final StatisticsComplex statistics) {
-    return new Model<>(hyp, statistics);
+    return new Model<>(hyp, statistics, new NoAlleleBalance());
   }
 
   private static void checkPosterior(ModelInterface<?> m, Hyp... hyp) {

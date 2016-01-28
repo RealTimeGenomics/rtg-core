@@ -32,6 +32,7 @@ import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.SomaticParams;
 import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.bayes.AlleleBalanceProbability;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.Model;
@@ -66,6 +67,7 @@ import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
 /**
  */
 public final class SomaticCallerConfiguration extends AbstractJointCallerConfiguration {
+
 
   /**
    * The factory for this caller.
@@ -103,12 +105,12 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
       final double phi = Math.min(1, contraryProbability + reverseContamination);
       final double psi = Math.min(1, contraryProbability + contamination);
       if (params.populationPriorFile() != null) {
-        ssp = new PopulationHwHypothesesCreator(params.populationPriorFile(), params.genomePriors(), params.referenceRanges());
+        ssp = new PopulationHwHypothesesCreator(params.populationPriorFile(), params.genomePriors(), params.referenceRanges(), params.alleleBalance());
       } else {
         ssp = null;
       }
-      final ModelSnpFactory haploid = new ModelSnpFactory(params.genomePriors(), true);
-      final ModelSnpFactory diploid = new ModelSnpFactory(params.genomePriors(), false);
+      final ModelSnpFactory haploid = new ModelSnpFactory(params.genomePriors(), true, params.alleleBalance());
+      final ModelSnpFactory diploid = new ModelSnpFactory(params.genomePriors(), false, params.alleleBalance());
       final ModelNoneFactory none = new ModelNoneFactory();
       final List<IndividualSampleFactory<?>> individualFactories = new ArrayList<>();
       final SexMemo sexMemo = Utils.createSexMemo(params);
@@ -124,15 +126,15 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
       } else {
         Diagnostic.userLog("Using contaminated cancer caller");
         individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, params.sex(), sexMemo));
-        final ModelCancerFactory contamHaploid = new ModelCancerFactory(params.genomePriors(), contamination, true);
-        final ModelCancerFactory contamDiploid = new ModelCancerFactory(params.genomePriors(), contamination, false);
+        final ModelCancerFactory contamHaploid = new ModelCancerFactory(params.genomePriors(), contamination, true, params.alleleBalance());
+        final ModelCancerFactory contamDiploid = new ModelCancerFactory(params.genomePriors(), contamination, false, params.alleleBalance());
         individualFactories.add(new IndividualSampleFactory<>(params, chooser, contamHaploid, contamDiploid, none, params.sex(), sexMemo));
         jointCaller = new ContaminatedSomaticCaller(
           new CachedSomaticPriorsFactory<>(haploid.defaultHypotheses(0), loh),
           new CachedSomaticPriorsFactory<>(diploid.defaultHypotheses(0), loh),
           params, phi, psi);
       }
-      final SomaticCallerConfiguration sc = new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, haploid, diploid, ssp, phi, psi);
+      final SomaticCallerConfiguration sc = new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, haploid, diploid, ssp, phi, psi, params.alleleBalance());
       sc.getVcfFilters().add(new SomaticFilter(statistics, !(params.somaticParams().includeGermlineVariants() || params.callLevel() == VariantOutputLevel.ALL)));
       return sc;
     }
@@ -142,13 +144,15 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
   private final double mPhi;
   private final double mPsi;
   private final LineageDenovoChecker mChecker;
+  private final AlleleBalanceProbability mAlleleBalanceProbability;
 
-  private SomaticCallerConfiguration(MultisampleJointCaller jointCaller, String[] genomeNames, List<IndividualSampleFactory<?>> individualFactories, MachineErrorChooserInterface machineErrorChooser, double contamination, ModelSnpFactory haploid, ModelSnpFactory diploid, PopulationHwHypothesesCreator ssp, double phi, double psi) {
+  private SomaticCallerConfiguration(MultisampleJointCaller jointCaller, String[] genomeNames, List<IndividualSampleFactory<?>> individualFactories, MachineErrorChooserInterface machineErrorChooser, double contamination, ModelSnpFactory haploid, ModelSnpFactory diploid, PopulationHwHypothesesCreator ssp, double phi, double psi, AlleleBalanceProbability alleleProbability) {
     super(jointCaller, genomeNames, individualFactories, machineErrorChooser, haploid, diploid, ssp);
     mContamination = contamination;
     mPhi = phi;
     mPsi = psi;
     mChecker = new LineageDenovoChecker(new LineageLookup(-1, 0)); // normal is sample 0, cancer is sample 1
+    mAlleleBalanceProbability  = alleleProbability;
   }
 
   @Override
@@ -181,8 +185,8 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
         complex = hyp.diploid();
         break;
     }
-    list.add(new Model<>(complex, new StatisticsComplex(complex.description(), locus.getLength())));
-    list.add(new ModelCancerContamination<>(new HypothesesCancer<>(complex, LogApproximatePossibility.SINGLETON), mContamination, new StatisticsComplex(complex.description(), locus.getLength())));
+    list.add(new Model<>(complex, new StatisticsComplex(complex.description(), locus.getLength()), mAlleleBalanceProbability));
+    list.add(new ModelCancerContamination<>(new HypothesesCancer<>(complex, LogApproximatePossibility.SINGLETON), mContamination, new StatisticsComplex(complex.description(), locus.getLength()), mAlleleBalanceProbability));
     return list;
   }
 

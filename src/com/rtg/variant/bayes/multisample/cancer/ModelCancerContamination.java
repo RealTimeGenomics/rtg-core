@@ -14,6 +14,7 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 import com.rtg.util.StringUtils;
 import com.rtg.util.format.FormatReal;
+import com.rtg.variant.bayes.AlleleBalanceProbability;
 import com.rtg.variant.bayes.Code;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.EvidenceInterface;
@@ -37,9 +38,10 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
    * @param hyp used to get the probabilities in the various categories for both normal and cancer.
    * @param contamination fraction of cancer sample that is contamination from normal sample.
    * @param statistics for statistics collection
+   * @param alleleBalance allele balance probability calculator
    */
-  public ModelCancerContamination(final HypothesesCancer<S> hyp, final double contamination, final Statistics<?> statistics) {
-    super(hyp, statistics);
+  public ModelCancerContamination(final HypothesesCancer<S> hyp, final double contamination, final Statistics<?> statistics, AlleleBalanceProbability alleleBalance) {
+    super(hyp, statistics, alleleBalance);
     if (contamination < 0 || contamination > 1) {
       throw new IllegalArgumentException("Illegal contamination: " + contamination);
     }

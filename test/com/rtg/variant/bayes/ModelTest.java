@@ -120,7 +120,7 @@ public class ModelTest extends TestCase {
     final double[] priors = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
-    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.175, 0.25, 0.5, 0.075};
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 0);
@@ -159,7 +159,7 @@ public class ModelTest extends TestCase {
         return 1;
       }
     };
-    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.175, 0.25, 0.5, 0.075};
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 2);
@@ -190,7 +190,7 @@ public class ModelTest extends TestCase {
     final double[] priors = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
-    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.175, 0.25, 0.5, 0.075};
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 1);
@@ -220,7 +220,7 @@ public class ModelTest extends TestCase {
     final double[] priors = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
-    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.175, 0.25, 0.5, 0.075};
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 0);
@@ -240,7 +240,7 @@ public class ModelTest extends TestCase {
     final double[] priors = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
-    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.175, 0.25, 0.5, 0.075};
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 1);
@@ -269,7 +269,7 @@ public class ModelTest extends TestCase {
     final double[] priors = {0.1, 0.4, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
-    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.175, 0.25, 0.5, 0.075};
     final double r = 0.49;
@@ -299,7 +299,7 @@ public class ModelTest extends TestCase {
     final double[] priors = {0.4, 0.1, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
-    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.5, 0.175, 0.25, 0.075};
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 0);
@@ -323,7 +323,7 @@ public class ModelTest extends TestCase {
     final double[] priors = {0.4, 0.1, 0.35, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
-    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.5, 0.175, 0.25, 0.075};
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 0);
@@ -355,7 +355,7 @@ public class ModelTest extends TestCase {
     final double[] priors = {0.1, 0.15, 0.75};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<>(MOCK_DESCRIPTION, arith, false, priors, 0);
-    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.8, 0.2};
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 0);
@@ -389,7 +389,7 @@ public class ModelTest extends TestCase {
     final double[] priors = {0.6, 0.4};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<>(MOCK_PE_DESCRIPTION, arith, true, priors, 0);
-    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    final ModelInterface<DescriptionCommon> mo = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
 
     final double[] prob = {0.75, 0.25};
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.15, prob, 0)  {

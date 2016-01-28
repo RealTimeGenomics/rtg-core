@@ -21,6 +21,7 @@ import com.rtg.variant.bayes.Evidence;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.snp.EvidenceQ;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.bayes.snp.StatisticsSnp;
@@ -57,8 +58,8 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
     final int refCode = refNt - 1;
     final Hypotheses<Description> simpleHomoHyps = AbstractSomaticCallerTest.simpleHomoHyps(0.99, refCode);
     final HypothesesCancer<Hypotheses<Description>> hypc = new HypothesesCancer<>(simpleHomoHyps, SimplePossibility.SINGLETON);
-    final ModelCancerContamination<Hypotheses<Description>> cancer = new ModelCancerContamination<>(hypc, contamination, new StatisticsSnp(hypc.description()));
-    final ModelInterface<Description> normal = new Model<>(simpleHomoHyps, new StatisticsSnp(simpleHomoHyps.description()));
+    final ModelCancerContamination<Hypotheses<Description>> cancer = new ModelCancerContamination<>(hypc, contamination, new StatisticsSnp(hypc.description()), new NoAlleleBalance());
+    final ModelInterface<Description> normal = new Model<>(simpleHomoHyps, new StatisticsSnp(simpleHomoHyps.description()), new NoAlleleBalance());
     // run through several identical reads
     final Evidence evc = new EvidenceQ(simpleHomoHyps.description(), 1, 0, 0, 0.05, 0.05, true, false, false, false);
     final Evidence evg = new EvidenceQ(simpleHomoHyps.description(), 2, 0, 0, 0.05, 0.05, true, false, false, false);
@@ -102,8 +103,8 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
     final int refCode = refNt - 1;
     final Hypotheses<Description> simpleHomoHyps = AbstractSomaticCallerTest.simpleHomoHyps(0.99, refCode);
     final HypothesesCancer<Hypotheses<Description>> hypc = new HypothesesCancer<>(simpleHomoHyps, SimplePossibility.SINGLETON);
-    final ModelCancerContamination<Hypotheses<Description>> cancer = new ModelCancerContamination<>(hypc, 0.0, new StatisticsSnp(hypc.description()));
-    final ModelInterface<Description> normal = new Model<>(simpleHomoHyps, new StatisticsSnp(simpleHomoHyps.description()));
+    final ModelCancerContamination<Hypotheses<Description>> cancer = new ModelCancerContamination<>(hypc, 0.0, new StatisticsSnp(hypc.description()), new NoAlleleBalance());
+    final ModelInterface<Description> normal = new Model<>(simpleHomoHyps, new StatisticsSnp(simpleHomoHyps.description()), new NoAlleleBalance());
     final Evidence eva = new EvidenceQ(simpleHomoHyps.description(), 0, 0, 0, 0.05, 0.05, true, false, false, false);
     // run through several identical reads
     for (int i = 0; i < numReads; i++) {

@@ -32,6 +32,7 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.SamCalibrationInputs;
+import com.rtg.launcher.AlleleBalanceFactor;
 import com.rtg.launcher.BuildCommon;
 import com.rtg.launcher.CommandLineFiles;
 import com.rtg.launcher.CommonFlags;
@@ -62,6 +63,10 @@ import com.rtg.variant.ThreadingEnvironment;
 import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
+import com.rtg.variant.bayes.AlleleBalanceProbability;
+import com.rtg.variant.bayes.BinomialAlleleBalance;
+import com.rtg.variant.bayes.HoeffdingAlleleBalance;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
 import com.rtg.vcf.VariantStatistics;
@@ -123,6 +128,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String X_FORMAT_ANNOTATION_FLAG = "Xformat-annotation";
   private static final String X_MIN_VARIANT_ALLELE_COUNT = "Xmin-vac";
   private static final String X_MIN_VARIANT_ALLELE_FRACTION = "Xmin-vaf";
+  private static final String X_ALLELE_BALANCE_PROBABILITY = "Xallele-balance-probability";
+  private static final String X_EXPECTED_ALLELE_BALANCE = "Xexpected-allele-balance";
 
   /**
    * validate common flags
@@ -325,6 +332,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     // TODO Decide if these should trigger output on ref calls(current) or filter out low VA* not ref calls(some one may ask for this at some stage).
     flags.registerOptional(X_MIN_VARIANT_ALLELE_COUNT, Integer.class, "int", "minimum variant allelic count to output a call", 0).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_MIN_VARIANT_ALLELE_FRACTION, Double.class, "float", "minimum variant allelic fraction to output a call", 0.0).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_ALLELE_BALANCE_PROBABILITY, AlleleBalanceFactor.class, "string", "method for calculating allele balance", AlleleBalanceFactor.NONE).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_EXPECTED_ALLELE_BALANCE, Double.class, "float", "expected allele balance", 0.5).setCategory(SENSITIVITY_TUNING);
   }
 
   /**
@@ -406,6 +415,12 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     builder.minVariantAlleleCount((Integer) mFlags.getValue(X_MIN_VARIANT_ALLELE_COUNT));
     builder.minVariantAlleleFraction((Double) mFlags.getValue(X_MIN_VARIANT_ALLELE_FRACTION));
 
+    final AlleleBalanceFactor factor = (AlleleBalanceFactor) mFlags.getValue(X_ALLELE_BALANCE_PROBABILITY);
+    final double expectedAlleleBalance = (Double) mFlags.getValue(X_EXPECTED_ALLELE_BALANCE);
+    final AlleleBalanceProbability probability = getProbability(factor, expectedAlleleBalance);
+    builder.alleleBalance(probability);
+    builder.minVariantAlleleFraction((Double) mFlags.getValue(X_MIN_VARIANT_ALLELE_FRACTION));
+
     // From here on pretty much needs the genome reader to be loaded
     final File genomeFile = (File) mFlags.getValue(TEMPLATE_FLAG);
     SdfUtils.validateHasNames(genomeFile);
@@ -418,6 +433,19 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     } catch (final RuntimeException | IOException e) {
       genomeParams.close();
       throw e;
+    }
+  }
+
+  private AlleleBalanceProbability getProbability(AlleleBalanceFactor factor, double expectedAlleleBalance) {
+    switch (factor) {
+      case BINOMIAL:
+        return new BinomialAlleleBalance(expectedAlleleBalance);
+      case HOEFFDING:
+        return new HoeffdingAlleleBalance(expectedAlleleBalance);
+      case NONE:
+        return new NoAlleleBalance();
+      default:
+        throw new IllegalArgumentException();
     }
   }
 

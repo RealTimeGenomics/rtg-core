@@ -28,6 +28,7 @@ import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelFactory;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.ModelTest;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.util.VariantUtils;
 
@@ -73,12 +74,12 @@ public class EvidenceMatcherTest extends TestCase {
   private static class MockModelFactory extends ModelSnpFactory {
 
     MockModelFactory() {
-      super(GenomePriorParams.builder().create(), true);
+      super(GenomePriorParams.builder().create(), true, new NoAlleleBalance());
     }
 
     @Override
     protected ModelInterface<Description> makeModel(Hypotheses<Description> hyp) {
-      return new Model<Description>(hyp, new StatisticsSnp(hyp.description())) {
+      return new Model<Description>(hyp, new StatisticsSnp(hyp.description()), new NoAlleleBalance()) {
         @Override
         public String toString() {
           return "ref=" + hypotheses().reference() + " " + statistics().toString();

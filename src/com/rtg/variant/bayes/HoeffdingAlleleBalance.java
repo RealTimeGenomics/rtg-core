@@ -19,6 +19,13 @@ import com.rtg.util.MathUtils;
  * @author kurt
  */
 public class HoeffdingAlleleBalance extends AbstractAlleleBalance {
+  /**
+   * @param expected expected allele balance
+   */
+  public HoeffdingAlleleBalance(double expected) {
+    super(expected);
+  }
+
   private double alleleBalanceLn(double p, double trials, double count) {
     return MathUtils.hoeffdingLn(trials, count, p);
   }

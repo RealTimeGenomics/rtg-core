@@ -15,6 +15,7 @@ package com.rtg.variant.bayes.snp;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.bayes.EvidenceInterface;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 
 import junit.framework.TestCase;
 
@@ -25,7 +26,7 @@ public class ModelSnpFactoryTest extends TestCase {
   public void testHaploid() {
     final GenomePriorParams params = GenomePriorParams.builder().create();
 
-    final ModelSnpFactory mf = new ModelSnpFactory(params, true);
+    final ModelSnpFactory mf = new ModelSnpFactory(params, true, new NoAlleleBalance());
     mf.globalIntegrity();
     final ModelInterface<?> mo = mf.make(0);
     assertEquals(4, mo.size());
@@ -36,7 +37,7 @@ public class ModelSnpFactoryTest extends TestCase {
   public void testDiploid() {
     final GenomePriorParams params = GenomePriorParams.builder().create();
 
-    final ModelSnpFactory mf = new ModelSnpFactory(params, false);
+    final ModelSnpFactory mf = new ModelSnpFactory(params, false, new NoAlleleBalance());
     mf.globalIntegrity();
     final ModelInterface<?> mo = mf.make(0);
     assertEquals(10, mo.size());

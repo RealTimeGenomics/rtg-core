@@ -33,6 +33,7 @@ import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.ModelTest;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.multisample.HypothesisScore;
 import com.rtg.variant.bayes.snp.DescriptionSnp;
@@ -74,7 +75,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
   }
 
   ModelInterface<?> getModel() throws InvalidParamsException {
-    return new Model<>(mHypotheses, new StatisticsSnp(mHypotheses.description()));
+    return new Model<>(mHypotheses, new StatisticsSnp(mHypotheses.description()), new NoAlleleBalance());
   }
 
   /*

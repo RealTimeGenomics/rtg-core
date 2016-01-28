@@ -22,16 +22,25 @@ import com.rtg.variant.util.arithmetic.LogPossibility;
  */
 @TestClass({"com.rtg.variant.bayes.BinomialAlleleBalanceTest", "com.rtg.variant.bayes.HoeffdingAlleleBalanceTest"})
 public abstract class AbstractAlleleBalance implements AlleleBalanceProbability {
+  final double mExpected;
+
+  /**
+   * @param expected the expected allele balance
+   */
+  protected AbstractAlleleBalance(double expected) {
+    this.mExpected = expected;
+  }
+
   @Override
-  public double alleleBalanceLn(int i, Hypotheses<?> hypotheses, Statistics<?> statistics, double expected) {
+  public double alleleBalanceLn(int i, Hypotheses<?> hypotheses, Statistics<?> statistics) {
     if (hypotheses.ploidy() != Ploidy.DIPLOID
       && hypotheses.ploidy() != Ploidy.HAPLOID
       ) {
       return LogPossibility.SINGLETON.one();
     }
-    final double trials = statistics instanceof  StatisticsDouble ?
-      ((StatisticsDouble) statistics).exactCoverage() :
-      statistics.coverage();
+    final double trials = statistics instanceof  StatisticsDouble
+      ? ((StatisticsDouble) statistics).exactCoverage()
+      : statistics.coverage();
 
     if (trials == 0) {
       return LogPossibility.SINGLETON.one();
@@ -47,7 +56,7 @@ public abstract class AbstractAlleleBalance implements AlleleBalanceProbability 
       return LogPossibility.SINGLETON.one();
     }
     final double bCount = counts.count(b) - counts.error(b);
-    return alleleBalanceHeterozygousLn(expected, trials, vac, bCount);
+    return alleleBalanceHeterozygousLn(mExpected, trials, vac, bCount);
   }
 
   abstract double alleleBalanceHeterozygousLn(double p, double trials, double observed, double observedAlt);

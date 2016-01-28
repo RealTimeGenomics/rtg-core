@@ -13,7 +13,6 @@
 package com.rtg.variant.bayes.multisample.population;
 
 
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -24,8 +23,8 @@ import com.rtg.sam.SamRangeUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
@@ -33,6 +32,7 @@ import com.rtg.util.test.NanoRegression;
 import com.rtg.variant.AlleleCountsFileConverter;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.GenomePriorParamsBuilder;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.complex.ComplexTemplate;
 import com.rtg.variant.bayes.complex.DescriptionComplex;
 import com.rtg.variant.bayes.complex.HypothesesComplex;
@@ -93,8 +93,8 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
 
       new TabixIndexer(out, new File(dir, "snps.vcf.gz.tbi")).saveVcfIndex();
       final GenomePriorParams genomePriors = GenomePriorParams.builder().create();
-      final ModelSnpFactory haploid = new ModelSnpFactory(genomePriors, true);
-      final ModelSnpFactory diploid = new ModelSnpFactory(genomePriors, false);
+      final ModelSnpFactory haploid = new ModelSnpFactory(genomePriors, true, new NoAlleleBalance());
+      final ModelSnpFactory diploid = new ModelSnpFactory(genomePriors, false, new NoAlleleBalance());
       final PopulationHwHypothesesCreator pwh = new PopulationHwHypothesesCreator(alleleCountFile, haploid, diploid, null);
       final HaploidDiploidHypotheses<?> hypotheses = pwh.getSnpHypotheses("1", 9);
 
@@ -132,8 +132,8 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
 
       new TabixIndexer(out, new File(dir, "snps.vcf.gz.tbi")).saveVcfIndex();
       final GenomePriorParams genomePriors = GenomePriorParams.builder().create();
-      final ModelSnpFactory haploid = new ModelSnpFactory(genomePriors, true);
-      final ModelSnpFactory diploid = new ModelSnpFactory(genomePriors, false);
+      final ModelSnpFactory haploid = new ModelSnpFactory(genomePriors, true, new NoAlleleBalance());
+      final ModelSnpFactory diploid = new ModelSnpFactory(genomePriors, false, new NoAlleleBalance());
       final PopulationHwHypothesesCreator pwh = new PopulationHwHypothesesCreator(alleleCountFile, haploid, diploid, null);
       assertEquals(0, pwh.getCounts("1", 0, 5).size());
       assertEquals(0, pwh.getCounts("1", 0, 9).size());
@@ -433,7 +433,7 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
         fileToUse = sspf;
       }
 
-      final PopulationHwHypothesesCreator pop = new PopulationHwHypothesesCreator(fileToUse, new GenomePriorParamsBuilder().create(), SamRangeUtils.createExplicitReferenceRange(new RegionRestriction("Chr1")));
+      final PopulationHwHypothesesCreator pop = new PopulationHwHypothesesCreator(fileToUse, new GenomePriorParamsBuilder().create(), SamRangeUtils.createExplicitReferenceRange(new RegionRestriction("Chr1")), new NoAlleleBalance());
 
       final List<AlleleCounts> acs = pop.getCounts("Chr1", 24000, 25000);
       assertEquals(1, acs.size());
@@ -461,7 +461,7 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
       final TabixIndexer ti = new TabixIndexer(sspf);
       ti.saveVcfIndex();
 
-      final PopulationHwHypothesesCreator pop = new PopulationHwHypothesesCreator(alleleCountFile, new GenomePriorParamsBuilder().create(), SamRangeUtils.createExplicitReferenceRange(new RegionRestriction("Chr1")));
+      final PopulationHwHypothesesCreator pop = new PopulationHwHypothesesCreator(alleleCountFile, new GenomePriorParamsBuilder().create(), SamRangeUtils.createExplicitReferenceRange(new RegionRestriction("Chr1")), new NoAlleleBalance());
 
       List<AlleleCounts> acs = pop.getCounts("Chr1", 24000, 25000);
       assertEquals(0, acs.size());

@@ -31,6 +31,7 @@ import com.rtg.variant.bayes.Evidence;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.snp.DescriptionCommon;
 import com.rtg.variant.bayes.snp.DescriptionSnp;
@@ -72,7 +73,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     final List<ModelInterface<Description>> models = new ArrayList<>();
     for (int ref = 0; ref < 4; ref++) {
       final Hypotheses<Description> hyps = simpleHomoHyps(0.99, ref);
-      models.add(new Model<>(hyps, new StatisticsSnp(hyps.description())));
+      models.add(new Model<>(hyps, new StatisticsSnp(hyps.description()), new NoAlleleBalance()));
     }
     return models;
   }

@@ -84,11 +84,11 @@ public class IndividualSampleFactory<D extends Description> {
   ModelInterface<DescriptionComplex> makeModelComplex(HaploidDiploidHypotheses<HypothesesPrior<DescriptionComplex>> hyp, SequenceNameLocus locus) {
     switch (getEffectivePloidy(locus.getSequenceName(), (locus.getStart() + locus.getEnd()) / 2)) {
       case HAPLOID:
-        return new Model<>(hyp.haploid(), new StatisticsComplex(hyp.haploid().description(), locus.getLength()));
+        return new Model<>(hyp.haploid(), new StatisticsComplex(hyp.haploid().description(), locus.getLength()), mParams.alleleBalance());
       case NONE:
         return ModelNone.SINGLETON_COMPLEX;
       default:
-        return new Model<>(hyp.diploid(), new StatisticsComplex(hyp.haploid().description(), locus.getLength()));
+        return new Model<>(hyp.diploid(), new StatisticsComplex(hyp.haploid().description(), locus.getLength()), mParams.alleleBalance());
     }
   }
 

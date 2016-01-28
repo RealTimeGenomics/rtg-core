@@ -26,6 +26,7 @@ import com.rtg.variant.GenomePriorParamsBuilder;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.StatisticsInt;
 import com.rtg.variant.bayes.snp.DescriptionSnp;
 import com.rtg.variant.bayes.snp.HypothesesMock;
@@ -212,7 +213,7 @@ public class DiseasedFamilyPosteriorTest extends TestCase {
 
   private static class MockModel extends Model<Description> {
     MockModel(final double[] posteriors) {
-      super(HYPOTHESES0, new StatisticsInt(HYPOTHESES0.description()));
+      super(HYPOTHESES0, new StatisticsInt(HYPOTHESES0.description()), new NoAlleleBalance());
       assert posteriors.length == mPosteriors.length;
       for (int i = 0; i < posteriors.length; i++) {
         mPosteriors[i] = arithmetic().prob2Poss(posteriors[i]);
@@ -222,7 +223,7 @@ public class DiseasedFamilyPosteriorTest extends TestCase {
 
   private static class MockModelC extends Model<Description> {
     MockModelC(final double[] posteriors) {
-      super(HYPOTHESES1, new StatisticsInt(HYPOTHESES1.description()));
+      super(HYPOTHESES1, new StatisticsInt(HYPOTHESES1.description()), new NoAlleleBalance());
       assert posteriors.length == mPosteriors.length;
       for (int i = 0; i < posteriors.length; i++) {
         mPosteriors[i] = arithmetic().prob2Poss(posteriors[i]);

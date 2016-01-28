@@ -25,6 +25,7 @@ import com.rtg.variant.bayes.MockHypotheses;
 import com.rtg.variant.bayes.MockModel;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.snp.DescriptionSnp;
 import com.rtg.variant.bayes.snp.EvidenceQ;
@@ -62,7 +63,7 @@ public class SingletonCallerTest extends TestCase {
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final MockHypotheses<Description> hypotheses = new MockHypotheses<Description>(DescriptionSnp.SINGLETON, arith, true, priors, 2);
     final List<ModelInterface<?>> list = new ArrayList<>();
-    list.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description())));
+    list.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance()));
     final VariantParams p = VariantParams.builder()
         .machineErrorName("illumina")
         .genomePriors(GenomePriorParams.builder().create())
@@ -85,7 +86,7 @@ public class SingletonCallerTest extends TestCase {
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final MockHypotheses<Description> hypotheses = new MockHypotheses<Description>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final List<ModelInterface<?>> list = new ArrayList<>();
-    list.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description())));
+    list.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance()));
     final VariantParams p = VariantParams.builder()
         .machineErrorName("illumina")
         .genomePriors(GenomePriorParams.builder().create())

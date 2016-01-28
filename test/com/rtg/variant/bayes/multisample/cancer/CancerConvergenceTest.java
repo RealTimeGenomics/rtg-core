@@ -33,6 +33,7 @@ import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.bayes.EvidenceInterface;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.multisample.ComplexCallerTest;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.multisample.MultisampleJointCaller;
@@ -103,13 +104,13 @@ public class CancerConvergenceTest extends TestCase {
     final MultisampleJointCaller jointCaller = getCaller(jointConfig);
     final GenomePriorParams gp = GenomePriorParams.builder().create();
     final VariantParams params = VariantParams.builder().callLevel(VariantOutputLevel.ALL).genomePriors(gp).create();
-    final ModelCancerFactory mf = new ModelCancerFactory(params.genomePriors(), contamination, false);
+    final ModelCancerFactory mf = new ModelCancerFactory(params.genomePriors(), contamination, false, new NoAlleleBalance());
 
     for (int j = 0; j < 100; j++) {
       final byte[] ref = {(byte) (1 + r.nextInt(4))}; // random reference A, C, G, T
       final HypothesesSnp hypotheses = getHypotheses(ref[0] - 1);
       final HypothesesSnp hypothesesHaploid = getHypothesesHaploid(ref[0] - 1);
-      final ModelInterface<?> normalModel = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+      final ModelInterface<?> normalModel = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
       final ModelInterface<?> cancerModel = mf.make(ref[0] - 1);
 
       // Choose random alleles for normal and cancer, such that there is always an explanation.

@@ -22,7 +22,7 @@ public class MockModel<D extends Description> extends Model<D> {
    * @param post dummy posteriors.
    */
   public MockModel(Hypotheses<D> hypotheses, final Statistics<?> statistics, final double[] post) {
-    super(hypotheses, statistics);
+    super(hypotheses, statistics, new NoAlleleBalance());
     if (post != null) {
       for (int i = 0; i < size(); i++) {
         mPosteriors[i] = arithmetic().prob2Poss(post[i]);

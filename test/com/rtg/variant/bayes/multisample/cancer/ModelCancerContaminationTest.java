@@ -17,6 +17,7 @@ import static com.rtg.util.StringUtils.LS;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Evidence;
 import com.rtg.variant.bayes.Hypotheses;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.snp.EvidenceQ;
 import com.rtg.variant.bayes.snp.StatisticsSnp;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
@@ -42,7 +43,7 @@ public class ModelCancerContaminationTest extends TestCase {
   public void test1G() {
     final HypothesesCancer<Hypotheses<Description>> hypc = getTestCats();
     final Description desc = hypc.subHypotheses().description();
-    final ModelCancerContamination<Hypotheses<Description>> model = new ModelCancerContamination<>(hypc, 0.2, new StatisticsSnp(hypc.description()));
+    final ModelCancerContamination<Hypotheses<Description>> model = new ModelCancerContamination<>(hypc, 0.2, new StatisticsSnp(hypc.description()), new NoAlleleBalance());
     model.integrity();
     final Evidence evg = new EvidenceQ(desc, 2, 0, 0, 0.05, 0.05, true, false, false, false);
     model.increment(evg);

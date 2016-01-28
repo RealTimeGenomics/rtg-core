@@ -23,6 +23,7 @@ import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.multisample.population.Convergence.SimulationResult;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.bayes.snp.HypothesesSnp;
@@ -89,7 +90,7 @@ public class ConvergencePlot {
       } else {
         hyp = mRandom.nextInt(2) == 0 ? mHaploid : mDiploid;
       }
-      models.add(new Model<>(hyp,  new StatisticsSnp(hyp.description())));
+      models.add(new Model<>(hyp,  new StatisticsSnp(hyp.description()), new NoAlleleBalance()));
     }
     return new Convergence(mHaploid, mDiploid, mDistr, mErrorRate, mEstimator, models, mRandom);
   }

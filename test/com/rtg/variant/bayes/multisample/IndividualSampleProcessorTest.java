@@ -35,6 +35,7 @@ import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.bayes.Description;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.snp.ModelNoneFactory;
 import com.rtg.variant.bayes.snp.ModelSnpFactory;
 
@@ -77,8 +78,8 @@ public class IndividualSampleProcessorTest extends TestCase {
             final GenomePriorParams gpp = GenomePriorParams.builder().create();
             b.genomePriors(gpp);
             final VariantParams p = b.create();
-            final ModelSnpFactory haploid = new ModelSnpFactory(p.genomePriors(), true);
-            final ModelSnpFactory diploid = new ModelSnpFactory(p.genomePriors(), false);
+            final ModelSnpFactory haploid = new ModelSnpFactory(p.genomePriors(), true, new NoAlleleBalance());
+            final ModelSnpFactory diploid = new ModelSnpFactory(p.genomePriors(), false, new NoAlleleBalance());
 
             final byte[] template = new byte[10];
             final String name = "pufferfish";

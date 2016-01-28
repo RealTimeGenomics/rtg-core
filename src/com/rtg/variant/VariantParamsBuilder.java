@@ -28,6 +28,8 @@ import com.rtg.sam.SingleMappedParams.SingleMappedParamsBuilder;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.MathUtils;
 import com.rtg.util.intervals.ReferenceRanges;
+import com.rtg.variant.bayes.AlleleBalanceProbability;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
 
@@ -100,6 +102,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   EnumSet <VcfInfoField> mInfoAnnotations = EnumSet.noneOf(VcfInfoField.class);
   EnumSet<VcfFormatField> mFormatAnnotations = EnumSet.noneOf(VcfFormatField.class);
   SomaticParams mSomaticParams = new SomaticParamsBuilder().create();
+  AlleleBalanceProbability mAlleleBalance = new NoAlleleBalance();
 
   @Override
   protected VariantParamsBuilder self() {
@@ -661,6 +664,15 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
    */
   public VariantParamsBuilder somaticParams(SomaticParams params) {
     mSomaticParams = params;
+    return self();
+  }
+
+  /**
+   * @param alleleBalance allele balance calculator
+   * @return this builder, so calls can be chained
+   */
+  public VariantParamsBuilder alleleBalance(AlleleBalanceProbability alleleBalance) {
+    mAlleleBalance = alleleBalance;
     return self();
   }
 }

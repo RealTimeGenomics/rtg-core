@@ -20,6 +20,13 @@ import com.rtg.util.ChiSquared;
  */
 public class BinomialAlleleBalance extends AbstractAlleleBalance {
 
+  /**
+   * @param expected the expected allele balance
+   */
+  public BinomialAlleleBalance(double expected) {
+    super(expected);
+  }
+
   private static double logBinomial(final double p, final double nn, final double n) {
     assert p >= 0.0 && p <= 1.0;
     assert n >= 0;

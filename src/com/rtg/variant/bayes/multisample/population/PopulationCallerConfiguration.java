@@ -112,12 +112,12 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
       final MachineErrorChooserInterface chooser = MultisampleUtils.chooser(newParams);
       final PopulationHwHypothesesCreator ssp;
       if (params.populationPriorFile() != null) {
-        ssp = new PopulationHwHypothesesCreator(params.populationPriorFile(), params.genomePriors(), params.referenceRanges());
+        ssp = new PopulationHwHypothesesCreator(params.populationPriorFile(), params.genomePriors(), params.referenceRanges(), params.alleleBalance());
       } else {
         ssp = null;
       }
-      final ModelSnpFactory haploid = new ModelSnpFactory(params.genomePriors(), true);
-      final ModelSnpFactory diploid = new ModelSnpFactory(params.genomePriors(), false);
+      final ModelSnpFactory haploid = new ModelSnpFactory(params.genomePriors(), true, params.alleleBalance());
+      final ModelSnpFactory diploid = new ModelSnpFactory(params.genomePriors(), false, params.alleleBalance());
       final ModelNoneFactory none = new ModelNoneFactory();
       MultisampleJointScorer familyCaller = null;
       Family[] famArray = null;

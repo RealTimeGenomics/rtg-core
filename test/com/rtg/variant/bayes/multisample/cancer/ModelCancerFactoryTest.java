@@ -16,6 +16,7 @@ import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.EvidenceInterface;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.snp.DescriptionSnp;
 import com.rtg.variant.bayes.snp.EvidenceQ;
 
@@ -27,7 +28,7 @@ public class ModelCancerFactoryTest extends TestCase {
 
   public void testHaploid() {
     final GenomePriorParams params = GenomePriorParams.builder().create();
-    final ModelCancerFactory mf = new ModelCancerFactory(params, 0.0, true);
+    final ModelCancerFactory mf = new ModelCancerFactory(params, 0.0, true, new NoAlleleBalance());
     mf.globalIntegrity();
     final ModelInterface<Description> mo = mf.make(0);
     assertEquals(16, mo.size());
@@ -37,7 +38,7 @@ public class ModelCancerFactoryTest extends TestCase {
 
   private void checkRef(final int refNt) {
     final GenomePriorParams params = GenomePriorParams.builder().create();
-    final ModelCancerFactory mf = new ModelCancerFactory(params, 0.0, false);
+    final ModelCancerFactory mf = new ModelCancerFactory(params, 0.0, false, new NoAlleleBalance());
     mf.globalIntegrity();
     final ModelInterface<Description> mo = mf.make(refNt);
     assertEquals(100, mo.size());

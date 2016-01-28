@@ -112,13 +112,13 @@ public final class FamilyCallerConfiguration extends AbstractJointCallerConfigur
       final MachineErrorChooserInterface chooser = MultisampleUtils.chooser(params);
       final PopulationHwHypothesesCreator ssp;
       if (params.populationPriorFile() != null) {
-        ssp = new PopulationHwHypothesesCreator(params.populationPriorFile(), params.genomePriors(), params.referenceRanges());
+        ssp = new PopulationHwHypothesesCreator(params.populationPriorFile(), params.genomePriors(), params.referenceRanges(), params.alleleBalance());
       } else {
         ssp = null;
       }
       final FamilyCaller familyCaller = new FamilyCaller(params, family);
-      final ModelSnpFactory haploid = new ModelSnpFactory(params.genomePriors(), true);
-      final ModelSnpFactory diploid = new ModelSnpFactory(params.genomePriors(), false);
+      final ModelSnpFactory haploid = new ModelSnpFactory(params.genomePriors(), true, params.alleleBalance());
+      final ModelSnpFactory diploid = new ModelSnpFactory(params.genomePriors(), false, params.alleleBalance());
       final ModelNoneFactory none = new ModelNoneFactory();
       final List<IndividualSampleFactory<?>> individualFactories = new ArrayList<>();
       final SexMemo sexMemo = Utils.createSexMemo(params);

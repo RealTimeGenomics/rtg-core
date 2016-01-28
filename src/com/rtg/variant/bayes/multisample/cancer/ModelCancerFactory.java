@@ -13,6 +13,7 @@
 package com.rtg.variant.bayes.multisample.cancer;
 
 import com.rtg.variant.GenomePriorParams;
+import com.rtg.variant.bayes.AlleleBalanceProbability;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.ModelInterface;
@@ -34,9 +35,10 @@ public class ModelCancerFactory extends ModelCommonFactory<Description, Hypothes
    * @param params information about genome used to compute priors.
    * @param contamination contamination rate.
    * @param haploid use a haploid set of hypotheses iff true.
+   * @param alleleBalance allele balance probability implementation
    */
-  public ModelCancerFactory(final GenomePriorParams params, final double contamination, final boolean haploid) {
-    super();
+  public ModelCancerFactory(final GenomePriorParams params, final double contamination, final boolean haploid, final AlleleBalanceProbability alleleBalance) {
+    super(alleleBalance);
     mContamination = contamination;
     final HypothesesSnp unknownHypothesesSnp = new HypothesesSnp(LogApproximatePossibility.SINGLETON, params, haploid, -1);
     mHypothesisUnknown = new HypothesesCancer<>(unknownHypothesesSnp, LogApproximatePossibility.SINGLETON);
@@ -50,7 +52,7 @@ public class ModelCancerFactory extends ModelCommonFactory<Description, Hypothes
   protected ModelInterface<Description> makeModel(final Hypotheses<Description> hyp) {
     assert hyp instanceof HypothesesCancer;
     final HypothesesCancer<?> hypothesesCancer = (HypothesesCancer<?>) hyp;
-    return new ModelCancerContamination<>(hypothesesCancer, mContamination, new StatisticsSnp(hypothesesCancer.subHypotheses().description()));
+    return new ModelCancerContamination<>(hypothesesCancer, mContamination, new StatisticsSnp(hypothesesCancer.subHypotheses().description()), getAlleleBalance());
   }
 
 }

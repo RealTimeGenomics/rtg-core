@@ -20,7 +20,7 @@ package com.rtg.variant.bayes;
 public class NoAlleleBalance implements AlleleBalanceProbability {
 
   @Override
-  public double alleleBalanceLn(int i, Hypotheses<?> hypotheses, Statistics<?> statistics, double expected) {
+  public double alleleBalanceLn(int i, Hypotheses<?> hypotheses, Statistics<?> statistics) {
     return 0.0; // 1 in log space.
   }
 }

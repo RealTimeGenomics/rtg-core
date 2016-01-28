@@ -21,6 +21,7 @@ import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.MockHypotheses;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.multisample.family.MendelianAlleleProbability;
 import com.rtg.variant.bayes.multisample.family.MendelianAlleleProbabilityDiploid;
 import com.rtg.variant.bayes.snp.DescriptionCommon;
@@ -211,7 +212,7 @@ public class CommonFormulasTest extends TestCase {
 
   private static class MockModel extends Model<Description> {
     MockModel(final Hypotheses<Description> hyp, final double[] posteriors) {
-      super(hyp, new StatisticsSnp(hyp.description()));
+      super(hyp, new StatisticsSnp(hyp.description()), new NoAlleleBalance());
       assert posteriors.length == mPosteriors.length;
       for (int i = 0; i < posteriors.length; i++) {
         mPosteriors[i] = arithmetic().prob2Poss(posteriors[i]);

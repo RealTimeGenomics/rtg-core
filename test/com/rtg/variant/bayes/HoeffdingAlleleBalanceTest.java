@@ -49,6 +49,6 @@ public class HoeffdingAlleleBalanceTest extends AbstractAlleleBalanceTest {
 
   @Override
   protected HoeffdingAlleleBalance getAlleleBalanceProbability() {
-    return new HoeffdingAlleleBalance();
+    return new HoeffdingAlleleBalance(0.5);
   }
 }

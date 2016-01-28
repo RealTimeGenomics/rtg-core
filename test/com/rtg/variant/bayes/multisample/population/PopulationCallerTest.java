@@ -43,6 +43,7 @@ import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.ModelNone;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.multisample.HypothesisScore;
 import com.rtg.variant.bayes.multisample.HypothesisScores;
@@ -91,7 +92,7 @@ public class PopulationCallerTest extends TestCase {
   private static List<ModelInterface<?>> buildModels(HypothesesSnp hypotheses, String... members) {
     final List<ModelInterface<?>> b = new ArrayList<>();
     for (final String member : members) {
-      final Model<Description> model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+      final Model<Description> model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
       b.add(model);
       increment(model, member, 0.1);
     }
@@ -284,11 +285,11 @@ public class PopulationCallerTest extends TestCase {
         , "AAAAGGGGGGG"
         , "AAAAAAAA");
     final HypothesesSnp hypotheses = new HypothesesSnp(LogPossibility.SINGLETON, params, false, refNt - 1);
-    Model<Description> model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    Model<Description> model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
     increment(model, "GGGCGG", 0.6);
     increment(model, "GGGCGG", 0.1);
     b.add(model);
-    model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
     increment(model, "GGCGGCCCGGGG", 0.6);
     increment(model, "GGGC", 0.1);
     b.add(model);
@@ -318,11 +319,11 @@ public class PopulationCallerTest extends TestCase {
         , "AAAAGGGGGGG"
         , "AAAAAAAA");
     final HypothesesSnp hypotheses = new HypothesesSnp(LogPossibility.SINGLETON, params, true, refNt - 1);
-    Model<Description> model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    Model<Description> model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
     increment(model, "GGGCGG", 0.6);
     increment(model, "GGGCGG", 0.1);
     b.add(model);
-    model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()));
+    model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
     increment(model, "GGCGGCCCGGGG", 0.6);
     increment(model, "GGGC", 0.1);
     b.add(model);
@@ -390,7 +391,7 @@ public class PopulationCallerTest extends TestCase {
         , "CCCCCCCC"
     };
     for (int i = 0; i < 7; i++) {
-      final Model<Description> model = new Model<>(hypothesesSnp, new StatisticsSnp(hypothesesSnp.description()));
+      final Model<Description> model = new Model<>(hypothesesSnp, new StatisticsSnp(hypothesesSnp.description()), new NoAlleleBalance());
       b.add(model);
       increment(model, values[i], 0.001, 0.001);
     }
@@ -542,7 +543,7 @@ public class PopulationCallerTest extends TestCase {
         , "GGGGGGGGGGGGGGGGG"
     };
     for (String value : values) {
-      final Model<Description> model = new Model<>(diploid, new StatisticsSnp(diploid.description()));
+      final Model<Description> model = new Model<>(diploid, new StatisticsSnp(diploid.description()), new NoAlleleBalance());
       models.add(model);
       increment(model, value, 0.001, 0.001);
     }

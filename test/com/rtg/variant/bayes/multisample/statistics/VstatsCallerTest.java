@@ -30,6 +30,7 @@ import com.rtg.variant.bayes.MockHypotheses;
 import com.rtg.variant.bayes.MockModel;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.snp.DescriptionSnp;
 import com.rtg.variant.bayes.snp.EvidenceQ;
@@ -139,9 +140,9 @@ public class VstatsCallerTest extends TestCase {
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final MockHypotheses<Description> hypotheses = new MockHypotheses<Description>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final List<ModelInterface<?>> listA = new ArrayList<>();
-    listA.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description())));
+    listA.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance()));
     final List<ModelInterface<?>> listB = new ArrayList<>();
-    listB.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description())));
+    listB.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance()));
     final File tempDir = FileUtils.createTempDir("vstats", "test");
     try {
       final VariantParams p = getOutputParams(tempDir);
@@ -181,9 +182,9 @@ public class VstatsCallerTest extends TestCase {
     final double[] priors = {0.1, 0.4, 0.35, 0.15, 0.1, 0.4, 0.35, 0.15, 0.35, 0.15};
     final MockHypotheses<Description> hypotheses = new MockHypotheses<Description>(DescriptionSnp.SINGLETON, SimplePossibility.SINGLETON, false, priors, 0);
     final List<ModelInterface<?>> listA = new ArrayList<>();
-    listA.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description())));
+    listA.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance()));
     final List<ModelInterface<?>> listB = new ArrayList<>();
-    listB.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description())));
+    listB.add(new  Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance()));
     final File tempDir = FileUtils.createTempDir("vstats", "test");
     try {
       final VariantParams p = getOutputParams(tempDir);

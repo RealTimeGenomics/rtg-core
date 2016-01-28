@@ -45,7 +45,7 @@ public abstract class AbstractAlleleBalanceTest extends TestCase {
     final Description description = getDescriptionCommon();
     final Statistics<?> statistics = new MockStatistics(description, counts, errors);
     final Hypotheses<?> hypotheses = getDescriptionHypothesesCommon(description);
-    return binomialAlleleBalance.alleleBalanceLn(hypothesis, hypotheses, statistics, expected);
+    return binomialAlleleBalance.alleleBalanceLn(hypothesis, hypotheses, statistics);
   }
   public void dumpPlot() {
     for (int i = 0; i < 200; i += 5) {

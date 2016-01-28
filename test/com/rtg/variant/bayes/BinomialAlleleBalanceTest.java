@@ -44,6 +44,6 @@ public class BinomialAlleleBalanceTest extends AbstractAlleleBalanceTest {
 
   @Override
   protected BinomialAlleleBalance getAlleleBalanceProbability() {
-    return new BinomialAlleleBalance();
+    return new BinomialAlleleBalance(0.5);
   }
 }

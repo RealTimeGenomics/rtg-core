@@ -15,7 +15,6 @@ package com.rtg.variant.bayes;
 
 import java.util.Arrays;
 
-import com.rtg.launcher.AlleleBalanceFactor;
 import com.rtg.launcher.GlobalFlags;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
@@ -35,22 +34,6 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
 
   // Factor 1.1 to cover arithmetic error in sum used for error() in EvidenceComplex
   private static final double MAX_BASE_ERROR = VariantUtils.phredToProb(GlobalFlags.getIntegerValue(GlobalFlags.MIN_BASE_QUALITY)) * 1.1;
-  private static final double EXPECTED_ALLELE_FREQUENCY = GlobalFlags.getDoubleValue(GlobalFlags.CALLER_EXPECTED_ALLELE_FREQUENCY);
-
-  private static final AlleleBalanceProbability ALLELE_BALANCE_PROBABILITY = getAlleleBalanceProbability((AlleleBalanceFactor) GlobalFlags.getFlag(GlobalFlags.ALLELE_BALANCE_FACTOR).getValue());
-
-  public static AlleleBalanceProbability getAlleleBalanceProbability(AlleleBalanceFactor alleleBalanceFactor) {
-    switch(alleleBalanceFactor) {
-      case NONE:
-        return new NoAlleleBalance();
-      case HOEFFDING:
-        return new HoeffdingAlleleBalance();
-      case BINOMIAL:
-        return new BinomialAlleleBalance();
-      default:
-        throw new IllegalArgumentException();
-    }
-  }
 
   /**
    * When <code>MAPQ</code> is less than or equal to this then treat as ambiguous.
@@ -71,7 +54,8 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
   protected final double[] mPosteriors;
 
   private final Statistics<?> mStatistics;
-  private AlleleBalanceProbability mAlleleBalanceProbability;
+
+  private final AlleleBalanceProbability mAlleleBalance;
 
   protected boolean ambiguityShortCircuit(final EvidenceInterface evidence) {
     return evidence.mapError() >= AMBIGUITY_THRESHOLD || evidence.error() > MAX_BASE_ERROR;
@@ -80,13 +64,15 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
   /**
    * @param hyp provides information about the set of hypotheses.
    * @param statistics to store counts
+   * @param alleleBalance allele balance probability implementation
    */
-  public Model(final Hypotheses<D> hyp, final Statistics<?> statistics) {
+  public Model(final Hypotheses<D> hyp, final Statistics<?> statistics, AlleleBalanceProbability alleleBalance) {
     mHypotheses = hyp;
     mStatistics = statistics;
     final int size = hyp.code().size();
     mPosteriors = new double[size];
     Arrays.fill(mPosteriors, arithmetic().one());
+    mAlleleBalance = alleleBalance;
     //    System.err.println("construct" + hypotheses.getClass().getName());
     //    System.err.println("hyparith" + hypotheses.arithmetic().getClass().getName());
   }
@@ -194,13 +180,12 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
   }
 
   private double posterior(final PossibilityArithmetic arith, final int i, final Factor<?> hypotheses) {
-    return arith.multiply(arith.multiply(mPosteriors[i], arith.ln2Poss(ALLELE_BALANCE_PROBABILITY.alleleBalanceLn(i, hypotheses(), statistics(), EXPECTED_ALLELE_FREQUENCY))), hypotheses.p(i));
+    return arith.multiply(arith.multiply(mPosteriors[i], arith.ln2Poss(mAlleleBalance.alleleBalanceLn(i, hypotheses(), statistics()))), hypotheses.p(i));
   }
 
   @Override
   public double posteriorLn0(int hyp) {
-    double foo =  arithmetic().poss2Ln(arithmetic().multiply(mPosteriors[hyp], arithmetic().ln2Poss(ALLELE_BALANCE_PROBABILITY.alleleBalanceLn(hyp, hypotheses(), statistics(), EXPECTED_ALLELE_FREQUENCY))));
-    return arithmetic().poss2Ln(arithmetic().multiply(mPosteriors[hyp], arithmetic().ln2Poss(ALLELE_BALANCE_PROBABILITY.alleleBalanceLn(hyp, hypotheses(), statistics(), EXPECTED_ALLELE_FREQUENCY))));
+    return arithmetic().poss2Ln(arithmetic().multiply(mPosteriors[hyp], arithmetic().ln2Poss(mAlleleBalance.alleleBalanceLn(hyp, hypotheses(), statistics()))));
   }
 
   @Override

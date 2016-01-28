@@ -18,6 +18,7 @@ import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.bayes.snp.StatisticsSnp;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
@@ -43,7 +44,7 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
     for (int ref = 0; ref < 4; ref++) {
       final Hypotheses<Description> hyps = simpleHomoHyps(0.99, ref);
       final HypothesesCancer<Hypotheses<Description>> hypc = new HypothesesCancer<>(hyps, SimplePossibility.SINGLETON);
-      models.add(new ModelCancerContamination<>(hypc, 0.0, new StatisticsSnp(hypc.description())));
+      models.add(new ModelCancerContamination<>(hypc, 0.0, new StatisticsSnp(hypc.description()), new NoAlleleBalance()));
     }
     return models;
   }

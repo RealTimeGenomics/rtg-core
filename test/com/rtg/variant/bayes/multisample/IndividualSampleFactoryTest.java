@@ -23,6 +23,7 @@ import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.bayes.Description;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.snp.ModelNoneFactory;
 import com.rtg.variant.bayes.snp.ModelSnpFactory;
 
@@ -39,8 +40,8 @@ public class IndividualSampleFactoryTest extends TestCase {
       .machineErrorName("default")
       .genome(new MockReaderParams(ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.SEQ_DNA_SIMPLE), SequenceMode.UNIDIRECTIONAL))
       .create();
-    final ModelSnpFactory diploid = new ModelSnpFactory(params.genomePriors(), false);
-    final ModelSnpFactory haploid = new ModelSnpFactory(params.genomePriors(), true);
+    final ModelSnpFactory diploid = new ModelSnpFactory(params.genomePriors(), false, new NoAlleleBalance());
+    final ModelSnpFactory haploid = new ModelSnpFactory(params.genomePriors(), true, new NoAlleleBalance());
     final ModelNoneFactory none = new ModelNoneFactory();
     final MachineErrorChooserInterface chooser = MultisampleUtils.chooser(params);
     final SexMemo sexMemo = Utils.createSexMemo(params);

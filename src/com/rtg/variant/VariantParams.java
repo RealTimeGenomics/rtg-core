@@ -32,6 +32,7 @@ import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.Integrity;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.test.params.ParamsNoField;
+import com.rtg.variant.bayes.AlleleBalanceProbability;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
 
@@ -107,6 +108,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final int mMinVariantAlleleCount;
   private final double mMinVariantAlleleFraction;
   private final SomaticParams mSomaticParams;
+  private final AlleleBalanceProbability mAlleleBalance;
 
   /**
    * @param builder the builder object.
@@ -166,6 +168,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mMinVariantAlleleCount = builder.mMinVariantAlleleCount;
     mMinVariantAlleleFraction = builder.mMinVariantAlleleFraction;
     mSomaticParams = builder.mSomaticParams;
+    mAlleleBalance = builder.mAlleleBalance;
   }
 
   @Override
@@ -610,6 +613,12 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   public SomaticParams somaticParams() {
     return mSomaticParams;
   }
+  /**
+   * @return the allele balance probability calculator
+   */
+  public AlleleBalanceProbability alleleBalance() {
+    return mAlleleBalance;
+  }
 
   /**
    * Create a builder with all the values set to those of this object.
@@ -680,6 +689,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     .minVariantAlleleCount(mMinVariantAlleleCount)
     .minVariantAlleleFraction(mMinVariantAlleleFraction)
     .somaticParams(somaticParams())
+    .alleleBalance(alleleBalance())
     ;
   }
 
@@ -758,6 +768,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     sb.append(" min_variant_allele_count=").append(mMinVariantAlleleCount).append(LS);
     sb.append(" min_variant_allele_fraction=").append(mMinVariantAlleleFraction).append(LS);
     sb.append(" somatic_params=").append(mSomaticParams).append(LS);
+    sb.append(" allele_balance=").append(mAlleleBalance).append(LS);
     return sb.toString();
   }
 }

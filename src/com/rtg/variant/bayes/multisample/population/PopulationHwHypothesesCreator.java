@@ -25,6 +25,7 @@ import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.variant.GenomePriorParams;
+import com.rtg.variant.bayes.AlleleBalanceProbability;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.ModelFactory;
 import com.rtg.variant.bayes.complex.DescriptionComplex;
@@ -78,10 +79,11 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
    * @param input input file containing population
    * @param genomePriorParams genome prior params
    * @param ranges region restrictions
+   * @param alleleBalance allele balance probability calculator
    * @exception IOException if error
    */
-  public PopulationHwHypothesesCreator(File input, GenomePriorParams genomePriorParams, ReferenceRanges<String> ranges) throws IOException {
-    this(input, new ModelSnpFactory(genomePriorParams, true), new ModelSnpFactory(genomePriorParams, false), ranges);
+  public PopulationHwHypothesesCreator(File input, GenomePriorParams genomePriorParams, ReferenceRanges<String> ranges, AlleleBalanceProbability alleleBalance) throws IOException {
+    this(input, new ModelSnpFactory(genomePriorParams, true, alleleBalance), new ModelSnpFactory(genomePriorParams, false, alleleBalance), ranges);
   }
 
 
