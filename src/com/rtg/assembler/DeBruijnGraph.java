@@ -15,20 +15,9 @@ package com.rtg.assembler;
 import java.util.Iterator;
 
 /**
+ * Definition of graph used in assembler.
  */
 public interface DeBruijnGraph extends Iterable<Kmer> {
-  /**
-   * Add the provided Kmer to the graph or increase it's count
-   * @param kmer the new kmer
-   */
-  //void add(Kmer kmer);
-
-  //void add(KmerIterableFactory factory);
-
-  /**
-   * Call after adding all hashes to perform any compacting of finalisation of the graph before starting to use it
-   */
-  //void freeze();
 
   /**
    * Retrieve the number of times the kmer occurred in the input data

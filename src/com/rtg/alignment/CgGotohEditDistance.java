@@ -67,7 +67,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
   static final int OVERLAP2_GAP = RealignParamsImplementation.CG_OVERLAP2;
 
   /** This is indexed by the above three constants. */
-  static final String[] GAP_NAME = {"Overlap", "Small", "Large", "Overlap2"};
+  private static final String[] GAP_NAME = {"Overlap", "Small", "Large", "Overlap2"};
 
   /** width of each number in the <code>toString</code> output */
   static final int FIELD_DP = 0;

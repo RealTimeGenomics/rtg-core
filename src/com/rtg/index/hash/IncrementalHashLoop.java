@@ -64,7 +64,6 @@ public abstract class IncrementalHashLoop extends HashLoop {
     }
     final SequenceMode mode = sequences.mode();
 
-    //assert reader.integrity();
     //number of codes to be ignored (unknown etc).
     final int firstCode = mode.codeType().firstValid();
     //the various possible frames (direction and phase for translation)

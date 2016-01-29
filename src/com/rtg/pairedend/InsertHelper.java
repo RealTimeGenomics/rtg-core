@@ -12,14 +12,14 @@
 package com.rtg.pairedend;
 
 /**
- * This class calculates the insert sizes for given pair
+ * This class calculates the insert sizes for given pair.
  */
 public final class InsertHelper {
 
   private InsertHelper() { }
 
   /**
-   * Calculate the fragment length for a given pair
+   * Calculate the fragment length for a given pair.
    * @param templateStart1 template start for first of the pair
    * @param readLen1 read length for first
    * @param templateStart2 template start for second of the pair
@@ -29,15 +29,13 @@ public final class InsertHelper {
   public static int calculateFragmentLength(int templateStart1, int readLen1, int templateStart2, int readLen2) {
     if (templateStart1 < templateStart2) {
       return calculateCorrectFragmentLength(templateStart1, readLen1, templateStart2, readLen2);
-      //      return Math.max(templateStart1 + readLen1, (templateStart2 + readLen2) - templateStart1);
     } else {
       return calculateCorrectFragmentLength(templateStart2, readLen2, templateStart1, readLen1);
-      //      return Math.max(templateStart2 + readLen2, (templateStart1 + readLen1) - templateStart2);
     }
   }
 
   /**
-   * Calculate the fragment length for a given pair
+   * Calculate the fragment length for a given pair.
    * @param first1 true iff the read referred to in <code>templateStart1</code> and <code>readLen1</code> is first of pair.
    * @param templateStart1 template start for first of the pair
    * @param readLen1 read length for first
