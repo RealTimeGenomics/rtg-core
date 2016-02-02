@@ -33,7 +33,9 @@ public enum CovariateEnum {
   /** base quality covariate */
   BASEQUALITY,
   /** template sequence covariate */
-  SEQUENCE;
+  SEQUENCE,
+  /** arm of read covariate */
+  ARM;
 
   /**
    * Create array of covariates from required covariate types.
@@ -77,6 +79,8 @@ public enum CovariateEnum {
         } else {
           return new CovariateSequenceFixed(SamUtils.getSequenceNames(header));
         }
+      case ARM:
+        return new CovariateArm();
       default:
         throw new IllegalArgumentException();
     }

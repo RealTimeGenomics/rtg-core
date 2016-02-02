@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 public class CovariateEnumTest extends TestCase {
 
   public void test() {
-    TestUtils.testEnum(CovariateEnum.class, "[READGROUP, READPOSITION, BASEQUALITY, SEQUENCE]");
+    TestUtils.testEnum(CovariateEnum.class, "[READGROUP, READPOSITION, BASEQUALITY, SEQUENCE, ARM]");
   }
 
   public void testDefaults() {
