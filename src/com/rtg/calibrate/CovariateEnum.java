@@ -35,7 +35,9 @@ public enum CovariateEnum {
   /** template sequence covariate */
   SEQUENCE,
   /** arm of read covariate */
-  ARM;
+  ARM,
+  /** machine cycle covariate (that is, position in read as sequenced) */
+  MACHINECYCLE;
 
   /**
    * Create array of covariates from required covariate types.
@@ -81,6 +83,8 @@ public enum CovariateEnum {
         }
       case ARM:
         return new CovariateArm();
+      case MACHINECYCLE:
+        return new CovariateMachineCycle(0);
       default:
         throw new IllegalArgumentException();
     }

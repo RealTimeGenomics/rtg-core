@@ -12,6 +12,7 @@
 package com.rtg.calibrate;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import com.rtg.util.TestUtils;
 
@@ -26,7 +27,7 @@ import junit.framework.TestCase;
 public class CovariateEnumTest extends TestCase {
 
   public void test() {
-    TestUtils.testEnum(CovariateEnum.class, "[READGROUP, READPOSITION, BASEQUALITY, SEQUENCE, ARM]");
+    TestUtils.testEnum(CovariateEnum.class, "[READGROUP, READPOSITION, BASEQUALITY, SEQUENCE, ARM, MACHINECYCLE]");
   }
 
   public void testDefaults() {
@@ -57,7 +58,7 @@ public class CovariateEnumTest extends TestCase {
     assertEquals(CovariateEnum.SEQUENCE, covs[2].getType());
     assertTrue(covs[2] instanceof CovariateSequenceFixed);
     header.addReadGroup(new SAMReadGroupRecord("readGroup2"));
-    covs = CovariateEnum.getCovariates(Arrays.asList(CovariateEnum.READGROUP), header);
+    covs = CovariateEnum.getCovariates(Collections.singletonList(CovariateEnum.READGROUP), header);
     assertEquals(1, covs.length);
     assertEquals(CovariateEnum.READGROUP, covs[0].getType());
     assertTrue(covs[0] instanceof CovariateReadGroup);
