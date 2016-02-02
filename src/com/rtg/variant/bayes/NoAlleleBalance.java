@@ -14,7 +14,7 @@ package com.rtg.variant.bayes;
 
 /**
  * Represents not adjusting for allele balance
- * Will return the multiplicative identity in logspace(0), so probability will not change
+ * Will return the multiplicative identity in log space(0), so probability will not change
  * @author kurt
  */
 public class NoAlleleBalance implements AlleleBalanceProbability {
