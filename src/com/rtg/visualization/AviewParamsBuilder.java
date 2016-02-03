@@ -48,7 +48,7 @@ class AviewParamsBuilder {
   protected int mMaxMatedAlignmentScore = Integer.MAX_VALUE;
   protected int mMaxUnmatedAlignmentScore = Integer.MAX_VALUE;
   protected int mMaxIhScore = Integer.MAX_VALUE;
-  protected int mMinMapq = 0;
+  protected int mMinMapQ = 0;
   protected int mMappingTolerance = 0;
   protected int mProjectTrackId = 0;
 
@@ -157,8 +157,8 @@ class AviewParamsBuilder {
     return this;
   }
 
-  AviewParamsBuilder minMapq(int minMapq) {
-    mMinMapq = minMapq;
+  AviewParamsBuilder minMapQ(int minMapq) {
+    mMinMapQ = minMapq;
     return this;
   }
 

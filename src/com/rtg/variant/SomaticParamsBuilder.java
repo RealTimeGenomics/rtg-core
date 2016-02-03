@@ -36,7 +36,7 @@ public class SomaticParamsBuilder {
       throw new IllegalArgumentException();
     }
     mSomaticRate = p;
-    return this;
+    return self();
   }
 
   /**
@@ -46,7 +46,7 @@ public class SomaticParamsBuilder {
    */
   public SomaticParamsBuilder includeGermlineVariants(boolean includeGermline) {
     mIncludeGermlineVariants = includeGermline;
-    return this;
+    return self();
   }
 
   /**
@@ -56,7 +56,7 @@ public class SomaticParamsBuilder {
    */
   public SomaticParamsBuilder includeGainOfReference(boolean includeGainOfReference) {
     mIncludeGainOfReference = includeGainOfReference;
-    return this;
+    return self();
   }
 
   /**
@@ -66,7 +66,7 @@ public class SomaticParamsBuilder {
    */
   public SomaticParamsBuilder siteSpecificSomaticPriors(final ReferenceRanges<Double> priors) {
     mSiteSpecificSomaticPriors = priors;
-    return this;
+    return self();
   }
 
   /**
@@ -79,9 +79,8 @@ public class SomaticParamsBuilder {
       throw new IllegalArgumentException();
     }
     mLohPrior = p;
-    return this;
+    return self();
   }
-
 
   /**
    * Creates a SomaticParams using the current builder configuration.
@@ -91,7 +90,7 @@ public class SomaticParamsBuilder {
     return new SomaticParams(this);
   }
 
-  private SomaticParamsBuilder self() {
+  protected SomaticParamsBuilder self() {
     return this;
   }
 }

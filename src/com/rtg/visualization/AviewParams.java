@@ -167,7 +167,7 @@ class AviewParams {
   private final int mMaxMatedAlignmentScore;
   private final int mMaxUnmatedAlignmentScore;
   private final int mMaxIhScore;
-  private final int mMinMapq;
+  private final int mMinMapQ;
   private final int mMappingTolerance;
   private final boolean mPrintCigars;
   private final boolean mPrintReadGroup;
@@ -193,7 +193,7 @@ class AviewParams {
     mMaxMatedAlignmentScore = aviewParamsBuilder.mMaxMatedAlignmentScore;
     mMaxUnmatedAlignmentScore = aviewParamsBuilder.mMaxUnmatedAlignmentScore;
     mMaxIhScore = aviewParamsBuilder.mMaxIhScore;
-    mMinMapq = aviewParamsBuilder.mMinMapq;
+    mMinMapQ = aviewParamsBuilder.mMinMapQ;
     mMappingTolerance = aviewParamsBuilder.mMappingTolerance;
     mUseTerminalColor = aviewParamsBuilder.mUseTerminalColor;
     mUseHtml = aviewParamsBuilder.mUseHtml;
@@ -251,7 +251,7 @@ class AviewParams {
      builder.maxIhScore((Integer) flags.getValue(MAX_IH_SCORE));
    }
    if (flags.isSet(MIN_MAPQ_SCORE)) {
-     builder.minMapq((Integer) flags.getValue(MIN_MAPQ_SCORE));
+     builder.minMapQ((Integer) flags.getValue(MIN_MAPQ_SCORE));
    }
    if (flags.isSet(MAX_MATED_ALIGNMENT_SCORE)) {
      builder.maxMatedAlignmentScore((Integer) flags.getValue(MAX_MATED_ALIGNMENT_SCORE));
@@ -362,8 +362,8 @@ class AviewParams {
     return mMaxUnmatedAlignmentScore;
   }
 
-  final int minMapq() {
-    return mMinMapq;
+  final int minMapQ() {
+    return mMinMapQ;
   }
 
   final int maxIhScore() {

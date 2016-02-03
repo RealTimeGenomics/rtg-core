@@ -82,7 +82,7 @@ public final class SamHelper {
     final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
     try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(files, 2, pf,
       SamFilterParams.builder()
-        .minMapQ(params.minMapq())
+        .minMapQ(params.minMapQ())
         .maxMatedAlignmentScore(new IntegerOrPercentage(params.maxMatedAlignmentScore()))
         .maxUnmatedAlignmentScore(new IntegerOrPercentage(params.maxUnmatedAlignmentScore()))
         .restriction(new SamRegionRestriction(params.region())).create(), header)) {
