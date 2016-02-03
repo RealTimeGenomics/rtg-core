@@ -14,27 +14,26 @@ package com.rtg.variant.bayes.multisample.singleton;
 
 import java.io.File;
 
+import com.rtg.AbstractTest;
 import com.rtg.launcher.MockReaderParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
-import com.rtg.util.test.FileHelper;
 import com.rtg.variant.AlleleCountsFileConverter;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
 
 import htsjdk.samtools.SAMFileHeader;
-import junit.framework.TestCase;
 
 /**
  */
-public class SingletonCallerConfigurationTest extends TestCase {
+public class SingletonCallerConfigurationTest extends AbstractTest {
 
   public void testCreation() throws Exception {
-    final File tmp = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory tmp = new TestDirectory()) {
       final File popFile = new File(tmp, "pop.vcf.gz");
       BgzipFileHelper.resourceToBgzipFile("com/rtg/variant/resources/pop58.vcf", popFile);
 
@@ -59,8 +58,6 @@ public class SingletonCallerConfigurationTest extends TestCase {
       assertTrue(config.getJointCaller() instanceof SingletonCaller);
 
       assertNotNull(config.getOutputFormatter(p));
-    } finally {
-      FileHelper.deleteAll(tmp);
     }
   }
 

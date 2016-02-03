@@ -16,17 +16,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.rtg.launcher.GlobalFlags;
-import com.rtg.util.cli.CommandLine;
+import com.rtg.AbstractTest;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-
-import junit.framework.TestCase;
 
 /**
  *
  */
-public abstract class AbstractModelBuilderTest<T extends AbstractModelBuilder<?>> extends TestCase {
+public abstract class AbstractModelBuilderTest<T extends AbstractModelBuilder<?>> extends AbstractTest {
   abstract T getModelBuilder(String[] formatAttributes, String[] infoAttributes, String[] derivedAttributes);
 
   ModelFactory getModelFactory(File file) throws IOException {
@@ -58,8 +55,6 @@ public abstract class AbstractModelBuilderTest<T extends AbstractModelBuilder<?>
   }
 
   public void testConstructor() {
-    GlobalFlags.resetAccessedStatus();
-    CommandLine.clearCommandArgs();
     final String[] formatAttributes = {"GP", "DP", "RE", "AB", "DP"};
     final String[] infoAttributes = {"XRX", "RCE", "SP", "RCE"};
     final String[] derivedAttributes = {"IC", "EP"};

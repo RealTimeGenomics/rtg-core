@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.zip.GZIPOutputStream;
 
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.mode.SequenceType;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.ngs.blocking.ReadBlocker;
@@ -32,45 +33,36 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
 
-import junit.framework.TestCase;
-
 /**
  */
-public class UnmatedSamResultsFilterTest extends TestCase {
+public class UnmatedSamResultsFilterTest extends AbstractNanoTest {
 
   private MockArraySequencesReader mTemplateReader;
-  private NanoRegression mNano;
 
   @Override
-  protected void setUp() {
+  public void setUp() throws IOException {
+    super.setUp();
     mTemplateReader = new MockArraySequencesReader(SequenceType.DNA, new int[] {62435964}, new String[] {"chr20"}) {
       @Override
       public PrereadType getPrereadType() {
         return PrereadType.UNKNOWN;
       }
     };
-    mNano = new NanoRegression(this.getClass());
   }
 
   @Override
-  protected void tearDown() throws Exception {
+  public void tearDown() throws IOException {
     mTemplateReader = null;
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
+    super.tearDown();
   }
 
   public void writeTempFile(File out) throws IOException {
-    final TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true, false));
-    try {
+    try (TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true, false))) {
       final BinaryTempFileRecord bar = new BinaryTempFileRecord(true, false, false, false);
 
 //  + "3\t129\t0\t28734\t30\t35M\t=\t0\t0\tACCT\t<<<<\tMF:i:18\tAS:i:0\n"
@@ -119,8 +111,6 @@ public class UnmatedSamResultsFilterTest extends TestCase {
 
       bar.setSentinelRecord();
       trw.writeRecord(bar);
-    } finally {
-      trw.close();
     }
   }
 

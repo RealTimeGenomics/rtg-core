@@ -19,6 +19,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.zip.GZIPOutputStream;
 
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.mode.SequenceType;
 import com.rtg.ngs.DummySamResultsFilterTest.StatusListener;
 import com.rtg.ngs.tempstage.BinaryTempFileRecord;
@@ -32,17 +33,15 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
-import junit.framework.TestCase;
 
 
 /**
  */
-public class SamResultsSansFilterTest extends TestCase {
+public class SamResultsSansFilterTest extends AbstractNanoTest {
 
   public void writeTempFile(File out) throws IOException {
     try (TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true, false))) {
@@ -99,22 +98,17 @@ public class SamResultsSansFilterTest extends TestCase {
 
 
   private MockArraySequencesReader mTemplateReader;
-  private NanoRegression mNano;
 
   @Override
-  protected void setUp() {
+  public void setUp() throws IOException {
     mTemplateReader = new MockArraySequencesReader(SequenceType.DNA, new int[] {62435964}, new String[] {"chr20"});
-    mNano = new NanoRegression(this.getClass());
+    super.setUp();
   }
 
   @Override
-  protected void tearDown() throws Exception {
+  public void tearDown() throws IOException {
     mTemplateReader = null;
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
+    super.tearDown();
   }
 
   public void testFilterUnmated() throws IOException {
@@ -132,7 +126,7 @@ public class SamResultsSansFilterTest extends TestCase {
 
         final StatusListener listener = new StatusListener(numReads);
 
-        final SequencesReader mr = new MockSequencesReader(SequenceType.DNA, 80, 4) {
+        try (SequencesReader mr = new MockSequencesReader(SequenceType.DNA, 80, 4) {
           @Override
           public int read(long index, byte[] out) {
             out[0] = 1;
@@ -161,8 +155,7 @@ public class SamResultsSansFilterTest extends TestCase {
             dest[0] = dest[1] = dest[2] = dest[3] = '<' - 33;
             return 4;
           }
-        };
-        try {
+        }) {
           final SamResultsSansFilter filter = new SamResultsSansFilter(listener, 0, mr, mr, null, false);
           assertEquals("Sans", filter.getName());
 
@@ -190,8 +183,6 @@ public class SamResultsSansFilterTest extends TestCase {
             }
             assertEquals("readId=" + read, expect, listener.getStatus(read));
           }
-        } finally {
-          mr.close();
         }
       } finally {
         if (out != null) {
