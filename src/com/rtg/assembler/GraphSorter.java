@@ -64,12 +64,12 @@ final class GraphSorter {
     public int compareTo(OriginalContig o) {
       final int limit = Math.min(o.mContig.length(), mContig.length());
       for (int i = 0; i < limit; i++) {
-        final int compare = Byte.valueOf(mContig.nt(i)).compareTo(o.mContig.nt(i));
+        final int compare = Byte.compare(mContig.nt(i), o.mContig.nt(i));
         if (compare != 0) {
           return compare;
         }
       }
-      return Integer.valueOf(mContig.length()).compareTo(o.mContig.length());
+      return Integer.compare(mContig.length(), o.mContig.length());
     }
     @Override
     public boolean equals(Object o) {

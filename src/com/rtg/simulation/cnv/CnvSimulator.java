@@ -124,7 +124,7 @@ public class CnvSimulator {
   protected static class FixedRegionComparator implements Comparator<FixedRegion>, Serializable {
     @Override
     public int compare(final FixedRegion o1, final FixedRegion o2) {
-      return Integer.valueOf((int) o1.mStartPosNullBased).compareTo((int) o2.mStartPosNullBased);
+      return Long.compare(o1.mStartPosNullBased, o2.mStartPosNullBased);
     }
   }
 

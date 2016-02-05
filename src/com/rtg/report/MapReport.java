@@ -96,7 +96,7 @@ public class MapReport extends MapSummaryReport {
       final File reportFile = new File(inputDir, MapReportData.MAP_REPORT_FILE_NAME);
       if (!(reportFile.exists() && checkVersion(reportFile))) {
         final MapReportData reportData = new MapReportData();
-        final List<File> samFiles = Arrays.asList(inputDir.listFiles(new SamBamFilter()));
+        final List<File> samFiles = Arrays.asList(FileUtils.listFiles(inputDir, new SamBamFilter()));
         if (samFiles.size() > 0) {
           final SamReadingContext context = new SamReadingContext(samFiles, 1, mFilter, SamUtils.getUberHeader(samFiles));
           try (final RecordIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {

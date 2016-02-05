@@ -129,7 +129,7 @@ public class ReadGroupStats {
   // XXX Assume 8 percent of the read length may have been erroneously aligned across a breakpoint due to alignment penalties.
   // This should really be passed in somewhere. We used to assume that mAlignmentStartIgnored == mMaxAlignment, but since our
   // alignment penalties have changed, this is no longer true.
-  private final int mAlignmentStartIgnoredFraction = 8;
+  private static final int ALIGNMENT_START_IGNORED_FRACTION = 8;
 
   // Derived from counts stored above
   private double mMeanLength;
@@ -303,7 +303,7 @@ public class ReadGroupStats {
       mProperRandomRate = mDiscordantRate * mUnmatedRate;
       // TODO we think this should be better:
       //mProperRandomRate = mDiscordantRate * (2 * mGapStdDev / mTotalReference);
-      mAlignmentStartIgnored = (int) (mMeanLength * mAlignmentStartIgnoredFraction / 100);
+      mAlignmentStartIgnored = (int) (mMeanLength * ALIGNMENT_START_IGNORED_FRACTION / 100);
     }
   }
 

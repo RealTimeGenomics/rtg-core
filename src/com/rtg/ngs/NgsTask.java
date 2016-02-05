@@ -59,6 +59,7 @@ import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.OneShotTimer;
 import com.rtg.util.intervals.RegionRestriction;
+import com.rtg.util.io.FileUtils;
 
 /**
  * Takes reads and a template and generates mappings.
@@ -136,8 +137,8 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
     }
   }
 
-  private List<File> findCalibrationFiles(final File dir) {
-    return Arrays.asList(dir.listFiles(new FilenameFilter() {
+  private List<File> findCalibrationFiles(final File dir) throws IOException {
+    return Arrays.asList(FileUtils.listFiles(dir, new FilenameFilter() {
       @Override
       public boolean accept(File dir, String name) {
         return name.endsWith(Recalibrate.EXTENSION);

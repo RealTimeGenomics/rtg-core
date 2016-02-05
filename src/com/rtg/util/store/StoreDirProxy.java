@@ -19,6 +19,7 @@ import java.util.TreeSet;
 
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
+import com.rtg.util.io.FileUtils;
 
 /**
  */
@@ -55,8 +56,8 @@ public class StoreDirProxy extends IntegralAbstract implements StoreDirectory {
   }
 
   @Override
-  public SortedSet<String> children() {
-    final File[] listFiles = mDir.listFiles();
+  public SortedSet<String> children() throws IOException {
+    final File[] listFiles = FileUtils.listFiles(mDir);
     final SortedSet<String> names = new TreeSet<>();
     for (final File file : listFiles) {
       if (file.isFile()) {

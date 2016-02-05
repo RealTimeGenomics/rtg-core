@@ -77,26 +77,23 @@ public class CombinedReport {
     final List<File> species = new ArrayList<>();
     final List<File> mapx = new ArrayList<>();
     for (File directory : mDirectories) {
-      final String[] files = directory.list(new Filter());
-      if (files != null) {
-        for (String name : files) {
-          switch (name) {
-            case "mapf.log":
-              mapf.add(directory);
-              break;
-            case "mapx.log":
-              mapx.add(directory);
-              break;
-            case "map.log":
-              map.add(directory);
-              break;
-            case "species.log":
-              species.add(directory);
-              break;
-            default:
-              // Can't do anything about directories we don't recognize
-              break;
-          }
+      for (String name : FileUtils.list(directory, new Filter())) {
+        switch(name) {
+          case "mapf.log" :
+            mapf.add(directory);
+            break;
+          case "mapx.log" :
+            mapx.add(directory);
+            break;
+          case "map.log" :
+            map.add(directory);
+            break;
+          case "species.log" :
+            species.add(directory);
+            break;
+          default:
+            // Can't do anything about directories we don't recognize
+            break;
         }
       }
     }

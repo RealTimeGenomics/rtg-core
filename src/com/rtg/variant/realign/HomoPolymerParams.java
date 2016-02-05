@@ -241,9 +241,9 @@ public class HomoPolymerParams extends IntegralAbstract {
         for (int r = 0; r < mTransitions[nt][t].length; r++) {
           final double v = mTransitions[nt][t][r];
           total = mArithmetic.add(total, v);
-          mArithmetic.isValidPoss(v);
+          Exam.assertTrue(mArithmetic.isValidPoss(v));
           final double vc = mTransitionsC[nt][t][r];
-          mArithmetic.isValidPoss(vc);
+          Exam.assertTrue(mArithmetic.isValidPoss(vc));
           Exam.assertTrue(MathUtils.approxEquals(mArithmetic.poss2Prob(v), 1.0 - mArithmetic.poss2Prob(vc), 0.000001));
         }
         if (mTransitions[nt][t].length > 0) {
