@@ -38,7 +38,6 @@ import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.multisample.MultisampleJointCaller;
-import com.rtg.variant.bayes.multisample.Utils;
 import com.rtg.variant.bayes.multisample.VariantAlleleTrigger;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.dna.DNARange;
@@ -199,12 +198,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     // Such calls must never have isInteresting set to true when they are returned
     // so that later complex calling does not muck with them.
 
-    boolean boring = Utils.hasOnlyRefCoverage(models);
-    if (mParams.callLevel() != VariantOutputLevel.ALL && boring) {
-      // Short-circuit case where all evidence matches the reference.
-      updateParameterEstimationCounts(null, code, 0, 0, 0);
-      return null;
-    }
+    boolean boring = false;
 
     final AbstractSomaticPosterior posterior = makePosterior(modelNormal, modelCancer, hypotheses, getSomaticPrior(templateName, position, endPosition));
     final boolean sameCall = posterior.isSameCall();

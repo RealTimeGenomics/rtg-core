@@ -111,6 +111,9 @@ final class ComplexCaller {
         // Make the calls
         final MultisampleJointCaller complexJointCaller = mConfig.getComplexJointCaller(sspHyp.get(models.get(0)), mParams, cot); /// The first argument is only needed by the cancer caller -- seems bogus.
         final Variant variant;
+        for (ModelInterface<?> model : models) {
+          model.freeze();
+        }
         final Variant variant0 = complexJointCaller.makeCall(refName, startOfRegion, endOfRegion, template, models, sspHyp);
 
         if (variant0 == null && mParams.callLevel() == VariantOutputLevel.ALL) {

@@ -75,6 +75,10 @@ public final class ModelNone<D extends Description> implements ModelInterface<D>
   }
 
   @Override
+  public void freeze() {
+  }
+
+  @Override
   public void statistics(StringBuilder sb, final HypothesesPrior<?> hypotheses) {
   }
 
@@ -113,4 +117,8 @@ public final class ModelNone<D extends Description> implements ModelInterface<D>
     return this;
   }
 
+  @Override
+  public ModelNone<D> copy() {
+    return new ModelNone<>(mHypotheses);
+  }
 }

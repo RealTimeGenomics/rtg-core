@@ -131,6 +131,7 @@ public class EvidenceMatcherTest extends TestCase {
     if (model == null) {
       return null;
     }
+    model.freeze();
     final Variant call = ModelTest.makeCalls(model, "G1", position, position + 1, template, params);
     return (call != null && call.isInteresting()) ? call : null;
   }

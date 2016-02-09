@@ -15,6 +15,7 @@ package com.rtg.variant.bayes.multisample.population;
 
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import com.rtg.variant.bayes.Code;
 import com.rtg.variant.bayes.Description;
@@ -185,7 +186,9 @@ public class Convergence {
       final EvidenceInterface ev = new EvidenceQ(mDescription, read, 0, 0, 0.01, mErrorRate, true, false, false, false);
       model.increment(ev);
     }
-    final HypothesisScores popCalls = mPopulation.getBestScores(mModels, new PriorContainer<>(new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, mHaploid, mDiploid), null));
+    final List<ModelInterface<?>> models = mModels.stream().map(ModelInterface::copy).collect(Collectors.toList());
+    models.stream().forEach(ModelInterface::freeze);
+    final HypothesisScores popCalls = mPopulation.getBestScores(models, new PriorContainer<>(new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, mHaploid, mDiploid), null));
     final int[] incorrect = new int[mDiploid.size()];
     for (int i = 0; i < mModels.size(); i++) {
       final int sample = mSample[i];

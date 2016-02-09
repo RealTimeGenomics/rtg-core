@@ -23,4 +23,9 @@ public interface EvidenceAcceptor {
    */
   void increment(EvidenceInterface evidence);
 
+  /**
+   * Signal that no more increments will occur. This allows the model to finalise it's posterior scores.
+   */
+  void freeze();
+
 }

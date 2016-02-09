@@ -19,6 +19,7 @@ import static com.rtg.util.StringUtils.TAB;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.rtg.util.MathUtils;
@@ -69,19 +70,21 @@ public class ModelTest extends TestCase {
   }
 
   public void testPosterior0() {
-    final double[] priors = {0.1, 0.4, 0.35, 0.15};
+    final double[] priors = {0.6, 0.1, 0.15, 0.15};
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final MockHypotheses<DescriptionCommon> hypotheses = new MockHypotheses<DescriptionCommon>(DescriptionSnp.SINGLETON, arith, true, priors, 0);
     final Model<?> mo = new MockModel<>(hypotheses, new StatisticsSnp(hypotheses.description()), null);
     assertTrue(mo.hypotheses() == hypotheses);
     assertEquals(4, mo.size());
 
+    mo.freeze();
     for (int i = 0; i < 4; i++) {
       assertEquals(0.0, mo.posteriorLn0(i));
     }
     final VariantParams params0 = VariantParams.builder().create();
-    final Variant call0 = makeCalls(mo, null, 42, 43, null, params0);
-    assertNull(call0);
+    final Variant call0 = makeCalls(mo, "A", 0, 1, new byte[] {0, 1, 1, 1}, params0);
+    assertEquals(Collections.emptyMap(), call0.getSample(0).getGenotypeLikelihoods());
+    assertEquals(true, call0.isInteresting());
   }
 
   //no increment force the posteriors
@@ -94,6 +97,7 @@ public class ModelTest extends TestCase {
     assertTrue(mo.hypotheses() == hypotheses);
     assertEquals(4, mo.size());
 
+    mo.freeze();
     for (int i = 0; i < 4; i++) {
       assertEquals(Math.log(post[i]), mo.posteriorLn0(i));
     }
@@ -126,6 +130,7 @@ public class ModelTest extends TestCase {
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 0);
     mo.increment(di);
 
+    mo.freeze();
     for (int i = 0; i < 4; i++) {
       assertEquals(Math.log(prob[i]), mo.posteriorLn0(i));
     }
@@ -165,6 +170,7 @@ public class ModelTest extends TestCase {
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 2);
     mo.increment(di);
 
+    mo.freeze();
     for (int i = 0; i < 4; i++) {
       assertEquals(Math.log(prob[i]), mo.posteriorLn0(i));
     }
@@ -196,6 +202,7 @@ public class ModelTest extends TestCase {
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 1);
     mo.increment(di);
 
+    mo.freeze();
     for (int i = 0; i < 4; i++) {
       assertEquals(Math.log(prob[i]), mo.posteriorLn0(i));
     }
@@ -226,13 +233,15 @@ public class ModelTest extends TestCase {
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 0);
     mo.increment(di);
 
+    mo.freeze();
     for (int i = 0; i < 4; i++) {
       assertEquals(Math.log(prob[i]), mo.posteriorLn0(i));
     }
 
     final VariantParams params = VariantParams.builder().callLevel(VariantOutputLevel.INTERESTING).create();
     final Variant call = makeCalls(mo, "foo", 42, 43, new byte[] {}, params);
-    assertNull(call);
+    assertEquals("G", call.getSample(0).getName());
+    assertEquals(0.3, call.getSample(0).getPosterior(), 1e-1);
   }
 
   //increment twice set trigger - suppress complex calls
@@ -247,6 +256,7 @@ public class ModelTest extends TestCase {
     mo.increment(di);
     mo.increment(di);
 
+    mo.freeze();
     for (int i = 0; i < 4; i++) {
       assertEquals(Math.log(prob[i] * prob[i]), mo.posteriorLn0(i));
     }
@@ -276,6 +286,7 @@ public class ModelTest extends TestCase {
     mo.increment(new MockEvidence(DescriptionSnp.SINGLETON, r, prob, 1));
     mo.increment(new MockEvidence(DescriptionSnp.SINGLETON, 0.51, prob, 1));
 
+    mo.freeze();
     for (int i = 0; i < 4; i++) {
       final double p = prob[i] * (1.0 - r) + r * 0.25;
       assertEquals(Math.log(p), mo.posteriorLn0(i));
@@ -308,6 +319,7 @@ public class ModelTest extends TestCase {
     final EvidenceInterface di1 = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 1);
     mo.increment(di1);
 
+    mo.freeze();
     for (int i = 0; i < 4; i++) {
       final double cube = prob[i] * prob[i] * prob[i];
       assertEquals(Math.log(cube), mo.posteriorLn0(i));
@@ -329,6 +341,7 @@ public class ModelTest extends TestCase {
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 0);
     mo.increment(di);
 
+    mo.freeze();
     for (int i = 0; i < 4; i++) {
       assertEquals(Math.log(prob[i]), mo.posteriorLn0(i));
     }
@@ -361,6 +374,7 @@ public class ModelTest extends TestCase {
     final EvidenceInterface di = new MockEvidence(DescriptionSnp.SINGLETON, 0.0, prob, 0);
     mo.increment(di);
 
+    mo.freeze();
     assertEquals(Math.log(prob[0]), mo.posteriorLn0(0));
 
     assertEquals(Math.log(prob[1]), mo.posteriorLn0(1));
@@ -400,6 +414,7 @@ public class ModelTest extends TestCase {
     };
     mo.increment(di);
 
+    mo.freeze();
     assertEquals(-0.4269, mo.posteriorLn0(0), 0.0001);
 
     assertEquals(-1.4806, mo.posteriorLn0(1), 0.0001);
@@ -417,14 +432,6 @@ public class ModelTest extends TestCase {
 
   private static final VariantOutputVcfFormatter FORMATTER = new VariantOutputVcfFormatter();
 
-  public void testNonRefCount0a() {
-    final OldHypotheses hy = new OldHypotheses(new double[] {0.1, 0.2, 0.7}, 0);
-    final MockModel<?> ba = new MockModel<>(hy, new StatisticsSnp(hy.description()), null);
-    ba.integrity();
-
-    assertEquals(0, ba.statistics().nonRefCount());
-    assertNull(makeCalls(ba, null, 0, 1, new byte[] {}, VariantParams.builder().create()));
-  }
 
   //check that nonref count is unchanged under increments by ref
   public void testNonRefCount1() {
@@ -457,15 +464,30 @@ public class ModelTest extends TestCase {
   }
 
   public void testCoverageThreshold() {
+    final Variant vo = getCoverageVariant(4);
+    final String bostr = FORMATTER.formatCall(vo);
+    //    assertTrue(vo.isAllowOutput());
+    assertTrue(bostr, bostr.contains("PASS"));
+
+    final Variant vo2 = getCoverageVariant(5);
+    assertTrue(vo2.isInteresting());
+    final String bostr2 = FORMATTER.formatCall(vo2);
+    assertTrue(bostr2, bostr2.contains("OC"));
+    assertFalse(bostr2, bostr2.contains("PASS"));
+  }
+
+  private Variant getCoverageVariant(int evidenceCount) {
     final OldHypotheses hy = new OldHypotheses(new double[] {0.1, 0.1, 0.2, 0.7}, 0);
     final MockModel<?> ba = new MockModel<>(hy, new StatisticsSnp(hy.description()), null);
     ba.integrity();
 
     final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.1, 0.1, true, false, false, false);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < evidenceCount; i++) {
       ba.increment(di);
     }
     ba.integrity();
+    ba.freeze();
+
 
     final String prefix = "x";
     final VariantParams options = VariantParams.builder()
@@ -473,33 +495,11 @@ public class ModelTest extends TestCase {
         .maxAmbiguity(0.1)
         .create();
     // within coverage threshold
-    final Variant vo = makeCalls(ba, prefix, 0, 1, new byte[] {}, options);
-    final String bostr = FORMATTER.formatCall(vo);
-    //    assertTrue(vo.isAllowOutput());
-    assertTrue(bostr, bostr.contains("PASS"));
-
-    ba.increment(di);
-
-    // outside coverage threshold
-    final Variant vo2 = makeCalls(ba, prefix, 0, 1, new byte[] {}, options);
-    assertTrue(vo2.isInteresting());
-    final String bostr2 = FORMATTER.formatCall(vo2);
-    assertTrue(bostr2, bostr2.contains("OC"));
-    assertFalse(bostr2, bostr2.contains("PASS"));
+    return makeCalls(ba, prefix, 0, 1, new byte[] {}, options);
   }
 
   public void testIHThreshold() {
-    final OldHypotheses hy = new OldHypotheses(new double[] {0.1, 0.1, 0.2, 0.7}, 0);
-    final MockModel<?> ba = new MockModel<>(hy, new StatisticsSnp(hy.description()), null);
-    ba.integrity();
 
-    final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.49, 0.1, true, false, false, false);
-    for (int i = 0; i < 9; i++) {
-      ba.increment(di);
-    }
-    final EvidenceInterface di1 = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.51, 0.1, true, false, false, false);
-    ba.increment(di1);
-    ba.integrity();
 
     final String prefix = "x";
     final VariantParams options = VariantParams.builder()
@@ -509,14 +509,20 @@ public class ModelTest extends TestCase {
     final VariantOutputVcfFormatter formatter = new VariantOutputVcfFormatter(options, "SAMPLE");
 
     // within IHRatio
+    MockModel<?> ba = incrementIHModel(1);
+    ba.integrity();
+    ba.freeze();
     //System.err.println(IntegralAbstract.toString(ba));
     final Variant vo = makeCalls(ba, prefix, 0, 1, new byte[] {}, options);
     assertTrue(vo.isInteresting());
     final String bostr = formatter.formatCall(vo);
     assertTrue(bostr, bostr.contains("PASS"));
-    ba.increment(di1);
+
 
     // outside IHRatio
+    ba = incrementIHModel(2);
+    ba.integrity();
+    ba.freeze();
     final Variant vo2 = makeCalls(ba, prefix, 0, 1, new byte[] {}, options);
     assertTrue(vo2.isInteresting());
     final String bostr2 = formatter.formatCall(vo2);
@@ -524,12 +530,30 @@ public class ModelTest extends TestCase {
     assertFalse(bostr2, bostr2.contains("PASS"));
   }
 
+  private MockModel<?> incrementIHModel(int ihCount) {
+    final OldHypotheses hy = new OldHypotheses(new double[] {0.1, 0.1, 0.2, 0.7}, 0);
+    final MockModel<?> ba = new MockModel<>(hy, new StatisticsSnp(hy.description()), null);
+    ba.integrity();
+
+    final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.49, 0.1, true, false, false, false);
+    for (int i = 0; i < 9; i++) {
+      ba.increment(di);
+    }
+
+    final EvidenceInterface di1 = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.51, 0.1, true, false, false, false);
+    for (int i = 0; i < ihCount; i++) {
+      ba.increment(di1);
+    }
+
+    return ba;
+  }
+
 
   public void testPosteriorThreshold2() {
     final OldHypotheses hy = new OldHypotheses(new double[] {0.01, 0.89, 0.05, 0.05}, 1);
     final MockModel<?> ba = new MockModel<>(hy, new StatisticsSnp(hy.description()), null);
     ba.integrity();
-
+    ba.freeze();
     final Variant vo = makeCalls(ba, "x", 0, 1, new byte[] {}, VariantParams.builder().create());
     assertNull(vo);
   }

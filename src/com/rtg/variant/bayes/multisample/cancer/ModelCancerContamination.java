@@ -50,6 +50,14 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
     mContaminationM = 1.0 - mContamination;
   }
 
+  public ModelCancerContamination(ModelCancerContamination<S> original) {
+    super(original);
+    mSubHypotheses = original.mSubHypotheses;
+    mContamination = original.mContamination;
+    mContaminationM = original.mContaminationM;
+
+  }
+
   private double[] oneDprob(final EvidenceInterface evidence) {
     final Code code = mSubHypotheses.code();
     final double[] probs = new double[mSubHypotheses.size()];
@@ -112,6 +120,12 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
       }
       sb.append(LS);
     }
+  }
+
+
+  @Override
+  public ModelCancerContamination<S> copy() {
+    return new ModelCancerContamination<>(this);
   }
 
 }

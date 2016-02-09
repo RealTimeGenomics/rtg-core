@@ -137,6 +137,9 @@ public abstract class AbstractFamilyPosteriorTest extends TestCase {
 
 
   protected AbstractFamilyPosterior getFamilyPosterior(final GenomePriorParams priors, final HaploidDiploidHypotheses<HypothesesPrior<Description>> hdh, final List<ModelInterface<?>> models, final Family family) {
+    for (ModelInterface<?> model : models) {
+      model.freeze();
+    }
     return new FamilyPosterior(family, priors, models, hdh);
   }
 

@@ -68,6 +68,8 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
       cancer.increment(evg);
       normal.increment(evc);
     }
+    cancer.freeze();
+    normal.freeze();
     return new SomaticPosteriorContaminated((normal.haploid() ? cc.mQHaploidFactory : cc.mQDiploidFactory).somaticQ(0.001), normal, cancer, hypotheses, 1, 1);
   }
 
@@ -94,7 +96,8 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
   }
 
   public void testPosteriorAllSame() {
-    final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) PureSomaticCallerTest.EQUALS_REF_A.get(0).hypotheses();
+    final ModelInterface<Description> normal = PureSomaticCallerTest.EQUALS_REF_A.get(0);
+    final HypothesesPrior<?> hypotheses = (HypothesesPrior<?>) normal.hypotheses();
     final VariantParams params = VariantParams.builder().somaticParams(new SomaticParamsBuilder().somaticRate(0.001).create()).create();
     final ContaminatedSomaticCaller cc = new ContaminatedSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0), new SomaticPriorsFactory<>(hypotheses, 0), params, 1, 1);
     cc.integrity();
@@ -104,14 +107,13 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
     final Hypotheses<Description> simpleHomoHyps = AbstractSomaticCallerTest.simpleHomoHyps(0.99, refCode);
     final HypothesesCancer<Hypotheses<Description>> hypc = new HypothesesCancer<>(simpleHomoHyps, SimplePossibility.SINGLETON);
     final ModelCancerContamination<Hypotheses<Description>> cancer = new ModelCancerContamination<>(hypc, 0.0, new StatisticsSnp(hypc.description()), new NoAlleleBalance());
-    final ModelInterface<Description> normal = new Model<>(simpleHomoHyps, new StatisticsSnp(simpleHomoHyps.description()), new NoAlleleBalance());
     final Evidence eva = new EvidenceQ(simpleHomoHyps.description(), 0, 0, 0, 0.05, 0.05, true, false, false, false);
     // run through several identical reads
     for (int i = 0; i < numReads; i++) {
       cancer.increment(eva);
-      normal.increment(eva);
     }
-    final AbstractSomaticPosterior post = new SomaticPosteriorContaminated((hypotheses.haploid() ? cc.mQHaploidFactory : cc.mQDiploidFactory).somaticQ(0.001), PureSomaticCallerTest.EQUALS_REF_A.get(0), cancer, hypotheses, 1, 1);
+    cancer.freeze();
+    final AbstractSomaticPosterior post = new SomaticPosteriorContaminated((hypotheses.haploid() ? cc.mQHaploidFactory : cc.mQDiploidFactory).somaticQ(0.001), normal, cancer, hypotheses, 1, 1);
     assertEquals(SomaticPosteriorPureTest.EXPECT_ALL_SAME, post.toString());
     assertEquals(0, post.bestNormal());
     assertEquals(0, post.bestCancer());

@@ -50,6 +50,9 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
 
   @Override
   protected AbstractFamilyPosterior getFamilyPosterior(final GenomePriorParams priors, final HaploidDiploidHypotheses<HypothesesPrior<Description>> hdh, final List<ModelInterface<?>> models, final Family family) {
+    for (ModelInterface<?> model : models) {
+      model.freeze();
+    }
     return new FamilyPosterior(family, priors, models, hdh);
   }
 
@@ -71,6 +74,9 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
   }
 
   protected AbstractFamilyPosterior getFamilyPosterior(List<ModelInterface<?>> models, Family family) {
+    for (ModelInterface<?> model : models) {
+      model.freeze();
+    }
     return new FamilyPosterior(family, mPriors, models, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, null, mHypotheses));
   }
 
@@ -392,22 +398,22 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
     assertTrue(fp.isInteresting());
   }
 
-  public void testBorderChildCase() throws IOException, InvalidParamsException {
-    final int readCount = 30;
+  private ModelInterface<?> createModel(int aCount, int cCount) {
     final ModelInterface<?> childModel = getModel();
-
-    for (int i = 0; i < readCount; i++) {
+    for (int i = 0; i < aCount; i++) {
       childModel.increment(new EvidenceQ(DescriptionSnp.SINGLETON, A, 0, 0, 0.1, 0.2, true, false, false, false));
     }
-    int callThreshold = 0;
-    while (true) {
-      final Variant v = ModelTest.makeCalls(childModel, "blah", 0, 1, new byte[] {}, VariantParams.builder().callLevel(VariantOutputLevel.ALL).create());
-      if (!v.getSample(0).getName().equals("A:A")) {
-        break;
-      }
+
+    for (int i = 0; i < cCount; i++) {
       childModel.increment(new EvidenceQ(DescriptionSnp.SINGLETON, C, 0, 0, 0.1, 0.2, true, false, false, false));
-      callThreshold++;
     }
+    childModel.freeze();
+    return childModel;
+  }
+
+  public void testBorderChildCase() throws IOException, InvalidParamsException {
+    final int readCount = 30;
+    final int callThreshold = getCallThreshold(readCount);
     // callThreshold is now the number of C reads required to convert an A call to A:C
 
 
@@ -454,19 +460,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
 
   public void testBorderParentCase() throws IOException, InvalidParamsException {
     final int readCount = 50;
-    final ModelInterface<?> childModel = getModel();
-    for (int i = 0; i < readCount; i++) {
-      childModel.increment(new EvidenceQ(DescriptionSnp.SINGLETON, A, 0, 0, 0.1, 0.2, true, false, false, false));
-    }
-    int callThreshold = 0;
-    while (true) {
-      final Variant v = ModelTest.makeCalls(childModel, "blah", 0, 1, new byte[] {}, VariantParams.builder().callLevel(VariantOutputLevel.ALL).create());
-      if (!v.getSample(0).getName().equals("A:A")) {
-        break;
-      }
-      childModel.increment(new EvidenceQ(DescriptionSnp.SINGLETON, C, 0, 0, 0.1, 0.2, true, false, false, false));
-      callThreshold++;
-    }
+    final int callThreshold = getCallThreshold(readCount);
     // callThreshold is now the number of C reads required to convert an A call to A:C
 
     final ModelInterface<?> father = getModel();
@@ -507,6 +501,19 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
     assertEquals("A:A", mHypotheses.name(bestFather.hypothesis()));
     assertEquals("A:C", mHypotheses.name(bestMother.hypothesis()));
     assertEquals("A:C", mHypotheses.name(bestChild1.hypothesis()));
+  }
+
+  private int getCallThreshold(int readCount) {
+    int callThreshold = 0;
+    while (true) {
+      ModelInterface<?> childModel = createModel(readCount, callThreshold);
+      final Variant v = ModelTest.makeCalls(childModel, "blah", 0, 1, new byte[] {}, VariantParams.builder().callLevel(VariantOutputLevel.ALL).create());
+      if (!v.getSample(0).getName().equals("A:A")) {
+        break;
+      }
+      callThreshold++;
+    }
+    return callThreshold;
   }
 
   public void testDenovoPosterior() throws Exception {

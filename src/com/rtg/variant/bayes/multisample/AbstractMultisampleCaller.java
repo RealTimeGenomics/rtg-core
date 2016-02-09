@@ -19,7 +19,6 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.mode.DnaUtils;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantLocus;
-import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantOutputOptions;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantSample;
@@ -65,11 +64,6 @@ public abstract class AbstractMultisampleCaller implements MultisampleJointCalle
 
   @Override
   public <D extends Description, T extends HypothesesPrior<D>> Variant makeCall(String templateName, int position, int endPosition, byte[] ref, List<ModelInterface<?>> models, HaploidDiploidHypotheses<T> hypotheses) {
-
-    final boolean onlyRefCoverage = Utils.hasOnlyRefCoverage(models);
-    if (getParams().callLevel() != VariantOutputLevel.ALL && onlyRefCoverage) {
-      return null;
-    }
 
     final ComparisonResult result = makeSamples(models, hypotheses);
     if (result == null) {

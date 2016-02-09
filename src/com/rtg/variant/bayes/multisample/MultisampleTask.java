@@ -61,6 +61,7 @@ import com.rtg.variant.Variant.VariantFilter;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantAlignmentRecordPopulator;
 import com.rtg.variant.VariantLocus;
+import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.avr.ModelFactory;
@@ -238,7 +239,17 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
             }
             if (refHyp != Integer.MIN_VALUE) {
               final HaploidDiploidHypotheses<HypothesesPrior<Description>> hypotheses = mConfig.getSnpHypotheses(refHyp, refName, pos);
-              final Variant variant = jointCaller.makeCall(refName, pos, pos + 1, template, models, hypotheses);
+              final Variant variant;
+              final boolean onlyRefCoverage = Utils.hasOnlyRefCoverage(models);
+              if (mParams.callLevel() != VariantOutputLevel.ALL && onlyRefCoverage) {
+                variant = null;
+              } else {
+                for (ModelInterface<?> model : models) {
+                  model.freeze();
+                }
+                variant = jointCaller.makeCall(refName, pos, pos + 1, template, models, hypotheses);
+              }
+
               if (variant != null) {
                 calls.add(variant);
               }

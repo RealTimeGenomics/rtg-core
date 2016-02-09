@@ -134,6 +134,7 @@ public class PopulationCallerTest extends TestCase {
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
+    freezeModels(b);
     final Variant v = pc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploidHypotheses(params, refNt), diploidHypotheses(params, refNt)));
     final String str = makeFormatter(vParams, 4).formatCall(v);
     //System.err.println(str);
@@ -159,6 +160,7 @@ public class PopulationCallerTest extends TestCase {
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
+    freezeModels(b);
     final Variant v = pc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploidHypotheses(params, refNt), diploidHypotheses(params, refNt)));
     final String str = makeFormatter(vParams, 4).formatCall(v);
     //System.err.println(str);
@@ -181,6 +183,7 @@ public class PopulationCallerTest extends TestCase {
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 0;
+    freezeModels(b);
     final Variant v = pc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploidHypotheses(params, refNt), diploidHypotheses(params, refNt)));
     assertNotNull(v);
   }
@@ -198,6 +201,7 @@ public class PopulationCallerTest extends TestCase {
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
+    freezeModels(b);
     final Variant v = pc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploidHypotheses(params, refNt), diploidHypotheses(params, refNt)));
     assertNull(v);
   }
@@ -215,6 +219,7 @@ public class PopulationCallerTest extends TestCase {
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
+    freezeModels(b);
     final Variant v = pc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploidHypotheses(params, refNt), diploidHypotheses(params, refNt)));
     assertNull(v);
   }
@@ -231,6 +236,7 @@ public class PopulationCallerTest extends TestCase {
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
+    freezeModels(b);
     final Variant v = pc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploidHypotheses(params, refNt), diploidHypotheses(params, refNt)));
     assertNotNull(v);
     assertFalse(v.isInteresting());
@@ -249,6 +255,7 @@ public class PopulationCallerTest extends TestCase {
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
+    freezeModels(b);
     final Variant v = pc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploidHypotheses(params, refNt), diploidHypotheses(params, refNt)));
     assertNotNull(v);
     assertFalse(v.isInteresting());
@@ -269,6 +276,7 @@ public class PopulationCallerTest extends TestCase {
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
+    freezeModels(b);
     final Variant v = pc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploidHypotheses(params, refNt), diploidHypotheses(params, refNt)));
     assertNotNull(null, v);
     assertTrue(v.isInteresting());
@@ -296,6 +304,7 @@ public class PopulationCallerTest extends TestCase {
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
+    freezeModels(b);
     final Variant v = pc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploidHypotheses(params, refNt), diploidHypotheses(params, refNt)));
     assertNotNull(null, v);
     assertTrue(v.isInteresting());
@@ -330,6 +339,7 @@ public class PopulationCallerTest extends TestCase {
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
+    freezeModels(b);
     final Variant v = pc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploidHypotheses(params, refNt), diploidHypotheses(params, refNt)));
     assertNotNull(null, v);
     assertTrue(v.isInteresting());
@@ -401,6 +411,7 @@ public class PopulationCallerTest extends TestCase {
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
+    freezeModels(b);
     final Variant v = pc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, hypothesesSnp, diploid));
     assertTrue(v.toString(), v.isInteresting());
     /* if USE_FB_FALLBACK
@@ -550,6 +561,7 @@ public class PopulationCallerTest extends TestCase {
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
+    freezeModels(models);
     final Variant v = pc.makeCall("foo", 20, 21, ref, models, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploid, diploid));
 //    System.err.println("v = " + v);
     final String[] expected = {"C:C", "C:C", "C:C", "C:C", "C:G", "G:G", "G:G", "G:G"};
@@ -563,6 +575,13 @@ public class PopulationCallerTest extends TestCase {
     assertTrue(v.toString(), v.isInteresting());
 
   }
+
+  private void freezeModels(List<ModelInterface<?>> models) {
+    for (ModelInterface<?> model : models) {
+      model.freeze();
+    }
+  }
+
   static final String REAL_WORLD_PEDIGREE = ""
                                             + "Lyon_10\tLID57249\t0\t0\t1\t1" + LS
                                             + "Lyon_10\tLID57242\t0\t0\t2\t1" + LS
@@ -607,7 +626,7 @@ public class PopulationCallerTest extends TestCase {
     final FamilyCaller familyCaller = new FamilyCaller(vParams, families);
     final PopulationCaller pc = new PopulationCaller(vParams, familyCaller);
     final int refNt = 3;
-    final List<ModelInterface<Description>> models = new ArrayList<>();
+    final List<ModelInterface<?>> models = new ArrayList<>();
     final HypothesesSnp haploid =  new HypothesesSnp(LogApproximatePossibility.SINGLETON, params, true, refNt - 1);
     final HypothesesSnp diploid =  new HypothesesSnp(LogApproximatePossibility.SINGLETON, params, false, refNt - 1);
 
@@ -633,6 +652,7 @@ public class PopulationCallerTest extends TestCase {
     final byte[] ref = new byte[21];
     ref[19] = 3;
     ref[20] = 1;
+    freezeModels(models);
     final Variant v = pc.makeCall("foo", 20, 21, ref, new ArrayList<ModelInterface<?>>(models), new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploid, diploid));
     final String[] expected = {"A:G", "A:G", "A:G", "A:G", "G:G", "A:G", "G:G", "A:G", "A:G", "A:G"};
     for (int i = 0; i < v.getNumberOfSamples(); i++) {

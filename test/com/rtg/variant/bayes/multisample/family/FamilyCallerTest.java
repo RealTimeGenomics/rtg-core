@@ -141,6 +141,9 @@ public class FamilyCallerTest extends TestCase {
       b.add(new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance()));
       increment(b.get(i), members[i]);
     }
+    for (ModelInterface<?> modelInterface : b) {
+      modelInterface.freeze();
+    }
     return b;
   }
 
@@ -322,9 +325,11 @@ public class FamilyCallerTest extends TestCase {
     final Hypotheses<Description> hypotheses = haploidHypotheses(params, 1);
     Model<Description> model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
     increment(model, "CCCCC");
+    model.freeze();
     b.add(Family.FATHER_INDEX, model);
     model = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
     increment(model, "AACCCCC");
+    model.freeze();
     b.add(model);
     final MultisampleJointCaller fc = getFamilyCaller(makeFamily("f", "m", "c1", "c2", "c3", "c4"), vParams);
     final byte[] ref = new byte[21];

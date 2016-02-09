@@ -140,8 +140,9 @@ public class CancerConvergenceTest extends TestCase {
           cancerModel.increment(evidence1);
         }
         final List<ModelInterface<?>> models = new ArrayList<>();
-        models.add(normalModel);
-        models.add(cancerModel);
+        models.add(normalModel.copy());
+        models.add(cancerModel.copy());
+        models.stream().forEach(ModelInterface::freeze);
         final Variant v = jointCaller.makeCall("refName", 0, 1, ref, models, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, hypothesesHaploid, hypotheses));
         if (v != null) {
           final String normal = v.getSample(0).getName();
@@ -175,7 +176,7 @@ public class CancerConvergenceTest extends TestCase {
     for (int k = 7; k < correct00.length; k++) {
       assertTrue(correct00[k] >= k);
       assertTrue(correct01[k] >= k);
-      assertTrue(correct02[k] >= k - 3);
+      assertTrue(correct02[k] + " >= " + (k - 3), correct02[k] >= k - 3);
     }
   }
 

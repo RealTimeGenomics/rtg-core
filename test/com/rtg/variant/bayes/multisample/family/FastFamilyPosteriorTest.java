@@ -41,11 +41,17 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
       for (final ModelInterface<?> m : models) {
         list.add(m);
       }
+      for (ModelInterface<?> model : models) {
+        model.freeze();
+      }
       return new FastFamilyPosterior(family, priors, list, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, null, mHypotheses));
   }
 
   @Override
   protected AbstractFamilyPosterior getFamilyPosterior(final GenomePriorParams priors, final HaploidDiploidHypotheses<HypothesesPrior<Description>> hdh, final List<ModelInterface<?>> models, final Family family) {
+    for (ModelInterface<?> model : models) {
+      model.freeze();
+    }
     return new FastFamilyPosterior(family, priors, models, hdh);
   }
 
@@ -74,11 +80,13 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
       //incrementCats(father, new ProbabilityQ(r.nextBoolean() ? fa : fb, r.nextDouble()));
       father.increment(new EvidenceQ(DescriptionSnp.SINGLETON, r.nextBoolean() ? fa : fb, 0, 0, 0.1, r.nextDouble(), true, false, false, false));
     }
+    father.freeze();
     // Add reads for mother
     for (int i = 0; i < mc; i++) {
       //incrementCats(mother, new ProbabilityQ(r.nextBoolean() ? ma : mb, r.nextDouble()));
       mother.increment(new EvidenceQ(DescriptionSnp.SINGLETON, r.nextBoolean() ? ma : mb, 0, 0, 0.1, r.nextDouble(), true, false, false, false));
     }
+    mother.freeze();
     // Note: this always does Mendelian valid children
     for (int i = 0; i < numChildren; i++) {
       // Choose genotype of child
@@ -91,7 +99,9 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
         //incrementCats(child, new ProbabilityQ(r.nextBoolean() ? ca : cb, r.nextDouble()));
         child.increment(new EvidenceQ(DescriptionSnp.SINGLETON, r.nextBoolean() ? ca : cb, 0, 0, 0.1, r.nextDouble(), true, false, false, false));
       }
+      child.freeze();
     }
+
     final GenomePriorParams priors = getGenomePriorParams();
     final Family family = FamilyCallerTest.makeFamily("f", "m", children.toArray(new String[children.size()]));
     final AbstractFamilyPosterior slow = new FamilyPosterior(family, priors, models, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, null, mHypotheses));

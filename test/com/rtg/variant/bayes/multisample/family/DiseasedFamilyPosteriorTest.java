@@ -274,6 +274,9 @@ public class DiseasedFamilyPosteriorTest extends TestCase {
     list.add(father);
     list.add(mother);
     list.add(child);
+    for (ModelInterface<?> modelInterface : list) {
+      modelInterface.freeze();
+    }
     final DiseasedFamilyPosterior diseased = getDiseasedFamily(family, 0, list);
     //System.err.println(dumpMarginals(diseased));
     assertEquals(0, diseased.bestDisease().hypothesis());
@@ -302,6 +305,9 @@ public class DiseasedFamilyPosteriorTest extends TestCase {
     list.add(father);
     list.add(mother);
     list.add(child);
+    for (ModelInterface<?> modelInterface : list) {
+      modelInterface.freeze();
+    }
     final DiseasedFamilyPosterior diseased = getDiseasedFamily(family, 0, list);
     //System.err.println(dumpMarginals(diseased));
     assertEquals(0, diseased.bestDisease().hypothesis());
@@ -330,6 +336,9 @@ public class DiseasedFamilyPosteriorTest extends TestCase {
     list.add(father);
     list.add(mother);
     list.add(child);
+    for (ModelInterface<?> modelInterface : list) {
+      modelInterface.freeze();
+    }
     final DiseasedFamilyPosterior diseased = getDiseasedFamily(family, 1 /*refNt=C*/, list);
     //System.err.println(dumpMarginals(diseased));
 

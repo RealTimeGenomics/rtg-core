@@ -421,6 +421,7 @@ public class EvidenceComplexTest extends TestCase {
       for (final AlignmentMatch match : ml) {
         m.increment(new EvidenceComplex(hyp, match, HypothesesComplexTest.COMPLEX_TEMPLATE, vp, getChooser()));
       }
+      m.freeze();
       assertEquals(0, statistics.placedUnmappedCount());
       for (int i = 0 ; i < m.size(); i++) {
         assertFalse(Double.isInfinite(m.posteriorLn0(i)));
@@ -708,6 +709,7 @@ public class EvidenceComplexTest extends TestCase {
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), HypothesesComplexTest.COMPLEX_TEMPLATE.getLength());
     final ModelInterface<?> m = getModel(hyp, statistics);
     m.increment(new EvidenceComplex(hyp, match, HypothesesComplexTest.COMPLEX_TEMPLATE, vp, getChooser()));
+    m.freeze();
     for (int i = 0 ; i < m.size(); i++) {
       assertFalse(Double.isInfinite(m.posteriorLn0(i)));
       assertFalse(Double.isNaN(m.posteriorLn0(i)));

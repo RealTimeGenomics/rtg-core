@@ -54,7 +54,11 @@ public class SingletonCallerTest extends TestCase {
         .genomePriors(GenomePriorParams.builder().create())
         .create();
     final SingletonCaller sc = new SingletonCaller(p);
-    assertNull(sc.makeCall("test", 3, 4, new byte[] {0, 1, 2, 3, 4, 5}, list, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, null, null)));
+    for (ModelInterface<?> modelInterface : list) {
+      modelInterface.freeze();
+    }
+    final Variant test = sc.makeCall("test", 3, 4, new byte[]{0, 1, 2, 3, 1, 1}, list, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, hypotheses, null));
+    assertEquals("C", test.getSample(0).getName());
   }
 
   public void testCorrect() {
@@ -70,6 +74,9 @@ public class SingletonCallerTest extends TestCase {
         .create();
     for (int i = 0; i < 10; i++) {
       list.get(0).increment(new EvidenceQ(hypotheses.description(), 3, 0, 0, 0.01, 0.1, true, false, false, false));
+    }
+    for (ModelInterface<?> modelInterface : list) {
+      modelInterface.freeze();
     }
     final SingletonCaller sc = new SingletonCaller(p);
     final Variant v = sc.makeCall("test", 3, 4, new byte[] {0, 1, 2, 3, 4, 5}, list, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, hypotheses, null));
@@ -93,6 +100,9 @@ public class SingletonCallerTest extends TestCase {
         .create();
     for (int i = 0; i < 10; i++) {
       list.get(0).increment(new EvidenceQ(hypotheses.description(), 3, 0, 0, 0.01, 0.1, true, false, false, false));
+    }
+    for (ModelInterface<?> modelInterface : list) {
+      modelInterface.freeze();
     }
     final SingletonCaller sc = new SingletonCaller(p);
     final Variant v = sc.makeCall("test", 0, 1, new byte[] {1, 1, 2, 3, 4, 5}, list, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, hypotheses, null));

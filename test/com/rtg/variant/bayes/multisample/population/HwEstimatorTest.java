@@ -102,6 +102,9 @@ public class HwEstimatorTest extends AbstractEstimatorTest {
       }
     };
     mModels.add(nullModel);
+    for (ModelInterface<?> modelInterface : mModels) {
+      modelInterface.freeze();
+    }
   }
 
 

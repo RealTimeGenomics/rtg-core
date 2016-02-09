@@ -109,6 +109,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
         final Evidence ev = new EvidenceQ(m.description(), readNt, 0, 0, 0.05, 0.05, true, false, false, false);
         m.increment(ev);
       }
+      m.freeze();
     }
     return models;
   }
@@ -120,6 +121,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
         final Evidence ev = new EvidenceQ(m.description(), readNt, 0, 0, 0.05, 0.05, true, false, false, false);
         m.increment(ev);
       }
+      m.freeze();
     }
     return models;
   }
@@ -239,6 +241,9 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     final List<ModelInterface<?>> models = new ArrayList<>();
     models.add(normal.get(refCode));
     models.add(cancer.get(refCode));
+//    for (ModelInterface<?> model : models) {
+//      model.freeze();
+//    }
     final HaploidDiploidHypotheses<HypothesesPrior<Description>> hyp = new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON,
         (HypothesesPrior<Description>) normal.get(refCode).hypotheses(),
         null);

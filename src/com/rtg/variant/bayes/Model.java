@@ -57,6 +57,8 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
 
   private final AlleleBalanceProbability mAlleleBalance;
 
+  protected boolean mFrozen = false;
+
   protected boolean ambiguityShortCircuit(final EvidenceInterface evidence) {
     return evidence.mapError() >= AMBIGUITY_THRESHOLD || evidence.error() > MAX_BASE_ERROR;
   }
@@ -75,6 +77,14 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     mAlleleBalance = alleleBalance;
     //    System.err.println("construct" + hypotheses.getClass().getName());
     //    System.err.println("hyparith" + hypotheses.arithmetic().getClass().getName());
+  }
+
+  /** test copy constructor */
+  protected Model(Model<D> m) {
+    mHypotheses = m.mHypotheses;
+    mStatistics = (Statistics<?>) m.mStatistics.copy();
+    mPosteriors = Arrays.copyOf(m.mPosteriors, m.mPosteriors.length);
+    mAlleleBalance = m.mAlleleBalance;
   }
 
   @Override
@@ -127,6 +137,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
 
   @Override
   public void increment(EvidenceInterface evidence) {
+    assert !mFrozen : "This model has been frozen you should not be updating it any more";
     incrementStatistics(evidence);
     if (ambiguityShortCircuit(evidence)) {
       return;
@@ -162,6 +173,16 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     }
   }
 
+  @Override
+  public void freeze() {
+    assert !mFrozen : "Should only freeze once";
+    mFrozen = true;
+    final PossibilityArithmetic arithmetic = arithmetic();
+    for (int hyp = 0; hyp < mPosteriors.length; hyp++) {
+      mPosteriors[hyp] = arithmetic.multiply(mPosteriors[hyp], arithmetic.ln2Poss(mAlleleBalance.alleleBalanceLn(hyp, hypotheses(), statistics())));
+    }
+  }
+
   protected void incrementStatistics(EvidenceInterface distribution) {
     mStatistics.increment(distribution, mHypotheses.reference());
   }
@@ -180,12 +201,14 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
   }
 
   private double posterior(final PossibilityArithmetic arith, final int i, final Factor<?> hypotheses) {
-    return arith.multiply(arith.multiply(mPosteriors[i], arith.ln2Poss(mAlleleBalance.alleleBalanceLn(i, hypotheses(), statistics()))), hypotheses.p(i));
+    assert mFrozen : "You should freeze the model before calling posterior methods";
+    return arith.multiply(mPosteriors[i], hypotheses.p(i));
   }
 
   @Override
   public double posteriorLn0(int hyp) {
-    return arithmetic().poss2Ln(arithmetic().multiply(mPosteriors[hyp], arithmetic().ln2Poss(mAlleleBalance.alleleBalanceLn(hyp, hypotheses(), statistics()))));
+    assert mFrozen : "You should freeze the model before calling posterior methods";
+    return arithmetic().poss2Ln(mPosteriors[hyp]);
   }
 
   @Override
@@ -245,6 +268,11 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
   public boolean integrity() {
     Exam.assertNotNull(mHypotheses);
     return true;
+  }
+
+  @Override
+  public Model<D> copy() {
+    return new Model<>(this);
   }
 
 }

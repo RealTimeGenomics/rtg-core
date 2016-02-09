@@ -55,11 +55,6 @@ public class SingletonCaller implements MultisampleJointCaller {
   public <D extends Description, T extends HypothesesPrior<D>> Variant makeCall(String templateName, int position, int endPosition, byte[] ref, List<ModelInterface<?>> models, HaploidDiploidHypotheses<T> hypotheses) {
     assert models.size() == 1;
 
-    final boolean onlyRefCoverage = Utils.hasOnlyRefCoverage(models);
-    if (mParams.callLevel() != VariantOutputLevel.ALL && onlyRefCoverage) {
-      return null;
-    }
-
     final ModelInterface<?> model = models.get(0);
     final T hyp = hypotheses.get(model);
 

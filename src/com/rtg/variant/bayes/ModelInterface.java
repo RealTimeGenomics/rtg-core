@@ -71,4 +71,9 @@ public interface ModelInterface<D extends Description> extends EvidenceAcceptor,
    * @return the best scoring call.
    */
   HypothesisScore best(HypothesesPrior<?> hypotheses);
+
+  /**
+   * @return a copy of this model
+   */
+  ModelInterface<D> copy();
 }

@@ -57,6 +57,11 @@ public class IndelDetector implements EvidenceAcceptor {
     }
   }
 
+  @Override
+  public void freeze() {
+    // Nothing to do here
+  }
+
   /**
    * @return maximum length of an insert or delete as specified by cigar
    */

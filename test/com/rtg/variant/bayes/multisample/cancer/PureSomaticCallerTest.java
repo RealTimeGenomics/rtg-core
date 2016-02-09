@@ -100,6 +100,9 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
     final List<ModelInterface<?>> models = new ArrayList<>();
     models.add(model0);
     models.add(model1);
+    for (ModelInterface<?> model : models) {
+      model.freeze();
+    }
     final Variant v = ccs.makeCall("chr1", 13, 14, ref, models, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, hypotheses, null));
     final VariantOutputVcfFormatter formatter = getFormatter();
     assertEquals(EXPECT_IDENTICAL, formatter.formatCall(v));
@@ -136,6 +139,9 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
     final List<ModelInterface<?>> models = new ArrayList<>();
     models.add(model0);
     models.add(model1);
+    for (ModelInterface<?> model : models) {
+      model.freeze();
+    }
     final Variant v = ccs.makeCall("chr1", 13, 14, ref, models, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, hypotheses, null));
     final VariantOutputVcfFormatter formatter = getFormatter();
     assertEquals(EXPECT_CANCER1, formatter.formatCall(v));
