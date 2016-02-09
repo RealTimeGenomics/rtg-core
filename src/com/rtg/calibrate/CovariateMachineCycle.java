@@ -18,6 +18,7 @@ import java.util.Map;
 
 import com.rtg.sam.ReadGroupUtils;
 import com.rtg.util.machine.MachineOrientation;
+import com.rtg.util.machine.MachineType;
 
 import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
@@ -48,7 +49,8 @@ public final class CovariateMachineCycle extends CovariateImpl {
     if (mo != null) {
       return mo;
     }
-    MachineOrientation mo2 = ReadGroupUtils.platformToMachineType(rg, rec.getReadPairedFlag()).orientation();
+    final MachineType machineType = rg == null ? null : ReadGroupUtils.platformToMachineType(rg, rec.getReadPairedFlag());
+    MachineOrientation mo2 = machineType == null ? null : machineType.orientation();
     if (mo2 == null) {
       mo2 = MachineOrientation.FR; // Assume an Illumina-style machine
     }
