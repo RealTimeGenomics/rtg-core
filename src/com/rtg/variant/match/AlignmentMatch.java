@@ -84,11 +84,11 @@ public class AlignmentMatch extends Match implements Integrity {
         // apply machine error calibration curve for appropriate read group if possible
         final int phred = me == null ? scoreChar : me.getPhred(scoreChar, k + start);
         assert 0 <= phred && phred < 255;
-        mBaseError[k] = 1.0 - (1.0 - VariantUtils.phredToProb(phred));
+        mBaseError[k] = VariantUtils.phredToProb(phred);
       }
     }
     // apply correct machine error calibration curve to qDefault, if possible
-    mQualityDefault = 1.0 - (1.0 - VariantUtils.phredToProb(me == null ? qDefault : me.getPhred((byte) qDefault, 0)));
+    mQualityDefault = VariantUtils.phredToProb(me == null ? qDefault : me.getPhred((byte) qDefault, 0));
     mFixedLeft = fixedLeft;
     mFixedRight = fixedRight;
     mReadNt = new int[length];
