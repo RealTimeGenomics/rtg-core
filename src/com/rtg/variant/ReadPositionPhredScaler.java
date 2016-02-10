@@ -11,6 +11,8 @@
  */
 package com.rtg.variant;
 
+import java.util.Arrays;
+
 import com.rtg.calibrate.CalibrationStats;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
@@ -26,31 +28,48 @@ class ReadPositionPhredScaler implements PhredScaler {
   private static class ReadPositionStatsProcessor implements StatsProcessor {
     private final long[] mMismatches;
     private final long[] mTotals;
+    private final double[] mMeanSquareError;
+    private final long[] mTerms;
+    private final int mQualityCovariateIndex;
 
     private final int mReadPosIndex;
 
-    public ReadPositionStatsProcessor(int readPosIndex, int readPosSize) {
+    public ReadPositionStatsProcessor(int readPosIndex, int readPosSize, int qualityCovariateIndex) {
       mMismatches = new long[readPosSize];
       mTotals = new long[readPosSize];
+      mMeanSquareError = new double[readPosSize];
+      mTerms = new long[readPosSize];
       mReadPosIndex = readPosIndex;
+      mQualityCovariateIndex = qualityCovariateIndex;
     }
 
     @Override
     public void process(int[] covariateValues, CalibrationStats stats) {
       if (stats != null) {
         final int readPosValue = covariateValues[mReadPosIndex];
-        mMismatches[readPosValue] += stats.getDifferent();
-        mTotals[readPosValue] += stats.getDifferent() + stats.getEqual();
+        final long different = stats.getDifferent();
+        final long same = stats.getEqual();
+        final long total = different + same;
+        mMismatches[readPosValue] += different;
+        mTotals[readPosValue] += total;
+        if (mQualityCovariateIndex >= 0) {
+          final int qual = stats.getCovariateValue(mQualityCovariateIndex);
+          final int empirical = CalibratedMachineErrorParams.countsToEmpiricalQuality(different, total, 0); // todo purpose of global error rate
+          final int error = qual - empirical;
+          mMeanSquareError[readPosValue] += error * error;
+          mTerms[readPosValue]++;
+        }
       }
     }
   }
 
   private final int[] mCurve;
+  private final double[] mMeanSquareError;
 
   public ReadPositionPhredScaler(CovariateEnum type, Calibrator cal, Calibrator.QuerySpec query) {
     final int readPosIndex = cal.getCovariateIndex(type);
     final int readPosSize = cal.getCovariate(readPosIndex).size();
-    final ReadPositionStatsProcessor proc = new ReadPositionStatsProcessor(readPosIndex, readPosSize);
+    final ReadPositionStatsProcessor proc = new ReadPositionStatsProcessor(readPosIndex, readPosSize, cal.getCovariateIndex(CovariateEnum.BASEQUALITY));
     cal.processStats(proc, query);
     long totalMismatches = 0;
     for (final long v : proc.mMismatches) {
@@ -66,11 +85,19 @@ class ReadPositionPhredScaler implements PhredScaler {
     for (int i = 0; i < readPosSize; i++) {
       mCurve[i] = CalibratedMachineErrorParams.countsToEmpiricalQuality(proc.mMismatches[i], proc.mTotals[i], globalErrorRate);
     }
+    mMeanSquareError = Arrays.copyOf(proc.mMeanSquareError, proc.mMeanSquareError.length); // XXX remove need for this
+    for (int k = 0; k < readPosSize; k++) {
+      mMeanSquareError[k] /= proc.mTerms[k];
+    }
   }
 
   @Override
   public int getPhred(byte quality, int readPosition) {
     return mCurve[readPosition];
+  }
+
+  public double getMSE(final int readPosition) {
+    return mMeanSquareError[readPosition];
   }
 
 }
