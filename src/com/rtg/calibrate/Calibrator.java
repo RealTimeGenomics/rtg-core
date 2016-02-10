@@ -309,25 +309,8 @@ public class Calibrator {
           for (int i = start; i < end; i++) {
             final String[] cvsplit = names[i].split(":");
             final String cvname = cvsplit[0];
-            switch (CovariateEnum.valueOf(cvname.toUpperCase(Locale.ROOT))) {
-              case BASEQUALITY:
-                ret[i - start] = new CovariateBaseQuality();
-                break;
-              case READGROUP:
-                ret[i - start] = new CovariateReadGroup();
-                break;
-              case READPOSITION:
-                if (cvsplit.length < 2) {
-                  throw new IOException("Expected length on read position covariate");
-                }
-                ret[i - start] = new CovariateReadPos(Integer.parseInt(cvsplit[1]));
-                break;
-              case SEQUENCE:
-                ret[i - start] = new CovariateSequence();
-                break;
-              default:
-                throw new IllegalArgumentException();
-            }
+            final int length = cvsplit.length > 1 ? Integer.parseInt(cvsplit[1]) : 0;
+            ret[i - start] = CovariateEnum.getCovariate(null, CovariateEnum.valueOf(cvname.toUpperCase(Locale.ROOT)), length);
           }
           return ret;
         }

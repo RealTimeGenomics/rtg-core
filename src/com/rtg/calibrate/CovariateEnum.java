@@ -53,12 +53,12 @@ public enum CovariateEnum {
     final Covariate[] cs = new Covariate[s.size()];
     int i = 0;
     for (final CovariateEnum type : s) {
-      cs[i++] = getCovariate(header, type);
+      cs[i++] = getCovariate(header, type, 0);
     }
     return cs;
   }
 
-  private static Covariate getCovariate(final SAMFileHeader header, final CovariateEnum type) {
+  static Covariate getCovariate(final SAMFileHeader header, final CovariateEnum type, final int length) {
     switch (type) {
       case BASEQUALITY:
         return new CovariateBaseQuality();
@@ -74,7 +74,7 @@ public enum CovariateEnum {
           }
         }
       case READPOSITION:
-        return new CovariateReadPos(0);
+        return new CovariateReadPos(length);
       case SEQUENCE:
         if (header == null) {
           return new CovariateSequence();
@@ -84,7 +84,7 @@ public enum CovariateEnum {
       case ARM:
         return new CovariateArm();
       case MACHINECYCLE:
-        return new CovariateMachineCycle(0);
+        return new CovariateMachineCycle(length);
       default:
         throw new IllegalArgumentException();
     }
