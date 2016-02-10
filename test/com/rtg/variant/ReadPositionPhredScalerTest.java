@@ -17,6 +17,7 @@ import java.io.File;
 import com.rtg.calibrate.CalibrationStats;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Calibrator.QuerySpec;
+import com.rtg.calibrate.CovariateEnum;
 import com.rtg.calibrate.StatsProcessor;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
@@ -54,7 +55,7 @@ public class ReadPositionPhredScalerTest extends TestCase {
       };
 
       thisQuery[0] = c.initQuery();
-      final ReadPositionPhredScaler bqps = new ReadPositionPhredScaler(c, thisQuery[0]);
+      final ReadPositionPhredScaler bqps = new ReadPositionPhredScaler(CovariateEnum.READPOSITION, c, thisQuery[0]);
       assertEquals(14, bqps.getPhred((byte) 0, 0));
       assertEquals(16, bqps.getPhred((byte) 0, 1));
       assertEquals(15, bqps.getPhred((byte) 0, 2));

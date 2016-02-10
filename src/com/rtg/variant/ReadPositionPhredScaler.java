@@ -47,8 +47,8 @@ class ReadPositionPhredScaler implements PhredScaler {
 
   private final int[] mCurve;
 
-  public ReadPositionPhredScaler(Calibrator cal, Calibrator.QuerySpec query) {
-    final int readPosIndex = cal.getCovariateIndex(CovariateEnum.READPOSITION);
+  public ReadPositionPhredScaler(CovariateEnum type, Calibrator cal, Calibrator.QuerySpec query) {
+    final int readPosIndex = cal.getCovariateIndex(type);
     final int readPosSize = cal.getCovariate(readPosIndex).size();
     final ReadPositionStatsProcessor proc = new ReadPositionStatsProcessor(readPosIndex, readPosSize);
     cal.processStats(proc, query);
