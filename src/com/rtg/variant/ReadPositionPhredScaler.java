@@ -11,8 +11,6 @@
  */
 package com.rtg.variant;
 
-import java.util.Arrays;
-
 import com.rtg.calibrate.CalibrationStats;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
@@ -29,7 +27,6 @@ class ReadPositionPhredScaler implements PhredScaler {
     private final long[] mMismatches;
     private final long[] mTotals;
     private final double[] mMeanSquareError;
-    private final long[] mTerms;
     private final int mQualityCovariateIndex;
 
     private final int mReadPosIndex;
@@ -38,7 +35,6 @@ class ReadPositionPhredScaler implements PhredScaler {
       mMismatches = new long[readPosSize];
       mTotals = new long[readPosSize];
       mMeanSquareError = new double[readPosSize];
-      mTerms = new long[readPosSize];
       mReadPosIndex = readPosIndex;
       mQualityCovariateIndex = qualityCovariateIndex;
     }
@@ -53,11 +49,10 @@ class ReadPositionPhredScaler implements PhredScaler {
         mMismatches[readPosValue] += different;
         mTotals[readPosValue] += total;
         if (mQualityCovariateIndex >= 0) {
-          final int qual = stats.getCovariateValue(mQualityCovariateIndex);
-          final int empirical = CalibratedMachineErrorParams.countsToEmpiricalQuality(different, total, 0); // todo purpose of global error rate
+          final int qual = covariateValues[mQualityCovariateIndex];
+          final int empirical = CalibratedMachineErrorParams.countsToEmpiricalQuality(different, total, 0);
           final int error = qual - empirical;
           mMeanSquareError[readPosValue] += total * error * error; // todo is this total the right one to use?
-          mTerms[readPosValue] += total;
         }
       }
     }
@@ -85,9 +80,9 @@ class ReadPositionPhredScaler implements PhredScaler {
     for (int i = 0; i < readPosSize; i++) {
       mCurve[i] = CalibratedMachineErrorParams.countsToEmpiricalQuality(proc.mMismatches[i], proc.mTotals[i], globalErrorRate);
     }
-    mMeanSquareError = Arrays.copyOf(proc.mMeanSquareError, proc.mMeanSquareError.length); // XXX remove need for this
+    mMeanSquareError = proc.mMeanSquareError;
     for (int k = 0; k < readPosSize; k++) {
-      mMeanSquareError[k] /= proc.mTerms[k];
+      mMeanSquareError[k] /= proc.mTotals[k];
     }
   }
 
