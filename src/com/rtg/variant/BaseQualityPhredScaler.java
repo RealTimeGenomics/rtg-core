@@ -64,7 +64,7 @@ class BaseQualityPhredScaler implements PhredScaler {
     final double globalErrorRate = (double) totalMismatches / (double) totalEverything;
 //     System.out.println("global miss=" + totalMismatches + " total=" + totalEverything + " errRate=" + globalErrorRate);
     for (int i = 0; i < baseQualSize; i++) {
-      mCurve[i] = CalibratedMachineErrorParams.countsToEmpiricalQuality(proc.mMismatches[i], proc.mTotals[i], globalErrorRate);
+      mCurve[i] = CalibratedMachineErrorParams.countsToEmpiricalQuality(proc.mMismatches[i], proc.mTotals[i], 0 /*globalErrorRate*/);
 //       System.out.println(i + ": miss=" + proc.mMismatches[i] + " total=" + proc.mTotals[i] + " qual=" + mCurve[i]);
     }
   }
