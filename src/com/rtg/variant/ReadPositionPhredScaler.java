@@ -56,8 +56,8 @@ class ReadPositionPhredScaler implements PhredScaler {
           final int qual = stats.getCovariateValue(mQualityCovariateIndex);
           final int empirical = CalibratedMachineErrorParams.countsToEmpiricalQuality(different, total, 0); // todo purpose of global error rate
           final int error = qual - empirical;
-          mMeanSquareError[readPosValue] += error * error;
-          mTerms[readPosValue]++;
+          mMeanSquareError[readPosValue] += total * error * error; // todo is this total the right one to use?
+          mTerms[readPosValue] += total;
         }
       }
     }
