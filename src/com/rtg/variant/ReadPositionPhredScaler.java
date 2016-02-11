@@ -83,7 +83,7 @@ class ReadPositionPhredScaler implements PhredScaler {
     mCurve = new int[readPosSize];
     final double globalErrorRate = (double) totalMismatches / (double) totalEverything;
     for (int i = 0; i < readPosSize; i++) {
-      mCurve[i] = CalibratedMachineErrorParams.countsToEmpiricalQuality(proc.mMismatches[i], proc.mTotals[i], globalErrorRate);
+      mCurve[i] = CalibratedMachineErrorParams.countsToEmpiricalQuality(proc.mMismatches[i], proc.mTotals[i], 0 /*globalErrorRate*/);
     }
     mMeanSquareError = Arrays.copyOf(proc.mMeanSquareError, proc.mMeanSquareError.length); // XXX remove need for this
     for (int k = 0; k < readPosSize; k++) {
