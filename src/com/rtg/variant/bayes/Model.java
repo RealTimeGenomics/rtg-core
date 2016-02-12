@@ -79,7 +79,8 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     //    System.err.println("hyparith" + hypotheses.arithmetic().getClass().getName());
   }
 
-  /** test copy constructor
+  /**
+   * test copy constructor
    * @param m model to copy
    */
   protected Model(Model<D> m) {
