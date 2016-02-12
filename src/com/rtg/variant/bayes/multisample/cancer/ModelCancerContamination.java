@@ -50,7 +50,10 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
     mContaminationM = 1.0 - mContamination;
   }
 
-  public ModelCancerContamination(ModelCancerContamination<S> original) {
+  /** copy constructor
+   * @param original Model to copy
+   */
+  private ModelCancerContamination(ModelCancerContamination<S> original) {
     super(original);
     mSubHypotheses = original.mSubHypotheses;
     mContamination = original.mContamination;
