@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.EnumSet;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -125,7 +125,7 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
       if (USE_PEDIGREE) {
         // Only include families where at least two members are in the output genomes, at least one of which is a child
         final Set<Family> initialFamilies = Family.getFamilies(genomeRelationships, false, null);
-        final Set<Family> families = new HashSet<>();
+        final Set<Family> families = new LinkedHashSet<>();
         for (Family family : initialFamilies) {
           if (Utils.isCallableAsFamily(outputGenomes, family)) {
             families.add(family);
