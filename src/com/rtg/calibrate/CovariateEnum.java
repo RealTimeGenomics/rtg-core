@@ -92,4 +92,18 @@ public enum CovariateEnum {
 
   /** Default list of covariates. */
   public static final List<CovariateEnum> DEFAULT_COVARIATES = Collections.unmodifiableList(Arrays.asList(READGROUP, SEQUENCE, BASEQUALITY));
+
+  /**
+   * Return the covariate corresponding to the given name (ignoring case).
+   * @param covariateName covariate to get
+   * @return covariate object or null
+   */
+  public static CovariateEnum getCovariate(final String covariateName) {
+    for (final CovariateEnum e : values()) {
+      if (e.name().equalsIgnoreCase(covariateName)) {
+        return e;
+      }
+    }
+    return null;
+  }
 }
