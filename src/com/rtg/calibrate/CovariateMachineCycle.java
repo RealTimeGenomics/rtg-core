@@ -77,7 +77,7 @@ public final class CovariateMachineCycle extends CovariateImpl {
   public int value(SAMRecord sam, CalibratorCigarParser parser) {
     final int length = sam.getReadLength();
     if (length >= newSize()) {
-      setNewSize(length);
+      setNewSize(length + 1);
     }
     final int readPos = parser.getReadPosition();
     return getOrientation(sam) ? length - readPos - 1 : readPos;
