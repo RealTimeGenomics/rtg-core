@@ -52,7 +52,7 @@ public final class CovariateMachineCycle extends CovariateImpl {
     final MachineType machineType = rg == null ? null : ReadGroupUtils.platformToMachineType(rg, rec.getReadPairedFlag());
     MachineOrientation mo2 = machineType == null ? null : machineType.orientation();
     if (mo2 == null) {
-      mo2 = MachineOrientation.FR; // Assume an Illumina-style machine
+      mo2 = MachineOrientation.FR; // Assume an FR-style machine if no specification is available
     }
     mReadGroupToOrientation.put(rg, mo2);
     return mo2;
@@ -76,10 +76,11 @@ public final class CovariateMachineCycle extends CovariateImpl {
   @Override
   public int value(SAMRecord sam, CalibratorCigarParser parser) {
     final int length = sam.getReadLength();
-    if (length >= newSize()) {
-      setNewSize(length + 1);
-    }
     final int readPos = parser.getReadPosition();
+    if (readPos >= newSize()) {
+      setNewSize(Math.max(length, readPos + 1));
+    }
+    assert readPos >= 0 /* && readPos < length */ : "pos=" + readPos + " len=" + length + " " + sam.getSAMString();
     return getOrientation(sam) ? length - readPos - 1 : readPos;
   }
 

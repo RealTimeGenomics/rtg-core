@@ -24,8 +24,8 @@ import htsjdk.samtools.SAMRecord;
  * respect to sequencing order, not mapped reference position order.
  * I.e. it should take into account whether the read was mapped in
  * forward / reverse frame, and whether read is the first or second
- * arm (depending on machine type).
- *
+ * arm (depending on machine type).  The machine cycle covariate
+ * is a better implementation.
  */
 public final class CovariateReadPos extends CovariateImpl {
 
