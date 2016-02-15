@@ -60,7 +60,7 @@ public class SingleEndMapStatistics extends AbstractStatistics implements MapSta
     case MISSING: mMissing++ ; break;
     case TOTAL_READS: mTotal++; break;
     default:
-      throw new InternalError();
+      throw new RuntimeException();
     }
   }
 

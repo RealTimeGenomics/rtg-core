@@ -69,7 +69,7 @@ public final class CovariateMachineCycle extends CovariateImpl {
       case TANDEM:
         return false;
       default:
-        throw new InternalError();
+        throw new RuntimeException();
     }
   }
 
@@ -80,8 +80,9 @@ public final class CovariateMachineCycle extends CovariateImpl {
     if (readPos >= newSize()) {
       setNewSize(Math.max(length, readPos + 1));
     }
-    assert readPos >= 0 /* && readPos < length */ : "pos=" + readPos + " len=" + length + " " + sam.getSAMString();
-    return getOrientation(sam) ? length - readPos - 1 : readPos;
+    final int machineCycle = getOrientation(sam) ? length - readPos - 1 : readPos;
+    assert machineCycle >= 0 && machineCycle < newSize() : "pos=" + readPos + " len=" + length + " " + sam.getSAMString();;
+    return machineCycle;
   }
 
   @Override
