@@ -32,6 +32,7 @@ import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.ModelNone;
 import com.rtg.variant.bayes.ModelTest;
 import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
@@ -527,6 +528,21 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
 
   public void testPolyploid() throws Exception {
 
+  }
+
+  public void testAllNone() throws Exception {
+    final ModelInterface<?> father = ModelNone.SINGLETON;
+    final ModelInterface<?> mother = ModelNone.SINGLETON;
+    final ModelInterface<?> child = ModelNone.SINGLETON;
+    final List<ModelInterface<?>> models = new ArrayList<>();
+    models.add(father);
+    models.add(mother);
+    models.add(child);
+    final Family family = FamilyCallerTest.makeFamily(FATHER, MOTHER, "c");
+    final AbstractFamilyPosterior fp = getFamilyPosterior(models, family);
+    assertNull(fp.bestFather());
+    assertNull(fp.bestMother());
+    assertNull(fp.bestChild(0));
   }
 }
 

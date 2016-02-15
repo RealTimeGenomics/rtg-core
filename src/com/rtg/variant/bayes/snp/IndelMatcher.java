@@ -23,12 +23,10 @@ public class IndelMatcher extends EvidenceMatcher<IndelDetector> {
 
   /**
    * Construct a new indel matcher
-   * @param template nucleotides for current sequence in template.
-   * @param start of region on template to be processed (0 based, inclusive)
-   * @param end of region on template to be processed (0 based, exclusive)
+   * @param buffer
    */
-  public IndelMatcher(final byte[] template, int start, int end) {
-    super(new ReferenceBasedBuffer<>(end - start, IndelDetectorFactory.SINGLETON, template, start), EvidenceIndelFactory.SINGLETON);
+  public IndelMatcher(ReferenceBasedBuffer<IndelDetector> buffer) {
+    super(buffer, EvidenceIndelFactory.SINGLETON);
   }
 
   /**

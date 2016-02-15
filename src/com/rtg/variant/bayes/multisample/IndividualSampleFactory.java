@@ -14,13 +14,13 @@ package com.rtg.variant.bayes.multisample;
 
 import com.rtg.reference.Ploidy;
 import com.rtg.reference.Sex;
+import com.rtg.reference.SexMemo;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.util.intervals.SequenceNameLocusSimple;
-import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.SamToMatch;
 import com.rtg.variant.SamToMatchCigar;
-import com.rtg.reference.SexMemo;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Model;
@@ -33,6 +33,9 @@ import com.rtg.variant.bayes.snp.CigarParserModel;
 import com.rtg.variant.bayes.snp.EvidenceMatcher;
 import com.rtg.variant.bayes.snp.EvidenceQFactory;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
+import com.rtg.variant.bayes.snp.IndelDetector;
+import com.rtg.variant.bayes.snp.IndelDetectorFactory;
+import com.rtg.variant.bayes.snp.IndelIgnorerFactory;
 import com.rtg.variant.bayes.snp.IndelMatcher;
 import com.rtg.variant.bayes.snp.ReferenceBasedBuffer;
 import com.rtg.variant.bayes.snp.SwitchingReferenceBasedBuffer;
@@ -94,25 +97,25 @@ public class IndividualSampleFactory<D extends Description> {
 
   // Used by simple snp calling
   IndividualSampleProcessor<?> make(final String name, final byte[] template, int start, int end) {
-    final ReferenceBasedBuffer<ModelInterface<D>> buffer = makeBuffer(name, template, start, end);
-    final EvidenceMatcher<ModelInterface<D>> matcherCurrent = new EvidenceMatcher<>(buffer, new EvidenceQFactory());
-    final IndelMatcher indelMatcher = new IndelMatcher(template, start, end);
-    final SamToMatch toMatch = new SamToMatchCigar(mParams, new CigarParserModel(matcherCurrent, indelMatcher, start, end, mParams), mChooser);
-    return new IndividualSampleProcessor<>(template, matcherCurrent, indelMatcher, toMatch);
-  }
-
-  private ReferenceBasedBuffer<ModelInterface<D>> makeBuffer(final String name, final byte[] template, int start, int end) {
+    final ReferenceBasedBuffer<ModelInterface<D>> result;
+    final ReferenceBasedBuffer<IndelDetector> indelDetector;
     final SequenceNameLocusSimple region = new SequenceNameLocusSimple(name, start, end);
     final int parBoundary = PAR_AWARE ? mSexMemo.getParBoundary(mSex, region) : -1;
     if (parBoundary == -1) {
-      return new ReferenceBasedBuffer<>(end - start, selectFactory(name, start), template, start);
+      result = new ReferenceBasedBuffer<>(end - start, selectFactory(name, start), template, start);
+      indelDetector = new ReferenceBasedBuffer<>(end - start, IndelDetectorFactory.SINGLETON, template, start);
     } else {
       // Make a special buffer that switches factories when it crosses the PAR boundary. The assumption is that there is only ever one such boundary within a chunk.
       Diagnostic.developerLog("Creating a " + mSex + " PAR-aware boundary chunk " + region + " crossing at " + (parBoundary + 1)
           + " from " + mSexMemo.getEffectivePloidy(mSex, name, start)
           + " to " + mSexMemo.getEffectivePloidy(mSex, name, end));
-      return new SwitchingReferenceBasedBuffer<>(end - start, selectFactory(name, start), selectFactory(name, end), parBoundary, template, start);
+      result = new SwitchingReferenceBasedBuffer<>(end - start, selectFactory(name, start), selectFactory(name, end), parBoundary, template, start);
+      indelDetector = new SwitchingReferenceBasedBuffer<>(end - start, selectIndelFactory(name, start), selectIndelFactory(name, end), parBoundary, template, start);
     }
+    final EvidenceMatcher<ModelInterface<D>> matcherCurrent = new EvidenceMatcher<>(result, new EvidenceQFactory());
+    final IndelMatcher indelMatcher = new IndelMatcher(indelDetector);
+    final SamToMatch toMatch = new SamToMatchCigar(mParams, new CigarParserModel(matcherCurrent, indelMatcher, start, end, mParams), mChooser);
+    return new IndividualSampleProcessor<>(template, matcherCurrent, indelMatcher, toMatch);
   }
 
   private ModelFactory<D, ?> selectFactory(final String name, int pos) {
@@ -126,4 +129,14 @@ public class IndividualSampleFactory<D extends Description> {
     }
   }
 
+  private IndelDetectorFactory selectIndelFactory(final String name, int pos) {
+    switch (getEffectivePloidy(name, pos)) {
+      case HAPLOID:
+        return IndelDetectorFactory.SINGLETON;
+      case NONE:
+        return IndelIgnorerFactory.SINGLETON;
+      default:
+        return IndelDetectorFactory.SINGLETON;
+    }
+  }
 }

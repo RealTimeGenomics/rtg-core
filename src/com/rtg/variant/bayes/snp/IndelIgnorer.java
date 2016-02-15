@@ -12,21 +12,14 @@
 
 package com.rtg.variant.bayes.snp;
 
-import com.rtg.variant.bayes.ReferenceBasedFactory;
+import com.rtg.variant.bayes.EvidenceInterface;
 
 /**
+ * @author kurt
  */
-public class IndelDetectorFactory implements ReferenceBasedFactory<IndelDetector> {
-
-  /** Unique instance of factory. */
-  public static final IndelDetectorFactory SINGLETON = new IndelDetectorFactory();
-
-  protected IndelDetectorFactory() {
-  }
-
+public class IndelIgnorer extends IndelDetector {
   @Override
-  public IndelDetector make(final int ref) {
-    return new IndelDetector();
+  public void increment(EvidenceInterface evidence) {
+    // Ignore all indels
   }
-
 }
