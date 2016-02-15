@@ -564,8 +564,11 @@ public class Calibrator {
   protected CalibrationStats findStats(CalibratorCigarParser currPos) throws BadSuperCigarException {
     int pos = 0;
     boolean mustResize = false;
-    for (final Covariate var : mCovariates) {
+    final int[] values = new int[mCovariates.length];
+    for (int i = 0; i < mCovariates.length; i++) {
+      final Covariate var = mCovariates[i];
       final int val = var.value(mSamRec, currPos);
+      values[i] = val;
       mustResize |= var.sizeChanged();
       pos = pos * var.newSize() + val;
     }
@@ -574,11 +577,6 @@ public class Calibrator {
     }
     CalibrationStats stats = mStats[pos];
     if (stats == null) {
-      // loop through again to create the value array
-      final int[] values = new int[mCovariates.length];
-      for (int i = 0; i < mCovariates.length; i++) {
-        values[i] = mCovariates[i].value(mSamRec, currPos);
-      }
       stats = new CalibrationStats(values);
       mStats[pos] = stats;
     }
