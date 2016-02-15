@@ -160,7 +160,6 @@ public class CovariateMachineCycleTest extends TestCase {
     //  0123456789
     sam.setFirstOfPairFlag(false);
     sam.setSecondOfPairFlag(true);
-    sam.setReadNegativeStrandFlag(true);
     cal.processRead(sam);
 
     int c = 0;
