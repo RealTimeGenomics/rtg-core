@@ -23,7 +23,7 @@ public class IndelMatcher extends EvidenceMatcher<IndelDetector> {
 
   /**
    * Construct a new indel matcher
-   * @param buffer
+   * @param buffer manages per-position <code>EvidenceAcceptor</code> s
    */
   public IndelMatcher(ReferenceBasedBuffer<IndelDetector> buffer) {
     super(buffer, EvidenceIndelFactory.SINGLETON);
