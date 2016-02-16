@@ -13,10 +13,13 @@
 package com.rtg.calibrate;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collections;
 
 import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.ReadGroupUtils;
+import com.rtg.sam.SamUtils;
+import com.rtg.util.StringUtils;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMReadGroupRecord;
@@ -43,38 +46,18 @@ public class CovariateMachineCycleTest extends TestCase {
     assertEquals("14", var.valueString(14));
   }
 
-  public void testResize() throws BadSuperCigarException {
-    final Covariate var = new CovariateMachineCycle(6);
-    assertEquals(6, var.size());
-    final SAMRecord sam = new SAMRecord(null);
-    sam.setReadBases(new byte[7]);
-
-    final Calibrator calwtf = new Calibrator(new Covariate[] {new CovariateReadGroup()}, null);
-    final CalibratorCigarParser parser = new CalibratorCigarParser(calwtf) {
-      private int mPos = 3;
-      @Override
-      public int getReadPosition() {
-        mPos *= 2;
-        return mPos;
-      }
-    };
-    assertEquals(6, var.value(sam, parser));
-    assertEquals(7, var.newSize());
-    assertEquals(6, var.size());
-    assertTrue(var.sizeChanged());
-    sam.setReadBases(new byte[13]);
-    assertEquals(12, var.value(sam, parser));
-    assertEquals(13, var.newSize());
-    assertEquals(6, var.size());
-    assertTrue(var.sizeChanged());
-    var.resized();
-    assertEquals(13, var.size());
-  }
-
   public void testNameType() {
     final Covariate var = new CovariateMachineCycle(15);
     assertEquals("machinecycle:15", var.name());
     assertEquals(CovariateEnum.MACHINECYCLE, var.getType());
+  }
+
+  private byte[] id(final int n) {
+    final byte[] q = new byte[n];
+    for (int k = 0; k < n; k++) {
+      q[k] = (byte) k;
+    }
+    return q;
   }
 
   public void testFR() throws BadSuperCigarException, IOException {
@@ -84,7 +67,7 @@ public class CovariateMachineCycleTest extends TestCase {
     final SAMFileHeader header = new SAMFileHeader();
     header.addReadGroup(rg);
 
-    final Calibrator cal = new Calibrator(new Covariate[] {var, new CovariateBaseQuality()}, null);
+    final Calibrator cal = new Calibrator(new Covariate[] {var}, null);
     cal.setTemplate(new byte[10], 10);
     cal.setSequenceLengths(Collections.singletonMap("1", 10));
 
@@ -94,7 +77,7 @@ public class CovariateMachineCycleTest extends TestCase {
     final SAMRecord sam = new SAMRecord(header);
     sam.setAttribute(ReadGroupUtils.RG_ATTRIBUTE, "FR");
     sam.setReadString("aaaaaaaaaa");
-    sam.setBaseQualities(new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
+    sam.setBaseQualities(id(10));
     sam.setMappingQuality(40);
     sam.setCigarString("10=");
     sam.setReadPairedFlag(true);
@@ -136,7 +119,7 @@ public class CovariateMachineCycleTest extends TestCase {
     final SAMFileHeader header = new SAMFileHeader();
     header.addReadGroup(rg);
 
-    final Calibrator cal = new Calibrator(new Covariate[] {var, new CovariateBaseQuality()}, null);
+    final Calibrator cal = new Calibrator(new Covariate[] {var}, null);
     cal.setTemplate(new byte[10], 10);
     cal.setSequenceLengths(Collections.singletonMap("1", 10));
 
@@ -146,7 +129,7 @@ public class CovariateMachineCycleTest extends TestCase {
     final SAMRecord sam = new SAMRecord(header);
     sam.setAttribute(ReadGroupUtils.RG_ATTRIBUTE, "FF");
     sam.setReadString("aaaaaaaaaa");
-    sam.setBaseQualities(new byte[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
+    sam.setBaseQualities(id(10));
     sam.setMappingQuality(40);
     sam.setCigarString("10=");
     sam.setReadPairedFlag(true);
@@ -173,6 +156,58 @@ public class CovariateMachineCycleTest extends TestCase {
       }
     }
     assertEquals(10, c);
+  }
+
+  public void testCGv1() throws BadSuperCigarException, IOException {
+    final Covariate var = new CovariateMachineCycle(0);
+    final SAMReadGroupRecord rg = new SAMReadGroupRecord("FF");
+    rg.setPlatform("COMPLETE");
+    final SAMFileHeader header = new SAMFileHeader();
+    header.addReadGroup(rg);
+
+    final Calibrator cal = new Calibrator(new Covariate[] {var}, null);
+    final byte[] template = new byte[50];
+    Arrays.fill(template, (byte) 1);
+    cal.setTemplate(template, 50);
+    cal.setSequenceLengths(Collections.singletonMap("1", 10));
+
+    // Left arm forwards
+    // |----------------------------------->
+    //  01234567890123456789
+    //                 012345678901234
+    final SAMRecord sam = new SAMRecord(header);
+    sam.setAttribute(ReadGroupUtils.RG_ATTRIBUTE, "FF");
+    sam.setReadString(StringUtils.repeat("A", 30));
+    sam.setBaseQualities(id(30));
+    sam.setMappingQuality(40);
+    sam.setAttribute(SamUtils.CG_SUPER_CIGAR, "20=5B15=");
+    sam.setAttribute(SamUtils.CG_READ_DELTA, "AAAAA");
+    sam.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "+++++");
+    sam.setReadPairedFlag(true);
+    sam.setFirstOfPairFlag(true);
+    sam.setAlignmentStart(1);
+    sam.setReferenceName("1");
+    cal.processRead(sam);
+
+    // Right arm forwards
+    // |----------------------------------->
+    //  01234567890123456789
+    //                 012345678901234
+    sam.setFirstOfPairFlag(false);
+    sam.setSecondOfPairFlag(true);
+    cal.processRead(sam);
+
+    int c = 0;
+    for (final CalibrationStats stats : cal.mStats) {
+      if (stats != null) {
+        assertEquals(2, stats.getEqual());
+        assertEquals(0, stats.getDifferent());
+        assertEquals(0, stats.getDeleted());
+        assertEquals(0, stats.getInserted());
+        c++;
+      }
+    }
+    assertEquals(35, c);
   }
 
 }
