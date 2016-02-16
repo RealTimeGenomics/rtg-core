@@ -17,7 +17,6 @@ import java.io.File;
 import com.rtg.calibrate.CalibrationStats;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Calibrator.QuerySpec;
-import com.rtg.calibrate.CovariateEnum;
 import com.rtg.calibrate.StatsProcessor;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
@@ -26,7 +25,7 @@ import junit.framework.TestCase;
 
 /**
  */
-public class ReadPositionPhredScalerTest extends TestCase {
+public class BaseQualityMachineCyclePhredScalerTest extends TestCase {
 
 
   public void testABunch() throws Exception {
@@ -55,10 +54,14 @@ public class ReadPositionPhredScalerTest extends TestCase {
       };
 
       thisQuery[0] = c.initQuery();
-      final ReadPositionPhredScaler bqps = new ReadPositionPhredScaler(CovariateEnum.READPOSITION, c, thisQuery[0]);
+      final BaseQualityMachineCyclePhredScaler bqps = new BaseQualityMachineCyclePhredScaler(c, thisQuery[0]);
       assertEquals(14, bqps.getPhred((byte) 0, 0));
-      assertEquals(16, bqps.getPhred((byte) 0, 1));
-      assertEquals(15, bqps.getPhred((byte) 0, 2));
+      assertEquals(15, bqps.getPhred((byte) 1, 0));
+      assertEquals(15, bqps.getPhred((byte) 2, 0));
+      assertEquals(15, bqps.getPhred((byte) 0, 1));
+      assertEquals(16, bqps.getPhred((byte) 1, 1));
+      assertEquals(15, bqps.getPhred((byte) 2, 1));
+      assertEquals(15, bqps.getPhred((byte) 200, 1));
     } finally {
       FileHelper.deleteAll(dir);
     }

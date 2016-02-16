@@ -89,15 +89,15 @@ public class RecalibrateCliTest extends AbstractCliTest {
     "@ins:RG1\t0\t0\t0\t1" + LS,
     "@mnp:RG1\t0\t85\t8\t1\t1" + LS,
     "@nh:RG1\t0\t100" + LS,
-    "@covar\treadgroup\treadposition:100\tbasequality\tequal\tdiff\tins\tdel" + LS,
-    "RG1\t0\t20\t99\t1\t0\t0" + LS,
-    "RG1\t1\t20\t100\t0\t0\t0" + LS,
-    "RG1\t2\t20\t97\t3\t0\t0" + LS,
-    "RG1\t3\t20\t98\t2\t0\t0" + LS,
-    "RG1\t4\t20\t98\t1\t1\t0" + LS,
+    "@covar\treadgroup\tbasequality\tmachinecycle:100\tequal\tdiff\tins\tdel" + LS,
+    "RG1\t20\t0\t99\t1\t0\t0" + LS,
+    "RG1\t20\t1\t100\t0\t0\t0" + LS,
+    "RG1\t20\t2\t98\t2\t0\t0" + LS,
+    "RG1\t20\t3\t100\t0\t0\t0" + LS,
+    "RG1\t20\t4\t98\t1\t1\t0" + LS,
     // ...
-    "RG1\t98\t20\t99\t1\t0\t0" + LS,
-    "RG1\t99\t20\t100\t0\t0\t0" + LS,
+    "RG1\t20\t98\t99\t1\t0\t0" + LS,
+    "RG1\t20\t99\t100\t0\t0\t0" + LS,
   };
 
   public void testCovariates() throws IOException {
@@ -109,7 +109,7 @@ public class RecalibrateCliTest extends AbstractCliTest {
       SimpleArchive.unpackArchive(templateDwa, templateDir);
       final MemoryPrintStream dump = new MemoryPrintStream();
       final int code = getCli().mainInit(new String[] {"--force", "--template", templateDir.getPath(), testFile.getPath(),
-          "--Xcovariate=readposition",
+          "--Xcovariate=machinecycle",
           "--Xcovariate=readgroup",
           "-c", "basequality"},
           dump.outputStream(), dump.printStream());

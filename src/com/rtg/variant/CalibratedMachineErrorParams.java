@@ -131,8 +131,8 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     if (readGroupIndex >= 0) {
       query.setValue(CovariateEnum.READGROUP, cal.getCovariate(readGroupIndex).parse(readGroup));
     }
-    if (cal.getCovariateIndex(CovariateEnum.READPOSITION) != -1) {
-      return new BaseQualityReadPositionPhredScaler(cal, query);
+    if (cal.getCovariateIndex(CovariateEnum.MACHINECYCLE) != -1) {
+      return new BaseQualityMachineCyclePhredScaler(cal, query);
     } else {
       return new BaseQualityPhredScaler(cal, query);
     }

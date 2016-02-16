@@ -20,7 +20,7 @@ import com.rtg.calibrate.StatsProcessor;
 /**
  * Implementation that uses calibration files.
  */
-class BaseQualityReadPositionPhredScaler implements PhredScaler {
+class BaseQualityMachineCyclePhredScaler implements PhredScaler {
 
   private static class BaseQualityReadPositionStatsProcessor implements StatsProcessor {
     private final long[][] mMismatches;
@@ -49,9 +49,9 @@ class BaseQualityReadPositionPhredScaler implements PhredScaler {
 
   private final int[][] mCurve;
 
-  public BaseQualityReadPositionPhredScaler(Calibrator cal, Calibrator.QuerySpec query) {
+  public BaseQualityMachineCyclePhredScaler(Calibrator cal, Calibrator.QuerySpec query) {
     final int baseQualIndex = cal.getCovariateIndex(CovariateEnum.BASEQUALITY);
-    final int readPosIndex = cal.getCovariateIndex(CovariateEnum.READPOSITION);
+    final int readPosIndex = cal.getCovariateIndex(CovariateEnum.MACHINECYCLE);
     final int baseQualSize = cal.getCovariate(baseQualIndex).size();
     final int readPosSize = cal.getCovariate(readPosIndex).size();
     final BaseQualityReadPositionStatsProcessor proc = new BaseQualityReadPositionStatsProcessor(baseQualIndex, baseQualSize, readPosIndex, readPosSize);

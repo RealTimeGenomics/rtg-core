@@ -27,7 +27,7 @@ import junit.framework.TestCase;
 public class CovariateEnumTest extends TestCase {
 
   public void test() {
-    TestUtils.testEnum(CovariateEnum.class, "[READGROUP, READPOSITION, BASEQUALITY, SEQUENCE, ARM, MACHINECYCLE]");
+    TestUtils.testEnum(CovariateEnum.class, "[READGROUP, BASEQUALITY, SEQUENCE, ARM, MACHINECYCLE]");
   }
 
   public void testDefaults() {
@@ -38,12 +38,11 @@ public class CovariateEnumTest extends TestCase {
   }
 
   public void testNormal() {
-    final Covariate[] covs = CovariateEnum.getCovariates(Arrays.asList(CovariateEnum.SEQUENCE, CovariateEnum.READGROUP, CovariateEnum.READPOSITION, CovariateEnum.READPOSITION, CovariateEnum.BASEQUALITY), null);
+    final Covariate[] covs = CovariateEnum.getCovariates(Arrays.asList(CovariateEnum.SEQUENCE, CovariateEnum.READGROUP, CovariateEnum.ARM, CovariateEnum.ARM, CovariateEnum.BASEQUALITY), null);
     assertEquals(4, covs.length);
     for (int i = 0; i < covs.length; i++) {
       assertEquals(CovariateEnum.values()[i], covs[i].getType());
     }
-    assertEquals(0, covs[CovariateEnum.READPOSITION.ordinal()].size());
   }
 
   public void testWithHeader() {

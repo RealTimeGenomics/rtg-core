@@ -41,13 +41,15 @@ public final class CovariateMachineCycle extends CovariateImpl {
 
   private int getReadLength(SAMRecord rec) {
     // Complicated by Complete Genomics reads where the rec.getReadLength() is not the true flattened read length
-    final SAMReadGroupRecord rg = rec.getReadGroup();
-    if (rg != null) {
-      final MachineType machineType = ReadGroupUtils.platformToMachineType(rg, rec.getReadPairedFlag());
-      if (machineType == MachineType.COMPLETE_GENOMICS_2) {
-        return CgUtils.CG2_RAW_READ_LENGTH;
-      } else if (machineType == MachineType.COMPLETE_GENOMICS) {
-        return CgUtils.CG_RAW_READ_LENGTH;
+    if (rec.getHeader() != null) {
+      final SAMReadGroupRecord rg = rec.getReadGroup();
+      if (rg != null) {
+        final MachineType machineType = ReadGroupUtils.platformToMachineType(rg, rec.getReadPairedFlag());
+        if (machineType == MachineType.COMPLETE_GENOMICS_2) {
+          return CgUtils.CG2_RAW_READ_LENGTH;
+        } else if (machineType == MachineType.COMPLETE_GENOMICS) {
+          return CgUtils.CG_RAW_READ_LENGTH;
+        }
       }
     }
     return rec.getReadLength();

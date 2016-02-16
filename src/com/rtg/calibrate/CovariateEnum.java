@@ -28,8 +28,6 @@ public enum CovariateEnum {
 
   /** read group covariate */
   READGROUP,
-  /** read position covariate */
-  READPOSITION,
   /** base quality covariate */
   BASEQUALITY,
   /** template sequence covariate */
@@ -73,8 +71,6 @@ public enum CovariateEnum {
             return new CovariateReadGroup();
           }
         }
-      case READPOSITION:
-        return new CovariateReadPos(length);
       case SEQUENCE:
         if (header == null) {
           return new CovariateSequence();

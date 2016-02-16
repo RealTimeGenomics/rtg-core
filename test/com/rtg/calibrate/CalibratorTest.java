@@ -51,7 +51,7 @@ public class CalibratorTest extends TestCase {
     + "#CL\tfoo bar" + LS
     + "@nh:group1\t0\t5" + LS
     + "@nh:group2\t0\t2" + LS
-    + "@covar\treadgroup\treadposition:7\tbasequality\tsequence\tequal\tdiff\tins\tdel" + LS
+    + "@covar\treadgroup\tmachinecycle:7\tbasequality\tsequence\tequal\tdiff\tins\tdel" + LS
     + "group1\t0\t35\tsequence1\t3\t0\t0\t0" + LS
     + "group1\t0\t35\tsequence2\t2\t0\t0\t0" + LS
     + "group1\t1\t0\tsequence1\t3\t0\t0\t0" + LS
@@ -96,19 +96,19 @@ public class CalibratorTest extends TestCase {
     final Calibrator cal0 = new Calibrator(new Covariate[] {}, null);
     assertEquals("", cal0.toString());
 
-    final Calibrator cal2 = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateReadPos(35)}, null);
-    assertEquals("basequality\treadposition:35", cal2.toString());
+    final Calibrator cal2 = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateMachineCycle(35)}, null);
+    assertEquals("basequality\tmachinecycle:35", cal2.toString());
   }
 
   public void testGetCovariateIndex() {
-    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateReadPos(35)}, null);
+    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateMachineCycle(35)}, null);
     assertEquals(-1, cal.getCovariateIndex(CovariateEnum.READGROUP));
     assertEquals(0, cal.getCovariateIndex(CovariateEnum.BASEQUALITY));
-    assertEquals(1, cal.getCovariateIndex(CovariateEnum.READPOSITION));
+    assertEquals(1, cal.getCovariateIndex(CovariateEnum.MACHINECYCLE));
   }
 
   public void testProcessStats() throws IOException {
-    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateReadPos(35)}, null);
+    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateMachineCycle(35)}, null);
     add2Records(cal);
     final Calibrator.QuerySpec query = cal.new QuerySpec();
     mEqualCount = mDiffCount = 0;
@@ -128,12 +128,12 @@ public class CalibratorTest extends TestCase {
     assertEquals(57, stats.getEqual());
 
     // now do a more restricted query
-    assertTrue(query.setValue(CovariateEnum.READPOSITION, 10));
+    assertTrue(query.setValue(CovariateEnum.MACHINECYCLE, 10));
     mEqualCount = mDiffCount = 0;
     cal.processStats(proc, query);
     assertEquals(2, mEqualCount);
     assertEquals(0, mDiffCount);
-    stats = cal.getSums(CovariateEnum.READPOSITION, "10");
+    stats = cal.getSums(CovariateEnum.MACHINECYCLE, "10");
     assertEquals(2, stats.getEqual());
 
     // now do a very restricted query
@@ -180,7 +180,7 @@ public class CalibratorTest extends TestCase {
   }
 
   public void testWriteToFile() throws IOException {
-    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateReadPos(35)}, null);
+    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateMachineCycle(35)}, null);
     add2Records(cal);
     // now check the output file
     final File tmp = File.createTempFile("test", "calibrator", mDir);
@@ -191,7 +191,7 @@ public class CalibratorTest extends TestCase {
   }
 
   public void testWriteToFileLegacy() throws IOException {
-    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateReadPos(35)}, null);
+    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateMachineCycle(35)}, null);
     add2RecordsLegacy(cal);
     // now check the output file
     final File tmp = File.createTempFile("test", "calibrator", mDir);
@@ -205,7 +205,7 @@ public class CalibratorTest extends TestCase {
   public void testBadCigar() {
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     Diagnostic.setLogStream(new PrintStream(bos));
-    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadPos(3), new CovariateBaseQuality()}, null);
+    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateMachineCycle(3), new CovariateBaseQuality()}, null);
     final SAMRecord sam = new SAMRecord(null);
     sam.setCigarString("3X");
     sam.setAttribute("XU", "3X");
@@ -223,7 +223,7 @@ public class CalibratorTest extends TestCase {
 
   // Tests the case where the last index is bigger than the first index
   public void testMax() throws IOException {
-    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadPos(3), new CovariateBaseQuality()}, null);
+    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateMachineCycle(3), new CovariateBaseQuality()}, null);
     final SAMRecord sam = new SAMRecord(null);
     sam.setCigarString("3=");
     sam.setReadString("acg");
@@ -240,12 +240,12 @@ public class CalibratorTest extends TestCase {
     final String expected = ""
       + "#CL foo bar "
       + "@nh:read group 2 0 1 "
-      + "@covar readposition:3 basequality equal diff ins del "
+      + "@covar machinecycle:3 basequality equal diff ins del "
       + "0 35 1 0 0 0 "
       + "1 0 1 0 0 0 "
       + "2 35 1 0 0 0 ";
     assertEquals(expected, stats.replaceAll("\\s+", " "));
-    final Calibrator cal0 = new Calibrator(new Covariate[] {new CovariateReadPos(3), new CovariateBaseQuality()}, null);
+    final Calibrator cal0 = new Calibrator(new Covariate[] {new CovariateMachineCycle(3), new CovariateBaseQuality()}, null);
     cal0.accumulate(tmp);
     final File tmp2 = File.createTempFile("test", "calibrator2", mDir);
     cal0.writeToFile(tmp2);
@@ -255,7 +255,7 @@ public class CalibratorTest extends TestCase {
   }
 
 //  public void testExpanding() {
-//    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateReadPos(2), new CovariateBaseQuality(), new CovariateSequence()});
+//    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateMachineCycle(2), new CovariateBaseQuality(), new CovariateSequence()});
 //    MockSamBamRecord sam = new MockSamBamRecord();
 //    sam.setField(SamBamConstants.RNAME_FIELD, "sequence1");
 //    sam.setField(SamBamConstants.CIGAR_FIELD, "2=");
@@ -294,7 +294,7 @@ public class CalibratorTest extends TestCase {
 //    final String expected = EXPECTED_CALIBRATION;
 //    // System.out.println(stats);
 //    assertEquals(expected, stats);
-//    final Calibrator cal0 = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateReadPos(1), new CovariateBaseQuality(), new CovariateSequence()});
+//    final Calibrator cal0 = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateMachineCycle(1), new CovariateBaseQuality(), new CovariateSequence()});
 //    cal0.accumulate(tmp);
 //    final File tmp2 = File.createTempFile("test", "calibrator2", mDir);
 //    cal0.writeToFile(tmp2);
@@ -304,7 +304,7 @@ public class CalibratorTest extends TestCase {
 //  }
 
   public void testExpanding2() throws IOException {
-    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateReadPos(2), new CovariateBaseQuality(), new CovariateSequence()}, null);
+    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateMachineCycle(2), new CovariateBaseQuality(), new CovariateSequence()}, null);
     SAMRecord sam = new SAMRecord(null);
     sam.setReferenceName("sequence1");
     sam.setCigarString("2=");
@@ -343,7 +343,7 @@ public class CalibratorTest extends TestCase {
     final String expected = EXPECTED_CALIBRATION;
     // System.out.println(stats);
     assertEquals(expected, stats);
-    final Calibrator cal0 = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateReadPos(1), new CovariateBaseQuality(), new CovariateSequence()}, null);
+    final Calibrator cal0 = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateMachineCycle(1), new CovariateBaseQuality(), new CovariateSequence()}, null);
     cal0.accumulate(tmp);
     final File tmp2 = File.createTempFile("test", "calibrator2", mDir);
     cal0.writeToFile(tmp2);
@@ -384,7 +384,7 @@ public class CalibratorTest extends TestCase {
   }
 
   public void testReadFromFile() throws IOException {
-    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateReadPos(35)}, null);
+    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateMachineCycle(35)}, null);
     add2Records(cal);
     // now check the output file
     final File tmp = File.createTempFile("test", "calibrator1", mDir);
@@ -392,7 +392,7 @@ public class CalibratorTest extends TestCase {
     String stats = FileUtils.fileToString(tmp);
     //System.out.println(stats);
     check2Records(stats);
-    final Calibrator cal0 = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateReadPos(35)}, null);
+    final Calibrator cal0 = new Calibrator(new Covariate[] {new CovariateBaseQuality(), new CovariateMachineCycle(35)}, null);
     cal0.accumulate(tmp);
     final File tmp2 = File.createTempFile("test", "calibrator2", mDir);
     cal0.writeToFile(tmp2);
@@ -402,7 +402,7 @@ public class CalibratorTest extends TestCase {
   }
 
   public void testErrors() throws IOException {
-    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateReadPos(3)}, null);
+    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateMachineCycle(3)}, null);
     final File f = File.createTempFile("test", "file", mDir);
     String line = "blah";
     FileUtils.stringToFile(line, f);
@@ -425,14 +425,14 @@ public class CalibratorTest extends TestCase {
     } catch (final NoTalkbackSlimException e) {
       assertEquals("calibration file \"" + f.getPath() + "\" has mismatching covariates: " + line, e.getMessage());
     }
-    line = "@covar\treadposition:3\treadgroup\tequal\tdiff\tins\tdel";
+    line = "@covar\tmachinecycle:3\treadgroup\tequal\tdiff\tins\tdel";
     FileUtils.stringToFile(line, f);
     try {
       cal.accumulate(f);
     } catch (final NoTalkbackSlimException e) {
-      assertEquals("calibration file \"" + f.getPath() + "\" contains unexpected covariate: readposition", e.getMessage());
+      assertEquals("calibration file \"" + f.getPath() + "\" contains unexpected covariate: machinecycle", e.getMessage());
     }
-    line = "@covar\treadgroup\treadposition:3\tequal\tdiff\tins\tdel\nblah";
+    line = "@covar\treadgroup\tmachinecycle:3\tequal\tdiff\tins\tdel\nblah";
     FileUtils.stringToFile(line, f);
     try {
       cal.accumulate(f);
@@ -451,7 +451,7 @@ public class CalibratorTest extends TestCase {
         "@mnp:rg1\t0\t0\t0\t0\t0\t2",
         "@ins:rg1\t0\t0\t1",
         "@del:rg1\t0\t0\t0\t1",
-        "@covar\tbasequality\treadposition:35\tequal\tdiff\tins\tdel",
+        "@covar\tbasequality\tmachinecycle:35\tequal\tdiff\tins\tdel",
         "15   0  2 0 0 0".replaceAll("  *", "\t"),
         "15  10  1 0 0 0".replaceAll("  *", "\t"),
         "16  10  1 0 0 0".replaceAll("  *", "\t"),
@@ -639,8 +639,8 @@ public class CalibratorTest extends TestCase {
     assertEquals(4, c.length);
     assertEquals("readgroup", c[0].name());
     assertTrue(c[0] instanceof CovariateReadGroup);
-    assertEquals("readposition:7", c[1].name());
-    assertTrue(c[1] instanceof CovariateReadPos);
+    assertEquals("machinecycle:7", c[1].name());
+    assertTrue(c[1] instanceof CovariateMachineCycle);
     assertEquals("basequality", c[2].name());
     assertTrue(c[2] instanceof CovariateBaseQuality);
     assertEquals("sequence", c[3].name());
@@ -806,7 +806,7 @@ public class CalibratorTest extends TestCase {
                                 + "@nh:group2\t0\t2" + LS
                                 + "@sequence\t10000\tsequence1" + LS
                                 + "@sequence\t1234\tsequence2" + LS
-                                + "@covar\treadgroup\treadposition:7\tbasequality\tsequence\tequal\tdiff\tins\tdel" + LS
+                                + "@covar\treadgroup\tmachinecycle:7\tbasequality\tsequence\tequal\tdiff\tins\tdel" + LS
                                 + "group1\t0\t35\tsequence1\t3\t0\t0\t0" + LS
                                 + "group1\t0\t35\tsequence2\t2\t0\t0\t0" + LS
                                 + "group1\t1\t0\tsequence1\t3\t0\t0\t0" + LS
@@ -822,7 +822,7 @@ public class CalibratorTest extends TestCase {
                                 + "group2\t3\t32\tsequence1\t2\t0\t0\t0" + LS
                                 + "group2\t4\t35\tsequence1\t2\t0\t0\t0" + LS;
   public void testLengths() throws IOException {
-    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateReadPos(2), new CovariateBaseQuality(), new CovariateSequence()}, null);
+    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateMachineCycle(2), new CovariateBaseQuality(), new CovariateSequence()}, null);
     cal.accumulate(new ByteArrayInputStream(LENGTHS.getBytes()), "testLengths");
     assertEquals(10000, cal.getSequenceLengths().get("sequence1").intValue());
     assertEquals(1234, cal.getSequenceLengths().get("sequence2").intValue());
