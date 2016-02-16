@@ -166,15 +166,13 @@ public class SuperCigarParser {
     return mTemplate;
   }
 
-//  protected byte[] getRead() {
-//    return mRead;
-//  }
   protected byte getReadByte(int position) {
     if (position > mReadLength) {
       throw new ArrayIndexOutOfBoundsException(position);
     }
     return mRead[position];
   }
+
   protected int getReadLength() {
     return mReadLength;
   }
