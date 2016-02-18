@@ -375,8 +375,8 @@ public class ContigCollectorTest extends TestCase {
     final StoreDirString str = new StoreDirString();
     GraphWriter.writeWithDeleted(g, str, "foo", Collections.<UUID>emptySet());
     assertEquals("GGGGAAA", ContigString.contigSequenceString(g.contig(7)));
-    assertEquals(Arrays.asList(1L, 7L, 4L), MergeNodes.getPath(g, 3));
-    assertEquals(Arrays.asList(5L, 7L, 6L), MergeNodes.getPath(g, 4));
+    assertEquals(Arrays.asList(1L, 7L, 4L), MergeNodes.getPath(g, 4));
+    assertEquals(Arrays.asList(5L, 7L, 6L), MergeNodes.getPath(g, 3));
   }
 
   public void testCollapseWithLongerPaths() throws IOException {
@@ -394,10 +394,10 @@ public class ContigCollectorTest extends TestCase {
     final StoreDirString str = new StoreDirString();
     GraphWriter.writeWithDeleted(g, str, "foo", Collections.<UUID>emptySet());
     assertEquals("GGGGAAA", ContigString.contigSequenceString(g.contig(9)));
-    assertEquals(Arrays.asList(1L, 9L, 4L), MergeNodes.getPath(g, 5));
-    assertEquals(Arrays.asList(5L, 9L, 6L), MergeNodes.getPath(g, 6));
-    assertEquals(Arrays.asList(7L, 1L, 9L, 4L), MergeNodes.getPath(g, 7));
-    assertEquals(Arrays.asList(8L, 1L, 9L, 4L), MergeNodes.getPath(g, 8));
+    assertEquals(Arrays.asList(1L, 9L, 4L), MergeNodes.getPath(g, 8));
+    assertEquals(Arrays.asList(5L, 9L, 6L), MergeNodes.getPath(g, 7));
+    assertEquals(Arrays.asList(7L, 1L, 9L, 4L), MergeNodes.getPath(g, 6));
+    assertEquals(Arrays.asList(8L, 1L, 9L, 4L), MergeNodes.getPath(g, 5));
     assertEquals("2/3", g.contigAttribute(9, Consensus.COMBINED));
 
     assertEquals("7/1/-9:(2/3)", ContigCollector.buildCombinedString(Arrays.asList(7L, 1L, -9L), g));

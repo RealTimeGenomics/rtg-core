@@ -325,10 +325,10 @@ public class MergeNodesTest extends TestCase {
         , paths, attr, attr);
 
     MergeNodes.updatePaths(graph, 5, Arrays.asList(3L, 4L));
-    assertEquals(2, graph.path(6).contig(0));
-    assertEquals(5, graph.path(6).contig(1));
-    assertEquals(-2, graph.path(7).contig(0));
+    assertEquals(2, graph.path(7).contig(0));
     assertEquals(5, graph.path(7).contig(1));
+    assertEquals(-2, graph.path(6).contig(0));
+    assertEquals(5, graph.path(6).contig(1));
 
   }
 }
