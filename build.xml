@@ -11,7 +11,6 @@
 
   <property name="product" value="RTG Core Non-Commercial" />
   <property name="resources" value="core" />
-  <property name="main.class" value="com.rtg.Slim" />
 
   <!-- Location of RTG Tools source, here we assume the repo is parallel to rtg-core -->
   <property name="public.tools.basedir" location="${public.core.basedir}/../rtg-tools"/>
@@ -109,7 +108,7 @@
   <!-- Override or extra targets -->
 
   <target name="rtg-core.jar" depends="compile-src,set-rtg-build-version,set-rtg-build-product" description="Core jar.">
-    <rtg-jar main="${main.class}" file="${build.dir}/rtg-core.jar" refid="jar-src"/>
+    <rtg-jar main="com.rtg.Slim" file="${build.dir}/rtg-core.jar" refid="jar-src"/>
   </target>
 
 
