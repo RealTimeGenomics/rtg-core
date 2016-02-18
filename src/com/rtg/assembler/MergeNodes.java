@@ -13,7 +13,7 @@
 package com.rtg.assembler;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -43,7 +43,7 @@ public class MergeNodes {
     mThreshold = threshold;
     mOverlap = overlap;
   }
-  static final Set<String> INT_ATTRIBUTES = new HashSet<>();
+  static final Set<String> INT_ATTRIBUTES = new LinkedHashSet<>();
   static {
     INT_ATTRIBUTES.add(GraphKmerAttribute.READ_COUNT);
     INT_ATTRIBUTES.add(GraphKmerAttribute.K_MER_FREQ);
@@ -82,7 +82,7 @@ public class MergeNodes {
   }
 
   static void updatePaths(MutableGraph graph, long newId, List<Long> mergedIds) {
-    final Set<Long> pathIds = new HashSet<>();
+    final Set<Long> pathIds = new LinkedHashSet<>();
     for (long contig : mergedIds) {
       final PathsIterator it = graph.paths(contig);
       long pathId;
@@ -223,7 +223,7 @@ public class MergeNodes {
     if (predecessors.size() <= 1) {
       return true;
     } else if (predecessors.size() == 2) {
-      final Set<Long> forward = new HashSet<>();
+      final Set<Long> forward = new LinkedHashSet<>();
       for (long l : predecessors) {
         forward.add(Math.abs(l));
       }
@@ -269,7 +269,7 @@ public class MergeNodes {
   }
 
   static Set<Long> predecessors(MutableGraph graph, long i) {
-    final Set<Long> predecessors = new HashSet<>();
+    final Set<Long> predecessors = new LinkedHashSet<>();
     final PathsIterator iterator = graph.paths(i);
     long pathId;
     while ((pathId = iterator.nextPathId()) != 0) {
