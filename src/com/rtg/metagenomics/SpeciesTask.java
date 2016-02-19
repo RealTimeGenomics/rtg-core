@@ -39,7 +39,6 @@ import com.rtg.launcher.ReaderParams;
 import com.rtg.metagenomics.krona.KronaSpeciesNode;
 import com.rtg.metagenomics.krona.KronaSpeciesReportWriter;
 import com.rtg.metagenomics.matrix.Vector;
-import com.rtg.metagenomics.matrix.VectorSimple;
 import com.rtg.reader.PrereadNamesInterface;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
@@ -284,13 +283,11 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     Diagnostic.developerLog(blockMapping.statistics());
 
     final long[] genomeLengths = new long[mSpeciesMap.taxonIds().length];
-    final Vector genomeLengthsVector = new VectorSimple(genomeLengths.length);
 
     final ReaderParams genomes = mParams.genome();
     final int[] initGenomeLengths = genomes.lengths();
     for (int i = 0; i < initGenomeLengths.length; i++) {
       final int id = mSpeciesMap.id(mSequenceMap.get(genomes.reader().name(i)));
-      genomeLengthsVector.incr(id, initGenomeLengths[i]);
       genomeLengths[id] += initGenomeLengths[i];
     }
     //separate into blocks

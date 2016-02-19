@@ -468,7 +468,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
         if (cmpStart <= 0) {
           //result is left or in region
           break;
-        } else if (cmpStart > 0) {
+        } else {
           //result is right of region, look for region containing result
           regionIndexStart++;
         }
@@ -490,7 +490,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
         if (cmpEnd >= 0) {
           //result is in region (+1 case should not happen given above constraints)
           regionIndexEnd++;
-        } else if (cmpEnd < 0) {
+        } else {
           //result is left of region, first region past result
           break;
         }
