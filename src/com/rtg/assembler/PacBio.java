@@ -259,7 +259,7 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
   static class ScoreComparator implements Comparator<PacBioPath>, Serializable {
     @Override
     public int compare(PacBioPath o1, PacBioPath o2) {
-      return Integer.valueOf(o1.score()).compareTo(o2.score());
+      return Integer.compare(o1.score(), o2.score());
     }
   }
 

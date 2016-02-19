@@ -103,7 +103,7 @@ public class PathTracker {
           return compare;
         }
       }
-      return Integer.valueOf(o1.size()).compareTo(o2.size());
+      return Integer.compare(o1.size(), o2.size());
 
     }
   }

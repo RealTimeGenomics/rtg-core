@@ -127,12 +127,12 @@ final class GraphSorter {
     public int compareTo(TranslatedPath o) {
       final int limit = Math.min(o.mPath.length(), mPath.length());
       for (int i = 0; i < limit; i++) {
-        final int compare = Long.valueOf(mPath.contig(i)).compareTo(o.mPath.contig(i));
+        final int compare = Long.compare(mPath.contig(i), o.mPath.contig(i));
         if (compare != 0) {
           return compare;
         }
       }
-      return Integer.valueOf(mPath.length()).compareTo(o.mPath.length());
+      return Integer.compare(mPath.length(), o.mPath.length());
     }
 
     @Override

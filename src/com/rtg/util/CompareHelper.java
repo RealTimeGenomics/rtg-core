@@ -55,7 +55,7 @@ public final class CompareHelper {
         return this;
       }
     }
-    mCurrent = Integer.valueOf(list1.size()).compareTo(list2.size());
+    mCurrent = Integer.compare(list1.size(), list2.size());
     return this;
   }
 
@@ -77,7 +77,7 @@ public final class CompareHelper {
         return this;
       }
     }
-    mCurrent = Integer.valueOf(list1.length).compareTo(list2.length);
+    mCurrent = Integer.compare(list1.length, list2.length);
     return this;
   }
 

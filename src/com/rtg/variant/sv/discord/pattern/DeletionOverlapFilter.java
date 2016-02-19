@@ -120,7 +120,7 @@ public class DeletionOverlapFilter implements Iterable<DiscordBedRecord> {
   class SizeComparator extends BaseComparator {
     @Override
     public int compare(DiscordBedRecord o1, DiscordBedRecord o2) {
-      final int res = Integer.valueOf(Math.abs(o1.getEnd() - o1.getStart())).compareTo(Math.abs(o2.getEnd() - o2.getStart()));
+      final int res = Integer.compare(Math.abs(o1.getEnd() - o1.getStart()), Math.abs(o2.getEnd() - o2.getStart()));
       if (res != 0) {
         return res;
       }
@@ -132,7 +132,7 @@ public class DeletionOverlapFilter implements Iterable<DiscordBedRecord> {
     public int compare(DiscordBedRecord o1, DiscordBedRecord o2) {
       final int start1 = Math.min(o1.getStart(), o1.getEnd());
       final int start2 = Math.min(o2.getStart(), o2.getEnd());
-      final int res = Integer.valueOf(start1).compareTo(start2);
+      final int res = Integer.compare(start1, start2);
       if (res != 0) {
         return res;
       }
@@ -144,7 +144,7 @@ public class DeletionOverlapFilter implements Iterable<DiscordBedRecord> {
     public int compare(DiscordBedRecord o1, DiscordBedRecord o2) {
       final int end1 = Math.max(o1.getStart(), o1.getEnd());
       final int end2 = Math.max(o2.getStart(), o2.getEnd());
-      final int res = Integer.valueOf(end1).compareTo(end2);
+      final int res = Integer.compare(end1, end2);
       if (res != 0) {
         return res;
       }

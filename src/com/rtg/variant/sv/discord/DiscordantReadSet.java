@@ -172,7 +172,7 @@ class DiscordantReadSet {
       final int p0 = arg0.unionPosition();
       final int p1 = arg1.unionPosition();
       // Important - we only ever want to return 0 for the same exact object, as the results are being stored in a sorted set
-      return p0 == p1 ? Integer.valueOf(System.identityHashCode(arg0)).compareTo(System.identityHashCode(arg1)) : Integer.valueOf(p0).compareTo(p1);
+      return p0 == p1 ? Integer.compare(System.identityHashCode(arg0), System.identityHashCode(arg1)) : Integer.compare(p0, p1);
     }
   }
 

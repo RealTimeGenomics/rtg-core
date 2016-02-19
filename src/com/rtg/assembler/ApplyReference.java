@@ -129,7 +129,7 @@ public class ApplyReference {
   static class MismatchComparator implements Comparator<AlignmentState>, Serializable {
     @Override
     public int compare(AlignmentState o1, AlignmentState o2) {
-      return Integer.valueOf(o1.numberMismatches()).compareTo(o2.numberMismatches());
+      return Integer.compare(o1.numberMismatches(), o2.numberMismatches());
     }
   }
   static class AlignmentState {

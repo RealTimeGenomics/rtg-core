@@ -42,7 +42,7 @@ public class SmartBedWriter extends ReorderingQueue<DiscordBedRecord> {
         } else if (o1.getStart() < o2.getStart()) {
           res = -1;
         } else {
-          res = Integer.valueOf(System.identityHashCode(o1)).compareTo(System.identityHashCode(o2)); // Ensure that none get clobbered
+          res = Integer.compare(System.identityHashCode(o1), System.identityHashCode(o2)); // Ensure that none get clobbered
         }
       }
       return res;
