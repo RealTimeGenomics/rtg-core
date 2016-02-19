@@ -169,7 +169,7 @@ public class Species extends IntegralAbstract {
 
     if (!MatrixUtils.isFinite(jacobian)) {
       message("Invalid initial derivatives:", jacobian);
-    } else if (n > 1) { //avoid extra work developer log msgs etc. when n=1
+    } else {
       Vector lastJacobian = jacobian;
       Vector delta = MatrixUtils.negative(jacobian);
       double smooth = 0.0;
