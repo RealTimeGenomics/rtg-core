@@ -49,10 +49,11 @@ public class CompareHelperTest extends TestCase {
     final List<Integer> fourth = Arrays.asList(-1, 2, 4, 4, 5);
     assertEquals(0, new CompareHelper().compareList(first, first).result());
     assertEquals(0, new CompareHelper().compareList(second, second).result());
-    assertEquals(Integer.valueOf(4).compareTo(5), new CompareHelper().compareList(first, second).result());
-    assertEquals(Integer.valueOf(3).compareTo(4), new CompareHelper().compareList(first, third).result());
-    assertEquals(Integer.valueOf(1).compareTo(-1), new CompareHelper().compareList(first, fourth).result());
+    assertEquals(Integer.compare(4, 5), new CompareHelper().compareList(first, second).result());
+    assertEquals(Integer.compare(3, 4), new CompareHelper().compareList(first, third).result());
+    assertEquals(Integer.compare(1, -1), new CompareHelper().compareList(first, fourth).result());
   }
+  
   public void testListCompareAlreadyDifferent() {
     final List<Integer> first = Arrays.asList(3, 2, 3, 4);
     final List<Integer> second = Arrays.asList(1, 2, 3, 4);
