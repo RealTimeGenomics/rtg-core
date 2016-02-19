@@ -53,7 +53,7 @@ public class CompareHelperTest extends TestCase {
     assertEquals(Integer.compare(3, 4), new CompareHelper().compareList(first, third).result());
     assertEquals(Integer.compare(1, -1), new CompareHelper().compareList(first, fourth).result());
   }
-  
+
   public void testListCompareAlreadyDifferent() {
     final List<Integer> first = Arrays.asList(3, 2, 3, 4);
     final List<Integer> second = Arrays.asList(1, 2, 3, 4);

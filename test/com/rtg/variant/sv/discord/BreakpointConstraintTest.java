@@ -34,7 +34,7 @@ public class BreakpointConstraintTest extends TestCase {
   }
 
   private static class MockReadGroupStats extends ReadGroupStats {
-    static final double STD_DEV =  3.14159;
+    static final double STD_DEV = Math.PI;
     private final double mMean;
     MockReadGroupStats(double mean) {
       super("id", 1000);
@@ -80,7 +80,7 @@ public class BreakpointConstraintTest extends TestCase {
         ;
     assertEquals(exp, bc.toString());
     assertEquals(246.0, bc.rMean());
-    assertEquals(3.14159, bc.rStdDev());
+    assertEquals(Math.PI, bc.rStdDev());
     assertEquals("BreakpointPosition [lo=118, position=123, hi=128, positionY=123]", bc.position().toString());
     assertEquals("BreakpointPosition [lo=118, position=123, hi=128, positionY=123]", bc.flip().position().toString());
     final String gpx = ""
