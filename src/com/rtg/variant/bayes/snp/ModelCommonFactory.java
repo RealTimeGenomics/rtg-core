@@ -61,11 +61,10 @@ public abstract class ModelCommonFactory<D extends Description, H extends Hypoth
 
   @Override
   public boolean globalIntegrity() {
-    integrity();
     for (int i = 0; i < mHypothesesCache.size(); i++) {
       Exam.assertEquals(i, mHypothesesCache.get(i).reference());
     }
-    return true;
+    return integrity();
   }
 
   public AlleleBalanceProbability getAlleleBalance() {
