@@ -113,8 +113,9 @@ public class SchedulerSynchronized<J extends JobId<J>> implements Scheduler<J>, 
   public synchronized boolean globalIntegrity() {
     integrity();
     //results running and candidates should be disjoint
-    for (final J id : mResults.keySet()) {
-      Exam.assertTrue(mResults.get(id).refCount() > 0);
+    for (final Map.Entry<J, CountResult> e : mResults.entrySet()) {
+      final J id = e.getKey();
+      Exam.assertTrue(e.getValue().refCount() > 0);
       Exam.assertFalse(mRunning.contains(id));
       Exam.assertFalse(mEventList.contains(id));
     }

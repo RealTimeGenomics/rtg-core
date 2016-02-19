@@ -61,8 +61,7 @@ public class DeletionOverlapFilter implements Iterable<DiscordBedRecord> {
    */
   public List<DiscordBedRecord> nonOverlapping() {
     final List<DiscordBedRecord> result = new ArrayList<>();
-    for (String chr : mChrMap.keySet()) {
-      final ArrayList<DiscordBedRecord> chrRecords = mChrMap.get(chr);
+    for (final ArrayList<DiscordBedRecord> chrRecords : mChrMap.values()) {
       final TreeSet<DiscordBedRecord> size = new TreeSet<>(new SizeComparator());
       final TreeSet<DiscordBedRecord> start = new TreeSet<>(new StartComparator());
       final TreeSet<DiscordBedRecord> end = new TreeSet<>(new EndComparator());
