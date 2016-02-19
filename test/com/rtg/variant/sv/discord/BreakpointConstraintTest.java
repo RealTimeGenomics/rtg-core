@@ -624,7 +624,7 @@ public class BreakpointConstraintTest extends TestCase {
 
   private void checkStats(BreakpointConstraint bc) {
     assertEquals(245.0, bc.rMean(), 0.000001);
-    assertEquals(2.221440, bc.rStdDev(), 0.000001);
+    assertEquals(2.221441, bc.rStdDev(), 0.000001);
   }
 
   private static void checkOverlap(boolean xUp, boolean yUp, int x0, int y0, int x1, int y1, BreakpointConstraint exp) {
