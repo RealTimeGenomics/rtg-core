@@ -53,8 +53,7 @@ public class Sam2BamTest extends AbstractCliTest {
    * Test of convertSamToBam method, of class BamConverter.
    */
   public void testConvertSamToBam() throws Exception {
-    final File dir = FileUtils.createTempDir("sam2bam", "test");
-    try {
+    try (final TestDirectory dir = new TestDirectory("sam2bam")) {
       final File sam1 = new File(dir, "sam1.sam.gz");
       final File sam2 = new File(dir, "sam2.sam.gz");
       final File sam3 = new File(dir, "sam3.sam.gz");
@@ -81,8 +80,7 @@ public class Sam2BamTest extends AbstractCliTest {
       final File index = new File(dir, "output.bai");
       Sam2Bam.convertSamToBam(output, index, input);
       try (SamReader reader = SamUtils.makeSamReader(output)) {
-        final CloseableIterator<SAMRecord> bIt = reader.iterator();
-        try {
+        try (CloseableIterator<SAMRecord> bIt = reader.iterator()) {
           try (RecordIterator<SAMRecord> multi = new ThreadedMultifileIterator<>(input, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
             while (bIt.hasNext() && multi.hasNext()) {
               final SAMRecord b = bIt.next();
@@ -91,8 +89,6 @@ public class Sam2BamTest extends AbstractCliTest {
             }
             assertFalse(bIt.hasNext() || multi.hasNext());
           }
-        } finally {
-          bIt.close();
         }
       }
 
@@ -103,8 +99,6 @@ public class Sam2BamTest extends AbstractCliTest {
         assertEquals(mps.toString(), 0, code);
       }
       assertTrue(new File(output.toString() + ".bai").exists());
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 
@@ -147,18 +141,15 @@ public class Sam2BamTest extends AbstractCliTest {
   }
 
   public void testOutOfOrder() throws Exception {
-    final File tmpDir = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory()) {
       final Sam2Bam bc = new Sam2Bam();
 
       final File in = new File(tmpDir, "in.sam");
       FileHelper.resourceToFile("com/rtg/sam/resources/unmated-out-of-order.sam", in);
 
       final MemoryPrintStream mps = new MemoryPrintStream();
-      assertEquals(1, bc.mainInit(new String[] {"-o", tmpDir.getPath() + StringUtils.FS + "out.bam", in.getPath()}, TestUtils.getNullOutputStream(), mps.printStream()));
+      assertEquals(1, bc.mainInit(new String[]{"-o", tmpDir.getPath() + StringUtils.FS + "out.bam", in.getPath()}, TestUtils.getNullOutputStream(), mps.printStream()));
       assertTrue(mps.toString().contains("Alignments added out of order in " + tmpDir.getPath() + StringUtils.FS + "out.bam. Sort order is coordinate. Offending records are at [gi0:10] and [gi0:9]"));
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmpDir));
     }
   }
   /**
@@ -166,8 +157,7 @@ public class Sam2BamTest extends AbstractCliTest {
    * FileHelper.resourceToFile("com/rtg/variant/resources/coverage_mated.sam.gz.calibration", new File(dir, "mated.sam.gz.calibration"));
    */
   public void testCalibrationConversion() throws IOException {
-    final File dir = FileUtils.createTempDir("sam2bam", "test");
-    try {
+    try (final TestDirectory dir = new TestDirectory("sam2bam")) {
       final File sam = new File(dir, "samFile.sam.gz");
       final File samCal = new File(sam.getParent(), sam.getName() + ".calibration");
       final File bam = new File(dir, "bamFile.bam");
@@ -191,9 +181,6 @@ public class Sam2BamTest extends AbstractCliTest {
       assertTrue(bamCal.isFile());
       assertEquals(FileUtils.fileToString(samCal).replaceAll("#.*", "").replaceAll("\r", ""), FileUtils.fileToString(bamCal).replaceAll("#.*", "").replaceAll("\r", ""));
       assertFalse(ps.toString(), ps.toString().contains("Number of calibration files does not match number of SAM files, will not merge calibration files."));
-    } finally {
-      Diagnostic.setLogStream();
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 

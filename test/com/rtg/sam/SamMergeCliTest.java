@@ -27,6 +27,7 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 /**
@@ -59,23 +60,18 @@ public class SamMergeCliTest extends AbstractCliTest {
   }
 
   public void testValidator() throws IOException {
-    final File temp = FileUtils.createTempDir("validator", "test");
-    try {
+    try (final TestDirectory temp = new TestDirectory("validator")) {
       final File fake = new File(temp, "fake.txt.sam");
       FileUtils.stringToFile(fake.getPath() + LS, fake);
       TestUtils.containsAll(checkHandleFlagsErr("-o", "blahOutput").replaceAll("\\s+", " "), "No input files specified.");
       TestUtils.containsAll(checkHandleFlagsErr("-o", fake.getPath(), fake.getPath(), "-Z").replaceAll("\\s+", " "), "The file \"" + fake.getPath() + "\" already exists. Please remove it first or choose a different file");
       TestUtils.containsAll(checkHandleFlagsErr("-o", fake.getPath(), fake.getPath(), "-c", "0").replaceAll("\\s+", " "), "The specified flag \"--max-hits\" has invalid value \"0\". It should be greater than or equal to \"1\".");
       checkHandleFlagsOut("-o", fake.getPath(), "-I", fake.getPath());
-    } finally {
-      assertTrue(FileHelper.deleteAll(temp));
     }
   }
 
   public void testSimpleMerge() throws Exception {
-    Diagnostic.setLogStream();
-    final File temp = FileUtils.createTempDir("simplemerge", "test");
-    try {
+    try (final TestDirectory temp = new TestDirectory("simplemerge")) {
       final File inputFile = new File(temp, "input.txt");
       final File ffa = new File(temp, "alignmentsA.sam.gz");
       FileHelper.stringToGzFile(SharedSamConstants.SAM1, ffa);
@@ -97,18 +93,14 @@ public class SamMergeCliTest extends AbstractCliTest {
           , "@PG\tID:rtg", "VN:" + Environment.getVersion(), "PN:rtg"
           , "g1\t3", "g1\t5");
       assertEquals(output, 12, output.split("\r\n|\n").length);
-      assertTrue(TabixIndexer.indexFileName(outFile).exists());
       mNano.check("simplestdout", TestUtils.stripSAMHeader(output), false);
-    } finally {
-      assertTrue(FileHelper.deleteAll(temp));
-      CommandLine.clearCommandArgs();
+      assertTrue(TabixIndexer.indexFileName(outFile).exists());
     }
   }
 
   public void testSimpleMergeStdOut() throws Exception {
     Diagnostic.setLogStream();
-    final File temp = FileUtils.createTempDir("simplemerge", "test");
-    try {
+    try (final TestDirectory temp = new TestDirectory("simplemerge")) {
       final File inputFile = new File(temp, "input.txt");
       final File ffa = new File(temp, "alignmentsA.sam.gz");
       FileHelper.stringToGzFile(SharedSamConstants.SAM1, ffa);
@@ -120,14 +112,20 @@ public class SamMergeCliTest extends AbstractCliTest {
 
       final String stdout = checkMainInitOk("-I", inputFile.getPath(), "--region", "g1:1+5");
       TestUtils.containsAll(stdout
-          , "SO:coordinate"
-          , "@PG\tID:rtg", "VN:" + Environment.getVersion(), "PN:rtg"
-          , "g1\t3", "g1\t5");
+        , "SO:coordinate"
+        , "@PG\tID:rtg", "VN:" + Environment.getVersion(), "PN:rtg"
+        , "g1\t3", "g1\t5");
       mNano.check("simplestdout", TestUtils.stripSAMHeader(stdout), false);
       assertEquals(stdout, 12, stdout.split("\r\n|\n").length);
-    } finally {
-      assertTrue(FileHelper.deleteAll(temp));
-      CommandLine.clearCommandArgs();
+
+      final File header = new File(temp, "header.sam.gz");
+      FileHelper.stringToGzFile(""
+        + "@HD" + TAB + "VN:1.0" + TAB + "SO:coordinate" + LS
+        + "@SQ" + TAB + "SN:g1" + TAB + "LN:20" + LS
+        + "@SQ" + TAB + "SN:gempty" + TAB + "LN:0" + LS
+        + "@RG" + TAB + "ID:RG1" + TAB + "SM:TEST-UPDATED" + TAB + "PL:ILLUMINA" + LS, header);
+      final String stdout2 = checkMainInitOk("-I", inputFile.getPath(), "--region", "g1:1+5", "--Xalternate-sam-header", header.getPath());
+      mNano.check("simplestdout-newheader", TestUtils.sanitizeSAMHeader(stdout2), false);
     }
   }
 
@@ -139,8 +137,7 @@ public class SamMergeCliTest extends AbstractCliTest {
 
 
   public void testTabixHandlingBug() throws IOException {
-    final File dir = FileUtils.createTempDir("test", "tabixerror");
-    try {
+    try (final TestDirectory dir = new TestDirectory("test")) {
       final File failing = FileHelper.resourceToFile("com/rtg/sam/resources/failing.sam.gz", new File(dir, "failing.sam.gz"));
       FileHelper.resourceToFile("com/rtg/sam/resources/failing.sam.gz.tbi", new File(dir, "failing.sam.gz.tbi"));
       final String out = checkMainInitOk(failing.getPath(), "--region", "chr6:160560323+100");
@@ -148,15 +145,12 @@ public class SamMergeCliTest extends AbstractCliTest {
 
       final String outlegacy = checkMainInitOk(failing.getPath(), "--region", "chr6:160560323+100", "--legacy-cigars");
       mNano.check("checklegacy", TestUtils.stripSAMHeader(outlegacy), false);
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 
   public void testUnmappedMerge() throws Exception {
     Diagnostic.setLogStream();
-    final File temp = FileUtils.createTempDir("unmapped_merge", "test");
-    try {
+    try (final TestDirectory temp = new TestDirectory("unmapped_merge")) {
       CommandLine.setCommandArgs("test", "arguments");
       final File inputFile = new File(temp, "input.txt");
       final File ffa = new File(temp, "alignmentsA.sam.gz");
@@ -169,28 +163,24 @@ public class SamMergeCliTest extends AbstractCliTest {
       FileHelper.stringToGzFile(SharedSamConstants.SAM9 + SAM_PCR_DUP, ffc);
       new TabixIndexer(ffc, TabixIndexer.indexFileName(ffc)).saveSamIndex();
       FileUtils.stringToFile(ffa.getPath() + LS
-                             + ffb.getPath() + LS
-                             + ffc.getPath() + LS, inputFile);
+        + ffb.getPath() + LS
+        + ffc.getPath() + LS, inputFile);
 
       final File outFile = new File(temp, "test.sam.gz");
       final String stdout = checkMainInitOk("-I", inputFile.getPath(), "-o", outFile.getPath());
       mNano.check("sfm-inc-stdout", stdout);
       assertTrue(outFile.exists());
       final String output = FileHelper.gzFileToString(outFile);
-      TestUtils.containsAll(output, "SO:coordinate" , "@PG\tID:rtg", "VN:" + Environment.getVersion(), "PN:rtg");
+      TestUtils.containsAll(output, "SO:coordinate", "@PG\tID:rtg", "VN:" + Environment.getVersion(), "PN:rtg");
       final String outRecords = TestUtils.stripSAMHeader(output);
       mNano.check("sfm-inc-unmappeddups", outRecords, false);
       assertTrue(TabixIndexer.indexFileName(outFile).exists());
-    } finally {
-      assertTrue(FileHelper.deleteAll(temp));
-      CommandLine.clearCommandArgs();
     }
   }
 
   public void testUnmappedStrip() throws Exception {
     Diagnostic.setLogStream();
-    final File temp = FileUtils.createTempDir("unmapped_strip", "test");
-    try {
+    try (final TestDirectory temp = new TestDirectory("unmapped_strip")) {
       CommandLine.setCommandArgs("test", "arguments");
       final File inputFile = new File(temp, "input.txt");
       final File ffa = new File(temp, "alignmentsA.sam.gz");
@@ -203,21 +193,18 @@ public class SamMergeCliTest extends AbstractCliTest {
       FileHelper.stringToGzFile(SharedSamConstants.SAM9 + SAM_PCR_DUP, ffc);
       new TabixIndexer(ffc, TabixIndexer.indexFileName(ffc)).saveSamIndex();
       FileUtils.stringToFile(ffa.getPath() + LS
-                             + ffb.getPath() + LS
-                             + ffc.getPath() + LS, inputFile);
+        + ffb.getPath() + LS
+        + ffc.getPath() + LS, inputFile);
 
       final File outFile = new File(temp, "test.sam.gz");
       final String stdout = checkMainInitOk("-I", inputFile.getPath(), "-o", outFile.getPath(), "--exclude-duplicates", "--exclude-unmapped");
       mNano.check("sfm-exc-stdout", stdout);
       assertTrue(outFile.exists());
       final String output = FileHelper.gzFileToString(outFile);
-      TestUtils.containsAll(output, "SO:coordinate" , "@PG\tID:rtg", "VN:" + Environment.getVersion(), "PN:rtg");
+      TestUtils.containsAll(output, "SO:coordinate", "@PG\tID:rtg", "VN:" + Environment.getVersion(), "PN:rtg");
       final String outRecords = TestUtils.stripSAMHeader(output);
       mNano.check("sfm-exc-unmappeddups", outRecords, false);
       assertTrue(TabixIndexer.indexFileName(outFile).exists());
-    } finally {
-      assertTrue(FileHelper.deleteAll(temp));
-      CommandLine.clearCommandArgs();
     }
   }
 }

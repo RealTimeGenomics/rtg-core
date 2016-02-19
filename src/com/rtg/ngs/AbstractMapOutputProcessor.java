@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.Recalibrate;
+import com.rtg.calibrate.SamCalibrationInputs;
 import com.rtg.index.hash.ngs.OutputProcessor;
 import com.rtg.launcher.GlobalFlags;
 import com.rtg.launcher.HashingRegion;
@@ -331,7 +332,8 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
             if (unmappedAlignments != null) {
               toMerge.add(unmappedAlignments.getAlignmentFiles().get(index));
             }
-            merge.mergeSamFiles(toMerge, outputFile, null, mSharedResources.getHeader(), index == 0, false);
+            final SamCalibrationInputs inputs = new SamCalibrationInputs(toMerge, true);
+            merge.mergeSamFiles(inputs.getSamFiles(), inputs.getCalibrationFiles(), outputFile, null, mSharedResources.getHeader(), index == 0, false);
           }
         });
       }

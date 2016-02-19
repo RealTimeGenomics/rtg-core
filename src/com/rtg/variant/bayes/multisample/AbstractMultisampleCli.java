@@ -121,8 +121,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String X_ALT_MULTIPLIER_FLAG = "Xalt-coverage-multiplier";
   protected static final String X_CONTRARY_FLAG = "Xcontrary-probability";
 
-  //
   private static final String X_IGNORE_SAM_HEADER_INCOMPATIBILITY = "Xignore-incompatible-sam-headers";
+  private static final String X_ALTERNATE_SAM_HEADER = "Xalternate-sam-header";
 
   private static final String X_INFO_ANNOTATION_FLAG = "Xinfo-annotation";
   private static final String X_FORMAT_ANNOTATION_FLAG = "Xformat-annotation";
@@ -321,6 +321,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(X_NO_COMPLEX_CALLS_FLAG, "turn off attempting calls in complex region").setCategory(INPUT_OUTPUT);
     flags.registerOptional(X_NO_TRIM_SPLIT, "disable trimming and splitting").setCategory(REPORTING);
     flags.registerOptional(X_IGNORE_SAM_HEADER_INCOMPATIBILITY, "ignore incompatible SAM headers when merging SAM results").setCategory(UTILITY);
+    flags.registerOptional(X_ALTERNATE_SAM_HEADER, File.class, "FILE", "treat all SAM records as having the supplied header").setCategory(UTILITY);
     flags.registerOptional(X_CONTRARY_FLAG, Double.class, "float", "probability used to penalize contrary evidence in somatic calls", 0.01).setCategory(SENSITIVITY_TUNING);
 
     //Extra INFO / FORMAT fields
@@ -488,7 +489,13 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
       throw new InvalidParamsException("Can not use --" + COVERAGE_BYPASS_MULTIPLIER_FLAG + " when calibration files are not being used.");
     }
     builder.ignoreIncompatibleSamHeaders(mFlags.isSet(X_IGNORE_SAM_HEADER_INCOMPATIBILITY));
-    final SAMFileHeader uberHeader = SamUtils.getUberHeader(samFiles, mFlags.isSet(X_IGNORE_SAM_HEADER_INCOMPATIBILITY), grf == null ? null : grf.genomes());
+    final SAMFileHeader uberHeader;
+    if (mFlags.isSet(X_ALTERNATE_SAM_HEADER)) {
+      final File altHeaderFile = (File) mFlags.getValue(X_ALTERNATE_SAM_HEADER);
+      uberHeader = SamUtils.getSingleHeader(altHeaderFile);
+    } else {
+      uberHeader = SamUtils.getUberHeader(samFiles, mFlags.isSet(X_IGNORE_SAM_HEADER_INCOMPATIBILITY), grf == null ? null : grf.genomes());
+    }
     builder.uberHeader(uberHeader);
     builder.referenceRanges(SamRangeUtils.createReferenceRanges(uberHeader, filterParams));
 

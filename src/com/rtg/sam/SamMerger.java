@@ -19,7 +19,6 @@ import java.util.Collection;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Recalibrate;
-import com.rtg.calibrate.SamCalibrationInputs;
 import com.rtg.launcher.GlobalFlags;
 import com.rtg.tabix.IndexingStreamCreator;
 import com.rtg.tabix.TabixIndexer;
@@ -68,19 +67,16 @@ public class SamMerger {
   /**
    * Merges given SAM and/or BAM files into one using parameters given to this merger.
    *
-   *
-   * @param inputFiles files to merge
+   * @param samFiles files to merge
+   * @param calibrationFiles corresponding calibration files to merge (may be empty)
    * @param output output file, null to use supplied output stream
    * @param out output stream to write sam to (if {@code output} is null), otherwise statistics are written here. may be null
-   * @param headerOverride use this header instead of any found in the SAM/BAM file (useful if file has no header). null for normal behaviour
+   * @param header use this header instead of any found in the SAM/BAM file (useful if file has no header, or needs changing).
    * @param writeHeader true if SAM/BAM header should be written to output file
    * @param terminateBlockedGzip true if BAM or block compressed SAM should have terminator block
    * @throws java.io.IOException if an IO error occurs
    */
-  public void mergeSamFiles(Collection<File> inputFiles, File output, OutputStream out, SAMFileHeader headerOverride, boolean writeHeader, boolean terminateBlockedGzip) throws IOException {
-    final SamCalibrationInputs inputs = new SamCalibrationInputs(inputFiles, true);
-    final Collection<File> samFiles = inputs.getSamFiles();
-    final Collection<File> calibrationFiles = inputs.getCalibrationFiles();
+  public void mergeSamFiles(Collection<File> samFiles, Collection<File> calibrationFiles, File output, OutputStream out, SAMFileHeader header, boolean writeHeader, boolean terminateBlockedGzip) throws IOException {
     if (output != null && calibrationFiles.size() > 0 && calibrationFiles.size() != samFiles.size()) {
       Diagnostic.warning("Number of calibration files does not match number of SAM files, will not merge calibration files.");
     }
@@ -90,7 +86,6 @@ public class SamMerger {
     final long recordsIn;
     final long recordsOut;
     final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
-    final SAMFileHeader header = headerOverride != null ? headerOverride.clone() : SamUtils.getUberHeader(samFiles);
     try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(samFiles, mNumberThreads, pf, mFilterParams, header)) {
       header.setSortOrder(SAMFileHeader.SortOrder.coordinate);
       if (mAddProgramRecord) {

@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Collection;
 
+import com.rtg.calibrate.SamCalibrationInputs;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommandLineFiles;
 import com.rtg.launcher.CommonFlags;
@@ -28,6 +29,8 @@ import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 
+import htsjdk.samtools.SAMFileHeader;
+
 /**
  */
 public class SamMergeCli extends AbstractCli {
@@ -35,6 +38,7 @@ public class SamMergeCli extends AbstractCli {
   private static final String MODULE_NAME = "sammerge";
 
   private static final String LEGACY_CIGARS = "legacy-cigars";
+  private static final String X_ALTERNATE_SAM_HEADER = "Xalternate-sam-header";
 
   private static class SamFileMergeValidator implements Validator {
     @Override
@@ -84,6 +88,7 @@ public class SamMergeCli extends AbstractCli {
     final Flag listFlag = mFlags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional('o', CommonFlags.OUTPUT_FLAG, File.class, "FILE", "name for output SAM/BAM file. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(LEGACY_CIGARS, "if set, use legacy cigars in output").setCategory(UTILITY);
+    mFlags.registerOptional(X_ALTERNATE_SAM_HEADER, File.class, "FILE", "treat all SAM records as having the supplied header").setCategory(UTILITY);
     SamFilterOptions.registerMaskFlags(mFlags);
     SamFilterOptions.registerMinMapQFlag(mFlags);
     SamFilterOptions.registerMaxHitsFlag(mFlags, 'c');
@@ -119,7 +124,15 @@ public class SamMergeCli extends AbstractCli {
     }
     final Collection<File> inputFiles = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null, CommandLineFiles.EXISTS, CommandLineFiles.NOT_DIRECTORY).getFileList(mFlags);
     final SamMerger merger = new SamMerger(createIndex, gzip, legacy, numberThreads, filterParams, true, false);
-    merger.mergeSamFiles(inputFiles, output, out, null, true, true);
+    final SamCalibrationInputs inputs = new SamCalibrationInputs(inputFiles, true);
+    final SAMFileHeader uberHeader;
+    if (mFlags.isSet(X_ALTERNATE_SAM_HEADER)) {
+      final File altHeaderFile = (File) mFlags.getValue(X_ALTERNATE_SAM_HEADER);
+      uberHeader = SamUtils.getSingleHeader(altHeaderFile);
+    } else {
+      uberHeader = SamUtils.getUberHeader(inputs.getSamFiles());
+    }
+    merger.mergeSamFiles(inputs.getSamFiles(), inputs.getCalibrationFiles(), output, out, uberHeader, true, true);
     return 0;
   }
 
