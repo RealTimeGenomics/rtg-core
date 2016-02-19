@@ -568,12 +568,12 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     builder.defaultMatedReadQuality(rDefault);
     builder.defaultUnmatedReadQuality(urDefault);
     final int rMax = (Integer) mFlags.getValue(X_R_MAX_FLAG);
-    if (rDefault < 0) {
-      throw new InvalidParamsException(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, X_R_MAX_FLAG, "" + rDefault, "0");
+    if (rMax < 0) {
+      throw new InvalidParamsException(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, X_R_MAX_FLAG, "" + rMax, "0");
     }
     final int urMax = (Integer) mFlags.getValue(X_UNMATED_R_MAX_FLAG);
-    if (urDefault < 0) {
-      throw new InvalidParamsException(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, X_UNMATED_R_MAX_FLAG, "" + urDefault, "0");
+    if (urMax < 0) {
+      throw new InvalidParamsException(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, X_UNMATED_R_MAX_FLAG, "" + urMax, "0");
     }
     builder.maxMatedReadQuality(rMax);
     builder.maxUnmatedReadQuality(urMax);

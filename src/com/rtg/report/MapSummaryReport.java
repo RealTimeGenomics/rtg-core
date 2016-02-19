@@ -114,20 +114,18 @@ public class MapSummaryReport implements Report {
     body.append(StringUtils.LS).append(START_PARAMS_SUMMARY).append(StringUtils.LS);
     writeParamsBlock(body);
     final List<String> commandLines = getCommandLines();
-    if (commandLines.size() >= 0) {
-      if (commandLines.size() == 1) {
+    if (commandLines.size() == 1) {
         body.append("<p><strong>Command line: ").append("</strong>").append(commandLines.get(0)).append("</p>");
       } else {
-        body.append("<p><strong>Command lines").append("</strong></p>");
-        body.append("<ul>");
-        for (String cl : commandLines) {
-          body.append("<li>");
-          body.append(cl)
-              .append(StringUtils.LS);
-          body.append("</li>");
-        }
-        body.append("</ul>");
+      body.append("<p><strong>Command lines").append("</strong></p>");
+      body.append("<ul>");
+      for (String cl : commandLines) {
+        body.append("<li>");
+        body.append(cl)
+          .append(StringUtils.LS);
+        body.append("</li>");
       }
+      body.append("</ul>");
     }
     body.append(StringUtils.LS).append(END_PARAMS_SUMMARY).append(StringUtils.LS);
 

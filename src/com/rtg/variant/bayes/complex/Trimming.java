@@ -74,7 +74,7 @@ public final class Trimming {
     }
     final int colon = oldName.indexOf(VariantUtils.COLON);
     if (colon >= 0) {
-      assert colon >= 0 && oldName.indexOf(VariantUtils.COLON, colon + 1) == -1;
+      assert oldName.indexOf(VariantUtils.COLON, colon + 1) == -1;
       final String allele1 = StringUtils.clip(oldName.substring(0, colon), leftClip, rightClip);
       final String allele2 = StringUtils.clip(oldName.substring(colon + 1), leftClip, rightClip);
       return allele1 + VariantUtils.COLON + allele2;
