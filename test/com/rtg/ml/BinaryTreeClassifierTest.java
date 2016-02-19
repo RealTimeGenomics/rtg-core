@@ -34,7 +34,7 @@ public class BinaryTreeClassifierTest extends TestCase {
         new ZeroRBuilder.ZeroRClassifier(1.0),
         0.2
     );
-    final BinaryTreeClassifier classifier = new BinaryTreeClassifier(new BinarySplitter("att0", 0, 3.141, MlDataType.DOUBLE),
+    final BinaryTreeClassifier classifier = new BinaryTreeClassifier(new BinarySplitter("att0", 0, Math.PI, MlDataType.DOUBLE),
         new ZeroRBuilder.ZeroRClassifier(0.9),
         node2,
         0.3
@@ -45,7 +45,7 @@ public class BinaryTreeClassifierTest extends TestCase {
     final double tolerance = 0.00001;
     //double, boolean
     assertEquals(0.9, classifier.predict(new double[] {3.0, 1.0}));
-    assertEquals(0.9, classifier.predict(new double[] {3.141, 1.0}));
+    assertEquals(0.9, classifier.predict(new double[] {Math.PI, 1.0}));
     assertEquals(0.9, classifier.predict(new double[] {3.0, 0.0}));
     assertEquals(0.9, classifier.predict(new double[] {3.0, Double.NaN}));
 
