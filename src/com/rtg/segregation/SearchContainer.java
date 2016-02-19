@@ -121,12 +121,9 @@ class SearchContainer extends IntegralAbstract implements Comparable<SearchConta
 
   @Override
   public int compareTo(SearchContainer that) {
-    final double delta = that.mScore - this.mScore;
-    if (delta > 0.0) {
-      return -1;
-    }
-    if (delta < 0.0) {
-      return +1;
+    final int c = Double.compare(mScore, that.mScore);
+    if (c != 0) {
+      return c;
     }
     return (int) (this.mId - that.mId);
   }
