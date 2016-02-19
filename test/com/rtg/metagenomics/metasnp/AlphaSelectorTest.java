@@ -77,13 +77,6 @@ public class AlphaSelectorTest extends TestCase {
     Arrays.fill(beta, 0.001);
     final double error = 0.01;
     final PossibilityArithmetic arith = LogApproximatePossibility.SINGLETON;
-    final double[][] xiPoss = new double[xi.length][];
-    for (int i = 0; i < xi.length; i++) {
-      xiPoss[i] = new double[xi[i].length];
-      for (int j = 0; j < xi[i].length; j++) {
-        xiPoss[i][j] = arith.prob2Poss(xi[i][j]);
-      }
-    }
     final double[][] thetaLookup = AlphaSelector.computeThetaLookup(xi, arith, arith.prob2Poss(1 - error), arith.prob2Poss(error / 3));
     return AlphaSelector.alphaPosition(template, beta, reads, thetaLookup, arith, xi[0].length);
   }
