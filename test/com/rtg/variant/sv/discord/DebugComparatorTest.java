@@ -15,8 +15,6 @@ package com.rtg.variant.sv.discord;
 import junit.framework.TestCase;
 
 /**
- *         Date: 1/03/12
- *         Time: 4:03 PM
  */
 public class DebugComparatorTest extends TestCase {
   public void testComparator() {
@@ -28,11 +26,11 @@ public class DebugComparatorTest extends TestCase {
 
     BreakpointConstraint bg2 = new BreakpointConstraint(new BreakpointGeometry(Orientation.UU, "f", "g", 41, 51, 145, 161, 191, 202), 0, 10.0);
     DiscordantReadSet drs3 = new DiscordantReadSet("f", 60, bg2);
-    assertEquals(Integer.valueOf(42).compareTo(41), new DebugComparator().compare(drs1, drs3));
+    assertEquals(Integer.compare(42, 41), new DebugComparator().compare(drs1, drs3));
 
     bg2 = new BreakpointConstraint(new BreakpointGeometry(Orientation.UU, "f", "g", 42, 51, 145, 148, 187, 199), 0, 10.0);
     drs3 = new DiscordantReadSet("f", 60, bg2);
-    assertEquals(Integer.valueOf(50).compareTo(51), new DebugComparator().compare(drs1, drs3));
+    assertEquals(Integer.compare(50, 51), new DebugComparator().compare(drs1, drs3));
 
     bg2 = new BreakpointConstraint(new BreakpointGeometry(Orientation.UU, "f", "g", 42, 50, 145, 148, 187, 198), 0, 10.0);
     drs3 = new DiscordantReadSet("f", 60, bg2);
@@ -40,16 +38,16 @@ public class DebugComparatorTest extends TestCase {
 
     bg2 = new BreakpointConstraint(new BreakpointGeometry(Orientation.UU, "f", "s", 42, 50, 145, 148, 187, 198), 0, 10.0);
     drs3 = new DiscordantReadSet("f", 60, bg2);
-    assertEquals(Integer.valueOf(142).compareTo(145), new DebugComparator().compare(drs1, drs3));
+    assertEquals(Integer.compare(142, 145), new DebugComparator().compare(drs1, drs3));
 
     bg2 = new BreakpointConstraint(new BreakpointGeometry(Orientation.UU, "f", "s", 42, 50, 142, 148, 187, 198), 0, 10.0);
     drs3 = new DiscordantReadSet("f", 60, bg2);
-    assertEquals(Integer.valueOf(150).compareTo(148), new DebugComparator().compare(drs1, drs3));
+    assertEquals(Integer.compare(150, 148), new DebugComparator().compare(drs1, drs3));
 
     bg2 = new BreakpointConstraint(new BreakpointGeometry(Orientation.UU, "f", "s", 42, 50, 142, 150, 188, 198), 0, 10.0);
     drs3 = new DiscordantReadSet("f", 60, bg2);
     drs3.add(bg2);
     drs3.add(bg2);
-    assertEquals(Integer.valueOf(1).compareTo(3), new DebugComparator().compare(drs1, drs3));
+    assertEquals(Integer.compare(1, 3), new DebugComparator().compare(drs1, drs3));
   }
 }
