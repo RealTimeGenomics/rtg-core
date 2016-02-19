@@ -202,7 +202,7 @@ public class SvInterestingRegionExtractor implements Closeable {
       mCurrentRegionPositions++;
       mCurrentRegionTotalScore += thisMaxValue;
 
-    } else if (maxValuePos == NORMAL_POS) {     //we're in a normal region...
+    } else {
       if (mCurrentMaxValuePos != NORMAL_POS) { //but it was the end of an interesting region
         //outputRegion(position);
         mEmitter.mergeOrOutputRegion(mCurrentRegionStart, oneBasedPosition, mRegionChanges, mCurrentRegionMaxScore, mCurrentRegionTotalScore, mCurrentRegionPositions);

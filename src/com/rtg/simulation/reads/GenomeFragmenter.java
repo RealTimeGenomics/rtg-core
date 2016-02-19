@@ -232,12 +232,12 @@ public class GenomeFragmenter {
    */
   public String fractionStatistics() throws IOException {
     final StringBuilder sb = new StringBuilder();
-    final double[][] fractions = new double[mSequenceCounts.length][];
+    //final double[][] fractions = new double[mSequenceCounts.length][];
     int totalFrags = 0;
     for (int i = 0; i < mSequenceCounts.length; i++) {
-      fractions[i] = new double[mSequenceCounts[i].length];
+      //fractions[i] = new double[mSequenceCounts[i].length];
       for (int j = 0; j < mSequenceCounts[i].length; j++) {
-        fractions[i][j] = (double) mSequenceCounts[i][j] / mSequenceLengths[i][j];
+        //fractions[i][j] = (double) mSequenceCounts[i][j] / mSequenceLengths[i][j];
         totalFrags += mSequenceCounts[i][j];
       }
     }

@@ -649,9 +649,6 @@ public final class MapFlags {
     if (i > 0 && l > readLength - w) {
       throw new InvalidParamsException(ErrorType.INVALID_MAX_INTEGER_FLAG_VALUE, "-c", l + "", (readLength - w) + "");
     }
-    if (i > 0 && l <= 0) {
-      throw new InvalidParamsException(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "-c", l + "", "1");
-    }
     if (i > readLength - w) {
       throw new InvalidParamsException(ErrorType.INVALID_MAX_INTEGER_FLAG_VALUE, "-b", i + "", (readLength - w) + "");
     }
