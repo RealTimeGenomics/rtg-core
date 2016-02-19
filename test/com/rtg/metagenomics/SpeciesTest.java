@@ -40,7 +40,6 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
 
 import Jama.EigenvalueDecomposition;
 import junit.framework.TestCase;
@@ -48,9 +47,6 @@ import junit.framework.TestCase;
 /**
  */
 public class SpeciesTest extends TestCase {
-
-  protected File mDir;
-  protected NanoRegression mNano;
 
   @Override
   public void setUp() {
