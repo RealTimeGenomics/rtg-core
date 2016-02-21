@@ -14,6 +14,8 @@ package com.rtg.util.array;
 import com.rtg.util.format.FormatInteger;
 import com.rtg.util.format.FormatReal;
 
+import junit.framework.Assert;
+
 /**
  * Time doing a "sequential" write of the various IntIndex implementations and some other equivalent methods.
  */
@@ -96,6 +98,7 @@ public final class NativeArrayTiming {
     System.gc();
     final long t3 = System.currentTimeMillis();
     tMsg("array", new long[] {tm, t0, t1, t1, t3});
+    Assert.assertNotNull(a);
   }
 
   /**
