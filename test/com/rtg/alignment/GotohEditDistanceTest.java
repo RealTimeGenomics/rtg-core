@@ -32,7 +32,7 @@ import com.rtg.util.test.NanoRegression;
  */
 public class GotohEditDistanceTest extends AbstractUnidirectionalEditDistanceTest {
 
-  protected NanoRegression mNano;
+  protected NanoRegression mNano = null;
 
   @Override
   public void setUp() throws IOException {
