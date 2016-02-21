@@ -11,6 +11,17 @@
  */
 package com.rtg.simulation.cnv;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfWriter;
@@ -27,18 +38,8 @@ import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 import com.rtg.util.test.NotRandomRandom;
-import junit.framework.TestCase;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintStream;
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import junit.framework.TestCase;
 
 public class CnvSimulatorTest extends TestCase {
 
@@ -385,7 +386,7 @@ public class CnvSimulatorTest extends TestCase {
     assertEquals(5, reg2.mEndPosNullBased);
     assertEquals(2, reg2.mCopyNumber);
     assertEquals(5, reg2.mLength);
-    assertEquals(Integer.valueOf(0).compareTo(1), CnvSimulator.getFixedRegionComparator().compare(reg1, reg2));
+    assertEquals(-1, CnvSimulator.getFixedRegionComparator().compare(reg1, reg2));
     Diagnostic.setLogStream();
   }
 
