@@ -17,11 +17,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.rtg.assembler.graph.Contig;
 import com.rtg.assembler.graph.Graph;
@@ -30,11 +28,11 @@ import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.Histogram;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.Pair;
 import com.rtg.util.StringUtils;
 import com.rtg.util.array.intindex.IntChunks;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.test.FileHelper;
 
 import junit.framework.TestCase;
@@ -275,23 +273,6 @@ public class DeBruijnGraphBuilderTest extends TestCase {
     } finally {
       FileHelper.deleteAll(tmpDir);
     }
-
-  }
-  public void testUniqMers() {
-    final Set<String> uniq = new HashSet<>();
-    for (int i = 0; i < 4 * 4 * 4; i++) {
-      int chars = i;
-      final StringBuilder mer = new StringBuilder();
-      for (int j = 0; j < 3; j++) {
-        final char c = DNA.values()[(chars & 3) + 1].toString().charAt(0);
-        chars >>= 2;
-      mer.append(c);
-      }
-      uniq.add(DeBruijnGraphBuilder.minimalVersion(mer.toString()));
-    }
-    final ArrayList<String> sort = new ArrayList<>();
-    sort.addAll(uniq);
-    Collections.sort(sort);
   }
 
   public void testHairpin() throws IOException {
