@@ -15,8 +15,6 @@ package com.rtg.variant.sv;
 import com.rtg.util.TestUtils;
 import com.rtg.util.io.MemoryPrintStream;
 
-import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -25,12 +23,6 @@ public class SignalSumTest extends TestCase {
 
   public void test() {
     final SamCounts sa = new SamArray(10);
-    final SAMRecord sam1 = new SAMRecord(null);
-    sam1.setReadName("1");
-    final SAMRecord sam2 = new SAMRecord(null);
-    sam2.setReadName("2");
-    final SAMRecord sam3 = new SAMRecord(null);
-    sam3.setReadName("3");
     sa.increment(0);
     sa.increment(4);
     sa.increment(4);
