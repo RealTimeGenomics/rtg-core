@@ -333,7 +333,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
               toMerge.add(unmappedAlignments.getAlignmentFiles().get(index));
             }
             final SamCalibrationInputs inputs = new SamCalibrationInputs(toMerge, true);
-            merge.mergeSamFiles(inputs.getSamFiles(), inputs.getCalibrationFiles(), outputFile, null, mSharedResources.getHeader(), index == 0, false);
+            merge.mergeSamFiles(inputs.getSamFiles(), inputs.getCalibrationFiles(), outputFile, null, mSharedResources.getHeader().clone(), index == 0, false);
           }
         });
       }
