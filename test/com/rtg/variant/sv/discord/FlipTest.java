@@ -30,7 +30,7 @@ public class FlipTest extends TestCase {
     }
     @Override
     public double gapStdDev() {
-      return 3.14159;
+      return Math.PI;
     }
     @Override
     public double gapMean() {
