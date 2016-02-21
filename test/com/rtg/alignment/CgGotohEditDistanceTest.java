@@ -117,7 +117,7 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
       assertEquals(s1.length, s1R.length);
       assertEquals(s2.length, s2R.length);
       final EditDistance fR = getEditDistanceInstance(unknownsPenalty, "cg_test_errors-080412", v2); // because f.logStats() kills it!
-      final int startR = s2.length - (start + s1.length) - (v2 ? 0 : CgGotohEditDistance.CG_INSERT_REGION_DEFAULT_SIZE);
+      final int startR = s2.length - (start + s1.length) - CgGotohEditDistance.CG_INSERT_REGION_DEFAULT_SIZE;
       final int[] vR = fR.calculateEditDistance(s1R, s1R.length, s2R, startR, rc, Integer.MAX_VALUE, 7, !left);
 //      System.out.println(mCgGotoh.toString());
 //      System.out.println("actions: " + ActionsHelper.toString(vR));
@@ -698,7 +698,6 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
     final PortableRandom rand = new PortableRandom(42);
     final String[] mutations = {"A", "C", "G", "T", "", "AC", "GT"};
     String mut = "";
-    final int[] hist = new int[40];
     for (int repeat = 0; repeat < reads.length; repeat++) {
       final String read = reads[repeat % reads.length].replaceAll(" ", "").toLowerCase(Locale.ROOT);
       String tmpl = "aaaagggg" + read.substring(0, 25) + "tatata" + read.substring(25) + "accaacca";
@@ -732,7 +731,6 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
         final String actsRight = ActionsHelper.toString(vR);
         final StringBuilder sb = new StringBuilder(actsRight);
         sb.reverse();
-        hist[diff + 20]++;
         if (diff != 0) {
           System.out.println("read=" + StringUtils.getSpaceString(readStart + 1) + read);
           System.out.println("tmpl=" + tmpl.substring(0, readStart) + " " + tmpl.substring(readStart, readEnd) + " " + tmpl.substring(readEnd));
