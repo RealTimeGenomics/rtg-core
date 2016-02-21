@@ -68,7 +68,8 @@ public class PairedTempFileWriterImplTest extends TestCase {
    */
   public static class UselessStatusIdListener implements ReadStatusListener {
     @Override
-    public void addStatus(int readId, int status) { }
+    public void addStatus(int readId, int status) {
+    }
 
     @Override
     public String toString() {
@@ -107,10 +108,10 @@ public class PairedTempFileWriterImplTest extends TestCase {
     try {
       final NgsOutputParams op = NgsOutputParams.builder().filterParams(NgsFilterParams.builder().outputFilter(OutputFilter.PAIRED_END).create()).create();
       final NgsParams param = NgsParams.builder().buildFirstParams(SequenceParams.builder().directory(left)
-          .useMemReader(true).create()).buildSecondParams(SequenceParams.builder().directory(right).useMemReader(true).create()).searchParams(SequenceParams.builder().directory(template).loadNames(true).useMemReader(true).create())
-          .maxFragmentLength(1000).minFragmentLength(0).outputParams(op)
-          .gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(0)
-          .create();
+        .useMemReader(true).create()).buildSecondParams(SequenceParams.builder().directory(right).useMemReader(true).create()).searchParams(SequenceParams.builder().directory(template).loadNames(true).useMemReader(true).create())
+        .maxFragmentLength(1000).minFragmentLength(0).outputParams(op)
+        .gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(0)
+        .create();
 
       final PairedTempFileWriterImpl w = createPairedWriter(param, out, false);
       try {
@@ -185,6 +186,7 @@ public class PairedTempFileWriterImplTest extends TestCase {
       w.close();
     }
   }
+
   static final String TEMP_LEFT_MED = "tgcaaccaagagggcctccc";  //1 substitutions
   static final String TEMP_RIGHT_MED = "tttggcccccgaccagtctgggctga"; //1 substitutions
   static final String TEMP_LEFT_BAD = "tgcaaccatgaggccctccc";  //3 substitutions
@@ -228,7 +230,7 @@ public class PairedTempFileWriterImplTest extends TestCase {
       w.close();
     }
     final byte[] actual = IOUtils.readData(new ByteArrayInputStream(stream.toByteArray()));
-    assertTrue(Arrays.equals(new byte[] {(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff}, actual));
+    assertTrue(Arrays.equals(new byte[]{(byte) 0xff, (byte) 0xff, (byte) 0xff, (byte) 0xff}, actual));
     assertEquals(",0:MATED ", sril.mStatusString);
     sril.mStatusString = "";
 
@@ -262,9 +264,9 @@ public class PairedTempFileWriterImplTest extends TestCase {
 
     op = NgsOutputParams.builder().filterParams(NgsFilterParams.builder().matedMaxMismatches(IntegerOrPercentage.valueOf(2)).outputFilter(OutputFilter.PAIRED_END).create()).create();
     param = NgsParams.builder().buildFirstParams(SequenceParams.builder().directory(leftok).useMemReader(true).create()).buildSecondParams(SequenceParams.builder().directory(rightok).useMemReader(true).create()).searchParams(SequenceParams.builder().directory(template).loadNames(true).useMemReader(true).create())
-        .maxFragmentLength(1000).minFragmentLength(0).outputParams(op)
-        .gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(0)
-        .create();
+      .maxFragmentLength(1000).minFragmentLength(0).outputParams(op)
+      .gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(0)
+      .create();
     sr = SharedResources.generateSharedResources(param);
     w = new PairedTempFileWriterImpl(param, sril, sr);
     final File out = File.createTempFile("sam", "out", mDir);
@@ -300,9 +302,9 @@ public class PairedTempFileWriterImplTest extends TestCase {
 
     op = NgsOutputParams.builder().filterParams(NgsFilterParams.builder().matedMaxMismatches(IntegerOrPercentage.valueOf(20)).outputFilter(OutputFilter.PAIRED_END).create()).create();
     param = NgsParams.builder().buildFirstParams(SequenceParams.builder().directory(leftok).useMemReader(true).create()).buildSecondParams(SequenceParams.builder().directory(rightok).useMemReader(true).create()).searchParams(SequenceParams.builder().directory(templatetrio).loadNames(true).useMemReader(true).create())
-        .maxFragmentLength(1000).minFragmentLength(0).outputParams(op).alignerBandWidthFactor(new MaxShiftFactor(0.55))
-        .gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(1)
-        .create();
+      .maxFragmentLength(1000).minFragmentLength(0).outputParams(op).alignerBandWidthFactor(new MaxShiftFactor(0.55))
+      .gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(1)
+      .create();
     w = createPairedWriter(param, out, true);
     try {
       w.nextTemplateId(0);
@@ -428,11 +430,11 @@ public class PairedTempFileWriterImplTest extends TestCase {
     try {
       final NgsOutputParams op = NgsOutputParams.builder().filterParams(NgsFilterParams.builder().outputFilter(OutputFilter.PAIRED_END).create()).create();
       final NgsParams param = NgsParams.builder().buildFirstParams(SequenceParams.builder().directory(left).useMemReader(true).create())
-                                      .buildSecondParams(SequenceParams.builder().directory(right).useMemReader(true).create())
-                                      .searchParams(SequenceParams.builder().directory(template).loadNames(true).useMemReader(true).create()).maxFragmentLength(1000).minFragmentLength(0)
-                                      .outputParams(op)
-                                      .substitutionPenalty(3)
-                                      .create();
+        .buildSecondParams(SequenceParams.builder().directory(right).useMemReader(true).create())
+        .searchParams(SequenceParams.builder().directory(template).loadNames(true).useMemReader(true).create()).maxFragmentLength(1000).minFragmentLength(0)
+        .outputParams(op)
+        .substitutionPenalty(3)
+        .create();
 
       try (PairedTempFileWriterImpl w = createPairedWriter(param, out, true)) {
         w.nextTemplateId(0);
@@ -458,13 +460,13 @@ public class PairedTempFileWriterImplTest extends TestCase {
 
   private static NgsParams getCommonTestParams(File left, File right, File template, IntegerOrPercentage maxMatedScore, IntegerOrPercentage maxUnmatedScore) {
     final NgsOutputParams op = NgsOutputParams.builder().filterParams(NgsFilterParams.builder()
-        .matedMaxMismatches(maxMatedScore)
-        .unmatedMaxMismatches(maxUnmatedScore)
-        .outputFilter(OutputFilter.PAIRED_END).maxTopResults(10).create()).create();
+      .matedMaxMismatches(maxMatedScore)
+      .unmatedMaxMismatches(maxUnmatedScore)
+      .outputFilter(OutputFilter.PAIRED_END).maxTopResults(10).create()).create();
     return NgsParams.builder().buildFirstParams(SequenceParams.builder().directory(left).useMemReader(true).create()).buildSecondParams(SequenceParams.builder().directory(right).useMemReader(true).create()).searchParams(SequenceParams.builder().directory(template).loadNames(true).useMemReader(true).create())
-        .maxFragmentLength(1000).minFragmentLength(0).outputParams(op)
-        .gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(1)
-        .create();
+      .maxFragmentLength(1000).minFragmentLength(0).outputParams(op)
+      .gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(1)
+      .create();
   }
 
   public void testOtherStuff() throws Exception {
@@ -587,13 +589,13 @@ public class PairedTempFileWriterImplTest extends TestCase {
 
 
     final NgsOutputParams op = NgsOutputParams.builder()
-        .filterParams(NgsFilterParams.builder().matedMaxMismatches(IntegerOrPercentage.valueOf(2))
-            .outputFilter(OutputFilter.PAIRED_END).create())
-            .create();
+      .filterParams(NgsFilterParams.builder().matedMaxMismatches(IntegerOrPercentage.valueOf(2))
+        .outputFilter(OutputFilter.PAIRED_END).create())
+      .create();
     return NgsParams.builder().buildFirstParams(SequenceParams.builder().directory(leftok).useMemReader(true).create()).buildSecondParams(SequenceParams.builder().directory(rightok).useMemReader(true).create()).searchParams(SequenceParams.builder().directory(template).loadNames(true).useMemReader(true).create())
-        .maxFragmentLength(1000).minFragmentLength(0).outputParams(op)
-        .gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(0)
-        .create();
+      .maxFragmentLength(1000).minFragmentLength(0).outputParams(op)
+      .gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(0)
+      .create();
   }
 
   public void testUnmatedUnfiltered() throws IOException {
@@ -805,7 +807,7 @@ public class PairedTempFileWriterImplTest extends TestCase {
 
   }
 
-  void checkRecord(BinaryTempFileRecord rec, int readId,  int samFlags, int refId, int startPos, String cigar, int mateStartPos, Integer tlen, Integer as) {
+  void checkRecord(BinaryTempFileRecord rec, int readId, int samFlags, int refId, int startPos, String cigar, int mateStartPos, Integer tlen, Integer as) {
     assertEquals(readId, rec.getReadId());
     assertEquals(samFlags, rec.getSamFlags() & 0xff);
     assertEquals(refId, rec.getReferenceId());
@@ -909,32 +911,27 @@ public class PairedTempFileWriterImplTest extends TestCase {
     try {
       final NgsOutputParams op = NgsOutputParams.builder().filterParams(NgsFilterParams.builder().outputFilter(OutputFilter.PAIRED_END).create()).create();
       final NgsParams param = NgsParams.builder().buildFirstParams(SequenceParams.builder().directory(left).useMemReader(true).create())
-                                      .buildSecondParams(SequenceParams.builder().directory(right).useMemReader(true).create())
-                                      .searchParams(SequenceParams.builder().directory(template).loadNames(true).useMemReader(true).create()).maxFragmentLength(1000).minFragmentLength(0)
-                                      .substitutionPenalty(1).gapOpenPenalty(1).gapExtendPenalty(1).unknownsPenalty(0)
-                                      .outputParams(op).create();
+        .buildSecondParams(SequenceParams.builder().directory(right).useMemReader(true).create())
+        .searchParams(SequenceParams.builder().directory(template).loadNames(true).useMemReader(true).create()).maxFragmentLength(1000).minFragmentLength(0)
+        .substitutionPenalty(1).gapOpenPenalty(1).gapExtendPenalty(1).unknownsPenalty(0)
+        .outputParams(op).create();
 
-      final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-      try {
-        final PairedTempFileWriterImpl w = new PairedTempFileWriterImpl(param, new UselessStatusIdListener(), SharedResources.generateSharedResources(param)) {
-          @Override
-          protected final int[] calculateEditDistance(byte[] read, int length, int start, boolean rc, IntegerOrPercentage maxMismatches, boolean first, int readId) {
-            assertFalse(first);
-            return super.calculateEditDistance(read, length, start, rc, maxMismatches, first, readId);
-          }
-        };
-        w.initialiseMated(FileUtils.createOutputStream(out, false, false));
-        try {
-          w.nextTemplateId(0);
-          final MatedHitInfo mhi = new MatedHitInfo();
-          mhi.setValues(0, true, false, 0, false, 0);
-          w.pairResultLeft(mhi);
-        } finally {
-          w.close();
-          w.closeMated();
+      final PairedTempFileWriterImpl w = new PairedTempFileWriterImpl(param, new UselessStatusIdListener(), SharedResources.generateSharedResources(param)) {
+        @Override
+        protected final int[] calculateEditDistance(byte[] read, int length, int start, boolean rc, IntegerOrPercentage maxMismatches, boolean first, int readId) {
+          assertFalse(first);
+          return super.calculateEditDistance(read, length, start, rc, maxMismatches, first, readId);
         }
+      };
+      w.initialiseMated(FileUtils.createOutputStream(out, false, false));
+      try {
+        w.nextTemplateId(0);
+        final MatedHitInfo mhi = new MatedHitInfo();
+        mhi.setValues(0, true, false, 0, false, 0);
+        w.pairResultLeft(mhi);
       } finally {
-        bos.close();
+        w.close();
+        w.closeMated();
       }
     } finally {
       CommandLine.clearCommandArgs();
