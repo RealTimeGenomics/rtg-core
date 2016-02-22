@@ -26,15 +26,9 @@ import com.rtg.variant.util.arithmetic.LogPossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  */
 public class ScoreMatrixTest extends AbstractNanoTest {
-
-  //Mark says I have to put my name here so he doesnt get blamed for the next bit of code
-  //JC
 
   /** Used for testing. */
   public static class LogTest extends ScoreMatrixTest {
@@ -67,14 +61,6 @@ public class ScoreMatrixTest extends AbstractNanoTest {
     protected AllPaths score(final Environment env) {
       return score(SimplePossibility.SINGLETON, env);
     }
-  }
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-    suite.addTestSuite(LogApproximateTest.class);
-    suite.addTestSuite(LogTest.class);
-    suite.addTestSuite(SimpleTest.class);
-    return suite;
   }
 
   /**
