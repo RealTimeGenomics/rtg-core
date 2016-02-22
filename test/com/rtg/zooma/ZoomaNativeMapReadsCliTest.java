@@ -109,7 +109,7 @@ public class ZoomaNativeMapReadsCliTest extends AbstractCliTest {
         assertTrue(new File(outFile, "done").exists());
         // Concatenate output files
         final StringBuilder sb = new StringBuilder();
-        final File[] outFiles = outFile.listFiles();
+        final File[] outFiles = FileUtils.listFiles(outFile);
         Arrays.sort(outFiles);
         for (File f : outFiles) {
           if (!"done".equals(f.getName())) {

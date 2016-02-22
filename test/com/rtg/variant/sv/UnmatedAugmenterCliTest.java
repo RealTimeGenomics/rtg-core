@@ -173,6 +173,7 @@ public class UnmatedAugmenterCliTest extends AbstractCliTest {
     assertTrue(existsBamGz.createNewFile());
 
     final File[] files = mDir.listFiles(new UnmatedAugmenterCli.SamBamGzMatedUnmatedFileFilter());
+    assertNotNull(files);
     assertEquals(3, files.length);
     TestUtils.containsAll(Arrays.toString(files), "unmated.sam.gz", "mated.sam", "mated.bam");
   }
