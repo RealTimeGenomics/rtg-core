@@ -86,6 +86,7 @@ public class Calibrator {
   /** The actual statistics collection. */
   protected CalibrationStats[] mStats;
   protected final CalibratorCigarParser mParser;
+  private String mTemplateName = null;
   protected byte[] mTemplate;
   protected int mTemplateLength;
   protected byte[] mRead;
@@ -227,8 +228,8 @@ public class Calibrator {
   }
 
 
-  boolean inRange(String name, int templatePosition) {
-    return mRegions == null || mRegions.enclosed(name, templatePosition);
+  boolean inRange(int templatePosition) {
+    return mRegions == null || mRegions.enclosed(mTemplateName, templatePosition);
   }
 
   /**
@@ -625,10 +626,12 @@ public class Calibrator {
 
   /**
    * Must call this each time we start a new template sequence.
+   * @param name the reference sequence name
    * @param template template nucleotides
    * @param length amount of array used by template
    */
-  public void setTemplate(byte[] template, int length) {
+  public void setTemplate(String name, byte[] template, int length) {
+    mTemplateName = name;
     mTemplate = template;
     mTemplateLength = length;
     getParser().setTemplate(mTemplate, mTemplateLength);
@@ -682,7 +685,6 @@ public class Calibrator {
     if (mapq == 0) {
       return;
     }
-    getParser().setTemplateName(sam.getReferenceName());
     getParser().setTemplateStart(zeroBasedStart);
     try {
       final byte[] baseQualities = sam.getBaseQualities();

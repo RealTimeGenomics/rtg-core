@@ -124,7 +124,7 @@ public class Recalibrate implements Closeable {
           }
           mLastName = name;
           final int length = mTemplate.read(seqId, mTemplateBytes);
-          c.setTemplate(mTemplateBytes, length);
+          c.setTemplate(name, mTemplateBytes, length);
         }
         c.processRead(rec);
       }

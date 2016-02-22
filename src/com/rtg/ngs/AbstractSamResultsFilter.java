@@ -185,7 +185,7 @@ public abstract class AbstractSamResultsFilter {
                     lastName = name;
                     final int seqId = rec.getReferenceId();
                     final int length = template.read(seqId, templateBuffer);
-                    cal.setTemplate(templateBuffer, length);
+                    cal.setTemplate(name, templateBuffer, length);
                   }
                   cal.processRead(filteredRecord);
                 }

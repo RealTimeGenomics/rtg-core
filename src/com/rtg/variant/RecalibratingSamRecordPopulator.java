@@ -64,12 +64,12 @@ public class RecalibratingSamRecordPopulator extends SamRecordPopulator {
         }
         try {
           final int length = mTemplate.read(seqId, mTemplateBytes);
-          mCalibrator.setTemplate(mTemplateBytes, length);
+          mCalibrator.setTemplate(name, mTemplateBytes, length);
         } catch (final IOException e) {
           throw new NoTalkbackSlimException("Failed to read sequence " + name + " from template");
         }
       } else {
-        mCalibrator.setTemplate(EMPTY, 0);
+        mCalibrator.setTemplate(name, EMPTY, 0);
       }
       mLastName = name;
     }

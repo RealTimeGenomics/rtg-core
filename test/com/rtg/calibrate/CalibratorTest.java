@@ -455,7 +455,7 @@ public class CalibratorTest extends TestCase {
     sam.setMappingQuality(1);        //     acgtacgtggacgtacgtggacgtacgtggtttttacgtacgtggacgta
                                      //                                                     cgtgg   acgtacgtggtttt
     final byte[] t = DnaUtils.encodeString("acgtacgtggacgtacgtggacgtacgtggtttttacgtaAAAAAacgtatggacNNNgtacAAAAAtttt");
-    cal.setTemplate(t, t.length);
+    cal.setTemplate("sequence1", t, t.length);
     sam.setAttribute("RG", "rg1");
     cal.processRead(sam);
     sam.setReadString("acgtacgtggacgtacgtggacgtacgtggtttt");  //1 shorter to test qualities better
@@ -482,7 +482,7 @@ public class CalibratorTest extends TestCase {
   public void testCG() throws IOException {
     final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup()}, null);
     final byte[] t = DnaUtils.encodeString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    cal.setTemplate(t, t.length);
+    cal.setTemplate("sequence1", t, t.length);
     final SAMRecord sam1 = new SAMRecord(null);
     sam1.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=2B10=1N10=5N10=");
     sam1.setAlignmentStart(1);
@@ -649,7 +649,7 @@ public class CalibratorTest extends TestCase {
     };
 
     final byte[] t = DnaUtils.encodeString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
-    cal.setTemplate(t, t.length);
+    cal.setTemplate("sequence1", t, t.length);
 
     final SAMRecord sam = new SAMRecord(null);
     sam.setReadString("acgtacgtggacgtacgtggacgtacgtggttttt");
@@ -760,19 +760,20 @@ public class CalibratorTest extends TestCase {
 
   public void testBed() throws IOException {
     final ReferenceRegions bed = new ReferenceRegions();
-    bed.add("sequence1", 11, 20);
+    final String refName = "sequence1";
+    bed.add(refName, 11, 20);
     final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateSequence()}, bed);
     final Map<String, Integer> dummyLengths = new HashMap<>();
-    dummyLengths.put("sequence1", 10);
+    dummyLengths.put(refName, 10);
     cal.setSequenceLengths(dummyLengths);
     final byte[] t = DnaUtils.encodeString("acgtgtgaggacgtacgtggacgtacgtggacgtacgtggtttttacgtagtagattttagaggaggggagaaaaccacacgagacagtgtgtgt");
-    cal.setTemplate(t, t.length);
+    cal.setTemplate(refName, t, t.length);
 
     SAMRecord sam = new SAMRecord(null);
     sam.setReadString("acgtacgtggacgtacgtggacgtacgtggttttt");
     sam.setAlignmentStart(11);
     sam.setMappingQuality(1);
-    sam.setReferenceName("sequence1");
+    sam.setReferenceName(refName);
     sam.setFlags(67);
     sam.setAttribute("RG", "rg1");
     sam.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=2B20=6N10=");
@@ -782,7 +783,7 @@ public class CalibratorTest extends TestCase {
     sam.setReadString("acgtacgtggacgtacgtggacgtacgtggttttt");
     sam.setAlignmentStart(21);
     sam.setMappingQuality(1);
-    sam.setReferenceName("sequence1");
+    sam.setReferenceName(refName);
     sam.setFlags(67);
     sam.setAttribute("RG", "rg1");
     sam.setCigarString("36=");
@@ -791,7 +792,7 @@ public class CalibratorTest extends TestCase {
     sam.setReadString("acgtgtgaggggg");
     sam.setAlignmentStart(1);
     sam.setMappingQuality(1);
-    sam.setReferenceName("sequence1");
+    sam.setReferenceName(refName);
     sam.setFlags(67);
     sam.setAttribute("RG", "rg1");
     sam.setCigarString("12=");

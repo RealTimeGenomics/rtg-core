@@ -68,8 +68,9 @@ public class CovariateMachineCycleTest extends TestCase {
     header.addReadGroup(rg);
 
     final Calibrator cal = new Calibrator(new Covariate[] {var}, null);
-    cal.setTemplate(new byte[10], 10);
-    cal.setSequenceLengths(Collections.singletonMap("1", 10));
+    final String refName = "1";
+    cal.setTemplate(refName, new byte[10], 10);
+    cal.setSequenceLengths(Collections.singletonMap(refName, 10));
 
     // Left arm forwards
     // |---------->
@@ -120,8 +121,9 @@ public class CovariateMachineCycleTest extends TestCase {
     header.addReadGroup(rg);
 
     final Calibrator cal = new Calibrator(new Covariate[] {var}, null);
-    cal.setTemplate(new byte[10], 10);
-    cal.setSequenceLengths(Collections.singletonMap("1", 10));
+    final String refName = "1";
+    cal.setTemplate(refName, new byte[10], 10);
+    cal.setSequenceLengths(Collections.singletonMap(refName, 10));
 
     // Left arm forwards
     // |---------->
@@ -168,8 +170,9 @@ public class CovariateMachineCycleTest extends TestCase {
     final Calibrator cal = new Calibrator(new Covariate[] {var}, null);
     final byte[] template = new byte[50];
     Arrays.fill(template, (byte) 1);
-    cal.setTemplate(template, 50);
-    cal.setSequenceLengths(Collections.singletonMap("1", 10));
+    final String refName = "1";
+    cal.setTemplate(refName, template, 50);
+    cal.setSequenceLengths(Collections.singletonMap(refName, 10));
 
     // Left arm forwards
     // |----------------------------------->

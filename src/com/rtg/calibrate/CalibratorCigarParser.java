@@ -32,17 +32,14 @@ class CalibratorCigarParser extends SuperCigarParser {
   private Histogram mCGOverHist;
   private Histogram mCGGapHist;
   private Histogram mMnpHist;
-  private String mTemplateName;
 
 
   CalibratorCigarParser(Calibrator calibrator) {
     mCalibrator = calibrator;
   }
-  void setTemplateName(String name) {
-    mTemplateName = name;
-  }
+
   boolean include() {
-    return mCalibrator.inRange(mTemplateName, getTemplatePosition());
+    return mCalibrator.inRange(getTemplatePosition());
   }
 
   private static final int DEFAULT_QUALITY = 20;
