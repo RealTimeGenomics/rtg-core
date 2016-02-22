@@ -37,7 +37,7 @@ import junit.framework.TestCase;
  */
 public class UnfilteredSingleEndOutputProcessorTest extends TestCase {
 
-  protected File mDir;
+  protected File mDir = null;
   @Override
   public void setUp() throws Exception {
     mDir = FileHelper.createTempDirectory();

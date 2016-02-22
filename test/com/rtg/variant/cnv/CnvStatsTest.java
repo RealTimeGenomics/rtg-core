@@ -36,7 +36,7 @@ import junit.framework.TestCase;
 public class CnvStatsTest extends TestCase {
   private static final String TB = "\t";
 
-  private File mDir;
+  private File mDir = null;
 
   @Override
   public void setUp() throws IOException, InvalidParamsException {
