@@ -25,7 +25,6 @@ import com.rtg.reader.SdfUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
-import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.io.InputFileUtils;
@@ -55,38 +54,35 @@ public class RecalibrateCli extends AbstractCli {
     mFlags.setDescription("Creates quality calibration files for all supplied SAM/BAM files.");
     CommonFlagCategories.setCategories(mFlags);
 
-    mFlags.setValidator(new Validator() {
-      @Override
-      public boolean isValid(CFlags flags) {
-        if (!CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)) {
-          return false;
-        }
-        if (!checkBedFileFlag(flags)) {
-          return false;
-        }
-        if (!CommonFlags.validateTemplate(flags)) {
-          return false;
-        }
-
-        final boolean force = flags.isSet(FORCE_FLAG);
-        if (!force) {
-          try {
-            final List<File> files = CommonFlags.getFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, false);
-            for (File f : files) {
-              final File calibration = new File(f.getPath() + Recalibrate.EXTENSION);
-              if (calibration.exists()) {
-                flags.setParseMessage("Calibration file already exists: " + calibration.getPath());
-                return false;
-              }
-            }
-          } catch (IOException ioe) {
-            Diagnostic.error("Exception reading file list: " + ioe.getMessage());
-            return false;
-          }
-        }
-
-        return true;
+    mFlags.setValidator(flags -> {
+      if (!CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)) {
+        return false;
       }
+      if (!checkBedFileFlag(flags)) {
+        return false;
+      }
+      if (!CommonFlags.validateTemplate(flags)) {
+        return false;
+      }
+
+      final boolean force = flags.isSet(FORCE_FLAG);
+      if (!force) {
+        try {
+          final List<File> files = CommonFlags.getFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, false);
+          for (File f : files) {
+            final File calibration = new File(f.getPath() + Recalibrate.EXTENSION);
+            if (calibration.exists()) {
+              flags.setParseMessage("Calibration file already exists: " + calibration.getPath());
+              return false;
+            }
+          }
+        } catch (IOException ioe) {
+          Diagnostic.error("Exception reading file list: " + ioe.getMessage());
+          return false;
+        }
+      }
+
+      return true;
     });
     final Flag inFlag = mFlags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(CommonFlagCategories.INPUT_OUTPUT);
