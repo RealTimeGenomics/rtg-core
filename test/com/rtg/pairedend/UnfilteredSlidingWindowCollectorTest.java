@@ -83,7 +83,7 @@ public class UnfilteredSlidingWindowCollectorTest extends TestCase {
   }
 
 
-  private File mTmpDir;
+  private File mTmpDir = null;
   private NgsParams mParams;
   private static final int UNMATED_MAX_SCORE = 5;
   private static final int MATED_MAX_SCORE = 10;
@@ -155,9 +155,9 @@ public class UnfilteredSlidingWindowCollectorTest extends TestCase {
     mTmpDir = null;
   }
 
-  UnfilteredHitInfo mHit;
-  UnfilteredHitInfo mMate;
-  UnfilteredHitInfo mUnhit;
+  UnfilteredHitInfo mHit = null;
+  UnfilteredHitInfo mMate = null;
+  UnfilteredHitInfo mUnhit = null;
 
   public void testFlush() throws Exception {
     final SharedResources sr = SharedResources.generateSharedResources(mParams);

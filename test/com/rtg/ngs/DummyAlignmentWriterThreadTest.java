@@ -41,8 +41,8 @@ import junit.framework.TestCase;
  */
 public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutputProcessorTest {
 
-  protected File mDir;
-  protected NanoRegression mNano;
+  protected File mDir = null;
+  protected NanoRegression mNano = null;
 
   @Override
   public void setUp() throws Exception {

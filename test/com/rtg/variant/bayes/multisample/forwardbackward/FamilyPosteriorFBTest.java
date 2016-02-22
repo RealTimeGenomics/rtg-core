@@ -38,7 +38,7 @@ import com.rtg.variant.util.arithmetic.SimplePossibility;
  */
 public class FamilyPosteriorFBTest extends AbstractFamilyPosteriorTest {
 
-  private HashMap<String, Double> mExpectedNonIdentity;
+  private HashMap<String, Double> mExpectedNonIdentity = null;
   @Override
   public void setUp() throws Exception {
     super.setUp();

@@ -28,11 +28,10 @@ import junit.framework.TestCase;
 
 /**
  * This tests the whole alignment chain.
- *
  */
 public class EditDistanceChainTest extends TestCase {
 
-  private EditDistanceChainAnalyzer mEd;
+  private EditDistanceChainAnalyzer mEd = null;
 
   @Override
   public void setUp() {

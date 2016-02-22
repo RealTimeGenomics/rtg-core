@@ -32,7 +32,7 @@ import junit.framework.TestCase;
  */
 public class PriorPopulationVariantGeneratorTest extends TestCase {
 
-  private NanoRegression mNano;
+  private NanoRegression mNano = null;
 
   @Override
   public void setUp() {

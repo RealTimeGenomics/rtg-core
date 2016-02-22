@@ -11,7 +11,6 @@
  */
 package com.rtg.simulation.variants;
 
-import java.io.File;
 import java.io.IOException;
 
 import com.rtg.launcher.AbstractCli;
@@ -21,8 +20,6 @@ import com.rtg.launcher.AbstractCliTest;
  * Test the corresponding class
  */
 public class PriorPopulationVariantGeneratorCliTest extends AbstractCliTest {
-
-  protected File mDir;
 
   @Override
   public void setUp() throws IOException {

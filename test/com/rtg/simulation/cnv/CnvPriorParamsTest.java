@@ -91,7 +91,7 @@ public class CnvPriorParamsTest extends TestCase {
     }
   }
 
-  private CnvPriorParams mPriors;
+  private CnvPriorParams mPriors = null;
 
   @Override
   public void setUp() throws Exception {
