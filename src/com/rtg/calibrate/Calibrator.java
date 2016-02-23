@@ -408,6 +408,46 @@ public class Calibrator {
   }
 
   /**
+   * Accumulate the results of another compatible calibrator into this calibrator.
+   * @param cal other calibrator
+   */
+  public void accumulate(Calibrator cal) {
+    // Check covariates match
+    if (mCovariates.length != cal.mCovariates.length) {
+      throw new RuntimeException("Missing covariates");
+    }
+    for (int k = 0; k < mCovariates.length; k++) {
+      if (!getCovariate(k).name().equals(cal.getCovariate(k).name())) {
+        throw new RuntimeException("Covariates mismatch");
+      }
+    }
+    // Merge hypercubes
+    assert mStats.length == cal.mStats.length;
+    for (int k = 0; k < mStats.length; k++) {
+      if (mStats[k] != null) {
+        if (cal.mStats[k] != null) {
+          mStats[k].accumulate(cal.mStats[k]);
+        }
+      } else {
+        mStats[k] = cal.mStats[k];
+      }
+    }
+    // Merge histograms
+    for (final Map.Entry<String, Histogram> e : mDistributions.entrySet()) {
+      final Histogram h = cal.getHistogram(e.getKey());
+      if (h != null) {
+        e.getValue().addHistogram(h);
+      }
+    }
+    for (final Map.Entry<String, Histogram> e : cal.mDistributions.entrySet()) {
+      final Histogram h = getHistogram(e.getKey());
+      if (h == null) {
+        mDistributions.put(e.getKey(), e.getValue());
+      }
+    }
+  }
+
+  /**
    * @param ce type of covariate
    * @return the index of the covariate for use in other methods,
    *         or -1 if the requested covariate is not in the hypercube.

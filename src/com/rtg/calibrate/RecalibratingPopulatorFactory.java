@@ -11,16 +11,13 @@
  */
 package com.rtg.calibrate;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.Populator;
 import com.rtg.util.PopulatorFactory;
+import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.variant.RecalibratingSamRecordPopulator;
 
 import htsjdk.samtools.SAMRecord;
@@ -64,19 +61,7 @@ public class RecalibratingPopulatorFactory implements PopulatorFactory<SAMRecord
   public Calibrator mergedCalibrator() {
     final Calibrator merged = new Calibrator(mCovariates, mRegions);
     for (final RecalibratingSamRecordPopulator pop : mPopulators) {
-      // TODO: It would be nice if calibrate had an accumulate(Calibrator cal), so this ugly
-      // write-read-parse cycle could be avoided.
-      try {
-        try (final ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-          pop.calibrator().writeToStream(bos);
-          try (final ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray())) {
-            merged.accumulate(bis, "");
-          }
-        }
-      } catch (final IOException e) {
-        // This really shouldn't happen -- no actual files are involved
-        throw new RuntimeException(e);
-      }
+      merged.accumulate(pop.calibrator());
     }
     return merged;
   }
