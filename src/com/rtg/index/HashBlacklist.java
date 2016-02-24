@@ -30,7 +30,7 @@ public final class HashBlacklist {
 
   private HashBlacklist() { }
 
-  private static final String BLACKLIST_SUBDIR = "blacklists";
+  static final String BLACKLIST_SUBDIR = "blacklists";
 
   /**
    * Determine if SDF has a blacklist for the appropriate word size
