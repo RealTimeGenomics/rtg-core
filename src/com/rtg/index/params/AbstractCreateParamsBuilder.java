@@ -11,10 +11,8 @@
  */
 package com.rtg.index.params;
 
-import com.rtg.index.Index;
-
 /**
- * @author Dave Ware
+ * Abstract base builder for create params
  */
 public abstract class AbstractCreateParamsBuilder<B extends AbstractCreateParamsBuilder<B>> {
   protected long mSize = 20;
@@ -26,7 +24,6 @@ public abstract class AbstractCreateParamsBuilder<B extends AbstractCreateParams
   protected boolean mSpaceEfficientButUnsafe = false;
   protected boolean mIdeal = false;
   protected boolean mOnlyKeepRepeatHashes = false;
-  protected Index mHashFilterIndex = null;
 
   /**
    * @param size upper bound of number of hash windows expected in index.
@@ -103,24 +100,6 @@ public abstract class AbstractCreateParamsBuilder<B extends AbstractCreateParams
    */
   public B ideal(boolean ideal) {
     mIdeal = ideal;
-    return self();
-  }
-
-  /**
-   * @param val true to discard all hashes except those that exceed repeat threshold
-   * @return self() builder for chaining purposes
-   */
-  public B onlyKeepRepeatHashes(boolean val) {
-    mOnlyKeepRepeatHashes = val;
-    return self();
-  }
-
-  /**
-   * @param index index that contains hashes which should be discarded
-   * @return self() builder for chaining purposes
-   */
-  public B hashFilterIndex(Index index) {
-    mHashFilterIndex = index;
     return self();
   }
 

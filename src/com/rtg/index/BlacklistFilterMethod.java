@@ -27,7 +27,7 @@ public class BlacklistFilterMethod implements IndexFilterMethod {
   /**
    * @param sdfDir directory of reference SDF
    * @param wordSize kmer size for hashes
-   * @param threshold kmer occurance count at which they get placed in blacklist
+   * @param threshold kmer occurence count at which they get placed in blacklist
    * @param numberThreads number of threads for index sorting
    * @throws IOException if an IO error occurs
    */

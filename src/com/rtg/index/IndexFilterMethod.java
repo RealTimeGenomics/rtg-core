@@ -24,7 +24,7 @@ public interface IndexFilterMethod {
 
   /**
    * @param hash the hash
-   * @param numHits the number of occurances of this hash in the index
+   * @param numHits the number of occurences of this hash in the index
    * @return true if hash should be kept, false if it should be discarded
    */
   boolean keepHash(long hash, long numHits);

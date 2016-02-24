@@ -143,7 +143,7 @@ public final class MapParamsHelper {
   }
 
   /**
-   * Populates the builder with repeat frequency related values. Note use populateHashFilteringSettings instead
+   * Populates the builder with repeat frequency related values. Note use <code>populateHashFilteringSettings</code> instead
    * if using the blacklist is an option
    * @param flags the flags
    * @param builder the builder
