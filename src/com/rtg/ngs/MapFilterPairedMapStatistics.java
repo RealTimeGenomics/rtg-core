@@ -11,6 +11,8 @@
  */
 package com.rtg.ngs;
 
+import static com.rtg.ngs.MapStatisticsField.TOTAL_READS;
+
 import java.io.File;
 
 import com.rtg.util.StringUtils;
@@ -40,33 +42,45 @@ public class MapFilterPairedMapStatistics extends PairedEndMapStatistics {
   }
 
   @Override
-  public void increment(MapStatisticsField field, MapStatisticsArm arm) {
+  public void increment(MapStatisticsField field, Arm arm) {
     checkField(field);
     super.increment(field, arm);
   }
 
   @Override
-  public void set(MapStatisticsField field, MapStatisticsArm arm, long value) {
+  public void set(MapStatisticsField field, Arm arm, long value) {
     checkField(field);
     super.set(field, arm, value);
   }
 
   @Override
-  public long value(MapStatisticsField field, MapStatisticsArm arm) {
+  public long value(MapStatisticsField field, Arm arm) {
     checkField(field);
     return super.value(field, arm);
   }
 
   @Override
-  public double valueAsPercent(MapStatisticsField field, MapStatisticsArm arm) {
+  public long totalValue(MapStatisticsField field) {
+    checkField(field);
+    return super.totalValue(field);
+  }
+
+  @Override
+  public double valueAsPercent(MapStatisticsField field, Arm arm) {
     checkField(field);
     return super.valueAsPercent(field, arm);
+  }
+
+  @Override
+  public double totalValueAsPercent(MapStatisticsField field) {
+    checkField(field);
+    return super.totalValueAsPercent(field);
   }
 
 
   @Override
   protected String getStatistics(boolean includeDevLog) {
-    final long total = value(MapStatisticsField.TOTAL_READS, MapStatisticsArm.BOTH);
+    final long total = totalValue(TOTAL_READS);
     final int formatLength = Math.max(MAX_HEADER_LENGTH, String.format("%d", total).length());
     final StringBuilder sb = new StringBuilder();
     //adding extra newLine in case Progress is on

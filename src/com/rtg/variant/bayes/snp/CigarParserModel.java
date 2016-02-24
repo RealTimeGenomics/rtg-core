@@ -13,6 +13,7 @@ package com.rtg.variant.bayes.snp;
 
 
 import com.rtg.mode.DNA;
+import com.rtg.ngs.Arm;
 import com.rtg.reader.CgUtils;
 import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.SamUtils;
@@ -44,6 +45,8 @@ public class CigarParserModel implements ReadParserInterface {
   private final int mStart;
 
   private final int mEnd;
+
+  private Arm mArm;
 
   private final ToMatcherCigarParser mParser = new ToMatcherCigarParser();
 
@@ -79,7 +82,7 @@ public class CigarParserModel implements ReadParserInterface {
     } catch (final IllegalArgumentException iae) {
       throw new BadSuperCigarException("Illegal DNA character: " + iae.getMessage());
     }
-    qualities = var.getQuality().length == 0 || mParams.ignoreQualityScores() ? null : var.getQuality();
+    qualities = var.getRecalibratedQuality().length == 0 || mParams.ignoreQualityScores() ? null : var.getRecalibratedQuality();
 
     mParser.setTemplateStart(var.getStart());
     mParser.setTemplate(templateBytes);
@@ -127,13 +130,14 @@ public class CigarParserModel implements ReadParserInterface {
       if (mQualities != null && getReadPosition() >= mQualities.length) {
         throw new BadSuperCigarException("readPos " + getReadPosition() + " > qual.len in SAM record");
       }
-      return mQualities == null ? mDefaultQuality : mMe.getPhred(mQualities[getReadPosition()], getReadPosition());
+      return mQualities == null ? mDefaultQuality : mQualities[getReadPosition()];
     }
 
     void setAdditional(AbstractMachineErrorParams me, int mapScore, int defaultQuality, boolean isFirst, boolean isForward, boolean isReadPaired, boolean isMated, boolean isUnmapped) {
       mMe = me;
       mMapScore = mapScore;
       mDefaultQuality = defaultQuality;
+      mArm = isFirst ? Arm.LEFT : Arm.RIGHT;
       mIsCgOverlapLeft = me.machineType() == MachineType.COMPLETE_GENOMICS && (isFirst ^ !isForward)
         || me.machineType() == MachineType.COMPLETE_GENOMICS_2 && isForward;
       mIsForward = isForward;

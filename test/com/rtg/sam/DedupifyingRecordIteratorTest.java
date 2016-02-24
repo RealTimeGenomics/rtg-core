@@ -19,6 +19,7 @@ import java.util.List;
 import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
+import com.rtg.variant.DefaultMachineErrorChooser;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantAlignmentRecordPopulator;
 
@@ -35,7 +36,7 @@ public class DedupifyingRecordIteratorTest extends TestCase {
       final File sam = FileHelper.resourceToFile(SAM_RESOURCE, new File(dir, "testFilter.sam"));
       final List<File> f = new ArrayList<>();
       f.add(sam);
-      final SingletonPopulatorFactory<VariantAlignmentRecord> pf = new SingletonPopulatorFactory<>(new VariantAlignmentRecordPopulator());
+      final SingletonPopulatorFactory<VariantAlignmentRecord> pf = new SingletonPopulatorFactory<>(new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser()));
       try (ThreadedMultifileIterator<VariantAlignmentRecord> tmfi = new ThreadedMultifileIterator<>(f, 1, pf, SamFilterParams.builder().excludeUnmapped(true).create(), SamUtils.getUberHeader(f))) {
         final DedupifyingRecordIterator<VariantAlignmentRecord> dd = new DedupifyingRecordIterator<>(tmfi);
         while (dd.hasNext()) {

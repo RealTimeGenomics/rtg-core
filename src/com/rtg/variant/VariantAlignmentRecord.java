@@ -11,10 +11,15 @@
  */
 package com.rtg.variant;
 
+import java.util.Arrays;
+
+import com.rtg.ngs.Arm;
 import com.rtg.reader.FastaUtils;
+import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.MateInfo;
 import com.rtg.sam.ReaderRecord;
 import com.rtg.sam.SamUtils;
+import com.rtg.sam.SuperCigarParser;
 import com.rtg.util.CompareHelper;
 import com.rtg.util.MathUtils;
 import com.rtg.util.intervals.SequenceIdLocusSimple;
@@ -44,7 +49,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
   }
 
   private final byte[] mBases;
-  private final byte[] mQuality;
+  private final byte[] mRecalibratedQuality;
   private final String mCigar;
   private final byte mMappingQuality;
   private final byte mFlag; // Not the same semantics as SAM flag.
@@ -65,7 +70,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
   private VariantAlignmentRecord(final int start, final int end) {
     super(0, start, end);
     mBases = null;
-    mQuality = null;
+    mRecalibratedQuality = null;
     mCigar = null;
     mMappingQuality = 0;
     mFlag = -1;
@@ -86,8 +91,9 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
    * Construct a new alignment record populated from a SAM record.
    * @param record SAM record. Requires header with sequence dictionary (for reference index lookup)
    * @param genome genome code for this record
+   * @param chooser machine error chooser
    */
-  public VariantAlignmentRecord(final SAMRecord record, final int genome) {
+  public VariantAlignmentRecord(final SAMRecord record, final int genome, MachineErrorChooserInterface chooser) {
     super(record.getReferenceIndex(), record.getAlignmentStart() - 1, record.getReadUnmappedFlag() ? record.getAlignmentStart() - 1 + record.getReadLength() : record.getAlignmentEnd()); // picard end position is 1-based inclusive == 0-based exclusive
     mGenome = genome;
     mFragmentLength = record.getInferredInsertSize();
@@ -95,21 +101,11 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
 
 
     final byte[] baseQualities = record.getBaseQualities();
-    mQuality = baseQualities;
 //    if (baseQualities.length == 0) {
-//      mQuality = baseQualities;
+//      mRecalibratedQuality = baseQualities;
 //    } else {
-//      mQuality = baseQualities;
+//      mRecalibratedQuality = baseQualities;
 
-      // Perform recalibration at this point?
-      //mQuality = Arrays.copyOf(baseQualities, baseQualities.length);
-      //final AbstractMachineErrorParams me = chooser == null ? null : chooser.machineErrors(var);
-      //final int phred = me == null ? scoreChar - '!' : me.getPhred(scoreChar, k + start);
-
-//      for (int i = 0; i < mQuality.length; i++) {
-//        mQuality[i] += FastqSequenceDataSource.PHRED_LOWER_LIMIT_CHAR;
-//      }
-//    }
     mCigar = record.getCigarString();
     mMappingQuality = (byte) record.getMappingQuality();
     mReadGroup = record.getReadGroup();
@@ -135,12 +131,69 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     }
     mFlag = (byte) f;
 
-    mOverlapQuality = mSuperCigar == null
+    final String overlapQuality = mSuperCigar == null
       ? SamUtils.allowEmpty(record.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY))
       : SamUtils.allowEmpty(record.getStringAttribute(SamUtils.CG_OVERLAP_QUALITY));
     mOverlapBases = SamUtils.allowEmpty(record.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES));
     mOverlapInstructions = record.getStringAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS);
     mCgReadDelta = record.getStringAttribute(SamUtils.CG_READ_DELTA);
+
+    // Perform recalibration at this point
+    mRecalibratedQuality = Arrays.copyOf(baseQualities, baseQualities.length);
+    final AbstractMachineErrorParams me = chooser == null ? null : chooser.machineErrors(record.getReadGroup(), record.getReadPairedFlag());
+    final String superCigar = SamUtils.allowEmpty(record.getStringAttribute(SamUtils.CG_SUPER_CIGAR));
+    final int backStepPosition;
+    if (!overlapQuality.isEmpty() && !superCigar.isEmpty()) {
+      final SuperCigarParser parser = new SuperCigarParser();
+      parser.setCigar(superCigar, mCgReadDelta);
+      try {
+        parser.parse();
+        backStepPosition = parser.getReadOverlapStart();
+      } catch (BadSuperCigarException e) {
+        throw new IllegalArgumentException("Invalid super cigar");
+      }
+    } else {
+      backStepPosition = -1;
+    }
+
+    final int readLength = mRecalibratedQuality.length + overlapQuality.length();
+    final int machineStep;
+    int machineCycle;
+      if (record.getReadNegativeStrandFlag()) {
+       machineCycle = readLength - 1;
+        machineStep = -1;
+      } else {
+        machineCycle = 0;
+        machineStep = 1;
+      }
+    int qualityPosition = 0;
+
+    final Arm arm = !record.getReadPairedFlag() || record.getFirstOfPairFlag() ? Arm.LEFT : Arm.RIGHT;
+    while (machineCycle < backStepPosition && qualityPosition < mRecalibratedQuality.length) {
+      final byte scoreChar = mRecalibratedQuality[qualityPosition];
+      final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getPhred(scoreChar, machineCycle, arm);
+      mRecalibratedQuality[qualityPosition] = (byte) recalibrated;
+      machineCycle += machineStep;
+      qualityPosition++;
+    }
+
+    final StringBuilder recalibratedOverlapQuality = new StringBuilder();
+    for (int i = 0; i < overlapQuality.length() && qualityPosition < mRecalibratedQuality.length; i++) {
+      final byte scoreChar = (byte) overlapQuality.charAt(i);
+      final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getPhred(scoreChar, machineCycle, arm);
+      recalibratedOverlapQuality.append((char) recalibrated);
+      machineCycle += machineStep;
+    }
+    mOverlapQuality = recalibratedOverlapQuality.toString();
+
+    while (qualityPosition < mRecalibratedQuality.length) {
+      final byte scoreChar = mRecalibratedQuality[qualityPosition];
+      final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getPhred(scoreChar, machineCycle, arm);
+      mRecalibratedQuality[qualityPosition] = (byte) recalibrated;
+      machineCycle += machineStep;
+      qualityPosition++;
+    }
+
   }
 
   /**
@@ -156,7 +209,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
    * @param record SAM record
    */
   public VariantAlignmentRecord(final SAMRecord record) {
-    this(record, record.getReferenceIndex());
+    this(record, record.getReferenceIndex(), new DefaultMachineErrorChooser());
   }
 
   public byte[] getRead() {
@@ -167,8 +220,8 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
    * Get the binary phred quality values as a byte array.
    * @return quality
    */
-  public byte[] getQuality() {
-    return mQuality;
+  public byte[] getRecalibratedQuality() {
+    return mRecalibratedQuality;
   }
 
   public String getCigar() {
@@ -203,6 +256,10 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     return (mFlag & FLAG_FIRST) != 0;
   }
 
+  public Arm getArm() {
+    return isFirst() ? Arm.LEFT : Arm.RIGHT;
+  }
+
   public boolean isNegativeStrand() {
     return (mFlag & FLAG_NEGATIVE) != 0;
   }
@@ -234,7 +291,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
 
   @Override
   public String toString() {
-    return getStart() + " " + getCigar() + " " + new String(getRead()) + " " + new String(FastaUtils.rawToAsciiQuality(getQuality()));
+    return getStart() + " " + getCigar() + " " + new String(getRead()) + " " + new String(FastaUtils.rawToAsciiQuality(getRecalibratedQuality()));
   }
 
   @Override
@@ -243,7 +300,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
       .compare(getStart(), rec.getStart())
       .compare(getCigar(), rec.getCigar())
       .compare(compare(getRead(), rec.getRead()))
-      .compare(compare(getQuality(), rec.getQuality()));
+      .compare(compare(getRecalibratedQuality(), rec.getRecalibratedQuality()));
     return helper.result();
   }
 
@@ -318,7 +375,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     if (r != 0) {
       return r;
     }
-    final int q = compare(var.getQuality(), getQuality());
+    final int q = compare(var.getRecalibratedQuality(), getRecalibratedQuality());
     if (q != 0) {
       return q;
     }

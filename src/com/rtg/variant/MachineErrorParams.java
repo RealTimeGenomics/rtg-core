@@ -15,6 +15,7 @@ import static com.rtg.util.StringUtils.LS;
 
 import java.io.IOException;
 
+import com.rtg.ngs.Arm;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
@@ -215,7 +216,8 @@ public final class MachineErrorParams extends AbstractMachineErrorParams impleme
   }
 
   @Override
-  public int getPhred(final byte rawQuality, int readPos) {
+  public int getPhred(final byte rawQuality, int readPos, Arm arm) {
+    //TODO support Arm
     if (mQualityCurve != null) {
       if (rawQuality >= mQualityCurve.length) {
         return mQualityCurve[mQualityCurve.length - 1];

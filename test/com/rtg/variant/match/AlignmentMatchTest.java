@@ -16,6 +16,7 @@ import java.io.IOException;
 import com.rtg.reader.FastaUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.variant.DefaultMachineErrorChooser;
 import com.rtg.variant.ReadGroupMachineErrorChooser;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.dna.DNARangeNAT;
@@ -31,6 +32,10 @@ import junit.framework.TestCase;
 /**
  */
 public class AlignmentMatchTest extends TestCase {
+
+  public static final String TEST_READ_STRING = "ACGT";
+  public static final String TEST_READ_QUALITY_STRING = "!!%`";
+  public static final byte[] TEST_RAW_QUALITY = FastaUtils.asciiToRawQuality(TEST_READ_QUALITY_STRING.toCharArray());
 
   public void test0() {
     final AlignmentMatch ins = new AlignmentMatch(null, "", "", 0, 0, 0, 7);
@@ -56,11 +61,7 @@ public class AlignmentMatchTest extends TestCase {
     assertEquals(0, ins.length());
   }
 
-  public void testReadGroups() throws IOException {
-    Diagnostic.setLogStream();
-    final String read = "ACGT";   // we use the "CGT" part
-    final String qualities = "!!%`";  // that is, 0,0,4,63.
-    final byte[] qScores = FastaUtils.asciiToRawQuality(qualities.toCharArray());
+  private SAMFileHeader getSAMFileHeader() {
     final SAMFileHeader hdr = new SAMFileHeader();
     final SAMReadGroupRecord illumina = new SAMReadGroupRecord("Illumina");
     illumina.setSample("sample1");
@@ -70,12 +71,18 @@ public class AlignmentMatchTest extends TestCase {
     cg.setSample("sample2");
     cg.setPlatform("complete");
     hdr.addReadGroup(cg);
+    return hdr;
+  }
+
+  public void testNoQualities() throws IOException {
+    Diagnostic.setLogStream();
+    final SAMFileHeader hdr = getSAMFileHeader();
     final SAMRecord rec = new SAMRecord(hdr);
     final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
-    final ReadGroupMachineErrorChooser chooser = new ReadGroupMachineErrorChooser(hdr);
+
 
     // no qualities
-    AlignmentMatch ins = new AlignmentMatch(var, null, read, null, 20, 1, 3, 7, true, true);
+    final AlignmentMatch ins = new AlignmentMatch(var, null, TEST_READ_STRING, null, 20, 1, 3, 7, true, true);
     ins.integrity();
     assertEquals("CGT", ins.toString());
     assertEquals(3, ins.length());
@@ -85,33 +92,63 @@ public class AlignmentMatchTest extends TestCase {
     assertEquals(VariantUtils.phredToProb(20), ins.baseError(1), 1E-14);
     assertEquals(VariantUtils.phredToProb(20), ins.baseError(2), 1E-14);
     assertEquals(VariantUtils.phredToProb(7), ins.mapError(), 1E-14);
+  }
 
-    ins = new AlignmentMatch(var, null, read, qScores, 20, 1, 3, 7, true, true);
+  public void testQualities() throws IOException {
+    Diagnostic.setLogStream();
+    final SAMFileHeader hdr = getSAMFileHeader();
+    final SAMRecord rec = new SAMRecord(hdr);
+    final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
+
+    final AlignmentMatch ins = new AlignmentMatch(var, null, TEST_READ_STRING, TEST_RAW_QUALITY, 20, 1, 3, 7, true, true);
     assertEquals(VariantUtils.phredToProb(0), ins.baseError(0), 1E-14);
     assertEquals(VariantUtils.phredToProb(4), ins.baseError(1), 1E-14);
     assertEquals(VariantUtils.phredToProb(63), ins.baseError(2), 1E-14);
     assertEquals(VariantUtils.phredToProb(7), ins.mapError(), 1E-14);
+  }
+
+  public void testNoReadGroupInSam() throws IOException {
+    Diagnostic.setLogStream();
+    final SAMFileHeader hdr = getSAMFileHeader();
+    final SAMRecord rec = new SAMRecord(hdr);
+    final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
+    final ReadGroupMachineErrorChooser chooser = new ReadGroupMachineErrorChooser(hdr);
 
     // no read group in SAM record, so no quality correction curve
     try {
-      new AlignmentMatch(var, chooser, read, qScores, 20, 1, 3, 7, true, true);
+      new AlignmentMatch(var, chooser, TEST_READ_STRING, TEST_RAW_QUALITY, 20, 1, 3, 7, true, true);
       fail();
     } catch (final NoTalkbackSlimException ntse) {
       //expected
     }
+  }
+
+  public void testIlluminaCorrectionCurve() throws IOException {
+    Diagnostic.setLogStream();
+    final SAMFileHeader hdr = getSAMFileHeader();
+    final SAMRecord rec = new SAMRecord(hdr);
+    final ReadGroupMachineErrorChooser chooser = new ReadGroupMachineErrorChooser(hdr);
 
     // Illumina correction curve
     rec.setAttribute("RG", "Illumina");
-    ins = new AlignmentMatch(new VariantAlignmentRecord(rec), chooser, read, qScores, 20, 1, 3, 7, true, true);
+    final AlignmentMatch ins = new AlignmentMatch(new VariantAlignmentRecord(rec), chooser, TEST_READ_STRING, TEST_RAW_QUALITY, 20, 1, 3, 7, true, true);
     ins.integrity();
     assertEquals(VariantUtils.phredToProb(0), ins.baseError(0), 1E-14);
     assertEquals(VariantUtils.phredToProb(4), ins.baseError(1), 1E-14);
     assertEquals(VariantUtils.phredToProb(63), ins.baseError(2), 1E-14);
     assertEquals(VariantUtils.phredToProb(7), ins.mapError(), 1E-14);
 
+  }
+
+  public void testCgCorrectionCurve() throws IOException {
+    Diagnostic.setLogStream();
+    final SAMFileHeader hdr = getSAMFileHeader();
+    final SAMRecord rec = new SAMRecord(hdr);
+    final ReadGroupMachineErrorChooser chooser = new ReadGroupMachineErrorChooser(hdr);
+
     // Complete Genomics correction curve
     rec.setAttribute("RG", "CG");
-    ins = new AlignmentMatch(new VariantAlignmentRecord(rec), chooser, read, qScores, 20, 1, 3, 7, true, true);
+    final AlignmentMatch ins = new AlignmentMatch(new VariantAlignmentRecord(rec, 0, new DefaultMachineErrorChooser()), chooser, TEST_READ_STRING, TEST_RAW_QUALITY, 20, 1, 3, 7, true, true);
     ins.integrity();
     assertEquals(VariantUtils.phredToProb(0), ins.baseError(0), 1E-14);
     assertEquals(VariantUtils.phredToProb(5), ins.baseError(1), 1E-14);

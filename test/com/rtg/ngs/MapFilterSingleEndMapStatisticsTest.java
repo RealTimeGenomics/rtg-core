@@ -22,12 +22,12 @@ public class MapFilterSingleEndMapStatisticsTest extends TestCase {
 
   public void testIncrement() {
     final MapFilterSingleEndMapStatistics stats = new MapFilterSingleEndMapStatistics(null);
-    stats.increment(MapStatisticsField.UNMATED_AMBIG_READS, MapStatisticsArm.LEFT);
-    stats.set(MapStatisticsField.UNMATED_AMBIG_READS, MapStatisticsArm.RIGHT, 10);
-    stats.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, MapStatisticsArm.RIGHT);
-    stats.increment(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.LEFT);
-    stats.set(MapStatisticsField.TOTAL_READS, MapStatisticsArm.LEFT, 15);
-    stats.set(MapStatisticsField.TOTAL_READS, MapStatisticsArm.RIGHT, 15);
+    stats.increment(MapStatisticsField.UNMATED_AMBIG_READS, Arm.LEFT);
+    stats.set(MapStatisticsField.UNMATED_AMBIG_READS, Arm.RIGHT, 10);
+    stats.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.RIGHT);
+    stats.increment(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT);
+    stats.set(MapStatisticsField.TOTAL_READS, Arm.LEFT, 15);
+    stats.set(MapStatisticsField.TOTAL_READS, Arm.RIGHT, 15);
     final String str = stats.getStatistics();
     TestUtils.containsAll(str, "READ MAPPINGS",
                                "10  66.7% mapped",
@@ -40,19 +40,19 @@ public class MapFilterSingleEndMapStatisticsTest extends TestCase {
   public void testBadFields() {
     final MapFilterSingleEndMapStatistics stats = new MapFilterSingleEndMapStatistics(null);
     try {
-      stats.increment(MapStatisticsField.UNMATED_UNIQUE_READS, MapStatisticsArm.LEFT);
+      stats.increment(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.LEFT);
       fail();
     } catch (final UnsupportedOperationException e) {
       //expected
     }
     try {
-      stats.set(MapStatisticsField.UNMATED_UNIQUE_READS, MapStatisticsArm.LEFT, 10);
+      stats.set(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.LEFT, 10);
       fail();
     } catch (final UnsupportedOperationException e) {
       //expected
     }
     try {
-      stats.value(MapStatisticsField.UNMATED_UNIQUE_READS, MapStatisticsArm.LEFT);
+      stats.value(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.LEFT);
       fail();
     } catch (final UnsupportedOperationException e) {
       //expected

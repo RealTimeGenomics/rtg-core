@@ -17,6 +17,7 @@ import java.io.IOException;
 
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Covariate;
+import com.rtg.ngs.Arm;
 import com.rtg.sam.ReadGroupUtils;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -27,7 +28,6 @@ import com.rtg.util.test.FileHelper;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -78,19 +78,19 @@ public class CalibratedMachineErrorChooserTest extends TestCase {
       final SAMRecord fake = new SAMRecord(fheader);
       VariantAlignmentRecord var = new VariantAlignmentRecord(fake);
       try {
-        c.machineErrors(var);
+        c.machineErrors(var.getReadGroup(), var.isReadPaired());
         fail();
       } catch (final NoTalkbackSlimException e) {
         assertTrue(e.getMessage().contains("Read group"));
       }
       fake.setAttribute(ReadGroupUtils.RG_ATTRIBUTE, "readgroup1");  // known
       var = new VariantAlignmentRecord(fake);
-      assertEquals(expectedQual0, c.machineErrors(var).getPhred((char) ('!' + 2), 0));
-      assertEquals(expectedQual1, c.machineErrors(var).getPhred((char) ('!' + 2), 1));
+      assertEquals(expectedQual0, c.machineErrors(var.getReadGroup(), var.isReadPaired()).getPhred((char) ('!' + 2), 0, Arm.LEFT));
+      assertEquals(expectedQual1, c.machineErrors(var.getReadGroup(), var.isReadPaired()).getPhred((char) ('!' + 2), 1, Arm.LEFT));
       fake.setAttribute(ReadGroupUtils.RG_ATTRIBUTE, "readgroup2");  // unknown
       try {
         var = new VariantAlignmentRecord(fake);
-        c.machineErrors(var);
+        c.machineErrors(var.getReadGroup(), var.isReadPaired());
         fail();
       } catch (final NoTalkbackSlimException e) {
         assertEquals("No calibration data supplied for read group: readgroup2", e.getMessage());

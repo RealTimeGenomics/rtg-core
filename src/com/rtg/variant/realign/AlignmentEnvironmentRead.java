@@ -35,7 +35,7 @@ public final class AlignmentEnvironmentRead extends AbstractAlignmentEnvironment
     mRead = DNA.byteDNAtoByte(sam.getRead());
     final int len = mRead.length;
     mQuality = new double[len];
-    final byte[] quality = sam.getQuality();
+    final byte[] quality = sam.getRecalibratedQuality();
     if (quality.length == 0) {
       final double qDef = VariantUtils.phredToProb(params.qDefault());
       for (int i = 0; i < len; i++) {
@@ -43,8 +43,7 @@ public final class AlignmentEnvironmentRead extends AbstractAlignmentEnvironment
       }
     } else {
       for (int i = 0; i < len; i++) {
-        final int phred = me.getPhred(quality[i], i);
-        mQuality[i] = VariantUtils.phredToProb(phred);
+        mQuality[i] = VariantUtils.phredToProb(quality[i]);
       }
     }
   }

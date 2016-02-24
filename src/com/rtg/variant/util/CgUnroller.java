@@ -77,7 +77,7 @@ public final class CgUnroller {
     }
 
     final String samRead = new String(rec.getRead());
-    final String samQualities = new String(FastaUtils.rawToAsciiQuality(rec.getQuality())); // Convert this function to work natively in raw qualities
+    final String samQualities = new String(FastaUtils.rawToAsciiQuality(rec.getRecalibratedQuality())); // Convert this function to work natively in raw qualities
     final boolean hasQuality = samQualities.length() != 0;
     final int samLength = samRead.length();
     if (hasQuality && samLength != samQualities.length()) {

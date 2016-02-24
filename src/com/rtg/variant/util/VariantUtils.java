@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import com.rtg.mode.DnaUtils;
+import com.rtg.ngs.Arm;
 import com.rtg.sam.MateInfo;
 import com.rtg.util.MathUtils;
 import com.rtg.util.StringUtils;
@@ -317,8 +318,12 @@ public final class VariantUtils {
     sb.append("smallGapDistribution: ").append(Arrays.toString(p.smallGapDistribution())).append(StringUtils.LS);
     sb.append("overlapDistribution2: ").append(Arrays.toString(p.overlapDistribution2())).append(StringUtils.LS);
     sb.append("quality curve: ");
-    for (byte q = 0; q < 64; q++) {
-      sb.append(p.getPhred(q, 0)).append(",");
+    for (Arm arm : Arm.values()) {
+      sb.append(arm).append("=");
+      for (byte q = 0; q < 64; q++) {
+        sb.append(p.getPhred(q, 0, arm)).append(",");
+      }
+      sb.append(StringUtils.LS);
     }
     sb.append(StringUtils.LS);
     return sb.toString();
@@ -364,11 +369,15 @@ public final class VariantUtils {
     sb.append(StringUtils.LS);
 
     sb.append("quality_curve = ");
-    for (byte q = 0; q < 64; q++) {
-      if (q != 0) {
-        sb.append(", ");
+    for (Arm arm : Arm.values()) {
+      sb.append(arm).append("=");
+      for (byte q = 0; q < 64; q++) {
+        if (q != 0) {
+          sb.append(", ");
+        }
+        sb.append(p.getPhred(q, 0, arm));
       }
-      sb.append(p.getPhred(q, 0));
+      sb.append(StringUtils.LS).append("    ");
     }
     sb.append(StringUtils.LS);
     sb.append(StringUtils.LS);

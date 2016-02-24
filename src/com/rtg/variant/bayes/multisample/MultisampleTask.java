@@ -323,7 +323,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
         genomeNames = new String[] {}; // Special case for singleton caller, map all records to 0
       }
       final int depth = mParams.maxCoverageBypass().thresholdTotal(refName);
-      final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(genomeNames);
+      final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(MultisampleUtils.chooser(mParams), genomeNames);
       final RegionRestriction restriction = new RegionRestriction(refName, info.start(), info.end());
 
       mBuffer = new CircularBufferMultifileSinglePassReaderWindowSync<>(mWrapper, pop, mParams.uberHeader().getSequenceIndex(refName), restriction.getStart(), depth);
@@ -696,7 +696,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     if (genomeNames.length == 1) {
       genomeNames = new String[] {}; // Special case for singleton caller, map all records to 0
     }
-    final SingletonPopulatorFactory<VariantAlignmentRecord> pf = new SingletonPopulatorFactory<>(new VariantAlignmentRecordPopulator(genomeNames));
+    final SingletonPopulatorFactory<VariantAlignmentRecord> pf = new SingletonPopulatorFactory<>(new VariantAlignmentRecordPopulator(MultisampleUtils.chooser(mParams), genomeNames));
     mWrapper = new ThreadedMultifileIteratorWrapper<>(new SamReadingContext(mParams.mapped(), mParams.ioThreads(), mParams.filterParams(), mParams.uberHeader()), pf);
     final SAMSequenceDictionary dict = mWrapper.header().getSequenceDictionary();
     mSequences = dict.getSequences();

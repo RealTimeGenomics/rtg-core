@@ -39,7 +39,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     assertTrue(Arrays.equals("TATT".getBytes(), r.getRead()));
     assertEquals(41, r.getStart());
     assertEquals(6, r.getLength());
-    assertTrue(Arrays.equals(q, r.getQuality()));
+    assertTrue(Arrays.equals(q, r.getRecalibratedQuality()));
     assertEquals("2M2D2M", r.getCigar());
     assertEquals(43, r.getMappingQuality());
     assertEquals(2, r.getNHOrIH());

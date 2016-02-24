@@ -15,6 +15,7 @@ import com.rtg.calibrate.CalibrationStats;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
 import com.rtg.calibrate.StatsProcessor;
+import com.rtg.ngs.Arm;
 
 
 /**
@@ -79,7 +80,7 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
   }
 
   @Override
-  public int getPhred(byte quality, int readPosition) {
+  public int getPhred(byte quality, int readPosition, Arm arm) {
     final int qualIndex = quality & 0xFF;
     if (qualIndex >= mCurve.length) {
       return mCurve[mCurve.length - 1][readPosition];

@@ -68,8 +68,7 @@ public class ReadGroupMachineErrorChooser implements MachineErrorChooserInterfac
   }
 
   @Override
-  public MachineErrorParams machineErrors(VariantAlignmentRecord r) {
-    final SAMReadGroupRecord rgr = r.getReadGroup();
+  public MachineErrorParams machineErrors(SAMReadGroupRecord rgr, boolean readPaired) {
     final String rg = rgr == null ? null : rgr.getId();
     if (rg == null) {
       throw new NoTalkbackSlimException("Sam record had no read group attribute, but header read groups were supplied.");

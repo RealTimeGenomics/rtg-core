@@ -37,6 +37,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
+import com.rtg.variant.DefaultMachineErrorChooser;
 import com.rtg.variant.GenomePriorParamsBuilder;
 import com.rtg.variant.StaticThreshold;
 import com.rtg.variant.Variant;
@@ -279,7 +280,7 @@ public class ComplexCallerTest extends TestCase {
       .create();
     final AbstractJointCallerConfiguration config = new SingletonCallerConfiguration.Configurator().getConfig(params, null);
 
-    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator();
+    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser());
     final RecordIterator<VariantAlignmentRecord> it = CircularBufferMultifileSinglePassReaderWindow.defaultIterator(list, params.filterParams(), 8, pop);
     final CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord> trib =
        new CircularBufferMultifileSinglePassReaderWindow<>(

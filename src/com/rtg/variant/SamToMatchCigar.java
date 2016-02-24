@@ -47,7 +47,7 @@ public class SamToMatchCigar extends IntegralAbstract implements SamToMatch {
 
   @Override
   public boolean process(final byte[] templateBytes, final VariantAlignmentRecord rec) {
-    final AbstractMachineErrorParams me = mChooser.machineErrors(rec);
+    final AbstractMachineErrorParams me = mChooser.machineErrors(rec.getReadGroup(), rec.isReadPaired());
     final int readScore = VariantUtils.readScoreFromAlignmentRecord(rec, mParams);
     if (readScore < 0) {
       // Invalid read score

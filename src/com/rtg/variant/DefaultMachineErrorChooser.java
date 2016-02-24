@@ -63,10 +63,9 @@ public class DefaultMachineErrorChooser implements MachineErrorChooserInterface 
     "You are using a single set of machine error rates when combining reads from different platforms. Usually using platform specific error rates will give better results";
 
   @Override
-  public MachineErrorParams machineErrors(final VariantAlignmentRecord r) {
+  public MachineErrorParams machineErrors(SAMReadGroupRecord rg, boolean readPaired) {
     // Don't bother checking platforms if we've already warned
     if (!mWarned) {
-      final SAMReadGroupRecord rg = r.getReadGroup();
       if (rg != null) {
         final String platform = rg.getPlatform();
         if (mPlatform == null) {

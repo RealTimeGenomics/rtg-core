@@ -64,15 +64,14 @@ public class CalibratedMachineErrorChooser implements MachineErrorChooserInterfa
   }
 
   @Override
-  public AbstractMachineErrorParams machineErrors(VariantAlignmentRecord r) {
-    final SAMReadGroupRecord rg = r.getReadGroup();
+  public AbstractMachineErrorParams machineErrors(SAMReadGroupRecord rg, boolean readPaired) {
     if (rg == null) {
       throw new NoTalkbackSlimException("Read group required in SAM file");
     }
     final String rgId = rg.getId();
     AbstractMachineErrorParams cal = mReadGroupMachineErrorParams.get(rgId);
     if (cal == null) {
-      final MachineType mt = ReadGroupUtils.platformToMachineType(rg, r.isReadPaired());
+      final MachineType mt = ReadGroupUtils.platformToMachineType(rg, readPaired);
       if (mt == MachineType.COMPLETE_GENOMICS && CG_BYPASS_HACK) {
         Diagnostic.developerLog("CG calibration bypass enabled, using default CG errors");
         cal = getDefaultCompleteParams(mt);

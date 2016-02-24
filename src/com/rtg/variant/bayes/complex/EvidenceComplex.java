@@ -120,7 +120,7 @@ public class EvidenceComplex extends Evidence {
     final int size = description().size();
     mProb = new double[size];
     final VariantAlignmentRecord alignmentRecord = match.alignmentRecord();
-    final AbstractMachineErrorParams me = chooser.machineErrors(alignmentRecord);
+    final AbstractMachineErrorParams me = chooser.machineErrors(alignmentRecord.getReadGroup(), alignmentRecord.isReadPaired());
     final boolean cg = me.isCG() && CG_ALLPATHS;
     final AllPaths sm;
     if (params.threadingEnvironment() == ThreadingEnvironment.PARALLEL) {

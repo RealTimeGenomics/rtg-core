@@ -32,13 +32,13 @@ public class VariantAlignmentRecordPopulatorTest extends TestCase {
   public void test() {
     final SAMRecord rec = new SAMRecord(new SAMFileHeader());
     rec.setAlignmentStart(42);
-    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator();
+    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser());
     final VariantAlignmentRecord r = pop.populate(rec);
     assertEquals(41, r.getStart());
   }
 
   public void test2() throws IOException {
-    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator("sample1", "sample2");
+    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), "sample1", "sample2");
     final SAMRecord rec = new SAMRecord(new SAMFileHeader());
     rec.setAlignmentStart(42);
     try {
@@ -56,7 +56,7 @@ public class VariantAlignmentRecordPopulatorTest extends TestCase {
     + "4856309\t137\tchr13\t1\t37\t45M\t*\t0\t0\tTCCCAGCTACTCAGGAGTCTGAGGTGGGAGAATTGCTTGATGCCA\tDDB<CCEEDEEHEDGEGEFHCEEF?AFCF??DBA=.=C</:04,7\tRG:Z:ERR000473\n";
 
   public void test3() throws IOException {
-    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator("sample1", "sample2");
+    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), "sample1", "sample2");
     try (TestDirectory td = new TestDirectory()) {
       final File samfile = new File(td, "test.sam.gz");
       FileHelper.stringToGzFile(SAM, samfile);

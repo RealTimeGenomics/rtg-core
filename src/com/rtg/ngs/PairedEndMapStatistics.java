@@ -51,14 +51,12 @@ public class PairedEndMapStatistics extends AbstractStatistics implements MapSta
   }
 
   @Override
-  public void increment(MapStatisticsField field, MapStatisticsArm arm) {
+  public void increment(MapStatisticsField field, Arm arm) {
     switch (arm) {
-    case LEFT: mLeft.increment(field, arm); break;
     case RIGHT: mRight.increment(field, arm); break;
-    case BOTH:
+    case LEFT:
     default:
       mLeft.increment(field, arm);
-      mRight.increment(field, arm);
       break;
     }
   }
@@ -75,10 +73,10 @@ public class PairedEndMapStatistics extends AbstractStatistics implements MapSta
   }
 
   void appendValue(StringBuilder sb, MapStatisticsField key, String msg, int formatLength) {
-    final long leftValue = value(key, MapStatisticsArm.LEFT);
-    final long rightValue = value(key, MapStatisticsArm.RIGHT);
-    final long bothValue = value(key, MapStatisticsArm.BOTH);
-    final double percent = valueAsPercent(key, MapStatisticsArm.BOTH);
+    final long leftValue = value(key, Arm.LEFT);
+    final long rightValue = value(key, Arm.RIGHT);
+    final long bothValue = totalValue(key);
+    final double percent = totalValueAsPercent(key);
 
     String formatStr = "%" + formatLength + "d";
     final String leftValueFormat = String.format(formatStr, leftValue);
@@ -116,7 +114,7 @@ public class PairedEndMapStatistics extends AbstractStatistics implements MapSta
   }
 
   protected String getStatistics(boolean includeDevLog) {
-    final long total = value(MapStatisticsField.TOTAL_READS, MapStatisticsArm.BOTH);
+    final long total = totalValue(MapStatisticsField.TOTAL_READS);
     final int formatLength = Math.max(MAX_HEADER_LENGTH, String.format("%d", total).length());
     final StringBuilder sb = new StringBuilder();
     //adding extra newLine in case Progress is on
@@ -144,8 +142,8 @@ public class PairedEndMapStatistics extends AbstractStatistics implements MapSta
     appendValue(sb, MapStatisticsField.UNMAPPED_NO_HITS, "unmapped with no hits", formatLength);
 
     if (includeDevLog && License.isDeveloper()) {
-      final long countLeftMissing = value(MapStatisticsField.MISSING, MapStatisticsArm.LEFT);
-      final long countRightMissing = value(MapStatisticsField.MISSING, MapStatisticsArm.RIGHT);
+      final long countLeftMissing = value(MapStatisticsField.MISSING, Arm.LEFT);
+      final long countRightMissing = value(MapStatisticsField.MISSING, Arm.RIGHT);
       if (countLeftMissing != 0 || countRightMissing != 0) {
         appendValue(sb, MapStatisticsField.MISSING, "arms missing", formatLength);
       }
@@ -154,9 +152,9 @@ public class PairedEndMapStatistics extends AbstractStatistics implements MapSta
     appendValue(sb, MapStatisticsField.TOTAL_READS, "total", formatLength);
 
     if (includeDevLog && License.isDeveloper()) {
-      final long totalReads = value(MapStatisticsField.TOTAL_READS, MapStatisticsArm.LEFT);
-      final long matedReads = value(MapStatisticsField.MATED_AMBIG_READS, MapStatisticsArm.LEFT)
-      + value(MapStatisticsField.MATED_UNIQUE_READS, MapStatisticsArm.LEFT);
+      final long totalReads = totalValue(MapStatisticsField.TOTAL_READS);
+      final long matedReads = totalValue(MapStatisticsField.MATED_AMBIG_READS)
+      + value(MapStatisticsField.MATED_UNIQUE_READS, Arm.LEFT);
       final long mappedReads = totalReads - mBothUnmapped;
       final long unmatedReads = mappedReads - matedReads;
       final int formatLength2 = String.format("%d", totalReads).length();
@@ -193,32 +191,41 @@ public class PairedEndMapStatistics extends AbstractStatistics implements MapSta
   }
 
   @Override
-  public long value(MapStatisticsField field, MapStatisticsArm arm) {
+  public long value(MapStatisticsField field, Arm arm) {
     final long res;
-      switch (arm) {
-    case LEFT: res = mLeft.value(field, arm); break;
-    case RIGHT: res = mRight.value(field, arm); break;
-    case BOTH:
-    default:
-      res = mLeft.value(field, arm) + mRight.value(field, arm);
-      break;
+    switch (arm) {
+      case RIGHT:
+        res = mRight.value(field, arm);
+        break;
+      case LEFT:
+      default:
+        res = mLeft.value(field, arm);
+        break;
     }
     return res;
   }
 
   @Override
-  public double valueAsPercent(MapStatisticsField field, MapStatisticsArm arm) {
+  public long totalValue(MapStatisticsField field) {
+    return mLeft.totalValue(field) + mRight.totalValue(field);
+  }
+
+  @Override
+  public double valueAsPercent(MapStatisticsField field, Arm arm) {
     final double res;
     switch (arm) {
-    case LEFT: res = mLeft.valueAsPercent(field, arm); break;
     case RIGHT: res = mRight.valueAsPercent(field, arm); break;
-    case BOTH:
+    case LEFT:
     default:
-      final long total = mLeft.value(MapStatisticsField.TOTAL_READS, arm) + mRight.value(MapStatisticsField.TOTAL_READS, arm);
-      res = (mLeft.value(field, arm) + mRight.value(field, arm)) * 100.0 / (total <= 0 ? 1 : total);
-      break;
+      res = mLeft.valueAsPercent(field, arm); break;
     }
     return res;
+  }
+
+  @Override
+  public double totalValueAsPercent(MapStatisticsField field) {
+    final long total = mLeft.totalValue(MapStatisticsField.TOTAL_READS) + mRight.totalValue(MapStatisticsField.TOTAL_READS);
+     return (mLeft.totalValue(field) + mRight.totalValue(field)) * 100.0 / (total <= 0 ? 1 : total);
   }
 
   @Override
@@ -234,14 +241,12 @@ public class PairedEndMapStatistics extends AbstractStatistics implements MapSta
   }
 
   @Override
-  public void set(MapStatisticsField field, MapStatisticsArm arm, long value) {
+  public void set(MapStatisticsField field, Arm arm, long value) {
     switch (arm) {
-    case LEFT: mLeft.set(field, arm, value); break;
     case RIGHT: mRight.set(field, arm, value); break;
-    case BOTH:
+    case LEFT:
     default:
       mLeft.set(field, arm, value);
-      mRight.set(field, arm, value);
       break;
     }
   }

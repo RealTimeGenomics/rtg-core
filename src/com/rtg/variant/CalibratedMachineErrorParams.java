@@ -18,6 +18,7 @@ import com.rtg.calibrate.CalibrationStats;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Covariate;
 import com.rtg.calibrate.CovariateEnum;
+import com.rtg.ngs.Arm;
 import com.rtg.util.Histogram;
 import com.rtg.util.MathUtils;
 import com.rtg.util.cli.CFlags;
@@ -110,9 +111,11 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     mErrorOverlap2Dist = dists != null && dists[3] != null ? dists[3] : MachineErrorParamsBuilder.CG_DEFAULT_OVERLAP2_DIST;
 
     final CalibrationStats sums = calibrator.getSums(CovariateEnum.READGROUP, readGroupId);
-    mMnpBaseRate = (double) sums.getDifferent() / (sums.getEqual() + sums.getDifferent() + 1);
-    mInsBaseRate = (double) sums.getInserted() / (sums.getEqual() + sums.getDifferent() + 1);
-    mDelBaseRate = (double) sums.getDeleted() / (sums.getEqual() + sums.getDifferent() + 1);
+    //TODO Decide if Deletion or Insertion  should be included in potential error sites
+    final long potentialErrorSites = sums.getEqual() + sums.getDifferent() + 1;
+    mMnpBaseRate = (double) sums.getDifferent() / potentialErrorSites;
+    mInsBaseRate = (double) sums.getInserted() / potentialErrorSites;
+    mDelBaseRate = (double) sums.getDeleted() / potentialErrorSites;
 
     mMnpEventRate = mMnpBaseRate / GenomePriorParamsBuilder.averageLength(mErrorMnpDist);
     mInsEventRate = mInsBaseRate / GenomePriorParamsBuilder.averageLength(mErrorInsDist);
@@ -317,8 +320,8 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
   }
 
   @Override
-  public int getPhred(byte quality, int readPos) {
-    return mScaler.getPhred(quality, readPos);
+  public int getPhred(byte quality, int readPos, Arm arm) {
+    return mScaler.getPhred(quality, readPos, arm);
   }
 
   @Override

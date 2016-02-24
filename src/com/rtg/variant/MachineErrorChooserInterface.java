@@ -11,14 +11,17 @@
  */
 package com.rtg.variant;
 
+import htsjdk.samtools.SAMReadGroupRecord;
+
 /**
  */
 public interface MachineErrorChooserInterface {
 
   /**
-   * @param r alignment record
+   * @param rg
+   * @param readPaired
    * @return appropriate machine errors for read
    */
-  AbstractMachineErrorParams machineErrors(VariantAlignmentRecord r);
+  AbstractMachineErrorParams machineErrors(SAMReadGroupRecord rg, boolean readPaired);
 
 }

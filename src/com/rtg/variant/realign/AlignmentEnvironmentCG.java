@@ -60,8 +60,7 @@ public class AlignmentEnvironmentCG extends AbstractAlignmentEnvironment {
       }
     } else {
       for (int i = 0; i < len; i++) {
-        final int phred = me.getPhred(qChar[i], i);
-        mQuality[i] = VariantUtils.phredToProb(phred);
+        mQuality[i] = VariantUtils.phredToProb(qChar[i]);
       }
     }
     mIsInverted = orient.isInverted();

@@ -13,6 +13,7 @@ package com.rtg.variant;
 
 import java.io.IOException;
 
+import com.rtg.ngs.Arm;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 
@@ -48,9 +49,9 @@ public class MachineErrorParamsTest extends TestCase {
     final MachineErrorParams params = MachineErrorParams.builder()
       .errors("illumina").create();
 
-    assertEquals(62, params.getPhred((char) ('!' + 62), 1));
-    assertEquals(63, params.getPhred((char) ('!' + 63), 1));
-    assertEquals(63, params.getPhred((char) ('!' + 64), 1));
+    assertEquals(62, params.getPhred((char) ('!' + 62), 1, Arm.LEFT));
+    assertEquals(63, params.getPhred((char) ('!' + 63), 1, Arm.LEFT));
+    assertEquals(63, params.getPhred((char) ('!' + 64), 1, Arm.LEFT));
   }
 
   /** Check that CG error priors parse okay. */

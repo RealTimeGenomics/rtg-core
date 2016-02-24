@@ -11,6 +11,8 @@
  */
 package com.rtg.variant;
 
+import com.rtg.ngs.Arm;
+
 /**
  * Interface for phred score scaler objects.
  */
@@ -21,8 +23,9 @@ interface PhredScaler {
    * correcting it.
    * @param qual original quality value.
    * @param readPosition position on read of <code>qualChar</code>
+   * @param arm For paired end reads, which arm this is. Use {@code Arm.LEFT} if single end.
    * @return the possibly corrected phred score.
    */
-  int getPhred(byte qual, int readPosition);
+  int getPhred(byte qual, int readPosition, Arm arm);
 }
 

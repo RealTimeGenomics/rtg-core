@@ -44,7 +44,7 @@ public class SingleEndMapStatistics extends AbstractStatistics implements MapSta
   }
 
   @Override
-  public void increment(MapStatisticsField field, MapStatisticsArm arm) {
+  public void increment(MapStatisticsField field, Arm arm) {
     switch (field) {
     case MATED_UNIQUE_READS: mMatedUnique++; break;
     case MATED_AMBIG_READS: mMatedAmbig++; break;
@@ -69,8 +69,8 @@ public class SingleEndMapStatistics extends AbstractStatistics implements MapSta
   }
 
   protected void appendValue(StringBuilder sb, MapStatisticsField key, String msg, int formatLength) {
-    final long value = value(key);
-    final double percent = valueAsPercent(key);
+    final long value = totalValue(key);
+    final double percent = totalValueAsPercent(key);
 
     String formatStr = "%" + formatLength + "d";
     final String valueFormat = String.format(formatStr, value);
@@ -123,11 +123,12 @@ public class SingleEndMapStatistics extends AbstractStatistics implements MapSta
   }
 
   @Override
-  public long value(MapStatisticsField field, MapStatisticsArm arm) {
-    return value(field);
+  public long value(MapStatisticsField field, Arm arm) {
+    return totalValue(field);
   }
 
-  private long value(MapStatisticsField field) {
+  @Override
+  public long totalValue(MapStatisticsField field) {
     final long res;
     switch (field) {
     case MATED_UNIQUE_READS: res = mMatedUnique; break;
@@ -150,16 +151,17 @@ public class SingleEndMapStatistics extends AbstractStatistics implements MapSta
   }
 
   @Override
-  public double valueAsPercent(MapStatisticsField field, MapStatisticsArm arm) {
-    return valueAsPercent(field);
-  }
-
-  private double valueAsPercent(MapStatisticsField field) {
-    return value(field) * 100.0 / ((mTotal <= 0) ? 1 : mTotal);
+  public double valueAsPercent(MapStatisticsField field, Arm arm) {
+    return totalValueAsPercent(field);
   }
 
   @Override
-  public void set(MapStatisticsField field, MapStatisticsArm arm, long value) {
+  public double totalValueAsPercent(MapStatisticsField field) {
+    return totalValue(field) * 100.0 / ((mTotal <= 0) ? 1 : mTotal);
+  }
+
+  @Override
+  public void set(MapStatisticsField field, Arm arm, long value) {
     switch (field) {
     case MATED_UNIQUE_READS: mMatedUnique = value; break;
     case MATED_AMBIG_READS: mMatedAmbig = value; break;

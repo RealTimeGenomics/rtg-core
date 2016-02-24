@@ -29,7 +29,7 @@ public interface MapStatistics extends Statistics {
    * @param field field to increment
    * @param arm arm to increment
    */
-  void increment(MapStatisticsField field, MapStatisticsArm arm);
+  void increment(MapStatisticsField field, Arm arm);
 
   /**
    * Sets the count for <code>field</code> of <code>arm</code> to the given <code>value</code>.
@@ -38,7 +38,7 @@ public interface MapStatistics extends Statistics {
    * @param arm arm to set
    * @param value value to be set
    */
-  void set(MapStatisticsField field, MapStatisticsArm arm, long value);
+  void set(MapStatisticsField field, Arm arm, long value);
 
   /**
    * Returns the value of the <code>field</code> of <code>arm</code>.
@@ -47,7 +47,15 @@ public interface MapStatistics extends Statistics {
    * @param arm arm to retrieve from
    * @return value of the field
    */
-  long value(MapStatisticsField field, MapStatisticsArm arm);
+  long value(MapStatisticsField field, Arm arm);
+
+  /**
+   * Returns the total value of the <code>field</code> across all arms
+   *
+   * @param field field to retrieve from
+   * @return value of the field
+   */
+  long totalValue(MapStatisticsField field);
 
   /**
    * Returns the value of the <code>field</code> of <code>arm</code> as a percent of the total count.
@@ -56,7 +64,15 @@ public interface MapStatistics extends Statistics {
    * @param arm arm to retrieve from
    * @return value of the field as a percent
    */
-  double valueAsPercent(MapStatisticsField field, MapStatisticsArm arm);
+  double valueAsPercent(MapStatisticsField field, Arm arm);
+
+  /**
+   * Returns the total value of the <code>field</code> across all arms as a percent of the total count.
+   *
+   * @param field field to retrieve from
+   * @return value of the field as a percent
+   */
+  double totalValueAsPercent(MapStatisticsField field);
 
   /**
    * Merges the counts of another <code>stats</code> into this statistics.

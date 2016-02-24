@@ -19,7 +19,7 @@ import java.io.PrintStream;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.ngs.MapStatistics;
-import com.rtg.ngs.MapStatisticsArm;
+import com.rtg.ngs.Arm;
 import com.rtg.ngs.MapStatisticsField;
 import com.rtg.ngs.NgsFilterParams;
 import com.rtg.ngs.NgsOutputParams;
@@ -277,18 +277,18 @@ public class SingleEndTempFileWriterTest extends TestCase {
 //        TestUtils.containsAll(StringUtils.toString(stats), "UNMAPPED_READS=4", "MISSING_LEFT=0", "UNMAPPED_READS_PERCENT=80",
 //            "MATED_UNIQUE_READS=0", "MATED_AMBIG_READS=0", "MISSING_RIGHT=0", "UNMATED_AMBIG_READS_PERCENT=20", "UNMATED_AMBIG_READS=1", "MATED_UNIQUE_READS_PERCENT=0",
 //            "TOTAL_READS=5", "MAPPED_READS_PERCENT=20", "MAPPED_READS=1");
-        assertEquals(4L, stats.value(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.LEFT));
-        assertEquals(0L, stats.value(MapStatisticsField.MISSING, MapStatisticsArm.LEFT));
-        assertEquals(0L, stats.value(MapStatisticsField.MATED_UNIQUE_READS, MapStatisticsArm.LEFT));
-        assertEquals(0L, stats.value(MapStatisticsField.MATED_AMBIG_READS, MapStatisticsArm.LEFT));
-        assertEquals(1L, stats.value(MapStatisticsField.UNMATED_AMBIG_READS, MapStatisticsArm.LEFT));
-        assertEquals(5L, stats.value(MapStatisticsField.TOTAL_READS, MapStatisticsArm.LEFT));
-        assertEquals(80.0, stats.valueAsPercent(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.LEFT));
-        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MISSING, MapStatisticsArm.LEFT));
-        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MATED_UNIQUE_READS, MapStatisticsArm.LEFT));
-        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MATED_AMBIG_READS, MapStatisticsArm.LEFT));
-        assertEquals(20.0, stats.valueAsPercent(MapStatisticsField.UNMATED_AMBIG_READS, MapStatisticsArm.LEFT));
-        assertEquals(100.0, stats.valueAsPercent(MapStatisticsField.TOTAL_READS, MapStatisticsArm.LEFT));
+        assertEquals(4L, stats.value(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT));
+        assertEquals(0L, stats.value(MapStatisticsField.MISSING, Arm.LEFT));
+        assertEquals(0L, stats.value(MapStatisticsField.MATED_UNIQUE_READS, Arm.LEFT));
+        assertEquals(0L, stats.value(MapStatisticsField.MATED_AMBIG_READS, Arm.LEFT));
+        assertEquals(1L, stats.value(MapStatisticsField.UNMATED_AMBIG_READS, Arm.LEFT));
+        assertEquals(5L, stats.value(MapStatisticsField.TOTAL_READS, Arm.LEFT));
+        assertEquals(80.0, stats.valueAsPercent(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT));
+        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MISSING, Arm.LEFT));
+        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MATED_UNIQUE_READS, Arm.LEFT));
+        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MATED_AMBIG_READS, Arm.LEFT));
+        assertEquals(20.0, stats.valueAsPercent(MapStatisticsField.UNMATED_AMBIG_READS, Arm.LEFT));
+        assertEquals(100.0, stats.valueAsPercent(MapStatisticsField.TOTAL_READS, Arm.LEFT));
 
         stats.reset();
 
@@ -301,18 +301,18 @@ public class SingleEndTempFileWriterTest extends TestCase {
 //        TestUtils.containsAll(StringUtils.toString(stats), "UNMAPPED_READS=4", "MISSING_LEFT=0", "UNMAPPED_READS_PERCENT=80",
 //           "MATED_UNIQUE_READS=0", "MATED_AMBIG_READS=0", "MISSING_RIGHT=0", "UNMATED_AMBIG_READS_PERCENT=20", "UNMATED_AMBIG_READS=1", "MATED_UNIQUE_READS_PERCENT=0",
 //            "TOTAL_READS=5", "MAPPED_READS_PERCENT=20", "MAPPED_READS=1");
-        assertEquals(4L, stats.value(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.LEFT));
-        assertEquals(0L, stats.value(MapStatisticsField.MISSING, MapStatisticsArm.LEFT));
-        assertEquals(0L, stats.value(MapStatisticsField.MATED_UNIQUE_READS, MapStatisticsArm.LEFT));
-        assertEquals(0L, stats.value(MapStatisticsField.MATED_AMBIG_READS, MapStatisticsArm.LEFT));
-        assertEquals(1L, stats.value(MapStatisticsField.UNMATED_AMBIG_READS, MapStatisticsArm.LEFT));
-        assertEquals(5L, stats.value(MapStatisticsField.TOTAL_READS, MapStatisticsArm.LEFT));
-        assertEquals(80.0, stats.valueAsPercent(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.LEFT));
-        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MISSING, MapStatisticsArm.LEFT));
-        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MATED_UNIQUE_READS, MapStatisticsArm.LEFT));
-        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MATED_AMBIG_READS, MapStatisticsArm.LEFT));
-        assertEquals(20.0, stats.valueAsPercent(MapStatisticsField.UNMATED_AMBIG_READS, MapStatisticsArm.LEFT));
-        assertEquals(100.0, stats.valueAsPercent(MapStatisticsField.TOTAL_READS, MapStatisticsArm.LEFT));
+        assertEquals(4L, stats.value(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT));
+        assertEquals(0L, stats.value(MapStatisticsField.MISSING, Arm.LEFT));
+        assertEquals(0L, stats.value(MapStatisticsField.MATED_UNIQUE_READS, Arm.LEFT));
+        assertEquals(0L, stats.value(MapStatisticsField.MATED_AMBIG_READS, Arm.LEFT));
+        assertEquals(1L, stats.value(MapStatisticsField.UNMATED_AMBIG_READS, Arm.LEFT));
+        assertEquals(5L, stats.value(MapStatisticsField.TOTAL_READS, Arm.LEFT));
+        assertEquals(80.0, stats.valueAsPercent(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT));
+        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MISSING, Arm.LEFT));
+        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MATED_UNIQUE_READS, Arm.LEFT));
+        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MATED_AMBIG_READS, Arm.LEFT));
+        assertEquals(20.0, stats.valueAsPercent(MapStatisticsField.UNMATED_AMBIG_READS, Arm.LEFT));
+        assertEquals(100.0, stats.valueAsPercent(MapStatisticsField.TOTAL_READS, Arm.LEFT));
         assertNotNull(w.getBlocker());
       }
     } finally {
@@ -379,18 +379,18 @@ public class SingleEndTempFileWriterTest extends TestCase {
 //        TestUtils.containsAll(StringUtils.toString(stats), "UNMAPPED_READS=0", "MISSING_LEFT=0", "UNMAPPED_READS_PERCENT=0",
 //            "MATED_UNIQUE_READS=0", "MISSING_RIGHT=0", "UNMATED_AMBIG_READS_PERCENT=100", "UNMATED_AMBIG_READS=2099", "MATED_UNIQUE_READS_PERCENT=0",
 //            "TOTAL_READS=2099", "MAPPED_READS_PERCENT=100", "MAPPED_READS=2099");
-        assertEquals(0L, stats.value(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.LEFT));
-        assertEquals(0L, stats.value(MapStatisticsField.MISSING, MapStatisticsArm.LEFT));
-        assertEquals(0L, stats.value(MapStatisticsField.MATED_UNIQUE_READS, MapStatisticsArm.LEFT));
-        assertEquals(0L, stats.value(MapStatisticsField.MATED_AMBIG_READS, MapStatisticsArm.LEFT));
-        assertEquals(2099L, stats.value(MapStatisticsField.UNMATED_AMBIG_READS, MapStatisticsArm.LEFT));
-        assertEquals(2099L, stats.value(MapStatisticsField.TOTAL_READS, MapStatisticsArm.LEFT));
-        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.UNMATED_UNIQUE_READS, MapStatisticsArm.LEFT));
-        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MISSING, MapStatisticsArm.LEFT));
-        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MATED_UNIQUE_READS, MapStatisticsArm.LEFT));
-        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MATED_AMBIG_READS, MapStatisticsArm.LEFT));
-        assertEquals(100.0, stats.valueAsPercent(MapStatisticsField.UNMATED_AMBIG_READS, MapStatisticsArm.LEFT));
-        assertEquals(100.0, stats.valueAsPercent(MapStatisticsField.TOTAL_READS, MapStatisticsArm.LEFT));
+        assertEquals(0L, stats.value(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT));
+        assertEquals(0L, stats.value(MapStatisticsField.MISSING, Arm.LEFT));
+        assertEquals(0L, stats.value(MapStatisticsField.MATED_UNIQUE_READS, Arm.LEFT));
+        assertEquals(0L, stats.value(MapStatisticsField.MATED_AMBIG_READS, Arm.LEFT));
+        assertEquals(2099L, stats.value(MapStatisticsField.UNMATED_AMBIG_READS, Arm.LEFT));
+        assertEquals(2099L, stats.value(MapStatisticsField.TOTAL_READS, Arm.LEFT));
+        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.LEFT));
+        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MISSING, Arm.LEFT));
+        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MATED_UNIQUE_READS, Arm.LEFT));
+        assertEquals(0.0, stats.valueAsPercent(MapStatisticsField.MATED_AMBIG_READS, Arm.LEFT));
+        assertEquals(100.0, stats.valueAsPercent(MapStatisticsField.UNMATED_AMBIG_READS, Arm.LEFT));
+        assertEquals(100.0, stats.valueAsPercent(MapStatisticsField.TOTAL_READS, Arm.LEFT));
         assertNotNull(w.getBlocker());
       }
     } finally {
