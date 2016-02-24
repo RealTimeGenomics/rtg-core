@@ -221,7 +221,7 @@ public final class MapParamsHelper {
       throw new InvalidParamsException("Names not present in SDF and read names requested");
     }
     if (localParams.outputParams().calibrateRegions() != null) {
-      localParams.outputParams().calibrateRegions().validateTemplate(localParams.searchParams().reader());
+      ReaderUtils.validateRegions(localParams.searchParams().reader(), localParams.outputParams().calibrateRegions());
     }
 
     localParams.globalIntegrity();

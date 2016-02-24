@@ -275,7 +275,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     final Sex sex = MapParamsHelper.getMappingSex(ngsParamBuilder, mFlags);
     final SequenceParams tParams = SequenceParams.builder().directory(template).mode(SequenceMode.UNIDIRECTIONAL).sex(sex).loadNames(true).useMemReader(inMemoryTemplate).create();
     if (outputParams.calibrateRegions() != null) {
-      outputParams.calibrateRegions().validateTemplate(tParams.reader());
+      ReaderUtils.validateRegions(tParams.reader(), outputParams.calibrateRegions());
     }
     try {
       SdfUtils.validateNoDuplicates(tParams.reader(), true);
