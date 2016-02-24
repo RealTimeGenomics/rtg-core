@@ -134,7 +134,7 @@ public final class MapParamsHelper {
         throw new InvalidParamsException("A blacklist does not exist in " + refDir + " for word size " + wordSize);
       } else if (blackListExists) {
         final Integer blacklistThreshold = (Integer) flags.getValue(MapFlags.BLACKLIST_THRESHOLD);
-        final IndexFilterMethod method = new BlacklistFilterMethod(refDir, wordSize, blacklistThreshold, builder.mNumberThreads);
+        final IndexFilterMethod method = BlacklistFilterMethod.loadBlacklist(refDir, wordSize, blacklistThreshold, builder.mNumberThreads);
         builder.indexFilter(method);
         return;
       }

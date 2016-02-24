@@ -25,15 +25,11 @@ public class BlacklistFilterMethod implements IndexFilterMethod {
   private final Index mBlacklist;
 
   /**
-   * @param sdfDir directory of reference SDF
-   * @param wordSize kmer size for hashes
-   * @param threshold kmer occurence count at which they get placed in blacklist
+   * @param blacklist the list of blacklisted hashes
+   * @param hashBits how many bits of each long is used to encode hash
    * @param numberThreads number of threads for index sorting
-   * @throws IOException if an IO error occurs
    */
-  public BlacklistFilterMethod(File sdfDir, int wordSize, int threshold, int numberThreads) throws IOException {
-    final List<Long> blacklist = HashBlacklist.loadBlacklist(sdfDir, wordSize, threshold);
-    final int hashBits = HashBlacklist.hashBits(wordSize);
+  public BlacklistFilterMethod(List<Long> blacklist, int hashBits, int numberThreads) {
     final CreateParams createParams = new CreateParams.CreateParamsBuilder().valueBits(0).compressHashes(true).createBitVector(true).windowBits(hashBits).size(blacklist.size()).hashBits(hashBits).create();
     final IndexCompressed blacklistIndex = new IndexCompressed(createParams, new UnfilteredFilterMethod(), numberThreads);
     for (long hash : blacklist) {
@@ -45,6 +41,20 @@ public class BlacklistFilterMethod implements IndexFilterMethod {
     }
     blacklistIndex.freeze();
     mBlacklist = blacklistIndex;
+  }
+
+  /**
+   *
+   * @param sdfDir directory of reference SDF
+   * @param wordSize kmer size for hashes
+   * @param threshold kmer occurence count at which they get placed in blacklist
+   * @param numberThreads number of threads for index sorting
+   * @return the filter
+   * @throws IOException if an IO error occurs
+   */
+  public static BlacklistFilterMethod loadBlacklist(File sdfDir, int wordSize, int threshold, int numberThreads) throws IOException {
+    final List<Long> blacklist = HashBlacklist.loadBlacklist(sdfDir, wordSize, threshold);
+    return new BlacklistFilterMethod(blacklist, HashBlacklist.hashBits(wordSize), numberThreads);
   }
 
   @Override

@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,10 +52,21 @@ public final class HashBlacklist {
    * @throws IOException if an IO error occurs
    */
   public static List<Long> loadBlacklist(File sdfDir, int wordSize, int threshold) throws IOException {
-    final ArrayList<Long> ret = new ArrayList<>();
     final File blacklistFile = getFile(sdfDir, wordSize);
     Diagnostic.developerLog("Loading blacklist at word size " + wordSize + " and threshold " + threshold);
-    try (BufferedReader br = new BufferedReader(new FileReader(blacklistFile))) {
+    return loadBlacklist(new FileReader(blacklistFile), threshold);
+  }
+
+  /**
+   * load blacklist from reader
+   * @param blacklistData blacklist data (assumed to be lines of "k-mer[TAB]count")
+   * @param threshold only load hashes with count meeting this threshold
+   * @return list of hashes
+   * @throws IOException if an IO error occurs
+   */
+  public static List<Long> loadBlacklist(Reader blacklistData, int threshold) throws IOException {
+    final ArrayList<Long> ret = new ArrayList<>();
+     try (BufferedReader br = new BufferedReader(blacklistData)) {
       String line;
       while ((line = br.readLine()) != null) {
         final String[] split = line.split("\t");

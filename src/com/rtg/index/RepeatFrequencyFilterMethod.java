@@ -65,12 +65,15 @@ public class RepeatFrequencyFilterMethod implements IndexFilterMethod {
   public void initialize(Index index) {
     if (mUseProportionalThreshold) {
       final OneShotTimer over = new OneShotTimer("Index_Frequency");
-      final SparseFrequencyHistogram histo = index.getSparseFrequencyHistogram();
-      mCutoff = determineCutoffFrequency(histo, index.getInitialHashes(), mThreshold);
+      internalInitializeProportional(index.getSparseFrequencyHistogram(), index.getInitialHashes());
       over.stopLog();
     } else {
       mCutoff = mThreshold;
     }
+  }
+
+  void internalInitializeProportional(SparseFrequencyHistogram histo, long initialHashes) {
+    mCutoff = determineCutoffFrequency(histo, initialHashes, mThreshold);
   }
 
   @Override
