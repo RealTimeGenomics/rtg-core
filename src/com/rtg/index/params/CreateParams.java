@@ -58,6 +58,8 @@ public class CreateParams implements Integrity {
 
   private final boolean mSpaceEfficientButUnsafe;
 
+  private final boolean mOnlyKeepRepeatHashes;
+
   /**
    * @param size upper bound of number of hash windows expected in index.
    * @param hashBits number of bits recorded in each hash window.
@@ -83,6 +85,7 @@ public class CreateParams implements Integrity {
       mInitialPointerBits = computeInitialPointerBits(mHashBits, mSize);
     }
     mHashCompressedBits = computeHashCompressedBits(mHashBits, mInitialPointerBits, compressHashes);
+    mOnlyKeepRepeatHashes = false;
     //System.err.println(this);
     assert localIntegrity();
   }
@@ -97,6 +100,27 @@ public class CreateParams implements Integrity {
    */
   public CreateParams(final long size, final int hashBits, final int windowBits, final boolean compressHashes, boolean spaceEfficientButUnsafe, boolean ideal) {
     this(size, hashBits, windowBits, 31, compressHashes, true, spaceEfficientButUnsafe, ideal);
+  }
+
+  /**
+   * @param builder builder containing parameter values
+   */
+  public CreateParams(final AbstractCreateParamsBuilder<?> builder) {
+    mSize = builder.mSize;
+    mHashBits = builder.mHashBits;
+    mWindowBits = builder.mWindowBits;
+    mValueBits = builder.mValueBits;
+    mCompressHashes = builder.mCompressHashes;
+    mCreateBitVector = builder.mCreateBitVector;
+    mSpaceEfficientButUnsafe = builder.mSpaceEfficientButUnsafe;
+    if (builder.mIdeal) {
+      mInitialPointerBits = computeInitialPointerBitsIdeal(mSize, mHashBits, mSpaceEfficientButUnsafe);
+    } else {
+      mInitialPointerBits = computeInitialPointerBits(mHashBits, mSize);
+    }
+    mHashCompressedBits = computeHashCompressedBits(mHashBits, mInitialPointerBits, builder.mCompressHashes);
+    mOnlyKeepRepeatHashes = builder.mOnlyKeepRepeatHashes;
+    assert localIntegrity();
   }
 
   /**
@@ -283,6 +307,13 @@ public class CreateParams implements Integrity {
     }
   }
 
+  /**
+   * @return true if index should only keep hashes above the repeat frequency threshold
+   */
+  public boolean onlyKeepRepeatHashes() {
+    return mOnlyKeepRepeatHashes;
+  }
+
   @Override
   public int hashCode() {
     return Utils.pairHash(mHashBits, hashLong(mSize));
@@ -345,18 +376,11 @@ public class CreateParams implements Integrity {
     return true;
   }
 
+
   /**
    * Builder class for <code>CreateParams</code>
    */
-  public static class CreateParamsBuilder {
-    private long mSize = 20;
-    private int mHashBits = 20;
-    private int mWindowBits = 20;
-    private int mValueBits = 20;
-    private boolean mCompressHashes = true;
-    private boolean mCreateBitVector = true;
-    private boolean mSpaceEfficientButUnsafe = false;
-    private boolean mIdeal = false;
+  public static class CreateParamsBuilder extends AbstractCreateParamsBuilder<CreateParamsBuilder> {
 
     /**
      * @return a CreateParams object as described by the builder
@@ -365,84 +389,10 @@ public class CreateParams implements Integrity {
       return new CreateParams(mSize, mHashBits, mWindowBits, mValueBits, mCompressHashes, mCreateBitVector, mSpaceEfficientButUnsafe, mIdeal);
     }
 
-    /**
-     * @param size upper bound of number of hash windows expected in index.
-     * @return this builder for chaining purposes
-     */
-    public CreateParamsBuilder size(long size) {
-      mSize = size;
+    @Override
+    protected CreateParamsBuilder self() {
       return this;
     }
-
-    /**
-     *
-     * @param hashBits number of bits recorded in each hash window.
-     * @return this builder for chaining purposes
-     */
-    public CreateParamsBuilder hashBits(int hashBits) {
-      mHashBits = hashBits;
-      return this;
-    }
-
-    /**
-     * @param windowBits number of bits needed to uniquely represent a window (the hash may lose information).
-     * @return this builder for chaining purposes
-     */
-    public CreateParamsBuilder windowBits(int windowBits) {
-      mWindowBits = windowBits;
-      return this;
-    }
-
-    /**
-     * @param valueBits the number of bits needed to represent the values associated with each hash.
-     * @return this builder for chaining purposes
-     */
-    public CreateParamsBuilder valueBits(int valueBits) {
-      mValueBits = valueBits;
-      return this;
-    }
-
-    /**
-     * @param compressHashes if we are compressing the hash array (requires two passes of adds). <code>noOverflow</code> must be on for this to be allowed
-     * @return this builder for chaining purposes
-     */
-    public CreateParamsBuilder compressHashes(boolean compressHashes) {
-      mCompressHashes = compressHashes;
-      return this;
-    }
-
-    /**
-     * @param createBitVector if we are creating the bit vector
-     * @return this builder for chaining purposes
-     */
-    public CreateParamsBuilder createBitVector(boolean createBitVector) {
-      mCreateBitVector = createBitVector;
-      return this;
-    }
-
-    /**
-     * Implies that the hashes for the index are packed as small as possible, with the tradeoff
-     * that potentially an index storage implementation that <b>is not</b> safe from word tearing might
-     * be selected. This means it will not be safe to do a multi-threaded sort of the hashes.
-     * @param fanatical if we want to use the <code>spaceEfficientButUnsafe</code> <code>ArrayType</code> selection mode
-     * @return this builder for chaining purposes
-     */
-    public CreateParamsBuilder spaceEfficientButUnsafe(boolean fanatical) {
-      mSpaceEfficientButUnsafe = fanatical;
-      return this;
-    }
-
-    /**
-     * Sets whether to minimise the memory used.
-     * Only use if not intending to search the index.
-     * @param ideal if true then minimise total of hash and initial pointer memory
-     * @return this builder for chaining purposes
-     */
-    public CreateParamsBuilder ideal(boolean ideal) {
-      mIdeal = ideal;
-      return this;
-    }
-
   }
 
 }
