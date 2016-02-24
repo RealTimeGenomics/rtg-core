@@ -17,6 +17,8 @@ import java.util.Collections;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.alignment.AlignerMode;
 import com.rtg.alignment.EditDistanceFactory;
+import com.rtg.index.IndexFilterMethod;
+import com.rtg.index.RepeatFrequencyFilterMethod;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.ModuleParams.ModuleParamsBuilder;
@@ -71,6 +73,7 @@ public class NgsParamsBuilder extends ModuleParamsBuilder<NgsParamsBuilder> {
   MaxShiftFactor mAlignerBandWidthFactor = new MaxShiftFactor(0.5);
   AlignerMode mAlignerMode = AlignerMode.AUTO;
   String mSingleIndelPenalties = EditDistanceFactory.DEFAULT_SINGLE_INDEL_TABLE;
+  IndexFilterMethod mIndexFilter = new RepeatFrequencyFilterMethod(mHashCountThreshold, mUseProportionalHashThreshold, mMaxHashCountThreshold, mMinHashCountThreshold);
 
 
   @Override
@@ -494,6 +497,15 @@ public class NgsParamsBuilder extends ModuleParamsBuilder<NgsParamsBuilder> {
    */
   public NgsParamsBuilder singleIndelPenalties(String value) {
     mSingleIndelPenalties = value;
+    return self();
+  }
+
+  /**
+   * @param filter handle that is used to filter (normally repetitive) hashes from index
+   * @return this build, so calls can be chained
+   */
+  public NgsParamsBuilder indexFilter(IndexFilterMethod filter) {
+    mIndexFilter = filter;
     return self();
   }
 

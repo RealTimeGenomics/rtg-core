@@ -66,10 +66,11 @@ public abstract class AbstractIndexTest extends TestCase {
   protected abstract IndexBase getIndex(final long size, final int hashBits, final Integer threshold);
 
   protected IndexBase getIndex(final long size, final int hashBits, final Integer threshold, final boolean twoPass) {
+    final RepeatFrequencyFilterMethod filter = new RepeatFrequencyFilterMethod(threshold, false, threshold, threshold);
     if (twoPass) {
-      return new IndexCompressed(new CreateParams(size, hashBits, hashBits, twoPass, false, false), threshold, false, threshold, threshold, 1);
+      return new IndexCompressed(new CreateParams(size, hashBits, hashBits, twoPass, false, false), filter, 1);
     } else {
-      return new IndexSimple(new CreateParams(size, hashBits, hashBits, twoPass, false, false), threshold, false, 1, threshold, threshold);
+      return new IndexSimple(new CreateParams(size, hashBits, hashBits, twoPass, false, false), filter, 1);
     }
   }
 
@@ -334,7 +335,7 @@ public abstract class AbstractIndexTest extends TestCase {
     checkKeyCount(hi, 2, 0);
   }
   public void testMaxThreshold() throws IOException {
-    final IndexBase hi = new IndexCompressed(new CreateParams(10L, 16, 16, true, false, false), 10, true, 3, 0, 1);
+    final IndexBase hi = new IndexCompressed(new CreateParams(10L, 16, 16, true, false, false), new RepeatFrequencyFilterMethod(10, true, 3, 0), 1);
     for (int i = 0; i < 2; i++) {
       hi.add(1, 1);
       hi.add(1, 2);

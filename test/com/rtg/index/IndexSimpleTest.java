@@ -45,7 +45,7 @@ public class IndexSimpleTest extends AbstractIndexTest {
 
   @Override
   protected IndexBase getIndex(final long size, final int hashBits, final Integer threshold) {
-    return new IndexSimple(new CreateParams(size, hashBits, hashBits, false, false, false), threshold, false, threshold, threshold, 1);
+    return new IndexSimple(new CreateParams(size, hashBits, hashBits, false, false, false), new RepeatFrequencyFilterMethod(threshold, false, threshold, threshold), 1);
   }
 
   /**

@@ -12,12 +12,12 @@
 package com.rtg.protein;
 
 import static com.rtg.launcher.BuildCommon.RESOURCE;
-import static com.rtg.ngs.MapFlags.COMPRESS_HASHES_FLAG;
-import static com.rtg.ngs.MapFlags.DEFAULT_TOP_N;
 import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.launcher.CommonFlags.READS_FLAG;
 import static com.rtg.launcher.CommonFlags.TEMPLATE_FLAG;
 import static com.rtg.launcher.CommonFlags.TEMP_DIR;
+import static com.rtg.ngs.MapFlags.COMPRESS_HASHES_FLAG;
+import static com.rtg.ngs.MapFlags.DEFAULT_TOP_N;
 import static com.rtg.ngs.MapFlags.TEMP_FILES_COMPRESSED;
 import static com.rtg.ngs.MapFlags.WORDSIZE_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
@@ -301,13 +301,9 @@ public class MapXCli extends ParamsCli<NgsParams> {
       ngsParamsBuilder.proteinScoringMatrix(new ProteinScoringMatrix((String) mFlags.getValue(MATRIX_FLAG)));
     }
     ngsParamsBuilder.enableProteinReadCache(mFlags.isSet(READ_CACHE_FLAG));
-    final IntegerOrPercentage repeat = (IntegerOrPercentage) mFlags.getValue(MapFlags.REPEAT_FREQUENCY_FLAG);
-    ngsParamsBuilder.useProportionalHashThreshold(repeat.isPercentage());
-    if (repeat.isPercentage()) {
-      ngsParamsBuilder.hashCountThreshold(100 - repeat.getValue(100));
-    } else {
-      ngsParamsBuilder.hashCountThreshold(repeat.getRawValue());
-    }
+
+    MapParamsHelper.populateProportionalRepeat(mFlags, ngsParamsBuilder);
+
     ngsParamsBuilder.numberThreads(CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)));
     final int metaChunkSize;
     if (mFlags.isSet(XMETA_CHUNK_LENGTH)) {

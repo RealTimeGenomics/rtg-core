@@ -30,7 +30,7 @@ public class IndexCompressedTest extends AbstractIndexTest {
 
   @Override
   protected IndexBase getIndex(final long size, final int hashBits, final Integer threshold) {
-    return new IndexCompressed(new CreateParams(size, hashBits, hashBits, true, false, false), threshold, false, threshold, threshold, 2);
+    return new IndexCompressed(new CreateParams(size, hashBits, hashBits, true, false, false), new RepeatFrequencyFilterMethod(threshold, false, threshold, threshold), 2);
   }
 
   public final void testStateTwoPass() throws IOException {
@@ -155,7 +155,7 @@ public class IndexCompressedTest extends AbstractIndexTest {
 
   public final void testUnsafeError() {
     final CreateParams params = new CreateParams(51, 8, 8, 3, true, true, true, false);
-    final IndexExtended countIndex = new IndexCompressed(params, Integer.MAX_VALUE, false, Integer.MAX_VALUE, 0, 4);
+    final IndexExtended countIndex = new IndexCompressed(params, new UnfilteredFilterMethod(), 4);
 
     final long[] hashes = {48, 192, 3, 48, 192, 3, 48, 192, 1, 4, 19, 77, 53, 104, 88, 96, 61
         , 48, 192, 1, 4, 19, 77, 53, 104, 88, 96, 61, 48, 192, 1, 4, 18, 73, 37, 105, 88, 96, 61, 48
@@ -177,7 +177,7 @@ public class IndexCompressedTest extends AbstractIndexTest {
   public final void testAssemblyNonDeterminism() throws IOException {
     for (int i = 0; i < 10; i++) {
       final CreateParams params = new CreateParams(51, 8, 8, 3, true, true, false, false);
-      final IndexExtended countIndex = new IndexCompressed(params, Integer.MAX_VALUE, false, Integer.MAX_VALUE, 0, 4);
+      final IndexExtended countIndex = new IndexCompressed(params, new UnfilteredFilterMethod(), 4);
 
       final long[] hashes = {48, 192, 3, 48, 192, 3, 48, 192, 1, 4, 19, 77, 53, 104, 88, 96, 61
           , 48, 192, 1, 4, 19, 77, 53, 104, 88, 96, 61, 48, 192, 1, 4, 18, 73, 37, 105, 88, 96, 61, 48

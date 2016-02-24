@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.util.Collection;
 
 import com.rtg.alignment.AlignerMode;
+import com.rtg.index.IndexFilterMethod;
 import com.rtg.launcher.BuildParams;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.ModuleParams;
@@ -79,6 +80,7 @@ public class NgsParams extends ModuleParams implements Integrity {
   private final MaxShiftFactor mAlignerBandWidthFactor;
   private final AlignerMode mAlignerMode;
   private final String mSingleIndelPenalties;
+  private final IndexFilterMethod mIndexFilter;
 
   /**
    * Creates a NgsParams builder.
@@ -131,6 +133,7 @@ public class NgsParams extends ModuleParams implements Integrity {
     mAlignerBandWidthFactor = builder.mAlignerBandWidthFactor;
     mAlignerMode = builder.mAlignerMode;
     mSingleIndelPenalties = builder.mSingleIndelPenalties;
+    mIndexFilter = builder.mIndexFilter;
   }
 
   //  /**
@@ -187,6 +190,13 @@ public class NgsParams extends ModuleParams implements Integrity {
    */
   public Integer hashCountThreshold() {
     return mHashCountThreshold;
+  }
+
+  /**
+   * @return handle that is used to filter (normally repetitive) hashes from index
+   */
+  public IndexFilterMethod indexFilter() {
+    return mIndexFilter;
   }
 
   /**

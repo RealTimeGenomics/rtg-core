@@ -220,7 +220,8 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
    */
   public static void buildQueryLongRead(final NgsParams params, final MapStatistics statistic, final UsageMetric usageMetric) throws IOException {
     final PositionParams posParams = params.toPositionParams();
-    final Index index = LongReadTask.build(posParams, usageMetric);
+    final Index index = LongReadTask.build(posParams, usageMetric, params.indexFilter());
+
     final OutputFilter filter = params.outputParams().outFilter();
     try (OutputProcessor outProcessor = filter.makeProcessor(params, statistic)) {
       LongReadTask.search(posParams, outProcessor, index);

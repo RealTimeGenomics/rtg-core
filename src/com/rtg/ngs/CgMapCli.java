@@ -247,15 +247,9 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     .numberThreads(CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)))
     .readFreqThreshold((Integer) mFlags.getValue(MapFlags.READ_FREQUENCY_FLAG))
     .parallelUnmatedProcessing((Boolean) mFlags.getValue(MapFlags.PARALLEL_UNMATED_PROCESSING_FLAG));
-    final IntegerOrPercentage repeat = (IntegerOrPercentage) mFlags.getValue(MapFlags.REPEAT_FREQUENCY_FLAG);
-    ngsParamBuilder.useProportionalHashThreshold(repeat.isPercentage());
-    if (repeat.isPercentage()) {
-      ngsParamBuilder.hashCountThreshold(100 - repeat.getValue(100));
-    } else {
-      ngsParamBuilder.hashCountThreshold(repeat.getRawValue());
-    }
-    ngsParamBuilder.maxHashCountThreshold((Integer) mFlags.getValue(MapFlags.MAX_REPEAT_FREQUENCY_FLAG));
-    ngsParamBuilder.minHashCountThreshold((Integer) mFlags.getValue(MapFlags.MIN_REPEAT_FREQUENCY_FLAG));
+
+    MapParamsHelper.populateProportionalRepeat(mFlags, ngsParamBuilder);
+
     final File reads = (File) mFlags.getValue(CommonFlags.READS_FLAG);
     final LongRange buildReaderRestriction = CommonFlags.getReaderRestriction(mFlags);
     try {

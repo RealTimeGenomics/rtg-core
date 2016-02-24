@@ -52,7 +52,7 @@ public class IndexCompressedExtendedTest extends TestCase {
   protected IndexCompressed getIndex(final long size, final int hashBits, final Integer threshold) {
     final CreateParams params = new CreateParams(size, hashBits, hashBits, true, true, false);
     //System.err.println(params);
-    return new IndexCompressed(params, threshold, false, threshold, threshold, 2);
+    return new IndexCompressed(params, new RepeatFrequencyFilterMethod(threshold, false, threshold, threshold), 2);
   }
 
   private static long[] extend(final long l) {

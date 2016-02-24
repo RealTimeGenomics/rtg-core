@@ -24,6 +24,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import com.rtg.index.RepeatFrequencyFilterMethod;
 import com.rtg.index.hash.HashLoop;
 import com.rtg.index.params.CountParams;
 import com.rtg.index.params.CreateParams;
@@ -676,7 +677,7 @@ public class SimilarityCliTest extends AbstractCliTest {
 
   public void testIOException() throws IOException {
     final CreateParams cp = new CreateParams(0, 1, 1, false, true, false);
-    final IndexSimilarity index = new IndexSimilarity(cp, 1000, false, 1000, 0, false, 1);
+    final IndexSimilarity index = new IndexSimilarity(cp, new RepeatFrequencyFilterMethod(1000, false, 1000, 0), false, 1);
     index.freeze();
 
     final SequencesReader sr = new MockArraySequencesReader(SequenceType.DNA, new int[] {1}, new String[] {"name"});

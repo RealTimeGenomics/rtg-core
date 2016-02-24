@@ -40,21 +40,6 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
 
   protected final CreateParams mParams;
 
-  /**
-   * Hashes with more than this number of hits are assumed to be repeats and are
-   * not reported during searches. This can give performance improvements by
-   * eliminating the construction of index hit objects that only contain these
-   * high frequency chunks.
-   */
-  protected final int mThreshold;
-  /**
-   * When using proportional threshold don't exceed this value as cutoff.
-   */
-  protected final int mMaxThreshold;
-  /**
-   * When using proportional threshold don't dont go below this value.
-   */
-  protected final int mMinThreshold;
   //The following all deal with the initial pointer data
   protected final CommonIndex mInitialPosition;
 
@@ -140,23 +125,19 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
 
   protected final int mNumberThreads;
 
-
-  protected final boolean mUseProportionalThreshold;
+  protected final IndexFilterMethod mIndexFilterMethod;
 
   /**
    * Constructs an empty index.
    *
    * @param indexParams holds all the values needed for constructing the index.
-   * @param threshold maximum repeat frequency threshold - default
-   *        <code>Integer.MAX_VALUE</code> if null.
-   * @param proportionalThreshold Whether the frequency threshold should be calculated from index data rather than as a parameter.
-   * @param maxThreshold when using proportional threshold don't exceed this repeat frequency
-   * @param minThreshold when using proportional threshold don't go below this repeat frequency
+   * @param filter the handle to be used for filtering hashes
    * @param numberThreads number of threads appropriate for parallel execution.
    */
-  public IndexBase(final CreateParams indexParams, final Integer threshold, final boolean proportionalThreshold, int maxThreshold, int minThreshold, final int numberThreads) {
+  public IndexBase(final CreateParams indexParams, IndexFilterMethod filter, final int numberThreads) {
     assert indexParams.integrity();
     mParams = indexParams;
+    mIndexFilterMethod = filter;
 
     final long size = indexParams.size();
     final int hashBits = indexParams.hashBits();
@@ -169,16 +150,6 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
     mState = mParams.compressHashes() ? IndexState.PRE_ADD : IndexState.ADD;
 
     mHashBits = mParams.hashBits();
-    if (threshold == null) {
-      mThreshold = Integer.MAX_VALUE;
-    } else {
-      if (!proportionalThreshold && threshold < 1) {
-        throw new RuntimeException("Threshold must be positive:" + threshold);
-      }
-      mThreshold = threshold;
-    }
-    mMaxThreshold = maxThreshold;
-    mMinThreshold = minThreshold;
     mNumberThreads = numberThreads;
     //carefully allocate memory
     try {
@@ -210,7 +181,6 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
       Diagnostic.userLog(e);
       throw e;
     }
-    mUseProportionalThreshold = proportionalThreshold;
   }
 
   @Override
@@ -354,6 +324,11 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
   }
 
   @Override
+  public long getInitialHashes() {
+    return mInitialHashes;
+  }
+
+  @Override
   public String infoString() {
     final StringBuilder sb = new StringBuilder();
     infoString(sb);
@@ -428,7 +403,6 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
 
   @Override
   public boolean integrity() {
-    Exam.assertTrue(mUseProportionalThreshold || mThreshold >= 1);
     Exam.assertTrue(mInitialHashes >= 0);
     Exam.assertTrue(mValue != null);
     if (mHash == null) {
@@ -472,7 +446,7 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
   @Override
   public final void toString(final StringBuilder sb) {
     sb.append("IndexImplementation").append(LS);
-    sb.append("Hash Bits=").append(mHashBits).append(LS).append("Threshold=").append(mThreshold).append(LS);
+    sb.append("Hash Bits=").append(mHashBits).append(LS);
     sb.append("Initial Number of hashes=").append(mInitialHashes).append(LS);
     sb.append("Number of hash codes=").append(mNumHashes).append(LS);
     infoString(sb);
@@ -525,30 +499,6 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
     for (long i = 0; i < mNumValues; i++) {
       out.println("[" + i + "]" + "  " + mHash.get(i) + "  " + mValue.get(i));
     }
-  }
-
-  protected int determineCutoffFrequency(final SparseFrequencyHistogram freqHist, final int percent) {
-    final long cutoff = mInitialHashes * percent / 100;
-    long val = 0;
-    int ret = Integer.MAX_VALUE;
-    for (int i = freqHist.length() - 1; i >= 0; i--) {
-      final int freq = freqHist.getFrequency(i);
-      val += freqHist.getCount(i) * freq;
-      if (val > cutoff) {
-        break;
-      }
-      ret = freq;
-    }
-    if (mUseProportionalThreshold && ret > mMaxThreshold) {
-      Diagnostic.developerLog("Using max frequency since calculated frequency exceeded max. threshold: " + ret + " max: " + mMaxThreshold);
-      ret = mMaxThreshold;
-    } else if (mUseProportionalThreshold && ret < mMinThreshold) {
-      Diagnostic.developerLog("Using min frequency since calculated frequency is below min. threshold: " + ret + " min: " + mMinThreshold);
-      ret = mMinThreshold;
-    } else {
-      Diagnostic.developerLog("Calculated frequency threshold value: " + ret);
-    }
-    return ret - 1;
   }
 
   @Override

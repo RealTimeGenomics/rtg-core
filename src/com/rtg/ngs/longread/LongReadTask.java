@@ -16,6 +16,7 @@ import java.io.IOException;
 import com.rtg.index.Add;
 import com.rtg.index.Finder;
 import com.rtg.index.Index;
+import com.rtg.index.IndexFilterMethod;
 import com.rtg.index.IndexUtils;
 import com.rtg.index.hash.ExactHashFunction;
 import com.rtg.index.hash.HashFunction;
@@ -69,7 +70,7 @@ public final class LongReadTask {
    */
   static void execute(final PositionParams params, final OutputProcessor output, final UsageMetric usageMetric) throws IOException {
     final OneShotTimer fullTimer = new OneShotTimer("total_time");
-    final Index index = build(params, usageMetric);
+    final Index index = build(params, usageMetric, params.ngsParams().indexFilter());
     search(params, output, index);
     fullTimer.stopLog();
     Diagnostic.userLog("Index search performance " + StringUtils.LS + index.perfString());
@@ -112,10 +113,11 @@ public final class LongReadTask {
    * Build index using given parameters
    * @param params index parameters
    * @param usageMetric accumulates the count of nucleotides read.
+   * @param hashFilter handle used to filter hashes from index
    * @return index
    * @throws IOException if an I/O error occurs
    */
-  public static Index build(final PositionParams params, final UsageMetric usageMetric) throws IOException {
+  public static Index build(final PositionParams params, final UsageMetric usageMetric, IndexFilterMethod hashFilter) throws IOException {
     Diagnostic.userLog("Usage of memory" + StringUtils.LS + PositionUtils.memToString(params));
     final OneShotTimer buildTimer = new OneShotTimer("LR_BS_build");
     final int numberThreads = params.numberThreads();
@@ -148,7 +150,7 @@ public final class LongReadTask {
     pool.terminate();
     queueTimer.stopLog();
     final OneShotTimer freezeTimer = new OneShotTimer("LR_BS_freeze");
-    final Index index = IndexUtils.createIndex(indexParams, params.hashCountThreshold(), params.ngsParams().useProportionalHashThreshold(), params.ngsParams().maxHashCountThreshold(), params.ngsParams().minHashCountThreshold(), numberThreads);
+    final Index index = IndexUtils.createIndex(indexParams, hashFilter, numberThreads);
     queues.freeze(index);
     freezeTimer.stopLog();
     buildTimer.stopLog();

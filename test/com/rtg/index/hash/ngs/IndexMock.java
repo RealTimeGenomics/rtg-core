@@ -20,6 +20,7 @@ import java.io.PrintStream;
 import com.rtg.index.Finder;
 import com.rtg.index.FinderHashValue;
 import com.rtg.index.Index;
+import com.rtg.index.SparseFrequencyHistogram;
 import com.rtg.util.StringUtils;
 
 
@@ -40,6 +41,17 @@ class IndexMock implements Index {
       ReadCallImplementationTest.fail();
     }
   }
+
+  @Override
+  public long getInitialHashes() {
+    return 0;
+  }
+
+  @Override
+  public SparseFrequencyHistogram getSparseFrequencyHistogram() {
+    return null;
+  }
+
   @Override
   public long bytes() {
     return 0;

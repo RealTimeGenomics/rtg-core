@@ -32,14 +32,27 @@ public final class HashBlacklist {
   private static final String BLACKLIST_SUBDIR = "blacklists";
 
   /**
+   * Determine if SDF has a blacklist for the appropriate word size
+   * @param sdfDir directory containing SDF
+   * @param wordSize kmer size
+   * @return true if blacklist exists
+   */
+  public static boolean blacklistExists(File sdfDir, int wordSize) {
+    final File blacklist = getFile(sdfDir, wordSize);
+    return blacklist.exists();
+  }
+
+  /**
    * Load a blacklist file (assumed to be lines of "k-mer[TAB]count")
    * @param sdfDir directory containing sdf
+   * @param wordSize kmer size
+   * @param threshold only load hashes with count meeting this threshold
    * @return list of hashes
    * @throws IOException if an IO error occurs
    */
   public static List<Long> loadBlacklist(File sdfDir, int wordSize, int threshold) throws IOException {
     final ArrayList<Long> ret = new ArrayList<>();
-    final File blacklistFile = new File(sdfDir, BLACKLIST_SUBDIR + File.separator + "w" + wordSize);
+    final File blacklistFile = getFile(sdfDir, wordSize);
     Diagnostic.developerLog("Loading blacklist at word size " + wordSize + " and threshold " + threshold);
     try (BufferedReader br = new BufferedReader(new FileReader(blacklistFile))) {
       String line;
@@ -55,6 +68,18 @@ public final class HashBlacklist {
     }
     Diagnostic.developerLog("Loaded " + ret.size() + " hashes from blacklist");
     return ret;
+  }
+
+  private static File getFile(File sdfDir, int wordSize) {
+    return new File(sdfDir, BLACKLIST_SUBDIR + File.separator + "w" + wordSize);
+  }
+
+  /**
+   * @param wordSize kmer size
+   * @return number of bits used in hash for kmer
+   */
+  public static int hashBits(int wordSize) {
+    return 2 * wordSize;
   }
 
   private static long dnaToLong(byte[] dna) {

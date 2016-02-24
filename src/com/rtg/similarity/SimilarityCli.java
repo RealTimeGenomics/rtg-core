@@ -32,6 +32,7 @@ import java.util.Map;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.index.Index;
 import com.rtg.index.IndexUtils;
+import com.rtg.index.UnfilteredFilterMethod;
 import com.rtg.index.hash.ExactHashFunction;
 import com.rtg.index.hash.HashLoop;
 import com.rtg.index.hash.IncrementalHashLoop;
@@ -288,7 +289,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       Diagnostic.userLog("Usage of memory" + StringUtils.LS + memToString(params, bufferLength));
 
       // Make all the components we need
-      final IndexSimilarity index = new IndexSimilarity(params.build(), null, false, Integer.MAX_VALUE, 0, params.uniqueWords(), 1);
+      final IndexSimilarity index = new IndexSimilarity(params.build(), new UnfilteredFilterMethod(), params.uniqueWords(), 1);
 
       // Search the queries and write hits
       final long numSequences;

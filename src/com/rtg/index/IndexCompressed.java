@@ -47,15 +47,11 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
    * Constructs an empty index.
    *
    * @param indexParams holds all the values needed for constructing the index.
-   * @param threshold maximum repeat frequency threshold - default
-   *        <code>Integer.MAX_VALUE</code> if null.
-   * @param proportionalThreshold Whether the frequency threshold should be calculated from index data rather than as a parameter.
-   * @param maxThreshold when using proportional threshold don't exceed this repeat frequency
-   * @param minThreshold when using proportional threshold don't go below this repeat frequency
+   * @param filter the filter
    * @param numberThreads number of threads appropriate for parallel execution.
    */
-  public IndexCompressed(final CreateParams indexParams, final Integer threshold, boolean proportionalThreshold, int maxThreshold, int minThreshold, final int numberThreads) {
-    super(indexParams, threshold, proportionalThreshold, maxThreshold, minThreshold, numberThreads);
+  public IndexCompressed(final CreateParams indexParams, IndexFilterMethod filter,  final int numberThreads) {
+    super(indexParams, filter, numberThreads);
     mCompressHashMask = LongUtils.longMask(mSRBits);
     mExcessBits = mHashBits > Long.SIZE ? mHashBits - Long.SIZE : 0;
     mExcessBitsMask = LongUtils.longMask(mExcessBits);
@@ -229,8 +225,8 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
     }
   }
 
-  private int determineCutoffFrequency() {
-    final OneShotTimer over = new OneShotTimer("Index_Frequency");
+  @Override
+  public SparseFrequencyHistogram getSparseFrequencyHistogram() {
     int[] freqDist = new int[1024];
     SparseFrequencyHistogram freqHist = new SparseFrequencyHistogram();
     long mergeCount = 0;
@@ -266,20 +262,16 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
     freqHist = SparseFrequencyHistogram.merge(freqHist, SparseFrequencyHistogram.fromIndividualFrequencies(freqDist, numUsed));
     mergeCount++;
     Diagnostic.developerLog("IndexCompressed " + mergeCount + " Frequency Histogram Merges");
-    final int ret = determineCutoffFrequency(freqHist, mThreshold);
-    over.stopLog();
-    return ret;
+    return freqHist;
   }
 
   @Override
   protected void compact() {
+    Diagnostic.developerLog("compacting using hash frequency");
     mMaxHashCount = 0;
     final long threshold;
-    if (mUseProportionalThreshold) {
-      threshold = determineCutoffFrequency();
-    } else {
-      threshold = mThreshold;
-    }
+    mIndexFilterMethod.initialize(this);
+
     //System.err.println("compact");
     long prevk = 0;
     long lo = 0;
@@ -312,7 +304,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
           mMaxHashCountBins[4]++;
         }
 
-        if (nh <= threshold) {
+        if (mIndexFilterMethod.keepHash(decompressHash(p, hash), nh)) {
           prevk = k;
           //System.err.println("hash nh=" + nh);
 
@@ -374,7 +366,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
    */
   @Override
   protected final long decompressHash(final long upper, final long lower) {
-    assert 0 <= lower && lower <= mCompressHashMask;
+    assert 0 <= lower && Long.compareUnsigned(lower, mCompressHashMask) <= 0;
     assert 0 <= upper && upper < mInitialPositionLength - 1;
     return (upper - mIncrement) << mSRBits | lower;
   }

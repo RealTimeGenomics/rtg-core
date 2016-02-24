@@ -21,6 +21,7 @@ import java.util.TreeMap;
 import com.rtg.assembler.graph.Graph;
 import com.rtg.index.Finder;
 import com.rtg.index.IndexCompressed;
+import com.rtg.index.UnfilteredFilterMethod;
 import com.rtg.index.hash.ExactHashFunction;
 import com.rtg.index.params.CreateParams;
 
@@ -46,7 +47,7 @@ public class GraphIndex {
     final int valueBits = (int) Math.ceil(Math.log(totalLength) / Math.log(2));
     final int hashBits = wordSize * 2;
     final CreateParams create =  new CreateParams(totalHashes, hashBits, hashBits, valueBits, true, true, false, false);
-    mIndex = new IndexCompressed(create, Integer.MAX_VALUE, false, Integer.MAX_VALUE, 0, 1);
+    mIndex = new IndexCompressed(create, new UnfilteredFilterMethod(), 1);
     mWordSize = wordSize;
     mBuildFunction = new ExactHashFunction(wordSize, 2);
     for (int pass = 0; pass < 2; pass++) {

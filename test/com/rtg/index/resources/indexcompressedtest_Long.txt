@@ -1,6 +1,5 @@
 IndexImplementation
 Hash Bits=64
-Threshold=2147483647
 Initial Number of hashes=8
 Number of hash codes=8
 

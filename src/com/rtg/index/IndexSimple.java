@@ -54,15 +54,11 @@ public class IndexSimple extends IndexBase {
    * Constructs an empty index.
    *
    * @param indexParams holds all the values needed for constructing the index.
-   * @param threshold maximum repeat frequency threshold - default
-   *        <code>Integer.MAX_VALUE</code> if null.
-   * @param proportionalThreshold Whether the frequency threshold should be calculated from index data rather than as a parameter.
-   * @param maxThreshold when using proportional threshold don't exceed this repeat frequency
-   * @param minThreshold when using proportional threshold don't go below this repeat frequency
+   * @param filter the hash filter
    * @param numberThreads number of threads appropriate for parallel execution.
    */
-  public IndexSimple(final CreateParams indexParams, final Integer threshold, boolean proportionalThreshold, int maxThreshold, int minThreshold, final int numberThreads) {
-    super(indexParams, threshold, proportionalThreshold, maxThreshold, minThreshold, numberThreads);
+  public IndexSimple(final CreateParams indexParams, IndexFilterMethod filter, final int numberThreads) {
+    super(indexParams, filter, numberThreads);
     if (mHashBits < 1 || mHashBits > 64) {
       throw new RuntimeException("Hash bits set to invalid value bits=" + mHashBits);
     }
@@ -165,8 +161,8 @@ public class IndexSimple extends IndexBase {
     }
   }
 
-  private int determineCutoffFrequency() {
-    final OneShotTimer over = new OneShotTimer("Index_Frequency");
+  @Override
+  public SparseFrequencyHistogram getSparseFrequencyHistogram() {
     int[] freqDist = new int[1024];
     SparseFrequencyHistogram freqHist = new SparseFrequencyHistogram();
     long mergeCount = 0;
@@ -197,20 +193,14 @@ public class IndexSimple extends IndexBase {
     freqHist = SparseFrequencyHistogram.merge(freqHist, SparseFrequencyHistogram.fromIndividualFrequencies(freqDist, numUsed));
     mergeCount++;
     Diagnostic.developerLog("IndexSimple " + mergeCount + " Frequency Histogram Merges");
-    final int ret = determineCutoffFrequency(freqHist, mThreshold);
-    over.stopLog();
-    return ret;
+    return freqHist;
   }
 
   @Override
   protected void compact() {
     mMaxHashCount = 0;
-    final long threshold;
-    if (mUseProportionalThreshold) {
-      threshold = determineCutoffFrequency();
-    } else {
-      threshold = mThreshold;
-    }
+
+    mIndexFilterMethod.initialize(this);
     long prevk = 0;
     for (long i = 0; i < mInitialHashes;) {
       long k = prevk;
@@ -237,7 +227,7 @@ public class IndexSimple extends IndexBase {
       } else {
         mMaxHashCountBins[4]++;
       }
-      if (nh <= threshold) {
+      if (mIndexFilterMethod.keepHash(hash, nh)) {
         prevk = k;
         if (nh > mMaxHashCount) {
           mMaxHashCount = (int) nh;

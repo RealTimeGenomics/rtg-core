@@ -112,6 +112,11 @@ public interface Index extends Add {
   long numberHashes() throws IllegalStateException;
 
   /**
+   * @return the number of hashes added before the freeze stage
+   */
+  long getInitialHashes();
+
+  /**
    * Will write out hashes and values in a format identical for both overflow and no overflow cases.
    * Needed to investigate a bug.
    * @param out where to put output.
@@ -146,6 +151,11 @@ public interface Index extends Add {
    */
   long getValue(long found);
 
+
+  /**
+   * @return histogram of hash frequencies
+   */
+  SparseFrequencyHistogram getSparseFrequencyHistogram();
 }
 
 

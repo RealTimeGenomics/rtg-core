@@ -24,7 +24,7 @@ public class ReadIndexCoverageUtilsTest extends TestCase {
 
   public void testFindRejectedReads() {
     final CreateParams create = new CreateParams(100, 36, 36, false, false, false);
-    final IndexSimple index = new IndexSimple(create, 100, false, 100, 0, 1);
+    final IndexSimple index = new IndexSimple(create, new RepeatFrequencyFilterMethod(100, false, 100, 0), 1);
     fillIndex(index,
             new long[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
             new long[] {20, 22, 25, 45, 92, 106, 50, 44, 49, 90});
@@ -46,7 +46,7 @@ public class ReadIndexCoverageUtilsTest extends TestCase {
 
   public void testSummariseRejectedReads() {
     final CreateParams create = new CreateParams(100, 36, 36, false, false, false);
-    final IndexSimple index = new IndexSimple(create, 100, false, 100, 0, 1);
+    final IndexSimple index = new IndexSimple(create, new RepeatFrequencyFilterMethod(100, false, 100, 0), 1);
     fillIndex(index,
             new long[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
             new long[] {20, 22, 25, 45, 92, 106, 50, 44, 49, 90});
@@ -67,7 +67,7 @@ public class ReadIndexCoverageUtilsTest extends TestCase {
 
   public void testSummariseRejectedReadsPaired() {
     final CreateParams create = new CreateParams(100, 36, 36, false, false, false);
-    final IndexSimple index = new IndexSimple(create, 100, false, 100, 0, 1);
+    final IndexSimple index = new IndexSimple(create, new RepeatFrequencyFilterMethod(100, false, 100, 0), 1);
     fillIndex(index,
             new long[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9},
             new long[] {20, 22, 25, 45, 92, 106, 50, 44, 49, 90});

@@ -17,7 +17,7 @@ import java.util.Arrays;
 /**
  * Class to contain an ordered sparse histogram of frequency counts.
  */
-final class SparseFrequencyHistogram {
+public final class SparseFrequencyHistogram {
 
   private int[] mFrequencies;
   private long[] mCounts;

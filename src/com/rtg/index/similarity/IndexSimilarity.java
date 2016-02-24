@@ -15,6 +15,7 @@ import java.io.IOException;
 
 import com.rtg.index.Finder;
 import com.rtg.index.IndexCompressed;
+import com.rtg.index.IndexFilterMethod;
 import com.rtg.index.params.CreateParams;
 
 /**
@@ -26,15 +27,12 @@ public final class IndexSimilarity extends IndexCompressed {
 
   /**
    * @param indexParams parameters used to size and initialize index.
-   * @param threshold maximum number of times a hash can occur before it is ignored.
-   * @param proportionalThreshold Whether the frequency threshold should be calculated from index data rather than as a parameter.
-   * @param maxThreshold when using proportional threshold don't exceed this repeat frequency
-   * @param minThreshold when using proportional threshold don't go below this repeat frequency
+   * @param filter the hash filter
    * @param singleton if true then count each hash only once ( as opposed to the product of the number of times it occurs in each genome).
    * @param threads  number of threads appropriate for parallel execution.
    */
-  public IndexSimilarity(final CreateParams indexParams, final Integer threshold, final boolean proportionalThreshold, int maxThreshold, int minThreshold, final boolean singleton, final int threads) {
-    super(indexParams, threshold, proportionalThreshold, maxThreshold, minThreshold, threads);
+  public IndexSimilarity(final CreateParams indexParams, IndexFilterMethod filter, final boolean singleton, final int threads) {
+    super(indexParams, filter, threads);
     mSingleton = singleton;
   }
 

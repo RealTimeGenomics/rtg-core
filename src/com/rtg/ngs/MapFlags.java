@@ -75,6 +75,8 @@ public final class MapFlags {
   public static final String WORDSIZE_FLAG = "word";
   /** Repeat frequency flag. */
   public static final String REPEAT_FREQUENCY_FLAG = "repeat-freq";
+  /** Blacklist threshold flag */
+  public static final String BLACKLIST_THRESHOLD = "blacklist-threshold";
   /** Maximum repeat frequency */
   public static final String MAX_REPEAT_FREQUENCY_FLAG = "Xmax-repeat-freq";
   /** Maximum repeat frequency */
@@ -301,6 +303,9 @@ public final class MapFlags {
     if (!checkPercentRepeatFrequency(flags)) {
       return false;
     }
+    if (!checkBlacklistThreshold(flags)) {
+      return false;
+    }
 
     if (!CommonFlags.validateThreads(flags)) {
       return false;
@@ -463,6 +468,7 @@ public final class MapFlags {
    */
   public static void initSharedFlagsOnly(CFlags flags, IntegerOrPercentage repeat, int minRepeat, int maxRepeat) {
     flags.registerOptional(REPEAT_FREQUENCY_FLAG, IntegerOrPercentage.class, CommonFlags.INT, BuildCommon.RESOURCE.getString("REPEAT_FREQUENCY_DESC"), repeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(BLACKLIST_THRESHOLD, Integer.class, CommonFlags.INT, BuildCommon.RESOURCE.getString("BLACKLIST_THRESHOLD_DESC"), 65).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(MAX_REPEAT_FREQUENCY_FLAG, Integer.class, CommonFlags.INT, BuildCommon.RESOURCE.getString("MAX_REPEAT_FREQUENCY_DESC"), maxRepeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(MIN_REPEAT_FREQUENCY_FLAG, Integer.class, CommonFlags.INT, BuildCommon.RESOURCE.getString("MIN_REPEAT_FREQUENCY_DESC"), minRepeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     CommonFlags.initNoGzip(flags);
@@ -572,6 +578,25 @@ public final class MapFlags {
           Diagnostic.error(ErrorType.INVALID_MAX_INTEGER_FLAG_VALUE, "--" + REPEAT_FREQUENCY_FLAG, repeat + "", 100000 + "");
           return false;
         }
+      }
+    }
+    return true;
+  }
+
+  /**
+   * Checks related to blacklist threshold
+   * @param flags the flags to check
+   * @return <code>true</code> if all okay <code>false</code> otherwise
+   */
+  public static boolean checkBlacklistThreshold(CFlags flags) {
+    if (!flags.checkNand(BLACKLIST_THRESHOLD, REPEAT_FREQUENCY_FLAG)) {
+      return false;
+    }
+    if (flags.isSet(BLACKLIST_THRESHOLD)) {
+      final int val = (Integer) flags.getValue(BLACKLIST_THRESHOLD);
+      if (val < 0) {
+        Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + REPEAT_FREQUENCY_FLAG, val + "", "0");
+        return false;
       }
     }
     return true;

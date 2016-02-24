@@ -17,6 +17,7 @@ import java.io.IOException;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.index.IndexCompressed;
 import com.rtg.index.IndexExtended;
+import com.rtg.index.UnfilteredFilterMethod;
 import com.rtg.index.params.CreateParams;
 import com.rtg.util.MathUtils;
 import com.rtg.util.array.bitindex.BitIndex;
@@ -55,7 +56,7 @@ public abstract class AbstractKDeBruijnGraph implements DeBruijnGraph {
   IndexExtended buildInitialIndex(KmerIterableFactoryInterface factory, final long size, final int kmerSize) {
     final int bits = 2 * kmerSize;
     final CreateParams params = new CreateParams(size, bits, bits, 0, true, false, true, true);
-    final IndexExtended initialIndex = new IndexCompressed(params, Integer.MAX_VALUE, false, Integer.MAX_VALUE, 0, 1);
+    final IndexExtended initialIndex = new IndexCompressed(params, new UnfilteredFilterMethod(), 1);
     Diagnostic.developerLog(initialIndex.infoString());
     try (KmerIterable iterable = factory.makeIterable()) {
       addAll(initialIndex, iterable);
@@ -80,7 +81,7 @@ public abstract class AbstractKDeBruijnGraph implements DeBruijnGraph {
     final int valueBits = MathUtils.ceilPowerOf2Bits(maxHashCount);
     final int bits = 2 * kmerSize;
     final CreateParams params = new CreateParams(numberHashes, bits, bits, valueBits, true, true, true, false);
-    final IndexExtended countIndex = new IndexCompressed(params, Integer.MAX_VALUE, false, Integer.MAX_VALUE, 0, 1);
+    final IndexExtended countIndex = new IndexCompressed(params, new UnfilteredFilterMethod(), 1);
     Diagnostic.developerLog(countIndex.infoString());
 
     transferCounts(initialIndex, countIndex);

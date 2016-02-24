@@ -18,6 +18,7 @@ import java.io.StringWriter;
 import com.rtg.index.Finder;
 import com.rtg.index.FinderHashValue;
 import com.rtg.index.Index;
+import com.rtg.index.SparseFrequencyHistogram;
 import com.rtg.util.StringUtils;
 import com.rtg.util.integrity.IntegralAbstract;
 
@@ -28,7 +29,7 @@ public class MockIndex extends IntegralAbstract implements Index {
 
   private final Appendable mOut = new StringWriter();
   private int mTimesFrozen = 0;
-
+  private long mInitialHashes;
   private final int[] mCounts;
   private int mI = 0;
 
@@ -48,10 +49,21 @@ public class MockIndex extends IntegralAbstract implements Index {
   @Override
   public void add(final long hash, final long id) {
     try {
+      mInitialHashes++;
       mOut.append(String.valueOf(id)).append(StringUtils.LS);
     } catch (final IOException e) {
       throw new RuntimeException(e);
     }
+  }
+
+  @Override
+  public long getInitialHashes() {
+    return mInitialHashes;
+  }
+
+  @Override
+  public SparseFrequencyHistogram getSparseFrequencyHistogram() {
+    throw new UnsupportedOperationException("Not implemented yet");
   }
 
   @Override

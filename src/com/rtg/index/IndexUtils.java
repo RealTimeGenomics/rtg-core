@@ -27,21 +27,17 @@ public final class IndexUtils {
   /**
    * Create a new <code>Index</code> using the current default implementation.
    * @param indexParams holds all the values needed for constructing the index.
-   * @param threshold maximum repeat frequency threshold - default <code>Integer.MAX_VALUE</code> if null.
-   *        If <code>proportionalThreshold</code> then this value relates to the percentage of hashes to throw away.
-   * @param proportionalThreshold Whether the frequency threshold should be calculated from index data rather than as a parameter.
-   * @param maxThreshold Specify an upper limit for repeat frequency that is also applied when using proportional thresholds.
-   * @param minThreshold when using proportional threshold don't go below this repeat frequency
+   * @param filter the index filter
    * @param threads ignored
    * @return the new <code>Index</code>
    */
-  public static Index createIndex(final CreateParams indexParams, final Integer threshold, final boolean proportionalThreshold, int maxThreshold, int minThreshold, final int threads) {
+  public static Index createIndex(final CreateParams indexParams, IndexFilterMethod filter, final int threads) {
     if (indexParams.compressHashes()) {
       Diagnostic.developerLog("Creating compressed index");
-      return new IndexCompressed(indexParams, threshold, proportionalThreshold, maxThreshold, minThreshold, threads);
+      return new IndexCompressed(indexParams, filter, threads);
     } else {
       Diagnostic.developerLog("Creating simple index");
-      return new IndexSimple(indexParams, threshold, proportionalThreshold, maxThreshold, minThreshold, threads);
+      return new IndexSimple(indexParams, filter, threads);
     }
   }
 
