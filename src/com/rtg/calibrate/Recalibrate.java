@@ -21,9 +21,7 @@ import java.util.Map;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SdfId;
-import com.rtg.reader.SdfUtils;
 import com.rtg.reader.SequencesReader;
-import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.sam.ReferenceSequenceRequiredException;
 import com.rtg.sam.SamBamConstants;
 import com.rtg.sam.SamFilterParams;
@@ -62,20 +60,13 @@ public class Recalibrate implements Closeable {
 
   /**
    * Constructor
-   * @param templateSdf directory containing SDF for template. null if not required/supplied
+   * @param template reference SDF
    * @param regions bed file regions to restrict calibration
    * @throws IOException if an IO error occurs
    */
-  public Recalibrate(File templateSdf, ReferenceRegions regions) throws IOException {
-    if (templateSdf == null) {
-      throw new IllegalArgumentException("template must not be null");
-    }
+  public Recalibrate(SequencesReader template, ReferenceRegions regions) throws IOException {
     mRegions = regions;
-    mTemplate = SequencesReaderFactory.createDefaultSequencesReader(templateSdf);
-    SdfUtils.validateNoDuplicates(mTemplate, false);
-    if (mRegions != null) {
-      mRegions.validateTemplate(mTemplate);
-    }
+    mTemplate = template;
     mSequenceNameMap = ReaderUtils.getSequenceNameMap(mTemplate);
     mTemplateBytes = new byte[(int) mTemplate.maxLength()];
     mTemplateSdfId = mTemplate.getSdfId();

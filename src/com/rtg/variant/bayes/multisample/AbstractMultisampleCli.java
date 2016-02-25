@@ -502,7 +502,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
 
     if (c != null) {
       final Map<String, String> readGroupToSampleId = SamUtils.getReadGroupToSampleId(uberHeader);
-      final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getSequenceLengthMap(genomeParams.reader(), simpleRestriction);
+      final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getNonNSequenceLengthMap(genomeParams.reader(), simpleRestriction);
       final CalibratedPerSequenceExpectedCoverage expectedCoverages = new CalibratedPerSequenceExpectedCoverage(c, sequenceLengthMap, readGroupToSampleId, simpleRestriction);
       builder.expectedCoverage(expectedCoverages);
       if (!mFlags.isSet(FILTER_DEPTH_FLAG) && !mFlags.isSet(COVERAGE_BYPASS_FLAG)) {

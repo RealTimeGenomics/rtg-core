@@ -155,7 +155,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
         if (c != null) {
           final String sample = mParams.outputParams().readGroup().getSample();
           final Map<String, String> readGroupToSampleId = Collections.singletonMap(mParams.outputParams().readGroup().getReadGroupId(), sample);
-          final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getSequenceLengthMap(mParams.searchParams().reader(), (RegionRestriction) null);
+          final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getNonNSequenceLengthMap(mParams.searchParams().reader(), (RegionRestriction) null);
           final CalibratedPerSequenceExpectedCoverage expectedCoverages = new CalibratedPerSequenceExpectedCoverage(c, sequenceLengthMap, readGroupToSampleId, null);
           final ChrStats cc = new ChrStats(mParams.searchParams().reader());
           if (cc.referenceOk()) {

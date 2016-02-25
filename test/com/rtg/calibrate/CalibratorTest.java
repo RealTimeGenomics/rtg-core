@@ -810,7 +810,7 @@ public class CalibratorTest extends TestCase {
   }
 
   public void checkLengthMap(MockSequencesReader reader) throws IOException {
-    final Map<String, Integer> names = Calibrator.getSequenceLengthMap(reader, (RegionRestriction) null);
+    final Map<String, Integer> names = Calibrator.getNonNSequenceLengthMap(reader, (RegionRestriction) null);
     assertEquals(10, names.size());
     for (int i = 0; i < names.size(); i++) {
       final String key = "seq" + i;

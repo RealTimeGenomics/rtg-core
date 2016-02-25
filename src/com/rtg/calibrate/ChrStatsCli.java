@@ -128,7 +128,7 @@ public class ChrStatsCli extends AbstractCli {
       final GenomeRelationships pedigree = mFlags.isSet(PEDIGREE_FLAG) ? GenomeRelationships.loadGenomeRelationships((File) mFlags.getValue(PEDIGREE_FLAG)) : null;
 
       final Map<String, String> readGroupToSampleId = SamUtils.getReadGroupToSampleId(uberHeader);
-      final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getSequenceLengthMap(genomeParams.reader(), (RegionRestriction) null);
+      final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getNonNSequenceLengthMap(genomeParams.reader(), (RegionRestriction) null);
       final CalibratedPerSequenceExpectedCoverage expectedCoverages = new CalibratedPerSequenceExpectedCoverage(c, sequenceLengthMap, readGroupToSampleId, null);
       final Set<String> samples = expectedCoverages.samples();
       if (samples.size() == 0) {

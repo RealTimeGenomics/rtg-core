@@ -24,6 +24,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.util.Arrays;
+import java.util.BitSet;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
@@ -90,6 +91,7 @@ public class Calibrator {
   protected byte[] mTemplate;
   protected int mTemplateLength;
   protected byte[] mRead;
+  protected BitSet mTemplateMask = null;
   private byte[] mCgQualities = null;
   protected SAMRecord mSamRec;
   protected String mReadGroup;
@@ -98,9 +100,9 @@ public class Calibrator {
   private final Map<String, Integer> mSequenceLengths = new HashMap<>();
 
   /**
-   * Create a calibrator restricted to a bed files regions
-   * @param vars the sequence of variables that may influence the error rates/qualities.
-   * @param regions bed file of regions to restrict calibration too.
+   * Create a calibrator where statistics will only be accumulated within the specified reference regions
+   * @param vars the sequence of covariates that may influence the error rates/qualities.
+   * @param regions regions within which calibration statistics should be accumulated.
    */
   public Calibrator(Covariate[] vars, ReferenceRegions regions) {
     mCovariates = vars;
@@ -113,10 +115,10 @@ public class Calibrator {
   }
 
   /**
-   * Construct a map from sequence name to non-n length from BED regions.
+   * Construct a map from sequence name to length covered by BED regions.
    * @param reader the sequences reader to construct the map from
-   * @param regions only measure the parts within these regions. Ignored if null
-   * @return the map from sequence name to sequence id
+   * @param regions only measure the parts within these regions.
+   * @return the map from sequence name to covered length
    * @throws java.io.IOException if your sequences reader is dodgy.
    */
   public static Map<String, Integer> getSequenceLengthMap(SequencesReader reader, ReferenceRegions regions) throws IOException {
@@ -134,7 +136,7 @@ public class Calibrator {
    * @return the map from sequence name to sequence id
    * @throws java.io.IOException if your sequences reader is dodgy.
    */
-  public static Map<String, Integer> getSequenceLengthMap(SequencesReader reader, RegionRestriction restriction) throws IOException {
+  public static Map<String, Integer> getNonNSequenceLengthMap(SequencesReader reader, RegionRestriction restriction) throws IOException {
     final Map<String, Integer> lengthMap = new HashMap<>();
     for (int i = 0; i < reader.numberSequences(); i++) {
       final String name = reader.name(i);
@@ -158,6 +160,43 @@ public class Calibrator {
       lengthMap.put(name, length);
     }
     return lengthMap;
+  }
+
+  /**
+   * Construct a map from sequence name to non-n length calculated from the reference.
+   * @param reader the sequences reader to construct the map from
+   * @param restriction if not null, only include information for the sequence contained in the restriction
+   * @return the map from sequence name to sequence id
+   * @throws java.io.IOException if your sequences reader is dodgy.
+   */
+  public static ReferenceRegions getNonNRegions(SequencesReader reader, RegionRestriction restriction) throws IOException {
+    final ReferenceRegions r = new ReferenceRegions();
+    for (int i = 0; i < reader.numberSequences(); i++) {
+      final String name = reader.name(i);
+      if (restriction != null && !name.equals(restriction.getSequenceName())) {
+        continue;
+      }
+      final int length = reader.length(i);
+      final byte[] refNts = new byte[length];
+      reader.read(i, refNts);
+      int start = 0;
+      int end = 0;
+      for (int i1 = 0; i1 < refNts.length; i1++) {
+        if (refNts[i1] != DnaUtils.UNKNOWN_RESIDUE) {
+          end = i1 + 1;
+        } else {
+          if (start < end) {
+            r.add(name, start, end);
+          }
+          start = i1 + 1;
+        }
+      }
+      if (start < end) {
+        r.add(name, start, end);
+      }
+      Diagnostic.developerLog("Length of sequence " + name + " for calibration is " + r.coveredLength(name) + " (" + refNts.length + " raw) ");
+    }
+    return r;
   }
 
   /**
@@ -226,10 +265,9 @@ public class Calibrator {
   public boolean hasLengths() {
     return mSequenceLengths.size() > 0;
   }
-
-
+  
   boolean inRange(int templatePosition) {
-    return mRegions == null || mRegions.enclosed(mTemplateName, templatePosition);
+    return mTemplateMask == null || mTemplateMask.get(templatePosition);
   }
 
   /**
@@ -546,7 +584,6 @@ public class Calibrator {
     }
   }
 
-
   /**
    * Dumps all the statistics out into a text file.
    *
@@ -634,6 +671,7 @@ public class Calibrator {
     mTemplateName = name;
     mTemplate = template;
     mTemplateLength = length;
+    mTemplateMask = mRegions == null ? null : mRegions.mask(mTemplateName);
     getParser().setTemplate(mTemplate, mTemplateLength);
   }
 
