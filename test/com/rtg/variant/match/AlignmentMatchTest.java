@@ -12,11 +12,13 @@
 package com.rtg.variant.match;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.rtg.reader.FastaUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.variant.DefaultMachineErrorChooser;
 import com.rtg.variant.ReadGroupMachineErrorChooser;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.dna.DNARangeNAT;
@@ -25,7 +27,6 @@ import com.rtg.variant.util.VariantUtils;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 
@@ -33,8 +34,8 @@ import junit.framework.TestCase;
  */
 public class AlignmentMatchTest extends TestCase {
 
-  public static final String TEST_READ_STRING = "ACGT";
-  public static final String TEST_READ_QUALITY_STRING = "!!%`";
+  public static final String TEST_READ_STRING = "ACGT"; // We use the "CGT" part
+  public static final String TEST_READ_QUALITY_STRING = "!!%`"; // 0,0,4,63
   public static final byte[] TEST_RAW_QUALITY = FastaUtils.asciiToRawQuality(TEST_READ_QUALITY_STRING.toCharArray());
 
   public void test0() {
@@ -148,7 +149,9 @@ public class AlignmentMatchTest extends TestCase {
 
     // Complete Genomics correction curve
     rec.setAttribute("RG", "CG");
-    final AlignmentMatch ins = new AlignmentMatch(new VariantAlignmentRecord(rec, 0, new DefaultMachineErrorChooser()), chooser, TEST_READ_STRING, TEST_RAW_QUALITY, 20, 1, 3, 7, true, true);
+    rec.setBaseQualities(TEST_RAW_QUALITY);
+    final VariantAlignmentRecord var = new VariantAlignmentRecord(rec, 0, chooser);
+    final AlignmentMatch ins = new AlignmentMatch(var, chooser, TEST_READ_STRING, var.getRecalibratedQuality(), 20, 1, 3, 7, true, true);
     ins.integrity();
     assertEquals(VariantUtils.phredToProb(0), ins.baseError(0), 1E-14);
     assertEquals(VariantUtils.phredToProb(5), ins.baseError(1), 1E-14);
@@ -156,48 +159,91 @@ public class AlignmentMatchTest extends TestCase {
     assertEquals(VariantUtils.phredToProb(7), ins.mapError(), 1E-14);
   }
 
-  public void test() {
-    final AlignmentMatch ins = new AlignmentMatch(null, null, "ACGTACGT", FastaUtils.asciiToRawQuality("ABCDABCD"), 0, 3, 3, 7, false, true);
-    ins.integrity();
-    assertFalse(ins.isFixedLeft());
-    assertTrue(ins.isFixedRight());
-
+  public void testReadRangeLower() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
     try {
       ins.read(-1);
       fail();
     } catch (final IndexOutOfBoundsException e) {
       // ok
     }
+  }
+  public void testReadRangeUpper() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
     try {
       ins.read(3);
       fail();
     } catch (final IndexOutOfBoundsException e) {
       // ok
     }
+  }
+
+  public void testReadValues() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
+    assertEquals(Arrays.asList(3, 0, 1),
+      IntStream.range(0, 3).map(ins::read).boxed().collect(Collectors.toList())
+    );
+  }
+
+  public void testErrorRangeLower() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
     try {
       ins.baseError(-1);
       fail();
     } catch (final IndexOutOfBoundsException e) {
       // ok
     }
+  }
+
+  public void testErrorRangeUpper() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
     try {
-      ins.baseError(4);
+      ins.baseError(3);
       fail();
     } catch (final IndexOutOfBoundsException e) {
       // ok
     }
+  }
 
-    assertEquals("~TAC", ins.toString());
-    assertEquals(3, ins.read(0));
-    assertEquals(0, ins.read(1));
-    assertEquals(1, ins.read(2));
-    assertEquals(VariantUtils.phredToProb('D' - '!'), ins.baseError(0), 1E-14);
-    assertEquals(VariantUtils.phredToProb('A' - '!'), ins.baseError(1), 1E-14);
-    assertEquals(VariantUtils.phredToProb('B' - '!'), ins.baseError(2), 1E-14);
+  public void testBaseError() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
+    assertEquals(VariantUtils.phredToProb('D' - FastaUtils.PHRED_LOWER_LIMIT_CHAR), ins.baseError(0), 1E-14);
+    assertEquals(VariantUtils.phredToProb('A' - FastaUtils.PHRED_LOWER_LIMIT_CHAR), ins.baseError(1), 1E-14);
+    assertEquals(VariantUtils.phredToProb('B' - FastaUtils.PHRED_LOWER_LIMIT_CHAR), ins.baseError(2), 1E-14);
+  }
+
+  public void testFixedEnds() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
+    assertFalse(ins.isFixedLeft());
+    assertTrue(ins.isFixedRight());
+
+  }
+  public void testToString() {
+    assertEquals("~TAC", getTestAlignmentMatch().toString());
+  }
+
+  public void testMapError() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
     assertEquals(VariantUtils.phredToProb(7), ins.mapError(), 1E-14);
+  }
+
+  public void testIntegrity() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
+    ins.integrity();
+  }
+
+  public void testReadString() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
     assertEquals("TAC", ins.readString());
-    assertEquals("~TAC", ins.toString());
+  }
+  public void testLength() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
     assertEquals(3, ins.length());
+  }
+
+
+  private AlignmentMatch getTestAlignmentMatch() {
+    return new AlignmentMatch(null, null, "ACGTACGT", FastaUtils.asciiToRawQuality("ABCDABCD"), 0, 3, 3, 7, false, true);
   }
 }
 
