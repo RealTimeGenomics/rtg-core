@@ -154,8 +154,12 @@ public final class CgUnroller {
       reversedRead = StringUtils.reverse(expandedRead);
       reversedQual = StringUtils.reverse(expandedQual);
     }
+    final byte[] qualityBytes = new byte[reversedQual.length()];
+    for (int i = 0; i < reversedQual.length(); i++) {
+      qualityBytes[i] = (byte) reversedQual.charAt(i);
+    }
     return new CgUnroller.OrientedRead(CgUtils.unPad(reversedRead.getBytes(), !rec.isNegativeStrand()),
-      hasQuality ? CgUtils.unPad(FastaUtils.asciiToRawQuality(reversedQual), !rec.isNegativeStrand()) : null, !cgOverlapOnLeft);
+      hasQuality ? CgUtils.unPad(qualityBytes, !rec.isNegativeStrand()) : null, !cgOverlapOnLeft);
   }
 
 }
