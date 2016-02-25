@@ -47,6 +47,7 @@ import junit.framework.TestCase;
 /**
  */
 public class CalibratorTest extends TestCase {
+
   static final String EXPECTED_CALIBRATION = ""
     + "#CL\tfoo bar" + LS
     + "@nh:group1\t0\t5" + LS
@@ -67,7 +68,6 @@ public class CalibratorTest extends TestCase {
     + "group2\t3\t32\tsequence1\t2\t0\t0\t0" + LS
     + "group2\t4\t35\tsequence1\t2\t0\t0\t0" + LS
     ;
-
 
   private File mDir;
   private long mEqualCount;
@@ -112,13 +112,10 @@ public class CalibratorTest extends TestCase {
     add2Records(cal);
     final Calibrator.QuerySpec query = cal.new QuerySpec();
     mEqualCount = mDiffCount = 0;
-    final StatsProcessor proc = new StatsProcessor() {
-      @Override
-      public void process(int[] covariateValues, CalibrationStats stats) {
-        if (stats != null) {
-          mEqualCount += stats.getEqual();
-          mDiffCount += stats.getDifferent();
-        }
+    final StatsProcessor proc = (covariateValues, stats) -> {
+      if (stats != null) {
+        mEqualCount += stats.getEqual();
+        mDiffCount += stats.getDifferent();
       }
     };
     cal.processStats(proc, query);
@@ -146,22 +143,6 @@ public class CalibratorTest extends TestCase {
     // check non existent returns false
     assertFalse(query.setValue(CovariateEnum.READGROUP, 0));
   }
-
-//  public void testHasReadgroup() {
-//    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateBaseQuality()});
-//    final MockSamBamRecord sam = new MockSamBamRecord();
-//    sam.setField(SamBamConstants.CIGAR_FIELD, "35=");
-//    sam.setField(SamBamConstants.SEQ_FIELD, "acgtacgtggacgtacgtggacgtacgtggttttt");
-//    sam.setField(SamBamConstants.QUAL_FIELD, "012345678901234567890123456789ABCDE");
-//    sam.setField(SamBamConstants.POS_FIELD, "1");
-//    sam.setField(SamBamConstants.MAPQ_FIELD, "1");
-//    try {
-//      cal.processRead(sam);
-//      fail();
-//    } catch (final NoTalkbackSlimException ex) {
-//      assertEquals("quality calibration requires a read group to be specified", ex.getMessage());
-//    }
-//  }
 
   public void testHasReadgroup2() {
     final Calibrator cal = new Calibrator(new Covariate[] {new CovariateBaseQuality()}, null);
@@ -197,7 +178,6 @@ public class CalibratorTest extends TestCase {
     final File tmp = File.createTempFile("test", "calibrator", mDir);
     cal.writeToFile(tmp);
     final String stats = FileUtils.fileToString(tmp);
-//    System.out.println(stats);
     check2Records(stats);
   }
 
@@ -254,56 +234,7 @@ public class CalibratorTest extends TestCase {
     assertEquals(expected, stats.replaceAll("\\s+", " "));
   }
 
-//  public void testExpanding() {
-//    final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateMachineCycle(2), new CovariateBaseQuality(), new CovariateSequence()});
-//    MockSamBamRecord sam = new MockSamBamRecord();
-//    sam.setField(SamBamConstants.RNAME_FIELD, "sequence1");
-//    sam.setField(SamBamConstants.CIGAR_FIELD, "2=");
-//    sam.setField(SamBamConstants.SEQ_FIELD,  "ac");
-//    sam.setField(SamBamConstants.QUAL_FIELD, "D!");
-//    sam.setField(SamBamConstants.POS_FIELD, "1");
-//    sam.setField(SamBamConstants.MAPQ_FIELD, "1");
-//    sam.addAttribute("RG:Z:group1");
-//    cal.processRead(sam);
-//    cal.processRead(sam);
-//    cal.processRead(sam);
-//    sam = new MockSamBamRecord();
-//    sam.setField(SamBamConstants.RNAME_FIELD, "sequence1");
-//    sam.setField(SamBamConstants.CIGAR_FIELD, "5=");
-//    sam.setField(SamBamConstants.SEQ_FIELD,  "actga");
-//    sam.setField(SamBamConstants.QUAL_FIELD, "D!DAD");
-//    sam.setField(SamBamConstants.POS_FIELD, "1");
-//    sam.setField(SamBamConstants.MAPQ_FIELD, "1");
-//    sam.addAttribute("RG:Z:group2");
-//    cal.processRead(sam);
-//    cal.processRead(sam);
-//    sam = new MockSamBamRecord();
-//    sam.setField(SamBamConstants.RNAME_FIELD, "sequence2");
-//    sam.setField(SamBamConstants.CIGAR_FIELD, "7=");
-//    sam.setField(SamBamConstants.SEQ_FIELD,  "actgact");
-//    sam.setField(SamBamConstants.POS_FIELD, "1");
-//    sam.setField(SamBamConstants.QUAL_FIELD, "D!DAD!!");
-//    sam.setField(SamBamConstants.MAPQ_FIELD, "1");
-//    sam.addAttribute("RG:Z:group1");
-//    cal.processRead(sam);
-//    cal.processRead(sam);
-//    // now check the output file
-//    final File tmp = File.createTempFile("test", "calibrator1", mDir);
-//    cal.writeToFile(tmp);
-//    String stats = stripVersion(FileUtils.fileToString(tmp));
-//    final String expected = EXPECTED_CALIBRATION;
-//    // System.out.println(stats);
-//    assertEquals(expected, stats);
-//    final Calibrator cal0 = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateMachineCycle(1), new CovariateBaseQuality(), new CovariateSequence()});
-//    cal0.accumulate(tmp);
-//    final File tmp2 = File.createTempFile("test", "calibrator2", mDir);
-//    cal0.writeToFile(tmp2);
-//    stats = stripVersion(FileUtils.fileToString(tmp2));
-//    //System.out.println(stats);
-//    assertEquals(expected, stats);
-//  }
-
-  public void testExpanding2() throws IOException {
+  public void testExpanding() throws IOException {
     final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateMachineCycle(2), new CovariateBaseQuality(), new CovariateSequence()}, null);
     SAMRecord sam = new SAMRecord(null);
     sam.setReferenceName("sequence1");
@@ -547,6 +478,7 @@ public class CalibratorTest extends TestCase {
     + "rg2 700     0     0     0".replaceAll("  *", "\t") + LS
     + "rg1         330    20     0     0".replaceAll("  *", "\t") + LS
     ;
+
   public void testCG() throws IOException {
     final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup()}, null);
     final byte[] t = DnaUtils.encodeString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
@@ -555,7 +487,6 @@ public class CalibratorTest extends TestCase {
     sam1.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=2B10=1N10=5N10=");
     sam1.setAlignmentStart(1);
     sam1.setMappingQuality(1);
-//    sam1.setBaseQualityString("*");
     sam1.setFlags(67);
     sam1.setAttribute("RG", "rg2");
     final SAMRecord sam2 = new SAMRecord(null);
@@ -563,7 +494,6 @@ public class CalibratorTest extends TestCase {
     sam2.setAttribute(SamUtils.CG_READ_DELTA, "TT");
     sam2.setAlignmentStart(1);
     sam2.setMappingQuality(1);
-//    sam2.setBaseQualityString("*");
     sam2.setFlags(67);
     sam2.setAttribute("RG", "rg1");
     for (int i = 0; i < 10; i++) {
@@ -720,13 +650,6 @@ public class CalibratorTest extends TestCase {
 
     final byte[] t = DnaUtils.encodeString("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA");
     cal.setTemplate(t, t.length);
-//    final MockSamBamRecord sam1 = new MockSamBamRecord();
-//    sam1.addAttribute(SamUtils.CG_SUPER_CIGAR + ":Z:5=2B20=6N10=");
-//    sam1.setField(SamBamConstants.POS_FIELD, "1");
-//    sam1.setField(SamBamConstants.MAPQ_FIELD, "1");
-//    sam1.setField(SamBamConstants.QUAL_FIELD, "*");
-//    sam1.setField(SamBamConstants.FLAG_FIELD, "67");
-//    sam1.addAttribute("RG:Z:rg1");
 
     final SAMRecord sam = new SAMRecord(null);
     sam.setReadString("acgtacgtggacgtacgtggacgtacgtggttttt");
@@ -799,7 +722,6 @@ public class CalibratorTest extends TestCase {
     }
   }
 
-
   static final String LENGTHS = ""
                                 + "#CL\tfoo bar" + LS
                                 + "@nh:group1\t0\t5" + LS
@@ -821,6 +743,7 @@ public class CalibratorTest extends TestCase {
                                 + "group2\t2\t35\tsequence1\t2\t0\t0\t0" + LS
                                 + "group2\t3\t32\tsequence1\t2\t0\t0\t0" + LS
                                 + "group2\t4\t35\tsequence1\t2\t0\t0\t0" + LS;
+
   public void testLengths() throws IOException {
     final Calibrator cal = new Calibrator(new Covariate[] {new CovariateReadGroup(), new CovariateMachineCycle(2), new CovariateBaseQuality(), new CovariateSequence()}, null);
     cal.accumulate(new ByteArrayInputStream(LENGTHS.getBytes()), "testLengths");
@@ -834,6 +757,7 @@ public class CalibratorTest extends TestCase {
     cal.setSequenceLengths(dummyLengths);
     assertEquals(300, cal.getSequenceLengths().get("sequence1").intValue());
   }
+
   public void testBed() throws IOException {
     final ReferenceRegions bed = new ReferenceRegions();
     bed.add("sequence1", 11, 20);
@@ -853,7 +777,6 @@ public class CalibratorTest extends TestCase {
     sam.setAttribute("RG", "rg1");
     sam.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=2B20=6N10=");
     sam.setCigarString("36=");
-//    sam.setAlignmentEnd(50);
     cal.processRead(sam);
     sam = new SAMRecord(null);
     sam.setReadString("acgtacgtggacgtacgtggacgtacgtggttttt");
@@ -863,7 +786,6 @@ public class CalibratorTest extends TestCase {
     sam.setFlags(67);
     sam.setAttribute("RG", "rg1");
     sam.setCigarString("36=");
-//    sam.setAlignmentEnd(50);
     cal.processRead(sam);
     sam = new SAMRecord(null);
     sam.setReadString("acgtgtgaggggg");
@@ -873,7 +795,6 @@ public class CalibratorTest extends TestCase {
     sam.setFlags(67);
     sam.setAttribute("RG", "rg1");
     sam.setCigarString("12=");
-//    sam.setAlignmentEnd(50);
     cal.processRead(sam);
     final File tmp2 = File.createTempFile("test", "calibrator2", mDir);
     cal.writeToFile(tmp2);
@@ -901,6 +822,4 @@ public class CalibratorTest extends TestCase {
     final MockSequencesReader reader = new MockArraySequencesReader(SequenceType.DNA, new int[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9});
     checkLengthMap(reader);
   }
-
-
 }
