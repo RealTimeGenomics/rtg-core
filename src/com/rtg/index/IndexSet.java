@@ -102,7 +102,7 @@ public class IndexSet {
     public void run() {
       Diagnostic.userLog("Start create job " + mId);
       // If index hit caching is enabled this is created when threadClone is invoked rather than now.
-      mIndexes[mId] = IndexUtils.createIndex(mIndexParams, mParams.indexFilter(), mParams.numberThreads());
+      mIndexes[mId] = IndexUtils.createIndex(mIndexParams, mParams.indexFilter().threadClone(), mParams.numberThreads());
       Diagnostic.userLog("Finish create job " + mId);
     }
   }

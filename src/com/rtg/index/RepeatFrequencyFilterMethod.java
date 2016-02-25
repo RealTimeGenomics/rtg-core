@@ -62,6 +62,11 @@ public class RepeatFrequencyFilterMethod implements IndexFilterMethod {
   }
 
   @Override
+  public IndexFilterMethod threadClone() {
+    return new RepeatFrequencyFilterMethod(mThreshold, mUseProportionalThreshold, mMaxThreshold, mMinThreshold);
+  }
+
+  @Override
   public void initialize(Index index) {
     if (mUseProportionalThreshold) {
       final OneShotTimer over = new OneShotTimer("Index_Frequency");

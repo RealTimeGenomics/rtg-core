@@ -28,4 +28,9 @@ public interface IndexFilterMethod {
    * @return true if hash should be kept, false if it should be discarded
    */
   boolean keepHash(long hash, long numHits);
+
+  /**
+   * @return a copy of this filter
+   */
+  IndexFilterMethod threadClone();
 }

@@ -23,4 +23,9 @@ public class UnfilteredFilterMethod implements IndexFilterMethod {
   public boolean keepHash(long hash, long numHits) {
     return true;
   }
+
+  @Override
+  public IndexFilterMethod threadClone() {
+    return new UnfilteredFilterMethod();
+  }
 }

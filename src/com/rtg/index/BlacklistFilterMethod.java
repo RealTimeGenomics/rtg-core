@@ -43,6 +43,15 @@ public class BlacklistFilterMethod implements IndexFilterMethod {
     mBlacklist = blacklistIndex;
   }
 
+  private BlacklistFilterMethod(Index blacklist) {
+    mBlacklist = blacklist;
+  }
+
+  @Override
+  public IndexFilterMethod threadClone() {
+    return new BlacklistFilterMethod(mBlacklist);
+  }
+
   /**
    *
    * @param sdfDir directory of reference SDF
