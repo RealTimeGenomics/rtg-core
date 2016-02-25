@@ -11,9 +11,12 @@
  */
 package com.rtg.index.params;
 
+import com.reeltwo.jumble.annotations.TestClass;
+
 /**
  * Abstract base builder for create params
  */
+@TestClass("com.rtg.index.params.CreateParamsTest")
 public abstract class AbstractCreateParamsBuilder<B extends AbstractCreateParamsBuilder<B>> {
   protected long mSize = 20;
   protected int mHashBits = 20;
