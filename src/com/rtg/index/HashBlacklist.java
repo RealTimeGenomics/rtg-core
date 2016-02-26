@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.Reader;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,6 +56,24 @@ public final class HashBlacklist {
     final File blacklistFile = getFile(sdfDir, wordSize);
     Diagnostic.developerLog("Loading blacklist at word size " + wordSize + " and threshold " + threshold);
     return loadBlacklist(new FileReader(blacklistFile), threshold);
+  }
+
+  /**
+   * Installs given blacklist into given SDF
+   * @param blacklist blacklist to install
+   * @param sdfDir SDF to install into
+   * @param wordSize kmer size
+   * @throws IOException If blacklist already exists or other IO error
+   */
+  public static void installBlacklist(File blacklist, File sdfDir, int wordSize) throws IOException {
+    final File destination = getFile(sdfDir, wordSize);
+    if (destination.exists()) {
+      throw new IOException("Blacklist already exists in " + sdfDir + " for word size " + wordSize);
+    }
+    if (!destination.getParentFile().isDirectory() && !destination.getParentFile().mkdir()) {
+      throw new IOException("Could not make blacklist directory");
+    }
+    Files.copy(blacklist.toPath(), destination.toPath());
   }
 
   /**
