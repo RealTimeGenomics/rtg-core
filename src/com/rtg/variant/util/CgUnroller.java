@@ -11,11 +11,12 @@
  */
 package com.rtg.variant.util;
 
+import java.util.Arrays;
+
 import com.rtg.reader.CgSamBamSequenceDataSource;
 import com.rtg.reader.CgUtils;
-import com.rtg.reader.FastaUtils;
 import com.rtg.sam.BadSuperCigarException;
-import com.rtg.util.StringUtils;
+import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.VariantAlignmentRecord;
 
@@ -76,37 +77,37 @@ public final class CgUnroller {
       return null;
     }
 
-    final String samRead = new String(rec.getRead());
-    final String samQualities = new String(FastaUtils.rawToAsciiQuality(rec.getRecalibratedQuality())); // Convert this function to work natively in raw qualities
-    final boolean hasQuality = samQualities.length() != 0;
-    final int samLength = samRead.length();
-    if (hasQuality && samLength != samQualities.length()) {
+    final byte[] samRead = Arrays.copyOf(rec.getRead(), rec.getRead().length);
+    final byte[] samQualities = rec.getRecalibratedQuality(); // Convert this function to work natively in raw qualities
+    final boolean hasQuality = samQualities.length != 0;
+    final int samLength = samRead.length;
+    if (hasQuality && samLength != samQualities.length) {
       return null;
     }
-    final String expandedRead;
-    final String expandedQual;
+    final byte[] expandedRead;
+    final byte[] expandedQualBytes;
     final String superCigar = rec.getSuperCigar();
     final boolean v1;
     if (superCigar == null) {
-      final String gs = rec.getOverlapBases();
-      final String gq = rec.getOverlapQuality();
+      final byte[] gs = rec.getOverlapBases();
+      final byte[] gq = rec.getOverlapQuality();
       final String gc = rec.getOverlapInstructions();
-      final int overlap = gq.length();
-      final boolean legacyLegacy = gq.length() == gs.length() / 2;
-      if (!legacyLegacy && overlap != gs.length()) {
+      final int overlap = gq.length;
+      final boolean legacyLegacy = gq.length == gs.length / 2;
+      if (!legacyLegacy && overlap != gs.length) {
         return null;
       }
       expandedRead = CgSamBamSequenceDataSource.unrollLegacyRead(samRead, gs, gc);
       if (expandedRead == null) {
         return null;
       }
-      v1 = expandedRead.length() == CgUtils.CG_RAW_READ_LENGTH;
+      v1 = expandedRead.length == CgUtils.CG_RAW_READ_LENGTH;
       if (!hasQuality) {
-        expandedQual = null;
+        expandedQualBytes = null;
       } else if (legacyLegacy) {
-        expandedQual = CgSamBamSequenceDataSource.unrollLegacyLegacyQualities(samQualities, gq, gc);
+        expandedQualBytes = CgSamBamSequenceDataSource.unrollLegacyLegacyQualities(samQualities, gq, gc);
       } else {
-        expandedQual = CgSamBamSequenceDataSource.unrollLegacyRead(samQualities, gq, gc);
+        expandedQualBytes = CgSamBamSequenceDataSource.unrollLegacyRead(samQualities, gq, gc);
       }
     } else {
       final SuperCigarUnroller unroll = new SuperCigarUnroller();
@@ -118,14 +119,14 @@ public final class CgUnroller {
         Diagnostic.developerLog("Ignored SAM CG record due to " + ex.getMessage());
         return null;
       }
-      expandedRead = unroll.getString();      //.replaceAll(" ", "");
-      v1 = expandedRead.length() == CgUtils.CG_RAW_READ_LENGTH;
+      expandedRead = unroll.getByteArray();      //.replaceAll(" ", "");
+      v1 = expandedRead.length == CgUtils.CG_RAW_READ_LENGTH;
       final int overlapWidth = unroll.getTemplateOverlapEnd() - unroll.getTemplateOverlapStart();
       final int middle = unroll.getReadOverlapMiddle();
-      if (!v1 && expandedRead.length() != CgUtils.CG2_RAW_READ_LENGTH && expandedRead.length() != CgUtils.CG2_PADDED_LENGTH) {
+      if (!v1 && expandedRead.length != CgUtils.CG2_RAW_READ_LENGTH && expandedRead.length != CgUtils.CG2_PADDED_LENGTH) {
         return null;
       }
-      if (rec.getRead().length != expandedRead.length()
+      if (rec.getRead().length != expandedRead.length
         && (overlapWidth <= 0
         //          || samLength + overlapWidth != CG_RAW_READ_LENGTH   NOT necessarily true - deletes in the overlap region change this.
         || middle == -1)) {
@@ -134,32 +135,29 @@ public final class CgUnroller {
       if (hasQuality) {
         final int fwdOverlap = v1 ? CgUtils.CG_OVERLAP_POSITION : CgUtils.CG2_OVERLAP_POSITION;
         final int overlapPos = middle <= fwdOverlap ? fwdOverlap : samLength - fwdOverlap;
-        final String overlapQual = rec.getOverlapQuality();
-        expandedQual = samQualities.substring(0, overlapPos) + overlapQual + samQualities.substring(overlapPos);
-        if (expandedQual.length() != expandedRead.length()) {
+        final byte[] overlapQual = rec.getOverlapQuality();
+        expandedQualBytes = new byte[samQualities.length + overlapQual.length];
+        System.arraycopy(samQualities, 0, expandedQualBytes, 0, overlapPos);
+        System.arraycopy(overlapQual, 0, expandedQualBytes, overlapPos, overlapQual.length);
+        System.arraycopy(samQualities, overlapPos, expandedQualBytes, overlapPos + overlapQual.length, samQualities.length - overlapPos);
+//        System.arraycsamQualities.substring(0, overlapPos) + FastaUtils.rawToAsciiString(overlapQual) + samQualities.substring(overlapPos);
+        if (expandedQualBytes.length != expandedRead.length) {
           return null;
         }
       } else {
-        expandedQual = null;
+        expandedQualBytes = null;
       }
       //System.out.println("unrollCgRead gives RL=" + rec.getRead().length + " read:" + expandedRead + " (len=" + expandedRead.length() + ")" + "               and qual:" + expandedQual + " (overlapWidth=" + overlapWidth + ")" + " middle=" + middle);
     }
     final boolean cgOverlapOnLeft = v1 && (rec.isFirst() ^ rec.isNegativeStrand()) || !v1 && !rec.isNegativeStrand();
-    final String reversedRead;
-    final String reversedQual;
-    if (cgOverlapOnLeft) {
-      reversedRead = expandedRead;
-      reversedQual = expandedQual;
-    } else {
-      reversedRead = StringUtils.reverse(expandedRead);
-      reversedQual = StringUtils.reverse(expandedQual);
+    if (!cgOverlapOnLeft) {
+      Utils.reverseInPlace(expandedRead);
+      if (expandedQualBytes != null) {
+        Utils.reverseInPlace(expandedQualBytes);
+      }
     }
-    final byte[] qualityBytes = new byte[reversedQual.length()];
-    for (int i = 0; i < reversedQual.length(); i++) {
-      qualityBytes[i] = (byte) reversedQual.charAt(i);
-    }
-    return new CgUnroller.OrientedRead(CgUtils.unPad(reversedRead.getBytes(), !rec.isNegativeStrand()),
-      hasQuality ? CgUtils.unPad(qualityBytes, !rec.isNegativeStrand()) : null, !cgOverlapOnLeft);
+    return new CgUnroller.OrientedRead(CgUtils.unPad(expandedRead, !rec.isNegativeStrand()),
+      hasQuality ? CgUtils.unPad(expandedQualBytes, !rec.isNegativeStrand()) : null, !cgOverlapOnLeft);
   }
 
 }

@@ -68,7 +68,7 @@ public class CgUnrollerTest extends TestCase {
     final String qual = new StringBuilder("9899441797:<<;;=<<;:::::;545778:::9").reverse().toString();
     final byte[] qual2 = FastaUtils.asciiToRawQuality(qual);
 
-    assertTrue("expected : " + Arrays.toString(FastaUtils.rawToAsciiQuality(qual.getBytes())) + "\nactual : " + Arrays.toString(read.getQuality()),
+    assertTrue("expected : " + qual + "\nactual : " + read.getQuality(),
       Arrays.equals(qual2, read.getQuality()));
     assertTrue("expected : " + Arrays.toString(readx.getBytes()) + "\nactual : " + Arrays.toString(read.getRead()), Arrays.equals(readx.getBytes(), read.getRead()));
   }

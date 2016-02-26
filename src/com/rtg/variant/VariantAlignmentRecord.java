@@ -60,8 +60,8 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
 
   private final SAMReadGroupRecord mReadGroup;
   private final String mSuperCigar;
-  private final String mOverlapBases;
-  private final String mOverlapQuality;
+  private final byte[] mOverlapBases;
+  private final byte[] mOverlapQuality;
   private final String mOverlapInstructions;
   private final String mCgReadDelta;
 
@@ -134,7 +134,8 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     final String overlapQuality = mSuperCigar == null
       ? SamUtils.allowEmpty(record.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY))
       : SamUtils.allowEmpty(record.getStringAttribute(SamUtils.CG_OVERLAP_QUALITY));
-    mOverlapBases = SamUtils.allowEmpty(record.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES));
+    final String cgOverlap = record.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES);
+    mOverlapBases = cgOverlap == null ? new byte[0] : cgOverlap.getBytes();
     mOverlapInstructions = record.getStringAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS);
     mCgReadDelta = record.getStringAttribute(SamUtils.CG_READ_DELTA);
 
@@ -169,7 +170,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     int qualityPosition = 0;
 
     final Arm arm = !record.getReadPairedFlag() || record.getFirstOfPairFlag() ? Arm.LEFT : Arm.RIGHT;
-    while (machineCycle < backStepPosition && qualityPosition < mRecalibratedQuality.length) {
+    while (qualityPosition < backStepPosition && qualityPosition < mRecalibratedQuality.length) {
       final byte scoreChar = mRecalibratedQuality[qualityPosition];
       final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getPhred(scoreChar, machineCycle, arm);
       mRecalibratedQuality[qualityPosition] = (byte) recalibrated;
@@ -177,14 +178,14 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
       qualityPosition++;
     }
 
-    final StringBuilder recalibratedOverlapQuality = new StringBuilder();
+    mOverlapQuality = new byte[overlapQuality.length()];
     for (int i = 0; i < overlapQuality.length() && qualityPosition < mRecalibratedQuality.length; i++) {
-      final byte scoreChar = (byte) overlapQuality.charAt(i);
+      final char scoreChar = overlapQuality.charAt(i);
+      // Be careful to invoke the me.getPhred that takes a char. It will correct for ascii encoding
       final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getPhred(scoreChar, machineCycle, arm);
-      recalibratedOverlapQuality.append((char) recalibrated);
+      mOverlapQuality[i] = (byte) recalibrated;
       machineCycle += machineStep;
     }
-    mOverlapQuality = recalibratedOverlapQuality.toString();
 
     while (qualityPosition < mRecalibratedQuality.length) {
       final byte scoreChar = mRecalibratedQuality[qualityPosition];
@@ -193,7 +194,6 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
       machineCycle += machineStep;
       qualityPosition++;
     }
-
   }
 
   /**
@@ -273,11 +273,11 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     return mSuperCigar;
   }
 
-  public String getOverlapBases() {
+  public byte[] getOverlapBases() {
     return mOverlapBases;
   }
 
-  public String getOverlapQuality() {
+  public byte[] getOverlapQuality() {
     return mOverlapQuality;
   }
 
@@ -399,7 +399,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     if (sc != 0) {
       return sc;
     }
-    return compare(var.mOverlapBases + var.mOverlapQuality + var.mOverlapInstructions + var.mCgReadDelta, mOverlapBases + mOverlapQuality + mOverlapInstructions + mCgReadDelta);
+    return compare(Arrays.toString(var.mOverlapBases) + Arrays.toString(var.mOverlapQuality) + var.mOverlapInstructions + var.mCgReadDelta, Arrays.toString(mOverlapBases) + Arrays.toString(mOverlapQuality) + mOverlapInstructions + mCgReadDelta);
   }
 
   @Override
