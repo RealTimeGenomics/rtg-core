@@ -151,7 +151,7 @@ public class SomaticCli extends AbstractMultisampleCli {
     flags.registerOptional(LOH_FLAG, Double.class, "float", "prior probability that a loss of heterozygosity event has occurred", 0.0).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(INCLUDE_GERMLINE_FLAG, "include germline variants in output VCF").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('G', INCLUDE_GAIN_OF_REFERENCE, "include gain of reference somatic calls in output VCF").setCategory(SENSITIVITY_TUNING);
-    AbstractMultisampleCli.registerComplexPruningFlags(flags);
+    AbstractMultisampleCli.registerComplexPruningFlags(flags, true);
     flags.addRequiredSet(derivedFlag, originalFlag, contamFlag, inFlag);
     flags.addRequiredSet(derivedFlag, originalFlag, contamFlag, listFlag);
   }

@@ -340,9 +340,10 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   /**
    * Add flags for complex hypothesis pruning to the specified flags object
    * @param flags flags object to modify
+   * @param pruneDefault whether pruning should be enabled by default
    */
-  public static void registerComplexPruningFlags(CFlags flags) {
-    flags.registerOptional(X_PRUNE_HYPOTHESES, Boolean.class, CommonFlags.BOOL, "prune hypotheses during complex calling", Boolean.TRUE).setCategory(SENSITIVITY_TUNING);
+  public static void registerComplexPruningFlags(CFlags flags, boolean pruneDefault) {
+    flags.registerOptional(X_PRUNE_HYPOTHESES, Boolean.class, CommonFlags.BOOL, "prune hypotheses during complex calling", pruneDefault).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_MAX_COMPLEX_HYPOTHESES, Integer.class, CommonFlags.INT, "maximum number of remaining hypotheses after pruning", 21).setCategory(SENSITIVITY_TUNING);
   }
 
