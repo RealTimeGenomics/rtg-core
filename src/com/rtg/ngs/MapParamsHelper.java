@@ -127,10 +127,10 @@ public final class MapParamsHelper {
     if (forceBlacklist && forceRepeat) {
       throw new InvalidParamsException("Repeat frequency and blacklist options are mutually exclusive");
     }
-    if (!forceRepeat) {
+    if (forceBlacklist) {
       final File refDir = builder.searchParams().directory();
       final boolean blackListExists = HashBlacklist.blacklistExists(refDir, wordSize);
-      if (forceBlacklist && !blackListExists) {
+      if (!blackListExists) {
         throw new InvalidParamsException("A blacklist does not exist in " + refDir + " for word size " + wordSize);
       } else if (blackListExists) {
         final Integer blacklistThreshold = (Integer) flags.getValue(MapFlags.BLACKLIST_THRESHOLD);
