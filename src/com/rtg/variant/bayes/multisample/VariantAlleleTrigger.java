@@ -61,10 +61,9 @@ public class VariantAlleleTrigger {
         va = i;
       }
     }
-    double vaf;
     if (va != -1) {
-      vaf = vac / tot;
-      if (vac <= mMinVac || vaf <= mMinVaf) {
+      final double vaf = vac / tot;
+      if (vac < mMinVac || vaf < mMinVaf) {
         va = -1;
       }
     }
