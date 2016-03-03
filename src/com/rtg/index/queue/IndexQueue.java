@@ -63,17 +63,7 @@ public class IndexQueue extends IntegralAbstract implements Add {
   private static final int CURR  =  1;
   private static final int END   =  2;
   private static final int LENGTH = 3;
-  private static final int TOTAL  = 4;
   private static final int TOTAL_BITS  = 2;
-
-  // just to avoid Java warnings from the following assertion.
-  private static boolean isEqual(int a, int b) {
-    return a == b;
-  }
-
-  static {
-    assert isEqual(TOTAL, 1 << TOTAL_BITS);
-  }
 
   private final int mLowerBits;
 
