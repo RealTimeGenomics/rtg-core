@@ -12,6 +12,8 @@
 package com.rtg.ngs;
 
 /**
+ * Represent which arm of paired sequencing a read is from
+ * Order is important.
  */
 public enum Arm {
   /** Left arm of read, or the read for single end */
