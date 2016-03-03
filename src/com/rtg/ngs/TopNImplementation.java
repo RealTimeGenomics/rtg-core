@@ -67,7 +67,7 @@ public class TopNImplementation implements UptoNStore {
    * @param readMaxLength maximum read length, used to determine how far off template we can go
    */
   public TopNImplementation(final long numReads, final long numTemplateSeqs, final int n, final long templateMaxLength, long readMaxLength) {
-    final long length = numReads * (long) n;
+    final long length = numReads * n;
     mPositionOffset = readMaxLength;
     final long product = numTemplateSeqs * (templateMaxLength + mPositionOffset * 2);
     // Try and be a little bit careful about detecting overflow ..., also reserve 1 position

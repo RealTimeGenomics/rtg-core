@@ -42,7 +42,7 @@ public class DeduplicatingNStore implements UptoNStore {
    * @param readMaxLength maximum read length, used to determine how far off template we can go
    */
   public DeduplicatingNStore(final long numReads, final long numTemplateSeqs, final int n, final long templateMaxLength, long readMaxLength) {
-    final long length = numReads * (long) n;
+    final long length = numReads * n;
 
     mPositionOffset = readMaxLength;
     final long product = numTemplateSeqs * (templateMaxLength + mPositionOffset * 2);
