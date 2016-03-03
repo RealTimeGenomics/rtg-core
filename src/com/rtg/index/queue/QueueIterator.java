@@ -12,6 +12,7 @@
 package com.rtg.index.queue;
 
 import com.rtg.util.array.ExtensibleIndex;
+import com.rtg.util.array.intindex.IntChunks;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 
@@ -45,17 +46,26 @@ public class QueueIterator extends IntegralAbstract {
     step(start);
   }
 
+  private long getFree(final long pos) {
+    if (mMemory instanceof IntChunks) {
+      return (mMemory.getSigned(pos - 1) << 32) | mMemory.get(pos);
+    } else {
+      assert mMemory.getSigned(pos - 1) == 0;
+      return mMemory.getSigned(pos);
+    }
+  }
+
   private void step(final long start) {
     mEnd = start;
     final long length = mMemory.getSigned(start);
-    final long s1 = mMemory.getSigned(start - 1);
+    final long s1 = getFree(start - 1);
     if (length < 0) {
       mCurrent = mEnd + length + 1;
       mLast = s1;
       mNext = -1;
     } else {
       mCurrent = mEnd - length + 1;
-      mLast = mEnd - 1;
+      mLast = mEnd - 2;
       mNext = s1;
     }
   }
