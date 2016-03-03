@@ -95,11 +95,11 @@ public class IndexQueue extends IntegralAbstract implements Add {
     mRadix = 1 << mUpperBits;
     mQueueInfo = new long[mRadix << TOTAL_BITS];
 
-    final long bs = (length >> mUpperBits) + 2L;
+    final long bs = (length >> mUpperBits) + 2L; // XXX SAI possibly should be + 3L to allow for 2 slot store of "next"
     if (bs < 1) {
       throw new RuntimeException("Length too large:" + length + " for radix bits=" + upperBits);
     }
-    final long blockSize = Math.max(4L, bs); //ensure space for two items plus next/length values
+    final long blockSize = Math.max(4L, bs); //ensure space for two items plus next/length values // XXX SAI, 4 should now be 5?
     for (int i = 0; i < mRadix; i++) {
       final int j = i << TOTAL_BITS;
       final long ib = i * blockSize;
@@ -162,7 +162,8 @@ public class IndexQueue extends IntegralAbstract implements Add {
     final long curr = mQueueInfo[i + CURR];
     final long end = mQueueInfo[i + END];
     if (curr < end - 1) {
-      mMemory.setSigned(curr, value);
+      assert value < 1L << 32 : "radix=" + radix + " value=" + value;
+      mMemory.set(curr, value);
       mQueueInfo[i + CURR] = curr + 1;
     } else {
       //System.err.println("Expanding memory block for radix " + radix);
@@ -174,10 +175,10 @@ public class IndexQueue extends IntegralAbstract implements Add {
       mQueueInfo[i + END] = fr;
       mQueueInfo[i + LENGTH] = MIN_BLOCK_SIZE;
       //System.err.println("end=" + end + " free=" + free);
+      assert fr <= Integer.MAX_VALUE : "Require more than 31 bits for fr " + fr;
       mMemory.setSigned(end - 1, fr);
       mMemory.setSigned(end, length);
-      //only one more level
-      //TODO make this clearer
+      // Now that we have made more space, we can be sure that on the following recursion the value will be stored.
       add(radix, value);
     }
   }
