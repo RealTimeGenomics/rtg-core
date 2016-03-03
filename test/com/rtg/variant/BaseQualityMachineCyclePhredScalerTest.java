@@ -56,13 +56,13 @@ public class BaseQualityMachineCyclePhredScalerTest extends TestCase {
 
       thisQuery[0] = c.initQuery();
       final BaseQualityMachineCyclePhredScaler bqps = new BaseQualityMachineCyclePhredScaler(c, thisQuery[0]);
-      assertEquals(14, bqps.getPhred((byte) 0, 0, Arm.LEFT));
-      assertEquals(15, bqps.getPhred((byte) 1, 0, Arm.LEFT));
-      assertEquals(15, bqps.getPhred((byte) 2, 0, Arm.LEFT));
-      assertEquals(15, bqps.getPhred((byte) 0, 1, Arm.LEFT));
-      assertEquals(16, bqps.getPhred((byte) 1, 1, Arm.LEFT));
-      assertEquals(15, bqps.getPhred((byte) 2, 1, Arm.LEFT));
-      assertEquals(15, bqps.getPhred((byte) 200, 1, Arm.LEFT));
+      assertEquals(14, bqps.getScaledPhred((byte) 0, 0, Arm.LEFT));
+      assertEquals(15, bqps.getScaledPhred((byte) 1, 0, Arm.LEFT));
+      assertEquals(15, bqps.getScaledPhred((byte) 2, 0, Arm.LEFT));
+      assertEquals(15, bqps.getScaledPhred((byte) 0, 1, Arm.LEFT));
+      assertEquals(16, bqps.getScaledPhred((byte) 1, 1, Arm.LEFT));
+      assertEquals(15, bqps.getScaledPhred((byte) 2, 1, Arm.LEFT));
+      assertEquals(15, bqps.getScaledPhred((byte) 200, 1, Arm.LEFT));
     } finally {
       FileHelper.deleteAll(dir);
     }

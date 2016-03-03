@@ -16,7 +16,7 @@ import com.rtg.ngs.Arm;
 /**
  * Interface for phred score scaler objects.
  */
-interface PhredScaler {
+public interface PhredScaler {
 
   /**
    * Get a phred score from a binary quality optionally
@@ -26,6 +26,6 @@ interface PhredScaler {
    * @param arm For paired end reads, which arm this is. Use {@code Arm.LEFT} if single end.
    * @return the possibly corrected phred score.
    */
-  int getPhred(byte qual, int readPosition, Arm arm);
+  int getScaledPhred(byte qual, int readPosition, Arm arm);
 }
 

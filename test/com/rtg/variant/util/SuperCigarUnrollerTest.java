@@ -165,7 +165,7 @@ public class SuperCigarUnrollerTest extends TestCase {
     samrec.setReadString("AGCCCACACG       TAAATAAGACATCACGATG ATCA".replaceAll(" ", ""));
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "10=7N19=1S2B1=4S");
     samrec.setBaseQualityString("8:::::79:775986<=<<96576767679808");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "88");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "88");
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "AATCA");
 //    samrec.setFlags(115);
     validator.setTemplate(DnaUtils.encodeString("AGCCCACACGTTCCCCTTAAATAAGACATCACGATG"));
@@ -183,7 +183,7 @@ public class SuperCigarUnrollerTest extends TestCase {
     samrec.setReadString("ACTA GTAGCACTACAGAATAAAT       GCACACCCGA".replaceAll(" ", ""));
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "4S1=2B1S19=7N10=");
     samrec.setBaseQualityString("8:::::79:775986<=<<96576767679808");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "88");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "88");
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "ACTAA");
 //    samrec.setFlags(115);
     validator.setTemplate(DnaUtils.encodeString("GTAGCACTACAGAATAAATTCCCCTTGCACACCCGA"));
@@ -201,7 +201,7 @@ public class SuperCigarUnrollerTest extends TestCase {
     samrec.setReadString("NNNNCACACG       TAAATAAGACATCACGAT GA TCA".replaceAll(" ", ""));
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "4S6=7N20=2B5=");
     samrec.setBaseQualityString("8:::::79:775986<=<<96576767679808");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "88");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "88");
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "NNNN");
 //    samrec.setFlags(115);
     validator.setTemplate(DnaUtils.encodeString("TTTTCACACGTTCCCCTTAAATAAGACATCACGATGATCA"));

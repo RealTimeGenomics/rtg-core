@@ -18,6 +18,7 @@ import com.rtg.sam.SamUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.util.VariantUtils;
 
 /**
@@ -47,7 +48,7 @@ public class SamToMatchCigar extends IntegralAbstract implements SamToMatch {
 
   @Override
   public boolean process(final byte[] templateBytes, final VariantAlignmentRecord rec) {
-    final AbstractMachineErrorParams me = mChooser.machineErrors(rec.getReadGroup(), rec.isReadPaired());
+    final MachineType machineType = mChooser.machineType(rec.getReadGroup(), rec.isReadPaired());
     final int readScore = VariantUtils.readScoreFromAlignmentRecord(rec, mParams);
     if (readScore < 0) {
       // Invalid read score
@@ -55,7 +56,7 @@ public class SamToMatchCigar extends IntegralAbstract implements SamToMatch {
     }
     try {
       // System.err.println("read=" + read + " cigar=" + cigarString);
-      mParser.toMatcher(me, rec, mQdefault, templateBytes);
+      mParser.toMatcher(rec, machineType, mQdefault, templateBytes);
       return true;
     } catch (final BadSuperCigarException e) {
       // Invalid CIGAR

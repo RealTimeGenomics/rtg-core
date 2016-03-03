@@ -92,7 +92,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setReadString("CTTCAGCGATGGAGAAACTCGGGTGTCTACGTA");
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=2B20=6N10=");
     samrec.setAttribute(SamUtils.CG_READ_DELTA, null);
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "%6");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "%6");
     samrec.setAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE, 0);
     samrec.setBaseQualityString("4316%8883-56+141663,2.3----45/.,2");
     samrec.setFlags(179);
@@ -206,7 +206,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setReadString("tttgtaggtcggataaggcgttcatccgacacg");
     samrec.setBaseQualityString("4316%8883-56+141663,2.3----45/.,2");
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=2B20=5N10=");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "%6");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "%6");
     samrec.setReadNegativeStrandFlag(false);
     samrec.setFlags(67);
     validator.setData(samrec, DnaUtils.encodeString("tttgtgtaggtcggataaggcgttc     atccgacacg".replaceAll(" ", "")), FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3----45/.,2"));
@@ -273,7 +273,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setReadString("CTTCAGCGATGGAGAAACTCGGGTGTCTACGTA");
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=2B20=6N10=");
     samrec.setAttribute(SamUtils.CG_READ_DELTA, null);
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "%6");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "%6");
     samrec.setBaseQualityString("4316%8883-56+141663,2.3----45/.,2");
     samrec.setFlags(179);
     validator.setData(samrec, DnaUtils.encodeString("TACGTAGACA     CCCGAGTGTCTCCATCGCTGTGAAG".replaceAll(" ", "")), FastaUtils.asciiToRawQuality("2,./54----3.2,366141+65-38886%%6134"));
@@ -286,7 +286,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setCigarString("10M5N25M");
     samrec.setReadString("GAGGCCGAGGCAGGCGGATCGTCAGGAGTTAAAAA");
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "10=5N25=");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, null);
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, null);
     samrec.setBaseQualityString("4316%668883-56+141663,2.3----45/.,2");
     samrec.setFlags(73);
     validator.setData(samrec, DnaUtils.encodeString("GAGGCCGAGG     CAGGCGGATCGTCAGGAGTTAAAAA".replaceAll(" ", "")), FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3----45/.,2"));
@@ -300,7 +300,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setReadString("tttgtaggtcggataaggcgttcatccgacacg");
     samrec.setBaseQualityString("4316%8883-56+141663,2.3----45/.,2");
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=2B20=5N10=");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "6");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "6");
     samrec.setReadNegativeStrandFlag(false);
     samrec.setFlags(67);
     try {
@@ -315,7 +315,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setReadString("tttgtaggtcggataaggcgttcatccgacacg");
     samrec.setBaseQualityString("4316%%68883-56+141663,2.3----45/.,2");
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=2B20=5N10=");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, null);
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, null);
     samrec.setReadNegativeStrandFlag(false);
     samrec.setFlags(67);
     validator.setTemplate(DnaUtils.encodeString("tttgtaggtcggataaggcgttcgggggatccgacacg"));
@@ -323,7 +323,7 @@ public class SuperCigarValidatorTest extends TestCase {
     validator.parse();
 
     assertFalse(validator.getInvalidReason(), validator.isValid());
-    assertTrue(validator.getInvalidReason(), validator.getInvalidReason().contains("Overlap described but no " + SamUtils.CG_OVERLAP_QUALITY + " field present"));
+    assertTrue(validator.getInvalidReason(), validator.getInvalidReason().contains("Overlap described but no " + SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY + " field present"));
   }
 
   public void testQualities() throws Exception {
@@ -344,7 +344,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setReadString("tgcccccctgagaatgaatgttggacgaaata");
     samrec.setBaseQualityString(")*N!S!7@*`[4DRA8VKE-JF:KP0<D:/!K");
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=3B20=6N10=");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "V55");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "V55");
     samrec.setFlags(67);
 
     validator.setData(samrec, DnaUtils.encodeString("tgccccccccctgagaatgaatgtt     ggacgaaata".replaceAll(" ", "")), FastaUtils.asciiToRawQuality(")*N!SV55!7@*`[4DRA8VKE-JF:KP0<D:/!K"));             //   tttgt  aggtcggataaggcgttcgg     atccgacacg
@@ -363,7 +363,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setReadString("AGCTTCTATAGCGGAATTGAGCGGAACCGCACG");
     samrec.setBaseQualityString("YTD$B1L!`_<!L'V8W=72T#YU]K@,#KUA>");
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "10=6N4=1X15=2B5=");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "%*");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "%*");
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "A");
     samrec.setFlags(131);
     validator.setData(samrec, DnaUtils.encodeString("AGCTTCTATA     GCGGAATTGAGCGGAACCGCGCACG".replaceAll(" ", "")), FastaUtils.asciiToRawQuality("YTD$B1L!`_<!L'V8W=72T#YU]K@,%*#KUA>"));       //    YTD$B1L!`_      <!L'V8W=72T#YU]K@,%*#KUA>
@@ -381,7 +381,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setReadString("TCTATAGGGGTATTGAGCGAGAACCGCACGTGC");
     samrec.setBaseQualityString("^#R!E!`,),UQANL6J/J!G/P'^;<RIX4O$");
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "10=6N9=1I10=2B5=");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "<O");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "<O");
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "A");
     samrec.setFlags(115);
     validator.setData(samrec, DnaUtils.encodeString("GCACGCGTGCGGTTCTCGCTCAATA     CCCCTATAGA".replaceAll(" ", "")), FastaUtils.asciiToRawQuality("$O4XIO<R<;^'P/G!J/J6LNAQU,),`!E!R#^"));       //    YTD$B1L!`_      <!L'V8W=72T#YU]K@,%*#KUA>
@@ -401,7 +401,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setReadString("AGAATGAATCTTATGTACGGACGGTAACCATAA");
     samrec.setBaseQualityString("^#R!E,),UQANL6J/J!G/P'^;<R<OIX4O$");
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=2B6=1X13=6N10=");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "!`");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "!`");
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "C");
     samrec.setFlags(179);
     validator.setData(samrec, DnaUtils.encodeString("TTATGGTTAC     CGTCCGTACATAAGATTCATATTCT".replaceAll(" ", "")), FastaUtils.asciiToRawQuality("$O4XIO<R<;^'P/G!J/J6LNAQU,),`!E!R#^"));       //    YTD$B1L!`_      <!L'V8W=72T#YU]K@,%*#KUA>
@@ -421,7 +421,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setReadString("CAGTTGGAGACGTTGTGNATGTGNACGCCTCTGC");
     samrec.setBaseQualityString("213.3/22..103350/!2,2+/!14/-+-4//5");
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=1B12=4I1=1I2=4N10=");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "1");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "1");
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "GNATT");
     samrec.setAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE, 7);
     samrec.setFlags(67);
@@ -473,7 +473,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setReadString("AGCCCACACGTAAATAAGACATCACGATGATCA");
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "3S2=2B20=5N9=1X");
     samrec.setBaseQualityString("4316%8883-56+141663,2.3----45/.,2");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "%6");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "%6");
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "AGCA");
     samrec.setAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE, 4);
     samrec.setFlags(67);
@@ -490,7 +490,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setReadString("AAAACCCTAACCCTAACCCTAACCCCAACCCTA");
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "4S1=2B1S19=7N2=1X7=");
     samrec.setBaseQualityString("998140-,7::;26;;.39'(2347-88989+7");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "42");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "42");
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "AAAAAC");
     samrec.setAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE, 6);
     samrec.setFlags(67);
@@ -509,7 +509,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setReadString("AGCCCACACGTAAATAAGACATCACGATGATCA");
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "10=7N19=1S2B1=4S");
     samrec.setBaseQualityString("8:::::79:775986<=<<96576767679808");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "88");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "88");
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "AATCA");
     samrec.setAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE, 5);
     samrec.setFlags(139);
@@ -606,7 +606,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "2=2I1=4B1X1=1I17=6N10=");
     samrec.setBaseQualityString("20001.1-+,8/0/41373,1751662362");
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "AAGG");
-    samrec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, ").,1/");
+    samrec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, ").,1/");
     samrec.setAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE, 6);
     samrec.setFlags(179);
 

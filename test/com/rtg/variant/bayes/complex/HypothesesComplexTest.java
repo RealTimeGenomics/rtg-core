@@ -359,7 +359,7 @@ public class HypothesesComplexTest extends TestCase {
     sam.setCigarString("21=2I4N10=");
     sam.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=2B18=2I4N10=");
     sam.setAttribute(SamUtils.CG_READ_DELTA, "AA");
-    sam.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "55");
+    sam.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "55");
     sam.setFlags(73);
 
     final AlignmentMatch ma = new AlignmentMatch(new VariantAlignmentRecord(sam), "A", "5", 0, 0, 1, 0) {

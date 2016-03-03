@@ -249,11 +249,6 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
   }
 
   @Override
-  public boolean cgTrimOuterBases() {
-    return mMachineType == MachineType.COMPLETE_GENOMICS && MachineErrorParamsBuilder.CG_TRIM;
-  }
-
-  @Override
   public double errorDelBaseRate() {
     return mDelBaseRate;
   }
@@ -320,8 +315,8 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
   }
 
   @Override
-  public int getPhred(byte quality, int readPos, Arm arm) {
-    return mScaler.getPhred(quality, readPos, arm);
+  public int getScaledPhred(byte quality, int readPos, Arm arm) {
+    return mScaler.getScaledPhred(quality, readPos, arm);
   }
 
   @Override

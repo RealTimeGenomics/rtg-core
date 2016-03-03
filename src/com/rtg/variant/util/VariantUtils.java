@@ -312,7 +312,6 @@ public final class VariantUtils {
     sb.append("errorInsDistribution: ").append(Arrays.toString(p.errorInsDistribution())).append(StringUtils.LS);
     sb.append("machineType: ").append(p.machineType()).append(StringUtils.LS);
     sb.append("isCG: ").append(p.isCG()).append(StringUtils.LS);
-    sb.append("cgTrimOuterBases: ").append(p.cgTrimOuterBases()).append(StringUtils.LS);
     sb.append("overlapDistribution: ").append(Arrays.toString(p.overlapDistribution())).append(StringUtils.LS);
     sb.append("gapDistribution: ").append(Arrays.toString(p.gapDistribution())).append(StringUtils.LS);
     sb.append("smallGapDistribution: ").append(Arrays.toString(p.smallGapDistribution())).append(StringUtils.LS);
@@ -321,7 +320,7 @@ public final class VariantUtils {
     for (Arm arm : Arm.values()) {
       sb.append(arm).append("=");
       for (byte q = 0; q < 64; q++) {
-        sb.append(p.getPhred(q, 0, arm)).append(",");
+        sb.append(p.getScaledPhred(q, 0, arm)).append(",");
       }
       sb.append(StringUtils.LS);
     }
@@ -375,7 +374,7 @@ public final class VariantUtils {
         if (q != 0) {
           sb.append(", ");
         }
-        sb.append(p.getPhred(q, 0, arm));
+        sb.append(p.getScaledPhred(q, 0, arm));
       }
       sb.append(StringUtils.LS).append("    ");
     }
@@ -383,7 +382,6 @@ public final class VariantUtils {
     sb.append(StringUtils.LS);
 
     if (p.isCG()) {
-      sb.append("cg_trim_outer_bases = ").append(p.cgTrimOuterBases()).append(StringUtils.LS);
       sb.append("overlap = ").append(toString(p.overlapDistribution())).append(StringUtils.LS);
       sb.append("gap = ").append(toString(p.gapDistribution())).append(StringUtils.LS);
       sb.append("smallgap = ").append(toString(p.smallGapDistribution())).append(StringUtils.LS);

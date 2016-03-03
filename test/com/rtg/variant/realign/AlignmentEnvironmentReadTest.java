@@ -12,13 +12,12 @@
 
 package com.rtg.variant.realign;
 
-import com.rtg.variant.MachineErrorParams;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -32,7 +31,7 @@ public class AlignmentEnvironmentReadTest extends TestCase {
     sam.setBaseQualityString("!!0AB");
     sam.setAlignmentStart(42);
     final VariantParams params = VariantParams.builder().create();
-    final AbstractAlignmentEnvironment se = new AlignmentEnvironmentRead(new VariantAlignmentRecord(sam), params, MachineErrorParams.builder().create());
+    final AbstractAlignmentEnvironment se = new AlignmentEnvironmentRead(new VariantAlignmentRecord(sam), params, MachineType.ILLUMINA_PE);
     se.integrity();
     assertEquals("AlignmentEnvironment read=NACGT quality=[1.0000, 1.0000, 0.0316, 0.0006, 0.0005] start=41", se.toString());
     assertEquals(0, se.base(0));
@@ -60,7 +59,7 @@ public class AlignmentEnvironmentReadTest extends TestCase {
     sam.setCigarString("5=2I5=");
     sam.setAlignmentStart(1);
     final VariantParams params = VariantParams.builder().create();
-    final AbstractAlignmentEnvironment se = new AlignmentEnvironmentRead(new VariantAlignmentRecord(sam), params, MachineErrorParams.builder().create());
+    final AbstractAlignmentEnvironment se = new AlignmentEnvironmentRead(new VariantAlignmentRecord(sam), params, MachineType.ILLUMINA_PE);
     se.integrity();
     assertEquals("AlignmentEnvironment read=CCCCCTAGGGGG quality=[0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100, 0.0100] start=0", se.toString());
     assertEquals(2, se.base(0));

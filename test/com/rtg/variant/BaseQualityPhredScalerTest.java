@@ -56,10 +56,10 @@ public class BaseQualityPhredScalerTest extends TestCase {
 
       thisQuery[0] = c.initQuery();
       final BaseQualityPhredScaler bqps = new BaseQualityPhredScaler(c, thisQuery[0]);
-      assertEquals(14, bqps.getPhred((byte) 0, 0, Arm.LEFT));
-      assertEquals(16, bqps.getPhred((byte) 1, 0, Arm.LEFT));
-      assertEquals(15, bqps.getPhred((byte) 2, 0, Arm.LEFT));
-      assertEquals(15, bqps.getPhred((byte) 200, 0, Arm.LEFT));
+      assertEquals(14, bqps.getScaledPhred((byte) 0, 0, Arm.LEFT));
+      assertEquals(16, bqps.getScaledPhred((byte) 1, 0, Arm.LEFT));
+      assertEquals(15, bqps.getScaledPhred((byte) 2, 0, Arm.LEFT));
+      assertEquals(15, bqps.getScaledPhred((byte) 200, 0, Arm.LEFT));
     } finally {
       FileHelper.deleteAll(dir);
     }

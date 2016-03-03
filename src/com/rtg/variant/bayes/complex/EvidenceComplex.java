@@ -18,7 +18,6 @@ import com.rtg.sam.SamUtils;
 import com.rtg.util.MaxShiftUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.machine.MachineType;
-import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.ThreadingEnvironment;
 import com.rtg.variant.VariantAlignmentRecord;
@@ -36,6 +35,7 @@ import com.rtg.variant.realign.AllPaths;
 import com.rtg.variant.realign.Environment;
 import com.rtg.variant.realign.EnvironmentCombined;
 import com.rtg.variant.realign.InvertCgTemplateEnvironment;
+import com.rtg.variant.realign.RealignParams;
 import com.rtg.variant.realign.ScoreFastUnderflow;
 import com.rtg.variant.realign.ScoreFastUnderflowCG;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
@@ -58,11 +58,11 @@ public class EvidenceComplex extends Evidence {
     SCORE_INTERFACE_MEMO = new ScoreInterfaceMemo();
   }
 
-  private static AllPaths getAllPaths(final AbstractMachineErrorParams me) {
-    if (me.isCG() && CG_ALLPATHS) {
-      return new ScoreFastUnderflowCG(me.realignParams());
+  private static AllPaths getAllPaths(final RealignParams params) {
+    if (params.machineType() != null && params.machineType().isCg() && CG_ALLPATHS) {
+      return new ScoreFastUnderflowCG(params);
     }
-    return new ScoreFastUnderflow(me.realignParams());
+    return new ScoreFastUnderflow(params);
   }
 
   private final int mReference;
@@ -120,8 +120,8 @@ public class EvidenceComplex extends Evidence {
     final int size = description().size();
     mProb = new double[size];
     final VariantAlignmentRecord alignmentRecord = match.alignmentRecord();
-    final AbstractMachineErrorParams me = chooser.machineErrors(alignmentRecord.getReadGroup(), alignmentRecord.isReadPaired());
-    final boolean cg = me.isCG() && CG_ALLPATHS;
+    final RealignParams me = chooser.realignParams(alignmentRecord.getReadGroup(), alignmentRecord.isReadPaired());
+    final boolean cg = me.machineType() != null && me.machineType().isCg();
     final AllPaths sm;
     if (params.threadingEnvironment() == ThreadingEnvironment.PARALLEL) {
       sm = getAllPaths(me);
@@ -131,9 +131,9 @@ public class EvidenceComplex extends Evidence {
 
     final AlignmentEnvironment se;
     if (cg) {
-      se = new AlignmentEnvironmentCG(alignmentRecord, params, me, reference.templateBytes());
+      se = new AlignmentEnvironmentCG(alignmentRecord, params, reference.templateBytes(), me.machineType());
     } else {
-      se = new AlignmentEnvironmentRead(alignmentRecord, params, me);
+      se = new AlignmentEnvironmentRead(alignmentRecord, params, me.machineType());
     }
     final int maxShift0;
     final int newStart;

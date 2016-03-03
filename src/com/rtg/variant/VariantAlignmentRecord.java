@@ -14,12 +14,11 @@ package com.rtg.variant;
 import java.util.Arrays;
 
 import com.rtg.ngs.Arm;
+import com.rtg.reader.CgUtils;
 import com.rtg.reader.FastaUtils;
-import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.MateInfo;
 import com.rtg.sam.ReaderRecord;
 import com.rtg.sam.SamUtils;
-import com.rtg.sam.SuperCigarParser;
 import com.rtg.util.CompareHelper;
 import com.rtg.util.MathUtils;
 import com.rtg.util.intervals.SequenceIdLocusSimple;
@@ -133,46 +132,47 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
 
     final String overlapQuality = mSuperCigar == null
       ? SamUtils.allowEmpty(record.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY))
-      : SamUtils.allowEmpty(record.getStringAttribute(SamUtils.CG_OVERLAP_QUALITY));
+      : SamUtils.allowEmpty(record.getStringAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY));
     final String cgOverlap = record.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES);
     mOverlapBases = cgOverlap == null ? new byte[0] : cgOverlap.getBytes();
     mOverlapInstructions = record.getStringAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS);
     mCgReadDelta = record.getStringAttribute(SamUtils.CG_READ_DELTA);
 
     // Perform recalibration at this point
-    mRecalibratedQuality = Arrays.copyOf(baseQualities, baseQualities.length);
-    final AbstractMachineErrorParams me = chooser == null ? null : chooser.machineErrors(record.getReadGroup(), record.getReadPairedFlag());
-    final String superCigar = SamUtils.allowEmpty(record.getStringAttribute(SamUtils.CG_SUPER_CIGAR));
+    final PhredScaler me = chooser == null ? null : chooser.machineErrors(record.getReadGroup(), record.getReadPairedFlag());
+
+    final int readLength = baseQualities.length + overlapQuality.length();
+
     final int backStepPosition;
-    if (!overlapQuality.isEmpty() && !superCigar.isEmpty()) {
-      final SuperCigarParser parser = new SuperCigarParser();
-      parser.setCigar(superCigar, mCgReadDelta);
-      try {
-        parser.parse();
-        backStepPosition = parser.getReadOverlapStart();
-      } catch (BadSuperCigarException e) {
-        throw new IllegalArgumentException("Invalid super cigar");
+    if (!overlapQuality.isEmpty()) {
+      // Work out CG backstep position
+      boolean v1 = readLength == CgUtils.CG_RAW_READ_LENGTH;
+      if (v1) {
+        final boolean first = record.getReadPairedFlag() && record.getFirstOfPairFlag();
+        backStepPosition = record.getReadNegativeStrandFlag() ^ !first ? baseQualities.length - CgUtils.CG_OVERLAP_POSITION : CgUtils.CG_OVERLAP_POSITION;
+      } else {
+        backStepPosition = record.getReadNegativeStrandFlag() ? baseQualities.length - CgUtils.CG2_OVERLAP_POSITION : CgUtils.CG2_OVERLAP_POSITION;
       }
     } else {
       backStepPosition = -1;
     }
 
-    final int readLength = mRecalibratedQuality.length + overlapQuality.length();
+    mRecalibratedQuality = new byte[baseQualities.length];
     final int machineStep;
     int machineCycle;
-      if (record.getReadNegativeStrandFlag()) {
-       machineCycle = readLength - 1;
-        machineStep = -1;
-      } else {
-        machineCycle = 0;
-        machineStep = 1;
-      }
+    if (record.getReadNegativeStrandFlag() ) {
+      machineCycle = readLength - 1;
+      machineStep = -1;
+    } else {
+      machineCycle = 0;
+      machineStep = 1;
+    }
     int qualityPosition = 0;
 
     final Arm arm = !record.getReadPairedFlag() || record.getFirstOfPairFlag() ? Arm.LEFT : Arm.RIGHT;
     while (qualityPosition < backStepPosition && qualityPosition < mRecalibratedQuality.length) {
-      final byte scoreChar = mRecalibratedQuality[qualityPosition];
-      final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getPhred(scoreChar, machineCycle, arm);
+      final byte scoreChar = baseQualities[qualityPosition];
+      final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getScaledPhred(scoreChar, machineCycle, arm);
       mRecalibratedQuality[qualityPosition] = (byte) recalibrated;
       machineCycle += machineStep;
       qualityPosition++;
@@ -180,16 +180,16 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
 
     mOverlapQuality = new byte[overlapQuality.length()];
     for (int i = 0; i < overlapQuality.length() && qualityPosition < mRecalibratedQuality.length; i++) {
-      final char scoreChar = overlapQuality.charAt(i);
-      // Be careful to invoke the me.getPhred that takes a char. It will correct for ascii encoding
-      final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getPhred(scoreChar, machineCycle, arm);
+      final byte scoreChar = (byte) (overlapQuality.charAt(i) - FastaUtils.PHRED_LOWER_LIMIT_CHAR );
+      // Be careful to invoke the me.getScaledPhred that takes a char. It will correct for ascii encoding
+      final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getScaledPhred(scoreChar, machineCycle, arm);
       mOverlapQuality[i] = (byte) recalibrated;
       machineCycle += machineStep;
     }
 
     while (qualityPosition < mRecalibratedQuality.length) {
-      final byte scoreChar = mRecalibratedQuality[qualityPosition];
-      final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getPhred(scoreChar, machineCycle, arm);
+      final byte scoreChar = baseQualities[qualityPosition];
+      final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getScaledPhred(scoreChar, machineCycle, arm);
       mRecalibratedQuality[qualityPosition] = (byte) recalibrated;
       machineCycle += machineStep;
       qualityPosition++;
@@ -217,7 +217,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
   }
 
   /**
-   * Get the binary phred quality values as a byte array.
+   * Get the binary phred quality values as a byte array (not Ascii).
    * @return quality
    */
   public byte[] getRecalibratedQuality() {
@@ -273,6 +273,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     return mSuperCigar;
   }
 
+  /** @return the quality of the overlapped bases as a byte[] (not ascii) */
   public byte[] getOverlapBases() {
     return mOverlapBases;
   }

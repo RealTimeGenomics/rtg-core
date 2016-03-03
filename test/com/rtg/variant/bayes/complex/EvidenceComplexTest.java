@@ -596,7 +596,7 @@ public class EvidenceComplexTest extends TestCase {
     sam.setCigarString("21=2I4N10=");
     sam.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=2B18=2I4N10=");
     sam.setAttribute(SamUtils.CG_READ_DELTA, "AA");
-    sam.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "55");
+    sam.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "55");
     sam.setFlags(73);
 
     final AlignmentMatch ma = new AlignmentMatch(new VariantAlignmentRecord(sam), "AA", "55", 0, 0, 2, 20);
@@ -627,7 +627,7 @@ public class EvidenceComplexTest extends TestCase {
     sam3.setCigarString("21=2I4N10=");
     sam3.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=2B18=2I4N10=");
     sam3.setAttribute(SamUtils.CG_READ_DELTA, "AA");
-    sam3.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "55");
+    sam3.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "55");
     sam3.setFlags(137);
 
     final AlignmentMatch ma3 = new AlignmentMatch(new VariantAlignmentRecord(sam3), "AA", "55", 0, 0, 2, 20);

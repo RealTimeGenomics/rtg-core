@@ -120,7 +120,7 @@ public final class SamResultsSansFilter extends AbstractSamResultsFilter {
       record.setBaseQualities(quals);
       if (gq) {
         final String cgQual = new String(mGQBuffer, 0, mGQLength);
-        record.setAttribute(SamUtils.CG_OVERLAP_QUALITY, cgQual);
+        record.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, cgQual);
       }
     }
     record.setReadString(readString);

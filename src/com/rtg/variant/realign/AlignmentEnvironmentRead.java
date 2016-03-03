@@ -12,7 +12,7 @@
 package com.rtg.variant.realign;
 
 import com.rtg.mode.DNA;
-import com.rtg.variant.AbstractMachineErrorParams;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.util.VariantUtils;
@@ -28,9 +28,9 @@ public final class AlignmentEnvironmentRead extends AbstractAlignmentEnvironment
    * @param params the variant params object
    * @param me machine errors.
    */
-  public AlignmentEnvironmentRead(VariantAlignmentRecord sam, VariantParams params, AbstractMachineErrorParams me) {
+  public AlignmentEnvironmentRead(VariantAlignmentRecord sam, VariantParams params, MachineType me) {
     super(sam.getStart());
-    assert !me.isCG();
+    assert me == null || !me.isCg();
     //SamUtils.checkCG(sam); // todo
     mRead = DNA.byteDNAtoByte(sam.getRead());
     final int len = mRead.length;

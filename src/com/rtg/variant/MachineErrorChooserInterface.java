@@ -11,6 +11,9 @@
  */
 package com.rtg.variant;
 
+import com.rtg.util.machine.MachineType;
+import com.rtg.variant.realign.RealignParams;
+
 import htsjdk.samtools.SAMReadGroupRecord;
 
 /**
@@ -18,10 +21,13 @@ import htsjdk.samtools.SAMReadGroupRecord;
 public interface MachineErrorChooserInterface {
 
   /**
-   * @param rg
-   * @param readPaired
+   * @param rg read group to select errors from
+   * @param readPaired is the read paired
    * @return appropriate machine errors for read
    */
-  AbstractMachineErrorParams machineErrors(SAMReadGroupRecord rg, boolean readPaired);
+  PhredScaler machineErrors(SAMReadGroupRecord rg, boolean readPaired);
 
+  RealignParams realignParams(SAMReadGroupRecord rg, boolean readPaired);
+
+  MachineType machineType(SAMReadGroupRecord rg, boolean readPaired);
 }

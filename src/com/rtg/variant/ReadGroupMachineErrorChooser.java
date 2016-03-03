@@ -22,6 +22,7 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.machine.MachineType;
+import com.rtg.variant.realign.RealignParams;
 import com.rtg.variant.util.VariantUtils;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -79,5 +80,15 @@ public class ReadGroupMachineErrorChooser implements MachineErrorChooserInterfac
       throw new NoTalkbackSlimException("Sam record referenced read group \"" + rg + "\" which was not found in the header.");
     }
     return me;
+  }
+
+  @Override
+  public RealignParams realignParams(SAMReadGroupRecord rg, boolean readPaired) {
+    return machineErrors(rg, readPaired).realignParams();
+  }
+
+  @Override
+  public MachineType machineType(SAMReadGroupRecord rg, boolean readPaired) {
+    return machineErrors(rg, readPaired).machineType();
   }
 }

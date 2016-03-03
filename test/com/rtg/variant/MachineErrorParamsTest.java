@@ -49,9 +49,9 @@ public class MachineErrorParamsTest extends TestCase {
     final MachineErrorParams params = MachineErrorParams.builder()
       .errors("illumina").create();
 
-    assertEquals(62, params.getPhred((char) ('!' + 62), 1, Arm.LEFT));
-    assertEquals(63, params.getPhred((char) ('!' + 63), 1, Arm.LEFT));
-    assertEquals(63, params.getPhred((char) ('!' + 64), 1, Arm.LEFT));
+    assertEquals(62, params.getScaledPhredFromAscii((char) ('!' + 62), 1, Arm.LEFT));
+    assertEquals(63, params.getScaledPhredFromAscii((char) ('!' + 63), 1, Arm.LEFT));
+    assertEquals(63, params.getScaledPhredFromAscii((char) ('!' + 64), 1, Arm.LEFT));
   }
 
   /** Check that CG error priors parse okay. */
@@ -71,7 +71,6 @@ public class MachineErrorParamsTest extends TestCase {
     assertEquals(10, qcurve[9]);
     assertEquals(10, qcurve[29]);
     assertEquals(10, qcurve[63]);
-    assertEquals(true, params.cgTrimOuterBases());
     assertEquals(true, params.isCG());
   }
 
@@ -127,7 +126,6 @@ public class MachineErrorParamsTest extends TestCase {
     assertEquals(0.20, delErrDist[2]);
     assertEquals(0.10, delErrDist[3]);
     assertNull(params.qualityCurve());
-    assertEquals(false, params.cgTrimOuterBases());
     final double[] overlapDist = params.overlapDistribution();
     assertNotNull(overlapDist);
     assertEquals(5, overlapDist.length);

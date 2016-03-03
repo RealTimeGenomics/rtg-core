@@ -34,10 +34,10 @@ public abstract class AbstractMachineErrorParams implements Params, PhredScaler 
    * @param arm which arm of paired end reads is this. Use {@code LEFT} if single end.
    * @return the possibly corrected phred score.
    */
-  public final int getPhred(final char qualChar, int readPos, Arm arm) {
+  public final int getScaledPhredFromAscii(final char qualChar, int readPos, Arm arm) {
     assert qualChar >= FastaUtils.PHRED_LOWER_LIMIT_CHAR;
     final byte rawQuality = (byte) (qualChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR);
-    return getPhred(rawQuality, readPos, arm);
+    return getScaledPhred(rawQuality, readPos, arm);
   }
 
   /**
@@ -48,15 +48,7 @@ public abstract class AbstractMachineErrorParams implements Params, PhredScaler 
    * @param arm which arm of paired end reads is this. Use {@code LEFT} if single end.
    * @return the possibly corrected phred score.
    */
-  public abstract int getPhred(final byte quality, int readPos, Arm arm);
-
-  /**
-   * Get the flag to indicate if CG outer base trimming is to be used.
-   * @return the flag - true if trimming is to be used.
-   */
-  public boolean cgTrimOuterBases() {
-    return machineType() == MachineType.COMPLETE_GENOMICS && MachineErrorParamsBuilder.CG_TRIM;
-  }
+  public abstract int getScaledPhred(final byte quality, int readPos, Arm arm);
 
   /**
    * Get the CG v1 small gap distribution for 0,1,2,3.

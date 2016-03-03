@@ -9,21 +9,13 @@
  * code you accept the terms of that license agreement and any amendments to those terms that may
  * be made from time to time by Real Time Genomics Limited.
  */
-
-package com.rtg.variant.bayes.complex;
-
-import com.rtg.variant.realign.AllPaths;
-import com.rtg.variant.realign.RealignParams;
+package com.rtg.ngs;
 
 /**
  */
-public interface ScoreInterfaceMemoInterface {
-
-  /**
-   * Get a singleton <code>ScoreInterface</code> determined by the read group in <code>params</code> and the Complete Genomics flag.
-   * @param me machine errors
-   * @return the singleton.
-   */
-  AllPaths getScoreInterface(final RealignParams me);
-
+public enum Arm {
+  /** Left arm of read, or the read for single end */
+  LEFT,
+  /** Right arm of read */
+  RIGHT
 }

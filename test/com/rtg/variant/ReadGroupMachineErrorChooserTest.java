@@ -39,7 +39,7 @@ public class ReadGroupMachineErrorChooserTest extends TestCase {
 
   public void test() throws Exception {
     final SAMFileHeader header = SamUtils.makeSamReader(new ByteArrayInputStream(SAM.getBytes())).getFileHeader();
-    final MachineErrorChooserInterface m = new ReadGroupMachineErrorChooser(header);
+    final ReadGroupMachineErrorChooser m = new ReadGroupMachineErrorChooser(header);
     final SAMRecord s = new SAMRecord(header);
     s.setAttribute("RG", "sounique");
     VariantAlignmentRecord var = new VariantAlignmentRecord(s);

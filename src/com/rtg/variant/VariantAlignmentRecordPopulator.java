@@ -30,6 +30,7 @@ public class VariantAlignmentRecordPopulator implements Populator<VariantAlignme
   /**
    * Populator.
    * @param genomeNames list of genome names
+   * @param chooser Machine error chooser. Will be used to recalibrate qualities at record creation time
    */
   public VariantAlignmentRecordPopulator(MachineErrorChooserInterface chooser, final String... genomeNames) {
     mChooser = chooser;

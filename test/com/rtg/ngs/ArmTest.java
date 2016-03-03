@@ -9,21 +9,17 @@
  * code you accept the terms of that license agreement and any amendments to those terms that may
  * be made from time to time by Real Time Genomics Limited.
  */
+package com.rtg.ngs;
 
-package com.rtg.variant.bayes.complex;
+import com.rtg.util.TestUtils;
 
-import com.rtg.variant.realign.AllPaths;
-import com.rtg.variant.realign.RealignParams;
+import junit.framework.TestCase;
 
 /**
  */
-public interface ScoreInterfaceMemoInterface {
+public class ArmTest extends TestCase {
 
-  /**
-   * Get a singleton <code>ScoreInterface</code> determined by the read group in <code>params</code> and the Complete Genomics flag.
-   * @param me machine errors
-   * @return the singleton.
-   */
-  AllPaths getScoreInterface(final RealignParams me);
-
+  public void test() {
+    TestUtils.testEnum(Arm.class, "[LEFT, RIGHT]");
+  }
 }

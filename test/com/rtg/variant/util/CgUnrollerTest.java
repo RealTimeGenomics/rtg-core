@@ -61,14 +61,14 @@ public class CgUnrollerTest extends TestCase {
     rec.setAlignmentStart(2);
     rec.setCigarString("10=6N19=");
     rec.setAttribute(SamUtils.CG_SUPER_CIGAR, "10=6N16=2I2=4B5=");
-    rec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, ";54577");
+    rec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, ";54577");
     rec.setAttribute(SamUtils.CG_READ_DELTA, "TC");
     final CgUnroller.OrientedRead read = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     final String readx = new StringBuilder("GTTCCAGCACTTGAAAAAACTGTCTTTCTTTTTTC").reverse().toString();
     final String qual = new StringBuilder("9899441797:<<;;=<<;:::::;545778:::9").reverse().toString();
     final byte[] qual2 = FastaUtils.asciiToRawQuality(qual);
 
-    assertTrue("expected : " + qual + "\nactual : " + read.getQuality(),
+    assertTrue("expected : " + Arrays.toString(qual2) + "\nactual : " + Arrays.toString(read.getQuality()),
       Arrays.equals(qual2, read.getQuality()));
     assertTrue("expected : " + Arrays.toString(readx.getBytes()) + "\nactual : " + Arrays.toString(read.getRead()), Arrays.equals(readx.getBytes(), read.getRead()));
   }

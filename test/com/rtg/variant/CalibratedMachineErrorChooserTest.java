@@ -85,8 +85,8 @@ public class CalibratedMachineErrorChooserTest extends TestCase {
       }
       fake.setAttribute(ReadGroupUtils.RG_ATTRIBUTE, "readgroup1");  // known
       var = new VariantAlignmentRecord(fake);
-      assertEquals(expectedQual0, c.machineErrors(var.getReadGroup(), var.isReadPaired()).getPhred((char) ('!' + 2), 0, Arm.LEFT));
-      assertEquals(expectedQual1, c.machineErrors(var.getReadGroup(), var.isReadPaired()).getPhred((char) ('!' + 2), 1, Arm.LEFT));
+      assertEquals(expectedQual0, c.machineErrors(var.getReadGroup(), var.isReadPaired()).getScaledPhredFromAscii((char) ('!' + 2), 0, Arm.LEFT));
+      assertEquals(expectedQual1, c.machineErrors(var.getReadGroup(), var.isReadPaired()).getScaledPhredFromAscii((char) ('!' + 2), 1, Arm.LEFT));
       fake.setAttribute(ReadGroupUtils.RG_ATTRIBUTE, "readgroup2");  // unknown
       try {
         var = new VariantAlignmentRecord(fake);

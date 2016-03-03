@@ -13,10 +13,10 @@ package com.rtg.variant.bayes.complex;
 
 import java.io.IOException;
 
-import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.MachineErrorParams;
 import com.rtg.variant.MachineErrorParamsBuilder;
 import com.rtg.variant.realign.AllPaths;
+import com.rtg.variant.realign.RealignParams;
 import com.rtg.variant.realign.ScoreFastUnderflow;
 import com.rtg.variant.realign.ScoreFastUnderflowCG;
 
@@ -29,18 +29,18 @@ public class ScoreInterfaceMemoTest extends TestCase {
   public void test() throws IOException {
     final ScoreInterfaceMemoInterface memo = new ScoreInterfaceMemo();
     final MachineErrorParamsBuilder builder = MachineErrorParams.builder();
-    final AbstractMachineErrorParams params = builder.create();
-    final AllPaths s1 = memo.getScoreInterface(params);
+    final RealignParams me = builder.create().realignParams();
+    final AllPaths s1 = memo.getScoreInterface(me);
     assertTrue(s1 instanceof ScoreFastUnderflow);
-    assertTrue(s1 == memo.getScoreInterface(params));
+    assertTrue(s1 == memo.getScoreInterface(me));
 
-    final AllPaths s2 = memo.getScoreInterface(builder.create());
+    final AllPaths s2 = memo.getScoreInterface(builder.create().realignParams());
     assertTrue(s2 instanceof ScoreFastUnderflow);
     assertFalse(s1 == s2);
 
     final MachineErrorParams complete = builder.errors("complete").create();
-    final AllPaths s3 = memo.getScoreInterface(complete);
+    final AllPaths s3 = memo.getScoreInterface(complete.realignParams());
     assertTrue(s3 instanceof ScoreFastUnderflowCG);
-    assertTrue(s3 == memo.getScoreInterface(complete));
+    assertTrue(s3 == memo.getScoreInterface(complete.realignParams()));
   }
 }

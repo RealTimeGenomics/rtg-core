@@ -95,8 +95,6 @@ public final class MachineErrorParams extends AbstractMachineErrorParams impleme
 
   private final MachineType mMachine;
 
-  private final boolean mCGTrimOuterBases;
-
   private final RealignParams mRealignParams;
 
   /**
@@ -120,7 +118,6 @@ public final class MachineErrorParams extends AbstractMachineErrorParams impleme
     mOverlapDistribution2 = builder.mOverlapDistribution2;
     mMachine = builder.mMachine;
     mCG = mMachine == MachineType.COMPLETE_GENOMICS || mMachine == MachineType.COMPLETE_GENOMICS_2;
-    mCGTrimOuterBases = mMachine == MachineType.COMPLETE_GENOMICS && builder.mCGTrimOuterBases;
     mRealignParams = new RealignParamsImplementation(this);
   }
 
@@ -175,7 +172,7 @@ public final class MachineErrorParams extends AbstractMachineErrorParams impleme
   }
 
   @Override
-  protected //Only used for testing - see getPhred
+  protected //Only used for testing - see getScaledPhred
   int[] qualityCurve() {
     return mQualityCurve;
   }
@@ -211,12 +208,7 @@ public final class MachineErrorParams extends AbstractMachineErrorParams impleme
   }
 
   @Override
-  public boolean cgTrimOuterBases() {
-    return mCGTrimOuterBases;
-  }
-
-  @Override
-  public int getPhred(final byte rawQuality, int readPos, Arm arm) {
+  public int getScaledPhred(final byte rawQuality, int readPos, Arm arm) {
     //TODO support Arm
     if (mQualityCurve != null) {
       if (rawQuality >= mQualityCurve.length) {

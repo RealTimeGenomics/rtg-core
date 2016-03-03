@@ -18,6 +18,8 @@ import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.machine.MachineType;
+import com.rtg.variant.realign.RealignParams;
 import com.rtg.variant.util.VariantUtils;
 
 import htsjdk.samtools.SAMReadGroupRecord;
@@ -79,5 +81,15 @@ public class DefaultMachineErrorChooser implements MachineErrorChooserInterface 
       }
     }
     return mMachineError;
+  }
+
+  @Override
+  public RealignParams realignParams(SAMReadGroupRecord rg, boolean readPaired) {
+    return machineErrors(rg, readPaired).realignParams();
+  }
+
+  @Override
+  public MachineType machineType(SAMReadGroupRecord rg, boolean readPaired) {
+    return machineErrors(rg, readPaired).machineType();
   }
 }
