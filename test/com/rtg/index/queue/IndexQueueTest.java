@@ -14,14 +14,12 @@ package com.rtg.index.queue;
 import com.rtg.util.array.ExtensibleIndex;
 import com.rtg.util.array.longindex.LongChunks;
 
-
-
 /**
  */
 public class IndexQueueTest extends IndexIteratorQueueTest {
 
   private static long size(final int bits) {
-    return (1L << bits) - 2;
+    return (1L << bits) - 3;
   }
 
   public void testMemory() {
@@ -41,18 +39,16 @@ public class IndexQueueTest extends IndexIteratorQueueTest {
     checkMemory(size(55), 24, 31);
     checkMemory(size(62), 31, 31);
     try {
-      checkMemory(Long.MAX_VALUE, 31, 31);
-      fail();
-    } catch (final RuntimeException e) {
-      // expected
-      assertEquals("Length too large:" + Long.MAX_VALUE + " for radix bits=0", e.getMessage());
-    }
-    try {
-      checkMemory(Long.MAX_VALUE - 2, 31, 31);
+      checkMemory(-1L, 31, 31);
       fail();
     } catch (final IllegalArgumentException e) {
       // expected
-      assertEquals("Number out of range:" + (Long.MAX_VALUE - 1), e.getMessage());
+    }
+    try {
+      checkMemory(Long.MAX_VALUE, 31, 31);
+      fail();
+    } catch (final IllegalArgumentException e) {
+      // expected
     }
   }
 

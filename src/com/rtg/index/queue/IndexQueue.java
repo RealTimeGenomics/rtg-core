@@ -41,11 +41,11 @@ public class IndexQueue extends IntegralAbstract implements Add {
    * <pre>
    * if length > 0:
    *    <1 ... length-2> entries
-   *    next    the last position in the next block
+   *    next    the last position in the next block (takes 2 slots)
    *    length  the total length of the block
    * if length < 0:
    *    entries
-   *    used    the index of the last used entry in the block.
+   *    used    the index of the last used entry in the block (takes 2 slots).
    *    length  the negative of the total length of the block
    * </pre>
    */
@@ -90,16 +90,19 @@ public class IndexQueue extends IntegralAbstract implements Add {
    * @param valueBits number of value bits.
    */
   public IndexQueue(final int lowerBits, final int upperBits, final long length, final int valueBits) {
+    if (upperBits < 0 || lowerBits < 0 || valueBits < 0 || length < 0) {
+      throw new IllegalArgumentException();
+    }
+    final long bs = (length >> upperBits) + 3L;
+    if (bs < 2) { // Extremely unlikely to happen, requires length very close to Long.MAX_VALUE and upperBits == 0
+      throw new IllegalArgumentException();
+    }
+    final long blockSize = Math.max(5L, bs); //ensure space for at least two items plus next/length values
     mLowerBits = lowerBits;
     mUpperBits = upperBits;
     mRadix = 1 << mUpperBits;
     mQueueInfo = new long[mRadix << TOTAL_BITS];
 
-    final long bs = (length >> mUpperBits) + 2L; // XXX SAI possibly should be + 3L to allow for 2 slot store of "next"
-    if (bs < 1) {
-      throw new RuntimeException("Length too large:" + length + " for radix bits=" + upperBits);
-    }
-    final long blockSize = Math.max(4L, bs); //ensure space for two items plus next/length values // XXX SAI, 4 should now be 5?
     for (int i = 0; i < mRadix; i++) {
       final int j = i << TOTAL_BITS;
       final long ib = i * blockSize;
@@ -109,6 +112,7 @@ public class IndexQueue extends IntegralAbstract implements Add {
       mQueueInfo[j + END]    = st;
       mQueueInfo[j + LENGTH] = blockSize;
     }
+
     //dumpQueueInfo();
     final long memSize = blockSize * mRadix;
     //System.err.println("length=" + length + " upperBits=" + upperBits + " memSize=" + memSize);
@@ -156,13 +160,22 @@ public class IndexQueue extends IntegralAbstract implements Add {
     add(radix, id);
   }
 
+  private void setFree(final long pos, final long free) {
+    if (mMemory instanceof IntChunks) {
+      mMemory.setSigned(pos - 1, free >> 32);
+      mMemory.set(pos, (int) free);
+    } else {
+      assert mMemory instanceof LongChunks;
+      mMemory.setSigned(pos, free);
+    }
+  }
+
   private void add(final int radix, final long value) {
     //System.err.println("radix=" + radix);
     final int i = radix << TOTAL_BITS;
     final long curr = mQueueInfo[i + CURR];
     final long end = mQueueInfo[i + END];
-    if (curr < end - 1) {
-      assert value < 1L << 32 : "radix=" + radix + " value=" + value;
+    if (curr < end - 2) { // Last three slots are used for housekeeping
       mMemory.set(curr, value);
       mQueueInfo[i + CURR] = curr + 1;
     } else {
@@ -174,9 +187,7 @@ public class IndexQueue extends IntegralAbstract implements Add {
       final long fr = free + MIN_BLOCK_SIZE - 1;
       mQueueInfo[i + END] = fr;
       mQueueInfo[i + LENGTH] = MIN_BLOCK_SIZE;
-      //System.err.println("end=" + end + " free=" + free);
-      assert fr <= Integer.MAX_VALUE : "Require more than 31 bits for fr " + fr;
-      mMemory.setSigned(end - 1, fr);
+      setFree(end - 1, fr);
       mMemory.setSigned(end, length);
       // Now that we have made more space, we can be sure that on the following recursion the value will be stored.
       add(radix, value);
@@ -193,7 +204,8 @@ public class IndexQueue extends IntegralAbstract implements Add {
       final long end = mQueueInfo[j + END];
       final long curr = mQueueInfo[j + CURR];
       //System.err.println("end=" + end + " curr=" + curr);
-      mMemory.setSigned(end - 1, curr);
+      setFree(end - 1, curr);
+      //mMemory.setSigned(end - 1, curr);
       final long length = mQueueInfo[j + LENGTH];
       mMemory.setSigned(end, -length);
     }

@@ -47,7 +47,6 @@ public class IndexQueues extends IntegralAbstract {
    * @param ipBits number of bits used to generate length of initial pointer table.
    */
   public IndexQueues(final int numberThreads, final int hashBits, final long size, final int valueBits, final int ipBits) {
-    System.err.println("SAI: valueBits=" + valueBits);
     if (numberThreads < 1) {
       throw new IllegalArgumentException("" + numberThreads);
     }
