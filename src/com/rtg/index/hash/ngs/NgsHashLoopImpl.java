@@ -86,6 +86,9 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
     final SequencesReader reader = params.reader();
     final long start = 0;
     final long end = reader.numberSequences();
+    if (end > Integer.MAX_VALUE) {
+      throw new RuntimeException("Too many reads");
+    }
 
     assert mode.codeType().firstValid() == 1;
     final byte[] byteBuffer = makeBuffer(reader);
