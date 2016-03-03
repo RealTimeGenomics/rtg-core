@@ -82,7 +82,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
    */
   public TopNPairedEndOutputProcessorSync(NgsParams param, MapStatistics stats, boolean outputUnmated, boolean outputUnmapped) throws IOException {
     super(param, stats, true, outputUnmated);
-    final int sequences = (int) param.buildFirstParams().numberSequences();
+    final long sequences = param.buildFirstParams().numberSequences();
 
     // These blockers are for counting hits per read per side, for high frequency filtering purposes
     mFreqBlockerLeft = new ReadBlockerSync(sequences, param.readFreqThreshold(), "left hits");
@@ -94,10 +94,10 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
       final UptoNStore nStore;
       if (DUMB_N) {
         Diagnostic.developerLog("Using DumbN: " + mParams.outputParams().filter().topN());
-        nStore = new DeduplicatingNStore(sequences * 2, (int) param.searchParams().reader().numberSequences(), mParams.outputParams().filter().topN(), param.searchParams().reader().maxLength(), Math.max(param.buildFirstParams().maxLength(), param.buildSecondParams().maxLength()));
+        nStore = new DeduplicatingNStore(sequences * 2, param.searchParams().reader().numberSequences(), mParams.outputParams().filter().topN(), param.searchParams().reader().maxLength(), Math.max(param.buildFirstParams().maxLength(), param.buildSecondParams().maxLength()));
       } else {
         Diagnostic.developerLog("Using TopN: " + mParams.outputParams().filter().topN());
-        nStore = new TopNImplementation(sequences * 2, (int) param.searchParams().reader().numberSequences(), mParams.outputParams().filter().topN(), param.searchParams().reader().maxLength(), Math.max(param.buildFirstParams().maxLength(), param.buildSecondParams().maxLength()));
+        nStore = new TopNImplementation(sequences * 2, param.searchParams().reader().numberSequences(), mParams.outputParams().filter().topN(), param.searchParams().reader().maxLength(), Math.max(param.buildFirstParams().maxLength(), param.buildSecondParams().maxLength()));
       }
       mTopN = new UptoNStoreSync(nStore);
     } else {

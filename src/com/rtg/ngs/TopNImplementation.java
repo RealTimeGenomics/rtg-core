@@ -55,7 +55,7 @@ public class TopNImplementation implements UptoNStore {
   private final LongIndex mResultCounts;
 
   private final int mN;
-  private final int mNumTemplateSeqs;
+  private final long mNumTemplateSeqs;
   private final long mPositionOffset;
 
   /**
@@ -66,7 +66,7 @@ public class TopNImplementation implements UptoNStore {
    * @param templateMaxLength size of largest template sequence
    * @param readMaxLength maximum read length, used to determine how far off template we can go
    */
-  public TopNImplementation(final int numReads, final int numTemplateSeqs, final int n, final long templateMaxLength, long readMaxLength) {
+  public TopNImplementation(final long numReads, final long numTemplateSeqs, final int n, final long templateMaxLength, long readMaxLength) {
     final long length = numReads * (long) n;
     mPositionOffset = readMaxLength;
     final long product = numTemplateSeqs * (templateMaxLength + mPositionOffset * 2);

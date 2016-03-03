@@ -29,7 +29,7 @@ public class ReadBlockerSync extends ReadBlocker {
    * @param threshold blocking threshold in range 1 to 255
    * @param title a title to use during logging
    */
-  public ReadBlockerSync(final int count, final int threshold, final String title) {
+  public ReadBlockerSync(final long count, final int threshold, final String title) {
     super(count, threshold, title);
     mThreadLocks = new Object[NUMBER_OF_THREAD_LOCKS];
     for (int i = 0; i < mThreadLocks.length; i++) {

@@ -45,11 +45,14 @@ public class ReadBlocker implements Closeable {
    * @param threshold blocking threshold in range 1 to 255
    * @param title a title to use during logging
    */
-  public ReadBlocker(final int count, final int threshold, final String title) {
+  public ReadBlocker(final long count, final int threshold, final String title) {
+    if (count > Integer.MAX_VALUE) {
+      throw new IllegalArgumentException("Too many reads");
+    }
     if (threshold != -1 && (threshold > MAX_COUNT || threshold < 1)) {
       throw new IllegalArgumentException();
     }
-    mCounts = new short[count];
+    mCounts = new short[(int) count];
     mThreshold = threshold;
     mTitle = title;
   }
@@ -61,7 +64,7 @@ public class ReadBlocker implements Closeable {
    * @param count number of reads
    * @param threshold blocking threshold in range 1 to 255.
    */
-  public ReadBlocker(final int count, final int threshold) {
+  public ReadBlocker(final long count, final int threshold) {
     this(count, threshold, "blocked pairings");
   }
 
