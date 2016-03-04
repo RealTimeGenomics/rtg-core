@@ -10,12 +10,8 @@
  * be made from time to time by Real Time Genomics Limited.
  */
 package com.rtg.index;
-import com.rtg.util.integrity.Exam;
-
-
 /**
  * A vector of bits.
- *
  */
 public final class BitVector extends AbstractBitVector {
 
@@ -32,15 +28,18 @@ public final class BitVector extends AbstractBitVector {
     if (allocLength >= (Integer.MAX_VALUE >> 2)) {
       throw new RuntimeException("BitVector is too long " + length);
     }
-    //System.err.println("BitVector constructor length=" + length + " allocLength=" + allocLength);
     mArray = new int[(int) allocLength];
+  }
+
+  private void checkBounds(final long index) {
+    if (index >= mLength || index < 0) {
+      throw new ArrayIndexOutOfBoundsException(index + ":" + mLength);
+    }
   }
 
   @Override
   public boolean get(final long index) {
-    if (index >= mLength || index < 0) {
-      throw new ArrayIndexOutOfBoundsException(index + ":" + mLength);
-    }
+    checkBounds(index);
     final long x = index >> BITS_PER_ENTRY;
     final int v = mArray[(int) x];
     final int s = 1 << (int) (index & MASK);
@@ -49,45 +48,27 @@ public final class BitVector extends AbstractBitVector {
 
   @Override
   public void set(final long index) {
-    if (index >= mLength || index < 0) {
-      throw new ArrayIndexOutOfBoundsException(index + ":" + mLength);
-    }
+    checkBounds(index);
     final long x = index >> BITS_PER_ENTRY;
     mArray[(int) x] |= 1 << (int) (index & MASK);
   }
 
   @Override
   public void reset(final long index) {
-    if (index >= mLength || index < 0) {
-      throw new ArrayIndexOutOfBoundsException(index + ":" + mLength);
-    }
+    checkBounds(index);
     final long x = index >> BITS_PER_ENTRY;
-    mArray[(int) x] ^= 1 << (int) (index & MASK); // toggles bit not strictly reset
+    mArray[(int) x] &= ~(1 << (int) (index & MASK));
   }
-
 
   @Override
   public long bytes() {
     return (((long) mArray.length) << BITS_PER_ENTRY) >> BITS_PER_BYTE;
   }
 
-
-  /**
-   * Gets the length of the bit vector.
-   *
-   * @return number of bits.
-   */
   @Override
   public long length() {
     return mLength;
   }
-
-  @Override
-  public boolean integrity() {
-    Exam.assertTrue(mArray.length << BITS_PER_ENTRY >= mLength);
-    return true;
-  }
-
 }
 
 

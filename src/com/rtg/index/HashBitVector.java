@@ -105,7 +105,7 @@ public class HashBitVector extends IntegralAbstract {
   @Override
   public void toString(final StringBuilder sb) {
     sb.append("HashBitVector bits=").append(mBits).append(" vectorBits=").append(mVectorBits).append(" shift=").append(mShift).append(com.rtg.util.StringUtils.LS);
-    mBitVector.toString(sb);
+    sb.append(mBitVector.toString());
   }
 
   @Override

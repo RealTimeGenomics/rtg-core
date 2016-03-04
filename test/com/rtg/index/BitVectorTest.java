@@ -14,10 +14,8 @@ package com.rtg.index;
 
 /**
  * JUnit tests for BitVector.
- *
  */
 public class BitVectorTest extends AbstractBitVectorTest {
-
 
   @Override
   protected AbstractBitVector getBitVector(final long length) {

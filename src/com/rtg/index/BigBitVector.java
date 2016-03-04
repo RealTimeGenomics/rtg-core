@@ -12,7 +12,6 @@
 package com.rtg.index;
 
 import com.rtg.util.array.intindex.IntChunks;
-import com.rtg.util.integrity.Exam;
 
 
 /**
@@ -34,11 +33,15 @@ public final class BigBitVector extends AbstractBitVector {
     mArray = new IntChunks(allocLength);
   }
 
-  @Override
-  public boolean get(final long index) {
+  private void checkBounds(final long index) {
     if (index >= mLength || index < 0) {
       throw new ArrayIndexOutOfBoundsException(index + ":" + mLength);
     }
+  }
+
+  @Override
+  public boolean get(final long index) {
+    checkBounds(index);
     final long x = index >> BITS_PER_ENTRY;
     final int v = mArray.getInt(x);
     final int s = 1 << (int) (index & MASK);
@@ -47,9 +50,7 @@ public final class BigBitVector extends AbstractBitVector {
 
   @Override
   public void set(final long index) {
-    if (index >= mLength || index < 0) {
-      throw new ArrayIndexOutOfBoundsException(index + ":" + mLength);
-    }
+    checkBounds(index);
     final long x = index >> BITS_PER_ENTRY;
     final int v = mArray.getInt(x) | 1 << (int) (index & MASK);
     mArray.setInt(x, v);
@@ -57,11 +58,9 @@ public final class BigBitVector extends AbstractBitVector {
 
   @Override
   public void reset(final long index) {
-    if (index >= mLength || index < 0) {
-      throw new ArrayIndexOutOfBoundsException(index + ":" + mLength);
-    }
+    checkBounds(index);
     final long x = index >> BITS_PER_ENTRY;
-    final int v = mArray.getInt(x) ^ (1 << (int) (index & MASK));
+    final int v = mArray.getInt(x) & ~(1 << (int) (index & MASK));
     mArray.setInt(x, v);
   }
 
@@ -71,27 +70,10 @@ public final class BigBitVector extends AbstractBitVector {
     return (mArray.length() << BITS_PER_ENTRY) >> BITS_PER_BYTE;
   }
 
-
-  /**
-   * Gets the length of the bit vector.
-   *
-   * @return number of bits.
-   */
   @Override
   public long length() {
     return mLength;
   }
-
-  @Override
-  public boolean integrity() {
-    if (mArray == null) {
-      Exam.assertTrue(false);
-    } else {
-      Exam.assertTrue(mArray.length() << BITS_PER_ENTRY >= mLength);
-    }
-    return true;
-  }
-
 }
 
 

@@ -31,7 +31,6 @@ public abstract class AbstractBitVectorTest extends TestCase {
 
   public void test0() {
     final AbstractBitVector bitv = getBitVector(0);
-    bitv.integrity();
     assertEquals(0, bitv.length());
     assertEquals(0, bitv.bytes());
     try {
@@ -61,7 +60,6 @@ public abstract class AbstractBitVectorTest extends TestCase {
 
   public void test1() {
     final AbstractBitVector bitv = getBitVector(1);
-    bitv.integrity();
     assertEquals(1, bitv.length());
     assertEquals(4, bitv.bytes());
     assertTrue(!bitv.get(0));
@@ -79,7 +77,6 @@ public abstract class AbstractBitVectorTest extends TestCase {
 
   public void testSetAndGet() {
     final AbstractBitVector bitv = getBitVector(100);
-    bitv.integrity();
     assertEquals(100, bitv.length());
     assertEquals(16, bitv.bytes());
     for (int i = 0; i < 100; i++) {
@@ -105,7 +102,6 @@ public abstract class AbstractBitVectorTest extends TestCase {
 
   public void testResetAndGet() {
     final AbstractBitVector bitv = getBitVector(100);
-    bitv.integrity();
     assertEquals(100, bitv.length());
     assertEquals(16, bitv.bytes());
     for (int i = 0; i < 100; i++) {
@@ -136,7 +132,6 @@ public abstract class AbstractBitVectorTest extends TestCase {
 
   public void testToString123() {
     final AbstractBitVector bitv = getBitVector(123);
-    bitv.integrity();
     final String expected = ""
       + "BitVector[123]" + StringUtils.LS
       + "[0]\t 0000000000 0000000000 0000000000 0000000000 0000000000 0000000000 0000000000 0000000000 0000000000 0000000000" + StringUtils.LS
@@ -147,7 +142,6 @@ public abstract class AbstractBitVectorTest extends TestCase {
 
   public void testToString20() {
     final AbstractBitVector bitv = getBitVector(20);
-    bitv.integrity();
     final String expected = ""
       + "BitVector[20]" + StringUtils.LS
       + "[0]\t 0000000000 0000000000" + StringUtils.LS

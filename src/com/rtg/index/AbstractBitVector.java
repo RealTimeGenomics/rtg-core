@@ -13,14 +13,12 @@ package com.rtg.index;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.StringUtils;
-import com.rtg.util.integrity.IntegralAbstract;
 
 /**
  * A vector of bits.
- *
  */
 @TestClass(value = {"com.rtg.index.BitVectorTest"})
-public abstract class AbstractBitVector extends IntegralAbstract {
+public abstract class AbstractBitVector {
 
   static final int BITS_PER_ENTRY = 5;
 
@@ -101,7 +99,8 @@ public abstract class AbstractBitVector extends IntegralAbstract {
   }
 
   @Override
-  public void toString(final StringBuilder sb) {
+  public String toString() {
+    final StringBuilder sb = new StringBuilder();
     sb.append("BitVector[").append(mLength).append("]").append(StringUtils.LS);
     for (long l = 0; l < mLength; l += 100) {
       sb.append("[").append(l).append("]\t");
@@ -115,5 +114,6 @@ public abstract class AbstractBitVector extends IntegralAbstract {
       sb.append(StringUtils.LS);
     }
     sb.append(StringUtils.LS);
+    return sb.toString();
   }
 }
