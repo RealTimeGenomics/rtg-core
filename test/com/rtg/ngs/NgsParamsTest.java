@@ -298,8 +298,9 @@ public class NgsParamsTest extends TestCase {
     final String pps = pparams.toString();
     //System.err.println(pps);
     TestUtils.containsAll(pps, "distribution={maxGap=4}}",
-      "hash bits=4 initial pointer bits=2 value bits=31 window=2 step=2",
-      "hash bits=4 initial pointer bits=2 value bits=31 window=2 step=1");
+      "hash bits=4 initial pointer bits=2 value bits=1",
+      "window=2 step=2",
+      "window=2 step=1");
     closeParams(params);
   }
 
@@ -311,8 +312,9 @@ public class NgsParamsTest extends TestCase {
     final String pps = pparams.toString();
     //System.err.println(pps);
     TestUtils.containsAll(pps, "distribution={maxGap=1}}",
-      "hash bits=8 initial pointer bits=2 value bits=31 window=4 step=4",
-      "hash bits=8 initial pointer bits=2 value bits=31 window=4 step=1");
+      "hash bits=8 initial pointer bits=2 value bits=0",
+      "window=4 step=4",
+      "window=4 step=1");
     closeParams(params);
   }
 

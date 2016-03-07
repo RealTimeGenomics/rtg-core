@@ -30,7 +30,7 @@ public class IndexUtilsTest extends TestCase {
   }
 
   public void testBytes() {
-    final CreateParams c = new CreateParams(20, 33, 33, false, false, false);
+    final CreateParams c = new CreateParams(20, 33, 33, 31, false, true, false, false);
     assertEquals(322, IndexUtils.bytes(c));
   }
 
@@ -41,7 +41,7 @@ public class IndexUtilsTest extends TestCase {
     + "\tMemory\tBit_vector\t64" + StringUtils.LS
     + "";
   public void testMemoryTostring() {
-    final CreateParams c = new CreateParams(20, 33, 33, false, false, false);
+    final CreateParams c = new CreateParams(20, 33, 33, 31, false, true, false, false);
     assertEquals(EXPECTED_MEM_STR, IndexUtils.memToString(c));
   }
 
@@ -54,7 +54,7 @@ public class IndexUtilsTest extends TestCase {
   + "\t\t322\t\tTotal" + StringUtils.LS;
 
   public void testMemoryString() {
-    final CreateParams c = new CreateParams(20, 33, 33, false, false, false);
+    final CreateParams c = new CreateParams(20, 33, 33, 31, false, true, false, false);
     assertEquals(EXPECTED_MEMSTR, IndexUtils.memString(c));
   }
 }

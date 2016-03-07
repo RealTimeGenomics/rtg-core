@@ -48,7 +48,7 @@ public class NgsTaskTest extends NgsPairedEndTest {
   private CreateParams makeIndexParams(NgsParams params) {
     final HashFunctionFactory factory = params.maskParams().maskFactory((int) params.getMaxReadLength());
     final long numSeqs = params.buildFirstParams().numberSequences() + (params.paired() ? params.buildSecondParams().numberSequences() : 0);
-    return new CreateParams(numSeqs, factory.hashBits(), factory.windowBits(), params.compressHashes(), false, false);
+    return new CreateParams(numSeqs, factory.hashBits(), factory.windowBits(), 31, params.compressHashes(), true, false, false);
   }
 
   public void testThreads1Log() throws Exception {

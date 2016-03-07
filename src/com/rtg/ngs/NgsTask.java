@@ -236,7 +236,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
     final int threadBits = MathUtils.ceilPowerOf2Bits(numberThreads - 1);
     final HashFunctionFactory factory = params.maskParams().maskFactory((int) params.getMaxReadLength());
     final long numSeqs = params.buildFirstParams().numberSequences() + (params.paired() ? params.buildSecondParams().numberSequences() : 0);
-    final CreateParams indexParams = new CreateParams(numSeqs, factory.hashBits(), factory.windowBits(), params.compressHashes(), false, false);
+    final CreateParams indexParams = new CreateParams(numSeqs, factory.hashBits(), factory.windowBits(), NgsParams.calculateValueBitsShortReads(params.buildFirstParams().numberSequences(), params.paired()), params.compressHashes(), true, false, false);
     Diagnostic.developerLog("Index params: " + indexParams.toString());
     final NgsHashLoopImpl hashLoop = new NgsHashLoopImpl(params.buildFirstParams().numberSequences(), params.outputParams().progress(), 0x3FFFFL, ((pMask + 1L) << threadBits) - 1L);
     hashLoop.setThreadPadding(params.calculateThreadPadding());

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.rtg.index.params.CountParams;
+import com.rtg.index.params.CreateParams;
 import com.rtg.launcher.BuildParams;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
@@ -49,8 +50,8 @@ public class BuildSearchParamsTest extends TestCase {
     mDir = null;
   }
 
-  BuildSearchParams getParams(final ProgramMode mode, final BuildParams build, final CountParams count) {
-    return BuildSearchParams.builder().mode(mode).build(build)
+  BuildSearchParams getParams(final ProgramMode mode, final BuildParams build, final CountParams count) throws IOException {
+    return BuildSearchParams.builder().mode(mode).build(build).index(CreateParams.fromBuildParams(build).create())
                                       .count(count).create();
   }
 
@@ -106,7 +107,8 @@ public class BuildSearchParamsTest extends TestCase {
       final CountParams count = new CountParams(hitDir, 5, 10, false);
       final File subjectDir = ReaderTestUtils.getDNADir(mDir);
       final SequenceParams subject = SequenceParams.builder().directory(subjectDir).mode(pm.subjectMode()).create();
-      final BuildParams build = BuildParams.builder().windowSize(4).stepSize(1).sequences(dummySubjectParams).size(size).create();
+      final BuildParams build = BuildParams.builder().windowSize(4).stepSize(1).sequences(dummySubjectParams).create();
+
 
       try (BuildSearchParams bsp = getParams(pm, subject, build, count, false)) {
         bsp.integrity();
@@ -148,9 +150,10 @@ public class BuildSearchParamsTest extends TestCase {
             + "BuildSearchParams mode=SLIMN" + LS
             + ".. hits={ CountParams directory=" + bsp.countParams().directory()
             + " topN=5 minHits=10 max. file size=1000000000} " + LS
+            + ".. index={ size=1 hash bits=8 initial pointer bits=2 value bits=20}" + LS
             + ".. build={ seq={SequenceParams mode=UNIDIRECTIONAL region=[(0:-1), (1:-1)] directory="
             + build.directory().toString()
-            + "}  size=1 hash bits=8 initial pointer bits=2 value bits=31 window=4 step=1}" + LS
+            + "}  window=4 step=1}" + LS
           , bsp.toString()
         );
       }

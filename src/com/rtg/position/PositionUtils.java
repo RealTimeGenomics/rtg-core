@@ -68,23 +68,24 @@ public final class PositionUtils {
    * @param index the index of hashes.
    * @param buildFirst the parameters for one arm of the pair.
    * @param buildSecond  the parameters for the other arm of the pair.
+   * @param winBits number of bits required to encode a window
    * @return the <code>HashLoop</code>.
    * @throws IOException whenever.
    */
-  public static HashLoop makePairedBuild(final Add index, final BuildParams buildFirst, final BuildParams buildSecond) throws IOException {
+  public static HashLoop makePairedBuild(final Add index, final BuildParams buildFirst, final BuildParams buildSecond, int winBits) throws IOException {
     final int mxs = Math.max(maxMatches(buildFirst), maxMatches(buildSecond));
-    return makeBuild(index, buildFirst, buildFirst.windowBits(), mxs, true);
+    return makeBuild(index, buildFirst, winBits, mxs, true);
   }
 
   /**
    * Construct a <code>HashLoop</code> to use when doing single end processing.
    * @param index the index of hashes.
    * @param buildParams the parameters.
+   * @param winBits number of bits required to encode a window
    * @return the <code>HashLoop</code>.
    * @throws IOException whenever.
    */
-  public static HashLoop makeBuild(final Add index, final BuildParams buildParams) throws IOException {
-    final int winBits = buildParams.windowBits();
+  public static HashLoop makeBuild(final Add index, final BuildParams buildParams, int winBits) throws IOException {
     final int mxs = maxMatches(buildParams);
     return makeBuild(index, buildParams, winBits, mxs, false);
   }
@@ -111,18 +112,27 @@ public final class PositionUtils {
     final int stepSize = buildParams.stepSize();
     final int windowSize = buildParams.windowSize();
     final long maxLength = buildParams.sequences().maxLength();
-    final int numberFrames = buildParams.sequences().readerParams().mode().numberFrames();
-    //System.err.println(" max sequence length=" + maxLength + " frames=" + numberFrames + " step=" + mStepSize + " window=" + windowSize);
+    return maxMatches(stepSize, windowSize, maxLength);
+  }
+
+  /**
+   * Compute the number of different match positions that can occur in a build sequence.
+   * @param stepSize step size parameter
+   * @param windowSize window size parameter
+   * @param maxLength length of longest sequence
+   * @return the number of possible match positions (&ge; 0).
+   * @throws IllegalArgumentException if result is too large.
+   */
+  public static int maxMatches(int stepSize, int windowSize, long maxLength) {
     final long mxs;
     if (maxLength < windowSize) {
       mxs = 0;
     } else {
       mxs = (maxLength - windowSize) / stepSize + 1;
     }
-    //System.err.println(" mMxs=" + mMxs);
     assert mxs >= 0 : mxs;
     if (mxs > Integer.MAX_VALUE) {
-      throw new IllegalArgumentException("Unable to store identifier bits. Input data too long. max sequence length=" + maxLength + " frames=" + numberFrames + " step=" + stepSize + " window=" + windowSize);
+      throw new IllegalArgumentException("Unable to store identifier bits. Input data too long. max sequence length=" + maxLength + " step=" + stepSize + " window=" + windowSize);
     }
     return (int) mxs;
   }

@@ -18,16 +18,19 @@ import java.util.Collection;
 
 import com.rtg.alignment.AlignerMode;
 import com.rtg.index.IndexFilterMethod;
+import com.rtg.index.params.CreateParams;
 import com.rtg.launcher.BuildParams;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.ModuleParams;
 import com.rtg.mode.ProgramMode;
 import com.rtg.mode.ProteinScoringMatrix;
+import com.rtg.position.PositionUtils;
 import com.rtg.position.output.OutputFormatType;
 import com.rtg.position.output.PositionDistributionParams;
 import com.rtg.position.output.PositionOutputParams;
 import com.rtg.position.output.PositionParams;
 import com.rtg.reference.Sex;
+import com.rtg.util.MathUtils;
 import com.rtg.util.MaxShiftFactor;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.ListenerType;
@@ -599,14 +602,67 @@ public class NgsParams extends ModuleParams implements Integrity {
     final PositionDistributionParams pdp = new PositionDistributionParams(Double.NaN, Double.NaN, maxGap, maxIndel);
     final PositionOutputParams pop = new PositionOutputParams(outputParams().directory(), OutputFormatType.NGS, pdp, (double) -outputParams().errorLimit(), outputParams().isCompressOutput(), outputParams().topN());
     final BuildParams template = BuildParams.builder().windowSize(maskP.getWordSize()).stepSize(1).sequences(mSearchParams).create();
-    final BuildParams reads = BuildParams.builder().windowSize(maskP.getWordSize()).stepSize(mStepSize).sequences(mBuildFirstParams).compressHashes(compressHashes()).create();
+    final BuildParams reads = BuildParams.builder().windowSize(maskP.getWordSize()).stepSize(mStepSize).sequences(mBuildFirstParams).create();
     final BuildParams reads2;
     if (paired()) {
-      reads2 = BuildParams.builder().windowSize(maskP.getWordSize()).stepSize(mStepSize).sequences(mBuildSecondParams).compressHashes(compressHashes()).create();
+      reads2 = BuildParams.builder().windowSize(maskP.getWordSize()).stepSize(mStepSize).sequences(mBuildSecondParams).create();
     } else {
       reads2 = null;
     }
-    return PositionParams.builder().ngsParams(this).mode(ProgramMode.SLIMN).hashCountThreshold(mHashCountThreshold).buildParams(reads).buildSecondParams(reads2).searchParams(template).outputParams(pop).progress(outputParams().progress()).numberThreads(numberThreads()).create();
+    final CreateParams.CreateParamsBuilder indexParams = new CreateParams.CreateParamsBuilder();
+    final int hashBits = CreateParams.calculateHashBits(mBuildFirstParams.mode().codeType().bits(), maskP.getWordSize());
+    final int valueBits;
+    indexParams.compressHashes(compressHashes())
+      .windowBits(hashBits)
+      .hashBits(hashBits)
+      .spaceEfficientButUnsafe(false)
+      .ideal(false);
+    if (reads2 != null) {
+      indexParams.size(reads.calculateSize() + reads2.calculateSize());
+      valueBits = calculateValueBitsLongReads(reads.sequences().numberSequences(), paired(), maskP.getWordSize(), mStepSize, Math.max(reads.sequences().maxLength(), reads2.sequences().maxLength()));
+    } else {
+      indexParams.size(reads.calculateSize());
+      valueBits = calculateValueBitsLongReads(reads.sequences().numberSequences(), paired(), maskP.getWordSize(), mStepSize, reads.sequences().maxLength());
+    }
+    indexParams.valueBits(valueBits);
+    return PositionParams.builder().ngsParams(this).mode(ProgramMode.SLIMN).hashCountThreshold(mHashCountThreshold).buildParams(reads).buildSecondParams(reads2).searchParams(template).outputParams(pop).progress(outputParams().progress()).indexParams(indexParams.create()).numberThreads(numberThreads()).create();
+  }
+
+
+  /**
+   * Calculates the required number of bits to store values for long read pipeline
+   * @param numberReads the number of reads
+   * @param pairedEnd whether reads are paired end
+   * @param windowsSize the size of the hash window
+   * @param stepSize the gap between window start positions
+   * @param maxLength the length of the longest sequence
+   * @return the number of bits required to encode a value
+   */
+  public static int calculateValueBitsLongReads(long numberReads, boolean pairedEnd, int windowsSize, int stepSize, long maxLength) {
+    final int mxs = PositionUtils.maxMatches(stepSize, windowsSize, maxLength);
+    long maxVal = numberReads - 1;
+    if (pairedEnd) {
+      maxVal <<= 1;
+      maxVal += 1;
+    }
+    maxVal *= mxs;
+    maxVal += mxs - 1;
+    return MathUtils.ceilPowerOf2Bits(maxVal);
+  }
+
+  /**
+   * Calculates the required number of bits to store values for short read pipeline
+   * @param numberReads the number of reads
+   * @param pairedEnd whether reads are paired end
+   * @return the number of bits required to encode a value
+   */
+  public static int calculateValueBitsShortReads(long numberReads, boolean pairedEnd) {
+    long maxVal = numberReads - 1;
+    if (pairedEnd) {
+      maxVal <<= 1;
+      maxVal += 1;
+    }
+    return MathUtils.ceilPowerOf2Bits(maxVal);
   }
 
   /**

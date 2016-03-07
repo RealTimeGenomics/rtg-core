@@ -218,11 +218,12 @@ public class SimilarityCliTest extends AbstractCliTest {
     try {
       try (final SequencesReader sr = getReaderDNA(subjects)) {
         final ISequenceParams subjectParams = new MockSequenceParams(sr, mode.subjectMode());
-        try (final BuildParams buildParams = BuildParams.builder().windowSize(windowSize).stepSize(stepSize).compressHashes(true).sequences(subjectParams).create()) {
+        try (final BuildParams buildParams = BuildParams.builder().windowSize(windowSize).stepSize(stepSize).sequences(subjectParams).create()) {
           //try (final ISequenceParams queryParams = new MockSequenceParams(sr, mode.queryMode())) {
           final CountParams countParams = new CountParams(outputDir, 1, 1, false);
           final BuildSearchParams bsp = BuildSearchParams.builder()
               .mode(mode).build(buildParams)
+              .index(CreateParams.fromBuildParams(buildParams).create())
               .count(countParams).create();
           final UsageMetric usageMetric = new UsageMetric();
           runPhylogeny(bsp, usageMetric);
@@ -512,7 +513,7 @@ public class SimilarityCliTest extends AbstractCliTest {
           final CountParams countParams = new CountParams(hitsDir, 20, 1, false);
           final BuildSearchParams bsp =
               new SequenceLengthMessageBuildSearchParams(BuildSearchParams.builder().mode(mode)
-                  .build(buildParams).count(countParams));
+                  .build(buildParams).index(CreateParams.fromBuildParams(buildParams).create()).count(countParams));
           final MyListener listener = new MyListener();
           try {
             Diagnostic.addListener(listener);
@@ -613,12 +614,11 @@ public class SimilarityCliTest extends AbstractCliTest {
         try (final BuildParams buildParams = BuildParams.builder()
             .windowSize(SimilarityCli.DEFAULT_WORD_SIZE)
             .stepSize(SimilarityCli.DEFAULT_STEP_SIZE)
-            .compressHashes(true)
             .sequences(subjectParams)
             .create()) {
           final CountParams countParams = new CountParams(outputDir, 1, 1, false);
           final BuildSearchParams bsp = BuildSearchParams.builder()
-              .mode(mode).build(buildParams)
+              .mode(mode).build(buildParams).index(CreateParams.fromBuildParams(buildParams).create())
               .count(countParams).create();
           final UsageMetric usageMetric = new UsageMetric();
           runPhylogeny(bsp, usageMetric);
@@ -676,7 +676,7 @@ public class SimilarityCliTest extends AbstractCliTest {
   }
 
   public void testIOException() throws IOException {
-    final CreateParams cp = new CreateParams(0, 1, 1, false, true, false);
+    final CreateParams cp = new CreateParams(0, 1, 1, 31, false, true, true, false);
     final IndexSimilarity index = new IndexSimilarity(cp, new RepeatFrequencyFilterMethod(1000, false, 1000, 0), false, 1);
     index.freeze();
 
@@ -726,7 +726,7 @@ public class SimilarityCliTest extends AbstractCliTest {
 
   public void testMakeBuild() throws IOException {
     final SequenceParams dummySubjectParams = SequenceParams.builder().region(new HashingRegion(0, 0)).mode(SequenceMode.BIDIRECTIONAL).create();
-    BuildParams buildParams = BuildParams.builder().windowSize(33).stepSize(1).size(0).sequences(dummySubjectParams).create();
+    BuildParams buildParams = BuildParams.builder().windowSize(33).stepSize(1).sequences(dummySubjectParams).create();
     final MockIndex index = new MockIndex() {
       @Override
       public void add(long hash, long id) {
@@ -747,7 +747,7 @@ public class SimilarityCliTest extends AbstractCliTest {
     } catch (final SlimException e) {
       assertEquals("Word size > 32", e.getMessage());
     }
-    buildParams = BuildParams.builder().windowSize(31).stepSize(1).size(0).sequences(dummySubjectParams).create();
+    buildParams = BuildParams.builder().windowSize(31).stepSize(1).sequences(dummySubjectParams).create();
     HashLoop hl = SimilarityCli.makeBuild(index, buildParams, -1, null);
     assertNotNull(hl);
     hl.hashCallBidirectional(1, -1, 1, 67);
@@ -901,7 +901,7 @@ public class SimilarityCliTest extends AbstractCliTest {
       };
 
       MemoryPrintStream ps = new MemoryPrintStream();
-      assertEquals(0, p.mainInit(args, ps.outputStream(), ps.printStream()));
+      assertEquals(ps.toString(), 0, p.mainInit(args, ps.outputStream(), ps.printStream()));
       assertEquals("The SDF \"" + emptyInputLeft.getPath() + "\" contains no sequences" + LS, ps.toString());
       String result = FileUtils.fileToString(new File(output, "similarity.tsv"));
       assertEquals("#rtg " + null + LS

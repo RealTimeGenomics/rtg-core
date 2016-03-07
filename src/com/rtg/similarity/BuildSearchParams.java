@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.util.List;
 
 import com.rtg.index.params.CountParams;
+import com.rtg.index.params.CreateParams;
 import com.rtg.launcher.BuildParams;
 import com.rtg.launcher.ModuleParams;
 import com.rtg.launcher.SequenceParams;
@@ -51,6 +52,8 @@ public class BuildSearchParams extends ModuleParams implements Integrity {
 
     protected BuildParams mBuildParams;
 
+    protected CreateParams mIndexParams;
+
     protected List<Pair<String, List<SequenceParams>>> mSequenceParams;
 
     protected CountParams mCountParams;
@@ -78,12 +81,22 @@ public class BuildSearchParams extends ModuleParams implements Integrity {
     }
 
     /**
-     * Sets the parameters for doing create and build.
+     * Sets the parameters for doing build.
      * @param build the build parameters.
      * @return this builder, so calls can be chained.
      */
     public BuildSearchParamsBuilder build(BuildParams build) {
       mBuildParams = build;
+      return this;
+    }
+
+    /**
+     * Sets the parameters for doing create.
+     * @param index the index parameters.
+     * @return this builder, so calls can be chained.
+     */
+    public BuildSearchParamsBuilder index(CreateParams index) {
+      mIndexParams = index;
       return this;
     }
 
@@ -131,6 +144,8 @@ public class BuildSearchParams extends ModuleParams implements Integrity {
 
   private final BuildParams mBuildParams;
 
+  private final CreateParams mIndexParams;
+
   private final List<Pair<String, List<SequenceParams>>> mSequenceParams;
 
   private final CountParams mCountParams;
@@ -148,6 +163,7 @@ public class BuildSearchParams extends ModuleParams implements Integrity {
     mSequenceParams = builder.mSequenceParams;
     mCountParams = builder.mCountParams;
     mUniqueWords = builder.mUniqueWords;
+    mIndexParams = builder.mIndexParams;
   }
 
   /**
@@ -158,10 +174,17 @@ public class BuildSearchParams extends ModuleParams implements Integrity {
   }
 
   /**
-   * @return the build and create parameters.
+   * @return the build parameters.
    */
   public BuildParams build() {
     return mBuildParams;
+  }
+
+  /**
+   * @return the create parameters
+   */
+  public CreateParams index() {
+    return mIndexParams;
   }
 
   /**
@@ -231,6 +254,7 @@ public class BuildSearchParams extends ModuleParams implements Integrity {
     final String linePrefix = com.rtg.util.StringUtils.LS + "..";
     return name() + " mode=" + mProgramMode + linePrefix
         + " hits={" + countParams() + "} " + linePrefix
+        + " index={" + index() + "}" + linePrefix
         + " build={" + build() + "}"
         + com.rtg.util.StringUtils.LS;
   }

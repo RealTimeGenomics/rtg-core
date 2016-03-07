@@ -61,6 +61,8 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
 
     protected int mNumberThreads = 1;
 
+    protected CreateParams mIndexParams = null;
+
     protected BuildParams mBuildParams = null;
 
     protected BuildParams mBuildSecondParams = null;
@@ -79,6 +81,15 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
      */
     public PositionParamsBuilder mode(final ProgramMode mode) {
       mProgramMode = mode;
+      return this;
+    }
+
+    /**
+     * @param params parameters for index creation
+     * @return this builder, so calls can be chained.
+     */
+    public PositionParamsBuilder indexParams(final CreateParams params) {
+      mIndexParams = params;
       return this;
     }
 
@@ -186,6 +197,7 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
 
   private final BuildParams mBuildParams;
   private final BuildParams mBuildSecondParams;
+  private final CreateParams mIndexParams;
 
   private final BuildParams mSearchParams;
 
@@ -213,6 +225,7 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
     mOutputParams = builder.mOutputParams;
     mProgress = builder.mProgress;
     mNgsParams = builder.mNgsParams;
+    mIndexParams = builder.mIndexParams;
     mObjects = new Object[] {mOutputParams, mProgramMode, mBuildParams, mBuildSecondParams, mSearchParams, mHashCountThreshold, mProgress, mNumberThreads, mNgsParams};
   }
 
@@ -230,6 +243,7 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
       final Integer threshold,
       final BuildParams buildParams,
       final BuildParams buildSecondParams,
+      final CreateParams indexParams,
       final BuildParams searchParams,
       final PositionOutputParams outParams,
       final boolean progress,
@@ -239,13 +253,14 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
     mProgramMode = programMode;
     mBuildParams = buildParams;
     mBuildSecondParams = buildSecondParams;
+    mIndexParams = indexParams;
     mSearchParams = searchParams;
     mOutputParams = outParams;
     mHashCountThreshold = threshold;
     mProgress = progress;
     mNumberThreads = numberThreads;
     mNgsParams = ngsParams;
-    mObjects = new Object[] {mOutputParams, mProgramMode, mBuildParams, mBuildSecondParams, mSearchParams, mHashCountThreshold, mProgress, mNumberThreads, mNgsParams};
+    mObjects = new Object[] {mOutputParams, mProgramMode, mBuildParams, mBuildSecondParams, mIndexParams, mSearchParams, mHashCountThreshold, mProgress, mNumberThreads, mNgsParams};
   }
 
   /**
@@ -262,7 +277,7 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
     final ISequenceParams sequences = build.sequences();
     //TODO improve efficiency of duplicating build
     return new PositionParams(
-        mProgramMode, hashCountThreshold(), build.subSequence(sequences.region()), buildSecond() != null ? buildSecond().subSequence(sequences.region()) : null, search.subSequence(region), output(), progress(), numberThreads(), ngsParams()
+        mProgramMode, hashCountThreshold(), build.subSequence(sequences.region()), buildSecond() != null ? buildSecond().subSequence(sequences.region()) : null, indexParams(), search.subSequence(region), output(), progress(), numberThreads(), ngsParams()
     );
   }
 
@@ -279,7 +294,7 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
     final BuildParams build = build();
     //TODO improve efficiency of duplicating build
     return new PositionParams(
-        mProgramMode, hashCountThreshold(), build.subSequence(region), buildSecond() != null ? buildSecond().subSequence(region) : null, search.subSequence(search.sequences().region()), output(), progress(), numberThreads(), ngsParams()
+        mProgramMode, hashCountThreshold(), build.subSequence(region), buildSecond() != null ? buildSecond().subSequence(region) : null, indexParams(), search.subSequence(search.sequences().region()), output(), progress(), numberThreads(), ngsParams()
     );
   }
 
@@ -329,6 +344,13 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
   }
 
   /**
+   * @return parameters for index creation
+   */
+  public CreateParams indexParams() {
+    return mIndexParams;
+  }
+
+  /**
    * @return the search parameters.
    */
   public BuildParams search() {
@@ -352,18 +374,6 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
    */
   public File outputDir() {
     return mOutputParams.directory();
-  }
-
-  /**
-   * Return create parameters.
-   * @return the parameters
-   */
-  public CreateParams indexParams() {
-    if (mBuildSecondParams != null) {
-      return new CreateParams(mBuildParams.size() + mBuildSecondParams.size(), mBuildParams.hashBits(), mBuildParams.hashBits(), mNgsParams.compressHashes(), false, false);
-    } else {
-      return mBuildParams;
-    }
   }
 
   /**
@@ -482,6 +492,7 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
     final String linePrefix = LS + "..";
     return "PositionParams mode=" + mProgramMode + " threshold=" + mHashCountThreshold + " progress=" + mProgress + " number threads=" + mNumberThreads + linePrefix
         + " output={" + mOutputParams + "}" + linePrefix
+        + " index={" + indexParams() + "}" + linePrefix
         + " build={" + build() + "}" + linePrefix
         + " search={" + search() + "}" + LS;
   }
@@ -504,8 +515,6 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
   @Override
   public boolean globalIntegrity() {
     integrity();
-    mBuildParams.globalIntegrity();
-    mSearchParams.globalIntegrity();
     mOutputParams.globalIntegrity();
     return true;
   }

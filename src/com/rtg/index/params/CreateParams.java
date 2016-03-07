@@ -12,7 +12,10 @@
 package com.rtg.index.params;
 
 
+import java.io.IOException;
+
 import com.rtg.index.HashBitHandle;
+import com.rtg.launcher.BuildParams;
 import com.rtg.util.MathUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
@@ -88,18 +91,6 @@ public class CreateParams implements Integrity {
     mOnlyKeepRepeatHashes = false;
     //System.err.println(this);
     assert localIntegrity();
-  }
-
-  /**
-   * @param size upper bound of number of hash windows expected in index.
-   * @param hashBits number of bits recorded in each hash window.
-   * @param windowBits number of bits needed to uniquely represent a window (the hash may lose information).
-   * @param compressHashes if we are compressing the hash array (requires two passes of adds). <code>noOverflow</code> must be on for this to be allowed
-   * @param spaceEfficientButUnsafe if we want to use the <code>spaceEfficientButUnsafe</code> <code>ArrayType</code> selection mode
-   * @param ideal if true then minimise total of hash and initial pointer memory
-   */
-  public CreateParams(final long size, final int hashBits, final int windowBits, final boolean compressHashes, boolean spaceEfficientButUnsafe, boolean ideal) {
-    this(size, hashBits, windowBits, 31, compressHashes, true, spaceEfficientButUnsafe, ideal);
   }
 
   /**
@@ -307,13 +298,6 @@ public class CreateParams implements Integrity {
     }
   }
 
-  /**
-   * @return true if index should only keep hashes above the repeat frequency threshold
-   */
-  public boolean onlyKeepRepeatHashes() {
-    return mOnlyKeepRepeatHashes;
-  }
-
   @Override
   public int hashCode() {
     return Utils.pairHash(mHashBits, hashLong(mSize));
@@ -358,7 +342,7 @@ public class CreateParams implements Integrity {
       Exam.assertTrue(hashBits() == LONG_BITS || hashBits() == windowBits());
     }
     Exam.assertTrue(initialPointerBits() >= 2);
-    Exam.assertTrue(valueBits() >= 0 && valueBits() <= LONG_BITS);
+//    Exam.assertTrue(valueBits() >= 0 && valueBits() <= LONG_BITS);
     return true;
   }
 
@@ -374,6 +358,35 @@ public class CreateParams implements Integrity {
   public boolean globalIntegrity() {
     integrity();
     return true;
+  }
+
+
+  /**
+   * Calculate the number of hash bits needed.
+   * @param typeBits bits needed for each residue.
+   * @param windowSize number of residues in a hash window.
+   * @return the number of required hash bits.
+   */
+  public static int calculateHashBits(final int typeBits, final int windowSize) {
+    final int winBits = windowSize * typeBits;
+    return winBits > 64 ? 64 : winBits;
+  }
+
+  /**
+   * builder for create params with defaults calculated from build params
+   * @param bp the build params
+   * @return builder with some of values preset
+   * @throws IOException if an IO error occurs whilst calculating size
+   */
+  public static CreateParamsBuilder fromBuildParams(BuildParams bp) throws IOException {
+    final int hashBits = CreateParams.calculateHashBits(bp.sequences().mode().codeType().bits(), bp.windowSize());
+    final CreateParamsBuilder ret = new CreateParamsBuilder();
+    ret.windowBits(hashBits)
+      .size(bp.calculateSize())
+      .hashBits(hashBits)
+      .spaceEfficientButUnsafe(false)
+      .ideal(false);
+    return ret;
   }
 
 

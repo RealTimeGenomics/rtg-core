@@ -65,7 +65,7 @@ public class IndexSimilarityTest extends TestCase {
   }
 
   public final void testSimilarity1() {
-    final CreateParams params = new CreateParams(100, 32, 32, true, false, false);
+    final CreateParams params = new CreateParams(100, 32, 32, 31, true, true, false, false);
     final IndexSimilarity index = new IndexSimilarity(params, new RepeatFrequencyFilterMethod(6, false, 6, 0), false, 1);
     final String expected = ""
       + "SimilarityMatrix 10" + StringUtils.LS
@@ -88,7 +88,7 @@ public class IndexSimilarityTest extends TestCase {
   }
 
   public final void testSimilarity2() {
-    final CreateParams params = new CreateParams(100, 32, 32, true, false, false);
+    final CreateParams params = new CreateParams(100, 32, 32, 31, true, true, false, false);
     final IndexSimilarity index = new IndexSimilarity(params, new RepeatFrequencyFilterMethod(6, false, 6, 0), false, 1);
     final String expected = ""
       + "SimilarityMatrix 10" + StringUtils.LS

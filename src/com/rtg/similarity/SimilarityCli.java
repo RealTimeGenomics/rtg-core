@@ -37,6 +37,7 @@ import com.rtg.index.hash.ExactHashFunction;
 import com.rtg.index.hash.HashLoop;
 import com.rtg.index.hash.IncrementalHashLoop;
 import com.rtg.index.params.CountParams;
+import com.rtg.index.params.CreateParams;
 import com.rtg.index.params.ParamsUtils;
 import com.rtg.index.similarity.BinaryTree;
 import com.rtg.index.similarity.IndexSimilarity;
@@ -233,7 +234,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
    */
   static void memToString(final StringBuilder sb, final BuildSearchParams buildSearchParams, final long bufferLength) {
     sb.append(ParamsUtils.memToString("Shared_buffer", bufferLength));
-    sb.append(IndexUtils.memString(buildSearchParams.build()));
+    sb.append(IndexUtils.memString(buildSearchParams.index()));
   }
 
   private static class IncrementalIdMap extends HashMap<Integer, Integer> {
@@ -289,7 +290,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       Diagnostic.userLog("Usage of memory" + StringUtils.LS + memToString(params, bufferLength));
 
       // Make all the components we need
-      final IndexSimilarity index = new IndexSimilarity(params.build(), new UnfilteredFilterMethod(), params.uniqueWords(), 1);
+      final IndexSimilarity index = new IndexSimilarity(params.index(), new UnfilteredFilterMethod(), params.uniqueWords(), 1);
 
       // Search the queries and write hits
       final long numSequences;
@@ -365,8 +366,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
   protected static HashLoop makeBuild(final Index index, final BuildParams buildParams, final int labelIndex, final long[] sdfIdToTaxonId) {
     final HashLoop subjectHashLoop;
     final boolean dualMode = true;
-    final int winBits = buildParams.windowBits();
-    if (winBits > 64) {
+    if (buildParams.windowSize() > 32) {
       throw new SlimException(ErrorType.INFO_ERROR, "Word size > 32");
     } else {
       final ExactHashFunction exf = new ExactHashFunction(buildParams, dualMode);
@@ -561,15 +561,18 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       final BuildParams buildParams = BuildParams.builder()
           .windowSize(nwindow)
           .stepSize(nstep)
-          .valueBits(idBits)
-          .compressHashes(true)
           .sequences(subjectParams)
+          .create();
+      final CreateParams indexParams = CreateParams.fromBuildParams(buildParams)
+          .compressHashes(true)
+          .valueBits(idBits)
           .createBitVector(false)
           .spaceEfficientButUnsafe(true)
           .ideal(true)
           .size(size)
           .create();
       builder.build(buildParams);
+      builder.index(indexParams);
     } else {
       final File listFile = (File) mFlags.getValue(CommonFlags.INPUT_LIST_FLAG);
       int numberErrorLines = 0;
@@ -653,15 +656,21 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
         final BuildParams buildParams = BuildParams.builder()
           .windowSize(nwindow)
           .stepSize(nstep)
-          .size(size)
-          .valueBits(idBits)
-          .compressHashes(true)
           .sequences(dummySubjectParams)
+          .create();
+        final int hashBits = CreateParams.calculateHashBits(pm.subjectMode().codeType().bits(), nwindow);
+        final CreateParams indexParams = new CreateParams.CreateParamsBuilder()
+          .hashBits(hashBits)
+          .windowBits(hashBits)
+          .compressHashes(true)
+          .valueBits(idBits)
           .createBitVector(false)
           .spaceEfficientButUnsafe(true)
           .ideal(true)
+          .size(size)
           .create();
         builder.build(buildParams);
+        builder.index(indexParams);
       }
     }
 

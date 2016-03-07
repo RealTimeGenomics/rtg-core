@@ -14,14 +14,13 @@ package com.rtg.launcher;
 import java.io.File;
 import java.io.IOException;
 
-import com.rtg.index.IndexUtils;
 import com.rtg.mode.ProgramMode;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
@@ -67,7 +66,7 @@ public class BuildParamsTest extends TestCase {
     final File file = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams sp = SequenceParams.builder().directory(file).create();
     try {
-      return BuildParams.builder().size(size).windowSize(windowSize).stepSize(stepSize).sequences(sp).create();
+      return BuildParams.builder().windowSize(windowSize).stepSize(stepSize).sequences(sp).create();
     } catch (final RuntimeException re) {
       sp.close();
       throw re;
@@ -84,7 +83,7 @@ public class BuildParamsTest extends TestCase {
     final String actual = b.toString();
     //System.err.println(actual);
     assertTrue(actual, actual.startsWith(" seq={SequenceParams mode=BIDIRECTIONAL region=[(1:-1), (2:-1)] directory="));
-    assertTrue(actual, actual.endsWith("}  size=2 hash bits=8 initial pointer bits=2 value bits=31 window=4 step=2"));
+    assertTrue(actual, actual.endsWith("}  window=4 step=2"));
     a.close();
     b.close();
   }
@@ -96,17 +95,13 @@ public class BuildParamsTest extends TestCase {
     final File fileb = ReaderTestUtils.getDNADir(mDir);
     final SequenceParams spb = SequenceParams.builder().directory(fileb).create();
     spb.close();
-    final BuildParams a1 = BuildParams.builder().size(100).windowSize(4).stepSize(2).sequences(spa).create();
-    final BuildParams a2 = BuildParams.builder().size(100).windowSize(4).stepSize(2).sequences(spa).create();
-    final BuildParams b = BuildParams.builder().size(100).windowSize(4).stepSize(2).sequences(spb).create();
-    final BuildParams c = BuildParams.builder().size(101).windowSize(4).stepSize(2).sequences(spa).create();
-    final BuildParams d = BuildParams.builder().size(100).windowSize(5).stepSize(2).sequences(spa).create();
-    final BuildParams e = BuildParams.builder().size(100).windowSize(4).stepSize(3).sequences(spa).create();
-    TestUtils.equalsHashTest(new BuildParams[][] {{a1, a2}, {b}, {c}, {d}, {e}});
+    final BuildParams a1 = BuildParams.builder().windowSize(4).stepSize(2).sequences(spa).create();
+    final BuildParams a2 = BuildParams.builder().windowSize(4).stepSize(2).sequences(spa).create();
+    final BuildParams d = BuildParams.builder().windowSize(5).stepSize(2).sequences(spa).create();
+    final BuildParams e = BuildParams.builder().windowSize(4).stepSize(3).sequences(spa).create();
+    TestUtils.equalsHashTest(new BuildParams[][] {{a1, a2}, {d}, {e}});
     a1.close();
     a2.close();
-    b.close();
-    c.close();
     d.close();
     e.close();
   }
@@ -119,15 +114,10 @@ public class BuildParamsTest extends TestCase {
 
   public void testa() throws Exception {
     final BuildParams ip = getParams(42L, 4, 3);
-    ip.integrity();
-    assertEquals(42, ip.size());
     assertEquals(4, ip.windowSize());
     assertEquals(3, ip.stepSize());
-    assertEquals(8, ip.hashBits());
-    assertEquals(8, ip.windowBits());
     final String str = ip.toString();
-    assertTrue(str, str.endsWith(" size=42 hash bits=8 initial pointer bits=5 value bits=31 window=4 step=3"));
-    assertEquals(MEM_EXPECTED, IndexUtils.memToString(ip));
+    assertTrue(str, str.endsWith(" window=4 step=3"));
 
     ip.sequences().reader();
     ip.close();
@@ -135,68 +125,45 @@ public class BuildParamsTest extends TestCase {
 
   public void testHashBits0() throws Exception {
     final BuildParams ip = getParams(42L, 33, 3);
-    ip.integrity();
-    assertEquals(42, ip.size());
     assertEquals(33, ip.windowSize());
     assertEquals(3, ip.stepSize());
-    assertEquals(64, ip.hashBits());
-    assertEquals(66, ip.windowBits());
     final String str = ip.toString();
-    assertTrue(str, str.endsWith(" size=42 hash bits=64 initial pointer bits=5 value bits=31 window=33 step=3"));
+    assertTrue(str, str.endsWith(" window=33 step=3"));
     ip.close();
   }
 
   public void testHashBits1() throws Exception {
     final BuildParams ip = getParams(42L, 32, 3);
-    ip.integrity();
-    assertEquals(42, ip.size());
     assertEquals(32, ip.windowSize());
     assertEquals(3, ip.stepSize());
-    assertEquals(64, ip.hashBits());
-    assertEquals(64, ip.windowBits());
     final String str = ip.toString();
-    assertTrue(str, str.endsWith(" size=42 hash bits=64 initial pointer bits=5 value bits=31 window=32 step=3"));
+    assertTrue(str, str.endsWith(" window=32 step=3"));
     ip.close();
   }
 
   public void testHashBits2() throws Exception {
     final BuildParams ip = getParams(42L, 13, 3);
-    ip.integrity();
-    assertEquals(42, ip.size());
     assertEquals(13, ip.windowSize());
     assertEquals(3, ip.stepSize());
-    assertEquals(26, ip.hashBits());
-    assertEquals(26, ip.windowBits());
     final String str = ip.toString();
-    assertTrue(str, str.endsWith(" size=42 hash bits=26 initial pointer bits=5 value bits=31 window=13 step=3"));
+    assertTrue(str, str.endsWith(" window=13 step=3"));
     ip.close();
   }
 
-  public void testHashBits() {
-    assertEquals(1, BuildParams.calculateHashBits(1, 1));
-    assertEquals(2, BuildParams.calculateHashBits(2, 1));
-    assertEquals(2, BuildParams.calculateHashBits(1, 2));
-    assertEquals(62, BuildParams.calculateHashBits(2, 31));
-    assertEquals(64, BuildParams.calculateHashBits(2, 32));
-    assertEquals(64, BuildParams.calculateHashBits(2, 33));
-    assertEquals(60, BuildParams.calculateHashBits(5, 12));
-    assertEquals(64, BuildParams.calculateHashBits(5, 13));
-  }
 
   public void testBasic1() throws Exception {
     File file = null;
     try {
       file = ReaderTestUtils.getDNADir(mDir);
       try (BuildParams ip = getParams(ProgramMode.SLIMN.subjectMode(), file, 4, 3)) {
-        ip.integrity();
-        assertEquals(1, ip.size());
+        assertEquals(1, ip.calculateSize());
         assertEquals(4, ip.windowSize());
         assertEquals(3, ip.stepSize());
         assertEquals(file, ip.directory());
         final String str = ip.toString();
         //System.err.println(str);
         assertTrue(str, str.startsWith(" seq={SequenceParams mode="));
-        assertTrue(str, str.endsWith(" size=1 hash bits=8 initial pointer bits=2 value bits=31 window=4 step=3"));
+        assertTrue(str, str.endsWith(" window=4 step=3"));
       }
     } finally {
       FileHelper.deleteAll(file);
@@ -208,15 +175,14 @@ public class BuildParamsTest extends TestCase {
     try {
       file = ReaderTestUtils.getDNADir(mDir);
       try (BuildParams ip = getParams(ProgramMode.TSLIMX.subjectMode(), file, 4, 3)) {
-        ip.integrity();
-        assertEquals(0, ip.size());
+        assertEquals(0, ip.calculateSize());
         assertEquals(4, ip.windowSize());
         assertEquals(3, ip.stepSize());
         assertEquals(file, ip.directory());
         final String str = ip.toString();
         //System.err.println(str);
         assertTrue(str, str.startsWith(" seq={SequenceParams mode="));
-        assertTrue(str, str.endsWith(" size=0 hash bits=20 initial pointer bits=2 value bits=31 window=4 step=3"));
+        assertTrue(str, str.endsWith(" window=4 step=3"));
       }
     } finally {
       FileHelper.deleteAll(file);
@@ -288,12 +254,12 @@ public class BuildParamsTest extends TestCase {
       SequenceParams seq = SequenceParams.builder().directory(dir).readerRestriction(LongRange.NONE).mode(SequenceMode.UNIDIRECTIONAL).create();
       assertEquals(160, seq.reader().lengthBetween(0, 5));
       assertEquals(160, seq.reader().totalLength());
-      assertEquals(10, BuildParams.builder().sequences(seq).stepSize(16).windowSize(16).create().size());
+      assertEquals(10, BuildParams.builder().sequences(seq).stepSize(16).windowSize(16).create().calculateSize());
       seq = SequenceParams.builder().directory(dir).readerRestriction(new LongRange(2, 5)).mode(SequenceMode.UNIDIRECTIONAL).useMemReader(false).create();
       assertEquals(3, seq.reader().numberSequences());
       assertEquals(96, seq.reader().lengthBetween(0, 3));
       assertEquals(160, seq.reader().totalLength());
-      assertEquals(6, BuildParams.builder().sequences(seq).stepSize(16).windowSize(16).create().size());
+      assertEquals(6, BuildParams.builder().sequences(seq).stepSize(16).windowSize(16).create().calculateSize());
     } finally {
       FileHelper.deleteAll(dir);
     }

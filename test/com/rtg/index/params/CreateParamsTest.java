@@ -40,7 +40,7 @@ public class CreateParamsTest extends TestCase {
   }
 
   CreateParams getParams(final long size, final int hashBits, final int windowBits) {
-    return new CreateParams(size, hashBits, windowBits, false, false, false);
+    return new CreateParams(size, hashBits, windowBits, 31, false, true, false, false);
   }
 
   public void testEquals() throws Exception {
@@ -491,7 +491,7 @@ public class CreateParamsTest extends TestCase {
   }
 
   private ArrayHandle getInitialPositionHandle(long size, int hashbits) {
-    return new CreateParams(size, hashbits, hashbits, false, true, true).initialPosition();
+    return new CreateParams(size, hashbits, hashbits, 31, false, true, true, true).initialPosition();
   }
 
   public void testBuilder() {
@@ -544,6 +544,18 @@ public class CreateParamsTest extends TestCase {
       assertEquals(Math.min(64, i - 10), params.hashCompressedBits());
       //System.err.println(i + ":" + params.hashCompressedBits());
     }
+  }
+
+
+  public void testHashBits() {
+    assertEquals(1, CreateParams.calculateHashBits(1, 1));
+    assertEquals(2, CreateParams.calculateHashBits(2, 1));
+    assertEquals(2, CreateParams.calculateHashBits(1, 2));
+    assertEquals(62, CreateParams.calculateHashBits(2, 31));
+    assertEquals(64, CreateParams.calculateHashBits(2, 32));
+    assertEquals(64, CreateParams.calculateHashBits(2, 33));
+    assertEquals(60, CreateParams.calculateHashBits(5, 12));
+    assertEquals(64, CreateParams.calculateHashBits(5, 13));
   }
 }
 

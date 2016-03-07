@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.rtg.index.IndexUtils;
+import com.rtg.index.params.CreateParams;
 import com.rtg.launcher.BuildParams;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
@@ -61,8 +62,8 @@ public class PositionParamsTest extends TestCase {
     return IndexUtils.bytes(buildSearchParams.indexParams());
   }
 
-  PositionParams getParams(final ProgramMode mode, final Integer threshold, final BuildParams build, final BuildParams search, final PositionOutputParams outParams, final int numberThreads, final boolean largeSort) {
-    return PositionParams.builder().mode(mode).hashCountThreshold(threshold).buildParams(build).searchParams(search).outputParams(outParams).numberThreads(numberThreads).create();
+  PositionParams getParams(final ProgramMode mode, final Integer threshold, final BuildParams build, final BuildParams search, final PositionOutputParams outParams, final int numberThreads, final boolean largeSort) throws IOException {
+    return PositionParams.builder().mode(mode).hashCountThreshold(threshold).buildParams(build).searchParams(search).indexParams(CreateParams.fromBuildParams(build).create()).outputParams(outParams).numberThreads(numberThreads).create();
   }
 
   public void testLog10() {
@@ -203,12 +204,13 @@ public class PositionParamsTest extends TestCase {
       assertEquals(""
           + "PositionParams mode=SLIMN threshold=1000 progress=" + Boolean.FALSE.toString() + " number threads=13" + LS
           + ".. output={outputDir=" + wp.output().directory() + " format=SEGMENT zip=" + Boolean.FALSE.toString()  + " score threshold=" + Utils.realFormat(null) + " topN=1" + " distribution={" + Utils.realFormat(null) + "}}" + LS
+          + ".. index={ size=1 hash bits=8 initial pointer bits=2 value bits=20}" + LS
           + ".. build={ seq={SequenceParams mode=UNIDIRECTIONAL region=[(0:-1), (1:-1)] directory="
           + build.directory().toString()
-          + "}  size=1 hash bits=8 initial pointer bits=2 value bits=31 window=4 step=1}" + LS
+          + "}  window=4 step=1}" + LS
           + ".. search={ seq={SequenceParams mode=BIDIRECTIONAL region=[(0:-1), (2:-1)] directory="
           + queries.directory()
-          + "}  size=16 hash bits=8 initial pointer bits=4 value bits=31 window=4 step=1}"  + LS
+          + "}  window=4 step=1}"  + LS
           , wp.toString()
       );
 
@@ -249,17 +251,18 @@ public class PositionParamsTest extends TestCase {
     final PositionParams pp2 = pp1.subSearch(new HashingRegion(1, 2));
     final String first = "PositionParams mode=SLIMN threshold=1 progress=" + Boolean.FALSE.toString() + " number threads=1" + LS
     + ".. output={outputDir=" + pp1.outputDir() + " format=SEGMENT zip=" + Boolean.FALSE.toString() + " score threshold=" + Utils.realFormat(null) + " topN=1 distribution={" + Utils.realFormat(null) + "}}" + LS
+    + ".. index={ size=1 hash bits=8 initial pointer bits=2 value bits=20}" + LS
     + ".. build={ seq={SequenceParams mode=UNIDIRECTIONAL region=[(0:-1), (1:-1)] directory="
     + build.directory().toString()
-    + "}  size=1 hash bits=8 initial pointer bits=2 value bits=31 window=4 step=1}" + LS;
+    + "}  window=4 step=1}" + LS;
     assertEquals(""
         + first
-        + ".. search={ seq={SequenceParams mode=BIDIRECTIONAL region=[(0:-1), (4:-1)] directory=" + queries.directory() + "}  size=50 hash bits=8 initial pointer bits=5 value bits=31 window=4 step=1}" + LS
+        + ".. search={ seq={SequenceParams mode=BIDIRECTIONAL region=[(0:-1), (4:-1)] directory=" + queries.directory() + "}  window=4 step=1}" + LS
         , pp1.toString()
     );
     assertEquals(""
         + first
-        + ".. search={ seq={SequenceParams mode=BIDIRECTIONAL region=[(1:-1), (2:-1)] directory=" + queries.directory() + "}  size=8 hash bits=8 initial pointer bits=3 value bits=31 window=4 step=1}" + LS
+        + ".. search={ seq={SequenceParams mode=BIDIRECTIONAL region=[(1:-1), (2:-1)] directory=" + queries.directory() + "}  window=4 step=1}" + LS
         , pp2.toString()
     );
     pp1.close();
@@ -281,13 +284,14 @@ public class PositionParamsTest extends TestCase {
     final PositionParams pp1 = getParams(pm, 1, build, queries, outputParams, 1/*thread*/, false/*largeSort*/);
     pp1.integrity();
     final PositionParams pp2 = pp1.subBuild(new HashingRegion(0, 1));
+    final String indexStr = ".. index={ size=1 hash bits=8 initial pointer bits=2 value bits=20}" + LS;
     final String buildStr = ".. build={ seq={SequenceParams mode=UNIDIRECTIONAL region=[(0:-1), (1:-1)] directory=";
-    final String secondStr = build.directory().toString() + "}  size=1 hash bits=8 initial pointer bits=2 value bits=31 window=4 step=1}" + LS;
+    final String secondStr = build.directory().toString() + "}  window=4 step=1}" + LS;
     final String first = "PositionParams mode=SLIMN threshold=1 progress=" + Boolean.FALSE.toString() + " number threads=1" + LS + ".. output={outputDir=" + pp1.outputDir() + " format=SEGMENT zip=" + Boolean.FALSE.toString() + " score threshold=" + Utils.realFormat(null) + " topN=1 distribution={" + Utils.realFormat(null) + "}}" + LS;
-    final String searchStr = ".. search={ seq={SequenceParams mode=BIDIRECTIONAL region=[(0:-1), (4:-1)] directory=" + queries.directory() + "}  size=50 hash bits=8 initial pointer bits=5 value bits=31 window=4 step=1}" + LS;
-    assertEquals(first + buildStr + secondStr + searchStr, pp1.toString());
+    final String searchStr = ".. search={ seq={SequenceParams mode=BIDIRECTIONAL region=[(0:-1), (4:-1)] directory=" + queries.directory() + "}  window=4 step=1}" + LS;
+    assertEquals(first + indexStr + buildStr + secondStr + searchStr, pp1.toString());
     final String buildStr2 = ".. build={ seq={SequenceParams mode=UNIDIRECTIONAL region=[(0:-1), (1:-1)] directory=";
-    assertEquals(first + buildStr2 + secondStr + searchStr, pp2.toString());
+    assertEquals(first + indexStr + buildStr2 + secondStr + searchStr, pp2.toString());
     pp1.close();
     pp2.close();
   }
@@ -319,12 +323,13 @@ public class PositionParamsTest extends TestCase {
       assertEquals(""
           + "PositionParams mode=SLIMN threshold=1 progress=" + Boolean.FALSE.toString() + " number threads=1" + LS
           + ".. output={outputDir=" + bsp.outputDir() + " format=SEGMENT zip=" + Boolean.FALSE.toString() + " score threshold=" + Utils.realFormat(null) + " topN=1 distribution={" + Utils.realFormat(null) + "}}" + LS
+          + ".. index={ size=1 hash bits=8 initial pointer bits=2 value bits=20}" + LS
           + ".. build={ seq={SequenceParams mode=UNIDIRECTIONAL region=[(0:-1), (1:-1)] directory="
           + build.directory().toString()
-          + "}  size=1 hash bits=8 initial pointer bits=2 value bits=31 window=4 step=1}" + LS
+          + "}  window=4 step=1}" + LS
           + ".. search={ seq={SequenceParams mode=BIDIRECTIONAL region=[(0:-1), (2:-1)] directory="
           + queries.directory()
-          + "}  size=16 hash bits=8 initial pointer bits=4 value bits=31 window=4 step=1}"  + LS
+          + "}  window=4 step=1}"  + LS
           , bsp.toString()
       );
 

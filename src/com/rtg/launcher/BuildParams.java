@@ -14,20 +14,17 @@ package com.rtg.launcher;
 import java.io.File;
 import java.io.IOException;
 
-import com.rtg.index.params.AbstractCreateParamsBuilder;
-import com.rtg.index.params.CreateParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.Params;
 import com.rtg.util.Utils;
-import com.rtg.util.integrity.Exam;
 
 /**
  * Holds a set of parameters that are sufficient to enable the initial creation
  * and build of an index.
  *
  */
-public final class BuildParams extends CreateParams implements Params {
+public final class BuildParams implements Params {
 
   static long size(final int windowSize, final int stepSize, final ISequenceParams sequenceParams) throws IOException {
     final SequenceMode mode = sequenceParams.mode();
@@ -72,17 +69,13 @@ public final class BuildParams extends CreateParams implements Params {
   }
 
   /**
-   * Calculate the number of hash bits needed.
-   * @param typeBits bits needed for each residue.
-   * @param windowSize number of residues in a hash window.
-   * @return the number of required hash bits.
+   * calculate the total number of hash windows based on sequences window and step sizes
+   * @return the number of hash windows
+   * @throws IOException if an IO error occurs
    */
-  //implemented as a static so that can be called in the super constructor
-  static int calculateHashBits(final int typeBits, final int windowSize) {
-    final int winBits = windowSize * typeBits;
-    return winBits > 64 ? 64 : winBits;
+  public long calculateSize() throws IOException {
+    return size(mWindowSize, mStepSize, mSequenceParams);
   }
-
 
   /**
    * Creates a BuildParams builder.
@@ -96,7 +89,7 @@ public final class BuildParams extends CreateParams implements Params {
   /**
    * A builder class for <code>BuildParams</code>.
    */
-  public static class BuildParamsBuilder extends AbstractCreateParamsBuilder<BuildParamsBuilder> {
+  public static class BuildParamsBuilder {
 
     protected ISequenceParams mSequenceParams;
 
@@ -104,17 +97,12 @@ public final class BuildParams extends CreateParams implements Params {
 
     protected int mStepSize;
 
-    protected boolean mDefaultSize = true;
-
     protected int mTypeBits; // Calculated automatically
 
     /**
      * create the builder
      */
     public BuildParamsBuilder() {
-      compressHashes(false);
-      hashBits(0);
-      valueBits(31);
     }
 
     /**
@@ -124,17 +112,6 @@ public final class BuildParams extends CreateParams implements Params {
      */
     public BuildParamsBuilder sequences(final ISequenceParams sequences) {
       mSequenceParams = sequences;
-      return this;
-    }
-
-    /**
-     * Sets index size. If not set, a default will be determined from the other parameters.
-     * @param size upper bound of number of hash windows expected in index.
-     * @return this builder, so calls can be chained.
-     */
-    public BuildParamsBuilder size(final long size) {
-      super.size(size);
-      mDefaultSize = false;
       return this;
     }
 
@@ -165,21 +142,11 @@ public final class BuildParams extends CreateParams implements Params {
      * @throws IOException If in I/O error occurs while finding out sizes of data
      */
     public BuildParams create() throws IOException {
-      if (mDefaultSize) {
-        mSize = BuildParams.size(mWindowSize, mStepSize, mSequenceParams);
-      }
       if (mSequenceParams == null) {
         throw new NullPointerException("BuildParams requires SequenceParams to be set.");
       }
       mTypeBits = mSequenceParams.mode().codeType().bits();
-      mHashBits = BuildParams.calculateHashBits(mTypeBits, mWindowSize);
-      windowBits(mTypeBits * mWindowSize);
       return new BuildParams(this);
-    }
-
-    @Override
-    protected BuildParamsBuilder self() {
-      return this;
     }
   }
 
@@ -200,12 +167,23 @@ public final class BuildParams extends CreateParams implements Params {
    * @param builder the builder object.
    */
   public BuildParams(final BuildParamsBuilder builder) {
-    super(builder);
     mSequenceParams = builder.mSequenceParams;
     mTypeBits = builder.mTypeBits;
     mWindowSize = builder.mWindowSize;
     mStepSize = builder.mStepSize;
-    integrity();
+
+    if (mSequenceParams == null) {
+      throw new IllegalArgumentException();
+    }
+    if (mTypeBits != 2 && mTypeBits != 5) {
+      throw new IllegalArgumentException();
+    }
+    if (mWindowSize < 1) {
+      throw new IllegalArgumentException();
+    }
+    if (mStepSize < 1) {
+      throw new IllegalArgumentException();
+    }
   }
 
   /**
@@ -213,8 +191,7 @@ public final class BuildParams extends CreateParams implements Params {
    * @return a builder
    */
   public BuildParamsBuilder cloneBuilder() {
-    return new BuildParamsBuilder().windowSize(windowSize()).stepSize(stepSize()).sequences(sequences())
-      .compressHashes(compressHashes());
+    return new BuildParamsBuilder().windowSize(windowSize()).stepSize(stepSize()).sequences(sequences());
   }
 
   /**
@@ -267,7 +244,7 @@ public final class BuildParams extends CreateParams implements Params {
 
   @Override
   public int hashCode() {
-    return Utils.pairHash(super.hashCode(), Utils.pairHash(Utils.pairHash(mSequenceParams.hashCode(), mTypeBits), Utils.pairHash(mWindowSize, mStepSize)));
+    return Utils.pairHash(Utils.pairHash(mSequenceParams.hashCode(), mTypeBits), Utils.pairHash(mWindowSize, mStepSize));
   }
 
   @Override
@@ -279,37 +256,15 @@ public final class BuildParams extends CreateParams implements Params {
       return false;
     }
     final BuildParams that = (BuildParams) obj;
-    return
-    super.equals(that)
-    && this.mSequenceParams.equals(that.mSequenceParams)
+    return this.mSequenceParams.equals(that.mSequenceParams)
     && this.mTypeBits == that.mTypeBits
     && this.mWindowSize == that.mWindowSize
     && this.mStepSize == that.mStepSize;
   }
 
-
-  @Override
-  public boolean integrity() {
-    super.integrity();
-    Exam.assertTrue(mSequenceParams != null);
-    Exam.assertTrue("mTypeBits=" + mTypeBits, mTypeBits == 2 || mTypeBits == 5);
-    Exam.assertTrue(mWindowSize >= 1);
-    Exam.assertTrue("stepSize=" + mStepSize + " windowSize=" + mWindowSize, mStepSize >= 1);
-    return true;
-  }
-
-
-  @Override
-  public boolean globalIntegrity() {
-    integrity();
-    Exam.integrity(mSequenceParams);
-    return true;
-  }
-
   @Override
   public String toString() {
     return " seq={" + mSequenceParams + "} "
-     + super.toString()
      + " window=" + mWindowSize
      + " step=" + mStepSize;
   }

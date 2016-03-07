@@ -127,11 +127,7 @@ public final class LongReadTask {
     final SizeSplit ss = new SizeSplit((int) params.build().sequences().reader().numberSequences(), numberThreads);
     final CreateParams indexParams;
     final boolean paired = params.ngsParams().paired();
-    if (paired) {
-      indexParams = params.indexParams();
-    } else {
-      indexParams = params.build();
-    }
+    indexParams = params.indexParams();
     final int ipBits = indexParams.initialPointerBits();
     final IndexQueues queues = new IndexQueues(numberThreads, indexParams.hashBits(), indexParams.size(), indexParams.valueBits(), ipBits);
     for (int i = 0; i < numberThreads; i++) {
@@ -186,7 +182,7 @@ public final class LongReadTask {
     @Override
     public void run() throws IOException {
       final OneShotTimer timer = new OneShotTimer("LR_BS_build_queue_" + Thread.currentThread().getName().replace(" ", "_"));
-      final HashLoop hl = PositionUtils.makeBuild(mQueue, mParams.build());
+      final HashLoop hl = PositionUtils.makeBuild(mQueue, mParams.build(), mParams.indexParams().windowBits());
       final byte[] buffer = PositionUtils.makeBuffer(mParams.build().sequences().maxLength());
       mUsageMetric.incrementMetric(hl.execLoop(mParams.build().sequences(), buffer));
       timer.stopLog();
@@ -210,7 +206,7 @@ public final class LongReadTask {
       final OneShotTimer timer = new OneShotTimer("LR_BS_build_queue_" + Thread.currentThread().getName().replace(" ", "_"));
       final BuildParams buildFirst = mParams.build();
       final BuildParams buildSecond = mParams.buildSecond();
-      final HashLoop hl = PositionUtils.makePairedBuild(mQueue, buildFirst, buildSecond);
+      final HashLoop hl = PositionUtils.makePairedBuild(mQueue, buildFirst, buildSecond, mParams.indexParams().windowBits());
       final long lLeft = mParams.build().sequences().maxLength();
       final long lRight = mParams.buildSecond().sequences().maxLength();
       final byte[] buffer = PositionUtils.makeBuffer(Math.max(lLeft, lRight));
@@ -359,7 +355,7 @@ public final class LongReadTask {
         final PositionOutput temp = output.reverseClone();
         final FinderPositionOutput outputVarsReverse = new FinderPositionOutput(new PositionFinder(mxs, temp, stepSize, true, mReadLengths, buildParams.windowSize()), temp);
 
-        final int winBits = buildParams.windowBits();
+        final int winBits = mSubParams.indexParams().windowBits();
         final HashLoop queryHashLoop;
         if (winBits > 64) {
           final HashFunction function = new InExactHashFunction(buildParams.windowSize());
