@@ -58,6 +58,7 @@ import com.rtg.util.MathUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.OneShotTimer;
+import com.rtg.util.diagnostic.SlimException;
 import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.io.FileUtils;
 
@@ -220,6 +221,10 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
    */
   public static void buildQueryLongRead(final NgsParams params, final MapStatistics statistic, final UsageMetric usageMetric) throws IOException {
     final PositionParams posParams = params.toPositionParams();
+    if (posParams.indexParams().valueBits() > 31) {
+      //this isn't adequately tested, so fail
+      throw new SlimException("Read dataset too large, try running in multiple smaller chunks using --start-read and --end-read parameters");
+    }
     final Index index = LongReadTask.build(posParams, usageMetric, params.indexFilter());
 
     final OutputFilter filter = params.outputParams().outFilter();
