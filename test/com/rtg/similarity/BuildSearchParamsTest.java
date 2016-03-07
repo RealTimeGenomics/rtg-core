@@ -101,7 +101,6 @@ public class BuildSearchParamsTest extends TestCase {
     Diagnostic.setLogStream();
     final ProgramMode pm = ProgramMode.SLIMN;
     final SequenceParams dummySubjectParams = SequenceParams.builder().region(new HashingRegion(0, 1)).mode(pm.subjectMode()).create();
-    final long size = BuildParams.size(4, 0, 4, 1, dummySubjectParams.mode().numberFrames(), dummySubjectParams.mode().codeIncrement());
     final File hitDir = FileHelper.createTempDirectory();
     try {
       final CountParams count = new CountParams(hitDir, 5, 10, false);
