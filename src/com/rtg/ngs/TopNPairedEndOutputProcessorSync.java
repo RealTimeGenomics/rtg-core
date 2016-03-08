@@ -168,17 +168,19 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     }
     preProcessMatedStatistics(mUnmappedTracker, mSharedResources.getBlocker()) ;
 
-    final FilterConcatIntermediateFiles matedIntFiles = new MatedMulticoreFilterConcat(mParams, mSharedResources.getBlocker(), mFreqBlockerLeft, mFreqBlockerRight, mSharedResources.names(), mParams.useTopRandom() ? mSharedResources.getPairedEndTopRandom().getRecords() : null, mStatsMerger, mReportMerger)
-            .filterConcat(outputFiles, outFile, mSharedResources.getHeader(), mParams.outputParams());
-    if (mSharedResources.getPairedEndTopRandom() != null) {
-      mSharedResources.getPairedEndTopRandom().finish();
-    }
     final FilterConcatIntermediateFiles unmatedIntFiles;
     if (mOutputUnmated) {
       unmatedIntFiles = writeUnmated();
     } else {
       unmatedIntFiles = null;
     }
+
+    final FilterConcatIntermediateFiles matedIntFiles = new MatedMulticoreFilterConcat(mParams, mSharedResources.getBlocker(), mFreqBlockerLeft, mFreqBlockerRight, mSharedResources.names(), mParams.useTopRandom() ? mSharedResources.getPairedEndTopRandom().getRecords() : null, mStatsMerger, mReportMerger)
+      .filterConcat(outputFiles, outFile, mSharedResources.getHeader(), mParams.outputParams());
+    if (mSharedResources.getPairedEndTopRandom() != null) {
+      mSharedResources.getPairedEndTopRandom().finish();
+    }
+
     final FilterConcatIntermediateFiles unmappedIntFiles;
     if (mOutputUnmapped) {
       unmappedIntFiles = writeUnmapped(!mParams.outputParams().unify(), false, false);
@@ -215,7 +217,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     final FilterConcatIntermediateFiles unmatedIntFiles = getNonMatedFilterConcatIntermediateFiles(results, paired, regions);
     unmatedOutputTimer.stop();
     unmatedOutputTimer.log();
-   return unmatedIntFiles;
+    return unmatedIntFiles;
   }
 
   @Override
