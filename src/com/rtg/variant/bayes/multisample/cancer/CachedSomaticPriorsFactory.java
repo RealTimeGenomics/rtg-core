@@ -27,16 +27,6 @@ class CachedSomaticPriorsFactory<D extends Description> extends SomaticPriorsFac
   // Cf. Math.exponent()
   private final double[][][] mCache = new double[-Double.MIN_EXPONENT + 2][][];
 
-//  /**
-//   * Construct a new factory for the specified hypotheses.
-//   * @param hypotheses to be mutated.
-//   * @param loh probability of loss of heterozygosity.
-//   * @param initialPriors initial unnormalized haploid transition probabilities.
-//   */
-//  CachedSomaticPriorsFactory(final Hypotheses<D> hypotheses, final double loh, final double[][] initialPriors) {
-//    super(hypotheses, loh, initialPriors);
-//  }
-
   /**
    * Construct a new factory for the specified hypotheses.
    * @param hypotheses to be mutated.

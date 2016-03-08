@@ -40,7 +40,6 @@ class SomaticPosteriorPure extends AbstractSomaticPosterior {
         final double q = MathUtils.log(qa[i][j]);
         final double t = q + pi + pj;
         mPosterior[i][j] = t;
-        //System.err.println("SomaticPosteriorPure i=" + i + " j=" + j + " hypNormal=" + hypotheses.name(i) + " hypCancer=" + hypotheses.name(j) + " q=" + Utils.realFormat(q, 3) + " pi=" + Utils.realFormat(pi, 3) + " pj=" + Utils.realFormat(pj, 3) + " t=" + Utils.realFormat(t, 3));
       }
     }
     contraryEvidenceAdjustment(normal.statistics(), cancer.statistics());

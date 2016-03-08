@@ -50,10 +50,6 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
     mContaminationM = 1.0 - mContamination;
   }
 
-  /**
-   * copy constructor
-   * @param original Model to copy
-   */
   private ModelCancerContamination(ModelCancerContamination<S> original) {
     super(original);
     mSubHypotheses = original.mSubHypotheses;
@@ -70,13 +66,11 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
       final double b = Math.max(0, evidence.probability(code.bc(i)));
       probs[i] = 0.5 * (a + b);
     }
-    //System.err.println(probs.length + " :" + Arrays.toString(probs));
     return probs;
   }
 
   @Override
   public void increment(final EvidenceInterface evidence) {
-    //System.err.println(evidence);
     incrementStatistics(evidence);
     if (ambiguityShortCircuit(evidence)) {
       return;
@@ -126,10 +120,8 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
     }
   }
 
-
   @Override
   public ModelCancerContamination<S> copy() {
     return new ModelCancerContamination<>(this);
   }
-
 }
