@@ -15,6 +15,9 @@ import static com.rtg.util.StringUtils.LS;
 
 import com.rtg.index.Add;
 import com.rtg.index.Index;
+import com.rtg.index.IndexCompressed;
+import com.rtg.index.UnfilteredFilterMethod;
+import com.rtg.index.params.CreateParams;
 import com.rtg.position.MockIndex;
 import com.rtg.util.diagnostic.Diagnostic;
 
@@ -104,5 +107,14 @@ public class IndexQueuesTest extends TestCase {
     } catch (final RuntimeException e) {
       assertEquals("0", e.getMessage());
     }
+  }
+
+  public void testLongs() {
+    final CreateParams indexParams = new CreateParams(1, 20, 20, 33, true, true, false, false);
+    final IndexQueues iq = new IndexQueues(4, indexParams.hashBits(), indexParams.size(), indexParams.valueBits(), indexParams.initialPointerBits());
+    iq.queue(0).add(2, 0b111111111111111111111111111111111L);
+    final Index i = new IndexCompressed(indexParams, new UnfilteredFilterMethod(), 1);
+    iq.freeze(i);
+    assertEquals(0b111111111111111111111111111111111L, i.getValue(i.first(2)));
   }
 }
