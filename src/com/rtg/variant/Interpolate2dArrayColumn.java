@@ -12,29 +12,35 @@
 
 package com.rtg.variant;
 
-import com.rtg.ngs.Arm;
-
 /**
- * Delegate phred scaling to separte quality scalers for each arm.
  * @author kurt
  */
-public class ArmMachineCyclePhredScaler implements PhredScaler {
-  PhredScaler mLeft;
-  PhredScaler mRight;
+class Interpolate2dArrayColumn implements Interpolate {
+  private final int mColumn;
+  private final int[][] mCurve;
 
-  public ArmMachineCyclePhredScaler(PhredScaler left, PhredScaler right) {
-    mLeft = left;
-    mRight = right;
+  public Interpolate2dArrayColumn(int column, int[][] curve) {
+    mColumn = column;
+    mCurve = curve;
   }
 
   @Override
-  public int getScaledPhred(byte qual, int readPosition, Arm arm) {
-    switch (arm) {
-      case RIGHT:
-        return mRight.getScaledPhred(qual, readPosition, arm);
-      case LEFT:
-      default:
-        return mLeft.getScaledPhred(qual, readPosition, arm);
-    }
+  public int getValue(int pos) {
+    return mCurve[pos][mColumn];
+  }
+
+  @Override
+  public void setValue(int pos, int value) {
+    mCurve[pos][mColumn] = value;
+  }
+
+  @Override
+  public int minPos() {
+    return 0;
+  }
+
+  @Override
+  public int maxPos() {
+    return mCurve.length;
   }
 }

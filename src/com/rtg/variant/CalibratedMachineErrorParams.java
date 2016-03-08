@@ -135,15 +135,23 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
       query.setValue(CovariateEnum.READGROUP, cal.getCovariate(readGroupIndex).parse(readGroup));
     }
     if (cal.getCovariateIndex(CovariateEnum.ARM) != -1 && cal.getCovariateIndex(CovariateEnum.MACHINECYCLE) != -1) {
-      query.setValue(CovariateEnum.ARM, Arm.LEFT.ordinal());
-      final PhredScaler left = new BaseQualityMachineCyclePhredScaler(cal, query);
-      query.setValue(CovariateEnum.ARM, Arm.RIGHT.ordinal());
-      final PhredScaler right = new BaseQualityMachineCyclePhredScaler(cal, query);
+      final PhredScaler left = getArmPhredScaler(cal, query, Arm.LEFT);
+      final PhredScaler right = getArmPhredScaler(cal, query, Arm.RIGHT);
+      query.setValue(CovariateEnum.ARM, -1);
       return new ArmMachineCyclePhredScaler(left, right);
     } else if (cal.getCovariateIndex(CovariateEnum.MACHINECYCLE) != -1) {
       return new BaseQualityMachineCyclePhredScaler(cal, query);
     } else {
       return new BaseQualityPhredScaler(cal, query);
+    }
+  }
+
+  private static PhredScaler getArmPhredScaler(Calibrator cal, Calibrator.QuerySpec query, Arm left) {
+    query.setValue(CovariateEnum.ARM, left.ordinal());
+    try {
+      return new BaseQualityMachineCyclePhredScaler(cal, query);
+    } finally {
+      query.setValue(CovariateEnum.ARM, -1);
     }
   }
 

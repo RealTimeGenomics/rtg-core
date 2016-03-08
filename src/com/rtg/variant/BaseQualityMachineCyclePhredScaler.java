@@ -74,8 +74,53 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
     final double globalErrorRate = (double) totalMismatches / (double) totalEverything;
     for (int i = 0; i < baseQualSize; i++) {
       for (int j = 0; j < readPosSize; j++) {
-        mCurve[i][j] = CalibratedMachineErrorParams.countsToEmpiricalQuality(proc.mMismatches[i][j], proc.mTotals[i][j], globalErrorRate);
+        if (proc.mTotals[i][j] == 0) {
+          // Save it for interpolation
+          mCurve[i][j] = -1;
+        } else {
+          mCurve[i][j] = CalibratedMachineErrorParams.countsToEmpiricalQuality(proc.mMismatches[i][j], proc.mTotals[i][j], globalErrorRate);
+        }
       }
+    }
+
+    //Interpolation phase
+    // First work out read position independent quality levels to be used as defaults
+    final int[] qualityMismatches = new int[mCurve.length];
+    final int[] qualityTotals = new int[mCurve.length];
+    for (int i = 0; i < qualityMismatches.length; i++) {
+      for (int j = 0; j < proc.mTotals[i].length; j++) {
+        qualityMismatches[i] += proc.mMismatches[i][j];
+        qualityTotals[i] += proc.mTotals[i][j];
+      }
+    }
+
+    final int[] qualityDefaults = new int[mCurve.length];
+    for (int i = 0; i < qualityDefaults.length; i++) {
+      if (qualityTotals[i] == 0) {
+        qualityDefaults[i] = -1;
+      } else {
+        qualityDefaults[i] = CalibratedMachineErrorParams.countsToEmpiricalQuality(qualityMismatches[i], qualityTotals[i], globalErrorRate);
+      }
+    }
+    // Some of the quality default values will be missing so need to interpolate those as well;
+    // if min/max qual are missing then interpolate between claimed and the first/last observed qual
+    if (qualityDefaults[0] == -1) {
+      qualityDefaults[0] = 0;
+    }
+
+    if (qualityDefaults[qualityDefaults.length - 1] == -1) {
+      qualityDefaults[qualityDefaults.length - 1] = qualityDefaults.length - 1;
+    }
+
+    new InterpolateArray(qualityDefaults).process();
+
+    // Now we have defaults for the ends of curves we can interpolate within the read position curve set.
+    // At each read position we'll draw a straight line between present quality values we have a rate for.
+    // Use the global quality default array for ends...
+    for (int j = 0; j < readPosSize; j++) {
+      final Interpolate2dArrayColumn interpolate2dArrayColumn = new Interpolate2dArrayColumn(j, mCurve);
+      interpolate2dArrayColumn.process();
+      interpolate2dArrayColumn.fill(qualityDefaults);
     }
   }
 
@@ -83,9 +128,12 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
   public int getScaledPhred(byte quality, int readPosition, Arm arm) {
     final int qualIndex = quality & 0xFF;
     if (qualIndex >= mCurve.length) {
-      return mCurve[mCurve.length - 1][readPosition];
+      return mCurve[mCurve.length - 1][Math.min(readPosition, mCurve[mCurve.length - 1].length - 1)];
+    } else if (readPosition >= mCurve[qualIndex].length) {
+      return mCurve[qualIndex][mCurve[qualIndex].length - 1];
     }
     return mCurve[qualIndex][readPosition];
+
   }
 
 }
