@@ -117,13 +117,12 @@ public class IndexQueue extends IntegralAbstract implements Add {
     final long memSize = blockSize * mRadix;
     //System.err.println("length=" + length + " upperBits=" + upperBits + " memSize=" + memSize);
     mValueBits = valueBits;
-    mMemory = makeMemory(memSize);
-
-    assert integrity();
     mHashMask = (1L << mLowerBits) - 1;
+    mMemory = makeMemory(memSize);
+    assert integrity();
   }
 
-  ExtensibleIndex makeMemory(final long length) {
+  final ExtensibleIndex makeMemory(final long length) {
     final int lengthBits = MathUtils.ceilPowerOf2Bits(length - 1);
     final int initLengthBits = lengthBits - 7;
     final int initSubarrayBits = initLengthBits <= 0 ? lengthBits : initLengthBits;
