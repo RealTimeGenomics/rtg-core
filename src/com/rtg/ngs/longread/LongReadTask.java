@@ -118,7 +118,7 @@ public final class LongReadTask {
    * @throws IOException if an I/O error occurs
    */
   public static Index build(final PositionParams params, final UsageMetric usageMetric, IndexFilterMethod hashFilter) throws IOException {
-    Diagnostic.userLog("Usage of memory" + StringUtils.LS + PositionUtils.memToString(params));
+    Diagnostic.developerLog("Estimated usage of memory" + StringUtils.LS + PositionUtils.memToString(params));
     final OneShotTimer buildTimer = new OneShotTimer("LR_BS_build");
     final int numberThreads = params.numberThreads();
     final OneShotTimer queueTimer = new OneShotTimer("LR_BS_build_queue");
@@ -151,7 +151,7 @@ public final class LongReadTask {
     freezeTimer.stopLog();
     buildTimer.stopLog();
     //System.err.println(index);
-    Diagnostic.userLog("Memory performance " + StringUtils.LS + index.infoString());
+    Diagnostic.userLog("Index statistics " + StringUtils.LS + index.infoString());
 
     return index;
   }

@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.launcher.SequenceParams.SequenceParamsBuilder;
 import com.rtg.mode.DnaUtils;
 import com.rtg.mode.SequenceMode;
@@ -40,32 +40,10 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
-import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
-
-import junit.framework.TestCase;
 
 /**
  */
-public class LongReadTaskTest extends TestCase {
-
-  private NanoRegression mNano = null;
-
-  @Override
-  public void setUp() {
-    mNano = new NanoRegression(this.getClass(), false);
-    GlobalFlags.resetAccessedStatus();
-    Diagnostic.setLogStream();
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
+public class LongReadTaskTest extends AbstractNanoTest {
 
   private static final String READ = "acgtacgtacgtacgtacgtacgtacgtacgtacgacgtacgtacgtacgtacgtacgtacgtacgtacg";
   private static final String TMPL = "acgtacgtacgtacgtacgtacgtacgtacgtacgacgtacgtacgtacgtacgtacgtacgtacgtacgacgtacgtacgtacgtacgtacgtacgtacgtacgacgtacgtacgtacgtacgtacgtacgtacgtacgacgtacgtacgtacgtacgtacgtacgtacgtacgacgtacgtacgtacgtacgtacgtacgtacgtacg";
@@ -92,8 +70,7 @@ public class LongReadTaskTest extends TestCase {
   }
 
   public void testSingleEndMTRev() throws Exception {
-    final File tmpDir = FileUtils.createTempDir("longreadtask", "tmpdir");
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory("longreadtask")) {
       final ByteArrayOutputStream ba = new ByteArrayOutputStream();
       final PrintStream pr = new PrintStream(ba);
       Diagnostic.setLogStream(pr);
@@ -122,21 +99,18 @@ public class LongReadTaskTest extends TestCase {
           pr.flush();
 
           assertEquals(READ.length(), usageMetric.getMetric());
-          TestUtils.containsAll(ba.toString(), "1 100.0% mapped ambiguously (NH > 1)", "Usage of memory", "Shared_buffer", "Timer total_time", "Index search performance",
-                                       "Timer LR_BS_search", "Timer LR_BS_build_queue", "LR_BS_freeze", "Memory performance", "Memory Usage", "LongReadTask Thread create:", "LongReadTask Thread start:", "Timer LR_BS_build_queue_Build-0", "Timer Search_0");
+          TestUtils.containsAll(ba.toString(), "1 100.0% mapped ambiguously (NH > 1)", "Timer total_time", "Index search performance",
+            "Timer LR_BS_search", "Timer LR_BS_build_queue", "LR_BS_freeze", "Memory Usage", "LongReadTask Thread create:", "LongReadTask Thread start:", "Timer LR_BS_build_queue_Build-0", "Timer Search_0");
         }
       } finally {
         Diagnostic.setLogStream();
         pr.close();
       }
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 
   public void testSingleEndMTRevWinBits() throws Exception {
-    final File tmpDir = FileUtils.createTempDir("longreadtask", "tmpdir");
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory("longreadtask")) {
       final File reads = new File(tmpDir, "reads");
       ReaderTestUtils.getReaderDNA(">test\n" + DnaUtils.reverseComplement(READ) + "\n", reads, null);
 
@@ -157,14 +131,11 @@ public class LongReadTaskTest extends TestCase {
         final String res = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(tmpDir, "alignments.sam")));
         mNano.check("longreadtask-testsingleendmtrev.txt", res, false); // Same result as earlier test
       }
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 
   public void checkSingleEnd(final int threads) throws Exception {
-    final File tmpDir = FileUtils.createTempDir("longreadtask", "tmpdir");
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory("longreadtask")) {
       final ByteArrayOutputStream ba = new ByteArrayOutputStream();
       final PrintStream pr = new PrintStream(ba);
       Diagnostic.setLogStream(pr);
@@ -194,15 +165,13 @@ public class LongReadTaskTest extends TestCase {
           //System.err.println(ba.toString());
 
           assertEquals(READ.length(), usageMetric.getMetric());
-          TestUtils.containsAll(ba.toString(), "1 100.0% mapped ambiguously (NH > 1)", "Usage of memory", "Shared_buffer", "Timer total_time", "Index search performance",
-                                       "Timer LR_BS_search", "Timer LR_BS_build_queue", "LR_BS_freeze", "Memory performance", "Memory Usage", "LongReadTask Thread create:", "LongReadTask Thread start:", "Timer LR_BS_build_queue_Build-0", "Timer Search_0");
+          TestUtils.containsAll(ba.toString(), "1 100.0% mapped ambiguously (NH > 1)", "Timer total_time", "Index search performance",
+            "Timer LR_BS_search", "Timer LR_BS_build_queue", "LR_BS_freeze", "Memory Usage", "LongReadTask Thread create:", "LongReadTask Thread start:", "Timer LR_BS_build_queue_Build-0", "Timer Search_0");
         }
       } finally {
         Diagnostic.setLogStream();
         pr.close();
       }
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 
@@ -215,8 +184,7 @@ public class LongReadTaskTest extends TestCase {
   }
 
   public void testSingleEndMTWinBits() throws Exception {
-    final File tmpDir = FileUtils.createTempDir("longreadtask", "tmpdir");
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory("longreadtask")) {
       final ByteArrayOutputStream ba = new ByteArrayOutputStream();
       final PrintStream pr = new PrintStream(ba);
       Diagnostic.setLogStream(pr);
@@ -246,8 +214,6 @@ public class LongReadTaskTest extends TestCase {
         Diagnostic.setLogStream();
         pr.close();
       }
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 
@@ -257,8 +223,7 @@ public class LongReadTaskTest extends TestCase {
   private static final String TEMPLATE_LONG = LONG_READ_1 + "atcgag" + LONG_READ_2;
 
   public void checkPairedEnd(final int threads) throws Exception {
-    final File tmpDir = FileUtils.createTempDir("longreadtask", "tmpdir");
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory("longreadtask")) {
       final File readsl = new File(tmpDir, "readsl");
       ReaderTestUtils.getReaderDNA(">r1\n" + LONG_READ_1 + "\n", readsl, null);
       final File readsr = new File(tmpDir, "readsr");
@@ -279,11 +244,9 @@ public class LongReadTaskTest extends TestCase {
 
         assertEquals(LONG_READ_1.length() + LONG_READ_2.length(), usageMetric.getMetric());
         TestUtils.containsAll(FileUtils.fileToString(new File(tmpDir, "mated.sam")),
-                                     "0\t67\ttest\t1\t55\t70=\t=\t77\t146\tCATAATGACGGCTGGGCTACTGGACATATGTACGCGGTCTCCGGGAACAAGCAGCATGGAGTTTCCCCTG\t*\tAS:i:0\tNM:i:0\tXA:i:0\tIH:i:1",
-                                     "0\t131\ttest\t77\t55\t70=\t=\t1\t-146\tACAAGTACAAGGAGGCGGACTATCGCACTCCAAGTTAGCCGGTTTGAACATAGAAGCTCTCCCGAGCTCG\t*\tAS:i:0\tNM:i:0\tXA:i:0\tIH:i:1");
+          "0\t67\ttest\t1\t55\t70=\t=\t77\t146\tCATAATGACGGCTGGGCTACTGGACATATGTACGCGGTCTCCGGGAACAAGCAGCATGGAGTTTCCCCTG\t*\tAS:i:0\tNM:i:0\tXA:i:0\tIH:i:1",
+          "0\t131\ttest\t77\t55\t70=\t=\t1\t-146\tACAAGTACAAGGAGGCGGACTATCGCACTCCAAGTTAGCCGGTTTGAACATAGAAGCTCTCCCGAGCTCG\t*\tAS:i:0\tNM:i:0\tXA:i:0\tIH:i:1");
       }
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 

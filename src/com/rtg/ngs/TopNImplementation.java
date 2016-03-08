@@ -79,13 +79,11 @@ public class TopNImplementation implements UptoNStore {
     mResultCounts = LongCreate.createIndex(numReads);
     mN = n;
     mNumTemplateSeqs = numTemplateSeqs;
-    Diagnostic.developerLog(toString());
-    Diagnostic.developerLog(infoString());
+    Diagnostic.userLog(toString() + " statistics" + LS + infoString());
   }
 
   String infoString() {
     final StringBuilder sb = new StringBuilder();
-    sb.append(LS);
     sb.append("Memory Usage\tbytes\tlength").append(LS);
     long totalBytes = 0;
     sb.append("\t\t").append(StringUtils.commas(mTopNRes.bytes())).append("\t").append(StringUtils.commas(mTopNRes.length())).append("\tHTopNRes").append(LS);
@@ -94,7 +92,7 @@ public class TopNImplementation implements UptoNStore {
     sb.append("\t\t").append(StringUtils.commas(mResultCounts.bytes())).append("\t").append(StringUtils.commas(mResultCounts.length())).append("\tResultCounts").append(LS);
     totalBytes +=  mResultCounts.bytes();
 
-    sb.append("\t\t").append(StringUtils.commas(totalBytes)).append("\t\tTotal").append(LS);
+    sb.append("\t\t").append(StringUtils.commas(totalBytes)).append("\t\tTotal bytes").append(LS);
 
     return sb.toString();
   }

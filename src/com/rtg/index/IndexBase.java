@@ -348,7 +348,6 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
   }
 
   void infoString(final StringBuilder sb) {
-    sb.append(LS);
     sb.append("Memory Usage\tbytes\tlength").append(LS);
     long totalBytes = 0;
     sb.append("\t\t").append(StringUtils.commas(mHash.bytes())).append("\t").append(StringUtils.commas(mHash.length())).append("\tHash").append(LS);
@@ -366,10 +365,12 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
       totalBytes += mHashVector.bytes();
     }
 
-    sb.append("\t\t").append(StringUtils.commas(totalBytes)).append("\t\tTotal").append(LS);
+    sb.append("\t\t").append(StringUtils.commas(totalBytes)).append("\t\tTotal bytes").append(LS);
     if (totalBytes != bytes()) {
       throw new RuntimeException("Inconsistency in memory calculation bytes()=" + bytes() + " total=" + totalBytes);
     }
+
+    sb.append(LS);
     sb.append("Hash counts\t0\t1\t2").append(LS);
     sb.append("\t\t").append(mHashCount0).append("\t").append(mHashCount1).append("\t").append(mHashCount2).append(LS);
     sb.append("Bucket counts\t0\t1\t2").append(LS);

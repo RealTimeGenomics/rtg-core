@@ -2,13 +2,13 @@ IndexImplementation
 Hash Bits=16
 Initial Number of hashes=1
 Number of hash codes=1
-
 Memory Usage	bytes	length
 		2	1	Hash
 		4	1	Value
 		6	6	Initial Position
 		4	16	Bit vector
-		16		Total
+		16		Total bytes
+
 Hash counts	0	1	2
 		1	1	1
 Bucket counts	0	1	2

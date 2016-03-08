@@ -287,7 +287,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
     try {
       Diagnostic.userLog("Parameters:" + StringUtils.LS + params.toString());
       final long bufferLength = params.bufferLength();
-      Diagnostic.userLog("Usage of memory" + StringUtils.LS + memToString(params, bufferLength));
+      Diagnostic.userLog("Estimated usage of memory" + StringUtils.LS + memToString(params, bufferLength));
 
       // Make all the components we need
       final IndexSimilarity index = new IndexSimilarity(params.index(), new UnfilteredFilterMethod(), params.uniqueWords(), 1);
@@ -343,7 +343,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       Diagnostic.progress("Input for index finished. Starting indexing");
       index.freeze();
       //System.err.println(index);
-      Diagnostic.userLog("Memory performance " + StringUtils.LS + index.infoString());
+      Diagnostic.userLog("Index statistics " + StringUtils.LS + index.infoString());
 
       final boolean doPca = GlobalFlags.getBooleanValue(GlobalFlags.SIMILARITY_PCA_FLAG);
 

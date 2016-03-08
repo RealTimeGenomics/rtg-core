@@ -509,7 +509,7 @@ public final class MapParamsHelper {
           FutureTask<SequenceParams> rightTask = null;
           if (buildSecond != null) {
             final RightSimplePrereadNames rNames = names == null ? null : new RightSimplePrereadNames(names);
-            final RightSimplePrereadNames rSuffixes = names == null ? null : new RightSimplePrereadNames(suffixes);
+            final RightSimplePrereadNames rSuffixes = suffixes == null ? null : new RightSimplePrereadNames(suffixes);
             rightTask = new FutureTask<>(new SequenceParamsCallableFasta(buildSecond, format, buildRegion, PrereadArm.RIGHT, rNames, rSuffixes, useQuality, readsMode));
             executor.execute(rightTask);
           }

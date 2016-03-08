@@ -310,9 +310,8 @@ public class SimilarityCliTest extends AbstractCliTest {
   private void checkLog(final String logStr) {
     final String versionString = "java.version = ";
     TestUtils.containsAll(logStr, versionString, "user.timezone = ", "Parameters:" + LS + "BuildSearchParams",
-      "Usage of memory", " Timer ", "Shared_buffer",
-      "mode=PHYLOGENY", "Ph_similarity_matrix ", "Ph_similarity_neighbor ", "Ph_similarity_out ",
-      " Memory performance");
+      " Timer ",
+      "mode=PHYLOGENY", "Ph_similarity_matrix ", "Ph_similarity_neighbor ", "Ph_similarity_out ");
   }
 
   public final String checkMain(final String subjects, final int windowSize, final int stepSize, final String expSimi, final String expTree, final long expUsage) throws Exception {
@@ -447,8 +446,6 @@ public class SimilarityCliTest extends AbstractCliTest {
         checkLog(s);
         assertTrue(s.contains("Hash counts\t0\t1\t2"));
         assertTrue(s.contains("Bucket counts\t0\t1\t2"));
-        assertTrue(s.contains("Usage of memory"));
-        assertTrue(s.contains("Memory performance"));
       } finally {
         Diagnostic.setLogStream();
       }

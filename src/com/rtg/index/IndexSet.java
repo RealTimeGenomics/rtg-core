@@ -123,7 +123,7 @@ public class IndexSet {
       mIndex.freeze();
       Diagnostic.userLog("Finish freeze job " + mId);
       //System.err.println("index[" + i + "]" + LS + indexes[i]);
-      Diagnostic.userLog("Index[" + mId + "] memory performance " + LS + mIndex.infoString());
+      Diagnostic.userLog("Index[" + mId + "] statistics " + LS + mIndex.infoString());
     }
   }
 }

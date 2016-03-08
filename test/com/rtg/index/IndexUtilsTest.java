@@ -45,13 +45,13 @@ public class IndexUtilsTest extends TestCase {
     assertEquals(EXPECTED_MEM_STR, IndexUtils.memToString(c));
   }
 
-  private static final String EXPECTED_MEMSTR = StringUtils.LS
+  private static final String EXPECTED_MEMSTR = ""
   + "Memory Usage\tbytes\tlength" + StringUtils.LS
   + "\t\t160\t20\tHash" + StringUtils.LS
   + "\t\t80\t20\tValue" + StringUtils.LS
   + "\t\t18\t18\tInitial Position" + StringUtils.LS
   + "\t\t64\t512\tBit vector" + StringUtils.LS
-  + "\t\t322\t\tTotal" + StringUtils.LS;
+  + "\t\t322\t\tTotal bytes" + StringUtils.LS;
 
   public void testMemoryString() {
     final CreateParams c = new CreateParams(20, 33, 33, 31, false, true, false, false);

@@ -69,7 +69,7 @@ public class NgsTaskTest extends NgsPairedEndTest {
         //deprecated timers to be removed
         TestUtils.containsAll(logs, " Timer Index_initialization ", " Timer Index_sort ", " Timer Index_pointer ", " Timer Index_position ", " Timer Index_bitVector ");
         //index statistics
-        TestUtils.containsAll(logs, "Index[", "] memory performance", "] search performance");
+        TestUtils.containsAll(logs, "Index[", "] statistics", "] search performance");
         assertTrue(logs.contains("Start create job 0"));
         assertTrue(logs.contains("Finish create job 0"));
         assertFalse(logs.contains("Start create job 1"));
@@ -195,7 +195,7 @@ public class NgsTaskTest extends NgsPairedEndTest {
   };
 
   private class DummyMaskParams extends NgsMaskParamsGeneral {
-    public DummyMaskParams(int wordSize, int substitutions, int indels, int indelLength, boolean cgl) {
+    public DummyMaskParams(int wordSize, int substitutions, int indels, int indelLength) {
       super(wordSize, substitutions, indels, indelLength);
     }
     @Override
@@ -214,8 +214,7 @@ public class NgsTaskTest extends NgsPairedEndTest {
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final NgsTaskFunctionalTest ntt = new NgsTaskFunctionalTest();
         ntt.mDir = mDir;
-        final NgsParams params = ntt.getParams(out, new NgsMaskParamsGeneral(4, 0, 0, 1), new NgsTestUtils.ParamsParams(SEQ_DNA_Y2, SEQ_DNA_Y1, 10, true, false), ListenerType.NULL, OutputFilter.NONE, 1, numberThreads);
-        try {
+        try (NgsParams params = ntt.getParams(out, new NgsMaskParamsGeneral(4, 0, 0, 1), new NgsTestUtils.ParamsParams(SEQ_DNA_Y2, SEQ_DNA_Y1, 10, true, false), ListenerType.NULL, OutputFilter.NONE, 1, numberThreads)) {
           final NgsHashLoopDummyImpl hashdummy = new NgsHashLoopDummyImpl();
           try {
             assertEquals(43, NgsTask.indexThenSearchShortReads(params, hashdummy, null, makeIndexParams(params)));
@@ -224,8 +223,6 @@ public class NgsTaskTest extends NgsPairedEndTest {
           }
           assertFalse(hashdummy.mSecondSeen);
           assertEquals(0, hashdummy.mReverseCounts);
-        } finally {
-          params.close();
         }
 
         pr.flush();
@@ -233,7 +230,7 @@ public class NgsTaskTest extends NgsPairedEndTest {
         //deprecated timers to be removed
         TestUtils.containsAll(logs, " Timer Index_initialization ", " Timer Index_sort ", " Timer Index_pointer ", " Timer Index_position ", " Timer Index_bitVector ");
         //index statistics
-        TestUtils.containsAll(logs, "Index[0] memory performance", "] search performance");
+        TestUtils.containsAll(logs, "Index[0] statistics", "] search performance");
         //thread stats
         TestUtils.containsAll(logs, "Start create job 0", "Finish create job 0", "Start freeze job 0", "Finish freeze job 0");
       } finally {
@@ -248,7 +245,7 @@ public class NgsTaskTest extends NgsPairedEndTest {
     Diagnostic.setLogStream(pr.printStream());
     try {
       final String cgdata = "@test\nacgtacgtacgtacgtacgtacgtacgtacgtacg\n+\n###################################";
-      try (DummyMaskParams dmp = new DummyMaskParams(3, 1, 1, 1, false)) {
+      try (DummyMaskParams dmp = new DummyMaskParams(3, 1, 1, 1)) {
         NgsParams params = getParamsPairedEnd(pr.outputStream(), dmp, new TestPairedEndParams(cgdata, cgdata, ">t\na", "", 1, 1, 0L), true);
         try {
           final NgsHashLoopDummyImpl hashdummy = new NgsHashLoopDummyImpl();

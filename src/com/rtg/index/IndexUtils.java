@@ -119,7 +119,6 @@ public final class IndexUtils {
    * @param createParams parameters that will be used to construct the <code>IndexImplementation</code>.
    */
   public static void memString(final StringBuilder sb, final CreateParams createParams) {
-    sb.append(StringUtils.LS);
     sb.append("Memory Usage\tbytes\tlength").append(StringUtils.LS);
     long totalBytes = 0;
     sb.append("\t\t").append(StringUtils.commas(createParams.hash().bytes())).append("\t").append(StringUtils.commas(createParams.hash().length())).append("\tHash").append(StringUtils.LS);
@@ -137,7 +136,7 @@ public final class IndexUtils {
       totalBytes += bitVector.bytes();
     }
 
-    sb.append("\t\t").append(StringUtils.commas(totalBytes)).append("\t\tTotal").append(StringUtils.LS);
+    sb.append("\t\t").append(StringUtils.commas(totalBytes)).append("\t\tTotal bytes").append(StringUtils.LS);
     assert totalBytes == bytes(createParams);
   }
 }

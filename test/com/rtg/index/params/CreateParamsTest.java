@@ -72,13 +72,12 @@ public class CreateParamsTest extends TestCase {
   }
 
   private static final String EXPECTED0 = ""
-      + StringUtils.LS
       + "Memory Usage\tbytes\tlength" + StringUtils.LS
       + "\t\t1\t1\tHash" + StringUtils.LS
       + "\t\t4\t1\tValue" + StringUtils.LS
       + "\t\t6\t6\tInitial Position" + StringUtils.LS
       + "\t\t4\t16\tBit vector" + StringUtils.LS
-      + "\t\t15\t\tTotal" + StringUtils.LS
+      + "\t\t15\t\tTotal bytes" + StringUtils.LS
       ;
 
   private static final String MEM_EXPECTED = ""
@@ -87,7 +86,7 @@ public class CreateParamsTest extends TestCase {
       + "\tMemory\tInitial_position\t6" + StringUtils.LS
       + "\tMemory\tBit_vector\t4" + StringUtils.LS;
 
-  private static final String HASH_BUCKET = ""
+  private static final String HASH_BUCKET = StringUtils.LS
       + "Hash counts\t0\t1\t2" + StringUtils.LS
       + "\t\t0\t0\t0" + StringUtils.LS
       + "Bucket counts\t0\t1\t2" + StringUtils.LS
@@ -136,13 +135,12 @@ public class CreateParamsTest extends TestCase {
   }
 
   private static final String EXPECTED42 = ""
-      + StringUtils.LS
       + "Memory Usage\tbytes\tlength" + StringUtils.LS
       + "\t\t42\t42\tHash" + StringUtils.LS
       + "\t\t168\t42\tValue" + StringUtils.LS
       + "\t\t34\t34\tInitial Position" + StringUtils.LS
       + "\t\t32\t256\tBit vector" + StringUtils.LS
-      + "\t\t276\t\tTotal" + StringUtils.LS;
+      + "\t\t276\t\tTotal bytes" + StringUtils.LS;
 
   public void test42() throws Exception {
     final CreateParams ip = getParams(42L, 8);
@@ -184,13 +182,12 @@ public class CreateParamsTest extends TestCase {
   }
 
   private static final String EXPECTED42_A = ""
-      + StringUtils.LS
       + "Memory Usage\tbytes\tlength" + StringUtils.LS
       + "\t\t42\t42\tHash" + StringUtils.LS
       + "\t\t168\t42\tValue" + StringUtils.LS
       + "\t\t34\t34\tInitial Position" + StringUtils.LS
       + "\t\t8\t64\tBit vector" + StringUtils.LS
-      + "\t\t252\t\tTotal" + StringUtils.LS;
+      + "\t\t252\t\tTotal bytes" + StringUtils.LS;
 
   public void test42a() throws Exception {
     final CreateParams ip = getParams(42L, 1);
@@ -215,13 +212,12 @@ public class CreateParamsTest extends TestCase {
   }
 
   private static final String EXPECTED42_B = ""
-      + StringUtils.LS
       + "Memory Usage\tbytes\tlength" + StringUtils.LS
       + "\t\t42\t42\tHash" + StringUtils.LS
       + "\t\t168\t42\tValue" + StringUtils.LS
       + "\t\t34\t34\tInitial Position" + StringUtils.LS
       + "\t\t8\t64\tBit vector" + StringUtils.LS
-      + "\t\t252\t\tTotal" + StringUtils.LS;
+      + "\t\t252\t\tTotal bytes" + StringUtils.LS;
 
   public void test42b() throws Exception {
     final CreateParams ip = getParams(42L, 2);
@@ -246,13 +242,12 @@ public class CreateParamsTest extends TestCase {
   }
 
   private static final String EXPECTED42_C = ""
-      + StringUtils.LS
       + "Memory Usage\tbytes\tlength" + StringUtils.LS
       + "\t\t42\t42\tHash" + StringUtils.LS
       + "\t\t168\t42\tValue" + StringUtils.LS
       + "\t\t34\t34\tInitial Position" + StringUtils.LS
       + "\t\t8\t64\tBit vector" + StringUtils.LS
-      + "\t\t252\t\tTotal" + StringUtils.LS;
+      + "\t\t252\t\tTotal bytes" + StringUtils.LS;
 
   public void test42c() throws Exception {
     final CreateParams ip = getParams(42L, 3);
@@ -277,13 +272,12 @@ public class CreateParamsTest extends TestCase {
   }
 
   private static final String EXPECTED42_D = ""
-      + StringUtils.LS
       + "Memory Usage\tbytes\tlength" + StringUtils.LS
       + "\t\t42\t42\tHash" + StringUtils.LS
       + "\t\t168\t42\tValue" + StringUtils.LS
       + "\t\t34\t34\tInitial Position" + StringUtils.LS
       + "\t\t8\t64\tBit vector" + StringUtils.LS
-      + "\t\t252\t\tTotal" + StringUtils.LS;
+      + "\t\t252\t\tTotal bytes" + StringUtils.LS;
 
   public void test42d() throws Exception {
     final CreateParams ip = getParams(42L, 4);
@@ -308,13 +302,12 @@ public class CreateParamsTest extends TestCase {
   }
 
   private static final String EXPECTED42_E = ""
-      + StringUtils.LS
       + "Memory Usage\tbytes\tlength" + StringUtils.LS
       + "\t\t42\t42\tHash" + StringUtils.LS
       + "\t\t168\t42\tValue" + StringUtils.LS
       + "\t\t34\t34\tInitial Position" + StringUtils.LS
       + "\t\t16\t128\tBit vector" + StringUtils.LS
-      + "\t\t260\t\tTotal" + StringUtils.LS;
+      + "\t\t260\t\tTotal bytes" + StringUtils.LS;
 
   public void test42e() throws Exception {
     final CreateParams ip = getParams(42L, 7);
@@ -339,13 +332,12 @@ public class CreateParamsTest extends TestCase {
   }
 
   private static final String EXPECTED42_F = ""
-      + StringUtils.LS
       + "Memory Usage\tbytes\tlength" + StringUtils.LS
       + "\t\t120\t15\tHash" + StringUtils.LS
       + "\t\t60\t15\tValue" + StringUtils.LS
       + "\t\t10\t10\tInitial Position" + StringUtils.LS
       + "\t\t32\t256\tBit vector" + StringUtils.LS
-      + "\t\t222\t\tTotal" + StringUtils.LS;
+      + "\t\t222\t\tTotal bytes" + StringUtils.LS;
 
   public void test42f() throws Exception {
     final CreateParams ip = getParams(15L, 64);
@@ -370,13 +362,12 @@ public class CreateParamsTest extends TestCase {
   }
 
   private static final String EXPECTED42_G = ""
-      + StringUtils.LS
       + "Memory Usage\tbytes\tlength" + StringUtils.LS
       + "\t\t64\t8\tHash" + StringUtils.LS
       + "\t\t32\t8\tValue" + StringUtils.LS
       + "\t\t10\t10\tInitial Position" + StringUtils.LS
       + "\t\t16\t128\tBit vector" + StringUtils.LS
-      + "\t\t122\t\tTotal" + StringUtils.LS;
+      + "\t\t122\t\tTotal bytes" + StringUtils.LS;
 
   public void test42g() throws Exception {
     final CreateParams ip = getParams(8L, 64);
@@ -401,13 +392,12 @@ public class CreateParamsTest extends TestCase {
   }
 
   private static final String EXPECTED42_Z = ""
-      + StringUtils.LS
       + "Memory Usage\tbytes\tlength" + StringUtils.LS
       + "\t\t336\t42\tHash" + StringUtils.LS
       + "\t\t168\t42\tValue" + StringUtils.LS
       + "\t\t34\t34\tInitial Position" + StringUtils.LS
       + "\t\t128\t1,024\tBit vector" + StringUtils.LS
-      + "\t\t666\t\tTotal" + StringUtils.LS;
+      + "\t\t666\t\tTotal bytes" + StringUtils.LS;
 
   public void test42z() throws Exception {
     final CreateParams ip = getParams(42L, 64);

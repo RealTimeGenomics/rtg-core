@@ -692,7 +692,7 @@ public class NgsTaskFunctionalTest extends TestCase {
         //deprecated timers to be removed
         TestUtils.containsAll(logs, " Timer Index_initialization ", " Timer Index_sort ", " Timer Index_pointer ", " Timer Index_position ", " Timer Index_bitVector ");
         //index statistics
-        TestUtils.containsAll(logs, "Index[", "] memory performance", "] search performance");
+        TestUtils.containsAll(logs, "Index[", "] statistics", "] search performance");
       } finally {
         Diagnostic.setLogStream();
       }
