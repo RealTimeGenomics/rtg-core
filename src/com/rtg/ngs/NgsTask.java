@@ -58,6 +58,7 @@ import com.rtg.util.MathUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.OneShotTimer;
+import com.rtg.util.diagnostic.SlimException;
 import com.rtg.util.intervals.RegionRestriction;
 
 /**
@@ -219,6 +220,12 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
    */
   public static void buildQueryLongRead(final NgsParams params, final MapStatistics statistic, final UsageMetric usageMetric) throws IOException {
     final PositionParams posParams = params.toPositionParams();
+
+    if (calculateValueBitsLongReads(posParams) > 32) {
+      //we don't handle this
+      throw new SlimException("Read dataset too large, try running in multiple smaller chunks using --start-read and --end-read parameters");
+    }
+
     final Index index = LongReadTask.build(posParams, usageMetric);
     final OutputFilter filter = params.outputParams().outFilter();
     try (OutputProcessor outProcessor = filter.makeProcessor(params, statistic)) {
@@ -226,6 +233,22 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
       outProcessor.finish();
     }
     Diagnostic.userLog("Index search performance " + LS + index.perfString());
+  }
+
+  private static int calculateValueBitsLongReads(PositionParams params) throws IOException {
+    final long maxLength;
+    final boolean paired = params.ngsParams().paired();
+    if (paired) {
+      maxLength = Math.max(params.build().sequences().maxLength(), params.buildSecond().sequences().maxLength());
+    } else {
+      maxLength = params.build().sequences().maxLength();
+    }
+    return NgsParams.calculateValueBitsLongReads(params.build().sequences().numberSequences(),
+        paired,
+        params.build().windowSize(),
+        params.build().stepSize(),
+        maxLength
+      );
   }
 
   private static void indexThenSearchShortReads(final NgsParams params, final MapStatistics statistics, final UsageMetric usageMetric) throws IOException {

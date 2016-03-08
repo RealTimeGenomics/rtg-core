@@ -22,11 +22,13 @@ import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.ModuleParams;
 import com.rtg.mode.ProgramMode;
 import com.rtg.mode.ProteinScoringMatrix;
+import com.rtg.position.PositionUtils;
 import com.rtg.position.output.OutputFormatType;
 import com.rtg.position.output.PositionDistributionParams;
 import com.rtg.position.output.PositionOutputParams;
 import com.rtg.position.output.PositionParams;
 import com.rtg.reference.Sex;
+import com.rtg.util.MathUtils;
 import com.rtg.util.MaxShiftFactor;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.ListenerType;
@@ -605,6 +607,27 @@ public class NgsParams extends ModuleParams implements Integrity {
   @ParamsNoField
   public long getMaxReadLength() {
     return paired() ? Math.max(buildFirstParams().maxLength(), buildSecondParams().maxLength()) : buildFirstParams().maxLength();
+  }
+
+  /**
+   * Calculates the required number of bits to store values for long read pipeline
+   * @param numberReads the number of reads
+   * @param pairedEnd whether reads are paired end
+   * @param windowsSize the size of the hash window
+   * @param stepSize the gap between window start positions
+   * @param maxLength the length of the longest sequence
+   * @return the number of bits required to encode a value
+   */
+  public static int calculateValueBitsLongReads(long numberReads, boolean pairedEnd, int windowsSize, int stepSize, long maxLength) {
+    final int mxs = PositionUtils.maxMatches(stepSize, windowsSize, maxLength, 1);
+    long maxVal = numberReads - 1;
+    if (pairedEnd) {
+      maxVal <<= 1;
+      maxVal += 1;
+    }
+    maxVal *= mxs;
+    maxVal += mxs - 1;
+    return MathUtils.ceilPowerOf2Bits(maxVal);
   }
 
   /**
