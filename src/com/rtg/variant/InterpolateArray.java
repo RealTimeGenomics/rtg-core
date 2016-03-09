@@ -40,4 +40,9 @@ public class InterpolateArray implements Interpolate {
   public int maxPos() {
     return mCurve.length;
   }
+
+  @Override
+  public boolean isMissing(int pos) {
+    return getValue(pos) == -1;
+  }
 }

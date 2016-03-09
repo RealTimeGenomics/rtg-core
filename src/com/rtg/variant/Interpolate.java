@@ -21,13 +21,32 @@ import com.reeltwo.jumble.annotations.TestClass;
  */
 @TestClass({"com.rtg.variant.Interpolate2dArrayColumnTest", "com.rtg.variant.InterpolateArrayTest"})
 interface Interpolate {
+  /**
+   * @param pos index to fetch
+   * @return the value at index {@code pos}
+   * */
   int getValue(int pos);
 
+  /**
+   * @param pos index to set
+   * @param value the value to store
+   * */
   void setValue(int pos, int value);
 
+  /**
+   * @return the smallest index to interpolate
+   * */
   int minPos();
 
+  /**
+   * @return the largest index to interpolate
+   */
   int maxPos();
+
+  /**
+   * @return true if the value at {@code pos} represents a missing value
+   */
+  boolean isMissing(int pos);
 
   /**
    *  Fill gaps (-1's) in your structure by taking points on the straight line between present values
@@ -36,7 +55,7 @@ interface Interpolate {
     boolean foundFirstValue = false;
     int prev = minPos() - 1;
     for (int i = minPos(); i < maxPos(); i++) {
-      if (getValue(i) >= 0) {
+      if (!isMissing(i)) {
         for (int gap = prev + 1; gap < i; gap++) {
           if (foundFirstValue) {
             final int gapSize = i - prev;

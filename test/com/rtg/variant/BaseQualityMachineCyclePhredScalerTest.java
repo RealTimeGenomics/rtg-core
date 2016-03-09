@@ -40,8 +40,8 @@ public class BaseQualityMachineCyclePhredScalerTest extends TestCase {
       final Calibrator.QuerySpec[] thisQuery = new QuerySpec[1];
       final Calibrator c = new MyCalibrator(cal, thisQuery,
         proc -> {
-          calibrate(proc, new int[]{0, 0, 0, 0}, 3, 70);
-          calibrate(proc, new int[]{1, 1, 1, 1}, 1, 92);
+          calibrate(proc, new int[]{0, 0, 0, 0}, 300, 7000);
+          calibrate(proc, new int[]{1, 1, 1, 1}, 100, 9200);
         }
       );
 
@@ -64,7 +64,7 @@ public class BaseQualityMachineCyclePhredScalerTest extends TestCase {
     }
   }
 
-  public void testVariousInterpolations() throws Exception {
+  public void testInterpolationFullRange() throws Exception {
 
     final File dir = FileUtils.createTempDir("calMEP", "test");
     try {
@@ -73,13 +73,9 @@ public class BaseQualityMachineCyclePhredScalerTest extends TestCase {
       final Calibrator.QuerySpec[] thisQuery = new QuerySpec[1];
       final Calibrator c = new MyCalibrator(cal, thisQuery,
         proc -> {
-          // in readPos 10 from claimed quality 20-30 use interpolated empirical qualities from 20-80
-          calibrate(proc, new int[]{0, 20, 10}, 100, 10_000);
-          calibrate(proc, new int[]{0, 30, 10}, 1, 100_000_000);
-
           // in readPos 0 from claimed quality 0-63 use interpolated empirical qualities from 10-20
-          calibrate(proc, new int[]{0, 0, 0}, 10, 100);
-          calibrate(proc, new int[]{0, 63, 0}, 1, 100);
+          calibrate(proc, new int[]{0, 0, 0}, 200, 2000);
+          calibrate(proc, new int[]{0, 63, 0}, 20, 2000);
         }
       );
 
@@ -91,16 +87,38 @@ public class BaseQualityMachineCyclePhredScalerTest extends TestCase {
       assertEquals(15, bqps.getScaledPhred((byte) 31, 0, Arm.LEFT));
       assertEquals(20, bqps.getScaledPhred((byte) 63, 0, Arm.LEFT));
 
-      // Read position 10
-      assertEquals(20, bqps.getScaledPhred((byte) 20, 10, Arm.LEFT));
-      assertEquals(50, bqps.getScaledPhred((byte) 25, 10, Arm.LEFT));
-      assertEquals(80, bqps.getScaledPhred((byte) 30, 10, Arm.LEFT));
-
       // We should return the max qual value position when the qual value is too high
       assertEquals(20, bqps.getScaledPhred((byte) 200, 1, Arm.LEFT));
 
       // We should return the max read position value for read positions that are too high
       assertEquals(10, bqps.getScaledPhred((byte) 0, 1000, Arm.LEFT));
+    } finally {
+      FileHelper.deleteAll(dir);
+    }
+  }
+  public void testInterpolation() throws Exception {
+
+    final File dir = FileUtils.createTempDir("calMEP", "test");
+    try {
+
+      final File cal = FileHelper.resourceToFile("com/rtg/variant/resources/test4.calibration", new File(dir, "test.cal"));
+      final Calibrator.QuerySpec[] thisQuery = new QuerySpec[1];
+      final Calibrator c = new MyCalibrator(cal, thisQuery,
+        proc -> {
+          // in readPos 10 from claimed quality 20-30 use interpolated empirical qualities from 20-60
+          calibrate(proc, new int[]{0, 20, 10}, 100, 10_000);
+          calibrate(proc, new int[]{0, 30, 10}, 1, 100_000_0);
+        }
+      );
+
+      thisQuery[0] = c.initQuery();
+      final BaseQualityMachineCyclePhredScaler bqps = new BaseQualityMachineCyclePhredScaler(c, thisQuery[0]);
+
+      // Read position 10
+      assertEquals(20, bqps.getScaledPhred((byte) 20, 10, Arm.LEFT));
+      assertEquals(40, bqps.getScaledPhred((byte) 25, 10, Arm.LEFT));
+      assertEquals(60, bqps.getScaledPhred((byte) 30, 10, Arm.LEFT));
+
     } finally {
       FileHelper.deleteAll(dir);
     }
@@ -145,8 +163,8 @@ public class BaseQualityMachineCyclePhredScalerTest extends TestCase {
           // None of these are in the same read position so should be no interpolation between per read position quality
 
           // at qual 20 twice the error rate
-          calibrate(proc, new int[]{0, 20, 5}, 2, 100);
-          calibrate(proc, new int[]{0, 20, 10}, 2, 100);
+          calibrate(proc, new int[]{0, 20, 5}, 20, 1000);
+          calibrate(proc, new int[]{0, 20, 10}, 20, 1000);
 
           // at qual 40 half the error rate
           calibrate(proc, new int[]{0, 40, 15}, 0, 10_000);

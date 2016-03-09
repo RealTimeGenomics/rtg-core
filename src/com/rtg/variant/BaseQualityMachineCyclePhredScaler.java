@@ -22,6 +22,8 @@ import com.rtg.ngs.Arm;
  * Implementation that uses calibration files.
  */
 class BaseQualityMachineCyclePhredScaler implements PhredScaler {
+  /** do you want to interpolate from qualities out of the observer ranges per position? */
+  private static final long QUALITY_MIN_EVIDENCE = 1000;
 
   private static class BaseQualityReadPositionStatsProcessor implements StatsProcessor {
     private final long[][] mMismatches;
@@ -74,7 +76,7 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
     final double globalErrorRate = (double) totalMismatches / (double) totalEverything;
     for (int i = 0; i < baseQualSize; i++) {
       for (int j = 0; j < readPosSize; j++) {
-        if (proc.mTotals[i][j] == 0) {
+        if (proc.mTotals[i][j] < QUALITY_MIN_EVIDENCE) {
           // Save it for interpolation
           mCurve[i][j] = -1;
         } else {
@@ -96,7 +98,7 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
 
     final int[] qualityDefaults = new int[mCurve.length];
     for (int i = 0; i < qualityDefaults.length; i++) {
-      if (qualityTotals[i] == 0) {
+      if (qualityTotals[i] < QUALITY_MIN_EVIDENCE) {
         qualityDefaults[i] = -1;
       } else {
         qualityDefaults[i] = CalibratedMachineErrorParams.countsToEmpiricalQuality(qualityMismatches[i], qualityTotals[i], globalErrorRate);
@@ -112,15 +114,13 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
       qualityDefaults[qualityDefaults.length - 1] = qualityDefaults.length - 1;
     }
 
-    new InterpolateArray(qualityDefaults).process();
-
     // Now we have defaults for the ends of curves we can interpolate within the read position curve set.
     // At each read position we'll draw a straight line between present quality values we have a rate for.
     // Use the global quality default array for ends...
     for (int j = 0; j < readPosSize; j++) {
       final Interpolate2dArrayColumn interpolate2dArrayColumn = new Interpolate2dArrayColumn(j, mCurve);
-      interpolate2dArrayColumn.process();
       interpolate2dArrayColumn.fill(qualityDefaults);
+      interpolate2dArrayColumn.process();
     }
   }
 
