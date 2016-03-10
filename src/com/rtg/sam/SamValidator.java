@@ -250,7 +250,7 @@ public final class SamValidator {
             }
           }
           currTemplate = new byte[tempit.currentLength()];
-          mSuperCigarValidator.setTemplate(currTemplate, currTemplate.length);
+          mSuperCigarValidator.setTemplate(currTemplate);
           if (mShowConsensus) {
             pileUp = new PileUp(currTemplate.length);
           }

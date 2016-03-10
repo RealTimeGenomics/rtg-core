@@ -98,7 +98,7 @@ public class SuperCigarUnroller extends SuperCigarParser {
     final String superCigar = sam.getStringAttribute(SamUtils.CG_SUPER_CIGAR);
     // Reset all the parameter information in the parser
     setCigar(superCigar, sam.getStringAttribute(SamUtils.CG_READ_DELTA));
-    setTemplate(templateBytes, templateBytes.length);
+    setTemplate(templateBytes);
     setTemplateStart(sam.getAlignmentStart() - 1);
     mSnippets.clear();
     mLastTemplatePosition = -1;

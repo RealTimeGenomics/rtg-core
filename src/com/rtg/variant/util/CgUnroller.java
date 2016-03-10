@@ -111,7 +111,7 @@ public final class CgUnroller {
     } else {
       final SuperCigarUnroller unroll = new SuperCigarUnroller();
       unroll.setAlignmentRecord(rec);
-      unroll.setTemplate(template, template.length);
+      unroll.setTemplate(template);
       try {
         unroll.parse();
       } catch (final BadSuperCigarException ex) {
