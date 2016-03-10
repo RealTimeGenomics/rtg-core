@@ -668,11 +668,25 @@ public class Calibrator {
    * @param length amount of array used by template
    */
   public void setTemplate(String name, byte[] template, int length) {
+    setTemplate(name, 0, template, length);
+  }
+
+  /**
+   * Must call this each time we start a new template sequence. This method allows
+   * supplying a template buffer that covers only a portion of the template sequence.
+   * @param name the reference sequence name
+   * @param templateOffset the zero-based coordinate that the first byte of the provided template corresponds to
+   * @param template template nucleotides
+   * @param length amount of array used by template
+   */
+  public void setTemplate(String name, int templateOffset, byte[] template, int length) {
+    if (mRegions != null && !name.equals(mTemplateName)) {
+      mTemplateMask = mRegions.mask(name);
+    }
     mTemplateName = name;
     mTemplate = template;
     mTemplateLength = length;
-    mTemplateMask = mRegions == null ? null : mRegions.mask(mTemplateName);
-    getParser().setTemplate(mTemplate, mTemplateLength);
+    getParser().setTemplate(templateOffset, mTemplate, mTemplateLength);
   }
 
   /**

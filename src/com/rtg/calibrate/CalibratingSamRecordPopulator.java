@@ -17,38 +17,47 @@ import java.util.Map;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.SamRecordPopulator;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.diagnostic.SlimException;
 
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.util.RuntimeIOException;
 
 /**
  * Populator that passes through SAM records and performs calibration statistic accumulation.
  */
 public class CalibratingSamRecordPopulator extends SamRecordPopulator {
 
+  private static final int BUFFER_SIZE = 10000000; // How many bases of template sequence to read at a time
+
   private final Calibrator mCalibrator;
-  private final SequencesReader mTemplate;
-  private final byte[] mTemplateBytes;
+  private final SequencesReader mReference;
   private final Map<String, Long> mSequenceNameMap;
-  private String mLastName = "";
+  private final byte[] mReferenceBytes = new byte[BUFFER_SIZE];
+
+  private String mCurrentName = null;
+  private long mCurrentId = 0;
+  private int mCurrentLength = 0;
+
+  private int mReferenceStart = 0;
+  private int mReferenceEnd = 0;
 
   /**
    * Populator for SAM records using an initializer. Can be given null to
    * skip initialization.
    * @param calibrator calibrator to use
-   * @param template template reader
+   * @param reference template reader
    * @param forceInit if true use the default SAM record forced field initializer
    */
-  public CalibratingSamRecordPopulator(final Calibrator calibrator, final SequencesReader template, boolean forceInit) {
+  public CalibratingSamRecordPopulator(final Calibrator calibrator, final SequencesReader reference, boolean forceInit) {
     super(forceInit ? SamRecordPopulator.DEFAULT_INITIALIZER : null);
     mCalibrator = calibrator;
-    mTemplate = template;
-    mTemplateBytes = new byte[(int) mTemplate.maxLength()];
+    mReference = reference;
     try {
-      mSequenceNameMap = ReaderUtils.getSequenceNameMap(mTemplate);
+      mSequenceNameMap = ReaderUtils.getSequenceNameMap(mReference);
     } catch (final IOException e) {
-      // I don't think this should happen?
-      throw new NoTalkbackSlimException("Problem getting sequence names from template");
+      throw new SlimException("Problem getting sequence names from reference");
     }
   }
 
@@ -56,22 +65,39 @@ public class CalibratingSamRecordPopulator extends SamRecordPopulator {
   public SAMRecord populate(final SAMRecord rec) {
     if (!rec.getReadUnmappedFlag()) {
       final String name = rec.getReferenceName();
-      if (!name.equals(mLastName)) {
-        final Long seqId = mSequenceNameMap.get(name);
-        if (seqId == null) {
-          throw new NoTalkbackSlimException("Sequence " + name + " not found in template");  //user must have edited the sam file and cocked this up.
+      try {
+        if (!name.equals(mCurrentName)) {
+          final Long seqId = mSequenceNameMap.get(name);
+          if (seqId == null) {
+            //user most likely is calibrating against a different reference to what the mappings came from
+            throw new NoTalkbackSlimException("SAM record is aligned to sequence " + name + ", but this is not contained in the supplied reference");
+          }
+          mCurrentName = name;
+          mCurrentId = seqId;
+          mCurrentLength = mReference.length(mCurrentId);
+          mReferenceStart = 0;
+          mReferenceEnd = 0;
         }
-        try {
-          final int length = mTemplate.read(seqId, mTemplateBytes);
-          mCalibrator.setTemplate(name, mTemplateBytes, length);
-        } catch (final IOException e) {
-          throw new NoTalkbackSlimException("Failed to read sequence " + name + " from template");
-        }
-        mLastName = name;
+        ensureTemplate(rec.getAlignmentStart() - 1, rec.getAlignmentEnd());
+      } catch (IOException e) {
+        throw new RuntimeIOException(e);
       }
       mCalibrator.processRead(rec);
     }
     return super.populate(rec);
+  }
+
+  private void ensureTemplate(int alignmentStart, int alignmentEnd) throws IOException {
+    if (alignmentStart < mReferenceStart) {
+      throw new IOException("Alignments are not sorted");
+    }
+    if (mReferenceEnd <= alignmentEnd) {
+      mReferenceStart = alignmentStart;
+      mReferenceEnd = Math.min(mCurrentLength, Math.max(alignmentEnd, mReferenceStart + mReferenceBytes.length));
+      final int length = mReference.read(mCurrentId, mReferenceBytes, mReferenceStart, mReferenceEnd - mReferenceStart);
+      Diagnostic.developerLog("Moving reference buffer to: " + mCurrentName + "[" + (mReferenceStart + 1) + "," + (mReferenceStart + length) + ")");
+      mCalibrator.setTemplate(mCurrentName, mReferenceStart, mReferenceBytes, length);
+    }
   }
 
   /**

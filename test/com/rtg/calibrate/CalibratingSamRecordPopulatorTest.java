@@ -29,6 +29,11 @@ public class CalibratingSamRecordPopulatorTest extends TestCase {
     final SAMRecord rec = new SAMRecord(null);
     rec.setAttribute(ReadGroupUtils.RG_ATTRIBUTE, "test");
     rec.setReferenceName(template.name(0));
+    rec.setCigarString("2=");
+    rec.setReadString("ac");
+    rec.setBaseQualityString("D!");
+    rec.setAlignmentStart(1);
+    rec.setMappingQuality(1);
     final Calibrator cal = new Calibrator(new Covariate[0], null);
     final CalibratingSamRecordPopulator pop = new CalibratingSamRecordPopulator(cal, template, false);
     final SAMRecord r = pop.populate(rec);

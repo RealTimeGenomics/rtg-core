@@ -47,9 +47,11 @@ public class SuperCigarParser {
   protected int mOperationLength;
 
   private byte[] mTemplate;
-  private int mTemplateLength;
-  private int mTemplateStart; // zero-based start position.
-  private int mTemplatePos;
+  private int mTemplateBufferOffset; // The zero-based coordinate that the first byte in mTemplate
+  private int mTemplateLength; // How much of the mTemplate buffer is valid
+
+  private int mTemplateStart; // zero-based start position of the current alignment.
+  private int mTemplatePos;   // zero-based template coordinate of the position within the current alignment
 
   /** The template position where the CG overlap region starts (-1 means no overlap). */
   private int mTemplateOverlapStart;
@@ -128,11 +130,13 @@ public class SuperCigarParser {
   }
 
   /**
-   * Set template.
+   * Set template sequence bytes.
+   * @param templateOffset the zero-based coordinate that the first byte of the provided template corresponds to
    * @param template the template sequence.
    * @param length length of template used
    */
-  public void setTemplate(byte[] template, int length) {
+  public void setTemplate(int templateOffset, byte[] template, int length) {
+    mTemplateBufferOffset = templateOffset;
     mTemplate = template;
     mTemplateLength = length;
   }
@@ -143,9 +147,9 @@ public class SuperCigarParser {
    */
   public void setTemplate(byte[] template) {
     if (template == null) {
-      setTemplate(null, 0);
+      setTemplate(0, null, 0);
     } else {
-      setTemplate(template, template.length);
+      setTemplate(0, template, template.length);
     }
   }
 
@@ -169,8 +173,9 @@ public class SuperCigarParser {
     return mReadLength;
   }
 
-  public int getTemplateLength() {
-    return mTemplateLength;
+  /** Return the maximum template coordinate for which bases can be resolved */
+  protected int getTemplateLength() {
+    return mTemplateBufferOffset + mTemplateLength;
   }
 
   /**
@@ -268,7 +273,8 @@ public class SuperCigarParser {
   }
 
   protected final byte templateNt(int templatePos) {
-    return mTemplate != null && 0 <= templatePos && templatePos < mTemplateLength ? mTemplate[templatePos] : DnaUtils.UNKNOWN_RESIDUE;
+    final int t = templatePos - mTemplateBufferOffset;
+    return mTemplate != null && 0 <= t && t < mTemplateLength ? mTemplate[t] : DnaUtils.UNKNOWN_RESIDUE;
   }
 
   protected final byte templateNt() {
@@ -313,8 +319,8 @@ public class SuperCigarParser {
           if (mTemplate == null) {
             throw new ReferenceSequenceRequiredException("No template has been set and legacy cigars are used.");
           }
-          if (mTemplatePos < 0 || mTemplatePos >= mTemplateLength) {
-            throw new BadSuperCigarException("bad cigar start=" + mTemplateStart + ", pos=" + mTemplatePos + ", len=" + mTemplateLength + ", cigar " + mCigar);
+          if (mTemplatePos < 0 || mTemplatePos >= getTemplateLength()) {
+            throw new BadSuperCigarException("bad cigar start=" + mTemplateStart + ", pos=" + mTemplatePos + ", len=" + getTemplateLength() + ", cigar " + mCigar);
           }
           final byte readDeltaNt = getReadDelta(mReadDeltaPos);
           assert readDeltaNt >= DNA.N.ordinal() && readDeltaNt <= DNA.T.ordinal() : "ReadDelta out of 0-4 range: " + readDeltaNt; //make sure we're dealing with everything in the same number space.
