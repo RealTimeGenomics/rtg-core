@@ -21,10 +21,6 @@ import htsjdk.samtools.SAMRecord;
  */
 public class SamRecordPopulator implements Populator<SAMRecord> {
 
-  private static final SAMRecord OVERFLOW = new SAMRecord(null);
-
-  private final ForcedInitialiser mRecordInitialiser;
-
   @TestClass(value = {"com.rtg.sam.ThreadedMultifileIteratorTest"})
   private static class DefaultForcedInitialiser implements ForcedInitialiser {
     @Override
@@ -35,6 +31,13 @@ public class SamRecordPopulator implements Populator<SAMRecord> {
       record.getAlignmentEnd();
     }
   }
+
+  /** Singleton for default record initialization */
+  public static final ForcedInitialiser DEFAULT_INITIALIZER = new DefaultForcedInitialiser();
+
+  private static final SAMRecord OVERFLOW = new SAMRecord(null);
+
+  private final ForcedInitialiser mRecordInitialiser;
 
   /**
    * Populator for SAM records using an initializer. Can be given null to
@@ -47,7 +50,7 @@ public class SamRecordPopulator implements Populator<SAMRecord> {
 
   /** Populator for SAM records with default initializer. */
   public SamRecordPopulator() {
-    this(new DefaultForcedInitialiser());
+    this(DEFAULT_INITIALIZER);
   }
 
 

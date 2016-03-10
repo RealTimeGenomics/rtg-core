@@ -16,14 +16,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import com.reeltwo.jumble.annotations.TestClass;
-import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.ReferenceSequenceRequiredException;
-import com.rtg.sam.SamBamConstants;
 import com.rtg.sam.SamFilterParams;
 import com.rtg.sam.SamMerger;
 import com.rtg.sam.SamUtils;
@@ -33,6 +30,7 @@ import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.io.AsynchInputStream;
+import com.rtg.variant.RecalibratingSamRecordPopulator;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMFileWriter;
@@ -52,9 +50,6 @@ public class Recalibrate implements Closeable {
   public static final String EXTENSION = ".calibration";
 
   private final SequencesReader mTemplate;
-  private final Map<String, Long> mSequenceNameMap;
-  private String mLastName;
-  private final byte[] mTemplateBytes;
   private final SdfId mTemplateSdfId;
   private final ReferenceRegions mRegions;
 
@@ -67,8 +62,6 @@ public class Recalibrate implements Closeable {
   public Recalibrate(SequencesReader template, ReferenceRegions regions) throws IOException {
     mRegions = regions;
     mTemplate = template;
-    mSequenceNameMap = ReaderUtils.getSequenceNameMap(mTemplate);
-    mTemplateBytes = new byte[(int) mTemplate.maxLength()];
     mTemplateSdfId = mTemplate.getSdfId();
   }
 
@@ -91,7 +84,6 @@ public class Recalibrate implements Closeable {
         throw new IOException("File: " + calibrationFile + " already exists");
       }
       c.writeToFile(calibrationFile);
-      mLastName = null;
     }
   }
 
@@ -100,24 +92,10 @@ public class Recalibrate implements Closeable {
     if (mRegions != null) {
       c.setSequenceLengths(Calibrator.getSequenceLengthMap(mTemplate, mRegions));
     }
+    final RecalibratingSamRecordPopulator p = new RecalibratingSamRecordPopulator(c, mTemplate, false);
     try (SAMRecordIterator it = reader.iterator()) {
       while (it.hasNext()) {
-        final SAMRecord rec = it.next();
-        final int flags = rec.getFlags();
-        if ((flags & SamBamConstants.SAM_READ_IS_UNMAPPED) != 0) {
-          continue;
-        }
-        final String name = rec.getReferenceName();
-        if (!name.equals(mLastName)) {
-          final Long seqId = mSequenceNameMap.get(name);
-          if (seqId == null) {
-            throw new NoTalkbackSlimException("Sequence " + name + " not found in template");  //user must have edited the sam file and cocked this up.
-          }
-          mLastName = name;
-          final int length = mTemplate.read(seqId, mTemplateBytes);
-          c.setTemplate(name, mTemplateBytes, length);
-        }
-        c.processRead(rec);
+        p.populate(it.next());
       }
     }
     return c;
@@ -142,8 +120,7 @@ public class Recalibrate implements Closeable {
       try (final IndexingStreamCreator streamHandler = new IndexingStreamCreator(alignmentOutputFile, System.out, compress, indexerFactory, true /* create index */)) {
         try (final SAMFileWriter writer = SamMerger.getSAMFileWriter(streamHandler, header, outputBam, true /* writeHeader */, true /* terminateBlockedGzip */)) {
           while (it.hasNext()) {
-            final SAMRecord rec = it.next();
-            writer.addAlignment(rec);
+            writer.addAlignment(it.next());
           }
         }
       }

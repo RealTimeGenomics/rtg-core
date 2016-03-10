@@ -23,11 +23,10 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import htsjdk.samtools.SAMRecord;
 
 /**
- * Populator that passes through SAM records and performs calibration.
+ * Populator that passes through SAM records and performs calibration statistic accumulation.
  */
 public class RecalibratingSamRecordPopulator extends SamRecordPopulator {
 
-  private static final byte[] EMPTY = new byte[0];
   private final Calibrator mCalibrator;
   private final SequencesReader mTemplate;
   private final byte[] mTemplateBytes;
@@ -39,9 +38,10 @@ public class RecalibratingSamRecordPopulator extends SamRecordPopulator {
    * skip initialization.
    * @param calibrator calibrator to use
    * @param template template reader
+   * @param forceInit if true use the default SAM record forced field initializer
    */
-  public RecalibratingSamRecordPopulator(final Calibrator calibrator, final SequencesReader template) {
-    super();
+  public RecalibratingSamRecordPopulator(final Calibrator calibrator, final SequencesReader template, boolean forceInit) {
+    super(forceInit ? SamRecordPopulator.DEFAULT_INITIALIZER : null);
     mCalibrator = calibrator;
     mTemplate = template;
     mTemplateBytes = new byte[(int) mTemplate.maxLength()];
@@ -55,9 +55,9 @@ public class RecalibratingSamRecordPopulator extends SamRecordPopulator {
 
   @Override
   public SAMRecord populate(final SAMRecord rec) {
-    final String name = rec.getReferenceName();
-    if (!name.equals(mLastName)) {
-      if (!"*".equals(name)) {
+    if (!rec.getReadUnmappedFlag()) {
+      final String name = rec.getReferenceName();
+      if (!name.equals(mLastName)) {
         final Long seqId = mSequenceNameMap.get(name);
         if (seqId == null) {
           throw new NoTalkbackSlimException("Sequence " + name + " not found in template");  //user must have edited the sam file and cocked this up.
@@ -68,12 +68,10 @@ public class RecalibratingSamRecordPopulator extends SamRecordPopulator {
         } catch (final IOException e) {
           throw new NoTalkbackSlimException("Failed to read sequence " + name + " from template");
         }
-      } else {
-        mCalibrator.setTemplate(name, EMPTY, 0);
+        mLastName = name;
       }
-      mLastName = name;
+      mCalibrator.processRead(rec);
     }
-    mCalibrator.processRead(rec);
     return super.populate(rec);
   }
 

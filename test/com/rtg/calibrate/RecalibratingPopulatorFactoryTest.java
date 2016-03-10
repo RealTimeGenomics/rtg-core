@@ -11,6 +11,8 @@
  */
 package com.rtg.calibrate;
 
+import java.io.IOException;
+
 import com.rtg.mode.SequenceType;
 import com.rtg.reader.MockSequencesReader;
 import com.rtg.reader.SequencesReader;
@@ -26,7 +28,7 @@ import junit.framework.TestCase;
  */
 public class RecalibratingPopulatorFactoryTest extends TestCase {
 
-  public void test() {
+  public void test() throws IOException {
     final Covariate[] cov = {new CovariateSequence()};
     final SequencesReader t = new MockSequencesReader(SequenceType.DNA, 5);
     final RecalibratingPopulatorFactory f = new RecalibratingPopulatorFactory(cov, null, t);

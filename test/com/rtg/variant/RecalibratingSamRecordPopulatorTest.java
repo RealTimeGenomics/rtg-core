@@ -33,10 +33,11 @@ public class RecalibratingSamRecordPopulatorTest extends TestCase {
     rec.setAttribute(ReadGroupUtils.RG_ATTRIBUTE, "test");
     rec.setReferenceName(template.name(0));
     final Calibrator cal = new Calibrator(new Covariate[0], null);
-    final RecalibratingSamRecordPopulator pop = new RecalibratingSamRecordPopulator(cal, template);
+    final RecalibratingSamRecordPopulator pop = new RecalibratingSamRecordPopulator(cal, template, false);
     final SAMRecord r = pop.populate(rec);
     assertEquals(rec, r);
     assertEquals(cal, pop.calibrator());
+    rec.setReadUnmappedFlag(true);
     rec.setReferenceName("*");
     final SAMRecord r2 = pop.populate(rec);
     assertEquals(rec, r2);
