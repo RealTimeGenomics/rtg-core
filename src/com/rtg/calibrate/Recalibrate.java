@@ -30,7 +30,6 @@ import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.io.AsynchInputStream;
-import com.rtg.variant.RecalibratingSamRecordPopulator;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMFileWriter;
@@ -92,7 +91,7 @@ public class Recalibrate implements Closeable {
     if (mRegions != null) {
       c.setSequenceLengths(Calibrator.getSequenceLengthMap(mTemplate, mRegions));
     }
-    final RecalibratingSamRecordPopulator p = new RecalibratingSamRecordPopulator(c, mTemplate, false);
+    final CalibratingSamRecordPopulator p = new CalibratingSamRecordPopulator(c, mTemplate, false);
     try (SAMRecordIterator it = reader.iterator()) {
       while (it.hasNext()) {
         p.populate(it.next());
@@ -104,7 +103,7 @@ public class Recalibrate implements Closeable {
   void doMergeRecalibrate(File output, List<File> samFiles, List<CovariateEnum> covs, int threads, boolean force, boolean compress) throws IOException {
     final SAMFileHeader uberHeader = SamUtils.getUberHeader(samFiles);
     final Covariate[] covariates = CovariateEnum.getCovariates(covs, uberHeader);
-    final RecalibratingPopulatorFactory rpf = new RecalibratingPopulatorFactory(covariates, mRegions, mTemplate);
+    final CalibratingPopulatorFactory rpf = new CalibratingPopulatorFactory(covariates, mRegions, mTemplate);
     final boolean outputBam = output.getName().endsWith(SamUtils.BAM_SUFFIX);
     final File alignmentOutputFile = outputBam ? output : SamUtils.getZippedSamFileName(compress, output);
     final File calibrationFile = new File(alignmentOutputFile.getParent(), alignmentOutputFile.getName() + EXTENSION);

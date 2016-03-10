@@ -26,12 +26,12 @@ import junit.framework.TestCase;
  * Tests the corresponding class.
  *
  */
-public class RecalibratingPopulatorFactoryTest extends TestCase {
+public class CalibratingPopulatorFactoryTest extends TestCase {
 
   public void test() throws IOException {
     final Covariate[] cov = {new CovariateSequence()};
     final SequencesReader t = new MockSequencesReader(SequenceType.DNA, 5);
-    final RecalibratingPopulatorFactory f = new RecalibratingPopulatorFactory(cov, null, t);
+    final CalibratingPopulatorFactory f = new CalibratingPopulatorFactory(cov, null, t);
     final Populator<SAMRecord> p1 = f.populator();
     assertNotSame(p1, f.populator());
     assertNotNull(f.mergedCalibrator());

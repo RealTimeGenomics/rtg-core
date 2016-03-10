@@ -20,16 +20,15 @@ import com.rtg.reader.SequencesReader;
 import com.rtg.util.Populator;
 import com.rtg.util.PopulatorFactory;
 import com.rtg.util.intervals.ReferenceRegions;
-import com.rtg.variant.RecalibratingSamRecordPopulator;
 
 import htsjdk.samtools.SAMRecord;
 
 /**
  * Populator factory where each SAM record populator includes a calibrator.
  */
-public class RecalibratingPopulatorFactory implements PopulatorFactory<SAMRecord> {
+public class CalibratingPopulatorFactory implements PopulatorFactory<SAMRecord> {
 
-  private final List<RecalibratingSamRecordPopulator> mPopulators = new ArrayList<>();
+  private final List<CalibratingSamRecordPopulator> mPopulators = new ArrayList<>();
 
   private final Covariate[] mCovariates;
   private final ReferenceRegions mRegions;
@@ -43,7 +42,7 @@ public class RecalibratingPopulatorFactory implements PopulatorFactory<SAMRecord
    * @param template the template
    * @throws IOException if there is a problem reading sequence lengths from the reference
    */
-  public RecalibratingPopulatorFactory(final Covariate[] covariates, final ReferenceRegions regions, final SequencesReader template) throws IOException {
+  public CalibratingPopulatorFactory(final Covariate[] covariates, final ReferenceRegions regions, final SequencesReader template) throws IOException {
     mCovariates = covariates;
     mRegions = regions;
     mTemplate = template;
@@ -56,7 +55,7 @@ public class RecalibratingPopulatorFactory implements PopulatorFactory<SAMRecord
     if (mLengths != null) {
       calibrator.setSequenceLengths(mLengths);
     }
-    final RecalibratingSamRecordPopulator pop = new RecalibratingSamRecordPopulator(calibrator, mTemplate.copy(), true); // necessary to close these copies?
+    final CalibratingSamRecordPopulator pop = new CalibratingSamRecordPopulator(calibrator, mTemplate.copy(), true); // necessary to close these copies?
     mPopulators.add(pop);
     return pop;
   }
@@ -71,7 +70,7 @@ public class RecalibratingPopulatorFactory implements PopulatorFactory<SAMRecord
     if (mLengths != null) {
       merged.setSequenceLengths(mLengths);
     }
-    for (final RecalibratingSamRecordPopulator pop : mPopulators) {
+    for (final CalibratingSamRecordPopulator pop : mPopulators) {
       merged.accumulate(pop.calibrator());
     }
     return merged;

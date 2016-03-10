@@ -9,12 +9,11 @@
  * code you accept the terms of that license agreement and any amendments to those terms that may
  * be made from time to time by Real Time Genomics Limited.
  */
-package com.rtg.variant;
+package com.rtg.calibrate;
 
 import java.io.IOException;
 import java.util.Map;
 
-import com.rtg.calibrate.Calibrator;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.SamRecordPopulator;
@@ -25,7 +24,7 @@ import htsjdk.samtools.SAMRecord;
 /**
  * Populator that passes through SAM records and performs calibration statistic accumulation.
  */
-public class RecalibratingSamRecordPopulator extends SamRecordPopulator {
+public class CalibratingSamRecordPopulator extends SamRecordPopulator {
 
   private final Calibrator mCalibrator;
   private final SequencesReader mTemplate;
@@ -40,7 +39,7 @@ public class RecalibratingSamRecordPopulator extends SamRecordPopulator {
    * @param template template reader
    * @param forceInit if true use the default SAM record forced field initializer
    */
-  public RecalibratingSamRecordPopulator(final Calibrator calibrator, final SequencesReader template, boolean forceInit) {
+  public CalibratingSamRecordPopulator(final Calibrator calibrator, final SequencesReader template, boolean forceInit) {
     super(forceInit ? SamRecordPopulator.DEFAULT_INITIALIZER : null);
     mCalibrator = calibrator;
     mTemplate = template;
