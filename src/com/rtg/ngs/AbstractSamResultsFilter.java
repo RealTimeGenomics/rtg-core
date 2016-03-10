@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.rtg.calibrate.CalibratingSamRecordPopulator;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
 import com.rtg.mode.DnaUtils;
@@ -143,24 +144,21 @@ public abstract class AbstractSamResultsFilter {
    */
   public void filterConcat(SAMFileHeader header, OutputStream destination, OutputStream calibrationDest, ReferenceRegions referenceRegions, SequencesReader template, boolean deleteTempFiles, File... inputFiles) throws IOException {
     try (SAMFileWriter samWriter = getSAMFileWriter(header, destination)) {
-      final byte[] templateBuffer;
-      final Calibrator cal;
       if (mStatsCalculator != null) {
         mStatsCalculator.setupReadGroups(header);
       }
 
+      final CalibratingSamRecordPopulator cp;
       if (template != null && calibrationDest != null) {
-        cal = new Calibrator(CovariateEnum.getCovariates(CovariateEnum.DEFAULT_COVARIATES, header), referenceRegions);
+        final Calibrator cal = new Calibrator(CovariateEnum.getCovariates(CovariateEnum.DEFAULT_COVARIATES, header), referenceRegions);
         if (referenceRegions != null) {
           cal.setSequenceLengths(Calibrator.getSequenceLengthMap(template, referenceRegions));
         }
-        templateBuffer = new byte[(int) template.maxLength()];
+        cp = new CalibratingSamRecordPopulator(cal, template, false);
       } else {
-        templateBuffer = null;
-        cal = null;
+        cp = null;
       }
 
-      String lastName = null;
       int inputRecords = 0;
       int outputRecords = 0;
       for (final File currentFile : inputFiles) {
@@ -178,17 +176,8 @@ public abstract class AbstractSamResultsFilter {
             inputRecords++;
             final SAMRecord filteredRecord = filterRecord(samWriter, rec, template.names());
             if (filteredRecord != null) {
-              if (cal != null) {
-                if (!filteredRecord.getReadUnmappedFlag()) {
-                  final String name = filteredRecord.getReferenceName();
-                  if (!name.equals(lastName)) {
-                    lastName = name;
-                    final int seqId = rec.getReferenceId();
-                    final int length = template.read(seqId, templateBuffer);
-                    cal.setTemplate(name, templateBuffer, length);
-                  }
-                  cal.processRead(filteredRecord);
-                }
+              if (cp != null) {
+                cp.populate(filteredRecord);
               }
               if (mStatsCalculator != null) {
                 mStatsCalculator.addRecord(filteredRecord);
@@ -210,8 +199,8 @@ public abstract class AbstractSamResultsFilter {
         }
       } //for
       // timer.stopLog();
-      if (cal != null) {
-        cal.writeToStream(calibrationDest);
+      if (cp != null) {
+        cp.calibrator().writeToStream(calibrationDest);
       }
 
       Diagnostic.userLog(getName() + " SAM filter outputs " + outputRecords + "/" + inputRecords + " records");
