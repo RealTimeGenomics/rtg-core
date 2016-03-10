@@ -32,11 +32,11 @@ public class AlignmentEnvironmentCG extends AbstractAlignmentEnvironment {
    * @param var the alignment record
    * @param params the variant params object
    * @param template reference nucleotides
-   * @param machineType
+   * @param machineType which machine type
    */
   public AlignmentEnvironmentCG(final VariantAlignmentRecord var, final VariantParams params, final byte[] template, MachineType machineType) {
     super(var.getStart());
-    assert machineType.isCg();
+    assert machineType.isCG();
     final CgUnroller.OrientedRead orient = CgUnroller.unrollCgRead(var, template);
     if (orient == null) {
       throw new NoTalkbackSlimException("Invalid CG alignment. Could not reconstruct original read. record=" + var.toString());

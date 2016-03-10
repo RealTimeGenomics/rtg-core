@@ -146,7 +146,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     final int backStepPosition;
     if (!overlapQuality.isEmpty()) {
       // Work out CG backstep position
-      boolean v1 = readLength == CgUtils.CG_RAW_READ_LENGTH;
+      final boolean v1 = readLength == CgUtils.CG_RAW_READ_LENGTH;
       if (v1) {
         final boolean first = record.getReadPairedFlag() && record.getFirstOfPairFlag();
         backStepPosition = record.getReadNegativeStrandFlag() ^ !first ? baseQualities.length - CgUtils.CG_OVERLAP_POSITION : CgUtils.CG_OVERLAP_POSITION;
@@ -160,7 +160,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     mRecalibratedQuality = new byte[baseQualities.length];
     final int machineStep;
     int machineCycle;
-    if (record.getReadNegativeStrandFlag() ) {
+    if (record.getReadNegativeStrandFlag()) {
       machineCycle = readLength - 1;
       machineStep = -1;
     } else {
@@ -180,7 +180,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
 
     mOverlapQuality = new byte[overlapQuality.length()];
     for (int i = 0; i < overlapQuality.length() && qualityPosition < mRecalibratedQuality.length; i++) {
-      final byte scoreChar = (byte) (overlapQuality.charAt(i) - FastaUtils.PHRED_LOWER_LIMIT_CHAR );
+      final byte scoreChar = (byte) (overlapQuality.charAt(i) - FastaUtils.PHRED_LOWER_LIMIT_CHAR);
       // Be careful to invoke the me.getScaledPhred that takes a char. It will correct for ascii encoding
       final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getScaledPhred(scoreChar, machineCycle, arm);
       mOverlapQuality[i] = (byte) recalibrated;

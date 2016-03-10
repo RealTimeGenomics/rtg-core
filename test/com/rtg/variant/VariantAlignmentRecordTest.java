@@ -32,9 +32,9 @@ import junit.framework.TestCase;
  */
 public class VariantAlignmentRecordTest extends TestCase {
 
-  public static final String READ_GROUP_ID = "ASDF";
-  public static final String CG1_READ_GROUP_ID = "CG";
-  public static final String CG2_READ_GROUP_ID = "CG2";
+  private static final String READ_GROUP_ID = "ASDF";
+  private static final String CG1_READ_GROUP_ID = "CG";
+  private static final String CG2_READ_GROUP_ID = "CG2";
 
   public void testBasicOperation() {
     final SAMFileHeader header = new SAMFileHeader();

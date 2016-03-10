@@ -18,6 +18,9 @@ package com.rtg.variant;
 public class InterpolateArray implements Interpolate {
   private final int[] mCurve;
 
+  /**
+   * @param curve interpolate values in this curve
+   */
   public InterpolateArray(int[] curve) {
     mCurve = curve;
   }

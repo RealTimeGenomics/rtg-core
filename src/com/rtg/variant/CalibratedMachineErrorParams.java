@@ -335,7 +335,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
 
   @Override
   public final boolean isCG() {
-    return mMachineType == MachineType.COMPLETE_GENOMICS || mMachineType == MachineType.COMPLETE_GENOMICS_2;
+    return mMachineType.isCG();
   }
 
   @Override

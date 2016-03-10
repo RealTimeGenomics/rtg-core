@@ -22,6 +22,10 @@ public class ArmMachineCyclePhredScaler implements PhredScaler {
   PhredScaler mLeft;
   PhredScaler mRight;
 
+  /**
+   * @param left scaler for the left arm
+   * @param right scaler for the right arm
+   */
   public ArmMachineCyclePhredScaler(PhredScaler left, PhredScaler right) {
     mLeft = left;
     mRight = right;

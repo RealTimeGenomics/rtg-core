@@ -13,6 +13,7 @@
 package com.rtg.variant;
 
 import com.reeltwo.jumble.annotations.TestClass;
+import com.rtg.util.MathUtils;
 
 /**
  * populates missing values in a list by drawing straight lines between adjacent values
@@ -24,18 +25,18 @@ interface Interpolate {
   /**
    * @param pos index to fetch
    * @return the value at index {@code pos}
-   * */
+   */
   int getValue(int pos);
 
   /**
    * @param pos index to set
    * @param value the value to store
-   * */
+   */
   void setValue(int pos, int value);
 
   /**
    * @return the smallest index to interpolate
-   * */
+   */
   int minPos();
 
   /**
@@ -49,7 +50,7 @@ interface Interpolate {
   boolean isMissing(int pos);
 
   /**
-   *  Fill gaps (-1's) in your structure by taking points on the straight line between present values
+   *  Fill missing values in your structure by taking points on the straight line between present values
    */
   default void process() {
     boolean foundFirstValue = false;
@@ -61,7 +62,7 @@ interface Interpolate {
             final int gapSize = i - prev;
             final int gapValue = getValue(i) - getValue(prev);
             final int step = gap - prev;
-            final int qual = getValue(prev) + (int) Math.round((double) gapValue / gapSize * step);
+            final int qual = getValue(prev) + (int) MathUtils.round((double) gapValue / gapSize * step);
             setValue(gap, qual);
           }
         }

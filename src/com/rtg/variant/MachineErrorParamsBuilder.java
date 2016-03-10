@@ -163,14 +163,6 @@ public class MachineErrorParamsBuilder {
     return dist;
   }
 
-  private static boolean tryGetBoolean(final Properties pr, final String key, final boolean dfault) {
-    if (pr.containsKey(key)) {
-      return Boolean.valueOf(pr.getProperty(key));
-    } else {
-      return dfault;
-    }
-  }
-
   static double parseDouble(final String prior, final String val, final String key) {
     final double ret;
     try {

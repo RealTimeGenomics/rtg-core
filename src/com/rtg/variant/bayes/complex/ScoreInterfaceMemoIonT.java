@@ -42,7 +42,7 @@ public final class ScoreInterfaceMemoIonT implements ScoreInterfaceMemoInterface
 
   @Override
   public AllPaths getScoreInterface(final RealignParams me) {
-    if (me.machineType() != null && me.machineType().isCg()) {
+    if (me.machineType() != null && me.machineType().isCG()) {
       throw new UnsupportedOperationException();
     }
     AllPaths s;

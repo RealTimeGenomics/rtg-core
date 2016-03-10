@@ -30,7 +30,7 @@ public final class ScoreInterfaceMemo implements ScoreInterfaceMemoInterface {
   @Override
   public AllPaths getScoreInterface(final RealignParams params) {
     AllPaths s;
-    if (params.machineType() != null && params.machineType().isCg() && EvidenceComplex.CG_ALLPATHS) {
+    if (params.machineType() != null && params.machineType().isCG() && EvidenceComplex.CG_ALLPATHS) {
       s = mCacheCG.get(params);
       if (s == null) {
         s = new ScoreFastUnderflowCG(params);

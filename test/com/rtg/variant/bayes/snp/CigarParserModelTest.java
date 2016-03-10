@@ -599,8 +599,8 @@ public class CigarParserModelTest extends TestCase {
       matcher.close();
     }
     assertEquals(""
-      + (MachineType.CG_TRIM ?  "" :
-      "ref=2 nt=2 q=20 r=63" + LS
+      + (MachineType.CG_TRIM ?  ""
+      : "ref=2 nt=2 q=20 r=63" + LS
         + "ref=3 nt=2 q=20 r=63" + LS
         + "ref=4 nt=2 q=20 r=63" + LS)
         + "ref=5 nt=4 q=20 r=63" + LS
@@ -697,8 +697,8 @@ public class CigarParserModelTest extends TestCase {
         + "ref=35 nt=2 q=13 r=0" + LS //C.
         + "ref=36 nt=2 q=14 r=0" + LS //C/
         + "ref=37 nt=4 q=20 r=0" + LS //T5
-        + (MachineType.CG_TRIM ?  "" :
-         "ref=38 nt=2 q=15 r=0" + LS //C0
+        + (MachineType.CG_TRIM ?  ""
+        : "ref=38 nt=2 q=15 r=0" + LS //C0
         + "ref=39 nt=2 q=19 r=0" + LS //C4
         + "ref=40 nt=2 q=19 r=0" + LS), matcher.toString()); //C4
 
@@ -768,8 +768,8 @@ public class CigarParserModelTest extends TestCase {
         + "ref=33 nt=4 q=17 r=0" + LS //T2
         + "ref=34 nt=2 q=24 r=0" + LS //C9
         + "ref=35 nt=4 q=14 r=0" + LS //T/
-        + (MachineType.CG_TRIM ?  "" :
-         "ref=36 nt=2 q=23 r=0" + LS //C8
+        + (MachineType.CG_TRIM ?  ""
+        : "ref=36 nt=2 q=23 r=0" + LS //C8
         + "ref=37 nt=1 q=24 r=0" + LS //A9
         + "ref=38 nt=1 q=15 r=0" + LS), matcher.toString()); //A0
 

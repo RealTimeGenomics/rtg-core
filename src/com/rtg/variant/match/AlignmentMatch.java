@@ -83,7 +83,7 @@ public class AlignmentMatch extends Match implements Integrity {
       for (int k = 0; k < mBaseError.length; k++) {
         // apply machine error calibration curve for appropriate read group if possible
         final int phred = qScore[k + start];
-        assert 0 <= phred && phred < 255;
+        assert 0 <= phred;
         mBaseError[k] = VariantUtils.phredToProb(phred);
       }
     }

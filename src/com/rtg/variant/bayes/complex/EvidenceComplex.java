@@ -59,7 +59,7 @@ public class EvidenceComplex extends Evidence {
   }
 
   private static AllPaths getAllPaths(final RealignParams params) {
-    if (params.machineType() != null && params.machineType().isCg() && CG_ALLPATHS) {
+    if (params.machineType() != null && params.machineType().isCG() && CG_ALLPATHS) {
       return new ScoreFastUnderflowCG(params);
     }
     return new ScoreFastUnderflow(params);
@@ -121,7 +121,7 @@ public class EvidenceComplex extends Evidence {
     mProb = new double[size];
     final VariantAlignmentRecord alignmentRecord = match.alignmentRecord();
     final RealignParams me = chooser.realignParams(alignmentRecord.getReadGroup(), alignmentRecord.isReadPaired());
-    final boolean cg = me.machineType() != null && me.machineType().isCg();
+    final boolean cg = me.machineType() != null && me.machineType().isCG();
     final AllPaths sm;
     if (params.threadingEnvironment() == ThreadingEnvironment.PARALLEL) {
       sm = getAllPaths(me);

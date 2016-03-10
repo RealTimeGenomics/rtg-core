@@ -30,7 +30,7 @@ public final class AlignmentEnvironmentRead extends AbstractAlignmentEnvironment
    */
   public AlignmentEnvironmentRead(VariantAlignmentRecord sam, VariantParams params, MachineType me) {
     super(sam.getStart());
-    assert me == null || !me.isCg();
+    assert me == null || !me.isCG();
     //SamUtils.checkCG(sam); // todo
     mRead = DNA.byteDNAtoByte(sam.getRead());
     final int len = mRead.length;

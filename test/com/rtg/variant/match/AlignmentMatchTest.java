@@ -34,9 +34,9 @@ import junit.framework.TestCase;
  */
 public class AlignmentMatchTest extends TestCase {
 
-  public static final String TEST_READ_STRING = "ACGT"; // We use the "CGT" part
-  public static final String TEST_READ_QUALITY_STRING = "!!%`"; // 0,0,4,63
-  public static final byte[] TEST_RAW_QUALITY = FastaUtils.asciiToRawQuality(TEST_READ_QUALITY_STRING.toCharArray());
+  private static final String TEST_READ_STRING = "ACGT"; // We use the "CGT" part
+  private static final String TEST_READ_QUALITY_STRING = "!!%`"; // 0,0,4,63
+  private static final byte[] TEST_RAW_QUALITY = FastaUtils.asciiToRawQuality(TEST_READ_QUALITY_STRING.toCharArray());
 
   public void test0() {
     final AlignmentMatch ins = new AlignmentMatch(null, "", "", 0, 0, 0, 7);
