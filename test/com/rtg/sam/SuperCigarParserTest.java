@@ -60,7 +60,7 @@ public class SuperCigarParserTest extends TestCase {
     @Override
     protected void doTemplateSkip(int templateNt) {
       mTemplateString.append('.');
-      Exam.assertEquals(templateNt, getTemplate()[getTemplatePosition()]);
+      Exam.assertEquals(templateNt, templateNt(getTemplatePosition()));
     }
 
     @Override
@@ -72,14 +72,14 @@ public class SuperCigarParserTest extends TestCase {
     @Override
     protected void doTemplateOnly(int templateNt) {
       mTemplateString.append(DNA_CHAR[templateNt]);
-      Exam.assertEquals(templateNt, getTemplate()[getTemplatePosition()]);
+      Exam.assertEquals(templateNt, templateNt(getTemplatePosition()));
     }
 
     @Override
     protected void doSubstitution(int readNt, int templateNt) {
       mReadString.append(DNA_CHAR[readNt]);
       mTemplateString.append(DNA_CHAR[templateNt]);
-      Exam.assertEquals(templateNt, getTemplate()[getTemplatePosition()]);
+      Exam.assertEquals(templateNt, templateNt(getTemplatePosition()));
       Exam.assertEquals(readNt, mReadSeq[getReadPosition()]);
     }
 
@@ -87,7 +87,7 @@ public class SuperCigarParserTest extends TestCase {
     protected void doEquality(int readNt, int nt) {
       mReadString.append(DNA_CHAR[nt]);
       mTemplateString.append(DNA_CHAR[nt]);
-      Exam.assertEquals(nt, getTemplate()[getTemplatePosition()]);
+      Exam.assertEquals(nt, templateNt(getTemplatePosition()));
       Exam.assertEquals(nt, mReadSeq[getReadPosition()]);
     }
   }

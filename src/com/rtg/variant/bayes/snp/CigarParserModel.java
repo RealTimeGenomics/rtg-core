@@ -195,18 +195,17 @@ public class CigarParserModel implements ReadParserInterface {
         if (ILLUMINA_HOMOPOLYMER_HACK) {
           final int templatePos = getTemplatePosition();
           if (templatePos > 2 && templatePos < getTemplateLength() - 2) {
-            final byte[] template = getTemplate();
             final boolean homop;
-            final byte currentTemplate = template[templatePos];
+            final byte currentTemplate = templateNt(templatePos);
             final boolean match = readNt == currentTemplate || readNt == DNA.N.ordinal() || currentTemplate == DNA.N.ordinal();
             final byte homopTemplate;
             if (mIsForward) {
               //equal if current or previous nt are same or previous and one before are same
-              homop = template[templatePos - 1] == template[templatePos - 2];
-              homopTemplate = template[templatePos - 1];
+              homop = templateNt(templatePos - 1) == templateNt(templatePos - 2);
+              homopTemplate = templateNt(templatePos - 1);
             } else {
-              homop = template[templatePos + 1] == template[templatePos + 2];
-              homopTemplate = template[templatePos + 1];
+              homop = templateNt(templatePos + 1) == templateNt(templatePos + 2);
+              homopTemplate = templateNt(templatePos + 1);
             }
             if (!match && homop && readNt == homopTemplate) {
               currentQuality = 2;

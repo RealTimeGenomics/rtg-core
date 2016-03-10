@@ -158,14 +158,6 @@ public class SuperCigarParser {
     mTemplateStart = zeroBasedStart;
   }
 
-  /**
-   * Get template.
-   * @return Returns the template.
-   */
-  public byte[] getTemplate() {
-    return mTemplate;
-  }
-
   protected byte getReadByte(int position) {
     if (position > mReadLength) {
       throw new ArrayIndexOutOfBoundsException(position);
@@ -275,8 +267,12 @@ public class SuperCigarParser {
     }
   }
 
-  protected byte templateNt() {
-    return mTemplate != null && 0 <= mTemplatePos && mTemplatePos < mTemplateLength ? mTemplate[mTemplatePos] : DnaUtils.UNKNOWN_RESIDUE;
+  protected final byte templateNt(int templatePos) {
+    return mTemplate != null && 0 <= templatePos && templatePos < mTemplateLength ? mTemplate[templatePos] : DnaUtils.UNKNOWN_RESIDUE;
+  }
+
+  protected final byte templateNt() {
+    return templateNt(mTemplatePos);
   }
 
   /**
