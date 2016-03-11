@@ -20,7 +20,6 @@ import com.rtg.variant.util.arithmetic.SimplePossibility;
 import junit.framework.TestCase;
 
 /**
- * @author kurt
  */
 public abstract class AbstractAlleleBalanceTest extends TestCase {
   int findIndexByName(String name) {

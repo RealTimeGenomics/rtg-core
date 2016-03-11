@@ -15,7 +15,6 @@ package com.rtg.variant.bayes.snp;
 import junit.framework.TestCase;
 
 /**
- * @author kurt
  */
 public class IndelIgnorerFactoryTest extends TestCase {
   public void testFactory() {

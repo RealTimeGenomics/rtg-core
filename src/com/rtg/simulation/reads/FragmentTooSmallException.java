@@ -14,7 +14,6 @@ package com.rtg.simulation.reads;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
 /**
- * @author Dave Ware
  */
 public class FragmentTooSmallException extends NoTalkbackSlimException {
 

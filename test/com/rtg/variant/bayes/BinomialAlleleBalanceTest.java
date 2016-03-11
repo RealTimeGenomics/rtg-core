@@ -13,7 +13,6 @@
 package com.rtg.variant.bayes;
 
 /**
- * @author kurt
  */
 public class BinomialAlleleBalanceTest extends AbstractAlleleBalanceTest {
   public void testAlleleBalanceZeroCoverage() {
@@ -38,9 +37,6 @@ public class BinomialAlleleBalanceTest extends AbstractAlleleBalanceTest {
     final double worse = balance(new int[]{7, 3, 0, 0}, new double[]{0.1, 0.1, 0.0, 0.0}, findIndexByName("B:D"));
     assertTrue(unbalanced > worse);
   }
-//  public void testPlot() {
-//    dumpPlot();
-//  }
 
   @Override
   protected BinomialAlleleBalance getAlleleBalanceProbability() {

@@ -19,7 +19,6 @@ import com.rtg.variant.util.arithmetic.SimplePossibility;
 import junit.framework.TestCase;
 
 /**
- * @author kurt
  */
 public class NoAlleleBalanceTest extends TestCase {
   public void test() {

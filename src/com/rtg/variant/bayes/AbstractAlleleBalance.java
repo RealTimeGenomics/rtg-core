@@ -17,8 +17,6 @@ import com.rtg.reference.Ploidy;
 import com.rtg.variant.util.arithmetic.LogPossibility;
 
 /**
- *
- * @author kurt
  */
 @TestClass({"com.rtg.variant.bayes.BinomialAlleleBalanceTest", "com.rtg.variant.bayes.HoeffdingAlleleBalanceTest"})
 public abstract class AbstractAlleleBalance implements AlleleBalanceProbability {

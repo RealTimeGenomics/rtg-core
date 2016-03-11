@@ -16,7 +16,6 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.intervals.ReferenceRanges;
 
 /**
- * @author kurt
  */
 @TestClass("com.rtg.variant.SomaticParamsTest")
 public class SomaticParamsBuilder {

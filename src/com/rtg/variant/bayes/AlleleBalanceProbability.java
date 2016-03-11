@@ -14,7 +14,6 @@ package com.rtg.variant.bayes;
 
 /**
  * Possible implementations of the allele balance probability factor
- * @author kurt
  */
 public interface AlleleBalanceProbability {
 
