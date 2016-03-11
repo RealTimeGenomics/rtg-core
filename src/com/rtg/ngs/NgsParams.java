@@ -619,7 +619,7 @@ public class NgsParams extends ModuleParams implements Integrity {
    * @return the number of bits required to encode a value
    */
   public static int calculateValueBitsLongReads(long numberReads, boolean pairedEnd, int windowsSize, int stepSize, long maxLength) {
-    final int mxs = PositionUtils.maxMatches(stepSize, windowsSize, maxLength, 1);
+    final int mxs = PositionUtils.maxMatches(windowsSize, stepSize, maxLength, 1);
     long maxVal = numberReads - 1;
     if (pairedEnd) {
       maxVal <<= 1;
