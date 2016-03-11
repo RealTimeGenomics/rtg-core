@@ -16,7 +16,6 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.intervals.ReferenceRanges;
 
 /**
- * @author kurt
  */
 public class SomaticParams {
 

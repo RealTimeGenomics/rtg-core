@@ -19,7 +19,6 @@ import com.rtg.variant.bayes.snp.EvidenceQ;
 import junit.framework.TestCase;
 
 /**
- * @author kurt
  */
 public class VariantAlleleTriggerTest extends TestCase {
   static final VariantAlleleTrigger TRIGGER = new VariantAlleleTrigger(3, 0.5);

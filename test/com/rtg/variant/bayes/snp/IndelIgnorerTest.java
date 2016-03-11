@@ -15,7 +15,6 @@ package com.rtg.variant.bayes.snp;
 import junit.framework.TestCase;
 
 /**
- * @author kurt
  */
 public class IndelIgnorerTest extends TestCase {
   public void testIncrementHasNoEffect() {

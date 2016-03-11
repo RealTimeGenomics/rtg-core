@@ -15,7 +15,6 @@ package com.rtg.variant.bayes.snp;
 import com.rtg.variant.bayes.EvidenceInterface;
 
 /**
- * @author kurt
  */
 public class IndelIgnorer extends IndelDetector {
   @Override

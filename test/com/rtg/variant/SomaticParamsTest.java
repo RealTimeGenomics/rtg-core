@@ -18,7 +18,6 @@ import com.rtg.util.test.params.TestParams;
 import junit.framework.TestCase;
 
 /**
- * @author kurt
  */
 public class SomaticParamsTest extends TestCase {
   public void testOmnes() {

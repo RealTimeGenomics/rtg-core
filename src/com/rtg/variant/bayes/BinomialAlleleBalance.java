@@ -16,7 +16,6 @@ import com.rtg.util.ChiSquared;
 
 /**
  * Approximate probability of allele balance as a binomial trial.
- * @author kurt
  */
 public class BinomialAlleleBalance extends AbstractAlleleBalance {
 

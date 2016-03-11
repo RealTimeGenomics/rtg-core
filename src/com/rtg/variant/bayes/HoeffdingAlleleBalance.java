@@ -16,7 +16,6 @@ import com.rtg.util.MathUtils;
 
 /**
  * Approximate probability of allele balance with Hoeffding's inequality
- * @author kurt
  */
 public class HoeffdingAlleleBalance extends AbstractAlleleBalance {
   /**
