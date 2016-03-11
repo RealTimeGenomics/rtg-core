@@ -112,18 +112,18 @@ public final class PositionUtils {
     final int stepSize = buildParams.stepSize();
     final int windowSize = buildParams.windowSize();
     final long maxLength = buildParams.sequences().maxLength();
-    return maxMatches(stepSize, windowSize, maxLength);
+    return maxMatches(windowSize, stepSize, maxLength);
   }
 
   /**
    * Compute the number of different match positions that can occur in a build sequence.
-   * @param stepSize step size parameter
    * @param windowSize window size parameter
+   * @param stepSize step size parameter
    * @param maxLength length of longest sequence
    * @return the number of possible match positions (&ge; 0).
    * @throws IllegalArgumentException if result is too large.
    */
-  public static int maxMatches(int stepSize, int windowSize, long maxLength) {
+  public static int maxMatches(int windowSize, int stepSize, long maxLength) {
     final long mxs;
     if (maxLength < windowSize) {
       mxs = 0;

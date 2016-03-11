@@ -221,7 +221,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
    */
   public static void buildQueryLongRead(final NgsParams params, final MapStatistics statistic, final UsageMetric usageMetric) throws IOException {
     final PositionParams posParams = params.toPositionParams();
-    if (posParams.indexParams().valueBits() > 31) {
+    if (posParams.indexParams().valueBits() > 32) {
       //this isn't adequately tested, so fail
       throw new SlimException("Read dataset too large, try running in multiple smaller chunks using --start-read and --end-read parameters");
     }
