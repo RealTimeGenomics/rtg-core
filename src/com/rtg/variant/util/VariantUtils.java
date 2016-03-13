@@ -352,8 +352,8 @@ public final class VariantUtils {
     sb.append("# isCG: ").append(p.isCG()).append(StringUtils.LS);
     sb.append(StringUtils.LS);
 
-    sb.append(String.format("Locale.ROOT, # derived: error_snp_rate = %.6f" + StringUtils.LS, p.errorSnpRate()));
-    sb.append(String.format("Locale.ROOT, error_mnp_event_rate = %.6f" + StringUtils.LS, p.errorMnpEventRate()));
+    sb.append(String.format(Locale.ROOT, "# derived: error_snp_rate = %.6f" + StringUtils.LS, p.errorSnpRate()));
+    sb.append(String.format(Locale.ROOT, "error_mnp_event_rate = %.6f" + StringUtils.LS, p.errorMnpEventRate()));
     sb.append("error_mnp_distribution = ").append(toString(p.errorMnpDistribution())).append(StringUtils.LS);
     sb.append(StringUtils.LS);
 
