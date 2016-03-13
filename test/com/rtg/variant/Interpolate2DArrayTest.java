@@ -19,7 +19,17 @@ import junit.framework.TestCase;
 /**
  * @author kurt
  */
-public class Interpolate2dArrayColumnTest extends TestCase {
+public class Interpolate2DArrayTest extends TestCase {
+
+  public static final int[][] CURVES = new int[][]{{-1, 4, -1, 6, -1, 10, -1},
+    {-1, -1, -1, -1, -1, -1, -1},
+    {-1, 20, -1, 15, -1, 9, -1},
+  };
+  public static final int[][] EXPECTED = new int[][]{{-1, 4, 5, 6, 8, 10, -1},
+    {-1, -1, -1, -1, -1, -1, -1},
+    {-1, 20, 18, 15, 12, 9, -1}
+  };
+
   int[][] transpose(int[][] arr) {
     final int[][] result = new int[arr[0].length][arr.length];
     for (int i = 0; i < arr.length; i++) {
@@ -30,30 +40,34 @@ public class Interpolate2dArrayColumnTest extends TestCase {
     return result;
   }
 
-  public void testSimple() {
+  public void testColumn() {
     // These are expressed as rows because that's far easier to type/read
-    int[][] curves = {{-1, 4, -1, 6, -1, 10, -1},
-      {-1, -1, -1, -1, -1, -1, -1},
-      {-1, 20, -1, 15, -1, 9, -1},
-    };
-    curves = transpose(curves);
+    final int[][] curves = transpose(CURVES);
 
-    int[][] expected = {{-1, 4, 5, 6, 8, 10, -1},
-      {-1, -1, -1, -1, -1, -1, -1},
-      {-1, 20, 18, 15, 12, 9, -1}
-    };
-    expected = transpose(expected);
+    final int[][] expected = transpose(EXPECTED);
 
 
-    new Interpolate2dArrayColumn(0, curves).process();
-    new Interpolate2dArrayColumn(1, curves).process();
-    new Interpolate2dArrayColumn(2, curves).process();
+    Interpolate2dArray.column(curves, 0).interpolate();
+    Interpolate2dArray.column(curves, 1).interpolate();
+    Interpolate2dArray.column(curves, 2).interpolate();
     final String exp = Arrays.deepToString(expected);
     final String actual = Arrays.deepToString(curves);
     assertTrue(String.format("Expected <%s> but was <%s>", exp, actual), Arrays.deepEquals(expected, curves));
   }
 
+  public void testRow() {
+    // These are expressed as rows because that's far easier to type/read
+
+    Interpolate2dArray.row(CURVES, 0).interpolate();
+    Interpolate2dArray.row(CURVES, 1).interpolate();
+    Interpolate2dArray.row(CURVES, 2).interpolate();
+    final String exp = Arrays.deepToString(EXPECTED);
+    final String actual = Arrays.deepToString(CURVES);
+    assertTrue(String.format("Expected <%s> but was <%s>", exp, actual), Arrays.deepEquals(EXPECTED, CURVES));
+  }
+
   public void testFill() {
+
 
   }
 

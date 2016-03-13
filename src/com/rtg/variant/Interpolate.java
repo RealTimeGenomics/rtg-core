@@ -40,9 +40,9 @@ interface Interpolate {
   int minPos();
 
   /**
-   * @return the largest index to interpolate
+   * @return true if the specified position is within bounds
    */
-  int maxPos();
+  boolean inBounds(int pos);
 
   /**
    * @return true if the value at {@code pos} represents a missing value
@@ -52,10 +52,10 @@ interface Interpolate {
   /**
    *  Fill missing values in your structure by taking points on the straight line between present values
    */
-  default void process() {
+  default void interpolate() {
     boolean foundFirstValue = false;
     int prev = minPos() - 1;
-    for (int i = minPos(); i < maxPos(); i++) {
+    for (int i = minPos(); inBounds(i); i++) {
       if (!isMissing(i)) {
         for (int gap = prev + 1; gap < i; gap++) {
           if (foundFirstValue) {
@@ -73,7 +73,7 @@ interface Interpolate {
   }
 
   default void fill(int[] values) {
-    for (int i = minPos(); i < maxPos(); i++) {
+    for (int i = minPos(); inBounds(i); i++) {
       if (getValue(i) < 0) {
         setValue(i, values[i]);
       }

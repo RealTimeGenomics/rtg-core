@@ -118,9 +118,9 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
     // At each read position we'll draw a straight line between present quality values we have a rate for.
     // Use the global quality default array for ends...
     for (int j = 0; j < readPosSize; j++) {
-      final Interpolate2dArrayColumn interpolate2dArrayColumn = new Interpolate2dArrayColumn(j, mCurve);
-      interpolate2dArrayColumn.fill(qualityDefaults);
-      interpolate2dArrayColumn.process();
+      final Interpolate2dArray interpolate2DArray = Interpolate2dArray.column(mCurve, j);
+      interpolate2DArray.fill(qualityDefaults);
+      interpolate2DArray.interpolate();
     }
   }
 

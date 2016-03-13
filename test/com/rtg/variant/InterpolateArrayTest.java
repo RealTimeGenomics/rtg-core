@@ -26,7 +26,7 @@ public class InterpolateArrayTest extends TestCase {
     final int[] expected = {-1, 4, 5, 6, 8, 10, -1};
 
 
-    new InterpolateArray(curve).process();
+    new InterpolateArray(curve).interpolate();
     final String exp = Arrays.toString(expected);
     final String actual = Arrays.toString(curve);
     assertTrue(String.format("Expected <%s> but was <%s>", exp, actual), Arrays.equals(expected, curve));

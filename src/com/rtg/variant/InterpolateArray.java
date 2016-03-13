@@ -40,8 +40,8 @@ public class InterpolateArray implements Interpolate {
   }
 
   @Override
-  public int maxPos() {
-    return mCurve.length;
+  public boolean inBounds(int pos) {
+    return pos >= 0 && pos < mCurve.length;
   }
 
   @Override
