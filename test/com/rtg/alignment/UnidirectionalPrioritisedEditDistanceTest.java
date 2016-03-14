@@ -39,7 +39,7 @@ public class UnidirectionalPrioritisedEditDistanceTest extends AbstractUnidirect
     /**
      * Creates a Prioritised edit distance which tries several options in order
      */
-    public MinIntEd() {
+    MinIntEd() {
       mActions = new int[12];
       mActions[ActionsHelper.ALIGNMENT_SCORE_INDEX] = Integer.MIN_VALUE;
     }

@@ -25,7 +25,7 @@ class SansFilterConcat extends AbstractMulticoreFilterConcat {
   private final long mReadIdOffset;
   private final ReadStatusListener mListener;
 
-  public SansFilterConcat(NgsParams params, ReadStatusListener listener, long readIdOffset) {
+  SansFilterConcat(NgsParams params, ReadStatusListener listener, long readIdOffset) {
     super(params);
     mReadIdOffset = readIdOffset;
     mListener = listener;

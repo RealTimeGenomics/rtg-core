@@ -35,7 +35,7 @@ public class SwitchingReferenceBasedBufferTest extends TestCase {
   private static class Fac implements ReferenceBasedFactory<MockModel> {
     private int mCount = 0;
     private final String mPrefix;
-    public Fac(String prefix) {
+    Fac(String prefix) {
       mPrefix = prefix;
     }
     @Override

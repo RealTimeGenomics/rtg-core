@@ -564,7 +564,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
 
   private static final class AlignmentWriterThread extends AbstractAlignmentWriterThread {
 
-    public AlignmentWriterThread(AbstractTempFileWriter writer, MatchResult results, long chunkStart, long chunkEnd, HashingRegion region, int threadNumber) {
+    AlignmentWriterThread(AbstractTempFileWriter writer, MatchResult results, long chunkStart, long chunkEnd, HashingRegion region, int threadNumber) {
       super(writer, results, chunkStart, chunkEnd, region, threadNumber);
     }
 

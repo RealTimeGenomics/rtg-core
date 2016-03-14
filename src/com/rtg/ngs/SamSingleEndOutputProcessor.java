@@ -200,7 +200,7 @@ public class SamSingleEndOutputProcessor extends AbstractMapOutputProcessor {
     final ReadStatusListener mListener;
     final MapReportData.Merger mReportMerger;
 
-    public SingleEndMulticoreFilterConcat(NgsParams params, ReadStatusListener listener, MapQScoringReadBlocker asBlocker, ReadBlocker freqBlocker, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, PrereadNamesInterface templateNames, MapReportData.Merger reportMerger) {
+    SingleEndMulticoreFilterConcat(NgsParams params, ReadStatusListener listener, MapQScoringReadBlocker asBlocker, ReadBlocker freqBlocker, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, PrereadNamesInterface templateNames, MapReportData.Merger reportMerger) {
       super(params);
       mListener = listener;
       mAsBlocker = asBlocker;

@@ -175,7 +175,7 @@ public final class LongReadTask {
      * @param queue where hash/id pairs are added.
      * @param usageMetric counter for accumulating number of nucleotides read.
      */
-    public BuildTask(final PositionParams params, final Add queue, final UsageMetric usageMetric) {
+    BuildTask(final PositionParams params, final Add queue, final UsageMetric usageMetric) {
       super(params, queue, usageMetric);
     }
 
@@ -197,7 +197,7 @@ public final class LongReadTask {
      * @param queue where hash/id pairs are added.
      * @param usageMetric counter for accumulating number of nucleotides read.
      */
-    public BuildPairedTask(final PositionParams params, final Add queue, final UsageMetric usageMetric) {
+    BuildPairedTask(final PositionParams params, final Add queue, final UsageMetric usageMetric) {
       super(params, queue, usageMetric);
     }
 
@@ -278,7 +278,7 @@ public final class LongReadTask {
       private final ImmutableIntArray mBuildLengths;
       private final int mWindowLength;
 
-      public PositionFinder(final int mxs, final PositionOutput output, final int stepSize, final boolean reverseMode, final ImmutableIntArray buildLengths, final int windowLength) {
+      PositionFinder(final int mxs, final PositionOutput output, final int stepSize, final boolean reverseMode, final ImmutableIntArray buildLengths, final int windowLength) {
         mMxs = mxs;
         mOutput = output;
         mStepSize = stepSize;

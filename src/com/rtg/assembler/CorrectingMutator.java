@@ -139,7 +139,7 @@ public class CorrectingMutator {
     int mStart;
     int mEnd;
 
-    public Mutations(SequenceBases original, boolean all, int start, int end) {
+    Mutations(SequenceBases original, boolean all, int start, int end) {
       mOriginal = original;
       mAll = all;
       mStart = start;

@@ -60,7 +60,7 @@ public class AbstractPositionWriterTest extends TestCase {
 
     private double mScore;
 
-    public MockSurrogateGappedRegion(final MockGappedRegion region, final int queryId, final Frame queryFrame, final Frame[] subjectFrames, final double score) {
+    MockSurrogateGappedRegion(final MockGappedRegion region, final int queryId, final Frame queryFrame, final Frame[] subjectFrames, final double score) {
       super(region, queryId, queryFrame, subjectFrames);
       mScore = score;
     }

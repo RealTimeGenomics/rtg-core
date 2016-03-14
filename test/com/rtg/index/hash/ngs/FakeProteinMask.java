@@ -23,7 +23,7 @@ class FakeProteinMask extends ProteinMask {
   int mTemplateCalls;
   int mClones;
 
-  public FakeProteinMask(Skeleton sk, ReadCall readCall, TemplateCall templateCall) {
+  FakeProteinMask(Skeleton sk, ReadCall readCall, TemplateCall templateCall) {
     super(sk, readCall, templateCall);
   }
 

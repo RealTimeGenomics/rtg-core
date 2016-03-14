@@ -102,7 +102,7 @@ public final class ObjectWalkerTest extends TestCase {
 
   private class ObjectWalkerImpl extends ObjectWalker {
 
-    public ObjectWalkerImpl() {
+    ObjectWalkerImpl() {
     }
 
     @Override

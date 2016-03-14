@@ -80,19 +80,19 @@ final class AviewModel {
     }
   }
   static class BaselineSet extends SnpSet {
-    public BaselineSet(String source, LinkedHashMap<String, ArrayList<AviewVariant>> snps) {
+    BaselineSet(String source, LinkedHashMap<String, ArrayList<AviewVariant>> snps) {
       super(GENERATED_LABEL, source, snps);
     }
   }
   static class CallSet extends SnpSet {
-    public CallSet(String source, LinkedHashMap<String, ArrayList<AviewVariant>> snps) {
+    CallSet(String source, LinkedHashMap<String, ArrayList<AviewVariant>> snps) {
       super(CALLED_LABEL, source, snps);
     }
   }
   static class BedSet implements AviewTrack {
     private final String mSource;
     private final ArrayList<BedRecord> mBedRecords;
-    public BedSet(String source, ArrayList<BedRecord> records) {
+    BedSet(String source, ArrayList<BedRecord> records) {
       mSource = source;
       mBedRecords = records;
     }

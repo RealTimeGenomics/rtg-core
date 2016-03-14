@@ -34,7 +34,7 @@ public class LoggingLineSolverTest extends TestCase {
   private static class LinearLine extends Line {
     private final double mConstant;
     private final double mMultiplier;
-    public LinearLine(final double constant, final double multiplier) {
+    LinearLine(final double constant, final double multiplier) {
       mConstant = constant;
       mMultiplier = multiplier;
     }
@@ -87,7 +87,7 @@ public class LoggingLineSolverTest extends TestCase {
 
   private class NastyLine extends Line {
     private final long mConstant;
-    public NastyLine(final long constant) {
+    NastyLine(final long constant) {
       mConstant = constant;
     }
     @Override
@@ -105,7 +105,7 @@ public class LoggingLineSolverTest extends TestCase {
 
   private class ConstantLine extends Line {
     private final double mConstant;
-    public ConstantLine(final double constant) {
+    ConstantLine(final double constant) {
       mConstant = constant;
     }
     @Override
@@ -132,7 +132,7 @@ public class LoggingLineSolverTest extends TestCase {
 
   private class BizarreLine extends Line {
     private final double mConstant;
-    public BizarreLine(final double constant) {
+    BizarreLine(final double constant) {
       mConstant = constant;
     }
     @Override
@@ -157,7 +157,7 @@ public class LoggingLineSolverTest extends TestCase {
 
   private class AsymptoteLine extends Line {
     private final double mConstant;
-    public AsymptoteLine(final double constant) {
+    AsymptoteLine(final double constant) {
       mConstant = constant;
     }
     @Override
@@ -174,7 +174,7 @@ public class LoggingLineSolverTest extends TestCase {
 
   private class NaNPointLine extends Line {
     private final double mPos;
-    public NaNPointLine(final double pos) {
+    NaNPointLine(final double pos) {
       mPos = pos;
     }
     @Override

@@ -30,7 +30,7 @@ public class ProteinExtractAbstractTest extends TestCase {
     MockProteinExtract() {
       super(new SingleMask(1, 1, 1, 1));
     }
-    public MockProteinExtract(SingleMask ms) {
+    MockProteinExtract(SingleMask ms) {
       super(ms);
     }
     @Override

@@ -288,7 +288,7 @@ public abstract class AbstractMulticoreFilterConcat {
     private final IndexingStreamCreator.IndexRunner mIndexRunner;
     private final ReferenceRegions mRegions;
 
-    public SubFilter(AbstractSamResultsFilter filter, OutputWrapper out, OutputStream calOut, ReferenceRegions referenceRegions, SequencesReader template, File[] files, SAMFileHeader header) {
+    SubFilter(AbstractSamResultsFilter filter, OutputWrapper out, OutputStream calOut, ReferenceRegions referenceRegions, SequencesReader template, File[] files, SAMFileHeader header) {
       mFilter = filter;
       mOut = out.mOutputStream;
       mCalOut = calOut;

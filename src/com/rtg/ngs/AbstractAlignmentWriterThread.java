@@ -107,7 +107,7 @@ abstract class AbstractAlignmentWriterThread implements IORunnable {
       mThreadCount = -1;
     }
 
-    public AlignmentWorkload(int nt, int threadPadding, MatchResult results, int threadNumber) {
+    AlignmentWorkload(int nt, int threadPadding, MatchResult results, int threadNumber) {
       mResults = results;
       mThreadNumber = threadNumber;
       mThreadCount = nt;

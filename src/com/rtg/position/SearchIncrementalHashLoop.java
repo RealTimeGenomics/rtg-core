@@ -44,8 +44,7 @@ public class SearchIncrementalHashLoop extends IncrementalHashLoop {
    * @param dualMode whether to process forward and reverse simultaneously or not
    */
   public SearchIncrementalHashLoop(int stepSize, final ExactHashFunction function,
-                                   final FinderPositionOutput outputVars, final FinderPositionOutput outputVarsReverse, final Index index, final boolean dualMode)
-  {
+                                   final FinderPositionOutput outputVars, final FinderPositionOutput outputVarsReverse, final Index index, final boolean dualMode) {
     super(stepSize, function, dualMode);
     mHit = outputVars.getFinder();
     mOutput = outputVars.getPositionOutput();

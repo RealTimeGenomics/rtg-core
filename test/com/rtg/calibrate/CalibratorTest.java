@@ -581,7 +581,7 @@ public class CalibratorTest extends TestCase {
     private int mPos = 0;
     byte[] mExp = FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3----45/.,2");
 
-    public CalibratorQualityTestParser(Covariate[] vars) {
+    CalibratorQualityTestParser(Covariate[] vars) {
       super(vars, null);
     }
 

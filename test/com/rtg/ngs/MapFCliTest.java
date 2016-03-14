@@ -113,7 +113,7 @@ public class MapFCliTest extends AbstractCliTest {
   }
 
   private static class DummyTask extends MapFTask {
-    public DummyTask(NgsParams params, OutputStream defaultOutput) {
+    DummyTask(NgsParams params, OutputStream defaultOutput) {
       super(params, defaultOutput, new UsageMetric());
     }
     public void assertInstanceSE() {

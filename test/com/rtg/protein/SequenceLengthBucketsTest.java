@@ -29,7 +29,7 @@ import junit.framework.TestCase;
 public class SequenceLengthBucketsTest extends TestCase {
   private static class MockLengthsReader extends MockSequencesReader {
     private final int[] mLengths;
-    public MockLengthsReader(int[] lengths) {
+    MockLengthsReader(int[] lengths) {
       super(SequenceType.PROTEIN, lengths.length);
       mLengths = lengths;
     }

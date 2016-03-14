@@ -343,7 +343,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
   static class AttributeComparator implements Comparator<Instance>, Serializable {
     private final int mAttributeIndex;
 
-    public AttributeComparator(int attributeIndex) {
+    AttributeComparator(int attributeIndex) {
       mAttributeIndex = attributeIndex;
     }
 

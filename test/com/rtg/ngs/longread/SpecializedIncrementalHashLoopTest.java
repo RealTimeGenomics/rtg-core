@@ -164,7 +164,7 @@ public class SpecializedIncrementalHashLoopTest extends NgsLongTest {
 
   private static class MockSequenceParamsImpl extends MockSequenceParams {
 
-    public MockSequenceParamsImpl(ReaderParams readerParams) {
+    MockSequenceParamsImpl(ReaderParams readerParams) {
       super(readerParams);
     }
 

@@ -149,7 +149,7 @@ public class SamSingleEndOutputProcessorTest extends TestCase {
     private OutputProcessor mProc;
     private final int mThreadNum;
 
-    public SimpleProcess(final OutputProcessor proc, HashingRegion region, final int threadNum) {
+    SimpleProcess(final OutputProcessor proc, HashingRegion region, final int threadNum) {
       mParentProc = proc;
       mThreadNum = threadNum;
       mRegion = region;

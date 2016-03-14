@@ -135,7 +135,7 @@ public class SingleEndTempFileWriterTest extends TestCase {
   private class MySamSingleEndAlignmentWriter extends SingleEndTempFileWriter {
 
     final int[] mMyMatchActions;
-    public MySamSingleEndAlignmentWriter(NgsParams param, ReadStatusTracker stat, int[] myMatchActions)
+    MySamSingleEndAlignmentWriter(NgsParams param, ReadStatusTracker stat, int[] myMatchActions)
     throws IOException {
       super(param, stat, SharedResources.generateSharedResources(param));
       mMyMatchActions = myMatchActions;
@@ -148,7 +148,7 @@ public class SingleEndTempFileWriterTest extends TestCase {
   }
 
   private class MyStatusReadIdListenerImpl extends ReadStatusTracker {
-    public MyStatusReadIdListenerImpl(int numReads, MapStatistics stats) {
+    MyStatusReadIdListenerImpl(int numReads, MapStatistics stats) {
       super(numReads, stats);
     }
 

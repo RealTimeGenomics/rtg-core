@@ -137,7 +137,7 @@ final class ReadSimEvalParams {
   }
 
 
-  public ReadSimEvalParams(final CFlags flags) throws IOException, InvalidParamsException {
+  ReadSimEvalParams(final CFlags flags) throws IOException, InvalidParamsException {
     mReadDir = (File) flags.getValue(READ_SDF);
     mIsPaired = ReaderUtils.isPairedEndDirectory(mReadDir);
     mSamFiles = getSamFiles(flags);

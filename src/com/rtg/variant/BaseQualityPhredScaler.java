@@ -29,7 +29,7 @@ class BaseQualityPhredScaler implements PhredScaler {
 
     private final int mBaseQualIndex;
 
-    public BaseQualityStatsProcessor(int baseQualIndex, int baseQualSize) {
+    BaseQualityStatsProcessor(int baseQualIndex, int baseQualSize) {
       mMismatches = new long[baseQualSize];
       mTotals = new long[baseQualSize];
       mBaseQualIndex = baseQualIndex;
@@ -46,7 +46,7 @@ class BaseQualityPhredScaler implements PhredScaler {
 
   private final int[] mCurve;
 
-  public BaseQualityPhredScaler(Calibrator cal, Calibrator.QuerySpec query) {
+  BaseQualityPhredScaler(Calibrator cal, Calibrator.QuerySpec query) {
     final int baseQualIndex = cal.getCovariateIndex(CovariateEnum.BASEQUALITY);
     final int baseQualSize = cal.getCovariate(baseQualIndex).size();
     final BaseQualityStatsProcessor proc = new BaseQualityStatsProcessor(baseQualIndex, baseQualSize);

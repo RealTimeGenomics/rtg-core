@@ -56,7 +56,7 @@ class LoggingOnlyEditDistance implements UnidirectionalEditDistance {
    * Creates a logging only edit distance. If the sub edit distance returns null then we log the read/template.
    * Only logs the first 3 calls.
    */
-  public LoggingOnlyEditDistance() {
+  LoggingOnlyEditDistance() {
     this(3, "");
   }
 

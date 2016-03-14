@@ -170,7 +170,7 @@ public class MetagenomicsWrapperCliTest extends AbstractCliTest {
     private final File mOutputDir;
     private final List<List<String>> mCommands;
 
-    public MockMetagenomics(File outputDir, List<List<String>> commands) {
+    MockMetagenomics(File outputDir, List<List<String>> commands) {
       mOutputDir = outputDir;
       mCommands = commands;
     }

@@ -53,7 +53,7 @@ public abstract class AbstractSolverTest extends TestCase {
   private static class StraightLine extends Line {
     private final double mConstant;
     private final double mMultiplier;
-    public StraightLine(final double constant, final double multiplier) {
+    StraightLine(final double constant, final double multiplier) {
       mConstant = constant;
       mMultiplier = multiplier;
     }
@@ -123,7 +123,7 @@ public abstract class AbstractSolverTest extends TestCase {
 
   private class ConstantLine extends Line {
     private final double mConstant;
-    public ConstantLine(final double constant) {
+    ConstantLine(final double constant) {
       mConstant = constant;
     }
     @Override
@@ -159,7 +159,7 @@ public abstract class AbstractSolverTest extends TestCase {
 
   private class AsymptoteLine extends Line {
     private final double mConstant;
-    public AsymptoteLine(final double constant) {
+    AsymptoteLine(final double constant) {
       mConstant = constant;
     }
     @Override
@@ -187,7 +187,7 @@ public abstract class AbstractSolverTest extends TestCase {
   private class QuadraticLine extends Line {
     private final double mConstant;
     private final double mMultiplier;
-    public QuadraticLine(final double constant, final double multiplier) {
+    QuadraticLine(final double constant, final double multiplier) {
       mConstant = constant;
       mMultiplier = multiplier;
     }
@@ -250,7 +250,7 @@ public abstract class AbstractSolverTest extends TestCase {
         0.5, 2.245117217184488E105
     };
 
-    public PointsLine() {
+    PointsLine() {
 
     }
 

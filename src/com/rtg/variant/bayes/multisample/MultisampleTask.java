@@ -371,7 +371,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     private abstract class MultisampleJob extends Job<JobIdMultisample> {
       protected final Result[] mArguments;
       private final int mTimeOffset;
-      public MultisampleJob(JobIdMultisample id, Result[] arguments, int timeOffset) {
+      MultisampleJob(JobIdMultisample id, Result[] arguments, int timeOffset) {
         super(id);
         mArguments = arguments;
         mTimeOffset = timeOffset;
@@ -396,7 +396,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     }
 
     private class IncrJob extends MultisampleJob {
-      public IncrJob(JobIdMultisample id, Result[] arguments) {
+      IncrJob(JobIdMultisample id, Result[] arguments) {
         super(id, arguments, 0);
       }
 
@@ -413,7 +413,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     }
 
     private class DanglingJob extends MultisampleJob {
-      public DanglingJob(JobIdMultisample id, Result[] arguments) {
+      DanglingJob(JobIdMultisample id, Result[] arguments) {
         super(id, arguments, 1);
       }
 
@@ -427,7 +427,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     }
 
     private class BedJob extends MultisampleJob {
-      public BedJob(JobIdMultisample id, Result[] arguments) {
+      BedJob(JobIdMultisample id, Result[] arguments) {
         super(id, arguments, 1);
       }
 
@@ -442,7 +442,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     }
 
     private class ComplexJob extends MultisampleJob {
-      public ComplexJob(JobIdMultisample id, Result[] arguments) {
+      ComplexJob(JobIdMultisample id, Result[] arguments) {
         super(id, arguments, 1);
       }
 
@@ -475,7 +475,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     }
 
     private class FilterJob extends MultisampleJob {
-      public FilterJob(JobIdMultisample id, Result[] arguments) {
+      FilterJob(JobIdMultisample id, Result[] arguments) {
         super(id, arguments, 1);
       }
 
@@ -503,7 +503,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     }
 
     private class OutJob extends MultisampleJob {
-      public OutJob(JobIdMultisample id, Result[] arguments) {
+      OutJob(JobIdMultisample id, Result[] arguments) {
         super(id, arguments, 2);
       }
 

@@ -28,7 +28,7 @@ abstract class AbstractCnvRegion extends SequenceIdLocusSimple implements Compar
    * @param start position (inclusive)
    * @param end position (inclusive)
    */
-  public AbstractCnvRegion(final int start, final int end) {
+  AbstractCnvRegion(final int start, final int end) {
     super(nextID(), start, end);
   }
 

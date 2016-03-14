@@ -30,14 +30,14 @@ class ReadMappingRoc {
   private final Histogram mFpHistogram = new Histogram();
   private final boolean mAscending;
 
-  public ReadMappingRoc() {
+  ReadMappingRoc() {
     this(true);
   }
 
   /**
    * @param ascending set this to true if low scores are good, otherwise set to false
    */
-  public ReadMappingRoc(boolean ascending) {
+  ReadMappingRoc(boolean ascending) {
     mAscending = ascending;
   }
 

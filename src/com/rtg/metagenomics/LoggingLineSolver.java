@@ -29,7 +29,7 @@ final class LoggingLineSolver implements LineSolver {
    * @param solver the delegate line solver
    * @param veryVerbose verbose output.
    */
-  public LoggingLineSolver(LineSolver solver, boolean veryVerbose) {
+  LoggingLineSolver(LineSolver solver, boolean veryVerbose) {
     if (solver == null) {
       throw new NullPointerException("null solver given.");
     }
@@ -54,7 +54,7 @@ final class LoggingLineSolver implements LineSolver {
      * @param proxy proxy line
      * @param veryVerbose print very verbose information
      */
-    public LineVerbose(Line proxy, boolean veryVerbose) {
+    LineVerbose(Line proxy, boolean veryVerbose) {
       super();
       mProxy = proxy;
       mVeryVerbose = veryVerbose;

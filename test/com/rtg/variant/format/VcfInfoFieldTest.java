@@ -72,7 +72,7 @@ public class VcfInfoFieldTest extends TestCase {
   }
 
   private final class DummyCoverageThreshold extends CalibratedPerSequenceExpectedCoverage {
-    public DummyCoverageThreshold() {
+    DummyCoverageThreshold() {
       super(new Calibrator(CovariateEnum.getCovariates(CovariateEnum.DEFAULT_COVARIATES, null), new ReferenceRegions()), new HashMap<String, Integer>(), new HashMap<String, String>(), null);
     }
     @Override

@@ -285,7 +285,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     final ReadGroupStatsCalculator.Merger mStatsMerger;
     final MapReportData.Merger mReportMerger;
 
-    public MatedMulticoreFilterConcat(NgsParams params, MapQScoringReadBlocker xaBlocker, ReadBlocker freqBlockerLeft, ReadBlocker freqBlockerRight, PrereadNamesInterface templateNames, PairedTopRandomImplementation.HitRecord[] hitsToKeep, ReadGroupStatsCalculator.Merger statsMerger, MapReportData.Merger reportMerger) {
+    MatedMulticoreFilterConcat(NgsParams params, MapQScoringReadBlocker xaBlocker, ReadBlocker freqBlockerLeft, ReadBlocker freqBlockerRight, PrereadNamesInterface templateNames, PairedTopRandomImplementation.HitRecord[] hitsToKeep, ReadGroupStatsCalculator.Merger statsMerger, MapReportData.Merger reportMerger) {
       super(params, "Mated");
       mXaBlocker = new MapQScoringReadBlocker(xaBlocker);    // Read-only from here, so no need for synchronization
       mFreqBlockerLeft = new ReadBlocker(freqBlockerLeft);   // Read-only from here, so no need for synchronization
@@ -332,7 +332,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     final ReadGroupStatsCalculator.Merger mStatsMerger;
     final MapReportData.Merger mReportMerger;
 
-    public UnmatedMulticoreFilterConcat(NgsParams params, MapQScoringReadBlocker asBlockerLeft, MapQScoringReadBlocker asBlockerRight, ReadBlocker freqBlockerLeft, ReadBlocker freqBlockerRight, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, PrereadNamesInterface templateNames, UnmatedAugmenter.Merger augmenterMerger, ReadGroupStatsCalculator.Merger statsMerger, MapReportData.Merger reportMerger) {
+    UnmatedMulticoreFilterConcat(NgsParams params, MapQScoringReadBlocker asBlockerLeft, MapQScoringReadBlocker asBlockerRight, ReadBlocker freqBlockerLeft, ReadBlocker freqBlockerRight, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, PrereadNamesInterface templateNames, UnmatedAugmenter.Merger augmenterMerger, ReadGroupStatsCalculator.Merger statsMerger, MapReportData.Merger reportMerger) {
       super(params, "Unmated");
       mAsBlockerLeft = new MapQScoringReadBlocker(asBlockerLeft);    // Read-only from here, so no need for synchronization
       mAsBlockerRight = new MapQScoringReadBlocker(asBlockerRight);  // Read-only from here, so no need for synchronization
@@ -419,7 +419,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
        * @param bam true to use bam writers for output
        * @param writeBogusHeader true to write out minimal headers instead of the normal header. Usually for in unified BAM output case (Picard will later read these and need a header to detect BAM file type)
        */
-      public SubAugment(OutputWrapper out, File intermediate, File intermediateAugment, UnmatedAugmenter augmenter, SAMFileHeader header, boolean writeHeader, boolean bam, boolean writeBogusHeader) {
+      SubAugment(OutputWrapper out, File intermediate, File intermediateAugment, UnmatedAugmenter augmenter, SAMFileHeader header, boolean writeHeader, boolean bam, boolean writeBogusHeader) {
         mOut = out.mOutputStream;
         mIndexProxy = out.mIndexRunner == null ? null : new IORunnableProxy(out.mIndexRunner);
         mIntermediateFile = intermediate;
@@ -544,7 +544,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     protected final ReadBlocker mFreqBlockerRight;
     private int mProcessCalls = 0;
 
-    public InnerPairedEndOutputProcessor(PairedTempFileWriterImpl sam, SlidingWindowCollector collector, ReadBlocker left, ReadBlocker right, UptoNStore topn, ReadStatusListener listener, HashingRegion region) {
+    InnerPairedEndOutputProcessor(PairedTempFileWriterImpl sam, SlidingWindowCollector collector, ReadBlocker left, ReadBlocker right, UptoNStore topn, ReadStatusListener listener, HashingRegion region) {
       mPairedEndOutputProcessor = new PairedEndOutputProcessor(sam, collector);
       mUptoN = topn;
       mOutputUnmated = mUptoN != null;

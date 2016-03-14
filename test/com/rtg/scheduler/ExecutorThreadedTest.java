@@ -83,7 +83,7 @@ public class ExecutorThreadedTest extends TestCase {
 
   class MockJobError extends Job<ExampleJobId> {
 
-    public MockJobError(ExampleJobId id) {
+    MockJobError(ExampleJobId id) {
       super(id);
     }
 
@@ -98,7 +98,7 @@ public class ExecutorThreadedTest extends TestCase {
 
     private final AtomicInteger mAtom;
 
-    public MockJobNoError(ExampleJobId id, final AtomicInteger atomI) {
+    MockJobNoError(ExampleJobId id, final AtomicInteger atomI) {
       super(id);
       mAtom = atomI;
     }
@@ -115,7 +115,7 @@ public class ExecutorThreadedTest extends TestCase {
     private int mStart = 0;
     private final AtomicInteger mAtom;
 
-    public MockSched(final AtomicInteger i) {
+    MockSched(final AtomicInteger i) {
       mAtom = i;
     }
 

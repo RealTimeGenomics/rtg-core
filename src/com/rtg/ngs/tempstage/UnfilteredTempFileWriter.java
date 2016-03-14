@@ -48,8 +48,7 @@ public class UnfilteredTempFileWriter extends AbstractTempFileWriter {
    * @param left left read frequency blocker
    * @param right right read frequency blocker
    */
-  public UnfilteredTempFileWriter(ReadStatusListener listener, SharedResources sharedResources, NgsParams params, ReadBlocker left, ReadBlocker right)
-      {
+  public UnfilteredTempFileWriter(ReadStatusListener listener, SharedResources sharedResources, NgsParams params, ReadBlocker left, ReadBlocker right) {
     super(listener, sharedResources, params);
     mFreqBlockerLeft = left;
     mFreqBlockerRight = right;

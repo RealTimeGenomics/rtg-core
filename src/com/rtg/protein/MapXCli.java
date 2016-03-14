@@ -453,7 +453,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
   @TestClass("com.rtg.protein.MapXFunctionalTest")
   private static class MapXTask extends ParamsTask<NgsParams, MapXStatistics> {
 
-    public MapXTask(final NgsParams params, final OutputStream reportStream, final UsageMetric usageMetric) {
+    MapXTask(final NgsParams params, final OutputStream reportStream, final UsageMetric usageMetric) {
       super(params, reportStream, new MapXStatistics(params.directory()), usageMetric);
     }
 

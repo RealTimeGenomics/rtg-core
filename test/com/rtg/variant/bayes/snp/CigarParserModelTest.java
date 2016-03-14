@@ -51,7 +51,7 @@ public class CigarParserModelTest extends TestCase {
     private final PrintStream mInsertPR;
     private int mCount = 0;
 
-    public MockModelMatcher() {
+    MockModelMatcher() {
       mBOS = new ByteArrayOutputStream();
       mPR = new PrintStream(mBOS);
       mInsertBOS = new ByteArrayOutputStream();

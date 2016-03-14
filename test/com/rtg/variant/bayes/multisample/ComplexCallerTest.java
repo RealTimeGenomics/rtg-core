@@ -165,7 +165,7 @@ public class ComplexCallerTest extends TestCase {
 
    private class MockComplexities extends Complexities {
 
-    public MockComplexities() {
+    MockComplexities() {
       super(new ArrayList<Variant>(), "foo", 0, 2000, 5, 5, ComplexitiesTest.template(30), true, null);
     }
 
@@ -225,7 +225,7 @@ public class ComplexCallerTest extends TestCase {
 
     private final List<SAMRecord> mList;
 
-    public MyCB(RecordIterator<VariantAlignmentRecord> recordIt, List<File> samFiles, RegionRestriction restriction, Populator<VariantAlignmentRecord> pop, SAMFileHeader header) throws IOException {
+    MyCB(RecordIterator<VariantAlignmentRecord> recordIt, List<File> samFiles, RegionRestriction restriction, Populator<VariantAlignmentRecord> pop, SAMFileHeader header) throws IOException {
       super(recordIt, pop, header.getSequenceIndex("chr21"), restriction.getStart(), Integer.MAX_VALUE);
       assert samFiles.size() == 1;
       mList = readFile(samFiles.get(0));

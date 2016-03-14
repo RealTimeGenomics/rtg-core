@@ -29,7 +29,7 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
     private final int mBaseQualIndex;
     private final int mReadPosIndex;
 
-    public BaseQualityReadPositionStatsProcessor(int baseQualIndex, int baseQualSize, int readPosIndex, int readPosSize) {
+    BaseQualityReadPositionStatsProcessor(int baseQualIndex, int baseQualSize, int readPosIndex, int readPosSize) {
       mMismatches = new long[baseQualSize][readPosSize];
       mTotals = new long[baseQualSize][readPosSize];
       mBaseQualIndex = baseQualIndex;
@@ -49,7 +49,7 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
 
   private final int[][] mCurve;
 
-  public BaseQualityMachineCyclePhredScaler(Calibrator cal, Calibrator.QuerySpec query) {
+  BaseQualityMachineCyclePhredScaler(Calibrator cal, Calibrator.QuerySpec query) {
     final int baseQualIndex = cal.getCovariateIndex(CovariateEnum.BASEQUALITY);
     final int readPosIndex = cal.getCovariateIndex(CovariateEnum.MACHINECYCLE);
     final int baseQualSize = cal.getCovariate(baseQualIndex).size();

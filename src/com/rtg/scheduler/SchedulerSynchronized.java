@@ -43,7 +43,7 @@ public class SchedulerSynchronized<J extends JobId<J>> implements Scheduler<J>, 
      * @param refCount the number of jobs that will make use of the result.
      * @param result the result of running a job.
      */
-    public CountResult(int refCount, Result result) {
+    CountResult(int refCount, Result result) {
       assert refCount > 0;
       mRefCount = refCount;
       mResult = result;

@@ -70,7 +70,7 @@ public abstract class AbstractAlleleBalanceTest extends TestCase {
     /**
      * @param description about which statistics are being collected.
      */
-    public MockStatistics(Description description, int[] counts, double[] errors) {
+    MockStatistics(Description description, int[] counts, double[] errors) {
       super(description);
       int coverage = 0;
       for (int count : counts) {
@@ -115,7 +115,7 @@ public abstract class AbstractAlleleBalanceTest extends TestCase {
      *
      * @param description set of possible values
      */
-    public MockAlleleStatisticsInt(int[] counts, double[] errors, Description description) {
+    MockAlleleStatisticsInt(int[] counts, double[] errors, Description description) {
       super(description);
       this.mCounts = counts;
       this.mErrors = errors;

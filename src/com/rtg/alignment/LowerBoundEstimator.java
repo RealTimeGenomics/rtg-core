@@ -39,7 +39,7 @@ final class LowerBoundEstimator {
    * @param substitutionPenalty the penalty for a substitution
    * @param unknownsPenalty the penalty for an unknown nucleotide
    */
-  public LowerBoundEstimator(int substitutionPenalty, int unknownsPenalty) {
+  LowerBoundEstimator(int substitutionPenalty, int unknownsPenalty) {
     this(4, substitutionPenalty, unknownsPenalty);
   }
 

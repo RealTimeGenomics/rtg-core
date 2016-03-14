@@ -36,7 +36,7 @@ public class DummySdfOutputProcessorTest extends TestCase {
 
   private class BlahOutputProcessor extends AbstractSdfOutputProcessor {
 
-    public BlahOutputProcessor(NgsParams param) throws IOException {
+    BlahOutputProcessor(NgsParams param) throws IOException {
       super(param, null, false, false);
     }
 

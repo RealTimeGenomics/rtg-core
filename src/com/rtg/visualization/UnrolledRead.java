@@ -118,7 +118,7 @@ class UnrolledRead {
     int mZeroBasedScreenEnd;
     String mUnrolledRead;
 
-    public ReadLoc(int start, String data) {
+    ReadLoc(int start, String data) {
       assert start >= 0;
       mZeroBasedScreenStart = start;
       mUnrolledRead = data;

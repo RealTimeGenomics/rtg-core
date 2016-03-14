@@ -51,7 +51,7 @@ public abstract class AbstractPairedEndOutputProcessorSyncTest extends AbstractP
     private OutputProcessor mProc;
     private final int mThreadNum;
 
-    public SimpleProcess(final OutputProcessor proc, HashingRegion region, final int threadNum) {
+    SimpleProcess(final OutputProcessor proc, HashingRegion region, final int threadNum) {
       mParentProc = proc;
       mThreadNum = threadNum;
       mRegion = region;
@@ -181,7 +181,7 @@ public abstract class AbstractPairedEndOutputProcessorSyncTest extends AbstractP
     private final HashingRegion mRegion;
     private OutputProcessor mProc;
     private final int mThreadNum;
-    public SimpleProcess2(final OutputProcessor proc, HashingRegion region, final int threadNum) {
+    SimpleProcess2(final OutputProcessor proc, HashingRegion region, final int threadNum) {
       mParentProc = proc;
       mRegion = region;
       mThreadNum = threadNum;

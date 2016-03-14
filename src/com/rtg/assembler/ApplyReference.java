@@ -144,7 +144,7 @@ public class ApplyReference {
       return mChain.mContigId;
     }
 
-    public AlignmentState(int refPos, ReferenceChain chain, int position, int referenceOrigin, int mismatchCount) {
+    AlignmentState(int refPos, ReferenceChain chain, int position, int referenceOrigin, int mismatchCount) {
       mChain = chain;
       mReferencePosition = refPos;
       mContigPosition = position;

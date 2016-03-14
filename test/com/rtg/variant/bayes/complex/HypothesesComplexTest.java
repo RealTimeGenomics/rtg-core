@@ -121,7 +121,7 @@ public class HypothesesComplexTest extends TestCase {
   }
 
   static class Hyp extends Pair<String, Double> {
-    public Hyp(String a, Double b) {
+    Hyp(String a, Double b) {
       super(a, b);
     }
   }

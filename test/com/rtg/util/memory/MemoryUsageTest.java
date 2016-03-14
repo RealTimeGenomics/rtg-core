@@ -254,7 +254,7 @@ public class MemoryUsageTest extends TestCase {
 
     private final Object mO;
 
-    public MemoryUsageImpl(final Object o) {
+    MemoryUsageImpl(final Object o) {
       this.mO = o;
       calculateUsage(new Object(), new Object[]{mO}, new Class<?>[]{Integer.class});
       mHardrefs = new IdentitySet();

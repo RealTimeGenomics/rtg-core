@@ -212,7 +212,7 @@ public class UnfilteredPairedEndOutputProcessor extends AbstractSdfOutputProcess
     protected final ReadBlocker mFreqBlockerRight;
     private int mProcessCalls = 0;
 
-    public InnerPairedEndOutputProcessor(UnfilteredTempFileWriter sam, UnfilteredSlidingWindowCollector collector, ReadBlocker left, ReadBlocker right, ReadStatusListener listener, HashingRegion region, File file) {
+    InnerPairedEndOutputProcessor(UnfilteredTempFileWriter sam, UnfilteredSlidingWindowCollector collector, ReadBlocker left, ReadBlocker right, ReadStatusListener listener, HashingRegion region, File file) {
       mPairedEndOutputProcessor = new PairedEndOutputProcessor(sam, collector);
       mListener = listener;
       mRegion = region;

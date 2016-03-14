@@ -122,7 +122,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     int mValue = 1;
   }
 
-  public SpeciesTask(final SpeciesParams params, final OutputStream out, final UsageMetric usageMetric) {
+  SpeciesTask(final SpeciesParams params, final OutputStream out, final UsageMetric usageMetric) {
     super(params, out, new SpeciesStatistics(params.directory()), usageMetric);
   }
 

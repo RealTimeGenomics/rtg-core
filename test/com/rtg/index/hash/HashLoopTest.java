@@ -82,7 +82,7 @@ public class HashLoopTest extends TestCase {
 
     private final long mMaxSequenceLength;
 
-    public MaxLenDummyReader(long maxSequenceLength) {
+    MaxLenDummyReader(long maxSequenceLength) {
       mMaxSequenceLength = maxSequenceLength;
     }
 

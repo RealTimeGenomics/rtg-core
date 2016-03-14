@@ -32,7 +32,7 @@ public class DedupifyingIteratorTest extends TestCase {
   private static class VarRecordIterator implements Iterator<VariantAlignmentRecord> {
 
     private final Iterator<SAMRecord> mIt;
-    public VarRecordIterator(Iterator<SAMRecord> it) {
+    VarRecordIterator(Iterator<SAMRecord> it) {
       mIt = it;
     }
 

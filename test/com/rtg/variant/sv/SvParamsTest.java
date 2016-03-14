@@ -48,7 +48,7 @@ public class SvParamsTest extends TestCase {
       }
     }
 
-    public MockSvParams(MockSvParamsBuilder builder) {
+    MockSvParams(MockSvParamsBuilder builder) {
       super(builder);
     }
   }

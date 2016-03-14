@@ -50,7 +50,7 @@ class TauImplementation {
   /**
    * @param kappa used to build tau.
    */
-  public TauImplementation(AbstractKappa kappa) {
+  TauImplementation(AbstractKappa kappa) {
     mKappa = kappa;
     mQMemo = new DoubleMemo(new DoubleFunction() {
       @Override

@@ -119,7 +119,7 @@ public class AsyncKmerIterableTest extends TestCase {
     byte[][] mBytes = {{1, 2, 3}, {3, 2, 1}};
     int mI;
 
-    public DeadlyReadPairSource() throws IOException {
+    DeadlyReadPairSource() throws IOException {
       super(ReaderTestUtils.getReaderDnaMemory(">a" + LS + "G" + LS));
     }
 

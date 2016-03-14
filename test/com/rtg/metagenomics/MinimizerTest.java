@@ -24,7 +24,7 @@ public class MinimizerTest extends TestCase {
   private static class Quadratic extends Line {
     private final double mConstant;
     private final double mRoot;
-    public Quadratic(final double constant, final double root) {
+    Quadratic(final double constant, final double root) {
       mConstant = constant;
       mRoot = root;
     }
@@ -70,7 +70,7 @@ public class MinimizerTest extends TestCase {
 
   //Similar to the case that motivated this class
   private class Complex extends Line {
-    public Complex() {
+    Complex() {
     }
     @Override
     public double value(final double delta) {

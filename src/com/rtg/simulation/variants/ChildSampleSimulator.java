@@ -112,7 +112,7 @@ public class ChildSampleSimulator {
     private int mFatherCrossovers = 0;
     private int mMotherCrossovers = 0;
 
-    public ChildStatistics() {
+    ChildStatistics() {
       super(null);
     }
 

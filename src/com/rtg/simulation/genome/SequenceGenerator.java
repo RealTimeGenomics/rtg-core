@@ -45,7 +45,7 @@ public class SequenceGenerator {
 
     private byte[] mSequenceData;
 
-    public RandomDataSource(final int[] lengths, final PortableRandom source, final RandomDistribution distribution, String namePrefix) {
+    RandomDataSource(final int[] lengths, final PortableRandom source, final RandomDistribution distribution, String namePrefix) {
       mLengths = lengths;
       mSource = source;
       mDistribution = distribution;

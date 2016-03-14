@@ -30,7 +30,7 @@ public class DerivedAnnotationTest extends TestCase {
   }
 
   private static final class DummyVcfAnnotation extends AbstractDerivedAnnotation {
-    public DummyVcfAnnotation() {
+    DummyVcfAnnotation() {
       super("DUMMY", "DUMMY-DESC", AnnotationDataType.BOOLEAN);
     }
     @Override

@@ -29,7 +29,7 @@ public class DummyModelBuilderTest extends AbstractModelBuilderTest<DummyModelBu
 
   static class DummyModelBuilder extends AbstractModelBuilder<DummyPredictModel> {
 
-    public DummyModelBuilder(String[] formatAttributes, String[] infoAttributes, String[] derivedAttributes) {
+    DummyModelBuilder(String[] formatAttributes, String[] infoAttributes, String[] derivedAttributes) {
       super(formatAttributes, infoAttributes, derivedAttributes);
       mProperties.setProperty(AbstractModelBuilder.MODEL_PROPERTY_TYPE, "NULL");
     }
@@ -47,7 +47,7 @@ public class DummyModelBuilderTest extends AbstractModelBuilderTest<DummyModelBu
   }
 
   static class DummyModelFactory extends ModelFactory {
-    public DummyModelFactory(File avrFile) throws IOException {
+    DummyModelFactory(File avrFile) throws IOException {
       super(avrFile, 0.0);
       try (final ZipInputStream zin = new ZipInputStream(new FileInputStream(avrFile))) {
         ZipEntry ze = zin.getNextEntry();

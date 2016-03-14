@@ -94,7 +94,7 @@ public class RcEditDistanceTest extends AbstractEditDistanceTest {
   }
 
   private static class TestGotohEditDistance extends CgGotohEditDistance {
-    public TestGotohEditDistance(int maxShift, RealignParams params) {
+    TestGotohEditDistance(int maxShift, RealignParams params) {
       super(maxShift, params, 0);
     }
     @Override

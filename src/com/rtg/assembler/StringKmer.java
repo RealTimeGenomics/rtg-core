@@ -23,7 +23,7 @@ import com.rtg.mode.DNA;
 class StringKmer extends AbstractKmer {
   final String mCode;
 
-  public StringKmer(String code) {
+  StringKmer(String code) {
     mCode = code;
   }
 

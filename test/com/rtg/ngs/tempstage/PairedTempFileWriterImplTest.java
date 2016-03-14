@@ -918,7 +918,7 @@ public class PairedTempFileWriterImplTest extends TestCase {
 
       final PairedTempFileWriterImpl w = new PairedTempFileWriterImpl(param, new UselessStatusIdListener(), SharedResources.generateSharedResources(param)) {
         @Override
-        protected final int[] calculateEditDistance(byte[] read, int length, int start, boolean rc, IntegerOrPercentage maxMismatches, boolean first, int readId) {
+        protected int[] calculateEditDistance(byte[] read, int length, int start, boolean rc, IntegerOrPercentage maxMismatches, boolean first, int readId) {
           assertFalse(first);
           return super.calculateEditDistance(read, length, start, rc, maxMismatches, first, readId);
         }

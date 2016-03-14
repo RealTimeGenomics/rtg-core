@@ -21,7 +21,7 @@ import junit.framework.TestCase;
  */
 public class DummyMateInfoReaderRecordTest extends TestCase {
   private static class MyRecord extends AbstractMateInfoReaderRecord<MyRecord> {
-    public MyRecord(SAMRecord sam, int genome) {
+    MyRecord(SAMRecord sam, int genome) {
       super(sam, genome);
     }
 

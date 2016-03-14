@@ -27,7 +27,7 @@ class MockJob extends Job<ExampleJobId> {
    * @param arguments the arguments supplied by other jobs.
    * @param result put the result of the job in here as a side effect (demonstrates external communication with the world outside the jobs).
    */
-  public MockJob(final ExampleJobId jobId, final Result[] arguments, final StringBuilder result) {
+  MockJob(final ExampleJobId jobId, final Result[] arguments, final StringBuilder result) {
     super(jobId);
     mArguments = arguments;
     mResult = result;

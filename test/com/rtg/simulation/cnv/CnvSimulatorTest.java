@@ -60,7 +60,7 @@ public class CnvSimulatorTest extends TestCase {
 
   private final class MyCnvSimRandom extends CnvSimulator {
 
-    public MyCnvSimRandom(SequencesReader dsr, SdfWriter output, SdfWriter twin, OutputStream cnvs, PortableRandom random,
+    MyCnvSimRandom(SequencesReader dsr, SdfWriter output, SdfWriter twin, OutputStream cnvs, PortableRandom random,
         CnvPriorParams priors, double percent, int count) {
       super(dsr, output, twin, cnvs, random, priors, percent, count);
 
@@ -73,7 +73,7 @@ public class CnvSimulatorTest extends TestCase {
 
   private final class MyCnvSimOneSequence extends CnvSimulator {
 
-    public MyCnvSimOneSequence(SequencesReader dsr, SdfWriter output, SdfWriter twin, OutputStream cnvs, PortableRandom random,
+    MyCnvSimOneSequence(SequencesReader dsr, SdfWriter output, SdfWriter twin, OutputStream cnvs, PortableRandom random,
         CnvPriorParams priors, double percent, int count) throws IOException {
       super(dsr, output, twin, cnvs, random, priors, percent, count);
 
@@ -220,7 +220,7 @@ public class CnvSimulatorTest extends TestCase {
 
   private final class MyCnvSimulatorTaske extends CnvSimulator {
 
-    public MyCnvSimulatorTaske(SequencesReader dsr, SdfWriter output, SdfWriter twin, OutputStream cnvs, PortableRandom random,
+    MyCnvSimulatorTaske(SequencesReader dsr, SdfWriter output, SdfWriter twin, OutputStream cnvs, PortableRandom random,
         CnvPriorParams priors, double percent, int count) {
       super(dsr, output, twin, cnvs, random, priors, percent, count);
 
@@ -256,7 +256,7 @@ public class CnvSimulatorTest extends TestCase {
 
   private final class MyCnvSimTwoSequences extends CnvSimulator {
 
-    public MyCnvSimTwoSequences(SequencesReader dsr, SdfWriter output, SdfWriter twin, OutputStream cnvs, PortableRandom random,
+    MyCnvSimTwoSequences(SequencesReader dsr, SdfWriter output, SdfWriter twin, OutputStream cnvs, PortableRandom random,
         CnvPriorParams priors, double percent, int count) throws IOException {
       super(dsr, output, twin, cnvs, random, priors, percent, count);
 
@@ -280,7 +280,7 @@ public class CnvSimulatorTest extends TestCase {
   private final class MyCnvSimAccumulate extends CnvSimulator {
 
 
-    public MyCnvSimAccumulate(SequencesReader dsr, SdfWriter output, SdfWriter twin, OutputStream cnvs, PortableRandom random,
+    MyCnvSimAccumulate(SequencesReader dsr, SdfWriter output, SdfWriter twin, OutputStream cnvs, PortableRandom random,
         CnvPriorParams priors, double percent, int count) {
       super(dsr, output, twin, cnvs, random, priors, percent, count);
       mBreakPoints = new long[] {3, 20, 40};

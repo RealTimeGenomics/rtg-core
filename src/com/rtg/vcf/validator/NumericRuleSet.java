@@ -69,7 +69,7 @@ public class NumericRuleSet<T extends Number & Comparable<T>> extends RuleSet<T>
      * Constructor
      * @param number the number that the value must be greater than.
      */
-    public GreaterThanRule(T number) {
+    GreaterThanRule(T number) {
       mNumber = number;
     }
     @Override

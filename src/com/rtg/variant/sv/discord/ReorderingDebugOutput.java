@@ -36,7 +36,7 @@ class ReorderingDebugOutput extends ReorderingQueue<DiscordantReadSet> {
    * @param bufferDistance the initial buffer distance. If records are out of order by more than this errors will be
    *                       generated and it will be skipped.
    */
-  public ReorderingDebugOutput(DebugDiscordantOutputFormatter formatter, OutputStream output, int bufferDistance) {
+  ReorderingDebugOutput(DebugDiscordantOutputFormatter formatter, OutputStream output, int bufferDistance) {
     super(bufferDistance, new DebugComparator());
     mDebug = output;
     mFormatter = formatter;

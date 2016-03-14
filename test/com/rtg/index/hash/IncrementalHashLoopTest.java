@@ -85,8 +85,7 @@ public class IncrementalHashLoopTest extends AbstractIncrementalHashLoopTest {
 
   @Override
   protected HashLoop getHashLoop3(final int windowSize, int stepSize,
-      final long[] expectedL, final int[] expectedI, final int bits, final int[] count)
-  {
+      final long[] expectedL, final int[] expectedI, final int bits, final int[] count) {
     final HashLoop hashLoop;
     hashLoop =
       new IncrementalHashLoop(stepSize, new ExactHashFunction(windowSize, bits), false) {

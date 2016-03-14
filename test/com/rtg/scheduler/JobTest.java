@@ -23,7 +23,7 @@ public class JobTest extends TestCase {
   private static class MockJobId extends IntegralAbstract implements JobId<MockJobId> {
     private final Integer mI;
 
-    public MockJobId(final int i) {
+    MockJobId(final int i) {
       mI = i;
     }
 

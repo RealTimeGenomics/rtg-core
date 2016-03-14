@@ -32,8 +32,7 @@ import com.rtg.util.test.FileHelper;
 public class ResetHashLoopTest extends AbstractHashLoopTest {
 
   final class TestLoopResetHashLoop extends ResetHashLoop {
-    TestLoopResetHashLoop(final int windowSize, int stepSize, final HashFunction function)
-    {
+    TestLoopResetHashLoop(final int windowSize, int stepSize, final HashFunction function) {
       super(windowSize, stepSize, function, false);
     }
 

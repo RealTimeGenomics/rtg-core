@@ -64,7 +64,7 @@ public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutpu
   }
 
   private static final class MyAlignmentWriterThread extends AbstractAlignmentWriterThread {
-    public MyAlignmentWriterThread(AbstractTempFileWriter writer, MatchResult results, long chunkStart, long chunkEnd, HashingRegion region, int threadNumber) {
+    MyAlignmentWriterThread(AbstractTempFileWriter writer, MatchResult results, long chunkStart, long chunkEnd, HashingRegion region, int threadNumber) {
       super(writer, results, chunkStart, chunkEnd, region, threadNumber);
       //System.err.println(this.makeString());
       assertEquals(this.getName(), "Alignment Processing Thread ");
@@ -176,7 +176,7 @@ public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutpu
     private final HashingRegion mRegion;
     private OutputProcessor mProc;
     private final int mThreadNum;
-    public SimpleProcess2(final OutputProcessor proc, HashingRegion region, final int threadNum) {
+    SimpleProcess2(final OutputProcessor proc, HashingRegion region, final int threadNum) {
       mParentProc = proc;
       mRegion = region;
       mThreadNum = threadNum;

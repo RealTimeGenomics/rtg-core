@@ -182,7 +182,7 @@ public class StatisticsComplexTest extends TestCase {
 
   private static final class DummyMatch extends Match {
     final int mLen;
-    public DummyMatch(int len) {
+    DummyMatch(int len) {
       mLen = len;
     }
     @Override

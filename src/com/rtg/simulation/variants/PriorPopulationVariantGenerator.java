@@ -66,7 +66,7 @@ public class PriorPopulationVariantGenerator extends PopulationVariantGenerator 
 
   static final class FixedAlleleFrequencyChooser implements AlleleFrequencyChooser {
     private final double mFreq;
-    public FixedAlleleFrequencyChooser(double freq) {
+    FixedAlleleFrequencyChooser(double freq) {
       mFreq = freq;
     }
     @Override

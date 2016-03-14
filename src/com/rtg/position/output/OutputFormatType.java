@@ -23,7 +23,7 @@ import com.rtg.util.array.ImmutableIntArray;
 public abstract class OutputFormatType implements Serializable {
 
   private static class Segment extends OutputFormatType {
-    public Segment() {
+    Segment() {
       super(0, "SEGMENT");
     }
     @Override
@@ -40,7 +40,7 @@ public abstract class OutputFormatType implements Serializable {
 
   private static class NgsOutputFormatType extends OutputFormatType {
 
-    public NgsOutputFormatType(final int ordinal, final String name) {
+    NgsOutputFormatType(final int ordinal, final String name) {
       //TODO find out if should write scoring
       super(ordinal, name);
     }

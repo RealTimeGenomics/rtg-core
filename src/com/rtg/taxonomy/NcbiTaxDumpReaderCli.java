@@ -51,7 +51,7 @@ public class NcbiTaxDumpReaderCli extends AbstractCli {
 
     private final PrintStream mErr;
 
-    public NcbiTaxDumpReader(File dir, PrintStream err) throws IOException {
+    NcbiTaxDumpReader(File dir, PrintStream err) throws IOException {
       mErr = err;
       names(dir);
       nodes(dir);

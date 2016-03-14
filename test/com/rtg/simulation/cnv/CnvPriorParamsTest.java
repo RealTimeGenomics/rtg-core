@@ -40,7 +40,7 @@ public class CnvPriorParamsTest extends TestCase {
      * @param builder params builder
      * @throws InvalidParamsException
      */
-    public MyCnvPriorParams(CnvPriorParamsBuilder builder) {
+    MyCnvPriorParams(CnvPriorParamsBuilder builder) {
       super(builder);
       try {
         checkEndsList(new int[] {5, 1, 10});

@@ -417,7 +417,7 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
     private double mBestScore = Double.NEGATIVE_INFINITY;
     G mBestRegion = null;
 
-    public GappedOutputScannerImpl(final GappedOutput<G> outer) {
+    GappedOutputScannerImpl(final GappedOutput<G> outer) {
       super();
       this.mOuter = outer;
     }

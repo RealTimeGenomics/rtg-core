@@ -29,7 +29,7 @@ public class DedupifyingIterator<T extends ReaderRecord<T> & MateInfo> implement
     private final boolean mMated;
     private final X mRec;
 
-    public ReadDuplicateAttributes(X rec) {
+    ReadDuplicateAttributes(X rec) {
       mRec = rec;
       mMated = rec.isMated();
     }

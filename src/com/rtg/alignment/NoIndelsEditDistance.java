@@ -31,7 +31,7 @@ class NoIndelsEditDistance implements UnidirectionalEditDistance {
 
   private int mMaxReadLengthSeen = 0;
 
-  public NoIndelsEditDistance(NgsParams ngsParams) {
+  NoIndelsEditDistance(NgsParams ngsParams) {
 
     /*
      * We want to allow this aligner to account for all alignments which can be expressed with no indels.

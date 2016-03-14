@@ -70,7 +70,7 @@ public class DummySamResultsFilterTest extends TestCase {
      * @param blocker1 information about the min score for each read. (left only for unmated case).
      * @param listener each record written will set a flag in this listener
      */
-    public DummySamResultsFilter(MapQScoringReadBlocker blocker1, ReadStatusListener listener) {
+    DummySamResultsFilter(MapQScoringReadBlocker blocker1, ReadStatusListener listener) {
       super(new MockSequencesReader(SequenceType.DNA, 21), new MockSequencesReader(SequenceType.DNA, 21), null, false, 0, false, false);
       mBlocker1 = blocker1;
       mListener = listener;

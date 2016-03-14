@@ -64,7 +64,7 @@ final class ComplexCaller {
   private final VariantParams mParams;
   private final AbstractJointCallerConfiguration mConfig;
 
-  public ComplexCaller(VariantParams params,  AbstractJointCallerConfiguration config) {
+  ComplexCaller(VariantParams params,  AbstractJointCallerConfiguration config) {
     mParams = params;
     mConfig = config;
   }

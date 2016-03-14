@@ -102,7 +102,7 @@ public class SearchIncrementalHashLoopTest extends AbstractPositionHashLoopTest 
   }
 
   private static final class TestLongIncrementalHashLoop extends SearchIncrementalHashLoop {
-    public TestLongIncrementalHashLoop(int stepSize, final ExactHashFunction function) {
+    TestLongIncrementalHashLoop(int stepSize, final ExactHashFunction function) {
       super(stepSize, function, getOutputVarsEmpty(), null, null, false);
     }
 

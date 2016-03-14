@@ -30,7 +30,7 @@ final class MatchResult {
   long mCount = 0;
 
 
-  public MatchResult(int size) {
+  MatchResult(int size) {
     final int newSize = Math.max(2, size);
     mTemplateId = new IntChunks(newSize);
     mPosition = new IntChunks(newSize);
@@ -130,7 +130,7 @@ final class MatchResult {
   private static class MatchResultSortProxy implements QuickSort.SortProxy {
 
     private final MatchResult mResult;
-    public MatchResultSortProxy(MatchResult result) {
+    MatchResultSortProxy(MatchResult result) {
       mResult = result;
     }
 

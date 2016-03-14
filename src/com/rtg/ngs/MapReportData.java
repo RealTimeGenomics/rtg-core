@@ -63,31 +63,55 @@ public final class MapReportData {
   public enum DistributionType {
 
     /** Mapping Counts */
-    MAPC ("Mapping Counts By Status", License.isDeveloper(), License.isDeveloper()),
+    MAPC("Mapping Counts By Status", License.isDeveloper(), License.isDeveloper()),
     /** Alignment Score - single end and unmated paired end left arm */
-    AS ("Alignment Score Distribution"),
+    AS("Alignment Score Distribution"),
     /** Alignment Score - unmated paired end right arm */
-    AS2 ("Right Arm Alignment Score"),
+    AS2("Right Arm Alignment Score"),
     /** Alignment Score - mated paired end left arm */
-    ASM ("Mated Left Arm Alignment Score"),
+    ASM("Mated Left Arm Alignment Score"),
     /** Alignment Score - mated paired end right arm */
-    AS2M ("Mated Right Arm Alignment Score"),
+    AS2M("Mated Right Arm Alignment Score"),
     /** Length of reads */
-    RLEN ("Read Length Distribution", License.isDeveloper(), License.isDeveloper()), RLEN2 ("Right Arm Read Length", License.isDeveloper(), License.isDeveloper()), RLENM ("Mated Left Arm Read Length", License.isDeveloper(), License.isDeveloper()), RLEN2M ("Mated Right Arm Read Length", License.isDeveloper(), License.isDeveloper()),
+    RLEN("Read Length Distribution", License.isDeveloper(), License.isDeveloper()),
+    /** Length of right arm reads */
+    RLEN2("Right Arm Read Length", License.isDeveloper(), License.isDeveloper()),
+    /** Length of left arm mated reads */
+    RLENM("Mated Left Arm Read Length", License.isDeveloper(), License.isDeveloper()),
+    /** Length of right arm mated reads */
+    RLEN2M("Mated Right Arm Read Length", License.isDeveloper(), License.isDeveloper()),
     /** unmapped read lengths */
-    RLENU ("Read Length Distribution (Unmapped Only)", License.isDeveloper(), License.isDeveloper()),
+    RLENU("Read Length Distribution (Unmapped Only)", License.isDeveloper(), License.isDeveloper()),
     /** Number of hits */
-    NH ("Number Of Hits Distribution", License.isDeveloper(), License.isDeveloper()), NH2 ("Right Arm Number Of Hits", License.isDeveloper(), License.isDeveloper()), NHM ("Mated Left Arm Number Of Hits", License.isDeveloper(), License.isDeveloper()), NH2M ("Mated Right Arm Number Of Hits", License.isDeveloper(), License.isDeveloper()),
+    NH("Number Of Hits Distribution", License.isDeveloper(), License.isDeveloper()),
+    /** Right Arm Number of hits */
+    NH2("Right Arm Number Of Hits", License.isDeveloper(), License.isDeveloper()),
+    /** Mated Left Arm Number of hits */
+    NHM("Mated Left Arm Number Of Hits", License.isDeveloper(), License.isDeveloper()),
+    /** Mated Right Arm Number of hits */
+    NH2M("Mated Right Arm Number Of Hits", License.isDeveloper(), License.isDeveloper()),
     /** Number of mismatches */
-    NM ("Number Of Mismatches Distribution", License.isDeveloper(), License.isDeveloper()), NM2 ("Right Arm Number Of Mismatches", License.isDeveloper(), License.isDeveloper()), NMM ("Mated Left Arm Number Of Mismatches", License.isDeveloper(), License.isDeveloper()), NM2M ("Mated Right Arm Number Of Mismatches", License.isDeveloper(), License.isDeveloper()),
+    NM("Number Of Mismatches Distribution", License.isDeveloper(), License.isDeveloper()),
+    /** Right Arm Number of mismatches */
+    NM2("Right Arm Number Of Mismatches", License.isDeveloper(), License.isDeveloper()),
+    /** Mated Left Arm Number of mismatches */
+    NMM("Mated Left Arm Number Of Mismatches", License.isDeveloper(), License.isDeveloper()),
+    /** Mated Right Arm Number of mismatches */
+    NM2M("Mated Right Arm Number Of Mismatches", License.isDeveloper(), License.isDeveloper()),
     /** Mapping orientation */
-    ORI ("Mapping Orientation", true, License.isDeveloper()), ORI2 ("Right Arm Mapping Orientation", true, License.isDeveloper()), ORIM ("Mated Left Arm Mapping Orientation", true, License.isDeveloper()), ORI2M ("Mated Right Arm Mapping Orientation", true, License.isDeveloper()),
+    ORI("Mapping Orientation", true, License.isDeveloper()),
+    /** Right Arm Mapping orientation */
+    ORI2("Right Arm Mapping Orientation", true, License.isDeveloper()),
+    /** Mated Left Arm Mapping orientation */
+    ORIM("Mated Left Arm Mapping Orientation", true, License.isDeveloper()),
+    /** Mated Right Arm Mapping orientation */
+    ORI2M("Mated Right Arm Mapping Orientation", true, License.isDeveloper()),
     /** Mate orientation */
-    MORI ("Mate Orientation", License.isDeveloper(), License.isDeveloper()),
+    MORI("Mate Orientation", License.isDeveloper(), License.isDeveloper()),
     /** Fragment length */
-    FLEN ("Fragment Length Distribution"),
+    FLEN("Fragment Length Distribution"),
     /** Mapping Quality (MAPQ) */
-    MAPQ ("Mapping Quality (MAPQ) Distribution");
+    MAPQ("Mapping Quality (MAPQ) Distribution");
 
     private final String mLongName;
     private final boolean mShowData;

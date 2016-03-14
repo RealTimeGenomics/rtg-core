@@ -60,7 +60,7 @@ public class ExecutorThreaded<J extends JobId<J>> implements Executor<J> {
     /**
      * @param startJob initial job to start running.
      */
-    public ExecutorThread(Job<J> startJob) {
+    ExecutorThread(Job<J> startJob) {
       mStartJob = startJob;
     }
 
