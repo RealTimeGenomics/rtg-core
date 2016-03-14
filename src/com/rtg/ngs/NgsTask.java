@@ -224,14 +224,13 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
     if (!checkReadCount(params)) {
       throw new SlimException("Read dataset too large, try running in multiple smaller chunks using --start-read and --end-read parameters");
     }
-    final Index index = LongReadTask.build(posParams, usageMetric, params.indexFilter());
 
+    final Index index = LongReadTask.build(posParams, usageMetric, params.indexFilter());
     final OutputFilter filter = params.outputParams().outFilter();
     try (OutputProcessor outProcessor = filter.makeProcessor(params, statistic)) {
       LongReadTask.search(posParams, outProcessor, index);
       outProcessor.finish();
     }
-    Diagnostic.userLog("Index search performance " + LS + index.perfString());
   }
 
   /**
