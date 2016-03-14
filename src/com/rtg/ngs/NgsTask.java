@@ -221,8 +221,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
    */
   public static void buildQueryLongRead(final NgsParams params, final MapStatistics statistic, final UsageMetric usageMetric) throws IOException {
     final PositionParams posParams = params.toPositionParams();
-    if (posParams.indexParams().valueBits() > 32) {
-      //this isn't adequately tested, so fail
+    if (!checkReadCount(params)) {
       throw new SlimException("Read dataset too large, try running in multiple smaller chunks using --start-read and --end-read parameters");
     }
     final Index index = LongReadTask.build(posParams, usageMetric, params.indexFilter());
@@ -233,6 +232,19 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
       outProcessor.finish();
     }
     Diagnostic.userLog("Index search performance " + LS + index.perfString());
+  }
+
+  /**
+   * Returns true if number of read arms is less than {@link Integer#MAX_VALUE}
+   * @param params the params to check
+   * @return true if number is within bounds, false otherwise
+   */
+  private static boolean checkReadCount(NgsParams params) {
+    long numReads = params.buildFirstParams().numberSequences();
+    if (params.paired()) {
+      numReads <<= 1;
+    }
+    return numReads <= Integer.MAX_VALUE;
   }
 
   private static void indexThenSearchShortReads(final NgsParams params, final MapStatistics statistics, final UsageMetric usageMetric) throws IOException {
