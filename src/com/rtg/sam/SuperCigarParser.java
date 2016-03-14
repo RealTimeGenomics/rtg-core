@@ -173,7 +173,7 @@ public class SuperCigarParser {
     return mReadLength;
   }
 
-  /** Return the maximum template coordinate for which bases can be resolved */
+  /** @return the maximum template coordinate for which bases can be resolved */
   protected int getTemplateLength() {
     return mTemplateBufferOffset + mTemplateLength;
   }
