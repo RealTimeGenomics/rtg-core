@@ -21,11 +21,11 @@ import junit.framework.TestCase;
  */
 public class Interpolate2DArrayTest extends TestCase {
 
-  public static final int[][] CURVES = new int[][]{{-1, 4, -1, 6, -1, 10, -1},
+  private static final int[][] CURVES = new int[][]{{-1, 4, -1, 6, -1, 10, -1},
     {-1, -1, -1, -1, -1, -1, -1},
     {-1, 20, -1, 15, -1, 9, -1},
   };
-  public static final int[][] EXPECTED = new int[][]{{-1, 4, 5, 6, 8, 10, -1},
+  private static final int[][] EXPECTED = new int[][]{{-1, 4, 5, 6, 8, 10, -1},
     {-1, -1, -1, -1, -1, -1, -1},
     {-1, 20, 18, 15, 12, 9, -1}
   };
