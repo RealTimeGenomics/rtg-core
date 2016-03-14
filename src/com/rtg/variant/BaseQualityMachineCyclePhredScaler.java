@@ -15,6 +15,7 @@ import com.rtg.calibrate.CalibrationStats;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
 import com.rtg.calibrate.StatsProcessor;
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.ngs.Arm;
 
 
@@ -22,8 +23,6 @@ import com.rtg.ngs.Arm;
  * Implementation that uses calibration files.
  */
 class BaseQualityMachineCyclePhredScaler implements PhredScaler {
-  /** do you want to interpolate from qualities out of the observer ranges per position? */
-  private static final long QUALITY_MIN_EVIDENCE = 1000;
 
   private static class BaseQualityReadPositionStatsProcessor implements StatsProcessor {
     private final long[][] mMismatches;
@@ -74,9 +73,11 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
 
     mCurve = new int[baseQualSize][readPosSize];
     final double globalErrorRate = (double) totalMismatches / (double) totalEverything;
+    /* do you want to interpolate from qualities out of the observer ranges per position? */
+    final long qualityCalibrationMinEvidence = GlobalFlags.getIntegerValue(GlobalFlags.QUALITY_CALIBRATION_MIN_EVIDENCE);
     for (int i = 0; i < baseQualSize; i++) {
       for (int j = 0; j < readPosSize; j++) {
-        if (proc.mTotals[i][j] < QUALITY_MIN_EVIDENCE) {
+        if (proc.mTotals[i][j] < qualityCalibrationMinEvidence) {
           // Save it for interpolation
           mCurve[i][j] = -1;
         } else {
@@ -98,7 +99,7 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
 
     final int[] qualityDefaults = new int[mCurve.length];
     for (int i = 0; i < qualityDefaults.length; i++) {
-      if (qualityTotals[i] < QUALITY_MIN_EVIDENCE) {
+      if (qualityTotals[i] < qualityCalibrationMinEvidence) {
         qualityDefaults[i] = -1;
       } else {
         qualityDefaults[i] = CalibratedMachineErrorParams.countsToEmpiricalQuality(qualityMismatches[i], qualityTotals[i], globalErrorRate);
