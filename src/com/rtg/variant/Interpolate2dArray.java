@@ -22,7 +22,7 @@ class Interpolate2dArray implements Interpolate {
   private final int mStepY;
   private final int[][] mCurve;
 
-  public Interpolate2dArray(int[][] curve, int minX, int minY, int stepX, int stepY) {
+  Interpolate2dArray(int[][] curve, int minX, int minY, int stepX, int stepY) {
     mMinX = minX;
     mMinY = minY;
     mStepX = stepX;

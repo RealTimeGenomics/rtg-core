@@ -203,7 +203,7 @@ public class BaseQualityMachineCyclePhredScalerTest extends TestCase {
     private final QuerySpec[] mThisQuery;
     private final Consumer<StatsProcessor> mConsumer;
 
-    public MyCalibrator(File cal, QuerySpec[] thisQuery, Consumer<StatsProcessor> consumer) throws IOException {
+    MyCalibrator(File cal, QuerySpec[] thisQuery, Consumer<StatsProcessor> consumer) throws IOException {
       super(Calibrator.getCovariateSet(cal), null);
       mThisQuery = thisQuery;
       mConsumer = consumer;
