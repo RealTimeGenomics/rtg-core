@@ -171,8 +171,8 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
 
     final Arm arm = !record.getReadPairedFlag() || record.getFirstOfPairFlag() ? Arm.LEFT : Arm.RIGHT;
     while (qualityPosition < backStepPosition && qualityPosition < mRecalibratedQuality.length) {
-      final byte scoreChar = baseQualities[qualityPosition];
-      final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getScaledPhred(scoreChar, machineCycle, arm);
+      final byte quality = baseQualities[qualityPosition];
+      final int recalibrated = me == null ? quality : me.getScaledPhred(quality, machineCycle, arm);
       mRecalibratedQuality[qualityPosition] = (byte) recalibrated;
       machineCycle += machineStep;
       qualityPosition++;
@@ -182,14 +182,14 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     for (int i = 0; i < overlapQuality.length() && qualityPosition < mRecalibratedQuality.length; i++) {
       final byte scoreChar = (byte) (overlapQuality.charAt(i) - FastaUtils.PHRED_LOWER_LIMIT_CHAR);
       // Be careful to invoke the me.getScaledPhred that takes a char. It will correct for ascii encoding
-      final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getScaledPhred(scoreChar, machineCycle, arm);
+      final int recalibrated = me == null ? scoreChar : me.getScaledPhred(scoreChar, machineCycle, arm);
       mOverlapQuality[i] = (byte) recalibrated;
       machineCycle += machineStep;
     }
 
     while (qualityPosition < mRecalibratedQuality.length) {
-      final byte scoreChar = baseQualities[qualityPosition];
-      final int recalibrated = me == null ? scoreChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR : me.getScaledPhred(scoreChar, machineCycle, arm);
+      final byte quality = baseQualities[qualityPosition];
+      final int recalibrated = me == null ? quality : me.getScaledPhred(quality, machineCycle, arm);
       mRecalibratedQuality[qualityPosition] = (byte) recalibrated;
       machineCycle += machineStep;
       qualityPosition++;
