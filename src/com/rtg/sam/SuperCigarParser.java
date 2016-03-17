@@ -234,13 +234,13 @@ public class SuperCigarParser {
    * @throws BadSuperCigarException on bad cigar or read delta
    */
   public void parse() throws BadSuperCigarException {
+    mTemplatePos = mTemplateStart;
+    mReadPos = 0;
+    mReadDeltaPos = 0;
     if (mIsUnmapped) {
       doChunk(SamUtils.CIGAR_UNMAPPED, mRead.length);
       return;
     }
-    mTemplatePos = mTemplateStart;
-    mReadPos = 0;
-    mReadDeltaPos = 0;
     /* The current cigar action count */
     int cigarCount = 0;
     for (int i = 0; i < mCigar.length(); i++) {
