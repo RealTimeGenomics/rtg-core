@@ -107,7 +107,7 @@ public class BaseQualityMachineCyclePhredScalerTest extends TestCase {
         proc -> {
           // in readPos 10 from claimed quality 20-30 use interpolated empirical qualities from 20-60
           calibrate(proc, new int[]{0, 20, 10}, 100, 10_000);
-          calibrate(proc, new int[]{0, 30, 10}, 1, 100_000_0);
+          calibrate(proc, new int[]{0, 30, 10}, 100, 100_000_000);
         }
       );
 
@@ -116,8 +116,8 @@ public class BaseQualityMachineCyclePhredScalerTest extends TestCase {
 
       // Read position 10
       assertEquals(20, bqps.getScaledPhred((byte) 20, 10, Arm.LEFT));
-      assertEquals(39, bqps.getScaledPhred((byte) 25, 10, Arm.LEFT));
-      assertEquals(57, bqps.getScaledPhred((byte) 30, 10, Arm.LEFT));
+      assertEquals(40, bqps.getScaledPhred((byte) 25, 10, Arm.LEFT));
+      assertEquals(60, bqps.getScaledPhred((byte) 30, 10, Arm.LEFT));
 
     } finally {
       FileHelper.deleteAll(dir);

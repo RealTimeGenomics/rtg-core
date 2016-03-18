@@ -73,8 +73,8 @@ public class CovariateIntersectionCycleQualityScalerTest extends TestCase {
       final Calibrator c = new MyCalibrator(cal, thisQuery,
         proc -> {
           // in readPos 10 from claimed quality 20-30 use interpolated empirical qualities from 20-60
-          calibrate(proc, new int[]{0, 20, 10}, 99, 9_999);
-          calibrate(proc, new int[]{0, 30, 10}, 0, 99_999_9);
+          calibrate(proc, new int[]{0, 20, 10}, 100, 10000);
+          calibrate(proc, new int[]{0, 30, 10}, 1, 1_000_000);
         }
       );
 
@@ -149,9 +149,9 @@ public class CovariateIntersectionCycleQualityScalerTest extends TestCase {
       assertEquals(9, bqps.getScaledPhred((byte) 10, 0, Arm.LEFT));
       assertEquals(17, bqps.getScaledPhred((byte) 20, 0, Arm.LEFT));
 
-      //from claimed (20-40) we should observe (17-47)
-      assertEquals(29, bqps.getScaledPhred((byte) 30, 0, Arm.LEFT));
-      assertEquals(40, bqps.getScaledPhred((byte) 40, 0, Arm.LEFT));
+      //from claimed (20-40) we should observe (17-43)
+      assertEquals(30, bqps.getScaledPhred((byte) 30, 0, Arm.LEFT));
+      assertEquals(43, bqps.getScaledPhred((byte) 40, 0, Arm.LEFT));
 
     } finally {
       FileHelper.deleteAll(dir);

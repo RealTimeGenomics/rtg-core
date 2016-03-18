@@ -38,7 +38,7 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
       }
     }
     long totalEverything = 0;
-    for (final long[] v : proc.getMismatches()) {
+    for (final long[] v : proc.getTotals()) {
       for (final long vv : v) {
         totalEverything += vv;
       }
@@ -54,7 +54,7 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
           // Save it for interpolation
           mCurve[i][j] = -1;
         } else {
-          mCurve[i][j] = CalibratedMachineErrorParams.countsToEmpiricalQuality(proc.getMismatches()[i][j], proc.getMismatches()[i][j], globalErrorRate);
+          mCurve[i][j] = CalibratedMachineErrorParams.countsToEmpiricalQuality(proc.getMismatches()[i][j], proc.getTotals()[i][j], globalErrorRate);
         }
       }
     }
