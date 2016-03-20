@@ -59,6 +59,7 @@ class AviewParams {
 
   static final String NO_DOTS = "no-dots";
   static final String NO_COLOR = "no-color";
+  static final String NO_BASE_COLORS = "no-base-colors";
   static final String HTML = "html";
   static final String PADDING = "padding";
   static final String SORT_READGROUP = "sort-readgroup";
@@ -107,6 +108,7 @@ class AviewParams {
     // Other display options
     flags.registerOptional(NO_DOTS, "display nucleotide instead of dots").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(NO_COLOR, "do not use colors").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(NO_BASE_COLORS, "do not use base-colors").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(HTML, "output as HTML").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(PRINT_REFERENCE_LINE, Integer.class, "INT", "print reference line every N lines", 0).setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(PROJECT_TRACK, Integer.class, "INT", "if set, project highlighting for the specified track down through reads (Default projects the union of tracks)").setCategory(CommonFlagCategories.REPORTING);
@@ -177,6 +179,7 @@ class AviewParams {
   private final boolean mSortReadGroup;
   private final boolean mPrintMapQ;
   private final boolean mUnflattenCgi;
+  private final boolean mColorBases;
   private final int mProjectTrackId;
 
   AviewParams(AviewParamsBuilder aviewParamsBuilder) {
@@ -196,6 +199,7 @@ class AviewParams {
     mMinMapQ = aviewParamsBuilder.mMinMapQ;
     mMappingTolerance = aviewParamsBuilder.mMappingTolerance;
     mUseTerminalColor = aviewParamsBuilder.mUseTerminalColor;
+    mColorBases = aviewParamsBuilder.mColorBases;
     mUseHtml = aviewParamsBuilder.mUseHtml;
     mPrintCigars = aviewParamsBuilder.mPrintCigars;
     mPrintReadName = aviewParamsBuilder.mPrintReadName;
@@ -236,6 +240,7 @@ class AviewParams {
      .region(flags.getValue(REGION).toString())
      .headerLineRepeat((Integer) flags.getValue(PRINT_REFERENCE_LINE))
      .displayDots(!flags.isSet(NO_DOTS))
+     .colorBases(!flags.isSet(NO_BASE_COLORS))
      .useTerminalColor(!flags.isSet(NO_COLOR))
      .printCigars(flags.isSet(PRINT_CIGARS))
      .printReadName(flags.isSet(PRINT_NAMES))
@@ -424,5 +429,9 @@ class AviewParams {
 
   final int mappingTolerance() {
     return mMappingTolerance;
+  }
+
+  public boolean colorBases() {
+    return mColorBases;
   }
 }

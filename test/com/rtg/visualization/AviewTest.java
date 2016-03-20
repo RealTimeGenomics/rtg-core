@@ -128,7 +128,11 @@ public class AviewTest extends AbstractCliTest {
   }
 
   public void testColor() throws IOException, InterruptedException {
-    run("aview-color.txt", SAM, "--region", "g1:11+4", "--no-dots");
+    run("aview-color.txt", SAM, "--region", "g1:11+4", "--no-dots", "--no-base-color");
+  }
+
+  public void testBaseColor() throws IOException, InterruptedException {
+    run("aview-basecolor.txt", SAM, "--region", "g1:11+4", "--no-dots");
   }
 
   @Override
@@ -262,6 +266,6 @@ public class AviewTest extends AbstractCliTest {
   }
 
   public void testTooMuchTemplate() throws Exception {
-    runWithErr("aview-toomuchtemplate.txt", SAM, "The end position \"23\" is outside the length of the sequence (20). Defaulting end to \"20\"" + LS, "--region", "g1:11+13", "--no-dots");
+    runWithErr("aview-toomuchtemplate.txt", SAM, "The end position \"23\" is outside the length of the sequence (20). Defaulting end to \"20\"" + LS, "--region", "g1:11+13", "--no-dots", "--no-base-colors");
   }
 }

@@ -31,6 +31,7 @@ class AviewParamsBuilder {
 
   protected boolean mDisplayDots = true;
   protected boolean mUseTerminalColor = true;
+  protected boolean mColorBases = false;
   protected boolean mUseHtml = false;
   protected boolean mPrintCigars = false;
   protected boolean mPrintReadName = false;
@@ -99,6 +100,11 @@ class AviewParamsBuilder {
 
   AviewParamsBuilder useTerminalColor(boolean colorTerminal) {
     mUseTerminalColor = colorTerminal;
+    return this;
+  }
+
+  AviewParamsBuilder colorBases(boolean colorBases) {
+    mColorBases = colorBases;
     return this;
   }
 

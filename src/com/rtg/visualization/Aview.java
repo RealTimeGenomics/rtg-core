@@ -127,13 +127,15 @@ public final class Aview extends AbstractCli {
       printOnScreen(mDisplayHelper.header());
       final String region = mParams.sequenceName() + ":" + mParams.start() + ((mParams.end() - 1) == mParams.start() ? "" : "-" + mParams.end());
       printOnScreen(mDisplayHelper.decorateLabel(LOCATION_LABEL) + region);
+      printCoordIndicators(ref);
 
-      ref = printReference(ref);
+      ref = expandReference(ref);
+      printOnScreen(mDisplayHelper.decorateLabel(REFERENCE_LABEL), mDisplayHelper.decorateWithHighlight(ref, null, 0, mParams.colorBases()), "");
 
       mAlternateBackgrounds = true;
       final boolean[] highlightMask = new boolean[ref.length() + 1]; // Set true at each display position that needs markup during read display
       final int highlightBg = printTracks(zeroBasedStart, zeroBasedEnd, highlightMask);
-      final String prettyRef = mDisplayHelper.decorateReads(ref, highlightMask, highlightBg);
+      final String prettyRef = mDisplayHelper.decorateWithHighlight(ref, highlightMask, highlightBg, mParams.colorBases());
       int printHeaderCount = 0;
       for (final SAMRecord r : mModel.records()) {
         final SdfId mappingRefGuid = SamUtils.getReferenceGuid(r.getHeader());
@@ -245,7 +247,7 @@ public final class Aview extends AbstractCli {
               || (!r.getReadPairedFlag() && !r.getReadUnmappedFlag())) {
             readStr = mDisplayHelper.decorateBold(readStr);
           }
-          readStr = mDisplayHelper.decorateReads(readStr, highlightMask, highlightBg);
+          readStr = mDisplayHelper.decorateWithHighlight(readStr, highlightMask, highlightBg, mParams.colorBases());
           printOnScreen(readLabel, readStr, extra);
           first = false;
         }
@@ -340,7 +342,7 @@ public final class Aview extends AbstractCli {
     return highlightBg; // Return the background color used for highlighting
   }
 
-  private String printReference(final String ref) {
+  private void printCoordIndicators(final String ref) {
     final String label = mDisplayHelper.getSpaces(DisplayHelper.LABEL_LENGTH + 1);
     final int selectionStart = mParams.start() - mModel.oneBasedStart();
     final int selectionLength = Math.min(mParams.end()  - mParams.start() - 1, mModel.inserts().length - selectionStart); //if they've asked for more region than available, just give what we've got.
@@ -382,10 +384,6 @@ public final class Aview extends AbstractCli {
       printOnScreen(label, mDisplayHelper.decorateBackground(expandReference(posStrs[i].toString()), DisplayHelper.WHITE_PLUS), "");
     }
     printOnScreen(label, indicatorStr, "");
-
-    final String localref = expandReference(ref);
-    printOnScreen(mDisplayHelper.decorateLabel(REFERENCE_LABEL), mDisplayHelper.decorateBackground(localref, DisplayHelper.WHITE_PLUS), "");
-    return localref;
   }
 
   /**
@@ -703,8 +701,9 @@ public final class Aview extends AbstractCli {
         }
         newEndLabel = " " + endLabel;
       }
-      printOnScreen(mDisplayHelper.decorateLabel(label), strand1.toString(), newEndLabel);
-      printOnScreen(mDisplayHelper.decorateLabel(label), strand2.toString(), newEndLabel);
+
+      printOnScreen(mDisplayHelper.decorateLabel(label), mDisplayHelper.decorateWithHighlight(strand1.toString(), null, 0, mParams.colorBases()), newEndLabel);
+      printOnScreen(mDisplayHelper.decorateLabel(label), mDisplayHelper.decorateWithHighlight(strand2.toString(), null, 0, mParams.colorBases()), newEndLabel);
     }
   }
 

@@ -13,6 +13,7 @@
 package com.rtg.visualization;
 
 
+import com.rtg.util.StringUtils;
 
 /**
  * This class is concerned with display of text without any markup
@@ -60,6 +61,25 @@ public class DisplayHelper {
       sb.append(INSERT_CHAR);
     }
     return sb.toString();
+  }
+
+  int getBaseColor(char readChar) {
+    switch (readChar) {
+      case 'a':
+      case 'A':
+        return DisplayHelper.GREEN;
+      case 't':
+      case 'T':
+        return DisplayHelper.RED;
+      case 'c':
+      case 'C':
+        return DisplayHelper.BLUE;
+      case 'g':
+      case 'G':
+        return DisplayHelper.MAGENTA;
+      default:
+        return -1;
+    }
   }
 
   protected String escape(String text) {
@@ -129,23 +149,23 @@ public class DisplayHelper {
     return decorateForeground(shortLabel, DisplayHelper.CYAN) + " ";
   }
 
-  // Decorates a section of read with snp colors, not marking up space characters at the ends
-  protected String decorateRead(final String read, int bgcolor) {
-    final String trimmed = read.trim();
+  // Decorates a section of DNA with highlight colors, not marking up space characters at the ends
+  protected String trimHighlighting(final String dna, int bgcolor) {
+    final String trimmed = StringUtils.trimSpaces(dna);
     if (trimmed.length() == 0) { // All whitespace, no markup needed
-      return read;
+      return dna;
     }
-    if (trimmed.length() == read.length()) { // No trimming needed
-      return decorate(read, BLACK, bgcolor);
+    if (trimmed.length() == dna.length()) { // No trimming needed
+      return decorate(dna, BLACK, bgcolor);
     } else {
-      if (read.charAt(0) == ' ') { // Some amount of non-marked up prefix needed
+      if (dna.charAt(0) == ' ') { // Some amount of non-marked up prefix needed
         int prefixEnd = 0;
-        while (read.charAt(prefixEnd) == ' ') {
+        while (dna.charAt(prefixEnd) == ' ') {
           prefixEnd++;
         }
-        return read.substring(0, prefixEnd) + decorate(trimmed, BLACK, bgcolor) + read.substring(prefixEnd + trimmed.length());
+        return dna.substring(0, prefixEnd) + decorate(trimmed, BLACK, bgcolor) + dna.substring(prefixEnd + trimmed.length());
       } else { // Trimming was only at the end
-        return decorate(trimmed, BLACK, bgcolor) + read.substring(trimmed.length());
+        return decorate(trimmed, BLACK, bgcolor) + dna.substring(trimmed.length());
       }
     }
   }
@@ -157,7 +177,7 @@ public class DisplayHelper {
     return false;
   }
 
-  protected String decorateReads(final String str, boolean[] highlightMask, int bgcolor) {
+  protected String decorateWithHighlight(final String str, boolean[] highlightMask, int bgcolor, boolean colorBases) {
     final StringBuilder output = new StringBuilder();
     int coord = 0; // coordinate ignoring markup
     final StringBuilder toHighlight = new StringBuilder();
@@ -175,24 +195,26 @@ public class DisplayHelper {
           inMarkup = true;
           output.append(c);
         } else {
-          if (highlightMask[coord] != highlight) {
+          if (highlightMask != null && highlightMask[coord] != highlight) {
             if (highlight) {
-              output.append(decorateRead(toHighlight.toString(), bgcolor));
+              output.append(trimHighlighting(toHighlight.toString(), bgcolor));
               toHighlight.setLength(0);
             }
             highlight = highlightMask[coord];
           }
-          if (highlight) {
-            toHighlight.append(c);
+          final StringBuilder dest = highlight ? toHighlight : output;
+          final int col = getBaseColor(c);
+          if (colorBases && col >= 0) {
+            dest.append(decorateForeground(String.valueOf(c), col));
           } else {
-            output.append(c);
+            dest.append(c);
           }
           coord++;
         }
       }
     }
     if (highlight) {
-      output.append(decorateRead(toHighlight.toString(), bgcolor));
+      output.append(trimHighlighting(toHighlight.toString(), bgcolor));
     }
     return output.toString();
   }
