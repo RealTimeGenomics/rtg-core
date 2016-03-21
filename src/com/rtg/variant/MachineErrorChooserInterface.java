@@ -28,14 +28,14 @@ public interface MachineErrorChooserInterface {
   PhredScaler machineErrors(SAMReadGroupRecord rg, boolean readPaired);
 
   /**
-   * @param rg read group of intreset
+   * @param rg read group of interest
    * @param readPaired is the read paired
    * @return realign parameters reflecting the machine errors observed in the read group
    */
   RealignParams realignParams(SAMReadGroupRecord rg, boolean readPaired);
 
   /**
-   * @param rg read group of intreset
+   * @param rg read group of interest
    * @param readPaired is the read paired
    * @return type of machine this read group is from
    */

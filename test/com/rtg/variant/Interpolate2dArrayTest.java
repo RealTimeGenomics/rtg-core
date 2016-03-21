@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 /**
  * @author kurt
  */
-public class Interpolate2DArrayTest extends TestCase {
+public class Interpolate2dArrayTest extends TestCase {
 
   private static final int[][] CURVES = new int[][]{{-1, 4, -1, 6, -1, 10, -1},
     {-1, -1, -1, -1, -1, -1, -1},

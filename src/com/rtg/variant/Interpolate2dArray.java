@@ -61,7 +61,7 @@ class Interpolate2dArray implements Interpolate {
    * Return an interpolation down a column
    * @param curve curve to interpolate
    * @param column column of the curve to interpolate
-   * @return a new Interpolate2dArray configured for the {@code column}'th column of {@code curve}
+   * @return a new Interpolate2dArray configured for the {@code column} column of {@code curve}
    */
   public static Interpolate2dArray column(int[][] curve, int column) {
     return new Interpolate2dArray(curve, 0, column, 1, 0);
@@ -70,7 +70,7 @@ class Interpolate2dArray implements Interpolate {
    * Return an interpolation across a row
    * @param curve curve to interpolate
    * @param row column of the curve to interpolate
-   * @return a new Interpolate2dArray configured for the {@code row}'th row of {@code curve}
+   * @return a new Interpolate2dArray configured for the {@code row} row of {@code curve}
    */
   public static Interpolate2dArray row(int[][] curve, int row) {
     return new Interpolate2dArray(curve, row, 0, 0, 1);

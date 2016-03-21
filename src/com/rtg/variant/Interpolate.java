@@ -20,7 +20,7 @@ import com.rtg.util.MathUtils;
  * Falls back on a default value (potentially per position) for leading/trailing missing values
  * @author kurt
  */
-@TestClass({"com.rtg.variant.Interpolate2dArrayColumnTest", "com.rtg.variant.InterpolateArrayTest"})
+@TestClass({"com.rtg.variant.Interpolate2dArrayTest", "com.rtg.variant.InterpolateArrayTest"})
 interface Interpolate {
   /**
    * @param pos index to fetch
@@ -40,11 +40,13 @@ interface Interpolate {
   int minPos();
 
   /**
+   * @param pos index to check
    * @return true if the specified position is within bounds
    */
   boolean inBounds(int pos);
 
   /**
+   * @param pos index to check
    * @return true if the value at {@code pos} represents a missing value
    */
   boolean isMissing(int pos);

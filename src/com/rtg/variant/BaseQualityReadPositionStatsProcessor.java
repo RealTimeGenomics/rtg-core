@@ -12,11 +12,14 @@
 
 package com.rtg.variant;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.CalibrationStats;
 import com.rtg.calibrate.StatsProcessor;
 
 /**
+ *
  */
+@TestClass("com.rtg.variant.BaseQualityMachineCyclePhredScalerTest")
 class BaseQualityReadPositionStatsProcessor implements StatsProcessor {
   private final long[][] mMismatches;
   private final long[][] mTotals;
