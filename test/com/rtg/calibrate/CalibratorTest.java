@@ -664,7 +664,7 @@ public class CalibratorTest extends TestCase {
     cal.processRead(sam);
 
     sam.setBaseQualityString("J316%8883-56+141663,2.3----45/.,2");
-    sam.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "%6");
+    sam.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "%6");
 
     exp[0] = FastaUtils.asciiToRawQuality("J316%%68883-56+141663,2.3----45/.,2");
 
@@ -686,7 +686,7 @@ public class CalibratorTest extends TestCase {
       assertTrue(mps.toString(), mps.toString().contains("Ignored SAM record due to SAM record qualities plus XQ not expected length. Was: 33 expected: 35"));
 
       mps.reset();
-      sam2.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "%6");
+      sam2.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "%6");
       cal.processRead(sam2);
 
       assertEquals(mps.toString(), 0, mps.toString().length()); //check there's no error output this time
@@ -698,7 +698,7 @@ public class CalibratorTest extends TestCase {
       sam3.setBaseQualityString("599(:.5,5:0;:2:<96;8:;6::9#::99938");
       sam3.setAttribute("RG", "rg1");
       sam3.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=1B20=5N2=1X5=1X1=");
-      sam3.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "4");
+      sam3.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "4");
 
       exp[0] = FastaUtils.asciiToRawQuality("599(:4.5,5:0;:2:<96;8:;6::9#::99938");
       cal.processRead(sam3);
@@ -710,7 +710,7 @@ public class CalibratorTest extends TestCase {
       sam4.setMappingQuality(1);
       sam4.setFlags(115);
       sam4.setBaseQualityString("77:(9978885/5:0<59;46677746377978");
-      sam4.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "61");
+      sam4.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "61");
       sam4.setAttribute("RG", "rg1");
       sam4.setAttribute(SamUtils.CG_SUPER_CIGAR, "10=5N7=1I12=2B5=");
       exp[0] = FastaUtils.asciiToRawQuality("77:(9978885/5:0<59;4667774636177978");

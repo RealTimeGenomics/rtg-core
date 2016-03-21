@@ -30,9 +30,9 @@ public class ScoreInterfaceMemoIonTTest extends TestCase {
   public void test() throws IOException, InvalidParamsException {
     final ScoreInterfaceMemoIonT memo = new ScoreInterfaceMemoIonT(new HomoPolymerParams(SimplePossibility.SINGLETON, 2, 2, new StringReader("")), new HomoPolymerParams(LogApproximatePossibility.SINGLETON, 2, 2, new StringReader("")));
     final MachineErrorParams me = MachineErrorParams.builder().create();
-    assertTrue(memo.getScoreInterface(me) == memo.getScoreInterface(me));
+    assertTrue(memo.getScoreInterface(me.realignParams()) == memo.getScoreInterface(me.realignParams()));
     try {
-      memo.getScoreInterface(MachineErrorParams.builder().errors("complete").create());
+      memo.getScoreInterface(MachineErrorParams.builder().errors("complete").create().realignParams());
       fail();
     } catch (final UnsupportedOperationException e) {
 

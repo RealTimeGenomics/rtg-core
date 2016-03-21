@@ -23,7 +23,6 @@ import com.rtg.sam.SamUtils;
 import com.rtg.util.MathUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.machine.MachineType;
-import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.MachineErrorParams;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
@@ -82,7 +81,7 @@ public class CigarParserModelTest extends TestCase {
     }
 
     @Override
-    public void match(int refPosition, int readBasesLeft, int readBasesRight, int readNt, int mapQ, int phred, AbstractMachineErrorParams me, int stateIndex) {
+    public void match(int refPosition, int readBasesLeft, int readBasesRight, int readNt, int mapQ, int phred, int stateIndex) {
       mPR.println("ref=" + refPosition + " nt=" + readNt + " q="
           + phred + " r=" + mapQ);
       mCount++;
@@ -145,7 +144,7 @@ public class CigarParserModelTest extends TestCase {
           return 63;
         }
       };
-      cpm.toMatcher(me, var, 20, templateBytes);
+      cpm.toMatcher(var, me.machineType(), 20, templateBytes);
       fail();
     } catch (final BadSuperCigarException e) {
       // Expected
@@ -161,7 +160,6 @@ public class CigarParserModelTest extends TestCase {
 
   private static void check(String seq, byte[] templateBytes, int regionStart, int regionEnd, int templateStart, String cigar, String qual, String exp, String expInsert) throws Exception {
     final MockModelMatcher matcher = new MockModelMatcher();
-    final MachineErrorParams me = MachineErrorParams.builder().create();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
     try {
       final CigarParserModel cpm = new CigarParserModel(matcher, matcher, regionStart, regionEnd, vp) {
@@ -171,7 +169,7 @@ public class CigarParserModelTest extends TestCase {
         }
       };
       final VariantAlignmentRecord var = toVariantAlignmentRecord(seq.getBytes(), qual, cigar, templateStart, true);
-      cpm.toMatcher(me, var, 20, templateBytes);
+      cpm.toMatcher(var, null, 20, templateBytes);
     } finally {
       matcher.close();
     }
@@ -214,7 +212,6 @@ public class CigarParserModelTest extends TestCase {
 
   public void testCigarToMatcherBad1() {
     MockModelMatcher matcher = new MockModelMatcher();
-    final MachineErrorParams me = MachineErrorParams.builder().create();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
 
     final String seq = "ACRG";
@@ -227,7 +224,7 @@ public class CigarParserModelTest extends TestCase {
         }
       };
       final VariantAlignmentRecord var = toVariantAlignmentRecord(seq.getBytes(), "`!`!", "2M2D1N1M", 1, true);
-      cpm.toMatcher(me, var, 20, templateBytes);
+      cpm.toMatcher(var, null, 20, templateBytes);
       fail();
     } catch (final BadSuperCigarException e) {
       // Expected
@@ -244,7 +241,7 @@ public class CigarParserModelTest extends TestCase {
         }
       };
       final VariantAlignmentRecord var = toVariantAlignmentRecord(seq.getBytes(), "`!`!", "2=2D1N1=", 1, true);
-      cpm.toMatcher(me, var, 20, templateBytes);
+      cpm.toMatcher(var, null, 20, templateBytes);
       fail();
     } catch (final BadSuperCigarException e) {
       // Expected
@@ -261,7 +258,7 @@ public class CigarParserModelTest extends TestCase {
         }
       };
       final VariantAlignmentRecord var = toVariantAlignmentRecord(seq.getBytes(), "`!`!", "2X2D1N1X", 1, true);
-      cpm.toMatcher(me, var, 20, templateBytes);
+      cpm.toMatcher(var, null, 20, templateBytes);
       fail();
     } catch (final BadSuperCigarException e) {
       // Expected
@@ -274,7 +271,6 @@ public class CigarParserModelTest extends TestCase {
 
   public void testCigarToMatcherBad2() throws Exception {
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
-    final MachineErrorParams me = MachineErrorParams.builder().create();
     try (MockModelMatcher matcher = new MockModelMatcher()) {
       final String seq = "ACTG";
       final byte[] templateBytes = {0, 0, 1, 2, 2, 3, 4};
@@ -285,7 +281,7 @@ public class CigarParserModelTest extends TestCase {
         }
       };
       final VariantAlignmentRecord var = toVariantAlignmentRecord(seq.getBytes(), "`!`!", "2MDN7M", 1, true);
-      cpm.toMatcher(me, var, 20, templateBytes);
+      cpm.toMatcher(var, null, 20, templateBytes);
       fail();
     } catch (final RuntimeException e) {
       assertEquals(ERR2, e.getMessage());
@@ -492,7 +488,6 @@ public class CigarParserModelTest extends TestCase {
   public void testCigarToMatcher10Bad() {
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
     MockModelMatcher matcher = new MockModelMatcher();
-    final MachineErrorParams me = MachineErrorParams.builder().create();
     final String seq = "ACTGCG";
     final byte[] templateBytes = {0, 0, 1, 2, 2, 3, 4};
     try {
@@ -503,7 +498,7 @@ public class CigarParserModelTest extends TestCase {
         }
       };
       final VariantAlignmentRecord var = toVariantAlignmentRecord(seq.getBytes(), null, "6M", 3, true);
-      cpm.toMatcher(me, var, 20, templateBytes);
+      cpm.toMatcher(var, null, 20, templateBytes);
       fail();
     } catch (final BadSuperCigarException e) {
       // Expected
@@ -521,7 +516,7 @@ public class CigarParserModelTest extends TestCase {
         }
       };
       final VariantAlignmentRecord var = toVariantAlignmentRecord(seq.getBytes(), null, "6=", 3, true);
-      cpm.toMatcher(me, var, 20, templateBytes);
+      cpm.toMatcher(var, null, 20, templateBytes);
       fail();
     } catch (final BadSuperCigarException e) {
       // Expected
@@ -539,7 +534,7 @@ public class CigarParserModelTest extends TestCase {
         }
       };
       final VariantAlignmentRecord var = toVariantAlignmentRecord(seq.getBytes(), null, "6X", 3, true);
-      cpm.toMatcher(me, var, 20, templateBytes);
+      cpm.toMatcher(var, null, 20, templateBytes);
       fail();
     } catch (final BadSuperCigarException e) {
       // Expected
@@ -568,7 +563,6 @@ public class CigarParserModelTest extends TestCase {
 
   public void testBugFoundByStu() throws Exception {
     final MockModelMatcher matcher = new MockModelMatcher();
-    final MachineErrorParams me = MachineErrorParams.builder().create();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
     try {
       final String seq = "CATATTAGGGCCTAATTGTAATACA";
@@ -580,7 +574,7 @@ public class CigarParserModelTest extends TestCase {
         }
       };
       final VariantAlignmentRecord var = toVariantAlignmentRecord(seq.getBytes(), null, "1S13M1D3M1D8M", 1, true);
-      cpm.toMatcher(me, var, 20, templateBytes);
+      cpm.toMatcher(var, MachineType.ILLUMINA_PE, 20, templateBytes);
     } finally {
       matcher.close();
     }
@@ -589,7 +583,6 @@ public class CigarParserModelTest extends TestCase {
 
   public void testCgLeftNoPrune() throws Exception {
     final MockModelMatcher matcher = new MockModelMatcher();
-    final MachineErrorParams me = MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).cgTrimOuterBases(false).create();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
     try {
       final String seq = "CCCTTTTTTTTTTTTTTTTTTTTAAAAAAAAAA";
@@ -601,14 +594,15 @@ public class CigarParserModelTest extends TestCase {
         }
       };
       final VariantAlignmentRecord var = toVariantAlignmentRecord(seq.getBytes(), null, "23=5N10=", 2, true);
-      cpm.toMatcher(me, var, 20, templateBytes);
+      cpm.toMatcher(var, MachineType.COMPLETE_GENOMICS, 20, templateBytes);
     } finally {
       matcher.close();
     }
     assertEquals(""
-        + "ref=2 nt=2 q=20 r=63" + LS
+      + (MachineType.CG_TRIM ?  ""
+      : "ref=2 nt=2 q=20 r=63" + LS
         + "ref=3 nt=2 q=20 r=63" + LS
-        + "ref=4 nt=2 q=20 r=63" + LS
+        + "ref=4 nt=2 q=20 r=63" + LS)
         + "ref=5 nt=4 q=20 r=63" + LS
         + "ref=6 nt=4 q=20 r=63" + LS
         + "ref=7 nt=4 q=20 r=63" + LS
@@ -659,7 +653,7 @@ public class CigarParserModelTest extends TestCase {
     rec.setMateReferenceName("*");
     rec.setCigarString("10=5N17=1D6=");
     rec.setAttribute(SamUtils.CG_SUPER_CIGAR, "1=1R8=5N17=1D2=1X2B5=");
-    rec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, ".*");
+    rec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, ".*");
     rec.setAttribute(SamUtils.CG_READ_DELTA, "A");
 
     //orig read = ANCTCCAGGGGTGATCTTCCCACCTCACCACTCCC
@@ -667,11 +661,10 @@ public class CigarParserModelTest extends TestCase {
 
     final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
 
-    final MachineErrorParams me = MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).cgTrimOuterBases(false).create();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
     try (MockModelMatcher matcher = new MockModelMatcher()) {
       final CigarParserModel cpm = new CigarParserModel(matcher, matcher, 0, tmpl.length, vp);
-      cpm.toMatcher(me, var, 20, tmpl);
+      cpm.toMatcher(var, MachineType.COMPLETE_GENOMICS, 20, tmpl);
 
       assertEquals(""
         + "ref=2 nt=1 q=11 r=0" + LS  //A,
@@ -704,9 +697,10 @@ public class CigarParserModelTest extends TestCase {
         + "ref=35 nt=2 q=13 r=0" + LS //C.
         + "ref=36 nt=2 q=14 r=0" + LS //C/
         + "ref=37 nt=4 q=20 r=0" + LS //T5
-        + "ref=38 nt=2 q=15 r=0" + LS //C0
+        + (MachineType.CG_TRIM ?  ""
+        : "ref=38 nt=2 q=15 r=0" + LS //C0
         + "ref=39 nt=2 q=19 r=0" + LS //C4
-        + "ref=40 nt=2 q=19 r=0" + LS, matcher.toString()); //C4
+        + "ref=40 nt=2 q=19 r=0" + LS), matcher.toString()); //C4
 
       assertEquals("ref=34 n" + LS, matcher.insertString());
     }
@@ -730,7 +724,7 @@ public class CigarParserModelTest extends TestCase {
     rec.setMateReferenceName("*");
     rec.setCigarString("10=6N18=1X4=");
     rec.setAttribute(SamUtils.CG_SUPER_CIGAR, "10=6N20=2B1X4=");
-    rec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "&)");
+    rec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "&)");
     rec.setAttribute(SamUtils.CG_READ_DELTA, "C");
 
     //orig read = CTCCCAAGTT      ATTCTCCTGCCTCAGCCTTT CTCAA
@@ -738,11 +732,10 @@ public class CigarParserModelTest extends TestCase {
 
     final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
 
-    final MachineErrorParams me = MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).cgTrimOuterBases(false).create();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
     try (MockModelMatcher matcher = new MockModelMatcher()) {
       final CigarParserModel cpm = new CigarParserModel(matcher, matcher, 0, tmpl.length, vp);
-      cpm.toMatcher(me, var, 20, tmpl);
+      cpm.toMatcher(var, MachineType.COMPLETE_GENOMICS, 20, tmpl);
 
       assertEquals(""
         + "ref=0 nt=2 q=24 r=0" + LS  //C9
@@ -775,9 +768,10 @@ public class CigarParserModelTest extends TestCase {
         + "ref=33 nt=4 q=17 r=0" + LS //T2
         + "ref=34 nt=2 q=24 r=0" + LS //C9
         + "ref=35 nt=4 q=14 r=0" + LS //T/
-        + "ref=36 nt=2 q=23 r=0" + LS //C8
+        + (MachineType.CG_TRIM ?  ""
+        : "ref=36 nt=2 q=23 r=0" + LS //C8
         + "ref=37 nt=1 q=24 r=0" + LS //A9
-        + "ref=38 nt=1 q=15 r=0" + LS, matcher.toString()); //A0
+        + "ref=38 nt=1 q=15 r=0" + LS), matcher.toString()); //A0
 
       assertEquals("", matcher.insertString());
     }
@@ -787,7 +781,6 @@ public class CigarParserModelTest extends TestCase {
 //    23667286        67      chr21   9720286 55      20=1X2=6N9=1X   =       9720785 499     TGAGAAACTACTTTGTAATGAGTATCTCACAGT      899798:9777779;+;+',$5(5$8,8:8998       AS:i:2  NM:i:2  MQ:i:255        GS:Z:GAGA       GC:Z:3S2G28S    GQ:Z:90 XA:i:4  RG:Z:GS000005362        IH:i:1  NH:i:1
 
     final MockModelMatcher matcher = new MockModelMatcher();
-    final MachineErrorParams me = MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).cgTrimOuterBases(true).create();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
     try {
       final byte[] tmpl = DnaUtils.encodeString("AATGAGAAACTACTTTGTAATGTGTCCCCCCATCTCACAGG");
@@ -806,7 +799,7 @@ public class CigarParserModelTest extends TestCase {
 
       final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
 
-      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(me, var, 20, tmpl);
+      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(var, MachineType.COMPLETE_GENOMICS, 20, tmpl);
 
     } finally {
       matcher.close();
@@ -849,7 +842,6 @@ public class CigarParserModelTest extends TestCase {
 //    11619609        179     chr21   9720273 55      8=1X6=1X7=6N10= =       9720764 491     AACAGAAGTTTTCTGGGAAACTAAATGTGTGCA      69:46648:;;;:;<<=<;;<<;9:9:9:99:9       AS:i:2  NM:i:2  MQ:i:255        GS:Z:AGAG       GC:Z:3S2G28S    GQ:Z:-: XA:i:3  RG:Z:GS000005362        IH:i:1  NH:i:1
 
     final MockModelMatcher matcher = new MockModelMatcher();
-    final MachineErrorParams me = MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).cgTrimOuterBases(true).create();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
     try {
       final byte[] tmpl = DnaUtils.encodeString("TTAACAGAAGATTTCTGTGAAACTANNNNNNAATGTGTGCA");
@@ -868,7 +860,7 @@ public class CigarParserModelTest extends TestCase {
 
       final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
 
-      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(me, var, 20, tmpl);
+      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(var, MachineType.COMPLETE_GENOMICS, 20, tmpl);
 
     } finally {
       matcher.close();
@@ -909,7 +901,6 @@ public class CigarParserModelTest extends TestCase {
 
   public void testCgLeftPruneWithSmallGap() throws Exception {
     final MockModelMatcher matcher = new MockModelMatcher();
-    final MachineErrorParams me = MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).cgTrimOuterBases(true).create();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
     try {
       final byte[] tmpl = DnaUtils.encodeString("AACCCGTTTTTTTTTAAATTTTTTTTTTGGGGGAAAAAAAAAA");
@@ -928,7 +919,7 @@ public class CigarParserModelTest extends TestCase {
 
       final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
 
-      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(me, var, 20, tmpl);
+      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(var, MachineType.COMPLETE_GENOMICS, 20, tmpl);
     } finally {
       matcher.close();
     }
@@ -971,7 +962,6 @@ public class CigarParserModelTest extends TestCase {
 //    43906180        115     chr21   9720271 55      10=5N2=1X20=    =       9719808 -463    TAAACAGAAGTGGGAAACTACTTTGTAATGTGT   9:98:884,601(#525<;8777771),20988       AS:i:1  NM:i:1  MQ:i:255        GS:Z:TGTG       GC:Z:28S2G3S    GQ:Z:9: XA:i:1  RG:Z:GS000005362        IH:i:1  NH:i:1
 
     final MockModelMatcher matcher = new MockModelMatcher();
-    final MachineErrorParams me = MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).cgTrimOuterBases(true).create();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
     try {
       final byte[] tmpl = DnaUtils.encodeString("AATAAACAGAAGAAAAATGTGAAACTACTTTGTAATGTGT");
@@ -990,7 +980,7 @@ public class CigarParserModelTest extends TestCase {
 
       final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
 
-      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(me, var, 20, tmpl);
+      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(var, MachineType.COMPLETE_GENOMICS, 20, tmpl);
 
     } finally {
       matcher.close();
@@ -1033,7 +1023,6 @@ public class CigarParserModelTest extends TestCase {
 //    49451311        131     chr21   9720271 34      10=5N2=1X7=1X12=        =       9719862 -409    TAAACAGAAGTGGGAAACTAATTTGTAATGTGT       *799:,81899<<<;<;;<;::;;;586478:8       AS:i:2  NM:i:2  MQ:i:255        GS:Z:TGTG       GC:Z:28S2G3S    GQ:Z:2: XA:i:3  RG:Z:GS000005362        IH:i:1  NH:i:1
 
     final MockModelMatcher matcher = new MockModelMatcher();
-    final MachineErrorParams me = MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).cgTrimOuterBases(true).create();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
     try {
       final byte[] tmpl = DnaUtils.encodeString("AATAAACAGAAGAAAAATGTGAAACTAGTTTGTAATGTGT");
@@ -1052,7 +1041,7 @@ public class CigarParserModelTest extends TestCase {
 
       final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
 
-      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(me, var, 20, tmpl);
+      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(var, MachineType.COMPLETE_GENOMICS, 20, tmpl);
 
     } finally {
       matcher.close();
@@ -1094,7 +1083,6 @@ public class CigarParserModelTest extends TestCase {
   // test that right end is pruned when there is a small gap as well as a large one
   public void testCgRightPruneWithSmallGap() throws Exception {
     final MockModelMatcher matcher = new MockModelMatcher();
-    final MachineErrorParams me = MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).cgTrimOuterBases(true).create();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
     try {
       final byte[] tmpl = DnaUtils.encodeString("AATTTTTTTTTTNNNNNTTTTTTTTTTNTTTAAAAAAACCC");
@@ -1113,7 +1101,7 @@ public class CigarParserModelTest extends TestCase {
 
       final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
 
-      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(me, var, 20, tmpl);
+      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(var, MachineType.COMPLETE_GENOMICS, 20, tmpl);
 
 
     } finally {
@@ -1155,7 +1143,6 @@ public class CigarParserModelTest extends TestCase {
 
   public void checkCgPrune(String read, String cigar, String template, boolean forward, int count) throws Exception {
     final MockModelMatcher matcher = new MockModelMatcher();
-    final MachineErrorParams me = MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).cgTrimOuterBases(true).create();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
     try {
       final byte[] tmpl = DnaUtils.encodeString(template);
@@ -1173,7 +1160,7 @@ public class CigarParserModelTest extends TestCase {
       rec.setMappingQuality(63);
 
       final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
-      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(me, var, 20, tmpl);
+      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(var, MachineType.COMPLETE_GENOMICS, 20, tmpl);
     } finally {
       matcher.close();
     }
@@ -1202,7 +1189,6 @@ public class CigarParserModelTest extends TestCase {
 //    31386   67      paolo-bac       33604   55      24=6N10=        =       33997   393     GGTGGGCACCGGTGCCTCGCCCCAAGGGCCAAGG        0353,7311-8/$152834,1'4,52-.*14505      AS:i:0  MQ:i:255        XU:Z:5=1B20=6N10=       XQ:Z:/  XA:i:1  IH:i:1  NH:i:1
 
     final MockModelMatcher matcher = new MockModelMatcher();
-    final MachineErrorParams me = MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).cgTrimOuterBases(true).create();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
     try {
       final byte[] tmpl = DnaUtils.encodeString("AAGGTGGGCACCGGTGCCTCGCCCCANNNNNNAGGGCCAAGG");
@@ -1219,13 +1205,13 @@ public class CigarParserModelTest extends TestCase {
       rec.setCigarString("24=6N10=");
       rec.setMappingQuality(63);
       rec.setAttribute(SamUtils.CG_SUPER_CIGAR, "5=1B20=6N10=");
-//      rec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "&)");
+//      rec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "&)");
 //      rec.setAttribute(SamUtils.CG_READ_DELTA, "C");
 //      5=1B20=6N10=
 
       final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
 
-      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(me, var, 20, tmpl);
+      new CigarParserModel(matcher, matcher, 0, tmpl.length, vp).toMatcher(var, MachineType.COMPLETE_GENOMICS, 20, tmpl);
 
     } finally {
       matcher.close();

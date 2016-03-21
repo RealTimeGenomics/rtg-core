@@ -30,8 +30,6 @@ import com.rtg.util.machine.MachineType;
 @TestClass(value = { "com.rtg.variant.MachineErrorParamsTest" })
 public class MachineErrorParamsBuilder {
 
-  static final boolean CG_TRIM = true; //Boolean.valueOf(System.getProperty("cg-trim", "true"));
-
   static final double[] CG_DEFAULT_OVERLAP_DIST = MathUtils.renormalize(new int[]{0, 8, 84, 8, 0});
   static final double[] CG_DEFAULT_GAP_DIST = MathUtils.renormalize(new int[]{0, 27, 64, 9, 0});
   static final double[] CG_DEFAULT_SMALL_GAP_DIST = MathUtils.renormalize(new int[]{90, 7, 3, 0});
@@ -48,7 +46,6 @@ public class MachineErrorParamsBuilder {
   protected double[] mGapDistribution;
   protected double[] mSmallGapDistribution;
   protected double[] mOverlapDistribution;
-  protected boolean mCGTrimOuterBases;
 
   // CG v2
   protected double[] mOverlapDistribution2;
@@ -98,7 +95,6 @@ public class MachineErrorParamsBuilder {
     mOverlapDistribution = errors.overlapDistribution();
     mOverlapDistribution2 = errors.overlapDistribution2();
     mMachine = errors.machineType();
-    mCGTrimOuterBases = errors.cgTrimOuterBases() && CG_TRIM;
   }
 
   /**
@@ -141,7 +137,6 @@ public class MachineErrorParamsBuilder {
         mMachine = null;
       }
     }
-    mCGTrimOuterBases = tryGetBoolean(pr, "cg_trim_outer_bases", false) && CG_TRIM;
     mOverlapDistribution = getDistribution(pr, "overlap", CG_DEFAULT_OVERLAP_DIST, errors);
     mSmallGapDistribution = getDistribution(pr, "smallgap", CG_DEFAULT_SMALL_GAP_DIST, errors);
     mGapDistribution = getDistribution(pr, "gap", CG_DEFAULT_GAP_DIST, errors);
@@ -166,14 +161,6 @@ public class MachineErrorParamsBuilder {
       dist = defaultDist;
     }
     return dist;
-  }
-
-  private static boolean tryGetBoolean(final Properties pr, final String key, final boolean dfault) {
-    if (pr.containsKey(key)) {
-      return Boolean.valueOf(pr.getProperty(key));
-    } else {
-      return dfault;
-    }
   }
 
   static double parseDouble(final String prior, final String val, final String key) {
@@ -264,17 +251,6 @@ public class MachineErrorParamsBuilder {
     checkDistribution(lengths);
     mErrorDelDistribution = new double[lengths.length + 1];
     System.arraycopy(lengths, 0, mErrorDelDistribution, 1, lengths.length);
-    return this;
-  }
-
-  /**
-   * Set the flag that says whether to use CG Outer Base Trimming.
-   *
-   * @param cgTrimOuterBases flag - true if Trimming to be used
-   * @return this builder, so calls can be chained.
-   */
-  public MachineErrorParamsBuilder cgTrimOuterBases(final boolean cgTrimOuterBases) {
-    mCGTrimOuterBases = cgTrimOuterBases;
     return this;
   }
 

@@ -12,12 +12,12 @@
 package com.rtg.ngs;
 
 /**
+ * Represent which arm of paired sequencing a read is from
+ * Order is important.
  */
-public enum MapStatisticsArm {
+public enum Arm {
   /** Left arm of read, or the read for single end */
   LEFT,
   /** Right arm of read */
-  RIGHT,
-  /** Both arms of read */
-  BOTH
+  RIGHT
 }

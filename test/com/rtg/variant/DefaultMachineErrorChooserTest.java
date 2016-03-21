@@ -36,7 +36,7 @@ public class DefaultMachineErrorChooserTest extends TestCase {
     final MachineErrorChooserInterface ch = new DefaultMachineErrorChooser();
     final SAMRecord r = new SAMRecord(new SAMFileHeader());
     final VariantAlignmentRecord var = new VariantAlignmentRecord(r);
-    assertNotNull(ch.machineErrors(var));
+    assertNotNull(ch.machineErrors(var.getReadGroup(), var.isReadPaired()));
   }
 
   public void testSpecified() {
@@ -45,7 +45,7 @@ public class DefaultMachineErrorChooserTest extends TestCase {
     final MachineErrorChooserInterface ch = new DefaultMachineErrorChooser(me);
     final SAMRecord r = new SAMRecord(new SAMFileHeader());
     final VariantAlignmentRecord var = new VariantAlignmentRecord(r);
-    assertTrue(me == ch.machineErrors(var));
+    assertTrue(me == ch.machineErrors(var.getReadGroup(), var.isReadPaired()));
   }
 
   public void testName() throws InvalidParamsException, IOException {
@@ -53,7 +53,7 @@ public class DefaultMachineErrorChooserTest extends TestCase {
     final MachineErrorChooserInterface ch = new DefaultMachineErrorChooser("complete");
     final SAMRecord r = new SAMRecord(new SAMFileHeader());
     final VariantAlignmentRecord var = new VariantAlignmentRecord(r);
-    assertNotNull(ch.machineErrors(var));
+    assertNotNull(ch.machineErrors(var.getReadGroup(), var.isReadPaired()));
   }
 
   public void testNameBad() throws InvalidParamsException, IOException {
@@ -97,15 +97,15 @@ public class DefaultMachineErrorChooserTest extends TestCase {
       final SAMRecord r1 = new SAMRecord(sfh);
       r1.setAttribute("RG", group1.getId());
       final VariantAlignmentRecord var = new VariantAlignmentRecord(r1);
-      chooser.machineErrors(var);
-      chooser.machineErrors(var);
+      chooser.machineErrors(var.getReadGroup(), var.isReadPaired());
+      chooser.machineErrors(var.getReadGroup(), var.isReadPaired());
       assertFalse(mWarned);
       final SAMRecord r2 = new SAMRecord(sfh);
       r2.setAttribute("RG", group2.getId());
       final VariantAlignmentRecord var2 = new VariantAlignmentRecord(r2);
-      chooser.machineErrors(var2);
+      chooser.machineErrors(var2.getReadGroup(), var2.isReadPaired());
       assertTrue(mWarned);
-      chooser.machineErrors(var2);
+      chooser.machineErrors(var2.getReadGroup(), var2.isReadPaired());
     } finally {
       Diagnostic.removeListener(dl);
       Diagnostic.setLogStream();

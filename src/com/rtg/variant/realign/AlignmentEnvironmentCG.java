@@ -15,7 +15,6 @@ import com.rtg.mode.DNA;
 import com.rtg.reader.CgUtils;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.machine.MachineType;
-import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.util.CgUnroller;
@@ -32,12 +31,12 @@ public class AlignmentEnvironmentCG extends AbstractAlignmentEnvironment {
   /**
    * @param var the alignment record
    * @param params the variant params object
-   * @param me machine errors.
    * @param template reference nucleotides
+   * @param machineType which machine type
    */
-  public AlignmentEnvironmentCG(final VariantAlignmentRecord var, final VariantParams params, final AbstractMachineErrorParams me, final byte[] template) {
+  public AlignmentEnvironmentCG(final VariantAlignmentRecord var, final VariantParams params, final byte[] template, MachineType machineType) {
     super(var.getStart());
-    assert me.isCG();
+    assert machineType.isCG();
     final CgUnroller.OrientedRead orient = CgUnroller.unrollCgRead(var, template);
     if (orient == null) {
       throw new NoTalkbackSlimException("Invalid CG alignment. Could not reconstruct original read. record=" + var.toString());
@@ -45,10 +44,10 @@ public class AlignmentEnvironmentCG extends AbstractAlignmentEnvironment {
     mRead = DNA.byteDNAtoByte(orient.getRead());
     final int len = mRead.length;
     //System.err.println("CG len=" + len);
-    if (me.machineType() == MachineType.COMPLETE_GENOMICS && len != CgUtils.CG_RAW_READ_LENGTH) {
+    if (machineType == MachineType.COMPLETE_GENOMICS && len != CgUtils.CG_RAW_READ_LENGTH) {
       throw new NoTalkbackSlimException("Invalid CG version 1 alignment. Unexpected reconstructed read length. record=" + var.toString());
     }
-    if (me.machineType() == MachineType.COMPLETE_GENOMICS_2 && len != CgUtils.CG2_RAW_READ_LENGTH) {
+    if (machineType == MachineType.COMPLETE_GENOMICS_2 && len != CgUtils.CG2_RAW_READ_LENGTH) {
       throw new NoTalkbackSlimException("Invalid CG version 2 alignment. Unexpected reconstructed read length. record=" + var.toString());
     }
     mQuality = new double[len];
@@ -60,8 +59,7 @@ public class AlignmentEnvironmentCG extends AbstractAlignmentEnvironment {
       }
     } else {
       for (int i = 0; i < len; i++) {
-        final int phred = me.getPhred(qChar[i], i);
-        mQuality[i] = VariantUtils.phredToProb(phred);
+        mQuality[i] = VariantUtils.phredToProb(qChar[i]);
       }
     }
     mIsInverted = orient.isInverted();

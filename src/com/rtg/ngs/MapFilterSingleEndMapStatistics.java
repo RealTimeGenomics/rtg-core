@@ -40,19 +40,19 @@ public class MapFilterSingleEndMapStatistics extends SingleEndMapStatistics {
   }
 
   @Override
-  public void increment(MapStatisticsField field, MapStatisticsArm arm) {
+  public void increment(MapStatisticsField field, Arm arm) {
     checkField(field);
     super.increment(field, arm);
   }
 
   @Override
-  public void set(MapStatisticsField field, MapStatisticsArm arm, long value) {
+  public void set(MapStatisticsField field, Arm arm, long value) {
     checkField(field);
     super.set(field, arm, value);
   }
 
   @Override
-  public long value(MapStatisticsField field, MapStatisticsArm arm) {
+  public long value(MapStatisticsField field, Arm arm) {
     checkField(field);
     return super.value(field, arm);
   }

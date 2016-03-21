@@ -12,7 +12,7 @@
 package com.rtg.variant.realign;
 
 import com.rtg.mode.DNA;
-import com.rtg.variant.AbstractMachineErrorParams;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.util.VariantUtils;
@@ -28,14 +28,14 @@ public final class AlignmentEnvironmentRead extends AbstractAlignmentEnvironment
    * @param params the variant params object
    * @param me machine errors.
    */
-  public AlignmentEnvironmentRead(VariantAlignmentRecord sam, VariantParams params, AbstractMachineErrorParams me) {
+  public AlignmentEnvironmentRead(VariantAlignmentRecord sam, VariantParams params, MachineType me) {
     super(sam.getStart());
-    assert !me.isCG();
+    assert me == null || !me.isCG();
     //SamUtils.checkCG(sam); // todo
     mRead = DNA.byteDNAtoByte(sam.getRead());
     final int len = mRead.length;
     mQuality = new double[len];
-    final byte[] quality = sam.getQuality();
+    final byte[] quality = sam.getRecalibratedQuality();
     if (quality.length == 0) {
       final double qDef = VariantUtils.phredToProb(params.qDefault());
       for (int i = 0; i < len; i++) {
@@ -43,8 +43,7 @@ public final class AlignmentEnvironmentRead extends AbstractAlignmentEnvironment
       }
     } else {
       for (int i = 0; i < len; i++) {
-        final int phred = me.getPhred(quality[i], i);
-        mQuality[i] = VariantUtils.phredToProb(phred);
+        mQuality[i] = VariantUtils.phredToProb(quality[i]);
       }
     }
   }

@@ -153,7 +153,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
    * @param v2 true for CG version 2 read structure, otherwise assume version 1 read structure
    */
   public CgGotohEditDistance(final int maxShift, final RealignParams params, int unknownsPenalty, boolean v2) {
-    assert params.machineType() == MachineType.COMPLETE_GENOMICS || params.machineType() == MachineType.COMPLETE_GENOMICS_2;
+  assert params.machineType() == MachineType.COMPLETE_GENOMICS || params.machineType() == MachineType.COMPLETE_GENOMICS_2;
     mEnv = null; // set by each edit distance call.
     mLength = v2 ? CgUtils.CG2_RAW_READ_LENGTH : CgUtils.CG_RAW_READ_LENGTH;
     mWidth = maxShift * 2 + 1;

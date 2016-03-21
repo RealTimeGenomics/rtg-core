@@ -11,7 +11,6 @@
  */
 package com.rtg.variant.bayes.snp;
 
-import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.bayes.EvidenceInterface;
 
 /**
@@ -26,10 +25,9 @@ public interface MatcherInterface {
    * @param readNt read nucleotide in range 0=N, 1=A ... 5=D
    * @param mapQ phred score of probability that the read is not mapped to this position.
    * @param phred phred score of probability that the read nucleotide is not correct.
-   * @param me error rates for a read group.
    * @param stateIndex the index number for the flag states
    */
-  void match(int refPosition, int readBasesLeft, int readBasesRight, int readNt, int mapQ, int phred, AbstractMachineErrorParams me, int stateIndex);
+  void match(int refPosition, int readBasesLeft, int readBasesRight, int readNt, int mapQ, int phred, int stateIndex);
 
   /**
    * Signal a piece of unmapped evidence.

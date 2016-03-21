@@ -36,7 +36,7 @@ public class AlignmentEnvironmentCGTest extends TestCase {
     rec.setReadPairedFlag(true);
     final VariantParams params = VariantParams.builder().create();
     final AbstractMachineErrorParams me = MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).create();
-    final AlignmentEnvironment se = new AlignmentEnvironmentCG(new VariantAlignmentRecord(rec), params, me, null);
+    final AlignmentEnvironment se = new AlignmentEnvironmentCG(new VariantAlignmentRecord(rec), params, null, me.machineType());
 
     assertFalse(!se.isInverted());
     final String exp = ""
@@ -55,7 +55,7 @@ public class AlignmentEnvironmentCGTest extends TestCase {
     rec.setReadString("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG");
     rec.setReadPairedFlag(true);
     final VariantParams params = VariantParams.builder().defaultQuality(10).create();
-    final AlignmentEnvironment se = new AlignmentEnvironmentCG(new VariantAlignmentRecord(rec), params, MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).create(), null);
+    final AlignmentEnvironment se = new AlignmentEnvironmentCG(new VariantAlignmentRecord(rec), params, null, MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).create().machineType());
 
     assertFalse(!se.isInverted());
     final String exp = ""
@@ -76,7 +76,7 @@ public class AlignmentEnvironmentCGTest extends TestCase {
     rec.setBaseQualityString("/725361840-525251.68,0,.52!222254/2");
     final VariantParams params = VariantParams.builder().create();
     try {
-      new AlignmentEnvironmentCG(new VariantAlignmentRecord(rec), params, MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).create(), null);
+      new AlignmentEnvironmentCG(new VariantAlignmentRecord(rec), params, null, MachineErrorParams.builder().machine(MachineType.COMPLETE_GENOMICS).create().machineType());
       fail();
     } catch (final NoTalkbackSlimException e) {
       assertTrue(e.getMessage(), e.getMessage().startsWith("Invalid CG alignment."));

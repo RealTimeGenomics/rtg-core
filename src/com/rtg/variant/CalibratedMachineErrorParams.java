@@ -18,6 +18,8 @@ import com.rtg.calibrate.CalibrationStats;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Covariate;
 import com.rtg.calibrate.CovariateEnum;
+import com.rtg.launcher.GlobalFlags;
+import com.rtg.ngs.Arm;
 import com.rtg.util.Histogram;
 import com.rtg.util.MathUtils;
 import com.rtg.util.cli.CFlags;
@@ -110,9 +112,11 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     mErrorOverlap2Dist = dists != null && dists[3] != null ? dists[3] : MachineErrorParamsBuilder.CG_DEFAULT_OVERLAP2_DIST;
 
     final CalibrationStats sums = calibrator.getSums(CovariateEnum.READGROUP, readGroupId);
-    mMnpBaseRate = (double) sums.getDifferent() / (sums.getEqual() + sums.getDifferent() + 1);
-    mInsBaseRate = (double) sums.getInserted() / (sums.getEqual() + sums.getDifferent() + 1);
-    mDelBaseRate = (double) sums.getDeleted() / (sums.getEqual() + sums.getDifferent() + 1);
+    //TODO Decide if Deletion or Insertion  should be included in potential error sites
+    final long potentialErrorSites = sums.getEqual() + sums.getDifferent() + 1;
+    mMnpBaseRate = (double) sums.getDifferent() / potentialErrorSites;
+    mInsBaseRate = (double) sums.getInserted() / potentialErrorSites;
+    mDelBaseRate = (double) sums.getDeleted() / potentialErrorSites;
 
     mMnpEventRate = mMnpBaseRate / GenomePriorParamsBuilder.averageLength(mErrorMnpDist);
     mInsEventRate = mInsBaseRate / GenomePriorParamsBuilder.averageLength(mErrorInsDist);
@@ -131,10 +135,28 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     if (readGroupIndex >= 0) {
       query.setValue(CovariateEnum.READGROUP, cal.getCovariate(readGroupIndex).parse(readGroup));
     }
-    if (cal.getCovariateIndex(CovariateEnum.MACHINECYCLE) != -1) {
+    if (cal.getCovariateIndex(CovariateEnum.ARM) != -1 && cal.getCovariateIndex(CovariateEnum.MACHINECYCLE) != -1) {
+      final PhredScaler left = getArmPhredScaler(cal, query, Arm.LEFT);
+      final PhredScaler right = getArmPhredScaler(cal, query, Arm.RIGHT);
+      query.setValue(CovariateEnum.ARM, -1);
+      return new ArmMachineCyclePhredScaler(left, right);
+    } else if (cal.getCovariateIndex(CovariateEnum.MACHINECYCLE) != -1) {
       return new BaseQualityMachineCyclePhredScaler(cal, query);
     } else {
       return new BaseQualityPhredScaler(cal, query);
+    }
+  }
+
+  private static PhredScaler getArmPhredScaler(Calibrator cal, Calibrator.QuerySpec query, Arm left) {
+    query.setValue(CovariateEnum.ARM, left.ordinal());
+    try {
+      if (GlobalFlags.getBooleanValue(GlobalFlags.QUALITY_CALIBRATION_COVARIATE_INTERSECTION)) {
+        return new CovariateIntersectionCycleQualityScaler(cal, query);
+      } else {
+        return new BaseQualityMachineCyclePhredScaler(cal, query);
+      }
+    } finally {
+      query.setValue(CovariateEnum.ARM, -1);
     }
   }
 
@@ -246,11 +268,6 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
   }
 
   @Override
-  public boolean cgTrimOuterBases() {
-    return mMachineType == MachineType.COMPLETE_GENOMICS && MachineErrorParamsBuilder.CG_TRIM;
-  }
-
-  @Override
   public double errorDelBaseRate() {
     return mDelBaseRate;
   }
@@ -317,13 +334,13 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
   }
 
   @Override
-  public int getPhred(byte quality, int readPos) {
-    return mScaler.getPhred(quality, readPos);
+  public int getScaledPhred(byte quality, int readPos, Arm arm) {
+    return mScaler.getScaledPhred(quality, readPos, arm);
   }
 
   @Override
   public final boolean isCG() {
-    return mMachineType == MachineType.COMPLETE_GENOMICS || mMachineType == MachineType.COMPLETE_GENOMICS_2;
+    return mMachineType.isCG();
   }
 
   @Override

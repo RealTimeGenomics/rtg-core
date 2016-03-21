@@ -20,6 +20,7 @@ import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
+import com.rtg.variant.DefaultMachineErrorChooser;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantAlignmentRecordPopulator;
 
@@ -41,7 +42,7 @@ public class ThreadedMultifileIteratorWrapperTest extends TestCase {
       fileList.add(first);
       fileList.add(second);
       final SamFilterParams params = SamFilterParams.builder().create();
-      final SingletonPopulatorFactory<VariantAlignmentRecord> pf = new SingletonPopulatorFactory<>(new VariantAlignmentRecordPopulator());
+      final SingletonPopulatorFactory<VariantAlignmentRecord> pf = new SingletonPopulatorFactory<>(new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser()));
       try (ThreadedMultifileIteratorWrapper<VariantAlignmentRecord> it = new ThreadedMultifileIteratorWrapper<>(new SamReadingContext(fileList, 1, params, SamUtils.getUberHeader(fileList)), pf)) {
         it.setSequenceId(0);
         final List<SAMReadGroupRecord> readGroups = it.header().getReadGroups();

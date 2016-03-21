@@ -39,23 +39,23 @@ public class ReadGroupMachineErrorChooserTest extends TestCase {
 
   public void test() throws Exception {
     final SAMFileHeader header = SamUtils.makeSamReader(new ByteArrayInputStream(SAM.getBytes())).getFileHeader();
-    final MachineErrorChooserInterface m = new ReadGroupMachineErrorChooser(header);
+    final ReadGroupMachineErrorChooser m = new ReadGroupMachineErrorChooser(header);
     final SAMRecord s = new SAMRecord(header);
     s.setAttribute("RG", "sounique");
     VariantAlignmentRecord var = new VariantAlignmentRecord(s);
-    assertEquals(MachineType.ILLUMINA_PE, m.machineErrors(var).machineType());
+    assertEquals(MachineType.ILLUMINA_PE, m.machineErrors(var.getReadGroup(), var.isReadPaired()).machineType());
     s.setAttribute("RG", "uniquer");
     var = new VariantAlignmentRecord(s);
-    assertEquals(MachineType.COMPLETE_GENOMICS, m.machineErrors(var).machineType());
+    assertEquals(MachineType.COMPLETE_GENOMICS, m.machineErrors(var.getReadGroup(), var.isReadPaired()).machineType());
     s.setAttribute("RG", "somereads");
     var = new VariantAlignmentRecord(s);
-    assertEquals(MachineType.FOURFIVEFOUR_SE, m.machineErrors(var).machineType());
+    assertEquals(MachineType.FOURFIVEFOUR_SE, m.machineErrors(var.getReadGroup(), var.isReadPaired()).machineType());
     s.setAttribute("RG", "paired");
     var = new VariantAlignmentRecord(s);
-    assertEquals(MachineType.FOURFIVEFOUR_PE, m.machineErrors(var).machineType());
+    assertEquals(MachineType.FOURFIVEFOUR_PE, m.machineErrors(var.getReadGroup(), var.isReadPaired()).machineType());
     s.setAttribute("RG", "differentyetthesame");
     var = new VariantAlignmentRecord(s);
-    assertEquals(MachineType.ILLUMINA_PE, m.machineErrors(var).machineType());
+    assertEquals(MachineType.ILLUMINA_PE, m.machineErrors(var.getReadGroup(), var.isReadPaired()).machineType());
   }
 
   private static final String SAM_BAD = ""
@@ -82,7 +82,7 @@ public class ReadGroupMachineErrorChooserTest extends TestCase {
     final SAMRecord s = new SAMRecord(header);
     try {
       final VariantAlignmentRecord var = new VariantAlignmentRecord(s);
-      m.machineErrors(var);
+      m.machineErrors(var.getReadGroup(), var.isReadPaired());
       fail();
     } catch (final NoTalkbackSlimException e) {
       assertEquals("Sam record had no read group attribute, but header read groups were supplied.", e.getMessage());
@@ -91,7 +91,7 @@ public class ReadGroupMachineErrorChooserTest extends TestCase {
     rgr.setPlatform("BLAH");
     try {
       final VariantAlignmentRecord var = new VariantAlignmentRecord(s);
-      m.machineErrors(var);
+      m.machineErrors(var.getReadGroup(), var.isReadPaired());
       fail();
     } catch (final NoTalkbackSlimException e) {
       assertEquals("Sam record referenced read group \"somethingelse\" which was not found in the header.", e.getMessage());

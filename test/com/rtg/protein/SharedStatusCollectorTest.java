@@ -15,7 +15,7 @@ import static com.rtg.util.StringUtils.LS;
 
 import java.io.ByteArrayOutputStream;
 
-import com.rtg.ngs.MapStatisticsArm;
+import com.rtg.ngs.Arm;
 import com.rtg.ngs.MapStatisticsField;
 import com.rtg.util.IORunnable;
 import com.rtg.util.SimpleThreadPool;
@@ -96,10 +96,10 @@ public class SharedStatusCollectorTest extends TestCase {
     collector.setStatus(19, (byte) 0x10);
     collector.setStatus(20, (byte) 0x10);
     collector.calculateStatistics();
-    assertEquals(22, stats.value(MapStatisticsField.TOTAL_READS, MapStatisticsArm.LEFT));
-    assertEquals(1, stats.value(MapStatisticsField.UNMATED_UNIQUE_READS, MapStatisticsArm.LEFT));
-    assertEquals(20, stats.value(MapStatisticsField.UNMAPPED_UNMATED_POOR, MapStatisticsArm.LEFT));
-    assertEquals(1, stats.value(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.LEFT));
+    assertEquals(22, stats.value(MapStatisticsField.TOTAL_READS, Arm.LEFT));
+    assertEquals(1, stats.value(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.LEFT));
+    assertEquals(20, stats.value(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.LEFT));
+    assertEquals(1, stats.value(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT));
     final byte[] testGetReadProtein = collector.getReadProtein(131);
     assertNull(testGetReadProtein);
   }

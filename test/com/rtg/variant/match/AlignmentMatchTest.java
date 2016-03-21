@@ -12,6 +12,9 @@
 package com.rtg.variant.match;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import com.rtg.reader.FastaUtils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -24,13 +27,16 @@ import com.rtg.variant.util.VariantUtils;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 
 /**
  */
 public class AlignmentMatchTest extends TestCase {
+
+  private static final String TEST_READ_STRING = "ACGT"; // We use the "CGT" part
+  private static final String TEST_READ_QUALITY_STRING = "!!%`"; // 0,0,4,63
+  private static final byte[] TEST_RAW_QUALITY = FastaUtils.asciiToRawQuality(TEST_READ_QUALITY_STRING.toCharArray());
 
   public void test0() {
     final AlignmentMatch ins = new AlignmentMatch(null, "", "", 0, 0, 0, 7);
@@ -56,11 +62,7 @@ public class AlignmentMatchTest extends TestCase {
     assertEquals(0, ins.length());
   }
 
-  public void testReadGroups() throws IOException {
-    Diagnostic.setLogStream();
-    final String read = "ACGT";   // we use the "CGT" part
-    final String qualities = "!!%`";  // that is, 0,0,4,63.
-    final byte[] qScores = FastaUtils.asciiToRawQuality(qualities.toCharArray());
+  private SAMFileHeader getSAMFileHeader() {
     final SAMFileHeader hdr = new SAMFileHeader();
     final SAMReadGroupRecord illumina = new SAMReadGroupRecord("Illumina");
     illumina.setSample("sample1");
@@ -70,12 +72,18 @@ public class AlignmentMatchTest extends TestCase {
     cg.setSample("sample2");
     cg.setPlatform("complete");
     hdr.addReadGroup(cg);
+    return hdr;
+  }
+
+  public void testNoQualities() throws IOException {
+    Diagnostic.setLogStream();
+    final SAMFileHeader hdr = getSAMFileHeader();
     final SAMRecord rec = new SAMRecord(hdr);
     final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
-    final ReadGroupMachineErrorChooser chooser = new ReadGroupMachineErrorChooser(hdr);
+
 
     // no qualities
-    AlignmentMatch ins = new AlignmentMatch(var, null, read, null, 20, 1, 3, 7, true, true);
+    final AlignmentMatch ins = new AlignmentMatch(var, null, TEST_READ_STRING, null, 20, 1, 3, 7, true, true);
     ins.integrity();
     assertEquals("CGT", ins.toString());
     assertEquals(3, ins.length());
@@ -85,33 +93,65 @@ public class AlignmentMatchTest extends TestCase {
     assertEquals(VariantUtils.phredToProb(20), ins.baseError(1), 1E-14);
     assertEquals(VariantUtils.phredToProb(20), ins.baseError(2), 1E-14);
     assertEquals(VariantUtils.phredToProb(7), ins.mapError(), 1E-14);
+  }
 
-    ins = new AlignmentMatch(var, null, read, qScores, 20, 1, 3, 7, true, true);
+  public void testQualities() throws IOException {
+    Diagnostic.setLogStream();
+    final SAMFileHeader hdr = getSAMFileHeader();
+    final SAMRecord rec = new SAMRecord(hdr);
+    final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
+
+    final AlignmentMatch ins = new AlignmentMatch(var, null, TEST_READ_STRING, TEST_RAW_QUALITY, 20, 1, 3, 7, true, true);
     assertEquals(VariantUtils.phredToProb(0), ins.baseError(0), 1E-14);
     assertEquals(VariantUtils.phredToProb(4), ins.baseError(1), 1E-14);
     assertEquals(VariantUtils.phredToProb(63), ins.baseError(2), 1E-14);
     assertEquals(VariantUtils.phredToProb(7), ins.mapError(), 1E-14);
+  }
+
+  public void testNoReadGroupInSam() throws IOException {
+    Diagnostic.setLogStream();
+    final SAMFileHeader hdr = getSAMFileHeader();
+    final SAMRecord rec = new SAMRecord(hdr);
+    final VariantAlignmentRecord var = new VariantAlignmentRecord(rec);
+    final ReadGroupMachineErrorChooser chooser = new ReadGroupMachineErrorChooser(hdr);
 
     // no read group in SAM record, so no quality correction curve
     try {
-      new AlignmentMatch(var, chooser, read, qScores, 20, 1, 3, 7, true, true);
+      new AlignmentMatch(var, chooser, TEST_READ_STRING, TEST_RAW_QUALITY, 20, 1, 3, 7, true, true);
       fail();
     } catch (final NoTalkbackSlimException ntse) {
       //expected
     }
+  }
+
+  public void testIlluminaCorrectionCurve() throws IOException {
+    Diagnostic.setLogStream();
+    final SAMFileHeader hdr = getSAMFileHeader();
+    final SAMRecord rec = new SAMRecord(hdr);
+    final ReadGroupMachineErrorChooser chooser = new ReadGroupMachineErrorChooser(hdr);
 
     // Illumina correction curve
     rec.setAttribute("RG", "Illumina");
-    ins = new AlignmentMatch(new VariantAlignmentRecord(rec), chooser, read, qScores, 20, 1, 3, 7, true, true);
+    final AlignmentMatch ins = new AlignmentMatch(new VariantAlignmentRecord(rec), chooser, TEST_READ_STRING, TEST_RAW_QUALITY, 20, 1, 3, 7, true, true);
     ins.integrity();
     assertEquals(VariantUtils.phredToProb(0), ins.baseError(0), 1E-14);
     assertEquals(VariantUtils.phredToProb(4), ins.baseError(1), 1E-14);
     assertEquals(VariantUtils.phredToProb(63), ins.baseError(2), 1E-14);
     assertEquals(VariantUtils.phredToProb(7), ins.mapError(), 1E-14);
 
+  }
+
+  public void testCgCorrectionCurve() throws IOException {
+    Diagnostic.setLogStream();
+    final SAMFileHeader hdr = getSAMFileHeader();
+    final SAMRecord rec = new SAMRecord(hdr);
+    final ReadGroupMachineErrorChooser chooser = new ReadGroupMachineErrorChooser(hdr);
+
     // Complete Genomics correction curve
     rec.setAttribute("RG", "CG");
-    ins = new AlignmentMatch(new VariantAlignmentRecord(rec), chooser, read, qScores, 20, 1, 3, 7, true, true);
+    rec.setBaseQualities(TEST_RAW_QUALITY);
+    final VariantAlignmentRecord var = new VariantAlignmentRecord(rec, 0, chooser);
+    final AlignmentMatch ins = new AlignmentMatch(var, chooser, TEST_READ_STRING, var.getRecalibratedQuality(), 20, 1, 3, 7, true, true);
     ins.integrity();
     assertEquals(VariantUtils.phredToProb(0), ins.baseError(0), 1E-14);
     assertEquals(VariantUtils.phredToProb(5), ins.baseError(1), 1E-14);
@@ -119,48 +159,91 @@ public class AlignmentMatchTest extends TestCase {
     assertEquals(VariantUtils.phredToProb(7), ins.mapError(), 1E-14);
   }
 
-  public void test() {
-    final AlignmentMatch ins = new AlignmentMatch(null, null, "ACGTACGT", FastaUtils.asciiToRawQuality("ABCDABCD"), 0, 3, 3, 7, false, true);
-    ins.integrity();
-    assertFalse(ins.isFixedLeft());
-    assertTrue(ins.isFixedRight());
-
+  public void testReadRangeLower() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
     try {
       ins.read(-1);
       fail();
     } catch (final IndexOutOfBoundsException e) {
       // ok
     }
+  }
+  public void testReadRangeUpper() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
     try {
       ins.read(3);
       fail();
     } catch (final IndexOutOfBoundsException e) {
       // ok
     }
+  }
+
+  public void testReadValues() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
+    assertEquals(Arrays.asList(3, 0, 1),
+      IntStream.range(0, 3).map(ins::read).boxed().collect(Collectors.toList())
+    );
+  }
+
+  public void testErrorRangeLower() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
     try {
       ins.baseError(-1);
       fail();
     } catch (final IndexOutOfBoundsException e) {
       // ok
     }
+  }
+
+  public void testErrorRangeUpper() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
     try {
-      ins.baseError(4);
+      ins.baseError(3);
       fail();
     } catch (final IndexOutOfBoundsException e) {
       // ok
     }
+  }
 
-    assertEquals("~TAC", ins.toString());
-    assertEquals(3, ins.read(0));
-    assertEquals(0, ins.read(1));
-    assertEquals(1, ins.read(2));
-    assertEquals(VariantUtils.phredToProb('D' - '!'), ins.baseError(0), 1E-14);
-    assertEquals(VariantUtils.phredToProb('A' - '!'), ins.baseError(1), 1E-14);
-    assertEquals(VariantUtils.phredToProb('B' - '!'), ins.baseError(2), 1E-14);
+  public void testBaseError() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
+    assertEquals(VariantUtils.phredToProb('D' - FastaUtils.PHRED_LOWER_LIMIT_CHAR), ins.baseError(0), 1E-14);
+    assertEquals(VariantUtils.phredToProb('A' - FastaUtils.PHRED_LOWER_LIMIT_CHAR), ins.baseError(1), 1E-14);
+    assertEquals(VariantUtils.phredToProb('B' - FastaUtils.PHRED_LOWER_LIMIT_CHAR), ins.baseError(2), 1E-14);
+  }
+
+  public void testFixedEnds() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
+    assertFalse(ins.isFixedLeft());
+    assertTrue(ins.isFixedRight());
+
+  }
+  public void testToString() {
+    assertEquals("~TAC", getTestAlignmentMatch().toString());
+  }
+
+  public void testMapError() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
     assertEquals(VariantUtils.phredToProb(7), ins.mapError(), 1E-14);
+  }
+
+  public void testIntegrity() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
+    ins.integrity();
+  }
+
+  public void testReadString() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
     assertEquals("TAC", ins.readString());
-    assertEquals("~TAC", ins.toString());
+  }
+  public void testLength() {
+    final AlignmentMatch ins = getTestAlignmentMatch();
     assertEquals(3, ins.length());
+  }
+
+
+  private AlignmentMatch getTestAlignmentMatch() {
+    return new AlignmentMatch(null, null, "ACGTACGT", FastaUtils.asciiToRawQuality("ABCDABCD"), 0, 3, 3, 7, false, true);
   }
 }
 

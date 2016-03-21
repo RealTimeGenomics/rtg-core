@@ -11,12 +11,13 @@
  */
 package com.rtg.variant.match;
 
+import com.rtg.ngs.Arm;
 import com.rtg.reader.FastaUtils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.Integrity;
-import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.NoQualityException;
+import com.rtg.variant.PhredScaler;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.dna.DNARange;
 import com.rtg.variant.dna.DNARangeNAT;
@@ -73,22 +74,22 @@ public class AlignmentMatch extends Match implements Integrity {
   public AlignmentMatch(final VariantAlignmentRecord var, final MachineErrorChooserInterface chooser, final String readNt, final byte[] qScore, final int qDefault, final int start, final int length, final int readScore, final boolean fixedLeft, final boolean fixedRight) {
     super();
     mAlignmentRecord = var;
-    final AbstractMachineErrorParams me = chooser == null ? null : chooser.machineErrors(var);
+    final PhredScaler me = chooser == null ? null : chooser.machineErrors(var.getReadGroup(), var.isReadPaired());
     mMapError = VariantUtils.phredToProb(readScore);
     if (qScore == null) {
       mBaseError = null;
     } else {
       mBaseError = new double[length];
       for (int k = 0; k < mBaseError.length; k++) {
-        final byte scoreChar = qScore[k + start];
         // apply machine error calibration curve for appropriate read group if possible
-        final int phred = me == null ? scoreChar : me.getPhred(scoreChar, k + start);
-        assert 0 <= phred && phred < 255;
+        final int phred = qScore[k + start];
+        assert 0 <= phred;
         mBaseError[k] = VariantUtils.phredToProb(phred);
       }
     }
     // apply correct machine error calibration curve to qDefault, if possible
-    mQualityDefault = VariantUtils.phredToProb(me == null ? qDefault : me.getPhred((byte) qDefault, 0));
+    final Arm arm  = Arm.LEFT;
+    mQualityDefault = VariantUtils.phredToProb(me == null ? qDefault : me.getScaledPhred((byte) qDefault, 0, arm));
     mFixedLeft = fixedLeft;
     mFixedRight = fixedRight;
     mReadNt = new int[length];

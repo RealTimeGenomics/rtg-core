@@ -15,7 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import com.rtg.ngs.MapStatisticsArm;
+import com.rtg.ngs.Arm;
 import com.rtg.ngs.MapStatisticsField;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -39,10 +39,10 @@ public class MapXStatisticsTest extends TestCase {
       Diagnostic.setLogStream();
     }
     assertEquals("", log.toString());
-    stats.set(MapStatisticsField.TOTAL_READS, MapStatisticsArm.LEFT, 100);
-    stats.set(MapStatisticsField.UNMATED_UNIQUE_READS, MapStatisticsArm.LEFT, 50);
-    stats.set(MapStatisticsField.UNMAPPED_UNMATED_POOR, MapStatisticsArm.LEFT, 20);
-    stats.set(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.LEFT, 30);
+    stats.set(MapStatisticsField.TOTAL_READS, Arm.LEFT, 100);
+    stats.set(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.LEFT, 50);
+    stats.set(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.LEFT, 20);
+    stats.set(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT, 30);
     final ByteArrayOutputStream out = new ByteArrayOutputStream();
     stats.printStatistics(out);
     final String outString = out.toString();

@@ -16,7 +16,7 @@ import java.io.OutputStream;
 
 import com.rtg.mode.TranslatedFrame;
 import com.rtg.ngs.MapStatistics;
-import com.rtg.ngs.MapStatisticsArm;
+import com.rtg.ngs.Arm;
 import com.rtg.ngs.MapStatisticsField;
 import com.rtg.reader.PrereadNamesInterface;
 import com.rtg.util.StringUtils;
@@ -133,15 +133,15 @@ public class SharedStatusCollector {
   protected void calculateStatistics() {
     if (mStatistics != null) {
       for (final byte status : mReadsStatus) {
-        mStatistics.increment(MapStatisticsField.TOTAL_READS, MapStatisticsArm.LEFT);
+        mStatistics.increment(MapStatisticsField.TOTAL_READS, Arm.LEFT);
         if ((status & RESULT_WRITTEN) != 0) {
-          mStatistics.increment(MapStatisticsField.UNMATED_UNIQUE_READS, MapStatisticsArm.LEFT);
+          mStatistics.increment(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.LEFT);
           continue;
         }
         if ((status & FAILED_THRESHOLD_FLAGS) != 0) {
-          mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, MapStatisticsArm.LEFT);
+          mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.LEFT);
         } else {
-          mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.LEFT);
+          mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT);
         }
       }
     }

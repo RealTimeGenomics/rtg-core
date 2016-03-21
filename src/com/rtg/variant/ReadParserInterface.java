@@ -13,6 +13,7 @@
 package com.rtg.variant;
 
 import com.rtg.sam.BadSuperCigarException;
+import com.rtg.util.machine.MachineType;
 
 /**
  */
@@ -20,12 +21,12 @@ public interface ReadParserInterface {
 
   /**
    * Expands read input and calls appropriate matcher.
-   * @param me machine errors used for estimating error rates in calling.
    * @param var variant alignment record to process
+   * @param machineType the machine type of the variant alignment record
    * @param qdefault if quality is null default quality value to use.
    * @param templateBytes template array with nucleotide codes (coded as 0 = N ... 4 = T).
    * @throws BadSuperCigarException if a recognized problem with a cigar is found.
    */
-  void toMatcher(AbstractMachineErrorParams me, VariantAlignmentRecord var, int qdefault, byte[] templateBytes) throws BadSuperCigarException;
+  void toMatcher(VariantAlignmentRecord var, MachineType machineType, int qdefault, byte[] templateBytes) throws BadSuperCigarException;
 
 }

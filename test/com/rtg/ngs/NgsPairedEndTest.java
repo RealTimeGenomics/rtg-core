@@ -98,17 +98,17 @@ public class NgsPairedEndTest extends TestCase {
     }
     assertEquals(8, usage.getMetric());
     final MapStatistics statsMap = task.getStatistics();
-    assertEquals(2L, statsMap.value(MapStatisticsField.TOTAL_READS, MapStatisticsArm.BOTH));
-    assertEquals(2L, statsMap.value(MapStatisticsField.MATED_UNIQUE_READS, MapStatisticsArm.BOTH));
-    assertEquals(0L, statsMap.value(MapStatisticsField.MATED_AMBIG_READS, MapStatisticsArm.BOTH));
-    assertEquals(0L, statsMap.value(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.BOTH));
-    assertEquals(0L, statsMap.value(MapStatisticsField.UNMATED_UNIQUE_READS, MapStatisticsArm.BOTH));
-    assertEquals(0L, statsMap.value(MapStatisticsField.MISSING, MapStatisticsArm.LEFT));
-    assertEquals(0L, statsMap.value(MapStatisticsField.MISSING, MapStatisticsArm.RIGHT));
-    assertEquals(100.0, statsMap.valueAsPercent(MapStatisticsField.MATED_UNIQUE_READS, MapStatisticsArm.BOTH));
-    assertEquals(0.0, statsMap.valueAsPercent(MapStatisticsField.MATED_AMBIG_READS, MapStatisticsArm.BOTH));
-    assertEquals(0.0, statsMap.valueAsPercent(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.BOTH));
-    assertEquals(0.0, statsMap.valueAsPercent(MapStatisticsField.UNMATED_UNIQUE_READS, MapStatisticsArm.BOTH));
+    assertEquals(2L, statsMap.totalValue(MapStatisticsField.TOTAL_READS));
+    assertEquals(2L, statsMap.totalValue(MapStatisticsField.MATED_UNIQUE_READS));
+    assertEquals(0L, statsMap.totalValue(MapStatisticsField.MATED_AMBIG_READS));
+    assertEquals(0L, statsMap.totalValue(MapStatisticsField.UNMAPPED_NO_HITS));
+    assertEquals(0L, statsMap.totalValue(MapStatisticsField.UNMATED_UNIQUE_READS));
+    assertEquals(0L, statsMap.value(MapStatisticsField.MISSING, Arm.LEFT));
+    assertEquals(0L, statsMap.value(MapStatisticsField.MISSING, Arm.RIGHT));
+    assertEquals(100.0, statsMap.totalValueAsPercent(MapStatisticsField.MATED_UNIQUE_READS));
+    assertEquals(0.0, statsMap.totalValueAsPercent(MapStatisticsField.MATED_AMBIG_READS));
+    assertEquals(0.0, statsMap.totalValueAsPercent(MapStatisticsField.UNMAPPED_NO_HITS));
+    assertEquals(0.0, statsMap.totalValueAsPercent(MapStatisticsField.UNMATED_UNIQUE_READS));
   }
 
   //Test minInsertSize

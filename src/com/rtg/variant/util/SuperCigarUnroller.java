@@ -11,6 +11,8 @@
  */
 package com.rtg.variant.util;
 
+import java.io.ByteArrayOutputStream;
+
 import com.rtg.mode.DNA;
 import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.SuperCigarParser;
@@ -31,7 +33,7 @@ import com.rtg.variant.VariantAlignmentRecord;
  */
 public class SuperCigarUnroller extends SuperCigarParser {
 
-  protected StringBuilder mBuilder;
+  protected ByteArrayOutputStream mBaos = new ByteArrayOutputStream();
 
   /**
    * Set the SAM record, which must contain a super cigar and read delta attribute.
@@ -42,15 +44,14 @@ public class SuperCigarUnroller extends SuperCigarParser {
     final String cigar =  superCigar == null ? alignmentRecord.getCigar() : superCigar;
     super.setCigar(cigar, alignmentRecord.getCGReadDelta());
     setTemplateStart(alignmentRecord.getStart());
-    mBuilder = new StringBuilder();
   }
 
 
   /**
    * @return the read string, with spaces for CG gaps.
    */
-  public String getString() {
-    return mBuilder.toString();
+  public byte[] getByteArray() {
+    return mBaos.toByteArray();
   }
 
   /**
@@ -58,7 +59,7 @@ public class SuperCigarUnroller extends SuperCigarParser {
    */
   @Override
   public void parse() throws BadSuperCigarException {
-    mBuilder = new StringBuilder();
+    mBaos = new ByteArrayOutputStream();
     super.parse();
     //checkMismatchCounts();
   }
@@ -69,7 +70,7 @@ public class SuperCigarUnroller extends SuperCigarParser {
 
   @Override
   protected void doReadSoftClip(int readNt) {
-    mBuilder.append(DNA.valueChars()[readNt]);
+    mBaos.write(DNA.valueChars()[readNt]);
   }
 
   @Override
@@ -82,7 +83,7 @@ public class SuperCigarUnroller extends SuperCigarParser {
 
   @Override
   protected void doReadOnly(int readNt) {
-    mBuilder.append(DNA.valueChars()[readNt]);
+    mBaos.write(DNA.valueChars()[readNt]);
   }
 
   @Override
@@ -91,24 +92,24 @@ public class SuperCigarUnroller extends SuperCigarParser {
 
   @Override
   protected void doSubstitution(int readNt, int templateNt) {
-    mBuilder.append(DNA.valueChars()[readNt]);
+    mBaos.write(DNA.valueChars()[readNt]);
   }
 
   @Override
   protected void doEquality(int readNt, int nt) {
-    mBuilder.append(DNA.valueChars()[nt]);
+    mBaos.write(DNA.valueChars()[nt]);
   }
 
 
   @Override
   protected void doUnknownOnTemplate(int readNt, int templateNt) {
-    mBuilder.append(DNA.valueChars()[readNt]);
+    mBaos.write(DNA.valueChars()[readNt]);
   }
 
 
   @Override
   protected void doUnknownOnRead() {
-    mBuilder.append(DNA.N.name());
+    mBaos.write(DNA.N.name().charAt(0));
   }
 
 

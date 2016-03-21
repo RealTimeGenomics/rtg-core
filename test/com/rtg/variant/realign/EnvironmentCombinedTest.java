@@ -14,10 +14,9 @@ package com.rtg.variant.realign;
 
 import com.rtg.mode.DNA;
 import com.rtg.util.MaxShiftUtils;
-import com.rtg.variant.AbstractMachineErrorParams;
+import com.rtg.util.machine.MachineType;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.GenomePriorParamsBuilder;
-import com.rtg.variant.MachineErrorParams;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
@@ -25,7 +24,6 @@ import com.rtg.variant.bayes.complex.ComplexTemplate;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -40,7 +38,7 @@ public class EnvironmentCombinedTest extends TestCase {
     sam.setAlignmentStart(42);
     //System.err.println("start=" + sam.getAlignmentStart() + " end=" + sam.getAlignmentEnd());
     final VariantParams params = VariantParams.builder().create();
-    final AlignmentEnvironment se = new AlignmentEnvironmentRead(new VariantAlignmentRecord(sam), params, MachineErrorParams.builder().create());
+    final AlignmentEnvironment se = new AlignmentEnvironmentRead(new VariantAlignmentRecord(sam), params, MachineType.ILLUMINA_PE);
     final ComplexTemplate cot = new ComplexTemplate(new byte[] {}, "", 0, 0);
     //final EnvironmentCombined env = new EnvironmentCombined(se, se.start(), 0, cot, new byte[] {});
     final AlignmentEnvironment temEnv = new AlignmentEnvironmentGenomeSubstitution(0, 0, cot, new byte[] {});
@@ -71,7 +69,7 @@ public class EnvironmentCombinedTest extends TestCase {
     sam.setBaseQualityString("!!0AB");
     sam.setAlignmentStart(1);
     final VariantParams params = VariantParams.builder().create();
-    final AlignmentEnvironment se = new AlignmentEnvironmentRead(new VariantAlignmentRecord(sam), params, MachineErrorParams.builder().create());
+    final AlignmentEnvironment se = new AlignmentEnvironmentRead(new VariantAlignmentRecord(sam), params, MachineType.ILLUMINA_PE);
     final byte[] template = {1, 1, 2, 2, 3, 3, 1, 1};
     final ComplexTemplate cot = new ComplexTemplate(template, "", 2, 4);
     //final EnvironmentCombined env = new EnvironmentCombined(se, se.start(), 3, cot, new byte[] {4});
@@ -111,25 +109,15 @@ public class EnvironmentCombinedTest extends TestCase {
     return new VariantParamsBuilder().genomePriors(vpb).defaultQuality(10).create();
   }
 
-  private AbstractMachineErrorParams getSpecifiedError() {
-    return MachineErrorParams.builder()
-        .errorDelEventRate(0.01)
-        .errorDelDistribution(new double[] {0.6, 0.4})
-        .errorInsEventRate(0.02)
-        .errorInsDistribution(new double[] {0.7, 0.3})
-        .create();
-  }
-
   public void testBug1() {
     final byte[] template = DNA.stringDNAtoByte("CCCCCGGGGG");
     final ComplexTemplate cot = new ComplexTemplate(template, "", 5, 5);
     final VariantParams vp = getSpecifiedParams();
-    final AbstractMachineErrorParams me = getSpecifiedError();
     final SAMRecord samTA = new SAMRecord(new SAMFileHeader());
     samTA.setAlignmentStart(1);
     samTA.setReadString("CCCCCTAGGGGG");
     samTA.setCigarString("5=2I5=");
-    final AlignmentEnvironment se = new AlignmentEnvironmentRead(new VariantAlignmentRecord(samTA), vp, me);
+    final AlignmentEnvironment se = new AlignmentEnvironmentRead(new VariantAlignmentRecord(samTA), vp, MachineType.ILLUMINA_PE);
 
     //final EnvironmentCombined env = new EnvironmentCombined(se, se.start(), Utils.calculateDefaultMaxShift(samTA.getReadLength()), cot, DNA.stringDNAtoByte("TA"));
     final AlignmentEnvironment temEnv = new AlignmentEnvironmentGenomeSubstitution(0, template.length, cot, DNA.stringDNAtoByte("TA"));
@@ -147,12 +135,11 @@ public class EnvironmentCombinedTest extends TestCase {
     final byte[] template = DNA.stringDNAtoByte("CCCCCGGGGG");
     final ComplexTemplate cot = new ComplexTemplate(template, "", 5, 5);
     final VariantParams vp = getSpecifiedParams();
-    final AbstractMachineErrorParams me = getSpecifiedError();
     final SAMRecord samTA = new SAMRecord(new SAMFileHeader());
     samTA.setAlignmentStart(3);
     samTA.setReadString("CCCAGGGGG");
     samTA.setCigarString("3=1I5=");
-    final AlignmentEnvironment se = new AlignmentEnvironmentRead(new VariantAlignmentRecord(samTA), vp, me);
+    final AlignmentEnvironment se = new AlignmentEnvironmentRead(new VariantAlignmentRecord(samTA), vp, MachineType.ILLUMINA_PE);
 
     //final EnvironmentCombined env = new EnvironmentCombined(se, se.start(), Utils.calculateDefaultMaxShift(samTA.getReadLength()), cot, DNA.stringDNAtoByte("A"));
     final AlignmentEnvironment temEnv = new AlignmentEnvironmentGenomeSubstitution(2, template.length, cot, DNA.stringDNAtoByte("A"));

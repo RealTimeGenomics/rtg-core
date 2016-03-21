@@ -18,6 +18,8 @@ import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.machine.MachineType;
+import com.rtg.variant.realign.RealignParams;
 import com.rtg.variant.util.VariantUtils;
 
 import htsjdk.samtools.SAMReadGroupRecord;
@@ -63,10 +65,9 @@ public class DefaultMachineErrorChooser implements MachineErrorChooserInterface 
     "You are using a single set of machine error rates when combining reads from different platforms. Usually using platform specific error rates will give better results";
 
   @Override
-  public MachineErrorParams machineErrors(final VariantAlignmentRecord r) {
+  public MachineErrorParams machineErrors(SAMReadGroupRecord rg, boolean readPaired) {
     // Don't bother checking platforms if we've already warned
     if (!mWarned) {
-      final SAMReadGroupRecord rg = r.getReadGroup();
       if (rg != null) {
         final String platform = rg.getPlatform();
         if (mPlatform == null) {
@@ -80,5 +81,15 @@ public class DefaultMachineErrorChooser implements MachineErrorChooserInterface 
       }
     }
     return mMachineError;
+  }
+
+  @Override
+  public RealignParams realignParams(SAMReadGroupRecord rg, boolean readPaired) {
+    return machineErrors(rg, readPaired).realignParams();
+  }
+
+  @Override
+  public MachineType machineType(SAMReadGroupRecord rg, boolean readPaired) {
+    return machineErrors(rg, readPaired).machineType();
   }
 }

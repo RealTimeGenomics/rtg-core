@@ -12,7 +12,6 @@
 package com.rtg.variant.bayes.snp;
 
 import com.rtg.util.StringUtils;
-import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.bayes.EvidenceAcceptor;
 import com.rtg.variant.bayes.EvidenceInterface;
 
@@ -36,7 +35,7 @@ public class EvidenceMatcher<D extends EvidenceAcceptor> implements MatcherInter
   }
 
   @Override
-  public void match(int refPosition, int readBasesLeft, int readBasesRight, int readNt, int mapQ, int phred, AbstractMachineErrorParams me, int stateIndex) {
+  public void match(int refPosition, int readBasesLeft, int readBasesRight, int readNt, int mapQ, int phred, int stateIndex) {
     if (readNt > 0) {
       final EvidenceInterface ev = mCachedEvidenceFactory.evidence(readNt - 1, readBasesLeft, readBasesRight, mapQ, phred, stateIndex, 0, false);
       match(refPosition, ev);

@@ -11,14 +11,33 @@
  */
 package com.rtg.variant;
 
+import com.rtg.util.machine.MachineType;
+import com.rtg.variant.realign.RealignParams;
+
+import htsjdk.samtools.SAMReadGroupRecord;
+
 /**
  */
 public interface MachineErrorChooserInterface {
 
   /**
-   * @param r alignment record
+   * @param rg read group to select errors from
+   * @param readPaired is the read paired
    * @return appropriate machine errors for read
    */
-  AbstractMachineErrorParams machineErrors(VariantAlignmentRecord r);
+  PhredScaler machineErrors(SAMReadGroupRecord rg, boolean readPaired);
 
+  /**
+   * @param rg read group of intreset
+   * @param readPaired is the read paired
+   * @return realign parameters reflecting the machine errors observed in the read group
+   */
+  RealignParams realignParams(SAMReadGroupRecord rg, boolean readPaired);
+
+  /**
+   * @param rg read group of intreset
+   * @param readPaired is the read paired
+   * @return type of machine this read group is from
+   */
+  MachineType machineType(SAMReadGroupRecord rg, boolean readPaired);
 }

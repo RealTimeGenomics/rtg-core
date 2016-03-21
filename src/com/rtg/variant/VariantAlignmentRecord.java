@@ -11,6 +11,10 @@
  */
 package com.rtg.variant;
 
+import java.util.Arrays;
+
+import com.rtg.ngs.Arm;
+import com.rtg.reader.CgUtils;
 import com.rtg.reader.FastaUtils;
 import com.rtg.sam.MateInfo;
 import com.rtg.sam.ReaderRecord;
@@ -44,7 +48,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
   }
 
   private final byte[] mBases;
-  private final byte[] mQuality;
+  private final byte[] mRecalibratedQuality;
   private final String mCigar;
   private final byte mMappingQuality;
   private final byte mFlag; // Not the same semantics as SAM flag.
@@ -55,8 +59,8 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
 
   private final SAMReadGroupRecord mReadGroup;
   private final String mSuperCigar;
-  private final String mOverlapBases;
-  private final String mOverlapQuality;
+  private final byte[] mOverlapBases;
+  private final byte[] mOverlapQuality;
   private final String mOverlapInstructions;
   private final String mCgReadDelta;
 
@@ -65,7 +69,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
   private VariantAlignmentRecord(final int start, final int end) {
     super(0, start, end);
     mBases = null;
-    mQuality = null;
+    mRecalibratedQuality = null;
     mCigar = null;
     mMappingQuality = 0;
     mFlag = -1;
@@ -86,8 +90,9 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
    * Construct a new alignment record populated from a SAM record.
    * @param record SAM record. Requires header with sequence dictionary (for reference index lookup)
    * @param genome genome code for this record
+   * @param chooser machine error chooser
    */
-  public VariantAlignmentRecord(final SAMRecord record, final int genome) {
+  public VariantAlignmentRecord(final SAMRecord record, final int genome, MachineErrorChooserInterface chooser) {
     super(record.getReferenceIndex(), record.getAlignmentStart() - 1, record.getReadUnmappedFlag() ? record.getAlignmentStart() - 1 + record.getReadLength() : record.getAlignmentEnd()); // picard end position is 1-based inclusive == 0-based exclusive
     mGenome = genome;
     mFragmentLength = record.getInferredInsertSize();
@@ -95,21 +100,11 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
 
 
     final byte[] baseQualities = record.getBaseQualities();
-    mQuality = baseQualities;
 //    if (baseQualities.length == 0) {
-//      mQuality = baseQualities;
+//      mRecalibratedQuality = baseQualities;
 //    } else {
-//      mQuality = baseQualities;
+//      mRecalibratedQuality = baseQualities;
 
-      // Perform recalibration at this point?
-      //mQuality = Arrays.copyOf(baseQualities, baseQualities.length);
-      //final AbstractMachineErrorParams me = chooser == null ? null : chooser.machineErrors(var);
-      //final int phred = me == null ? scoreChar - '!' : me.getPhred(scoreChar, k + start);
-
-//      for (int i = 0; i < mQuality.length; i++) {
-//        mQuality[i] += FastqSequenceDataSource.PHRED_LOWER_LIMIT_CHAR;
-//      }
-//    }
     mCigar = record.getCigarString();
     mMappingQuality = (byte) record.getMappingQuality();
     mReadGroup = record.getReadGroup();
@@ -135,12 +130,70 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     }
     mFlag = (byte) f;
 
-    mOverlapQuality = mSuperCigar == null
+    final String overlapQuality = mSuperCigar == null
       ? SamUtils.allowEmpty(record.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_QUALITY))
-      : SamUtils.allowEmpty(record.getStringAttribute(SamUtils.CG_OVERLAP_QUALITY));
-    mOverlapBases = SamUtils.allowEmpty(record.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES));
+      : SamUtils.allowEmpty(record.getStringAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY));
+    final String cgOverlap = record.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES);
+    mOverlapBases = cgOverlap == null ? new byte[0] : cgOverlap.getBytes();
     mOverlapInstructions = record.getStringAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS);
     mCgReadDelta = record.getStringAttribute(SamUtils.CG_READ_DELTA);
+
+    // Perform recalibration at this point
+    final PhredScaler me = chooser == null ? null : chooser.machineErrors(record.getReadGroup(), record.getReadPairedFlag());
+
+    final int readLength = baseQualities.length + overlapQuality.length();
+
+    final int backStepPosition;
+    if (!overlapQuality.isEmpty()) {
+      // Work out CG backstep position
+      final boolean v1 = readLength == CgUtils.CG_RAW_READ_LENGTH;
+      if (v1) {
+        final boolean first = record.getReadPairedFlag() && record.getFirstOfPairFlag();
+        backStepPosition = record.getReadNegativeStrandFlag() ^ !first ? baseQualities.length - CgUtils.CG_OVERLAP_POSITION : CgUtils.CG_OVERLAP_POSITION;
+      } else {
+        backStepPosition = record.getReadNegativeStrandFlag() ? baseQualities.length - CgUtils.CG2_OVERLAP_POSITION : CgUtils.CG2_OVERLAP_POSITION;
+      }
+    } else {
+      backStepPosition = -1;
+    }
+
+    mRecalibratedQuality = new byte[baseQualities.length];
+    final int machineStep;
+    int machineCycle;
+    if (record.getReadNegativeStrandFlag()) {
+      machineCycle = readLength - 1;
+      machineStep = -1;
+    } else {
+      machineCycle = 0;
+      machineStep = 1;
+    }
+    int qualityPosition = 0;
+
+    final Arm arm = !record.getReadPairedFlag() || record.getFirstOfPairFlag() ? Arm.LEFT : Arm.RIGHT;
+    while (qualityPosition < backStepPosition && qualityPosition < mRecalibratedQuality.length) {
+      final byte quality = baseQualities[qualityPosition];
+      final int recalibrated = me == null ? quality : me.getScaledPhred(quality, machineCycle, arm);
+      mRecalibratedQuality[qualityPosition] = (byte) recalibrated;
+      machineCycle += machineStep;
+      qualityPosition++;
+    }
+
+    mOverlapQuality = new byte[overlapQuality.length()];
+    for (int i = 0; i < overlapQuality.length() && qualityPosition < mRecalibratedQuality.length; i++) {
+      final byte scoreChar = (byte) (overlapQuality.charAt(i) - FastaUtils.PHRED_LOWER_LIMIT_CHAR);
+      // Be careful to invoke the me.getScaledPhred that takes a char. It will correct for ascii encoding
+      final int recalibrated = me == null ? scoreChar : me.getScaledPhred(scoreChar, machineCycle, arm);
+      mOverlapQuality[i] = (byte) recalibrated;
+      machineCycle += machineStep;
+    }
+
+    while (qualityPosition < mRecalibratedQuality.length) {
+      final byte quality = baseQualities[qualityPosition];
+      final int recalibrated = me == null ? quality : me.getScaledPhred(quality, machineCycle, arm);
+      mRecalibratedQuality[qualityPosition] = (byte) recalibrated;
+      machineCycle += machineStep;
+      qualityPosition++;
+    }
   }
 
   /**
@@ -156,7 +209,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
    * @param record SAM record
    */
   public VariantAlignmentRecord(final SAMRecord record) {
-    this(record, record.getReferenceIndex());
+    this(record, record.getReferenceIndex(), new DefaultMachineErrorChooser());
   }
 
   public byte[] getRead() {
@@ -164,11 +217,11 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
   }
 
   /**
-   * Get the binary phred quality values as a byte array.
+   * Get the binary phred quality values as a byte array (not Ascii).
    * @return quality
    */
-  public byte[] getQuality() {
-    return mQuality;
+  public byte[] getRecalibratedQuality() {
+    return mRecalibratedQuality;
   }
 
   public String getCigar() {
@@ -203,6 +256,10 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     return (mFlag & FLAG_FIRST) != 0;
   }
 
+  public Arm getArm() {
+    return isFirst() ? Arm.LEFT : Arm.RIGHT;
+  }
+
   public boolean isNegativeStrand() {
     return (mFlag & FLAG_NEGATIVE) != 0;
   }
@@ -216,11 +273,12 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     return mSuperCigar;
   }
 
-  public String getOverlapBases() {
+  /** @return the quality of the overlapped bases as a byte[] (not ascii) */
+  public byte[] getOverlapBases() {
     return mOverlapBases;
   }
 
-  public String getOverlapQuality() {
+  public byte[] getOverlapQuality() {
     return mOverlapQuality;
   }
 
@@ -234,7 +292,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
 
   @Override
   public String toString() {
-    return getStart() + " " + getCigar() + " " + new String(getRead()) + " " + new String(FastaUtils.rawToAsciiQuality(getQuality()));
+    return getStart() + " " + getCigar() + " " + new String(getRead()) + " " + new String(FastaUtils.rawToAsciiQuality(getRecalibratedQuality()));
   }
 
   @Override
@@ -243,7 +301,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
       .compare(getStart(), rec.getStart())
       .compare(getCigar(), rec.getCigar())
       .compare(compare(getRead(), rec.getRead()))
-      .compare(compare(getQuality(), rec.getQuality()));
+      .compare(compare(getRecalibratedQuality(), rec.getRecalibratedQuality()));
     return helper.result();
   }
 
@@ -318,7 +376,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     if (r != 0) {
       return r;
     }
-    final int q = compare(var.getQuality(), getQuality());
+    final int q = compare(var.getRecalibratedQuality(), getRecalibratedQuality());
     if (q != 0) {
       return q;
     }
@@ -342,7 +400,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     if (sc != 0) {
       return sc;
     }
-    return compare(var.mOverlapBases + var.mOverlapQuality + var.mOverlapInstructions + var.mCgReadDelta, mOverlapBases + mOverlapQuality + mOverlapInstructions + mCgReadDelta);
+    return compare(Arrays.toString(var.mOverlapBases) + Arrays.toString(var.mOverlapQuality) + var.mOverlapInstructions + var.mCgReadDelta, Arrays.toString(mOverlapBases) + Arrays.toString(mOverlapQuality) + mOverlapInstructions + mCgReadDelta);
   }
 
   @Override

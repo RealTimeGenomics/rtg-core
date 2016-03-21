@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import com.rtg.mode.DnaUtils;
+import com.rtg.ngs.Arm;
 import com.rtg.sam.MateInfo;
 import com.rtg.util.MathUtils;
 import com.rtg.util.StringUtils;
@@ -311,14 +312,17 @@ public final class VariantUtils {
     sb.append("errorInsDistribution: ").append(Arrays.toString(p.errorInsDistribution())).append(StringUtils.LS);
     sb.append("machineType: ").append(p.machineType()).append(StringUtils.LS);
     sb.append("isCG: ").append(p.isCG()).append(StringUtils.LS);
-    sb.append("cgTrimOuterBases: ").append(p.cgTrimOuterBases()).append(StringUtils.LS);
     sb.append("overlapDistribution: ").append(Arrays.toString(p.overlapDistribution())).append(StringUtils.LS);
     sb.append("gapDistribution: ").append(Arrays.toString(p.gapDistribution())).append(StringUtils.LS);
     sb.append("smallGapDistribution: ").append(Arrays.toString(p.smallGapDistribution())).append(StringUtils.LS);
     sb.append("overlapDistribution2: ").append(Arrays.toString(p.overlapDistribution2())).append(StringUtils.LS);
     sb.append("quality curve: ");
-    for (byte q = 0; q < 64; q++) {
-      sb.append(p.getPhred(q, 0)).append(",");
+    for (Arm arm : Arm.values()) {
+      sb.append(arm).append("=");
+      for (byte q = 0; q < 64; q++) {
+        sb.append(p.getScaledPhred(q, 0, arm)).append(",");
+      }
+      sb.append(StringUtils.LS);
     }
     sb.append(StringUtils.LS);
     return sb.toString();
@@ -348,8 +352,8 @@ public final class VariantUtils {
     sb.append("# isCG: ").append(p.isCG()).append(StringUtils.LS);
     sb.append(StringUtils.LS);
 
-    sb.append(String.format("Locale.ROOT, # derived: error_snp_rate = %.6f" + StringUtils.LS, p.errorSnpRate()));
-    sb.append(String.format("Locale.ROOT, error_mnp_event_rate = %.6f" + StringUtils.LS, p.errorMnpEventRate()));
+    sb.append(String.format(Locale.ROOT, "# derived: error_snp_rate = %.6f" + StringUtils.LS, p.errorSnpRate()));
+    sb.append(String.format(Locale.ROOT, "error_mnp_event_rate = %.6f" + StringUtils.LS, p.errorMnpEventRate()));
     sb.append("error_mnp_distribution = ").append(toString(p.errorMnpDistribution())).append(StringUtils.LS);
     sb.append(StringUtils.LS);
 
@@ -364,17 +368,20 @@ public final class VariantUtils {
     sb.append(StringUtils.LS);
 
     sb.append("quality_curve = ");
-    for (byte q = 0; q < 64; q++) {
-      if (q != 0) {
-        sb.append(", ");
+    for (Arm arm : Arm.values()) {
+      sb.append(arm).append("=");
+      for (byte q = 0; q < 64; q++) {
+        if (q != 0) {
+          sb.append(", ");
+        }
+        sb.append(p.getScaledPhred(q, 0, arm));
       }
-      sb.append(p.getPhred(q, 0));
+      sb.append(StringUtils.LS).append("    ");
     }
     sb.append(StringUtils.LS);
     sb.append(StringUtils.LS);
 
     if (p.isCG()) {
-      sb.append("cg_trim_outer_bases = ").append(p.cgTrimOuterBases()).append(StringUtils.LS);
       sb.append("overlap = ").append(toString(p.overlapDistribution())).append(StringUtils.LS);
       sb.append("gap = ").append(toString(p.gapDistribution())).append(StringUtils.LS);
       sb.append("smallgap = ").append(toString(p.smallGapDistribution())).append(StringUtils.LS);

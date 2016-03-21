@@ -14,7 +14,6 @@ package com.rtg.variant.bayes.complex;
 
 import java.util.HashMap;
 
-import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.realign.AllPaths;
 import com.rtg.variant.realign.RealignParams;
 import com.rtg.variant.realign.ScoreFastUnderflow;
@@ -29,10 +28,9 @@ public final class ScoreInterfaceMemo implements ScoreInterfaceMemoInterface {
   final HashMap<RealignParams, AllPaths> mCacheCG = new HashMap<>();
 
   @Override
-  public AllPaths getScoreInterface(final AbstractMachineErrorParams me) {
-    final RealignParams params = me.realignParams();
+  public AllPaths getScoreInterface(final RealignParams params) {
     AllPaths s;
-    if (me.isCG() && EvidenceComplex.CG_ALLPATHS) {
+    if (params.machineType() != null && params.machineType().isCG() && EvidenceComplex.CG_ALLPATHS) {
       s = mCacheCG.get(params);
       if (s == null) {
         s = new ScoreFastUnderflowCG(params);

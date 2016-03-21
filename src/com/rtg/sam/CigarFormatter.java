@@ -227,7 +227,7 @@ public final class CigarFormatter {
   public static AlignmentMatch cigarSubsequence(final VariantAlignmentRecord alignmentRecord, final MachineErrorChooserInterface chooser, final int start, final int end, final VariantParams params) {
     final String cigar = alignmentRecord.getCigar();
     final byte[] read = alignmentRecord.getRead();
-    final byte[] qual = alignmentRecord.getQuality();
+    final byte[] qual = alignmentRecord.getRecalibratedQuality();
     if (read.length == 0) {
       return null; // For records that are non-primary and have no read or quality data stored with them
     }

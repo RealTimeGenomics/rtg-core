@@ -11,6 +11,8 @@
  */
 package com.rtg.variant;
 
+import com.rtg.util.machine.MachineType;
+
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
 import junit.framework.TestCase;
@@ -24,7 +26,7 @@ public class SamToMatchCigarTest extends TestCase {
     private final StringBuilder mSb = new StringBuilder();
 
     @Override
-    public void toMatcher(AbstractMachineErrorParams me, VariantAlignmentRecord var, int qdefault, final byte[] templateBytes) {
+    public void toMatcher(VariantAlignmentRecord var, MachineType machineType, int qdefault, final byte[] templateBytes) {
       mSb.append("called");
     }
 

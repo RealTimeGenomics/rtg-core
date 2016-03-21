@@ -14,6 +14,7 @@ package com.rtg.variant;
 import java.io.IOException;
 
 import com.reeltwo.jumble.annotations.TestClass;
+import com.rtg.ngs.Arm;
 import com.rtg.reader.FastaUtils;
 import com.rtg.util.Params;
 import com.rtg.util.machine.MachineType;
@@ -23,19 +24,20 @@ import com.rtg.variant.realign.RealignParams;
  * Abstract machine error parameters class
  */
 @TestClass("com.rtg.variant.MachineErrorParamsTest")
-public abstract class AbstractMachineErrorParams implements Params {
+public abstract class AbstractMachineErrorParams implements Params, PhredScaler {
 
   /**
    * Get a phred score from an ASCII quality character optionally
    * correcting it.
    * @param qualChar  original quality character.
    * @param readPos position on read of <code>qualChar</code>
+   * @param arm which arm of paired end reads is this. Use {@code LEFT} if single end.
    * @return the possibly corrected phred score.
    */
-  public final int getPhred(final char qualChar, int readPos) {
+  public final int getScaledPhredFromAscii(final char qualChar, int readPos, Arm arm) {
     assert qualChar >= FastaUtils.PHRED_LOWER_LIMIT_CHAR;
     final byte rawQuality = (byte) (qualChar - FastaUtils.PHRED_LOWER_LIMIT_CHAR);
-    return getPhred(rawQuality, readPos);
+    return getScaledPhred(rawQuality, readPos, arm);
   }
 
   /**
@@ -43,17 +45,10 @@ public abstract class AbstractMachineErrorParams implements Params {
    * correcting it.
    * @param quality original quality value.
    * @param readPos position on read of <code>qualChar</code>
+   * @param arm which arm of paired end reads is this. Use {@code LEFT} if single end.
    * @return the possibly corrected phred score.
    */
-  public abstract int getPhred(final byte quality, int readPos);
-
-  /**
-   * Get the flag to indicate if CG outer base trimming is to be used.
-   * @return the flag - true if trimming is to be used.
-   */
-  public boolean cgTrimOuterBases() {
-    return machineType() == MachineType.COMPLETE_GENOMICS && MachineErrorParamsBuilder.CG_TRIM;
-  }
+  public abstract int getScaledPhred(final byte quality, int readPos, Arm arm);
 
   /**
    * Get the CG v1 small gap distribution for 0,1,2,3.

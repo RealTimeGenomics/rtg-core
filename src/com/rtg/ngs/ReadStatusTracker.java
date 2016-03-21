@@ -167,92 +167,92 @@ public class ReadStatusTracker implements ReadStatusListener {
         final int status = mReadIdStatus[r];
         boolean leftNoHit = false;
 
-        mStatistics.increment(MapStatisticsField.TOTAL_READS, MapStatisticsArm.LEFT);
+        mStatistics.increment(MapStatisticsField.TOTAL_READS, Arm.LEFT);
         if (isSet(status, MATED_FIRST)) {
           if (isSet(status, UNIQUELY_MAPPED_FIRST)) {
-            mStatistics.increment(MapStatisticsField.MATED_UNIQUE_READS, MapStatisticsArm.LEFT);
+            mStatistics.increment(MapStatisticsField.MATED_UNIQUE_READS, Arm.LEFT);
           } else {
-            mStatistics.increment(MapStatisticsField.MATED_AMBIG_READS, MapStatisticsArm.LEFT);
+            mStatistics.increment(MapStatisticsField.MATED_AMBIG_READS, Arm.LEFT);
           }
         } else if (isSet(status, UNMATED_FIRST)) {
           if (isSet(status, UNIQUELY_MAPPED_FIRST)) {
-            mStatistics.increment(MapStatisticsField.UNMATED_UNIQUE_READS, MapStatisticsArm.LEFT);
+            mStatistics.increment(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.LEFT);
           } else {
-            mStatistics.increment(MapStatisticsField.UNMATED_AMBIG_READS, MapStatisticsArm.LEFT);
+            mStatistics.increment(MapStatisticsField.UNMATED_AMBIG_READS, Arm.LEFT);
           }
         } else {
           leftNoHit = true;
           if (isSet(status, BLOCKED_FIRST)) {
-            mStatistics.increment(MapStatisticsField.UNMAPPED_BLOCKED, MapStatisticsArm.LEFT);
+            mStatistics.increment(MapStatisticsField.UNMAPPED_BLOCKED, Arm.LEFT);
           } else if (isSet(status, MATED) && !(isSet(status, BLOCKED_FIRST) || isSet(status, BLOCKED_SECOND))) {
             if (!isSet(status, MATED_ALIGN_SCORE)) {
-              mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_POOR, MapStatisticsArm.LEFT);
+              mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_POOR, Arm.LEFT);
             } else {
-              mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_TOO_MANY, MapStatisticsArm.LEFT);
+              mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_TOO_MANY, Arm.LEFT);
             }
           } else {
             if (allhits) {
               if (isSet(status, MATCHED_FIRST) && isSet(status, UNMATED_COMPUTE_ALIGNMENT_FIRST)) {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, MapStatisticsArm.LEFT);
+                mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.LEFT);
               } else {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.LEFT);
+                mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT);
               }
             } else if (isSet(status, MATCHED_FIRST)) {
               if (!isSet(status, UNMATED_COMPUTE_ALIGNMENT_FIRST)) {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_TOPN, MapStatisticsArm.LEFT);
+                mStatistics.increment(MapStatisticsField.UNMAPPED_TOPN, Arm.LEFT);
               } else if (!isSet(status, UNMATED_ALIGN_SCORE_FIRST)) {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, MapStatisticsArm.LEFT);
+                mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.LEFT);
               } else {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_TOO_MANY, MapStatisticsArm.LEFT);
+                mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_TOO_MANY, Arm.LEFT);
               }
             } else {
-              mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.LEFT);
+              mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, Arm.LEFT);
             }
           }
         }
         if (pairedEnd) {
-          mStatistics.increment(MapStatisticsField.TOTAL_READS, MapStatisticsArm.RIGHT);
+          mStatistics.increment(MapStatisticsField.TOTAL_READS, Arm.RIGHT);
           if (isSet(status, MATED_SECOND)) {
             if (isSet(status, UNIQUELY_MAPPED_SECOND)) {
-              mStatistics.increment(MapStatisticsField.MATED_UNIQUE_READS, MapStatisticsArm.RIGHT);
+              mStatistics.increment(MapStatisticsField.MATED_UNIQUE_READS, Arm.RIGHT);
             } else {
-              mStatistics.increment(MapStatisticsField.MATED_AMBIG_READS, MapStatisticsArm.RIGHT);
+              mStatistics.increment(MapStatisticsField.MATED_AMBIG_READS, Arm.RIGHT);
             }
           } else if (isSet(status, UNMATED_SECOND)) {
             if (isSet(status, UNIQUELY_MAPPED_SECOND)) {
-              mStatistics.increment(MapStatisticsField.UNMATED_UNIQUE_READS, MapStatisticsArm.RIGHT);
+              mStatistics.increment(MapStatisticsField.UNMATED_UNIQUE_READS, Arm.RIGHT);
             } else {
-              mStatistics.increment(MapStatisticsField.UNMATED_AMBIG_READS, MapStatisticsArm.RIGHT);
+              mStatistics.increment(MapStatisticsField.UNMATED_AMBIG_READS, Arm.RIGHT);
             }
           } else {
             if (leftNoHit) {
               ((PairedEndMapStatistics) mStatistics).incrementBothUnmapped();
             }
             if (isSet(status, BLOCKED_SECOND)) {
-              mStatistics.increment(MapStatisticsField.UNMAPPED_BLOCKED, MapStatisticsArm.RIGHT);
+              mStatistics.increment(MapStatisticsField.UNMAPPED_BLOCKED, Arm.RIGHT);
             } else if (isSet(status, MATED) && !(isSet(status, BLOCKED_FIRST) || isSet(status, BLOCKED_SECOND))) {
               if (!isSet(status, MATED_ALIGN_SCORE)) {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_POOR, MapStatisticsArm.RIGHT);
+                mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_POOR, Arm.RIGHT);
               } else {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_TOO_MANY, MapStatisticsArm.RIGHT);
+                mStatistics.increment(MapStatisticsField.UNMAPPED_MATED_TOO_MANY, Arm.RIGHT);
               }
             } else {
               if (allhits) {
                 if (isSet(status, MATCHED_SECOND) && isSet(status, UNMATED_COMPUTE_ALIGNMENT_SECOND)) {
-                  mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, MapStatisticsArm.RIGHT);
+                  mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.RIGHT);
                 } else {
-                  mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.RIGHT);
+                  mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, Arm.RIGHT);
                 }
               } else if (isSet(status, MATCHED_SECOND)) {
                 if (!isSet(status, UNMATED_COMPUTE_ALIGNMENT_SECOND)) {
-                  mStatistics.increment(MapStatisticsField.UNMAPPED_TOPN, MapStatisticsArm.RIGHT);
+                  mStatistics.increment(MapStatisticsField.UNMAPPED_TOPN, Arm.RIGHT);
                 } else if (!isSet(status, UNMATED_ALIGN_SCORE_SECOND)) {
-                  mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, MapStatisticsArm.RIGHT);
+                  mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_POOR, Arm.RIGHT);
                 } else {
-                  mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_TOO_MANY, MapStatisticsArm.RIGHT);
+                  mStatistics.increment(MapStatisticsField.UNMAPPED_UNMATED_TOO_MANY, Arm.RIGHT);
                 }
               } else {
-                mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, MapStatisticsArm.RIGHT);
+                mStatistics.increment(MapStatisticsField.UNMAPPED_NO_HITS, Arm.RIGHT);
               }
             }
           }
@@ -271,13 +271,13 @@ public class ReadStatusTracker implements ReadStatusListener {
             break;
           case MATED_FIRST: //missing right arm
           case UNMAPPED_FIRST: //
-            mStatistics.increment(MapStatisticsField.MISSING, MapStatisticsArm.LEFT);
+            mStatistics.increment(MapStatisticsField.MISSING, Arm.LEFT);
             Diagnostic.developerLog("readId: " + r + " had no right side status. Status was: " + statusToString(mappingStatus));
             break;
             // missing left arm
           case MATED_SECOND: //
           case UNMAPPED_SECOND: //
-            mStatistics.increment(MapStatisticsField.MISSING, MapStatisticsArm.RIGHT);
+            mStatistics.increment(MapStatisticsField.MISSING, Arm.RIGHT);
             Diagnostic.developerLog("readId: " + r + " had no left side status. Status was: " + statusToString(mappingStatus));
             break;
           default:

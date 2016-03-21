@@ -185,7 +185,7 @@ public class CovariateMachineCycleTest extends TestCase {
     sam.setMappingQuality(40);
     sam.setAttribute(SamUtils.CG_SUPER_CIGAR, "20=5B15=");
     sam.setAttribute(SamUtils.CG_READ_DELTA, "AAAAA");
-    sam.setAttribute(SamUtils.CG_OVERLAP_QUALITY, "+++++");
+    sam.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, "+++++");
     sam.setReadPairedFlag(true);
     sam.setFirstOfPairFlag(true);
     sam.setAlignmentStart(1);

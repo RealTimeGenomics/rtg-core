@@ -9,17 +9,29 @@
  * code you accept the terms of that license agreement and any amendments to those terms that may
  * be made from time to time by Real Time Genomics Limited.
  */
-package com.rtg.ngs;
 
-import com.rtg.util.TestUtils;
+package com.rtg.variant;
+
+import com.rtg.ngs.Arm;
 
 import junit.framework.TestCase;
 
 /**
+ * @author kurt
  */
-public class MapStatisticsArmTest extends TestCase {
+public class ArmMachineCyclePhredScalerTest extends TestCase {
 
-  public void test() {
-    TestUtils.testEnum(MapStatisticsArm.class, "[LEFT, RIGHT, BOTH]");
+  PhredScaler getScaler() {
+    return new ArmMachineCyclePhredScaler(
+      (qual, readPosition, arm) -> qual * 2 - readPosition,
+      (qual, readPosition, arm) -> qual * 3 + readPosition
+
+    );
+  }
+  public void testLeftArm() {
+    assertEquals(35, getScaler().getScaledPhred((byte) 20, 5, Arm.LEFT));
+  }
+  public void testRightArm() {
+    assertEquals(65, getScaler().getScaledPhred((byte) 20, 5, Arm.RIGHT));
   }
 }

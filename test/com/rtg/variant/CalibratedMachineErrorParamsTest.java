@@ -22,6 +22,7 @@ import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Covariate;
 import com.rtg.calibrate.CovariateBaseQuality;
 import com.rtg.calibrate.CovariateEnum;
+import com.rtg.ngs.Arm;
 import com.rtg.util.Histogram;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.machine.MachineType;
@@ -131,11 +132,11 @@ public class CalibratedMachineErrorParamsTest extends TestCase {
       c.accumulate(cal);
       final CalibratedMachineErrorParams cp = new CalibratedMachineErrorParams(MachineType.ILLUMINA_PE, c, "readgroup1");
 
-      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(2), cp.getPhred((char) ('!' + 2), 1));
-      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(20), cp.getPhred((char) ('!' + 20), 1));
-      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(30), cp.getPhred((char) ('!' + 30), 1));
-      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(32), cp.getPhred((char) ('!' + 32), 1));
-      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(36), cp.getPhred((char) ('!' + 36), 1));
+      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(2), cp.getScaledPhredFromAscii((char) ('!' + 2), 1, Arm.LEFT));
+      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(20), cp.getScaledPhredFromAscii((char) ('!' + 20), 1, Arm.LEFT));
+      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(30), cp.getScaledPhredFromAscii((char) ('!' + 30), 1, Arm.LEFT));
+      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(32), cp.getScaledPhredFromAscii((char) ('!' + 32), 1, Arm.LEFT));
+      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(36), cp.getScaledPhredFromAscii((char) ('!' + 36), 1, Arm.LEFT));
     } finally {
       assertTrue(FileHelper.deleteAll(dir));
     }
@@ -148,7 +149,7 @@ public class CalibratedMachineErrorParamsTest extends TestCase {
       final Calibrator c = new Calibrator(Calibrator.getCovariateSet(cal), null);
       c.accumulate(cal);
       final CalibratedMachineErrorParams cp = new CalibratedMachineErrorParams(MachineType.ILLUMINA_PE, c, "readgroup1");
-      assertEquals(3, cp.getPhred((char) ('!' + 2), 1));
+      assertEquals(3, cp.getScaledPhredFromAscii((char) ('!' + 2), 1, Arm.LEFT));
     } finally {
       assertTrue(FileHelper.deleteAll(dir));
     }
@@ -161,12 +162,12 @@ public class CalibratedMachineErrorParamsTest extends TestCase {
       final Calibrator c = new Calibrator(Calibrator.getCovariateSet(cal), null);
       c.accumulate(cal);
       final CalibratedMachineErrorParams cp = new CalibratedMachineErrorParams(MachineType.ILLUMINA_PE, c, "readgroup1");
-      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(2), cp.getPhred((char) ('!' + 2), 1));
-      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(36), cp.getPhred((char) ('!' + 36), 1));
-      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(63), cp.getPhred((char) ('!' + 63), 1));
+      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(2), cp.getScaledPhredFromAscii((char) ('!' + 2), 1, Arm.LEFT));
+      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(36), cp.getScaledPhredFromAscii((char) ('!' + 36), 1, Arm.LEFT));
+      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(63), cp.getScaledPhredFromAscii((char) ('!' + 63), 1, Arm.LEFT));
       // test that we return the max when asking for higher values
-      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(63), cp.getPhred((char) ('!' + 64), 1));
-      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(63), cp.getPhred((char) ('!' + 128), 1));
+      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(63), cp.getScaledPhredFromAscii((char) ('!' + 64), 1, Arm.LEFT));
+      assertEquals((int) TEST_CALIBRATION_QUALITIES.get(63), cp.getScaledPhredFromAscii((char) ('!' + 128), 1, Arm.LEFT));
 
     } finally {
       assertTrue(FileHelper.deleteAll(dir));

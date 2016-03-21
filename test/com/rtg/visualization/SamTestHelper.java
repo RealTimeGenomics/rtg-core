@@ -36,7 +36,7 @@ final class SamTestHelper {
     rec.setReferenceName(TEMPLATE_NAME);
     rec.setReadBases(read.getBytes());
     rec.setAttribute(SamUtils.CG_SUPER_CIGAR, xs);
-    rec.setAttribute(SamUtils.CG_OVERLAP_QUALITY, xq);
+    rec.setAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY, xq);
     rec.setAttribute(SamUtils.CG_READ_DELTA, xr);
     return rec;
   }

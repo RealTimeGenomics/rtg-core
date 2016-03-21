@@ -78,7 +78,7 @@ public class SuperCigarValidator extends SuperCigarParser {
     final byte[] xq = qualityOverlap == null ? null : FastaUtils.asciiToRawQuality(qualityOverlap);
     final int unrollLen = samQualities.length + xqlength;
     if (unrollLen != CgUtils.CG_RAW_READ_LENGTH && unrollLen != CgUtils.CG2_RAW_READ_LENGTH) {
-      throw new BadSuperCigarException("SAM record qualities plus " + SamUtils.CG_OVERLAP_QUALITY + " not expected length. Was: " + unrollLen + " expected: " + CgUtils.CG_RAW_READ_LENGTH + " or " + CgUtils.CG2_RAW_READ_LENGTH);
+      throw new BadSuperCigarException("SAM record qualities plus " + SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY + " not expected length. Was: " + unrollLen + " expected: " + CgUtils.CG_RAW_READ_LENGTH + " or " + CgUtils.CG2_RAW_READ_LENGTH);
     }
     assert dest.length == CgUtils.CG_RAW_READ_LENGTH || dest.length == CgUtils.CG2_RAW_READ_LENGTH;
     final boolean v2 = dest.length == CgUtils.CG2_RAW_READ_LENGTH;
@@ -102,7 +102,7 @@ public class SuperCigarValidator extends SuperCigarParser {
     super.setCigar(samRecord.getStringAttribute(SamUtils.CG_SUPER_CIGAR), samRecord.getStringAttribute(SamUtils.CG_READ_DELTA));
     setTemplateStart(samRecord.getAlignmentStart() - 1);
     mIsReverseComplement = samRecord.getReadNegativeStrandFlag();
-    mXQField = samRecord.getStringAttribute(SamUtils.CG_OVERLAP_QUALITY);
+    mXQField = samRecord.getStringAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY);
 
     if (mQualities == null || mQualities.length != mSdfQualities.length) {
       mQualities = new byte[mSdfQualities.length];
@@ -166,7 +166,7 @@ public class SuperCigarValidator extends SuperCigarParser {
 
   protected void checkOverlap() {
     if (mReusedTemplate && mXQField == null) {
-      setInvalid("Overlap described but no " + SamUtils.CG_OVERLAP_QUALITY + " field present in SAM record, " + mSamRecord.getSAMString().trim());
+      setInvalid("Overlap described but no " + SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY + " field present in SAM record, " + mSamRecord.getSAMString().trim());
     }
   }
 
