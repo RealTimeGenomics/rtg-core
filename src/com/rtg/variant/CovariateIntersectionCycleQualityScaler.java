@@ -78,7 +78,8 @@ class CovariateIntersectionCycleQualityScaler implements PhredScaler {
         if (mCurve[i][j] == -1 && qualityErrors[i] > qualityCalibrationMinEvidence && cycleErrors[j] > qualityCalibrationMinEvidence) {
           final int qualityAdjust = CalibratedMachineErrorParams.countsToEmpiricalQuality(qualityErrors[i], qualityTotals[i], globalErrorRate) - globalPhred;
           final int positionAdjust = CalibratedMachineErrorParams.countsToEmpiricalQuality(cycleErrors[j], cycleTotals[j], globalErrorRate) - globalPhred;
-          mCurve[i][j] = (globalPhred * 2 + qualityAdjust + positionAdjust) / 2;
+          // >>> 1 to convince findbugs this is overflow safe
+          mCurve[i][j] = (globalPhred * 2 + qualityAdjust + positionAdjust) >>> 1;
         }
       }
     }
