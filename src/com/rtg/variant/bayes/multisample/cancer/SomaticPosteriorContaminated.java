@@ -13,8 +13,6 @@
 package com.rtg.variant.bayes.multisample.cancer;
 
 import com.rtg.util.MathUtils;
-import com.rtg.variant.bayes.AlleleBalanceProbability;
-import com.rtg.variant.bayes.BinomialAlleleBalance;
 import com.rtg.variant.bayes.Code;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
