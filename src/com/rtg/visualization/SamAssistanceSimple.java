@@ -21,11 +21,14 @@ import htsjdk.samtools.SAMRecord;
  */
 public class SamAssistanceSimple implements SamAssistance {
 
-  private static final String INVALID_CIGAR = "Invalid cigar : ";
+  private static final String INVALID_CIGAR = "Invalid cigar: ";
 
   @Override
   public String[] samToReads(final SAMRecord sam, final String template, byte[] templateBytes, final int readStart, final boolean displayDots) {
     final String read = sam.getReadString();
+    if ("*".equals(read)) {
+      throw new IllegalStateException("No read sequence");
+    }
     final String cigar = sam.getCigarString();
     return new String[] {cigarToReads(cigar, read, template, readStart, displayDots)};
   }

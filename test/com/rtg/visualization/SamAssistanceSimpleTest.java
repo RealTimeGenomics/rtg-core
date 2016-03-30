@@ -15,7 +15,6 @@ import com.rtg.sam.BadSuperCigarException;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -29,8 +28,8 @@ public class SamAssistanceSimpleTest extends TestCase {
     try {
       check("ACGT", "ACGT", "4Z", new int[] {0, 0, 0, 0});
       fail();
-    } catch (final RuntimeException e) {
-      assertEquals("Invalid cigar : 4Z", e.getMessage());
+    } catch (final IllegalStateException e) {
+      assertEquals("Invalid cigar: 4Z", e.getMessage());
     }
 
     check("A  C", "ACGT", "1M2N1M", new int[] {0, 0, 0, 0});
