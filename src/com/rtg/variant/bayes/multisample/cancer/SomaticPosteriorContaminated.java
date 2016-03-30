@@ -46,7 +46,7 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
         assert k >= 0 && k < code.size() : k + " " + code.size();
         final double pj = cancer.posteriorLn0(k);
         final AlleleBalanceProbability alleleBalance = new BinomialAlleleBalance(0.5);
-        final double q = MathUtils.log(qa[i][j]) + mArithmetic.ln2Poss(alleleBalance.alleleBalanceLn(i, normal.hypotheses(), normal.statistics()));
+        final double q = MathUtils.log(qa[i][j]) + mArithmetic.ln2Poss(alleleBalance.alleleBalanceLn(i, normal.hypotheses(), cancer.statistics()));
         final double t = q + pi + pj;
         mPosterior[i][j] = t;
       }
