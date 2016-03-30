@@ -13,6 +13,8 @@
 package com.rtg.variant.bayes.multisample.cancer;
 
 import com.rtg.util.MathUtils;
+import com.rtg.variant.bayes.AlleleBalanceProbability;
+import com.rtg.variant.bayes.BinomialAlleleBalance;
 import com.rtg.variant.bayes.Code;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
@@ -43,7 +45,8 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
         final int k = code.code(i, j); // code point for normal(i) x cancer(j)
         assert k >= 0 && k < code.size() : k + " " + code.size();
         final double pj = cancer.posteriorLn0(k);
-        final double q = MathUtils.log(qa[i][j]);
+        final AlleleBalanceProbability alleleBalance = new BinomialAlleleBalance(0.5);
+        final double q = MathUtils.log(qa[i][j]) + mArithmetic.ln2Poss(alleleBalance.alleleBalanceLn(i, normal.hypotheses(), normal.statistics()));
         final double t = q + pi + pj;
         mPosterior[i][j] = t;
       }
