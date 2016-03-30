@@ -40,17 +40,16 @@ public class IndelDetector implements EvidenceAcceptor {
 
   @Override
   public void increment(EvidenceInterface evidence) {
-    if (evidence instanceof EvidenceIndel) {
-      mIndelLength = Math.max(((EvidenceIndel) evidence).maxIndelLength(), mIndelLength);
-    }
     if (evidence == null) {
       mNonIndelCount++;
     } else {
+      assert evidence instanceof EvidenceIndel;
+      mIndelLength = Math.max(((EvidenceIndel) evidence).maxIndelLength(), mIndelLength);
       if (evidence.mapError() < Model.AMBIGUITY_THRESHOLD) {
-        if (evidence.read() == 0) {
+        if (evidence.read() == EvidenceIndel.INSERT) {
           mNonTrivialInsertCount++;
         } else {
-          assert evidence.read() == 1;
+          assert evidence.read() == EvidenceIndel.DELETE;
           mNonTrivialDeletionCount++;
         }
       }
