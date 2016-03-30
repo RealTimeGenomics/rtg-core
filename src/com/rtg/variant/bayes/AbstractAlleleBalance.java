@@ -36,7 +36,7 @@ public abstract class AbstractAlleleBalance implements AlleleBalanceProbability 
       ) {
       return LogPossibility.SINGLETON.one();
     }
-    final double trials = statistics instanceof  StatisticsDouble
+    final double trials = statistics instanceof StatisticsDouble
       ? ((StatisticsDouble) statistics).exactCoverage()
       : statistics.coverage();
 
@@ -46,13 +46,13 @@ public abstract class AbstractAlleleBalance implements AlleleBalanceProbability 
     final int a = hypotheses.code().a(i);
     final int b = hypotheses.code().bc(i);
     final AlleleStatistics<?> counts = statistics.counts();
-    // This reflection for the case a == ref seems important.
     final double vac = counts.count(a) - counts.error(a);
     if (a == b) {
        //double error = statistics.totalError() / statistics.coverage();
        //alleleBalanceHomozygousLn(1.0 - error, trials, vac);
       return LogPossibility.SINGLETON.one();
     }
+    assert b < counts.getDescription().size() : b + " " + counts.getDescription().size() + "\nHYP=" + hypotheses.toString() + "\nDESC=" + counts.getDescription().toString();
     final double bCount = counts.count(b) - counts.error(b);
     return alleleBalanceHeterozygousLn(mExpected, trials, vac, bCount);
   }

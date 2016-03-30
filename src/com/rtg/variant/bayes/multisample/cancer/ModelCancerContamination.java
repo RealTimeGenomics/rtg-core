@@ -27,7 +27,6 @@ import com.rtg.variant.bayes.Statistics;
  * @param <S> type of underlying hypotheses
  */
 public class ModelCancerContamination<S extends Hypotheses<? extends Description>> extends Model<Description> {
-
   private final S mSubHypotheses;
 
   private final double mContamination;
@@ -56,6 +55,14 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
     mContamination = original.mContamination;
     mContaminationM = original.mContaminationM;
 
+  }
+
+  @Override
+  public void freeze() {
+    // Avoid doing the allele balance calculation of the standard model since it doesn't play
+    // well with the cross-product hypotheses used in this model.
+    assert !mFrozen : "Should only freeze once";
+    mFrozen = true;
   }
 
   private double[] oneDprob(final EvidenceInterface evidence) {
