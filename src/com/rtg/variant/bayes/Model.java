@@ -203,6 +203,11 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     return new HypothesisScore(new ArrayGenotypeMeasure(arith, posteriors, hypotheses));
   }
 
+  @Override
+  public AlleleBalanceProbability alleleBalanceProbability() {
+    return mAlleleBalance;
+  }
+
   private double posterior(final PossibilityArithmetic arith, final int i, final Factor<?> hypotheses) {
     assert mFrozen : "You should freeze the model before calling posterior methods";
     return arith.multiply(mPosteriors[i], hypotheses.p(i));

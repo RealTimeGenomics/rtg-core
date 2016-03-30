@@ -13,6 +13,7 @@
 package com.rtg.variant.bayes.multisample.cancer;
 
 import com.rtg.util.MathUtils;
+import com.rtg.variant.bayes.AlleleBalanceProbability;
 import com.rtg.variant.bayes.Code;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
@@ -37,14 +38,14 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
     assert cancer instanceof ModelCancerContamination;
     assert !cancer.haploid(); // The cancer model is a cross-product of normal x cancer hypotheses
     final Code code = cancer.hypotheses().code();
-    //    final AlleleBalanceProbability alleleBalance = new BinomialAlleleBalance(0.5);
+    final AlleleBalanceProbability alleleBalance = normal.alleleBalanceProbability();
     for (int i = 0; i < mPosterior.length; i++) {
       final double pi = hypotheses.arithmetic().poss2Ln(hypotheses.p(i)) + normal.posteriorLn0(i);
       for (int j = 0; j < mPosterior.length; j++) {
         final int k = code.code(i, j); // code point for normal(i) x cancer(j)
         assert k >= 0 && k < code.size() : k + " " + code.size();
         final double pj = cancer.posteriorLn0(k);
-        final double q = MathUtils.log(qa[i][j]); // + mArithmetic.ln2Poss(alleleBalance.alleleBalanceLn(i, normal.hypotheses(), cancer.statistics()));
+        final double q = MathUtils.log(qa[i][j]) + mArithmetic.ln2Poss(alleleBalance.alleleBalanceLn(i, normal.hypotheses(), cancer.statistics()));
         final double t = q + pi + pj;
         mPosterior[i][j] = t;
       }

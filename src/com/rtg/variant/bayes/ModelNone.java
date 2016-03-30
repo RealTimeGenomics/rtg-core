@@ -98,6 +98,11 @@ public final class ModelNone<D extends Description> implements ModelInterface<D>
   }
 
   @Override
+  public AlleleBalanceProbability alleleBalanceProbability() {
+    return null;
+  }
+
+  @Override
   public PossibilityArithmetic arithmetic() {
     return mHypotheses.arithmetic();
   }

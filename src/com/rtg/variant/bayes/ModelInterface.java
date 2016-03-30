@@ -73,6 +73,12 @@ public interface ModelInterface<D extends Description> extends EvidenceAcceptor,
   HypothesisScore best(HypothesesPrior<?> hypotheses);
 
   /**
+   * Return the object for computing the allele balance probability used with this model.
+   * @return allele balance computer
+   */
+  AlleleBalanceProbability alleleBalanceProbability();
+
+  /**
    * @return a copy of this model
    */
   ModelInterface<D> copy();
