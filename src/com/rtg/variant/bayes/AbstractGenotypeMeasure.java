@@ -111,7 +111,7 @@ public abstract class AbstractGenotypeMeasure implements GenotypeMeasure {
     sb.append("AbstractGenotypeMeasure{").append("mBest=").append(mBest).append(" [");
     String join = "";
     for (int i = 0; i < size(); i++) {
-      sb.append(join).append(measure(i));
+      sb.append(join).append(hypotheses().name(i)).append("=").append(measure(i));
       join = ", ";
     }
     sb.append("]}");

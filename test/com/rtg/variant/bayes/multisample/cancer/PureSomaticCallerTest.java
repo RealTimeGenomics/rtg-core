@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.rtg.reference.Ploidy;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.Variant;
@@ -49,18 +50,16 @@ import com.rtg.variant.util.arithmetic.SimplePossibility;
 public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description> {
 
   @Override
-  protected List<ModelInterface<Description>> getModel() {
-    return getNormalModel();
+  protected List<ModelInterface<Description>> getModel(Ploidy ploidy, double contamination, double same) {
+    if (contamination > 0.0) {
+      throw new IllegalArgumentException("Contamination should be 0 for pure somatic tests");
+    }
+    return getNormalModel(ploidy, 0.99);
   }
 
   @Override
-  protected AbstractSomaticCaller getSomaticCaller(final double mutation, final Hypotheses<Description> hypotheses, String normalName, String cancerName, VariantParams params) {
-    return new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0.0), new SomaticPriorsFactory<>(hypotheses, 0), params, 1, 1);
-  }
-
-  @Override
-  protected Hypotheses<Description> getCancerHypotheses(double same, int ref) {
-    return simpleHomoHyps(same, ref);
+  protected AbstractSomaticCaller getSomaticCaller(final Hypotheses<Description> hypotheses, VariantParams params, double phi, double psi) {
+    return new PureSomaticCaller(new SomaticPriorsFactory<>(hypotheses, 0.0), new SomaticPriorsFactory<>(hypotheses, 0), params, phi, psi);
   }
 
   /** The result of 3 A reads, when reference is also A. */
@@ -85,7 +84,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
   public void testIdentical() throws InvalidParamsException, IOException {
     final byte refNt = DNARange.G;
     final int refCode = refNt - 1;
-    final HypothesesPrior<Description> hypotheses = simpleHomoHyps(0.7, refCode);
+    final HypothesesPrior<Description> hypotheses = simpleHyps(0.7, refCode, Ploidy.HAPLOID);
     final ModelInterface<?> model0 = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
     final ModelInterface<?> model1 = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
     final byte[] ref = new byte[14];
@@ -95,7 +94,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
     model0.increment(ev);
     model1.increment(ev);
     final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).create();
-    final AbstractSomaticCaller ccs = getSomaticCaller(0.3, simpleHomoHyps(0.7, refCode), "A", "C", params);
+    final AbstractSomaticCaller ccs = getSomaticCaller(simpleHyps(0.7, refCode, Ploidy.HAPLOID), params);
     ccs.integrity();
     final List<ModelInterface<?>> models = new ArrayList<>();
     models.add(model0);
@@ -118,7 +117,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
   public void testCancer1() throws InvalidParamsException, IOException {
     final byte refNt = DNARange.G;
     final int refCode = refNt - 1;
-    final HypothesesPrior<Description> hypotheses = simpleHomoHyps(0.7, refCode);
+    final HypothesesPrior<Description> hypotheses = simpleHyps(0.7, refCode, Ploidy.HAPLOID);
     final ModelInterface<?> model0 = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
     final ModelInterface<?> model1 = new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance());
     final byte[] ref = new byte[14];
@@ -134,7 +133,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
       model1.increment(evc);
     }
     final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).create();
-    final AbstractSomaticCaller ccs = getSomaticCaller(0.003, hypotheses, "A", "C", params);
+    final AbstractSomaticCaller ccs = getSomaticCaller(hypotheses, params);
     ccs.integrity();
     final List<ModelInterface<?>> models = new ArrayList<>();
     models.add(model0);
@@ -150,7 +149,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
   public void testQ() {
     final GenomePriorParams params = GenomePriorParams.builder().create();
     final VariantParams vParams = VariantParams.builder().genomePriors(params).create();
-    final AbstractSomaticCaller ccs = getSomaticCaller(0.3, new HypothesesSnp(SimplePossibility.SINGLETON, params, false, 0), null, null, vParams);
+    final AbstractSomaticCaller ccs = getSomaticCaller(new HypothesesSnp(SimplePossibility.SINGLETON, params, false, 0), vParams);
     ccs.integrity();
     final String exp = ""
         + "length=10" + LS

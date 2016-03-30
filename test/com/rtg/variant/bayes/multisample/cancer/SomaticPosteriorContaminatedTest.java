@@ -14,6 +14,7 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 import static com.rtg.util.StringUtils.LS;
 
+import com.rtg.reference.Ploidy;
 import com.rtg.variant.SomaticParamsBuilder;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.Description;
@@ -56,7 +57,7 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
     final int numReads = 3;
     final int refNt = DNARange.A;
     final int refCode = refNt - 1;
-    final Hypotheses<Description> simpleHomoHyps = AbstractSomaticCallerTest.simpleHomoHyps(0.99, refCode);
+    final Hypotheses<Description> simpleHomoHyps = AbstractSomaticCallerTest.simpleHyps(0.99, refCode, Ploidy.HAPLOID);
     final HypothesesCancer<Hypotheses<Description>> hypc = new HypothesesCancer<>(simpleHomoHyps, SimplePossibility.SINGLETON);
     final ModelCancerContamination<Hypotheses<Description>> cancer = new ModelCancerContamination<>(hypc, contamination, new StatisticsSnp(hypc.description()), new NoAlleleBalance());
     final ModelInterface<Description> normal = new Model<>(simpleHomoHyps, new StatisticsSnp(simpleHomoHyps.description()), new NoAlleleBalance());
@@ -104,7 +105,7 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
     final int numReads = 3;
     final int refNt = DNARange.A;
     final int refCode = refNt - 1;
-    final Hypotheses<Description> simpleHomoHyps = AbstractSomaticCallerTest.simpleHomoHyps(0.99, refCode);
+    final Hypotheses<Description> simpleHomoHyps = AbstractSomaticCallerTest.simpleHyps(0.99, refCode, Ploidy.HAPLOID);
     final HypothesesCancer<Hypotheses<Description>> hypc = new HypothesesCancer<>(simpleHomoHyps, SimplePossibility.SINGLETON);
     final ModelCancerContamination<Hypotheses<Description>> cancer = new ModelCancerContamination<>(hypc, 0.0, new StatisticsSnp(hypc.description()), new NoAlleleBalance());
     final Evidence eva = new EvidenceQ(simpleHomoHyps.description(), 0, 0, 0, 0.05, 0.05, true, false, false, false);

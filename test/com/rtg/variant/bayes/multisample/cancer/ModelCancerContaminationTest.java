@@ -14,6 +14,7 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 import static com.rtg.util.StringUtils.LS;
 
+import com.rtg.reference.Ploidy;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Evidence;
 import com.rtg.variant.bayes.Hypotheses;
@@ -29,7 +30,7 @@ import junit.framework.TestCase;
 public class ModelCancerContaminationTest extends TestCase {
 
   private HypothesesCancer<Hypotheses<Description>> getTestCats() {
-    final Hypotheses<Description> hyps = AbstractSomaticCallerTest.simpleHomoHyps(0.99, 0);
+    final Hypotheses<Description> hyps = AbstractSomaticCallerTest.simpleHyps(0.99, 0, Ploidy.HAPLOID);
     return new HypothesesCancer<>(hyps, SimplePossibility.SINGLETON);
   }
 

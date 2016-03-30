@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.rtg.reference.Ploidy;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.variant.SomaticParamsBuilder;
@@ -27,7 +28,6 @@ import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.bayes.Description;
-import com.rtg.variant.bayes.Evidence;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
@@ -35,7 +35,6 @@ import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.snp.DescriptionCommon;
 import com.rtg.variant.bayes.snp.DescriptionSnp;
-import com.rtg.variant.bayes.snp.EvidenceQ;
 import com.rtg.variant.bayes.snp.HypothesesNone;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.bayes.snp.StatisticsSnp;
@@ -53,9 +52,9 @@ import junit.framework.TestCase;
  */
 public abstract class AbstractSomaticCallerTest<D extends Description> extends TestCase {
 
-  protected static HypothesesPrior<Description> simpleHomoHyps(final double same, final int ref) {
+  protected static HypothesesPrior<Description> simpleHyps(final double same, final int ref, Ploidy ploidy) {
     final DescriptionCommon desc = DescriptionSnp.SINGLETON;
-    return new HypothesesPrior<Description>(desc, SimplePossibility.SINGLETON, true, ref) {
+    return new HypothesesPrior<Description>(desc, SimplePossibility.SINGLETON, ploidy == Ploidy.HAPLOID, ref) {
 
       @Override
       public double p(int hyp) {
@@ -69,20 +68,32 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     };
   }
 
-  List<ModelInterface<Description>> getNormalModel() {
+  ModelIncrementer<Description> getNormalIncremeter(Ploidy ploidy) {
+    return getNormalIncremeter(ploidy, 0.99);
+  }
+  ModelIncrementer<Description> getNormalIncremeter(Ploidy ploidy, double same) {
+    return new ModelIncrementer<>(getNormalModel(ploidy, same));
+  }
+  ModelIncrementer<D> getIncrementer(Ploidy ploidy, double contamination, double same) {
+    return new ModelIncrementer<>(getModel(ploidy, contamination, same));
+  }
+
+  List<ModelInterface<Description>> getNormalModel(Ploidy ploidy, double same) {
     final List<ModelInterface<Description>> models = new ArrayList<>();
     for (int ref = 0; ref < 4; ref++) {
-      final Hypotheses<Description> hyps = simpleHomoHyps(0.99, ref);
+      final Hypotheses<Description> hyps = simpleHyps(same, ref, ploidy);
       models.add(new Model<>(hyps, new StatisticsSnp(hyps.description()), new NoAlleleBalance()));
     }
     return models;
   }
 
-  protected abstract List<ModelInterface<D>> getModel();
+  protected abstract List<ModelInterface<D>> getModel(Ploidy ploidy, double contamination, double same);
 
-  protected abstract AbstractSomaticCaller getSomaticCaller(final double mutation, final Hypotheses<D> hypotheses, String normalName, String cancerName, VariantParams params);
+  protected AbstractSomaticCaller getSomaticCaller(final Hypotheses<D> hypotheses, VariantParams params) {
+    return getSomaticCaller(hypotheses, params, 1.0, 1.0);
+  }
 
-  protected abstract Hypotheses<D> getCancerHypotheses(final double same, final int ref);
+  protected abstract AbstractSomaticCaller getSomaticCaller(final Hypotheses<D> hypotheses, VariantParams params, double phi, double psi);
 
   protected VariantOutputVcfFormatter getFormatter() {
     return getFormatter(null);
@@ -103,27 +114,19 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
    * @return the Bayesian after the reads.
    */
   protected final List<ModelInterface<D>> doReads(final int numReads, final int readNt) {
-    final List<ModelInterface<D>> models = getModel();
-    for (final ModelInterface<D> m : models) {
-      for (int i = 0; i < numReads; i++) {
-        final Evidence ev = new EvidenceQ(m.description(), readNt, 0, 0, 0.05, 0.05, true, false, false, false);
-        m.increment(ev);
-      }
-      m.freeze();
+    final double[] qualities = new double[numReads];
+    for (int i = 0; i < numReads; i++) {
+      qualities[i] = 0.05;
     }
-    return models;
+    return doReads(readNt, qualities);
+  }
+
+  protected final List<ModelInterface<D>> doReads(final int readNt, double... qualities) {
+    return getIncrementer(Ploidy.HAPLOID, 0.0, 0.99).doReads(readNt, qualities).freeze();
   }
 
   protected List<ModelInterface<Description>> doNormalReads(final int numReads, final int readNt) {
-    final List<ModelInterface<Description>> models = getNormalModel();
-    for (final ModelInterface<Description> m : models) {
-      for (int i = 0; i < numReads; i++) {
-        final Evidence ev = new EvidenceQ(m.description(), readNt, 0, 0, 0.05, 0.05, true, false, false, false);
-        m.increment(ev);
-      }
-      m.freeze();
-    }
-    return models;
+    return getNormalIncremeter(Ploidy.HAPLOID).doReads(numReads, readNt).freeze();
   }
 
   // check that three A reads give us the expected input values.
@@ -165,9 +168,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     checkCancer(
       doNormalReads(3, DNARangeAT.A),
       doReads(3, DNARangeAT.A),
-      EXPECT_ALL_SAME,
-      "A",
-      "C"
+      EXPECT_ALL_SAME
     );
   }
 
@@ -177,9 +178,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     checkCancer(
       doNormalReads(3, DNARangeAT.A),
       doReads(3, DNARangeAT.C),
-      EXPECT_NORMAL_EQ_REF,
-      "A",
-      "C"
+      EXPECT_NORMAL_EQ_REF
     );
   }
 
@@ -189,9 +188,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     checkCancer(
       doNormalReads(3, DNARangeAT.C),
       doReads(3, DNARangeAT.A),
-      EXPECT_CANCER_EQ_REF,
-      "A",
-      "C"
+      EXPECT_CANCER_EQ_REF
     );
   }
 
@@ -201,9 +198,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     checkCancer(
       doNormalReads(3, DNARangeAT.C),
       doReads(3, DNARangeAT.C),
-      EXPECT_CANCER_EQ_NORMAL,
-      "A",
-      "C"
+      EXPECT_CANCER_EQ_NORMAL
     );
   }
 
@@ -213,22 +208,32 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     checkCancer(
       doNormalReads(3, DNARangeAT.C),
       doReads(3, DNARangeAT.G),
-      EXPECT_ALL_DIFFERENT,
-      "A",
-      "C"
+      EXPECT_ALL_DIFFERENT
     );
   }
 
-  private void checkCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect, String normalName, String cancerName) throws InvalidParamsException, IOException {
-    final GenomeRelationships genomeRelationships = getGenomeRelationships();
-    final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).somaticParams(new SomaticParamsBuilder().somaticRate(0.001).create()).genomeRelationships(genomeRelationships).create();
-    checkCancer(normal, cancer, expect, normalName, cancerName, params);
+  private void checkCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect) throws InvalidParamsException, IOException {
+    checkCancer(normal, cancer, expect, getDefaultParams());
   }
-  private void checkCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect, String normalName, String cancerName, VariantParams params) throws InvalidParamsException, IOException {
+
+  VariantParams getDefaultParams() {
+    final GenomeRelationships genomeRelationships = getGenomeRelationships();
+    return new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).somaticParams(new SomaticParamsBuilder().somaticRate(0.001).create()).genomeRelationships(genomeRelationships).create();
+  }
+
+  private void checkCancer(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, String expect, VariantParams params) throws InvalidParamsException, IOException {
+    final Variant v = getVariant(normal, cancer, params);
+    final VariantOutputVcfFormatter formatter = getFormatter(params);
+    assertEquals(expect, formatter.formatCall(v));
+  }
+
+  Variant getVariant(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, VariantParams params) {
+    return getVariant(normal, cancer, params, 1.0, 1.0);
+  }
+  private Variant getVariant(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, VariantParams params, double phi, double psi) {
     final int refNt = DNARange.A;
-    final int refCode = refNt - 1;
-    final Hypotheses<D> hypotheses = getCancerHypotheses(0.99, refCode);
-    final AbstractSomaticCaller ccs = getSomaticCaller(0.001, hypotheses, normalName, cancerName, params);
+    final Hypotheses<D> hypotheses = cancer.get(0).hypotheses();
+    final AbstractSomaticCaller ccs = getSomaticCaller(hypotheses, params, phi, psi);
     ccs.integrity();
     //System.out.println(new Posterior(ccs.mQ, A, normal.categories(), cancer.categories()));
     //    final MultivarianceCall out = new MultivarianceCall("chr1", 13, 14, VarianceCallType.SNP);
@@ -239,17 +244,25 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     //debugCalls(outParams, 13, normal[refCode], cancer[refCode]);
 
     final List<ModelInterface<?>> models = new ArrayList<>();
-    models.add(normal.get(refCode));
-    models.add(cancer.get(refCode));
+    models.add(normal.get(0));
+    models.add(cancer.get(0));
 //    for (ModelInterface<?> model : models) {
 //      model.freeze();
 //    }
+    final HypothesesPrior<Description> hypotheses1 = (HypothesesPrior<Description>) normal.get(0).hypotheses();
+    final HypothesesPrior<Description> haploid;
+    final HypothesesPrior<Description> diploid;
+    if (hypotheses1.haploid()) {
+      haploid = hypotheses1;
+      diploid = null;
+    } else {
+      haploid = null;
+      diploid = hypotheses1;
+    }
     final HaploidDiploidHypotheses<HypothesesPrior<Description>> hyp = new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON,
-        (HypothesesPrior<Description>) normal.get(refCode).hypotheses(),
-        null);
-    final Variant v = ccs.makeCall("chr1", 13, 14, ref, models, hyp);
-    final VariantOutputVcfFormatter formatter = getFormatter(params);
-    assertEquals(expect, formatter.formatCall(v));
+      haploid,
+        diploid);
+    return ccs.makeCall("chr1", 13, 14, ref, models, hyp);
   }
 
   protected static <T extends Description> String dump(List<ModelInterface<T>> bayes) {
@@ -280,16 +293,130 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
       doNormalReads(0, DNARangeAT.C),
       doReads(3, DNARangeAT.G),
       EXPECT_VAF,
-      "A",
-      "C",
       params
     );
   }
 
-  private GenomeRelationships getGenomeRelationships() {
+  GenomeRelationships getGenomeRelationships() {
     final GenomeRelationships genomeRelationships = new GenomeRelationships();
     genomeRelationships.addGenome("normal");
     genomeRelationships.addGenome("cancer");
     return genomeRelationships;
+  }
+
+  public void testIncrementNormal() {
+    final Variant confident = getVariant(
+      getNormalIncremeter(Ploidy.DIPLOID, 0.9)
+        .doReads(50, DNARangeAT.C)
+        .freeze(),
+      getIncrementer(Ploidy.DIPLOID, 0.0, 0.99).doReads(50, DNARangeAT.C)
+        .doReads(50, DNARangeAT.G)
+        .freeze(),
+      getDefaultParams());
+    Double lastCancerScore = confident.getNormalCancerScore();
+    int i;
+    for (i = 1; i < 50; i++) {
+      final Variant suspect = getVariant(
+        getNormalIncremeter(Ploidy.DIPLOID, 0.9)
+          .doReads(50, DNARangeAT.C, 0.0001)
+          .doReads(i, DNARangeAT.G, 0.0001)
+          .freeze(),
+        getIncrementer(Ploidy.DIPLOID, 0.0, 0.99).doReads(50, DNARangeAT.C, 0.0001)
+          .doReads(50, DNARangeAT.G, 0.0001)
+          .freeze(),
+        getDefaultParams());
+
+      final Double suspectCancerScore = suspect.getNormalCancerScore();
+      if (suspectCancerScore == null) {
+        break;
+      }
+      assertTrue(suspectCancerScore + " < " + lastCancerScore, suspectCancerScore < lastCancerScore);
+      lastCancerScore = suspectCancerScore;
+    }
+  }
+  int firstNonCancerCall(double phi, double psi) {
+    final Variant confident = getVariant(
+      getNormalIncremeter(Ploidy.DIPLOID, 0.9)
+        .doReads(50, DNARangeAT.C)
+        .freeze(),
+      getIncrementer(Ploidy.DIPLOID, 0.0, 0.99).doReads(50, DNARangeAT.C)
+        .doReads(50, DNARangeAT.G)
+        .freeze(),
+      getDefaultParams());
+    Double lastCancerScore = confident.getNormalCancerScore();
+    int i;
+    for (i = 1; i < 50; i++) {
+      final Variant suspect = getVariant(
+        getNormalIncremeter(Ploidy.DIPLOID, 0.9)
+          .doReads(50, DNARangeAT.C, 0.0001)
+          .doReads(i, DNARangeAT.G, 0.0001)
+          .freeze(),
+        getIncrementer(Ploidy.DIPLOID, 0.0, 0.99).doReads(50, DNARangeAT.C, 0.0001)
+          .doReads(50, DNARangeAT.G, 0.0001)
+          .freeze(),
+        getDefaultParams(), phi, psi);
+
+      final Double suspectCancerScore = suspect.getNormalCancerScore();
+      if (suspectCancerScore == null) {
+        break;
+      }
+      assertTrue(suspectCancerScore + " < " + lastCancerScore, suspectCancerScore < lastCancerScore);
+      lastCancerScore = suspectCancerScore;
+    }
+    return i;
+  }
+  public void testContraryEvidenceCausesQuickerNonCancerCalls() {
+    final int baseline = firstNonCancerCall(1.0, 1.0);
+    final int contraryEvidence = firstNonCancerCall(0.01, 0.01);
+    assertTrue(contraryEvidence + " < " + baseline, contraryEvidence < baseline);
+
+  }
+
+  public void testLessEvidenceCancer() {
+    final Variant confident = getVariant(
+      getNormalIncremeter(Ploidy.DIPLOID, 0.9)
+        .doReads(20, DNARangeAT.A)
+        .freeze(),
+      getIncrementer(Ploidy.DIPLOID, 0.0, 0.99)
+        .doReads(10, DNARangeAT.A)
+        .doReads(10, DNARangeAT.C)
+        .freeze(),
+      getDefaultParams());
+    final Variant suspect = getVariant(
+      getNormalIncremeter(Ploidy.DIPLOID, 0.9)
+        .doReads(20, DNARangeAT.A)
+        .freeze(),
+      getIncrementer(Ploidy.DIPLOID, 0.0, 0.99)
+        .doReads(10, DNARangeAT.A)
+        .doReads(9, DNARangeAT.C)
+        .freeze(),
+      getDefaultParams());
+    final double confidentCancerScore = confident.getNormalCancerScore();
+    final double suspectCancerScore = suspect.getNormalCancerScore();
+    assertTrue(suspectCancerScore + " < " + confidentCancerScore, suspectCancerScore < confidentCancerScore);
+  }
+
+  public void testMoreEvidenceCancer() {
+    final Variant confident = getVariant(
+      getNormalIncremeter(Ploidy.DIPLOID, 0.9)
+        .doReads(20, DNARangeAT.A)
+        .freeze(),
+      getIncrementer(Ploidy.DIPLOID, 0.0, 0.99)
+        .doReads(10, DNARangeAT.A)
+        .doReads(10, DNARangeAT.C)
+        .freeze(),
+      getDefaultParams());
+    final Variant improved = getVariant(
+      getNormalIncremeter(Ploidy.DIPLOID, 0.9)
+        .doReads(20, DNARangeAT.A)
+        .freeze(),
+      getIncrementer(Ploidy.DIPLOID, 0.0, 0.99)
+        .doReads(10, DNARangeAT.A)
+        .doReads(11, DNARangeAT.C)
+        .freeze(),
+      getDefaultParams());
+    final double confidentCancerScore = confident.getNormalCancerScore();
+    final double improvedScore = improved.getNormalCancerScore();
+    assertTrue(improvedScore + " > " + confidentCancerScore, improvedScore > confidentCancerScore);
   }
 }
