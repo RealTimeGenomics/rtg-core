@@ -111,7 +111,6 @@ public class EvidenceComplexTest extends TestCase {
     double sum = 0.0;
     for (final AlignmentMatch match : ml) {
       final EvidenceComplex evidence = new EvidenceComplex(hyp, match, HypothesesComplexTest.COMPLEX_TEMPLATE, vp, ch);
-      //System.err.println(evidence.sumLn());
       sum += evidence.sumLn();
       m.increment(evidence);
     }
@@ -123,44 +122,6 @@ public class EvidenceComplexTest extends TestCase {
         new Hyp("A:TT", -54.033),
         new Hyp(":TT", -135.688)
         );
-  }
-
-  //with new P(E) calculation
-  public void testMatchesAllWithSecondOutputPE() {
-    System.getProperties().setProperty("complex_pe", "true");
-    final AlignmentMatch mA = HypothesesComplexTest.match("A", 5);
-    final AlignmentMatch mTT = HypothesesComplexTest.match("TT", 5);
-
-    final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-    for (int i = 0; i < 20; i++) {
-      ml.add(mA);
-      ml.add(mTT);
-    }
-    final MachineErrorParams machineErrors = getErrors();
-    final MachineErrorChooserInterface ch = new DefaultMachineErrorChooser(machineErrors);
-    final GenomePriorParams vpb = new GenomePriorParamsBuilder().genomeSnpRateHomo(0.5).genomeSnpRateHetero(0.5)
-        .genomeIndelEventRate(0.1 / 2.0)
-        .create();
-    final VariantParams vp = new VariantParamsBuilder().genomePriors(vpb).defaultQuality(20).callLevel(VariantOutputLevel.ALL).create();
-    final HypothesesComplex hypComplex = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, ml, LogPossibility.SINGLETON, false, vp, null);
-    final StatisticsComplex stat = new StatisticsComplex(hypComplex.description(), HypothesesComplexTest.COMPLEX_TEMPLATE.getLength());
-    final ModelInterface<?> m = getModel(hypComplex, stat);
-    double sum = 0.0;
-    for (final AlignmentMatch match : ml) {
-      final EvidenceComplex evidence = new EvidenceComplex(hypComplex, match, HypothesesComplexTest.COMPLEX_TEMPLATE, vp, ch);
-      sum += evidence.sumLn();
-      m.increment(evidence);
-    }
-    assertEquals(-16.18125, sum, 1e-3);
-    checkPosterior(m, new Hyp(":", -259.067),
-        new Hyp("A:A", -180.472),
-        new Hyp("TT:TT", -129.989),
-        new Hyp(":A", -191.105),
-        new Hyp("A:TT", -54.033),
-        new Hyp(":TT", -135.688)
-        );
-    System.getProperties().setProperty("complex_pe", "false");
-
   }
 
   public void testObviousSingleNtInsertionMatchesHomoCall() throws Exception {

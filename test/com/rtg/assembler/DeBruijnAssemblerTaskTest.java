@@ -16,26 +16,23 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+import com.rtg.AbstractTest;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-
-import junit.framework.TestCase;
 
 /**
  *         Date: 11/05/12
  *         Time: 2:27 PM
  */
-public class DeBruijnAssemblerTaskTest extends TestCase {
+public class DeBruijnAssemblerTaskTest extends AbstractTest {
   public void test() throws IOException {
-    final MemoryPrintStream mps = new MemoryPrintStream();
-    final MemoryPrintStream diag = new MemoryPrintStream();
-    final File tmpDir = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory()) {
       final File sequence = ReaderTestUtils.getDNADir(""
           + ">a" + StringUtils.LS + "AAAAAACAACCAAGCAATGAATCGAAAAAA" + StringUtils.LS
           + ">a" + StringUtils.LS + "AAAAAACAACCAAGCAATGAATCGAAAAAAGTGTG" + StringUtils.LS
@@ -44,32 +41,28 @@ public class DeBruijnAssemblerTaskTest extends TestCase {
           + ">a" + StringUtils.LS + "AAAAAACAACCAAGCCATGAATCGAAAAAA" + StringUtils.LS
       );
       try {
+        final MemoryPrintStream mps = new MemoryPrintStream();
+        final MemoryPrintStream diag = new MemoryPrintStream();
         final DeBruijnParams params = DeBruijnParams.builder().inputFiles(Arrays.asList(sequence)).directory(tmpDir).kmerSize(6).create();
         final File fileList = new File(tmpDir, "fileList");
         FileUtils.stringToFile(sequence.toString() + StringUtils.LS, fileList);
         Diagnostic.setLogStream(diag.printStream());
-        try {
-          final DeBruijnAssemblerTask task = new DeBruijnAssemblerTask(params, mps.outputStream());
-          task.exec();
+        final DeBruijnAssemblerTask task = new DeBruijnAssemblerTask(params, mps.outputStream());
+        task.exec();
 //          System.err.println(FileUtils.fileToString(new File(tmpDir, "contigs")));
-          TestUtils.containsAll(diag.toString()
-              , "Maximum bubble length: 22"
-              , "Tip threshold: 12"
-          );
-          final File contigs = new File(tmpDir, "contigs");
-          assertTrue(contigs.exists());
-          final File collapsed = new File(tmpDir, "collapsed");
-          assertTrue(collapsed.exists());
-          final File popped = new File(tmpDir, "popped");
-          assertTrue(popped.exists());
-        } finally {
-          Diagnostic.setLogStream();
-        }
+        TestUtils.containsAll(diag.toString()
+          , "Maximum bubble length: 22"
+          , "Tip threshold: 12"
+        );
+        final File contigs = new File(tmpDir, "contigs");
+        assertTrue(contigs.exists());
+        final File collapsed = new File(tmpDir, "collapsed");
+        assertTrue(collapsed.exists());
+        final File popped = new File(tmpDir, "popped");
+        assertTrue(popped.exists());
       } finally {
         FileHelper.deleteAll(sequence);
       }
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 }

@@ -48,6 +48,7 @@ import java.util.List;
 import com.rtg.Slim;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractNanoTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.sam.SamFilterOptions;
 import com.rtg.sam.SharedSamConstants;
@@ -55,9 +56,7 @@ import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
-import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
@@ -344,18 +343,16 @@ public class VariantNanoTest extends AbstractNanoTest {
   }
 
   private void checkCompressed(final String sam, final String[] args0, final int expNum) throws Exception {
-    final File output = FileUtils.createTempDir("testcheckCompressed", "variance_out");
-    FileHelper.deleteAll(output);
-    final File input = FileUtils.createTempDir("testcheckCompressed", "variance_in");
-    try {
-      final File file = new File(input, OUT_SAM + ".gz");
+    try (final TestDirectory dir = new TestDirectory("testcheckCompressed")) {
+      final File output = new File(dir, "variant_out");
+      final File file = new File(dir, OUT_SAM + ".gz");
       BgzipFileHelper.streamToBgzipFile(new ByteArrayInputStream(sam.getBytes()), file);
-      new TabixIndexer(file, new File(input, OUT_SAM + ".gz.tbi")).saveSamIndex();
+      new TabixIndexer(file, new File(dir, OUT_SAM + ".gz.tbi")).saveSamIndex();
       final String outn = output.getPath();
-      final String inn = input.getPath();
+      final String inn = dir.getPath();
       final File templ = ReaderTestUtils.getDNADir(REF_SEQS);
       try {
-        final String[] alignArgs = {"snp", "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-m", "default", "-Z", "--keep-duplicates", inn + FS + OUT_SAM + FileUtils.GZ_SUFFIX, };
+        final String[] alignArgs = {"snp", "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-m", "default", "-Z", "--keep-duplicates", inn + FS + OUT_SAM + FileUtils.GZ_SUFFIX,};
         final String[] args = Utils.append(alignArgs, args0);
         final ByteArrayOutputStream out = new ByteArrayOutputStream();
         final ByteArrayOutputStream berr = new ByteArrayOutputStream();
@@ -373,9 +370,6 @@ public class VariantNanoTest extends AbstractNanoTest {
       } finally {
         FileHelper.deleteAll(templ);
       }
-    } finally {
-      FileHelper.deleteAll(output);
-      FileHelper.deleteAll(input);
     }
   }
 
@@ -413,20 +407,17 @@ public class VariantNanoTest extends AbstractNanoTest {
   static final String SAMFORMATERROR = "" + "SAM record has an irrecoverable error in file ";
 
   private void checkSamFormatNoError(final String refSeq, final String sam, final String[] warnings, final String[] logs) throws Exception {
-    Diagnostic.setLogStream();
-    final File output = FileUtils.createTempDir("testchecksamformat", "variant");
-    FileHelper.deleteAll(output);
-    final File alignments = FileUtils.createTempDir("testchecksamformat", "variant");
-    try {
+    try (final TestDirectory dir = new TestDirectory("testchecksamformat")) {
+      final File output = new File(dir, "variant_out");
       // FileUtils.saveFile(new File(alignments, OUT_SAM), sam);
-      final File file = new File(alignments, OUT_SAM + ".gz");
+      final File file = new File(dir, OUT_SAM + ".gz");
       BgzipFileHelper.streamToBgzipFile(new ByteArrayInputStream(sam.getBytes()), file);
-      new TabixIndexer(file, new File(alignments, OUT_SAM + ".gz.tbi")).saveSamIndex();
-      final String align = alignments.getPath();
+      new TabixIndexer(file, new File(dir, OUT_SAM + ".gz.tbi")).saveSamIndex();
+      final String align = dir.getPath();
       final String outn = output.getPath();
       final File templ = ReaderTestUtils.getDNADir(refSeq);
       try {
-        final String[] alignArgs = {"snp", "-t", templ.getPath(), "-m", "default", "-o", outn, align + FS + OUT_SAM + ".gz", };
+        final String[] alignArgs = {"snp", "-t", templ.getPath(), "-m", "default", "-o", outn, align + FS + OUT_SAM + ".gz",};
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final ByteArrayOutputStream berr = new ByteArrayOutputStream();
 
@@ -449,23 +440,19 @@ public class VariantNanoTest extends AbstractNanoTest {
       } finally {
         assertTrue(FileHelper.deleteAll(templ));
       }
-    } finally {
-      assertTrue(FileHelper.deleteAll(output));
-      assertTrue(FileHelper.deleteAll(alignments));
+      ;
     }
   }
 
   private void checkSamFormatFatal(final String refSeq, final String sam, final String[] errExpected) throws Exception {
-    final File output = FileUtils.createTempDir("testchecksamformat", "variant");
-    FileHelper.deleteAll(output);
-    final File alignments = FileUtils.createTempDir("testchecksamformat", "variant");
-    try {
-      FileUtils.stringToFile(sam, new File(alignments, OUT_SAM));
-      final String align = alignments.getPath();
+    try (final TestDirectory dir = new TestDirectory("testchecksamformat")) {
+      final File output = new File(dir, "variant_out");
+      FileUtils.stringToFile(sam, new File(dir, OUT_SAM));
+      final String align = dir.getPath();
       final String outn = output.getPath();
       final File templ = ReaderTestUtils.getDNADir(refSeq);
       try {
-        final String[] alignArgs = {"snp", "-t", templ.getPath(), "-o", outn, align + FS + OUT_SAM, };
+        final String[] alignArgs = {"snp", "-t", templ.getPath(), "-o", outn, align + FS + OUT_SAM,};
         final ByteArrayOutputStream bout = new ByteArrayOutputStream();
         final ByteArrayOutputStream berr = new ByteArrayOutputStream();
         final PrintStream err = new PrintStream(berr);
@@ -486,9 +473,6 @@ public class VariantNanoTest extends AbstractNanoTest {
       } finally {
         FileHelper.deleteAll(templ);
       }
-    } finally {
-      FileHelper.deleteAll(output);
-      FileHelper.deleteAll(alignments);
     }
   }
 
@@ -1135,48 +1119,30 @@ public class VariantNanoTest extends AbstractNanoTest {
   private static final String SAM_HEADER = "@HD\tVN:1.4\tSO:coordinate\n";
 
   private void checkNoDefaultMachineErrors(final String refSeq, final String sam, final String[] args0, final String errorMsg, final String logMsg, final int errCode) throws Exception {
-    Diagnostic.setLogStream();
-    final File output = FileUtils.createTempDir("testcheck", "variance_out");
-    FileHelper.deleteAll(output);
-    final File input = FileUtils.createTempDir("testcheck", "variance_in");
-    try {
-      final File inn = new File(input, OUT_SAM + ".gz");
-      //System.err.println(sam);
-      BgzipFileHelper.streamToBgzipFile(new ByteArrayInputStream((SAM_HEADER + sam).getBytes()), inn);
-      new TabixIndexer(inn, new File(input, OUT_SAM + ".gz.tbi")).saveSamIndex();
+    try (final TestDirectory dir = new TestDirectory("testcheck")) {
+      final File output = new File(dir, "variant_out");
+      final File input = new File(dir, "variant_in");
+      if (!input.mkdir()) {
+        throw new IOException("Whut, couldn't make test directory");
+      }
+      final File insam = new File(input, OUT_SAM + ".gz");
+      BgzipFileHelper.streamToBgzipFile(new ByteArrayInputStream((SAM_HEADER + sam).getBytes()), insam);
+      new TabixIndexer(insam, new File(input, OUT_SAM + ".gz.tbi")).saveSamIndex();
       final String outn = output.getPath();
       final File templ = ReaderTestUtils.getDNADir(refSeq);
       try {
-        final String[] alignArgs = {"snp", "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-Z", inn.getPath(), };
+        final String[] alignArgs = {"-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-Z", insam.getPath(),};
         final String[] args = Utils.append(alignArgs, args0);
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final ByteArrayOutputStream berr = new ByteArrayOutputStream();
-        final String errStr;
-        final int intMain;
-        final PrintStream err = new PrintStream(berr);
-        try {
-          intMain = new Slim().intMain(args, out, err);
-        } finally {
-          err.flush();
-          err.close();
-        }
-        errStr = berr.toString();
-        assertEquals(errStr, errCode, intMain);
-        // assertEquals("", out.toString()); Now outputting stats
-        //System.err.println(errStr);
-        //System.err.println(errorMsg);
-        assertTrue(errStr.contains(errorMsg));
+        final MainResult r = MainResult.run(new SingletonCli(), args);
+        assertEquals(r.err(), errCode, r.rc());
+        assertTrue(r.err(), r.err().contains(errorMsg));
         if (logMsg != null && !logMsg.equals("")) {
           final String lout = FileUtils.fileToString(new File(outn, "snp.log"));
-          //System.err.println(lout);
           assertTrue(lout.contains(logMsg));
         }
       } finally {
         FileHelper.deleteAll(templ);
       }
-    } finally {
-      FileHelper.deleteAll(output);
-      FileHelper.deleteAll(input);
     }
   }
 
@@ -1200,11 +1166,12 @@ public class VariantNanoTest extends AbstractNanoTest {
   public void checkReaderRestriction(String restriction, String results) throws Exception {
     // requires a tabix file to be able to do the reader restriction
     // check(REF_SEQS11, SAM11, args0, 1, "", 0);
-    Diagnostic.setLogStream();
-    final File output = FileUtils.createTempDir("testcheck", "variance_out");
-    FileHelper.deleteAll(output);
-    final File input = FileUtils.createTempDir("testcheck", "variance_in");
-    try {
+    try (final TestDirectory dir = new TestDirectory("testcheck")) {
+      final File output = new File(dir, "variant_out");
+      final File input = new File(dir, "variant_in");
+      if (!input.mkdir()) {
+        throw new IOException("Whut, couldn't make test directory");
+      }
       final File sam = new File(input, "sam11.sam.bgz");
       FileHelper.resourceToFile("com/rtg/variant/resources/sam11.sam.bgz", sam);
       //System.err.println(FileHelper.gzFileToString(sam));
@@ -1213,22 +1180,9 @@ public class VariantNanoTest extends AbstractNanoTest {
       final String inn = sam.getPath();
       final File templ = ReaderTestUtils.getDNADir(SharedSamConstants.REF_SEQS11);
       try {
-        final String[] args = {"snp", "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-Z", inn, "-a", "--region", restriction, "--snps-only", "-m", "default", "--keep-duplicates"};
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final ByteArrayOutputStream berr = new ByteArrayOutputStream();
-        final String errStr;
-        final int intMain;
-        final PrintStream err = new PrintStream(berr);
-        //System.err.println(Arrays.toString(args));
-        try {
-          intMain = new Slim().intMain(args, out, err);
-        } finally {
-          err.flush();
-          err.close();
-        }
-        errStr = berr.toString();
-        assertEquals(errStr, 0, intMain);
-        //System.err.println(errStr);
+        final String[] args = {"-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-Z", inn, "-a", "--region", restriction, "--snps-only", "-m", "default", "--keep-duplicates"};
+        final MainResult r = MainResult.run(new SingletonCli(), args);
+        assertEquals(r.err(), 0, r.rc());
         final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
         final String actualFixed = TestUtils.sanitizeVcfHeader(result);
 
@@ -1237,31 +1191,21 @@ public class VariantNanoTest extends AbstractNanoTest {
       } finally {
         FileHelper.deleteAll(templ);
       }
-    } finally {
-      FileHelper.deleteAll(output);
-      FileHelper.deleteAll(input);
     }
   }
 
   public void testHyperComplexRegion() throws Exception {
-    final File dir = FileUtils.createTempDir("test", "hyper");
-    try {
+    try (final TestDirectory dir = new TestDirectory("test")) {
       final File template = ReaderTestUtils.getDNADir(FileHelper.resourceToString("com/rtg/variant/resources/hypertemplate.fa"), new File(dir, "template"));
       final File sam = new File(dir, "sam.sam.gz");
       VariantTestUtils.bgzipAndIndex(FileHelper.resourceToString("com/rtg/variant/resources/hypersam.sam"), sam);
-      final File output = new File(dir, "out");
-      final MemoryPrintStream mps = new MemoryPrintStream();
-      final SingletonCli vc = new SingletonCli();
-      final int code = vc.mainInit(new String[] {"-t", template.getPath(), "-o", output.getPath(), "-m", "illumina", "--keep-duplicates", sam.getPath()}, mps.outputStream(), mps.printStream());
-      assertEquals(mps.toString(), 0, code);
+      final File output = new File(dir, "variant_out");
+      final MainResult r = MainResult.run(new SingletonCli(), "-t", template.getPath(), "-o", output.getPath(), "-m", "illumina", "--keep-duplicates", sam.getPath());
+      assertEquals(r.err(), 0, r.rc());
       final String result = StringUtils.grep(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")), "^[^#]").replaceAll("\n|\r\n", LS);
-
 
       //turn on following in singleton caller case
       mNano.check("hyper_oldcli.vcf", result, false);
-      //        assertEquals(FileHelper.resourceToString("com/rtg/variant/resources/hyper_oldcli.vcf"), result);
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 
@@ -1356,43 +1300,36 @@ public class VariantNanoTest extends AbstractNanoTest {
 
   // bug 1332
   public void testIdentityInsert() throws Exception {
-    final File dir = FileUtils.createTempDir("test", "identityinsert");
-    try {
+    try (final TestDirectory dir = new TestDirectory("test")) {
       final File template = ReaderTestUtils.getDNADir(FileHelper.resourceToString("com/rtg/variant/resources/ident-insert2-genome.fa"), new File(dir, "template"));
       final File sam = VariantTestUtils.bgzipAndIndexResource("com/rtg/variant/resources/ident-insert2.sam", dir);
       //      final String samString = FileHelper.resourceToString("com/rtg/variant/resources/ident-insert2.sam");
       //      final File sam = new File(dir, "sam.sam.gz");
       //      bgzipAndIndex(samString, sam);
-      final File output = new File(dir, "out");
-      final MemoryPrintStream mps = new MemoryPrintStream();
-      final int code = new SingletonCli().mainInit(new String[] {"-t", template.getPath(),
-          "-o", output.getPath(), sam.getPath(),
-          "--keep-duplicates"}, mps.outputStream(), mps.printStream());
-      assertEquals(mps.toString(), 0, code);
+      final File output = new File(dir, "variant_out");
+
+      final MainResult r = MainResult.run(new SingletonCli(), "-t", template.getPath(),
+        "-o", output.getPath(), sam.getPath(),
+        "--keep-duplicates");
+      assertEquals(r.err(), 0, r.rc());
 
       final String result = StringUtils.grep(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")), "^[^#]").trim();
       mNano.check("variancetaskidentityinsert.vcf", result, false);
       //assertTrue(result, result.isEmpty());
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 
   //TODO verify what the resolution for hyper complex region
   public void testComplexDeletesInHyperComplex() throws Exception {
-    Diagnostic.setLogStream();
-    final File dir = FileUtils.createTempDir("test", "ComplexHyperComplex");
-    try {
+    try (final TestDirectory dir = new TestDirectory("test")) {
       final File template = ReaderTestUtils.getDNADir(FileHelper.resourceToString("com/rtg/variant/resources/complexhypercomplextemplate.fa"), new File(dir, "template"));
       final File sam = new File(dir, "sam.sam.gz");
       VariantTestUtils.bgzipAndIndex(FileHelper.resourceToString("com/rtg/variant/resources/complexhypercomplex.sam"), sam);
-      final File output = new File(dir, "out");
-      final MemoryPrintStream mps = new MemoryPrintStream();
-      final int code = new SingletonCli().mainInit(new String[] {"-t", template.getPath(),
-          "-o", output.getPath(), "--keep-duplicates", "--Xhyper-complex-length", "21",
-          sam.getPath()
-      }, mps.outputStream(), mps.printStream());
-      assertEquals(mps.toString(), 0, code);
+      final File output = new File(dir, "variant_out");
+      final MainResult r = MainResult.run(new SingletonCli(), "-t", template.getPath(),
+        "-o", output.getPath(), "--keep-duplicates", "--Xhyper-complex-length", "21",
+        sam.getPath());
+      assertEquals(r.err(), 0, r.rc());
 
       final String result = StringUtils.grep(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")), "^[^#]").trim();
       //System.err.println(result);
@@ -1401,26 +1338,20 @@ public class VariantNanoTest extends AbstractNanoTest {
       final String bed = StringUtils.grep(FileHelper.gzFileToString(new File(output, "regions.bed.gz")), "^[^#]").trim();
       //System.err.println(bed);
       assertEquals("chr20 93 115 hyper-complex".replaceAll(" ", "\t"), bed);
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 
   public void testComplexAmbiguousSuppression() throws Exception {
-    final File dir = FileUtils.createTempDir("test", "identityinsert");
-    try {
+    try (final TestDirectory dir = new TestDirectory("test")) {
       final File template = ReaderTestUtils.getDNADir(FileHelper.resourceToString("com/rtg/variant/resources/complexambigsuppressiontemplate.fa"), new File(dir, "template"));
       final File sam = new File(dir, "sam.sam.gz");
       VariantTestUtils.bgzipAndIndex(FileHelper.resourceToString("com/rtg/variant/resources/complexambigsuppression.sam"), sam);
-      final File output = new File(dir, "out");
-      final MemoryPrintStream mps = new MemoryPrintStream();
-      final int code = new SingletonCli().mainInit(new String[] {"-t", template.getPath(), "-o", output.getPath(), "--keep-duplicates", sam.getPath(), "--filter-ambiguity", "8%"}, mps.outputStream(), mps.printStream());
-      assertEquals(mps.toString(), 0, code);
+      final File output = new File(dir, "variant_out");
+      final MainResult r = MainResult.run(new SingletonCli(), "-t", template.getPath(), "-o", output.getPath(), "--keep-duplicates", sam.getPath(), "--filter-ambiguity", "8%");
+      assertEquals(r.err(), 0, r.rc());
 
       final String result = StringUtils.grep(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")), "^[^#]").trim();
       mNano.check("variancetasktest-complexambsuppression", result, false);
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 
@@ -1451,49 +1382,18 @@ public class VariantNanoTest extends AbstractNanoTest {
     check(REF_SEQS, SAM_COMPLEX_COVERAGE_2, 57, null, 0, 88L/*regression*/, args0);
   }
 
-
-  //        public void testRegression() {
-  //          final File dir = FileUtils.createTempDir("test", "hyper");
-  //          try {
-  //            final File output = new File(dir, "output");
-  //            ///esian/internal/com/rtg/regression/data/snp_sex/map-female/unmated.sam.gz /home/mehul/cartesian/internal/com/rtg/regression/data/snp_sex/map-female/unmated.sam.gz.calibration -Z --sex female          final File output = new File(dir, "out");
-  //            final File template = new File("\\\\head.rtg.18londonst.co.nz\\share\\data\\human\\ref\\sdf\\hg18");
-  //            //final File sam = new File("\\\\head.rtg.18londonst.co.nz\\share\\users\\mehul\\output_fail_example\\extracted.sam.gz");
-  //            //final File samCal = new File("Y:\\users\\mehul\\workspace\\rtg\\internal\\com\\rtg\\regression\\data\\snp_sex\\map-female\\mated.sam.gz.calibration");
-  //            //final File sam2 = new File("Y:\\users\\mehul\\workspace\\rtg\\internal\\com\\rtg\\regression\\data\\snp_sex\\map-female\\unmated.sam.gz");
-  //            //final File sam2Cal = new File("Y:\\users\\mehul\\workspace\\rtg\\internal\\com\\rtg\\regression\\data\\snp_sex\\map-female\\unmated.sam.gz.calibration");
-  //            final MemoryPrintStream mps = new MemoryPrintStream();
-  //            new SingletonCli().mainInit(new String[] {"-t", template.getPath(), "-o", output.getPath(),
-  //               //sam.getPath(), //samCal.getPath(),
-  //               //sam2.getPath(), sam2Cal.getPath(),
-  //               "-m", "illumina", "-I", "\\\\head.rtg.18londonst.co.nz\\share\\users\\mehul\\chr21_mappings\\input_windows_local.txt",
-  //               "--region",  "chr21:9864000+1000"
-  //               }, mps.outputStream(), mps.printStream());
-  //
-  //            System.err.println(mps.toString());
-  //            System.err.println(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")));
-  //          } finally {
-  //            assertTrue(FileHelper.deleteAll(dir));
-  //          }
-  //        }
-
   //site specific population priors
   public void test58() throws Exception {
     final String sam = FileHelper.resourceToString("com/rtg/variant/resources/vcftest.sam");
     final String tmplfa = FileHelper.resourceToString("com/rtg/variant/resources/vcftesttmpl.fa");
-    final File dir = FileUtils.createTempDir("testcheck", "variance_pop");
-    try {
+    try (final TestDirectory dir = new TestDirectory("testcheck")) {
       final File popFile = new File(dir, "pop.vcf.gz");
       BgzipFileHelper.resourceToBgzipFile("com/rtg/variant/resources/pop58.vcf", popFile);
-
       final File alleleCountFile = new File(dir, "allele.ac");
-
       final AlleleCountsFileConverter blah = new AlleleCountsFileConverter();
       blah.convert(popFile, alleleCountFile);
 
       check(tmplfa, sam, 58, null, "", 0, 2, null, true, 172L/*regression*/, "--population-priors", alleleCountFile.getPath());
-    } finally {
-      FileHelper.deleteAll(dir);
     }
   }
 
@@ -1535,8 +1435,7 @@ public class VariantNanoTest extends AbstractNanoTest {
     //complex priors are only used to extend complex region
     final String sam = FileHelper.resourceToString("com/rtg/variant/resources/complexssp2.sam");
     final String tmplfa = FileHelper.resourceToString("com/rtg/variant/resources/complexssp.fa");
-    final File dir = FileUtils.createTempDir("testcheck", "variance_complex_ssp");
-    try {
+    try (final TestDirectory dir = new TestDirectory("testcheck")) {
       final File popFile = new File(dir, "pop.vcf.gz");
       BgzipFileHelper.resourceToBgzipFile("com/rtg/variant/resources/complexssp_pop.vcf", popFile);
 
@@ -1553,8 +1452,6 @@ public class VariantNanoTest extends AbstractNanoTest {
       }
       check(tmplfa, sam, 63, null, "", 0, 5, null, true, 1111L/*regression*/);
       check(tmplfa, sam, 64, null, "", 0, 5, null, true, 1111L/*regression*/, "--population-priors", fileToUse.getPath());
-    } finally {
-      FileHelper.deleteAll(dir);
     }
   }
 
@@ -1624,16 +1521,13 @@ public class VariantNanoTest extends AbstractNanoTest {
       final File sam = FileHelper.resourceToFile("com/rtg/variant/resources/bug1524.sam.gz", new File(dir, "bug1524.sam.gz"));
       final File genome = ReaderTestUtils.getDNADir(FileHelper.resourceToString("com/rtg/variant/resources/bug1524.fasta"), new File(dir, "genome"));
       new TabixIndexer(sam).saveSamIndex();
-      final File output = new File(dir, "snpout");
-      final MemoryPrintStream out = new MemoryPrintStream();
-      final MemoryPrintStream err = new MemoryPrintStream();
-      final int intMain;
-      intMain = new Slim().intMain(new String[] {"snp", "-Z", "-t", genome.getPath(), "-o", output.getPath(), sam.getPath()}, out.outputStream(), err.printStream());
-      assertEquals(err.toString(), 0, intMain);
+      final File output = new File(dir, "variant_out");
+      final MainResult r = MainResult.run(new SingletonCli(), "-Z", "-t", genome.getPath(), "-o", output.getPath(), sam.getPath());
+      assertEquals(r.err(), 0, r.rc());
       final String expectedErr = "SAM record is invalid. 48 90=3I7=  " + LS
           + "1 records skipped because of SAM format problems." + LS;
-      assertEquals(expectedErr, err.toString());
-      mNano.check("bug1524.txt", out.toString());
+      assertEquals(expectedErr, r.err());
+      mNano.check("bug1524.txt", r.out());
       final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
       final String actualFixed = TestUtils.sanitizeVcfHeader(result);
       mNano.check("bug1524.vcf", actualFixed, false);
