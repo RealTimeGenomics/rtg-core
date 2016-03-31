@@ -1443,11 +1443,11 @@ public class VariantNanoTest extends AbstractNanoTest {
       ;
 
   public void test56ComplexPartialCoverageThreshold2() throws Exception {
-    final String[] args0 = {"--filter-depth", "9"};
+    final String[] args0 = {"--filter-depth", "8"};
     check(REF_SEQS, SAM_COMPLEX_COVERAGE_2, 56, null, 0, 88L/*regression*/, args0);
   }
   public void test56ComplexPartialCoverageThresholdUnderCoverage() throws Exception {
-    final String[] args0 = {"--filter-depth", "10"};
+    final String[] args0 = {"--filter-depth", "9"};
     check(REF_SEQS, SAM_COMPLEX_COVERAGE_2, 57, null, 0, 88L/*regression*/, args0);
   }
 

@@ -170,7 +170,6 @@ public class EvidenceComplex extends Evidence {
     assert adjust >= 0;
 
     final int maxShift = maxShift0 + adjust;
-    int readHyp = EvidenceInterface.NOT_A_HYPOTHESIS;
     final double[] logScore = new double[size];
     double sum = mArithmetic.zero();
     for (int i = 0; i < size; i++) {
@@ -189,24 +188,34 @@ public class EvidenceComplex extends Evidence {
       //System.err.println("Read match=" + match.readString() + " Hyp i=" + i + " name=" + hypotheses.description().name(i) + " : unnorm score=" + mArithmetic.poss2Ln(poss) + " scorematrix=\n" + sm.toString());
       logScore[i] = poss;
       sum = mArithmetic.add(sum, poss);
-      if (hypotheses.description().match(i).readString().equals(match.readString())) {
-        readHyp = i;
-      }
     }
 
-    // Normalize
+    // Normalize, and determine readHyp
     mLogSum = mArithmetic.poss2Ln(sum);
+    int readHyp = EvidenceInterface.NOT_A_HYPOTHESIS;
+    double maxProb = -1;
     for (int i = 0; i < size; i++) {
       final double poss = mArithmetic.divide(logScore[i], sum);
       if (PRINT_EVIDENCE_DETAILS) {
         Diagnostic.developerLog("Match: " + (match.isFixedLeft() ? "" : "~") + match.readString() + (match.isFixedRight() ? "" : "~")
           + " hyp: " + i + " " + hypotheses.description().name(i)
           + " score: " + mArithmetic.poss2Prob(poss)
-          + " sample: " + match.alignmentRecord().getReadGroup().getSample());
+          + (match.alignmentRecord().getReadGroup() == null ? "" : " sample: " + match.alignmentRecord().getReadGroup().getSample()));
       }
       set(i, poss);
+      if (mProb[i] > maxProb) {
+        readHyp = i;
+        maxProb = mProb[i];
+      }
     }
-    mReadHypothesis = readHyp;
+
+    if (readHyp == EvidenceInterface.NOT_A_HYPOTHESIS) {
+      mReadHypothesis = readHyp;
+      mError = 1.0;
+    } else {
+      mReadHypothesis = mProb[readHyp] > 0.5 ? readHyp : EvidenceInterface.NOT_A_HYPOTHESIS;
+      mError = 1.0 - maxProb;
+    }
 
     mForward = !match.alignmentRecord().isNegativeStrand();
     mReadPaired = match.alignmentRecord().isReadPaired(); // True if is a paired end read at all, false if single end
@@ -239,9 +248,6 @@ public class EvidenceComplex extends Evidence {
     assert mArithmetic.isValidPoss(hypPrior);
     mPE = mArithmetic.add(mPE, mArithmetic.multiply(hypPrior, poss));
     assert mArithmetic.isValidPoss(mPE);
-    if (index != mReference) {
-      mError += mProb[index];
-    }
   }
 
   @Override

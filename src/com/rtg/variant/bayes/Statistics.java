@@ -66,17 +66,8 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
       return; // Don't increment any other stats for unmapped evidence
     }
 
-    int bestHyp = evidence.read();
-    if (bestHyp == EvidenceInterface.NOT_A_HYPOTHESIS) {
-      for (int i = 0; i < mDescription.size(); i++) {
-        if (evidence.probability(i) > 0.5) {
-          bestHyp = i;
-          break; // There can be at most one hypothesis with probability > 0.5
-        }
-      }
-      if (bestHyp == EvidenceInterface.NOT_A_HYPOTHESIS) {
-        return;
-      }
+    if (evidence.read() == EvidenceInterface.NOT_A_HYPOTHESIS) {
+      return;
     }
 
     // Used for short circuit detection, integer increments OK
@@ -93,7 +84,7 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
     if (right) {
       mCountRight++;
     }
-    incrementBest(evidence, bestHyp);
+    incrementBest(evidence, evidence.read());
   }
 
   /**

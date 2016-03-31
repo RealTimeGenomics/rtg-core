@@ -34,7 +34,7 @@ public interface EvidenceInterface {
   double pe();
 
   /**
-   * @return total probability that this is not equal to the reference hypothesis. (Ordinary double not in possibility arithmetic).
+   * @return total probability that this is not equal to the read hypothesis. (Ordinary double not in possibility arithmetic).
    */
   double error();
 
@@ -45,7 +45,8 @@ public interface EvidenceInterface {
 
   /**
    * @return the hypothesis corresponding to the sequence (often a single nucleotide)
-   * being used to update the model.
+   * being used to update the model, or <code>NOT_A_HYPOTHESIS</code> if the evidence
+   * does not correspond to a single hypothesis.
    */
   int read();
 

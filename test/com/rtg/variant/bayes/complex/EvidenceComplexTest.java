@@ -312,18 +312,18 @@ public class EvidenceComplexTest extends TestCase {
     final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
     final EvidenceComplex dc = new EvidenceComplex(hyp, mG, cot, vp, getChooser());
     assertEquals(6.498e-6, Math.exp(dc.sumLn()), 1e-6);
-    assertEquals(0.99999476, dc.error(), 1e-6);
+    assertEquals(5.234e-6, dc.error(), 1e-6);
     assertTrue(dc.integrity());
   }
 
   public void testReadHypNull() throws Exception {
-    final AlignmentMatch mG = HypothesesComplexTest.match("TTTTT", 20);
-    final AlignmentMatch mG2 = HypothesesComplexTest.match("CCCC", 20);
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-    ml.add(mG);
+    ml.add(HypothesesComplexTest.match("TTTTTTTT", 20));
+    ml.add(HypothesesComplexTest.match("AAAAAAAA", 20));
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
-    final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte("GGATCGGGGG"), "", 1, 6);
+    final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte("CCCCCGGGGG"), "", 5, 5);
     final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
+    final AlignmentMatch mG2 = HypothesesComplexTest.match("TTTTAAAA", 20);
     final EvidenceComplex dc = new EvidenceComplex(hyp, mG2, cot, vp, getChooser());
     assertEquals(EvidenceInterface.NOT_A_HYPOTHESIS, dc.read());
   }
