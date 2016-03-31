@@ -52,7 +52,6 @@ public abstract class AbstractAlleleBalance implements AlleleBalanceProbability 
        //alleleBalanceHomozygousLn(1.0 - error, trials, vac);
       return LogPossibility.SINGLETON.one();
     }
-    assert b < counts.getDescription().size() : b + " " + counts.getDescription().size() + "\nHYP=" + hypotheses.toString() + "\nDESC=" + counts.getDescription().toString();
     final double bCount = counts.count(b) - counts.error(b);
     return alleleBalanceHeterozygousLn(mExpected, trials, vac, bCount);
   }
