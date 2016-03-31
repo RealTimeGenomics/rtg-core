@@ -352,15 +352,10 @@ public class VariantNanoTest extends AbstractNanoTest {
       final String inn = dir.getPath();
       final File templ = ReaderTestUtils.getDNADir(REF_SEQS);
       try {
-        final String[] alignArgs = {"snp", "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-m", "default", "-Z", "--keep-duplicates", inn + FS + OUT_SAM + FileUtils.GZ_SUFFIX,};
+        final String[] alignArgs = {"-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-m", "default", "-Z", "--keep-duplicates", inn + FS + OUT_SAM + FileUtils.GZ_SUFFIX};
         final String[] args = Utils.append(alignArgs, args0);
-        final ByteArrayOutputStream out = new ByteArrayOutputStream();
-        final ByteArrayOutputStream berr = new ByteArrayOutputStream();
-        final PrintStream err = new PrintStream(berr);
-        //System.err.println(outn);
-        new Slim().intMain(args, out, err);
-        // assertEquals("", out.toString());
-        assertEquals("", berr.toString());
+        final MainResult r = MainResult.run(new SingletonCli(), args);
+        assertEquals("", r.err());
         final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
         final String actual = result.replace("Version", "");
         //System.err.println(actual);
@@ -404,8 +399,6 @@ public class VariantNanoTest extends AbstractNanoTest {
 
   private static final String REF_WRONGNAME = "" + ">g111" + LS + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + LS;
 
-  static final String SAMFORMATERROR = "" + "SAM record has an irrecoverable error in file ";
-
   private void checkSamFormatNoError(final String refSeq, final String sam, final String[] warnings, final String[] logs) throws Exception {
     try (final TestDirectory dir = new TestDirectory("testchecksamformat")) {
       final File output = new File(dir, "variant_out");
@@ -417,34 +410,19 @@ public class VariantNanoTest extends AbstractNanoTest {
       final String outn = output.getPath();
       final File templ = ReaderTestUtils.getDNADir(refSeq);
       try {
-        final String[] alignArgs = {"snp", "-t", templ.getPath(), "-m", "default", "-o", outn, align + FS + OUT_SAM + ".gz",};
-        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        final ByteArrayOutputStream berr = new ByteArrayOutputStream();
-
-        try (PrintStream err = new PrintStream(berr)) {
-          new Slim().intMain(alignArgs, bout, err);
-          //System.err.println("out\n" + bout.toString());
-          //System.err.println("err\n" + berr.toString());
-          final String log = FileUtils.fileToString(new File(output, "snp.log"));
-          //System.err.println("log\n" + log);
-          TestUtils.containsAll(log, logs);
-        } catch (final RuntimeException ex) {
-          fail(Utils.getStackTrace(ex));
-        }
-        //System.err.println("Something else wrong: \n" + berr.toString());
-
+        final MainResult r = MainResult.run(new SingletonCli(), "-t", templ.getPath(), "-m", "default", "-o", outn, align + FS + OUT_SAM + ".gz");
+        final String log = FileUtils.fileToString(new File(output, "snp.log"));
+        TestUtils.containsAll(log, logs);
         if (warnings != null) {
-          final String warnstr = berr.toString();
-          TestUtils.containsAll(warnstr, warnings);
+          TestUtils.containsAll(r.err(), warnings);
         }
       } finally {
         assertTrue(FileHelper.deleteAll(templ));
       }
-      ;
     }
   }
 
-  private void checkSamFormatFatal(final String refSeq, final String sam, final String[] errExpected) throws Exception {
+  private void checkSamFormatFatal(final String refSeq, final String sam, final String... errExpected) throws Exception {
     try (final TestDirectory dir = new TestDirectory("testchecksamformat")) {
       final File output = new File(dir, "variant_out");
       FileUtils.stringToFile(sam, new File(dir, OUT_SAM));
@@ -452,24 +430,10 @@ public class VariantNanoTest extends AbstractNanoTest {
       final String outn = output.getPath();
       final File templ = ReaderTestUtils.getDNADir(refSeq);
       try {
-        final String[] alignArgs = {"snp", "-t", templ.getPath(), "-o", outn, align + FS + OUT_SAM,};
-        final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-        final ByteArrayOutputStream berr = new ByteArrayOutputStream();
-        final PrintStream err = new PrintStream(berr);
-
-        try {
-          assertEquals(1, new Slim().intMain(alignArgs, bout, err));
-        } catch (final RuntimeException ex) {
-          //System.err.println("out\n" + bout.toString());
-          //System.err.println("err\n" + berr.toString());
-          err.flush();
-          final String errmsg = berr.toString();
-          TestUtils.containsAll(errmsg, errExpected);
-          assertFalse(errmsg.contains("RTG has encountered a diff"));
-        } finally {
-          //System.err.println("Something else wrong: \n" + berr.toString());
-          err.close();
-        }
+        final MainResult r = MainResult.run(new SingletonCli(), "-t", templ.getPath(), "-o", outn, "-m", "illumina", align + FS + OUT_SAM);
+        assertEquals(1, r.rc());
+        TestUtils.containsAll(r.err(), errExpected);
+        assertFalse(r.err().contains("RTG has encountered a diff"));
       } finally {
         FileHelper.deleteAll(templ);
       }
@@ -522,7 +486,7 @@ public class VariantNanoTest extends AbstractNanoTest {
 
   public void testSamFormatOneRecBadFatal() throws Exception {
     final String sam = SAM_HEAD1 + SAM_REC_OK1 + SAM_REC_BAD_FATAL;
-    checkSamFormatFatal(REF_DOESNTMATTER, sam, new String[] {SAMFORMATERROR});
+    checkSamFormatFatal(REF_DOESNTMATTER, sam, "SAM record has an irrecoverable problem in file ");
   }
 
   // static final String ERROR_CIGAR_IDN = ""
@@ -546,11 +510,9 @@ public class VariantNanoTest extends AbstractNanoTest {
     checkSamFormatNoError(REF_DOESNTMATTER, sam, null, new String[] {});
   }
 
-  static final String ERRORX = "Wrong reference sequences for given reads.";
-
   public void testSamFormatWrongSequ() throws Exception {
     final String sam = SAM_HEAD1 + SAM_REC_OK1;
-    checkSamFormatFatal(REF_WRONGNAME, sam, new String[]{ERRORX});
+    checkSamFormatFatal(REF_WRONGNAME, sam, "Sequence 'gi' not in reference SDF");
   }
 
   public void testSoftClippedRight() throws Exception {
@@ -1131,8 +1093,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final String outn = output.getPath();
       final File templ = ReaderTestUtils.getDNADir(refSeq);
       try {
-        final String[] alignArgs = {"-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-Z", insam.getPath(),};
-        final String[] args = Utils.append(alignArgs, args0);
+        final String[] args = Utils.append(args0, "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-Z", insam.getPath());
         final MainResult r = MainResult.run(new SingletonCli(), args);
         assertEquals(r.err(), errCode, r.rc());
         assertTrue(r.err(), r.err().contains(errorMsg));
@@ -1180,8 +1141,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final String inn = sam.getPath();
       final File templ = ReaderTestUtils.getDNADir(SharedSamConstants.REF_SEQS11);
       try {
-        final String[] args = {"-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-Z", inn, "-a", "--region", restriction, "--snps-only", "-m", "default", "--keep-duplicates"};
-        final MainResult r = MainResult.run(new SingletonCli(), args);
+        final MainResult r = MainResult.run(new SingletonCli(), "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-Z", inn, "-a", "--region", restriction, "--snps-only", "-m", "default", "--keep-duplicates");
         assertEquals(r.err(), 0, r.rc());
         final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
         final String actualFixed = TestUtils.sanitizeVcfHeader(result);
