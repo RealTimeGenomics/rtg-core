@@ -27,6 +27,7 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.mode.DNA;
 import com.rtg.util.SeparateClassLoader;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -63,7 +64,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
 
   /** print complex hypotheses for debugging */
-  private static final boolean PRINT_HYP_DETAILS = false; //Boolean.valueOf(System.getProperty("rtg.print-cx-hyp-details", "false"));
+  private static final boolean PRINT_HYP_DETAILS = GlobalFlags.isSet(GlobalFlags.COMPLEX_HYPOTHESIS_DETAILS);
 
   /** Normalize priors after initial calculation */
   private static final boolean NORMALIZE_PRIORS = true; //Boolean.parseBoolean(System.getProperty("rtg.hypoth-cx-prior-normalisation", "true"));
