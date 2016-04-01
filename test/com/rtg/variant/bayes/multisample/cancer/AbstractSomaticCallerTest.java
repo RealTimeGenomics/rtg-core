@@ -54,6 +54,10 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
 
   protected static HypothesesPrior<Description> simpleHyps(final double same, final int ref, Ploidy ploidy) {
     final DescriptionCommon desc = DescriptionSnp.SINGLETON;
+    return getDescriptionHypothesesPrior(same, ref, ploidy, desc);
+  }
+
+  protected static HypothesesPrior<Description> getDescriptionHypothesesPrior(final double same, final int ref, final Ploidy ploidy, final DescriptionCommon desc) {
     return new HypothesesPrior<Description>(desc, SimplePossibility.SINGLETON, ploidy == Ploidy.HAPLOID, ref) {
 
       @Override
@@ -230,7 +234,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
   Variant getVariant(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, VariantParams params) {
     return getVariant(normal, cancer, params, 1.0, 1.0);
   }
-  private Variant getVariant(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, VariantParams params, double phi, double psi) {
+  Variant getVariant(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, VariantParams params, double phi, double psi) {
     final int refNt = DNARange.A;
     final Hypotheses<D> hypotheses = cancer.get(0).hypotheses();
     final AbstractSomaticCaller ccs = getSomaticCaller(hypotheses, params, phi, psi);

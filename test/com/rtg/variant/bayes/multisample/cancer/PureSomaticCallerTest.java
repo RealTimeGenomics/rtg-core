@@ -17,6 +17,7 @@ import static com.rtg.util.StringUtils.LS;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import com.rtg.reference.Ploidy;
@@ -32,7 +33,9 @@ import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.NoAlleleBalance;
+import com.rtg.variant.bayes.complex.StatisticsComplex;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
+import com.rtg.variant.bayes.snp.DescriptionCommon;
 import com.rtg.variant.bayes.snp.EvidenceQ;
 import com.rtg.variant.bayes.snp.HypothesesNone;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
@@ -41,6 +44,7 @@ import com.rtg.variant.bayes.snp.StatisticsSnp;
 import com.rtg.variant.dna.DNARange;
 import com.rtg.variant.dna.DNARangeAT;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
+import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
 /**
@@ -168,4 +172,27 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
     assertEquals(exp, ccs.toString());
   }
 
+  //this demonstrates the situation where we call 1/1 -> 1/2 (normal -> cancer) even when no evidence is provided
+  //for the normal and contamination is zero
+  public void testXRXPureCall() {
+    final DescriptionCommon desc = new DescriptionCommon("ref", "A", "B"); //to resemble what evidence complex does
+    final double[] priors = {0.0, -40.48, -33.38, -40.358, -69.708, -33.262};
+    final Hypotheses<Description> hyp = new HypothesesPrior<>(desc, LogApproximatePossibility.SINGLETON, priors, false, 0);
+    final Model<Description> modelNormal = new Model<>(hyp, new StatisticsComplex(desc, 1), new NoAlleleBalance());
+    final Model<Description> modelCancer = new Model<>(hyp, new StatisticsComplex(desc, 1), new NoAlleleBalance());
+
+    final ModelIncrementer<Description> cancerIncrementer = new ModelIncrementer<>(Collections.singletonList(modelCancer));
+
+    final Variant var = getVariant(new ModelIncrementer<>(Collections.singletonList(modelNormal)).freeze(),
+      cancerIncrementer
+        .doReadsCustom(11, desc, 0, new double[] {0.333, 0.333, 0.333}, 0.3333, 0.6666, 1e-7)
+        .doReadsCustom(2, desc, 2, new double[] {0.499, 1e-10, 0.499}, 0.4986, 0.51, 1e-7)
+        .doReadsCustom(14, desc, 1, new double[] {1e-10, 0.995, 1e-10}, 0.002216, 0.998, 1e-7)
+        .doReadsCustom(9, desc, 2, new double[] {1e-10, 1e-10, 0.995}, 0.00149, 0.998, 1e-7)
+        .freeze(), getDefaultParams(), 0.01, 0.01);
+
+    assertNotNull(var.getNormalCancerScore());
+    assertEquals("B:B", var.getSample(0).getName());
+    assertEquals("A:B", var.getSample(1).getName());
+  }
 }
