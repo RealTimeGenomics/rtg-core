@@ -12,11 +12,13 @@
 
 package com.rtg.variant.bayes.multisample.cancer;
 
+import com.rtg.util.ChiSquared;
 import com.rtg.util.MathUtils;
-import com.rtg.variant.bayes.AlleleBalanceProbability;
+import com.rtg.variant.bayes.AlleleStatistics;
 import com.rtg.variant.bayes.Code;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.Statistics;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 
 /**
@@ -24,12 +26,28 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
  */
 class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
 
-  private static double alleleBalanceProbability(final Hypotheses<?> hyp, final int normalHyp, final int cancerHyp) {
+  private static double alleleBalanceProbabilityLn(final Hypotheses<?> hyp, final Statistics<?> statistics, final int normalHyp, final int cancerHyp, final double alpha) {
+    // Using a multinomial
     final Code code = hyp.code();
     final int na = code.a(normalHyp);
     final int nb = code.bc(normalHyp);
-
-    return 0;
+    final int ca = code.a(cancerHyp);
+    final int cb = code.bc(cancerHyp);
+    final double[] p = new double[hyp.description().size()];
+    p[na] += 0.5 * alpha;
+    p[nb] += 0.5 * alpha;
+    p[ca] += 0.5 * (1 - alpha);
+    p[cb] += 0.5 * (1 - alpha);
+    double lnP = 0;
+    final AlleleStatistics<?> counts = statistics.counts();
+    for (int k = 0; k < p.length; k++) {
+      if (p[k] > 0) { // Efficiency, avoid lgamma when the result will be 0
+        final double c = counts.count(k) - counts.error(k);
+        lnP += p[k] * c - ChiSquared.lgamma(c + 1);
+      }
+    }
+    lnP += ChiSquared.lgamma(statistics.coverage() - statistics.totalError() + 1);
+    return lnP;
   }
 
   /**
@@ -39,26 +57,24 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
    * @param hypotheses the hypotheses containing priors
    * @param phi probability of seeing contrary evidence in the original
    * @param psi probability of seeing contrary evidence in the derived
+   * @param alpha contamination
    */
-  SomaticPosteriorContaminated(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi) {
+  SomaticPosteriorContaminated(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi, double alpha) {
     super(normal.hypotheses(), phi, psi);
     //System.err.println("normal " + normal);
     //System.err.println("cancer " + cancer);
     assert cancer instanceof ModelCancerContamination;
     assert !cancer.haploid(); // The cancer model is a cross-product of normal x cancer hypotheses
     final Code code = cancer.hypotheses().code();
-    final AlleleBalanceProbability alleleBalanceNormal = normal.alleleBalanceProbability();
-    //final AlleleBalanceProbability alleleBalanceCancer = new BinomialAlleleBalance(0.75);  // XXX 0.75 should be 1-contam/2 -- for ref allele
     for (int i = 0; i < mPosterior.length; i++) {
       final double pi = hypotheses.arithmetic().poss2Ln(hypotheses.p(i)) + normal.posteriorLn0(i);
       for (int j = 0; j < mPosterior.length; j++) {
         final int k = code.code(i, j); // code point for normal(i) x cancer(j)
         assert k >= 0 && k < code.size() : k + " " + code.size();
         final double pj = cancer.posteriorLn0(k);
-        final double q = MathUtils.log(qa[i][j])
-          + mArithmetic.ln2Poss(alleleBalanceNormal.alleleBalanceLn(i, normal.hypotheses(), cancer.statistics()));
-          //+ mArithmetic.ln2Poss(alleleBalanceCancer.alleleBalanceLn(j, normal.hypotheses(), cancer.statistics()));
-        final double t = q + pi + pj;
+        final double q = MathUtils.log(qa[i][j]);
+        final double ab = alleleBalanceProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
+        final double t = q + pi + pj + ab;
         mPosterior[i][j] = t;
       }
     }

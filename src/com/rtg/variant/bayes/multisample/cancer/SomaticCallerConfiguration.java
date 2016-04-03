@@ -132,7 +132,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
         jointCaller = new ContaminatedSomaticCaller(
           new CachedSomaticPriorsFactory<>(haploid.defaultHypotheses(0), loh),
           new CachedSomaticPriorsFactory<>(diploid.defaultHypotheses(0), loh),
-          params, phi, psi);
+          params, phi, psi, contamination);
       }
       final SomaticCallerConfiguration sc = new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, haploid, diploid, ssp, phi, psi, params.alleleBalance());
       sc.getVcfFilters().add(new SomaticFilter(statistics, !(params.somaticParams().includeGermlineVariants() || params.callLevel() == VariantOutputLevel.ALL)));
@@ -204,7 +204,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
     if (mContamination == 0) {
       return new PureSomaticCaller(qHaploidFactory, qDiploidFactory, params, mPhi, mPsi);
     } else {
-      return new ContaminatedSomaticCaller(qHaploidFactory, qDiploidFactory, params, mPhi, mPsi);
+      return new ContaminatedSomaticCaller(qHaploidFactory, qDiploidFactory, params, mPhi, mPsi, mContamination);
     }
   }
 
