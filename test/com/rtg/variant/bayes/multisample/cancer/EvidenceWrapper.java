@@ -15,7 +15,7 @@ import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Evidence;
 
 /**
- *
+ * Allow manually setting various evidence values
  */
 public class EvidenceWrapper extends Evidence {
   private final double mQuality;
@@ -23,6 +23,14 @@ public class EvidenceWrapper extends Evidence {
   private final int mRead;
   private final double mPE;
 
+  /**
+   * @param description description used by evidence
+   * @param read value for read method
+   * @param probabilities probabilities for probability method
+   * @param quality value for error method
+   * @param mapQ map error value
+   * @param pe value for corresponding method
+   */
   public EvidenceWrapper(Description description, int read, double[] probabilities, double quality, double mapQ, double pe) {
     super(description, mapQ);
     mProbabilities = probabilities;
