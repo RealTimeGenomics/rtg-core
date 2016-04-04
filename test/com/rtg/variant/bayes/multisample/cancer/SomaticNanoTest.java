@@ -43,7 +43,7 @@ public class SomaticNanoTest extends AbstractNanoTest {
 
   //test an interesting call using cancer caller (homozygous SNP)
   public void test1() throws Exception {
-    checkCancer("1", "1", REF_TEST1, 6550L, "--all", "--keep-duplicates", "--Xinclude-germline", "--loh", "0.1", "--somatic", "0.0001", "--Xcontrary", "1");
+    checkCancer("1", "1", REF_TEST1, 6550L, "--all", "--keep-duplicates", "--include-germline", "--loh", "0.1", "--somatic", "0.0001", "--Xcontrary", "1");
   }
 
   public void testGainOfReference() throws Exception {
@@ -66,7 +66,7 @@ public class SomaticNanoTest extends AbstractNanoTest {
   //       ACGGTCT
   //       ACGGTCT
   public void test2() throws Exception {
-    checkCancer("2", "2", REF_TEST2, 126L, "--all", "--keep-duplicates", "--Xinclude-germline", "--loh", "0.1", "--somatic", "0.0001");
+    checkCancer("2", "2", REF_TEST2, 126L, "--all", "--keep-duplicates", "--include-germline", "--loh", "0.1", "--somatic", "0.0001");
   }
 
   private static final String REF_TEST3 = ">test1" + LS
@@ -90,7 +90,7 @@ public class SomaticNanoTest extends AbstractNanoTest {
   // test an interesting call using cancer caller (homozygous SNP with skipping
   // first 50 Nts)
   public void test4() throws Exception {
-    checkCancer("1", "4", REF_TEST1, 2450L, "--all", "--region", "simulatedSequence1:90+10", "--Xinclude-germline", "--loh", "0.1", "--somatic", "0.0001");
+    checkCancer("1", "4", REF_TEST1, 2450L, "--all", "--region", "simulatedSequence1:90+10", "--include-germline", "--loh", "0.1", "--somatic", "0.0001");
   }
 
   private static final String REF_TEST5 = ""
@@ -123,7 +123,7 @@ public class SomaticNanoTest extends AbstractNanoTest {
 
   // Set loh to 0 should not get the LOH call
   public void testNoLoh() throws Exception {
-    checkCancer("Loh", "5b", REF_TEST5, 126L, "--keep-duplicates", "--loh", "0.0", "--Xinclude-germline", "--somatic", "0.0001");
+    checkCancer("Loh", "5b", REF_TEST5, 126L, "--keep-duplicates", "--loh", "0.0", "--include-germline", "--somatic", "0.0001");
   }
 
   // Set loh should get the LOH call - original is heterozygous

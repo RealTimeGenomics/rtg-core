@@ -58,7 +58,7 @@ public class SomaticCli extends AbstractMultisampleCli {
   private static final String REVERSE_CONTAMINATION_FLAG = "X" + Relationship.REVERSE_CONTAMINATION;
 
   private static final String SEX_FLAG = "sex";
-  private static final String INCLUDE_GERMLINE_FLAG = "Xinclude-germline";
+  private static final String INCLUDE_GERMLINE_FLAG = "include-germline";
   private static final String INCLUDE_GAIN_OF_REFERENCE = "include-gain-of-reference";
 
   private static final String MISMATCHED_PARAMS_ERROR1 = "Cannot use --" + PEDIGREE_FLAG + " in conjunction with --" + DERIVED_FLAG + ", --" + ORIGINAL_FLAG + ", or --" + CONTAMINATION_FLAG;
