@@ -38,15 +38,18 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
     p[nb] += 0.5 * alpha;
     p[ca] += 0.5 * (1 - alpha);
     p[cb] += 0.5 * (1 - alpha);
-    double lnP = 0;
+    double lnP = 0; // i.e. p = 1
+    double dp = 0;
     final AlleleStatistics<?> counts = statistics.counts();
     for (int k = 0; k < p.length; k++) {
-      if (p[k] > 0) { // Efficiency, avoid lgamma when the result will be 0
+      if (p[k] > 0) { // Avoid infinity arising from p = 0 situation
         final double c = counts.count(k) - counts.error(k);
+        dp += c;
         lnP += Math.log(p[k]) * c - ChiSquared.lgamma(c + 1);
       }
     }
-    lnP += ChiSquared.lgamma(statistics.coverage() - statistics.totalError() + 1);
+    lnP += ChiSquared.lgamma(dp + 1);
+    //lnP += ChiSquared.lgamma(statistics.coverage() - statistics.totalError() + 1);
     return lnP;
   }
 
