@@ -77,14 +77,11 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
       variantParams);
 
   }
-  private Variant tumorOnlyVariant(double contamination, int[] readCounts) {
-    return getVariant(contamination, readCounts, new int[] {0, 0, 0, 0});
-  }
-
 
   private void checkTumorOnly(String expectedNormal, String expectedCancer, double contamination, int[] readCounts) {
     checkTumorOnly(expectedNormal, expectedCancer, contamination, readCounts, new int[] {0, 0, 0, 0});
   }
+
   private void checkTumorOnly(String expectedNormal, String expectedCancer, double contamination, int[] readCounts, int[] normalReadCounts) {
     final Variant call = getVariant(contamination, readCounts, normalReadCounts);
     final String normalName = call.getSample(0).getName();
@@ -94,13 +91,24 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
     assertEquals(failure, expectedNormal + ", " + expectedCancer, normalName + ", " + tumorName);
   }
 
-  void assertRange(List<Variant> variants, String normal, String cancer, int start, int end) {
+  private void assertRange(List<Variant> variants, String normal, String cancer, int start, int end) {
     for (int i = start; i < end; i++) {
-      Variant v = variants.get(i);
+      final Variant v = variants.get(i);
       final String normalName = v.getSample(0).getName();
       final String tumorName = v.getSample(1).getName();
       final String failure = "normal:" + normalName + ", tumor:" + tumorName + ", reads: " + i;
       assertTrue(failure, normalName.equals(normal) && tumorName.equals(cancer));
+    }
+  }
+
+  private void rangeTest(List<String> normal, List<String> tumor, List<Integer> breakpoints, List<Variant> variants) {
+    int start = 0;
+    for (int i = 0; i < normal.size(); i++) {
+      final int breakpoint = breakpoints.get(i);
+      final String n = normal.get(i);
+      final String t = tumor.get(i);
+      assertRange(variants, n, t, start, breakpoint);
+      start = breakpoint;
     }
   }
 
@@ -114,23 +122,15 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
     );
   }
 
-  void rangeTest(List<String> normal, List<String> tumor, List<Integer> breakpoints, List<Variant> variants) {
-    int start = 0;
-    for (int i = 0; i < normal.size(); i++) {
-      final int breakpoint = breakpoints.get(i);
-      final String n = normal.get(i);
-      final String t = tumor.get(i);
-      assertRange(variants, n, t, start, breakpoint);
-      start = breakpoint;
-    }
-  }
   public void testTumorOnly30EdgeCase() {
-    getVariant(0.3, new int[] {24, 76, 0, 0}, new int[] {0, 0, 0, 0});
+    final Variant variant = getVariant(0.3, new int[]{24, 76, 0, 0}, new int[]{0, 0, 0, 0});
+    assertEquals("C:C", variant.getSample(0).getName());
+    assertEquals("C:C", variant.getSample(1).getName());
+    assertNull(variant.getNormalCancerScore());
   }
 
   public void testTumorOnly30() {
     final List<Variant> variants = variantRange(0.3);
-    assertNotNull(variants.get(77).getNormalCancerScore());
     rangeTest(
       Arrays.asList("A:A", "A:C", "A:A", "A:C", "C:C", "C:C", "A:C", "C:C"),
       Arrays.asList("A:A", "A:A", "A:C", "A:C", "A:C", "C:C", "C:C", "C:C"),
@@ -145,10 +145,10 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
     checkTumorOnly("A:C", "A:C", 0.5, new int[]{60, 40, 0, 0});
   }
 
-  public List<Variant> variantRange(double contamination) {
+  private List<Variant> variantRange(double contamination) {
     return variantRange(contamination, 100);
   }
-  public List<Variant> variantRange(double contamination, int numReads) {
+  private List<Variant> variantRange(double contamination, int numReads) {
     final List<Variant> variants = new ArrayList<>();
     for (int i = 0; i < numReads; i++) {
       variants.add(getVariant(contamination, new int[] {numReads - i, i, 0, 0}, new int[] {0, 0, 0, 0}));
