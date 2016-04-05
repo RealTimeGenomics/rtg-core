@@ -1,7 +1,7 @@
   LOC: g1:9
        89012
         |
-  REF: ctggt
+  REF: CTGGT
   BED:    (* (1) mybed
  CALL:     * (2) SM:SAMPLE mysnps
  CALL:     * (2) SM:SAMPLE mysnps

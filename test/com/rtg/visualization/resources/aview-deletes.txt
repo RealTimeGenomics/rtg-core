@@ -2,7 +2,7 @@
           _    1        
        345_6789012345678
               | |
-  REF: atc_gactggtcagcta
+  REF: ATC_GACTGGTCAGCTA
   GEN:          C        (1) SM:SAMPLE snps.vcf
   GEN:          T        (1) SM:SAMPLE snps.vcf
  CALL:          C        (2) SM:SAMPLE snps.vcf

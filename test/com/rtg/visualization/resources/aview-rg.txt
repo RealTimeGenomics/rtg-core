@@ -2,7 +2,7 @@
                 1        
        123456789012345678
        |         |
-  REF: aaatcgactggtcagcta
+  REF: AAATCGACTGGTCAGCTA
   GEN:           C        (1) SM:SAMPLE snps.vcf
   GEN:           T        (1) SM:SAMPLE snps.vcf
  CALL:           C        (2) SM:SAMPLE snps.vcf
