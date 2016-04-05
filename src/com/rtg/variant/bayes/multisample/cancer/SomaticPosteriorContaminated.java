@@ -43,7 +43,7 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
     for (int k = 0; k < p.length; k++) {
       if (p[k] > 0) { // Efficiency, avoid lgamma when the result will be 0
         final double c = counts.count(k) - counts.error(k);
-        lnP += p[k] * c - ChiSquared.lgamma(c + 1);
+        lnP += Math.log(p[k]) * c - ChiSquared.lgamma(c + 1);
       }
     }
     lnP += ChiSquared.lgamma(statistics.coverage() - statistics.totalError() + 1);
