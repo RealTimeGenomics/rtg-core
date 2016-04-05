@@ -76,7 +76,7 @@ public abstract class AbstractMultisampleCaller implements MultisampleJointCalle
     if (result.isInteresting()) {
       v.setInteresting();
     }
-    if (hypotheses.haploid().reference() == -1) {
+    if (hypotheses.haploid().reference() == Hypotheses.NO_HYPOTHESIS) {
       if (Utils.totalCoverage(models) < Utils.MIN_DEPTH_FOR_N_CALL) {
         return null;
       }

@@ -23,8 +23,8 @@ import com.rtg.variant.ThreadingEnvironment;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.Evidence;
-import com.rtg.variant.bayes.EvidenceInterface;
 import com.rtg.variant.bayes.Factor;
+import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.match.AlignmentMatch;
 import com.rtg.variant.realign.AlignmentEnvironment;
@@ -192,7 +192,7 @@ public class EvidenceComplex extends Evidence {
 
     // Normalize, and determine readHyp
     mLogSum = mArithmetic.poss2Ln(sum);
-    int readHyp = EvidenceInterface.NOT_A_HYPOTHESIS;
+    int readHyp = Hypotheses.NO_HYPOTHESIS;
     double maxProb = -1;
     for (int i = 0; i < size; i++) {
       final double poss = mArithmetic.divide(logScore[i], sum);
@@ -209,11 +209,11 @@ public class EvidenceComplex extends Evidence {
       }
     }
 
-    if (readHyp == EvidenceInterface.NOT_A_HYPOTHESIS) {
+    if (readHyp == Hypotheses.NO_HYPOTHESIS) {
       mReadHypothesis = readHyp;
       mError = 1.0;
     } else {
-      mReadHypothesis = mProb[readHyp] > 0.5 ? readHyp : EvidenceInterface.NOT_A_HYPOTHESIS;
+      mReadHypothesis = mProb[readHyp] > 0.5 ? readHyp : Hypotheses.NO_HYPOTHESIS;
       mError = 1.0 - maxProb;
     }
 

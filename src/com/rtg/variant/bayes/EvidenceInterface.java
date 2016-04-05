@@ -19,9 +19,6 @@ package com.rtg.variant.bayes;
  */
 public interface EvidenceInterface {
 
-  /** Invalid hypothesis. */
-  int NOT_A_HYPOTHESIS = -1;
-
   /**
    * @param index selects the haploid hypothesis.
    * @return the probability that the specified hypothesis (index) is correct. (Ordinary double not in possibility arithmetic).

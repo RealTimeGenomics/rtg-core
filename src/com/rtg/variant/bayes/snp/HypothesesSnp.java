@@ -29,7 +29,7 @@ public final class HypothesesSnp extends HypothesesCommon<Description> {
    */
   public HypothesesSnp(PossibilityArithmetic arithmetic, final GenomePriorParams params, final boolean haploid, int ref) {
     super(DescriptionSnp.SINGLETON, arithmetic, haploid, ref);
-    if (ref == -1) {
+    if (ref == NO_HYPOTHESIS) {
       initPriors(params);
     } else {
       initPriors(params, ref);

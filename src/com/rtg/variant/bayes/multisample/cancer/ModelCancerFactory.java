@@ -40,7 +40,7 @@ public class ModelCancerFactory extends ModelCommonFactory<Description, Hypothes
   public ModelCancerFactory(final GenomePriorParams params, final double contamination, final boolean haploid, final AlleleBalanceProbability alleleBalance) {
     super(alleleBalance);
     mContamination = contamination;
-    final HypothesesSnp unknownHypothesesSnp = new HypothesesSnp(LogApproximatePossibility.SINGLETON, params, haploid, -1);
+    final HypothesesSnp unknownHypothesesSnp = new HypothesesSnp(LogApproximatePossibility.SINGLETON, params, haploid, Hypotheses.NO_HYPOTHESIS);
     mHypothesisUnknown = new HypothesesCancer<>(unknownHypothesesSnp, LogApproximatePossibility.SINGLETON);
     for (int i = 0; i < DescriptionSnp.SINGLETON.size(); i++) {
       final HypothesesSnp hyp = new HypothesesSnp(SimplePossibility.SINGLETON, params, haploid, i);

@@ -34,7 +34,7 @@ import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
-import com.rtg.variant.bayes.EvidenceInterface;
+import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.MockHypotheses;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
@@ -286,7 +286,7 @@ public class EvidenceComplexTest extends TestCase {
     final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
     final AlignmentMatch mG2 = HypothesesComplexTest.match("TTTTAAAA", 20);
     final EvidenceComplex dc = new EvidenceComplex(hyp, mG2, cot, vp, getChooser());
-    assertEquals(EvidenceInterface.NOT_A_HYPOTHESIS, dc.read());
+    assertEquals(Hypotheses.NO_HYPOTHESIS, dc.read());
   }
 
   public void testObviousSingleNtInsertionMatchesHeteroCall() throws Exception {

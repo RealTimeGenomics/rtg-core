@@ -117,7 +117,7 @@ public class DiseasedFamilyCaller implements MultisampleJointCaller {
         final HypothesisScore child = fp.bestChild(i);
         samples[i + Family.FIRST_CHILD_INDEX] = FamilyCaller.createSample(commonHypotheses, child, models.get(i + Family.FIRST_CHILD_INDEX), mParams);
       }
-      final String refAllele = commonHypotheses.description().name(commonHypotheses.reference());
+      final String refAllele = commonHypotheses.description().name(commonHypotheses.reference()); // XXX Doesn't support reference == Hypothesis.NO_HYPOTHESIS
       final VariantLocus locus = new VariantLocus(templateName, position, endPosition, refAllele, VariantUtils.getPreviousRefNt(ref, position));
       final Variant v = new Variant(locus, samples);
       v.setDiseasePresenceScore(fp.anyDiseasePosteriorRatio());

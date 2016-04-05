@@ -13,6 +13,7 @@ package com.rtg.variant.bayes.snp;
 
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
+import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.ReferenceBasedFactory;
 
 /**
@@ -94,7 +95,7 @@ public class ReferenceBasedBuffer<D> extends IntegralAbstract {
   // Make a D that is appropriate to the current position on the reference
   protected D make(int index) {
     final int nt = mTemplate[index] - 1;
-    assert -1 <= nt && nt < 4;
+    assert nt == Hypotheses.NO_HYPOTHESIS || 0 <= nt && nt < 4;
     return mFactory.make(nt);
   }
 

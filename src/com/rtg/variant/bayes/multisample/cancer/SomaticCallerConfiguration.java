@@ -229,7 +229,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
     }
     for (int i = 0; i < description.size(); i++) {
       final int iLen = callBytes[i].length;
-      final AlignmentEnvironment aei = new AlignmentEnvironmentGenomeSubstitution(start, 0 /*doesn't matter*/, cot, callBytes[i]);
+      final AlignmentEnvironment aei = new AlignmentEnvironmentGenomeSubstitution(start, end, cot, callBytes[i]);
       //System.err.println("aei.length=" + aei.length());
       for (int j = 0; j < description.size(); j++) {
         final int jLen = callBytes[j].length;

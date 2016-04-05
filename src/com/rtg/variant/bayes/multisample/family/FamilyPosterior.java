@@ -348,7 +348,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
     }
     final int refHyp = mFatherHypotheses.reference();
     assert refHyp == mMotherHypotheses.reference();
-    if (refHyp != -1) {
+    if (refHyp != Hypotheses.NO_HYPOTHESIS) {
       final double fatherRef = mFatherMarginal[refHyp];
       final double motherRef = mMotherMarginal[refHyp];
       if (fatherRef == Double.NEGATIVE_INFINITY || motherRef == Double.NEGATIVE_INFINITY) {

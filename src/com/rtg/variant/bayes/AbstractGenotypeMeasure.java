@@ -47,12 +47,12 @@ public abstract class AbstractGenotypeMeasure implements GenotypeMeasure {
         others = arithmetic().add(others, measure(i));
       }
     }
-    final double refMeasure = reference == -1 ? arithmetic().zero() : measure(reference);
+    final double refMeasure = reference == Hypotheses.NO_HYPOTHESIS ? arithmetic().zero() : measure(reference);
 
     final double bestOther = best == reference ? others : arithmetic().add(others, refMeasure);
     mBestPosterior = arithmetic().divide(measure(best), bestOther);
 
-    if (reference == -1) {
+    if (reference == Hypotheses.NO_HYPOTHESIS) {
       mNonIdentity = arithmetic().zero();
     } else {
       final double refOther = best == reference ? others : arithmetic().add(others, measure(best));
@@ -75,7 +75,7 @@ public abstract class AbstractGenotypeMeasure implements GenotypeMeasure {
 
   private int findBest() {
     if (size() < 1) {
-      return -1;
+      return Hypotheses.NO_HYPOTHESIS;
     }
     int best = 0;
     for (int i = 0; i < size(); i++) {

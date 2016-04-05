@@ -25,6 +25,7 @@ import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantSample;
 import com.rtg.variant.bayes.AlleleStatistics;
 import com.rtg.variant.bayes.Description;
+import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.multisample.HypothesisScore;
@@ -87,7 +88,7 @@ public class SingletonCaller implements MultisampleJointCaller {
         sample.setVariantAllele(description.name(va));
       }
     }
-    if (hyp.reference() == -1) {
+    if (hyp.reference() == Hypotheses.NO_HYPOTHESIS) {
       if (Utils.totalCoverage(models) < Utils.MIN_DEPTH_FOR_N_CALL) {
         return null;
       }

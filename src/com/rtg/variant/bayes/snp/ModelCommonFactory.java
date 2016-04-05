@@ -52,7 +52,7 @@ public abstract class ModelCommonFactory<D extends Description, H extends Hypoth
   @Override
   public H defaultHypotheses(int ref) {
     //return mHypothesesCache.get(ref);
-    return ref == -1 ? mHypothesisUnknown : mHypothesesCache.get(ref);
+    return ref == Hypotheses.NO_HYPOTHESIS ? mHypothesisUnknown : mHypothesesCache.get(ref);
   }
 
   protected ModelInterface<D> makeModel(final Hypotheses<D> hyp) {

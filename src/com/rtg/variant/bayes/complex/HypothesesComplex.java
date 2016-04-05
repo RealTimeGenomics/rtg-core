@@ -139,15 +139,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
    */
   public static HypothesesComplex makeComplexHypotheses(ComplexTemplate reference, List<AlignmentMatch> matches, PossibilityArithmetic arithmetic, boolean haploid, final VariantParams params, SiteSpecificPriors ssp) {
     final DescriptionComplex description = createDescription(matches, reference, params.pruneHypotheses(), ssp, params.maxComplexHypotheses());
-
-    int refHyp1 = -1;
-    for (int i1 = 0; i1 < description.size(); i1++) {
-      if (description.name(i1).equals(reference.replaceString())) {
-        refHyp1 = i1;
-        break;
-      }
-    }
-    final int refHyp = refHyp1;
+    final int refHyp = findReferenceHypothesis(description, reference.replaceString());
 
     double[] priors = makePriorsAllPaths(description, haploid, reference, arithmetic, refHyp, params.genomePriors());
     priors = VariantUtils.normalisePossibilities(priors, arithmetic);
@@ -163,6 +155,15 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     }
 
     return result;
+  }
+
+  private static int findReferenceHypothesis(DescriptionComplex description, String reference) {
+    for (int i1 = 0; i1 < description.size(); i1++) {
+      if (description.name(i1).equals(reference)) {
+        return i1;
+      }
+    }
+    return NO_HYPOTHESIS;
   }
 
   /**

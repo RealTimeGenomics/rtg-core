@@ -25,6 +25,9 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  */
 public abstract class Hypotheses<D extends Description> {
 
+  /** Index used to denote invalid hypothesis. */
+  public static final int NO_HYPOTHESIS = -1;
+
   protected final D mDescription;
   private final PossibilityArithmetic mArithmetic;
   private final Code mCode;
@@ -73,7 +76,7 @@ public abstract class Hypotheses<D extends Description> {
 
   /**
    * Gets the identity hypothesis.
-   * @return the index for the hypothesis that is the same as the reference (there must always be one).
+   * @return the index for the hypothesis that is the same as the reference (if the reference does not correspond to a hypothesis, this should be <code>NOT_A_HYPOTHESIS</code>).
    */
   public abstract int reference();
 

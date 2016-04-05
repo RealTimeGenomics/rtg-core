@@ -66,7 +66,7 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
       return; // Don't increment any other stats for unmapped evidence
     }
 
-    if (evidence.read() == EvidenceInterface.NOT_A_HYPOTHESIS) {
+    if (evidence.read() == Hypotheses.NO_HYPOTHESIS) {
       return;
     }
 
