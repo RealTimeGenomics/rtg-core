@@ -131,7 +131,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
 
   private double loh(final Hypotheses<?> hypotheses, final int normal, final int cancer) {
     final Code code = hypotheses.code();
-    if (!hypotheses.code().homozygous(normal) && code.homozygous(cancer)) {
+    if (!code.homozygous(normal) && code.homozygous(cancer)) {
       return 1;
     }
     if (cancer == normal) {

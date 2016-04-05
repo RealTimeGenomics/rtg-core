@@ -93,11 +93,11 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
 
   protected abstract List<ModelInterface<D>> getModel(Ploidy ploidy, double contamination, double same);
 
-  protected AbstractSomaticCaller getSomaticCaller(final Hypotheses<D> hypotheses, VariantParams params) {
+  protected AbstractSomaticCaller getSomaticCaller(final Hypotheses<Description> hypotheses, VariantParams params) {
     return getSomaticCaller(hypotheses, params, 1.0, 1.0);
   }
 
-  protected abstract AbstractSomaticCaller getSomaticCaller(final Hypotheses<D> hypotheses, VariantParams params, double phi, double psi);
+  protected abstract AbstractSomaticCaller getSomaticCaller(final Hypotheses<Description> hypotheses, VariantParams params, double phi, double psi);
 
   protected VariantOutputVcfFormatter getFormatter() {
     return getFormatter(null);
@@ -236,7 +236,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
   }
   Variant getVariant(List<ModelInterface<Description>> normal, List<ModelInterface<D>> cancer, VariantParams params, double phi, double psi) {
     final int refNt = DNARange.A;
-    final Hypotheses<D> hypotheses = cancer.get(0).hypotheses();
+    final Hypotheses<Description> hypotheses = normal.get(0).hypotheses();
     final AbstractSomaticCaller ccs = getSomaticCaller(hypotheses, params, phi, psi);
     ccs.integrity();
     //System.out.println(new Posterior(ccs.mQ, A, normal.categories(), cancer.categories()));
