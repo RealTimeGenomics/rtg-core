@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -119,7 +120,7 @@ public final class Aview extends AbstractCli {
     mDisplayHelper = mParams.displayHelper();
     openSdfs(mParams);
     try {
-      String ref = ReferenceHelper.referenceStringFromBytes(mModel.template(), 0, mModel.template().length);
+      String ref = DnaUtils.bytesToSequenceIncCG(mModel.template()).toLowerCase(Locale.ROOT);
       final SdfId refGuid = ReaderUtils.getSdfId(mParams.referenceFile());
       final int zeroBasedStart = mModel.zeroBasedStart();
       final int zeroBasedEnd = mModel.zeroBasedEnd();

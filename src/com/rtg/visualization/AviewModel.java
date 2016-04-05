@@ -23,6 +23,9 @@ import java.util.Map;
 import com.rtg.bed.BedReader;
 import com.rtg.bed.BedRecord;
 import com.rtg.bed.BedUtils;
+import com.rtg.reader.ReaderUtils;
+import com.rtg.reader.SequencesReader;
+import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.sam.SamUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.Pair;
@@ -122,64 +125,70 @@ final class AviewModel {
 
 
   AviewModel(AviewParams p) throws IOException {
-    final int len = ReferenceHelper.templateLength(p.referenceFile(), p.sequenceName());
-    if (p.start() > len) {
-      throw new NoTalkbackSlimException("start is greater than template length. start = " + p.start() + ", template length = " + len);
-    }
-    if (p.end() <= p.start()) {
-      throw new NoTalkbackSlimException("start is greater than end. start = " + p.start() + ", end = " + p.end());
-    }
-
-    mRecords = SamHelper.loadAlignments(p);
-    if (p.sortReads()) {
-      SamHelper.sortAlignments(mRecords);
-    }
-    if (p.sortReadGroup()) {
-      SamHelper.sortAlignmentsWithReadGroups(mRecords);
-    }
-
-    // Scan alignments to auto-expand the range if needed
-    RegionRestriction region = expandRegion(mRecords, p.region());
-
-    // Also expand if need be to ensure that we get features within the padded zone
-    if (p.regionPadding() > 0) {
-      final RegionRestriction paddedInitial = new RegionRestriction(region.getSequenceName(),
-        Math.max(0, p.region().getStart() - p.regionPadding()),
-        Math.min(len, p.region().getEnd() + p.regionPadding()));
-      region = union(region, paddedInitial, 0, len);
-    }
-
-    // Grab any variants/beds overlapping the new region
-    loadTracks(p, region);
-
-    // Scan snps to auto-expand the range if needed (just to allow complete display of baseline variants near the edges
-    for (final AviewTrack track : mTracks) {
-      if (track instanceof SnpSet) {
-        region = expandRegion((SnpSet) track, region);
+    try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(p.referenceFile())) {
+      final Map<String, Long> names = ReaderUtils.getSequenceNameMap(reader);
+      final Long sequenceId = names.get(p.sequenceName());
+      if (sequenceId == null) {
+        throw new NoTalkbackSlimException("Given sequence name not found : " + p.sequenceName());
       }
-    }
-
-    //    System.err.println("Auto-expanded range is now minStart:" + minStart + " maxEnd:" + maxEnd);
-
-    mOneBasedStart = Math.max(1, region.getStart() + 1);
-    mZeroBasedStart = Math.max(0, region.getStart());
-    mZeroBasedEnd = Math.min(region.getEnd(), len); // Converting from one-based inclusive to zero-based exclusive
-
-    // Locate positions of inserts based on alignments
-    mInserts = new int[mZeroBasedEnd - mZeroBasedStart];
-    for (final SAMRecord r : mRecords) {
-      final String superCigar = r.getStringAttribute(SamUtils.CG_SUPER_CIGAR);
-      final String cigar = superCigar == null ? r.getCigarString() : superCigar;
-      if (!CigarHelper.isMissing(cigar)) {
-        CigarHelper.locateInserts(cigar, r.getAlignmentStart() - mOneBasedStart, mInserts);
+      final long seqId = sequenceId;
+      final int len = reader.length(seqId);
+      if (p.start() > len) {
+        throw new NoTalkbackSlimException("start is greater than template length. start = " + p.start() + ", template length = " + len);
       }
+      if (p.end() <= p.start()) {
+        throw new NoTalkbackSlimException("start is greater than end. start = " + p.start() + ", end = " + p.end());
+      }
+      mRecords = SamHelper.loadAlignments(p);
+      if (p.sortReads()) {
+        SamHelper.sortAlignments(mRecords);
+      }
+      if (p.sortReadGroup()) {
+        SamHelper.sortAlignmentsWithReadGroups(mRecords);
+      }
+
+      // Scan alignments to auto-expand the range if needed
+      RegionRestriction region = expandRegion(mRecords, p.region());
+
+      // Also expand if need be to ensure that we get features within the padded zone
+      if (p.regionPadding() > 0) {
+        final RegionRestriction paddedInitial = new RegionRestriction(region.getSequenceName(),
+          Math.max(0, p.region().getStart() - p.regionPadding()),
+          Math.min(len, p.region().getEnd() + p.regionPadding()));
+        region = union(region, paddedInitial, 0, len);
+      }
+
+      // Grab any variants/beds overlapping the new region
+      loadTracks(p, region);
+
+      // Scan snps to auto-expand the range if needed (just to allow complete display of baseline variants near the edges
+      for (final AviewTrack track : mTracks) {
+        if (track instanceof SnpSet) {
+          region = expandRegion((SnpSet) track, region);
+        }
+      }
+
+      mOneBasedStart = Math.max(1, region.getStart() + 1);
+      mZeroBasedStart = Math.max(0, region.getStart());
+      mZeroBasedEnd = Math.min(region.getEnd(), len); // Converting from one-based inclusive to zero-based exclusive
+      final int tlen = mZeroBasedEnd - mZeroBasedStart;
+
+      mTemplate = new byte[tlen];
+      reader.read(seqId, mTemplate, mZeroBasedStart, tlen);
+
+      // Locate positions of inserts based on alignments
+      mInserts = new int[tlen];
+      for (final SAMRecord r : mRecords) {
+        final String superCigar = r.getStringAttribute(SamUtils.CG_SUPER_CIGAR);
+        final String cigar = superCigar == null ? r.getCigarString() : superCigar;
+        if (!CigarHelper.isMissing(cigar)) {
+          CigarHelper.locateInserts(cigar, r.getAlignmentStart() - mOneBasedStart, mInserts);
+        }
+      }
+
+      // Locate positions of inserts based on variants
+      calculateSnpInserts();
     }
-
-    // Locate positions of inserts based on variants
-    calculateSnpInserts();
-
-    mTemplate = ReferenceHelper.loadReference(p.referenceFile(), p.sequenceName(), mZeroBasedStart, mZeroBasedEnd - mZeroBasedStart);
-    //System.err.println(DnaUtils.bytesToSequenceIncCG(mTemplate));
   }
 
   private RegionRestriction union(SequenceNameLocus a, SequenceNameLocus b, int min, int max) {
