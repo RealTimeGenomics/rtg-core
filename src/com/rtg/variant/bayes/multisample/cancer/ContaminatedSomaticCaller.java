@@ -14,6 +14,7 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 
 /**
@@ -22,6 +23,7 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
 public class ContaminatedSomaticCaller extends AbstractSomaticCaller {
 
   private final double mContamination;
+  private final boolean mUseAlleleBalanceCorrection;
 
   /**
    * @param qHaploidFactory haploid Q matrix factory
@@ -34,10 +36,11 @@ public class ContaminatedSomaticCaller extends AbstractSomaticCaller {
   public ContaminatedSomaticCaller(SomaticPriorsFactory<?> qHaploidFactory, SomaticPriorsFactory<?> qDiploidFactory, VariantParams params, double phi, double psi, double contamination) {
     super(qHaploidFactory, qDiploidFactory, params, phi, psi);
     mContamination = contamination;
+    mUseAlleleBalanceCorrection = !(params.alleleBalance() instanceof NoAlleleBalance);
   }
 
   @Override
   protected AbstractSomaticPosterior makePosterior(ModelInterface<?> normal, ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double mu) {
-    return new SomaticPosteriorContaminated((normal.haploid() ? mQHaploidFactory : mQDiploidFactory).somaticQ(mu), normal, cancer, hypotheses, mPhi, mPsi, mContamination);
+    return new SomaticPosteriorContaminated((normal.haploid() ? mQHaploidFactory : mQDiploidFactory).somaticQ(mu), normal, cancer, hypotheses, mPhi, mPsi, mContamination, mUseAlleleBalanceCorrection);
   }
 }

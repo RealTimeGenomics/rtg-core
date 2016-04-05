@@ -58,8 +58,9 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
    * @param phi probability of seeing contrary evidence in the original
    * @param psi probability of seeing contrary evidence in the derived
    * @param alpha contamination
+   * @param useAlleleBalanceCorrection true if the expected allele balance correction is to be applied
    */
-  SomaticPosteriorContaminated(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi, double alpha) {
+  SomaticPosteriorContaminated(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi, double alpha, boolean useAlleleBalanceCorrection) {
     super(normal.hypotheses(), phi, psi);
     //System.err.println("normal " + normal);
     //System.err.println("cancer " + cancer);
@@ -73,8 +74,10 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
         assert k >= 0 && k < code.size() : k + " " + code.size();
         final double pj = cancer.posteriorLn0(k);
         final double q = MathUtils.log(qa[i][j]);
-        final double ab = alleleBalanceProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
-        final double t = q + pi + pj + ab;
+        double t = q + pi + pj;
+        if (useAlleleBalanceCorrection) {
+          t += alleleBalanceProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
+        }
         mPosterior[i][j] = t;
       }
     }

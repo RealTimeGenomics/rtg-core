@@ -71,7 +71,7 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
     }
     cancer.freeze();
     normal.freeze();
-    return new SomaticPosteriorContaminated((normal.haploid() ? cc.mQHaploidFactory : cc.mQDiploidFactory).somaticQ(0.001), normal, cancer, hypotheses, 1, 1, contamination);
+    return new SomaticPosteriorContaminated((normal.haploid() ? cc.mQHaploidFactory : cc.mQDiploidFactory).somaticQ(0.001), normal, cancer, hypotheses, 1, 1, contamination, false);
   }
 
   private static final String EXPECT_ALL_DIFFERENT_20 = ""
@@ -114,7 +114,7 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
       cancer.increment(eva);
     }
     cancer.freeze();
-    final AbstractSomaticPosterior post = new SomaticPosteriorContaminated((hypotheses.haploid() ? cc.mQHaploidFactory : cc.mQDiploidFactory).somaticQ(0.001), normal, cancer, hypotheses, 1, 1, 0.5);
+    final AbstractSomaticPosterior post = new SomaticPosteriorContaminated((hypotheses.haploid() ? cc.mQHaploidFactory : cc.mQDiploidFactory).somaticQ(0.001), normal, cancer, hypotheses, 1, 1, 0.5, false);
     assertEquals(SomaticPosteriorPureTest.EXPECT_ALL_SAME, post.toString());
     assertEquals(0, post.bestNormal());
     assertEquals(0, post.bestCancer());
