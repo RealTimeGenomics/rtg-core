@@ -66,9 +66,6 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
   /** print complex hypotheses for debugging */
   private static final boolean PRINT_HYP_DETAILS = GlobalFlags.isSet(GlobalFlags.COMPLEX_HYPOTHESIS_DETAILS);
 
-  /** Normalize priors after initial calculation */
-  private static final boolean NORMALIZE_PRIORS = true; //Boolean.parseBoolean(System.getProperty("rtg.hypoth-cx-prior-normalisation", "true"));
-
   /** Bias hypothesis priors between ref and alt alleles. 1.0 = no bias. 0.0 = reduced alt likelihood */
   private static final double PRIORS_ALT_BIAS = 0.1; //Double.parseDouble(System.getProperty("rtg.hypoth-cx-alt-bias", "0.1"));
 
@@ -153,7 +150,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     final int refHyp = refHyp1;
 
     double[] priors = makePriorsAllPaths(description, haploid, reference, arithmetic, refHyp, params.genomePriors());
-    priors = NORMALIZE_PRIORS ? VariantUtils.normalisePossibilities(priors, arithmetic) : priors;
+    priors = VariantUtils.normalisePossibilities(priors, arithmetic);
     //assert sum >= 0 && sum <= 1;
 
     final HypothesesComplex result = new HypothesesComplex(description, arithmetic, priors, haploid, refHyp);
