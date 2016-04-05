@@ -19,7 +19,7 @@ import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Calibrator.QuerySpec;
 import com.rtg.calibrate.StatsProcessor;
 import com.rtg.ngs.Arm;
-import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 import junit.framework.TestCase;
@@ -30,12 +30,9 @@ public class BaseQualityPhredScalerTest extends TestCase {
 
 
   public void testABunch() throws Exception {
-
-    final File dir = FileUtils.createTempDir("calMEP", "test");
-    try {
-
+    try (final TestDirectory dir = new TestDirectory("calMEP")) {
       final File cal = FileHelper.resourceToFile("com/rtg/variant/resources/test.calibration", new File(dir, "test.cal"));
-      final Calibrator.QuerySpec[] thisQuery = new QuerySpec[1];
+      final QuerySpec[] thisQuery = new QuerySpec[1];
       final Calibrator c = new Calibrator(Calibrator.getCovariateSet(cal), null) {
 
         @Override
@@ -60,8 +57,6 @@ public class BaseQualityPhredScalerTest extends TestCase {
       assertEquals(16, bqps.getScaledPhred((byte) 1, 0, Arm.LEFT));
       assertEquals(15, bqps.getScaledPhred((byte) 2, 0, Arm.LEFT));
       assertEquals(15, bqps.getScaledPhred((byte) 200, 0, Arm.LEFT));
-    } finally {
-      FileHelper.deleteAll(dir);
     }
   }
 }
