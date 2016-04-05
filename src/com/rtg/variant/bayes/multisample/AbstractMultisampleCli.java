@@ -32,7 +32,6 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.SamCalibrationInputs;
-import com.rtg.launcher.AlleleBalanceFactor;
 import com.rtg.launcher.BuildCommon;
 import com.rtg.launcher.CommandLineFiles;
 import com.rtg.launcher.CommonFlags;
