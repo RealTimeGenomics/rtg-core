@@ -13,10 +13,6 @@
 package com.rtg.variant.bayes.complex;
 
 import java.io.Serializable;
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.security.AccessController;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -27,10 +23,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 import com.rtg.launcher.GlobalFlags;
-import com.rtg.mode.DNA;
-import com.rtg.util.SeparateClassLoader;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.SlimException;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.Code;
@@ -43,17 +36,6 @@ import com.rtg.variant.match.AlignmentMatch;
 import com.rtg.variant.match.AlleleAsReadMatch;
 import com.rtg.variant.match.Match;
 import com.rtg.variant.match.OrdinalMatchComparator;
-import com.rtg.variant.realign.AbstractAllPaths;
-import com.rtg.variant.realign.AlignmentEnvironment;
-import com.rtg.variant.realign.AlignmentEnvironmentGenome;
-import com.rtg.variant.realign.AlignmentEnvironmentGenomeSubstitution;
-import com.rtg.variant.realign.AllPaths;
-import com.rtg.variant.realign.Environment;
-import com.rtg.variant.realign.EnvironmentCombined;
-import com.rtg.variant.realign.RealignParams;
-import com.rtg.variant.realign.RealignParamsGenome;
-import com.rtg.variant.realign.ScoreFastUnderflow;
-import com.rtg.variant.realign.ScoreMatrix;
 import com.rtg.variant.util.VariantUtils;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
@@ -81,91 +63,27 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
   private static final int HYPOTH_CUTOFF_DIV = 6; //Integer.parseInt(System.getProperty("rtg.hypoth-cutoff-div", "6"));
   private static final double HYPOTH_COUNTS_MULT = 1.5; //Double.parseDouble(System.getProperty("rtg.hypoth-counts-mult", "1.5"));
 
-  /*
-   * The following block of code is being used to allow two separate class definitions
-   * for classes that the java JIT can optimise quite heavily in another part of the code
-   * if not used directly in this code. This allows it to maintain the speed it used to have
-   * instead of becoming approximately 40% slower due to the optimisations removed to allow
-   * both locations to use the same code.
-   */
-  /*******************START BLOCK******************/
-  private static final Constructor<AllPaths> SCORE_FAST_CONSTRUCTOR;
-  private static final Constructor<Environment> ENVIRONMENT_COMBINED_CONSTRUCTOR;
-  static {
-    final SeparateClassLoader loader = AccessController.doPrivileged(new PrivilegedAction<SeparateClassLoader>() {
-      @Override
-      public SeparateClassLoader run() {
-        return new SeparateClassLoader(ScoreFastUnderflow.class, ScoreMatrix.class, AbstractAllPaths.class, EnvironmentCombined.class);
-      }
-    });
-    try {
-      @SuppressWarnings("unchecked")
-      final Class<AllPaths> sfClazz = (Class<AllPaths>) loader.loadClass(ScoreFastUnderflow.class.getName());
-      SCORE_FAST_CONSTRUCTOR = sfClazz.getConstructor(RealignParams.class);
-      @SuppressWarnings("unchecked")
-      final Class<Environment> ecClazz = (Class<Environment>) loader.loadClass(EnvironmentCombined.class.getName());
-      ENVIRONMENT_COMBINED_CONSTRUCTOR = ecClazz.getConstructor(AlignmentEnvironment.class, int.class, int.class, AlignmentEnvironment.class);
-    } catch (final ClassNotFoundException | NoSuchMethodException | SecurityException e) {
-      throw new SlimException(e);
-    }
-  }
-
-  private static AllPaths initScoreFastUnderflow(RealignParams params) {
-    try {
-      return SCORE_FAST_CONSTRUCTOR.newInstance(params);
-    } catch (final IllegalArgumentException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
-      throw new SlimException(e);
-    }
-    //return new ScoreFastUnderflow(params);
-  }
-
-  private static Environment initEnvironmentCombined(AlignmentEnvironment samEnv, int zeroBasedStartPos, int maxShift, AlignmentEnvironment templateEnv) {
-    try {
-      return ENVIRONMENT_COMBINED_CONSTRUCTOR.newInstance(samEnv, zeroBasedStartPos, maxShift, templateEnv);
-    } catch (final IllegalArgumentException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
-      throw new SlimException(e);
-    }
-    //return new EnvironmentCombined(samEnv, zeroBasedStartPos, maxShift, templateEnv);
-  }
-  /*******************END BLOCK********************/
-
-
   /**
    * Obtain hypotheses for a complex region
-   * @param reference reference bases for complex region
-   * @param matches matches covering complex region (see <code>intersectSet</code>)
-   * @param arithmetic implementation to use for arithmetic
+   * @param context contains complex call contextual information
    * @param haploid true if reference is haploid
    * @param params variant params used for genome priors
-   * @param ssp site specific priors
    * @return the HypothesesComplex
    */
-  public static HypothesesComplex makeComplexHypotheses(ComplexTemplate reference, List<AlignmentMatch> matches, PossibilityArithmetic arithmetic, boolean haploid, final VariantParams params, SiteSpecificPriors ssp) {
-    final DescriptionComplex description = createDescription(matches, reference, params.pruneHypotheses(), ssp, params.maxComplexHypotheses());
-    final int refHyp = findReferenceHypothesis(description, reference.replaceString());
-
-    final double[] priors = makePriorsAllPaths(description, haploid, reference, arithmetic, refHyp, params.genomePriors());
+  public static HypothesesComplex makeComplexHypotheses(ComplexTemplate context, boolean haploid, final VariantParams params) {
+    final double[] priors = makePriorsAllPaths(context, haploid, params.genomePriors());
     //assert sum >= 0 && sum <= 1;
 
-    final HypothesesComplex result = new HypothesesComplex(description, arithmetic, priors, haploid, refHyp);
+    final HypothesesComplex result = new HypothesesComplex(context.description(), context.arithmetic(), priors, haploid, context.refHyp());
 
     if (PRINT_HYP_DETAILS) {
       for (int i = 0; i < result.size(); i++) {
         final String ploidy = haploid ? "haploid" : "diploid";
-        System.err.println("" + reference.getSequenceName() + ":" + reference.getStart() + "-" + reference.getEnd() + " ploidy=" + ploidy + " hyp=" + result.name(i) + " prior=" +  arithmetic.poss2Prob(result.p(i)));
+        System.err.println("" + context.getSequenceName() + ":" + context.getStart() + "-" + context.getEnd() + " ploidy=" + ploidy + " hyp=" + result.name(i) + " prior=" + context.arithmetic().poss2Prob(result.p(i)));
       }
     }
 
     return result;
-  }
-
-  private static int findReferenceHypothesis(DescriptionComplex description, String reference) {
-    for (int i1 = 0; i1 < description.size(); i1++) {
-      if (description.name(i1).equals(reference)) {
-        return i1;
-      }
-    }
-    return NO_HYPOTHESIS;
   }
 
   /**
@@ -184,77 +102,27 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
   /**
    * This diagram shows the relationship of the different variables when doing the all-paths matching.
    * <img src="doc-files/makeInitialPriors.jpg" alt="image">
-   * @param description description for hypotheses
+   * @param c region on reference being replaced by the hypotheses.
    * @param haploid true for a haploid situation
-   * @param cot region on reference being replaced by the hypotheses.
-   * @param arithmetic implementation to use for arithmetic
-   * @param refHyp index of reference hypothesis
    * @param genomePriors genome prior information
    * @return the prior possibilities for transitions between haploid hypotheses.
    */
-  static double[] makePriorsAllPaths(DescriptionComplex description, boolean haploid, final ComplexTemplate cot, PossibilityArithmetic arithmetic, int refHyp, GenomePriorParams genomePriors) {
-    // Compute likelihood of the alleles themselves arising
-    final AllPaths sm = initScoreFastUnderflow(RealignParamsGenome.SINGLETON);
-    final int hypExtension = Math.max(5, Math.max(description.maxLength() + 1, cot.getLength() + 1));
-    final int start = cot.getStart() - hypExtension;
-    final int end = cot.getStart() + hypExtension;
-    final int e0Hx = cot.getEnd() - hypExtension;
-
-    // Build up all alignment environments that we will need
-    final List<AlignmentEnvironment> hypEnvs = new ArrayList<>(); // All alleles to which we will perform alignment (description first,
-    final List<Integer> hypLengths = new ArrayList<>();
-    for (int i = 0; i < description.size(); i++) {
-      final AlignmentEnvironment env;
-      final int len;
-      if (i == refHyp) {
-        env = new AlignmentEnvironmentGenome(start, end, cot.templateBytes());
-        len = cot.getEnd() - cot.getStart();
-      } else {
-        final byte[] hypDna = DNA.stringDNAtoByte(description.name(i));
-        len = hypDna.length;
-        env = new AlignmentEnvironmentGenomeSubstitution(start, end, cot, hypDna);
-      }
-      hypEnvs.add(env);
-      hypLengths.add(len);
-    }
-    final int refAllele;
-    if (refHyp == Hypotheses.NO_HYPOTHESIS) { // Reference wasn't included in the set of hypotheses (perhaps due to Ns)
-      refAllele = hypEnvs.size();
-      hypEnvs.add(new AlignmentEnvironmentGenome(start, end, cot.templateBytes()));
-      hypLengths.add(cot.getLength());
-    } else {
-      refAllele = refHyp;
-    }
-
-    // Compute all-paths transition matrix
-    final double[][] transitionProbsLn = new double[hypEnvs.size()][description.size()];
-    for (int i = 0; i < hypEnvs.size(); i++) {
-      final AlignmentEnvironment aei = hypEnvs.get(i);
-      final int iLen = hypLengths.get(i);
-      for (int j = 0; j < description.size(); j++) {
-        final AlignmentEnvironment aej = hypEnvs.get(j);
-        final int jLen = hypLengths.get(j);
-        final int alignStart = e0Hx - (jLen + iLen) / 2;
-        final int maxShift = (jLen + iLen + 1) / 2;
-        final Environment env = initEnvironmentCombined(aej, alignStart, maxShift, aei);
-        sm.setEnv(env);
-        transitionProbsLn[i][j] = sm.totalScoreLn();
-      }
-    }
-
+  static double[] makePriorsAllPaths(final ComplexTemplate c, boolean haploid, GenomePriorParams genomePriors) {
     if (haploid) {
-      return computeHaploidPriors(description, arithmetic, transitionProbsLn[refAllele]);
+      return computeHaploidPriors(c);
     } else if (NEW_DIPLOID_PRIORS) {
-      return computeDiploidPriorsNew(description, arithmetic, refHyp, genomePriors, transitionProbsLn, refAllele);
+      return computeDiploidPriorsNew(c, genomePriors);
     } else {
-      return computeDiploidPriorsOld(description, arithmetic, refHyp, genomePriors, transitionProbsLn[refAllele]);
+      return computeDiploidPriorsOld(c, genomePriors);
     }
   }
 
-  private static double[] computeDiploidPriorsNew(DescriptionComplex description, PossibilityArithmetic arithmetic, int refHyp, GenomePriorParams genomePriors, double[][] transitionProbsLn, int refAllele) {
-    final double[] haploidPriors = computeHaploidPriors(description, arithmetic, transitionProbsLn[refAllele]);
-
-    final Code code =  new CodeDiploid(description.size());
+  private static double[] computeDiploidPriorsNew(ComplexTemplate c, GenomePriorParams genomePriors) {
+    final double[] haploidPriors = computeHaploidPriors(c);
+    final PossibilityArithmetic arithmetic = c.arithmetic();
+    final double[][] transitionProbsLn = c.transitionProbsLn();
+    final int refAllele = c.refTransitionIndex();
+    final Code code =  new CodeDiploid(c.description().size());
     final double[] diploidPriors = new double[code.size()];
     for (int i = 0; i < diploidPriors.length; i++) {
       final int ca = code.a(i);
@@ -273,15 +141,15 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     }
 
     if (ADJUST) {
-      adjustDiploidPriors(description, arithmetic, refHyp, genomePriors, haploidPriors, diploidPriors);
+      adjustDiploidPriors(c, arithmetic, genomePriors, haploidPriors, diploidPriors);
     }
     return VariantUtils.normalisePossibilities(diploidPriors, arithmetic);
   }
 
-  private static double[] computeDiploidPriorsOld(DescriptionComplex description, PossibilityArithmetic arithmetic, int refHyp, GenomePriorParams genomePriors, double[] refTransitionPriorsLn) {
-    final double[] haploidPriors = computeHaploidPriors(description, arithmetic, refTransitionPriorsLn);
-
-    final Code code =  new CodeDiploid(description.size());
+  private static double[] computeDiploidPriorsOld(ComplexTemplate c, GenomePriorParams genomePriors) {
+    final double[] haploidPriors = computeHaploidPriors(c);
+    final PossibilityArithmetic arithmetic = c.arithmetic();
+    final Code code =  new CodeDiploid(c.description().size());
     final double[] diploidPriors = new double[code.size()];
     for (int i = 0; i < diploidPriors.length; i++) {
       final int ca = code.a(i);
@@ -296,13 +164,13 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     }
 
     if (ADJUST) {
-      adjustDiploidPriors(description, arithmetic, refHyp, genomePriors, haploidPriors, diploidPriors);
+      adjustDiploidPriors(c, arithmetic, genomePriors, haploidPriors, diploidPriors);
     }
     return VariantUtils.normalisePossibilities(diploidPriors, arithmetic);
   }
 
   // Adjust priors using overall genome prior information (shouldn't actually be needed as this is incorporated into all-paths alignment probabilities
-  private static void adjustDiploidPriors(DescriptionComplex description, PossibilityArithmetic arithmetic, int refHyp, GenomePriorParams genomePriors, double[] haploidPriors, double[] diploidPriors) {
+  private static void adjustDiploidPriors(ComplexTemplate c, PossibilityArithmetic arithmetic, GenomePriorParams genomePriors, double[] haploidPriors, double[] diploidPriors) {
     // Reference allele frequency (average) from our priors file
     final double refFreqInitial = (1.0 - genomePriors.genomeIndelEventFraction()) / (genomePriors.genomeIndelEventFraction() + 1.0);
     double altFreqInitial = 1.0 - refFreqInitial; // Probability mass for all alt alleles.
@@ -310,12 +178,12 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     altFreqInitial = altFreqInitial * PRIORS_ALT_BIAS;
     final double refFreq = 1.0 - altFreqInitial;
     final double altFreq = haploidPriors.length == 1 ? 1.0 : altFreqInitial / (haploidPriors.length - 1); // Distribute evenly among all alt alleles
-    final double[] haploidFrequencies = new double[description.size()];
+    final double[] haploidFrequencies = new double[haploidPriors.length];
     for (int i = 0; i < haploidFrequencies.length; i++) {
-      haploidFrequencies[i] = arithmetic.prob2Poss(i == refHyp ? refFreq : altFreq);
+      haploidFrequencies[i] = arithmetic.prob2Poss(i == c.refHyp() ? refFreq : altFreq);
     }
     final double hetBias = arithmetic.prob2Poss(PRIORS_HET_BIAS);
-    final Code code = new CodeDiploid(description.size());;
+    final Code code = new CodeDiploid(c.description().size());
     for (int i = 0; i < diploidPriors.length; i++) {
       final int ca = code.a(i);
       final int cb = code.b(i);
@@ -327,16 +195,27 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
   }
 
   // Compute prior possibilities for each description from the reference allele
-  private static double[] computeHaploidPriors(DescriptionComplex description, PossibilityArithmetic arithmetic, double[] refTransitionPriorsLn) {
-    double[] haploidPriors = new double[description.size()];
-    for (int i = 0; i < description.size(); i++) {
+  private static double[] computeHaploidPriors(ComplexTemplate c) {
+    final double[] refTransitionPriorsLn = c.transitionProbsLn()[c.refTransitionIndex()];
+    final PossibilityArithmetic arithmetic = c.arithmetic();
+    double[] haploidPriors = new double[c.description().size()];
+    for (int i = 0; i < haploidPriors.length; i++) {
       haploidPriors[i] = arithmetic.ln2Poss(refTransitionPriorsLn[i]);
     }
     haploidPriors = VariantUtils.normalisePossibilities(haploidPriors, arithmetic);
     return haploidPriors;
   }
 
-  static DescriptionComplex createDescription(List<AlignmentMatch> matches, ComplexTemplate reference, boolean pruneMatches, SiteSpecificPriors ssp, int maxHypotheses) {
+  /**
+   * Create the complex description from the alignment matches, site-specific priors etc
+   * @param matches all alignment matches
+   * @param reference used to create reference description if not present in the matches
+   * @param ssp site-specific priors for additional description entries
+   * @param pruneMatches if set, prune full description
+   * @param maxHypotheses maximum number of descriptions
+   * @return the description
+   */
+  public static DescriptionComplex createComplexDescription(List<AlignmentMatch> matches, ComplexTemplate reference, SiteSpecificPriors ssp, boolean pruneMatches, int maxHypotheses) {
 
     // turn ssps into alleleAsRef matches
     final ArrayList<Match> sspMatches = new ArrayList<>();

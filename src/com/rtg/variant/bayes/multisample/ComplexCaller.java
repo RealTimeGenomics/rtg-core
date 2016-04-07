@@ -180,7 +180,10 @@ final class ComplexCaller {
       region.setType(RegionType.NO_HYPOTHESES);
       return null;
     }
-    final HypothesesComplex hypHap = HypothesesComplex.makeComplexHypotheses(cot, matches, LogApproximatePossibility.SINGLETON, true, mParams, mConfig.getSiteSpecificPriors());
+
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(matches, cot, mConfig.getSiteSpecificPriors(), mParams.pruneHypotheses(), mParams.maxComplexHypotheses()), LogApproximatePossibility.SINGLETON);
+
+    final HypothesesComplex hypHap = HypothesesComplex.makeComplexHypotheses(cot, true, mParams);
     if (hypHap.size() == 0 || (hypHap.size() == 1 && hypHap.reference() == 0)) {
       Diagnostic.userLog("Can not create hypothesis to cover region " + cot.toString());
       if (mParams.callLevel() == VariantOutputLevel.ALL) {
@@ -199,7 +202,8 @@ final class ComplexCaller {
       region.setType(RegionType.TOO_MANY_HYPOTHESES);
       return null;
     }
-    final HypothesesComplex hypDip = HypothesesComplex.makeComplexHypotheses(cot, matches, LogApproximatePossibility.SINGLETON, false, mParams, mConfig.getSiteSpecificPriors());
+
+    final HypothesesComplex hypDip = HypothesesComplex.makeComplexHypotheses(cot, false, mParams);
     if (hypHap.size() > MAX_HYPOTHESES || hypDip.size() > MAX_HYPOTHESES) {
       Diagnostic.userLog(hypHap.size() + " haploid hypotheses, " + hypDip.size() + " diploid hypotheses is too high, at region " + cot.toString());
       if (mParams.callLevel() == VariantOutputLevel.ALL) {

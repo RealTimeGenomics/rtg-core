@@ -14,10 +14,13 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 
 import com.rtg.launcher.MockReaderParams;
+import com.rtg.mode.DnaUtils;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reference.Ploidy;
@@ -30,11 +33,13 @@ import com.rtg.util.integrity.Exam;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
-import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.complex.ComplexTemplate;
+import com.rtg.variant.bayes.complex.DescriptionComplex;
 import com.rtg.variant.bayes.multisample.ComplexCallerTest;
-import com.rtg.variant.bayes.snp.DescriptionCommon;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
+import com.rtg.variant.match.AlleleAsReadMatch;
+import com.rtg.variant.match.Match;
+import com.rtg.variant.util.arithmetic.SimplePossibility;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMReadGroupRecord;
@@ -126,12 +131,21 @@ public class SomaticCallerConfigurationTest extends TestCase {
     gt(initialPriors[a7], aa, cc, aa, a, a, c);
   }
 
+
+  private DescriptionComplex makeDescriptionComplex(String... names) {
+    final List<Match> matches = new ArrayList<>();
+    for (String name : names) {
+      matches.add(new AlleleAsReadMatch(DnaUtils.encodeString(name)));
+    }
+    return new DescriptionComplex(matches);
+  }
+
   public void testMakeInitialPriors() {
     final byte[] template = new byte[1000];
     Arrays.fill(template, (byte) 4);
     final ComplexTemplate cot = new ComplexTemplate(template, "", 500, 502);
-    final Description descr = new DescriptionCommon("A", "C", "AA", "CC", "CCC", "AAAAAAA");
-    final double[][] initialPriors = SomaticCallerConfiguration.makeSomaticInitialPriors(descr, cot);
+    cot.setComplexContext(makeDescriptionComplex("A", "C", "AA", "CC", "CCC", "AAAAAAA"), SimplePossibility.SINGLETON);
+    final double[][] initialPriors = SomaticCallerConfiguration.makeSomaticInitialPriors(cot);
     //System.err.println(toStringLog(initialPriors));
     checkDistribution(initialPriors);
     gtCheck(initialPriors);
@@ -141,8 +155,8 @@ public class SomaticCallerConfigurationTest extends TestCase {
     final byte[] template = new byte[1000];
     Arrays.fill(template, (byte) 4);
     final ComplexTemplate cot = new ComplexTemplate(template, "", 500, 502);
-    final Description descr = new DescriptionCommon("A", "AAAAAAA");
-    final double[][] initialPriors = SomaticCallerConfiguration.makeSomaticInitialPriors(descr, cot);
+    cot.setComplexContext(makeDescriptionComplex("A", "AAAAAAA"), SimplePossibility.SINGLETON);
+    final double[][] initialPriors = SomaticCallerConfiguration.makeSomaticInitialPriors(cot);
     //System.err.println(toStringLog(initialPriors));
     checkDistribution(initialPriors);
   }
@@ -154,8 +168,8 @@ public class SomaticCallerConfigurationTest extends TestCase {
       template[i] = (byte) (rand.nextInt(4) + 1);
     }
     final ComplexTemplate cot = new ComplexTemplate(template, "", 500, 500);
-    final Description descr = new DescriptionCommon("A", "C", "AA", "CC", "CCC", "AAAAAAA");
-    final double[][] initialPriors = SomaticCallerConfiguration.makeSomaticInitialPriors(descr, cot);
+    cot.setComplexContext(makeDescriptionComplex("A", "C", "AA", "CC", "CCC", "AAAAAAA"), SimplePossibility.SINGLETON);
+    final double[][] initialPriors = SomaticCallerConfiguration.makeSomaticInitialPriors(cot);
     //System.err.println(toStringLog(initialPriors));
     checkDistribution(initialPriors);
     gtCheck(initialPriors);

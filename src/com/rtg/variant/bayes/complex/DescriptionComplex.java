@@ -28,7 +28,11 @@ public class DescriptionComplex extends Description {
 
   private final int mMaxLength;
 
-  protected DescriptionComplex(List<? extends Match> matches) {
+  /**
+   * Make one.
+   * @param matches corresponding to each hypothesis.
+   */
+  public DescriptionComplex(List<? extends Match> matches) {
     mNames = matches;
     int min = Integer.MAX_VALUE;
     int max = 0;

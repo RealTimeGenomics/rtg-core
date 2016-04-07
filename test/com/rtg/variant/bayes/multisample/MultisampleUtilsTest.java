@@ -120,7 +120,9 @@ public class MultisampleUtilsTest extends TestCase {
     assertEquals("G", is.get(2).toString());
 
     final VariantParams p = VariantParams.builder().genomePriors("human").create();
-    final HypothesesComplex hc = HypothesesComplex.makeComplexHypotheses(new ComplexTemplate(DnaUtils.encodeString("acgtgtggtcgtacgtaccaagtaca"), "", 8 - 1, 8 - 1), is, SimplePossibility.SINGLETON, false, p, null);
+    ComplexTemplate context = new ComplexTemplate(DnaUtils.encodeString("acgtgtggtcgtacgtaccaagtaca"), "", 8 - 1, 8 - 1);
+    context.setComplexContext(HypothesesComplex.createComplexDescription(is, context, null, p.pruneHypotheses(), p.maxComplexHypotheses()), SimplePossibility.SINGLETON);
+    final HypothesesComplex hc = HypothesesComplex.makeComplexHypotheses(context, false, p);
     final HashSet<String> haphypoexp = new HashSet<>();
     haphypoexp.add("");
     haphypoexp.add("A");
@@ -165,7 +167,9 @@ public class MultisampleUtilsTest extends TestCase {
     assertEquals("~TC", is.get(2).toString());
     assertEquals("~A", is.get(3).toString());
     final VariantParams p = VariantParams.builder().genomePriors("human").create();
-    final HypothesesComplex hc = HypothesesComplex.makeComplexHypotheses(new ComplexTemplate(DnaUtils.encodeString("acgtgtggtcgtacgtaccaagtaca"), "", 8 - 1, 11 - 1), is, SimplePossibility.SINGLETON, false, p, null);
+    ComplexTemplate context = new ComplexTemplate(DnaUtils.encodeString("acgtgtggtcgtacgtaccaagtaca"), "", 8 - 1, 11 - 1);
+    context.setComplexContext(HypothesesComplex.createComplexDescription(is, context, null, p.pruneHypotheses(), p.maxComplexHypotheses()), SimplePossibility.SINGLETON);
+    final HypothesesComplex hc = HypothesesComplex.makeComplexHypotheses(context, false, p);
     assertEquals(1, hc.size()); //just the ref, rest are unfixed
     assertEquals("GTC", hc.description().name(hc.reference()));
   }
@@ -191,7 +195,9 @@ public class MultisampleUtilsTest extends TestCase {
     assertEquals("", is.get(2).toString());
     assertEquals("", is.get(3).toString());
     final VariantParams p = VariantParams.builder().genomePriors("human").create();
-    final HypothesesComplex hc = HypothesesComplex.makeComplexHypotheses(new ComplexTemplate(DnaUtils.encodeString("acgtgtggtcgtacgtaccaagtaca"), "", 6 - 1, 7 - 1), is, SimplePossibility.SINGLETON, false, p, null);
+    ComplexTemplate context = new ComplexTemplate(DnaUtils.encodeString("acgtgtggtcgtacgtaccaagtaca"), "", 6 - 1, 7 - 1);
+    context.setComplexContext(HypothesesComplex.createComplexDescription(is, context, null, p.pruneHypotheses(), p.maxComplexHypotheses()), SimplePossibility.SINGLETON);
+    final HypothesesComplex hc = HypothesesComplex.makeComplexHypotheses(context, false, p);
     assertEquals(3, hc.size());
     final HashSet<String> haphypoexp = new HashSet<>();
     haphypoexp.add("");

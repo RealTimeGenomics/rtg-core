@@ -81,13 +81,15 @@ public class HypothesesComplexTest extends TestCase {
   // Get a scorer with all the priors explicitly set
   public static HypothesesComplex getSpecifiedScorer(final ArrayList<AlignmentMatch> ml, boolean haploid, SiteSpecificPriors ssp, ComplexTemplate cot, boolean prune) {
     final VariantParams vp = getSpecifiedParams(prune);
-    return HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, haploid, vp, ssp);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, ssp, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    return HypothesesComplex.makeComplexHypotheses(cot, haploid, vp);
   }
 
   // Get a scorer with all the priors explicitly set
   public static HypothesesComplex getSpecifiedScorerProb(final ArrayList<AlignmentMatch> ml, boolean haploid, SiteSpecificPriors ssp, ComplexTemplate cot, boolean prune) {
     final VariantParams vp = getSpecifiedParams(prune);
-    return HypothesesComplex.makeComplexHypotheses(cot, ml, SimplePossibility.SINGLETON, haploid, vp, ssp);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, ssp, vp.pruneHypotheses(), vp.maxComplexHypotheses()), SimplePossibility.SINGLETON);
+    return HypothesesComplex.makeComplexHypotheses(cot, haploid, vp);
   }
 
   private static VariantParams getSpecifiedParams(boolean prune) {
@@ -139,7 +141,8 @@ public class HypothesesComplexTest extends TestCase {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
     final VariantParams vp = getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate cot = new ComplexTemplate(new byte[] {}, "", 0, 0);
-    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, true, vp);
     checkHypothesis("EmptyMatches", dis);
     assertEquals(0, dis.reference());
   }
@@ -149,7 +152,8 @@ public class HypothesesComplexTest extends TestCase {
     ml.add(match("N", 20));
     final VariantParams vp = getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate cot = new ComplexTemplate(new byte[] {}, "", 0, 0);
-    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, true, vp);
     checkHypothesis("AddingN", dis);
   }
 
@@ -162,7 +166,8 @@ public class HypothesesComplexTest extends TestCase {
     .create();
     final VariantParams vp = new VariantParamsBuilder().genomePriors(vpb).defaultQuality(20).callLevel(VariantOutputLevel.ALL).create();
     final ComplexTemplate cot = new ComplexTemplate(new byte[] {}, "", 0, 0);
-    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, false, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, false, vp);
     checkHypothesis("EmptyMatchesAll", dis);
   }
 
@@ -173,7 +178,8 @@ public class HypothesesComplexTest extends TestCase {
     vpb.mapped(new TreeSet<File>());
     final VariantParams vp = vpb.genomePriors(gppb).callLevel(VariantOutputLevel.ALL).create();
     final ComplexTemplate cot = new ComplexTemplate(new byte[] {}, "", 0, 0);
-    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, false, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, false, vp);
     checkHypothesis("PriorsBug", dis);
   }
 
@@ -191,7 +197,8 @@ public class HypothesesComplexTest extends TestCase {
         .genomeIndelEventRate(0.1 / 2.0)
         .create();
     final VariantParams vp = new VariantParamsBuilder().genomePriors(vpb).defaultQuality(20).callLevel(VariantOutputLevel.ALL).create();
-    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, ml, LogPossibility.SINGLETON, false, vp, null);
+    COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, false, vp);
     checkHypothesis("MatchesAllWithSecondOutput", dis);
   }
 
@@ -230,7 +237,8 @@ public class HypothesesComplexTest extends TestCase {
       ml.add(mA);
     }
     final VariantParams vp = getVariantParams(0.5, 0.5, 0.1);
-    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, ml, LogPossibility.SINGLETON, false, vp, null);
+    COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, false, vp);
 
     checkHypothesis("ObviousSingleNtInsertionMatchesHomoCall", dis);
   }
@@ -246,7 +254,8 @@ public class HypothesesComplexTest extends TestCase {
     final VariantParams vp = getVariantParams(0.5, 0.5, 0.1);
 
     final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte("GGATCGGGGG"), "", 5, 5);
-    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, false, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, false, vp);
 
     checkHypothesis("ObviousSingleNtInsertionMatchesHeteroCall", dis);
   }
@@ -257,7 +266,8 @@ public class HypothesesComplexTest extends TestCase {
     ml.add(mA);
     final VariantParams vp = getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte("GGATCGGGGG"), "", 5, 6);
-    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, false, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, false, vp);
     assertEquals(1, dis.reference());
   }
 
@@ -288,7 +298,8 @@ public class HypothesesComplexTest extends TestCase {
         ml.add(rm);
       }
 
-      final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, ml, LogPossibility.SINGLETON, false, vp, null);
+      COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+      final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, false, vp);
 
       for (int i = 0 ; i < dis.code().size(); i++) {
         assertFalse(Double.isInfinite(dis.p(i)));
@@ -313,7 +324,8 @@ public class HypothesesComplexTest extends TestCase {
     //System.err.println(ml);
     final GenomePriorParams vpb = new GenomePriorParamsBuilder().create();
     final VariantParams vp = new VariantParamsBuilder().genomePriors(vpb).defaultQuality(20).maxAmbiguity(100.0).maxCoverageFilter(new StaticThreshold(100)).create();
-    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, ml, LogPossibility.SINGLETON, false, vp, null);
+    COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, false, vp);
     checkHypothesis("FromConvergence", dis);
   }
 
@@ -332,7 +344,8 @@ public class HypothesesComplexTest extends TestCase {
 
     final GenomePriorParams vpb = new GenomePriorParamsBuilder().create();
     final VariantParams vp = new VariantParamsBuilder().genomePriors(vpb).defaultQuality(20).create();
-    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, ml, LogPossibility.SINGLETON, false, vp, null);
+    COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, false, vp);
     checkHypothesis("FromConvergence2", dis);
   }
 
@@ -373,7 +386,8 @@ public class HypothesesComplexTest extends TestCase {
     ml.add(ma);
     final VariantParams vp = new VariantParamsBuilder().genomePriors(new GenomePriorParamsBuilder().create()).maxCoverageFilter(new StaticThreshold(10)).create();
     final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte("gatatgaaattctgggttgaaaattcttttaagaatgttgaatattggcccccacggtcttctggcttgtagggtttctgcagag"), "", 5, 6);
-    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, false, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, false, vp);
     checkHypothesis("AmbiguousRead", dis);
   }
 
@@ -383,8 +397,10 @@ public class HypothesesComplexTest extends TestCase {
     ml.add(match("TT", 20));
     final GenomePriorParams vpb = new GenomePriorParamsBuilder().genomeSnpRateHomo(0.5).genomeSnpRateHetero(0.5).genomeIndelEventRate(0.1 / 2.0).create();
     final VariantParams vp = new VariantParamsBuilder().genomePriors(vpb).defaultQuality(20).callLevel(VariantOutputLevel.ALL).create();
-    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, ml, LogPossibility.SINGLETON, false, vp, null);
-    final HypothesesComplex dis2 = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, ml, SimplePossibility.SINGLETON, false, vp, null);
+    COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, false, vp);
+    COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), SimplePossibility.SINGLETON);
+    final HypothesesComplex dis2 = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, false, vp);
     for (int i = 0; i < dis.code().size(); i++) {
       assertEquals(Math.exp(dis.p(i)), dis2.p(i), 1e-11);
     }
@@ -399,7 +415,8 @@ public class HypothesesComplexTest extends TestCase {
     final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte("gata"), "", 1, 2);
     final GenomePriorParams vpb = new GenomePriorParamsBuilder().genomeSnpRateHomo(0.5).genomeSnpRateHetero(0.5).genomeIndelEventRate(0.1 / 2.0).create();
     final VariantParams vp = new VariantParamsBuilder().genomePriors(vpb).defaultQuality(20).callLevel(VariantOutputLevel.ALL).create();
-    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, ml, SimplePossibility.SINGLETON, false, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), SimplePossibility.SINGLETON);
+    final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(cot, false, vp);
     assertEquals(2, dis.description().size());
     assertEquals(0.0, dis.description().match(0).mapError());
     assertEquals(VariantUtils.phredToProb(30), dis.description().match(1).mapError());
@@ -413,7 +430,7 @@ public class HypothesesComplexTest extends TestCase {
     final ArrayList<AlignmentMatch> ml = createMatches(ref);
 
     final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte(ref), "", 0, ref.length());
-    final DescriptionComplex dc = HypothesesComplex.createDescription(ml, cot, true, null, Integer.MAX_VALUE);
+    final DescriptionComplex dc = HypothesesComplex.createComplexDescription(ml, cot, null, true, Integer.MAX_VALUE);
     assertEquals(6, dc.size());
   }
 
@@ -482,7 +499,7 @@ public class HypothesesComplexTest extends TestCase {
     ml.add(match("TCAAATCCCAAG", 40));
 
     final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte(ref), "", 0, ref.length());
-    final DescriptionComplex dc = HypothesesComplex.createDescription(ml, cot, true, null, 6);
+    final DescriptionComplex dc = HypothesesComplex.createComplexDescription(ml, cot, null, true, 6);
     assertEquals(6, dc.size());
   }
 
@@ -552,8 +569,8 @@ public class HypothesesComplexTest extends TestCase {
   public void testIndelAndUnknownRefBug1591() {
     final ComplexTemplate cot = new ComplexTemplate(new byte[1000], "ref", 468, 510);
     final Match m = new AlignmentMatch(null, "AAAAA", null, 20, 0, 5, 0);
-    final DescriptionComplex desc = new DescriptionComplex(Collections.singletonList(m));
-    assertNotNull(HypothesesComplex.makePriorsAllPaths(desc, true, cot, SimplePossibility.SINGLETON, -1, new GenomePriorParamsBuilder().create()));
+    cot.setComplexContext(new DescriptionComplex(Collections.singletonList(m)), SimplePossibility.SINGLETON);
+    assertNotNull(HypothesesComplex.makePriorsAllPaths(cot, true, new GenomePriorParamsBuilder().create()));
   }
 
   // TODO Following test should be enabled after fixing TODO in HypothesesComplex.createDescription method

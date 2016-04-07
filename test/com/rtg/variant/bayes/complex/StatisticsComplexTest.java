@@ -66,7 +66,8 @@ public class StatisticsComplexTest extends TestCase {
     final VariantOutputOptions params = VariantParams.builder().create();
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate comtem = new ComplexTemplate(new byte[]{0, 0}, "foo", 0, 2);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(comtem, Arrays.asList(match("AA", 5)), LogPossibility.SINGLETON, true, vp, null);
+    comtem.setComplexContext(HypothesesComplex.createComplexDescription(Arrays.asList(match("AA", 5)), comtem, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(comtem, true, vp);
     final StatisticsComplex stat = new StatisticsComplex(hyp.description(), comtem.getLength());
     stat.increment(new EvidenceComplex(hyp, match("A", 20), comtem, vp, EvidenceComplexTest.getChooser()), 0);
     stat.increment(new EvidenceComplex(hyp, match("C", 21), comtem, vp, EvidenceComplexTest.getChooser()), 0);
@@ -96,7 +97,8 @@ public class StatisticsComplexTest extends TestCase {
   public void testIncompleteOverlap() throws IOException {
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate comtem = new ComplexTemplate(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, "foo", 0, 10);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(comtem, Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), LogPossibility.SINGLETON, true, vp, null);
+    comtem.setComplexContext(HypothesesComplex.createComplexDescription(Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), comtem, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(comtem, true, vp);
     final StatisticsComplex stat = new StatisticsComplex(hyp.description(), comtem.getLength());
     for (int i = 0; i < 10; i++) {
       stat.increment(new EvidenceComplex(hyp, partialMatch("AA", "2=", 5, true, false), comtem, vp, EvidenceComplexTest.getChooser()), 0);
@@ -108,7 +110,8 @@ public class StatisticsComplexTest extends TestCase {
   public void testIncompleteOverlapOtherEnd() throws IOException {
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate comtem = new ComplexTemplate(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, "foo", 0, 10);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(comtem, Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), LogPossibility.SINGLETON, true, vp, null);
+    comtem.setComplexContext(HypothesesComplex.createComplexDescription(Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), comtem, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(comtem, true, vp);
     final StatisticsComplex stat = new StatisticsComplex(hyp.description(), comtem.getLength());
     for (int i = 0; i < 10; i++) {
       stat.increment(new EvidenceComplex(hyp, partialMatch("AA", "2=", 5, false, true), comtem, vp, EvidenceComplexTest.getChooser()), 0);
@@ -120,7 +123,8 @@ public class StatisticsComplexTest extends TestCase {
   public void testExactCoverage() throws IOException {
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate comtem = new ComplexTemplate(new byte[]{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, "foo", 0, 10);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(comtem, Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), LogPossibility.SINGLETON, true, vp, null);
+    comtem.setComplexContext(HypothesesComplex.createComplexDescription(Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), comtem, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(comtem, true, vp);
     final StatisticsComplex stat = new StatisticsComplex(hyp.description(), comtem.getLength());
     for (int i = 0; i < 12; i++) {
       stat.increment(new EvidenceComplex(hyp, partialMatch("AA", "2=", 5, true, false), comtem, vp, EvidenceComplexTest.getChooser()), 0);
@@ -163,7 +167,8 @@ public class StatisticsComplexTest extends TestCase {
     }
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate cot = new ComplexTemplate(new byte[] {1, 2, 3}, "Foo", 0, 3);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, true, vp);
     final StatisticsComplex cmpx = new StatisticsComplex(hyp.description(), cot.getLength());
     double cov = 0.0;
     for (final AlignmentMatch match : ml) {

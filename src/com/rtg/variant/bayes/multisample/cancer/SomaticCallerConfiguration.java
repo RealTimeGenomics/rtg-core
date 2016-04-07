@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 
-import com.rtg.mode.DNA;
 import com.rtg.reference.Ploidy;
 import com.rtg.reference.SexMemo;
 import com.rtg.relation.LineageLookup;
@@ -33,7 +32,6 @@ import com.rtg.variant.SomaticParams;
 import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.AlleleBalanceProbability;
-import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
@@ -56,12 +54,6 @@ import com.rtg.variant.bayes.snp.ModelSnpFactory;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
-import com.rtg.variant.realign.AlignmentEnvironment;
-import com.rtg.variant.realign.AlignmentEnvironmentGenomeSubstitution;
-import com.rtg.variant.realign.AllPaths;
-import com.rtg.variant.realign.EnvironmentCombined;
-import com.rtg.variant.realign.RealignParamsGenome;
-import com.rtg.variant.realign.ScoreFastUnderflow;
 import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
 
 /**
@@ -192,7 +184,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
 
   @Override
   public MultisampleJointCaller getComplexJointCaller(final Hypotheses<DescriptionComplex> complex, final VariantParams params, final ComplexTemplate cot) {
-    final double[][] initialPriors = makeSomaticInitialPriors(complex.description(), cot);
+    final double[][] initialPriors = makeSomaticInitialPriors(cot);
     //System.err.println("CancerJointCallerConfiguration mu=" + mMutationRate + " contamination=" + mContamination);
     //System.err.println(complex);
     //System.err.println(toStringLog(initialPriors));
@@ -211,41 +203,17 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
   /**
    * This diagram shows the relationship of the different variables when doing the all-paths matching.
    * <img src="doc-files/makeInitialPriors.jpg" alt="image">
-   * @param description haploid hypotheses.
    * @param cot region on reference being replaced by the hypotheses.
    * @return the prior probabilities for transitions between haploid hypotheses.
    */
-  static double[][] makeSomaticInitialPriors(final Description description, final ComplexTemplate cot) {
-    final int hypExtension = Math.max(5, Math.max(description.maxLength() + 1, cot.getLength() + 1));
-    final AllPaths sm = new ScoreFastUnderflow(RealignParamsGenome.SINGLETON);
-    final double[][] initialPriorsLn = new double[description.size()][description.size()];
-    final int start = cot.getStart() - hypExtension;
-    final int end = cot.getStart() + hypExtension;
-    //System.err.println("CancerJointCallerConfiguration start=" + start + " end=" + end);
-    final int e0Hx = cot.getEnd() - hypExtension;
-    final byte[][] callBytes = new byte[description.size()][];
-    for (int i = 0; i < description.size(); i++) {
-      callBytes[i] = DNA.stringDNAtoByte(description.name(i));
-    }
-    for (int i = 0; i < description.size(); i++) {
-      final int iLen = callBytes[i].length;
-      final AlignmentEnvironment aei = new AlignmentEnvironmentGenomeSubstitution(start, end, cot, callBytes[i]);
-      //System.err.println("aei.length=" + aei.length());
-      for (int j = 0; j < description.size(); j++) {
-        final int jLen = callBytes[j].length;
-        final AlignmentEnvironment aej = new AlignmentEnvironmentGenomeSubstitution(start, end, cot, callBytes[j]);
-        final int s = e0Hx - (iLen + jLen) / 2;
-        final int mx = (iLen + jLen + 1) / 2;
-        final EnvironmentCombined env = new EnvironmentCombined(aej, s, mx, aei);
-        sm.setEnv(env);
-        initialPriorsLn[i][j] = sm.totalScoreLn();
-        //System.err.println(sm.toString());
-      }
-    }
-    //System.err.println(IntegralAbstract.toString(initialPriorsLn));
-    final double[][] initialPriors = new double[description.size()][];
-    for (int i = 0; i < initialPriorsLn.length; i++) {
-      initialPriors[i] = MathUtils.lnToNormaliedProb(initialPriorsLn[i]);
+  static double[][] makeSomaticInitialPriors(final ComplexTemplate cot) {
+    assert cot.description() != null;
+    assert cot.transitionProbsLn() != null;
+    final double[][] transitionProbsLn = cot.transitionProbsLn();
+    final double[][] initialPriors = new double[cot.description().size()][];
+    assert transitionProbsLn.length >= initialPriors.length; // transition matrix may have additional rows
+    for (int i = 0; i < initialPriors.length; i++) {
+      initialPriors[i] = MathUtils.lnToNormaliedProb(transitionProbsLn[i]);
     }
     return initialPriors;
   }

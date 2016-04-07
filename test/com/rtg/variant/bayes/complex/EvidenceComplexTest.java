@@ -105,7 +105,8 @@ public class EvidenceComplexTest extends TestCase {
         .genomeIndelEventRate(0.1 / 2.0)
         .create();
     final VariantParams vp = new VariantParamsBuilder().genomePriors(vpb).defaultQuality(20).callLevel(VariantOutputLevel.ALL).create();
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, ml, LogPossibility.SINGLETON, false, vp, null);
+    HypothesesComplexTest.COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, HypothesesComplexTest.COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, false, vp);
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), HypothesesComplexTest.COMPLEX_TEMPLATE.getLength());
     final ModelInterface<?> m = getModel(hyp, statistics);
     double sum = 0.0;
@@ -136,7 +137,8 @@ public class EvidenceComplexTest extends TestCase {
       ml.add(mA);
     }
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, ml, LogPossibility.SINGLETON, false, vp, null);
+    HypothesesComplexTest.COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, HypothesesComplexTest.COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, false, vp);
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), HypothesesComplexTest.COMPLEX_TEMPLATE.getLength());
     final ModelInterface<?> m = getModel(hyp, statistics);
     double sum = 0.0;
@@ -155,7 +157,8 @@ public class EvidenceComplexTest extends TestCase {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate cot = new ComplexTemplate(new byte[] {}, "", 0, 0);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, true, vp);
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), cot.getLength());
     double sum = 0.0;
     final ModelInterface<?> m = getModel(hyp, statistics);
@@ -172,7 +175,8 @@ public class EvidenceComplexTest extends TestCase {
     ml.add(HypothesesComplexTest.match("N", 20));
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate cot = new ComplexTemplate(new byte[] {}, "", 0, 0);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, true, vp);
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), cot.getLength());
     final ModelInterface<?> m = getModel(hyp, statistics);
     double sum = 0.0;
@@ -196,7 +200,8 @@ public class EvidenceComplexTest extends TestCase {
     final MachineErrorChooserInterface ch = new DefaultMachineErrorChooser(me);
     final VariantParams vp = new VariantParamsBuilder().genomePriors(vpb).defaultQuality(20).callLevel(VariantOutputLevel.ALL).create();
     final ComplexTemplate cot = new ComplexTemplate(new byte[] {}, "", 0, 0);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, false, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, false, vp);
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), cot.getLength());
     final ModelInterface<?> m = getModel(hyp, statistics);
     for (final AlignmentMatch match : ml) {
@@ -212,7 +217,8 @@ public class EvidenceComplexTest extends TestCase {
     vpb.mapped(new TreeSet<File>());
     final VariantParams vp = vpb.genomePriors(gppb).callLevel(VariantOutputLevel.ALL).create();
     final ComplexTemplate cot = new ComplexTemplate(new byte[] {}, "", 0, 0);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, true, vp);
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), cot.getLength());
     final ModelInterface<?> m = getModel(hyp, statistics);
     for (final AlignmentMatch match : ml) {
@@ -243,7 +249,8 @@ public class EvidenceComplexTest extends TestCase {
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
 
     final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte("GGATCGGGGG"), "", 5, 5);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, true, vp);
     final int readHyp = new EvidenceComplex(hyp, mCC, cot, vp, getChooser()).read();
     assertEquals(2, readHyp);
     final int readHyp2 = new EvidenceComplex(hyp, mTT, cot, vp, getChooser()).read();
@@ -258,7 +265,8 @@ public class EvidenceComplexTest extends TestCase {
     }
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte("GGATCGGGGG"), "", 5, 6);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, true, vp);
     final EvidenceComplex dc = new EvidenceComplex(hyp, mG, cot, vp, getChooser());
     assertEquals(0.0, dc.error());
     assertTrue(dc.integrity());
@@ -270,7 +278,8 @@ public class EvidenceComplexTest extends TestCase {
     ml.add(mG);
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte("GGATCGGGGG"), "", 1, 6);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, true, vp);
     final EvidenceComplex dc = new EvidenceComplex(hyp, mG, cot, vp, getChooser());
     assertEquals(6.498e-6, Math.exp(dc.sumLn()), 1e-6);
     assertEquals(5.234e-6, dc.error(), 1e-6);
@@ -283,7 +292,8 @@ public class EvidenceComplexTest extends TestCase {
     ml.add(HypothesesComplexTest.match("AAAAAAAA", 20));
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
     final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte("CCCCCGGGGG"), "", 5, 5);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, true, vp);
     final AlignmentMatch mG2 = HypothesesComplexTest.match("TTTTAAAA", 20);
     final EvidenceComplex dc = new EvidenceComplex(hyp, mG2, cot, vp, getChooser());
     assertEquals(Hypotheses.NO_HYPOTHESIS, dc.read());
@@ -300,7 +310,8 @@ public class EvidenceComplexTest extends TestCase {
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
 
     final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte("GGATCGGGGG"), "", 5, 5);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, true, vp);
     //System.err.println(hyp);
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), cot.getLength());
     final ModelInterface<?> m = getModel(hyp, statistics);
@@ -330,7 +341,8 @@ public class EvidenceComplexTest extends TestCase {
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
 
     final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte("GGATCGGGGG"), "", 5, 5);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, true, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, true, vp);
     //System.err.println(hyp);
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), cot.getLength());
     final ModelInterface<?> m = getModel(hyp, statistics);
@@ -376,7 +388,8 @@ public class EvidenceComplexTest extends TestCase {
         ml.add(rm);
       }
 
-      final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, ml, LogPossibility.SINGLETON, true, vp, null);
+      HypothesesComplexTest.COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, HypothesesComplexTest.COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+      final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, true, vp);
       final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), HypothesesComplexTest.COMPLEX_TEMPLATE.getLength());
       final ModelInterface<?> m = getModel(hyp, statistics);
       for (final AlignmentMatch match : ml) {
@@ -407,7 +420,8 @@ public class EvidenceComplexTest extends TestCase {
     final GenomePriorParams vpb = new GenomePriorParamsBuilder().create();
     final VariantParams vp = new VariantParamsBuilder().genomePriors(vpb).defaultQuality(20).maxAmbiguity(100.0).maxCoverageFilter(new StaticThreshold(100)).create();
     //System.err.println(ip.toString());
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, ml, LogPossibility.SINGLETON, true, vp, null);
+    HypothesesComplexTest.COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, HypothesesComplexTest.COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, true, vp);
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), HypothesesComplexTest.COMPLEX_TEMPLATE.getLength());
     double sum = 0.0;
     final ModelInterface<?> m = getModel(hyp, statistics);
@@ -441,7 +455,8 @@ public class EvidenceComplexTest extends TestCase {
     final GenomePriorParams vpb = new GenomePriorParamsBuilder().create();
     final VariantParams vp = new VariantParamsBuilder().genomePriors(vpb).defaultQuality(20).create();
     //System.err.println(ip.toString());
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, ml, LogPossibility.SINGLETON, true, vp, null);
+    HypothesesComplexTest.COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, HypothesesComplexTest.COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, true, vp);
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), HypothesesComplexTest.COMPLEX_TEMPLATE.getLength());
     final ModelInterface<?> m = getModel(hyp, statistics);
     double sum = 0.0;
@@ -471,7 +486,8 @@ public class EvidenceComplexTest extends TestCase {
     final GenomePriorParams vpb = new GenomePriorParamsBuilder().create();
     final VariantParams vp = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).genomePriors(vpb).defaultQuality(20).create();
     //System.err.println(ip.toString());
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, ml, LogPossibility.SINGLETON, true, vp, null);
+    HypothesesComplexTest.COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, HypothesesComplexTest.COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, true, vp);
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), HypothesesComplexTest.COMPLEX_TEMPLATE.getLength());
     final ModelInterface<?> m = getModel(hyp, statistics);
     double sum = 0.0;
@@ -501,7 +517,8 @@ public class EvidenceComplexTest extends TestCase {
 
     final VariantParams vp = VariantParams.builder().genomePriors(GenomePriorParams.builder().create()).create();
     //System.err.println(ip.toString());
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, ml, LogPossibility.SINGLETON, true, vp, null);
+    HypothesesComplexTest.COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, HypothesesComplexTest.COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, true, vp);
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), HypothesesComplexTest.COMPLEX_TEMPLATE.getLength());
     final ModelInterface<?> m = getModel(hyp, statistics);
     double sum = 0.0;
@@ -568,7 +585,8 @@ public class EvidenceComplexTest extends TestCase {
     final ComplexTemplate cot = new ComplexTemplate(DNA.stringDNAtoByte("gatatgaaattctgggttgaaaattcttttaagaatgttgaatattggcccccacggtcttctggcttgtagggtttctgcagag"), "", 5, 7);
 
     final DefaultMachineErrorChooser mec = new DefaultMachineErrorChooser("cg_test_errors-080412");
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, ml, LogPossibility.SINGLETON, false, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(ml, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, false, vp);
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), cot.getLength());
     final ModelInterface<?> m = getModel(hyp, statistics);
     double sum = 0.0;
@@ -599,7 +617,8 @@ public class EvidenceComplexTest extends TestCase {
     final ComplexTemplate cot3 = new ComplexTemplate(DNA.stringDNAtoByte("gatatgaaattctgggttgaaaattcttttaagaatgttgaatattggcccccacggtcttctggcttgtagggtttctgcagag"), "", 5, 7);
 
     final DefaultMachineErrorChooser mec3 = new DefaultMachineErrorChooser("cg_test_errors-080412");
-    final HypothesesComplex hyp3 = HypothesesComplex.makeComplexHypotheses(cot3, ml3, LogPossibility.SINGLETON, false, vp3, null);
+    cot3.setComplexContext(HypothesesComplex.createComplexDescription(ml3, cot3, null, vp3.pruneHypotheses(), vp3.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp3 = HypothesesComplex.makeComplexHypotheses(cot3, false, vp3);
     final StatisticsComplex statistics3 = new StatisticsComplex(hyp3.description(), cot3.getLength());
     final ModelInterface<?> m3 = getModel(hyp3, statistics3);
     double sum1 = 0.0;
@@ -666,7 +685,8 @@ public class EvidenceComplexTest extends TestCase {
   public void testUnmapped() throws Exception {
     final VariantParams vp = HypothesesComplexTest.getVariantParams(RANDOM.nextDouble() / 10.0, RANDOM.nextDouble() / 10.0, RANDOM.nextDouble() / 10.0);
     final AlignmentMatch match = unmappedMatch();
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, Collections.singletonList(match), LogPossibility.SINGLETON, true, vp, null);
+    HypothesesComplexTest.COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(Collections.singletonList(match), HypothesesComplexTest.COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(HypothesesComplexTest.COMPLEX_TEMPLATE, true, vp);
     final StatisticsComplex statistics = new StatisticsComplex(hyp.description(), HypothesesComplexTest.COMPLEX_TEMPLATE.getLength());
     final ModelInterface<?> m = getModel(hyp, statistics);
     m.increment(new EvidenceComplex(hyp, match, HypothesesComplexTest.COMPLEX_TEMPLATE, vp, getChooser()));

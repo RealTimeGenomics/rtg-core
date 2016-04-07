@@ -71,7 +71,8 @@ public class StatisticsDoubleTest extends AbstractStatisticsTest {
     final ArrayList<AlignmentMatch> hypMatches = new ArrayList<>();
     hypMatches.add(match("T", 7));
     hypMatches.addAll(ml);
-    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, hypMatches, LogPossibility.SINGLETON, true, vp, null);
+    cot.setComplexContext(HypothesesComplex.createComplexDescription(hypMatches, cot, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
+    final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(cot, true, vp);
     final StatisticsComplex cmpx = new StatisticsComplex(hyp.description(), cot.getLength());
     final ModelInterface<?> m = new Model<>(hyp, cmpx, new NoAlleleBalance());
     for (final AlignmentMatch match : ml) {
