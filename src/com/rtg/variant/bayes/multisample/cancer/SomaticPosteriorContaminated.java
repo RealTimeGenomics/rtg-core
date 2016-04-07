@@ -34,7 +34,7 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
     final int ca = code.a(cancerHyp);
     final int cb = code.bc(cancerHyp);
     final double[] p = new double[hyp.description().size()];
-    final double e = 0.01; // XXX overall error rate
+    final double e = 0; //.01; // XXX overall error rate
     p[na] += 0.5 * alpha * (1 - e);
     p[nb] += 0.5 * alpha * (1 - e);
     p[ca] += 0.5 * (1 - alpha) * (1 - e);
@@ -51,7 +51,7 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
         }
       } else {
         final double c = counts.count(k) - counts.error(k);
-        if (c > 0 ) {
+        if (c > 0 && e > 0) {
           dp += c;
           lnP += Math.log(e) * (c - 1) - ChiSquared.lgamma(c);
         }
