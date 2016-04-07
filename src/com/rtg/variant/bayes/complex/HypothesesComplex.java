@@ -18,7 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -66,6 +65,11 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
   /** print complex hypotheses for debugging */
   private static final boolean PRINT_HYP_DETAILS = GlobalFlags.isSet(GlobalFlags.COMPLEX_HYPOTHESIS_DETAILS);
 
+  private static final boolean NEW_DIPLOID_PRIORS = GlobalFlags.getBooleanValue(GlobalFlags.COMPLEX_HYPOTHESIS_NEW_PRIORS);
+
+  /** Use the genome priors and the following two constants to adjust the priors */
+  private static final boolean ADJUST = GlobalFlags.getBooleanValue(GlobalFlags.COMPLEX_HYPOTHESIS_ADJUST_PRIORS);
+
   /** Bias hypothesis priors between ref and alt alleles. 1.0 = no bias. 0.0 = reduced alt likelihood */
   private static final double PRIORS_ALT_BIAS = 0.1; //Double.parseDouble(System.getProperty("rtg.hypoth-cx-alt-bias", "0.1"));
 
@@ -76,7 +80,6 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
   private static final int MIN_HYPOTH = 6; //Integer.parseInt(System.getProperty("rtg.min-hypoth", "6"));
   private static final int HYPOTH_CUTOFF_DIV = 6; //Integer.parseInt(System.getProperty("rtg.hypoth-cutoff-div", "6"));
   private static final double HYPOTH_COUNTS_MULT = 1.5; //Double.parseDouble(System.getProperty("rtg.hypoth-counts-mult", "1.5"));
-
 
   /*
    * The following block of code is being used to allow two separate class definitions
@@ -141,8 +144,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     final DescriptionComplex description = createDescription(matches, reference, params.pruneHypotheses(), ssp, params.maxComplexHypotheses());
     final int refHyp = findReferenceHypothesis(description, reference.replaceString());
 
-    double[] priors = makePriorsAllPaths(description, haploid, reference, arithmetic, refHyp, params.genomePriors());
-    priors = VariantUtils.normalisePossibilities(priors, arithmetic);
+    final double[] priors = makePriorsAllPaths(description, haploid, reference, arithmetic, refHyp, params.genomePriors());
     //assert sum >= 0 && sum <= 1;
 
     final HypothesesComplex result = new HypothesesComplex(description, arithmetic, priors, haploid, refHyp);
@@ -197,86 +199,141 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     final int start = cot.getStart() - hypExtension;
     final int end = cot.getStart() + hypExtension;
     final int e0Hx = cot.getEnd() - hypExtension;
-    final int refLen = cot.getLength();
-    final AlignmentEnvironment[] hypEnvs = new AlignmentEnvironment[description.size()];
-    final int[] hypLengths = new int[description.size()];
-    final List<AlignmentEnvironment> alleles = new ArrayList<>();
+
+    // Build up all alignment environments that we will need
+    final List<AlignmentEnvironment> hypEnvs = new ArrayList<>(); // All alleles to which we will perform alignment (description first,
+    final List<Integer> hypLengths = new ArrayList<>();
     for (int i = 0; i < description.size(); i++) {
       final AlignmentEnvironment env;
+      final int len;
       if (i == refHyp) {
         env = new AlignmentEnvironmentGenome(start, end, cot.templateBytes());
-        hypLengths[i] = cot.getEnd() - cot.getStart();
+        len = cot.getEnd() - cot.getStart();
       } else {
         final byte[] hypDna = DNA.stringDNAtoByte(description.name(i));
-        hypLengths[i] = hypDna.length;
+        len = hypDna.length;
         env = new AlignmentEnvironmentGenomeSubstitution(start, end, cot, hypDna);
       }
-      hypEnvs[i] = env;
-      if (i == refHyp) {
-        alleles.add(env);
-      }
+      hypEnvs.add(env);
+      hypLengths.add(len);
     }
-    if (alleles.size() == 0) { // Reference wasn't included in the set of hypotheses (perhaps due to Ns)
-      alleles.add(new AlignmentEnvironmentGenome(start, end, cot.templateBytes()));
+    final int refAllele;
+    if (refHyp == Hypotheses.NO_HYPOTHESIS) { // Reference wasn't included in the set of hypotheses (perhaps due to Ns)
+      refAllele = hypEnvs.size();
+      hypEnvs.add(new AlignmentEnvironmentGenome(start, end, cot.templateBytes()));
+      hypLengths.add(cot.getLength());
+    } else {
+      refAllele = refHyp;
     }
-    double[] haploidPriors = new double[description.size()];
-    Arrays.fill(haploidPriors, arithmetic.zero());
-    for (final AlignmentEnvironment refEnv : alleles) {
-      for (int i = 0; i < description.size(); i++) {
-        final AlignmentEnvironment hypEnv = hypEnvs[i];
-        final int alignStart = e0Hx - (hypLengths[i] + refLen) / 2;
-        final int maxShift = (hypLengths[i] + refLen + 1) / 2;
-        final Environment env = initEnvironmentCombined(hypEnv, alignStart, maxShift, refEnv);
+
+    // Compute all-paths transition matrix
+    final double[][] transitionProbsLn = new double[hypEnvs.size()][description.size()];
+    for (int i = 0; i < hypEnvs.size(); i++) {
+      final AlignmentEnvironment aei = hypEnvs.get(i);
+      final int iLen = hypLengths.get(i);
+      for (int j = 0; j < description.size(); j++) {
+        final AlignmentEnvironment aej = hypEnvs.get(j);
+        final int jLen = hypLengths.get(j);
+        final int alignStart = e0Hx - (jLen + iLen) / 2;
+        final int maxShift = (jLen + iLen + 1) / 2;
+        final Environment env = initEnvironmentCombined(aej, alignStart, maxShift, aei);
         sm.setEnv(env);
-        haploidPriors[i] = arithmetic.add(haploidPriors[i], arithmetic.ln2Poss(sm.totalScoreLn()));
+        transitionProbsLn[i][j] = sm.totalScoreLn();
       }
     }
 
     if (haploid) {
-      // We could apply an allele frequency correction here too, but don't have this in our priors.
-      return haploidPriors;
+      return computeHaploidPriors(description, arithmetic, transitionProbsLn[refAllele]);
+    } else if (NEW_DIPLOID_PRIORS) {
+      return computeDiploidPriorsNew(description, arithmetic, refHyp, genomePriors, transitionProbsLn, refAllele);
     } else {
+      return computeDiploidPriorsOld(description, arithmetic, refHyp, genomePriors, transitionProbsLn[refAllele]);
+    }
+  }
 
-      haploidPriors = VariantUtils.normalisePossibilities(haploidPriors, arithmetic);
+  private static double[] computeDiploidPriorsNew(DescriptionComplex description, PossibilityArithmetic arithmetic, int refHyp, GenomePriorParams genomePriors, double[][] transitionProbsLn, int refAllele) {
+    final double[] haploidPriors = computeHaploidPriors(description, arithmetic, transitionProbsLn[refAllele]);
 
-      // Compute diploid priors from the haploid distances
-
-      // Reference allele frequency (average) from our priors file
-      final double refFreqInitial = (1.0 - genomePriors.genomeIndelEventFraction()) / (genomePriors.genomeIndelEventFraction() + 1.0);
-      double altFreqInitial = 1.0 - refFreqInitial; // Probability mass for all alt alleles.
-
-      // XXX Hack to make alt stuff less likely, to improve ROC from slope analysis.
-      altFreqInitial = altFreqInitial * PRIORS_ALT_BIAS;
-
-      final double refFreq = 1.0 - altFreqInitial;
-      final double altFreq = haploidPriors.length == 1 ? 1.0 : altFreqInitial / (haploidPriors.length - 1); // Distribute evenly among all alt alleles
-
-      final double[] haploidFrequencies = new double[description.size()];
-      for (int i = 0; i < haploidFrequencies.length; i++) {
-        haploidFrequencies[i] = arithmetic.prob2Poss(i == refHyp ? refFreq : altFreq);
+    final Code code =  new CodeDiploid(description.size());
+    final double[] diploidPriors = new double[code.size()];
+    for (int i = 0; i < diploidPriors.length; i++) {
+      final int ca = code.a(i);
+      final int cb = code.b(i);
+      if (code.homozygous(i)) {
+        diploidPriors[i] = haploidPriors[ca]; // prior possibility of the one allele
+      } else {
+        // select the most likely path to both alleles in the heterozygous case
+        double p1 = arithmetic.multiply(arithmetic.ln2Poss(transitionProbsLn[refAllele][ca]), arithmetic.ln2Poss(transitionProbsLn[ca][cb]));
+        final double p2 = arithmetic.multiply(arithmetic.ln2Poss(transitionProbsLn[refAllele][cb]), arithmetic.ln2Poss(transitionProbsLn[cb][ca]));
+        final double p3 = arithmetic.multiply(arithmetic.ln2Poss(transitionProbsLn[refAllele][cb]), arithmetic.ln2Poss(transitionProbsLn[refAllele][ca]));
+        p1 = arithmetic.gt(p1, p2) ? p1 : p2;
+        p1 = arithmetic.gt(p1, p3) ? p1 : p3;
+        diploidPriors[i] = arithmetic.add(p1, p1); // het genotypes require *2 factor since a|b and b|a share the same diploid Code.
       }
+    }
 
-      final Code code =  new CodeDiploid(description.size());
-      final double hetBias = arithmetic.prob2Poss(PRIORS_HET_BIAS);
-      final double[] diploidPriors = new double[code.size()];
-      for (int i = 0; i < diploidPriors.length; i++) {
-        final int ca = code.a(i);
-        final int cb = code.b(i);
-        double p = arithmetic.multiply(haploidFrequencies[ca], haploidFrequencies[cb]);  // Probability of getting the combination of alleles (just from allele frequencies)
-        p = arithmetic.multiply(p, haploidPriors[ca]); // And factor in the prior probability of the first allele
-        if (!code.homozygous(i)) {
-          p = arithmetic.multiply(p, haploidPriors[cb]); // Need to factor in the prior probability of second allele (since it is different to the first)
-          p = arithmetic.add(p, p); // het genotypes have *2 factor since a|b and b|a share the same diploid Code.
+    if (ADJUST) {
+      adjustDiploidPriors(description, arithmetic, refHyp, genomePriors, haploidPriors, diploidPriors);
+    }
+    return VariantUtils.normalisePossibilities(diploidPriors, arithmetic);
+  }
 
-          if (PRIORS_HET_BIAS != 1.0) {
-            p = arithmetic.multiply(p, hetBias); // XXX Hack to give less confidence in het stuff, to improve ROC from slope analysis.
-          }
+  private static double[] computeDiploidPriorsOld(DescriptionComplex description, PossibilityArithmetic arithmetic, int refHyp, GenomePriorParams genomePriors, double[] refTransitionPriorsLn) {
+    final double[] haploidPriors = computeHaploidPriors(description, arithmetic, refTransitionPriorsLn);
 
-        }
+    final Code code =  new CodeDiploid(description.size());
+    final double[] diploidPriors = new double[code.size()];
+    for (int i = 0; i < diploidPriors.length; i++) {
+      final int ca = code.a(i);
+      final int cb = code.b(i);
+      if (code.homozygous(i)) {
+        diploidPriors[i] = haploidPriors[ca]; // prior possibility of the one allele
+      } else {
+        double p = arithmetic.multiply(haploidPriors[ca], haploidPriors[cb]); // prior possibility of both alleles
+        p = arithmetic.add(p, p); // het genotypes require *2 factor since a|b and b|a share the same diploid Code.
         diploidPriors[i] = p;
       }
-      return diploidPriors;
     }
+
+    if (ADJUST) {
+      adjustDiploidPriors(description, arithmetic, refHyp, genomePriors, haploidPriors, diploidPriors);
+    }
+    return VariantUtils.normalisePossibilities(diploidPriors, arithmetic);
+  }
+
+  // Adjust priors using overall genome prior information (shouldn't actually be needed as this is incorporated into all-paths alignment probabilities
+  private static void adjustDiploidPriors(DescriptionComplex description, PossibilityArithmetic arithmetic, int refHyp, GenomePriorParams genomePriors, double[] haploidPriors, double[] diploidPriors) {
+    // Reference allele frequency (average) from our priors file
+    final double refFreqInitial = (1.0 - genomePriors.genomeIndelEventFraction()) / (genomePriors.genomeIndelEventFraction() + 1.0);
+    double altFreqInitial = 1.0 - refFreqInitial; // Probability mass for all alt alleles.
+    // XXX Hack to make alt stuff less likely, to improve ROC from slope analysis.
+    altFreqInitial = altFreqInitial * PRIORS_ALT_BIAS;
+    final double refFreq = 1.0 - altFreqInitial;
+    final double altFreq = haploidPriors.length == 1 ? 1.0 : altFreqInitial / (haploidPriors.length - 1); // Distribute evenly among all alt alleles
+    final double[] haploidFrequencies = new double[description.size()];
+    for (int i = 0; i < haploidFrequencies.length; i++) {
+      haploidFrequencies[i] = arithmetic.prob2Poss(i == refHyp ? refFreq : altFreq);
+    }
+    final double hetBias = arithmetic.prob2Poss(PRIORS_HET_BIAS);
+    final Code code = new CodeDiploid(description.size());;
+    for (int i = 0; i < diploidPriors.length; i++) {
+      final int ca = code.a(i);
+      final int cb = code.b(i);
+      diploidPriors[i] = arithmetic.multiply(diploidPriors[i], arithmetic.multiply(haploidFrequencies[ca], haploidFrequencies[cb]));  // Probability of getting the combination of alleles (just from allele frequencies)
+      if (!code.homozygous(i) && PRIORS_HET_BIAS != 1.0) {
+        diploidPriors[i] = arithmetic.multiply(diploidPriors[i], hetBias); // XXX Hack to give less confidence in het stuff, to improve ROC from slope analysis.
+      }
+    }
+  }
+
+  // Compute prior possibilities for each description from the reference allele
+  private static double[] computeHaploidPriors(DescriptionComplex description, PossibilityArithmetic arithmetic, double[] refTransitionPriorsLn) {
+    double[] haploidPriors = new double[description.size()];
+    for (int i = 0; i < description.size(); i++) {
+      haploidPriors[i] = arithmetic.ln2Poss(refTransitionPriorsLn[i]);
+    }
+    haploidPriors = VariantUtils.normalisePossibilities(haploidPriors, arithmetic);
+    return haploidPriors;
   }
 
   static DescriptionComplex createDescription(List<AlignmentMatch> matches, ComplexTemplate reference, boolean pruneMatches, SiteSpecificPriors ssp, int maxHypotheses) {

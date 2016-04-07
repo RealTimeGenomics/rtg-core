@@ -91,17 +91,17 @@ final class ComplexCaller {
         final List<AlignmentMatch> matches = MultisampleUtils.intersectSet(startOfRegion, endOfRegion, it, mConfig.getMachineErrorChooser(), mParams);
 
         // Create the complex hypotheses
-        final HaploidDiploidHypotheses<HypothesesPrior<DescriptionComplex>> sspHyp = makeComplexHypotheses(region, cot, matches, calls);
-        if (sspHyp == null) { // Couldn't create suitable hypotheses, makeComplexHypotheses will have updated calls and region appropriately
+        final HaploidDiploidHypotheses<HypothesesPrior<DescriptionComplex>> hyp = makeComplexHypotheses(region, cot, matches, calls);
+        if (hyp == null) { // Couldn't create suitable hypotheses, makeComplexHypotheses will have updated calls and region appropriately
           continue;
         }
 
         // Pass evidence to correct models
-        final List<ModelInterface<?>> models = mConfig.getModelComplex(sspHyp, cot);
+        final List<ModelInterface<?>> models = mConfig.getModelComplex(hyp, cot);
         for (final AlignmentMatch match : matches) {
           final int genome = (numSamples == 1) ? 0 : match.alignmentRecord().getGenome();
           if (!(models.get(genome) instanceof ModelNone)) {
-            final HypothesesPrior<DescriptionComplex> hypotheses = models.get(genome).haploid() ? sspHyp.haploid() : sspHyp.diploid();
+            final HypothesesPrior<DescriptionComplex> hypotheses = models.get(genome).haploid() ? hyp.haploid() : hyp.diploid();
             final EvidenceComplex evidence = new EvidenceComplex(hypotheses, match, cot, mParams, mConfig.getMachineErrorChooser());
             models.get(genome).increment(evidence);
           }
@@ -109,12 +109,12 @@ final class ComplexCaller {
 
 
         // Make the calls
-        final MultisampleJointCaller complexJointCaller = mConfig.getComplexJointCaller(sspHyp.get(models.get(0)), mParams, cot); /// The first argument is only needed by the cancer caller -- seems bogus.
+        final MultisampleJointCaller complexJointCaller = mConfig.getComplexJointCaller(hyp.get(models.get(0)), mParams, cot); /// The first argument is only needed by the cancer caller -- seems bogus.
         final Variant variant;
         for (ModelInterface<?> model : models) {
           model.freeze();
         }
-        final Variant variant0 = complexJointCaller.makeCall(refName, startOfRegion, endOfRegion, template, models, sspHyp);
+        final Variant variant0 = complexJointCaller.makeCall(refName, startOfRegion, endOfRegion, template, models, hyp);
 
         if (variant0 == null && mParams.callLevel() == VariantOutputLevel.ALL) {
           //need to output an identity call at this position
