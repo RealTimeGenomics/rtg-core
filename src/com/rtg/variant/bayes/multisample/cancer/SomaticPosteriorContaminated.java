@@ -12,6 +12,7 @@
 
 package com.rtg.variant.bayes.multisample.cancer;
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.util.ChiSquared;
 import com.rtg.util.MathUtils;
 import com.rtg.variant.bayes.AlleleStatistics;
@@ -26,19 +27,17 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
  */
 class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
 
-  private static double alleleBalanceProbabilityLn(final Hypotheses<?> hyp, final Statistics<?> statistics, final int normalHyp, final int cancerHyp, final double alpha) {
-    // Using a multinomial
+  private static double alleleBalanceDirichletProbabilityLn(final Hypotheses<?> hyp, final Statistics<?> statistics, final int normalHyp, final int cancerHyp, final double alpha) {
     final Code code = hyp.code();
     final int na = code.a(normalHyp);
     final int nb = code.bc(normalHyp);
     final int ca = code.a(cancerHyp);
     final int cb = code.bc(cancerHyp);
     final double[] p = new double[hyp.description().size()];
-    final double e = 0; //.01; // XXX overall error rate
-    p[na] += 0.5 * alpha * (1 - e);
-    p[nb] += 0.5 * alpha * (1 - e);
-    p[ca] += 0.5 * (1 - alpha) * (1 - e);
-    p[cb] += 0.5 * (1 - alpha) * (1 - e);
+    p[na] += 0.5 * alpha;
+    p[nb] += 0.5 * alpha;
+    p[ca] += 0.5 * (1 - alpha);
+    p[cb] += 0.5 * (1 - alpha);
     double lnP = 0; // i.e. p = 1
     double dp = 0;
     final AlleleStatistics<?> counts = statistics.counts();
@@ -49,18 +48,38 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
           dp += c;
           lnP += Math.log(p[k]) * (c - 1) - ChiSquared.lgamma(c);
         }
-      } else {
-        final double c = counts.count(k) - counts.error(k);
-        if (c > 0 && e > 0) {
-          dp += c;
-          lnP += Math.log(e) * (c - 1) - ChiSquared.lgamma(c);
-        }
       }
     }
     if (dp > 0) {
       lnP += ChiSquared.lgamma(dp);
     }
-    //lnP += ChiSquared.lgamma(statistics.coverage() - statistics.totalError() + 1);
+    return lnP;
+  }
+
+  private static double alleleBalanceMultinomialProbabilityLn(final Hypotheses<?> hyp, final Statistics<?> statistics, final int normalHyp, final int cancerHyp, final double alpha) {
+    final Code code = hyp.code();
+    final int na = code.a(normalHyp);
+    final int nb = code.bc(normalHyp);
+    final int ca = code.a(cancerHyp);
+    final int cb = code.bc(cancerHyp);
+    final double[] p = new double[hyp.description().size()];
+    p[na] += 0.5 * alpha;
+    p[nb] += 0.5 * alpha;
+    p[ca] += 0.5 * (1 - alpha);
+    p[cb] += 0.5 * (1 - alpha);
+    double lnP = 0; // i.e. p = 1
+    double dp = 0;
+    final AlleleStatistics<?> counts = statistics.counts();
+    for (int k = 0; k < p.length; k++) {
+      if (p[k] > 0) { // Avoid infinity arising from p = 0 situation
+        final double c = counts.count(k) - counts.error(k);
+        dp += c;
+        lnP += Math.log(p[k]) * c - ChiSquared.lgamma(c + 1);
+      }
+    }
+    if (dp > 0) {
+      lnP += ChiSquared.lgamma(dp + 1);
+    }
     return lnP;
   }
 
@@ -90,7 +109,11 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
         final double q = MathUtils.log(qa[i][j]);
         double t = q + pi + pj;
         if (useAlleleBalanceCorrection) {
-          t += alleleBalanceProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
+          if (GlobalFlags.isSet(GlobalFlags.DIRICHLET_ALLELE_BALANCE)) {
+            t += alleleBalanceDirichletProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
+          } else {
+            t += alleleBalanceMultinomialProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
+          }
         }
         mPosterior[i][j] = t;
       }
