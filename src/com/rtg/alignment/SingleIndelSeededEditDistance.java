@@ -13,7 +13,6 @@ package com.rtg.alignment;
 
 import java.util.Arrays;
 
-import com.rtg.mode.DnaUtils;
 import com.rtg.ngs.NgsParams;
 import com.rtg.util.integrity.Exam;
 
@@ -298,7 +297,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
     int[] actions = mSied.calculateEditDistance(read, rLen, template, zeroBasedStart, maxScore, maxShift, cgLeft);
     if (mGotoh != null && actions == null) {
       actions = mGotoh.calculateEditDistance(read, rLen, template, zeroBasedStart, maxScore, maxShift, cgLeft);
-      System.err.println("Gotoh aligned read " + DnaUtils.bytesToSequenceIncCG(read) + " from " + zeroBasedStart + " as " + ActionsHelper.toString(actions) + " at " + ActionsHelper.zeroBasedTemplateStart(actions));
+//      System.err.println("Gotoh aligned read " + DnaUtils.bytesToSequenceIncCG(read) + " from " + zeroBasedStart + " as " + ActionsHelper.toString(actions) + " at " + ActionsHelper.zeroBasedTemplateStart(actions));
     }
     return actions;
   }
