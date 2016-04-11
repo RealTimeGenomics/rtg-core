@@ -140,12 +140,12 @@ public class SomaticCli extends AbstractMultisampleCli {
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     flags.registerOptional('r', PEDIGREE_FLAG, File.class, "file", "relationships file").setCategory(INPUT_OUTPUT);
-    final Flag contamFlag = flags.registerOptional(CONTAMINATION_FLAG, Double.class, "float", "estimated fraction of contamination in derived sample").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(CONTAMINATION_FLAG, Double.class, "float", "estimated fraction of contamination in derived sample").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(REVERSE_CONTAMINATION_FLAG, Double.class, "float", "estimated fraction of derived sample in original sample", 0.0).setCategory(SENSITIVITY_TUNING);
-    final Flag derivedFlag = flags.registerOptional(DERIVED_FLAG, String.class, "string", "sample identifier used in read groups for derived sample").setCategory(INPUT_OUTPUT);
-    final Flag originalFlag = flags.registerOptional(ORIGINAL_FLAG, String.class, "string", "sample identifier used in read groups for original sample").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(DERIVED_FLAG, String.class, "string", "sample identifier used in read groups for derived sample").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(ORIGINAL_FLAG, String.class, "string", "sample identifier used in read groups for original sample").setCategory(INPUT_OUTPUT);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of individual", Sex.EITHER).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('s', SOMATIC_FLAG, Double.class, "float", "default prior probability of a somatic SNP mutation in the derived sample", 1e-6).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(SOMATIC_PRIORS_FLAG, File.class, "file", "if set, use the BED file to generate site specific somatic priors").setCategory(SENSITIVITY_TUNING);
