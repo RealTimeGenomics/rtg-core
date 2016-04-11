@@ -19,10 +19,10 @@ import com.rtg.relation.Relationship.RelationshipType;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.vcf.PerSampleVariantStatistics;
 import com.rtg.variant.VariantParams;
-import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.format.VcfFormatField;
+import com.rtg.vcf.PerSampleVariantStatistics;
+import com.rtg.vcf.VariantStatistics;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.header.VcfHeader;
@@ -94,12 +94,12 @@ public class SomaticStatistics extends VariantStatistics {
    */
   public void countVariant(final VcfHeader header, final VcfRecord rec) {
     // Handle the normal sample
-    final int normalId = header.getSampleIndex(mNormalSampleName);
-    if (isGenotype(rec, normalId, DIPLOID01)) {
+    final Integer normalId = header.getSampleIndex(mNormalSampleName);
+    if (normalId != null && isGenotype(rec, normalId, DIPLOID01)) {
       final Double rankingScore = rec.getSampleDouble(normalId, mRankingField);
       final String alleleDepth = rec.getSampleString(normalId, AD);
       insert(mNormalStore, rankingScore, alleleDepth);
-    } else if (isGenotype(rec, normalId, DIPLOID00)) {
+    } else if (normalId == null || isGenotype(rec, normalId, DIPLOID00)) {
       // Handle the cancer sample
       final int cancerId = header.getSampleIndex(mCancerSampleName);
       if (isGenotype(rec, cancerId, DIPLOID01)) {

@@ -54,6 +54,7 @@ import com.rtg.variant.avr.AvrStatsCli;
 import com.rtg.variant.avr.BuilderCli;
 import com.rtg.variant.avr.PredictCli;
 import com.rtg.variant.bayes.multisample.cancer.SomaticCli;
+import com.rtg.variant.bayes.multisample.cancer.TumorOnlyCli;
 import com.rtg.variant.bayes.multisample.family.FamilyCli;
 import com.rtg.variant.bayes.multisample.lineage.LineageCli;
 import com.rtg.variant.bayes.multisample.population.PopulationCli;
@@ -133,6 +134,9 @@ public final class CoreCommand {
 
   /** Runs somatic variant calling. */
   static final Command MULTI_SOMATIC = new Command(new SomaticCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
+
+  /** Runs somatic variant calling. */
+  static final Command TUMOR_ONLY = new Command(new TumorOnlyCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
 
   /** Runs the mondo population/pedigree variant caller. */
   static final Command MULTI_POPULATION = new Command(new PopulationCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
@@ -279,7 +283,7 @@ public final class CoreCommand {
     CALIBRATE, SVPREP, SV, DISCORD, COVERAGE,
 
     // Variant calling
-    SINGLETON, MULTI_FAMILY, MULTI_SOMATIC, MULTI_POPULATION,
+    SINGLETON, MULTI_FAMILY, MULTI_SOMATIC, MULTI_POPULATION, TUMOR_ONLY,
     MULTI_LINEAGE,
     AVRBUILD, AVRPREDICT,
     CNV,

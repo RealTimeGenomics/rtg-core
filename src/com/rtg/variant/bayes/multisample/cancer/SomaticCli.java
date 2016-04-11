@@ -45,26 +45,27 @@ import com.rtg.variant.format.VcfFormatField;
  */
 public class SomaticCli extends AbstractMultisampleCli {
 
-  private static final String SOMATIC_FLAG = "somatic";
+  protected static final String SOMATIC_FLAG = "somatic";
   private static final String SOMATIC_PRIORS_FLAG = "somatic-priors";
-  private static final String LOH_FLAG = "loh";
+  protected static final String LOH_FLAG = "loh";
   // Either this ...
-  private static final String PEDIGREE_FLAG = "Xpedigree";
+  protected static final String PEDIGREE_FLAG = "Xpedigree";
   // or these
-  private static final String DERIVED_FLAG = "derived";
-  private static final String ORIGINAL_FLAG = "original";
-  private static final String CONTAMINATION_FLAG = Relationship.CONTAMINATION;
+  protected static final String DERIVED_FLAG = "derived";
+  // Unregistered for tumor only caller so made package local
+  static final String ORIGINAL_FLAG = "original";
+  protected static final String CONTAMINATION_FLAG = Relationship.CONTAMINATION;
 
-  private static final String REVERSE_CONTAMINATION_FLAG = "X" + Relationship.REVERSE_CONTAMINATION;
+  protected static final String REVERSE_CONTAMINATION_FLAG = "X" + Relationship.REVERSE_CONTAMINATION;
 
-  private static final String SEX_FLAG = "sex";
+  protected static final String SEX_FLAG = "sex";
   private static final String INCLUDE_GERMLINE_FLAG = "include-germline";
   private static final String INCLUDE_GAIN_OF_REFERENCE = "include-gain-of-reference";
 
   private static final String MISMATCHED_PARAMS_ERROR1 = "Cannot use --" + PEDIGREE_FLAG + " in conjunction with --" + DERIVED_FLAG + ", --" + ORIGINAL_FLAG + ", or --" + CONTAMINATION_FLAG;
   private static final String MISMATCHED_PARAMS_ERROR2 = "All of --" + DERIVED_FLAG + ", --" + ORIGINAL_FLAG + ", and --" + CONTAMINATION_FLAG + " must be specified";
 
-  static class MultigenomeValidator implements Validator {
+  private static class MultigenomeValidator implements Validator {
     @Override
     public boolean isValid(final CFlags flags) {
       if (!AbstractMultisampleCli.validateCommonOptions(flags)) {
@@ -152,8 +153,12 @@ public class SomaticCli extends AbstractMultisampleCli {
     flags.registerOptional(INCLUDE_GERMLINE_FLAG, "include germline variants in output VCF").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('G', INCLUDE_GAIN_OF_REFERENCE, "include gain of reference somatic calls in output VCF").setCategory(SENSITIVITY_TUNING);
     AbstractMultisampleCli.registerComplexPruningFlags(flags, true);
-    flags.addRequiredSet(derivedFlag, originalFlag, contamFlag, inFlag);
-    flags.addRequiredSet(derivedFlag, originalFlag, contamFlag, listFlag);
+    requiredSet(flags);
+  }
+
+  void requiredSet(CFlags flags) {
+    flags.addRequiredSet(flags.getFlag(DERIVED_FLAG), flags.getFlag(ORIGINAL_FLAG), flags.getFlag(CONTAMINATION_FLAG), flags.getAnonymousFlag(0));
+    flags.addRequiredSet(flags.getFlag(DERIVED_FLAG), flags.getFlag(ORIGINAL_FLAG), flags.getFlag(CONTAMINATION_FLAG), flags.getFlag(CommonFlags.INPUT_LIST_FLAG));
   }
 
   @Override

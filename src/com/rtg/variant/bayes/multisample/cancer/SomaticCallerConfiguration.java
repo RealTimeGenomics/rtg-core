@@ -84,9 +84,9 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
       final String normalSampleName = genomeNames[AbstractSomaticCaller.NORMAL];
       final String cancerSampleName = genomeNames[AbstractSomaticCaller.CANCER];
       final String[] outputSampleNames = SamUtils.getSampleNames(params.uberHeader());
-      if (outputSampleNames.length != 2) {
-        throw new NoTalkbackSlimException("Exactly two sample names expected in mappings");
-      }
+//      if (outputSampleNames.length != 2) {
+//        throw new NoTalkbackSlimException("Exactly two sample names expected in mappings");
+//      }
       for (final String mapName : outputSampleNames) {
         if (!mapName.equals(normalSampleName) && !mapName.equals(cancerSampleName)) {
           throw new NoTalkbackSlimException("Unexpected sample name in mappings: " + mapName);
