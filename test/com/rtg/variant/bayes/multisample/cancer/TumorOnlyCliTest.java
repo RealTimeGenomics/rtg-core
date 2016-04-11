@@ -30,7 +30,7 @@ import com.rtg.util.test.FileHelper;
  */
 public class TumorOnlyCliTest extends AbstractCliTest {
 
-  public static final String REQUIRED_MESSAGE = "both --derived and --contamination must be specified";
+  private static final String REQUIRED_MESSAGE = "both --derived and --contamination must be specified";
 
   @Override
   protected AbstractCli getCli() {
