@@ -22,7 +22,6 @@ import com.rtg.reader.ReaderTestUtils;
 import com.rtg.sam.SharedSamConstants;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.cli.CFlags;
-import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
@@ -53,7 +52,6 @@ public class TumorOnlyCliTest extends AbstractCliTest {
 
   public void testValidator() throws Exception {
     try (final TestDirectory tmpDir = new TestDirectory()) {
-      final File tmpFile = FileUtils.stringToFile("original-derived TEST cancer contamination=0.13", new File(tmpDir, "relations.relations"));
       final File in = new File(tmpDir, "alignments.sam.gz");
       FileHelper.stringToGzFile(SharedSamConstants.SAM_CANCER, in);
       new TabixIndexer(in, new File(tmpDir, "alignments.sam.gz.tbi")).saveSamIndex();
