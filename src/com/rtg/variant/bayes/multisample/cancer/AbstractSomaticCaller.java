@@ -263,7 +263,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     if (doLoh) {
       v.setLoh(loh);
     }
-    if (isSomatic) {
+    if (isSomatic || mParams.somaticParams().includeGermlineVariants()) {
       v.setNormalCancerScore(posterior.ncScore());
     }
     updateParameterEstimationCounts(normalPloidy, code, bestNormal, bestCancer, loh);

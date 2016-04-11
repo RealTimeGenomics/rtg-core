@@ -20,12 +20,12 @@ import com.rtg.relation.GenomeRelationships;
 import com.rtg.relation.Relationship;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.Validator;
+import com.rtg.variant.SomaticParamsBuilder;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 
 /**
  */
 public class TumorOnlyCli extends SomaticCli {
-  private static final String SUPPRESS_NORMAL_OUTPUT = "Xsuppress-normal-output";
   private static final String ORIGINAL_NAME = "normal";
 
   @Override
@@ -90,15 +90,21 @@ public class TumorOnlyCli extends SomaticCli {
 
   @Override
   void initLocalFlags(CFlags flags) {
-    super.initLocalFlags(flags);
-    flags.unregister(ORIGINAL_FLAG);
-    flags.unregister(PEDIGREE_FLAG);
-    flags.registerOptional(SUPPRESS_NORMAL_OUTPUT, Boolean.class, "suppress the normal sample column in vcf output", "BOOLEAN", true);
+    initFlags(flags);
+    CommonFlags.initAvrModel(flags, false);
+    CommonFlags.initMinAvrScore(flags);
+    commonSomaticFlags(flags);
+    flags.setDescription("Performs a somatic variant analysis on a mixed tumor/normal sample.");
+    requiredSet(flags);
     flags.setValidator(new MultigenomeValidator());
   }
-  @Override
-  void requiredSet(CFlags flags) {
+  private void requiredSet(CFlags flags) {
     flags.addRequiredSet(flags.getFlag(DERIVED_FLAG), flags.getFlag(CONTAMINATION_FLAG), flags.getAnonymousFlag(0));
     flags.addRequiredSet(flags.getFlag(DERIVED_FLAG), flags.getFlag(CONTAMINATION_FLAG), flags.getFlag(CommonFlags.INPUT_LIST_FLAG));
+  }
+
+  @Override
+  protected SomaticParamsBuilder getSomaticParamsBuilder() {
+    return super.getSomaticParamsBuilder().includeGermlineVariants(true);
   }
 }

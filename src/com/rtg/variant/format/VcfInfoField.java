@@ -56,7 +56,7 @@ public enum VcfInfoField {
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       if (call.getNormalCancerScore() != null) {
-        rec.addInfo(name(), Utils.realFormat(PosteriorUtils.phredIfy(Math.abs(call.getNormalCancerScore())), 1));
+        rec.addInfo(name(), Utils.realFormat(PosteriorUtils.phredIfy(call.getNormalCancerScore()), 3));
       }
     }
   },

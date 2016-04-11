@@ -118,7 +118,7 @@ public class VcfInfoFieldTest extends TestCase {
     for (VcfInfoField field : VcfInfoField.values()) {
       field.updateRecord(record, call, params, false);
     }
-    assertEquals("ref\t3\t.\tG\tA\t123.4\t.\tLOH=20.0;NCS=32.6;DISEASE=A;RDS=6.5;DPS=36.9;DP=33;DPR=47.143;XRX;RCE;CT=2147483647;RTRM;RSPLT=1;IC=0.333;EP=0.724;LAL=1;QD=3.739;NAA=1;AC=3;AN=6\tGT:DP\t1/1:10\t0/1:11\t0/0:12", record.toString());
+    assertEquals("ref\t3\t.\tG\tA\t123.4\t.\tLOH=20.0;NCS=32.574;DISEASE=A;RDS=6.5;DPS=36.9;DP=33;DPR=47.143;XRX;RCE;CT=2147483647;RTRM;RSPLT=1;IC=0.333;EP=0.724;LAL=1;QD=3.739;NAA=1;AC=3;AN=6\tGT:DP\t1/1:10\t0/1:11\t0/0:12", record.toString());
   }
 
   public void testMultiAlleleAC() {

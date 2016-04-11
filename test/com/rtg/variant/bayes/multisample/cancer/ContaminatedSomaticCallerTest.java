@@ -24,6 +24,7 @@ import com.rtg.variant.Variant;
 import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
+import com.rtg.variant.VariantSample;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.ModelInterface;
@@ -126,7 +127,7 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
     final Variant variant = getVariant(0.3, new int[]{24, 76, 0, 0}, new int[]{0, 0, 0, 0});
     assertEquals("C:C", variant.getSample(0).getName());
     assertEquals("C:C", variant.getSample(1).getName());
-    assertNull(variant.getNormalCancerScore());
+    assertEquals(VariantSample.DeNovoStatus.NOT_DE_NOVO, variant.getSample(1).isDeNovo());
   }
 
   public void testTumorOnly30() {
