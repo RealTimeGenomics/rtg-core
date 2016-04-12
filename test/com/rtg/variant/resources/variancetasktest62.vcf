@@ -25,4 +25,4 @@
 ##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
 ##FORMAT=<ID=GL,Number=G,Type=Float,Description="Log_10 scaled genotype likelihoods. As defined in VCF specifications">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	TEST
-g1	200	.	ATTCATTTTCCTTGATTTGGG	A	1165.7	PASS	XRX	GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:AD:GL	1/1:17:0.170:0.000:58:0.00:1.15:1.03:0.00:0,17:-116.57,-5.75,0.00
+g1	200	.	ATTCATTTTCCTTGATTTGGG	A	1165.7	PASS	XRX	GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:AD:GL	1/1:17:0.170:0.000:58:0.00:1.15:1.03:0.00:0,17:-116.57,-5.85,0.00
