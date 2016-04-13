@@ -730,13 +730,13 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
         // Only process this sequence if we are doing them all, or if it is
         // in the restriction specified by the user
         if (!mWrapper.context().hasRegions() || mWrapper.context().referenceRanges().containsSequence(sequenceName)) {
-          if (!sequenceNameMap.containsKey(sequenceName)) { //this means our SDF does not have reference
-            throw new NoTalkbackSlimException("Reference SDF does not contain sequence '" + sequenceName + "'");
-          }
-          final long sdfSeqId = sequenceNameMap.get(sequenceName);
-          final int sequenceLength = mReferenceSequences.length(sdfSeqId);
           mWrapper.setSequenceId(r.getSequenceIndex());
           if (mWrapper.hasNext()) {
+            if (!sequenceNameMap.containsKey(sequenceName)) { //this means our SDF does not have reference
+              throw new NoTalkbackSlimException("Reference SDF does not contain sequence '" + sequenceName + "'");
+            }
+            final long sdfSeqId = sequenceNameMap.get(sequenceName);
+            final int sequenceLength = mReferenceSequences.length(sdfSeqId);
             assert sequenceLength == r.getSequenceLength() : "" + sequenceLength + " != " + r.getSequenceLength();
             final byte[] sequenceNt = new byte[sequenceLength];
             mReferenceSequences.read(sdfSeqId, sequenceNt);
