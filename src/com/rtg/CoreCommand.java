@@ -13,6 +13,7 @@ package com.rtg;
 
 import com.rtg.assembler.AssembleCli;
 import com.rtg.assembler.PacBioCli;
+import com.rtg.blacklist.HashDistCli;
 import com.rtg.calibrate.ChrStatsCli;
 import com.rtg.calibrate.RecalibrateCli;
 import com.rtg.metagenomics.CompositionMetaPipelineCli;
@@ -86,6 +87,9 @@ public final class CoreCommand {
 
   /** For converting Slim's data format into FASTA/QUALA format */
   static final Command SDF2QUALA = new Command(new Sdf2Quala(), CommandCategory.FORMAT, ReleaseLevel.ALPHA);
+
+  /** For generating k-mer count histograms and blacklists */
+  static final Command HASHDIST = new Command(new HashDistCli(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
 
   /** Read mapping with new and old technology mixed */
   static final Command MAP = new Command(new MapCli(), CommandCategory.MAPPING, ReleaseLevel.GA);
@@ -312,6 +316,7 @@ public final class CoreCommand {
     ToolsCommand.VCFFILTER, ToolsCommand.VCFANNOTATE, ToolsCommand.VCFSUBSET, ToolsCommand.VCFEVAL, SNPINTERSECT,
     ToolsCommand.PEDFILTER, ToolsCommand.PEDSTATS,
     AVRSTATS, ToolsCommand.ROCPLOT,
+    HASHDIST,
 
     NCBI2TAX, TAXFILTER, TAXSTATS, // Taxonomy
 
