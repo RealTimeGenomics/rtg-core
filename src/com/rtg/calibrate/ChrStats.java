@@ -291,13 +291,18 @@ public class ChrStats {
    * Perform a basic leave one out coverage check for multiple samples.
    * @param calibrator calibrator containing coverage information to use
    * @param samples names of samples
-   * @param pedigree pedigree information
+   * @param pedigree pedigree information supplying sex information
+   * @param updatePedigree if true, set sex information in the supplied pedigree
    */
-  void chrStatsCheck(final CalibratedPerSequenceExpectedCoverage calibrator, final Set<String> samples, final GenomeRelationships pedigree) {
+  void chrStatsCheck(final CalibratedPerSequenceExpectedCoverage calibrator, final Set<String> samples, final GenomeRelationships pedigree, boolean updatePedigree) {
     final TextTable table = initTable();
     for (final String sample : samples) {
       final Sex sex = pedigree.getSex(sample);
-      addRow(table, sample, sex, runCheckAndReport(calibrator, sample, sex));
+      final ChrStatsResult res = runCheckAndReport(calibrator, sample, sex);
+      addRow(table, sample, sex, res);
+      if (updatePedigree && res != null && res.mObservedSex != null) {
+        pedigree.addGenome(sample, res.mObservedSex);
+      }
     }
     Diagnostic.info(table.toString());
   }
