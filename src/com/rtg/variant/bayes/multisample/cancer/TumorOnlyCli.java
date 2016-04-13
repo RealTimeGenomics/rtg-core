@@ -19,9 +19,11 @@ import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.relation.Relationship;
 import com.rtg.util.cli.CFlags;
+import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.variant.SomaticParamsBuilder;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
+import com.rtg.variant.bayes.multisample.AlleleBalanceFactor;
 
 /**
  */
@@ -95,6 +97,8 @@ public class TumorOnlyCli extends SomaticCli {
     CommonFlags.initMinAvrScore(flags);
     commonSomaticFlags(flags);
     flags.setDescription("Performs a somatic variant analysis on a mixed tumor/normal sample.");
+    final Flag alleleBalance = flags.getFlag(X_ALLELE_BALANCE_PROBABILITY);
+    alleleBalance.setParameterDefault(AlleleBalanceFactor.BINOMIAL);
     requiredSet(flags);
     flags.setValidator(new MultigenomeValidator());
   }

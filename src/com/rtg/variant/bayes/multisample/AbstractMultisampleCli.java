@@ -127,7 +127,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String X_FORMAT_ANNOTATION_FLAG = "Xformat-annotation";
   private static final String X_MIN_VARIANT_ALLELE_COUNT = "Xmin-vac";
   private static final String X_MIN_VARIANT_ALLELE_FRACTION = "Xmin-vaf";
-  private static final String X_ALLELE_BALANCE_PROBABILITY = "Xallele-balance-probability";
+  protected static final String X_ALLELE_BALANCE_PROBABILITY = "Xallele-balance-probability";
   private static final String X_EXPECTED_ALLELE_BALANCE = "Xexpected-allele-balance";
 
   /**
