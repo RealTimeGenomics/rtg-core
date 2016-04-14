@@ -14,15 +14,17 @@ package com.rtg.blacklist;
 
 import java.io.File;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.launcher.BuildParams;
 
 /**
  * Builder for {@link HashDistParams}
  */
+@TestClass("com.rtg.blacklist.HashDistParamsTest")
 public class HashDistParamsBuilder {
   BuildParams mBuildParams;
   int mThreshold;
-  boolean mBlacklist;
+  boolean mMakeBlacklist;
   Integer mBlacklistThreshold = 0;
   File mDirectory;
   int mNumberThreads;
@@ -53,8 +55,8 @@ public class HashDistParamsBuilder {
    * @param blacklist true if a blacklist should be generated
    * @return this builder for chaining purposes
    */
-  public HashDistParamsBuilder blacklist(boolean blacklist) {
-    mBlacklist = blacklist;
+  public HashDistParamsBuilder makeBlacklist(boolean blacklist) {
+    mMakeBlacklist = blacklist;
     return this;
   }
 
@@ -113,4 +115,7 @@ public class HashDistParamsBuilder {
   }
 
 
+  protected HashDistParamsBuilder self() {
+    return this;
+  }
 }

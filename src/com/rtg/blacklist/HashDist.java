@@ -26,6 +26,7 @@ import com.rtg.index.hash.IncrementalHashLoop;
 import com.rtg.index.params.CreateParams;
 import com.rtg.launcher.BuildParams;
 import com.rtg.launcher.HashingRegion;
+import com.rtg.launcher.NoStatistics;
 import com.rtg.launcher.ParamsTask;
 import com.rtg.mode.DNA;
 import com.rtg.usage.UsageMetric;
@@ -37,7 +38,7 @@ import com.rtg.util.diagnostic.OneShotTimer;
 /**
  * Task for producing k-mer blacklists and a count histogram
  */
-public class HashDist extends ParamsTask<HashDistParams, NullStatistics> {
+public class HashDist extends ParamsTask<HashDistParams, NoStatistics> {
 
   private static final String BLACKLIST_FILENAME = "blacklist";
 
@@ -47,7 +48,7 @@ public class HashDist extends ParamsTask<HashDistParams, NullStatistics> {
    * @param stats unused
    * @param usageMetric unused
    */
-  public HashDist(HashDistParams params, OutputStream reportStream, NullStatistics stats, UsageMetric usageMetric) {
+  public HashDist(HashDistParams params, OutputStream reportStream, NoStatistics stats, UsageMetric usageMetric) {
     super(params, reportStream, stats, usageMetric);
   }
 
@@ -57,20 +58,20 @@ public class HashDist extends ParamsTask<HashDistParams, NullStatistics> {
   }
 
   static void hashCount(final HashDistParams params) throws IOException {
-    final File refDir = params.build().directory();
-    final int wordSize = params.build().windowSize();
+    final File refDir = params.buildParams().directory();
+    final int wordSize = params.buildParams().windowSize();
     if (params.installBlacklist() && HashBlacklist.blacklistExists(refDir, wordSize)) {
       throw new NoTalkbackSlimException("Blacklist already exists in " + refDir + " for word size " + wordSize);
     }
-    final int hashBits = CreateParams.calculateHashBits(params.build().sequences().mode().codeType().bits(), params.build().windowSize());
-    final long counterSizeBase = params.build().sequences().reader().totalLength();
+    final int hashBits = CreateParams.calculateHashBits(params.buildParams().sequences().mode().codeType().bits(), params.buildParams().windowSize());
+    final long counterSizeBase = params.buildParams().sequences().reader().totalLength();
     final long counterSize = counterSizeBase + (long) ((params.hashMapSizeFactor() - 1.0) * counterSizeBase);
     final HashCounter sparseIndex = new HashCounter(counterSize, hashBits, params.threshold());
     final SimpleThreadPool stp = new SimpleThreadPool(params.numberThreads(), "HashToolsThread", true);
-    for (int i = 0; i < params.build().sequences().numberSequences(); i++) {
-      final ExactHashFunction exf = new ExactHashFunction(params.build());
-      final BuildParams bp = params.build().subSequence(new HashingRegion(i, i + 1));
-      final HashLoop subjectHashLoop = new IncrementalHashLoop(params.build().stepSize(), exf, false) {
+    for (int i = 0; i < params.buildParams().sequences().numberSequences(); i++) {
+      final ExactHashFunction exf = new ExactHashFunction(params.buildParams());
+      final BuildParams bp = params.buildParams().subSequence(new HashingRegion(i, i + 1));
+      final HashLoop subjectHashLoop = new IncrementalHashLoop(params.buildParams().stepSize(), exf, false) {
         @Override
         public void hashCall(final long hash, final int internalId, final int stepPosition) {
           //System.err.println("build hashCall hash=" + hash + " id=" + internalId);
@@ -99,7 +100,7 @@ public class HashDist extends ParamsTask<HashDistParams, NullStatistics> {
         final long count = sparseIndex.getCount();
         if (params.makeBlacklist()) {
           if (count >= params.blacklistThreshold()) {
-            blacklistWriter.write(reverseHash(hash, params.build().windowSize(), params.build().sequences().mode().codeType().bits()));
+            blacklistWriter.write(reverseHash(hash, params.buildParams().windowSize(), params.buildParams().sequences().mode().codeType().bits()));
             blacklistWriter.write("\t");
             blacklistWriter.write(Long.toString(count));
             blacklistWriter.newLine();

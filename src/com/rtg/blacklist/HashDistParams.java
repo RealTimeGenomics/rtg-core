@@ -25,7 +25,7 @@ public class HashDistParams extends ModuleParams {
   private final BuildParams mBuildParams;
 
   private final int mThreshold;
-  private final boolean mBlacklist;
+  private final boolean mMakeBlacklist;
   private final boolean mInstallBlacklist;
   private final int mBlacklistThreshold;
   private final File mDirectory;
@@ -35,12 +35,12 @@ public class HashDistParams extends ModuleParams {
   /**
    * @param builder the builder
    */
-  public HashDistParams(HashDistParamsBuilder builder) {
+  HashDistParams(HashDistParamsBuilder builder) {
     super("HashToolsParams");
     mBuildParams = builder.mBuildParams;
     mThreshold = builder.mThreshold;
-    mBlacklist = builder.mBlacklist;
-    mBlacklistThreshold = builder.mBlacklist ? builder.mBlacklistThreshold : 0;
+    mMakeBlacklist = builder.mMakeBlacklist;
+    mBlacklistThreshold = builder.mMakeBlacklist ? builder.mBlacklistThreshold : 0;
     mDirectory = builder.mDirectory;
     mNumberThreads = builder.mNumberThreads;
     mInstallBlacklist = builder.mInstallBlacklist;
@@ -51,7 +51,7 @@ public class HashDistParams extends ModuleParams {
    * @return true if a blacklist should be generated
    */
   public boolean makeBlacklist() {
-    return mBlacklist;
+    return mMakeBlacklist;
   }
 
   /**
@@ -85,7 +85,7 @@ public class HashDistParams extends ModuleParams {
   /**
    * @return Specifies the word and step size and the sequences to generate hashes from
    */
-  public BuildParams build() {
+  public BuildParams buildParams() {
     return mBuildParams;
   }
 

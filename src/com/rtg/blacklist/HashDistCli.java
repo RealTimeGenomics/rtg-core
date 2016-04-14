@@ -17,6 +17,7 @@ import java.io.OutputStream;
 
 import com.rtg.launcher.BuildParams;
 import com.rtg.launcher.CommonFlags;
+import com.rtg.launcher.NoStatistics;
 import com.rtg.launcher.ParamsCli;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
@@ -40,7 +41,7 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
 
   @Override
   protected IORunnable task(HashDistParams params, OutputStream out) throws IOException {
-    return new HashDist(params, out, new NullStatistics(), new UsageMetric());
+    return new HashDist(params, out, new NoStatistics(), new UsageMetric());
   }
 
   @Override
@@ -56,7 +57,7 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
       .installBlacklist(mFlags.isSet(INSTALL_BLACKLIST))
       .hashMapSizeFactor((Double) mFlags.getValue(HASHMAP_SIZE_FACTOR))
       .blacklistThreshold((Integer) mFlags.getValue(BLACKLIST_THRESHOLD_FLAG))
-      .blacklist(mFlags.isSet(BLACKLIST_THRESHOLD_FLAG))
+      .makeBlacklist(mFlags.isSet(BLACKLIST_THRESHOLD_FLAG))
       .numberThreads(CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)))
       .directory((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG))
       .threshold((Integer) mFlags.getValue(MAX_COUNT_FLAG))

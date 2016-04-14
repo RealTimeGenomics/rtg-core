@@ -9,22 +9,22 @@
  * code you accept the terms of that license agreement and any amendments to those terms that may
  * be made from time to time by Real Time Genomics Limited.
  */
+
 package com.rtg.blacklist;
 
-import java.io.IOException;
-import java.io.OutputStream;
+import com.rtg.util.test.params.TestParams;
 
-import com.rtg.launcher.Statistics;
+import junit.framework.TestCase;
 
 /**
- * Does nothing
+ *
  */
-public class NullStatistics implements Statistics {
-  @Override
-  public void printStatistics(OutputStream reportStream) throws IOException {
-  }
+public class HashDistParamsTest extends TestCase {
 
-  @Override
-  public void generateReport() throws IOException {
+  public void test() {
+    new TestParams(HashDistParams.class, HashDistParamsBuilder.class)
+      .excludeParams("close")
+      .excludeTypeCheck("blacklistThreshold")
+      .check();
   }
 }
