@@ -54,7 +54,7 @@ public class HashDistCliTest extends AbstractCliTest {
     try (TestDirectory dir = new TestDirectory()) {
       final File sdfDir = ReaderTestUtils.getDNADir(REF, new File(dir, "sdf"));
       final File outDir = new File(dir, "out");
-      final MainResult mr = MainResult.run(getCli(), sdfDir.getPath(), "--word", "1", "--output", outDir.getPath(), "--blacklist-threshold", "1");
+      MainResult.run(getCli(), sdfDir.getPath(), "--word", "1", "--output", outDir.getPath(), "--blacklist-threshold", "1");
       final String histogram = FileUtils.fileToString(new File(outDir, "histogram.txt"));
       final String blacklist = FileUtils.fileToString(new File(outDir, "blacklist"));
       mNano.check("histogram.txt", histogram);
