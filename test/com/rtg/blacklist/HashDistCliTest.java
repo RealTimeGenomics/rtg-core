@@ -38,9 +38,12 @@ public class HashDistCliTest extends AbstractCliTest {
 
   @Override
   public void tearDown() throws IOException {
-    super.tearDown();
-    mNano.finish();
-    mNano = null;
+    try {
+      super.tearDown();
+      mNano.finish();
+    } finally {
+      mNano = null;
+    }
   }
 
   @Override
