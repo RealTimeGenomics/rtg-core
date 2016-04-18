@@ -91,7 +91,7 @@ commercial support contact us via info@realtimegenomics.com.
 
 ## Prerequisites for building from source
 
-* Java 1.7 or later
+* Java 1.8 or later
 * apache ant 1.9 or later
 
 ## Check out source code for both RTG Tools and RTG Core
