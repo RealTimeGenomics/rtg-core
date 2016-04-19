@@ -86,10 +86,7 @@ public class ChrStats {
   public ChrStats(final SequencesReader genomeReader, final double sexDeviations, double deviations) throws IOException {
     mMinSexDeviations = sexDeviations;
     mMinDeviations = deviations;
-    // If the fallback fires below, then the checking will be disabled because the number
-    // of specified sequences will be 0.  But this way prevents an exception from occurring if
-    // there is no reference.txt file present in the template SDF.
-    mSexMemo = new SexMemo(genomeReader, ReferenceGenome.DefaultFallback.DIPLOID);
+    mSexMemo = new SexMemo(genomeReader, ReferenceGenome.ReferencePloidy.AUTO);
     boolean refOk = true;
     for (Sex sex : Sex.values()) {
       if (countSpecifiedSequences(mSexMemo.referenceGenome(sex)) < MIN_SPECIFIED_SEQUENCES) {

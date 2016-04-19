@@ -19,7 +19,7 @@ import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SourceTemplateReadWriter;
 import com.rtg.reference.ReferenceGenome;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.Sex;
 import com.rtg.simulation.genome.SequenceDistribution;
 import com.rtg.util.PortableRandom;
@@ -67,7 +67,7 @@ public class GenomeFragmenter {
     mRefGenome = new ReferenceGenome[sdfs.length];
     for (int k = 0; k < mRefGenome.length; k++) {
       // Used to determine circular status when constructing fragments -- hopefully sex and ploidy independent
-      mRefGenome[k] = new ReferenceGenome(sdfs[k], Sex.EITHER, DefaultFallback.HAPLOID);
+      mRefGenome[k] = new ReferenceGenome(sdfs[k], Sex.EITHER, ReferencePloidy.AUTO);
     }
   }
 

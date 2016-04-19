@@ -23,7 +23,7 @@ import java.io.OutputStream;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.ParamsTask;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.sam.SamFilterOptions;
@@ -34,9 +34,9 @@ import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
-import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 import com.rtg.variant.bayes.multisample.MultisampleTask;
+import com.rtg.vcf.VariantStatistics;
 
 /**
  */
@@ -78,7 +78,11 @@ public class SingletonCli extends AbstractMultisampleCli {
       if (Sex.EITHER != flags.getValue(SEX_FLAG) && !CommonFlags.validateSexTemplateReference(flags, SEX_FLAG, null, TEMPLATE_FLAG)) {
         return false;
       }
-      flags.checkNand(SEX_FLAG, PEDIGREE_FLAG);
+      if (!(flags.checkNand(SEX_FLAG, PEDIGREE_FLAG)
+        && flags.checkNand(PLOIDY_FLAG, SEX_FLAG)
+        && flags.checkNand(PLOIDY_FLAG, PEDIGREE_FLAG))) {
+        return false;
+      }
       return true;
     }
   }
@@ -94,7 +98,7 @@ public class SingletonCli extends AbstractMultisampleCli {
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
     final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(PLOIDY_FLAG, DefaultFallback.class, "string", "ploidy to use when the template does not contain a reference text file", DefaultFallback.DIPLOID).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(PLOIDY_FLAG, ReferencePloidy.class, "string", "ploidy to use", ReferencePloidy.AUTO).setCategory(SENSITIVITY_TUNING);
 
     SamFilterOptions.registerMaxHitsFlag(flags, SamFilterOptions.NO_SINGLE_LETTER);
     SamFilterOptions.registerMaxASMatedFlag(flags, SamFilterOptions.NO_SINGLE_LETTER);
@@ -116,7 +120,7 @@ public class SingletonCli extends AbstractMultisampleCli {
   protected VariantParamsBuilder makeParamsBuilder() throws InvalidParamsException, IOException {
     final VariantParamsBuilder builder = super.makeParamsBuilder();
     builder.sex((Sex) mFlags.getValue(SEX_FLAG));
-    builder.ploidy((DefaultFallback) mFlags.getValue(PLOIDY_FLAG));
+    builder.ploidy((ReferencePloidy) mFlags.getValue(PLOIDY_FLAG));
     return builder;
   }
 

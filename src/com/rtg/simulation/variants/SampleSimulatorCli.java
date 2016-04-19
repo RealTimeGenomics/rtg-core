@@ -20,7 +20,7 @@ import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.Sex;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.cli.CFlags;
@@ -69,7 +69,7 @@ public class SampleSimulatorCli extends AbstractCli {
     mFlags.registerRequired('i', POPULATION_VCF, File.class, "FILE", "input VCF containing population variants").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerRequired('s', SAMPLE_NAME, String.class, "STRING", "name for sample").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerOptional(SEX, Sex.class, "SEX", "sex of individual", Sex.EITHER).setCategory(CommonFlagCategories.UTILITY);
-    mFlags.registerOptional(PLOIDY, DefaultFallback.class, "string", "ploidy to use when the template does not contain a reference text file", DefaultFallback.DIPLOID).setCategory(CommonFlagCategories.UTILITY);
+    mFlags.registerOptional(PLOIDY, ReferencePloidy.class, "string", "ploidy to use", ReferencePloidy.AUTO).setCategory(CommonFlagCategories.UTILITY);
     mFlags.registerOptional(SEED, Integer.class, "INT", "seed for the random number generator").setCategory(CommonFlagCategories.UTILITY);
     CommonFlags.initNoGzip(mFlags);
 
@@ -106,7 +106,7 @@ public class SampleSimulatorCli extends AbstractCli {
     final File outputVcf = FileUtils.getZippedFileName(!flags.isSet(CommonFlags.NO_GZIP), (File) flags.getValue(OUTPUT_VCF));
     final String sample = (String) flags.getValue(SAMPLE_NAME);
     final Sex sex = (Sex) flags.getValue(SEX);
-    final DefaultFallback ploidy = (DefaultFallback) flags.getValue(PLOIDY);
+    final ReferencePloidy ploidy = (ReferencePloidy) flags.getValue(PLOIDY);
     try (SequencesReader dsr = SequencesReaderFactory.createMemorySequencesReaderCheckEmpty(reference, true, false, LongRange.NONE)) {
       final SampleSimulator ss = new SampleSimulator(dsr, random, ploidy);
       ss.mutateIndividual(popVcf, outputVcf, sample, sex);

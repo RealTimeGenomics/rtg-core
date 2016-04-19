@@ -21,7 +21,7 @@ import java.util.List;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
 import com.rtg.calibrate.Calibrator;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.sam.SingleMappedParams.SingleMappedParamsBuilder;
@@ -65,7 +65,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   //  boolean mCompleteGenomics = false;
   Double mMaxAmbiguity = null;
   Sex mSex = Sex.EITHER;
-  DefaultFallback mPloidy = DefaultFallback.DIPLOID;
+  ReferencePloidy mPloidy = ReferencePloidy.AUTO;
   String mMachineErrorName = null;
   boolean mVcfRp = false;
   boolean mOutputIndex = true;
@@ -443,7 +443,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
    * @param ploidy diploid or haploid
    * @return this builder, so calls can be chained.
    */
-  public VariantParamsBuilder ploidy(final DefaultFallback ploidy) {
+  public VariantParamsBuilder ploidy(final ReferencePloidy ploidy) {
     mPloidy = ploidy;
     return self();
   }

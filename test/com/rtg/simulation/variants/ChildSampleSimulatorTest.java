@@ -23,7 +23,7 @@ import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.reference.ReferenceGenome;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.Sex;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.StringUtils;
@@ -89,20 +89,20 @@ public class ChildSampleSimulatorTest extends AbstractCliTest {
       //System.out.println(popVarStr);
 
       // Generate sample w.r.t variants
-      final SampleSimulator dadsim = new SampleSimulator(sr, new PortableRandom(15), DefaultFallback.DIPLOID);
+      final SampleSimulator dadsim = new SampleSimulator(sr, new PortableRandom(15), ReferencePloidy.AUTO);
       final File dadVcf = new File(dir, "sample_dad.vcf.gz");
       dadsim.mutateIndividual(popVcf, dadVcf, "dad", Sex.MALE);
 
-      final SampleSimulator momsim = new SampleSimulator(sr, new PortableRandom(65), DefaultFallback.DIPLOID);
+      final SampleSimulator momsim = new SampleSimulator(sr, new PortableRandom(65), ReferencePloidy.AUTO);
       final File momVcf = new File(dir, "sample_mom.vcf.gz");
       momsim.mutateIndividual(dadVcf, momVcf, "mom", Sex.FEMALE);
 
       // Generate children w.r.t variants
-      final ChildSampleSimulator sonsim = new ChildSampleSimulator(sr, new PortableRandom(76), DefaultFallback.DIPLOID, 0, false);
+      final ChildSampleSimulator sonsim = new ChildSampleSimulator(sr, new PortableRandom(76), ReferencePloidy.AUTO, 0, false);
       final File sonVcf = new File(dir, "sample_son.vcf.gz");
       sonsim.mutateIndividual(momVcf, sonVcf, "son", Sex.MALE, "dad", "mom");
 
-      final ChildSampleSimulator daughtersim = new ChildSampleSimulator(sr, new PortableRandom(13), DefaultFallback.DIPLOID, 0, false);
+      final ChildSampleSimulator daughtersim = new ChildSampleSimulator(sr, new PortableRandom(13), ReferencePloidy.AUTO, 0, false);
       final File daughterVcf = new File(dir, "sample_daughter.vcf.gz");
       daughtersim.mutateIndividual(sonVcf, daughterVcf, "daughter", Sex.FEMALE, "dad", "mom");
 

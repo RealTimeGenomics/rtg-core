@@ -683,11 +683,7 @@ public class VariantNanoTest extends AbstractNanoTest {
   }
 
   public void test17diploid() throws Exception {
-    final String[] args0 = {"-a", "--sex=either"};
-    check(REF_SEQS, SAM1_I2, 17, "", "Processing g1", 0, 1/*
-     * interesting
-     * separation
-     */, SharedSamConstants.REF_DIPLOID, true, SAM1_I2_LENGTH, args0);
+    check(REF_SEQS, SAM1_I2, 17, "", "Processing g1", 0, 1, SharedSamConstants.REF_DIPLOID, true, SAM1_I2_LENGTH, "-a", "--sex=either");
   }
 
   private static final String SAM1_II = ""
@@ -1211,10 +1207,12 @@ public class VariantNanoTest extends AbstractNanoTest {
   }
 
   public void test53() throws Exception { // same as test17 except haploid
-    check(REF_SEQS, SAM1_I2, 53, null, "Processing g1", 0, 1/*
-     * interesting
-     * separation
-     */, SharedSamConstants.REF_HAPLOID, true, SAM1_I2_LENGTH, "-a", "--sex=either");
+    check(REF_SEQS, SAM1_I2, 53, null, "Processing g1", 0, 1, SharedSamConstants.REF_HAPLOID, true, SAM1_I2_LENGTH, "-a", "--sex=either");
+  }
+
+  public void test53PloidyOverride() throws Exception { // same as test17 and test53 but via ploidy override
+    check(REF_SEQS, SAM1_I2, 17, null, "Processing g1", 0, 1, SharedSamConstants.REF_HAPLOID, true, SAM1_I2_LENGTH, "-a", "--ploidy=diploid");
+    check(REF_SEQS, SAM1_I2, 53, null, "Processing g1", 0, 1, SharedSamConstants.REF_DIPLOID, true, SAM1_I2_LENGTH, "-a", "--ploidy=haploid");
   }
 
   //similar to test6 but long enough to get multiple chunks

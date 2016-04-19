@@ -19,7 +19,7 @@ import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.reference.ReferenceGenome;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.Sex;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.PortableRandom;
@@ -91,21 +91,21 @@ public class DeNovoSampleSimulatorTest extends TestCase {
       //System.out.println(popVarStr);
 
       // Generate a couple of samples w.r.t variants
-      final SampleSimulator dadsim = new SampleSimulator(sr, new PortableRandom(42), DefaultFallback.DIPLOID);
+      final SampleSimulator dadsim = new SampleSimulator(sr, new PortableRandom(42), ReferencePloidy.AUTO);
       final File dadVcf = new File(dir, "sample_dad.vcf.gz");
       dadsim.mutateIndividual(popVcf, dadVcf, "dad", Sex.MALE);
-      final SampleSimulator momsim = new SampleSimulator(sr, new PortableRandom(43), DefaultFallback.DIPLOID);
+      final SampleSimulator momsim = new SampleSimulator(sr, new PortableRandom(43), ReferencePloidy.AUTO);
       final File momVcf = new File(dir, "sample_mom.vcf.gz");
       momsim.mutateIndividual(dadVcf, momVcf, "mom", Sex.FEMALE);
 
       final GenomePriorParams params = new GenomePriorParamsBuilder().create();
 
       // Now generate genotypes containing de novo variants
-      final DeNovoSampleSimulator dad2sim = new DeNovoSampleSimulator(sr, params, new PortableRandom(63), DefaultFallback.DIPLOID, 20, false);
+      final DeNovoSampleSimulator dad2sim = new DeNovoSampleSimulator(sr, params, new PortableRandom(63), ReferencePloidy.AUTO, 20, false);
       final File dad2Vcf = new File(dir, "sample_dad2.vcf.gz");
       dad2sim.mutateIndividual(momVcf, dad2Vcf, "dad", "dad2");
 
-      final DeNovoSampleSimulator mom2sim = new DeNovoSampleSimulator(sr, params, new PortableRandom(64), DefaultFallback.DIPLOID, 20, false);
+      final DeNovoSampleSimulator mom2sim = new DeNovoSampleSimulator(sr, params, new PortableRandom(64), ReferencePloidy.AUTO, 20, false);
       final File mom2Vcf = new File(dir, "sample_mom2.vcf.gz");
       mom2sim.mutateIndividual(dad2Vcf, mom2Vcf, "mom", "mom2");
 

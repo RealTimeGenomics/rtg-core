@@ -24,7 +24,7 @@ import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reference.Ploidy;
 import com.rtg.reference.ReferenceGenome;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.ReferenceSequence;
 import com.rtg.reference.Sex;
 import com.rtg.util.Pair;
@@ -278,7 +278,7 @@ public class HashingRegion implements Serializable, Comparable<HashingRegion> {
       , final int numberChunks, final long minChunkSize, final long padding) throws IOException {
     final ReferenceGenome rg;
     if (sex == null || sex == Sex.EITHER) {
-      rg = new ReferenceGenome(reader, sex, DefaultFallback.DIPLOID);
+      rg = new ReferenceGenome(reader, sex, ReferencePloidy.AUTO);
     } else {
       rg = new ReferenceGenome(reader, sex);
       Diagnostic.userLog("Sex-specific Reference Genome:" + StringUtils.LS + rg.toString());

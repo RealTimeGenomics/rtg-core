@@ -19,7 +19,7 @@ import com.rtg.mode.DnaUtils;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.Sex;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.StringUtils;
@@ -68,7 +68,7 @@ public class SampleSimulatorTest extends TestCase {
       }
 
       // Generate sample w.r.t variants
-      final SampleSimulator genomemut = new SampleSimulator(sr, new PortableRandom(42), DefaultFallback.DIPLOID);
+      final SampleSimulator genomemut = new SampleSimulator(sr, new PortableRandom(42), ReferencePloidy.DIPLOID);
       final File vcfOutFile = new File(dir, "sample_foo.vcf.gz");
       genomemut.mutateIndividual(popVcf, vcfOutFile, "foo", Sex.EITHER);
       String sampleVcf = FileHelper.gzFileToString(vcfOutFile);

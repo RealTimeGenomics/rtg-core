@@ -144,8 +144,8 @@ public class VariantOutputVcfFormatter {
       }
 
       if (mParams.minVariantAlleleCount() > 0 || mParams.minVariantAlleleFraction() > 0) {
-        mFormatFields.add(VcfFormatField.VA); // XXXLen
-        mFormatFields.add(VcfFormatField.ADE); // XXXLen
+        mFormatFields.add(VcfFormatField.VA);
+        mFormatFields.add(VcfFormatField.ADE);
         mFormatFields.add(VcfFormatField.VAF);
       }
       mFormatFields.addAll(mParams.formatAnnotations());

@@ -23,7 +23,7 @@ import com.rtg.reader.SdfWriter;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SourceTemplateReadWriter;
 import com.rtg.reference.ReferenceGenome;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.ReferenceSequence;
 import com.rtg.reference.Sex;
 import com.rtg.util.Constants;
@@ -92,7 +92,7 @@ public class SampleReplayer {
     referenceThing.append("either\tdef\tnone\tlinear").append(StringUtils.LS);
     try (SdfWriter sdf = new SdfWriter(outputDir, Constants.MAX_FILE_SIZE, PrereadType.UNKNOWN, false, true, true, SequenceType.DNA)) {
       sdf.setCommandLine(CommandLine.getCommandLine());
-      final ReferenceGenome rg = new ReferenceGenome(mReference, sex, DefaultFallback.DIPLOID);
+      final ReferenceGenome rg = new ReferenceGenome(mReference, sex, ReferencePloidy.AUTO);
       for (long i = 0; i < mReference.numberSequences(); i++) {
         final ReferenceSequence refSeq = rg.sequence(mReference.name(i));
         final int count = refSeq.ploidy().count() >= 0 ? refSeq.ploidy().count() : 1; //effectively treats polyploid as haploid

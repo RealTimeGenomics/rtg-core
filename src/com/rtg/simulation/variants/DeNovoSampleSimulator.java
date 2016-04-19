@@ -20,7 +20,7 @@ import java.util.List;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reference.Ploidy;
 import com.rtg.reference.ReferenceGenome;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.ReferenceSequence;
 import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
@@ -49,7 +49,7 @@ public class DeNovoSampleSimulator {
 
   private final SequencesReader mReference;
   private final PortableRandom mRandom;
-  private final DefaultFallback mDefaultPloidy;
+  private final ReferencePloidy mDefaultPloidy;
   private final PriorPopulationVariantGenerator mGenerator;
   private VariantStatistics mStats = null;
   private int mOriginalSampleNum = -1;
@@ -69,7 +69,7 @@ public class DeNovoSampleSimulator {
    * @param verbose if true output extra information on crossover points
    * @throws IOException if an I/O error occurs.
    */
-  public DeNovoSampleSimulator(SequencesReader reference, GenomePriorParams params, PortableRandom rand, DefaultFallback ploidy, final int targetMutations, boolean verbose) throws IOException {
+  public DeNovoSampleSimulator(SequencesReader reference, GenomePriorParams params, PortableRandom rand, ReferencePloidy ploidy, final int targetMutations, boolean verbose) throws IOException {
     mReference = reference;
     mRandom = rand;
     mDefaultPloidy = ploidy;

@@ -22,7 +22,7 @@ import java.util.List;
 
 import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
 import com.rtg.calibrate.Calibrator;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.sam.SingleMappedParams;
@@ -78,7 +78,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final boolean mIgnoreQualityScores;
   private final Double mMaxAmbiguity;
   private final Sex mSex;
-  private final DefaultFallback mPloidy;
+  private final ReferencePloidy mPloidy;
   private final String mMachineErrorName;
   private final boolean mVcfRp;
   private final boolean mOutputIndex;
@@ -372,7 +372,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
    * Return the default ploidy to use if no reference text file present.
    * @return the default ploidy
    */
-  public DefaultFallback ploidy() {
+  public ReferencePloidy ploidy() {
     return mPloidy;
   }
 

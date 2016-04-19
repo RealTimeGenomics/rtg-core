@@ -20,7 +20,7 @@ import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.Sex;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.cli.CFlags;
@@ -77,7 +77,7 @@ public class ChildSampleSimulatorCli extends AbstractCli {
     mFlags.registerRequired(FATHER_FLAG, String.class, "STRING", "name of the existing sample to use as the father").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerRequired(MOTHER_FLAG, String.class, "STRING", "name of the existing sample to use as the mother").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerOptional(SEX, Sex.class, "SEX", "sex of individual", Sex.EITHER).setCategory(CommonFlagCategories.UTILITY);
-    mFlags.registerOptional(PLOIDY, DefaultFallback.class, "string", "ploidy to use when the template does not contain a reference text file", DefaultFallback.DIPLOID).setCategory(CommonFlagCategories.UTILITY);
+    mFlags.registerOptional(PLOIDY, ReferencePloidy.class, "string", "ploidy to use", ReferencePloidy.AUTO).setCategory(CommonFlagCategories.UTILITY);
     mFlags.registerOptional(EXTRA_CROSSOVERS, Double.class, "FLOAT", "likelihood of extra crossovers per chromosome", EXTRA_CROSSOVERS_PER_CHROMOSOME).setCategory(CommonFlagCategories.UTILITY);
     mFlags.registerOptional(SEED, Integer.class, "INT", "seed for the random number generator").setCategory(CommonFlagCategories.UTILITY);
     mFlags.registerOptional(SHOW_CROSSOVERS, "if set, display information regarding haplotype selection and crossover points").setCategory(CommonFlagCategories.UTILITY);
@@ -117,7 +117,7 @@ public class ChildSampleSimulatorCli extends AbstractCli {
     final String father = (String) flags.getValue(FATHER_FLAG);
     final String mother = (String) flags.getValue(MOTHER_FLAG);
     final Sex sex = (Sex) flags.getValue(SEX);
-    final DefaultFallback ploidy = (DefaultFallback) flags.getValue(PLOIDY);
+    final ReferencePloidy ploidy = (ReferencePloidy) flags.getValue(PLOIDY);
     try (SequencesReader dsr = SequencesReaderFactory.createMemorySequencesReaderCheckEmpty(reference, true, false, LongRange.NONE)) {
       final ChildSampleSimulator ss = new ChildSampleSimulator(dsr, random, ploidy, (Double) flags.getValue(EXTRA_CROSSOVERS), flags.isSet(SHOW_CROSSOVERS));
       ss.mutateIndividual(popVcf, outputVcf, sample, sex, father, mother);

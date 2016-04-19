@@ -23,11 +23,7 @@ import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.TestUtils;
-import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.LogRecord;
-import com.rtg.util.io.LogStream;
-import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.bayes.multisample.AbstractCallerCliTest;
@@ -53,8 +49,6 @@ public class SingletonCliTest extends AbstractCallerCliTest {
       + "AAAACGAGTGTATGAGGAAATGCGACAGCTACCCCCACCCGATTTAGCTGGCGGTTGCCGCCCTACGAGAAGATTTCTGCGCACAACCTTCGTCTCATTG" + LS;
 
   public void testCoverageLoading() throws InvalidParamsException, IOException, UnindexableDataException {
-    final LogStream logStream = new LogRecord();
-    Diagnostic.setLogStream(logStream);
     try (final TestDirectory dir = new TestDirectory()) {
       final File ref = new File(dir, "ref");
       ReaderTestUtils.getReaderDNA(REF, ref, null).close();
@@ -67,18 +61,10 @@ public class SingletonCliTest extends AbstractCallerCliTest {
       FileHelper.resourceToFile("com/rtg/variant/resources/coverage_unmated.sam.gz.calibration", new File(dir, "unmated.sam.gz.calibration"));
       new TabixIndexer(unmated, new File(dir, "unmated.sam.gz.tbi")).saveSamIndex();
 
-      final File out = new File(dir, "snpscalls");
-      final String[] args = {
-        "-t", ref.getPath(),
-        "-o", out.getPath(),
-        mated.getPath(),
-        unmated.getPath(),
-        "--filter-depth-multiplier", "3.0"
-      };
-      final MemoryPrintStream ps = new MemoryPrintStream();
-      assertEquals(ps.toString(), 0, getCli().mainInit(args, ps.outputStream(), ps.printStream()));
+      final File out = new File(dir, "calls");
+      checkMainInitWarn("-t", ref.getPath(), "-o", out.getPath(), mated.getPath(), unmated.getPath(),
+        "--filter-depth-multiplier", "3.0");
       final String log = FileUtils.fileToString(new File(out, "snp.log"));
-      //System.err.println(log);
       TestUtils.containsAll(log, "max_coverage_filter=avgSeqCov*3.0", //"max_coverage_threshold=avgSeqCov+(sqrt(avgSeqCov)*3.0)",
         "Sequence simulatedSequence2 filter on maximum per-sample coverage is 7",
         "Sequence simulatedSequence1 filter on maximum per-sample coverage is 10" //9"
@@ -88,9 +74,6 @@ public class SingletonCliTest extends AbstractCallerCliTest {
 
   public void testBug1508() throws InvalidParamsException, IOException, UnindexableDataException {
     // tests an issue in the circular buffer
-
-    final LogStream logStream = new LogRecord();
-    Diagnostic.setLogStream(logStream);
     try (final TestDirectory dir = new TestDirectory()) {
       final String refFasta = FileHelper.resourceToString("com/rtg/variant/resources/bug1508_ref.fasta");
       final File ref = new File(dir, "ref");
@@ -99,16 +82,9 @@ public class SingletonCliTest extends AbstractCallerCliTest {
       FileHelper.resourceToFile("com/rtg/variant/resources/bug1508_reads.sam.gz", reads);
       new TabixIndexer(reads, new File(dir, "reads.sam.gz.tbi")).saveSamIndex();
 
-      final File out = new File(dir, "snpscalls");
-      final String[] args = {
-          "-t", ref.getPath(),
-          "-o", out.getPath(),
-          reads.getPath(),
-      };
-      final MemoryPrintStream ps = new MemoryPrintStream();
-      assertEquals(ps.toString(), 0, getCli().mainInit(args, ps.outputStream(), ps.printStream()));
+      final File out = new File(dir, "calls");
+      checkMainInitOk("-t", ref.getPath(), "-o", out.getPath(), reads.getPath());
       final String log = FileUtils.fileToString(new File(out, "snp.log"));
-      //System.err.println(log);
       TestUtils.containsAll(log, "16 records processed",
           "Finished successfully"
           );

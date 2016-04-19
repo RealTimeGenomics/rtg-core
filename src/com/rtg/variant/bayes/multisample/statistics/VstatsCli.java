@@ -22,7 +22,7 @@ import java.io.OutputStream;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.ParamsTask;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.sam.SamFilterOptions;
@@ -33,9 +33,9 @@ import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
-import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 import com.rtg.variant.bayes.multisample.MultisampleTask;
+import com.rtg.vcf.VariantStatistics;
 
 /**
  */
@@ -87,7 +87,7 @@ public class VstatsCli extends AbstractMultisampleCli {
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMaxCount(Integer.MAX_VALUE);
     final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(PLOIDY_FLAG, DefaultFallback.class, "string", "ploidy to use when the template does not contain a reference text file", DefaultFallback.DIPLOID).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(PLOIDY_FLAG, ReferencePloidy.class, "string", "ploidy to use", ReferencePloidy.AUTO).setCategory(SENSITIVITY_TUNING);
 
     SamFilterOptions.registerMaxHitsFlag(flags, SamFilterOptions.NO_SINGLE_LETTER);
     SamFilterOptions.registerMaxASMatedFlag(flags, SamFilterOptions.NO_SINGLE_LETTER);
@@ -104,7 +104,7 @@ public class VstatsCli extends AbstractMultisampleCli {
   protected VariantParamsBuilder makeParamsBuilder() throws InvalidParamsException, IOException {
     final VariantParamsBuilder builder = super.makeParamsBuilder();
     builder.sex((Sex) mFlags.getValue(SEX_FLAG));
-    builder.ploidy((DefaultFallback) mFlags.getValue(PLOIDY_FLAG));
+    builder.ploidy((ReferencePloidy) mFlags.getValue(PLOIDY_FLAG));
     builder.noComplexCalls(true);
     return builder;
   }

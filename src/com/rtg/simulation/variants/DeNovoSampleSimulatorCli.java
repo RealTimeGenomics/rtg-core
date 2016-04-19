@@ -20,7 +20,7 @@ import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.cli.CFlags;
@@ -76,7 +76,7 @@ public class DeNovoSampleSimulatorCli extends AbstractCli {
     mFlags.registerRequired('s', SAMPLE_FLAG, String.class, "STRING", "name for new derived sample").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerOptional('p', PRIORS_FLAG, String.class, "STRING", "selects a properties file specifying the mutation priors. Either a file name or one of [human]", "human").setCategory(CommonFlagCategories.UTILITY);
     mFlags.registerRequired(ORIGINAL_FLAG, String.class, "STRING", "name of the existing sample to use as the original genotype").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerOptional(PLOIDY, DefaultFallback.class, "string", "ploidy to use when the template does not contain a reference text file", DefaultFallback.DIPLOID).setCategory(CommonFlagCategories.UTILITY);
+    mFlags.registerOptional(PLOIDY, ReferencePloidy.class, "string", "ploidy to use", ReferencePloidy.AUTO).setCategory(CommonFlagCategories.UTILITY);
     mFlags.registerOptional(EXPECTED_MUTATIONS, Integer.class, "INT", "expected number of mutations per genome", DEFAULT_MUTATIONS_PER_GENOME).setCategory(CommonFlagCategories.UTILITY);
     mFlags.registerOptional(SEED, Integer.class, "INT", "seed for the random number generator").setCategory(CommonFlagCategories.UTILITY);
     mFlags.registerOptional(SHOW_MUTATIONS, "if set, display information regarding de novo mutation points").setCategory(CommonFlagCategories.UTILITY);
@@ -114,7 +114,7 @@ public class DeNovoSampleSimulatorCli extends AbstractCli {
     final File outputVcf = FileUtils.getZippedFileName(!flags.isSet(CommonFlags.NO_GZIP), (File) flags.getValue(OUTPUT_VCF));
     final String sample = (String) flags.getValue(SAMPLE_FLAG);
     final String original = (String) flags.getValue(ORIGINAL_FLAG);
-    final DefaultFallback ploidy = (DefaultFallback) flags.getValue(PLOIDY);
+    final ReferencePloidy ploidy = (ReferencePloidy) flags.getValue(PLOIDY);
     final GenomePriorParams priors;
     try {
       priors = GenomePriorParams.builder().genomePriors((String) mFlags.getValue(PRIORS_FLAG)).create();

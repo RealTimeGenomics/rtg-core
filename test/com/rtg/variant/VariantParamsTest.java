@@ -25,7 +25,7 @@ import com.rtg.launcher.ReaderParams;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.Sex;
 import com.rtg.sam.SharedSamConstants;
 import com.rtg.util.InvalidParamsException;
@@ -85,7 +85,7 @@ public class VariantParamsTest extends TestCase {
         " ignore_quality_scores=false" + LS,
         " max_ambiguity=null" + LS,
         " sex=EITHER" + LS,
-        " ploidy=DIPLOID" + LS,
+        " ploidy=AUTO" + LS,
         " chunk_size=1000 lookahead=2 max_read_length=1000" + LS,
         " threading_environment=PARALLEL treading_environment_seed=null" + LS,
         " exec_threads=1 io_threads=1" + LS,
@@ -189,7 +189,7 @@ public class VariantParamsTest extends TestCase {
     assertEquals(vpb.ioThreads(1), vpb);
     assertTrue(vpb.maxAmbiguity(1.0) == vpb);
     assertTrue(vpb.sex(Sex.FEMALE) == vpb);
-    assertTrue(vpb.ploidy(DefaultFallback.HAPLOID) == vpb);
+    assertTrue(vpb.ploidy(ReferencePloidy.HAPLOID) == vpb);
     assertTrue(vpb.pruneHypotheses(true) == vpb);
     //    final SequenceParams sq = SequenceParams.builder().directory(new File("foo")).create();
     //    assertTrue(vpb.genome(null) == vpb);
@@ -207,7 +207,7 @@ public class VariantParamsTest extends TestCase {
         " zip=" + Boolean.FALSE,
         " max_ambiguity=" + Double.toString(1.0),
         " sex=" + Sex.FEMALE,
-        " ploidy=" + DefaultFallback.HAPLOID
+        " ploidy=" + ReferencePloidy.HAPLOID
     };
     final String actual = params.toString();
     //System.err.println(actual);
@@ -288,7 +288,7 @@ public class VariantParamsTest extends TestCase {
     assertEquals(255, params.matedReadMax());
     assertEquals(255, params.unmatedReadMax());
     assertEquals(Sex.EITHER, params.sex());
-    assertEquals(DefaultFallback.DIPLOID, params.ploidy());
+    assertEquals(ReferencePloidy.AUTO, params.ploidy());
     assertEquals("ModuleParams", params.name());
     assertTrue(params.nonidentityPosterior());
     assertFalse(params.ionTorrent());

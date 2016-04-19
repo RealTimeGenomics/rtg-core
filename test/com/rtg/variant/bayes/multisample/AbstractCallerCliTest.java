@@ -128,7 +128,7 @@ public abstract class AbstractCallerCliTest extends AbstractCliTest {
         "for unmated reads that have no mapping quality supplied use this as the default quality (in Phred format from 0 to 63)",
         "Calls sequence variants",
         "file containing a list of SAM/BAM format files (1 per line) containing mapped reads",
-        "ploidy to use when the template does not contain a reference text file",
+        "ploidy to use",
         "sex of individual"
         );
   }

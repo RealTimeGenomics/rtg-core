@@ -19,7 +19,7 @@ import java.util.List;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reference.Ploidy;
 import com.rtg.reference.ReferenceGenome;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.ReferenceSequence;
 import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
@@ -96,7 +96,7 @@ public class ChildSampleSimulator {
 
   private final SequencesReader mReference;
   private final PortableRandom mRandom;
-  private final DefaultFallback mDefaultPloidy;
+  private final ReferencePloidy mDefaultPloidy;
   private ChildStatistics mStats = null;
   private int mFatherSampleNum = -1;
   private int mMotherSampleNum = -1;
@@ -137,7 +137,7 @@ public class ChildSampleSimulator {
    * @param extraCrossovers expected number of extra crossovers per chromosome
    * @param verbose if true output extra information on crossover points
    */
-  public ChildSampleSimulator(SequencesReader reference, PortableRandom rand, DefaultFallback ploidy, double extraCrossovers, boolean verbose) {
+  public ChildSampleSimulator(SequencesReader reference, PortableRandom rand, ReferencePloidy ploidy, double extraCrossovers, boolean verbose) {
     mReference = reference;
     mRandom = rand;
     mDefaultPloidy = ploidy;

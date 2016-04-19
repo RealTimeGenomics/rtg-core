@@ -19,7 +19,7 @@ import java.util.List;
 
 import com.rtg.reader.SequencesReader;
 import com.rtg.reference.ReferenceGenome;
-import com.rtg.reference.ReferenceGenome.DefaultFallback;
+import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.ReferenceSequence;
 import com.rtg.reference.Sex;
 import com.rtg.simulation.SimulationUtils;
@@ -46,7 +46,7 @@ public class SampleSimulator {
 
   protected final SequencesReader mReference;
   private final PortableRandom mRandom;
-  private final DefaultFallback mDefaultPloidy;
+  private final ReferencePloidy mDefaultPloidy;
   private VariantStatistics mStats = null;
   private boolean mSeenVariants = false;
   private int mDefaultAfCount = 0;
@@ -56,7 +56,7 @@ public class SampleSimulator {
    * @param rand random number generator
    * @param ploidy the default ploidy to use if no reference specification is present
    */
-  public SampleSimulator(SequencesReader reference, PortableRandom rand, DefaultFallback ploidy) {
+  public SampleSimulator(SequencesReader reference, PortableRandom rand, ReferencePloidy ploidy) {
     mReference = reference;
     mRandom = rand;
     mDefaultPloidy = ploidy;
