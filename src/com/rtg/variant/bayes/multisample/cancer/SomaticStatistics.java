@@ -148,7 +148,7 @@ public class SomaticStatistics extends VariantStatistics {
   @Override
   public String getStatistics() {
     final StringBuilder out = new StringBuilder();
-    out.append("Passed Filters               : ").append(mTotalVariants).append(StringUtils.LS);
+    out.append("Passed Filters               : ").append(mTotalPassed).append(StringUtils.LS);
     out.append("Failed Filters               : ").append(mTotalFiltered).append(StringUtils.LS);
     if (mExcessCoverage > 0) {
       out.append("Excessive Coverage           : ").append(mExcessCoverage).append(StringUtils.LS);
