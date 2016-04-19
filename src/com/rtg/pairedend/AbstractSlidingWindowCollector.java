@@ -541,7 +541,9 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
 
   abstract void writerNextTemplateId(long templateId) throws IOException;
 
-  /** Maximum number of hits at a given position in the sliding window collector */
+  /**
+   * @return Maximum number of hits at a given position in the sliding window collector
+   */
   protected final int getMaxHitsPerPosition() {
     return mMaxHitsPerPosition;
   }

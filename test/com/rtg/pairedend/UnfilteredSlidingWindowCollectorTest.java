@@ -84,7 +84,7 @@ public class UnfilteredSlidingWindowCollectorTest extends TestCase {
 
 
   private File mTmpDir = null;
-  private NgsParams mParams;
+  private NgsParams mParams = null;
   private static final int UNMATED_MAX_SCORE = 5;
   private static final int MATED_MAX_SCORE = 10;
 
