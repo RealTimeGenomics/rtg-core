@@ -89,7 +89,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String FILTER_DEPTH_FLAG = "filter-depth";
   private static final String FILTER_DEPTH_MULTIPLIER_FLAG = "filter-depth-multiplier";
   private static final String BED_FILTER_FLAG = "filter-bed";
-  private static final String COVERAGE_BYPASS_FLAG = "max-coverage";
+  static final String COVERAGE_BYPASS_FLAG = "max-coverage";
   private static final String COVERAGE_BYPASS_MULTIPLIER_FLAG = "max-coverage-multiplier";
   private static final String NO_CALIBRATION = "no-calibration";
   private static final String R_DEFAULT_FLAG = "rdefault-mated";

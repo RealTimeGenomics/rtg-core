@@ -95,6 +95,9 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
   private static final int ION_TORRENT_HYPER_COMPLEX = 21;
 
+  private static final int MIN_CALLS_FOR_COVERAGE_WARNING = 50; // Only warn for non-trivial datasets
+  private static final double COVERAGE_WARNING_THRESHOLD = 1.0;
+
   private final JobStatistics<JobIdMultisample> mJobStatistics = new MultisampleStatistics();
   private final OutputStream mBedOut;
   private final SexMemo mSexMemo;
@@ -748,6 +751,13 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       mStatistics.setExcessiveCoverageCount(mExcessiveCoverageCount);
       mStatistics.setExcessiveHypothesesCount(mExcessiveHypothesesCount);
       mStatistics.setNoHypothesesCount(mNoHypothesesCount);
+
+      final long totalCalls = mStatistics.getTotalFiltered() + mStatistics.getTotalPassed();
+      final double excessCoverageFraction = 100.0 * mExcessiveCoverageCount / totalCalls;
+      if (mExcessiveCoverageCount > MIN_CALLS_FOR_COVERAGE_WARNING && excessCoverageFraction > COVERAGE_WARNING_THRESHOLD) {
+        Diagnostic.warning("A large fraction of sites had coverage much higher than expected!  Check that input alignments have been calibrated with correct regions or that an appropriate --" + AbstractMultisampleCli.COVERAGE_BYPASS_FLAG + " value is supplied.");
+      }
+
     } finally {
       try (VcfWriter ignored1 = mOut;
            OutputStream ignored2 = mBedOut;
