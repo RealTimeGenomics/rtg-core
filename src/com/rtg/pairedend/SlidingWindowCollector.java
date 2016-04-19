@@ -19,6 +19,7 @@ import com.rtg.ngs.NgsParams;
 import com.rtg.ngs.SharedResources;
 import com.rtg.ngs.tempstage.PairedTempFileWriter;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.machine.MachineOrientation;
 
 /**
@@ -51,10 +52,10 @@ public class SlidingWindowCollector extends AbstractSlidingWindowCollector<HitIn
    * @param pairOrientation required mating orientation
    * @param alignmentWriter a <code>PairedAlignmentWriter</code>
    * @param sharedResources resources shared between multiple instances of this class
-   *
+   * @param calibrationRegions regions which reads target, or null if whole genome is covered
    */
-  public SlidingWindowCollector(int maxFragmentLength, int minFragmentLength, MachineOrientation pairOrientation, PairedTempFileWriter alignmentWriter, SharedResources sharedResources) {
-    super(maxFragmentLength, minFragmentLength, pairOrientation, sharedResources);
+  public SlidingWindowCollector(int maxFragmentLength, int minFragmentLength, MachineOrientation pairOrientation, PairedTempFileWriter alignmentWriter, SharedResources sharedResources, ReferenceRegions calibrationRegions) {
+    super(maxFragmentLength, minFragmentLength, pairOrientation, sharedResources, calibrationRegions);
 
     if (alignmentWriter == null) {
       throw new NullPointerException();
@@ -83,18 +84,18 @@ public class SlidingWindowCollector extends AbstractSlidingWindowCollector<HitIn
    *
    */
   SlidingWindowCollector(int maxFragmentLength, int minFragmentLength, MachineOrientation pairOrientation, PairedTempFileWriter alignmentWriter, NgsParams params) throws IOException {
-    this(maxFragmentLength, minFragmentLength, pairOrientation, alignmentWriter, SharedResources.generateSharedResources(params));
+    this(maxFragmentLength, minFragmentLength, pairOrientation, alignmentWriter, SharedResources.generateSharedResources(params), params.outputParams().calibrateRegions());
   }
 
   private MatedHitInfo getMatedHitInfo(int i) {
     final MatedHitInfo ret;
-    if (mMatedReadsWindowInUse[i] == mMaxHitsPerPosition - 1) {
+    if (mMatedReadsWindowInUse[i] == getMaxHitsPerPosition() - 1) {
       mMaxMatedHitsExceededCount++;
       if (mMaxMatedHitsExceededCount < 5) {
         Diagnostic.userLog("Max mated hits per position exceeded at template: " + mReferenceId + " templateStart: " + (mReadsWindow[i].size() > 0 ? "" + mReadsWindow[i].get(0).mTemplateStart : "unknown"));
       }
     }
-    if (mMatedReadsWindowInUse[i] == mMaxHitsPerPosition) {
+    if (mMatedReadsWindowInUse[i] == getMaxHitsPerPosition()) {
       ret = null; //sorry, no vacancy.
     } else {
       if (mMatedReadsWindowInUse[i] < mMatedReadsWindow[i].size()) {

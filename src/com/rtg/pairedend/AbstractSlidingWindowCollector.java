@@ -14,6 +14,7 @@ package com.rtg.pairedend;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.Properties;
 
 import com.reeltwo.jumble.annotations.TestClass;
@@ -23,6 +24,7 @@ import com.rtg.reader.CgUtils;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.machine.MachineOrientation;
 
 
@@ -43,9 +45,11 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
    */
   private static final int HASHTABLE_FACTOR = 30;
 
-  /** Maximum number of hits at a given position in the sliding window collector */
+  //this works out to roughly an extra 10 per 1 million reads on the full human reference
+  private static final int READS_PP_FACTOR = 31375;
+
   //see bug #1476 for consequences of this on larger datasets
-  protected final int mMaxHitsPerPosition;
+  private int mMaxHitsPerPosition;
 
   final int mWindowSize;
   private final int mMinFragmentLength;
@@ -73,12 +77,13 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
   private long mDuplicateCount = 0;
   private long mHitCount = 0;
   private long mMaxHitsExceededCount = 0;
+  private final long mGenomeLength;
   private int mReferenceCount = 0;
   protected long mReferenceId = 0;
   private long mReferenceLengthTotal = 0; // sum of length of all references
   private final MachineOrientation mMachineOrientation;
 
-  AbstractSlidingWindowCollector(int maxFragmentLength, int minFragmentLength, MachineOrientation pairOrientation, SharedResources sharedResources) {
+  AbstractSlidingWindowCollector(int maxFragmentLength, int minFragmentLength, MachineOrientation pairOrientation, SharedResources sharedResources, ReferenceRegions bedRegions) {
     if (maxFragmentLength < minFragmentLength) {
       throw new IllegalArgumentException("Maximum window size too small: " + maxFragmentLength);
     }
@@ -86,13 +91,16 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
       throw new IllegalArgumentException("Minimum window size too small: " + minFragmentLength);
     }
 
-    final int readMillions = (int) (sharedResources.firstReaderCopy().numberSequences() / 1000000);
+//    final int readMillions = (int) (sharedResources.firstReaderCopy().numberSequences() / 1000000);
+    mGenomeLength = bedRegions != null ? genomeLength(bedRegions) : genomeLength(sharedResources.templateReaderCopy());
     if (GlobalFlags.isSet(GlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG)) {
-      mMaxHitsPerPosition = GlobalFlags.getIntegerValue(GlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG);
+      setMaxHitsPerPosition(GlobalFlags.getIntegerValue(GlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG));
     } else {
-      mMaxHitsPerPosition = 1000 + readMillions * 10;
+      final long numReads = sharedResources.firstReaderCopy().numberSequences();
+      setMaxHitsPerPosition(1000 + calculateExtraMaxHitsPerPosition(mGenomeLength, numReads));
     }
 
+    Diagnostic.developerLog("Setting max hits per position to: " + getMaxHitsPerPosition());
     mMinFragmentLength = minFragmentLength;
     mMaxFragmentLength = maxFragmentLength;
     mMachineOrientation = pairOrientation;
@@ -119,6 +127,23 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
     mReadsLookup = readsLookup;
   }
 
+  static int calculateExtraMaxHitsPerPosition(double genomeLength, double numReads) {
+    return (int) (numReads / genomeLength * READS_PP_FACTOR);
+  }
+
+  static long genomeLength(ReferenceRegions regions) {
+    long totalLength = 0;
+    for (Map.Entry<String, Integer> entry : regions.coveredLengths().entrySet()) {
+      totalLength += entry.getValue();
+    }
+    return totalLength;
+  }
+
+  static long genomeLength(SequencesReader reader) {
+    return reader.totalLength();
+  }
+
+
   void setReadLookup(int i, T hit) {
     mReadsLookup[i] = hit;
   }
@@ -140,7 +165,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
 
   private T getHitInfo(int i) {
     final T ret;
-    if (mReadsWindowInUse[i] == mMaxHitsPerPosition) {
+    if (mReadsWindowInUse[i] == getMaxHitsPerPosition()) {
       mMaxHitsExceededCount++;
       if (mMaxHitsExceededCount < 5) {
         Diagnostic.userLog("Max hits per position exceeded at template: " + mReferenceId + " templateStart: " + (mReadsWindow[i].size() > 0 ? "" + mReadsWindow[i].get(0).mTemplateStart : "unknown"));
@@ -435,7 +460,10 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
     stats.setProperty("total_hits", Long.toString(mHitCount));
     stats.setProperty("duplicate_hits", Long.toString(mDuplicateCount));
     stats.setProperty("max_hits_exceeded", Long.toString(mMaxHitsExceededCount));
-    stats.setProperty("max_hits_threshold", Integer.toString(mMaxHitsPerPosition));
+    stats.setProperty("max_hits_threshold", Integer.toString(getMaxHitsPerPosition()));
+    if (mGenomeLength > 0) {
+      stats.setProperty("max_hits_exceed_percentage", String.format("%.2f", mMaxHitsExceededCount * 100.0 / mGenomeLength));
+    }
     stats.setProperty("template_lengths_total", Long.toString(mReferenceLengthTotal));
 
     for (int i = 0; i < mRightPairCounts.length; i++) {
@@ -512,4 +540,13 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
   abstract void flushToPosition(final int newStart) throws IOException;
 
   abstract void writerNextTemplateId(long templateId) throws IOException;
+
+  /** Maximum number of hits at a given position in the sliding window collector */
+  protected final int getMaxHitsPerPosition() {
+    return mMaxHitsPerPosition;
+  }
+
+  void setMaxHitsPerPosition(int maxHitsPerPosition) {
+    mMaxHitsPerPosition = maxHitsPerPosition;
+  }
 }

@@ -96,7 +96,7 @@ public class UnfilteredPairedEndOutputProcessor extends AbstractSdfOutputProcess
     sam.initialiseUnmated(outStream);
     sam.setClipRegion(region);
     final UnfilteredSlidingWindowCollector collector = new UnfilteredSlidingWindowCollector(mParams.maxFragmentLength(), mParams.minFragmentLength(), mParams.pairOrientation(), sam,
-        mSharedResources);
+        mSharedResources, mParams.outputParams().calibrateRegions());
     final InnerPairedEndOutputProcessor ipeop = new InnerPairedEndOutputProcessor(sam, collector, mFreqBlockerLeft, mFreqBlockerRight, mUnmappedTracker, region, out);
     mChildren.add(new Pair<>(ipeop.getRegion(), ipeop.getFile()));
     Diagnostic.developerLog("InnerPairedEndOutputProcessor:" + ipeop + " region:" + region);

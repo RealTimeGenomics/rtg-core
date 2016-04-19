@@ -18,7 +18,6 @@ import java.io.OutputStream;
 import java.util.Properties;
 import java.util.Random;
 
-import com.rtg.launcher.GlobalFlags;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.ngs.NgsFilterParams;
 import com.rtg.ngs.NgsOutputParams;
@@ -167,8 +166,9 @@ public class SlidingWindowCollectorTest extends TestCase {
     }
   }
 
-  static final String TEMPLATE = ">t" + StringUtils.LS + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
-  + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa" + StringUtils.LS;
+  private static final String TEMPLATE_BASES = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    + "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+  static final String TEMPLATE = ">t" + StringUtils.LS + TEMPLATE_BASES + StringUtils.LS;
   static final String READ_LEFT_LENGTH2 = ">r1" + StringUtils.LS + "aa" + StringUtils.LS
   + ">r2" + StringUtils.LS + "aa" + StringUtils.LS;
   static final String READ_RIGHT_LENGTH2 = ">r1" + StringUtils.LS + "aa" + StringUtils.LS
@@ -676,6 +676,13 @@ public class SlidingWindowCollectorTest extends TestCase {
     readsLeft.append(StringUtils.LS);
   }
 
+  public void testCalculateExtraMaxHitsPerPosition() {
+    //want extra 10 per 1m reads on human reference
+    assertEquals(10, AbstractSlidingWindowCollector.calculateExtraMaxHitsPerPosition(3137454505L, 1000000));
+    assertEquals(100, AbstractSlidingWindowCollector.calculateExtraMaxHitsPerPosition(3137454505L, 10000000));
+    assertEquals(1000, AbstractSlidingWindowCollector.calculateExtraMaxHitsPerPosition(3137454505L, 100000000));
+  }
+
   //Many reads;
   public void testMaxHitsInPosition() throws Exception {
     final MemoryPrintStream mps = new MemoryPrintStream();
@@ -686,13 +693,14 @@ public class SlidingWindowCollectorTest extends TestCase {
       final StringBuilder readsRight = new StringBuilder();
       final char[] chars = {'a', 'c', 'g', 't'};
       final Random rand = new Random(33);
-      final int maxHits = GlobalFlags.getIntegerValue(GlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG);
+      final int maxHits = 1000; //GlobalFlags.getIntegerValue(GlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG);
       for (int i = 0; i < maxHits + 2; i++) {
         addRandomRead(readsLeft, i, chars, rand);
         addRandomRead(readsRight, i, chars, rand);
       }
 
       final SlidingWindowCollector swc = new SlidingWindowCollector(45, 0, MachineOrientation.ANY, writer, buildParams(readsLeft.toString(), readsRight.toString()));
+      swc.setMaxHitsPerPosition(maxHits);
       swc.nextTemplateId(0);
 
       // add 1000 left arms at a position which should be ignored
@@ -735,13 +743,14 @@ public class SlidingWindowCollectorTest extends TestCase {
 
       final char[] chars = {'a', 'c', 'g', 't'};
       final Random rand = new Random(33);
-      final int maxHits = GlobalFlags.getIntegerValue(GlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG);
+      final int maxHits = 1000; //GlobalFlags.getIntegerValue(GlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG);
       for (int i = 0; i < maxHits + 2; i++) {
         addRandomRead(readsLeft, i, chars, rand);
         addRandomRead(readsRight, i, chars, rand);
       }
 
       final SlidingWindowCollector swc = new SlidingWindowCollector(10, 0, MachineOrientation.ANY, writer, buildParams(readsLeft.toString(), readsRight.toString()));
+      swc.setMaxHitsPerPosition(maxHits);
       swc.nextTemplateId(0);
 
       for (int i = 0; i < maxHits + 1; i++) {

@@ -127,7 +127,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     sam.initialiseMated(outStream);
     sam.setClipRegion(region);
     final SlidingWindowCollector collector = new SlidingWindowCollector(mParams.maxFragmentLength(), mParams.minFragmentLength(), mParams.pairOrientation(), sam,
-        mSharedResources);
+        mSharedResources, mParams.outputParams().calibrateRegions());
     final InnerPairedEndOutputProcessor ipeop = new InnerPairedEndOutputProcessor(sam, collector, mFreqBlockerLeft, mFreqBlockerRight, mOutputUnmated ? mTopN : null, mUnmappedTracker, region);
     mChildren.add(new Pair<>(ipeop.getRegion(), out));
     Diagnostic.developerLog("InnerPairedEndOutputProcessor:" + ipeop + " region:" + region);

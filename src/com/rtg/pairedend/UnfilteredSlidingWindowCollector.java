@@ -16,6 +16,7 @@ import java.util.ArrayList;
 
 import com.rtg.ngs.SharedResources;
 import com.rtg.ngs.tempstage.UnfilteredTempFileWriter;
+import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.machine.MachineOrientation;
 
 
@@ -33,9 +34,10 @@ public class UnfilteredSlidingWindowCollector extends AbstractSlidingWindowColle
    * @param pairOrientation required mating orientation
    * @param alignmentWriter alignment writer
    * @param sharedResources the shared resources between threads
+   * @param calibrationRegions regions which reads target, or null if whole genome is covered
    */
-  public UnfilteredSlidingWindowCollector(int maxInsertSize, int minInsertSize, MachineOrientation pairOrientation, UnfilteredTempFileWriter alignmentWriter, SharedResources sharedResources) {
-    super(maxInsertSize, minInsertSize, pairOrientation, sharedResources);
+  public UnfilteredSlidingWindowCollector(int maxInsertSize, int minInsertSize, MachineOrientation pairOrientation, UnfilteredTempFileWriter alignmentWriter, SharedResources sharedResources, ReferenceRegions calibrationRegions) {
+    super(maxInsertSize, minInsertSize, pairOrientation, sharedResources, calibrationRegions);
     mWriter = alignmentWriter;
   }
 

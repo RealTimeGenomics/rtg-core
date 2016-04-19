@@ -115,7 +115,7 @@ public abstract class AbstractPairedEndOutputProcessorTest extends TestCase {
     final int max = param.maxFragmentLength();
     final int min = param.minFragmentLength();
 
-    final SlidingWindowCollector collector = new SlidingWindowCollector(max, min, MachineOrientation.ANY, mSamWriter, sharedResources);
+    final SlidingWindowCollector collector = new SlidingWindowCollector(max, min, MachineOrientation.ANY, mSamWriter, sharedResources, param.outputParams().calibrateRegions());
 
     return getPEOP(mSamWriter, collector);
   }

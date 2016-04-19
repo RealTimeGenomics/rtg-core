@@ -162,7 +162,7 @@ public class UnfilteredSlidingWindowCollectorTest extends TestCase {
   public void testFlush() throws Exception {
     final SharedResources sr = SharedResources.generateSharedResources(mParams);
     final UnfilteredTempFileWriter mUsaw = new TestUnfilteredAlignmentWriter(new PairedTempFileWriterImplTest.UselessStatusIdListener(), sr, mParams);
-    final UnfilteredSlidingWindowCollector uswc = new UnfilteredSlidingWindowCollector(70, 0, MachineOrientation.ANY, mUsaw, sr);
+    final UnfilteredSlidingWindowCollector uswc = new UnfilteredSlidingWindowCollector(70, 0, MachineOrientation.ANY, mUsaw, sr, mParams.outputParams().calibrateRegions());
 
     uswc.nextTemplateId(0);
     uswc.mCurrentReferencePosition = -1;
