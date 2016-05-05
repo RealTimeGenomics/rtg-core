@@ -27,7 +27,7 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.intervals.LongRange;
-import com.rtg.util.io.FileUtils;
+import com.rtg.vcf.VcfUtils;
 
 /**
  * Command line wrapper for fixed step variant generator
@@ -92,7 +92,7 @@ public class FixedStepPopulationVariantGeneratorCli extends AbstractCli {
     final int distance = (Integer) flags.getValue(DISTANCE);
     final File input = (File) flags.getValue(REFERENCE_SDF);
     final Mutator mutator = new Mutator((String) flags.getValue(SNP_SPECIFICATION));
-    final File outputVcf = FileUtils.getZippedFileName(true, (File) flags.getValue(OUTPUT_VCF));
+    final File outputVcf = VcfUtils.getZippedVcfFileName(true, (File) flags.getValue(OUTPUT_VCF));
     final double af = (Double) flags.getValue(FREQUENCY);
     try (SequencesReader dsr = SequencesReaderFactory.createMemorySequencesReader(input, true, LongRange.NONE)) {
       final FixedStepPopulationVariantGenerator fs = new FixedStepPopulationVariantGenerator(dsr, distance, mutator, random, af);

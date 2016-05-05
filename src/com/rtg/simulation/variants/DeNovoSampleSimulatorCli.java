@@ -27,8 +27,8 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.intervals.LongRange;
-import com.rtg.util.io.FileUtils;
 import com.rtg.variant.GenomePriorParams;
+import com.rtg.vcf.VcfUtils;
 
 /**
  * Generate a derived genotype that contains additional de novo variants.
@@ -111,7 +111,7 @@ public class DeNovoSampleSimulatorCli extends AbstractCli {
 
     final File reference = (File) flags.getValue(REFERENCE_SDF);
     final File popVcf = (File) flags.getValue(INPUT_VCF);
-    final File outputVcf = FileUtils.getZippedFileName(!flags.isSet(CommonFlags.NO_GZIP), (File) flags.getValue(OUTPUT_VCF));
+    final File outputVcf = VcfUtils.getZippedVcfFileName(!flags.isSet(CommonFlags.NO_GZIP), (File) flags.getValue(OUTPUT_VCF));
     final String sample = (String) flags.getValue(SAMPLE_FLAG);
     final String original = (String) flags.getValue(ORIGINAL_FLAG);
     final ReferencePloidy ploidy = (ReferencePloidy) flags.getValue(PLOIDY);

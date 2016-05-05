@@ -23,8 +23,8 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.intervals.LongRange;
-import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
+import com.rtg.vcf.VcfUtils;
 
 /**
  * Generates a genome SDF corresponding to the sample genotype described in a VCF file.
@@ -76,7 +76,7 @@ public class SampleReplayerCli extends LoggedCli {
   protected int mainExec(OutputStream out, LogStream log) throws IOException {
     final CFlags flags = mFlags;
     final File input = (File) flags.getValue(REFERENCE_SDF);
-    final File sampleVcf = FileUtils.getZippedFileName(true, (File) flags.getValue(SAMPLE_VCF));
+    final File sampleVcf = VcfUtils.getZippedVcfFileName(true, (File) flags.getValue(SAMPLE_VCF));
     final String sample = (String) flags.getValue(SAMPLE_NAME);
     try (SequencesReader dsr = SequencesReaderFactory.createMemorySequencesReader(input, true, LongRange.NONE)) {
       final SampleReplayer vr = new SampleReplayer(dsr);

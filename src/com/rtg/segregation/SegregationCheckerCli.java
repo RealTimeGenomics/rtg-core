@@ -35,8 +35,8 @@ import com.rtg.util.Pair;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.RangeList.RangeData;
-import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.VcfReader;
+import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.VcfWriter;
 import com.rtg.vcf.header.VcfHeader;
 
@@ -101,7 +101,7 @@ public class SegregationCheckerCli extends AbstractCli {
     final boolean stdout = CommonFlags.isStdio(vcfOut);
     try (final VcfReader reader = VcfReader.openVcfReader((File) mFlags.getValue(VCF_FLAG))) {
       final VcfHeader header = SegregationChecker.modifyHeader(reader.getHeader(), mFlags.isSet(REPAIR_FLAG));
-      final File vcfFile = stdout ? null : FileUtils.getZippedFileName(gzip, vcfOut);
+      final File vcfFile = stdout ? null : VcfUtils.getZippedVcfFileName(gzip, vcfOut);
       try (VcfWriter writer = new VcfWriter(header, vcfFile, out, gzip, index)) {
         new SegregationChecker((String) mFlags.getValue(FATHER_FLAG), (String) mFlags.getValue(MOTHER_FLAG), reader, writer, patterns, ploidyMap, mFlags.isSet(REPAIR_FLAG)).run();
       }

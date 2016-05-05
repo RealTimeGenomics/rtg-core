@@ -28,8 +28,8 @@ import com.rtg.util.PortableRandom;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.intervals.LongRange;
-import com.rtg.util.io.FileUtils;
 import com.rtg.variant.GenomePriorParams;
+import com.rtg.vcf.VcfUtils;
 
 /**
  * Command line wrapper for prior-based population variant creation
@@ -97,7 +97,7 @@ public class PriorPopulationVariantGeneratorCli extends AbstractCli {
     final File out = (File) flags.getValue(OUTPUT_VCF);
     final boolean gzip = !flags.isSet(CommonFlags.NO_GZIP);
     final boolean stdout = CommonFlags.isStdio(out);
-    final File vcfFile = stdout ? null : FileUtils.getZippedFileName(gzip, out);
+    final File vcfFile = stdout ? null : VcfUtils.getZippedVcfFileName(gzip, out);
     try (SequencesReader dsr = SequencesReaderFactory.createMemorySequencesReaderCheckEmpty(reference, true, false, LongRange.NONE)) {
       final int targetVariants;
       if (flags.isSet(RATE_FLAG)) {

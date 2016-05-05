@@ -24,9 +24,9 @@ import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfRecord;
+import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.VcfWriter;
 import com.rtg.vcf.header.VcfHeader;
 
@@ -70,7 +70,7 @@ public class PredictCli extends AbstractCli {
       public boolean isValid(CFlags flags) {
         final File o = (File) flags.getValue(OUTPUT_FLAG);
         if (!CommonFlags.isStdio(o)) {
-          final File output = FileUtils.getZippedFileName(!flags.isSet(CommonFlags.NO_GZIP), o);
+          final File output = VcfUtils.getZippedVcfFileName(!flags.isSet(CommonFlags.NO_GZIP), o);
           if (output.exists()) {
             flags.setParseMessage("The file \"" + output + "\" already exists. Please remove it first or choose a different file");
             return false;
@@ -111,7 +111,7 @@ public class PredictCli extends AbstractCli {
       final boolean stdout = CommonFlags.isStdio(o);
       final boolean gzip = !mFlags.isSet(CommonFlags.NO_GZIP);
       final boolean index = !mFlags.isSet(CommonFlags.NO_INDEX);
-      final File vcfFile = stdout ? null : FileUtils.getZippedFileName(gzip, o);
+      final File vcfFile = stdout ? null : VcfUtils.getZippedVcfFileName(gzip, o);
       try (VcfWriter writer = new VcfWriter(header, vcfFile, out, gzip, index)) {
         while (posReader.hasNext()) {
           final VcfRecord current = posReader.next();
