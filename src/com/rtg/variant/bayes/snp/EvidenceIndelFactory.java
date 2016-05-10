@@ -26,12 +26,20 @@ public final class EvidenceIndelFactory implements CachedEvidenceFactory {
   /** Unique instance of factory. */
   public static final CachedEvidenceFactory SINGLETON = new EvidenceIndelFactory();
 
-  private EvidenceIndelFactory() {
-  }
 
   // For efficiency precompute the possible evidence objects
-  private final EvidenceIndel[] mGoodEvidence = {new EvidenceIndel(0, 0, 0), new EvidenceIndel(0, 1, 0)};
-  private final EvidenceIndel[] mBadEvidence = {new EvidenceIndel(Model.AMBIGUITY_THRESHOLD, 0, 0), new EvidenceIndel(Model.AMBIGUITY_THRESHOLD, 1, 0)};
+  private final EvidenceIndel[] mGoodEvidence;
+  private final EvidenceIndel[] mBadEvidence;
+
+
+  private EvidenceIndelFactory() {
+    mGoodEvidence = new EvidenceIndel[EvidenceIndel.DISTINCT_READS];
+    mBadEvidence = new EvidenceIndel[EvidenceIndel.DISTINCT_READS];
+    for (int i = 0; i < EvidenceIndel.DISTINCT_READS; i++) {
+      mGoodEvidence[i] = new EvidenceIndel(0, i, 0);
+      mBadEvidence[i] = new EvidenceIndel(Model.AMBIGUITY_THRESHOLD, i, 0);
+    }
+  }
 
   @Override
   public EvidenceInterface evidence(int readNt, int readBasesLeft, int readBasesRight, int mapQ, int phred, int stateIndex, int maxIndelLength, boolean isUnmapped) {

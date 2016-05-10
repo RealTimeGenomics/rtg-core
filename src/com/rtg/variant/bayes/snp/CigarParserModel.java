@@ -100,7 +100,7 @@ public class CigarParserModel implements ReadParserInterface {
     private boolean mIsCgOverlapLeft = false;
     private int mMapScore;
     private int mDefaultQuality;
-    private boolean mInInsertBlock;
+    private boolean mInBlock;
 
     @Override
     public void setCigar(String superCigar, String readDelta) {
@@ -143,7 +143,7 @@ public class CigarParserModel implements ReadParserInterface {
 
     @Override
     protected void doChunk(char ch, int count) throws BadSuperCigarException {
-      mInInsertBlock = false;
+      mInBlock = false;
       if ((ch == SamUtils.CIGAR_SAME || ch == SamUtils.CIGAR_MISMATCH || ch == SamUtils.CIGAR_SAME_OR_MISMATCH || ch == SamUtils.CIGAR_DELETION_FROM_REF)
           && getTemplatePosition() + count > getTemplateLength()) {
         throw new BadSuperCigarException("Cigar exceeds template length");
@@ -152,14 +152,31 @@ public class CigarParserModel implements ReadParserInterface {
     }
 
     @Override
+    public void parse() throws BadSuperCigarException {
+      super.parse();
+    }
+
+    @Override
     protected void doReadOnly(int readNt) {
-      if (mInInsertBlock) {
+      if (mInBlock) {
         return;
       }
       //System.err.println("i=" + readNt);
-      mInInsertBlock = true;
+      mInBlock = true;
       if (mMatcherIndel != null && includeBase(getReadPosition()) && mStart <= getTemplatePosition() && getTemplatePosition() < mEnd) {
         mMatcherIndel.match(getTemplatePosition(), EvidenceIndelFactory.SINGLETON.evidence(EvidenceIndel.INSERT, /*unused*/0, /*unused*/0, mMapScore, /*unused*/0, /*unused*/0, mOperationLength, false));
+      }
+    }
+
+    @Override
+    protected void doReadSoftClip(int readNt) {
+      if (mInBlock) {
+        return;
+      }
+      //System.err.println("i=" + readNt);
+      mInBlock = true;
+      if (mMatcherIndel != null && includeBase(getReadPosition()) && mStart <= getTemplatePosition() && getTemplatePosition() < mEnd) {
+        mMatcherIndel.match(getTemplatePosition(), EvidenceIndelFactory.SINGLETON.evidence(getReadPosition() == 0 ? EvidenceIndel.SOFT_CLIP_LEFT : EvidenceIndel.SOFT_CLIP_RIGHT, /*unused*/0, /*unused*/0, mMapScore, /*unused*/0, /*unused*/0, mOperationLength, false));
       }
     }
 

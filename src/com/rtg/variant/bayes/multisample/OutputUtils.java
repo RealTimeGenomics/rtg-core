@@ -41,7 +41,7 @@ public final class OutputUtils {
     ComplexRegion cr = step(itb);
     while (ita.hasNext()) {
       final Variant call = ita.next();
-      if (call.isIndel() || call.isOverflow()) {
+      if (call.isIndel() || call.isOverflow() || call.isSoftClip()) {
         continue;
       }
       while (cr != null && cr.getEnd() <= call.getLocus().getStart()) {

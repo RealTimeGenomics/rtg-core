@@ -54,6 +54,14 @@ public class IndelMatcher extends EvidenceMatcher<IndelDetector> {
         call.setIndel(indelDetector.maxIndelLength());
         return call;
       }
+      if (indelDetector.softClipLeftCount() >= minIndelCount || indelDetector.softClipRightCount() >= minIndelCount) {
+        final VariantLocus locus = new VariantLocus(refName, startPos, newEnd);
+        final Variant call = new Variant(locus);
+        call.setInteresting();
+        final Variant.SoftClipSide side = indelDetector.softClipLeftCount() > indelDetector.softClipRightCount() ? Variant.SoftClipSide.LEFT : Variant.SoftClipSide.RIGHT;
+        call.setSoftClip(indelDetector.maxIndelLength(), side);
+        return call;
+      }
       return null;
     } else { //reference nt == N
       return null;

@@ -28,6 +28,8 @@ public class IndelDetector implements EvidenceAcceptor {
 
   private int mNonTrivialInsertCount;
   private int mNonTrivialDeletionCount;
+  private int mSoftClipLeftCount;
+  private int mSoftClipRightCount;
   private int mNonIndelCount;
 
   private int mIndelLength;
@@ -46,11 +48,21 @@ public class IndelDetector implements EvidenceAcceptor {
       assert evidence instanceof EvidenceIndel;
       mIndelLength = Math.max(((EvidenceIndel) evidence).maxIndelLength(), mIndelLength);
       if (evidence.mapError() < Model.AMBIGUITY_THRESHOLD) {
-        if (evidence.read() == EvidenceIndel.INSERT) {
-          mNonTrivialInsertCount++;
-        } else {
-          assert evidence.read() == EvidenceIndel.DELETE;
-          mNonTrivialDeletionCount++;
+        switch (evidence.read()) {
+          case EvidenceIndel.INSERT:
+            mNonTrivialInsertCount++;
+            break;
+          case EvidenceIndel.DELETE:
+            mNonTrivialDeletionCount++;
+            break;
+          case EvidenceIndel.SOFT_CLIP_LEFT:
+            mSoftClipLeftCount++;
+            break;
+          case EvidenceIndel.SOFT_CLIP_RIGHT:
+            mSoftClipRightCount++;
+            break;
+          default:
+            throw new RuntimeException("Invalid indel code: " + evidence.read());
         }
       }
     }
@@ -82,6 +94,14 @@ public class IndelDetector implements EvidenceAcceptor {
    */
   int nonTrivialDeletionCount() {
     return mNonTrivialDeletionCount;
+  }
+
+  int softClipLeftCount() {
+    return mSoftClipLeftCount;
+  }
+
+  int softClipRightCount() {
+    return mSoftClipRightCount;
   }
 
   int minIndelCount(int percentage) {

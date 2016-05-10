@@ -17,11 +17,21 @@ import com.rtg.variant.bayes.EvidenceInterface;
 /**
  */
 public final class EvidenceIndel implements EvidenceInterface {
+
+  /** Constant for a soft clip. */
+  public static final int SOFT_CLIP_RIGHT = 3;
+
+  /** Constant for a soft clip. */
+  public static final int SOFT_CLIP_LEFT = 2;
+
   /** Constant for a deletion. */
   public static final int DELETE = 1;
 
   /** Constant for an insert. */
   public static final int INSERT = 0;
+
+  /** Number of valid codes for <code>read</code> */
+  public static final int DISTINCT_READS = 4;
 
   private final double mMapError;
   private final int mRead;
@@ -30,14 +40,14 @@ public final class EvidenceIndel implements EvidenceInterface {
 
   /**
    * @param mapError probability that the read doesn't map to this position.
-   * @param indel 0 = insert, 1 = delete
+   * @param indel 0 = insert, 1 = delete, 2 = soft clip left, 3 = soft clip right
    * @param maxIndelLength maximum length of an insert or delete as specified by cigar
    */
   public EvidenceIndel(final double mapError, int indel, int maxIndelLength) {
     mMapError = mapError;
     mRead = indel;
     mMaxIndelLength = maxIndelLength;
-    assert mRead == INSERT || mRead == DELETE;
+    assert mRead == INSERT || mRead == DELETE || mRead == SOFT_CLIP_LEFT || mRead == SOFT_CLIP_RIGHT;
   }
 
   @Override

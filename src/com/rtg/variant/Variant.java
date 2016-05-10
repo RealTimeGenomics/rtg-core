@@ -65,6 +65,16 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
     }
   }
 
+  /**
+   * Describes which side of the read the soft clip is on
+   */
+  public enum SoftClipSide {
+    /** Soft clip occurs at leftmost end of read (aligned against reference) */
+    LEFT,
+    /** Soft clip occurs at rightmost end of read (aligned against reference) */
+    RIGHT;
+  }
+
   private final VariantLocus mLocus;
   private int mFilters;
   private final VariantSample[] mSamples;
@@ -79,6 +89,9 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
   private boolean mTrimmed = false;
   private int mSplitId = -1;
   private boolean mForceComplex = false;
+
+  private boolean mSoftClip;
+  private SoftClipSide mSoftClipSide;
 
   private Double mNonIdentityPosterior = null;
 
@@ -268,6 +281,32 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
   }
 
   /**
+   * Indicates that this call is soft clip of specified length, to be processed by the complex caller.
+   * @param length of operation in cigar
+   * @param side which side of the read the soft clip occurs on, as aligned against reference
+   */
+  public void setSoftClip(int length, SoftClipSide side) {
+    mSoftClip = true;
+    mForceComplex = true;
+    mIndelLength = length;
+    mSoftClipSide = side;
+  }
+
+  /**
+   * @return true if this call is a soft clip (i.e., to be processed by the complex caller)
+   */
+  public boolean isSoftClip() {
+    return mSoftClip;
+  }
+
+  /**
+   * @return which side of the read the soft clip occurs on, as aligned against reference.
+   */
+  public SoftClipSide getSoftClipSide() {
+    return mSoftClipSide;
+  }
+
+  /**
    * @return true if this call is an insert or delete (i.e., to be processed by the complex caller)
    */
   public boolean isIndel() {
@@ -411,6 +450,9 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
     if (copyFrom.isIndel()) {
       copyTo.setIndel(copyFrom.mIndelLength);
     }
+    if (copyFrom.isSoftClip()) {
+      copyTo.setSoftClip(copyFrom.getIndelLength(), copyFrom.getSoftClipSide());
+    }
     if (copyFrom.isForceComplex()) {
       copyTo.setForceComplex();
     }
@@ -439,7 +481,13 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
 
     final int thisO = this.isIndel() ? 0 : 1;
     final int thatO = that.isIndel() ? 0 : 1;
-    return thisO - thatO;
+    final int diff2 = thisO - thatO;
+    if (diff2 != 0) {
+      return diff2;
+    }
+    final int thisS = this.isSoftClip() ? 0 : 1;
+    final int thatS = that.isSoftClip() ? 0 : 1;
+    return thisS - thatS;
   }
 
   @Override
@@ -494,6 +542,8 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
   String getTypeString() {
     if (isIndel()) {
       return "INDEL";
+    } else if (isSoftClip()) {
+      return "SOFTCLIP";
     } else {
       return "SNP";
     }
