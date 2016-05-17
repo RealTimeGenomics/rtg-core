@@ -87,7 +87,12 @@ final class ComplexCaller {
       if (startOfRegion >= complexities.startOfChunk() && startOfRegion <= complexities.endOfChunk()) {
         final ComplexTemplate cot = new ComplexTemplate(template, refName, startOfRegion, endOfRegion);
 
-        final Iterator<VariantAlignmentRecord> it = tribble.recordsOverlap(startOfRegion, endOfRegion);
+        final Iterator<VariantAlignmentRecord> it;
+        if (mParams.expandComplexReadQueries()) {
+          it = tribble.recordsOverlap(Math.max(0, startOfRegion - 1), endOfRegion + 1);
+        } else {
+          it = tribble.recordsOverlap(startOfRegion, endOfRegion);
+        }
         final List<AlignmentMatch> matches = MultisampleUtils.intersectSet(startOfRegion, endOfRegion, it, mConfig.getMachineErrorChooser(), mParams);
 
         // Create the complex hypotheses

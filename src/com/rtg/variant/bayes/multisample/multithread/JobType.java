@@ -75,12 +75,32 @@ public enum JobType {
           ;
     }
   },
+  /** flushes the circular buffer */
+  FLUSH {
+    @Override
+    public boolean validArguments(Result[] results) {
+      if (results.length != 3) {
+        return false;
+      }
+      if (results[0] == null) {
+        return INCR.validResult(results[1]);
+      }
+      if (results[1] == null) {
+        return INCR.validResult(results[0]);
+      }
+      return INCR.validResult(results[0]) && INCR.validResult(results[1]);
+    }
 
+    @Override
+    public boolean validResult(Result result) {
+      return result.length() == 0;
+    }
+  },
   /** Merge results from initial calling and complex calling. */
   FILTER {
     @Override
     public boolean validArguments(Result[] results) {
-      if (results.length != 3) {
+      if (results.length != 4) {
         return false;
       }
       if (results[0] == null && results[1] == null) {
@@ -97,7 +117,6 @@ public enum JobType {
           ;
     }
   },
-
   /** Write regions to <code>regions.bed</code> file. */
   BED {
     @Override
@@ -116,7 +135,6 @@ public enum JobType {
       return result.length() == 0;
     }
   },
-
   /** Write called Variants. */
   OUT {
     @Override

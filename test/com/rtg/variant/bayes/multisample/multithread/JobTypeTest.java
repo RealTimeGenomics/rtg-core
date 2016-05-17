@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 public class JobTypeTest extends TestCase {
 
   public void test() {
-    TestUtils.testEnum(JobType.class, "[INCR, DANGLING, COMPLEX, FILTER, BED, OUT]");
+    TestUtils.testEnum(JobType.class, "[INCR, DANGLING, COMPLEX, FLUSH, FILTER, BED, OUT]");
   }
 
   public void testIncrement() {
@@ -94,17 +94,17 @@ public class JobTypeTest extends TestCase {
     assertFalse(t.validArguments(new Result[] {new Result(new Object())}));
 
     final ArrayList<Variant> list = new ArrayList<>();
-    assertTrue(t.validArguments(new Result[] {null, null, new Result(null, list)}));
-    assertTrue(t.validArguments(new Result[] {null, null, new Result(list, null)}));
+    assertTrue(t.validArguments(new Result[] {null, null, new Result(null, list), null}));
+    assertTrue(t.validArguments(new Result[] {null, null, new Result(list, null), null}));
 
 
     final Result r = getValidIncrementResult(); //increment
     final Result r2 = getValidComplexResult(); //complex
     final Result r3 = getValidFilterResult(); //filter
-    assertTrue(t.validArguments(new Result[] {r, r2, r3}));
-    assertTrue(t.validArguments(new Result[] {r, r2, null}));
-    assertFalse(t.validArguments(new Result[] {new Result(), r2, null}));
-    assertFalse(t.validArguments(new Result[] {r, new Result(), null}));
+    assertTrue(t.validArguments(new Result[] {r, r2, r3, new Result()}));
+    assertTrue(t.validArguments(new Result[] {r, r2, null, new Result()}));
+    assertFalse(t.validArguments(new Result[] {new Result(), r2, null, new Result()}));
+    assertFalse(t.validArguments(new Result[] {r, new Result(), null, new Result()}));
 
     assertFalse(t.validResult(new Result()));
     assertTrue(t.validResult(new Result(null, list)));

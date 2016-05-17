@@ -109,6 +109,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final double mMinVariantAlleleFraction;
   private final SomaticParams mSomaticParams;
   private final AlleleBalanceProbability mAlleleBalance;
+  private final boolean mExpandComplexReadQueries;
 
   /**
    * @param builder the builder object.
@@ -169,6 +170,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mMinVariantAlleleFraction = builder.mMinVariantAlleleFraction;
     mSomaticParams = builder.mSomaticParams;
     mAlleleBalance = builder.mAlleleBalance;
+    mExpandComplexReadQueries = builder.mExpandComplexReadQueries;
   }
 
   @Override
@@ -618,6 +620,13 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
    */
   public AlleleBalanceProbability alleleBalance() {
     return mAlleleBalance;
+  }
+
+  /**
+   * @return if true expand queries for reads by one base either side of a complex region
+   */
+  public boolean expandComplexReadQueries() {
+    return mExpandComplexReadQueries;
   }
 
   /**

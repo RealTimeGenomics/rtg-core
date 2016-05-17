@@ -51,14 +51,20 @@ public class DependenciesMultiSample extends IntegralAbstract implements Depende
     ORDERING.setLink(JobType.DANGLING, 0, JobType.BED); // Needed to get complexities out, since COMPLEX doesn't return them as a result
     ORDERING.setLink(JobType.COMPLEX, 0, JobType.BED);  // But needs to be after complex calling has put status into the complexities.
 
-    ORDERING.setLink(JobType.DANGLING, 0, JobType.COMPLEX);
+    ORDERING.setLink(JobType.DANGLING, 0, JobType.COMPLEX); // DANGLING passes the region from the previous timestep to complex
+
+    ORDERING.setLink(JobType.INCR, 1, JobType.FLUSH); // Pass through the complexities so we know what region to flush.
+    ORDERING.setLink(JobType.INCR, 0, JobType.FLUSH); // Like COMPLEX we operate 1 time step behind INCR
+    ORDERING.setLink(JobType.COMPLEX, 0, JobType.FLUSH); // Ensure DANGLING has adjusted region and COMPLEX has finished calling
 
     ORDERING.setLink(JobType.INCR, 1, JobType.FILTER);   // Only needed to propagate max read length for equivalent filtering limiting
     ORDERING.setLink(JobType.COMPLEX, 0, JobType.FILTER);
     ORDERING.setLink(JobType.FILTER, 1, JobType.FILTER); // Equivalent filter status propagation, for comparing against last across boundaries
+    ORDERING.setLink(JobType.FLUSH, 0, JobType.FILTER);
 
     ORDERING.setLink(JobType.OUT, 1, JobType.OUT); // Ensure output ordering
     ORDERING.setLink(JobType.FILTER, 0, JobType.OUT);
+
 
     ORDERING.freeze();
   }
@@ -84,17 +90,17 @@ public class DependenciesMultiSample extends IntegralAbstract implements Depende
   @Override
   public Collection<JobIdMultisample> from(final JobIdMultisample id) {
     final List<JobIdMultisample> res = new LinkedList<>();
-    final int chunk = id.time();
+    final int chunk = id.time(); //absolute time
     final JobType type = id.type();
     final Set<EnumTimeId<JobType>> fromId = ORDERING.from(id.type());
     //System.err.println(fromId);
     for (final EnumTimeId<JobType> frid : fromId) {
-      final int incr = frid.time();
+      final int incr = frid.time(); //relative time
       assert incr <= 0;
       final int fromChunk = chunk + incr;
       final JobIdMultisample from;
       final JobType fridType = frid.type();
-      if (fromChunk < 0 || (type == JobType.DANGLING && chunk == mNumberChunks && fridType == JobType.INCR && incr == 0)) {
+      if (fromChunk < 0 || ((type == JobType.DANGLING || type == JobType.FLUSH) && chunk == mNumberChunks && fridType == JobType.INCR && incr == 0)) {
         from = null;
       } else {
         final boolean none;
@@ -115,6 +121,7 @@ public class DependenciesMultiSample extends IntegralAbstract implements Depende
           switch (type) {
             case DANGLING:
             case COMPLEX:
+            case FLUSH:
             case BED:
               none = false;
               break;
@@ -147,8 +154,13 @@ public class DependenciesMultiSample extends IntegralAbstract implements Depende
       res.add(new JobIdMultisample(mNumberChunks, 0, JobType.COMPLEX));
       res.add(new JobIdMultisample(mNumberChunks, 0, JobType.BED));
     } else if (typeFrom == JobType.COMPLEX && chunk == 0) {
+      //cut out filter job for timestamp 0
       res.add(new JobIdMultisample(mNumberChunks, 0, JobType.BED));
+      res.add(new JobIdMultisample(mNumberChunks, 0, JobType.FLUSH));
       return res;
+    } else if (typeFrom == JobType.FLUSH && chunk == 0) {
+      //noop
+      //cut out filter job for timestamp 0
     } else {
       final Set<EnumTimeId<JobType>> toSet = ORDERING.to(id.type());
       for (final EnumTimeId<JobType> toid : toSet) {

@@ -319,6 +319,9 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     private final MultisampleJointCaller mJointCaller;
     private final BedComplexitiesWriter mBed;
 
+    /** Minimum position on reference, either 0 or supplied by restriction */
+    private final int mMinimumPosition;
+
     JobFactoryMultiSample(final ChunkInfo info, final String refName, final byte[] refNts) throws IOException {
       mInfo = info;
       String[] genomeNames = mConfig.getGenomeNames();
@@ -329,6 +332,11 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(MultisampleUtils.chooser(mParams), genomeNames);
       final RegionRestriction restriction = new RegionRestriction(refName, info.start(), info.end());
 
+      if (restriction.getStart() < 0) {
+        mMinimumPosition = 0;
+      } else {
+        mMinimumPosition = restriction.getStart();
+      }
       mBuffer = new CircularBufferMultifileSinglePassReaderWindowSync<>(mWrapper, pop, mParams.uberHeader().getSequenceIndex(refName), restriction.getStart(), depth);
       mRefName = refName;
       mRefNts = refNts;
@@ -362,6 +370,8 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
           return new BedJob(id, arguments);
         case COMPLEX:
           return new ComplexJob(id, arguments);
+        case FLUSH:
+          return new FlushJob(id, arguments);
         case FILTER:
           return new FilterJob(id, arguments);
         case OUT:
@@ -425,6 +435,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
         final Complexities last = mArguments[0] == null ? null : (Complexities) mArguments[0].result(0);
         final Complexities cx = mArguments[1] == null ? null : (Complexities) mArguments[1].result(0);
         Complexities.fixDangling(last, cx);
+        //passing through complexities from previous incr time step to current complex time step
         return new Result(last);
       }
     }
@@ -469,11 +480,35 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
             calls = OutputUtils.merge(nonComplexCalls, complexCalls);
             updateCounts(caller);
           }
-          mBuffer.flush(complexRegions.startOfChunk(), complexRegions.endOfChunk());
           return new Result(calls);
         } else {
           return new Result((Object) null);
         }
+      }
+    }
+
+    private class FlushJob extends MultisampleJob {
+      FlushJob(JobIdMultisample id, Result[] arguments) {
+        super(id, arguments, 1);
+      }
+
+      @Override
+      protected Result run() throws IOException {
+        final Complexities last = mArguments[0] == null ? null : (Complexities) mArguments[0].result(0);
+        final Complexities current = mArguments[1] == null ? null : (Complexities) mArguments[1].result(0);
+        //operating 1 time step behind increment job. So operating on 'last'
+        if (last != null) {
+          if (mParams.expandComplexReadQueries()) {
+            //complex calls may have are will be made +/- 1 outside of chunk boundaries
+            final int flushStart = Math.max(mMinimumPosition, last.startOfChunk() - 1);
+            //don't flush last base so it can be used by next complex region
+            final int flushEnd = current != null ? last.endOfChunk() - 1 : last.endOfChunk();
+            mBuffer.flush(flushStart, flushEnd);
+          } else {
+            mBuffer.flush(last.startOfChunk(), last.endOfChunk());
+          }
+        }
+        return new Result();
       }
     }
 
@@ -532,7 +567,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
             }
           }
         }
-        if (mBuffer.finishedTo() < Math.min(id().time() * mInfo.chunkSize() + mInfo.start(), mInfo.end())) { //flushing should be keeping up with output
+        if (mBuffer.finishedTo() < Math.min(id().time() * mInfo.chunkSize() + mInfo.start() - 1, mInfo.end())) { //flushing should be keeping up with output
           throw new RuntimeException("Failed to flush chunk: " + mBuffer.finishedTo() + " : " + id().time() * mInfo.chunkSize());
         }
         return null;

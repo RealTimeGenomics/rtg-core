@@ -11,6 +11,8 @@
  */
 package com.rtg.sam;
 
+import static htsjdk.samtools.util.SequenceUtil.a;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -20,6 +22,9 @@ import java.util.LinkedList;
 import java.util.List;
 
 import com.rtg.sam.SamFilterParams.SamFilterParamsBuilder;
+import com.rtg.tabix.IndexUtils;
+import com.rtg.tabix.TabixIndexer;
+import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.Pair;
 import com.rtg.util.QuickSort;
 import com.rtg.util.QuickSortIntIntProxy;
@@ -143,6 +148,32 @@ public class CircularBufferMultifileSinglePassReaderWindowTest extends TestCase 
       assertFalse(it.hasNext());
     }
 
+  }
+
+  public void testRecordsOverlap() throws IOException, UnindexableDataException {
+    File samFile = FileHelper.resourceToGzFile("com/rtg/sam/resources/readerWindowInsert.sam", new File(mDir, "samFile.sam.gz"));
+    samFile = IndexUtils.ensureBlockCompressed(samFile);
+    new TabixIndexer(samFile, new File(mDir, "samFile.sam.gz.tbi")).saveSamIndex();
+    final Pair<CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord>, RecordIterator<VariantAlignmentRecord>> circularBuffer = getCircularBuffer(new File[]{samFile}, 0, 10000);
+    //check that can't ask for same start and end (since it isn't supported)
+    final CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord> a = circularBuffer.getA();
+
+    //TODO re-add check once we turn on complex read query expansion permanently
+//    try {
+//      a.recordsOverlap(4, 4);
+//      fail();
+//    } catch (IllegalArgumentException e) {
+//
+//    }
+
+    final Iterator<VariantAlignmentRecord> variantAlignmentRecordIterator = a.recordsOverlap(3, 4);
+    final int[] expectedStarts = {0, 1, 2, 3};
+    int i = 0;
+    while (variantAlignmentRecordIterator.hasNext()) {
+      final VariantAlignmentRecord next = variantAlignmentRecordIterator.next();
+      assertEquals(expectedStarts[i++], next.getStart());
+    }
+    assertEquals(expectedStarts.length, i);
   }
 
   public void testCallSequence() throws IOException {

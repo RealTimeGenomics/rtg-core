@@ -82,6 +82,8 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   boolean mEnableTrimSplit = true;
   boolean mUsePropagatingPriors = false;
 
+  boolean mExpandComplexReadQueries = false;
+
   int mMaxComplexHypotheses = 6;
 
   int mMaxEmIterations = -1; // EmAlgorithm will turn this into DEFAULT_MAX_ITERATIONS
@@ -673,6 +675,16 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
    */
   public VariantParamsBuilder alleleBalance(AlleleBalanceProbability alleleBalance) {
     mAlleleBalance = alleleBalance;
+    return self();
+  }
+
+
+  /**
+   * @param val if true expand queries for reads by one base either side of a complex region
+   * @return this builder, so calls can be chained
+   */
+  public VariantParamsBuilder expandComplexReadQueries(boolean val) {
+    mExpandComplexReadQueries = val;
     return self();
   }
 }

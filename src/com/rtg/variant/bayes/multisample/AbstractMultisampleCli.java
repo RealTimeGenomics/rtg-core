@@ -129,6 +129,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String X_MIN_VARIANT_ALLELE_FRACTION = "Xmin-vaf";
   protected static final String X_ALLELE_BALANCE_PROBABILITY = "Xallele-balance-probability";
   private static final String X_EXPECTED_ALLELE_BALANCE = "Xexpected-allele-balance";
+  private static final String X_EXPAND_COMPLEX_READ_QUERIES = "Xexpand-complex-read-queries";
 
   /**
    * validate common flags
@@ -334,6 +335,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(X_MIN_VARIANT_ALLELE_FRACTION, Double.class, "float", "minimum variant allelic fraction to output a call", 0.0).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_ALLELE_BALANCE_PROBABILITY, AlleleBalanceFactor.class, "string", "method for calculating allele balance", AlleleBalanceFactor.NONE).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_EXPECTED_ALLELE_BALANCE, Double.class, "float", "expected allele balance", 0.5).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_EXPAND_COMPLEX_READ_QUERIES, Boolean.class, CommonFlags.BOOL, "expand queries for reads by one base either side of a complex region", false).setCategory(SENSITIVITY_TUNING);
   }
 
   /**
@@ -421,6 +423,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     final AlleleBalanceProbability probability = getProbability(factor, expectedAlleleBalance);
     builder.alleleBalance(probability);
     builder.minVariantAlleleFraction((Double) mFlags.getValue(X_MIN_VARIANT_ALLELE_FRACTION));
+
+    builder.expandComplexReadQueries((Boolean) mFlags.getValue(X_EXPAND_COMPLEX_READ_QUERIES));
 
     // From here on pretty much needs the genome reader to be loaded
     final File genomeFile = (File) mFlags.getValue(TEMPLATE_FLAG);
