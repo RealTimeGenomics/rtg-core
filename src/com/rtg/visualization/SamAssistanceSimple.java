@@ -77,8 +77,8 @@ public class SamAssistanceSimple implements SamAssistance {
 
             break;  //process ALL the inserts at the same time, so break out of this entire loop...
           }
-          if (template.charAt(tPos) == '_') {
-            sb.append("_");
+          if (template.charAt(tPos) == DisplayHelper.INSERT_CHAR) {
+            sb.append(DisplayHelper.INSERT_CHAR);
             tPos++;
             continue;
           }

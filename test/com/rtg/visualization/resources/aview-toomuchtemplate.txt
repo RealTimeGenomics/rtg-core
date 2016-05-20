@@ -1,13 +1,13 @@
 [36m  LOC:[39m g1:11-24
-       [49m     1         2[49m
-       [49m5678901234567890[49m
+       [48;5;237m     1         2[49m
+       [48;5;237m5678901234567890[49m
              |[4m         [24m|
 [36m  REF:[39m CGACTGGTCAGCTAGG
-[36m  GEN:[39m       [30m[42mC[49m[39m          (1) SM:SAMPLE snps.vcf
-[36m  GEN:[39m [49m      [30m[42mT[49m[39m         [49m (1) SM:SAMPLE snps.vcf
-[36m CALL:[39m       [30m[43mC[49m[39m          (2) SM:SAMPLE snps.vcf
-[36m CALL:[39m [49m      [30m[43mT[49m[39m         [49m (2) SM:SAMPLE snps.vcf
-[36m READ:[39m [1mCGACTG[30m[43mG[49m[39mT        [22m >  SE NH:1 AS:1
-[36m READ:[39m [49m[1m GACTG[30m[43mG[49m[39mTC       [22m[49m >  SE NH:1 AS:1
-[36m READ:[39m [1m GACTG[30m[43mG[49m[39mTC       [22m >  SE NH:1 AS:1
-[36m READ:[39m [49m[1m      [30m[43mG[49m[39mTCAGCTA  [22m[49m >  SE NH:1 AS:1
+[36m  GEN:[39m       [30m[48;5;22mC[49m[39m          (1) SM:SAMPLE snps.vcf
+[36m  GEN:[39m       [30m[48;5;22mT[49m[39m          (1) SM:SAMPLE snps.vcf
+[36m CALL:[39m       [30m[48;5;58mC[49m[39m          (2) SM:SAMPLE snps.vcf
+[36m CALL:[39m       [30m[48;5;58mT[49m[39m          (2) SM:SAMPLE snps.vcf
+[36m READ:[39m [1mCGACTG[30m[48;5;58mG[49m[39mT        [22m >  SE NH:1 AS:1
+[36m READ:[39m [1m GACTG[30m[48;5;58mG[49m[39mTC       [22m >  SE NH:1 AS:1
+[36m READ:[39m [1m GACTG[30m[48;5;58mG[49m[39mTC       [22m >  SE NH:1 AS:1
+[36m READ:[39m [1m      [30m[48;5;58mG[49m[39mTCAGCTA  [22m >  SE NH:1 AS:1

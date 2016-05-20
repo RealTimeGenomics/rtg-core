@@ -1,13 +1,13 @@
 [36m  LOC:[39m g1:11-15
-       [49m     1        [49m
-       [49m56789012345678[49m
+       [48;5;237m     1        [49m
+       [48;5;237m56789012345678[49m
              |[4m  [24m|
 [36m  REF:[39m [34mC[39m[35mG[39m[32mA[39m[34mC[39m[31mT[39m[35mG[39m[35mG[39m[31mT[39m[34mC[39m[32mA[39m[35mG[39m[34mC[39m[31mT[39m[32mA[39m
-[36m  GEN:[39m       [30m[42m[34mC[39m[49m[39m        (1) SM:SAMPLE snps.vcf
-[36m  GEN:[39m [49m      [30m[42m[31mT[39m[49m[39m       [49m (1) SM:SAMPLE snps.vcf
-[36m CALL:[39m       [30m[43m[34mC[39m[49m[39m        (2) SM:SAMPLE snps.vcf
-[36m CALL:[39m [49m      [30m[43m[31mT[39m[49m[39m       [49m (2) SM:SAMPLE snps.vcf
-[36m READ:[39m [1m[34mC[39m[35mG[39m[32mA[39m[34mC[39m[31mT[39m[35mG[39m[30m[43m[35mG[39m[49m[39m[31mT[39m      [22m >  SE NH:1 AS:1
-[36m READ:[39m [49m[1m [35mG[39m[32mA[39m[34mC[39m[31mT[39m[35mG[39m[30m[43m[35mG[39m[49m[39m[31mT[39m[34mC[39m     [22m[49m >  SE NH:1 AS:1
-[36m READ:[39m [1m [35mG[39m[32mA[39m[34mC[39m[31mT[39m[35mG[39m[30m[43m[35mG[39m[49m[39m[31mT[39m[34mC[39m     [22m >  SE NH:1 AS:1
-[36m READ:[39m [49m[1m      [30m[43m[35mG[39m[49m[39m[31mT[39m[34mC[39m[32mA[39m[35mG[39m[34mC[39m[31mT[39m[32mA[39m[22m[49m >  SE NH:1 AS:1
+[36m  GEN:[39m       [30m[48;5;22m[34mC[39m[49m[39m        (1) SM:SAMPLE snps.vcf
+[36m  GEN:[39m       [30m[48;5;22m[31mT[39m[49m[39m        (1) SM:SAMPLE snps.vcf
+[36m CALL:[39m       [30m[48;5;58m[34mC[39m[49m[39m        (2) SM:SAMPLE snps.vcf
+[36m CALL:[39m       [30m[48;5;58m[31mT[39m[49m[39m        (2) SM:SAMPLE snps.vcf
+[36m READ:[39m [1m[34mC[39m[35mG[39m[32mA[39m[34mC[39m[31mT[39m[35mG[39m[30m[48;5;58m[35mG[39m[49m[39m[31mT[39m      [22m >  SE NH:1 AS:1
+[36m READ:[39m [1m [35mG[39m[32mA[39m[34mC[39m[31mT[39m[35mG[39m[30m[48;5;58m[35mG[39m[49m[39m[31mT[39m[34mC[39m     [22m >  SE NH:1 AS:1
+[36m READ:[39m [1m [35mG[39m[32mA[39m[34mC[39m[31mT[39m[35mG[39m[30m[48;5;58m[35mG[39m[49m[39m[31mT[39m[34mC[39m     [22m >  SE NH:1 AS:1
+[36m READ:[39m [1m      [30m[48;5;58m[35mG[39m[49m[39m[31mT[39m[34mC[39m[32mA[39m[35mG[39m[34mC[39m[31mT[39m[32mA[39m[22m >  SE NH:1 AS:1

@@ -59,6 +59,10 @@ public class HtmlDisplayHelper extends DisplayHelper {
     return "</pre></body></html>";
   }
 
+  @Override
+  public boolean supportsNesting() {
+    return true;
+  }
 
   @Override
   public String decorateUnderline(String text) {

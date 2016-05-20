@@ -52,7 +52,7 @@ public class SamAssistanceCg extends SuperCigarParser implements SamAssistance {
       int extras = 0;
       for (int k = 0; k < backShift; k++) {
         while (--mExpandedTemplatePosition >= 0
-               && mExpandedTemplate.charAt(mExpandedTemplatePosition) == '_') {
+               && mExpandedTemplate.charAt(mExpandedTemplatePosition) == DisplayHelper.INSERT_CHAR) {
           extras++;
         }
       }
@@ -66,9 +66,9 @@ public class SamAssistanceCg extends SuperCigarParser implements SamAssistance {
   private void handleExpandedTemplate(final int shift) {
     int s = shift;
     while (mExpandedTemplatePosition < mExpandedTemplate.length()
-           && mExpandedTemplate.charAt(mExpandedTemplatePosition) == '_') {
+           && mExpandedTemplate.charAt(mExpandedTemplatePosition) == DisplayHelper.INSERT_CHAR) {
       if (s == 0) {
-        mAviewDisplay.append('_');
+        mAviewDisplay.append(DisplayHelper.INSERT_CHAR);
       } else {
         s--;
       }

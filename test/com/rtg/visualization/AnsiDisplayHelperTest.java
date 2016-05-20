@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 public class AnsiDisplayHelperTest extends TestCase {
 
   public void testAnsiColors() {
-    assertEquals((char) 27 + "[44m", AnsiDisplayHelper.ansiBackground(DisplayHelper.BLUE));
+    assertEquals((char) 27 + "[48;5;17m", AnsiDisplayHelper.ansiBackground(DisplayHelper.BLUE));
     assertEquals((char) 27 + "[31m", AnsiDisplayHelper.ansiForeground(DisplayHelper.RED));
   }
 

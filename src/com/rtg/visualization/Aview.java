@@ -574,7 +574,7 @@ public final class Aview extends AbstractCli {
           }
 
           // Now output the region itself.
-          line.append(mDisplayHelper.decorate(name, DisplayHelper.BLACK, BED_BG));
+          line.append(mDisplayHelper.decorate(name, DisplayHelper.WHITE, BED_BG));
           if (highlightMask != null) {
             for (int i = 0; i < name.length() && (charPosition + i) < highlightMask.length; i++) {
               highlightMask[charPosition + i] = true;
@@ -711,7 +711,7 @@ public final class Aview extends AbstractCli {
     mOut.print(prefix);
     String clipped = clipSequence(sequence);
     if (mAlternateBackgrounds) {
-      if ((mAlternateCount++ & 1) == 1) {
+      if (mDisplayHelper.supportsNesting() && (mAlternateCount++ & 1) == 1) {
         clipped = mDisplayHelper.decorateBackground(clipped, DisplayHelper.WHITE_PLUS);
       }
     }

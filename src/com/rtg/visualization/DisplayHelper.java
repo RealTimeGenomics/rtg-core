@@ -93,6 +93,13 @@ public class DisplayHelper {
   }
 
   /**
+   * @return true if display properties can nest
+   */
+  public boolean supportsNesting() {
+    return false;
+  }
+
+  /**
    * Mark up the text with underlining
    * @param text the text
    * @return the marked up text
