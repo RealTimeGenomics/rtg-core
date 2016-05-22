@@ -27,6 +27,7 @@ import com.rtg.variant.bayes.AlleleStatistics;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Hypotheses;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.ModelNone;
 import com.rtg.variant.bayes.multisample.HaploidDiploidHypotheses;
 import com.rtg.variant.bayes.multisample.HypothesisScore;
 import com.rtg.variant.bayes.multisample.MultisampleJointCaller;
@@ -57,6 +58,10 @@ public class SingletonCaller implements MultisampleJointCaller {
     assert models.size() == 1;
 
     final ModelInterface<?> model = models.get(0);
+    if (model instanceof ModelNone<?>) {
+      return null;
+    }
+
     final T hyp = hypotheses.get(model);
 
     final String refAllele = DnaUtils.bytesToSequenceIncCG(ref, position, endPosition - position);
