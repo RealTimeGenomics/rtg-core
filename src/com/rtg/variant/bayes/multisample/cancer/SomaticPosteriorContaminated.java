@@ -109,9 +109,10 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
         final double q = MathUtils.log(qa[i][j]);
         double t = q + pi + pj;
         if (useAlleleBalanceCorrection) {
-          if (GlobalFlags.isSet(GlobalFlags.DIRICHLET_ALLELE_BALANCE)) {
+          final String abType = GlobalFlags.getStringValue(GlobalFlags.DIRICHLET_ALLELE_BALANCE);
+          if ("dirichlet".equals(abType)) {
             t += alleleBalanceDirichletProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
-          } else {
+          } else if ("binomial".equals(abType)) {
             t += alleleBalanceMultinomialProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
           }
         }
