@@ -40,8 +40,8 @@ public class HtmlDisplayHelper extends DisplayHelper {
 
   static final String[] BGCOLORS = {
     "<span style=\"background-color:black\"",
-    "<span style=\"background-color:red\">",
-    "<span style=\"background-color:green\">",
+    "<span style=\"background-color:rgb(255, 200, 200)\">",
+    "<span style=\"background-color:rgb(200, 255, 200)\">",
     "<span style=\"background-color:orange\">",
     "<span style=\"background-color:dodgerblue\">",
     "<span style=\"background-color:magenta\">",
