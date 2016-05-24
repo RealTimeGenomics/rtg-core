@@ -27,6 +27,12 @@ import com.rtg.variant.bayes.snp.HypothesesPrior;
  */
 class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
 
+  /** Select Dirichlet distribution for tumor side. */
+  public static final String DIRICHLET = "dirichlet";
+  /** Select binomial distribution for tumor side. */
+  public static final String BINOMIAL = "binomial";
+  /** You can also pick anything else for no allele balance. */
+
   private static double alleleBalanceDirichletProbabilityLn(final Hypotheses<?> hyp, final Statistics<?> statistics, final int normalHyp, final int cancerHyp, final double alpha) {
     final Code code = hyp.code();
     final int na = code.a(normalHyp);
@@ -110,9 +116,9 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
         double t = q + pi + pj;
         if (useAlleleBalanceCorrection) {
           final String abType = GlobalFlags.getStringValue(GlobalFlags.DIRICHLET_ALLELE_BALANCE);
-          if ("dirichlet".equals(abType)) {
+          if (DIRICHLET.equals(abType)) {
             t += alleleBalanceDirichletProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
-          } else if ("binomial".equals(abType)) {
+          } else if (BINOMIAL.equals(abType)) {
             t += alleleBalanceMultinomialProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
           }
         }
