@@ -16,7 +16,7 @@ import com.rtg.scheduler.JobId;
 import com.rtg.scheduler.Result;
 import com.rtg.scheduler.enumtime.EnumTimeId;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  */

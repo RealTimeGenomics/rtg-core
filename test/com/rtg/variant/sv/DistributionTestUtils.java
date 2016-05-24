@@ -12,7 +12,7 @@
 
 package com.rtg.variant.sv;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  */

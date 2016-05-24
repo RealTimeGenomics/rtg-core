@@ -29,7 +29,7 @@ import com.rtg.util.diagnostic.ListenerType;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  */

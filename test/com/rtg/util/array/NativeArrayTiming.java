@@ -14,7 +14,7 @@ package com.rtg.util.array;
 import com.rtg.util.format.FormatInteger;
 import com.rtg.util.format.FormatReal;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  * Time doing a "sequential" write of the various IntIndex implementations and some other equivalent methods.

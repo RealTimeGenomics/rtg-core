@@ -13,6 +13,8 @@ package com.rtg.index.hash.ngs;
 
 import java.io.IOException;
 
+import org.junit.Assert;
+
 import com.rtg.index.hash.ngs.general.Skeleton;
 import com.rtg.index.hash.ngs.protein.ProteinMask;
 import com.rtg.launcher.HashingRegion;
@@ -29,7 +31,7 @@ class FakeProteinMask extends ProteinMask {
 
   @Override
   public void readAll(int readId, boolean reverse) {
-    junit.framework.Assert.assertFalse(reverse);
+    Assert.assertFalse(reverse);
     mReadCalls++;
   }
 

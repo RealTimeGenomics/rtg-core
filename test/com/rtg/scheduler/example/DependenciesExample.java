@@ -23,7 +23,7 @@ import com.rtg.scheduler.enumtime.EnumTimeId;
 import com.rtg.scheduler.enumtime.LocalOrdering;
 import com.rtg.util.integrity.IntegralAbstract;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  * Example which includes the sort of patterns expected in the multi-sample

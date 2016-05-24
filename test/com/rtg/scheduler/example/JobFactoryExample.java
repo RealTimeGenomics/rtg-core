@@ -17,7 +17,7 @@ import com.rtg.scheduler.JobFactory;
 import com.rtg.scheduler.Result;
 import com.rtg.util.integrity.IntegralAbstract;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  * Example which includes the sort of patterns expected in the multi-sample

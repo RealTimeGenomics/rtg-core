@@ -20,7 +20,7 @@ import com.rtg.index.hash.ngs.NgsHashFunction;
 import com.rtg.index.hash.ngs.ReadCall;
 import com.rtg.index.hash.ngs.TemplateCall;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  */

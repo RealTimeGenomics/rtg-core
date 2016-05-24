@@ -21,7 +21,7 @@ import com.rtg.index.hash.ngs.NgsHashFunction;
 import com.rtg.index.hash.ngs.instances.AbstractSplitTest.ReadCallAccumulate;
 import com.rtg.index.hash.ngs.instances.AbstractSplitTest.TemplateCallCheck;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 /**
  * Check that all possible substitutions in a string are found when filtered via the <code>HashFunction</code>.
