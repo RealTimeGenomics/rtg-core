@@ -48,8 +48,10 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
   private static final String BEDGRAPH_FLAG = "bedgraph";
   private static final String PER_BASE_FLAG = "per-base";
   private static final String X_ONLY_MAPPED_FLAG = "Xonly-mapped-templates";
-  private static final String X_MIN_COVERAGE_FOR_BREADTH_FLAG = "Xmin-coverage-for-breadth";
+  private static final String X_COVERAGE_THRESHOLD_FLAG = "Xcoverage-threshold";
   private static final String X_IGNORE_SAM_HEADER_INCOMPATIBILITY_FLAG = "Xignore-incompatible-sam-headers";
+  private static final String X_BINARIZE_BED_FLAG = "Xbinarize-bed";
+  private static final String X_CALLABILITY_FLAG = "Xcallability";
   private static final String X_DISABLE_HTML_REPORT_FLAG = "Xdisable-html-report";
 
   private static class CoverageValidator implements Validator {
@@ -145,7 +147,9 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     SamFilterOptions.registerKeepDuplicatesFlag(mFlags);
     mFlags.registerOptional(ERROR_RATES_FLAG, "report statistics about sequencer error rates").setCategory(REPORTING);
     mFlags.registerOptional(X_ONLY_MAPPED_FLAG, "report only templates that received mappings").setCategory(REPORTING);
-    mFlags.registerOptional(X_MIN_COVERAGE_FOR_BREADTH_FLAG, Integer.class, "INT", "minimum coverage for breadth calculation", 1).setCategory(REPORTING);
+    mFlags.registerOptional(X_COVERAGE_THRESHOLD_FLAG, Integer.class, "INT", "coverage threshold for breadth computation (and binarization, if enabled)", 1).setCategory(REPORTING);
+    mFlags.registerOptional(X_BINARIZE_BED_FLAG, "if set, binarize BED outputs").setCategory(REPORTING);
+    mFlags.registerOptional(X_CALLABILITY_FLAG, Integer.class, "INT", "report callability with respect to this minimum coverage level").setCategory(REPORTING);
     mFlags.registerOptional(X_IGNORE_SAM_HEADER_INCOMPATIBILITY_FLAG, "ignore incompatible SAM headers when merging SAM results").setCategory(UTILITY);
     mFlags.registerOptional(X_DISABLE_HTML_REPORT_FLAG, "disable HTML report output").setCategory(REPORTING);
     CommonFlags.initIndexFlags(mFlags);
@@ -171,10 +175,13 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     builder.tsvOutput(mFlags.isSet(PER_BASE_FLAG));
     builder.bedgraphOutput(mFlags.isSet(BEDGRAPH_FLAG));
     builder.ioThreads(CommonFlags.parseIOThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)));
-    final Integer minCoverage = (Integer) mFlags.getValue(X_MIN_COVERAGE_FOR_BREADTH_FLAG);
-    builder.minimumCoverageForBreadth(minCoverage);
     builder.outputIndex(!mFlags.isSet(CommonFlags.NO_INDEX));
     builder.ignoreIncompatibleSamHeaders(mFlags.isSet(X_IGNORE_SAM_HEADER_INCOMPATIBILITY_FLAG));
+    builder.minimumCoverageThreshold((Integer) mFlags.getValue(X_COVERAGE_THRESHOLD_FLAG));
+    builder.binarizeBed(mFlags.isSet(X_BINARIZE_BED_FLAG));
+    if (mFlags.isSet(X_CALLABILITY_FLAG)) {
+      builder.includeDeletions(true).binarizeBed(true).minimumCoverageThreshold((Integer) mFlags.getValue(X_CALLABILITY_FLAG));
+    }
     if (mFlags.isSet(X_DISABLE_HTML_REPORT_FLAG)) {
       builder.disableHtmlReport(true);
     }

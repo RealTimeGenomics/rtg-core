@@ -122,7 +122,7 @@ public class CoverageCliTest extends AbstractCliTest {
             );
     checkExtendedHelp("coverage [OPTION]... -o DIR FILE+"
             , "--Xerror-rates", "report statistics about sequencer error rates"
-            , "--Xmin-coverage-for-breadth=INT", "minimum coverage for breadth calculation (Default is 1)"
+            , "--Xcoverage-threshold=INT"
             , "--Xonly-mapped-templates", "report only templates that received mappings"
             );
   }

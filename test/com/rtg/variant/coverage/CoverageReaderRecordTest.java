@@ -32,7 +32,7 @@ public class CoverageReaderRecordTest extends TestCase {
     final SAMRecord blankSam = new SAMRecord(null);
     blankSam.setCigarString("1=");
     blankSam.setAttribute(SamUtils.ATTRIBUTE_IH, 2);
-    final CoverageReaderRecord crr0 = new CoverageReaderRecord(blankSam, 0);
+    final CoverageReaderRecord crr0 = new CoverageReaderRecord(blankSam, 0, false);
     assertEquals(-1, crr0.getFragmentLength());
     assertEquals(-1, crr0.getMateSequenceId());
     assertFalse(crr0.isMated());
@@ -55,17 +55,15 @@ public class CoverageReaderRecordTest extends TestCase {
     sam.setAlignmentStart(4);
     sam.setInferredInsertSize(460);
 
-    final CoverageReaderRecord crr = new CoverageReaderRecord(sam, 23);
-
+    final CoverageReaderRecord crr = new CoverageReaderRecord(sam, 23, false);
     assertEquals(23, crr.getGenome());
-
     assertEquals(460, crr.getFragmentLength());
     assertEquals(0, crr.getMateSequenceId());
     assertEquals(3, crr.getStart());
     assertEquals(16, crr.getLength());
     assertEquals(-1, crr.getSequenceId());
     assertEquals(1.0, crr.getCoverageMultiplier());
-    final BitSet coverage = crr.getCoverageBitSet();
+    BitSet coverage = crr.getCoverageBitSet();
     assertTrue(coverage.get(0));
     assertFalse(coverage.get(1));
     assertTrue(coverage.get(2));
@@ -86,5 +84,26 @@ public class CoverageReaderRecordTest extends TestCase {
     assertFalse(coverage.get(16));
     assertEquals(-1, crr0.compareTo(crr));
     assertFalse(crr0.equals(crr));
+
+    coverage = new CoverageReaderRecord(sam, 23, true).getCoverageBitSet();
+    assertTrue(coverage.get(0));
+    assertFalse(coverage.get(1));
+    assertTrue(coverage.get(2));
+    assertTrue(coverage.get(3));
+    assertTrue(coverage.get(4));
+    assertTrue(coverage.get(5));
+    assertTrue(coverage.get(6));
+    assertTrue(coverage.get(7));
+    assertTrue(coverage.get(8));
+    assertTrue(coverage.get(9));
+    assertTrue(coverage.get(10));
+    assertTrue(coverage.get(11));
+    assertTrue(coverage.get(12));
+
+    assertTrue(coverage.get(13));
+    assertTrue(coverage.get(14));
+    assertTrue(coverage.get(15));
+    assertFalse(coverage.get(16));
+
   }
 }

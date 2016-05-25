@@ -74,7 +74,7 @@ public class CoverageParamsTest extends TestCase {
     assertFalse(cp.onlyMappedRegions());
     assertFalse(cp.errorRates());
     assertEquals(0, cp.smoothing());
-    assertEquals(1, cp.minimumCoverageForBreadth());
+    assertEquals(1, cp.minimumCoverageThreshold());
     assertEquals(outDir, cp.directory());
     assertEquals(cp.outFile(), cp.file("coverage.bed"));
     assertEquals("coverage.bed", cp.outFile().getName());
@@ -100,13 +100,13 @@ public class CoverageParamsTest extends TestCase {
     "    SequenceParams mode=UNIDIRECTIONAL directory=",
     "OutputParams output directory=",
     "progress=" + Boolean.FALSE + " zip=" + Boolean.TRUE + LS,
-    "minCoverageForBreadth=3"
+    "min coverage threshold=3"
   };
 
   CoverageParams getCoverageParams(final File outFile, final List<File> mapped) throws IOException {
     return CoverageParams.builder().outputParams(new OutputParams(outFile, false, true))
                                    .mapped(mapped).genome(makeGenome()).smoothing(0)
-                                   .ioThreads(1).minimumCoverageForBreadth(3).tsvOutput(false)
+                                   .ioThreads(1).minimumCoverageThreshold(3).tsvOutput(false)
                                    .name("CoverageParams").errorRates(false)
                                    .onlyMappedRegions(false).filterParams(SamFilterParams.builder().create())
                                    .create();
@@ -130,7 +130,7 @@ public class CoverageParamsTest extends TestCase {
       assertFalse(ccp.errorRates());
       assertNotNull(ccp.filterParams());
       assertEquals(1, ccp.ioThreads());
-      assertEquals(3, ccp.minimumCoverageForBreadth());
+      assertEquals(3, ccp.minimumCoverageThreshold());
       final String ccs = ccp.toString();
       //System.err.println(ccs);
       TestUtils.containsAll(ccs, BASE_PARAMS);

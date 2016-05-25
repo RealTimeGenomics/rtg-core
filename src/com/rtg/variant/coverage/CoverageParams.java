@@ -46,7 +46,7 @@ public final class CoverageParams extends SingleMappedParams {
    */
   public static final class CoverageParamsBuilder extends SingleMappedParamsBuilder<CoverageParamsBuilder> {
 
-    int mMinimumCoverageForBreadth = 1;
+    int mMinimumCoverageThreshold = 1;
     int mSmoothing = 0;
     boolean mErrorRates = false;
     boolean mTsvOutput = false;
@@ -55,6 +55,8 @@ public final class CoverageParams extends SingleMappedParams {
     boolean mOutputIndex = true;
     int mChunkSize = 10000;
     boolean mDisableHtmlReport = false;
+    private boolean mBinarizeBed = false;
+    private boolean mIncludeDeletions = false;
 
     @Override
     protected CoverageParamsBuilder self() {
@@ -80,6 +82,26 @@ public final class CoverageParams extends SingleMappedParams {
      */
     public CoverageParamsBuilder errorRates(final boolean errorRates) {
       mErrorRates = errorRates;
+      return self();
+    }
+
+    /**
+     * Turns on inclusion of deletion operations in coverage values
+     * @param includeDeletions true if deletions should be counted
+     * @return this builder, so calls can be chained.
+     */
+    public CoverageParamsBuilder includeDeletions(final boolean includeDeletions) {
+      mIncludeDeletions = includeDeletions;
+      return self();
+    }
+
+    /**
+     * Turns on coverage binarization
+     * @param binarize true if BED output should be binarized
+     * @return this builder, so calls can be chained.
+     */
+    public CoverageParamsBuilder binarizeBed(final boolean binarize) {
+      mBinarizeBed = binarize;
       return self();
     }
 
@@ -119,8 +141,8 @@ public final class CoverageParams extends SingleMappedParams {
      * @param minCoverage minimum coverage
      * @return this builder, so calls can be chained.
      */
-    public  CoverageParamsBuilder minimumCoverageForBreadth(int minCoverage) {
-      mMinimumCoverageForBreadth = minCoverage;
+    public  CoverageParamsBuilder minimumCoverageThreshold(int minCoverage) {
+      mMinimumCoverageThreshold = minCoverage;
       return self();
     }
 
@@ -155,10 +177,12 @@ public final class CoverageParams extends SingleMappedParams {
 
   private final int mSmoothing;
   private final boolean mErrorRates;
+  private final boolean mBinarizeBed;
+  private final boolean mIncludeDeletions;
   private final boolean mTsvOutput;
   private final boolean mBedgraphOutput;
   private final boolean mOnlyMappedRegions;
-  private final int mMinimumCoverageForBreadth;
+  private final int mMinimumCoverageThreshold;
   private final int mChunkSize;
   private final boolean mDisableHtmlReport;
 
@@ -171,10 +195,12 @@ public final class CoverageParams extends SingleMappedParams {
     super(builder);
     mSmoothing = builder.mSmoothing;
     mErrorRates = builder.mErrorRates;
+    mBinarizeBed = builder.mBinarizeBed;
+    mIncludeDeletions = builder.mIncludeDeletions;
     mTsvOutput = builder.mTsvOutput;
     mBedgraphOutput = builder.mBedgraphOutput && !mTsvOutput; // TSV takes priority if both set
     mOnlyMappedRegions = builder.mOnlyMappedRegions;
-    mMinimumCoverageForBreadth = builder.mMinimumCoverageForBreadth;
+    mMinimumCoverageThreshold = builder.mMinimumCoverageThreshold;
     mOutputIndex = builder.mOutputIndex;
     mChunkSize = builder.mChunkSize;
     mDisableHtmlReport = builder.mDisableHtmlReport;
@@ -231,6 +257,20 @@ public final class CoverageParams extends SingleMappedParams {
   }
 
   /**
+   * @return true if deletion operators should be included in coverage counts (e.g. for variant callability)
+   */
+  public boolean includeDeletions() {
+    return mIncludeDeletions;
+  }
+
+  /**
+   * @return true if the BED should be binarized
+   */
+  public boolean binarizeBed() {
+    return mBinarizeBed;
+  }
+
+  /**
    * Get whether tab separated value is being output.
    * @return true means generate the tab separated value format.
    */
@@ -254,10 +294,10 @@ public final class CoverageParams extends SingleMappedParams {
   }
 
   /**
-   * @return minimum coverage for breadth calculations
+   * @return minimum coverage for breadth calculations and binarization
    */
-  public int minimumCoverageForBreadth() {
-    return mMinimumCoverageForBreadth;
+  public int minimumCoverageThreshold() {
+    return mMinimumCoverageThreshold;
   }
 
   /**
@@ -284,8 +324,10 @@ public final class CoverageParams extends SingleMappedParams {
     return "CoverageParams"
       + " mapped reads=" + mapped().toString()
       + " smoothing=" + mSmoothing
-      + " error rates=" + Boolean.valueOf(mErrorRates).toString()
-      + " minCoverageForBreadth=" + mMinimumCoverageForBreadth
+      + " error rates=" + mErrorRates
+      + " min coverage threshold=" + mMinimumCoverageThreshold
+      + " binarize bed=" + mBinarizeBed
+      + " include deletions=" + mIncludeDeletions
       + LS + super.toString();
   }
 }

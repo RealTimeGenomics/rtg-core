@@ -14,6 +14,7 @@ package com.rtg.variant.coverage;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.BitSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -121,7 +122,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     //TODO: if we want multithreading by running multiple refs at once, this name list should be broken into per reference lists.
     final Set<String> outputRegionNames = new LinkedHashSet<>();
     try {
-      final SingletonPopulatorFactory<CoverageReaderRecord> pf = new SingletonPopulatorFactory<>(new CoverageReaderRecordPopulator());
+      final SingletonPopulatorFactory<CoverageReaderRecord> pf = new SingletonPopulatorFactory<>(new CoverageReaderRecordPopulator(mParams.includeDeletions()));
       final SamReadingContext context = new SamReadingContext(mParams.mapped(), mParams.ioThreads(), mParams.filterParams(), uberHeader);
       final ReferenceRanges<String> ranges = context.referenceRanges();
       mWrapper = new ThreadedMultifileIteratorWrapper<>(context, pf);
@@ -190,6 +191,9 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     addOriginalRangeToSortedNameList(range, nameContainsSet);
 
     final int smooth = mParams.smoothing();
+    final boolean binarizeBed = mParams.binarizeBed();
+    final int minCoverage = mParams.minimumCoverageThreshold();
+
     try {
       int lastValStartPos = range.getStart();
       int lastVal = -1;
@@ -226,29 +230,31 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
         if (currentTemplatePosition < range.getStart()) { //we're outside a range. keep track of the sliding window for consistency's sake.
           csw.step();
         } else { //we're within a range.
-          final int currCov = csw.currentCoverage();
-
+          final double nonSmoothCov = getCoverageForPosition(currentTemplatePosition) * INV_SCALE;
+          int smoothCov = csw.currentCoverage();
+          if (binarizeBed) {
+            smoothCov = smoothCov >= minCoverage ? minCoverage : 0;
+          }
           if (mParams.tsvOutput()) { //tsv outputs something at every position within a range.
             coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
             coverageWriter.finalCoveragePosition(r.getSequenceName(), currentTemplatePosition, getIH1ForPosition(currentTemplatePosition), getIHgt1ForPosition(currentTemplatePosition), getCoverageForPosition(currentTemplatePosition) * INV_SCALE);
           }
 
-          if (lastVal != -1 && currCov != lastVal) { //the coverage value at this position is different from the previous
+          if (lastVal != -1 && smoothCov != lastVal) { //the coverage value at this position is different from the previous
             if (!mParams.tsvOutput()) {
               coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
               coverageWriter.finalCoverageRegion(r.getSequenceName(), lastValStartPos, currentTemplatePosition, lastVal);
             }
             lastValStartPos = currentTemplatePosition;
           }
-          lastVal = currCov;
+          lastVal = smoothCov;
           csw.step();
 
           //update statistics for this base.
-          final double nonSmoothCov = getCoverageForPosition(currentTemplatePosition) * INV_SCALE;
           final byte base = getBaseForPosition(currentTemplatePosition);
-          mStatistics.updateCoverageHistogram(nonSmoothCov, mReferenceSequenceIndex != null && base == DnaUtils.UNKNOWN_RESIDUE, mParams.minimumCoverageForBreadth());
+          mStatistics.updateCoverageHistogram(nonSmoothCov, mReferenceSequenceIndex != null && base == DnaUtils.UNKNOWN_RESIDUE, minCoverage);
 
-          if (!refHasCoverage && currCov > 0) {
+          if (!refHasCoverage && smoothCov > 0) {
             refHasCoverage = true;
           }
         }
@@ -335,7 +341,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
       mCircularBuffer.close();
     }
 
-    final CoverageReaderRecordPopulator populator = new CoverageReaderRecordPopulator();
+    final CoverageReaderRecordPopulator populator = new CoverageReaderRecordPopulator(mParams.includeDeletions());
     mCircularBuffer = new CircularBufferMultifileSinglePassReaderWindow<>(mWrapper, populator, r.getSequenceIndex(), mInfo.start(), Integer.MAX_VALUE);
     mChunkCov = null;
     mChunkStart = -1;
@@ -417,29 +423,37 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
       final Iterator<CoverageReaderRecord> it = mCircularBuffer.recordsOverlap(mChunkStart, mChunkEnd);
       while (it.hasNext()) {
         final CoverageReaderRecord crr = it.next();
-        for (int j = 0; j < crr.getCoverageBitSet().length(); j++) {
-          if (crr.getCoverageBitSet().get(j)) {
-            final int index = crr.getStart() + j - mChunkStart;
-            if (index >= 0 && index < mChunkCov.length) {
-              mChunkCov[index] += MathUtils.round(crr.getCoverageMultiplier() * SCALE);
-              if (mParams.tsvOutput()) {
-                if (crr.getIH() == 1) {
-                  mIH1[index]++;
-                } else {
-                  mIHgt1[index]++;
-                }
-              }
-            }
-          }
-        }
+        addBitSet(crr.getStart(), crr.getIH(), crr.getCoverageMultiplier(), crr.getCoverageBitSet());
       }
       return true;
     }
     return false;
   }
 
+  private void addBitSet(int start, int ih, double multiplier, BitSet coverageBitSet) {
+    for (int j = 0; j < coverageBitSet.length(); j++) {
+      if (coverageBitSet.get(j)) {
+        final int index = start + j - mChunkStart;
+        if (index >= 0 && index < mChunkCov.length) {
+          mChunkCov[index] += MathUtils.round(multiplier * SCALE);
+          if (mParams.tsvOutput()) {
+            if (ih == 1) {
+              mIH1[index]++;
+            } else {
+              mIHgt1[index]++;
+            }
+          }
+        }
+      }
+    }
+  }
+
 
   private static class CoverageReaderRecordPopulator implements Populator<CoverageReaderRecord> {
+    final boolean mIncludeDeletions;
+    private CoverageReaderRecordPopulator(boolean includeDeletions) {
+      mIncludeDeletions = includeDeletions;
+    }
     @Override
     public CoverageReaderRecord overflow(int position, int length) {
       throw new UnsupportedOperationException("Not supported yet.");
@@ -447,7 +461,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
 
     @Override
     public CoverageReaderRecord populate(SAMRecord source) {
-      return new CoverageReaderRecord(source, 0);
+      return new CoverageReaderRecord(source, 0, mIncludeDeletions);
     }
   }
 

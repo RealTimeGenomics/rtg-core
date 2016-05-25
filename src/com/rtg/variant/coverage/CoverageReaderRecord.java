@@ -30,13 +30,14 @@ public class CoverageReaderRecord extends AbstractMateInfoReaderRecord<CoverageR
   /**
    * @param sam record to convert
    * @param genome genome record applies to
+   * @param includeDeletions if true, count deletions
    */
-  public CoverageReaderRecord(SAMRecord sam, int genome) {
+  public CoverageReaderRecord(SAMRecord sam, int genome, boolean includeDeletions) {
     super(sam, genome);
     final Integer ih = sam.getIntegerAttribute(SamUtils.ATTRIBUTE_IH);
     mIH = ih == null ? 1 : ih;
     mCoverageMultiplier = ih == null ? 1.0 : 1.0 / ih;
-    mCoverageBitSet = parseCigar(sam);
+    mCoverageBitSet = parseCigar(sam, includeDeletions);
   }
 
   @Override
@@ -90,7 +91,7 @@ public class CoverageReaderRecord extends AbstractMateInfoReaderRecord<CoverageR
     return helper.result();
   }
 
-  private BitSet parseCigar(SAMRecord rec) {
+  private BitSet parseCigar(SAMRecord rec, boolean includeDeletions) {
     final BitSet bs = new BitSet();
     int tPos = 0;
     final String cigar = rec.getCigarString();
@@ -105,17 +106,19 @@ public class CoverageReaderRecord extends AbstractMateInfoReaderRecord<CoverageR
         case SamUtils.CIGAR_SAME:
         case SamUtils.CIGAR_MISMATCH:
           // it is a match or mismatch, so increment our coverage counts
-          while (n-- > 0) {
-            if (0 <= tPos) {
-              bs.set(tPos, true);
-            }
-            tPos++;
-          }
+          bs.set(tPos, tPos + n, true);
+          tPos += n;
           break;
 
         case SamUtils.CIGAR_GAP_IN_READ:
           // skip this region in the reference genome
+          tPos += n;
+          break;
+
         case SamUtils.CIGAR_DELETION_FROM_REF: // we record the delete at the read position just after the delete
+          if (includeDeletions) {
+            bs.set(tPos, tPos + n, true);
+          }
           tPos += n;
           break;
 
