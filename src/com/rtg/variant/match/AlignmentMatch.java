@@ -39,6 +39,8 @@ public class AlignmentMatch extends Match implements Integrity {
   private final boolean mFixedRight;
   private int mBasesLeftOfMatch;
   private int mBasesRightOfMatch;
+  private int mSoftClipLeft;
+  private int mSoftClipRight;
   private final VariantAlignmentRecord mAlignmentRecord;
 
 
@@ -140,6 +142,34 @@ public class AlignmentMatch extends Match implements Integrity {
 
   public void setBasesRightOfMatch(int basesRightOfMatch) {
     mBasesRightOfMatch = basesRightOfMatch;
+  }
+
+  /**
+   * @return Position of first non soft clip base on read (0 based inclusive)
+   */
+  public int getSoftClipLeft() {
+    return mSoftClipLeft;
+  }
+
+  /**
+   * @param softClipLeft Position of first non soft clip base on read (0 based inclusive)
+   */
+  public void setSoftClipLeft(int softClipLeft) {
+    mSoftClipLeft = softClipLeft;
+  }
+
+  /**
+   * @return Position after last non soft clip base on read (i.e. 0 based exclusive)
+   */
+  public int getSoftClipRight() {
+    return mSoftClipRight;
+  }
+
+  /**
+   * @param softClipRight Position after last non soft clip base on read (i.e. 0 based exclusive)
+   */
+  public void setSoftClipRight(int softClipRight) {
+    mSoftClipRight = softClipRight;
   }
 
   @Override

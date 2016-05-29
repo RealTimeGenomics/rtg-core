@@ -133,7 +133,11 @@ public class EvidenceComplex extends Evidence {
     if (cg) {
       se = new AlignmentEnvironmentCG(alignmentRecord, params, reference.templateBytes(), me.machineType());
     } else {
-      se = new AlignmentEnvironmentRead(alignmentRecord, params, me.machineType());
+      if (params.complexUseSoftClip()) {
+        se = new AlignmentEnvironmentRead(alignmentRecord, params, me.machineType());
+      } else {
+        se = new AlignmentEnvironmentRead(alignmentRecord, params, me.machineType(), match.getSoftClipLeft(), match.getSoftClipRight());
+      }
     }
     final int maxShift0;
     final int newStart;

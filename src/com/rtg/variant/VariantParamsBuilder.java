@@ -84,6 +84,8 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
 
   boolean mExpandComplexReadQueries = false;
 
+  boolean mComplexUseSoftClip = true;
+
   int mMaxComplexHypotheses = 6;
 
   int mMaxEmIterations = -1; // EmAlgorithm will turn this into DEFAULT_MAX_ITERATIONS
@@ -685,6 +687,15 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
    */
   public VariantParamsBuilder expandComplexReadQueries(boolean val) {
     mExpandComplexReadQueries = val;
+    return self();
+  }
+
+  /**
+   * @param val if true include soft clipped bases in complex calling evidence
+   * @return this builder, so calls can be chained
+   */
+  public VariantParamsBuilder complexUseSoftClip(boolean val) {
+    mComplexUseSoftClip = val;
     return self();
   }
 }

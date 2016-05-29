@@ -15,6 +15,7 @@ import com.rtg.alignment.ActionsHelper;
 import com.rtg.mode.DnaUtils;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParamsBuilder;
+import com.rtg.variant.match.AlignmentMatch;
 import com.rtg.variant.match.Match;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -235,15 +236,16 @@ public class CigarFormatterTest extends TestCase {
     return sam;
   }
 
-  private void checkCigarSubSequence(final String read, final String cigar, final int start, final int end, final String expected) {
+  private AlignmentMatch checkCigarSubSequence(final String read, final String cigar, final int start, final int end, final String expected) {
     final SAMRecord sam = makeSamRecord(2, read, cigar);
-    final Match cs = CigarFormatter.cigarSubsequence(new VariantAlignmentRecord(sam), null, start + 1, end + 1, new VariantParamsBuilder().create());
+    final AlignmentMatch cs = CigarFormatter.cigarSubsequence(new VariantAlignmentRecord(sam), null, start + 1, end + 1, new VariantParamsBuilder().create());
     if (expected == null) {
       assertNull(cs);
     } else {
       assertNotNull(cs);
       assertEquals(expected, cs.toString());
     }
+    return cs;
   }
 
   public void testCigarSubSequenceDeletes() {
@@ -254,13 +256,24 @@ public class CigarFormatterTest extends TestCase {
   }
 
   public void testCigarSubSequenceSoft() {
-    checkCigarSubSequence("ACGTACGTACGT", "12=", 0, 2, "AC");
-    checkCigarSubSequence("ACGTACGTACGT", "2H1S11=", 0, 2, "CG");
-    checkCigarSubSequence("ACGTACGTACGT", "6=6S", 2, 6, "GTAC");
-    checkCigarSubSequence("ACGTACGTACGT", "6=6S", 2, 8, "GTAC~");
-    checkCigarSubSequence("ACGTACGTACGT", "6S6=", 1, 5, "TACG");
-    checkCigarSubSequence("ACGTACGTACGT", "6S6=", 0, 4, "GTAC");
-    checkCigarSubSequence("ACGTACGTACGT", "6S6=", -1, 4, "~GTAC");
+    checkSoftClipBounds(checkCigarSubSequence("ACGTACGTACGT", "12=", 0, 2, "AC"), 0, 12);
+    checkSoftClipBounds(checkCigarSubSequence("ACGTACGTACGT", "2H1S11=", 0, 2, "CG"), 1, 12);
+    checkSoftClipBounds(checkCigarSubSequence("ACGTACGTACGT", "6=6S", 2, 6, "GTAC"), 0, 6);
+    checkSoftClipBounds(checkCigarSubSequence("ACGTACGTACGT", "6=6S", 2, 8, "GTAC~"), 0, 6);
+    checkSoftClipBounds(checkCigarSubSequence("ACGTACGTACGT", "6S6=", 1, 5, "TACG"), 6, 12);
+    checkSoftClipBounds(checkCigarSubSequence("ACGTACGTACGT", "6S6=", 0, 4, "GTAC"), 6, 12);
+    checkSoftClipBounds(checkCigarSubSequence("ACGTACGTACGT", "6S6=", -1, 4, "~GTAC"), 6, 12);
+
+    checkSoftClipBounds(checkCigarSubSequence("ACGTACGTACGT", "6=6S", 0, 2, "AC"), 0, 6);
+  }
+
+  public void testFoo() {
+    checkCigarSubSequence("ACGTACGTACGT", "2=4M6=", 2, 6, "GTAC");
+  }
+
+  private static void checkSoftClipBounds(AlignmentMatch match, int expectedLeft, int expectedRight) {
+    assertEquals(expectedLeft, match.getSoftClipLeft());
+    assertEquals(expectedRight, match.getSoftClipRight());
   }
 
   public void testCigarSubSequenceLeftFixed() {

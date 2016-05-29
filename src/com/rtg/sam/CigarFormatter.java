@@ -318,8 +318,7 @@ public final class CigarFormatter {
               validNt = true;
               break;
             case SamUtils.CIGAR_INSERTION_INTO_REF:
-              if (rightN) {
-                //an invalid mixed case
+              if (rightN) { //an invalid mixed case
                 return null;
               }
               sb.append((char) read[readPos]);
@@ -372,6 +371,44 @@ public final class CigarFormatter {
     final AlignmentMatch match = new AlignmentMatch(alignmentRecord, chooser, rs, quality, params.qDefault(), 0, rs.length(), VariantUtils.readScoreFromAlignmentRecord(alignmentRecord, params), !leftN, !rightN);
     match.setBasesLeftOfMatch(startInRead);
     match.setBasesRightOfMatch(alignmentRecord.getRead().length - endReadPos);
+    setSoftClipBases(cigar, match, read.length);
     return match;
   }
+
+  private static void setSoftClipBases(String cigar, AlignmentMatch match, int readLength) {
+    //finishes parsing the cigar if we haven't reached the end in order to determine is bases should be soft clipped
+    int softClipStartOffset = 0;
+    for (int i = 0, n = 0; i < cigar.length(); i++) {
+      final char c = cigar.charAt(i);
+      if (Character.isDigit(c)) {
+        n = 10 * n + c - '0';
+      } else if (c == SamUtils.CIGAR_SOFT_CLIP) {
+        softClipStartOffset = n;
+      } else if (c == SamUtils.CIGAR_HARD_CLIP) {
+        n = 0;
+      } else {
+        break;
+      }
+    }
+    int n = 0;
+    int pow = 0;
+    for (int i = 0; i < cigar.length() - 1; i++) {
+      final char c = cigar.charAt(cigar.length() - 1 - i);
+      if (Character.isDigit(c)) {
+        n += (c - '0') * (int) Math.pow(10, pow++);
+      } else if (c == SamUtils.CIGAR_HARD_CLIP) {
+        n = 0;
+      } else if (c == SamUtils.CIGAR_SOFT_CLIP) {
+        pow = 0;
+      } else {
+        break;
+      }
+    }
+    final int softClipEndOffset = readLength - n;
+
+    match.setSoftClipLeft(softClipStartOffset);
+    match.setSoftClipRight(softClipEndOffset);
+  }
+
+
 }

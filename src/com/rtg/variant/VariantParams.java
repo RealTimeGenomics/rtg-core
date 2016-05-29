@@ -110,6 +110,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final SomaticParams mSomaticParams;
   private final AlleleBalanceProbability mAlleleBalance;
   private final boolean mExpandComplexReadQueries;
+  private final boolean mComplexUseSoftClip;
 
   /**
    * @param builder the builder object.
@@ -171,6 +172,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mSomaticParams = builder.mSomaticParams;
     mAlleleBalance = builder.mAlleleBalance;
     mExpandComplexReadQueries = builder.mExpandComplexReadQueries;
+    mComplexUseSoftClip = builder.mComplexUseSoftClip;
   }
 
   @Override
@@ -620,6 +622,13 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
    */
   public AlleleBalanceProbability alleleBalance() {
     return mAlleleBalance;
+  }
+
+  /**
+   * @return if true include soft clipped bases in complex calling evidence
+   */
+  public boolean complexUseSoftClip() {
+    return mComplexUseSoftClip;
   }
 
   /**

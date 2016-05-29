@@ -11,7 +11,7 @@
  */
 package com.rtg.variant.realign;
 
-import com.rtg.mode.DNA;
+import com.rtg.mode.DnaUtils;
 import com.rtg.util.machine.MachineType;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
@@ -27,25 +27,55 @@ public final class AlignmentEnvironmentRead extends AbstractAlignmentEnvironment
    * @param sam the SAM record
    * @param params the variant params object
    * @param me machine errors.
+   * @param clippedStart start position on read when excluding soft clipped bases (0 based)
+   * @param clippedEnd end position on read when excluding soft clipped bases (0 based exclusive)
    */
-  public AlignmentEnvironmentRead(VariantAlignmentRecord sam, VariantParams params, MachineType me) {
-    super(sam.getStart());
+  public AlignmentEnvironmentRead(VariantAlignmentRecord sam, VariantParams params, MachineType me, int clippedStart, int clippedEnd) {
+    this(sam.getStart(), alignmentRecordToRead(sam, clippedStart, clippedEnd), alignmentRecordToQuality(sam, params, clippedStart, clippedEnd));
     assert me == null || !me.isCG();
     //SamUtils.checkCG(sam); // todo
-    mRead = DNA.byteDNAtoByte(sam.getRead());
-    final int len = mRead.length;
-    mQuality = new double[len];
+  }
+
+  /**
+   * @param sam the SAM record
+   * @param params the variant params object
+   * @param me machine errors.
+   */
+  public AlignmentEnvironmentRead(VariantAlignmentRecord sam, VariantParams params, MachineType me) {
+    this(sam.getStart(), alignmentRecordToRead(sam), alignmentRecordToQuality(sam, params));
+  }
+
+  private AlignmentEnvironmentRead(int start, byte[] read, double[] quality) {
+    super(start);
+    mRead = read;
+    mQuality = quality;
+  }
+
+  private static byte[] alignmentRecordToRead(VariantAlignmentRecord sam) {
+    return DnaUtils.encodeArrayCopy(sam.getRead()); // DNA.byteDNAtoByte(sam.getRead());
+  }
+  private static byte[] alignmentRecordToRead(VariantAlignmentRecord sam, int clippedStart, int clippedEnd) {
+    return DnaUtils.encodeArrayCopy(sam.getRead(), clippedStart, clippedEnd - clippedStart); // DNA.byteDNAtoByte(sam.getRead());
+  }
+
+  private static double[] alignmentRecordToQuality(VariantAlignmentRecord sam, VariantParams params, int clippedStart, int clippedEnd) {
+    final double[] ret = new double[clippedEnd - clippedStart];
     final byte[] quality = sam.getRecalibratedQuality();
     if (quality.length == 0) {
       final double qDef = VariantUtils.phredToProb(params.qDefault());
-      for (int i = 0; i < len; i++) {
-        mQuality[i] = qDef;
+      for (int i = 0; i < ret.length; i++) {
+        ret[i] = qDef;
       }
     } else {
-      for (int i = 0; i < len; i++) {
-        mQuality[i] = VariantUtils.phredToProb(quality[i]);
+      for (int i = 0; i < ret.length; i++) {
+        ret[i] = VariantUtils.phredToProb(quality[i + clippedStart]);
       }
     }
+    return ret;
+  }
+
+  private static double[] alignmentRecordToQuality(VariantAlignmentRecord sam, VariantParams params) {
+    return alignmentRecordToQuality(sam, params, 0, sam.getRead().length);
   }
 
   @Override
