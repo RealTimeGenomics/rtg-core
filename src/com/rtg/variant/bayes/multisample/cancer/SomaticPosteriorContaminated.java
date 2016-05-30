@@ -41,7 +41,7 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
   private final double mV;
 
   {
-    final String abType = GlobalFlags.getStringValue(GlobalFlags.DIRICHLET_ALLELE_BALANCE);
+    final String abType = GlobalFlags.getStringValue(GlobalFlags.TUMOR_ALLELE_BALANCE);
     if (abType.startsWith(BAND)) {
       final String[] parts = abType.split(",");
       final double a = Double.parseDouble(parts[1]);
@@ -164,7 +164,7 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
         final double q = MathUtils.log(qa[i][j]);
         double t = q + pi + pj;
         if (useAlleleBalanceCorrection) {
-          final String abType = GlobalFlags.getStringValue(GlobalFlags.DIRICHLET_ALLELE_BALANCE);
+          final String abType = GlobalFlags.getStringValue(GlobalFlags.TUMOR_ALLELE_BALANCE);
           if (DIRICHLET.equals(abType)) {
             t += alleleBalanceDirichletProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
           } else if (BINOMIAL.equals(abType)) {
