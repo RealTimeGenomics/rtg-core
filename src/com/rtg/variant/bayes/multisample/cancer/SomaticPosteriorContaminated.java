@@ -134,7 +134,8 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
     if (cb != na && cb != nb) {
       somaticCount += counts.count(cb) - counts.error(cb);
     }
-    final double somaticFraction = (somaticCount + 0.5) / (normalCount + 1.0); // Laplace
+    final double somaticFraction = (somaticCount + 0.5) / (normalCount + somaticCount + 1.0); // Laplace
+    //final double somaticFraction = (somaticCount + 0.5) / (normalCount + 1.0); // Laplace
     return somaticFraction >= mLowerBand && somaticFraction < mUpperBand ? mU : mV;
   }
 
