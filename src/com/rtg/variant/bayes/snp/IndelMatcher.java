@@ -12,6 +12,8 @@
 package com.rtg.variant.bayes.snp;
 
 
+import com.rtg.launcher.GlobalFlags;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantParams;
@@ -20,6 +22,8 @@ import com.rtg.variant.VariantParams;
  * Maintains counts for indels from CIGAR format input.
  */
 public class IndelMatcher extends EvidenceMatcher<IndelDetector> {
+
+  private static final boolean DUMP_INDEL_SIGNAL = GlobalFlags.getBooleanValue(GlobalFlags.DUMP_COMPLEX_TRIGGER_SIGNALS);
 
   /**
    * Construct a new indel matcher
@@ -46,6 +50,11 @@ public class IndelMatcher extends EvidenceMatcher<IndelDetector> {
       int newEnd = startPos;
       if (indelDetector.nonTrivialDeletionCount() >= minIndelCount) {
         newEnd++;
+      }
+      if (DUMP_INDEL_SIGNAL) {
+        if (indelDetector.nonTrivialDeletionCount() > 1 || indelDetector.nonTrivialInsertCount() > 1 || indelDetector.softClipLeftCount() > 1 || indelDetector.softClipRightCount() > 1) {
+          Diagnostic.developerLog(String.format("INDEL-SIGNAL\t%s\t%d\t%d\t%d\t%d\t%d\t%d", refName, startPos, newEnd, indelDetector.nonTrivialInsertCount(), indelDetector.nonTrivialDeletionCount(), indelDetector.softClipLeftCount(), indelDetector.softClipRightCount()));
+        }
       }
       if (indelDetector.nonTrivialInsertCount() >= minIndelCount || indelDetector.nonTrivialDeletionCount() >= minIndelCount) {
         final VariantLocus locus = new VariantLocus(refName, startPos, newEnd);

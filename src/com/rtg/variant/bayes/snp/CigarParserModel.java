@@ -12,6 +12,7 @@
 package com.rtg.variant.bayes.snp;
 
 
+import com.rtg.launcher.GlobalFlags;
 import com.rtg.mode.DNA;
 import com.rtg.reader.CgUtils;
 import com.rtg.sam.BadSuperCigarException;
@@ -29,6 +30,8 @@ import com.rtg.variant.util.VariantUtils;
 public class CigarParserModel implements ReadParserInterface {
 
   private static final boolean ILLUMINA_HOMOPOLYMER_HACK = false; //Boolean.valueOf(System.getProperty("com.rtg.variant.illuhomopoly", "false"));
+
+  private static final boolean SOFT_CLIP_COMPLEX_TRIGGER = GlobalFlags.getBooleanValue(GlobalFlags.SOFT_CLIP_COMPLEX_TRIGGER);
 
   static int getDNA(final char charAt) {
     return DNA.valueOf(charAt).ordinal();
@@ -170,13 +173,15 @@ public class CigarParserModel implements ReadParserInterface {
 
     @Override
     protected void doReadSoftClip(int readNt) {
-      if (mInBlock) {
-        return;
-      }
-      //System.err.println("i=" + readNt);
-      mInBlock = true;
-      if (mMatcherIndel != null && includeBase(getReadPosition()) && mStart <= getTemplatePosition() && getTemplatePosition() < mEnd) {
-        mMatcherIndel.match(getTemplatePosition(), EvidenceIndelFactory.SINGLETON.evidence(getReadPosition() == 0 ? EvidenceIndel.SOFT_CLIP_LEFT : EvidenceIndel.SOFT_CLIP_RIGHT, /*unused*/0, /*unused*/0, mMapScore, /*unused*/0, /*unused*/0, mOperationLength, false));
+      if (SOFT_CLIP_COMPLEX_TRIGGER) {
+        if (mInBlock) {
+          return;
+        }
+        //System.err.println("i=" + readNt);
+        mInBlock = true;
+        if (mMatcherIndel != null && includeBase(getReadPosition()) && mStart <= getTemplatePosition() && getTemplatePosition() < mEnd) {
+          mMatcherIndel.match(getTemplatePosition(), EvidenceIndelFactory.SINGLETON.evidence(getReadPosition() == 0 ? EvidenceIndel.SOFT_CLIP_LEFT : EvidenceIndel.SOFT_CLIP_RIGHT, /*unused*/0, /*unused*/0, mMapScore, /*unused*/0, /*unused*/0, mOperationLength, false));
+        }
       }
     }
 
