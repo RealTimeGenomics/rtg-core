@@ -128,11 +128,17 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
 
     final double normalCount = counts.count(na) - counts.error(na) + counts.count(nb) - counts.error(nb);
     double somaticCount = 0;
+    boolean isSomaticHyp = false;
     if (ca != na && ca != nb) {
       somaticCount += counts.count(ca) - counts.error(ca);
+      isSomaticHyp = true;
     }
     if (cb != na && cb != nb) {
       somaticCount += counts.count(cb) - counts.error(cb);
+      isSomaticHyp = true;
+    }
+    if (!isSomaticHyp) {
+      return 0; // Not a somatic hypothesis
     }
     final double somaticFraction = (somaticCount + 0.5) / (normalCount + somaticCount + 1.0); // Laplace
     //final double somaticFraction = (somaticCount + 0.5) / (normalCount + 1.0); // Laplace
