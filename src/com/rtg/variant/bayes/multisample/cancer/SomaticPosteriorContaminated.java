@@ -136,11 +136,11 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
     final int cb = code.bc(cancerHyp);
     double lnP = 0; // i.e. p = 1
     final double[] p = new double[hyp.description().size()];
-    for (final double alpha : mPivots) {
-      p[na] += 0.5 * alpha;
-      p[nb] += 0.5 * alpha;
-      p[ca] += 0.5 * (1 - alpha);
-      p[cb] += 0.5 * (1 - alpha);
+    for (final double expectedVaf : mPivots) {
+      p[na] += 0.5 * (1 - expectedVaf);
+      p[nb] += 0.5 * (1 - expectedVaf);
+      p[ca] += 0.5 * expectedVaf;
+      p[cb] += 0.5 * expectedVaf;  // Yeuch is this the right thing to do, even in the binomial ???
       double dp = 0;
       final AlleleStatistics<?> counts = statistics.counts();
       for (int k = 0; k < p.length; k++) {
