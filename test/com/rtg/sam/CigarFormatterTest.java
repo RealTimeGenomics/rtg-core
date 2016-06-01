@@ -265,6 +265,7 @@ public class CigarFormatterTest extends TestCase {
     checkSoftClipBounds(checkCigarSubSequence("ACGTACGTACGT", "6S6=", -1, 4, "~GTAC"), 6, 12);
 
     checkSoftClipBounds(checkCigarSubSequence("ACGTACGTACGT", "6=6S", 0, 2, "AC"), 0, 6);
+    checkSoftClipBounds(checkCigarSubSequence("ACGTACGTACGT", "4H12=4H", 0, 12, "ACGTACGTACGT"), 0, 12);
   }
 
   public void testFoo() {
