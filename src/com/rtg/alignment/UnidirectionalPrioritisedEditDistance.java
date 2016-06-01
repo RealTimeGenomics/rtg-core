@@ -12,7 +12,8 @@
 package com.rtg.alignment;
 
 import com.reeltwo.jumble.annotations.JumbleIgnore;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.mode.DnaUtils;
 import com.rtg.ngs.NgsParams;
 import com.rtg.util.License;
@@ -27,7 +28,7 @@ import com.rtg.util.diagnostic.Diagnostic;
  */
 class UnidirectionalPrioritisedEditDistance implements UnidirectionalEditDistance {
 
-  private static final boolean LOG_AS_HISTO = GlobalFlags.isSet(GlobalFlags.EDIT_DIST_LOG_AS_HISTOGRAM_FLAG);
+  private static final boolean LOG_AS_HISTO = GlobalFlags.isSet(CoreGlobalFlags.EDIT_DIST_LOG_AS_HISTOGRAM_FLAG);
 
   private final UnidirectionalEditDistance[] mEds;
   private final int[] mCounts;
@@ -71,7 +72,7 @@ class UnidirectionalPrioritisedEditDistance implements UnidirectionalEditDistanc
       mASHistogramOverMaxScore = null;
     }
 
-    mValidateAlignments = License.isDeveloper() && "".equals(GlobalFlags.getStringValue(GlobalFlags.EDIT_DIST_INDEL_TABLE_FLAG)); //TODO: table can't currently be replicated by the validator, so don't bother checking.
+    mValidateAlignments = License.isDeveloper() && "".equals(GlobalFlags.getStringValue(CoreGlobalFlags.EDIT_DIST_INDEL_TABLE_FLAG)); //TODO: table can't currently be replicated by the validator, so don't bother checking.
   }
 
   @Override

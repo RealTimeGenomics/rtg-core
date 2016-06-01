@@ -17,7 +17,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.util.SynchronizedLinkedList;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
@@ -32,7 +33,7 @@ import com.rtg.variant.bayes.multisample.population.SiteSpecificPriors;
  */
 public class Complexities extends IntegralAbstract implements Iterable<ComplexRegion> {
 
-  static final String MER_FINDER_IMPL = GlobalFlags.getStringValue(GlobalFlags.COMPLEX_REGION_SIMPLE_REPEAT_IMPL);
+  static final String MER_FINDER_IMPL = GlobalFlags.getStringValue(CoreGlobalFlags.COMPLEX_REGION_SIMPLE_REPEAT_IMPL);
 
   private static final boolean USE_CX_SSP = true; //Boolean.parseBoolean(System.getProperty("com.rtg.complexities.ssp", "true"));
 

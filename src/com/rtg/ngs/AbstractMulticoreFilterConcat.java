@@ -24,7 +24,8 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
 import com.rtg.calibrate.Recalibrate;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.BamIndexMerge;
 import com.rtg.sam.BamIndexer;
@@ -212,7 +213,7 @@ public abstract class AbstractMulticoreFilterConcat {
               + ((samGzipIntFiles || mParams.outputParams().bam()) ? 1 : 0)
               + (calibrate ? 1 : 0);
       int cur = 0;
-      final boolean keepTempFiles = GlobalFlags.isSet(GlobalFlags.MAP_KEEP_TEMPORARY_FILES);
+      final boolean keepTempFiles = GlobalFlags.isSet(CoreGlobalFlags.MAP_KEEP_TEMPORARY_FILES);
       Diagnostic.progress(mThreadNamePrefix + "ResultsConcat: Starting " + tot + " Jobs");
       FileUtils.catInSync(outFile, !keepTempFiles, intermediate);
       Diagnostic.progress(mThreadNamePrefix + "ResultsConcat: " + ++cur + "/" + tot + " Jobs Finished");

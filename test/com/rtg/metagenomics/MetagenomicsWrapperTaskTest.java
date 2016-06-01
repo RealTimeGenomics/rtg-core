@@ -17,7 +17,7 @@ import static com.rtg.util.StringUtils.LS;
 import java.io.File;
 import java.io.IOException;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.OutputParams;
 import com.rtg.metagenomics.MetagenomicsWrapperCli.Platform;
 import com.rtg.ngs.MapFlags;

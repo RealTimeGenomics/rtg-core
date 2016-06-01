@@ -17,7 +17,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Properties;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.ml.ZeroRBuilder.ZeroRClassifier;
 import com.rtg.util.DoubleMultiSet;
 import com.rtg.util.PortableRandom;
@@ -248,7 +249,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
         break;
       case MISSING:
       default:
-        if (GlobalFlags.getBooleanValue(GlobalFlags.AVR_TRAIN_ON_MISSING_VALUES)) {
+        if (GlobalFlags.getBooleanValue(CoreGlobalFlags.AVR_TRAIN_ON_MISSING_VALUES)) {
           // Send instances with missing values down both branches with half weight
           final double halfWeight = 0.5 * inst.weight();
           leftWeight += halfWeight;

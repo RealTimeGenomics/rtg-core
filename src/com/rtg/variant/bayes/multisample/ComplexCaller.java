@@ -17,7 +17,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.mode.DnaUtils;
 import com.rtg.reference.Ploidy;
 import com.rtg.sam.ReaderWindow;
@@ -53,7 +54,7 @@ final class ComplexCaller {
   // Calling will bail out where this is exceeded.
   // Usually the set of hypotheses is sufficiently pruned prior to this point that
   // the cutoff only comes into play to prevent very rare pathological cases.
-  private static final int MAX_HYPOTH = GlobalFlags.getIntegerValue(GlobalFlags.COMPLEX_CALLER_MAX_HYPOTH_FLAG);
+  private static final int MAX_HYPOTH = GlobalFlags.getIntegerValue(CoreGlobalFlags.COMPLEX_CALLER_MAX_HYPOTH_FLAG);
 
   private static final int MAX_HYPOTHESES = (int) Math.sqrt(Integer.MAX_VALUE);
 

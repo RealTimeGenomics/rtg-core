@@ -13,7 +13,8 @@ package com.rtg.variant;
 
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.ngs.Arm;
 
 
@@ -61,7 +62,7 @@ class CovariateIntersectionCycleQualityScaler implements PhredScaler {
     }
 
     mCurve = new int[baseQualSize][readPosSize];
-    final long qualityCalibrationMinEvidence = GlobalFlags.getIntegerValue(GlobalFlags.QUALITY_CALIBRATION_MIN_EVIDENCE);
+    final long qualityCalibrationMinEvidence = GlobalFlags.getIntegerValue(CoreGlobalFlags.QUALITY_CALIBRATION_MIN_EVIDENCE);
     for (int i = 0; i < baseQualSize; i++) {
       for (int j = 0; j < readPosSize; j++) {
         if (proc.getMismatches()[i][j] < qualityCalibrationMinEvidence) {

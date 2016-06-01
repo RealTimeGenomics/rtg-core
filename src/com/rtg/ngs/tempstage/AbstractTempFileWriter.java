@@ -19,8 +19,9 @@ import java.util.Comparator;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.alignment.EditDistance;
 import com.rtg.alignment.EditDistanceFactory;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.HashingRegion;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.ngs.NgsParams;
 import com.rtg.ngs.SharedResources;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
@@ -44,7 +45,7 @@ public abstract class AbstractTempFileWriter implements Closeable {
    */
   private static final boolean USE_BLOCKERS_FOR_EARLY_TERM = false; //Boolean.valueOf(System.getProperty("rtg.blockers-for-early-term", "false"));
 
-  private static final boolean DUMP_ALIGNMENT_STATS = GlobalFlags.isSet(GlobalFlags.TEMP_FILES_DUMP_ALIGN_STATS_FLAG);
+  private static final boolean DUMP_ALIGNMENT_STATS = GlobalFlags.isSet(CoreGlobalFlags.TEMP_FILES_DUMP_ALIGN_STATS_FLAG);
   protected final SharedResources mSharedResources;
   protected final ReadStatusListener mListener;
   protected SequencesReader mTemplateReader;

@@ -22,7 +22,8 @@ import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.VariantParams;
@@ -45,12 +46,12 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
 
   /** print complex hypotheses for debugging */
-  private static final boolean PRINT_HYP_DETAILS = GlobalFlags.isSet(GlobalFlags.COMPLEX_HYPOTHESIS_DETAILS);
+  private static final boolean PRINT_HYP_DETAILS = GlobalFlags.isSet(CoreGlobalFlags.COMPLEX_HYPOTHESIS_DETAILS);
 
-  private static final boolean NEW_DIPLOID_PRIORS = GlobalFlags.getBooleanValue(GlobalFlags.COMPLEX_HYPOTHESIS_NEW_PRIORS);
+  private static final boolean NEW_DIPLOID_PRIORS = GlobalFlags.getBooleanValue(CoreGlobalFlags.COMPLEX_HYPOTHESIS_NEW_PRIORS);
 
   /** Use the genome priors and the following two constants to adjust the priors */
-  private static final boolean ADJUST = GlobalFlags.getBooleanValue(GlobalFlags.COMPLEX_HYPOTHESIS_ADJUST_PRIORS);
+  private static final boolean ADJUST = GlobalFlags.getBooleanValue(CoreGlobalFlags.COMPLEX_HYPOTHESIS_ADJUST_PRIORS);
 
   /** Bias hypothesis priors between ref and alt alleles. 1.0 = no bias. 0.0 = reduced alt likelihood */
   private static final double PRIORS_ALT_BIAS = 0.1; //Double.parseDouble(System.getProperty("rtg.hypoth-cx-alt-bias", "0.1"));

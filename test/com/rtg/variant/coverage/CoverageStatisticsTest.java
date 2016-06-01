@@ -17,7 +17,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.IndexUtils;
 import com.rtg.tabix.TabixIndexer;

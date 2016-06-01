@@ -18,7 +18,8 @@ import com.rtg.calibrate.CalibrationStats;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Covariate;
 import com.rtg.calibrate.CovariateEnum;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.ngs.Arm;
 import com.rtg.util.Histogram;
 import com.rtg.util.MathUtils;
@@ -150,7 +151,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
   private static PhredScaler getArmPhredScaler(Calibrator cal, Calibrator.QuerySpec query, Arm left) {
     query.setValue(CovariateEnum.ARM, left.ordinal());
     try {
-      if (GlobalFlags.getBooleanValue(GlobalFlags.QUALITY_CALIBRATION_COVARIATE_INTERSECTION)) {
+      if (GlobalFlags.getBooleanValue(CoreGlobalFlags.QUALITY_CALIBRATION_COVARIATE_INTERSECTION)) {
         return new CovariateIntersectionCycleQualityScaler(cal, query);
       } else {
         return new BaseQualityMachineCyclePhredScaler(cal, query);

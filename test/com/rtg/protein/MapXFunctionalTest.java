@@ -19,7 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.mode.DnaUtils;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.TestUtils;

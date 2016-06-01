@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.MockReaderParams;
 import com.rtg.launcher.MockSequenceParams;
 import com.rtg.metagenomics.SpeciesParams.SpeciesParamsBuilder;

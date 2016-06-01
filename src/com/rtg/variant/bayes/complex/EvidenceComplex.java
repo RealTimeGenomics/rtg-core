@@ -12,7 +12,8 @@
 
 package com.rtg.variant.bayes.complex;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.mode.DNA;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.MaxShiftUtils;
@@ -47,12 +48,12 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 public class EvidenceComplex extends Evidence {
 
   /** Print complex evidence scores into the developer log for debugging. */
-  private static final boolean PRINT_EVIDENCE_DETAILS = GlobalFlags.isSet(GlobalFlags.COMPLEX_EVIDENCE_DETAILS);
+  private static final boolean PRINT_EVIDENCE_DETAILS = GlobalFlags.isSet(CoreGlobalFlags.COMPLEX_EVIDENCE_DETAILS);
 
   private static final ScoreInterfaceMemoInterface SCORE_INTERFACE_MEMO;
 
   // If true, CG allpaths realignment should use the full reconstructed read, otherwise use the flattened representation
-  static final boolean CG_ALLPATHS = GlobalFlags.getBooleanValue(GlobalFlags.COMPLEX_CALLER_UNROLL_CG_FLAG);
+  static final boolean CG_ALLPATHS = GlobalFlags.getBooleanValue(CoreGlobalFlags.COMPLEX_CALLER_UNROLL_CG_FLAG);
 
   static {
     SCORE_INTERFACE_MEMO = new ScoreInterfaceMemo();

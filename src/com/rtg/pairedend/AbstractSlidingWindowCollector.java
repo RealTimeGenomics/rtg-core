@@ -18,7 +18,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.reeltwo.jumble.annotations.TestClass;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.ngs.SharedResources;
 import com.rtg.reader.CgUtils;
 import com.rtg.reader.PrereadType;
@@ -93,8 +94,8 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
 
 //    final int readMillions = (int) (sharedResources.firstReaderCopy().numberSequences() / 1000000);
     mGenomeLength = bedRegions != null ? genomeLength(bedRegions) : genomeLength(sharedResources.templateReaderCopy());
-    if (GlobalFlags.isSet(GlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG)) {
-      setMaxHitsPerPosition(GlobalFlags.getIntegerValue(GlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG));
+    if (GlobalFlags.isSet(CoreGlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG)) {
+      setMaxHitsPerPosition(GlobalFlags.getIntegerValue(CoreGlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG));
     } else {
       final long numReads = sharedResources.firstReaderCopy().numberSequences();
       setMaxHitsPerPosition(1000 + calculateExtraMaxHitsPerPosition(mGenomeLength, numReads));

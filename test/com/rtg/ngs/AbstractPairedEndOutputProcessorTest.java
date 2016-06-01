@@ -14,7 +14,7 @@ package com.rtg.ngs;
 import java.io.File;
 import java.io.IOException;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.ngs.tempstage.BinaryTempFileRecord;
 import com.rtg.ngs.tempstage.PairedTempFileWriterImpl;

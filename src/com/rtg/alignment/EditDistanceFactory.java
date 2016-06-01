@@ -15,7 +15,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.mode.ProteinScoringMatrix;
 import com.rtg.ngs.NgsOutputParams;
 import com.rtg.ngs.NgsParams;
@@ -43,13 +44,13 @@ public final class EditDistanceFactory {
   //  private static final String LB_VALUE = "lower-bound-value";
 
   // Only use the gotoh aligner (disable all others, has priority over USE_NOINDELS_ONLY)
-  private static final boolean USE_GOTOH_ONLY = GlobalFlags.isSet(GlobalFlags.EDIT_DIST_GOTOH_ONLY_FLAG);
+  private static final boolean USE_GOTOH_ONLY = GlobalFlags.isSet(CoreGlobalFlags.EDIT_DIST_GOTOH_ONLY_FLAG);
   // Only use the single-indel-seeded aligner (disable all others, has priority over USE_NOINDELS_ONLY)
-  private static final boolean USE_SINGLE_INDEL_SEEDED_ONLY = GlobalFlags.isSet(GlobalFlags.EDIT_DIST_SINGLE_INDEL_SEEDED_ONLY_FLAG);
+  private static final boolean USE_SINGLE_INDEL_SEEDED_ONLY = GlobalFlags.isSet(CoreGlobalFlags.EDIT_DIST_SINGLE_INDEL_SEEDED_ONLY_FLAG);
   // Enable the heuristic aligners (faster, but some lower quality alignments are produced)
-  private static final boolean ENABLE_HEURISTIC_ALIGNING = GlobalFlags.getBooleanValue(GlobalFlags.EDIT_DIST_HEURISTIC_ALIGNERS_FLAG);
+  private static final boolean ENABLE_HEURISTIC_ALIGNING = GlobalFlags.getBooleanValue(CoreGlobalFlags.EDIT_DIST_HEURISTIC_ALIGNERS_FLAG);
   // Specify how many reads to log with -D option
-  private static final int EDIT_LOGGING_AMOUNT = GlobalFlags.getIntegerValue(GlobalFlags.EDIT_DIST_LOGGING_AMOUNT_FLAG);
+  private static final int EDIT_LOGGING_AMOUNT = GlobalFlags.getIntegerValue(CoreGlobalFlags.EDIT_DIST_LOGGING_AMOUNT_FLAG);
 
   // Priors for cg CG-gotoh TODO merge with the same default priors that variant calling uses
   private static final String GOTOH_CG_PRIORS = "cg_real_errors";

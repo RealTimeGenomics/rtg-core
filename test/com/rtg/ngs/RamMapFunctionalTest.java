@@ -18,7 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.rtg.alignment.EditDistanceFactory;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.reader.FormatCli;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;

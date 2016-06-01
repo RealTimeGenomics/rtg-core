@@ -23,7 +23,8 @@ import com.rtg.assembler.graph.Graph;
 import com.rtg.assembler.graph.MutableGraph;
 import com.rtg.assembler.graph.PathsIterator;
 import com.rtg.assembler.graph.implementation.GraphKmerAttribute;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.util.Histogram;
 import com.rtg.util.IORunnable;
 import com.rtg.util.IntegerOrPercentage;
@@ -39,8 +40,8 @@ import com.rtg.util.diagnostic.Diagnostic;
  */
 public class GraphMap {
 
-  static final int MAX_HITS_PER_START_POSITION = GlobalFlags.getIntegerValue(GlobalFlags.ASSEMBLER_MAX_HITS_PER_START_POS_FLAG);
-  static final int INSERT_DEVIATIONS = GlobalFlags.getIntegerValue(GlobalFlags.ASSEMBLER_INSERT_DEVIATIONS_FLAG);
+  static final int MAX_HITS_PER_START_POSITION = GlobalFlags.getIntegerValue(CoreGlobalFlags.ASSEMBLER_MAX_HITS_PER_START_POS_FLAG);
+  static final int INSERT_DEVIATIONS = GlobalFlags.getIntegerValue(CoreGlobalFlags.ASSEMBLER_INSERT_DEVIATIONS_FLAG);
 
   private final GraphIndex mIndex;
 

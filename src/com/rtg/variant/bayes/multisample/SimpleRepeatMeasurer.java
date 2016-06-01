@@ -11,7 +11,8 @@
  */
 package com.rtg.variant.bayes.multisample;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 
 /**
  * Measures the total length of simple repeat regions between two positions (may consider nucleotides outside this range to determine repeat length).
@@ -20,7 +21,7 @@ import com.rtg.launcher.GlobalFlags;
  */
 public class SimpleRepeatMeasurer implements RepeatMeasurer {
 
-  static final int MAX_MER_LENGTH = GlobalFlags.getIntegerValue(GlobalFlags.COMPLEX_REGION_SIMPLE_REPEAT_LIMIT);
+  static final int MAX_MER_LENGTH = GlobalFlags.getIntegerValue(CoreGlobalFlags.COMPLEX_REGION_SIMPLE_REPEAT_LIMIT);
 
   protected final byte[] mReferenceNts;
 
