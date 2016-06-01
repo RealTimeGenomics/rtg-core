@@ -65,9 +65,10 @@ public class SimpleRepeatMeasurer implements RepeatMeasurer {
    */
   @Override
   public int measureRepeats(int positionA, int positionB) {
+    final int clippedPositionA = Math.max(positionA, 0);
     int repeatTotal = 0;
     //StringBuilder sb = new StringBuilder();
-    for (int repeatStart = positionA; repeatStart < positionB; repeatStart++) {
+    for (int repeatStart = clippedPositionA; repeatStart < positionB; repeatStart++) {
       for (int simpleLength = 1; simpleLength <= mMaxMerLength; simpleLength++) {
         // work out the potential repeat unit
         if (mReferenceNts.length > repeatStart + simpleLength) {

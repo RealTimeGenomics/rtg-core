@@ -300,14 +300,16 @@ public class ComplexitiesTest extends TestCase {
   }
 
   public void testIndelExtension() {
-    final Complexities complex = new Complexities(Collections.<Variant>emptyList(), "foo", 0, 50, 3, 15, template(30), false, null);
+    final Complexities complex = new Complexities(Collections.<Variant>emptyList(), "foo", 0, 50, 3, 100, template(30), false, null);
     complex.globalIntegrity();
     assertEquals(0, complex.size());
     final ArrayList<Variant> chunk = new ArrayList<>();
     chunk.add(TestUtils.createVariant(0));
     chunk.add(TestUtils.createVariant(4));
-    chunk.add(TestUtils.createVariant(10, 11, true, 3)); // interesting sep + indel length lets it join to previous
+    chunk.add(TestUtils.createVariant(10, 20, true, 3)); // interesting sep + indel length lets it join to previous
     chunk.add(TestUtils.createVariant(15));
+    chunk.add(TestUtils.createVariant(24)); //still in shadow
+    chunk.add(TestUtils.createVariant(34));
     final Deque<ComplexRegion> regions = complex.getComplexRegions(chunk);
     final Iterator<ComplexRegion> it = regions.iterator();
     assertTrue(it.hasNext());
@@ -318,12 +320,12 @@ public class ComplexitiesTest extends TestCase {
     assertTrue(it.hasNext());
     final ComplexRegion com1 = it.next();
     assertEquals(4, com1.getStart());
-    assertEquals(11, com1.getEnd());
+    assertEquals(25, com1.getEnd());
     assertEquals(ComplexRegion.RegionType.COMPLEX, com1.type());
     assertTrue(it.hasNext());
     final ComplexRegion com3 = it.next();
-    assertEquals(15, com3.getStart());
-    assertEquals(16, com3.getEnd());
+    assertEquals(34, com3.getStart());
+    assertEquals(35, com3.getEnd());
     assertEquals(ComplexRegion.RegionType.INTERESTING, com3.type());
     assertFalse(it.hasNext());
   }

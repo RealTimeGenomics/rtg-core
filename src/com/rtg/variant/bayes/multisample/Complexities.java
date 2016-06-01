@@ -166,12 +166,14 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
     int lastInteresting = -1;
     boolean forceComplex = false;
 
+    int lastInterestingShadow = -1;
     for (final Variant c : chunk) {
       if (c.isOverflow()) {
         // Want to write an overflow region, but need to output any current complex region first
         addRegion(regions, firstInteresting, lastInteresting, forceComplex);
         firstInteresting = -1;   // Reset state of "in-construction" region
         lastInteresting = -1;
+        lastInterestingShadow = -1;
         forceComplex = false;
         addOverflowRegion(regions, c.getLocus());
       } else if (c.isInteresting()) {
@@ -181,11 +183,12 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
         final int outputPosition = c.getLocus().getStart();
 
         // See whether the current variant is var enough away that we need to close out the "in-construction" region
-        if (lastInteresting > 0 && !joinInteresting(lastInteresting - 1 + c.getIndelLength(), outputPosition)) { //TODO this is not symmetric in the indel extension - if there is an indel to the left it is ignored
+        if (lastInteresting > 0 && !joinInteresting(lastInterestingShadow - 1, outputPosition - c.getIndelLength())) {
           // Can't joint current variant to in-construction complex region, so finish the complex region and add it
           addRegion(regions, firstInteresting, lastInteresting, forceComplex);
           firstInteresting = -1;   // Reset state of "in-construction" region
           lastInteresting = -1;
+          lastInterestingShadow = -1;
           forceComplex = false;
         }
 
@@ -194,6 +197,7 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
           firstInteresting = outputPosition;
         }
         lastInteresting = Math.max(lastInteresting, c.getLocus().getEnd());
+        lastInterestingShadow = Math.max(lastInterestingShadow, lastInteresting + c.getIndelLength());
         forceComplex |= c.isForceComplex();
         //System.err.println("getComplexRegions: " + outputPosition + " : " + c.getLocus().getEnd() + " : " + firstInteresting + " : " + lastInteresting);
       }
@@ -214,7 +218,7 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
   }
 
   boolean joinInteresting(int positionA, int positionB) {
-    final int repeatTotal = mRepeatMeasurer.measureRepeats(Math.max(positionA, 0), positionB);
+    final int repeatTotal = mRepeatMeasurer.measureRepeats(positionA, positionB);
     return positionA + mInterestingSeparation + repeatTotal >= positionB;
   }
 
@@ -464,7 +468,7 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
       Exam.assertTrue(mEndDangling == null || mEndDangling.type() == ComplexRegion.RegionType.HYPER);
     }
     Exam.assertTrue(mStartOfChunk >= 0);
-    Exam.assertTrue(mEndOfChunk >= mStartOfChunk + mHyperComplexLength);
+    Exam.assertTrue(mEndOfChunk >= mStartOfChunk);
     Exam.assertTrue(mHyperComplexLength > mInterestingSeparation);
     return true;
   }
