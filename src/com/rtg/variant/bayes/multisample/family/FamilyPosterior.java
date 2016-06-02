@@ -20,7 +20,8 @@ import java.util.List;
 import java.util.Stack;
 
 import com.reeltwo.jumble.annotations.TestClass;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.reference.Ploidy;
 import com.rtg.relation.Family;
 import com.rtg.util.QuickSort;
@@ -50,7 +51,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
   private static final double TERM_THRESHOLD = 10.0;
   static final boolean TERMINATE = true;
   static final boolean SQUARE_FIRST = true;
-  static final boolean ENABLE_SORTED_HYPOTHESES = GlobalFlags.getBooleanValue(GlobalFlags.FAMILY_CALLER_SORTED_HYPOTHESES);
+  static final boolean ENABLE_SORTED_HYPOTHESES = GlobalFlags.getBooleanValue(CoreGlobalFlags.FAMILY_CALLER_SORTED_HYPOTHESES);
   private static final boolean FIRST_HYP_FULLY = true;
 
   double[] mFatherMarginal;

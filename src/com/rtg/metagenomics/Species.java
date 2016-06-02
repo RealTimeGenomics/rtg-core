@@ -12,7 +12,8 @@
 package com.rtg.metagenomics;
 
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.metagenomics.matrix.Matrix;
 import com.rtg.metagenomics.matrix.MatrixSymmetric;
 import com.rtg.metagenomics.matrix.MatrixUtils;
@@ -33,8 +34,8 @@ public class Species extends IntegralAbstract {
   /** Used to detect when L increases */
   private static final double INCREASE_THRESHOLD = -0.1;  //TODO something sensible about this arbitrary constant
 
-  private static final double L_TERMINATION = (Double) GlobalFlags.getFlag(GlobalFlags.SPECIES_LTERMINATION_FLAG).getValue();
-  private static final Double L_TERMINATION_TARGET = (Double) GlobalFlags.getFlag(GlobalFlags.SPECIES_TERMINATION_TARGET_FLAG).getValue();
+  private static final double L_TERMINATION = (Double) GlobalFlags.getFlag(CoreGlobalFlags.SPECIES_LTERMINATION_FLAG).getValue();
+  private static final Double L_TERMINATION_TARGET = (Double) GlobalFlags.getFlag(CoreGlobalFlags.SPECIES_TERMINATION_TARGET_FLAG).getValue();
 
   private static final int[] EMPTY = new int[0];
 

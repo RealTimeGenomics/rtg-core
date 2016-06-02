@@ -19,7 +19,8 @@ import java.util.Collection;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Recalibrate;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.tabix.IndexingStreamCreator;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.SingletonPopulatorFactory;
@@ -143,7 +144,7 @@ public class SamMerger {
     }
   }
 
-  private static final int GZIP_LEVEL = GlobalFlags.getIntegerValue(GlobalFlags.GZIP_LEVEL);
+  private static final int GZIP_LEVEL = GlobalFlags.getIntegerValue(CoreGlobalFlags.GZIP_LEVEL);
 
   /**
    * Get a SAM/BAM writer potentially with indexing on the fly

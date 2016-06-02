@@ -27,9 +27,10 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.Recalibrate;
 import com.rtg.calibrate.SamCalibrationInputs;
 import com.rtg.index.hash.ngs.OutputProcessor;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.ngs.blocking.MapQScoringReadBlockerSynch;
 import com.rtg.ngs.tempstage.AbstractTempFileWriter;
@@ -306,7 +307,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
   }
 
   protected void whizBangUnify(final FilterConcatIntermediateFiles unmappedAlignments, final FilterConcatIntermediateFiles... alignmentFiles) throws IOException {
-    final boolean keepTempFiles = GlobalFlags.isSet(GlobalFlags.MAP_KEEP_TEMPORARY_FILES);
+    final boolean keepTempFiles = GlobalFlags.isSet(CoreGlobalFlags.MAP_KEEP_TEMPORARY_FILES);
     //if present the unmapped array contains unmapped, and will be 1 longer than the rest (containing the unmapped with no position entries)
     final SamMerger merge = new SamMerger(mParams.outputParams().outputIndex(), mParams.outputParams().isCompressOutput(), mParams.legacyCigars(), mParams.numberThreads(), SamFilterParams.builder().create(), false, !keepTempFiles);
     final int numberIntermediateFiles = AbstractMulticoreFilterConcat.numberIntermediateFiles(mRegions.size(), mParams.numberThreads());

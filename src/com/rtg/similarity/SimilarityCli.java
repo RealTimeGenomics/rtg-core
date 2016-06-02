@@ -45,13 +45,14 @@ import com.rtg.index.similarity.NeighborJoining;
 import com.rtg.index.similarity.SimilarityMatrix;
 import com.rtg.launcher.BuildParams;
 import com.rtg.launcher.CommonFlags;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.NoStatistics;
 import com.rtg.launcher.ParamsCli;
 import com.rtg.launcher.ParamsTask;
 import com.rtg.launcher.SequenceParams;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.mode.ProgramMode;
 import com.rtg.ngs.MapFlags;
 import com.rtg.reader.IndexFile;
@@ -345,7 +346,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       //System.err.println(index);
       Diagnostic.userLog("Index statistics " + StringUtils.LS + index.infoString());
 
-      final boolean doPca = GlobalFlags.getBooleanValue(GlobalFlags.SIMILARITY_PCA_FLAG);
+      final boolean doPca = GlobalFlags.getBooleanValue(CoreGlobalFlags.SIMILARITY_PCA_FLAG);
 
       try (final Writer writeSimi = new OutputStreamWriter(params.outStream(SIMILARITY_SUFFIX))) {
         try (final Writer writeTree = new OutputStreamWriter(params.outStream(TREE_SUFFIX))) {

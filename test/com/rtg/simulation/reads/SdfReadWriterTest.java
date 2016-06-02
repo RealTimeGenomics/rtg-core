@@ -14,7 +14,7 @@ package com.rtg.simulation.reads;
 
 import java.io.File;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.Sdf2Fasta;
 import com.rtg.util.StringUtils;

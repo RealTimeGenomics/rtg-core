@@ -17,7 +17,8 @@ import java.util.LinkedList;
 import java.util.PriorityQueue;
 import java.util.Queue;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -35,7 +36,7 @@ import htsjdk.samtools.util.RuntimeIOException;
  */
 public class MultifileIterator implements RecordIterator<SAMRecord> {
 
-  static final boolean FALLBACK = GlobalFlags.isSet(GlobalFlags.SAM_ALLOW_FALLBACK_FOR_NON_INDEXED_REGIONS);
+  static final boolean FALLBACK = GlobalFlags.isSet(CoreGlobalFlags.SAM_ALLOW_FALLBACK_FOR_NON_INDEXED_REGIONS);
 
   private static final double MEGABYTE = 1 << 20;
 

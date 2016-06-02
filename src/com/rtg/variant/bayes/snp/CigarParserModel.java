@@ -12,7 +12,8 @@
 package com.rtg.variant.bayes.snp;
 
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.mode.DNA;
 import com.rtg.reader.CgUtils;
 import com.rtg.sam.BadSuperCigarException;
@@ -31,7 +32,7 @@ public class CigarParserModel implements ReadParserInterface {
 
   private static final boolean ILLUMINA_HOMOPOLYMER_HACK = false; //Boolean.valueOf(System.getProperty("com.rtg.variant.illuhomopoly", "false"));
 
-  private static final boolean SOFT_CLIP_COMPLEX_TRIGGER = GlobalFlags.getBooleanValue(GlobalFlags.SOFT_CLIP_COMPLEX_TRIGGER);
+  private static final boolean SOFT_CLIP_COMPLEX_TRIGGER = GlobalFlags.getBooleanValue(CoreGlobalFlags.SOFT_CLIP_COMPLEX_TRIGGER);
 
   static int getDNA(final char charAt) {
     return DNA.valueOf(charAt).ordinal();

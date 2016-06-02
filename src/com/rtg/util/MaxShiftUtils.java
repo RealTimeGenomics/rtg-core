@@ -11,7 +11,8 @@
  */
 package com.rtg.util;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 
 /**
  */
@@ -26,7 +27,7 @@ public final class MaxShiftUtils {
    */
   private static final double DEFAULT_INDEL_RATE = 0.01;
   /** default total length of all inserts/deletes allowed in reasonably short reads */
-  private static final Integer DEFAULT_INDEL_LENGTH = GlobalFlags.getIntegerValue(GlobalFlags.DEFAULT_INDEL_LENGTH_FLAG);
+  private static final Integer DEFAULT_INDEL_LENGTH = GlobalFlags.getIntegerValue(CoreGlobalFlags.DEFAULT_INDEL_LENGTH_FLAG);
 
   /**
    * TODO this is completely insufficent for finding longer indels in reads - it's only considering sequencer error rates.

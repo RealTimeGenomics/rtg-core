@@ -12,7 +12,8 @@
 package com.rtg.variant.bayes.snp;
 
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantLocus;
@@ -23,7 +24,7 @@ import com.rtg.variant.VariantParams;
  */
 public class IndelMatcher extends EvidenceMatcher<IndelDetector> {
 
-  private static final boolean DUMP_INDEL_SIGNAL = GlobalFlags.getBooleanValue(GlobalFlags.DUMP_COMPLEX_TRIGGER_SIGNALS);
+  private static final boolean DUMP_INDEL_SIGNAL = GlobalFlags.getBooleanValue(CoreGlobalFlags.DUMP_COMPLEX_TRIGGER_SIGNALS);
 
   /**
    * Construct a new indel matcher

@@ -13,7 +13,8 @@ package com.rtg.variant;
 
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.ngs.Arm;
 
 
@@ -47,7 +48,7 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
     mCurve = new int[baseQualSize][readPosSize];
     final double globalErrorRate = (double) totalMismatches / (double) totalEverything;
     /* do you want to interpolate from qualities out of the observer ranges per position? */
-    final long qualityCalibrationMinEvidence = GlobalFlags.getIntegerValue(GlobalFlags.QUALITY_CALIBRATION_MIN_EVIDENCE);
+    final long qualityCalibrationMinEvidence = GlobalFlags.getIntegerValue(CoreGlobalFlags.QUALITY_CALIBRATION_MIN_EVIDENCE);
     for (int i = 0; i < baseQualSize; i++) {
       for (int j = 0; j < readPosSize; j++) {
         if (proc.getTotals()[i][j] < qualityCalibrationMinEvidence) {

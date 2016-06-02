@@ -15,7 +15,7 @@ import java.io.File;
 import java.io.IOException;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;

@@ -15,7 +15,7 @@ package com.rtg;
 import java.io.ByteArrayOutputStream;
 import java.util.Locale;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.util.StringUtils;
 
 import junit.framework.TestCase;

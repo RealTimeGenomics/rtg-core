@@ -19,7 +19,7 @@ import java.util.Collection;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.util.Resources;
 import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.StringUtils;

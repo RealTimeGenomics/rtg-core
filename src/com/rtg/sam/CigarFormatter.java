@@ -391,16 +391,17 @@ public final class CigarFormatter {
       }
     }
     int n = 0;
-    int pow = 0;
+    int pow = -1;
     for (int i = 0; i < cigar.length() - 1; i++) {
       final char c = cigar.charAt(cigar.length() - 1 - i);
       if (Character.isDigit(c)) {
-        n += (c - '0') * (int) Math.pow(10, pow++);
-      } else if (c == SamUtils.CIGAR_HARD_CLIP) {
-        n = 0;
+        if (pow >= 0) {
+          n += (c - '0') * (int) Math.pow(10, pow++);
+        }
       } else if (c == SamUtils.CIGAR_SOFT_CLIP) {
+        n = 0;
         pow = 0;
-      } else {
+      } else if (c != SamUtils.CIGAR_HARD_CLIP) {
         break;
       }
     }

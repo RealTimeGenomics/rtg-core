@@ -15,7 +15,8 @@ package com.rtg.variant.bayes.multisample;
 import java.io.IOException;
 import java.util.List;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.reference.SexMemo;
 import com.rtg.relation.Family;
 import com.rtg.variant.VariantParams;
@@ -31,7 +32,7 @@ public final class Utils {
    * cases of large regions tend to trigger a complex call with only a single (probably wrong) hypothesis. Increasing
    * this reduces the size of the complex region to contain more alternative hypotheses.
    */
-  public static final int MIN_DEPTH_FOR_N_CALL = GlobalFlags.getIntegerValue(GlobalFlags.CALLER_N_MIN_DEPTH);
+  public static final int MIN_DEPTH_FOR_N_CALL = GlobalFlags.getIntegerValue(CoreGlobalFlags.CALLER_N_MIN_DEPTH);
 
   private Utils() { }
 

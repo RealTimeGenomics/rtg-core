@@ -13,7 +13,8 @@ package com.rtg.variant.bayes.multisample.family;
 
 import java.util.List;
 
-import com.rtg.launcher.GlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.relation.Family;
 import com.rtg.util.MathUtils;
 import com.rtg.variant.VariantOutputLevel;
@@ -40,7 +41,7 @@ public class FamilyCaller extends AbstractMultisampleCaller implements Multisamp
 
   private static final boolean USE_SLOW_IMPL = false; //Boolean.valueOf(System.getProperty("rtg.family.use-slow", "false"));
   // If true, resolve disagreeing calls using the forward backward caller (currently SLOW)
-  private static final boolean USE_FB_FALLBACK = GlobalFlags.getBooleanValue(GlobalFlags.FAMILY_CALLER_FALLBACK_FLAG);
+  private static final boolean USE_FB_FALLBACK = GlobalFlags.getBooleanValue(CoreGlobalFlags.FAMILY_CALLER_FALLBACK_FLAG);
 
   private final VariantParams mParams;
   private final Family[] mFamilies;
