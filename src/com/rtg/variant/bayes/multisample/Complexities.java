@@ -182,8 +182,9 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
         assert firstInteresting == -1 || (firstInteresting >= mStartOfChunk && lastInteresting >= firstInteresting && lastInteresting <= mEndOfChunk);
         final int outputPosition = c.getLocus().getStart();
 
+        final int indelLength = !c.isSoftClip() ? c.getIndelLength() : 0;
         // See whether the current variant is var enough away that we need to close out the "in-construction" region
-        if (lastInteresting > 0 && !joinInteresting(lastInterestingShadow - 1, outputPosition - c.getIndelLength())) {
+        if (lastInteresting > 0 && !joinInteresting(lastInterestingShadow - 1, outputPosition - indelLength)) {
           // Can't joint current variant to in-construction complex region, so finish the complex region and add it
           addRegion(regions, firstInteresting, lastInteresting, forceComplex);
           firstInteresting = -1;   // Reset state of "in-construction" region
@@ -197,7 +198,7 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
           firstInteresting = outputPosition;
         }
         lastInteresting = Math.max(lastInteresting, c.getLocus().getEnd());
-        lastInterestingShadow = Math.max(lastInterestingShadow, lastInteresting + c.getIndelLength());
+        lastInterestingShadow = Math.max(lastInterestingShadow, lastInteresting + indelLength);
         forceComplex |= c.isForceComplex();
         //System.err.println("getComplexRegions: " + outputPosition + " : " + c.getLocus().getEnd() + " : " + firstInteresting + " : " + lastInteresting);
       }
