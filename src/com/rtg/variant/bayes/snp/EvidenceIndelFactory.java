@@ -43,12 +43,12 @@ public final class EvidenceIndelFactory implements CachedEvidenceFactory {
   }
 
   @Override
-  public EvidenceInterface evidence(int readNt, int readBasesLeft, int readBasesRight, int mapQ, int phred, int stateIndex, int maxIndelLength, boolean isUnmapped) {
+  public EvidenceInterface evidence(int operationType, int readBasesLeft, int readBasesRight, int mapQ, int phred, int stateIndex, int operationLength, boolean isUnmapped) {
     assert !isUnmapped; // Unmapped evidence should never be coming as indels
     if (mapQ <= Model.AMBIGUITY_PHRED) {
-      return COMPLEX_REGION_INDEL_EXTENSION ? new EvidenceIndel(Model.AMBIGUITY_THRESHOLD, readNt, maxIndelLength) : mBadEvidence[readNt];
+      return COMPLEX_REGION_INDEL_EXTENSION ? new EvidenceIndel(Model.AMBIGUITY_THRESHOLD, operationType, operationLength) : mBadEvidence[operationType];
     } else {
-      return COMPLEX_REGION_INDEL_EXTENSION ? new EvidenceIndel(0, readNt, maxIndelLength) : mGoodEvidence[readNt];
+      return COMPLEX_REGION_INDEL_EXTENSION ? new EvidenceIndel(0, operationType, operationLength) : mGoodEvidence[operationType];
     }
   }
 

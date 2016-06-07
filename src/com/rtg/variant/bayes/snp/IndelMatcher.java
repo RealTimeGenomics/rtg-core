@@ -69,7 +69,7 @@ public class IndelMatcher extends EvidenceMatcher<IndelDetector> {
         final Variant call = new Variant(locus);
         call.setInteresting();
         final Variant.SoftClipSide side = indelDetector.softClipLeftCount() > indelDetector.softClipRightCount() ? Variant.SoftClipSide.LEFT : Variant.SoftClipSide.RIGHT;
-        call.setSoftClip(indelDetector.maxIndelLength(), side);
+        call.setSoftClip(indelDetector.maxSoftClipLength(), side);
         return call;
       }
       return null;

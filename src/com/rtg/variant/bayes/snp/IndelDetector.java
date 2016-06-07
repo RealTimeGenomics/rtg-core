@@ -33,6 +33,7 @@ public class IndelDetector implements EvidenceAcceptor {
   private int mNonIndelCount;
 
   private int mIndelLength;
+  private int mSoftClipLength;
 
   /**
    * Constructor
@@ -46,20 +47,23 @@ public class IndelDetector implements EvidenceAcceptor {
       mNonIndelCount++;
     } else {
       assert evidence instanceof EvidenceIndel;
-      mIndelLength = Math.max(((EvidenceIndel) evidence).maxIndelLength(), mIndelLength);
       if (evidence.mapError() < Model.AMBIGUITY_THRESHOLD) {
         switch (evidence.read()) {
           case EvidenceIndel.INSERT:
             mNonTrivialInsertCount++;
+            mIndelLength = Math.max(((EvidenceIndel) evidence).maxOperationLength(), mIndelLength);
             break;
           case EvidenceIndel.DELETE:
             mNonTrivialDeletionCount++;
+            mIndelLength = Math.max(((EvidenceIndel) evidence).maxOperationLength(), mIndelLength);
             break;
           case EvidenceIndel.SOFT_CLIP_LEFT:
             mSoftClipLeftCount++;
+            mSoftClipLength = Math.max(((EvidenceIndel) evidence).maxOperationLength(), mSoftClipLength);
             break;
           case EvidenceIndel.SOFT_CLIP_RIGHT:
             mSoftClipRightCount++;
+            mSoftClipLength = Math.max(((EvidenceIndel) evidence).maxOperationLength(), mSoftClipLength);
             break;
           default:
             throw new RuntimeException("Invalid indel code: " + evidence.read());
@@ -78,6 +82,14 @@ public class IndelDetector implements EvidenceAcceptor {
    */
   public int maxIndelLength() {
     return mIndelLength;
+  }
+
+  /**
+   *
+   * @return maximum length of a soft clip as specified by cigar
+   */
+  public int maxSoftClipLength() {
+    return mSoftClipLength;
   }
 
   /**

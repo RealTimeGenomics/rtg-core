@@ -177,6 +177,8 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
         forceComplex = false;
         addOverflowRegion(regions, c.getLocus());
       } else if (c.isInteresting()) {
+//        final String desc = c.isIndel() ? "indel" : (c.isSoftClip() ? "soft-clip" : "generic");
+//        Diagnostic.developerLog(String.format("COMPLEX_CHUNK\t%s\t%d\t%d\t%s\t%d", c.getLocus().getSequenceName(), c.getLocus().getStart(), c.getLocus().getEnd(), desc, c.getIndelLength()));
         //        System.err.println("first: " + firstInteresting + " last: " + lastInteresting + " forced: " + forceComplex + " call: " + c + " SoC: " + mStartOfChunk + " EoC: " + mEndOfChunk);
         assert firstInteresting > -1 || (lastInteresting == -1 && !forceComplex);
         assert firstInteresting == -1 || (firstInteresting >= mStartOfChunk && lastInteresting >= firstInteresting && lastInteresting <= mEndOfChunk);
