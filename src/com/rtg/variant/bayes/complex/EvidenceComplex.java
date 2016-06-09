@@ -207,9 +207,10 @@ public class EvidenceComplex extends Evidence {
       final double poss = mArithmetic.divide(logScore[i], sum);
       if (PRINT_EVIDENCE_DETAILS) {
         Diagnostic.developerLog("Match: " + (match.isFixedLeft() ? "" : "~") + match.readString() + (match.isFixedRight() ? "" : "~")
-          + " hyp: " + i + " " + hypotheses.description().name(i)
+          + " hyp: " + (i == mReference ? "*" : " ") + i + " " + hypotheses.description().name(i)
           + " score: " + mArithmetic.poss2Prob(poss)
-          + (match.alignmentRecord().getReadGroup() == null ? "" : " sample: " + match.alignmentRecord().getReadGroup().getSample()));
+          + (match.alignmentRecord().getReadGroup() == null ? "" : " sample: " + match.alignmentRecord().getReadGroup().getSample())
+          + " cigar: " + match.alignmentRecord().getCigar());
       }
       set(i, poss);
       if (mProb[i] > maxProb) {
