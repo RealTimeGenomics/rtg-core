@@ -14,6 +14,7 @@ package com.rtg.sam;
 
 import java.io.ByteArrayOutputStream;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.alignment.ActionsHelper;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantAlignmentRecord;
@@ -24,6 +25,7 @@ import com.rtg.variant.util.VariantUtils;
 /**
  * This class to convert to and from CIGAR format, not remotely thread safe
  */
+@TestClass({"com.rtg.sam.CigarFormatterTest", "com.rtg.sam.CigarSubsequenceTest"})
 public final class CigarFormatter {
 
   private CigarFormatter() { }
