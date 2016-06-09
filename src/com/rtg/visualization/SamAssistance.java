@@ -29,8 +29,9 @@ public interface SamAssistance {
    * @param templateBytes the template as a byte array (the original with no modifications applied)
    * @param readStart where the read starts on the template (in screen co-ordinates).
    * @param displayDots if lines match display dot
+   * @param displaySoftClip if soft clipped bases should be displayed
    * @return array of strings each string is padded with spaces at start (but not end). There will usually be one string or 2 in case of CG reads.
    * @throws BadSuperCigarException on bad cigar
    */
-  String[] samToReads(SAMRecord sam, String templateStr, byte[] templateBytes, int readStart, boolean displayDots) throws BadSuperCigarException;
+  String[] samToReads(SAMRecord sam, String templateStr, byte[] templateBytes, int readStart, boolean displayDots, boolean displaySoftClip) throws BadSuperCigarException;
 }

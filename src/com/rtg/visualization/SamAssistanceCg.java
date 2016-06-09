@@ -133,7 +133,7 @@ public class SamAssistanceCg extends SuperCigarParser implements SamAssistance {
   }
 
   @Override
-  public String[] samToReads(final SAMRecord sam, final String template, byte[] templateBytes, final int readStart, final boolean displayDots) throws BadSuperCigarException {
+  public String[] samToReads(final SAMRecord sam, final String template, byte[] templateBytes, final int readStart, final boolean displayDots, boolean displaySoftClip) throws BadSuperCigarException {
     final String superCigar = sam.getStringAttribute(SamUtils.CG_SUPER_CIGAR);
     // Reset all the parameter information in the parser
     setCigar(superCigar, sam.getStringAttribute(SamUtils.CG_READ_DELTA));

@@ -37,29 +37,40 @@ public class SamAssistanceSimpleTest extends TestCase {
     check("   A__  C", "ACGT", "1M2N1M", new int[] {2, 0, 2, 0, 0, 0, 0}, 3, true);
 
     check("A--C", "ACGT", "1M2D1M", new int[] {0, 0, 0, 0});
-    check("....", "ACGT", "4=", "ACGT", 0, true);
-    check("ACGT", "ACGT", "4=", "NNNN", 0, true);
-    check("..............", "ACGTACGTACGTAC", "14=", "ACGTACGTACGTAC", 0, true);
-    check("..N.", "ACNT", "4=", "ACGT", 0, true);
+    check("....", "ACGT", "4=", "ACGT", 0, true, false);
+    check("ACGT", "ACGT", "4=", "NNNN", 0, true, false);
+    check("..............", "ACGTACGTACGTAC", "14=", "ACGTACGTACGTAC", 0, true, false);
+    check("..N.", "ACNT", "4=", "ACGT", 0, true, false);
     check("ACGT", "ACGT", "4X", new int[] {0, 0, 0, 0});
 
+    check("....ACGT", "ACGTACGT", "4=4I", "ACGTA", 0, true, false);
+
     //test "S"
-    check("CG.", "ACGT", "1S2X1=", "TTT", 0, true);
+    check("CG.", "ACGT", "1S2X1=", "TTT", 0, true, false);
+    check("CG.", "ACGT", "1S2X1=", "TTT", 0, true, true);
+    check("aCG.", "ACGT", "1S2X1=", "TTTT", 1, true, true);
     check("ACNT", "ACNT", "4X", new int[] {0, 0, 0, 0});
 
     check("AC_GT", "ACGT", "4M", new int[] {0, 0, 1, 0});
-    check(".._..", "ACGT", "4=", "AC_GT", 0, true);
+    check(".._..", "ACGT", "4=", "AC_GT", 0, true, false);
     check("AC_GT", "ACGT", "4X", new int[] {0, 0, 1, 0});
     check("ACG____T", "ACGT", "2M1I1M", new int[] {0, 0, 5, 0});
 
-    check("..GTGT", "ACGTGT", "2=1I1X1I1X", "AC_A_A", 0, true);
+    check("..GTGT", "ACGTGT", "2=1I1X1I1X", "AC_A_A", 0, true, false);
 
-    check(".-CG", "ACGT", "1=1D2X", "ACTT", 0, true);
+    check(".-CG", "ACGT", "1=1D2X", "ACTT", 0, true, false);
 
-    check("  .-CG", "ACGT", "1=1D2X", "TTACTT", 2, true);
+    check("  .-CG", "ACGT", "1=1D2X", "TTACTT", 2, true, false);
+    check("tt.-CG", "TTTACGT", "3S1=1D2X", "TTACTT", 2, true, true);
+    check("tt.-CG", "TTACGT", "2S1=1D2X", "TTACTT", 2, true, true);
+    check(" t.-CG", "TACGT", "1S1=1D2X", "TTACTT", 2, true, true);
+    check(" t.-CGtttt", "TACGTTTTT", "1S1=1D2X4S", "TTACTTA", 2, true, true);
+    check(" t.-CGttt", "TACGTTTT", "1S1=1D2X3S", "TTACTTA", 2, true, true);
+    check(" t.-CGtt", "TACGTTTT", "1S1=1D2X2S", "TTACTTA", 2, true, true);
+    check(" t.-CGt", "TACGTTTT", "1S1=1D2X1S", "TTACTTA", 2, true, true);
 
     //insert before start of read
-    check("   .-CGT", "ACGT", "1=1D3X", "___AAAAA", 3, true);
+    check("   .-CGT", "ACGT", "1=1D3X", "___AAAAA", 3, true, false);
 
     check("A-CG", "ACGT", "1=1D2X", new int[] {0, 0, 0, 0}, 0, false);
   }
@@ -72,10 +83,10 @@ public class SamAssistanceSimpleTest extends TestCase {
 
     final SamAssistanceSimple sas = new SamAssistanceSimple();
 
-    String s = sas.cigarToReads(cigar, read, template, readStart, true);
+    String s = sas.cigarToReads(cigar, read, template, readStart, true, false);
     assertEquals("TC...", s);
 
-    s = sas.cigarToReads("2I5M", "TTGTGAA", template, 3, true);
+    s = sas.cigarToReads("2I5M", "TTGTGAA", template, 3, true, false);
     assertEquals(" TT.....", s);
   }
 
@@ -93,7 +104,7 @@ public class SamAssistanceSimpleTest extends TestCase {
 
   void check(final String expected, final String read, final String cigar, final int[] inserts, final int readStart, final boolean displayDots) throws BadSuperCigarException {
     final String template = insertString(inserts);
-    check(expected, read, cigar, template, readStart, displayDots);
+    check(expected, read, cigar, template, readStart, displayDots, false);
   }
 
   static String insertString(final int[] inserts) {
@@ -107,12 +118,12 @@ public class SamAssistanceSimpleTest extends TestCase {
     return sb.toString();
   }
 
-  void check(final String expected, final String read, final String cigar, final String template, final int readStart, final boolean displayDots) throws BadSuperCigarException {
+  void check(final String expected, final String read, final String cigar, final String template, final int readStart, final boolean displayDots, boolean displaySoftClip) throws BadSuperCigarException {
     final SamAssistance sama = new SamAssistanceSimple();
     final SAMRecord sam = makeSamRecord(read, cigar);
     sam.setAlignmentStart(1);
     //System.err.println(template);
-    final String[] actual = sama.samToReads(sam, template, template.getBytes(), readStart, displayDots);
+    final String[] actual = sama.samToReads(sam, template, template.getBytes(), readStart, displayDots, displaySoftClip);
     assertEquals(1, actual.length);
     assertEquals(expected, actual[0]);
   }

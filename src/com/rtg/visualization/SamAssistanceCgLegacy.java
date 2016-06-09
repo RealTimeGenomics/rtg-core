@@ -79,11 +79,11 @@ public class SamAssistanceCgLegacy implements SamAssistance {
   }
 
   @Override
-  public String[] samToReads(final SAMRecord sam, final String template, byte[] templateBytes, final int readStart, final boolean displayDots) {
+  public String[] samToReads(final SAMRecord sam, final String template, byte[] templateBytes, final int readStart, final boolean displayDots, boolean displaySoftClip) {
     //System.err.println(template.length());
     if (!sam.hasAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES)) {
       //no overlap use the simple code.
-      return mSimple.samToReads(sam, template, templateBytes, readStart, displayDots);
+      return mSimple.samToReads(sam, template, templateBytes, readStart, displayDots, displaySoftClip);
     }
     final String gs = sam.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES);
     final String gc = sam.getStringAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS);
@@ -96,7 +96,7 @@ public class SamAssistanceCgLegacy implements SamAssistance {
     //System.err.println("split cigar " + cigar + " into " + java.util.Arrays.toString(cigars));
 
     final String[] res = new String[2];
-    res[0] = mSimple.cigarToReads(cigars[0], read, template, readStart, displayDots);
+    res[0] = mSimple.cigarToReads(cigars[0], read, template, readStart, displayDots, displaySoftClip);
 
     final StringBuilder sb = new StringBuilder();
     int overStart = res[0].length();
@@ -125,7 +125,7 @@ public class SamAssistanceCgLegacy implements SamAssistance {
     final String overCigar = sb.toString() + cigars[1];
     final String overRead = gs.substring(overLapLength) + read.substring(overlapPos);
     //System.err.println("overCigar=" + overCigar + " overRead=" + overRead + " overStart=" + overStart);
-    res[1] = mSimple.cigarToReads(overCigar, overRead, template, overStart, displayDots);
+    res[1] = mSimple.cigarToReads(overCigar, overRead, template, overStart, displayDots, displaySoftClip);
     return res;
   }
 }

@@ -41,6 +41,7 @@ class AviewParamsBuilder {
   protected boolean mPrintReadGroup = false;
   protected boolean mPrintMatePosition = false;
   protected boolean mUnflattenCgi = false;
+  protected boolean mShowSoftClippedBases = false;
   protected String[] mSamples = null;
 
   protected RegionRestriction mRegion = new RegionRestriction("", RegionRestriction.MISSING, RegionRestriction.MISSING);
@@ -198,4 +199,8 @@ class AviewParamsBuilder {
     return this;
   }
 
+  AviewParamsBuilder showSoftClippedBases(boolean val) {
+    mShowSoftClippedBases = val;
+    return this;
+  }
 }

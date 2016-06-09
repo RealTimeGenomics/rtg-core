@@ -56,6 +56,7 @@ class AviewParams {
   static final String PRINT_NAMES = "print-names";
   static final String PRINT_MATE_POSITION = "print-mate-position";
   static final String PRINT_REFERENCE_LINE = "print-reference-line";
+  static final String PRINT_SOFT_CLIPPED_BASES = "print-soft-clipped-bases";
 
   static final String NO_DOTS = "no-dots";
   static final String NO_COLOR = "no-color";
@@ -104,6 +105,7 @@ class AviewParams {
     flags.registerOptional(PRINT_MATE_POSITION, "print mate position").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(PRINT_MAPQ, "print alignment MAPQ values").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(PRINT_NAMES, "print read names").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(PRINT_SOFT_CLIPPED_BASES, "print soft clipped bases").setCategory(CommonFlagCategories.REPORTING);
 
     // Other display options
     flags.registerOptional(NO_DOTS, "display nucleotide instead of dots").setCategory(CommonFlagCategories.REPORTING);
@@ -180,6 +182,7 @@ class AviewParams {
   private final boolean mPrintMapQ;
   private final boolean mUnflattenCgi;
   private final boolean mColorBases;
+  private final boolean mShowSoftClippedBases;
   private final int mProjectTrackId;
 
   AviewParams(AviewParamsBuilder aviewParamsBuilder) {
@@ -214,6 +217,7 @@ class AviewParams {
     mPrintMapQ = aviewParamsBuilder.mPrintMapQ;
     mUnflattenCgi = aviewParamsBuilder.mUnflattenCgi;
     mProjectTrackId = aviewParamsBuilder.mProjectTrackId;
+    mShowSoftClippedBases = aviewParamsBuilder.mShowSoftClippedBases;
   }
 
  private static File[] getFiles(CFlags flags, String flagName) {
@@ -251,6 +255,7 @@ class AviewParams {
      .sortReadGroup(flags.isSet(SORT_READGROUP))
      .printReadGroup(flags.isSet(PRINT_READGROUP))
      .printMatePosition(flags.isSet(PRINT_MATE_POSITION))
+     .showSoftClippedBases(flags.isSet(PRINT_SOFT_CLIPPED_BASES))
      ;
    if (flags.isSet(MAX_IH_SCORE)) {
      builder.maxIhScore((Integer) flags.getValue(MAX_IH_SCORE));
@@ -429,6 +434,10 @@ class AviewParams {
 
   final int mappingTolerance() {
     return mMappingTolerance;
+  }
+
+  final boolean showSoftClippedBases() {
+    return mShowSoftClippedBases;
   }
 
   public boolean colorBases() {

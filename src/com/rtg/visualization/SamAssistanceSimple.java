@@ -24,13 +24,13 @@ public class SamAssistanceSimple implements SamAssistance {
   private static final String INVALID_CIGAR = "Invalid cigar: ";
 
   @Override
-  public String[] samToReads(final SAMRecord sam, final String template, byte[] templateBytes, final int readStart, final boolean displayDots) {
+  public String[] samToReads(final SAMRecord sam, final String template, byte[] templateBytes, final int readStart, final boolean displayDots, boolean displaySoftClip) {
     final String read = sam.getReadString();
     if ("*".equals(read)) {
       throw new IllegalStateException("No read sequence");
     }
     final String cigar = sam.getCigarString();
-    return new String[] {cigarToReads(cigar, read, template, readStart, displayDots)};
+    return new String[] {cigarToReads(cigar, read, template, readStart, displayDots, displaySoftClip)};
   }
 
   /**
@@ -39,9 +39,10 @@ public class SamAssistanceSimple implements SamAssistance {
    * @param template nucleotides of template
    * @param readStart where the read starts on the template (in screen co-ordinates).
    * @param displayDots if lines match display dot
+   * @param displaySoftClip if soft clipped bases should be displayed
    * @return return a string with a display of the current read.
    */
-  String cigarToReads(String cigar, String read, String template, int readStart, boolean displayDots) {
+  String cigarToReads(String cigar, String read, String template, int readStart, boolean displayDots, boolean displaySoftClip) {
     //System.err.println("cigar=" + cigar + " read=" + read + " template=" + template + " readStart=" + readStart);
     final StringBuilder sb = new StringBuilder();
     int n = 0;
@@ -123,6 +124,15 @@ public class SamAssistanceSimple implements SamAssistance {
               tPos++;
               break;
             case SamUtils.CIGAR_SOFT_CLIP:
+              if (displaySoftClip) {
+                if (readStart - n + rPos >= 0) {
+                  if (isFirstAction) {
+                    sb.append(StringUtils.getSpaceString(readStart - n + rPos));
+                    isFirstAction = false;
+                  }
+                  sb.append(Character.toLowerCase(read.charAt(rPos)));
+                }
+              }
               rPos++;
               //soft clip doesn't really count as a first action!
               break;

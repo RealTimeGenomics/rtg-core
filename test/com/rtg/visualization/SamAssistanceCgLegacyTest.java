@@ -83,7 +83,7 @@ public class SamAssistanceCgLegacyTest extends TestCase {
     final SamAssistance sama = new SamAssistanceCgLegacy();
     final SAMRecord sam = makeSamRecord(read, cigar);
     sam.setAlignmentStart(1);
-    final String[] actual = sama.samToReads(sam, template, template.getBytes(), readStart, displayDots);
+    final String[] actual = sama.samToReads(sam, template, template.getBytes(), readStart, displayDots, false);
     assertEquals(1, actual.length);
     assertEquals(expected, actual[0]);
   }
@@ -129,7 +129,7 @@ public class SamAssistanceCgLegacyTest extends TestCase {
   public void testCGNoOverlapLegacy() throws BadSuperCigarException {
     final SamAssistance sama = new SamAssistanceCgLegacy();
     final SAMRecord sam = makeSamRecord("acgtacgt".toUpperCase(DEFAULT), "7X");
-    final String[] actual = sama.samToReads(sam, TEMPLATE1, TEMPLATE1.getBytes(), 1, false);
+    final String[] actual = sama.samToReads(sam, TEMPLATE1, TEMPLATE1.getBytes(), 1, false, false);
     assertEquals(1, actual.length);
     assertEquals(" ACGTACG", actual[0]);
   }
@@ -139,7 +139,7 @@ public class SamAssistanceCgLegacyTest extends TestCase {
     final SamAssistance sama = new SamAssistanceCgLegacy();
     final SAMRecord sam = makeSamRecordLegacyFormatCG(read.replaceAll(" ", "").toUpperCase(DEFAULT), cigar, gs.toUpperCase(DEFAULT), gc.toUpperCase(DEFAULT));
 
-    final String[] actual = sama.samToReads(sam, TEMPLATE1, TEMPLATE1.getBytes(), 0, true);
+    final String[] actual = sama.samToReads(sam, TEMPLATE1, TEMPLATE1.getBytes(), 0, true, false);
     assertEquals(2, actual.length);
     assertEquals(line1, actual[0]);
     assertEquals(line2, actual[1]);
@@ -193,7 +193,7 @@ public class SamAssistanceCgLegacyTest extends TestCase {
     final SamAssistance sama = new SamAssistanceCgLegacy();
     final SAMRecord sam = makeSamRecordLegacyFormatCG(TEMPLATE1.replaceAll(" ", "").toUpperCase(DEFAULT), "12=", "gggg".toUpperCase(DEFAULT), "8S2G2S".toUpperCase(DEFAULT));
     final String template = "a__cgt_aaccggtt";
-    final String[] actual = sama.samToReads(sam, template, template.getBytes(), 0, true);
+    final String[] actual = sama.samToReads(sam, template, template.getBytes(), 0, true, false);
     assertEquals(2, actual.length);
     assertEquals(".__..._......", actual[0]);
     assertEquals("           ....", actual[1]);
@@ -202,7 +202,7 @@ public class SamAssistanceCgLegacyTest extends TestCase {
   private void checkOverlap2Legacy(final String template, final String exp0, final String exp1) throws BadSuperCigarException {
     final SamAssistance sama = new SamAssistanceCgLegacy();
     final SAMRecord sam = makeSamRecordLegacyFormatCG("acgtaacTgAtA".toUpperCase(DEFAULT), "7=1X1=1X1=1X", "ggCg".toUpperCase(DEFAULT), "8S2G2S".toUpperCase(DEFAULT));
-    final String[] actual = sama.samToReads(sam, template, template.getBytes(), 0, true);
+    final String[] actual = sama.samToReads(sam, template, template.getBytes(), 0, true, false);
     assertEquals(2, actual.length);
     assertEquals(exp0, actual[0]);
     assertEquals(exp1, actual[1]);
@@ -222,7 +222,7 @@ public class SamAssistanceCgLegacyTest extends TestCase {
   private void checkOverlap1Legacy(final String template, final String exp0, final String exp1) throws BadSuperCigarException {
     final SamAssistance sama = new SamAssistanceCgLegacy();
     final SAMRecord sam = makeSamRecordLegacyFormatCG("acgtaacTgAtA".toUpperCase(DEFAULT), "7=1X1=1X1=1X", "gC".toUpperCase(DEFAULT), "8S1G3S".toUpperCase(DEFAULT));
-    final String[] actual = sama.samToReads(sam, template, template.getBytes(), 0, true);
+    final String[] actual = sama.samToReads(sam, template, template.getBytes(), 0, true, false);
     assertEquals(2, actual.length);
     assertEquals(exp0, actual[0]);
     assertEquals(exp1, actual[1]);

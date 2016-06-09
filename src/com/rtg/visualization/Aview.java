@@ -182,15 +182,15 @@ public final class Aview extends AbstractCli {
         final String[] rawRead;
         try {
           if (mParams.unflattenCgi() && r.hasAttribute(SamUtils.CG_SUPER_CIGAR)) {
-            rawRead = mCgAssistant.samToReads(r, ref, mModel.template(), readStart, mParams.displayDots());
+            rawRead = mCgAssistant.samToReads(r, ref, mModel.template(), readStart, mParams.displayDots(), mParams.showSoftClippedBases());
           } else if (mParams.unflattenCgi() && r.hasAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS)) {
-            rawRead = mCgLegacyAssistant.samToReads(r, ref, mModel.template(), readStart, mParams.displayDots());
+            rawRead = mCgLegacyAssistant.samToReads(r, ref, mModel.template(), readStart, mParams.displayDots(), mParams.showSoftClippedBases());
           } else if (r.getReadUnmappedFlag()) {
             final int bases = Math.min(ref.length() - readStart, r.getReadLength());
             rawRead = new String[]{mDisplayHelper.getSpaces(readStart) + r.getReadString().substring(0, bases)};
           } else {
             // System.err.println(mModel.template());
-            rawRead = mSimpleAssistant.samToReads(r, ref, mModel.template(), readStart, mParams.displayDots());
+            rawRead = mSimpleAssistant.samToReads(r, ref, mModel.template(), readStart, mParams.displayDots(), mParams.showSoftClippedBases());
           }
         } catch (IllegalStateException e) {
           printOnScreen(mDisplayHelper.decorateBackground("WARNING: Cannot display alignment (" + e.getMessage() + "): " + r.getSAMString(), DisplayHelper.RED));
