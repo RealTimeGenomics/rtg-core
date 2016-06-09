@@ -148,7 +148,9 @@ public class EvidenceComplex extends Evidence {
       calc.parse(alignmentRecord.getCigar(), alignmentRecord.getStart());
       maxShift0 = calc.getMaxShift();
       newStart = calc.getStartPos();
-      softClipStartOffset = calc.getSoftClipStartOffset();
+      if (params.complexUseSoftClip()) {
+        softClipStartOffset = calc.getSoftClipStartOffset();
+      }
       if (!sIsIonTorrent) {
         printIonTorrentDevLog();
       }
@@ -156,15 +158,17 @@ public class EvidenceComplex extends Evidence {
       maxShift0 = MaxShiftUtils.calculateDefaultMaxShift(se.subsequenceLength());
       newStart = alignmentRecord.getStart();
 
-      final String cigar = match.alignmentRecord().getCigar();
-      for (int i = 0, n = 0; i < cigar.length(); i++) {
-        final char c = cigar.charAt(i);
-        if (Character.isDigit(c)) {
-          n = 10 * n + c - '0';
-        } else if (c == SamUtils.CIGAR_SOFT_CLIP) {
-          softClipStartOffset = n;
-        } else {
-          break;
+      if (params.complexUseSoftClip()) {
+        final String cigar = match.alignmentRecord().getCigar();
+        for (int i = 0, n = 0; i < cigar.length(); i++) {
+          final char c = cigar.charAt(i);
+          if (Character.isDigit(c)) {
+            n = 10 * n + c - '0';
+          } else if (c == SamUtils.CIGAR_SOFT_CLIP) {
+            softClipStartOffset = n;
+          } else {
+            break;
+          }
         }
       }
     }
