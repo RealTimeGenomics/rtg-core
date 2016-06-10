@@ -526,9 +526,11 @@ public final class Aview extends AbstractCli {
 
           // First output spaces to bring us to the correct start position
           int newRefPosition = record.getStart();
+          int refLength = record.getLength();
           if (record.getStart() < correctStart) { // If we are a region coming in from the left, truncate it at correctStart
             newRefPosition = correctStart;
             startChar = '*';
+            refLength = refLength - (correctStart - record.getStart());
           }
           final int numInserts = getInsertsBetween(refPosition - correctStart, newRefPosition - correctStart); // From one past ref position to new position
           final int numspaces = newRefPosition - refPosition + numInserts + residualInsertLength;
@@ -544,7 +546,6 @@ public final class Aview extends AbstractCli {
           // At this point the output line is complete to the position of the call. charPostition and refPosition are also correct.
 
 
-          final int refLength = record.getLength();
           newRefPosition = Math.min(refPosition + refLength, correctEnd);
           // Count displayed inserts between start and end of displayed call, including insert at the terminal coordinate
           final int displayedRefInserts = getInsertsBetween(refPosition - correctStart, Math.min(newRefPosition, correctEnd) - correctStart); // From one past ref position to new position. Also grab adjacent insert
