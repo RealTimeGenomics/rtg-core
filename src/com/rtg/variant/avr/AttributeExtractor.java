@@ -287,7 +287,7 @@ public class AttributeExtractor {
     for (final DerivedAnnotations derived : DerivedAnnotations.singleValueAnnotations()) {
       derivedRange.add(derived.toString());
     }
-    flags.registerOptional("derived-annotations", String.class, "STRING", "derived fields to use in model").setParameterRange(derivedRange).setRangeList(true).setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional("derived-annotations", String.class, "STRING", "derived fields to use in model").setParameterRange(derivedRange).enableCsv().setCategory(CommonFlagCategories.REPORTING);
     if (!flags.setFlags(args)) {
       return;
     }

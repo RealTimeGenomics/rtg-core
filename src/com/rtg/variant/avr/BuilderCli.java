@@ -24,10 +24,10 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
-import com.rtg.util.StringUtils;
 import com.rtg.util.ThreadAware;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
@@ -76,14 +76,14 @@ public class BuilderCli extends AbstractCli {
     mFlags.registerRequired('n', NEGATIVE_VCF_FLAG, File.class, "FILE", "VCF file containing negative training examples").setCategory(INPUT_OUTPUT).setMaxCount(Integer.MAX_VALUE);
 
     mFlags.registerOptional('s', SAMPLE_FLAG, String.class, "STRING", "the name of the sample to select (required when using multi-sample VCF files)").setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(INFO_ANNOTATIONS_FLAG, String.class, "STRING", "INFO fields to use in model").setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(FORMAT_ANNOTATIONS_FLAG, String.class, "STRING", "FORMAT fields to use in model").setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(INFO_ANNOTATIONS_FLAG, String.class, "STRING", "INFO fields to use in model").setCategory(SENSITIVITY_TUNING).setMaxCount(Integer.MAX_VALUE).enableCsv();
+    mFlags.registerOptional(FORMAT_ANNOTATIONS_FLAG, String.class, "STRING", "FORMAT fields to use in model").setCategory(SENSITIVITY_TUNING).setMaxCount(Integer.MAX_VALUE).enableCsv();
     mFlags.registerOptional(QUAL_ANNOTATION_FLAG, "if set, use QUAL annotation in model").setCategory(SENSITIVITY_TUNING);
     final List<String> derivedRange = new ArrayList<>();
     for (final DerivedAnnotations derived : DerivedAnnotations.singleValueAnnotations()) {
       derivedRange.add(derived.toString());
     }
-    mFlags.registerOptional(DERIVED_ANNOTATIONS_FLAG, String.class, "STRING", "derived fields to use in model").setParameterRange(derivedRange).setRangeList(true).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(DERIVED_ANNOTATIONS_FLAG, String.class, "STRING", "derived fields to use in model").setParameterRange(derivedRange).enableCsv().setCategory(SENSITIVITY_TUNING);
 
     mFlags.registerOptional(X_MODEL_PARAMS_FLAG, File.class, "PROPERTIES", "property file containing model parameters").setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(X_POS_WEIGHT, Double.class, "FLOAT", "weight to assign to positive training examples", 1.0).setCategory(SENSITIVITY_TUNING);
@@ -108,30 +108,9 @@ public class BuilderCli extends AbstractCli {
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
 
     final File outFile = (File) mFlags.getValue(OUTPUT_FLAG);
-    final String[] infoAttributes;
-    if (mFlags.isSet(INFO_ANNOTATIONS_FLAG)) {
-      infoAttributes = StringUtils.split((String) mFlags.getValue(INFO_ANNOTATIONS_FLAG), ',');
-    } else {
-      infoAttributes = new String[0];
-    }
-
-    final String[] formatAttributes;
-    if (mFlags.isSet(FORMAT_ANNOTATIONS_FLAG)) {
-      formatAttributes = StringUtils.split((String) mFlags.getValue(FORMAT_ANNOTATIONS_FLAG), ',');
-    } else {
-      formatAttributes = new String[0];
-    }
-
-    final String[] derivedAttributes;
-    if (mFlags.isSet(DERIVED_ANNOTATIONS_FLAG)) {
-      final List<String> derived = new ArrayList<>();
-      for (final Object field : mFlags.getValues(DERIVED_ANNOTATIONS_FLAG)) {
-        derived.add(field.toString());
-      }
-      derivedAttributes = derived.toArray(new String[derived.size()]);
-    } else {
-      derivedAttributes = new String[0];
-    }
+    final String[] infoAttributes = getStrings(INFO_ANNOTATIONS_FLAG);
+    final String[] formatAttributes = getStrings(FORMAT_ANNOTATIONS_FLAG);
+    final String[] derivedAttributes = getStrings(DERIVED_ANNOTATIONS_FLAG);
 
     final AbstractModelBuilder<?> builder;
     final ModelType modelType = (ModelType) mFlags.getValue(X_MODEL_TYPE_FLAG);
@@ -186,6 +165,17 @@ public class BuilderCli extends AbstractCli {
     }
 
     return 0;
+  }
+
+  private String[] getStrings(String flag) {
+    final String[] derivedAttributes;
+    if (mFlags.isSet(flag)) {
+      final List<String> derived = mFlags.getValues(flag).stream().map(Object::toString).collect(Collectors.toList());
+      derivedAttributes = derived.toArray(new String[derived.size()]);
+    } else {
+      derivedAttributes = new String[0];
+    }
+    return derivedAttributes;
   }
 
   private static int getSampleNumber(File vcf, String sampleName) throws IOException {

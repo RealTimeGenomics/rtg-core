@@ -327,9 +327,9 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
 
     //Extra INFO / FORMAT fields
     flags.registerOptional(X_INFO_ANNOTATION_FLAG, VcfInfoField.class, "string", "additional VCF INFO fields").setCategory(REPORTING)
-        .setParameterRange(new String[] {VcfInfoField.IC.name(), VcfInfoField.EP.name(), VcfInfoField.LAL.name(), VcfInfoField.QD.name(), VcfInfoField.NAA.name(), VcfInfoField.AN.name(), VcfInfoField.AC.name(), VcfInfoField.RTRM.name(), VcfInfoField.RSPLT.name(), VcfInfoField.SGP.name()}).setRangeList(true);
+        .setParameterRange(new String[] {VcfInfoField.IC.name(), VcfInfoField.EP.name(), VcfInfoField.LAL.name(), VcfInfoField.QD.name(), VcfInfoField.NAA.name(), VcfInfoField.AN.name(), VcfInfoField.AC.name(), VcfInfoField.RTRM.name(), VcfInfoField.RSPLT.name(), VcfInfoField.SGP.name()}).enableCsv();
     flags.registerOptional(X_FORMAT_ANNOTATION_FLAG, VcfFormatField.class, "string", "additional VCF FORMAT fields").setCategory(REPORTING)
-        .setParameterRange(new String[] {VcfFormatField.GQD.name(), VcfFormatField.ZY.name(), VcfFormatField.PD.name()}).setRangeList(true).setRangeList(true);
+        .setParameterRange(new String[] {VcfFormatField.GQD.name(), VcfFormatField.ZY.name(), VcfFormatField.PD.name()}).enableCsv();
 
     // TODO Decide if these should trigger output on ref calls(current) or filter out low VA* not ref calls(some one may ask for this at some stage).
     flags.registerOptional(X_MIN_VARIANT_ALLELE_COUNT, Integer.class, "int", "minimum variant allelic count to output a call", 0).setCategory(SENSITIVITY_TUNING);
