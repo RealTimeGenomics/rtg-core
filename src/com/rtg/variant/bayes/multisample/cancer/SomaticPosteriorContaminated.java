@@ -33,43 +33,21 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
   /** Select binomial distribution for tumor side. */
   public static final String BINOMIAL = "binomial";
   /** Select a band to allow. */
-  public static final String BAND = "band";
-  /** Select a band to allow. */
   public static final String MULTIPLE_BINOMIAL = "multiple-binomial";
   /** You can also pick anything else for no allele balance. */
 
-  private final double mLowerBand;
-  private final double mUpperBand;
-  private final double mU;
-  private final double mV;
   private final double[] mPivots;
 
   {
     final String abType = GlobalFlags.getStringValue(CoreGlobalFlags.TUMOR_ALLELE_BALANCE);
-    if (abType.startsWith(BAND)) {
+    if (abType.startsWith(MULTIPLE_BINOMIAL)) {
       final String[] parts = abType.split(",");
-      final double a = Double.parseDouble(parts[1]);
-      final double b = Double.parseDouble(parts[2]);
-      final double w = Double.parseDouble(parts[3]);
-      mLowerBand = a;
-      mUpperBand = b;
-      mU = Math.log(w / ((w - 1) * (b - a) + 1));
-      mV = Math.log(1.0 / ((w - 1) * (b - a) + 1));
-      mPivots = null;
-    } else {
-      mLowerBand = 0;
-      mUpperBand = 0;
-      mU = 0;
-      mV = 0;
-      if (abType.startsWith(MULTIPLE_BINOMIAL)) {
-        final String[] parts = abType.split(",");
-        mPivots = new double[parts.length - 1];
-        for (int k = 1; k < parts.length; k++) {
-          mPivots[k - 1] = Double.parseDouble(parts[k]);
-        }
-      } else {
-        mPivots = null;
+      mPivots = new double[parts.length - 1];
+      for (int k = 1; k < parts.length; k++) {
+        mPivots[k - 1] = Double.parseDouble(parts[k]);
       }
+    } else {
+      mPivots = null;
     }
   }
 
@@ -158,35 +136,6 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
     return lnP;
   }
 
-  private double alleleBalanceBandLn(final Hypotheses<?> hyp, final Statistics<?> statistics, final int normalHyp, final int cancerHyp) {
-    final Code code = hyp.code();
-    final int na = code.a(normalHyp);
-    final int nb = code.bc(normalHyp);
-    final int ca = code.a(cancerHyp);
-    final int cb = code.bc(cancerHyp);
-//    final int ref = hyp.reference();
-//    final int ra = code.a(ref);
-//    final int rb = code.bc(ref);
-    final AlleleStatistics<?> counts = statistics.counts();
-
-    final double normalCount = counts.count(na) - counts.error(na) + counts.count(nb) - counts.error(nb);
-    double somaticCount = 0;
-    boolean isSomaticHyp = false;
-    if (ca != na && ca != nb) {
-      somaticCount += counts.count(ca) - counts.error(ca);
-      isSomaticHyp = true;
-    }
-    if (cb != na && cb != nb) {
-      somaticCount += counts.count(cb) - counts.error(cb);
-      isSomaticHyp = true;
-    }
-    if (!isSomaticHyp) {
-      return 0; // Not a somatic hypothesis
-    }
-    final double somaticFraction = (somaticCount + 0.5) / (normalCount + somaticCount + 1.0); // Laplace
-    return somaticFraction >= mLowerBand && somaticFraction < mUpperBand ? mU : mV;
-  }
-
   /**
    * @param qa The Q matrix of cancer mutation probabilities.
    * @param normal model.
@@ -218,8 +167,6 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
             t += alleleBalanceDirichletProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
           } else if (BINOMIAL.equals(abType)) {
             t += alleleBalanceMultinomialProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
-          } else if (abType.startsWith(BAND)) {
-            t += alleleBalanceBandLn(normal.hypotheses(), cancer.statistics(), i, j);
           } else if (abType.startsWith(MULTIPLE_BINOMIAL)) {
             t += alleleBalanceMultinomialPivotsLn(normal.hypotheses(), cancer.statistics(), i, j);
           }
