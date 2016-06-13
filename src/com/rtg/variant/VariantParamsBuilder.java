@@ -28,6 +28,7 @@ import com.rtg.sam.SingleMappedParams.SingleMappedParamsBuilder;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.MathUtils;
 import com.rtg.util.intervals.ReferenceRanges;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.variant.bayes.AlleleBalanceProbability;
 import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.format.VcfFormatField;
@@ -107,6 +108,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   EnumSet<VcfFormatField> mFormatAnnotations = EnumSet.noneOf(VcfFormatField.class);
   SomaticParams mSomaticParams = new SomaticParamsBuilder().create();
   AlleleBalanceProbability mAlleleBalance = new NoAlleleBalance();
+  RegionRestriction mForceComplexRegion;
 
   @Override
   protected VariantParamsBuilder self() {
@@ -696,6 +698,24 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
    */
   public VariantParamsBuilder complexUseSoftClip(boolean val) {
     mComplexUseSoftClip = val;
+    return self();
+  }
+
+  /**
+   * @param r region which will be forced to be a complex region during calling
+   * @return this builder, so calls can be chained
+   */
+  public VariantParamsBuilder forceComplexRegion(RegionRestriction r) {
+    mForceComplexRegion = r;
+    return self();
+  }
+
+  /**
+   * @param regionString region which will be forced to be a complex region during calling. see {@link RegionRestriction#RegionRestriction(String)}
+   * @return this builder, so calls can be chained
+   */
+  public VariantParamsBuilder forceComplexRegion(String regionString) {
+    mForceComplexRegion = new RegionRestriction(regionString);
     return self();
   }
 }

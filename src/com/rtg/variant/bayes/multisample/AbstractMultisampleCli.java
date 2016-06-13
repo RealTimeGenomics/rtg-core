@@ -131,6 +131,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String X_EXPECTED_ALLELE_BALANCE = "Xexpected-allele-balance";
   private static final String X_EXPAND_COMPLEX_READ_QUERIES = "Xexpand-complex-read-queries";
   private static final String X_COMPLEX_USE_SOFT_CLIP = "Xcomplex-use-soft-clip";
+  private static final String X_FORCE_COMPLEX_REGION = "Xforce-complex-region";
 
   /**
    * validate common flags
@@ -338,6 +339,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(X_EXPECTED_ALLELE_BALANCE, Double.class, "float", "expected allele balance", 0.5).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_EXPAND_COMPLEX_READ_QUERIES, Boolean.class, CommonFlags.BOOL, "expand queries for reads by one base either side of a complex region", false).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_COMPLEX_USE_SOFT_CLIP, Boolean.class, CommonFlags.BOOL, "use soft clipped bases in evidence for complex calls", true).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_FORCE_COMPLEX_REGION, String.class, CommonFlags.STRING, "Force a complex region over specified range").setCategory(UTILITY);
   }
 
   /**
@@ -428,6 +430,9 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
 
     builder.expandComplexReadQueries((Boolean) mFlags.getValue(X_EXPAND_COMPLEX_READ_QUERIES));
     builder.complexUseSoftClip((Boolean) mFlags.getValue(X_COMPLEX_USE_SOFT_CLIP));
+    if (mFlags.isSet(X_FORCE_COMPLEX_REGION)) {
+      builder.forceComplexRegion((String) mFlags.getValue(X_FORCE_COMPLEX_REGION));
+    }
 
     // From here on pretty much needs the genome reader to be loaded
     final File genomeFile = (File) mFlags.getValue(TEMPLATE_FLAG);

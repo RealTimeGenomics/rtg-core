@@ -14,6 +14,7 @@ package com.rtg.variant.bayes.multisample;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -417,9 +418,18 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
       public Result run() throws IOException {
         final int start = id().time() * mInfo.chunkSize() + mInfo.start();
         final int end = Math.min(start + mInfo.chunkSize(), mInfo.end());
-        final List<Variant> calls = new ArrayList<>();
+        List<Variant> calls = new ArrayList<>();
         final int maxReadLen = processNtPositions(calls, mJointCaller, mInfo, mRefNts, mBuffer, start, end);
         final boolean simpleRepeats = mParams.simpleRepeatExtension() && !mParams.ionTorrent();
+        final RegionRestriction forcedComplexRegion = mParams.forceComplexRegion();
+        if (forcedComplexRegion != null) {
+          if (forcedComplexRegion.getSequenceName().equals(mRefName) && start <= forcedComplexRegion.getStart() && end > forcedComplexRegion.getStart()) {
+            final Variant v = new Variant(new VariantLocus(mRefName, forcedComplexRegion.getStart(), forcedComplexRegion.getEnd()));
+            v.setInteresting();
+            v.setIndel(1); //forces complex
+            calls = OutputUtils.merge(calls, Collections.singletonList(v));
+          }
+        }
         final Complexities cx = new Complexities(calls, mRefName, start, end, mParams.interestingSeparation(), mParams.hyperComplexLength(), mRefNts, simpleRepeats, mConfig.getSiteSpecificPriors());
         return new Result(cx, maxReadLen);
       }

@@ -31,6 +31,7 @@ import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.Integrity;
 import com.rtg.util.intervals.ReferenceRanges;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.test.params.ParamsNoField;
 import com.rtg.variant.bayes.AlleleBalanceProbability;
 import com.rtg.variant.format.VcfFormatField;
@@ -111,6 +112,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final AlleleBalanceProbability mAlleleBalance;
   private final boolean mExpandComplexReadQueries;
   private final boolean mComplexUseSoftClip;
+  private final RegionRestriction mForceComplexRegion;
 
   /**
    * @param builder the builder object.
@@ -173,6 +175,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mAlleleBalance = builder.mAlleleBalance;
     mExpandComplexReadQueries = builder.mExpandComplexReadQueries;
     mComplexUseSoftClip = builder.mComplexUseSoftClip;
+    mForceComplexRegion = builder.mForceComplexRegion;
   }
 
   @Override
@@ -639,6 +642,13 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   }
 
   /**
+   * @return Region which will be forced to be a complex region during calling
+   */
+  public RegionRestriction forceComplexRegion() {
+    return mForceComplexRegion;
+  }
+
+  /**
    * Create a builder with all the values set to those of this object.
    * @return a builder
    */
@@ -708,6 +718,8 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     .minVariantAlleleFraction(mMinVariantAlleleFraction)
     .somaticParams(somaticParams())
     .alleleBalance(alleleBalance())
+    .complexUseSoftClip(complexUseSoftClip())
+    .forceComplexRegion(forceComplexRegion())
     ;
   }
 
