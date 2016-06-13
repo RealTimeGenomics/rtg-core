@@ -90,7 +90,7 @@ final class ComplexCaller {
 
         final Iterator<VariantAlignmentRecord> it;
         if (mParams.expandComplexReadQueries()) {
-          it = tribble.recordsOverlap(Math.max(0, startOfRegion - 1), endOfRegion + 1);
+          it = tribble.recordsOverlap(Math.max(tribble.flushedTo(), startOfRegion - 1), endOfRegion + 1);
         } else {
           it = tribble.recordsOverlap(startOfRegion, endOfRegion);
         }
