@@ -103,6 +103,7 @@ public class CircularBufferMultifileSinglePassReaderWindow<T extends ReaderRecor
    * Returns the position where data has actually been flush to.
    * @return the position flushed to.
    */
+  @Override
   public int flushedTo() {
     return mFlushedTo;
   }

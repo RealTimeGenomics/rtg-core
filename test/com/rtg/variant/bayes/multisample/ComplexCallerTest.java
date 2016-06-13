@@ -162,6 +162,9 @@ public class ComplexCallerTest extends TestCase {
     public void flush(int start, int end) {
       // do nothing
     }
+    public int flushedTo() {
+      return 0;
+    }
   }
 
    private class MockComplexities extends Complexities {
