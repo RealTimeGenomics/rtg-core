@@ -14,9 +14,9 @@ package com.rtg.zooma;
 import java.io.File;
 import java.io.IOException;
 
-import com.rtg.util.test.RandomDna;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
+import com.rtg.util.test.RandomDna;
 
 import junit.framework.TestCase;
 
@@ -37,7 +37,7 @@ public class NativeZoomaTest extends TestCase {
 
       }
     } else {
-      System.err.println("cannot run zooma test");
+      System.err.println("skipping zooma test (no native lib)");
     }
 
   }
