@@ -449,7 +449,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
   }
 
 
-  private static class CoverageReaderRecordPopulator implements Populator<CoverageReaderRecord> {
+  private static final class CoverageReaderRecordPopulator implements Populator<CoverageReaderRecord> {
     final boolean mIncludeDeletions;
     private CoverageReaderRecordPopulator(boolean includeDeletions) {
       mIncludeDeletions = includeDeletions;
