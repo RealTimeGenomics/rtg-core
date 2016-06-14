@@ -41,7 +41,7 @@ public class ZoomaNativeBuildIndexCliTest extends AbstractCliTest {
       }
     } else {
       // fail(); //
-      System.err.println("cannot run zbuild test");
+      System.err.println("skipping zbuild test (no native lib)");
     }
   }
 }

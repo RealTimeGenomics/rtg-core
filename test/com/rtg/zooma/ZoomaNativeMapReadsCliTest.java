@@ -121,7 +121,7 @@ public class ZoomaNativeMapReadsCliTest extends AbstractCliTest {
       }
     } else {
       //fail(); //
-      System.err.println("cannot run zmap test");
+      System.err.println("skipping zmap test (no native lib)");
     }
   }
 }

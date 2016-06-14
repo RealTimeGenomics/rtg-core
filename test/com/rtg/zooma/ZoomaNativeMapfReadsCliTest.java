@@ -60,7 +60,7 @@ public class ZoomaNativeMapfReadsCliTest extends AbstractCliTest {
       }
     } else {
       //fail(); //
-      System.err.println("cannot run zmapf test");
+      System.err.println("skipping zmapf test (no native lib)");
     }
   }
 }
