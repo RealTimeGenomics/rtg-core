@@ -34,6 +34,7 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
 import com.rtg.variant.util.arithmetic.LogPossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
+import com.rtg.vcf.DefaultVcfWriter;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.VcfWriter;
@@ -299,7 +300,7 @@ public class MetaSnpCli extends LoggedCli {
     }
     header.addInfoField(LIKE, MetaType.FLOAT, VcfNumber.DOT, "phred scaled likelihood of genotype assignments");
     header.addInfoField(SYNDROME, MetaType.STRING, VcfNumber.DOT, "packed representation of strain assignment");
-    try (final VcfWriter writer = new VcfWriter(header, out)) {
+    try (final VcfWriter writer = new DefaultVcfWriter(header, out)) {
       for (int i = 0; i < lines.size(); i++) {
         final MetaSnpLine line = lines.get(i);
         final int[] assignments = res.mAssignments.get(i).mCalls;

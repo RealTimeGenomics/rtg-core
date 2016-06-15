@@ -77,6 +77,7 @@ import com.rtg.variant.bayes.multisample.multithread.MultisampleStatistics;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.util.VariantUtils;
+import com.rtg.vcf.DefaultVcfWriter;
 import com.rtg.vcf.VariantStatistics;
 import com.rtg.vcf.VcfAnnotator;
 import com.rtg.vcf.VcfFilter;
@@ -759,7 +760,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     for (final VcfFilter filter : mFilters) {
       filter.setHeader(mVcfHeader);
     }
-    mOut = new VcfWriter(mVcfHeader, mParams.vcfStream());
+    mOut = new DefaultVcfWriter(mVcfHeader, mParams.vcfStream());
     mBedFilterRegions = (mParams.regionsFilterBedFile() == null) ? null : BedUtils.regions(mParams.regionsFilterBedFile());
 
     Diagnostic.developerLog("Chunk size is " + mParams.chunkSize());
