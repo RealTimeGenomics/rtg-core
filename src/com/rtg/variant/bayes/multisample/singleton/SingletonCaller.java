@@ -78,20 +78,20 @@ public class SingletonCaller implements MultisampleJointCaller {
     final boolean triggersVa = va != -1;
 
     final boolean changed = hyp.reference() != best.hypothesis();
-    final boolean interesting = changed || best.posterior() < mInterestingThreshold || triggersVa;
+    final boolean interesting = changed || best.posterior() < mInterestingThreshold;
 
-    if (!interesting && mParams.callLevel() != VariantOutputLevel.ALL) {
+    if (!(interesting || triggersVa || mParams.callLevel() == VariantOutputLevel.ALL)) {
       return null;
     }
 
     final String altName = hyp.name(best.hypothesis());
     final VariantSample sample = new VariantSample(hyp.haploid() ? Ploidy.HAPLOID : Ploidy.DIPLOID, altName, best.hypothesis() == hyp.reference(), best.genotypeMeasure(), VariantSample.DeNovoStatus.UNSPECIFIED, null);
+    if (triggersVa) {
+      sample.setVariantAllele(description.name(va));
+    }
     final Variant v = new Variant(locus, sample);
     if (interesting) {
       v.setInteresting();
-      if (va != -1) {
-        sample.setVariantAllele(description.name(va));
-      }
     }
     if (hyp.reference() == Hypotheses.NO_HYPOTHESIS) {
       if (Utils.totalCoverage(models) < Utils.MIN_DEPTH_FOR_N_CALL) {

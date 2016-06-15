@@ -194,17 +194,11 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     final HypothesesPrior<?> hypotheses = normalHypotheses.get(modelNormal);
     final Code code = hypotheses.code();
 
-    // Boring keeps track of any call which is not-interesting to the cancer mode.
-    // Such calls must never have isInteresting set to true when they are returned
-    // so that later complex calling does not muck with them.
-
-    boolean boring = false;
-
     final AbstractSomaticPosterior posterior = makePosterior(modelNormal, modelCancer, hypotheses, getSomaticPrior(templateName, position, endPosition));
-    final boolean sameCall = posterior.isSameCall();
     final boolean isSomatic;
     final int bestNormal = posterior.bestNormal();
     final int bestCancer = posterior.bestCancer();
+    final boolean sameCall = posterior.isSameCall() || (bestNormal == bestCancer);
     // Simple LOH test based on ploidy of results alone, could be done with Bayesian calculation later
     final double loh = loh(hypotheses, bestNormal, bestCancer);
     final Ploidy normalPloidy = hypotheses.haploid() ? Ploidy.HAPLOID : Ploidy.DIPLOID;
@@ -217,16 +211,17 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     final Description description = ac.getDescription();
     final int va = mVariantAlleleTrigger.getVariantAllele(ac, description, refAllele);
 
-    final boolean interesting = va != -1;
-    if (sameCall || bestNormal == bestCancer) {
-      // Call is same for both samples.  It still could be a germline call.
-      if (va == -1 && hypotheses.reference() == bestNormal && ratio >= mIdentityInterestingThreshold) {
-        if (mParams.callLevel() != VariantOutputLevel.ALL) {
-          // Call was same for both samples and equal to the reference, this is really boring
-          // only retain it if ALL mode is active
-          return null;
-        }
-        boring = true;
+    final boolean triggersVa = va != -1;
+    if ((sameCall && hypotheses.reference() == bestNormal && ratio >= mIdentityInterestingThreshold)  // Call was same for both samples and equal to the reference
+      && !(triggersVa || (mParams.callLevel() == VariantOutputLevel.ALL))) {
+      // We don't need to output any record here.
+      return null;
+    }
+
+    boolean interesting = true;
+    if (sameCall) {
+      if (hypotheses.reference() == bestNormal && ratio >= mIdentityInterestingThreshold) {
+        interesting = false;
       }
       isSomatic = false;
     } else if (!doLoh && loh > 0) {
@@ -246,18 +241,17 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     } else {
       cancerSample = setCallValues(posterior.cancerMeasure(), bestCancer, hypotheses, modelCancer, mParams, normalPloidy, VariantSample.DeNovoStatus.NOT_DE_NOVO, null);
     }
-    if (interesting) {
+    if (triggersVa) {
       cancerSample.setVariantAllele(description.name(va));
     }
     final VariantLocus locus = new VariantLocus(templateName, position, endPosition, refAllele, VariantUtils.getPreviousRefNt(ref, position));
     final Variant v = new Variant(locus, normalSample, cancerSample);
     if (modelNormal.statistics().overCoverage(mParams, templateName) || modelCancer.statistics().overCoverage(mParams, templateName)) {
       v.addFilter(Variant.VariantFilter.COVERAGE);
-      boring = true;
     } else if (modelNormal.statistics().ambiguous(mParams) || modelCancer.statistics().ambiguous(mParams)) {
       v.addFilter(Variant.VariantFilter.AMBIGUITY);
     }
-    if (!boring || interesting) {
+    if (interesting) {
       v.setInteresting();
     }
     if (doLoh) {
