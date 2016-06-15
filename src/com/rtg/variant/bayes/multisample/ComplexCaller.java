@@ -133,6 +133,9 @@ final class ComplexCaller {
         } else {
           variant = variant0;
         }
+        if (variant == null || !variant.isInteresting()) {
+          region.setType(RegionType.COMPLEX_NO_VARIANT);
+        }
         if (variant != null) {
           variant.setComplexScored();
           if (variant.hasCallNames()) {
@@ -140,8 +143,6 @@ final class ComplexCaller {
           } else {
             copyFailedCalls(complexities, calls, startOfRegion, endOfRegion, mParams); //mark the calls as hyper complex and copy over the originals in complex call list
           }
-        } else {
-          region.setType(RegionType.COMPLEX_NO_VARIANT);
         }
       }
     }
