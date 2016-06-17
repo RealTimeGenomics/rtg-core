@@ -109,7 +109,7 @@ public class RecalibrateCli extends AbstractCli {
     mFlags.registerOptional(EXCLUDE_BED_FLAG, File.class, "FILE", "BED containing regions to exclude from calibration").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
 
     final Flag covariates = mFlags.registerOptional('c', COVARIATE_FLAG, CovariateEnum.class, "COVARIATE", "covariates to recalibrate on").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    covariates.setMaxCount(Integer.MAX_VALUE);
+    covariates.setMaxCount(Integer.MAX_VALUE).enableCsv();
     mFlags.addRequiredSet(inFlag);
     mFlags.addRequiredSet(listFlag);
   }
