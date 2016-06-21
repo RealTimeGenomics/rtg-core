@@ -12,6 +12,8 @@
 
 package com.rtg.variant.format;
 
+import static com.rtg.variant.format.VcfFormatField.VADER;
+
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -20,18 +22,25 @@ import java.util.Set;
 
 import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
 import com.rtg.calibrate.Calibrator;
+import com.rtg.calibrate.Covariate;
 import com.rtg.calibrate.CovariateEnum;
+import com.rtg.calibrate.CovariateReadGroup;
+import com.rtg.calibrate.CovariateSequence;
 import com.rtg.reference.Ploidy;
 import com.rtg.util.TestUtils;
 import com.rtg.util.intervals.ReferenceRegions;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.Variant;
 import com.rtg.variant.Variant.VariantFilter;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.VariantSample;
+import com.rtg.variant.bayes.AlleleStatisticsInt;
 import com.rtg.variant.bayes.ArrayGenotypeMeasure;
 import com.rtg.variant.bayes.GenotypeMeasure;
+import com.rtg.variant.bayes.MockGenotypeMeasure;
 import com.rtg.variant.bayes.snp.DescriptionSnp;
 import com.rtg.variant.bayes.snp.HypothesesSnp;
 import com.rtg.variant.bayes.snp.StatisticsSnp;
@@ -279,5 +288,44 @@ public class VcfFormatFieldTest extends TestCase {
     assertEquals("ref\t3\t.\tA\tC,GC\t.\t.\t.", rec.toString());
     assertEquals(3, VcfFormatField.addAltAllele("", "A", 'G', rec));
     assertEquals("ref\t3\t.\tA\tC,GC,G\t.\t.\t.", rec.toString());
+  }
+
+  public void testVader() {
+    final VcfRecord record = new VcfRecord("foo", 1, "C");
+    record.addAltCall("T");
+    record.addFormatAndSample("GT", "0/1");
+    final Calibrator calibrator = new Calibrator(new Covariate[]{new CovariateSequence(), new CovariateReadGroup()}, new ReferenceRegions());
+    final CalibratedPerSequenceExpectedCoverage expectedCoverage = new CalibratedPerSequenceExpectedCoverage(calibrator, new HashMap<>(), new HashMap<>(), new RegionRestriction("foo:1+1000")){
+      @Override
+      public double expectedCoverage(String sequenceName, String sampleName) {
+        return 20;
+      }
+    };
+
+    final VariantParams params = new VariantParamsBuilder().expectedCoverage(expectedCoverage).create();
+    final VariantSample sample = new VariantSample(Ploidy.DIPLOID, "Sample", false, new MockGenotypeMeasure(0.1), VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0);
+    // Override methods because it's easier than attempting to increment...
+    final StatisticsSnp stats = new StatisticsSnp(DescriptionSnp.SINGLETON) {
+      @Override
+      public AlleleStatisticsInt counts() {
+        return new AlleleStatisticsInt(DescriptionSnp.SINGLETON) {
+          @Override
+          public double count(int index) {
+            return 60;
+          }
+
+          @Override
+          public double error(int index) {
+            return 10;
+          }
+        };
+      }
+    };
+    sample.setStats(stats);
+    final Variant call = new Variant(new VariantLocus("foo", 1, 2), 0, sample);
+    final String sampleName = "Sample";
+    assertTrue(VADER.hasValue(record, call, sample, sampleName, params));
+    VADER.updateRecord(record, call, new String[] {"Sample"}, params, false);
+    assertEquals("2.500", record.getFormatAndSample().get("VADER").get(0));
   }
 }

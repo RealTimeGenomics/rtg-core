@@ -650,6 +650,29 @@ public enum VcfFormatField {
       return true;
     }
   },
+  /** Allelic Depth, error-corrected */
+  VADER {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Allelic depths for the ref and alt alleles in the order listed, error corrected");
+    }
+    @Override
+    public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      final String name = sample.getVariantAllele();
+      final AlleleStatistics<?> counts = sample.getStats().counts();
+      final int altDescriptionCode = counts.getDescription().indexOf(name);
+      final double ade = counts.count(altDescriptionCode) - counts.error(altDescriptionCode);
+      final double expected = params.expectedCoverage().expectedCoverage(call.getLocus().getSequenceName(), sampleName);
+      final double vader = ade / expected;
+      rec.addFormatAndSample(name(), Utils.realFormat(vader, 3));
+    }
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return sample != null && sample.getStats() != null
+        && params.expectedCoverage().expectedCoverage(call.getLocus().getSequenceName(), sampleName) > 0
+        && sample.getVariantAllele() != null;
+    }
+  },
   ;
 
   private static final VcfAnnotator GQD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.GQD);
