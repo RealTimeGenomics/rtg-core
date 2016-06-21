@@ -296,7 +296,7 @@ public class VcfFormatFieldTest extends TestCase {
     record.addAltCall("T");
     record.addFormatAndSample("GT", "0/1");
     final Calibrator calibrator = new Calibrator(new Covariate[]{new CovariateSequence(), new CovariateReadGroup()}, new ReferenceRegions());
-    final CalibratedPerSequenceExpectedCoverage expectedCoverage = new CalibratedPerSequenceExpectedCoverage(calibrator, new HashMap<>(), new HashMap<>(), new RegionRestriction("foo:1+1000")){
+    final CalibratedPerSequenceExpectedCoverage expectedCoverage = new CalibratedPerSequenceExpectedCoverage(calibrator, new HashMap<>(), new HashMap<>(), new RegionRestriction("foo:1+1000")) {
       @Override
       public double expectedCoverage(String sequenceName, String sampleName) {
         return 20;
