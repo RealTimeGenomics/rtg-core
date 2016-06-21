@@ -654,7 +654,7 @@ public enum VcfFormatField {
   VADER {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Allelic depths for the ref and alt alleles in the order listed, error corrected");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Error corrected allelic depth of alt allele as a ration of the expected coverage");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
@@ -669,6 +669,7 @@ public enum VcfFormatField {
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
       return sample != null && sample.getStats() != null
+        && params.expectedCoverage() != null
         && params.expectedCoverage().expectedCoverage(call.getLocus().getSequenceName(), sampleName) > 0
         && sample.getVariantAllele() != null;
     }

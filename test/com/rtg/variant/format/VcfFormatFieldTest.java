@@ -55,7 +55,7 @@ import junit.framework.TestCase;
 public class VcfFormatFieldTest extends TestCase {
 
   public void testEnum() {
-    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, COC, COF, VAF]");
+    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, COC, COF, VAF, VADER]");
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.AD)) {
       assertFalse(field.isVcfAnnotator());
     }
@@ -99,6 +99,7 @@ public class VcfFormatFieldTest extends TestCase {
       + "##FORMAT=<ID=COC,Number=1,Type=Integer,Description=\"Contrary observation count\">\n"
       + "##FORMAT=<ID=COF,Number=1,Type=Float,Description=\"Contrary observation fraction\">\n"
       + "##FORMAT=<ID=VAF,Number=1,Type=Float,Description=\"Variant Allelic Fraction\">\n"
+      + "##FORMAT=<ID=VADER,Number=1,Type=Float,Description=\"Error corrected allelic depth of alt allele as a ration of the expected coverage\">\n"
       + "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n";
 
     assertEquals(expected, header.toString());
@@ -304,6 +305,7 @@ public class VcfFormatFieldTest extends TestCase {
 
     final VariantParams params = new VariantParamsBuilder().expectedCoverage(expectedCoverage).create();
     final VariantSample sample = new VariantSample(Ploidy.DIPLOID, "Sample", false, new MockGenotypeMeasure(0.1), VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0);
+    sample.setVariantAllele("A");
     // Override methods because it's easier than attempting to increment...
     final StatisticsSnp stats = new StatisticsSnp(DescriptionSnp.SINGLETON) {
       @Override
