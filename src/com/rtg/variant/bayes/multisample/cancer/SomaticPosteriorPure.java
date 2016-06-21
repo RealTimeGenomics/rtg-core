@@ -30,7 +30,7 @@ class SomaticPosteriorPure extends AbstractSomaticPosterior {
    * @param psi probability of seeing contrary evidence in the derived
    */
   SomaticPosteriorPure(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi) {
-    super(hypotheses, psi, psi);
+    super(hypotheses, phi, psi);
     //System.err.println("normal " + normal);
     //System.err.println("cancer " + cancer);
     for (int i = 0; i < mLength; i++) {
