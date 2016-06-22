@@ -12,7 +12,6 @@
 
 package com.rtg.variant;
 
-import com.rtg.util.StringUtils;
 import com.rtg.util.intervals.ReferenceRanges;
 
 /**
@@ -24,12 +23,14 @@ public class SomaticParams {
   private final boolean mIncludeGainOfReference;
   private final ReferenceRanges<Double> mSiteSpecificSomaticPriors;
   private final double mLohPrior;
+  private final boolean mSomaticAlleleBalance;
 
   /**
    * @param builder the builder object.
    */
   SomaticParams(SomaticParamsBuilder builder) {
     mSomaticRate = builder.mSomaticRate;
+    mSomaticAlleleBalance = builder.mSomaticAlleleBalance;
     mIncludeGermlineVariants = builder.mIncludeGermlineVariants;
     mIncludeGainOfReference = builder.mIncludeGainOfReference;
     mSiteSpecificSomaticPriors = builder.mSiteSpecificSomaticPriors;
@@ -41,6 +42,13 @@ public class SomaticParams {
    */
   public double somaticRate() {
     return mSomaticRate;
+  }
+
+  /**
+   * @return true if somatic allele balance computation should be employed
+   */
+  public boolean somaticAlleleBalance() {
+    return mSomaticAlleleBalance;
   }
 
   /**
@@ -73,12 +81,14 @@ public class SomaticParams {
 
   @Override
   public String toString() {
-    final StringBuilder sb = new StringBuilder(super.toString());
-    sb.append("VariantParams")
-      .append(" somaticRate=").append(somaticRate())
-      .append(" includeGermlineVariants=").append(includeGermlineVariants())
-      .append(" includeGainOfReference=").append(includeGainOfReference())
-      .append(" lohPrior=").append(lohPrior()).append(StringUtils.LS);
+    final StringBuilder sb = new StringBuilder();
+    sb.append("SomaticParams")
+      .append(" somatic_rate=").append(somaticRate())
+      .append(" somatic_allele_balance=").append(somaticAlleleBalance())
+      .append(" somatic_ssp=").append(siteSpecificSomaticPriors() == null ? "none" : "supplied")
+      .append(" include_germline_variants=").append(includeGermlineVariants())
+      .append(" include_gain_of_reference=").append(includeGainOfReference())
+      .append(" loh_prior=").append(lohPrior());
     return sb.toString();
   }
 }

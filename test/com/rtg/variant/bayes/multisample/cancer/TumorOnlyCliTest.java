@@ -29,21 +29,17 @@ import com.rtg.util.test.FileHelper;
  */
 public class TumorOnlyCliTest extends AbstractCliTest {
 
-  private static final String REQUIRED_MESSAGE = "both --derived and --contamination must be specified";
-
   @Override
   protected AbstractCli getCli() {
     return new TumorOnlyCli();
   }
 
-  private static final String EXP_F1 = "Error: You must provide values for -o DIR -t SDF" + LS;
-
   public void testErrorF1() {
-    assertTrue(checkHandleFlagsErr().contains(EXP_F1));
+    assertTrue(checkHandleFlagsErr().contains("Error: You must provide values for -o DIR --sample STRING -t SDF" + LS));
   }
 
   public void testInitParams() {
-    checkHelp("tumoronly [OPTION]... -o DIR -t SDF --contamination FLOAT --derived STRING FILE+",
+    checkHelp("tumoronly [OPTION]... -o DIR --sample STRING -t SDF FILE+",
       "threshold for ambiguity",
       "include gain of reference somatic calls in output VCF",
       "estimated fraction of contamination"
@@ -59,41 +55,29 @@ public class TumorOnlyCliTest extends AbstractCliTest {
       final File template = new File(tmpDir, "template");
       ReaderTestUtils.getDNADir(">g1\nacgtacgtacgtacgtacgt", template);
       final File outDir = new File(tmpDir, "out");
-      String err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", outDir.getPath());
+      String err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", outDir.getPath(), "--sample", "test");
       assertTrue(err, err.contains("Error: The specified SDF, \"" + outDir.getPath() + "\", does not exist."));
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), in.getPath());
-      assertTrue(err, err.contains(REQUIRED_MESSAGE));
+      assertTrue(err, err.contains("--sample"));
 
-      err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--derived", "blah", in.getPath());
-      assertTrue(err, err.contains(REQUIRED_MESSAGE));
-
-      err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--contamination", "0.5", in.getPath());
-      assertTrue(err, err.contains(REQUIRED_MESSAGE));
-
-      err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--sex", "male", "--derived", "bar", "--contamination", "0.5", in.getPath());
+      err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--sex", "male", "--sample", "bar", in.getPath());
       assertTrue(err, err.contains("Sex-specific processing was specified but " + template.getPath() + " is missing a 'reference.txt'"));
 
-      err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--somatic", "1", "--derived", "bar", "--contamination", "0.5", in.getPath());
-      assertTrue(err, err.contains("--somatic should be a probability 0<s<1"));
+      err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--somatic", "1", "--sample", "bar", in.getPath());
+      assertTrue(err, err.contains("--somatic must be in the range (0.0, 1.0)"));
 
-      err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--somatic", "0", "--derived", "bar", "--contamination", "0.5", in.getPath());
-      assertTrue(err, err.contains("--somatic should be a probability 0<s<1"));
+      err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--somatic", "0", "--sample", "bar", in.getPath());
+      assertTrue(err, err.contains("--somatic must be in the range (0.0, 1.0)"));
 
-      err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "-0.5", "--derived", "bar", "--contamination", "0.5", in.getPath());
-      assertTrue(err, err.contains("--loh should be a probability 0<=p<=1"));
+      err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "-0.5", "--sample", "bar", in.getPath());
+      assertTrue(err, err.contains("--loh must be in the range [0.0, 1.0]"));
 
-      err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "1.5", "--derived", "bar", "--contamination", "0.5", in.getPath());
-      assertTrue(err, err.contains("--loh should be a probability 0<=p<=1"));
+      err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "1.5", "--sample", "bar", in.getPath());
+      assertTrue(err, err.contains("--loh must be in the range [0.0, 1.0]"));
 
-      err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--Xcontrary-probability", "-0.5", "--derived", "bar", "--contamination", "0.5", in.getPath());
-      assertTrue(err, err.contains("--Xcontrary-probability should be a probability 0<p<=1"));
-
-      err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--Xcontrary-probability", "1.5", "--derived", "bar", "--contamination", "0.5", in.getPath());
-      assertTrue(err, err.contains("--Xcontrary-probability should be a probability 0<p<=1"));
-
-      checkHandleFlagsOut("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "0", "--derived", "bar", "--contamination", "0.5", in.getPath());
-      checkHandleFlagsOut("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "1", "--derived", "bar", "--contamination", "0.5", in.getPath());
+      checkHandleFlagsOut("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "0", "--sample", "bar", in.getPath());
+      checkHandleFlagsOut("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "1", "--sample", "bar", in.getPath());
 
     }
   }

@@ -14,7 +14,6 @@ package com.rtg.variant.bayes.multisample.cancer;
 
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.ModelInterface;
-import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.snp.HypothesesPrior;
 
 /**
@@ -36,7 +35,7 @@ public class ContaminatedSomaticCaller extends AbstractSomaticCaller {
   public ContaminatedSomaticCaller(SomaticPriorsFactory<?> qHaploidFactory, SomaticPriorsFactory<?> qDiploidFactory, VariantParams params, double phi, double psi, double contamination) {
     super(qHaploidFactory, qDiploidFactory, params, phi, psi);
     mContamination = contamination;
-    mUseAlleleBalanceCorrection = !(params.alleleBalance() instanceof NoAlleleBalance);
+    mUseAlleleBalanceCorrection = params.somaticParams().somaticAlleleBalance();
   }
 
   @Override

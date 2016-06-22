@@ -79,7 +79,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   ThreadingEnvironment mThreadingEnvironment = ThreadingEnvironment.PARALLEL;
   Long mThreadingEnvironmentSeed = null;
   boolean mPruneHypotheses = false;
-  int mIndelTriggerFraction = 0;
+  double mIndelTriggerFraction = 0;
   boolean mEnableTrimSplit = true;
   boolean mUsePropagatingPriors = false;
 
@@ -101,8 +101,8 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   ReferenceRanges<String> mReferenceRanges = null;
   File mRegionsFilterBedFile = null;
 
-  int mMinVariantAlleleCount = 0;
-  double mMinVariantAlleleFraction = 0.0;
+  double mMinVariantAllelicDepth = 0.0;
+  double mMinVariantAllelicFraction = 0.0;
 
   EnumSet <VcfInfoField> mInfoAnnotations = EnumSet.noneOf(VcfInfoField.class);
   EnumSet<VcfFormatField> mFormatAnnotations = EnumSet.noneOf(VcfFormatField.class);
@@ -400,7 +400,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
    * @param fraction the fraction of trivial indels needed to trigger complex calling.
    * @return this builder, so calls can be chained.
    */
-  public VariantParamsBuilder indelTriggerFraction(int fraction) {
+  public VariantParamsBuilder indelTriggerFraction(double fraction) {
     mIndelTriggerFraction = fraction;
     return self();
   }
@@ -647,20 +647,20 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   }
 
   /**
-   * @param count filter out results with a variant allele count lower than this
+   * @param depth output results with a variant allele depth meeting this threshold
    * @return this builder, so calls can be chained.
    */
-  public VariantParamsBuilder minVariantAlleleCount(int count) {
-    mMinVariantAlleleCount = count;
+  public VariantParamsBuilder minVariantAllelicDepth(double depth) {
+    mMinVariantAllelicDepth = depth;
     return self();
   }
 
   /**
-   * @param fraction filter out results with a variant allele count lower than this
+   * @param fraction output results with a variant allele fraction meeting this threshold
    * @return this builder, so calls can be chained.
    */
-  public VariantParamsBuilder minVariantAlleleFraction(double fraction) {
-    mMinVariantAlleleFraction = fraction;
+  public VariantParamsBuilder minVariantAllelicFraction(double fraction) {
+    mMinVariantAllelicFraction = fraction;
     return self();
   }
 

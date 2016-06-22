@@ -116,8 +116,8 @@ public class IndelDetector implements EvidenceAcceptor {
     return mSoftClipRightCount;
   }
 
-  int minIndelCount(int percentage) {
-    return Math.max(TRIVIAL_INDEL_COUNT, mNonIndelCount * percentage / 100);
+  int minIndelCount(double fraction) {
+    return Math.max(TRIVIAL_INDEL_COUNT, (int) (mNonIndelCount * fraction));
   }
 
 }

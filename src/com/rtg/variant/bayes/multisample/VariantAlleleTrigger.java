@@ -19,19 +19,19 @@ import com.rtg.variant.bayes.Description;
  * Wrapper class for Variant Allele threshold checks
  */
 public class VariantAlleleTrigger {
-  final int mMinVac;
+  final double mMinVad;
   final double mMinVaf;
 
   /**
    * Create a trigger with the specified thresholds.
-   * If both thresholds are zero then Variant Allele handling will be skipped
-   * @param count Require that variant alleles occur more than {@code count} times. Should be &gt;= 0
+   * If both thresholds are zero then no check will be made.
+   * @param depth Require that variant alleles occur more than {@code depth} (error-adjusted) times. Should be &gt;= 0
    * @param fraction  require that the variant makes up at least this fraction of total evidence. Should be between 0.0 and 0.1.
    */
-  public VariantAlleleTrigger(int count, double fraction) {
+  public VariantAlleleTrigger(double depth, double fraction) {
     assert fraction >= 0.0 && fraction <= 1.0;
-    assert count >= 0;
-    mMinVac = count;
+    assert depth >= 0;
+    mMinVad = depth;
     mMinVaf = fraction;
   }
 
@@ -40,10 +40,10 @@ public class VariantAlleleTrigger {
    * @param ac counts and errors of the alleles at this position
    * @param description current description
    * @param refAllele the allele present in the reference sequence
-   * @return -1 if there is no variant allele meeting the thresholds. Otherwise the index of the variant allele
+   * @return -1 if there is no variant allele meeting the thresholds or thresholds are disabled. Otherwise the index of the variant allele
    */
   public int getVariantAllele(AlleleStatistics<?> ac, Description description, String refAllele) {
-    if (mMinVac <= 0 && mMinVaf <= 0) {
+    if (mMinVad <= 0 && mMinVaf <= 0) {
       return -1;
     }
     final int refCode = description.indexOf(refAllele);
@@ -63,7 +63,7 @@ public class VariantAlleleTrigger {
     }
     if (va != -1) {
       final double vaf = vac / tot;
-      if (vac < mMinVac || vaf < mMinVaf) {
+      if (vac < mMinVad || vaf < mMinVaf) {
         va = -1;
       }
     }

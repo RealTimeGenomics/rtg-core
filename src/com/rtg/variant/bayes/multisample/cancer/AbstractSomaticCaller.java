@@ -78,7 +78,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     mIdentityInterestingThreshold = mParams.interestingThreshold() * MathUtils.LOG_10;
     mPhi = phi;
     mPsi = psi;
-    mVariantAlleleTrigger = new VariantAlleleTrigger(params.minVariantAlleleCount(), params.minVariantAlleleFraction());
+    mVariantAlleleTrigger = new VariantAlleleTrigger(params.minVariantAllelicDepth(), params.minVariantAllelicFraction());
   }
 
   /**

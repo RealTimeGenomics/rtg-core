@@ -57,4 +57,10 @@ public class BinomialAlleleBalance extends AbstractAlleleBalance {
     // Compute bin(p, trials, count) * bin(1 - p, trials, countAlt)
     return logBinomial(p, trials, count, countAlt);
   }
+
+  @Override
+  public String toString() {
+    return "binomial(" + mExpected + ")";
+  }
+
 }

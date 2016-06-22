@@ -61,6 +61,7 @@ public class SomaticCli extends AbstractMultisampleCli {
   protected static final String SEX_FLAG = "sex";
   static final String INCLUDE_GERMLINE_FLAG = "include-germline";
   private static final String INCLUDE_GAIN_OF_REFERENCE = "include-gain-of-reference";
+  private static final String USE_SOMATIC_ALLELIC_FRACTION = "enable-somatic-allelic-fraction";
 
   private static final String MISMATCHED_PARAMS_ERROR1 = "Cannot use --" + PEDIGREE_FLAG + " in conjunction with --" + DERIVED_FLAG + ", --" + ORIGINAL_FLAG + ", or --" + CONTAMINATION_FLAG;
   private static final String MISMATCHED_PARAMS_ERROR2 = "All of --" + DERIVED_FLAG + ", --" + ORIGINAL_FLAG + ", and --" + CONTAMINATION_FLAG + " must be specified";
@@ -91,19 +92,10 @@ public class SomaticCli extends AbstractMultisampleCli {
       if (Sex.EITHER != flags.getValue(SEX_FLAG) && !CommonFlags.validateSexTemplateReference(flags, SEX_FLAG, null, TEMPLATE_FLAG)) {
         return false;
       }
-      final double som = (Double) flags.getValue(SOMATIC_FLAG);
-      if (som <= 0 || som >= 1) {
-        flags.error("--" + SOMATIC_FLAG + " should be a probability 0<s<1");
-        return false;
-      }
-      final double loh = (Double) flags.getValue(LOH_FLAG);
-      if (loh < 0 || loh > 1) {
-        flags.error("--" + LOH_FLAG + " should be a probability 0<=p<=1");
-        return false;
-      }
-      final double reverse = (Double) flags.getValue(REVERSE_CONTAMINATION_FLAG);
-      if (reverse < 0 || reverse > 1) {
-        flags.error("--" + REVERSE_CONTAMINATION_FLAG + " should be a probability 0<p<1");
+      if (!flags.checkInRange(SOMATIC_FLAG, 0.0, false, 1.0, false)
+        || !flags.checkInRange(LOH_FLAG, 0.0, true, 1.0, true)
+        || !flags.checkInRange(CONTAMINATION_FLAG, 0.0, true, 1.0, false)
+        || !flags.checkInRange(REVERSE_CONTAMINATION_FLAG, 0.0, true, 1.0, false)) {
         return false;
       }
       return true;
@@ -133,12 +125,12 @@ public class SomaticCli extends AbstractMultisampleCli {
     flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     flags.registerOptional(CONTAMINATION_FLAG, Double.class, "float", "estimated fraction of contamination in derived sample").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(REVERSE_CONTAMINATION_FLAG, Double.class, "float", "estimated fraction of derived sample in original sample", 0.0).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(DERIVED_FLAG, String.class, "string", "sample identifier used in read groups for derived sample").setCategory(INPUT_OUTPUT);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of individual", Sex.EITHER).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('s', SOMATIC_FLAG, Double.class, "float", "default prior probability of a somatic SNP mutation in the derived sample", 1e-6).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(SOMATIC_PRIORS_FLAG, File.class, "file", "if set, use the BED file to generate site specific somatic priors").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(LOH_FLAG, Double.class, "float", "prior probability that a loss of heterozygosity event has occurred", 0.0).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('G', INCLUDE_GAIN_OF_REFERENCE, "include gain of reference somatic calls in output VCF").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(USE_SOMATIC_ALLELIC_FRACTION, "if set, incorporate the expected somatic allelic fraction in scoring").setCategory(SENSITIVITY_TUNING);
     final Flag inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
@@ -152,6 +144,7 @@ public class SomaticCli extends AbstractMultisampleCli {
     CommonFlags.initAvrModel(flags, false);
     CommonFlags.initMinAvrScore(flags);
     commonSomaticFlags(flags);
+    flags.registerOptional(DERIVED_FLAG, String.class, "string", "sample identifier used in read groups for derived sample").setCategory(INPUT_OUTPUT);
     flags.registerOptional(ORIGINAL_FLAG, String.class, "string", "sample identifier used in read groups for original sample").setCategory(INPUT_OUTPUT);
     flags.registerOptional(INCLUDE_GERMLINE_FLAG, "include germline variants in output VCF").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('r', PEDIGREE_FLAG, File.class, "file", "relationships file").setCategory(INPUT_OUTPUT);
@@ -213,6 +206,7 @@ public class SomaticCli extends AbstractMultisampleCli {
       .somaticRate((Double) mFlags.getValue(SOMATIC_FLAG))
       .includeGermlineVariants(mFlags.isSet(INCLUDE_GERMLINE_FLAG))
       .includeGainOfReference(mFlags.isSet(INCLUDE_GAIN_OF_REFERENCE))
+      .somaticAlleleBalance(mFlags.isSet(USE_SOMATIC_ALLELIC_FRACTION))
       .lohPrior((Double) mFlags.getValue(LOH_FLAG));
     return somaticBuilder;
   }

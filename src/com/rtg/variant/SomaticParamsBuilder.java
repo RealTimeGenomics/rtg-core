@@ -24,6 +24,7 @@ public class SomaticParamsBuilder {
   boolean mIncludeGermlineVariants = false;
   boolean mIncludeGainOfReference = false;
   ReferenceRanges<Double> mSiteSpecificSomaticPriors = null;
+  boolean mSomaticAlleleBalance = false;
 
   /**
    * Set the somatic rate
@@ -35,6 +36,16 @@ public class SomaticParamsBuilder {
       throw new IllegalArgumentException();
     }
     mSomaticRate = p;
+    return self();
+  }
+
+  /**
+   * If set, incorporate expected somatic allelic fraction into scoring.
+   * @param somaticAlleleBalance true iff somatic allele balance computation should be used.
+   * @return this, for chaining
+   */
+  public SomaticParamsBuilder somaticAlleleBalance(boolean somaticAlleleBalance) {
+    mSomaticAlleleBalance = somaticAlleleBalance;
     return self();
   }
 

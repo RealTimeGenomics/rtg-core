@@ -32,24 +32,6 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
   public static final String DIRICHLET = "dirichlet";
   /** Select binomial distribution for tumor side. */
   public static final String BINOMIAL = "binomial";
-  /** Select a band to allow. */
-  public static final String MULTIPLE_BINOMIAL = "multiple-binomial";
-  /** You can also pick anything else for no allele balance. */
-
-  private final double[] mPivots;
-
-  {
-    final String abType = GlobalFlags.getStringValue(CoreGlobalFlags.TUMOR_ALLELE_BALANCE);
-    if (abType.startsWith(MULTIPLE_BINOMIAL)) {
-      final String[] parts = abType.split(",");
-      mPivots = new double[parts.length - 1];
-      for (int k = 1; k < parts.length; k++) {
-        mPivots[k - 1] = Double.parseDouble(parts[k]);
-      }
-    } else {
-      mPivots = null;
-    }
-  }
 
   private static double alleleBalanceDirichletProbabilityLn(final Hypotheses<?> hyp, final Statistics<?> statistics, final int normalHyp, final int cancerHyp, final double alpha) {
     final Code code = hyp.code();
@@ -107,35 +89,6 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
     return lnP;
   }
 
-  private double alleleBalanceMultinomialPivotsLn(final Hypotheses<?> hyp, final Statistics<?> statistics, final int normalHyp, final int cancerHyp) {
-    final Code code = hyp.code();
-    final int na = code.a(normalHyp);
-    final int nb = code.bc(normalHyp);
-    final int ca = code.a(cancerHyp);
-    final int cb = code.bc(cancerHyp);
-    double lnP = 0; // i.e. p = 1
-    final double[] p = new double[hyp.description().size()];
-    for (final double expectedVaf : mPivots) {
-      p[na] += 0.5 * (1 - expectedVaf);
-      p[nb] += 0.5 * (1 - expectedVaf);
-      p[ca] += 0.5 * expectedVaf;
-      p[cb] += 0.5 * expectedVaf;  // Yeuch is this the right thing to do, even in the binomial ???
-      double dp = 0;
-      final AlleleStatistics<?> counts = statistics.counts();
-      for (int k = 0; k < p.length; k++) {
-        if (p[k] > 0) { // Avoid infinity arising from p = 0 situation
-          final double c = counts.count(k) - counts.error(k);
-          dp += c;
-          lnP += Math.log(p[k]) * c - ChiSquared.lgamma(c + 1);
-        }
-      }
-      if (dp > 0) {
-        lnP += ChiSquared.lgamma(dp + 1);
-      }
-    }
-    return lnP;
-  }
-
   /**
    * @param qa The Q matrix of cancer mutation probabilities.
    * @param normal model.
@@ -144,9 +97,9 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
    * @param phi probability of seeing contrary evidence in the original
    * @param psi probability of seeing contrary evidence in the derived
    * @param alpha contamination
-   * @param useAlleleBalanceCorrection true if the expected allele balance correction is to be applied
+   * @param useSomaticAlleleBalance true if the expected somatic allelic fraction correction is to be applied
    */
-  SomaticPosteriorContaminated(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi, double alpha, boolean useAlleleBalanceCorrection) {
+  SomaticPosteriorContaminated(final double[][] qa, final ModelInterface<?> normal, final ModelInterface<?> cancer, HypothesesPrior<?> hypotheses, double phi, double psi, double alpha, boolean useSomaticAlleleBalance) {
     super(normal.hypotheses(), phi, psi);
     //System.err.println("normal " + normal);
     //System.err.println("cancer " + cancer);
@@ -161,14 +114,12 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
         final double pj = cancer.posteriorLn0(k);
         final double q = MathUtils.log(qa[i][j]);
         double t = q + pi + pj;
-        if (useAlleleBalanceCorrection) {
+        if (useSomaticAlleleBalance) {
           final String abType = GlobalFlags.getStringValue(CoreGlobalFlags.TUMOR_ALLELE_BALANCE);
           if (DIRICHLET.equals(abType)) {
             t += alleleBalanceDirichletProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
           } else if (BINOMIAL.equals(abType)) {
             t += alleleBalanceMultinomialProbabilityLn(normal.hypotheses(), cancer.statistics(), i, j, alpha);
-          } else if (abType.startsWith(MULTIPLE_BINOMIAL)) {
-            t += alleleBalanceMultinomialPivotsLn(normal.hypotheses(), cancer.statistics(), i, j);
           }
         }
         mPosterior[i][j] = t;

@@ -33,4 +33,9 @@ public class HoeffdingAlleleBalance extends AbstractAlleleBalance {
   double alleleBalanceHeterozygousLn(double p, double trials, double observed, double observedAlt) {
     return alleleBalanceLn(p, trials, observed) + alleleBalanceLn(p, trials, observedAlt);
   }
+
+  @Override
+  public String toString() {
+    return "hoeffding(" + mExpected + ")";
+  }
 }

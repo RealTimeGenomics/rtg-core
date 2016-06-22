@@ -50,7 +50,7 @@ public class SingletonCaller implements MultisampleJointCaller {
   public SingletonCaller(VariantParams params) {
     mParams = params;
     mInterestingThreshold = mParams.interestingThreshold() * MathUtils.LOG_10;
-    mVariantAlleleTrigger = new VariantAlleleTrigger(params.minVariantAlleleCount(), params.minVariantAlleleFraction());
+    mVariantAlleleTrigger = new VariantAlleleTrigger(params.minVariantAllelicDepth(), params.minVariantAllelicFraction());
   }
 
   @Override

@@ -26,7 +26,6 @@ import com.rtg.reference.ReferenceGenome.ReferencePloidy;
 import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.sam.SingleMappedParams;
-import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.Integrity;
@@ -68,7 +67,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final boolean mOutputNonSnps;
   private final GenomePriorParams mGenomePriors;
   private final double mInterestingThreshold;
-  private final int mIndelTriggerFraction;
+  private final double mIndelTriggerFraction;
   private final int mInterestingSeparation;
   private final int mHyperComplexLength;
   private final boolean mSimpleRepeatExtension;
@@ -106,8 +105,8 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final EnumSet<VcfInfoField> mInfoAnnotations;
   private final EnumSet<VcfFormatField> mFormatAnnotations;
   private final File mRegionsFilterBedFile;
-  private final int mMinVariantAlleleCount;
-  private final double mMinVariantAlleleFraction;
+  private final double mMinVariantAllelicDepth;
+  private final double mMinVariantAllelicFraction;
   private final SomaticParams mSomaticParams;
   private final AlleleBalanceProbability mAlleleBalance;
   private final boolean mExpandComplexReadQueries;
@@ -169,8 +168,8 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mInfoAnnotations = builder.mInfoAnnotations;
     mFormatAnnotations = builder.mFormatAnnotations;
     mRegionsFilterBedFile = builder.mRegionsFilterBedFile;
-    mMinVariantAlleleCount = builder.mMinVariantAlleleCount;
-    mMinVariantAlleleFraction = builder.mMinVariantAlleleFraction;
+    mMinVariantAllelicDepth = builder.mMinVariantAllelicDepth;
+    mMinVariantAllelicFraction = builder.mMinVariantAllelicFraction;
     mSomaticParams = builder.mSomaticParams;
     mAlleleBalance = builder.mAlleleBalance;
     mExpandComplexReadQueries = builder.mExpandComplexReadQueries;
@@ -421,7 +420,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   }
 
   /** @return the fraction of indels needed to trigger complex calling */
-  public int indelTriggerFraction() {
+  public double indelTriggerFraction() {
     return mIndelTriggerFraction;
   }
 
@@ -602,17 +601,17 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   }
 
   /**
-   * @return the minimum variant allelic count to output a call. Calls below this threshold will be filtered
+   * @return the minimum variant allelic depth to output a call.
    */
-  public int minVariantAlleleCount() {
-    return mMinVariantAlleleCount;
+  public double minVariantAllelicDepth() {
+    return mMinVariantAllelicDepth;
   }
 
   /**
-   * @return the minimum variant allelic fraction output a call. Calls below this threshold will be filtered
+   * @return the minimum variant allelic fraction output a call.
    */
-  public double minVariantAlleleFraction() {
-    return mMinVariantAlleleFraction;
+  public double minVariantAllelicFraction() {
+    return mMinVariantAllelicFraction;
   }
   /**
    * @return the params for somatic specific callers
@@ -714,8 +713,8 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     .formatAnnotations(EnumSet.copyOf(mFormatAnnotations))
     .regionsFilterBedFile(mRegionsFilterBedFile)
     .referenceRanges(mReferenceRanges)
-    .minVariantAlleleCount(mMinVariantAlleleCount)
-    .minVariantAlleleFraction(mMinVariantAlleleFraction)
+    .minVariantAllelicDepth(mMinVariantAllelicDepth)
+    .minVariantAllelicFraction(mMinVariantAllelicFraction)
     .somaticParams(somaticParams())
     .alleleBalance(alleleBalance())
     .complexUseSoftClip(complexUseSoftClip())
@@ -753,7 +752,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
       .append(" output_index=").append(mOutputIndex).append(LS);
     sb.append(" call_level=").append(mCallLevel)
       .append(" indels=").append(mOutputNonSnps)
-      .append(" noComplexCalls=").append(mNoComplexCalls).append(LS);
+      .append(" no_complex_calls=").append(mNoComplexCalls).append(LS);
     sb.append(" interesting_threshold=").append(Utils.realFormat(mInterestingThreshold, 4)).append(LS);
     sb.append(" interesting_separation=").append(mInterestingSeparation).append(LS);
     sb.append(" indel_trigger_fraction=").append(mIndelTriggerFraction).append(LS)
@@ -774,31 +773,35 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     sb.append(" ionTorrent=").append(mIonTorrent)
       .append(" prune_hypothesis=").append(mPruneHypotheses)
       .append(" enable_trim_split=").append(mEnableTrimSplit).append(LS);  //note currently writing IonTorrent out here is pointless as it is modified after this is printed.
-    sb.append(" noDiseasePrior=").append(noDiseasePrior()).append(StringUtils.LS);
+    sb.append(" no_disease_prior=").append(noDiseasePrior()).append(LS);
     sb.append(" Relationships:").append(genomeRelationships()).append(LS);
     sb.append(" max_em_iterations=").append(mMaxEmIterations).append(LS);
     sb.append(" genome_connectivity=").append(mGenomeConnectivity == null ? "null" : mGenomeConnectivity.toString()).append(LS);
     if (mPopulationPriorFile != null) {
       sb.append(" Population prior=").append(mPopulationPriorFile.getPath()).append(LS);
     }
-    sb.append(mGenomePriors == null ? "null" : mGenomePriors.toString()).append(LS);
+    if (mGenomePriors != null) {
+      sb.append(mGenomePriors).append(LS);
+    }
     if (genome() != null) {
-      sb.append(pref).append(genome().toString()).append(LS);
+      sb.append(pref).append(genome()).append(LS);
     }
     if (outputParams() != null) {
-      sb.append(pref).append(outputParams().toString()).append(LS);
+      sb.append(pref).append(outputParams()).append(LS);
     }
     if (filterParams() != null) {
-      sb.append(pref).append(filterParams().toString()).append(LS);
+      sb.append(pref).append(filterParams()).append(LS);
     }
     sb.append(" AVR model: ").append(mAvrModelFile == null ? "Not set" : mAvrModelFile.getPath()).append(LS);
-    sb.append(" min AVR score=").append(mMinAvrScore).append(LS);
+    sb.append(" min_avr_score=").append(mMinAvrScore).append(LS);
     sb.append(" max_complex_hypotheses=").append(mMaxComplexHypotheses).append(LS);
     sb.append(" regions_bed_file=").append(mRegionsFilterBedFile).append(LS);
-    sb.append(" min_variant_allele_count=").append(mMinVariantAlleleCount).append(LS);
-    sb.append(" min_variant_allele_fraction=").append(mMinVariantAlleleFraction).append(LS);
-    sb.append(" somatic_params=").append(mSomaticParams).append(LS);
+    sb.append(" min_variant_allelic_count=").append(mMinVariantAllelicDepth).append(LS);
+    sb.append(" min_variant_allelic_fraction=").append(mMinVariantAllelicFraction).append(LS);
     sb.append(" allele_balance=").append(mAlleleBalance).append(LS);
+    if (mSomaticParams != null) {
+      sb.append(pref).append(mSomaticParams).append(LS);
+    }
     return sb.toString();
   }
 }

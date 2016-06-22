@@ -342,7 +342,7 @@ public final class Trimming {
    * @return a list of calls. There can be more than one if the call can be split into separate calls that line up.
    */
   public static List<Variant> trimSplit(VariantParams params, Variant original, DenovoChecker denovoCorrector) {
-    final VariantAlleleTrigger variantAlleleTrigger = new VariantAlleleTrigger(params.minVariantAlleleCount(), params.minVariantAlleleFraction());
+    final VariantAlleleTrigger variantAlleleTrigger = new VariantAlleleTrigger(params.minVariantAllelicDepth(), params.minVariantAllelicFraction());
     if (params.callLevel() == VariantOutputLevel.ALL) {
       return Collections.singletonList(original);
     } else if (params.ionTorrent()) {

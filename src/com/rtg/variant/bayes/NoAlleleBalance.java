@@ -22,4 +22,9 @@ public class NoAlleleBalance implements AlleleBalanceProbability {
   public double alleleBalanceLn(int i, Hypotheses<?> hypotheses, Statistics<?> statistics) {
     return 0.0; // 1 in log space.
   }
+
+  @Override
+  public String toString() {
+    return "none";
+  }
 }

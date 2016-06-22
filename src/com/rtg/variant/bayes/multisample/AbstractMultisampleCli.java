@@ -97,6 +97,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String SNPS_ONLY_FLAG = "snps-only";
   protected static final String TEMPLATE_FLAG = "template";
   private static final String POPULATION_PRIORS = "population-priors";
+  private static final String MIN_VARIANT_ALLELIC_DEPTH = "min-variant-allelic-depth";
+  private static final String MIN_VARIANT_ALLELIC_FRACTION = "min-variant-allelic-fraction";
 
   private static final String X_PRIORS_FLAG = "Xpriors";
   private static final String X_Q_DEFAULT_FLAG = "Xqdefault";
@@ -125,10 +127,9 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
 
   private static final String X_INFO_ANNOTATION_FLAG = "Xinfo-annotation";
   private static final String X_FORMAT_ANNOTATION_FLAG = "Xformat-annotation";
-  private static final String X_MIN_VARIANT_ALLELE_COUNT = "Xmin-vac";
-  private static final String X_MIN_VARIANT_ALLELE_FRACTION = "Xmin-vaf";
-  protected static final String X_ALLELE_BALANCE_PROBABILITY = "Xallele-balance-probability";
-  private static final String X_EXPECTED_ALLELE_BALANCE = "Xexpected-allele-balance";
+  protected static final String USE_ALLELIC_FRACTION = "enable-allelic-fraction";
+  private static final String X_ALLELE_BALANCE_PROBABILITY = "Xallele-balance-probability"; // Fine grained control over the method used
+  private static final String X_EXPECTED_ALLELIC_FRACTION = "Xexpected-allele-balance"; // Fine grained control over the expected fraction
   private static final String X_EXPAND_COMPLEX_READ_QUERIES = "Xexpand-complex-read-queries";
   private static final String X_COMPLEX_USE_SOFT_CLIP = "Xcomplex-use-soft-clip";
   private static final String X_FORCE_COMPLEX_REGION = "Xforce-complex-region";
@@ -230,16 +231,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
         return false;
       }
     }
-    if (flags.getFlag(CommonFlags.FILTER_AVR_FLAG) != null && flags.isSet(CommonFlags.FILTER_AVR_FLAG)) {
-      final double threshold = (Double) flags.getValue(CommonFlags.FILTER_AVR_FLAG);
-      if (threshold < 0 || threshold > 1) {
-        flags.error("--" + CommonFlags.FILTER_AVR_FLAG + " should be between 0 and 1");
-        return false;
-      }
-    }
-    final double contrary = (Double) flags.getValue(X_CONTRARY_FLAG);
-    if (contrary <= 0 || contrary > 1) {
-      flags.error("--" + X_CONTRARY_FLAG + " should be a probability 0<p<=1");
+    if (!flags.checkInRange(CommonFlags.FILTER_AVR_FLAG, 0.0, true, 1.0, true)
+      || !flags.checkInRange(X_CONTRARY_FLAG, 0.0, false, 1.0, true)) {
       return false;
     }
     if (flags.isSet(BED_FILTER_FLAG)) {
@@ -295,6 +288,9 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(POPULATION_PRIORS, File.class, "file", "if set, use the VCF file to generate population based site-specific priors").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(COVERAGE_BYPASS_FLAG, Integer.class, "int", "skip calling in sites with per sample read depth exceeding this value", DEFAULT_COVERAGE_CUTOFF).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(COVERAGE_BYPASS_MULTIPLIER_FLAG, Double.class, "float", "skip calling in sites with combined depth exceeding multiplier * average combined coverage determined from calibration", defaultCoverageCutoffMultiplier()).setCategory(SENSITIVITY_TUNING); //set a coverage threshold for use with the average coverage determined by calibration files. The threshold will be the average coverage + (multiplier * square root of average coverage)
+    flags.registerOptional(MIN_VARIANT_ALLELIC_DEPTH, Double.class, "float", "if set, also output sites that meet this minimum quality-adjusted alternate allelic depth").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(MIN_VARIANT_ALLELIC_FRACTION, Double.class, "float", "if set, also output sites that meet this minimum quality-adjusted alternate allelic fraction").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(USE_ALLELIC_FRACTION, "if set, incorporate the expected allelic fraction in scoring").setCategory(SENSITIVITY_TUNING);
 
     flags.registerOptional(SNPS_ONLY_FLAG, "if set, will output simple SNPs only").setCategory(REPORTING);
     flags.registerOptional('a', ALL_FLAG, "write variant calls covering every position irrespective of thresholds").setCategory(REPORTING);
@@ -307,7 +303,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
 
     flags.registerOptional(X_PRIORS_FLAG, String.class, "string", "selects a properties file specifying the priors. Either a file name or one of [human]", "human").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_IGNORE_QUALITIES_FLAG, "if set, will ignore quality scores associated with reads and use the default instead").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_INDEL_TRIGGER_FRACTION_FLAG, Integer.class, "int", "if set, percentage of bases that must be indel to trigger complex calling", 5).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_INDEL_TRIGGER_FRACTION_FLAG, Double.class, "int", "if set, fraction of evidence at a position that must be indel to trigger complex calling", 0.05).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_CHUNKING_FLAG, Integer.class, "int", "number of nucleotide positions considered per chunk", 1000).setCategory(UTILITY);
     flags.registerOptional(X_LOOKAHEAD_FLAG, Integer.class, "int", "number of chunks to prefetch", 2).setCategory(UTILITY);
     flags.registerOptional(X_VCF_RP, "include RTG posterior in VCF output").setCategory(REPORTING);
@@ -332,11 +328,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(X_FORMAT_ANNOTATION_FLAG, VcfFormatField.class, "string", "additional VCF FORMAT fields").setCategory(REPORTING)
         .setParameterRange(new String[] {VcfFormatField.GQD.name(), VcfFormatField.ZY.name(), VcfFormatField.PD.name()}).enableCsv();
 
-    // TODO Decide if these should trigger output on ref calls(current) or filter out low VA* not ref calls(some one may ask for this at some stage).
-    flags.registerOptional(X_MIN_VARIANT_ALLELE_COUNT, Integer.class, "int", "minimum variant allelic count to output a call", 0).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_MIN_VARIANT_ALLELE_FRACTION, Double.class, "float", "minimum variant allelic fraction to output a call", 0.0).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_ALLELE_BALANCE_PROBABILITY, AlleleBalanceFactor.class, "string", "method for calculating allele balance", AlleleBalanceFactor.NONE).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_EXPECTED_ALLELE_BALANCE, Double.class, "float", "expected allele balance", 0.5).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_EXPECTED_ALLELIC_FRACTION, Double.class, "float", "expected germline heterozygous alternate allele fraction", 0.5).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_EXPAND_COMPLEX_READ_QUERIES, Boolean.class, CommonFlags.BOOL, "expand queries for reads by one base either side of a complex region", false).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_COMPLEX_USE_SOFT_CLIP, Boolean.class, CommonFlags.BOOL, "use soft clipped bases in evidence for complex calls", true).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_FORCE_COMPLEX_REGION, String.class, CommonFlags.STRING, "Force a complex region over specified range").setCategory(UTILITY);
@@ -394,7 +387,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     if (mFlags.getFlag(X_MAX_COMPLEX_HYPOTHESES) != null && mFlags.isSet(X_MAX_COMPLEX_HYPOTHESES)) {
       builder.maxComplexHypotheses((Integer) mFlags.getValue(X_MAX_COMPLEX_HYPOTHESES));
     }
-    builder.indelTriggerFraction((Integer) mFlags.getValue(X_INDEL_TRIGGER_FRACTION_FLAG));
+    builder.indelTriggerFraction((Double) mFlags.getValue(X_INDEL_TRIGGER_FRACTION_FLAG));
     if (mFlags.isSet(FILTER_AMBIGUITY_FLAG)) {
       final IntegerOrPercentage amb = (IntegerOrPercentage) mFlags.getValue(FILTER_AMBIGUITY_FLAG);
       builder.maxAmbiguity(amb.getRawValue() / 100.0);
@@ -419,14 +412,18 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
       final List<File> popPriorVcfFile = new CommandLineFiles(null, POPULATION_PRIORS, CommandLineFiles.EXISTS, CommandLineFiles.NOT_DIRECTORY, CommandLineFiles.TABIX).getFileList(mFlags);
       builder.populationPriors(popPriorVcfFile.get(0));
     }
-    builder.minVariantAlleleCount((Integer) mFlags.getValue(X_MIN_VARIANT_ALLELE_COUNT));
-    builder.minVariantAlleleFraction((Double) mFlags.getValue(X_MIN_VARIANT_ALLELE_FRACTION));
+    if (mFlags.isSet(MIN_VARIANT_ALLELIC_DEPTH)) {
+      builder.minVariantAllelicDepth((Double) mFlags.getValue(MIN_VARIANT_ALLELIC_DEPTH));
+    }
+    if (mFlags.isSet(MIN_VARIANT_ALLELIC_FRACTION)) {
+      builder.minVariantAllelicFraction((Double) mFlags.getValue(MIN_VARIANT_ALLELIC_FRACTION));
+    }
 
-    final AlleleBalanceFactor factor = (AlleleBalanceFactor) mFlags.getValue(X_ALLELE_BALANCE_PROBABILITY);
-    final double expectedAlleleBalance = (Double) mFlags.getValue(X_EXPECTED_ALLELE_BALANCE);
-    final AlleleBalanceProbability probability = getProbability(factor, expectedAlleleBalance);
+    final AlleleBalanceFactor factor = mFlags.isSet(USE_ALLELIC_FRACTION)
+      ? AlleleBalanceFactor.BINOMIAL
+      : (AlleleBalanceFactor) mFlags.getValue(X_ALLELE_BALANCE_PROBABILITY);
+    final AlleleBalanceProbability probability = getProbability(factor, (Double) mFlags.getValue(X_EXPECTED_ALLELIC_FRACTION));
     builder.alleleBalance(probability);
-    builder.minVariantAlleleFraction((Double) mFlags.getValue(X_MIN_VARIANT_ALLELE_FRACTION));
 
     builder.expandComplexReadQueries((Boolean) mFlags.getValue(X_EXPAND_COMPLEX_READ_QUERIES));
     builder.complexUseSoftClip((Boolean) mFlags.getValue(X_COMPLEX_USE_SOFT_CLIP));

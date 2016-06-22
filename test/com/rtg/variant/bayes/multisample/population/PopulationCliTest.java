@@ -94,10 +94,10 @@ public class PopulationCliTest extends AbstractParamsCliTest<VariantParams> {
     assertTrue(err, err.contains("should contain exactly 6 columns"));
 
     err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--pedigree", tmpFile.getPath(), in.getPath(), "--min-avr-score", "1.1");
-    assertTrue(err, err.contains("--min-avr-score should be between 0 and 1"));
+    assertTrue(err, err.contains("--min-avr-score must be in the range [0.0, 1.0]"));
 
     err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--pedigree", tmpFile.getPath(), in.getPath(), "--min-avr-score", "-0.1");
-    assertTrue(err, err.contains("--min-avr-score should be between 0 and 1"));
+    assertTrue(err, err.contains("--min-avr-score must be in the range [0.0, 1.0]"));
 
     checkMainInitOk("-o", outDir.getPath(), "-t", template.getPath(), "--pedigree", tmpFile2.getPath(), in.getPath(), in.getPath());
   }

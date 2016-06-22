@@ -221,7 +221,7 @@ public class MultisampleTaskTest extends AbstractNanoTest {
   public void testIndelTriggering() throws Exception {
     final String testName = "indel_triggering_fraction";
     final String sam = FileHelper.resourceToString(RESOURCE_DIR + testName + ".sam");
-    PopulationNanoTest.check(mNano, PopulationNanoTest.DENOVO_REF, sam, PopulationNanoTest.FAMILY_PED, testName, new String[]{"--Xindel-trigger-fraction", "50"}, 1200, true);
+    PopulationNanoTest.check(mNano, PopulationNanoTest.DENOVO_REF, sam, PopulationNanoTest.FAMILY_PED, testName, new String[]{"--Xindel-trigger-fraction", "0.5"}, 1200, true);
   }
   public void testIndelTriggeringOnTwoSplitIndels() throws Exception {
     final String testName = "indel_triggering_on2_split";

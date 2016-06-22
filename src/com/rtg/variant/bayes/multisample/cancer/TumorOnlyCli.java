@@ -12,6 +12,8 @@
 
 package com.rtg.variant.bayes.multisample.cancer;
 
+import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
+
 import java.io.IOException;
 
 import com.rtg.launcher.CommonFlags;
@@ -23,21 +25,20 @@ import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.variant.SomaticParamsBuilder;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
-import com.rtg.variant.bayes.multisample.AlleleBalanceFactor;
 
 /**
  */
 public class TumorOnlyCli extends SomaticCli {
   private static final String ORIGINAL_NAME = "normal";
+  protected static final String SAMPLE_FLAG = "sample";
 
   @Override
   protected GenomeRelationships grf() throws IOException {
-      assert mFlags.isSet(DERIVED_FLAG);
-      assert mFlags.isSet(CONTAMINATION_FLAG);
+      assert mFlags.isSet(SAMPLE_FLAG);
 
       final GenomeRelationships ped = new GenomeRelationships();
       final String original = ORIGINAL_NAME;
-      final String derived = (String) mFlags.getValue(DERIVED_FLAG);
+      final String derived = (String) mFlags.getValue(SAMPLE_FLAG);
       final Sex sex = (Sex) mFlags.getValue(SEX_FLAG);
       ped.addGenome(original, sex);
       ped.addGenome(derived, sex);
@@ -54,26 +55,13 @@ public class TumorOnlyCli extends SomaticCli {
       if (!AbstractMultisampleCli.validateCommonOptions(flags)) {
         return false;
       }
-      if (!flags.isSet(DERIVED_FLAG) || !flags.isSet(CONTAMINATION_FLAG)) {
-        flags.error("both --" + DERIVED_FLAG + " and --" + CONTAMINATION_FLAG + " must be specified");
-        return false;
-      }
       if (Sex.EITHER != flags.getValue(SEX_FLAG) && !CommonFlags.validateSexTemplateReference(flags, SEX_FLAG, null, TEMPLATE_FLAG)) {
         return false;
       }
-      final double som = (Double) flags.getValue(SOMATIC_FLAG);
-      if (som <= 0 || som >= 1) {
-        flags.error("--" + SOMATIC_FLAG + " should be a probability 0<s<1");
-        return false;
-      }
-      final double loh = (Double) flags.getValue(LOH_FLAG);
-      if (loh < 0 || loh > 1) {
-        flags.error("--" + LOH_FLAG + " should be a probability 0<=p<=1");
-        return false;
-      }
-      final double reverse = (Double) flags.getValue(REVERSE_CONTAMINATION_FLAG);
-      if (reverse < 0 || reverse > 1) {
-        flags.error("--" + REVERSE_CONTAMINATION_FLAG + " should be a probability 0<p<1");
+      if (!flags.checkInRange(SOMATIC_FLAG, 0.0, false, 1.0, false)
+        || !flags.checkInRange(LOH_FLAG, 0.0, true, 1.0, true)
+        || !flags.checkInRange(CONTAMINATION_FLAG, 0.0, true, 1.0, false)
+        || !flags.checkInRange(REVERSE_CONTAMINATION_FLAG, 0.0, true, 1.0, false)) {
         return false;
       }
       return true;
@@ -96,15 +84,17 @@ public class TumorOnlyCli extends SomaticCli {
     CommonFlags.initAvrModel(flags, false);
     CommonFlags.initMinAvrScore(flags);
     commonSomaticFlags(flags);
-    flags.setDescription("Performs a somatic variant analysis on a mixed tumor/normal sample.");
-    final Flag alleleBalance = flags.getFlag(X_ALLELE_BALANCE_PROBABILITY);
-    alleleBalance.setParameterDefault(AlleleBalanceFactor.BINOMIAL);
+    flags.setDescription("Performs a somatic variant analysis on a mixed tumor sample.");
+    flags.registerRequired(SAMPLE_FLAG, String.class, "string", "sample identifier used in read groups for tumor sample").setCategory(INPUT_OUTPUT);
+    final Flag contamination = flags.getFlag(CONTAMINATION_FLAG);
+    contamination.setParameterDefault(0.75);
     requiredSet(flags);
     flags.setValidator(new MultigenomeValidator());
   }
+
   private void requiredSet(CFlags flags) {
-    flags.addRequiredSet(flags.getFlag(DERIVED_FLAG), flags.getFlag(CONTAMINATION_FLAG), flags.getAnonymousFlag(0));
-    flags.addRequiredSet(flags.getFlag(DERIVED_FLAG), flags.getFlag(CONTAMINATION_FLAG), flags.getFlag(CommonFlags.INPUT_LIST_FLAG));
+    flags.addRequiredSet(flags.getAnonymousFlag(0));
+    flags.addRequiredSet(flags.getFlag(CommonFlags.INPUT_LIST_FLAG));
   }
 
   @Override

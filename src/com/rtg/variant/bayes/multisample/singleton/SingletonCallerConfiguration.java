@@ -94,7 +94,7 @@ public final class SingletonCallerConfiguration extends AbstractJointCallerConfi
   @Override
   public VariantOutputVcfFormatter getOutputFormatter(final VariantParams params) {
     final VariantOutputVcfFormatter f = new VariantOutputVcfFormatter(params, getGenomeNames());
-    if (params.minVariantAlleleCount() > 0 || params.minVariantAlleleFraction() > 0.0) {
+    if (params.minVariantAllelicDepth() > 0 || params.minVariantAllelicFraction() > 0.0) {
       f.addExtraFormatFields(EnumSet.of(VcfFormatField.VAF));
     }
     return f;

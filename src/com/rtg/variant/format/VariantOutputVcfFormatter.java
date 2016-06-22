@@ -143,7 +143,7 @@ public class VariantOutputVcfFormatter {
         mFormatFields.add(VcfFormatField.RP);
       }
 
-      if (mParams.minVariantAlleleCount() > 0 || mParams.minVariantAlleleFraction() > 0) {
+      if (mParams.minVariantAllelicDepth() > 0 || mParams.minVariantAllelicFraction() > 0) {
         mFormatFields.add(VcfFormatField.VA);
         mFormatFields.add(VcfFormatField.ADE);
         mFormatFields.add(VcfFormatField.VAF);

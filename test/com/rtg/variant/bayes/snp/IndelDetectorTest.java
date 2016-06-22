@@ -50,7 +50,7 @@ public class IndelDetectorTest extends TestCase {
 
   public void testIndelCount() {
     final IndelDetector dis = new IndelDetector();
-    final int fraction = 5;
+    final double fraction = 0.05;
 
     for (int i = 0; i < 10; i++) {
       dis.increment(null);

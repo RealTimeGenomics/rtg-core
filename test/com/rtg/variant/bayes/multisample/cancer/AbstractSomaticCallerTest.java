@@ -290,8 +290,8 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     final VariantParams params = new VariantParamsBuilder()
       .callLevel(VariantOutputLevel.ALL)
       .somaticParams(new SomaticParamsBuilder().somaticRate(0.001).create())
-      .minVariantAlleleFraction(0.1)
-      .minVariantAlleleCount(1)
+      .minVariantAllelicFraction(0.1)
+      .minVariantAllelicDepth(1)
       .genomeRelationships(getGenomeRelationships())
       .create();
     checkCancer(
