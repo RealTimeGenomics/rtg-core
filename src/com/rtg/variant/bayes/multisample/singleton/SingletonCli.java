@@ -106,7 +106,8 @@ public class SingletonCli extends AbstractMultisampleCli {
     SamFilterOptions.registerExcludeMatedFlag(flags);
     SamFilterOptions.registerExcludeUnmatedFlag(flags);
 
-    AbstractMultisampleCli.registerComplexPruningFlags(flags, false);
+    registerComplexPruningFlags(flags, false);
+    registerAllelicTriggers(flags);
 
     flags.registerOptional('p', PEDIGREE_FLAG, File.class, "file", "genome relationships PED file containing sex of individual").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of individual", Sex.EITHER).setCategory(SENSITIVITY_TUNING);

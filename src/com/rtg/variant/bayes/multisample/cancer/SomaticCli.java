@@ -135,8 +135,8 @@ public class SomaticCli extends AbstractMultisampleCli {
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    AbstractMultisampleCli.registerComplexPruningFlags(flags, true);
-
+    registerAllelicTriggers(flags);
+    registerComplexPruningFlags(flags, true);
   }
 
   void initLocalFlags(CFlags flags) {

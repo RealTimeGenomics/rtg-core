@@ -139,7 +139,7 @@ public class FamilyCli extends AbstractMultisampleCli {
     final Flag motherFlag = flags.registerOptional(MOTHER_FLAG, String.class, "string", "sample identifier used in read groups for for mother sample").setCategory(INPUT_OUTPUT);
     flags.registerOptional(SON_FLAG, String.class, "string", "sample identifier used in read groups for a son sample").setMaxCount(Integer.MAX_VALUE).setCategory(INPUT_OUTPUT);
     flags.registerOptional(DAUGHTER_FLAG, String.class, "string", "sample identifier used in read groups for a daughter sample").setMaxCount(Integer.MAX_VALUE).setCategory(INPUT_OUTPUT);
-    AbstractMultisampleCli.registerComplexPruningFlags(flags, true);
+    registerComplexPruningFlags(flags, true);
     flags.addRequiredSet(fatherFlag, motherFlag, inFlag);
     flags.addRequiredSet(fatherFlag, motherFlag, listFlag);
     flags.addRequiredSet(pedFlag, inFlag);

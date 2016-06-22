@@ -83,7 +83,7 @@ public class LineageCli extends AbstractMultisampleCli {
     flags.registerRequired('p', PEDIGREE_FLAG, File.class, "file", "genome relationships PED file").setCategory(INPUT_OUTPUT);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
-    AbstractMultisampleCli.registerComplexPruningFlags(flags, true);
+    registerComplexPruningFlags(flags, true);
   }
   @Override
   public ParamsTask<?, ?> task(final VariantParams params, final OutputStream out) throws IOException {

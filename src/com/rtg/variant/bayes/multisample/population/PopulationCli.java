@@ -98,7 +98,7 @@ public class PopulationCli extends AbstractMultisampleCli {
     flags.registerOptional(IMPUTE_FLAG, String.class, "STRING", "name of sample absent from mappings to impute genotype for")
     .setCategory(REPORTING)
     .setMaxCount(Integer.MAX_VALUE);
-    AbstractMultisampleCli.registerComplexPruningFlags(flags, true);
+    registerComplexPruningFlags(flags, true);
     flags.registerOptional(REMOVE_RELATIONSHIPS_FLAG, "if set, remove all relationship information from pedigree.").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(PROPAGATING_FLAG, "true to use propagating priors algorithm for pedigrees").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(MAX_EM_ITERATIONS_FLAG, Integer.class, "INT", "maximum number of EM iterations. 0 to disable EM", EmAlgorithm.DEFAULT_MAX_ITERATIONS).setCategory(REPORTING);

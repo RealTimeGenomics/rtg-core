@@ -97,8 +97,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String SNPS_ONLY_FLAG = "snps-only";
   protected static final String TEMPLATE_FLAG = "template";
   private static final String POPULATION_PRIORS = "population-priors";
-  private static final String MIN_VARIANT_ALLELIC_DEPTH = "min-variant-allelic-depth";
-  private static final String MIN_VARIANT_ALLELIC_FRACTION = "min-variant-allelic-fraction";
+  protected static final String MIN_VARIANT_ALLELIC_DEPTH = "min-variant-allelic-depth";
+  protected static final String MIN_VARIANT_ALLELIC_FRACTION = "min-variant-allelic-fraction";
 
   private static final String X_PRIORS_FLAG = "Xpriors";
   private static final String X_Q_DEFAULT_FLAG = "Xqdefault";
@@ -288,8 +288,6 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(POPULATION_PRIORS, File.class, "file", "if set, use the VCF file to generate population based site-specific priors").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(COVERAGE_BYPASS_FLAG, Integer.class, "int", "skip calling in sites with per sample read depth exceeding this value", DEFAULT_COVERAGE_CUTOFF).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(COVERAGE_BYPASS_MULTIPLIER_FLAG, Double.class, "float", "skip calling in sites with combined depth exceeding multiplier * average combined coverage determined from calibration", defaultCoverageCutoffMultiplier()).setCategory(SENSITIVITY_TUNING); //set a coverage threshold for use with the average coverage determined by calibration files. The threshold will be the average coverage + (multiplier * square root of average coverage)
-    flags.registerOptional(MIN_VARIANT_ALLELIC_DEPTH, Double.class, "float", "if set, also output sites that meet this minimum quality-adjusted alternate allelic depth").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(MIN_VARIANT_ALLELIC_FRACTION, Double.class, "float", "if set, also output sites that meet this minimum quality-adjusted alternate allelic fraction").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(USE_ALLELIC_FRACTION, "if set, incorporate the expected allelic fraction in scoring").setCategory(SENSITIVITY_TUNING);
 
     flags.registerOptional(SNPS_ONLY_FLAG, "if set, will output simple SNPs only").setCategory(REPORTING);
@@ -335,12 +333,17 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(X_FORCE_COMPLEX_REGION, String.class, CommonFlags.STRING, "Force a complex region over specified range").setCategory(UTILITY);
   }
 
+  protected void registerAllelicTriggers(CFlags flags) {
+    flags.registerOptional(MIN_VARIANT_ALLELIC_DEPTH, Double.class, "float", "if set, also output sites that meet this minimum quality-adjusted alternate allelic depth").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(MIN_VARIANT_ALLELIC_FRACTION, Double.class, "float", "if set, also output sites that meet this minimum quality-adjusted alternate allelic fraction").setCategory(SENSITIVITY_TUNING);
+  }
+
   /**
    * Add flags for complex hypothesis pruning to the specified flags object
    * @param flags flags object to modify
    * @param pruneDefault whether pruning should be enabled by default
    */
-  public static void registerComplexPruningFlags(CFlags flags, boolean pruneDefault) {
+  protected void registerComplexPruningFlags(CFlags flags, boolean pruneDefault) {
     flags.registerOptional(X_PRUNE_HYPOTHESES, Boolean.class, CommonFlags.BOOL, "prune hypotheses during complex calling", pruneDefault).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_MAX_COMPLEX_HYPOTHESES, Integer.class, CommonFlags.INT, "maximum number of remaining hypotheses after pruning", 21).setCategory(SENSITIVITY_TUNING);
   }
