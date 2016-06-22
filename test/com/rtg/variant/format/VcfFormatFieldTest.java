@@ -56,7 +56,7 @@ import junit.framework.TestCase;
 public class VcfFormatFieldTest extends TestCase {
 
   public void testEnum() {
-    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, COC, COF, VAF, VADER]");
+    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, COC, COF, VAF, VADE, VADER]");
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.AD)) {
       assertFalse(field.isVcfAnnotator());
     }
@@ -100,7 +100,8 @@ public class VcfFormatFieldTest extends TestCase {
       + "##FORMAT=<ID=COC,Number=1,Type=Integer,Description=\"Contrary observation count\">\n"
       + "##FORMAT=<ID=COF,Number=1,Type=Float,Description=\"Contrary observation fraction\">\n"
       + "##FORMAT=<ID=VAF,Number=1,Type=Float,Description=\"Variant Allelic Fraction\">\n"
-      + "##FORMAT=<ID=VADER,Number=1,Type=Float,Description=\"Error corrected allelic depth of alt allele as a ration of the expected coverage\">\n"
+      + "##FORMAT=<ID=VADE,Number=1,Type=Float,Description=\"Error corrected allelic depth of alt allele\">\n"
+      + "##FORMAT=<ID=VADER,Number=1,Type=Float,Description=\"Error corrected allelic depth of alt allele as a ratio of the expected coverage\">\n"
       + "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n";
 
     assertEquals(expected, header.toString());
