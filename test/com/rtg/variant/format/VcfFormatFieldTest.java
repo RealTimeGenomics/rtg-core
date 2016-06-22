@@ -12,6 +12,7 @@
 
 package com.rtg.variant.format;
 
+import static com.rtg.variant.format.VcfFormatField.VADE;
 import static com.rtg.variant.format.VcfFormatField.VADER;
 
 import java.util.Collections;
@@ -327,7 +328,10 @@ public class VcfFormatFieldTest extends TestCase {
     final Variant call = new Variant(new VariantLocus("foo", 1, 2), 0, sample);
     final String sampleName = "Sample";
     assertTrue(VADER.hasValue(record, call, sample, sampleName, params));
+    assertTrue(VADE.hasValue(record, call, sample, sampleName, params));
     VADER.updateRecord(record, call, new String[] {"Sample"}, params, false);
+    VADE.updateRecord(record, call, new String[] {"Sample"}, params, false);
     assertEquals("2.500", record.getFormatAndSample().get("VADER").get(0));
+    assertEquals("50.000", record.getFormatAndSample().get("VADE").get(0));
   }
 }

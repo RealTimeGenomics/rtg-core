@@ -651,10 +651,29 @@ public enum VcfFormatField {
     }
   },
   /** Allelic Depth, error-corrected */
+  VADE {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Error corrected allelic depth of alt allele");
+    }
+    @Override
+    public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      final String name = sample.getVariantAllele();
+      final AlleleStatistics<?> counts = sample.getStats().counts();
+      final int altDescriptionCode = counts.getDescription().indexOf(name);
+      final double ade = counts.count(altDescriptionCode) - counts.error(altDescriptionCode);
+      rec.addFormatAndSample(name(), Utils.realFormat(ade, 3));
+    }
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return sample != null && sample.getStats() != null && sample.getVariantAllele() != null;
+    }
+  },
+  /** Allelic Depth, error-corrected */
   VADER {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Error corrected allelic depth of alt allele as a ration of the expected coverage");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Error corrected allelic depth of alt allele as a ratio of the expected coverage");
     }
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
