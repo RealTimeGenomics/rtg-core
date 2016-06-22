@@ -28,6 +28,7 @@ import com.rtg.ngs.SamRename;
 import com.rtg.protein.MapXCli;
 import com.rtg.protein.MapxRename;
 import com.rtg.reader.Cg2Sdf;
+import com.rtg.reader.SamToFastq;
 import com.rtg.reader.Sdf2Cg;
 import com.rtg.reader.Sdf2Quala;
 import com.rtg.reader.SdfSplitter;
@@ -220,6 +221,9 @@ public final class CoreCommand {
   /** Create a BAM file from a SAM file  */
   static final Command SAM2BAM = new Command(new Sam2Bam(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
+  /** Convert a paired SAM/BAM file to FASTQ */
+  static final Command SAM2FASTQ = new Command(new SamToFastq(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
+
   /** Rename read-id field in mapping output */
   static final Command SAMMERGE = new Command(new SamMergeCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
@@ -310,7 +314,7 @@ public final class CoreCommand {
     ToolsCommand.BGZIP, ToolsCommand.INDEX, ToolsCommand.EXTRACT, AVIEW,                        // General purpose
     ToolsCommand.SDFSTATS, SDFSPLIT, ToolsCommand.SDFSUBSET, ToolsCommand.SDFSUBSEQ,            // SDF related
     SAM2BAM, SAMMERGE, SAMSTATS, SAMRENAME, MAPXRENAME,  // Mapping related
-    CHRSTATS,
+    CHRSTATS, SAM2FASTQ,
     ToolsCommand.MENDELIAN, PHASINGSEARCH, PHASINGEVAL,
     ToolsCommand.VCFSTATS, ToolsCommand.VCFMERGE,                       // VCF related
     ToolsCommand.VCFFILTER, ToolsCommand.VCFANNOTATE, ToolsCommand.VCFSUBSET, ToolsCommand.VCFEVAL, SNPINTERSECT,
