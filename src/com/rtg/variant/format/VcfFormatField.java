@@ -695,6 +695,7 @@ public enum VcfFormatField {
         && sample.getVariantAllele() != null;
     }
   },
+  /** Sum of quality of the alternate observations */
   QA {
       @Override
       public void updateHeader(VcfHeader header) {
@@ -712,8 +713,7 @@ public enum VcfFormatField {
       }
       @Override
       public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-        final Statistics<?> stats = sample.getStats();
-        return sample != null && stats != null
+        return sample != null && sample.getStats() != null
           && sample.getVariantAllele() != null;
       }
   },
