@@ -12,6 +12,9 @@
 package com.rtg.variant.bayes;
 
 
+import com.rtg.variant.bayes.snp.DescriptionSnp;
+import com.rtg.variant.bayes.snp.EvidenceQ;
+
 /**
  */
 public class AlleleStatisticsIntTest extends AbstractAlleleStatisticsTest<AlleleStatisticsInt> {
@@ -26,5 +29,12 @@ public class AlleleStatisticsIntTest extends AbstractAlleleStatisticsTest<Allele
     final double q = dist.error();
     final double e = r + (1.0 - r) * q;
     stats.increment(dist, dist.read(), e);
+  }
+
+  public void testQa() {
+    final AlleleStatisticsInt alleleStatistics = getAlleleStatistics(DescriptionSnp.SINGLETON);
+    alleleStatistics.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0.1, 0.1, true, true, true, false), 1, 0.1);
+    alleleStatistics.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0.1, 0.1, true, true, true, false), 1, 0.1);
+    assertEquals(20.0, alleleStatistics.qa(1));
   }
 }

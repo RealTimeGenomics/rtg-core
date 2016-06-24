@@ -98,6 +98,13 @@ public abstract class AlleleStatistics<T extends AlleleStatistics<T>> {
    */
   public abstract double error(final int index);
 
+  /**
+   * Get the current accumulated for the specified index.
+   * @param index whose value to get.
+   * @return the accumulated error.
+   */
+  public abstract double qa(final int index);
+
 
   Double alleleBalanceHomozygous(int allele, int total) {
     return MathUtils.hoeffdingPhred(total, count(allele), 1.0);

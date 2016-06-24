@@ -12,6 +12,7 @@
 
 package com.rtg.variant.format;
 
+import static com.rtg.variant.format.VcfFormatField.QA;
 import static com.rtg.variant.format.VcfFormatField.VADE;
 import static com.rtg.variant.format.VcfFormatField.VADER;
 
@@ -56,7 +57,7 @@ import junit.framework.TestCase;
 public class VcfFormatFieldTest extends TestCase {
 
   public void testEnum() {
-    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, COC, COF, VAF, VADE, VADER]");
+    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, COC, COF, VAF, VADE, VADER, QA]");
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.AD)) {
       assertFalse(field.isVcfAnnotator());
     }
@@ -102,6 +103,7 @@ public class VcfFormatFieldTest extends TestCase {
       + "##FORMAT=<ID=VAF,Number=1,Type=Float,Description=\"Variant Allelic Fraction\">\n"
       + "##FORMAT=<ID=VADE,Number=1,Type=Float,Description=\"Error corrected allelic depth of alt allele\">\n"
       + "##FORMAT=<ID=VADER,Number=1,Type=Float,Description=\"Error corrected allelic depth of alt allele as a ratio of the expected coverage\">\n"
+      + "##FORMAT=<ID=QA,Number=1,Type=Float,Description=\"Sum of quality of the alternate observations\">\n"
       + "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n";
 
     assertEquals(expected, header.toString());
@@ -334,5 +336,40 @@ public class VcfFormatFieldTest extends TestCase {
     VADE.updateRecord(record, call, new String[] {"Sample"}, params, false);
     assertEquals("2.500", record.getFormatAndSample().get("VADER").get(0));
     assertEquals("50.000", record.getFormatAndSample().get("VADE").get(0));
+  }
+
+  public void testQa() {
+    final VcfRecord record = new VcfRecord("foo", 1, "C");
+    record.addAltCall("T");
+    record.addFormatAndSample("GT", "0/1");
+    final Calibrator calibrator = new Calibrator(new Covariate[]{new CovariateSequence(), new CovariateReadGroup()}, new ReferenceRegions());
+    final CalibratedPerSequenceExpectedCoverage expectedCoverage = new CalibratedPerSequenceExpectedCoverage(calibrator, new HashMap<>(), new HashMap<>(), new RegionRestriction("foo:1+1000")) {
+      @Override
+      public double expectedCoverage(String sequenceName, String sampleName) {
+        return 20;
+      }
+    };
+
+    final VariantParams params = new VariantParamsBuilder().expectedCoverage(expectedCoverage).create();
+    final VariantSample sample = new VariantSample(Ploidy.DIPLOID, "Sample", false, new MockGenotypeMeasure(0.1), VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0);
+    sample.setVariantAllele("A");
+    // Override methods because it's easier than attempting to increment...
+    final StatisticsSnp stats = new StatisticsSnp(DescriptionSnp.SINGLETON) {
+      @Override
+      public AlleleStatisticsInt counts() {
+        return new AlleleStatisticsInt(DescriptionSnp.SINGLETON) {
+          @Override
+          public double qa(int index) {
+            return 20;
+          }
+        };
+      }
+    };
+    sample.setStats(stats);
+    final Variant call = new Variant(new VariantLocus("foo", 1, 2), 0, sample);
+    final String sampleName = "Sample";
+    assertTrue(QA.hasValue(record, call, sample, sampleName, params));
+    QA.updateRecord(record, call, new String[] {"Sample"}, params, false);
+    assertEquals("20.000", record.getFormatAndSample().get("QA").get(0));
   }
 }

@@ -34,6 +34,11 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
    */
   private final double[] mErrors;
 
+  /**
+   * product of base quality errors
+   */
+  private final double[] mQualityProduct;
+
 
   /**
    * Create a new empty count object.
@@ -47,6 +52,7 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
     mCountsUnmated = new double[description.size()];
     //mCountsSingle = new int[description.size()];
     mErrors = new double[description.size()];
+    mQualityProduct = new double[description.size()];
     //Arrays.fill(mCountsForwards, 0);
     //Arrays.fill(mCountsBackwards, 0);
     //Arrays.fill(mErrors, 0.0);
@@ -78,6 +84,7 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
       }
     }
     mErrors[bestHyp] += e;
+    mQualityProduct[bestHyp] += MathUtils.phred(e);
   }
 
   /**
@@ -98,6 +105,15 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
   @Override
   public double error(final int index) {
     return mErrors[index];
+  }
+
+  /**
+   * Get the accumulated phred quality for the specified index.
+   * @param index whose value to get.
+   * @return the accumulated quality.
+   */
+  public double qa(final int index) {
+    return mQualityProduct[index];
   }
 
   @Override
@@ -124,6 +140,7 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
       newCounts.mCountsMated[newI] += mCountsMated[oldI];
       newCounts.mCountsUnmated[newI] += mCountsUnmated[oldI];
       newCounts.mErrors[newI] += mErrors[oldI];
+      newCounts.mQualityProduct[newI] += mQualityProduct[oldI];
     }
     return newCounts;
   }

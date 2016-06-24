@@ -29,6 +29,7 @@ public class StatisticsInt extends Statistics<AlleleStatisticsInt> {
   private double mTotalError;
   private int mMatedCount;
   private int mUnmatedCount;
+  private double mQa = 1.0;
 
   /**
    * @param description about which statistics are being collected.
@@ -43,6 +44,7 @@ public class StatisticsInt extends Statistics<AlleleStatisticsInt> {
     final double r = evidence.mapError();
     final double q = evidence.error();
     final double errorIncrement = r + (1.0 - r) * q;
+    mQa *= q;
 
     if (evidence.mapError() >= Model.AMBIGUITY_THRESHOLD) {
       mAmbiguous++;
@@ -92,6 +94,10 @@ public class StatisticsInt extends Statistics<AlleleStatisticsInt> {
   @Override
   public double totalError() {
     return mTotalError;
+  }
+
+  public double qualityProduct() {
+    return mQa;
   }
 
   @Override

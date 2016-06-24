@@ -675,6 +675,7 @@ public enum VcfFormatField {
     public void updateHeader(VcfHeader header) {
       header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Error corrected allelic depth of alt allele as a ratio of the expected coverage");
     }
+
     @Override
     public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
       final String name = sample.getVariantAllele();
@@ -685,6 +686,7 @@ public enum VcfFormatField {
       final double vader = ade / expected;
       rec.addFormatAndSample(name(), Utils.realFormat(vader, 3));
     }
+
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
       return sample != null && sample.getStats() != null
@@ -692,6 +694,28 @@ public enum VcfFormatField {
         && params.expectedCoverage().expectedCoverage(call.getLocus().getSequenceName(), sampleName) > 0
         && sample.getVariantAllele() != null;
     }
+  },
+  QA {
+      @Override
+      public void updateHeader(VcfHeader header) {
+        header.addFormatField(name(), MetaType.FLOAT, VcfNumber.ONE, "Sum of quality of the alternate observations");
+      }
+      @Override
+      public void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+        final String name = sample.getVariantAllele();
+
+        final Statistics<?> stats = sample.getStats();
+        final AlleleStatistics<?> counts = stats.counts();
+        final int altDescriptionCode = counts.getDescription().indexOf(name);
+        final double qa = counts.qa(altDescriptionCode);
+        rec.addFormatAndSample(name(), Utils.realFormat(qa, 3));
+      }
+      @Override
+      public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+        final Statistics<?> stats = sample.getStats();
+        return sample != null && stats != null
+          && sample.getVariantAllele() != null;
+      }
   },
   ;
 
