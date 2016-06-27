@@ -143,15 +143,14 @@ public class SampleReplayer {
           } else if (gtInt[i] > 0) {
             final String allele = vcf.getAltCalls().get(gtInt[i] - 1);
             final VariantType svType = VariantType.getSymbolicAlleleType(allele);
-            if (svType != null) {
-              throw new NoTalkbackSlimException("Symbolic variants are not supported, currently at " + name + ":" + (thisPosition + 1));
-            } else if ("*".equals(allele)) {
+            if (svType == VariantType.SV_MISSING) {
               // Check that this site is in fact covered by an earlier variant
               if (currentPos <= thisPosition) {
                 throw new NoTalkbackSlimException("Encountered deletion allele \"*\", but site is not covered by an earlier deletion, currently at " + name + ":" + (thisPosition + 1));
               }
+            } else if (svType != null) {
+              throw new NoTalkbackSlimException("Symbolic variants are not supported, currently at " + name + ":" + (thisPosition + 1));
             } else {
-              //
               writeRefToPosition(output, sequenceId, currentPos, thisPosition);
               final byte[] alleleBytes = DnaUtils.encodeArray(allele.getBytes());
               output.write(alleleBytes, null, alleleBytes.length);
