@@ -13,6 +13,8 @@ package com.rtg.variant;
 
 import java.util.Arrays;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.ngs.Arm;
 import com.rtg.reader.CgUtils;
 import com.rtg.reader.FastaUtils;
@@ -30,6 +32,8 @@ import htsjdk.samtools.SAMRecord;
  * Alignment information needed by variant implementations.
  */
 public final class VariantAlignmentRecord extends SequenceIdLocusSimple implements ReaderRecord<VariantAlignmentRecord>, MateInfo, MapInfo {
+  // Factor 1.1 to cover arithmetic error in sum used for error() in EvidenceComplex
+  private static final double MIN_QUALITY = GlobalFlags.getIntegerValue(CoreGlobalFlags.MIN_BASE_QUALITY);
 
   private static final int FLAG_MATED = 1;
   private static final int FLAG_PAIRED = 2;
@@ -96,10 +100,16 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     super(record.getReferenceIndex(), record.getAlignmentStart() - 1, record.getReadUnmappedFlag() ? record.getAlignmentStart() - 1 + record.getReadLength() : record.getAlignmentEnd()); // picard end position is 1-based inclusive == 0-based exclusive
     mGenome = genome;
     mFragmentLength = record.getInferredInsertSize();
-    mBases = record.getReadBases();
+    final byte[] readBases = record.getReadBases();
+    mBases = Arrays.copyOf(readBases, record.getReadLength());
 
 
     final byte[] baseQualities = record.getBaseQualities();
+    for (int i = 0; i < baseQualities.length; i++) {
+      if (baseQualities[i] < MIN_QUALITY) {
+        mBases[i] = 'N';
+      }
+    }
 //    if (baseQualities.length == 0) {
 //      mRecalibratedQuality = baseQualities;
 //    } else {

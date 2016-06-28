@@ -61,7 +61,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
   protected boolean mFrozen = false;
 
   protected boolean ambiguityShortCircuit(final EvidenceInterface evidence) {
-    return evidence.mapError() >= AMBIGUITY_THRESHOLD || evidence.error() > MAX_BASE_ERROR;
+    return evidence.mapError() >= AMBIGUITY_THRESHOLD; // || evidence.error() > MAX_BASE_ERROR;
   }
 
   /**
