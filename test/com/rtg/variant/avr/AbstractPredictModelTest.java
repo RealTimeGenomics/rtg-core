@@ -65,7 +65,7 @@ public abstract class AbstractPredictModelTest<T extends AbstractPredictModel> e
 
     //System.err.println(record.toString());
     assertTrue(record.toString().contains("AVR"));
-    final List<String> avrVals = record.getFormatAndSample().get("AVR");
+    final List<String> avrVals = record.getFormat("AVR");
     assertNotNull(avrVals);
     assertEquals(3, avrVals.size());
   }

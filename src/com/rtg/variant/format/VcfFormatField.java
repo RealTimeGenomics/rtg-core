@@ -520,8 +520,8 @@ public enum VcfFormatField {
     }
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      final List<String> genotypeQuals = rec.getFormatAndSample().get(GQ.name());
-      final List<String> depths = rec.getFormatAndSample().get(DP.name());
+      final List<String> genotypeQuals = rec.getFormat(GQ.name());
+      final List<String> depths = rec.getFormat(DP.name());
       if (genotypeQuals != null && depths != null && genotypeQuals.size() == depths.size()) {
         for (int i = 0; i < depths.size(); i++) {
           if (!VcfRecord.MISSING.equals(genotypeQuals.get(i)) && !VcfRecord.MISSING.equals(depths.get(i))) {
@@ -548,7 +548,7 @@ public enum VcfFormatField {
     }
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      final List<String> genotypes = rec.getFormatAndSample().get(GT.name());
+      final List<String> genotypes = rec.getFormat(GT.name());
       if (genotypes != null) {
         for (final String gt : genotypes) {
           if (!gt.contains(VcfRecord.MISSING)) {
@@ -575,7 +575,7 @@ public enum VcfFormatField {
     }
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      final List<String> genotypes = rec.getFormatAndSample().get(GT.name());
+      final List<String> genotypes = rec.getFormat(GT.name());
       if (genotypes != null) {
         for (final String gt : genotypes) {
           if (!gt.contains(VcfRecord.MISSING)) {
@@ -643,7 +643,7 @@ public enum VcfFormatField {
 
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      return rec.getFormatAndSample().get(VA.name()) != null && rec.getFormatAndSample().get(AD.name()) != null;
+      return rec.getFormat(VA.name()) != null && rec.getFormat(AD.name()) != null;
     }
     @Override
     public boolean isVcfAnnotator() {
@@ -727,19 +727,19 @@ public enum VcfFormatField {
   private static final VcfAnnotator VAF_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.VAF);
 
   private static boolean hasValueCofCoc(final VcfRecord rec) {
-    List<?> fld = rec.getFormatAndSample().get(AD.name());
+    List<?> fld = rec.getFormat(AD.name());
     if (fld == null) {
       return false;
     }
-    fld = rec.getFormatAndSample().get(GT.name());
+    fld = rec.getFormat(GT.name());
     if (fld == null) {
       return false;
     }
-    fld = rec.getFormatAndSample().get(SS.name());
+    fld = rec.getFormat(SS.name());
     if (fld != null) {
       return true;
     }
-    fld = rec.getFormatAndSample().get(DN.name());
+    fld = rec.getFormat(DN.name());
     if (fld != null) {
       return true;
     }

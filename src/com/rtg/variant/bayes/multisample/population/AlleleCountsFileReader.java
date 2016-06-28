@@ -261,7 +261,7 @@ public final class AlleleCountsFileReader implements Closeable {
 
     final int[] counts = new int[vcfRecord.getAltCalls().size() + 1]; // +1 for the reference allele.
     for (int i = 0; i < vcfRecord.getNumberOfSamples(); i++) {
-      final String gt = vcfRecord.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE).get(i);
+      final String gt = vcfRecord.getFormat(VcfUtils.FORMAT_GENOTYPE).get(i);
       for (final int gti : VcfUtils.splitGt(gt)) {
         if (gti != -1) { // to ignore . alleles in GT like ./1 which is valid (e.g. on sex chromosome PAR regions, depending on representation).
           if (gti >= counts.length) {

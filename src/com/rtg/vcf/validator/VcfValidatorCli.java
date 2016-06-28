@@ -178,7 +178,7 @@ public class VcfValidatorCli extends AbstractCli {
             }
           }
         }
-        for (String format : current.getFormatAndSample().keySet()) {
+        for (String format : current.getFormats()) {
           if (!formats.containsKey(format)) {
             warning(err, current, "VCF FORMAT field " + format + " not present in the header.");
             mNumberFieldsNotInHeader++;

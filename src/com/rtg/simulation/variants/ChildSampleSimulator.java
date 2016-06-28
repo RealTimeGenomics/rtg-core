@@ -325,16 +325,16 @@ public class ChildSampleSimulator {
 
         } else if (childPloidy == Ploidy.POLYPLOID) {
           // Just copy from mother for polyploid (i.e. MT)
-          gt.append(v.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE).get(mMotherSampleNum));
+          gt.append(v.getFormat(VcfUtils.FORMAT_GENOTYPE).get(mMotherSampleNum));
 
         } else {
           // Get father GT
-          final int[] fatherGtInt = getGt(v.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE).get(mFatherSampleNum), fatherCount);
+          final int[] fatherGtInt = getGt(v.getFormat(VcfUtils.FORMAT_GENOTYPE).get(mFatherSampleNum), fatherCount);
           if (fatherGtInt.length != fatherCount) {
             throw new NoTalkbackSlimException("Genotype with incorrect ploidy for sample: " + vcfOut.getHeader().getSampleNames().get(mFatherSampleNum) + " at " + refSeq.name() + ":" + v.getOneBasedStart() + " exp: " + fatherCount + " was : " + fatherGtInt.length);
           }
           // Get mother GT
-          final int[] motherGtInt = getGt(v.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE).get(mMotherSampleNum), motherCount);
+          final int[] motherGtInt = getGt(v.getFormat(VcfUtils.FORMAT_GENOTYPE).get(mMotherSampleNum), motherCount);
           if (motherGtInt.length != motherCount) {
             throw new NoTalkbackSlimException("Genotype with incorrect ploidy for sample: " + vcfOut.getHeader().getSampleNames().get(mMotherSampleNum) + " at " + refSeq.name() + ":" + v.getOneBasedStart() + " exp: " + motherCount + " was : " + motherGtInt.length);
           }

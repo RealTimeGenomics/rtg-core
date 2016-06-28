@@ -33,7 +33,7 @@ public class AviewVariant {
    * @param sampleNo the sample column number (starting from 0) for multiple sample variant calls
    */
   public AviewVariant(VcfRecord rec, int sampleNo) {
-    final String gt = rec.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE).get(sampleNo);
+    final String gt = rec.getFormat(VcfUtils.FORMAT_GENOTYPE).get(sampleNo);
     final int[] gtArray = VcfUtils.splitGt(gt);
     if (gtArray.length > 2) {
       throw new NoTalkbackSlimException("Cannot handle calls with ploidy more than diploid.");

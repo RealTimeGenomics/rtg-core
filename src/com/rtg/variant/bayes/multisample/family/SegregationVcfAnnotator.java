@@ -110,7 +110,7 @@ public class SegregationVcfAnnotator implements VcfAnnotator {
       code = new CodeDiploid(codeSize);
       mCodes.put(codeSize, code);
     }
-    final List<String> calls = rec.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE);
+    final List<String> calls = rec.getFormat(VcfUtils.FORMAT_GENOTYPE);
     final int father = getCode(code, calls.get(mFatherIndex));
     final int mother = getCode(code, calls.get(mMotherIndex));
     if (father == -1 && mother == -1) {

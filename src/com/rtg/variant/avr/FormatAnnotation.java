@@ -64,7 +64,7 @@ public class FormatAnnotation implements Annotation {
 
   @Override
   public Object getValue(VcfRecord record, int sampleNumber) {
-    final ArrayList<String> sampleValues = record.getFormatAndSample().get(mFieldName);
+    final ArrayList<String> sampleValues = record.getFormat(mFieldName);
     final Object value;
     if (sampleValues == null || sampleValues.size() < (sampleNumber + 1)) {
       value = null;

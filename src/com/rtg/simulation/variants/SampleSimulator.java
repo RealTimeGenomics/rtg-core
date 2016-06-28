@@ -129,7 +129,7 @@ public class SampleSimulator {
       while (reader.hasNext()) {
         mSeenVariants = true;
         final VcfRecord v = reader.next();
-        v.addFormat(VcfUtils.FORMAT_GENOTYPE); // Ensure the record has a notion of genotype - strictly we should also initialize any pre-exising sample columns with empty GT
+        v.addFormat(VcfUtils.FORMAT_GENOTYPE); // Ensure the record has a notion of genotype if it doesn't already - values will be filled in below
         final StringBuilder gt = new StringBuilder();
         if (refSeq.ploidy().count() != 0) {
           final List<String> allFreqStr = v.getInfo().get(VcfUtils.INFO_ALLELE_FREQ);

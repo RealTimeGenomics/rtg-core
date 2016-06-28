@@ -84,7 +84,7 @@ public class VcfReplayerCli extends AbstractCli {
         for (int i = 0; i < strAlts.size(); i++) {
           alts[i] = Adjacency.parseAdjacency(rec.getSequenceName(), rec.getOneBasedStart(), strAlts.get(i));
         }
-        if (!rec.getFormatAndSample().containsKey(VcfUtils.FORMAT_GENOTYPE)) {
+        if (!rec.hasFormat(VcfUtils.FORMAT_GENOTYPE)) {
           if (!gtWarned) {
             Diagnostic.warning("Records without GT field assumed to be homozygous.");
             gtWarned = true;
@@ -92,7 +92,7 @@ public class VcfReplayerCli extends AbstractCli {
           gts[0] = 1;
           gts[1] = 1;
         } else {
-          final List<String> gtList = rec.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE);
+          final List<String> gtList = rec.getFormat(VcfUtils.FORMAT_GENOTYPE);
           if (gtList.size() > 1) {
             throw new NoTalkbackSlimException("Replaying multi sample VCF files is unsupported");
           }

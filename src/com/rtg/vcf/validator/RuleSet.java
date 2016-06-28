@@ -174,7 +174,7 @@ public class RuleSet<T> {
    */
   public void validateRecord(VcfRecord record) throws RuleValidationException {
     if (mType == FieldType.FORMAT) {
-      final List<String> sampleValues = record.getFormatAndSample().get(mName);
+      final List<String> sampleValues = record.getFormat(mName);
       for (final String sampleValue : sampleValues) {
         validateValues(StringUtils.split(sampleValue, ','), record);
       }

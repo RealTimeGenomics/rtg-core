@@ -316,13 +316,12 @@ public class MetaSnpCli extends LoggedCli {
         final double phred = PosteriorUtils.phredIfy(arith.poss2Ln(res.mAssignments.get(i).mLikelihood));
         record.setInfo("LIKE", "" + Utils.realFormat(phred, 3));
         record.setNumberOfSamples(assignments.length);
-        record.addFormat(VcfUtils.FORMAT_GENOTYPE); // Ensure the record has a notion of genotype - strictly we should also initialize any pre-exising sample columns with empty GT
         for (int alt = 1; alt < alts.size(); alt++) {
           record.addAltCall(line.mAlleles[alts.get(alt)]);
         }
         final StringBuilder syndrome = new StringBuilder();
         for (int assignment : assignments) {
-          record.addFormatAndSample("GT", "" + alts.indexOf(assignment));
+          record.addFormatAndSample(VcfUtils.FORMAT_GENOTYPE, "" + alts.indexOf(assignment));
           syndrome.append(alts.indexOf(assignment) == 0 ? '0' : '1');
         }
         record.setInfo("SYNDROME", syndrome.toString());

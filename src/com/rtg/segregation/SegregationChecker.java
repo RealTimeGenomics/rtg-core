@@ -132,7 +132,7 @@ public class SegregationChecker {
   private FamilyGt familyFromRecord(VcfRecord rec) throws MismatchingPloidyException {
     assert mSampleFather != mSampleMother;
     final GType[] children = new GType[rec.getNumberOfSamples() - 2];
-    final List<String> gts = rec.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE);
+    final List<String> gts = rec.getFormat(VcfUtils.FORMAT_GENOTYPE);
     final GType father = new GType(gts.get(mSampleFather), mPloidyMap.get(new Pair<>(mSampleSex[0], rec.getSequenceName())).effectivePloidy(rec.getStart()));
     final GType mother = new GType(gts.get(mSampleMother), mPloidyMap.get(new Pair<>(mSampleSex[1], rec.getSequenceName())).effectivePloidy(rec.getStart()));
     int index = 0;
@@ -149,7 +149,7 @@ public class SegregationChecker {
   PatternHolder overRide(VcfRecord rec, String fatherGtOverride, String motherGtOverride, int childIndex, String childGtOverride) throws MismatchingPloidyException {
     assert mSampleFather != mSampleMother;
     final GType[] children = new GType[rec.getNumberOfSamples() - 2];
-    final List<String> gts = rec.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE);
+    final List<String> gts = rec.getFormat(VcfUtils.FORMAT_GENOTYPE);
     final GType father = new GType(fatherGtOverride == null ? gts.get(mSampleFather) : fatherGtOverride, mPloidyMap.get(new Pair<>(mSampleSex[0], rec.getSequenceName())).effectivePloidy(rec.getStart()));
     final GType mother = new GType(motherGtOverride == null ? gts.get(mSampleMother) : motherGtOverride, mPloidyMap.get(new Pair<>(mSampleSex[1], rec.getSequenceName())).effectivePloidy(rec.getStart()));
     int index = 0;
@@ -226,7 +226,7 @@ public class SegregationChecker {
       }
       final int childGroup = selectedPatternChildren.group(child);
       groupCounts[childGroup]++;
-      groupDprSums[childGroup] += rec.getFormatAndSample().get(VcfFormatField.DPR.name()) == null ? 0.0 : Double.valueOf(rec.getFormatAndSample().get(VcfFormatField.DPR.name()).get(i));
+      groupDprSums[childGroup] += rec.getFormat(VcfFormatField.DPR.name()) == null ? 0.0 : Double.valueOf(rec.getFormat(VcfFormatField.DPR.name()).get(i));
       child++;
     }
     for (int i = 0; i < groupCounts.length; i++) {
@@ -355,7 +355,7 @@ public class SegregationChecker {
 
   void repairRecord(VcfRecord original, VcfRecord rec, int sampleIndex, String newGt, PatternHolder curr) throws IOException, MismatchingPloidyException {
     final String sampleName = mSampleNames.get(sampleIndex);
-    final String oldGt = rec.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE).get(sampleIndex);
+    final String oldGt = rec.getFormat(VcfUtils.FORMAT_GENOTYPE).get(sampleIndex);
     rec.setFormatAndSample(VcfUtils.FORMAT_GENOTYPE, newGt, sampleIndex);
     rec.addInfo(PHASING_REPAIRED, sampleName, oldGt);
     rec.addInfo(PHASING_COMPATIBLE);
@@ -368,7 +368,7 @@ public class SegregationChecker {
   private void calcPhq(VcfRecord rec) {
     if (!rec.isFiltered()) {
       final MultiSet<String> codes = new MultiSet<>();
-      for (String gtStr : rec.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE)) {
+      for (String gtStr : rec.getFormat(VcfUtils.FORMAT_GENOTYPE)) {
         final int[] gtint = VcfUtils.splitGt(gtStr);
         final String code;
         if (gtint.length == 1) {

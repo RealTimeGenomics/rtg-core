@@ -80,7 +80,7 @@ public final class MutatedSampleOffsets {
         if (!indel) {
           continue;
         }
-        final List<String> gts = rec.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE);
+        final List<String> gts = rec.getFormat(VcfUtils.FORMAT_GENOTYPE);
         for (int i = 0; i < samples.length; i++) {
           final String gt = gts.get(sampleIndexes[i]);
           if (VcfUtils.isMissingGt(gt)) {

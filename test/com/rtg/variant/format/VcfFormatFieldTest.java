@@ -334,8 +334,8 @@ public class VcfFormatFieldTest extends TestCase {
     assertTrue(VADE.hasValue(record, call, sample, sampleName, params));
     VADER.updateRecord(record, call, new String[] {"Sample"}, params, false);
     VADE.updateRecord(record, call, new String[] {"Sample"}, params, false);
-    assertEquals("2.500", record.getFormatAndSample().get("VADER").get(0));
-    assertEquals("50.000", record.getFormatAndSample().get("VADE").get(0));
+    assertEquals("2.500", record.getFormat("VADER").get(0));
+    assertEquals("50.000", record.getFormat("VADE").get(0));
   }
 
   public void testQa() {
@@ -370,6 +370,6 @@ public class VcfFormatFieldTest extends TestCase {
     final String sampleName = "Sample";
     assertTrue(QA.hasValue(record, call, sample, sampleName, params));
     QA.updateRecord(record, call, new String[] {"Sample"}, params, false);
-    assertEquals("20.000", record.getFormatAndSample().get("QA").get(0));
+    assertEquals("20.000", record.getFormat("QA").get(0));
   }
 }

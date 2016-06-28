@@ -101,10 +101,10 @@ public class MlAvrPredictModelTest extends AbstractPredictModelTest<MlAvrPredict
 
       //System.err.println(record.toString());
       assertTrue(record.toString().contains(apm.getField()));
-      assertEquals(1.0, Double.valueOf(record.getFormatAndSample().get(apm.getField()).get(0)), 0.001);
-      assertEquals(0.7, Double.valueOf(record.getFormatAndSample().get(apm.getField()).get(1)), 0.001);
-      assertEquals(1.0, Double.valueOf(record.getFormatAndSample().get(apm.getField()).get(2)), 0.001);
-      assertEquals(0.0, Double.valueOf(record.getFormatAndSample().get(apm.getField()).get(3)), 0.001);
+      assertEquals(1.0, Double.valueOf(record.getFormat(apm.getField()).get(0)), 0.001);
+      assertEquals(0.7, Double.valueOf(record.getFormat(apm.getField()).get(1)), 0.001);
+      assertEquals(1.0, Double.valueOf(record.getFormat(apm.getField()).get(2)), 0.001);
+      assertEquals(0.0, Double.valueOf(record.getFormat(apm.getField()).get(3)), 0.001);
 
 
       // Annotate just requested samples
@@ -114,10 +114,10 @@ public class MlAvrPredictModelTest extends AbstractPredictModelTest<MlAvrPredict
 
       //System.err.println(record.toString());
       assertTrue(record.toString().contains(apm.getField()));
-      assertEquals(".", record.getFormatAndSample().get(apm.getField()).get(0));
-      assertEquals(".", record.getFormatAndSample().get(apm.getField()).get(1));
-      assertEquals(1.0, Double.valueOf(record.getFormatAndSample().get(apm.getField()).get(2)), 0.001);
-      assertEquals(0.0, Double.valueOf(record.getFormatAndSample().get(apm.getField()).get(3)), 0.001);
+      assertEquals(".", record.getFormat(apm.getField()).get(0));
+      assertEquals(".", record.getFormat(apm.getField()).get(1));
+      assertEquals(1.0, Double.valueOf(record.getFormat(apm.getField()).get(2)), 0.001);
+      assertEquals(0.0, Double.valueOf(record.getFormat(apm.getField()).get(3)), 0.001);
     }
   }
 

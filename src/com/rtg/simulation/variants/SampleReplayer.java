@@ -129,7 +129,7 @@ public class SampleReplayer {
         int currentPos = 0;
         while (vcfReader.hasNext()) {
           final VcfRecord vcf = vcfReader.next();
-          final String gtStr = vcf.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE).get(sampleNum);
+          final String gtStr = vcf.getFormat(VcfUtils.FORMAT_GENOTYPE).get(sampleNum);
           final int[] gtInt = VcfUtils.splitGt(gtStr);
           if (gtInt.length != count) {
             throw new NoTalkbackSlimException("Genotype with incorrect ploidy for sample: " + header.getSampleNames().get(sampleNum) + " at " + name + ":" + vcf.getOneBasedStart() + " exp: " + count + " was : " + gtInt.length);

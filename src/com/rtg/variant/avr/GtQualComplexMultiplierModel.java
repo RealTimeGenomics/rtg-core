@@ -146,7 +146,7 @@ public class GtQualComplexMultiplierModel extends AbstractPredictModel {
 
       if (!Double.isNaN(gq)) {
         final String value = Long.toString(MathUtils.round(gq * mGqMultipliers[multiplierIndex]));
-        record.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE_QUALITY).set(s, value);
+        record.getFormat(VcfUtils.FORMAT_GENOTYPE_QUALITY).set(s, value);
       }
 
       // update summary statistics
@@ -167,7 +167,7 @@ public class GtQualComplexMultiplierModel extends AbstractPredictModel {
 
     if (!Double.isNaN(gq)) {
       final String value = Long.toString(MathUtils.round(gq * mGqMultipliers[multiplierIndex]));
-      record.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE_QUALITY).set(sampleNo, value);
+      record.getFormat(VcfUtils.FORMAT_GENOTYPE_QUALITY).set(sampleNo, value);
     }
 
     // update summary statistics

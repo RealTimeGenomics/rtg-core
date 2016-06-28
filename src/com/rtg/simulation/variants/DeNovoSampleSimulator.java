@@ -195,7 +195,7 @@ public class DeNovoSampleSimulator {
 
         // For non de-novo, append sample genotype from original genotype
         v.setNumberOfSamples(sampleId + 1);
-        final String gt = v.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE).get(mOriginalSampleNum);
+        final String gt = v.getFormat(VcfUtils.FORMAT_GENOTYPE).get(mOriginalSampleNum);
         for (String format : v.getFormats()) {
           final String value = format.equals(VcfUtils.FORMAT_GENOTYPE) ? gt : VcfRecord.MISSING;
           v.addFormatAndSample(format, value);
@@ -238,8 +238,6 @@ public class DeNovoSampleSimulator {
 
   private String addSamplesForDeNovo(final VcfRecord v, final int sampleId, final int ploidyCount, String refName) {
     final String sampleGt = ploidyCount == 1 ? "1" : mRandom.nextBoolean() ? "0|1" : "1|0";
-    v.addFormat(VcfUtils.FORMAT_GENOTYPE);
-    v.addFormat(VcfUtils.FORMAT_DENOVO);
     v.setNumberOfSamples(sampleId + 1);
     for (int id = 0; id <= sampleId; id++) {
       final String gt;

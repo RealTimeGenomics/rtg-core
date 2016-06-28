@@ -246,7 +246,7 @@ public class SegregationVcfSearch extends AbstractCli {
 
   private FamilyGt getFamilyGt(VcfRecord rec, int sampleFather, int sampleMother, Sex[] sexes, Map<Pair<Sex, String>, ReferenceSequence> ploidyMap) throws MismatchingPloidyException {
     final String[] sortedGts = new String[rec.getNumberOfSamples()];
-    final List<String> gts = rec.getFormatAndSample().get(VcfUtils.FORMAT_GENOTYPE);
+    final List<String> gts = rec.getFormat(VcfUtils.FORMAT_GENOTYPE);
     sortedGts[0] = gts.get(sampleFather);
     sortedGts[1] = gts.get(sampleMother);
     int index = 2;
