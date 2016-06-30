@@ -27,6 +27,7 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.io.BaseFile;
 import com.rtg.util.io.FileUtils;
 
 /**
@@ -74,7 +75,7 @@ public class SamToFastq extends AbstractCli {
     final List<File> files = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, INPUT_FLAG).getFileList(mFlags);
     final CollatedDataSource ds = new CollatedDataSource(new FileStreamIterator(files, null), true, false, null);
 
-    final FastqUtils.BaseFile baseOutFile = FastqUtils.baseFile((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), !mFlags.isSet(CommonFlags.NO_GZIP));
+    final BaseFile baseOutFile = FastqUtils.baseFile((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), !mFlags.isSet(CommonFlags.NO_GZIP));
     final File outLeftName = baseOutFile.suffixedFile("_1");
     final File outRightName = baseOutFile.suffixedFile("_2");
     boolean left = true;

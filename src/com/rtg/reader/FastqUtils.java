@@ -15,9 +15,9 @@ import java.io.File;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
-import java.util.List;
 
 import com.rtg.mode.DnaUtils;
+import com.rtg.util.io.BaseFile;
 import com.rtg.util.io.FileUtils;
 
 /**
@@ -31,51 +31,10 @@ public final class FastqUtils {
   private static final String[] EXTS = {".fastq", ".fq"};
 
   /**
-   * @return list of extensions that we recognize for FASTQ files
+   * @return array of extensions that we recognize for FASTQ files
    */
-  public static List<String> extensions() {
-    return Arrays.asList(EXTS);
-  }
-
-  /**
-   * Convenience for dealing with a base file name that may have suffixes before the file extensions
-   */
-  public static class BaseFile {
-    private final File mBaseFile;
-    private final String mExtension;
-    private final boolean mGzip;
-
-    /**
-     * @param baseFile file name up to point that suffixes and/or extensions are applied
-     * @param extension extension that should be appended after suffix
-     * @param gzip whether a gzip extension should be applied to end
-     */
-    public BaseFile(File baseFile, String extension, boolean gzip) {
-      mBaseFile = baseFile;
-      mExtension = extension;
-      mGzip = gzip;
-    }
-
-    public File getBaseFile() {
-      return mBaseFile;
-    }
-
-    public String getExtension() {
-      return mExtension;
-    }
-
-    public boolean isGzip() {
-      return mGzip;
-    }
-
-    /**
-     * Apply suffix to base file and add all relevant extensions
-     * @param suffix suffix for base file
-     * @return the fully named file
-     */
-    public File suffixedFile(String suffix) {
-      return new File(mBaseFile.getParentFile(), mBaseFile.getName() + suffix + mExtension + (mGzip ? FileUtils.GZ_SUFFIX : ""));
-    }
+  public static String[] extensions() {
+    return Arrays.copyOf(EXTS, EXTS.length);
   }
 
   /**
@@ -85,21 +44,7 @@ public final class FastqUtils {
    * @return the base file
    */
   public static BaseFile baseFile(File file, boolean gzip) {
-    return getBaseFile(file, gzip, EXTS);
-  }
-
-  private static BaseFile getBaseFile(File file, boolean gzip, String... exts) {
-    File baseOutFile = file;
-    if (FileUtils.isGzipFilename(baseOutFile)) { //remove gzip extension if present, we will put this back on if gzipping
-      baseOutFile = FileUtils.removeExtension(baseOutFile);
-    }
-    String extension = FileUtils.getExtension(baseOutFile);
-    if (Arrays.asList(exts).contains(extension)) {
-      baseOutFile = FileUtils.removeExtension(baseOutFile); //remove extension if present, we will place back on with other suffixes
-    } else {
-      extension = exts[0];
-    }
-    return new BaseFile(baseOutFile, extension, gzip);
+    return FileUtils.getBaseFile(file, gzip, EXTS);
   }
 
   /**

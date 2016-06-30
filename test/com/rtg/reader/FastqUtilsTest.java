@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.StringWriter;
 
 import com.rtg.mode.DnaUtils;
+import com.rtg.util.io.BaseFile;
 
 import junit.framework.TestCase;
 
@@ -33,10 +34,10 @@ public class FastqUtilsTest extends TestCase {
     checkBaseFile("input", ".fq", true, FastqUtils.baseFile(new File("input.fq.gz"), true));
     checkBaseFile("input.fast", ".fastq", true, FastqUtils.baseFile(new File("input.fast.gz"), true));
 
-    final FastqUtils.BaseFile bf = FastqUtils.baseFile(new File("input.fastq.gz"), true);
+    final BaseFile bf = FastqUtils.baseFile(new File("input.fastq.gz"), true);
     assertEquals("input.fastq.gz", bf.suffixedFile("").getName());
     assertEquals("input_moo.fastq.gz", bf.suffixedFile("_moo").getName());
-    final FastqUtils.BaseFile bf2 = FastqUtils.baseFile(new File("input.fastq.gz"), false);
+    final BaseFile bf2 = FastqUtils.baseFile(new File("input.fastq.gz"), false);
     assertEquals("input.fastq", bf2.suffixedFile("").getName());
     assertEquals("input_moo.fastq", bf2.suffixedFile("_moo").getName());
   }
@@ -52,10 +53,10 @@ public class FastqUtilsTest extends TestCase {
     }
   }
 
-  private void checkBaseFile(String expectedBase, String expExtension, boolean gz, FastqUtils.BaseFile res) {
+  private void checkBaseFile(String expectedBase, String expExtension, boolean gz, BaseFile res) {
     checkBaseFile(new File(expectedBase), expExtension, gz, res);
   }
-  private void checkBaseFile(File expectedBase, String expExtension, boolean gz, FastqUtils.BaseFile res) {
+  private void checkBaseFile(File expectedBase, String expExtension, boolean gz, BaseFile res) {
     assertEquals(expectedBase, res.getBaseFile());
     assertEquals(expExtension, res.getExtension());
     assertEquals(gz, res.isGzip());
