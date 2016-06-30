@@ -17,7 +17,9 @@ import java.util.Arrays;
 import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
-import com.rtg.util.Utils;
+import com.rtg.util.MathUtils;
+import com.rtg.util.StringUtils;
+import com.rtg.util.cli.CFlags;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 import com.rtg.util.machine.MachineType;
@@ -29,6 +31,15 @@ import com.rtg.variant.util.arithmetic.SimplePossibility;
 /**
  */
 public class ScoreMatrixTest extends AbstractNanoTest {
+
+  private static final String TEMPLATE_FLAG = "template";
+  private static final String READ_FLAG = "read";
+  private static final String START_FLAG = "start";
+  private static final String MAXSHIFT_FLAG = "maxshift";
+  private static final String QUALITY_FLAG = "quality";
+  private static final String PPM_FLAG = "ppm";
+  private static final String ASCII_FLAG = "ascii";
+  private static final String ITERATE_FLAG = "iterate";
 
   /** Used for testing. */
   public static class LogTest extends ScoreMatrixTest {
@@ -272,47 +283,60 @@ public class ScoreMatrixTest extends AbstractNanoTest {
    * @param args none required.
    */
   public static void main(String[] args) {
-    final String read = "ACGTACGTAC GTACGTACGT ACGTACGTAC GTACG".replaceAll(" ", "");
-    final String tmpl = "AACCGGTTAACCGGTTTGCAGACTGACTGACGAGTACATGCTGCAGCGTAGCG";
-    final int start = 10;
-    final int maxShift = 7;
-    final int repeat = 1000000;
+    final CFlags f = new CFlags();
+    f.setName("ScoreMatrixTest");
+    f.setDescription("Compute an all-paths alignment between a read and template. For PPM visualization, try:\n"
+    + "  " + f.getName() + " --ppm [...] | pnmscale 5 - | display -\n");
+    f.registerOptional('t', TEMPLATE_FLAG, String.class, "DNA", "template bases", "AACCGGTTAACCGGTTTTTTGACTGACTGACGAGTACATGCTGCAGCGTAGCG");
+    f.registerOptional('r', READ_FLAG, String.class, "DNA", "read bases",                "TAggCGGTTTTT GACTGACTcACGAtTtCATGCTGCAGaGT");
+    f.registerOptional('q', QUALITY_FLAG, Integer.class, "INT", "default phread quality score", 20);
+    f.registerOptional('s', START_FLAG, Integer.class, "INT", "start position of read", 7);
+    f.registerOptional('m', MAXSHIFT_FLAG, Integer.class, "INT", "maxshift", 7);
+    f.registerOptional('i', ITERATE_FLAG, Integer.class, "INT", "perform timing comparison using this many iterations");
+    f.registerOptional('p', PPM_FLAG, "Output as PPM image");
+    f.registerOptional('a', ASCII_FLAG, "Output as ascii matrix");
+    if (!f.setFlags(args)) {
+      System.exit(1);
+    }
+    final String tmpl = ((String) f.getValue(TEMPLATE_FLAG)).replaceAll(" ", "");
+    final int start = (Integer) f.getValue(START_FLAG);
+    final int maxShift = (Integer) f.getValue(MAXSHIFT_FLAG);
+    final String read = ((String) f.getValue(READ_FLAG)).replaceAll(" ", "");
     final double[] quality = new double[read.length()];
-    Arrays.fill(quality, 0.01);
+    Arrays.fill(quality, MathUtils.phredToProb((Integer) f.getValue(QUALITY_FLAG)));
     final Environment env = new EnvironmentImplementation(
-        maxShift,
-        DNA.stringDNAtoByte(tmpl),
-        start,
-        DNA.stringDNAtoByte(read),
-        quality
-        );
+      maxShift,
+      DNA.stringDNAtoByte(tmpl),
+      start,
+      DNA.stringDNAtoByte(read),
+      quality
+    );
     Exam.integrity(env);
-    final long time0 = System.nanoTime();
-    ScoreMatrix sm1 = null;
-    for (int i = 0; i < repeat; i++) {
-      sm1 = new ScoreMatrix(LogPossibility.SINGLETON, new MockRealignParams());
-      sm1.setEnv(env);
+    System.err.println("Template: " + tmpl);
+    System.err.println("Read:     " + read);
+    if (f.isSet(ITERATE_FLAG)) {
+      final int repeat = (Integer) f.getValue(ITERATE_FLAG);
+      for (PossibilityArithmetic arith : new PossibilityArithmetic[]{LogPossibility.SINGLETON, LogApproximatePossibility.SINGLETON, SimplePossibility.SINGLETON}) {
+        final long time0 = System.nanoTime();
+        ScoreMatrix sm1 = null;
+        for (int i = 0; i < repeat; i++) {
+          sm1 = new ScoreMatrix(arith, new MockRealignParams());
+          sm1.setEnv(env);
+        }
+        final long time1 = System.nanoTime();
+        final double usec1 = (time1 - time0) / (1000.0 * repeat);
+        System.out.println(StringUtils.padRight(arith.toString(), 30) + " time=" + usec1 + "usec  scoreLn=" + sm1.totalScoreLn());
+      }
+    } else {
+      final AbstractAllPaths sm = new ScoreMatrix(LogApproximatePossibility.SINGLETON, RealignParamsGenome.SINGLETON);
+      sm.setEnv(env);
+      System.err.println("Probability: " + sm.totalScore());
+      System.err.println("Log Score:   " + sm.totalScoreLn());
+      if (f.isSet(PPM_FLAG)) {
+        System.out.print(sm.toPpm());
+      } else if (f.isSet(ASCII_FLAG)) {
+        System.out.println(sm.toString());
+      }
     }
-    final long time1 = System.nanoTime();
-    ScoreMatrix sm2 = null;
-    for (int i = 0; i < repeat; i++) {
-      sm2 = new ScoreMatrix(LogApproximatePossibility.SINGLETON, new MockRealignParams());
-      sm2.setEnv(env);
-    }
-    final long time2 = System.nanoTime();
-    ScoreMatrix sm3 = null;
-    for (int i = 0; i < repeat; i++) {
-      sm3 = new ScoreMatrix(SimplePossibility.SINGLETON, new MockRealignParams());
-      sm3.setEnv(env);
-    }
-    final long time3 = System.nanoTime();
-    final double usec1 = (time1 - time0) / (1000.0 * repeat);
-    final double usec2 = (time2 - time1) / (1000.0 * repeat);
-    final double usec3 = (time3 - time2) / (1000.0 * repeat);
-    System.out.println("log       scoreLn=" + sm1.totalScoreLn() + "  time=" + usec1 + "usec");
-    System.out.println("logApprox scoreLn=" + sm2.totalScoreLn() + "  time=" + usec2 + "usec");
-    System.out.println("double    scoreLn=" + sm3.totalScoreLn() + "  time=" + usec3 + "usec");
-    System.out.println("ratios = " + Utils.realFormat(usec1 / usec3, 1)
-        + " : " + Utils.realFormat(usec2 / usec3, 1) + " : 1.0");
   }
 }

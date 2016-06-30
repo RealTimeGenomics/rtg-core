@@ -66,10 +66,14 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
   private final double mDelOpen;
 
 
-  /** The height of the matrix less 1 (so valid rows are from 0 .. <code>mLength</code> inclusive) */
+  /**
+   * The height of the matrix less 1 (so valid rows are from 0 .. <code>mLength</code> inclusive)
+   */
   protected int mLength;
 
-  /** The minimum width of the matrix (i.e., the width of the first row) */
+  /**
+   * The minimum width of the matrix (i.e., the width of the first row)
+   */
   protected int mWidth;
 
   protected int mMaxWidth;  //the current full width of the matrix
@@ -92,6 +96,7 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
 
   /**
    * A score matrix with the given maximum band width.
+   *
    * @param arith helper object that does the arithmetic so that this code can be independent of the representation.
    * @param params the machine error model and related parameters.
    */
@@ -162,10 +167,10 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
    *
    * @param row one-based read position.
    * @return an offset along the template, from where the read is expected to start.
-   *         Smallest value will be for row 0.
-   *         Largest value will be for the last row.
-   *         But the values for intermediate rows may move backwards
-   *         and forwards between those bounds.
+   * Smallest value will be for row 0.
+   * Largest value will be for the last row.
+   * But the values for intermediate rows may move backwards
+   * and forwards between those bounds.
    */
   protected int rowOffset(final int row) {
     return row - mEnv.maxShift() - 1;
@@ -195,6 +200,7 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
 
   /**
    * Calculate the match/mismatch cost at a given cell of the matrix.
+   *
    * @param i zero-based read position
    * @param j zero-based column position (<code>0 .. mWidth - 1</code>)
    * @return natural log of the probability
@@ -215,6 +221,7 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
 
   /**
    * Calculate the match/mismatch probability at a given row and for a specified nucleotide.
+   *
    * @param i zero-based read position
    * @param nt nucleotide (assumed to be on template, 0=N...4=T).
    * @return probability represented as a possibility.
@@ -230,7 +237,7 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
       final double q3 = q / 3.0;
       if (nt == re) {
         incr = mArith.add(mArith.multiply(mMatchPoss, mArith.prob2Poss(1.0 - q)),
-            mArith.multiply(mMisMatchPoss, mArith.prob2Poss(q3)));
+          mArith.multiply(mMisMatchPoss, mArith.prob2Poss(q3)));
         //System.err.println("match    i=" + i + " j=" + j + " incr=" + incr + " res=" + (sum + incr));
       } else {
         final double x = mArith.multiply(mMatchPoss, mArith.prob2Poss(q3));
@@ -251,6 +258,95 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
 
   final int width() {
     return mWidth;
+  }
+
+  /**
+   * Gets a visual representation of the alignment, in PPM image format
+   * @return the PPM image string
+   */
+  public final String toPpm() {
+    int fragTot = 0;
+    for (int row = 0; row <= mLength; row++) {
+      if (isFragmentStart(row)) {
+        fragTot++;
+      }
+    }
+    double best = rescale(mArith.poss2Ln(mInsert[0][0]), 0);
+    for (int row = 0; row <= mLength; row++) {
+      for (int col = 0; col < mWidth; col++) {
+        best = Math.max(best, rescale(mArith.poss2Ln(mInsert[row][col]), 0));
+        best = Math.max(best, rescale(mArith.poss2Ln(mMatch[row][col]), 0));
+        best = Math.max(best, rescale(mArith.poss2Ln(mDelete[row][col]), 0));
+      }
+    }
+    System.err.println("Best: " + best);
+
+    final StringBuilder sb = new StringBuilder();
+    sb.append("P3\n");
+    sb.append("" + (mLength + mWidth + 2) + " " + (mLength + fragTot + 3) + "\n");
+    sb.append("100\n");
+
+    final int rowStart = rowOffset(0);
+    final int rowEnd = rowOffset(mLength) + mWidth;
+
+    ppmTemplateRow(sb, rowStart, rowEnd);
+    for (int row = 0; row <= mLength; row++) {
+      if (isFragmentStart(row)) { // insert a horizontal line where the CG gap/overlap happens.
+        ppmTemplateRow(sb, rowStart, rowEnd);
+      }
+      sb.append(PPM_DNA_COLS[row == 0 ? 0 : mEnv.read(row - 1)]); // Left hand read base column
+      // indent the row, so we line up with the template
+      for (int i = 0; i < rowOffset(row) - rowStart; i++) {
+        ppmColor(sb, 0, 0, 0);
+      }
+      for (int col = 0; col < mWidth; col++) {
+        ppmColor(sb,
+          rescale(mArith.poss2Ln(mInsert[row][col]), 0, best),
+          rescale(mArith.poss2Ln(mMatch[row][col]), 0, best),
+          rescale(mArith.poss2Ln(mDelete[row][col]), 0, best));
+      }
+      for (int i = rowOffset(row) - rowStart + mWidth; i < mLength + mWidth; i++) {
+        ppmColor(sb, 0, 0, 0);
+      }
+      sb.append(PPM_DNA_COLS[row == 0 ? 0 : mEnv.read(row - 1)]); // Right hand read base column
+      sb.append(LS);
+    }
+    ppmTemplateRow(sb, rowStart, rowEnd);
+    return sb.toString();
+  }
+
+  private static final String[] PPM_DNA_COLS = {
+    "  50  50  50 ", // N
+    "   0 100   0 ", // A
+    "   0   0 100 ", // C
+    "  50   0  50 ", // G
+    " 100   0   0 ", // T
+  };
+
+  private void ppmTemplateRow(StringBuilder sb, int rowStart, int rowEnd) {
+    sb.append(PPM_DNA_COLS[0]);
+    for (int pos = rowStart; pos < rowEnd; pos++) {
+      sb.append(PPM_DNA_COLS[mEnv.template(pos)]);
+    }
+    sb.append(PPM_DNA_COLS[0]);
+    sb.append(LS);
+  }
+
+  private static void ppmColor(StringBuilder sb, double ins, double match, double del) {
+    sb.append(StringUtils.padLeft(Utils.realFormat(ins, FIELD_DP), FIELD_WIDTH + 1));
+    sb.append(StringUtils.padLeft(Utils.realFormat(match, FIELD_DP), FIELD_WIDTH + 1));
+    sb.append(StringUtils.padLeft(Utils.realFormat(del, FIELD_DP), FIELD_WIDTH + 1));
+    sb.append(" ");
+  }
+
+  private static double rescale(final double x, int edge) {
+    //be careful about outputting -0.0
+    return Double.isInfinite(x) ? edge : x == 0.0 ? 0.0 : -x;
+  }
+  private static double rescale(final double x, int edge, double best) {
+    //be careful about outputting -0.0
+    //return Double.isInfinite(x) ? edge : x == 0.0 ? 0.0 : -100 * x / best;
+    return Double.isInfinite(x) ? edge : x == 0.0 ? 0.0 : 100 - -100 * x / best;
   }
 
   @Override
@@ -316,13 +412,7 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
     return format(x, FIELD_WIDTH);
   }
 
-  /**
-   * padded format
-   * @param x value to format
-   * @param fw total width
-   * @return formated string
-   */
-  public static String format(final double x, final int fw) {
+  private static String format(final double x, final int fw) {
     //be careful about outputting -0.0
     final String fst = Double.isInfinite(x) && x < 0.0 ? "" : x == 0.0 ? Utils.realFormat(0.0, FIELD_DP) : Utils.realFormat(-x, FIELD_DP);
     return StringUtils.padLeft(fst, fw);
