@@ -305,6 +305,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(FILTER_DEPTH_FLAG, Integer.class, "int", "apply a fixed depth of coverage filter to output variants").setCategory(REPORTING);
     flags.registerOptional(FILTER_DEPTH_MULTIPLIER_FLAG, Double.class, "float", "apply a ratio based depth filter. The filter will be multiplier * average coverage determined from calibration files").setCategory(REPORTING); //set a coverage threshold for use with the average coverage determined by calibration files. The threshold will be the average coverage + (multiplier * square root of average coverage)
     flags.registerOptional(BED_FILTER_FLAG, File.class, "FILE", "apply a position based filter, retaining only variants that fall in these BED regions").setCategory(REPORTING);
+    flags.registerOptional(MIN_BASE_QUALITY_FLAG, Integer.class, "int", "phred scaled quality score, read bases below this quality will be treated as unknowns", 0).setCategory(SENSITIVITY_TUNING);
 
     flags.registerOptional(X_ALT_MULTIPLIER_FLAG, "determine coverage thresholds using avg_cov + multiplier * sqrt(avg_cov)").setCategory(REPORTING); /* old multiplier * avg_cov instead of as */
 
