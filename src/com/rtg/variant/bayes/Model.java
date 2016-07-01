@@ -15,8 +15,6 @@ package com.rtg.variant.bayes;
 
 import java.util.Arrays;
 
-import com.rtg.launcher.globals.GlobalFlags;
-import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
@@ -32,9 +30,6 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  * @param <D> description type
  */
 public class Model<D extends Description> extends IntegralAbstract implements ModelInterface<D> {
-
-  // Factor 1.1 to cover arithmetic error in sum used for error() in EvidenceComplex
-  private static final double MAX_BASE_ERROR = VariantUtils.phredToProb(GlobalFlags.getIntegerValue(CoreGlobalFlags.MIN_BASE_QUALITY)) * 1.1;
 
   /**
    * When <code>MAPQ</code> is less than or equal to this then treat as ambiguous.

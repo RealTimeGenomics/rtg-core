@@ -33,7 +33,7 @@ import htsjdk.samtools.SAMRecord;
  */
 public final class VariantAlignmentRecord extends SequenceIdLocusSimple implements ReaderRecord<VariantAlignmentRecord>, MateInfo, MapInfo {
   // Factor 1.1 to cover arithmetic error in sum used for error() in EvidenceComplex
-  private static final double MIN_QUALITY = GlobalFlags.getIntegerValue(CoreGlobalFlags.MIN_BASE_QUALITY);
+  private static final boolean MIN_QUALITY_AS_TWO = GlobalFlags.getBooleanValue(CoreGlobalFlags.MIN_BASE_QUALITY_AS_TWO);
 
   private static final int FLAG_MATED = 1;
   private static final int FLAG_PAIRED = 2;
@@ -95,8 +95,9 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
    * @param record SAM record. Requires header with sequence dictionary (for reference index lookup)
    * @param genome genome code for this record
    * @param chooser machine error chooser
+   * @param minBaseQuality
    */
-  public VariantAlignmentRecord(final SAMRecord record, final int genome, MachineErrorChooserInterface chooser) {
+  public VariantAlignmentRecord(final SAMRecord record, final int genome, MachineErrorChooserInterface chooser, int minBaseQuality) {
     super(record.getReferenceIndex(), record.getAlignmentStart() - 1, record.getReadUnmappedFlag() ? record.getAlignmentStart() - 1 + record.getReadLength() : record.getAlignmentEnd()); // picard end position is 1-based inclusive == 0-based exclusive
     mGenome = genome;
     mFragmentLength = record.getInferredInsertSize();
@@ -105,11 +106,6 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
 
 
     final byte[] baseQualities = record.getBaseQualities();
-    for (int i = 0; i < baseQualities.length; i++) {
-      if (baseQualities[i] < MIN_QUALITY) {
-        mBases[i] = 'N';
-      }
-    }
 //    if (baseQualities.length == 0) {
 //      mRecalibratedQuality = baseQualities;
 //    } else {
@@ -204,6 +200,15 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
       machineCycle += machineStep;
       qualityPosition++;
     }
+    for (int i = 0; i < mRecalibratedQuality.length; i++) {
+      if (mRecalibratedQuality[i] < minBaseQuality) {
+        if (MIN_QUALITY_AS_TWO) {
+          mRecalibratedQuality[i] = 2;
+        } else {
+          mBases[i] = 'N';
+        }
+      }
+    }
   }
 
   /**
@@ -219,7 +224,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
    * @param record SAM record
    */
   public VariantAlignmentRecord(final SAMRecord record) {
-    this(record, record.getReferenceIndex(), new DefaultMachineErrorChooser());
+    this(record, record.getReferenceIndex(), new DefaultMachineErrorChooser(), 0);
   }
 
   public byte[] getRead() {

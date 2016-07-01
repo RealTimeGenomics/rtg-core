@@ -84,7 +84,7 @@ public class CircularBufferMultifileSinglePassReaderWindowTest extends TestCase 
     final File samFile = VariantTestUtils.bgzipAndIndexResource("com/rtg/sam/resources/" + name + ".sam", mDir);
     final File[] samFiles = {samFile};
     final List<File> list = Arrays.asList(samFiles);
-    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), "a", "b", "c");
+    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), 0, "a", "b", "c");
     final SamRegionRestriction restriction = new SamRegionRestriction("simulatedSequence1", 0, end);
     final RecordIterator<VariantAlignmentRecord> it = CircularBufferMultifileSinglePassReaderWindow.defaultIterator(list, new SamFilterParamsBuilder().restriction(restriction).create(), 4, pop);
     final CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord> ssrw = new CircularBufferMultifileSinglePassReaderWindow<>(it, pop, SamUtils.getUberHeader(list).getSequenceIndex("simulatedSequence1"), restriction.getStart(), Integer.MAX_VALUE);
@@ -93,7 +93,7 @@ public class CircularBufferMultifileSinglePassReaderWindowTest extends TestCase 
 
   protected Pair<CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord>, RecordIterator<VariantAlignmentRecord>> getCircularBuffer(final File[] samFiles, final int start, final int end) throws IOException {
     final List<File> list = Arrays.asList(samFiles);
-    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), "a", "b", "c");
+    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), 0, "a", "b", "c");
     final SamRegionRestriction restriction = new SamRegionRestriction("simulatedSequence2", start, end);
     final RecordIterator<VariantAlignmentRecord> it = CircularBufferMultifileSinglePassReaderWindow.defaultIterator(list, new SamFilterParamsBuilder().restriction(restriction).create(), 4, pop);
     final CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord> ssrw = new CircularBufferMultifileSinglePassReaderWindow<>(it, pop, SamUtils.getUberHeader(list).getSequenceIndex("simulatedSequence2"), restriction.getStart(), Integer.MAX_VALUE);
@@ -379,7 +379,7 @@ public class CircularBufferMultifileSinglePassReaderWindowTest extends TestCase 
     final File[] tbiFiles = {new File(mDir, "samFile1460.sam.gz.tbi")};
     FileHelper.resourceToFile("com/rtg/sam/resources/readerWindow1.sam.gz", samFiles[0]);
     FileHelper.resourceToFile("com/rtg/sam/resources/readerWindow1.sam.gz.tbi", tbiFiles[0]);
-    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), "a", "b", "c");
+    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), 0, "a", "b", "c");
     final SamRegionRestriction region = new SamRegionRestriction("simulatedSequence1", 0, 1000);
     final RecordIterator<VariantAlignmentRecord> it = CircularBufferMultifileSinglePassReaderWindow.defaultIterator(Arrays.asList(samFiles), new SamFilterParamsBuilder().restriction(region).create(), 4, pop);
     final CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord> buf = new CircularBufferMultifileSinglePassReaderWindow<>(it, pop, 0, region.getStart(), 0);

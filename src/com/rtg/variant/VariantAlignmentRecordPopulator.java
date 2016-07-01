@@ -26,15 +26,18 @@ public class VariantAlignmentRecordPopulator implements Populator<VariantAlignme
 
   private final HashMap<String, Integer> mGenomeToInteger;
   private MachineErrorChooserInterface mChooser;
+  private int mMinBaseQuality;
 
   /**
    * Populator.
-   * @param genomeNames list of genome names
    * @param chooser Machine error chooser. Will be used to recalibrate qualities at record creation time
+   * @param minBaseQuality minimum read base quality in phred scale
+   * @param genomeNames list of genome names
    */
-  public VariantAlignmentRecordPopulator(MachineErrorChooserInterface chooser, final String... genomeNames) {
+  public VariantAlignmentRecordPopulator(MachineErrorChooserInterface chooser, int minBaseQuality, final String... genomeNames) {
     mChooser = chooser;
     mGenomeToInteger = new HashMap<>(genomeNames.length);
+    mMinBaseQuality = minBaseQuality;
     for (int i = 0; i < genomeNames.length; i++) {
       final String s = genomeNames[i];
       mGenomeToInteger.put(s, i);
@@ -52,9 +55,9 @@ public class VariantAlignmentRecordPopulator implements Populator<VariantAlignme
       if (genome == null) {
         throw new NoTalkbackSlimException("Could not determine sample from SAM record (check read group information against expected samples): " + rec.getSAMString());
       }
-      return new VariantAlignmentRecord(rec, genome, mChooser);
+      return new VariantAlignmentRecord(rec, genome, mChooser, mMinBaseQuality);
     } else {
-      return new VariantAlignmentRecord(rec, 0, mChooser);
+      return new VariantAlignmentRecord(rec, 0, mChooser, mMinBaseQuality);
     }
   }
 

@@ -36,7 +36,7 @@ public class DedupifyingRecordIteratorTest extends TestCase {
       final File sam = FileHelper.resourceToFile(SAM_RESOURCE, new File(dir, "testFilter.sam"));
       final List<File> f = new ArrayList<>();
       f.add(sam);
-      final SingletonPopulatorFactory<VariantAlignmentRecord> pf = new SingletonPopulatorFactory<>(new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser()));
+      final SingletonPopulatorFactory<VariantAlignmentRecord> pf = new SingletonPopulatorFactory<>(new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), 0));
       try (ThreadedMultifileIterator<VariantAlignmentRecord> tmfi = new ThreadedMultifileIterator<>(f, 1, pf, SamFilterParams.builder().excludeUnmapped(true).create(), SamUtils.getUberHeader(f))) {
         final DedupifyingRecordIterator<VariantAlignmentRecord> dd = new DedupifyingRecordIterator<>(tmfi);
         while (dd.hasNext()) {

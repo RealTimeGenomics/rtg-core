@@ -42,7 +42,7 @@ public class ThreadedMultifileIteratorWrapperTest extends TestCase {
       fileList.add(first);
       fileList.add(second);
       final SamFilterParams params = SamFilterParams.builder().create();
-      final SingletonPopulatorFactory<VariantAlignmentRecord> pf = new SingletonPopulatorFactory<>(new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser()));
+      final SingletonPopulatorFactory<VariantAlignmentRecord> pf = new SingletonPopulatorFactory<>(new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), 0));
       try (ThreadedMultifileIteratorWrapper<VariantAlignmentRecord> it = new ThreadedMultifileIteratorWrapper<>(new SamReadingContext(fileList, 1, params, SamUtils.getUberHeader(fileList)), pf)) {
         it.setSequenceId(0);
         final List<SAMReadGroupRecord> readGroups = it.header().getReadGroups();

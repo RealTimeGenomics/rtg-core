@@ -283,7 +283,7 @@ public class ComplexCallerTest extends TestCase {
       .create();
     final AbstractJointCallerConfiguration config = new SingletonCallerConfiguration.Configurator().getConfig(params, null);
 
-    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser());
+    final VariantAlignmentRecordPopulator pop = new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), 0);
     final RecordIterator<VariantAlignmentRecord> it = CircularBufferMultifileSinglePassReaderWindow.defaultIterator(list, params.filterParams(), 8, pop);
     final CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord> trib =
        new CircularBufferMultifileSinglePassReaderWindow<>(

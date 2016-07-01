@@ -150,7 +150,7 @@ public class AlignmentMatchTest extends TestCase {
     // Complete Genomics correction curve
     rec.setAttribute("RG", "CG");
     rec.setBaseQualities(TEST_RAW_QUALITY);
-    final VariantAlignmentRecord var = new VariantAlignmentRecord(rec, 0, chooser);
+    final VariantAlignmentRecord var = new VariantAlignmentRecord(rec, 0, chooser, 0);
     final AlignmentMatch ins = new AlignmentMatch(var, chooser, TEST_READ_STRING, var.getRecalibratedQuality(), 20, 1, 3, 7, true, true);
     ins.integrity();
     assertEquals(VariantUtils.phredToProb(0), ins.baseError(0), 1E-14);

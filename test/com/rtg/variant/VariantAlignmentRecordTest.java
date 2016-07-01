@@ -151,7 +151,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final SAMRecord rec = getSAMRecord("TATT", "2M2D2M", q, true);
 
     final MachineErrorChooserInterface machineErrorChooserInterface = getMachineCycleCalibrator();
-    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface);
+    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     assertTrue(Arrays.equals(new byte[] {0, 1, 2, 3}, r.getRecalibratedQuality()));
   }
 
@@ -169,7 +169,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final SAMRecord rec = getSAMRecord("TATT", "2M2D2M", q, true);
 
     final MachineErrorChooserInterface machineErrorChooserInterface = getArmBasedChooserInterface();
-    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface);
+    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     assertTrue(Arrays.equals(new byte[] {30, 42, 18, 20}, r.getRecalibratedQuality()));
   }
 
@@ -178,7 +178,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final SAMRecord rec = getSAMRecord("TATT", "2M2D2M", q, false);
 
     final MachineErrorChooserInterface machineErrorChooserInterface = getArmBasedChooserInterface();
-    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface);
+    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     assertTrue(Arrays.equals(new byte[] {15, 21, 9, 10}, r.getRecalibratedQuality()));
   }
 
@@ -241,7 +241,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final SAMRecord rec = getCgSAMRecord(read, overlapBases, "24=7N10=", "5=1B20=7N10=", q, xq, true, false);
 
     final MachineErrorChooserInterface machineErrorChooserInterface = getMachineCycleCalibrator();
-    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface);
+    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     for (int i = 0; i < expected.length; i++) {
       expected[i] = (byte) (i + (i > 4 ? 1 : 0));
@@ -263,7 +263,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final SAMRecord rec = getCgSAMRecord(read, overlapBases, "10=7N24=", "10=7N20=1B5=", q, xq, true, true);
 
     final MachineErrorChooserInterface machineErrorChooserInterface = getMachineCycleCalibrator();
-    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface);
+    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     final int overlapPosition = samReadLength - 1 - CgUtils.CG_OVERLAP_POSITION;
     for (int i = 0; i < expected.length; i++) {
@@ -286,7 +286,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final SAMRecord rec = getCgSAMRecord(read, overlapBases, "22=7N10=", "5=3B20=7N10=", q, xq, true, false);
 
     final MachineErrorChooserInterface machineErrorChooserInterface = getMachineCycleCalibrator();
-    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface);
+    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     for (int i = 0; i < expected.length; i++) {
       expected[i] = (byte) (i + (i > 4 ? 3 : 0));
@@ -308,7 +308,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final SAMRecord rec = getCgSAMRecord(read, overlapBases, "10=7N22=", "10=7N20=2B5=", q, xq, true, true);
 
     final MachineErrorChooserInterface machineErrorChooserInterface = getMachineCycleCalibrator();
-    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface);
+    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     final int overlapPosition = samReadLength - 1 - CgUtils.CG_OVERLAP_POSITION;
     for (int i = 0; i < expected.length; i++) {
@@ -331,7 +331,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final SAMRecord rec = getCgSAMRecord(read, overlapBases, "10=7N22=", "10=7N20=2B5=", q, xq, false, false);
 
     final MachineErrorChooserInterface machineErrorChooserInterface = getMachineCycleCalibrator();
-    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface);
+    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     final int overlapPosition = samReadLength - 1 - CgUtils.CG_OVERLAP_POSITION;
     for (int i = 0; i < expected.length; i++) {
@@ -354,7 +354,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final SAMRecord rec = getCgSAMRecord(read, overlapBases, "27=", "10=2B19=", q, xq, true, false);
 
     final MachineErrorChooserInterface machineErrorChooserInterface = getMachineCycleCalibrator();
-    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface);
+    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     final int overlapPosition = CgUtils.CG2_OVERLAP_POSITION;
     for (int i = 0; i < expected.length; i++) {
@@ -376,7 +376,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final SAMRecord rec = getCgSAMRecord(read, overlapBases, "27=", "10=2B19=", q, xq, false, false);
 
     final MachineErrorChooserInterface machineErrorChooserInterface = getMachineCycleCalibrator();
-    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface);
+    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     final int overlapPosition = CgUtils.CG2_OVERLAP_POSITION;
     for (int i = 0; i < expected.length; i++) {
@@ -399,7 +399,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final SAMRecord rec = getCgSAMRecord(read, overlapBases, "27=", "19=2B10=", q, xq, true, true);
 
     final MachineErrorChooserInterface machineErrorChooserInterface = getMachineCycleCalibrator();
-    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface);
+    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     final int overlapPosition = samReadLength - CgUtils.CG2_OVERLAP_POSITION;
     for (int i = 0; i < expected.length; i++) {
@@ -421,7 +421,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final SAMRecord rec = getCgSAMRecord(read, overlapBases, "27=", "19=2B10=", q, xq, false, true);
 
     final MachineErrorChooserInterface machineErrorChooserInterface = getMachineCycleCalibrator();
-    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface);
+    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     final int overlapPosition = samReadLength - CgUtils.CG2_OVERLAP_POSITION;
     for (int i = 0; i < expected.length; i++) {
@@ -430,5 +430,17 @@ public class VariantAlignmentRecordTest extends TestCase {
 
     TestUtils.assertEquals(expected, r.getRecalibratedQuality());
     TestUtils.assertEquals(new byte[] {11, 10}, r.getOverlapQuality());
+  }
+  public void testMinQuality() {
+    final String read = "GGGGGGGGGGGGGGGGGGGGGGGGGGG";
+    final byte[] q = new byte[read.length()];
+    Arrays.fill(q, (byte) (FastaUtils.PHRED_LOWER_LIMIT_CHAR + 30));
+    q[5] = 14;
+    q[15] = 14;
+    final SAMRecord rec = getSAMRecord(read, read.length() + "=", q, true);
+    final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, new DefaultMachineErrorChooser(), 20);
+    assertEquals('G', r.getRead()[4]);
+    assertEquals('N', r.getRead()[5]);
+    assertEquals('N', r.getRead()[15]);
   }
 }

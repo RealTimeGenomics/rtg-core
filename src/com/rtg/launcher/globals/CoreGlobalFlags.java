@@ -82,8 +82,8 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
   public static final String FAMILY_CALLER_FALLBACK_FLAG = "com.rtg.variant.bayes.multisample.FamilyCaller.fb-fallback";
   /** If true perform early exit of family caller when enough precision is reached */
   public static final String FAMILY_CALLER_SORTED_HYPOTHESES = "com.rtg.variant.bayes.multisample.FamilyPosterior.sorted-hypotheses";
-  /** Minimum phred base quality to consider a piece of evidence. */
-  public static final String MIN_BASE_QUALITY = "com.rtg.variant.bayes.Model.min-bq";
+  /** Treat bases with phred below the minimum base quality as quality 2*/
+  public static final String MIN_BASE_QUALITY_AS_TWO = "com.rtg.variant.VariantAlignmentRecord.min-bq-2";
   /** Minimum count required in a calibration covariate set before it will be used */
   public static final String QUALITY_CALIBRATION_MIN_EVIDENCE = "com.rtg.variant.quality-calibration-min-evidence";
   /** Use covariate intersection calibration method */
@@ -152,7 +152,7 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
     registerFlag(CALLER_N_MIN_DEPTH, Integer.class, 5);
     registerFlag(FAMILY_CALLER_FALLBACK_FLAG, Boolean.class, false);
     registerFlag(FAMILY_CALLER_SORTED_HYPOTHESES, Boolean.class, true);
-    registerFlag(MIN_BASE_QUALITY, Integer.class, 0);
+    registerFlag(MIN_BASE_QUALITY_AS_TWO, Boolean.class, false);
     registerFlag(QUALITY_CALIBRATION_MIN_EVIDENCE, Integer.class, 10);
     registerFlag(QUALITY_CALIBRATION_COVARIATE_INTERSECTION, Boolean.class, false);
     registerFlag(TUMOR_ALLELE_BALANCE, String.class, "binomial");

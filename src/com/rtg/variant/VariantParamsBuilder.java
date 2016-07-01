@@ -109,6 +109,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   SomaticParams mSomaticParams = new SomaticParamsBuilder().create();
   AlleleBalanceProbability mAlleleBalance = new NoAlleleBalance();
   RegionRestriction mForceComplexRegion;
+  int mMinBaseQuality = 0;
 
   @Override
   protected VariantParamsBuilder self() {
@@ -716,6 +717,15 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
    */
   public VariantParamsBuilder forceComplexRegion(String regionString) {
     mForceComplexRegion = new RegionRestriction(regionString);
+    return self();
+  }
+
+  /**
+   * @param minBaseQuality minimum base quality in phred scale
+   * @return this builder, so calls can be chained
+   */
+  public VariantParamsBuilder minBaseQuality(int minBaseQuality) {
+    mMinBaseQuality = minBaseQuality;
     return self();
   }
 }

@@ -112,6 +112,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final boolean mExpandComplexReadQueries;
   private final boolean mComplexUseSoftClip;
   private final RegionRestriction mForceComplexRegion;
+  private final int mMinBaseQuality;
 
   /**
    * @param builder the builder object.
@@ -175,6 +176,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mExpandComplexReadQueries = builder.mExpandComplexReadQueries;
     mComplexUseSoftClip = builder.mComplexUseSoftClip;
     mForceComplexRegion = builder.mForceComplexRegion;
+    mMinBaseQuality = builder.mMinBaseQuality;
   }
 
   @Override
@@ -648,6 +650,13 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   }
 
   /**
+   * @return Region which will be forced to be a complex region during calling
+   */
+  public int minBaseQuality() {
+    return mMinBaseQuality;
+  }
+
+  /**
    * Create a builder with all the values set to those of this object.
    * @return a builder
    */
@@ -719,6 +728,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     .alleleBalance(alleleBalance())
     .complexUseSoftClip(complexUseSoftClip())
     .forceComplexRegion(forceComplexRegion())
+    .minBaseQuality(minBaseQuality())
     ;
   }
 
@@ -802,6 +812,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     if (mSomaticParams != null) {
       sb.append(pref).append(mSomaticParams).append(LS);
     }
+    sb.append(" min_base_quality=").append(mAlleleBalance).append(LS);
     return sb.toString();
   }
 }

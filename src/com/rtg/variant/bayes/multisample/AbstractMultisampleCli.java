@@ -99,6 +99,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String POPULATION_PRIORS = "population-priors";
   protected static final String MIN_VARIANT_ALLELIC_DEPTH = "min-variant-allelic-depth";
   protected static final String MIN_VARIANT_ALLELIC_FRACTION = "min-variant-allelic-fraction";
+  /** Minimum read base quality filter flag */
+  public static final String MIN_BASE_QUALITY_FLAG = "min-base-quality";
 
   private static final String X_PRIORS_FLAG = "Xpriors";
   private static final String X_Q_DEFAULT_FLAG = "Xqdefault";
@@ -162,6 +164,13 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
         return false;
       } else if (amb.getRawValue() > 100) {
         Diagnostic.error(ErrorType.INVALID_MAX_INTEGER_FLAG_VALUE, "--" + FILTER_AMBIGUITY_FLAG, amb + "", "100%");
+        return false;
+      }
+    }
+    if (flags.isSet(MIN_BASE_QUALITY_FLAG)) {
+      final Integer minBaseQuality = (Integer) flags.getValue(MIN_BASE_QUALITY_FLAG);
+      if (minBaseQuality < 0) {
+        Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + MIN_BASE_QUALITY_FLAG,  minBaseQuality + "", "0");
         return false;
       }
     }
@@ -406,6 +415,9 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     builder.infoAnnotations(infos).formatAnnotations(formats);
     if (mFlags.getFlag(CommonFlags.FILTER_AVR_FLAG) != null && mFlags.isSet(CommonFlags.FILTER_AVR_FLAG)) {
       builder.minAvrScore((Double) mFlags.getValue(CommonFlags.FILTER_AVR_FLAG));
+    }
+    if (mFlags.getFlag(MIN_BASE_QUALITY_FLAG) != null && mFlags.isSet(MIN_BASE_QUALITY_FLAG)) {
+      builder.minBaseQuality((Integer) mFlags.getValue(MIN_BASE_QUALITY_FLAG));
     }
     builder.genomePriors(GenomePriorParams.builder().genomePriors((String) mFlags.getValue(X_PRIORS_FLAG)).contraryProbability((Double) mFlags.getValue(X_CONTRARY_FLAG)).create());
     if (mFlags.isSet(MACHINE_ERRORS_FLAG)) {
