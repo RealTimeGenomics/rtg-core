@@ -163,16 +163,16 @@ public class DisplayHelper {
       return dna;
     }
     if (trimmed.length() == dna.length()) { // No trimming needed
-      return decorate(dna, BLACK, bgcolor);
+      return decorateBackground(dna, bgcolor);
     } else {
       if (dna.charAt(0) == ' ') { // Some amount of non-marked up prefix needed
         int prefixEnd = 0;
         while (dna.charAt(prefixEnd) == ' ') {
           prefixEnd++;
         }
-        return dna.substring(0, prefixEnd) + decorate(trimmed, BLACK, bgcolor) + dna.substring(prefixEnd + trimmed.length());
+        return dna.substring(0, prefixEnd) + decorateBackground(trimmed, bgcolor) + dna.substring(prefixEnd + trimmed.length());
       } else { // Trimming was only at the end
-        return decorate(trimmed, BLACK, bgcolor) + dna.substring(trimmed.length());
+        return decorateBackground(trimmed, bgcolor) + dna.substring(trimmed.length());
       }
     }
   }

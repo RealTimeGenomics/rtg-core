@@ -679,8 +679,8 @@ public final class Aview extends AbstractCli {
           // Now output the call itself.
           final boolean failed = var.isFiltered();
           final int bgCol = failed ? FAILED_BG : baseline ? GEN_BG : CALL_BG;
-          strand1.append(mDisplayHelper.decorate(firstCall, DisplayHelper.BLACK, bgCol));
-          strand2.append(mDisplayHelper.decorate(secondCall, DisplayHelper.BLACK, bgCol));
+          strand1.append(mDisplayHelper.decorateBackground(firstCall, bgCol));
+          strand2.append(mDisplayHelper.decorateBackground(secondCall, bgCol));
           if (highlightMask != null) {
             for (int i = 0; i < firstCall.length(); i++) {
               highlightMask[charPosition + i] = true;
