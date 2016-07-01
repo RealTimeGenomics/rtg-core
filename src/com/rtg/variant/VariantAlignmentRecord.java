@@ -95,7 +95,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
    * @param record SAM record. Requires header with sequence dictionary (for reference index lookup)
    * @param genome genome code for this record
    * @param chooser machine error chooser
-   * @param minBaseQuality
+   * @param minBaseQuality minimum read base quality
    */
   public VariantAlignmentRecord(final SAMRecord record, final int genome, MachineErrorChooserInterface chooser, int minBaseQuality) {
     super(record.getReferenceIndex(), record.getAlignmentStart() - 1, record.getReadUnmappedFlag() ? record.getAlignmentStart() - 1 + record.getReadLength() : record.getAlignmentEnd()); // picard end position is 1-based inclusive == 0-based exclusive
