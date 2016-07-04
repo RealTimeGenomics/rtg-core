@@ -11,11 +11,11 @@
  */
 package com.rtg.alignment;
 
-import com.rtg.AbstractTest;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.mode.DnaUtils;
 
 
-public abstract class AbstractUnidirectionalEditDistanceTest extends AbstractTest {
+public abstract class AbstractUnidirectionalEditDistanceTest extends AbstractNanoTest {
 
   protected abstract UnidirectionalEditDistance getEditDistanceInstance(int gapOpenPenalty, int gapExtendPenalty, int substitutionPenalty, int unknownsPenalty);
 

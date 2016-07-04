@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Locale;
 
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.mode.DnaUtils;
 import com.rtg.ngs.NgsParams;
 import com.rtg.ngs.NgsParamsBuilder;
@@ -26,30 +25,10 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.Timer;
 import com.rtg.util.io.MemoryPrintStream;
-import com.rtg.util.test.NanoRegression;
 
 /**
  */
 public class GotohEditDistanceTest extends AbstractUnidirectionalEditDistanceTest {
-
-  protected NanoRegression mNano = null;
-
-  @Override
-  public void setUp() throws IOException {
-    GlobalFlags.resetAccessedStatus();
-    Diagnostic.setLogStream();
-    mNano = new NanoRegression(this.getClass());
-  }
-
-  @Override
-  public void tearDown() throws IOException {
-    Diagnostic.setLogStream();
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
 
   /**
    * Get an instance of <code>UnidirectionalEditDistance</code>.
