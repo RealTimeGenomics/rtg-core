@@ -12,6 +12,7 @@
 package com.rtg.alignment;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 
 import com.rtg.mode.DnaUtils;
@@ -39,7 +40,7 @@ public class HopStepEditDistanceLongTest extends AbstractUnidirectionalEditDista
   }
 
   @Override
-  public void setUp() throws Exception {
+  public void setUp() throws IOException {
     super.setUp();
     mMaxScore = 50;
     final NgsParams params = new NgsParamsBuilder().gapOpenPenalty(1).gapExtendPenalty(1).substitutionPenalty(1).unknownsPenalty(0).create();
@@ -48,7 +49,7 @@ public class HopStepEditDistanceLongTest extends AbstractUnidirectionalEditDista
   }
 
   @Override
-  public void tearDown() throws Exception {
+  public void tearDown() throws IOException {
     super.tearDown();
     mHopStep = null;
   }

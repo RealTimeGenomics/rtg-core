@@ -11,24 +11,13 @@
  */
 package com.rtg.alignment;
 
+import com.rtg.AbstractTest;
 import com.rtg.mode.DnaUtils;
 
-import junit.framework.TestCase;
 
-/**
- */
-public abstract class AbstractUnidirectionalEditDistanceTest extends TestCase {
+public abstract class AbstractUnidirectionalEditDistanceTest extends AbstractTest {
 
   protected abstract UnidirectionalEditDistance getEditDistanceInstance(int gapOpenPenalty, int gapExtendPenalty, int substitutionPenalty, int unknownsPenalty);
-
-  @Override
-  public void setUp() throws Exception {
-  }
-
-  @Override
-  public void tearDown() throws Exception {
-  }
-
 
   public void testStartPositionSet() throws Exception {
     final byte[] read = DnaUtils.encodeString("acgta");
