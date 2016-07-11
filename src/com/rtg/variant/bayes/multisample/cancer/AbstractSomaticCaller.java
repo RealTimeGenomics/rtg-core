@@ -224,12 +224,6 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
         interesting = false;
       }
       isSomatic = false;
-    } else if (!doLoh && loh > 0) {
-      // LOH event, even though the LOH prior was 0, force it to have no cause
-      isSomatic = false;
-    } else if (!mParams.somaticParams().includeGainOfReference() && refAllele.equals(hypotheses.name(bestCancer))) {
-      // Gain of reference, if such calls are not allowed then this should have no cause
-      isSomatic = false;
     } else {
       isSomatic = true;
     }

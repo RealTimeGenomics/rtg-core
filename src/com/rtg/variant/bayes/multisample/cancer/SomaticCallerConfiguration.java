@@ -127,7 +127,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
           params, phi, psi, contamination);
       }
       final SomaticCallerConfiguration sc = new SomaticCallerConfiguration(jointCaller, genomeNames, individualFactories, chooser, contamination, haploid, diploid, ssp, phi, psi, params.alleleBalance());
-      sc.getVcfFilters().add(new SomaticFilter(statistics, !(params.somaticParams().includeGermlineVariants() || params.callLevel() == VariantOutputLevel.ALL)));
+      sc.getVcfFilters().add(new SomaticFilter(statistics, !(params.somaticParams().includeGermlineVariants() || params.callLevel() == VariantOutputLevel.ALL), params.somaticParams().lohPrior() > 0, params.somaticParams().includeGainOfReference()));
       return sc;
     }
   }

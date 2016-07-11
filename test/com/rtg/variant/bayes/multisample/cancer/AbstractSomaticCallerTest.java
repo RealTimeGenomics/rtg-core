@@ -424,4 +424,19 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
     final double improvedScore = improved.getNormalCancerScore();
     assertTrue(improvedScore + " > " + confidentCancerScore, improvedScore > confidentCancerScore);
   }
+
+  public void testLoh() {
+    final Variant loh = getVariant(
+      getNormalIncremeter(Ploidy.DIPLOID, 0.9)
+        .doReads(20, DNARangeAT.A)
+        .doReads(20, DNARangeAT.T)
+        .freeze(),
+      getIncrementer(Ploidy.DIPLOID, 0.0, 0.99)
+        .doReads(40, DNARangeAT.A)
+        .freeze(),
+      getDefaultParams());
+    assertEquals("A:T", loh.getSample(0).getName());
+    assertEquals("A:A", loh.getSample(1).getName());
+    assertEquals(VariantSample.DeNovoStatus.IS_DE_NOVO, loh.getSample(1).isDeNovo());
+  }
 }

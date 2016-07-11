@@ -11,9 +11,12 @@
  */
 package com.rtg.variant.bayes.multisample.cancer;
 
+import java.util.Arrays;
+
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.vcf.VcfFilter;
 import com.rtg.vcf.VcfRecord;
+import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.header.VcfHeader;
 
 /**
@@ -26,16 +29,22 @@ public class SomaticFilter implements VcfFilter {
   private final SomaticStatistics mStatistics;
   private final boolean mSomaticOnly;
   private VcfHeader mVcfHeader;
+  private final boolean mLossOfHeterozygosity;
+  private final boolean mGainOfReference;
 
   /**
    * Construct a new filter which counts variants for the purposes of estimating contamination in
    * the somatic caller and optionally filter records which are not somatic.
    * @param statistics statistics object for computing contamination estimates
    * @param somaticOnly true iff only somatic variants are to be retained
+   * @param lossOfHeterozygosity true iff loss of heterozygosity calls should be retained
+   * @param gainOfReference true iff loss of heterozygosity calls should be retained
    */
-  public SomaticFilter(final SomaticStatistics statistics, final boolean somaticOnly) {
+  public SomaticFilter(final SomaticStatistics statistics, final boolean somaticOnly, final boolean lossOfHeterozygosity, final boolean gainOfReference) {
     mStatistics = statistics;
     mSomaticOnly = somaticOnly;
+    mLossOfHeterozygosity = lossOfHeterozygosity;
+    mGainOfReference = gainOfReference;
   }
 
   @Override
@@ -46,11 +55,29 @@ public class SomaticFilter implements VcfFilter {
   @Override
   public boolean accept(VcfRecord record) {
     mStatistics.countVariant(mVcfHeader, record);
-    if (mSomaticOnly) {
-      final Integer somaticStatus = record.getSampleInteger(AbstractSomaticCaller.CANCER, VcfFormatField.SS.name());
-      return somaticStatus != null && somaticStatus == 2;
-    } else {
-      return true;
+    final Integer somaticStatus = record.getSampleInteger(AbstractSomaticCaller.CANCER, VcfFormatField.SS.name());
+    final boolean somatic = somaticStatus != null && somaticStatus == 2;
+    if (mSomaticOnly && !somatic) {
+      return false;
+
     }
+    if (somatic && !mLossOfHeterozygosity && isLossOfHeterozygosity(record)) {
+      return false;
+    }
+    if (somatic && !mGainOfReference && isGainOfReference(record)) {
+      return false;
+    }
+    return true;
+  }
+
+  private boolean isGainOfReference(VcfRecord record) {
+    final int[] cancerGts = VcfUtils.splitGt(record.getSampleString(AbstractSomaticCaller.CANCER, VcfFormatField.GT.name()));
+    return Arrays.stream(cancerGts).allMatch(cancerGt -> cancerGt == 0);
+  }
+
+  private boolean isLossOfHeterozygosity(VcfRecord record) {
+    final int[] normalGts = VcfUtils.splitGt(record.getSampleString(AbstractSomaticCaller.NORMAL, VcfFormatField.GT.name()));
+    final int[] cancerGts = VcfUtils.splitGt(record.getSampleString(AbstractSomaticCaller.CANCER, VcfFormatField.GT.name()));
+    return Arrays.stream(cancerGts).allMatch(cancerGt -> Arrays.stream(normalGts).anyMatch(normalGt -> normalGt == cancerGt));
   }
 }

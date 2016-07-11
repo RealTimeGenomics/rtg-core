@@ -26,6 +26,48 @@ import junit.framework.TestCase;
 public class SomaticFilterTest extends TestCase {
 
   public void test() {
+    final SomaticFilter sf = getSomaticFilter(true, true, true);
+    final VcfRecord record = getVcfRecord("0/0", "0/1");
+    assertFalse(sf.accept(record));
+    record.addFormatAndSample("SS", "0")
+      .addFormatAndSample("SS", "2");
+    assertTrue(sf.accept(record));
+  }
+
+  public void testLossOfHeterozygosity() {
+    final SomaticFilter sf = getSomaticFilter(true, false, true);
+    final VcfRecord record = getSomaticVcfRecord("0/1", "0/0");
+    assertFalse(sf.accept(record));
+  }
+
+  public void testLossOfRefHeterozygosity() {
+    final SomaticFilter sf = getSomaticFilter(true, false, true);
+    final VcfRecord record = getSomaticVcfRecord("0/1", "1/1");
+    assertFalse(sf.accept(record));
+  }
+
+
+  public void testExcludeGainOfRefRejected() {
+    final SomaticFilter sf = getSomaticFilter(true, true, false);
+    final VcfRecord record = getSomaticVcfRecord("0/1", "0/0");
+    assertFalse(sf.accept(record));
+  }
+
+  public void testExcludeGainOfRefAccepted() {
+    final SomaticFilter sf = getSomaticFilter(true, true, false);
+    final VcfRecord record = getSomaticVcfRecord("0/1", "1/1");
+    assertTrue(sf.accept(record));
+  }
+
+  private VcfRecord getSomaticVcfRecord(String normalGt, String cancerGt) {
+    final VcfRecord record = getVcfRecord(normalGt, cancerGt);
+    record.addFormatAndSample("SS", "0")
+      .addFormatAndSample("SS", "2");
+    return record;
+  }
+
+
+  private SomaticFilter getSomaticFilter(boolean somaticOnly, boolean lossOfHeterozygosity, boolean gainOfReference) {
     final GenomeRelationships genomeRelationships = new GenomeRelationships();
     genomeRelationships.addGenome("cancer");
     genomeRelationships.addGenome("normal");
@@ -35,22 +77,23 @@ public class SomaticFilterTest extends TestCase {
       .genomeRelationships(genomeRelationships)
       .create();
     final SomaticStatistics ss = new SomaticStatistics(params, "GQ");
-    final SomaticFilter sf = new SomaticFilter(ss, true);
+    final SomaticFilter sf = new SomaticFilter(ss, somaticOnly, lossOfHeterozygosity, gainOfReference);
     final VcfHeader vcfHeader = new VcfHeader();
     vcfHeader.addSampleName("cancer");
     vcfHeader.addSampleName("normal");
     sf.setHeader(vcfHeader);
+    return sf;
+  }
+
+  private VcfRecord getVcfRecord(String normalGt, String cancerGt) {
     final VcfRecord record = new VcfRecord("pretend", 42, "A");
     record.setNumberOfSamples(2)
-      .addFormatAndSample("GT", "0/0")
-      .addFormatAndSample("GT", "0/1")
+      .addFormatAndSample("GT", normalGt)
+      .addFormatAndSample("GT", cancerGt)
       .addFormatAndSample("GQ", "20")
       .addFormatAndSample("GQ", "20")
       .addFormatAndSample("AD", "50,0")
       .addFormatAndSample("AD", "25,25");
-    assertFalse(sf.accept(record));
-    record.addFormatAndSample("SS", "0")
-      .addFormatAndSample("SS", "2");
-    assertTrue(sf.accept(record));
+    return record;
   }
 }
