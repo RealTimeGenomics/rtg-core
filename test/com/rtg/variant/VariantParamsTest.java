@@ -91,7 +91,7 @@ public class VariantParamsTest extends TestCase {
         " exec_threads=1 io_threads=1" + LS,
         " hyper_complex_threshold=21" + LS,
         " ionTorrent=false prune_hypothesis=false enable_trim_split=true" + LS,
-        " somatic_rate=0.3 somatic_allele_balance=false somatic_ssp=none include_germline_variants=false include_gain_of_reference=false loh_prior=0.0" + LS,
+        " somatic_rate=0.3 somatic_allele_balance=false somatic_ssp=none include_germline_variants=false include_gain_of_reference=false loh_prior=0.0 contamination_basis=1000" + LS,
         " no_disease_prior=0.95" + LS,
         " Relationships:null" + LS,
         " SamFilterParams minMapQ=-1 maxAlignmentCount=-1 maxMatedAlignmentScore=null maxUnmatedAlignmentScore=null",

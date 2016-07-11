@@ -25,6 +25,7 @@ public class SomaticParamsBuilder {
   boolean mIncludeGainOfReference = false;
   ReferenceRanges<Double> mSiteSpecificSomaticPriors = null;
   boolean mSomaticAlleleBalance = false;
+  int mContaminationBasis = 1000;
 
   /**
    * Set the somatic rate
@@ -89,6 +90,19 @@ public class SomaticParamsBuilder {
       throw new IllegalArgumentException();
     }
     mLohPrior = p;
+    return self();
+  }
+
+  /**
+   * The number of examples used for contamination estimation.
+   * @param basis number of examples
+   * @return this, for chaining
+   */
+  public SomaticParamsBuilder contaminationBasis(final int basis) {
+    if (basis < 0) {
+      throw new IllegalArgumentException();
+    }
+    mContaminationBasis = basis;
     return self();
   }
 

@@ -24,6 +24,7 @@ public class SomaticParams {
   private final ReferenceRanges<Double> mSiteSpecificSomaticPriors;
   private final double mLohPrior;
   private final boolean mSomaticAlleleBalance;
+  private final int mContaminationBasis;
 
   /**
    * @param builder the builder object.
@@ -35,6 +36,7 @@ public class SomaticParams {
     mIncludeGainOfReference = builder.mIncludeGainOfReference;
     mSiteSpecificSomaticPriors = builder.mSiteSpecificSomaticPriors;
     mLohPrior = builder.mLohPrior;
+    mContaminationBasis = builder.mContaminationBasis;
   }
 
   /**
@@ -73,6 +75,13 @@ public class SomaticParams {
   }
 
   /**
+   * @return number of examples for contamination estimation
+   */
+  public int contaminationBasis() {
+    return mContaminationBasis;
+  }
+
+  /**
    * @return prior probability that a region in a cancer genome has lost heterozygosity.
    */
   public double lohPrior() {
@@ -88,7 +97,8 @@ public class SomaticParams {
       .append(" somatic_ssp=").append(siteSpecificSomaticPriors() == null ? "none" : "supplied")
       .append(" include_germline_variants=").append(includeGermlineVariants())
       .append(" include_gain_of_reference=").append(includeGainOfReference())
-      .append(" loh_prior=").append(lohPrior());
+      .append(" loh_prior=").append(lohPrior())
+      .append(" contamination_basis=").append(contaminationBasis());
     return sb.toString();
   }
 }

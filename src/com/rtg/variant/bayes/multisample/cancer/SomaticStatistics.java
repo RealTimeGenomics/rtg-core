@@ -46,7 +46,6 @@ public class SomaticStatistics extends VariantStatistics {
   private static final String AD = VcfFormatField.AD.name();
   private static final int[] DIPLOID00 = {0, 0};
   private static final int[] DIPLOID01 = {0, 1};
-  private static final int BASIS = 1000;
 
   private final String mRankingField;
   private final String mNormalSampleName;
@@ -69,7 +68,7 @@ public class SomaticStatistics extends VariantStatistics {
     mNormalSampleName = genomeNames[AbstractSomaticCaller.NORMAL];
     mCancerSampleName = genomeNames[AbstractSomaticCaller.CANCER];
     mNormalStore = new TotalScorer();
-    mCancerStore = new TopScorer(BASIS);
+    mCancerStore = new TopScorer(params.somaticParams().contaminationBasis());
   }
 
   private boolean isGenotype(final VcfRecord rec, final int sampleId, final int[] desired) {

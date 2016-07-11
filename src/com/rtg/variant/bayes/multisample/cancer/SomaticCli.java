@@ -62,9 +62,11 @@ public class SomaticCli extends AbstractMultisampleCli {
   static final String INCLUDE_GERMLINE_FLAG = "include-germline";
   private static final String INCLUDE_GAIN_OF_REFERENCE = "include-gain-of-reference";
   private static final String USE_SOMATIC_ALLELIC_FRACTION = "enable-somatic-allelic-fraction";
+  private static final String CONTAMINATION_BASIS_FLAG = "Xcontamination-basis";
 
   private static final String MISMATCHED_PARAMS_ERROR1 = "Cannot use --" + PEDIGREE_FLAG + " in conjunction with --" + DERIVED_FLAG + ", --" + ORIGINAL_FLAG + ", or --" + CONTAMINATION_FLAG;
   private static final String MISMATCHED_PARAMS_ERROR2 = "All of --" + DERIVED_FLAG + ", --" + ORIGINAL_FLAG + ", and --" + CONTAMINATION_FLAG + " must be specified";
+  private static final int DEFAULT_CONTAMINATION_BASIS = 1000;
 
   private static class MultigenomeValidator implements Validator {
     @Override
@@ -131,6 +133,7 @@ public class SomaticCli extends AbstractMultisampleCli {
     flags.registerOptional(LOH_FLAG, Double.class, "float", "prior probability that a loss of heterozygosity event has occurred", 0.0).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('G', INCLUDE_GAIN_OF_REFERENCE, "include gain of reference somatic calls in output VCF").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(USE_SOMATIC_ALLELIC_FRACTION, "if set, incorporate the expected somatic allelic fraction in scoring").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(CONTAMINATION_BASIS_FLAG, Integer.class, "int", "number of examples to use in computing the contamination estimate", DEFAULT_CONTAMINATION_BASIS).setCategory(SENSITIVITY_TUNING);
     final Flag inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
@@ -207,6 +210,7 @@ public class SomaticCli extends AbstractMultisampleCli {
       .includeGermlineVariants(mFlags.isSet(INCLUDE_GERMLINE_FLAG))
       .includeGainOfReference(mFlags.isSet(INCLUDE_GAIN_OF_REFERENCE))
       .somaticAlleleBalance(mFlags.isSet(USE_SOMATIC_ALLELIC_FRACTION))
+      .contaminationBasis((Integer) mFlags.getValue(CONTAMINATION_BASIS_FLAG))
       .lohPrior((Double) mFlags.getValue(LOH_FLAG));
     return somaticBuilder;
   }

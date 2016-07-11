@@ -30,12 +30,14 @@ public class SomaticParamsTest extends TestCase {
       .includeGermlineVariants(true)
       .lohPrior(0.987)
       .somaticRate(0.345)
-      .siteSpecificSomaticPriors(new ReferenceRanges<Double>(true))
+      .siteSpecificSomaticPriors(new ReferenceRanges<>(true))
+      .contaminationBasis(42)
       .create();
     assertTrue(somaticParams.includeGainOfReference());
     assertTrue(somaticParams.includeGermlineVariants());
     assertEquals(0.987, somaticParams.lohPrior());
     assertEquals(0.345, somaticParams.somaticRate());
+    assertEquals(42, somaticParams.contaminationBasis());
     assertNotNull(somaticParams.siteSpecificSomaticPriors());
 
   }
