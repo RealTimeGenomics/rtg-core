@@ -16,7 +16,7 @@ import com.reeltwo.jumble.annotations.TestClass;
 /**
  * Indicates that reference sequence data was required in a situation where it was not supplied.
  */
-@TestClass("com.rtg.SlimTest")
+@TestClass("com.rtg.RtgCoreTest")
 public class ReferenceSequenceRequiredException extends IllegalStateException {
 
   /**
