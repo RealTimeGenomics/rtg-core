@@ -15,13 +15,13 @@ package com.rtg;
 /**
  * Entry point for all RTG command line modules
  */
-public final class Slim extends AbstractCliEntry {
+public final class RtgCore extends AbstractCliEntry {
 
   /**
    * @param args command line arguments
    */
   public static void main(String[] args) {
-    new Slim().mainImpl(args);
+    new RtgCore().mainImpl(args);
   }
 
   @Override

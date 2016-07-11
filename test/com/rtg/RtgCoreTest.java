@@ -26,7 +26,7 @@ import junit.framework.TestCase;
 
 /**
  */
-public class SlimTest extends TestCase {
+public class RtgCoreTest extends TestCase {
 
   @Override
   public void setUp() {
@@ -48,7 +48,7 @@ public class SlimTest extends TestCase {
     final ByteArrayOutputStream berr = new ByteArrayOutputStream();
 
     try (PrintStream err = new PrintStream(berr)) {
-      assertEquals(1, new Slim().intMain(new String[]{""}, bout, err));
+      assertEquals(1, new RtgCore().intMain(new String[]{""}, bout, err));
     } finally {
       try {
         bout.close();
@@ -74,7 +74,7 @@ public class SlimTest extends TestCase {
     final ByteArrayOutputStream berr = new ByteArrayOutputStream();
 
     try (PrintStream err = new PrintStream(berr)) {
-      assertEquals(1, new Slim().intMain(new String[]{ToolsCommand.FORMAT.getCommandName()}, bout, err));
+      assertEquals(1, new RtgCore().intMain(new String[]{ToolsCommand.FORMAT.getCommandName()}, bout, err));
     } finally {
       try {
         bout.close();
@@ -111,7 +111,7 @@ public class SlimTest extends TestCase {
     final ByteArrayOutputStream berr = new ByteArrayOutputStream();
 
     try (PrintStream err = new PrintStream(berr)) {
-      assertEquals(0, new Slim().intMain(new String[]{help}, bout, err));
+      assertEquals(0, new RtgCore().intMain(new String[]{help}, bout, err));
       bout.flush();
     } finally {
       try {
@@ -130,7 +130,7 @@ public class SlimTest extends TestCase {
     final ByteArrayOutputStream bout2 = new ByteArrayOutputStream();
     final ByteArrayOutputStream berr2 = new ByteArrayOutputStream();
     try (PrintStream err2 = new PrintStream(berr2)) {
-      assertEquals(0, new Slim().intMain(new String[]{help, "map"}, bout2, err2));
+      assertEquals(0, new RtgCore().intMain(new String[]{help, "map"}, bout2, err2));
       err2.flush();
     } finally {
       try {
@@ -162,7 +162,7 @@ public class SlimTest extends TestCase {
     final ByteArrayOutputStream bout = new ByteArrayOutputStream();
 
     try (PrintStream err = new PrintStream(bout)) {
-      assertEquals(retCode, new Slim().intMain(new String[]{version}, bout, err));
+      assertEquals(retCode, new RtgCore().intMain(new String[]{version}, bout, err));
       bout.flush();
       assertTrue(bout.toString(), bout.toString().contains("Version: "));
     } finally {
@@ -186,7 +186,7 @@ public class SlimTest extends TestCase {
     final ByteArrayOutputStream berr = new ByteArrayOutputStream();
 
     try (PrintStream err = new PrintStream(berr)) {
-      assertEquals(1, new Slim().intMain(null, bout, err));
+      assertEquals(1, new RtgCore().intMain(null, bout, err));
     } finally {
       try {
         bout.close();
@@ -211,7 +211,7 @@ public class SlimTest extends TestCase {
     final ByteArrayOutputStream berr = new ByteArrayOutputStream();
 
     try (PrintStream err = new PrintStream(berr)) {
-      assertEquals(1, new Slim().intMain(new String[]{"foo"}, bout, err));
+      assertEquals(1, new RtgCore().intMain(new String[]{"foo"}, bout, err));
     } finally {
       try {
         bout.close();
@@ -236,7 +236,7 @@ public class SlimTest extends TestCase {
     final ByteArrayOutputStream bout = new ByteArrayOutputStream();
     final ByteArrayOutputStream berr = new ByteArrayOutputStream();
     try (PrintStream err = new PrintStream(berr)) {
-      assertEquals(1, new Slim().intMain(new String[]{"format"}, bout, err));
+      assertEquals(1, new RtgCore().intMain(new String[]{"format"}, bout, err));
     } finally {
       try {
         bout.close();
@@ -261,7 +261,7 @@ public class SlimTest extends TestCase {
     final ByteArrayOutputStream bout = new ByteArrayOutputStream();
     final ByteArrayOutputStream berr = new ByteArrayOutputStream();
     try (PrintStream err = new PrintStream(berr)) {
-      assertEquals(1, new Slim().intMain(new String[]{"format"}, bout, err));
+      assertEquals(1, new RtgCore().intMain(new String[]{"format"}, bout, err));
     } finally {
       try {
         bout.close();
@@ -283,21 +283,21 @@ public class SlimTest extends TestCase {
   }
 
   public void testShift() {
-    final String[] shifted = Slim.shift(new String[]{"a", "b"});
+    final String[] shifted = RtgCore.shift(new String[]{"a", "b"});
     assertEquals(1, shifted.length);
     assertEquals("b", shifted[0]);
   }
 
   public void testFindXlog() {
     final PrintStream systemErr = System.err;
-    Object[] objs = Slim.findXlog(new String[]{"--", "--Xlog"});
+    Object[] objs = RtgCore.findXlog(new String[]{"--", "--Xlog"});
     assertEquals(2, objs.length);
     assertNull(objs[0]);
     assertTrue(objs[1] instanceof String[]);
     assertEquals(2, ((String[]) objs[1]).length);
     assertEquals("--", ((String[]) objs[1])[0]);
     assertEquals("--Xlog", ((String[]) objs[1])[1]);
-    objs = Slim.findXlog(new String[]{"abc", "--Xlog=blah", "123"});
+    objs = RtgCore.findXlog(new String[]{"abc", "--Xlog=blah", "123"});
     assertEquals(2, objs.length);
     assertTrue(objs[0] instanceof String);
     assertEquals("blah", (String) objs[0]);
@@ -305,7 +305,7 @@ public class SlimTest extends TestCase {
     assertEquals(2, ((String[]) objs[1]).length);
     assertEquals("abc", ((String[]) objs[1])[0]);
     assertEquals("123", ((String[]) objs[1])[1]);
-    objs = Slim.findXlog(new String[]{"123", "--Xlog", "blarg", "abc"});
+    objs = RtgCore.findXlog(new String[]{"123", "--Xlog", "blarg", "abc"});
     assertEquals(2, objs.length);
     assertTrue(objs[0] instanceof String);
     assertEquals("blarg", (String) objs[0]);
@@ -317,7 +317,7 @@ public class SlimTest extends TestCase {
     final PrintStream err = new PrintStream(bos);
     System.setErr(err);
     try {
-      Slim.findXlog(new String[]{"a", "--Xlog"});
+      RtgCore.findXlog(new String[]{"a", "--Xlog"});
       fail();
     } catch (RuntimeException e) { }
     err.flush();
@@ -327,6 +327,6 @@ public class SlimTest extends TestCase {
   }
 
   public void testErrorMessage() {
-    assertEquals("The " + ToolsCommand.FORMAT.getCommandName() + " command has not been enabled by your current license.\nPlease contact " + Constants.SUPPORT_EMAIL_ADDR + " to have this command licensed.", Slim.getErrorMessage(ToolsCommand.FORMAT));
+    assertEquals("The " + ToolsCommand.FORMAT.getCommandName() + " command has not been enabled by your current license.\nPlease contact " + Constants.SUPPORT_EMAIL_ADDR + " to have this command licensed.", RtgCore.getErrorMessage(ToolsCommand.FORMAT));
   }
 }

@@ -80,13 +80,13 @@ public final class CoreCommand {
 
   private CoreCommand() { }
 
-  /** For formatting complete genomics data files for use by Slim */
+  /** For formatting complete genomics data files for use by RtgCore */
   static final Command CG2SDF = new Command(new Cg2Sdf(), CommandCategory.FORMAT, ReleaseLevel.GA);
 
   /** For converting SDF formatted complete genomics reads back into CG TSV format */
   static final Command SDF2CG = new Command(new Sdf2Cg(), CommandCategory.FORMAT, ReleaseLevel.BETA);
 
-  /** For converting Slim's data format into FASTA/QUALA format */
+  /** For converting RtgCore's data format into FASTA/QUALA format */
   static final Command SDF2QUALA = new Command(new Sdf2Quala(), CommandCategory.FORMAT, ReleaseLevel.ALPHA);
 
   /** For generating k-mer count histograms and blacklists */

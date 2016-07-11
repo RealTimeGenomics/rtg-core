@@ -45,7 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.rtg.Slim;
+import com.rtg.RtgCore;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.launcher.MainResult;
@@ -259,7 +259,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final PrintStream err = new PrintStream(berr);
       //System.err.println(Arrays.toString(args));
       try {
-        intMain = new Slim().intMain(args, out, err);
+        intMain = new RtgCore().intMain(args, out, err);
       } finally {
         err.flush();
         err.close();
@@ -323,7 +323,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final ByteArrayOutputStream berr = new ByteArrayOutputStream();
       //System.err.println(outn);
       try (PrintStream err = new PrintStream(berr)) {
-        assertEquals(berr.toString() + " " + out.toString(), 0, new Slim().intMain(args, out, err));
+        assertEquals(berr.toString() + " " + out.toString(), 0, new RtgCore().intMain(args, out, err));
         // assertEquals("", out.toString());
         err.flush();
       }
