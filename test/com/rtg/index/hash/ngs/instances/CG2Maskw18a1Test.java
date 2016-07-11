@@ -88,7 +88,6 @@ public class CG2Maskw18a1Test extends AbstractSplitTest {
     assertEquals(29, str.length());
     final SubstituteCG sub = new SubstituteCG(str, CG2Maskw18a1.FACTORY, true, 0, 4);
     final int missed1 = sub.substituteProtected(1);
-    System.err.println(sub.details());
     Assert.assertEquals(sub.toString(), 0, missed1);
     final int missed2 = sub.substituteProtected(2);
     //System.err.println(sub.details());
