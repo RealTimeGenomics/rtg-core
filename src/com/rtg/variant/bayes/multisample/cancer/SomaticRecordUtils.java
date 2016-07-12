@@ -21,7 +21,7 @@ import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
 
 /**
- * Utilities for analysing somatic vcf records.
+ * Utilities for analysing somatic VCF records.
  */
 public final class SomaticRecordUtils {
   private SomaticRecordUtils() { }
@@ -49,7 +49,7 @@ public final class SomaticRecordUtils {
    * 0 no change between normal an cancer
    * &lt; 0 implies
    *
-   * @param record vcf record to inspect
+   * @param record VCF record to inspect
    * @return a loss of heterozygosity indicator
    */
   public static double lossOfHeterozygosity(VcfRecord record) {
