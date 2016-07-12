@@ -12,6 +12,8 @@
 
 package com.rtg.variant.format;
 
+import static com.rtg.variant.format.VcfInfoField.LOH;
+
 import java.io.IOException;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -23,11 +25,13 @@ import com.rtg.reference.Ploidy;
 import com.rtg.util.TestUtils;
 import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.test.NanoRegression;
+import com.rtg.variant.SomaticParamsBuilder;
 import com.rtg.variant.Variant;
 import com.rtg.variant.Variant.VariantFilter;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantSample;
+import com.rtg.variant.bayes.multisample.cancer.SomaticFilterTest;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.header.VcfHeader;
 
@@ -55,7 +59,7 @@ public class VcfInfoFieldTest extends TestCase {
 
   public void testEnum() {
     TestUtils.testEnum(VcfInfoField.class, "[LOH, NCS, DISEASE, RDS, DPS, DP, DPR, XRX, RCE, CT, RTRM, RSPLT, NREF, IC, EP, LAL, QD, NAA, AC, AN, SGP]");
-    for (VcfInfoField field : EnumSet.range(VcfInfoField.LOH, VcfInfoField.RSPLT)) {
+    for (VcfInfoField field : EnumSet.range(LOH, VcfInfoField.RSPLT)) {
       assertFalse(field.isVcfAnnotator());
     }
     for (VcfInfoField field : EnumSet.range(VcfInfoField.IC, VcfInfoField.SGP)) {
@@ -105,7 +109,6 @@ public class VcfInfoFieldTest extends TestCase {
     call.setPossibleCauseScore(15.0);
     call.setNormalCancerScore(7.5);
     call.setDiseasePresenceScore(8.5);
-    call.setLoh(20.0);
     call.setComplexEquivalent();
     call.setComplexScored();
     call.addFilter(VariantFilter.COVERAGE);
@@ -118,7 +121,7 @@ public class VcfInfoFieldTest extends TestCase {
     for (VcfInfoField field : VcfInfoField.values()) {
       field.updateRecord(record, call, params, false);
     }
-    assertEquals("ref\t3\t.\tG\tA\t123.4\t.\tLOH=20.0;NCS=32.574;DISEASE=A;RDS=6.5;DPS=36.9;DP=33;DPR=47.143;XRX;RCE;CT=2147483647;RTRM;RSPLT=1;IC=0.333;EP=0.724;LAL=1;QD=3.739;NAA=1;AC=3;AN=6\tGT:DP\t1/1:10\t0/1:11\t0/0:12", record.toString());
+    assertEquals("ref\t3\t.\tG\tA\t123.4\t.\tNCS=32.574;DISEASE=A;RDS=6.5;DPS=36.9;DP=33;DPR=47.143;XRX;RCE;CT=2147483647;RTRM;RSPLT=1;IC=0.333;EP=0.724;LAL=1;QD=3.739;NAA=1;AC=3;AN=6\tGT:DP\t1/1:10\t0/1:11\t0/0:12", record.toString());
   }
 
   public void testMultiAlleleAC() {
@@ -155,5 +158,17 @@ public class VcfInfoFieldTest extends TestCase {
     assertEquals("CG", VcfInfoField.formatPossibleCause(call, true));
     call.setPossibleCause("G:T");
     assertEquals("CG:CT", VcfInfoField.formatPossibleCause(call, true));
+  }
+  public void testLohInfo() {
+    final VcfRecord record = SomaticFilterTest.getSomaticVcfRecord("0/1", "0/0");
+    final VariantParams variantParams = VariantParams.builder().somaticParams(new SomaticParamsBuilder().lohPrior(0.01).create()).create();
+    LOH.updateRecord(record, null, variantParams,  false);
+    assertEquals("1.0", record.getInfo().get("LOH").get(0));
+  }
+  public void testLohNotEnabled() {
+    final VcfRecord record = SomaticFilterTest.getSomaticVcfRecord("0/1", "0/0");
+    final VariantParams variantParams = VariantParams.builder().somaticParams(new SomaticParamsBuilder().lohPrior(0.0).create()).create();
+    LOH.updateRecord(record, null, variantParams,  false);
+    assertNull(record.getInfo().get("LOH"));
   }
 }

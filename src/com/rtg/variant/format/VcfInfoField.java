@@ -13,14 +13,15 @@
 package com.rtg.variant.format;
 
 import com.rtg.util.Pair;
+import com.rtg.util.PosteriorUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.variant.CoverageThreshold;
-import com.rtg.util.PosteriorUtils;
 import com.rtg.variant.StaticThreshold;
 import com.rtg.variant.Variant;
 import com.rtg.variant.Variant.VariantFilter;
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.bayes.multisample.cancer.SomaticRecordUtils;
 import com.rtg.variant.util.VariantUtils;
 import com.rtg.vcf.VcfAnnotator;
 import com.rtg.vcf.VcfRecord;
@@ -42,8 +43,8 @@ public enum VcfInfoField {
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
-      if (call.getLoh() != null) {
-        rec.addInfo(name(), Utils.realFormat(call.getLoh()));
+      if (params != null && params.somaticParams().lohPrior() > 0) {
+        rec.addInfo(name(), Utils.realFormat(SomaticRecordUtils.lossOfHeterozygosity(rec)));
       }
     }
   },

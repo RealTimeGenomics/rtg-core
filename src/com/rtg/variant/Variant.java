@@ -99,7 +99,6 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
   private Double mPossibleCauseScore;
   private Double mNormalCancerScore;
   private Double mDiseasePresenceScore;
-  private Double mLoh;
 
   /**
    * @param locus the locus for this variant
@@ -424,14 +423,6 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
     mDiseasePresenceScore = diseasePresenceScore;
   }
 
-  public void setLoh(Double loh) {
-    mLoh = loh;
-  }
-
-  public Double getLoh() {
-    return mLoh;
-  }
-
   /**
    * Method to copy all non final fields from one object to another.
    * @param copyFrom values to copy from
@@ -468,7 +459,6 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
       copyTo.setTrimmed();
     }
     copyTo.mFilters = copyFrom.mFilters;
-    copyTo.setLoh(copyFrom.getLoh());
     copyTo.setSplitId(copyFrom.getSplitId());
   }
 

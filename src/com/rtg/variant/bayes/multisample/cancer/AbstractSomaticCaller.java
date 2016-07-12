@@ -202,7 +202,6 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     // Simple LOH test based on ploidy of results alone, could be done with Bayesian calculation later
     final double loh = loh(hypotheses, bestNormal, bestCancer);
     final Ploidy normalPloidy = hypotheses.haploid() ? Ploidy.HAPLOID : Ploidy.DIPLOID;
-    final boolean doLoh = mParams.somaticParams().lohPrior() > 0;
     final String refAllele = DnaUtils.bytesToSequenceIncCG(ref, position, endPosition - position);
     final double ratio = posterior.posteriorScore();
 
@@ -247,9 +246,6 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     }
     if (interesting) {
       v.setInteresting();
-    }
-    if (doLoh) {
-      v.setLoh(loh);
     }
     if (isSomatic || mParams.somaticParams().includeGermlineVariants()) {
       v.setNormalCancerScore(posterior.ncScore());

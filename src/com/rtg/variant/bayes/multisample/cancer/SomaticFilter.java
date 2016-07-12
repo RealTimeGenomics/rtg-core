@@ -11,12 +11,9 @@
  */
 package com.rtg.variant.bayes.multisample.cancer;
 
-import java.util.Arrays;
-
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.vcf.VcfFilter;
 import com.rtg.vcf.VcfRecord;
-import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.header.VcfHeader;
 
 /**
@@ -61,23 +58,14 @@ public class SomaticFilter implements VcfFilter {
       return false;
 
     }
-    if (somatic && !mLossOfHeterozygosity && isLossOfHeterozygosity(record)) {
+
+    if (somatic && !mLossOfHeterozygosity && SomaticRecordUtils.isLossOfHeterozygosity(record)) {
       return false;
     }
-    if (somatic && !mGainOfReference && isGainOfReference(record)) {
+    if (somatic && !mGainOfReference && SomaticRecordUtils.isGainOfReference(record)) {
       return false;
     }
     return true;
   }
 
-  private boolean isGainOfReference(VcfRecord record) {
-    final int[] cancerGts = VcfUtils.splitGt(record.getSampleString(AbstractSomaticCaller.CANCER, VcfFormatField.GT.name()));
-    return Arrays.stream(cancerGts).allMatch(cancerGt -> cancerGt == 0);
-  }
-
-  private boolean isLossOfHeterozygosity(VcfRecord record) {
-    final int[] normalGts = VcfUtils.splitGt(record.getSampleString(AbstractSomaticCaller.NORMAL, VcfFormatField.GT.name()));
-    final int[] cancerGts = VcfUtils.splitGt(record.getSampleString(AbstractSomaticCaller.CANCER, VcfFormatField.GT.name()));
-    return Arrays.stream(cancerGts).allMatch(cancerGt -> Arrays.stream(normalGts).anyMatch(normalGt -> normalGt == cancerGt));
-  }
 }

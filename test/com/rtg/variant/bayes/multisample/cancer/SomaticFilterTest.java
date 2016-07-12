@@ -59,7 +59,7 @@ public class SomaticFilterTest extends TestCase {
     assertTrue(sf.accept(record));
   }
 
-  private VcfRecord getSomaticVcfRecord(String normalGt, String cancerGt) {
+  public static VcfRecord getSomaticVcfRecord(String normalGt, String cancerGt) {
     final VcfRecord record = getVcfRecord(normalGt, cancerGt);
     record.addFormatAndSample("SS", "0")
       .addFormatAndSample("SS", "2");
@@ -85,7 +85,7 @@ public class SomaticFilterTest extends TestCase {
     return sf;
   }
 
-  private VcfRecord getVcfRecord(String normalGt, String cancerGt) {
+  static VcfRecord getVcfRecord(String normalGt, String cancerGt) {
     final VcfRecord record = new VcfRecord("pretend", 42, "A");
     record.setNumberOfSamples(2)
       .addFormatAndSample("GT", normalGt)
