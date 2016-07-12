@@ -114,7 +114,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String X_SIMPLE_REPEAT_EXTENSION = "Xsimple-repeat-extension";
   private static final String X_R_IGNORE_FLAG = "Xrignore";
   private static final String X_R_MAX_FLAG = "Xrmax";
-  private static final String X_UNMATED_R_MAX_FLAG = "Xunmated_rmax";
+  private static final String X_UNMATED_R_MAX_FLAG = "Xunmated-rmax";
   private static final String X_THREADING_ENVIRONMENT = "Xthreading-env";
   private static final String X_IO_THREADS = "Xio-threads";
   protected static final String X_PRUNE_HYPOTHESES = "Xprune-hypotheses";
