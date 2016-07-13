@@ -334,7 +334,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(X_INFO_ANNOTATION_FLAG, VcfInfoField.class, "string", "additional VCF INFO fields").setCategory(REPORTING)
         .setParameterRange(new String[] {VcfInfoField.IC.name(), VcfInfoField.EP.name(), VcfInfoField.LAL.name(), VcfInfoField.QD.name(), VcfInfoField.NAA.name(), VcfInfoField.AN.name(), VcfInfoField.AC.name(), VcfInfoField.RTRM.name(), VcfInfoField.RSPLT.name(), VcfInfoField.SGP.name()}).enableCsv();
     flags.registerOptional(X_FORMAT_ANNOTATION_FLAG, VcfFormatField.class, "string", "additional VCF FORMAT fields").setCategory(REPORTING)
-        .setParameterRange(new String[] {VcfFormatField.GQD.name(), VcfFormatField.ZY.name(), VcfFormatField.PD.name()}).enableCsv();
+        .setParameterRange(new String[] {VcfFormatField.GQD.name(), VcfFormatField.ZY.name(), VcfFormatField.PD.name(), VcfFormatField.SQ.name()}).enableCsv();
 
     flags.registerOptional(X_ALLELE_BALANCE_PROBABILITY, AlleleBalanceFactor.class, "string", "method for calculating allele balance", AlleleBalanceFactor.NONE).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_EXPECTED_ALLELIC_FRACTION, Double.class, "float", "expected germline heterozygous alternate allele fraction", 0.5).setCategory(SENSITIVITY_TUNING);

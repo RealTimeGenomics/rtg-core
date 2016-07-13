@@ -329,6 +329,38 @@ public enum VcfFormatField {
       return sample != null && sample.getHoeffdingUnmatedBiasAllele1() != null;
     }
   },
+  SQ {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.REF_ALTS, "Sum of quality for the evidence of the allele");
+    }
+
+    @Override
+    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      final String ref = includePrevNt ? rec.getRefCall().substring(1) : rec.getRefCall();
+      final AlleleStatistics<?> counts = sample.getStats().counts();
+      final Description desc = counts.getDescription();
+      final int refHyp = desc.indexOf(ref);
+
+      final StringBuilder value = new StringBuilder();
+      if (refHyp == -1) {
+        value.append(0);
+      } else {
+        value.append(Utils.realFormat(counts.qa(refHyp), 3));
+      }
+      for (String altCall : rec.getAltCalls()) {
+        final String adjAltCall = includePrevNt ? altCall.substring(1) : altCall;
+        final int hyp = desc.indexOf(adjAltCall);
+        value.append(",").append(Utils.realFormat(counts.qa(hyp), 3));
+      }
+      rec.addFormatAndSample(name(), value.toString());
+    }
+
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return sample != null && sample.getStats() != null;
+    }
+  },
   /** Placed unmapped ratio */
   PUR {
     @Override
