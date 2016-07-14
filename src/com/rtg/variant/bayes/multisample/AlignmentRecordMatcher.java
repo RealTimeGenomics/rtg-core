@@ -92,7 +92,7 @@ public class AlignmentRecordMatcher {
   }
 
   private static boolean greedyCheck(char op, int refPos, int untilPos) {
-    return op == SamUtils.CIGAR_INSERTION_INTO_REF  || op == SamUtils.CIGAR_SOFT_CLIP ? refPos <= untilPos : refPos < untilPos;
+    return op == SamUtils.CIGAR_INSERTION_INTO_REF ? refPos <= untilPos : refPos < untilPos;
   }
 
 

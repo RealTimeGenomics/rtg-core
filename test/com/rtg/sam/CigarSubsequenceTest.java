@@ -11,6 +11,7 @@
  */
 package com.rtg.sam;
 
+import com.rtg.AbstractTest;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
@@ -19,12 +20,11 @@ import com.rtg.variant.match.Match;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-import junit.framework.TestCase;
 
 /**
  *
  */
-public class CigarSubsequenceTest extends TestCase {
+public class CigarSubsequenceTest extends AbstractTest {
 
   public static SAMRecord makeSamRecord(final int alignStart, final String readString, final String cigar) {
     final SAMRecord sam = new SAMRecord(new SAMFileHeader());
@@ -164,6 +164,8 @@ public class CigarSubsequenceTest extends TestCase {
   //test when insert at end of selected region
   public void testCigarSubSequenceInsertAtEnd() {
     checkCigarSubSequence("CCGT", "2=1I1=", 2, 2, "G");
+    checkCigarSubSequence("CCGT", "3I1=", 0, 0, "CCG");
+    checkCigarSubSequence("CCGT", "3S1=", 0, 0, null);
 
     checkCigarSubSequence("ACGTACGTACGTACGT", "8=4I4=", 0, 8, "ACGTACGTACGT");
   }
