@@ -12,6 +12,8 @@
 
 package com.rtg.visualization;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.StringUtils;
 
@@ -22,6 +24,7 @@ import htsjdk.samtools.SAMRecord;
 public class SamAssistanceSimple implements SamAssistance {
 
   private static final String INVALID_CIGAR = "Invalid cigar: ";
+  private static final boolean PRETTY_DELETES = GlobalFlags.getBooleanValue(CoreGlobalFlags.CP437_DELETES);
 
   @Override
   public String[] samToReads(final SAMRecord sam, final String template, byte[] templateBytes, final int readStart, final boolean displayDots, boolean displaySoftClip) {
@@ -112,7 +115,19 @@ public class SamAssistanceSimple implements SamAssistance {
                 sb.append(StringUtils.getSpaceString(readStart));
                 isFirstAction = false;
               }
-              sb.append("-");
+              if (PRETTY_DELETES) {
+                if (sb.charAt(sb.length() - 1) == '\u2551') {
+                  sb.deleteCharAt(sb.length() - 1);
+                  sb.append("\u251c\u2524");
+                } else if (sb.charAt(sb.length() - 1) == '\u2524') {
+                  sb.deleteCharAt(sb.length() - 1);
+                  sb.append("\u254c\u2524");
+                } else {
+                  sb.append("\u2551");
+                }
+              } else {
+                sb.append("-");
+              }
               tPos++;
               break;
             case SamUtils.CIGAR_GAP_IN_READ:

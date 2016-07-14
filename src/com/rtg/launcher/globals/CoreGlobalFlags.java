@@ -98,6 +98,8 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
   public static final String GZIP_LEVEL = "com.rtg.calibrate.Recalibrate.gzip-level";
   /** Allow fallback to a slower alternative when reading non-indexed SAM files with region restrictions requested */
   public static final String SAM_ALLOW_FALLBACK_FOR_NON_INDEXED_REGIONS = "com.rtg.sam.allow-region-fallback";
+  /** Use code page 437 characters for deletes*/
+  public static final String CP437_DELETES = "com.rtg.visualization.cp437-deletes";
 
   CoreGlobalFlags(List<Flag> flags) {
     super(flags);
@@ -162,5 +164,8 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
     // when there are lots of missing values.
     registerFlag(AVR_TRAIN_ON_MISSING_VALUES, Boolean.class, false);
     registerFlag(AVR_ALLOW_UNDECLARED_ATTRIBUTES, Boolean.class, false);
+
+    //Aview
+    registerFlag(CP437_DELETES, Boolean.class, false);
   }
 }
