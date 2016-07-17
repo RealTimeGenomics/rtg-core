@@ -11,6 +11,8 @@
  */
 package com.rtg.variant.bayes;
 
+import com.rtg.reference.Ploidy;
+
 import junit.framework.TestCase;
 
 /**
@@ -20,6 +22,12 @@ public class ModelNoneTest extends TestCase {
   public void test() {
     final ModelNone<Description> none = ModelNone.SINGLETON;
     assertEquals(0, none.hypotheses().size());
+    assertEquals(0, none.size());
+    assertEquals(Ploidy.NONE, none.hypotheses().ploidy());
+    none.freeze();
+    assertEquals(0, none.posteriorLn0(0), 0.0);
+    assertTrue(none.isNormalized());
+    assertTrue(none == none.normalize());
   }
 
 }
