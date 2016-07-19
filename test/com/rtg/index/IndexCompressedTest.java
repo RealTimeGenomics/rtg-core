@@ -142,7 +142,7 @@ public class IndexCompressedTest extends AbstractIndexTest {
     }
   }
 
-    static class FindTest implements FinderHashValue {
+    static class TestFinder implements FinderHashValue {
     List<Long> mHash = new ArrayList<>();
     List<Long> mValue = new ArrayList<>();
 
@@ -189,7 +189,7 @@ public class IndexCompressedTest extends AbstractIndexTest {
         }
         countIndex.freeze();
       }
-      final FindTest finder = new FindTest();
+      final TestFinder finder = new TestFinder();
       countIndex.scan(finder);
       final List<Long> expected = Arrays.asList(1L, 1L, 1L, 1L, 3L, 3L, 4L, 4L, 4L, 4L, 13L, 18L, 18L, 19L, 19L, 37L, 37L, 48L
           , 48L, 48L, 48L, 48L, 48L, 53L, 53L, 61L, 61L, 61L, 61L, 73L, 73L, 77L, 77L, 88L, 88L, 88L, 88L, 96L, 96L, 96L
