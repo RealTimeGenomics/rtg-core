@@ -36,7 +36,7 @@ import com.rtg.util.test.FileHelper;
  */
 public abstract class AbstractPairedEndOutputProcessorTest extends AbstractNanoTest {
 
-  protected File mDir;
+  protected File mDir = null;
 
   @Override
   public void setUp() throws IOException {
@@ -46,7 +46,7 @@ public abstract class AbstractPairedEndOutputProcessorTest extends AbstractNanoT
 
   @Override
   public void tearDown() throws IOException {
-    assertTrue(!mDir.exists() || FileHelper.deleteAll(mDir));
+    assertTrue(mDir == null || !mDir.exists() || FileHelper.deleteAll(mDir));
     mDir = null;
     super.tearDown();
   }

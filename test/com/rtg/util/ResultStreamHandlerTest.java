@@ -25,11 +25,8 @@ import junit.framework.TestCase;
  */
 public class ResultStreamHandlerTest extends TestCase {
 
-  public ResultStreamHandlerTest(String testName) {
-    super(testName);
-  }
-
   private File mDir = null;
+
   @Override
   public void setUp() throws IOException {
     mDir = FileUtils.createTempDir("resultstreamhandler", "test");
@@ -38,9 +35,10 @@ public class ResultStreamHandlerTest extends TestCase {
 
   @Override
   public void tearDown() {
-    assertTrue(!mDir.exists() || FileHelper.deleteAll(mDir));
+    assertTrue(mDir == null || !mDir.exists() || FileHelper.deleteAll(mDir));
     mDir = null;
   }
+
   /**
    * Test of file method, of class ResultStreamHandler.
    */

@@ -18,9 +18,9 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.ngs.tempstage.AbstractTempFileWriter;
 import com.rtg.ngs.tempstage.SingleEndTempFileWriter;
@@ -54,7 +54,7 @@ public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutpu
   @Override
   public void tearDown() throws Exception {
     GlobalFlags.resetAccessedStatus();
-    assertTrue(!mDir.exists() || FileHelper.deleteAll(mDir));
+    assertTrue(mDir == null || !mDir.exists() || FileHelper.deleteAll(mDir));
     try {
       mNano.finish();
     } finally {

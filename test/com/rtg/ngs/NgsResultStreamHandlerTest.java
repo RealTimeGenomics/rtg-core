@@ -15,33 +15,26 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.AbstractTest;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
-
-import junit.framework.TestCase;
 
 /**
  * Test class
  */
-public class NgsResultStreamHandlerTest extends TestCase {
-
-  public NgsResultStreamHandlerTest(String testName) {
-    super(testName);
-  }
+public class NgsResultStreamHandlerTest extends AbstractTest {
 
   File mDir = null;
 
   @Override
-  public void setUp() throws Exception {
-    Diagnostic.setLogStream();
+  public void setUp() throws IOException {
     mDir = FileUtils.createTempDir("ngsresultstreamhandler", "test");
     assertTrue(mDir.delete());
   }
 
   @Override
   public void tearDown() {
-    assertTrue(!mDir.exists() || FileHelper.deleteAll(mDir));
+    assertTrue(mDir == null || !mDir.exists() || FileHelper.deleteAll(mDir));
     mDir = null;
   }
 

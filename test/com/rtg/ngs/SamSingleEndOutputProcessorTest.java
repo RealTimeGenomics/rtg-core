@@ -51,7 +51,7 @@ public class SamSingleEndOutputProcessorTest extends AbstractTest {
 
   @Override
   public void tearDown() throws IOException {
-    assertTrue(!mDir.exists() || FileHelper.deleteAll(mDir));
+    assertTrue(mDir == null || !mDir.exists() || FileHelper.deleteAll(mDir));
     mDir = null;
     super.tearDown();
   }
