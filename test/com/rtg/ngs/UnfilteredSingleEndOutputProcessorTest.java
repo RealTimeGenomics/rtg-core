@@ -39,15 +39,15 @@ public class UnfilteredSingleEndOutputProcessorTest extends AbstractTest {
   protected File mDir = null;
   @Override
   public void setUp() throws IOException {
-    mDir = FileHelper.createTempDirectory();
     super.setUp();
+    mDir = FileHelper.createTempDirectory();
   }
 
   @Override
   public void tearDown() throws IOException {
-    assertTrue(mDir == null || !mDir.exists() || FileHelper.deleteAll(mDir));
-    mDir = null;
     super.tearDown();
+    assertTrue(!mDir.exists() || FileHelper.deleteAll(mDir));
+    mDir = null;
   }
 
   static final String TEMP = ">t" + StringUtils.LS + "tgcaagacaagagggcctcc" + StringUtils.LS;
@@ -184,6 +184,9 @@ public class UnfilteredSingleEndOutputProcessorTest extends AbstractTest {
       }
       inner.threadFinish();
       assertTrue(log.toString().contains("Child finish"));
+    } finally {
+      Diagnostic.setLogStream();
+
     }
   }
 
