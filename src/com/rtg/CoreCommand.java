@@ -90,7 +90,7 @@ public final class CoreCommand {
   static final Command SDF2QUALA = new Command(new Sdf2Quala(), CommandCategory.FORMAT, ReleaseLevel.ALPHA);
 
   /** For generating k-mer count histograms and blacklists */
-  static final Command HASHDIST = new Command(new HashDistCli(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
+  static final Command HASHDIST = new Command(new HashDistCli(), CommandCategory.UTILITY, ReleaseLevel.BETA);
 
   /** Read mapping with new and old technology mixed */
   static final Command MAP = new Command(new MapCli(), CommandCategory.MAPPING, ReleaseLevel.GA);

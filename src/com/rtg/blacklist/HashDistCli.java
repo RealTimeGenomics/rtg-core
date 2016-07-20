@@ -21,7 +21,9 @@ import com.rtg.launcher.NoStatistics;
 import com.rtg.launcher.ParamsCli;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
+import com.rtg.mode.SequenceType;
 import com.rtg.ngs.MapFlags;
+import com.rtg.reader.ReaderUtils;
 import com.rtg.usage.UsageMetric;
 import com.rtg.util.IORunnable;
 import com.rtg.util.InvalidParamsException;
@@ -30,6 +32,7 @@ import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
 
 /**
+ * Command-line entry point for the <code>hashdist</code> command.
  */
 public class HashDistCli extends ParamsCli<HashDistParams> {
 
@@ -37,7 +40,7 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
   private static final String BLACKLIST_THRESHOLD_FLAG = "blacklist-threshold";
   private static final String INSTALL_BLACKLIST = "install-blacklist";
   private static final String HASHMAP_SIZE_FACTOR = "hashmap-size-factor";
-  private static final String DESCRIPTION = "Counts the number of times hashes occur and produces a histogram. Optionally produces a blacklist of highly occuring hashes";
+  private static final String DESCRIPTION = "Counts the number of times k-mers occur in an SDF and produces a histogram. Optionally creates a blacklist of highly occurring hashes that can be used to increase mapping speed";
 
   @Override
   protected IORunnable task(HashDistParams params, OutputStream out) throws IOException {
@@ -46,12 +49,18 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
 
   @Override
   protected HashDistParams makeParams() throws InvalidParamsException, IOException {
+    final File sdfDir = (File) mFlags.getAnonymousValue(0);
+    if (ReaderUtils.isPairedEndDirectory(sdfDir)) {
+      throw new InvalidParamsException("Analysis of paired-end SDFs is not supported");
+    }
+    final SequenceParams sequences = SequenceParams.builder().directory(sdfDir).mode(SequenceMode.UNIDIRECTIONAL).create();
+    if (sequences.reader().type() != SequenceType.DNA) {
+      throw new InvalidParamsException("Analysis of non-DNA containing SDFs is not supported");
+    }
     final BuildParams buildParams = BuildParams.builder()
       .windowSize((Integer) mFlags.getValue(MapFlags.WORDSIZE_FLAG))
       .stepSize((Integer) mFlags.getValue(MapFlags.STEP_FLAG))
-      .sequences(
-        SequenceParams.builder().directory((File) mFlags.getAnonymousValue(0)).mode(SequenceMode.UNIDIRECTIONAL).create()
-      ).create();
+      .sequences(sequences).create();
     return HashDistParams.builder()
       .buildParams(buildParams)
       .installBlacklist(mFlags.isSet(INSTALL_BLACKLIST))
@@ -80,13 +89,13 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
     CommonFlagCategories.setCategories(flags);
     CommonFlags.initOutputDirFlag(flags);
     CommonFlags.initThreadsFlag(flags);
-    flags.registerRequired(File.class, CommonFlags.SDF, "SDF data set to run against").setCategory(CommonFlagCategories.INPUT_OUTPUT).setMaxCount(1).setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerOptional('w', MapFlags.WORDSIZE_FLAG, Integer.class, CommonFlags.INT, "number of bases in hash", 22).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerRequired(File.class, CommonFlags.SDF, "SDF containing sequence data to analyse").setCategory(CommonFlagCategories.INPUT_OUTPUT).setMaxCount(1).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerOptional('w', MapFlags.WORDSIZE_FLAG, Integer.class, CommonFlags.INT, "number of bases in each hash", 22).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional('s', MapFlags.STEP_FLAG, Integer.class, CommonFlags.INT, "step size", 1).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(MAX_COUNT_FLAG, Integer.class, CommonFlags.INT, "soft minimum for hash count (i.e. will record exact counts of at least this much)", 500).setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(BLACKLIST_THRESHOLD_FLAG, Integer.class, CommonFlags.INT, "produces a blacklist of hashes with counts exceeding this value").setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(INSTALL_BLACKLIST, "Adds blacklist to SDF for use in mapping").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerOptional(HASHMAP_SIZE_FACTOR, Double.class, CommonFlags.FLOAT, "Multiplier for the minimum size of the hashmap", 1.0).setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(MAX_COUNT_FLAG, Integer.class, CommonFlags.INT, "soft minimum for hash count (i.e. will record exact counts of at least this value)", 500).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(BLACKLIST_THRESHOLD_FLAG, Integer.class, CommonFlags.INT, "if set, output a blacklist containing all k-mer hashes with counts exceeding this value").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(HASHMAP_SIZE_FACTOR, Double.class, CommonFlags.FLOAT, "multiplier for the minimum size of the hashmap", 1.0).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(INSTALL_BLACKLIST, "install the blacklist into the SDF for use during mapping").setCategory(CommonFlagCategories.UTILITY);
     flags.setValidator(new HashToolsCliValidator());
   }
 
@@ -127,12 +136,4 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
     }
   }
 
-
-  /**
-   * Main program for dusting. Use -h to get help.
-   * @param args command line arguments.
-   */
-  public static void main(final String[] args) {
-    new HashDistCli().mainExit(args);
-  }
 }
