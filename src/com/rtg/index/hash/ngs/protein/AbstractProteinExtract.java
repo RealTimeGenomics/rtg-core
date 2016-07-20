@@ -22,11 +22,11 @@ import com.rtg.util.integrity.IntegralAbstract;
  * Deals with extracting masks.
  * Indel tweaking is done dynamically in the <code>maskIndel()</code> method.
  */
-public abstract class ProteinExtractAbstract extends IntegralAbstract {
+public abstract class AbstractProteinExtract extends IntegralAbstract {
 
   protected final SingleMask mSingleMask;
 
-  ProteinExtractAbstract(final SingleMask singleMask) {
+  AbstractProteinExtract(final SingleMask singleMask) {
     mSingleMask = singleMask;
   }
 

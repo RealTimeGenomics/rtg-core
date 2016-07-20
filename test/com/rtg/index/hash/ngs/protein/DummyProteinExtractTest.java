@@ -23,9 +23,9 @@ import junit.framework.TestCase;
 
 /**
  */
-public class ProteinExtractAbstractTest extends TestCase {
+public class DummyProteinExtractTest extends TestCase {
 
-  private static class MockProteinExtract extends ProteinExtractAbstract {
+  private static class MockProteinExtract extends AbstractProteinExtract {
     protected ArrayList<Long> mResults = new ArrayList<>();
     MockProteinExtract() {
       super(new SingleMask(1, 1, 1, 1));

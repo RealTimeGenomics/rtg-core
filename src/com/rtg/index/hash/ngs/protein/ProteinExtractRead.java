@@ -19,7 +19,7 @@ import com.rtg.util.integrity.Exam;
 
 /**
  */
-public final class ProteinExtractRead extends ProteinExtractAbstract {
+public final class ProteinExtractRead extends AbstractProteinExtract {
 
   private final ReadCall mReadCall;
 
