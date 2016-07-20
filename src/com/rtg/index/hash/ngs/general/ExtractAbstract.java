@@ -21,9 +21,7 @@ import com.rtg.util.integrity.IntegralAbstract;
  * Deals with extracting masks.
  * Indel tweaking is done dynamically in the <code>maskIndel()</code> method.
  */
-@TestClass({"com.rtg.index.hash.ngs.general.ExtractAbstractTest",
-  "com.rtg.index.hash.ngs.general.SingleMaskTest",
-})
+@TestClass({"com.rtg.index.hash.ngs.general.ExtractAbstractTest", "com.rtg.index.hash.ngs.general.SingleMaskTest"})
 public abstract class ExtractAbstract extends IntegralAbstract {
 
   protected final SingleMask mSingleMask;

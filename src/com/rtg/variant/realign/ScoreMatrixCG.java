@@ -31,11 +31,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  * Calculates a banded matrix of Complete Genomics alignment probabilities.
  *
  */
-@TestClass({
-  "com.rtg.variant.realign.AbstractScoreMatrixCGTest$LogTest",
-  "com.rtg.variant.realign.AbstractScoreMatrixCGTest$LogApproximateTest",
-  "com.rtg.variant.realign.AbstractScoreMatrixCGTest$SimpleTest"
-})
+@TestClass({"com.rtg.variant.realign.AbstractScoreMatrixCGTest$LogTest", "com.rtg.variant.realign.AbstractScoreMatrixCGTest$LogApproximateTest", "com.rtg.variant.realign.AbstractScoreMatrixCGTest$SimpleTest"})
 public class ScoreMatrixCG extends ScoreMatrix {
 
   static final int OVERLAP_GAP = RealignParamsImplementation.CG_OVERLAP;
