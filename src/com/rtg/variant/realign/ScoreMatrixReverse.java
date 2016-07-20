@@ -12,11 +12,13 @@
 
 package com.rtg.variant.realign;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
  * Calculates the score matrix in reverse (from end backwards).
  */
+@TestClass({"com.rtg.variant.realign.AbstractScoreMatrixReverseTest$LogTest", "com.rtg.variant.realign.AbstractScoreMatrixReverseTest$LogApproximateTest", "com.rtg.variant.realign.AbstractScoreMatrixReverseTest$SimpleTest"})
 public class ScoreMatrixReverse extends AbstractAllPaths {
 
   /**
