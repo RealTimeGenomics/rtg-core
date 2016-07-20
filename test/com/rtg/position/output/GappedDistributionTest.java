@@ -12,20 +12,11 @@
 package com.rtg.position.output;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * See the spreadsheet for the test case below.
  */
 public class GappedDistributionTest extends TestCase {
-
-  public static TestSuite suite() {
-    final TestSuite suite = new TestSuite();
-    suite.addTestSuite(GapProbabilitiesScorerTest.class);
-    suite.addTestSuite(GappedDistributionTest.class);
-    return suite;
-  }
-
 
   public void test() {
     final GappedDistribution gd = new GappedDistribution(8, 8, GappedDistribution.distrParams(16));

@@ -11,6 +11,9 @@
  */
 package com.rtg.util.test.params;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
 import com.rtg.launcher.ModuleParamsTest;
 import com.rtg.launcher.OutputModuleParamsTest;
 import com.rtg.metagenomics.SpeciesParamsTest;
@@ -20,37 +23,29 @@ import com.rtg.sam.SingleMappedParamsTest;
 import com.rtg.variant.VariantParamsTest;
 import com.rtg.variant.cnv.CnvProductParamsTest;
 import com.rtg.variant.coverage.CoverageParamsTest;
-import com.rtg.vcf.eval.VcfEvalParamsTest;
 import com.rtg.variant.sv.SvParamsTest;
 import com.rtg.variant.sv.SvToolParamsTest;
 import com.rtg.variant.sv.discord.DiscordantToolParamsTest;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import com.rtg.vcf.eval.VcfEvalParamsTest;
 
 /**
  */
-public class AllTestParams extends TestSuite {
-
-  /**
-   * @return a test suite for all test classes that use <code>TestParams</code>
-   */
-  public static Test suite() {
-    final TestSuite suite = new TestSuite("com.rtg.util.test.params");
-    suite.addTestSuite(ModuleParamsTest.class);
-    suite.addTestSuite(OutputModuleParamsTest.class);
-    suite.addTestSuite(SpeciesParamsTest.class);
-    suite.addTestSuite(NgsParamsTest.class);
-    suite.addTestSuite(MappedParamsTest.class);
-    suite.addTestSuite(SingleMappedParamsTest.class);
-    suite.addTestSuite(CoverageParamsTest.class);
-    suite.addTestSuite(VariantParamsTest.class);
-    suite.addTestSuite(CnvProductParamsTest.class);
-    suite.addTestSuite(VcfEvalParamsTest.class);
-    suite.addTestSuite(SvParamsTest.class);
-    suite.addTestSuite(SvToolParamsTest.class);
-    suite.addTestSuite(DiscordantToolParamsTest.class);
-    return suite;
-  }
-
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+  ModuleParamsTest.class,
+  OutputModuleParamsTest.class,
+  SpeciesParamsTest.class,
+  NgsParamsTest.class,
+  MappedParamsTest.class,
+  SingleMappedParamsTest.class,
+  CoverageParamsTest.class,
+  VariantParamsTest.class,
+  CnvProductParamsTest.class,
+  VcfEvalParamsTest.class,
+  SvParamsTest.class,
+  SvToolParamsTest.class,
+  DiscordantToolParamsTest.class,
+})
+public class AllTestParamsSuite {
+  // required empty suite class
 }

@@ -18,20 +18,11 @@ import com.rtg.sam.SamUtils;
 import com.rtg.util.machine.MachineOrientation;
 import com.rtg.variant.sv.ReadGroupStats;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  */
 public class BreakpointConstraintTest extends TestCase {
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-    suite.addTestSuite(BreakpointConstraintTest.class);
-    suite.addTestSuite(FlipTest.class);
-    return suite;
-  }
 
   private static class MockReadGroupStats extends ReadGroupStats {
     static final double STD_DEV = Math.PI;

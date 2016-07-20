@@ -11,6 +11,7 @@
  */
 package com.rtg.variant.sv.discord;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.MathUtils;
 import com.rtg.util.Utils;
@@ -35,6 +36,7 @@ import htsjdk.samtools.SAMRecord;
  * <img src="doc-files/BreakpointDiagrams/Slide7.jpg" alt="image">
  *
  */
+@TestClass({"com.rtg.variant.sv.discord.BreakpointConstraintTest", "com.rtg.variant.sv.discord.FlipTest"})
 public final class BreakpointConstraint extends AbstractBreakpointGeometry {
   /** Maximum number of standard deviations */
   private static final int MAX_FRAGMENT_MULTIPLIER = 4;

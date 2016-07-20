@@ -16,6 +16,7 @@ import static com.rtg.position.output.Offset.INSERT;
 import static com.rtg.position.output.Offset.TOTAL;
 import static com.rtg.position.output.Offset.ZERO;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.StringUtils;
 import com.rtg.util.format.FormatInteger;
 import com.rtg.util.format.FormatReal;
@@ -28,6 +29,7 @@ import com.rtg.util.integrity.IntegralAbstract;
  * Currently fixed for KAREN defaults of sub prob = 0.001 indel prob= 0.009
  * (these were the numbers from 454).
  */
+@TestClass({"com.rtg.position.output.GapProbabilitiesScorerTest", "com.rtg.position.output.GappedDistributionTest"})
 public class GappedDistribution extends IntegralAbstract {
 
   /**

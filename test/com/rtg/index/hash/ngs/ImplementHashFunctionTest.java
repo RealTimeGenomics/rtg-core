@@ -18,18 +18,8 @@ import com.rtg.launcher.HashingRegion;
 import com.rtg.util.Utils;
 import com.rtg.util.integrity.IntegralAbstract;
 
-import junit.framework.Test;
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 public class ImplementHashFunctionTest extends TestCase {
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-    suite.addTestSuite(ImplementHashFunctionTest.class);
-    suite.addTestSuite(ImplementHashFunctionCloneTest.class);
-    suite.addTestSuite(TemplateCallImplementationTest.class);
-    return suite;
-  }
 
   private static class ReadCallMock implements ReadCall {
     @Override

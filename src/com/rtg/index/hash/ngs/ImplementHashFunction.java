@@ -13,6 +13,7 @@ package com.rtg.index.hash.ngs;
 
 import java.io.IOException;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.index.hash.PrimeUtils;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.util.integrity.Exam;
@@ -22,6 +23,7 @@ import com.rtg.util.integrity.IntegralAbstract;
  * Tailored for use with <code>Ngs</code> processing.
  * Allows split windows to be extracted.
  */
+@TestClass({"com.rtg.index.hash.ngs.ImplementHashFunctionTest", "com.rtg.index.hash.ngs.ImplementHashFunctionCloneTest", "com.rtg.index.hash.ngs.TemplateCallImplementationTest"})
 public abstract class ImplementHashFunction extends IntegralAbstract implements NgsHashFunction, Cloneable {
 
   /** Number of bits in an int */

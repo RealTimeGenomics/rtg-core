@@ -12,19 +12,9 @@
 package com.rtg.position.output;
 
 import com.rtg.util.TestUtils;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 /**
  */
 public class DummyPositionOutputTest extends WordOutputTest {
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-    suite.addTestSuite(DummyPositionOutputTest.class);
-    suite.addTestSuite(SegmentOutputTest.class);
-    return suite;
-  }
 
   public void testStateEnum() {
     TestUtils.testEnum(AbstractPositionOutput.State.class, "[SEQUENCE, QUERY, POSITION, HIT]");
