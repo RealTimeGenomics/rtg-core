@@ -11,10 +11,8 @@
  */
 package com.rtg.ngs;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -23,6 +21,7 @@ import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.sam.RecordIterator;
+import com.rtg.sam.SamRecordPopulator;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.ThreadedMultifileIterator;
 import com.rtg.util.IORunnable;
@@ -30,10 +29,9 @@ import com.rtg.util.SimpleThreadPool;
 import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
-import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-import com.rtg.sam.SamRecordPopulator;
 
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.util.BlockCompressedInputStream;
@@ -81,44 +79,22 @@ public abstract class AbstractPairedEndOutputProcessorSyncTest extends AbstractP
   }
 
   public void testThreadClone1() throws Exception {
-    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    final PrintStream ps = new PrintStream(bos);
-    Diagnostic.setLogStream(ps);
-    try {
-      checkThreadClone(null, false, false);
-    } finally {
-      Diagnostic.setLogStream();
-      ps.close();
-    }
+    checkThreadClone(null, false, false);
   }
 
   public void testThreadClone2() throws Exception {
-    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    final PrintStream ps = new PrintStream(bos);
-    Diagnostic.setLogStream(ps);
-    try {
-      checkThreadClone(null, true, true);
-    } finally {
-      Diagnostic.setLogStream();
-      ps.close();
-    }
+    checkThreadClone(null, true, true);
   }
 
   public void testThreadClone3() throws Exception {
-    final File tmp = FileUtils.createTempDir("topnsync", "clone");
-    try {
+    try (TestDirectory tmp = new TestDirectory()) {
       checkThreadClone(tmp, false, true);
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp));
     }
   }
 
   public void testThreadCloneLocalZipText() throws Exception {
-    final File tmp = FileUtils.createTempDir("topnsync", "clone");
-    try {
+    try (TestDirectory tmp = new TestDirectory()) {
       checkThreadClone(tmp, true, false);
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp));
     }
   }
 

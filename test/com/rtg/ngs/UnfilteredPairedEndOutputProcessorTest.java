@@ -27,6 +27,7 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 /**
@@ -83,31 +84,24 @@ public class UnfilteredPairedEndOutputProcessorTest extends AbstractPairedEndOut
     final ByteArrayOutputStream logBytes = new ByteArrayOutputStream();
     try (PrintStream log = new PrintStream(logBytes)) {
       Diagnostic.setLogStream(log);
-      try {
-        final int numThreads = 4;
-        final SimpleThreadPool stp = new SimpleThreadPool(numThreads, "TestUnmated", true);
-        final NgsParams params = getDefaultBuilder(tempDir, false, OutputFilter.SAM_UNFILTERED, null).numberThreads(numThreads).create();
-        final UnfilteredPairedEndOutputProcessor sync = new UnfilteredPairedEndOutputProcessor(params, null, true);
-        try {
-          for (int i = 0; i < numThreads; i++) {
-            final long padding = params.calculateThreadPadding();
-            final long start = i * MAX_COORD / numThreads;
-            final long end = (i + 1) * MAX_COORD / numThreads;
-            final HashingRegion region = new HashingRegion(0, start, 0, end, Math.max(0, start - padding), Math.min(MAX_COORD, end + padding));
-            stp.execute(new SimpleProcess2(sync, region, i));
-          }
-          stp.terminate();
-          sync.finish();
-        } finally {
-          sync.close();
+      final int numThreads = 4;
+      final SimpleThreadPool stp = new SimpleThreadPool(numThreads, "TestUnmated", true);
+      final NgsParams params = getDefaultBuilder(tempDir, false, OutputFilter.SAM_UNFILTERED, null).numberThreads(numThreads).create();
+      try (UnfilteredPairedEndOutputProcessor sync = new UnfilteredPairedEndOutputProcessor(params, null, true)) {
+        for (int i = 0; i < numThreads; i++) {
+          final long padding = params.calculateThreadPadding();
+          final long start = i * MAX_COORD / numThreads;
+          final long end = (i + 1) * MAX_COORD / numThreads;
+          final HashingRegion region = new HashingRegion(0, start, 0, end, Math.max(0, start - padding), Math.min(MAX_COORD, end + padding));
+          stp.execute(new SimpleProcess2(sync, region, i));
         }
-        final String contentsUnmapped = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(new File(mDir, "hitDir"), NgsOutputParams.UNMAPPED_SAM_FILE_NAME)));
-        final String contentsUnmated = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(new File(mDir, "hitDir"), NgsOutputParams.ALIGNMENTS_SAM_FILE_NAME)));
-        mNano.check("upeops-unmated", contentsUnmated, false);
-        mNano.check("upeops-unmapped", contentsUnmapped, false);
-      } finally {
-        Diagnostic.setLogStream();
+        stp.terminate();
+        sync.finish();
       }
+      final String contentsUnmapped = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(new File(mDir, "hitDir"), NgsOutputParams.UNMAPPED_SAM_FILE_NAME)));
+      final String contentsUnmated = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(new File(mDir, "hitDir"), NgsOutputParams.ALIGNMENTS_SAM_FILE_NAME)));
+      mNano.check("upeops-unmated", contentsUnmated, false);
+      mNano.check("upeops-unmapped", contentsUnmapped, false);
     }
   }
 
@@ -145,10 +139,7 @@ public class UnfilteredPairedEndOutputProcessorTest extends AbstractPairedEndOut
                           + ">r7" + StringUtils.LS + RIGHT_READ_AS0 + StringUtils.LS;
 
   public void testEndToEnd() throws Exception {
-    Diagnostic.setLogStream();
-    final File tmpDir = FileUtils.createTempDir("usaw", "ksdjf");
-
-    try {
+    try (TestDirectory tmpDir = new TestDirectory()) {
       final File template = FileUtils.createTempDir("template", "ngs", tmpDir);
       final File left = new File(tmpDir, "left");
       final File right = new File(tmpDir, "right");
@@ -184,37 +175,30 @@ public class UnfilteredPairedEndOutputProcessorTest extends AbstractPairedEndOut
         mNano.check("upeops-endtoend-alignments", alignments, false);
         mNano.check("upeops-endtoend-unmapped", unmapped, false);
       }
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 
   public void testEndToEnd2() throws Exception {
-    Diagnostic.setLogStream();
-    final File tmpDir = FileUtils.createTempDir("usaw", "ksdjf");
+    try (TestDirectory tmpDir = new TestDirectory()) {
+      final File template = FileUtils.createTempDir("template", "ngs", tmpDir);
+      final File left = new File(tmpDir, "left");
+      final File right = new File(tmpDir, "right");
+      final File out = new File(tmpDir, "out");
 
-    try {
-    final File template = FileUtils.createTempDir("template", "ngs", tmpDir);
-    final File left = new File(tmpDir, "left");
-    final File right = new File(tmpDir, "right");
-    final File out = new File(tmpDir, "out");
+      ReaderTestUtils.getReaderDNA(TEMPLATE, template, null).close();
+      ReaderTestUtils.getReaderDNA(READ_LEFT, left, null).close();
+      ReaderTestUtils.getReaderDNA(READ_RIGHT, right, null).close();
 
-    ReaderTestUtils.getReaderDNA(TEMPLATE, template, null).close();
-    ReaderTestUtils.getReaderDNA(READ_LEFT, left, null).close();
-    ReaderTestUtils.getReaderDNA(READ_RIGHT, right, null).close();
+      final MemoryPrintStream mps = new MemoryPrintStream();
 
-    final MemoryPrintStream mps = new MemoryPrintStream();
+      final MapFCli map = new MapFCli();
+      final int code = map.mainInit(new String[] {"-e", "10", "-E", "7", "-w", "4", "-s", "1", "-m", "1", "-i", tmpDir.toString(), "-t", template.toString(), "-o", out.toString()}, mps.outputStream(), mps.printStream());
+      assertEquals(mps.toString(), 0, code);
 
-    final MapFCli map = new MapFCli();
-    final int code = map.mainInit(new String[] {"-e", "10", "-E", "7", "-w", "4", "-s", "1", "-m", "1", "-i", tmpDir.toString(), "-t", template.toString(), "-o", out.toString()}, mps.outputStream(), mps.printStream());
-    assertEquals(mps.toString(), 0, code);
-
-    assertFalse(new File(out, "alignments.sam").isFile());
-    assertFalse(new File(out, "unmapped.sam").isFile());
-    assertTrue(new File(out, "alignments.sdf").isDirectory());
-    assertTrue(new File(out, "unmapped.sdf").isDirectory());
-    } finally {
-      FileHelper.deleteAll(tmpDir);
+      assertFalse(new File(out, "alignments.sam").isFile());
+      assertFalse(new File(out, "unmapped.sam").isFile());
+      assertTrue(new File(out, "alignments.sdf").isDirectory());
+      assertTrue(new File(out, "unmapped.sdf").isDirectory());
     }
   }
 

@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import com.rtg.AbstractTest;
 import com.rtg.bed.BedUtils;
 import com.rtg.index.hash.ngs.OutputProcessor;
 import com.rtg.launcher.HashingRegion;
@@ -36,24 +37,23 @@ import com.rtg.util.io.IOUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.TestCase;
-
 /**
  * Tests corresponding class
  */
-public class SamSingleEndOutputProcessorTest extends TestCase {
+public class SamSingleEndOutputProcessorTest extends AbstractTest {
 
   protected File mDir = null;
   @Override
-  public void setUp() throws Exception {
+  public void setUp() throws IOException {
     mDir = FileHelper.createTempDirectory();
-    Diagnostic.setLogStream();
+    super.setUp();
   }
 
   @Override
-  public void tearDown() {
+  public void tearDown() throws IOException {
     assertTrue(!mDir.exists() || FileHelper.deleteAll(mDir));
     mDir = null;
+    super.tearDown();
   }
 
   static final String TEMPLATE = ">t" + StringUtils.LS + "tgcaagacaagagggcctcc" + StringUtils.LS;

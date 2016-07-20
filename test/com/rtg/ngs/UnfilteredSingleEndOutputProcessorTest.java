@@ -18,6 +18,7 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import com.rtg.AbstractTest;
 import com.rtg.index.hash.ngs.OutputProcessor;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
@@ -30,24 +31,23 @@ import com.rtg.util.io.IOUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.TestCase;
-
 /**
  * Tests corresponding class
  */
-public class UnfilteredSingleEndOutputProcessorTest extends TestCase {
+public class UnfilteredSingleEndOutputProcessorTest extends AbstractTest {
 
   protected File mDir = null;
   @Override
-  public void setUp() throws Exception {
+  public void setUp() throws IOException {
     mDir = FileHelper.createTempDirectory();
-    Diagnostic.setLogStream();
+    super.setUp();
   }
 
   @Override
-  public void tearDown() {
+  public void tearDown() throws IOException {
     assertTrue(!mDir.exists() || FileHelper.deleteAll(mDir));
     mDir = null;
+    super.tearDown();
   }
 
   static final String TEMP = ">t" + StringUtils.LS + "tgcaagacaagagggcctcc" + StringUtils.LS;
@@ -184,9 +184,6 @@ public class UnfilteredSingleEndOutputProcessorTest extends TestCase {
       }
       inner.threadFinish();
       assertTrue(log.toString().contains("Child finish"));
-    } finally {
-      Diagnostic.setLogStream();
-
     }
   }
 

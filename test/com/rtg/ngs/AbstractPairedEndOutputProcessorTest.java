@@ -14,7 +14,7 @@ package com.rtg.ngs;
 import java.io.File;
 import java.io.IOException;
 
-import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.ngs.tempstage.BinaryTempFileRecord;
 import com.rtg.ngs.tempstage.PairedTempFileWriterImpl;
@@ -31,34 +31,24 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.machine.MachineOrientation;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
-
-import junit.framework.TestCase;
 
 /**
  */
-public abstract class AbstractPairedEndOutputProcessorTest extends TestCase {
+public abstract class AbstractPairedEndOutputProcessorTest extends AbstractNanoTest {
 
   protected File mDir;
-  protected NanoRegression mNano;
 
   @Override
-  public void setUp() throws Exception {
-    GlobalFlags.resetAccessedStatus();
+  public void setUp() throws IOException {
+    super.setUp();
     mDir = FileHelper.createTempDirectory();
-    Diagnostic.setLogStream();
-    mNano = new NanoRegression(this.getClass());
   }
 
   @Override
-  public void tearDown() throws Exception {
-    assertTrue(mNano.getFailureString(), !mDir.exists() || FileHelper.deleteAll(mDir));
+  public void tearDown() throws IOException {
+    assertTrue(!mDir.exists() || FileHelper.deleteAll(mDir));
     mDir = null;
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
+    super.tearDown();
   }
 
   static final String TEMPLATE = ">t" + StringUtils.LS + "tgcaagacaagagggcctcc" + StringUtils.LS;
@@ -126,55 +116,47 @@ public abstract class AbstractPairedEndOutputProcessorTest extends TestCase {
     try (NgsParams param = getDefaultBuilder().create()) {
       final MemoryPrintStream mps = new MemoryPrintStream();
       Diagnostic.setLogStream(mps.printStream());
+      final File tempFile = new File(param.outputParams().directory(), "mated.sam");
+      final PairedEndOutputProcessor peop = getOutputProc(param, tempFile);
       try {
-        final File tempFile = new File(param.outputParams().directory(), "mated.sam");
-        final PairedEndOutputProcessor peop = getOutputProc(param, tempFile);
-        try {
-          assertNotNull(peop.mSamWriter);
+        assertNotNull(peop.mSamWriter);
 
-          peop.process(0, false, 0, 1);
-          peop.process(0, true, 1, 3);
+        peop.process(0, false, 0, 1);
+        peop.process(0, true, 1, 3);
 
-          peop.finish();
-        } finally {
-          peop.close();
-        }
-        assertNull(peop.mSamWriter);
-
-        final TempRecordReader trr = new TempRecordReaderNio(FileUtils.createInputStream(tempFile, false), new TempRecordReader.RecordFactory(true, false, false, false));
-        try {
-          BinaryTempFileRecord bar = trr.readRecord();
-          assertNotNull(bar);
-          assertEquals(0, bar.getReadId());
-          assertEquals(147, bar.getSamFlags() & 0xff);
-          assertEquals(0, bar.getReferenceId());
-          assertEquals(1, bar.getStartPosition());
-          assertEquals(-20, bar.getTemplateLength());
-
-          bar = trr.readRecord();
-          assertNotNull(bar);
-          assertEquals(0, bar.getReadId());
-          assertEquals(99, bar.getSamFlags() & 0xff);
-          assertEquals(0, bar.getReferenceId());
-          assertEquals(1, bar.getStartPosition());
-          assertEquals(20, bar.getTemplateLength());
-
-          assertNull(trr.readRecord());
-        } finally {
-          trr.close();
-        }
-
-
-        //0 147 0 1 255 20= = 1 -20 * * AS:i:0  NM:i:0  MQ:i:255  XA:i:0
-        //0 99  0 1 255 20= = 1 20  * * AS:i:0  NM:i:0  MQ:i:255  XA:i:0
-
-
-        TestUtils.containsAll(mps.toString(), "Sliding window collector statistics",
-          "hits = 2");
-
+        peop.finish();
       } finally {
-        Diagnostic.setLogStream();
+        peop.close();
       }
+      assertNull(peop.mSamWriter);
+
+      try (TempRecordReader trr = new TempRecordReaderNio(FileUtils.createInputStream(tempFile, false), new TempRecordReader.RecordFactory(true, false, false, false))) {
+        BinaryTempFileRecord bar = trr.readRecord();
+        assertNotNull(bar);
+        assertEquals(0, bar.getReadId());
+        assertEquals(147, bar.getSamFlags() & 0xff);
+        assertEquals(0, bar.getReferenceId());
+        assertEquals(1, bar.getStartPosition());
+        assertEquals(-20, bar.getTemplateLength());
+
+        bar = trr.readRecord();
+        assertNotNull(bar);
+        assertEquals(0, bar.getReadId());
+        assertEquals(99, bar.getSamFlags() & 0xff);
+        assertEquals(0, bar.getReferenceId());
+        assertEquals(1, bar.getStartPosition());
+        assertEquals(20, bar.getTemplateLength());
+
+        assertNull(trr.readRecord());
+      }
+
+
+      //0 147 0 1 255 20= = 1 -20 * * AS:i:0  NM:i:0  MQ:i:255  XA:i:0
+      //0 99  0 1 255 20= = 1 20  * * AS:i:0  NM:i:0  MQ:i:255  XA:i:0
+
+
+      TestUtils.containsAll(mps.toString(), "Sliding window collector statistics",
+        "hits = 2");
     }
   }
 

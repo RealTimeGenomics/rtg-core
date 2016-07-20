@@ -79,11 +79,8 @@ public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutpu
   }
 
   public void testUnmatedLocal() throws IOException, InvalidParamsException {
-    final File tmp = FileUtils.createTempDir("topnsync", "clone");
-    try {
+    try (TestDirectory tmp = new TestDirectory()) {
       checkUnmated(tmp);
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp));
     }
   }
 
@@ -95,7 +92,6 @@ public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutpu
    * Test of threadClone method, of class PairedEndOutputProcessorSync.
    */
   public void checkUnmated(final File tempDir) throws IOException, InvalidParamsException {
-    CommandLine.clearCommandArgs();
     final ByteArrayOutputStream logBytes = new ByteArrayOutputStream();
     try (PrintStream log = new PrintStream(logBytes)) {
       Diagnostic.setLogStream(log);
@@ -106,15 +102,12 @@ public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutpu
         final NgsParams params = getDefaultBuilder(tempDir, false, OutputFilter.TOPN_PAIRED_END, rgFile).numberThreads(numThreads).create();
         final SequencesReader ref = params.searchParams().reader();
         final HashingRegion[] regions = HashingRegion.splitWorkload(ref, params.sex(), 0, ref.numberSequences(), params.numberThreads() * params.threadMultiplier(), HashingRegion.DEFAULT_MIN_CHUNK_SIZE, params.calculateThreadPadding());
-        final TopNPairedEndOutputProcessorSync sync = new TopNPairedEndOutputProcessorSync(params, null, true, true);
-        try {
+        try (TopNPairedEndOutputProcessorSync sync = new TopNPairedEndOutputProcessorSync(params, null, true, true)) {
           for (int i = 0; i < regions.length; i++) {
             stp.execute(new SimpleProcess2(sync, regions[i], i));
           }
           stp.terminate();
           sync.finish();
-        } finally {
-          sync.close();
         }
         final String contentsUnmapped = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(new File(mDir, "hitDir"), NgsOutputParams.UNMAPPED_SAM_FILE_NAME)));
         final String contentsUnmated = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(new File(mDir, "hitDir"), NgsOutputParams.UNMATED_SAM_FILE_NAME)));
@@ -123,7 +116,6 @@ public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutpu
         mNano.check("topnpeops-checkunmated-unmapped", contentsUnmapped, false);
         mNano.check("topnpeops-checkunmated-unmated-cal", contentsUnmatedCal, true);
       } finally {
-        Diagnostic.setLogStream();
         assertTrue(FileHelper.deleteAll(rgFile));
       }
     }
@@ -138,32 +130,24 @@ public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutpu
                                   + ">r3" + StringUtils.LS + "AATCGATGGCTCGGGATCGA" + StringUtils.LS;
 
   public void testAugmented() throws IOException, InvalidParamsException {
-    CommandLine.clearCommandArgs();
     final ByteArrayOutputStream logBytes = new ByteArrayOutputStream();
-    final File tmp = FileUtils.createTempDir("topnsync", "clone");
-    try (PrintStream log = new PrintStream(logBytes)) {
+    try (TestDirectory tmp = new TestDirectory(); PrintStream log = new PrintStream(logBytes)) {
       Diagnostic.setLogStream(log);
-      try {
-        final File templateok = new File(tmp, "template");
-        final File input = new File(tmp, "reads");
-        assertTrue(input.mkdir());
-        final File leftok = new File(input, "left");
-        final File rightok = new File(input, "right");
-        ReaderTestUtils.getReaderDNA(TEMPLATE_LARGE, templateok, null).close();
-        ReaderTestUtils.getReaderDNA(READS_LEFT, leftok, null).close();
-        ReaderTestUtils.getReaderDNA(READS_RIGHT, rightok, null).close();
-        final File outDir = new File(tmp, "outDir");
-        new MapCli().mainInit(new String[]{"-t", templateok.getPath(), "-i", input.getPath(), "-o", outDir.getPath(), "--sam-rg", "@RG\\tID:RG23\\tSM:NA123\\tPL:COMPLETE", "-Z", "--max-fragment-size", "65", "--sam", "--no-merge"}, logBytes, log);
-        final String contentsUnmapped = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(outDir, NgsOutputParams.UNMAPPED_SAM_FILE_NAME)));
-        final String contentsUnmated = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(outDir, NgsOutputParams.UNMATED_SAM_FILE_NAME)));
+      final File templateok = new File(tmp, "template");
+      final File input = new File(tmp, "reads");
+      assertTrue(input.mkdir());
+      final File leftok = new File(input, "left");
+      final File rightok = new File(input, "right");
+      ReaderTestUtils.getReaderDNA(TEMPLATE_LARGE, templateok, null).close();
+      ReaderTestUtils.getReaderDNA(READS_LEFT, leftok, null).close();
+      ReaderTestUtils.getReaderDNA(READS_RIGHT, rightok, null).close();
+      final File outDir = new File(tmp, "outDir");
+      new MapCli().mainInit(new String[]{"-t", templateok.getPath(), "-i", input.getPath(), "-o", outDir.getPath(), "--sam-rg", "@RG\\tID:RG23\\tSM:NA123\\tPL:COMPLETE", "-Z", "--max-fragment-size", "65", "--sam", "--no-merge"}, logBytes, log);
+      final String contentsUnmapped = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(outDir, NgsOutputParams.UNMAPPED_SAM_FILE_NAME)));
+      final String contentsUnmated = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(outDir, NgsOutputParams.UNMATED_SAM_FILE_NAME)));
 
-        mNano.check("topnpeops-checkunmatedaugment-unmated", contentsUnmated, false);
-        mNano.check("topnpeops-checkunmatedaugment-unmapped", contentsUnmapped, false);
-      } finally {
-        Diagnostic.setLogStream();
-      }
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp));
+      mNano.check("topnpeops-checkunmatedaugment-unmated", contentsUnmated, false);
+      mNano.check("topnpeops-checkunmatedaugment-unmapped", contentsUnmapped, false);
     }
   }
 
@@ -175,15 +159,12 @@ public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutpu
   }
 
   public void test() throws IOException {
-    final File dir = FileUtils.createTempDir("indexutils", "test");
-    try {
+    try (TestDirectory dir = new TestDirectory()) {
       final File foo = new File(dir, "foo");
       final File fooTbi = new File(dir, "foo.tbi");
       final File fooBai = new File(dir, "foo.bai");
       assertEquals(fooTbi, AbstractMulticoreFilterConcat.indexFileName(foo, false));
       assertEquals(fooBai, AbstractMulticoreFilterConcat.indexFileName(foo, true));
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 
@@ -207,15 +188,12 @@ public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutpu
           final NgsParams params = getDefaultBuilder(tempDir, false, OutputFilter.TOPN_PAIRED_END, rgFile).numberThreads(numThreads).outputParams(output).create();
           final SequencesReader ref = params.searchParams().reader();
           final HashingRegion[] regions = HashingRegion.splitWorkload(ref, params.sex(), 0, ref.numberSequences(), params.numberThreads() * params.threadMultiplier(), HashingRegion.DEFAULT_MIN_CHUNK_SIZE, params.calculateThreadPadding());
-          final TopNPairedEndOutputProcessorSync sync = new TopNPairedEndOutputProcessorSync(params, null, true, true);
-          try {
+          try (TopNPairedEndOutputProcessorSync sync = new TopNPairedEndOutputProcessorSync(params, null, true, true)) {
             for (int i = 0; i < regions.length; i++) {
               stp.execute(new SimpleProcess2(sync, regions[i], i));
             }
             stp.terminate();
             sync.finish();
-          } finally {
-            sync.close();
           }
           final String contentsUnmapped = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(hitDir, NgsOutputParams.UNMAPPED_SAM_FILE_NAME)));
           final String contentsUnmated = TestUtils.stripSAMHeader(FileUtils.fileToString(new File(hitDir, NgsOutputParams.UNMATED_SAM_FILE_NAME)));
@@ -225,7 +203,6 @@ public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutpu
           mNano.check("topnpeops-checkunmated-unmapped", contentsUnmapped, false);
           mNano.check("topnpeops-checkunmated-unmated-region-cal", contentsUnmatedCal, true);
         } finally {
-          Diagnostic.setLogStream();
           assertTrue(FileHelper.deleteAll(rgFile));
         }
       }
@@ -242,26 +219,19 @@ public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutpu
       };
       final MemoryPrintStream mps = new MemoryPrintStream();
       Diagnostic.setLogStream(mps.printStream());
+      final SequenceParams sequenceParams = new SequenceParams.SequenceParamsBuilder().readerParam(new DefaultReaderParams(r, LongRange.NONE, SequenceMode.BIDIRECTIONAL)).create();
+      final NgsOutputParams outputParams = new NgsOutputParamsBuilder().outputIndex(true).bam(false).create();
+      final NgsParams params = new NgsParamsBuilder().searchParams(sequenceParams).outputParams(outputParams).create();
+      final SansFilterConcat sans = new SansFilterConcat(params, new ReadStatusTracker(10, new PairedEndMapStatistics(false, null)), 0);
+      final AbstractMulticoreFilterConcat.OutputWrapper streams = sans.createStreams(1, new File[]{new File(dir, "Foo")}, new File[]{new File(dir, "bar")}, false, true, 0);
       try {
-        final SequenceParams sequenceParams = new SequenceParams.SequenceParamsBuilder().readerParam(new DefaultReaderParams(r, LongRange.NONE, SequenceMode.BIDIRECTIONAL)).create();
-        final NgsOutputParams outputParams = new NgsOutputParamsBuilder().outputIndex(true).bam(false).create();
-        final NgsParams params = new NgsParamsBuilder().searchParams(sequenceParams).outputParams(outputParams).create();
-        final SansFilterConcat sans = new SansFilterConcat(params, new ReadStatusTracker(10, new PairedEndMapStatistics(false, null)), 0);
-        final AbstractMulticoreFilterConcat.OutputWrapper streams = sans.createStreams(1, new File[]{new File(dir, "Foo")}, new File[]{new File(dir, "bar")}, false, true, 0);
-        try {
-          final String s = mps.toString();
-          assertTrue(s.contains("Cannot produce TABIX index"));
-          assertTrue(s.contains("as maximum reference sequence length is exceeded."));
-        } finally {
-          streams.mOutputStream.close();
-        }
-
-
+        final String s = mps.toString();
+        assertTrue(s.contains("Cannot produce TABIX index"));
+        assertTrue(s.contains("as maximum reference sequence length is exceeded."));
       } finally {
-        Diagnostic.setLogStream();
+        streams.mOutputStream.close();
       }
     }
-
   }
 
 }
