@@ -20,7 +20,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
  */
-public class ScoreFastUnderflowCGTest extends ScoreMatrixCGTest {
+public class ScoreFastUnderflowCGTest extends AbstractScoreMatrixCGTest {
 
   @Override
   protected PossibilityArithmetic arith() {

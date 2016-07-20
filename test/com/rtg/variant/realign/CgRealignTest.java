@@ -15,7 +15,7 @@ package com.rtg.variant.realign;
 import static com.rtg.util.StringUtils.LS;
 
 import com.rtg.mode.DnaUtils;
-import com.rtg.variant.realign.ScoreMatrixCGTest.MockRealignParamsCG;
+import com.rtg.variant.realign.AbstractScoreMatrixCGTest.MockRealignParamsCG;
 import com.rtg.variant.util.arithmetic.LogPossibility;
 
 import junit.framework.TestCase;
@@ -25,8 +25,8 @@ import junit.framework.TestCase;
 public class CgRealignTest extends TestCase {
 
   /** This is the read and template from the <code>scorematrixCG.xls</code> spreadsheet */
-  private static final byte[] READ = DnaUtils.encodeString(ScoreMatrixCGTest.READ);
-  private static final byte[] TEMPLATE = DnaUtils.encodeString(ScoreMatrixCGTest.TEMPLATE);
+  private static final byte[] READ = DnaUtils.encodeString(AbstractScoreMatrixCGTest.READ);
+  private static final byte[] TEMPLATE = DnaUtils.encodeString(AbstractScoreMatrixCGTest.TEMPLATE);
 
   protected Delta getRealign(final Environment env, final RealignParams params) {
     final DeltaSlowly realign = new DeltaSlowly(
@@ -170,7 +170,7 @@ public class CgRealignTest extends TestCase {
         + "[55][0.250 0.250 0.250 0.250]" + LS
         + "[56][0.250 0.250 0.250 0.250]" + LS
         ;
-    checkPredictions(ScoreMatrixCGTest.TEMPLATE, ScoreMatrixCGTest.READ, exp);
+    checkPredictions(AbstractScoreMatrixCGTest.TEMPLATE, AbstractScoreMatrixCGTest.READ, exp);
   }
 
 }

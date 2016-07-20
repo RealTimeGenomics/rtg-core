@@ -20,17 +20,10 @@ import com.rtg.util.io.LogStream;
 import com.rtg.util.test.FileHelper;
 
 import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  */
 public class PositionUtilsTest extends TestCase {
-
-  public static TestSuite suite() {
-    final TestSuite suite = new TestSuite();
-    suite.addTestSuite(com.rtg.position.PositionUtilsTest.class);
-    return suite;
-  }
 
   protected File mDir;
 

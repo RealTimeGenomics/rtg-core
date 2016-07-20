@@ -9,27 +9,20 @@
  * code you accept the terms of that license agreement and any amendments to those terms that may
  * be made from time to time by Real Time Genomics Limited.
  */
-package com.rtg.index.hash.ngs.general;
 
+package com.rtg.variant.realign;
 
-import junit.framework.TestCase;
+import com.rtg.variant.util.arithmetic.SimplePossibility;
 
 /**
+ * Test using simple arithmetic (should pick up errors in arithmetic usage)
  */
-public class ExtractAbstractTest extends TestCase {
-
-  private static class MockExtract extends ExtractAbstract {
-    MockExtract() {
-      super(new SingleMask(1, 1, 1, 1));
-    }
-    @Override
-    protected void masked(final long bits) {
-      // do nothing
-    }
-
-  }
-  public void testToString() {
-    final MockExtract me = new MockExtract();
-    assertEquals("Extract", me.toString());
+public class DeltaImplementationSimpleTest extends DeltaImplementationTest {
+  @Override
+  protected Delta getRealign(final Environment env, final RealignParams params) {
+    final DeltaImplementation realign = new DeltaImplementation(SimplePossibility.SINGLETON, params);
+    realign.setEnv(env);
+    realign.globalIntegrity();
+    return realign;
   }
 }

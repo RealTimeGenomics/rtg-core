@@ -12,6 +12,7 @@
 
 package com.rtg.variant.realign;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 
@@ -20,6 +21,9 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  * in the reverse direction (from the end of the read, back to the beginning).
  *
  */
+@TestClass({"com.rtg.variant.realign.AbstractScoreMatrixCGReverseTest$SimpleTest",
+  "com.rtg.variant.realign.AbstractScoreMatrixCGReverseTest$LogApproximateTest",
+  "com.rtg.variant.realign.AbstractScoreMatrixCGReverseTest$LogTest"})
 public class ScoreMatrixCGReverse extends ScoreMatrixReverse {
 
   static final int OVERLAP_GAP = 0;

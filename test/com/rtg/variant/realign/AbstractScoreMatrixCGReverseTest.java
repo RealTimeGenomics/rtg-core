@@ -22,19 +22,16 @@ import com.rtg.variant.util.arithmetic.LogPossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 
 /**
  */
-public abstract class ScoreMatrixCGReverseTest extends AbstractNanoTest {
+public abstract class AbstractScoreMatrixCGReverseTest extends AbstractNanoTest {
 
   //Mark says I have to put my name here so he doesnt get blamed for the next bit of code
   //JC
 
   /** Used for testing. */
-  public static class LogTest extends ScoreMatrixCGReverseTest {
+  public static class LogTest extends AbstractScoreMatrixCGReverseTest {
     public LogTest() { }
     @Override
     protected PossibilityArithmetic arith() {
@@ -43,7 +40,7 @@ public abstract class ScoreMatrixCGReverseTest extends AbstractNanoTest {
   }
 
   /** Used for testing. */
-  public static class LogApproximateTest extends ScoreMatrixCGReverseTest {
+  public static class LogApproximateTest extends AbstractScoreMatrixCGReverseTest {
     public LogApproximateTest() { }
     @Override
     protected PossibilityArithmetic arith() {
@@ -56,7 +53,7 @@ public abstract class ScoreMatrixCGReverseTest extends AbstractNanoTest {
   }
 
   /** Used for testing. */
-  public static class SimpleTest extends ScoreMatrixCGReverseTest {
+  public static class SimpleTest extends AbstractScoreMatrixCGReverseTest {
     public SimpleTest() { }
     @Override
     protected PossibilityArithmetic arith() {
@@ -64,18 +61,10 @@ public abstract class ScoreMatrixCGReverseTest extends AbstractNanoTest {
     }
   }
 
-  public static Test suite() {
-    final TestSuite suite = new TestSuite("com.rtg.variant.realign");
-    suite.addTestSuite(LogApproximateTest.class);
-    suite.addTestSuite(LogTest.class);
-    suite.addTestSuite(SimpleTest.class);
-    return suite;
-  }
-
   protected abstract PossibilityArithmetic arith();
 
   protected AllPaths score(final Environment env) {
-    final AllPaths score = new ScoreMatrixCGReverse(arith(), new ScoreMatrixCGTest.MockRealignParamsCG());
+    final AllPaths score = new ScoreMatrixCGReverse(arith(), new AbstractScoreMatrixCGTest.MockRealignParamsCG());
     score.setEnv(env);
     Exam.globalIntegrity(score);
     return score;
@@ -83,7 +72,7 @@ public abstract class ScoreMatrixCGReverseTest extends AbstractNanoTest {
 
 
   public void testRowOffset() {
-    final AllPaths score0 = score(ScoreMatrixCGTest.env());
+    final AllPaths score0 = score(AbstractScoreMatrixCGTest.env());
     if (score0 instanceof ScoreMatrixCG) {
       final ScoreMatrixCG score = (ScoreMatrixCG) score0;
       final int half = -8; // half of the width of the band (at row 1).
@@ -96,7 +85,7 @@ public abstract class ScoreMatrixCGReverseTest extends AbstractNanoTest {
   }
 
   public void testStartScores() {
-    final Environment env = ScoreMatrixCGTest.env();
+    final Environment env = AbstractScoreMatrixCGTest.env();
     final AllPaths score0 = score(env);
     if (score0 instanceof ScoreMatrixCG) {
       final ScoreMatrixCG score = (ScoreMatrixCG) score0;
@@ -113,13 +102,13 @@ public abstract class ScoreMatrixCGReverseTest extends AbstractNanoTest {
   }
 
   public void testTotalScoreLn() {
-    final AllPaths score = score(ScoreMatrixCGTest.env());
+    final AllPaths score = score(AbstractScoreMatrixCGTest.env());
     assertEquals(-10.012458, score.totalScoreLn(), 0.0002);
     assertEquals(-10.012458, Math.log(score.totalScore()), 0.0002);
   }
 
   public void testScoreLn() {
-    final Environment env = ScoreMatrixCGTest.env();
+    final Environment env = AbstractScoreMatrixCGTest.env();
     final AllPaths score0 = score(env);
     if (score0 instanceof ScoreMatrixCG) {
       final ScoreMatrixCG score = (ScoreMatrixCG) score0;
@@ -128,40 +117,40 @@ public abstract class ScoreMatrixCGReverseTest extends AbstractNanoTest {
       final int start = env.absoluteTemplatePosition(0);
       // down column 8 (first T on the template), cuts through the overlap region
       final int tPos = 8 - start;
-      ScoreMatrixCGTest.checkScores(score, 0, tPos, -12.6462, -12.4498, Double.NEGATIVE_INFINITY);
-      ScoreMatrixCGTest.checkScores(score, 1, tPos, -16.8551, -16.9501, -13.0428);
-      ScoreMatrixCGTest.checkScores(score, 2, tPos, -14.7730, -14.4005, -10.3354);
-      ScoreMatrixCGTest.checkScores(score, 3, tPos, -16.5896, -16.1711, -11.9198);
-      ScoreMatrixCGTest.checkScores(score, 4, tPos, -19.0452, -18.3808, -13.5117);
-      ScoreMatrixCGTest.checkScores(score, 5, tPos, -21.3363, -20.4260, -15.0958);
-      ScoreMatrixCGTest.checkScores(score, 6, tPos, -19.7458, -18.8543, -13.7007);
-      ScoreMatrixCGTest.checkScores(score, 7, tPos, -26.3596, -21.1361, -15.2996);
-      ScoreMatrixCGTest.checkScores(score, 8, tPos, -27.9488, -22.7212, -16.8846);
-      ScoreMatrixCGTest.checkScores(score, 9, tPos, -29.5036, -24.3107, -18.4742);
-      ScoreMatrixCGTest.checkScores(score, 10, tPos, -29.8945, -25.8869, -20.0569);
-      ScoreMatrixCGTest.checkScores(score, 11, tPos, -27.6707, -26.7838, -21.6349);
+      AbstractScoreMatrixCGTest.checkScores(score, 0, tPos, -12.6462, -12.4498, Double.NEGATIVE_INFINITY);
+      AbstractScoreMatrixCGTest.checkScores(score, 1, tPos, -16.8551, -16.9501, -13.0428);
+      AbstractScoreMatrixCGTest.checkScores(score, 2, tPos, -14.7730, -14.4005, -10.3354);
+      AbstractScoreMatrixCGTest.checkScores(score, 3, tPos, -16.5896, -16.1711, -11.9198);
+      AbstractScoreMatrixCGTest.checkScores(score, 4, tPos, -19.0452, -18.3808, -13.5117);
+      AbstractScoreMatrixCGTest.checkScores(score, 5, tPos, -21.3363, -20.4260, -15.0958);
+      AbstractScoreMatrixCGTest.checkScores(score, 6, tPos, -19.7458, -18.8543, -13.7007);
+      AbstractScoreMatrixCGTest.checkScores(score, 7, tPos, -26.3596, -21.1361, -15.2996);
+      AbstractScoreMatrixCGTest.checkScores(score, 8, tPos, -27.9488, -22.7212, -16.8846);
+      AbstractScoreMatrixCGTest.checkScores(score, 9, tPos, -29.5036, -24.3107, -18.4742);
+      AbstractScoreMatrixCGTest.checkScores(score, 10, tPos, -29.8945, -25.8869, -20.0569);
+      AbstractScoreMatrixCGTest.checkScores(score, 11, tPos, -27.6707, -26.7838, -21.6349);
     }
   }
 
   public void testToString() throws IOException {
-    final AllPaths score = score(ScoreMatrixCGTest.env());
+    final AllPaths score = score(AbstractScoreMatrixCGTest.env());
     mNano.check("scorematrixcg-reverse-tostring.txt", score.toString());
   }
 
   protected AllPaths scoreV2(final Environment env) {
-    final AllPaths score = new ScoreMatrixCG(arith(), new ScoreMatrixCGTest.MockRealignParamsCG(MachineType.COMPLETE_GENOMICS_2));
+    final AllPaths score = new ScoreMatrixCG(arith(), new AbstractScoreMatrixCGTest.MockRealignParamsCG(MachineType.COMPLETE_GENOMICS_2));
     score.setEnv(env);
     Exam.globalIntegrity(score);
     return score;
   }
 
   public void testToStringV2() throws IOException {
-    final AllPaths score = scoreV2(ScoreMatrixCGTest.envV2());
+    final AllPaths score = scoreV2(AbstractScoreMatrixCGTest.envV2());
     mNano.check("scorematrixcg-reverse-v2-tostring.txt", score.toString());
   }
 
   public void testReadStartsBeforeLn() {
-    final AllPaths score = score(ScoreMatrixCGTest.env());
+    final AllPaths score = score(AbstractScoreMatrixCGTest.env());
     if (score instanceof ScoreMatrixCG) {
       final ScoreMatrixCGReverse sm = (ScoreMatrixCGReverse) score;
       assertEquals(Double.NEGATIVE_INFINITY, sm.readStartsBeforeLn(-1));

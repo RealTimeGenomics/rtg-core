@@ -24,17 +24,14 @@ import com.rtg.variant.util.arithmetic.LogPossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  */
-public abstract class ScoreMatrixCGTest extends AbstractNanoTest {
+public abstract class AbstractScoreMatrixCGTest extends AbstractNanoTest {
 
   //Mark says I have to put my name here so he doesnt get blamed for the next bit of code
   //JC
   /** Used for testing. */
-  public static class LogTest extends ScoreMatrixCGTest {
+  public static class LogTest extends AbstractScoreMatrixCGTest {
     public LogTest() { }
     @Override
     protected PossibilityArithmetic arith() {
@@ -43,7 +40,7 @@ public abstract class ScoreMatrixCGTest extends AbstractNanoTest {
   }
 
   /** Used for testing. */
-  public static class LogApproximateTest extends ScoreMatrixCGTest {
+  public static class LogApproximateTest extends AbstractScoreMatrixCGTest {
     public LogApproximateTest() { }
     @Override
     protected PossibilityArithmetic arith() {
@@ -57,21 +54,12 @@ public abstract class ScoreMatrixCGTest extends AbstractNanoTest {
   }
 
   /** Used for testing. */
-  public static class SimpleTest extends ScoreMatrixCGTest {
+  public static class SimpleTest extends AbstractScoreMatrixCGTest {
     public SimpleTest() { }
     @Override
     protected PossibilityArithmetic arith() {
       return SimplePossibility.SINGLETON;
     }
-  }
-
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite();
-    suite.addTestSuite(LogApproximateTest.class);
-    suite.addTestSuite(LogTest.class);
-    suite.addTestSuite(SimpleTest.class);
-    return suite;
   }
 
   /**

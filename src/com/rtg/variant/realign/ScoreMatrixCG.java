@@ -20,6 +20,7 @@ import static com.rtg.reader.CgUtils.CG_EXPECTED_OVERLAP;
 import static com.rtg.reader.CgUtils.CG_OVERLAP_POSITION;
 import static com.rtg.reader.CgUtils.CG_RAW_READ_LENGTH;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.diagnostic.SpyCounter;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.machine.MachineType;
@@ -30,6 +31,11 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  * Calculates a banded matrix of Complete Genomics alignment probabilities.
  *
  */
+@TestClass({
+  "com.rtg.variant.realign.AbstractScoreMatrixCGTest$LogTest",
+  "com.rtg.variant.realign.AbstractScoreMatrixCGTest$LogApproximateTest",
+  "com.rtg.variant.realign.AbstractScoreMatrixCGTest$SimpleTest"
+})
 public class ScoreMatrixCG extends ScoreMatrix {
 
   static final int OVERLAP_GAP = RealignParamsImplementation.CG_OVERLAP;

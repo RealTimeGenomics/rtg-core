@@ -13,6 +13,7 @@ package com.rtg.index.hash.ngs.general;
 
 import java.io.IOException;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 
@@ -20,6 +21,9 @@ import com.rtg.util.integrity.IntegralAbstract;
  * Deals with extracting masks.
  * Indel tweaking is done dynamically in the <code>maskIndel()</code> method.
  */
+@TestClass({"com.rtg.index.hash.ngs.general.ExtractAbstractTest",
+  "com.rtg.index.hash.ngs.general.SingleMaskTest",
+})
 public abstract class ExtractAbstract extends IntegralAbstract {
 
   protected final SingleMask mSingleMask;

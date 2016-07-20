@@ -25,7 +25,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  * template, by adding the probabilities of all possible alignments of the read.
  *
  */
-@TestClass("com.rtg.variant.realign.DeltaImplementationTest")
+@TestClass({"com.rtg.variant.realign.DeltaImplementationTest", "com.rtg.variant.realign.DeltaImplementationSimpleTest"})
 public abstract class Delta extends IntegralAbstract implements DeltaInterface {
 
   /**

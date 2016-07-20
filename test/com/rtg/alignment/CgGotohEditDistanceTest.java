@@ -30,7 +30,7 @@ import com.rtg.variant.MachineErrorParams;
 import com.rtg.variant.MachineErrorParamsBuilder;
 import com.rtg.variant.realign.RealignParams;
 import com.rtg.variant.realign.RealignParamsImplementation;
-import com.rtg.variant.realign.ScoreMatrixCGTest;
+import com.rtg.variant.realign.AbstractScoreMatrixCGTest;
 
 /**
  */
@@ -134,7 +134,7 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
 
   // this is the example in com/rtg/variant/realign/scorematrixtestCG.xls
   public void testCGSpreadsheet() throws IOException {
-    final CgGotohEditDistance ed = new CgGotohEditDistance(7, new ScoreMatrixCGTest.MockRealignParamsCG(), 0);
+    final CgGotohEditDistance ed = new CgGotohEditDistance(7, new AbstractScoreMatrixCGTest.MockRealignParamsCG(), 0);
     final String read = "        ATAAA AAGGCGACAT GCCAATGTGT        TTCAACTTTC";
     final String tmpl = "gggggggataAAA   AAGGCGACAT GCCAATGTGT CGCCTTTTTCAACTTTCCGATTAA";
     final byte[] s1 = DnaUtils.encodeString(read.replaceAll(" ", "").toLowerCase(Locale.ROOT));
@@ -156,7 +156,7 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
   }
 
   public void testCGSpreadsheetRightArm() throws IOException {
-    final CgGotohEditDistance ed = new CgGotohEditDistance(7, new ScoreMatrixCGTest.MockRealignParamsCG(), 0);
+    final CgGotohEditDistance ed = new CgGotohEditDistance(7, new AbstractScoreMatrixCGTest.MockRealignParamsCG(), 0);
     //final String read = "          ATAAA AAGGCGACAT GCCAATGTGT .....  TTCAACTTTC";
     //final String tmpl = "gggggggataAAA   AAGGCGACAT GCCAATGTGT CGCCTTTTTCAACTTTCCGATTAA";
     final String read = "       CTTTCAACTT         TGTGTAACCG TACAGCGGAA AAATA";

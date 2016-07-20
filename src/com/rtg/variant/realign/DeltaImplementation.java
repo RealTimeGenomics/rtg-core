@@ -13,6 +13,7 @@ package com.rtg.variant.realign;
 
 import java.util.Arrays;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
@@ -22,6 +23,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  * directions, then just sums the probabilities down a column.
  *
  */
+@TestClass({"com.rtg.variant.realign.DeltaImplementationTest", "com.rtg.variant.realign.DeltaImplementationSimpleTest"})
 public class DeltaImplementation extends Delta {
 
   protected final double mLog25;

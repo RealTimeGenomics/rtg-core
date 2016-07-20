@@ -15,34 +15,10 @@ package com.rtg.variant.realign;
 import static com.rtg.util.StringUtils.LS;
 
 import com.rtg.variant.util.arithmetic.LogPossibility;
-import com.rtg.variant.util.arithmetic.SimplePossibility;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  */
 public class DeltaImplementationTest extends AbstractRealignTest {
-
-  public static Test suite() {
-    final TestSuite suite = new TestSuite("com.rtg.variant.realign");
-    suite.addTestSuite(DeltaImplementationTest.class);
-    suite.addTestSuite(DeltaImplementationSimpleTest.class);
-    return suite;
-  }
-
-  /**
-   * Test using simple arithmetic (should pick up errors in arithmetic usage)
-   */
-  public static class DeltaImplementationSimpleTest extends DeltaImplementationTest {
-    @Override
-    protected Delta getRealign(final Environment env, final RealignParams params) {
-      final DeltaImplementation realign = new DeltaImplementation(SimplePossibility.SINGLETON, params);
-      realign.setEnv(env);
-      realign.globalIntegrity();
-      return realign;
-    }
-  }
 
   @Override
   protected Delta getRealign(final Environment env, final RealignParams params) {
