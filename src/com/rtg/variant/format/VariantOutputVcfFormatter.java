@@ -138,6 +138,7 @@ public class VariantOutputVcfFormatter {
     mFormatFields.add(VcfFormatField.PPB);
     mFormatFields.add(VcfFormatField.PUR);
     mFormatFields.add(VcfFormatField.GL);
+    mFormatFields.add(VcfFormatField.AQ);
     if (mParams != null) {
       if (mParams.vcfRp()) {
         mFormatFields.add(VcfFormatField.RP);

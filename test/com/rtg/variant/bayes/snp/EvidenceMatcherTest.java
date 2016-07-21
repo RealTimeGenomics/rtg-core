@@ -112,7 +112,7 @@ public class EvidenceMatcherTest extends TestCase {
 
     assertEquals(EXP1, bm.toString());
     final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).create();
-    checkCall(template, bm, params, 0, new Object[] {"G1", "1", ".", "A", "C", "154.5", "PASS", ".", "GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:GL", "1:3:0.000:0.000:155:0.00:6.51:0.00:0.00:C,3,0.000:0,3:-15.45,0.00"});
+    checkCall(template, bm, params, 0, new Object[] {"G1", "1", ".", "A", "C", "154.5", "PASS", ".", "GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL", "1:3:0.000:0.000:155:0.00:6.51:0.00:0.000,179.969:0.00:C,3,0.000:0,3:-15.45,0.00"});
 
     try {
       //do again at the same position
@@ -122,8 +122,8 @@ public class EvidenceMatcherTest extends TestCase {
       assertEquals("ref=0 != base=1", e.getMessage());
     }
     assertNull(makeCall(bm, 1, template, params));
-    checkCall(template, bm, params, 2, new Object[] {"G1", "3", ".", "G", "C", "25.5", "PASS", ".", "GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:GL", "1:1:0.000:0.000:26:0.00:2.17:0.00:0.00:C,1,0.000:0,1:-2.55,0.00"});
-    checkCall(template, bm, params, 3, new Object[] {"G1", "4", ".", "T", "C", "30.1", "PASS", ".", "GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:GL", "1:1:0.000:0.000:30:0.00:2.17:0.00:0.00:C,1,0.000:0,1:-3.01,0.00"});
+    checkCall(template, bm, params, 2, new Object[] {"G1", "3", ".", "G", "C", "25.5", "PASS", ".", "GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL", "1:1:0.000:0.000:26:0.00:2.17:0.00:0.000,59.990:0.00:C,1,0.000:0,1:-2.55,0.00"});
+    checkCall(template, bm, params, 3, new Object[] {"G1", "4", ".", "T", "C", "30.1", "PASS", ".", "GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL", "1:1:0.000:0.000:30:0.00:2.17:0.00:0.000,59.990:0.00:C,1,0.000:0,1:-3.01,0.00"});
   }
 
   private Variant makeCall(EvidenceMatcher<ModelInterface<Description>> bm, int position, byte[] template, VariantParams params) {

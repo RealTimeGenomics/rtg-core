@@ -329,10 +329,10 @@ public enum VcfFormatField {
       return sample != null && sample.getHoeffdingUnmatedBiasAllele1() != null;
     }
   },
-  SQ {
+  AQ {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.REF_ALTS, "Sum of quality for the evidence of the allele");
+      header.addFormatField(name(), MetaType.FLOAT, VcfNumber.DOT, "Sum of quality for the evidence of the allele");
     }
 
     @Override

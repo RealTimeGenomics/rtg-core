@@ -78,7 +78,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
   static final List<ModelInterface<Description>> SEEN_3_G =
       new PureSomaticCallerTest().doReads(3, DNARangeAT.G);
 
-  protected static final String EXPECT_IDENTICAL = "chr1\t14\t.\tG\tA\t.\tPASS\tDP=2\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SS\t1:1:0.020:0.000:21:0.00:2.17:0.00:0.00:A,1,0.020:0,1\t1:1:0.020:0.000:25:0.00:2.17:0.00:0.00:A,1,0.020:0,1:1\n";
+  protected static final String EXPECT_IDENTICAL = "chr1\t14\t.\tG\tA\t.\tPASS\tDP=2\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:SS\t1:1:0.020:0.000:21:0.00:2.17:0.00:0.000,17.011:0.00:A,1,0.020:0,1\t1:1:0.020:0.000:25:0.00:2.17:0.00:0.000,17.011:0.00:A,1,0.020:0,1:1\n";
 
   /**
    * Test that two identical SNP calls are not viewed as cancer.
@@ -111,7 +111,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
     assertEquals(EXPECT_IDENTICAL, formatter.formatCall(v));
   }
 
-  protected static final String EXPECT_CANCER1 = "chr1\t14\t.\tG\tA,C\t.\tPASS\tNCS=314.906;DP=30\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD:SSC:SS\t1:20:0.040:0.000:635:0.00:43.43:0.00:0.00:A,20,0.040:0,20,0\t2:10:0.020:0.000:314:0.00:21.71:0.00:0.00:C,10,0.020:0,0,10:31.4:2\n";
+  protected static final String EXPECT_CANCER1 = "chr1\t14\t.\tG\tA,C\t.\tPASS\tNCS=314.906;DP=30\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:SSC:SS\t1:20:0.040:0.000:635:0.00:43.43:0.00:0.000,539.837,0.000:0.00:A,20,0.040:0,20,0\t2:10:0.020:0.000:314:0.00:21.71:0.00:0.000,0.000,269.919:0.00:C,10,0.020:0,0,10:31.4:2\n";
 
   /**
    * Test that a successful cancer call is made.

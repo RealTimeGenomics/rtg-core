@@ -20,9 +20,10 @@
 ##FORMAT=<ID=SBP,Number=1,Type=Float,Description="Phred scaled probability that strand bias is present">
 ##FORMAT=<ID=RPB,Number=1,Type=Float,Description="Phred scaled probability that read position bias is present">
 ##FORMAT=<ID=PPB,Number=1,Type=Float,Description="Phred scaled probability that there is a bias in the proportion of alignments that are properly paired">
+##FORMAT=<ID=AQ,Number=.,Type=Float,Description="Sum of quality for the evidence of the allele">
 ##FORMAT=<ID=PUR,Number=1,Type=Float,Description="Ratio of placed unmapped reads to mapped reads">
 ##FORMAT=<ID=RS,Number=.,Type=String,Description="RTG Support Statistics">
 ##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
 ##FORMAT=<ID=GL,Number=G,Type=Float,Description="Log_10 scaled genotype likelihoods. As defined in VCF specifications">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	NA12878
-chr1	92	.	A	ATG	186.1	PASS	XRX	GT:DP:RE:AR:GQ:ABP:SBP:RPB:PPB:PUR:AD:GL	0/1:11:0.003:0.000:21:4.94:6.51:23.89:0.00:0.00:3,8:-18.61,0.00,-2.08
+chr1	92	.	A	ATG	186.1	PASS	XRX	GT:DP:RE:AR:GQ:ABP:SBP:RPB:PPB:AQ:PUR:AD:GL	0/1:11:0.003:0.000:21:4.94:6.51:23.89:0.00:165.000,315.682:0.00:3,8:-18.61,0.00,-2.08

@@ -57,7 +57,7 @@ import junit.framework.TestCase;
 public class VcfFormatFieldTest extends TestCase {
 
   public void testEnum() {
-    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, SQ, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, COC, COF, VAF, VADE, VADER, QA]");
+    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, AQ, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, COC, COF, VAF, VADE, VADER, QA]");
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.AD)) {
       assertFalse(field.isVcfAnnotator());
     }
@@ -88,7 +88,7 @@ public class VcfFormatFieldTest extends TestCase {
       + "##FORMAT=<ID=SBP,Number=1,Type=Float,Description=\"Phred scaled probability that strand bias is present\">\n"
       + "##FORMAT=<ID=RPB,Number=1,Type=Float,Description=\"Phred scaled probability that read position bias is present\">\n"
       + "##FORMAT=<ID=PPB,Number=1,Type=Float,Description=\"Phred scaled probability that there is a bias in the proportion of alignments that are properly paired\">\n"
-      + "##FORMAT=<ID=SQ,Number=R,Type=Float,Description=\"Sum of quality for the evidence of the allele\">\n"
+      + "##FORMAT=<ID=AQ,Number=.,Type=Float,Description=\"Sum of quality for the evidence of the allele\">\n"
       + "##FORMAT=<ID=PUR,Number=1,Type=Float,Description=\"Ratio of placed unmapped reads to mapped reads\">\n"
       + "##FORMAT=<ID=RS,Number=.,Type=String,Description=\"RTG Support Statistics\">\n"
       + "##FORMAT=<ID=ADE,Number=.,Type=Float,Description=\"Allelic depths for the ref and alt alleles in the order listed, error corrected\">\n"
@@ -214,7 +214,7 @@ public class VcfFormatFieldTest extends TestCase {
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
-    assertEquals("ref\t3\t.\tA\tG\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:SQ:PUR:RS:ADE:AD:SSC:SS:GL:GQD:ZY:PD\t0/1:.:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:4.00:1.00:5.00:0.50:0.000,0.000:0.42:Q:0.0,0.0:0,0:4.3:2:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
+    assertEquals("ref\t3\t.\tA\tG\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:AQ:PUR:RS:ADE:AD:SSC:SS:GL:GQD:ZY:PD\t0/1:.:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:4.00:1.00:5.00:0.50:0.000,0.000:0.42:Q:0.0,0.0:0,0:4.3:2:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
 
     sample.setHoeffdingAlleleBalanceHom(3.0);
     rec = new VcfRecord("ref", 2, "A");
@@ -222,7 +222,7 @@ public class VcfFormatFieldTest extends TestCase {
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.PD)) {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
-    assertEquals("ref\t3\t.\tA\tG\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:SQ:PUR:RS:ADE:AD:SSC:SS:GL:GQD:ZY:PD\t0/1:.:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:3.00:1.00:5.00:0.50:0.000,0.000:0.42:Q:0.0,0.0:0,0:4.3:2:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
+    assertEquals("ref\t3\t.\tA\tG\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:AQ:PUR:RS:ADE:AD:SSC:SS:GL:GQD:ZY:PD\t0/1:.:10:14.286:5.500:5.000:10.4:1:-0.7:Y:43:3.00:1.00:5.00:0.50:0.000,0.000:0.42:Q:0.0,0.0:0,0:4.3:2:-0.53,-0.39,-0.53:0.100:e:d", rec.toString());
 
     rec = new VcfRecord("ref", 2, "A");
     rec.setNumberOfSamples(sampleNames.length);
@@ -231,7 +231,7 @@ public class VcfFormatFieldTest extends TestCase {
       field.updateRecord(rec, call, sampleNames, params, false);
     }
 
-    assertEquals("ref\t3\t.\tA\t.\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:SQ:PUR:RS:ADE:AD:SSC:SS:GL:GQD:ZY:PD\t.", rec.toString());
+    assertEquals("ref\t3\t.\tA\t.\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:AQ:PUR:RS:ADE:AD:SSC:SS:GL:GQD:ZY:PD\t.", rec.toString());
 
     call = new Variant(new VariantLocus("ref", 2, 3, "A", 'G'), sample);
     call.addFilter(VariantFilter.FAILED_COMPLEX);
@@ -242,7 +242,7 @@ public class VcfFormatFieldTest extends TestCase {
     }
 
     // This is a bit dumb the final 3 format fields haven't been populated not entirely sure why
-    assertEquals("ref\t3\t.\tA\t.\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:SQ:PUR:RS:ADE:AD:SSC:SS:GL:GQD:ZY:PD\t./.:.:10:14.286:5.500:5.000:10.4:.:.:.:43:3.00:1.00:5.00:0.50:0.000:0.42:Q:0.0:0:4.3:2:0.00", rec.toString());
+    assertEquals("ref\t3\t.\tA\t.\t.\t.\t.\tGT:VA:DP:DPR:RE:AR:RQ:GQ:RP:DN:DNP:ABP:SBP:RPB:PPB:AQ:PUR:RS:ADE:AD:SSC:SS:GL:GQD:ZY:PD\t./.:.:10:14.286:5.500:5.000:10.4:.:.:.:43:3.00:1.00:5.00:0.50:0.000:0.42:Q:0.0:0:4.3:2:0.00", rec.toString());
   }
 
   public void testDenovoUpdateRecord() {

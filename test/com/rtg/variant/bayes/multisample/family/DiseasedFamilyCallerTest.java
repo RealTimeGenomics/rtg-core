@@ -70,11 +70,11 @@ public class DiseasedFamilyCallerTest extends TestCase {
     assertNotNull(v);
     final String[] outstr = makeFormatter(4).formatCall(v).split("\t");
     assertEquals(Arrays.toString(outstr), 13, outstr.length);
-    final String expected = ("foo 21 . A T . OC DPS=41.0;DP=60;CT=0 GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD "
-        + "0/0:11:2.090:0.000:64:0.00:23.89:0.00:0.00:A,11,2.090:11,0 "
-        + "0/1:15:2.850:0.000:136:0.14:17.37:0.00:0.00:A,7,1.330,T,8,1.520:7,8 "
-        + "0/0:15:2.850:0.000:105:0.00:32.57:0.00:0.00:A,15,2.850:15,0 "
-        + "0/1:19:3.610:0.000:137:1.03:23.89:0.00:0.00:A,8,1.520,T,11,2.090:8,11\n").replaceAll(" ", "\t");
+    final String expected = ("foo 21 . A T . OC DPS=41.0;DP=60;CT=0 GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD "
+        + "0/0:11:2.090:0.000:64:0.00:23.89:0.00:79.337,0.000:0.00:A,11,2.090:11,0 "
+        + "0/1:15:2.850:0.000:136:0.14:17.37:0.00:50.487,57.700:0.00:A,7,1.330,T,8,1.520:7,8 "
+        + "0/0:15:2.850:0.000:105:0.00:32.57:0.00:108.187,0.000:0.00:A,15,2.850:15,0 "
+        + "0/1:19:3.610:0.000:137:1.03:23.89:0.00:57.700,79.337:0.00:A,8,1.520,T,11,2.090:8,11\n").replaceAll(" ", "\t");
 
     assertEquals(expected, makeFormatter(4).formatCall(v));
     assertTrue(v.isFiltered(VariantFilter.COVERAGE));
@@ -135,7 +135,7 @@ public class DiseasedFamilyCallerTest extends TestCase {
     assertNotNull(v);
     final String formatted = makeFormatter(4).formatCall(v);
     assertEquals(13, formatted.split("\t").length);
-    assertTrue(formatted, makeFormatter(4).formatCall(v).contains("foo\t21\t.\tA\tT\t.\tPASS\tDPS=38.3;DP=59\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:RS:AD\t0/0"));
+    assertTrue(formatted, makeFormatter(4).formatCall(v).contains("foo\t21\t.\tA\tT\t.\tPASS\tDPS=38.3;DP=59\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD\t0/0"));
   }
 
   @SuppressWarnings("unchecked")

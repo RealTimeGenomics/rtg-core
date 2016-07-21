@@ -21,10 +21,11 @@
 ##FORMAT=<ID=SBP,Number=1,Type=Float,Description="Phred scaled probability that strand bias is present">
 ##FORMAT=<ID=RPB,Number=1,Type=Float,Description="Phred scaled probability that read position bias is present">
 ##FORMAT=<ID=PPB,Number=1,Type=Float,Description="Phred scaled probability that there is a bias in the proportion of alignments that are properly paired">
+##FORMAT=<ID=AQ,Number=.,Type=Float,Description="Sum of quality for the evidence of the allele">
 ##FORMAT=<ID=PUR,Number=1,Type=Float,Description="Ratio of placed unmapped reads to mapped reads">
 ##FORMAT=<ID=RS,Number=.,Type=String,Description="RTG Support Statistics">
 ##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
 ##FORMAT=<ID=GL,Number=G,Type=Float,Description="Log_10 scaled genotype likelihoods. As defined in VCF specifications">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	SAMPLE
-g1	7	.	A	GC	94.2	PASS	XRX	GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:AD:GL	1/1:4:0.040:0.000:19:0.00:8.69:8.69:0.00:0,4:-9.42,-1.87,-0.01
-g2	7	.	A	TG	97.9	PASS	XRX	GT:DP:RE:AR:GQ:ABP:SBP:RPB:PUR:AD:GL	1/1:4:0.040:0.000:19:0.00:8.69:8.69:0.00:0,4:-9.79,-1.87,-0.01
+g1	7	.	A	GC	94.2	PASS	XRX	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:AD:GL	1/1:4:0.040:0.000:19:0.00:8.69:8.69:0.000,79.999:0.00:0,4:-9.42,-1.87,-0.01
+g2	7	.	A	TG	97.9	PASS	XRX	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:AD:GL	1/1:4:0.040:0.000:19:0.00:8.69:8.69:0.000,79.999:0.00:0,4:-9.79,-1.87,-0.01
