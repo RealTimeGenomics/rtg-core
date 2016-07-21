@@ -52,7 +52,7 @@ public class MendelianAlleleProbabilityCombinerTest extends TestCase {
     final MendelianAlleleProbabilityCombiner c = new MendelianAlleleProbabilityCombiner(MendelianAlleleProbabilityDiploid.SINGLETON, MendelianAlleleProbabilityDiploidDeNovo.SINGLETON, Math.log(0.0000025), Math.log(0.00001), 0);
     final CodeDiploid code = new CodeDiploid(4);
     assertTrue(c.isDenovo(code, code.code(0, 0), code.code(0, 0), code.code(0, 1)));
-    assertTrue(c.isDenovo(code, code.code(1, 1), code.code(1,1), code.code(0, 1)));
+    assertTrue(c.isDenovo(code, code.code(1, 1), code.code(1, 1), code.code(0, 1)));
   }
 
 }
