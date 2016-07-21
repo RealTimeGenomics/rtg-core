@@ -18,7 +18,7 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 /**
  * Calculates the score matrix in reverse (from end backwards).
  */
-@TestClass({"com.rtg.variant.realign.AbstractScoreMatrixReverseTest$LogTest", "com.rtg.variant.realign.AbstractScoreMatrixReverseTest$LogApproximateTest", "com.rtg.variant.realign.AbstractScoreMatrixReverseTest$SimpleTest"})
+@TestClass("com.rtg.variant.realign.ScoreMatrixReverseTestSuite")
 public class ScoreMatrixReverse extends AbstractAllPaths {
 
   /**
