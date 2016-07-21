@@ -16,10 +16,13 @@ import static com.rtg.variant.format.VcfFormatField.QA;
 import static com.rtg.variant.format.VcfFormatField.VADE;
 import static com.rtg.variant.format.VcfFormatField.VADER;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import com.rtg.calibrate.CalibratedPerSequenceExpectedCoverage;
@@ -29,6 +32,7 @@ import com.rtg.calibrate.CovariateEnum;
 import com.rtg.calibrate.CovariateReadGroup;
 import com.rtg.calibrate.CovariateSequence;
 import com.rtg.reference.Ploidy;
+import com.rtg.util.Resources;
 import com.rtg.util.TestUtils;
 import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.intervals.RegionRestriction;
@@ -373,5 +377,18 @@ public class VcfFormatFieldTest extends TestCase {
     assertTrue(QA.hasValue(record, call, sample, sampleName, params));
     QA.updateRecord(record, call, new String[] {"Sample"}, params, false);
     assertEquals("20.000", record.getFormat("QA").get(0));
+  }
+
+  public void testFieldsListedInValidatorProperties() throws IOException {
+    final Properties props = new Properties();
+    try (final InputStream rulesStream = Resources.getResourceAsStream("com/rtg/vcf/validator/rules.properties")) {
+      props.load(rulesStream);
+    }
+    for (final VcfFormatField fld : VcfFormatField.values()) {
+      final String type = props.getProperty("FORMAT." + fld.toString() + ".TYPE");
+      if (type == null) {
+        fail("Please add " + fld + " to com/rtg/vcf/validator/rules.properties");
+      }
+    }
   }
 }
