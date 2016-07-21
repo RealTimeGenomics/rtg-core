@@ -329,6 +329,7 @@ public enum VcfFormatField {
       return sample != null && sample.getHoeffdingUnmatedBiasAllele1() != null;
     }
   },
+  /** Sum of quality for alleles evidence */
   AQ {
     @Override
     public void updateHeader(VcfHeader header) {
@@ -749,6 +750,23 @@ public enum VcfFormatField {
           && sample.getVariantAllele() != null;
       }
   },
+  /** Difference in mean quality for called alleles */
+  MEANQAD {
+    @Override
+    public void updateHeader(VcfHeader header) {
+      MEANQAD_ANNOTATOR.updateHeader(header);
+    }
+
+    @Override
+    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
+      MEANQAD_ANNOTATOR.annotate(rec);
+    }
+
+    @Override
+    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
+      return sample != null;
+    }
+  }
   ;
 
   private static final VcfAnnotator GQD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.GQD);
@@ -757,6 +775,7 @@ public enum VcfFormatField {
   private static final VcfAnnotator COC_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.COC);
   private static final VcfAnnotator COF_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.COF);
   private static final VcfAnnotator VAF_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.VAF);
+  private static final VcfAnnotator MEANQAD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.MEANQAD);
 
   private static boolean hasValueCofCoc(final VcfRecord rec) {
     List<?> fld = rec.getFormat(AD.name());

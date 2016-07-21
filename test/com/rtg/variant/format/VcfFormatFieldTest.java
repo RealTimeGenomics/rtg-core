@@ -57,7 +57,7 @@ import junit.framework.TestCase;
 public class VcfFormatFieldTest extends TestCase {
 
   public void testEnum() {
-    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, AQ, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, COC, COF, VAF, VADE, VADER, QA]");
+    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, AQ, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, COC, COF, VAF, VADE, VADER, QA, MEANQAD]");
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.AD)) {
       assertFalse(field.isVcfAnnotator());
     }
@@ -105,6 +105,7 @@ public class VcfFormatFieldTest extends TestCase {
       + "##FORMAT=<ID=VADE,Number=1,Type=Float,Description=\"Error corrected allelic depth of alt allele\">\n"
       + "##FORMAT=<ID=VADER,Number=1,Type=Float,Description=\"Error corrected allelic depth of alt allele as a ratio of the expected coverage\">\n"
       + "##FORMAT=<ID=QA,Number=1,Type=Float,Description=\"Sum of quality of the alternate observations\">\n"
+      + "##FORMAT=<ID=MEANQAD,Number=1,Type=Float,Description=\"Difference between the mean alt quality and mean reference quality\">\n"
       + "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n";
 
     assertEquals(expected, header.toString());
