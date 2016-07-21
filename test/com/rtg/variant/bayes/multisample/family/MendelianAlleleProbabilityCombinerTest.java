@@ -26,4 +26,33 @@ public class MendelianAlleleProbabilityCombinerTest extends TestCase {
     assertEquals(MendelianAlleleProbabilityDiploid.SINGLETON.probabilityLn(code, 0, 1, 1), c.probabilityLn(code, 0, 1, 1));
   }
 
+  public void testDenovoProbabilityRef() {
+    final MendelianAlleleProbabilityCombiner c = new MendelianAlleleProbabilityCombiner(MendelianAlleleProbabilityDiploid.SINGLETON, MendelianAlleleProbabilityDiploidDeNovo.SINGLETON, Math.log(0.00002), Math.log(0.00001), 0);
+    final CodeDiploid code = new CodeDiploid(4);
+    assertEquals(Math.log(0.00002 / 6), c.probabilityLn(code, code.code(0, 0), code.code(0, 0), code.code(0, 1)), 1e-8);
+  }
+  public void testDenovoProbabilityNonRef() {
+    final MendelianAlleleProbabilityCombiner c = new MendelianAlleleProbabilityCombiner(MendelianAlleleProbabilityDiploid.SINGLETON, MendelianAlleleProbabilityDiploidDeNovo.SINGLETON, Math.log(0.00002), Math.log(0.00001), 0);
+    final CodeDiploid code = new CodeDiploid(4);
+    assertEquals(Math.log(0.00001 / 6), c.probabilityLn(code, code.code(1, 1), code.code(1, 1), code.code(1, 2)), 1e-8);
+  }
+
+  public void testDenovoProbabilityNonRefDiploidParent() {
+    final MendelianAlleleProbabilityCombiner c = new MendelianAlleleProbabilityCombiner(MendelianAlleleProbabilityDiploid.SINGLETON, MendelianAlleleProbabilityDiploidDeNovo.SINGLETON, Math.log(0.00002), Math.log(0.00001), 0);
+    final CodeDiploid code = new CodeDiploid(4);
+    assertEquals(Math.log(0.00001/ 6), c.probabilityLn(code, code.code(0, 1), code.code(0, 0), code.code(1, 1)), 1e-8);
+  }
+  public void testDenovoProbabilityLotsOfAlleles() {
+    final MendelianAlleleProbabilityCombiner c = new MendelianAlleleProbabilityCombiner(MendelianAlleleProbabilityDiploid.SINGLETON, MendelianAlleleProbabilityDiploidDeNovo.SINGLETON, Math.log(0.00002), Math.log(0.00001), 0);
+    final CodeDiploid code = new CodeDiploid(4);
+    assertEquals(Math.log(0.00001/ 12), c.probabilityLn(code, code.code(0, 1), code.code(1, 2), code.code(2, 3)), 1e-8);
+  }
+
+  public void testDenovo() {
+    final MendelianAlleleProbabilityCombiner c = new MendelianAlleleProbabilityCombiner(MendelianAlleleProbabilityDiploid.SINGLETON, MendelianAlleleProbabilityDiploidDeNovo.SINGLETON, Math.log(0.0000025), Math.log(0.00001), 0);
+    final CodeDiploid code = new CodeDiploid(4);
+    assertTrue(c.isDenovo(code, code.code(0, 0), code.code(0, 0), code.code(0, 1)));
+    assertTrue(c.isDenovo(code, code.code(1, 1), code.code(1,1), code.code(0, 1)));
+  }
+
 }

@@ -40,6 +40,19 @@ public class JobTypeTest extends TestCase {
     assertFalse(t.validResult(new Result(5, regions)));
   }
 
+  public void testFlush() {
+    final JobType t = JobType.FLUSH;
+    final Result result = new Result();
+    assertTrue(t.validResult(result));
+    assertFalse(t.validArguments(new Result[] {}));
+    assertFalse(t.validArguments(new Result[] {result}));
+    assertFalse(t.validArguments(new Result[] {result, result, result}));
+    assertFalse(t.validArguments(new Result[] {getValidIncrementResult(), result, result}));
+    assertFalse(t.validArguments(new Result[] {result, getValidIncrementResult(), result}));
+    assertFalse(t.validArguments(new Result[] {getValidIncrementResult(), getValidIncrementResult(), result, result}));
+    assertTrue(t.validArguments(new Result[] {getValidIncrementResult(), getValidIncrementResult(), result}));
+  }
+
   private Complexities getComplexities() {
     final ArrayList<Variant> chunk = new ArrayList<>();
     chunk.add(com.rtg.variant.bayes.multisample.TestUtils.createVariant(4));

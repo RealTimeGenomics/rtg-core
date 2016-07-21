@@ -52,23 +52,43 @@ public class CnvProductParamsTest extends TestCase {
     assertEquals(null, params.filterParams().maxUnmatedAlignmentScore());
     assertEquals(3.0, params.divisionFactor());
     assertEquals(3.0, params.multiplicationFactor());
+    TestUtils.containsAll(params.toString(), "CnvProductParams",
+      "bucketSize=100",
+      "baseLineInput=null",
+      "targetInput=null",
+      "filterStartPositions=" + true,
+      "divisionFactor=" + 3.0,
+      "multiplicationFactor=" + 3.0,
+      "null",
+      "maxMatedAlignmentScore=null",
+      "maxUnmatedAlignmentScore=null",
+      "maxAlignmentCount=-1"
+      );
   }
 
   public void testActual() throws IOException {
     final File tempFile = FileUtils.createTempDir("cnvproductparams", "test");
     assertTrue(tempFile.delete());
-    final CnvProductParams.CnvProductParamsBuilder builder = CnvProductParams.builder();
-    builder.mappedBase(new ArrayList<File>());
-    builder.mappedTarget(new ArrayList<File>());
-    builder.outputParams(new OutputParams(tempFile, false, false));
-    final CnvProductParams params = builder.create();
+    final CnvProductParams params = CnvProductParams.builder()
+      .mappedBase(new ArrayList<File>())
+      .mappedTarget(new ArrayList<File>())
+      .outputParams(new OutputParams(tempFile, false, false))
+      .divisionFactor(5.0)
+      .multiplicationFactor(7.0)
+      .bucketSize(2)
+      .filterStartPositions(false)
+      .magicConstant(1.3)
+      .extraPenaltyOff(true)
+      .threads(9)
+      .create()
+      ;
     TestUtils.containsAll(params.toString(), "CnvProductParams",
-      "bucketSize=100",
+      "bucketSize=2",
       "baseLineInput=[]",
       "targetInput=[]",
-      "filterStartPositions=" + true,
-      "divisionFactor=" + 3.0,
-      "multiplicationFactor=" + 3.0,
+      "filterStartPositions=" + false,
+      "divisionFactor=" + 5.0,
+      "multiplicationFactor=" + 7.0,
       "OutputParams",
       "directory=" + tempFile.getAbsolutePath(),
       "maxMatedAlignmentScore=null",
@@ -77,6 +97,10 @@ public class CnvProductParamsTest extends TestCase {
       "progress=" + false,
       "zip=" + false);
 
+
+    assertEquals(1.3, params.magicConstant(), 1e-8);
+    assertTrue(params.extraPenaltyOff());
+    assertEquals(9, params.threads());
     assertEquals(tempFile, params.directory());
     assertEquals(new File(tempFile, "file").getPath(), params.file("file").getPath());
   }

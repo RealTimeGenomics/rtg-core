@@ -12,15 +12,58 @@
 
 package com.rtg.visualization;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  */
-public class AnsiDisplayHelperTest extends TestCase {
+public class AnsiDisplayHelperTest {
 
+  @Test
   public void testAnsiColors() {
     assertEquals((char) 27 + "[48;5;17m", AnsiDisplayHelper.ansiBackground(DisplayHelper.BLUE));
     assertEquals((char) 27 + "[31m", AnsiDisplayHelper.ansiForeground(DisplayHelper.RED));
   }
 
+  @Rule
+  public ExpectedException expectedException = ExpectedException.none();
+  @Test
+  public void testColorExceptionRed() {
+    expectedException.expect(IllegalArgumentException.class);
+    AnsiDisplayHelper.extendedColor(6, 5, 5);
+  }
+  @Test
+  public void testColorExceptionGreen() {
+    expectedException.expect(IllegalArgumentException.class);
+    AnsiDisplayHelper.extendedColor(5, 6, 5);
+  }
+  @Test
+  public void testColorExceptionBlue() {
+    expectedException.expect(IllegalArgumentException.class);
+    AnsiDisplayHelper.extendedColor(5, 5, 6);
+  }
+  @Test
+  public void testExtendedColorWhite() {
+    assertEquals(231, AnsiDisplayHelper.extendedColor(5, 5, 5));
+  }
+
+  @Test
+  public void testMarkupStart() {
+    final AnsiDisplayHelper helper = new AnsiDisplayHelper();
+    assertTrue(helper.isMarkupStart((char) 0x1b));
+    assertFalse(helper.isMarkupStart('f'));
+  }
+
+  @Test
+  public void testMarkupEnd() {
+    final AnsiDisplayHelper helper = new AnsiDisplayHelper();
+    assertTrue(helper.isMarkupEnd('m'));
+    assertFalse(helper.isMarkupEnd((char) 0x1b));
+    assertFalse(helper.isMarkupEnd((char) 0x00));
+  }
 }
