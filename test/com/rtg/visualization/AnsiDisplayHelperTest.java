@@ -30,6 +30,7 @@ public class AnsiDisplayHelperTest {
     assertEquals((char) 27 + "[31m", AnsiDisplayHelper.ansiForeground(DisplayHelper.RED));
   }
 
+  /** Expected exception handler */
   @Rule
   public ExpectedException mExpectedException = ExpectedException.none();
   @Test

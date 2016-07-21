@@ -35,7 +35,7 @@ public class RecalibrateCliTest extends AbstractCliTest {
     return new RecalibrateCli();
   }
 
-  private static final String EXPECTED = ", calibrate v3.0" + LS
+  static final String EXPECTED = ", calibrate v3.0" + LS
           + "#CL\tnull" + LS
           + "@ins:RG1\t0\t0\t0\t1" + LS
           + "@mnp:RG1\t0\t85\t8\t1\t1" + LS
@@ -55,6 +55,7 @@ public class RecalibrateCliTest extends AbstractCliTest {
       assertEquals(dump.toString(), 0, code);
       final File calibrationFile = new File(dir, "test.sam.gz.calibration");
       final String s = FileUtils.fileToString(calibrationFile);
+      System.err.println(s);
       final int start = s.indexOf(", calibrate ");
       assertEquals(EXPECTED, s.substring(start));
     } finally {

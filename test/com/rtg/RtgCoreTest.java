@@ -257,73 +257,10 @@ public class RtgCoreTest extends TestCase {
 
   }
 
-  public void testSearch() {
-    final ByteArrayOutputStream bout = new ByteArrayOutputStream();
-    final ByteArrayOutputStream berr = new ByteArrayOutputStream();
-    try (PrintStream err = new PrintStream(berr)) {
-      assertEquals(1, new RtgCore().intMain(new String[]{"format"}, bout, err));
-    } finally {
-      try {
-        bout.close();
-      } catch (final IOException e) {
-        // too bad
-      }
-      //out.close();
-
-      try {
-        berr.close();
-      } catch (final IOException e) {
-        // too bad
-      }
-    }
-
-    assertEquals("", bout.toString());
-    assertTrue(berr.toString().length() > 0);
-
-  }
-
   public void testShift() {
     final String[] shifted = RtgCore.shift(new String[]{"a", "b"});
     assertEquals(1, shifted.length);
     assertEquals("b", shifted[0]);
-  }
-
-  public void testFindXlog() {
-    final PrintStream systemErr = System.err;
-    Object[] objs = RtgCore.findXlog(new String[]{"--", "--Xlog"});
-    assertEquals(2, objs.length);
-    assertNull(objs[0]);
-    assertTrue(objs[1] instanceof String[]);
-    assertEquals(2, ((String[]) objs[1]).length);
-    assertEquals("--", ((String[]) objs[1])[0]);
-    assertEquals("--Xlog", ((String[]) objs[1])[1]);
-    objs = RtgCore.findXlog(new String[]{"abc", "--Xlog=blah", "123"});
-    assertEquals(2, objs.length);
-    assertTrue(objs[0] instanceof String);
-    assertEquals("blah", (String) objs[0]);
-    assertTrue(objs[1] instanceof String[]);
-    assertEquals(2, ((String[]) objs[1]).length);
-    assertEquals("abc", ((String[]) objs[1])[0]);
-    assertEquals("123", ((String[]) objs[1])[1]);
-    objs = RtgCore.findXlog(new String[]{"123", "--Xlog", "blarg", "abc"});
-    assertEquals(2, objs.length);
-    assertTrue(objs[0] instanceof String);
-    assertEquals("blarg", (String) objs[0]);
-    assertTrue(objs[1] instanceof String[]);
-    assertEquals(2, ((String[]) objs[1]).length);
-    assertEquals("123", ((String[]) objs[1])[0]);
-    assertEquals("abc", ((String[]) objs[1])[1]);
-    final ByteArrayOutputStream bos = new ByteArrayOutputStream();
-    final PrintStream err = new PrintStream(bos);
-    System.setErr(err);
-    try {
-      RtgCore.findXlog(new String[]{"a", "--Xlog"});
-      fail();
-    } catch (RuntimeException e) { }
-    err.flush();
-    TestUtils.containsAll(bos.toString(), "Expected URL after --Xlog");
-    System.setErr(systemErr);
-    err.close();
   }
 
   public void testErrorMessage() {

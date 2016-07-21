@@ -56,6 +56,7 @@ public class ChrStatsCli extends AbstractCli {
 
   private static final String SEX_Z_THRESHOLD_FLAG = "sex-z-threshold";
   private static final String Z_THRESHOLD_FLAG = "z-threshold";
+  static final String DESCRIPTION = "check expected chromosome coverage levels from mapping calibration files";
 
   @Override
   public String moduleName() {
@@ -64,7 +65,7 @@ public class ChrStatsCli extends AbstractCli {
 
   @Override
   public String description() {
-    return "check expected chromosome coverage levels from mapping calibration files";
+    return DESCRIPTION;
   }
 
   @Override
