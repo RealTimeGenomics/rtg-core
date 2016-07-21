@@ -111,7 +111,6 @@ public class ChrStatsCli extends AbstractCli {
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
     final File genomeFile = (File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG);
     SdfUtils.validateHasNames(genomeFile);
-    final SequenceParams genomeParams = SequenceParams.builder().directory(genomeFile).useMemReader(false).mode(SequenceMode.UNIDIRECTIONAL).create();
     final Collection<File> inputFiles = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null, CommandLineFiles.EXISTS).getFileList(mFlags);
     final SamCalibrationInputs inputs = new SamCalibrationInputs(inputFiles, true);
     final Collection<File> samFiles = inputs.getSamFiles();
@@ -128,48 +127,62 @@ public class ChrStatsCli extends AbstractCli {
     if (c == null) {
       throw new NoTalkbackSlimException("Could not load calibration information - ensure SAM files have been calibrated"); // Runtime as above checks have ensured there are calibration files
     } else {
-      final ChrStats cc = new ChrStats(genomeParams.reader(), (Double) mFlags.getValue(SEX_Z_THRESHOLD_FLAG), (Double) mFlags.getValue(Z_THRESHOLD_FLAG));
-      if (!cc.referenceOk()) {
-        throw new NoTalkbackSlimException("The supplied reference does not contain sufficient genome chromosome information. For more information, see the user manual.");
-      }
-
-      final Map<String, String> readGroupToSampleId = SamUtils.getReadGroupToSampleId(uberHeader);
-      final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getNonNSequenceLengthMap(genomeParams.reader(), (RegionRestriction) null);
-      final CalibratedPerSequenceExpectedCoverage expectedCoverages = new CalibratedPerSequenceExpectedCoverage(c, sequenceLengthMap, readGroupToSampleId, null);
-      final Set<String> samples = expectedCoverages.samples();
-      if (samples.size() == 0) {
-        throw new NoTalkbackSlimException("No sample information contained in mapping headers");
-      } else if (mFlags.isSet(OUTPUT_PEDIGREE_FLAG)) {
-        final GenomeRelationships pedigree = (mFlags.isSet(PEDIGREE_FLAG)) ? GenomeRelationships.loadGenomeRelationships((File) mFlags.getValue(PEDIGREE_FLAG)) : new GenomeRelationships();
-        samples.forEach(pedigree::addGenome);
-        cc.chrStatsCheck(expectedCoverages, samples, pedigree, true);
-        final File outFile = (File) mFlags.getValue(OUTPUT_PEDIGREE_FLAG);
-        try (LineWriter w = new LineWriter(new OutputStreamWriter(FileUtils.createOutputStream(outFile)))) {
-          w.write(PedFileParser.toString(pedigree, "source: " + CommandLine.getCommandLine()));
+      final SequenceParams.SequenceParamsBuilder builder = SequenceParams.builder().directory(genomeFile).useMemReader(false).mode(SequenceMode.UNIDIRECTIONAL);
+      try (SequenceParams genomeParams = builder.create()) {
+        final ChrStats cc = new ChrStats(genomeParams.reader(), (Double) mFlags.getValue(SEX_Z_THRESHOLD_FLAG), (Double) mFlags.getValue(Z_THRESHOLD_FLAG));
+        if (!cc.referenceOk()) {
+          throw new NoTalkbackSlimException("The supplied reference does not contain sufficient genome chromosome information. For more information, see the user manual.");
         }
-        Diagnostic.info("PED file written to " + outFile.toString() + ", please check and add relationships where known.");
 
-      } else if (samples.size() == 1 || mFlags.isSet(SAMPLE_FLAG))  {
-        // Single sample mode
-        final GenomeRelationships pedigree = mFlags.isSet(PEDIGREE_FLAG) ? GenomeRelationships.loadGenomeRelationships((File) mFlags.getValue(PEDIGREE_FLAG)) : null;
-        final String sample = mFlags.isSet(SAMPLE_FLAG) ? (String) mFlags.getValue(SAMPLE_FLAG) : samples.iterator().next();
-        final Sex sex;
-        if (pedigree != null) {
-          sex = pedigree.getSex(sample);
+        final Map<String, String> readGroupToSampleId = SamUtils.getReadGroupToSampleId(uberHeader);
+        final Map<String, Integer> sequenceLengthMap = c.hasLengths() ? c.getSequenceLengths() : Calibrator.getNonNSequenceLengthMap(genomeParams.reader(), (RegionRestriction) null);
+        final CalibratedPerSequenceExpectedCoverage expectedCoverages = new CalibratedPerSequenceExpectedCoverage(c, sequenceLengthMap, readGroupToSampleId, null);
+        final Set<String> samples = expectedCoverages.samples();
+        if (samples.size() == 0) {
+          throw new NoTalkbackSlimException("No sample information contained in mapping headers");
+        }
+        if (mFlags.isSet(OUTPUT_PEDIGREE_FLAG)) {
+          outputPedigree(cc, expectedCoverages, samples);
+        } else if (samples.size() == 1 || mFlags.isSet(SAMPLE_FLAG)) {
+          singleSample(cc, expectedCoverages, samples);
         } else {
-          sex = (Sex) mFlags.getValue(MapFlags.SEX_FLAG);
+          multiSample(cc, expectedCoverages, samples);
         }
-        cc.chrStatsCheckAndReport(expectedCoverages, sample, sex);
-
-      } else {
-        final GenomeRelationships pedigree = mFlags.isSet(PEDIGREE_FLAG) ? GenomeRelationships.loadGenomeRelationships((File) mFlags.getValue(PEDIGREE_FLAG)) : null;
-        // Multiple samples
-        if (pedigree == null) {
-          throw new NoTalkbackSlimException("Multiple samples present. Please specify sample and sex information via --" + PEDIGREE_FLAG);
-        }
-        cc.chrStatsCheck(expectedCoverages, samples, pedigree, false);
       }
     }
     return 0;
+  }
+
+  private void multiSample(ChrStats cc, CalibratedPerSequenceExpectedCoverage expectedCoverages, Set<String> samples) throws IOException {
+    final GenomeRelationships pedigree = mFlags.isSet(PEDIGREE_FLAG) ? GenomeRelationships.loadGenomeRelationships((File) mFlags.getValue(PEDIGREE_FLAG)) : null;
+    // Multiple samples
+    if (pedigree == null) {
+      throw new NoTalkbackSlimException("Multiple samples present. Please specify sample and sex information via --" + PEDIGREE_FLAG);
+    }
+    cc.chrStatsCheck(expectedCoverages, samples, pedigree, false);
+  }
+
+  private void singleSample(ChrStats cc, CalibratedPerSequenceExpectedCoverage expectedCoverages, Set<String> samples) throws IOException {
+    // Single sample mode
+    final GenomeRelationships pedigree = mFlags.isSet(PEDIGREE_FLAG) ? GenomeRelationships.loadGenomeRelationships((File) mFlags.getValue(PEDIGREE_FLAG)) : null;
+    final String sample = mFlags.isSet(SAMPLE_FLAG) ? (String) mFlags.getValue(SAMPLE_FLAG) : samples.iterator().next();
+    final Sex sex;
+    if (pedigree != null) {
+      sex = pedigree.getSex(sample);
+    } else {
+      sex = (Sex) mFlags.getValue(MapFlags.SEX_FLAG);
+    }
+    cc.chrStatsCheckAndReport(expectedCoverages, sample, sex);
+  }
+
+  private void outputPedigree(ChrStats cc, CalibratedPerSequenceExpectedCoverage expectedCoverages, Set<String> samples) throws IOException {
+    final GenomeRelationships pedigree = (mFlags.isSet(PEDIGREE_FLAG)) ? GenomeRelationships.loadGenomeRelationships((File) mFlags.getValue(PEDIGREE_FLAG)) : new GenomeRelationships();
+    samples.forEach(pedigree::addGenome);
+    cc.chrStatsCheck(expectedCoverages, samples, pedigree, true);
+    final File outFile = (File) mFlags.getValue(OUTPUT_PEDIGREE_FLAG);
+    try (LineWriter w = new LineWriter(new OutputStreamWriter(FileUtils.createOutputStream(outFile)))) {
+      w.write(PedFileParser.toString(pedigree, "source: " + CommandLine.getCommandLine()));
+    }
+    Diagnostic.info("PED file written to " + outFile.toString() + ", please check and add relationships where known.");
   }
 }
