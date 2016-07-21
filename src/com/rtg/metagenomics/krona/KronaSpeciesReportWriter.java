@@ -20,6 +20,7 @@ import javax.xml.stream.XMLOutputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
 
+import com.reeltwo.jumble.annotations.JumbleIgnore;
 import com.rtg.metagenomics.SpeciesParams;
 import com.rtg.report.MapSummaryReport;
 import com.rtg.taxonomy.TaxonNode;
@@ -32,6 +33,7 @@ import com.rtg.util.io.FileUtils;
 
 /**
  */
+@JumbleIgnore
 public class KronaSpeciesReportWriter {
 
   private final HtmlReportHelper mReportHelper;
