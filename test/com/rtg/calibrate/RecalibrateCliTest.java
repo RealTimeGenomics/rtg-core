@@ -55,7 +55,6 @@ public class RecalibrateCliTest extends AbstractCliTest {
       assertEquals(dump.toString(), 0, code);
       final File calibrationFile = new File(dir, "test.sam.gz.calibration");
       final String s = FileUtils.fileToString(calibrationFile);
-      System.err.println(s);
       final int start = s.indexOf(", calibrate ");
       assertEquals(EXPECTED, s.substring(start));
     } finally {
