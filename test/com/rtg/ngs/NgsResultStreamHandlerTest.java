@@ -28,14 +28,16 @@ public class NgsResultStreamHandlerTest extends AbstractTest {
 
   @Override
   public void setUp() throws IOException {
+    super.setUp();
     mDir = FileUtils.createTempDir("ngsresultstreamhandler", "test");
     assertTrue(mDir.delete());
   }
 
   @Override
-  public void tearDown() {
+  public void tearDown() throws IOException {
     assertTrue(mDir == null || !mDir.exists() || FileHelper.deleteAll(mDir));
     mDir = null;
+    super.tearDown();
   }
 
   private void checkStream(OutputStream out, String name, boolean zip) throws IOException {
