@@ -31,20 +31,20 @@ public class AnsiDisplayHelperTest {
   }
 
   @Rule
-  public ExpectedException expectedException = ExpectedException.none();
+  public ExpectedException mExpectedException = ExpectedException.none();
   @Test
   public void testColorExceptionRed() {
-    expectedException.expect(IllegalArgumentException.class);
+    mExpectedException.expect(IllegalArgumentException.class);
     AnsiDisplayHelper.extendedColor(6, 5, 5);
   }
   @Test
   public void testColorExceptionGreen() {
-    expectedException.expect(IllegalArgumentException.class);
+    mExpectedException.expect(IllegalArgumentException.class);
     AnsiDisplayHelper.extendedColor(5, 6, 5);
   }
   @Test
   public void testColorExceptionBlue() {
-    expectedException.expect(IllegalArgumentException.class);
+    mExpectedException.expect(IllegalArgumentException.class);
     AnsiDisplayHelper.extendedColor(5, 5, 6);
   }
   @Test
