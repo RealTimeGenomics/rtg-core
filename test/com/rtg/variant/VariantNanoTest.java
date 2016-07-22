@@ -1290,11 +1290,9 @@ public class VariantNanoTest extends AbstractNanoTest {
       assertEquals(r.err(), 0, r.rc());
 
       final String result = StringUtils.grep(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")), "^[^#]").trim();
-      System.err.println(result);
       //turn on following for singleton
       TestUtils.containsAll(result, "chr20 114 . C A 86.0 RX . GT:DP:RE:AR:GQ:ABP:SBP:RPB:PPB:AQ:PUR:RS:AD:GL 1/0:46:0.073:0.000:86:48.34:6.74:2.26:0.00:1238.038,228.803:0.00:A,7,0.004,C,39,0.069:39,7:-8.60,0.00,-128.80".replaceAll(" ", "\t"));
       final String bed = StringUtils.grep(FileHelper.gzFileToString(new File(output, "regions.bed.gz")), "^[^#]").trim();
-      System.err.println(bed);
       assertEquals("chr20 93 115 hyper-complex".replaceAll(" ", "\t"), bed);
     }
   }
