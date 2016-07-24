@@ -25,10 +25,13 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.format.VcfFormatField;
+import com.rtg.variant.format.VcfInfoField;
 import com.rtg.vcf.DefaultVcfWriter;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfWriter;
 import com.rtg.vcf.header.FormatField;
+import com.rtg.vcf.header.InfoField;
+import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
 
 /**
@@ -106,26 +109,7 @@ public class VcfValidatorCliTest extends AbstractCliTest {
         vcfRecord.setNumberOfSamples(1);
         for (FormatField formatField : header.getFormatLines()) {
           final VcfFormatField vcfFormatField = VcfFormatField.valueOf(formatField.getId());
-          String val;
-          switch (formatField.getType()) {
-            case CHARACTER:
-              val = ".";
-              break;
-            case STRING:
-              val = "AB";
-              break;
-            case INTEGER:
-              val = "1";
-              break;
-            case FLOAT:
-              val = "-0.11";
-              break;
-            case FLAG:
-              val = ".";
-              break;
-            default:
-              val = ".";
-          }
+          final String val = getTypeValue(formatField.getType());
           vcfRecord.addFormatAndSample(vcfFormatField.name(), val);
         }
         writer.write(vcfRecord);
@@ -140,6 +124,59 @@ public class VcfValidatorCliTest extends AbstractCliTest {
       for (String line : StringUtils.split(err.toString(), '\n')) {
         assertFalse(line, line.contains("not contained in the specified rule set."));
       }
+    }
+  }
+
+  /**
+   * check that all declared INFO fields are present in the rules file
+   * should catch missing rules earlier than regression tests
+   * */
+  public void testAllInfoFieldsHaveARule() throws IOException {
+    try (TestDirectory td = new TestDirectory()) {
+      final VcfHeader header = new VcfHeader();
+      header.setVersionValue(VcfHeader.VERSION_VALUE);
+      for (VcfInfoField vcfInfoField : VcfInfoField.values()) {
+        vcfInfoField.updateHeader(header);
+      }
+      final File file = new File(td, "foo.vcf");
+      try (final OutputStream out = new FileOutputStream(file)) {
+        final VcfWriter writer = new DefaultVcfWriter(header, out);
+        final VcfRecord vcfRecord = new VcfRecord("foo", 3, "A");
+        vcfRecord.setNumberOfSamples(0);
+        for (InfoField infoField : header.getInfoLines()) {
+          final VcfInfoField vcfInfoField = VcfInfoField.valueOf(infoField.getId());
+          final String val = getTypeValue(infoField.getType());
+          vcfRecord.addInfo(vcfInfoField.name(), val);
+        }
+        writer.write(vcfRecord);
+        writer.close();
+      }
+      final VcfValidatorCli cli = new VcfValidatorCli();
+      final ByteArrayOutputStream out = new ByteArrayOutputStream();
+      final ByteArrayOutputStream err = new ByteArrayOutputStream();
+      try (PrintStream printErr = new PrintStream(err)) {
+        cli.mainInit(new String[]{file.getAbsolutePath()}, out, printErr);
+      }
+      for (String line : StringUtils.split(err.toString(), '\n')) {
+        assertFalse(line, line.contains("not contained in the specified rule set."));
+      }
+    }
+  }
+
+  private String getTypeValue(MetaType metaType) {
+    switch (metaType) {
+      case CHARACTER:
+        return ".";
+      case STRING:
+        return "AB";
+      case INTEGER:
+        return "1";
+      case FLOAT:
+        return "-0.11";
+      case FLAG:
+        return ".";
+      default:
+        return ".";
     }
   }
 
