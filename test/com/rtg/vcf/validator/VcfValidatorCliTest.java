@@ -12,13 +12,24 @@
 
 package com.rtg.vcf.validator;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintStream;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.util.StringUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
+import com.rtg.variant.format.VcfFormatField;
+import com.rtg.vcf.DefaultVcfWriter;
+import com.rtg.vcf.VcfRecord;
+import com.rtg.vcf.VcfWriter;
+import com.rtg.vcf.header.FormatField;
+import com.rtg.vcf.header.VcfHeader;
 
 /**
  */
@@ -73,6 +84,62 @@ public class VcfValidatorCliTest extends AbstractCliTest {
       FileHelper.resourceToFile("com/rtg/vcf/validator/resources/boringNormal.vcf", vcf);
       final String out = checkMainInitOk(vcf.getPath());
       assertEquals("", out);
+    }
+  }
+
+  /**
+   * check that all declared format fields are present in the rules file
+   * should catch missing rules earlier than regression tests
+   * */
+  public void testAllFormatFieldsHaveARule() throws IOException {
+    try (TestDirectory td = new TestDirectory()) {
+      final VcfHeader header = new VcfHeader();
+      header.setVersionValue(VcfHeader.VERSION_VALUE);
+      for (VcfFormatField vcfFormatField : VcfFormatField.values()) {
+        vcfFormatField.updateHeader(header);
+      }
+      header.addSampleName("bar");
+      final File file = new File(td, "foo.vcf");
+      try (final OutputStream out = new FileOutputStream(file)) {
+        final VcfWriter writer = new DefaultVcfWriter(header, out);
+        final VcfRecord vcfRecord = new VcfRecord("foo", 3, "A");
+        vcfRecord.setNumberOfSamples(1);
+        for (FormatField formatField : header.getFormatLines()) {
+          final VcfFormatField vcfFormatField = VcfFormatField.valueOf(formatField.getId());
+          String val;
+          switch (formatField.getType()) {
+            case CHARACTER:
+              val = ".";
+              break;
+            case STRING:
+              val = "AB";
+              break;
+            case INTEGER:
+              val = "1";
+              break;
+            case FLOAT:
+              val = "-0.11";
+              break;
+            case FLAG:
+              val = ".";
+              break;
+            default:
+              val = ".";
+          }
+          vcfRecord.addFormatAndSample(vcfFormatField.name(), val);
+        }
+        writer.write(vcfRecord);
+        writer.close();
+      }
+      final VcfValidatorCli cli = new VcfValidatorCli();
+      final ByteArrayOutputStream out = new ByteArrayOutputStream();
+      final ByteArrayOutputStream err = new ByteArrayOutputStream();
+      try (PrintStream printErr = new PrintStream(err)) {
+        cli.mainInit(new String[]{file.getAbsolutePath()}, out, printErr);
+      }
+      for (String line : StringUtils.split(err.toString(), '\n')) {
+        assertFalse(line, line.contains("not contained in the specified rule set."));
+      }
     }
   }
 
