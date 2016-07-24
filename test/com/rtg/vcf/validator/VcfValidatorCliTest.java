@@ -93,7 +93,7 @@ public class VcfValidatorCliTest extends AbstractCliTest {
   /**
    * check that all declared format fields are present in the rules file
    * should catch missing rules earlier than regression tests
-   * */
+   */
   public void testAllFormatFieldsHaveARule() throws IOException {
     try (TestDirectory td = new TestDirectory()) {
       final VcfHeader header = new VcfHeader();
@@ -130,7 +130,7 @@ public class VcfValidatorCliTest extends AbstractCliTest {
   /**
    * check that all declared INFO fields are present in the rules file
    * should catch missing rules earlier than regression tests
-   * */
+   */
   public void testAllInfoFieldsHaveARule() throws IOException {
     try (TestDirectory td = new TestDirectory()) {
       final VcfHeader header = new VcfHeader();
