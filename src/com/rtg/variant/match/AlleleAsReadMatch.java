@@ -80,6 +80,11 @@ public class AlleleAsReadMatch extends Match {
   }
 
   @Override
+  public double baseError() {
+    return mQuality;
+  }
+
+  @Override
   public int read(final int index) {
     final int res = mReferenceBytes[index] - 1;
     assert DNARangeNAT.DNA.valid(res) : res;

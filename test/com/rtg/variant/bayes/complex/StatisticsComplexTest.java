@@ -19,7 +19,6 @@ import java.util.Arrays;
 import com.rtg.reader.FastaUtils;
 import com.rtg.util.MathUtils;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.variant.NoQualityException;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantOutputOptions;
 import com.rtg.variant.VariantParams;
@@ -30,7 +29,6 @@ import com.rtg.variant.util.arithmetic.LogPossibility;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -199,7 +197,11 @@ public class StatisticsComplexTest extends TestCase {
       return 0;
     }
     @Override
-    public double baseError(int index) throws NoQualityException, IndexOutOfBoundsException {
+    public double baseError(int index) {
+      return 0;
+    }
+    @Override
+    public double baseError() {
       return 0;
     }
     @Override

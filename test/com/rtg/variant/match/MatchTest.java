@@ -52,8 +52,8 @@ public class MatchTest extends TestCase {
     assertEquals(0.109, m2.correction(), 0.00001);
     final Match m3 = new AlignmentMatch(null, "ACGT", "$$#!", 0, 0, 4, 10);
     assertEquals(0.69250, m3.correction(), 0.00001);
-    final Match m4 = new AlignmentMatch(null, "", "", 0, 0, 0, 10);
-    assertEquals(0.1, m4.correction(), 0.00001);
+    final Match m4 = new AlignmentMatch(null, "", "", 10, 0, 0, 10);
+    assertEquals(0.1, m4.correction(), 0.19);
   }
 }
 

@@ -16,7 +16,6 @@ import com.rtg.reader.FastaUtils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.Integrity;
 import com.rtg.variant.MachineErrorChooserInterface;
-import com.rtg.variant.NoQualityException;
 import com.rtg.variant.PhredScaler;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.dna.DNARange;
@@ -80,18 +79,33 @@ public class AlignmentMatch extends Match implements Integrity {
     mMapError = VariantUtils.phredToProb(readScore);
     if (qScore == null) {
       mBaseError = null;
+      mQualityDefault = VariantUtils.phredToProb(me == null ? qDefault : me.getScaledPhred((byte) qDefault, 0, Arm.LEFT));
     } else {
       mBaseError = new double[length];
+      int l = length;
+      double c = 0;
+      if (l == 0) { // Compute average of the bounding bases
+        if (start > 0) {
+          c += VariantUtils.phredToProb(qScore[start - 1]);
+          l++;
+        }
+        if (start + length + 1 < qScore.length) {
+          c += VariantUtils.phredToProb(qScore[start + length]);
+          l++;
+        }
+        if (l == 0) { // Fall back to default
+          c += VariantUtils.phredToProb(me == null ? qDefault : me.getScaledPhred((byte) qDefault, 0, Arm.LEFT));
+          l++;
+        }
+      }
       for (int k = 0; k < mBaseError.length; k++) {
-        // apply machine error calibration curve for appropriate read group if possible
         final int phred = qScore[k + start];
         assert 0 <= phred;
         mBaseError[k] = VariantUtils.phredToProb(phred);
+        c += mBaseError[k];
       }
+      mQualityDefault = c / l;
     }
-    // apply correct machine error calibration curve to qDefault, if possible
-    final Arm arm  = Arm.LEFT;
-    mQualityDefault = VariantUtils.phredToProb(me == null ? qDefault : me.getScaledPhred((byte) qDefault, 0, arm));
     mFixedLeft = fixedLeft;
     mFixedRight = fixedRight;
     mReadNt = new int[length];
@@ -112,9 +126,13 @@ public class AlignmentMatch extends Match implements Integrity {
     return mAlignmentRecord;
   }
 
+  @Override
+  public double baseError() {
+    return mQualityDefault;
+  }
 
   @Override
-  public double baseError(final int index) throws NoQualityException, IndexOutOfBoundsException {
+  public double baseError(final int index) {
     if (mBaseError == null) {
       return mQualityDefault;
     }

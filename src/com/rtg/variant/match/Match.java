@@ -33,6 +33,14 @@ public abstract class Match {
   public abstract double baseError(int index) throws NoQualityException, IndexOutOfBoundsException;
 
   /**
+   * Get the average base error over the whole region.
+   * This is the probability that the mapping of the corresponding nucleotides is incorrect
+   * and is typically directly derived from the sequencer quality values.
+   * @return the probability that the mapping is incorrect (may be 0.0 or 1.0).
+   */
+  public abstract double baseError();
+
+  /**
    * Return a human readable version of the various quality log probabilities.
    * @return the string with quality information.
    */
@@ -94,14 +102,7 @@ public abstract class Match {
    */
   public double correction() {
     final double mq = mapError();
-    if (length() == 0) {
-      return mq;
-    }
-    double c = 0.0;
-    for (int i = 0; i < length(); i++) {
-      c += baseError(i);
-    }
-    return c * (1.0 - mq) / length() + mq;
+    return baseError() * (1.0 - mq) + mq;
   }
 
   /**
