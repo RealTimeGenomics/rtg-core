@@ -76,6 +76,8 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
   public static final String COMPLEX_HYPOTHESIS_ADJUST_PRIORS = "com.rtg.variant.complex.complex-hypothesis-adjust-priors";
   /** If true, all-paths should attempt to use unrolled CG read, otherwise use the flattened representation */
   public static final String COMPLEX_CALLER_UNROLL_CG_FLAG = "com.rtg.variant.bayes.EvidenceComplex.unroll-cg";
+  /** If true, use the class loader hack to prevent JIT from de-optimizing all-paths due to call bi-morphism */
+  public static final String COMPLEX_CALLER_HOTSPOT_HACK = "com.rtg.variant.bayes.complex.hotspot-hack";
   /** Variant caller min depth for call-at-N triggering */
   public static final String CALLER_N_MIN_DEPTH = "com.rtg.variant.n-min-depth";
   /** If true, the population command will fall back to using forward backward when disagreeing calls are encountered (currently slow for large pops) */
@@ -149,6 +151,7 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
     registerFlag(COMPLEX_HYPOTHESIS_NEW_PRIORS, Boolean.class, true);
     registerFlag(COMPLEX_HYPOTHESIS_ADJUST_PRIORS, Boolean.class, true);
     registerFlag(COMPLEX_CALLER_UNROLL_CG_FLAG, Boolean.class, true);
+    registerFlag(COMPLEX_CALLER_HOTSPOT_HACK, Boolean.class, true);
 
     // Misc calling
     registerFlag(CALLER_N_MIN_DEPTH, Integer.class, 5);

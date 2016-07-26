@@ -18,9 +18,12 @@ import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
 import com.rtg.util.SeparateClassLoader;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.SlimException;
 import com.rtg.util.intervals.SequenceNameLocusSimple;
 import com.rtg.variant.bayes.Hypotheses;
@@ -51,9 +54,11 @@ public class ComplexTemplate extends SequenceNameLocusSimple {
    * TODO: THIS WAS TRUE WITH JAVA 6 -- EVALUATE IF STILL NEEDED
    */
   /*******************START BLOCK******************/
+  private static final boolean HOTSPOT_HACK = GlobalFlags.getBooleanValue(CoreGlobalFlags.COMPLEX_CALLER_HOTSPOT_HACK);
   private static final Constructor<AllPaths> SCORE_FAST_CONSTRUCTOR;
   private static final Constructor<Environment> ENVIRONMENT_COMBINED_CONSTRUCTOR;
   static {
+    Diagnostic.developerLog("Classloading hack = " + HOTSPOT_HACK);
     final SeparateClassLoader loader = AccessController.doPrivileged(new PrivilegedAction<SeparateClassLoader>() {
       @Override
       public SeparateClassLoader run() {
@@ -73,21 +78,27 @@ public class ComplexTemplate extends SequenceNameLocusSimple {
   }
 
   private static AllPaths initScoreFastUnderflow(RealignParams params) {
-    try {
-      return SCORE_FAST_CONSTRUCTOR.newInstance(params);
-    } catch (final IllegalArgumentException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
-      throw new SlimException(e);
+    if (HOTSPOT_HACK) {
+      try {
+        return SCORE_FAST_CONSTRUCTOR.newInstance(params);
+      } catch (final IllegalArgumentException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+        throw new SlimException(e);
+      }
+    } else {
+      return new ScoreFastUnderflow(params);
     }
-    //return new ScoreFastUnderflow(params);
   }
 
   private static Environment initEnvironmentCombined(AlignmentEnvironment samEnv, int zeroBasedStartPos, int maxShift, AlignmentEnvironment templateEnv) {
-    try {
-      return ENVIRONMENT_COMBINED_CONSTRUCTOR.newInstance(samEnv, zeroBasedStartPos, maxShift, templateEnv);
-    } catch (final IllegalArgumentException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
-      throw new SlimException(e);
+    if (HOTSPOT_HACK) {
+      try {
+        return ENVIRONMENT_COMBINED_CONSTRUCTOR.newInstance(samEnv, zeroBasedStartPos, maxShift, templateEnv);
+      } catch (final IllegalArgumentException | InvocationTargetException | IllegalAccessException | InstantiationException e) {
+        throw new SlimException(e);
+      }
+    } else {
+      return new EnvironmentCombined(samEnv, zeroBasedStartPos, maxShift, templateEnv);
     }
-    //return new EnvironmentCombined(samEnv, zeroBasedStartPos, maxShift, templateEnv);
   }
   /*******************END BLOCK********************/
 
