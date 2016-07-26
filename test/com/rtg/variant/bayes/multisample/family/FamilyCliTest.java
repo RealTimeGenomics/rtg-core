@@ -24,6 +24,7 @@ import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 
 /**
  */
@@ -134,7 +135,7 @@ public class FamilyCliTest extends AbstractParamsCliTest<VariantParams> {
       err = checkMainInitBadFlags("-o", outDir.getPath(), "-t", template.getPath(), "-p", tmpFile.getPath(), in2.getPath());
       assertTrue(err, err.contains("should contain exactly 6"));
 
-      checkMainInitOk("-o", outDir.getPath(), "-t", template.getPath(), "-p", tmpFile2.getPath(), in.getPath(), in.getPath());
+      checkMainInitOk("-o", outDir.getPath(), "-t", template.getPath(), "-p", tmpFile2.getPath(), in.getPath(), in.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
     } finally {
       FileHelper.deleteAll(tmpDir);
       FileHelper.deleteAll(tmpFile);
@@ -156,7 +157,7 @@ public class FamilyCliTest extends AbstractParamsCliTest<VariantParams> {
       FileHelper.stringToGzFile(SAMHEADER + SAM_BODY, in2);
       new TabixIndexer(in2, new File(tmpDir, "alignments2.sam.gz.tbi")).saveSamIndex();
 
-      final VariantParams p = checkMakeParamsOut("-o", outDir.getPath(), "-t", template.getPath(), "-p", tmpFile.getPath(), in.getPath(), in.getPath());
+      final VariantParams p = checkMakeParamsOut("-o", outDir.getPath(), "-t", template.getPath(), "-p", tmpFile.getPath(), in.getPath(), in.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
       assertEquals(true, p.pruneHypotheses());
     } finally {
       FileHelper.deleteAll(tmpDir);

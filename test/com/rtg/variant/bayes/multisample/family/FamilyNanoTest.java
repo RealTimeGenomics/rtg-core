@@ -28,6 +28,7 @@ import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
+import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 import com.rtg.variant.bayes.multisample.population.PopulationNanoTest;
 
 /**
@@ -92,6 +93,7 @@ public class FamilyNanoTest extends AbstractNanoTest {
           "-o", out.getPath(),
           "-Z",
           sam.getPath(),
+          "--" + AbstractMultisampleCli.NO_CALIBRATION
       };
 
       final String[] args;

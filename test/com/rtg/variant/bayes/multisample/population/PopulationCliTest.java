@@ -26,6 +26,7 @@ import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 import com.rtg.variant.bayes.multisample.family.FamilyCliTest;
 
 /**
@@ -99,7 +100,7 @@ public class PopulationCliTest extends AbstractParamsCliTest<VariantParams> {
     err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--pedigree", tmpFile.getPath(), in.getPath(), "--min-avr-score", "-0.1");
     assertTrue(err, err.contains("--min-avr-score must be in the range [0.0, 1.0]"));
 
-    checkMainInitOk("-o", outDir.getPath(), "-t", template.getPath(), "--pedigree", tmpFile2.getPath(), in.getPath(), in.getPath());
+    checkMainInitOk("-o", outDir.getPath(), "-t", template.getPath(), "--pedigree", tmpFile2.getPath(), in.getPath(), in.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
   }
 
   @Override

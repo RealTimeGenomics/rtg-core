@@ -91,7 +91,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String BED_FILTER_FLAG = "filter-bed";
   static final String COVERAGE_BYPASS_FLAG = "max-coverage";
   private static final String COVERAGE_BYPASS_MULTIPLIER_FLAG = "max-coverage-multiplier";
-  private static final String NO_CALIBRATION = "no-calibration";
+  /** flag for disabling use of calibration files */
+  public static final String NO_CALIBRATION = "no-calibration";
   private static final String R_DEFAULT_FLAG = "rdefault-mated";
   private static final String UNMATED_R_DEFAULT_FLAG = "rdefault-unmated";
   private static final String SNPS_ONLY_FLAG = "snps-only";
@@ -522,6 +523,9 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
       uberHeader = SamUtils.getUberHeader(samFiles, mFlags.isSet(X_IGNORE_SAM_HEADER_INCOMPATIBILITY), grf == null ? null : grf.genomes());
     }
     builder.uberHeader(uberHeader);
+    if (calibrationFiles.size() == 0 && !mFlags.isSet(NO_CALIBRATION)) {
+      throw new InvalidParamsException("No calibration files were found for input mappings. Please run 'rtg calibrate', or use --" + NO_CALIBRATION + " and set --" + COVERAGE_BYPASS_FLAG + " appropriately to proceed without calibration.");
+    }
     builder.referenceRanges(SamRangeUtils.createReferenceRanges(uberHeader, filterParams));
 
     if (c != null) {

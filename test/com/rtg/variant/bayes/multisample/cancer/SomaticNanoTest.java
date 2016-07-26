@@ -28,6 +28,7 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
+import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 
 /**
  */
@@ -165,7 +166,8 @@ public class SomaticNanoTest extends AbstractNanoTest {
           "-o", out.getPath(),
           "-Z",
           normal.getPath(),
-          cancer.getPath()
+          cancer.getPath(),
+          "--" + AbstractMultisampleCli.NO_CALIBRATION
       };
 
       final String[] args;

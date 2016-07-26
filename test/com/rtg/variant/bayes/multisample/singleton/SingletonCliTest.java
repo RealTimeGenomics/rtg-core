@@ -27,6 +27,7 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.bayes.multisample.AbstractCallerCliTest;
+import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 
 /**
  */
@@ -83,7 +84,7 @@ public class SingletonCliTest extends AbstractCallerCliTest {
       new TabixIndexer(reads, new File(dir, "reads.sam.gz.tbi")).saveSamIndex();
 
       final File out = new File(dir, "calls");
-      checkMainInitOk("-t", ref.getPath(), "-o", out.getPath(), reads.getPath());
+      checkMainInitOk("-t", ref.getPath(), "-o", out.getPath(), reads.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
       final String log = FileUtils.fileToString(new File(out, "snp.log"));
       TestUtils.containsAll(log, "16 records processed",
           "Finished successfully"

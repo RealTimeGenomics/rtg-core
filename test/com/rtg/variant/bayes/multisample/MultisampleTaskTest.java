@@ -174,7 +174,8 @@ public class MultisampleTaskTest extends AbstractNanoTest {
         "-o", output.getPath(),
         "-Z",
         "-m", "default", "--keep-duplicates",
-        input.getPath() + FS + OUT_SAM + ".gz"
+        input.getPath() + FS + OUT_SAM + ".gz",
+        "--" + AbstractMultisampleCli.NO_CALIBRATION
       };
       final MainResult res = MainResult.run(new SingletonCli(), Utils.append(args, getArguments()));
       assertEquals("", res.err());
@@ -209,7 +210,8 @@ public class MultisampleTaskTest extends AbstractNanoTest {
         "-Z",
         "-m", "default", "--keep-duplicates",
         input.getPath() + FS + OUT_SAM + ".gz",
-        "--region", "foooo"
+        "--region", "foooo",
+        "--" + AbstractMultisampleCli.NO_CALIBRATION
       };
       final MainResult res = MainResult.run(new SingletonCli(), Utils.append(args, getArguments()));
       assertEquals(1, res.rc());

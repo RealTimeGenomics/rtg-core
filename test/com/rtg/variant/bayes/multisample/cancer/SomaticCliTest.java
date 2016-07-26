@@ -24,6 +24,7 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
+import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 
 /**
  */
@@ -108,7 +109,7 @@ public class SomaticCliTest extends AbstractCliTest {
       checkHandleFlagsOut("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "0", "--original", "foo", "--derived", "bar", "--contamination", "0.5", in.getPath());
       checkHandleFlagsOut("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "1", "--original", "foo", "--derived", "bar", "--contamination", "0.5", in.getPath());
 
-      checkMainInitOk("-o", outDir.getPath(), "-t", template.getPath(), "--Xpedigree", tmpFile.getPath(), in.getPath(), in.getPath());
+      checkMainInitOk("-o", outDir.getPath(), "-t", template.getPath(), "--Xpedigree", tmpFile.getPath(), in.getPath(), in.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
     }
   }
 

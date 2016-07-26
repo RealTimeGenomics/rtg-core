@@ -292,7 +292,7 @@ public abstract class AbstractCallerCliTest extends AbstractCliTest {
       BgzipFileHelper.streamToBgzipFile(new ByteArrayInputStream(SAM.getBytes()), map);
       new TabixIndexer(map, new File(inFile, "map.gz.tbi")).saveSamIndex();
 
-      final String[] fullArgs = com.rtg.util.Utils.append(new String[]{"-o", outFile.getPath(), map.getPath(), "-m", "default"}, args);
+      final String[] fullArgs = com.rtg.util.Utils.append(new String[]{"-o", outFile.getPath(), map.getPath(), "-m", "default", "--" + AbstractMultisampleCli.NO_CALIBRATION}, args);
       final VariantParams vp = getParams(fullArgs);
       try {
         final OutputStream out = new ByteArrayOutputStream();

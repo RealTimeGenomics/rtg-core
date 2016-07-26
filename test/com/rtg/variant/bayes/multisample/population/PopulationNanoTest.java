@@ -34,6 +34,7 @@ import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
 import com.rtg.util.test.NanoRegression;
+import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 
 /**
  */
@@ -143,6 +144,7 @@ public class PopulationNanoTest extends AbstractNanoTest {
           "-o", out.getPath(),
           "-Z",
           sam.getPath(),
+          "--" + AbstractMultisampleCli.NO_CALIBRATION
       };
 
       final String[] args;

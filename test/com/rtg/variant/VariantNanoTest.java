@@ -60,6 +60,7 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
+import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 import com.rtg.variant.bayes.multisample.singleton.SingletonCli;
 
 /**
@@ -236,7 +237,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       }
       final String[] alignArgs = {"snp", "-t", templ.getPath(),
         "-o", outn, "--Xpriors", "testhumanprior", "-Z", "--Xinteresting-separation",
-        Integer.toString(intSeparation), inn + FS + OUT_SAM + ".gz"
+        Integer.toString(intSeparation), inn + FS + OUT_SAM + ".gz", "--" + AbstractMultisampleCli.NO_CALIBRATION
       };
       final String[] args1;
       if (args0 != null) {
@@ -317,7 +318,7 @@ public class VariantNanoTest extends AbstractNanoTest {
 
       final String outn = output.getPath();
       ReaderTestUtils.getDNADir(refSeq, templ);
-      final String[] alignArgs = {"snp", "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-m", "default", "--keep-duplicates", "-Z", sam1.getPath(), sam2.getPath(), sam3.getPath(), };
+      final String[] alignArgs = {"snp", "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-m", "default", "--keep-duplicates", "-Z", sam1.getPath(), sam2.getPath(), sam3.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION};
       final String[] args = Utils.append(alignArgs, args0);
       final ByteArrayOutputStream out = new ByteArrayOutputStream();
       final ByteArrayOutputStream berr = new ByteArrayOutputStream();
@@ -352,7 +353,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final String inn = dir.getPath();
       final File templ = ReaderTestUtils.getDNADir(REF_SEQS);
       try {
-        final String[] alignArgs = {"-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-m", "default", "-Z", "--keep-duplicates", inn + FS + OUT_SAM + FileUtils.GZ_SUFFIX};
+        final String[] alignArgs = {"-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-m", "default", "-Z", "--keep-duplicates", inn + FS + OUT_SAM + FileUtils.GZ_SUFFIX, "--" + AbstractMultisampleCli.NO_CALIBRATION};
         final String[] args = Utils.append(alignArgs, args0);
         final MainResult r = MainResult.run(new SingletonCli(), args);
         assertEquals("", r.err());
@@ -410,7 +411,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final String outn = output.getPath();
       final File templ = ReaderTestUtils.getDNADir(refSeq);
       try {
-        final MainResult r = MainResult.run(new SingletonCli(), "-t", templ.getPath(), "-m", "default", "-o", outn, align + FS + OUT_SAM + ".gz");
+        final MainResult r = MainResult.run(new SingletonCli(), "-t", templ.getPath(), "-m", "default", "-o", outn, align + FS + OUT_SAM + ".gz", "--" + AbstractMultisampleCli.NO_CALIBRATION);
         final String log = FileUtils.fileToString(new File(output, "snp.log"));
         TestUtils.containsAll(log, logs);
         if (warnings != null) {
@@ -430,7 +431,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final String outn = output.getPath();
       final File templ = ReaderTestUtils.getDNADir(refSeq);
       try {
-        final MainResult r = MainResult.run(new SingletonCli(), "-t", templ.getPath(), "-o", outn, "-m", "illumina", align + FS + OUT_SAM);
+        final MainResult r = MainResult.run(new SingletonCli(), "-t", templ.getPath(), "-o", outn, "-m", "illumina", align + FS + OUT_SAM, "--" + AbstractMultisampleCli.NO_CALIBRATION);
         assertEquals(1, r.rc());
         TestUtils.containsAll(r.err(), errExpected);
         assertFalse(r.err().contains("RTG has encountered a diff"));
@@ -1089,7 +1090,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final String outn = output.getPath();
       final File templ = ReaderTestUtils.getDNADir(refSeq);
       try {
-        final String[] args = Utils.append(args0, "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-Z", insam.getPath());
+        final String[] args = Utils.append(args0, "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-Z", insam.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
         final MainResult r = MainResult.run(new SingletonCli(), args);
         assertEquals(r.err(), errCode, r.rc());
         assertTrue(r.err(), r.err().contains(errorMsg));
@@ -1137,7 +1138,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final String inn = sam.getPath();
       final File templ = ReaderTestUtils.getDNADir(SharedSamConstants.REF_SEQS11);
       try {
-        final MainResult r = MainResult.run(new SingletonCli(), "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-Z", inn, "-a", "--region", restriction, "--snps-only", "-m", "default", "--keep-duplicates");
+        final MainResult r = MainResult.run(new SingletonCli(), "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-Z", inn, "-a", "--region", restriction, "--snps-only", "-m", "default", "--keep-duplicates", "--" + AbstractMultisampleCli.NO_CALIBRATION);
         assertEquals(r.err(), 0, r.rc());
         final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
         final String actualFixed = TestUtils.sanitizeVcfHeader(result);
@@ -1156,7 +1157,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final File sam = new File(dir, "sam.sam.gz");
       VariantTestUtils.bgzipAndIndex(FileHelper.resourceToString("com/rtg/variant/resources/hypersam.sam"), sam);
       final File output = new File(dir, "variant_out");
-      final MainResult r = MainResult.run(new SingletonCli(), "-t", template.getPath(), "-o", output.getPath(), "-m", "illumina", "--keep-duplicates", sam.getPath());
+      final MainResult r = MainResult.run(new SingletonCli(), "-t", template.getPath(), "-o", output.getPath(), "-m", "illumina", "--keep-duplicates", sam.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
       assertEquals(r.err(), 0, r.rc());
       final String result = StringUtils.grep(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")), "^[^#]").replaceAll("\n|\r\n", LS);
 
@@ -1268,7 +1269,7 @@ public class VariantNanoTest extends AbstractNanoTest {
 
       final MainResult r = MainResult.run(new SingletonCli(), "-t", template.getPath(),
         "-o", output.getPath(), sam.getPath(),
-        "--keep-duplicates");
+        "--keep-duplicates", "--" + AbstractMultisampleCli.NO_CALIBRATION);
       assertEquals(r.err(), 0, r.rc());
 
       final String result = StringUtils.grep(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")), "^[^#]").trim();
@@ -1286,7 +1287,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final File output = new File(dir, "variant_out");
       final MainResult r = MainResult.run(new SingletonCli(), "-t", template.getPath(),
         "-o", output.getPath(), "--keep-duplicates", "--Xhyper-complex-length", "21",
-        sam.getPath());
+        sam.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
       assertEquals(r.err(), 0, r.rc());
 
       final String result = StringUtils.grep(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")), "^[^#]").trim();
@@ -1303,7 +1304,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final File sam = new File(dir, "sam.sam.gz");
       VariantTestUtils.bgzipAndIndex(FileHelper.resourceToString("com/rtg/variant/resources/complexambigsuppression.sam"), sam);
       final File output = new File(dir, "variant_out");
-      final MainResult r = MainResult.run(new SingletonCli(), "-t", template.getPath(), "-o", output.getPath(), "--keep-duplicates", sam.getPath(), "--filter-ambiguity", "8%");
+      final MainResult r = MainResult.run(new SingletonCli(), "-t", template.getPath(), "-o", output.getPath(), "--keep-duplicates", sam.getPath(), "--filter-ambiguity", "8%", "--" + AbstractMultisampleCli.NO_CALIBRATION);
       assertEquals(r.err(), 0, r.rc());
 
       final String result = StringUtils.grep(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")), "^[^#]").trim();
@@ -1478,7 +1479,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       final File genome = ReaderTestUtils.getDNADir(FileHelper.resourceToString("com/rtg/variant/resources/bug1524.fasta"), new File(dir, "genome"));
       new TabixIndexer(sam).saveSamIndex();
       final File output = new File(dir, "variant_out");
-      final MainResult r = MainResult.run(new SingletonCli(), "-Z", "-t", genome.getPath(), "-o", output.getPath(), sam.getPath());
+      final MainResult r = MainResult.run(new SingletonCli(), "-Z", "-t", genome.getPath(), "-o", output.getPath(), sam.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
       assertEquals(r.err(), 0, r.rc());
       final String expectedErr = "SAM record is invalid. 48 90=3I7=  " + LS
           + "1 records skipped because of SAM format problems." + LS;
