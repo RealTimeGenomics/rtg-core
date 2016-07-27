@@ -40,6 +40,7 @@ import com.rtg.launcher.ParamsCli;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.SdfUtils;
+import com.rtg.reference.SexMemo;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.sam.SamFilterOptions;
 import com.rtg.sam.SamFilterParams;
@@ -136,6 +137,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String X_EXPAND_COMPLEX_READ_QUERIES = "Xexpand-complex-read-queries";
   private static final String X_COMPLEX_USE_SOFT_CLIP = "Xcomplex-use-soft-clip";
   private static final String X_FORCE_COMPLEX_REGION = "Xforce-complex-region";
+  private static final double LOW_COVERAGE_WARNING_THRESHOLD = 2.0;
 
   /**
    * validate common flags
@@ -544,6 +546,8 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
         final CalibratedPerSequenceThreshold processingThreshold = new CalibratedPerSequenceThreshold(expectedCoverages, (Double) mFlags.getValue(COVERAGE_BYPASS_MULTIPLIER_FLAG), processingFunc);
         builder.maxCoverageBypass(processingThreshold);
       }
+
+      checkLowCoverage(expectedCoverages, new SexMemo(genomeParams.reader(), null));
     }
     if (c == null || mFlags.isSet(FILTER_DEPTH_FLAG) || mFlags.isSet(COVERAGE_BYPASS_FLAG)) {
       if (mFlags.isSet(FILTER_DEPTH_FLAG)) {
@@ -557,6 +561,24 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
       builder.maxCoverageBypass(new StaticThreshold(coverageBypassValue, coverageBypassValue * Math.max(1, samples.size())));
     }
     builder.calibrator(c);
+  }
+
+  private void checkLowCoverage(CalibratedPerSequenceExpectedCoverage expectedCoverages, SexMemo sexMemo) throws IOException {
+    boolean doWarning = false;
+    for (String sample : expectedCoverages.samples()) {
+      for (String seq : expectedCoverages.sequences()) {
+        if (sexMemo.isAutosome(seq)) { //only check sequences we expect normal coverage of
+          final double coverage = expectedCoverages.expectedCoverage(seq, sample);
+          if (coverage < LOW_COVERAGE_WARNING_THRESHOLD) {
+            Diagnostic.warning(String.format("Calibration indicates very low coverage (%.1f) for sample: %s on sequence: %s", coverage, sample, seq));
+            doWarning = true;
+          }
+        }
+      }
+    }
+    if (doWarning) {
+      Diagnostic.warning("Check that appropriate target regions were supplied during mapping/calibration");
+    }
   }
 
 
