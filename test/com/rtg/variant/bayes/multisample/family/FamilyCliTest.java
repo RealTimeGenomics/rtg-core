@@ -152,7 +152,6 @@ public class FamilyCliTest extends AbstractParamsCliTest<VariantParams> {
 
   public void testLowCoverage() throws Exception {
     try (TestDirectory dir = new TestDirectory()) {
-      final File tmpFile = FileUtils.stringToFile("original-derived TEST cancer contamination=0.13", new File(dir, "tmpFile"));
       final File tmpFile2 = FileUtils.stringToFile(FAMILY_PED, new File(dir, "pedfile"));
       final File in = new File(dir, "alignments.sam.gz");
       FileHelper.stringToGzFile(SAM_FAMILY, in);
