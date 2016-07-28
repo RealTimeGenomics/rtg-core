@@ -40,6 +40,7 @@ import com.rtg.variant.bayes.Model;
 import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.NoAlleleBalance;
 import com.rtg.variant.bayes.complex.HypothesesComplexTest.Hyp;
+import com.rtg.variant.bayes.multisample.AlignmentRecordMatcher;
 import com.rtg.variant.match.AlignmentMatch;
 import com.rtg.variant.match.AlleleAsReadMatch;
 import com.rtg.variant.match.Match;
@@ -644,8 +645,6 @@ public class EvidenceComplexTest extends TestCase {
     sam.setCigarString("27S83=");
     sam.setFlags(0);
 
-    final AlignmentMatch ma = new AlignmentMatch(new VariantAlignmentRecord(sam), readNt, null, 0, 0, readNt.length(), 0);
-
     final String t = "TCATGAATCAGAATCTCATCTTGTAATATTCCAGTGTTCTGTTCTTCAGAAAGTTGCTTCTGAGTATCATCTTGTTCATCACTAGAAAAAAAATTAATTTTCATGAAATACTGGAGGTGTCCCCAAAATG"
                 + "ATCTGCG" //deleted region. Ambiguous as to whether starting G is deleted, or the G at the end of this region.
                 + "CCATCAGATGTCATTCACACAATGTATATCTGCACATTATTCCAATACAAGGCAAAGGGGTCTCACATCTGTTAACCGAGTATCCCCAACCATGCTGGCACCAGGGACTGGTTTTGCGGAAGATAATTTTTCCAGGAGCCTGAG"; //the start of this region is where the read SHOULD align.
@@ -655,6 +654,7 @@ public class EvidenceComplexTest extends TestCase {
     final VariantParams vp = new VariantParamsBuilder().genomePriors(new GenomePriorParamsBuilder().create()).maxCoverageFilter(new StaticThreshold(10)).create();
     final MachineErrorChooserInterface mec = getChooser();
 
+    final AlignmentMatch ma = new AlignmentRecordMatcher(new VariantAlignmentRecord(sam)).getMatch(mec, 137, readNt.length(), vp);
     final Match delmatch = new AlleleAsReadMatch(new byte[0]);
     final Match refmatch = new AlleleAsReadMatch(DnaUtils.encodeString("ATCTGCG"));
     final List<Match> durmatches = new ArrayList<>();

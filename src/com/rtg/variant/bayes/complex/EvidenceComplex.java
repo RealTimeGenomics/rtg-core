@@ -12,10 +12,9 @@
 
 package com.rtg.variant.bayes.complex;
 
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.mode.DNA;
-import com.rtg.sam.SamUtils;
 import com.rtg.util.MaxShiftUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.machine.MachineType;
@@ -157,19 +156,8 @@ public class EvidenceComplex extends Evidence {
     } else {
       maxShift0 = MaxShiftUtils.calculateDefaultMaxShift(se.subsequenceLength());
       newStart = alignmentRecord.getStart();
-
       if (params.complexUseSoftClip()) {
-        final String cigar = match.alignmentRecord().getCigar();
-        for (int i = 0, n = 0; i < cigar.length(); i++) {
-          final char c = cigar.charAt(i);
-          if (Character.isDigit(c)) {
-            n = 10 * n + c - '0';
-          } else if (c == SamUtils.CIGAR_SOFT_CLIP) {
-            softClipStartOffset = n;
-          } else {
-            break;
-          }
-        }
+        softClipStartOffset = match.getSoftClipLeft();
       }
     }
     //if (softClipStartOffset > 0) {
