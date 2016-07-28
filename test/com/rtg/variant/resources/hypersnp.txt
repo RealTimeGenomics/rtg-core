@@ -1,9 +1,0 @@
-simulatedSequence1	1	o	C	T	0.6	3	0.031	T	3	0.031
-simulatedSequence1	10	o	G	T	0.3	2	0.020	T	2	0.020
-simulatedSequence1	13	x	AGGAT	x	0.0	6	0.061	T~	2	0.020	~A	2	0.020	~T~	2	0.020
-simulatedSequence1	20	x	AA	x	0.0	6	0.061	T~	3	0.031	~T	3	0.031
-simulatedSequence1	24	x	TGC	x	0.0	6	0.061	A~	3	0.031	~T	3	0.031
-simulatedSequence1	29	o	T	A	0.7	3	0.031	A	3	0.031
-simulatedSequence1	32	o	T	A	0.7	3	0.031	A	3	0.031
-simulatedSequence1	35	o	G	A	0.6	3	0.031	A	3	0.031
-simulatedSequence1	50	o	A	T	0.7	3	0.031	T	3	0.031
