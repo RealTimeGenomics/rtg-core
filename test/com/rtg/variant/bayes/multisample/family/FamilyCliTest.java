@@ -17,11 +17,18 @@ import static com.rtg.util.StringUtils.LS;
 
 import java.io.File;
 
+import com.rtg.calibrate.RecalibrateCli;
 import com.rtg.launcher.AbstractParamsCliTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.launcher.ParamsCli;
 import com.rtg.reader.ReaderTestUtils;
+import com.rtg.reference.Ploidy;
+import com.rtg.reference.ReferenceTextBuilder;
+import com.rtg.reference.Sex;
 import com.rtg.tabix.TabixIndexer;
+import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
@@ -140,6 +147,27 @@ public class FamilyCliTest extends AbstractParamsCliTest<VariantParams> {
       FileHelper.deleteAll(tmpDir);
       FileHelper.deleteAll(tmpFile);
       FileHelper.deleteAll(tmpFile2);
+    }
+  }
+
+  public void testLowCoverage() throws Exception {
+    try (TestDirectory dir = new TestDirectory()) {
+      final File tmpFile = FileUtils.stringToFile("original-derived TEST cancer contamination=0.13", new File(dir, "tmpFile"));
+      final File tmpFile2 = FileUtils.stringToFile(FAMILY_PED, new File(dir, "pedfile"));
+      final File in = new File(dir, "alignments.sam.gz");
+      FileHelper.stringToGzFile(SAM_FAMILY, in);
+      new TabixIndexer(in, new File(dir, "alignments.sam.gz.tbi")).saveSamIndex();
+
+      final File template = new File(dir, "template");
+      ReaderTestUtils.getDNADir(">g1\nacgtacgtacgtacgtacgt", template);
+      ReferenceTextBuilder.createDiploid().addSequence("g1", Sex.EITHER, Ploidy.DIPLOID, true).writeToSdfDir(template);
+
+      final MainResult calRes = MainResult.run(new RecalibrateCli(), "-t", template.getPath(), in.getPath());
+      assertEquals(calRes.err(), 0, calRes.rc());
+
+      final File outDir = new File(dir, "out");
+      final String err = checkMainInitWarn("-o", outDir.getPath(), "-t", template.getPath(), "-p", tmpFile2.getPath(), in.getPath(), in.getPath());
+      TestUtils.containsAll(err, "Calibration indicates very low coverage", "Check that appropriate target regions were supplied during mapping/calibration");
     }
   }
 
