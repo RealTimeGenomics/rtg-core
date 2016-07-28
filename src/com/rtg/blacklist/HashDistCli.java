@@ -40,7 +40,6 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
   private static final String BLACKLIST_THRESHOLD_FLAG = "blacklist-threshold";
   private static final String INSTALL_BLACKLIST = "install-blacklist";
   private static final String HASHMAP_SIZE_FACTOR = "hashmap-size-factor";
-  private static final String DESCRIPTION = "Counts the number of times k-mers occur in an SDF and produces a histogram. Optionally creates a blacklist of highly occurring hashes that can be used to increase mapping speed";
 
   @Override
   protected IORunnable task(HashDistParams params, OutputStream out) throws IOException {
@@ -85,7 +84,7 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
 
   private static void initFlags(CFlags flags) {
     flags.registerExtendedHelp();
-    flags.setDescription(DESCRIPTION);
+    flags.setDescription("Counts the number of times k-mers occur in an SDF and produces a histogram. Optionally creates a blacklist of highly occurring hashes that can be used to increase mapping speed");
     CommonFlagCategories.setCategories(flags);
     CommonFlags.initOutputDirFlag(flags);
     CommonFlags.initThreadsFlag(flags);
@@ -106,7 +105,7 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
 
   @Override
   public String description() {
-    return DESCRIPTION;
+    return "analyse the k-mer distribution within an SDF";
   }
 
 
