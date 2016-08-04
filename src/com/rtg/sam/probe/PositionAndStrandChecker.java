@@ -11,22 +11,31 @@
  */
 package com.rtg.sam.probe;
 
-import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.intervals.RangeList;
 
+import htsjdk.samtools.CigarOperator;
 import htsjdk.samtools.SAMRecord;
 
 /**
  * Checks whether a record should be stripped according to given criteria. Provides stripping function.
  */
-@TestClass("com.rtg.sam.probe.PosCheckerTest")
 abstract class PositionAndStrandChecker {
   protected final int mTolerance;
-  protected final int[] mStats;
+  protected final int[] mPosDiffStats;
+  protected final int[] mSoftClipStats;
+  protected final int[] mMismatchStats;
+  protected final int[] mInsertStats;
+  protected final int[] mDeletionStats;
+
+  static final int MAX_OP_LEN = 20;
 
   PositionAndStrandChecker(int tolerance) {
     mTolerance = tolerance;
-    mStats = new int[mTolerance * 2 + 1];
+    mPosDiffStats = new int[mTolerance * 2 + 1];
+    mSoftClipStats = new int[MAX_OP_LEN];
+    mMismatchStats = new int[MAX_OP_LEN];
+    mInsertStats = new int[MAX_OP_LEN];
+    mDeletionStats = new int[MAX_OP_LEN];
   }
 
   abstract boolean check(SAMRecord record, RangeList.RangeData<String> data);
@@ -34,4 +43,24 @@ abstract class PositionAndStrandChecker {
   abstract int getStartDataIndex(SAMRecord record, RangeList<String> list);
 
   abstract void stripRecord(SAMRecord record, RangeList.RangeData<String> data);
+
+  protected void updateStrippedStats(CigarOperator operator, int consume) {
+    final int statIndex = consume > MAX_OP_LEN ? MAX_OP_LEN - 1 : consume - 1;
+    switch (operator) {
+      case X:
+        mMismatchStats[statIndex]++;
+        break;
+      case S:
+        mSoftClipStats[statIndex]++;
+        break;
+      case I:
+        mInsertStats[statIndex]++;
+        break;
+      case D:
+        mDeletionStats[statIndex]++;
+        break;
+      default:
+        break;
+    }
+  }
 }

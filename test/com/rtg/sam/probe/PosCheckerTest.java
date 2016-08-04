@@ -33,15 +33,10 @@ public class PosCheckerTest extends TestCase {
   }
 
   public void testSetAlignment() {
+    final PosChecker pos = new PosChecker(10);
     final SAMRecord rec = createRecord("AGGTTTGG", "1=1X1=1X1=1X1=1X");
-    PosChecker.setAlignmentStart(rec, 1002);
+    pos.setAlignmentStart(rec, 1002);
     assertEquals("GTTTGG", rec.getReadString());
     assertEquals("1=1X1=1X1=1X", rec.getCigarString());
-  }
-
-  public void testStats() {
-    final PosChecker pos = new PosChecker(10);
-    assertEquals(10, pos.mTolerance);
-    assertEquals(21, pos.mStats.length);
   }
 }

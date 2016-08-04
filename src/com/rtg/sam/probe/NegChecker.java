@@ -52,11 +52,11 @@ class NegChecker extends PositionAndStrandChecker {
   @Override
   void stripRecord(SAMRecord record, RangeList.RangeData<String> data) {
     final int diff = record.getAlignmentEnd() - data.getEnd();
-    mStats[mTolerance + diff]++;
+    mPosDiffStats[mTolerance + diff]++;
     setAlignmentEnd(record, data.getStart());
   }
 
-  static void setAlignmentEnd(SAMRecord record, int alignmentEnd) {
+  void setAlignmentEnd(SAMRecord record, int alignmentEnd) {
     //end positions are 1 based exclusive
     int readEnd = record.getReadLength();
     int refEnd = record.getAlignmentEnd();
@@ -73,6 +73,7 @@ class NegChecker extends PositionAndStrandChecker {
         if (operator.consumesReadBases()) {
           readEnd -= consume;
         }
+        updateStrippedStats(operator, consume);
         if (e.getLength() - consume > 0) {
           newCigarElements.add(new CigarElement(e.getLength() - consume, operator));
         }

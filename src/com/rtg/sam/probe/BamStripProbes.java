@@ -136,9 +136,17 @@ public class BamStripProbes extends AbstractCli {
     err.println("forward = " + forward);
     err.println("reverse = " + reverse);
     err.print(String.format("%9s | %9s %9s%n", "DIFF", "POS", "NEG"));
-    for (int i = 0; i < posChecker.mStats.length; i++) {
-      err.print(String.format("%9d | %9d %9d%n", i - tolerance, posChecker.mStats[i], negChecker.mStats[tolerance * 2 - i]));
+    for (int i = 0; i < posChecker.mPosDiffStats.length; i++) {
+      err.print(String.format("%9d | %9d %9d%n", i - tolerance, posChecker.mPosDiffStats[i], negChecker.mPosDiffStats[tolerance * 2 - i]));
     }
+    err.print(String.format("(S) %4s  | %9s %9s %9s %9s%n", "LEN", "SOFT", "MISM", "INS", "DEL"));
+    for (int i = 0; i < PositionAndStrandChecker.MAX_OP_LEN  - 1; i++) {
+      err.print(String.format("(+) %4d  | %9d %9d %9d %9d%n", i + 1, posChecker.mSoftClipStats[i], posChecker.mMismatchStats[i], posChecker.mInsertStats[i], posChecker.mDeletionStats[i]));
+      err.print(String.format("(-) %4d  | %9d %9d %9d %9d%n", i + 1, negChecker.mSoftClipStats[i], negChecker.mMismatchStats[i], negChecker.mInsertStats[i], negChecker.mDeletionStats[i]));
+    }
+    final int maxIndex = PositionAndStrandChecker.MAX_OP_LEN - 1;
+    err.print(String.format("(+) %4d+ | %9d %9d %9d %9d%n", maxIndex + 1, posChecker.mSoftClipStats[maxIndex], posChecker.mMismatchStats[maxIndex], posChecker.mInsertStats[maxIndex], posChecker.mDeletionStats[maxIndex]));
+    err.print(String.format("(-) %4d+ | %9d %9d %9d %9d%n", maxIndex + 1, negChecker.mSoftClipStats[maxIndex], negChecker.mMismatchStats[maxIndex], negChecker.mInsertStats[maxIndex], negChecker.mDeletionStats[maxIndex]));
 
     return 0;
   }

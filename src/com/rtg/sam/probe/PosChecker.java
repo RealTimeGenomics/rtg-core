@@ -51,11 +51,11 @@ class PosChecker extends PositionAndStrandChecker {
   @Override
   void stripRecord(SAMRecord record, RangeList.RangeData<String> data) {
     final int diff = record.getAlignmentStart() - 1 - data.getStart();
-    mStats[mTolerance + diff]++;
+    mPosDiffStats[mTolerance + diff]++;
     setAlignmentStart(record, data.getEnd());
   }
 
-  static void setAlignmentStart(SAMRecord record, int alignmentStart) {
+  void setAlignmentStart(SAMRecord record, int alignmentStart) {
     int readStart = 0;
     int refStart = record.getAlignmentStart() - 1;
     final List<CigarElement> cigarElements = new ArrayList<>();
@@ -69,6 +69,7 @@ class PosChecker extends PositionAndStrandChecker {
         if (operator.consumesReadBases()) {
           readStart += consume;
         }
+        updateStrippedStats(operator, consume);
         if (e.getLength() - consume > 0) {
           cigarElements.add(new CigarElement(e.getLength() - consume, operator));
         }
@@ -83,4 +84,5 @@ class PosChecker extends PositionAndStrandChecker {
     record.setCigar(new Cigar(cigarElements));
     record.setAlignmentStart(alignmentStart + 1);
   }
+
 }
