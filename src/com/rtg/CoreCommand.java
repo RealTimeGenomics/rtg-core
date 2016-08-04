@@ -32,6 +32,7 @@ import com.rtg.reader.SamToFastq;
 import com.rtg.reader.Sdf2Cg;
 import com.rtg.reader.Sdf2Quala;
 import com.rtg.reader.SdfSplitter;
+import com.rtg.sam.BamStripProbes;
 import com.rtg.sam.Sam2Bam;
 import com.rtg.sam.SamMergeCli;
 import com.rtg.sam.SamValidatorCli;
@@ -233,6 +234,9 @@ public final class CoreCommand {
   /** Rename read-id field in mapping output */
   static final Command SAMRENAME = new Command(new SamRename(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
+  /** strip probes for mapped bam */
+  static final Command SAMSTRIPPROBES = new Command(new BamStripProbes(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
+
   /** Rename read-id field in mapping output */
   static final Command MAPXRENAME = new Command(new MapxRename(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
@@ -313,7 +317,7 @@ public final class CoreCommand {
     // Utility
     ToolsCommand.BGZIP, ToolsCommand.INDEX, ToolsCommand.EXTRACT, AVIEW,                        // General purpose
     ToolsCommand.SDFSTATS, SDFSPLIT, ToolsCommand.SDFSUBSET, ToolsCommand.SDFSUBSEQ,            // SDF related
-    SAM2BAM, SAMMERGE, SAMSTATS, SAMRENAME, MAPXRENAME,  // Mapping related
+    SAM2BAM, SAMMERGE, SAMSTATS, SAMRENAME, SAMSTRIPPROBES, MAPXRENAME,  // Mapping related
     CHRSTATS, SAM2FASTQ,
     ToolsCommand.MENDELIAN, PHASINGSEARCH, PHASINGEVAL,
     ToolsCommand.VCFSTATS, ToolsCommand.VCFMERGE,                       // VCF related
