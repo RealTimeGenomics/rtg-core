@@ -10,7 +10,7 @@
  * be made from time to time by Real Time Genomics Limited.
  */
 
-package com.rtg.sam;
+package com.rtg.sam.probe;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 /**
  *
  */
-public class BamStripProbesTest extends TestCase {
+public class PosCheckerTest extends TestCase {
 
   static SAMRecord createRecord(String read, String cigar) {
     final SAMRecord rec = new SAMRecord(new SAMFileHeader());
@@ -33,14 +33,15 @@ public class BamStripProbesTest extends TestCase {
   }
 
   public void testSetAlignment() {
-    SAMRecord rec = createRecord("AGGTTTGG", "1=1X1=1X1=1X1=1X");
-    BamStripProbes.setAlignmentStart(rec, 1002);
+    final SAMRecord rec = createRecord("AGGTTTGG", "1=1X1=1X1=1X1=1X");
+    PosChecker.setAlignmentStart(rec, 1002);
     assertEquals("GTTTGG", rec.getReadString());
     assertEquals("1=1X1=1X1=1X", rec.getCigarString());
-    rec = createRecord("AGGTTTGG", "1=1X1=1X3=1X");
-    BamStripProbes.setAlignmentEnd(rec, 1006);
-    assertEquals("AGGTTT", rec.getReadString());
-    assertEquals("1=1X1=1X2=", rec.getCigarString());
   }
 
+  public void testStats() {
+    final PosChecker pos = new PosChecker(10);
+    assertEquals(10, pos.mTolerance);
+    assertEquals(21, pos.mStats.length);
+  }
 }

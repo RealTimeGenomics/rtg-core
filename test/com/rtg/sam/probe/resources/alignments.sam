@@ -1,0 +1,8 @@
+@HD	VN:1.5	SO:coordinate
+@SQ	SN:seq	LN:100000
+rn1	99	seq	701	55	100=	=	1101	500	GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG	####################################################################################################	AS:i:102
+rn2	83	seq	941	55	100=	=	541	-500	GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG	####################################################################################################	AS:i:102
+rn3	83	seq	1961	55	100=	=	1561	-500	GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG	####################################################################################################	AS:i:102
+rn4	83	seq	2921	55	100=	=	2521	-500	GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG	####################################################################################################	AS:i:102
+rn5	99	seq	4001	55	100=	=	4401	500	GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG	####################################################################################################	AS:i:102
+rn6	99	seq	5001	55	100=	=	5401	500	GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG	####################################################################################################	AS:i:102

@@ -1,0 +1,6 @@
+seq	700	750	probe_name_1	741	+
+seq	1000	1040	probe_name_2	848	-
+seq	2000	2060	probe_name_3	880	-
+seq	3000	3020	probe_name_4	695	-
+seq	4000	4030	probe_name_5	576	+
+seq	5000	5050	probe_name_6	880	+

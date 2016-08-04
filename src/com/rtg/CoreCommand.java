@@ -32,7 +32,7 @@ import com.rtg.reader.SamToFastq;
 import com.rtg.reader.Sdf2Cg;
 import com.rtg.reader.Sdf2Quala;
 import com.rtg.reader.SdfSplitter;
-import com.rtg.sam.BamStripProbes;
+import com.rtg.sam.probe.BamStripProbes;
 import com.rtg.sam.Sam2Bam;
 import com.rtg.sam.SamMergeCli;
 import com.rtg.sam.SamValidatorCli;

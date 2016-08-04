@@ -9,30 +9,28 @@
  * code you accept the terms of that license agreement and any amendments to those terms that may
  * be made from time to time by Real Time Genomics Limited.
  */
-package com.rtg.sam;
+package com.rtg.sam.probe;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import com.rtg.bed.BedReader;
 import com.rtg.bed.BedRecord;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
+import com.rtg.sam.SamBamBaseFile;
+import com.rtg.sam.SamUtils;
+import com.rtg.sam.SmartSamWriter;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
 
-import htsjdk.samtools.Cigar;
-import htsjdk.samtools.CigarElement;
-import htsjdk.samtools.CigarOperator;
 import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.SAMFileWriterFactory;
 import htsjdk.samtools.SAMRecord;
@@ -130,93 +128,19 @@ public class BamStripProbes extends AbstractCli {
         }
       }
     }
-    System.err.println("total = " + total);
-    System.err.println("totalstripped = " + totalstripped);
-    System.err.println(String.format("percentage Stripped: %.2f%%", (double) totalstripped / total * 100.0));
-    System.err.println("totalForward = " + totalForward);
-    System.err.println("totalReverse = " + totalReverse);
-    System.err.println("forward = " + forward);
-    System.err.println("reverse = " + reverse);
-    System.err.print(String.format("%9s | %9s %9s%n", "DIFF", "POS", "NEG"));
+    err.println("total = " + total);
+    err.println("totalstripped = " + totalstripped);
+    err.println(String.format("percentage Stripped: %.2f%%", (double) totalstripped / total * 100.0));
+    err.println("totalForward = " + totalForward);
+    err.println("totalReverse = " + totalReverse);
+    err.println("forward = " + forward);
+    err.println("reverse = " + reverse);
+    err.print(String.format("%9s | %9s %9s%n", "DIFF", "POS", "NEG"));
     for (int i = 0; i < posChecker.mStats.length; i++) {
-      System.err.print(String.format("%9d | %9d %9d%n", i - tolerance, posChecker.mStats[i], negChecker.mStats[tolerance * 2 - i]));
+      err.print(String.format("%9d | %9d %9d%n", i - tolerance, posChecker.mStats[i], negChecker.mStats[tolerance * 2 - i]));
     }
 
     return 0;
-  }
-
-  abstract static class PositionAndStrandChecker {
-    protected final int mTolerance;
-    protected final int[] mStats;
-    PositionAndStrandChecker(int tolerance) {
-      mTolerance = tolerance;
-      mStats = new int[mTolerance * 2 + 1];
-    }
-
-    abstract boolean check(SAMRecord record, RangeList.RangeData<String> data);
-    abstract int getStartDataIndex(SAMRecord record, RangeList<String> list);
-    abstract void stripRecord(SAMRecord record, RangeList.RangeData<String> data);
-  }
-
-  private static class PosChecker extends PositionAndStrandChecker {
-    PosChecker(int tolerance) {
-      super(tolerance);
-    }
-
-    @Override
-    public boolean check(SAMRecord record, RangeList.RangeData<String> data) {
-      final int alignmentStart = record.getAlignmentStart() - 1;
-      if (!record.getReadNegativeStrandFlag()) {
-        if (data.getStart() > alignmentStart - mTolerance && data.getStart() < alignmentStart + mTolerance) {
-//                    System.err.println(record.getSAMString() + " strip forward to: " + data.getEnd() + " (" + data.getStart() + " : " + data.getEnd() + ")");
-          return true;
-        }
-      }
-      return false;
-    }
-
-    @Override
-    public int getStartDataIndex(SAMRecord record, RangeList<String> list) {
-      final int alignmentStart = record.getAlignmentStart() - 1;
-      return list.findFullRangeIndex(alignmentStart - mTolerance);
-    }
-
-    @Override
-    void stripRecord(SAMRecord record, RangeList.RangeData<String> data) {
-      final int diff = record.getAlignmentStart() - 1 - data.getStart();
-      mStats[mTolerance + diff]++;
-      setAlignmentStart(record, data.getStart());
-    }
-  }
-  private static class NegChecker extends PositionAndStrandChecker {
-
-    NegChecker(int tolerance) {
-      super(tolerance);
-    }
-
-    @Override
-    public boolean check(SAMRecord record, RangeList.RangeData<String> data) {
-      if (record.getReadNegativeStrandFlag()) {
-        final int alignmentEnd = record.getAlignmentEnd();
-        if (data.getEnd() > alignmentEnd - mTolerance && data.getEnd() < alignmentEnd + mTolerance) {
-//                    System.err.println(record.getSAMString() + "strip back to: " + data.getStart() + " (" + data.getStart() + " : " + data.getEnd() + ")");
-          return true;
-        }
-      }
-      return false;
-    }
-
-    @Override
-    public int getStartDataIndex(SAMRecord record, RangeList<String> list) {
-      return list.findFullRangeIndex(record.getAlignmentEnd() - mTolerance);
-    }
-
-    @Override
-    void stripRecord(SAMRecord record, RangeList.RangeData<String> data) {
-      final int diff = record.getAlignmentEnd() - data.getEnd();
-      mStats[mTolerance + diff]++;
-      setAlignmentEnd(record, data.getEnd());
-    }
   }
 
   private static boolean checkList(RangeList<String> list, SAMRecord record, int tolerance, PositionAndStrandChecker checker) {
@@ -243,12 +167,24 @@ public class BamStripProbes extends AbstractCli {
     if (data == null) {
       return false;
     }
+    final int dataMin;
+    if (data.getStart() - tolerance > data.getStart()) {
+      dataMin = Integer.MIN_VALUE;
+    } else {
+      dataMin = data.getStart() - tolerance;
+    }
+    final int dataMax;
+    if (data.getEnd() + tolerance < data.getEnd()) {
+      dataMax = Integer.MAX_VALUE;
+    } else  {
+      dataMax = data.getEnd() + tolerance;
+    }
     final int alignmentStart = rec.getAlignmentStart() - 1;
-    if (alignmentStart >= data.getStart() - tolerance && alignmentStart < data.getEnd() + tolerance) {
+    if (alignmentStart >= dataMin && alignmentStart < dataMax) {
       return true;
     }
     final int alignmentEnd = rec.getAlignmentEnd();
-    if (alignmentEnd > data.getStart() - tolerance && alignmentEnd < data.getEnd() + tolerance) {
+    if (alignmentEnd > dataMin && alignmentEnd < dataMax) {
       return true;
     }
     return false;
@@ -262,66 +198,7 @@ public class BamStripProbes extends AbstractCli {
     }
   }
 
-  static void setAlignmentStart(SAMRecord record, int alignmentStart) {
-    int readStart = 0;
-    int refStart = record.getAlignmentStart() - 1;
-    final List<CigarElement> cigarElements = new ArrayList<>();
-    for (CigarElement e : record.getCigar().getCigarElements()) {
-      final CigarOperator operator = e.getOperator();
-      if (alignmentStart > refStart) {
-        final int consume = operator.consumesReferenceBases() ? Math.min(alignmentStart - refStart, e.getLength()) : e.getLength();
-        if (operator.consumesReferenceBases()) {
-          refStart += consume;
-        }
-        if (operator.consumesReadBases()) {
-          readStart += consume;
-        }
-        if (e.getLength() - consume > 0) {
-          cigarElements.add(new CigarElement(e.getLength() - consume, operator));
-        }
-      } else {
-        cigarElements.add(e);
-      }
-    }
-    final byte[] readBases = record.getReadBases();
-    record.setReadBases(Arrays.copyOfRange(readBases, readStart, readBases.length));
-    final byte[] baseQualities = record.getBaseQualities();
-    record.setBaseQualities(Arrays.copyOfRange(baseQualities, readStart, readBases.length));
-    record.setCigar(new Cigar(cigarElements));
-    record.setAlignmentStart(alignmentStart + 1);
-  }
 
-  static void setAlignmentEnd(SAMRecord record, int alignmentEnd) {
-    //end positions are 1 based exclusive
-    int readEnd = record.getReadLength();
-    int refEnd = record.getAlignmentEnd();
-    final List<CigarElement> newCigarElements = new ArrayList<>();
-    final List<CigarElement> cigarElements = record.getCigar().getCigarElements();
-    for (int i = cigarElements.size() - 1; i >= 0; i--) {
-      final CigarElement e = cigarElements.get(i);
-      final CigarOperator operator = e.getOperator();
-      if (alignmentEnd < refEnd) {
-        final int consume = operator.consumesReferenceBases() ? Math.min(refEnd - alignmentEnd, e.getLength()) : e.getLength();
-        if (operator.consumesReferenceBases()) {
-          refEnd -= consume;
-        }
-        if (operator.consumesReadBases()) {
-          readEnd -= consume;
-        }
-        if (e.getLength() - consume > 0) {
-          newCigarElements.add(new CigarElement(e.getLength() - consume, operator));
-        }
-      } else {
-        newCigarElements.add(e);
-      }
-    }
-    Collections.reverse(newCigarElements);
-    final byte[] readBases = record.getReadBases();
-    record.setReadBases(Arrays.copyOfRange(readBases, 0, readEnd));
-    final byte[] baseQualities = record.getBaseQualities();
-    record.setBaseQualities(Arrays.copyOfRange(baseQualities, 0, readEnd));
-    record.setCigar(new Cigar(newCigarElements));
-  }
 
   @Override
   public String description() {
