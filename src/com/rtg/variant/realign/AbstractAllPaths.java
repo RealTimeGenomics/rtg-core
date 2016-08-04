@@ -16,7 +16,6 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.mode.DNA;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
-import com.rtg.util.diagnostic.SpyCounter;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
@@ -37,9 +36,6 @@ import com.rtg.visualization.DisplayHelper;
  */
 @TestClass("com.rtg.variant.realign.ScoreMatrixTest")
 public abstract class AbstractAllPaths extends IntegralAbstract implements AllPaths {
-
-  private static final SpyCounter SET_ENV = new SpyCounter("ScoreMatrix setEnv");
-  private static final SpyCounter SET_ENV_RESIZE = new SpyCounter("ScoreMatrix setEnv resize");
 
   private static final int FIELD_DP = 0;
   private static final int FIELD_WIDTH = 3 + FIELD_DP + (FIELD_DP > 0 ? 1 : 0);
@@ -138,19 +134,18 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
 
   @Override
   public void setEnv(final Environment env) {
-    SET_ENV.increment();
     final int width = 2 * env.maxShift() + 1;
-    if (env.readLength() > mMaxLength || width > mMaxWidth) {
-      resizeMatrix(env.readLength(), width);
+    final int readLength = env.readLength();
+    if (readLength > mMaxLength || width > mMaxWidth) {
+      resizeMatrix(readLength, width);
     }
-    mLength = env.readLength();
+    mLength = readLength;
     mWidth = width;
     mEnv = env;
     calculateProbabilities();
   }
 
   void resizeMatrix(int length, int width) {
-    SET_ENV_RESIZE.increment();
     mMaxLength = length;
     mMaxWidth = width;
     mMatch = new double[mMaxLength + 1][mMaxWidth];
@@ -207,6 +202,9 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
    */
   protected final double matchEq(final int i, final int j) {
     final byte te = mEnv.template(templateIndex(i, j));
+    if (te == 0) {
+      return mOneInFourPoss;
+    }
     return matchEqTe(i, te);
   }
 
@@ -229,24 +227,24 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
   final double matchEqTe(final int i, final byte nt) {
     final byte re = mEnv.read(i);
     //System.err.println("         i=" + i + " j=" + j + " te=" + te + " re=" + re + " sum=" + sum);
-    final double incr;
-    if (nt == 0 || re == 0) {
-      incr = mOneInFourPoss;
-    } else {
-      final double q = mEnv.quality(i);
-      final double q3 = q / 3.0;
-      if (nt == re) {
-        incr = mArith.add(mArith.multiply(mMatchPoss, mArith.prob2Poss(1.0 - q)),
-          mArith.multiply(mMisMatchPoss, mArith.prob2Poss(q3)));
-        //System.err.println("match    i=" + i + " j=" + j + " incr=" + incr + " res=" + (sum + incr));
-      } else {
-        final double x = mArith.multiply(mMatchPoss, mArith.prob2Poss(q3));
-        final double y = mArith.multiply(mMisMatchPoss, mArith.prob2Poss((1.0 - q3) / 3.0));
-        incr = mArith.add(x, y);
-        //System.err.println("mismatch i=" + i + " j=" + j + " x=" + x + " y=" + y + " incr=" + incr + " res=" + (sum + incr));
-      }
+    if (re == 0) {
+      return mOneInFourPoss;
     }
-    return incr;
+
+    final double q = mEnv.quality(i);
+    final double q3 = q / 3.0;
+    final double match;
+    final double misMatch;
+    if (nt == re) {
+      match = 1.0 - q;
+      misMatch = q3;
+    } else {
+      match = q3;
+      misMatch = (1.0 - q3) / 3.0;
+    }
+    final double x = mArith.multiply(mMatchPoss, mArith.prob2Poss(match));
+    final double y = mArith.multiply(mMisMatchPoss, mArith.prob2Poss(misMatch));
+    return mArith.add(x, y);
   }
 
   @Override
@@ -492,30 +490,30 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
     return true;
   }
 
-  double insert(final int row, final int col) {
+  final double insert(final int row, final int col) {
     return mInsert[row][col];
   }
 
-  protected final void setInsert(final int row, final int col, final double poss) {
-    assert !Double.isNaN(poss) && poss != Double.POSITIVE_INFINITY : poss + " @ " + row + ":" + col;
+  final void setInsert(final int row, final int col, final double poss) {
+//    assert !Double.isNaN(poss) && poss != Double.POSITIVE_INFINITY : poss + " @ " + row + ":" + col;
     mInsert[row][col] = poss;
   }
 
-  double delete(final int row, final int col) {
+  final double delete(final int row, final int col) {
     return mDelete[row][col];
   }
 
-  protected final void setDelete(final int row, final int col, final double poss) {
-    assert !Double.isNaN(poss) && poss != Double.POSITIVE_INFINITY : poss + " @ " + row + ":" + col;
+  final void setDelete(final int row, final int col, final double poss) {
+//    assert !Double.isNaN(poss) && poss != Double.POSITIVE_INFINITY : poss + " @ " + row + ":" + col;
     mDelete[row][col] = poss;
   }
 
-  double match(final int row, final int col) {
+  final double match(final int row, final int col) {
     return mMatch[row][col];
   }
 
-  protected final void setMatch(final int row, final int col, final double poss) {
-    assert !Double.isNaN(poss) && poss != Double.POSITIVE_INFINITY : poss + " @ " + row + ":" + col;
+  final void setMatch(final int row, final int col, final double poss) {
+//    assert !Double.isNaN(poss) && poss != Double.POSITIVE_INFINITY : poss + " @ " + row + ":" + col;
     mMatch[row][col] = poss;
   }
 }

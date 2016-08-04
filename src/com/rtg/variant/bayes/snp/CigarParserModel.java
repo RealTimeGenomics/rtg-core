@@ -167,8 +167,9 @@ public class CigarParserModel implements ReadParserInterface {
       }
       //System.err.println("i=" + readNt);
       mInBlock = true;
-      if (mMatcherIndel != null && includeBase(getReadPosition()) && mStart <= getTemplatePosition() && getTemplatePosition() < mEnd) {
-        mMatcherIndel.match(getTemplatePosition(), EvidenceIndelFactory.SINGLETON.evidence(EvidenceIndel.INSERT, /*unused*/0, /*unused*/0, mMapScore, /*unused*/0, /*unused*/0, mOperationLength, false));
+      final int templatePosition = getTemplatePosition();
+      if (mMatcherIndel != null && includeBase(getReadPosition()) && mStart <= templatePosition && templatePosition < mEnd) {
+        mMatcherIndel.match(templatePosition, EvidenceIndelFactory.SINGLETON.evidence(EvidenceIndel.INSERT, /*unused*/0, /*unused*/0, mMapScore, /*unused*/0, /*unused*/0, mOperationLength, false));
       }
     }
 
@@ -180,8 +181,10 @@ public class CigarParserModel implements ReadParserInterface {
         }
         //System.err.println("i=" + readNt);
         mInBlock = true;
-        if (mMatcherIndel != null && includeBase(getReadPosition()) && mStart <= getTemplatePosition() && getTemplatePosition() < mEnd) {
-          mMatcherIndel.match(getTemplatePosition(), EvidenceIndelFactory.SINGLETON.evidence(getReadPosition() == 0 ? EvidenceIndel.SOFT_CLIP_LEFT : EvidenceIndel.SOFT_CLIP_RIGHT, /*unused*/0, /*unused*/0, mMapScore, /*unused*/0, /*unused*/0, mOperationLength, false));
+        final int readPosition = getReadPosition();
+        final int templatePosition = getTemplatePosition();
+        if (mMatcherIndel != null && includeBase(readPosition) && mStart <= templatePosition && templatePosition < mEnd) {
+          mMatcherIndel.match(templatePosition, EvidenceIndelFactory.SINGLETON.evidence(readPosition == 0 ? EvidenceIndel.SOFT_CLIP_LEFT : EvidenceIndel.SOFT_CLIP_RIGHT, /*unused*/0, /*unused*/0, mMapScore, /*unused*/0, /*unused*/0, mOperationLength, false));
         }
       }
     }
@@ -190,8 +193,9 @@ public class CigarParserModel implements ReadParserInterface {
     protected void doTemplateOnly(int templateNt) {
       //System.err.println("d=" + templateNt);
       if (mMatcherIndel != null && includeBase(getReadPosition())) {
-        if (mStart <= getTemplatePosition() && getTemplatePosition() < mEnd) {
-          mMatcherIndel.match(getTemplatePosition(), EvidenceIndelFactory.SINGLETON.evidence(EvidenceIndel.DELETE, /*unused*/0, /*unused*/0, mMapScore, /*unused*/0, /*unused*/0, mOperationLength, false));
+        final int templatePosition = getTemplatePosition();
+        if (mStart <= templatePosition && templatePosition < mEnd) {
+          mMatcherIndel.match(templatePosition, EvidenceIndelFactory.SINGLETON.evidence(EvidenceIndel.DELETE, /*unused*/0, /*unused*/0, mMapScore, /*unused*/0, /*unused*/0, mOperationLength, false));
         }
       }
     }
@@ -211,40 +215,42 @@ public class CigarParserModel implements ReadParserInterface {
     }
 
     private void doSubstitutionOrEquality(final int readNt) throws BadSuperCigarException {
-      final boolean should = includeBase(getReadPosition());
-      if (should && mStart <= getTemplatePosition() && getTemplatePosition() < mEnd) {
+      final int readPosition = getReadPosition();
+      final boolean should = includeBase(readPosition);
+      final int templatePosition = getTemplatePosition();
+      if (should && mStart <= templatePosition && templatePosition < mEnd) {
         int currentQuality = getCurrentQuality();
         if (ILLUMINA_HOMOPOLYMER_HACK) {
-          final int templatePos = getTemplatePosition();
-          if (templatePos > 2 && templatePos < getTemplateLength() - 2) {
+          if (templatePosition > 2 && templatePosition < getTemplateLength() - 2) {
             final boolean homop;
-            final byte currentTemplate = templateNt(templatePos);
+            final byte currentTemplate = templateNt(templatePosition);
             final boolean match = readNt == currentTemplate || readNt == DNA.N.ordinal() || currentTemplate == DNA.N.ordinal();
             final byte homopTemplate;
             if (mIsForward) {
               //equal if current or previous nt are same or previous and one before are same
-              homop = templateNt(templatePos - 1) == templateNt(templatePos - 2);
-              homopTemplate = templateNt(templatePos - 1);
+              homop = templateNt(templatePosition - 1) == templateNt(templatePosition - 2);
+              homopTemplate = templateNt(templatePosition - 1);
             } else {
-              homop = templateNt(templatePos + 1) == templateNt(templatePos + 2);
-              homopTemplate = templateNt(templatePos + 1);
+              homop = templateNt(templatePosition + 1) == templateNt(templatePosition + 2);
+              homopTemplate = templateNt(templatePosition + 1);
             }
             if (!match && homop && readNt == homopTemplate) {
               currentQuality = 2;
             }
           }
         }
-        mMatcherNt.match(getTemplatePosition(), getReadPosition(), getReadLength() - getReadPosition() - 1, readNt, mMapScore, currentQuality, mMatcherNt.getStateIndex(mIsForward, mIsReadPaired, mIsMated));
+        mMatcherNt.match(templatePosition, readPosition, getReadLength() - readPosition - 1, readNt, mMapScore, currentQuality, mMatcherNt.getStateIndex(mIsForward, mIsReadPaired, mIsMated));
         if (mMatcherIndel != null) { //for coverage-sensitive indel triggering, we need to use a dummy match for the indels to work out the coverage down deeper.
-          mMatcherIndel.match(getTemplatePosition(), null);
+          mMatcherIndel.match(templatePosition, null);
         }
       }
     }
 
     @Override
     protected void doUnmapped() {
-      if (mStart <= getTemplatePosition() && getTemplatePosition() < mEnd) {
-        mMatcherNt.unmapped(getTemplatePosition());
+      final int templatePosition = getTemplatePosition();
+      if (mStart <= templatePosition && templatePosition < mEnd) {
+        mMatcherNt.unmapped(templatePosition);
       }
     }
 
@@ -268,9 +274,10 @@ public class CigarParserModel implements ReadParserInterface {
      * @return true if this base should be included
      */
     private boolean includeBase(int rPos) {
+      final int readLength = getReadLength();
       return !mCgTrimOuterBases
         || (!mIsCgOverlapLeft && rPos < (CgUtils.CG_RAW_READ_LENGTH - CgUtils.CG_OVERLAP_POSITION))
-        || (mIsCgOverlapLeft && rPos >= (getReadLength() == 0 ? CgUtils.CG_OVERLAP_POSITION : getReadLength() - (CgUtils.CG_RAW_READ_LENGTH - CgUtils.CG_OVERLAP_POSITION)));
+        || (mIsCgOverlapLeft && rPos >= (readLength == 0 ? CgUtils.CG_OVERLAP_POSITION : readLength - (CgUtils.CG_RAW_READ_LENGTH - CgUtils.CG_OVERLAP_POSITION)));
     }
 
   }

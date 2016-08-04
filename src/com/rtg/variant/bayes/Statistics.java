@@ -66,25 +66,24 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
       return; // Don't increment any other stats for unmapped evidence
     }
 
-    if (evidence.read() == Hypotheses.NO_HYPOTHESIS) {
+    final int read = evidence.read();
+    if (read == Hypotheses.NO_HYPOTHESIS) {
       return;
     }
 
     // Used for short circuit detection, integer increments OK
-    if (evidence.read() != reference) {
+    if (read != reference) {
       mNonRefCount++;
     }
 
     // Used for internally self-consistent stats calculations, so can be integer increments
-    final boolean left = evidence.getReadBasesLeft() >= evidence.getReadBasesRight();
-    final boolean right = evidence.getReadBasesRight() >= evidence.getReadBasesLeft();
-    if (left) {
-      mCountLeft++;
-    }
-    if (right) {
-      mCountRight++;
-    }
-    incrementBest(evidence, evidence.read());
+    final int readBasesLeft = evidence.getReadBasesLeft();
+    final int readBasesRight = evidence.getReadBasesRight();
+    final int left = readBasesLeft >= readBasesRight ? 1 : 0;
+    final int right = readBasesRight >= readBasesLeft ? 1 : 0;
+    mCountLeft += left;
+    mCountRight += right;
+    incrementBest(evidence, read);
   }
 
   /**

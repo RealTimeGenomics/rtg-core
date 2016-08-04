@@ -13,7 +13,6 @@
 package com.rtg.variant.realign;
 
 import com.reeltwo.jumble.annotations.TestClass;
-import com.rtg.util.diagnostic.SpyCounter;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
@@ -26,8 +25,6 @@ import com.rtg.variant.util.arithmetic.SimplePossibility;
  */
 @TestClass(value = "com.rtg.variant.realign.ScoreFastUnderflowTest")
 public abstract class AbstractAllPathsFastUnderflow extends IntegralAbstract implements AllPaths {
-  private static final SpyCounter SPY0 = new SpyCounter("ScoreFast");
-  private static final SpyCounter SPY = new SpyCounter("ScoreFast underflow");
 
   private final RealignParams mParams;
 
@@ -56,10 +53,8 @@ public abstract class AbstractAllPathsFastUnderflow extends IntegralAbstract imp
       mFast = makeMatrix(SimplePossibility.SINGLETON, mParams);
     }
     mFast.setEnv(env);
-    SPY0.increment();
     if (mFast.underflow()) {
       //System.err.println("Underflow");
-      SPY.increment();
       if (mSlowSure == null) {
         mSlowSure = makeMatrix(LogApproximatePossibility.SINGLETON, mParams);
       }

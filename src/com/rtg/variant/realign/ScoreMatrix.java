@@ -12,7 +12,6 @@
 
 package com.rtg.variant.realign;
 
-import com.rtg.util.diagnostic.SpyCounter;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 
@@ -26,8 +25,6 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  */
 public class ScoreMatrix extends AbstractAllPaths {
 
-  private static final SpyCounter SPY = new SpyCounter("ScoreMatrix");
-
   /**
    * A score matrix with the given maximum band width.
    * @param arith helper object that does the arithmetic so that this code can be independent of the representation.
@@ -35,7 +32,6 @@ public class ScoreMatrix extends AbstractAllPaths {
    */
   protected ScoreMatrix(PossibilityArithmetic arith, final RealignParams params) {
     super(arith, params);
-    SPY.increment();
   }
 
   protected final double calculateDelete(final int i, final int j) {
