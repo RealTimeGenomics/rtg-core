@@ -22,17 +22,14 @@ import com.rtg.bed.BedReader;
 import com.rtg.bed.BedRecord;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
-import com.rtg.sam.SamBamBaseFile;
+import com.rtg.sam.SamOutput;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.SmartSamWriter;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.ReferenceRanges;
-import com.rtg.util.io.FileUtils;
 
-import htsjdk.samtools.SAMFileWriter;
-import htsjdk.samtools.SAMFileWriterFactory;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SamReader;
 
@@ -64,7 +61,6 @@ public class BamStripProbes extends AbstractCli {
 
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
-    final SamBamBaseFile baseFile = SamBamBaseFile.getBaseFile((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), !mFlags.isSet(CommonFlags.NO_GZIP));
     final int tolerance = (Integer) mFlags.getValue(TOLERANCE_FLAG);
     final File input = (File) mFlags.getValue(CommonFlags.INPUT_FLAG);
     long totalstripped = 0;
@@ -94,37 +90,37 @@ public class BamStripProbes extends AbstractCli {
       final ReferenceRanges<String> posRanges = posRangesAccum.getReferenceRanges();
       final ReferenceRanges<String> negRanges = negRangesAccum.getReferenceRanges();
 //      final ReferenceRanges<String> bedReferenceRanges = SamRangeUtils.createBedReferenceRanges(reader.getFileHeader(), (File) mFlags.getValue(PROBE_BED));
-      try (SmartSamWriter writer = new SmartSamWriter(getSAMFileWriter(baseFile, reader))) {
-        for (SAMRecord record : reader) {
-          if (!record.getReadUnmappedFlag()) {
-            if (record.getFirstOfPairFlag()) {
-              boolean stripped = false;
-              boolean neg = false;
-              if (checkList(posRanges.get(record.getReferenceName()), record, tolerance, posChecker)) {
-                stripped = true;
-              } else if (checkList(negRanges.get(record.getReferenceName()), record, tolerance, negChecker)) {
-                stripped = true;
-                neg = true;
-              }
-              if (record.getReadNegativeStrandFlag()) {
-                totalReverse++;
-              } else {
-                totalForward++;
-              }
-              if (stripped) {
-                totalstripped++;
-                if (record.getReadNegativeStrandFlag()) {
-                  reverse++;
-                } else {
-                  forward++;
+      try (SamOutput samOutput = SamOutput.getSamOutput((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), out, reader.getFileHeader(), !mFlags.isSet(CommonFlags.NO_GZIP))) {
+        try (SmartSamWriter writer = new SmartSamWriter(samOutput.getWriter())) {
+          for (SAMRecord record : reader) {
+            if (!record.getReadUnmappedFlag()) {
+              if (record.getFirstOfPairFlag()) {
+                boolean stripped = false;
+                if (checkList(posRanges.get(record.getReferenceName()), record, tolerance, posChecker)) {
+                  stripped = true;
+                } else if (checkList(negRanges.get(record.getReferenceName()), record, tolerance, negChecker)) {
+                  stripped = true;
                 }
-              } else {
-                record.setAttribute("XS", "failed");
+                if (record.getReadNegativeStrandFlag()) {
+                  totalReverse++;
+                } else {
+                  totalForward++;
+                }
+                if (stripped) {
+                  totalstripped++;
+                  if (record.getReadNegativeStrandFlag()) {
+                    reverse++;
+                  } else {
+                    forward++;
+                  }
+                } else {
+                  record.setAttribute("XS", "failed");
+                }
+                total++;
               }
-              total++;
             }
+            writer.addRecord(record);
           }
-          writer.addRecord(record);
         }
       }
     }
@@ -197,16 +193,6 @@ public class BamStripProbes extends AbstractCli {
     }
     return false;
   }
-
-  private SAMFileWriter getSAMFileWriter(SamBamBaseFile baseFile, SamReader reader) throws IOException {
-    if (baseFile.isBam()) {
-      return new SAMFileWriterFactory().makeBAMWriter(reader.getFileHeader(), true, FileUtils.createOutputStream(baseFile.suffixedFile(""), false));
-    } else {
-      return new SAMFileWriterFactory().makeSAMWriter(reader.getFileHeader(), true, FileUtils.createOutputStream(baseFile.suffixedFile(""), baseFile.isGzip()));
-    }
-  }
-
-
 
   @Override
   public String description() {
