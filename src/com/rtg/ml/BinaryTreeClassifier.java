@@ -69,7 +69,7 @@ public final class BinaryTreeClassifier implements PredictClassifier {
       mLeftFraction = dis.readDouble();
       mRightFraction = dis.readDouble();
     } else {
-      throw new IOException("Unsupported version");
+      throw new IOException("Unsupported tree version: " + mCurrentVersion);
     }
   }
 

@@ -70,7 +70,7 @@ public class ZeroRBuilder implements BuildClassifier {
         mProb = dis.readDouble();
         mDesc = dis.readUTF();
       } else {
-        throw new IOException("Unsupported version");
+        throw new IOException("Unsupported 0R version: " + mCurrentVersion);
       }
     }
 

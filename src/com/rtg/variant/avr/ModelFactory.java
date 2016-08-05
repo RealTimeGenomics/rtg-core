@@ -111,7 +111,7 @@ public class ModelFactory {
             throw new UnsupportedOperationException("Loading support not implemented for AVR model type: " + modelType);
         }
       } catch (RuntimeException re) {
-        throw new NoTalkbackSlimException("Corrupt AVR model: " + avrFile.getPath());
+        throw new NoTalkbackSlimException(re, "Could not load AVR model: " + avrFile.getPath() + ". It may be created with a newer version of RTG, or may be corrupt.");
       }
     }
   }

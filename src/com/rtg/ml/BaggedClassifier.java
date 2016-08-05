@@ -47,7 +47,7 @@ final class BaggedClassifier implements PredictClassifier {
         mClassifiers[i] = MlPredictLoader.loadPredictClassifier(dis, data);
       }
     } else {
-      throw new IOException("Unsupported version");
+      throw new IOException("Unsupported bag version: " + mCurrentVersion);
     }
     //System.out.println(this.toString(new StringBuilder(), "").toString());
   }

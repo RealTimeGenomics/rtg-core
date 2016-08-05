@@ -74,7 +74,7 @@ public class MlAvrPredictModel extends AbstractPredictModel {
       mAttributeExtractor = AttributeExtractor.load(is);
       mClassifier = MlPredictLoader.loadPredictClassifier(is, mAttributeExtractor.getDataset());
     } else {
-      throw new IOException("Unsupported version");
+      throw new IOException("Unsupported model version: " + mCurrentVersion);
     }
   }
 
