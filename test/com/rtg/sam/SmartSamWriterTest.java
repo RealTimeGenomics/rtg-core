@@ -14,7 +14,6 @@ package com.rtg.sam;
 
 import java.io.IOException;
 
-import com.rtg.util.StringUtils;
 import com.rtg.util.io.MemoryPrintStream;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -59,10 +58,11 @@ public class SmartSamWriterTest extends TestCase {
     smartSamWriter.addRecord(records[1]);
     smartSamWriter.close();
     final StringBuilder sb = new StringBuilder();
+    sb.append(SamUtils.getHeaderAsString(records[0].getHeader()));
     for (SAMRecord r : records) {
       sb.append(r.getSAMString());
     }
-    assertEquals(sb.toString(), StringUtils.grepMinusV(mps.toString(), "^@"));
+    assertEquals(sb.toString(), mps.toString());
   }
 
 }
