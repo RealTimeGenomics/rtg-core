@@ -248,7 +248,7 @@ public final class MapFlags {
    * @param flags shared flags
    */
   static void initDontUnifyFlag(CFlags flags) {
-    flags.registerOptional(DONT_UNIFY_FLAG, "output mated/unmated/unmapped alignments into separate SAM/BAM files").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerOptional(DONT_UNIFY_FLAG, "output mated/unmated/unmapped alignments into separate SAM/BAM files").setCategory(CommonFlagCategories.UTILITY);
   }
 
   /**

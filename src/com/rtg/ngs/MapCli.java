@@ -196,8 +196,8 @@ public class MapCli extends ParamsCli<NgsParams>  {
 
   static void initRamMapFlags(CFlags flags) {
     flags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, CommonFlags.INT, "maximum number of top equal results output per read", 5).setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(MapFlags.NO_UNMAPPED, "do not output unmapped reads").setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(MapFlags.NO_UNMATED, "do not output unmated reads when in paired-end mode").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(MapFlags.NO_UNMAPPED, "do not output unmapped reads").setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(MapFlags.NO_UNMATED, "do not output unmated reads when in paired-end mode").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(MapFlags.OUTPUT_UNFILTERED, "output all alignments meeting thresholds instead of applying mating and N limits").setCategory(CommonFlagCategories.REPORTING);
 
     //x flags

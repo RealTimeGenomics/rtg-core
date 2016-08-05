@@ -283,7 +283,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   public void initFlags(CFlags flags) {
     flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
-    flags.registerOptional(NO_CALIBRATION, "if set, ignore mapping calibration files").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(NO_CALIBRATION, "if set, ignore mapping calibration files").setCategory(UTILITY);
     flags.registerRequired('t', TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the reads have been mapped against").setCategory(INPUT_OUTPUT);
     CommonFlags.initOutputDirFlag(flags);
     CommonFlags.initNoGzip(flags);

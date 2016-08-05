@@ -424,7 +424,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
     flags.registerOptional(COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", true).setCategory(UTILITY);
     flags.registerOptional(TEMP_DIR, File.class, "DIR", "directory used for temporary files (Defaults to output directory)").setCategory(UTILITY);
     flags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary files", true).setCategory(UTILITY);
-    flags.registerOptional(MapFlags.NO_UNMAPPED, "do not output unmapped reads").setCategory(REPORTING);
+    flags.registerOptional(MapFlags.NO_UNMAPPED, "do not output unmapped reads").setCategory(UTILITY);
     flags.registerOptional('w', WORDSIZE_FLAG, Integer.class, "int", "word size", 7).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('a', MISMATCHES_FLAG, Integer.class, "INT", "guaranteed minimum number of identical mismatches which will be detected", 1).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('b', GAPS_FLAG, Integer.class, "INT", "guaranteed minimum number of gaps which will be detected (if this is larger than the minimum number of mismatches then the minimum number of mismatches is increased to the same value)", 0).setCategory(SENSITIVITY_TUNING);

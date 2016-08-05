@@ -192,8 +192,8 @@ public class CgMapCli extends ParamsCli<NgsParams> {
 
     mFlags.registerOptional('e', MapFlags.MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, "INT", "maximum mismatches allowed for mated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_MATED_MISMATCH_THRESHOLD)).setCategory(REPORTING);
     mFlags.registerOptional('E', MapFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, "INT", "maximum mismatches allowed for unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_UNMATED_MISMATCH_THRESHOLD)).setCategory(REPORTING);
-    mFlags.registerOptional(MapFlags.NO_UNMATED, "do not report unmated").setCategory(REPORTING);
-    mFlags.registerOptional(MapFlags.NO_UNMAPPED, "do not report unmapped").setCategory(REPORTING);
+    mFlags.registerOptional(MapFlags.NO_UNMATED, "do not report unmated").setCategory(UTILITY);
+    mFlags.registerOptional(MapFlags.NO_UNMAPPED, "do not report unmapped").setCategory(UTILITY);
 
     mFlags.registerOptional(TEMP_DIR, File.class, "DIR", "directory used for temporary files (Defaults to output directory)").setCategory(UTILITY);
 
