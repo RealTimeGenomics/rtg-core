@@ -79,6 +79,7 @@ class PosChecker extends PositionAndStrandChecker {
     }
     final byte[] readBases = record.getReadBases();
     record.setReadBases(Arrays.copyOfRange(readBases, readStart, readBases.length));
+    //record.setAttribute("XP", new String(readBases, 0, readStart));
     final byte[] baseQualities = record.getBaseQualities();
     record.setBaseQualities(Arrays.copyOfRange(baseQualities, readStart, readBases.length));
     record.setCigar(new Cigar(cigarElements));

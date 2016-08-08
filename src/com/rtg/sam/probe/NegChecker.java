@@ -84,9 +84,11 @@ class NegChecker extends PositionAndStrandChecker {
     Collections.reverse(newCigarElements);
     final byte[] readBases = record.getReadBases();
     record.setReadBases(Arrays.copyOfRange(readBases, 0, readEnd));
+    final int trimmed = readBases.length - readEnd;
+    //record.setAttribute("XP", new String(readBases, readEnd, trimmed));
     final byte[] baseQualities = record.getBaseQualities();
     record.setBaseQualities(Arrays.copyOfRange(baseQualities, 0, readEnd));
     record.setCigar(new Cigar(newCigarElements));
-    mBasesTrimmed += readBases.length - readEnd;
+    mBasesTrimmed += trimmed;
   }
 }

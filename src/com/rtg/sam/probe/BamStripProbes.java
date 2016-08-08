@@ -137,7 +137,7 @@ public class BamStripProbes extends AbstractCli {
     summary.addRow("Strand", "Alignments", "Stripped", "Identified", "nt/read");
     summary.addSeparator();
     summary.addRow("+", Long.toString(totalPos), Long.toString(posStripped), String.format("%.2f%%", (double) posStripped / totalPos * 100.0), String.format("%.1f", (double) posChecker.mBasesTrimmed / posStripped));
-    summary.addRow("-", Long.toString(totalNeg), Long.toString(negStripped), String.format("%.2f%%", (double) negStripped / totalNeg * 100.0), String.format("%.1f", (double) negChecker.mBasesTrimmed / posStripped));
+    summary.addRow("-", Long.toString(totalNeg), Long.toString(negStripped), String.format("%.2f%%", (double) negStripped / totalNeg * 100.0), String.format("%.1f", (double) negChecker.mBasesTrimmed / negStripped));
     summary.addRow("Both", Long.toString(total), Long.toString(totalstripped), String.format("%.2f%%", (double) totalstripped / total * 100.0), String.format("%.1f", (double) (posChecker.mBasesTrimmed + negChecker.mBasesTrimmed) / totalstripped));
     err.println(summary);
 
