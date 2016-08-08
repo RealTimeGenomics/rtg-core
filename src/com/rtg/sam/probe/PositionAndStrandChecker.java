@@ -20,14 +20,16 @@ import htsjdk.samtools.SAMRecord;
  * Checks whether a record should be stripped according to given criteria. Provides stripping function.
  */
 abstract class PositionAndStrandChecker {
+
+  static final int MAX_OP_LEN = 20;
+
   protected final int mTolerance;
   protected final int[] mPosDiffStats;
   protected final int[] mSoftClipStats;
   protected final int[] mMismatchStats;
   protected final int[] mInsertStats;
   protected final int[] mDeletionStats;
-
-  static final int MAX_OP_LEN = 20;
+  protected long mBasesTrimmed = 0;
 
   PositionAndStrandChecker(int tolerance) {
     mTolerance = tolerance;

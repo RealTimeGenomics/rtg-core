@@ -83,6 +83,7 @@ class PosChecker extends PositionAndStrandChecker {
     record.setBaseQualities(Arrays.copyOfRange(baseQualities, readStart, readBases.length));
     record.setCigar(new Cigar(cigarElements));
     record.setAlignmentStart(alignmentStart + 1);
+    mBasesTrimmed += readStart;
   }
 
 }

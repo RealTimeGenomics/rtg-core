@@ -25,6 +25,7 @@ import com.rtg.launcher.CommonFlags;
 import com.rtg.sam.SamOutput;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.SmartSamWriter;
+import com.rtg.util.TextTable;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.intervals.RangeList;
@@ -38,11 +39,23 @@ import htsjdk.samtools.SamReader;
  */
 public class BamStripProbes extends AbstractCli {
 
-  private static final String NAME = "sam-strip-probes";
-
-  private static final String DESC = "Remove probes from mapped SAM/BAM";
   private static final String PROBE_BED = "probe-bed";
   private static final String TOLERANCE_FLAG = "tolerance";
+
+
+  private ReferenceRanges<String> mPosRanges;
+  private ReferenceRanges<String> mNegRanges;
+
+
+  @Override
+  public String moduleName() {
+    return "deprobe";
+  }
+
+  @Override
+  public String description() {
+    return "trim strand-specific probes from mapped SAM/BAM alignments";
+  }
 
   @Override
   protected void initFlags() {
@@ -52,10 +65,10 @@ public class BamStripProbes extends AbstractCli {
   private static void initFlags(CFlags flags) {
     flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
-    flags.registerRequired('i', CommonFlags.INPUT_FLAG, File.class, "FILE", "SAM or BAM input file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "FILE", "SAM or BAM output file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerRequired('b', PROBE_BED, File.class, "FILE", "Bed file for probes").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "Start position tolerance for probe", 3).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerRequired('i', CommonFlags.INPUT_FLAG, File.class, "FILE", "SAM/BAM file containing input alignments").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "FILE", "name for output SAM/BAM file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerRequired('b', PROBE_BED, File.class, "FILE", "BED file specifying each probe location and strand").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "start position tolerance for probe matching", 3).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     CommonFlags.initNoGzip(flags);
   }
 
@@ -63,60 +76,33 @@ public class BamStripProbes extends AbstractCli {
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
     final int tolerance = (Integer) mFlags.getValue(TOLERANCE_FLAG);
     final File input = (File) mFlags.getValue(CommonFlags.INPUT_FLAG);
-    long totalstripped = 0;
-    long total = 0;
-    long totalForward = 0;
-    long totalReverse = 0;
-    long forward = 0;
-    long reverse = 0;
+    long totalPos = 0;
+    long totalNeg = 0;
+    long posStripped = 0;
+    long negStripped = 0;
     final PosChecker posChecker = new PosChecker(tolerance);
     final NegChecker negChecker = new NegChecker(tolerance);
+    final File bedFile = (File) mFlags.getValue(PROBE_BED);
     try (SamReader reader = SamUtils.makeSamReader(input)) {
-      final ReferenceRanges.Accumulator<String> posRangesAccum = new ReferenceRanges.Accumulator<>();
-      final ReferenceRanges.Accumulator<String> negRangesAccum = new ReferenceRanges.Accumulator<>();
-      try (BedReader bedReader = BedReader.openBedReader(null, (File) mFlags.getValue(PROBE_BED), 3)) {
-        while (bedReader.hasNext()) {
-          final BedRecord record = bedReader.next();
-          final RangeList.RangeData<String> rangeData = new RangeList.RangeData<>(record.getStart(), record.getEnd(), Arrays.asList(record.getAnnotations()));
-          if ("+".equals(record.getAnnotations()[2])) {
-            posRangesAccum.addRangeData(record.getSequenceName(), rangeData);
-          } else if ("-".equals(record.getAnnotations()[2])) {
-            negRangesAccum.addRangeData(record.getSequenceName(), rangeData);
-          } else {
-            throw new RuntimeException("badness: " + record);
-          }
-        }
-      }
-      final ReferenceRanges<String> posRanges = posRangesAccum.getReferenceRanges();
-      final ReferenceRanges<String> negRanges = negRangesAccum.getReferenceRanges();
+      loadProbeBed(bedFile);
 //      final ReferenceRanges<String> bedReferenceRanges = SamRangeUtils.createBedReferenceRanges(reader.getFileHeader(), (File) mFlags.getValue(PROBE_BED));
       try (SamOutput samOutput = SamOutput.getSamOutput((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), out, reader.getFileHeader(), !mFlags.isSet(CommonFlags.NO_GZIP))) {
         try (SmartSamWriter writer = new SmartSamWriter(samOutput.getWriter())) {
           for (SAMRecord record : reader) {
             if (!record.getReadUnmappedFlag()) {
               if (record.getFirstOfPairFlag()) {
-                boolean stripped = false;
-                if (checkList(posRanges.get(record.getReferenceName()), record, tolerance, posChecker)) {
-                  stripped = true;
-                } else if (checkList(negRanges.get(record.getReferenceName()), record, tolerance, negChecker)) {
-                  stripped = true;
-                }
-                if (record.getReadNegativeStrandFlag()) {
-                  totalReverse++;
-                } else {
-                  totalForward++;
-                }
-                if (stripped) {
-                  totalstripped++;
-                  if (record.getReadNegativeStrandFlag()) {
-                    reverse++;
-                  } else {
-                    forward++;
-                  }
+                if (checkList(mPosRanges.get(record.getReferenceName()), record, tolerance, posChecker)) {
+                  posStripped++;
+                } else if (checkList(mNegRanges.get(record.getReferenceName()), record, tolerance, negChecker)) {
+                  negStripped++;
                 } else {
                   record.setAttribute("XS", "failed");
                 }
-                total++;
+                if (record.getReadNegativeStrandFlag()) {
+                  totalNeg++;
+                } else {
+                  totalPos++;
+                }
               }
             }
             writer.addRecord(record);
@@ -124,27 +110,63 @@ public class BamStripProbes extends AbstractCli {
         }
       }
     }
-    err.println("total = " + total);
-    err.println("totalstripped = " + totalstripped);
-    err.println(String.format("percentage Stripped: %.2f%%", (double) totalstripped / total * 100.0));
-    err.println("totalForward = " + totalForward);
-    err.println("totalReverse = " + totalReverse);
-    err.println("forward = " + forward);
-    err.println("reverse = " + reverse);
-    err.print(String.format("%9s | %9s %9s%n", "DIFF", "POS", "NEG"));
+
+    err.println("PROBE OFFSETS");
+    final TextTable offsetSummary = new TextTable();
+    offsetSummary.addRow("Delta", "+", "-");
+    offsetSummary.addSeparator();
     for (int i = 0; i < posChecker.mPosDiffStats.length; i++) {
-      err.print(String.format("%9d | %9d %9d%n", i - tolerance, posChecker.mPosDiffStats[i], negChecker.mPosDiffStats[tolerance * 2 - i]));
+      offsetSummary.addRow(Integer.toString(i - tolerance), Integer.toString(posChecker.mPosDiffStats[i]), Integer.toString(negChecker.mPosDiffStats[tolerance * 2 - i]));
     }
-    err.print(String.format("(S) %4s  | %9s %9s %9s %9s%n", "LEN", "SOFT", "MISM", "INS", "DEL"));
-    for (int i = 0; i < PositionAndStrandChecker.MAX_OP_LEN  - 1; i++) {
-      err.print(String.format("(+) %4d  | %9d %9d %9d %9d%n", i + 1, posChecker.mSoftClipStats[i], posChecker.mMismatchStats[i], posChecker.mInsertStats[i], posChecker.mDeletionStats[i]));
-      err.print(String.format("(-) %4d  | %9d %9d %9d %9d%n", i + 1, negChecker.mSoftClipStats[i], negChecker.mMismatchStats[i], negChecker.mInsertStats[i], negChecker.mDeletionStats[i]));
+    err.println(offsetSummary);
+
+    err.println("CIGAR OPERATIONS WITHIN PROBE");
+    final TextTable cigarSummary = new TextTable();
+    cigarSummary.addRow("Strand", "Length", "X", "I", "D", "S");
+    cigarSummary.addSeparator();
+    for (int i = 0; i < PositionAndStrandChecker.MAX_OP_LEN; i++) {
+      addCigarRow(cigarSummary, "+", posChecker, i);
+      addCigarRow(cigarSummary, "-", negChecker, i);
     }
-    final int maxIndex = PositionAndStrandChecker.MAX_OP_LEN - 1;
-    err.print(String.format("(+) %4d+ | %9d %9d %9d %9d%n", maxIndex + 1, posChecker.mSoftClipStats[maxIndex], posChecker.mMismatchStats[maxIndex], posChecker.mInsertStats[maxIndex], posChecker.mDeletionStats[maxIndex]));
-    err.print(String.format("(-) %4d+ | %9d %9d %9d %9d%n", maxIndex + 1, negChecker.mSoftClipStats[maxIndex], negChecker.mMismatchStats[maxIndex], negChecker.mInsertStats[maxIndex], negChecker.mDeletionStats[maxIndex]));
+    err.println(cigarSummary);
+
+    err.println("SUMMARY");
+    final long totalstripped = posStripped + negStripped;
+    final long total = totalPos + totalNeg;
+    final TextTable summary = new TextTable();
+    summary.addRow("Strand", "Alignments", "Stripped", "Identified", "nt/read");
+    summary.addSeparator();
+    summary.addRow("+", Long.toString(totalPos), Long.toString(posStripped), String.format("%.2f%%", (double) posStripped / totalPos * 100.0), String.format("%.1f", (double) posChecker.mBasesTrimmed / posStripped));
+    summary.addRow("-", Long.toString(totalNeg), Long.toString(negStripped), String.format("%.2f%%", (double) negStripped / totalNeg * 100.0), String.format("%.1f", (double) negChecker.mBasesTrimmed / posStripped));
+    summary.addRow("Both", Long.toString(total), Long.toString(totalstripped), String.format("%.2f%%", (double) totalstripped / total * 100.0), String.format("%.1f", (double) (posChecker.mBasesTrimmed + negChecker.mBasesTrimmed) / totalstripped));
+    err.println(summary);
 
     return 0;
+  }
+
+  private void addCigarRow(TextTable ctype, String strand, PositionAndStrandChecker checker, int i) {
+    final String len = Integer.toString(i + 1) + (i == PositionAndStrandChecker.MAX_OP_LEN - 1 ? "+" : "");
+    ctype.addRow(strand, len, Integer.toString(checker.mMismatchStats[i]), Integer.toString(checker.mInsertStats[i]), Integer.toString(checker.mDeletionStats[i]), Integer.toString(checker.mSoftClipStats[i]));
+  }
+
+  private void loadProbeBed(File bedFile) throws IOException {
+    final ReferenceRanges.Accumulator<String> posRangesAccum = new ReferenceRanges.Accumulator<>();
+    final ReferenceRanges.Accumulator<String> negRangesAccum = new ReferenceRanges.Accumulator<>();
+    try (BedReader bedReader = BedReader.openBedReader(null, bedFile, 3)) {
+      while (bedReader.hasNext()) {
+        final BedRecord record = bedReader.next();
+        final RangeList.RangeData<String> rangeData = new RangeList.RangeData<>(record.getStart(), record.getEnd(), Arrays.asList(record.getAnnotations()));
+        if ("+".equals(record.getAnnotations()[2])) {
+          posRangesAccum.addRangeData(record.getSequenceName(), rangeData);
+        } else if ("-".equals(record.getAnnotations()[2])) {
+          negRangesAccum.addRangeData(record.getSequenceName(), rangeData);
+        } else {
+          throw new IOException("BED record does not indicate strand as '-' or '+' in column 6: " + record);
+        }
+      }
+    }
+    mPosRanges = posRangesAccum.getReferenceRanges();
+    mNegRanges = negRangesAccum.getReferenceRanges();
   }
 
   private static boolean checkList(RangeList<String> list, SAMRecord record, int tolerance, PositionAndStrandChecker checker) {
@@ -192,16 +214,6 @@ public class BamStripProbes extends AbstractCli {
       return true;
     }
     return false;
-  }
-
-  @Override
-  public String description() {
-    return DESC;
-  }
-
-  @Override
-  public String moduleName() {
-    return NAME;
   }
 
 }
