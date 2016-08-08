@@ -170,6 +170,9 @@ public class BamStripProbes extends AbstractCli {
   }
 
   private static boolean checkList(RangeList<String> list, SAMRecord record, int tolerance, PositionAndStrandChecker checker) {
+    if (list == null) {
+      return false;
+    }
     int index = checker.getStartDataIndex(record, list);
     RangeList.RangeData<String> data = list.getFullRangeList().get(index);
     while (recordOverlap(record, data, tolerance)) {
