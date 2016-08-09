@@ -12,7 +12,12 @@
 
 package com.rtg.simulation;
 
+import static com.rtg.vcf.eval.RocContainer.RocColumns.FALSE_POSITIVES;
+import static com.rtg.vcf.eval.RocContainer.RocColumns.SCORE;
+import static com.rtg.vcf.eval.RocContainer.RocColumns.TRUE_POSITIVES;
+
 import java.text.DecimalFormat;
+import java.util.Arrays;
 
 import com.rtg.util.Histogram;
 import com.rtg.util.StringUtils;
@@ -95,7 +100,9 @@ class ReadMappingRoc {
     final StringBuilder sb = new StringBuilder();
     sb.append("#total baseline variants: ").append(total).append(StringUtils.LS);
     sb.append("#score field: MAPQ").append(StringUtils.LS);
-    sb.append("#score\ttrue_positives\tfalse_positives").append(StringUtils.LS);
+    sb.append("#");
+    sb.append(String.join("\t", Arrays.asList(SCORE, TRUE_POSITIVES, FALSE_POSITIVES)));
+    sb.append(StringUtils.LS);
     sb.append("255\t0.00\t0.00").append(StringUtils.LS);
     double tpCum = 0;
     double fpCum = 0;
