@@ -352,6 +352,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
 
   private void populateDeltas(byte[] read, int rLen, byte[] template, int zeroBasedStart) {
     Arrays.fill(mDelta, 0);
+    Arrays.fill(mSeedInfo, (short) 0);
     //initialize seeds
     final SeedShifter rSeed = new SeedShifter(mSeed, read, 0);
     final SeedShifter sSeed = new SeedShifter(mSeed, read, -mDeltaLength - 1);
