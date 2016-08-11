@@ -148,9 +148,6 @@ public class VariantOutputVcfFormatter {
         mFormatFields.add(VcfFormatField.VA);
         mFormatFields.add(VcfFormatField.ADE);
         mFormatFields.add(VcfFormatField.VAF);
-        mFormatFields.add(VcfFormatField.VADE);
-        mFormatFields.add(VcfFormatField.VADER);
-        mFormatFields.add(VcfFormatField.QA);
       }
       mFormatFields.addAll(mParams.formatAnnotations());
     }

@@ -12,9 +12,9 @@
 
 package com.rtg.variant.format;
 
+import static com.rtg.variant.format.VcfFormatField.AQ;
 import static com.rtg.variant.format.VcfFormatField.QA;
-import static com.rtg.variant.format.VcfFormatField.VADE;
-import static com.rtg.variant.format.VcfFormatField.VADER;
+import static com.rtg.variant.format.VcfFormatField.VA;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -61,7 +61,7 @@ import junit.framework.TestCase;
 public class VcfFormatFieldTest extends TestCase {
 
   public void testEnum() {
-    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, AQ, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, COC, COF, VAF, VADE, VADER, QA, MEANQAD]");
+    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, AQ, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, COC, COF, VAF, QA, MEANQAD]");
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.AD)) {
       assertFalse(field.isVcfAnnotator());
     }
@@ -106,8 +106,6 @@ public class VcfFormatFieldTest extends TestCase {
       + "##FORMAT=<ID=COC,Number=1,Type=Integer,Description=\"Contrary observation count\">\n"
       + "##FORMAT=<ID=COF,Number=1,Type=Float,Description=\"Contrary observation fraction\">\n"
       + "##FORMAT=<ID=VAF,Number=1,Type=Float,Description=\"Variant Allelic Fraction\">\n"
-      + "##FORMAT=<ID=VADE,Number=1,Type=Float,Description=\"Error corrected allelic depth of alt allele\">\n"
-      + "##FORMAT=<ID=VADER,Number=1,Type=Float,Description=\"Error corrected allelic depth of alt allele as a ratio of the expected coverage\">\n"
       + "##FORMAT=<ID=QA,Number=1,Type=Float,Description=\"Sum of quality of the alternate observations\">\n"
       + "##FORMAT=<ID=MEANQAD,Number=1,Type=Float,Description=\"Difference between the mean alt quality and mean reference quality\">\n"
       + "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n";
@@ -301,48 +299,6 @@ public class VcfFormatFieldTest extends TestCase {
     assertEquals("ref\t3\t.\tA\tC,GC,G\t.\t.\t.", rec.toString());
   }
 
-  public void testVader() {
-    final VcfRecord record = new VcfRecord("foo", 1, "C");
-    record.addAltCall("T");
-    record.addFormatAndSample("GT", "0/1");
-    final Calibrator calibrator = new Calibrator(new Covariate[]{new CovariateSequence(), new CovariateReadGroup()}, new ReferenceRegions());
-    final CalibratedPerSequenceExpectedCoverage expectedCoverage = new CalibratedPerSequenceExpectedCoverage(calibrator, new HashMap<>(), new HashMap<>(), new RegionRestriction("foo:1+1000")) {
-      @Override
-      public double expectedCoverage(String sequenceName, String sampleName) {
-        return 20;
-      }
-    };
-
-    final VariantParams params = new VariantParamsBuilder().expectedCoverage(expectedCoverage).create();
-    final VariantSample sample = new VariantSample(Ploidy.DIPLOID, "Sample", false, new MockGenotypeMeasure(0.1), VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0);
-    sample.setVariantAllele("A");
-    // Override methods because it's easier than attempting to increment...
-    final StatisticsSnp stats = new StatisticsSnp(DescriptionSnp.SINGLETON) {
-      @Override
-      public AlleleStatisticsInt counts() {
-        return new AlleleStatisticsInt(DescriptionSnp.SINGLETON) {
-          @Override
-          public double count(int index) {
-            return 60;
-          }
-
-          @Override
-          public double error(int index) {
-            return 10;
-          }
-        };
-      }
-    };
-    sample.setStats(stats);
-    final Variant call = new Variant(new VariantLocus("foo", 1, 2), 0, sample);
-    final String sampleName = "Sample";
-    assertTrue(VADER.hasValue(record, call, sample, sampleName, params));
-    assertTrue(VADE.hasValue(record, call, sample, sampleName, params));
-    VADER.updateRecord(record, call, new String[] {"Sample"}, params, false);
-    VADE.updateRecord(record, call, new String[] {"Sample"}, params, false);
-    assertEquals("2.500", record.getFormat("VADER").get(0));
-    assertEquals("50.000", record.getFormat("VADE").get(0));
-  }
 
   public void testQa() {
     final VcfRecord record = new VcfRecord("foo", 1, "C");
@@ -373,9 +329,14 @@ public class VcfFormatFieldTest extends TestCase {
     };
     sample.setStats(stats);
     final Variant call = new Variant(new VariantLocus("foo", 1, 2), 0, sample);
-    final String sampleName = "Sample";
-    assertTrue(QA.hasValue(record, call, sample, sampleName, params));
-    QA.updateRecord(record, call, new String[] {"Sample"}, params, false);
+    final String[] sampleNames = {"Sample"};
+    record.setNumberOfSamples(sampleNames.length);
+    VA.updateRecord(record, call, sampleNames, params, false);
+    AQ.updateRecord(record, call, sampleNames, params, false);
+
+    assertTrue(QA.hasValue(record, call, sample, sampleNames[0], params));
+
+    QA.updateRecord(record, call, sampleNames, params, false);
     assertEquals("20.000", record.getFormat("QA").get(0));
   }
 
