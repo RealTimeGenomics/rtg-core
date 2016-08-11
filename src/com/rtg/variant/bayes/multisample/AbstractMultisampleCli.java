@@ -20,7 +20,6 @@ import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashSet;
@@ -496,25 +495,32 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     } else {
       inputFiles = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null, CommandLineFiles.EXISTS).getFileList(mFlags);
     }
-    final SamCalibrationInputs inputs = new SamCalibrationInputs(inputFiles, !mFlags.isSet(MACHINE_ERRORS_FLAG) && !mFlags.isSet(NO_CALIBRATION));
+    final boolean useCalibration = !mFlags.isSet(MACHINE_ERRORS_FLAG) && !mFlags.isSet(NO_CALIBRATION);
+    final SamCalibrationInputs inputs = new SamCalibrationInputs(inputFiles, useCalibration);
     final Collection<File> samFiles = inputs.getSamFiles();
-    final Collection<File> calibrationFiles = mFlags.isSet(NO_CALIBRATION) ? new ArrayList<File>() : inputs.getCalibrationFiles();
     if (samFiles.size() == 0) {
       throw new InvalidParamsException("No SAM files provided for input.");
     }
     Diagnostic.userLog("Input SAM files: " + samFiles);
     builder.mapped(samFiles);
-    Diagnostic.userLog("Input calibration files: " + calibrationFiles);
-    builder.calibrations(calibrationFiles);
-    if (calibrationFiles.size() != 0 && calibrationFiles.size() != samFiles.size()) {
-      throw new InvalidParamsException("Number of calibration files (" + calibrationFiles.size() + ") does not match number of SAM files (" + samFiles.size() + ").");
-    }
-    final Calibrator c = Calibrator.initCalibrator(calibrationFiles);
-    if (c == null && mFlags.isSet(FILTER_DEPTH_MULTIPLIER_FLAG)) {
-      throw new InvalidParamsException("Can not use --" + FILTER_DEPTH_MULTIPLIER_FLAG + " when calibration files are not being used.");
-    }
-    if (c == null && mFlags.isSet(COVERAGE_BYPASS_MULTIPLIER_FLAG)) {
-      throw new InvalidParamsException("Can not use --" + COVERAGE_BYPASS_MULTIPLIER_FLAG + " when calibration files are not being used.");
+    Calibrator c = null;
+    if (useCalibration) {
+      final Collection<File> calibrationFiles = inputs.getCalibrationFiles();
+      Diagnostic.userLog("Input calibration files: " + calibrationFiles);
+      builder.calibrations(calibrationFiles);
+      if (calibrationFiles.size() == 0) {
+        throw new InvalidParamsException("No calibration files were found for input mappings. Please run 'rtg calibrate', or use --" + NO_CALIBRATION + " and set --" + COVERAGE_BYPASS_FLAG + " appropriately to proceed without calibration.");
+      }
+      if (calibrationFiles.size() != 0 && calibrationFiles.size() != samFiles.size()) {
+        throw new InvalidParamsException("Number of calibration files (" + calibrationFiles.size() + ") does not match number of SAM files (" + samFiles.size() + ").");
+      }
+      c = Calibrator.initCalibrator(calibrationFiles);
+      if (c == null && mFlags.isSet(FILTER_DEPTH_MULTIPLIER_FLAG)) {
+        throw new InvalidParamsException("Can not use --" + FILTER_DEPTH_MULTIPLIER_FLAG + " when calibration files are not being used.");
+      }
+      if (c == null && mFlags.isSet(COVERAGE_BYPASS_MULTIPLIER_FLAG)) {
+        throw new InvalidParamsException("Can not use --" + COVERAGE_BYPASS_MULTIPLIER_FLAG + " when calibration files are not being used.");
+      }
     }
     builder.ignoreIncompatibleSamHeaders(mFlags.isSet(X_IGNORE_SAM_HEADER_INCOMPATIBILITY));
     final SAMFileHeader uberHeader;
@@ -525,9 +531,6 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
       uberHeader = SamUtils.getUberHeader(samFiles, mFlags.isSet(X_IGNORE_SAM_HEADER_INCOMPATIBILITY), grf == null ? null : grf.genomes());
     }
     builder.uberHeader(uberHeader);
-    if (calibrationFiles.size() == 0 && !mFlags.isSet(NO_CALIBRATION)) {
-      throw new InvalidParamsException("No calibration files were found for input mappings. Please run 'rtg calibrate', or use --" + NO_CALIBRATION + " and set --" + COVERAGE_BYPASS_FLAG + " appropriately to proceed without calibration.");
-    }
     builder.referenceRanges(SamRangeUtils.createReferenceRanges(uberHeader, filterParams));
 
     if (c != null) {

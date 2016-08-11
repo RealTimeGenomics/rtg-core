@@ -43,7 +43,7 @@ import htsjdk.samtools.SAMFileHeader;
 public final class VariantParamsBuilder extends SingleMappedParamsBuilder<VariantParamsBuilder> {
 
   List<String> mImputedSamples = new ArrayList<>();
-  Collection<File> mCalibrations;
+  Collection<File> mCalibrations = new ArrayList<>();
   int mQDefault = 20;
   int mMatedReadDefault = 20;
   int mUnmatedReadDefault = 20;
