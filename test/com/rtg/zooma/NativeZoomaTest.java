@@ -32,7 +32,7 @@ public class NativeZoomaTest extends AbstractTest {
         FileUtils.stringToFile(">reference\n" + reference + "\n", referenceFile);
         final NativeZooma zooma = new NativeZooma();
 
-        zooma.buildIndex(indexFile.getPath(), referenceFile.getPath(), null, null);
+        zooma.buildIndex(indexFile.getPath(), referenceFile.getPath(), null, null, 21, 1);
 
       }
     } else {

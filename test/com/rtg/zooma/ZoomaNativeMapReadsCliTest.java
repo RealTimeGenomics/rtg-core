@@ -17,6 +17,7 @@ import java.util.Arrays;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.mode.DnaUtils;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.PortableRandom;
@@ -104,18 +105,17 @@ public class ZoomaNativeMapReadsCliTest extends AbstractCliTest {
         FileUtils.stringToFile(rightFq.toString(), rightFile);
         final File outFile = new File(dir, "map_out");
 
-        checkMainInitOk("-i", indexFile.toString(), "-o", outFile.toString(), "-l", leftFile.toString(), "-r", rightFile.toString(), "-Q", "-T", "1", "-m", "200", "-M", "400"); // Single thread for output determinism
+        final MainResult result = MainResult.run(getCli(), "-t", indexFile.toString(), "-o", outFile.toString(), "-l", leftFile.toString(), "-r", rightFile.toString(), "-Q", "-T", "1", "-m", "200", "-M", "400");
+        assertEquals(0, result.rc());
 
         assertTrue(new File(outFile, "done").exists());
         // Concatenate output files
         final StringBuilder sb = new StringBuilder();
-        final File[] outFiles = FileUtils.listFiles(outFile);
+        final File[] outFiles = FileUtils.listFiles(outFile, f -> f.getName().endsWith(".bam"));
         Arrays.sort(outFiles);
         for (File f : outFiles) {
-          if (!"done".equals(f.getName())) {
             //System.err.println(FileUtils.fileToString(f));
             sb.append(TestUtils.stripSAMHeader(samFileToString(f)));
-          }
         }
         mNano.check("testzmap.sam", sb.toString(), false);
       }

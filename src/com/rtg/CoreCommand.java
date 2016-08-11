@@ -32,10 +32,10 @@ import com.rtg.reader.SamToFastq;
 import com.rtg.reader.Sdf2Cg;
 import com.rtg.reader.Sdf2Quala;
 import com.rtg.reader.SdfSplitter;
-import com.rtg.sam.probe.BamStripProbes;
 import com.rtg.sam.Sam2Bam;
 import com.rtg.sam.SamMergeCli;
 import com.rtg.sam.SamValidatorCli;
+import com.rtg.sam.probe.BamStripProbes;
 import com.rtg.segregation.SegregationCheckerCli;
 import com.rtg.segregation.SegregationVcfSearch;
 import com.rtg.similarity.SimilarityCli;
@@ -72,7 +72,6 @@ import com.rtg.vcf.SnpIntersection;
 import com.rtg.visualization.Aview;
 import com.rtg.zooma.ZoomaNativeBuildIndexCli;
 import com.rtg.zooma.ZoomaNativeMapReadsCli;
-import com.rtg.zooma.ZoomaNativeMapfReadsCli;
 
 /**
  * Commands available in RTG Core.
@@ -107,9 +106,6 @@ public final class CoreCommand {
 
   /** Map using zooma native code */
   static final Command ZOOMA_MAP = new Command(new ZoomaNativeMapReadsCli(), CommandCategory.MAPPING, ReleaseLevel.ALPHA);
-
-  /** Contaminant filtering using zooma native code */
-  static final Command ZOOMA_MAPF = new Command(new ZoomaNativeMapfReadsCli(), CommandCategory.MAPPING, ReleaseLevel.ALPHA);
 
   /** Runs Ngs and Alignment*/
   static final Command MAPX = new Command(new MapXCli(), CommandCategory.PROTEIN, ReleaseLevel.GA);
@@ -282,7 +278,7 @@ public final class CoreCommand {
     MAP, MAPF, CGMAP,
 
     // Zooma native mapping
-    ZOOMA_BUILD, ZOOMA_MAP, ZOOMA_MAPF,
+    ZOOMA_BUILD, ZOOMA_MAP,
 
     // Protein
     MAPX,

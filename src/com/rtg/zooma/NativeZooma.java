@@ -11,6 +11,8 @@
  */
 package com.rtg.zooma;
 
+import java.io.FileDescriptor;
+
 /**
  * Provide a single entry point to C zooma code.
  *
@@ -33,7 +35,8 @@ public class NativeZooma {
       System.loadLibrary("Zooma");
       loaded = true;
     } catch (UnsatisfiedLinkError e) {
-      //Diagnostic.developerLog(e);
+//      e.printStackTrace(System.err);
+//      Diagnostic.developerLog(e);
     }
     IS_ENABLED = loaded;
   }
@@ -48,40 +51,45 @@ public class NativeZooma {
    * @param templateFasta file name containing the reference FASTA
    * @param include string prefix for sequences to be included
    * @param exclude string prefix for sequences to be excluded
+   * @param word word size for hashes
+   * @param step step size between start of hashes
    * @return non-zero on failure
    */
-  public native int buildIndex(String indexFile, String templateFasta, String include, String exclude);
+  public native int buildIndex(String indexFile, String templateFasta, String include, String exclude, int word, int step);
+
+  /**
+   */
+
 
   /**
    * Map paired-end reads
-   * @param indexFile file name of already built index file
+   * @param indexFilename filename for reference index
    * @param leftFasta file name of left arm FASTQ
    * @param rightFasta file name of left arm FASTQ
    * @param outPrefix name used as output prefix
+   * @param numTheads number of threads
+   * @param outputChunksize number of reads per chunk
+   * @param eScore alignment score threshold
+   * @param minFragSize minimum fragment size
+   * @param maxFragSize maximum fragment size
+   * @param step step size (<code>MAX_INT</code> to use indexes word size)
    * @param readGroup read group specification
-   * @param minFragSize minimum fragment size
-   * @param maxFragSize maximum fragment size
-   * @param threads number of threads to use
-   * @param inputChunk number of reads per input chunk
-   * @param outputChunk number of reads per output chunk
-   * @param quickCache if true, build and use quick cache
+   * @param buildQuick performance option
+   * @param buildCache performance option
+   * @param verbose extra debug output
+   * @param threadMerge merge files per thread
+   * @param fileMerge merge alls file into one
+   * @param compressionLevel level of compression for output
+   * @param refNamesFile name of reference sequences that should get own name (some output modes only)
+   * @param stderr handle to where standard error should be sent (unused)
+   * @param iCacheGB size of input cache in gigabytes
+   * @param oCacheGB size of output cache in gigabytes
    * @return non-zero on failure
    */
-  public native int mapReads(String indexFile, String leftFasta, String rightFasta, String outPrefix, String readGroup, int minFragSize, int maxFragSize, int threads, int inputChunk, int outputChunk, boolean quickCache);
-
-  /**
-   * Map paired-end reads
-   * @param indexFile file name of already built index file
-   * @param leftFasta file name of left arm FASTQ
-   * @param rightFasta file name of left arm FASTQ
-   * @param outPrefix name used as output prefix
-   * @param minFragSize minimum fragment size
-   * @param maxFragSize maximum fragment size
-   * @param threads number of threads to use
-   * @param inputChunk number of reads per input chunk
-   * @param quickCache if true, build and use quick cache
-   * @return non-zero on failure
-   */
-  public native int mapfReads(String indexFile, String leftFasta, String rightFasta, String outPrefix, int minFragSize, int maxFragSize, int threads, int inputChunk, boolean quickCache);
+  public native int mapReads(String indexFilename, String leftFasta, String rightFasta, String outPrefix, int numTheads,
+                              int outputChunksize, int eScore, int minFragSize, int maxFragSize, int step,
+                              String readGroup, boolean buildQuick, boolean buildCache, boolean verbose, boolean threadMerge,
+                              boolean fileMerge, int compressionLevel, String refNamesFile, FileDescriptor stderr, int iCacheGB,
+                              int oCacheGB);
 
 }

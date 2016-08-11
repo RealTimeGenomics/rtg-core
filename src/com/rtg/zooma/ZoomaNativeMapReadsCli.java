@@ -12,6 +12,7 @@
 package com.rtg.zooma;
 
 import java.io.File;
+import java.io.FileDescriptor;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -19,6 +20,8 @@ import java.io.PrintStream;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.ngs.MapFlags;
+import com.rtg.util.Environment;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
 /**
@@ -34,6 +37,8 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
   private static final String OUTPUT_CHUNK_FLAG = "output-chunk";
   private static final String INPUT_CHUNK_FLAG = "input-chunk";
   private static final String SAM_RG_FLAG = "sam-rg";
+  private static final String E_SCORE = "e-score";
+  private static final String STEP = "step";
 
   @Override
   public String moduleName() {
@@ -47,13 +52,14 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
 
   @Override
   protected void initFlags() {
-    mFlags.registerOptional('i', INDEX_FLAG, File.class, "FILE", "reference index file", new File("zooma.index.bin"));
+    mFlags.registerOptional('t', INDEX_FLAG, File.class, "FILE", "reference index file", new File("zooma.index.bin"));
     mFlags.registerRequired('l', LEFT_FLAG, File.class, "FILE", "left input file for FASTQ paired end data");
     mFlags.registerRequired('r', RIGHT_FLAG, File.class, "FILE", "right input file for FASTQ paired end data");
     mFlags.registerOptional('o', OUT_PREFIX_FLAG, String.class, "STRING", "prefix for output files", "outfile_zooma");
     mFlags.registerOptional('Q', NO_QUICK_FLAG, "do not build and use the \"quick cache\"");
-    mFlags.registerOptional('K', OUTPUT_CHUNK_FLAG, Integer.class, "INT", "number of reads per output chunk", 2000000);
-    mFlags.registerOptional('k', INPUT_CHUNK_FLAG, Integer.class, "INT", "number of reads per input chunk", 125000);
+    mFlags.registerOptional('k', OUTPUT_CHUNK_FLAG, Integer.class, "INT", "number of reads per chunk", 100000);
+    mFlags.registerOptional('e', E_SCORE, Integer.class, CommonFlags.INT, "alignment score threshold per arm (2*e for mates)", 10);
+    mFlags.registerOptional('s', STEP, Integer.class, CommonFlags.INT, "set the search step size (The w value from inside the index)");
     mFlags.registerOptional(SAM_RG_FLAG, String.class, "STRING", "string in the form \"@RG\\tID:RG1\\tSM:SAMPLE_NAME\\tPL:ILLUMINA\"");
     MapFlags.initFragmentSizeFlags(mFlags);
     CommonFlags.initThreadsFlag(mFlags);
@@ -80,14 +86,26 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
       return 1;
     }
     final NativeZooma zooma = new NativeZooma();
-    return zooma.mapReads(indexFile.getPath(),
-      leftFile.getPath(), rightFile.getPath(),
-      (String) mFlags.getValue(OUT_PREFIX_FLAG),
-      (String) mFlags.getValue(SAM_RG_FLAG),
-      (Integer) mFlags.getValue(CommonFlags.MIN_FRAGMENT_SIZE),
-      (Integer) mFlags.getValue(CommonFlags.MAX_FRAGMENT_SIZE),
-      CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)),
-      (Integer) mFlags.getValue(INPUT_CHUNK_FLAG), (Integer) mFlags.getValue(OUTPUT_CHUNK_FLAG), !mFlags.isSet(NO_QUICK_FLAG));
+    final Integer chunkSize = (Integer) mFlags.getValue(OUTPUT_CHUNK_FLAG);
+    final Integer threads = CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG));
+    final int step = mFlags.isSet(STEP) ? (Integer) mFlags.getValue(STEP) : Integer.MAX_VALUE;
+    double tsm = Environment.getTotalMemory() / 1024.0 / 1024.0 / 1024.0 - 128;
+      // subtract chunksize * threads * average read size
+    final double memforthreads = (chunkSize * 150L * 6 * threads) / 1024.0 / 1024.0 / 1024.0;
+    tsm -= memforthreads;
+    if (tsm < 100) {
+      Diagnostic.warning("Not enough ram for default settings");
+    }
+    int icacheGB = (int) (tsm / 3);
+    if (icacheGB > 20) {
+      icacheGB = 20;
+    }
+    final int ocacheGB = (int) (tsm - icacheGB); // subtract input cache, the rest for output cache
+    return zooma.mapReads(
+      indexFile.getPath(), leftFile.getPath(), rightFile.getPath(), (String) mFlags.getValue(OUT_PREFIX_FLAG), threads,
+      chunkSize, (Integer) mFlags.getValue(E_SCORE), (Integer) mFlags.getValue(CommonFlags.MIN_FRAGMENT_SIZE), (Integer) mFlags.getValue(CommonFlags.MAX_FRAGMENT_SIZE),
+      step, (String) mFlags.getValue(SAM_RG_FLAG), true, true, false,
+      false, false, 0, null, FileDescriptor.err, icacheGB, ocacheGB);
   }
 
 }

@@ -17,6 +17,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 
 import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
 /**
@@ -28,6 +29,8 @@ public class ZoomaNativeBuildIndexCli extends AbstractCli {
   private static final String OUTPUT_FLAG = "output";
   private static final String INCLUDE_FLAG = "include";
   private static final String EXCLUDE_FLAG = "exclude";
+  private static final String WORD = "word";
+  private static final String STEP = "step";
 
   @Override
   public String moduleName() {
@@ -36,7 +39,7 @@ public class ZoomaNativeBuildIndexCli extends AbstractCli {
 
   @Override
   public String description() {
-    return "build an index for use with zmap and zmapf";
+    return "build an index for use with zmap";
   }
 
   @Override
@@ -45,6 +48,8 @@ public class ZoomaNativeBuildIndexCli extends AbstractCli {
     mFlags.registerOptional('o', OUTPUT_FLAG, File.class, "FILE", "name of output index file", new File("zooma.index.bin"));
     mFlags.registerOptional('c', INCLUDE_FLAG, String.class, "STR", "include chromosomes with this string in the name");
     mFlags.registerOptional('e', EXCLUDE_FLAG, String.class, "STR", "exclude chromosomes with this string in the name");
+    mFlags.registerOptional('w', WORD, Integer.class, CommonFlags.INT, "hash width (<= 21)", 18);
+    mFlags.registerOptional('s', STEP, Integer.class, CommonFlags.INT, "step size", 1);
   }
 
   @Override
@@ -66,7 +71,7 @@ public class ZoomaNativeBuildIndexCli extends AbstractCli {
       return 1;
     }
     final NativeZooma zooma = new NativeZooma();
-    return zooma.buildIndex(indexFile.getPath(), fastaFile.getPath(), include, exclude);
+    return zooma.buildIndex(indexFile.getPath(), fastaFile.getPath(), include, exclude, (Integer) mFlags.getValue(WORD), (Integer) mFlags.getValue(STEP));
   }
 
 }
