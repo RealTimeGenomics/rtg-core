@@ -97,7 +97,7 @@ public class PopulationCli extends AbstractMultisampleCli {
     flags.registerRequired('p', PEDIGREE_FLAG, File.class, "file", "genome relationships PED file").setCategory(INPUT_OUTPUT);
     flags.registerOptional(IMPUTE_FLAG, String.class, "STRING", "name of sample absent from mappings to impute genotype for")
     .setCategory(REPORTING)
-    .setMaxCount(Integer.MAX_VALUE);
+    .setMaxCount(Integer.MAX_VALUE).enableCsv();
     registerComplexPruningFlags(flags, true);
     flags.registerOptional(REMOVE_RELATIONSHIPS_FLAG, "if set, remove all relationship information from pedigree.").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(PROPAGATING_FLAG, "true to use propagating priors algorithm for pedigrees").setCategory(SENSITIVITY_TUNING);

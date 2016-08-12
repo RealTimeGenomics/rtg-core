@@ -83,7 +83,7 @@ public class BuilderCli extends AbstractCli {
     for (final DerivedAnnotations derived : DerivedAnnotations.singleValueAnnotations()) {
       derivedRange.add(derived.toString());
     }
-    mFlags.registerOptional(DERIVED_ANNOTATIONS_FLAG, String.class, "STRING", "derived fields to use in model").setParameterRange(derivedRange).enableCsv().setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(DERIVED_ANNOTATIONS_FLAG, String.class, "STRING", "derived fields to use in model").setParameterRange(derivedRange).setMaxCount(Integer.MAX_VALUE).enableCsv().setCategory(SENSITIVITY_TUNING);
 
     mFlags.registerOptional(X_MODEL_PARAMS_FLAG, File.class, "PROPERTIES", "property file containing model parameters").setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(X_POS_WEIGHT, Double.class, "FLOAT", "weight to assign to positive training examples", 1.0).setCategory(SENSITIVITY_TUNING);

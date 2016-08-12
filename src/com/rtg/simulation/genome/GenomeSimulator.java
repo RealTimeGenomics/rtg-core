@@ -73,7 +73,7 @@ public class GenomeSimulator extends LoggedCli {
     final Flag maxLength = mFlags.registerOptional(MAX_LENGTH, Integer.class, "int", "maximum sequence length").setCategory(UTILITY);
     final Flag minLength = mFlags.registerOptional(MIN_LENGTH, Integer.class, "int", "minimum sequence length").setCategory(UTILITY);
     final Flag lFlag = mFlags.registerOptional('l', LENGTH, Integer.class, "int", "length of generated sequence");
-    lFlag.setMaxCount(Integer.MAX_VALUE);
+    lFlag.setMaxCount(Integer.MAX_VALUE).enableCsv();
     lFlag.setCategory(UTILITY);
     mFlags.registerOptional(FREQUENCY, String.class, "string", "relative frequencies of A,C,G,T in the generated sequence", "1,1,1,1").setCategory(UTILITY);
     mFlags.registerOptional(COMMENT, String.class, "string", "comment to include in the generated SDF").setCategory(UTILITY);

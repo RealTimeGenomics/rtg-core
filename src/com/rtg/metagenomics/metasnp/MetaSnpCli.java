@@ -82,7 +82,7 @@ public class MetaSnpCli extends LoggedCli {
   @Override
   protected void initFlags() {
     mFlags.registerExtendedHelp();
-    mFlags.registerRequired(File.class, "FILE", "allele stats file").setMaxCount(1).setMinCount(1);
+    mFlags.registerRequired(File.class, "FILE", "allele stats file");
     mFlags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", "output directory");
     mFlags.registerRequired('s', STRAINS, Integer.class, "INT", "number of strains");
     mFlags.registerOptional('e', ERROR_RATE, Double.class, "FLOAT", "read/mapping error rate", 0.01);

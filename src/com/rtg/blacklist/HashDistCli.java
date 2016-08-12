@@ -88,7 +88,7 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
     CommonFlagCategories.setCategories(flags);
     CommonFlags.initOutputDirFlag(flags);
     CommonFlags.initThreadsFlag(flags);
-    flags.registerRequired(File.class, CommonFlags.SDF, "SDF containing sequence data to analyse").setCategory(CommonFlagCategories.INPUT_OUTPUT).setMaxCount(1).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerRequired(File.class, CommonFlags.SDF, "SDF containing sequence data to analyse").setCategory(CommonFlagCategories.INPUT_OUTPUT).setCategory(CommonFlagCategories.INPUT_OUTPUT);
     flags.registerOptional('w', MapFlags.WORDSIZE_FLAG, Integer.class, CommonFlags.INT, "number of bases in each hash", 22).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional('s', MapFlags.STEP_FLAG, Integer.class, CommonFlags.INT, "step size", 1).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(MAX_COUNT_FLAG, Integer.class, CommonFlags.INT, "soft minimum for hash count (i.e. will record exact counts of at least this value)", 500).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);

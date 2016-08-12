@@ -90,7 +90,7 @@ class AviewParams {
     flags.registerOptional('B', BEDS, File.class, "FILE", "BED file containing regions to overlay").setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.INPUT_OUTPUT);
 
     // Filtering options
-    flags.registerOptional(SAMPLE, String.class, "STRING", "specify name of sample to select").setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.FILTERING);
+    flags.registerOptional(SAMPLE, String.class, "STRING", "specify name of sample to select").setMaxCount(Integer.MAX_VALUE).enableCsv().setCategory(CommonFlagCategories.FILTERING);
     flags.registerRequired(REGION, String.class, "STRING", "the region of interest to display. The format is one of <sequence_name>, <sequence_name>:start-end or <sequence_name>:start+length").setCategory(CommonFlagCategories.FILTERING);
     flags.registerOptional('p', PADDING, Integer.class, "INT", "padding around region of interest (Default is to automatically determine padding to avoid read truncation)").setCategory(CommonFlagCategories.FILTERING);
 
