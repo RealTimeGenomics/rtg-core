@@ -34,6 +34,7 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
   private static final String RIGHT_FLAG = "right";
   private static final String OUT_PREFIX_FLAG = "out";
   private static final String NO_QUICK_FLAG = "Xno-quick-cache";
+  private static final String NO_CACHE_FLAG = "Xno-cache";
   private static final String OUTPUT_CHUNK_FLAG = "output-chunk";
   private static final String INPUT_CHUNK_FLAG = "input-chunk";
   private static final String SAM_RG_FLAG = "sam-rg";
@@ -57,6 +58,7 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
     mFlags.registerRequired('r', RIGHT_FLAG, File.class, "FILE", "right input file for FASTQ paired end data");
     mFlags.registerOptional('o', OUT_PREFIX_FLAG, String.class, "STRING", "prefix for output files", "outfile_zooma");
     mFlags.registerOptional('Q', NO_QUICK_FLAG, "do not build and use the \"quick cache\"");
+    mFlags.registerOptional('C', NO_CACHE_FLAG, "do not build and use the \"cache\"");
     mFlags.registerOptional('k', OUTPUT_CHUNK_FLAG, Integer.class, "INT", "number of reads per chunk", 100000);
     mFlags.registerOptional('e', E_SCORE, Integer.class, CommonFlags.INT, "alignment score threshold per arm (2*e for mates)", 10);
     mFlags.registerOptional('s', STEP, Integer.class, CommonFlags.INT, "set the search step size (The w value from inside the index)");
@@ -100,11 +102,17 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
     if (icacheGB > 20) {
       icacheGB = 20;
     }
-    final int ocacheGB = (int) (tsm - icacheGB); // subtract input cache, the rest for output cache
+    int ocacheGB = (int) (tsm - icacheGB); // subtract input cache, the rest for output cache
+    if (icacheGB < 0) {
+      icacheGB = 0;
+    }
+    if (ocacheGB < 0) {
+      ocacheGB = 0;
+    }
     return zooma.mapReads(
       indexFile.getPath(), leftFile.getPath(), rightFile.getPath(), (String) mFlags.getValue(OUT_PREFIX_FLAG), threads,
       chunkSize, (Integer) mFlags.getValue(E_SCORE), (Integer) mFlags.getValue(CommonFlags.MIN_FRAGMENT_SIZE), (Integer) mFlags.getValue(CommonFlags.MAX_FRAGMENT_SIZE),
-      step, (String) mFlags.getValue(SAM_RG_FLAG), true, true, false,
+      step, (String) mFlags.getValue(SAM_RG_FLAG), !mFlags.isSet(NO_QUICK_FLAG), !mFlags.isSet(NO_CACHE_FLAG), false,
       false, false, 0, null, FileDescriptor.err, icacheGB, ocacheGB);
   }
 

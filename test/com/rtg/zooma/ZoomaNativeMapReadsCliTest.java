@@ -105,8 +105,8 @@ public class ZoomaNativeMapReadsCliTest extends AbstractCliTest {
         FileUtils.stringToFile(rightFq.toString(), rightFile);
         final File outFile = new File(dir, "map_out");
 
-        final MainResult result = MainResult.run(getCli(), "-t", indexFile.toString(), "-o", outFile.toString(), "-l", leftFile.toString(), "-r", rightFile.toString(), "-Q", "-T", "1", "-m", "200", "-M", "400");
-        assertEquals(0, result.rc());
+        final MainResult result = MainResult.run(getCli(), "-t", indexFile.toString(), "-o", outFile.toString(), "-l", leftFile.toString(), "-r", rightFile.toString(), "-Q", "-T", "1", "-m", "200", "-M", "400", "-C");
+        assertEquals(result.err(), 0, result.rc());
 
         assertTrue(new File(outFile, "done").exists());
         // Concatenate output files
