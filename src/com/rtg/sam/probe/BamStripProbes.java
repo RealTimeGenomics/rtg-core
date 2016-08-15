@@ -35,7 +35,15 @@ import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SamReader;
 
 /**
- *
+ * Remove probes from mapped reads using a bed file to describe probes.
+ * <ul>
+ *   <li>Assumes probe is on first read in sequencing</li>
+ *   <li>Assumes 6th column is +/- representing whether probe is on forward or reverse strand</li>
+ *   <li>Only updates records that are mapped, and marked as first in sequencing</li>
+ *   <li>Update is made by removing values as appropriate from: the read string, the quality string, and the cigar. As well as updating the alignment start position if required.</li>
+ *   <li>No changes are made to the mate position or TLEN field of any record (so these are likely to be incorrect when records have been updated)</li>
+ *   <li>Mapped first arm reads that do not match a known probe will receive an annotation (XS:Z:failed)</li>
+ * </ul>
  */
 public class BamStripProbes extends AbstractCli {
 
