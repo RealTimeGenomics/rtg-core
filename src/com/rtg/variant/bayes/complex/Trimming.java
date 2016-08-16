@@ -116,6 +116,7 @@ public final class Trimming {
     return newSamples;
   }
 
+  // XXX These should be recomputed directly from the measure, in order to include alleles not called in the originalLikelihoods
   private static Map<Set<String>, Double> newGenotypeLikelihoods(int leftClip, int rightClip, VariantSample sample) {
     final Map<Set<String>, Double> newMap = new HashMap<>();
     final Map<Set<String>, Double> originalLikelihoods = sample.getGenotypeLikelihoods();

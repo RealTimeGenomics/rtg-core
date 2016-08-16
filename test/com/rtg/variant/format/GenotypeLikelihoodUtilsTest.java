@@ -57,11 +57,11 @@ public class GenotypeLikelihoodUtilsTest extends TestCase {
       assertEquals(failMsg, a[i], b[i], tolerance);
     }
   }
+
   public void test() {
     final VariantSample sample = getVariantSampleHaploid(0.1, 0.3, 0.4, 0.6);
     final List<String> calls = Arrays.asList("A", "C", "T");
-    sample.setGenotypeLikelihoods(sample.computeGenotypeLikelihoods(new HashSet<>(calls)));
-    final double[] likelihoods = GenotypeLikelihoodUtils.getLikelihoods(sample, calls);
+    final double[] likelihoods = GenotypeLikelihoodUtils.haploidLikelihoods(calls, sample.computeGenotypeLikelihoods(new HashSet<>(calls)));
 
     final double[] expected = convert(0.1, 0.3, 0.6);
     assertApproxEquals(expected, likelihoods, 0.0001);
@@ -69,8 +69,7 @@ public class GenotypeLikelihoodUtilsTest extends TestCase {
   public void testDiploid() {
     final VariantSample sample = getVariantSampleDiploid(0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1);
     final List<String> calls = Arrays.asList("A", "T");
-    sample.setGenotypeLikelihoods(sample.computeGenotypeLikelihoods(new HashSet<>(calls)));
-    final double[] likelihoods = GenotypeLikelihoodUtils.getLikelihoods(sample, calls);
+    final double[] likelihoods = GenotypeLikelihoodUtils.diploidLikelihoods(calls, sample.computeGenotypeLikelihoods(new HashSet<>(calls)));
 
     final double[] expected = convert(1.0 / 3, 1.0 / 3, 1.0 / 3);
     assertApproxEquals(expected, likelihoods, 0.0001);
@@ -78,8 +77,7 @@ public class GenotypeLikelihoodUtilsTest extends TestCase {
   public void testDiploid2() {
     final VariantSample sample = getVariantSampleDiploid(0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1);
     final List<String> calls = Arrays.asList("A", "T");
-    sample.setGenotypeLikelihoods(sample.computeGenotypeLikelihoods(new HashSet<>(calls)));
-    final double[] likelihoods = GenotypeLikelihoodUtils.getLikelihoods(sample, calls);
+    final double[] likelihoods = GenotypeLikelihoodUtils.diploidLikelihoods(calls, sample.computeGenotypeLikelihoods(new HashSet<>(calls)));
 
     final double[] expected = convert(2.0 / 4, 1.0 / 4, 1.0 / 4);
     assertApproxEquals(expected, likelihoods, 0.0001);
@@ -87,8 +85,7 @@ public class GenotypeLikelihoodUtilsTest extends TestCase {
   public void testDiploid3() {
     final VariantSample sample = getVariantSampleDiploid(0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.3);
     final List<String> calls = Arrays.asList("A", "T");
-    sample.setGenotypeLikelihoods(sample.computeGenotypeLikelihoods(new HashSet<>(calls)));
-    final double[] likelihoods = GenotypeLikelihoodUtils.getLikelihoods(sample, calls);
+    final double[] likelihoods = GenotypeLikelihoodUtils.diploidLikelihoods(calls, sample.computeGenotypeLikelihoods(new HashSet<>(calls)));
 
     final double[] expected = convert(2.0 / 6, 3.0 / 6, 1.0 / 6);
     assertApproxEquals(expected, likelihoods, 0.0001);

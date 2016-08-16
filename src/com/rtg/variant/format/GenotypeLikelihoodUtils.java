@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import com.rtg.reference.Ploidy;
 import com.rtg.util.MathUtils;
 import com.rtg.variant.VariantSample;
 import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
@@ -27,18 +26,29 @@ import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
  */
 public final class GenotypeLikelihoodUtils {
   private GenotypeLikelihoodUtils() { }
-  private static double[] diploidLikelihoods(List<String> calls, Map<Set<String>, Double> genotypeLikelihoods) {
+
+  /**
+   * Produce diploid GL field values for a set of alleles
+   * from VCF spec the canonical ordering is: position of hypothesis <code>j/k</code> is given by <code>F(j/k) = (k*(k+1)/2)+j</code>.
+   * @param alleles the alleles to include in the likelihoods
+   * @param genotypeLikelihoods the full genotype likelihoods, including hypotheses not called
+   * @return array of likelihoods in the canonical order, or null if they could not be computed
+   */
+  static double[] diploidLikelihoods(List<String> alleles, Map<Set<String>, Double> genotypeLikelihoods) {
     final PossibilityArithmetic arith = LogApproximatePossibility.SINGLETON;
-    final int size = calls.size() * (calls.size() + 1) / 2;
+    final int size = alleles.size() * (alleles.size() + 1) / 2;
     final double[] likelihoods = new double[size];
     double sum = arith.zero();
-    for (int j = 0; j < calls.size(); j++) {
-      final String a = calls.get(j);
-      for (int k = j; k < calls.size(); k++) {
-        final String b = calls.get(k);
+    for (int j = 0; j < alleles.size(); j++) {
+      final String a = alleles.get(j);
+      for (int k = j; k < alleles.size(); k++) {
+        final String b = alleles.get(k);
         // canonical ordering, see vcf spec
         final int pos = (k * (k + 1) / 2) + j;
         final Double likelihood = genotypeLikelihoods.get(VariantSample.pairSet(a, b));
+        if (likelihood == null) { // Can occur if variant splitting discovers a new VA
+          return null;
+        }
         likelihoods[pos] = likelihood;
         sum = arith.add(sum, likelihoods[pos]);
       }
@@ -50,42 +60,28 @@ public final class GenotypeLikelihoodUtils {
     return likelihoods;
   }
 
-  private static double[] haploidLikelihoods(List<String> calls, Map<Set<String>, Double> genotypeLikelihoods) {
+  /**
+   * Produce haploid GL field values for a set of alleles
+   * from VCF spec the canonical ordering is: position of hypothesis <code>j/k</code> is given by <code>F(j/k) = (k*(k+1)/2)+j</code>.
+   * @param alleles the alleles to include in the likelihoods
+   * @param genotypeLikelihoods the full genotype likelihoods, including hypotheses not called
+   * @return array of likelihoods in the canonical order, or null if they could not be computed
+   */
+  static double[] haploidLikelihoods(List<String> alleles, Map<Set<String>, Double> genotypeLikelihoods) {
     final PossibilityArithmetic arith = LogApproximatePossibility.SINGLETON;
-    final double[] likelihoods = new double[calls.size()];
+    final double[] likelihoods = new double[alleles.size()];
     double sum = arith.zero();
-    for (int i = 0; i < calls.size(); i++) {
-      final Double likelihood = genotypeLikelihoods.get(Collections.singleton(calls.get(i)));
+    for (int i = 0; i < alleles.size(); i++) {
+      final Double likelihood = genotypeLikelihoods.get(Collections.singleton(alleles.get(i)));
+      if (likelihood == null) { // Can occur if variant splitting discovers a new VA
+        return null;
+      }
       likelihoods[i] = likelihood;
       sum = arith.add(sum, likelihoods[i]);
     }
-    for (int i = 0; i < calls.size(); i++) {
+    for (int i = 0; i < alleles.size(); i++) {
       likelihoods[i] = arith.divide(likelihoods[i], sum) / MathUtils.LOG_10;
     }
     return likelihoods;
   }
-
-  /**
-   * Produce GL field values for a set of alleles
-   * from VCF spec the canonical ordering is: position of hypothesis <code>j/k</code> is given by <code>F(j/k) = (k*(k+1)/2)+j</code>.
-   * @param sample the sample to create likelihoods for
-   * @param alleles the alleles to include in the likelihoods
-   * @return array of likelihoods in the canonical order
-   */
-  public static double[] getLikelihoods(VariantSample sample, List<String> alleles) {
-    final double[] likelihoods;
-    final Map<Set<String>, Double> genotypeLikelihoods = sample.getGenotypeLikelihoods();
-    if (genotypeLikelihoods == null || genotypeLikelihoods.size() == 0) {
-      return null;
-    }
-    if (sample.getPloidy() == Ploidy.HAPLOID) {
-      likelihoods = haploidLikelihoods(alleles, genotypeLikelihoods);
-    } else if (sample.getPloidy() == Ploidy.DIPLOID) {
-      likelihoods = diploidLikelihoods(alleles, genotypeLikelihoods);
-    } else {
-      likelihoods = null;
-    }
-    return likelihoods;
-  }
-
 }

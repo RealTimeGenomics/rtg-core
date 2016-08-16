@@ -15,12 +15,15 @@ package com.rtg.variant.format;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import com.rtg.reference.Ploidy;
 import com.rtg.util.MathUtils;
 import com.rtg.util.PosteriorUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.Variant;
 import com.rtg.variant.Variant.VariantFilter;
 import com.rtg.variant.VariantParams;
@@ -511,24 +514,35 @@ public enum VcfFormatField {
     }
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      final List<String> calls = new ArrayList<>();
-      calls.add(rec.getRefCall());
-      calls.addAll(rec.getAltCalls());
+      final List<String> alleles = new ArrayList<>();
+      alleles.add(rec.getRefCall());
+      alleles.addAll(rec.getAltCalls());
       if (includePrevNt) {
-        for (int i = 0; i < calls.size(); i++) {
-          calls.set(i, calls.get(i).substring(1));
+        for (int i = 0; i < alleles.size(); i++) {
+          alleles.set(i, alleles.get(i).substring(1));
         }
       }
-      final double[] likelihoods = GenotypeLikelihoodUtils.getLikelihoods(sample, calls);
-      if (likelihoods != null) {
-        final StringBuilder sb = new StringBuilder();
-        for (double d : likelihoods) {
-          if (sb.length() != 0) {
-            sb.append(",");
-          }
-          sb.append(Utils.realFormat(d, 2));
+      final Map<Set<String>, Double> genotypeLikelihoods = sample.getGenotypeLikelihoods();
+      if (genotypeLikelihoods != null && genotypeLikelihoods.size() > 0
+        && (sample.getPloidy() == Ploidy.HAPLOID || sample.getPloidy() == Ploidy.DIPLOID)) {
+        final double[] likelihoods;
+        if (sample.getPloidy() == Ploidy.DIPLOID) {
+          likelihoods = GenotypeLikelihoodUtils.diploidLikelihoods(alleles, genotypeLikelihoods);
+        } else {
+          likelihoods = GenotypeLikelihoodUtils.haploidLikelihoods(alleles, genotypeLikelihoods);
         }
-        rec.addFormatAndSample(name(), sb.toString());
+        if (likelihoods == null) {
+          Diagnostic.developerLog("Could not compute GL for variant at " + rec.getSequenceName() + ":" + (rec.getStart() + 1) + "-" + (rec.getEnd() + 1));
+        } else {
+          final StringBuilder sb = new StringBuilder();
+          for (double d : likelihoods) {
+            if (sb.length() != 0) {
+              sb.append(",");
+            }
+            sb.append(Utils.realFormat(d, 2));
+          }
+          rec.addFormatAndSample(name(), sb.toString());
+        }
       }
     }
     @Override
