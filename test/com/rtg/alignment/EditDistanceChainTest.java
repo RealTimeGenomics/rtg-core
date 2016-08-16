@@ -49,7 +49,7 @@ public class EditDistanceChainTest extends TestCase {
     int i = 0;
     assertEquals(NoIndelsEditDistance.class.getSimpleName(), mEd.getName(i++));
     assertEquals(SingleIndelEditDistance.class.getSimpleName(), mEd.getName(i++));
-//    assertEquals(SingleIndelSeededEditDistance.class.getSimpleName(), mEd.getName(2));
+    assertEquals(SingleIndelSeededEditDistance.class.getSimpleName(), mEd.getName(i++));
     assertEquals(LowerBoundEditDistance.class.getSimpleName(), mEd.getName(i++));
     assertEquals(HopStepEditDistanceLong.class.getSimpleName(), mEd.getName(i));
   }

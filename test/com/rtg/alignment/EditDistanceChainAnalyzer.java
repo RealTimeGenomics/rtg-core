@@ -131,7 +131,7 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
     this(params.substitutionPenalty(), params.gapOpenPenalty(), params.gapExtendPenalty(), params.unknownsPenalty(), maxShiftFactor,
         new NoIndelsEditDistance(params),
         new SingleIndelEditDistance(params, rlen),
-//        new SingleIndelSeededEditDistance(params, rlen), XXX this is a broken unused aligner
+        new SingleIndelSeededEditDistance(params, rlen),
         new LowerBoundEditDistance(EditDistanceFactory.calculateLowerBoundValue(rlen, maxShiftFactor), 1, params.unknownsPenalty()),
         new HopStepEditDistanceLong(params),
         new SeededAligner(params, false),

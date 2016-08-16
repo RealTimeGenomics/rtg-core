@@ -68,7 +68,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
     super(ngsParams, maxReadLength);
     mSeed = new Seed(seedSize);
     mSeedInfo = new short[4 * mDiagonal.length]; // TODO related to seed length?! explodes if > 5
-    mDelta = new int[1000]; //XXX set this from something sensible or put in code to scale it with maxShift parameters
+    mDelta = new int[0];
     mDeltaThreshold = deltaThreshold;
     mDiffThreshold = diffThreshold * mSubstitutionPenalty;
     mIndelOpenPenalty = ngsParams.gapOpenPenalty();
@@ -96,7 +96,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
 
     mSeed = new Seed(seedSize);
     mSeedInfo = new short[4 * mDiagonal.length]; //TODO related to seed length?! explodes if > 5
-    mDelta = new int[1000]; //XXX set this from something sensible or put in code to scale it with maxShift parameters
+    mDelta = new int[0];
     mDeltaThreshold = deltaThreshold;
     mDiffThreshold = diffThreshold * mSubstitutionPenalty;
     mIndelOpenPenalty = ngsParams.gapOpenPenalty();
@@ -138,7 +138,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
     mMaxShift = maxShift;
     mDeltaLength = 2 * mMaxShift + 1;
     if (mDeltaLength > mDelta.length) {
-      mDelta = new int[mDeltaLength];
+      mDelta = new int[mDeltaLength + 2];
     }
     int zeroBasedStart = initialZeroBasedStart;
 
