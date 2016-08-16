@@ -39,9 +39,6 @@ public final class GenotypeLikelihoodUtils {
         // canonical ordering, see vcf spec
         final int pos = (k * (k + 1) / 2) + j;
         final Double likelihood = genotypeLikelihoods.get(VariantSample.pairSet(a, b));
-        if (likelihood == null) {
-          return null; // XXX we may not have computed the likelihood for the VA allele
-        }
         likelihoods[pos] = likelihood;
         sum = arith.add(sum, likelihoods[pos]);
       }
@@ -59,9 +56,6 @@ public final class GenotypeLikelihoodUtils {
     double sum = arith.zero();
     for (int i = 0; i < calls.size(); i++) {
       final Double likelihood = genotypeLikelihoods.get(Collections.singleton(calls.get(i)));
-      if (likelihood == null) {
-        return null; // XXX we may not have computed the likelihood for the VA allele
-      }
       likelihoods[i] = likelihood;
       sum = arith.add(sum, likelihoods[i]);
     }

@@ -143,6 +143,9 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
     alleles.add(ref);
     for (final VariantSample sample : samples) {
       if (sample != null  && sample.getMeasure() != null) {
+        if (sample.getVariantAllele() != null) {
+          alleles.add(sample.getVariantAllele());
+        }
         final int best = sample.getMeasure().best();
         final Description desc = sample.getMeasure().hypotheses().description();
         final Code code = sample.getMeasure().hypotheses().code();
