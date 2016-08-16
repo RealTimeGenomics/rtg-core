@@ -17,11 +17,11 @@ import java.io.IOException;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 /**
- *
  */
 public class BamStripProbesTest extends AbstractCliTest {
 
@@ -35,9 +35,9 @@ public class BamStripProbesTest extends AbstractCliTest {
       final File probes = FileHelper.resourceToFile("com/rtg/sam/probe/resources/probes.bed", new File(dir, "probes.bed"));
       final File alignments = FileHelper.resourceToFile("com/rtg/sam/probe/resources/alignments.sam", new File(dir, "alignments.sam"));
       final File output = new File(dir, "output.sam");
-      final String warn = checkMainInitWarn("-i", alignments.getPath(), "-o", output.getPath(), "-b", probes.getPath(), "-Z");
+      final MainResult result = checkMainInit("-i", alignments.getPath(), "-o", output.getPath(), "-b", probes.getPath(), "-Z");
       mNano.check("expected.stripped.sam", FileHelper.fileToString(output));
-      mNano.check("expected.warn.text", warn);
+      mNano.check("expected.out.text", result.out());
     }
   }
 

@@ -119,36 +119,37 @@ public class BamStripProbes extends AbstractCli {
       }
     }
 
-    err.println("PROBE OFFSETS");
-    final TextTable offsetSummary = new TextTable();
-    offsetSummary.addRow("Delta", "+", "-");
-    offsetSummary.addSeparator();
-    for (int i = 0; i < posChecker.mPosDiffStats.length; i++) {
-      offsetSummary.addRow(Integer.toString(i - tolerance), Integer.toString(posChecker.mPosDiffStats[i]), Integer.toString(negChecker.mPosDiffStats[tolerance * 2 - i]));
+    try (final PrintStream summaryOut = new PrintStream(out)) {
+      summaryOut.println("PROBE OFFSETS");
+      final TextTable offsetSummary = new TextTable();
+      offsetSummary.addRow("Delta", "+", "-");
+      offsetSummary.addSeparator();
+      for (int i = 0; i < posChecker.mPosDiffStats.length; i++) {
+        offsetSummary.addRow(Integer.toString(i - tolerance), Integer.toString(posChecker.mPosDiffStats[i]), Integer.toString(negChecker.mPosDiffStats[tolerance * 2 - i]));
+      }
+      summaryOut.println(offsetSummary);
+
+      summaryOut.println("CIGAR OPERATIONS WITHIN PROBE");
+      final TextTable cigarSummary = new TextTable();
+      cigarSummary.addRow("Strand", "Length", "X", "I", "D", "S");
+      cigarSummary.addSeparator();
+      for (int i = 0; i < PositionAndStrandChecker.MAX_OP_LEN; i++) {
+        addCigarRow(cigarSummary, "+", posChecker, i);
+        addCigarRow(cigarSummary, "-", negChecker, i);
+      }
+      summaryOut.println(cigarSummary);
+
+      summaryOut.println("SUMMARY");
+      final long totalstripped = posStripped + negStripped;
+      final long total = totalPos + totalNeg;
+      final TextTable summary = new TextTable();
+      summary.addRow("Strand", "Alignments", "Stripped", "Identified", "nt/read");
+      summary.addSeparator();
+      summary.addRow("+", Long.toString(totalPos), Long.toString(posStripped), String.format("%.2f%%", (double) posStripped / totalPos * 100.0), String.format("%.1f", (double) posChecker.mBasesTrimmed / posStripped));
+      summary.addRow("-", Long.toString(totalNeg), Long.toString(negStripped), String.format("%.2f%%", (double) negStripped / totalNeg * 100.0), String.format("%.1f", (double) negChecker.mBasesTrimmed / negStripped));
+      summary.addRow("Both", Long.toString(total), Long.toString(totalstripped), String.format("%.2f%%", (double) totalstripped / total * 100.0), String.format("%.1f", (double) (posChecker.mBasesTrimmed + negChecker.mBasesTrimmed) / totalstripped));
+      summaryOut.println(summary);
     }
-    err.println(offsetSummary);
-
-    err.println("CIGAR OPERATIONS WITHIN PROBE");
-    final TextTable cigarSummary = new TextTable();
-    cigarSummary.addRow("Strand", "Length", "X", "I", "D", "S");
-    cigarSummary.addSeparator();
-    for (int i = 0; i < PositionAndStrandChecker.MAX_OP_LEN; i++) {
-      addCigarRow(cigarSummary, "+", posChecker, i);
-      addCigarRow(cigarSummary, "-", negChecker, i);
-    }
-    err.println(cigarSummary);
-
-    err.println("SUMMARY");
-    final long totalstripped = posStripped + negStripped;
-    final long total = totalPos + totalNeg;
-    final TextTable summary = new TextTable();
-    summary.addRow("Strand", "Alignments", "Stripped", "Identified", "nt/read");
-    summary.addSeparator();
-    summary.addRow("+", Long.toString(totalPos), Long.toString(posStripped), String.format("%.2f%%", (double) posStripped / totalPos * 100.0), String.format("%.1f", (double) posChecker.mBasesTrimmed / posStripped));
-    summary.addRow("-", Long.toString(totalNeg), Long.toString(negStripped), String.format("%.2f%%", (double) negStripped / totalNeg * 100.0), String.format("%.1f", (double) negChecker.mBasesTrimmed / negStripped));
-    summary.addRow("Both", Long.toString(total), Long.toString(totalstripped), String.format("%.2f%%", (double) totalstripped / total * 100.0), String.format("%.1f", (double) (posChecker.mBasesTrimmed + negChecker.mBasesTrimmed) / totalstripped));
-    err.println(summary);
-
     return 0;
   }
 
