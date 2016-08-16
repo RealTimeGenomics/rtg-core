@@ -104,6 +104,16 @@ public class CoverageReaderRecordTest extends TestCase {
     assertTrue(coverage.get(14));
     assertTrue(coverage.get(15));
     assertFalse(coverage.get(16));
+  }
 
+  public void testEmptyCigar() {
+    final SAMRecord sam = new SAMRecord(null);
+    sam.setCigarString("*");
+    sam.setAttribute(SamUtils.ATTRIBUTE_IH, 1);
+    final CoverageReaderRecord record = new CoverageReaderRecord(sam, 0, false);
+    assertEquals(-1, record.getFragmentLength());
+    assertEquals(-1, record.getMateSequenceId());
+    assertFalse(record.isMated());
+    assertEquals(1.0, record.getCoverageMultiplier());
   }
 }

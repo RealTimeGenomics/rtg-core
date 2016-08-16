@@ -19,7 +19,7 @@ import com.rtg.util.CompareHelper;
 import htsjdk.samtools.SAMRecord;
 
 /**
- *
+ * Hold the SAM record information we care about for the purposes of coverage calculations.
  */
 public class CoverageReaderRecord extends AbstractMateInfoReaderRecord<CoverageReaderRecord> {
 
@@ -93,48 +93,50 @@ public class CoverageReaderRecord extends AbstractMateInfoReaderRecord<CoverageR
 
   private BitSet parseCigar(SAMRecord rec, boolean includeDeletions) {
     final BitSet bs = new BitSet();
-    int tPos = 0;
     final String cigar = rec.getCigarString();
-    int n = 0;
-    for (int i = 0; i < cigar.length(); i++) {
-      final char c = cigar.charAt(i);
-      if (Character.isDigit(c)) {
-        n = 10 * n + c - '0';
-      } else {
-        switch (c) {
-        case SamUtils.CIGAR_SAME_OR_MISMATCH:
-        case SamUtils.CIGAR_SAME:
-        case SamUtils.CIGAR_MISMATCH:
-          // it is a match or mismatch, so increment our coverage counts
-          bs.set(tPos, tPos + n, true);
-          tPos += n;
-          break;
+    if (!SamUtils.NO_CIGAR.equals(cigar)) {
+      int tPos = 0;
+      int n = 0;
+      for (int i = 0; i < cigar.length(); i++) {
+        final char c = cigar.charAt(i);
+        if (Character.isDigit(c)) {
+          n = 10 * n + c - '0';
+        } else {
+          switch (c) {
+            case SamUtils.CIGAR_SAME_OR_MISMATCH:
+            case SamUtils.CIGAR_SAME:
+            case SamUtils.CIGAR_MISMATCH:
+              // it is a match or mismatch, so increment our coverage counts
+              bs.set(tPos, tPos + n, true);
+              tPos += n;
+              break;
 
-        case SamUtils.CIGAR_GAP_IN_READ:
-          // skip this region in the reference genome
-          tPos += n;
-          break;
+            case SamUtils.CIGAR_GAP_IN_READ:
+              // skip this region in the reference genome
+              tPos += n;
+              break;
 
-        case SamUtils.CIGAR_DELETION_FROM_REF: // we record the delete at the read position just after the delete
-          if (includeDeletions) {
-            bs.set(tPos, tPos + n, true);
+            case SamUtils.CIGAR_DELETION_FROM_REF: // we record the delete at the read position just after the delete
+              if (includeDeletions) {
+                bs.set(tPos, tPos + n, true);
+              }
+              tPos += n;
+              break;
+
+            case SamUtils.CIGAR_INSERTION_INTO_REF:
+            case SamUtils.CIGAR_SOFT_CLIP:
+              // skip over these soft-clipped read bases.
+            case SamUtils.CIGAR_HARD_CLIP:
+              // unlike soft clipping, hard clipping does not appear in the read, so we just skip it.
+            case SamUtils.CIGAR_PADDING:
+              // padding is just to get multiple inserts aligned, so it does not increment either position.
+              break;
+
+            default:
+              throw new RuntimeException("Unknown cigar code=" + c + " in record: " + rec.getSAMString());
           }
-          tPos += n;
-          break;
-
-        case SamUtils.CIGAR_INSERTION_INTO_REF:
-        case SamUtils.CIGAR_SOFT_CLIP:
-          // skip over these soft-clipped read bases.
-        case 'H':
-          // unlike soft clipping, hard clipping does not appear in the read, so we just skip it.
-        case 'P':
-          // padding is just to get multiple inserts aligned, so it does not increment either position.
-          break;
-
-        default:
-          throw new RuntimeException("Unknown cigar code=" + c);
+          n = 0;
         }
-        n = 0;
       }
     }
     return bs;

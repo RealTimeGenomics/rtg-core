@@ -254,7 +254,7 @@ public final class CigarFormatter {
             case SamUtils.CIGAR_SAME_OR_MISMATCH:
             case SamUtils.CIGAR_SAME:
             case SamUtils.CIGAR_MISMATCH:
-            case 'P':
+            case SamUtils.CIGAR_PADDING:
               refPos++;
               readPos++;
               break;

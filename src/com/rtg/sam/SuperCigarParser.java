@@ -367,7 +367,7 @@ public class SuperCigarParser {
             advanceTemplate(true);
           }
           break;
-        case 'H':
+        case SamUtils.CIGAR_HARD_CLIP:
           doReadHardClip();
           // hard clip regions are not included in the read, so we do not increment mReadPos.
           if (mTemplatePos > mTemplateStart) {  //this only advances the template for soft clips that aren't at the start of the read. Advancing for other cases is purely for super cigar backstep operations.
