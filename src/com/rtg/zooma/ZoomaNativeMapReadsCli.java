@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import com.reeltwo.jumble.annotations.JumbleIgnore;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.ngs.MapFlags;
@@ -27,6 +28,7 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 /**
  * Provide integration with C Zooma read mapping
  */
+@JumbleIgnore
 public class ZoomaNativeMapReadsCli extends AbstractCli {
 
   private static final String INDEX_FLAG = "index";
