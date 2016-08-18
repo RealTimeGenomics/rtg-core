@@ -311,10 +311,7 @@ public final class MapFlags {
       return false;
     }
 
-    if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.MAX_FRAGMENT_SIZE, 1, MAX_INSERT_SIZE)) {
-      return false;
-    }
-    if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.MIN_FRAGMENT_SIZE, 0, MAX_INSERT_SIZE)) {
+    if (!validateMinMaxFragmentSize(flags)) {
       return false;
     }
     if (flags.isSet(MATED_MISMATCH_THRESHOLD) && flags.isSet(MAX_ALIGNMENT_MISMATCHES)) {
@@ -341,6 +338,27 @@ public final class MapFlags {
       return false;
     }
 
+    return true;
+  }
+
+  /**
+   * Validate fragment size limiting flags
+   * @param flags the flags to check
+   * @return true if flags passed check
+   */
+  public static boolean validateMinMaxFragmentSize(CFlags flags) {
+    if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.MAX_FRAGMENT_SIZE, 1, MAX_INSERT_SIZE)) {
+      return false;
+    }
+    if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.MIN_FRAGMENT_SIZE, 0, MAX_INSERT_SIZE)) {
+      return false;
+    }
+    final int min = (Integer) flags.getValue(CommonFlags.MIN_FRAGMENT_SIZE);
+    final int max = (Integer) flags.getValue(CommonFlags.MAX_FRAGMENT_SIZE);
+    if (min > max) {
+      flags.setParseMessage("--" + CommonFlags.MIN_FRAGMENT_SIZE + " must be less than --" + CommonFlags.MAX_FRAGMENT_SIZE);
+      return false;
+    }
     return true;
   }
 
@@ -392,12 +410,7 @@ public final class MapFlags {
       flags.setParseMessage("--" + UNMATED_MISMATCH_THRESHOLD + " requires paired end input");
       return false;
     }
-    final int min = (Integer) flags.getValue(CommonFlags.MIN_FRAGMENT_SIZE);
-    final int max = (Integer) flags.getValue(CommonFlags.MAX_FRAGMENT_SIZE);
-    if (min > max) {
-      flags.setParseMessage("--" + CommonFlags.MIN_FRAGMENT_SIZE + " must be less than --" + CommonFlags.MAX_FRAGMENT_SIZE);
-      return false;
-    }
+
     if (flags.isSet(BAM_FLAG) && flags.isSet(SAM_FLAG)) {
       flags.setParseMessage("Can not specify both --" + SAM_FLAG + " and --" + BAM_FLAG);
       return false;

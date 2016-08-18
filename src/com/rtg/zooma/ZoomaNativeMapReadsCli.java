@@ -21,6 +21,7 @@ import com.reeltwo.jumble.annotations.JumbleIgnore;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.ngs.MapFlags;
+import com.rtg.sam.SamCommandHelper;
 import com.rtg.util.Environment;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
@@ -34,14 +35,14 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
   private static final String INDEX_FLAG = "index";
   private static final String LEFT_FLAG = "left";
   private static final String RIGHT_FLAG = "right";
-  private static final String OUT_PREFIX_FLAG = "out";
   private static final String NO_QUICK_FLAG = "Xno-quick-cache";
   private static final String NO_CACHE_FLAG = "Xno-cache";
   private static final String OUTPUT_CHUNK_FLAG = "output-chunk";
-  private static final String INPUT_CHUNK_FLAG = "input-chunk";
   private static final String SAM_RG_FLAG = "sam-rg";
   private static final String E_SCORE = "e-score";
   private static final String STEP = "step";
+  private static final String INPUT_CACHE = "input-cache";
+  private static final String OUTPUT_CACHE = "output-cache";
 
   @Override
   public String moduleName() {
@@ -58,15 +59,18 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
     mFlags.registerOptional('t', INDEX_FLAG, File.class, "FILE", "reference index file", new File("zooma.index.bin"));
     mFlags.registerRequired('l', LEFT_FLAG, File.class, "FILE", "left input file for FASTQ paired end data");
     mFlags.registerRequired('r', RIGHT_FLAG, File.class, "FILE", "right input file for FASTQ paired end data");
-    mFlags.registerOptional('o', OUT_PREFIX_FLAG, String.class, "STRING", "prefix for output files", "outfile_zooma");
+    CommonFlags.initOutputDirFlag(mFlags);
     mFlags.registerOptional('Q', NO_QUICK_FLAG, "do not build and use the \"quick cache\"");
-    mFlags.registerOptional('C', NO_CACHE_FLAG, "do not build and use the \"cache\"");
+    mFlags.registerOptional('N', NO_CACHE_FLAG, "do not build and use the \"cache\"");
     mFlags.registerOptional('k', OUTPUT_CHUNK_FLAG, Integer.class, "INT", "number of reads per chunk", 100000);
     mFlags.registerOptional('e', E_SCORE, Integer.class, CommonFlags.INT, "alignment score threshold per arm (2*e for mates)", 10);
     mFlags.registerOptional('s', STEP, Integer.class, CommonFlags.INT, "set the search step size (The w value from inside the index)");
-    mFlags.registerOptional(SAM_RG_FLAG, String.class, "STRING", "string in the form \"@RG\\tID:RG1\\tSM:SAMPLE_NAME\\tPL:ILLUMINA\"");
+    mFlags.registerOptional('c', INPUT_CACHE, Integer.class, CommonFlags.INT, "input cache in GB");
+    mFlags.registerOptional('C', OUTPUT_CACHE, Integer.class, CommonFlags.INT, "output cache in GB");
+    SamCommandHelper.initSamRg(mFlags);
     MapFlags.initFragmentSizeFlags(mFlags);
     CommonFlags.initThreadsFlag(mFlags);
+    mFlags.setValidator(flags -> (!mFlags.isSet(SamCommandHelper.SAM_RG) || SamCommandHelper.validateSamRg(flags)) && MapFlags.validateMinMaxFragmentSize(flags));
   }
 
   @Override
@@ -111,10 +115,16 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
     if (ocacheGB < 0) {
       ocacheGB = 0;
     }
+    if (mFlags.isSet(INPUT_CACHE)) {
+      icacheGB = (Integer) mFlags.getValue(INPUT_CACHE);
+    }
+    if (mFlags.isSet(OUTPUT_CACHE)) {
+      ocacheGB = (Integer) mFlags.getValue(OUTPUT_CACHE);
+    }
     return zooma.mapReads(
-      indexFile.getPath(), leftFile.getPath(), rightFile.getPath(), (String) mFlags.getValue(OUT_PREFIX_FLAG), threads,
+      indexFile.getPath(), leftFile.getPath(), rightFile.getPath(), ((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG)).getPath(), threads,
       chunkSize, (Integer) mFlags.getValue(E_SCORE), (Integer) mFlags.getValue(CommonFlags.MIN_FRAGMENT_SIZE), (Integer) mFlags.getValue(CommonFlags.MAX_FRAGMENT_SIZE),
-      step, (String) mFlags.getValue(SAM_RG_FLAG), !mFlags.isSet(NO_QUICK_FLAG), !mFlags.isSet(NO_CACHE_FLAG), false,
+      step, (String) mFlags.getValue(SamCommandHelper.SAM_RG), !mFlags.isSet(NO_QUICK_FLAG), !mFlags.isSet(NO_CACHE_FLAG), false,
       false, false, 0, null, FileDescriptor.err, icacheGB, ocacheGB);
   }
 
