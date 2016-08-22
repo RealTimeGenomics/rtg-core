@@ -35,6 +35,7 @@ import com.rtg.util.cli.Validator;
 import com.rtg.variant.GenomeConnectivity;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
+import com.rtg.variant.avr.AvrUtils;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 import com.rtg.variant.bayes.multisample.MultisampleTask;
 
@@ -85,7 +86,7 @@ public class PopulationCli extends AbstractMultisampleCli {
 
   void initLocalFlags(CFlags flags) {
     initFlags(flags);
-    CommonFlags.initAvrModel(flags, false);
+    AvrUtils.initAvrModel(flags, false);
     CommonFlags.initMinAvrScore(flags);
     flags.setDescription("Performs a multiple sample variant analysis of many, potentially related, genomes.");
     flags.setValidator(new MultisampleValidator());

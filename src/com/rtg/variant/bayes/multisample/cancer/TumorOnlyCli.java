@@ -24,6 +24,7 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.variant.SomaticParamsBuilder;
+import com.rtg.variant.avr.AvrUtils;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 
 /**
@@ -81,7 +82,7 @@ public class TumorOnlyCli extends SomaticCli {
   @Override
   void initLocalFlags(CFlags flags) {
     initFlags(flags);
-    CommonFlags.initAvrModel(flags, false);
+    AvrUtils.initAvrModel(flags, false);
     CommonFlags.initMinAvrScore(flags);
     commonSomaticFlags(flags);
     flags.setDescription("Performs a somatic variant analysis on a mixed tumor sample.");

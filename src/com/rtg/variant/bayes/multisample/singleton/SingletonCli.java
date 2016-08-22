@@ -34,6 +34,7 @@ import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
+import com.rtg.variant.avr.AvrUtils;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 import com.rtg.variant.bayes.multisample.MultisampleTask;
 import com.rtg.vcf.VariantStatistics;
@@ -89,7 +90,7 @@ public class SingletonCli extends AbstractMultisampleCli {
 
   void initLocalFlags(CFlags flags) {
     initFlags(flags);
-    CommonFlags.initAvrModel(flags, false);
+    AvrUtils.initAvrModel(flags, false);
     CommonFlags.initMinAvrScore(flags);
     flags.setDescription("Calls sequence variants, such as single nucleotide polymorphisms (SNPs), multi-nucleotide polymorphisms (MNPs) and Indels, from a set of alignments reported in co-ordinate sorted SAM/BAM files.");
     flags.setValidator(new SingletonValidator());

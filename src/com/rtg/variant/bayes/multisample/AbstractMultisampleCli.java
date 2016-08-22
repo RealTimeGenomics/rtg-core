@@ -62,6 +62,7 @@ import com.rtg.variant.ThreadingEnvironment;
 import com.rtg.variant.VariantOutputLevel;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
+import com.rtg.variant.avr.AvrUtils;
 import com.rtg.variant.bayes.AlleleBalanceProbability;
 import com.rtg.variant.bayes.BinomialAlleleBalance;
 import com.rtg.variant.bayes.HoeffdingAlleleBalance;
@@ -384,7 +385,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     builder.outputNonSnps(!mFlags.isSet(SNPS_ONLY_FLAG));
     builder.enableTrimSplit(!mFlags.isSet(X_NO_TRIM_SPLIT));
     builder.vcfRp(mFlags.isSet(X_VCF_RP));
-    builder.avrModelFile(CommonFlags.getAvrModel(mFlags, false));
+    builder.avrModelFile(AvrUtils.getAvrModel(mFlags, false));
     builder.ignoreQualityScores(mFlags.isSet(X_IGNORE_QUALITIES_FLAG));
     final SamFilterParams filterParams = SamFilterOptions.makeFilterParamsBuilder(mFlags).excludeUnplaced(true).excludeVariantInvalid(true).create();
     builder.filterParams(filterParams);

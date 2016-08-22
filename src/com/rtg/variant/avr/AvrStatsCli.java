@@ -30,7 +30,6 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import com.rtg.launcher.AbstractCli;
-import com.rtg.launcher.CommonFlags;
 import com.rtg.util.Pair;
 import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CommonFlagCategories;
@@ -62,7 +61,7 @@ public class AvrStatsCli extends AbstractCli {
     mFlags.registerOptional(XDUMP_PROPERTIES, "if set, output the raw model properties").setCategory(CommonFlagCategories.UTILITY);
     mFlags.registerOptional(XDUMP_MODEL, "if set, output a verbose representation of the model").setCategory(CommonFlagCategories.UTILITY);
 
-    CommonFlags.initAvrModel(mFlags, true);
+    AvrUtils.initAvrModel(mFlags, true);
   }
 
   private final ArrayList<Pair<String, String>> mProperties = new ArrayList<>();
@@ -81,7 +80,7 @@ public class AvrStatsCli extends AbstractCli {
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
     final File modelFile;
-    modelFile = CommonFlags.getAvrModel(mFlags, true);
+    modelFile = AvrUtils.getAvrModel(mFlags, true);
     if (modelFile == null) {
       throw new NoTalkbackSlimException("No model file specified and no default model available.");
     }

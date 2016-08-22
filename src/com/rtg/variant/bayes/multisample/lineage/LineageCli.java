@@ -25,6 +25,7 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.avr.AvrUtils;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 import com.rtg.variant.bayes.multisample.MultisampleTask;
 
@@ -71,7 +72,7 @@ public class LineageCli extends AbstractMultisampleCli {
 
   void initLocalFlags(CFlags flags) {
     initFlags(flags);
-    CommonFlags.initAvrModel(flags, false);
+    AvrUtils.initAvrModel(flags, false);
     CommonFlags.initMinAvrScore(flags);
     flags.setDescription("Performs a combined cell lineage variant analysis.");
     flags.setValidator(new LineageValidator());

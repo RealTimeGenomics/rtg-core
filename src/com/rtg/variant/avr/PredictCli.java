@@ -59,7 +59,7 @@ public class PredictCli extends AbstractCli {
     mFlags.registerRequired('i', INPUT_FLAG, File.class, "FILE", "input VCF file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerRequired('o', OUTPUT_FLAG, File.class, "FILE", "output VCF file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
 
-    final Flag avrFlag = CommonFlags.initAvrModel(mFlags, false);
+    final Flag avrFlag = AvrUtils.initAvrModel(mFlags, false);
     if (avrFlag.getParameterDefault() == null) {
       avrFlag.setMinCount(1); // Make required if no default available
     }
@@ -85,7 +85,7 @@ public class PredictCli extends AbstractCli {
 
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
-    final File modelFile = CommonFlags.getAvrModel(mFlags, false);
+    final File modelFile = AvrUtils.getAvrModel(mFlags, false);
     final double threshold = mFlags.isSet(CommonFlags.FILTER_AVR_FLAG) ? (Double) mFlags.getValue(CommonFlags.FILTER_AVR_FLAG) : 0;
     if (modelFile == null) {
       throw new NoTalkbackSlimException("No model file specified and no default model available.");

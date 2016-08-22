@@ -36,6 +36,7 @@ import com.rtg.variant.SomaticParamsBuilder;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.avr.AbstractPredictModel;
+import com.rtg.variant.avr.AvrUtils;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 import com.rtg.variant.bayes.multisample.MultisampleTask;
 import com.rtg.variant.format.VcfFormatField;
@@ -144,7 +145,7 @@ public class SomaticCli extends AbstractMultisampleCli {
 
   void initLocalFlags(CFlags flags) {
     initFlags(flags);
-    CommonFlags.initAvrModel(flags, false);
+    AvrUtils.initAvrModel(flags, false);
     CommonFlags.initMinAvrScore(flags);
     commonSomaticFlags(flags);
     flags.registerOptional(DERIVED_FLAG, String.class, "string", "sample identifier used in read groups for derived sample").setCategory(INPUT_OUTPUT);
