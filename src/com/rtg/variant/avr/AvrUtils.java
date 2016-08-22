@@ -12,7 +12,6 @@
 package com.rtg.variant.avr;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.util.Arrays;
 
 import com.rtg.util.Environment;
@@ -59,17 +58,12 @@ public final class AvrUtils {
    */
   public static Flag initAvrModel(final CFlags flags, boolean anonymous, String defaultModel) {
     String description = "name of AVR model to use when scoring variants";
-    boolean hasDefault = false;
+    File defaultModelFile = null;
     final String modelDirName = Environment.getEnvironmentMap().get(ENVIRONMENT_MODELS_DIR);
     if (modelDirName != null) {
       final File modelDirFile = new File(modelDirName);
       if (modelDirFile.exists() && modelDirFile.isDirectory()) {
-        final String[] models = modelDirFile.list(new FilenameFilter() {
-          @Override
-          public boolean accept(File dir, String name) {
-            return name.endsWith(".avr");
-          }
-        });
+        final String[] models = modelDirFile.list((dir, name) -> name.endsWith(".avr"));
         if (!anonymous && models != null && models.length > 0) {
           final String[] newModels = new String[models.length + 1];
           newModels[0] = AVR_NONE_NAME;
@@ -77,7 +71,7 @@ public final class AvrUtils {
           Arrays.sort(newModels);
           description += " (Must be one of " + Arrays.toString(newModels) + " or a path to a model file)";
           if (Arrays.asList(newModels).contains(defaultModel)) {
-            hasDefault = true;
+            defaultModelFile = new File(defaultModel);
           }
         }
       }
@@ -85,25 +79,10 @@ public final class AvrUtils {
     final Flag modelFlag = anonymous
         ? flags.registerRequired(File.class, "file", description).setCategory(CommonFlagCategories.REPORTING)
         : flags.registerOptional(AVR_MODEL_FILE_FLAG, File.class, "file", description).setCategory(CommonFlagCategories.REPORTING);
-    if (!anonymous && hasDefault) {
-      modelFlag.setParameterDefault(defaultModel);
+    if (!anonymous && defaultModelFile != null) {
+      modelFlag.setParameterDefault(defaultModelFile);
     }
     return modelFlag;
-  }
-
-  // If the environment for models is set up and the default model exists within it, return the default model, otherwise null
-  private static File defaultAvrModel(String defaultModel) {
-    final String modelDirName = Environment.getEnvironmentMap().get(ENVIRONMENT_MODELS_DIR);
-    if (modelDirName == null) {
-      return null;
-    } else {
-      final File modelsDirFile = new File(modelDirName);
-      if (!modelsDirFile.exists() || !modelsDirFile.isDirectory()) {
-        throw new InvalidParamsException("The AVR models directory cannot be found or is not a directory: " + modelDirName);
-      }
-      final File model = new File(modelDirName, defaultModel);
-      return model.exists() ? model : null;
-    }
   }
 
   /**
@@ -118,38 +97,35 @@ public final class AvrUtils {
    * not exist or is not a directory.
    */
   public static File getAvrModel(final CFlags flags, boolean anonymous) {
-    return getAvrModel(flags, anonymous, MODEL_DEFAULT);
-  }
-
-  /**
-   * Gets the AVR model to use for prediction. If the user has supplied a model name, it will be first
-   * searched for as an actual file name, or secondly as a name within the environmental model directory
-   * (if configured)
-   *
-   * @param flags shared flags
-   * @param anonymous true if the model was registered as the only anonymous flag
-   * @param defaultModel specify the name of the model to be used as a default value
-   * @return a File pointing at the specified AVR model, or null if no AVR model is to be used
-   * @throws InvalidParamsException if the user specified a model that does not exist, or a models directory which does
-   * not exist or is not a directory.
-   */
-  public static File getAvrModel(final CFlags flags, boolean anonymous, String defaultModel) {
-    File avrModel = defaultAvrModel(defaultModel);
-    final Flag flag = anonymous ? flags.getAnonymousFlag(0) : flags.getFlag(AVR_MODEL_FILE_FLAG);
-    if (flag != null && flag.isSet()) {
-      final String modelsDir = Environment.getEnvironmentMap().get(ENVIRONMENT_MODELS_DIR);
-      final File userModel = (File) flag.getValue();
-      if (AVR_NONE_NAME.equals(userModel.toString())) {
-        return null;
-      } else if (userModel.exists()) {
-        avrModel = userModel;
-      } else if (modelsDir != null) {
-        avrModel = new File(modelsDir, userModel.getName());
-      }
-      if (avrModel == null || !avrModel.exists()) {
-        throw new InvalidParamsException("The specified AVR model could not be found: " + userModel.toString());
+    final String modelDirName = Environment.getEnvironmentMap().get(ENVIRONMENT_MODELS_DIR);
+    File modelsDirFile = null;
+    if (modelDirName != null) {
+      modelsDirFile = new File(modelDirName);
+      if (!modelsDirFile.exists() || !modelsDirFile.isDirectory()) {
+        throw new InvalidParamsException("The AVR models directory cannot be found or is not a directory: " + modelDirName);
       }
     }
-    return avrModel;
+
+    final Flag flag = anonymous ? flags.getAnonymousFlag(0) : flags.getFlag(AVR_MODEL_FILE_FLAG);
+    if (flag == null) {
+      return null;
+    }
+    if (flag.getValue() != null) {
+      File avrModel = (File) flag.getValue();
+      if (AVR_NONE_NAME.equals(avrModel.toString())) {
+        return null;
+      } else if (avrModel.exists()) {
+        return avrModel;
+      } else {
+        if (modelsDirFile != null) {
+          avrModel = new File(modelsDirFile, avrModel.getName());
+        }
+        if (!avrModel.exists()) {
+          throw new InvalidParamsException("The specified AVR model could not be found: " + flag.getValue());
+        }
+        return avrModel;
+      }
+    }
+    return null;
   }
 }

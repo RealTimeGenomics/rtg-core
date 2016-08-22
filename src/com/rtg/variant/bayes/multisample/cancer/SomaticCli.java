@@ -46,6 +46,9 @@ import com.rtg.variant.format.VcfFormatField;
  */
 public class SomaticCli extends AbstractMultisampleCli {
 
+  // The name of the default AVR model used for somatic calling
+  static final String SOMATIC_MODEL_DEFAULT = "illumina-somatic.avr";
+
   protected static final String SOMATIC_FLAG = "somatic";
   private static final String SOMATIC_PRIORS_FLAG = "somatic-priors";
   protected static final String LOH_FLAG = "loh";
@@ -145,7 +148,7 @@ public class SomaticCli extends AbstractMultisampleCli {
 
   void initLocalFlags(CFlags flags) {
     initFlags(flags);
-    AvrUtils.initAvrModel(flags, false);
+    AvrUtils.initAvrModel(flags, false, SOMATIC_MODEL_DEFAULT);
     CommonFlags.initMinAvrScore(flags);
     commonSomaticFlags(flags);
     flags.registerOptional(DERIVED_FLAG, String.class, "string", "sample identifier used in read groups for derived sample").setCategory(INPUT_OUTPUT);

@@ -82,7 +82,7 @@ public class TumorOnlyCli extends SomaticCli {
   @Override
   void initLocalFlags(CFlags flags) {
     initFlags(flags);
-    AvrUtils.initAvrModel(flags, false);
+    AvrUtils.initAvrModel(flags, false, SOMATIC_MODEL_DEFAULT);
     CommonFlags.initMinAvrScore(flags);
     commonSomaticFlags(flags);
     flags.setDescription("Performs a somatic variant analysis on a mixed tumor sample.");
