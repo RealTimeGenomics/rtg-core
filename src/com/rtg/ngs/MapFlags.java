@@ -481,7 +481,7 @@ public final class MapFlags {
    */
   public static void initSharedFlagsOnly(CFlags flags, IntegerOrPercentage repeat, int minRepeat, int maxRepeat) {
     flags.registerOptional(REPEAT_FREQUENCY_FLAG, IntegerOrPercentage.class, CommonFlags.INT, BuildCommon.RESOURCE.getString("REPEAT_FREQUENCY_DESC"), repeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(BLACKLIST_THRESHOLD, Integer.class, CommonFlags.INT, "filter k-mers that occur more than this many times in the reference using a blacklist", 65).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(BLACKLIST_THRESHOLD, Integer.class, CommonFlags.INT, "filter k-mers that occur more than this many times in the reference using a blacklist").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(MAX_REPEAT_FREQUENCY_FLAG, Integer.class, CommonFlags.INT, BuildCommon.RESOURCE.getString("MAX_REPEAT_FREQUENCY_DESC"), maxRepeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(MIN_REPEAT_FREQUENCY_FLAG, Integer.class, CommonFlags.INT, BuildCommon.RESOURCE.getString("MIN_REPEAT_FREQUENCY_DESC"), minRepeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     CommonFlags.initNoGzip(flags);
