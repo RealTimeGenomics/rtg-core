@@ -55,7 +55,7 @@ public class SvCliUtilsTest extends TestCase {
         , "FILE+", "SAM/BAM format files containing mapped reads. May be specified 0 or more times"
         , "-m,", "--max-as-mated=INT", "if set, ignore mated SAM records with an alignment score (AS attribute) that exceeds this value"
         , "-u,", "--max-as-unmated=INT", "if set, ignore unmated SAM records with an alignment score (AS attribute) that exceeds this value"
-        , "--region=STRING", "if set, only process SAM records within the specified range. The format is one of <template_name>, <template_name>:start-end or <template_name>:start+length"
+        , "--region=STRING", "if set, only process SAM records within the specified range. The format is one of <sequence_name>, <sequence_name>:start-end or <sequence_name>:start+length"
         , "-h,", "--help", "print help on command-line flag usage"
         , "-Z,", "--no-gzip", "do not gzip the output"
         , "-T,", "--threads=INT", "number of threads (Default is the number of available cores)"
