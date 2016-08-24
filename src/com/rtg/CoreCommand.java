@@ -35,7 +35,7 @@ import com.rtg.reader.SdfSplitter;
 import com.rtg.sam.Sam2Bam;
 import com.rtg.sam.SamMergeCli;
 import com.rtg.sam.SamValidatorCli;
-import com.rtg.sam.probe.BamStripProbes;
+import com.rtg.sam.probe.DeProbeCli;
 import com.rtg.segregation.SegregationCheckerCli;
 import com.rtg.segregation.SegregationVcfSearch;
 import com.rtg.similarity.SimilarityCli;
@@ -231,7 +231,7 @@ public final class CoreCommand {
   static final Command SAMRENAME = new Command(new SamRename(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** strip probes for mapped bam */
-  static final Command SAMSTRIPPROBES = new Command(new BamStripProbes(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
+  static final Command SAMSTRIPPROBES = new Command(new DeProbeCli(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
 
   /** Rename read-id field in mapping output */
   static final Command MAPXRENAME = new Command(new MapxRename(), CommandCategory.UTILITY, ReleaseLevel.GA);

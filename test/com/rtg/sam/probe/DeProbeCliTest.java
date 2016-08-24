@@ -17,26 +17,33 @@ import java.io.IOException;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.MainResult;
+import com.rtg.sam.SamUtils;
+import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 /**
  */
-public class BamStripProbesTest extends AbstractCliTest {
+public class DeProbeCliTest extends AbstractCliTest {
 
   @Override
   protected AbstractCli getCli() {
-    return new BamStripProbes();
+    return new DeProbeCli();
   }
 
   public void test() throws IOException {
     try (TestDirectory dir = new TestDirectory()) {
       final File probes = FileHelper.resourceToFile("com/rtg/sam/probe/resources/probes.bed", new File(dir, "probes.bed"));
       final File alignments = FileHelper.resourceToFile("com/rtg/sam/probe/resources/alignments.sam", new File(dir, "alignments.sam"));
-      final File output = new File(dir, "output.sam");
-      final MainResult result = checkMainInit("-i", alignments.getPath(), "-o", output.getPath(), "-b", probes.getPath(), "-Z");
-      mNano.check("expected.stripped.sam", FileHelper.fileToString(output));
+      final File output = new File(dir, "output");
+      final File bamFile = new File(output, DeProbeCli.ALIGNMENT_FILE_NAME);
+      final MainResult result = checkMainInit("-i", alignments.getPath(), "-o", output.getPath(), "-b", probes.getPath());
+      mNano.check("expected.stripped.sam", SamUtils.bamToString(bamFile));
+      mNano.check("expected.probes.tsv", FileUtils.fileToString(new File(output, DeProbeCli.PROBE_OFFSET_TABLE_FILE)));
+      mNano.check("expected.cigar_ops.tsv", FileUtils.fileToString(new File(output, DeProbeCli.CIGAR_OP_TABLE_FILE)));
+      mNano.check("expected.out.text", FileUtils.fileToString(new File(output, CommonFlags.SUMMARY_FILE)));
       mNano.check("expected.out.text", result.out());
     }
   }

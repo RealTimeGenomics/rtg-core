@@ -20,16 +20,19 @@ import java.util.List;
 
 import com.rtg.bed.BedReader;
 import com.rtg.bed.BedRecord;
-import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
+import com.rtg.launcher.LoggedCli;
 import com.rtg.sam.SamOutput;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.SmartSamWriter;
 import com.rtg.util.TextTable;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.ReferenceRanges;
+import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.LogStream;
 
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SamReader;
@@ -45,10 +48,13 @@ import htsjdk.samtools.SamReader;
  *   <li>Mapped first arm reads that do not match a known probe will receive an annotation (XS:Z:failed)</li>
  * </ul>
  */
-public class BamStripProbes extends AbstractCli {
+public class DeProbeCli extends LoggedCli {
 
   private static final String PROBE_BED = "probe-bed";
   private static final String TOLERANCE_FLAG = "tolerance";
+  static final String ALIGNMENT_FILE_NAME = "alignments_deprobed.bam";
+  static final String PROBE_OFFSET_TABLE_FILE = "probe_offsets.tsv";
+  static final String CIGAR_OP_TABLE_FILE = "cigar_ops.tsv";
 
 
   private ReferenceRanges<String> mPosRanges;
@@ -74,14 +80,18 @@ public class BamStripProbes extends AbstractCli {
     flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
     flags.registerRequired('i', CommonFlags.INPUT_FLAG, File.class, "FILE", "SAM/BAM file containing input alignments").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "FILE", "name for output SAM/BAM file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "FILE", "directory for output").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     flags.registerRequired('b', PROBE_BED, File.class, "FILE", "BED file specifying each probe location and strand").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     flags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "start position tolerance for probe matching", 3).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    CommonFlags.initNoGzip(flags);
   }
 
   @Override
-  protected int mainExec(OutputStream out, PrintStream err) throws IOException {
+  protected File outputDirectory() {
+    return (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
+  }
+
+  @Override
+  protected int mainExec(OutputStream out, LogStream log) throws IOException {
     final int tolerance = (Integer) mFlags.getValue(TOLERANCE_FLAG);
     final File input = (File) mFlags.getValue(CommonFlags.INPUT_FLAG);
     long totalPos = 0;
@@ -91,10 +101,13 @@ public class BamStripProbes extends AbstractCli {
     final PosChecker posChecker = new PosChecker(tolerance);
     final NegChecker negChecker = new NegChecker(tolerance);
     final File bedFile = (File) mFlags.getValue(PROBE_BED);
+    final File outputDir = (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
+
     try (SamReader reader = SamUtils.makeSamReader(input)) {
       loadProbeBed(bedFile);
 //      final ReferenceRanges<String> bedReferenceRanges = SamRangeUtils.createBedReferenceRanges(reader.getFileHeader(), (File) mFlags.getValue(PROBE_BED));
-      try (SamOutput samOutput = SamOutput.getSamOutput((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), out, reader.getFileHeader(), !mFlags.isSet(CommonFlags.NO_GZIP))) {
+      final File outputFile = new File(outputDir, ALIGNMENT_FILE_NAME);
+      try (SamOutput samOutput = SamOutput.getSamOutput(outputFile, out, reader.getFileHeader(), !mFlags.isSet(CommonFlags.NO_GZIP))) {
         try (SmartSamWriter writer = new SmartSamWriter(samOutput.getWriter())) {
           for (SAMRecord record : reader) {
             if (!record.getReadUnmappedFlag()) {
@@ -119,27 +132,28 @@ public class BamStripProbes extends AbstractCli {
       }
     }
 
-    try (final PrintStream summaryOut = new PrintStream(out)) {
-      summaryOut.println("PROBE OFFSETS");
-      final TextTable offsetSummary = new TextTable();
-      offsetSummary.addRow("Delta", "+", "-");
-      offsetSummary.addSeparator();
-      for (int i = 0; i < posChecker.mPosDiffStats.length; i++) {
-        offsetSummary.addRow(Integer.toString(i - tolerance), Integer.toString(posChecker.mPosDiffStats[i]), Integer.toString(negChecker.mPosDiffStats[tolerance * 2 - i]));
-      }
-      summaryOut.println(offsetSummary);
+    Diagnostic.userLog("PROBE OFFSETS");
+    final TextTable offsetSummary = new TextTable();
+    offsetSummary.addRow("Delta", "+", "-");
+    offsetSummary.addSeparator();
+    for (int i = 0; i < posChecker.mPosDiffStats.length; i++) {
+      offsetSummary.addRow(Integer.toString(i - tolerance), Integer.toString(posChecker.mPosDiffStats[i]), Integer.toString(negChecker.mPosDiffStats[tolerance * 2 - i]));
+    }
+    Diagnostic.userLog(offsetSummary.toString());
+    FileUtils.stringToFile(offsetSummary.getAsTsv(), new File(outputDir, PROBE_OFFSET_TABLE_FILE));
 
-      summaryOut.println("CIGAR OPERATIONS WITHIN PROBE");
-      final TextTable cigarSummary = new TextTable();
-      cigarSummary.addRow("Strand", "Length", "X", "I", "D", "S");
-      cigarSummary.addSeparator();
-      for (int i = 0; i < PositionAndStrandChecker.MAX_OP_LEN; i++) {
-        addCigarRow(cigarSummary, "+", posChecker, i);
-        addCigarRow(cigarSummary, "-", negChecker, i);
-      }
-      summaryOut.println(cigarSummary);
+    Diagnostic.userLog("CIGAR OPERATIONS WITHIN PROBE");
+    final TextTable cigarSummary = new TextTable();
+    cigarSummary.addRow("Strand", "Length", "X", "I", "D", "S");
+    cigarSummary.addSeparator();
+    for (int i = 0; i < PositionAndStrandChecker.MAX_OP_LEN; i++) {
+      addCigarRow(cigarSummary, "+", posChecker, i);
+      addCigarRow(cigarSummary, "-", negChecker, i);
+    }
+    Diagnostic.userLog(cigarSummary.toString());
+    FileUtils.stringToFile(cigarSummary.getAsTsv(), new File(outputDir, CIGAR_OP_TABLE_FILE));
 
-      summaryOut.println("SUMMARY");
+    try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(new File(outputDir, CommonFlags.SUMMARY_FILE), false), out))) {
       final long totalstripped = posStripped + negStripped;
       final long total = totalPos + totalNeg;
       final TextTable summary = new TextTable();
@@ -152,6 +166,7 @@ public class BamStripProbes extends AbstractCli {
     }
     return 0;
   }
+
 
   private void addCigarRow(TextTable ctype, String strand, PositionAndStrandChecker checker, int i) {
     final String len = Integer.toString(i + 1) + (i == PositionAndStrandChecker.MAX_OP_LEN - 1 ? "+" : "");
