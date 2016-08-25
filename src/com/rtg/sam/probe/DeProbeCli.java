@@ -55,6 +55,7 @@ public class DeProbeCli extends LoggedCli {
   static final String ALIGNMENT_FILE_NAME = "alignments_deprobed.bam";
   static final String PROBE_OFFSET_TABLE_FILE = "probe_offsets.tsv";
   static final String CIGAR_OP_TABLE_FILE = "cigar_ops.tsv";
+  static final String PROBE_SUMMARY_FILE = "probe_summary.tsv";
 
 
   private ReferenceRanges<String> mPosRanges;
@@ -163,6 +164,7 @@ public class DeProbeCli extends LoggedCli {
       summary.addRow("-", Long.toString(totalNeg), Long.toString(negStripped), String.format("%.2f%%", (double) negStripped / totalNeg * 100.0), String.format("%.1f", (double) negChecker.mBasesTrimmed / negStripped));
       summary.addRow("Both", Long.toString(total), Long.toString(totalstripped), String.format("%.2f%%", (double) totalstripped / total * 100.0), String.format("%.1f", (double) (posChecker.mBasesTrimmed + negChecker.mBasesTrimmed) / totalstripped));
       summaryOut.println(summary);
+      FileUtils.stringToFile(summary.getAsTsv(), new File(outputDir, PROBE_SUMMARY_FILE));
     }
     return 0;
   }

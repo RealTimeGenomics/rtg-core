@@ -45,6 +45,7 @@ public class DeProbeCliTest extends AbstractCliTest {
       mNano.check("expected.cigar_ops.tsv", FileUtils.fileToString(new File(output, DeProbeCli.CIGAR_OP_TABLE_FILE)));
       mNano.check("expected.out.text", FileUtils.fileToString(new File(output, CommonFlags.SUMMARY_FILE)));
       mNano.check("expected.out.text", result.out());
+      mNano.check("expected.summary.tsv", FileUtils.fileToString(new File(output, DeProbeCli.PROBE_SUMMARY_FILE)));
     }
   }
 
