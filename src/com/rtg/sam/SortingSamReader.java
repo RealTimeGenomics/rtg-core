@@ -89,11 +89,27 @@ public class SortingSamReader implements Iterable<SAMRecord>, Closeable {
   }
 
   @Override
-  @SuppressWarnings("try")
   public void close() throws IOException {
-    try (Closeable ignored = mReader) {
-      if (!mTmpFile.delete()) {
-        throw new IOException("Failed to delete temporary file: " + mTmpFile.getPath());
+    IOException caught = null;
+    boolean deleted;
+    try {
+      mReader.close();
+    } catch (IOException exception) {
+      caught = exception;
+    } finally {
+      deleted = mTmpFile.delete();
+    }
+    if (deleted) {
+      if (caught != null) {
+        throw caught;
+      }
+    } else {
+      final IOException throwing = new IOException("Failed to delete temporary file: " + mTmpFile.getPath());
+      if (caught == null) {
+        throw throwing;
+      } else {
+        throwing.addSuppressed(caught);
+        throw throwing;
       }
     }
   }
