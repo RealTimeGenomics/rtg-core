@@ -370,6 +370,7 @@ public final class LongReadTask {
         queryHashLoop.setThreadPadding(padding);
         queryHashLoop.execLoop(mSubParams.search().sequences(), buffer);
         ((OutputProcessorWrapper) writer).getEnclosed().threadFinish();
+        Diagnostic.developerLog("LongReadTask Thread finish: " + mSubParams.search().sequences().region());
       } finally {
         mSubParams.close();
       }
