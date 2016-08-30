@@ -15,16 +15,19 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import com.rtg.bed.BedReader;
 import com.rtg.bed.BedRecord;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
 import com.rtg.sam.SamOutput;
-import com.rtg.sam.SamUtils;
-import com.rtg.sam.SmartSamWriter;
+import com.rtg.sam.SortingSamReader;
 import com.rtg.util.TextTable;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
@@ -34,8 +37,9 @@ import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
 
+import htsjdk.samtools.SAMFileHeader;
+import htsjdk.samtools.SAMFileWriter;
 import htsjdk.samtools.SAMRecord;
-import htsjdk.samtools.SamReader;
 
 /**
  * Remove probes from mapped reads using a bed file to describe probes.
@@ -56,6 +60,7 @@ public class DeProbeCli extends LoggedCli {
   static final String PROBE_OFFSET_TABLE_FILE = "probe_offsets.tsv";
   static final String CIGAR_OP_TABLE_FILE = "cigar_ops.tsv";
   static final String PROBE_SUMMARY_FILE = "probe_summary.tsv";
+  static final String ON_TARGET_SUMMARY_FILE = "on_target.tsv";
 
 
   private ReferenceRanges<String> mPosRanges;
@@ -99,35 +104,71 @@ public class DeProbeCli extends LoggedCli {
     long totalNeg = 0;
     long posStripped = 0;
     long negStripped = 0;
+    long totalReads = 0;
+    long onTargetReads = 0;
+    long totalRecords = 0;
+    long onTargetRecords = 0;
+    long totalBases = 0;
+    long onTargetBases = 0;
     final PosChecker posChecker = new PosChecker(tolerance);
     final NegChecker negChecker = new NegChecker(tolerance);
     final File bedFile = (File) mFlags.getValue(PROBE_BED);
     final File outputDir = (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
 
-    try (SamReader reader = SamUtils.makeSamReader(input)) {
+    try (SortingSamReader reader = SortingSamReader.reader(input, SAMFileHeader.SortOrder.queryname, outputDir)) {
       loadProbeBed(bedFile);
 //      final ReferenceRanges<String> bedReferenceRanges = SamRangeUtils.createBedReferenceRanges(reader.getFileHeader(), (File) mFlags.getValue(PROBE_BED));
       final File outputFile = new File(outputDir, ALIGNMENT_FILE_NAME);
-      try (SamOutput samOutput = SamOutput.getSamOutput(outputFile, out, reader.getFileHeader(), !mFlags.isSet(CommonFlags.NO_GZIP))) {
-        try (SmartSamWriter writer = new SmartSamWriter(samOutput.getWriter())) {
-          for (SAMRecord record : reader) {
-            if (!record.getReadUnmappedFlag()) {
-              if (record.getFirstOfPairFlag()) {
-                if (checkList(mPosRanges.get(record.getReferenceName()), record, tolerance, posChecker)) {
-                  posStripped++;
-                } else if (checkList(mNegRanges.get(record.getReferenceName()), record, tolerance, negChecker)) {
-                  negStripped++;
-                } else {
-                  record.setAttribute("XS", "failed");
-                }
-                if (record.getReadNegativeStrandFlag()) {
-                  totalNeg++;
-                } else {
-                  totalPos++;
+      final SAMFileHeader fileHeader = reader.getFileHeader();
+      fileHeader.setSortOrder(SAMFileHeader.SortOrder.coordinate);
+      try (SamOutput samOutput = SamOutput.getSamOutput(outputFile, out, fileHeader, !mFlags.isSet(CommonFlags.NO_GZIP), false)) {
+        try (SAMFileWriter writer = samOutput.getWriter()) {
+          List<SAMRecord> readRecords;
+          final ReadRecordGrouper grouper = new ReadRecordGrouper(reader);
+          final Map<Integer, SAMRecord> posMap = new HashMap<>();
+          while ((readRecords = grouper.nextRead()) != null) {
+            posMap.clear();
+            totalReads++;
+            for (SAMRecord record : readRecords) {
+              totalRecords++;
+              totalBases += record.getReadLength();
+              posMap.put(record.getAlignmentStart(), record);
+            }
+            boolean strippedRead = false;
+            for (SAMRecord record : readRecords) {
+              final int initialLength = record.getReadLength();
+              if (!record.getReadUnmappedFlag()) {
+                final SAMRecord mate = posMap.get(record.getMateAlignmentStart());
+                if (record.getFirstOfPairFlag()) {
+                  if (checkList(mPosRanges.get(record.getReferenceName()), record, mate, tolerance, posChecker)
+                    || checkList(mNegRanges.get(record.getReferenceName()), record, mate, tolerance, negChecker)) {
+                    strippedRead = true;
+                    onTargetRecords++;
+                    onTargetBases += initialLength;
+                    if (mate != null) {
+                      onTargetRecords++;
+                      onTargetBases += mate.getReadLength();
+                    }
+                    if (record.getReadNegativeStrandFlag()) {
+                      negStripped++;
+                    } else {
+                      posStripped++;
+                    }
+                  } else {
+                    record.setAttribute("XS", "failed");
+                  }
+                  if (record.getReadNegativeStrandFlag()) {
+                    totalNeg++;
+                  } else {
+                    totalPos++;
+                  }
                 }
               }
+              writer.addAlignment(record);
             }
-            writer.addRecord(record);
+            if (strippedRead) {
+              onTargetReads++;
+            }
           }
         }
       }
@@ -153,6 +194,14 @@ public class DeProbeCli extends LoggedCli {
     }
     Diagnostic.userLog(cigarSummary.toString());
     FileUtils.stringToFile(cigarSummary.getAsTsv(), new File(outputDir, CIGAR_OP_TABLE_FILE));
+
+    final TextTable onTargetSummary = new TextTable();
+    onTargetSummary.addRow("", "Total", "On Target", "%");
+    onTargetSummary.addRow("Reads", Long.toString(totalReads), Long.toString(onTargetReads), String.format("%.2f%%", (double) onTargetReads / (double) totalReads * 100.0));
+    onTargetSummary.addRow("Records", Long.toString(totalRecords), Long.toString(onTargetRecords), String.format("%.2f%%", (double) onTargetRecords / (double) totalRecords * 100.0));
+    onTargetSummary.addRow("Bases", Long.toString(totalBases), Long.toString(onTargetBases), String.format("%.2f%%", (double) onTargetBases / (double) totalBases * 100.0));
+    Diagnostic.userLog(onTargetSummary.toString());
+    FileUtils.stringToFile(onTargetSummary.getAsTsv(), new File(outputDir, ON_TARGET_SUMMARY_FILE));
 
     try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(new File(outputDir, CommonFlags.SUMMARY_FILE), false), out))) {
       final long totalstripped = posStripped + negStripped;
@@ -195,7 +244,7 @@ public class DeProbeCli extends LoggedCli {
     mNegRanges = negRangesAccum.getReferenceRanges();
   }
 
-  private static boolean checkList(RangeList<String> list, SAMRecord record, int tolerance, PositionAndStrandChecker checker) {
+  private static boolean checkList(RangeList<String> list, SAMRecord record, SAMRecord mate, int tolerance, PositionAndStrandChecker checker) {
     if (list == null) {
       return false;
     }
@@ -205,7 +254,7 @@ public class DeProbeCli extends LoggedCli {
       final List<String> metas = data.getMeta();
       if (metas != null && metas.size() >= 3) {
         if (checker.check(record, data)) {
-          checker.stripRecord(record, data);
+          checker.stripRecord(record, mate, data);
           return true;
         }
       }
@@ -243,6 +292,45 @@ public class DeProbeCli extends LoggedCli {
       return true;
     }
     return false;
+  }
+
+  private static class ReadRecordGrouper {
+    private final Iterator<SAMRecord> mReader;
+    private SAMRecord mCurrent = null;
+
+    ReadRecordGrouper(Iterable<SAMRecord> reader) {
+      mReader = reader.iterator();
+    }
+
+    void initCurrent() {
+      if (mCurrent == null && mReader.hasNext()) {
+        mCurrent = mReader.next();
+      }
+    }
+
+    List<SAMRecord> nextRead() {
+      initCurrent();
+      if (mCurrent == null) {
+        return null;
+      }
+      final ArrayList<SAMRecord> read = new ArrayList<>();
+      read.add(mCurrent);
+      final String name = mCurrent.getReadName();
+      while (true) {
+        if (mReader.hasNext()) {
+          mCurrent = mReader.next();
+          if (mCurrent.getReadName().equals(name)) {
+            read.add(mCurrent);
+          } else {
+            break;
+          }
+        } else {
+          mCurrent = null;
+          break;
+        }
+      }
+      return read;
+    }
   }
 
 }

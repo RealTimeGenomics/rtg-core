@@ -23,7 +23,7 @@ public class NegCheckerTest extends TestCase {
   public void test() {
     final NegChecker neg = new NegChecker(10);
     final SAMRecord rec = PosCheckerTest.createRecord("AGGTTTGG", "1=1X1=1X3=1X");
-    neg.setAlignmentEnd(rec, 1006);
+    neg.setAlignmentEnd(rec, null, 1006);
     assertEquals("AGGTTT", rec.getReadString());
     assertEquals("1=1X1=1X2=", rec.getCigarString());
   }

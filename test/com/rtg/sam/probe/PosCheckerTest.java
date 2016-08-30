@@ -35,7 +35,7 @@ public class PosCheckerTest extends TestCase {
   public void testSetAlignment() {
     final PosChecker pos = new PosChecker(10);
     final SAMRecord rec = createRecord("AGGTTTGG", "1=1X1=1X1=1X1=1X");
-    pos.setAlignmentStart(rec, 1002);
+    pos.setAlignmentStart(rec, null, 1002);
     assertEquals("GTTTGG", rec.getReadString());
     assertEquals("1=1X1=1X1=1X", rec.getCigarString());
   }

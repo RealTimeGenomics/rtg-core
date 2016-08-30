@@ -44,7 +44,7 @@ abstract class PositionAndStrandChecker {
 
   abstract int getStartDataIndex(SAMRecord record, RangeList<String> list);
 
-  abstract void stripRecord(SAMRecord record, RangeList.RangeData<String> data);
+  abstract void stripRecord(SAMRecord record, SAMRecord mate, RangeList.RangeData<String> data);
 
   protected void updateStrippedStats(CigarOperator operator, int consume) {
     final int statIndex = consume > MAX_OP_LEN ? MAX_OP_LEN - 1 : consume - 1;
@@ -64,5 +64,24 @@ abstract class PositionAndStrandChecker {
       default:
         break;
     }
+  }
+
+  static void updateTlenAndMateStart(SAMRecord rec1, SAMRecord rec2) {
+    final SAMRecord leftMost;
+    final SAMRecord rightMost;
+    if (rec1.getAlignmentStart() <= rec2.getAlignmentStart()) {
+      leftMost = rec1;
+      rightMost = rec2;
+    } else {
+      leftMost = rec2;
+      rightMost = rec1;
+    }
+    final int end = Math.max(leftMost.getAlignmentEnd(), rightMost.getAlignmentEnd());
+    final int start = leftMost.getAlignmentStart() - 1;
+    final int tlen = end - start;
+    leftMost.setInferredInsertSize(tlen);
+    rightMost.setInferredInsertSize(-tlen);
+    leftMost.setMateAlignmentStart(rightMost.getAlignmentStart());
+    rightMost.setMateAlignmentStart(leftMost.getAlignmentStart());
   }
 }
