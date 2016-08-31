@@ -151,7 +151,7 @@ public class CoverageStatistics extends AbstractStatistics {
       final Double fold80 = fold80();
       if (fold80 != null) {
         sb.append(LS);
-        sb.append("Fold-80 Penalfy: ").append(String.format("%.2f", fold80)).append(LS);
+        sb.append("Fold-80 Penalty: ").append(String.format("%.2f", fold80)).append(LS);
       }
     } else {
       sb.append(Utils.realFormat(totalDepth, DP)).append('\t').append(Utils.realFormat(totalBreadth, DP)).append('\t')
