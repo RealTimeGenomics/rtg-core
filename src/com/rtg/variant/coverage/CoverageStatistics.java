@@ -113,10 +113,10 @@ public class CoverageStatistics extends AbstractStatistics {
 
     if (summary) {
       sb.append("Coverage per region:").append(LS);
-    appendRow(table, "depth", "breadth", "covered", "size", "name");
-  } else {
-    sb.append("#depth\tbreadth\tcovered\tsize\tname").append(LS);
-  }
+      appendRow(table, "depth", "breadth", "covered", "size", "name");
+    } else {
+      sb.append("#depth\tbreadth\tcovered\tsize\tname").append(LS);
+    }
     final Collection<String> sortOrder;
     if (mOutputRegions == null) {
       sortOrder = new ArrayList<>();
@@ -148,6 +148,11 @@ public class CoverageStatistics extends AbstractStatistics {
       appendRow(table, Utils.realFormat(totalDepth, DP), Utils.realFormat(totalBreadth, DP), mTotalCovered, mTotalBases,
                      /*Utils.realFormat(nonNTotalDepth, DP), Utils.realFormat(nonNTotalBreadth, DP), mNonNTotalCovered, mNonNTotalBaseCount,*/ "all regions");
       table.toString(sb);
+      final Double fold80 = fold80();
+      if (fold80 != null) {
+        sb.append(LS);
+        sb.append("Fold-80 Penalfy: ").append(String.format("%.2f", fold80)).append(LS);
+      }
     } else {
       sb.append(Utils.realFormat(totalDepth, DP)).append('\t').append(Utils.realFormat(totalBreadth, DP)).append('\t')
               .append(mTotalCovered).append('\t').append(mTotalBases).append('\t')
@@ -380,6 +385,34 @@ public class CoverageStatistics extends AbstractStatistics {
    */
   public void addNonNCoveredBasesCount(String regionName, Integer coveredBasesCount) {
     incrementMap(mRegionNonNCoveredBaseCounts, regionName, coveredBasesCount);
+  }
+
+  /**
+   * Calculates the fold 80 penalty if possible. a measure of the non-uniformity of sequence
+   * coverage: the amount of additional sequencing that would be necessary to ensure that 80%
+   * of target bases (in non-zero coverage targets) are covered to the current mean target coverage.
+   * <br>
+   * The fold 80 penalty might not be able to be calculated if the binning results in no coverage value
+   * near enough to the 20th percentile
+   * @return the fold 80 penalty, or null if it could not be calculated.
+   */
+  public Double fold80() {
+    double sum = 0.0;
+    if (mHistogram != null) {
+      for (int i = 0; i < mHistogram.length; i++) {
+        final double cumulativeP = 100.0 * (mTotalBases - sum) / mTotalBases;
+        sum += mHistogram[i];
+
+        if (cumulativeP <= 80.0 + 1e-10) {
+          if (MathUtils.approxEquals(cumulativeP, 80.0, 1e-1)) {
+            final int pct20Cov = i * BUCKET_SIZE;
+            return mTotalCoverage / mTotalBases / pct20Cov;
+          }
+          break;
+        }
+      }
+    }
+    return null;
   }
 
   @Override
