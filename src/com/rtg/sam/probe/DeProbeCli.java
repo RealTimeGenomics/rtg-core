@@ -108,6 +108,9 @@ public class DeProbeCli extends LoggedCli {
     long onTargetReads = 0;
     long totalRecords = 0;
     long onTargetRecords = 0;
+    long totalMappedBases = 0;
+    long totalMappedRecords = 0;
+    long totalMappedReads = 0;
     long totalBases = 0;
     long onTargetBases = 0;
     final PosChecker posChecker = new PosChecker(tolerance);
@@ -115,7 +118,9 @@ public class DeProbeCli extends LoggedCli {
     final File bedFile = (File) mFlags.getValue(PROBE_BED);
     final File outputDir = (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
 
+    Diagnostic.progress("Beginning read name sort");
     try (SortingSamReader reader = SortingSamReader.reader(input, SAMFileHeader.SortOrder.queryname, outputDir)) {
+      Diagnostic.progress("read name sort complete");
       loadProbeBed(bedFile);
 //      final ReferenceRanges<String> bedReferenceRanges = SamRangeUtils.createBedReferenceRanges(reader.getFileHeader(), (File) mFlags.getValue(PROBE_BED));
       final File outputFile = new File(outputDir, ALIGNMENT_FILE_NAME);
@@ -135,9 +140,13 @@ public class DeProbeCli extends LoggedCli {
               posMap.put(record.getAlignmentStart(), record);
             }
             boolean strippedRead = false;
+            boolean mappedRead = false;
             for (SAMRecord record : readRecords) {
               final int initialLength = record.getReadLength();
               if (!record.getReadUnmappedFlag()) {
+                mappedRead = true;
+                totalMappedRecords++;
+                totalMappedBases += record.getReadLength();
                 final SAMRecord mate = posMap.get(record.getMateAlignmentStart());
                 if (record.getFirstOfPairFlag()) {
                   if (checkList(mPosRanges.get(record.getReferenceName()), record, mate, tolerance, posChecker)
@@ -145,7 +154,7 @@ public class DeProbeCli extends LoggedCli {
                     strippedRead = true;
                     onTargetRecords++;
                     onTargetBases += initialLength;
-                    if (mate != null) {
+                    if (record.getProperPairFlag() && mate != null) {
                       onTargetRecords++;
                       onTargetBases += mate.getReadLength();
                     }
@@ -169,7 +178,11 @@ public class DeProbeCli extends LoggedCli {
             if (strippedRead) {
               onTargetReads++;
             }
+            if (mappedRead) {
+              totalMappedReads++;
+            }
           }
+          Diagnostic.progress("Closing SAM writer");
         }
       }
     }
@@ -196,10 +209,10 @@ public class DeProbeCli extends LoggedCli {
     FileUtils.stringToFile(cigarSummary.getAsTsv(), new File(outputDir, CIGAR_OP_TABLE_FILE));
 
     final TextTable onTargetSummary = new TextTable();
-    onTargetSummary.addRow("", "Total", "On Target", "%");
-    onTargetSummary.addRow("Reads", Long.toString(totalReads), Long.toString(onTargetReads), String.format("%.2f%%", (double) onTargetReads / (double) totalReads * 100.0));
-    onTargetSummary.addRow("Records", Long.toString(totalRecords), Long.toString(onTargetRecords), String.format("%.2f%%", (double) onTargetRecords / (double) totalRecords * 100.0));
-    onTargetSummary.addRow("Bases", Long.toString(totalBases), Long.toString(onTargetBases), String.format("%.2f%%", (double) onTargetBases / (double) totalBases * 100.0));
+    onTargetSummary.addRow("Group", "Total", "Mapped", "On Target", "%/Total", "%/Mapped");
+    onTargetSummary.addRow("Reads", Long.toString(totalReads), Long.toString(totalMappedReads), Long.toString(onTargetReads), String.format("%.2f%%", (double) onTargetReads / (double) totalReads * 100.0), String.format("%.2f%%", (double) onTargetReads / (double) totalMappedReads * 100.0));
+    onTargetSummary.addRow("Records", Long.toString(totalRecords), Long.toString(totalMappedRecords), Long.toString(onTargetRecords), String.format("%.2f%%", (double) onTargetRecords / (double) totalRecords * 100.0), String.format("%.2f%%", (double) onTargetRecords / (double) totalMappedRecords * 100.0));
+    onTargetSummary.addRow("Bases", Long.toString(totalBases), Long.toString(totalMappedBases), Long.toString(onTargetBases), String.format("%.2f%%", (double) onTargetBases / (double) totalBases * 100.0), String.format("%.2f%%", (double) onTargetBases / (double) totalMappedBases * 100.0));
     Diagnostic.userLog(onTargetSummary.toString());
     FileUtils.stringToFile(onTargetSummary.getAsTsv(), new File(outputDir, ON_TARGET_SUMMARY_FILE));
 

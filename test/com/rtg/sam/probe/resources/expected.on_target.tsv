@@ -1,4 +1,4 @@
-	Total	On Target	%
-Reads	6	6	100.00%
-Records	6	6	100.00%
-Bases	600	600	100.00%
+Group	Total	Mapped	On Target	%/Total	%/Mapped
+Reads	6	6	6	100.00%	100.00%
+Records	6	6	6	100.00%	100.00%
+Bases	600	600	600	100.00%	100.00%
