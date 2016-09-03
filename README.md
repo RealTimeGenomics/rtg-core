@@ -1,6 +1,6 @@
 # RTG Core Non-commercial
 
-Copyright (c) 2014 Real Time Genomics Ltd
+Copyright (c) 2016 Real Time Genomics Ltd
 
 This software is provided under the Real Time Genomics Ltd Software
 Licence Agreement for Academic Non-commercial Research Purposes
@@ -129,7 +129,7 @@ Uncompress the installation zip:
     $ unzip /path/to/rtg-core/dist/rtg-core-VERSION-nojre.zip
 
 Follow the instructions contained in the `README.txt`. This build will
-use the system Java by default, so ensure it is Java 1.7 or later.
+use the system Java by default, so ensure it is Java 1.8 or later.
 
 For a nice demonstration of the features of RTG Core for sex and
 pedigree aware mapping and variant calling on data generated from
