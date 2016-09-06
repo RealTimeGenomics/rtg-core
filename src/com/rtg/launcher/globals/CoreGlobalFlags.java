@@ -48,6 +48,8 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
   /** Maximum number of hits at a given position in the sliding window collector */
   //see bug #1476 for consequences of this on larger datasets
   public static final String SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG = "com.rtg.pairedend.SlidingWindow.max-hits-per-position";
+  /** Maximum number of hits at a given read can have in the current window in the sliding window collector */
+  public static final String SLIDING_WINDOW_MAX_HITS_PER_READ_FLAG = "com.rtg.pairedend.SlidingWindow.max-hits-per-read";
   /** Default total length of all inserts/deletes allowed in reasonably short reads */
   public static final String DEFAULT_INDEL_LENGTH_FLAG = "com.rtg.util.default-indel-length";
   /** If more than this many hits are seen at a position, skip them all. */
@@ -126,7 +128,8 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
 
     registerFlag(TEMP_FILES_DUMP_ALIGN_STATS_FLAG);
     registerFlag(MAP_KEEP_TEMPORARY_FILES);
-    registerFlag(SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG, Integer.class, 1000);
+    registerFlag(SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG, Integer.class, 0);
+    registerFlag(SLIDING_WINDOW_MAX_HITS_PER_READ_FLAG, Integer.class, 0);
 
     //SAM
     registerFlag(SAM_ALLOW_FALLBACK_FOR_NON_INDEXED_REGIONS);
