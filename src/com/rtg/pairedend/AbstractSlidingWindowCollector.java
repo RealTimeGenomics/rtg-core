@@ -48,6 +48,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
 
   //this works out to roughly an extra 10 per 1 million reads on the full human reference
   private static final int READS_PP_FACTOR = 31375;
+  private static final int READ_OVERLOAD_BASE_LIMIT = 10;
 
   //see bug #1476 for consequences of this on larger datasets
   private int mMaxHitsPerPosition;
@@ -64,6 +65,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
    * Each entry is a linked list, sorted by increasing template start order.
    */
   private final AbstractHitInfo<T>[] mReadsLookup;
+  private final AbstractHitInfo<T>[] mReadsLookupReverse;
   final int mReadsLookupMask;
 
   static final int DONT_KNOW_YET = Integer.MIN_VALUE;
@@ -73,6 +75,8 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
   final int[] mReadsWindowInUse;
 
   final int[] mRightPairCounts = new int[5000];
+  int mLeftOverloadCount = 0;
+  int mRightOverloadCount = 0;
 
   // statistics counters
   private long mDuplicateCount = 0;
@@ -83,6 +87,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
   protected long mReferenceId = 0;
   private long mReferenceLengthTotal = 0; // sum of length of all references
   private final MachineOrientation mMachineOrientation;
+  private final int mReadOverloadLimit;
 
   AbstractSlidingWindowCollector(int maxFragmentLength, int minFragmentLength, MachineOrientation pairOrientation, SharedResources sharedResources, ReferenceRegions bedRegions) {
     if (maxFragmentLength < minFragmentLength) {
@@ -112,6 +117,12 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
     //margin needs to be added to allow for reads coming from GappedOutput in slightly wrong order, 1 RL is our best guess
     final int uncertaintyMargin = (int) Math.max(64L, Math.max(mLeftReader.maxLength(), mRightReader.maxLength()));
     mWindowSize = maxFragmentLength + (int) Math.max(64L, Math.max(mLeftReader.maxLength(), mRightReader.maxLength())) + uncertaintyMargin;
+    if (GlobalFlags.isSet(CoreGlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_READ_FLAG)) {
+      mReadOverloadLimit = GlobalFlags.getIntegerValue(CoreGlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_READ_FLAG);
+    } else {
+      mReadOverloadLimit = READ_OVERLOAD_BASE_LIMIT + (mWindowSize / 100); //1%
+    }
+    Diagnostic.developerLog("Setting max read hits to: " + mReadOverloadLimit);
 
     @SuppressWarnings("unchecked")
     final ArrayList<T>[] readsWindow = (ArrayList<T>[]) new ArrayList<?>[mWindowSize];
@@ -126,6 +137,9 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
     @SuppressWarnings("unchecked")
     final AbstractHitInfo<T>[] readsLookup = (AbstractHitInfo<T>[]) new AbstractHitInfo<?>[hashTableSize];
     mReadsLookup = readsLookup;
+    @SuppressWarnings("unchecked")
+    final AbstractHitInfo<T>[] readsLookupReverse = (AbstractHitInfo<T>[]) new AbstractHitInfo<?>[hashTableSize];
+    mReadsLookupReverse = readsLookupReverse;
   }
 
   static int calculateExtraMaxHitsPerPosition(double genomeLength, double numReads) {
@@ -244,21 +258,32 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
       final int hash = readHash(readId, first);
 
       @SuppressWarnings("unchecked")
-      T list = (T) mReadsLookup[hash];
-      if (list == null || templateStart < list.templateStart()) {
-        // insert at the head of the linked list
-        hit.setNext(list);
+      T list = (T) mReadsLookupReverse[hash];
+      if (list == null) {
         mReadsLookup[hash] = hit;
+        mReadsLookupReverse[hash] = hit;
+      } else if (templateStart > list.templateStart()) {
+        list.insertHit(hit);
+        mReadsLookupReverse[hash] = hit;
       } else {
         boolean same;
-        while (!(same = same(list, hit)) && list.next() != null && list.next().templateStart() <= templateStart) {
-          list = list.next();
+        while (!(same = same(list, hit)) && list.prev() != null && list.prev().templateStart() >= templateStart) {
+          list = list.prev();
         }
         if (same) {
           returnHitInfo(windPos); // Return it to the pool
           mDuplicateCount++;
         } else {
-          list.insertHit(hit);
+          if (list.prev() != null) {
+            list.prev().insertHit(hit);
+            if (hit.next() == null) {
+              mReadsLookupReverse[hash] = hit;
+            }
+          } else {
+            hit.setNext(list);
+            list.setPrev(hit);
+            mReadsLookup[hash] = hit;
+          }
         }
       }
     }
@@ -297,9 +322,12 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
 
     //assert mReadsLookup.size() == 0;
     Arrays.fill(mReadsLookup, null);
+    Arrays.fill(mReadsLookupReverse, null);
   }
 
   void findNewMates(final ArrayList<T> hits, int size) throws IOException {
+
+    nextHit:
     for (int i = 0; i < size; i++) {
       final T hit = hits.get(i);
       //      boolean mated = hit.getLeftReads() != null;
@@ -309,6 +337,20 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
       // send pair result to writer
       // link right to left
       final long readId = hit.readId();
+      @SuppressWarnings("unchecked")
+      T thisSide = (T) mReadsLookup[readHash(readId, hit.first())];
+      int thisSideCount = 0;
+      while (thisSide != null) {
+        if (thisSide.readId() == hit.readId() && thisSide.first() == hit.first()) {
+          thisSideCount++;
+        }
+        if (thisSideCount > mReadOverloadLimit) {
+          mLeftOverloadCount++;
+          continue nextHit;
+        }
+        thisSide = thisSide.next();
+      }
+
       final int hash = readHash(readId, !hit.first());
       int pairCount = 0;
       @SuppressWarnings("unchecked")
@@ -336,7 +378,12 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
           if (fragmentLength >= mMinFragmentLength && fragmentLength <= mMaxFragmentLength) {  // only process if length is within specified fragment bounds
             assert hit.isPair(mate);
             pairCount++;
-            if (!checkPair(hit, mate)) {
+            if (pairCount <= mReadOverloadLimit) {
+              if (!checkPair(hit, mate)) {
+                break;
+              }
+            } else {
+              mRightOverloadCount++;
               break;
             }
           }
@@ -393,6 +440,11 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
         head = head.next();
       }
       mReadsLookup[hash] = head;
+      if (head != null) {
+        head.setPrev(null);
+      } else {
+        mReadsLookupReverse[hash] = null;
+      }
     }
 
     // Chop down memory used by the list
@@ -427,11 +479,18 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
       }
       if (previous == null) {
         mReadsLookup[hash] = head;
+        if (head != null) {
+          head.setPrev(null);
+        } else {
+          mReadsLookupReverse[hash] = null;
+        }
       } else {
         previous.setNext(head);
-      }
-      if (head != null) {
-        head.setNext(null);
+        if (head != null) {
+          head.setPrev(previous);
+        } else {
+          mReadsLookupReverse[hash] = previous;
+        }
       }
     }
     //    System.err.println(hits.size() + " " + mReadsLookup.size());
@@ -460,8 +519,11 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
     stats.setProperty("templates", Integer.toString(mReferenceCount));
     stats.setProperty("total_hits", Long.toString(mHitCount));
     stats.setProperty("duplicate_hits", Long.toString(mDuplicateCount));
-    stats.setProperty("max_hits_exceeded", Long.toString(mMaxHitsExceededCount));
-    stats.setProperty("max_hits_threshold", Integer.toString(getMaxHitsPerPosition()));
+    stats.setProperty("max_pos_hits_exceeded", Long.toString(mMaxHitsExceededCount));
+    stats.setProperty("max_pos_hits_threshold", Integer.toString(getMaxHitsPerPosition()));
+    stats.setProperty("max_read_hits_left_exceeded", Long.toString(mLeftOverloadCount));
+    stats.setProperty("max_read_hits_right_exceeded", Long.toString(mRightOverloadCount));
+    stats.setProperty("max_read_hits_threshold", Integer.toString(mReadOverloadLimit));
     if (mGenomeLength > 0) {
       stats.setProperty("max_hits_exceed_percentage", String.format("%.2f", mMaxHitsExceededCount * 100.0 / mGenomeLength));
     }

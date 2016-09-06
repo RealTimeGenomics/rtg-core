@@ -29,6 +29,7 @@ public abstract class AbstractHitInfo<T extends AbstractHitInfo<T>> {
 
   // we keep a linked list of hits, sorted by increasing mTemplateStart.
   private T mNext;
+  private T mPrev;
 
   /**
    * @param first true if hit is from &quot;left&quot; read arm. That is, first in sequencing
@@ -66,6 +67,11 @@ public abstract class AbstractHitInfo<T extends AbstractHitInfo<T>> {
     mNext = nextHit;
   }
 
+  @SuppressWarnings("unchecked")
+  private T thisT() {
+    return (T) this;
+  }
+
   /**
    * By separating this part out it prevents the necessity of an unchecked cast
    * to <code>T</code> when assigning to <code>mNext</code> while still allowing
@@ -73,12 +79,21 @@ public abstract class AbstractHitInfo<T extends AbstractHitInfo<T>> {
    */
   private void link(AbstractHitInfo<T> nextHit) {
     assert nextHit.mNext == null;
+    assert nextHit.mPrev == null;
     assert nextHit.mTemplateStart >= mTemplateStart;
     nextHit.mNext = mNext;
+    if (mNext != null) {
+      mNext.setPrev(nextHit.thisT());
+    }
+    nextHit.mPrev = thisT();
   }
 
   void setNext(T nextHit) {
     mNext = nextHit;
+  }
+
+  void setPrev(T prev) {
+    mPrev = prev;
   }
 
   /**
@@ -125,6 +140,10 @@ public abstract class AbstractHitInfo<T extends AbstractHitInfo<T>> {
 
   T next() {
     return mNext;
+  }
+
+  T prev() {
+    return mPrev;
   }
 
   boolean isPair(AbstractHitInfo<T> other) {
