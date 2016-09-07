@@ -45,6 +45,7 @@ public abstract class AbstractHitInfo<T extends AbstractHitInfo<T>> {
     mAlignmentScore = -1;
     mAlignment = null;
     mNext = null;
+    mPrev = null;
   }
 
   /**
