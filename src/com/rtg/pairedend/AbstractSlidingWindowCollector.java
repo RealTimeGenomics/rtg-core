@@ -442,6 +442,9 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
       mReadsLookup[hash] = head;
       if (head != null) {
         head.setPrev(null);
+        if (head.next() == null) {
+          mReadsLookupReverse[hash] = head;
+        }
       } else {
         mReadsLookupReverse[hash] = null;
       }
