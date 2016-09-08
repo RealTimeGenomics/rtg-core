@@ -120,7 +120,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
     if (GlobalFlags.isSet(CoreGlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_READ_FLAG)) {
       mReadOverloadLimit = GlobalFlags.getIntegerValue(CoreGlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_READ_FLAG);
     } else {
-      mReadOverloadLimit = READ_OVERLOAD_BASE_LIMIT + (mWindowSize / 100); //1%
+      mReadOverloadLimit = READ_OVERLOAD_BASE_LIMIT + (mWindowSize / 20); //5%
     }
     Diagnostic.developerLog("Setting max read hits to: " + mReadOverloadLimit);
 
