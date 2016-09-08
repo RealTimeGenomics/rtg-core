@@ -56,6 +56,8 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
   public static final String ASSEMBLER_MAX_HITS_PER_START_POS_FLAG = "com.rtg.assembler.maxhits";
   /** Number of deviations to apply to insert distributions. */
   public static final String ASSEMBLER_INSERT_DEVIATIONS_FLAG = "com.rtg.assembler.insertdeviations";
+  /** Mask homopolymer bases near ends of alignments before using in variant calling */
+  public static final String VARIANT_MASK_HOMOPOLYMER = "com.rtg.variant.mask-homopolymer";
   /** The maximum number of hypotheses that can comfortably be handled by the complex caller */
   public static final String COMPLEX_CALLER_MAX_HYPOTH_FLAG = "com.rtg.variant.bayes.multisample.ComplexCaller.max-hypoth";
   /** Complex region extraction include indel lengths in interesting separation */
@@ -141,6 +143,8 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
     registerFlag(ASSEMBLER_MAX_HITS_PER_START_POS_FLAG, Integer.class, 5);
     registerFlag(ASSEMBLER_INSERT_DEVIATIONS_FLAG, Integer.class, 4);
 
+    // variant calling
+    registerFlag(VARIANT_MASK_HOMOPOLYMER, Boolean.class, false);
 
     // Complex caller
     registerFlag(COMPLEX_CALLER_MAX_HYPOTH_FLAG, Integer.class, 20);

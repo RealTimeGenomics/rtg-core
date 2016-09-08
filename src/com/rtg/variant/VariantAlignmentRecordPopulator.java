@@ -13,7 +13,11 @@ package com.rtg.variant;
 
 import java.util.HashMap;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.sam.HomopolymerUtils;
 import com.rtg.util.Populator;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 
 import htsjdk.samtools.SAMReadGroupRecord;
@@ -27,6 +31,9 @@ public class VariantAlignmentRecordPopulator implements Populator<VariantAlignme
   private final HashMap<String, Integer> mGenomeToInteger;
   private MachineErrorChooserInterface mChooser;
   private int mMinBaseQuality;
+  private final boolean mMaskHomopolymer;
+  private long mMaskedRecords;
+  private long mTotalRecords;
 
   /**
    * Populator.
@@ -42,10 +49,22 @@ public class VariantAlignmentRecordPopulator implements Populator<VariantAlignme
       final String s = genomeNames[i];
       mGenomeToInteger.put(s, i);
     }
+    mMaskHomopolymer = GlobalFlags.getBooleanValue(CoreGlobalFlags.VARIANT_MASK_HOMOPOLYMER);
+    mMaskedRecords = 0;
+    mTotalRecords = 0;
   }
 
   @Override
   public VariantAlignmentRecord populate(final SAMRecord rec) {
+    if (mMaskHomopolymer) {
+      mTotalRecords++;
+      if (HomopolymerUtils.maskHomoPolymer(rec)) {
+        mMaskedRecords++;
+      }
+      if (mTotalRecords % 1000000 == 0) {
+        Diagnostic.developerLog("Masked " + mMaskedRecords + " out of " + mTotalRecords + " (" + (100.0 * mMaskedRecords / mTotalRecords) + "%)");
+      }
+    }
     if (mGenomeToInteger.size() > 0) {
       final SAMReadGroupRecord readGroup = rec.getReadGroup();
       if (readGroup == null) {
