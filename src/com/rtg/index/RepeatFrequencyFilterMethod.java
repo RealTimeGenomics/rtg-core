@@ -98,14 +98,10 @@ public class RepeatFrequencyFilterMethod implements IndexFilterMethod {
       }
       ret = freq;
     }
-    if (mUseProportionalThreshold && ret > mMaxThreshold) {
-      Diagnostic.developerLog("Using max frequency since calculated frequency exceeded max. threshold: " + ret + " max: " + mMaxThreshold);
-      ret = mMaxThreshold;
-    } else if (mUseProportionalThreshold && ret < mMinThreshold) {
-      Diagnostic.developerLog("Using min frequency since calculated frequency is below min. threshold: " + ret + " min: " + mMinThreshold);
-      ret = mMinThreshold;
-    } else {
-      Diagnostic.developerLog("Calculated frequency threshold value: " + ret);
+    Diagnostic.userLog("Calculated hash frequency threshold: " + ret);
+    if (mUseProportionalThreshold && (ret > mMaxThreshold || ret < mMinThreshold)) {
+      ret = Math.max(mMinThreshold, Math.min(ret, mMaxThreshold));
+      Diagnostic.userLog("Limiting hash frequency to bounds: [" + mMinThreshold + "," + mMaxThreshold + "] now " + ret);
     }
     return ret - 1;
   }

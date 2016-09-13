@@ -200,7 +200,7 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
     if (mInitialHashes != 0) {
       final long discarded = mInitialHashes - mNumValues;
       final int percent = (int) (100.0 * discarded / mInitialHashes + 0.5);
-      Diagnostic.developerLog("checkRepeatFrequency(initial=" + mInitialHashes + ", now " + mNumValues + ", " + percent + "% of hashes discarded)");
+      Diagnostic.userLog("Applied hash count threshold (initial " + mInitialHashes + ", now " + mNumValues + ", " + percent + "% of hashes discarded)");
       if (!sHavePrintedRepeatFrequencyWarning) {
         printWarning(percent, mNumValues, mInitialHashes);
       }
@@ -239,10 +239,10 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
       return;
     }
     compact();
-    printStatistics("post compact");
-    Diagnostic.developerLog("Maximum hash count: " + maxRawHashCount());
-    Diagnostic.developerLog("Maximum hash count post compact: " + maxHashCount());
-    Diagnostic.developerLog("Hash count histogram: " + hashCountArray());
+    Diagnostic.userLog("Hash count histogram: " + hashCountArray());
+    Diagnostic.userLog("Maximum hash count: " + maxRawHashCount());
+    Diagnostic.userLog("Maximum hash count post compact: " + maxHashCount());
+    printStatistics("post compact statistics:");
   }
 
   private void printStatistics(String head) {

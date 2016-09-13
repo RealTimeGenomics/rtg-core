@@ -593,6 +593,16 @@ public final class MapFlags {
         }
       }
     }
+    if (flags.isSet(MAX_REPEAT_FREQUENCY_FLAG)) {
+      if (!CommonFlags.validateFlagBetweenValues(flags, MAX_REPEAT_FREQUENCY_FLAG, 1, Integer.MAX_VALUE)) {
+        return false;
+      }
+    }
+    if (flags.isSet(MIN_REPEAT_FREQUENCY_FLAG)) {
+      if (!CommonFlags.validateFlagBetweenValues(flags, MIN_REPEAT_FREQUENCY_FLAG, 1, Integer.MAX_VALUE)) {
+        return false;
+      }
+    }
     return true;
   }
 
