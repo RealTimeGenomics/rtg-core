@@ -183,7 +183,10 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
     if (mReadsWindowInUse[i] == getMaxHitsPerPosition()) {
       mMaxHitsExceededCount++;
       if (mMaxHitsExceededCount < 5) {
-        Diagnostic.userLog("Max hits per position exceeded at template: " + mReferenceId + " templateStart: " + (mReadsWindow[i].size() > 0 ? "" + mReadsWindow[i].get(0).mTemplateStart : "unknown"));
+        Diagnostic.developerLog("Max hits per position exceeded at template: " + mReferenceId + " templateStart: " + (mReadsWindow[i].size() > 0 ? "" + mReadsWindow[i].get(0).mTemplateStart : "unknown"));
+      }
+      if (mMaxHitsExceededCount == 5) {
+        Diagnostic.developerLog("Truncated reporting of max hits per position");
       }
       removeHits(mReadsWindow[i], mReadsWindowInUse[i]);
       mReadsWindowInUse[i] = -1; // Blacklist the position until it slides off
@@ -536,6 +539,12 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
       if (mRightPairCounts[i] != 0) {
         Diagnostic.developerLog("Reads with " + i + " potential right side candidates: " + mRightPairCounts[i] + " effective alignments: " + (i * 2 * mRightPairCounts[i]));
       }
+    }
+    if (mMaxHitsExceededCount > 0) {
+      Diagnostic.userLog("Max hits per position threshold of " + mMaxHitsPerPosition + " exceeded " + mMaxHitsExceededCount + " times");
+    }
+    if (mLeftOverloadCount + mRightOverloadCount > 0) {
+      Diagnostic.userLog("Max window hits per read theshold of " + mReadOverloadLimit + " exceeded " + (mLeftOverloadCount + mRightOverloadCount) + " times");
     }
     return stats;
   }
