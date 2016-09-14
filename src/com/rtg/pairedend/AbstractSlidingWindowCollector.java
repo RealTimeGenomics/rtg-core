@@ -18,8 +18,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import com.reeltwo.jumble.annotations.TestClass;
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.ngs.SharedResources;
 import com.rtg.reader.CgUtils;
 import com.rtg.reader.PrereadType;
@@ -544,7 +544,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
       Diagnostic.userLog("Max hits per position threshold of " + mMaxHitsPerPosition + " exceeded " + mMaxHitsExceededCount + " times");
     }
     if (mLeftOverloadCount + mRightOverloadCount > 0) {
-      Diagnostic.userLog("Max window hits per read theshold of " + mReadOverloadLimit + " exceeded " + (mLeftOverloadCount + mRightOverloadCount) + " times");
+      Diagnostic.userLog("Max window hits per read threshold of " + mReadOverloadLimit + " exceeded " + (mLeftOverloadCount + mRightOverloadCount) + " times");
     }
     return stats;
   }
