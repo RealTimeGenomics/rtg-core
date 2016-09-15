@@ -15,6 +15,7 @@ import java.util.Arrays;
 
 import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.mode.DnaUtils;
 import com.rtg.ngs.Arm;
 import com.rtg.reader.CgUtils;
 import com.rtg.reader.FastaUtils;
@@ -102,7 +103,8 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     mGenome = genome;
     mFragmentLength = record.getInferredInsertSize();
     final byte[] readBases = record.getReadBases();
-    mBases = Arrays.copyOf(readBases, record.getReadLength());
+
+    mBases = DnaUtils.encodeArray(Arrays.copyOf(readBases, record.getReadLength()));
 
 
     final byte[] baseQualities = record.getBaseQualities();
@@ -141,6 +143,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
       : SamUtils.allowEmpty(record.getStringAttribute(SamUtils.CG_SUPER_CIGAR_OVERLAP_QUALITY));
     final String cgOverlap = record.getStringAttribute(SamUtils.ATTRIBUTE_CG_OVERLAP_BASES);
     mOverlapBases = cgOverlap == null ? new byte[0] : cgOverlap.getBytes();
+    DnaUtils.encodeArray(mOverlapBases);
     mOverlapInstructions = record.getStringAttribute(SamUtils.ATTRIBUTE_CG_RAW_READ_INSTRUCTIONS);
     mCgReadDelta = record.getStringAttribute(SamUtils.CG_READ_DELTA);
 
@@ -205,7 +208,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
         if (MIN_QUALITY_AS_TWO) {
           mRecalibratedQuality[i] = 2;
         } else {
-          mBases[i] = 'N';
+          mBases[i] = 0;
         }
       }
     }
@@ -307,7 +310,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
 
   @Override
   public String toString() {
-    return getStart() + " " + getCigar() + " " + new String(getRead()) + " " + new String(FastaUtils.rawToAsciiQuality(getRecalibratedQuality()));
+    return getStart() + " " + getCigar() + " " + DnaUtils.bytesToSequenceIncCG(getRead()) + " " + new String(FastaUtils.rawToAsciiQuality(getRecalibratedQuality()));
   }
 
   @Override

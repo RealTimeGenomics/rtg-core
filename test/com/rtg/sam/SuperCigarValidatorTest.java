@@ -263,7 +263,7 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "4=1I5=7N25=");
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "A");
     validator.setData(samrec, DnaUtils.encodeString("CTGTGGCATC     GGGGGACCTGGGGCCCTCNCTGAGT".replaceAll(" ", "")), FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3----45/.,2"));
-    validator.setTemplate(DnaUtils.encodeString("TGTTCTGTG CATCTTCCCTTGGGGGACCTGNGGCCCTCACTGAGTGGGTCCTCCATGGGTGACTGGTGA"));
+    validator.setTemplate(DnaUtils.encodeString("TGTTCTGTGnCATCTTCCCTTGGGGGACCTGNGGCCCTCACTGAGTGGGTCCTCCATGGGTGACTGGTGA"));
     validator.parse();
     assertFalse(validator.getInvalidReason(), validator.isValid());
     assertTrue(validator.getInvalidReason(), validator.getInvalidReason().contains("SDF read insert: G does not match SAM " + SamUtils.CG_READ_DELTA + ": A,"));
@@ -451,14 +451,14 @@ public class SuperCigarValidatorTest extends TestCase {
     samrec.setAttribute(SamUtils.CG_SUPER_CIGAR, "2=1X13=5N20=");
     samrec.setBaseQualityString("4316%%68883-56+141663,2.3----45/.,2");
     samrec.setFlags(73);
-    validator.setData(samrec, DnaUtils.encodeString("                                   "), FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3----45/.,2"));
+    validator.setData(samrec, DnaUtils.encodeString("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN"), FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3----45/.,2"));
     validator.setTemplate(DnaUtils.encodeString("GAGGCCGAGGGGGGGAAAAACAGGCGGATCGTCAGGAGTT"));
 
     validator.parse();
     assertFalse(validator.isValid());
 
     samrec.setFlags(115);
-    validator.setData(samrec, DnaUtils.encodeString("                                   "), FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3----45/.,2"));
+    validator.setData(samrec, DnaUtils.encodeString("NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN"), FastaUtils.asciiToRawQuality("4316%%68883-56+141663,2.3----45/.,2"));
 
     validator.parse();
     assertFalse(validator.isValid());

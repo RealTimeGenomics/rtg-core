@@ -16,6 +16,7 @@ import java.io.ByteArrayOutputStream;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.alignment.ActionsHelper;
+import com.rtg.mode.DnaUtils;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
@@ -311,7 +312,7 @@ public final class CigarFormatter {
               }
               refPos++;
               //this duplicates the 'I' case below
-              sb.append((char) read[readPos]);
+              sb.append(DnaUtils.getBase(read[readPos]));
               if (qb != null) {
                 qb.write(qual[readPos]);
               }
@@ -323,7 +324,7 @@ public final class CigarFormatter {
               if (rightN) { //an invalid mixed case
                 return null;
               }
-              sb.append((char) read[readPos]);
+              sb.append(DnaUtils.getBase(read[readPos]));
               if (qb != null) {
                 qb.write(qual[readPos]);
               }

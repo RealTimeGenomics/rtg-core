@@ -310,14 +310,14 @@ public class AlignmentResultTest extends TestCase {
   }
 
   public void testSAMPEInsert() throws Exception {
-    final AlignmentResult mate = new AlignmentResult(getSequence("AC-GT"), ActionsHelper.build("", 12, 4), getSequence(SAM_SEQ));
+    final AlignmentResult mate = new AlignmentResult(getSequence("ACNGT"), ActionsHelper.build("", 12, 4), getSequence(SAM_SEQ));
     mate.mReferenceId = 8;
     mate.setIdentifyingInfo(false, true);
     runSAMPairedEnd(mate, 1, "F", "0#163#7#1#*#10=5N25=#=#13#40#*#*#AS:i:1#NM:i:0", false);
   }
 
   public void testSAMPEDeletion() throws Exception {
-    final AlignmentResult mate = new AlignmentResult(getSequence("ACGT"), ActionsHelper.build("", 12, 2), getSequence("AC-T"));
+    final AlignmentResult mate = new AlignmentResult(getSequence("ACGT"), ActionsHelper.build("", 12, 2), getSequence("ACNT"));
     mate.mReferenceId = 7;
     mate.setIdentifyingInfo(false, true);
     runSAMPairedEnd(mate, 1, "F", "0#163#7#1#*#10=5N25=#=#13#40#*#*#AS:i:1#NM:i:0", false);
@@ -332,7 +332,7 @@ public class AlignmentResultTest extends TestCase {
   }
 
   public void testBug867() {
-    final AlignmentResult ar = new AlignmentResult(getSequence("taaataatggcaatatctgcaggga     aaactataag"), ActionsHelper.build("", 0, 0), getSequence("taa...atggcaatatctgcagggaacaggaaactataag"));
+    final AlignmentResult ar = new AlignmentResult(getSequence("taaataatggcaatatctgcaggga     aaactataag"), ActionsHelper.build("", 0, 0), getSequence("taaNNNatggcaatatctgcagggaacaggaaactataag"));
     assertEquals(0, ar.mismatches());
   }
 

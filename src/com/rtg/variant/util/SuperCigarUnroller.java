@@ -70,7 +70,7 @@ public class SuperCigarUnroller extends SuperCigarParser {
 
   @Override
   protected void doReadSoftClip(int readNt) {
-    mBaos.write(DNA.valueChars()[readNt]);
+    mBaos.write(readNt);
   }
 
   @Override
@@ -83,7 +83,7 @@ public class SuperCigarUnroller extends SuperCigarParser {
 
   @Override
   protected void doReadOnly(int readNt) {
-    mBaos.write(DNA.valueChars()[readNt]);
+    mBaos.write(readNt);
   }
 
   @Override
@@ -92,24 +92,24 @@ public class SuperCigarUnroller extends SuperCigarParser {
 
   @Override
   protected void doSubstitution(int readNt, int templateNt) {
-    mBaos.write(DNA.valueChars()[readNt]);
+    mBaos.write(readNt);
   }
 
   @Override
   protected void doEquality(int readNt, int nt) {
-    mBaos.write(DNA.valueChars()[nt]);
+    mBaos.write(nt);
   }
 
 
   @Override
   protected void doUnknownOnTemplate(int readNt, int templateNt) {
-    mBaos.write(DNA.valueChars()[readNt]);
+    mBaos.write(readNt);
   }
 
 
   @Override
   protected void doUnknownOnRead() {
-    mBaos.write(DNA.N.name().charAt(0));
+    mBaos.write(DNA.N.ordinal());
   }
 
 

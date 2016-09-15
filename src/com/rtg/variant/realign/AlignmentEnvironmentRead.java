@@ -11,7 +11,8 @@
  */
 package com.rtg.variant.realign;
 
-import com.rtg.mode.DnaUtils;
+import java.util.Arrays;
+
 import com.rtg.util.machine.MachineType;
 import com.rtg.variant.VariantAlignmentRecord;
 import com.rtg.variant.VariantParams;
@@ -52,10 +53,11 @@ public final class AlignmentEnvironmentRead extends AbstractAlignmentEnvironment
   }
 
   private static byte[] alignmentRecordToRead(VariantAlignmentRecord sam) {
-    return DnaUtils.encodeArrayCopy(sam.getRead()); // DNA.byteDNAtoByte(sam.getRead());
+    //XXX maybe check whether we can pass this directly instead of copying.
+    return sam.getRead();
   }
   private static byte[] alignmentRecordToRead(VariantAlignmentRecord sam, int clippedStart, int clippedEnd) {
-    return DnaUtils.encodeArrayCopy(sam.getRead(), clippedStart, clippedEnd - clippedStart); // DNA.byteDNAtoByte(sam.getRead());
+    return Arrays.copyOfRange(sam.getRead(), clippedStart, clippedEnd); // DnaUtils.encodeArrayCopy(sam.getRead(), clippedStart, clippedEnd - clippedStart); // DNA.byteDNAtoByte(sam.getRead());
   }
 
   private static double[] alignmentRecordToQuality(VariantAlignmentRecord sam, VariantParams params, int clippedStart, int clippedEnd) {

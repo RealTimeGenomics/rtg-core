@@ -55,7 +55,7 @@ public class DnaSequenceComplexityTest extends TestCase {
     c = sc.minComplexity("acgttttttttttttttttttttttacg");
     assertEquals(0.0, c);
 
-    c = sc.minComplexity("acgtnxyz");
+    c = sc.minComplexity("acgtnnnn");
     assertTrue("" + c, c > 0.66 && c < 0.67);
   }
 

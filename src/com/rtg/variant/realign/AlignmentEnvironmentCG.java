@@ -11,7 +11,6 @@
  */
 package com.rtg.variant.realign;
 
-import com.rtg.mode.DNA;
 import com.rtg.reader.CgUtils;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.machine.MachineType;
@@ -41,7 +40,7 @@ public class AlignmentEnvironmentCG extends AbstractAlignmentEnvironment {
     if (orient == null) {
       throw new NoTalkbackSlimException("Invalid CG alignment. Could not reconstruct original read. record=" + var.toString());
     }
-    mRead = DNA.byteDNAtoByte(orient.getRead());
+    mRead = orient.getRead();
     final int len = mRead.length;
     //System.err.println("CG len=" + len);
     if (machineType == MachineType.COMPLETE_GENOMICS && len != CgUtils.CG_RAW_READ_LENGTH) {

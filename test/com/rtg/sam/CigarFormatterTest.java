@@ -258,7 +258,7 @@ public class CigarFormatterTest extends TestCase {
   }
 
   public void testMentalRead() {
-    final byte[] tmpl = DnaUtils.encodeString("CTCTAACTTCA-T--GAAGGAGTGGCACTTCCACCTGCCTCAGCTCATGCGTGATATCCAGGTGGGGGCCCAAGATGGTGTCTTGGAGTCTGGGGTAATGCTTGGAGACAGGGA");
+    final byte[] tmpl = DnaUtils.encodeString("CTCTAACTTCAnTnnGAAGGAGTGGCACTTCCACCTGCCTCAGCTCATGCGTGATATCCAGGTGGGGGCCCAAGATGGTGTCTTGGAGTCTGGGGTAATGCTTGGAGACAGGGA");
     //    byte[] read = DnaUtils.encodeString("----------TGAGCTGAGG.....GAAGTGCCACTCCTTCACTCCTTAT");   //rc of original read, TGAGCTGAGGGAAGTGCCACTCCTTCACTCCTTAT
     //                                                   A TAAG
     //                                                  GAGT  GAAGGAGTGGCACTTC      CCTCAGCTCA

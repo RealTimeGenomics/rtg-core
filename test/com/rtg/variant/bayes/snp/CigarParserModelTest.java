@@ -210,63 +210,6 @@ public class CigarParserModelTest extends TestCase {
 
   }
 
-  public void testCigarToMatcherBad1() {
-    MockModelMatcher matcher = new MockModelMatcher();
-    final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
-
-    final String seq = "ACRG";
-    final byte[] templateBytes = {0, 0, 1, 2, 2, 3, 4};
-    try {
-      final CigarParserModel cpm = new CigarParserModel(matcher, matcher, 0, templateBytes.length, vp) {
-        @Override
-        int getReadScore(VariantAlignmentRecord var) {
-          return 63;
-        }
-      };
-      final VariantAlignmentRecord var = toVariantAlignmentRecord(seq.getBytes(), "`!`!", "2M2D1N1M", 1, true);
-      cpm.toMatcher(var, null, 20, templateBytes);
-      fail();
-    } catch (final BadSuperCigarException e) {
-      // Expected
-    } finally {
-      matcher.close();
-    }
-
-    matcher = new MockModelMatcher();
-    try {
-      final CigarParserModel cpm = new CigarParserModel(matcher, matcher, 0, templateBytes.length, vp) {
-        @Override
-        int getReadScore(VariantAlignmentRecord var) {
-          return 63;
-        }
-      };
-      final VariantAlignmentRecord var = toVariantAlignmentRecord(seq.getBytes(), "`!`!", "2=2D1N1=", 1, true);
-      cpm.toMatcher(var, null, 20, templateBytes);
-      fail();
-    } catch (final BadSuperCigarException e) {
-      // Expected
-    } finally {
-      matcher.close();
-    }
-
-    matcher = new MockModelMatcher();
-    try {
-      final CigarParserModel cpm = new CigarParserModel(matcher, matcher, 0, templateBytes.length, vp) {
-        @Override
-        int getReadScore(VariantAlignmentRecord var) {
-          return 63;
-        }
-      };
-      final VariantAlignmentRecord var = toVariantAlignmentRecord(seq.getBytes(), "`!`!", "2X2D1N1X", 1, true);
-      cpm.toMatcher(var, null, 20, templateBytes);
-      fail();
-    } catch (final BadSuperCigarException e) {
-      // Expected
-    } finally {
-      matcher.close();
-    }
-  }
-
   private static final String ERR2 = "Malformed CIGAR string: 2MDN7M";
 
   public void testCigarToMatcherBad2() throws Exception {

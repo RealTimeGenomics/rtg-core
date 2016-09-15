@@ -1131,7 +1131,7 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
     getEditDistanceInstance(0);
 
     final byte[] r = DnaUtils.encodeString("gatcatatatCtatatatatatata     tatataaaac".replaceAll(" ", ""));
-    final byte[] t = DnaUtils.encodeString("gatcatataCatatatatatCtata.....tatataaaac");
+    final byte[] t = DnaUtils.encodeString("gatcatataCatatatatatCtataNNNNNtatataaaac");
 
     int[] actions = mCgGotoh.calculateEditDistance(r, r.length, t, 0, 10, 3, true);
     if (actions != null) {
@@ -1152,7 +1152,7 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
     getEditDistanceInstance(0);
 
     final byte[] r = DnaUtils.encodeString("gatcatatatNtatatatatNtata     tatataaaac".replaceAll(" ", ""));
-    final byte[] t = DnaUtils.encodeString("gatcatataNatatatatatNtata.....tatataaaac");
+    final byte[] t = DnaUtils.encodeString("gatcatataNatatatatatNtataNNNNNtatataaaac");
 
     int[] actions = mCgGotoh.calculateEditDistance(r, r.length, t, 0, 10, 3, true);
     if (actions != null) {

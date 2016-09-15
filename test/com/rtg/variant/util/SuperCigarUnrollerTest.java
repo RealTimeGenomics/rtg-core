@@ -14,12 +14,10 @@ package com.rtg.variant.util;
 import com.rtg.mode.DnaUtils;
 import com.rtg.sam.BadSuperCigarException;
 import com.rtg.sam.SamUtils;
-import com.rtg.util.TestUtils;
 import com.rtg.variant.VariantAlignmentRecord;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 
@@ -40,7 +38,7 @@ public class SuperCigarUnrollerTest extends TestCase {
     validator.setAlignmentRecord(new VariantAlignmentRecord(samrec));
     validator.setTemplate(DnaUtils.encodeString("GAGGCCGAGGGGGGGCAGGCGGATCGTCAGGAGTT"));
     validator.parse();
-    TestUtils.assertEquals("GAGGCCGAGGCAGGCGGATCGTCAGGAGTT".getBytes(), validator.getByteArray());
+    assertEquals("GAGGCCGAGGCAGGCGGATCGTCAGGAGTT", DnaUtils.bytesToSequenceIncCG(validator.getByteArray()));
 
     samrec.setCigarString("2=1X7=5N20=");
     samrec.setReadString("GACGCCGAGGCAGGCGGATCGTCAGGAGTT");
@@ -49,7 +47,7 @@ public class SuperCigarUnrollerTest extends TestCase {
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "C");
     validator.setAlignmentRecord(new VariantAlignmentRecord(samrec));
     validator.parse();
-    TestUtils.assertEquals("GACGCCGAGGCAGGCGGATCGTCAGGAGTT".getBytes(), validator.getByteArray());
+    assertEquals("GACGCCGAGGCAGGCGGATCGTCAGGAGTT", DnaUtils.bytesToSequenceIncCG(validator.getByteArray()));
 
     samrec.setAlignmentStart(5);
     samrec.setCigarString("4=1D6=5N20=");
@@ -60,7 +58,7 @@ public class SuperCigarUnrollerTest extends TestCase {
     validator.setAlignmentRecord(new VariantAlignmentRecord(samrec));
     validator.setTemplate(DnaUtils.encodeString("TGTTCTGTGCATCTTCCCTTACCTGNGGCCCTCACTGAGTGGGTCCTCCATGGGTGACTGGTGA"));
     validator.parse();
-    TestUtils.assertEquals("CTGTCATCTTACCTGNGGCCCTCACTGAGT".getBytes(), validator.getByteArray());
+    assertEquals("CTGTCATCTTACCTGNGGCCCTCACTGAGT", DnaUtils.bytesToSequenceIncCG(validator.getByteArray()));
 
     samrec.setAlignmentStart(5);
     samrec.setCigarString("4=1I5=7N20=");
@@ -70,7 +68,7 @@ public class SuperCigarUnrollerTest extends TestCase {
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "A");
     validator.setAlignmentRecord(new VariantAlignmentRecord(samrec));
     validator.parse();
-    TestUtils.assertEquals("CTGTAGCATCACCTGNGGCCCTCACTGAGT".getBytes(), validator.getByteArray());
+    assertEquals("CTGTAGCATCACCTGNGGCCCTCACTGAGT", DnaUtils.bytesToSequenceIncCG(validator.getByteArray()));
 
     //reverse complement
     samrec.setAlignmentStart(2);
@@ -83,7 +81,7 @@ public class SuperCigarUnrollerTest extends TestCase {
     validator.setAlignmentRecord(new VariantAlignmentRecord(samrec));
     validator.setTemplate(DnaUtils.encodeString("GCTTCAGCGATGGAGAAACTCGGGAAGTCGTGTCTACGTAGAACGTAGTT"));
     validator.parse();
-    TestUtils.assertEquals("CTTCACAGCGATGGAGAAACTCGGGTGTCTACGTA".getBytes(), validator.getByteArray());
+    assertEquals("CTTCACAGCGATGGAGAAACTCGGGTGTCTACGTA", DnaUtils.bytesToSequenceIncCG(validator.getByteArray()));
 
   }
 
@@ -105,7 +103,7 @@ public class SuperCigarUnrollerTest extends TestCase {
     validator.setTemplate(DnaUtils.encodeString("tttgtaggtcggataaggcgttcgggggggatccgacacg"));
     //qual "4316%%68883-56+141663,2.3----45/.,2553"
     validator.parse();
-    TestUtils.assertEquals("TTTGTGTAGGTCGGATAAGGCGTTCGGATCCGACACG".getBytes(), validator.getByteArray());
+    assertEquals("TTTGTGTAGGTCGGATAAGGCGTTCGGATCCGACACG", DnaUtils.bytesToSequenceIncCG(validator.getByteArray()));
 
     samrec.setCigarString("3=1X21=5N10=");
     samrec.setReadString("tttataggtcggataaggcgttcggatccgacacg");
@@ -115,7 +113,7 @@ public class SuperCigarUnrollerTest extends TestCase {
 
     validator.setAlignmentRecord(new VariantAlignmentRecord(samrec));
     validator.parse();
-    TestUtils.assertEquals("TTTGTATAGGTCGGATAAGGCGTTCGGATCCGACACG".getBytes(), validator.getByteArray());
+    assertEquals("TTTGTATAGGTCGGATAAGGCGTTCGGATCCGACACG", DnaUtils.bytesToSequenceIncCG(validator.getByteArray()));
   }
 
   public void testMismatchFailures() throws Exception {
@@ -134,7 +132,7 @@ public class SuperCigarUnrollerTest extends TestCase {
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "T");
     validator.setAlignmentRecord(new VariantAlignmentRecord(samrec));
     validator.parse();
-    TestUtils.assertEquals("GATGCCGAGGCAGGCGGATCGTCAGGAGTT".getBytes(), validator.getByteArray());
+    assertEquals("GATGCCGAGGCAGGCGGATCGTCAGGAGTT", DnaUtils.bytesToSequenceIncCG(validator.getByteArray()));
   }
 
   public void testAllMismatches() throws Exception {
@@ -153,7 +151,7 @@ public class SuperCigarUnrollerTest extends TestCase {
     samrec.setAttribute(SamUtils.CG_READ_DELTA, "TTTTTCTTTTTTTTTTTTTTTTTCGTTTTTTTTT");
     validator.setAlignmentRecord(new VariantAlignmentRecord(samrec));
     validator.parse();
-    TestUtils.assertEquals("TTTTTCTTTTTTTTTATTTTTTTTCGTTTTTTTTT".getBytes(), validator.getByteArray());
+    assertEquals("TTTTTCTTTTTTTTTATTTTTTTTCGTTTTTTTTT", DnaUtils.bytesToSequenceIncCG(validator.getByteArray()));
   }
 
   public void testOffTemplateSoftClipEnd() throws BadSuperCigarException {
@@ -171,7 +169,7 @@ public class SuperCigarUnrollerTest extends TestCase {
     validator.setTemplate(DnaUtils.encodeString("AGCCCACACGTTCCCCTTAAATAAGACATCACGATG"));
     validator.setAlignmentRecord(new VariantAlignmentRecord(samrec));
     validator.parse();
-    TestUtils.assertEquals("AGCCCACACG TAAATAAGACATCACGATG A GA TCA".replaceAll(" ", "").getBytes(), validator.getByteArray());
+    assertEquals("AGCCCACACG TAAATAAGACATCACGATG A GA TCA".replaceAll(" ", ""), DnaUtils.bytesToSequenceIncCG(validator.getByteArray()));
   }
 
   public void testOffTemplateSoftClipFront() throws BadSuperCigarException {
@@ -189,7 +187,7 @@ public class SuperCigarUnrollerTest extends TestCase {
     validator.setTemplate(DnaUtils.encodeString("GTAGCACTACAGAATAAATTCCCCTTGCACACCCGA"));
     validator.setAlignmentRecord(new VariantAlignmentRecord(samrec));
     validator.parse();
-    TestUtils.assertEquals("ACT AG A GTAGCACTACAGAATAAAT GCACACCCGA".replaceAll(" ", "").getBytes(), validator.getByteArray());
+    assertEquals("ACT AG A GTAGCACTACAGAATAAAT GCACACCCGA".replaceAll(" ", ""), DnaUtils.bytesToSequenceIncCG(validator.getByteArray()));
   }
 
   public void testReadSoftClipStart() throws Exception {
@@ -207,6 +205,6 @@ public class SuperCigarUnrollerTest extends TestCase {
     validator.setTemplate(DnaUtils.encodeString("TTTTCACACGTTCCCCTTAAATAAGACATCACGATGATCA"));
     validator.setAlignmentRecord(new VariantAlignmentRecord(samrec));
     validator.parse();
-    TestUtils.assertEquals("NNNNCACACG TAAATAAGACATCACGAT GA GATCA".replaceAll(" ", "").getBytes(), validator.getByteArray());
+    assertEquals("NNNNCACACG TAAATAAGACATCACGAT GA GATCA".replaceAll(" ", ""), DnaUtils.bytesToSequenceIncCG(validator.getByteArray()));
   }
 }

@@ -24,7 +24,7 @@ public interface Populator<T> {
    * contents of the source object.
    *
    * @param source source object
-   * @return populated object
+   * @return populated object, or null if the source object was invalid
    */
   T populate(SAMRecord source);
 

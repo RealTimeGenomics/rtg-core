@@ -21,6 +21,8 @@ import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.IORunnable;
 import com.rtg.util.Populator;
 import com.rtg.util.ProgramState;
+import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.diagnostic.WarningType;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
@@ -45,6 +47,8 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
   private final Populator<T> mPopulator;
   private Iterator<T> mPacketIterator = new ArrayList<T>().iterator();
   private T mTopRecord = null;
+
+  private long mInvalidRecords;
 
   private volatile boolean mVolIsClosing = false;
   private volatile boolean mVolIsFinished = false;
@@ -77,7 +81,13 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
       try {
         final SAMRecord next = mIterator.next();
         final boolean hasNext = mIterator.hasNext();
-        packet.add(mPopulator.populate(next));
+        final T populate = mPopulator.populate(next);
+        if (populate != null) {
+          packet.add(populate);
+        } else {
+          mInvalidRecords++;
+          maybeWarn(next);
+        }
         if (packet.size() >= mPacketSize || !hasNext) {
           mRecords.add(packet, hasNext);
           ProgramState.checkAbort();
@@ -100,6 +110,13 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
     synchronized (this) {
       mVolIsFinished = true;
       notifyAll();
+    }
+  }
+
+  private void maybeWarn(SAMRecord record) {
+    if (mInvalidRecords <= 5) {
+      Diagnostic.warning(WarningType.SAM_BAD_FORMAT_WARNING1, record.toString());
+      Diagnostic.userLog("Invalid record: " + record.toString());
     }
   }
 
@@ -236,7 +253,7 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
 
   @Override
   public long getInvalidRecordsCount() {
-    return mIterator.getInvalidRecordsCount();
+    return mIterator.getInvalidRecordsCount() + mInvalidRecords;
   }
 
   @Override

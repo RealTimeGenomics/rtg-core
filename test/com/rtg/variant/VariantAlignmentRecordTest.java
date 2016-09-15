@@ -13,6 +13,7 @@ package com.rtg.variant;
 
 import java.util.Arrays;
 
+import com.rtg.mode.DnaUtils;
 import com.rtg.ngs.Arm;
 import com.rtg.reader.CgUtils;
 import com.rtg.reader.FastaUtils;
@@ -49,7 +50,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     rec.setBaseQualities(q);
     rec.setInferredInsertSize(-232);
     final VariantAlignmentRecord r = new VariantAlignmentRecord(rec);
-    assertTrue(Arrays.equals("TATT".getBytes(), r.getRead()));
+    assertEquals("TATT", DnaUtils.bytesToSequenceIncCG(r.getRead()));
     assertEquals(41, r.getStart());
     assertEquals(6, r.getLength());
     assertTrue(Arrays.equals(q, r.getRecalibratedQuality()));
@@ -439,8 +440,8 @@ public class VariantAlignmentRecordTest extends TestCase {
     q[15] = 14;
     final SAMRecord rec = getSAMRecord(read, read.length() + "=", q, true);
     final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, new DefaultMachineErrorChooser(), 20);
-    assertEquals('G', r.getRead()[4]);
-    assertEquals('N', r.getRead()[5]);
-    assertEquals('N', r.getRead()[15]);
+    assertEquals('G', DnaUtils.getBase(r.getRead()[4]));
+    assertEquals('N', DnaUtils.getBase(r.getRead()[5]));
+    assertEquals('N', DnaUtils.getBase(r.getRead()[15]));
   }
 }

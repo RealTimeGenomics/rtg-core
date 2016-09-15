@@ -165,7 +165,7 @@ public class SamAssistanceCgTest extends TestCase {
     check2Reads("....."
               , "   ....................      ......A.A."
               , "AAGGATCACAGAGGTTCCAGAGTGAACTGAGAG", "23=6N6=1I1=1X1=", "5=2B20=6N6=1I1=1X1=", "AA", true
-              , "aaggatcacagaggttccagagtcagggagaactg_gc");
+              , "aaggatcacagaggttccagagtcagggagaactgNgc");
   }
 
 }

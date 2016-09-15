@@ -70,7 +70,7 @@ public class CgUnrollerTest extends TestCase {
 
     assertTrue("expected : " + Arrays.toString(qual2) + "\nactual : " + Arrays.toString(read.getQuality()),
       Arrays.equals(qual2, read.getQuality()));
-    assertTrue("expected : " + Arrays.toString(readx.getBytes()) + "\nactual : " + Arrays.toString(read.getRead()), Arrays.equals(readx.getBytes(), read.getRead()));
+    assertEquals("expected : " + Arrays.toString(readx.getBytes()) + "\nactual : " + DnaUtils.bytesToSequenceIncCG(read.getRead()), readx, DnaUtils.bytesToSequenceIncCG(read.getRead()));
   }
 
   public void testCgUnrollNoOverlap() {
@@ -81,22 +81,22 @@ public class CgUnrollerTest extends TestCase {
     rec.setReadPairedFlag(true);
     final CgUnroller.OrientedRead a = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), null);
     assertFalse(!a.isInverted());
-    assertEquals("GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT", new String(a.getRead()));
+    assertEquals("GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT", DnaUtils.bytesToSequenceIncCG(a.getRead()));
     assertEquals("2/452222!25.,0,86.152525-048163527/", new String(FastaUtils.rawToAsciiQuality(a.getQuality())));
     rec.setFirstOfPairFlag(true);
     final CgUnroller.OrientedRead b = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), null);
     assertTrue(!b.isInverted());
-    assertEquals("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG", new String(b.getRead()));
+    assertEquals("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG", DnaUtils.bytesToSequenceIncCG(b.getRead()));
     assertEquals("/725361840-525251.68,0,.52!222254/2", new String(FastaUtils.rawToAsciiQuality(b.getQuality())));
     rec.setReadNegativeStrandFlag(true);
     final CgUnroller.OrientedRead c = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), null);
     assertFalse(!c.isInverted());
-    assertEquals("GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT", new String(c.getRead()));
+    assertEquals("GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT", DnaUtils.bytesToSequenceIncCG(c.getRead()));
     assertEquals("2/452222!25.,0,86.152525-048163527/", new String(FastaUtils.rawToAsciiQuality(c.getQuality())));
     rec.setFirstOfPairFlag(false);
     final CgUnroller.OrientedRead d = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), null);
     assertTrue(!d.isInverted());
-    assertEquals("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG", new String(d.getRead()));
+    assertEquals("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG", DnaUtils.bytesToSequenceIncCG(d.getRead()));
     assertEquals("/725361840-525251.68,0,.52!222254/2", new String(FastaUtils.rawToAsciiQuality(d.getQuality())));
   }
 
@@ -112,25 +112,25 @@ public class CgUnrollerTest extends TestCase {
     final CgUnroller.OrientedRead a = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertNotNull(a);      //not convinced that this can't return the expected result, but this case shouldn't happen in the real world anyway.
     assertFalse(!a.isInverted());
-    assertEquals("GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT", new String(a.getRead()));
+    assertEquals("GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT", DnaUtils.bytesToSequenceIncCG(a.getRead()));
     assertEquals("2/452222!25.,0,86.152525-048163527/", new String(FastaUtils.rawToAsciiQuality(a.getQuality())));
     rec.setFirstOfPairFlag(true);
     final CgUnroller.OrientedRead b = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertNotNull(b);
     assertTrue(!b.isInverted());
-    assertEquals("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG", new String(b.getRead()));
+    assertEquals("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG", DnaUtils.bytesToSequenceIncCG(b.getRead()));
     assertEquals("/725361840-525251.68,0,.52!222254/2", new String(FastaUtils.rawToAsciiQuality(b.getQuality())));
     rec.setReadNegativeStrandFlag(true);
     final CgUnroller.OrientedRead c = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertNotNull(c);
     assertFalse(!c.isInverted());
-    assertEquals("GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT", new String(c.getRead()));
+    assertEquals("GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT", DnaUtils.bytesToSequenceIncCG(c.getRead()));
     assertEquals("2/452222!25.,0,86.152525-048163527/", new String(FastaUtils.rawToAsciiQuality(c.getQuality())));
     rec.setFirstOfPairFlag(false);
     final CgUnroller.OrientedRead d = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertNotNull(d);
     assertTrue(!d.isInverted());
-    assertEquals("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG", new String(d.getRead()));
+    assertEquals("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG", DnaUtils.bytesToSequenceIncCG(d.getRead()));
     assertEquals("/725361840-525251.68,0,.52!222254/2", new String(FastaUtils.rawToAsciiQuality(d.getQuality())));
   }
 
@@ -194,22 +194,22 @@ public class CgUnrollerTest extends TestCase {
     rec.setAttribute("XQ", "1");
     final CgUnroller.OrientedRead a = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertFalse(!a.isInverted());
-    assertEquals("GGGAAACCACAGTATAAAATGGTCAGAGTTTAGGA", new String(a.getRead()));
+    assertEquals("GGGAAACCACAGTATAAAATGGTCAGAGTTTAGGA", DnaUtils.bytesToSequenceIncCG(a.getRead()));
     assertEquals(".6431011/1.772/42560*-+4-22*,1,5/42", new String(FastaUtils.rawToAsciiQuality(a.getQuality())));
     rec.setFirstOfPairFlag(true);
     final CgUnroller.OrientedRead b = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertTrue(!b.isInverted());
-    assertEquals("AGGATTTGAGACTGGTAAAATATGACACCAAAGGG", new String(b.getRead()));
+    assertEquals("AGGATTTGAGACTGGTAAAATATGACACCAAAGGG", DnaUtils.bytesToSequenceIncCG(b.getRead()));
     assertEquals("24/5,1,*22-4+-*06524/277.1/1101346.", new String(FastaUtils.rawToAsciiQuality(b.getQuality())));
     rec.setReadNegativeStrandFlag(true);
     final CgUnroller.OrientedRead c = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertFalse(!c.isInverted());
-    assertEquals("GGGAAACCACAGTATAAAATGGTCAGAGTTTAGGA", new String(c.getRead()));
+    assertEquals("GGGAAACCACAGTATAAAATGGTCAGAGTTTAGGA", DnaUtils.bytesToSequenceIncCG(c.getRead()));
     assertEquals(".6431011/1.772/42560*-+4-22*,1,5/42", new String(FastaUtils.rawToAsciiQuality(c.getQuality())));
     rec.setFirstOfPairFlag(false);
     final CgUnroller.OrientedRead d = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertTrue(!d.isInverted());
-    assertEquals("AGGATTTGAGACTGGTAAAATATGACACCAAAGGG", new String(d.getRead()));
+    assertEquals("AGGATTTGAGACTGGTAAAATATGACACCAAAGGG", DnaUtils.bytesToSequenceIncCG(d.getRead()));
     assertEquals("24/5,1,*22-4+-*06524/277.1/1101346.", new String(FastaUtils.rawToAsciiQuality(d.getQuality())));
   }
 
@@ -227,28 +227,28 @@ public class CgUnrollerTest extends TestCase {
     CgUnroller.OrientedRead a = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertNotNull(a);
     assertTrue(!a.isInverted());
-    check(a.isInverted(), new String(a.getRead()), expLeft, expRight);
+    check(a.isInverted(), DnaUtils.bytesToSequenceIncCG(a.getRead()), expLeft, expRight);
     check(a.isInverted(), new String(FastaUtils.rawToAsciiQuality(a.getQuality())), expQLeft, expQRight);
 
     // F2
     rec.setFirstOfPairFlag(false);
     a = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertTrue(v1 && a.isInverted() || !v1 && !a.isInverted());
-    check(a.isInverted(), new String(a.getRead()), expLeft, expRight);
+    check(a.isInverted(), DnaUtils.bytesToSequenceIncCG(a.getRead()), expLeft, expRight);
     check(a.isInverted(), new String(FastaUtils.rawToAsciiQuality(a.getQuality())), expQLeft, expQRight);
 
     // R2
     rec.setReadNegativeStrandFlag(true);
     a = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertTrue(v1 && !a.isInverted() || !v1 && a.isInverted());
-    check(a.isInverted(), new String(a.getRead()), expLeft, expRight);
+    check(a.isInverted(), DnaUtils.bytesToSequenceIncCG(a.getRead()), expLeft, expRight);
     check(a.isInverted(), new String(FastaUtils.rawToAsciiQuality(a.getQuality())), expQLeft, expQRight);
 
     // R1
     rec.setFirstOfPairFlag(true);
     a = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertFalse(!a.isInverted());
-    check(a.isInverted(), new String(a.getRead()), expLeft, expRight);
+    check(a.isInverted(), DnaUtils.bytesToSequenceIncCG(a.getRead()), expLeft, expRight);
     check(a.isInverted(), new String(FastaUtils.rawToAsciiQuality(a.getQuality())), expQLeft, expQRight);
   }
 
@@ -339,12 +339,12 @@ public class CgUnrollerTest extends TestCase {
     rec.setReadPairedFlag(true);
     final CgUnroller.OrientedRead a = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), null);
     assertFalse(!a.isInverted());
-    assertEquals("GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT", new String(a.getRead()));
+    assertEquals("GAACCACCNGGTAAAATGGTCAGAGTTAGGATTAT", DnaUtils.bytesToSequenceIncCG(a.getRead()));
     assertNull(a.getQuality());
     rec.setFirstOfPairFlag(true);
     final CgUnroller.OrientedRead b = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), null);
     assertTrue(!b.isInverted());
-    assertEquals("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG", new String(b.getRead()));
+    assertEquals("TATTAGGATTGAGACTGGTAAAATGGNCCACCAAG", DnaUtils.bytesToSequenceIncCG(b.getRead()));
     assertNull(b.getQuality());
   }
 
@@ -363,7 +363,7 @@ public class CgUnrollerTest extends TestCase {
     rec.setReadNegativeStrandFlag(true);
     final CgUnroller.OrientedRead c = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), template);
     assertFalse(!c.isInverted());
-    assertEquals("AGATTTTTCCTGCAAACTTTAGTATTGACAAAANG", new String(c.getRead()));
+    assertEquals("AGATTTTTCCTGCAAACTTTAGTATTGACAAAANG", DnaUtils.bytesToSequenceIncCG(c.getRead()));
     assertNull(c.getQuality());
   }
 
@@ -404,7 +404,7 @@ public class CgUnrollerTest extends TestCase {
     final CgUnroller.OrientedRead or = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), tmpl);
     assertEquals(expRead.length(), or.getRead().length);
     for (int i = 0; i < expRead.length(); i++) {
-      assertEquals(expRead.charAt(i), or.getRead()[i]);
+      assertEquals(expRead.charAt(i), DnaUtils.getBase(or.getRead()[i]));
     }
   }
 
@@ -546,7 +546,7 @@ public class CgUnrollerTest extends TestCase {
       final CgUnroller.OrientedRead unr = CgUnroller.unrollCgRead(rec, template);
       assertNotNull(unr);
       final byte[] ur = unr.getRead();
-      final String ustr = new String(ur);
+      final String ustr = DnaUtils.bytesToSequenceIncCG(ur);
       if (!unr.isInverted()) {
         sb.append(ustr).append(LS);
       } else {
@@ -586,7 +586,7 @@ public class CgUnrollerTest extends TestCase {
     assertNotNull(or);
     assertEquals(expRead.length(), or.getRead().length);
     for (int i = 0; i < expRead.length(); i++) {
-      assertEquals(expRead.charAt(i), or.getRead()[i]);
+      assertEquals(expRead.charAt(i), DnaUtils.getBase(or.getRead()[i]));
     }
     assertEquals(expQual.length(), or.getQuality().length);
     for (int i = 0; i < expQual.length(); i++) {

@@ -14,6 +14,7 @@ package com.rtg.variant.bayes.multisample;
 
 import java.io.ByteArrayOutputStream;
 
+import com.rtg.mode.DnaUtils;
 import com.rtg.sam.SamUtils;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantAlignmentRecord;
@@ -157,7 +158,7 @@ public class AlignmentRecordMatcher {
           mInvalid = true;
         }
         //this duplicates the 'I' case below
-        mMatchString.append((char) mRead[mReadPos]);
+        mMatchString.append(DnaUtils.getBase(mRead[mReadPos]));
         if (mQualString != null) {
           mQualString.write(mQual[mReadPos]);
         }

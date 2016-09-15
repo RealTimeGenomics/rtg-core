@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -30,6 +31,9 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
+import com.rtg.variant.DefaultMachineErrorChooser;
+import com.rtg.variant.VariantAlignmentRecord;
+import com.rtg.variant.VariantAlignmentRecordPopulator;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMFormatException;
@@ -240,6 +244,19 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
     }
 
     check(SamFilterParams.builder().maxAlignmentCount(-1).restriction("simulatedSequence1:90-145").create(), 6, 0, true);
+  }
+
+  public void testInvalidPopulate() throws IOException {
+
+    try (TestDirectory dir = new TestDirectory()) {
+      final File samFile = FileHelper.resourceToFile("com/rtg/sam/resources/badReadBase.sam", new File(dir, "samfile.sam"));
+
+      final ThreadedMultifileIterator<VariantAlignmentRecord> it = new ThreadedMultifileIterator<>(Collections.singletonList(samFile), new SingletonPopulatorFactory<>(new VariantAlignmentRecordPopulator(new DefaultMachineErrorChooser(), 2)));
+      while (it.hasNext()) {
+        it.next();
+      }
+      assertEquals(2L, it.getInvalidRecordsCount());
+    }
   }
 
 }

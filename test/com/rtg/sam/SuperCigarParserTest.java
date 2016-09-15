@@ -137,7 +137,7 @@ public class SuperCigarParserTest extends TestCase {
     final SuperCigarParserTester parser = new SuperCigarParserTester();
     parser.setStandardCigar("3H1S2D3X4I5N18=1I3=2H", new byte[] {0, 3, 2}, 3);
     assertEquals(3, parser.getReadLength());
-    parser.setCigar("3H", "BLAH");
+    parser.setCigar("3H", "NNAN");
     assertEquals(0, parser.getReadLength());
   }
 

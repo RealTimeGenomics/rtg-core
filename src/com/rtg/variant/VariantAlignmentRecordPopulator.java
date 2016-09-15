@@ -74,9 +74,17 @@ public class VariantAlignmentRecordPopulator implements Populator<VariantAlignme
       if (genome == null) {
         throw new NoTalkbackSlimException("Could not determine sample from SAM record (check read group information against expected samples): " + rec.getSAMString());
       }
-      return new VariantAlignmentRecord(rec, genome, mChooser, mMinBaseQuality);
+      try {
+        return new VariantAlignmentRecord(rec, genome, mChooser, mMinBaseQuality);
+      } catch (IllegalArgumentException e) {
+        return null;
+      }
     } else {
-      return new VariantAlignmentRecord(rec, 0, mChooser, mMinBaseQuality);
+      try {
+        return new VariantAlignmentRecord(rec, 0, mChooser, mMinBaseQuality);
+      } catch (IllegalArgumentException e) {
+        return null;
+      }
     }
   }
 

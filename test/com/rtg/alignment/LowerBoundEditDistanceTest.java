@@ -95,7 +95,7 @@ public class LowerBoundEditDistanceTest extends AbstractUnidirectionalEditDistan
    * Simple test
    */
   public void test6() {
-    final byte[] read = DnaUtils.encodeString("GGAGGCCCTCTTGTCTTGCA  ");
+    final byte[] read = DnaUtils.encodeString("GGAGGCCCTCTTGTCTTGCANN");
     final byte[] temp = DnaUtils.encodeString("TGCAAGACAAGAGGGCCTCC");
     final UnidirectionalEditDistance lo = new LowerBoundEditDistance(4, 1, 1);
     final int[] res = lo.calculateEditDistance(read, read.length, temp, 7, 4, 7, true);
