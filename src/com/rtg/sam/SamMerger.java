@@ -19,10 +19,8 @@ import java.util.Collection;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Recalibrate;
-import com.rtg.launcher.globals.CoreGlobalFlags;
-import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.reader.SequencesReader;
-import com.rtg.tabix.IndexingStreamCreator;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.StringUtils;
@@ -30,9 +28,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMFileWriter;
-import htsjdk.samtools.SAMFileWriterFactory;
 import htsjdk.samtools.SAMRecord;
-import htsjdk.samtools.util.BlockCompressedOutputStream;
 
 /**
  */
@@ -71,8 +67,8 @@ public class SamMerger {
    *
    * @param samFiles files to merge
    * @param calibrationFiles corresponding calibration files to merge (may be empty)
-   * @param output output file, null to use supplied output stream
-   * @param out output stream to write sam to (if {@code output} is null), otherwise statistics are written here. may be null
+   * @param output output file, or "-" to use supplied output stream
+   * @param out output stream to write sam to (if {@code output} is "-"), otherwise statistics are written here. may be null
    * @param reference must be non-null for CRAM support
    * @param header use this header instead of any found in the SAM/BAM file (useful if file has no header, or needs changing).
    * @param writeHeader true if SAM/BAM header should be written to output file
@@ -80,12 +76,11 @@ public class SamMerger {
    * @throws java.io.IOException if an IO error occurs
    */
   public void mergeSamFiles(Collection<File> samFiles, Collection<File> calibrationFiles, File output, OutputStream out, SequencesReader reference, SAMFileHeader header, boolean writeHeader, boolean terminateBlockedGzip) throws IOException {
-    if (output != null && calibrationFiles.size() > 0 && calibrationFiles.size() != samFiles.size()) {
+    final boolean isStdio = CommonFlags.isStdio(output);
+    if (!isStdio && calibrationFiles.size() > 0 && calibrationFiles.size() != samFiles.size()) {
       Diagnostic.warning("Number of calibration files does not match number of SAM files, will not merge calibration files.");
     }
-    final boolean outputBam = (output != null) && output.getName().endsWith(SamUtils.BAM_SUFFIX);
-    final File alignmentOutputFile = output != null ? (outputBam ? output : SamUtils.getZippedSamFileName(mGzip, output)) : null;
-    final TabixIndexer.IndexerFactory indexerFactory = outputBam ? null : new TabixIndexer.SamIndexerFactory();
+    final File alignmentOutputFile;
     final long recordsIn;
     final long recordsOut;
     final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
@@ -96,8 +91,10 @@ public class SamMerger {
         SamUtils.addProgramRecord(header);
       }
       SamUtils.updateRunId(header);
-      try (IndexingStreamCreator streamHandler = new IndexingStreamCreator(alignmentOutputFile, out, mGzip, indexerFactory, mCreateIndex)) {
-        try (SAMFileWriter writer = getSAMFileWriter(streamHandler, header, outputBam, writeHeader, terminateBlockedGzip)) {
+
+      try (SamOutput so = SamOutput.getSamOutput(output, out, header, mGzip, true, writeHeader, terminateBlockedGzip, mCreateIndex, reference)) {
+        alignmentOutputFile = so.getOutFile();
+        try (SAMFileWriter writer = so.getWriter()) {
           while (it.hasNext()) {
             final SAMRecord rec = it.next();
             if (mLegacy) {
@@ -110,14 +107,13 @@ public class SamMerger {
       recordsIn = it.getTotalRecordsCount();
       recordsOut = it.getTotalRecordsCount() - it.getFilteredRecordsCount() - it.getDuplicateRecordsCount() - it.getInvalidRecordsCount();
     }
-    if (output != null) {
+    if (!isStdio) {
       if (calibrationFiles.size() > 0 && calibrationFiles.size() == samFiles.size()) {
         final Calibrator c = new Calibrator(Calibrator.getCovariateSet(calibrationFiles.iterator().next()), null);
         for (final File f : calibrationFiles) {
           c.accumulate(f);
         }
-        final File actualOut = outputBam ? output : SamUtils.getZippedSamFileName(mGzip, output);
-        c.writeToFile(new File(actualOut.getParent(), actualOut.getName() + Recalibrate.EXTENSION));
+        c.writeToFile(new File(alignmentOutputFile.getParent(), alignmentOutputFile.getName() + Recalibrate.EXTENSION));
       }
       if (out != null) {
         out.write(("SAM records read:    " + recordsIn + StringUtils.LS).getBytes());
@@ -146,28 +142,4 @@ public class SamMerger {
       }
     }
   }
-
-  private static final int GZIP_LEVEL = GlobalFlags.getIntegerValue(CoreGlobalFlags.GZIP_LEVEL);
-
-  /**
-   * Get a SAM/BAM writer potentially with indexing on the fly
-   * @param streamHandler stream handler
-   * @param header header to output
-   * @param outputBam if true BAM otherwise SAM
-   * @param writeHeader should the header be written
-   * @param terminateBlockGzip should the terminator be written
-   * @return writer
-   * @throws IOException if an I/O error occurs.
-   */
-  public static SAMFileWriter getSAMFileWriter(IndexingStreamCreator streamHandler, SAMFileHeader header, boolean outputBam, boolean writeHeader, boolean terminateBlockGzip) throws IOException {
-    final OutputStream intStream = streamHandler.createStreamsAndStartThreads(header != null ? header.getSequenceDictionary().size() : -1, writeHeader, terminateBlockGzip);
-    final SAMFileWriter writer;
-    if (outputBam) {
-      writer = new SAMFileWriterFactory().makeBAMWriter(header, true, new BlockCompressedOutputStream(intStream, null, GZIP_LEVEL, terminateBlockGzip), writeHeader, false /* ignored */, true);
-    } else {
-      writer = new SAMFileWriterFactory().makeSAMWriter(header, true, intStream, writeHeader);
-    }
-    return writer;
-  }
-
 }

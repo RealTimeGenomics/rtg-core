@@ -125,7 +125,7 @@ public class DeProbeCli extends LoggedCli {
       final File outputFile = new File(outputDir, ALIGNMENT_FILE_NAME);
       final SAMFileHeader fileHeader = reader.getFileHeader();
       fileHeader.setSortOrder(SAMFileHeader.SortOrder.coordinate);
-      try (SamOutput samOutput = SamOutput.getSamOutput(outputFile, out, fileHeader, !mFlags.isSet(CommonFlags.NO_GZIP), false)) {
+      try (SamOutput samOutput = SamOutput.getSamOutput(outputFile, out, fileHeader, !mFlags.isSet(CommonFlags.NO_GZIP), false, null)) {
         try (SAMFileWriter writer = samOutput.getWriter()) {
           List<SAMRecord> readRecords;
           final ReadRecordGrouper grouper = new ReadRecordGrouper(reader);

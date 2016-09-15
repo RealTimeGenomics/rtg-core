@@ -122,11 +122,8 @@ public class SamMergeCli extends AbstractCli {
     final boolean legacy = mFlags.isSet(LEGACY_CIGARS);
     final int numberThreads = CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG));
     final SamFilterParams filterParams = SamFilterOptions.makeFilterParamsBuilder(mFlags).create();
-    File output = (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
-    if ((output != null) && CommonFlags.isStdio(output)) { // Allow "-" as an alternative for writing to stdout.
-      output = null;
-    }
-    SequencesReader template = (!mFlags.isSet(CommonFlags.TEMPLATE_FLAG)) ? null : SequencesReaderFactory.createDefaultSequencesReader((File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG));
+    final File output = mFlags.isSet(CommonFlags.OUTPUT_FLAG) ? (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG) : new File("-");
+    final SequencesReader template = (!mFlags.isSet(CommonFlags.TEMPLATE_FLAG)) ? null : SequencesReaderFactory.createDefaultSequencesReader((File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG));
 
     final Collection<File> inputFiles = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null, CommandLineFiles.EXISTS, CommandLineFiles.NOT_DIRECTORY).getFileList(mFlags);
     final SamMerger merger = new SamMerger(createIndex, gzip, legacy, numberThreads, filterParams, true, false);

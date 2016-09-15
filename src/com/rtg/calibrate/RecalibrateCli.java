@@ -73,24 +73,6 @@ public class RecalibrateCli extends AbstractCli {
       if (!CommonFlags.validateTemplate(flags)) {
         return false;
       }
-
-      final boolean force = flags.isSet(FORCE_FLAG);
-      if (!force) {
-        try {
-          final List<File> files = CommonFlags.getFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, false);
-          for (File f : files) {
-            final File calibration = new File(f.getPath() + Recalibrate.EXTENSION);
-            if (calibration.exists()) {
-              flags.setParseMessage("Calibration file already exists: " + calibration.getPath());
-              return false;
-            }
-          }
-        } catch (IOException ioe) {
-          Diagnostic.error("Exception reading file list: " + ioe.getMessage());
-          return false;
-        }
-      }
-
       return true;
     });
     final Flag inFlag = mFlags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");

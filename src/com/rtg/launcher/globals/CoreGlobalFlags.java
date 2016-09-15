@@ -15,7 +15,6 @@ import java.util.List;
 
 import com.reeltwo.jumble.annotations.JumbleIgnore;
 import com.rtg.util.cli.Flag;
-import com.rtg.util.io.AdjustableGZIPOutputStream;
 
 /**
  * Experimental flags for public release
@@ -135,7 +134,6 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
 
     //SAM
     registerFlag(SAM_ALLOW_FALLBACK_FOR_NON_INDEXED_REGIONS);
-    registerFlag(GZIP_LEVEL, Integer.class, AdjustableGZIPOutputStream.DEFAULT_GZIP_LEVEL);
 
     // Aligners / all-paths
     registerFlag(DEFAULT_INDEL_LENGTH_FLAG, Integer.class, 7);

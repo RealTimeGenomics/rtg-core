@@ -22,12 +22,10 @@ import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.ReferenceSequenceRequiredException;
 import com.rtg.sam.SamFilterParams;
-import com.rtg.sam.SamMerger;
+import com.rtg.sam.SamOutput;
 import com.rtg.sam.SamReadingContext;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.ThreadedMultifileIterator;
-import com.rtg.tabix.IndexingStreamCreator;
-import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.ReferenceRegions;
 import com.rtg.util.io.AsynchInputStream;
@@ -81,7 +79,7 @@ public class Recalibrate implements Closeable {
       final Calibrator c = doRecalibrate(reader, CovariateEnum.getCovariates(covs, reader.getFileHeader()));
       final File calibrationFile = new File(samFile.getParent(), samFile.getName() + EXTENSION);
       if (!force && calibrationFile.exists()) {
-        throw new IOException("File: " + calibrationFile + " already exists");
+        throw new NoTalkbackSlimException("Calibration file already exists: " + calibrationFile);
       }
       c.writeToFile(calibrationFile);
     }
@@ -102,27 +100,25 @@ public class Recalibrate implements Closeable {
   }
 
   void doMergeRecalibrate(File output, List<File> samFiles, List<CovariateEnum> covs, int threads, boolean force, boolean compress) throws IOException {
+    final File calibrationFile;
     final SAMFileHeader uberHeader = SamUtils.getUberHeader(mTemplate, samFiles);
     final Covariate[] covariates = CovariateEnum.getCovariates(covs, uberHeader);
     final CalibratingPopulatorFactory rpf = new CalibratingPopulatorFactory(covariates, mRegions, mTemplate);
-    final boolean outputBam = output.getName().endsWith(SamUtils.BAM_SUFFIX);
-    final File alignmentOutputFile = outputBam ? output : SamUtils.getZippedSamFileName(compress, output);
-    final File calibrationFile = new File(alignmentOutputFile.getParent(), alignmentOutputFile.getName() + EXTENSION);
-    if (!force && calibrationFile.exists()) {
-      throw new IOException("File: " + calibrationFile + " already exists");
-    }
-    final TabixIndexer.IndexerFactory indexerFactory = outputBam ? null : new TabixIndexer.SamIndexerFactory();
     final SamReadingContext context = new SamReadingContext(samFiles, threads, SamFilterParams.builder().create(), SamUtils.getUberHeader(mTemplate, samFiles), mTemplate);
     try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, rpf)) {
       final SAMFileHeader header = it.header().clone();
       header.setSortOrder(SAMFileHeader.SortOrder.coordinate);
       SamUtils.addProgramRecord(header);
       SamUtils.updateRunId(header);
-      try (final IndexingStreamCreator streamHandler = new IndexingStreamCreator(alignmentOutputFile, System.out, compress, indexerFactory, true /* create index */)) {
-        try (final SAMFileWriter writer = SamMerger.getSAMFileWriter(streamHandler, header, outputBam, true /* writeHeader */, true /* terminateBlockedGzip */)) {
-          while (it.hasNext()) {
-            writer.addAlignment(it.next());
-          }
+      try (final SamOutput so = SamOutput.getSamOutput(output, System.out, header, compress, true, mTemplate)) {
+        calibrationFile = new File(so.getOutFile().getParent(), so.getOutFile().getName() + EXTENSION);
+        if (!force && calibrationFile.exists()) {
+          throw new NoTalkbackSlimException("Calibration file already exists: " + calibrationFile);
+        }
+
+        final SAMFileWriter writer = so.getWriter();
+        while (it.hasNext()) {
+          writer.addAlignment(it.next());
         }
       }
     }
