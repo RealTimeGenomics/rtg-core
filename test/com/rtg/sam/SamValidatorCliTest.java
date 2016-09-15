@@ -11,18 +11,16 @@
  */
 package com.rtg.sam;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.util.StringUtils;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
 
 /**
@@ -115,9 +113,6 @@ public class SamValidatorCliTest extends AbstractCliTest {
         + "@SQ" + TAB + "SN:a" + TAB + "LN:30" + StringUtils.LS;
 
   public void testFlags() throws IOException {
-    ByteArrayOutputStream outbaos = new ByteArrayOutputStream();
-    final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    final PrintStream errStr = new PrintStream(baos);
     final File template = ReaderTestUtils.getDNASubDir(getSequence(), mDir);
     final File pairedReads = FileUtils.createTempDir("temp", "paired");
     final SdfId sdfId = ReaderTestUtils.createPairedReaderDNA(getSequence(), getSequence(), pairedReads, null);
@@ -134,46 +129,26 @@ public class SamValidatorCliTest extends AbstractCliTest {
 
         FileUtils.stringToFile(samHeader, sam);
 
-        int result;
-        result = new SamValidatorCli().mainInit(new String[] {}, outbaos, errStr);
-        assertEquals(1, result);
-        result = new SamValidatorCli().mainInit(new String[] {"-h"}, outbaos, errStr);
-        outbaos.flush();
-        assertTrue(outbaos.toString().contains("Usage:"));
-        assertEquals(1, result);
-        result = new SamValidatorCli().mainInit(new String[] {"-i", sam.getAbsolutePath()}, outbaos, errStr);
-        assertEquals(1, result);
-        result = new SamValidatorCli().mainInit(new String[] {"-t", template.getAbsolutePath()}, outbaos, errStr);
-        assertEquals(1, result);
-        result = new SamValidatorCli().mainInit(new String[] {"-t", template.getAbsolutePath(), "-I", "blah"}, outbaos, errStr);
-        assertEquals(1, result);
+        checkHandleFlagsErr();
+        checkHandleFlagsErr("-i", sam.getAbsolutePath());
+        checkHandleFlagsErr("-t", template.getAbsolutePath());
+        checkHandleFlagsErr("-t", template.getAbsolutePath(), "-I", "blah");
 
-        result = new SamValidatorCli().mainInit(new String[] {"-t", template.getAbsolutePath(), sam.getAbsolutePath()}, outbaos, errStr);
-        assertEquals(0, result);
+        checkMainInitOk("-t", template.getAbsolutePath(), sam.getAbsolutePath());
+        checkMainInitOk("-t", template.getAbsolutePath(), sam.getAbsolutePath(), "-r", template.getAbsolutePath());
+        checkMainInitOk("-t", template.getAbsolutePath(), sam.getAbsolutePath(), "-r", template.getAbsolutePath(), "--Xignore-cg-fragment");
 
-        result = new SamValidatorCli().mainInit(new String[] {"-t", template.getAbsolutePath(), sam.getAbsolutePath(), "-r", template.getAbsolutePath()}, outbaos, errStr);
-        assertEquals(0, result);
+        MainResult res = MainResult.run(getCli(), "-t", template.getAbsolutePath(), sam.getAbsolutePath(), "-r", pairedReads.getAbsolutePath());
+        assertEquals(res.err(), 0, res.rc());
+        assertFalse(res.out().contains("Distribution"));
 
-        result = new SamValidatorCli().mainInit(new String[] {"-t", template.getAbsolutePath(), sam.getAbsolutePath(), "-r", template.getAbsolutePath(), "--Xignore-cg-fragment"}, outbaos, errStr);
-        assertEquals(0, result);
-
-        outbaos = new ByteArrayOutputStream();
-        result = new SamValidatorCli().mainInit(new String[] {"-t", template.getAbsolutePath(), sam.getAbsolutePath(), "-r", pairedReads.getAbsolutePath()}, outbaos, errStr);
-        assertEquals(0, result);
-        outbaos.flush();
-        assertFalse(outbaos.toString().contains("Distribution"));
-
-        outbaos = new ByteArrayOutputStream();
-        result = new SamValidatorCli().mainInit(new String[] {"-t", template.getAbsolutePath(), sam.getAbsolutePath(), "-r", pairedReads.getAbsolutePath(), "-D"}, outbaos, errStr);
-        assertEquals(0, result);
-        outbaos.flush();
-        final String out = outbaos.toString();
-        assertTrue(out.contains("Distribution of read hits"));
+        res = MainResult.run(getCli(), "-t", template.getAbsolutePath(), sam.getAbsolutePath(), "-r", pairedReads.getAbsolutePath(), "-D");
+        assertEquals(res.err(), 0, res.rc());
+        assertTrue(res.out().contains("Distribution of read hits"));
       } finally {
         assertTrue(!dir.exists() || FileHelper.deleteAll(dir));
       }
     } finally {
-      assertTrue(!template.exists() || FileHelper.deleteAll(template));
       assertTrue(!pairedReads.exists() || FileHelper.deleteAll(pairedReads));
     }
   }
@@ -187,16 +162,7 @@ public class SamValidatorCliTest extends AbstractCliTest {
             ;
 
     final File sam = FileHelper.stringToGzFile(samstr, new File(mDir, "blah.sam"));
-
-    final SamValidatorCli svc = new SamValidatorCli();
-
-    final MemoryPrintStream omps = new MemoryPrintStream();
-    final MemoryPrintStream emps = new MemoryPrintStream();
-
-    final int code = svc.mainInit(new String[] {"-D", "--validate", "-t", template.getPath(), "--Xmismatch-penalty", "1", "--Xgap-open-penalty", "1", "--Xgap-extend-penalty", "1", "--Xunknowns-penalty", "0", sam.getPath()}, omps.outputStream(), emps.printStream());
-    assertEquals(emps.toString(), 0, code);
-
-    assertEquals(emps.toString(), 0, emps.toString().length());
+    checkMainInitOk("-D", "--validate", "-t", template.getPath(), "--Xmismatch-penalty", "1", "--Xgap-open-penalty", "1", "--Xgap-extend-penalty", "1", "--Xunknowns-penalty", "0", sam.getPath());
   }
 
 }
