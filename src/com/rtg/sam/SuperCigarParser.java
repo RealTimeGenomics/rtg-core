@@ -304,7 +304,12 @@ public class SuperCigarParser {
           mReadPos++;
           break;
         case SamUtils.CIGAR_SAME:
-          final int readNt = mRead == null ? templateNt : getReadDelta(-1);
+          int readNt = mRead == null ? templateNt : getReadDelta(-1);
+          if (readNt == '=') {
+            readNt = templateNt;
+            updateReadWithTemplate(templateNt);
+          }
+
           doEquality(readNt, templateNt);
           advanceTemplate(true);
           mReadPos++;
@@ -393,6 +398,12 @@ public class SuperCigarParser {
           && mReadOverlapStart != -1) {
         mReadOverlapEnd = mReadPos; // the first read position after the overlap
       }
+    }
+  }
+
+  private void updateReadWithTemplate(int templateNt) {
+    if (mRead != null) {
+      mRead[mReadPos] = (byte) templateNt;
     }
   }
 

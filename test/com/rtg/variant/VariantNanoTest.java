@@ -964,22 +964,48 @@ public class VariantNanoTest extends AbstractNanoTest {
    * cgtagagagagaga__tgct cgtagagagagaga__tgct cgtagagagagaga__tgct
    * cgtagagagagaga__tgct
    */
-  static final String SAM_TEST_COMPLEX_EQUIVALENT = ""
+  static final String COMPLEX_EQUIV_READ = "cgtagagagagagatgct";
+  private static final String COMPLEX_EQUIV_QUALITY = "``````````````````";
+
+  static final String SAM_COMPLEX_EQUIV_HEADER = ""
       + "@HD" + TAB + "VN:1.0" + TAB + "SO:coordinate" + LS
       + "@SQ" + TAB + "SN:g1" + TAB + "LN:22" + LS
-      + TEMPLATE_SDF_ID + LS
-      + "a0" + TAB + "0" + TAB + "g1" + TAB + "4" + TAB + "255" + TAB + "3=2I13=" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + LS
-      + "a1" + TAB + "0" + TAB + "g1" + TAB + "4" + TAB + "255" + TAB + "3=2I13=" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + LS
-      + "a2" + TAB + "0" + TAB + "g1" + TAB + "4" + TAB + "255" + TAB + "3=2I13=" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + LS
-      + "a3" + TAB + "0" + TAB + "g1" + TAB + "4" + TAB + "255" + TAB + "3=2I13=" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + LS
-      + "b0" + TAB + "0" + TAB + "g1" + TAB + "4" + TAB + "255" + TAB + "12=2I4=" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + LS
-      + "b1" + TAB + "0" + TAB + "g1" + TAB + "4" + TAB + "255" + TAB + "12=2I4=" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + LS
-      + "b2" + TAB + "0" + TAB + "g1" + TAB + "4" + TAB + "255" + TAB + "12=2I4=" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + LS
-      + "b3" + TAB + "0" + TAB + "g1" + TAB + "4" + TAB + "255" + TAB + "12=2I4=" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + LS;
+      + TEMPLATE_SDF_ID + LS;
+  static final String SAM_COMPLEX_EQUIV_BASE_LINE = "%s\t0\tg1\t4\t255\t%s\t*\t0\t0\t%s\t%s\tAS:i:3%n";
+  static final String SAM_TEST_COMPLEX_EQUIVALENT = ""
+    + SAM_COMPLEX_EQUIV_HEADER
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "a0", "3=2I13=", COMPLEX_EQUIV_READ, COMPLEX_EQUIV_QUALITY)
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "a1", "3=2I13=", COMPLEX_EQUIV_READ, COMPLEX_EQUIV_QUALITY)
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "a2", "3=2I13=", COMPLEX_EQUIV_READ, COMPLEX_EQUIV_QUALITY)
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "a3", "3=2I13=", COMPLEX_EQUIV_READ, COMPLEX_EQUIV_QUALITY)
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "b0", "12=2I4=", COMPLEX_EQUIV_READ, COMPLEX_EQUIV_QUALITY)
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "b1", "12=2I4=", COMPLEX_EQUIV_READ, COMPLEX_EQUIV_QUALITY)
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "b2", "12=2I4=", COMPLEX_EQUIV_READ, COMPLEX_EQUIV_QUALITY)
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "b3", "12=2I4=", COMPLEX_EQUIV_READ, COMPLEX_EQUIV_QUALITY);
+
   private static final long SAM_TCE_LENGTH = 8 * 18;
 
   public void test41() throws Exception {
     check(COMPLEX_EQUIVALENT_TEMPLATE, SAM_TEST_COMPLEX_EQUIVALENT, 41, null, 0, SAM_TCE_LENGTH);
+  }
+//                                                  "cgtagagagagagatgct"
+//                                               "acccgtagagagagatgctatt"
+  static final String COMPLEX_EQUIV_READ_EQUALS_A = "===ag=============";
+  static final String COMPLEX_EQUIV_READ_EQUALS_B = "============ga====";
+
+  static final String SAM_TEST_COMPLEX_EQUIVALENT_EQUALS = ""
+    + SAM_COMPLEX_EQUIV_HEADER
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "a0", "3=2I13=", COMPLEX_EQUIV_READ_EQUALS_A, COMPLEX_EQUIV_QUALITY)
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "a1", "3=2I13=", COMPLEX_EQUIV_READ_EQUALS_A, COMPLEX_EQUIV_QUALITY)
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "a2", "3=2I13=", COMPLEX_EQUIV_READ_EQUALS_A, COMPLEX_EQUIV_QUALITY)
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "a3", "3=2I13=", COMPLEX_EQUIV_READ_EQUALS_A, COMPLEX_EQUIV_QUALITY)
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "b0", "12=2I4=", COMPLEX_EQUIV_READ_EQUALS_B, COMPLEX_EQUIV_QUALITY)
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "b1", "12=2I4=", COMPLEX_EQUIV_READ_EQUALS_B, COMPLEX_EQUIV_QUALITY)
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "b2", "12=2I4=", COMPLEX_EQUIV_READ_EQUALS_B, COMPLEX_EQUIV_QUALITY)
+    + String.format(SAM_COMPLEX_EQUIV_BASE_LINE, "b3", "12=2I4=", COMPLEX_EQUIV_READ_EQUALS_B, COMPLEX_EQUIV_QUALITY);
+
+  public void test41SamEquals() throws Exception {
+    check(COMPLEX_EQUIVALENT_TEMPLATE, SAM_TEST_COMPLEX_EQUIVALENT_EQUALS, 41, null, 0, SAM_TCE_LENGTH);
   }
 
   /*

@@ -15,6 +15,7 @@ import java.util.Arrays;
 
 import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
 import com.rtg.ngs.Arm;
 import com.rtg.reader.CgUtils;
@@ -104,7 +105,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     mFragmentLength = record.getInferredInsertSize();
     final byte[] readBases = record.getReadBases();
 
-    mBases = DnaUtils.encodeArray(Arrays.copyOf(readBases, record.getReadLength()));
+    mBases = byteDNAtoByteHandleEquals(readBases); //we assume something will convert the = before use
 
 
     final byte[] baseQualities = record.getBaseQualities();
@@ -230,6 +231,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     this(record, record.getReferenceIndex(), new DefaultMachineErrorChooser(), 0);
   }
 
+  //XXX note we actually modify the contents of mBases in SuperCigarParser.updateReadWithTemplate
   public byte[] getRead() {
     return mBases;
   }
@@ -474,5 +476,25 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
   public int getFragmentLength() {
     return mFragmentLength;
   }
+
+  /**
+   * Convert a byte array containing valid nucleotide characters into a byte array
+   * with values (0=N, ... 4=T).
+   * @param dna the string to be converted.
+   * @return the byte array.
+   */
+  public static byte[] byteDNAtoByteHandleEquals(final byte[] dna) {
+    final byte[] dnaBytes = new byte[dna.length];
+    for (int i = 0; i < dna.length; i++) {
+      final char charAt = (char) dna[i];
+      if (charAt == '=') {
+        dnaBytes[i] = (byte) '=';
+      } else {
+        dnaBytes[i] = (byte) DNA.getDNA(charAt);
+      }
+    }
+    return dnaBytes;
+  }
+
 }
 
