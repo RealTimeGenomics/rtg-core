@@ -117,7 +117,7 @@ public abstract class SamIteratorTask<P extends SingleMappedParams, S extends St
    */
   protected boolean validateRecord(final SAMRecord rec) {
     final Integer nh = SamUtils.getNHOrIH(rec);
-    return !(nh != null && nh <= 0);
+    return nh == null || nh > 0;
   }
 
   @Override
