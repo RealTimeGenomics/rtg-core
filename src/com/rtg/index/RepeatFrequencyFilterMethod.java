@@ -43,8 +43,8 @@ public class RepeatFrequencyFilterMethod implements IndexFilterMethod {
    * @param threshold maximum repeat frequency threshold - default
    *        <code>Integer.MAX_VALUE</code> if null.
    * @param proportionalThreshold Whether the frequency threshold should be calculated from index data rather than as a parameter.
-   * @param maxThreshold when using proportional threshold don't exceed this repeat frequency
-   * @param minThreshold when using proportional threshold don't go below this repeat frequency
+   * @param maxThreshold when using proportional threshold don't exceed this repeat frequency, -1 to disable bounding
+   * @param minThreshold when using proportional threshold don't go below this repeat frequency, -1 to disable bounding
    */
   public RepeatFrequencyFilterMethod(final Integer threshold, boolean proportionalThreshold, int maxThreshold, int minThreshold) {
     if (threshold == null) {
@@ -99,9 +99,17 @@ public class RepeatFrequencyFilterMethod implements IndexFilterMethod {
       ret = freq;
     }
     Diagnostic.userLog("Calculated hash frequency threshold: " + ret);
-    if (mUseProportionalThreshold && (ret > mMaxThreshold || ret < mMinThreshold)) {
-      ret = Math.max(mMinThreshold, Math.min(ret, mMaxThreshold));
-      Diagnostic.userLog("Limiting hash frequency to bounds: [" + mMinThreshold + "," + mMaxThreshold + "] now " + ret);
+    if (mUseProportionalThreshold) {
+      final int preLimit = ret;
+      if (mMaxThreshold > 0 && ret > mMaxThreshold) {
+        ret = mMaxThreshold;
+      }
+      if (mMinThreshold > 0 && ret < mMinThreshold) {
+        ret = mMinThreshold;
+      }
+      if (ret != preLimit) {
+        Diagnostic.userLog("Limiting hash frequency to bounds: [" + mMinThreshold + "," + mMaxThreshold + "] now " + ret);
+      }
     }
     return ret - 1;
   }
