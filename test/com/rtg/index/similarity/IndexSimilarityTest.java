@@ -11,8 +11,8 @@
  */
 package com.rtg.index.similarity;
 
+import com.rtg.index.FixedRepeatFrequencyFilterMethod;
 import com.rtg.index.Index;
-import com.rtg.index.RepeatFrequencyFilterMethod;
 import com.rtg.index.params.CreateParams;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -66,7 +66,7 @@ public class IndexSimilarityTest extends TestCase {
 
   public final void testSimilarity1() {
     final CreateParams params = new CreateParams(100, 32, 32, 31, true, true, false, false);
-    final IndexSimilarity index = new IndexSimilarity(params, new RepeatFrequencyFilterMethod(6, false, 6, 0), false, 1);
+    final IndexSimilarity index = new IndexSimilarity(params, new FixedRepeatFrequencyFilterMethod(6), false, 1);
     final String expected = ""
       + "SimilarityMatrix 10" + StringUtils.LS
       + "[0]\t1\t1\t3\t1\t0\t0\t0\t0\t0\t0" + StringUtils.LS
@@ -89,7 +89,7 @@ public class IndexSimilarityTest extends TestCase {
 
   public final void testSimilarity2() {
     final CreateParams params = new CreateParams(100, 32, 32, 31, true, true, false, false);
-    final IndexSimilarity index = new IndexSimilarity(params, new RepeatFrequencyFilterMethod(6, false, 6, 0), false, 1);
+    final IndexSimilarity index = new IndexSimilarity(params, new FixedRepeatFrequencyFilterMethod(6), false, 1);
     final String expected = ""
       + "SimilarityMatrix 10" + StringUtils.LS
       + "[0]\t1\t1\t3\t1\t0\t0\t0\t0\t0\t0" + StringUtils.LS

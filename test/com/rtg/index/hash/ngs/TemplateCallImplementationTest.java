@@ -67,7 +67,7 @@ public class TemplateCallImplementationTest extends TestCase {
     final NgsTestUtils.OverriddenNgsOutputParams outParams = new NgsTestUtils.OverriddenNgsOutputParams(NgsTestUtils.OverriddenNgsOutputParams.builder().outStream(sb).filterParams(filterParams));
     final File file = ReaderTestUtils.getDNADir(">t\na");
     final SequenceParams buildParams = SequenceParams.builder().directory(file).create();
-    final NgsParams params = NgsParams.builder().hashCountThreshold(1000).outputParams(outParams).buildFirstParams(buildParams).create();
+    final NgsParams params = NgsParams.builder().outputParams(outParams).buildFirstParams(buildParams).create();
     final DefaultOutputProcessor outPr = new DefaultOutputProcessor(params);
     final IndexSet indexSet = new IndexSet(indexes);
     final TemplateCallImplementation tci = new TemplateCallImplementation(params, 4, indexSet, outPr);
@@ -122,7 +122,7 @@ public class TemplateCallImplementationTest extends TestCase {
       final NgsTestUtils.OverriddenNgsOutputParams outParams = new NgsTestUtils.OverriddenNgsOutputParams(outBuilder);
       final File file = ReaderTestUtils.getDNADir(">t\na");
       final SequenceParams buildParams = SequenceParams.builder().directory(file).create();
-      final NgsParams params = NgsParams.builder().hashCountThreshold(1000).outputParams(outParams).buildFirstParams(buildParams).create();
+      final NgsParams params = NgsParams.builder().outputParams(outParams).buildFirstParams(buildParams).create();
       final DefaultOutputProcessor outPr = new DefaultOutputProcessor(params);
       final IndexSet indexSet = new IndexSet(indexes);
       final TemplateCallImplementation tca = new TemplateCallImplementation(params, 4, indexSet, outPr);

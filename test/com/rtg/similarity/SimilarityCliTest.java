@@ -24,7 +24,7 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import com.rtg.index.RepeatFrequencyFilterMethod;
+import com.rtg.index.FixedRepeatFrequencyFilterMethod;
 import com.rtg.index.hash.HashLoop;
 import com.rtg.index.params.CountParams;
 import com.rtg.index.params.CreateParams;
@@ -32,7 +32,6 @@ import com.rtg.index.similarity.IndexSimilarity;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
 import com.rtg.launcher.BuildParams;
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.MockReaderParams;
@@ -40,6 +39,7 @@ import com.rtg.launcher.MockSequenceParams;
 import com.rtg.launcher.ReaderParams;
 import com.rtg.launcher.SequenceLengthMessageBuildSearchParams;
 import com.rtg.launcher.SequenceParams;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.mode.DNAFastaSymbolTable;
 import com.rtg.mode.ProgramMode;
 import com.rtg.mode.SequenceMode;
@@ -674,7 +674,7 @@ public class SimilarityCliTest extends AbstractCliTest {
 
   public void testIOException() throws IOException {
     final CreateParams cp = new CreateParams(0, 1, 1, 31, false, true, true, false);
-    final IndexSimilarity index = new IndexSimilarity(cp, new RepeatFrequencyFilterMethod(1000, false, 1000, 0), false, 1);
+    final IndexSimilarity index = new IndexSimilarity(cp, new FixedRepeatFrequencyFilterMethod(1000), false, 1);
     index.freeze();
 
     final SequencesReader sr = new MockArraySequencesReader(SequenceType.DNA, new int[] {1}, new String[] {"name"});

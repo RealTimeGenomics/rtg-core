@@ -86,8 +86,6 @@ public class MapParamsHelperTest extends AbstractCliTest {
       assertEquals(3, MapParamsHelper.populateCommonMapParams(npb, flags, 12, 3, false, false));
       assertEquals(2, err.toString().split("The end sequence id \"2\" is out of range, it must be from \"1\" to \"1\". Defaulting end to \"1\"").length - 1);
 
-      assertEquals(Integer.valueOf(67), npb.mHashCountThreshold);
-
       flags.setFlags("-i", tmpDir.getPath(),
                             "-t", r.getPath(),
                             "-o", tmpDir.getPath(),

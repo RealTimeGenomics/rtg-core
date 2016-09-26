@@ -22,7 +22,9 @@ import java.io.PrintStream;
 import java.io.StringWriter;
 import java.util.Collections;
 
-import com.rtg.index.RepeatFrequencyFilterMethod;
+import org.junit.Assert;
+
+import com.rtg.index.FixedRepeatFrequencyFilterMethod;
 import com.rtg.index.hash.ngs.NgsHashLoopImpl;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.DnaUtils;
@@ -39,7 +41,6 @@ import com.rtg.util.diagnostic.DiagnosticListener;
 import com.rtg.util.diagnostic.ListenerType;
 import com.rtg.util.test.FileHelper;
 
-import org.junit.Assert;
 import junit.framework.TestCase;
 
 /**
@@ -346,7 +347,7 @@ public class NgsTaskFunctionalTest extends TestCase {
         final SequenceParams queryParams = SequenceParams.builder().directory(queriesDir).create();
         final NgsFilterParams filterParams = NgsFilterParams.builder().outputFilter(OutputFilter.NONE).topN(10).errorLimit(5).create();
         final NgsOutputParams outputParams = new NgsTestUtils.OverriddenNgsOutputParams(NgsTestUtils.OverriddenNgsOutputParams.builder().outStream(out).progress(false).outputDir(new File(hitsDir, "log")).filterParams(filterParams));
-        final NgsParams params = NgsParams.builder().indexFilter(new RepeatFrequencyFilterMethod(5, false, 0, 0)).hashCountThreshold(5).buildFirstParams(subjectParams).searchParams(queryParams).outputParams(outputParams).maskParams(mask).create(); //less than the number of reads
+        final NgsParams params = NgsParams.builder().indexFilter(new FixedRepeatFrequencyFilterMethod(5)).buildFirstParams(subjectParams).searchParams(queryParams).outputParams(outputParams).maskParams(mask).create(); //less than the number of reads
         final NgsTask ngs = getNgs(params);
         final NgsParams par = ngs.parameters();
         assertEquals(params, par);

@@ -99,8 +99,6 @@ public class CgMapCliTest extends AbstractCliTest {
 
         assertEquals(1000, params.maxFragmentLength().intValue());
         assertEquals(0, params.minFragmentLength().intValue());
-        assertEquals(5, params.hashCountThreshold().intValue());
-        assertEquals(true, params.useProportionalHashThreshold());
         assertEquals(true, params.outputParams().progress());
         assertEquals(false, params.outputParams().sorted());
         assertEquals(true, params.outputParams().isCompressOutput());

@@ -25,9 +25,10 @@ import java.util.concurrent.TimeUnit;
 
 import com.rtg.alignment.AlignerMode;
 import com.rtg.index.BlacklistFilterMethod;
+import com.rtg.index.FixedRepeatFrequencyFilterMethod;
 import com.rtg.index.HashBlacklist;
 import com.rtg.index.IndexFilterMethod;
-import com.rtg.index.RepeatFrequencyFilterMethod;
+import com.rtg.index.ProportionalRepeatFrequencyFilterMethod;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.DefaultReaderParams;
 import com.rtg.launcher.ISequenceParams;
@@ -149,25 +150,14 @@ public final class MapParamsHelper {
    * @param builder the builder
    */
   public static void populateProportionalRepeat(CFlags flags, NgsParamsBuilder builder) {
-    if (flags.getFlag(MapFlags.MAX_REPEAT_FREQUENCY_FLAG) != null) {
-      builder.maxHashCountThreshold((Integer) flags.getValue(MapFlags.MAX_REPEAT_FREQUENCY_FLAG));
-    }
-    if (flags.getFlag(MapFlags.MIN_REPEAT_FREQUENCY_FLAG) != null) {
-      builder.minHashCountThreshold((Integer) flags.getValue(MapFlags.MIN_REPEAT_FREQUENCY_FLAG));
-    }
-
     final IntegerOrPercentage repeat = (IntegerOrPercentage) flags.getValue(MapFlags.REPEAT_FREQUENCY_FLAG);
-    builder.useProportionalHashThreshold(repeat.isPercentage());
-
-
     if (repeat.isPercentage()) {
-      builder.hashCountThreshold(100 - repeat.getValue(100));
+      final int maxHC = (flags.getFlag(MapFlags.MAX_REPEAT_FREQUENCY_FLAG) != null) ? (Integer) flags.getValue(MapFlags.MAX_REPEAT_FREQUENCY_FLAG) : 1000;
+      final int minHC = (flags.getFlag(MapFlags.MIN_REPEAT_FREQUENCY_FLAG) != null) ? (Integer) flags.getValue(MapFlags.MIN_REPEAT_FREQUENCY_FLAG) : 1;
+      builder.indexFilter(new ProportionalRepeatFrequencyFilterMethod(100 - repeat.getValue(100), maxHC, minHC));
     } else {
-      builder.hashCountThreshold(repeat.getRawValue());
+      builder.indexFilter(new FixedRepeatFrequencyFilterMethod(repeat.getRawValue()));
     }
-
-    final IndexFilterMethod method = new RepeatFrequencyFilterMethod(builder.mHashCountThreshold, builder.mUseProportionalHashThreshold, builder.mMaxHashCountThreshold, builder.mMinHashCountThreshold);
-    builder.indexFilter(method);
   }
 
   static void populateAlignmentScoreSettings(CFlags flags, NgsFilterParams.NgsFilterParamsBuilder ngsFilterParamsBuilder, boolean paired, SAMReadGroupRecord rg)  {

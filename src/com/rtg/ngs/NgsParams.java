@@ -51,10 +51,6 @@ public class NgsParams extends ModuleParams implements Integrity {
   //  private final Integer mInsertSize;
   private final Integer mMaxFragmentLength;
   private final Integer mMinFragmentLength;
-  private final Integer mHashCountThreshold;
-  private final Integer mMaxHashCountThreshold;
-  private final Integer mMinHashCountThreshold;
-  private final boolean mUseProportionalHashThreshold;
   private final int mReadFreqThreshold;
   private final NgsOutputParams mOutputParams;
   private final NgsMaskParams mMaskParams;
@@ -105,9 +101,6 @@ public class NgsParams extends ModuleParams implements Integrity {
     mMaxFragmentLength = builder.mMaxFragmentLength;
     mMinFragmentLength = builder.mMinFragmentLength;
     mStepSize = builder.mStepSize;
-    mHashCountThreshold = builder.mHashCountThreshold;
-    mMaxHashCountThreshold = builder.mMaxHashCountThreshold;
-    mMinHashCountThreshold = builder.mMinHashCountThreshold;
     mBuildFirstParams = builder.mBuildFirstParams;
     mBuildSecondParams = builder.mBuildSecondParams;
     mSearchParams = builder.mSearchParams;
@@ -120,7 +113,6 @@ public class NgsParams extends ModuleParams implements Integrity {
     mIntSetWindow = builder.mIntSetWindow;
     mReadFreqThreshold = builder.mReadFreqThreshold;
     mMinHits = builder.mMinHits;
-    mUseProportionalHashThreshold = builder.mUseProportionalHashThreshold;
     mLegacyCigars = builder.mLegacyCigars;
     mUseTopRandom = builder.mUseTopRandom;
     mMapXMinReadLength = builder.mMapXMinReadLength;
@@ -188,42 +180,10 @@ public class NgsParams extends ModuleParams implements Integrity {
   }
 
   /**
-   * Get the maximum count permissible for a hash.
-   * @return the maximum hash count permissible.
-   */
-  public Integer hashCountThreshold() {
-    return mHashCountThreshold;
-  }
-
-  /**
    * @return handle that is used to filter (normally repetitive) hashes from index
    */
   public IndexFilterMethod indexFilter() {
     return mIndexFilter;
-  }
-
-  /**
-   * Whether the hash limit should be calculated from index data rather than as an explicit count.
-   * @return true if yes
-   */
-  public boolean useProportionalHashThreshold() {
-    return mUseProportionalHashThreshold;
-  }
-
-  /**
-   * Get the maximum count permissible for a hash when using proportional threshold.
-   * @return the maximum hash count permissible.
-   */
-  public Integer maxHashCountThreshold() {
-    return mMaxHashCountThreshold;
-  }
-
-  /**
-   * Get the minimum count permissible for a hash when using proportional threshold.
-   * @return the minimum hash count permissible.
-   */
-  public Integer minHashCountThreshold() {
-    return mMinHashCountThreshold;
   }
 
   /**
@@ -487,7 +447,7 @@ public class NgsParams extends ModuleParams implements Integrity {
   @Override
   @ParamsNoField
   public int hashCode() {
-    return Utils.hash(new Object[] {mBuildFirstParams, mBuildSecondParams, mSearchParams, mHashCountThreshold, mNumberThreads, mOutputParams});
+    return Utils.hash(new Object[] {mBuildFirstParams, mBuildSecondParams, mSearchParams, mNumberThreads, mOutputParams});
   }
 
   @Override
@@ -501,15 +461,15 @@ public class NgsParams extends ModuleParams implements Integrity {
     }
     final NgsParams that = (NgsParams) obj;
     return Utils.equals(
-        new Object[] {this.mBuildFirstParams, this.mBuildSecondParams, this.mSearchParams, this.mHashCountThreshold, this.mNumberThreads, this.mOutputParams},
-        new Object[] {that.mBuildFirstParams, that.mBuildSecondParams, that.mSearchParams, that.mHashCountThreshold, that.mNumberThreads, that.mOutputParams}
+        new Object[] {this.mBuildFirstParams, this.mBuildSecondParams, this.mSearchParams, this.mNumberThreads, this.mOutputParams},
+        new Object[] {that.mBuildFirstParams, that.mBuildSecondParams, that.mSearchParams, that.mNumberThreads, that.mOutputParams}
         );
   }
 
   @Override
   public String toString() {
     final String linePrefix = com.rtg.util.StringUtils.LS + "..";
-    return "NgsParams threshold=" + mHashCountThreshold + " compressHashes=" + mCompressHashes
+    return "NgsParams compressHashes=" + mCompressHashes
         + " threads=" + mNumberThreads + " useLongRead=" + mUseLongReadMapping + linePrefix
         + " mapXMinLength=" + mMapXMinReadLength  + linePrefix
         + " search={" + mSearchParams + "} " + linePrefix
@@ -535,9 +495,6 @@ public class NgsParams extends ModuleParams implements Integrity {
     }
     if (mOutputParams == null) {
       throw new RuntimeException();
-    }
-    if (mHashCountThreshold != null) {
-      Exam.assertTrue(mUseProportionalHashThreshold || mHashCountThreshold >= 1);
     }
     Exam.assertTrue(mNumberThreads >= 1);
     //    Assert.assertTrue(mInsertSize == null || mInsertSize >= 1);
@@ -625,7 +582,7 @@ public class NgsParams extends ModuleParams implements Integrity {
       valueBits = calculateValueBitsLongReads(reads.sequences().numberSequences(), paired(), maskP.getWordSize(), mStepSize, reads.sequences().maxLength());
     }
     indexParams.valueBits(valueBits);
-    return PositionParams.builder().ngsParams(this).mode(ProgramMode.SLIMN).hashCountThreshold(mHashCountThreshold).buildParams(reads).buildSecondParams(reads2).searchParams(template).outputParams(pop).progress(outputParams().progress()).indexParams(indexParams.create()).numberThreads(numberThreads()).create();
+    return PositionParams.builder().ngsParams(this).mode(ProgramMode.SLIMN).buildParams(reads).buildSecondParams(reads2).searchParams(template).outputParams(pop).progress(outputParams().progress()).indexParams(indexParams.create()).numberThreads(numberThreads()).create();
   }
 
 
@@ -692,10 +649,9 @@ public class NgsParams extends ModuleParams implements Integrity {
     .searchParams(searchParams())
     .buildSecondParams(buildSecondParams())
     .stepSize(stepSize())
-    .hashCountThreshold(hashCountThreshold())
+    .indexFilter(indexFilter().threadClone())
     .compressHashes(compressHashes())
     .useLongReadMapping(useLongReadMapping())
-    .useProportionalHashThreshold(useProportionalHashThreshold())
     .useTopRandom(useTopRandom())
     .legacyCigars(legacyCigars())
     .minHits(minHits())
@@ -703,8 +659,6 @@ public class NgsParams extends ModuleParams implements Integrity {
     .enableProteinReadCache(enableProteinReadCache())
     .threadMultiplier(threadMultiplier())
     .readFreqThreshold(readFreqThreshold())
-    .maxHashCountThreshold(maxHashCountThreshold())
-    .minHashCountThreshold(minHashCountThreshold())
     .mapXMinLength(mapXMinReadLength())
     .mapXMetaChunkSize(mapXMetaChunkSize())
     .mapXMetaChunkOverlap(mapXMetaChunkOverlap())

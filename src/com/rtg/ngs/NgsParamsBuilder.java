@@ -17,8 +17,8 @@ import java.util.Collections;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.alignment.AlignerMode;
 import com.rtg.alignment.EditDistanceFactory;
+import com.rtg.index.FixedRepeatFrequencyFilterMethod;
 import com.rtg.index.IndexFilterMethod;
-import com.rtg.index.RepeatFrequencyFilterMethod;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.ModuleParams.ModuleParamsBuilder;
@@ -40,10 +40,6 @@ public class NgsParamsBuilder extends ModuleParamsBuilder<NgsParamsBuilder> {
   Integer mMinFragmentLength = null;
   Integer mMaxFragmentLength = null;
   //  Integer mExpectedInsertSize = null;
-  Integer mHashCountThreshold = 1000;
-  Integer mMaxHashCountThreshold = 1000;
-  Integer mMinHashCountThreshold = 1;
-  boolean mUseProportionalHashThreshold = false;
   int mReadFreqThreshold = 65535;
   int mStepSize = -1;
   boolean mUseLongReadMapping = false;
@@ -73,7 +69,7 @@ public class NgsParamsBuilder extends ModuleParamsBuilder<NgsParamsBuilder> {
   MaxShiftFactor mAlignerBandWidthFactor = new MaxShiftFactor(0.5);
   AlignerMode mAlignerMode = AlignerMode.AUTO;
   String mSingleIndelPenalties = EditDistanceFactory.DEFAULT_SINGLE_INDEL_TABLE;
-  IndexFilterMethod mIndexFilter = new RepeatFrequencyFilterMethod(mHashCountThreshold, mUseProportionalHashThreshold, mMaxHashCountThreshold, mMinHashCountThreshold);
+  IndexFilterMethod mIndexFilter = new FixedRepeatFrequencyFilterMethod(1000);
 
 
   @Override
@@ -133,64 +129,6 @@ public class NgsParamsBuilder extends ModuleParamsBuilder<NgsParamsBuilder> {
    */
   public NgsParamsBuilder maxFragmentLength(final int size) {
     mMaxFragmentLength = size;
-    return self();
-  }
-
-  //  /**
-  //   * Sets the expected insert size for paired reads to mate.
-  //   *
-  //   * @param size the expected insert size. The default is null.
-  //   * @return this builder, so calls can be chained.
-  //   */
-  //  public NgsParamsBuilder expectedInsertSize(final Integer size) {
-  //    mExpectedInsertSize = size;
-  //    return self();
-  //  }
-
-  /**
-   * Sets the maximum number of hashes with the same value before the hash is ignored.
-   * if using a proportional threshold this will be a percentage
-   *
-   * @param threshold the threshold. The default is 1000.
-   * @return this builder, so calls can be chained.
-   */
-  public NgsParamsBuilder hashCountThreshold(final int threshold) {
-    mHashCountThreshold = threshold;
-    return self();
-  }
-
-
-  /**
-   * Whether the frequency threshold should be calculated from index data rather than as a parameter.
-   * @param val guess
-   * @return this builder, so calls can be chained.
-   */
-  public NgsParamsBuilder useProportionalHashThreshold(final boolean val) {
-    mUseProportionalHashThreshold = val;
-    return self();
-  }
-
-  /**
-   * When using a proportional hash count threshold don't go below this number of
-   * hashes. Prevents the index becoming barren if the data is highly unique.
-   *
-   * @param threshold the threshold. The default is 5.
-   * @return this builder, so calls can be chained.
-   */
-  public NgsParamsBuilder minHashCountThreshold(final int threshold) {
-    mMinHashCountThreshold = threshold;
-    return self();
-  }
-
-  /**
-   * When using a proportional hash count threshold don't exceed this number of
-   * hashes. Prevents the index blowing out if the data is highly repetitive.
-   *
-   * @param threshold the threshold. The default is 1000.
-   * @return this builder, so calls can be chained.
-   */
-  public NgsParamsBuilder maxHashCountThreshold(final int threshold) {
-    mMaxHashCountThreshold = threshold;
     return self();
   }
 

@@ -11,11 +11,11 @@
  */
 package com.rtg.index.params;
 
+import com.rtg.index.FixedRepeatFrequencyFilterMethod;
 import com.rtg.index.HashBitHandle;
 import com.rtg.index.IndexBase;
 import com.rtg.index.IndexSimple;
 import com.rtg.index.IndexUtils;
-import com.rtg.index.RepeatFrequencyFilterMethod;
 import com.rtg.index.UnfilteredFilterMethod;
 import com.rtg.index.params.CreateParams.CreateParamsBuilder;
 import com.rtg.util.StringUtils;
@@ -206,7 +206,7 @@ public class CreateParamsTest extends TestCase {
     assertEquals(252, IndexUtils.bytes(ip));
     assertEquals(EXPECTED42_A, IndexUtils.memString(ip));
 
-    final IndexBase ii = new IndexSimple(ip, new RepeatFrequencyFilterMethod(1000, false, Integer.MAX_VALUE, 0), 1);
+    final IndexBase ii = new IndexSimple(ip, new FixedRepeatFrequencyFilterMethod(1000), 1);
     assertEquals(252, ii.bytes());
     assertEquals(EXPECTED42_A + HASH_BUCKET, ii.infoString());
   }
@@ -236,7 +236,7 @@ public class CreateParamsTest extends TestCase {
     assertEquals(252, IndexUtils.bytes(ip));
     assertEquals(EXPECTED42_B, IndexUtils.memString(ip));
 
-    final IndexBase ii = new IndexSimple(ip, new RepeatFrequencyFilterMethod(1000, false, Integer.MAX_VALUE, 0), 1);
+    final IndexBase ii = new IndexSimple(ip, new FixedRepeatFrequencyFilterMethod(1000), 1);
     assertEquals(252, ii.bytes());
     assertEquals(EXPECTED42_B + HASH_BUCKET, ii.infoString());
   }
@@ -266,7 +266,7 @@ public class CreateParamsTest extends TestCase {
     assertEquals(252, IndexUtils.bytes(ip));
     assertEquals(EXPECTED42_C, IndexUtils.memString(ip));
 
-    final IndexBase ii = new IndexSimple(ip, new RepeatFrequencyFilterMethod(1000, false, Integer.MAX_VALUE, 0), 1);
+    final IndexBase ii = new IndexSimple(ip, new FixedRepeatFrequencyFilterMethod(1000), 1);
     assertEquals(252, ii.bytes());
     assertEquals(EXPECTED42_C + HASH_BUCKET, ii.infoString());
   }
@@ -296,7 +296,7 @@ public class CreateParamsTest extends TestCase {
     assertEquals(252, IndexUtils.bytes(ip));
     assertEquals(EXPECTED42_D, IndexUtils.memString(ip));
 
-    final IndexBase ii = new IndexSimple(ip, new RepeatFrequencyFilterMethod(1000, false, Integer.MAX_VALUE, 0), 1);
+    final IndexBase ii = new IndexSimple(ip, new FixedRepeatFrequencyFilterMethod(1000), 1);
     assertEquals(252, ii.bytes());
     assertEquals(EXPECTED42_D + HASH_BUCKET, ii.infoString());
   }
@@ -326,7 +326,7 @@ public class CreateParamsTest extends TestCase {
     assertEquals(260, IndexUtils.bytes(ip));
     assertEquals(EXPECTED42_E, IndexUtils.memString(ip));
 
-    final IndexBase ii = new IndexSimple(ip, new RepeatFrequencyFilterMethod(1000, false, Integer.MAX_VALUE, 0), 1);
+    final IndexBase ii = new IndexSimple(ip, new FixedRepeatFrequencyFilterMethod(1000), 1);
     assertEquals(260, ii.bytes());
     assertEquals(EXPECTED42_E + HASH_BUCKET, ii.infoString());
   }
@@ -356,7 +356,7 @@ public class CreateParamsTest extends TestCase {
     assertEquals(222, IndexUtils.bytes(ip));
     assertEquals(EXPECTED42_F, IndexUtils.memString(ip));
 
-    final IndexBase ii = new IndexSimple(ip, new RepeatFrequencyFilterMethod(1000, false, Integer.MAX_VALUE, 0), 1);
+    final IndexBase ii = new IndexSimple(ip, new FixedRepeatFrequencyFilterMethod(1000), 1);
     assertEquals(222, ii.bytes());
     assertEquals(EXPECTED42_F  + HASH_BUCKET, ii.infoString());
   }
@@ -386,7 +386,7 @@ public class CreateParamsTest extends TestCase {
     assertEquals(122, IndexUtils.bytes(ip));
     assertEquals(EXPECTED42_G, IndexUtils.memString(ip));
 
-    final IndexBase ii = new IndexSimple(ip, new RepeatFrequencyFilterMethod(1000, false, Integer.MAX_VALUE, 0), 1);
+    final IndexBase ii = new IndexSimple(ip, new FixedRepeatFrequencyFilterMethod(1000), 1);
     assertEquals(122, ii.bytes());
     assertEquals(EXPECTED42_G + HASH_BUCKET, ii.infoString());
   }
@@ -415,7 +415,7 @@ public class CreateParamsTest extends TestCase {
     assertEquals(666, IndexUtils.bytes(ip));
     assertEquals(EXPECTED42_Z, IndexUtils.memString(ip));
 
-    final IndexBase ii = new IndexSimple(ip, new RepeatFrequencyFilterMethod(1000, false, Integer.MAX_VALUE, 0), 1);
+    final IndexBase ii = new IndexSimple(ip, new FixedRepeatFrequencyFilterMethod(1000), 1);
     assertEquals(666, ii.bytes());
     assertEquals(EXPECTED42_Z + HASH_BUCKET, ii.infoString());
   }

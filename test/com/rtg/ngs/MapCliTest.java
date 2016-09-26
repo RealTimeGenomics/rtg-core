@@ -117,8 +117,6 @@ public class MapCliTest extends AbstractCliTest {
 
         assertEquals(1000, params.maxFragmentLength().intValue());
         assertEquals(0, params.minFragmentLength().intValue());
-        assertEquals(true, params.useProportionalHashThreshold());
-        assertEquals(10, params.hashCountThreshold().intValue());
         assertEquals(false, params.outputParams().progress());
         assertEquals(true, params.outputParams().isCompressOutput());
         assertEquals(false, params.outputParams().useids());

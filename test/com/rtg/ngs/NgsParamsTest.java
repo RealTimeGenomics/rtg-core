@@ -53,7 +53,7 @@ public class NgsParamsTest extends TestCase {
     mDir = null;
   }
 
-  NgsParams getParams(final Integer threshold, final int threads, final SequenceParams build, final SequenceParams search, final NgsOutputParams outParams, final boolean useProportionalHashThreshold) {
+  NgsParams getParams(final int threads, final SequenceParams build, final SequenceParams search, final NgsOutputParams outParams) {
     return NgsParams.builder().buildFirstParams(build)
         //                              .expectedInsertSize(7)
         .maxFragmentLength(8)
@@ -63,17 +63,13 @@ public class NgsParamsTest extends TestCase {
         .maskParams("Bar")
         .searchParams(search)
         .stepSize(10)
-        .hashCountThreshold(threshold)
         .compressHashes(true)
-        .useProportionalHashThreshold(useProportionalHashThreshold)
         .legacyCigars(true)
         .minHits(86)
         .intsetWindow(37)
         .enableProteinReadCache(true)
         .threadMultiplier(45)
         .readFreqThreshold(230)
-        .maxHashCountThreshold(6897)
-        .minHashCountThreshold(3478)
         .mapXMinLength(23487)
         .parallelUnmatedProcessing(true)
         .substitutionPenalty(2)
@@ -90,7 +86,7 @@ public class NgsParamsTest extends TestCase {
     final SequenceParams querya = SequenceParams.builder().directory(queryDir).create();
     final NgsFilterParams filterParamsa = NgsFilterParams.builder().outputFilter(OutputFilter.NONE).create();
     final NgsOutputParams outputa = NgsOutputParams.builder().progress(false).outputDir(new File("Foo")).filterParams(filterParamsa).create();
-    final NgsParams params = getParams(100, 3, subjectaa, querya, outputa, true);
+    final NgsParams params = getParams(3, subjectaa, querya, outputa);
     final NgsParams clone = params.cloneBuilder().create();
 
     //    assertEquals(params.expectedInsertSize(), clone.expectedInsertSize());
@@ -105,10 +101,8 @@ public class NgsParamsTest extends TestCase {
     assertEquals(params.searchParams(), clone.searchParams());
     assertEquals(params.buildSecondParams(), clone.buildSecondParams());
     assertEquals(params.stepSize(), clone.stepSize());
-    assertEquals(params.hashCountThreshold(), clone.hashCountThreshold());
     assertEquals(params.useLongReadMapping(), clone.useLongReadMapping());
     assertEquals(params.compressHashes(), clone.compressHashes());
-    assertEquals(params.useProportionalHashThreshold(), clone.useProportionalHashThreshold());
 
     assertEquals(params.legacyCigars(), clone.legacyCigars());
     assertEquals(params.minHits(), clone.minHits());
@@ -116,8 +110,6 @@ public class NgsParamsTest extends TestCase {
     assertEquals(params.enableProteinReadCache(), clone.enableProteinReadCache());
     assertEquals(params.threadMultiplier(), clone.threadMultiplier());
     assertEquals(params.readFreqThreshold(), clone.readFreqThreshold());
-    assertEquals(params.maxHashCountThreshold(), clone.maxHashCountThreshold());
-    assertEquals(params.minHashCountThreshold(), clone.minHashCountThreshold());
     assertEquals(params.mapXMinReadLength(), clone.mapXMinReadLength());
     assertEquals(params.parallelUnmatedProcessing(), clone.parallelUnmatedProcessing());
 
@@ -150,15 +142,14 @@ public class NgsParamsTest extends TestCase {
     final NgsFilterParams filterParamsb = NgsFilterParams.builder().outputFilter(OutputFilter.PAIRED_END).create();
     final NgsOutputParams outputb = NgsOutputParams.builder().progress(false).outputDir(new File("Foo")).filterParams(filterParamsb).create();
 
-    final NgsParams a1 = getParams(100, 1, subjectaa, querya, outputa, false);
-    final NgsParams a2 = getParams(100, 1, subjectaa, querya, outputa, false);
-    final NgsParams b = getParams(100, 1, subjectaa, queryba, outputa, false);
-    final NgsParams ba = getParams(100, 1, subjectc, queryba, outputa, false);
-    final NgsParams c = getParams(100, 1, subjectb, queryba, outputb, false);
-    final NgsParams d = getParams(100, 1, subjectab, querybb, outputa, false);
-    final NgsParams e = getParams(100, 2, subjectab, querybb, outputa, false);
-    final NgsParams f = getParams(1000, 1, subjectab, querybb, outputa, false);
-    TestUtils.equalsHashTest(new NgsParams[][] {{a1, a2}, {b}, {ba}, {c}, {d}, {e}, {f}});
+    final NgsParams a1 = getParams(1, subjectaa, querya, outputa);
+    final NgsParams a2 = getParams(1, subjectaa, querya, outputa);
+    final NgsParams b = getParams(1, subjectaa, queryba, outputa);
+    final NgsParams ba = getParams(1, subjectc, queryba, outputa);
+    final NgsParams c = getParams(1, subjectb, queryba, outputb);
+    final NgsParams d = getParams(1, subjectab, querybb, outputa);
+    final NgsParams e = getParams(2, subjectab, querybb, outputa);
+    TestUtils.equalsHashTest(new NgsParams[][] {{a1, a2}, {b}, {ba}, {c}, {d}, {e}});
     a1.close();
     a2.close();
     b.close();
@@ -166,7 +157,6 @@ public class NgsParamsTest extends TestCase {
     c.close();
     d.close();
     e.close();
-    f.close();
   }
 
   /** Subject sequence used for the calibration runs.  */
@@ -194,10 +184,9 @@ public class NgsParamsTest extends TestCase {
       final File queryDir = ReaderTestUtils.getDNASubDir(SEQ_DNA_A2, mDir);
       final SequenceParams query = SequenceParams.builder().directory(queryDir).mode(pm.queryMode()).create();
 
-      final NgsParams bsp = getParams(1000, 3, subject, query, count, false);
+      final NgsParams bsp = getParams(3, subject, query, count);
       bsp.integrity();
       assertEquals(new File(testFile, "bar"), bsp.outputParams().file("bar"));
-      assertEquals(Integer.valueOf(1000), bsp.hashCountThreshold());
       assertEquals(3, bsp.numberThreads());
       assertFalse(bsp.paired());
       assertEquals(Integer.valueOf(8), bsp.maxFragmentLength());
@@ -254,7 +243,7 @@ public class NgsParamsTest extends TestCase {
       final File queryDir = ReaderTestUtils.getDNADir(mDir);
       final SequenceParams query = SequenceParams.builder().directory(queryDir).mode(pm.queryMode()).create();
 
-      try (NgsParams bsp = getParams(1000, 3, subject, query, outputParams, false)) {
+      try (NgsParams bsp = getParams(3, subject, query, outputParams)) {
         assertTrue(bsp.compressOutput());
       }
     } finally {
@@ -273,7 +262,7 @@ public class NgsParamsTest extends TestCase {
     builder.outputParams(NgsOutputParams.builder().outputDir(res)
         .create());
     builder.maskParams(new NgsMaskParamsGeneral(w, a, b, c));
-    builder.hashCountThreshold(20).numberThreads(1);
+    builder.numberThreads(1);
     builder.stepSize(w);
     return builder.create();
   }
@@ -335,7 +324,7 @@ public class NgsParamsTest extends TestCase {
       final File queryDir = ReaderTestUtils.getDNADir(mDir);
       final SequenceParams query = SequenceParams.builder().directory(queryDir).mode(pm.queryMode()).create();
 
-      final NgsParams params = getParams(1000, 3, subject, query, count, false);
+      final NgsParams params = getParams(3, subject, query, count);
 
       assertEquals(2, params.substitutionPenalty());
       assertEquals(3, params.gapOpenPenalty());

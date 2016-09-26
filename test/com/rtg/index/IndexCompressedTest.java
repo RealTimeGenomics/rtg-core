@@ -30,7 +30,7 @@ public class IndexCompressedTest extends AbstractIndexTest {
 
   @Override
   protected IndexBase getIndex(final long size, final int hashBits, final Integer threshold) {
-    return new IndexCompressed(new CreateParams(size, hashBits, hashBits, 31, true, true, false, false), new RepeatFrequencyFilterMethod(threshold, false, threshold, threshold), 2);
+    return new IndexCompressed(new CreateParams(size, hashBits, hashBits, 31, true, true, false, false), new FixedRepeatFrequencyFilterMethod(threshold), 2);
   }
 
   public final void testStateTwoPass() throws IOException {

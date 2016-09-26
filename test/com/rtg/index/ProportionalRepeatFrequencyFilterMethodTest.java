@@ -12,34 +12,15 @@
 
 package com.rtg.index;
 
-import com.rtg.util.diagnostic.Diagnostic;
-
-import junit.framework.TestCase;
+import com.rtg.AbstractTest;
 
 /**
  * Test
  */
-public class RepeatFrequencyFilterMethodTest extends TestCase {
-
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    Diagnostic.setLogStream();
-  }
-
-  public void testSimple() {
-    final RepeatFrequencyFilterMethod m = new RepeatFrequencyFilterMethod(50, false, 100, 0);
-    m.initialize(null);
-    assertTrue(m.keepHash(0, 5));
-    assertTrue(m.keepHash(0, 25));
-    assertTrue(m.keepHash(0, 50));
-    assertFalse(m.keepHash(0, 80));
-    assertFalse(m.keepHash(0, 1000));
-    assertFalse(m.keepHash(0, 10000));
-  }
+public class ProportionalRepeatFrequencyFilterMethodTest extends AbstractTest {
 
   public void testProportional() {
-    final RepeatFrequencyFilterMethod m = new RepeatFrequencyFilterMethod(50, true, 100, 0);
+    final ProportionalRepeatFrequencyFilterMethod m = new ProportionalRepeatFrequencyFilterMethod(50, 100, 0);
     //discard half the hashes
     final SparseFrequencyHistogram sph = new SparseFrequencyHistogram();
     for (int i = 1; i <= 10; i++) {
