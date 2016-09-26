@@ -30,7 +30,7 @@ public class UnidirectionalPrioritisedEditDistanceTest extends AbstractUnidirect
 
   @Override
   protected UnidirectionalEditDistance getEditDistanceInstance(int gapOpenPenalty, int gapExtendPenalty, int subsPenalty, int unknownsPenalty) {
-    return  new UnidirectionalPrioritisedEditDistance(null, new GotohEditDistance(gapOpenPenalty, gapExtendPenalty, subsPenalty, unknownsPenalty, false));
+    return  new UnidirectionalPrioritisedEditDistance(new GotohEditDistance(gapOpenPenalty, gapExtendPenalty, subsPenalty, unknownsPenalty, false));
   }
 
   private class MinIntEd implements UnidirectionalEditDistance {
@@ -86,7 +86,7 @@ public class UnidirectionalPrioritisedEditDistanceTest extends AbstractUnidirect
   }
 
   public void testPriority() {
-    UnidirectionalEditDistance ed = new UnidirectionalPrioritisedEditDistance(null, new MinIntEd());
+    UnidirectionalEditDistance ed = new UnidirectionalPrioritisedEditDistance(new MinIntEd());
 
     final byte[] s1 = "gggggattttt".getBytes();
     final byte[] s2 = "gggggttttt".getBytes();
@@ -112,7 +112,7 @@ public class UnidirectionalPrioritisedEditDistanceTest extends AbstractUnidirect
       actions = ed.calculateEditDistanceFixedStart(s1, 0, s1.length, s2, 0, 5, MaxShiftUtils.calculateDefaultMaxShift(s1.length));
       assertEquals(Integer.MAX_VALUE, actions[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
 
-      ed = new UnidirectionalPrioritisedEditDistance(null, new MinIntEd(), new GotohEditDistance(1, 1, 1, 1, false));
+      ed = new UnidirectionalPrioritisedEditDistance(new MinIntEd(), new GotohEditDistance(1, 1, 1, 1, false));
       actions = ed.calculateEditDistance(s1, s1.length, s2, 0, 2, MaxShiftUtils.calculateDefaultMaxShift(s1.length), true);
       assertEquals(2, actions[ActionsHelper.ALIGNMENT_SCORE_INDEX]);
 

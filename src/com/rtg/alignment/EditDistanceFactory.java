@@ -129,13 +129,13 @@ public final class EditDistanceFactory {
     }
     if (USE_SINGLE_INDEL_SEEDED_ONLY) {
       Diagnostic.developerLog("Using SingleIndelSeededEditDistance: maxReadLength=" + maxReadLength);
-      return new SoftClipperOmni(new RcEditDistance(new UnidirectionalPrioritisedEditDistance(ngsParams, new SingleIndelSeededEditDistance(ngsParams, maxReadLength))), ngsParams.softClipDistance());
+      return new SoftClipperOmni(new RcEditDistance(new UnidirectionalPrioritisedEditDistance(new SingleIndelSeededEditDistance(ngsParams, maxReadLength))), ngsParams.softClipDistance());
     } else if (USE_GOTOH_ONLY) {
       Diagnostic.developerLog("Using Gotoh only");
       return new SoftClipperOmni(new RcEditDistance(new GotohEditDistance(ngsParams)), ngsParams.softClipDistance());
     } else if (effectiveChain == AlignerMode.TABLE) {
       Diagnostic.developerLog("Using SingleIndelEditDistance (TABLE): maxReadLength=" + maxReadLength);
-      return new SoftClipperOmni(new RcEditDistance(new UnidirectionalPrioritisedEditDistance(ngsParams, new SingleIndelEditDistance(ngsParams, maxReadLength))), ngsParams.softClipDistance());
+      return new SoftClipperOmni(new RcEditDistance(new UnidirectionalPrioritisedEditDistance(new SingleIndelEditDistance(ngsParams, maxReadLength))), ngsParams.softClipDistance());
     }
     // General case
 
@@ -180,12 +180,12 @@ public final class EditDistanceFactory {
       rev.add(new GotohEditDistance(ngsParams));
 
       return new SoftClipperOmni(new RcEditDistance(
-          new UnidirectionalPrioritisedEditDistance(ngsParams, fwd.toArray(new UnidirectionalEditDistance[fwd.size()])),
-          new UnidirectionalPrioritisedEditDistance(ngsParams, rev.toArray(new UnidirectionalEditDistance[rev.size()]))), ngsParams.softClipDistance());
+          new UnidirectionalPrioritisedEditDistance(fwd.toArray(new UnidirectionalEditDistance[fwd.size()])),
+          new UnidirectionalPrioritisedEditDistance(rev.toArray(new UnidirectionalEditDistance[rev.size()]))), ngsParams.softClipDistance());
     }
 
-    return new SoftClipperOmni(new RcEditDistance(new UnidirectionalPrioritisedEditDistance(ngsParams,
-        new NoIndelsEditDistance(ngsParams),
+    return new SoftClipperOmni(new RcEditDistance(new UnidirectionalPrioritisedEditDistance(
+      new NoIndelsEditDistance(ngsParams),
         new GotohEditDistance(ngsParams))), ngsParams.softClipDistance());
   }
 

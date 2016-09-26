@@ -12,11 +12,9 @@
 package com.rtg.alignment;
 
 import com.reeltwo.jumble.annotations.JumbleIgnore;
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.mode.DnaUtils;
-import com.rtg.ngs.NgsParams;
-import com.rtg.util.License;
 import com.rtg.util.MathUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -42,16 +40,11 @@ class UnidirectionalPrioritisedEditDistance implements UnidirectionalEditDistanc
   private final int[] mASHistogramUnderMaxScore;
   private final int[] mASHistogramOverMaxScore;
 
-  private final NgsParams mNgsParams;
-
-  private final boolean mValidateAlignments;
-
   /**
    * Creates a Prioritised edit distance which tries several options in order
-   * @param ngsParams {@link NgsParams} for current run
    * @param editDistances the edit distances to iterate over (in order)
    */
-  protected UnidirectionalPrioritisedEditDistance(NgsParams ngsParams, UnidirectionalEditDistance... editDistances) {
+  protected UnidirectionalPrioritisedEditDistance(UnidirectionalEditDistance... editDistances) {
     mEds = editDistances;
     mCounts = new int[editDistances.length];
     mTimeTaken = new long[editDistances.length]; // scaled to be in micro seconds, estimated by sampling
@@ -62,8 +55,6 @@ class UnidirectionalPrioritisedEditDistance implements UnidirectionalEditDistanc
     mMaxIntActions = new int[12];
     mMaxIntActions[ActionsHelper.ALIGNMENT_SCORE_INDEX] = Integer.MAX_VALUE;
 
-    mNgsParams = ngsParams;
-
     if (LOG_AS_HISTO) {
       mASHistogramUnderMaxScore = new int[256];  //TODO arbitrary limitation, should be based on max scores (but if those are percentages, depends on read lengths)
       mASHistogramOverMaxScore = new int[mASHistogramUnderMaxScore.length];
@@ -71,8 +62,6 @@ class UnidirectionalPrioritisedEditDistance implements UnidirectionalEditDistanc
       mASHistogramUnderMaxScore = null;
       mASHistogramOverMaxScore = null;
     }
-
-    mValidateAlignments = License.isDeveloper() && "".equals(GlobalFlags.getStringValue(CoreGlobalFlags.EDIT_DIST_INDEL_TABLE_FLAG)); //TODO: table can't currently be replicated by the validator, so don't bother checking.
   }
 
   @Override
@@ -103,18 +92,15 @@ class UnidirectionalPrioritisedEditDistance implements UnidirectionalEditDistanc
             mASHistogramUnderMaxScore[mASHistogramUnderMaxScore.length - 1]++;
           }
         } else {
-         if (mValidateAlignments) {
-            checkResult(read, rlen, template, zeroBasedStart, maxScore, i, actions);
-            if (LOG_AS_HISTO) {
-              if (score > mASHistogramOverMaxScore.length - 2) {
-                assert maxScore < mASHistogramOverMaxScore.length;
-                mASHistogramOverMaxScore[mASHistogramOverMaxScore.length - 2]++;
+          if (LOG_AS_HISTO) {
+            if (score > mASHistogramOverMaxScore.length - 2) {
+              assert maxScore < mASHistogramOverMaxScore.length;
+              mASHistogramOverMaxScore[mASHistogramOverMaxScore.length - 2]++;
+            } else {
+              if (score > maxScore) {
+                mASHistogramOverMaxScore[score]++;
               } else {
-                if (score > maxScore) {
-                  mASHistogramOverMaxScore[score]++;
-                } else {
-                  mASHistogramUnderMaxScore[score]++;
-                }
+                mASHistogramUnderMaxScore[score]++;
               }
             }
           }
@@ -127,28 +113,6 @@ class UnidirectionalPrioritisedEditDistance implements UnidirectionalEditDistanc
     }
     mMaxIntActions[ActionsHelper.TEMPLATE_START_INDEX] = zeroBasedStart;
     return mMaxIntActions;
-  }
-
-  @JumbleIgnore
-  private void checkResult(byte[] read, int rlen, byte[] template, int zeroBasedStart, int maxScore, int i, int[] actions) {
-    // good result, check every few
-    if (((mCounts[i] & ((2L << 18) - 1)) == 0) && read.length > 0 && template.length > 0) {
-      // check validation
-      try {
-        final ActionsValidator av = new ActionsValidator(mNgsParams.gapOpenPenalty(), mNgsParams.gapExtendPenalty(), mNgsParams.substitutionPenalty(), mNgsParams.unknownsPenalty());
-        if (!av.isValid(actions, read, rlen, template, maxScore)) {
-          final String msg = av.getErrorDetails(actions, read, rlen, template, zeroBasedStart);
-          Diagnostic.developerLog("UnidirectionalPrioritisedEditDistance validation action problem: returned by " + mEds[i].getClass().getName()
-              + StringUtils.LS + msg);
-        }
-      } catch (final RuntimeException e) {
-        Diagnostic.developerLog("UnidirectionalPrioritisedEditDistance: Problem even validating this pair of reads" + StringUtils.LS);
-        Diagnostic.developerLog(" read:  " + DnaUtils.bytesToSequenceIncCG(read, 0, rlen) + StringUtils.LS);
-        Diagnostic.developerLog(" tmpl:  " + DnaUtils.bytesToSequenceIncCG(template, zeroBasedStart, rlen) + StringUtils.LS);
-        Diagnostic.developerLog(e);
-      }
-    }
-
   }
 
   @Override
