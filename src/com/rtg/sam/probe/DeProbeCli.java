@@ -17,7 +17,7 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.List;
 
 import com.rtg.bed.BedReader;
@@ -66,6 +66,12 @@ public class DeProbeCli extends LoggedCli {
 
   private ReferenceRanges<String> mPosRanges;
   private ReferenceRanges<String> mNegRanges;
+  private long mTotalMappedReads;
+  private long mTotalMappedPos;
+  private long mTotalMappedNeg;
+  private long mTotalStrippedPos;
+  private long mTotalStrippedNeg;
+  private long mTotalStrippedReads;
 
 
   @Override
@@ -104,23 +110,22 @@ public class DeProbeCli extends LoggedCli {
     final PosChecker posChecker = new PosChecker(tolerance);
     final NegChecker negChecker = new NegChecker(tolerance);
     final File bedFile = (File) mFlags.getValue(PROBE_BED);
-    final File outputDir = (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
 
-    long totalReads = 0;
+    mTotalMappedReads = 0;
+    mTotalMappedPos = 0;
+    mTotalMappedNeg = 0;
+    mTotalStrippedPos = 0;
+    mTotalStrippedNeg = 0;
+    mTotalStrippedReads = 0;
+
     long totalUnmappedReads = 0;
-    long totalMappedReads = 0;
-    long totalPos = 0;
-    long totalNeg = 0;
-    long posStripped = 0;
-    long negStripped = 0;
-    long onTargetReads = 0;
     long totalRecords = 0;
     long totalAmbiguousRecords = 0;
-    final HashSet<String> ambiguousReads = new HashSet<>();
+    final HashMap<String, ReadStatus> ambiguousReads = new HashMap<>();
 
     try (RecordIterator<SAMRecord> reader = new ThreadedMultifileIterator<>(Collections.singletonList(input), new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
       loadProbeBed(bedFile);
-      final File outputFile = new File(outputDir, ALIGNMENT_FILE_NAME);
+      final File outputFile = new File(outputDirectory(), ALIGNMENT_FILE_NAME);
       try (SamOutput samOutput = SamOutput.getSamOutput(outputFile, out, reader.header(), !mFlags.isSet(CommonFlags.NO_GZIP), true, null)) {
         try (SmartSamWriter writer = new SmartSamWriter(samOutput.getWriter())) {
           while (reader.hasNext()) {
@@ -141,30 +146,23 @@ public class DeProbeCli extends LoggedCli {
                 }
               }
 
+              final boolean negative = record.getReadNegativeStrandFlag();
               if (unique) {
                 if (mapped) {
-                  totalMappedReads++;
-                  if (stripped) {
-                    onTargetReads++;
-                  }
-                  if (record.getReadNegativeStrandFlag()) {
-                    totalNeg++;
-                    if (stripped) {
-                      negStripped++;
-                    }
-                  } else {
-                    totalPos++;
-                    if (stripped) {
-                      posStripped++;
-                    }
-                  }
+                  addMapped(stripped, negative);
                 } else {
                   totalUnmappedReads++;
                 }
               } else {
-                // If not uniquely mapped, accumulate and delay addition to the stats until the end?
+                // If not uniquely mapped, accumulate and delay addition to the stats until the end
                 totalAmbiguousRecords++;
-                ambiguousReads.add(record.getReadName());
+                ReadStatus s = ambiguousReads.get(record.getReadName());
+                if (s == null) {
+                  s = new ReadStatus(record.getReadName(), stripped, negative);
+                  ambiguousReads.put(record.getReadName(), s);
+                } else if (stripped && !s.stripped()) {
+                  s.setStatus(stripped, negative);
+                }
               }
             }
             writer.addRecord(record);
@@ -174,13 +172,18 @@ public class DeProbeCli extends LoggedCli {
       }
     }
 
-    totalReads = totalMappedReads + totalUnmappedReads + ambiguousReads.size();
+    final long totalReads = mTotalMappedReads + totalUnmappedReads + ambiguousReads.size();
     Diagnostic.userLog("Total R1 records: " + totalRecords);
     Diagnostic.userLog("Total R1 reads: " + totalReads);
     Diagnostic.userLog("Total R1 unmapped reads (records): " + totalUnmappedReads);
-    Diagnostic.userLog("Total R1 uniquely mapped reads (records): " + totalMappedReads);
+    Diagnostic.userLog("Total R1 uniquely mapped reads (records): " + mTotalMappedReads);
     Diagnostic.userLog("Total R1 ambiguously mapped records: " + totalAmbiguousRecords);
     Diagnostic.userLog("Total R1 ambiguously mapped reads: " + ambiguousReads.size());
+
+    // Now merge in counts of any ambiguously mapped reads
+    for (ReadStatus s : ambiguousReads.values()) {
+      addMapped(s.stripped(), s.negative());
+    }
 
     Diagnostic.userLog("PROBE OFFSETS");
     final TextTable offsetSummary = new TextTable();
@@ -190,7 +193,7 @@ public class DeProbeCli extends LoggedCli {
       offsetSummary.addRow(Integer.toString(i - tolerance), Integer.toString(posChecker.mPosDiffStats[i]), Integer.toString(negChecker.mPosDiffStats[tolerance * 2 - i]));
     }
     Diagnostic.userLog(offsetSummary.toString());
-    FileUtils.stringToFile(offsetSummary.getAsTsv(), new File(outputDir, PROBE_OFFSET_TABLE_FILE));
+    FileUtils.stringToFile(offsetSummary.getAsTsv(), new File(outputDirectory(), PROBE_OFFSET_TABLE_FILE));
 
     Diagnostic.userLog("CIGAR OPERATIONS WITHIN PROBE");
     final TextTable cigarSummary = new TextTable();
@@ -201,27 +204,46 @@ public class DeProbeCli extends LoggedCli {
       addCigarRow(cigarSummary, "-", negChecker, i);
     }
     Diagnostic.userLog(cigarSummary.toString());
-    FileUtils.stringToFile(cigarSummary.getAsTsv(), new File(outputDir, CIGAR_OP_TABLE_FILE));
+    FileUtils.stringToFile(cigarSummary.getAsTsv(), new File(outputDirectory(), CIGAR_OP_TABLE_FILE));
 
-    final TextTable onTargetSummary = new TextTable();
-    onTargetSummary.addRow("Group", "Total", "Mapped", "On Target", "%/Total", "%/Mapped");
-    onTargetSummary.addRow("Reads", Long.toString(totalReads), Long.toString(totalMappedReads), Long.toString(onTargetReads), String.format("%.2f%%", (double) onTargetReads / (double) totalReads * 100.0), String.format("%.2f%%", (double) onTargetReads / (double) totalMappedReads * 100.0));
-    Diagnostic.userLog(onTargetSummary.toString());
-    FileUtils.stringToFile(onTargetSummary.getAsTsv(), new File(outputDir, ON_TARGET_SUMMARY_FILE));
+    final long totalstripped = mTotalStrippedPos + mTotalStrippedNeg;
+    final long total = mTotalMappedPos + mTotalMappedNeg;
+    final TextTable summary = new TextTable();
+    summary.addRow("Strand", "Alignments", "Stripped", "Identified", "nt/read");
+    summary.addSeparator();
+    summary.addRow("+", Long.toString(mTotalMappedPos), Long.toString(mTotalStrippedPos), String.format("%.2f%%", (double) mTotalStrippedPos / mTotalMappedPos * 100.0), String.format("%.1f", (double) posChecker.mBasesTrimmed / mTotalStrippedPos));
+    summary.addRow("-", Long.toString(mTotalMappedNeg), Long.toString(mTotalStrippedNeg), String.format("%.2f%%", (double) mTotalStrippedNeg / mTotalMappedNeg * 100.0), String.format("%.1f", (double) negChecker.mBasesTrimmed / mTotalStrippedNeg));
+    summary.addRow("Both", Long.toString(total), Long.toString(totalstripped), String.format("%.2f%%", (double) totalstripped / total * 100.0), String.format("%.1f", (double) (posChecker.mBasesTrimmed + negChecker.mBasesTrimmed) / totalstripped));
+    FileUtils.stringToFile(summary.getAsTsv(), new File(outputDirectory(), PROBE_SUMMARY_FILE));
 
-    try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(new File(outputDir, CommonFlags.SUMMARY_FILE), false), out))) {
-      final long totalstripped = posStripped + negStripped;
-      final long total = totalPos + totalNeg;
-      final TextTable summary = new TextTable();
-      summary.addRow("Strand", "Alignments", "Stripped", "Identified", "nt/read");
-      summary.addSeparator();
-      summary.addRow("+", Long.toString(totalPos), Long.toString(posStripped), String.format("%.2f%%", (double) posStripped / totalPos * 100.0), String.format("%.1f", (double) posChecker.mBasesTrimmed / posStripped));
-      summary.addRow("-", Long.toString(totalNeg), Long.toString(negStripped), String.format("%.2f%%", (double) negStripped / totalNeg * 100.0), String.format("%.1f", (double) negChecker.mBasesTrimmed / negStripped));
-      summary.addRow("Both", Long.toString(total), Long.toString(totalstripped), String.format("%.2f%%", (double) totalstripped / total * 100.0), String.format("%.1f", (double) (posChecker.mBasesTrimmed + negChecker.mBasesTrimmed) / totalstripped));
+    Diagnostic.userLog("ON TARGET RATES");
+    try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(new File(outputDirectory(), CommonFlags.SUMMARY_FILE), false), out))) {
+      final TextTable onTargetSummary = new TextTable();
+      onTargetSummary.addRow("Group", "Total", "Mapped", "On Target", "%/Total", "%/Mapped");
+      onTargetSummary.addRow("Reads", Long.toString(totalReads), Long.toString(mTotalMappedReads), Long.toString(mTotalStrippedReads), String.format("%.2f%%", (double) mTotalStrippedReads / (double) totalReads * 100.0), String.format("%.2f%%", (double) mTotalStrippedReads / (double) mTotalMappedReads * 100.0));
+      Diagnostic.userLog(onTargetSummary.toString());
+      FileUtils.stringToFile(onTargetSummary.getAsTsv(), new File(outputDirectory(), ON_TARGET_SUMMARY_FILE));
       summaryOut.println(summary);
-      FileUtils.stringToFile(summary.getAsTsv(), new File(outputDir, PROBE_SUMMARY_FILE));
     }
     return 0;
+  }
+
+  private void addMapped(boolean stripped, boolean negative) {
+    mTotalMappedReads++;
+    if (stripped) {
+      mTotalStrippedReads++;
+    }
+    if (negative) {
+      mTotalMappedNeg++;
+      if (stripped) {
+        mTotalStrippedNeg++;
+      }
+    } else {
+      mTotalMappedPos++;
+      if (stripped) {
+        mTotalStrippedPos++;
+      }
+    }
   }
 
 
@@ -298,5 +320,31 @@ public class DeProbeCli extends LoggedCli {
       return true;
     }
     return false;
+  }
+
+  private static final class ReadStatus {
+    final String mName;
+    boolean mStripped = false;
+    boolean mNegative = false;
+    private ReadStatus(String name, boolean stripped, boolean negative) {
+      mName = name;
+      setStatus(stripped, negative);
+    }
+    public int hashCode() {
+      return mName.hashCode();
+    }
+    public boolean equals(Object that) {
+      return that instanceof ReadStatus && mName.equals(((ReadStatus) that).mName);
+    }
+    private boolean stripped() {
+      return mStripped;
+    }
+    private boolean negative() {
+      return mNegative;
+    }
+    private void setStatus(boolean stripped, boolean negative) {
+      mStripped = stripped;
+      mNegative = negative;
+    }
   }
 }
