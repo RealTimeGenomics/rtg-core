@@ -13,9 +13,7 @@ package com.rtg.variant.bayes.multisample.family;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.reference.Ploidy;
-import com.rtg.reference.ReferenceGenome;
 import com.rtg.util.Pair;
-import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.bayes.Code;
 
 /**
@@ -36,6 +34,7 @@ public abstract class MendelianAlleleProbabilityFactory {
   static final Pair<MendelianAlleleProbability, MendelianAlleleProbability> HAPLOID_NONE_NONE = new Pair<>(MendelianAlleleProbabilityNHN.SINGLETON_HN, MendelianAlleleProbabilityNHNDeNovo.SINGLETON_HN);
   static final Pair<MendelianAlleleProbability, MendelianAlleleProbability> HAPLOID_NONE_HAPLOID = new Pair<>(MendelianAlleleProbabilityNHH.SINGLETON_HN, MendelianAlleleProbabilityNHHDeNovo.SINGLETON_HN);
   static final Pair<MendelianAlleleProbability, MendelianAlleleProbability> HAPLOID_HAPLOID_HAPLOID = new Pair<>(MendelianAlleleProbabilityHHH.SINGLETON_HHH, MendelianAlleleProbabilityHHHDeNovo.SINGLETON_HHH);
+  static final Pair<MendelianAlleleProbability, MendelianAlleleProbability> HAPLOID_HAPLOID_DIPLOID = new Pair<>(MendelianAlleleProbabilityHHD.SINGLETON_HHD, MendelianAlleleProbabilityHHDDeNovo.SINGLETON_HHD);
   static final Pair<MendelianAlleleProbability, MendelianAlleleProbability> HAPLOID_DIPLOID_HAPLOID = new Pair<>(MendelianAlleleProbabilityHDH.SINGLETON_HD, MendelianAlleleProbabilityHDHDeNovo.SINGLETON_HD);
   static final Pair<MendelianAlleleProbability, MendelianAlleleProbability> HAPLOID_DIPLOID_DIPLOID = new Pair<>(MendelianAlleleProbabilityHDD.SINGLETON_HD, MendelianAlleleProbabilityHDDDeNovo.SINGLETON_HD);
   static final Pair<MendelianAlleleProbability, MendelianAlleleProbability> DIPLOID_HAPLOID_HAPLOID = new Pair<>(MendelianAlleleProbabilityHDH.SINGLETON_DH, MendelianAlleleProbabilityHDHDeNovo.SINGLETON_DH);
@@ -82,7 +81,7 @@ public abstract class MendelianAlleleProbabilityFactory {
           if (child == Ploidy.HAPLOID) {
             return HAPLOID_HAPLOID_HAPLOID;
           } else {
-            throw new NoTalkbackSlimException("Mother haploid, father haploid, child not haploid is not supported, check the genome's " + ReferenceGenome.REFERENCE_FILE + " file");
+            return HAPLOID_HAPLOID_DIPLOID;
           }
         }
         if (child == Ploidy.HAPLOID) {

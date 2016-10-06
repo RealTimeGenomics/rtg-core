@@ -58,6 +58,7 @@ public class MendelianAlleleProbabilityDiploidDeNovoTest extends TestCase {
 
   //test there is no overlap between non de novo and de novo tables
   public void testOverlap() {
+    System.out.println(MendelianAlleleProbabilityDiploidDeNovo.SINGLETON);
     final Code code = new CodeDiploid(4);
     for (int i = 0; i < code.size(); i++) {
       for (int j = 0; j < code.size(); j++) {

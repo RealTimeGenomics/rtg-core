@@ -20,6 +20,8 @@ import com.rtg.variant.bayes.Code;
  */
 public final class MendelianAlleleProbabilityNHHDeNovo extends MendelianAlleleProbabilityDeNovo {
 
+  // todo Using log(1/3) for the de novo is only correct for SNPs. It should really do something like log(1/(codesize-1))
+
   static final double LOG_THIRD = Math.log(1.0 / 3);
 
   /** Father really is the father. */
