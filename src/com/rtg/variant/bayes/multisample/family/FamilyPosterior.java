@@ -67,7 +67,15 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
 
   FamilyPosterior(Family family, GenomePriorParams params, List<ModelInterface<?>> models, HaploidDiploidHypotheses<?> hypotheses) {
     super(family, params, models, hypotheses);
-    mMaximalCode = mFatherHypotheses.code().size() > mMotherHypotheses.code().size() ? mFatherHypotheses.code() : mMotherHypotheses.code();
+    Code maximalCode = null;
+    for (final ModelInterface<?> m : models) {
+      final Code code = hypotheses.get(m).code();
+      if (maximalCode == null || code.size() > maximalCode.size()) {
+        maximalCode = code;
+      }
+    }
+    mMaximalCode = maximalCode;
+
     mContraryProbabilityLn = Math.log(params.contraryProbability());
 
     if (mHypothesesFatherSize == 0 && mHypothesesMotherSize == 0) {
@@ -485,7 +493,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
   }
 
   double calculateMarginals(double marginal, int father, int mother) {
-    return calculateMarginalsSlowly(marginal, father, mother, new Stack<Integer>(), 0);
+    return calculateMarginalsSlowly(marginal, father, mother, new Stack<>(), 0);
   }
 
   protected static AlleleProbability getAlleleProbability(Ploidy father, Ploidy mother) {
