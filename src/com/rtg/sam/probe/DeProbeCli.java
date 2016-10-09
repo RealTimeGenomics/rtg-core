@@ -217,13 +217,14 @@ public class DeProbeCli extends LoggedCli {
     FileUtils.stringToFile(summary.getAsTsv(), new File(outputDirectory(), PROBE_SUMMARY_FILE));
 
     Diagnostic.userLog("ON TARGET RATES");
+    final TextTable onTargetSummary = new TextTable();
+    onTargetSummary.addRow("Group", "Total", "Mapped", "On Target", "%/Total", "%/Mapped");
+    onTargetSummary.addRow("Reads", Long.toString(totalReads), Long.toString(mTotalMappedReads), Long.toString(mTotalStrippedReads), String.format("%.2f%%", (double) mTotalStrippedReads / (double) totalReads * 100.0), String.format("%.2f%%", (double) mTotalStrippedReads / (double) mTotalMappedReads * 100.0));
+    Diagnostic.userLog(onTargetSummary.toString());
+    FileUtils.stringToFile(onTargetSummary.getAsTsv(), new File(outputDirectory(), ON_TARGET_SUMMARY_FILE));
+
     try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(new File(outputDirectory(), CommonFlags.SUMMARY_FILE), false), out))) {
-      final TextTable onTargetSummary = new TextTable();
-      onTargetSummary.addRow("Group", "Total", "Mapped", "On Target", "%/Total", "%/Mapped");
-      onTargetSummary.addRow("Reads", Long.toString(totalReads), Long.toString(mTotalMappedReads), Long.toString(mTotalStrippedReads), String.format("%.2f%%", (double) mTotalStrippedReads / (double) totalReads * 100.0), String.format("%.2f%%", (double) mTotalStrippedReads / (double) mTotalMappedReads * 100.0));
-      Diagnostic.userLog(onTargetSummary.toString());
-      FileUtils.stringToFile(onTargetSummary.getAsTsv(), new File(outputDirectory(), ON_TARGET_SUMMARY_FILE));
-      summaryOut.println(summary);
+      summaryOut.println(onTargetSummary);
     }
     return 0;
   }

@@ -1,6 +1,3 @@
-Strand  Alignments  Stripped  Identified  nt/read
--------------------------------------------------
-     +           3         3     100.00%     43.3
-     -           3         3     100.00%     40.0
-  Both           6         6     100.00%     41.7
+Group  Total  Mapped  On Target  %/Total  %/Mapped
+Reads      6       6          6  100.00%   100.00%
 
