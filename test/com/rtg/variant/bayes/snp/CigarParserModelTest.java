@@ -496,14 +496,6 @@ public class CigarParserModelTest extends TestCase {
     check(seq, templateBytes2, 0, templateBytes2.length, 3, "4X2S", null, CIGAR_EXP10, null);
   }
 
-  public void testGetDNA() {
-    assertEquals(0, CigarParserModel.getDNA('N'));
-    assertEquals(1, CigarParserModel.getDNA('A'));
-    assertEquals(2, CigarParserModel.getDNA('C'));
-    assertEquals(3, CigarParserModel.getDNA('G'));
-    assertEquals(4, CigarParserModel.getDNA('T'));
-  }
-
   public void testBugFoundByStu() throws Exception {
     final MockModelMatcher matcher = new MockModelMatcher();
     final VariantParams vp = new VariantParamsBuilder().ignoreQualityScores(false).create();
