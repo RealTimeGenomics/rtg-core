@@ -12,8 +12,8 @@
 package com.rtg.variant.bayes.snp;
 
 
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.mode.DNA;
 import com.rtg.reader.CgUtils;
 import com.rtg.sam.BadSuperCigarException;
@@ -30,13 +30,7 @@ import com.rtg.variant.util.VariantUtils;
  */
 public class CigarParserModel implements ReadParserInterface {
 
-  private static final boolean ILLUMINA_HOMOPOLYMER_HACK = false; //Boolean.valueOf(System.getProperty("com.rtg.variant.illuhomopoly", "false"));
-
   private static final boolean SOFT_CLIP_COMPLEX_TRIGGER = GlobalFlags.getBooleanValue(CoreGlobalFlags.SOFT_CLIP_COMPLEX_TRIGGER);
-
-  static int getDNA(final char charAt) {
-    return DNA.valueOf(charAt).ordinal();
-  }
 
   /** Handles explicit nucleotides and deletions. */
   private final MatcherInterface mMatcherNt;
@@ -66,7 +60,6 @@ public class CigarParserModel implements ReadParserInterface {
     mStart = start;
     mEnd = end;
     mParams = params;
-//    System.err.println("iontorr? " + mParams.ionTorrent());
   }
 
   int getReadScore(VariantAlignmentRecord var) {
@@ -165,7 +158,6 @@ public class CigarParserModel implements ReadParserInterface {
       if (mInBlock) {
         return;
       }
-      //System.err.println("i=" + readNt);
       mInBlock = true;
       final int templatePosition = getTemplatePosition();
       if (mMatcherIndel != null && includeBase(getReadPosition()) && mStart <= templatePosition && templatePosition < mEnd) {
@@ -179,7 +171,6 @@ public class CigarParserModel implements ReadParserInterface {
         if (mInBlock) {
           return;
         }
-        //System.err.println("i=" + readNt);
         mInBlock = true;
         final int readPosition = getReadPosition();
         final int templatePosition = getTemplatePosition();
@@ -191,7 +182,6 @@ public class CigarParserModel implements ReadParserInterface {
 
     @Override
     protected void doTemplateOnly(int templateNt) {
-      //System.err.println("d=" + templateNt);
       if (mMatcherIndel != null && includeBase(getReadPosition())) {
         final int templatePosition = getTemplatePosition();
         if (mStart <= templatePosition && templatePosition < mEnd) {
@@ -202,14 +192,12 @@ public class CigarParserModel implements ReadParserInterface {
 
     @Override
     protected void doSubstitution(int readNt, int templateNt) throws BadSuperCigarException {
-      //System.err.println("sub: " + readNt + " vs " + templateNt + " rPos=" + getReadPosition() + " tPos=" + getTemplatePosition());
       assert readNt != templateNt : mCigar + "@rpos=" + getReadPosition() + " @tstartpos=" + getTemplateStartPosition() + " : r" + readNt + " == t" + templateNt;
       doSubstitutionOrEquality(readNt);
     }
 
     @Override
     protected void doEquality(int readNt, int nt) throws BadSuperCigarException {
-//      System.err.println("eq: " + DnaUtils.getBase(readNt) + " vs " + DnaUtils.getBase(nt) + " rPos=" + getReadPosition() + " tPos=" + getTemplatePosition());
       assert readNt == nt || nt == DNA.N.ordinal() || readNt == DNA.N.ordinal() : mCigar + "@pos=" + getReadPosition() + " @tstartpos=" + getTemplateStartPosition() + " : r" + readNt + " != t" + nt;
       doSubstitutionOrEquality(readNt);
     }
@@ -219,28 +207,8 @@ public class CigarParserModel implements ReadParserInterface {
       final boolean should = includeBase(readPosition);
       final int templatePosition = getTemplatePosition();
       if (should && mStart <= templatePosition && templatePosition < mEnd) {
-        int currentQuality = getCurrentQuality();
-        if (ILLUMINA_HOMOPOLYMER_HACK) {
-          if (templatePosition > 2 && templatePosition < getTemplateLength() - 2) {
-            final boolean homop;
-            final byte currentTemplate = templateNt(templatePosition);
-            final boolean match = readNt == currentTemplate || readNt == DNA.N.ordinal() || currentTemplate == DNA.N.ordinal();
-            final byte homopTemplate;
-            if (mIsForward) {
-              //equal if current or previous nt are same or previous and one before are same
-              homop = templateNt(templatePosition - 1) == templateNt(templatePosition - 2);
-              homopTemplate = templateNt(templatePosition - 1);
-            } else {
-              homop = templateNt(templatePosition + 1) == templateNt(templatePosition + 2);
-              homopTemplate = templateNt(templatePosition + 1);
-            }
-            if (!match && homop && readNt == homopTemplate) {
-              currentQuality = 2;
-            }
-          }
-        }
-        mMatcherNt.match(templatePosition, readPosition, getReadLength() - readPosition - 1, readNt, mMapScore, currentQuality, mMatcherNt.getStateIndex(mIsForward, mIsReadPaired, mIsMated));
-        if (mMatcherIndel != null) { //for coverage-sensitive indel triggering, we need to use a dummy match for the indels to work out the coverage down deeper.
+        mMatcherNt.match(templatePosition, readPosition, getReadLength() - readPosition - 1, readNt, mMapScore, getCurrentQuality(), mMatcherNt.getStateIndex(mIsForward, mIsReadPaired, mIsMated));
+        if (mMatcherIndel != null) { //for coverage-sensitive indel triggering, we create a dummy match for the indels to compute coverage down deeper.
           mMatcherIndel.match(templatePosition, null);
         }
       }
