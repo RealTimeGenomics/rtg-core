@@ -349,6 +349,7 @@ public final class Trimming {
     } else if (params.ionTorrent()) {
       return Collections.singletonList(trim(original, variantAlleleTrigger));
     }
-    return split(trim(original, variantAlleleTrigger), denovoCorrector, variantAlleleTrigger);
+    final List<Variant> res = split(original, denovoCorrector, variantAlleleTrigger);
+    return (original == res.get(0)) ? Collections.singletonList(trim(original, variantAlleleTrigger)) : res;
   }
 }
