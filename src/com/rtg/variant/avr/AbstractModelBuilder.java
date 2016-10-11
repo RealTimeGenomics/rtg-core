@@ -101,9 +101,9 @@ public abstract class AbstractModelBuilder<T extends AbstractPredictModel> {
     mProperties.setProperty(MODEL_AVR_VERSION, Integer.toString(AVR_VERSION));
     mProperties.setProperty(MODEL_PROPERTY_MODEL_ID, UUID.randomUUID().toString());
     mProperties.setProperty(MODEL_PROPERTY_DATE, new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss").format(new Date()));
-    mProperties.setProperty(MODEL_PROPERTY_FORMAT_ANNOTATIONS, StringUtils.implode(mFormatAttributes, ","));
-    mProperties.setProperty(MODEL_PROPERTY_INFO_ANNOTATIONS, StringUtils.implode(mInfoAttributes, ","));
-    mProperties.setProperty(MODEL_PROPERTY_DERIVED_ANNOTATIONS, StringUtils.implode(mDerivedAttributes, ","));
+    mProperties.setProperty(MODEL_PROPERTY_FORMAT_ANNOTATIONS, StringUtils.join(",", mFormatAttributes));
+    mProperties.setProperty(MODEL_PROPERTY_INFO_ANNOTATIONS, StringUtils.join(",", mInfoAttributes));
+    mProperties.setProperty(MODEL_PROPERTY_DERIVED_ANNOTATIONS, StringUtils.join(",", mDerivedAttributes));
     mProperties.setProperty(MODEL_PROPERTY_QUAL_ANNOTATION, Boolean.toString(mUseQualAttribute));
     String cmd = CommandLine.getCommandLine();
     if (cmd == null) {
