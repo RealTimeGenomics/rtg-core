@@ -15,6 +15,7 @@ package com.rtg.variant.bayes;
 import com.rtg.variant.bayes.snp.DescriptionCommon;
 import com.rtg.variant.bayes.snp.HypothesesCommon;
 import com.rtg.variant.bayes.snp.StatisticsSnp;
+import com.rtg.variant.util.VariantUtils;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
 import junit.framework.TestCase;
@@ -22,6 +23,10 @@ import junit.framework.TestCase;
 /**
  */
 public abstract class AbstractAlleleBalanceTest extends TestCase {
+
+  int findIndexByName(String allele1, String allele2) {
+    return findIndexByName(allele1 + VariantUtils.COLON + allele2);
+  }
   int findIndexByName(String name) {
     final Description description = getDescriptionCommon();
     final Hypotheses<?> hypotheses = getDescriptionHypothesesCommon(description);
@@ -49,7 +54,7 @@ public abstract class AbstractAlleleBalanceTest extends TestCase {
   public void dumpPlot() {
     for (int i = 0; i < 200; i += 5) {
       for (int j = 0; j < 200; j += 5) {
-        final double balance = balance(new int[]{i, j, 0, 0}, new double[]{0.0, 0.0, 0.0, 0.0}, findIndexByName("B:D"));
+        final double balance = balance(new int[]{i, j, 0, 0}, new double[]{0.0, 0.0, 0.0, 0.0}, findIndexByName("B", "D"));
         System.err.println(String.format("%d\t%d\t%f", i, j, balance));
       }
     }

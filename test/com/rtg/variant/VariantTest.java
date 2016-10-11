@@ -22,6 +22,7 @@ import com.rtg.variant.Variant.VariantFilter;
 import com.rtg.variant.bayes.ArrayGenotypeMeasure;
 import com.rtg.variant.bayes.GenotypeMeasure;
 import com.rtg.variant.bayes.snp.HypothesesSnp;
+import com.rtg.variant.util.VariantUtils;
 import com.rtg.variant.util.arithmetic.SimplePossibility;
 
 import junit.framework.TestCase;
@@ -151,7 +152,7 @@ public class VariantTest extends TestCase {
     v = new Variant(new VariantLocus("", 1, 2, "c", (char) -1), new VariantSample(Ploidy.DIPLOID, "a", true, null, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0));
     assertTrue(v.isSnp());
 
-    v = new Variant(new VariantLocus("", 1, 2, "c", (char) -1), new VariantSample(Ploidy.DIPLOID, "a:t", false, null, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0));
+    v = new Variant(new VariantLocus("", 1, 2, "c", (char) -1), new VariantSample(Ploidy.DIPLOID, "a" + VariantUtils.COLON + "t", false, null, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0));
     assertTrue(v.isSnp());
   }
 

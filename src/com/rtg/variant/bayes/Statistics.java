@@ -22,6 +22,7 @@ import com.rtg.variant.Variant;
 import com.rtg.variant.Variant.VariantFilter;
 import com.rtg.variant.VariantOutputOptions;
 import com.rtg.variant.VariantSample;
+import com.rtg.variant.util.VariantUtils;
 
 /**
  * Maintains various counts etc. that are used by the model logic during output.
@@ -250,7 +251,7 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
   }
 
   private static void getAlleleIndexes(String names, Description des, int[] alleleIndexes) {
-    final String[] split = StringUtils.split(names, ':');
+    final String[] split = StringUtils.split(names, VariantUtils.COLON);
     assert split.length == 2;
     Arrays.fill(alleleIndexes, -1);
     for (int i = 0; i < split.length; i++) {

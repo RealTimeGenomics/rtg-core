@@ -37,6 +37,7 @@ import com.rtg.variant.bayes.snp.DescriptionCommon;
 import com.rtg.variant.bayes.snp.EvidenceQ;
 import com.rtg.variant.bayes.snp.StatisticsSnp;
 import com.rtg.variant.format.VariantOutputVcfFormatterTest;
+import com.rtg.variant.util.VariantUtils;
 
 import junit.framework.TestCase;
 
@@ -192,7 +193,7 @@ public class TrimmingTest extends TestCase {
   static DescriptionCommon getDescription(String... names) {
     final HashSet<String> allelesSet = new HashSet<>();
     for (String name : names) {
-      allelesSet.addAll(Arrays.asList(StringUtils.split(name, ':')));
+      allelesSet.addAll(Arrays.asList(StringUtils.split(name, VariantUtils.COLON)));
     }
     return new DescriptionCommon(allelesSet.toArray(new String[allelesSet.size()]));
   }

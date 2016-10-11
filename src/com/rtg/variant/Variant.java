@@ -21,6 +21,7 @@ import com.rtg.util.integrity.IntegralAbstract;
 import com.rtg.variant.bayes.Code;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.NoNonIdentityMeasure;
+import com.rtg.variant.util.VariantUtils;
 
 /**
  * Container for variant locus, parent call, and n sample calls.
@@ -520,7 +521,7 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
       if (len != 1 && len != 3) {
         return false;
       }
-      if (len == 3 && name.charAt(1) != ':') {
+      if (len == 3 && name.charAt(1) != VariantUtils.COLON) {
         return false;
       }
     }

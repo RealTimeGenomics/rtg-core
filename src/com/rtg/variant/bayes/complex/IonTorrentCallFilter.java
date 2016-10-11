@@ -15,6 +15,7 @@ package com.rtg.variant.bayes.complex;
 import com.rtg.reference.Ploidy;
 import com.rtg.util.StringUtils;
 import com.rtg.variant.Variant;
+import com.rtg.variant.util.VariantUtils;
 
 /**
  */
@@ -53,7 +54,7 @@ public final class IonTorrentCallFilter {
 
     final String call;
     if (res.getSample(0).getPloidy() == Ploidy.DIPLOID) {  //TODO polyploid will suck!
-      final String[] calls = StringUtils.split(name, ':');
+      final String[] calls = StringUtils.split(name, VariantUtils.COLON);
       if (calls[0].equals(calls[1])) {
         call = calls[0];
       } else {

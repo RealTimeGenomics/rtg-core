@@ -44,6 +44,7 @@ import com.rtg.variant.bayes.multisample.AlignmentRecordMatcher;
 import com.rtg.variant.match.AlignmentMatch;
 import com.rtg.variant.match.AlleleAsReadMatch;
 import com.rtg.variant.match.Match;
+import com.rtg.variant.util.VariantUtils;
 import com.rtg.variant.util.arithmetic.LogPossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
@@ -208,7 +209,7 @@ public class EvidenceComplexTest extends TestCase {
     for (final AlignmentMatch match : ml) {
       m.increment(new EvidenceComplex(hyp, match, cot, vp, ch));
     }
-    checkPosterior(m, new Hyp(":", -0.051));
+    checkPosterior(m, new Hyp("" + VariantUtils.COLON, -0.051));
   }
 
   public void testPriorsBug() {

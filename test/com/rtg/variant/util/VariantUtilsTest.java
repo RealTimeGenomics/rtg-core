@@ -21,7 +21,6 @@ import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMRecord;
-
 import junit.framework.TestCase;
 
 /**
@@ -373,7 +372,7 @@ public class VariantUtilsTest extends TestCase {
   }
 
   private void checkNormalizePair(final String variation, final String left, final String right) {
-    final String[] res = VariantUtils.normalizePair(variation);
+    final String[] res = VariantUtils.normalizePair(variation.replace(':', VariantUtils.COLON)); // XXX Update input
     assertEquals(2, res.length);
     assertEquals(left, res[0]);
     assertEquals(right, res[1]);

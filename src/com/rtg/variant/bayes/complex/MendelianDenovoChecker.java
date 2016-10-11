@@ -17,6 +17,7 @@ import com.rtg.relation.Family;
 import com.rtg.util.StringUtils;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantSample;
+import com.rtg.variant.util.VariantUtils;
 
 /**
  * Checks for de novo calls in mendelian inheritance scenarios
@@ -39,10 +40,10 @@ public class MendelianDenovoChecker implements DenovoChecker {
     final Family family = mLookup.getFamily(sample);
     final VariantSample parentA = variant.getSample(family.getSampleIds()[Family.FATHER_INDEX]);
     final VariantSample parentB = variant.getSample(family.getSampleIds()[Family.MOTHER_INDEX]);
-    final String[] childAlleles = StringUtils.split(child.getName(), ':');
+    final String[] childAlleles = StringUtils.split(child.getName(), VariantUtils.COLON);
     //currently VariantSample == null for Ploidy.NONE
-    final String[] parentAAlleles = parentA == null || parentA.getPloidy() == Ploidy.NONE ? new String[0] : StringUtils.split(parentA.getName(), ':');
-    final String[] parentBAlleles = parentB == null || parentB.getPloidy() == Ploidy.NONE ? new String[0] : StringUtils.split(parentB.getName(), ':');
+    final String[] parentAAlleles = parentA == null || parentA.getPloidy() == Ploidy.NONE ? new String[0] : StringUtils.split(parentA.getName(), VariantUtils.COLON);
+    final String[] parentBAlleles = parentB == null || parentB.getPloidy() == Ploidy.NONE ? new String[0] : StringUtils.split(parentB.getName(), VariantUtils.COLON);
     if (child.getPloidy() == Ploidy.DIPLOID) {
       return !isMendelianDiploid(childAlleles, parentAAlleles, parentBAlleles);
     } else if (child.getPloidy() == Ploidy.HAPLOID) {

@@ -13,6 +13,7 @@
 package com.rtg.variant.bayes;
 
 import com.rtg.reference.Ploidy;
+import com.rtg.variant.util.VariantUtils;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
@@ -92,7 +93,7 @@ public abstract class Hypotheses<D extends Description> {
     final int a = code().a(hyp);
     final int b = code().b(hyp);
     //assert b < a;
-    return mDescription.name(b) + ":" + mDescription.name(a);
+    return mDescription.name(b) + VariantUtils.COLON + mDescription.name(a);
   }
 
   // Example when we come to implement RTG output
@@ -107,7 +108,7 @@ public abstract class Hypotheses<D extends Description> {
     if (!haploid()) {
       final int b = code().b(hyp);
       mDescription.writeName(sb, b);
-      sb.append(':');
+      sb.append(VariantUtils.COLON);
     }
     mDescription.writeName(sb, a);
   }

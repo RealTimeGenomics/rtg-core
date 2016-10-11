@@ -23,6 +23,7 @@ import com.rtg.variant.Variant;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantSample;
 import com.rtg.variant.bayes.snp.DescriptionCommon;
+import com.rtg.variant.util.VariantUtils;
 
 import junit.framework.TestCase;
 
@@ -43,7 +44,7 @@ public class LineageDenovoCheckerTest extends TestCase {
     final DescriptionCommon description = TrimmingTest.getDescription(alleles.toArray(new String[alleles.size()]));
     for (int i = 0; i < samples.length; i++) {
       final List<String> sampleList = samples[i] == null ? null : Arrays.asList(samples[i]);
-      variantSamples[i] = samples[i] == null ? null : TrimmingTest.getVariantSample(samples[i].length == 1 ? Ploidy.HAPLOID : Ploidy.DIPLOID, StringUtils.join(":", sampleList), false, 5.0, VariantSample.DeNovoStatus.IS_DE_NOVO, 0.0, description);
+      variantSamples[i] = samples[i] == null ? null : TrimmingTest.getVariantSample(samples[i].length == 1 ? Ploidy.HAPLOID : Ploidy.DIPLOID, StringUtils.join("" + VariantUtils.COLON, sampleList), false, 5.0, VariantSample.DeNovoStatus.IS_DE_NOVO, 0.0, description);
 
     }
     final Variant v = new Variant(locus, variantSamples);

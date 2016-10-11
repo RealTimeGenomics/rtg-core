@@ -23,8 +23,10 @@ import java.util.Set;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.PropertiesUtils;
+import com.rtg.util.StringUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.ErrorType;
+import com.rtg.variant.util.VariantUtils;
 
 /**
  * A builder class for <code>GenomePriorParams</code>. This is in a separate
@@ -110,7 +112,7 @@ public class GenomePriorParamsBuilder {
       for (final Entry<String, Double> ref : call.getValue().entrySet()) {
         final Set<String> set = new HashSet<>();
         set.add(ref.getKey());
-        Collections.addAll(set, call.getKey().split(":"));
+        Collections.addAll(set, StringUtils.split(call.getKey(), VariantUtils.COLON));
         freq[set.size() - 1] += ref.getValue();
       }
     }
@@ -157,7 +159,7 @@ public class GenomePriorParamsBuilder {
           if (!pr.containsKey(lookupKey)) {
             lookupKey = ref.toLowerCase(Locale.ROOT) + "_" + allele2.toLowerCase(Locale.ROOT) + "_" + call.toLowerCase(Locale.ROOT);
           }
-          putGenomePrior(priorMap, ref, call + ":" + allele2, getDouble(prior, pr, lookupKey));
+          putGenomePrior(priorMap, ref, call + VariantUtils.COLON + allele2, getDouble(prior, pr, lookupKey));
         }
       }
     }

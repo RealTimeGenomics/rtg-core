@@ -16,29 +16,29 @@ package com.rtg.variant.bayes;
  */
 public class HoeffdingAlleleBalanceTest extends AbstractAlleleBalanceTest {
   public void testAlleleBalanceZeroCoverage() {
-    assertEquals(0.0, balance(new int[]{0, 0, 0, 0}, new double[]{0.0, 0.0, 0.0, 0.0}, findIndexByName("B:B")));
+    assertEquals(0.0, balance(new int[]{0, 0, 0, 0}, new double[]{0.0, 0.0, 0.0, 0.0}, findIndexByName("B", "B")));
   }
   public void testAlleleBalancePerfectBalanceNoError() {
-    assertEquals(0.000, balance(new int[]{9, 9, 0, 0}, new double[]{0.0, 0.0, 0.0, 0.0}, findIndexByName("B:D")), 0.001);
+    assertEquals(0.000, balance(new int[]{9, 9, 0, 0}, new double[]{0.0, 0.0, 0.0, 0.0}, findIndexByName("B", "D")), 0.001);
   }
 
   public void testAlleleBalancePerfectBalanceError() {
-    assertEquals(-0.009, balance(new int[]{9, 9, 0, 0}, new double[]{0.2, 0.2, 0.0, 0.0}, findIndexByName("B:D")), 0.001);
+    assertEquals(-0.009, balance(new int[]{9, 9, 0, 0}, new double[]{0.2, 0.2, 0.0, 0.0}, findIndexByName("B", "D")), 0.001);
   }
 
   public void testAlleleBalanceUnbalanced() {
-    assertEquals(-9.0, balance(new int[]{9, 0, 0, 0}, new double[]{0.0, 0.0, 0.0, 0.0}, findIndexByName("B:D")), 0.001);
+    assertEquals(-9.0, balance(new int[]{9, 0, 0, 0}, new double[]{0.0, 0.0, 0.0, 0.0}, findIndexByName("B", "D")), 0.001);
   }
 
   public void testBinomialBalancedBetterThanUnbalanced() {
-    final double balance = balance(new int[]{7, 7, 0, 0}, new double[]{0.1, 0.1, 0.0, 0.0}, findIndexByName("B:D"));
-    final double unbalanced = balance(new int[]{7, 4, 0, 0}, new double[]{0.1, 0.1, 0.0, 0.0}, findIndexByName("B:D"));
+    final double balance = balance(new int[]{7, 7, 0, 0}, new double[]{0.1, 0.1, 0.0, 0.0}, findIndexByName("B", "D"));
+    final double unbalanced = balance(new int[]{7, 4, 0, 0}, new double[]{0.1, 0.1, 0.0, 0.0}, findIndexByName("B", "D"));
     assertTrue(balance > unbalanced);
   }
 
   public void testBinomialGetsWorseAsBalanceDecreases() {
-    final double unbalanced = balance(new int[]{7, 4, 0, 0}, new double[]{0.1, 0.1, 0.0, 0.0}, findIndexByName("B:D"));
-    final double worse = balance(new int[]{7, 3, 0, 0}, new double[]{0.1, 0.1, 0.0, 0.0}, findIndexByName("B:D"));
+    final double unbalanced = balance(new int[]{7, 4, 0, 0}, new double[]{0.1, 0.1, 0.0, 0.0}, findIndexByName("B", "D"));
+    final double worse = balance(new int[]{7, 3, 0, 0}, new double[]{0.1, 0.1, 0.0, 0.0}, findIndexByName("B", "D"));
     assertTrue(unbalanced > worse);
   }
 

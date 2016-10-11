@@ -369,12 +369,12 @@ public enum VcfInfoField {
       return "*";
     }
     if (includePreviousNt) {
-      final String[] parts = StringUtils.split(call.getPossibleCause(), ':');
+      final char nt = call.getLocus().getPreviousRefNt();
+      final String[] parts = StringUtils.split(call.getPossibleCause(), VariantUtils.COLON);
       if (parts.length == 2) {
-        final char nt = call.getLocus().getPreviousRefNt();
-        return nt + parts[0] + ":" + nt + parts[1];
+        return nt + parts[0] + VariantUtils.COLON + nt + parts[1];
       }
-      return call.getLocus().getPreviousRefNt() + call.getPossibleCause();
+      return nt + call.getPossibleCause();
     }
     return call.getPossibleCause();
   }

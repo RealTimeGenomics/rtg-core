@@ -19,6 +19,7 @@ import com.rtg.relation.LineageLookup;
 import com.rtg.util.StringUtils;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantSample;
+import com.rtg.variant.util.VariantUtils;
 
 /**
  * De novo checker that supports cell lineage de novo checking
@@ -40,8 +41,8 @@ public class LineageDenovoChecker implements DenovoChecker {
     final VariantSample derived = variant.getSample(sample);
     final int originalId = mLineage.getOriginal(sample);
     final VariantSample original = variant.getSample(originalId);
-    final List<String> childAlleles = new ArrayList<>(Arrays.asList(StringUtils.split(derived.getName(), ':')));
-    for (final String s : StringUtils.split(original.getName(), ':')) {
+    final List<String> childAlleles = new ArrayList<>(Arrays.asList(StringUtils.split(derived.getName(), VariantUtils.COLON)));
+    for (final String s : StringUtils.split(original.getName(), VariantUtils.COLON)) {
       if (!childAlleles.remove(s)) {
         return true;
       }

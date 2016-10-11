@@ -233,7 +233,7 @@ public abstract class AbstractStatisticsTest extends TestCase {
     incrementStatistics(ss, hy, di3);
     final EvidenceInterface di4 = di(1, 0, 0.51, false, true, true);
     incrementStatistics(ss, hy, di4);
-    final VariantSample v = new VariantSample(Ploidy.DIPLOID, "A:C", false, new MockGenotypeMeasure(1.0), VariantSample.DeNovoStatus.UNSPECIFIED, null);
+    final VariantSample v = new VariantSample(Ploidy.DIPLOID, "A" + VariantUtils.COLON + "C", false, new MockGenotypeMeasure(1.0), VariantSample.DeNovoStatus.UNSPECIFIED, null);
     ss.addCountsToSample(v, new MockModel<>(hy, ss, new double[hy.size()]), VariantParams.builder().create());
     assertEquals(2.8952, v.getHoeffdingUnmatedBiasAllele1(), 0.0001);
     assertEquals(1.4476, v.getHoeffdingUnmatedBiasAllele2(), 0.0001);

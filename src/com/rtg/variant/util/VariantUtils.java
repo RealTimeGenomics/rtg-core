@@ -25,7 +25,9 @@ import com.rtg.variant.AbstractMachineErrorParams;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.MapInfo;
 import com.rtg.variant.VariantParams;
+import com.rtg.variant.bayes.snp.HypothesesSnp;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
+import com.rtg.variant.util.arithmetic.SimplePossibility;
 
 /**
  */
@@ -412,17 +414,13 @@ public final class VariantUtils {
     sb.append("genome_indel_distribution = ").append(toString(p.genomeIndelDistribution())).append(StringUtils.LS);
     sb.append(StringUtils.LS);
 
-    final String[] calls = {
-      "A", "T", "C", "G",
-      "A:T", "A:C", "A:G",
-      "C:T", "C:G",
-      "G:T"
-    };
-    for (final String call : calls) {
+    final HypothesesSnp h = new HypothesesSnp(SimplePossibility.SINGLETON, p, false, -1);
+    for (int i = 0; i < h.size(); i++) {
+      final String call = h.code().homozygous(i) ? h.description().name(i) : h.name(i);
+      final String call2 = call.toLowerCase(Locale.ROOT).replace(VariantUtils.COLON, '_');
       final double[] dist = p.getPriorDistr(call);
-      final String call2 = call.toLowerCase(Locale.ROOT).replace(":", "_");
-      for (int i = 0; i < 4; i++) {
-        sb.append(String.format(Locale.ROOT, "%s_%s = %.8f" + StringUtils.LS, Character.toLowerCase(DnaUtils.getBase(i + 1)), call2, dist[i]));
+      for (int b = 0; b < 4; b++) {
+        sb.append(String.format(Locale.ROOT, "%s_%s = %.8f" + StringUtils.LS, Character.toLowerCase(DnaUtils.getBase(b + 1)), call2, dist[b]));
       }
       sb.append(StringUtils.LS);
     }

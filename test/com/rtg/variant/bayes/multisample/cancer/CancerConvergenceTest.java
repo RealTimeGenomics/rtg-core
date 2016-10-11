@@ -150,9 +150,9 @@ public class CancerConvergenceTest extends TestCase {
           if (!"NONE".equals(normal) && !"NONE".equals(cancer)) {
             //System.out.println("normal=" + normal + " cancer=" + cancer);
             final int n1 = "ACGT".indexOf(normal.charAt(0));
-            final int n2 = normal.contains(":") ? "ACGT".indexOf(normal.charAt(2)) : n1;
+            final int n2 = normal.indexOf(VariantUtils.COLON) != -1 ? "ACGT".indexOf(normal.charAt(2)) : n1;
             final int c1 = "ACGT".indexOf(cancer.charAt(0));
-            final int c2 = cancer.contains(":") ? "ACGT".indexOf(cancer.charAt(2)) : c1;
+            final int c2 = cancer.indexOf(VariantUtils.COLON) != -1 ? "ACGT".indexOf(cancer.charAt(2)) : c1;
             if (((n1 == normal1 && n2 == normal2) || (n1 == normal2 && n2 == normal1)) && ((c1 == cancer1 && c2 == cancer2) || (c1 == cancer2 && c2 == cancer1))) {
               correct[k]++;
             }
