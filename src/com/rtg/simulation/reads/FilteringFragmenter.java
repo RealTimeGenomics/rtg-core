@@ -29,9 +29,10 @@ public class FilteringFragmenter extends GenomeFragmenter {
   }
 
   @Override
-  void emitFragment(int fragLength, int seqId, int readerId, String seqName, int fragStart) throws IOException {
+  boolean emitFragment(int fragLength, int seqId, int readerId, String seqName, int fragStart) throws IOException {
     if (mRegions.overlapped(seqName, fragStart, fragStart + fragLength)) {
-      super.emitFragment(fragLength, seqId, readerId, seqName, fragStart);
+      return super.emitFragment(fragLength, seqId, readerId, seqName, fragStart);
     }
+    return false;
   }
 }

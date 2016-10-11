@@ -161,8 +161,7 @@ public class GenomeFragmenter {
         final int fragStart = (int) (mPositionRandom.nextDouble() * sequenceLength);
         if (fragLength <= sequenceLength - fragStart) {
           mReaders[readerId].read(seqId, mByteBuffer, fragStart, fragLength);
-          if (checkNs(fragLength)) {
-            emitFragment(fragLength, seqId, readerId, seqName, fragStart);
+          if (checkNs(fragLength) && emitFragment(fragLength, seqId, readerId, seqName, fragStart)) {
             return;
           }
         } else if (!mRefGenome[readerId].sequence(seqName).isLinear()) {
@@ -173,6 +172,7 @@ public class GenomeFragmenter {
           // sequence is circular and can even be shorter than the fragment size, hence ...
           while (remaining > 0) {
             final int readLen = Math.min(remaining, seqLen - cPos);
+            assert readLen > 0;
             mReaders[readerId].read(seqId, mWorkspace, cPos, readLen);
             System.arraycopy(mWorkspace, 0, mByteBuffer, soFar, readLen);
             soFar += readLen;
@@ -181,8 +181,7 @@ public class GenomeFragmenter {
             cPos %= seqLen;
           }
           assert soFar == fragLength;
-          if (checkNs(fragLength)) {
-            emitFragment(fragLength, seqId, readerId, seqName, fragStart);
+          if (checkNs(fragLength) && emitFragment(fragLength, seqId, readerId, seqName, fragStart)) {
             return;
           }
         }
@@ -193,11 +192,11 @@ public class GenomeFragmenter {
     }
   }
 
-  void emitFragment(int fragLength, int seqId, int readerId, String seqName, int fragStart) throws IOException {
+  boolean emitFragment(int fragLength, int seqId, int readerId, String seqName, int fragStart) throws IOException {
     identifyTemplateIds();
     mMachine.processFragment("frag" + mCounter++ + "/" + readerId + "/" + seqId + "/" + seqName + "/", fragStart, mByteBuffer, fragLength);
     mSequenceCounts[readerId][seqId]++;
-
+    return true;
   }
 
   private void identifyTemplateIds() throws IOException {
