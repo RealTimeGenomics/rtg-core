@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -472,16 +473,36 @@ public class ReadSimCli extends LoggedCli {
     return 0;
   }
 
+  private void verifyRegionsMatchSdf(SequencesReader reader, ReferenceRegions referenceRegions) throws IOException {
+    // Verify regions sequencess match the reader
+    final Collection<String> regionSequenceNames = referenceRegions.sequenceNames();
+    final int total = regionSequenceNames.size();
+    final PrereadNamesInterface names = reader.names();
+    int removed = 0;
+    for (long k = 0; k < names.length(); k++) {
+      if (regionSequenceNames.remove(names.name(k))) {
+        removed++;
+      }
+    }
+    if (removed == 0) {
+      throw new NoTalkbackSlimException("Sequence names in region file have no overlap with supplied SDF");
+    } else {
+      Diagnostic.info(removed + "/" + total + " sequences founds in supplied regions occurred in SDF");
+    }
+  }
+
   private GenomeFragmenter getGenomeFragmenter(SequencesReader reader, SequenceDistribution distribution) throws IOException {
     final SequencesReader[] readers = {
       reader
     };
+    assert reader.hasNames();
     final SequenceDistribution[] distributions = {
       distribution
     };
     final GenomeFragmenter gf;
     if (mFlags.isSet(BED_FILE)) {
       final ReferenceRegions referenceRegions = BedUtils.regions((File) mFlags.getValue(BED_FILE));
+      verifyRegionsMatchSdf(reader, referenceRegions);
       gf = new FilteringFragmenter(referenceRegions, mRandom.nextLong(), distributions, readers);
     } else {
       gf = new GenomeFragmenter(mRandom.nextLong(), distributions, readers);
