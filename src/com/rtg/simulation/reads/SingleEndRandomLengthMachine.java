@@ -100,7 +100,7 @@ public abstract class SingleEndRandomLengthMachine extends AbstractMachine {
     } else {
       pos = processBackwards(0, data, length, 1, readLength);
     }
-    final String cigar = getCigar(forward, pos, length, mReadBytesUsed);  //forward rather than !forward because we used processBackwards
+    final String cigar = getCigar(forward);  //forward rather than !forward because we used processBackwards
     final String name = formatReadName(id, forward ? 'F' : 'R', cigar, fragmentStart, pos);
     mReadWriter.writeRead(name, mReadBytes, mQualityBytes, mReadBytesUsed);
     mResidueCount += mReadBytesUsed;

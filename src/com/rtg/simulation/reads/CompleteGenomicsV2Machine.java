@@ -90,7 +90,7 @@ public class CompleteGenomicsV2Machine extends CompleteGenomicsMachine {
       if (!forward) {
         DNA.complementInPlace(mReadBytes, 0, mReadBytesUsed);
       }
-      final String cigar = getCigar(!forward, newStart, length, READ_LENGTH);
+      final String cigar = getCigar(!forward);
       //System.err.println(id + " fragmentStart: " + fragmentStart + " length: " + length + " forward: " + forward + " leftArm: " + leftArm + " startFrom:" + startFrom + " direction:" + direction);
       return formatReadName(id, frame, cigar, fragmentStart, newStart);
     }

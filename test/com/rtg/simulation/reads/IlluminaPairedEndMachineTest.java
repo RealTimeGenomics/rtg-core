@@ -22,14 +22,26 @@ public class IlluminaPairedEndMachineTest extends TestCase {
 
   public void testProcessFragment() throws Exception {
     final IlluminaPairedEndMachine m = new IlluminaPairedEndMachine(42);
-    assertTrue(m.isPaired());
     final MemoryPrintStream out = new MemoryPrintStream();
     final FastaReadWriter w = new FastaReadWriter(out.printStream());
     m.setReadWriter(w);
+    assertTrue(m.isPaired());
     m.setLeftReadLength(5);
     m.setRightReadLength(5);
     final byte[] frag = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
     m.processFragment("name/", 30, frag, frag.length);
     assertEquals(">0 name/31/F/5./Left\nAAAAA\n>0 name/52/R/5./Right\nTTTTT\n", out.toString());
+  }
+
+  public void testProcessFragmentReadThrough() throws Exception {
+    final IlluminaPairedEndMachine m = new IlluminaPairedEndMachine(42);
+    final MemoryPrintStream out = new MemoryPrintStream();
+    final FastaReadWriter w = new FastaReadWriter(out.printStream());
+    m.setReadWriter(w);
+    m.setLeftReadLength(55);
+    m.setRightReadLength(55);
+    final byte[] frag = {1, 1, 1, 1, 1};
+    m.processFragment("name/", 30, frag, frag.length);
+    assertEquals(">0 name/31/F/55./Left\nAAAAACGGTCTCGGCATTCCTGCTGAACCGCTCTTCCGATCTNNNNNTCTAGCCT\n>0 name/-19/R/55./Right\nTTTTTTGTGAGAAAGGGATGTGCTGCGAGAAGGCTAGANNNNNAGATCGGAAGAG\n", out.toString());
   }
 }

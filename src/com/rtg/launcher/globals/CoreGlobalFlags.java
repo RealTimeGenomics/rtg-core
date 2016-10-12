@@ -105,6 +105,10 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
   public static final String SAM_ALLOW_FALLBACK_FOR_NON_INDEXED_REGIONS = "com.rtg.sam.allow-region-fallback";
   /** Use code page 437 characters for deletes*/
   public static final String CP437_DELETES = "com.rtg.visualization.cp437-deletes";
+  /** Which strand simulated reads are sequenced from: 0 = random, -1 = reverse, 1 = forward */
+  public static final String READ_STRAND = "com.rtg.simulation.reads.read-strand";
+  /** If set, assume fragments are from OS-Seq sequencing, with this minimum size (e.g. probe length) */
+  public static final String OS_SEQ_FRAGMENTS = "com.rtg.simulation.reads.os-seq-fragments";
 
   CoreGlobalFlags(List<Flag> flags) {
     super(flags);
@@ -175,5 +179,10 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
 
     //Aview
     registerFlag(CP437_DELETES, Boolean.class, false);
+
+    // Simulation
+    registerFlag(READ_STRAND, Integer.class, 0);
+    registerFlag(OS_SEQ_FRAGMENTS, Integer.class, 0);
+
   }
 }

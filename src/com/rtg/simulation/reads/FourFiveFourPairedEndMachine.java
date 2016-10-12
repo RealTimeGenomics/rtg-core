@@ -14,6 +14,8 @@ package com.rtg.simulation.reads;
 
 import java.io.IOException;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.machine.MachineType;
 import com.rtg.variant.AbstractMachineErrorParams;
@@ -25,6 +27,7 @@ public class FourFiveFourPairedEndMachine extends AbstractMachine {
 
   private static final int NUMBER_TRIES = 1000;
   private static final int MIN_SIDE_LENGTH = 1; // Ensure the smallest side has at least this many bases
+  private static final int READ_DIRECTION = GlobalFlags.getIntegerValue(CoreGlobalFlags.READ_STRAND); // -1 = reverse, 0 = random, 1 = forward
 
   private int mMinPairSize;
   private int mMaxPairSize;
@@ -97,14 +100,14 @@ public class FourFiveFourPairedEndMachine extends AbstractMachine {
     //this is the position on the subFragment that we cross the adapter
     final int pairPosition = mPairPositionRandom.nextInt(pairLength - (2 * MIN_SIDE_LENGTH)) + MIN_SIDE_LENGTH;
 
-    final boolean forward = mFrameRandom.nextBoolean();
+    final boolean forward = READ_DIRECTION == 0 ? mFrameRandom.nextBoolean() : READ_DIRECTION > 0;
     int pos;
     if (forward) {
       pos = process(length - pairLength + pairPosition, data, pairLength - pairPosition, 1, length);
     } else {
       pos = process(pairPosition, data, pairPosition, -1, length);
     }
-    String cigar = getCigar(!forward, pos, length, mReadBytesUsed);
+    String cigar = getCigar(!forward);
     String name = formatReadName(id, forward ? 'F' : 'R', cigar, fragmentStart, pos);
     mReadWriter.writeLeftRead(name, mReadBytes, mQualityBytes, mReadBytesUsed);
     mResidueCount += mReadBytesUsed;
@@ -115,7 +118,7 @@ public class FourFiveFourPairedEndMachine extends AbstractMachine {
     } else {
       pos = process(length - 1, data, pairLength - pairPosition, -1, length);
     }
-    cigar = getCigar(!forward, pos, length, mReadBytesUsed);
+    cigar = getCigar(!forward);
     name = formatReadName(id, forward ? 'F' : 'R', cigar, fragmentStart, pos);
     mReadWriter.writeRightRead(name, mReadBytes, mQualityBytes, mReadBytesUsed);
     mResidueCount += mReadBytesUsed;

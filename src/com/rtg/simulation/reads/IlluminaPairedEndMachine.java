@@ -14,7 +14,11 @@ package com.rtg.simulation.reads;
 
 import java.io.IOException;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.mode.DnaUtils;
 import com.rtg.util.InvalidParamsException;
+import com.rtg.util.StringUtils;
 import com.rtg.util.machine.MachineType;
 import com.rtg.variant.AbstractMachineErrorParams;
 
@@ -22,6 +26,11 @@ import com.rtg.variant.AbstractMachineErrorParams;
  * Illumina paired end read simulator
  */
 public class IlluminaPairedEndMachine extends AbstractIlluminaMachine {
+
+  private static final int READ_DIRECTION = GlobalFlags.getIntegerValue(CoreGlobalFlags.READ_STRAND); // -1 = reverse, 0 = random, 1 = forward
+
+  // PE Read 2 sequencing primer
+  private static final byte[] PE_EXTENSION = DnaUtils.encodeString("CGGTCTCGGCATTCCTGCTGAACCGCTCTTCCGATCT"  + "NNNNN" + StringUtils.reverse("ACACTCTTTCCCTACACGACGCTCTTCCGATCT"));
 
   protected int mLeftReadLength;
   protected int mRightReadLength;
@@ -33,6 +42,7 @@ public class IlluminaPairedEndMachine extends AbstractIlluminaMachine {
    */
   public IlluminaPairedEndMachine(AbstractMachineErrorParams params, long randomSeed) {
     super(params, randomSeed);
+    mExtension = PE_EXTENSION;
   }
 
   /**
@@ -43,6 +53,7 @@ public class IlluminaPairedEndMachine extends AbstractIlluminaMachine {
    */
   public IlluminaPairedEndMachine(long randomSeed) throws InvalidParamsException, IOException {
     super(randomSeed);
+    mExtension = PE_EXTENSION;
   }
 
   private void setBuffers() {
@@ -73,7 +84,7 @@ public class IlluminaPairedEndMachine extends AbstractIlluminaMachine {
   @Override
   public void processFragment(String id, int fragmentStart, byte[] data, int length) throws IOException {
     reseedErrorRandom(mFrameRandom.nextLong());
-    final boolean forwardFirst = mFrameRandom.nextBoolean();
+    final boolean forwardFirst = READ_DIRECTION == 0 ? mFrameRandom.nextBoolean() : READ_DIRECTION > 0;
     final String nameLeft = generateRead(id, fragmentStart, data, length, forwardFirst, mLeftReadLength);
     if (mReadBytesUsed == mLeftReadLength) {
       mReadWriter.writeLeftRead(nameLeft, mReadBytes, mQualityBytes, mLeftReadLength);

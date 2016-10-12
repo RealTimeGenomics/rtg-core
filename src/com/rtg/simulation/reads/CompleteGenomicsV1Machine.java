@@ -124,7 +124,7 @@ public class CompleteGenomicsV1Machine extends CompleteGenomicsMachine {
       if (!forward) {
         DNA.complementInPlace(mReadBytes, 0, mReadBytesUsed);
       }
-      final String cigar = getCigar(direction == -1, newStart, length, READ_LENGTH);
+      final String cigar = getCigar(direction == -1);
       return formatReadName(id, frame, cigar, fragmentStart, newStart);
     }
     //Diagnostic.developerLog(id + " fragmentStart: " + fragmentStart + " length: " + length + " forward: " + forward + " leftArm: " + leftArm);

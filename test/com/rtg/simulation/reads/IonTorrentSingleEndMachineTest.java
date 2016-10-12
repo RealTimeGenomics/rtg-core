@@ -55,7 +55,7 @@ public class IonTorrentSingleEndMachineTest extends TestCase {
     int pos = m.readBases(0, data, data.length, 1, 10, 0, 1);
 
     assertEquals(11, pos);
-    assertEquals("3.1D7.", m.getCigar(false, 0, data.length, 10));
+    assertEquals("3.1D7.", m.getCigar(false));
     assertEquals("GAACCTCGTA", DnaUtils.bytesToSequenceIncCG(m.mReadBytes)); //reduced the A homopoly by 1
 
     String s = m.formatActionsHistogram();
@@ -67,7 +67,7 @@ public class IonTorrentSingleEndMachineTest extends TestCase {
     m.reseedErrorRandom(1348);
     m.resetCigar();
     pos = m.readBases(0, data, data.length, 1, 10, 0, 1);
-    assertEquals("4.1I4.1I", m.getCigar(false, 0, data.length, 10));
+    assertEquals("4.1I4.1I", m.getCigar(false));
     assertEquals("GAAACCCTCT", DnaUtils.bytesToSequenceIncCG(m.mReadBytes)); //elongated the A homopoly by 1, C by 1 (one of these is NOT due to homopolymer extension!)
     assertEquals(8, pos);
     s = m.formatActionsHistogram();

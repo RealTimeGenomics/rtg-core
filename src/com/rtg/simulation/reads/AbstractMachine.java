@@ -55,6 +55,9 @@ public abstract class AbstractMachine implements Machine {
   protected int mReadBytesUsed;
   protected long mResidueCount;
 
+  // Optional sequence data used during fragment read-through.
+  // This could be split into separate forward and reverse sequences but this seems fine for now.
+  protected byte[] mExtension = null;
 
   protected byte mMaxQ = 63;
   protected byte mMinQ = 0;
@@ -243,7 +246,7 @@ public abstract class AbstractMachine implements Machine {
     return sb.toString();
   }
 
-  protected String getCigar(boolean reverse, int start, int templateLength, int readLength) {
+  protected String getCigar(boolean reverse) {
     if (mCigarCurrentLength != 0) {
       ActionsHelper.prepend(mWorkspace, mCigarCurrentLength, mCigarCurrentOp, 0);
     }
@@ -282,7 +285,7 @@ public abstract class AbstractMachine implements Machine {
    * complete genomics. Incrementally updates cigar and read buffer.
    *
    * @param startPos start position
-   * @param data sequence data
+   * @param data template sequence data
    * @param templateLength amount reference can travel from <code>startPos</code> in <code>direction</code>. i.e. amount of template read should cover
    * @param direction 1 for forwards, -1 for reverse
    * @param readLength max read length
@@ -291,19 +294,21 @@ public abstract class AbstractMachine implements Machine {
    * @return position
    */
   protected int readBases(int startPos, byte[] data, int templateLength, int direction, int readLength, int readStartPos, int readDirection) {
-    int refUsed = 0;
+    int templateUsed = 0;
     int readBases = 0;
-    while (readBases < readLength && refUsed < templateLength) {
+    while (readBases < readLength && (templateUsed < templateLength || mExtension != null)) {
       final SimErrorType e = getErrorType(mErrorTypeRandom.nextDouble());
+      final int templateAvail = mExtension == null ? templateLength - templateUsed : Integer.MAX_VALUE;
       switch (e) {
         case MNP:
-          final int mnpLength = Math.min(templateLength - refUsed, Math.min(readLength - readBases, SimulationUtils.chooseLength(mMnpLengthDistribution, mErrorLengthRandom.nextDouble())));
+          final int mnpLength = Math.min(templateAvail, Math.min(readLength - readBases, SimulationUtils.chooseLength(mMnpLengthDistribution, mErrorLengthRandom.nextDouble())));
           assert mnpLength > 0;
           for (int i = 0; i < mnpLength; i++) {
-            mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = chooseBase(data[startPos + refUsed * direction]);
+            final int templatePos = startPos + templateUsed * direction;
+            mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = chooseBase(getBase(data, templatePos, templateLength));
             mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getMissCallQuality();
             readBases++;
-            refUsed++;
+            templateUsed++;
           }
           addCigarState(mnpLength, ActionsHelper.MISMATCH);
           break;
@@ -318,16 +323,17 @@ public abstract class AbstractMachine implements Machine {
           addCigarState(insLength, ActionsHelper.INSERTION_INTO_REFERENCE);
           break;
         case DELETE:
-          final int delLength = Math.min(templateLength - refUsed, SimulationUtils.chooseLength(mDeleteLengthDistribution, mErrorLengthRandom.nextDouble()));
-          refUsed += delLength;
+          final int delLength = Math.min(templateAvail, SimulationUtils.chooseLength(mDeleteLengthDistribution, mErrorLengthRandom.nextDouble()));
+          templateUsed += delLength;
           addCigarState(delLength, ActionsHelper.DELETION_FROM_REFERENCE);
           // Deletion
           break;
         case NOERROR:
-          mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = data[startPos + refUsed * direction];
+          final int refPos = startPos + templateUsed * direction;
+          mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getBase(data, refPos, templateLength);
           mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getCorrectCallQuality();
           readBases++;
-          refUsed++;
+          templateUsed++;
           addCigarState(1, ActionsHelper.SAME);
           break;
         default:
@@ -335,7 +341,18 @@ public abstract class AbstractMachine implements Machine {
       }
     }
     mReadBytesUsed += readBases;
-    return startPos + refUsed * direction;
+    return startPos + templateUsed * direction;
+  }
+
+  private byte getBase(byte[] template, int templatePos, int templateLength) {
+    if (mExtension != null) {
+      if (templatePos < 0) {
+        return mExtension[(templatePos + 1) % mExtension.length + mExtension.length - 1];
+      } else if (templatePos >= templateLength) {
+        return mExtension[(templatePos - templateLength) % mExtension.length];
+      }
+    }
+    return template[templatePos];
   }
 
   /**

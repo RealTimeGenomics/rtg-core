@@ -14,7 +14,9 @@ package com.rtg.simulation.reads;
 
 import java.io.IOException;
 
+import com.rtg.mode.DnaUtils;
 import com.rtg.util.InvalidParamsException;
+import com.rtg.util.StringUtils;
 import com.rtg.util.machine.MachineType;
 import com.rtg.variant.AbstractMachineErrorParams;
 
@@ -22,6 +24,8 @@ import com.rtg.variant.AbstractMachineErrorParams;
  * Illumina read generator machine implementation
  */
 public class IlluminaSingleEndMachine extends AbstractIlluminaMachine {
+
+  private static final byte[] SE_EXTENSION = DnaUtils.encodeString("ACACTCTTTCCCTACACGACGCTCTTCCGATCT" + "NNNNN" + StringUtils.reverse("ACACTCTTTCCCTACACGACGCTCTTCCGATCT"));
 
   protected int mReadLength;
 
@@ -33,6 +37,7 @@ public class IlluminaSingleEndMachine extends AbstractIlluminaMachine {
    */
   public IlluminaSingleEndMachine(long randomSeed) throws InvalidParamsException, IOException {
     super(randomSeed);
+    mExtension = SE_EXTENSION;
   }
 
   /**
@@ -42,6 +47,7 @@ public class IlluminaSingleEndMachine extends AbstractIlluminaMachine {
    */
   public IlluminaSingleEndMachine(AbstractMachineErrorParams params, long randomSeed) {
     super(params, randomSeed);
+    mExtension = SE_EXTENSION;
   }
 
   /**

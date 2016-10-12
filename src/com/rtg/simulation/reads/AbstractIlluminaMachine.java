@@ -58,7 +58,7 @@ public abstract class AbstractIlluminaMachine extends AbstractMachine {
       direction = -1;
     }
     final int localStart = process(startFrom, data, length, direction, readLength);
-    final String cigar = getCigar(!forward, localStart, length, readLength);
+    final String cigar = getCigar(!forward);
     return formatReadName(id, forward ? 'F' : 'R', cigar, fragmentStart, localStart);
   }
 

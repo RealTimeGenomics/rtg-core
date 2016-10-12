@@ -14,6 +14,8 @@ package com.rtg.simulation.reads;
 import java.io.IOException;
 import java.util.Locale;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.mode.DNA;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
@@ -32,6 +34,8 @@ import com.rtg.util.diagnostic.Diagnostic;
 public class GenomeFragmenter {
   private static final int NUMBER_TRIES = 1000;
   private static final int MAX_WARNINGS = 5;
+  private static final boolean OS_SEQ = GlobalFlags.isSet(CoreGlobalFlags.OS_SEQ_FRAGMENTS);
+  private static final int OS_SEQ_MIN = GlobalFlags.getIntegerValue(CoreGlobalFlags.OS_SEQ_FRAGMENTS);
 
   private Machine mMachine;
   private int mCounter;
@@ -135,6 +139,9 @@ public class GenomeFragmenter {
     if (mMaxFragmentSize < mMinFragmentSize) {
       throw new IllegalStateException();
     }
+    if (mMinFragmentSize < OS_SEQ_MIN) {
+      throw new IllegalStateException();
+    }
     final double mid = (mMaxFragmentSize + mMinFragmentSize) * 0.5 + 0.5;
     final double width = (mMaxFragmentSize - mMinFragmentSize) * 0.25; // 2 std devs per side
     int fragLength = 0;
@@ -145,6 +152,9 @@ public class GenomeFragmenter {
       }
     }
     if ((fragLength >= mMinFragmentSize) && (fragLength <= mMaxFragmentSize)) {
+      if (OS_SEQ) { // Virtual truncation of off-probe end
+        fragLength = mLengthRandom.nextInt(fragLength - OS_SEQ_MIN) + OS_SEQ_MIN;
+      }
       if (mByteBuffer.length < fragLength) {
         mByteBuffer = new byte[fragLength];
         mWorkspace = new byte[fragLength];
@@ -158,7 +168,7 @@ public class GenomeFragmenter {
         final String seqName = mReaders[readerId].name(seqId);
         // Choose position on sequence
         final int sequenceLength = mSequenceLengths[readerId][seqId];
-        final int fragStart = (int) (mPositionRandom.nextDouble() * sequenceLength);
+        final int fragStart = OS_SEQ ? 0 : (int) (mPositionRandom.nextDouble() * sequenceLength);
         if (fragLength <= sequenceLength - fragStart) {
           mReaders[readerId].read(seqId, mByteBuffer, fragStart, fragLength);
           if (checkNs(fragLength) && emitFragment(fragLength, seqId, readerId, seqName, fragStart)) {
