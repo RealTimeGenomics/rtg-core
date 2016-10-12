@@ -44,4 +44,22 @@ public class IlluminaPairedEndMachineTest extends TestCase {
     m.processFragment("name/", 30, frag, frag.length);
     assertEquals(">0 name/31/F/55./Left\nAAAAACGGTCTCGGCATTCCTGCTGAACCGCTCTTCCGATCTNNNNNTCTAGCCT\n>0 name/-19/R/55./Right\nTTTTTTGTGAGAAAGGGATGTGCTGCGAGAAGGCTAGANNNNNAGATCGGAAGAG\n", out.toString());
   }
+
+  public void testBaseQuality() throws Exception {
+    final IlluminaPairedEndMachine m = new IlluminaPairedEndMachine(42);
+    m.setQualRange((byte) 15, (byte) 35);
+    int qsummatch = 0;
+    int qsummismatch = 0;
+    final int n = 1000;
+    for (int i = 0; i < n; i++) {
+      final byte correctCallQuality = m.getCorrectCallQuality((byte) 1);
+      final byte missCallQuality = m.getMissCallQuality();
+      //System.err.println(String.format(" = %2d  X %2d  %b", correctCallQuality, missCallQuality, correctCallQuality > missCallQuality));
+      qsummatch += correctCallQuality;
+      qsummismatch += missCallQuality;
+    }
+//    System.err.println("Avg match quality = " + qsummatch / n);
+//    System.err.println("Avg mismatch quality = " + qsummismatch / n);
+    assertTrue(qsummatch > qsummismatch);
+  }
 }

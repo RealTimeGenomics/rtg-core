@@ -130,10 +130,10 @@ public abstract class AbstractMachine implements Machine {
     return (byte) (mMinQ + getPhred(p));
   }
 
-  // Distribute quality values for a correctly called base. Most should have high quality
-  byte getCorrectCallQuality() {
+  // Distribute quality values for a correctly called base. Most should have high quality. N's get poor quality
+  byte getCorrectCallQuality(byte base) {
     final double p = mQualityRandom.nextDouble();
-    return (byte) (mMaxQ - getPhred(p));
+    return base == 0 ? 0 : (byte) (mMaxQ - getPhred(p));
   }
 
   protected void reseedErrorRandom(long seed) {
@@ -330,8 +330,9 @@ public abstract class AbstractMachine implements Machine {
           break;
         case NOERROR:
           final int refPos = startPos + templateUsed * direction;
-          mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getBase(data, refPos, templateLength);
-          mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getCorrectCallQuality();
+          final byte base = getBase(data, refPos, templateLength);
+          mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = base;
+          mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getCorrectCallQuality(base);
           readBases++;
           templateUsed++;
           addCigarState(1, ActionsHelper.SAME);

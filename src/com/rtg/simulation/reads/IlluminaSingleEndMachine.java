@@ -14,6 +14,8 @@ package com.rtg.simulation.reads;
 
 import java.io.IOException;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.mode.DnaUtils;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
@@ -25,9 +27,13 @@ import com.rtg.variant.AbstractMachineErrorParams;
  */
 public class IlluminaSingleEndMachine extends AbstractIlluminaMachine {
 
-  private static final byte[] SE_EXTENSION = DnaUtils.encodeString("ACACTCTTTCCCTACACGACGCTCTTCCGATCT" + "NNNNN" + StringUtils.reverse("ACACTCTTTCCCTACACGACGCTCTTCCGATCT"));
+  private static final String SE_EXTENSION = "ACACTCTTTCCCTACACGACGCTCTTCCGATCT" + "NNNNN" + StringUtils.reverse("ACACTCTTTCCCTACACGACGCTCTTCCGATCT");
 
   protected int mReadLength;
+
+  {
+    mExtension = DnaUtils.encodeString(GlobalFlags.isSet(CoreGlobalFlags.READ_THROUGH) ? GlobalFlags.getStringValue(CoreGlobalFlags.READ_THROUGH) : SE_EXTENSION);
+  }
 
   /**
    * Constructs with seed and default Illumina priors
@@ -37,7 +43,6 @@ public class IlluminaSingleEndMachine extends AbstractIlluminaMachine {
    */
   public IlluminaSingleEndMachine(long randomSeed) throws InvalidParamsException, IOException {
     super(randomSeed);
-    mExtension = SE_EXTENSION;
   }
 
   /**
@@ -47,7 +52,6 @@ public class IlluminaSingleEndMachine extends AbstractIlluminaMachine {
    */
   public IlluminaSingleEndMachine(AbstractMachineErrorParams params, long randomSeed) {
     super(params, randomSeed);
-    mExtension = SE_EXTENSION;
   }
 
   /**

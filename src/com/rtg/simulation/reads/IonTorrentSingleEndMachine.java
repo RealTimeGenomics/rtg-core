@@ -75,8 +75,9 @@ public class IonTorrentSingleEndMachine extends SingleEndRandomLengthMachine {
         final Double p = mErrorTypeRandom.nextDouble();
         if (p < mHomopolyDeleteProbability) { //20% chance of shortening
           for (int i = 0; i < homoPolymerLength - 1 && readBases < readLength && refUsed < templateLength; i++) {
-            mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = data[startPos + refUsed * direction];
-            mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getCorrectCallQuality();
+            final byte base = data[startPos + refUsed * direction];
+            mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = base;
+            mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getCorrectCallQuality(base);
             readBases++;
             refUsed++;
             addCigarState(1, ActionsHelper.SAME);
@@ -90,8 +91,9 @@ public class IonTorrentSingleEndMachine extends SingleEndRandomLengthMachine {
           }
         } else if (p < mHomopolyDeleteProbability + mHomopolyInsertProbability) { //3% chance of elongating homopoly by 1
           for (int i = 0; i < homoPolymerLength && readBases < readLength && refUsed < templateLength; i++) {
-            mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = data[startPos + refUsed * direction];
-            mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getCorrectCallQuality();
+            final byte base = data[startPos + refUsed * direction];
+            mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = base;
+            mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getCorrectCallQuality(base);
             readBases++;
             refUsed++;
             addCigarState(1, ActionsHelper.SAME);
@@ -105,8 +107,9 @@ public class IonTorrentSingleEndMachine extends SingleEndRandomLengthMachine {
           }
         } else {
           for (int i = 0; i < homoPolymerLength && readBases < readLength && refUsed < templateLength; i++) {
-            mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = data[startPos + refUsed * direction];
-            mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getCorrectCallQuality();
+            final byte base = data[startPos + refUsed * direction];
+            mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = base;
+            mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getCorrectCallQuality(base);
             readBases++;
             refUsed++;
             addCigarState(1, ActionsHelper.SAME);
@@ -127,8 +130,9 @@ public class IonTorrentSingleEndMachine extends SingleEndRandomLengthMachine {
             addCigarState(mnpLength, ActionsHelper.MISMATCH);
             break;
           case NOERROR:
-            mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = data[startPos + refUsed * direction];
-            mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getCorrectCallQuality();
+            final byte base = data[startPos + refUsed * direction];
+            mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = base;
+            mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getCorrectCallQuality(base);
             readBases++;
             refUsed++;
             addCigarState(1, ActionsHelper.SAME);

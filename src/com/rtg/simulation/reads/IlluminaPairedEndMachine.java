@@ -12,6 +12,8 @@
 
 package com.rtg.simulation.reads;
 
+import static com.rtg.launcher.globals.GlobalFlags.getIntegerValue;
+
 import java.io.IOException;
 
 import com.rtg.launcher.globals.CoreGlobalFlags;
@@ -27,13 +29,17 @@ import com.rtg.variant.AbstractMachineErrorParams;
  */
 public class IlluminaPairedEndMachine extends AbstractIlluminaMachine {
 
-  private static final int READ_DIRECTION = GlobalFlags.getIntegerValue(CoreGlobalFlags.READ_STRAND); // -1 = reverse, 0 = random, 1 = forward
+  private static final int READ_DIRECTION = getIntegerValue(CoreGlobalFlags.READ_STRAND); // -1 = reverse, 0 = random, 1 = forward
 
   // PE Read 2 sequencing primer
-  private static final byte[] PE_EXTENSION = DnaUtils.encodeString("CGGTCTCGGCATTCCTGCTGAACCGCTCTTCCGATCT"  + "NNNNN" + StringUtils.reverse("ACACTCTTTCCCTACACGACGCTCTTCCGATCT"));
+  private static final String PE_EXTENSION = "CGGTCTCGGCATTCCTGCTGAACCGCTCTTCCGATCT"  + "NNNNN" + StringUtils.reverse("ACACTCTTTCCCTACACGACGCTCTTCCGATCT");
 
   protected int mLeftReadLength;
   protected int mRightReadLength;
+
+  {
+    mExtension = DnaUtils.encodeString(GlobalFlags.isSet(CoreGlobalFlags.READ_THROUGH) ? GlobalFlags.getStringValue(CoreGlobalFlags.READ_THROUGH) : PE_EXTENSION);
+  }
 
   /**
    * Constructs with seed and specific priors
@@ -42,7 +48,6 @@ public class IlluminaPairedEndMachine extends AbstractIlluminaMachine {
    */
   public IlluminaPairedEndMachine(AbstractMachineErrorParams params, long randomSeed) {
     super(params, randomSeed);
-    mExtension = PE_EXTENSION;
   }
 
   /**
@@ -53,7 +58,6 @@ public class IlluminaPairedEndMachine extends AbstractIlluminaMachine {
    */
   public IlluminaPairedEndMachine(long randomSeed) throws InvalidParamsException, IOException {
     super(randomSeed);
-    mExtension = PE_EXTENSION;
   }
 
   private void setBuffers() {
