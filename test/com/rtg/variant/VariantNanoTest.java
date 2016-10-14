@@ -1156,10 +1156,10 @@ public class VariantNanoTest extends AbstractNanoTest {
       if (!input.mkdir()) {
         throw new IOException("Whut, couldn't make test directory");
       }
-      final File sam = new File(input, "sam11.sam.bgz");
-      FileHelper.resourceToFile("com/rtg/variant/resources/sam11.sam.bgz", sam);
+      final File sam = new File(input, "sam11.sam.gz");
+      FileHelper.resourceToFile("com/rtg/variant/resources/sam11.sam.gz", sam);
       //System.err.println(FileHelper.gzFileToString(sam));
-      FileHelper.resourceToFile("com/rtg/variant/resources/sam11.sam.bgz.tbi", new File(input, "sam11.sam.bgz.tbi"));
+      FileHelper.resourceToFile("com/rtg/variant/resources/sam11.sam.gz.tbi", new File(input, "sam11.sam.gz.tbi"));
       final String outn = output.getPath();
       final String inn = sam.getPath();
       final File templ = ReaderTestUtils.getDNADir(SharedSamConstants.REF_SEQS11);

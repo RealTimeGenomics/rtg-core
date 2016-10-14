@@ -388,9 +388,9 @@ public class MultifileIteratorTest extends TestCase {
   public void testMerging2ReadGroups() throws IOException {
     final File top = FileUtils.createTempDir("sam-multi-itr", "merge");
     try {
-      final File first = new File(top, "first");
+      final File first = new File(top, "first.sam");
       FileUtils.stringToFile(SAM_HEAD1 + "@RG\tID:1\tSM:sample1\tPL:ILLUMINA" + LS + SAM_REC_RG1, first);
-      final File second = new File(top, "second");
+      final File second = new File(top, "second.sam");
       FileUtils.stringToFile(SAM_HEAD1 + "@RG\tID:2\tSM:sample1\tPL:ILLUMINA" + LS + SAM_REC_RG2, second);
       final List<File> fileList = new ArrayList<>();
       fileList.add(first);

@@ -288,9 +288,9 @@ public abstract class AbstractCallerCliTest extends AbstractCliTest {
     FileHelper.deleteAll(outFile);
     final File inFile = FileUtils.createTempDir("variancetest", "tempin");
     try {
-      final File map = new File(inFile, "map.gz");
+      final File map = new File(inFile, "map.sam.gz");
       BgzipFileHelper.streamToBgzipFile(new ByteArrayInputStream(SAM.getBytes()), map);
-      new TabixIndexer(map, new File(inFile, "map.gz.tbi")).saveSamIndex();
+      new TabixIndexer(map, new File(inFile, "map.sam.gz.tbi")).saveSamIndex();
 
       final String[] fullArgs = com.rtg.util.Utils.append(new String[]{"-o", outFile.getPath(), map.getPath(), "-m", "default", "--" + AbstractMultisampleCli.NO_CALIBRATION}, args);
       final VariantParams vp = getParams(fullArgs);

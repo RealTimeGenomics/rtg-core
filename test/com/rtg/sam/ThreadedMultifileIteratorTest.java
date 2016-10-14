@@ -238,7 +238,7 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
         check(SamFilterParams.builder().maxAlignmentCount(-1).maxUnmatedAlignmentScore(new IntegerOrPercentage(0)).restriction("simulatedSequence1").create(), 6, 5, false);
         fail();
       } catch (NoTalkbackSlimException e) {
-        assertTrue(e.getMessage().contains("is not indexed"));
+        assertTrue(e.getMessage().contains("is not tabix indexed"));
       }
 
     }

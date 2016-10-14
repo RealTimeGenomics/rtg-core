@@ -36,7 +36,7 @@ public class ThreadedMultifileIteratorWrapperTest extends TestCase {
     try (final TestDirectory top = new TestDirectory()) {
       final File first = new File(top, "first");
       FileUtils.stringToFile(ThreadedMultifileIteratorTest.SAM_HEAD1 + "@RG\tID:1\tSM:sample1\tPL:ILLUMINA" + "\n" + MultifileIteratorTest.SAM_REC_RG1, first);
-      final File second = new File(top, "second");
+      final File second = new File(top, "second.sam");
       FileUtils.stringToFile(ThreadedMultifileIteratorTest.SAM_HEAD1 + "@RG\tID:2\tSM:sample1\tPL:ILLUMINA" + "\n" + MultifileIteratorTest.SAM_REC_RG2, second);
       final ArrayList<File> fileList = new ArrayList<>();
       fileList.add(first);

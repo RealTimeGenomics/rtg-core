@@ -98,7 +98,7 @@ public class DiscordantToolTest extends TestCase {
     try {
       final File seq = new File(dir, "ref.sdf");
       ReaderTestUtils.getDNADir(REF, seq);
-      final File input = new File(dir, "input");
+      final File input = new File(dir, "input.sam");
       FileUtils.stringToFile(sam, input);
       final File output = new File(dir, "output");
       final DiscordantToolParams p = makeParams(seq, input, output, minDepth, intersectionOnly);
@@ -191,7 +191,7 @@ public class DiscordantToolTest extends TestCase {
     try {
       final File seq = new File(dir, "ref.sdf");
       ReaderTestUtils.getDNADir(REF_FLUSH, seq);
-      final File input = new File(dir, "input");
+      final File input = new File(dir, "input.sam");
       FileUtils.stringToFile(FLUSH_SAM, input);
       final File output = new File(dir, "output");
       final DiscordantToolParams p = makeParams(seq, input, output, 1, false);
