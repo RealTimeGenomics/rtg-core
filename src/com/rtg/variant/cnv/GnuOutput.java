@@ -20,7 +20,7 @@ import com.rtg.util.Utils;
 
 /**
  */
-public class GnuOutput implements LSMOutput {
+public class GnuOutput implements LSMOutput, AutoCloseable {
 
   private static final String LS = StringUtils.LS;
   private final OutputStream mOut;
