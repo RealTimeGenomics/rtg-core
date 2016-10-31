@@ -71,7 +71,6 @@ public class CoverageParamsTest extends TestCase {
     assertFalse(cp.tsvOutput());
     assertTrue(cp.bedOutput());
     assertFalse(cp.blockCompressed());
-    assertFalse(cp.onlyMappedRegions());
     assertFalse(cp.errorRates());
     assertEquals(0, cp.smoothing());
     assertEquals(1, cp.minimumCoverageThreshold());
@@ -108,7 +107,7 @@ public class CoverageParamsTest extends TestCase {
                                    .mapped(mapped).genome(makeGenome()).smoothing(0)
                                    .ioThreads(1).minimumCoverageThreshold(3).tsvOutput(false)
                                    .name("CoverageParams").errorRates(false)
-                                   .onlyMappedRegions(false).filterParams(SamFilterParams.builder().create())
+                                   .filterParams(SamFilterParams.builder().create())
                                    .create();
   }
 

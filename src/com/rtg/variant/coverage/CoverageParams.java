@@ -51,7 +51,7 @@ public final class CoverageParams extends SingleMappedParams {
     boolean mErrorRates = false;
     boolean mTsvOutput = false;
     boolean mBedgraphOutput = false;
-    boolean mOnlyMappedRegions = false;
+    private boolean mPerRegion = false;
     boolean mOutputIndex = true;
     int mChunkSize = 10000;
     boolean mDisableHtmlReport = false;
@@ -106,6 +106,16 @@ public final class CoverageParams extends SingleMappedParams {
     }
 
     /**
+     * Turns on per-region aggregation
+     * @param perRegion true if BED output should be aggregate per region
+     * @return this builder, so calls can be chained.
+     */
+    public CoverageParamsBuilder perRegion(final boolean perRegion) {
+      mPerRegion = perRegion;
+      return self();
+    }
+
+    /**
      * Turns on tab separated value output.
      * @param tsv true means generate output in tab separated value format.
      * @return this builder, so calls can be chained.
@@ -122,16 +132,6 @@ public final class CoverageParams extends SingleMappedParams {
      */
     public CoverageParamsBuilder bedgraphOutput(final boolean bedgraph) {
       mBedgraphOutput = bedgraph;
-      return self();
-    }
-
-    /**
-     * Only produce output for regions which have coverage, but still tracks stats for those regions
-     * @param onlyMapped true to only produce output for regions with coverage.
-     * @return this builder, so calls can be chained.
-     */
-    public CoverageParamsBuilder onlyMappedRegions(final boolean onlyMapped) {
-      mOnlyMappedRegions = onlyMapped;
       return self();
     }
 
@@ -179,9 +179,9 @@ public final class CoverageParams extends SingleMappedParams {
   private final boolean mErrorRates;
   private final boolean mBinarizeBed;
   private final boolean mIncludeDeletions;
+  private final boolean mPerRegion;
   private final boolean mTsvOutput;
   private final boolean mBedgraphOutput;
-  private final boolean mOnlyMappedRegions;
   private final int mMinimumCoverageThreshold;
   private final int mChunkSize;
   private final boolean mDisableHtmlReport;
@@ -197,9 +197,9 @@ public final class CoverageParams extends SingleMappedParams {
     mErrorRates = builder.mErrorRates;
     mBinarizeBed = builder.mBinarizeBed;
     mIncludeDeletions = builder.mIncludeDeletions;
+    mPerRegion = builder.mPerRegion;
     mTsvOutput = builder.mTsvOutput;
     mBedgraphOutput = builder.mBedgraphOutput && !mTsvOutput; // TSV takes priority if both set
-    mOnlyMappedRegions = builder.mOnlyMappedRegions;
     mMinimumCoverageThreshold = builder.mMinimumCoverageThreshold;
     mOutputIndex = builder.mOutputIndex;
     mChunkSize = builder.mChunkSize;
@@ -220,14 +220,6 @@ public final class CoverageParams extends SingleMappedParams {
    */
   public boolean errorRates() {
     return mErrorRates;
-  }
-
-  /**
-   * Get whether to only report stats on mapped regions.
-   * @return true means only write out statistics for regions with coverage.
-   */
-  public boolean onlyMappedRegions() {
-    return mOnlyMappedRegions;
   }
 
   /**
@@ -268,6 +260,13 @@ public final class CoverageParams extends SingleMappedParams {
    */
   public boolean binarizeBed() {
     return mBinarizeBed;
+  }
+
+  /**
+   * @return true if BED/BEDGRAPH should report mean per region
+   */
+  public boolean perRegion() {
+    return mPerRegion;
   }
 
   /**

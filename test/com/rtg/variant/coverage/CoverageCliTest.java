@@ -118,12 +118,14 @@ public class CoverageCliTest extends AbstractCliTest {
             , "-s,", "--smoothing", "smooth with this number of neighboring values (0 means no smoothing) (Default is 50)"
             , "-Z,", "--no-gzip", "do not gzip the output"
             , "--per-base", "output per-base counts in TSV format"
+            , "--per-region", "output BED/BEDGRAPH entries per-region"
             , "-T,", "--threads=INT", "number of threads (Default is the number of available cores)"
             );
     checkExtendedHelp("coverage [OPTION]... -o DIR FILE+"
             , "--Xerror-rates", "report statistics about sequencer error rates"
             , "--Xcoverage-threshold=INT"
-            , "--Xonly-mapped-templates", "report only templates that received mappings"
+            , "--Xbinarize-bed"
+            , "--Xcallability"
             );
   }
 }

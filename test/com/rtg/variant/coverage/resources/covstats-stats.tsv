@@ -1,0 +1,7 @@
+#depth	breadth	covered	size	name
+2.0000	1.0000	7	7	simulatedSequence1:41-47
+2.1111	1.0000	9	9	blah
+2.4118	1.0000	17	17	feh
+1.7692	1.0000	26	26	simulatedSequence2:18-43
+1.8000	0.7333	22	30	simulatedSequence2:64-94
+1.9294	0.9059	77	85	all regions

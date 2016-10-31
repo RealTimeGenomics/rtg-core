@@ -390,7 +390,7 @@ public class CoverageTaskTest extends AbstractCliTest {
       final File samFile = IndexUtils.ensureBlockCompressed(FileUtils.stringToFile(SAM_CLIP, new File(tmpDir, "sam.sam")));
       new TabixIndexer(samFile).saveSamIndex();
       final File output = new File(tmpDir, "output");
-      checkMainInitOk("-t", template.getPath(), "-o", output.getPath(), "--per-base", "-s", "0", samFile.getPath(), "--Xdisable-html-report");
+      checkMainInitOk("-t", template.getPath(), "-o", output.getPath(), "--per-base", samFile.getPath(), "--Xdisable-html-report");
       final String was = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.TSV_NAME + FileUtils.GZ_SUFFIX)), "^#");
       final String res = "com/rtg/variant/coverage/resources/coveragetasktest_clipping.tsv";
       final String exp = FileHelper.resourceToString(res);
@@ -458,7 +458,7 @@ public class CoverageTaskTest extends AbstractCliTest {
       final File output = new File(tmpDir, "output");
       final String tmpl = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANAAAAAAAAAANAAAAAAAAAAAAAAAAAAAAAAAAAA";
       final File template = ReaderTestUtils.getDNADir(">simulatedSequence1\n" + tmpl + "\n>simulatedSequence2\n" + tmpl + "\n", new File(tmpDir, "template"));
-      checkMainInitWarn("-o", output.getPath(), "-s", "0", samFile.getPath(), "--per-base",
+      checkMainInitWarn("-o", output.getPath(), samFile.getPath(), "--per-base",
         "--bed-regions", bedRegionsFile.getPath(), "-t", template.getPath(), "--Xdisable-html-report");
       final String is = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.TSV_NAME + FileUtils.GZ_SUFFIX)), "^#");
       assertEquals(FileHelper.resourceToString("com/rtg/variant/coverage/resources/covBedRegion.tsv").replaceAll("\n|\r\n", LS), is);
@@ -472,7 +472,7 @@ public class CoverageTaskTest extends AbstractCliTest {
       new TabixIndexer(samFile).saveSamIndex();
       final File bedRegionsFile = FileHelper.stringToGzFile(BED_REGIONS, new File(tmpDir, "bedRegions.bed.gz"));
       final File output = new File(tmpDir, "output");
-      checkMainInitWarn("-o", output.getPath(), "-s", "0", samFile.getPath(), "--per-base",
+      checkMainInitWarn("-o", output.getPath(), samFile.getPath(), "--per-base",
         "--bed-regions", bedRegionsFile.getPath(), "--Xdisable-html-report");
       final File summary = new File(output, CommonFlags.SUMMARY_FILE);
       assertTrue(summary.exists());

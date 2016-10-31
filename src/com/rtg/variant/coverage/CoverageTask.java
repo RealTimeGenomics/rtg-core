@@ -184,9 +184,8 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
 
     setReferenceSequence(r, ranges.get(0).getStart(), ranges.get(ranges.size() - 1).getEnd());
 
-    final int smooth = mParams.smoothing();
-    final boolean binarizeBed = mParams.binarizeBed();
     final int minCoverage = mParams.minimumCoverageThreshold();
+    final boolean byRegions = mParams.perRegion();
 
     int rangeIndex = 0;
     RangeData<String> range = ranges.get(rangeIndex);
@@ -196,20 +195,26 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     addOriginalRangeToSortedNameList(range, nameContainsSet);
 
     try {
-      int lastVal = -1;
-      int lastValStartPos = range.getStart();
-      boolean refNoCoverage = true;
+      int lastLevel = -1;
+      int lastLevelStartPos = range.getStart();
+      double nonSmoothCovTot = 0;
 
-      final CoverageSmoothingWindow csw = new CoverageSmoothingWindow(mInfo.start(), mInfo.end(), smooth);
-      csw.initWindow();
+      final CoverageLeveller cl;
+      if (mParams.tsvOutput() || byRegions) {
+        cl = new CoverageLeveller(); // No-op implementation
+      } else if (mParams.binarizeBed()) {
+        cl = new CoverageBinarizer(minCoverage);
+      } else {
+        cl = new CoverageSmoothingWindow(mParams.smoothing());
+      }
 
       //main coverage loop.
       for (int currentTemplatePosition = mInfo.start(); currentTemplatePosition < mInfo.end(); currentTemplatePosition++) {
         if (currentTemplatePosition == range.getEnd()) {
           // do things necessary at the end of a range BEFORE processing the base at this position.
-          final boolean regionNoCoverage = lastVal == 0 && lastValStartPos == range.getStart();
-          if (!mParams.tsvOutput() && !(mParams.onlyMappedRegions() && regionNoCoverage)) { //since this is the end of a range, output a 'region of different coverage' line.
-            coverageWriter.finalCoverageRegion(r.getSequenceName(), lastValStartPos, currentTemplatePosition, lastVal);
+          if (!mParams.tsvOutput()) { //since this is the end of a range, output a 'region of different coverage' line.
+            final int cov = byRegions ? (int) MathUtils.round(nonSmoothCovTot / (currentTemplatePosition - lastLevelStartPos)) : lastLevel;
+            coverageWriter.finalCoverageRegion(r.getSequenceName(), lastLevelStartPos, currentTemplatePosition, cov);
           }
 
           //get a new range
@@ -223,43 +228,36 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
           addOriginalRangeToSortedNameList(range, nameContainsSet);
 
           //deal with gaps and reset variables
-          lastVal = -1;
-          lastValStartPos = range.getStart();
+          lastLevel = -1;
+          lastLevelStartPos = range.getStart();
+          nonSmoothCovTot = 0;
         }
 
         //now deal with the base at this template position.
-
         if (currentTemplatePosition >= range.getStart()) { //we're within a range
           final double nonSmoothCov = getCoverageForPosition(currentTemplatePosition) * INV_SCALE;
 
           if (mParams.tsvOutput()) { //tsv outputs something at every position within a range.
             coverageWriter.finalCoveragePosition(r.getSequenceName(), currentTemplatePosition, getIH1ForPosition(currentTemplatePosition), getIHgt1ForPosition(currentTemplatePosition), nonSmoothCov);
           } else {
-            int smoothCov = csw.currentCoverage();
-            if (binarizeBed) {
-              smoothCov = smoothCov >= minCoverage ? minCoverage : 0;
+            nonSmoothCovTot += nonSmoothCov;
+            final int currentLevel = cl.level();
+            if (!byRegions && lastLevel != -1 && currentLevel != lastLevel) { //the coverage value at this position is different from the previous
+              coverageWriter.finalCoverageRegion(r.getSequenceName(), lastLevelStartPos, currentTemplatePosition, lastLevel);
+              lastLevelStartPos = currentTemplatePosition;
             }
-
-            if (lastVal != -1 && smoothCov != lastVal) { //the coverage value at this position is different from the previous
-              if (!mParams.tsvOutput()) {
-                coverageWriter.finalCoverageRegion(r.getSequenceName(), lastValStartPos, currentTemplatePosition, lastVal);
-              }
-              lastValStartPos = currentTemplatePosition;
-            }
-            lastVal = smoothCov;
-            if (refNoCoverage && smoothCov > 0) {
-              refNoCoverage = false;
-            }
+            lastLevel = currentLevel;
           }
 
           //update statistics for this base.
           final byte base = getBaseForPosition(currentTemplatePosition);
           mStatistics.updateCoverageHistogram(nonSmoothCov, mReferenceSequenceIndex != null && base == DnaUtils.UNKNOWN_RESIDUE, minCoverage);
         }
-        csw.step();
+        cl.step();
       }
-      if (!mParams.tsvOutput() && mCurrentReferenceLength > 0 && !(mParams.onlyMappedRegions() && refNoCoverage)) { //output the last coverage value data.
-        coverageWriter.finalCoverageRegion(r.getSequenceName(), lastValStartPos, mInfo.end(), lastVal);
+      if (!mParams.tsvOutput() && mCurrentReferenceLength > 0) { //output the last coverage value data.
+        final int cov = byRegions ? (int) MathUtils.round(nonSmoothCovTot / (mInfo.end() - lastLevelStartPos)) : lastLevel;
+        coverageWriter.finalCoverageRegion(r.getSequenceName(), lastLevelStartPos, mInfo.end(), cov);
       }
 
       mStatistics.setRange(null); //flush the last range out of statistics
@@ -280,40 +278,52 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     }
   }
 
-  /**
-   * Keeps track of the coverage smoothing window
-   */
-  private final class CoverageSmoothingWindow {
+  private class CoverageLeveller {
+    protected void step() throws IOException { }
+    protected int level() {
+      return -1;
+    }
+  }
+
+  private final class CoverageBinarizer extends CoverageLeveller {
+    private final int mMinCoverage;
+    private int mPos;
+    private boolean mCurrent;
+    CoverageBinarizer(int minCoverage) throws IOException {
+      mMinCoverage = minCoverage;
+      mPos = mInfo.start();
+      step();
+    }
+    @Override
+    protected void step() throws IOException {
+      mCurrent = mPos < mInfo.end() && MathUtils.round(getCoverageForPosition(mPos++) * INV_SCALE) >= mMinCoverage;
+    }
+    @Override
+    protected int level() {
+      return mCurrent ? mMinCoverage : 0;
+    }
+  }
+
+  private final class CoverageSmoothingWindow extends CoverageLeveller {
+    private final int mSmoothWindowSize;
+    private int mPos;
     private int mNumInDaSum = 0;
     private long mCoverageSum = 0;
-    private int mPos;
-    private final int mEndPos;
-    private final int mSmoothWindowSize;
 
-    /**
-     *
-     * @param startPos start position, zero based inclusive
-     * @param endPos end position, zero based exclusive
-     * @param smoothWindowSize size of the window to smooth over
-     */
-    CoverageSmoothingWindow(int startPos, int endPos, int smoothWindowSize) {
-      mPos = startPos;
-      mEndPos = endPos;
+    CoverageSmoothingWindow(int smoothWindowSize) throws IOException {
+      mPos = mInfo.start();
       mSmoothWindowSize = smoothWindowSize;
-    }
-
-    private int currentCoverage() {
-      return (int) MathUtils.round((mCoverageSum * INV_SCALE) / mNumInDaSum);
-    }
-
-    private void initWindow() throws IOException {
-      for (int i = mPos; i < mPos + mSmoothWindowSize + 1 && i < mEndPos; i++) {
+      for (int i = mPos; i < mPos + mSmoothWindowSize + 1 && i < mInfo.end(); i++) {
         mCoverageSum += getCoverageForPosition(i);
         mNumInDaSum++;
       }
     }
-
-    private void step() throws IOException {
+    @Override
+    protected int level() {
+      return (int) MathUtils.round((mCoverageSum * INV_SCALE) / mNumInDaSum);
+    }
+    @Override
+    protected void step() throws IOException {
       if (mPos + mSmoothWindowSize + 1 < mInfo.end()) {
         mCoverageSum += getCoverageForPosition(mPos + mSmoothWindowSize + 1);
         mNumInDaSum++;

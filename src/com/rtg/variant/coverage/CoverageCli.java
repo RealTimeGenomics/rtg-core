@@ -47,7 +47,7 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
   private static final String ERROR_RATES_FLAG = "Xerror-rates";
   private static final String BEDGRAPH_FLAG = "bedgraph";
   private static final String PER_BASE_FLAG = "per-base";
-  private static final String X_ONLY_MAPPED_FLAG = "Xonly-mapped-templates";
+  private static final String PER_REGION_FLAG = "per-region";
   private static final String X_COVERAGE_THRESHOLD_FLAG = "Xcoverage-threshold";
   private static final String X_IGNORE_SAM_HEADER_INCOMPATIBILITY_FLAG = "Xignore-incompatible-sam-headers";
   private static final String X_BINARIZE_BED_FLAG = "Xbinarize-bed";
@@ -98,8 +98,22 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
         return false;
       }
 
-      if (flags.isSet(PER_BASE_FLAG) && flags.isSet(BEDGRAPH_FLAG)) {
-        flags.setParseMessage("Can not specify both --" + PER_BASE_FLAG + " and --" + BEDGRAPH_FLAG);
+      if (!flags.checkNand(PER_BASE_FLAG, BEDGRAPH_FLAG)) {
+        return false;
+      }
+      if (!flags.checkNand(PER_BASE_FLAG, PER_REGION_FLAG)) {
+        return false;
+      }
+      if (!flags.checkNand(PER_BASE_FLAG, SMOOTHING_LEVEL_FLAG)) {
+        return false;
+      }
+      if (!flags.checkNand(PER_REGION_FLAG, X_BINARIZE_BED_FLAG)) {
+        return false;
+      }
+      if (!flags.checkNand(PER_REGION_FLAG, X_CALLABILITY_FLAG)) {
+        return false;
+      }
+      if (!flags.checkNand(PER_REGION_FLAG, SMOOTHING_LEVEL_FLAG)) {
         return false;
       }
 
@@ -133,6 +147,7 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     mFlags.registerOptional('t', TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the reads have been mapped against").setCategory(INPUT_OUTPUT);
     CommonFlags.initNoGzip(mFlags);
     mFlags.registerOptional(PER_BASE_FLAG, "if set, output per-base counts in TSV format (suppresses BED file output)").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional(PER_REGION_FLAG, "if set, output BED/BEDGRAPH entries per-region rather than every coverage level change").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(BEDGRAPH_FLAG, "if set, output in BEDGRAPH format (suppresses BED file output)").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional('s', SMOOTHING_LEVEL_FLAG, Integer.class, "INT", "smooth with this number of neighboring values (0 means no smoothing)", 50).setCategory(SENSITIVITY_TUNING);
     CommonFlags.initThreadsFlag(mFlags);
@@ -146,7 +161,6 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     SamFilterOptions.registerBedRestrictionFlag(mFlags);
     SamFilterOptions.registerKeepDuplicatesFlag(mFlags);
     mFlags.registerOptional(ERROR_RATES_FLAG, "report statistics about sequencer error rates").setCategory(REPORTING);
-    mFlags.registerOptional(X_ONLY_MAPPED_FLAG, "report only templates that received mappings").setCategory(REPORTING);
     mFlags.registerOptional(X_COVERAGE_THRESHOLD_FLAG, Integer.class, "INT", "coverage threshold for breadth computation (and binarization, if enabled)", 1).setCategory(REPORTING);
     mFlags.registerOptional(X_BINARIZE_BED_FLAG, "if set, binarize BED outputs").setCategory(REPORTING);
     mFlags.registerOptional(X_CALLABILITY_FLAG, Integer.class, "INT", "report callability with respect to this minimum coverage level").setCategory(REPORTING);
@@ -171,8 +185,8 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     builder.mapped(inputFiles);
     builder.smoothing((Integer) mFlags.getValue(SMOOTHING_LEVEL_FLAG));
     builder.errorRates(mFlags.isSet(ERROR_RATES_FLAG));
-    builder.onlyMappedRegions(mFlags.isSet(X_ONLY_MAPPED_FLAG));
     builder.tsvOutput(mFlags.isSet(PER_BASE_FLAG));
+    builder.perRegion(mFlags.isSet(PER_REGION_FLAG));
     builder.bedgraphOutput(mFlags.isSet(BEDGRAPH_FLAG));
     builder.ioThreads(CommonFlags.parseIOThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)));
     builder.outputIndex(!mFlags.isSet(CommonFlags.NO_INDEX));
