@@ -184,30 +184,31 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
 
     setReferenceSequence(r, ranges.get(0).getStart(), ranges.get(ranges.size() - 1).getEnd());
 
-    int rangeIndex = 0;
-    RangeData<String> range = ranges.get(rangeIndex);
-    mStatistics.setRange(range);
-    assert mInfo.start() == range.getStart();
-    addOriginalRangeToSortedNameList(range, nameContainsSet);
-
     final int smooth = mParams.smoothing();
     final boolean binarizeBed = mParams.binarizeBed();
     final int minCoverage = mParams.minimumCoverageThreshold();
 
+    int rangeIndex = 0;
+    RangeData<String> range = ranges.get(rangeIndex);
+    assert mInfo.start() == range.getStart();
+    mStatistics.setRange(range);
+    coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
+    addOriginalRangeToSortedNameList(range, nameContainsSet);
+
     try {
-      int lastValStartPos = range.getStart();
       int lastVal = -1;
-      boolean refHasCoverage = false;
+      int lastValStartPos = range.getStart();
+      boolean refNoCoverage = true;
 
       final CoverageSmoothingWindow csw = new CoverageSmoothingWindow(mInfo.start(), mInfo.end(), smooth);
       csw.initWindow();
 
       //main coverage loop.
       for (int currentTemplatePosition = mInfo.start(); currentTemplatePosition < mInfo.end(); currentTemplatePosition++) {
-        if (currentTemplatePosition == range.getEnd()) { //reached the (exclusive) end of a range. do things necessary at the end of a range BEFORE processing the base at this position.
-          final boolean noCoverage = lastVal == 0 && lastValStartPos == range.getStart();
-          if (!mParams.tsvOutput() && !(mParams.onlyMappedRegions() && noCoverage)) { //since this is the end of a range, output a 'region of different coverage' line.
-            coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
+        if (currentTemplatePosition == range.getEnd()) {
+          // do things necessary at the end of a range BEFORE processing the base at this position.
+          final boolean regionNoCoverage = lastVal == 0 && lastValStartPos == range.getStart();
+          if (!mParams.tsvOutput() && !(mParams.onlyMappedRegions() && regionNoCoverage)) { //since this is the end of a range, output a 'region of different coverage' line.
             coverageWriter.finalCoverageRegion(r.getSequenceName(), lastValStartPos, currentTemplatePosition, lastVal);
           }
 
@@ -218,6 +219,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
           }
           range = ranges.get(rangeIndex);
           mStatistics.setRange(range);
+          coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
           addOriginalRangeToSortedNameList(range, nameContainsSet);
 
           //deal with gaps and reset variables
@@ -227,47 +229,41 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
 
         //now deal with the base at this template position.
 
-        if (currentTemplatePosition < range.getStart()) { //we're outside a range. keep track of the sliding window for consistency's sake.
-          csw.step();
-        } else { //we're within a range.
+        if (currentTemplatePosition >= range.getStart()) { //we're within a range
           final double nonSmoothCov = getCoverageForPosition(currentTemplatePosition) * INV_SCALE;
-          int smoothCov = csw.currentCoverage();
-          if (binarizeBed) {
-            smoothCov = smoothCov >= minCoverage ? minCoverage : 0;
-          }
-          if (mParams.tsvOutput()) { //tsv outputs something at every position within a range.
-            coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
-            coverageWriter.finalCoveragePosition(r.getSequenceName(), currentTemplatePosition, getIH1ForPosition(currentTemplatePosition), getIHgt1ForPosition(currentTemplatePosition), getCoverageForPosition(currentTemplatePosition) * INV_SCALE);
-          }
 
-          if (lastVal != -1 && smoothCov != lastVal) { //the coverage value at this position is different from the previous
-            if (!mParams.tsvOutput()) {
-              coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
-              coverageWriter.finalCoverageRegion(r.getSequenceName(), lastValStartPos, currentTemplatePosition, lastVal);
+          if (mParams.tsvOutput()) { //tsv outputs something at every position within a range.
+            coverageWriter.finalCoveragePosition(r.getSequenceName(), currentTemplatePosition, getIH1ForPosition(currentTemplatePosition), getIHgt1ForPosition(currentTemplatePosition), nonSmoothCov);
+          } else {
+            int smoothCov = csw.currentCoverage();
+            if (binarizeBed) {
+              smoothCov = smoothCov >= minCoverage ? minCoverage : 0;
             }
-            lastValStartPos = currentTemplatePosition;
+
+            if (lastVal != -1 && smoothCov != lastVal) { //the coverage value at this position is different from the previous
+              if (!mParams.tsvOutput()) {
+                coverageWriter.finalCoverageRegion(r.getSequenceName(), lastValStartPos, currentTemplatePosition, lastVal);
+              }
+              lastValStartPos = currentTemplatePosition;
+            }
+            lastVal = smoothCov;
+            if (refNoCoverage && smoothCov > 0) {
+              refNoCoverage = false;
+            }
           }
-          lastVal = smoothCov;
-          csw.step();
 
           //update statistics for this base.
           final byte base = getBaseForPosition(currentTemplatePosition);
           mStatistics.updateCoverageHistogram(nonSmoothCov, mReferenceSequenceIndex != null && base == DnaUtils.UNKNOWN_RESIDUE, minCoverage);
-
-          if (!refHasCoverage && smoothCov > 0) {
-            refHasCoverage = true;
-          }
         }
+        csw.step();
+      }
+      if (!mParams.tsvOutput() && mCurrentReferenceLength > 0 && !(mParams.onlyMappedRegions() && refNoCoverage)) { //output the last coverage value data.
+        coverageWriter.finalCoverageRegion(r.getSequenceName(), lastValStartPos, mInfo.end(), lastVal);
       }
 
       mStatistics.setRange(null); //flush the last range out of statistics
-
       recCounts.incrementCounts(mCircularBuffer);
-
-      if ((!mParams.onlyMappedRegions() || refHasCoverage) && mCurrentReferenceLength > 0 && !mParams.tsvOutput()) { //output the last coverage value data.
-        coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
-        coverageWriter.finalCoverageRegion(r.getSequenceName(), lastValStartPos, mInfo.end(), lastVal);
-      }
 
       mPP.updateProgress(100);
       Diagnostic.progress("Finished: " + r.getSequenceName());
