@@ -33,7 +33,7 @@ public class CoverageWriter implements CoverageProcessor {
 
   private final OutputStream mOut;
   private final CoverageParams mParams;
-  private static final String COVERAGE_OUTPUT_VERSION = "v1.0";
+  static final String COVERAGE_OUTPUT_VERSION = "v1.1";
 
   private String mBedLabel = DEFAULT_LABEL;
 

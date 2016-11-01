@@ -38,7 +38,7 @@ public class CoverageWriterTest extends TestCase {
     TestUtils.containsAll(out.toString(),
         CoverageWriter.VERSION_STRING,
         "#RUN-ID",
-        "Coverage BEDGRAPH output v1.0",
+        "Coverage BEDGRAPH output " + CoverageWriter.COVERAGE_OUTPUT_VERSION,
         GRAPH_LINE,
         "hello\t1\t20\t3"
     );
@@ -58,7 +58,7 @@ public class CoverageWriterTest extends TestCase {
         CoverageWriter.VERSION_STRING,
         "#RUN-ID",
         "#CL\tfoo bar",
-        "Coverage BED output v1.0",
+        "Coverage BED output " + CoverageWriter.COVERAGE_OUTPUT_VERSION,
         "hello\t1\t20\tcoverage\t3"
     );
     assertFalse(actual.contains(GRAPH_LINE));
@@ -88,7 +88,7 @@ public class CoverageWriterTest extends TestCase {
         CoverageWriter.VERSION_STRING,
         "#RUN-ID",
         "#Version",
-        "Coverage output v1.0",
+        "Coverage output " + CoverageWriter.COVERAGE_OUTPUT_VERSION,
         "#sequence\tposition\tunique-count\tambiguous-count\tscore",
         "hello\t1\t1\t2\t2.00" + StringUtils.LS,
         "hello\t2\t2\t1\t2.50" + StringUtils.LS,

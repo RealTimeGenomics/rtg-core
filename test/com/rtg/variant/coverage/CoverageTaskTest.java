@@ -255,7 +255,7 @@ public class CoverageTaskTest extends AbstractCliTest {
         //System.out.println(CoverageParams.NAME + ".txt" + " contains:\n" + result);
         mNano.check("coveragetasktest" + expFile + ".txt", result.replaceAll("#.*" + LS, ""));
         TestUtils.containsAll(result
-          , "#Version " + Environment.getVersion() + ", Coverage" + (tsv ? "" : " BED") + " output v1.0"
+          , "#Version " + Environment.getVersion() + ", Coverage" + (tsv ? "" : " BED") + " output " + CoverageWriter.COVERAGE_OUTPUT_VERSION
           , "#RUN-ID\t"
         );
         if (tsv) {
@@ -317,7 +317,7 @@ public class CoverageTaskTest extends AbstractCliTest {
       final String result = FileHelper.gzFileToString(new File(output, CoverageParams.BED_NAME + ".gz"));
       mNano.check("coveragetasktest" + expNum + ".txt", result.replaceAll("#.*" + LS, ""));
       TestUtils.containsAll(result
-        , "#Version " + Environment.getVersion() + ", Coverage BED output v1.0"
+        , "#Version " + Environment.getVersion() + ", Coverage BED output " + CoverageWriter.COVERAGE_OUTPUT_VERSION
         , "#RUN-ID\t"
       );
     }
