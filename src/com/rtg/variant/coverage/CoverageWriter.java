@@ -86,6 +86,10 @@ public class CoverageWriter implements CoverageProcessor {
     }
   }
 
+  /**
+   * Sets the label to be used for the next record
+   * @param label the label
+   */
   public void setBedLabel(String label) {
     mBedLabel = label.trim();
     if (mBedLabel.length() == 0) {
