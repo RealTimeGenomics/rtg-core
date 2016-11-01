@@ -23,8 +23,6 @@ import junit.framework.TestCase;
  */
 public class DummySegregationHaploidTest extends TestCase {
 
-  private static final double LOG_2 = Math.log(2);
-
   public void testTrivial() {
     final Code code = new CodeDiploid(2);
     final ISegregationScore score = AbstractSegregationHaploid.getHaploidInstance(code, code.code(0), code.code(1, 1));
@@ -70,7 +68,7 @@ public class DummySegregationHaploidTest extends TestCase {
       Exam.integrity(score);
     }
 
-    final double expected = MathUtils.logFactorial(7) - LOG_2 * 7 - MathUtils.logFactorial(3) - MathUtils.logFactorial(4);
+    final double expected = MathUtils.logFactorial(7) - MathUtils.LOG_2 * 7 - MathUtils.logFactorial(3) - MathUtils.logFactorial(4);
     //System.err.println(expected);
     assertEquals(expected, score.lnProbability(), 0.00000001);
   }
@@ -114,7 +112,7 @@ public class DummySegregationHaploidTest extends TestCase {
       Exam.integrity(score);
     }
 
-    final double expected = MathUtils.logFactorial(5) - LOG_2 * 5 - MathUtils.logFactorial(2) - MathUtils.logFactorial(3);
+    final double expected = MathUtils.logFactorial(5) - MathUtils.LOG_2 * 5 - MathUtils.logFactorial(2) - MathUtils.logFactorial(3);
     //System.err.println(expected);
     assertEquals(expected, score.lnProbability(), 0.00000001);
   }

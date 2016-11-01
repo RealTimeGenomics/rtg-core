@@ -22,7 +22,6 @@ import com.rtg.variant.bayes.Code;
  */
 public abstract class AbstractSegregationHaploid extends IntegralAbstract implements ISegregationScore {
 
-  private static final double LOG_2 = Math.log(2);
   private final int[] mCounts = new int[2];
   protected final Code mCode;
   protected final UniqueId mUid;
@@ -173,7 +172,7 @@ public abstract class AbstractSegregationHaploid extends IntegralAbstract implem
   @Override
   public double lnProbability() {
     final int total = mCounts[0] + mCounts[1];
-    final double ret = MathUtils.logFactorial(total) - MathUtils.logFactorial(mCounts[0]) - MathUtils.logFactorial(mCounts[1]) - LOG_2 * total;
+    final double ret = MathUtils.logFactorial(total) - MathUtils.logFactorial(mCounts[0]) - MathUtils.logFactorial(mCounts[1]) - MathUtils.LOG_2 * total;
     assert !Double.isNaN(ret);
     return ret;
   }
