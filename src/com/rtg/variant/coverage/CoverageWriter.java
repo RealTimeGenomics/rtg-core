@@ -27,16 +27,15 @@ import com.rtg.util.cli.CommandLine;
  */
 public class CoverageWriter implements CoverageProcessor {
   private static final String TB = "\t";
-  /** Header for tab separated coverage files */
-  public static final String TSV_HEADER = "#sequence" + TB + "position" + TB + "unique-count" + TB + "ambiguous-count" + TB + "score" + LS;
   /** Coverage file version string */
   public static final String VERSION_STRING = "#Version " + Environment.getVersion();
+  static final String DEFAULT_LABEL = "coverage";
 
   private final OutputStream mOut;
   private final CoverageParams mParams;
   private static final String COVERAGE_OUTPUT_VERSION = "v1.0";
 
-  private String mBedLabel = "";
+  private String mBedLabel = DEFAULT_LABEL;
 
   /**
    * Create a new coverage writer
@@ -64,10 +63,12 @@ public class CoverageWriter implements CoverageProcessor {
     //mOut.write()
     mOut.write(("#RUN-ID" + TB + CommandLine.getRunId() + LS).getBytes());
     if (mParams.tsvOutput()) {
-      mOut.write(TSV_HEADER.getBytes());
-    }
-    if (mParams.bedgraphOutput()) {
+      mOut.write(("#sequence\tposition\tunique-count\tambiguous-count\tscore" + LS).getBytes());
+    } else if (mParams.bedgraphOutput()) {
+      mOut.write(("#sequence\tstart\tend\tcoverage" + LS).getBytes());
       mOut.write(("track type=bedGraph name=coverage" + LS).getBytes());
+    } else {
+      mOut.write(("#sequence\tstart\tend\tlabel\tcoverage" + LS).getBytes());
     }
   }
 
@@ -81,16 +82,15 @@ public class CoverageWriter implements CoverageProcessor {
     if (mParams.bedgraphOutput()) {
       mOut.write((name + TB + start + TB + end + TB + coverage + LS).getBytes());
     } else {
-      String label = "coverage";
-      if (mBedLabel != null && mBedLabel.trim().length() > 0) {
-        label += ":" + mBedLabel;
-      }
-      mOut.write((name + TB + start + TB + end + TB + label + TB + coverage + LS).getBytes());
+      mOut.write((name + TB + start + TB + end + TB + mBedLabel + TB + coverage + LS).getBytes());
     }
   }
 
   public void setBedLabel(String label) {
-    mBedLabel = label;
+    mBedLabel = label.trim();
+    if (mBedLabel.length() == 0) {
+      mBedLabel = DEFAULT_LABEL;
+    }
   }
 
   @Override
