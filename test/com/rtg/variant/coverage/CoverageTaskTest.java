@@ -32,7 +32,6 @@ import static com.rtg.util.StringUtils.LS;
 import static com.rtg.util.StringUtils.TAB;
 
 import java.io.File;
-import java.io.InputStream;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
@@ -42,7 +41,6 @@ import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.IndexUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.Environment;
-import com.rtg.util.Resources;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
@@ -255,18 +253,13 @@ public class CoverageTaskTest extends AbstractCliTest {
           assertTrue(lout.contains("CoverageIndex"));
         }
         //System.out.println(CoverageParams.NAME + ".txt" + " contains:\n" + result);
-        final String resource = "com/rtg/variant/coverage/resources/coveragetasktest" + expFile + ".txt";
-        try (InputStream stream = Resources.getResourceAsStream(resource)) {
-          assertNotNull("Cant find:" + resource, stream);
-          final String expected = FileUtils.streamToString(stream);
-          assertEquals(expected.replaceAll("\n|\r\n", LS), result.replaceAll("#.*" + LS, ""));
-          TestUtils.containsAll(result
-                  , "#Version " + Environment.getVersion() + ", Coverage" + (tsv ? "" : " BED") + " output v1.0"
-                  , "#RUN-ID\t"
-          );
-          if (tsv) {
-            assertTrue(result, result.contains("#sequence\tposition\tunique-count\tambiguous-count\tscore" + LS));
-          }
+        mNano.check("coveragetasktest" + expFile + ".txt", result.replaceAll("#.*" + LS, ""));
+        TestUtils.containsAll(result
+          , "#Version " + Environment.getVersion() + ", Coverage" + (tsv ? "" : " BED") + " output v1.0"
+          , "#RUN-ID\t"
+        );
+        if (tsv) {
+          assertTrue(result, result.contains("#sequence\tposition\tunique-count\tambiguous-count\tscore" + LS));
         }
         final File summaryFile = new File(outn, "summary.txt");
         assertTrue(summaryFile.exists());
@@ -322,17 +315,11 @@ public class CoverageTaskTest extends AbstractCliTest {
       final MainResult res = checkMainInit(Utils.append(coverageArgs, args0));
       assertEquals(res.err(), 0, res.rc());
       final String result = FileHelper.gzFileToString(new File(output, CoverageParams.BED_NAME + ".gz"));
-      final String resource = "com/rtg/variant/coverage/resources/coveragetasktest" + expNum + ".txt";
-      try (InputStream stream = Resources.getResourceAsStream(resource)) {
-        assertNotNull("Cant find:" + resource, stream);
-        //System.out.println("actual coverage file contains:\n" + result);
-        final String expected = FileUtils.streamToString(stream);
-        assertEquals(expected.replaceAll("\n|\r\n", LS), result.replaceAll("#.*" + LS, ""));
-        TestUtils.containsAll(result
-          , "#Version " + Environment.getVersion() + ", Coverage BED output v1.0"
-          , "#RUN-ID\t"
-        );
-      }
+      mNano.check("coveragetasktest" + expNum + ".txt", result.replaceAll("#.*" + LS, ""));
+      TestUtils.containsAll(result
+        , "#Version " + Environment.getVersion() + ", Coverage BED output v1.0"
+        , "#RUN-ID\t"
+      );
     }
   }
 
@@ -377,10 +364,8 @@ public class CoverageTaskTest extends AbstractCliTest {
       new TabixIndexer(samFile).saveSamIndex();
       final File output = new File(tmpDir, "output");
       checkMainInitOk("-t", template.getPath(), "-o", output.getPath(), "-s", "0", samFile.getPath(), "--Xdisable-html-report");
-      final String res = "com/rtg/variant/coverage/resources/coveragetasktest_clipping.bed";
-      final String exp = FileHelper.resourceToString(res);
       final String was = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.BED_NAME + FileUtils.GZ_SUFFIX)), "^#");
-      assertEquals(exp, was.replaceAll(LS, "\n")); //Bed does not care of EOL chars
+      mNano.check("coveragetasktest_clipping.bed", was.replaceAll(LS, "\n")); //Bed does not care of EOL chars
     }
   }
 
@@ -392,9 +377,7 @@ public class CoverageTaskTest extends AbstractCliTest {
       final File output = new File(tmpDir, "output");
       checkMainInitOk("-t", template.getPath(), "-o", output.getPath(), "--per-base", samFile.getPath(), "--Xdisable-html-report");
       final String was = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.TSV_NAME + FileUtils.GZ_SUFFIX)), "^#");
-      final String res = "com/rtg/variant/coverage/resources/coveragetasktest_clipping.tsv";
-      final String exp = FileHelper.resourceToString(res);
-      assertEquals(exp, was.replaceAll(LS, "\n")); //Bed does not care of EOL chars
+      mNano.check("coveragetasktest_clipping.tsv", was.replaceAll(LS, "\n")); //Bed does not care of EOL chars
     }
   }
 
@@ -417,35 +400,7 @@ public class CoverageTaskTest extends AbstractCliTest {
       checkMainInitWarn("-o", output.getPath(), "-s", "0", samFile.getPath(),
         "--bed-regions", bedRegionsFile.getPath(), "-t", template.getPath(), "--Xdisable-html-report");
       final String is = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.BED_NAME + FileUtils.GZ_SUFFIX)), "^#");
-      final String exp = "simulatedSequence1\t40\t47\tcoverage:simulatedSequence1:41-47\t2\n"
-        + "simulatedSequence1\t55\t56\tcoverage:blah\t1\n"
-        + "simulatedSequence1\t56\t60\tcoverage:blah\t2\n"
-        + "simulatedSequence1\t60\t62\tcoverage:blah,feh\t2\n"
-        + "simulatedSequence1\t62\t65\tcoverage:blah,feh\t3\n"
-        + "simulatedSequence1\t65\t66\tcoverage:feh\t3\n"
-        + "simulatedSequence1\t66\t70\tcoverage:feh\t2\n"
-        + "simulatedSequence1\t70\t71\tcoverage:feh\t1\n"
-        + "simulatedSequence1\t71\t72\tcoverage:feh\t2\n"
-        + "simulatedSequence1\t72\t73\tcoverage:feh\t1\n"
-        + "simulatedSequence1\t73\t75\tcoverage:feh\t2\n"
-        + "simulatedSequence2\t17\t20\tcoverage:simulatedSequence2:18-43\t2\n"
-        + "simulatedSequence2\t20\t28\tcoverage:simulatedSequence2:18-43\t1\n"
-        + "simulatedSequence2\t28\t36\tcoverage:simulatedSequence2:18-43\t2\n"
-        + "simulatedSequence2\t36\t38\tcoverage:simulatedSequence2:18-43\t3\n"
-        + "simulatedSequence2\t38\t43\tcoverage:simulatedSequence2:18-43\t2\n"
-        + "simulatedSequence2\t55\t57\tcoverage:feh\t4\n"
-        + "simulatedSequence2\t57\t59\tcoverage:feh\t3\n"
-        + "simulatedSequence2\t63\t64\tcoverage:simulatedSequence2:64-94\t3\n"
-        + "simulatedSequence2\t64\t65\tcoverage:simulatedSequence2:64-94\t2\n"
-        + "simulatedSequence2\t65\t73\tcoverage:simulatedSequence2:64-94\t0\n"
-        + "simulatedSequence2\t73\t76\tcoverage:simulatedSequence2:64-94\t1\n"
-        + "simulatedSequence2\t76\t85\tcoverage:simulatedSequence2:64-94\t2\n"
-        + "simulatedSequence2\t85\t86\tcoverage:simulatedSequence2:64-94\t3\n"
-        + "simulatedSequence2\t86\t87\tcoverage:simulatedSequence2:64-94\t2\n"
-        + "simulatedSequence2\t87\t90\tcoverage:simulatedSequence2:64-94\t3\n"
-        + "simulatedSequence2\t90\t93\tcoverage:simulatedSequence2:64-94\t4\n"
-        + "simulatedSequence2\t93\t94\tcoverage:simulatedSequence2:64-94\t3\n";
-      assertEquals(exp.replaceAll("\n|\r\n", LS), is);
+      mNano.check("covBedRegion.bed", is);
     }
   }
 
@@ -461,7 +416,7 @@ public class CoverageTaskTest extends AbstractCliTest {
       checkMainInitWarn("-o", output.getPath(), samFile.getPath(), "--per-base",
         "--bed-regions", bedRegionsFile.getPath(), "-t", template.getPath(), "--Xdisable-html-report");
       final String is = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.TSV_NAME + FileUtils.GZ_SUFFIX)), "^#");
-      assertEquals(FileHelper.resourceToString("com/rtg/variant/coverage/resources/covBedRegion.tsv").replaceAll("\n|\r\n", LS), is);
+      mNano.check("covBedRegion.tsv", is);
     }
   }
 
@@ -475,17 +430,7 @@ public class CoverageTaskTest extends AbstractCliTest {
       checkMainInitWarn("-o", output.getPath(), samFile.getPath(), "--per-base",
         "--bed-regions", bedRegionsFile.getPath(), "--Xdisable-html-report");
       final File summary = new File(output, CommonFlags.SUMMARY_FILE);
-      assertTrue(summary.exists());
-      final String exp = "Coverage per region:\n"
-        + "   depth  breadth  covered  size                      name\n"
-        + "  2.0000   1.0000        7     7  simulatedSequence1:41-47\n"
-        + "  2.2000   1.0000       10    10                      blah\n"
-        + "  2.4211   1.0000       19    19                       feh\n"
-        + "  1.7692   1.0000       26    26  simulatedSequence2:18-43\n"
-        + "  1.7742   0.7419       23    31  simulatedSequence2:64-94\n"
-        + "  1.9318   0.9091       80    88               all regions\n";
-
-      assertEquals(exp.replaceAll("\n|\r\n", LS), FileUtils.fileToString(summary));
+      mNano.check("covBedRegionNoTemplate.txt", FileUtils.fileToString(summary));
     }
   }
 }
