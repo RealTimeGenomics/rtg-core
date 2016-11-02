@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import com.rtg.sam.SamUtils;
 import com.rtg.util.intervals.RangeList;
 
 import htsjdk.samtools.Cigar;
@@ -79,7 +80,6 @@ class PosChecker extends PositionAndStrandChecker {
     }
     final byte[] readBases = record.getReadBases();
     record.setReadBases(Arrays.copyOfRange(readBases, readStart, readBases.length));
-    //record.setAttribute("XP", new String(readBases, 0, readStart));
     final byte[] baseQualities = record.getBaseQualities();
     record.setBaseQualities(Arrays.copyOfRange(baseQualities, readStart, readBases.length));
     record.setCigar(new Cigar(cigarElements));
@@ -87,6 +87,8 @@ class PosChecker extends PositionAndStrandChecker {
     if (mate != null) {
       updateTlenAndMateStart(record, mate);
     }
+    record.setAttribute("XP", new String(readBases, 0, readStart));
+    record.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, null);
     mBasesTrimmed += readStart;
   }
 

@@ -16,6 +16,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import com.rtg.sam.SamUtils;
 import com.rtg.util.intervals.RangeList;
 
 import htsjdk.samtools.Cigar;
@@ -85,13 +86,14 @@ class NegChecker extends PositionAndStrandChecker {
     final byte[] readBases = record.getReadBases();
     record.setReadBases(Arrays.copyOfRange(readBases, 0, readEnd));
     final int trimmed = readBases.length - readEnd;
-    //record.setAttribute("XP", new String(readBases, readEnd, trimmed));
     final byte[] baseQualities = record.getBaseQualities();
     record.setBaseQualities(Arrays.copyOfRange(baseQualities, 0, readEnd));
     record.setCigar(new Cigar(newCigarElements));
     if (mate != null) {
       updateTlenAndMateStart(record, mate);
     }
+    record.setAttribute("XP", new String(readBases, readEnd, trimmed));
+    record.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, null);
     mBasesTrimmed += trimmed;
   }
 }

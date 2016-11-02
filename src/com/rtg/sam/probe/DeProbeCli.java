@@ -122,7 +122,7 @@ public class DeProbeCli extends LoggedCli {
     long totalRecords = 0;
     long totalAmbiguousRecords = 0;
     final HashMap<String, ReadStatus> ambiguousReads = new HashMap<>();
-
+    String currentSequence = null;
     try (RecordIterator<SAMRecord> reader = new ThreadedMultifileIterator<>(Collections.singletonList(input), new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
       loadProbeBed(bedFile);
       final File outputFile = new File(outputDirectory(), ALIGNMENT_FILE_NAME);
@@ -130,15 +130,18 @@ public class DeProbeCli extends LoggedCli {
         try (SmartSamWriter writer = new SmartSamWriter(samOutput.getWriter())) {
           while (reader.hasNext()) {
             final SAMRecord record = reader.next();
+            if (!record.getReferenceName().equals(currentSequence)) {
+              Diagnostic.progress("Processing: " + record.getReferenceName());
+              currentSequence = record.getReferenceName();
+            }
             if (record.getFirstOfPairFlag()) {
               totalRecords++;
               final int ih = MathUtils.unboxNatural(SamUtils.getNHOrIH(record));
               final boolean unique = 1 == ih || !record.getNotPrimaryAlignmentFlag();
+              final boolean negative = record.getReadNegativeStrandFlag();
+              final boolean mapped = !record.getReadUnmappedFlag();
               boolean stripped = false;
-              boolean mapped = false;
-              if (!record.getReadUnmappedFlag()) {
-                mapped = true;
-
+              if (mapped) {
                 stripped = checkList(mPosRanges.get(record.getReferenceName()), record, null, tolerance, posChecker)
                   || checkList(mNegRanges.get(record.getReferenceName()), record, null, tolerance, negChecker);
                 if (!stripped) {
@@ -146,13 +149,10 @@ public class DeProbeCli extends LoggedCli {
                 }
               }
 
-              final boolean negative = record.getReadNegativeStrandFlag();
-              if (unique) {
-                if (mapped) {
-                  addMapped(stripped, negative);
-                } else {
-                  totalUnmappedReads++;
-                }
+              if (!mapped) {
+                totalUnmappedReads++;
+              } else if (unique) {
+                addMapped(stripped, negative);
               } else {
                 // If not uniquely mapped, accumulate and delay addition to the stats until the end
                 totalAmbiguousRecords++;
