@@ -17,7 +17,6 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 
 /**
- * @author kurt
  */
 public class InterpolateArrayTest extends TestCase {
 

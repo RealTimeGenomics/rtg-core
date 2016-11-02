@@ -16,7 +16,6 @@ import com.rtg.ngs.Arm;
 
 /**
  * Delegate phred scaling to separte quality scalers for each arm.
- * @author kurt
  */
 public class ArmMachineCyclePhredScaler implements PhredScaler {
   PhredScaler mLeft;

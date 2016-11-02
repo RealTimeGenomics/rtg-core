@@ -13,7 +13,6 @@
 package com.rtg.variant;
 
 /**
- * @author kurt
  */
 public class InterpolateArray implements Interpolate {
   private final int[] mCurve;

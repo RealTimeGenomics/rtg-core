@@ -17,7 +17,6 @@ import com.rtg.ngs.Arm;
 import junit.framework.TestCase;
 
 /**
- * @author kurt
  */
 public class ArmMachineCyclePhredScalerTest extends TestCase {
 

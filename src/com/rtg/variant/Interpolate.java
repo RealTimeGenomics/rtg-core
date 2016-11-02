@@ -18,7 +18,6 @@ import com.rtg.util.MathUtils;
 /**
  * populates missing values in a list by drawing straight lines between adjacent values
  * Falls back on a default value (potentially per position) for leading/trailing missing values
- * @author kurt
  */
 @TestClass({"com.rtg.variant.Interpolate2dArrayTest", "com.rtg.variant.InterpolateArrayTest"})
 interface Interpolate {
