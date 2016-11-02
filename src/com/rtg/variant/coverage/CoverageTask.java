@@ -16,10 +16,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.BitSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import com.rtg.launcher.ParamsTask;
 import com.rtg.mode.DnaUtils;
@@ -64,7 +62,6 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
   private int[] mIHgt1;
   private CircularBufferMultifileSinglePassReaderWindow<CoverageReaderRecord> mCircularBuffer;
   private ChunkInfo mInfo;
-  private int mCurrentReferenceLength;
   private Long mReferenceSequenceIndex;
   private byte[] mReferenceBytes;
   private byte[] mPrevReferenceBytes;
@@ -120,7 +117,6 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
 
     //This list will maintain the sort order of stats output.
     //TODO: if we want multithreading by running multiple refs at once, this name list should be broken into per reference lists.
-    final Set<String> outputRegionNames = new LinkedHashSet<>();
     try {
       final SingletonPopulatorFactory<CoverageReaderRecord> pf = new SingletonPopulatorFactory<>(new CoverageReaderRecordPopulator(mParams.includeDeletions()));
       final SamReadingContext context = new SamReadingContext(mParams.mapped(), mParams.ioThreads(), mParams.filterParams(), uberHeader, reference);
@@ -131,7 +127,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
           final RangeList<String> rs = ranges.get(r.getSequenceName());
           if (rs != null) {
             mWrapper.setSequenceId(r.getSequenceIndex());
-            processReference(coverageWriter, r, recCounts, rs, outputRegionNames);
+            processReference(coverageWriter, r, recCounts, rs);
           }
         }
       }
@@ -158,7 +154,6 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
       indexing.stop();
       indexing.log();
     }
-    mStatistics.setOutputRegionNames(outputRegionNames);
 
     //this is really a statistics output message, but easier to detect here at the moment...
     if (reference == null) {
@@ -172,29 +167,28 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
    * @param r sam sequence record for information about reference
    * @param recCounts record counter
    * @param rangeList null to process entire reference, or a RangeList providing ranges of interest.
-   * @param nameContainsSet a set of output region names seen so far
    * @throws IOException if an exception occurs while reading or writing
    */
-  private void processReference(CoverageWriter coverageWriter, SAMSequenceRecord r, SamRecordCounter recCounts, RangeList<String> rangeList, Set<String> nameContainsSet) throws IOException {
+  private void processReference(CoverageWriter coverageWriter, SAMSequenceRecord r, SamRecordCounter recCounts, RangeList<String> rangeList) throws IOException {
     final List<RangeList.RangeData<String>> ranges = rangeList.getRangeList();
     if (ranges.size() == 0) { //no ranges were specified for this reference, so bail out
       return;
     }
-    mPP = new ParallelProgress(r.getSequenceName());
-
+    final String sequenceName = r.getSequenceName();
+    mPP = new ParallelProgress(sequenceName);
     setReferenceSequence(r, ranges.get(0).getStart(), ranges.get(ranges.size() - 1).getEnd());
 
-    final int minCoverage = mParams.minimumCoverageThreshold();
-    final boolean byRegions = mParams.perRegion();
-
-    int rangeIndex = 0;
-    RangeData<String> range = ranges.get(rangeIndex);
-    assert mInfo.start() == range.getStart();
-    mStatistics.setRange(range);
-    coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
-    addOriginalRangeToSortedNameList(range, nameContainsSet);
-
     try {
+
+      final int minCoverage = mParams.minimumCoverageThreshold();
+      final boolean byRegions = mParams.perRegion();
+
+      int rangeIndex = 0;
+      RangeData<String> range = ranges.get(rangeIndex);
+      assert mInfo.start() == range.getStart();
+      mStatistics.setRange(range);
+      coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
+
       int lastLevel = -1;
       int lastLevelStartPos = range.getStart();
       double nonSmoothCovTot = 0;
@@ -209,24 +203,30 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
       }
 
       //main coverage loop.
-      for (int currentTemplatePosition = mInfo.start(); currentTemplatePosition < mInfo.end(); currentTemplatePosition++) {
+      int currentTemplatePosition = mInfo.start();
+      while (currentTemplatePosition <= mInfo.end()) {
         if (currentTemplatePosition == range.getEnd()) {
           // do things necessary at the end of a range BEFORE processing the base at this position.
           if (!mParams.tsvOutput()) { //since this is the end of a range, output a 'region of different coverage' line.
-            final int cov = byRegions ? (int) MathUtils.round(nonSmoothCovTot / (currentTemplatePosition - lastLevelStartPos)) : lastLevel;
-            coverageWriter.finalCoverageRegion(r.getSequenceName(), lastLevelStartPos, currentTemplatePosition, cov);
+            if (byRegions) {
+              // TODO: Output for all original regions that are not present in the next range
+              final int cov = (int) MathUtils.round(nonSmoothCovTot / (currentTemplatePosition - lastLevelStartPos));
+              coverageWriter.finalCoverageRegion(sequenceName, lastLevelStartPos, currentTemplatePosition, cov);
+            } else {
+              coverageWriter.finalCoverageRegion(sequenceName, lastLevelStartPos, currentTemplatePosition, lastLevel);
+            }
           }
 
-          //get a new range
+          // get the next range
           rangeIndex++;
-          if (rangeIndex >= ranges.size()) {
+          range = rangeIndex < ranges.size() ? ranges.get(rangeIndex) : null;
+          mStatistics.setRange(range);
+
+          if (range == null) {
             break;
           }
-          range = ranges.get(rangeIndex);
-          mStatistics.setRange(range);
-          coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
-          addOriginalRangeToSortedNameList(range, nameContainsSet);
 
+          coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
           //deal with gaps and reset variables
           lastLevel = -1;
           lastLevelStartPos = range.getStart();
@@ -238,12 +238,12 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
           final double nonSmoothCov = getCoverageForPosition(currentTemplatePosition) * INV_SCALE;
 
           if (mParams.tsvOutput()) { //tsv outputs something at every position within a range.
-            coverageWriter.finalCoveragePosition(r.getSequenceName(), currentTemplatePosition, getIH1ForPosition(currentTemplatePosition), getIHgt1ForPosition(currentTemplatePosition), nonSmoothCov);
+            coverageWriter.finalCoveragePosition(sequenceName, currentTemplatePosition, getIH1ForPosition(currentTemplatePosition), getIHgt1ForPosition(currentTemplatePosition), nonSmoothCov);
           } else {
             nonSmoothCovTot += nonSmoothCov;
             final int currentLevel = cl.level();
             if (!byRegions && lastLevel != -1 && currentLevel != lastLevel) { //the coverage value at this position is different from the previous
-              coverageWriter.finalCoverageRegion(r.getSequenceName(), lastLevelStartPos, currentTemplatePosition, lastLevel);
+              coverageWriter.finalCoverageRegion(sequenceName, lastLevelStartPos, currentTemplatePosition, lastLevel);
               lastLevelStartPos = currentTemplatePosition;
             }
             lastLevel = currentLevel;
@@ -254,27 +254,16 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
           mStatistics.updateCoverageHistogram(nonSmoothCov, mReferenceSequenceIndex != null && base == DnaUtils.UNKNOWN_RESIDUE, minCoverage);
         }
         cl.step();
-      }
-      if (!mParams.tsvOutput() && mCurrentReferenceLength > 0) { //output the last coverage value data.
-        final int cov = byRegions ? (int) MathUtils.round(nonSmoothCovTot / (mInfo.end() - lastLevelStartPos)) : lastLevel;
-        coverageWriter.finalCoverageRegion(r.getSequenceName(), lastLevelStartPos, mInfo.end(), cov);
+        currentTemplatePosition++;
       }
 
-      mStatistics.setRange(null); //flush the last range out of statistics
       recCounts.incrementCounts(mCircularBuffer);
 
       mPP.updateProgress(100);
-      Diagnostic.progress("Finished: " + r.getSequenceName());
+      Diagnostic.progress("Finished: " + sequenceName);
 
     } finally {
       mCircularBuffer.close();
-    }
-  }
-
-  private void addOriginalRangeToSortedNameList(RangeData<String> range, Set<String> sortedRegionNames) {
-    for (final RangeList.RangeData<String> or : range.getOriginalRanges()) {
-      assert or.getMeta().size() == 1;
-      sortedRegionNames.add(or.getMeta().get(0));
     }
   }
 
@@ -337,7 +326,6 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
   }
 
   private void setReferenceSequence(SAMSequenceRecord r, int restrictionStart, int restrictionEnd) {
-    mCurrentReferenceLength = r.getSequenceLength();
     if (mParams.genome() != null) {
       mReferenceSequenceIndex = mReferenceNames.get(r.getSequenceName());
     }

@@ -20,12 +20,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 import org.apache.velocity.tools.generic.NumberTool;
 
@@ -37,13 +36,15 @@ import com.reeltwo.plot.renderer.GraphicsRenderer;
 import com.reeltwo.plot.ui.ImageWriter;
 import com.rtg.launcher.AbstractStatistics;
 import com.rtg.report.VelocityReportUtils;
+import com.rtg.util.DoubleMultiSet;
 import com.rtg.util.HtmlReportHelper;
 import com.rtg.util.MathUtils;
-import com.rtg.util.intervals.RangeList;
+import com.rtg.util.MultiSet;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TextTable;
 import com.rtg.util.Utils;
 import com.rtg.util.cli.CommandLine;
+import com.rtg.util.intervals.RangeList;
 import com.rtg.util.io.FileUtils;
 
 /**
@@ -60,16 +61,14 @@ public class CoverageStatistics extends AbstractStatistics {
 
   private final boolean mDisableHtmlReport;
 
-  private final SortedSet<String> mCoverageRegions = new TreeSet<>();
-  private final HashMap<String, Double> mTotalCoveragePerRegion = new HashMap<>();
-  private final HashMap<String, Double> mTotalNonNCoveragePerRegion = new HashMap<>();
-  private final HashMap<String, Integer> mRegionLengths = new HashMap<>();
-  private final HashMap<String, Integer> mRegionCoveredBaseCounts = new HashMap<>();
-  private final HashMap<String, Integer> mRegionNonNLengths = new HashMap<>();
-  private final HashMap<String, Integer> mRegionNonNCoveredBaseCounts = new HashMap<>();
+  // Contains distinct labels to output (e.g. sequence names / region names / gene names
+  private final LinkedHashSet<String> mCoverageNames = new LinkedHashSet<>();
+  private final DoubleMultiSet<String> mTotalCoveragePerName = new DoubleMultiSet<>();
+  private final MultiSet<String> mTotalLengthPerName = new MultiSet<>();
+  private final MultiSet<String> mCoveredLengthPerName = new MultiSet<>();
 
-  private RangeList.RangeData<String> mCurrentRange = null;
-  private Map<RangeList.RangeData<String>, CoverageSequenceStatistics> mOriginalRangeStatisticsMap = null;
+  private final Map<RangeList.RangeData<String>, CoverageSequenceStatistics> mOriginalRangeStatisticsMap = new HashMap<>();
+  private List<RangeList.RangeData<String>> mCurrentRange = Collections.emptyList();
 
   /**
    * Number of template positions whose coverage is in a given bucket.
@@ -87,8 +86,6 @@ public class CoverageStatistics extends AbstractStatistics {
 
   /** the total coverage across all regions, with overlaps being flattened. */
   private double mTotalCoverage;
-
-  private Collection<String> mOutputRegions;
 
   //Decimal places for depth and breadth columns
   private static final int DP = 4;
@@ -117,27 +114,20 @@ public class CoverageStatistics extends AbstractStatistics {
     } else {
       sb.append("#depth\tbreadth\tcovered\tsize\tname").append(LS);
     }
-    final Collection<String> sortOrder;
-    if (mOutputRegions == null) {
-      sortOrder = new ArrayList<>();
-      sortOrder.addAll(mCoverageRegions);
-    } else {
-      sortOrder = mOutputRegions;
-    }
-    for (final String regionName : sortOrder) {
-      final int size = mRegionLengths.get(regionName);
-      final double coverage = mTotalCoveragePerRegion.get(regionName);
-      final int baseCount = mRegionCoveredBaseCounts.get(regionName);
+    for (final String name : mCoverageNames) {
+      final int size = mTotalLengthPerName.get(name);
+      final double coverage = mTotalCoveragePerName.get(name);
+      final int baseCount = mCoveredLengthPerName.get(name);
       final double breadth = baseCount / (double) size;
       final double depth = coverage / size;
 
-      if (!summary || mCoverageRegions.size() < 100) {  // show up to 99 regions in summary, otherwise only output the total line.
+      if (!summary || mCoverageNames.size() < 100) {  // show up to 99 labels in summary, otherwise only output the total line.
         if (summary) {
-          appendRow(table, Utils.realFormat(depth, DP), Utils.realFormat(breadth, DP), baseCount, size, regionName);
+          appendRow(table, Utils.realFormat(depth, DP), Utils.realFormat(breadth, DP), baseCount, size, name);
         } else {
           sb.append(Utils.realFormat(depth, DP)).append('\t').append(Utils.realFormat(breadth, DP)).append('\t')
                   .append(baseCount).append('\t').append(size).append('\t')
-                  .append(regionName).append(LS);
+                  .append(name).append(LS);
         }
       }
     }
@@ -159,14 +149,6 @@ public class CoverageStatistics extends AbstractStatistics {
               .append("all regions").append(LS);
     }
     return sb.toString();
-  }
-
-  /**
-   *  Set the region names to output, in the natural order of the supplied Collection
-   *  @param  outputRegions the region names to output
-   */
-  void setOutputRegionNames(Collection<String> outputRegions) {
-    mOutputRegions = outputRegions;
   }
 
   void writeGraphs(List<List<Double>> data, HtmlReportHelper hrh, Map<String, Object> velocityMap) throws IOException {
@@ -276,70 +258,44 @@ public class CoverageStatistics extends AbstractStatistics {
     table.addRow(values);
   }
 
-  /**
-   * Add an average coverage value for a region to the statistics object.
-   * @param regionName the name of the region
-   * @param totalCoverage the total coverage
-   * @param totalNonNCoverage the total coverage over non N bases
-   * @param length the length of the region
-   * @param nonNLength the non N length of the region
-   */
-  public void addAverageCoverage(String regionName, double totalCoverage, double totalNonNCoverage, int length, int nonNLength) {
-    if (!mCoverageRegions.contains(regionName)) {
-      mCoverageRegions.add(regionName);
+  private static class CoverageSequenceStatistics {
+    double mTotalCoverage = 0.0;
+    int mBasesWithCoverage = 0;
+    int mBases = 0;
+
+    private void update(double nonSmoothCov, int minimumCoverageForBreadth) {
+      mTotalCoverage += nonSmoothCov;
+      mBases++;
+      if (nonSmoothCov >= minimumCoverageForBreadth) {
+        mBasesWithCoverage++;
+      }
     }
-    incrementMap(mTotalCoveragePerRegion, regionName, totalCoverage);
-    incrementMap(mTotalNonNCoveragePerRegion, regionName, totalNonNCoverage);
-    incrementMap(mRegionLengths, regionName, length);
-    incrementMap(mRegionNonNLengths, regionName, nonNLength);
   }
 
   void setRange(RangeList.RangeData<String> range) {
-    if (mOriginalRangeStatisticsMap != null && mOriginalRangeStatisticsMap.size() > 0) {
-      //flush previous range stats
-      for (final RangeList.RangeData<String> origRange : mCurrentRange.getOriginalRanges()) {
-        final String regionName = origRange.getMeta().get(0);
-        final CoverageSequenceStatistics stats = mOriginalRangeStatisticsMap.get(origRange);
-        addAverageCoverage(regionName, stats.mTotalNonNCoverage, stats.mTotalNonNCoverage, stats.mNonNLength, stats.mNonNLength);
-        addCoveredBasesCount(regionName, stats.mNonNBasesWithCoverage);
-        addNonNCoveredBasesCount(regionName, stats.mNonNBasesWithCoverage);
-      }
-      mOriginalRangeStatisticsMap.clear();
-    }
-    if (range != null) {
-      if (mOriginalRangeStatisticsMap == null) {
-        mOriginalRangeStatisticsMap = new HashMap<>();
-      }
-      mCurrentRange = range;
-      for (final RangeList.RangeData<String> origRange : range.getOriginalRanges()) {
-        mOriginalRangeStatisticsMap.put(origRange, new CoverageSequenceStatistics());
-      }
-    }
-  }
+    final List<RangeList.RangeData<String>> newList = range == null ? Collections.emptyList() : range.getOriginalRanges();
 
-  private static class CoverageSequenceStatistics {
-    double mTotalNonNCoverage = 0.0;
-    int mNonNBasesWithCoverage = 0;
-    int mNonNLength = 0;
+    //flush previous range stats, for any that are not present in the new list
+    mCurrentRange.stream().filter(origRange -> !newList.contains(origRange)).forEach(origRange -> {
+      final CoverageSequenceStatistics stats = mOriginalRangeStatisticsMap.get(origRange);
+      final String name = origRange.getMeta().get(0);
+      mTotalCoveragePerName.add(name, stats.mTotalCoverage);
+      mTotalLengthPerName.add(name, stats.mBases);
+      mCoveredLengthPerName.add(name, stats.mBasesWithCoverage);
+      mOriginalRangeStatisticsMap.remove(origRange);
+    });
 
-    private void update(double nonSmoothCov, int minimumCoverageForBreadth) {
-      mTotalNonNCoverage += nonSmoothCov;
-      mNonNLength++;
-      if (nonSmoothCov >= minimumCoverageForBreadth) {
-        mNonNBasesWithCoverage++;
-      }
-    }
-  }
+    // Create new range stats for any that aren't already present
+    newList.stream().filter(origRange -> !mOriginalRangeStatisticsMap.containsKey(origRange)).forEach(origRange -> {
+      mCoverageNames.add(origRange.getMeta().get(0));
+      mOriginalRangeStatisticsMap.put(origRange, new CoverageSequenceStatistics());
+    });
 
-  private void incrementMap(Map<String, Double> map, String templateName, double newCount) {
-    map.put(templateName, newCount + (map.containsKey(templateName) ? map.get(templateName) : 0));
-  }
-  private void incrementMap(Map<String, Integer> map, String templateName, int newCount) {
-    map.put(templateName, newCount + (map.containsKey(templateName) ? map.get(templateName) : 0));
+    mCurrentRange = newList;
   }
 
   /**
-   * Update the coverage histogram.
+   * Update the coverage histogram and per-region-name statistics
    * This must be called once and only once for each base within any region.
    * @param currCoverage the current coverage
    * @param templateIsUnknown true if template is unknown (false if no template was supplied - treat as all known)
@@ -363,28 +319,10 @@ public class CoverageStatistics extends AbstractStatistics {
         }
         mTotalCoverage += currCoverage;
       }
-      for (final RangeList.RangeData<String> origRange : mCurrentRange.getOriginalRanges()) {
+      for (final RangeList.RangeData<String> origRange : mCurrentRange) {
         mOriginalRangeStatisticsMap.get(origRange).update(currCoverage, minimumCoverageForBreadth);
       }
     }
-  }
-
-  /**
-   * Add covered base count for a region
-   * @param regionName name of the region
-   * @param coveredBasesCount count of bases covered
-   */
-  public void addCoveredBasesCount(String regionName, Integer coveredBasesCount) {
-    incrementMap(mRegionCoveredBaseCounts, regionName, coveredBasesCount);
-  }
-
-  /**
-   * Add non N covered base count for a region
-   * @param regionName name of the region
-   * @param coveredBasesCount count of non N bases
-   */
-  public void addNonNCoveredBasesCount(String regionName, Integer coveredBasesCount) {
-    incrementMap(mRegionNonNCoveredBaseCounts, regionName, coveredBasesCount);
   }
 
   /**
