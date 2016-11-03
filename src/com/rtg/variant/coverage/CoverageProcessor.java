@@ -15,11 +15,13 @@ package com.rtg.variant.coverage;
 import java.io.Closeable;
 import java.io.IOException;
 
+import com.reeltwo.jumble.annotations.JumbleIgnore;
 import com.rtg.util.Environment;
 
 /**
  * Adaptor class that produces no output.
  */
+@JumbleIgnore
 public abstract class CoverageProcessor implements Closeable {
 
   /** Coverage file version string */
