@@ -18,6 +18,7 @@ import com.rtg.util.ReorderingQueue;
 import com.rtg.util.diagnostic.Diagnostic;
 
 import htsjdk.samtools.SAMFileWriter;
+import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMRecordCoordinateComparator;
 
@@ -36,7 +37,20 @@ public class SmartSamWriter extends ReorderingQueue<SAMRecord> {
    * @param out where records should eventually be sent
    */
   public SmartSamWriter(SAMFileWriter out) {
-    super(BUFFER_SIZE, new SAMRecordCoordinateComparator());
+    super(BUFFER_SIZE, new SAMRecordCoordinateComparator() {
+      public int compare(final SAMRecord samRecord1, final SAMRecord samRecord2) {
+        final int cmp = super.compare(samRecord1, samRecord2);
+        if (cmp != 0) {
+          return cmp;
+        }
+        final SAMReadGroupRecord rg1 = samRecord1.getReadGroup();
+        final SAMReadGroupRecord rg2 = samRecord2.getReadGroup();
+        if (rg1 == rg2) {
+          return 0;
+        }
+        return rg1 == null ? -1 : rg2 == null ? 1 : rg1.getReadGroupId().compareTo(rg2.getReadGroupId());
+      }
+    });
     mOut = out;
   }
 

@@ -39,7 +39,7 @@ public class DeProbeCliTest extends AbstractCliTest {
       final File alignments = FileHelper.resourceToFile("com/rtg/sam/probe/resources/alignments.sam", new File(dir, "alignments.sam"));
       final File output = new File(dir, "output");
       final File bamFile = new File(output, DeProbeCli.ALIGNMENT_FILE_NAME);
-      final MainResult result = checkMainInit("-i", alignments.getPath(), "-o", output.getPath(), "-b", probes.getPath());
+      final MainResult result = checkMainInit(alignments.getPath(), "-o", output.getPath(), "-b", probes.getPath());
       mNano.check("expected.stripped.sam", SamUtils.bamToString(bamFile));
       mNano.check("expected.probes.tsv", FileUtils.fileToString(new File(output, DeProbeCli.PROBE_OFFSET_TABLE_FILE)));
       mNano.check("expected.cigar_ops.tsv", FileUtils.fileToString(new File(output, DeProbeCli.CIGAR_OP_TABLE_FILE)));

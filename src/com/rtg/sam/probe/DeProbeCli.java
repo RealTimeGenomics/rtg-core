@@ -11,21 +11,26 @@
  */
 package com.rtg.sam.probe;
 
+import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 
 import com.rtg.bed.BedReader;
 import com.rtg.bed.BedRecord;
+import com.rtg.launcher.CommandLineFiles;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
 import com.rtg.sam.RecordIterator;
+import com.rtg.sam.SamFilterParams;
 import com.rtg.sam.SamOutput;
+import com.rtg.sam.SamReadingContext;
 import com.rtg.sam.SamRecordPopulator;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.SmartSamWriter;
@@ -35,6 +40,7 @@ import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.TextTable;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
+import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.ReferenceRanges;
@@ -42,6 +48,7 @@ import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
 
 import htsjdk.samtools.SAMRecord;
+import htsjdk.samtools.SAMTagUtil;
 
 /**
  * Remove probes from mapped reads using a bed file to describe probes.
@@ -92,10 +99,14 @@ public class DeProbeCli extends LoggedCli {
   private static void initFlags(CFlags flags) {
     flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
-    flags.registerRequired('i', CommonFlags.INPUT_FLAG, File.class, "FILE", "SAM/BAM file containing input alignments").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "FILE", "directory for output").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerRequired('b', PROBE_BED, File.class, "FILE", "BED file specifying each probe location and strand").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag inFlag = flags.registerRequired(File.class, "FILE", "SAM/BAM format files containing coordinate-sorted alignments")
+      .setCategory(INPUT_OUTPUT).setMinCount(0).setMaxCount(Integer.MAX_VALUE);
+    final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing coordinate-sorted alignments").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "FILE", "directory for output").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('b', PROBE_BED, File.class, "FILE", "BED file specifying each probe location and strand").setCategory(INPUT_OUTPUT);
     flags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "start position tolerance for probe matching", 3).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.addRequiredSet(inFlag);
+    flags.addRequiredSet(listFlag);
   }
 
   @Override
@@ -106,10 +117,11 @@ public class DeProbeCli extends LoggedCli {
   @Override
   protected int mainExec(OutputStream out, LogStream log) throws IOException {
     final int tolerance = (Integer) mFlags.getValue(TOLERANCE_FLAG);
-    final File input = (File) mFlags.getValue(CommonFlags.INPUT_FLAG);
+    final Collection<File> inputFiles = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null, CommandLineFiles.EXISTS, CommandLineFiles.NOT_DIRECTORY).getFileList(mFlags);
     final PosChecker posChecker = new PosChecker(tolerance);
     final NegChecker negChecker = new NegChecker(tolerance);
     final File bedFile = (File) mFlags.getValue(PROBE_BED);
+    final int threads = CommonFlags.parseIOThreads(null); // Just use the default
 
     mTotalMappedReads = 0;
     mTotalMappedPos = 0;
@@ -118,12 +130,14 @@ public class DeProbeCli extends LoggedCli {
     mTotalStrippedNeg = 0;
     mTotalStrippedReads = 0;
 
+    boolean warnedNoReadGroup = false;
     long totalUnmappedReads = 0;
     long totalRecords = 0;
     long totalAmbiguousRecords = 0;
     final HashMap<String, ReadStatus> ambiguousReads = new HashMap<>();
     String currentSequence = null;
-    try (RecordIterator<SAMRecord> reader = new ThreadedMultifileIterator<>(Collections.singletonList(input), new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
+    final SamReadingContext c = new SamReadingContext(inputFiles, threads, new SamFilterParams.SamFilterParamsBuilder().create(), SamUtils.getUberHeader(inputFiles), null);
+    try (RecordIterator<SAMRecord> reader = new ThreadedMultifileIterator<>(c, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
       loadProbeBed(bedFile);
       final File outputFile = new File(outputDirectory(), ALIGNMENT_FILE_NAME);
       try (SamOutput samOutput = SamOutput.getSamOutput(outputFile, out, reader.header(), !mFlags.isSet(CommonFlags.NO_GZIP), true, null)) {
@@ -156,16 +170,26 @@ public class DeProbeCli extends LoggedCli {
               } else {
                 // If not uniquely mapped, accumulate and delay addition to the stats until the end
                 totalAmbiguousRecords++;
-                ReadStatus s = ambiguousReads.get(record.getReadName());
+                // Include rgid in tag to handle reads mapped as IDs rather than full names
+                final Object rgatt = record.getAttribute(SAMTagUtil.getSingleton().RG);
+                if (rgatt == null && !warnedNoReadGroup) {
+                  Diagnostic.warning("Encountered alignment without read group information. Statistics may not be correct if mappings to not include full read names");
+                  warnedNoReadGroup = true;
+                }
+                final String name = record.getReadName() + rgatt;
+                ReadStatus s = ambiguousReads.get(name);
                 if (s == null) {
-                  s = new ReadStatus(record.getReadName(), stripped, negative);
-                  ambiguousReads.put(record.getReadName(), s);
+                  s = new ReadStatus(name, stripped, negative);
+                  ambiguousReads.put(name, s);
                 } else if (stripped && !s.stripped()) {
                   s.setStatus(stripped, negative);
                 }
               }
             }
             writer.addRecord(record);
+          }
+          if (writer.getDuplicateCount() > 0) {
+            Diagnostic.warning(writer.getDuplicateCount() + " duplicate records were dropped during output.");
           }
           Diagnostic.progress("Closing SAM writer");
         }
