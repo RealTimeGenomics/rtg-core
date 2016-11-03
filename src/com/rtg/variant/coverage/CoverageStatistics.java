@@ -89,7 +89,7 @@ public class CoverageStatistics extends AbstractStatistics {
 
   //Decimal places for depth and breadth columns
   private static final int DP = 4;
-  private CoverageWriter mCoverageWriter;
+  private CoverageBedWriter mCoverageWriter;
 
   /**
    * @param outputDirectory The base output directory to generate statistics and reports in. May be null if no statistics or reports are to be generated.
@@ -273,7 +273,7 @@ public class CoverageStatistics extends AbstractStatistics {
     }
   }
 
-  void setPerRegionCoverageWriter(CoverageWriter writer) {
+  void setPerRegionCoverageWriter(CoverageBedWriter writer) {
     mCoverageWriter = writer;
   }
 
@@ -286,7 +286,7 @@ public class CoverageStatistics extends AbstractStatistics {
         final CoverageSequenceStatistics stats = mOriginalRangeStatisticsMap.get(origRange);
         final String name = origRange.getMeta().get(0);
         if (mCoverageWriter != null) {
-          mCoverageWriter.setBedLabel(name);
+          mCoverageWriter.setRegionLabel(name);
           mCoverageWriter.finalCoverageRegion(sequenceName, origRange.getStart(), origRange.getEnd(), (int) MathUtils.round(stats.mTotalCoverage / stats.mBases));
         }
         mTotalCoveragePerName.add(name, stats.mTotalCoverage);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. Real Time Genomics Limited.
+ * Copyright (c) 2016. Real Time Genomics Limited.
  *
  * Use of this source code is bound by the Real Time Genomics Limited Software Licence Agreement
  * for Academic Non-commercial Research Purposes only.
@@ -12,18 +12,28 @@
 
 package com.rtg.variant.coverage;
 
+import java.io.Closeable;
 import java.io.IOException;
 
+import com.rtg.util.Environment;
+
 /**
- *         Date: 16/02/12
- *         Time: 1:45 PM
+ * Adaptor class that produces no output.
  */
-public interface CoverageProcessor {
+public abstract class CoverageProcessor implements Closeable {
+
+  /** Coverage file version string */
+  public static final String VERSION_STRING = "#Version " + Environment.getVersion();
+
+  static final String COVERAGE_OUTPUT_VERSION = "v1.1";
+
+  protected static final String TB = "\t";
+
   /**
    * Performs any required initialisation
    * @throws IOException because it might do some output
    */
-  void init() throws IOException;
+  public void init() throws IOException { }
 
   /**
    * @param name sequence name
@@ -33,7 +43,13 @@ public interface CoverageProcessor {
    * @param coverage coverage at position
    * @throws IOException if an IO error occurs
    */
-  void finalCoveragePosition(String name, int position, int ih1, int ihgt1, double coverage) throws IOException;
+  public void finalCoveragePosition(String name, int position, int ih1, int ihgt1, double coverage) throws IOException { }
+
+  /**
+   * Sets the label to be used for the next region
+   * @param label the label
+   */
+  public void setRegionLabel(String label) { }
 
   /**
    *
@@ -43,11 +59,6 @@ public interface CoverageProcessor {
    * @param coverage coverage for the region
    * @throws IOException because it might do some output
    */
-  void finalCoverageRegion(String name, int start, int end, int coverage) throws IOException;
+  public void finalCoverageRegion(String name, int start, int end, int coverage) throws IOException { }
 
-  /**
-   * Clean up any open resources
-   * @throws IOException because it might do some output
-   */
-  void close() throws IOException;
 }

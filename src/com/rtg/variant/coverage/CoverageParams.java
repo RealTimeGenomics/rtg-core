@@ -197,8 +197,8 @@ public final class CoverageParams extends SingleMappedParams {
     mErrorRates = builder.mErrorRates;
     mBinarizeBed = builder.mBinarizeBed;
     mIncludeDeletions = builder.mIncludeDeletions;
-    mPerRegion = builder.mPerRegion;
     mTsvOutput = builder.mTsvOutput;
+    mPerRegion = builder.mPerRegion && !mTsvOutput;
     mBedgraphOutput = builder.mBedgraphOutput && !mTsvOutput; // TSV takes priority if both set
     mMinimumCoverageThreshold = builder.mMinimumCoverageThreshold;
     mOutputIndex = builder.mOutputIndex;

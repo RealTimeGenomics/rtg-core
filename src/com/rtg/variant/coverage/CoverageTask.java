@@ -102,9 +102,6 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
   @Override
   protected void exec() throws IOException {
     final SamRecordCounter recCounts = new SamRecordCounter();
-    final OutputStream os = mParams.bedStream();
-    final CoverageWriter coverageWriter = new CoverageWriter(os, mParams);
-    coverageWriter.init();
 
     final SequencesReader reference = mParams.genome() == null ? null : mParams.genome().reader();
     final SAMFileHeader uberHeader = SamUtils.getUberHeader(reference, mParams.mapped(), mParams.ignoreIncompatibleSamHeaders(), null);
@@ -115,9 +112,12 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
       Diagnostic.warning("No reference supplied - unable to determine regions of unknown nucleotides.");
     }
 
-    //This list will maintain the sort order of stats output.
-    //TODO: if we want multithreading by running multiple refs at once, this name list should be broken into per reference lists.
-    try {
+    try (final CoverageProcessor coverageWriter = mParams.tsvOutput() ? new CoverageTsvWriter(mParams) : new CoverageBedWriter(mParams)) {
+      coverageWriter.init();
+      if (mParams.perRegion()) {
+        // delegate output to the statistics object, it's already tracking per-region statistics
+        mStatistics.setPerRegionCoverageWriter((CoverageBedWriter) coverageWriter);
+      }
       final SingletonPopulatorFactory<CoverageReaderRecord> pf = new SingletonPopulatorFactory<>(new CoverageReaderRecordPopulator(mParams.includeDeletions()));
       final SamReadingContext context = new SamReadingContext(mParams.mapped(), mParams.ioThreads(), mParams.filterParams(), uberHeader, reference);
       final ReferenceRanges<String> ranges = context.referenceRanges();
@@ -132,7 +132,6 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
         }
       }
     } finally {
-      coverageWriter.close();
       if (mWrapper != null) {
         mWrapper.close();
       }
@@ -169,7 +168,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
    * @param rangeList null to process entire reference, or a RangeList providing ranges of interest.
    * @throws IOException if an exception occurs while reading or writing
    */
-  private void processReference(CoverageWriter coverageWriter, SAMSequenceRecord r, SamRecordCounter recCounts, RangeList<String> rangeList) throws IOException {
+  private void processReference(CoverageProcessor coverageWriter, SAMSequenceRecord r, SamRecordCounter recCounts, RangeList<String> rangeList) throws IOException {
     final List<RangeList.RangeData<String>> ranges = rangeList.getRangeList();
     if (ranges.size() == 0) { //no ranges were specified for this reference, so bail out
       return;
@@ -181,17 +180,17 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     try {
 
       final int minCoverage = mParams.minimumCoverageThreshold();
-      final boolean byRegions = !mParams.tsvOutput() && mParams.perRegion();
+      final boolean byRegions = mParams.perRegion();
       final boolean byLevels = !mParams.tsvOutput() && !byRegions;
 
       int rangeIndex = 0;
       RangeData<String> range = ranges.get(rangeIndex);
       assert mInfo.start() == range.getStart();
       mStatistics.setRange(sequenceName, range);
-      coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
 
       int lastLevel = -1;
       int lastLevelStartPos = range.getStart();
+      String levelLabel = formatMetaForBed(range.getMeta());
 
       final CoverageLeveller cl;
       if (!byLevels) {
@@ -201,10 +200,6 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
       } else {
         cl = new CoverageSmoothingWindow(mParams.smoothing());
       }
-      if (byRegions) {
-        // delegate output to the statistics object, he's already tracking per-region statistics
-        mStatistics.setPerRegionCoverageWriter(coverageWriter);
-      }
       //main coverage loop.
       int currentTemplatePosition = mInfo.start();
       while (currentTemplatePosition <= mInfo.end()) {
@@ -212,6 +207,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
           // do things necessary at the end of a range BEFORE processing the base at this position.
 
           if (byLevels) { // Write new level at range boundary
+            coverageWriter.setRegionLabel(levelLabel);
             coverageWriter.finalCoverageRegion(sequenceName, lastLevelStartPos, currentTemplatePosition, lastLevel);
           }
 
@@ -224,10 +220,10 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
             break;
           }
 
-          coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
           //deal with gaps and reset variables
           lastLevel = -1;
           lastLevelStartPos = range.getStart();
+          levelLabel = formatMetaForBed(range.getMeta());
         }
 
         // now deal with the base at this template position.
@@ -239,6 +235,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
           } else if (byLevels) {
             final int currentLevel = cl.level();
             if (lastLevel != -1 && currentLevel != lastLevel) { // we have a level change, write the previous
+              coverageWriter.setRegionLabel(levelLabel);
               coverageWriter.finalCoverageRegion(sequenceName, lastLevelStartPos, currentTemplatePosition, lastLevel);
               lastLevelStartPos = currentTemplatePosition;
             }
