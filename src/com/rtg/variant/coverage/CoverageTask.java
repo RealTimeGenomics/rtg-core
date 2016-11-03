@@ -181,46 +181,44 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     try {
 
       final int minCoverage = mParams.minimumCoverageThreshold();
-      final boolean byRegions = mParams.perRegion();
+      final boolean byRegions = !mParams.tsvOutput() && mParams.perRegion();
+      final boolean byLevels = !mParams.tsvOutput() && !byRegions;
 
       int rangeIndex = 0;
       RangeData<String> range = ranges.get(rangeIndex);
       assert mInfo.start() == range.getStart();
-      mStatistics.setRange(range);
+      mStatistics.setRange(sequenceName, range);
       coverageWriter.setBedLabel(formatMetaForBed(range.getMeta()));
 
       int lastLevel = -1;
       int lastLevelStartPos = range.getStart();
-      double nonSmoothCovTot = 0;
 
       final CoverageLeveller cl;
-      if (mParams.tsvOutput() || byRegions) {
+      if (!byLevels) {
         cl = new CoverageLeveller(); // No-op implementation
       } else if (mParams.binarizeBed()) {
         cl = new CoverageBinarizer(minCoverage);
       } else {
         cl = new CoverageSmoothingWindow(mParams.smoothing());
       }
-
+      if (byRegions) {
+        // delegate output to the statistics object, he's already tracking per-region statistics
+        mStatistics.setPerRegionCoverageWriter(coverageWriter);
+      }
       //main coverage loop.
       int currentTemplatePosition = mInfo.start();
       while (currentTemplatePosition <= mInfo.end()) {
         if (currentTemplatePosition == range.getEnd()) {
           // do things necessary at the end of a range BEFORE processing the base at this position.
-          if (!mParams.tsvOutput()) { //since this is the end of a range, output a 'region of different coverage' line.
-            if (byRegions) {
-              // TODO: Output for all original regions that are not present in the next range
-              final int cov = (int) MathUtils.round(nonSmoothCovTot / (currentTemplatePosition - lastLevelStartPos));
-              coverageWriter.finalCoverageRegion(sequenceName, lastLevelStartPos, currentTemplatePosition, cov);
-            } else {
-              coverageWriter.finalCoverageRegion(sequenceName, lastLevelStartPos, currentTemplatePosition, lastLevel);
-            }
+
+          if (byLevels) { // Write new level at range boundary
+            coverageWriter.finalCoverageRegion(sequenceName, lastLevelStartPos, currentTemplatePosition, lastLevel);
           }
 
           // get the next range
           rangeIndex++;
           range = rangeIndex < ranges.size() ? ranges.get(rangeIndex) : null;
-          mStatistics.setRange(range);
+          mStatistics.setRange(sequenceName, range);
 
           if (range == null) {
             break;
@@ -230,19 +228,17 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
           //deal with gaps and reset variables
           lastLevel = -1;
           lastLevelStartPos = range.getStart();
-          nonSmoothCovTot = 0;
         }
 
-        //now deal with the base at this template position.
+        // now deal with the base at this template position.
         if (currentTemplatePosition >= range.getStart()) { //we're within a range
           final double nonSmoothCov = getCoverageForPosition(currentTemplatePosition) * INV_SCALE;
 
           if (mParams.tsvOutput()) { //tsv outputs something at every position within a range.
             coverageWriter.finalCoveragePosition(sequenceName, currentTemplatePosition, getIH1ForPosition(currentTemplatePosition), getIHgt1ForPosition(currentTemplatePosition), nonSmoothCov);
-          } else {
-            nonSmoothCovTot += nonSmoothCov;
+          } else if (byLevels) {
             final int currentLevel = cl.level();
-            if (!byRegions && lastLevel != -1 && currentLevel != lastLevel) { //the coverage value at this position is different from the previous
+            if (lastLevel != -1 && currentLevel != lastLevel) { // we have a level change, write the previous
               coverageWriter.finalCoverageRegion(sequenceName, lastLevelStartPos, currentTemplatePosition, lastLevel);
               lastLevelStartPos = currentTemplatePosition;
             }

@@ -14,6 +14,7 @@ package com.rtg.variant.coverage;
 import static com.rtg.util.StringUtils.LS;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,14 +29,14 @@ import com.rtg.util.test.FileHelper;
 
 public class CoverageStatisticsTest extends AbstractNanoTest {
 
-  public void testAddAverageCoverage() {
+  public void testAddAverageCoverage() throws IOException {
     final CoverageStatistics cs = new CoverageStatistics(null, false);
 
     final RangeList.RangeData<String> range = new RangeList.RangeData<>(0, 10, "blah");
     final List<RangeList.RangeData<String>> ranges = new ArrayList<>();
     ranges.add(range);
     final RangeList<String> rangesearch = new RangeList<>(ranges);
-    cs.setRange(rangesearch.getRangeList().get(0));
+    cs.setRange("seq", rangesearch.getRangeList().get(0));
 
     cs.updateCoverageHistogram(1, false, 1);
     cs.updateCoverageHistogram(1, false, 1);
@@ -46,7 +47,7 @@ public class CoverageStatisticsTest extends AbstractNanoTest {
       cs.updateCoverageHistogram(0, false, 1);
     }
 
-    cs.setRange(null);
+    cs.setRange("seq", null);
     final String exp = "Coverage per region:" + LS
                          + "   depth  breadth  covered  size         name" + LS
                          + "  0.3750   0.3750        3     8         blah" + LS

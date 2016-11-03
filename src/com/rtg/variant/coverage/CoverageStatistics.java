@@ -89,6 +89,7 @@ public class CoverageStatistics extends AbstractStatistics {
 
   //Decimal places for depth and breadth columns
   private static final int DP = 4;
+  private CoverageWriter mCoverageWriter;
 
   /**
    * @param outputDirectory The base output directory to generate statistics and reports in. May be null if no statistics or reports are to be generated.
@@ -272,18 +273,28 @@ public class CoverageStatistics extends AbstractStatistics {
     }
   }
 
-  void setRange(RangeList.RangeData<String> range) {
+  void setPerRegionCoverageWriter(CoverageWriter writer) {
+    mCoverageWriter = writer;
+  }
+
+  void setRange(String sequenceName, RangeList.RangeData<String> range) throws IOException {
     final List<RangeList.RangeData<String>> newList = range == null ? Collections.emptyList() : range.getOriginalRanges();
 
     //flush previous range stats, for any that are not present in the new list
-    mCurrentRange.stream().filter(origRange -> !newList.contains(origRange)).forEach(origRange -> {
-      final CoverageSequenceStatistics stats = mOriginalRangeStatisticsMap.get(origRange);
-      final String name = origRange.getMeta().get(0);
-      mTotalCoveragePerName.add(name, stats.mTotalCoverage);
-      mTotalLengthPerName.add(name, stats.mBases);
-      mCoveredLengthPerName.add(name, stats.mBasesWithCoverage);
-      mOriginalRangeStatisticsMap.remove(origRange);
-    });
+    for (final RangeList.RangeData<String> origRange : mCurrentRange) {
+      if (!newList.contains(origRange)) {
+        final CoverageSequenceStatistics stats = mOriginalRangeStatisticsMap.get(origRange);
+        final String name = origRange.getMeta().get(0);
+        if (mCoverageWriter != null) {
+          mCoverageWriter.setBedLabel(name);
+          mCoverageWriter.finalCoverageRegion(sequenceName, origRange.getStart(), origRange.getEnd(), (int) MathUtils.round(stats.mTotalCoverage / stats.mBases));
+        }
+        mTotalCoveragePerName.add(name, stats.mTotalCoverage);
+        mTotalLengthPerName.add(name, stats.mBases);
+        mCoveredLengthPerName.add(name, stats.mBasesWithCoverage);
+        mOriginalRangeStatisticsMap.remove(origRange);
+      }
+    }
 
     // Create new range stats for any that aren't already present
     newList.stream().filter(origRange -> !mOriginalRangeStatisticsMap.containsKey(origRange)).forEach(origRange -> {
