@@ -404,6 +404,22 @@ public class CoverageTaskTest extends AbstractCliTest {
     }
   }
 
+  public void testBedRegionsPerRegion() throws Exception {
+    try (final TestDirectory tmpDir = new TestDirectory()) {
+      final File samFile = new File(tmpDir, "sam.sam.gz");
+      IndexUtils.ensureBlockCompressed(FileHelper.resourceToFile("com/rtg/variant/resources/coverage_mated.sam.gz", samFile));
+      new TabixIndexer(samFile).saveSamIndex();
+      final File bedRegionsFile = FileHelper.stringToGzFile(BED_REGIONS, new File(tmpDir, "bedRegions.bed.gz"));
+      final File output = new File(tmpDir, "output");
+      final String tmpl = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAANAAAAAAAAAANAAAAAAAAAAAAAAAAAAAAAAAAAA";
+      final File template = ReaderTestUtils.getDNADir(">simulatedSequence1\n" + tmpl + "\n>simulatedSequence2\n" + tmpl + "\n", new File(tmpDir, "template"));
+      checkMainInitWarn("-o", output.getPath(), samFile.getPath(),
+        "--bed-regions", bedRegionsFile.getPath(), "--per-region", "-t", template.getPath(), "--Xdisable-html-report");
+      final String is = StringUtils.grepMinusV(FileHelper.gzFileToString(new File(output, CoverageParams.BED_NAME + FileUtils.GZ_SUFFIX)), "^#");
+      mNano.check("covBedRegionPerRegion.bed", is);
+    }
+  }
+
   public void testBedRegionsTsv() throws Exception {
     try (final TestDirectory tmpDir = new TestDirectory()) {
       final File samFile = new File(tmpDir, "sam.sam.gz");

@@ -1,0 +1,7 @@
+simulatedSequence1	40	47	simulatedSequence1:41-47	2
+simulatedSequence1	55	60	blah	2
+simulatedSequence1	60	65	blah,feh	3
+simulatedSequence1	65	75	feh	2
+simulatedSequence2	17	43	simulatedSequence2:18-43	2
+simulatedSequence2	55	59	feh	4
+simulatedSequence2	63	94	simulatedSequence2:64-94	2
