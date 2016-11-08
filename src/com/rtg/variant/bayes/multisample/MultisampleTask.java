@@ -786,7 +786,6 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
             }
             final long sdfSeqId = sequenceNameMap.get(sequenceName);
             final int sequenceLength = mReferenceSequences.length(sdfSeqId);
-            assert sequenceLength == r.getSequenceLength() : "" + sequenceLength + " != " + r.getSequenceLength();
             final byte[] sequenceNt = new byte[sequenceLength];
             mReferenceSequences.read(sdfSeqId, sequenceNt);
             processAnEntireSequence(sequenceName, sequenceNt);
