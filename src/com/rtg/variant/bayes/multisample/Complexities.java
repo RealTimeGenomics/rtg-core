@@ -145,7 +145,8 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
           continue;
         }
       }
-      final Variant v = new Variant(new VariantLocus(referenceName, ac.position(), sspEnd));
+      // Truncate the variant trigger so that current chunk boundaries are not exceeded.
+      final Variant v = new Variant(new VariantLocus(referenceName, Math.max(start, ac.position()), Math.min(sspEnd, end)));
       if (ac.isComplex()) {
         // TODO, when we evaluate indel calling along with EvidenceIndelFactory.COMPLEX_REGION_INDEL_EXTENSION
         // v.setIndel(Math.abs(ac.refLength - ac.maxLength()));
@@ -348,7 +349,8 @@ public class Complexities extends IntegralAbstract implements Iterable<ComplexRe
         regionA.mEndDangling = null;
         regionB.mStartDangling = null;
         if (regionA.mRegions.getLast().getEnd() >= regionA.mEndOfChunk) {
-          for (final Variant v : regionB.mOriginalCalls) { //copy over the calls which are in the dangling region, required when the complex caller fails to make a call and prints originals
+          //copy over the calls which are in the dangling part of region B into region A, required when the complex caller fails to make a call and prints originals
+          for (final Variant v : regionB.mOriginalCalls) {
             if (v.getLocus().getStart() >= regionA.mEndOfChunk && v.getLocus().getStart() < regionA.mRegions.getLast().getEnd()) {
               regionA.mOriginalCalls.add(v);
             }

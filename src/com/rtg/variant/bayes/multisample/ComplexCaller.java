@@ -83,8 +83,9 @@ final class ComplexCaller {
       final int startOfRegion = region.getStart();
       final int endOfRegion = region.getEnd();
 
-      // Need to check the region is within the bounds of the specified complexities
-      // and if the start is within the complex region then only process it
+      // Here we need to check the region is within the bounds of the specified complexities, since in the case of a region
+      // spanning multiple chunks, both complexities get a copy of it. Only the complexities that contains the start
+      // is permitted to call the region.
       if (startOfRegion >= complexities.startOfChunk() && startOfRegion <= complexities.endOfChunk()) {
         final ComplexTemplate cot = new ComplexTemplate(template, refName, startOfRegion, endOfRegion);
 
