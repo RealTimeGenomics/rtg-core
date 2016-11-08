@@ -95,7 +95,6 @@ public class AlignmentResult {
           readPos += direction;
           break;
         case ActionsHelper.CG_OVERLAP_IN_READ:
-          assert Math.abs(readPos - (mFirst ? 0 : mRead.length)) < 15 : "first=" + mFirst + "&" + ActionsHelper.toString(mActions);  // overlap should be near the beginning
           cgOverlapSize++;
           break;
         case ActionsHelper.CG_GAP_IN_READ:
