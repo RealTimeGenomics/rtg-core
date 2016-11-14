@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 
 import com.rtg.util.StringUtils;
+import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.RegionRestriction;
@@ -82,7 +83,7 @@ public class VariantHelperTest extends TestCase {
         VariantHelper.loadSnpRange(snpmap, snps, new RegionRestriction("g1", 1, 4));
         fail();
       } catch (NoTalkbackSlimException ex) {
-        assertEquals("VCF header line contains format field but no sample fields", ex.getMessage());
+        TestUtils.containsAll(ex.getMessage(), "contains format column but no sample columns");
       }
 
     } finally {
