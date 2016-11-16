@@ -6,6 +6,7 @@
 ##FILTER=<ID=RX,Description="RTG variant contained within hypercomplex region">
 ##FILTER=<ID=RCEQUIV,Description="RTG variant is equivalent to the previous variant">
 ##FILTER=<ID=OTHER,Description="Variant is invalid for unknown reasons">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Combined read depth for variant over all samples">
 ##INFO=<ID=DPR,Number=1,Type=Float,Description="Ratio of combined read depth for variant to expected combined read depth">
 ##INFO=<ID=XRX,Number=0,Type=Flag,Description="RTG variant was called using complex caller">
 ##INFO=<ID=RCE,Number=0,Type=Flag,Description="RTG variant is equivalent to the previous variant">
@@ -27,4 +28,4 @@
 ##FORMAT=<ID=AD,Number=.,Type=Integer,Description="Allelic depths for the ref and alt alleles in the order listed">
 ##FORMAT=<ID=GL,Number=G,Type=Float,Description="Log_10 scaled genotype likelihoods. As defined in VCF specifications">
 #CHROM	POS	ID	REF	ALT	QUAL	FILTER	INFO	FORMAT	TEST
-g1	11	.	G	C,T	27.6	PASS	.	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL	1/2:4:0.040:0.000:11:0.00:4.34:2.17:0.000,40.000,40.000:0.00:C,2,0.020,T,2,0.020:0,2,2:-2.76,-1.95,-1.55,-1.95,-0.04,-1.58
+g1	11	.	G	C,T	27.6	PASS	DP=4	GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL	1/2:4:0.040:0.000:11:0.00:4.34:2.17:0.000,40.000,40.000:0.00:C,2,0.020,T,2,0.020:0,2,2:-2.76,-1.95,-1.55,-1.95,-0.04,-1.58

@@ -108,109 +108,74 @@ public class VariantOutputVcfFormatterTest extends TestCase {
 
         final String header = mps.toString().replaceAll("##source=.*", "##source=").replaceAll("##RUN-ID=.*", "##RUN-ID=").replaceAll("##fileDate=20.*", "##fileDate=20");
         mNano.check("vovf-single-header1.vcf", header);
-
-        //chr10   82350   o       C       T       0.8     4       0.400   T       4       0.400
-        final VariantSample vs = createSample(Ploidy.DIPLOID, "T:T", false, 0.8 * MathUtils.LOG_10, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0);
-        vs.setCoverage(4);
-        vs.setCoverageCorrection(0.4);
-
-        final VariantLocus locus = new VariantLocus("chr10", 82349, 82350, "C", 'N');
-        final Variant v = new Variant(locus, vs);
-        v.setNonIdentityPosterior(2.0);
-
-        final String s = formatter.formatCall(v);
-
-        //chr10      82350   .       C       T       8.63       PASS    NS=1;DP=4;AF=1.000;RE=0.400     GT:GQ:RP:DP:RS  1/1:5:0.8:4:T,4,0.400
-        assertEquals("chr10\t82350\t.\tC\tT\t9.2\tPASS\t.\tGT:DP:RE:GQ\t1/1:4:0.400:9\n", s);
       }
     }
   }
 
-  public void test1() {
+  public void testVariants() throws IOException {
     final VariantParams params = new VariantParamsBuilder().maxAmbiguity(0.5).create();
     final VariantOutputVcfFormatter formatter = new VariantOutputVcfFormatter(params, "SAMPLE");
 
-    //chr10   112109  e       C       C:T     9.5     38      4.622   C       14      1.430   T       24      3.192
+    final Variant[] v = {
+      variant1(),
+      variant2(),
+      variant3(),
+      variant4(),
+      variant5(),
+      variant6(),
+    };
+    final StringBuilder sb = new StringBuilder();
+    for (Variant v1 : v) {
+      sb.append(formatter.formatCall(v1));
+    }
+    mNano.check("vovf-test-several.vcf", sb.toString());
+  }
+
+  protected Variant variant1() {
     final VariantSample vs = createSample(Ploidy.DIPLOID, "C:T", false, 9.5 * MathUtils.LOG_10, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0);
     vs.setCoverage(38);
     vs.setCoverageCorrection(4.622);
-
-    //chr10      112109  .       C       T       41      PASS    NS=1;DP=38;AF=0.632;RE=4.622    GT:GQ:RP:DP:RS  0/1:41:9.5:38:C,14,1.430,T,24,3.192
-
-    final VariantLocus locus = new VariantLocus("chr10", 112108, 112109, "C", 'N');
-    final Variant v = new Variant(locus, vs);
-    final String s = formatter.formatCall(v);
-
-    assertEquals("chr10\t112109\t.\tC\tT\t.\tPASS\t.\tGT:DP:RE:GQ\t0/1:38:4.622:95\n", s);
+    return new Variant(new VariantLocus("chr10", 112108, 112109, "C", 'N'), vs);
   }
 
-  public void test2() {
-    final VariantParams params = new VariantParamsBuilder().maxAmbiguity(0.5).create();
-    final VariantOutputVcfFormatter formatter = new VariantOutputVcfFormatter(params, "SAMPLE");
-
-    //chr10   115008  e       G       C:G     16.4    81      15.368  C       53      10.713  G       28      4.654
+  protected Variant variant2() {
     final VariantSample vs = createSample(Ploidy.DIPLOID, "C:G", false, 16.4 * MathUtils.LOG_10, VariantSample.DeNovoStatus.UNSPECIFIED, null);
     vs.setCoverage(81);
     vs.setCoverageCorrection(15.368);
-
-    //chr10      115008  .       G       C       71      PASS    NS=1;DP=81;AF=0.654;RE=15.368   GT:GQ:RP:DP:RS  1/0:71:16.4:81:C,53,10.713,G,28,4.654
-    final VariantLocus locus = new VariantLocus("chr10", 115007, 115008, "G", 'N');
-    final Variant v = new Variant(locus, vs);
-    final String s = formatter.formatCall(v);
-
-    assertEquals("chr10\t115008\t.\tG\tC\t.\tPASS\t.\tGT:DP:RE:GQ\t1/0:81:15.368:164\n", s);
+    return new Variant(new VariantLocus("chr10", 115007, 115008, "G", 'N'), vs);
   }
 
-  public void test3() {
-    final VariantParams params = new VariantParamsBuilder().maxAmbiguity(0.5).create();
-    final VariantOutputVcfFormatter formatter = new VariantOutputVcfFormatter(params, "SAMPLE");
-
-    //chr10   2028433 e       A       C:G     11.0    39      4.118   A       3       0.301   C       19      1.900   G       17     1.917
+  protected Variant variant3() {
     final VariantSample vs = createSample(Ploidy.DIPLOID, "C:G", false, 11.0 * MathUtils.LOG_10, VariantSample.DeNovoStatus.UNSPECIFIED, null);
     vs.setCoverage(39);
     vs.setCoverageCorrection(4.118);
     vs.setStatisticsString("A\t3\t0.301\tC\t19\t1.900\tG\t17\t1.917");
-
-    //chr10      2028433 .       A       C,G     47      PASS    NS=1;DP=39;AF=0.487,0.436;RE=4.118      GT:GQ:RP:DP:RS  1/2:47:11.0:39:A,3,0.301,C,19,1.900,G,17,1.917
-    final VariantLocus locus = new VariantLocus("chr10", 2028432, 2028433, "A", 'N');
-    final Variant v = new Variant(locus, vs);
-    final String s = formatter.formatCall(v);
-
-    assertEquals("chr10\t2028433\t.\tA\tC,G\t.\tPASS\t.\tGT:DP:RE:GQ:RS\t1/2:39:4.118:110:A,3,0.301,C,19,1.900,G,17,1.917\n", s);
+    return new Variant(new VariantLocus("chr10", 2028432, 2028433, "A", 'N'), vs);
   }
 
-  public void test4() {
-    final VariantParams params = new VariantParamsBuilder().maxAmbiguity(0.5).create();
-    final VariantOutputVcfFormatter formatter = new VariantOutputVcfFormatter(params, "SAMPLE");
-
-    //chr10   2399391 o       T       i       9.8     35      2.602   T       26      2.601   i       9       0.000
-    //something like AT A 1/1
-
+  protected Variant variant4() {
     final VariantSample vs = createSample(Ploidy.DIPLOID, ":", false, 9.8 * MathUtils.LOG_10, VariantSample.DeNovoStatus.UNSPECIFIED, null);
     vs.setCoverage(35);
     vs.setCoverageCorrection(2.602);
-
-    final VariantLocus locus = new VariantLocus("chr10", 2399390, 2399391, "T", 'A');
-    final Variant v = new Variant(locus, vs);
-    final String s = formatter.formatCall(v);
-    assertEquals("chr10\t2399390\t.\tAT\tA\t.\tPASS\t.\tGT:DP:RE:GQ\t1/1:35:2.602:98\n", s);
+    return new Variant(new VariantLocus("chr10", 2399390, 2399391, "T", 'A'), vs);
   }
 
-  public void test5() {
-    final VariantParams params = new VariantParamsBuilder().maxAmbiguity(0.5).create();
-    final VariantOutputVcfFormatter formatter = new VariantOutputVcfFormatter(params, "SAMPLE");
-
-    //chr10   2402489 e       .t      i:GT    12.8    34      3.428   G       13      1.301   GT      2       0.200   GTT     1    0.100   T       18      1.827
-    // X XGT  0/1
+  protected Variant variant5() {
     final VariantSample vs = createSample(Ploidy.DIPLOID, ":GT", false, 12.8 * MathUtils.LOG_10, VariantSample.DeNovoStatus.UNSPECIFIED, null);
     vs.setCoverage(34);
     vs.setCoverageCorrection(3.428);
-
-    final VariantLocus locus = new VariantLocus("chr10", 2402489, 2402489, "", 'A');
-    final Variant v = new Variant(locus, vs);
+    final Variant v = new Variant(new VariantLocus("chr10", 2402489, 2402489, "", 'A'), vs);
     v.setNonIdentityPosterior(Double.POSITIVE_INFINITY);
-    final String s = formatter.formatCall(v);
-    assertEquals("chr10\t2402489\t.\tA\tAGT\t2147483647.0\tPASS\t.\tGT:DP:RE:GQ\t0/1:34:3.428:128\n", s);
+    return v;
+  }
+
+  protected Variant variant6() {
+    final VariantSample vs = createSample(Ploidy.DIPLOID, "T:T", false, 0.8 * MathUtils.LOG_10, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0);
+    vs.setCoverage(4);
+    vs.setCoverageCorrection(0.4);
+    final Variant v = new Variant(new VariantLocus("chr10", 82349, 82350, "C", 'N'), vs);
+    v.setNonIdentityPosterior(2.0);
+    return v;
   }
 
   public void testFormatCall() {

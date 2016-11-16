@@ -16,7 +16,6 @@ import static com.rtg.util.StringUtils.LS;
 import java.io.IOException;
 
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.filelinechecks.SimpleLineCheck;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantOutputLevel;
@@ -112,7 +111,7 @@ public class EvidenceMatcherTest extends TestCase {
 
     assertEquals(EXP1, bm.toString());
     final VariantParams params = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).create();
-    checkCall(template, bm, params, 0, new Object[] {"G1", "1", ".", "A", "C", "154.5", "PASS", ".", "GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL", "1:3:0.000:0.000:155:0.00:6.51:0.00:0.000,179.969:0.00:C,3,0.000:0,3:-15.45,0.00"});
+    checkCall(template, bm, params, 0, "G1\t1\t.\tA\tC\t154.5\tPASS\tDP=3\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL\t1:3:0.000:0.000:155:0.00:6.51:0.00:0.000,179.969:0.00:C,3,0.000:0,3:-15.45,0.00");
 
     try {
       //do again at the same position
@@ -122,8 +121,8 @@ public class EvidenceMatcherTest extends TestCase {
       assertEquals("ref=0 != base=1", e.getMessage());
     }
     assertNull(makeCall(bm, 1, template, params));
-    checkCall(template, bm, params, 2, new Object[] {"G1", "3", ".", "G", "C", "25.5", "PASS", ".", "GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL", "1:1:0.000:0.000:26:0.00:2.17:0.00:0.000,59.990:0.00:C,1,0.000:0,1:-2.55,0.00"});
-    checkCall(template, bm, params, 3, new Object[] {"G1", "4", ".", "T", "C", "30.1", "PASS", ".", "GT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL", "1:1:0.000:0.000:30:0.00:2.17:0.00:0.000,59.990:0.00:C,1,0.000:0,1:-3.01,0.00"});
+    checkCall(template, bm, params, 2, "G1\t3\t.\tG\tC\t25.5\tPASS\tDP=1\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL\t1:1:0.000:0.000:26:0.00:2.17:0.00:0.000,59.990:0.00:C,1,0.000:0,1:-2.55,0.00");
+    checkCall(template, bm, params, 3, "G1\t4\t.\tT\tC\t30.1\tPASS\tDP=1\tGT:DP:RE:AR:GQ:ABP:SBP:RPB:AQ:PUR:RS:AD:GL\t1:1:0.000:0.000:30:0.00:2.17:0.00:0.000,59.990:0.00:C,1,0.000:0,1:-3.01,0.00");
   }
 
   private Variant makeCall(EvidenceMatcher<ModelInterface<Description>> bm, int position, byte[] template, VariantParams params) {
@@ -136,11 +135,11 @@ public class EvidenceMatcherTest extends TestCase {
     return (call != null && call.isInteresting()) ? call : null;
   }
 
-  private void checkCall(byte[] template, EvidenceMatcher<ModelInterface<Description>> bm, VariantParams params, int position, Object[] checks) {
+  private void checkCall(byte[] template, EvidenceMatcher<ModelInterface<Description>> bm, VariantParams params, int position, String checks) {
     final Variant call = makeCall(bm, position, template, params);
     assertNotNull(call);
     final String bostr = FORMATTER.formatCall(call);
     //System.err.println(bostr);
-    SimpleLineCheck.TAB_CHECK.lineCheck(bostr.trim(), checks);
+    assertEquals(checks, bostr.trim());
   }
 }

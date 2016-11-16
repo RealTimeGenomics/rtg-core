@@ -10,6 +10,7 @@
 ##FILTER=<ID=RCEQUIV,Description="RTG variant is equivalent to the previous variant">
 ##FILTER=<ID=BED,Description="Variant falls outside the specified target regions">
 ##FILTER=<ID=OTHER,Description="Variant is invalid for unknown reasons">
+##INFO=<ID=DP,Number=1,Type=Integer,Description="Combined read depth for variant over all samples">
 ##INFO=<ID=DPR,Number=1,Type=Float,Description="Ratio of combined read depth for variant to expected combined read depth">
 ##INFO=<ID=XRX,Number=0,Type=Flag,Description="RTG variant was called using complex caller">
 ##INFO=<ID=RCE,Number=0,Type=Flag,Description="RTG variant is equivalent to the previous variant">
