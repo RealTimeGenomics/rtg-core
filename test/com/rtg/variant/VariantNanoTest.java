@@ -287,12 +287,12 @@ public class VariantNanoTest extends AbstractNanoTest {
         final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
         final String actualFixed = TestUtils.sanitizeVcfHeader(result);
         //System.err.println(actual);
-        //final String expectedFinal = FileHelper.resourceToString("com/rtg/variant/resources/variancetasktest" + expNum + ".vcf").replaceAll("\r", "");
+        //final String expectedFinal = FileHelper.resourceToString("com/rtg/variant/resources/variantnanotest" + expNum + ".vcf").replaceAll("\r", "");
         //final String actualFinal = actualFixed.replaceAll("\r", "");
         //System.out.println("Expected: \n" + expectedFinal);
         //System.out.println("Actual: \n" + actual);
         //assertEquals(expectedFinal, actualFinal);
-        mNano.check("variancetasktest" + expNum + ".vcf", actualFixed, false);
+        mNano.check("variantnanotest" + expNum + ".vcf", actualFixed, false);
       }
     }
   }
@@ -333,7 +333,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       if (errorMsg.equals("")) {
         final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
         final String actualFixed = TestUtils.sanitizeVcfHeader(result);
-        mNano.check("variancetasktest" + expNum + ".vcf", actualFixed, false);
+        mNano.check("variantnanotest" + expNum + ".vcf", actualFixed, false);
       }
     }
   }
@@ -362,7 +362,7 @@ public class VariantNanoTest extends AbstractNanoTest {
         //System.err.println(actual);
         assertTrue(actual.startsWith("##fileformat="));
         final String actualFixed = TestUtils.sanitizeVcfHeader(actual);
-        mNano.check("variancetasktest" + expNum + ".vcf", actualFixed, false);
+        mNano.check("variantnanotest" + expNum + ".vcf", actualFixed, false);
       } finally {
         FileHelper.deleteAll(templ);
       }
@@ -1139,12 +1139,12 @@ public class VariantNanoTest extends AbstractNanoTest {
   }
 
   public void testAllSequenceRestriction() throws Exception {
-    checkReaderRestriction("g2", "variancetask_tabix2.vcf");
+    checkReaderRestriction("g2", "variantnano_tabix2.vcf");
   }
 
   //region handling
   public void testAllReaderRestriction() throws Exception {
-    checkReaderRestriction("g1:9-18", "variancetask_tabix.vcf");
+    checkReaderRestriction("g1:9-18", "variantnano_tabix.vcf");
   }
 
   public void checkReaderRestriction(String restriction, String results) throws Exception {
@@ -1299,7 +1299,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       assertEquals(r.err(), 0, r.rc());
 
       final String result = StringUtils.grep(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")), "^[^#]").trim();
-      mNano.check("variancetaskidentityinsert.vcf", result, false);
+      mNano.check("variantnanotest-identityinsert.vcf", result, false);
       //assertTrue(result, result.isEmpty());
     }
   }
@@ -1333,7 +1333,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       assertEquals(r.err(), 0, r.rc());
 
       final String result = StringUtils.grep(FileHelper.gzFileToString(new File(output, "snps.vcf.gz")), "^[^#]").trim();
-      mNano.check("variancetasktest-complexambsuppression", result, false);
+      mNano.check("variantnanotest-complexambsuppression.vcf", result, false);
     }
   }
 
