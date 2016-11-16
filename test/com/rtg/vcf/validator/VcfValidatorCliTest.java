@@ -108,9 +108,8 @@ public class VcfValidatorCliTest extends AbstractCliTest {
         final VcfRecord vcfRecord = new VcfRecord("foo", 3, "A");
         vcfRecord.setNumberOfSamples(1);
         for (FormatField formatField : header.getFormatLines()) {
-          final VcfFormatField vcfFormatField = VcfFormatField.valueOf(formatField.getId());
           final String val = getTypeValue(formatField.getType());
-          vcfRecord.addFormatAndSample(vcfFormatField.name(), val);
+          vcfRecord.addFormatAndSample(formatField.getId(), val);
         }
         writer.write(vcfRecord);
         writer.close();
@@ -144,9 +143,8 @@ public class VcfValidatorCliTest extends AbstractCliTest {
         final VcfRecord vcfRecord = new VcfRecord("foo", 3, "A");
         vcfRecord.setNumberOfSamples(0);
         for (InfoField infoField : header.getInfoLines()) {
-          final VcfInfoField vcfInfoField = VcfInfoField.valueOf(infoField.getId());
           final String val = getTypeValue(infoField.getType());
-          vcfRecord.addInfo(vcfInfoField.name(), val);
+          vcfRecord.addInfo(infoField.getId(), val);
         }
         writer.write(vcfRecord);
         writer.close();

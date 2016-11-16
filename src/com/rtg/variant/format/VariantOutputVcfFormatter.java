@@ -93,8 +93,7 @@ public class VariantOutputVcfFormatter {
     mInfoFields.add(VcfInfoField.XRX);
     mInfoFields.add(VcfInfoField.RCE);
     mInfoFields.add(VcfInfoField.CT);
-    mInfoFields.add(VcfInfoField.DPR);
-    mInfoFields.add(VcfInfoField.DP);
+    mInfoFields.add(VcfInfoField.DP_DPR);
     mInfoFields.add(VcfInfoField.NREF);
     if (mParams != null) {
       mInfoFields.addAll(mParams.infoAnnotations());

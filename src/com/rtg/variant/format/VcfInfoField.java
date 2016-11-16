@@ -100,35 +100,36 @@ public enum VcfInfoField {
       }
     }
   },
-  /** Combined Depth */
-  DP {
+  /** Both <code>DP</code> and <code>DPR</code> */
+  DP_DPR {
     @Override
     public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.INTEGER, VcfNumber.ONE, "Combined read depth for variant over all samples");
+      header.addInfoField("DP", MetaType.INTEGER, VcfNumber.ONE, "Combined read depth for variant over all samples");
+      header.addInfoField("DPR", MetaType.FLOAT, VcfNumber.ONE, "Ratio of combined read depth for variant to expected combined read depth");
     }
     @Override
     public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
       final Pair<Integer, Boolean> cov = getCoverage(call);
       if (cov.getB()) {
-        rec.addInfo(name(), Integer.toString(cov.getA()));
-      }
-    }
-  },
-  /** Deviation from expected combined coverage */
-  DPR {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      header.addInfoField(name(), MetaType.FLOAT, VcfNumber.ONE, "Ratio of combined read depth for variant to expected combined read depth");
-    }
-    @Override
-    public void updateRecord(VcfRecord rec, Variant call, VariantParams params, boolean includePrevNt) {
-      final Pair<Integer, Boolean> cov = getCoverage(call);
-      if (cov.getB() && params != null && params.expectedCoverage() != null) {
-        final double expected = params.expectedCoverage().expectedTotalCoverage(call.getLocus().getSequenceName());
-        if (expected > 0) {
-          rec.addInfo(name(), Utils.realFormat(cov.getA() / expected, 3));
+        rec.addInfo("DP", Integer.toString(cov.getA()));
+        if (params != null && params.expectedCoverage() != null) {
+          final double expected = params.expectedCoverage().expectedTotalCoverage(call.getLocus().getSequenceName());
+          if (expected > 0) {
+            rec.addInfo("DPR", Utils.realFormat(cov.getA() / expected, 3));
+          }
         }
       }
+    }
+    private Pair<Integer, Boolean> getCoverage(Variant call) {
+      int coverage = 0;
+      boolean hasCoverage = false;
+      for (int i = 0; i < call.getNumberOfSamples(); i++) {
+        if (call.getSample(i) != null && call.getSample(i).getCoverage() != null) {
+          coverage += call.getSample(i).getCoverage();
+          hasCoverage = true;
+        }
+      }
+      return new Pair<>(coverage, hasCoverage);
     }
   },
   /** Complex Called */
@@ -379,20 +380,4 @@ public enum VcfInfoField {
     return call.getPossibleCause();
   }
 
-  /**
-   * Get the coverage information from the variant.
-   * @param call the variant call to get the coverage information from.
-   * @return a pair object with the A part holding the coverage and the B part holding if there were coverage values.
-   */
-  protected static Pair<Integer, Boolean> getCoverage(Variant call) {
-    int coverage = 0;
-    boolean hasCoverage = false;
-    for (int i = 0; i < call.getNumberOfSamples(); i++) {
-      if (call.getSample(i) != null && call.getSample(i).getCoverage() != null) {
-        coverage += call.getSample(i).getCoverage();
-        hasCoverage = true;
-      }
-    }
-    return new Pair<>(coverage, hasCoverage);
-  }
 }

@@ -58,7 +58,7 @@ public class VcfInfoFieldTest extends TestCase {
   }
 
   public void testEnum() {
-    TestUtils.testEnum(VcfInfoField.class, "[LOH, NCS, DISEASE, RDS, DPS, DP, DPR, XRX, RCE, CT, RTRM, RSPLT, NREF, IC, EP, LAL, QD, NAA, AC, AN, SGP]");
+    TestUtils.testEnum(VcfInfoField.class, "[LOH, NCS, DISEASE, RDS, DPS, DP_DPR, XRX, RCE, CT, RTRM, RSPLT, NREF, IC, EP, LAL, QD, NAA, AC, AN, SGP]");
     for (VcfInfoField field : EnumSet.range(LOH, VcfInfoField.RSPLT)) {
       assertFalse(field.isVcfAnnotator());
     }
@@ -138,7 +138,7 @@ public class VcfInfoFieldTest extends TestCase {
 
   public void testNoCoverage() {
     final VcfRecord record = new VcfRecord("ref", 2, "A");
-    VcfInfoField.DP.updateRecord(record, new Variant(new VariantLocus("ref", 2, 3, "A", 'G')), VariantParams.builder().create(), false);
+    VcfInfoField.DP_DPR.updateRecord(record, new Variant(new VariantLocus("ref", 2, 3, "A", 'G')), VariantParams.builder().create(), false);
     assertEquals("ref\t3\t.\tA\t.\t.\t.\t.", record.toString());
   }
 
