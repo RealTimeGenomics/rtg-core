@@ -35,6 +35,7 @@ import com.rtg.variant.util.VariantUtils;
 import com.rtg.vcf.VcfAnnotator;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
+import com.rtg.vcf.annotation.ContraryObservationAnnotator;
 import com.rtg.vcf.annotation.DerivedAnnotations;
 import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
@@ -637,40 +638,35 @@ public enum VcfFormatField {
       return true;
     }
   },
-  /** Contrary observation count */
-  COC {
+  /** Contrary observation count and fraction */
+  COC_COF {
     @Override
     public void updateHeader(VcfHeader header) {
-      COC_ANNOTATOR.updateHeader(header);
+      COC_COF_ANNOTATOR.updateHeader(header);
     }
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      COC_ANNOTATOR.annotate(rec);
+      COC_COF_ANNOTATOR.annotate(rec);
     }
-
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      return hasValueCofCoc(rec);
-    }
-    @Override
-    public boolean isVcfAnnotator() {
-      return true;
-    }
-  },
-  /** Contrary observation fraction */
-  COF {
-    @Override
-    public void updateHeader(VcfHeader header) {
-      COF_ANNOTATOR.updateHeader(header);
-    }
-    @Override
-    protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      COF_ANNOTATOR.annotate(rec);
-    }
-
-    @Override
-    public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
-      return hasValueCofCoc(rec);
+      List<?> fld = rec.getFormat(AD.name());
+      if (fld == null) {
+        return false;
+      }
+      fld = rec.getFormat(GT.name());
+      if (fld == null) {
+        return false;
+      }
+      fld = rec.getFormat(SS.name());
+      if (fld != null) {
+        return true;
+      }
+      fld = rec.getFormat(DN.name());
+      if (fld != null) {
+        return true;
+      }
+      return false;
     }
     @Override
     public boolean isVcfAnnotator() {
@@ -736,31 +732,11 @@ public enum VcfFormatField {
   private static final VcfAnnotator GQD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.GQD);
   private static final VcfAnnotator ZY_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.ZY);
   private static final VcfAnnotator PD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.PD);
-  private static final VcfAnnotator COC_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.COC);
-  private static final VcfAnnotator COF_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.COF);
+  private static final VcfAnnotator COC_COF_ANNOTATOR = new ContraryObservationAnnotator();
   private static final VcfAnnotator VAF_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.VAF);
   private static final VcfAnnotator MEANQAD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.MEANQAD);
   private static final VcfAnnotator QA_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.QA);
 
-  private static boolean hasValueCofCoc(final VcfRecord rec) {
-    List<?> fld = rec.getFormat(AD.name());
-    if (fld == null) {
-      return false;
-    }
-    fld = rec.getFormat(GT.name());
-    if (fld == null) {
-      return false;
-    }
-    fld = rec.getFormat(SS.name());
-    if (fld != null) {
-      return true;
-    }
-    fld = rec.getFormat(DN.name());
-    if (fld != null) {
-      return true;
-    }
-    return false;
-  }
 
   /**
    * Update the VCF header with the field description.

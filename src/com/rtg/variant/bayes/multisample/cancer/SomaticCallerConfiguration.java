@@ -156,7 +156,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
   public VariantOutputVcfFormatter getOutputFormatter(final VariantParams params) {
     final VariantOutputVcfFormatter f = new VariantOutputVcfFormatter(params, getGenomeNames());
     f.addExtraInfoFields(EnumSet.of(VcfInfoField.LOH, VcfInfoField.NCS));
-    f.addExtraFormatFields(EnumSet.of(VcfFormatField.SSC, VcfFormatField.SS, VcfFormatField.COC, VcfFormatField.COF, VcfFormatField.VAF));
+    f.addExtraFormatFields(EnumSet.of(VcfFormatField.SSC, VcfFormatField.SS, VcfFormatField.COC_COF, VcfFormatField.VAF));
     return f;
   }
 
