@@ -25,7 +25,6 @@ import com.rtg.variant.bayes.multisample.cancer.SomaticRecordUtils;
 import com.rtg.variant.util.VariantUtils;
 import com.rtg.vcf.VcfAnnotator;
 import com.rtg.vcf.VcfRecord;
-import com.rtg.vcf.VcfUtils;
 import com.rtg.vcf.annotation.DerivedAnnotations;
 import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
@@ -333,13 +332,14 @@ public enum VcfInfoField {
   };
 
   private static final CoverageThreshold DUMMY_COVERAGE_THRESHOLD = new StaticThreshold(0);
-  private static final VcfAnnotator IC_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.IC);
-  private static final VcfAnnotator EP_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.EP);
-  private static final VcfAnnotator LAL_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.LAL);
-  private static final VcfAnnotator QD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.QD);
-  private static final VcfAnnotator NAA_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.NAA);
-  private static final VcfAnnotator AC_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.AC);
-  private static final VcfAnnotator AN_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.AN);
+
+  private static final VcfAnnotator IC_ANNOTATOR = DerivedAnnotations.IC.getAnnotation();
+  private static final VcfAnnotator EP_ANNOTATOR = DerivedAnnotations.EP.getAnnotation();
+  private static final VcfAnnotator LAL_ANNOTATOR = DerivedAnnotations.LAL.getAnnotation();
+  private static final VcfAnnotator QD_ANNOTATOR = DerivedAnnotations.QD.getAnnotation();
+  private static final VcfAnnotator NAA_ANNOTATOR = DerivedAnnotations.NAA.getAnnotation();
+  private static final VcfAnnotator AC_ANNOTATOR = DerivedAnnotations.AC.getAnnotation();
+  private static final VcfAnnotator AN_ANNOTATOR = DerivedAnnotations.AN.getAnnotation();
 
   /**
    * Update the VCF header with the field description.

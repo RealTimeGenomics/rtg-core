@@ -13,7 +13,7 @@
 package com.rtg.variant.avr;
 
 import com.rtg.vcf.VcfRecord;
-import com.rtg.vcf.annotation.AbstractDerivedAnnotation;
+import com.rtg.vcf.annotation.AbstractDerivedInfoAnnotation;
 import com.rtg.vcf.header.InfoField;
 import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
@@ -31,9 +31,9 @@ public class DerivedAnnotationTest extends TestCase {
     assertEquals(AnnotationDataType.DOUBLE, ann.getType());
   }
 
-  private static final class DummyVcfAnnotation extends AbstractDerivedAnnotation<InfoField> {
+  private static final class DummyVcfAnnotation extends AbstractDerivedInfoAnnotation {
     DummyVcfAnnotation() {
-      super(new InfoField("DUMMY", MetaType.FLAG, VcfNumber.ONE, "DUMMY-DESC"));
+      super(new InfoField("DUMMY", MetaType.FLAG, VcfNumber.ONE, "DUMMY-DESC"), null);
     }
     @Override
     public Object getValue(VcfRecord record, int sampleNumber) {

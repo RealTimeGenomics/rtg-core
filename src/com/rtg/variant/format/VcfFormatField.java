@@ -729,13 +729,13 @@ public enum VcfFormatField {
   }
   ;
 
-  private static final VcfAnnotator GQD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.GQD);
-  private static final VcfAnnotator ZY_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.ZY);
-  private static final VcfAnnotator PD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.PD);
+  private static final VcfAnnotator GQD_ANNOTATOR = DerivedAnnotations.GQD.getAnnotation();
+  private static final VcfAnnotator ZY_ANNOTATOR = DerivedAnnotations.ZY.getAnnotation();
+  private static final VcfAnnotator PD_ANNOTATOR = DerivedAnnotations.PD.getAnnotation();
+  private static final VcfAnnotator VAF_ANNOTATOR = DerivedAnnotations.VAF.getAnnotation();
+  private static final VcfAnnotator MEANQAD_ANNOTATOR = DerivedAnnotations.MEANQAD.getAnnotation();
+  private static final VcfAnnotator QA_ANNOTATOR = DerivedAnnotations.QA.getAnnotation();
   private static final VcfAnnotator COC_COF_ANNOTATOR = new ContraryObservationAnnotator();
-  private static final VcfAnnotator VAF_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.VAF);
-  private static final VcfAnnotator MEANQAD_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.MEANQAD);
-  private static final VcfAnnotator QA_ANNOTATOR = VcfUtils.getAnnotator(DerivedAnnotations.QA);
 
 
   /**
