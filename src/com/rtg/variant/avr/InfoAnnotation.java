@@ -17,15 +17,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.rtg.vcf.VcfRecord;
-import com.rtg.vcf.annotation.AnnotationDataType;
 import com.rtg.vcf.header.InfoField;
 import com.rtg.vcf.header.VcfHeader;
 import com.rtg.vcf.header.VcfNumber;
 
 /**
- * Annotations for INFO fields in VCF files.
+ * An annotation extracted from an existing INFO field in a VCF file.
  */
 public class InfoAnnotation implements Annotation {
+
   private final String mFieldName;
   private final AnnotationDataType mType;
 

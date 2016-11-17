@@ -15,8 +15,6 @@ package com.rtg.variant.avr;
 import java.io.DataInputStream;
 import java.io.IOException;
 
-import com.rtg.vcf.annotation.AnnotationDataType;
-
 /**
  * Loads and saves {@link Annotation}s.
  */

@@ -27,7 +27,6 @@ import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.avr.AttributeExtractor.IncompatibleHeaderException;
 import com.rtg.vcf.VcfReader;
-import com.rtg.vcf.annotation.AnnotationDataType;
 import com.rtg.vcf.header.MetaType;
 
 import junit.framework.TestCase;

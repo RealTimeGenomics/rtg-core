@@ -16,10 +16,10 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import com.rtg.vcf.VcfRecord;
-import com.rtg.vcf.annotation.AnnotationDataType;
 import com.rtg.vcf.header.VcfHeader;
 
 /**
+ * Extracts the QUAL field from a VCF record as an annotation
  */
 public class QualAnnotation implements Annotation {
 

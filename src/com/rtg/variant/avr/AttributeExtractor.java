@@ -38,7 +38,6 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.LineWriter;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfRecord;
-import com.rtg.vcf.annotation.AnnotationDataType;
 import com.rtg.vcf.annotation.DerivedAnnotations;
 import com.rtg.vcf.header.FormatField;
 import com.rtg.vcf.header.InfoField;

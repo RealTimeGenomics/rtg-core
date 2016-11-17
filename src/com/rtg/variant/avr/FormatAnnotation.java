@@ -17,14 +17,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import com.rtg.vcf.VcfRecord;
-import com.rtg.vcf.annotation.AnnotationDataType;
 import com.rtg.vcf.header.FormatField;
 import com.rtg.vcf.header.VcfHeader;
 import com.rtg.vcf.header.VcfNumber;
 
 /**
- * Annotations for FORMAT fields in VCF files.
- *
+ * An annotation extracted from an existing FORMAT field in a VCF file.
  */
 public class FormatAnnotation implements Annotation {
   private final String mFieldName;

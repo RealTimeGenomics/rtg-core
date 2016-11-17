@@ -13,7 +13,6 @@
 package com.rtg.variant.avr;
 
 import com.rtg.vcf.VcfRecord;
-import com.rtg.vcf.annotation.AnnotationDataType;
 
 import junit.framework.TestCase;
 

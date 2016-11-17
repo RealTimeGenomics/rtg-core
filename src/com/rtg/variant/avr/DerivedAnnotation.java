@@ -17,22 +17,24 @@ import java.io.IOException;
 
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.annotation.AbstractDerivedAnnotation;
-import com.rtg.vcf.annotation.AnnotationDataType;
 import com.rtg.vcf.annotation.DerivedAnnotations;
+import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
 
 /**
- * Abstract class to use when implementing a derived annotation.
+ * Derived annotations compute a value on the fly based on other existing fields in the record.
  */
 public class DerivedAnnotation implements Annotation {
 
-  private final AbstractDerivedAnnotation mAnnotation;
+  private final AbstractDerivedAnnotation<?> mAnnotation;
+  private final AnnotationDataType mType;
 
   /**
    * @param annotation the derived annotation
    */
-  public DerivedAnnotation(AbstractDerivedAnnotation annotation) {
+  DerivedAnnotation(AbstractDerivedAnnotation<?> annotation) {
     mAnnotation = annotation;
+    mType = getCompatibleType(annotation.getField().getType());
   }
 
   /**
@@ -42,6 +44,22 @@ public class DerivedAnnotation implements Annotation {
     this(DerivedAnnotations.valueOf(annotationName).getAnnotation());
   }
 
+  protected static AnnotationDataType getCompatibleType(MetaType mt) {
+    switch (mt) {
+      case INTEGER:
+        return AnnotationDataType.INTEGER;
+      case FLOAT:
+        return AnnotationDataType.DOUBLE;
+      case STRING:
+      case CHARACTER:
+        return AnnotationDataType.STRING;
+      case FLAG:
+        return AnnotationDataType.BOOLEAN;
+      default:
+        return null;
+    }
+  }
+
   @Override
   public String getName() {
     return "DERIVED-" + mAnnotation.getName();
@@ -49,7 +67,7 @@ public class DerivedAnnotation implements Annotation {
 
   @Override
   public AnnotationDataType getType() {
-    return mAnnotation.getType();
+    return mType;
   }
 
   @Override

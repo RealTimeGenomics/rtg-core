@@ -15,12 +15,41 @@ package com.rtg.variant.avr;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import com.rtg.vcf.annotation.VcfAnnotation;
+import com.rtg.vcf.VcfRecord;
+import com.rtg.vcf.header.VcfHeader;
 
 /**
  * VCF annotation specification and extraction interface.
  */
-public interface Annotation extends VcfAnnotation {
+public interface Annotation {
+
+   /**
+   * Gets the name of the annotation.
+   * @return name of annotation
+   */
+  String getName();
+
+  /**
+   * Returns the type of the annotation.
+   * @return annotation type.
+   */
+  AnnotationDataType getType();
+
+  /**
+   * Returns the value for an annotation from a given {@link VcfRecord}.
+   * For sample specific annotations, the value in the first sample is returned.
+   * @param record record to extract value from.
+   * @param sampleNumber the number of the sample to extract the value from.
+   * @return value for this annotation from the given record, or null if no value could be calculated.
+   */
+  Object getValue(VcfRecord record, int sampleNumber);
+
+  /**
+   * Ensures any required annotations are declared in the given header.
+   * @param header a VCF header
+   * @return null if all good, other wise an error message.
+   */
+  String checkHeader(VcfHeader header);
 
   /**
    * Save the annotation to given data output stream.

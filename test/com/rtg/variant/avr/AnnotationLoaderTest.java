@@ -19,7 +19,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import com.rtg.util.TestUtils;
-import com.rtg.vcf.annotation.AnnotationDataType;
 import com.rtg.vcf.annotation.DerivedAnnotations;
 
 import junit.framework.TestCase;
