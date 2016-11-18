@@ -11,7 +11,7 @@
  */
 package com.rtg.metagenomics;
 
-import com.rtg.metagenomics.matrix.VectorSimple;
+import com.rtg.metagenomics.matrix.Vector;
 
 /**
  */
@@ -21,7 +21,7 @@ public class SpeciesResult extends BlockResult {
    * @param size the number of species
    */
   public SpeciesResult(int size) {
-    super(new VectorSimple(size), new VectorSimple(size), new VectorSimple(size));
+    super(new Vector(size), new Vector(size), new Vector(size));
   }
 
 }

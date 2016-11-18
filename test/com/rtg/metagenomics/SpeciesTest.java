@@ -25,7 +25,6 @@ import com.rtg.metagenomics.SpeciesParams.SpeciesParamsBuilder;
 import com.rtg.metagenomics.matrix.Matrix;
 import com.rtg.metagenomics.matrix.MatrixSimple;
 import com.rtg.metagenomics.matrix.Vector;
-import com.rtg.metagenomics.matrix.VectorSimple;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
@@ -190,11 +189,11 @@ public class SpeciesTest extends TestCase {
       //System.err.println(hessian);
       //Extract eigenvectors and eigenvalues.
       final EigenvalueDecomposition ed = hessian.toJama().eig();
-      final Vector r = new VectorSimple(3);
+      final Vector r = new Vector(3);
       r.set(0, 1.0);
       r.set(1, 1.0);
       r.set(2, 1.0);
-      final Vector stdDev = Species.variance(Species.makeFlatMembership(hessian.dimension()), blockInfo, r, ed);
+      final Vector stdDev = Species.variance(Species.makeFlatMembership(hessian.size()), blockInfo, r, ed);
       assertEquals(0.4365, Math.sqrt(stdDev.get(0)), 1e-4);
       assertEquals(0.1111, Math.sqrt(stdDev.get(1)), 1e-4);
     } finally {
@@ -283,14 +282,14 @@ public class SpeciesTest extends TestCase {
   }
 
   private void checkStdDev(final Matrix hessian, final double... stdDev) {
-    final int n = hessian.dimension();
+    final int n = hessian.size();
     //System.err.println("Hessian:");
     //System.err.println(hessian);
     //Extract eigenvectors and eigenvalues.
     final EigenvalueDecomposition ed = hessian.toJama().eig();
     final SpeciesMap sm = new SpeciesMap();
     final long[] genomeLengths = new long[n];
-    final Vector r = new VectorSimple(n);
+    final Vector r = new Vector(n);
     for (int i = 0; i < n; i++) {
       sm.id(i);
       genomeLengths[i] = 5;

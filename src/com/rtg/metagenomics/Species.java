@@ -18,7 +18,6 @@ import com.rtg.metagenomics.matrix.Matrix;
 import com.rtg.metagenomics.matrix.MatrixSymmetric;
 import com.rtg.metagenomics.matrix.MatrixUtils;
 import com.rtg.metagenomics.matrix.Vector;
-import com.rtg.metagenomics.matrix.VectorSimple;
 import com.rtg.util.Pair;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -79,11 +78,11 @@ public class Species extends IntegralAbstract {
    */
   public SubBlockResult solve(final int minIter) {
     final int numSpecies = mBlockInfo.getN();
-    final Vector m = new VectorSimple(numSpecies);
+    final Vector m = new Vector(numSpecies);
     for (final Frag frag : mBlockInfo.getFrags()) {
       frag.init(m);
     }
-    final Vector initialR = new VectorSimple(numSpecies);
+    final Vector initialR = new Vector(numSpecies);
     //initialize r
     for (int i = 0; i < numSpecies; i++) {
       final long l = mBlockInfo.getGenomeLength(i);
@@ -102,9 +101,9 @@ public class Species extends IntegralAbstract {
     final long startTime = System.currentTimeMillis();
     final EigenvalueDecomposition ed = hessian.toJama().eig();
     final long endTime = System.currentTimeMillis();
-    Diagnostic.developerLog("B:" + mBlockInfo.id() + " EigenValue Decomp took: " + ((endTime - startTime) / 1000) + "s" + " Hessian dimensions: " + hessian.dimension());
+    Diagnostic.developerLog("B:" + mBlockInfo.id() + " EigenValue Decomp took: " + ((endTime - startTime) / 1000) + "s" + " Hessian dimensions: " + hessian.size());
     final int totalGenomes =  mBlockInfo.getGlobalSpeciesMap() == null ? mBlockInfo.getSpeciesMap().size() : mBlockInfo.getGlobalSpeciesMap().size();
-    return new SubBlockResult(mLastR, variance(mMembersOf, mBlockInfo, mLastR, ed), new VectorSimple(totalGenomes), mLastL);
+    return new SubBlockResult(mLastR, variance(mMembersOf, mBlockInfo, mLastR, ed), new Vector(totalGenomes), mLastL);
 
   }
 
@@ -131,7 +130,7 @@ public class Species extends IntegralAbstract {
    * @return the final L value
    */
   public double solveFixed(Vector previousR, int[] fixedIds, final int minIter, final double targetL) {
-    final Vector initialR = new VectorSimple(previousR);
+    final Vector initialR = new Vector(previousR);
     //initialize r
     for (final int i : fixedIds) {
       final long l = mBlockInfo.getGenomeLength(i);
@@ -282,7 +281,7 @@ public class Species extends IntegralAbstract {
     //System.err.println("Eigen values:");
     //System.err.println(IntegralAbstract.toString(realEigenvalues));
 
-    final Vector v = new VectorSimple(totalGenomes);
+    final Vector v = new Vector(totalGenomes);
     for (int j = 0; j < totalGenomes; j++) { // This guy should iterate over all members of the taxonomy (i.e. including clades), using global ids
       double sum = 0.0;
       for (int i = 0; i < blockSize; i++) {
@@ -370,7 +369,7 @@ public class Species extends IntegralAbstract {
    * @return the Jacobian in frequency space.
    */
   static Pair<Vector, Double> jacobianR(BlockInfo blockInfo, final Vector r, final int[] fixedIds) {
-    final Vector jacobian = new VectorSimple(blockInfo.getN());
+    final Vector jacobian = new Vector(blockInfo.getN());
     double ll = 0.0;
     for (int i = 0; i < blockInfo.getN(); i++) {
       final long length = blockInfo.getGenomeLength(i);
@@ -430,7 +429,7 @@ public class Species extends IntegralAbstract {
    */
   Matrix hessian(final Vector r) {
     final Matrix hessian = new MatrixSymmetric(mBlockInfo.getN());
-    final Vector jacobian = new VectorSimple(mBlockInfo.getN());
+    final Vector jacobian = new Vector(mBlockInfo.getN());
     for (int i = 0; i < mBlockInfo.getN(); i++) {
       final long length = mBlockInfo.getGenomeLength(i);
       final double lr = length * r.get(i);
@@ -472,7 +471,7 @@ public class Species extends IntegralAbstract {
   }
 
   static Vector incrS(BlockInfo blockInfo, final Vector r, final Vector delta, final double d) {
-    final Vector soln = new VectorSimple(blockInfo.getN());
+    final Vector soln = new Vector(blockInfo.getN());
     for (int i = 0; i < blockInfo.getN(); i++) {
       final double e = Math.exp(delta.get(i) * d);
       final double rv = r.get(i);

@@ -13,7 +13,6 @@
 package com.rtg.metagenomics;
 
 import com.rtg.metagenomics.matrix.Vector;
-import com.rtg.metagenomics.matrix.VectorSimple;
 
 import junit.framework.TestCase;
 
@@ -31,8 +30,8 @@ public class LLineTest extends TestCase {
     final Frag[] frags = {f0, f1, f2, f02, f12};
     final long[] lengths = {10, 15, 20};
     final BlockInfo bi = new BlockInfo(42, null , frags, null, lengths, false);
-    final Vector r = new VectorSimple(new double[] {0.1, 0.2, 0.3});
-    final Vector d = new VectorSimple(new double[] {-0.1, +0.1, -0.2});
+    final Vector r = new Vector(new double[] {0.1, 0.2, 0.3});
+    final Vector d = new Vector(new double[] {-0.1, +0.1, -0.2});
 
     final Line spl = new LLine(r, d, bi);
     assertEquals(1, spl.derivativeOrder());

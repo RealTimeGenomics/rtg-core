@@ -194,7 +194,7 @@ public class BlockMapping extends IntegralAbstract {
     // Variance log is summed, in global id space
     final Vector subStd = subResults.getVarianceLog();
     final Vector subLikelihoods = subResults.getLikelihoods();
-    for (int i = 0; i < dest.getVarianceLog().dimension(); i++) {
+    for (int i = 0; i < dest.getVarianceLog().size(); i++) {
       dest.setVariance(i, dest.getVarianceLog().get(i) + subStd.get(i));
       dest.setLikelihood(i, dest.getLikelihoods().get(i) + subLikelihoods.get(i));
     }

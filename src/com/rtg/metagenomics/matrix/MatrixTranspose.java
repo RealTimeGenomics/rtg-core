@@ -11,8 +11,6 @@
  */
 package com.rtg.metagenomics.matrix;
 
-import com.rtg.util.integrity.Exam;
-
 /**
  */
 public class MatrixTranspose extends Matrix {
@@ -42,14 +40,8 @@ public class MatrixTranspose extends Matrix {
   }
 
   @Override
-  public int dimension() {
-    return mMatrix.dimension();
-  }
-
-  @Override
-  public boolean integrity() {
-    Exam.assertNotNull(mMatrix);
-    return true;
+  public int size() {
+    return mMatrix.size();
   }
 
   @Override
@@ -59,9 +51,9 @@ public class MatrixTranspose extends Matrix {
 
   @Override
   public Jama.Matrix toJama() {
-    final Jama.Matrix m = new Jama.Matrix(mMatrix.dimension(), mMatrix.dimension());
-    for (int i = 0; i < dimension(); i++) {
-      for (int j = 0; j < dimension(); j++) {
+    final Jama.Matrix m = new Jama.Matrix(mMatrix.size(), mMatrix.size());
+    for (int i = 0; i < size(); i++) {
+      for (int j = 0; j < size(); j++) {
         m.set(i, j, get(i, j));
       }
     }

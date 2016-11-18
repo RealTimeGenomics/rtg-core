@@ -13,13 +13,12 @@ package com.rtg.metagenomics.matrix;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.util.Utils;
-import com.rtg.util.integrity.IntegralAbstract;
 
 /**
  * Two dimensional square real valued matrices.
  */
 @TestClass(value = {"com.rtg.metagenomics.matrix.MatrixSimpleTest"})
-public abstract class Matrix extends IntegralAbstract {
+public abstract class Matrix {
 
   /**
    * Get the (i, j)th value.
@@ -46,10 +45,10 @@ public abstract class Matrix extends IntegralAbstract {
   public abstract void incr(int i, int j, double v);
 
   /**
-   * Get the dimension n of a square n x n matrix.
-   * @return the dimension (&ge; 0).
+   * Get the length n of a square n x n matrix.
+   * @return the length (&ge; 0).
    */
-  public abstract int dimension();
+  public abstract int size();
 
   /**
    * Test if is symmetric.
@@ -58,15 +57,17 @@ public abstract class Matrix extends IntegralAbstract {
   public abstract boolean isSymmetric();
 
   @Override
-  public void toString(final StringBuilder sb) {
-    for (int i = 0; i < dimension(); i++) {
+  public String toString() {
+    final StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < size(); i++) {
       sb.append("[").append(i).append("]");
-      final int hi = isSymmetric() ? i : dimension() - 1;
+      final int hi = isSymmetric() ? i : size() - 1;
       for (int j = 0; j <= hi; j++) {
         sb.append("  ").append(Utils.realFormat(get(i, j), 4));
       }
-      sb.append(LS);
+      sb.append(System.lineSeparator());
     }
+    return sb.toString();
   }
 
   /**

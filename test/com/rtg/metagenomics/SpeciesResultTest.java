@@ -20,8 +20,8 @@ public class SpeciesResultTest extends TestCase {
 
   public void test() {
     final SpeciesResult res = new SpeciesResult(3);
-    assertEquals(3, res.getR().dimension());
-    assertEquals(3, res.getVarianceLog().dimension());
-    assertEquals(3, res.getLikelihoods().dimension());
+    assertEquals(3, res.getR().size());
+    assertEquals(3, res.getVarianceLog().size());
+    assertEquals(3, res.getLikelihoods().size());
   }
 }

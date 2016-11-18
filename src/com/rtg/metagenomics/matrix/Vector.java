@@ -11,36 +11,86 @@
  */
 package com.rtg.metagenomics.matrix;
 
+import com.rtg.util.Utils;
 
 /**
- * One dimensional real valued vector.
  */
-public interface Vector {
+public class Vector {
+
+  private final int mSize;
+
+  private final double[] mVector;
+
+  /**
+   * For testing.
+   * @param v array of values to be converted to a vector.
+   */
+  public Vector(final double[] v) {
+    mSize = v.length;
+    mVector = v.clone();
+  }
+
+  /**
+   * Copy constructor
+   * @param copy the Vector to copy
+   */
+  public Vector(Vector copy) {
+    mSize = copy.size();
+    mVector = new double[mSize];
+    for (int i = 0; i < mSize; i++) {
+      mVector[i] = copy.get(i);
+    }
+  }
+
+  /**
+   * @param size length of vector.
+   */
+  public Vector(final int size) {
+    mSize = size;
+    mVector = new double[size];
+  }
 
   /**
    * Get the <code>i'th</code> value.
    * @param i  index.
    * @return the value.
    */
-  double get(int i);
+  public double get(final int i) {
+    return mVector[i];
+  }
 
   /**
    * Set the <code>i'th</code> value.
    * @param i index.
    * @param v value.
    */
-  void set(int i, double v);
+  public void set(final int i, final double v) {
+    mVector[i] = v;
+  }
 
   /**
    * Increment the <code>i'th</code> value.
    * @param i index.
    * @param v value.
    */
-  void incr(int i, double v);
+  public void incr(final int i, final double v) {
+    mVector[i] += v;
+  }
 
   /**
    * Get the length of the vector.
-   * @return the dimension (&ge; 0).
+   * @return the length (&ge; 0).
    */
-  int dimension();
+  public int size() {
+    return mSize;
+  }
+
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < mSize; i++) {
+      sb.append("  ").append(Utils.realFormat(mVector[i], 4));
+    }
+    return sb.toString();
+  }
 }

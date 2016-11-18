@@ -241,7 +241,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
   private int[] calculate(byte[] read, int readStartPos, int readEndPos, byte[] template, int templateStart, int templateEnd, int maxScore, int maxShift) {
     assert mFixedEnd || templateEnd == templateStart;
 
-    // We choose a template-dimension larger than the read length, to allow the ends to move.
+    // We choose a template-length larger than the read length, to allow the ends to move.
     // We'd like (roughly) twice the read length in the template to allow for indels and
     // shifting the start position, balanced on each side of the template.
     // But for longer reads, we limit the extension on each side to TEMPLATE_EXTENSION.

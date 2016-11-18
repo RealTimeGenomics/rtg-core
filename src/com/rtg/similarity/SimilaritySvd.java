@@ -43,9 +43,9 @@ public class SimilaritySvd {
     }
 
     /**
-     * Return the value for the given dimension in the SVD.
+     * Return the value for the given length in the SVD.
      * @param dimension to get value for
-     * @return value in given dimension
+     * @return value in given length
      */
     public double getValue(int dimension) {
       return mValues[dimension];
@@ -72,7 +72,7 @@ public class SimilaritySvd {
 
   /**
    * Create a similarity SVD with the given number of dimensions
-   * @param dimensions dimension of SVD matrix
+   * @param dimensions length of SVD matrix
    */
   public SimilaritySvd(int dimensions) {
     mDim = dimensions;
@@ -95,8 +95,8 @@ public class SimilaritySvd {
   }
 
   /**
-   * Set a name for dimension i of the matrix
-   * @param i dimension
+   * Set a name for length i of the matrix
+   * @param i length
    * @param name name to set
    */
   public void putName(int i, String name) {
@@ -174,7 +174,7 @@ public class SimilaritySvd {
     final int n = mat.getDimension();
 
     if (n <= dimensions) {
-      // to few dimensions to process
+      // too few dimensions to process
       return;
     }
 
@@ -238,9 +238,9 @@ public class SimilaritySvd {
   }
 
   /**
-   * Return the value for row, dimension from SVD decomposition.
+   * Return the value for row, length from SVD decomposition.
    * @param row row in decomposition
-   * @param dimension dimension in decomposition
+   * @param dimension length in decomposition
    * @return PCA value
    */
   public double getSvdValue(int row, int dimension) {

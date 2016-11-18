@@ -13,7 +13,6 @@
 package com.rtg.metagenomics;
 
 import com.rtg.metagenomics.matrix.Vector;
-import com.rtg.metagenomics.matrix.VectorSimple;
 
 import junit.framework.TestCase;
 
@@ -35,8 +34,8 @@ public class SpeciesLineLinearTest extends TestCase {
     final Frag[] frags = buildFrags();
     final long[] lengths = {10, 15, 20};
     final BlockInfo bi = new BlockInfo(42, null , frags, null, lengths, false);
-    final Vector r = new VectorSimple(new double[] {0.1, 0.2, 0.3});
-    final Vector d = new VectorSimple(new double[] {-0.1, +0.1, -0.2});
+    final Vector r = new Vector(new double[] {0.1, 0.2, 0.3});
+    final Vector d = new Vector(new double[] {-0.1, +0.1, -0.2});
     final Line spl = new SpeciesLineLinear(r, d, bi);
     assertEquals(0, spl.derivativeOrder());
     final double val = -2.24405;

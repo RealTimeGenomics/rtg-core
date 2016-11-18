@@ -21,15 +21,13 @@ public class MatrixTransposeTest extends TestCase {
 
   public void test0() {
     final Matrix ma = new MatrixTranspose(new MatrixSimple(0));
-    ma.globalIntegrity();
     assertEquals("", ma.toString());
   }
 
   public void test() {
     final Matrix ma = new MatrixSimple(3);
-    ma.globalIntegrity();
-    assertFalse(ma.isSymmetric());
-    assertEquals(3, ma.dimension());
+    assertTrue(ma.isSymmetric());
+    assertEquals(3, ma.size());
 
     ma.set(0, 0, 1.0);
     ma.set(0, 2, 2.0);
@@ -44,9 +42,8 @@ public class MatrixTransposeTest extends TestCase {
     assertEquals(0.0, ma.get(2, 0));
 
     final Matrix mt = new MatrixTranspose(ma);
-    mt.globalIntegrity();
     assertFalse(mt.isSymmetric());
-    assertEquals(3, mt.dimension());
+    assertEquals(3, mt.size());
 
     final String exp2 = ""
       + "[0]  1.0000  0.0000  0.0000" + LS

@@ -36,9 +36,9 @@ public final class MatrixUtils {
    * @return result of multiplication.
    */
   public static Matrix multiply(final Matrix a, final Matrix b) {
-    final int n = a.dimension();
-    if (n != b.dimension()) {
-      throw new IllegalArgumentException("A.dimension=" + n + " B.dimension=" + b.dimension());
+    final int n = a.size();
+    if (n != b.size()) {
+      throw new IllegalArgumentException("A.length=" + n + " B.length=" + b.size());
     }
     final Matrix res = new MatrixSimple(n);
     for (int i = 0; i < n; i++) {
@@ -60,11 +60,11 @@ public final class MatrixUtils {
    * @return result of multiplication.
    */
   public static Vector multiply(final Matrix a, final Vector v) {
-    final int n = a.dimension();
-    if (n != v.dimension()) {
-      throw new IllegalArgumentException("A.dimension=" + n + " v.dimension=" + v.dimension());
+    final int n = a.size();
+    if (n != v.size()) {
+      throw new IllegalArgumentException("A.length=" + n + " v.length=" + v.size());
     }
-    final Vector res = new VectorSimple(n);
+    final Vector res = new Vector(n);
     for (int i = 0; i < n; i++) {
       double sum = 0.0;
       for (int j = 0; j < n; j++) {
@@ -82,8 +82,8 @@ public final class MatrixUtils {
    * @return vector result.
    */
   public static Vector multiply(final double a, final Vector v) {
-    final int n = v.dimension();
-    final Vector res = new VectorSimple(n);
+    final int n = v.size();
+    final Vector res = new Vector(n);
     for (int i = 0; i < n; i++) {
       res.set(i, a * v.get(i));
     }
@@ -97,9 +97,9 @@ public final class MatrixUtils {
    * @return dot product.
    */
   public static double multiply(final Vector v, final Vector w) {
-    final int n = v.dimension();
-    if (n != w.dimension()) {
-      throw new IllegalArgumentException("v.dimension=" + n + " w.dimension=" + w.dimension());
+    final int n = v.size();
+    if (n != w.size()) {
+      throw new IllegalArgumentException("v.length=" + n + " w.length=" + w.size());
     }
     double sum = 0.0;
     for (int i = 0; i < n; i++) {
@@ -124,11 +124,11 @@ public final class MatrixUtils {
    * @return the vector sum.
    */
   public static Vector add(final Vector v, final Vector w) {
-    final int n = v.dimension();
-    if (n != w.dimension()) {
-      throw new IllegalArgumentException("v.dimension=" + n + " w.dimension=" + w.dimension());
+    final int n = v.size();
+    if (n != w.size()) {
+      throw new IllegalArgumentException("v.length=" + n + " w.length=" + w.size());
     }
-    final Vector res = new VectorSimple(n);
+    final Vector res = new Vector(n);
     for (int i = 0; i < n; i++) {
       res.set(i, v.get(i) + w.get(i));
     }
@@ -142,11 +142,11 @@ public final class MatrixUtils {
    * @return the vector difference (v - w).
    */
   public static Vector subtract(final Vector v, final Vector w) {
-    final int n = v.dimension();
-    if (n != w.dimension()) {
-      throw new IllegalArgumentException("v.dimension=" + n + " w.dimension=" + w.dimension());
+    final int n = v.size();
+    if (n != w.size()) {
+      throw new IllegalArgumentException("v.length=" + n + " w.length=" + w.size());
     }
-    final Vector res = new VectorSimple(n);
+    final Vector res = new Vector(n);
     for (int i = 0; i < n; i++) {
       res.set(i, v.get(i) - w.get(i));
     }
@@ -163,9 +163,9 @@ public final class MatrixUtils {
    */
   public static double innerProduct(final Vector v, final Matrix a, final Vector w) {
     double sum = 0.0;
-    final int n = a.dimension();
-    if (n != v.dimension() || n != w.dimension()) {
-      throw new IllegalArgumentException("v.dimension=" + v.dimension() + " A.dimension=" + a.dimension() + " w.dimension=" + w.dimension());
+    final int n = a.size();
+    if (n != v.size() || n != w.size()) {
+      throw new IllegalArgumentException("v.length=" + v.size() + " A.length=" + a.size() + " w.length=" + w.size());
     }
     for (int i = 0; i < n; i++) {
       final double vi = v.get(i);
@@ -177,12 +177,12 @@ public final class MatrixUtils {
   }
 
   /**
-   * Construct a new matrix with the same dimension and symmetry properties as the original.
+   * Construct a new matrix with the same length and symmetry properties as the original.
    * @param a matrix to be copied (but not the values).
    * @return a new matrix with the same shape as <code>a</code>.
    */
   public static Matrix sameShape(final Matrix a) {
-    final int n = a.dimension();
+    final int n = a.size();
     final Matrix res;
     if (a.isSymmetric()) {
       res = new MatrixSymmetric(n);
@@ -202,10 +202,10 @@ public final class MatrixUtils {
    * @return the inner product.
    */
   public static Matrix pointProduct(final Vector v, final Matrix a, final Vector w) {
-    final Matrix res = new MatrixSimple(a.dimension());
-    final int n = a.dimension();
-    if (n != v.dimension() || n != w.dimension()) {
-      throw new IllegalArgumentException("v.dimension=" + v.dimension() + " A.dimension=" + a.dimension() + " w.dimension=" + w.dimension());
+    final Matrix res = new MatrixSimple(a.size());
+    final int n = a.size();
+    if (n != v.size() || n != w.size()) {
+      throw new IllegalArgumentException("v.length=" + v.size() + " A.length=" + a.size() + " w.length=" + w.size());
     }
     for (int i = 0; i < n; i++) {
       final double vi = v.get(i);
@@ -228,9 +228,9 @@ public final class MatrixUtils {
   public static Matrix pointProduct(final Vector v, final Matrix a) {
     //if a is symmetrix then so is the result and the calculation can be optimized
     final Matrix res = sameShape(a);
-    final int n = a.dimension();
-    if (n != v.dimension()) {
-      throw new IllegalArgumentException("v.dimension=" + v.dimension() + " A.dimension=" + a.dimension());
+    final int n = a.size();
+    if (n != v.size()) {
+      throw new IllegalArgumentException("v.length=" + v.size() + " A.length=" + a.size());
     }
     for (int i = 0; i < n; i++) {
       final double vi = v.get(i);
@@ -252,11 +252,11 @@ public final class MatrixUtils {
    * @return the inner product.
    */
   public static Vector pointProduct(final Vector v, final Vector w) {
-    final int n = v.dimension();
-    if (n != w.dimension()) {
-      throw new IllegalArgumentException("v.dimension=" + v.dimension() + " w.dimension=" + w.dimension());
+    final int n = v.size();
+    if (n != w.size()) {
+      throw new IllegalArgumentException("v.length=" + v.size() + " w.length=" + w.size());
     }
-    final Vector res = new VectorSimple(n);
+    final Vector res = new Vector(n);
     for (int i = 0; i < n; i++) {
       res.set(i, v.get(i) * w.get(i));
     }
@@ -269,8 +269,8 @@ public final class MatrixUtils {
    * @return a vector containing the trace.
    */
   public static Vector trace(final Matrix a) {
-    final int n = a.dimension();
-    final Vector res = new VectorSimple(n);
+    final int n = a.size();
+    final Vector res = new Vector(n);
     for (int i = 0; i < n; i++) {
       res.set(i, a.get(i, i));
     }
@@ -283,8 +283,8 @@ public final class MatrixUtils {
    * @return a vector with the inverse.
    */
   public static Vector inverse(final Vector v) {
-    final int n = v.dimension();
-    final Vector res = new VectorSimple(n);
+    final int n = v.size();
+    final Vector res = new Vector(n);
     for (int i = 0; i < n; i++) {
       res.set(i, 1.0 / v.get(i));
     }
@@ -297,8 +297,8 @@ public final class MatrixUtils {
    * @return a vector with the square roots.
    */
   public static Vector sqrt(final Vector v) {
-    final int n = v.dimension();
-    final Vector res = new VectorSimple(n);
+    final int n = v.size();
+    final Vector res = new Vector(n);
     for (int i = 0; i < n; i++) {
       res.set(i, Math.sqrt(v.get(i)));
     }
@@ -311,8 +311,8 @@ public final class MatrixUtils {
    * @return negated vector.
    */
   public static Vector negative(final Vector v) {
-    final int dim = v.dimension();
-    final Vector neg = new VectorSimple(dim);
+    final int dim = v.size();
+    final Vector neg = new Vector(dim);
     for (int i = 0; i < dim; i++) {
       final double d = -v.get(i);
       neg.set(i, d);
@@ -326,7 +326,7 @@ public final class MatrixUtils {
    * @return true iff all values in the vector are finite.
    */
   public static boolean isFinite(final Vector v) {
-    for (int i = 0; i < v.dimension(); i++) {
+    for (int i = 0; i < v.size(); i++) {
       final double vv = v.get(i);
       if (Double.isNaN(vv) || Double.isInfinite(vv)) {
         return false;
@@ -341,7 +341,7 @@ public final class MatrixUtils {
    * @return true iff all values in the vector are finite and positive.
    */
   public static boolean isFinitePositive(final Vector v) {
-    for (int i = 0; i < v.dimension(); i++) {
+    for (int i = 0; i < v.size(); i++) {
       final double vv = v.get(i);
       if (vv < 0.0 || Double.isNaN(vv) || Double.isInfinite(vv)) {
         return false;
@@ -357,7 +357,7 @@ public final class MatrixUtils {
    */
   public static double trace(final Vector v) {
     double sum = 0.0;
-    for (int i = 0; i < v.dimension(); i++) {
+    for (int i = 0; i < v.size(); i++) {
       final double vv = v.get(i);
       sum += vv;
     }

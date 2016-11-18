@@ -11,7 +11,7 @@
  */
 package com.rtg.metagenomics;
 
-import com.rtg.metagenomics.matrix.VectorSimple;
+import com.rtg.metagenomics.matrix.Vector;
 
 import junit.framework.TestCase;
 
@@ -21,13 +21,13 @@ public class SubBlockResultTest extends TestCase {
 
 
   public void test() {
-    final VectorSimple x = new VectorSimple(3);
-    final VectorSimple varianceLog = new VectorSimple(3);
-    final VectorSimple likelihood = new VectorSimple(3);
+    final Vector x = new Vector(3);
+    final Vector varianceLog = new Vector(3);
+    final Vector likelihood = new Vector(3);
     final SubBlockResult res = new SubBlockResult(x, varianceLog,  likelihood, 1.5);
-    assertEquals(3, res.getR().dimension());
-    assertEquals(3, res.getVarianceLog().dimension());
-    assertEquals(3, res.getLikelihoods().dimension());
+    assertEquals(3, res.getR().size());
+    assertEquals(3, res.getVarianceLog().size());
+    assertEquals(3, res.getLikelihoods().size());
     assertEquals(1.5, res.getL());
   }
 }

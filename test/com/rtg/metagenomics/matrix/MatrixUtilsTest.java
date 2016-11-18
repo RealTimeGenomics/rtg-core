@@ -66,7 +66,7 @@ public class MatrixUtilsTest extends TestCase {
       fail();
     } catch (final IllegalArgumentException e) {
       //expected
-      assertEquals("A.dimension=2 B.dimension=1", e.getMessage());
+      assertEquals("A.length=2 B.length=1", e.getMessage());
     }
   }
 
@@ -76,101 +76,101 @@ public class MatrixUtilsTest extends TestCase {
     a.set(0, 0, 4.0);
     a.set(1, 1, 3.0);
     a.set(0, 1, 1.0);
-    final Vector v = new VectorSimple(new double[] {2.0, 1.0});
+    final Vector v = new Vector(new double[] {2.0, 1.0});
     final Vector w = MatrixUtils.multiply(a, v);
-    Exam.assertEquals(2, w.dimension());
+    Exam.assertEquals(2, w.size());
     Exam.assertEquals(9.0,  w.get(0));
     Exam.assertEquals(5.0, w.get(1));
   }
 
   public final void testMultiplyMatrixVectorBad() {
     final Matrix a = new MatrixSymmetric(2);
-    final Vector v = new VectorSimple(1);
+    final Vector v = new Vector(1);
     try {
       MatrixUtils.multiply(a, v);
       fail();
     } catch (final IllegalArgumentException e) {
       //expected
-      assertEquals("A.dimension=2 v.dimension=1", e.getMessage());
+      assertEquals("A.length=2 v.length=1", e.getMessage());
     }
   }
 
   public final void testMultiplyDoubleVector0() {
-    final Vector v = new VectorSimple(0);
+    final Vector v = new Vector(0);
     final Vector w = MatrixUtils.multiply(2.0, v);
-    Exam.assertEquals(0, w.dimension());
+    Exam.assertEquals(0, w.size());
   }
 
   public final void testMultiplyDoubleVector() {
-    final Vector v = new VectorSimple(new double[] {0.3, -1.5});
+    final Vector v = new Vector(new double[] {0.3, -1.5});
     final Vector w = MatrixUtils.multiply(2.0, v);
-    Exam.assertEquals(2, w.dimension());
+    Exam.assertEquals(2, w.size());
     Exam.assertEquals(0.6,  w.get(0));
     Exam.assertEquals(-3.0, w.get(1));
   }
 
   public final void testMultiplyVectorVector() {
-    final Vector v = new VectorSimple(new double[] {0.3, -1.5});
-    final Vector w = new VectorSimple(new double[] {-0.3, -1.0});
+    final Vector v = new Vector(new double[] {0.3, -1.5});
+    final Vector w = new Vector(new double[] {-0.3, -1.0});
     Exam.assertEquals(1.41, MatrixUtils.multiply(v, w));
   }
 
   public final void testMultiplyVectorVectorBad() {
-    final Vector v = new VectorSimple(2);
-    final Vector w = new VectorSimple(1);
+    final Vector v = new Vector(2);
+    final Vector w = new Vector(1);
     try {
       MatrixUtils.multiply(v, w);
       fail();
     } catch (final IllegalArgumentException e) {
       //expected
-      assertEquals("v.dimension=2 w.dimension=1", e.getMessage());
+      assertEquals("v.length=2 w.length=1", e.getMessage());
     }
   }
 
   public final void testNorm2() {
-    final Vector v = new VectorSimple(new double[] {0.3, -1.5});
+    final Vector v = new Vector(new double[] {0.3, -1.5});
     Exam.assertEquals(2.34, MatrixUtils.norm2(v));
   }
 
   public final void testAdd() {
-    final Vector v = new VectorSimple(new double[] {0.3, -1.5});
-    final Vector w = new VectorSimple(new double[] {0.8, 0.5});
+    final Vector v = new Vector(new double[] {0.3, -1.5});
+    final Vector w = new Vector(new double[] {0.8, 0.5});
     final Vector x = MatrixUtils.add(v, w);
-    Exam.assertEquals(2, x.dimension());
+    Exam.assertEquals(2, x.size());
     Exam.assertEquals(1.1,  x.get(0));
     Exam.assertEquals(-1.0, x.get(1));
   }
 
   public final void testAddBad() {
-    final Vector v = new VectorSimple(2);
-    final Vector w = new VectorSimple(1);
+    final Vector v = new Vector(2);
+    final Vector w = new Vector(1);
     try {
       MatrixUtils.add(v, w);
       fail();
     } catch (final IllegalArgumentException e) {
       //expected
-      assertEquals("v.dimension=2 w.dimension=1", e.getMessage());
+      assertEquals("v.length=2 w.length=1", e.getMessage());
     }
   }
 
   public final void testSubtract() {
-    final Vector v = new VectorSimple(new double[] {0.3, -1.5});
-    final Vector w = new VectorSimple(new double[] {0.8, 0.5});
+    final Vector v = new Vector(new double[] {0.3, -1.5});
+    final Vector w = new Vector(new double[] {0.8, 0.5});
     final Vector x = MatrixUtils.subtract(v, w);
-    Exam.assertEquals(2, x.dimension());
+    Exam.assertEquals(2, x.size());
     Exam.assertEquals(-0.5,  x.get(0));
     Exam.assertEquals(-2.0, x.get(1));
   }
 
   public final void testSubtractBad() {
-    final Vector v = new VectorSimple(2);
-    final Vector w = new VectorSimple(1);
+    final Vector v = new Vector(2);
+    final Vector w = new Vector(1);
     try {
       MatrixUtils.subtract(v, w);
       fail();
     } catch (final IllegalArgumentException e) {
       //expected
-      assertEquals("v.dimension=2 w.dimension=1", e.getMessage());
+      assertEquals("v.length=2 w.length=1", e.getMessage());
     }
   }
 
@@ -179,47 +179,49 @@ public class MatrixUtilsTest extends TestCase {
     a.set(0, 0, 4.0);
     a.set(1, 1, 3.0);
     a.set(0, 1, 1.0);
-    final Vector v = new VectorSimple(new double[] {2.0, 1.0});
-    final Vector w = new VectorSimple(new double[] {0.5, 1.0});
+    final Vector v = new Vector(new double[] {2.0, 1.0});
+    final Vector w = new Vector(new double[] {0.5, 1.0});
     final double x = MatrixUtils.innerProduct(v, a, w);
     Exam.assertEquals(9.5, x);
   }
 
   public final void testInnerProductBad() {
     final Matrix a = new MatrixSymmetric(2);
-    final Vector v = new VectorSimple(2);
-    final Vector w = new VectorSimple(1);
+    final Vector v = new Vector(2);
+    final Vector w = new Vector(1);
     try {
       MatrixUtils.innerProduct(v, a, w);
       fail();
     } catch (final IllegalArgumentException e) {
       //expected
-      assertEquals("v.dimension=2 A.dimension=2 w.dimension=1", e.getMessage());
+      assertEquals("v.length=2 A.length=2 w.length=1", e.getMessage());
     }
     try {
       MatrixUtils.innerProduct(w, a, v);
       fail();
     } catch (final IllegalArgumentException e) {
       //expected
-      assertEquals("v.dimension=1 A.dimension=2 w.dimension=2", e.getMessage());
+      assertEquals("v.length=1 A.length=2 w.length=2", e.getMessage());
     }
   }
 
   public final void testSameShapeSimple() {
     final Matrix a = new MatrixSimple(3);
-    assertEquals(3, a.dimension());
+    assertEquals(3, a.size());
+    assertTrue(a.isSymmetric());
+    a.set(1, 2, Math.PI);
     assertFalse(a.isSymmetric());
     final Matrix b = MatrixUtils.sameShape(a);
-    assertEquals(3, b.dimension());
-    assertFalse(b.isSymmetric());
+    assertEquals(3, b.size());
+    assertTrue(b.isSymmetric());
   }
 
   public final void testSameShapeSym() {
     final Matrix a = new MatrixSymmetric(3);
-    assertEquals(3, a.dimension());
+    assertEquals(3, a.size());
     assertTrue(a.isSymmetric());
     final Matrix b = MatrixUtils.sameShape(a);
-    assertEquals(3, b.dimension());
+    assertEquals(3, b.size());
     assertTrue(b.isSymmetric());
   }
 
@@ -228,8 +230,8 @@ public class MatrixUtilsTest extends TestCase {
     a.set(0, 0, 4.0);
     a.set(1, 1, 3.0);
     a.set(0, 1, 1.0);
-    final Vector v = new VectorSimple(new double[] {2.0, 1.0});
-    final Vector w = new VectorSimple(new double[] {0.33, 1.0});
+    final Vector v = new Vector(new double[] {2.0, 1.0});
+    final Vector w = new Vector(new double[] {0.33, 1.0});
     final Matrix x = MatrixUtils.pointProduct(v, a, w);
     assertFalse(x.isSymmetric());
     final String exp = ""
@@ -241,43 +243,43 @@ public class MatrixUtilsTest extends TestCase {
 
   public final void testPointProductBad() {
     final Matrix a = new MatrixSymmetric(2);
-    final Vector v = new VectorSimple(2);
-    final Vector w = new VectorSimple(1);
+    final Vector v = new Vector(2);
+    final Vector w = new Vector(1);
     try {
       MatrixUtils.pointProduct(v, a, w);
       fail();
     } catch (final IllegalArgumentException e) {
       //expected
-      assertEquals("v.dimension=2 A.dimension=2 w.dimension=1", e.getMessage());
+      assertEquals("v.length=2 A.length=2 w.length=1", e.getMessage());
     }
     try {
       MatrixUtils.pointProduct(w, a, v);
       fail();
     } catch (final IllegalArgumentException e) {
       //expected
-      assertEquals("v.dimension=1 A.dimension=2 w.dimension=2", e.getMessage());
+      assertEquals("v.length=1 A.length=2 w.length=2", e.getMessage());
     }
   }
 
   public final void testPointProductVV() {
-    final Vector v = new VectorSimple(new double[] {2.0, 1.0});
-    final Vector w = new VectorSimple(new double[] {0.33, 1.0});
+    final Vector v = new Vector(new double[] {2.0, 1.0});
+    final Vector w = new Vector(new double[] {0.33, 1.0});
     final Vector x = MatrixUtils.pointProduct(v, w);
-    assertEquals(2, x.dimension());
+    assertEquals(2, x.size());
     assertEquals(0.66, x.get(0));
     assertEquals(1.00, x.get(1));
 
   }
 
   public final void testPointProductVVBad() {
-    final Vector v = new VectorSimple(2);
-    final Vector w = new VectorSimple(1);
+    final Vector v = new Vector(2);
+    final Vector w = new Vector(1);
     try {
       MatrixUtils.pointProduct(v, w);
       fail();
     } catch (final IllegalArgumentException e) {
       //expected
-      assertEquals("v.dimension=2 w.dimension=1", e.getMessage());
+      assertEquals("v.length=2 w.length=1", e.getMessage());
     }
   }
 
@@ -286,7 +288,7 @@ public class MatrixUtilsTest extends TestCase {
     a.set(0, 0, 4.0);
     a.set(1, 1, 3.0);
     a.set(0, 1, 1.0);
-    final Vector v = new VectorSimple(new double[] {2.0, 1.0});
+    final Vector v = new Vector(new double[] {2.0, 1.0});
     final Matrix x = MatrixUtils.pointProduct(v, a);
     assertTrue(x.isSymmetric());
     final String exp = ""
@@ -298,11 +300,11 @@ public class MatrixUtilsTest extends TestCase {
 
   public final void testPointProduct2() {
     final Matrix a = new MatrixSimple(new double[][] {{4.0, 3.0}, {3.0, 1.0}});
-    final Vector v = new VectorSimple(new double[] {2.0, 1.0});
+    final Vector v = new Vector(new double[] {2.0, 1.0});
     final Matrix x = MatrixUtils.pointProduct(v, a);
-    assertFalse(x.isSymmetric());
+    assertTrue(x.isSymmetric());
     final String exp = ""
-      + "[0]  16.0000  6.0000" + LS
+      + "[0]  16.0000" + LS
       + "[1]  6.0000  1.0000" + LS
       ;
     assertEquals(exp, x.toString());
@@ -310,13 +312,13 @@ public class MatrixUtilsTest extends TestCase {
 
   public final void testPointProductBad1() {
     final Matrix a = new MatrixSymmetric(2);
-    final Vector w = new VectorSimple(1);
+    final Vector w = new Vector(1);
     try {
       MatrixUtils.pointProduct(w, a);
       fail();
     } catch (final IllegalArgumentException e) {
       //expected
-      assertEquals("v.dimension=1 A.dimension=2", e.getMessage());
+      assertEquals("v.length=1 A.length=2", e.getMessage());
     }
   }
 
@@ -326,51 +328,51 @@ public class MatrixUtilsTest extends TestCase {
     a.set(1, 1, 16.0);
     a.set(0, 1, 1.0);
     final Vector v = MatrixUtils.trace(a);
-    assertEquals(2, v.dimension());
+    assertEquals(2, v.size());
     assertEquals(4.0, v.get(0));
     assertEquals(16.0, v.get(1));
   }
 
   public void testInverse() {
-    final Vector v = new VectorSimple(new double[]{1.0, 2.0});
+    final Vector v = new Vector(new double[]{1.0, 2.0});
     final Vector w = MatrixUtils.inverse(v);
-    assertEquals(2, w.dimension());
+    assertEquals(2, w.size());
     assertEquals(1.0, w.get(0));
     assertEquals(0.5, w.get(1));
   }
 
   public void testSqrt() {
-    final Vector v = new VectorSimple(new double[]{4.0, 9.0});
+    final Vector v = new Vector(new double[]{4.0, 9.0});
     final Vector w = MatrixUtils.sqrt(v);
-    assertEquals(2, w.dimension());
+    assertEquals(2, w.size());
     assertEquals(2.0, w.get(0));
     assertEquals(3.0, w.get(1));
   }
 
   public void testNegative() {
-    final Vector v = new VectorSimple(new double[]{4.0, -9.0});
+    final Vector v = new Vector(new double[]{4.0, -9.0});
     final Vector w = MatrixUtils.negative(v);
-    assertEquals(2, w.dimension());
+    assertEquals(2, w.size());
     assertEquals(-4.0, w.get(0));
     assertEquals(9.0, w.get(1));
   }
 
   public void testIsFinite() {
-    assertTrue(MatrixUtils.isFinite(new VectorSimple(new double[]{4.0, -9.0})));
-    assertTrue(MatrixUtils.isFinite(new VectorSimple(new double[]{})));
+    assertTrue(MatrixUtils.isFinite(new Vector(new double[]{4.0, -9.0})));
+    assertTrue(MatrixUtils.isFinite(new Vector(new double[]{})));
 
-    assertFalse(MatrixUtils.isFinite(new VectorSimple(new double[]{Double.NaN, -9.0})));
-    assertFalse(MatrixUtils.isFinite(new VectorSimple(new double[]{4.0, Double.POSITIVE_INFINITY})));
-    assertFalse(MatrixUtils.isFinite(new VectorSimple(new double[]{4.0, Double.NEGATIVE_INFINITY})));
+    assertFalse(MatrixUtils.isFinite(new Vector(new double[]{Double.NaN, -9.0})));
+    assertFalse(MatrixUtils.isFinite(new Vector(new double[]{4.0, Double.POSITIVE_INFINITY})));
+    assertFalse(MatrixUtils.isFinite(new Vector(new double[]{4.0, Double.NEGATIVE_INFINITY})));
   }
 
   public void testIsFinitePositive() {
-    assertTrue(MatrixUtils.isFinitePositive(new VectorSimple(new double[]{4.0, 0.0})));
-    assertTrue(MatrixUtils.isFinitePositive(new VectorSimple(new double[]{})));
+    assertTrue(MatrixUtils.isFinitePositive(new Vector(new double[]{4.0, 0.0})));
+    assertTrue(MatrixUtils.isFinitePositive(new Vector(new double[]{})));
 
-    assertFalse(MatrixUtils.isFinitePositive(new VectorSimple(new double[]{4.0, -9.0})));
-    assertFalse(MatrixUtils.isFinitePositive(new VectorSimple(new double[]{Double.NaN, 4.0})));
-    assertFalse(MatrixUtils.isFinitePositive(new VectorSimple(new double[]{4.0, Double.POSITIVE_INFINITY})));
-    assertFalse(MatrixUtils.isFinitePositive(new VectorSimple(new double[]{4.0, Double.NEGATIVE_INFINITY})));
+    assertFalse(MatrixUtils.isFinitePositive(new Vector(new double[]{4.0, -9.0})));
+    assertFalse(MatrixUtils.isFinitePositive(new Vector(new double[]{Double.NaN, 4.0})));
+    assertFalse(MatrixUtils.isFinitePositive(new Vector(new double[]{4.0, Double.POSITIVE_INFINITY})));
+    assertFalse(MatrixUtils.isFinitePositive(new Vector(new double[]{4.0, Double.NEGATIVE_INFINITY})));
   }
 }

@@ -23,13 +23,11 @@ public class MatrixSymmetricTest extends TestCase {
 
   public void test0() {
     final Matrix ma = new MatrixSymmetric(0);
-    ma.globalIntegrity();
     Exam.assertEquals("", ma.toString());
   }
 
   public void test() {
     final Matrix ma = new MatrixSymmetric(3);
-    ma.globalIntegrity();
     Exam.assertTrue(ma.isSymmetric());
     final String exp = ""
       + "[0]  0.0000" + LS

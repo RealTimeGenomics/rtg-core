@@ -11,8 +11,6 @@
  */
 package com.rtg.metagenomics.matrix;
 
-import com.rtg.util.integrity.Exam;
-
 /**
  */
 public class MatrixSymmetric extends Matrix {
@@ -59,24 +57,8 @@ public class MatrixSymmetric extends Matrix {
   }
 
   @Override
-  public int dimension() {
+  public int size() {
     return mSize;
-  }
-
-  @Override
-  public boolean globalIntegrity() {
-    integrity();
-    for (int i = 0; i < mSize; i++) {
-      Exam.assertEquals(i + 1, mMatrix[i].length);
-    }
-    return true;
-  }
-
-  @Override
-  public boolean integrity() {
-    Exam.assertTrue(mSize >= 0);
-    Exam.assertTrue(isSymmetric());
-    return true;
   }
 
   @Override
@@ -86,9 +68,9 @@ public class MatrixSymmetric extends Matrix {
 
   @Override
   public Jama.Matrix toJama() {
-    final Jama.Matrix m = new Jama.Matrix(dimension(), dimension());
-    for (int i = 0; i < dimension(); i++) {
-      for (int j = 0; j < dimension(); j++) {
+    final Jama.Matrix m = new Jama.Matrix(size(), size());
+    for (int i = 0; i < size(); i++) {
+      for (int j = 0; j < size(); j++) {
         m.set(i, j, get(i, j));
       }
     }

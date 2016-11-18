@@ -16,7 +16,6 @@ import java.util.Arrays;
 
 import com.rtg.metagenomics.matrix.MatrixSymmetric;
 import com.rtg.metagenomics.matrix.Vector;
-import com.rtg.metagenomics.matrix.VectorSimple;
 import com.rtg.util.SortedMultiSet;
 import com.rtg.util.TestUtils;
 
@@ -124,8 +123,8 @@ public class FragTest extends TestCase {
     al.add(1);
     al.add(42);
     final Frag fr = new Frag(al);
-    final Vector j = new VectorSimple(44);
-    final Vector r = new VectorSimple(44);
+    final Vector j = new Vector(44);
+    final Vector r = new Vector(44);
     r.set(1, 0.5);
     r.set(42, 3.0);
     assertEquals(-Math.log(4.0), fr.increment(r, j));
@@ -141,7 +140,7 @@ public class FragTest extends TestCase {
     al.add(1);
     al.add(42);
     final Frag fr = new Frag(al);
-    final Vector j = new VectorSimple(44);
+    final Vector j = new Vector(44);
     j.set(1, 0.75);
     j.set(42, 0.1);
     assertEquals(1.6, fr.sum(j));
@@ -171,8 +170,8 @@ public class FragTest extends TestCase {
     final Frag fr2 = new Frag(al);
     final Frag fr3 = new Frag(al);
     fr3.setMultiplicity(2);
-    final Vector j1 = new VectorSimple(44);
-    final Vector r1 = new VectorSimple(44);
+    final Vector j1 = new Vector(44);
+    final Vector r1 = new Vector(44);
     r1.set(1, 0.5);
     r1.set(42, 3.0);
     assertEquals(-Math.log(4.0), fr1.increment(r1, j1));
@@ -181,8 +180,8 @@ public class FragTest extends TestCase {
     assertEquals(0.0, j1.get(0));
     assertEquals(-1.0, j1.get(1));
     assertEquals(-0.5, j1.get(42));
-    final Vector j2 = new VectorSimple(44);
-    final Vector r2 = new VectorSimple(44);
+    final Vector j2 = new Vector(44);
+    final Vector r2 = new Vector(44);
     r2.set(1, 0.5);
     r2.set(42, 3.0);
     assertEquals(-2 * Math.log(4.0), fr3.increment(r2, j2));

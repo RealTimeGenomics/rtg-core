@@ -21,10 +21,9 @@ public class MatrixSimpleTest extends TestCase {
 
   public void test0() {
     final Matrix ma = new MatrixSimple(0);
-    ma.globalIntegrity();
     assertEquals("", ma.toString());
     final Matrix mb = new MatrixSimple(new double[][] {{0.5, 1.0}, {0.2, 1.0}});
-    assertEquals(2, mb.dimension());
+    assertEquals(2, mb.size());
     assertEquals(0.5, mb.get(0, 0));
     assertEquals(1.0, mb.get(0, 1));
     assertEquals(0.2, mb.get(1, 0));
@@ -33,11 +32,10 @@ public class MatrixSimpleTest extends TestCase {
 
   public void test() {
     final Matrix ma = new MatrixSimple(3);
-    ma.globalIntegrity();
-    assertFalse(ma.isSymmetric());
+    assertTrue(ma.isSymmetric());
     final String exp = ""
-      + "[0]  0.0000  0.0000  0.0000" + LS
-      + "[1]  0.0000  0.0000  0.0000" + LS
+      + "[0]  0.0000" + LS
+      + "[1]  0.0000  0.0000" + LS
       + "[2]  0.0000  0.0000  0.0000" + LS
       ;
     assertEquals(exp, ma.toString());

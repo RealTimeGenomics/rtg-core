@@ -16,7 +16,6 @@ import java.util.Map.Entry;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.metagenomics.matrix.Vector;
-import com.rtg.metagenomics.matrix.VectorSimple;
 import com.rtg.util.SortedMultiSet;
 import com.rtg.util.integrity.IntegralAbstract;
 
@@ -65,7 +64,7 @@ public class BlockInfo extends IntegralAbstract {
     mSpeciesMap = speciesMap;
     mGenomeLengths = genomeLengths;
     mN = genomeLengths.length;
-    mGenomeLengthsVector = new VectorSimple(mN);
+    mGenomeLengthsVector = new Vector(mN);
     for (int i = 0; i < genomeLengths.length; i++) {
       mGenomeLengthsVector.incr(i, genomeLengths[i]);
     }

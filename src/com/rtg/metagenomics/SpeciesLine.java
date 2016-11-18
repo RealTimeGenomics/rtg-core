@@ -14,7 +14,6 @@ package com.rtg.metagenomics;
 
 import com.rtg.metagenomics.matrix.MatrixUtils;
 import com.rtg.metagenomics.matrix.Vector;
-import com.rtg.metagenomics.matrix.VectorSimple;
 import com.rtg.util.diagnostic.Diagnostic;
 
 /**
@@ -40,7 +39,7 @@ class SpeciesLine extends Line {
 
   @Override
   public double value(final double delta) {
-    final Vector e = new VectorSimple(mN);
+    final Vector e = new Vector(mN);
     for (int i = 0; i < mN; i++) {
       e.set(i, Math.exp(mDelta.get(i) * delta));
     }
