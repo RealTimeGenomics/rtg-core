@@ -41,7 +41,6 @@ public class CnvStatsCli extends AbstractCli {
   //private static final String VALIDATE = "validate";
   static final String GENERATED = "generated-cnvs";
   static final String DETECTED = "detected-cnvs";
-  static final String OUTPUT_DIR = "outdir";
   static final String BUCKET_SIZE = "bucket-size";
   static final String COLLAPSE_CNV = "collapse-cnv";
   //private static final String PRIORS_FLAG = "priors";
@@ -69,12 +68,10 @@ public class CnvStatsCli extends AbstractCli {
         cflags.setParseMessage("CNV detection file doesn't exist");
         return false;
       }
-      if (cflags.isSet(OUTPUT_DIR)) {
-        if (!CommonFlags.validateOutputDirectory((File) cflags.getValue(OUTPUT_DIR))) {
-          return false;
-        }
+      if (!CommonFlags.validateOutputDirectory(cflags)) {
+        return false;
       }
-       return true;
+      return true;
     }
   }
 
@@ -90,9 +87,9 @@ public class CnvStatsCli extends AbstractCli {
   public void initFlags(final CFlags flags) {
     flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
+    CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired('g', GENERATED, File.class, "file", "CNV generation file").setCategory(INPUT_OUTPUT);
     flags.registerRequired('s', DETECTED, File.class, "file", "CNV detection file").setCategory(INPUT_OUTPUT);
-    flags.registerOptional('o', OUTPUT_DIR, File.class, "dir", "output directory for results").setCategory(INPUT_OUTPUT);
     flags.registerOptional('b', BUCKET_SIZE, Integer.class, "int", "size of buckets used for CNV", 100).setCategory(UTILITY);
     flags.registerOptional(COLLAPSE_CNV, "collapse adjacent generated regions with identical CNV value").setCategory(UTILITY);
     flags.setValidator(new FlagsValidator());
@@ -119,8 +116,8 @@ public class CnvStatsCli extends AbstractCli {
       try (Reader generatedReader = getReader(generatedSnpFile)) {
         try (Reader detectedReader = getReader(detectedSnpFile)) {
 
-          if (flags.isSet(OUTPUT_DIR)) {
-            final File outputDirectory = (File) flags.getValue(OUTPUT_DIR);
+          if (flags.isSet(CommonFlags.OUTPUT_FLAG)) {
+            final File outputDirectory = (File) flags.getValue(CommonFlags.OUTPUT_FLAG);
             if (!outputDirectory.exists() && !outputDirectory.mkdirs()) {
               throw new IOException("Couldn't create output directory");
             }

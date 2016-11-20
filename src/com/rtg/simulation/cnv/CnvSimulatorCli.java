@@ -12,6 +12,7 @@
 package com.rtg.simulation.cnv;
 
 import static com.rtg.launcher.CommonFlags.NO_GZIP;
+import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
 
@@ -50,7 +51,6 @@ public final class CnvSimulatorCli extends LoggedCli {
 
   static final String MODULE_NAME = "cnvsim";
 
-  private static final String OUTPUT_DIRECTORY = "output";
   private static final String TWIN_DIRECTORY = "twin";
   private static final String INPUT_DIRECTORY = "input";
   private static final String CNV_FILE = "cnv-file";
@@ -77,10 +77,10 @@ public final class CnvSimulatorCli extends LoggedCli {
         return false;
       }
 
-      if (!CommonFlags.validateOutputDirectory((File) flags.getValue(OUTPUT_DIRECTORY))) {
+      if (!CommonFlags.validateOutputDirectory(flags)) {
         return false;
       }
-      if (!CommonFlags.validateOutputDirectory((File) flags.getValue(TWIN_DIRECTORY))) {
+      if (!CommonFlags.validateOutputDirectory(flags, TWIN_DIRECTORY)) {
         return false;
       }
 
@@ -157,7 +157,7 @@ public final class CnvSimulatorCli extends LoggedCli {
     mFlags.setDescription("Creates copy number variation between two simulated genomes, one the baseline and the other the sample to be tested.");
     CommonFlagCategories.setCategories(mFlags);
     mFlags.registerRequired('i', INPUT_DIRECTORY, File.class, "SDF", "SDF containing input genome").setCategory(INPUT_OUTPUT);
-    mFlags.registerRequired('o', OUTPUT_DIRECTORY, File.class, "SDF", "name for genome output SDF").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, "SDF", "name for genome output SDF").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired('O', TWIN_DIRECTORY, File.class, "SDF", "name for secondary output SDF").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired('s', CNV_FILE, File.class, "FILE", "output file with CNV information").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional('p', PRIORS_FLAG, String.class, "string", "selects a properties file specifying the CNV priors. Either a file name or one of ", "cnv-default").setCategory(UTILITY);
@@ -176,7 +176,7 @@ public final class CnvSimulatorCli extends LoggedCli {
 
   @Override
   protected File outputDirectory() {
-    return (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG);
+    return (File) mFlags.getValue(OUTPUT_FLAG);
   }
 
   /**
@@ -198,7 +198,7 @@ public final class CnvSimulatorCli extends LoggedCli {
     final CnvSimulator simulator;
 
     final File input = (File) flags.getValue(INPUT_DIRECTORY);
-    final File outputDirectory = (File) flags.getValue(OUTPUT_DIRECTORY);
+    final File outputDirectory = (File) flags.getValue(OUTPUT_FLAG);
     final File twinDirectory = (File) flags.getValue(TWIN_DIRECTORY);
     final boolean gzip = !flags.isSet(NO_GZIP);
 

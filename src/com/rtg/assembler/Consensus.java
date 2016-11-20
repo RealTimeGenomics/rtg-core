@@ -12,6 +12,7 @@
 
 package com.rtg.assembler;
 
+import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
 
@@ -48,7 +49,6 @@ import com.rtg.util.store.StoreDirectory;
  */
 public class Consensus extends LoggedCli {
 
-  private static final String OUTPUT = "output";
   private static final String MODULE_NAME = "consensus";
   private static final String KMER_SIZE = "kmer-size";
   /** attribute name for list of nodes that were combined to create this one */
@@ -77,7 +77,7 @@ public class Consensus extends LoggedCli {
 
   @Override
   protected File outputDirectory() {
-    return (File) mFlags.getValue(OUTPUT);
+    return (File) mFlags.getValue(OUTPUT_FLAG);
   }
 
   @Override
@@ -90,11 +90,11 @@ public class Consensus extends LoggedCli {
     flags.registerOptional(CONSENSUS_READS, Integer.class, "Int", "number of reads necessary to form consensus along a path", 0).setCategory(SENSITIVITY_TUNING);
   }
   protected static void initFlagsLocal(CFlags flags) {
+    flags.setDescription("Attempts to reduce the complexity of a graph by removing invalid paths");
     flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
+    CommonFlags.initOutputDirFlag(flags);
     initCommonFlags(flags);
-    flags.setDescription("Attempts to reduce the complexity of a graph by removing invalid paths");
-    flags.registerRequired('o', OUTPUT, File.class, "DIR", "output directory").setCategory(INPUT_OUTPUT);
     flags.registerRequired('k', KMER_SIZE, Integer.class, "Int", "size of kmer used to build the graph").setCategory(SENSITIVITY_TUNING);
     flags.registerRequired(File.class, "DIR", "input graph directory").setCategory(INPUT_OUTPUT);
     flags.setValidator(new Valid());
@@ -103,9 +103,7 @@ public class Consensus extends LoggedCli {
   private static class Valid implements Validator {
     @Override
     public boolean isValid(CFlags flags) {
-      final File output = (File) flags.getValue(OUTPUT);
-      if (!CommonFlags.validateOutputDirectory(output)) {
-
+      if (!CommonFlags.validateOutputDirectory(flags)) {
         return false;
       }
       final File input = (File) flags.getAnonymousValue(0);
@@ -120,7 +118,7 @@ public class Consensus extends LoggedCli {
   @Override
   protected int mainExec(OutputStream out, LogStream log) throws IOException {
     final File in = (File) mFlags.getAnonymousValue(0);
-    final File output = (File) mFlags.getValue(OUTPUT);
+    final File output = (File) mFlags.getValue(OUTPUT_FLAG);
     final int kmerSize = (Integer) mFlags.getValue(KMER_SIZE);
     final int threshold = (Integer) mFlags.getValue(CONSENSUS_READS);
     final StoreDirProxy graphDir = new StoreDirProxy(in);

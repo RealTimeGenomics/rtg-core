@@ -11,6 +11,8 @@
  */
 package com.rtg.metagenomics;
 
+import static com.rtg.launcher.CommonFlags.INPUT_FLAG;
+import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.FILTERING;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 
@@ -48,14 +50,12 @@ import com.rtg.util.io.LogStream;
  */
 public final class SpeciesSdfSubset extends LoggedCli {
 
-  private static final String INPUT_FLAG = "input";
-  private static final String OUTPUT_FLAG = "output";
   private static final String TAXONOMY_FILE_FLAG = "taxonomy-file";
 
   private static final Validator VALIDATOR = new Validator() {
     @Override
     public boolean isValid(CFlags flags) {
-      return CommonFlags.validateOutputDirectory((File) flags.getValue(OUTPUT_FLAG));
+      return CommonFlags.validateOutputDirectory(flags);
     }
   };
 

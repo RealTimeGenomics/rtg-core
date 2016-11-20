@@ -102,7 +102,7 @@ public class DeProbeCli extends LoggedCli {
     final Flag inFlag = flags.registerRequired(File.class, "FILE", "SAM/BAM format files containing coordinate-sorted alignments")
       .setCategory(INPUT_OUTPUT).setMinCount(0).setMaxCount(Integer.MAX_VALUE);
     final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing coordinate-sorted alignments").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "FILE", "directory for output").setCategory(INPUT_OUTPUT);
+    CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired('b', PROBE_BED, File.class, "FILE", "BED file specifying each probe location and strand").setCategory(INPUT_OUTPUT);
     flags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "start position tolerance for probe matching", 3).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.addRequiredSet(inFlag);

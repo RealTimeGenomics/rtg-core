@@ -44,7 +44,7 @@ public class ConsensusTest extends AbstractCliTest {
   public void testHelp() {
     checkHelp("rtg consensus"
         , "input graph directory"
-        , "-o,", "--output", "output directory"
+        , "-o,", "--output"
         , "--consensus-reads", "number of reads necessary to form consensus along a path"
         , "-k,", "--kmer-size", "size of kmer used to build the graph"
     );

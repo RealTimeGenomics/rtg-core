@@ -12,6 +12,7 @@
 
 package com.rtg.assembler;
 
+import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
 
@@ -45,8 +46,6 @@ import com.rtg.util.store.StoreDirProxy;
  */
 public class FilterPaths extends LoggedCli {
 
-  static final String OUTPUT = "output";
-  static final String MODULE_NAME = "filterpaths";
   static final String READ_COUNT = "read-count";
   static final String MIN_PATH = "min-path";
   static final String INCLUDE_DELETED = "include-deleted";
@@ -63,7 +62,7 @@ public class FilterPaths extends LoggedCli {
 
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "filterpaths";
   }
 
   @Override
@@ -73,7 +72,7 @@ public class FilterPaths extends LoggedCli {
 
   @Override
   protected File outputDirectory() {
-    return (File) mFlags.getValue(OUTPUT);
+    return (File) mFlags.getValue(OUTPUT_FLAG);
   }
 
   @Override
@@ -86,10 +85,10 @@ public class FilterPaths extends LoggedCli {
     flags.registerOptional('p', MIN_PATH, Integer.class, "Int", "minimum reads required in long paths").setCategory(SENSITIVITY_TUNING);
   }
   protected static void initFlagsLocal(CFlags flags) {
+    flags.setDescription("Attempts to reduce the complexity of a graph by removing invalid paths");
     flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
-    flags.setDescription("Attempts to reduce the complexity of a graph by removing invalid paths");
-    flags.registerRequired('o', OUTPUT, File.class, "DIR", "output directory").setCategory(INPUT_OUTPUT);
+    CommonFlags.initOutputDirFlag(flags);
     initCommonFlags(flags);
     flags.registerOptional('d', INCLUDE_DELETED, "set if you should output nodes that are deleted").setCategory(INPUT_OUTPUT);
     flags.registerRequired(File.class, "DIR", "input graph directory").setCategory(INPUT_OUTPUT);
@@ -99,9 +98,7 @@ public class FilterPaths extends LoggedCli {
   private static class Valid implements Validator {
     @Override
     public boolean isValid(CFlags flags) {
-      final File output = (File) flags.getValue(OUTPUT);
-      if (!CommonFlags.validateOutputDirectory(output)) {
-
+      if (!CommonFlags.validateOutputDirectory(flags)) {
         return false;
       }
       final File input = (File) flags.getAnonymousValue(0);
@@ -116,7 +113,7 @@ public class FilterPaths extends LoggedCli {
   @Override
   protected int mainExec(OutputStream out, LogStream log) throws IOException {
     final File in = (File) mFlags.getAnonymousValue(0);
-    final File output = (File) mFlags.getValue(OUTPUT);
+    final File output = (File) mFlags.getValue(OUTPUT_FLAG);
     final StoreDirProxy graphDir = new StoreDirProxy(in);
     final Set<UUID> sourceIds = new HashSet<>();
     sourceIds.add(GraphReader.getUUID(graphDir));

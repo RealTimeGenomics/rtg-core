@@ -173,9 +173,9 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     mFlags.setValidator(VALIDATOR);
 
     mFlags.registerRequired('i', CommonFlags.READS_FLAG, File.class, "SDF|FILE", "the Complete Genomics read set").setCategory(INPUT_OUTPUT);
-    mFlags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", "output directory").setCategory(INPUT_OUTPUT);
+    CommonFlags.initOutputDirFlag(mFlags);
     mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, "SDF", "SDF containing template to map against").setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional(MapFlags.NO_INMEMORY_TEMPLATE, "do not load the template in memory").setCategory(CommonFlagCategories.UTILITY);
+    mFlags.registerOptional(MapFlags.NO_INMEMORY_TEMPLATE, "do not load the template in memory").setCategory(UTILITY);
 
     final Flag maskFlag = mFlags.registerRequired(MASK_FLAG, String.class, "string", "read indexing method").setCategory(SENSITIVITY_TUNING);
     if (License.isDeveloper()) {

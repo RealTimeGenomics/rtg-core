@@ -201,8 +201,11 @@ public class MapFlagsTest extends TestCase {
       assertTrue(CommonFlags.validateTemplate(flags));
       assertTrue(FileHelper.deleteAll(temp));
 
-      assertTrue(CommonFlags.validateOutputDirectory(new File(tempDir, "blsdkjrlks")));
-      assertFalse(CommonFlags.validateOutputDirectory(tempDir));
+      final File newDir = new File(tempDir, "blsdkjrlks");
+      flags.setFlags("-o", newDir.getAbsolutePath());
+      assertTrue(CommonFlags.validateOutputDirectory(flags));
+      flags.setFlags("-o", tempDir.getAbsolutePath());
+      assertFalse(CommonFlags.validateOutputDirectory(flags));
     } finally {
       Diagnostic.removeListener(ev);
       assertTrue(FileHelper.deleteAll(tempDir));

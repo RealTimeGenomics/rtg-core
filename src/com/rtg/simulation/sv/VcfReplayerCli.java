@@ -265,7 +265,7 @@ public class VcfReplayerCli extends AbstractCli {
   static void getFlags(CFlags flags) {
     flags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, "SDF", "template SDF");
     flags.registerRequired('v', REPLAY, File.class, "FILE", "VCF file to replay");
-    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", "output directory");
+    CommonFlags.initOutputDirFlag(flags);
     flags.setValidator(new Validator() {
 
       @Override

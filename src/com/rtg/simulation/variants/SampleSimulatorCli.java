@@ -80,7 +80,7 @@ public class SampleSimulatorCli extends AbstractCli {
 
     @Override
     public boolean isValid(final CFlags cflags) {
-      if (cflags.isSet(OUTPUT_SDF) && !CommonFlags.validateOutputDirectory((File) cflags.getValue(OUTPUT_SDF))) {
+      if (cflags.isSet(OUTPUT_SDF) && !CommonFlags.validateOutputDirectory(cflags, OUTPUT_SDF)) {
         return false;
       }
       if (!cflags.checkNand(OUTPUT_SDF, CommonFlags.NO_GZIP)) {

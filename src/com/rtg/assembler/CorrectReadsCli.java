@@ -12,10 +12,13 @@
 
 package com.rtg.assembler;
 
+import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.io.LogStream;
@@ -24,7 +27,6 @@ import com.rtg.util.io.LogStream;
  */
 public class CorrectReadsCli extends LoggedCli {
   private static final String INPUT = "input";
-  private static final String OUTPUT = "output";
   private static final String THRESHOLD = "threshold";
 
   @Override
@@ -40,13 +42,13 @@ public class CorrectReadsCli extends LoggedCli {
 
   @Override
   protected File outputDirectory() {
-    return (File) mFlags.getValue(OUTPUT);
+    return (File) mFlags.getValue(OUTPUT_FLAG);
   }
 
   @Override
   protected int mainExec(OutputStream out, LogStream log) throws IOException {
     final File input = (File) mFlags.getValue(INPUT);
-    final File output = (File) mFlags.getValue(OUTPUT);
+    final File output = (File) mFlags.getValue(OUTPUT_FLAG);
     final int kmerSize = (Integer) mFlags.getValue(DeBruijnAssemblerCli.KMER_SIZE);
     final int threshold = mFlags.isSet(THRESHOLD) ? (Integer) mFlags.getValue(THRESHOLD) : -1;
     CorrectReads.correct(input, output, kmerSize, threshold);
@@ -59,9 +61,10 @@ public class CorrectReadsCli extends LoggedCli {
   }
   static void initFlagsLocal(CFlags flags) {
     flags.setDescription("attempt to correct read errors by locating low frequency kmers and mutating them into high frequency ones");
+    flags.registerExtendedHelp();
+    CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired('i', INPUT, File.class, "SDF", "read SDF to correct");
     flags.registerRequired('k', DeBruijnAssemblerCli.KMER_SIZE, Integer.class, "INT", "size of kmer to use in correction");
-    flags.registerRequired('o', OUTPUT, File.class, "DIR", "output directory");
     flags.registerOptional('c', THRESHOLD, Integer.class, "INT", "override the calculated frequency threshold");
   }
 

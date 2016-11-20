@@ -26,7 +26,7 @@ public class CorrectReadsCliTest extends AbstractCliTest {
     checkHelp("correctreads [OPTION]... -i SDF -k INT -o DIR",
         "-i, --input", "read SDF to correct",
         "-k, --kmer-size=INT", "size of kmer to use in correction",
-        "-o, --output", "output directory",
+        "-o, --output",
         "-c, --threshold", "override the calculated frequency threshold"
     );
   }

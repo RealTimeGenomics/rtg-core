@@ -24,8 +24,6 @@ import com.rtg.simulation.cnv.CnvSimulatorCli;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
-import com.rtg.util.cli.CFlags;
-import com.rtg.util.cli.TestCFlags;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogRecord;
@@ -72,21 +70,14 @@ public class CnvStatsCliTest extends AbstractCliTest {
   //private static final String USAGE = " rtg cnvsim [OPTION]... -n INT -s FILE -i SDF -o SDF -O SDF";
 
 
-  /**
-   * Test method for {@link CnvSimulatorCli}.
-   */
-  public final void testGetCFlags() {
-    final CFlags flags = new CFlags();
-    final CnvStatsCli stats = new CnvStatsCli();
-    stats.initFlags(flags);
-
-    TestCFlags.check(flags,
+  public void testHelp() {
+    checkHelp(
         "CNV generation file",
         "CNV detection file",
-    "output directory for results");
+    "directory for output");
   }
 
-  public void checkErrorMessage(final String[] args0, final String exp) throws InvalidParamsException, IOException {
+  public void checkErrorMessage(final String exp, final String... args0) throws InvalidParamsException, IOException {
     final LogStream logStream = new LogRecord();
     Diagnostic.setLogStream(logStream);
     final ByteArrayOutputStream berr = new ByteArrayOutputStream();
@@ -151,11 +142,12 @@ public class CnvStatsCliTest extends AbstractCliTest {
     assertTrue(doesnotexist.delete());
     final File in = ReaderTestUtils.getDNADir(mDir);
     try {
-      checkErrorMessage(new String[] {"-s", cnvsfileSimulated.getPath(), "-g"}, "Expecting value for flag -g");
-      checkErrorMessage(new String[] {"-s", cnvsfileSimulated.getPath(), "-g", doesnotexist.getPath()},
-      "CNV generation file doesn't exist");
-      checkErrorMessage(new String[] {"-s", doesnotexist.getPath(), "-g", cnvsfileGenerated.getPath()},
-      "CNV detection file doesn't exist");
+      checkErrorMessage("Expecting value for flag -g",
+        "-o", doesnotexist.getPath(), "-s", cnvsfileSimulated.getPath(), "-g");
+      checkErrorMessage("CNV generation file doesn't exist",
+        "-o", doesnotexist.getPath(), "-s", cnvsfileSimulated.getPath(), "-g", doesnotexist.getPath());
+      checkErrorMessage("CNV detection file doesn't exist",
+        "-o", doesnotexist.getPath(), "-s", doesnotexist.getPath(), "-g", cnvsfileGenerated.getPath());
     } finally {
       Diagnostic.setLogStream();
       //final String str = logStream.toString();

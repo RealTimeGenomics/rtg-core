@@ -11,6 +11,7 @@
  */
 package com.rtg.simulation.genome;
 
+import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
 
@@ -40,8 +41,7 @@ public class GenomeSimulator extends LoggedCli {
   static final String DEFAULT_PREFIX = "simulatedSequence";
 
   static final String SEED = "seed";
-  static final String OUTPUT = "output";
-    //static final String NO_SEED = "no-seed";
+  //static final String NO_SEED = "no-seed";
   //static final String GENERATE_GENOME = "genome-size";
   static final String FREQUENCY = "freq";
   static final String NUM_CONTIGS = "num-contigs";
@@ -67,7 +67,7 @@ public class GenomeSimulator extends LoggedCli {
     mFlags.setDescription("Simulates a reference genome.");
     CommonFlagCategories.setCategories(mFlags);
 
-    mFlags.registerRequired('o', OUTPUT, File.class, "SDF", "output SDF").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, "SDF", "output SDF").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional('s', SEED, Integer.class, "int", "seed for random number generator").setCategory(UTILITY);
     final Flag numContigs = mFlags.registerOptional('n', NUM_CONTIGS, Integer.class, "int", "number of sequences to generate").setCategory(UTILITY);
     final Flag maxLength = mFlags.registerOptional(MAX_LENGTH, Integer.class, "int", "maximum sequence length").setCategory(UTILITY);
@@ -131,7 +131,7 @@ public class GenomeSimulator extends LoggedCli {
         // ok: Lengths given, not both min and max set
       }
 
-      if (!CommonFlags.validateOutputDirectory((File) cflags.getValue(OUTPUT))) {
+      if (!CommonFlags.validateOutputDirectory(cflags)) {
         return false;
       }
 
@@ -209,7 +209,7 @@ public class GenomeSimulator extends LoggedCli {
 
     final RandomDistribution frequencyDistribution = new RandomDistribution(freqDist, rand);
 
-    generator = new SequenceGenerator(rand, frequencyDistribution, lengths, (File) mFlags.getValue(OUTPUT), (String) mFlags.getValue(PREFIX));
+    generator = new SequenceGenerator(rand, frequencyDistribution, lengths, (File) mFlags.getValue(OUTPUT_FLAG), (String) mFlags.getValue(PREFIX));
     generator.setComment((String) mFlags.getValue(COMMENT));
     generator.createSequences();
     return 0;
@@ -222,7 +222,7 @@ public class GenomeSimulator extends LoggedCli {
 
   @Override
   protected File outputDirectory() {
-    return (File) mFlags.getValue(OUTPUT);
+    return (File) mFlags.getValue(OUTPUT_FLAG);
   }
 
 }

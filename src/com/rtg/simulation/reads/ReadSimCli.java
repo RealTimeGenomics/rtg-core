@@ -11,6 +11,7 @@
  */
 package com.rtg.simulation.reads;
 
+import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.util.StringUtils.LS;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
@@ -67,7 +68,6 @@ public class ReadSimCli extends LoggedCli {
 
   // Common to all machines
   static final String INPUT = "input";
-  static final String OUTPUT = "output";
   static final String SEED = "seed";
   static final String COMMENT = "comment";
   static final String MACHINE_TYPE = "machine";
@@ -135,7 +135,7 @@ public class ReadSimCli extends LoggedCli {
 
   @Override
   protected File outputDirectory() {
-    File f = (File) mFlags.getValue(OUTPUT);
+    File f = (File) mFlags.getValue(OUTPUT_FLAG);
     if ("-".equals(f.getName())) {
       try {
         f = FileUtils.createTempDir("readsim", null);
@@ -156,7 +156,7 @@ public class ReadSimCli extends LoggedCli {
     mFlags.setDescription("Generates reads from a reference genome.");
     mFlags.setCategories(UTILITY, new String[]{INPUT_OUTPUT, CAT_FRAGMENTS, CAT_ILLUMINA_PE, CAT_ILLUMINA_SE, CAT_454_PE, CAT_ION_SE, CAT_CG, UTILITY});
     mFlags.registerExtendedHelp();
-    mFlags.registerRequired('o', OUTPUT, File.class, "SDF", "name for reads output SDF").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, "SDF", "name for reads output SDF").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired('t', INPUT, File.class, "SDF", "SDF containing input genome").setCategory(INPUT_OUTPUT);
     final Flag covFlag = mFlags.registerOptional('c', COVERAGE, Double.class, "float", "coverage, must be positive").setCategory(CAT_FRAGMENTS);
     final Flag nFlag = mFlags.registerOptional('n', READS, Long.class, "int", "number of reads to be generated").setCategory(CAT_FRAGMENTS);
@@ -274,7 +274,7 @@ public class ReadSimCli extends LoggedCli {
   }
 
   private ReadWriter createReadWriter(Machine m) throws IOException {
-    final File f = (File) mFlags.getValue(OUTPUT);
+    final File f = (File) mFlags.getValue(OUTPUT_FLAG);
     if (f.getName().endsWith(".fq")) {
       return new FastqReadWriter(f);
     } else if ("-".equals(f.getName())) {

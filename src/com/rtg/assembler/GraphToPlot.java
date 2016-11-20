@@ -12,6 +12,8 @@
 
 package com.rtg.assembler;
 
+import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -163,7 +165,6 @@ public final class GraphToPlot extends LoggedCli {
     }
   }
 
-  static final String OUTPUT = "output";
   static final String START = "start";
   static final String WIDTH = "width";
 
@@ -176,13 +177,13 @@ public final class GraphToPlot extends LoggedCli {
 
   @Override
   protected File outputDirectory() {
-    return (File) mFlags.getValue(OUTPUT);
+    return (File) mFlags.getValue(OUTPUT_FLAG);
   }
 
   @Override
   protected int mainExec(OutputStream out, LogStream log) throws IOException {
     final File in = (File) mFlags.getAnonymousValue(0);
-    final File output = (File) mFlags.getValue(OUTPUT);
+    final File output = (File) mFlags.getValue(OUTPUT_FLAG);
     final Graph graph = GraphReader.read(GraphFactory.KMER, new StoreDirProxy(in));
     final File dotOutput = new File(output, "graph.dot");
     final File pathOutput = new File(output, "long-paths.list");
@@ -204,7 +205,7 @@ public final class GraphToPlot extends LoggedCli {
   protected static void initFlagsLocal(CFlags flags) {
     flags.registerExtendedHelp();
     flags.setDescription("Produces graphs of the contigs in the specified graph directory");
-    flags.registerRequired('o', OUTPUT, File.class, "DIR", "output directory");
+    CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired(File.class, "DIR", "input graph directory");
     flags.registerRequired('s', START, Long.class, "INT", "produce a .dot file for nodes around this one");
     flags.registerOptional('w', WIDTH, Integer.class, "INT", "maximum distance from the initial node within the .dot", 5);
@@ -224,9 +225,7 @@ public final class GraphToPlot extends LoggedCli {
   private static class Valid implements Validator {
     @Override
     public boolean isValid(CFlags flags) {
-      final File output = (File) flags.getValue(OUTPUT);
-      if (!CommonFlags.validateOutputDirectory(output)) {
-
+      if (!CommonFlags.validateOutputDirectory(flags)) {
         return false;
       }
       final File input = (File) flags.getAnonymousValue(0);

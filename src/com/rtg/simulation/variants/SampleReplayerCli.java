@@ -11,6 +11,8 @@
  */
 package com.rtg.simulation.variants;
 
+import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -35,7 +37,6 @@ public class SampleReplayerCli extends LoggedCli {
 
   private static final String SAMPLE_VCF = "input";
   private static final String SAMPLE_NAME = "sample";
-  private static final String OUTPUT_SDF = "output";
   private static final String REFERENCE_SDF = "reference";
 
 
@@ -55,13 +56,13 @@ public class SampleReplayerCli extends LoggedCli {
     mFlags.registerExtendedHelp();
     CommonFlagCategories.setCategories(mFlags);
     mFlags.registerRequired('t', REFERENCE_SDF, File.class, "SDF", "SDF containing reference genome").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerRequired('o', OUTPUT_SDF, File.class, "SDF", "name for output SDF").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, "SDF", "name for output SDF").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerRequired('i', SAMPLE_VCF, File.class, "FILE", "input VCF containing the sample genotype").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerRequired('s', SAMPLE_NAME, String.class, "STRING", "name of the sample to select from the VCF").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.setValidator(new Validator() {
       @Override
       public boolean isValid(CFlags flags) {
-        return CommonFlags.validateOutputDirectory(outputDirectory());
+        return CommonFlags.validateOutputDirectory(flags);
       }
     });
 
@@ -69,7 +70,7 @@ public class SampleReplayerCli extends LoggedCli {
 
   @Override
   protected File outputDirectory() {
-    return (File) mFlags.getValue(OUTPUT_SDF);
+    return (File) mFlags.getValue(OUTPUT_FLAG);
   }
 
   @Override

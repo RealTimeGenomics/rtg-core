@@ -96,7 +96,7 @@ public class ChildSampleSimulatorCli extends AbstractCli {
       if (!CommonFlags.validateNotStdout((File) cflags.getValue(OUTPUT_VCF))) {
         return false;
       }
-      return !(cflags.isSet(OUTPUT_SDF) && !CommonFlags.validateOutputDirectory((File) cflags.getValue(OUTPUT_SDF)));
+      return !(cflags.isSet(OUTPUT_SDF) && !CommonFlags.validateOutputDirectory(cflags, OUTPUT_SDF));
     }
   }
 

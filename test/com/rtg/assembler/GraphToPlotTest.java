@@ -37,7 +37,7 @@ public class GraphToPlotTest extends AbstractCliTest {
     checkHelp("rtg graph2plot"
         , "Produces graphs of the contigs in the specified graph directory"
         , "input graph directory"
-        , "-o,", "--output", "output directory"
+        , "-o,", "--output"
         , "-w", "--width", "maximum distance from the initial node within the .dot"
         , "-s", "--start", "produce a .dot file for nodes around this one"
     );

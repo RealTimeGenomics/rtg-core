@@ -67,7 +67,7 @@ class ReadSimCliValidator implements Validator {
         return false;
       }
     }
-    if (!CommonFlags.validateOutputDirectory((File) cflags.getValue(ReadSimCli.OUTPUT))) {
+    if (!CommonFlags.validateOutputDirectory(cflags)) {
       return false;
     }
     if (cflags.isSet(ReadSimCli.DISTRIBUTION) && cflags.isSet(ReadSimCli.TAXONOMY_DISTRIBUTION)) {
