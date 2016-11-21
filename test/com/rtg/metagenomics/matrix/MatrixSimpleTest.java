@@ -22,7 +22,11 @@ public class MatrixSimpleTest extends TestCase {
   public void test0() {
     final Matrix ma = new MatrixSimple(0);
     assertEquals("", ma.toString());
-    final Matrix mb = new MatrixSimple(new double[][] {{0.5, 1.0}, {0.2, 1.0}});
+    final Matrix mb = new MatrixSimple(2);
+    mb.set(0, 0, 0.5);
+    mb.set(0, 1, 1.0);
+    mb.set(1, 0, 0.2);
+    mb.set(1, 1, 1.0);
     assertEquals(2, mb.size());
     assertEquals(0.5, mb.get(0, 0));
     assertEquals(1.0, mb.get(0, 1));

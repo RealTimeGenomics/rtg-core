@@ -20,29 +20,11 @@ public class MatrixSimple extends Matrix {
   private final double[][] mMatrix;
 
   /**
-   * Create a matrix from arrays of doubles.
-   * Intended for testing.
-   * Copies the array.
-   * @param values to be used.
-   */
-  MatrixSimple(final double[][] values) {
-    mSize = values.length;
-    mMatrix = new double[mSize][];
-    for (int i = 0; i < mSize; i++) {
-      mMatrix[i] = new double[mSize];
-      System.arraycopy(values[i], 0, mMatrix[i], 0, mSize);
-    }
-  }
-
-  /**
    * @param dimension n of an n x n matrix.
    */
   public MatrixSimple(final int dimension) {
     mSize = dimension;
-    mMatrix = new double[dimension][];
-    for (int i = 0; i < dimension; i++) {
-      mMatrix[i] = new double[dimension];
-    }
+    mMatrix = new double[dimension][dimension];
   }
 
   @Override

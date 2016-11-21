@@ -46,8 +46,16 @@ public class MatrixUtilsTest extends TestCase {
   }
 
   public void testMultiplyMatrixMatrix() {
-    final Matrix a = new MatrixSimple(new double[][] {{0.5, 1.0}, {0.2, 1.0}});
-    final Matrix b = new MatrixSimple(new double[][] {{1.0, 3.0}, {0.0, 2.0}});
+    final Matrix a = new MatrixSimple(2);
+    a.set(0, 0, 0.5);
+    a.set(0, 1, 1.0);
+    a.set(1, 0, 0.2);
+    a.set(1, 1, 1.0);
+    final Matrix b = new MatrixSimple(2);
+    b.set(0, 0, 1.0);
+    b.set(0, 1, 3.0);
+    b.set(1, 0, 0.0);
+    b.set(1, 1, 2.0);
     final Matrix c = MatrixUtils.multiply(a, b);
     final String str = c.toString();
     //System.err.println(str);
@@ -299,8 +307,12 @@ public class MatrixUtilsTest extends TestCase {
   }
 
   public final void testPointProduct2() {
-    final Matrix a = new MatrixSimple(new double[][] {{4.0, 3.0}, {3.0, 1.0}});
-    final Vector v = new Vector(new double[] {2.0, 1.0});
+    final Matrix a = new MatrixSimple(2);
+    a.set(0, 0, 4.0);
+    a.set(0, 1, 3.0);
+    a.set(1, 0, 3.0);
+    a.set(1, 1, 1.0);
+    final Vector v = new Vector(new double[]{2.0, 1.0});
     final Matrix x = MatrixUtils.pointProduct(v, a);
     assertTrue(x.isSymmetric());
     final String exp = ""
