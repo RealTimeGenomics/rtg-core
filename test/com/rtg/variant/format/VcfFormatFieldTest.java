@@ -16,6 +16,7 @@ import static com.rtg.variant.format.VcfFormatField.AQ;
 import static com.rtg.variant.format.VcfFormatField.QA;
 import static com.rtg.variant.format.VcfFormatField.VA;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -28,6 +29,7 @@ import com.rtg.calibrate.Covariate;
 import com.rtg.calibrate.CovariateEnum;
 import com.rtg.calibrate.CovariateReadGroup;
 import com.rtg.calibrate.CovariateSequence;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.reference.Ploidy;
 import com.rtg.util.TestUtils;
 import com.rtg.util.intervals.ReferenceRegions;
@@ -50,14 +52,12 @@ import com.rtg.variant.util.arithmetic.SimplePossibility;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.header.VcfHeader;
 
-import junit.framework.TestCase;
-
 /**
  */
-public class VcfFormatFieldTest extends TestCase {
+public class VcfFormatFieldTest extends AbstractNanoTest {
 
   public void testEnum() {
-    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, AQ, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, COC_COF, VAF, QA, MEANQAD]");
+    TestUtils.testEnum(VcfFormatField.class, "[GT, VA, DP, DPR, RE, AR, RQ, GQ, RP, DN, DNP, ABP, SBP, RPB, PPB, AQ, PUR, RS, ADE, AD, SSC, SS, GL, GQD, ZY, PD, SCONT, VAF, QA, MEANQAD]");
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.AD)) {
       assertFalse(field.isVcfAnnotator());
     }
@@ -67,46 +67,12 @@ public class VcfFormatFieldTest extends TestCase {
     assertEquals(0, VcfFormatField.GT.ordinal());
   }
 
-  public void testHeaders() {
+  public void testHeaders() throws IOException {
     final VcfHeader header = new VcfHeader();
     for (VcfFormatField field : VcfFormatField.values()) {
       field.updateHeader(header);
     }
-    final String expected = ""
-      + "##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">\n"
-      + "##FORMAT=<ID=VA,Number=1,Type=Integer,Description=\"Variant Allele\">\n"
-      + "##FORMAT=<ID=DP,Number=1,Type=Integer,Description=\"Read Depth\">\n"
-      + "##FORMAT=<ID=DPR,Number=1,Type=Float,Description=\"Ratio of read depth to expected read depth\">\n"
-      + "##FORMAT=<ID=RE,Number=1,Type=Float,Description=\"RTG Total Error\">\n"
-      + "##FORMAT=<ID=AR,Number=1,Type=Float,Description=\"Ambiguity Ratio\">\n"
-      + "##FORMAT=<ID=RQ,Number=1,Type=Float,Description=\"RTG sample quality\">\n"
-      + "##FORMAT=<ID=GQ,Number=1,Type=Integer,Description=\"Genotype Quality\">\n"
-      + "##FORMAT=<ID=RP,Number=1,Type=Float,Description=\"RTG Posterior\">\n"
-      + "##FORMAT=<ID=DN,Number=1,Type=Character,Description=\"Indicates whether call is a putative de novo mutation\">\n"
-      + "##FORMAT=<ID=DNP,Number=1,Type=Float,Description=\"Phred scaled probability that the call is due to a de novo mutation\">\n"
-      + "##FORMAT=<ID=ABP,Number=1,Type=Float,Description=\"Phred scaled probability that allele imbalance is present\">\n"
-      + "##FORMAT=<ID=SBP,Number=1,Type=Float,Description=\"Phred scaled probability that strand bias is present\">\n"
-      + "##FORMAT=<ID=RPB,Number=1,Type=Float,Description=\"Phred scaled probability that read position bias is present\">\n"
-      + "##FORMAT=<ID=PPB,Number=1,Type=Float,Description=\"Phred scaled probability that there is a bias in the proportion of alignments that are properly paired\">\n"
-      + "##FORMAT=<ID=AQ,Number=.,Type=Float,Description=\"Sum of quality for the evidence of the allele\">\n"
-      + "##FORMAT=<ID=PUR,Number=1,Type=Float,Description=\"Ratio of placed unmapped reads to mapped reads\">\n"
-      + "##FORMAT=<ID=RS,Number=.,Type=String,Description=\"RTG Support Statistics\">\n"
-      + "##FORMAT=<ID=ADE,Number=.,Type=Float,Description=\"Allelic depths for the ref and alt alleles in the order listed, error corrected\">\n"
-      + "##FORMAT=<ID=AD,Number=.,Type=Integer,Description=\"Allelic depths for the ref and alt alleles in the order listed\">\n"
-      + "##FORMAT=<ID=SSC,Number=1,Type=Float,Description=\"Somatic score\">\n"
-      + "##FORMAT=<ID=SS,Number=1,Type=Integer,Description=\"Somatic status relative to original sample\">\n"
-      + "##FORMAT=<ID=GL,Number=G,Type=Float,Description=\"Log_10 scaled genotype likelihoods. As defined in VCF specifications\">\n"
-      + "##FORMAT=<ID=GQD,Number=1,Type=Float,Description=\"GQ / DP for a single sample\">\n"
-      + "##FORMAT=<ID=ZY,Number=1,Type=String,Description=\"Zygosity of sample. 'e'=>heterozygous, 'o'=>homozygous\">\n"
-      + "##FORMAT=<ID=PD,Number=1,Type=String,Description=\"Ploidy of sample. 'h'=>haploid, 'd'=>diploid\">\n"
-      + "##FORMAT=<ID=COC,Number=1,Type=Integer,Description=\"Contrary observation count\">\n"
-      + "##FORMAT=<ID=COF,Number=1,Type=Float,Description=\"Contrary observation fraction\">\n"
-      + "##FORMAT=<ID=VAF,Number=1,Type=Float,Description=\"Variant Allelic Fraction\">\n"
-      + "##FORMAT=<ID=QA,Number=1,Type=Float,Description=\"Sum of quality of the alternate observations\">\n"
-      + "##FORMAT=<ID=MEANQAD,Number=1,Type=Float,Description=\"Difference between the mean alt quality and mean reference quality\">\n"
-      + "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\n";
-
-    assertEquals(expected, header.toString());
+    mNano.check("vcfformatfield-headers.vcf", header.toString());
   }
 
   private final class DummyCoverageThreshold extends CalibratedPerSequenceExpectedCoverage {

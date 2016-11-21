@@ -35,8 +35,8 @@ import com.rtg.variant.util.VariantUtils;
 import com.rtg.vcf.VcfAnnotator;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
-import com.rtg.vcf.annotation.ContraryObservationAnnotator;
 import com.rtg.vcf.annotation.DerivedAnnotations;
+import com.rtg.vcf.annotation.SplitContraryObservationAnnotator;
 import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
 import com.rtg.vcf.header.VcfNumber;
@@ -639,14 +639,14 @@ public enum VcfFormatField {
     }
   },
   /** Contrary observation count and fraction */
-  COC_COF {
+  SCONT {
     @Override
     public void updateHeader(VcfHeader header) {
-      COC_COF_ANNOTATOR.updateHeader(header);
+      SCONT_ANNOTATOR.updateHeader(header);
     }
     @Override
     protected void updateVcfRecord(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params, boolean includePrevNt) {
-      COC_COF_ANNOTATOR.annotate(rec);
+      SCONT_ANNOTATOR.annotate(rec);
     }
     @Override
     public boolean hasValue(VcfRecord rec, Variant call, VariantSample sample, String sampleName, VariantParams params) {
@@ -735,7 +735,7 @@ public enum VcfFormatField {
   private static final VcfAnnotator VAF_ANNOTATOR = DerivedAnnotations.VAF.getAnnotation();
   private static final VcfAnnotator MEANQAD_ANNOTATOR = DerivedAnnotations.MEANQAD.getAnnotation();
   private static final VcfAnnotator QA_ANNOTATOR = DerivedAnnotations.QA.getAnnotation();
-  private static final VcfAnnotator COC_COF_ANNOTATOR = new ContraryObservationAnnotator();
+  private static final VcfAnnotator SCONT_ANNOTATOR = new SplitContraryObservationAnnotator();
 
 
   /**
