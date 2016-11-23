@@ -24,14 +24,6 @@ import com.rtg.util.machine.MachineType;
  */
 class ReadSimCliValidator implements Validator {
 
-  private static boolean okProbability(final Object o) {
-    if (!(o instanceof Double)) {
-      return false;
-    }
-    final double d = (Double) o;
-    return d >= 0 && d <= 1;
-  }
-
   @Override
   public boolean isValid(final CFlags cflags) {
 
