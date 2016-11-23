@@ -35,21 +35,16 @@ class ReadSimCliValidator implements Validator {
   @Override
   public boolean isValid(final CFlags cflags) {
 
-    if (cflags.isSet(ReadSimCli.MNP_EVENT_RATE) && !okProbability(cflags.getValue(ReadSimCli.MNP_EVENT_RATE))) {
-      cflags.setParseMessage("--" + ReadSimCli.MNP_EVENT_RATE + " must be a value in [0,1]");
+    if (!cflags.checkInRange(ReadSimCli.MNP_EVENT_RATE, 0.0, 1.0)) {
       return false;
     }
-    if (cflags.isSet(ReadSimCli.INS_EVENT_RATE) && !okProbability(cflags.getValue(ReadSimCli.INS_EVENT_RATE))) {
-      cflags.setParseMessage("--" + ReadSimCli.INS_EVENT_RATE + " must be a value in [0,1]");
+    if (!cflags.checkInRange(ReadSimCli.INS_EVENT_RATE, 0.0, 1.0)) {
       return false;
     }
-    if (cflags.isSet(ReadSimCli.DEL_EVENT_RATE) && !okProbability(cflags.getValue(ReadSimCli.DEL_EVENT_RATE))) {
-      cflags.setParseMessage("--" + ReadSimCli.DEL_EVENT_RATE + " must be a value in [0,1]");
+    if (!cflags.checkInRange(ReadSimCli.DEL_EVENT_RATE, 0.0, 1.0)) {
       return false;
     }
-
-    if (!(cflags.isSet(ReadSimCli.COVERAGE) ^ cflags.isSet(ReadSimCli.READS))) {
-      cflags.setParseMessage("Exactly one of --" + ReadSimCli.COVERAGE + " or --" + ReadSimCli.READS + " must be specified");
+    if (!cflags.checkXor(ReadSimCli.COVERAGE, ReadSimCli.READS)) {
       return false;
     }
     if (cflags.isSet(ReadSimCli.READS)) {
@@ -70,8 +65,7 @@ class ReadSimCliValidator implements Validator {
     if (!CommonFlags.validateOutputDirectory(cflags)) {
       return false;
     }
-    if (cflags.isSet(ReadSimCli.DISTRIBUTION) && cflags.isSet(ReadSimCli.TAXONOMY_DISTRIBUTION)) {
-      cflags.setParseMessage("At most one of --" + ReadSimCli.DISTRIBUTION + " or --" + ReadSimCli.TAXONOMY_DISTRIBUTION + " should be set");
+    if (!cflags.checkNand(ReadSimCli.DISTRIBUTION, ReadSimCli.TAXONOMY_DISTRIBUTION)) {
       return false;
     }
     if (cflags.isSet(ReadSimCli.DISTRIBUTION)) {
@@ -90,8 +84,7 @@ class ReadSimCliValidator implements Validator {
       return false;
 
     }
-    if (cflags.isSet(ReadSimCli.ABUNDANCE) && cflags.isSet(ReadSimCli.DNA_FRACTION)) {
-      cflags.setParseMessage("At most one of --" + ReadSimCli.ABUNDANCE + " or --" + ReadSimCli.DNA_FRACTION + " should be set");
+    if (!cflags.checkNand(ReadSimCli.ABUNDANCE, ReadSimCli.DNA_FRACTION)) {
       return false;
     }
     if (cflags.isSet(ReadSimCli.TAXONOMY_DISTRIBUTION)) {

@@ -50,10 +50,10 @@ public class SimilarityFlagsValidatorTest extends TestCase {
       final File fakeList = new File(tempDir, "fakeList.txt");
       assertTrue(fakeList.createNewFile());
       checkErrorMessage(flags, new String[] {"-o", fakePaired.getPath(), "-I", fakeList.getPath()}, err, "The directory", "\"" + fakePaired.getPath() + "\"", "already exists.");
-      checkErrorMessage(flags, new String[] {"-o", "blah", "-I", fakeList.getPath(), "-w", "-1"}, err, "The specified flag \"--word\" has invalid value \"-1\". It should be greater than or equal to \"1\".");
-      checkErrorMessage(flags, new String[] {"-o", "blah", "-I", fakeList.getPath(), "-w", "0"}, err, "The specified flag \"--word\" has invalid value \"0\". It should be greater than or equal to \"1\".");
-      checkErrorMessage(flags, new String[] {"-o", "blah", "-I", fakeList.getPath(), "-w", "33"}, err, "The specified flag \"--word\" has invalid value \"33\". It should be less than or equal to \"32\".");
-      checkErrorMessage(flags, new String[] {"-o", "blah", "-I", fakeList.getPath(), "--max-reads", "0"}, err, "The --max-reads must be greater than 0");
+      checkErrorMessage(flags, new String[] {"-o", "blah", "-I", fakeList.getPath(), "-w", "-1"}, err, "--word must be in the range [1");
+      checkErrorMessage(flags, new String[] {"-o", "blah", "-I", fakeList.getPath(), "-w", "0"}, err, "--word must be in the range [1");
+      checkErrorMessage(flags, new String[] {"-o", "blah", "-I", fakeList.getPath(), "-w", "33"}, err, "--word must be in the range [1, 32]");
+      checkErrorMessage(flags, new String[] {"-o", "blah", "-I", fakeList.getPath(), "--max-reads", "0"}, err, "--max-reads must be greater than 0");
       checkErrorMessage(flags, new String[] {"-o", "blah", "-I", fakeList.getPath(), "-w", "20", "-s", "20"}, err);
       checkErrorMessage(flags, new String[] {"-o", "blah", "-i", left.getPath(), "--max-reads", "1"}, err, "Only set --max-reads when using --input-list-file");
       checkErrorMessage(flags, new String[] {"-o", "blah", "-i", left.getPath()}, err);

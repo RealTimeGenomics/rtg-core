@@ -45,7 +45,6 @@ import com.rtg.index.similarity.NeighborJoining;
 import com.rtg.index.similarity.SimilarityMatrix;
 import com.rtg.launcher.BuildParams;
 import com.rtg.launcher.CommonFlags;
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.NoStatistics;
@@ -53,6 +52,7 @@ import com.rtg.launcher.ParamsCli;
 import com.rtg.launcher.ParamsTask;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.mode.ProgramMode;
 import com.rtg.ngs.MapFlags;
 import com.rtg.reader.IndexFile;
@@ -142,8 +142,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
           flags.setParseMessage("The specified list file, \"" + inputList.getPath() + "\", is a directory.");
           return false;
         }
-        if (flags.isSet(MAX_READS_FLAG) && (Integer) flags.getValue(MAX_READS_FLAG) < 1) {
-          flags.setParseMessage("The --" + MAX_READS_FLAG + " must be greater than 0");
+        if (!flags.checkInRange(MAX_READS_FLAG, 0, false, Integer.MAX_VALUE, true)) {
           return false;
         }
       }
@@ -151,7 +150,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
         return false;
       }
       if (flags.isSet(WORDSIZE_FLAG)) {
-        if (!CommonFlags.validateFlagBetweenValues(flags, WORDSIZE_FLAG, 1, 32)) {
+        if (!flags.checkInRange(WORDSIZE_FLAG, 1, 32)) {
           return false;
         }
       }

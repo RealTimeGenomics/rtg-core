@@ -281,7 +281,7 @@ public final class MapFlags {
     final int b = (Integer) flags.getValue(CommonFlags.INDELS_FLAG);
     final int c = (Integer) flags.getValue(INDEL_LENGTH_FLAG);
     if (flags.isSet(WORDSIZE_FLAG)) {
-      if (!CommonFlags.validateFlagBetweenValues(flags, WORDSIZE_FLAG, 1, MAX_WORD_SIZE)) {
+      if (!flags.checkInRange(WORDSIZE_FLAG, 1, MAX_WORD_SIZE)) {
         return false;
       }
     }
@@ -347,15 +347,13 @@ public final class MapFlags {
    * @return true if flags passed check
    */
   public static boolean validateMinMaxFragmentSize(CFlags flags) {
-    if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.MAX_FRAGMENT_SIZE, 1, MAX_INSERT_SIZE)) {
+    if (!flags.checkInRange(CommonFlags.MAX_FRAGMENT_SIZE, 1, MAX_INSERT_SIZE)) {
       return false;
     }
-    if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.MIN_FRAGMENT_SIZE, 0, MAX_INSERT_SIZE)) {
+    if (!flags.checkInRange(CommonFlags.MIN_FRAGMENT_SIZE, 0, MAX_INSERT_SIZE)) {
       return false;
     }
-    final int min = (Integer) flags.getValue(CommonFlags.MIN_FRAGMENT_SIZE);
-    final int max = (Integer) flags.getValue(CommonFlags.MAX_FRAGMENT_SIZE);
-    if (min > max) {
+    if ((Integer) flags.getValue(CommonFlags.MIN_FRAGMENT_SIZE) > (int) (Integer) flags.getValue(CommonFlags.MAX_FRAGMENT_SIZE)) {
       flags.setParseMessage("--" + CommonFlags.MIN_FRAGMENT_SIZE + " must be less than --" + CommonFlags.MAX_FRAGMENT_SIZE);
       return false;
     }
@@ -427,22 +425,22 @@ public final class MapFlags {
   }
 
   static boolean validatePenaltyFlags(CFlags flags) {
-    if (!CommonFlags.validateFlagBetweenValues(flags, MISMATCH_PENALTY_FLAG, 1, 100)) {
+    if (!flags.checkInRange(MISMATCH_PENALTY_FLAG, 1, 100)) {
       return false;
     }
-    if (!CommonFlags.validateFlagBetweenValues(flags, UNKNOWNS_PENALTY_FLAG, 0, 100)) {
+    if (!flags.checkInRange(UNKNOWNS_PENALTY_FLAG, 0, 100)) {
       return false;
     }
-    if (!CommonFlags.validateFlagBetweenValues(flags, GAP_OPEN_PENALTY_FLAG, 1, 100)) {
+    if (!flags.checkInRange(GAP_OPEN_PENALTY_FLAG, 1, 100)) {
       return false;
     }
-    if (!CommonFlags.validateFlagBetweenValues(flags, GAP_EXTEND_PENALTY_FLAG, 1, 100)) {
+    if (!flags.checkInRange(GAP_EXTEND_PENALTY_FLAG, 1, 100)) {
       return false;
     }
-    if (!CommonFlags.validateFlagBetweenValues(flags, SOFT_CLIP_DISTANCE_FLAG, 0, 100)) {
+    if (!flags.checkInRange(SOFT_CLIP_DISTANCE_FLAG, 0, 100)) {
       return false;
     }
-    if (flags.isSet(ALIGNER_BAND_WIDTH_FACTOR_FLAG) && !CommonFlags.validateFlagBetweenValues(flags, ALIGNER_BAND_WIDTH_FACTOR_FLAG, 0.0f, 1.0f)) {
+    if (flags.isSet(ALIGNER_BAND_WIDTH_FACTOR_FLAG) && !flags.checkInRange(ALIGNER_BAND_WIDTH_FACTOR_FLAG, (double) 0.0f, (double) 1.0f)) {
       return false;
     }
     if (!(AlignerMode.GENERAL == flags.getValue(ALIGNER_MODE_FLAG)) && (flags.isSet(MISMATCH_PENALTY_FLAG) || flags.isSet(UNKNOWNS_PENALTY_FLAG) || flags.isSet(GAP_OPEN_PENALTY_FLAG) || flags.isSet(GAP_EXTEND_PENALTY_FLAG))) {
@@ -559,7 +557,7 @@ public final class MapFlags {
    */
   public static boolean checkRepeatFrequency(CFlags flags) {
     if (flags.isSet(REPEAT_FREQUENCY_FLAG)) {
-      if (!CommonFlags.validateFlagBetweenValues(flags, REPEAT_FREQUENCY_FLAG, 1, 100000)) {
+      if (!flags.checkInRange(REPEAT_FREQUENCY_FLAG, 1, 100000)) {
         return false;
       }
     }
@@ -593,15 +591,11 @@ public final class MapFlags {
         }
       }
     }
-    if (flags.isSet(MAX_REPEAT_FREQUENCY_FLAG)) {
-      if (!CommonFlags.validateFlagBetweenValues(flags, MAX_REPEAT_FREQUENCY_FLAG, -1, Integer.MAX_VALUE)) {
-        return false;
-      }
+    if (!flags.checkInRange(MAX_REPEAT_FREQUENCY_FLAG, -1, Integer.MAX_VALUE)) {
+      return false;
     }
-    if (flags.isSet(MIN_REPEAT_FREQUENCY_FLAG)) {
-      if (!CommonFlags.validateFlagBetweenValues(flags, MIN_REPEAT_FREQUENCY_FLAG, -1, Integer.MAX_VALUE)) {
-        return false;
-      }
+    if (!flags.checkInRange(MIN_REPEAT_FREQUENCY_FLAG, -1, Integer.MAX_VALUE)) {
+      return false;
     }
     return true;
   }

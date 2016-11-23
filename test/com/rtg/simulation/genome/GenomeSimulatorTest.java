@@ -90,7 +90,7 @@ public class GenomeSimulatorTest extends AbstractCliTest {
   public void testErr2() {
     final String err = checkError("--min-length=45", "--max-length=44", "-o", mTempFile.getPath(), "-n", "5");
     //System.out.println("GenomeSimulatorTest\n" + err);
-    TestUtils.containsAll(err, "Maximum sequence length must be greater or equal minimum length");
+    TestUtils.containsAll(err, "cannot be greater than");
    }
   public void testErr3() {
     final String err = checkError("--length=2", "--min-length=45", "--max-length=44", "-o", mTempFile.getPath(), "-n", "5");

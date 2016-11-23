@@ -152,7 +152,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
       final int b = (Integer) flags.getValue(GAPS_FLAG);
       final int c = (Integer) flags.getValue(GAP_LENGTH_FLAG);
       if (flags.isSet(WORDSIZE_FLAG)) {
-        if (!CommonFlags.validateFlagBetweenValues(flags, WORDSIZE_FLAG, 1, 12)) {
+        if (!flags.checkInRange(WORDSIZE_FLAG, 1, 12)) {
           return false;
         }
       }
@@ -168,51 +168,26 @@ public class MapXCli extends ParamsCli<NgsParams> {
         Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "-c", c + "", "1");
         return false;
       }
-      if (flags.isSet(MIN_IDENTITY_FLAG)) {
-        final Integer minIden = (Integer) flags.getValue(MIN_IDENTITY_FLAG);
-        if (minIden < 0 || minIden > 100) {
-          flags.setParseMessage("Invalid minimum percentage identity " + minIden.toString() + " must be between 0 and 100");
-          return false;
-        }
-      }
-      if (flags.isSet(MAX_ESCORE_FLAG) && flags.isSet(MIN_BITSCORE_FLAG)) {
-        flags.setParseMessage("Cannot set e-score and bit-score filters at the same time");
+      if (!flags.checkInRange(MIN_IDENTITY_FLAG, 0, 100)) {
         return false;
       }
-      if (flags.isSet(MAX_ESCORE_FLAG)) {
-        final Double maxEScore = (Double) flags.getValue(MAX_ESCORE_FLAG);
-        if (maxEScore < 0) {
-          flags.setParseMessage("Invalid maximum e-score " + maxEScore.toString() + " must be positive");
-          return false;
-        }
+      if (!flags.checkNand(MAX_ESCORE_FLAG, MIN_BITSCORE_FLAG)) {
+        return false;
       }
-      if (flags.isSet(MIN_BITSCORE_FLAG)) {
-        final Double minBScore = (Double) flags.getValue(MIN_BITSCORE_FLAG);
-        if (minBScore < 0) {
-          flags.setParseMessage("Invalid minimum bit score " + minBScore.toString() + " must be positive");
-          return false;
-        }
+      if (!flags.checkInRange(MAX_ESCORE_FLAG, 0, Double.MAX_VALUE)) {
+        return false;
       }
-      if (flags.isSet(PRE_FILTER_MIN_SCORE)) {
-        final Integer minScore = (Integer) flags.getValue(PRE_FILTER_MIN_SCORE);
-        if (minScore < 0 || minScore > 100) {
-          flags.setParseMessage("Invalid pre-filter minimum score " + minScore.toString() + " must be between 0 and 100");
-          return false;
-        }
+      if (!flags.checkInRange(MIN_BITSCORE_FLAG, 0, Double.MAX_VALUE)) {
+        return false;
       }
-      if (flags.isSet(PRE_FILTER_MIN_OVERLAP)) {
-        final Integer minOverlap = (Integer) flags.getValue(PRE_FILTER_MIN_OVERLAP);
-        if (minOverlap < 0 || minOverlap > 100) {
-          flags.setParseMessage("Invalid pre-filter minimum overlap " + minOverlap.toString() + " must be between 0 and 100");
-          return false;
-        }
+      if (!flags.checkInRange(PRE_FILTER_MIN_SCORE, 0, 100)) {
+        return false;
       }
-      if (flags.isSet(PRE_FILTER_ALGORITHM)) {
-        final Integer algorithm = (Integer) flags.getValue(PRE_FILTER_ALGORITHM);
-        if (algorithm < -10 || algorithm > 10) {
-          flags.setParseMessage("Invalid pre-filter algorithm " + algorithm.toString() + " must be between -10 and 10");
-          return false;
-        }
+      if (!flags.checkInRange(PRE_FILTER_MIN_OVERLAP, 0, 100)) {
+        return false;
+      }
+      if (!flags.checkInRange(PRE_FILTER_ALGORITHM, -10, 10)) {
+        return false;
       }
       final int metachunklength;
       if (flags.isSet(XMETA_CHUNK_LENGTH)) {
@@ -234,7 +209,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
         flags.setParseMessage("--" + XMETA_CHUNK_OVERLAP + " must be positive and less than " + XMETA_CHUNK_LENGTH);
         return false;
       }
-      if (!CommonFlags.validateFlagBetweenValues(flags, MapFlags.MAX_TOP_RESULTS_FLAG, 1, 250)) {
+      if (!flags.checkInRange(MapFlags.MAX_TOP_RESULTS_FLAG, 1, 250)) {
         return false;
       }
       return true;

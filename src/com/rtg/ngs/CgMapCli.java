@@ -120,19 +120,11 @@ public class CgMapCli extends ParamsCli<NgsParams> {
       }
 
       if (flags.isSet(MapFlags.XSCORE_INDEL)) {
-        if (!CommonFlags.validateFlagBetweenValues(flags, MapFlags.XSCORE_INDEL, 0, MapFlags.MAX_SCORE)) {
+        if (!flags.checkInRange(MapFlags.XSCORE_INDEL, 0, MapFlags.MAX_SCORE)) {
           return false;
         }
       }
-      if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.MAX_FRAGMENT_SIZE, 1, MAX_INSERT_SIZE)) {
-        return false;
-      }
-      if (!CommonFlags.validateFlagBetweenValues(flags, CommonFlags.MIN_FRAGMENT_SIZE, 0, MAX_INSERT_SIZE)) {
-        return false;
-      }
-      if ((Integer) flags.getValue(CommonFlags.MIN_FRAGMENT_SIZE)
-          > (Integer) flags.getValue(CommonFlags.MAX_FRAGMENT_SIZE)) {
-        flags.setParseMessage("--" + CommonFlags.MIN_FRAGMENT_SIZE + " must be less than --" + CommonFlags.MAX_FRAGMENT_SIZE);
+      if (!MapFlags.validateMinMaxFragmentSize(flags)) {
         return false;
       }
 
@@ -151,7 +143,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
       if (!CommonFlags.validateThreads(flags)) {
         return false;
       }
-      if (!CommonFlags.validateFlagBetweenValues(flags, MapFlags.MAX_TOP_RESULTS_FLAG, 1, 255)) {
+      if (!flags.checkInRange(MapFlags.MAX_TOP_RESULTS_FLAG, 1, 255)) {
         return false;
       }
       if (flags.isSet(MapFlags.BAM_FLAG) && flags.isSet(CommonFlags.NO_GZIP)) {

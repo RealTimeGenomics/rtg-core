@@ -114,21 +114,15 @@ public class MapFlagsTest extends TestCase {
   }
 
   public void testNegativeRepeatFreq() {
-    final MockEventListener ev = new MockEventListener();
-    Diagnostic.addListener(ev);
     final CFlags flags = new CFlags();
     flags.registerOptional('r', MapFlags.REPEAT_FREQUENCY_FLAG, Integer.class, "int", RESOURCE.getString("REPEAT_FREQUENCY_DESC"), 1000);
-    try {
-      flags.setFlags("-r", "-1");
-      assertFalse(MapFlags.checkRepeatFrequency(flags));
-      assertTrue(ev.compareErrorMessage("Error: The specified flag \"--" + MapFlags.REPEAT_FREQUENCY_FLAG + "\" has invalid value \"" + -1 + "\". It should be greater than or equal to \"1\"."));
+    flags.setFlags("-r", "-1");
+    assertFalse(MapFlags.checkRepeatFrequency(flags));
+    TestUtils.containsAll(flags.getParseMessage(), "--" + MapFlags.REPEAT_FREQUENCY_FLAG + " must be in the range [1");
 
-      flags.setFlags("-r", "0");
-      assertFalse(MapFlags.checkRepeatFrequency(flags));
-      assertTrue(ev.compareErrorMessage("Error: The specified flag \"--" + MapFlags.REPEAT_FREQUENCY_FLAG + "\" has invalid value \"" + 0 + "\". It should be greater than or equal to \"1\"."));
-    } finally {
-      Diagnostic.removeListener(ev);
-    }
+    flags.setFlags("-r", "0");
+    assertFalse(MapFlags.checkRepeatFrequency(flags));
+    TestUtils.containsAll(flags.getParseMessage(), "--" + MapFlags.REPEAT_FREQUENCY_FLAG + " must be in the range [1");
   }
 
 
@@ -294,7 +288,7 @@ public class MapFlagsTest extends TestCase {
   }
 
   public void testWord() throws Exception {
-    all4combo("--word", 0, 1);
+    checkInRange("--word", 0, 1);
   }
 
   public void testSubs() throws Exception {
@@ -310,11 +304,11 @@ public class MapFlagsTest extends TestCase {
   }
 
   public void testMaxFragmentSize() throws Exception {
-    pairedEndCombo("--max-fragment-size", 0, 1);
+    checkInRange("--max-fragment-size", 0, 1);
   }
 
   public void testMinFragmentSize() throws Exception {
-    pairedEndCombo("--min-fragment-size", -1, 0);
+    checkInRange("--min-fragment-size", -1, 0);
   }
 
   public void testMaxMatedAlignmentScore() throws Exception {
@@ -330,11 +324,13 @@ public class MapFlagsTest extends TestCase {
   }
 
   private void all4combo(final String flag, final int value, final int minValue) throws Exception  {
-    pairedEndCombo(flag, value, minValue);
+    checkMapParams(new String[] {flag, "" + value}, new String[] {"The specified flag \"" + flag + "\" has invalid value \"" + value + "\". It should be greater than or equal to \"" + minValue + "\"."});
   }
 
-  private void pairedEndCombo(final String flag, final int value, final int minValue) {
-    checkMapParams(new String[] {flag, "" + value}, new String[] {"The specified flag \"" + flag + "\" has invalid value \"" + value + "\". It should be greater than or equal to \"" + minValue + "\"."});
+  private void checkInRange(final String flag, final int value, final int minValue) {
+    mFlags.setFlags(flag, "" + value);
+    MapFlags.validateMapParams(mFlags);
+    TestUtils.containsAll(mFlags.getParseMessage(), flag + " must be in the range [" + minValue);
   }
 
 

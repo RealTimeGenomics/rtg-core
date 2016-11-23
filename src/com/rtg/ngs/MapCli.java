@@ -227,14 +227,14 @@ public class MapCli extends ParamsCli<NgsParams>  {
     }
 
     private static boolean validateRamMapParams(CFlags flags) {
-      if (!CommonFlags.validateFlagBetweenValues(flags, MapFlags.TOPN_RESULTS_FLAG, 1, 255)) {
+      if (!flags.checkInRange(MapFlags.TOPN_RESULTS_FLAG, 1, 255)) {
         return false;
       }
-      if (!CommonFlags.validateFlagBetweenValues(flags, MapFlags.MAX_TOP_RESULTS_FLAG, 1, 65535)) {
+      if (!flags.checkInRange(MapFlags.MAX_TOP_RESULTS_FLAG, 1, 65535)) {
         return false;
       }
       if (flags.isSet(MapFlags.XSCORE_INDEL)) {
-        if (!CommonFlags.validateFlagBetweenValues(flags, MapFlags.XSCORE_INDEL, 0, MapFlags.MAX_SCORE)) {
+        if (!flags.checkInRange(MapFlags.XSCORE_INDEL, 0, MapFlags.MAX_SCORE)) {
           return false;
         }
       }

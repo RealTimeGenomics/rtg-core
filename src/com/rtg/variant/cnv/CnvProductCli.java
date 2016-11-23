@@ -80,12 +80,10 @@ public class CnvProductCli extends ParamsCli<CnvProductParams> {
           return false;
         }
       }
-      if (flags.isSet(DIV_FACT_FLAG) && (Double) flags.getValue(DIV_FACT_FLAG) <= 1.0) {
-        flags.setParseMessage("The division factor flag should be greater than 1.0");
+      if (!flags.checkInRange(DIV_FACT_FLAG, 1.0, false, Double.MAX_VALUE, true)) {
         return false;
       }
-      if (flags.isSet(MUL_FACT_FLAG) && (Double) flags.getValue(MUL_FACT_FLAG) <= 1.0) {
-        flags.setParseMessage("The multiplication factor flag should be greater than 1.0");
+      if (!flags.checkInRange(MUL_FACT_FLAG, 1.0, false, Double.MAX_VALUE, true)) {
         return false;
       }
       if (!flags.isSet(INPUT_BASELINE_FLAG) && !flags.isSet(INPUT_BASELINE_LIST_FLAG)) {

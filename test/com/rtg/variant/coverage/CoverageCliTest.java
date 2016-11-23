@@ -54,7 +54,7 @@ public class CoverageCliTest extends AbstractCliTest {
       checkParamsError(new String[] {"-o", sam.getPath(), "-t", template.getPath()}, "The directory \"" + sam.getPath() + "\" already exists. Please remove it first or choose a different directory.");
       checkParamsError(new String[] {"-o", out.getPath(), "-t", out.getPath()}, "The specified SDF, \"" + out.getPath() + "\", does not exist.");
       checkParamsError(new String[] {"-o", out.getPath(), "-t", sam.getPath()}, "The specified file, \"" + sam.getPath() + "\", is not an SDF.");
-      checkParamsError(new String[] {"-o", out.getPath(), "-t", template.getPath(), "-s", "-1"}, "The specified flag \"--smoothing\" has invalid value \"-1\". It should be greater than or equal to \"0\"");
+      checkParamsError(new String[] {"-o", out.getPath(), "-t", template.getPath(), "-s", "-1"}, "--smoothing must be in the range [0, 8192]");
       checkParamsError(new String[] {"-o", out.getPath(), "-t", template.getPath(), "--input-list-file", out.getPath()});
       checkParamsError(new String[] {"-o", out.getPath(), "-t", template.getPath(), sam.getPath(), "-T", "0"});
       checkParamsError(new String[] {"-o", out.getPath(), "-t", template.getPath(), sam.getPath(), "-m", "-1"});

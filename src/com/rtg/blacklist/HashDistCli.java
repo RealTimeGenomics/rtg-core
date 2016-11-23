@@ -112,10 +112,10 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
   static final class HashToolsCliValidator implements Validator {
     @Override
     public boolean isValid(CFlags flags) {
-      if (!CommonFlags.validateFlagBetweenValues(flags, MapFlags.WORDSIZE_FLAG, 1, 32)) {
+      if (!flags.checkInRange(MapFlags.WORDSIZE_FLAG, 1, 32)) {
         return false;
       }
-      if (!CommonFlags.validateFlagBetweenValues(flags, HASHMAP_SIZE_FACTOR, 0.0, 5.0)) {
+      if (!flags.checkInRange(HASHMAP_SIZE_FACTOR, 0.0, 5.0)) {
         return false;
       }
       if (!CommonFlags.validateSDF((File) flags.getAnonymousValue(0))) {

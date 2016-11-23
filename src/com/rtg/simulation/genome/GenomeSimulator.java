@@ -95,22 +95,10 @@ public class GenomeSimulator extends LoggedCli {
           return false;
         } else {
           // ok: Lengths 0, and both min and max set
-          if (!((Integer) cflags.getValue(MAX_LENGTH) > 0)) {
-            cflags.setParseMessage("Maximum sequence length must be greater than 0");
+          if (!cflags.checkMinMaxInRange(MIN_LENGTH, MAX_LENGTH, 0, false, Integer.MAX_VALUE, true)) {
             return false;
           }
-          if (!((Integer) cflags.getValue(MIN_LENGTH) > 0)) {
-            cflags.setParseMessage("Minimum sequence length must be greater than 0");
-            return false;
-          }
-          if ((Integer) cflags.getValue(MAX_LENGTH)
-              < (Integer) cflags.getValue(MIN_LENGTH)) {
-            cflags.setParseMessage("Maximum sequence length must be greater or equal minimum length");
-            return false;
-          }
-          final int numContigs = (Integer) cflags.getValue(NUM_CONTIGS);
-          if (numContigs < 0) {
-            cflags.setParseMessage("Number of contigs must be greater than or equal to 0");
+          if (!cflags.checkInRange(NUM_CONTIGS, 0, Integer.MAX_VALUE)) {
             return false;
           }
         }

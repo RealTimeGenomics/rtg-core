@@ -81,7 +81,7 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
          * This value must be less than the chunk size since the window extends
          * this value either side of the point being smoothed, but must not cross two chunk boundaries.
          */
-        if (!CommonFlags.validateFlagBetweenValues(flags, SMOOTHING_LEVEL_FLAG, 0, 8192)) {
+        if (!flags.checkInRange(SMOOTHING_LEVEL_FLAG, 0, 8192)) {
           return false;
         }
       }
