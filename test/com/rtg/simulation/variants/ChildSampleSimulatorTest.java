@@ -19,6 +19,7 @@ import java.util.List;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
@@ -102,9 +103,15 @@ public class ChildSampleSimulatorTest extends AbstractCliTest {
       final File sonVcf = new File(dir, "sample_son.vcf.gz");
       sonsim.mutateIndividual(momVcf, sonVcf, "son", Sex.MALE, "dad", "mom");
 
-      final ChildSampleSimulator daughtersim = new ChildSampleSimulator(sr, new PortableRandom(13), ReferencePloidy.AUTO, 0, false);
+      // Using CLI for extra mutation testing
       final File daughterVcf = new File(dir, "sample_daughter.vcf.gz");
-      daughtersim.mutateIndividual(sonVcf, daughterVcf, "daughter", Sex.FEMALE, "dad", "mom");
+      final File daughterSdf = new File(dir, "sample_daughter.sdf");
+      final MainResult r = MainResult.run(new ChildSampleSimulatorCli(), "-t", sdf.getPath(),
+        "-i", sonVcf.getPath(), "-o", daughterVcf.getPath(), "--output-sdf", daughterSdf.getPath(),
+        "--seed", "13", "--num-crossovers", "0", "--sex", "female",
+        "--mother", "mom", "--father", "dad", "--sample", "daughter");
+      assertEquals(r.err(), 0, r.rc());
+      assertTrue(daughterSdf.exists());
 
       final ByteArrayOutputStream bos = new ByteArrayOutputStream();
       try {

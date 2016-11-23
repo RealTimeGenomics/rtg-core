@@ -15,18 +15,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import com.rtg.launcher.MainResult;
 import com.rtg.mode.DnaUtils;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
-import com.rtg.reference.ReferenceGenome.ReferencePloidy;
-import com.rtg.reference.Sex;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.LongRange;
-import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 import junit.framework.TestCase;
@@ -46,9 +45,10 @@ public class SampleSimulatorTest extends TestCase {
           + "gcgcgattca" + "ttatgcgcgc" + "atcgatcgat" + "cgatcgatca";
 
   public void testSampleSimulator() throws IOException {
-    final File dir = FileUtils.createTempDir("genomemut2_", "test");
-    try {
-      final SequencesReader sr = ReaderTestUtils.getReaderDnaMemory(REF);
+    try (final TestDirectory dir = new TestDirectory("samplesim")) {
+      final File sdf = new File(dir, "sdf");
+      ReaderTestUtils.getDNADir(REF, sdf);
+      final SequencesReader sr = SequencesReaderFactory.createMemorySequencesReader(sdf, true, LongRange.NONE);
       final byte[] buffr = new byte[(int) sr.maxLength()];
       final int lenr = sr.read(0, buffr);
       final String sref = DnaUtils.bytesToSequenceIncCG(buffr, 0, lenr);
@@ -68,9 +68,15 @@ public class SampleSimulatorTest extends TestCase {
       }
 
       // Generate sample w.r.t variants
-      final SampleSimulator genomemut = new SampleSimulator(sr, new PortableRandom(42), ReferencePloidy.DIPLOID);
       final File vcfOutFile = new File(dir, "sample_foo.vcf.gz");
-      genomemut.mutateIndividual(popVcf, vcfOutFile, "foo", Sex.EITHER);
+      final File sdfOutFile = new File(dir, "sample_foo.sdf");
+      final MainResult r = MainResult.run(new SampleSimulatorCli(),
+        "-t", sdf.getPath(), "-i", popVcf.getPath(), "-o", vcfOutFile.getPath(), "--output-sdf", sdfOutFile.getPath(),
+        "--seed", "42", "--sample", "foo"
+      );
+      assertEquals(r.err(), 0, r.rc());
+      assertTrue(sdfOutFile.exists());
+
       String sampleVcf = FileHelper.gzFileToString(vcfOutFile);
       //System.out.println("-- Including sample foo --");
       //System.out.println(sampleVcf);
@@ -107,8 +113,6 @@ public class SampleSimulatorTest extends TestCase {
       assertFalse(sref.equals(s2));
       assertFalse(s1.equals(s2));
 
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 }

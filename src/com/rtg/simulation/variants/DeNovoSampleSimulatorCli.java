@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.reader.SequencesReader;
@@ -34,6 +35,7 @@ import com.rtg.vcf.VcfUtils;
  * Generate a derived genotype that contains additional de novo variants.
  *
  */
+@TestClass(value = {"com.rtg.simulation.variants.DeNovoSampleSimulatorCliTest", "com.rtg.simulation.variants.DeNovoSampleSimulatorTest"})
 public class DeNovoSampleSimulatorCli extends AbstractCli {
 
   private static final String MODULE_NAME = "denovosim";

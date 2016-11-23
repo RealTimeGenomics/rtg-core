@@ -61,7 +61,7 @@ public class VcfFormatFieldTest extends AbstractNanoTest {
     for (VcfFormatField field : EnumSet.range(VcfFormatField.GT, VcfFormatField.AD)) {
       assertFalse(field.isVcfAnnotator());
     }
-    for (VcfFormatField field : EnumSet.range(VcfFormatField.GQD, VcfFormatField.PD)) {
+    for (VcfFormatField field : EnumSet.range(VcfFormatField.GQD, VcfFormatField.SCONT)) {
       assertTrue(field.isVcfAnnotator());
     }
     assertEquals(0, VcfFormatField.GT.ordinal());

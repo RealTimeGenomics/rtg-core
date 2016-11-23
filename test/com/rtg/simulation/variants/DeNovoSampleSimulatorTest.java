@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
@@ -29,8 +30,6 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
-import com.rtg.variant.GenomePriorParams;
-import com.rtg.variant.GenomePriorParamsBuilder;
 import com.rtg.vcf.VcfUtils;
 
 import junit.framework.TestCase;
@@ -98,16 +97,23 @@ public class DeNovoSampleSimulatorTest extends TestCase {
       final File momVcf = new File(dir, "sample_mom.vcf.gz");
       momsim.mutateIndividual(dadVcf, momVcf, "mom", Sex.FEMALE);
 
-      final GenomePriorParams params = new GenomePriorParamsBuilder().create();
 
       // Now generate genotypes containing de novo variants
-      final DeNovoSampleSimulator dad2sim = new DeNovoSampleSimulator(sr, params, new PortableRandom(63), ReferencePloidy.AUTO, 20, false);
       final File dad2Vcf = new File(dir, "sample_dad2.vcf.gz");
-      dad2sim.mutateIndividual(momVcf, dad2Vcf, "dad", "dad2");
+      final MainResult r = MainResult.run(new DeNovoSampleSimulatorCli(), "-t", sdf.getPath(),
+        "--seed", "63", "--num-mutations", "20",
+        "--original", "dad", "--sample", "dad2",
+        "-i", momVcf.getPath(), "-o", dad2Vcf.getPath());
+      assertEquals(r.err(), 0, r.rc());
 
-      final DeNovoSampleSimulator mom2sim = new DeNovoSampleSimulator(sr, params, new PortableRandom(64), ReferencePloidy.AUTO, 20, false);
       final File mom2Vcf = new File(dir, "sample_mom2.vcf.gz");
-      mom2sim.mutateIndividual(dad2Vcf, mom2Vcf, "mom", "mom2");
+      final File mom2Sdf = new File(dir, "sample_mom2.sdf");
+      final MainResult r2 = MainResult.run(new DeNovoSampleSimulatorCli(), "-t", sdf.getPath(),
+        "--seed", "64", "--num-mutations", "20",
+        "--original", "mom", "--sample", "mom2",
+        "-i", dad2Vcf.getPath(), "-o", mom2Vcf.getPath(), "--output-sdf", mom2Sdf.getPath());
+      assertEquals(r2.err(), 0, r2.rc());
+      assertTrue(mom2Sdf.exists());
 
       String sampleVcf = FileHelper.gzFileToString(mom2Vcf);
       //System.out.println("-- Final VCF --");

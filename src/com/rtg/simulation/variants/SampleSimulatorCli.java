@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.reader.SequencesReader;
@@ -34,6 +35,7 @@ import com.rtg.vcf.VcfUtils;
  * with allele frequencies.
  *
  */
+@TestClass(value = {"com.rtg.simulation.variants.SampleSimulatorCliTest", "com.rtg.simulation.variants.SampleSimulatorTest"})
 public class SampleSimulatorCli extends AbstractCli {
 
   private static final String MODULE_NAME = "samplesim";

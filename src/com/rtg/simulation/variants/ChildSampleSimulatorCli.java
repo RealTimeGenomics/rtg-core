@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.reader.SequencesReader;
@@ -33,6 +34,7 @@ import com.rtg.vcf.VcfUtils;
  * Generate the genotypes for a new sample which is the child of two existing samples.
  *
  */
+@TestClass(value = {"com.rtg.simulation.variants.ChildSampleSimulatorCliTest", "com.rtg.simulation.variants.ChildSampleSimulatorTest"})
 public class ChildSampleSimulatorCli extends AbstractCli {
 
   private static final String MODULE_NAME = "childsim";
