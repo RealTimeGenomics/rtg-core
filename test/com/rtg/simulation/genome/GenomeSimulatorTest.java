@@ -105,9 +105,8 @@ public class GenomeSimulatorTest extends AbstractCliTest {
 
   public void testErrSequenceLength() {
     final String err = checkError("-o", mTempFile.getPath(), "-l", "bob");
-    TestUtils.containsAll(err, "Invalid value \"bob\" for \"-l\".");
+    TestUtils.containsAll(err, "Invalid value \"bob\" for flag -l.");
    }
-
 
   public void testErrNoError() {
     checkNoError("-o", mTempFile.getPath(), "-l", "1000");

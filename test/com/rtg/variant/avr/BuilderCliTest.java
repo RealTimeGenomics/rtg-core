@@ -97,7 +97,7 @@ public class BuilderCliTest extends AbstractCliTest {
       );
 
       String error = checkMainInitBadFlags("-o", avr.getPath(), "-n", negVcf.getPath(), "-p", posVcf.getPath(), "--Xmodel-type", "gt_complex", "--Xmodel-params", props.getPath(), "--derived-annotations", "NOTDERIVED");
-      TestUtils.containsAll(error, "Invalid value \"NOTDERIVED\" for \"--derived-annotations\"");
+      TestUtils.containsAll(error, "Invalid value \"NOTDERIVED\" for flag --derived-annotations");
 
       error = checkMainInitBadFlags("-o", avr.getPath(), "-n", negVcf.getPath(), "-p", posVcf.getPath(), "--qual-annotation", "--Xmodel-type", "gt_complex", "--Xmodel-params", props.getPath(), "--sample", "SAMPLE");
       TestUtils.containsAll(error, "Sample name not found in VCF file: SAMPLE : " + posVcf.getPath());

@@ -71,7 +71,7 @@ public class MapXValidatorTest extends AbstractCliTest {
       ReaderTestUtils.getReaderProtein(TEMPLATE_FASTA, template).close();
       ReaderTestUtils.getReaderDNA(READS_FASTA_ONE_INDEL, left, null).close();
 
-      assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-a", "1", "-b", "1", "-o", output.getPath(), "-w", "4", "-T", "1", "--matrix=noblosum"), "Error: Invalid value \"noblosum\" for \"--matrix=noblosum\".");
+      assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-a", "1", "-b", "1", "-o", output.getPath(), "-w", "4", "-T", "1", "--matrix=noblosum"), "Error: Invalid value \"noblosum\" for flag --matrix=noblosum.");
       assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-l", left.getPath(), "-r", left.getPath(), "-a", "1", "-b", "1", "-o", output.getPath(), "-w", "4", "-T", "1"), "Unknown flag -l");
       assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-a", "1", "-b", "1", "-o", output.getPath(), "-w", "4", "-T", "1", "-n", "251"), "The specified flag \"--max-top-results\" has invalid value \"251\". It should be less than or equal to \"250\"");
       assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-a", "1", "-b", "1", "-o", output.getPath(), "-w", "4", "-T", "1", "-n", "0"), "The specified flag \"--max-top-results\" has invalid value \"0\". It should be greater than or equal to \"1\"");

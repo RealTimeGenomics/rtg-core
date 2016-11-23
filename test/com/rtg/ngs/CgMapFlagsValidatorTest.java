@@ -51,7 +51,7 @@ public class CgMapFlagsValidatorTest extends AbstractCliTest {
       final File out = new File(mainOut, "out");
       final String[] args = {"-i", mainOut.getPath(), "-t", template.getPath(), "-o", out.getPath(), "--mask", "foobar"};
       final String err = checkHandleFlagsErr(args);
-      assertTrue(err, err.contains("Invalid value \"foobar\" for \"--mask\"."));
+      assertTrue(err, err.contains("Invalid value \"foobar\" for flag --mask."));
     } finally {
       assertTrue(FileHelper.deleteAll(mainOut));
       Diagnostic.setLogStream();

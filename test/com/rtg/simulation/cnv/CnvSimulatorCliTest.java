@@ -140,7 +140,7 @@ public class CnvSimulatorCliTest extends AbstractCliTest {
               , "--twin", twin.getPath()
               , "--cnv-percent", "110%"
       }
-      , "Invalid value \"110%\" for \"--cnv-percent\"");
+      , "Invalid value \"110%\" for flag --cnv-percent");
     } finally {
       //final String str = logStream.toString();
       assertTrue(FileHelper.deleteAll(in));
