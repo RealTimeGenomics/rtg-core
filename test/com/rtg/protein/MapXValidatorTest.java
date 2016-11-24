@@ -78,16 +78,16 @@ public class MapXValidatorTest extends AbstractCliTest {
       assertStringContains(checkHandleFlagsErr("-t", "blaht", "-i", left.getPath(), "-o", output.getPath(), "-a", "1", "-b", "1", "-w", "13"), "The specified SDF, \"blaht\", does not exist");
       assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "1", "-b", "1", "-w", "12", "--min-identity", "-1"), " must be in the range [0, 100]");
       assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "1", "-b", "1", "-w", "12", "--min-identity", "101"), "must be in the range [0, 100]");
-      assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "1", "-b", "1", "-w", "12", "--max-e-score", "101", "--min-bit-score", "5"), "Only one of");
-      assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "1", "-b", "1", "-w", "12", "--max-e-score", "-0.01", "--min-bit-score", "-1"), "Only one of");
+      assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "1", "-b", "1", "-w", "12", "--max-e-score", "101", "--min-bit-score", "5"), "Cannot set both");
+      assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "1", "-b", "1", "-w", "12", "--max-e-score", "-0.01", "--min-bit-score", "-1"), "Cannot set both");
       assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "1", "-b", "1", "-w", "12", "--max-e-score", "-0.01"), "at least 0.0");
       assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "1", "-b", "1", "-w", "12", "--min-bit-score", "-0.01"), "at least 0.0");
       assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "1", "-b", "1", "-w", "12", "--min-bit-score", "0.5", "-n", "0"), "--max-top-results must be in the range [1, 250]");
       assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "1", "-b", "1", "-w", "12", "--max-e-score", "0.5", "-n", "0"), "--max-top-results must be in the range [1, 250]");
       assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "1", "-b", "1", "-w", "13"), "--word must be in the range [1, 12]");
-      assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "-1", "-b", "0", "-w", "12"), "The specified flag \"-a\" has invalid value \"-1\". It should be greater than or equal to \"0\".");
-      assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "0", "-b", "-1", "-w", "12"), "The specified flag \"-b\" has invalid value \"-1\". It should be greater than or equal to \"0\".");
-      assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-c", "0"), "The specified flag \"-c\" has invalid value \"0\". It should be greater than or equal to \"1\".");
+      assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "-1", "-b", "0", "-w", "12"), "--mismatches must be at least 0");
+      assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-a", "0", "-b", "-1", "-w", "12"), "--gaps must be at least 0");
+      assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-o", output.getPath(), "-c", "0"), "--gap-length must be at least 1");
       assertStringContains(checkHandleFlagsErr("-t", template.getPath(), "-i", left.getPath(), "-a", "1", "-b", "1", "-o", output.getPath(), "-w", "4", "-T", "1", "--matrix=blosum45", "--step", "-1"), "Unknown flag --step");
 
       checkMainInitOk("-t", template.getPath(), "-i", left.getPath(), "-a", "1", "-b", "1", "-o", output.getPath(), "-w", "4", "-T", "1", "--matrix=blosum45");

@@ -11,6 +11,11 @@
  */
 package com.rtg.variant.avr;
 
+import static com.rtg.launcher.CommonFlags.FILE;
+import static com.rtg.launcher.CommonFlags.FILTER_AVR_FLAG;
+import static com.rtg.launcher.CommonFlags.NO_GZIP;
+import static com.rtg.launcher.CommonFlags.STRING;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -24,6 +29,7 @@ import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.AsyncVcfWriter;
 import com.rtg.vcf.DefaultVcfWriter;
 import com.rtg.vcf.VcfReader;
@@ -52,13 +58,14 @@ public class PredictCli extends AbstractCli {
 
   @Override
   protected void initFlags() {
+    mFlags.registerExtendedHelp();
+    mFlags.setDescription("Use an AVR model to re-score variants in a VCF file.");
     CommonFlagCategories.setCategories(mFlags);
     CommonFlags.initNoGzip(mFlags);
     CommonFlags.initIndexFlags(mFlags);
-    mFlags.setDescription("Use an AVR model to re-score variants in a VCF file.");
-    mFlags.registerRequired('i', INPUT_FLAG, File.class, "FILE", "input VCF file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, "FILE", "output VCF file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-
+    CommonFlags.initForce(mFlags);
+    mFlags.registerRequired('i', INPUT_FLAG, File.class, FILE, "input VCF file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, FILE, "output VCF file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     final Flag avrFlag = AvrUtils.initAvrModel(mFlags, false);
     if (avrFlag.getParameterDefault() == null) {
       avrFlag.setMinCount(1); // Make required if no default available
@@ -66,17 +73,12 @@ public class PredictCli extends AbstractCli {
 
     CommonFlags.initMinAvrScore(mFlags);
 
-    mFlags.registerOptional('s', SAMPLE_FLAG, String.class, "STRING", "if set, only re-score the specified samples (Default is to re-score all samples)").setCategory(CommonFlagCategories.UTILITY).setMaxCount(Integer.MAX_VALUE);
+    mFlags.registerOptional('s', SAMPLE_FLAG, String.class, STRING, "if set, only re-score the specified samples (Default is to re-score all samples)").setCategory(CommonFlagCategories.UTILITY).setMaxCount(Integer.MAX_VALUE);
     mFlags.setValidator(new Validator() {
       @Override
       public boolean isValid(CFlags flags) {
-        final File o = (File) flags.getValue(OUTPUT_FLAG);
-        if (!CommonFlags.isStdio(o)) {
-          final File output = VcfUtils.getZippedVcfFileName(!flags.isSet(CommonFlags.NO_GZIP), o);
-          if (output.exists()) {
-            flags.setParseMessage("The file \"" + output + "\" already exists. Please remove it first or choose a different file");
-            return false;
-          }
+        if (!CommonFlags.validateOutputFile(flags, VcfUtils.getZippedVcfFileName(!flags.isSet(NO_GZIP), (File) flags.getValue(OUTPUT_FLAG)))) {
+          return false;
         }
         return true;
       }
@@ -86,7 +88,7 @@ public class PredictCli extends AbstractCli {
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
     final File modelFile = AvrUtils.getAvrModel(mFlags, false);
-    final double threshold = mFlags.isSet(CommonFlags.FILTER_AVR_FLAG) ? (Double) mFlags.getValue(CommonFlags.FILTER_AVR_FLAG) : 0;
+    final double threshold = mFlags.isSet(FILTER_AVR_FLAG) ? (Double) mFlags.getValue(FILTER_AVR_FLAG) : 0;
     if (modelFile == null) {
       throw new NoTalkbackSlimException("No model file specified and no default model available.");
     }
@@ -110,8 +112,8 @@ public class PredictCli extends AbstractCli {
       }
 
       final File o = (File) mFlags.getValue(OUTPUT_FLAG);
-      final boolean stdout = CommonFlags.isStdio(o);
-      final boolean gzip = !mFlags.isSet(CommonFlags.NO_GZIP);
+      final boolean stdout = FileUtils.isStdio(o);
+      final boolean gzip = !mFlags.isSet(NO_GZIP);
       final boolean index = !mFlags.isSet(CommonFlags.NO_INDEX);
       final File vcfFile = stdout ? null : VcfUtils.getZippedVcfFileName(gzip, o);
       try (VcfWriter writer = new AsyncVcfWriter(new DefaultVcfWriter(header, vcfFile, out, gzip, index))) {

@@ -46,7 +46,7 @@ public class ChrStatsCliTest extends AbstractCliTest {
       checkHandleFlags("-t", template.getPath(), "-p", ped.getPath(), "--sample=foo", bam.getPath());
 
       final String err = checkHandleFlagsErr("-t", template.getPath(), "-p", ped.getPath(), "--sex=male", bam.getPath());
-      TestUtils.containsAll(err, "Only one of --sex or --pedigree can be set");
+      TestUtils.containsAll(err, "Cannot set both --sex and --pedigree");
       if (!bam.createNewFile() && ped.createNewFile()) {
         throw new IOException();
       }

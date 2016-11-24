@@ -70,7 +70,6 @@ import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.diagnostic.Timer;
 
@@ -137,10 +136,11 @@ public class MapXCli extends ParamsCli<NgsParams> {
     public boolean isValid(final CFlags flags) {
       final String format = flags.isSet(FormatCli.FORMAT_FLAG) ? flags.getValue(FormatCli.FORMAT_FLAG).toString().toLowerCase(Locale.getDefault()) : FormatCli.SDF_FORMAT;
       final boolean sdf = format.equals(FormatCli.SDF_FORMAT);
-      if (!CommonFlags.validateOutputDirectory(flags) || !CommonFlags.validateReads(flags, sdf)) {
-        return false;
-      }
-      if (!CommonFlags.validateTemplate(flags) || !CommonFlags.validateThreads(flags) || !MapFlags.checkPercentRepeatFrequency(flags)) {
+      if (!CommonFlags.validateOutputDirectory(flags)
+        || !CommonFlags.validateReads(flags, sdf)
+        || !CommonFlags.validateTemplate(flags)
+        || !CommonFlags.validateThreads(flags)
+        || !MapFlags.checkPercentRepeatFrequency(flags)) {
         return false;
       }
 
@@ -148,45 +148,17 @@ public class MapXCli extends ParamsCli<NgsParams> {
         flags.setParseMessage("Paired end data not supported");
         return false;
       }
-      final int a = (Integer) flags.getValue(MISMATCHES_FLAG);
-      final int b = (Integer) flags.getValue(GAPS_FLAG);
-      final int c = (Integer) flags.getValue(GAP_LENGTH_FLAG);
-      if (flags.isSet(WORDSIZE_FLAG)) {
-        if (!flags.checkInRange(WORDSIZE_FLAG, 1, 12)) {
-          return false;
-        }
-      }
-      if (a < 0) {
-        Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "-a", a + "", "0");
-        return false;
-      }
-      if (b < 0) {
-        Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "-b", b + "", "0");
-        return false;
-      }
-      if (c <= 0) {
-        Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "-c", c + "", "1");
-        return false;
-      }
-      if (!flags.checkInRange(MIN_IDENTITY_FLAG, 0, 100)) {
-        return false;
-      }
-      if (!flags.checkNand(MAX_ESCORE_FLAG, MIN_BITSCORE_FLAG)) {
-        return false;
-      }
-      if (!flags.checkInRange(MAX_ESCORE_FLAG, 0, Double.MAX_VALUE)) {
-        return false;
-      }
-      if (!flags.checkInRange(MIN_BITSCORE_FLAG, 0, Double.MAX_VALUE)) {
-        return false;
-      }
-      if (!flags.checkInRange(PRE_FILTER_MIN_SCORE, 0, 100)) {
-        return false;
-      }
-      if (!flags.checkInRange(PRE_FILTER_MIN_OVERLAP, 0, 100)) {
-        return false;
-      }
-      if (!flags.checkInRange(PRE_FILTER_ALGORITHM, -10, 10)) {
+      if (!flags.checkInRange(WORDSIZE_FLAG, 1, 12)
+        || !flags.checkInRange(MISMATCHES_FLAG, 0, Integer.MAX_VALUE)
+        || !flags.checkInRange(GAPS_FLAG, 0, Integer.MAX_VALUE)
+        || !flags.checkInRange(GAP_LENGTH_FLAG, 1, Integer.MAX_VALUE)
+        || !flags.checkInRange(MIN_IDENTITY_FLAG, 0, 100)
+        || !flags.checkNand(MAX_ESCORE_FLAG, MIN_BITSCORE_FLAG)
+        || !flags.checkInRange(MAX_ESCORE_FLAG, 0, Double.MAX_VALUE)
+        || !flags.checkInRange(MIN_BITSCORE_FLAG, 0, Double.MAX_VALUE)
+        || !flags.checkInRange(PRE_FILTER_MIN_SCORE, 0, 100)
+        || !flags.checkInRange(PRE_FILTER_MIN_OVERLAP, 0, 100)
+        || !flags.checkInRange(PRE_FILTER_ALGORITHM, -10, 10)) {
         return false;
       }
       final int metachunklength;

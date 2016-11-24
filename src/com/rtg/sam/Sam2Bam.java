@@ -11,6 +11,8 @@
  */
 package com.rtg.sam;
 
+import static com.rtg.launcher.CommonFlags.FILE;
+import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 
 import java.io.File;
@@ -46,13 +48,9 @@ import htsjdk.samtools.SAMRecord;
  */
 public class Sam2Bam extends AbstractCli {
 
-  //private static final String TEMPLATE_FLAG = "template";
-  private static final String MODULE_NAME = "sam2bam";
-  private static final String OUTPUT_FLAG = "output";
-
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "sam2bam";
   }
 
   @Override
@@ -70,12 +68,13 @@ public class Sam2Bam extends AbstractCli {
     flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
     flags.setDescription("Produces an indexed BAM file from coordinate-sorted SAM/BAM files.");
-    final Flag inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
+    CommonFlags.initForce(flags);
+    final Flag inFlag = flags.registerRequired(File.class, FILE, "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(1);
     inFlag.setMaxCount(Integer.MAX_VALUE);
     //flags.registerOptional('t', TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the reads have been mapped against (required for CRAM input)").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('o', OUTPUT_FLAG, File.class, "file", "name for output BAM file. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('o', OUTPUT_FLAG, File.class, FILE, "name for output BAM file.").setCategory(INPUT_OUTPUT);
 
     flags.setValidator(VALIDATOR);
   }
@@ -86,19 +85,11 @@ public class Sam2Bam extends AbstractCli {
       if (!CommonFlags.checkFileList(flags, null, null, Integer.MAX_VALUE)) {
         return false;
       }
-      final File outFile = (File) flags.getValue(OUTPUT_FLAG);
-      if (outFile.isDirectory()) {
-        flags.setParseMessage(outFile.getPath() + " is a directory, must be a file");
+      if (!CommonFlags.validateOutputFile(flags, getBamOutputFile((File) flags.getValue(OUTPUT_FLAG)))) {
         return false;
       }
       for (final Object o : flags.getAnonymousValues(0)) {
-        final File f = (File) o;
-        if (!f.exists()) {
-          flags.setParseMessage("\"" + f.getPath() + "\" does not exist");
-          return false;
-        }
-        if (f.isDirectory()) {
-          flags.setParseMessage("\"" + f.getPath() + "\" is a directory");
+        if (!CommonFlags.validateInputFile(flags, (File) o)) {
           return false;
         }
       }

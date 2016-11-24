@@ -35,6 +35,7 @@ import com.rtg.util.Pair;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.RangeList.RangeData;
+import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.DefaultVcfWriter;
 import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfUtils;
@@ -99,7 +100,7 @@ public class SegregationCheckerCli extends AbstractCli {
     final File vcfOut = (File) mFlags.getValue(OUTPUT_FLAG);
     final boolean gzip = !mFlags.isSet(CommonFlags.NO_GZIP);
     final boolean index = !mFlags.isSet(CommonFlags.NO_INDEX);
-    final boolean stdout = CommonFlags.isStdio(vcfOut);
+    final boolean stdout = FileUtils.isStdio(vcfOut);
     try (final VcfReader reader = VcfReader.openVcfReader((File) mFlags.getValue(VCF_FLAG))) {
       final VcfHeader header = SegregationChecker.modifyHeader(reader.getHeader(), mFlags.isSet(REPAIR_FLAG));
       final File vcfFile = stdout ? null : VcfUtils.getZippedVcfFileName(gzip, vcfOut);

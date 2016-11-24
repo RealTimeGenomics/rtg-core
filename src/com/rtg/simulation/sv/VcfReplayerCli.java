@@ -51,8 +51,6 @@ import com.rtg.vcf.VcfUtils;
  */
 public class VcfReplayerCli extends AbstractCli {
 
-  private static final String MODULE_NAME = "vcfsvreplay";
-
   private static final String REPLAY = "replay";
 
   /** Set this to true to print out debug messages */
@@ -263,26 +261,17 @@ public class VcfReplayerCli extends AbstractCli {
   }
 
   static void getFlags(CFlags flags) {
+    flags.registerExtendedHelp();
+    CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, "SDF", "template SDF");
     flags.registerRequired('v', REPLAY, File.class, "FILE", "VCF file to replay");
-    CommonFlags.initOutputDirFlag(flags);
     flags.setValidator(new Validator() {
 
       @Override
       public boolean isValid(CFlags flags) {
-        if (!CommonFlags.validateOutputDirectory(flags)) {
-          return false;
-        }
-        if (!CommonFlags.validateTemplate(flags)) {
-          return false;
-        }
-        final File vcf = (File) flags.getValue(REPLAY);
-        if (!vcf.exists()) {
-          flags.setParseMessage("VCF file does not exist " + vcf.getPath());
-          return false;
-        }
-        if (vcf.isDirectory()) {
-          flags.setParseMessage("given input is a directory, " + vcf.getPath());
+        if (!CommonFlags.validateOutputDirectory(flags)
+          || !CommonFlags.validateInputFile(flags, REPLAY)
+          || !CommonFlags.validateTemplate(flags)) {
           return false;
         }
         return true;
@@ -304,7 +293,7 @@ public class VcfReplayerCli extends AbstractCli {
 
   @Override
   public String moduleName() {
-    return MODULE_NAME;
+    return "vcfsvreplay";
   }
 
   @Override

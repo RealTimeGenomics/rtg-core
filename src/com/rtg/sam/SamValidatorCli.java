@@ -31,7 +31,6 @@ import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.ErrorType;
 
 /**
  * CLI class for <code>SamValidator</code>.
@@ -101,27 +100,9 @@ public final class SamValidatorCli extends AbstractCli {
       if (!CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)) {
         return false;
       }
-      final String templateFile = flags.getFlag(TEMPLATE_DIR).getValue().toString();
-      final File template = new File(templateFile);
-      if (!template.exists()) {
-        Diagnostic.error(ErrorType.INFO_ERROR, "The specified SDF, \"" + template.getPath() + "\", does not exist.");
+      if (!CommonFlags.validateSDF(flags, TEMPLATE_DIR)
+        || (flags.isSet(READS_DIR) && !CommonFlags.validateSDF(flags, READS_DIR))) {
         return false;
-      }
-      if (!template.isDirectory()) {
-        Diagnostic.error(ErrorType.INFO_ERROR, "The specified file, \"" + template.getPath() + "\", is not an SDF.");
-        return false;
-      }
-      if (flags.getFlag(READS_DIR).isSet()) {
-        final String readsFile = flags.getFlag(READS_DIR).getValue().toString();
-        final File reads = new File(readsFile);
-        if (!reads.exists()) {
-          Diagnostic.error(ErrorType.INFO_ERROR, "The specified SDF, \"" + reads.getPath() + "\", does not exist.");
-          return false;
-        }
-        if (!reads.isDirectory()) {
-          Diagnostic.error(ErrorType.INFO_ERROR, "The specified file, \"" + reads.getPath() + "\", is not an SDF.");
-          return false;
-        }
       }
       if (flags.isSet(GAP_EXTEND_PENALTY_FLAG) || flags.isSet(GAP_OPEN_PENALTY_FLAG) || flags.isSet(MISMATCH_PENALTY_FLAG) || flags.isSet(UNKNOWNS_PENALTY_FLAG)) {
         if (!(flags.isSet(GAP_EXTEND_PENALTY_FLAG) && flags.isSet(GAP_OPEN_PENALTY_FLAG) && flags.isSet(MISMATCH_PENALTY_FLAG) && flags.isSet(UNKNOWNS_PENALTY_FLAG))) {

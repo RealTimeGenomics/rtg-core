@@ -11,6 +11,8 @@
  */
 package com.rtg.sam;
 
+import static com.rtg.launcher.CommonFlags.NO_GZIP;
+import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
 
@@ -39,30 +41,23 @@ public class SamMergeCli extends AbstractCli {
 
   private static final String MODULE_NAME = "sammerge";
 
-  private static final String REFERENCE_FLAG = "reference";
   private static final String LEGACY_CIGARS = "legacy-cigars";
   private static final String X_ALTERNATE_SAM_HEADER = "Xalternate-sam-header";
 
   private static class SamFileMergeValidator implements Validator {
     @Override
     public boolean isValid(CFlags flags) {
-      final File o = (File) flags.getValue(CommonFlags.OUTPUT_FLAG);
-      if (o != null) {
+      if (flags.isSet(OUTPUT_FLAG)) {
+        final File o = (File) flags.getValue(OUTPUT_FLAG);
         final boolean isbam = o.getName().endsWith(SamUtils.BAM_SUFFIX);
-        final File output = isbam ? o : SamUtils.getZippedSamFileName(!flags.isSet(CommonFlags.NO_GZIP), o);
-        if (output.exists()) {
-          flags.setParseMessage("The file \"" + output.getPath() + "\" already exists. Please remove it first or choose a different file");
+        final File output = isbam ? o : SamUtils.getZippedSamFileName(!flags.isSet(NO_GZIP), o);
+        if (!CommonFlags.validateOutputFile(flags, output)) {
           return false;
         }
       }
-      if (!CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)) {
-        return false;
-      }
-
-      if (!SamFilterOptions.validateFilterFlags(flags, true)) {
-        return false;
-      }
-      if (!CommonFlags.validateThreads(flags)) {
+      if (!CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)
+        || !SamFilterOptions.validateFilterFlags(flags, true)
+        || !CommonFlags.validateThreads(flags)) {
         return false;
       }
       return true;
@@ -90,7 +85,7 @@ public class SamMergeCli extends AbstractCli {
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
     final Flag listFlag = mFlags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional('o', CommonFlags.OUTPUT_FLAG, File.class, "FILE", "name for output SAM/BAM file. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional('o', OUTPUT_FLAG, File.class, "FILE", "name for output SAM/BAM file. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(LEGACY_CIGARS, "if set, use legacy cigars in output").setCategory(UTILITY);
     mFlags.registerOptional(X_ALTERNATE_SAM_HEADER, File.class, "FILE", "treat all SAM records as having the supplied header").setCategory(UTILITY);
     SamFilterOptions.registerSubsampleFlags(mFlags);
@@ -119,11 +114,11 @@ public class SamMergeCli extends AbstractCli {
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
     final boolean createIndex = !mFlags.isSet(CommonFlags.NO_INDEX);
-    final boolean gzip = !mFlags.isSet(CommonFlags.NO_GZIP);
+    final boolean gzip = !mFlags.isSet(NO_GZIP);
     final boolean legacy = mFlags.isSet(LEGACY_CIGARS);
     final int numberThreads = CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG));
     final SamFilterParams filterParams = SamFilterOptions.makeFilterParamsBuilder(mFlags).create();
-    final File output = mFlags.isSet(CommonFlags.OUTPUT_FLAG) ? (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG) : new File("-");
+    final File output = mFlags.isSet(OUTPUT_FLAG) ? (File) mFlags.getValue(OUTPUT_FLAG) : new File("-");
     final SequencesReader template = (!mFlags.isSet(CommonFlags.TEMPLATE_FLAG)) ? null : SequencesReaderFactory.createDefaultSequencesReader((File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG));
 
     final Collection<File> inputFiles = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null, CommandLineFiles.EXISTS, CommandLineFiles.NOT_DIRECTORY).getFileList(mFlags);

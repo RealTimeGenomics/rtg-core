@@ -11,7 +11,6 @@
  */
 package com.rtg.simulation.reads;
 
-import java.io.File;
 import java.util.Locale;
 
 import com.rtg.launcher.CommonFlags;
@@ -27,16 +26,10 @@ class ReadSimCliValidator implements Validator {
   @Override
   public boolean isValid(final CFlags cflags) {
 
-    if (!cflags.checkInRange(ReadSimCli.MNP_EVENT_RATE, 0.0, 1.0)) {
-      return false;
-    }
-    if (!cflags.checkInRange(ReadSimCli.INS_EVENT_RATE, 0.0, 1.0)) {
-      return false;
-    }
-    if (!cflags.checkInRange(ReadSimCli.DEL_EVENT_RATE, 0.0, 1.0)) {
-      return false;
-    }
-    if (!cflags.checkXor(ReadSimCli.COVERAGE, ReadSimCli.READS)) {
+    if (!cflags.checkInRange(ReadSimCli.MNP_EVENT_RATE, 0.0, 1.0)
+      || !cflags.checkInRange(ReadSimCli.INS_EVENT_RATE, 0.0, 1.0)
+      || !cflags.checkInRange(ReadSimCli.DEL_EVENT_RATE, 0.0, 1.0)
+      || !cflags.checkXor(ReadSimCli.COVERAGE, ReadSimCli.READS)) {
       return false;
     }
     if (cflags.isSet(ReadSimCli.READS)) {
@@ -60,12 +53,8 @@ class ReadSimCliValidator implements Validator {
     if (!cflags.checkNand(ReadSimCli.DISTRIBUTION, ReadSimCli.TAXONOMY_DISTRIBUTION)) {
       return false;
     }
-    if (cflags.isSet(ReadSimCli.DISTRIBUTION)) {
-      final File distFile = (File) cflags.getValue(ReadSimCli.DISTRIBUTION);
-      if (!distFile.exists() || distFile.isDirectory()) {
-        cflags.setParseMessage("File: " + distFile + " does not exist");
+    if (cflags.isSet(ReadSimCli.DISTRIBUTION) && !CommonFlags.validateInputFile(cflags, ReadSimCli.DISTRIBUTION)) {
         return false;
-      }
     }
     if (!cflags.isSet(ReadSimCli.TAXONOMY_DISTRIBUTION) && (cflags.isSet(ReadSimCli.ABUNDANCE) || cflags.isSet(ReadSimCli.DNA_FRACTION))) {
       cflags.setParseMessage("--" + ReadSimCli.ABUNDANCE + " and --" + ReadSimCli.DNA_FRACTION + " are only applicable if using --" + ReadSimCli.TAXONOMY_DISTRIBUTION);
@@ -79,12 +68,8 @@ class ReadSimCliValidator implements Validator {
     if (!cflags.checkNand(ReadSimCli.ABUNDANCE, ReadSimCli.DNA_FRACTION)) {
       return false;
     }
-    if (cflags.isSet(ReadSimCli.TAXONOMY_DISTRIBUTION)) {
-      final File distFile = (File) cflags.getValue(ReadSimCli.TAXONOMY_DISTRIBUTION);
-      if (!distFile.exists() || distFile.isDirectory()) {
-        cflags.setParseMessage("File: " + distFile + " does not exist");
-        return false;
-      }
+    if (cflags.isSet(ReadSimCli.TAXONOMY_DISTRIBUTION) && !CommonFlags.validateInputFile(cflags, ReadSimCli.TAXONOMY_DISTRIBUTION)) {
+      return false;
     }
 
     if (cflags.isSet(ReadSimCli.QUAL_RANGE)) {
@@ -115,13 +100,7 @@ class ReadSimCliValidator implements Validator {
         }
       }
     }
-    final File f = (File) cflags.getValue(ReadSimCli.INPUT);
-    if (!f.exists()) {
-      cflags.setParseMessage("The specified SDF, \"" + f.getPath() + "\", does not exist.");
-      return false;
-    }
-    if (!f.isDirectory()) {
-      cflags.setParseMessage("The specified file, \"" + f.getPath() + "\", is not an SDF.");
+    if (!CommonFlags.validateSDF(cflags, ReadSimCli.INPUT)) {
       return false;
     }
     if ((Integer) cflags.getValue(ReadSimCli.MIN_FRAGMENT) > (Integer) cflags.getValue(ReadSimCli.MAX_FRAGMENT)) {
@@ -129,10 +108,8 @@ class ReadSimCliValidator implements Validator {
       return false;
     }
 
-    final File bed = (File) cflags.getValue(ReadSimCli.BED_FILE);
     if (cflags.isSet(ReadSimCli.BED_FILE)) {
-      if (!bed.exists()) {
-        cflags.setParseMessage("The --" + ReadSimCli.BED_FILE + " specified file doesn't exist: " + bed.getPath());
+      if (!CommonFlags.validateInputFile(cflags, ReadSimCli.BED_FILE)) {
         return false;
       }
       if (cflags.isSet(ReadSimCli.COVERAGE)) {

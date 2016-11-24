@@ -19,12 +19,12 @@ import java.util.Collection;
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Recalibrate;
-import com.rtg.launcher.CommonFlags;
 import com.rtg.reader.SequencesReader;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
+import com.rtg.util.io.FileUtils;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMFileWriter;
@@ -76,7 +76,7 @@ public class SamMerger {
    * @throws java.io.IOException if an IO error occurs
    */
   public void mergeSamFiles(Collection<File> samFiles, Collection<File> calibrationFiles, File output, OutputStream out, SequencesReader reference, SAMFileHeader header, boolean writeHeader, boolean terminateBlockedGzip) throws IOException {
-    final boolean isStdio = CommonFlags.isStdio(output);
+    final boolean isStdio = FileUtils.isStdio(output);
     if (!isStdio && calibrationFiles.size() > 0 && calibrationFiles.size() != samFiles.size()) {
       Diagnostic.warning("Number of calibration files does not match number of SAM files, will not merge calibration files.");
     }

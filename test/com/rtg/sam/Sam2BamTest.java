@@ -94,6 +94,7 @@ public class Sam2BamTest extends AbstractCliTest {
 
       GlobalFlags.resetAccessedStatus();
       final Sam2Bam bc = new Sam2Bam();
+      assertTrue(output.delete());
       try (MemoryPrintStream mps = new MemoryPrintStream()) {
         final int code = bc.mainInit(new String[]{"-o", output.toString(), sam1.toString()}, mps.outputStream(), mps.printStream());
         assertEquals(mps.toString(), 0, code);
@@ -102,9 +103,6 @@ public class Sam2BamTest extends AbstractCliTest {
     }
   }
 
-  public void testConvertCramToBam() {
-
-  }
   public void testInnerClass() throws IOException {
     try (final TestDirectory dir = new TestDirectory("bamconverter")) {
       String err = checkMainInitBadFlags("non-existingfile", "-o", "something");
@@ -139,7 +137,9 @@ public class Sam2BamTest extends AbstractCliTest {
       assertTrue(f.mkdir());
       final File f2 = File.createTempFile("blahfile", "bam", tmpDir);
       flags.setFlags("-o", f.getPath(), f2.getPath());
-      assertTrue(flags.getParseMessage(), flags.getParseMessage().contains("blahdir.bam is a directory, must be a file"));
+      TestUtils.containsAll(flags.getParseMessage(), "already exists");
+      flags.setFlags("--Xforce", "-o", f.getPath(), f2.getPath());
+      TestUtils.containsAll(flags.getParseMessage(), "is a directory");
     }
   }
 
