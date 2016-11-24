@@ -122,7 +122,7 @@ public class CoverageTaskTest extends AbstractCliTest {
 
   public void test3WithBadRegion() throws Exception {
     final String[] args0 = {"-Z", "-s", "0", "--region", "notanactualregion"};
-    check(REF_SEQS_M, SAM_M, args0, null, new String[] {"notanactualregion", "not found"}, null, 1, false, null, null, false, null, null);
+    check(REF_SEQS_M, SAM_M, args0, null, new String[] {"notanactualregion", "not found"}, null, 1, false, null, null, false, null);
   }
 
   public void testIHFilter2() throws Exception {
@@ -188,11 +188,7 @@ public class CoverageTaskTest extends AbstractCliTest {
   public void testStats() throws Exception {
     final String[] args0 = {"-Z", "-s", "0"};
     final String expected = FileHelper.resourceToString("com/rtg/variant/coverage/resources/coveragetasktestStatsOut.txt");
-    //final String gapExp = FileHelper.resourceToString("com/rtg/variant/coverage/resources/coveragetasktestGapStatsOut.txt"); //This should be reinstated when/if gap histogram is reimplemented
-    final String levelsExp = FileHelper.resourceToString("com/rtg/variant/coverage/resources/coveragetasktestLevelsStatsOut.txt");
-    //err//assertEquals(expected.replaceAll("\n|\r\n", LS), mStdOutBos.toString());
-    check(REF_SEQS_STATS, SAM_M2, args0, "Stats", new String[]{""}, "", 0, false, null, new String[]{expected.replaceAll("\n|\r\n", LS)}, false, null /*gapExp*/, levelsExp);
-    //System.out.flush();
+    check(REF_SEQS_STATS, SAM_M2, args0, "Stats", new String[]{""}, "", 0, false, null, new String[]{expected.replaceAll("\n|\r\n", LS)}, false, "LevelsStatsOut");
   }
 
   public void testThreads() throws Exception {
@@ -205,16 +201,16 @@ public class CoverageTaskTest extends AbstractCliTest {
   }
 
   private void checkBed(String refSeq, String sam, String[] args0, String expFile, String errorMsg, int errCode, boolean gzip, String[] outString) throws Exception {
-    check(refSeq, sam, args0, expFile, new String[] {errorMsg}, "", errCode, gzip, null, outString, false, null, null);
+    check(refSeq, sam, args0, expFile, new String[] {errorMsg}, "", errCode, gzip, null, outString, false, null);
   }
 
   private void checkBed(String refSeq, String sam, String[] args0, String expFile,
       String errorMsg, String logMsg, int errCode, boolean gzip, String[] erlines, String[] outString) throws Exception {
-    check(refSeq, sam, args0, expFile, new String[]{errorMsg}, logMsg, errCode, gzip, erlines, outString, false, null, null);
+    check(refSeq, sam, args0, expFile, new String[]{errorMsg}, logMsg, errCode, gzip, erlines, outString, false, null);
   }
 
   private void check(String refSeq, String sam, String[] args0, String expFile, String[] errorMsgs, String logMsg,
-                     int errCode, boolean gzip, String[] erlines, String[] outString, boolean tsv, String gapStr, String levelExp) throws Exception {
+                     int errCode, boolean gzip, String[] erlines, String[] outString, boolean tsv, String levelExp) throws Exception {
     Diagnostic.setLogStream();
     try (final TestDirectory tmpDir = new TestDirectory()) {
       final File output = new File(tmpDir, "output_dir");
@@ -266,17 +262,10 @@ public class CoverageTaskTest extends AbstractCliTest {
         final String summary = FileHelper.fileToString(summaryFile);
         TestUtils.containsAll(res.out(), summary);
 
-        if (gapStr != null) {
-          final File gapsFile = new File(outn, "gaps.tsv");
-          assertTrue(gapsFile.exists());
-          final String gaps = FileHelper.fileToString(gapsFile);
-          TestUtils.containsAll(gaps, StringUtils.split(gapStr, '\n'));
-        }
         if (levelExp != null) {
           final File levelsFile = new File(outn, "levels.tsv");
-          assertTrue(levelsFile.exists());
           final String levels = FileHelper.fileToString(levelsFile);
-          TestUtils.containsAll(levels, StringUtils.split(levelExp, '\n'));
+          mNano.check("coveragetasktest" + levelExp + ".txt", levels.replaceAll("#.*" + LS, ""));
         }
       }
       if (erlines != null) {
@@ -331,7 +320,7 @@ public class CoverageTaskTest extends AbstractCliTest {
     + "2" + TAB +   "0" + TAB + "g1" + TAB +  "5" + TAB + "255" + TAB + "8M" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "CGACTGTT" + TAB + "````````" + TAB + "AS:i:1" + TAB + "IH:i:1" + TAB + "NH:i:2" + LS
     ;
   public void testNHandIH() throws Exception {
-    check(REF_SEQS, SAM_IH1_NH2, new String[] {"-s", "0"}, "ih1nh2", new String[] {}, "", 0, true, null, null, false, null, null);
+    check(REF_SEQS, SAM_IH1_NH2, new String[] {"-s", "0"}, "ih1nh2", new String[] {}, "", 0, true, null, null, false, null);
   }
 
   /** Paired-end variant of SAM1 **/
@@ -345,7 +334,7 @@ public class CoverageTaskTest extends AbstractCliTest {
     ;
   public void testNH5andIH2() throws Exception {
     //this should give exactly same results as testNHandIH, as we doubled the coverage and Ih = 1 => ih = 2
-    check(REF_SEQS, SAM_IH2_NH5, new String[] {"-s", "0"}, "ih1nh2", new String[] {}, "", 0, true, null, null, false, null, null);
+    check(REF_SEQS, SAM_IH2_NH5, new String[] {"-s", "0"}, "ih1nh2", new String[] {}, "", 0, true, null, null, false, null);
   }
 
   private static final String SAM_HEADER_CLIP = ""

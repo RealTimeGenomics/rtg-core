@@ -198,7 +198,7 @@ public class CoverageStatistics extends AbstractStatistics {
 
   void writeLevels(List<List<Double>> data, OutputStream os) throws IOException {
     final StringBuilder sb = new StringBuilder();
-    sb.append("#coverage_level\tcount\t%age\t%cumulative");
+    sb.append("#coverage_level\tcount\tpercent\tcumulative");
     sb.append(LS);
 
     String leader = "";
