@@ -108,8 +108,7 @@ public class Sam2BamTest extends AbstractCliTest {
       String err = checkMainInitBadFlags("non-existingfile", "-o", "something");
       TestUtils.containsAll(err, "non-existingfile");
 
-      err = checkMainInitBadFlags(dir.getPath(), "-o", "something");
-      TestUtils.containsAll(err, dir.getPath());
+      TestUtils.containsAllUnwrapped(checkMainInitBadFlags(dir.getPath(), "-o", "something"), dir.getPath());
     }
   }
 

@@ -56,34 +56,20 @@ public class MetagenomicsWrapperCliTest extends AbstractCliTest {
       ReaderTestUtils.getReaderProtein(">a" + LS + "GGATASDCASSZZXCVB" + LS, protein);
       ReaderTestUtils.getReaderDNA(">a" + LS + "ACGTTTAGA" + LS, dna, new SdfId());
 
-      String err = checkHandleFlagsErr("--protein", protein.getPath(), "--species", dna.getPath(), "--input", iFile.getPath(), "--output", new File(tmp, "output").getPath());
-      TestUtils.containsAll(err, "Filter reference required (use --filter)");
-      err = checkHandleFlagsErr("--protein", protein.getPath(), "--filter", dna.getPath(), "--input", iFile.getPath(), "--output", new File(tmp, "output").getPath());
-      TestUtils.containsAll(err, "Species reference required (use --species)");
-      err = checkHandleFlagsErr("--species", dna.getPath(), "--filter", dna.getPath(), "--input", iFile.getPath(), "--output", new File(tmp, "output").getPath());
-      TestUtils.containsAll(err, "Protein reference required (use --protein)");
-      err = checkHandleFlagsErr("--protein", protein.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath());
-      TestUtils.containsAll(err, "Some read data is required");
-      err = checkHandleFlagsErr("--input-left", "LEFT", "--protein", protein.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath());
-      TestUtils.containsAll(err, "You must provide both --input-left and --input-right");
-      err = checkHandleFlagsErr("--input-left", iFile.getPath(), "--input-right", "RIGHT", "--protein", protein.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath());
-      TestUtils.containsAll(err, "--input-right should be a file");
-      err = checkHandleFlagsErr("--input-left", "LEFT", "--input-right", iFile.getPath(), "--protein", protein.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath());
-      TestUtils.containsAll(err, "--input-left should be a file");
-      err = checkHandleFlagsErr("--input", iFile.getPath(), "--input-right", iFile.getPath(), "--input-left", iFile.getPath(), "--protein", protein.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath());
-      TestUtils.containsAll(err, "Too many read datasets supplied.");
-      err = checkHandleFlagsErr("--input", "FILE", "--protein", protein.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath());
-      TestUtils.containsAll(err, "--input file doesn't exist: FILE");
-      err = checkHandleFlagsErr("--input", readSdf.getPath(), "--protein", "PROT", "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath());
-      TestUtils.containsAll(err, "The specified SDF, \"PROT\", does not exist.");
-      err = checkHandleFlagsErr("--input", readSdf.getPath(), "--protein", protein.getPath(), "--species", "SPEC", "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath());
-      TestUtils.containsAll(err, "The specified SDF, \"SPEC\", does not exist.");
-      err = checkHandleFlagsErr("--input", readSdf.getPath(), "--protein", protein.getPath(), "--species", dna.getPath(), "--filter", "FILT", "--output", new File(tmp, "output").getPath());
-      TestUtils.containsAll(err, "The specified SDF, \"FILT\", does not exist.");
-      err = checkHandleFlagsErr("--input", readSdf.getPath(), "--protein", tmp.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath());
-      TestUtils.containsAll(err, "Invalid protein database.");
-      err = checkHandleFlagsErr("--input", readSdf.getPath(), "--protein", dna.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath());
-      TestUtils.containsAll(err, "Protein database should be an SDF containing formatted protein data");
+      TestUtils.containsAll(checkHandleFlagsErr("--protein", protein.getPath(), "--species", dna.getPath(), "--input", iFile.getPath(), "--output", new File(tmp, "output").getPath()), "Filter reference required (use --filter)");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("--protein", protein.getPath(), "--filter", dna.getPath(), "--input", iFile.getPath(), "--output", new File(tmp, "output").getPath()), "Species reference required (use --species)");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("--species", dna.getPath(), "--filter", dna.getPath(), "--input", iFile.getPath(), "--output", new File(tmp, "output").getPath()), "Protein reference required (use --protein)");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("--protein", protein.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath()), "Some read data is required");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("--input-left", "LEFT", "--protein", protein.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath()), "You must provide both --input-left and --input-right");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("--input-left", iFile.getPath(), "--input-right", "RIGHT", "--protein", protein.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath()), "--input-right should be a file");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("--input-left", "LEFT", "--input-right", iFile.getPath(), "--protein", protein.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath()), "--input-left should be a file");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("--input", iFile.getPath(), "--input-right", iFile.getPath(), "--input-left", iFile.getPath(), "--protein", protein.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath()), "Too many read datasets supplied.");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("--input", "FILE", "--protein", protein.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath()), "--input file doesn't exist: FILE");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("--input", readSdf.getPath(), "--protein", "PROT", "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath()), "The specified SDF, \"PROT\", does not exist.");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("--input", readSdf.getPath(), "--protein", protein.getPath(), "--species", "SPEC", "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath()), "The specified SDF, \"SPEC\", does not exist.");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("--input", readSdf.getPath(), "--protein", protein.getPath(), "--species", dna.getPath(), "--filter", "FILT", "--output", new File(tmp, "output").getPath()), "The specified SDF, \"FILT\", does not exist.");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("--input", readSdf.getPath(), "--protein", tmp.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath()), "Invalid protein database.");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("--input", readSdf.getPath(), "--protein", dna.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath()), "Protein database should be an SDF containing formatted protein data");
       checkHandleFlagsOut("--input", readSdf.getPath(), "--protein", protein.getPath(), "--species", dna.getPath(), "--filter", dna.getPath(), "--output", new File(tmp, "output").getPath());
     }
   }

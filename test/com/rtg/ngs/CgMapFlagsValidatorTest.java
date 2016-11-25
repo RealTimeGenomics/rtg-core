@@ -21,6 +21,7 @@ import com.rtg.launcher.AbstractCliTest;
 import com.rtg.reader.PrereadArm;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.StringUtils;
+import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.test.FileHelper;
@@ -77,17 +78,17 @@ public class CgMapFlagsValidatorTest extends AbstractCliTest {
       final File out = new File(mainOut, "out");
 
       final String[] args = {"-i", "input",
-                                          "--mask", "cg1",
-                                          "-t", template.getPath(),
-                                          "-o", out.getPath()
+        "--mask", "cg1",
+        "-t", template.getPath(),
+        "-o", out.getPath()
       };
 
       assertTrue(checkHandleFlagsErr(args).contains(USAGE));
-      assertTrue(checkHandleFlagsErr(args).contains("The specified SDF, \"input\", does not exist"));
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr(args), "The specified SDF, \"input\", does not exist");
 
-      assertTrue(checkHandleFlagsErr("-i", testfile.toString(), "-t", template.toString(), "-o", out.toString(), "--mask", "cg1").contains("The specified file, \"" + testfile.toString() + "\", is not an SDF"));
-      assertTrue(checkHandleFlagsErr("-i", mainOut.toString(), "-t", testfile.toString(), "-o", out.toString(), "--mask", "cg1").contains("The specified file, \"" + testfile.toString() + "\", is not an SDF"));
-      assertTrue(checkHandleFlagsErr("-i", cgleft.toString(), "-t", template.toString(), "-o", out.toString(), "--mask", "cg1").contains("Inputfile not in paired end format."));
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-i", testfile.toString(), "-t", template.toString(), "-o", out.toString(), "--mask", "cg1"), "The specified file, \"" + testfile.toString() + "\", is not an SDF");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-i", mainOut.toString(), "-t", testfile.toString(), "-o", out.toString(), "--mask", "cg1"), "The specified file, \"" + testfile.toString() + "\", is not an SDF");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-i", cgleft.toString(), "-t", template.toString(), "-o", out.toString(), "--mask", "cg1"), "Inputfile not in paired end format.");
 
       checkHandleFlagsOut("-i", mainOut.toString(), "-t", template.toString(), "-o", out.toString(), "--mask", "cg1");
     } finally {

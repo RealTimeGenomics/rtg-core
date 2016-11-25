@@ -136,7 +136,7 @@ public class SvInterestingRegionExtractor implements Closeable {
       mOutputStream.write("end\t".getBytes());
       mOutputStream.write("areas\t".getBytes());
       mOutputStream.write("maxscore\t".getBytes());
-      mOutputStream.write("average\t".getBytes());
+      mOutputStream.write("average".getBytes());
       mOutputStream.write(StringUtils.LS.getBytes());
     }
 

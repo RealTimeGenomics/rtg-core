@@ -85,8 +85,7 @@ public class MapCliTest extends AbstractCliTest {
       checkHandleFlagsErr("-t", template.getPath(), "-o", out.getPath(), "-i", mainOut.getPath(), "-F", "fasta", "-q", "sanger");
       checkHandleFlagsOut("-t", template.getPath(), "-o", out.getPath(), "-i", mainOut.getPath(), "-F", "fasta");
       checkHandleFlagsErr("-t", template.getPath(), "-o", out.getPath(), "-i", mainOut.getPath(), "-F", "bobo");
-      TestUtils.containsAll(checkHandleFlagsErr("-i", mainOut.getPath(), "-t", template.getPath(), "-o", out.getPath(), "--sex", "male")
-          , "is missing a 'reference.txt'");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-i", mainOut.getPath(), "-t", template.getPath(), "-o", out.getPath(), "--sex", "male"), "is missing a 'reference.txt'");
     } finally {
       FileHelper.deleteAll(mainOut);
     }

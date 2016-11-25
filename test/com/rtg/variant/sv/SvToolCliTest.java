@@ -13,7 +13,6 @@ package com.rtg.variant.sv;
 
 import static com.rtg.sam.SharedSamConstants.REF_SEQS;
 import static com.rtg.sam.SharedSamConstants.SAM_UNSORTED;
-import static com.rtg.util.StringUtils.LS;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,19 +34,14 @@ public class SvToolCliTest extends AbstractCliTest {
     return new SvToolCli();
   }
 
-  /** Test for an error that will be picked up during flags parsing. */
-  private void checkFlagsError(final String[] args, final String exp) {
-    assertTrue(checkHandleFlagsErr(args).contains(exp));
-  }
-
-  private static final String EXP_F1 = "Error: You must provide values for -o DIR -t SDF" + LS;
+  private static final String EXP_F1 = "Error: You must provide values for -o DIR -t SDF";
 
   public void testErrorFlags() {
-    checkFlagsError(new String[] {}, EXP_F1);
+    checkParamsError(new String[] {}, EXP_F1);
   }
 
   private void checkParamsError(final String[] args, final String... exp) {
-    TestUtils.containsAll(checkHandleFlagsErr(args).replaceAll(LS, " ").replaceAll("\\s+", " "), exp);
+    TestUtils.containsAllUnwrapped(checkHandleFlagsErr(args), exp);
   }
 
   private static final String EXP_P1 = "The specified SDF, \"blah\", does not exist";
@@ -67,10 +61,10 @@ public class SvToolCliTest extends AbstractCliTest {
       assertTrue(rg.createNewFile());
       checkHandleFlagsOut("-o", out.getPath(), "-t", gen.getPath(), aln.getPath(), "-r", rg.getPath());
 
-      assertTrue(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", rg.getPath(), aln.getPath(), "-b", "0").contains("Expected a positive integer for parameter \"Xbin-size\""));
-      assertTrue(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", rg.getPath(), aln.getPath(), "-s", "0").contains("Expected a positive integer for parameter \"step\""));
-      assertTrue(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", rg.getPath(), aln.getPath(), "-f", "0").contains("Expected a positive integer for parameter \"fine-step\""));
-      assertTrue(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", rg.getPath(), aln.getPath(), "-s", "1").contains("Parameter \"fine-step\" should be smaller than or equal to parameter \"step\""));
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", rg.getPath(), aln.getPath(), "-b", "0"), "Expected a positive integer for parameter \"Xbin-size\"");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", rg.getPath(), aln.getPath(), "-s", "0"), "Expected a positive integer for parameter \"step\"");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", rg.getPath(), aln.getPath(), "-f", "0"), "Expected a positive integer for parameter \"fine-step\"");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", rg.getPath(), aln.getPath(), "-s", "1"), "Parameter \"fine-step\" should be smaller than or equal to parameter \"step\"");
     }
   }
 

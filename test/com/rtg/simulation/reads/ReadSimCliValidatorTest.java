@@ -42,31 +42,27 @@ public class ReadSimCliValidatorTest extends AbstractCliTest {
         ReaderTestUtils.getReaderDNA(">seq1" + StringUtils.LS + "acgt", genomeDir, null).close();
         //final File xgenomeFile = new File(tempDir, "xgenome");
         final File reads = new File(tempDir, "reads");
-        TestUtils.containsAll(checkHandleFlagsErr("-o", reads.getPath(), "-r", "36", "-n", "100"), "You must provide values for -t SDF --machine STRING");
-        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-r", "36", "-n", "100", "--machine", "illumina_se"), "You must provide a value for -o SDF");
+        TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", reads.getPath(), "-r", "36", "-n", "100"), "You must provide values for -t SDF --machine STRING");
+        TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-t", genomeDir.getPath(), "-r", "36", "-n", "100", "--machine", "illumina_se"), "You must provide a value for -o SDF");
 
-        TestUtils.containsAll(checkHandleFlagsErr("-o", reads.getPath(), "-t", genomeDir.getPath(),
-            "-R", "20", "-L", "20", "-r", "36", "-n", "100", "--machine", "illumina_pe"), "The flag --read-length is not permitted for this set of arguments");
+        TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", reads.getPath(), "-t", genomeDir.getPath(), "-R", "20", "-L", "20", "-r", "36", "-n", "100", "--machine", "illumina_pe"), "The flag --read-length is not permitted for this set of arguments");
 
-        TestUtils.containsAll(checkHandleFlagsErr("-o", reads.getPath(), "-t", genomeDir.getPath(),
-            "-R", "20", "-L", "20", "-n", "100", "--machine", "illumina_se"), "The flag --read-length is required");
+        TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", reads.getPath(), "-t", genomeDir.getPath(), "-R", "20", "-L", "20", "-n", "100", "--machine", "illumina_se"), "The flag --read-length is required");
 
-        TestUtils.containsAll(checkHandleFlagsErr("-o", reads.getPath(), "-t", genomeDir.getPath(),
-            "-n", "100", "--machine", "illumina_pe"), "The flag --left-read-length is required");
-        TestUtils.containsAll(checkHandleFlagsErr("-o", reads.getPath(), "-t", genomeDir.getPath(),
-            "--left-read-length", "30", "-n", "100", "--machine", "illumina_pe"), "The flag --right-read-length is required");
+        TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", reads.getPath(), "-t", genomeDir.getPath(), "-n", "100", "--machine", "illumina_pe"), "The flag --left-read-length is required");
+        TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", reads.getPath(), "-t", genomeDir.getPath(), "--left-read-length", "30", "-n", "100", "--machine", "illumina_pe"), "The flag --right-read-length is required");
 
-        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-c", "0", "--machine", "illumina_se"), "Coverage should be positive");
+        TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-c", "0", "--machine", "illumina_se"), "Coverage should be positive");
 
-        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-c", "1000001", "--machine", "illumina_se"), "Coverage cannot be greater than 1000000.0");
+        TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-c", "1000001", "--machine", "illumina_se"), "Coverage cannot be greater than 1000000.0");
 
-        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "0", "--machine", "illumina_se"), "Number of reads should be greater than 0");
+        TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "0", "--machine", "illumina_se"), "Number of reads should be greater than 0");
 
-        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1", "-r", "0", "--machine", "illumina_se"), "Read length is too small");
+        TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1", "-r", "0", "--machine", "illumina_se"), "Read length is too small");
 
-        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1", "-r", "10", "--machine", "illumina_se", "--max-fragment-size", "10", "--min-fragment-size", "11"), "--max-fragment-size should not be smaller than --min-fragment-size");
+        TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1", "-r", "10", "--machine", "illumina_se", "--max-fragment-size", "10", "--min-fragment-size", "11"), "--max-fragment-size should not be smaller than --min-fragment-size");
 
-        TestUtils.containsAll(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1", "-r", "11", "--machine", "illumina_se", "--max-fragment-size", "10", "--min-fragment-size", "10"), "Read length is too large for selected fragment size");
+        TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-t", genomeDir.getPath(), "-o", reads.getPath(), "-n", "1", "-r", "11", "--machine", "illumina_se", "--max-fragment-size", "10", "--min-fragment-size", "10"), "Read length is too large for selected fragment size");
 
       } finally {
         assertTrue(FileHelper.deleteAll(genomeDir));

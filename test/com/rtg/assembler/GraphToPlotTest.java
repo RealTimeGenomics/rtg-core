@@ -47,23 +47,19 @@ public class GraphToPlotTest extends AbstractCliTest {
     final File tmpDir = FileHelper.createTempDirectory();
     try {
       TestUtils.containsAll(checkHandleFlagsErr(),
-         "Usage: rtg graph2plot [OPTION]... -o DIR -s INT DIR"
-          , "You must provide values for -o DIR -s INT DIR"
+        "Usage: rtg graph2plot [OPTION]... -o DIR -s INT DIR"
+        , "You must provide values for -o DIR -s INT DIR"
       );
       assertTrue(tmpDir.list().length == 0);
 
       final File inFile = new File(tmpDir, "in");
       final File outFile = new File(tmpDir, "out");
-      TestUtils.containsAll(checkHandleFlagsErr(inFile.toString(), "-o", outFile.toString(), "-s", "4")
-          , "input file should be a directory in the RTG graph file format"
-      );
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr(inFile.toString(), "-o", outFile.toString(), "-s", "4"), "input file should be a directory in the RTG graph file format");
       assertTrue(tmpDir.list().length == 0);
 
       assertTrue(inFile.mkdir());
       assertTrue(outFile.createNewFile());
-      TestUtils.containsAll(checkHandleFlagsErr(inFile.toString(), "-o", outFile.toString(), "-s", "4")
-          , "The directory \"" + outFile + "\" already exists."
-      );
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr(inFile.toString(), "-o", outFile.toString(), "-s", "4"), "The directory \"" + outFile + "\" already exists.");
 
       assertTrue(outFile.delete());
       checkHandleFlagsOut(inFile.toString(), "-o", outFile.toString(), "-w", "5", "-s", "2");

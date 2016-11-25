@@ -63,9 +63,9 @@ public class SamMergeCliTest extends AbstractCliTest {
     try (final TestDirectory temp = new TestDirectory("validator")) {
       final File fake = new File(temp, "fake.txt.sam");
       FileUtils.stringToFile(fake.getPath() + LS, fake);
-      TestUtils.containsAll(checkHandleFlagsErr("-o", "blahOutput").replaceAll("\\s+", " "), "No input files specified.");
-      TestUtils.containsAll(checkHandleFlagsErr("-o", fake.getPath(), fake.getPath(), "-Z").replaceAll("\\s+", " "), "The file \"" + fake.getPath() + "\" already exists. Please remove it first or choose a different file");
-      TestUtils.containsAll(checkHandleFlagsErr("-o", fake.getPath(), fake.getPath(), "-c", "0").replaceAll("\\s+", " "), "--max-hits must be at least 1");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", "blahOutput"), "No input files specified.");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", fake.getPath(), fake.getPath(), "-Z"), "The file \"" + fake.getPath() + "\" already exists. Please remove it first or choose a different file");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", fake.getPath(), fake.getPath(), "-c", "0"), "--max-hits must be at least 1");
       checkHandleFlagsOut("-o", fake.getPath(), "-I", fake.getPath());
     }
   }

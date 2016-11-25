@@ -45,7 +45,7 @@ public class SvCliUtilsTest extends TestCase {
         , "[OPTION]... -o DIR -t SDF -r FILE FILE+"
         , "[OPTION]... -o DIR -t SDF -I FILE -R FILE"
         );
-    TestUtils.containsAll(flags.getUsageString().replaceAll("\\s+", " ")
+    TestUtils.containsAllUnwrapped(flags.getUsageString()
         , "-I,", "--input-list-file=FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads"
         , "-o,", "--output=DIR", "directory for output"
         , "--readgroup-labels=FILE", "file containing read group relabel mappings (1 per line)"

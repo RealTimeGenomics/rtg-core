@@ -37,7 +37,7 @@ public class CoverageCliTest extends AbstractCliTest {
   }
 
   private void checkParamsError(final String[] args, final String... exp) {
-    TestUtils.containsAll(checkHandleFlagsErr(args).replaceAll(LS, " ").replaceAll("\\s+", " "), exp);
+    TestUtils.containsAllUnwrapped(checkHandleFlagsErr(args), exp);
   }
 
   public void testErrorFlags() {

@@ -99,7 +99,7 @@ public class MapXValidatorTest extends AbstractCliTest {
       assertTrue(right.mkdir());
       ReaderTestUtils.getReaderDNA(READS_FASTA_ONE_INDEL, right, null).close();
 
-      assertTrue(checkHandleFlagsErr("-t", template.getPath(), "-i", reads.getPath(), "-a", "1", "-b", "1", "-o", new File(dir, "output3").toString(), "-w", "4", "-T", "1", "--matrix=blosum45").contains("Paired end data not supported"));
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-t", template.getPath(), "-i", reads.getPath(), "-a", "1", "-b", "1", "-o", new File(dir, "output3").toString(), "-w", "4", "-T", "1", "--matrix=blosum45"), "Paired end data not supported");
     }
   }
 

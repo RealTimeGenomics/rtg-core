@@ -34,8 +34,8 @@ public class CoreCommandTest extends TestCase {
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     ToolsCommand.FORMAT.mainInit(new String[]{"-h"}, baos, null);
     baos.flush();
-    TestUtils.containsAll(baos.toString().replaceAll("\\s+", " "), "Usage: rtg format [OPTION]... -o SDF FILE+",
-        "-h, --help print help on command-line flag usage");
+    TestUtils.containsAllUnwrapped(baos.toString(), "Usage: rtg format [OPTION]... -o SDF FILE+",
+        "-h, --help", "print help on command-line flag usage");
     assertEquals("FORMAT", ToolsCommand.FORMAT.getCommandName());
     assertEquals("FORMAT", ToolsCommand.FORMAT.toString());
     assertEquals(CommandCategory.FORMAT, ToolsCommand.FORMAT.getCategory());

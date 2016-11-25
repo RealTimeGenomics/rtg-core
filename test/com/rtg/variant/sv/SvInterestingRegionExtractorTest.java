@@ -43,7 +43,7 @@ public class SvInterestingRegionExtractorTest extends TestCase {
       final String s = FileHelper.gzFileToString(out);
 
       TestUtils.containsAll(s,
-          "#chr\tstart\tend\tareas\tmaxscore\taverage\t",
+          "#chr\tstart\tend\tareas\tmaxscore\taverage",
           "chr1\t10\t4750\t3\t171.7091\t85.0291",
           "chr1\t7340\t9970\t2\t98.1045\t33.6914",
           "chr1\t39600\t0\t1\t186.4456\t159.4061",
@@ -66,7 +66,7 @@ public class SvInterestingRegionExtractorTest extends TestCase {
       final String s = FileUtils.fileToString(out);
 
       TestUtils.containsAll(s,
-          "#chr\tstart\tend\tareas\tmaxscore\taverage\t",
+          "#chr\tstart\tend\tareas\tmaxscore\taverage",
           "chr1\t10\t9970\t6\t171.7091\t67.9166",
           "chr1\t39600\t0\t1\t186.4456\t159.4061",
           "chr2\t220493770\t220495380\t2\t52.3520\t22.2873"

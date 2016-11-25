@@ -95,7 +95,7 @@ public class SamRenameTest extends AbstractCliTest {
 
   /** Test for an error that will be picked up during params object construction. */
   public void checkParamsError(final String[] args0, final String exp) throws InvalidParamsException {
-    TestUtils.containsAll(checkHandleFlagsErr(args0), exp);
+    TestUtils.containsAllUnwrapped(checkHandleFlagsErr(args0), exp);
   }
 
   // commandline errors
