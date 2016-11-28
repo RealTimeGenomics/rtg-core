@@ -69,7 +69,7 @@ public final class AvrUtils {
           newModels[0] = AVR_NONE_NAME;
           System.arraycopy(models, 0, newModels, 1, models.length);
           Arrays.sort(newModels);
-          description += " (Must be one of " + Arrays.toString(newModels) + " or a path to a model file)";
+          description += ". Allowed values are " + Arrays.toString(newModels) + " or a path to a model file";
           if (Arrays.asList(newModels).contains(defaultModel)) {
             defaultModelFile = new File(defaultModel);
           }
@@ -77,8 +77,8 @@ public final class AvrUtils {
       }
     }
     final Flag modelFlag = anonymous
-        ? flags.registerRequired(File.class, "file", description).setCategory(CommonFlagCategories.REPORTING)
-        : flags.registerOptional(AVR_MODEL_FILE_FLAG, File.class, "file", description).setCategory(CommonFlagCategories.REPORTING);
+        ? flags.registerRequired(File.class, "MODEL", description).setCategory(CommonFlagCategories.REPORTING)
+        : flags.registerOptional(AVR_MODEL_FILE_FLAG, File.class, "MODEL", description).setCategory(CommonFlagCategories.REPORTING);
     if (!anonymous && defaultModelFile != null) {
       modelFlag.setParameterDefault(defaultModelFile);
     }

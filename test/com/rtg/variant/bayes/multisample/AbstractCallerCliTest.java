@@ -122,7 +122,7 @@ public abstract class AbstractCallerCliTest extends AbstractCliTest {
         "for unmated reads that have no mapping quality supplied",
         "if set, ignore mapping calibration files",
         "SDF of the reference genome the reads have been mapped against",
-        "if set, force sequencer machine settings. One of [default, illumina, ls454_se, ls454_pe, complete, iontorrent]",
+        "if set, force sequencer machine settings.", "[default, illumina, ls454_se, ls454_pe, complete, iontorrent]",
         "if set, will output simple SNPs only",
         "for mated reads that have no mapping quality supplied use this as the default quality (in Phred format from 0 to 63)",
         "for unmated reads that have no mapping quality supplied use this as the default quality (in Phred format from 0 to 63)",

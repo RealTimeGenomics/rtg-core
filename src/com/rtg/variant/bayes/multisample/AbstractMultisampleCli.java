@@ -294,7 +294,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     SamFilterOptions.registerBedRestrictionFlag(flags);
     SamFilterOptions.registerKeepDuplicatesFlag(flags);
     flags.registerOptional('q', X_Q_DEFAULT_FLAG, Integer.class, "int", "for reads that have no quality information use this as the default quality (in Phred format from 0 to 63)", 20).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('m', MACHINE_ERRORS_FLAG, String.class, "string", "if set, force sequencer machine settings. One of [default, illumina, ls454_se, ls454_pe, complete, iontorrent]").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('m', MACHINE_ERRORS_FLAG, String.class, "string", "if set, force sequencer machine settings. Allowed values are [default, illumina, ls454_se, ls454_pe, complete, iontorrent]").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(R_DEFAULT_FLAG, Integer.class, "int", "for mated reads that have no mapping quality supplied use this as the default quality (in Phred format from 0 to 63)", 20).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(UNMATED_R_DEFAULT_FLAG, Integer.class, "int", "for unmated reads that have no mapping quality supplied use this as the default quality (in Phred format from 0 to 63)", 20).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(POPULATION_PRIORS, File.class, "file", "if set, use the VCF file to generate population based site-specific priors").setCategory(SENSITIVITY_TUNING);
