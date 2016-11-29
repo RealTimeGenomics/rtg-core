@@ -211,7 +211,7 @@ public class DeProbeCli extends LoggedCli {
 
     Diagnostic.userLog("PROBE OFFSETS");
     final TextTable offsetSummary = new TextTable();
-    offsetSummary.addRow("Delta", "+", "-");
+    offsetSummary.addHeaderRow("Delta", "+", "-");
     offsetSummary.addSeparator();
     for (int i = 0; i < posChecker.mPosDiffStats.length; i++) {
       offsetSummary.addRow(Integer.toString(i - tolerance), Integer.toString(posChecker.mPosDiffStats[i]), Integer.toString(negChecker.mPosDiffStats[tolerance * 2 - i]));
@@ -221,7 +221,7 @@ public class DeProbeCli extends LoggedCli {
 
     Diagnostic.userLog("CIGAR OPERATIONS WITHIN PROBE");
     final TextTable cigarSummary = new TextTable();
-    cigarSummary.addRow("Strand", "Length", "X", "I", "D", "S");
+    cigarSummary.addHeaderRow("Strand", "Length", "X", "I", "D", "S");
     cigarSummary.addSeparator();
     for (int i = 0; i < PositionAndStrandChecker.MAX_OP_LEN; i++) {
       addCigarRow(cigarSummary, "+", posChecker, i);
@@ -233,7 +233,7 @@ public class DeProbeCli extends LoggedCli {
     final long totalstripped = mTotalStrippedPos + mTotalStrippedNeg;
     final long total = mTotalMappedPos + mTotalMappedNeg;
     final TextTable summary = new TextTable();
-    summary.addRow("Strand", "Alignments", "Stripped", "Identified", "nt/read");
+    summary.addHeaderRow("Strand", "Alignments", "Stripped", "Identified", "nt/read");
     summary.addSeparator();
     summary.addRow("+", Long.toString(mTotalMappedPos), Long.toString(mTotalStrippedPos), String.format("%.2f%%", (double) mTotalStrippedPos / mTotalMappedPos * 100.0), String.format("%.1f", (double) posChecker.mBasesTrimmed / mTotalStrippedPos));
     summary.addRow("-", Long.toString(mTotalMappedNeg), Long.toString(mTotalStrippedNeg), String.format("%.2f%%", (double) mTotalStrippedNeg / mTotalMappedNeg * 100.0), String.format("%.1f", (double) negChecker.mBasesTrimmed / mTotalStrippedNeg));
@@ -242,7 +242,8 @@ public class DeProbeCli extends LoggedCli {
 
     Diagnostic.userLog("ON TARGET RATES");
     final TextTable onTargetSummary = new TextTable();
-    onTargetSummary.addRow("Group", "Total", "Mapped", "On Target", "%/Total", "%/Mapped");
+    onTargetSummary.addHeaderRow("Group", "Total", "Mapped", "On Target", "%/Total", "%/Mapped");
+    onTargetSummary.addSeparator();
     onTargetSummary.addRow("Reads", Long.toString(totalReads), Long.toString(mTotalMappedReads), Long.toString(mTotalStrippedReads), String.format("%.2f%%", (double) mTotalStrippedReads / (double) totalReads * 100.0), String.format("%.2f%%", (double) mTotalStrippedReads / (double) mTotalMappedReads * 100.0));
     Diagnostic.userLog(onTargetSummary.toString());
     FileUtils.stringToFile(onTargetSummary.getAsTsv(), new File(outputDirectory(), ON_TARGET_SUMMARY_FILE));
