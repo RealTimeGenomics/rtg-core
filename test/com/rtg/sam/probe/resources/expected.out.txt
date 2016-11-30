@@ -1,0 +1,4 @@
+group  total  mapped  on target  fraction of total  fraction of mapped
+----------------------------------------------------------------------
+Reads      6       6          6             1.0000              1.0000
+
