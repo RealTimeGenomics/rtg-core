@@ -21,6 +21,7 @@ import com.rtg.launcher.AbstractParamsCliTest;
 import com.rtg.launcher.ParamsCli;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
+import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
@@ -62,16 +63,9 @@ public class SvPatternsCliTest extends AbstractParamsCliTest<BreakpointPatternPa
 
       final File outDir = new File(tmpDir, "out");
 
-      String err = checkHandleFlagsErr("-o", outDir.getPath());
-      assertTrue(err, err.contains("Error: No input files specified"));
-
-      assertTrue(err, err.contains("Error: No input files specified"));
-
-      err = checkHandleFlagsErr("-I", tmpFile.getPath(), outDir.getPath());
-      assertTrue(err, err.contains("Error: You must provide a value for -o DIR"));
-
-      err = checkHandleFlagsErr("-o", outDir.getPath(), "-I", tmpFile.getPath(), "--region", "I_am_not_a_region:I_AM_A_FREE_STRING");
-      assertTrue(err, err.contains("Invalid region specification"));
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", outDir.getPath(), "Error: No input files specified"));
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-I", tmpFile.getPath(), outDir.getPath(), "Error: You must provide a value for -o DIR"));
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", outDir.getPath(), "-I", tmpFile.getPath(), "--region", "I_am_not_a_region:I_AM_A_FREE_STRING", "is malformed"));
 
       checkMainInitOk("-o", outDir.getPath(), "-I", tmpFile.getPath());
     }

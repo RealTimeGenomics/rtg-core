@@ -129,7 +129,6 @@ public class RecalibrateCliTest extends AbstractCliTest {
         "file containing a list of SAM/BAM format files (1 per line) containing mapped reads",
         "SDF containing reference",
         "SAM/BAM format files containing mapped reads. May be specified 0 or more times",
-        "force overwriting of calibration files",
         "print help on command-line flag usage"
     );
   }

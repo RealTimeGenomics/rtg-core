@@ -28,7 +28,6 @@ import java.util.HashSet;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.bed.BedUtils;
-import com.rtg.calibrate.RecalibrateCli;
 import com.rtg.index.hash.ngs.FactoryUtil;
 import com.rtg.index.hash.ngs.instances.AbstractCG2Mask;
 import com.rtg.index.hash.ngs.instances.AbstractCGMask;
@@ -150,7 +149,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
         flags.setParseMessage("Can only specify --" + CommonFlags.NO_GZIP + " when not using BAM output");
         return false;
       }
-      if (!RecalibrateCli.checkBedFileFlag(flags)) {
+      if (!CommonFlags.validateInputFile(flags, CommonFlags.BED_REGIONS_FLAG)) {
         return false;
       }
       return true;

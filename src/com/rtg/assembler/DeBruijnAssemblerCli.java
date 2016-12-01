@@ -28,7 +28,6 @@ import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
-import com.rtg.util.intervals.RegionRestriction;
 
 /**
  */
@@ -115,18 +114,17 @@ public class DeBruijnAssemblerCli extends ParamsCli<DeBruijnParams> {
       if (!checkSdfFileList(flags, files)) {
         return false;
       }
-      if (flags.isSet(CommonFlags.RESTRICTION_FLAG) && !RegionRestriction.validateRegion((String) flags.getValue(CommonFlags.RESTRICTION_FLAG))) {
-        flags.error("Invalid region specification");
+      if (!CommonFlags.validateRegion(flags)) {
         return false;
       }
       if ((Integer) flags.getValue(KMER_SIZE) < 1) {
-        flags.error("--" + KMER_SIZE + " should be positive");
+        flags.setParseMessage("--" + KMER_SIZE + " should be positive");
         return false;
       }
       if (flags.isSet(DIPLOID_RATIO)) {
         final double ratio = (Double) flags.getValue(DIPLOID_RATIO);
         if (ratio > 1 || ratio < 0) {
-          flags.error("--" + DIPLOID_RATIO + " should be between 0 and 1");
+          flags.setParseMessage("--" + DIPLOID_RATIO + " should be between 0 and 1");
         }
       }
       if (!CommonFlags.validateStartEnd(flags, CommonFlags.START_READ_ID, CommonFlags.END_READ_ID)) {
@@ -134,7 +132,7 @@ public class DeBruijnAssemblerCli extends ParamsCli<DeBruijnParams> {
       }
       if (flags.isSet(CommonFlags.START_READ_ID) || flags.isSet(CommonFlags.END_READ_ID)) {
         if (files.size() != 1) {
-          flags.error("Can only specify read range with a single input set of reads");
+          flags.setParseMessage("Can only specify read range with a single input set of reads");
           return false;
         }
       }
