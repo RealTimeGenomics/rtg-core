@@ -61,7 +61,7 @@ public abstract class ModelCommonFactory<D extends Description, H extends Hypoth
 
   @Override
   public boolean globalIntegrity() {
-    for (int i = 0; i < mHypothesesCache.size(); i++) {
+    for (int i = 0; i < mHypothesesCache.size(); ++i) {
       Exam.assertEquals(i, mHypothesesCache.get(i).reference());
     }
     return integrity();

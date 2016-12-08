@@ -43,7 +43,7 @@ public class CgRealignTest extends TestCase {
     final double[] qualities = new double[read.length];
     qualities[0] = 0.1;
     qualities[1] = Math.pow(10.0, -15 / 10.0);
-    for (int i = 2; i < qualities.length; i++) {
+    for (int i = 2; i < qualities.length; ++i) {
       qualities[i] = 0.01;
     }
     final EnvironmentImplementation env = new EnvironmentImplementation(
@@ -98,7 +98,7 @@ public class CgRealignTest extends TestCase {
   void checkPredictions(final String template, final String read, final String expected) {
     final StringBuilder sb = new StringBuilder();
     final Delta realign = getRealign(DnaUtils.encodeString(template), DnaUtils.encodeString(read));
-    for (int i = 0; i < template.length(); i++) {
+    for (int i = 0; i < template.length(); ++i) {
       final ProbabilityArray pr = new ProbabilityArray(realign.probabilitiesLn(i));
       sb.append("[").append(i).append("]");
       sb.append(pr);

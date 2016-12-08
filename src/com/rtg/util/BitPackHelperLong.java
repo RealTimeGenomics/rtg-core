@@ -41,11 +41,11 @@ public class BitPackHelperLong {
     }
     mShifts = new int[mFields.length];
     //mShifts[0] = 0
-    for (int i = 1; i < mShifts.length; i++) {
+    for (int i = 1; i < mShifts.length; ++i) {
       mShifts[i] = mShifts[i - 1] + mFields[i - 1];
     }
     mMasks = new long[mFields.length];
-    for (int i = 0; i < mMasks.length; i++) {
+    for (int i = 0; i < mMasks.length; ++i) {
       mMasks[i] = (1L << mFields[i]) - 1;
     }
   }
@@ -68,7 +68,7 @@ public class BitPackHelperLong {
   public long packValues(final long[] values) {
     assert values.length == mFields.length;
     long result = values[0];
-    for (int i = 1; i < mShifts.length; i++) {
+    for (int i = 1; i < mShifts.length; ++i) {
       result |= values[i] << mShifts[i];
     }
     return result;

@@ -94,7 +94,7 @@ public class ComplexCnvRegionTest extends TestCase {
     assertEquals(0, re.getStart());
     assertEquals(12, re.getEnd());
 
-    for (int i = 0; i <= 12; i++) {
+    for (int i = 0; i <= 12; ++i) {
       checkBox(re, i);
     }
     final String exp = ""
@@ -133,7 +133,7 @@ public class ComplexCnvRegionTest extends TestCase {
     assertEquals(0, re.getStart());
     assertEquals(12, re.getEnd());
 
-    for (int i = 0; i <= 12; i++) {
+    for (int i = 0; i <= 12; ++i) {
       checkBox(re, i);
     }
     final String exp = ""
@@ -188,7 +188,7 @@ public class ComplexCnvRegionTest extends TestCase {
     assertEquals(1, re.getStart());
     assertEquals(12, re.getEnd());
 
-    for (int i = 2; i <= 12; i++) {
+    for (int i = 2; i <= 12; ++i) {
       checkBox(re, i);
     }
     final String exp = ""
@@ -244,7 +244,7 @@ public class ComplexCnvRegionTest extends TestCase {
 
   public void testOverflow() {
     final SortedSet<AbstractCnvRegion> set = new TreeSet<>();
-    for (int i = 0; i < 2640; i++) {
+    for (int i = 0; i < 2640; ++i) {
       set.add(new SimpleCnvRegion(i + 90, i + 91));
     }
     set.add(new SimpleCnvRegion(804577, 804603));

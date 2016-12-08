@@ -88,7 +88,7 @@ public final class GraphWriter {
   private void writeContig() {
     try (final PrintStream ps = new PrintStream(new BoundedStreams(mDir, mMaxLength, "contig.", ".fa"))) {
       final Set<String> contigAttributes = new TreeSet<>(mGraph.contigAttributes().keySet());
-      for (long l = 1; l <= mGraph.numberContigs(); l++) {
+      for (long l = 1; l <= mGraph.numberContigs(); ++l) {
         if (!mIncludeDeletions && mGraph.contigDeleted(l)) {
           continue;
         }
@@ -103,7 +103,7 @@ public final class GraphWriter {
         }
         ps.println();
         final int length = mGraph.contigLength(l);
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < length; ++i) {
           if (i > 0 && (i % 80) == 0) {
             ps.println();
           }
@@ -118,7 +118,7 @@ public final class GraphWriter {
   private void writePath() {
     try (final PrintStream ps = new PrintStream(new BoundedStreams(mDir, mMaxLength, "path.", ".tsv"))) {
       final Set<String> pathAttributes = new TreeSet<>(mGraph.pathAttributes().keySet());
-      for (long l = 1; l <= mGraph.numberPaths(); l++) {
+      for (long l = 1; l <= mGraph.numberPaths(); ++l) {
         if (!mIncludeDeletions && mGraph.pathDeleted(l)) {
           continue;
         }
@@ -134,7 +134,7 @@ public final class GraphWriter {
         ps.println();
         ps.print("contigs");
         final int length = mGraph.pathLength(l);
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < length; ++i) {
           final long contig = mGraph.pathContig(l, i);
           ps.print(TAB + contig);
         }

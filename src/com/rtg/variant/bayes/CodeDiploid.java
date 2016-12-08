@@ -44,11 +44,11 @@ public final class CodeDiploid implements Code {
     mValues = new int[len];
     mSqr = new int[l];
     int n = 0;
-    for (int i = 0; i < l; i++) {
+    for (int i = 0; i < l; ++i) {
       mSqr[i] = n;
-      for (int j = 0; j <= i; j++) {
+      for (int j = 0; j <= i; ++j) {
         mValues[n] = i;
-        n++;
+        ++n;
       }
     }
   }

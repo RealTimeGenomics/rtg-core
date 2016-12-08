@@ -125,7 +125,7 @@ public class EnvironmentCombinedTest extends TestCase {
 
     //System.err.println(env);
     final byte[] exp = {2, 2, 2, 2, 2, 4, 1, 3, 3, 3, 3, 3};
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 12; ++i) {
       assertEquals(exp[i], env.template(i));
       //System.err.println("[" + i + "]" + env.template(i));
     }
@@ -147,7 +147,7 @@ public class EnvironmentCombinedTest extends TestCase {
 
     //System.err.println(env);
     final byte[] exp = {2, 2, 2, 2, 2, 1, 3, 3, 3, 3, 3};
-    for (int i = -2; i < 9; i++) {
+    for (int i = -2; i < 9; ++i) {
       assertEquals("" + i, exp[i + 2], env.template(i));
       //System.err.println("[" + i + "]" + env.template(i));
     }

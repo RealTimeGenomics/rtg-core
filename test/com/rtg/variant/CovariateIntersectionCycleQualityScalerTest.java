@@ -92,8 +92,8 @@ public class CovariateIntersectionCycleQualityScalerTest extends TestCase {
       thisQuery[0] = c.initQuery();
       final CovariateIntersectionCycleQualityScaler bqps = new CovariateIntersectionCycleQualityScaler(c, thisQuery[0]);
 
-      for (int i = 0; i < 64; i++) {
-        for (int j = 0; j < 35; j++) {
+      for (int i = 0; i < 64; ++i) {
+        for (int j = 0; j < 35; ++j) {
           assertEquals(String.format("readPos:%d, claimed quality: %d", j, i), i, bqps.getScaledPhred((byte) i, j, Arm.LEFT));
         }
       }

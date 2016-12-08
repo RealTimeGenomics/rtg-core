@@ -124,7 +124,7 @@ public class GraphIndexTest extends TestCase {
   }
   void check(Map<Integer, List<ContigPosition>> expected, List<List<ContigPosition>> actual, int length) {
     assertEquals(length, actual.size());
-    for (int i = 0; i < actual.size(); i++) {
+    for (int i = 0; i < actual.size(); ++i) {
       List<ContigPosition> currentExpected = expected.get(i);
       if (currentExpected == null) {
         currentExpected = Collections.emptyList();

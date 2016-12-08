@@ -139,7 +139,7 @@ public class FilterPaths extends LoggedCli {
   }
 
   static void improveSingle(MutableGraph mutable, int threshold) {
-    for (int i = 1; i <= mutable.numberPaths(); i++) {
+    for (int i = 1; i <= mutable.numberPaths(); ++i) {
       if (GraphToPlot.overlappingReadCount(i, mutable) < threshold) {
         mutable.deletePath(i);
       }
@@ -154,7 +154,7 @@ public class FilterPaths extends LoggedCli {
     }
   }
   static void improveMultiple(MutableGraph graph, int threshold) {
-    for (long i = 1; i < graph.numberPaths(); i++) {
+    for (long i = 1; i < graph.numberPaths(); ++i) {
       if (graph.pathDeleted(i) || graph.pathLength(i) != 2) {
         continue;
       }
@@ -171,7 +171,7 @@ public class FilterPaths extends LoggedCli {
   }
   static List<Long> biDirectional(long first, long second, Graph graph, int threshold) {
     final List<Long> forward = unambiguousPath(first, second, graph, threshold);
-    for (int end = forward.size() - 1; end >= 1; end--) {
+    for (int end = forward.size() - 1; end >= 1; --end) {
       final List<Long> reverse = unambiguousPath(-forward.get(end), -forward.get(end - 1), graph, threshold);
       if (reverse.size() > end && reverse.get(end) == -first) {
         return forward.subList(0, end + 1);
@@ -194,7 +194,7 @@ public class FilterPaths extends LoggedCli {
       if (graph.pathLength(current) > index + 1 && graph.pathContig(current, index + 1) != second) {
         continue;
       }
-      for (int contig = index, pathPos = 0; contig < graph.pathLength(current); contig++, pathPos++) {
+      for (int contig = index, pathPos = 0; contig < graph.pathLength(current); ++contig, ++pathPos) {
         final int readCount = readCount(current, graph);
         if (pathPos > path.size() - 1) {
           path.add(graph.pathContig(current, contig));
@@ -208,7 +208,7 @@ public class FilterPaths extends LoggedCli {
         }
       }
     }
-    for (int i = 0; i < failPosition && i < path.size(); i++) {
+    for (int i = 0; i < failPosition && i < path.size(); ++i) {
       if (counts.get(i) < threshold) {
         return path.subList(0, i);
       }

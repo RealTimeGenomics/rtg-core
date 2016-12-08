@@ -113,12 +113,12 @@ public class DummyMachineTest extends TestCase {
     assertEquals("10.", m.getCigar(false));
     assertEquals(0, m.process(0, frag, frag.length, 1, 10));
     assertEquals("1X9.", m.getCigar(false));
-    for (int c = 0; c < 1551; c++) {
+    for (int c = 0; c < 1551; ++c) {
       m.process(0, frag, frag.length, 1, 10);
     }
     //    System.out.println(m.getCigar(false, 0, 10, 10));
     assertEquals("9.1D1.", m.getCigar(false));
-    for (int c = 0; c < 1134; c++) {
+    for (int c = 0; c < 1134; ++c) {
       m.process(0, frag, frag.length, 1, 10);
     }
     assertEquals("3.1I6.", m.getCigar(false));

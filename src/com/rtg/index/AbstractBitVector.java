@@ -105,7 +105,7 @@ public abstract class AbstractBitVector {
     for (long l = 0; l < mLength; l += 100) {
       sb.append("[").append(l).append("]\t");
       final long min = Math.min(l + 100, mLength);
-      for (long m = l; m < min; m++) {
+      for (long m = l; m < min; ++m) {
         if (m % 10 == 0) {
           sb.append(" ");
         }

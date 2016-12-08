@@ -50,7 +50,7 @@ public class SimpleLineCheck {
       throw new RuntimeException("Incorrect number of fields. line=" + StringUtils.display(line) + " checks=" + Arrays.toString(checks) + " split=" + Arrays.toString(split));
     }
     try {
-      for (int i = 0; i < checks.length; i++) {
+      for (int i = 0; i < checks.length; ++i) {
         final Object obj = checks[i];
         if (i >= split.length && obj == null) {
           continue;

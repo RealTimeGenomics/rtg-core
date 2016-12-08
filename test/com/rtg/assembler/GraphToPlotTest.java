@@ -104,7 +104,7 @@ public class GraphToPlotTest extends AbstractCliTest {
     contigAttr.put(GraphKmerAttribute.READ_COUNT, "desc");
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "desc");
     final GraphKmerAttribute graph = new GraphKmerAttribute(2, contigAttr, pathAttr);
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       final int length = i + 4;
       contig(graph, length, length * (i + 1));
     }
@@ -127,7 +127,7 @@ public class GraphToPlotTest extends AbstractCliTest {
   }
   void contig(GraphKmerAttribute graph, int length, int kmer) {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       sb.append('A');
     }
     final long id = graph.addContig(new ContigString(sb.toString()));
@@ -197,7 +197,7 @@ public class GraphToPlotTest extends AbstractCliTest {
     contigAttr.put(GraphKmerAttribute.READ_COUNT, "desc");
     pathAttr.put(GraphKmerAttribute.READ_COUNT, "desc");
     final GraphKmerAttribute graph = new GraphKmerAttribute(2, contigAttr, pathAttr);
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; ++i) {
       final int length = i + 4;
       contig(graph, length, length * (i + 1));
     }

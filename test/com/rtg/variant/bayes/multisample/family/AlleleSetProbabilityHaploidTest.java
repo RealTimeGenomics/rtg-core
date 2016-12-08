@@ -46,8 +46,8 @@ public class AlleleSetProbabilityHaploidTest extends TestCase {
   //test symmetries and the two ways of accessing the table
   public void testLookupCode() {
     final Code code = new CodeDiploid(4);
-    for (int i = 0; i < code.rangeSize(); i++)  {
-      for (int j = 0; j < code.size(); j++)  {
+    for (int i = 0; i < code.rangeSize(); ++i)  {
+      for (int j = 0; j < code.size(); ++j)  {
         //System.err.println("i=" + i + " j=" + j);
         final byte ref = 1;
         final double exp = AlleleSetProbabilityHaploid.SINGLETON_HD.probabilityLn(code, ref, i, j);

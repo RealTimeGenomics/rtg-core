@@ -96,12 +96,12 @@ public final class MendelianAlleleProbabilityDiploid extends MendelianAlleleProb
   private static int init(double[][][][][] lookup) {
     final double z = Double.NEGATIVE_INFINITY;
     int cnt = 0;
-    for (int i = 0; i < lookup.length; i++) {
-      for (int j = 0; j < lookup[i].length; j++) {
-        for (int k = 0; k < lookup[i][j].length; k++) {
-          for (int l = 0; l < lookup[i][j][k].length; l++) {
-            for (int m = 0; m < lookup[i][j][k][l].length; m++) {
-              cnt++;
+    for (int i = 0; i < lookup.length; ++i) {
+      for (int j = 0; j < lookup[i].length; ++j) {
+        for (int k = 0; k < lookup[i][j].length; ++k) {
+          for (int l = 0; l < lookup[i][j][k].length; ++l) {
+            for (int m = 0; m < lookup[i][j][k][l].length; ++m) {
+              ++cnt;
               lookup[i][j][k][l][m] = z;
             }
           }

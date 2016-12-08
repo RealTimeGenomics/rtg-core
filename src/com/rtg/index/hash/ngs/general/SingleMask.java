@@ -125,7 +125,7 @@ public final class SingleMask extends IntegralAbstract {
     }
     assert gap >= 0;
     mGaps[mSize] = gap;
-    mSize++;
+    ++mSize;
   }
 
   /**
@@ -145,7 +145,7 @@ public final class SingleMask extends IntegralAbstract {
   @Override
   public void toString(final StringBuilder sb) {
     sb.append("Mask skeleton:").append(mFrozen ? "frozen" : "liquid").append(" indels=").append(mIndels).append(" indelLength=").append(mIndelLength).append(LS);
-    for (int i = 0; i < mSize; i++) {
+    for (int i = 0; i < mSize; ++i) {
       final Skel sk = mSkeletons[i];
       sb.append(mGaps[i]).append("[").append(i).append("]").append(sk).append(LS);
     }
@@ -160,7 +160,7 @@ public final class SingleMask extends IntegralAbstract {
 
     int total = 0;
     int posn = -1;
-    for (int i = 0; i < mSize; i++) {
+    for (int i = 0; i < mSize; ++i) {
       final Skel sk = mSkeletons[i];
       total += sk.length();
       posn += sk.length() + mGaps[i];
@@ -174,7 +174,7 @@ public final class SingleMask extends IntegralAbstract {
       Exam.assertTrue(mSize > 0);
       Exam.assertEquals(total, mWindowLength);
     }
-    for (int i = 0; i < mSize - 1; i++) {
+    for (int i = 0; i < mSize - 1; ++i) {
       final int gap = mGaps[i];
       Exam.assertTrue(i == 0 ? gap >= 0 : gap > 0);
     }

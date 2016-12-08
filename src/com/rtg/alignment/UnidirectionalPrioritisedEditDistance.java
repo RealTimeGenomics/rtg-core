@@ -109,7 +109,7 @@ class UnidirectionalPrioritisedEditDistance implements UnidirectionalEditDistanc
         return actions;
       }
       mNullReturned[i]++;
-      i++;
+      ++i;
     }
     mMaxIntActions[ActionsHelper.TEMPLATE_START_INDEX] = zeroBasedStart;
     return mMaxIntActions;
@@ -157,7 +157,7 @@ class UnidirectionalPrioritisedEditDistance implements UnidirectionalEditDistanc
   public void logStats() {
     final StringBuilder sb = new StringBuilder();
     sb.append("UniDirectionalPrioritisedEditDistance stats").append(StringUtils.LS);
-    for (int i = 0; i < mCounts.length; i++) {
+    for (int i = 0; i < mCounts.length; ++i) {
       final double timetaken = mTimeTaken[i] * 1024 / 1000000000.0;
       final double speed = MathUtils.round(mCounts[i] / timetaken);
       final int consumed = mCounts[i] - mNullReturned[i];
@@ -176,7 +176,7 @@ class UnidirectionalPrioritisedEditDistance implements UnidirectionalEditDistanc
     if (LOG_AS_HISTO) {
       sb.setLength(0);
       sb.append("Alignment score histogram for all alignments attempted:").append(StringUtils.LS);
-      for (int i = 0; i < mASHistogramUnderMaxScore.length - 2; i++) {
+      for (int i = 0; i < mASHistogramUnderMaxScore.length - 2; ++i) {
         if (mASHistogramUnderMaxScore[i] > 0 || mASHistogramOverMaxScore[i] > 0) {
           sb.append("AS:\t").append(i).append('\t').append(mASHistogramUnderMaxScore[i]).append('\t').append(mASHistogramOverMaxScore[i]).append(StringUtils.LS);
         }

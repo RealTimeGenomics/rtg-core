@@ -36,7 +36,7 @@ public class IdentitySetTest extends TestCase {
   public void testBigger() {
     final IdentitySet set = new IdentitySet(5000);
     final Integer[] tint = new Integer[5000];
-    for (int i = 0; i < tint.length; i++) {
+    for (int i = 0; i < tint.length; ++i) {
       tint[i] = 1000;
     }
     for (Integer aTint1 : tint) {
@@ -52,7 +52,7 @@ public class IdentitySetTest extends TestCase {
     final Integer[] tint = new Integer[1000];
     assertTrue(set.isEmpty());
     assertEquals(0, set.size());
-    for (int i = 0; i < tint.length; i++) {
+    for (int i = 0; i < tint.length; ++i) {
       final Integer xint = 10000;
       tint[i] = xint;
       assertTrue(!set.contains(xint));
@@ -62,7 +62,7 @@ public class IdentitySetTest extends TestCase {
       assertTrue(!set.isEmpty());
       assertEquals(i + 1, set.size());
       set.integrity();
-      for (int j = 0; j <= i; j++) {
+      for (int j = 0; j <= i; ++j) {
         assertTrue(set.contains(tint[j]));
       }
     }
@@ -70,12 +70,12 @@ public class IdentitySetTest extends TestCase {
       assertTrue(set.contains(aTint));
     }
     final Integer[] tint2 = new Integer[5];
-    for (int i = 0; i < tint2.length - 1; i++) {
+    for (int i = 0; i < tint2.length - 1; ++i) {
       tint2[i] = tint.length + i;
     }
     set.addAll(tint2);
     assertEquals(tint.length + tint2.length - 1, set.size());
-    for (int i = 0; i < tint2.length - 1; i++) {
+    for (int i = 0; i < tint2.length - 1; ++i) {
       assertTrue(set.contains(tint2[i]));
     }
   }

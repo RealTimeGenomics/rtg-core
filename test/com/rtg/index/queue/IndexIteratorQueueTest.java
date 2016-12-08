@@ -43,14 +43,14 @@ public class IndexIteratorQueueTest extends TestCase {
   public void test2() {
     final IndexQueue iq = new IndexQueue(3, 2, 100, 8);
     iq.globalIntegrity();
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 200; ++i) {
       iq.add(8, i + 1);
     }
     iq.globalIntegrity();
     iq.close();
     iq.globalIntegrity();
     final QueueIterator it = iq.iterator(1, 1 << 3);
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 200; ++i) {
       assertTrue(it.next());
       assertEquals(8, it.hash());
       assertEquals(i + 1, it.id());
@@ -61,17 +61,17 @@ public class IndexIteratorQueueTest extends TestCase {
   public void test3() {
     final IndexQueue iq = new IndexQueue(3, 2, 100, 5);
     iq.globalIntegrity();
-    for (int r = 0; r < 4; r++) {
-      for (int i = 0; i < 30; i++) {
+    for (int r = 0; r < 4; ++r) {
+      for (int i = 0; i < 30; ++i) {
         iq.add(r << 3, i + 1);
       }
     }
     iq.globalIntegrity();
     iq.close();
     iq.globalIntegrity();
-    for (int r = 0; r < 4; r++) {
+    for (int r = 0; r < 4; ++r) {
       final QueueIterator it = iq.iterator(r, r << 3);
-      for (int i = 0; i < 30; i++) {
+      for (int i = 0; i < 30; ++i) {
         assertTrue(it.next());
         assertEquals(r << 3, it.hash());
         assertEquals(i + 1, it.id());

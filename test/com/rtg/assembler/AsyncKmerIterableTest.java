@@ -47,12 +47,12 @@ public class AsyncKmerIterableTest extends TestCase {
           }
       };
       final List<File> files = new ArrayList<>();
-      for (int i = 0; i < sequences.length; i++) {
+      for (int i = 0; i < sequences.length; ++i) {
         final File dir = new File(tmpDir, "" + i);
         files.add(dir);
         final String[] reads = sequences[i];
         final StringBuilder sb = new StringBuilder();
-        for (int j = 0; j < reads.length; j++) {
+        for (int j = 0; j < reads.length; ++j) {
           sb.append(">")
               .append(j)
               .append(LS)
@@ -77,7 +77,7 @@ public class AsyncKmerIterableTest extends TestCase {
           int i = 0;
           for (Kmer k : iterable) {
             assertEquals(expected[i], k.toString());
-            i++;
+            ++i;
           }
           assertEquals(expected.length, i);
         }

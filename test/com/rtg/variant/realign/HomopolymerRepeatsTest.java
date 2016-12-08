@@ -75,7 +75,7 @@ public class HomopolymerRepeatsTest extends TestCase {
 
   private void check(final HomopolymerRepeats counts, final int[] forward, final int[] reverse) {
     assertEquals(forward.length, reverse.length);
-    for (int i = 0; i < forward.length; i++) {
+    for (int i = 0; i < forward.length; ++i) {
       assertEquals(counts.forward(i), forward[i]);
       assertEquals(counts.reverse(i), reverse[i]);
     }

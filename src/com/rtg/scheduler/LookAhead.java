@@ -40,7 +40,7 @@ public class LookAhead extends IntegralAbstract {
     integrity();
     int total = 0;
     if (mCurrent >= 0) {
-      for (int i = mCurrent; i <= mCurrent + mLookAhead + mDelta; i++) {
+      for (int i = mCurrent; i <= mCurrent + mLookAhead + mDelta; ++i) {
         final int cnt = mCounts[i & mMask];
         Exam.assertTrue(cnt >= 0);
         total += cnt;
@@ -62,7 +62,7 @@ public class LookAhead extends IntegralAbstract {
   }
 
   private void check(final int lo, final int hi) {
-    for (int i = lo; i < hi; i++) {
+    for (int i = lo; i < hi; ++i) {
       Exam.assertEquals(0, mCounts[i & mMask]);
     }
   }
@@ -138,7 +138,7 @@ public class LookAhead extends IntegralAbstract {
     final int x = t & mMask;
     assert mCounts[x] >= 0;
     mCounts[x]++;
-    mTotal++;
+    ++mTotal;
     if (mCurrent == -1) {
       assert mTotal == 1;
       mCurrent = t;
@@ -155,7 +155,7 @@ public class LookAhead extends IntegralAbstract {
     final int x = t & mMask;
     assert mCounts[x] >= 1;
     mCounts[x]--;
-    mTotal--;
+    --mTotal;
     assert mCounts[x] >= 0;
     assert mTotal >= 0;
     if (mCurrent == t) {
@@ -167,7 +167,7 @@ public class LookAhead extends IntegralAbstract {
           if (mCounts[y] > 0) {
             break;
           }
-          mCurrent++;
+          ++mCurrent;
         }
       }
     }

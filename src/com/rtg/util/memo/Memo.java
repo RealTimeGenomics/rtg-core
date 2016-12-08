@@ -77,7 +77,7 @@ public class Memo<T> extends IntegralAbstract implements Function<T> {
           final int newLength = mSynchPair.mMemo.length - index;
           final Object[] newArray = new Object[newLength];
           System.arraycopy(mSynchPair.mMemo, 0, newArray, -index, mSynchPair.mMemo.length);
-          for (int j = 0; j < -index; j++) {
+          for (int j = 0; j < -index; ++j) {
             newArray[j] = mFunction.fn(j + i);
           }
           mSynchPair = new Pair(i, newArray);
@@ -86,7 +86,7 @@ public class Memo<T> extends IntegralAbstract implements Function<T> {
           final int newLength = index + 1;
           final Object[] newArray = new Object[newLength];
           System.arraycopy(mSynchPair.mMemo, 0, newArray, 0, mSynchPair.mMemo.length);
-          for (int j = mSynchPair.mMemo.length; j <= index; j++) {
+          for (int j = mSynchPair.mMemo.length; j <= index; ++j) {
             newArray[j] = mFunction.fn(j + mSynchPair.mLo);
           }
           mSynchPair = new Pair(mSynchPair.mLo, newArray);
@@ -125,7 +125,7 @@ public class Memo<T> extends IntegralAbstract implements Function<T> {
   public synchronized boolean globalIntegrity() {
     integrity();
     if (mSynchPair != null) {
-      for (int i = 0; i < mSynchPair.mMemo.length; i++) {
+      for (int i = 0; i < mSynchPair.mMemo.length; ++i) {
         final int j = i + mSynchPair.mLo;
         Exam.assertEquals("i", mFunction.fn(j), mSynchPair.mMemo[i]);
       }

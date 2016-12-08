@@ -32,7 +32,7 @@ public class TopNImplementationTest extends TestCase {
   public void testDoesNotOverflowScoreIndelInTheResultCountArray() {
     Diagnostic.setLogStream();
     final UptoNStore topn = getTopNImplementation(5, 10, 50, 100);
-    for (int i = 0; i < 255; i++) {
+    for (int i = 0; i < 255; ++i) {
       topn.process(1, false, 4, 1, 77);
     }
       topn.process(1, false, 4, 1, 5);
@@ -40,13 +40,13 @@ public class TopNImplementationTest extends TestCase {
 
   public void testOver255() {
     final UptoNStore topn = getTopNImplementation(5, 5, 1000, 2000);
-    for (int i = 0; i < 1000; i++) {
+    for (int i = 0; i < 1000; ++i) {
       topn.process(0, false, 2, 17, i % 50);
     }
     final MatchResult mr = new MatchResult(0);
     topn.setResults(mr, 2);
     assertEquals(1000, mr.size());
-    for (int i = 0; i < mr.size(); i++) {
+    for (int i = 0; i < mr.size(); ++i) {
       assertEquals(17, mr.getPosition(i));
     }
   }

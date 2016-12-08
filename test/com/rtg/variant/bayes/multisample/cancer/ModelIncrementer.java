@@ -59,7 +59,7 @@ class ModelIncrementer<D extends Description> {
   }
 
   final ModelIncrementer<D> doReadsCustom(final int numReads, Description desc, final int readNt, final double[] probabilities, final double pe, final double error, final double mapError) {
-    for (int i = 0; i < numReads; i++) {
+    for (int i = 0; i < numReads; ++i) {
       final Evidence ev = new EvidenceWrapper(desc, readNt, probabilities, error, mapError, pe);
       for (final ModelInterface<D> m : mModels) {
         m.increment(ev);
@@ -69,7 +69,7 @@ class ModelIncrementer<D extends Description> {
   }
 
   final ModelIncrementer<D> doReads(final int numReads, final int readNt, final double quality) {
-    for (int i = 0; i < numReads; i++) {
+    for (int i = 0; i < numReads; ++i) {
       doRead(readNt, quality, mMapQ);
     }
     return this;

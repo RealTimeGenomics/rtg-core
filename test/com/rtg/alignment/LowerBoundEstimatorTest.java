@@ -272,7 +272,7 @@ public class LowerBoundEstimatorTest extends TestCase {
 
   private int slow(final String s1, final String s2, final int maxScore) {
     final int[] count = new int[4];
-    for (int i = 0; i < s1.length() - 3; i++) {
+    for (int i = 0; i < s1.length() - 3; ++i) {
       final String ts = s1.substring(i, i + 4);
       //      System.err.println(ts);
       final int low = Math.max(0, i - maxScore);

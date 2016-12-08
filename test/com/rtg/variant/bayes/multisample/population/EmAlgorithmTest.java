@@ -23,7 +23,7 @@ public class EmAlgorithmTest extends TestCase {
 
   public void testCallToStringSmall1() {
     final HypothesisScore[] calls = new HypothesisScore[15];
-    for (int i = 0; i < calls.length; i++) {
+    for (int i = 0; i < calls.length; ++i) {
       calls[i] = new HypothesisScore(new MockGenotypeMeasure(0, i % 10, 0.0, 0));
     }
     final String str = EmAlgorithm.callToString(10, calls);
@@ -33,7 +33,7 @@ public class EmAlgorithmTest extends TestCase {
   //long enough to get two complete cycles -- tests % operation
   public void testCallToStringSmall2() {
     final HypothesisScore[] calls = new HypothesisScore[21];
-    for (int i = 0; i < calls.length; i++) {
+    for (int i = 0; i < calls.length; ++i) {
       calls[i] = new HypothesisScore(new MockGenotypeMeasure(0, i % 10, 0.0, 0));
     }
     final String str = EmAlgorithm.callToString(10, calls);
@@ -42,7 +42,7 @@ public class EmAlgorithmTest extends TestCase {
 
   public void testCallToStringBig() {
     final HypothesisScore[] calls = new HypothesisScore[15];
-    for (int i = 0; i < calls.length; i++) {
+    for (int i = 0; i < calls.length; ++i) {
       calls[i] = new HypothesisScore(new MockGenotypeMeasure(0, i, 0.0, 0));
     }
     final String str = EmAlgorithm.callToString(11, calls);

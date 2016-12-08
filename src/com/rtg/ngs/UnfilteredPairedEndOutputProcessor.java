@@ -135,7 +135,7 @@ public class UnfilteredPairedEndOutputProcessor extends AbstractSdfOutputProcess
     Collections.sort(mChildren, new RegionFileComparator());
 
     final File[] outputFiles = new File[mChildren.size()];
-    for (int i = 0; i < outputFiles.length; i++) {
+    for (int i = 0; i < outputFiles.length; ++i) {
       outputFiles[i] = mChildren.get(i).getB();
     }
 
@@ -268,7 +268,7 @@ public class UnfilteredPairedEndOutputProcessor extends AbstractSdfOutputProcess
       if (mFreqBlockerLeft.isBlocked(dReadId) && mFreqBlockerRight.isBlocked(dReadId)) {
         return;
       }
-      mProcessCalls++;
+      ++mProcessCalls;
       final boolean reverse = frame.startsWith("R");
       mListener.addStatus(dReadId, isFirst ? ReadStatusTracker.MATCHED_FIRST : ReadStatusTracker.MATCHED_SECOND);
       mPairedEndOutputProcessor.process(templateId, reverse, readId, tStart);

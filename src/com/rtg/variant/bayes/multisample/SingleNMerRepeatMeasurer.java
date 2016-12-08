@@ -49,7 +49,7 @@ public final class SingleNMerRepeatMeasurer implements RepeatMeasurer {
     final int gapLength = endPos - startPos;
     final int midpoint = startPos + gapLength / 2;
     int repeatTotal = 0;
-    for (int simpleLength = 1; simpleLength <= mMaxMerLength; simpleLength++) {
+    for (int simpleLength = 1; simpleLength <= mMaxMerLength; ++simpleLength) {
       if (simpleLength > gapLength) { // Dont try to look for repeat units larger than the gap size
         break;
       }
@@ -62,12 +62,12 @@ public final class SingleNMerRepeatMeasurer implements RepeatMeasurer {
       int repeatPos = repeatStart;
       int copyPos = repeatStart + simpleLength;
       while ((copyPos < endPos) && (mReferenceNts[repeatPos] != 0) && (mReferenceNts[repeatPos++] == mReferenceNts[copyPos++])) {
-        intervalMatches++;
+        ++intervalMatches;
       }
       if (copyPos == endPos) {
         // See if the repeat continues right past the end pos
         while ((repeatPos < endPos) && (copyPos < mReferenceNts.length) && (mReferenceNts[repeatPos++] == mReferenceNts[copyPos++])) {
-          extervalMatches++;
+          ++extervalMatches;
         }
       }
 
@@ -75,12 +75,12 @@ public final class SingleNMerRepeatMeasurer implements RepeatMeasurer {
       repeatPos = repeatStart + simpleLength - 1;
       copyPos = repeatStart - 1;
       while ((copyPos >= startPos) && (mReferenceNts[repeatPos] != 0) && (mReferenceNts[repeatPos--] == mReferenceNts[copyPos--])) {
-        intervalMatches++;
+        ++intervalMatches;
       }
       if (copyPos < startPos) {
         // See if the repeat continues left of start pos
         while ((repeatPos >= endPos) && (copyPos >= 0) && (mReferenceNts[repeatPos--] == mReferenceNts[copyPos--])) {
-          extervalMatches++;
+          ++extervalMatches;
         }
       }
 

@@ -146,7 +146,7 @@ public final class Aview extends AbstractCli {
           printOnScreen(mDisplayHelper.decorateLabel(REFERENCE_LABEL), prettyRef, "");
           printHeaderCount = 0;
         }
-        printHeaderCount++;
+        ++printHeaderCount;
         //System.err.println(ref + "\n" + Arrays.toString(inserts) + " " + r.getAlignmentStart());
 
         final int screenReadStart = r.getAlignmentStart() - zeroBasedStart;
@@ -285,14 +285,14 @@ public final class Aview extends AbstractCli {
           Diagnostic.warning("Unable to evaluate correctness of simulated mapping: no sample name present in read group.");
         } else {
           final MutatedSampleOffsets[] offsets = MutatedSampleOffsets.getOffsets(mParams.baselineFile(), new RegionRestriction(mParams.sequenceName(), 0, mParams.end()), samples);
-          for (int i = 0; i < offsets.length; i++) {
+          for (int i = 0; i < offsets.length; ++i) {
             if (offsets[i] == null) {
               Diagnostic.warning("Unable to evaluate correctness of sample \"" + samples[i] + "\" due to overlapping variants in generated VCF.");
             }
           }
           final SimulatedReadNameParser[] parsers = SimulatedReadNameParserFactory.getParsers(readName, offsets);
           if (parsers.length == samples.length) {
-            for (int i = 0; i < parsers.length; i++) {
+            for (int i = 0; i < parsers.length; ++i) {
               if (parsers[i] != null) {
                 mParsers.put(samples[i], parsers[i]);
                 mParserAvailable = true;
@@ -326,7 +326,7 @@ public final class Aview extends AbstractCli {
           }
           final String sampleName = sampleVars.getKey();
           printVariants(sampleVars.getValue(), zeroBasedStart, zeroBasedEnd, isBaseline, called.type(), "(" + trackId + ") SM:" + sampleName + " " + called.name(), hl);
-          trackId++;
+          ++trackId;
         }
       } else if (track instanceof AviewModel.BedSet) {
         final AviewModel.BedSet bed = (AviewModel.BedSet) track;
@@ -336,7 +336,7 @@ public final class Aview extends AbstractCli {
           highlightBg = BED_BG;
         }
         printBeds(bed.bedRecords(), zeroBasedStart, zeroBasedEnd, bed.type(), "(" + trackId + ") " + bed.name(), hl);
-        trackId++;
+        ++trackId;
       }
     }
     return highlightBg; // Return the background color used for highlighting
@@ -366,21 +366,21 @@ public final class Aview extends AbstractCli {
     final StringBuffer[] posStrs = new StringBuffer[digits];
     final char[] lastCol = new char[digits];
     final String initPos = "" + (mModel.oneBasedStart() - 1);
-    for (int i = 0; i < digits; i++) {
+    for (int i = 0; i < digits; ++i) {
       posStrs[i] = new StringBuffer();
       final int j = initPos.length() - i - 1;
       lastCol[i] = (j >= 0) ? initPos.charAt(j) : ' ';
     }
-    for (int i = mModel.oneBasedStart(); i < mModel.oneBasedStart() + ref.length(); i++) {
+    for (int i = mModel.oneBasedStart(); i < mModel.oneBasedStart() + ref.length(); ++i) {
       final String pos = "" + i;
-      for (int d = 0; d < digits; d++) {
+      for (int d = 0; d < digits; ++d) {
         final int j = pos.length() - d - 1;
         final char c = (j >= 0) ? pos.charAt(j) : ' ';
         posStrs[d].append(c != lastCol[d] ? c : ' ');
         lastCol[d] = c;
       }
     }
-    for (int i = digits - 1; i >= 0; i--) {
+    for (int i = digits - 1; i >= 0; --i) {
       printOnScreen(label, mDisplayHelper.decorateBackground(expandReference(posStrs[i].toString()), DisplayHelper.WHITE_PLUS), "");
     }
     printOnScreen(label, indicatorStr, "");
@@ -397,7 +397,7 @@ public final class Aview extends AbstractCli {
   static String expandReference(final int[] inserts, String ref, DisplayHelper displayHelper) {
     String localref = ref;
     int n = 0;
-    for (int i = 0; i < inserts.length; i++) {
+    for (int i = 0; i < inserts.length; ++i) {
       if (inserts[i] > 0) {
         localref = localref.substring(0, i + n) + displayHelper.getInserts(inserts[i]) + localref.substring(i + n);
         n += inserts[i];
@@ -577,7 +577,7 @@ public final class Aview extends AbstractCli {
           // Now output the region itself.
           line.append(mDisplayHelper.decorate(name, DisplayHelper.WHITE, BED_BG));
           if (highlightMask != null) {
-            for (int i = 0; i < name.length() && (charPosition + i) < highlightMask.length; i++) {
+            for (int i = 0; i < name.length() && (charPosition + i) < highlightMask.length; ++i) {
               highlightMask[charPosition + i] = true;
             }
           }
@@ -682,7 +682,7 @@ public final class Aview extends AbstractCli {
           strand1.append(mDisplayHelper.decorateBackground(firstCall, bgCol));
           strand2.append(mDisplayHelper.decorateBackground(secondCall, bgCol));
           if (highlightMask != null) {
-            for (int i = 0; i < firstCall.length(); i++) {
+            for (int i = 0; i < firstCall.length(); ++i) {
               highlightMask[charPosition + i] = true;
             }
           }
@@ -740,7 +740,7 @@ public final class Aview extends AbstractCli {
   private int getInsertsBetween(final int start, final int end) {
     final int[] inserts = mModel.inserts();
     int n = 0;
-    for (int i = start; i < end; i++) {
+    for (int i = start; i < end; ++i) {
       n += inserts[i];
     }
     return n;

@@ -51,13 +51,13 @@ public class EmResult<T extends HypothesesPrior<?>> {
   static int difference(final HypothesisScore[] calls0, final HypothesisScore[] calls1) {
     assert calls0.length == calls1.length;
     int count = 0;
-    for (int i = 0; i < calls0.length; i++) {
+    for (int i = 0; i < calls0.length; ++i) {
       if (calls0[i] == null) { // E.g. female on Y chromosome
         if (calls1[i] != null) { // Can't suddenly change across em iterations.
           throw new RuntimeException();
         }
       } else if (calls0[i].hypothesis() != calls1[i].hypothesis()) {
-        count++;
+        ++count;
       }
     }
     return count;

@@ -76,7 +76,7 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
       int inputCount = 0;
       boolean valid = true;
       if (flags.isSet(INPUT_LEFT) || flags.isSet(INPUT_RIGHT)) {
-        inputCount++;
+        ++inputCount;
         if (!flags.isSet(INPUT_LEFT) || !flags.isSet(INPUT_RIGHT)) {
           flags.error("You must provide both --" + INPUT_LEFT + " and --" + INPUT_RIGHT + " or use --" + INPUT);
           valid = false;
@@ -94,7 +94,7 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
         }
       }
       if (flags.isSet(INPUT)) {
-        inputCount++;
+        ++inputCount;
         final File illumina = (File) flags.getValue(INPUT);
         if (!illumina.exists() || (!illumina.isDirectory() && !illumina.isFile())) {
           flags.error("--" + INPUT + " file doesn't exist: " + illumina.getPath());

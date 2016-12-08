@@ -105,7 +105,7 @@ public class GraphImplementationTest extends TestCase {
   public void testCompact() {
     final String[] contigNt = {"ACGT", "CGTA", "GTAC", "TACG", "AA", "CC", "GG", "TT"};
     final Contig[] contigs = new Contig[contigNt.length];
-    for (int i = 0; i < contigNt.length; i++) {
+    for (int i = 0; i < contigNt.length; ++i) {
       contigs[i] = new ContigString(contigNt[i]);
     }
 
@@ -219,7 +219,7 @@ public class GraphImplementationTest extends TestCase {
   public void testDelete() {
     final String[] contigNt = {"ACGT", "CGTA", "GTAC", "TACG", "AA", "CC", "GG", "TT"};
     final Contig[] contigs = new Contig[contigNt.length];
-    for (int i = 0; i < contigNt.length; i++) {
+    for (int i = 0; i < contigNt.length; ++i) {
       contigs[i] = new ContigString(contigNt[i]);
     }
 
@@ -233,10 +233,10 @@ public class GraphImplementationTest extends TestCase {
     buildGraph(graph, contigs, paths);
 
     //graph.dump(System.err);
-    for (int i = 1; i <= contigs.length; i++) {
+    for (int i = 1; i <= contigs.length; ++i) {
       assertFalse(graph.contigDeleted(i));
     }
-    for (int i = 1; i <= paths.length; i++) {
+    for (int i = 1; i <= paths.length; ++i) {
       assertFalse(graph.pathDeleted(i));
     }
     checkGraph(graph, contigs, paths, false);
@@ -300,7 +300,7 @@ public class GraphImplementationTest extends TestCase {
   public static GraphImplementation graph() {
     final String[] contigNt = {"ACGT", "CGTA", "GTAC", "TACG", "AA", "CC", "GG", "TT"};
     final Contig[] contigs = new Contig[contigNt.length];
-    for (int i = 0; i < contigNt.length; i++) {
+    for (int i = 0; i < contigNt.length; ++i) {
       contigs[i] = new ContigString(contigNt[i]);
     }
 
@@ -328,7 +328,7 @@ public class GraphImplementationTest extends TestCase {
     assertEquals(0, graph.numberContigs());
     assertEquals(0, graph.numberPaths());
 
-    for (int i = 0; i < contigs.length; i++) {
+    for (int i = 0; i < contigs.length; ++i) {
       assertEquals(i + 1, graph.addContig(contigs[i]));
     }
 
@@ -336,7 +336,7 @@ public class GraphImplementationTest extends TestCase {
     assertEquals(contigs.length, graph.numberContigs());
     assertEquals(0, graph.numberPaths());
 
-    for (int i = 0; i < paths.length; i++) {
+    for (int i = 0; i < paths.length; ++i) {
       assertEquals(i + 1, graph.addPath(new PathArray(paths[i])));
     }
     return graph;
@@ -350,15 +350,15 @@ public class GraphImplementationTest extends TestCase {
     }
 
 
-    for (int i = 0; i < contigs.length; i++) {
+    for (int i = 0; i < contigs.length; ++i) {
       checkNt(graph, i + 1, contigs[i], deleted);
     }
 
-    for (int i = 0; i < paths.length; i++) {
+    for (int i = 0; i < paths.length; ++i) {
       checkPath(graph, i + 1, paths[i], deleted);
     }
 
-    for (int i = 0; i < contigs.length; i++) {
+    for (int i = 0; i < contigs.length; ++i) {
       int count = 0;
       for (final long[] path : paths) {
         if (path == null) {
@@ -366,7 +366,7 @@ public class GraphImplementationTest extends TestCase {
         }
         for (final long c : path) {
           if (c == (i + 1) || -c == (i + 1)) {
-            count++;
+            ++count;
           }
         }
       }
@@ -375,7 +375,7 @@ public class GraphImplementationTest extends TestCase {
       }
       final long[] index = new long[count];
       int count1 = 0;
-      for (int j = 0; j < paths.length; j++) {
+      for (int j = 0; j < paths.length; ++j) {
         final long[] path = paths[j];
         if (path == null) {
           continue;
@@ -383,10 +383,10 @@ public class GraphImplementationTest extends TestCase {
         for (final long c : path) {
           if (c == (i + 1)) {
             index[count1] = j + 1;
-            count1++;
+            ++count1;
           } else if (-c == (i + 1)) {
             index[count1] = -(j + 1);
-            count1++;
+            ++count1;
           }
         }
       }
@@ -396,7 +396,7 @@ public class GraphImplementationTest extends TestCase {
 
   private static long[] neg(long[] paths) {
     final long[] neg = new long[paths.length];
-    for (int i = 0; i < paths.length; i++) {
+    for (int i = 0; i < paths.length; ++i) {
       final int j = paths.length - i - 1;
       neg[j] = -paths[i];
     }
@@ -437,7 +437,7 @@ public class GraphImplementationTest extends TestCase {
       final int contigIndex = it.contigIndex();
       assertEquals("contigIndex=" + contigIndex, contigId, graph.pathContig(path, contigIndex));
       actual[count] = path;
-      count++;
+      ++count;
     }
     Arrays.sort(actual);
     assertEquals(paths.length, count);
@@ -461,7 +461,7 @@ public class GraphImplementationTest extends TestCase {
     //If any contig has been deleted then the path should be deleted
     boolean contigDeleted = false;
     long max = 0;
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       max = Math.max(max, graph.absContig(path[i]));
       assertEquals(path[i], graph.pathContig(pathId, i));
       assertEquals(path[i], pathp.contig(i));
@@ -498,7 +498,7 @@ public class GraphImplementationTest extends TestCase {
     final Contig contigm = graph.contig(-contigId);
     Exam.integrity(contigm);
     assertEquals(length, contigm.length());
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       assertEquals("contigId=" + contigId + " i=" + i, contig.nt(i), graph.nt(contigId, i));
       assertEquals(contig.nt(i), contigp.nt(i));
 

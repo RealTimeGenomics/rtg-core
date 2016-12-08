@@ -32,7 +32,7 @@ public class CorrectReadsTest extends TestCase {
     try {
       final String[] left = new String[10];
       final String[] right = new String[10];
-      for (int i = 0; i < left.length; i++) {
+      for (int i = 0; i < left.length; ++i) {
         left[i] = "CCCAGGAGAGG";
         right[i] = "AACGGGGGGTTTTAT";
       }
@@ -62,7 +62,7 @@ public class CorrectReadsTest extends TestCase {
     final File tmpDir = FileHelper.createTempDirectory();
     try {
       final String[] left = new String[10];
-      for (int i = 0; i < left.length; i++) {
+      for (int i = 0; i < left.length; ++i) {
         left[i] = "CCCAGGAGAGG";
       }
       left[0] = "CCCAGGTGAGG";
@@ -72,7 +72,7 @@ public class CorrectReadsTest extends TestCase {
       CorrectReads.correct(in, out, 6, 2);
 //      System.err.println(Arrays.toString(out.listFiles()));
       try (SequencesReader reader = SequencesReaderFactory.createDefaultSequencesReader(new File(out, "0"))) {
-        for (long seq = 0; seq < reader.numberSequences(); seq++) {
+        for (long seq = 0; seq < reader.numberSequences(); ++seq) {
           assertEquals("CCCAGGAGAGG", DnaUtils.bytesToSequenceIncCG(reader.read(seq)));
         }
       }

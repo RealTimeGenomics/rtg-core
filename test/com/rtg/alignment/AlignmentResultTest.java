@@ -120,7 +120,7 @@ public class AlignmentResultTest extends TestCase {
 
   public void testCGAttrNew() {
     final byte[] qualityScores = new byte[35];
-    for (int i = 0; i < qualityScores.length; i++) {
+    for (int i = 0; i < qualityScores.length; ++i) {
       qualityScores[i] = (byte) i;
     }
     String read, acts, tmpl;
@@ -229,7 +229,7 @@ public class AlignmentResultTest extends TestCase {
   private static final byte[] SAM_QUALITY = new byte[SAM_SEQ.length()];
 
   static {
-    for (int k = 0; k < SAM_QUALITY.length; k++) {
+    for (int k = 0; k < SAM_QUALITY.length; ++k) {
       SAM_QUALITY[k] = (byte) k;
     }
   }

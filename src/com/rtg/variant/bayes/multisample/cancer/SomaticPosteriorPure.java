@@ -33,9 +33,9 @@ class SomaticPosteriorPure extends AbstractSomaticPosterior {
     super(hypotheses, phi, psi);
     //System.err.println("normal " + normal);
     //System.err.println("cancer " + cancer);
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       final double pi = hypotheses.arithmetic().poss2Ln(hypotheses.p(i)) + normal.posteriorLn0(i);
-      for (int j = 0; j < mLength; j++) {
+      for (int j = 0; j < mLength; ++j) {
         final double pj = cancer.posteriorLn0(j);
         final double q = MathUtils.log(qa[i][j]);
         final double t = q + pi + pj;

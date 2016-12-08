@@ -132,7 +132,7 @@ public class IdentitySet {
             Diagnostic.userLog(">>> " + obj.getClass().getName());
             Diagnostic.userLog(e);
           }
-          mN++;
+          ++mN;
           if (mN > mLength * LOAD_FACTOR) {
             resize();
           }
@@ -185,7 +185,7 @@ public class IdentitySet {
    */
   private int find(final Object obj, final int prb) {
     mRindex = prb % mLength;
-    for (int i = 0; i < BLOCK_SIZE; i++, mRindex++) {
+    for (int i = 0; i < BLOCK_SIZE; ++i, ++mRindex) {
       final Object vobj = mObj[mRindex];
       if (vobj == null) {
         //sRstate = EMPTY;
@@ -271,7 +271,7 @@ public class IdentitySet {
       if (result == null) {
         throw new NoSuchElementException();
       }
-      mIndex++;
+      ++mIndex;
       check();
       return result;
     }
@@ -290,7 +290,7 @@ public class IdentitySet {
         } else if (mSet.mObj[mIndex] != null) {
           return;
         } else {
-          mIndex++;
+          ++mIndex;
           continue;
         }
       }
@@ -325,7 +325,7 @@ public class IdentitySet {
 
     //chekc that nothing more than BLOCK_SIZE away from initial probe point
     int lastNull = -1;
-    for (int i = 0; i < mObj.length; i++) {
+    for (int i = 0; i < mObj.length; ++i) {
       if (mObj[i] == null) {
         lastNull = i;
       } else {
@@ -339,7 +339,7 @@ public class IdentitySet {
       for (final java.util.Iterator<Object> iter = mOverflow.getIterator(); iter.hasNext(); ) {
         final Object obj = iter.next();
         final int p = probe(obj) % mLength;
-        for (int i = p; i < p + BLOCK_SIZE; i++) {
+        for (int i = p; i < p + BLOCK_SIZE; ++i) {
           assert mObj[i] != null;
         }
       }
@@ -348,7 +348,7 @@ public class IdentitySet {
     for (final java.util.Iterator<Object> iter = getIterator(); iter.hasNext(); ) {
       final Object obj = iter.next();
       assert obj != null;
-      count++;
+      ++count;
     }
     assert size() == count;
     return true;

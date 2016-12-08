@@ -314,10 +314,10 @@ public class SkeletonTest extends TestCase {
   }
 
   public void test() {
-    for (int r = 1; r <= 64; r++) {
+    for (int r = 1; r <= 64; ++r) {
       final int rm = Math.min(32, r);
-      for (int w = 1; w < rm; w++) {
-        for (int s = 0; s <= Math.min(32 - w, r - w); s++) {
+      for (int w = 1; w < rm; ++w) {
+        for (int s = 0; s <= Math.min(32 - w, r - w); ++s) {
           final Skeleton sk = new Skeleton(r, w, s, 0, 1);
           sk.integrity();
           //sk.masks(); //takes too long

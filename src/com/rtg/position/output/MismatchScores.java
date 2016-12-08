@@ -59,7 +59,7 @@ public class MismatchScores extends IntegralAbstract implements GapScorer {
 
   @Override
   public double scoreMax(int buildStart, int buildEnd, int queryStart, int queryEnd) {
-    mScoreMaxCalls++;
+    ++mScoreMaxCalls;
     return score(buildStart, buildEnd, buildStart, buildEnd);
   }
 
@@ -103,7 +103,7 @@ public class MismatchScores extends IntegralAbstract implements GapScorer {
    */
   @Override
   public double score(int buildStart, int buildEnd, int queryStart, int queryEnd) {
-    mScoreCalls++;
+    ++mScoreCalls;
     final int buildLength = buildEnd - buildStart;
     final int queryLength = queryEnd - queryStart;
     //System.err.println("i=" + i + " j=" + j);

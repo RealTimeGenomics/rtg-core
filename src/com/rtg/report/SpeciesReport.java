@@ -55,7 +55,7 @@ public final class SpeciesReport implements Report {
 
     SpeciesLine(String[] parts, int length) {
       mValues = new float[length];
-      for (int i = 0; i < mValues.length; i++) {
+      for (int i = 0; i < mValues.length; ++i) {
 //        System.err.println(parts.length + " : " + mValues.length + " : " + i + " : " + parts[i]);
         try {
           mValues[i] = Float.parseFloat(parts[i]);
@@ -126,7 +126,7 @@ public final class SpeciesReport implements Report {
     final String[] sampleNames = new String[numSamples];
 
     Integer colsToTrim = 1;
-    for (int sampleNum = 0; sampleNum < numSamples; sampleNum++) {
+    for (int sampleNum = 0; sampleNum < numSamples; ++sampleNum) {
       final File inputDir = inputDirs[sampleNum];
       sampleNames[sampleNum] = inputDirs[sampleNum].getName();
       sampleNameMap.append("<tr><td>").append(sampleNames[sampleNum]).append("</td><td>").append(inputDirs[sampleNum].getPath()).append("</td></tr>\n");
@@ -164,7 +164,7 @@ public final class SpeciesReport implements Report {
                   throw new IllegalArgumentException("Could not find header line in " + tsvFile);
                 }
                 if (sampleNum == 0) { //only grab the header from the first sample...
-                  for (int headerCol = 0; headerCol < lastCommentLine.length; headerCol++) {
+                  for (int headerCol = 0; headerCol < lastCommentLine.length; ++headerCol) {
                     columnNames.add(headerCol == 0 ? lastCommentLine[headerCol].substring(1) : lastCommentLine[headerCol]);
                   }
                   lastCommentLine = null;
@@ -194,7 +194,7 @@ public final class SpeciesReport implements Report {
 
     for (String speciesName : speciesNames) {
       boolean hasValues = false;
-      for (int s = 0; s < numSamples; s++) {
+      for (int s = 0; s < numSamples; ++s) {
         final SpeciesData sd = data.get(s);
         if (sd != null && sd.hasValues(speciesName)) {
           hasValues = true;
@@ -203,8 +203,8 @@ public final class SpeciesReport implements Report {
       if (hasValues) {
         populatedSpecies.add(speciesName);
 
-        for (int c = 0; c < columnNames.size() - colsToTrim; c++) {
-          for (int s = 0; s < numSamples; s++) {
+        for (int c = 0; c < columnNames.size() - colsToTrim; ++c) {
+          for (int s = 0; s < numSamples; ++s) {
             final float value = data.get(s).getValue(speciesName, c);
             if (value > maxes[c]) {
               maxes[c] = value;
@@ -227,7 +227,7 @@ public final class SpeciesReport implements Report {
   private String writeTable(List<SpeciesData> data, List<String> columnNames, TreeSet<String> populatedSpecies, int numSamples, int colsToTrim, String[] sampleNames, float[] maxes, HtmlReportHelper hrh) throws IOException {
     final StringBuilder table = new StringBuilder();
     table.append("<table class=\"example sort07 table-autosort:0\" id=\"page\" border=\"0\"><thead><tr>");
-    for (int c = 0; c < columnNames.size() - colsToTrim; c++) {
+    for (int c = 0; c < columnNames.size() - colsToTrim; ++c) {
       final String colName = columnNames.get(c);
       table.append("<th class=\"table-sortable:numeric\" colspan=\"2\">").append(colName).append("</th>");
     }
@@ -235,12 +235,12 @@ public final class SpeciesReport implements Report {
     table.append("</tr></thead>\n<tbody>");
     for (String speciesName : populatedSpecies) {
       table.append("<tr>");
-      for (int c = 0; c < columnNames.size() - colsToTrim; c++) {
+      for (int c = 0; c < columnNames.size() - colsToTrim; ++c) {
 
         final float[] values = new float[numSamples];
         float max = -1.0f;
         final StringBuilder title = new StringBuilder();
-        for (int s = 0; s < numSamples; s++) {
+        for (int s = 0; s < numSamples; ++s) {
           final SpeciesData sd = data.get(s);
           final float value = sd == null ? 0.0f : sd.getValue(speciesName, c);
           values[s] = value;
@@ -297,7 +297,7 @@ public final class SpeciesReport implements Report {
 
 
     final int[] barValues = new int[values.length];
-    for (int i = 0; i < values.length; i++) {
+    for (int i = 0; i < values.length; ++i) {
       int val = (int) (height * values[i] / barMax);
       if (val > height) {
         val = height;
@@ -321,7 +321,7 @@ public final class SpeciesReport implements Report {
     g.setColor(Color.BLACK);
     g.fillRect(0, height - 1, width, 1);
 
-    for (int i = 0; i < barValues.length; i++) {
+    for (int i = 0; i < barValues.length; ++i) {
       final int h = barValues[i];
       g.setColor(new Color(255 - h * 255 / height, h * 255 / height, 0));
       g.fillRect((barWidth + GAP_WIDTH) * i, height - h, barWidth, h);

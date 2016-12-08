@@ -132,7 +132,7 @@ public final class SamExceptionChecker {
           int validation = 0;
           int headerOk = 0;
 
-          for (int k = 0; k < limit; k++) {
+          for (int k = 0; k < limit; ++k) {
 
             // Introduce a mutation into the SAM input
             final int size = SAM_INPUT.length;
@@ -148,7 +148,7 @@ public final class SamExceptionChecker {
 
             // Now try and iterate over its records using the SAM reader
             try {
-              headerOk++;
+              ++headerOk;
               try (SamReader r = factory.open(SamInputResource.of(new ByteArrayInputStream(mutant)))) {
                 try (CloseableIterator<SAMRecord> it = r.iterator()) {
                   while (it.hasNext()) {
@@ -157,18 +157,18 @@ public final class SamExceptionChecker {
                 }
               }
             } catch (final SAMFormatException e) {
-              format++;
+              ++format;
             } catch (final IllegalArgumentException e) {
-              illegal++;
+              ++illegal;
               recordTrace(traces, e);
             } catch (final ArrayIndexOutOfBoundsException e) {
-              array++;
+              ++array;
               recordTrace(traces, e);
             } catch (final RuntimeException e) {
               if (e.getMessage().startsWith("SAM validation error:")) {
-                validation++;
+                ++validation;
               } else {
-                runtime++;
+                ++runtime;
                 recordTrace(traces, e);
               }
             }

@@ -65,7 +65,7 @@ public abstract class AbstractBayesianSignalTest extends TestCase {
 
   SamArray constant(final double v) {
     final SamArray sa = new SamArray(2 * BREAK);
-    for (int i = 0; i < 2 * BREAK; i++) {
+    for (int i = 0; i < 2 * BREAK; ++i) {
       sa.increment(i, v);
     }
     return sa;
@@ -99,7 +99,7 @@ public abstract class AbstractBayesianSignalTest extends TestCase {
   private void checkSignal(final Signal sig, final boolean reverse) {
     int mini = -1;
     double minv = Double.POSITIVE_INFINITY;
-    for (int i = 0; i < 2 * BREAK; i++) {
+    for (int i = 0; i < 2 * BREAK; ++i) {
       final double v = sig.value(i);
       //System.err.println(i + "\t" + com.rtg.util.Utils.realFormat(v, 2));
       if (v < minv) {
@@ -136,7 +136,7 @@ public abstract class AbstractBayesianSignalTest extends TestCase {
         plotSignal(acs, new NormalBayesianSignal(4), false),
     };
 
-    for (int i = -WINDOW_LO; i < BREAK + WINDOW; i++) {
+    for (int i = -WINDOW_LO; i < BREAK + WINDOW; ++i) {
       ps.print(i);
       for (Signal sig : sigs) {
         final double v = sig.value(i);

@@ -62,7 +62,7 @@ public class RandomDistribution {
     int i = 0;
     while (i < mDistribution.length && random >= 0) {
       random -= mDistribution[i];
-      i++;
+      ++i;
     }
     return i - 1;
   }

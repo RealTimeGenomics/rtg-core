@@ -64,7 +64,7 @@ public class SamHelperTest extends TestCase {
       final ArrayList<SAMRecord> rec = SamHelper.loadAlignments(p, null);
       final int[] location = {3, 3, 5};
       assertEquals(location.length, rec.size());
-      for (int i = 0; i < rec.size(); i++) {
+      for (int i = 0; i < rec.size(); ++i) {
           assertEquals(rec.get(i).getAlignmentStart(), location[i]);
       }
     } finally {

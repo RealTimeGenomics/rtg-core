@@ -49,7 +49,7 @@ public class DisplayHelper {
 
   String getSpaces(final int diff) {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < diff; i++) {
+    for (int i = 0; i < diff; ++i) {
       sb.append(SPACE_CHAR);
     }
     return sb.toString();
@@ -57,7 +57,7 @@ public class DisplayHelper {
 
   String getInserts(final int diff) {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < diff; i++) {
+    for (int i = 0; i < diff; ++i) {
       sb.append(INSERT_CHAR);
     }
     return sb.toString();
@@ -168,7 +168,7 @@ public class DisplayHelper {
       if (dna.charAt(0) == ' ') { // Some amount of non-marked up prefix needed
         int prefixEnd = 0;
         while (dna.charAt(prefixEnd) == ' ') {
-          prefixEnd++;
+          ++prefixEnd;
         }
         return dna.substring(0, prefixEnd) + decorateBackground(trimmed, bgcolor) + dna.substring(prefixEnd + trimmed.length());
       } else { // Trimming was only at the end
@@ -190,7 +190,7 @@ public class DisplayHelper {
     final StringBuilder toHighlight = new StringBuilder();
     boolean highlight = false;
     boolean inMarkup = false;
-    for (int i = 0; i < str.length(); i++) {
+    for (int i = 0; i < str.length(); ++i) {
       final char c = str.charAt(i);
       if (inMarkup) {
         if (isMarkupEnd(c)) {
@@ -216,7 +216,7 @@ public class DisplayHelper {
           } else {
             dest.append(c);
           }
-          coord++;
+          ++coord;
         }
       }
     }
@@ -237,7 +237,7 @@ public class DisplayHelper {
     final StringBuilder sb = new StringBuilder();
     int coord = 0; // coordinate ignoring markup
     boolean inMarkup = false;
-    for (int currpos = 0; currpos < sequence.length(); currpos++) {
+    for (int currpos = 0; currpos < sequence.length(); ++currpos) {
       final char c = sequence.charAt(currpos);
       if (inMarkup) {
         if (isMarkupEnd(c)) {
@@ -252,7 +252,7 @@ public class DisplayHelper {
           if ((coord >= clipStart) && (coord < clipEnd)) {
             sb.append(c);
           }
-          coord++;
+          ++coord;
         }
       }
     }

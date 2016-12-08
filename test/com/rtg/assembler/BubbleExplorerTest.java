@@ -51,7 +51,7 @@ public class BubbleExplorerTest extends TestCase {
     assert contigs.size() == weights.length;
     final GraphKmerAttribute graph = new GraphKmerAttribute(overlap);
     final long[] ids = new long[contigs.size() + 1];
-    for (int i = 0; i < contigs.size(); i++) {
+    for (int i = 0; i < contigs.size(); ++i) {
       ids[i + 1] = graph.addContig(new ContigString(contigs.get(i)));
       graph.setKmerFreq(ids[i + 1], weights[i]);
     }
@@ -87,7 +87,7 @@ public class BubbleExplorerTest extends TestCase {
 
     final Histogram histogram = be.popBubbles();
     assertEquals(5, histogram.getLength());
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertEquals(0, histogram.getValue(i));
     }
     assertEquals(1, histogram.getValue(4));
@@ -112,7 +112,7 @@ public class BubbleExplorerTest extends TestCase {
 
     final Histogram histogram = be.popBubbles();
     assertEquals(5, histogram.getLength());
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertEquals(0, histogram.getValue(i));
     }
     assertEquals(1, histogram.getValue(4));
@@ -383,7 +383,7 @@ public class BubbleExplorerTest extends TestCase {
 
     final Histogram histogram = be.popBubbles();
     assertEquals(9, histogram.getLength());
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; ++i) {
       assertEquals(0, histogram.getValue(i));
     }
     assertEquals(1, histogram.getValue(8));
@@ -413,12 +413,12 @@ public class BubbleExplorerTest extends TestCase {
     final long[][] links = new long[200][2];
     final int[] weights = new int[102];
     final List<String> contigs = new ArrayList<>();
-    for (int i = 0; i < 102; i++) {
+    for (int i = 0; i < 102; ++i) {
       weights[i] = 1;
       contigs.add("A");
     }
     weights[6] = 300;
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; ++i) {
       links[i][0] = 1;
       links[i][1] = i + 2;
       links[i + 100][0] = i + 2;
@@ -442,12 +442,12 @@ public class BubbleExplorerTest extends TestCase {
     final long[][] links = new long[202][2];
     final int[] weights = new int[103];
     final List<String> contigs = new ArrayList<>();
-    for (int i = 0; i < 103; i++) {
+    for (int i = 0; i < 103; ++i) {
       weights[i] = 1;
       contigs.add("A");
     }
     weights[6] = 300;
-    for (int i = 0; i < 101; i++) {
+    for (int i = 0; i < 101; ++i) {
       links[i][0] = 1;
       links[i][1] = i + 2;
       links[i + 101][0] = i + 2;

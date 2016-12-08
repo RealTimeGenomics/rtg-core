@@ -56,13 +56,13 @@ public class LoggingLineSolverTest extends TestCase {
 
 
   public void testLinear() {
-    for (double k = 0; k < 10; k++) {
+    for (double k = 0; k < 10; ++k) {
       assertEquals(k, getLineSolver(false).solveLine(new LinearLine(-k, 1.0), 1e-10));
     }
   }
 
   public void testLinearSmall() {
-    for (double k = 0; k < 10; k++) {
+    for (double k = 0; k < 10; ++k) {
       assertEquals(k, getLineSolver(false).solveLine(new LinearLine(-k, 0.5 / (k + 1)), 1e-10));
     }
   }
@@ -115,7 +115,7 @@ public class LoggingLineSolverTest extends TestCase {
   }
 
   public void testConstant() {
-    for (double k = 0; k < 2; k++) {
+    for (double k = 0; k < 2; ++k) {
       assertEquals(k, getLineSolver(false).solveLine(new ConstantLine(-k), 1e-10));
     }
   }

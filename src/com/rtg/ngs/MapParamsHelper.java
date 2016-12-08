@@ -701,7 +701,7 @@ public final class MapParamsHelper {
         readers = new SequencesReader[] {sw.processSequencesInMemory(mBuild, mUseQuality, mNames, mSuffixes, mReaderRestriction), null};
       }
       final SequenceParams[] sp = new SequenceParams[readers.length];
-      for (int i = 0; i < readers.length; i++) {
+      for (int i = 0; i < readers.length; ++i) {
         if (readers[i] != null) {
           sp[i] = SequenceParams.builder().readerParam(new DefaultReaderParams(readers[i], mReaderRestriction, mMode)).useMemReader(mUseMemReader).mode(mMode).readerRestriction(mReaderRestriction).create(); // Reads
         }

@@ -100,12 +100,12 @@ public class DoubleMultiSet<E> {
       if (count > 0) {
         if (count % 10 == 0) {
           sb.append(StringUtils.LS);
-          lines++;
+          ++lines;
         }
         sb.append(", ");
       }
       sb.append(entry.getKey().toString()).append("->").append(entry.getValue().count());
-      count++;
+      ++count;
     }
     sb.append(lines > 1 ? StringUtils.LS : "").append("]");
     return sb.toString();

@@ -145,18 +145,18 @@ public final class CnvRatio {
       mCnvOut.write(HEADERS_BED);
       mRatio.write(HEADERS_RATIO);
       mSimpleOut = new SimpleOutput(mCnvOut, mBucketSize);
-      for (int i = 0; i < refLine.length; i++) {
+      for (int i = 0; i < refLine.length; ++i) {
         //If not using all files in this analysis this can be true
         if (refLine[i] != null && testLine[i] != null) {
           assert refLine[i].length == testLine[i].length;
           startSeq(mTemplateNameMap.get(i), refLine[i]);
-          for (int j = 0; j < refLine[i].length; j++) {
+          for (int j = 0; j < refLine[i].length; ++j) {
             add(refLine[i][j], testLine[i][j]);
           }
           endSeq(refLine[i].length);
         }
       }
-      for (int i = 0; i < refLine.length; i++) {
+      for (int i = 0; i < refLine.length; ++i) {
         if (refLine[i] != null && testLine[i] != null) {
           outputModel(refLine[i].length, mTemplateNameMap.get(i));
         }
@@ -218,7 +218,7 @@ public final class CnvRatio {
       mCnt1Total += cnt1;
       mCnt2Total += cnt2;
     }
-    mBlocks++;
+    ++mBlocks;
   }
 
   void endSeq(int seqSize) throws IOException {
@@ -233,7 +233,7 @@ public final class CnvRatio {
   void outputModel(int seqSize, String seqId) throws IOException {
     final double ratio = 2.0 * (mCnt2Total + 1.0) / (mCnt1Total + 1.0);
     final double gamma = 0.75;
-    for (int i = 0; i <= 5; i++) {
+    for (int i = 0; i <= 5; ++i) {
       final double level = ratio * gamma + (1.0 - gamma) * i;
       final String ls = Utils.realFormat(level, 3);
       mCnvOut.write(seqId.getBytes());
@@ -254,7 +254,7 @@ public final class CnvRatio {
   private void outputRegions(int seqSize, Region exclusions, byte[] label) throws IOException {
     int start = 0;
     boolean inRegion = false;
-    for (int i = 1; i <= seqSize; i++) {
+    for (int i = 1; i <= seqSize; ++i) {
       final boolean exclude = exclusions.isInRegion(i);
       if (!inRegion && exclude) {
         start = i;

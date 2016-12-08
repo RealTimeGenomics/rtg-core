@@ -23,7 +23,7 @@ final class ArrayToIterator<X> extends IteratorHelper<X> {
 
   @Override
   protected void step() {
-    mIndex++;
+    ++mIndex;
   }
 
   @Override

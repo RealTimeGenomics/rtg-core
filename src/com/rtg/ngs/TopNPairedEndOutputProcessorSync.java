@@ -154,7 +154,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     }
     Collections.sort(mChildren, new RegionFileComparator());
     final File[] outputFiles = new File[mChildren.size()];
-    for (int i = 0; i < outputFiles.length; i++) {
+    for (int i = 0; i < outputFiles.length; ++i) {
       outputFiles[i] = mChildren.get(i).getB();
     }
     // Filter and concatenate the intermediate files. All thresholds etc are now known.
@@ -211,7 +211,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     mTopN = null;
     final boolean paired = true;
     final HashingRegion[] regions = new HashingRegion[mChildren.size()];
-    for (int i = 0; i < mChildren.size(); i++) {
+    for (int i = 0; i < mChildren.size(); ++i) {
       regions[i] = mChildren.get(i).getA();
     }
     final FilterConcatIntermediateFiles unmatedIntFiles = getNonMatedFilterConcatIntermediateFiles(results, paired, regions);
@@ -229,7 +229,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
 
   private void preProcessUnMatedStatistics(ReadStatusTracker unmappedTracker, MapQScoringReadBlocker asBlockerLeft, MapQScoringReadBlocker asBlockerRight, ReadBlocker freqBlockerLeft, ReadBlocker freqBlockerRight) {
     Diagnostic.progress("UnmatedPreprocess: Starting 1 Jobs");
-    for (int i = 0; i < mParams.buildFirstParams().numberSequences(); i++) {
+    for (int i = 0; i < mParams.buildFirstParams().numberSequences(); ++i) {
       if (unmappedTracker.getStatus(i, ReadStatusTracker.MATED_FIRST) && unmappedTracker.getStatus(i, ReadStatusTracker.MATED_SECOND)) {
         continue;
       }
@@ -258,7 +258,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
 
   private void preProcessMatedStatistics(ReadStatusTracker unmappedTracker, MapQScoringReadBlocker blocker) {
     Diagnostic.progress("MatedPreprocess: Starting 1 Jobs");
-    for (int i = 0; i < mParams.buildFirstParams().numberSequences(); i++) {
+    for (int i = 0; i < mParams.buildFirstParams().numberSequences(); ++i) {
       if (blocker.isBlocked(i) || mFreqBlockerLeft.isBlocked(i) || mFreqBlockerRight.isBlocked(i)) {
         //System.err.println("skipping ... " + i);
         continue;
@@ -388,7 +388,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
       final File[] intermediateTempFiles = new File[numThreads];
       final boolean samGzipIntFiles = mParams.outputParams().isCompressOutput();
       final UnmatedAugmenter au = mAugmenterMerger.blend();
-      for (int i = 0; i < numThreads; i++) {
+      for (int i = 0; i < numThreads; ++i) {
         intermediateTempFiles[i] = new File(intermediate[i].getParent(), intermediate[i].getName() + ".augment");
         final OutputWrapper outWrapper = super.createStreams(numThreads, intermediateTempFiles, intermediateIndexes, samGzipIntFiles, createIndex, i);
         final boolean writeHeader = i == 0;
@@ -522,7 +522,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     }
     final MatchResult results = new MatchResult(guessCount);
 
-    for (int i = 0; i < readIdStatus.length; i++) {
+    for (int i = 0; i < readIdStatus.length; ++i) {
       //System.err.println(i + " READ ID STATUS = " + mReadIdStatus[i]);
       if (((readIdStatus[i] & ReadStatusTracker.MATED_FIRST) == 0) && ((readIdStatus[i] & ReadStatusTracker.MATED_SECOND) == 0)) {
         uptoN.setResults(results, i * 2);
@@ -602,7 +602,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
           return;
         }
       }
-      mProcessCalls++;
+      ++mProcessCalls;
       final boolean reverse = frame.startsWith("R");
       mListener.addStatus(dReadId, isFirst ? ReadStatusTracker.MATCHED_FIRST : ReadStatusTracker.MATCHED_SECOND);
       mPairedEndOutputProcessor.process(templateId, reverse, readId, tStart);

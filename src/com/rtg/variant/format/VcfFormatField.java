@@ -519,7 +519,7 @@ public enum VcfFormatField {
       alleles.add(rec.getRefCall());
       alleles.addAll(rec.getAltCalls());
       if (includePrevNt) {
-        for (int i = 0; i < alleles.size(); i++) {
+        for (int i = 0; i < alleles.size(); ++i) {
           alleles.set(i, alleles.get(i).substring(1));
         }
       }
@@ -571,7 +571,7 @@ public enum VcfFormatField {
       final List<String> genotypeQuals = rec.getFormat(GQ.name());
       final List<String> depths = rec.getFormat(DP.name());
       if (genotypeQuals != null && depths != null && genotypeQuals.size() == depths.size()) {
-        for (int i = 0; i < depths.size(); i++) {
+        for (int i = 0; i < depths.size(); ++i) {
           if (!VcfRecord.MISSING.equals(genotypeQuals.get(i)) && !VcfRecord.MISSING.equals(depths.get(i))) {
             return true;
           }
@@ -777,7 +777,7 @@ public enum VcfFormatField {
       updateRecordSample(rec, call, null, null, params, includePrevNt);
     } else {
       //Should process all samples for each field one field at a time
-      for (int i = 0; i < sampleNames.length; i++) {
+      for (int i = 0; i < sampleNames.length; ++i) {
         updateRecordSample(rec, call, call.getSample(i), sampleNames[i], params, includePrevNt);
       }
     }

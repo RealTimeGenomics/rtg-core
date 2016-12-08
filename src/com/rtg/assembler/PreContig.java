@@ -27,7 +27,7 @@ class PreContig implements Contig {
   int mKmerCount;
 
   PreContig(long id, Kmer k, int count) {
-    for (int i = 0; i < k.length(); i++) {
+    for (int i = 0; i < k.length(); ++i) {
       mContig.append(DNA.valueChars()[k.nt(i)]);
     }
     mId = id;

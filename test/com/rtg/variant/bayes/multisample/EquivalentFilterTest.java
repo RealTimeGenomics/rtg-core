@@ -30,7 +30,7 @@ public class EquivalentFilterTest extends TestCase {
 
   private Variant getCalls(int start, int end, String bestName) {
     final StringBuilder sb = new StringBuilder();
-    for (int i = start; i < end; i++) {
+    for (int i = start; i < end; ++i) {
       sb.append("A");
     }
     final String refNts = sb.toString();

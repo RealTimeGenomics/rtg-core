@@ -35,7 +35,7 @@ public class MapQScoringReadBlocker implements Closeable {
   private static final int[] G_LOG_N;
   static {
     G_LOG_N = new int[NEXT_LIMIT + 1];
-    for (int i = 1; i < G_LOG_N.length; i++) {
+    for (int i = 1; i < G_LOG_N.length; ++i) {
       G_LOG_N[i] = (int) (4.343 * Math.log(i) + 0.5);
       //System.err.println("G_LOG_N[" + i + "]=" + G_LOG_N[i] + " 23-=" + ((23 < G_LOG_N[i]) ? 0 : 23 - G_LOG_N[i]));
     }
@@ -285,7 +285,7 @@ public class MapQScoringReadBlocker implements Closeable {
       }
       Diagnostic.developerLog("Statistics of " + mTitle);
       long sum = 0;
-      for (int k = 0; k < MAX_COUNT + 1; k++) {
+      for (int k = 0; k < MAX_COUNT + 1; ++k) {
         if (h[k] > 0) {
           sum += h[k];
           final String c = k == MAX_COUNT ? ">= " + MAX_COUNT : String.valueOf(k);

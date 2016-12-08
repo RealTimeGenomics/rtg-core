@@ -43,7 +43,7 @@ public class GenomeFragmenterTest extends TestCase {
     @Override
     public void processFragment(String id, int fragmentStart, byte[] data, int length) {
       if (mAllGs) {
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < length; ++i) {
           assertEquals(3, data[i]);
         }
       }
@@ -76,7 +76,7 @@ public class GenomeFragmenterTest extends TestCase {
 
   static String g(final int n) {
     final StringBuilder sb = new StringBuilder();
-    for (int k = 0; k < n; k++) {
+    for (int k = 0; k < n; ++k) {
       sb.append('g');
     }
     return sb.toString();
@@ -102,7 +102,7 @@ public class GenomeFragmenterTest extends TestCase {
             counts0[fragmentStart]++;
           }
         });
-        for (long k = 0; k < LOOPS * testSize; k++) {
+        for (long k = 0; k < LOOPS * testSize; ++k) {
           gf.makeFragment();
         }
 
@@ -171,7 +171,7 @@ public class GenomeFragmenterTest extends TestCase {
           }
         });
         final int tlim = testSize + testSize / 2;
-        for (long k = 0; k < LOOPS * tlim; k++) {
+        for (long k = 0; k < LOOPS * tlim; ++k) {
           gf.makeFragment();
         }
 
@@ -211,7 +211,7 @@ public class GenomeFragmenterTest extends TestCase {
             counts0[length]++;
           }
         });
-        for (long k = 0; k < testSize; k++) {
+        for (long k = 0; k < testSize; ++k) {
           gf.makeFragment();
         }
 
@@ -221,7 +221,7 @@ public class GenomeFragmenterTest extends TestCase {
         double sum = 0;
         assertEquals(0.5, ChiSquared.normal(0), 1e-10);
         assertEquals(1, ChiSquared.normal(1e300), 1e-10);
-        for (int k = min; k < counts0.length; k++) {
+        for (int k = min; k < counts0.length; ++k) {
           final int c = counts0[k];
           final double left = (k - 0.5 - mean) / variance;
           final double right = (k + 0.5 - mean) / variance;
@@ -245,7 +245,7 @@ public class GenomeFragmenterTest extends TestCase {
   }
 
   public void testCircularRef() throws Exception {
-    for (int k = 1; k < 7; k++) {
+    for (int k = 1; k < 7; ++k) {
       final File temp = FileUtils.createTempDir("genomefrag", "test");
       try {
         final SequencesReader sr = ReaderTestUtils.getReaderDNA(">g\n" + g(k), new File(temp, "seq"), null);
@@ -277,7 +277,7 @@ public class GenomeFragmenterTest extends TestCase {
         gf.setMachine(m);
         // No ns produced
         gf.allowNs(false);
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; ++i) {
           gf.makeFragment();
           for (byte b : m.mLastFragment) {
             assertFalse(DNA.N.ordinal() == b);
@@ -286,7 +286,7 @@ public class GenomeFragmenterTest extends TestCase {
         gf.allowNs(true);
         // Ns allowed and below threshold
         boolean nsFound = false;
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; ++i) {
           gf.makeFragment();
           for (byte b : m.mLastFragment) {
             if (b == DNA.N.ordinal()) {
@@ -299,7 +299,7 @@ public class GenomeFragmenterTest extends TestCase {
         // Ns allowed but will be above threshold
         gf.setMaxFragmentSize(9);
         gf.setMinFragmentSize(9);
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; ++i) {
           gf.makeFragment();
           for (byte b : m.mLastFragment) {
             assertFalse(DNA.N.ordinal() == b);

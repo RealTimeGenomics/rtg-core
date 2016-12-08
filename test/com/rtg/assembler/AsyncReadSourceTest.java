@@ -50,7 +50,7 @@ public class AsyncReadSourceTest extends TestCase {
 
   static void listEquals(List<byte[]> a, List<byte[]> b) {
     assertEquals("expected <" + fragementToString(a) + "> but was <" + fragementToString(b) + ">", a.size(), b.size());
-    for (int i = 0; i < a.size(); i++) {
+    for (int i = 0; i < a.size(); ++i) {
       assertTrue("expected <" + fragementToString(a) + "> but was <" + fragementToString(b) + ">", Arrays.equals(a.get(i), b.get(i)));
     }
   }

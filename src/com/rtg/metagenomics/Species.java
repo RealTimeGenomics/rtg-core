@@ -84,7 +84,7 @@ public class Species extends IntegralAbstract {
     }
     final Vector initialR = new Vector(numSpecies);
     //initialize r
-    for (int i = 0; i < numSpecies; i++) {
+    for (int i = 0; i < numSpecies; ++i) {
       final long l = mBlockInfo.getGenomeLength(i);
       if (l == 0) {
         Diagnostic.warning("Could not determine length of taxonId \"" + mBlockInfo.getTaxonId(i) + "\", its either not present or the length is 0");
@@ -211,7 +211,7 @@ public class Species extends IntegralAbstract {
             if (floundered > 2) {
               break;
             }
-            floundered++;
+            ++floundered;
             //System.err.println("L increased again.");
             Diagnostic.developerLog(msg + " L increased again." + " LastL:" + mLastL + " L:" + llR);
             bug(mLastR, delta, solvedR.getB());
@@ -254,7 +254,7 @@ public class Species extends IntegralAbstract {
         if (BlockInfo.VERY_VERBOSE) {
           Diagnostic.developerLog("B:" + mBlockInfo.id() + " D: " + delta.toString());
         }
-        iter++;
+        ++iter;
       }
     }
   }
@@ -263,7 +263,7 @@ public class Species extends IntegralAbstract {
     final int intDelta = 10;
     final double delta = d / intDelta;
     final Line line = new LLine(r, deltaV, mBlockInfo);
-    for (int i = -intDelta; i <= 2 * intDelta; i++) {
+    for (int i = -intDelta; i <= 2 * intDelta; ++i) {
       final double b = i * delta;
       final double[] vs = line.values(b);
       Diagnostic.developerLog(b + " " + vs[0] + " " + vs[1]);
@@ -282,9 +282,9 @@ public class Species extends IntegralAbstract {
     //System.err.println(IntegralAbstract.toString(realEigenvalues));
 
     final Vector v = new Vector(totalGenomes);
-    for (int j = 0; j < totalGenomes; j++) { // This guy should iterate over all members of the taxonomy (i.e. including clades), using global ids
+    for (int j = 0; j < totalGenomes; ++j) { // This guy should iterate over all members of the taxonomy (i.e. including clades), using global ids
       double sum = 0.0;
-      for (int i = 0; i < blockSize; i++) {
+      for (int i = 0; i < blockSize; ++i) {
         //final double viold = eig.get(j, i);
         final double la = realEigenvalues[i];
         if (la < 0.0) { //protect against errors in eigenvector code
@@ -292,7 +292,7 @@ public class Species extends IntegralAbstract {
           continue;
         }
         double vi = 0;
-        for (int k = 0; k < membersOf[j].length; k++) { // This guy iterates over the species in the block, using local ids
+        for (int k = 0; k < membersOf[j].length; ++k) { // This guy iterates over the species in the block, using local ids
           final int j2 = membersOf[j][k];
           vi += eig.get(j2, i) * r.get(j2);
         }
@@ -318,7 +318,7 @@ public class Species extends IntegralAbstract {
   /* Make a default membership matrix corresponding to a flat taxonomy */
   static int[][] makeFlatMembership(final int totalGenomes) {
     final int[][] membersOf = new int[totalGenomes][];
-    for (int j = 0; j < totalGenomes; j++) {
+    for (int j = 0; j < totalGenomes; ++j) {
       membersOf[j] = new int[] {j};
     }
     return membersOf;
@@ -371,7 +371,7 @@ public class Species extends IntegralAbstract {
   static Pair<Vector, Double> jacobianR(BlockInfo blockInfo, final Vector r, final int[] fixedIds) {
     final Vector jacobian = new Vector(blockInfo.getN());
     double ll = 0.0;
-    for (int i = 0; i < blockInfo.getN(); i++) {
+    for (int i = 0; i < blockInfo.getN(); ++i) {
       final long length = blockInfo.getGenomeLength(i);
       final double lr = length * r.get(i);
       ll += lr;
@@ -395,7 +395,7 @@ public class Species extends IntegralAbstract {
    */
   static double ll(final Vector r, final BlockInfo blockInfo) {
     double ll = 0.0;
-    for (int i = 0; i < blockInfo.getN(); i++) {
+    for (int i = 0; i < blockInfo.getN(); ++i) {
       final long length = blockInfo.getGenomeLength(i);
       final double lr = length * r.get(i);
       //System.err.println("lr=" + lr);
@@ -430,7 +430,7 @@ public class Species extends IntegralAbstract {
   Matrix hessian(final Vector r) {
     final Matrix hessian = new MatrixSymmetric(mBlockInfo.getN());
     final Vector jacobian = new Vector(mBlockInfo.getN());
-    for (int i = 0; i < mBlockInfo.getN(); i++) {
+    for (int i = 0; i < mBlockInfo.getN(); ++i) {
       final long length = mBlockInfo.getGenomeLength(i);
       final double lr = length * r.get(i);
       jacobian.set(i, lr);
@@ -472,7 +472,7 @@ public class Species extends IntegralAbstract {
 
   static Vector incrS(BlockInfo blockInfo, final Vector r, final Vector delta, final double d) {
     final Vector soln = new Vector(blockInfo.getN());
-    for (int i = 0; i < blockInfo.getN(); i++) {
+    for (int i = 0; i < blockInfo.getN(); ++i) {
       final double e = Math.exp(delta.get(i) * d);
       final double rv = r.get(i);
       soln.set(i, rv * e);
@@ -484,12 +484,12 @@ public class Species extends IntegralAbstract {
   @Override
   public void toString(final StringBuilder sb) {
     sb.append("genomes:").append(LS);
-    for (int i = 0; i < mBlockInfo.getN(); i++) {
+    for (int i = 0; i < mBlockInfo.getN(); ++i) {
       sb.append("[").append(i).append("]").append(mBlockInfo.getTaxonId(i)).append(LS);
     }
 
     sb.append("fragments:").append(LS);
-    for (int i = 0; i < mBlockInfo.getFrags().length; i++) {
+    for (int i = 0; i < mBlockInfo.getFrags().length; ++i) {
       sb.append("[").append(i).append("]").append(mBlockInfo.getFrags()[i].toString()).append(LS);
     }
 

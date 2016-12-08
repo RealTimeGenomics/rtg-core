@@ -67,11 +67,11 @@ public abstract class AbstractMachineTest extends TestCase {
     // Slop should be 1 for a standard test
     checkIsProbabilityDistribution(name, expected);
     assertTrue(actual.length >= expected.length);
-    for (int k = expected.length; k < Math.min(2 * expected.length, actual.length); k++) {
+    for (int k = expected.length; k < Math.min(2 * expected.length, actual.length); ++k) {
       // Should not be many events longer than the priors
       assertTrue(actual[k] < 10);
     }
-    for (int k = 2 * expected.length; k < actual.length; k++) {
+    for (int k = 2 * expected.length; k < actual.length; ++k) {
       // Should not be no events longer than the 2 * priors length (for reasonable priors)
       assertEquals(name + " event longer than priors, length = " + k + " max-allowed=" + (expected.length - 1), 0, actual[k]);
     }
@@ -81,7 +81,7 @@ public abstract class AbstractMachineTest extends TestCase {
     }
     double chi = 0;
     int dofCorrection = 1;
-    for (int k = 0; k < expected.length; k++) {
+    for (int k = 0; k < expected.length; ++k) {
       final double e = sum * expected[k];
       if (e >= 1) {
         final double g = actual[k] - e;
@@ -89,7 +89,7 @@ public abstract class AbstractMachineTest extends TestCase {
         chi += yatesCorrection * yatesCorrection / e;
         //chi += g * g / e;
       } else {
-        dofCorrection++;
+        ++dofCorrection;
         if (e == 0) {
           assertEquals(name, 0, actual[k]);
         }
@@ -100,7 +100,7 @@ public abstract class AbstractMachineTest extends TestCase {
     final double upper = ChiSquared.chi(dof, CONFIDENCE_LEVEL);
     if (chi > slop * upper || chi * slop < lower) {
       final double[] a = new double[expected.length];
-      for (int k = 0; k < a.length; k++) {
+      for (int k = 0; k < a.length; ++k) {
         a[k] = actual[k] / sum;
       }
       final String ex = "Expect(" + name + "): "
@@ -126,9 +126,9 @@ public abstract class AbstractMachineTest extends TestCase {
     private int mRight = 0;
 
     private void augment(final String name, final byte[] data, final byte[] qual, final int length) {
-      mTotal++;
+      ++mTotal;
       if (name.contains("/F/")) {
-        mForward++;
+        ++mForward;
       }
       final int lastSlash = name.lastIndexOf('/');
       assertTrue(lastSlash != -1);
@@ -137,13 +137,13 @@ public abstract class AbstractMachineTest extends TestCase {
       final int colon = preCigar.indexOf(':');
       final String cigar = colon == -1 ? preCigar : preCigar.substring(0, colon);
       // Unroll cigar, incrementing appropriate events
-      for (int k = 0; k < cigar.length(); k++) {
+      for (int k = 0; k < cigar.length(); ++k) {
         int n = 0;
         char c;
         while (Character.isDigit(c = cigar.charAt(k))) {
           n *= 10;
           n += c - '0';
-          k++;
+          ++k;
         }
         switch (c) {
           case '.': // substitute for = since = not permitted in SAM names
@@ -152,15 +152,15 @@ public abstract class AbstractMachineTest extends TestCase {
             break;
           case 'X':
             mMismatches[n]++;
-            mTotalMismatchEvents++;
+            ++mTotalMismatchEvents;
             break;
           case 'I':
             mInserts[n]++;
-            mTotalInsertEvents++;
+            ++mTotalInsertEvents;
             break;
           case 'D':
             mDeletions[n]++;
-            mTotalDeleteEvents++;
+            ++mTotalDeleteEvents;
             break;
           case 'N':
           case 'B':
@@ -178,13 +178,13 @@ public abstract class AbstractMachineTest extends TestCase {
 
     @Override
     public void writeLeftRead(final String name, final byte[] data, final byte[] qual, final int length) throws IOException {
-      mLeft++;
+      ++mLeft;
       augment(name, data, qual, length);
     }
 
     @Override
     public void writeRightRead(final String name, final byte[] data, final byte[] qual, final int length) throws IOException {
-      mRight++;
+      ++mRight;
       augment(name, data, qual, length);
     }
 
@@ -251,7 +251,7 @@ public abstract class AbstractMachineTest extends TestCase {
       m.setReadWriter(w);
       final byte[] frag = new byte[FRAGMENT_LENGTH];
       Arrays.fill(frag, (byte) 1);
-      for (int k = 0; k < 10000; k++) {
+      for (int k = 0; k < 10000; ++k) {
         m.processFragment("d/", 0, frag, frag.length / 2);
       }
       w.performStatisticalTests(m.isPaired());

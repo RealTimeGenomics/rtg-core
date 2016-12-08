@@ -103,7 +103,7 @@ public class MemTester {
     final double estimate = d / (double) LEN;
     OUT.append(msg).append(estimate);
     if (check > estimate + TOLERANCE || check < estimate - TOLERANCE) {
-      sErrors++;
+      ++sErrors;
       OUT.append(" disagrees with ").append(check).append(" Error **");
     }
     OUT.append("\n");
@@ -214,7 +214,7 @@ public class MemTester {
 
     InnerInner[] create() {
       final InnerInner[] r = new InnerInner[LEN];
-      for (int i = 0; i < LEN; i++) {
+      for (int i = 0; i < LEN; ++i) {
         r[i] = new InnerInner();
       }
       return r;
@@ -251,61 +251,61 @@ public class MemTester {
 
   private void memCheckForLoops1() {
     final Thing[] oo = new Thing[LEN];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       oo[i] = new Thing();
     }
     check("empty object:", roundUp(0), oo);
 
     final Thing1[] o1 = new Thing1[LEN];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       o1[i] = new Thing1();
     }
     check("object with two ints:", roundUp(2 * MemoryUsage.INT_SIZE), o1);
 
     final Thing2[] o2 = new Thing2[LEN];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       o2[i] = new Thing2();
     }
     check("object with two bytes:", roundUp(2 * MemoryUsage.BYTE_SIZE), o2);
 
     final Nest0[] n0 = new Nest0[LEN];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       n0[i] = new Nest0();
     }
     check("object Nest0:", roundUp(MemoryUsage.BYTE_SIZE), n0);
 
     final Nest1[] n1 = new Nest1[LEN];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       n1[i] = new Nest1();
     }
     check("object Nest1:", roundUp(2 * MemoryUsage.BYTE_SIZE), n1);
 
     final Nest2[] n2 = new Nest2[LEN];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       n2[i] = new Nest2();
     }
     check("object Nest2:", roundUp(3 * MemoryUsage.BYTE_SIZE), n2);
 
     final Nest3[] n3 = new Nest3[LEN];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       n3[i] = new Nest3();
     }
     check("object Nest3:", roundUp(4 * MemoryUsage.BYTE_SIZE), n3);
 
     final Nest4[] n4 = new Nest4[LEN];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       n4[i] = new Nest4();
     }
     check("object Nest4:", roundUp(5 * MemoryUsage.BYTE_SIZE), n4);
 
     final By[] bz = new By[LEN];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       bz[i] = new By();
     }
     check("8 bytes:", roundUp(8 * MemoryUsage.BYTE_SIZE), bz);
 
     final In[] in = new In[LEN];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       in[i] = new In();
     }
     check("8 ints:", roundUp(8 * MemoryUsage.INT_SIZE), in);
@@ -313,49 +313,49 @@ public class MemTester {
 
   private void memCheckForLoops2() {
     final Object[][] a0 = new Object[LEN][];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       a0[i] = new Object[0];
     }
     check("object array:", ra(0), a0);
 
     final byte[][] b0 = new byte[LEN][];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       b0[i] = new byte[0];
     }
     check("byte array:", ra(0), b0);
 
     final byte[][] b1 = new byte[LEN][];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       b1[i] = new byte[1];
     }
     check("byte array[1]:", ra(MemoryUsage.BYTE_ARRAY), b1);
 
     final byte[][] b4 = new byte[LEN][];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       b4[i] = new byte[4];
     }
     check("byte array[4]:", ra(4 * MemoryUsage.BYTE_ARRAY), b4);
 
     final byte[][] b5 = new byte[LEN][];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       b5[i] = new byte[5];
     }
     check("byte array[5]:", ra(5 * MemoryUsage.BYTE_ARRAY), b5);
 
     final Inner0[] i0 = new Inner0[LEN];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       i0[i] = new Inner0();
     }
     check("inner0:", roundUp(MemoryUsage.INNER_SIZE), i0);
 
     final Inner1[] i1 = new Inner1[LEN];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       i1[i] = new Inner1();
     }
     check("inner1:", roundUp(MemoryUsage.INT_SIZE + MemoryUsage.INNER_SIZE), i1);
 
     final Inner2[] i2 = new Inner2[LEN];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       i2[i] = new Inner2();
     }
     check("inner2:", roundUp(2 * MemoryUsage.INT_SIZE + MemoryUsage.INNER_SIZE), i2);
@@ -364,7 +364,7 @@ public class MemTester {
     check("inner inner:", roundUp(MemoryUsage.INT_SIZE + MemoryUsage.INNER_SIZE), ia);
 
     final Integer[] oi = new Integer[LEN];
-    for (int i = 0; i < LEN; i++) {
+    for (int i = 0; i < LEN; ++i) {
       oi[i] = 0;
     }
     check("Integer:", roundUp(MemoryUsage.INT_SIZE), oi);

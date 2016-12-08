@@ -299,7 +299,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
   private static long index(NgsParams params, NgsHashLoop shl, CreateParams indexParams, IndexSet indexes, NgsHashFunction hf) throws IOException {
     Diagnostic.developerLog("index start");
     long totalLength = 0;
-    for (int pass = 1; pass <= (indexParams.compressHashes() ? 2 : 1); pass++) {
+    for (int pass = 1; pass <= (indexParams.compressHashes() ? 2 : 1); ++pass) {
       totalLength = 0; //only count for one pass
       if (params.paired()) {
         final boolean cgFlip = params.buildFirstParams().reader().getPrereadType() == PrereadType.CG && params.buildFirstParams().reader().minLength() == CgUtils.CG_RAW_READ_LENGTH;
@@ -339,7 +339,7 @@ public class NgsTask extends ParamsTask<NgsParams, MapStatistics> {
 
     //NgsHashLoopImpl.READ_DELAY.log("query");
     tci.logStatistics();
-    for (int i = 0; i < indexes.size(); i++) {
+    for (int i = 0; i < indexes.size(); ++i) {
       Diagnostic.userLog("Index[" + i + "] search performance " + LS + indexes.get(i).perfString());
     }
   }

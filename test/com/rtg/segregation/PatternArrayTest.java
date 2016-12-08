@@ -91,7 +91,7 @@ public class PatternArrayTest extends TestCase {
 
   PatternArray pat(final int[] q) {
     final Pattern[] p = new Pattern[q.length];
-    for (int i = 0; i < q.length; i++) {
+    for (int i = 0; i < q.length; ++i) {
       p[i] = new Pattern(q[i]);
     }
     return new PatternArray(p);
@@ -164,7 +164,7 @@ public class PatternArrayTest extends TestCase {
     final PatternArray pa = new PatternArray(q);
     assertFalse(pa.strictEquals(null));
     assertTrue(pa.strictEquals(pa));
-    for (int f = 0; f < Pattern.NUMBER_FLIPS; f++) {
+    for (int f = 0; f < Pattern.NUMBER_FLIPS; ++f) {
       final PatternArray pf = pa.flip(f);
       assertEquals(pa, pf);
       assertEquals(pf, pa);
@@ -188,7 +188,7 @@ public class PatternArrayTest extends TestCase {
     final PatternArray pa = new PatternArray(q);
     final StringBuilder fa = new StringBuilder();
     final StringBuilder mo = new StringBuilder();
-    for (int i = 0; i < q.length; i++) {
+    for (int i = 0; i < q.length; ++i) {
       fa.append(pa.index(i).faString());
       mo.append(pa.index(i).moString());
     }

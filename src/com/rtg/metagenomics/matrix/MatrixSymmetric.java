@@ -25,7 +25,7 @@ public class MatrixSymmetric extends Matrix {
   public MatrixSymmetric(final int dimension) {
     mSize = dimension;
     mMatrix = new double[dimension][];
-    for (int i = 0; i < dimension; i++) {
+    for (int i = 0; i < dimension; ++i) {
       mMatrix[i] = new double[i + 1];
     }
   }
@@ -69,8 +69,8 @@ public class MatrixSymmetric extends Matrix {
   @Override
   public Jama.Matrix toJama() {
     final Jama.Matrix m = new Jama.Matrix(size(), size());
-    for (int i = 0; i < size(); i++) {
-      for (int j = 0; j < size(); j++) {
+    for (int i = 0; i < size(); ++i) {
+      for (int j = 0; j < size(); ++j) {
         m.set(i, j, get(i, j));
       }
     }

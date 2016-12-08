@@ -45,7 +45,7 @@ public final class Trimming {
   // Can't use Description, as that includes hypotheses that weren't necessarily called.
   private static HashSet<String> extractAlleles(final Variant variant) {
     final HashSet<String> alleles = new HashSet<>();
-    for (int k = 0; k < variant.getNumberOfSamples(); k++) {
+    for (int k = 0; k < variant.getNumberOfSamples(); ++k) {
       final VariantSample vs = variant.getSample(k);
       if (vs != null) {
         if (!vs.isIdentity()) {
@@ -96,7 +96,7 @@ public final class Trimming {
 
   private static VariantSample[] createVariants(final Variant original, final int leftClip, final int rightClip, Description newDescription, int[] alleleMapping, String refNts, VariantAlleleTrigger variantAlleleTrigger) {
     final VariantSample[] newSamples = new VariantSample[original.getNumberOfSamples()];
-    for (int k = 0; k < newSamples.length; k++) {
+    for (int k = 0; k < newSamples.length; ++k) {
       final VariantSample sample = original.getSample(k);
       if (sample != null) {
         final String newName = createVariantName(leftClip, rightClip, sample.getName());
@@ -197,7 +197,7 @@ public final class Trimming {
     if (original.getNumberOfSamples() > 0) {
       //trim description
       Description oldDescription = DescriptionNone.SINGLETON;
-      for (int i = 0; i < original.getNumberOfSamples(); i++) {
+      for (int i = 0; i < original.getNumberOfSamples(); ++i) {
         if (original.getSample(i) != null && !(original.getSample(i).getStats().counts().getDescription() instanceof DescriptionNone)) {
           oldDescription = original.getSample(i).getStats().counts().getDescription();
         }
@@ -205,7 +205,7 @@ public final class Trimming {
       // Incrementally build up mapping of old alleles to new alleles
       final LinkedHashMap<String, Integer> alleles = new LinkedHashMap<>();
       final int[] alleleMap = new int[oldDescription.size()];
-      for (int i = 0; i < oldDescription.size(); i++) {
+      for (int i = 0; i < oldDescription.size(); ++i) {
         final String clipped = StringUtils.clip(oldDescription.name(i), start, end);
         Integer newPos = alleles.get(clipped);
         if (newPos == null) {
@@ -250,8 +250,8 @@ public final class Trimming {
     // and thus represents a split point.
     final boolean[] syndrome = new boolean[length];
     final String c = cats[0];
-    for (int k = 1; k < cats.length; k++) {
-      for (int j = 0; j < length; j++) {
+    for (int k = 1; k < cats.length; ++k) {
+      for (int j = 0; j < length; ++j) {
         syndrome[j] |= c.charAt(j) != cats[k].charAt(j);
       }
     }
@@ -274,14 +274,14 @@ public final class Trimming {
       if (syndrome[startSplit]) {
         int endSplit = startSplit + 1;
         while (endSplit < length && syndrome[endSplit]) {
-          endSplit++;
+          ++endSplit;
         }
         final Variant splitVariant = createSplitVariant(original, startSplit, length - endSplit, splitId++, variantAlleleTrigger);
         final Variant variant = denovoCorrector != null ? denovoCorrect(denovoCorrector, splitVariant) : splitVariant;
         list.add(variant);
         startSplit = endSplit + 1;
       } else {
-        startSplit++;
+        ++startSplit;
       }
     }
     return list;
@@ -296,7 +296,7 @@ public final class Trimming {
    */
   public static Variant denovoCorrect(DenovoChecker checker, Variant variant) {
     final Set<Integer> nonDenovoSamples = new HashSet<>();
-    for (int s = 0; s < variant.getNumberOfSamples(); s++) {
+    for (int s = 0; s < variant.getNumberOfSamples(); ++s) {
       final VariantSample sample = variant.getSample(s);
       if (sample != null) {
         final VariantSample.DeNovoStatus denovoCall = sample.isDeNovo();
@@ -313,7 +313,7 @@ public final class Trimming {
     } else {
       final VariantLocus newLocus = variant.getLocus();
       final VariantSample[] newSamples = new VariantSample[variant.getNumberOfSamples()];
-      for (int k = 0; k < newSamples.length; k++) {
+      for (int k = 0; k < newSamples.length; ++k) {
         final VariantSample sample = variant.getSample(k);
         if (sample != null) {
           final VariantSample.DeNovoStatus newStatus;

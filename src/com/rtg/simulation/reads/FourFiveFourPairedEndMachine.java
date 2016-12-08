@@ -90,7 +90,7 @@ public class FourFiveFourPairedEndMachine extends AbstractMachine {
     final double mid = (mMaxPairSize + mMinPairSize) * 0.5 + 0.5;
     final double width = (mMaxPairSize - mMinPairSize) * 0.25; // 2 std devs per side
     int pairLength = 0;
-    for (int x = 0; x < NUMBER_TRIES; x++) {
+    for (int x = 0; x < NUMBER_TRIES; ++x) {
       pairLength = (int) (mPairSizeRandom.nextGaussian() * width + mid);
       if ((pairLength >= mMinPairSize) && (pairLength <= mMaxPairSize)) {
         break;

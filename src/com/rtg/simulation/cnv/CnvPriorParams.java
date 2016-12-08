@@ -83,7 +83,7 @@ public class CnvPriorParams extends ObjectParams {
 
       final String[] magnituteStr = new String[]{"1", "2", "3", "4", "5", "6", "7", "8"};
       mCopyNumberDistribution = new double[magnituteStr.length][];
-      for (int i = 0; i < magnituteStr.length; i++) {
+      for (int i = 0; i < magnituteStr.length; ++i) {
         mCopyNumberDistribution[i] = parseDistribution(priorName, pr,
             "copy_number_distribution_" + magnituteStr[i], 0);
       }
@@ -102,7 +102,7 @@ public class CnvPriorParams extends ObjectParams {
       final String[] words = distrib.split(",");
       final double[] result = new double[words.length + start];
       try {
-        for (int i = 0; i < words.length; i++) {
+        for (int i = 0; i < words.length; ++i) {
           result[i + start] = parseDouble(prior, words[i], key);
         }
         checkDistribution(result);
@@ -120,7 +120,7 @@ public class CnvPriorParams extends ObjectParams {
       final String[] words = distrib.split(",");
       final int[] result = new int[words.length];
       try {
-        for (int i = 0; i < words.length; i++) {
+        for (int i = 0; i < words.length; ++i) {
           result[i] = parseInteger(prior, words[i], key);
         }
       } catch (final IllegalArgumentException e) {
@@ -234,7 +234,7 @@ public class CnvPriorParams extends ObjectParams {
     mProbDeletedOnOneStrand = builder.mProbDeletedOnOneStrand;
 
     mCopyNumberThresholds = new double[mCopyNumberDistribution.length][];
-    for (int i = 0; i < mCopyNumberThresholds.length; i++) {
+    for (int i = 0; i < mCopyNumberThresholds.length; ++i) {
       mCopyNumberThresholds[i] = SimulationUtils.cumulativeDistribution(mCopyNumberDistribution[i]);
     }
     mPowerLengthThresholds = SimulationUtils.cumulativeDistribution(mPowerLengthDistribution);

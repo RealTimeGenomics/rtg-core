@@ -42,7 +42,7 @@ public class ModelCancerFactory extends ModelCommonFactory<Description, Hypothes
     mContamination = contamination;
     final HypothesesSnp unknownHypothesesSnp = new HypothesesSnp(LogApproximatePossibility.SINGLETON, params, haploid, Hypotheses.NO_HYPOTHESIS);
     mHypothesisUnknown = new HypothesesCancer<>(unknownHypothesesSnp, LogApproximatePossibility.SINGLETON);
-    for (int i = 0; i < DescriptionSnp.SINGLETON.size(); i++) {
+    for (int i = 0; i < DescriptionSnp.SINGLETON.size(); ++i) {
       final HypothesesSnp hyp = new HypothesesSnp(SimplePossibility.SINGLETON, params, haploid, i);
       mHypothesesCache.add(new HypothesesCancer<>(hyp, LogApproximatePossibility.SINGLETON));
     }

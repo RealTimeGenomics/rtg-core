@@ -47,7 +47,7 @@ public final class NativeArrayTiming {
   public static void tMsg(final String msg, final long[] times) {
     final int lent = times.length;
     tM(times[lent - 1] - times[0]);
-    for (int i = 1; i < times.length; i++) {
+    for (int i = 1; i < times.length; ++i) {
       tM(times[i] - times[i - 1]);
     }
     System.out.println("  " + msg);
@@ -65,7 +65,7 @@ public final class NativeArrayTiming {
   public static void timeNull(final long tm, final long len) {
     final long t0 = System.currentTimeMillis();
     long j = 0;
-    for (int i = 0; i < ITERATIONS; i++) {
+    for (int i = 0; i < ITERATIONS; ++i) {
       j += 1039111L;
       if (j >= len) {
         j = j - len;
@@ -87,7 +87,7 @@ public final class NativeArrayTiming {
     final long t0 = System.currentTimeMillis();
     final int step = (int) (1039111L % len);
     int j = 0;
-    for (int i = 0; i < ITERATIONS; i++) {
+    for (int i = 0; i < ITERATIONS; ++i) {
       j += step;
       if (j >= len) {
         j = j - len;

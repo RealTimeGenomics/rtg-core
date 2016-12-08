@@ -48,7 +48,7 @@ public final class HomopolymerUtils {
     if (readBases.length > 0) {
       homoBase = readBases[0];
     }
-    for (int i = 0; i < MIN_HOMO && i < readBases.length; i++) {
+    for (int i = 0; i < MIN_HOMO && i < readBases.length; ++i) {
       if (readBases[i] != homoBase) {
         isHomo = false;
       }
@@ -58,7 +58,7 @@ public final class HomopolymerUtils {
       final int length = e.getLength();
       if (isHomo) {
         if (op.consumesReadBases()) {
-          for (int i = readPos; i < readPos + length; i++) {
+          for (int i = readPos; i < readPos + length; ++i) {
             if (readBases[i] == homoBase) {
               modified = maskBase(readBases, op, i) || modified;
             } else {
@@ -85,20 +85,20 @@ public final class HomopolymerUtils {
     if (readBases.length > 0) {
       homoBase = readBases[readPos];
     }
-    for (int i = readPos; i > readPos - MIN_HOMO && i >= 0; i--) {
+    for (int i = readPos; i > readPos - MIN_HOMO && i >= 0; --i) {
       if (readBases[i] != homoBase) {
         isHomo = false;
       }
     }
 
     final List<CigarElement> cigarElements = record.getCigar().getCigarElements();
-    for (int l = cigarElements.size() - 1; l >= 0; l--) {
+    for (int l = cigarElements.size() - 1; l >= 0; --l) {
       final CigarElement e = cigarElements.get(l);
       final CigarOperator op = e.getOperator();
       final int length = e.getLength();
       if (isHomo) {
         if (op.consumesReadBases()) {
-          for (int i = readPos; i > readPos - length && i >= 0; i--) {
+          for (int i = readPos; i > readPos - length && i >= 0; --i) {
             if (readBases[i] == homoBase) {
               modified = maskBase(readBases, op, i) || modified;
             } else {

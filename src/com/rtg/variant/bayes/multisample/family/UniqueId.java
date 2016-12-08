@@ -44,7 +44,7 @@ public final class UniqueId extends IntegralAbstract {
       return id - 1;
     }
     //increment before returning so that -1 reserved externally for unseen but internally is 0
-    mLastId++;
+    ++mLastId;
     mIds[i] = mLastId;
     return mLastId - 1;
   }

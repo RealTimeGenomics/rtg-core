@@ -147,7 +147,7 @@ public class SegregationVcfSearch extends AbstractCli {
           }
           final Map<String, Integer> sampleIndexMap = new HashMap<>();
           final List<String> sampleNames = header.getSampleNames();
-          for (int i = 0; i < sampleNames.size(); i++) {
+          for (int i = 0; i < sampleNames.size(); ++i) {
             sampleIndexMap.put(sampleNames.get(i), i);
           }
           final String fatherName = (String) mFlags.getValue(FATHER_FLAG);
@@ -220,7 +220,7 @@ public class SegregationVcfSearch extends AbstractCli {
     if (ReferenceGenome.hasReferenceFile(sr)) {
       for (final Sex s : Sex.values()) {
         final ReferenceGenome ref = new ReferenceGenome(sr, s);
-        for (long i = 0; i < sr.numberSequences(); i++) {
+        for (long i = 0; i < sr.numberSequences(); ++i) {
           final String name = sr.name(i);
           ploidyMap.put(new Pair<>(s, name), ref.sequence(name));
         }
@@ -250,12 +250,12 @@ public class SegregationVcfSearch extends AbstractCli {
     sortedGts[0] = gts.get(sampleFather);
     sortedGts[1] = gts.get(sampleMother);
     int index = 2;
-    for (int i = 0; i < gts.size(); i++) {
+    for (int i = 0; i < gts.size(); ++i) {
       if (i == sampleFather || i == sampleMother) {
         continue;
       }
       sortedGts[index] = gts.get(i);
-      index++;
+      ++index;
     }
     return FamilyGt.familyPloidy(rec.getSequenceName(), rec.getOneBasedStart(), sortedGts, sexes, ploidyMap);
   }
@@ -265,12 +265,12 @@ public class SegregationVcfSearch extends AbstractCli {
     sampleSex[0] = sampleSexMap.get(sampleNames.get(sampleFather));
     sampleSex[1] = sampleSexMap.get(sampleNames.get(sampleMother));
     int index = 2;
-    for (int i = 0; i < sampleNames.size(); i++) {
+    for (int i = 0; i < sampleNames.size(); ++i) {
       if (i == sampleFather || i == sampleMother) {
         continue;
       }
       sampleSex[index] = sampleSexMap.get(sampleNames.get(i));
-      index++;
+      ++index;
     }
     return sampleSex;
   }

@@ -19,9 +19,9 @@ public final class Util {
 
   private static final long[][] BINOMIAL = new long[65][];
   static {
-    for (int k = 1; k < BINOMIAL.length; k++) {
+    for (int k = 1; k < BINOMIAL.length; ++k) {
       final long[] row = new long[k];
-      for (int j = 0; j < row.length; j++) {
+      for (int j = 0; j < row.length; ++j) {
         row[j] = binomial(k - 1, j) + binomial(k - 1, j + 1);
       }
       BINOMIAL[k] = row;

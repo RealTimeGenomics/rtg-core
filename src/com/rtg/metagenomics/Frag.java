@@ -83,7 +83,7 @@ public class Frag extends IntegralAbstract {
     int n = 0;
     for (final int g : gens) {
       if (last != g) {
-        n++;
+        ++n;
       }
       last = g;
     }
@@ -95,20 +95,20 @@ public class Frag extends IntegralAbstract {
     int c = 1;
     int l = gens.get(0);
     int j = 0;
-    for (int i = 1; ; i++) {
+    for (int i = 1; ; ++i) {
       if (i == gn || l != gens.get(i)) {
         //another one
         assert c > 0;
         mGenomes[j] = l;
         mCounts[j] = c;
-        j++;
+        ++j;
         c = 0;
       }
       if (i == gn) {
         break;
       }
       l = gens.get(i);
-      c++;
+      ++c;
     }
     mTotalCount = gens.size();
     assert j == n; // : "j=" + j + " n=" + n;
@@ -116,7 +116,7 @@ public class Frag extends IntegralAbstract {
 
   void init(final Vector mv) {
     final double m = multiplicity();
-    for (int i = 0; i < mN; i++) {
+    for (int i = 0; i < mN; ++i) {
       final int g = mGenomes[i];
       final int c = mCounts[i];
       final double incr = c * m / (double) mTotalCount;
@@ -138,17 +138,17 @@ public class Frag extends IntegralAbstract {
   double incrementR(final Vector r, final Matrix hessian) {
     double rho = 0.0;
     final double m = multiplicity();
-    for (int i = 0; i < mN; i++) {
+    for (int i = 0; i < mN; ++i) {
       final int g = mGenomes[i];
       final int c = mCounts[i];
       rho += r.get(g) * c;
     }
     //System.err.println("rho: " + rho);
     assert hessian.isSymmetric();
-    for (int i = 0; i < mGenomes.length; i++) {
+    for (int i = 0; i < mGenomes.length; ++i) {
       final int gi = mGenomes[i];
       final int ci = mCounts[i];
-      for (int j = i; j < mGenomes.length; j++) {
+      for (int j = i; j < mGenomes.length; ++j) {
         final int gj = mGenomes[j];
         final int cj = mCounts[j];
         final double v = (m / (rho * rho)) * ci * cj;
@@ -172,13 +172,13 @@ public class Frag extends IntegralAbstract {
   double increment(final Vector r, final Vector jacobian, final Matrix hessian) {
     double rho = 0.0;
     final double m = multiplicity();
-    for (int i = 0; i < mN; i++) {
+    for (int i = 0; i < mN; ++i) {
       final int g = mGenomes[i];
       final int c = mCounts[i];
       rho += r.get(g) * c;
     }
 
-    for (int i = 0; i < mN; i++) {
+    for (int i = 0; i < mN; ++i) {
       final int g = mGenomes[i];
       final int c = mCounts[i];
       final double incr = -r.get(g) * c * m / rho;
@@ -187,11 +187,11 @@ public class Frag extends IntegralAbstract {
     }
 
     assert hessian.isSymmetric();
-    for (int i = 0; i < mGenomes.length; i++) {
+    for (int i = 0; i < mGenomes.length; ++i) {
       final int gi = mGenomes[i];
       final int ci = mCounts[i];
       final double ri = r.get(gi) * ci / rho;
-      for (int j = i; j < mGenomes.length; j++) {
+      for (int j = i; j < mGenomes.length; ++j) {
         final int gj = mGenomes[j];
         final int cj = mCounts[j];
         final double rj = r.get(gj) * cj / rho;
@@ -215,13 +215,13 @@ public class Frag extends IntegralAbstract {
   double increment(final Vector r, final Vector jacobian) {
     double rho = 0.0;
     final double m = multiplicity();
-    for (int i = 0; i < mN; i++) {
+    for (int i = 0; i < mN; ++i) {
       final int g = mGenomes[i];
       final int c = mCounts[i];
       rho += r.get(g) * c;
     }
 
-    for (int i = 0; i < mN; i++) {
+    for (int i = 0; i < mN; ++i) {
       final int g = mGenomes[i];
       final int c = mCounts[i];
       final double incr = -c / rho;
@@ -240,7 +240,7 @@ public class Frag extends IntegralAbstract {
    */
   double l(final Vector r) {
     double rho = 0.0;
-    for (int i = 0; i < mN; i++) {
+    for (int i = 0; i < mN; ++i) {
       final int g = mGenomes[i];
       final int c = mCounts[i];
       rho += r.get(g) * c;
@@ -252,7 +252,7 @@ public class Frag extends IntegralAbstract {
 
   @Override
   public void toString(final StringBuilder sb) {
-    for (int i = 0; i < mN; i++) {
+    for (int i = 0; i < mN; ++i) {
       final int g = mGenomes[i];
       final int c = mCounts[i];
       sb.append("  ").append(g).append(":").append(c);
@@ -265,9 +265,9 @@ public class Frag extends IntegralAbstract {
    * @param a array to be updated with descending chains of connected genomes.
    */
   public void stats(final int[] a) {
-    for (int i = 0; i < mN; i++) {
+    for (int i = 0; i < mN; ++i) {
       final int gi = mGenomes[i];
-      for (int j = 0; j < mN; j++) {
+      for (int j = 0; j < mN; ++j) {
         final int gj = mGenomes[j];
         final int mi = chain(a, gi);
         final int mj = chain(a, gj);
@@ -291,7 +291,7 @@ public class Frag extends IntegralAbstract {
   public boolean globalIntegrity() {
     integrity();
     int last = 0;
-    for (int i = 0; i < mN; i++) {
+    for (int i = 0; i < mN; ++i) {
       final int g = mGenomes[i];
       Exam.assertTrue(g >= last);
       last = g;
@@ -315,7 +315,7 @@ public class Frag extends IntegralAbstract {
    */
   public double sum(final Vector v) {
     double sum = 0.0;
-    for (int i = 0; i < mN; i++) {
+    for (int i = 0; i < mN; ++i) {
       final int g = mGenomes[i];
       final int c = mCounts[i];
       sum += v.get(g) * c;
@@ -358,7 +358,7 @@ public class Frag extends IntegralAbstract {
 
   Frag subFrag(int... c) {
     final int[] newGenomes = new int[mGenomes.length];
-    for (int i = 0; i < mGenomes.length; i++) {
+    for (int i = 0; i < mGenomes.length; ++i) {
       newGenomes[i] = c[mGenomes[i]];
     }
     return new Frag(newGenomes, mCounts, mTotalCount, mN, mMultiplicity);
@@ -384,7 +384,7 @@ public class Frag extends IntegralAbstract {
    */
   public void count(SortedMultiSet<Integer>[] counts) {
     final int cnt = mN;
-    for (int i = 0; i < mN; i++) {
+    for (int i = 0; i < mN; ++i) {
       counts[mGenomes[i]].add(cnt, mMultiplicity);
     }
   }

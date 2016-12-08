@@ -103,7 +103,7 @@ public class PredictCli extends AbstractCli {
 
       final List<Object> samplesList = mFlags.getValues(SAMPLE_FLAG);
       final int[] samples = new int[samplesList.size()];
-      for (int i = 0; i < samples.length; i++) {
+      for (int i = 0; i < samples.length; ++i) {
         final Integer sampleIndex = header.getSampleIndex((String) samplesList.get(i));
         if (sampleIndex == null) {
           throw new NoTalkbackSlimException("The sample name \"" + samplesList.get(i) + "\" is not present in the input VCF file");

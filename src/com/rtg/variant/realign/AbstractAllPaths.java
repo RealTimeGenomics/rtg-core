@@ -186,7 +186,7 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
   protected abstract void calculateProbabilities();
 
   protected final void calculateInitialRow(final int initRow, final double delete, final double match) {
-    for (int j = 0; j < mWidth; j++) {
+    for (int j = 0; j < mWidth; ++j) {
       mDelete[initRow][j] = delete;
       mMatch[initRow][j] = match;
       mInsert[initRow][j] = mZeroPoss;
@@ -264,14 +264,14 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
    */
   public final String toPpm() {
     int fragTot = 0;
-    for (int row = 0; row <= mLength; row++) {
+    for (int row = 0; row <= mLength; ++row) {
       if (isFragmentStart(row)) {
-        fragTot++;
+        ++fragTot;
       }
     }
     double best = rescale(mArith.poss2Ln(mInsert[0][0]), 0);
-    for (int row = 0; row <= mLength; row++) {
-      for (int col = 0; col < mWidth; col++) {
+    for (int row = 0; row <= mLength; ++row) {
+      for (int col = 0; col < mWidth; ++col) {
         best = Math.max(best, rescale(mArith.poss2Ln(mInsert[row][col]), 0));
         best = Math.max(best, rescale(mArith.poss2Ln(mMatch[row][col]), 0));
         best = Math.max(best, rescale(mArith.poss2Ln(mDelete[row][col]), 0));
@@ -288,22 +288,22 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
     final int rowEnd = rowOffset(mLength) + mWidth;
 
     ppmTemplateRow(sb, rowStart, rowEnd);
-    for (int row = 0; row <= mLength; row++) {
+    for (int row = 0; row <= mLength; ++row) {
       if (isFragmentStart(row)) { // insert a horizontal line where the CG gap/overlap happens.
         ppmTemplateRow(sb, rowStart, rowEnd);
       }
       sb.append(PPM_DNA_COLS[row == 0 ? 0 : mEnv.read(row - 1)]); // Left hand read base column
       // indent the row, so we line up with the template
-      for (int i = 0; i < rowOffset(row) - rowStart; i++) {
+      for (int i = 0; i < rowOffset(row) - rowStart; ++i) {
         ppmColor(sb, 0, 0, 0);
       }
-      for (int col = 0; col < mWidth; col++) {
+      for (int col = 0; col < mWidth; ++col) {
         ppmColor(sb,
           rescale(mArith.poss2Ln(mInsert[row][col]), 0, best),
           rescale(mArith.poss2Ln(mMatch[row][col]), 0, best),
           rescale(mArith.poss2Ln(mDelete[row][col]), 0, best));
       }
-      for (int i = rowOffset(row) - rowStart + mWidth; i < mLength + mWidth; i++) {
+      for (int i = rowOffset(row) - rowStart + mWidth; i < mLength + mWidth; ++i) {
         ppmColor(sb, 0, 0, 0);
       }
       sb.append(PPM_DNA_COLS[row == 0 ? 0 : mEnv.read(row - 1)]); // Right hand read base column
@@ -323,7 +323,7 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
 
   private void ppmTemplateRow(StringBuilder sb, int rowStart, int rowEnd) {
     sb.append(PPM_DNA_COLS[0]);
-    for (int pos = rowStart; pos < rowEnd; pos++) {
+    for (int pos = rowStart; pos < rowEnd; ++pos) {
       sb.append(PPM_DNA_COLS[mEnv.template(pos)]);
     }
     sb.append(PPM_DNA_COLS[0]);
@@ -361,11 +361,11 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
     final double[] mtmp = new double[mWidth];
     final double[] dtmp = new double[mWidth];
     printTemplateRow(sb, rowStart, rowEnd, mEnv, "ScoreMatrix", FIELD_WIDTH);
-    for (int row = 0; row <= mLength; row++) {
+    for (int row = 0; row <= mLength; ++row) {
       if (isFragmentStart(row)) {
         // show a horizontal line where the CG gap/overlap happens.
         sb.append("      ");
-        for (int i = 0; i < (FIELD_WIDTH * 3 + 1) * (rowOffset(row) - rowStart + mWidth); i++) {
+        for (int i = 0; i < (FIELD_WIDTH * 3 + 1) * (rowOffset(row) - rowStart + mWidth); ++i) {
           sb.append('-');
         }
         sb.append(LS);
@@ -373,16 +373,16 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
       sb.append(StringUtils.padBetween("[", 5, row + "]"));
       sb.append(row == 0 ? ' ' : dnaChars[mEnv.read(row - 1)]);
       // indent the row, so we line up with the template
-      for (int i = 0; i < rowOffset(row) - rowStart; i++) {
+      for (int i = 0; i < rowOffset(row) - rowStart; ++i) {
         sb.append(StringUtils.padLeft("|", 3 * FIELD_WIDTH + 1));
       }
       int bi = -1, bm = -1, bd = -1;
-      for (int col = 0; col < mWidth; col++) {
+      for (int col = 0; col < mWidth; ++col) {
         bi = update(itmp, mArith.poss2Ln(mInsert[row][col]), bi, col);
         bm = update(mtmp, mArith.poss2Ln(mMatch[row][col]), bm, col);
         bd = update(dtmp, mArith.poss2Ln(mDelete[row][col]), bd, col);
       }
-      for (int col = 0; col < mWidth; col++) {
+      for (int col = 0; col < mWidth; ++col) {
         sb.append(cell(dh, format(itmp[col]), col == bi, DisplayHelper.MAGENTA));
         sb.append(cell(dh, format(mtmp[col]), col == bm, DisplayHelper.GREEN));
         sb.append(cell(dh, format(dtmp[col]), col == bd, DisplayHelper.CYAN));
@@ -420,7 +420,7 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
     // print the header row, showing the template.
     final char[] dnaChars = DNA.valueChars();
     sb.append(StringUtils.padBetween(msg, 7 + 3 * fw, "|"));
-    for (int pos = rowStart + 1; pos <= rowEnd; pos++) {
+    for (int pos = rowStart + 1; pos <= rowEnd; ++pos) {
       sb.append(dnaChars[env.template(pos)]);
       sb.append(StringUtils.padLeft(Integer.toString(env.absoluteTemplatePosition(pos)), 2 * fw - 1));
       sb.append(StringUtils.padLeft("|", fw + 1));
@@ -431,12 +431,12 @@ public abstract class AbstractAllPaths extends IntegralAbstract implements AllPa
   @Override
   public boolean globalIntegrity() {
     integrity();
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       // the three matrices have exactly the same shape.
       Exam.assertEquals(mMaxWidth, mMatch[i].length);
       Exam.assertEquals(mMaxWidth, mDelete[i].length);
       Exam.assertEquals(mMaxWidth, mInsert[i].length);
-      for (int j = 0; j < mWidth; j++) {
+      for (int j = 0; j < mWidth; ++j) {
         final double vi = mInsert[i][j];
         Exam.assertTrue("i=" + i + " j=" + j + " vi=" + vi, mArith.isValidPoss(vi));
         final double vm = mMatch[i][j];

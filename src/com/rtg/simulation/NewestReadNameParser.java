@@ -75,7 +75,7 @@ public class NewestReadNameParser extends NewReadNameParser {
     mIns = 0;
     mDel = 0;
     int opcount = 0;
-    for (int i = 0; i < cigar.length(); i++) {
+    for (int i = 0; i < cigar.length(); ++i) {
       final char c = cigar.charAt(i);
       if (c >= '0' && c <= '9') {
         opcount = opcount * 10 + (c - '0');

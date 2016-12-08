@@ -94,7 +94,7 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
     final byte[] byteBuffer = makeBuffer(reader);
     int badLengthCount = 0;
     long totalLength = 0;
-    for (int seq = (int) start; seq < end; seq++) {
+    for (int seq = (int) start; seq < end; ++seq) {
       mUnknownVictim = -1;
       final int readId = encoder.encode(seq);
       final int id2 = encoder.encode((int) (seq - start));
@@ -116,7 +116,7 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
       //System.err.println(Arrays.toString(byteBuffer));
       hashFunction.reset();
       int prev = 0;
-      for (int j = 0; j < currentLength; j++) {
+      for (int j = 0; j < currentLength; ++j) {
         //System.err.println("j=" + j);
         final byte b = frame.code(byteBuffer, length, j);
         final int c = b - 1;
@@ -129,7 +129,7 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
           }
           v = (byte) mUnknownVictim;
           if (!DAVE_N_HACK) {
-            mUnknownVictim++;
+            ++mUnknownVictim;
             mUnknownVictim &= 3;
           }
         } else {
@@ -165,7 +165,7 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
     final long numberSeq = hashes.length;
     final int readLength = hashFunction.readLength();
     final int shift0 = 2 * (readLength - 1);
-    for (int seq = 0, id2 = 0; seq < numberSeq; seq++, id2 += 1) {
+    for (int seq = 0, id2 = 0; seq < numberSeq; ++seq, id2 += 1) {
       if ((id2 & mReadProgressMask) == 0) {
         ProgramState.checkAbort();
       }
@@ -218,11 +218,11 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
     long nt = 0;
     long ntbatch = 0;
     long batchstart = System.currentTimeMillis();
-    for (long templateId = start; templateId < end; templateId++) {
+    for (long templateId = start; templateId < end; ++templateId) {
       final int length = reader.read(templateId, byteBuffer);
       hashFunction.reset();
       hashFunction.templateSet(templateId, length);
-      for (int endPosition = 0; endPosition < length; endPosition++, nt++) {
+      for (int endPosition = 0; endPosition < length; ++endPosition, ++nt) {
         if ((nt & mTemplateProgressMask) == 0) {
           ProgramState.checkAbort();
         }
@@ -238,7 +238,7 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
             ntbatch = 0;
             batchstart = bs;
           }
-          ntbatch++;
+          ++ntbatch;
         }
         //final byte b = frame.code(byteBuffer, length, endPosition);
         final byte b = byteBuffer[endPosition];
@@ -250,7 +250,7 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
         hashFunction.hashStep((byte) c);
         hashFunction.templateBidirectional(endPosition);
       } //sequence
-      for (int endPosition = length; endPosition < length + 64 - hashFunction.readLength(); endPosition++) {
+      for (int endPosition = length; endPosition < length + 64 - hashFunction.readLength(); ++endPosition) {
         hashFunction.hashStep((byte) 0);
         hashFunction.templateReverse(endPosition);
       }
@@ -302,7 +302,7 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
     // this will avoid creating too many chunks.
     final HashingRegion[] ranges = HashingRegion.splitWorkload(reader0, params.sex(), start, end, numberThreads * threadMultiplier, mMinChunkSize, mThreadPadding);
     pool.enableBasicProgress(ranges.length);
-    for (int i = 0; i < ranges.length; i++) {
+    for (int i = 0; i < ranges.length; ++i) {
       schedule(params, hf, t0, pool, i, ranges[i]);
     }
     timeLog(t0, "parent", "Terminating", HashingRegion.NONE);
@@ -350,7 +350,7 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
       final SequencesReader reader = mParams.subSequence(mRegion).reader();
       final long padding = getPadding();
       final byte[] byteBuffer = makeBuffer(reader, mRegion, padding);
-      for (long templateId = mRegion.getStart(); templateId <= mRegion.getEnd(); templateId++) {
+      for (long templateId = mRegion.getStart(); templateId <= mRegion.getEnd(); ++templateId) {
         final int length = reader.length(templateId); //reader.readCurrent(byteBuffer);
         final int startPos = mRegion.getReferenceStart(templateId, padding);
         final int endPos = mRegion.getReferenceEnd(templateId, padding, length);
@@ -400,7 +400,7 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
     hashFunction.templateSet(templateId, length);
     long nt = 0;
     /* if (start > 0) {
-      for (int i = (int) Math.max(start - hashFunction.readLength(), 0L); i < start; i++) {
+      for (int i = (int) Math.max(start - hashFunction.readLength(), 0L); i < start; ++i) {
         final byte b = byteBuffer[i];
         final int c = b - 1;
         if (c < 0) {
@@ -411,13 +411,13 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
       }
     }*/
     //preload hash bits
-    for (int endPosition = start; endPosition < callStart; endPosition++, nt++) {
+    for (int endPosition = start; endPosition < callStart; ++endPosition, ++nt) {
       if ((nt & mTemplateProgressMask) == 0) {
         ProgramState.checkAbort();
       }
       updateHashStep(hashFunction, byteBuffer, endPosition - start);
     }
-    for (int endPosition = callStart; endPosition < callEnd; endPosition++, nt++) {
+    for (int endPosition = callStart; endPosition < callEnd; ++endPosition, ++nt) {
       if ((nt & mTemplateProgressMask) == 0) {
         ProgramState.checkAbort();
       }
@@ -427,7 +427,7 @@ public class NgsHashLoopImpl extends IntegralAbstract implements NgsHashLoop {
       }
     }
     // flush extra positions at the end
-    for (int i = 0; i < 64 - hashFunction.readLength(); i++) {
+    for (int i = 0; i < 64 - hashFunction.readLength(); ++i) {
       if (callEnd + i < end) {
         updateHashStep(hashFunction, byteBuffer, callEnd + i - start);
       } else {

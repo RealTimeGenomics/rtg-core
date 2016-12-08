@@ -41,7 +41,7 @@ public class SimilarityMatrix extends IntegralAbstract {
     }
     mLength = (int) numberSequences;
     mCounts = new double[mLength][];
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       mCounts[i] = new double[i + 1];
     }
   }
@@ -117,9 +117,9 @@ public class SimilarityMatrix extends IntegralAbstract {
   @Override
   public void toString(final StringBuilder sb) {
     sb.append("SimilarityMatrix ").append(mLength).append(StringUtils.LS);
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       sb.append("[").append(i).append("]");
-      for (int j = 0; j < mLength; j++) {
+      for (int j = 0; j < mLength; ++j) {
         sb.append("\t");
         sb.append(Utils.realFormat(get(i, j), 0));
       }
@@ -139,14 +139,14 @@ public class SimilarityMatrix extends IntegralAbstract {
       throw new SlimException(ErrorType.INFO_ERROR, "Size of matrix not equal to number of labels provided.");
     }
     final String tab = "\t";
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       out.append(tab);
       out.append(names.get(i));
     }
     out.append(StringUtils.LS);
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       out.append(names.get(i));
-      for (int j = 0; j < mLength; j++) {
+      for (int j = 0; j < mLength; ++j) {
         out.append(tab);
         out.append(Utils.realFormat(get(i, j), 0));
       }
@@ -172,9 +172,9 @@ public class SimilarityMatrix extends IntegralAbstract {
   @Override
   public boolean globalIntegrity() {
     integrity();
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       Exam.assertEquals(i + 1, mCounts[i].length);
-      for (int j = 0; j <= i; j++) {
+      for (int j = 0; j <= i; ++j) {
         Exam.assertTrue(mCounts[i][j] >= 0);
       }
     }
@@ -186,7 +186,7 @@ public class SimilarityMatrix extends IntegralAbstract {
     if (mCounts == null) {
       throw new NullPointerException();
     } else {
-      for (int i = 0; i < mLength; i++) {
+      for (int i = 0; i < mLength; ++i) {
         Exam.assertEquals(i + 1, mCounts[i].length);
       }
     }

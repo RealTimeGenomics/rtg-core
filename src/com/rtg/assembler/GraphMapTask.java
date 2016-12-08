@@ -92,14 +92,14 @@ public class GraphMapTask extends ParamsTask<GraphMapParams, GraphMapStatistics>
       reader.reset();
     }
     final ArrayList<PairConstraintWriter> writers = new ArrayList<>();
-    for (int i = 0; i < params.numberThreads(); i++) {
+    for (int i = 0; i < params.numberThreads(); ++i) {
       writers.add(new PairConstraintWriter(new PrintStream(new FileOutputStream(params.file("constraints" + i)))));
     }
     try {
       final AsyncReadPool readPool = new AsyncReadPool("ReadForMap", reads);
       final SimpleThreadPool mapPool = new SimpleThreadPool(params.numberThreads(), "MapReads", true);
       final List<GraphMap> mapThreads = new ArrayList<>();
-      for (int i = 0; i < params.numberThreads(); i++) {
+      for (int i = 0; i < params.numberThreads(); ++i) {
         final GraphMap mapThread = new GraphMap(index, mutable, writers.get(i), new PathTracker(new PalindromeTracker(mutable)));
         mapThreads.add(mapThread);
         mapPool.execute(new GraphMap.MapRunnable(mapThread, params.maxMismatches(), readPool.sources()));

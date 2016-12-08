@@ -52,7 +52,7 @@ class AlleleBalanceTable extends IntegralAbstract {
 
     final int[][] newBinCount = new int[newLength][];
     System.arraycopy(mBinCount, 0, newBinCount, 0, mLength);
-    for (int i = mLength; i < newLength; i++) {
+    for (int i = mLength; i < newLength; ++i) {
       newBinCount[i] = new int[i + 1];
     }
     mCoverageCount = newCoverageCount;
@@ -71,9 +71,9 @@ class AlleleBalanceTable extends IntegralAbstract {
   @Override
   public synchronized void toString(StringBuilder sb) {
     sb.append("#Coverage" + SEP + "R" + SEP + "X" + SEP + "Count" + SEP + "Total").append(LS);
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       final int covCnt = mCoverageCount[i];
-      for (int j = 0; j <= i; j++) {
+      for (int j = 0; j <= i; ++j) {
         final int binCnt = mBinCount[i][j];
         if (binCnt == 0) {
           continue;
@@ -87,11 +87,11 @@ class AlleleBalanceTable extends IntegralAbstract {
   @Override
   public synchronized boolean globalIntegrity() {
     integrity();
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       Exam.assertTrue(mCoverageCount[i] >= 0);
       Exam.assertEquals(i + 1, mBinCount[i].length);
       int count = 0;
-      for (int j = 0; j < mBinCount[i].length; j++) {
+      for (int j = 0; j < mBinCount[i].length; ++j) {
         count += mBinCount[i][j];
       }
       Exam.assertEquals(mCoverageCount[i], count);

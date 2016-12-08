@@ -496,7 +496,7 @@ public class CalibratorTest extends TestCase {
     sam2.setMappingQuality(1);
     sam2.setFlags(67);
     sam2.setAttribute("RG", "rg1");
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       cal.processRead(sam1);
       cal.processRead(sam1);
       cal.processRead(sam2);
@@ -596,7 +596,7 @@ public class CalibratorTest extends TestCase {
     @Override
     protected CalibrationStats findStats(CalibratorCigarParser currPos) throws BadSuperCigarException {
       assertEquals("at pos " + mPos, mExp[mPos], currPos.getCurrentQuality());
-      mPos++;
+      ++mPos;
       return new CalibrationStats(null);
     }
   }
@@ -812,7 +812,7 @@ public class CalibratorTest extends TestCase {
   public void checkLengthMap(MockSequencesReader reader) throws IOException {
     final Map<String, Integer> names = Calibrator.getNonNSequenceLengthMap(reader, (RegionRestriction) null);
     assertEquals(10, names.size());
-    for (int i = 0; i < names.size(); i++) {
+    for (int i = 0; i < names.size(); ++i) {
       final String key = "seq" + i;
       assertTrue(names.containsKey(key));
       assertEquals(i, (int) names.get(key));

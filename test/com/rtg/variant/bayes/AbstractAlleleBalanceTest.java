@@ -30,7 +30,7 @@ public abstract class AbstractAlleleBalanceTest extends TestCase {
   int findIndexByName(String name) {
     final Description description = getDescriptionCommon();
     final Hypotheses<?> hypotheses = getDescriptionHypothesesCommon(description);
-    for (int i = 0; i < hypotheses.size(); i++) {
+    for (int i = 0; i < hypotheses.size(); ++i) {
       if (hypotheses.name(i).equals(name)) {
         return i;
       }

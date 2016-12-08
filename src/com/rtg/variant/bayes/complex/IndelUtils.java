@@ -34,10 +34,10 @@ public final class IndelUtils {
     final double[] res = new double[prob.length];
     res[0] = 1.0 - scale;
     double norm = 0.0;
-    for (int i = 1; i < prob.length; i++) {
+    for (int i = 1; i < prob.length; ++i) {
       norm += prob[i];
     }
-    for (int i = 1; i < prob.length; i++) {
+    for (int i = 1; i < prob.length; ++i) {
       res[i] = prob[i] * scale / norm;
     }
     assert Exam.assertDistribution(res);
@@ -55,7 +55,7 @@ public final class IndelUtils {
     final double[] res = new double[prob.length];
     res[0] = 0.0;
     final double norm = 1.0 - prob[0];
-    for (int i = 1; i < prob.length; i++) {
+    for (int i = 1; i < prob.length; ++i) {
       res[i] = prob[i] / norm;
     }
     assert Exam.assertDistribution(res);

@@ -34,7 +34,7 @@ public class DoubleCounter {
    * Increment the counter.
    */
   public void increment() {
-    mCount++;
+    ++mCount;
   }
 
   /**

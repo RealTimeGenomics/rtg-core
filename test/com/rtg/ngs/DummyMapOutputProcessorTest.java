@@ -115,7 +115,7 @@ public class DummyMapOutputProcessorTest extends TestCase {
 //
 //      Interval[] loci = AbstractMulticoreFilterConcat.groupRegions(regions.size(), AbstractMulticoreFilterConcat.numberIntermediateFiles(regions.size(), 16));
 //      UnmappedSamAlignmentWriter[] writers = new UnmappedSamAlignmentWriter[loci.length];
-//      for (int i = 0; i < loci.length; i++) {
+//      for (int i = 0; i < loci.length; ++i) {
 //        writers[i] = new UnmappedSamAlignmentWriter(tdir, new SAMFileHeader());
 //      }
 //      final Map<Long,RangeList<UnmappedSamAlignmentWriter>> longRangeSearchMap = AbstractMapOutputProcessor.getUnmappedWriterReferenceLookup(searchParam, regions, loci, writers, new UnmappedSamAlignmentWriter(tdir, new SAMFileHeader()));

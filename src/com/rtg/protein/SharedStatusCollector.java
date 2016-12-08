@@ -68,7 +68,7 @@ public class SharedStatusCollector {
     mStatistics = statistics;
     mReadCacheProtein = new byte[numberOfReads * TranslatedFrame.values().length][];
     mThreadLocks = new Object[NUMBER_OF_THREAD_LOCKS];
-    for (int i = 0; i < mThreadLocks.length; i++) {
+    for (int i = 0; i < mThreadLocks.length; ++i) {
       mThreadLocks[i] = new Object();
     }
   }
@@ -100,7 +100,7 @@ public class SharedStatusCollector {
   }
 
   void writeUnmapped(final OutputStream unmapped, PrereadNamesInterface readsNames, long readIdOffset) throws IOException {
-    for (int i = 0; i < mReadsStatus.length; i++) {
+    for (int i = 0; i < mReadsStatus.length; ++i) {
       final byte status = mReadsStatus[i];
       if ((status & RESULT_WRITTEN) == RESULT_WRITTEN) {
         continue;

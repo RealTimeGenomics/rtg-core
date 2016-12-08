@@ -39,11 +39,11 @@ public class ProbabilityArray extends IntegralAbstract {
     }
     mProb = new double[probLn.length];
     if (sum == Double.NEGATIVE_INFINITY) {
-      for (int i = 0; i < probLn.length; i++) {
+      for (int i = 0; i < probLn.length; ++i) {
         mProb[i] = 0.25;
       }
     } else {
-      for (int i = 0; i < probLn.length; i++) {
+      for (int i = 0; i < probLn.length; ++i) {
         final double d = probLn[i] - sum;
         mProb[i] = Math.exp(d);
       }
@@ -65,7 +65,7 @@ public class ProbabilityArray extends IntegralAbstract {
   public void toString(final StringBuilder sb) {
     //sb.append("ProbabilityArray");
     sb.append("[");
-    for (int i = 0; i < mProb.length; i++) {
+    for (int i = 0; i < mProb.length; ++i) {
       if (i > 0) {
         sb.append(" ");
       }

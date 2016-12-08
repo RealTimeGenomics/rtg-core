@@ -79,21 +79,21 @@ public class ProteinNgsHashLoop implements NgsHashLoop {
     long first = start;
     long numberJobs = 0;
     // Horrible method for calculating the number of jobs ahead of time by replicating the loop
-    for (long templateId = start, i = 0; i < end - start; i++, templateId++) {
+    for (long templateId = start, i = 0; i < end - start; ++i, ++templateId) {
       currentLength += sequenceLengths[(int) i];
       if (currentLength >= ntCount / maxSequences) {
-        numberJobs++;
+        ++numberJobs;
         currentLength = 0;
         first = templateId + 1;
       }
     }
     if (first < end) {
-      numberJobs++;
+      ++numberJobs;
     }
     pool.enableBasicProgress(numberJobs);
     currentLength = 0;
     first = start;
-    for (long templateId = start, i = 0; i < end - start; i++, templateId++) {
+    for (long templateId = start, i = 0; i < end - start; ++i, ++templateId) {
       currentLength += sequenceLengths[(int) i];
       if (currentLength >= ntCount / maxSequences) {
         schedule(params, (ProteinMask) hf, t0, pool, first, templateId);

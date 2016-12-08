@@ -25,7 +25,7 @@ public abstract class AbstractKmer extends IntegralAbstract implements Kmer {
 
   @Override
   public int compareTo(Kmer that) {
-    for (int i = 0; i < Math.min(this.length(), that.length()); i++) {
+    for (int i = 0; i < Math.min(this.length(), that.length()); ++i) {
       final byte thisNt = this.nt(i);
       final byte thatNt = that.nt(i);
       final int delta = thisNt - thatNt;
@@ -39,7 +39,7 @@ public abstract class AbstractKmer extends IntegralAbstract implements Kmer {
   @Override
   public int hashCode() {
     int hash = 31;
-    for (int i = 0; i < length(); i++) {
+    for (int i = 0; i < length(); ++i) {
       hash = hash * 1000000007 + nt(i);
     }
     return hash;
@@ -58,7 +58,7 @@ public abstract class AbstractKmer extends IntegralAbstract implements Kmer {
     if (this.length() != that.length()) {
       return false;
     }
-    for (int i = 0; i < this.length(); i++) {
+    for (int i = 0; i < this.length(); ++i) {
       if (this.nt(i) != that.nt(i)) {
         return false;
       }
@@ -68,7 +68,7 @@ public abstract class AbstractKmer extends IntegralAbstract implements Kmer {
 
   @Override
   public boolean integrity() {
-    for (int i = 0; i < length(); i++) {
+    for (int i = 0; i < length(); ++i) {
       Exam.assertTrue(0 <= nt(i) && nt(i) <= 4);
     }
     return true;
@@ -78,7 +78,7 @@ public abstract class AbstractKmer extends IntegralAbstract implements Kmer {
   public void toString(StringBuilder sb) {
     //sb.append("k[" + length() + "]");
     final char[] valueChars = DNA.valueChars();
-    for (int i = 0; i < length(); i++) {
+    for (int i = 0; i < length(); ++i) {
       final byte nt = nt(i);
       sb.append(valueChars[nt]);
     }

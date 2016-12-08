@@ -37,7 +37,7 @@ class MockJob extends Job<ExampleJobId> {
   public Result run() {
     final StringBuilder sb = new StringBuilder();
     sb.append(id().toString()).append("(");
-    for (int i = 0; i < mArguments.length; i++) {
+    for (int i = 0; i < mArguments.length; ++i) {
       if (i > 0) {
         sb.append(", ");
       }

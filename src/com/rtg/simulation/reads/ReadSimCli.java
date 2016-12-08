@@ -396,7 +396,7 @@ public class ReadSimCli extends LoggedCli {
           final PrereadNamesInterface names = reader.names();
           final int[] lengths = reader.sequenceLengths(0, numSeq);
           double sum = 0;
-          for (int k = 0; k < numSeq; k++) {
+          for (int k = 0; k < numSeq; ++k) {
             final Double p = selectionMap.get(names.name(k));
             if (p != null) {
               sum += p;
@@ -479,9 +479,9 @@ public class ReadSimCli extends LoggedCli {
     final int total = regionSequenceNames.size();
     final PrereadNamesInterface names = reader.names();
     int removed = 0;
-    for (long k = 0; k < names.length(); k++) {
+    for (long k = 0; k < names.length(); ++k) {
       if (regionSequenceNames.remove(names.name(k))) {
-        removed++;
+        ++removed;
       }
     }
     if (removed == 0) {

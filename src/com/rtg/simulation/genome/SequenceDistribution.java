@@ -29,7 +29,7 @@ public class SequenceDistribution {
   public SequenceDistribution(double[] nonCumulative) {
     mCumulative = new double[nonCumulative.length];
     double sum = 0;
-    for (int i = 0; i < nonCumulative.length; i++) {
+    for (int i = 0; i < nonCumulative.length; ++i) {
       sum += nonCumulative[i];
       mCumulative[i] = sum;
     }
@@ -43,7 +43,7 @@ public class SequenceDistribution {
   public int selectSequence(double rand) {
     int seqId = 0;
     while (mCumulative[seqId] < rand) {
-      seqId++;
+      ++seqId;
     }
     return seqId;
   }
@@ -76,7 +76,7 @@ public class SequenceDistribution {
       total += length;
     }
     final double[] nonCumulative = new double[lengths.length];
-    for (int i = 0; i < lengths.length; i++) {
+    for (int i = 0; i < lengths.length; ++i) {
       nonCumulative[i] = (double) lengths[i] / (double) total;
     }
     return new SequenceDistribution(nonCumulative);

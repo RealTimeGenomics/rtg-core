@@ -40,7 +40,7 @@ public class PathArray extends IntegralAbstract implements Path {
    */
   public PathArray(List<Long> contigs) {
     mContigs = new long[contigs.size()];
-    for (int i = 0; i < mContigs.length; i++) {
+    for (int i = 0; i < mContigs.length; ++i) {
       mContigs[i] = contigs.get(i);
     }
   }
@@ -60,7 +60,7 @@ public class PathArray extends IntegralAbstract implements Path {
     if (contigId == 0) {
       throw new IllegalArgumentException();
     }
-    for (int i = 0; i < mContigs.length; i++) {
+    for (int i = 0; i < mContigs.length; ++i) {
       if (mContigs[i] == contigId) {
         return i;
       }
@@ -95,7 +95,7 @@ public class PathArray extends IntegralAbstract implements Path {
    */
   public static List<Long> toList(Path p) {
     final List<Long> result = new ArrayList<>();
-    for (int i = 0; i < p.length(); i++) {
+    for (int i = 0; i < p.length(); ++i) {
       result.add(p.contig(i));
     }
     return result;

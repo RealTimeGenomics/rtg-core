@@ -29,7 +29,7 @@ public class AssembleTaskTest extends TestCase {
     final File tmpDir = FileHelper.createTempDirectory();
     try {
       final String[] s = new String[30];
-      for (int i = 0; i < s.length; i++) {
+      for (int i = 0; i < s.length; ++i) {
         s[i] = "ACGGGACATACGTGTGAGATACGATAGCACAGGACGTGATGACGTCCCGTCG";
       }
       final File input =  ReaderTestUtils.getDNADir(ReaderTestUtils.fasta(s));

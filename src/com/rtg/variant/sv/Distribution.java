@@ -86,7 +86,7 @@ public abstract class Distribution extends IntegralAbstract {
 
   String dump() {
     final StringBuilder sb = new StringBuilder();
-    for (int i = lo(); i < hi(); i++) {
+    for (int i = lo(); i < hi(); ++i) {
       sb.append(i).append(" ").append(Utils.realFormat(get(i), 4)).append(StringUtils.LS);
     }
     return sb.toString();
@@ -103,7 +103,7 @@ public abstract class Distribution extends IntegralAbstract {
   @Override
   public boolean globalIntegrity() {
     integrity();
-    for (int i = lo(); i < hi(); i++) {
+    for (int i = lo(); i < hi(); ++i) {
       final double v = getValue(i);
       Exam.assertTrue("" + v, !Double.isNaN(v) && !Double.isInfinite(v));
     }

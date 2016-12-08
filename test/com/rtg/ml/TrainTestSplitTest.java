@@ -24,10 +24,10 @@ public class TrainTestSplitTest extends TestCase {
 
   static Dataset makeSimpleDataset(int posSize, int negSize) {
     final Dataset d = new Dataset(new Attribute("att1", MlDataType.DOUBLE));
-    for (int i = 0; i < posSize; i++) {
+    for (int i = 0; i < posSize; ++i) {
       d.addInstance(new Instance(new double[]{(double) i}, true));
     }
-    for (int i = 0; i < negSize ; i++) {
+    for (int i = 0; i < negSize ; ++i) {
       d.addInstance(new Instance(new double[]{(double) (i + posSize)}, false));
     }
     return d;
@@ -38,12 +38,12 @@ public class TrainTestSplitTest extends TestCase {
     final Dataset d = new Dataset(new Attribute("X", MlDataType.DOUBLE), new Attribute("Y", MlDataType.DOUBLE));
     //double maxAngle = Math.PI / 2;
     final double maxAngle = Math.PI * 2;
-    for (int i = 0; i < posSize; i++) {
+    for (int i = 0; i < posSize; ++i) {
       final double angle = random.nextDouble() * maxAngle;
       final double radius = random.nextDouble();
       d.addInstance(new Instance(new double[]{radius * Math.cos(angle), radius * Math.sin(angle)}, true));
     }
-    for (int i = 0; i < negSize ; i++) {
+    for (int i = 0; i < negSize ; ++i) {
       final double angle = random.nextDouble() * maxAngle;
       final double radius = 1.0 + random.nextDouble();
       d.addInstance(new Instance(new double[]{radius * Math.cos(angle), radius * Math.sin(angle)}, false));
@@ -54,7 +54,7 @@ public class TrainTestSplitTest extends TestCase {
   public static void nukeData(Dataset data, double errorRate) {
     final PortableRandom rand = new PortableRandom(42);
     for (Instance inst : data.getInstances()) {
-      for (int i = 0; i < inst.instance().length; i++) {
+      for (int i = 0; i < inst.instance().length; ++i) {
         if (rand.nextDouble() < errorRate) {
           inst.instance()[i] = Double.NaN;
         }

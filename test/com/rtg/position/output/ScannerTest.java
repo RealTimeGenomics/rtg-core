@@ -100,7 +100,7 @@ public class ScannerTest extends TestCase {
   }
 
   private void checkRange(final int lo, final int hi, final String expected) {
-    for (int i = -5; i <= 5; i++) {
+    for (int i = -5; i <= 5; ++i) {
       final int j = 11 * i;
       check(10, 20, lo + j, hi + j, expected);
     }

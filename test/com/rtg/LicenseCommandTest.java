@@ -40,7 +40,7 @@ public class LicenseCommandTest extends TestCase {
       }
     }
     final StringBuilder extraSpaces = new StringBuilder();
-    for (int i = 0; i < longestUsageLength - "Command name".length(); i++) {
+    for (int i = 0; i < longestUsageLength - "Command name".length(); ++i) {
       extraSpaces.append(" ");
     }
     assertTrue(result.contains("\tCommand name" + extraSpaces + " \tLicensed?         Release Level" + StringUtils.LS));
@@ -56,7 +56,7 @@ public class LicenseCommandTest extends TestCase {
 
   private static boolean contains(String haystack, String needle, boolean licensed, ReleaseLevel releaseLevel, int longestUsageLength) {
     final StringBuilder extraSpaces = new StringBuilder();
-    for (int i = 0; i < longestUsageLength - needle.length(); i++) {
+    for (int i = 0; i < longestUsageLength - needle.length(); ++i) {
       extraSpaces.append(" ");
     }
     final String rLevel;

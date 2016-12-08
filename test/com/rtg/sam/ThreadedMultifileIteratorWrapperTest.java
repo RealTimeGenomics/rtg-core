@@ -61,7 +61,7 @@ public class ThreadedMultifileIteratorWrapperTest extends TestCase {
         int count = 0;
         while (it.hasNext()) {
           it.next();
-          count++;
+          ++count;
         }
         assertEquals(2, count);
       }

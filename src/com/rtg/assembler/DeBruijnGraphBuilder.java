@@ -129,7 +129,7 @@ public class DeBruijnGraphBuilder {
 
   static int computeThreshold(final Histogram histogram) {
     Diagnostic.info("Hash frequency histogram: " + histogram.toString());
-    for (int i = 2; i < histogram.getLength(); i++) {
+    for (int i = 2; i < histogram.getLength(); ++i) {
       if (histogram.getValue(i) > histogram.getValue(i - 1)) {
         // Empirically determined on E. faecalis
         return Math.max(1, (i - 1) / 2);
@@ -175,24 +175,24 @@ public class DeBruijnGraphBuilder {
         final long graphId = mContigGraph.addContig(pc);
         mContigGraph.setKmerFreq(graphId, pc.mKmerCount);
         //preContigMap.put(id, pc);
-        id++;
+        ++id;
       }
     }
     final Map<Kmer, Long> contigEnds = new HashMap<>();
-    for (long i = 1; i <= mContigGraph.numberContigs(); i++) {
+    for (long i = 1; i <= mContigGraph.numberContigs(); ++i) {
       final Kmer startKmer = startKmer(mContigGraph.contig(i));
       contigEnds.put(startKmer, i);
       final Kmer endKmer = endKmer(mContigGraph.contig(i));
       contigEnds.put(endKmer, i);
     }
-    for (long i = 1; i <= mContigGraph.numberContigs(); i++) {
+    for (long i = 1; i <= mContigGraph.numberContigs(); ++i) {
       final  Contig contig = mContigGraph.contig(i);
       // We ensure we only add each link once by only doing it for the smaller id out of source & destination
       // The condition is >= for the end link and > for the start link on purpose. This is to prevent cyclical contigs
       // from linking to themselves repeatedly.
       final Kmer startKmer = startKmer(contig);
       final Kmer endKmer = endKmer(contig);
-      for (byte b = (byte) DNA.A.ordinal(); b <= DNA.T.ordinal(); b++) {
+      for (byte b = (byte) DNA.A.ordinal(); b <= DNA.T.ordinal(); ++b) {
         final List<Long> links = getLinks(true, endKmer.successor(b), contigEnds);
         for (final long link : links) {
           if (Math.abs(link) >= i) {
@@ -202,7 +202,7 @@ public class DeBruijnGraphBuilder {
         }
       }
 
-      for (byte b = (byte) DNA.A.ordinal(); b <= DNA.T.ordinal(); b++) {
+      for (byte b = (byte) DNA.A.ordinal(); b <= DNA.T.ordinal(); ++b) {
         final List<Long> links = getLinks(false, startKmer.predecessor(b), contigEnds);
         for (final long link : links) {
           if (Math.abs(link) > i) {
@@ -293,7 +293,7 @@ public class DeBruijnGraphBuilder {
    */
   Kmer uniqNext(Kmer hash, boolean direction) {
     Kmer next = null;
-    for (byte b = (byte) DNA.A.ordinal(); b <= DNA.T.ordinal(); b++) {
+    for (byte b = (byte) DNA.A.ordinal(); b <= DNA.T.ordinal(); ++b) {
       final Kmer successor = direction ? hash.successor(b) : hash.predecessor(b);
       if (next != null && mDeBruijnGraph.contains(successor)) {
         return null;
@@ -317,10 +317,10 @@ public class DeBruijnGraphBuilder {
   Pair<IntChunks, IntChunks> deleteTips(Pair<IntChunks, IntChunks> tipValues) {
     int tipCount = 0;
     long tipLength = 0;
-    for (long i = 1; i <= mContigGraph.numberContigs(); i++) {
+    for (long i = 1; i <= mContigGraph.numberContigs(); ++i) {
       if (!mContigGraph.contigDeleted(i) && !tipValueOk(i, tipValues.getA(), tipValues.getB())) {
         tipLength += mContigGraph.contigLength(i);
-        tipCount++;
+        ++tipCount;
         mContigGraph.deleteContig(i);
       }
     }
@@ -337,7 +337,7 @@ public class DeBruijnGraphBuilder {
     int changed = 1;
     while (changed > 0) {
       changed = 0;
-      for (long i = 1; i <= mContigGraph.numberContigs(); i++) {
+      for (long i = 1; i <= mContigGraph.numberContigs(); ++i) {
         changed += updateTipValue(i, startTips, endTips) ? 1 : 0;
       }
     }
@@ -373,7 +373,7 @@ public class DeBruijnGraphBuilder {
       final int index = pathsIterator.contigIndex();
       final long linkedContig = mContigGraph.pathContig(pathId, 1 - index);
       if (index == 0) {
-        endCount++;
+        ++endCount;
         final CommonIndex connected = linkedContig > 0 ? endTips : startTips;
         final long value = connected.get(Math.abs(linkedContig));
         if (value == 0) {
@@ -382,7 +382,7 @@ public class DeBruijnGraphBuilder {
           endTip = (int) Math.max(endTip, value);
         }
       } else {
-        startCount++;
+        ++startCount;
         final CommonIndex connected = linkedContig > 0 ? startTips : endTips;
         final long value = connected.get(Math.abs(linkedContig));
         if (value == 0) {

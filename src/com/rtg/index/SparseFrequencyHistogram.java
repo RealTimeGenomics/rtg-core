@@ -81,7 +81,7 @@ public final class SparseFrequencyHistogram {
       }
       mFrequencies[mUsed] = frequency;
       mLast = frequency;
-      mUsed++;
+      ++mUsed;
     }
     mCounts[mUsed - 1] += count;
   }
@@ -135,19 +135,19 @@ public final class SparseFrequencyHistogram {
       final int frequencyB = histogramB.getFrequency(b);
       if (frequencyA <= frequencyB) {
         histogram.add(frequencyA, histogramA.getCount(a));
-        a++;
+        ++a;
       } else {
         histogram.add(frequencyB, histogramB.getCount(b));
-        b++;
+        ++b;
       }
     }
     while (a < histogramA.length()) {
       histogram.add(histogramA.getFrequency(a), histogramA.getCount(a));
-      a++;
+      ++a;
     }
     while (b < histogramB.length()) {
       histogram.add(histogramB.getFrequency(b), histogramB.getCount(b));
-      b++;
+      ++b;
     }
     return histogram;
   }
@@ -167,7 +167,7 @@ public final class SparseFrequencyHistogram {
       final int freq = freqDist[i];
       final int start = i;
       while (i < numUsed && freq == freqDist[i]) {
-        i++;
+        ++i;
       }
       histogram.add(freq, i - start);
     }

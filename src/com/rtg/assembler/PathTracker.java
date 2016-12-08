@@ -64,7 +64,7 @@ public class PathTracker {
   List<Long> normalize(List<Long> path) {
     boolean forward = true;
     final int size = path.size();
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       long f = path.get(i);
       f = f < 0 && mPalindromes.isPalindrome(f) ? Math.abs(f) : f;
       long r = -path.get(size - i - 1);
@@ -85,7 +85,7 @@ public class PathTracker {
         result.add(f);
       }
     } else {
-      for (int i = size - 1; i >= 0; i--) {
+      for (int i = size - 1; i >= 0; --i) {
         long f = -path.get(i);
         f = f < 0 && mPalindromes.isPalindrome(f) ? Math.abs(f) : f;
         result.add(f);
@@ -97,7 +97,7 @@ public class PathTracker {
 
     @Override
     public int compare(List<Long> o1, List<Long> o2) {
-      for (int i = 0; i < o1.size() && i < o2.size(); i++) {
+      for (int i = 0; i < o1.size() && i < o2.size(); ++i) {
         final int compare =  o1.get(i).compareTo(o2.get(i));
         if (compare != 0) {
           return compare;

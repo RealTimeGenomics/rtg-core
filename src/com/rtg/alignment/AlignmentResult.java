@@ -78,7 +78,7 @@ public class AlignmentResult {
       if (cgOverlapSize > 0 && action != ActionsHelper.CG_OVERLAP_IN_READ) {
         // start/continue skipping over cgOverlapSize nucleotides of the TEMPLATE after the overlap.
         if (action != ActionsHelper.INSERTION_INTO_REFERENCE) {
-          cgOverlapSize--; // count down in template positions
+          --cgOverlapSize; // count down in template positions
         }
         if (action != ActionsHelper.DELETION_FROM_REFERENCE && action != ActionsHelper.CG_GAP_IN_READ) {
           readPos += direction;
@@ -95,7 +95,7 @@ public class AlignmentResult {
           readPos += direction;
           break;
         case ActionsHelper.CG_OVERLAP_IN_READ:
-          cgOverlapSize++;
+          ++cgOverlapSize;
           break;
         case ActionsHelper.CG_GAP_IN_READ:
         case ActionsHelper.DELETION_FROM_REFERENCE:
@@ -202,13 +202,13 @@ public class AlignmentResult {
     while (iter.hasNext() && tempPos < mTemplate.length) {
       final int action = iter.next();
       if (action == ActionsHelper.DELETION_FROM_REFERENCE || action == ActionsHelper.MISMATCH || action == ActionsHelper.INSERTION_INTO_REFERENCE) {
-        mismatches++;
+        ++mismatches;
       }
       if (action != ActionsHelper.INSERTION_INTO_REFERENCE) {
-        tempPos++;
+        ++tempPos;
       }
       if (action != ActionsHelper.DELETION_FROM_REFERENCE) {
-        readPos++;
+        ++readPos;
       }
     }
     if (readPos < mRead.length) {
@@ -216,7 +216,7 @@ public class AlignmentResult {
       while (iter.hasNext()) {
         final int action = iter.next();
         if (action != ActionsHelper.INSERTION_INTO_REFERENCE) {
-          mismatches++;
+          ++mismatches;
         }
       }
     }

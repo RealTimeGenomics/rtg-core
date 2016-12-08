@@ -131,7 +131,7 @@ public class PureSomaticCallerTest extends AbstractSomaticCallerTest<Description
     final Evidence eva = new EvidenceQ(hypotheses.description(), 0, 0, 0, 0.001, 0.001, true, false, false, false);
     final Evidence evc = new EvidenceQ(hypotheses.description(), 1, 0, 0, 0.001, 0.001, true, false, false, false);
 
-    for (int coverage = 0; coverage < 10; coverage++) {
+    for (int coverage = 0; coverage < 10; ++coverage) {
       model0.increment(eva);
       model0.increment(eva);
       model1.increment(evc);

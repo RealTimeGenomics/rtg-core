@@ -56,7 +56,7 @@ public class UnknownBaseReadWriter implements ReadWriter {
     if (mData == null || length > mData.length) {
       mData = new byte[length];
     }
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       if (mRandom.nextDouble() < mRate) {
         mData[i] = 0;
       } else {

@@ -241,7 +241,7 @@ public class GenomePriorParams extends ObjectParams implements Integrity {
     final double[] prior = new double[4];
     int cnt = 0;
     for (final Map.Entry<String, Double> re : map.entrySet()) {
-      cnt++;
+      ++cnt;
       final int rei = DNA.valueOf(re.getKey()).ordinal() - 1;
       final double ra = re.getValue();
       prior[rei] = ra;

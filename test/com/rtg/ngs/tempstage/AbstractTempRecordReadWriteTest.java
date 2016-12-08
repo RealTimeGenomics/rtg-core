@@ -29,7 +29,7 @@ public abstract class AbstractTempRecordReadWriteTest extends TestCase {
   public void testReadWrite() throws IOException {
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     final TempRecordWriter wr = getWriter(baos, new TempRecordReader.RecordFactory(true, true, true, true));
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 30; ++i) {
       final BinaryTempFileRecord rec = new BinaryTempFileRecord(true, true, true, true);
       rec.setStartPosition(i);
       rec.setReadDeltaString("foo".getBytes());
@@ -50,7 +50,7 @@ public abstract class AbstractTempRecordReadWriteTest extends TestCase {
     wr.close();
     final ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
     final TempRecordReader reader = getReader(bais, new TempRecordReader.RecordFactory(true, true, true, true));
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 30; ++i) {
       final BinaryTempFileRecord rec = reader.readRecord();
       assertEquals(rec.getStartPosition(), i);
       assertEquals("foo", new String(rec.getReadDeltaString()));

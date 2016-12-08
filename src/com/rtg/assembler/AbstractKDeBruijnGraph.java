@@ -135,7 +135,7 @@ public abstract class AbstractKDeBruijnGraph implements DeBruijnGraph {
 
     @Override
     protected void step() {
-      mNext++;
+      ++mNext;
     }
 
     @Override

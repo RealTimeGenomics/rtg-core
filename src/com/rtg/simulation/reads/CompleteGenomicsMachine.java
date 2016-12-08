@@ -42,7 +42,7 @@ public abstract class CompleteGenomicsMachine extends AbstractMachine {
   }
 
   protected void reverse() {
-    for (int left = 0, right = mReadBytesUsed - 1; left < right; left++, right--) {
+    for (int left = 0, right = mReadBytesUsed - 1; left < right; ++left, --right) {
       // exchange the first and last
       final byte temp = mReadBytes[left];
       mReadBytes[left] = mReadBytes[right];

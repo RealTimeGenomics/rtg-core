@@ -45,28 +45,28 @@ public final class SimilaritySorter extends IntegralAbstract {
   public boolean globalIntegrity() {
     integrity();
     final int[] sId = new int[mCurr];
-    for (int i = 0; i < mCurr; i++) {
+    for (int i = 0; i < mCurr; ++i) {
       Exam.assertTrue(mSortedIds[i] >= 0);
       sId[i] = mSortedIds[i];
     }
     if (mSorted) {
       //original array in order
-      for (int i = 1; i < mCurr; i++) {
+      for (int i = 1; i < mCurr; ++i) {
         Exam.assertTrue(mSortedIds[i - 1] <= mSortedIds[i]);
       }
       final int[] sNo = new int[mNumNoDupl];
-      for (int i = 0; i < mNumNoDupl; i++) {
+      for (int i = 0; i < mNumNoDupl; ++i) {
         Exam.assertTrue(mNoDupl[i] >= 0);
         sNo[i] = mNoDupl[i];
         //make sure everything in no duplicates is in original
         Exam.assertTrue(Arrays.binarySearch(sId, mNoDupl[i]) >= 0);
       }
       //no duplicates in order
-      for (int i = 1; i < mNumNoDupl; i++) {
+      for (int i = 1; i < mNumNoDupl; ++i) {
         Exam.assertTrue(mNoDupl[i - 1] < mNoDupl[i]);
       }
       //make sure every original occurs in the no duplicates
-      for (int i = 0; i < mCurr; i++) {
+      for (int i = 0; i < mCurr; ++i) {
         Exam.assertTrue(String.valueOf(mSortedIds[i]), Arrays.binarySearch(sNo, mSortedIds[i]) >= 0);
       }
     }
@@ -107,7 +107,7 @@ public final class SimilaritySorter extends IntegralAbstract {
   public void add(final int seqId) {
     assert !mSorted;
     mSortedIds[mCurr] = seqId;
-    mCurr++;
+    ++mCurr;
   }
 
   /**
@@ -126,7 +126,7 @@ public final class SimilaritySorter extends IntegralAbstract {
   public void similarity(final SimilarityMatrix matrix) {
     Arrays.sort(mSortedIds, 0, mCurr);
 //    System.err.print("[");
-//    for (int i = 0; i < mCurr; i++) {
+//    for (int i = 0; i < mCurr; ++i) {
 //      System.err.print(mSortedIds[i] + " ");
 //    }
 //    System.err.println("]");
@@ -134,10 +134,10 @@ public final class SimilaritySorter extends IntegralAbstract {
     //remove duplicates and count them
     int to = -1;
     int last = -1;
-    for (int from = 0; from < mCurr; from++) {
+    for (int from = 0; from < mCurr; ++from) {
       final int fromV = mSortedIds[from];
       if (fromV != last) {
-        to++;
+        ++to;
         mNoDupl[to] = fromV;
         mCounts[to] = 0;
       }
@@ -147,8 +147,8 @@ public final class SimilaritySorter extends IntegralAbstract {
     mNumNoDupl = to + 1;
 
     //put counts into similarity matrix
-    for (int j = 0; j < mNumNoDupl; j++) {
-      for (int k = j; k < mNumNoDupl; k++) {
+    for (int j = 0; j < mNumNoDupl; ++j) {
+      for (int k = j; k < mNumNoDupl; ++k) {
         if (mSingleton) {
           matrix.increment(mNoDupl[j], mNoDupl[k]);
         } else {
@@ -162,17 +162,17 @@ public final class SimilaritySorter extends IntegralAbstract {
   @Override
   public void toString(final StringBuilder sb) {
     sb.append("SimilaritySorter ").append(mCurr).append(":").append(mLength).append(" ").append(mSorted ? "sorted" : "unsorted").append(StringUtils.LS);
-    for (int i = 0; i < mCurr; i++) {
+    for (int i = 0; i < mCurr; ++i) {
       sb.append(mSortedIds[i]).append(" ");
     }
     sb.append(StringUtils.LS);
     if (mSorted) {
       sb.append("duplicates removed ").append(mNumNoDupl).append(StringUtils.LS);
-      for (int i = 0; i < mNumNoDupl; i++) {
+      for (int i = 0; i < mNumNoDupl; ++i) {
         sb.append(mNoDupl[i]).append(" ");
       }
       sb.append(StringUtils.LS);
-      for (int i = 0; i < mNumNoDupl; i++) {
+      for (int i = 0; i < mNumNoDupl; ++i) {
         sb.append(mCounts[i]).append(" ");
       }
       sb.append(StringUtils.LS);

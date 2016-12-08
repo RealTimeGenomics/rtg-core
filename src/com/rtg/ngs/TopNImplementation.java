@@ -105,11 +105,11 @@ public class TopNImplementation implements UptoNStore {
     final StringBuilder sb = new StringBuilder();
     sb.append("Histogram for TopN: ").append(LS);
     final long[] hist = new long[mN + 1];
-    for (int i = 0; i < mResultCounts.length(); i++) {
+    for (int i = 0; i < mResultCounts.length(); ++i) {
       hist[(int) mBitPackHelperRead.getField(RESULT_COUNT_FIELD_ID, mResultCounts.get(i))]++;
     }
     long tot = 0;
-    for (int i = 0; i < hist.length; i++) {
+    for (int i = 0; i < hist.length; ++i) {
       sb.append(i).append(": ").append(hist[i]).append(LS);
       if (i > 0) {
         tot += hist[i] * i;
@@ -202,7 +202,7 @@ public class TopNImplementation implements UptoNStore {
       ret = NO_RESULT;
     }
     //find insert position, shifting as we go
-    for (; i > resultIndex; i--) {
+    for (; i > resultIndex; --i) {
       final long current = mTopNRes.get(i - 1);
       if (insertScore >= mBitPackHelperRecord.getField(SCORE_FIELD_ID, current)) {
         break;
@@ -222,7 +222,7 @@ public class TopNImplementation implements UptoNStore {
     final long worstScoreCount = mBitPackHelperRead.getField(WORST_SCORE_COUNT_FIELD_ID, packedCount);
     final long worstScore = worstScoreCount > 0 ? mBitPackHelperRead.getField(WORST_SCORE_FIELD_ID, packedCount) : Integer.MAX_VALUE;
 
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; ++i) {
       final long result = mTopNRes.get(resultIndex + i);
       final int scoreIndel = (int) mBitPackHelperRecord.getField(SCORE_FIELD_ID, result);
       if (scoreIndel >= worstScore) {

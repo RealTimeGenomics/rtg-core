@@ -97,7 +97,7 @@ public class SparseFrequencyHistogramTest extends TestCase {
     final SparseFrequencyHistogram histBA = SparseFrequencyHistogram.merge(histB, histA);
 
     assertEquals(histAB.length(), histBA.length());
-    for (int i = 0; i < histAB.length(); i++) {
+    for (int i = 0; i < histAB.length(); ++i) {
       assertEquals(histAB.getFrequency(i), histBA.getFrequency(i));
       assertEquals(histAB.getCount(i), histBA.getCount(i));
     }

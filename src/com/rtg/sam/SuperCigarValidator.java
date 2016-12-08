@@ -196,7 +196,7 @@ public class SuperCigarValidator extends SuperCigarParser {
       }
       nt = mIsReverseComplement ? mSdfRead[mSdfRead.length - 1 - getReadPosition()] : mSdfRead[getReadPosition()];
       /*if (nt == DnaUtils.CG_SPACER_VALUE) {
-        mReadPos++;
+        ++mReadPos;
       } else*/ if (mIsReverseComplement) {
         nt = DNA.complement(nt);
       }
@@ -218,7 +218,7 @@ public class SuperCigarValidator extends SuperCigarParser {
     if (readNt != originalReadNt) {
       setInvalid("SDF read soft clip: " + DnaUtils.getBase(originalReadNt) + " does not match SAM " + SamUtils.CG_READ_DELTA + ": " + DnaUtils.getBase(readNt) + ", " + mSamRecord.getSAMString().trim());
     }
-    mAlignmentScore++;
+    ++mAlignmentScore;
   }
 
   @Override
@@ -227,7 +227,7 @@ public class SuperCigarValidator extends SuperCigarParser {
       return;
     }
 
-    mOverlapTemplate--;
+    --mOverlapTemplate;
 //    System.err.println("Template overlap...");
 //    if (mXQField == null) {
 //      setInvalid("Overlap described but no " + SamUtils.CG_OVERLAP_QUALITY + " field present in SAM record, " + mSamRecord.getSAMString().trim());
@@ -266,7 +266,7 @@ public class SuperCigarValidator extends SuperCigarParser {
     } else if (readNt != originalReadNt) {
       setInvalid(SamUtils.CG_READ_DELTA + " value: " + DnaUtils.getBase(readNt) + " does not match read value: " + DnaUtils.getBase(originalReadNt) + ", " + mSamRecord.getSAMString().trim());
     }
-    mAlignmentScore++;
+    ++mAlignmentScore;
     readAndTemplate();
   }
 
@@ -315,7 +315,7 @@ public class SuperCigarValidator extends SuperCigarParser {
       setInvalid("SDF and SAM qualities don't match, " + mSamRecord.getSAMString().trim());
     }
 
-    /*for (int i = 0; i < mSdfQualities.length; i++) {
+    /*for (int i = 0; i < mSdfQualities.length; ++i) {
       if (mSdfQualities[i] != mQualities[i] + 33) {
         setInvalid("SDF and Sam qualities don't match, " + mSamRecord.format());
         return;
@@ -344,11 +344,11 @@ public class SuperCigarValidator extends SuperCigarParser {
   private void readAndTemplate() {
     if (mOverlapTemplate < 0) {
       mReusedTemplate = true;
-      mOverlapTemplate++;
+      ++mOverlapTemplate;
     }
   }
 
   private void templateOnlyOp() {
-    mOverlapTemplate++;
+    ++mOverlapTemplate;
   }
 }

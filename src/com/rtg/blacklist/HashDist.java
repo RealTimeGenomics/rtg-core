@@ -68,7 +68,7 @@ public class HashDist extends ParamsTask<HashDistParams, NoStatistics> {
     final long counterSize = counterSizeBase + (long) ((params.hashMapSizeFactor() - 1.0) * counterSizeBase);
     final HashCounter sparseIndex = new HashCounter(counterSize, hashBits, params.threshold());
     final SimpleThreadPool stp = new SimpleThreadPool(params.numberThreads(), "HashToolsThread", true);
-    for (int i = 0; i < params.buildParams().sequences().numberSequences(); i++) {
+    for (int i = 0; i < params.buildParams().sequences().numberSequences(); ++i) {
       final ExactHashFunction exf = new ExactHashFunction(params.buildParams());
       final BuildParams bp = params.buildParams().subSequence(new HashingRegion(i, i + 1));
       final HashLoop subjectHashLoop = new IncrementalHashLoop(params.buildParams().stepSize(), exf, false) {
@@ -145,7 +145,7 @@ public class HashDist extends ParamsTask<HashDistParams, NoStatistics> {
     final char[] ret = new char[windowSize];
     final int mask = (1 << bitsPerThing) - 1;
     long locHash = hash;
-    for (int i = ret.length - 1; i >= 0; i--) {
+    for (int i = ret.length - 1; i >= 0; --i) {
       final int valuePos = 1 + ((int) locHash & mask);
       if (valuePos >= DNA.valueChars().length) {
         throw new ArrayIndexOutOfBoundsException("valuePos was: " + valuePos + " mask: " + mask + " locHash: " + locHash);

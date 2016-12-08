@@ -160,7 +160,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
       int deltaBest = 0;
       int deltaCnt = 0;
       int deltaOtherOff = 0;
-      for (int i = 0; i <= mDeltaLength + 1; i++) {
+      for (int i = 0; i <= mDeltaLength + 1; ++i) {
         final int delta = mDelta[i];
         if (delta > deltaBest) {
           deltaCnt = 1;
@@ -168,7 +168,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
           deltaOff = i - maxShift - 1;
 //          System.err.println("new best delta " + delta + " @ " + deltaOff);
         } else if (delta == deltaBest) {
-          deltaCnt++;
+          ++deltaCnt;
           deltaOtherOff = i - maxShift - 1;
 //          System.err.println("found equal best delta " + delta + " @ " + (i - maxShift - 1));
 //        } else if (delta > 10) {
@@ -227,7 +227,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
     int deltaOff = 0;
     int deltaCnt = 0;
     int deltaBest = 0;
-    for (int i = 0; i <= mDeltaLength + 1; i++) {
+    for (int i = 0; i <= mDeltaLength + 1; ++i) {
       if (i == (maxShift + 1)) { //skip zero offset
         continue;
       }
@@ -239,7 +239,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
 //        System.err.println("current best pos: " + deltaOff);
       } else if (delta == deltaBest) {
 //        System.err.println("equal best pos: " + deltaOff);
-        deltaCnt++;
+        ++deltaCnt;
       }
     }
 //    System.err.println("deltaOff=" + deltaOff + " deltaCnt=" + deltaCnt + " deltaBest=" + deltaBest);
@@ -267,12 +267,12 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
   private int[] tiebreakAmbiguous(int[] actions1, int[] actions2, int maxScore) {
     if (actions1 == null) {
       if (actions2 != null && ActionsHelper.alignmentScore(actions2) < maxScore) {
-        mAmbiguousRescued++;
+        ++mAmbiguousRescued;
       }
       return actions2; //if both are null, this will return null.
     } else if (actions2 == null) {
       if (ActionsHelper.alignmentScore(actions1) < maxScore) {
-        mAmbiguousRescued++;
+        ++mAmbiguousRescued;
       }
       return actions1;
     }
@@ -281,12 +281,12 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
     }
     if (ActionsHelper.alignmentScore(actions2) < ActionsHelper.alignmentScore(actions1)) {
       if (ActionsHelper.alignmentScore(actions2) < maxScore) {
-        mAmbiguousRescued++;
+        ++mAmbiguousRescued;
       }
       return actions2;
     }
     if (ActionsHelper.alignmentScore(actions1) < maxScore) {
-      mAmbiguousRescued++;
+      ++mAmbiguousRescued;
     }
     return actions1;
   }
@@ -358,7 +358,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
     final SeedShifter sSeed = new SeedShifter(mSeed, read, -mDeltaLength - 1);
     final SeedShifter tSeed = new SeedShifter(mSeed, template, zeroBasedStart - mMaxShift - 1);
 
-    for (int i = 0; i <= rLen + mDeltaLength; i++) {
+    for (int i = 0; i <= rLen + mDeltaLength; ++i) {
       final int r = rSeed.next();
       if (rSeed.isValid()) {
         final int ix = SEED_LENGTH * r;
@@ -389,7 +389,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
   @Override
   public boolean globalIntegrity() {
     super.globalIntegrity();
-    for (int i = 0; i < mSeedInfo.length / SEED_LENGTH; i++) {
+    for (int i = 0; i < mSeedInfo.length / SEED_LENGTH; ++i) {
       Exam.assertEquals(0, mSeedInfo[SEED_LENGTH * i + SEED_COUNT]);
     }
     for (int aMDelta : mDelta) {

@@ -34,7 +34,7 @@ public class RecoverLinksTest extends TestCase {
     cache.addConstraint(2, -4, 7, 9, 20);
     RecoverLinks.recover(Arrays.asList(cache), graph);
     final List<Long> path = new ArrayList<>();
-    for (int i = 0; i < graph.pathLength(1); i++) {
+    for (int i = 0; i < graph.pathLength(1); ++i) {
       path.add(graph.pathContig(1, i));
     }
     assertEquals(Arrays.asList(-2L, 5L, -1L), path);

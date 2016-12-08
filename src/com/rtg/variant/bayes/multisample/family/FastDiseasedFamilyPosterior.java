@@ -34,11 +34,11 @@ public class FastDiseasedFamilyPosterior extends DiseasedFamilyPosterior {
   FastDiseasedFamilyPosterior(final GenomePriorParams params, final Family family, Hypotheses<?> commonHypotheses, HypothesesDisease diseaseHypotheses, final List<ModelInterface<?>> models) {
     super(params, family, commonHypotheses, diseaseHypotheses, models);
     mCodeToBits = new int[mChildren.get(0).size()];
-    for (int k = 0; k < mCodeToBits.length; k++) {
+    for (int k = 0; k < mCodeToBits.length; ++k) {
       mCodeToBits[k] = code2Bits(k);
     }
     mChildDiseased = new boolean[mChildren.size()];
-    for (int k = 0; k < mChildDiseased.length; k++) {
+    for (int k = 0; k < mChildDiseased.length; ++k) {
       mChildDiseased[k] = mFamily.isDiseased(Family.FIRST_CHILD_INDEX + k);
     }
   }
@@ -56,11 +56,11 @@ public class FastDiseasedFamilyPosterior extends DiseasedFamilyPosterior {
   void calculateMarginals(final double b, final int father, final int mother) {
     final int children = mChildren.size();
     final WeightedLattice[] weightedChildren = new WeightedLattice[children];
-    for (int i = 0; i < children; i++) {
+    for (int i = 0; i < children; ++i) {
       weightedChildren[i] = new DefaultWeightedLattice(SINGLETON, BIT_SET);
       final ModelInterface<?> child = mChildren.get(i);
       final boolean diseased = mChildDiseased[i];
-      for (int j = 0; j < child.size(); j++) {
+      for (int j = 0; j < child.size(); ++j) {
         final double mendelian = MendelianAlleleProbabilityDiploid.SINGLETON.probabilityLn(mCode, father, mother, j);
         final int kidSet = mCodeToBits[j];
         final int set = diseased ? kidSet : BIT_SET.complement(kidSet);
@@ -88,7 +88,7 @@ public class FastDiseasedFamilyPosterior extends DiseasedFamilyPosterior {
 
     // Compute C(H_f,H_m,H_d) for each H_d, pos 0 is NO_DISEASE
     final double[] c = new double[mDiseaseHypotheses.size()];
-    for (int d = 0; d < mDiseaseHypotheses.size(); d++) {
+    for (int d = 0; d < mDiseaseHypotheses.size(); ++d) {
       final int alleleCount = Utils.numberAllelesExclude(mHypotheses.description().size(), mCode, d - 1, father, mother, mHypotheses.reference());
       final double pPrime = mParams.getAlleleFrequencyLnProbability(alleleCount);
       c[d] = pPrime + mDiseaseHypotheses.prior(d);
@@ -124,7 +124,7 @@ public class FastDiseasedFamilyPosterior extends DiseasedFamilyPosterior {
     //find best disease
     int be = 0;
     double bestWeight = mDiseaseMarginal[0];
-    for (int i = 1; i < mDiseaseMarginal.length; i++) {
+    for (int i = 1; i < mDiseaseMarginal.length; ++i) {
       if (mDiseaseMarginal[i] > bestWeight) {
         be = i;
         bestWeight = mDiseaseMarginal[i];
@@ -135,14 +135,14 @@ public class FastDiseasedFamilyPosterior extends DiseasedFamilyPosterior {
     final double c0 = b + c[0];
     final int bestSet = bestDisease == 0 ? 0 : BIT_SET.toSet(bestDisease - 1);
 
-    for (int ch = 0; ch < children; ch++) {
+    for (int ch = 0; ch < children; ++ch) {
       final double[][] childMarginal = mChildMarginal.get(ch);
       final WeightedLattice sfChild = sf.excludeChild(ch);
       final WeightedLattice child = weightedChildren[ch];
       final boolean diseased = mChildDiseased[ch];
 
       final ModelInterface<?> kittens = mChildren.get(ch); //TODO can this be optimized?
-      for (int i = 0; i < kittens.size(); i++) {
+      for (int i = 0; i < kittens.size(); ++i) {
         final int hyp = i; //We are speechless
         final int kitSet0 = code2Bits(i);
         final int kitSet = diseased ? kitSet0 : BIT_SET.complement(kitSet0);

@@ -26,7 +26,7 @@ class SomaticPriorsFactory<D extends Description> {
     // Each row is normalized with zero probability for the identity
     final double uniform = 1.0 / (size - 1);
     final double[][] initialPriors = new double[size][size];
-    for (int k = 0; k < size; k++) {
+    for (int k = 0; k < size; ++k) {
       Arrays.fill(initialPriors[k], uniform);
       initialPriors[k][k] = 0;
     }

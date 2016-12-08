@@ -57,7 +57,7 @@ public abstract class BoundedOutputStream extends OutputStream {
     }
     if (mProxy == null) {
       mProxy = nextProxy(mCount);
-      mCount++;
+      ++mCount;
     }
     mProxy.write(mBuffer.toByteArray());
     mTotalSize += size;

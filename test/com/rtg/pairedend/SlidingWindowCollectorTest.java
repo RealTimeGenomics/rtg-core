@@ -118,7 +118,7 @@ public class SlidingWindowCollectorTest extends TestCase {
 
     public void pairResult(final int readId, final boolean first, final boolean rc1, final int start1) {
 //      System.err.println("PR: " + readId + " : " + first + " : " + rc1 + " : " + start1 + " : " + rc2 + " : " + start2);
-      mPairResultCount++;
+      ++mPairResultCount;
       // check successive calls produce output in non-descending order
       assertTrue(start1 + " : " + mLeftPosition, start1 >= mLeftPosition);
       mLeftPosition = start1;
@@ -135,12 +135,12 @@ public class SlidingWindowCollectorTest extends TestCase {
       if (mExpectedStart1s != null) {
         assertEquals(mExpectedStart1s[mExpectedIndex], start1);
       }
-      mExpectedIndex++;
+      ++mExpectedIndex;
     }
 
     @Override
     public boolean pairResultLeft(final MatedHitInfo matedHitInfo) {
-      mPairedLeft++;
+      ++mPairedLeft;
       pairResult(matedHitInfo.mReadId, !matedHitInfo.mFirstRight, matedHitInfo.mReverseComplementLeft, matedHitInfo.mTemplateStartLeft
       );
       return true;
@@ -154,7 +154,7 @@ public class SlidingWindowCollectorTest extends TestCase {
 
     @Override
     public void nextTemplateId(final long templateId) {
-      mTemplateCount++;
+      ++mTemplateCount;
       mLeftPosition = Integer.MIN_VALUE;
     }
 
@@ -544,7 +544,7 @@ public class SlidingWindowCollectorTest extends TestCase {
     final SlidingWindowCollector collector = new SlidingWindowCollector(80, 0, MachineOrientation.ANY, samWriter,  buildParams(READ_LEFT_LENGTH50, READ_RIGHT_LENGTH50));
     collector.nextTemplateId(1);
     int readId = 10;
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       collector.match(true, false, readId++, i);
       collector.match(true, false, readId++, i);
       collector.match(false, false, readId - 10, i + 1);
@@ -621,19 +621,19 @@ public class SlidingWindowCollectorTest extends TestCase {
 
     final SlidingWindowCollector collector = new SlidingWindowCollector(200, 0, MachineOrientation.ANY, writer,  buildParams(READ_LEFT_VARLENGTH, READ_RIGHT_VARLENGTH));
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       assertEquals(i + (i % 2 == 0 ? 1 : -1), collector.readHash(i, true));
       assertEquals(i, collector.readHash(i, false));
     }
   }
 
   public void testNextPowerOfTwo() {
-    for (int i = 0; i < 100000; i++) {
+    for (int i = 0; i < 100000; ++i) {
       int next = i;
       for (int j = 1; j <= 16; j *= 2) {
         next |= next >> j;
       }
-      next++;
+      ++next;
       assertEquals(next, SlidingWindowCollector.nextPowerOfTwo(i));
     }
   }
@@ -670,7 +670,7 @@ public class SlidingWindowCollectorTest extends TestCase {
     readsLeft.append(">r");
     readsLeft.append(i);
     readsLeft.append(StringUtils.LS);
-    for (int j = 0; j < 36; j++) {
+    for (int j = 0; j < 36; ++j) {
       readsLeft.append(chars[rand.nextInt(4)]);
     }
     readsLeft.append(StringUtils.LS);
@@ -694,7 +694,7 @@ public class SlidingWindowCollectorTest extends TestCase {
       final char[] chars = {'a', 'c', 'g', 't'};
       final Random rand = new Random(33);
       final int maxHits = 1000; //GlobalFlags.getIntegerValue(GlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG);
-      for (int i = 0; i < maxHits + 2; i++) {
+      for (int i = 0; i < maxHits + 2; ++i) {
         addRandomRead(readsLeft, i, chars, rand);
         addRandomRead(readsRight, i, chars, rand);
       }
@@ -704,13 +704,13 @@ public class SlidingWindowCollectorTest extends TestCase {
       swc.nextTemplateId(0);
 
       // add 1000 left arms at a position which should be ignored
-      for (int i = 0; i < maxHits + 1; i++) {
+      for (int i = 0; i < maxHits + 1; ++i) {
         swc.match(true, false, i, 100);
       }
       swc.match(true, false, 0, 99);
 
       // add 1000 right arms at a position which should be ignored
-      for (int i = 0; i < maxHits + 1; i++) {
+      for (int i = 0; i < maxHits + 1; ++i) {
         swc.match(false, false, i, 108);
       }
       swc.match(false, false, 0, 107);
@@ -744,7 +744,7 @@ public class SlidingWindowCollectorTest extends TestCase {
       final char[] chars = {'a', 'c', 'g', 't'};
       final Random rand = new Random(33);
       final int maxHits = 1000; //GlobalFlags.getIntegerValue(GlobalFlags.SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG);
-      for (int i = 0; i < maxHits + 2; i++) {
+      for (int i = 0; i < maxHits + 2; ++i) {
         addRandomRead(readsLeft, i, chars, rand);
         addRandomRead(readsRight, i, chars, rand);
       }
@@ -753,7 +753,7 @@ public class SlidingWindowCollectorTest extends TestCase {
       swc.setMaxHitsPerPosition(maxHits);
       swc.nextTemplateId(0);
 
-      for (int i = 0; i < maxHits + 1; i++) {
+      for (int i = 0; i < maxHits + 1; ++i) {
         final HitInfo hit = new HitInfo();
         final HitInfo mate = new HitInfo();
         mate.mTemplateStart = 108;

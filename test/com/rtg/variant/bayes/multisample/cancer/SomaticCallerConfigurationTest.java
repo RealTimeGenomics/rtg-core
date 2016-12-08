@@ -101,10 +101,10 @@ public class SomaticCallerConfigurationTest extends TestCase {
   }
 
   private void checkDistribution(final double[][] a) {
-    for (int i = 0; i < a.length; i++) {
+    for (int i = 0; i < a.length; ++i) {
       Exam.assertDistribution(a[i]);
       final double ref = a[i][i];
-      for (int j = 0; j < a[i].length; j++) {
+      for (int j = 0; j < a[i].length; ++j) {
         assertTrue(a[i][j] <= ref);
       }
     }
@@ -164,7 +164,7 @@ public class SomaticCallerConfigurationTest extends TestCase {
   public void testMakeInitialPriorsRandomTemplate() {
     final byte[] template = new byte[1000];
     final Random rand = new Random(42);
-    for (int i = 0; i < template.length; i++) {
+    for (int i = 0; i < template.length; ++i) {
       template[i] = (byte) (rand.nextInt(4) + 1);
     }
     final ComplexTemplate cot = new ComplexTemplate(template, "", 500, 500);

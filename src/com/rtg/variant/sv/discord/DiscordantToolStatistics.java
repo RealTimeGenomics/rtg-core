@@ -34,9 +34,9 @@ public class DiscordantToolStatistics extends AbstractStatistics {
   // For when eventually we do record more statistics about a record set
   protected void tallyDiscordantReadSet(DiscordantReadSet drs) {
     if (drs != null) {
-      mTotalBreakEnds++;
+      ++mTotalBreakEnds;
       if (drs.getIntersection() == null) {
-        mFiltered++;
+        ++mFiltered;
       }
     }
   }

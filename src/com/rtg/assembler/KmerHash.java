@@ -31,7 +31,7 @@ class KmerHash extends AbstractKmer {
   static long kmerToHash(Kmer kmer) {
     assert kmer.length() <= 32;
     long hash = 0;
-    for (int i = 0; i < kmer.length(); i++) {
+    for (int i = 0; i < kmer.length(); ++i) {
       hash = hash << 2;
       hash |= kmer.nt(i) - 1;
     }
@@ -88,7 +88,7 @@ class KmerHash extends AbstractKmer {
   private long reverseHash() {
     long reverse = 0;
     long forw = mHash;
-    for (int i = 0; i < mKmerSize; i++) {
+    for (int i = 0; i < mKmerSize; ++i) {
       final int nt = 3 - (int) (forw & 3);
       reverse = (reverse << 2) | nt;
       forw = forw >> 2;

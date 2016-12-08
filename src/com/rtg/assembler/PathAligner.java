@@ -55,7 +55,7 @@ public class PathAligner {
     final int numContigs = mGraph.pathLength(pathId);
     final int overlap = mGraph.contigOverlap();
     int len = 0;
-    for (int k = 0; k < numContigs; k++) {
+    for (int k = 0; k < numContigs; ++k) {
       len += mGraph.contigLength(mGraph.pathContig(pathId, k));
     }
     return len - (numContigs - 1) * overlap;
@@ -65,9 +65,9 @@ public class PathAligner {
     final byte[] template = new byte[pathLength(pathId)];
     final int numContigs = mGraph.pathLength(pathId);
     final int overlap = mGraph.contigOverlap();
-    for (int k = 0, j = 0, start = 0; k < numContigs; k++) {
+    for (int k = 0, j = 0, start = 0; k < numContigs; ++k) {
       final long contig = mGraph.pathContig(pathId, k);
-      for (int i = start; i < mGraph.contigLength(contig); i++) {
+      for (int i = start; i < mGraph.contigLength(contig); ++i) {
         template[j++] = mGraph.nt(contig, i);
       }
       start = overlap;

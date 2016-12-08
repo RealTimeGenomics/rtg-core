@@ -38,7 +38,7 @@ public class DeltaSlowly extends Delta {
   @Override
   public double[] probabilitiesLn(final int index) {
     final int start = mEnv.absoluteTemplatePosition(0);
-    for (byte nt = 1; nt <= 4; nt++) {
+    for (byte nt = 1; nt <= 4; ++nt) {
       final Environment snp = new EnvironmentSNP(mEnv, index - start, nt);
       mForwardTmp.setEnv(snp);
       // uncomment this code for a given template position to see all 4 combined matrices.

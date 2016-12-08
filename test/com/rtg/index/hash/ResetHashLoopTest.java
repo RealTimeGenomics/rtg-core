@@ -173,7 +173,7 @@ public class ResetHashLoopTest extends AbstractHashLoopTest {
     public void hashCallBidirectional(long hashForward, long hashReverse, int stepPosition, int internalId) {
       assertEquals(-1, hashForward);
       assertEquals(-1, hashReverse);
-      mHashCallBiDirs++;
+      ++mHashCallBiDirs;
     }
   }
 

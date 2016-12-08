@@ -37,7 +37,7 @@ public class SingleIndelEditDistanceTest  extends AbstractUnidirectionalEditDist
   private static String randomDNA(final long seed, final int length) {
     final Random rand = new Random(seed);
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       final int dna = rand.nextInt(4);
       final String dnac = DNA_STRINGS[dna];
       sb.append(dnac);
@@ -126,7 +126,7 @@ public class SingleIndelEditDistanceTest  extends AbstractUnidirectionalEditDist
 
   public void testForwardPositive() throws Exception {
     final SingleIndelEditDistance ed = (SingleIndelEditDistance) getEditDistanceInstance(19, 1, 9, 0);
-    for (int i = 1; i <= 9; i++) {
+    for (int i = 1; i <= 9; ++i) {
       checkForwardPositive(ed, i, null);
     }
   }
@@ -165,7 +165,7 @@ public class SingleIndelEditDistanceTest  extends AbstractUnidirectionalEditDist
 
   public void testForwardNegative() throws Exception {
     final SingleIndelEditDistance ed = (SingleIndelEditDistance) getEditDistanceInstance(19, 1, 9, 0);
-    for (int i = 1; i <= 9; i++) {
+    for (int i = 1; i <= 9; ++i) {
       checkForwardNegative(ed, i, null);
     }
   }
@@ -194,7 +194,7 @@ public class SingleIndelEditDistanceTest  extends AbstractUnidirectionalEditDist
 
   public void testForwardNegativeLong() throws Exception {
     final SingleIndelEditDistance ed = (SingleIndelEditDistance) getEditDistanceInstance(19, 1, 9, 0);
-    for (int i = 1; i <= 9; i++) {
+    for (int i = 1; i <= 9; ++i) {
       checkForwardNegativeLong(ed, i, null);
     }
   }
@@ -235,7 +235,7 @@ public class SingleIndelEditDistanceTest  extends AbstractUnidirectionalEditDist
 
   public void testReversePositive() throws Exception {
     final SingleIndelEditDistance ed = (SingleIndelEditDistance) getEditDistanceInstance(19, 1, 9, 4); //changed to true due to new off template allowance interfering with tests
-    for (int i = 1; i <= 9; i++) {
+    for (int i = 1; i <= 9; ++i) {
       //final int i = 9;
       checkReversePositive(ed, i, null);
     }
@@ -271,7 +271,7 @@ public class SingleIndelEditDistanceTest  extends AbstractUnidirectionalEditDist
 
   public void testReverseNegative() throws Exception {
     final SingleIndelEditDistance ed = (SingleIndelEditDistance) getEditDistanceInstance(19, 1, 9, 0);
-    for (int i = 1; i <= 9; i++) {
+    for (int i = 1; i <= 9; ++i) {
       checkReverseNegative(i, null, ed);
     }
   }
@@ -341,14 +341,14 @@ public class SingleIndelEditDistanceTest  extends AbstractUnidirectionalEditDist
   public void testThingInconsistent() {
     final byte[] read = DnaUtils.encodeString("GGGTGGGTCGGGTGGGGTGTGGGGGGGGCTGGTGAGGTGTGGGGGGGGCTGGTCAGGCGTGGGCTGGGCTGGTCAGGCGTGGGGTCAGCCTGGCCCCTGCC");
     final byte[] template = DnaUtils.encodeString("CATGGGGCCGGCTGGTCAGGCGTGGGGCGGGCTGGTCAGGCGTGGGGCGGGCTGGTCAGGCGTGGGCTGGGCTGGTCAGGCGTGGGGTCAGCCTGGCCCCTGCCCGCTGG");
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       getEditDistanceInstance(19, 1, 9, 0).calculateEditDistance(read, read.length, template, i, Integer.MAX_VALUE, 9, false);
     }
   }
   public void testThingInconsistent2() {
     final byte[] read = DnaUtils.encodeString("CCCAGGGAGCCGAGGGCGGTGGAGGTGGGGGCCCACCACCCAGCAGCAACTGTTGGACCCCGCAGCGCAGGAGTGGCAGGGGCCCGCTGCCGGGCAGGGGG");
     final byte[] template = DnaUtils.encodeString("GAAATAACCCCAGGGAGCCGAGGGCGGTGGAGGTGGGGGCCCACCACCCAGCAGCAACTGTTGGACCCCGCAGCGCAGGAGTGGCAGGGCCCGTCTGCAGTGCAGGAGTGGCAGGGCGTG");
-    for (int i = 0; i < 18; i++) {
+    for (int i = 0; i < 18; ++i) {
       getEditDistanceInstance(19, 1, 9, 0).calculateEditDistance(read, read.length, template, i, Integer.MAX_VALUE, 9, false);
     }
   }

@@ -41,10 +41,10 @@ public final class MatrixUtils {
       throw new IllegalArgumentException("A.length=" + n + " B.length=" + b.size());
     }
     final Matrix res = new MatrixSimple(n);
-    for (int i = 0; i < n; i++) {
-      for (int j = 0; j < n; j++) {
+    for (int i = 0; i < n; ++i) {
+      for (int j = 0; j < n; ++j) {
         double sum = 0.0;
-        for (int k = 0; k < n; k++) {
+        for (int k = 0; k < n; ++k) {
           sum += a.get(i, k) * b.get(k, j);
         }
         res.set(i, j, sum);
@@ -65,9 +65,9 @@ public final class MatrixUtils {
       throw new IllegalArgumentException("A.length=" + n + " v.length=" + v.size());
     }
     final Vector res = new Vector(n);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       double sum = 0.0;
-      for (int j = 0; j < n; j++) {
+      for (int j = 0; j < n; ++j) {
         sum += v.get(j) * a.get(i, j);
       }
       res.set(i, sum);
@@ -84,7 +84,7 @@ public final class MatrixUtils {
   public static Vector multiply(final double a, final Vector v) {
     final int n = v.size();
     final Vector res = new Vector(n);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       res.set(i, a * v.get(i));
     }
     return res;
@@ -102,7 +102,7 @@ public final class MatrixUtils {
       throw new IllegalArgumentException("v.length=" + n + " w.length=" + w.size());
     }
     double sum = 0.0;
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       sum += v.get(i) * w.get(i);
     }
     return sum;
@@ -129,7 +129,7 @@ public final class MatrixUtils {
       throw new IllegalArgumentException("v.length=" + n + " w.length=" + w.size());
     }
     final Vector res = new Vector(n);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       res.set(i, v.get(i) + w.get(i));
     }
     return res;
@@ -147,7 +147,7 @@ public final class MatrixUtils {
       throw new IllegalArgumentException("v.length=" + n + " w.length=" + w.size());
     }
     final Vector res = new Vector(n);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       res.set(i, v.get(i) - w.get(i));
     }
     return res;
@@ -167,9 +167,9 @@ public final class MatrixUtils {
     if (n != v.size() || n != w.size()) {
       throw new IllegalArgumentException("v.length=" + v.size() + " A.length=" + a.size() + " w.length=" + w.size());
     }
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       final double vi = v.get(i);
-      for (int j = 0; j < n; j++) {
+      for (int j = 0; j < n; ++j) {
         sum += vi * a.get(i, j) * w.get(j);
       }
     }
@@ -207,9 +207,9 @@ public final class MatrixUtils {
     if (n != v.size() || n != w.size()) {
       throw new IllegalArgumentException("v.length=" + v.size() + " A.length=" + a.size() + " w.length=" + w.size());
     }
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       final double vi = v.get(i);
-      for (int j = 0; j < n; j++) {
+      for (int j = 0; j < n; ++j) {
         final double s = vi * a.get(i, j) * w.get(j);
         res.set(i, j, s);
       }
@@ -232,10 +232,10 @@ public final class MatrixUtils {
     if (n != v.size()) {
       throw new IllegalArgumentException("v.length=" + v.size() + " A.length=" + a.size());
     }
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       final double vi = v.get(i);
       final int hi = a.isSymmetric() ? i + 1 : n;
-      for (int j = 0; j < hi; j++) {
+      for (int j = 0; j < hi; ++j) {
         final double s = vi * a.get(i, j) * v.get(j);
         res.set(i, j, s);
       }
@@ -257,7 +257,7 @@ public final class MatrixUtils {
       throw new IllegalArgumentException("v.length=" + v.size() + " w.length=" + w.size());
     }
     final Vector res = new Vector(n);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       res.set(i, v.get(i) * w.get(i));
     }
     return res;
@@ -271,7 +271,7 @@ public final class MatrixUtils {
   public static Vector trace(final Matrix a) {
     final int n = a.size();
     final Vector res = new Vector(n);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       res.set(i, a.get(i, i));
     }
     return res;
@@ -285,7 +285,7 @@ public final class MatrixUtils {
   public static Vector inverse(final Vector v) {
     final int n = v.size();
     final Vector res = new Vector(n);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       res.set(i, 1.0 / v.get(i));
     }
     return res;
@@ -299,7 +299,7 @@ public final class MatrixUtils {
   public static Vector sqrt(final Vector v) {
     final int n = v.size();
     final Vector res = new Vector(n);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       res.set(i, Math.sqrt(v.get(i)));
     }
     return res;
@@ -313,7 +313,7 @@ public final class MatrixUtils {
   public static Vector negative(final Vector v) {
     final int dim = v.size();
     final Vector neg = new Vector(dim);
-    for (int i = 0; i < dim; i++) {
+    for (int i = 0; i < dim; ++i) {
       final double d = -v.get(i);
       neg.set(i, d);
     }
@@ -326,7 +326,7 @@ public final class MatrixUtils {
    * @return true iff all values in the vector are finite.
    */
   public static boolean isFinite(final Vector v) {
-    for (int i = 0; i < v.size(); i++) {
+    for (int i = 0; i < v.size(); ++i) {
       final double vv = v.get(i);
       if (Double.isNaN(vv) || Double.isInfinite(vv)) {
         return false;
@@ -341,7 +341,7 @@ public final class MatrixUtils {
    * @return true iff all values in the vector are finite and positive.
    */
   public static boolean isFinitePositive(final Vector v) {
-    for (int i = 0; i < v.size(); i++) {
+    for (int i = 0; i < v.size(); ++i) {
       final double vv = v.get(i);
       if (vv < 0.0 || Double.isNaN(vv) || Double.isInfinite(vv)) {
         return false;
@@ -357,7 +357,7 @@ public final class MatrixUtils {
    */
   public static double trace(final Vector v) {
     double sum = 0.0;
-    for (int i = 0; i < v.size(); i++) {
+    for (int i = 0; i < v.size(); ++i) {
       final double vv = v.get(i);
       sum += vv;
     }

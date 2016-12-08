@@ -40,7 +40,7 @@ class AllCounts extends IntegralAbstract {
 
   AllCounts(int length) {
     mLength = length;
-    for (int i = 0; i < LENGTH; i++) {
+    for (int i = 0; i < LENGTH; ++i) {
       mCounts[i] = new SamArray(length);
     }
   }
@@ -74,9 +74,9 @@ class AllCounts extends IntegralAbstract {
   }
 
   void plot(PrintStream ps) {
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       ps.print(i);
-      for (int j = 0; j < LENGTH; j++) {
+      for (int j = 0; j < LENGTH; ++j) {
         ps.print(TAB + Utils.realFormat(mCounts[j].count(0, i), 4));
       }
       ps.println();
@@ -87,7 +87,7 @@ class AllCounts extends IntegralAbstract {
   public boolean integrity() {
     Exam.assertEquals(7, mCounts.length);
     Exam.assertTrue(mLength >= 0);
-    for (int i = 0; i < LENGTH; i++) {
+    for (int i = 0; i < LENGTH; ++i) {
       Exam.assertEquals(mLength, mCounts[i].length());
     }
     return true;
@@ -106,7 +106,7 @@ class AllCounts extends IntegralAbstract {
    */
   AllCounts reverse() {
     final AllCounts rev = new AllCounts(mLength);
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       final int j = mLength - i - 1;
       rev.properLeft().increment(j, properRight().count(0, i));
       //System.err.println("i=" + i + " j=" + j + " count=" + properRight().count(0, i));

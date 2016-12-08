@@ -352,7 +352,7 @@ final class AviewModel {
       // Check sum of inserts already stored over the length of reference covered
       final int endposition = Math.min(mInserts.length, position + referenceLength + 1);
       int insertTot = 0;
-      for (int i = position; i < endposition; i++) {
+      for (int i = position; i < endposition; ++i) {
         insertTot += mInserts[i];
       }
       final int insertsNeeded = callDelta - insertTot;

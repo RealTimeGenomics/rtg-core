@@ -48,17 +48,17 @@ public final class TopNProteinImplementation {
     mEdgeScoreCount = new byte[numberSequences];
     mResults = ObjectCreate.createIndex(totalRecords);
     //mResults = new ProteinAlignmentResult[(int) totalRecords];
-    for (int l = 0; l < numberSequences; l++) {
+    for (int l = 0; l < numberSequences; ++l) {
       mEdgeAlignScore[l] = Short.MAX_VALUE;
     }
     mThreadLocks = new Object[NUMBER_OF_THREAD_LOCKS];
-    for (int i = 0; i < mThreadLocks.length; i++) {
+    for (int i = 0; i < mThreadLocks.length; ++i) {
       mThreadLocks[i] = new Object();
     }
   }
 
   boolean contains(int templateId, int templateStart, int readId, int readAndFrame) {
-    for (long i = (long) readId * mN; i < (long) readId * mN + resultCount(readId); i++) {
+    for (long i = (long) readId * mN; i < (long) readId * mN + resultCount(readId); ++i) {
       if (mResults.get(i).equals(templateId, templateStart, readAndFrame)) {
         return true;
       }
@@ -92,7 +92,7 @@ public final class TopNProteinImplementation {
     final long index = findIndexForInsertion(readId, alignmentScore);
     final long length = mN - (index - (long) readId * mN) - 1;
     updateEdgeCase(readId, alignmentScore);
-    for (long i = length - 1; i >= 0; i--) {
+    for (long i = length - 1; i >= 0; --i) {
       mResults.set(index + i + 1, mResults.get(index + i));
     }
     //System.arraycopy(mResults, index, mResults, index + 1, length);
@@ -110,8 +110,8 @@ public final class TopNProteinImplementation {
       } else {
         final long stop = (long) readId * mN;
         byte count = (byte) (alignmentScore == alignmentScore2 ? 1 : 0);
-        for (long i = prevIndex; i >= stop && mResults.get(i).alignmentScore() == alignmentScore2; i--) {
-            count++;
+        for (long i = prevIndex; i >= stop && mResults.get(i).alignmentScore() == alignmentScore2; --i) {
+            ++count;
         }
         mEdgeScoreCount[readId] = count;
       }
@@ -130,7 +130,7 @@ public final class TopNProteinImplementation {
 
   private long findIndexForInsertion(int readId, int alignmentScore) {
     final long indexZero = (long) readId * mN;
-    for (long index = (long) readId * mN + resultCount(readId) - 1; index >= indexZero; index--) {
+    for (long index = (long) readId * mN + resultCount(readId) - 1; index >= indexZero; --index) {
       if (mResults.get(index).alignmentScore() < alignmentScore) {
         return index + 1;
       }

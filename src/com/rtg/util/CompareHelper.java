@@ -49,7 +49,7 @@ public final class CompareHelper {
     if (mCurrent != 0) {
       return this;
     }
-    for (int i = 0; i < list1.size() && i < list2.size(); i++) {
+    for (int i = 0; i < list1.size() && i < list2.size(); ++i) {
       mCurrent = list1.get(i).compareTo(list2.get(i));
       if (mCurrent != 0) {
         return this;
@@ -71,7 +71,7 @@ public final class CompareHelper {
     if (mCurrent != 0) {
       return this;
     }
-    for (int i = 0; i < list1.length && i < list2.length; i++) {
+    for (int i = 0; i < list1.length && i < list2.length; ++i) {
       mCurrent = list1[i].compareTo(list2[i]);
       if (mCurrent != 0) {
         return this;

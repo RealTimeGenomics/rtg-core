@@ -60,7 +60,7 @@ public class TaxonomyDistribution {
     final PrereadNamesInterface names = reader.names();
     final long numSeq = reader.numberSequences();
     final int[] lengths = reader.sequenceLengths(0, numSeq);
-    for (int sequenceId = 0; sequenceId < numSeq; sequenceId++) {
+    for (int sequenceId = 0; sequenceId < numSeq; ++sequenceId) {
       final String name = names.name(sequenceId);
       final Integer taxonId = taxonLookup.get(name);
       final Double dist = taxonmyDistribution.get(taxonId);
@@ -88,12 +88,12 @@ public class TaxonomyDistribution {
     Diagnostic.developerLog("Taxonomy distribution:" + sequenceDist.toString());
     mDistribution = new double[(int) reader.numberSequences()];
     double sum = 0;
-    for (int i = 0; i < mDistribution.length; i++) {
+    for (int i = 0; i < mDistribution.length; ++i) {
       final Double val = sequenceDist.get(i);
       mDistribution[i] =  val == null ? 0 : val;
       sum += mDistribution[i];
     }
-    for (int i = 0; i < mDistribution.length; i++) {
+    for (int i = 0; i < mDistribution.length; ++i) {
       mDistribution[i] = mDistribution[i] / sum;
     }
 

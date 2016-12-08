@@ -285,7 +285,7 @@ public class HashingRegionTest extends TestCase {
   }
 
   private void checkRangeArray(HashingRegion[] regions) {
-    for (int i = 1; i < regions.length; i++) {
+    for (int i = 1; i < regions.length; ++i) {
       if (regions[i] != null) {
         assertTrue("Clip Region end id should be the start id of the next region", regions[i].getStart() == regions[i - 1].getEnd());
         assertTrue("Clip Region end position should be the start position of the next region", regions[i].getStartClipPosition() == regions[i - 1].getEndClipPosition());
@@ -543,7 +543,7 @@ public class HashingRegionTest extends TestCase {
     final MockSequencesReader genome = new MockSequencesReader(SequenceType.DNA, 5, 10000);
     final ReferenceGenome rg = new ReferenceGenome(genome, reader, Sex.MALE);
     final Map<String, Long> nameMap = new HashMap<>();
-    for (long i = 0; i < 5; i++) {
+    for (long i = 0; i < 5; ++i) {
       nameMap.put("seq" + i, i);
     }
     final List<HashingRegion> excluded = HashingRegion.excludeDuplicateRegions(rg, regions, nameMap);
@@ -619,7 +619,7 @@ public class HashingRegionTest extends TestCase {
   void checkExclusionAndPadding(ReferenceGenome rg, Map<String, Long> sequenceNameMap, HashingRegion[] expRegion, HashingRegion[] inputRegion) throws IOException {
     final List<HashingRegion> excluded = HashingRegion.excludeDuplicateRegions(rg, inputRegion, sequenceNameMap);
     assertEquals(Arrays.asList(expRegion), excluded);
-    for (int i = 0; i < excluded.size(); i++) {
+    for (int i = 0; i < excluded.size(); ++i) {
       assertEquals(expRegion[i].getStartPaddedPosition(), excluded.get(i).getStartPaddedPosition());
       assertEquals(expRegion[i].getEndPaddedPosition(), excluded.get(i).getEndPaddedPosition());
     }

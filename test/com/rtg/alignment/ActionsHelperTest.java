@@ -245,7 +245,7 @@ public class ActionsHelperTest extends TestCase {
 
   public void actionsEquals(final int[] subject, final int[] query) {
     assertEquals(subject.length, query.length);
-    for (int i = 0; i < subject.length; i++) {
+    for (int i = 0; i < subject.length; ++i) {
       assertEquals(subject[i], query[i]);
     }
   }
@@ -279,7 +279,7 @@ public class ActionsHelperTest extends TestCase {
     next(iter, ActionsHelper.SAME);
     next(iter, ActionsHelper.UNKNOWN_TEMPLATE);
     next(iter, ActionsHelper.UNKNOWN_READ);
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i < 11; ++i) {
       next(iter, ActionsHelper.MISMATCH);
     }
     next(iter, ActionsHelper.DELETION_FROM_REFERENCE);
@@ -303,7 +303,7 @@ public class ActionsHelperTest extends TestCase {
     next(iter, ActionsHelper.SAME);
     next(iter, ActionsHelper.SAME);
     next(iter, ActionsHelper.DELETION_FROM_REFERENCE);
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i < 11; ++i) {
       next(iter, ActionsHelper.MISMATCH);
     }
     next(iter, ActionsHelper.UNKNOWN_READ);
@@ -443,7 +443,7 @@ public class ActionsHelperTest extends TestCase {
     workspace[ActionsHelper.TEMPLATE_START_INDEX] = 90;
 
     // Insert some rubish to prove reusability
-    for (int i = ActionsHelper.ACTIONS_START_INDEX; i < workspace.length; i++) {
+    for (int i = ActionsHelper.ACTIONS_START_INDEX; i < workspace.length; ++i) {
       workspace[i] = 0xFF;
     }
     ActionsHelper.prepend(workspace, 36, ActionsHelper.INSERTION_INTO_REFERENCE, 6);

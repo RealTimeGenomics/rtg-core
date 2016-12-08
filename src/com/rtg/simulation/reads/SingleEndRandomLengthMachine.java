@@ -87,7 +87,7 @@ public abstract class SingleEndRandomLengthMachine extends AbstractMachine {
     final double mid = (mMaxSize + mMinSize) * 0.5 + 0.5;
     final double width = (mMaxSize - mMinSize) * 0.25; // 2 std devs per side
     int readLength = 0;
-    for (int x = 0; x < NUMBER_TRIES; x++) {
+    for (int x = 0; x < NUMBER_TRIES; ++x) {
       readLength = (int) (mReadSizeRandom.nextGaussian() * width + mid);
       if ((readLength >= mMinSize) && (readLength <= mMaxSize)) {
         break;

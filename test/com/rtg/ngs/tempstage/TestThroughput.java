@@ -31,7 +31,7 @@ public final class TestThroughput {
   public static void main(String[] args) throws IOException {
     final int t = Integer.parseInt(args[2]);
     final SimpleThreadPool stp = new SimpleThreadPool(t, "blah", true);
-    for (int i = 0; i < t; i++) {
+    for (int i = 0; i < t; ++i) {
       stp.execute(new Foo(args));
     }
     stp.terminate();
@@ -51,7 +51,7 @@ public final class TestThroughput {
       final File f = File.createTempFile("boo", "yah");
       wrt = new TempRecordWriterNio(FileUtils.createOutputStream(f, true));
       //   final Random r = new Random(75521593);
-      for (int i = 0; i < numRecs; i++) {
+      for (int i = 0; i < numRecs; ++i) {
         final BinaryTempFileRecord rec = new BinaryTempFileRecord(true, false, false, false);
         rec.setStartPosition(i);
         rec.setReadId(i);
@@ -71,7 +71,7 @@ public final class TestThroughput {
       wrt.close();
       final TempRecordReader rd;
       rd = new TempRecordReaderNio(FileUtils.createGzipInputStream(f, false), new TempRecordReader.RecordFactory(true, false, false, false));
-      for (int i = 0; i < numRecs; i++) {
+      for (int i = 0; i < numRecs; ++i) {
         final BinaryTempFileRecord rec = rd.readRecord();
         assert !rec.isSentinelRecord();
       }

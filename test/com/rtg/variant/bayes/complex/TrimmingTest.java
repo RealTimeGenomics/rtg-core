@@ -474,7 +474,7 @@ public class TrimmingTest extends TestCase {
   }
 
   private void checkDenovoCorrect(List<Variant> variants, int[] expectedPositions, String[] expectedParentA, String[] expectedParentB, String[] expectedChild, VariantSample.DeNovoStatus[] expectedDenovo) {
-    for (int i = 0; i < variants.size(); i++) {
+    for (int i = 0; i < variants.size(); ++i) {
       final Variant res = variants.get(i);
       assertEquals(expectedPositions[i], res.getLocus().getStart());
       assertEquals(res.getLocus().getStart() + 1, res.getLocus().getEnd());
@@ -544,7 +544,7 @@ public class TrimmingTest extends TestCase {
   }
 
   private void increment(DescriptionCommon description, StatisticsComplex stats, int read, int count) {
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; ++i) {
       stats.increment(new EvidenceQ(description, read, 2, 2, 0.1, 0.1, true, true, true, false), 0);
     }
   }

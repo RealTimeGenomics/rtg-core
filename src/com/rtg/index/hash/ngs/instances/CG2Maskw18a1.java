@@ -240,7 +240,7 @@ public class CG2Maskw18a1 extends AbstractCG2Mask {
   }
 
   protected static void dumpBlocks(String label, long... blocks) {
-    for (int i = 0; i < blocks.length; i++) {
+    for (int i = 0; i < blocks.length; ++i) {
       System.err.println(label + i + "=" + Utils.toBits(blocks[i], NUMBER_BITS));
     }
   }

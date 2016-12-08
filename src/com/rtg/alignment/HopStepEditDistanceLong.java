@@ -81,7 +81,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
    */
   protected HopStepEditDistanceLong(NgsParams params) {
     mSeeds = new SeedPositions[10];
-    for (int i = 0; i < mSeeds.length; i++) {
+    for (int i = 0; i < mSeeds.length; ++i) {
       mSeeds[i] = new SeedPositions();
     }
     mNumSeeds = 0;
@@ -136,7 +136,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
     assert y < maxY;
     final int maxShift = maxY - y + 2; // two extra, to make really sure the match is unique
     // move down the read, looking for a perfect equality region.
-    for (int j = 0; j < tries; j++) {
+    for (int j = 0; j < tries; ++j) {
       final int xEnd = x - j * jumpSize;
       final int yEnd = y - j * jumpSize;
       if (xEnd + 1 - windowLen < 0) {
@@ -151,7 +151,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
           continue;
         }
         boolean matches = true;
-        for (int i = 0; i < windowLen; i++) {
+        for (int i = 0; i < windowLen; ++i) {
           final byte r = mRead[xEnd - i];
           final byte t = mTemplate[ydelta - i];
           if (r * t == 0) {
@@ -163,7 +163,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
           }
         }
         if (matches) {
-          matchCount++;
+          ++matchCount;
           if (matchCount == 1) {
             // remember this match
             bestDelta = delta;
@@ -202,8 +202,8 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
     int xEnd = seed.mX2;
     int yEnd = seed.mY2;
     while (xEnd < maxX && yEnd < maxY && !different(mRead[xEnd], mTemplate[yEnd])) {
-      xEnd++;
-      yEnd++;
+      ++xEnd;
+      ++yEnd;
     }
     seed.mX2 = xEnd;
     seed.mY2 = yEnd;
@@ -221,7 +221,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
     mRead = read;
     mTemplate = template;
     mNumSeeds = 0;
-    mStatsTotal++;
+    ++mStatsTotal;
     mWorkspace[ActionsHelper.ACTIONS_LENGTH_INDEX] = 0;
     mWorkspace[ActionsHelper.ALIGNMENT_SCORE_INDEX] = 0;
   }
@@ -248,7 +248,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
     int x = rlen - 1;
     int y = zeroBasedStart + rlen - 1;
     if (y >= template.length + MAX_INDEL || y < rlen - MAX_INDEL) {
-      mStatsOffTemplate++;
+      ++mStatsOffTemplate;
       return failure();
     }
     final int windowSize = Math.min(10, rlen);
@@ -256,7 +256,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
     final int jumpSize = 5;
     final SeedPositions eq = findSeed(x, y, x, y + maxShift, windowSize, tries, jumpSize);
     if (eq == null) {
-      mStatsCannotSync++;
+      ++mStatsCannotSync;
       return failure();
     }
     // use eq as our first equality seed.  This may be a bit before the end of the read.
@@ -272,13 +272,13 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
     int[] alignStart = null; // the alignment for the first few nucleotides
     while (x > 0) {
       if (Math.abs(x - (y - zeroBasedStart)) > maxShift) {
-        mStatsMaxShift++;
+        ++mStatsMaxShift;
         return failure();
       }
       boolean allEqual = true;
       while (x > 0) { // this is the inner loop that deals with long strings of equalities
         if (y <= 0) {
-          mStatsOffTemplate++;
+          ++mStatsOffTemplate;
           return failure();
         }
         final byte r = read[--x];
@@ -300,10 +300,10 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
       mSeeds[mNumSeeds - 1].mX1 = x + 1;
       mSeeds[mNumSeeds - 1].mY1 = y + 1;
       if (x < TOO_NEAR_TO_START) {      // too near the start, so use a proper aligner to analyze it.
-        mStatsStartIsComplex++;
+        ++mStatsStartIsComplex;
         alignStart = mEd.calculateEditDistanceFixedEnd(read, 0, x + 1, template, y - x, y + 1, maxScore, maxShift);
         if (alignStart == null || alignStart[ActionsHelper.ALIGNMENT_SCORE_INDEX] > maxScore) {
-          mStatsStartTooHard++;
+          ++mStatsStartTooHard;
           return failure();
         }
         y = alignStart[ActionsHelper.TEMPLATE_START_INDEX];
@@ -343,10 +343,10 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
       }
       if (isIndel && lastIndelSeed == mNumSeeds - 2 && mSeeds[mNumSeeds - 1].xWidth() < INDEL_SPACING) {
         if (mSeeds[lastIndelSeed].xWidth() > INDEL_SPACING) {
-          mStatsIndelsTooClose++;
+          ++mStatsIndelsTooClose;
           return failure(); // that region has probably been merged once already
         }
-        mStatsMiddleMerged++; // we merge these two regions
+        ++mStatsMiddleMerged; // we merge these two regions
         mSeeds[lastIndelSeed].mType = DO_IT_LATER;
         mSeeds[lastIndelSeed].mX1 = eqX + 1;
         mSeeds[lastIndelSeed].mY1 = eqY + 1;
@@ -376,7 +376,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
       ActionsHelper.prepend(result, alignStart);
     }
     if (Math.abs(zeroBasedStart - y) > maxShift) {
-      mStatsStartMoved++;
+      ++mStatsStartMoved;
       return failure(); // there might be a worse alignment that does not shift so far...
     }
     result[ActionsHelper.TEMPLATE_START_INDEX] = y;
@@ -385,25 +385,25 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
       result[ActionsHelper.ALIGNMENT_SCORE_INDEX] = Integer.MAX_VALUE;
       result[ActionsHelper.ACTIONS_LENGTH_INDEX] = 0;
     }
-    mStatsSuccess++;
+    ++mStatsSuccess;
     return result;
   }
 
   private int[] buildAlignment(int maxScore, int maxShift) {
     //System.err.println();    SeedPositions.dumpSeeds(mSeeds, mNumSeeds, mRead, mTemplate);
     if (mSeeds[0].mX2 != mReadLen) {
-      mStatsEndIsComplex++; // We have a SNP/indel at the end.
+      ++mStatsEndIsComplex; // We have a SNP/indel at the end.
       final int xEnd = mSeeds[0].mX2;
       final int yEnd = mSeeds[0].mY2;
       //System.err.println("handling end case: " + xEnd + " .. " + rlen);
       final int[] alignEnd = mEd.calculateEditDistanceFixedStart(mRead, xEnd, mReadLen, mTemplate, yEnd, maxScore, maxShift);
       if (alignEnd == null || alignEnd[ActionsHelper.ALIGNMENT_SCORE_INDEX] > maxScore) {
-        mStatsEndTooHard++;
+        ++mStatsEndTooHard;
         return null;
       }
       ActionsHelper.prepend(mWorkspace, alignEnd);
     }
-    for (int i = 0; i < mNumSeeds && mWorkspace[ActionsHelper.ALIGNMENT_SCORE_INDEX] <= maxScore; i++) {
+    for (int i = 0; i < mNumSeeds && mWorkspace[ActionsHelper.ALIGNMENT_SCORE_INDEX] <= maxScore; ++i) {
       //System.err.println("seed[" + i + "] = " + mSeeds[i].toString());
       if (mSeeds[i].mType == ActionsHelper.SAME) {
         final int len = mSeeds[i].mX2 - mSeeds[i].mX1;
@@ -418,14 +418,14 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
         final int len = mSeeds[i].mY2 - mSeeds[i].mY1;
         ActionsHelper.prepend(mWorkspace, len, ActionsHelper.DELETION_FROM_REFERENCE, len * mGapExtend + mGapOpen);
       } else if (mSeeds[i].mType == DO_IT_LATER) {
-        mStatsMiddleIsComplex++;
+        ++mStatsMiddleIsComplex;
         final SeedPositions r = mSeeds[i];
 //        System.err.println("handling complex region: " + r + " width=" + r.xWidth());
         final int maxMidScore = maxScore - ActionsHelper.alignmentScore(mWorkspace);
         final int[] align = mEd.calculateEditDistanceFixedBoth(mRead, r.mX1, r.mX2, mTemplate, r.mY1, r.mY2, maxMidScore, maxShift);
 //        System.err.println(ActionsHelper.toString(align));
         if (align == null || align[ActionsHelper.ALIGNMENT_SCORE_INDEX] > maxMidScore) {
-          mStatsMiddleTooHard++;
+          ++mStatsMiddleTooHard;
           return null;
         }
         ActionsHelper.prepend(mWorkspace, align);
@@ -471,7 +471,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
     if (mNumSeeds >= mSeeds.length - 2) {
       final int oldLength = mSeeds.length;
       mSeeds = Arrays.copyOf(mSeeds, mNumSeeds * 2);
-      for (int i = oldLength; i < mSeeds.length; i++) {
+      for (int i = oldLength; i < mSeeds.length; ++i) {
         mSeeds[i] = new SeedPositions();
       }
     }
@@ -486,7 +486,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
     mSeeds[mNumSeeds].mX2 = prevX;
     mSeeds[mNumSeeds].mY1 = y;
     mSeeds[mNumSeeds].mY2 = prevY;
-    mNumSeeds++;
+    ++mNumSeeds;
   }
 
   @Override
@@ -503,7 +503,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
     sb.append("Mid too hard  : ").append(mStatsMiddleTooHard).append(" / ").append(mStatsMiddleIsComplex).append(" with ").append(mStatsMiddleMerged).append(" merges").append(StringUtils.LS);
     sb.append("Start too hard: ").append(mStatsStartTooHard).append(" / ").append(mStatsStartIsComplex).append(StringUtils.LS);
     sb.append("Start moved   : ").append(mStatsStartMoved).append(StringUtils.LS);
-    for (int i = 0; i < mHistogram.length; i++) {
+    for (int i = 0; i < mHistogram.length; ++i) {
       sb.append(i * HISTOGRAM_BIN).append("..: ").append(mHistogram[i]).append(StringUtils.LS);
     }
     Diagnostic.developerLog(sb.toString());
@@ -543,7 +543,7 @@ class HopStepEditDistanceLong implements UnidirectionalEditDistance, Integrity {
       Exam.assertTrue(0 < mReadLen && mReadLen <= mRead.length);
     }
     // check that seeds are contiguous and in reverse order.
-    for (int i = 1; i < mNumSeeds; i++) {
+    for (int i = 1; i < mNumSeeds; ++i) {
       Exam.assertEquals(mSeeds[i].mX2, mSeeds[i - 1].mX1);
       Exam.assertEquals(mSeeds[i].mY2, mSeeds[i - 1].mY1);
       // and that each seed is well-formed

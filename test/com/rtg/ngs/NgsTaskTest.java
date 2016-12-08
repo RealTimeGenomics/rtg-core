@@ -91,7 +91,7 @@ public class NgsTaskTest extends NgsPairedEndTest {
     public long readLoop(ISequenceParams params, ReadHashFunction hashFunction, ReadEncoder encoder, boolean reverse) {
       mSecondSeen = encoder == ReadEncoder.PAIRED_SECOND;
       if (reverse) {
-        mReverseCounts++;
+        ++mReverseCounts;
       }
       return 43;
     }

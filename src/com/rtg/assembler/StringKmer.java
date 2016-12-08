@@ -65,7 +65,7 @@ class StringKmer extends AbstractKmer {
     @Override
     public Kmer make(byte[] kmer, int start, int end) {
       final StringBuilder sb = new StringBuilder();
-      for (int i = start; i < end; i++) {
+      for (int i = start; i < end; ++i) {
         sb.append(DNA.valueChars()[kmer[i]]);
       }
       return new StringKmer(sb.toString());

@@ -28,8 +28,8 @@ public class SimilarityMatrixTest extends TestCase {
     final SimilarityMatrix sim = new SimilarityMatrix(10);
     assertEquals(10, sim.length());
     sim.globalIntegrity();
-    for (int i = 0; i < 10; i++) {
-      for (int j = 0; j < 10; j++) {
+    for (int i = 0; i < 10; ++i) {
+      for (int j = 0; j < 10; ++j) {
         assertEquals(0, sim.get(i, j), 0);
       }
     }
@@ -55,7 +55,7 @@ public class SimilarityMatrixTest extends TestCase {
     assertEquals(8, sim.get(2, 6), 1.0E-8);
     assertEquals(8, sim.get(6, 2), 1.0E-8);
 
-    for (int i = 0; i < 1001; i++) {
+    for (int i = 0; i < 1001; ++i) {
       sim.increment(3, 4);
     }
     assertEquals(1001, sim.get(4, 3), 1.0E-8);

@@ -115,7 +115,7 @@ public class SdfReadWriter implements ReadWriter {
       throw new IllegalStateException();
     }
     writeSequence(mSingle, mTotal + " " + name, data, qual, length);
-    mTotal++;
+    ++mTotal;
   }
 
   @Override
@@ -140,7 +140,7 @@ public class SdfReadWriter implements ReadWriter {
     }
     writeSequence(mRight, mTotal + " " + name, data, qual, length);
     mExpectLeft = !mExpectLeft;
-    mTotal++;
+    ++mTotal;
   }
 
   private void writeSequence(SdfWriter writer, String name, byte[] data, byte[] qual, int length) throws IOException {

@@ -54,7 +54,7 @@ public class NormalDistribution {
    * @param value the value
    */
   public void add(int value) {
-    mCount++;
+    ++mCount;
     mSum += value;
     mSum2 += value * value;
   }

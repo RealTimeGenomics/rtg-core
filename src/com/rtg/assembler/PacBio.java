@@ -125,7 +125,7 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
       }
     }
     int maxIndex = 0;
-    for (int i = 0; i < hitCounts.length; i++) {
+    for (int i = 0; i < hitCounts.length; ++i) {
       if (hitCounts[i] > hitCounts[maxIndex]) {
         maxIndex = i;
       }
@@ -138,7 +138,7 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
     boolean isInternal = false;
     if (contigLength >= hits.size()) {
       isInternal = true;
-      for (int i = 0; i < hitsSize; i++) {
+      for (int i = 0; i < hitsSize; ++i) {
         final List<ContigPosition> positionHits = hits.get(i);
         for (ContigPosition pos : positionHits) {
           if (Math.abs(pos.mContigId) == maxIndex) {
@@ -336,7 +336,7 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
 
   private static byte[] getContigArray(MutableGraph graph, long contigId) {
     final byte[] contigNt = new byte[graph.contigLength(contigId)];
-    for (int k = 0; k < contigNt.length; k++) {
+    for (int k = 0; k < contigNt.length; ++k) {
       contigNt[k] = graph.nt(contigId, k);
     }
     return contigNt;
@@ -381,7 +381,7 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
   static void printAlignment(final String header, final byte[] read, final byte[] contigNt, final int rStart, final int cStart, final String a, PrintStream out) {
     final StringBuilder rOut = new StringBuilder();
     final StringBuilder tOut = new StringBuilder();
-    for (int k = 0, r = rStart, t = cStart; k < a.length(); k++) {
+    for (int k = 0, r = rStart, t = cStart; k < a.length(); ++k) {
       switch (a.charAt(k)) {
         case 'X':
         case '=':
@@ -430,7 +430,7 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
   static HitMap joinHits(List<List<ContigPosition>> hits, int wordSize) {
     final HitMap map = new HitMap();
     final int size = hits.size();
-    for (int readPosition = 0; readPosition < size; readPosition++) {
+    for (int readPosition = 0; readPosition < size; ++readPosition) {
       final List<ContigPosition> posList = hits.get(readPosition);
       for (ContigPosition pos : posList) {
         final List<HitCollection> list = map.getOrAdd(pos.mContigId);
@@ -440,7 +440,7 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
         boolean ambiguous = false;
 
         final int listSize = list.size();
-        for (int i = 0; i < listSize; i++) {
+        for (int i = 0; i < listSize; ++i) {
           final HitCollection collection = list.get(i);
           final int readDistance = readPosition - collection.top().readPosition();
           final int contigDistance = pos.mPosition - collection.top().contigPosition();

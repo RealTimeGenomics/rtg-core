@@ -299,7 +299,7 @@ public class HashingRegion implements Serializable, Comparable<HashingRegion> {
     while (stack.size() > 0) {
       final HashingRegion current = stack.pop();
       boolean changed = false;
-      for (long sequenceId = current.getStart(); sequenceId <= current.getEnd(); sequenceId++) {
+      for (long sequenceId = current.getStart(); sequenceId <= current.getEnd(); ++sequenceId) {
         final List<Pair<Integer, Integer>> duplicates = dupMap.get(sequenceId);
         if (duplicates != null) {
           for (Pair<Integer, Integer> dup : duplicates) {
@@ -378,7 +378,7 @@ public class HashingRegion implements Serializable, Comparable<HashingRegion> {
     long totalLengths = 0;
     final int[] seqLengths = reader.sequenceLengths(0, reader.numberSequences());
     final ArrayList<Long> sequences = new ArrayList<>();
-    for (long id = startId; id < endId; id++) {
+    for (long id = startId; id < endId; ++id) {
       final String name = reader.name(id);
       if (rg == null || rg.sequence(name) != null && rg.sequence(reader.name(id)).ploidy() != Ploidy.NONE) {
         totalLengths += reader.length(id);
@@ -430,9 +430,9 @@ public class HashingRegion implements Serializable, Comparable<HashingRegion> {
       final HashingRegion[] ranges = new HashingRegion[(int) totalLengths];
       int startId = 0;
       long startPosition = 0;
-      for (int i = 0; i < totalLengths; i++, startPosition++) {
+      for (int i = 0; i < totalLengths; ++i, ++startPosition) {
         if (startPosition > sequenceLengths[startId] - 1) {
-          startId++;
+          ++startId;
           startPosition = 0;
         }
         ranges[i] = new HashingRegion(startId, startPosition, startId, startPosition + 1, Math.max(0, startPosition - padding), Math.min(startPosition + 1 + padding, sequenceLengths[startId]));
@@ -453,7 +453,7 @@ public class HashingRegion implements Serializable, Comparable<HashingRegion> {
         long currentLength = individualLength;
         while (currentLength > sequenceLengths[endId] - endPosition) {
           currentLength -= sequenceLengths[endId] - endPosition;
-          endId++;
+          ++endId;
           endPosition = 0;
         }
         endPosition += currentLength;

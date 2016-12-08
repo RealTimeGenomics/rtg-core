@@ -38,7 +38,7 @@ public class HomopolymerRepeats {
     int startRepeat = 0;
     byte last = -1; //initial value doesn't matter
     int count = 0;
-    for (int i = start, j = 0; i < end; i++, j++) {
+    for (int i = start, j = 0; i < end; ++i, ++j) {
       if (j != startRepeat) {
         if (last != sequence.get(i)) {
           mForward[j - 1] = count;
@@ -48,7 +48,7 @@ public class HomopolymerRepeats {
         }
         //everything starts at 0 in java so don't need to zero in else
       }
-      count++;
+      ++count;
       last = sequence.get(i);
     }
     mForward[mForward.length - 1] = count;

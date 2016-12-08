@@ -42,7 +42,7 @@ public class Statistics {
     reset();
     if (histogram != null) {
       mHistogram = histogram;
-      for (int i = 0; i < histogram.getLength(); i++) {
+      for (int i = 0; i < histogram.getLength(); ++i) {
         final long count = histogram.getValue(i);
         if (count > 0) {
           addSample(i, count);
@@ -75,7 +75,7 @@ public class Statistics {
     mSumSquares += (long) x * (long) x;
     mMin = x < mMin ? x : mMin;
     mMax = x > mMax ? x : mMax;
-    mCount++;
+    ++mCount;
 
     // If the sum of squares exceeds Long.MAX_VALUE, this means the
     // value has overflowed; reset the state back to zero and start again.

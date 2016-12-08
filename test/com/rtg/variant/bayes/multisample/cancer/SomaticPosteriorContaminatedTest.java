@@ -65,7 +65,7 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
     final Evidence evc = new EvidenceQ(simpleHomoHyps.description(), 1, 0, 0, 0.05, 0.05, true, false, false, false);
     final Evidence evg = new EvidenceQ(simpleHomoHyps.description(), 2, 0, 0, 0.05, 0.05, true, false, false, false);
 
-    for (int i = 0; i < numReads; i++) {
+    for (int i = 0; i < numReads; ++i) {
       cancer.increment(evg);
       normal.increment(evc);
     }
@@ -110,7 +110,7 @@ public class SomaticPosteriorContaminatedTest extends TestCase {
     final ModelCancerContamination<Hypotheses<Description>> cancer = new ModelCancerContamination<>(hypc, 0.0, new StatisticsSnp(hypc.description()), new NoAlleleBalance());
     final Evidence eva = new EvidenceQ(simpleHomoHyps.description(), 0, 0, 0, 0.05, 0.05, true, false, false, false);
     // run through several identical reads
-    for (int i = 0; i < numReads; i++) {
+    for (int i = 0; i < numReads; ++i) {
       cancer.increment(eva);
     }
     cancer.freeze();

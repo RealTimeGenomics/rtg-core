@@ -45,7 +45,7 @@ public class VariantAlignmentRecordPopulator implements Populator<VariantAlignme
     mChooser = chooser;
     mGenomeToInteger = new HashMap<>(genomeNames.length);
     mMinBaseQuality = minBaseQuality;
-    for (int i = 0; i < genomeNames.length; i++) {
+    for (int i = 0; i < genomeNames.length; ++i) {
       final String s = genomeNames[i];
       mGenomeToInteger.put(s, i);
     }
@@ -57,9 +57,9 @@ public class VariantAlignmentRecordPopulator implements Populator<VariantAlignme
   @Override
   public VariantAlignmentRecord populate(final SAMRecord rec) {
     if (mMaskHomopolymer) {
-      mTotalRecords++;
+      ++mTotalRecords;
       if (HomopolymerUtils.maskHomoPolymer(rec)) {
-        mMaskedRecords++;
+        ++mMaskedRecords;
       }
       if (mTotalRecords % 1000000 == 0) {
         Diagnostic.developerLog("Masked " + mMaskedRecords + " out of " + mTotalRecords + " (" + (100.0 * mMaskedRecords / mTotalRecords) + "%)");

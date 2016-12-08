@@ -21,11 +21,11 @@ public class CodeDiploidTest extends TestCase {
   public void testHaploid() {
     final CodeDiploid tc = new CodeDiploid(4);
     assertEquals(4, tc.rangeSize());
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertTrue(tc.homozygous(i));
       assertEquals(tc.a(i), tc.bc(i));
     }
-    for (int i = 4; i < 10; i++) {
+    for (int i = 4; i < 10; ++i) {
       assertFalse(tc.homozygous(i));
       assertFalse(tc.a(i) == tc.bc(i));
     }
@@ -36,7 +36,7 @@ public class CodeDiploidTest extends TestCase {
     final CodeDiploid tc = new CodeDiploid(4);
     assertFalse(tc.valid(-1));
     assertFalse(tc.valid(10));
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       assertTrue(tc.valid(i));
     }
   }
@@ -93,7 +93,7 @@ public class CodeDiploidTest extends TestCase {
 
   public void testCode1() {
     final CodeDiploid tc = new CodeDiploid(4);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertEquals(i, tc.code(i));
       assertEquals(i, tc.code(i, i));
     }
@@ -101,7 +101,7 @@ public class CodeDiploidTest extends TestCase {
 
   public void testCode2() {
     final CodeDiploid tc = new CodeDiploid(4);
-    for (int i = 0; i < tc.size(); i++) {
+    for (int i = 0; i < tc.size(); ++i) {
       final int a = tc.a(i);
       final int b = tc.homozygous(i) ? a : tc.b(i);
       assertEquals(i, tc.code(a, b));

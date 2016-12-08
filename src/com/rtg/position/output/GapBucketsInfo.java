@@ -100,16 +100,16 @@ public final class GapBucketsInfo extends IntegralAbstract {
     final int ss = mBucketScale * mStepSize;
     //System.err.println("bucketScale=" + mBucketScale + " stepSize=" + mStepSize + " ss=" + ss + " gap=" + mGap);
     //System.err.println("seqParams=" + seqParams);
-    for (long i = start; i < end; i++) {
+    for (long i = start; i < end; ++i) {
       final int l = (reader.length(i) + mGap + ss - 1) / ss;
       //System.err.println("l=" + l + " length=" + reader.currentLength());
-      for (int n = 0; n < numberFrames; n++) {
+      for (int n = 0; n < numberFrames; ++n) {
         tot += l;
         if (l > max) {
           max = l;
         }
         mBucketLast[j] = tot - 1;
-        j++;
+        ++j;
       }
     }
 
@@ -268,7 +268,7 @@ public final class GapBucketsInfo extends IntegralAbstract {
   @Override
   public void toString(final StringBuilder sb) {
     sb.append("GapBuckets pointers[").append(mBucketLast.length).append("]").append(StringUtils.LS);
-    for (int i = 0; i < mBucketLast.length; i++) {
+    for (int i = 0; i < mBucketLast.length; ++i) {
       sb.append("[");
       sb.append(String.valueOf(i));
       sb.append("]->");
@@ -285,7 +285,7 @@ public final class GapBucketsInfo extends IntegralAbstract {
     final int minBuckets = mGap / (mBucketScale * mStepSize);
     if (mBucketLast.length > 0) {
       long last = 0;
-      for (int i = 1; i < mBucketLast.length; i++) {
+      for (int i = 1; i < mBucketLast.length; ++i) {
         final long l = mBucketLast[i];
         final long d = l - last;
         Exam.assertTrue(d >= minBuckets);

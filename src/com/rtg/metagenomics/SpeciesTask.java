@@ -130,7 +130,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     final SpeciesMap speciesMap = new SpeciesMap();
     // Preload species map to ensure names in correct order
     final PrereadNamesInterface names = sr.names();
-    for (int k = 0; k < names.length(); k++) {
+    for (int k = 0; k < names.length(); ++k) {
       final String name = names.name(k);
       final Integer taxonId = sequenceMap.get(name);
       TaxonNode taxon = taxonomy.get(taxonId);
@@ -182,7 +182,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
       }
     }
     final int taxonIdBefore = nextId;
-    for (long i = 0; i < sr.numberSequences(); i++) {
+    for (long i = 0; i < sr.numberSequences(); ++i) {
       final String shortName = sr.name(i);
       if (!mSequenceMap.containsKey(shortName)) {
         final Integer taxonId = nextId++;
@@ -227,7 +227,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
         }
       }
     }
-    for (long i = 0; i < sr.numberSequences(); i++) {
+    for (long i = 0; i < sr.numberSequences(); ++i) {
       final String shortName = sr.name(i);
       final String suffix = sr.nameSuffix(i);
       if (!renameMap.containsKey(shortName) && suffix.length() != 0) {
@@ -255,7 +255,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
 
       // ensure all sequences accounted for
       final PrereadNamesInterface names = sr.names();
-      for (int k = 0; k < names.length(); k++) {
+      for (int k = 0; k < names.length(); ++k) {
         final String name = names.name(k);
         if (!mSequenceMap.containsKey(name)) {
           throw new NoTalkbackSlimException("Reference SDF contains sequences not referenced by sequence lookup");
@@ -286,7 +286,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
 
     final ReaderParams genomes = mParams.genome();
     final int[] initGenomeLengths = genomes.lengths();
-    for (int i = 0; i < initGenomeLengths.length; i++) {
+    for (int i = 0; i < initGenomeLengths.length; ++i) {
       final int id = mSpeciesMap.id(mSequenceMap.get(genomes.reader().name(i)));
       genomeLengths[id] += initGenomeLengths[i];
     }
@@ -355,7 +355,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     final SamReadingContext context = new SamReadingContext(mParams.mapped(), 1, mParams.filterParams(), SamUtils.getUberHeader(sr, mParams.mapped()), null); // XXX add CRAM support?
     try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
       while (it.hasNext()) {
-        usageStats++;
+        ++usageStats;
         final SAMRecord rec = it.next();
         final Integer ih = rec.getIntegerAttribute(SamUtils.ATTRIBUTE_IH);
         final double mappedIncr = (ih != null && ih > 0) ? 1.0 / ih : 1.0;
@@ -460,7 +460,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
             Diagnostic.developerLog(mCurrentBlock.fragInfo());
 
             // Set up block membership info
-            for (int j = 0; j < mMembersOf.length; j++) {
+            for (int j = 0; j < mMembersOf.length; ++j) {
               final TaxonNode taxon = mTaxonomy.get(mSpeciesMap.taxonId(j));
               final List<TaxonNode> members = taxon.depthFirstTraversal();
               mMembersOf[j] = new int[members.size()];
@@ -477,7 +477,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
 
             subResults[mCurrentBlockId] = runBlock();
 
-            for (int j = 0; j < mMembersOf.length; j++) {
+            for (int j = 0; j < mMembersOf.length; ++j) {
               mMembersOf[j] = null;
             }
 
@@ -491,7 +491,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
             // Calculate P values, for every global taxon id that could be affected:
             final Vector initialR = subBlockResults.getR();
             final List<Future<?>> pFutures = new ArrayList<>();
-            for (int j = 0; j < mInBlock.length; j++) {
+            for (int j = 0; j < mInBlock.length; ++j) {
               if (mInBlock[j]) {
                 final int nodeId = j;
                 final Runnable run = new Runnable() {
@@ -547,7 +547,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     Diagnostic.progress("Merging Block Results Started");
     Diagnostic.userLog("Merging block results.");
     final SpeciesResult result = new SpeciesResult(blockInfo.getN());
-    for (int currentBlock = 0; currentBlock < subBlocks.length; currentBlock++) {
+    for (int currentBlock = 0; currentBlock < subBlocks.length; ++currentBlock) {
       blockMapping.mergeResults(result, subResults[currentBlock], currentBlock);
     }
     Diagnostic.progress("Merging Block Results Finished");
@@ -613,7 +613,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     final long[] taxTotalGenomeLength = new long[allRef.length];
     final long[] taxHitCount = new long[allRef.length];
     final Vector likelihoods = result.getLikelihoods();
-    for (int i = 0; i < allRef.length; i++) {
+    for (int i = 0; i < allRef.length; ++i) {
       final double rv = r.get(i);
       final long gl = blockInfo.getGenomeLength(i);
       if (rv > 0.0 || mParams.printAll()) {
@@ -635,7 +635,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
       }
     }
     final TreeSet<ComparablePair<ReverseDouble, Integer>> taxset = new TreeSet<>();
-    for (int i = 0; i < allRef.length; i++) {
+    for (int i = 0; i < allRef.length; ++i) {
       final double rv = taxRs[i];
       if (rv > 0.0 || mParams.printAll()) {
         taxset.add(new ComparablePair<>(new ReverseDouble(rv), i));
@@ -684,7 +684,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
       if (passesConfidenceFilter && hasAssociatedGenome) {
         shannon -= wt * Math.log(wt);
         simpson += wt * wt;
-        speciesCount++;
+        ++speciesCount;
       }
 
       final BoundedDouble abundance = outputStdDevBounds(varianceLog, w, g, taxonId, wt);
@@ -757,7 +757,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
 
   private int[] makeParentLookup() {
     final int[] parentList = new int[mSpeciesMap.size()]; // Each element gives the internal id of the parent
-    for (int j = 0; j < parentList.length; j++) {
+    for (int j = 0; j < parentList.length; ++j) {
       final TaxonNode taxon = mTaxonomy.get(mSpeciesMap.taxonId(j));
       final int parentId = taxon.getParentId();
       parentList[j] = parentId != Taxonomy.ROOT_ID ? mSpeciesMap.get(parentId) : -1;

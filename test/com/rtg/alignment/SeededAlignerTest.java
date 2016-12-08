@@ -111,7 +111,7 @@ public class SeededAlignerTest extends AbstractUnidirectionalEditDistanceTest {
   // The seeded aligner returns NULL if there is 10nt repeated regions in the two strings.
   // Hence the null check fails.
 //  public void testVariousSidesSameKnownFail() {
-//    for (int s = 0; s < 100; s++) {
+//    for (int s = 0; s < 100; ++s) {
 //      final PortableRandom r = new PortableRandom(s);
 //      final char[] dna = {'a', 't', 'c', 'g'};
 //      final long start = System.currentTimeMillis();
@@ -119,7 +119,7 @@ public class SeededAlignerTest extends AbstractUnidirectionalEditDistanceTest {
 //      while (System.currentTimeMillis() - start < 100) {
 //        for (int i = SeededAligner.NTHASHSIZE; i < 100; i += 3) {
 //          final StringBuilder sb = new StringBuilder();
-//          for (int j = 0; j < i; j++) {
+//          for (int j = 0; j < i; ++j) {
 //            sb.append(dna[r.nextInt(dna.length)]);
 //          }
 //          align(sb.toString(), sb.toString(), 0, 0, i < SeededAligner.NTHASHSIZE ? true : false, Integer.MAX_VALUE);
@@ -138,11 +138,11 @@ public class SeededAlignerTest extends AbstractUnidirectionalEditDistanceTest {
     while (System.currentTimeMillis() - start < 100) {
       for (int i = SeededAligner.NTHASHSIZE; i < 100; i += 3) {
         final StringBuilder sb = new StringBuilder();
-        for (int j = 0; j < i; j++) {
+        for (int j = 0; j < i; ++j) {
           sb.append(dna[r.nextInt(dna.length)]);
         }
         final StringBuilder sb2 = new StringBuilder(sb.toString());
-        for (int j = 0; j < sb2.length(); j++) {
+        for (int j = 0; j < sb2.length(); ++j) {
           if (r.nextInt(5) < 1) {
             sb2.setCharAt(j, 'n');
           }
@@ -161,7 +161,7 @@ public class SeededAlignerTest extends AbstractUnidirectionalEditDistanceTest {
     while (System.currentTimeMillis() - start < 100) {
       for (int i = SeededAligner.NTHASHSIZE + 1; i < 60; i += 3) {
         final StringBuilder sb = new StringBuilder();
-        for (int j = 0; j < i; j++) {
+        for (int j = 0; j < i; ++j) {
           sb.append(dna[r.nextInt(dna.length)]);
         }
         final StringBuilder sb2 = new StringBuilder(sb.toString());
@@ -444,7 +444,7 @@ public class SeededAlignerTest extends AbstractUnidirectionalEditDistanceTest {
 
   String removeSpaces(String s) {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < s.length(); i++) {
+    for (int i = 0; i < s.length(); ++i) {
       if (s.charAt(i) != ' ') {
         sb.append(s.charAt(i));
       }

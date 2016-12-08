@@ -86,7 +86,7 @@ public class GraphWriterTest extends TestCase {
     final GraphImplementation graph = new GraphImplementation(0, Collections.<String, String>emptyMap(), Collections.<String, String>emptyMap());
     final StringBuilder sb = new StringBuilder();
     final String tenLong = "ACTG" + "GGTT" + "AA";
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; ++i) {
       sb.append(tenLong);
     }
 

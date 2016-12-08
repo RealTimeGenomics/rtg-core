@@ -47,7 +47,7 @@ public abstract class Match {
   public String qualityString() {
     final StringBuilder sb = new StringBuilder();
     sb.append("[");
-    for (int i = 0; i < length(); i++) {
+    for (int i = 0; i < length(); ++i) {
       sb.append(Utils.realFormat(-Math.log(baseError(i)) / Math.log(10.0), 2)).append(", ");
     }
     sb.append("]");

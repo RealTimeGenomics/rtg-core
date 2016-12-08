@@ -48,7 +48,7 @@ public final class Util {
     int count = 0;
     for (final Object obj : collection) {
       if (obj != null) {
-        count++;
+        ++count;
       }
     }
     return count;

@@ -76,9 +76,9 @@ final class ProteinBitScorer {
     }
 
     long finalBits = 0;
-    for (int shift = 0; shift <= 2 * mMaxIndel; shift++) {
+    for (int shift = 0; shift <= 2 * mMaxIndel; ++shift) {
       long eqBits = (1L << rlen) - 1;
-      for (int bit = 0; bit < NUM_BITS; bit++) {
+      for (int bit = 0; bit < NUM_BITS; ++bit) {
         final long thisEq = ~(mTemplate[bit] ^ (mRead[bit] << shift));
         eqBits &= thisEq >> shift;
       }
@@ -102,7 +102,7 @@ final class ProteinBitScorer {
   void fillup(final byte[] data, final int start, final int len, final int unknown, final long[] store) {
     long a = 0, b = 0, c = 0, d = 0, e = 0;
     final int end = start + len;
-    for (int i = start; i < end; i++) {
+    for (int i = start; i < end; ++i) {
       final byte aa = 0 <= i && i < data.length ? data[i] : (byte) unknown;
       a = a << 1 | (aa & 1);
       b = b << 1 | ((aa >> 1) & 1);

@@ -79,7 +79,7 @@ public class MutatedOffsets {
     checkFrozen(false);
     int pos = position - mOffsets[mLength - 1] + 1;
     checkNewPosition(pos);
-    for (int i = 0; i <= size; i++, pos++) {
+    for (int i = 0; i <= size; ++i, ++pos) {
       if (i == size / 2) {
         continue;
       }
@@ -118,7 +118,7 @@ public class MutatedOffsets {
     }
     mPositions[mLength] = position;
     mOffsets[mLength] = offset;
-    mLength++;
+    ++mLength;
   }
 
   private void growArrays() {

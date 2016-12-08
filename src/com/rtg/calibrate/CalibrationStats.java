@@ -54,7 +54,7 @@ public class CalibrationStats {
   public int getNewIndex(Covariate[] covariates) {
     assert covariates != null && mValues != null && covariates.length == mValues.length;
     int pos = 0;
-    for (int i = 0; i < covariates.length; i++) {
+    for (int i = 0; i < covariates.length; ++i) {
       pos = pos * covariates[i].newSize() + mValues[i];
     }
     return pos;
@@ -144,7 +144,7 @@ public class CalibrationStats {
     assert covariates != null && mValues != null && covariates.length == mValues.length;
     String sep = "";
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < covariates.length; i++) {
+    for (int i = 0; i < covariates.length; ++i) {
       sb.append(sep);
       sb.append(covariates[i].valueString(mValues[i]));
       sep = "\t";

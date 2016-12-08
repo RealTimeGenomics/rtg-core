@@ -33,13 +33,13 @@ public class SequencesReaderIteratorTest extends TestCase {
     final File tmpDir = FileHelper.createTempDirectory();
     try {
       final List<File> files = new ArrayList<>();
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < 4; ++i) {
         final File dir = new File(tmpDir, "" + i);
         files.add(dir);
         ReaderTestUtils.getReaderDNA(">" + i + StringUtils.LS + "AA" + StringUtils.LS, dir, new SdfId());
       }
       final SequencesReaderIterator iterator = new SequencesReaderIterator(files);
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < 4; ++i) {
         assertTrue(iterator.hasNext());
         final SequencesReader reader = iterator.next();
         assertEquals("" + i, reader.name(0));

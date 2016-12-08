@@ -105,7 +105,7 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
     //System.err.println(" threshold=" + params.threshold());
     @SuppressWarnings("unchecked")
     final AbstractGappedRegion<G>[][] ret = (AbstractGappedRegion<G>[][]) new AbstractGappedRegion<?>[mNumberColumns][];
-    for (int i = 0; i < ret.length; i++) {
+    for (int i = 0; i < ret.length; ++i) {
       @SuppressWarnings("unchecked")
       final AbstractGappedRegion<G>[] gs = (AbstractGappedRegion<G>[]) new AbstractGappedRegion<?>[mRepeatThreshold];
       ret[i] = gs;
@@ -118,7 +118,7 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
     //System.err.println("endQuery");
     //printRegions(System.err);
     if (mSearchPosition != NULL) {
-      for (int i = mSearchPosition + 1; i <= mSearchPosition + mNumberColumns; i++) {
+      for (int i = mSearchPosition + 1; i <= mSearchPosition + mNumberColumns; ++i) {
         final int im = i % mNumberColumns;
         //System.err.println("flushing i=" + i + " im=" + im);
         flush(im);
@@ -145,8 +145,8 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
   }
 
   private boolean checkRegionsEmpty() {
-    for (int i = 0; i < mRegions.length; i++) {
-      for (int j = 0; j < mRegions[i].length; j++) {
+    for (int i = 0; i < mRegions.length; ++i) {
+      for (int j = 0; j < mRegions[i].length; ++j) {
         assert mRegions[i][j] == null || !mRegions[i][j].isValid() : "endQuery i=" + i + " j=" + j + " region=" + mRegions[i][j];
       }
     }
@@ -155,10 +155,10 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
 
 //  void printRegions(final PrintStream out) {
 //    out.println("Regions[" + mRegions.length + "][" + mRegions[0].length + "] search=" + mSearchPosition + " curr. col=" + mCurrColumn);
-//    for (int i = 0; i < mRegions.length; i++) {
+//    for (int i = 0; i < mRegions.length; ++i) {
 //      //System.err.println("i=" + i);
 //      out.print("[" + i + "] ");
-//      for (int j = 0; j < mRegions[i].length; j++) {
+//      for (int j = 0; j < mRegions[i].length; ++j) {
 //        if (mRegions[i][j].isValid()) {
 //          out.print((j == 0 ? "" : ",") + " [" + j + "]" + mRegions[i][j]);
 //        }
@@ -175,7 +175,7 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
     final G cu = (G) mRegions[mCurrColumn][index];
     final G curr;
     if (cu == null) { //lazily contruct regions
-      mId++;
+      ++mId;
       //System.err.println("buildLengths=" + mBuildLengths);
       curr = mRegionFactory.region(mId, mProbabilities, mParams, mBuildLengths);
       mRegions[mCurrColumn][index] = curr;
@@ -211,7 +211,7 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
         final int end = mSearchPosition + mNumberColumns;
         final int hi = position >= end ? end : position;
         //System.err.println("mSearchPosition=" + mSearchPosition + " hi=" + hi);
-        for (int i = mSearchPosition + 1; i <= hi; i++) {
+        for (int i = mSearchPosition + 1; i <= hi; ++i) {
           final int im = i % mNumberColumns;
           flush(im);
         }
@@ -230,7 +230,7 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
     //System.err.println("flush col=" + col + " next=" + mNextRegion[col]);
     //}
     //System.err.println(this.toString());
-    for (int i = 0; i < mNextRegion[col]; i++) {
+    for (int i = 0; i < mNextRegion[col]; ++i) {
       //System.err.println("flush col=" + col + " i=" + i);
       final AbstractGappedRegion<G> region = mRegions[col][i];
       //this is tricky
@@ -323,9 +323,9 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
   @Override
   public void toString(final StringBuilder sb) {
     sb.append("GappedOutput wordSize=").append(mWordSize).append(" maxGap=").append(mMaxGap).append(" minDelta=").append(mMinDelta).append(" maxDelta=").append(mMaxDelta).append(" score=").append(score()).append(StringUtils.LS);
-    for (int i = 0; i < mRegions.length; i++) {
+    for (int i = 0; i < mRegions.length; ++i) {
       sb.append("[").append(i).append("]").append(mNextRegion[i]);
-      for (int j = 0; j < mNextRegion[i]; j++) {
+      for (int j = 0; j < mNextRegion[i]; ++j) {
         sb.append(" ").append(mRegions[i][j]);
       }
       sb.append(StringUtils.LS);
@@ -337,12 +337,12 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
     integrity();
     //scan the regions array
     if (!mReverseFrame) {
-      for (int i = 0; i < mRegions.length; i++) {
+      for (int i = 0; i < mRegions.length; ++i) {
         final AbstractGappedRegion<G>[] column = mRegions[i];
         final int init = mNextRegion[i];
         Exam.assertTrue(init >= 0 && init <= column.length);
         int qEnd = -1;
-        for (int j = 0; j < init; j++) {
+        for (int j = 0; j < init; ++j) {
           final AbstractGappedRegion<G> region = column[j];
           region.integrity();
           Exam.assertTrue(region.isInitialized());
@@ -357,7 +357,7 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
           final long bucket = region.bucket();
           Exam.assertTrue(mBuckets.get(bucket) != null);
         }
-        for (int j = init; j < column.length; j++) {
+        for (int j = init; j < column.length; ++j) {
           final AbstractGappedRegion<G> region = column[j];
           if (region != null) {
             region.integrity();
@@ -367,7 +367,7 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
       }
 
       //scan all the buckets
-      for (int i = 0; i < mBuckets.numberBuckets(); i++) {
+      for (int i = 0; i < mBuckets.numberBuckets(); ++i) {
         final AbstractGappedRegion<G> last = mBuckets.get(i);
         if (last == null) {
           continue;
@@ -443,7 +443,7 @@ public class GappedOutput <G extends AbstractGappedRegion<G>> extends AbstractPo
     @Override
     protected void scan(final G region, final boolean forward, final long lo, final long hi) {
       //System.err.println("scan region=" + region + " forward=" + forward + " lo=" + lo + " hi=" + hi);
-      for (long b = lo; b <= hi; b++) {
+      for (long b = lo; b <= hi; ++b) {
         //have a bucket - scan all the regions linked to the bucket
         final G lastRegion = mOuter.mBuckets.get(b);
         if (lastRegion != null) {

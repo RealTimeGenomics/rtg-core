@@ -236,7 +236,7 @@ Likely overlap, 1 Substitution
       final double deletePenalty = Math.log(Math.exp(score.mParams.deleteOpenLn())); // / w);
       assertEquals(w, score.mWidth);
       assertEquals(-maxShift - 1, score.rowOffset(0));
-      for (int tPos = -maxShift - 1; tPos < maxShift; tPos++) {
+      for (int tPos = -maxShift - 1; tPos < maxShift; ++tPos) {
         checkScores(score, 0, tPos, deletePenalty, matchPenalty, Double.NEGATIVE_INFINITY);
       }
     }

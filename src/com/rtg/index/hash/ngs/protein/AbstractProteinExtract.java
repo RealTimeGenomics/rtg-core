@@ -46,7 +46,7 @@ public abstract class AbstractProteinExtract extends IntegralAbstract {
   long mask(final long v) {
     assert mSingleMask.isFrozen();
     long res = 0;
-    for (int i = 0; i < mSingleMask.size(); i++) {
+    for (int i = 0; i < mSingleMask.size(); ++i) {
       final Skel sk = mSingleMask.subSkeleton(i);
       res = res | sk.mask(v);
     }
@@ -118,12 +118,12 @@ public abstract class AbstractProteinExtract extends IntegralAbstract {
     final int indGap = indels * indelLength;
     final int min = Math.min(indGap, mSingleMask.gaps(i + 1));
     //System.err.println("indels=" + indels + " indelLength=" + indelLength + " indGap=" + indGap + " min=" + min);
-    for (int t = -min; t < 0; t++) {
+    for (int t = -min; t < 0; ++t) {
       final int s = (-t + indelLength - 1) / indelLength;
       //System.err.println("neg i=" + i + " t=" + t + " s=" + s);
       ma(vs, aa, bb, cc, dd, ee, j, indels - s, tweak + t);
     }
-    for (int t = 0; t <= indGap; t++) {
+    for (int t = 0; t <= indGap; ++t) {
       final int s = (t + indelLength - 1) / indelLength;
       //System.err.println("pos i=" + i + " t=" + t + " s=" + s);
       ma(vs, aa, bb, cc, dd, ee, j, indels - s, tweak + t);

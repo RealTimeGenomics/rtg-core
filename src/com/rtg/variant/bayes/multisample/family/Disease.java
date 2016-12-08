@@ -46,7 +46,7 @@ public class Disease {
    * @return a disease explanation in the code space of the diseases (see <code>HypothesesDisease</code>)
    */
   public int explanation(final int ref) {
-    for (int i = 0; i < mIndividualHypotheses.description().size(); i++) {
+    for (int i = 0; i < mIndividualHypotheses.description().size(); ++i) {
       if (i != ref && q(i + 1)) {
         return i + 1;
       }
@@ -60,7 +60,7 @@ public class Disease {
    */
   private boolean q(final int diseaseHyp) {
     //iterate over the genomes
-    for (int i = 0; i < mCurrentHypotheses.length; i++) {
+    for (int i = 0; i < mCurrentHypotheses.length; ++i) {
       if (!q(diseaseHyp, i)) {
         return false;
       }

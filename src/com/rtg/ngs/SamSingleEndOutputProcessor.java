@@ -111,7 +111,7 @@ public class SamSingleEndOutputProcessor extends AbstractMapOutputProcessor {
 
   private static MatchResult organizeResults(final int[] readIdStatus, final UptoNStore uptoN) {
     final MatchResult results = new MatchResult(readIdStatus.length);
-    for (int i = 0; i < readIdStatus.length; i++) {
+    for (int i = 0; i < readIdStatus.length; ++i) {
       //System.err.println(i + " READ ID STATUS = " + mReadIdStatus[i]);
       uptoN.setResults(results, i);
 
@@ -241,7 +241,7 @@ public class SamSingleEndOutputProcessor extends AbstractMapOutputProcessor {
     final long num = mParams.buildFirstParams().reader().numberSequences();
     str.append("numsequences= ").append(num).append(StringUtils.LS);
     str.append("temp files gzipped= " + true);
-    for (int i = 0 ; i < num; i++) {
+    for (int i = 0 ; i < num; ++i) {
       str.append("read= ").append(i).append(" stats= ").append(mUnmappedTracker.getXCAttribute(i, true)).append(StringUtils.LS);
     }
     return str.toString();

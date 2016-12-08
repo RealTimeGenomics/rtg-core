@@ -82,13 +82,13 @@ public class AlignmentRecordMatcher {
         while ((mN > 0) && (!greedy ? mRefPos < untilPos : greedyCheck(c, mRefPos, untilPos))) {
           action.match(c);
           postMatch(c);
-          mN--;
+          --mN;
         }
         if (mN > 0 && mRefPos >= untilPos) {
           break;
         }
       }
-      mI++;
+      ++mI;
     }
   }
 
@@ -107,16 +107,16 @@ public class AlignmentRecordMatcher {
       case SamUtils.CIGAR_SAME:
       case SamUtils.CIGAR_MISMATCH:
       case 'P':
-        mRefPos++;
-        mReadPos++;
+        ++mRefPos;
+        ++mReadPos;
         break;
       case SamUtils.CIGAR_INSERTION_INTO_REF:
       case SamUtils.CIGAR_SOFT_CLIP: // soft-clipping bases in read ignored for position
-        mReadPos++;
+        ++mReadPos;
         break;
       case SamUtils.CIGAR_GAP_IN_READ:
       case SamUtils.CIGAR_DELETION_FROM_REF:
-        mRefPos++;
+        ++mRefPos;
         break;
       case SamUtils.CIGAR_HARD_CLIP:
         break;

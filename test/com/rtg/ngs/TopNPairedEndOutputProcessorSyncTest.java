@@ -103,7 +103,7 @@ public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutpu
         final SequencesReader ref = params.searchParams().reader();
         final HashingRegion[] regions = HashingRegion.splitWorkload(ref, params.sex(), 0, ref.numberSequences(), params.numberThreads() * params.threadMultiplier(), HashingRegion.DEFAULT_MIN_CHUNK_SIZE, params.calculateThreadPadding());
         try (TopNPairedEndOutputProcessorSync sync = new TopNPairedEndOutputProcessorSync(params, null, true, true)) {
-          for (int i = 0; i < regions.length; i++) {
+          for (int i = 0; i < regions.length; ++i) {
             stp.execute(new SimpleProcess2(sync, regions[i], i));
           }
           stp.terminate();
@@ -189,7 +189,7 @@ public class TopNPairedEndOutputProcessorSyncTest extends AbstractPairedEndOutpu
           final SequencesReader ref = params.searchParams().reader();
           final HashingRegion[] regions = HashingRegion.splitWorkload(ref, params.sex(), 0, ref.numberSequences(), params.numberThreads() * params.threadMultiplier(), HashingRegion.DEFAULT_MIN_CHUNK_SIZE, params.calculateThreadPadding());
           try (TopNPairedEndOutputProcessorSync sync = new TopNPairedEndOutputProcessorSync(params, null, true, true)) {
-            for (int i = 0; i < regions.length; i++) {
+            for (int i = 0; i < regions.length; ++i) {
               stp.execute(new SimpleProcess2(sync, regions[i], i));
             }
             stp.terminate();

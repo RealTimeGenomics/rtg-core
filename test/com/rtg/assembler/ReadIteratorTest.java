@@ -47,7 +47,7 @@ public class ReadIteratorTest extends TestCase {
 
   static void listEquals(String[] a, List<byte[]> b) {
     assertEquals("expected <" + Arrays.toString(a) + "> but was <" + ReadPairSourceTest.fragementToString(b) + ">", a.length, b.size());
-    for (int i = 0; i < a.length; i++) {
+    for (int i = 0; i < a.length; ++i) {
       assertEquals(a[i], DnaUtils.bytesToSequenceIncCG(b.get(i)));
     }
   }
@@ -83,14 +83,14 @@ public class ReadIteratorTest extends TestCase {
     final String rightFasta = ReaderTestUtils.fasta(right);
     final ReadPairSource reader = new ReadPairSource(ReaderTestUtils.getReaderDnaMemory(leftFasta), ReaderTestUtils.getReaderDnaMemory(rightFasta));
 
-    for (int j = 0; j < 2; j++) {
+    for (int j = 0; j < 2; ++j) {
       reader.reset();
       final AsyncReadPool pool = new AsyncReadPool("ReadIteratorTest", Collections.singletonList(reader));
       final ReadIterator iterator = new ReadIterator(pool.sources().get(0));
       int i = 0;
       while (iterator.hasNext()) {
         listEquals(new String[] {left[i], right[i]}, iterator.next());
-        i++;
+        ++i;
       }
       assertEquals(3, i);
       pool.terminate();

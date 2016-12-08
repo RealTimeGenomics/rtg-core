@@ -247,7 +247,7 @@ public class GotohEditDistanceTest extends AbstractUnidirectionalEditDistanceTes
     final byte[] read2 = (prefix + readString).replaceAll(" ", "").getBytes();
     DnaUtils.encodeArray(read2);
     final int[] a2 = editDist.calculateEditDistanceFixedStart(read2, prefix.length(), read2.length, temp, zeroBasedStart, Integer.MAX_VALUE, maxShift);
-    for (int i = 0; i <= ActionsHelper.ACTIONS_START_INDEX; i++) {
+    for (int i = 0; i <= ActionsHelper.ACTIONS_START_INDEX; ++i) {
       assertEquals(a0[i], a2[i]);
     }
 
@@ -274,7 +274,7 @@ public class GotohEditDistanceTest extends AbstractUnidirectionalEditDistanceTes
 
   private String reverse(String str) {
     final StringBuilder sb = new StringBuilder();
-    for (int i = str.length() - 1; i >= 0; i--) {
+    for (int i = str.length() - 1; i >= 0; --i) {
       sb.append(str.charAt(i));
     }
     return sb.toString();
@@ -780,7 +780,7 @@ public class GotohEditDistanceTest extends AbstractUnidirectionalEditDistanceTes
     final int iterations = 1000000;
     final Timer timer = new Timer("GotohEditDistance");
     timer.start();
-    for (int iter = 0; iter < iterations; iter++) {
+    for (int iter = 0; iter < iterations; ++iter) {
       //System.out.println(iter + ":");
       final StringBuilder readStr = new StringBuilder();
       final StringBuilder templateStr = new StringBuilder();
@@ -819,7 +819,7 @@ public class GotohEditDistanceTest extends AbstractUnidirectionalEditDistanceTes
     timer.stop();
     System.out.println("Time: " + timer.toString());
     System.out.println("Histogram.  Average readLen=" + (totalLen / iterations));
-    for (int j = 0; j < hist.length; j++) {
+    for (int j = 0; j < hist.length; ++j) {
       System.out.println(j + ": " + hist[j]);
     }
   }

@@ -56,7 +56,7 @@ public class DeletionOverlapFilterTest extends TestCase {
     for (DiscordBedRecord b : filter) {
       assertEquals(EXPECTED[i], b.toString());
 //      System.err.println(EXPECTED[i] + " == " + b.toString());
-      i++;
+      ++i;
     }
     assertEquals(EXPECTED.length, i);
   }

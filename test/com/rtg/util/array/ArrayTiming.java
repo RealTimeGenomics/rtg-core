@@ -100,7 +100,7 @@ public final class ArrayTiming {
   public static void tMsg(final String msg, final long[] times) {
     final int lent = times.length;
     tM(times[lent - 1] - times[0]);
-    for (int i = 1; i < times.length; i++) {
+    for (int i = 1; i < times.length; ++i) {
       tM(times[i] - times[i - 1]);
     }
     System.out.println("  " + msg);
@@ -118,7 +118,7 @@ public final class ArrayTiming {
   public static void timeNull(final long tm, final long len) {
     final long t0 = System.currentTimeMillis();
     long j = 0;
-    for (int i = 0; i < ITERATIONS; i++) {
+    for (int i = 0; i < ITERATIONS; ++i) {
       j += 1039111L;
       if (j >= len) {
         j = j - len;
@@ -141,7 +141,7 @@ public final class ArrayTiming {
       final long t0 = System.currentTimeMillis();
       final long step = 1039111 % len;
       long j = 0;
-      for (int i = 0; i < ITERATIONS; i++) {
+      for (int i = 0; i < ITERATIONS; ++i) {
         j += step;
         if (j >= len) {
           j = j - len;
@@ -169,7 +169,7 @@ public final class ArrayTiming {
     if (a != null) {
       final Thread[] t = new Thread[threads];
       final long t0 = System.currentTimeMillis();
-      for (int k = 0; k < threads; k++) {
+      for (int k = 0; k < threads; ++k) {
         final int j = k;
         t[k] = new Thread() {
 
@@ -180,7 +180,7 @@ public final class ArrayTiming {
             final long len = a.length();
             final long step = 1039111 % len;
             long j = mStartPoint;
-            for (int i = 0; i < ITERATIONS; i++) {
+            for (int i = 0; i < ITERATIONS; ++i) {
               j += step;
               if (j >= len) {
                 j = j - len;
@@ -244,12 +244,12 @@ public final class ArrayTiming {
     timeNull(System.currentTimeMillis(), len);
     try {
       System.out.println("Chunked...");
-      for (int i = 0; i < 3; i++) {
+      for (int i = 0; i < 3; ++i) {
         final CommonIndex index0 = bestForBits(bits, len, BitIndex.IndexType.CHUNKED);
         timeIt(threads, index0);
       }
       System.out.println("Single...");
-      for (int i = 0; i < 3; i++) {
+      for (int i = 0; i < 3; ++i) {
         final CommonIndex index1 = bestForBits(bits, len, BitIndex.IndexType.SINGLE);
         timeIt(threads, index1);
       }

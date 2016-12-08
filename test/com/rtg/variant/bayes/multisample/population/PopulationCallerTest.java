@@ -103,7 +103,7 @@ public class PopulationCallerTest extends TestCase {
     increment(b, s, r, 0.1);
   }
   public static <T extends Description> void increment(ModelInterface<T> b, String s, double r, double q) {
-    for (int i = 0; i < s.length(); i++) {
+    for (int i = 0; i < s.length(); ++i) {
       final char val = s.charAt(i);
       b.increment(new EvidenceQ(DescriptionSnp.SINGLETON, DNA.valueOf(val).ordinal() - 1, 0, 0, r, q, true, false, false, false));
     }
@@ -111,7 +111,7 @@ public class PopulationCallerTest extends TestCase {
 
   public static VariantOutputVcfFormatter makeFormatter(VariantParams params, int numSamples) {
     final List<String> names = new ArrayList<>();
-    for (int i = 0; i < numSamples; i++) {
+    for (int i = 0; i < numSamples; ++i) {
       names.add("g" + i);
     }
     final String[] namesarr = names.toArray(new String[names.size()]);
@@ -359,7 +359,7 @@ public class PopulationCallerTest extends TestCase {
     final int fieldIndex = findField(output, fieldName);
     final String[] parts = output.trim().split("\t");
     assertEquals(calls.length, parts.length - PRIOR_FIELDS);
-    for (int i = 0; i < parts.length - PRIOR_FIELDS; i++) {
+    for (int i = 0; i < parts.length - PRIOR_FIELDS; ++i) {
       final String[] subParts = parts[i + PRIOR_FIELDS].split(":");
       assertEquals("The field \"" + fieldName + " was mismatched in: <" + output + "> expected values <" + Arrays.toString(calls) + ">", calls[i], subParts[fieldIndex]);
     }
@@ -400,7 +400,7 @@ public class PopulationCallerTest extends TestCase {
         , "CCCCCCCC"
         , "CCCCCCCC"
     };
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 7; ++i) {
       final Model<Description> model = new Model<>(hypothesesSnp, new StatisticsSnp(hypothesesSnp.description()), new NoAlleleBalance());
       b.add(model);
       increment(model, values[i], 0.001, 0.001);
@@ -415,7 +415,7 @@ public class PopulationCallerTest extends TestCase {
     final Variant v = pc.makeCall("foo", 20, 21, ref, b, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, hypothesesSnp, diploid));
     assertTrue(v.toString(), v.isInteresting());
     /* if USE_FB_FALLBACK
-    for (int i = 0; i < v.getNumberOfSamples(); i++) {
+    for (int i = 0; i < v.getNumberOfSamples(); ++i) {
       final VariantSample sample = v.getSample(i);
       if (sample != null) {
         assertEquals("C", sample.getName());
@@ -565,7 +565,7 @@ public class PopulationCallerTest extends TestCase {
     final Variant v = pc.makeCall("foo", 20, 21, ref, models, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploid, diploid));
 //    System.err.println("v = " + v);
     final String[] expected = {"C:C", "C:C", "C:C", "C:C", "C:G", "G:G", "G:G", "G:G"};
-    for (int i = 0; i < v.getNumberOfSamples(); i++) {
+    for (int i = 0; i < v.getNumberOfSamples(); ++i) {
       final VariantSample sample = v.getSample(i);
       if (sample != null) {
         assertEquals(i + ": expected<" + expected[i] + "> actual<" + sample.getName() + ">",  expected[i], sample.getName());
@@ -630,7 +630,7 @@ public class PopulationCallerTest extends TestCase {
     final HypothesesSnp haploid =  new HypothesesSnp(LogApproximatePossibility.SINGLETON, params, true, refNt - 1);
     final HypothesesSnp diploid =  new HypothesesSnp(LogApproximatePossibility.SINGLETON, params, false, refNt - 1);
 
-    for (int i = 0; i < pedigreeToModel.size(); i++) {
+    for (int i = 0; i < pedigreeToModel.size(); ++i) {
       models.add(null);
     }
 
@@ -639,10 +639,10 @@ public class PopulationCallerTest extends TestCase {
       family.setSampleIds(calledGenomes);
       final String[] members = family.getMembers();
       final int[] sampleIds = family.getSampleIds();
-      for (int i = 0; i < sampleIds.length; i++) {
+      for (int i = 0; i < sampleIds.length; ++i) {
         final double[] posteriors = pedigreeToModel.get(members[i]);
         final double[] probSpace = new double[posteriors.length];
-        for (int j = 0; j < posteriors.length; j++) {
+        for (int j = 0; j < posteriors.length; ++j) {
           probSpace[j] = Math.exp(posteriors[j]);
         }
         models.set(sampleIds[i], new AbstractFamilyPosteriorTest.MockModel(diploid, probSpace));
@@ -655,7 +655,7 @@ public class PopulationCallerTest extends TestCase {
     freezeModels(models);
     final Variant v = pc.makeCall("foo", 20, 21, ref, new ArrayList<ModelInterface<?>>(models), new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, haploid, diploid));
     final String[] expected = {"A:G", "A:G", "A:G", "A:G", "G:G", "A:G", "G:G", "A:G", "A:G", "A:G"};
-    for (int i = 0; i < v.getNumberOfSamples(); i++) {
+    for (int i = 0; i < v.getNumberOfSamples(); ++i) {
       final VariantSample sample = v.getSample(i);
       if (sample != null) {
         assertEquals(i + ": expected<" + expected[i] + "> actual<" + sample.getName() + "> Variant: " + v,  expected[i], sample.getName());

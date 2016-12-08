@@ -38,7 +38,7 @@ public class HypothesesSnpTest extends TestCase {
     final GenomePriorParams params = GenomePriorParams.builder().create();
     final HypothesesSnp hyp = new HypothesesSnp(LogPossibility.SINGLETON, params, false, 1);
     //    System.err.println(IntegralAbstract.toString(hyp));
-    //    for (int i = 0; i < hyp.size(); i++) {
+    //    for (int i = 0; i < hyp.size(); ++i) {
     //      System.err.println("i=" + i + " name=" + hyp.name(i));
     //    }
     assertEquals(-9.257, hyp.p(0), 0.001);

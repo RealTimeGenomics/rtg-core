@@ -25,7 +25,7 @@ import com.rtg.assembler.graph.PathsIterator;
 public class GraphTraversions {
   private final Map<Long, Traversion> mMap = new HashMap<>();
   GraphTraversions(Graph g) {
-    for (long i = 1; i <= g.numberContigs(); i++) {
+    for (long i = 1; i <= g.numberContigs(); ++i) {
       if (g.contigDeleted(i)) {
         continue;
       }

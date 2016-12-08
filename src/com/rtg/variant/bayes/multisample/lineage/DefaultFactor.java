@@ -45,7 +45,7 @@ public class DefaultFactor extends AbstractFactor implements ToDefaultFactor {
     }
     final DefaultFactor def = new DefaultFactor(f.arithmetic(), f.scope());
     final Map<Variable, Integer> map = new HashMap<>(f.scope().size());
-    for (int k = 0; k < def.mPoss.length; k++) {
+    for (int k = 0; k < def.mPoss.length; ++k) {
       def.mPoss[k] = f.p(def.getMap(map, k));
     }
     return def;
@@ -71,7 +71,7 @@ public class DefaultFactor extends AbstractFactor implements ToDefaultFactor {
       throw new IllegalArgumentException();
     }
     final double[] bPoss = new double[a.mPoss.length];
-    for (int k = 0; k < a.mPoss.length; k++) {
+    for (int k = 0; k < a.mPoss.length; ++k) {
       bPoss[k] = a.arithmetic().divide(a.mPoss[k], sum);
     }
     return new DefaultFactor(a.arithmetic(), a.mScope, bPoss);
@@ -117,7 +117,7 @@ public class DefaultFactor extends AbstractFactor implements ToDefaultFactor {
     assert scope.size() == scope.size();
     int pos = 1;
     mStride = new int[scope.size()];
-    for (int i = 0; i < scope.size(); i++) {
+    for (int i = 0; i < scope.size(); ++i) {
       final Variable v = scope.get(i);
       mStride[i] = pos;
       pos *= v.size();
@@ -134,7 +134,7 @@ public class DefaultFactor extends AbstractFactor implements ToDefaultFactor {
 
   private Map<Variable, Integer> getMap(final Map<Variable, Integer> map, final int key) {
     map.clear();
-    for (int i = 0; i < mScope.size(); i++) {
+    for (int i = 0; i < mScope.size(); ++i) {
       final Variable variable = mScope.get(i);
       final int assignment = (key / mStride[i]) % variable.size();
       map.put(variable, assignment);
@@ -144,7 +144,7 @@ public class DefaultFactor extends AbstractFactor implements ToDefaultFactor {
 
   private int getKey(Map<Variable, Integer> values) {
     int key = 0;
-    for (int i = 0; i < mScope.size(); i++) {
+    for (int i = 0; i < mScope.size(); ++i) {
       final Variable var = mScope.get(i);
       final Integer val = values.get(var);
       if (val == null) {
@@ -197,13 +197,13 @@ public class DefaultFactor extends AbstractFactor implements ToDefaultFactor {
     final double[] p = new double[factorSize];
     final int[] stride = new int[scope.size()];
     final int[] phiStride = new int[scope.size()];
-    for (int l = 0; l < assignment.length; l++) {
+    for (int l = 0; l < assignment.length; ++l) {
       stride[l] = stride(varList.get(l));
       phiStride[l] = phi.stride(varList.get(l));
     }
-    for (int i = 0; i < p.length; i++) {
+    for (int i = 0; i < p.length; ++i) {
       p[i] = arith.multiply(mPoss[j], arith.poss2Poss(phi.mPoss[k], phi.arithmetic()));
-      for (int l = 0; l < assignment.length; l++) {
+      for (int l = 0; l < assignment.length; ++l) {
         if (++assignment[l] == varList.get(l).size()) {
           j -= (varList.get(l).size() - 1) * stride[l];
           k -= (varList.get(l).size() - 1) * phiStride[l];
@@ -224,7 +224,7 @@ public class DefaultFactor extends AbstractFactor implements ToDefaultFactor {
     final List<Variable> varListRes = new ArrayList<>();
     final int[] resultStride = new int[mScope.size()];
     int factorSize = 1;
-    for (int i = 0; i < mScope.size(); i++) {
+    for (int i = 0; i < mScope.size(); ++i) {
       final Variable v = mScope.get(i);
       if (variablesToKeep.contains(v)) {
         varListRes.add(v);
@@ -238,7 +238,7 @@ public class DefaultFactor extends AbstractFactor implements ToDefaultFactor {
     int j = 0;
     for (double mPos : mPoss) {
       p[j] = arith.add(p[j], mPos);
-      for (int l = 0; l < assignment.length; l++) {
+      for (int l = 0; l < assignment.length; ++l) {
         if (++assignment[l] == mScope.get(l).size()) {
           j -= (mScope.get(l).size() - 1) * resultStride[l];
           assignment[l] = 0;
@@ -268,9 +268,9 @@ public class DefaultFactor extends AbstractFactor implements ToDefaultFactor {
     }
     final double[] p = new double[factorSize];
     final int[] assignment = new int[varListRes.size()];
-    for (int i = 0; i < p.length; i++) {
+    for (int i = 0; i < p.length; ++i) {
       p[i] = mPoss[j];
-      for (int l = 0; l < assignment.length; l++) {
+      for (int l = 0; l < assignment.length; ++l) {
         if (++assignment[l] == varListRes.get(l).size()) {
           j -= (varListRes.get(l).size() - 1) * stride(varListRes.get(l));
           assignment[l] = 0;
@@ -296,7 +296,7 @@ public class DefaultFactor extends AbstractFactor implements ToDefaultFactor {
     int best = 0;
     double bestScore = arithmetic().zero();
     double rest = arithmetic().zero();
-    for (int i = 0; i < mPoss.length; i++) {
+    for (int i = 0; i < mPoss.length; ++i) {
       if (arithmetic().gt(mPoss[i], bestScore)) {
         best = i;
         rest = arithmetic().add(rest, bestScore);
@@ -314,7 +314,7 @@ public class DefaultFactor extends AbstractFactor implements ToDefaultFactor {
     final Collection<Variable> scope = new TreeSet<>(scope());
     sb.append(StringUtils.join("\t", scope)).append("\t").append("Value").append(StringUtils.LS);
     final Map<Variable, Integer> map = new HashMap<>(scope.size());
-    for (int i = 0; i < mPoss.length; i++) {
+    for (int i = 0; i < mPoss.length; ++i) {
       getMap(map, i);
       for (final Variable v : scope) {
         sb.append(map.get(v)).append("\t");

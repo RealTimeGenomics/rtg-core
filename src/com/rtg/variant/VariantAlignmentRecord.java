@@ -185,11 +185,11 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
       final int recalibrated = me == null ? quality : me.getScaledPhred(quality, machineCycle, arm);
       mRecalibratedQuality[qualityPosition] = (byte) recalibrated;
       machineCycle += machineStep;
-      qualityPosition++;
+      ++qualityPosition;
     }
 
     mOverlapQuality = new byte[overlapQuality.length()];
-    for (int i = 0; i < overlapQuality.length() && qualityPosition < mRecalibratedQuality.length; i++) {
+    for (int i = 0; i < overlapQuality.length() && qualityPosition < mRecalibratedQuality.length; ++i) {
       final byte scoreChar = (byte) (overlapQuality.charAt(i) - FastaUtils.PHRED_LOWER_LIMIT_CHAR);
       // Be careful to invoke the me.getScaledPhred that takes a char. It will correct for ascii encoding
       final int recalibrated = me == null ? scoreChar : me.getScaledPhred(scoreChar, machineCycle, arm);
@@ -202,9 +202,9 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
       final int recalibrated = me == null ? quality : me.getScaledPhred(quality, machineCycle, arm);
       mRecalibratedQuality[qualityPosition] = (byte) recalibrated;
       machineCycle += machineStep;
-      qualityPosition++;
+      ++qualityPosition;
     }
-    for (int i = 0; i < mRecalibratedQuality.length; i++) {
+    for (int i = 0; i < mRecalibratedQuality.length; ++i) {
       if (mRecalibratedQuality[i] < minBaseQuality) {
         if (MIN_QUALITY_AS_TWO) {
           mRecalibratedQuality[i] = 2;
@@ -329,7 +329,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
     if (a.length != b.length) {
       return a.length - b.length;
     }
-    for (int k = 0; k < a.length; k++) {
+    for (int k = 0; k < a.length; ++k) {
       if (a[k] != b[k]) {
         return a[k] - b[k];
       }
@@ -485,7 +485,7 @@ public final class VariantAlignmentRecord extends SequenceIdLocusSimple implemen
    */
   public static byte[] byteDNAtoByteHandleEquals(final byte[] dna) {
     final byte[] dnaBytes = new byte[dna.length];
-    for (int i = 0; i < dna.length; i++) {
+    for (int i = 0; i < dna.length; ++i) {
       final char charAt = (char) dna[i];
       if (charAt == '=') {
         dnaBytes[i] = (byte) '=';

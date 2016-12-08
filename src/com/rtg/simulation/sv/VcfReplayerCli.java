@@ -79,7 +79,7 @@ public class VcfReplayerCli extends AbstractCli {
         final VcfRecord rec = reader.next();
         final List<String> strAlts = rec.getAltCalls();
         final Adjacency[] alts = new Adjacency[strAlts.size()];
-        for (int i = 0; i < strAlts.size(); i++) {
+        for (int i = 0; i < strAlts.size(); ++i) {
           alts[i] = Adjacency.parseAdjacency(rec.getSequenceName(), rec.getOneBasedStart(), strAlts.get(i));
         }
         if (!rec.hasFormat(VcfUtils.FORMAT_GENOTYPE)) {
@@ -95,7 +95,7 @@ public class VcfReplayerCli extends AbstractCli {
             throw new NoTalkbackSlimException("Replaying multi sample VCF files is unsupported");
           }
           final String[] gtSplit = gtList.get(0).split("/");
-          for (int i = 0; i < gtSplit.length; i++) {
+          for (int i = 0; i < gtSplit.length; ++i) {
             //if its . just go with first thing in the alt field
             gts[i] = gtSplit[i].equals(".") ? 1 : Integer.parseInt(gtSplit[i]);
           }
@@ -142,12 +142,12 @@ public class VcfReplayerCli extends AbstractCli {
   private void doWork(Map<String, TreeSet<Adjacency>> set, SequencesReader reader, SdfWriter w1) throws IOException {
     final ArrayList<String> names = loadNames(reader);
     final Set<String> doneEnds = new HashSet<>();
-    for (int chrNum = 0; chrNum < names.size() ; chrNum++) {
+    for (int chrNum = 0; chrNum < names.size() ; ++chrNum) {
       final String chrName = names.get(chrNum);
       generateChromosome(chrNum, chrName, true, set, names, reader, doneEnds, w1);
     }
     // now do any remaining reference sequences, starting from the end.
-    for (int chrNum = 0; chrNum < names.size() ; chrNum++) {
+    for (int chrNum = 0; chrNum < names.size() ; ++chrNum) {
       final String chrName = names.get(chrNum);
       generateChromosome(chrNum, chrName, false, set, names, reader, doneEnds, w1);
     }
@@ -161,12 +161,12 @@ public class VcfReplayerCli extends AbstractCli {
     // In fact, we would need to *add* duplicate Adjacency objects for the homozygous case.
     // We may be able to do this by deleting each Adjacency object as it is used?
 
-//    for (int chrNum = 0; chrNum < names.size() ; chrNum++) {
+//    for (int chrNum = 0; chrNum < names.size() ; ++chrNum) {
 //      final String chrName = names.get(chrNum);
 //      generateChromosome(chrNum, chrName, true, set, names, reader, doneEnds, w2);
 //    }
 //    // now do any remaining reference sequences, starting from the end.
-//    for (int chrNum = 0; chrNum < names.size() ; chrNum++) {
+//    for (int chrNum = 0; chrNum < names.size() ; ++chrNum) {
 //      final String chrName = names.get(chrNum);
 //      generateChromosome(chrNum, chrName, false, set, names, reader, doneEnds, w2);
 //    }
@@ -244,7 +244,7 @@ public class VcfReplayerCli extends AbstractCli {
     } else {
       // copy and reverse
       //System.out.println("copy rev chr[" + (start - 1 - (b.length-1)) + ".." + (start - 1) + "] into b.  len=" + b.length);
-      for (int i = 0; i < b.length; i++) {
+      for (int i = 0; i < b.length; ++i) {
         b[i] = DNA.complement(chromosome[start - 1 - i]);
       }
     }
@@ -254,7 +254,7 @@ public class VcfReplayerCli extends AbstractCli {
   private ArrayList<String> loadNames(SequencesReader reader) throws IOException {
     final PrereadNames names = new PrereadNames(reader.path(), LongRange.NONE);
     final ArrayList<String> list = new ArrayList<>();
-    for (int i = 0; i < reader.numberSequences(); i++) {
+    for (int i = 0; i < reader.numberSequences(); ++i) {
       list.add(names.name(i));
     }
     return list;

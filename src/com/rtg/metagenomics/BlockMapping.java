@@ -47,10 +47,10 @@ public class BlockMapping extends IntegralAbstract {
     final int[] c = new int[n];
     int bn = 0;
     final int[] cnt = new int[n];
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       final int ai = a[i];
       if (ai == i) {
-        bn++;
+        ++bn;
       }
       if (ai >= 0) {
         cnt[a[ai]]++;
@@ -62,14 +62,14 @@ public class BlockMapping extends IntegralAbstract {
     Arrays.fill(block, -1);
     //fill in entries for each block
     int b = 0;
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       final int ai = a[i];
       if (cnt[i] > 0) {
         assert ai == i;
         final int numInBlock = cnt[i];
         blocks[b] = new int[numInBlock];
         block[i] = b;
-        b++;
+        ++b;
       }
       if (ai >= 0) {
         final int bx = block[ai];
@@ -91,7 +91,7 @@ public class BlockMapping extends IntegralAbstract {
     for (final Frag frag : frags) {
       frag.stats(a);
     }
-    for (int i = 0; i < a.length; i++) {
+    for (int i = 0; i < a.length; ++i) {
       final int ai = a[i];
       if (ai >= 0 && a[ai] < ai) {
         a[i] = a[ai];
@@ -102,7 +102,7 @@ public class BlockMapping extends IntegralAbstract {
 
   private static long[] subsetGenomeLengths(int[] block, long[] genomeLengths) {
     final long[] lengths = new long[block.length];
-    for (int i = 0; i < block.length; i++) {
+    for (int i = 0; i < block.length; ++i) {
       lengths[i] = genomeLengths[block[i]];
     }
     return lengths;
@@ -118,17 +118,17 @@ public class BlockMapping extends IntegralAbstract {
     final int[] cnt = new int[n];
     for (final int ai : mA) {
       if (ai == -1) {
-        noHit++;
+        ++noHit;
       } else {
         cnt[ai]++;
       }
     }
     final int[] cc = new int[n + 1];
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       cc[cnt[i]]++;
     }
     sb.append("No hits:").append(noHit).append(LS);
-    for (int i = 1; i <= n; i++) {
+    for (int i = 1; i <= n; ++i) {
       final int cci = cc[i];
       if (cci > 0) {
         sb.append("block size:").append(i).append(" times:").append(cci).append(LS);
@@ -163,14 +163,14 @@ public class BlockMapping extends IntegralAbstract {
    */
   public BlockInfo[] subBlock(SpeciesParams params, Frag[] frags, SpeciesMap speciesMap, long[] genomeLengths) {
     final ArrayList<ArrayList<Frag>> moddedFrags = new ArrayList<>(mBlocks.length);
-    for (int k = 0; k < mBlocks.length; k++) {
+    for (int k = 0; k < mBlocks.length; ++k) {
       moddedFrags.add(new ArrayList<Frag>());
     }
     for (final Frag f : frags) {
       moddedFrags.get(f.subBlock(mD)).add(f.subFrag(mC));
     }
     final BlockInfo[] blockInfos = new BlockInfo[mBlocks.length];
-    for (int b = 0; b < mBlocks.length; b++) {
+    for (int b = 0; b < mBlocks.length; ++b) {
       final ArrayList<Frag> subFrags = moddedFrags.get(b);
       blockInfos[b] = new BlockInfo(b, speciesMap, subFrags.toArray(new Frag[subFrags.size()]), speciesMap.subset(mBlocks[b]), subsetGenomeLengths(mBlocks[b], genomeLengths), params.verbose());
     }
@@ -187,14 +187,14 @@ public class BlockMapping extends IntegralAbstract {
 
     // R values are just poked directly in after conversion from local to global id
     final Vector subR = subResults.getR();
-    for (int i = 0; i < mBlocks[b].length; i++) {
+    for (int i = 0; i < mBlocks[b].length; ++i) {
       dest.setR(mBlocks[b][i], subR.get(i));
     }
 
     // Variance log is summed, in global id space
     final Vector subStd = subResults.getVarianceLog();
     final Vector subLikelihoods = subResults.getLikelihoods();
-    for (int i = 0; i < dest.getVarianceLog().size(); i++) {
+    for (int i = 0; i < dest.getVarianceLog().size(); ++i) {
       dest.setVariance(i, dest.getVarianceLog().get(i) + subStd.get(i));
       dest.setLikelihood(i, dest.getLikelihoods().get(i) + subLikelihoods.get(i));
     }
@@ -214,14 +214,14 @@ public class BlockMapping extends IntegralAbstract {
 
   @Override
   public boolean globalIntegrity() {
-    for (int i = 0; i < mA.length; i++) {
+    for (int i = 0; i < mA.length; ++i) {
       Exam.assertTrue(mA[i] <= i);
       Exam.assertTrue(mA[i] == -1 || mA[mA[i]] == mA[i]);
     }
 
     Exam.assertEquals(mA.length, mC.length);
     for (final int[] block : mBlocks) {
-      for (int i = 0; i < block.length; i++) {
+      for (int i = 0; i < block.length; ++i) {
         final int x = block[i];
         Exam.assertEquals(block[0], mA[x]);
         Exam.assertEquals(i, mC[x]);

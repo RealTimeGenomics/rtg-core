@@ -41,13 +41,13 @@ public class IndexSetTest extends TestCase {
     };
     final IndexSet is = new IndexSet(indexes);
     assertEquals(3, is.size());
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; ++i) {
       assertEquals(0, ((MockIndex) is.get(i)).getTimesFrozen());
     }
     final MemoryPrintStream baos = new MemoryPrintStream();
     Diagnostic.setLogStream(baos.printStream());
     is.freeze(2);
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; ++i) {
       assertEquals(1, ((MockIndex) is.get(i)).getTimesFrozen());
     }
     final String str = baos.toString();

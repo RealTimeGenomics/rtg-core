@@ -37,7 +37,7 @@ public class Vector {
   public Vector(Vector copy) {
     mSize = copy.size();
     mVector = new double[mSize];
-    for (int i = 0; i < mSize; i++) {
+    for (int i = 0; i < mSize; ++i) {
       mVector[i] = copy.get(i);
     }
   }
@@ -88,7 +88,7 @@ public class Vector {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < mSize; i++) {
+    for (int i = 0; i < mSize; ++i) {
       sb.append("  ").append(Utils.realFormat(mVector[i], 4));
     }
     return sb.toString();

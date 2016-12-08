@@ -89,10 +89,10 @@ public class PairedTempFileWriterImpl extends AbstractTempFileWriter implements 
     final int score1;
     if (matedHitInfo.getAlignmentScoreLeft() != -1) {
       //Diagnostic.developerLog("Using cached left alignment score for read " + readId);
-      mMatedCachedAlignment++;
+      ++mMatedCachedAlignment;
       score1 = matedHitInfo.getAlignmentScoreLeft();
     } else {
-      mMatedNonCachedAlignment++;
+      ++mMatedNonCachedAlignment;
       read1 = ReadHelper.getRead(!matedHitInfo.isFirstRight() ? mFirstReader : mSecondReader, matedHitInfo.getReadId());
       bufferActionsLeft(calculateEditDistance(read1, read1.length, matedHitInfo.getTemplateStartLeft(), matedHitInfo.isReverseComplementLeft(), mMatedMaxMismatches, !matedHitInfo.isFirstRight(), readId));
       score1 = ActionsHelper.alignmentScore(mActionsBufferLeft);
@@ -113,10 +113,10 @@ public class PairedTempFileWriterImpl extends AbstractTempFileWriter implements 
     final int score2;
     if (matedHitInfo.getAlignmentScoreRight() != -1) {
       //Diagnostic.developerLog("Using cached right alignment score for read " + readId);
-      mMatedCachedAlignment++;
+      ++mMatedCachedAlignment;
       score2 = matedHitInfo.getAlignmentScoreRight();
     } else {
-      mMatedNonCachedAlignment++;
+      ++mMatedNonCachedAlignment;
       read2 = ReadHelper.getRead(matedHitInfo.isFirstRight() ? mFirstReader : mSecondReader, matedHitInfo.getReadId());
       bufferActionsRight(calculateEditDistance(read2, read2.length, matedHitInfo.getTemplateStartRight(), matedHitInfo.isReverseComplementRight(), mMatedMaxMismatches, matedHitInfo.isFirstRight(), readId));
       score2 = ActionsHelper.alignmentScore(mActionsBufferRight);
@@ -189,10 +189,10 @@ public class PairedTempFileWriterImpl extends AbstractTempFileWriter implements 
       final int matchReadLength = matchFirst ? mFirstReader.length(readId) : mSecondReader.length(readId);
       final int mateReadLength = !matchFirst ? mFirstReader.length(readId) : mSecondReader.length(readId);
       if (matchScore <= mMatedMaxMismatches.getValue(matchReadLength) * mSubstitutionPenalty && mateScore <= mMatedMaxMismatches.getValue(mateReadLength) * mSubstitutionPenalty) {
-        mMatedMaxScorePassed++;
+        ++mMatedMaxScorePassed;
         return true;
       } else {
-        mMatedMaxScoreFailed++;
+        ++mMatedMaxScoreFailed;
       }
     }
     return false;

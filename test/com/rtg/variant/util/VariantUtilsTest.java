@@ -104,7 +104,7 @@ public class VariantUtilsTest extends TestCase {
   }
 
   public void testIndexConversion() {
-    for (int i = 0; i < VariantUtils.SIZE; i++) {
+    for (int i = 0; i < VariantUtils.SIZE; ++i) {
       checkIndexConversion(i + VariantUtils.START_INDEX);
     }
     assertEquals(VariantUtils.START_INDEX + VariantUtils.SIZE - 1, VariantUtils.doubleToIndex(VariantUtils.MAX_X));

@@ -102,7 +102,7 @@ public final class CigarFormatter {
           current = SOFTCLIP;
           break;
         case ActionsHelper.NOOP:
-          count--; //'continue' the previous action, but this wasn't actually a previous action.
+          --count; //'continue' the previous action, but this wasn't actually a previous action.
           break;
         default:
           throw new IllegalArgumentException();
@@ -114,7 +114,7 @@ public final class CigarFormatter {
         previous = current;
       }
       if (current == previous) {
-        count++;
+        ++count;
       } else {
         updateCigar(cigar, previous, count, rc);
         previous = current;
@@ -147,7 +147,7 @@ public final class CigarFormatter {
       if (cgOverlapSize > 0 && action != ActionsHelper.CG_OVERLAP_IN_READ) {
         // start/continue skipping over cgOverlapSize nucleotides on the TEMPLATE.
         if (action != ActionsHelper.INSERTION_INTO_REFERENCE) {
-          cgOverlapSize--;
+          --cgOverlapSize;
           tempWidth += direction;
         }
         continue; // skip this command
@@ -159,10 +159,10 @@ public final class CigarFormatter {
           break;
         case ActionsHelper.CG_OVERLAP_IN_READ:
           tempWidth -= direction;
-          count--; // preemptive attack against the increment down below, so that the cg overlap does not add to the cigar.
+          --count; // preemptive attack against the increment down below, so that the cg overlap does not add to the cigar.
           // SAM Cigars do not handle CG overlap regions, so instead we will skip the appropriate number of actions after the overlap region.
           // Eg. If the actions are: ===OOSS===, we will skip the SS!
-          cgOverlapSize++;
+          ++cgOverlapSize;
           break;
         case ActionsHelper.INSERTION_INTO_REFERENCE:
           current = INS;
@@ -185,7 +185,7 @@ public final class CigarFormatter {
           current = SOFTCLIP;
           break;
         case ActionsHelper.NOOP:
-          count--;  //'continue' the previous action, but this wasn't actually a previous action.
+          --count;  //'continue' the previous action, but this wasn't actually a previous action.
           break;
         default:
           throw new IllegalArgumentException();
@@ -197,7 +197,7 @@ public final class CigarFormatter {
         previous = current;
       }
       if (current == previous) {
-        count++;
+        ++count;
       } else if (previous == INS && current == DEL || previous == DEL && current == INS) {
         // adjacent Insert and Delete, so change 1D1I (or 1I1D) to 1X.
         updateCigar(cigar, previous, count - 1, revCigar);
@@ -256,30 +256,30 @@ public final class CigarFormatter {
             case SamUtils.CIGAR_SAME:
             case SamUtils.CIGAR_MISMATCH:
             case SamUtils.CIGAR_PADDING:
-              refPos++;
-              readPos++;
+              ++refPos;
+              ++readPos;
               break;
             case SamUtils.CIGAR_INSERTION_INTO_REF:
             case SamUtils.CIGAR_SOFT_CLIP: // soft-clipping bases in read ignored for position
-              readPos++;
+              ++readPos;
               break;
             case SamUtils.CIGAR_GAP_IN_READ:
             case SamUtils.CIGAR_DELETION_FROM_REF:
-              refPos++;
+              ++refPos;
               break;
             case SamUtils.CIGAR_HARD_CLIP:
               break;
             default:
               throw new IllegalArgumentException(cigar);
           }
-          n--;
+          --n;
         } //end while
         if ((n > 0) && (refPos >= start)) { // have reached selected region
           break;
         }
         assert n == 0;
       }
-      i++;
+      ++i;
     }
     assert n != 0;
     final int startInRead = readPos;
@@ -310,13 +310,13 @@ public final class CigarFormatter {
                 //an invalid mixed case
                 return null;
               }
-              refPos++;
+              ++refPos;
               //this duplicates the 'I' case below
               sb.append(DnaUtils.getBase(read[readPos]));
               if (qb != null) {
                 qb.write(qual[readPos]);
               }
-              readPos++;
+              ++readPos;
               //valid
               validNt = true;
               break;
@@ -328,15 +328,15 @@ public final class CigarFormatter {
               if (qb != null) {
                 qb.write(qual[readPos]);
               }
-              readPos++;
+              ++readPos;
               //valid
               validNt = true;
               break;
             case SamUtils.CIGAR_SOFT_CLIP: // soft-clipping bases in read ignored for position
-              readPos++;
+              ++readPos;
               break;
             case SamUtils.CIGAR_GAP_IN_READ:
-              refPos++;
+              ++refPos;
               if (validNt) {
                 rightN = true;
               } else {
@@ -344,21 +344,21 @@ public final class CigarFormatter {
               }
               break;
             case SamUtils.CIGAR_DELETION_FROM_REF:
-              refPos++;
+              ++refPos;
               break;
             case SamUtils.CIGAR_HARD_CLIP:
               break;
             default:
               throw new IllegalArgumentException("Unsupported cigar operation: " + c); //(c + ":" + cigar);
           }
-          n--;
+          --n;
         }
         if ((n > 0) && (refPos >= end)) { // have reached selected region
           break;
         }
         assert n == 0 : n;
       }
-      i++;
+      ++i;
     }
     final int endReadPos = readPos;
     //distinguish case when insert at start and start and end are the same from there being no insert at start
@@ -381,7 +381,7 @@ public final class CigarFormatter {
   private static void setSoftClipBases(String cigar, AlignmentMatch match, int readLength) {
     //finishes parsing the cigar if we haven't reached the end in order to determine is bases should be soft clipped
     int softClipStartOffset = 0;
-    for (int i = 0, n = 0; i < cigar.length(); i++) {
+    for (int i = 0, n = 0; i < cigar.length(); ++i) {
       final char c = cigar.charAt(i);
       if (Character.isDigit(c)) {
         n = 10 * n + c - '0';
@@ -395,7 +395,7 @@ public final class CigarFormatter {
     }
     int n = 0;
     int pow = -1;
-    for (int i = 0; i < cigar.length() - 1; i++) {
+    for (int i = 0; i < cigar.length() - 1; ++i) {
       final char c = cigar.charAt(cigar.length() - 1 - i);
       if (Character.isDigit(c)) {
         if (pow >= 0) {

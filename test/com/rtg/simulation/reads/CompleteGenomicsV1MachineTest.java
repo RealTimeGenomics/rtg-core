@@ -96,7 +96,7 @@ public class CompleteGenomicsV1MachineTest extends AbstractMachineTest {
         mBigSkip[bigSkip]++;
         mSmallSkip[smallSkip]++;
       }
-      mTotal++;
+      ++mTotal;
     }
 
     @Override
@@ -150,7 +150,7 @@ public class CompleteGenomicsV1MachineTest extends AbstractMachineTest {
       m.setReadWriter(w);
       final byte[] frag = new byte[FRAGMENT_LENGTH];
       Arrays.fill(frag, (byte) 1);
-      for (int k = 0; k < 10000; k++) {
+      for (int k = 0; k < 10000; ++k) {
         m.processFragment("b/", 0, frag, frag.length);
       }
       w.performStatisticalTests();

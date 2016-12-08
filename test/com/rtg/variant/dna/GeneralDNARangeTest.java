@@ -34,7 +34,7 @@ public class GeneralDNARangeTest extends IntegerRangeTest {
 
   public void testToChar() {
     final GeneralDNARange ir = (GeneralDNARange) getRange();
-    for (int i = ir.low(); i <= ir.high(); i++) {
+    for (int i = ir.low(); i <= ir.high(); ++i) {
       assertEquals(ir.toString(i), "" + ir.toChar(i));
       assertEquals(i, ir.valueOf(ir.toChar(i)));
     }

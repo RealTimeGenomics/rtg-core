@@ -125,7 +125,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
   }
 
   private void increment(EvidenceQ evidence) {
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       final double v = evidence.logEvidentialProbability(i);
       if (v > 0) {
         return;
@@ -155,7 +155,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
       final double pE = evidence.pe();
       //assert pE >= 0 && pE <= 1;
       final double pEr = r * pE;
-      for (int i = 0; i < size(); i++) {
+      for (int i = 0; i < size(); ++i) {
         final double prob = 0.5 * (evidence.probability(code.a(i)) + evidence.probability(code.bc(i)));
         // Phred scores of 0 can result in 0 probabilty, just skip them
         if (prob <= 0.0) {
@@ -177,7 +177,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     assert !mFrozen : "Should only freeze once";
     mFrozen = true;
     final PossibilityArithmetic arithmetic = arithmetic();
-    for (int hyp = 0; hyp < mPosteriors.length; hyp++) {
+    for (int hyp = 0; hyp < mPosteriors.length; ++hyp) {
       mPosteriors[hyp] = arithmetic.multiply(mPosteriors[hyp], arithmetic.ln2Poss(mAlleleBalance.alleleBalanceLn(hyp, hypotheses(), statistics())));
     }
   }
@@ -193,7 +193,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     }
     final PossibilityArithmetic arith = arithmetic();
     final double[] posteriors = new double[size()];
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       posteriors[i] = posterior(arith, i, hypotheses);
     }
     return new HypothesisScore(new ArrayGenotypeMeasure(arith, posteriors, hypotheses));
@@ -223,7 +223,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
   @Override
   public void statistics(StringBuilder sb, final HypothesesPrior<?> hypotheses) {
     final int size = hypotheses().code().size();
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       statistics(sb, i, hypotheses);
       sb.append(StringUtils.LS);
     }
@@ -261,7 +261,7 @@ public class Model<D extends Description> extends IntegralAbstract implements Mo
     //mStatistics.toString(sb);
     sb.append(LS);
     final int hypPad = mHypotheses.nameLength();
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       sb.append(StringUtils.padLeft(mHypotheses.name(i), hypPad));
       sb.append(" ").append(StringUtils.padLeft(Utils.realFormat(posteriorLn0(i), 3), 7));
       sb.append(LS);

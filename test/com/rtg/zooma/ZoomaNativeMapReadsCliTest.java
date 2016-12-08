@@ -67,7 +67,7 @@ public class ZoomaNativeMapReadsCliTest extends AbstractCliTest {
         final int readlen = 100;
         final int maxinslen = 200;
         final int maxfraglen = readlen * 2 + maxinslen;
-        for (int ref = 0; ref < 5; ref++) {
+        for (int ref = 0; ref < 5; ++ref) {
           final String reference = RandomDna.random(reflen, rand);
           referenceFa.append(">reference").append(ref).append("\n").append(reference).append("\n");
 

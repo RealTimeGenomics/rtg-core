@@ -33,7 +33,7 @@ public abstract class Description {
    * @return the index of name, or -1 if the name cannot be found
    */
   public int indexOf(String name) {
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       if (name(i).equals(name)) {
         return i;
       }

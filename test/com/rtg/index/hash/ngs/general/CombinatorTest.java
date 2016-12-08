@@ -33,9 +33,9 @@ public class CombinatorTest extends TestCase {
       public void permutation() {
         count[0]++;
         int c = 0;
-        for (int x = 0; x < size(); x++) {
+        for (int x = 0; x < size(); ++x) {
           if (getBit(x)) {
-            c++;
+            ++c;
           }
         }
         assertEquals(toBeSet(), c);

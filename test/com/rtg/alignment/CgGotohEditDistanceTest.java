@@ -180,7 +180,7 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
   public String stripTopBottom(String edStr) {
     final String[] actualLines = edStr.split(LS);
     StringBuilder sb = new StringBuilder();
-    for (int i = 1; i < actualLines.length - 1; i++) {
+    for (int i = 1; i < actualLines.length - 1; ++i) {
       sb.append(actualLines[i]).append(LS);
     }
     return sb.toString();
@@ -698,13 +698,13 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
     final PortableRandom rand = new PortableRandom(42);
     final String[] mutations = {"A", "C", "G", "T", "", "AC", "GT"};
     String mut = "";
-    for (int repeat = 0; repeat < reads.length; repeat++) {
+    for (int repeat = 0; repeat < reads.length; ++repeat) {
       final String read = reads[repeat % reads.length].replaceAll(" ", "").toLowerCase(Locale.ROOT);
       String tmpl = "aaaagggg" + read.substring(0, 25) + "tatata" + read.substring(25) + "accaacca";
       //System.out.println("@@@@@@@@@@@@@@@ starting with read:" + read + "@@@@@@@@@@@@@@@@@@@");
       int readStart = 8;
       int readEnd = readStart + 39;  // ie. 35 - 2 + 0 + 6 (for the most common gap sizes)
-      for (int age = 0; age < 10 && Math.abs(readEnd - readStart - 39) < 5 ; age++) {
+      for (int age = 0; age < 10 && Math.abs(readEnd - readStart - 39) < 5 ; ++age) {
         final byte[] s1 = DnaUtils.encodeString(read);
         final byte[] s2 = DnaUtils.encodeString(tmpl.toLowerCase(Locale.ROOT));
         final int[] tmp = ed.calculateEditDistance(s1, s1.length, s2, readStart, Integer.MAX_VALUE, 7, true);
@@ -1234,22 +1234,22 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
     while (it.hasNext()) {
       final int currAction = it.next();
       if (currAction == ActionsHelper.MISMATCH) {
-        ascore++;
+        ++ascore;
       } else if (currAction == ActionsHelper.DELETION_FROM_REFERENCE) {
         if (prevAction != ActionsHelper.DELETION_FROM_REFERENCE) {
           ascore += 2;
         } else {
-          ascore++;
+          ++ascore;
         }
       } else if (currAction == ActionsHelper.INSERTION_INTO_REFERENCE) {
         if (prevAction != ActionsHelper.INSERTION_INTO_REFERENCE) {
           ascore += 2;
         } else {
-          ascore++;
+          ++ascore;
         }
       } else if (currAction == ActionsHelper.UNKNOWN_TEMPLATE || currAction == ActionsHelper.UNKNOWN_READ) {
         if (treatNsAsMismatches) {
-          ascore++;
+          ++ascore;
         }
       }
       prevAction = currAction;

@@ -68,11 +68,11 @@ public final class RecoverLinks {
       final Contig start = graph.contig(constraint.mContigA);
       final Contig end = graph.contig(-constraint.mContigB);
       final int startOverlap = start.length() - overlap;
-      for (int i = 0; i < overlap; i++) {
+      for (int i = 0; i < overlap; ++i) {
         contigBytes[i] = start.nt(startOverlap + i);
       }
       final int endOverlap = contigBytes.length - overlap;
-      for (int i = 0; i < overlap; i++) {
+      for (int i = 0; i < overlap; ++i) {
         contigBytes[endOverlap + i] = end.nt(i);
       }
       final long newContig = graph.addContig(new ContigByte(contigBytes));

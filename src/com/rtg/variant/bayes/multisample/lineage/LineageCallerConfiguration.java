@@ -80,7 +80,7 @@ public final class LineageCallerConfiguration extends AbstractJointCallerConfigu
         final int parentPos = genomes.indexOf(r.first());
         builder.add(parentPos, childPos);
       }
-      for (int i = 0; i < parents.length; i++) {
+      for (int i = 0; i < parents.length; ++i) {
         if (parents[i] > 1) {
           throw new NoTalkbackSlimException("Lineage requires at most one parent per individual, sample '" + outputSampleNames[i] + "' had " + parents[i]);
         }

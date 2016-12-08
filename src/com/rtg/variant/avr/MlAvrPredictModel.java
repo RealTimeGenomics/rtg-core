@@ -98,7 +98,7 @@ public class MlAvrPredictModel extends AbstractPredictModel {
   @Override
   public void annotate(VcfRecord record) {
     boolean aboveThreshold = false;
-    for (int s = 0; s < record.getNumberOfSamples(); s++) {
+    for (int s = 0; s < record.getNumberOfSamples(); ++s) {
       final double prediction = annotateSampleNoPadding(record, s);
       if (prediction >= mPredictionThreshold) {
         aboveThreshold = true;
@@ -167,7 +167,7 @@ public class MlAvrPredictModel extends AbstractPredictModel {
   @Override
   public String getSummary() {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < NUM_BINS; i++) {
+    for (int i = 0; i < NUM_BINS; ++i) {
       sb.append("[")
       .append(Utils.realFormat((double) i / NUM_BINS, 2))
       .append("..")

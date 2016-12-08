@@ -70,7 +70,7 @@ public class SamArray extends IntegralAbstract implements SamCounts {
   @Override
   public double count(int base, int index, int index2) {
     double sum = 0;
-    for (int i = index; i < index2; i++) {
+    for (int i = index; i < index2; ++i) {
       sum += count(base, i);
     }
     return sum;
@@ -79,7 +79,7 @@ public class SamArray extends IntegralAbstract implements SamCounts {
   @Override
   public double sumLn(int base, int index, int index2) {
     double sum = 0;
-    for (int i = index; i < index2; i++) {
+    for (int i = index; i < index2; ++i) {
       final double count = count(base, i);
       if (count > 0) {
         sum += count * Math.log(count);
@@ -138,17 +138,17 @@ public class SamArray extends IntegralAbstract implements SamCounts {
     final int c = 2 * pivot - offset - 1;
     //extend at top of new array if necessary
     final double lov = count(0, 0);
-    for (int i = c + 1; i < mLength; i++) {
+    for (int i = c + 1; i < mLength; ++i) {
       rev.increment(i, lov);
     }
     //extend at bottom of new array if necessary
     final double hiv = count(0, mLength - 1);
     final int cc = c - mLength + 1;
-    for (int i = 0; i < cc; i++) {
+    for (int i = 0; i < cc; ++i) {
       rev.increment(i, hiv);
     }
     //fill in the bulk of the array
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       final int j = c - i;
       if (j >= 0 && j < mLength) {
         rev.increment(j, count(0, i));

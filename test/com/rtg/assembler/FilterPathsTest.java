@@ -36,7 +36,7 @@ public class FilterPathsTest extends TestCase {
   private void checkThreshold(List<Long> deleted, int threshold) {
     final MutableGraph mutableGraph = baseGraph();
     FilterPaths.improveSingle(mutableGraph, threshold);
-    for (long i = 1; i <= mutableGraph.numberPaths(); i++) {
+    for (long i = 1; i <= mutableGraph.numberPaths(); ++i) {
       assertEquals(deleted.contains(i), mutableGraph.pathDeleted(i));
     }
   }

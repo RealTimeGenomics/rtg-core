@@ -65,7 +65,7 @@ public class DeduplicatingNStore implements UptoNStore {
     }
     final long storePos = (long) tStart + mPositionOffset;
     final long packed = mBitPackHelperRecord.packValues(reverse ? 1 : 0, storePos * mNumTemplateSeqs + templateId);
-    for (long index = resultIndex; index < resultIndex + currentCount; index++) {
+    for (long index = resultIndex; index < resultIndex + currentCount; ++index) {
       final long val = mTopNRes.get(index);
       if (val == packed) {
         return; //duplicate
@@ -75,7 +75,7 @@ public class DeduplicatingNStore implements UptoNStore {
         if (currentCount == mN) {
           return;
         }
-        for (long i = resultIndex + currentCount - 1; i >= index; i--) {
+        for (long i = resultIndex + currentCount - 1; i >= index; --i) {
           mTopNRes.set(i + 1, mTopNRes.get(i));
         }
         mTopNRes.set(index, packed);
@@ -96,7 +96,7 @@ public class DeduplicatingNStore implements UptoNStore {
     if (count > mN) {
       return;
     }
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; ++i) {
       final long result = mTopNRes.get(resultIndex + i);
       final long templateAndPos = mBitPackHelperRecord.getField(TEMPLATE_NAME_AND_POSITION_FIELD_ID, result);
       final int templateId = (int) (templateAndPos % mNumTemplateSeqs);

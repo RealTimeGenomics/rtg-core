@@ -253,22 +253,22 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
 //    boolean retain = true;
     if (alignmentScore > mThreshold.getValue(plen)) {
       mSharedStatusCollector.setStatus(readId, SharedStatusCollector.EXCEEDS_ALIGNMENT_THRESHOLD);
-      mFailedAlignmentThresholdCount++;
+      ++mFailedAlignmentThresholdCount;
       return false;
     }
     if (ScoringHelper.percentId(res) < mParams.outputParams().filter().minIdentity()) {
       mSharedStatusCollector.setStatus(readId, SharedStatusCollector.EXCEEDS_PERCENT_ID_THRESHOLD);
-      mFailedPercentIdThresholdCount++;
+      ++mFailedPercentIdThresholdCount;
       return false;
     }
     if (ScoringHelper.computeEScore(alignmentScore, ActionsHelper.actionsCount(res), mSharedResources.totalTemplateLength(), mProteinScoringMatrix) > mParams.outputParams().filter().maxEScore()) {
       mSharedStatusCollector.setStatus(readId, SharedStatusCollector.EXCEEDS_E_SCORE_THRESHOLD);
-      mFailedDueToEscorCount++;
+      ++mFailedDueToEscorCount;
       return false;
     }
     if (ScoringHelper.computeBitScore(alignmentScore, mProteinScoringMatrix) < mParams.outputParams().filter().minBitScore()) {
       mSharedStatusCollector.setStatus(readId, SharedStatusCollector.BELOW_BIT_SCORE_THRESHOLD);
-      mFailedDueToBitScoreCount++;
+      ++mFailedDueToBitScoreCount;
       return false;
     }
    return true;
@@ -293,7 +293,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
       final int rlen = mRead.read(readId, mReadWorkspace);
       plen = (rlen - Math.abs(genomeFrame) + 1) / 3;
       readProtein = mEnableReadCache ? new byte[plen] : mProteinWorkspace;
-      for (int j = 0, i = 0; j < plen; j++, i += 3) {
+      for (int j = 0, i = 0; j < plen; ++j, i += 3) {
         readProtein[j] = frames.code(mReadWorkspace, rlen, i);
       }
       if (mEnableReadCache) {
@@ -301,7 +301,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
       }
     } else {
       plen = readProtein.length;
-      mNumberCacheHits++;
+      ++mNumberCacheHits;
     }
 
 
@@ -320,10 +320,10 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
       chunkReadStart = Math.max(plen - chunkToPosition - mParams.mapXMetaChunkSize(), 0);
     }
 
-    mNumberOfAlignments++;
+    ++mNumberOfAlignments;
     final int minOverlap = mPreFilterMinOverlapPercentage * plen / 100;
     if (start + plen < minOverlap || mCurrentTemplate.length - start < minOverlap) {
-      mSkippedDueToStartLocation++;
+      ++mSkippedDueToStartLocation;
       return;
     }
     final int fastScoreReadLength = Math.min(plen, mParams.mapXMetaChunkSize());
@@ -335,12 +335,12 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
       // We don't care about its exact position, since the aligner will sort that out.
       final int width = bitScores.length - 1;
       int sum = 0;
-      for (int i = 0; i < width; i++) {
+      for (int i = 0; i < width; ++i) {
         sum += bitScores[i];
       }
       // now search for the highest peak
       int maxPeak = 0;
-      for (int i = 0; i < width; i++) {
+      for (int i = 0; i < width; ++i) {
         // peak = sum{j:0..width-1, excluding i} of bitScores[i] - bitScores[j]
         final int peak = bitScores[i] * width - sum;
         if (peak > maxPeak) {
@@ -356,26 +356,26 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
       //Diagnostic.developerLog("bitScores: " + bitScores[bitScores.length - 1] + " minScore: " + minScore);
     }
     if (skipIt) {
-      mSkippedDueToFastIdentityFilter++;
+      ++mSkippedDueToFastIdentityFilter;
       return;
     }
     if (mLastReadLength != plen) {
       mLastReadLength = plen;
       mLastReadLengthMaxShiftValue = calculateProteinMaxShift(plen);
     }
-    mAlignmentsDone++;
+    ++mAlignmentsDone;
     int[] res = mProteinEditDistance.calculateEditDistance(readProtein, plen, mCurrentTemplate, start, false, Integer.MAX_VALUE, mLastReadLengthMaxShiftValue, true);
 
     int newZeroBasedTemplateStart = ActionsHelper.zeroBasedTemplateStart(res);
     if (Math.abs(newZeroBasedTemplateStart - start) > SHIFT_LIMIT) {
-      mAlignmentsRepeated++;
+      ++mAlignmentsRepeated;
       res = mProteinEditDistance.calculateEditDistance(readProtein, plen, mCurrentTemplate, newZeroBasedTemplateStart, false, Integer.MAX_VALUE, mLastReadLengthMaxShiftValue, true);
       newZeroBasedTemplateStart = ActionsHelper.zeroBasedTemplateStart(res);
     }
     final int shift = newZeroBasedTemplateStart - start;
 
     if (retainResult(res, readId, (int) templateId, r, plen)) {
-      mAlignmentsRetained++;
+      ++mAlignmentsRetained;
 
       final long idOffset = Math.max(mParams.buildFirstParams().readerRestriction().getStart(), 0);
       writeResult(new ProteinAlignmentResult(mSharedResources, (int) templateId, r, res, idOffset, mParams.outputParams().outputProteinSequences()));
@@ -434,7 +434,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
     Diagnostic.developerLog("Alignments failed due to bit score       : " + mFailedDueToBitScoreCount);
     Diagnostic.developerLog("Alignments retained : " + mAlignmentsRetained);
 
-    for (int i = 0; i < mAlignmentShiftCount.length; i++) {
+    for (int i = 0; i < mAlignmentShiftCount.length; ++i) {
       final int shift = i - mAlignmentShiftCount.length / 2;
       Diagnostic.developerLog("Alignments shifted by " + shift + " : " + mAlignmentShiftCount[i]);
     }
@@ -446,7 +446,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
     writeCommonHeader(out);
     final StringBuilder sb = new StringBuilder();
     sb.append('#').append(HEADER_COL_NAMES[0]);
-    for (int i = 1; i < HEADER_COL_NAMES.length; i++) {
+    for (int i = 1; i < HEADER_COL_NAMES.length; ++i) {
       if (i == READ_ID_COL && mParams.outputParams().outputReadNames()) {
         sb.append('\t').append(HEADER_COL_NAME_READNAME);
       } else if (i < TEMPLATE_PROTEIN_COL

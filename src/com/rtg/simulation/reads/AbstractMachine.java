@@ -174,7 +174,7 @@ public abstract class AbstractMachine implements Machine {
   byte chooseBase(byte ref) {
     byte ret = (byte) (1 + mBaseRandom.nextInt(DNA.values().length - (ref == 0 ? 1 : 2)));
     if (ref != 0 && ret >= ref) {
-      ret++;
+      ++ret;
     }
     return ret;
   }
@@ -220,7 +220,7 @@ public abstract class AbstractMachine implements Machine {
     final int lastLength = length & ActionsHelper.ACTIONS_COUNT_MASK;
     int actionCount = 0;
     int action = -1;
-    for (int i = start; i <= start + intLength; i++) {
+    for (int i = start; i <= start + intLength; ++i) {
       final int l;
       if (i == start + intLength) {
         l = lastLength;
@@ -228,7 +228,7 @@ public abstract class AbstractMachine implements Machine {
         l = ActionsHelper.ACTIONS_PER_INT;
       }
       final int localW = workspace[i];
-      for (int index = 0; index < l; index++) {
+      for (int index = 0; index < l; ++index) {
         final int lAction = (localW >>> ((ActionsHelper.ACTIONS_PER_INT - index - 1) * ActionsHelper.BITS_PER_ACTION)) & ActionsHelper.SINGLE_ACTION_MASK;
         if (lAction != action) {
           if (action != -1) {
@@ -237,7 +237,7 @@ public abstract class AbstractMachine implements Machine {
           action = lAction;
           actionCount = 0;
         }
-        actionCount++;
+        ++actionCount;
       }
     }
     if (action != -1) {
@@ -303,22 +303,22 @@ public abstract class AbstractMachine implements Machine {
         case MNP:
           final int mnpLength = Math.min(templateAvail, Math.min(readLength - readBases, SimulationUtils.chooseLength(mMnpLengthDistribution, mErrorLengthRandom.nextDouble())));
           assert mnpLength > 0;
-          for (int i = 0; i < mnpLength; i++) {
+          for (int i = 0; i < mnpLength; ++i) {
             final int templatePos = startPos + templateUsed * direction;
             mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = chooseBase(getBase(data, templatePos, templateLength));
             mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getMissCallQuality();
-            readBases++;
-            templateUsed++;
+            ++readBases;
+            ++templateUsed;
           }
           addCigarState(mnpLength, ActionsHelper.MISMATCH);
           break;
         case INSERT:
           final int insLength = Math.min(readLength - readBases, SimulationUtils.chooseLength(mInsertLengthDistribution, mErrorLengthRandom.nextDouble()));
           assert insLength > 0;
-          for (int k = 0; k < insLength; k++) {
+          for (int k = 0; k < insLength; ++k) {
             mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = chooseBase((byte) 0);
             mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getMissCallQuality();
-            readBases++;
+            ++readBases;
           }
           addCigarState(insLength, ActionsHelper.INSERTION_INTO_REFERENCE);
           break;
@@ -333,8 +333,8 @@ public abstract class AbstractMachine implements Machine {
           final byte base = getBase(data, refPos, templateLength);
           mReadBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = base;
           mQualityBytes[readStartPos + (mReadBytesUsed + readBases) * readDirection] = getCorrectCallQuality(base);
-          readBases++;
-          templateUsed++;
+          ++readBases;
+          ++templateUsed;
           addCigarState(1, ActionsHelper.SAME);
           break;
         default:

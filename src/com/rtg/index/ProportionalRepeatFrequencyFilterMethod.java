@@ -76,7 +76,7 @@ public class ProportionalRepeatFrequencyFilterMethod implements IndexFilterMetho
     final long cutoff = initialHashes * percent / 100;
     long val = 0;
     int ret = Integer.MAX_VALUE;
-    for (int i = freqHist.length() - 1; i >= 0; i--) {
+    for (int i = freqHist.length() - 1; i >= 0; --i) {
       final int freq = freqHist.getFrequency(i);
       val += freqHist.getCount(i) * freq;
       if (val > cutoff) {

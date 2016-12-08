@@ -129,7 +129,7 @@ public class AlleleStatisticsInt extends AlleleStatistics<AlleleStatisticsInt> {
   @Override
   public AlleleStatisticsInt remap(Description newDescription, int[] mapping) {
     final AlleleStatisticsInt newCounts = new AlleleStatisticsInt(newDescription);
-    for (int oldI = 0; oldI < mapping.length; oldI++) {
+    for (int oldI = 0; oldI < mapping.length; ++oldI) {
       final int newI = mapping[oldI];
       newCounts.mCountsForwards[newI] += mCountsForwards[oldI];
       newCounts.mCountsBackwards[newI] += mCountsBackwards[oldI];
@@ -144,7 +144,7 @@ public class AlleleStatisticsInt extends AlleleStatistics<AlleleStatisticsInt> {
 //  String debug() {
 //    final StringBuilder sb = new StringBuilder();
 //    sb.append("f|b|n!");
-//    for (int i = 0; i < mDescription.size(); i++) {
+//    for (int i = 0; i < mDescription.size(); ++i) {
 //      sb.append("").append(mCountsForwards[i]).append("|").append(mCountsBackwards[i]).append("|").append(mDescription.name(i)).append("!");
 //    }
 //    final int lastIndex = mCountsForwards.length - 1;

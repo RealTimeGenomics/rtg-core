@@ -146,7 +146,7 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
       assert hi - lo == mParams.binSize();
       @SuppressWarnings("unchecked")
       final ArrayList<Signal>[] simpleSubSignals = (ArrayList<Signal>[]) new ArrayList<?>[9];
-      for (int i = 0; i < simpleSubSignals.length; i++) {
+      for (int i = 0; i < simpleSubSignals.length; ++i) {
         simpleSubSignals[i] = new ArrayList<>();
       }
       for (final ReadGroupState rgs : states) {
@@ -219,7 +219,7 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
   private void warnRgMismatch(SAMRecord rec) {
     if (mWarnCount < MAX_WARNINGS) {
       Diagnostic.warning("Skipping record with unrecognized read group: " + rec.getSAMString().trim());
-      mWarnCount++;
+      ++mWarnCount;
       if (mWarnCount == MAX_WARNINGS) {
         Diagnostic.warning("Subsequent warnings of this type will not be shown.");
       }
@@ -243,19 +243,19 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
     }
 
     int backStepFrom = -1;
-    for (int i = start; i < last; i++) {
+    for (int i = start; i < last; ++i) {
       while (mTemplatePos < Math.min(i + mGlobalRadius, mTemplateLength)) {
         if (mTemplate[mTemplatePos] == 0) {
           mTemplateNs.increment(mTemplatePos);
         }
-        mTemplatePos++;
+        ++mTemplatePos;
       }
       if (i % mCurrentStepSize == 0) {
         final double nCount = mTemplateNs.count(i, -mGlobalRadius, mGlobalRadius);
         final double[] simple;
         if (mParams.outputSimple()) {
           simple = new double[mSimpleSignals.length + 1]; // Add 1 for n-count
-          for (int s = 0; s < mSimpleSignals.length; s++) {
+          for (int s = 0; s < mSimpleSignals.length; ++s) {
             final Signal sig = mSimpleSignals[s];
             simple[s] = sig.value(i);
           }
@@ -304,7 +304,7 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
   private static int maxIndex(double[] arr) {
     double max = Double.NEGATIVE_INFINITY;
     int maxIndex = 0;
-    for (int i = 0; i < arr.length; i++) {
+    for (int i = 0; i < arr.length; ++i) {
       if (arr[i] > max) {
         max = arr[i];
         maxIndex = i;
@@ -352,7 +352,7 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
 
   private double[] normalizedBayes(final int position) {
     final double[] posterior = new double[mPosteriorSignals.length];
-    for (int i = 0; i < mPosteriorSignals.length; i++) {
+    for (int i = 0; i < mPosteriorSignals.length; ++i) {
       posterior[i] = mPosteriorSignals[i].value(position);
     }
     if (posterior.length == 1) {
@@ -366,7 +366,7 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
     double min = Double.POSITIVE_INFINITY;
 
     int mini = -1;
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       final double lv = logValues[i];
       assert !Double.isInfinite(lv) && !Double.isNaN(lv);
       if (lv < min) {
@@ -379,7 +379,7 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
     final double[] norm = new double[length];
     double othersum = Double.NEGATIVE_INFINITY;
     double allsum = Double.NEGATIVE_INFINITY;
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       if (i != mini) {
         othersum = VariantUtils.logSumApproximation(othersum, -logValues[i]);
       }
@@ -387,7 +387,7 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
     }
 
     final double log10 = Math.log(10);
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       final double lv = -logValues[i];
       assert !Double.isInfinite(lv) && !Double.isNaN(lv);
       if (i == mini) {

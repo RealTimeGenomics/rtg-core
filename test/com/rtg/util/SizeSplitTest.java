@@ -38,7 +38,7 @@ public class SizeSplitTest extends TestCase {
     final SizeSplit ss = new SizeSplit(n, d);
     final int s = n / d;
     int last = 0;
-    for (int i = 1; i <= d; i++) {
+    for (int i = 1; i <= d; ++i) {
       final int st = ss.start(i);
       final int diff = st - ss.start(i - 1);
       assertTrue(last <= st);

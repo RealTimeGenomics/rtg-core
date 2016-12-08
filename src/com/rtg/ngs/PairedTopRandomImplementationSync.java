@@ -39,7 +39,7 @@ public class PairedTopRandomImplementationSync extends PairedTopRandomImplementa
 
   private void initThreadLocks() {
     mThreadLocks = new Object[NUMBER_OF_THREAD_LOCKS];
-    for (int i = 0; i < mThreadLocks.length; i++) {
+    for (int i = 0; i < mThreadLocks.length; ++i) {
       mThreadLocks[i] = new Object();
     }
   }

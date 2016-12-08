@@ -344,7 +344,7 @@ public class ContigCollectorTest extends TestCase {
     final PathsIterator pathsIterator = graph.paths(id);
     int count = 0;
     while (pathsIterator.nextPathId() != 0) {
-      count++;
+      ++count;
     }
     return count;
   }

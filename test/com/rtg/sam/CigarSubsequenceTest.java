@@ -32,7 +32,7 @@ public class CigarSubsequenceTest extends AbstractTest {
     sam.setReadString(readString);
     sam.setCigarString(cigar);
     final byte[] qual = new byte[readString.length()];
-    for (int i = 0; i < readString.length(); i++) {
+    for (int i = 0; i < readString.length(); ++i) {
       qual[i] = (byte) (i + 1);
     }
     sam.setBaseQualities(qual);
@@ -192,7 +192,7 @@ public class CigarSubsequenceTest extends AbstractTest {
     sam.setReadString("TTACGTAA");
     sam.setCigarString("2H2=2I4=3H");
 //    final byte[] qual = new byte["TTACGTAA".length()];
-//    for (int i = 0; i < "TTACGTAA".length(); i++) {
+//    for (int i = 0; i < "TTACGTAA".length(); ++i) {
 //      qual[i] = (byte) (i + 1);
 //    }
     //sam.setBaseQualities(qual);

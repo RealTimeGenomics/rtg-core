@@ -97,7 +97,7 @@ public class ActionsValidator {
         sb.append(" tmpl[").append(realStart).append("..]: ").append(DnaUtils.bytesToSequenceIncCG(template, realStart, zeroBasedStart - realStart)).append(StringUtils.LS);
       }
       sb.append(String.format("%10d|", zeroBasedStart));
-      for (int i = 1; i < 10; i++) {
+      for (int i = 1; i < 10; ++i) {
         sb.append(String.format("%9d|", (zeroBasedStart + 10 * i) % 1000));
       }
       sb.append(StringUtils.LS);
@@ -134,12 +134,12 @@ public class ActionsValidator {
 
 //    System.err.println("DEBUG: score=" + finalscore + ", len=" + len + ", start=" + zeroBasedStart);
 //    System.err.println("RD: ");
-//    for (int i = 0; i < read.length; i++) {
+//    for (int i = 0; i < read.length; ++i) {
 //      System.err.print("  " + read[i]);
 //    }
 //    System.err.println();
 //    System.err.println("TM: ");
-//    for (int i = 0; i < template.length; i++) {
+//    for (int i = 0; i < template.length; ++i) {
 //      System.err.print("  " + template[i]);
 //    }
 //    System.err.println();
@@ -168,7 +168,7 @@ public class ActionsValidator {
     int actionNum = 0;
     final ActionsHelper.CommandIterator iter = ActionsHelper.iterator(actions);
     while (iter.hasNext()) {
-      actionNum++;
+      ++actionNum;
       final int currAction = iter.next();
       if (rpos > rlen) {
         return error("too many actions - past end of read");

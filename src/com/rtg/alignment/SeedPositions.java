@@ -67,7 +67,7 @@ class SeedPositions {
   public static void dumpSeedsAsPPM(final SeedPositions[] seeds, final File f, final int w, final int h) {
     final int[][][] ppm = makeArray(w + 1, h + 1, 3);
 
-    for (int i = 0; i < seeds.length; i++) {
+    for (int i = 0; i < seeds.length; ++i) {
       final int count = seeds[i].mX2 - seeds[i].mX1;
       int x = seeds[i].mX1;
       int y = seeds[i].mY1;
@@ -85,9 +85,9 @@ class SeedPositions {
             ppm[x][y][1] = 255;
             ppm[x][y][2] = 255;
           }
-          x++;
-          y++;
-          j++;
+          ++x;
+          ++y;
+          ++j;
         }
       }
     }
@@ -98,9 +98,9 @@ class SeedPositions {
   @JumbleIgnore
   private static int[][][] makeArray(final int w, final int h, final int z) {
     final int[][][] res = new int[w][][];
-    for (int i = 0; i < w; i++) {
+    for (int i = 0; i < w; ++i) {
       res[i] = new int[h][];
-      for (int j = 0; j < h; j++) {
+      for (int j = 0; j < h; ++j) {
         res[i][j] = new int[z];
       }
     }
@@ -112,8 +112,8 @@ class SeedPositions {
     final PrintWriter pw = new PrintWriter(new BufferedWriter(new FileWriter(f)));
     pw.print("P6 " + w + " " + h + " " + 255);
     pw.print("\r");
-    for (int i = 0; i < w; i++) {
-      for (int j = 0; j < h; j++) {
+    for (int i = 0; i < w; ++i) {
+      for (int j = 0; j < h; ++j) {
         final char r = (char) ppm[i][j][0];
         final char g = (char) ppm[i][j][1];
         final char b = (char) ppm[i][j][2];
@@ -135,7 +135,7 @@ class SeedPositions {
    * @param template and the template
    */
   protected static void dumpSeeds(SeedPositions[] seeds, int numSeeds, byte[] read, byte[] template) {
-    for (int i = 0; i < numSeeds; i++) {
+    for (int i = 0; i < numSeeds; ++i) {
       System.err.println(seeds[i] + " " + DnaUtils.bytesToSequenceIncCG(read, seeds[i].mX1, seeds[i].mX2 - seeds[i].mX1)
           + " " + DnaUtils.bytesToSequenceIncCG(template, seeds[i].mY1, seeds[i].mY2 - seeds[i].mY1));
     }
@@ -163,7 +163,7 @@ class SeedPositions {
   static boolean seedIntegrity(final SeedPositions[] seeds, final int numSeeds, byte[] read, final int readlen, final byte[] template, final int zeroBasedStart) {
     // check ranges are increasing
     // System.err.println("seedintegrity");
-    for (int i = 0; i < numSeeds; i++) {
+    for (int i = 0; i < numSeeds; ++i) {
       if (seeds[i].mX1 > seeds[i].mX2) {
    //     SeedPositions.dumpSeeds(seeds, numSeeds, read, template);
         logBadSeed("SeededAligner failed integrity check: x -ve range", seeds, i, read, readlen, template, zeroBasedStart);
@@ -177,7 +177,7 @@ class SeedPositions {
     }
 
     // check empty seed
-    for (int i = 0; i < numSeeds; i++) {
+    for (int i = 0; i < numSeeds; ++i) {
       if ((seeds[i].mX1 == seeds[i].mX2) && (seeds[i].mY1 == seeds[i].mY2)) {
         logBadSeed("SeededAligner failed integrity check: empty seed: " + seeds[i], seeds, i, read, readlen, template, zeroBasedStart);
         return false;
@@ -185,7 +185,7 @@ class SeedPositions {
     }
 
     // increase
-    for (int i = 0; i < numSeeds - 1; i++) {
+    for (int i = 0; i < numSeeds - 1; ++i) {
       if (seeds[i + 1].mX1 <= seeds[i].mX1) {
         logBadSeed("SeededAligner failed integrity check: non monotonic x: " + seeds[i] + " " + seeds[i + 1] + " " + readlen + " " + zeroBasedStart, seeds, i, read, readlen, template, zeroBasedStart);
         return false;
@@ -193,7 +193,7 @@ class SeedPositions {
     }
 
     // also check off end of array
-    for (int i = 0; i < numSeeds; i++) {
+    for (int i = 0; i < numSeeds; ++i) {
       if ((seeds[i].mX2 > readlen) || (seeds[i].mY2 > template.length) || seeds[i].mX1 < 0 || seeds[i].mY1 < 0) {
         logBadSeed("SeededAligner failed integrity check: BUG: off end of array", seeds, i, read, readlen, template, zeroBasedStart);
         return false;
@@ -201,14 +201,14 @@ class SeedPositions {
     }
 
     // check the seed is really equal
-    for (int i = 0; i < numSeeds; i++) {
+    for (int i = 0; i < numSeeds; ++i) {
       int start = seeds[i].mY1;
-      for (int j = seeds[i].mX1; j < seeds[i].mX2; j++) {
+      for (int j = seeds[i].mX1; j < seeds[i].mX2; ++j) {
         if (read[j] != template[start]) {
           logBadSeed("SeededAligner failed integrity check: bad seed at " + j + " " + start + "   values = " + read[j] + " " + template[start] + " " + seeds[i] + " " + StringUtils.LS, seeds, i, read, readlen, template, zeroBasedStart);
           return false;
         }
-        start++;
+        ++start;
       }
     }
     return true;
@@ -216,7 +216,7 @@ class SeedPositions {
 
   static boolean overlapIntegrity(SeedPositions[] seeds, int numSeeds, byte[] read, int readlen, byte[] template, int zeroBasedStart) {
     // don't overlap with the next seed
-    for (int i = 0; i < numSeeds - 1; i++) {
+    for (int i = 0; i < numSeeds - 1; ++i) {
       if ((seeds[i].mX2 > seeds[i + 1].mX1) || (seeds[i].mY2 > seeds[i + 1].mY1)) {
 //        SeedPositions.dumpSeeds(seeds, numSeeds, read, template);
         logBadSeed("SeededAligner failed integrity check: overlapping seeds", seeds, i, read, readlen, template, zeroBasedStart);

@@ -50,7 +50,7 @@ public class PriorPopulationVariantGenerator extends PopulationVariantGenerator 
     @Override
     public SequenceIdLocus nextVariantPosition() {
       long pos = (long) (mRandom.nextDouble() * mTotalLength);
-      for (int i = 0; i < mSequenceLengths.length; i++) {
+      for (int i = 0; i < mSequenceLengths.length; ++i) {
         if (pos < mSequenceLengths[i]) {
           return new SequenceIdLocusSimple(i, (int) pos);
         }
@@ -122,7 +122,7 @@ public class PriorPopulationVariantGenerator extends PopulationVariantGenerator 
           }
           final long[] cumCountsArr = new long[(int) cumcounts.length()];
           final double[] altFreqsArr = new double[(int) cumcounts.length()];
-          for (int i = 0; i < cumcounts.length(); i++) {
+          for (int i = 0; i < cumcounts.length(); ++i) {
             cumCountsArr[i] = cumcounts.get(i);
             altFreqsArr[i] = (double) altfreqs.get(i) / 1000;
           }
@@ -206,7 +206,7 @@ public class PriorPopulationVariantGenerator extends PopulationVariantGenerator 
     final boolean accepted = super.checkValid(var, set);
     if (accepted) {
       double sum = 0;
-      for (int i = 0; i < var.mDistribution.length; i++) {
+      for (int i = 0; i < var.mDistribution.length; ++i) {
         sum += var.mDistribution[i];
       }
       mAcceptedCount += sum; // 1 - p(ref)

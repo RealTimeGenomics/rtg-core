@@ -29,7 +29,7 @@ public class BedComplexitiesWriterTest extends TestCase {
   private byte[] template(int length) {
     final PortableRandom r = new PortableRandom(42);
     final byte[] res = new byte[length];
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       res[i] = (byte) r.nextInt(5);
     }
     return res;

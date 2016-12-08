@@ -132,7 +132,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
           final FileAndStream[] outputFiles = new FileAndStream[regionRanges.length];
           final UnmappedSamAlignmentWriter[] outputWriters = new UnmappedSamAlignmentWriter[regionRanges.length];
           try {
-            for (int i = 0; i < outputFiles.length; i++) {
+            for (int i = 0; i < outputFiles.length; ++i) {
               outputFiles[i] = getUnmappedFileAndStream(isFinalUnmapped, suppressSam, Integer.toString(i));
               outputWriters[i] = new UnmappedSamAlignmentWriter(mParams.outputParams().tempFilesDirectory(), mSharedResources.getHeader());
               outputWriters[i].initialiseUnmapped(outputFiles[i].mStream, bam, mAugmenterMerger == null, true);
@@ -168,7 +168,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
   }
 
   private void writeUnmappedRecords(UnmappedSamRecordFactory unmappedSamRecordFactory, RecordToWriter rtw) {
-    for (int read = 0; read < mUnmappedTracker.getNumReads(); read++) {
+    for (int read = 0; read < mUnmappedTracker.getNumReads(); ++read) {
       final ReadStatusTracker.UnmappedStatus status = mUnmappedTracker.getUnmappedStatus(read, mPaired);
       switch (status) {
         case SINGLE_END_UNMAPPED:
@@ -201,13 +201,13 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
   protected static Map<Long, RangeList<UnmappedSamAlignmentWriter>> getUnmappedWriterReferenceLookup(ISequenceParams searchParams, List<HashingRegion> regions, Range[] regionRanges, UnmappedSamAlignmentWriter[] outputWriters, UnmappedSamAlignmentWriter unmappedNoPositionSamWriter) throws IOException {
     final Map<Long, List<RangeList.RangeData<UnmappedSamAlignmentWriter>>> temp = new HashMap<>();
     final Map<Long, RangeList<UnmappedSamAlignmentWriter>> lookup = new HashMap<>();
-    for (int rangeIndex = 0; rangeIndex < regionRanges.length; rangeIndex++) {
+    for (int rangeIndex = 0; rangeIndex < regionRanges.length; ++rangeIndex) {
       final Range range = regionRanges[rangeIndex];
-      for (int regionIndex = range.getStart(); regionIndex < range.getEnd(); regionIndex++) {
+      for (int regionIndex = range.getStart(); regionIndex < range.getEnd(); ++regionIndex) {
         final HashingRegion r = regions.get(regionIndex);
         final long regionStartId = r.getStart() != HashingRegion.MISSING ? r.getStart() : 0;
         final long regionEndId = r.getEnd() == HashingRegion.MISSING ? searchParams.numberSequences() : r.getExclusiveEndId();
-        for (long seq = regionStartId; seq < regionEndId; seq++) {
+        for (long seq = regionStartId; seq < regionEndId; ++seq) {
           final int startPos;
           if (seq != regionStartId) {
             startPos = 0;
@@ -314,7 +314,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
     final SimpleThreadPool stp = new SimpleThreadPool(Math.min(numberIntermediateFiles, AbstractMulticoreFilterConcat.MAX_FILTERCONCAT_THREADS), "Region-Merge", true);
     final List<File> regionFiles = new ArrayList<>();
     try {
-      for (int i = 0; i < numberIntermediateFiles; i++) {
+      for (int i = 0; i < numberIntermediateFiles; ++i) {
         final int index = i;
         final String fileNameSuffix = mParams.outputParams().bam() ? SamUtils.BAM_SUFFIX
                 : (mParams.outputParams().isCompressOutput() ? SamUtils.SAM_SUFFIX + FileUtils.GZ_SUFFIX
@@ -353,7 +353,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
     final File[] indexFiles = new File[regionFiles.size()];
     final File[] calibrationFiles = new File[regionFiles.size()];
     final ArrayList<Long> dataFileSizes = new ArrayList<>();
-    for (int i = 0; i < regionFiles.size(); i++) {
+    for (int i = 0; i < regionFiles.size(); ++i) {
       final File f = regionFiles.get(i);
       dataFileSizes.add(f.length());
       indexFiles[i] = AbstractMulticoreFilterConcat.indexFileName(f, mParams.outputParams().bam());
@@ -393,7 +393,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
     final File[] tempFiles = new File[regions.length];
     stp.enableBasicProgress(tempFiles.length);
     final ChunkPair[] chunks = findChunkBoundaries(regions, results);
-    for (int i = 0; i < tempFiles.length; i++) {
+    for (int i = 0; i < tempFiles.length; ++i) {
       tempFiles[i] = mParams.outputParams().resultStreamHandler().tempFile(namePrefix + i + FileUtils.GZ_SUFFIX);
       final OutputStream stream = FileUtils.createOutputStream(tempFiles[i], true, false);
 
@@ -461,7 +461,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
     Arrays.fill(chunkStart, -1L);
     int regionIndexStart = 0;
     int regionIndexEnd = 0;
-    for (long resultIndex = 0; resultIndex < results.size(); resultIndex++) {
+    for (long resultIndex = 0; resultIndex < results.size(); ++resultIndex) {
       int cmpStart = -1;
       //find first region containing result
       while (regionIndexStart < regions.length) {
@@ -471,7 +471,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
           break;
         } else {
           //result is right of region, look for region containing result
-          regionIndexStart++;
+          ++regionIndexStart;
         }
       }
       if (cmpStart < 0) {
@@ -479,7 +479,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
       }
       if (regionIndexEnd < regionIndexStart) {
         // regions had no results in them, make their boundaries be zero length, from and to first result outside their region
-        for (int i = regionIndexEnd; i < regionIndexStart; i++) {
+        for (int i = regionIndexEnd; i < regionIndexStart; ++i) {
           chunkStart[i] = resultIndex;
           chunkEnd[i] = resultIndex;
         }
@@ -490,14 +490,14 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
         final int cmpEnd = regions[regionIndexEnd].isInPaddedRange(results.getTemplateId(resultIndex), results.getPosition(resultIndex));
         if (cmpEnd >= 0) {
           //result is in region (+1 case should not happen given above constraints)
-          regionIndexEnd++;
+          ++regionIndexEnd;
         } else {
           //result is left of region, first region past result
           break;
         }
       }
 
-      for (int i = regionIndexStart; i < regionIndexEnd; i++) {
+      for (int i = regionIndexStart; i < regionIndexEnd; ++i) {
         if (chunkStart[i] == -1) {
           chunkStart[i] = resultIndex;
         }
@@ -506,11 +506,11 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
         }
       }
     }
-    for (int i = regionIndexEnd; i < regions.length; i++) {
+    for (int i = regionIndexEnd; i < regions.length; ++i) {
       chunkStart[i] = results.size();
       chunkEnd[i] = results.size();
     }
-    for (int i = 0; i < regions.length; i++) {
+    for (int i = 0; i < regions.length; ++i) {
       chunks[i] = new ChunkPair(chunkStart[i], chunkEnd[i]);
     }
     return chunks;

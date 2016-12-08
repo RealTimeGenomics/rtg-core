@@ -149,7 +149,7 @@ public class Consensus extends LoggedCli {
       merger.simplifyGraph();
       final ContigCollector collector = new ContigCollector(0, kmerSize, null, null, mutable);
       collector.collapse();
-      mergeCount++;
+      ++mergeCount;
       Diagnostic.developerLog("Finished merge round: " + mergeCount);
     }
     Diagnostic.developerLog("Took " + mergeCount + " iterations to complete merging");
@@ -168,16 +168,16 @@ public class Consensus extends LoggedCli {
     final List<Integer> lengths = lengths(g);
     Collections.sort(lengths);
     int soFar = 0;
-    for (int i = 0; i < 101; i++) {
+    for (int i = 0; i < 101; ++i) {
       result[i] = lengths.get(0);
     }
     int n = 0;
-    for (int index = lengths.size() - 1 ; index >= 0 && n < 101; index--) {
+    for (int index = lengths.size() - 1 ; index >= 0 && n < 101; --index) {
       final int currentLength = lengths.get(index);
       soFar += currentLength;
       while (soFar > totalLength / 100.0 * n) {
         result[n] = currentLength;
-        n++;
+        ++n;
       }
     }
     return result;
@@ -185,7 +185,7 @@ public class Consensus extends LoggedCli {
 
   private static List<Integer> lengths(Graph g) {
     final List<Integer> lengths = new ArrayList<>();
-    for (long i = 1; i <= g.numberContigs(); i++) {
+    for (long i = 1; i <= g.numberContigs(); ++i) {
       if (g.contigDeleted(i)) {
         continue;
       }

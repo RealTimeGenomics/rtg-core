@@ -189,7 +189,7 @@ public class MapxRenameTest extends AbstractCliTest {
   static final String READS_FASTA;
   static {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < READS.length; i++) {
+    for (int i = 0; i < READS.length; ++i) {
       sb.append(">testRead").append(i).append(LS).append(READS[i]).append(LS);
     }
     READS_FASTA = sb.toString();

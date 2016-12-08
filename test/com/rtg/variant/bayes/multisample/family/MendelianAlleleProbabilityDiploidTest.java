@@ -23,12 +23,12 @@ import junit.framework.TestCase;
 public class MendelianAlleleProbabilityDiploidTest extends TestCase {
 
   private static void checkChildren(final double[][][][][] lookup) {
-    for (int i = 0; i < lookup.length; i++) {
-      for (int j = 0; j < lookup[i].length; j++) {
-        for (int k = 0; k < lookup[i][j].length; k++) {
+    for (int i = 0; i < lookup.length; ++i) {
+      for (int j = 0; j < lookup[i].length; ++j) {
+        for (int k = 0; k < lookup[i][j].length; ++k) {
           double sum = 0.0;
-          for (int l = 0; l < lookup[i][j][k].length; l++) {
-            for (int m = 0; m < lookup[i][j][k][l].length; m++) {
+          for (int l = 0; l < lookup[i][j][k].length; ++l) {
+            for (int m = 0; m < lookup[i][j][k][l].length; ++m) {
               if (l <= m) {
                 sum += Math.exp(lookup[i][j][k][l][m]);
               }
@@ -62,10 +62,10 @@ public class MendelianAlleleProbabilityDiploidTest extends TestCase {
   //test symmetries and the two ways of accessing the table
   public void testLookupCode() {
     final Code code = new CodeDiploid(4);
-    for (int i = 0; i < code.size(); i++)  {
-      for (int j = 0; j < code.size(); j++)  {
+    for (int i = 0; i < code.size(); ++i)  {
+      for (int j = 0; j < code.size(); ++j)  {
         //System.err.println("i=" + i + " j=" + j);
-        for (int k = 0; k < code.size(); k++)  {
+        for (int k = 0; k < code.size(); ++k)  {
           final double exp = MendelianAlleleProbabilityDiploid.SINGLETON.probabilityLn(code, i, j, k);
           assertEquals(exp, MendelianAlleleProbabilityDiploid.SINGLETON.probabilityLn(code, j, i, k));
         }

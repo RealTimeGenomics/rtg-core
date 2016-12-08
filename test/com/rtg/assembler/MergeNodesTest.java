@@ -106,7 +106,7 @@ public class MergeNodesTest extends TestCase {
     assertTrue(graph.pathDeleted(3));
     assertFalse(graph.pathDeleted(4));
     final Set<List<Long>> newPaths = new HashSet<>();
-    for (int i = paths.length + 1; i <= graph.numberPaths(); i++) {
+    for (int i = paths.length + 1; i <= graph.numberPaths(); ++i) {
       newPaths.add(MergeNodes.getPath(graph, i));
     }
     final Set<List<Long>> expected = new HashSet<>();
@@ -239,7 +239,7 @@ public class MergeNodesTest extends TestCase {
   }
   void finalContigs(String[] contigs, Graph g) {
     final List<String> actual = new ArrayList<>();
-    for (long i = 1; i <= g.numberContigs(); i++) {
+    for (long i = 1; i <= g.numberContigs(); ++i) {
       if (!g.contigDeleted(i)) {
         actual.add(canonicalContig(ContigString.contigSequenceString(g.contig(i))));
       }
@@ -287,7 +287,7 @@ public class MergeNodesTest extends TestCase {
 
   private void newContigs(int oldLength, String[] expected, MutableGraph graph) {
     final Set<String> newContigs = new HashSet<>();
-    for (long i = oldLength + 1; i <= graph.numberContigs(); i++) {
+    for (long i = oldLength + 1; i <= graph.numberContigs(); ++i) {
       newContigs.add(ContigString.contigSequenceString(graph.contig(i)));
     }
     final Set<String> expectedContigs = new HashSet<>();
@@ -296,7 +296,7 @@ public class MergeNodesTest extends TestCase {
   }
 
   private void contigDeleted(MutableGraph graph, List<Long> deleted) {
-    for (long i = 1; i <= graph.numberContigs(); i++) {
+    for (long i = 1; i <= graph.numberContigs(); ++i) {
       if (deleted.contains(i)) {
         assertTrue("contig " + i + " was not deleted but should have been", graph.contigDeleted(i));
       } else {
@@ -306,7 +306,7 @@ public class MergeNodesTest extends TestCase {
   }
 
   private void pathDeleted(MutableGraph graph, List<Long> deleted) {
-    for (long i = 1; i <= graph.numberPaths(); i++) {
+    for (long i = 1; i <= graph.numberPaths(); ++i) {
       if (deleted.contains(i)) {
         assertTrue("path " + i + " was not deleted but should have been", graph.pathDeleted(i));
       } else {

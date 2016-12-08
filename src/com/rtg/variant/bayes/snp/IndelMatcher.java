@@ -50,7 +50,7 @@ public class IndelMatcher extends EvidenceMatcher<IndelDetector> {
       //System.err.println("@" + startPos + " nic=" + model.nonIndelCount() + " mic=" + minIndelCount + " nti=" + model.nonTrivialInsertCount() + " ntd=" + model.nonTrivialDeletionCount() + " itf=" + params.indelTriggerFraction());
       int newEnd = startPos;
       if (indelDetector.nonTrivialDeletionCount() >= minIndelCount) {
-        newEnd++;
+        ++newEnd;
       }
       if (DUMP_INDEL_SIGNAL) {
         if (indelDetector.nonTrivialDeletionCount() > 1 || indelDetector.nonTrivialInsertCount() > 1 || indelDetector.softClipLeftCount() > 1 || indelDetector.softClipRightCount() > 1) {

@@ -135,7 +135,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
       final double delslope = Double.valueOf(pr.getProperty("error_del_penalty_extension_slope", "0.5"));
       int lastInsPenaltyOffset = 0;
       int lastDelPenaltyOffset = 0;
-      for (int i = 0, offset = 0; i < offsets.length - 1; offset++) {
+      for (int i = 0, offset = 0; i < offsets.length - 1; ++offset) {
         offsets[i] = offset + 1;
         int penalty;
         if (offset < insdist.length) {
@@ -145,7 +145,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
           penalty = insdist[lastInsPenaltyOffset] + (int) (insslope * (offset - lastInsPenaltyOffset)); // Extrapolate from last given penalty
         }
         penalties[i] = penalty;
-        i++;
+        ++i;
 
         offsets[i] = -offset - 1;
         if (offset < deldist.length) {
@@ -155,7 +155,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
           penalty = deldist[lastDelPenaltyOffset] + (int) (delslope * (offset - lastDelPenaltyOffset)); // Extrapolate from last given penalty
         }
         penalties[i] = penalty;
-        i++;
+        ++i;
       }
       // Sort by increasing penalty.
       QuickSort.sort(new QuickSortIntIntProxy(penalties, offsets, true) {
@@ -182,7 +182,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
   }
 
   static void loadAffinePenalties(int[] offsets, int[] penalties, int gapOpenPenalty, int gapExtendPenalty) {
-    for (int i = 0; i < penalties.length; i++) {
+    for (int i = 0; i < penalties.length; ++i) {
       offsets[i] = i / 2 + 1;
       penalties[i] = gapOpenPenalty + offsets[i] * gapExtendPenalty;
       if ((i & 1) == 0) {
@@ -240,7 +240,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
 
     boolean insBailout = false;
     boolean delBailout = false;
-    for (int i = 0; i < mIndelOffsets.length && !(insBailout && delBailout); i++) {
+    for (int i = 0; i < mIndelOffsets.length && !(insBailout && delBailout); ++i) {
       final int offset = mIndelOffsets[i];
 
       if (offset > 0 && offset > maxShift) {
@@ -300,7 +300,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
     mDiagScore = 0;
     int fMis = -1; //position of first mismatch
     int lMis = -1; //position of last mismatch
-    for (int i = 0; i < rLen; i++) {
+    for (int i = 0; i < rLen; ++i) {
       mDiagonalCum[i] = mDiagScore;
       final byte tb = template(zeroBasedStart + i); //mTemplate[zeroBasedStart + i];
       final byte rb = mRead[i];
@@ -386,7 +386,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
     int cnt = 0;
     int lastScore = 0;
     int lastAction = -1;
-    for (int r = rEnd - 1, t = tEnd - 1; r >= rStart; r--, t--) {
+    for (int r = rEnd - 1, t = tEnd - 1; r >= rStart; --r, --t) {
 
       final byte tNt = template(t);
       final byte rNt = mRead[r];
@@ -409,7 +409,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
       }
 
       if (thisScore == lastScore && thisAction == lastAction) {
-        cnt++;
+        ++cnt;
       } else {
         prepend(cnt, lastScore, lastAction); //first time through, cnt == 0 which will be skipped over
         lastScore = thisScore;
@@ -442,7 +442,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
     assert offSet != 0;
     int score = mDiagScore + offsetPenalty;
     int possScore = offsetPenalty;
-    for (int r = rEnd - 1, t = tEnd - 1; r >= rStart; r--, t--) {
+    for (int r = rEnd - 1, t = tEnd - 1; r >= rStart; --r, --t) {
       final int m = match(r, t);
       score += m - mDiagonal[r];
       possScore += m;
@@ -483,7 +483,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
     }
 
 //    System.err.println("oDFN score=" + score + " possScore=" + possScore);
-    for (int r = rEnd - 1, t = tEnd - 1; r >= rStart; r--, t--) {
+    for (int r = rEnd - 1, t = tEnd - 1; r >= rStart; --r, --t) {
       final int m = match(r, t);
       final int diag = mDiagonal[r + offSet];
       score += m - diag;
@@ -524,7 +524,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
       mBestForward = false;
     }
 
-    for (int r = rStart, t = tStart; r < rEnd; r++, t++) {
+    for (int r = rStart, t = tStart; r < rEnd; ++r, ++t) {
       final int m = match(r, t);
       final int diag = mDiagonal[r + offSet];
       score += m - diag;
@@ -556,7 +556,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
     assert offSet < 0;
     int score = mDiagScore + offsetPenalty;
     int possScore = offsetPenalty;
-    for (int r = rStart, t = tStart; r < rEnd; r++, t++) {
+    for (int r = rStart, t = tStart; r < rEnd; ++r, ++t) {
       final int m = match(r, t);
       final int diag = mDiagonal[r];
       score += m - diag;
@@ -640,12 +640,12 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
     sb.append(" mMaxShift=").append(mMaxShift);
     sb.append(LS);
 
-    for (int i = 0; i < mRLen; i++) {
+    for (int i = 0; i < mRLen; ++i) {
       sb.append(" ").append(mDiagonal[i]);
     }
     sb.append(LS);
 
-    for (int i = 0; i < mRLen; i++) {
+    for (int i = 0; i < mRLen; ++i) {
       sb.append(" ").append(mDiagonalCum[i]);
     }
     sb.append(LS);
@@ -669,7 +669,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
   public boolean globalIntegrity() {
     integrity();
     int tot = 0;
-    for (int i = 0; i < mRLen; i++) {
+    for (int i = 0; i < mRLen; ++i) {
       final int diag = mDiagonal[i];
       Exam.assertTrue(diag == 0 || diag == mSubstitutionPenalty);
       Exam.assertEquals(tot, mDiagonalCum[i]);
@@ -689,7 +689,7 @@ public class SingleIndelEditDistance extends IntegralAbstract implements Unidire
     Exam.assertEquals(mIndelOffsets.length, mIndelPenalties.length);
     int lastPenalty = 0;
     int bestPenalty = 0;
-    for (int i = 0; i < mIndelPenalties.length; i++) {
+    for (int i = 0; i < mIndelPenalties.length; ++i) {
       final int current = mIndelPenalties[i];
       Exam.assertTrue(current >= lastPenalty);
       lastPenalty = current;

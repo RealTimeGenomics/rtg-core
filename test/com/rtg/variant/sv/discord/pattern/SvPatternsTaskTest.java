@@ -100,7 +100,7 @@ public class SvPatternsTaskTest extends TestCase {
       int i = 0;
       for (VcfBreakpoint b : store) {
         assertEquals(EXPECTED_BREAKPOINTS[i], b.toString());
-        i++;
+        ++i;
       }
       assertEquals(6, i);
 

@@ -275,7 +275,7 @@ public class SpeciesTest extends TestCase {
     final int n = stdDev.length;
     //construct a Hessian with these std dev.
     final Matrix hessian = new MatrixSimple(n);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       hessian.set(i, i, 1.0 / Math.pow(stdDev[i], 2));
     }
     checkStdDev(hessian, stdDev);
@@ -290,7 +290,7 @@ public class SpeciesTest extends TestCase {
     final SpeciesMap sm = new SpeciesMap();
     final long[] genomeLengths = new long[n];
     final Vector r = new Vector(n);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       sm.id(i);
       genomeLengths[i] = 5;
       r.set(i, 1.0);
@@ -298,7 +298,7 @@ public class SpeciesTest extends TestCase {
     final BlockInfo info = new BlockInfo(42, null, new Frag[0], sm, genomeLengths, false);
     final Vector actual = Species.variance(Species.makeFlatMembership(n), info, r, ed);
     //System.err.println(actual);
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       assertEquals(stdDev[i], Math.sqrt(actual.get(i)), 1e-6);
     }
   }

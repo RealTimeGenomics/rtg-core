@@ -169,7 +169,7 @@ public class EvidenceComplex extends Evidence {
     final int maxShift = maxShift0 + adjust;
     final double[] logScore = new double[size];
     double sum = mArithmetic.zero();
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       //TODO put in fast delta scoring for non-CG case.
       final String replace = description().name(i);
       final AlignmentEnvironment temEnv = new AlignmentEnvironmentGenomeSubstitution(se.start() - softClipStartOffset, 0 /* doesn't matter */, reference, DNA.stringDNAtoByte(replace));
@@ -191,7 +191,7 @@ public class EvidenceComplex extends Evidence {
     mLogSum = mArithmetic.poss2Ln(sum);
     int readHyp = Hypotheses.NO_HYPOTHESIS;
     double maxProb = -1;
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       final double poss = mArithmetic.divide(logScore[i], sum);
       if (PRINT_EVIDENCE_DETAILS) {
         Diagnostic.developerLog("Match: " + (match.isFixedLeft() ? "" : "~") + match.readString() + (match.isFixedRight() ? "" : "~")

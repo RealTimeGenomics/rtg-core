@@ -48,7 +48,7 @@ public final class TsvUtils {
   public static void tsvCat(boolean gzipped, OutputStream destination, File... inputFiles) throws IOException {
     final byte[] buff = new byte[1024 * 1024];
     final OneShotTimer timer = new OneShotTimer("tsvCat");
-    for (int i = 0; i < inputFiles.length; i++) {
+    for (int i = 0; i < inputFiles.length; ++i) {
       final long t0 = System.nanoTime();
       boolean dropHeader = i > 0;
       boolean scanNewLine = false;
@@ -60,7 +60,7 @@ public final class TsvUtils {
           while ((len = input.read(buff)) > 0) {
             int currentPos = 0;
             if (dropHeader) {
-              for (; currentPos < len; currentPos++) {
+              for (; currentPos < len; ++currentPos) {
                 final char c = (char) buff[currentPos];
                 if (scanNewLine && c == '\n') {
                   scanNewLine = false;

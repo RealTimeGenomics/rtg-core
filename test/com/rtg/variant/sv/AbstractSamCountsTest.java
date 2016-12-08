@@ -71,7 +71,7 @@ public abstract class AbstractSamCountsTest extends TestCase {
   private void checkFlush(int max, int buffer, int flushpoint) {
     final SamCounts sa = getCounts(0);
     sa.reset(max, buffer);
-    for (int i = 0; i < flushpoint; i++) {
+    for (int i = 0; i < flushpoint; ++i) {
       sa.increment(i);
       assertEquals(1.0, sa.count(i, 0));
     }
@@ -81,7 +81,7 @@ public abstract class AbstractSamCountsTest extends TestCase {
     assertEquals(0.0, sa.count(flushpoint - 1, 0)); // Already flushed
     assertEquals(0.0, sa.count(flushpoint, 0)); // Should be OK, nothing inserted yet
 
-    for (int i = flushpoint; i < max; i++) {
+    for (int i = flushpoint; i < max; ++i) {
       sa.increment(i);
       assertEquals(1.0, sa.count(i, 0));
     }

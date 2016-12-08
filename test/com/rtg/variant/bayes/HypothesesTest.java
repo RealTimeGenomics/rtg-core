@@ -99,7 +99,7 @@ public class HypothesesTest extends TestCase {
     final HypothesesPrior<Description> hy = new HypothesesMock<Description>(new DescriptionCommon("X", "YZ"), arith, false, 1) {
       @Override
       protected void initPriors(double[] priors) {
-        for (int i = 0; i < priors.length; i++) {
+        for (int i = 0; i < priors.length; ++i) {
           priors[i] = arith.prob2Poss(1.0 / (i + 2));
         }
       }
@@ -123,7 +123,7 @@ public class HypothesesTest extends TestCase {
     final Hypotheses<Description> hy = new HypothesesMock<Description>(new DescriptionCommon("X", "YZ"), arith, true, 1) {
       @Override
       protected void initPriors(double[] priors) {
-        for (int i = 0; i < priors.length; i++) {
+        for (int i = 0; i < priors.length; ++i) {
           priors[i] = arith.prob2Poss(1.0 / (i + 2));
         }
       }

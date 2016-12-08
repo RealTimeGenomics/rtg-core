@@ -103,7 +103,7 @@ public class SmartTempFileWriterTest extends TestCase {
     final DataOutputStream dos = new DataOutputStream(mps.outputStream());
     final SmartTempFileWriter writer = new SmartTempFileWriter(dos, new PairedTempFileRecordComparator(), 8);
     assertEquals(0, writer.getMaxCapacityUsed());
-    for (int i = 0; i <= 10; i++) {
+    for (int i = 0; i <= 10; ++i) {
       writer.addAlignmentHandleDuplicates(makeRecord(i + 1, 1, false, i + 5, false));
     }
 

@@ -26,7 +26,7 @@ public class GraphKmerAttributeTest extends TestCase {
   static GraphKmerAttribute graph() {
     final String[] contigNt = {"ACGT", "CGTA", "GTAC", "TACG", "AA", "CC", "GG", "TT"};
     final Contig[] contigs = new Contig[contigNt.length];
-    for (int i = 0; i < contigNt.length; i++) {
+    for (int i = 0; i < contigNt.length; ++i) {
       contigs[i] = new ContigString(contigNt[i]);
     }
 

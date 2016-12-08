@@ -36,7 +36,7 @@ public class DescriptionCommon extends Description {
     mNames = names;
     int min = names[0].length();
     int max = names[0].length();
-    for (int i = 1; i < names.length; i++) {
+    for (int i = 1; i < names.length; ++i) {
       final int len = names[i].length();
       if (len < min) {
         min = len;

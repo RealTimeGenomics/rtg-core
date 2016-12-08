@@ -82,7 +82,7 @@ public class SomaticPosteriorPureTest extends TestCase {
     ccs.integrity();
 
     AbstractSomaticPosterior post = null;
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 1; ++i) {
       final ModelInterface<Description> normal = PureSomaticCallerTest.EQUALS_REF_A.get(0);
       final ModelInterface<Description> cancer = PureSomaticCallerTest.EQUALS_REF_A.get(0);
       post = new SomaticPosteriorPure((hypotheses.haploid() ? ccs.mQHaploidFactory : ccs.mQDiploidFactory).somaticQ(0.001), normal, cancer, hypotheses, 1, 1);

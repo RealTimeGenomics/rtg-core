@@ -196,7 +196,7 @@ public abstract class AbstractJointCallerConfiguration {
    */
   public IndividualSampleProcessor<?>[] getIndividualSampleProcessors(final String name, final byte[] template, int start, int end) {
     final IndividualSampleProcessor<?>[] res = new IndividualSampleProcessor<?>[mIndividualFactories.size()];
-    for (int i = 0; i < res.length; i++) {
+    for (int i = 0; i < res.length; ++i) {
       res[i] = mIndividualFactories.get(i).make(name, template, start, end);
     }
     return res;

@@ -46,7 +46,7 @@ public class DiseasedFamilyCallerTest extends TestCase {
 
   private VariantOutputVcfFormatter makeFormatter(int numSamples) {
     final List<String> names = new ArrayList<>();
-    for (int i = 0; i < numSamples; i++) {
+    for (int i = 0; i < numSamples; ++i) {
       names.add("g" + i);
     }
     final VariantOutputVcfFormatter formatter = new VariantOutputVcfFormatter(names.toArray(new String[names.size()]));

@@ -23,9 +23,9 @@ import junit.framework.TestCase;
 public class MendelianAlleleProbabilityHDHTest extends TestCase {
 
   private static void checkChildren(final double[][] lookup) {
-    for (int i = 0; i < lookup.length; i++) {
+    for (int i = 0; i < lookup.length; ++i) {
       double sum = 0.0;
-      for (int j = 0; j < lookup[i].length; j++) {
+      for (int j = 0; j < lookup[i].length; ++j) {
         sum += Math.exp(lookup[i][j]);
       }
       Exam.assertEquals("j=" + i, 1.0, sum, 0.0000001);
@@ -63,10 +63,10 @@ public class MendelianAlleleProbabilityHDHTest extends TestCase {
   //test symmetries and the two ways of accessing the table
   public void testLookupCode() {
     final Code code = new CodeDiploid(4);
-    for (int i = 0; i < code.rangeSize(); i++)  {
-      for (int j = 0; j < code.size(); j++)  {
+    for (int i = 0; i < code.rangeSize(); ++i)  {
+      for (int j = 0; j < code.size(); ++j)  {
         //System.err.println("i=" + i + " j=" + j);
-        for (int k = 0; k < code.rangeSize(); k++)  {
+        for (int k = 0; k < code.rangeSize(); ++k)  {
           final double exp = MendelianAlleleProbabilityHDH.SINGLETON_HD.probabilityLn(code, i, j, k);
           assertEquals(exp, MendelianAlleleProbabilityHDH.SINGLETON_DH.probabilityLn(code, j, i, k));
         }

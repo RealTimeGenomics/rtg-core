@@ -50,7 +50,7 @@ public class IndexSet {
     final Integer numberThreads = params.numberThreads();
     final SimpleThreadPool pool = new SimpleThreadPool(numberThreads, "CreateIndex", true);
     pool.enableBasicProgress(mIndexes.length);
-    for (int i = 0; i < mIndexes.length; i++) {
+    for (int i = 0; i < mIndexes.length; ++i) {
       pool.execute(new CreateRunnable(mIndexes, i, indexParams, params));
     }
     pool.terminate();
@@ -79,7 +79,7 @@ public class IndexSet {
   public void freeze(int numberThreads) throws IOException {
     final SimpleThreadPool pool = new SimpleThreadPool(numberThreads, "BuildFreeze", true);
     pool.enableBasicProgress(mIndexes.length);
-    for (int i = 0; i < mIndexes.length; i++) {
+    for (int i = 0; i < mIndexes.length; ++i) {
       pool.execute(new FreezeRunnable(mIndexes[i], i));
     }
     pool.terminate();

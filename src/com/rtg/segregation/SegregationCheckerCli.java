@@ -127,7 +127,7 @@ public class SegregationCheckerCli extends AbstractCli {
         final int start = rec.getStart();
         int end = rec.getEnd();
         if (end == start) {
-          end++;
+          ++end;
         }
         chrList.add(new RangeData<>(start, end, PatternHolder.fromPatternStrings(rec.getAnnotations()[0], rec.getAnnotations()[1], rec.getAnnotations()[2])));
       }

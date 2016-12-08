@@ -46,7 +46,7 @@ public abstract class AbstractEstimatorTest extends TestCase {
   static double[] uniform(final int size) {
     final double[] prior = new double[size];
     final double d = 1.0 / size;
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       prior[i] = d;
     }
     return prior;
@@ -63,11 +63,11 @@ public abstract class AbstractEstimatorTest extends TestCase {
     final HypothesesPrior<Description> diploid = new MockHypotheses<Description>(descr, arith, false, uniform(6), 0);
     final double[] prob = {third, third, third};
     final List<ModelInterface<?>> models = new ArrayList<>();
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; ++i) {
       final MockModel<Description> model = new MockModel<>(diploid, new StatisticsSnp(diploid.description()), null);
       models.add(model);
       final EvidenceInterface di = new MockEvidence(descr, 0.0, prob, 1);
-      for (int j = 0; j < 20; j++) {
+      for (int j = 0; j < 20; ++j) {
         model.increment(di);
       }
     }
@@ -83,13 +83,13 @@ public abstract class AbstractEstimatorTest extends TestCase {
     final HypothesesPrior<Description> diploid = new HypothesesSnp(arith, params, false, 0);
     final HypothesesPrior<Description> haploid = new HypothesesSnp(arith, params, true, 0);
     final List<ModelInterface<?>> models = new ArrayList<>();
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; ++i) {
       final MockModel<Description> model = new MockModel<>(diploid, new StatisticsSnp(diploid.description()), null);
       models.add(model);
     }
     final Random random = new Random(143);
     final Convergence convergence = new Convergence(haploid, diploid, getEstimator(), models, random);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       final SimulationResult iterate = convergence.simulate();
       assertEquals(0, iterate.totalIncorrect());
       //System.err.println(iterate.totalIncorrect());

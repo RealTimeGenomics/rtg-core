@@ -182,11 +182,11 @@ public class GenomeSimulator extends LoggedCli {
       lengths = new int[numSequences];
       final int diff = (Integer) mFlags.getValue(MAX_LENGTH) - (Integer) mFlags.getValue(MIN_LENGTH);
       if (diff > 0) {
-        for (int i = 0; i < numSequences; i++) {
+        for (int i = 0; i < numSequences; ++i) {
           lengths[i] = rand.nextInt(diff + 1) + (Integer) mFlags.getValue(MIN_LENGTH);
         }
       } else {
-        for (int i = 0; i < numSequences; i++) {
+        for (int i = 0; i < numSequences; ++i) {
           lengths[i] = (Integer) mFlags.getValue(MIN_LENGTH);
         }
 

@@ -64,7 +64,7 @@ public class UnfilteredSingleEndOutputProcessor extends AbstractSdfOutputProcess
     mFreqBlockerLeft = new ReadBlocker(numSequences, param.readFreqThreshold(), "left hits");
     mChildren = new ArrayList<>();
     mThreadLocks = new Object[NUMBER_OF_THREAD_LOCKS];
-    for (int i = 0; i < mThreadLocks.length; i++) {
+    for (int i = 0; i < mThreadLocks.length; ++i) {
       mThreadLocks[i] = new Object();
     }
   }
@@ -81,7 +81,7 @@ public class UnfilteredSingleEndOutputProcessor extends AbstractSdfOutputProcess
     Collections.sort(mChildren, new TopNPairedEndOutputProcessorSync.RegionFileComparator());
 
     final File[] outputFiles = new File[mChildren.size()];
-    for (int i = 0; i < outputFiles.length; i++) {
+    for (int i = 0; i < outputFiles.length; ++i) {
       outputFiles[i] = mChildren.get(i).getB();
     }
     final FilterConcatIntermediateFiles alignmentsIntFiles;

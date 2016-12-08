@@ -290,7 +290,7 @@ public final class UnmatedAugmenter {
             record.setReadBases(b);
 
             final byte[] q = new byte[record.getBaseQualities().length];
-            for (int i = 0; i < q.length; i++) {
+            for (int i = 0; i < q.length; ++i) {
               q[q.length - 1 - i] = record.getBaseQualities()[i];
             }
             record.setBaseQualities(q);

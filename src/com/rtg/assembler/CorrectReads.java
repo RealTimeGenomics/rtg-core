@@ -44,7 +44,7 @@ public final class CorrectReads {
         source.reset();
         while ((fragments = source.nextFragments()) != null) {
 
-          for (int i = 0; i < fragments.size(); i++) {
+          for (int i = 0; i < fragments.size(); ++i) {
             final byte[] fragment = fragments.get(i);
 
             final CorrectingMutator.SequenceBases best = correctRead(mutator, new CorrectingMutator.BaseRead(fragment), kmerSize, threshold, graph);
@@ -61,7 +61,7 @@ public final class CorrectReads {
             writer.endSequence();
           }
 
-          readId++;
+          ++readId;
         }
       } finally {
         for (SdfWriter writer : outputs) {
@@ -102,7 +102,7 @@ public final class CorrectReads {
   private static int firstBadHash(CorrectingMutator.SequenceBases read, int kmerSize, int start, int threshold, DeBruijnGraph graph) {
     final KmerFactory fact = ByteKmer.factory();
     final byte[] bytes = CorrectingMutator.sequenceBasesToBytes(read);
-    for (int i = start; i < read.length() - kmerSize; i++) {
+    for (int i = start; i < read.length() - kmerSize; ++i) {
       final Kmer k = fact.make(bytes, i, i + kmerSize);
       if (!graph.contains(k)) {
         return i;
@@ -119,12 +119,12 @@ public final class CorrectReads {
       outputNames.add("left");
       outputNames.add("right");
     } else {
-      for (int i = 0; i < source.numberFragments(); i++) {
+      for (int i = 0; i < source.numberFragments(); ++i) {
         outputNames.add("" + i);
       }
     }
     final List<SdfWriter> outputs = new ArrayList<>();
-    for (int i = 0; i < source.numberFragments(); i++) {
+    for (int i = 0; i < source.numberFragments(); ++i) {
       final SdfWriter writer = new SdfWriter(new File(output, outputNames.get(i)), Constants.MAX_FILE_SIZE, PrereadType.UNKNOWN, false, true, true, SequenceType.DNA);
       outputs.add(writer);
     }

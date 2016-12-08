@@ -79,14 +79,14 @@ public abstract class AbstractBitVectorTest extends TestCase {
     final AbstractBitVector bitv = getBitVector(100);
     assertEquals(100, bitv.length());
     assertEquals(16, bitv.bytes());
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; ++i) {
       assertTrue(!bitv.get(i));
       if (i % 2 == 0) {
         bitv.set(i);
         assertTrue(bitv.get(i));
       }
     }
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; ++i) {
       if (i % 2 == 0) {
         assertTrue(bitv.get(i));
       } else {
@@ -104,19 +104,19 @@ public abstract class AbstractBitVectorTest extends TestCase {
     final AbstractBitVector bitv = getBitVector(100);
     assertEquals(100, bitv.length());
     assertEquals(16, bitv.bytes());
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; ++i) {
       assertTrue(!bitv.get(i));
       if (i % 2 == 0) {
         bitv.set(i);
         assertTrue(bitv.get(i));
       }
     }
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; ++i) {
       if (i % 4 == 0) {
         bitv.reset(i);
       }
     }
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; ++i) {
       if (i % 4 == 2) {
         assertTrue(bitv.get(i));
       } else {

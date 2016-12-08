@@ -170,10 +170,10 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
     mOneMinusDeleteInsertOpen = 1.0 - mDeleteOpenProb - mInsertOpenProb;
     mGapStart = new int[GAP_NAME.length];
     mGapProb = new double[GAP_NAME.length][];
-    for (int gap = 0; gap < GAP_NAME.length; gap++) {
+    for (int gap = 0; gap < GAP_NAME.length; ++gap) {
       mGapStart[gap] = mParams.gapStart(gap);
       mGapProb[gap] = new double[mParams.gapEnd(gap) - mParams.gapStart(gap) + 1];
-      for (int i = 0; i < mGapProb[gap].length; i++) {
+      for (int i = 0; i < mGapProb[gap].length; ++i) {
         mGapProb[gap][i] = Math.exp(mParams.gapFreqLn(gap, mGapStart[gap] + i));
       }
     }
@@ -204,7 +204,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
     mRowOffsets[RIGHT_ARM] = makeRowOffsets(RIGHT_ARM);
 
     mStats = new int[2 * GAP_NAME.length][];
-    for (int i = 0; i < mStats.length; i++) {
+    for (int i = 0; i < mStats.length; ++i) {
       mStats[i] = new int[MAX_GAP];
     }
     mUnknownsPenalty = unknownsPenalty == 0 ? 0 : 1; //cg ed only supports 1/1/1/1 or 1/1/1/0 penalties, really.
@@ -230,7 +230,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
   protected void calculateProbabilities() {
     assert mLength == CgUtils.CG_RAW_READ_LENGTH || mLength == CgUtils.CG2_RAW_READ_LENGTH : "mLength=" + mLength; // it should be a CG read
     calculateInitialRow(0, mDeleteOpenProb / mWidth, (1.0 - mDeleteOpenProb) / mWidth);
-    for (int row = 1; row <= mLength; row++) {
+    for (int row = 1; row <= mLength; ++row) {
       final int gap = mGap[mArm][row];
       if (gap < 0) {
         calculateRow(row); // normal boring row
@@ -261,7 +261,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
     final int maxShift = mWidth >> 1;
       final int[] result = new int[mLength + 1];
       int offset = -(maxShift + 1);
-      for (int row = 0; row <= mLength; row++) {
+      for (int row = 0; row <= mLength; ++row) {
         final int gap = mGap[arm][row];
         if (gap == OVERLAP_GAP) {
           offset -= 2;
@@ -271,7 +271,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
           offset += 6;
         }
         result[row] = offset;
-        offset++;
+        ++offset;
       }
       return result;
   }
@@ -328,7 +328,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
   }
 
   protected void calculateRow(final int i) {
-    for (int j = 0; j < mWidth; j++) {
+    for (int j = 0; j < mWidth; ++j) {
       mDelete[i][j] = calculateDelete(i - 1, j + 1);
       mMatch[i][j] = calculateMatch(i - 1, j) * matchEq(i - 1, j);
       mInsert[i][j] = calculateInsert(i, j - 1);
@@ -349,10 +349,10 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
     final int thisRowOffset = rowOffset(row);
     final int offset = thisRowOffset - rowOffset(row - 1);
 
-    for (int j = 0; j <= lastCol; j++) {
+    for (int j = 0; j <= lastCol; ++j) {
       // delete: we sum the probabilities over all gap sizes
       double del = 0.0;
-      for (int gapSize = gapStart; gapSize < gapEnd; gapSize++) {
+      for (int gapSize = gapStart; gapSize < gapEnd; ++gapSize) {
         final int prevCol = j - (gapSize - offset);
         if (0 <= prevCol && prevCol < mWidth) {
           final double from = calculateOpenDelete(row - 1, prevCol);
@@ -363,7 +363,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
 
       // match or mismatch: we sum the probabilities over all gap sizes
       double mm = 0.0;
-      for (int gapSize = gapStart; gapSize < gapEnd; gapSize++) {
+      for (int gapSize = gapStart; gapSize < gapEnd; ++gapSize) {
         final int prevCol = j - (gapSize - offset) - 1;
         //        final byte te = mEnv.template(thisRowOffset + j);
         if (0 <= prevCol && prevCol < mWidth) {
@@ -378,7 +378,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
   }
 
   protected void calculateInitialRow(final int initRow, final double delete, final double match) {
-    for (int j = 0; j < mWidth; j++) {
+    for (int j = 0; j < mWidth; ++j) {
       mDelete[initRow][j] = delete;
       mMatch[initRow][j] = match;
       mInsert[initRow][j] = 0.0;
@@ -437,7 +437,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
    */
   protected final double[][] makeDouble(final int rows) {
     final double[][] res = new double[rows][];
-    for (int i = 0; i < rows; i++) {
+    for (int i = 0; i < rows; ++i) {
       res[i] = new double[mWidth];
     }
     return res;
@@ -475,11 +475,11 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
     final double[] mtmp = new double[mWidth];
     final double[] dtmp = new double[mWidth];
     printTemplateRow(sb, rowStart, rowEnd, mEnv, "ScoreMatrix");
-    for (int row = 0; row <= mLength; row++) {
+    for (int row = 0; row <= mLength; ++row) {
       if (mGap[mArm][row] >= 0) {
         // show a horizontal line where the CG gap/overlap happens.
         sb.append("      ");
-        for (int i = 0; i < (FIELD_WIDTH * 3 + 1) * (rowOffset(row) - rowStart + mWidth); i++) {
+        for (int i = 0; i < (FIELD_WIDTH * 3 + 1) * (rowOffset(row) - rowStart + mWidth); ++i) {
           sb.append('-');
         }
         sb.append(LS);
@@ -488,7 +488,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
       final char re = row == 0 ? ' ' : dnaChars[mEnv.read(row - 1)];
       sb.append(re);
       int bi = -1, bm = -1, bd = -1;
-      for (int tPos = 0; tPos < rowOffset(row) - rowStart + mWidth; tPos++) {
+      for (int tPos = 0; tPos < rowOffset(row) - rowStart + mWidth; ++tPos) {
         if (tPos >= rowOffset(row) - rowStart) {
           final int col = tPos - (rowOffset(row) - rowStart);
           bi = update(itmp, mInsert[row][col], bi, col);
@@ -496,7 +496,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
           bd = update(dtmp, mDelete[row][col], bd, col);
         }
       }
-      for (int tPos = 0; tPos < rowOffset(row) - rowStart + mWidth; tPos++) {
+      for (int tPos = 0; tPos < rowOffset(row) - rowStart + mWidth; ++tPos) {
         //final String sep = row > 0 && (tPos + rowStart + 1) % 5 == 0 ? ("" + re) : "|";
         final String sep = "|";
         if (tPos < rowOffset(row) - rowStart) {
@@ -531,7 +531,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
   static void printTemplateRow(final StringBuilder sb, final int rowStart, final int rowEnd, final Environment env, final String msg) {
     final char[] dnaChars = DNA.valueChars();
     sb.append(extend(msg, 7 + 3 * FIELD_WIDTH, "|"));
-    for (int pos = rowStart + 1; pos <= rowEnd; pos++) {
+    for (int pos = rowStart + 1; pos <= rowEnd; ++pos) {
       sb.append(dnaChars[env.template(pos)]);
       sb.append(extend("", 2 * FIELD_WIDTH - 1, Integer.toString(env.absoluteTemplatePosition(pos))));
       sb.append(extend("", FIELD_WIDTH + 1, "|"));
@@ -553,12 +553,12 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
   @Override
   public boolean globalIntegrity() {
     integrity();
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       // the three matrices have exactly the same shape.
       Exam.assertEquals(mWidth, mMatch[i].length);
       Exam.assertEquals(mWidth, mDelete[i].length);
       Exam.assertEquals(mWidth, mInsert[i].length);
-      for (int j = 0; j < mWidth; j++) {
+      for (int j = 0; j < mWidth; ++j) {
         final double vi = mInsert[i][j];
         Exam.assertTrue("i=" + i + " j=" + j + " vi=" + vi, 0.0 <= vi && vi < 1.0 && !Double.isNaN(vi));
         final double vm = mMatch[i][j];
@@ -579,7 +579,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
   public int[] goBackwards(final int readEnd, final boolean reverse, final int[] workSpace0) {
     int bestPos = 0;
     double bestScore = 0.0;
-    for (int i = 0; i < mWidth; i++) {
+    for (int i = 0; i < mWidth; ++i) {
       final double tempScore = mMatch[mLength][i] + mDelete[mLength][i];
       if (tempScore > bestScore) {
         bestScore = tempScore;
@@ -610,7 +610,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
         // NOTE: ii is zero when refPos==0, so we should never make refPos negative here.
         ActionsHelper.prepend(workSpace, 1, ActionsHelper.DELETION_FROM_REFERENCE, previousAction == ActionsHelper.DELETION_FROM_REFERENCE ? 1 : 2);
         previousAction = ActionsHelper.DELETION_FROM_REFERENCE;
-        refPos--;
+        --refPos;
         assert refPos >= 0;
       } else if (dd == best) {
         ActionsHelper.prepend(workSpace, 1, ActionsHelper.INSERTION_INTO_REFERENCE, previousAction == ActionsHelper.INSERTION_INTO_REFERENCE ? 1 : 2);
@@ -627,10 +627,10 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
           assert refPos < mWidth;
         } else {
           // NOTE: dd is zero when refPos==mWidth-1, so refPos should stay < mWidth.
-          refPos++;
+          ++refPos;
           assert refPos < mWidth;
         }
-        readPos--;
+        --readPos;
       } else {
         final int templatePos = thisOffset + refPos;
         final int cmd;
@@ -662,7 +662,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
           assert 0 <= refPos;
           assert refPos < mWidth;
         }
-        readPos--;
+        --readPos;
         previousAction = cmd;
       }
     }
@@ -670,7 +670,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
       System.err.println("start := " +  mEnv.absoluteTemplatePosition(rowOffset(0) + refPos + 1));
       System.err.println("read=" + Arrays.toString(mRead));
       System.err.print("tmpl=[");
-      for (int i = 0; i < 40; i++) {
+      for (int i = 0; i < 40; ++i) {
         System.err.print(mEnv.template(i) + ", ");
       }
       System.err.println("]");
@@ -700,7 +700,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
     final int offset = thisRowOffset - rowOffset(row - 1);
     int bestGap = 0;
     double bestProb = 0.0;
-    for (int gapSize = gapStart; gapSize < gapEnd; gapSize++) {
+    for (int gapSize = gapStart; gapSize < gapEnd; ++gapSize) {
       final int prevCol = col - (gapSize - offset) - match;
       if (0 <= prevCol && prevCol < mWidth) {
         final double prob = ((match == 1)
@@ -734,16 +734,16 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
     sb.append(fmt.format(mInsertExtendProb));
     sb.append(StringUtils.LS);
     sb.append("Gap Histograms").append(StringUtils.LS);
-    for (int arm = 0; arm < 2; arm++) {
+    for (int arm = 0; arm < 2; ++arm) {
       final int startGap = 0;
       final int endGap = 3;
-      for (int whichGap = startGap; whichGap < endGap; whichGap++) {
+      for (int whichGap = startGap; whichGap < endGap; ++whichGap) {
         final int index = arm * GAP_NAME.length + whichGap;
         sb.append(arm == LEFT_ARM ? "Left" : "Right").append(GAP_NAME[whichGap]).append(":\t");
         final int gapStart = mGapStart[whichGap];
         final int gapEnd = gapStart + mGapProb[whichGap].length;
         sb.append(gapStart).append("..").append(gapEnd - 1);
-        for (int width = 0; width < gapEnd - gapStart; width++) {
+        for (int width = 0; width < gapEnd - gapStart; ++width) {
           sb.append("\t").append(mStats[index][width]);
         }
         sb.append(StringUtils.LS);

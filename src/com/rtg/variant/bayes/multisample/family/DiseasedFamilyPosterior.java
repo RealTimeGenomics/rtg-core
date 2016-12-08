@@ -47,7 +47,7 @@ public class DiseasedFamilyPosterior {
 
   private HypothesisScore marginal(double[][] marginals, int disease, Hypotheses<?> hypotheses) {
     final double[] result = new double[marginals.length];
-    for (int i = 0; i < marginals.length; i++) {
+    for (int i = 0; i < marginals.length; ++i) {
       result[i] = marginals[i][disease];
     }
     return new HypothesisScore(new NoNonIdentityMeasure(new ArrayGenotypeMeasure(LogApproximatePossibility.SINGLETON, result, hypotheses)));
@@ -81,7 +81,7 @@ public class DiseasedFamilyPosterior {
     assert mMother.hypotheses() == mHypotheses;
     assert mFather.hypotheses() == mHypotheses;
     mChildren = new ArrayList<>();
-    for (int i = Family.FIRST_CHILD_INDEX; i < ids.length; i++) {
+    for (int i = Family.FIRST_CHILD_INDEX; i < ids.length; ++i) {
       final ModelInterface<?> model = models.get(ids[i]);
       mChildren.add(model);
       assert model.hypotheses() == mHypotheses;
@@ -103,7 +103,7 @@ public class DiseasedFamilyPosterior {
       Arrays.fill(x, Double.NEGATIVE_INFINITY);
     }
     Arrays.fill(mDiseaseMarginal, Double.NEGATIVE_INFINITY);
-    for (int k = 0; k < mChildren.size(); k++) {
+    for (int k = 0; k < mChildren.size(); ++k) {
       final double[][] childMarginals = new double[mHypothesesSize][diseaseSize];
       for (final double[] x : childMarginals) {
         Arrays.fill(x, Double.NEGATIVE_INFINITY);
@@ -114,8 +114,8 @@ public class DiseasedFamilyPosterior {
   }
 
   void process() {
-    for (int i = 0; i < mHypothesesSize; i++) {
-      for (int j = 0; j < mHypothesesSize; j++) {
+    for (int i = 0; i < mHypothesesSize; ++i) {
+      for (int j = 0; j < mHypothesesSize; ++j) {
         double marginal = 0.0;
         // p dagger
         final double generatedPrior =  AlleleSetProbabilityDiploid.SINGLETON.probabilityLn(mCode, mHypotheses.reference(), i, j);
@@ -131,7 +131,7 @@ public class DiseasedFamilyPosterior {
     final int diseaseIndex = mBestDisease.hypothesis();
     mBest.add(marginal(mFatherMarginal, diseaseIndex, mFather.hypotheses()));
     mBest.add(marginal(mMotherMarginal, diseaseIndex, mMother.hypotheses()));
-    for (int i = 0; i < mChildMarginal.size(); i++) {
+    for (int i = 0; i < mChildMarginal.size(); ++i) {
       mBest.add(marginal(mChildMarginal.get(i), diseaseIndex, mChildren.get(i).hypotheses()));
     }
   }
@@ -150,7 +150,7 @@ public class DiseasedFamilyPosterior {
       updateMarginals(marginal, father, mother, childCats);
     } else {
       final ModelInterface<?> child = mChildren.get(childCount);
-      for (int i = 0; i < mHypothesesSize; i++) {
+      for (int i = 0; i < mHypothesesSize; ++i) {
         final double prior = MendelianAlleleProbabilityDiploid.SINGLETON.probabilityLn(mCode, father, mother, i);
         if (Double.isInfinite(prior)) {
           continue;
@@ -173,7 +173,7 @@ public class DiseasedFamilyPosterior {
     final int[] currentHyp = new int[childHyps.size() + Family.FIRST_CHILD_INDEX];
     currentHyp[Family.FATHER_INDEX] = father;
     currentHyp[Family.MOTHER_INDEX] = mother;
-    for (int i = 0; i < childHyps.size(); i++) {
+    for (int i = 0; i < childHyps.size(); ++i) {
       currentHyp[i + Family.FIRST_CHILD_INDEX] = childHyps.get(i);
     }
     final Disease disease = new Disease(mFamily, mHypotheses, currentHyp);
@@ -193,7 +193,7 @@ public class DiseasedFamilyPosterior {
     //    System.err.println("Xfather=" + father + " mother=" + mother + " fm=" + finalMarginal);
     mDiseaseMarginal[explanation] = VariantUtils.logSumApproximation(mDiseaseMarginal[explanation], finalMarginal);
     //    System.err.println("d=" + d + " father=" + father + " mother=" + mother + " b=" + b + " pPrime=" + pPrime + " q=" + q + " set=" + alleleSet + " dm[d]=" + mDiseaseMarginal[d] + " nt=" + refNt);
-    for (int i = 0; i < childHyps.size(); i++) {
+    for (int i = 0; i < childHyps.size(); ++i) {
       final double[][] marginals = mChildMarginal.get(i);
       final int cat = childHyps.get(i);
       marginals[cat][explanation] = VariantUtils.logSumApproximation(marginals[cat][explanation], finalMarginal);
@@ -236,7 +236,7 @@ public class DiseasedFamilyPosterior {
   double anyDiseasePosteriorRatio() {
     double explanation = Double.NEGATIVE_INFINITY;
     // position 0 is the no-disease case
-    for (int k = 1; k < mDiseaseMarginal.length; k++) {
+    for (int k = 1; k < mDiseaseMarginal.length; ++k) {
       explanation = VariantUtils.logSumApproximation(explanation, mDiseaseMarginal[k]);
     }
     return explanation - mDiseaseMarginal[0];

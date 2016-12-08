@@ -36,10 +36,10 @@ public final class AlleleSetProbabilityDiploid implements AlleleProbability {
    */
   static final double[][][][] LOOKUP = new double[5][2][3][4];
   static {
-    for (byte i = 0; i < 5; i++) {
-      for (int k = 0; k < 2; k++) {
-        for (int l = 0; l < 3; l++) {
-          for (int m = 0; m < 4; m++) {
+    for (byte i = 0; i < 5; ++i) {
+      for (int k = 0; k < 2; ++k) {
+        for (int l = 0; l < 3; ++l) {
+          for (int m = 0; m < 4; ++m) {
             setLookup(i, k, l, m);
           }
         }

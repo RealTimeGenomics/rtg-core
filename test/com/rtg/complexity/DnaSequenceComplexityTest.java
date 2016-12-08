@@ -32,7 +32,7 @@ public class DnaSequenceComplexityTest extends TestCase {
     } catch (IllegalArgumentException iae) {
       // expected
     }
-    for (int i = 1; i <= 20; i++) {
+    for (int i = 1; i <= 20; ++i) {
       new DnaSequenceComplexity(i);
     }
   }
@@ -85,17 +85,17 @@ public class DnaSequenceComplexityTest extends TestCase {
 
   private static double complexity(String seq, int length) {
     final int[] counts = new int[27];
-    for (int i = 0; i < seq.length(); i++) {
+    for (int i = 0; i < seq.length(); ++i) {
       counts[seq.charAt(i) - 'a']++;
     }
     //double res = 0.0;
     long lf = 1;
-    for (int j = 2; j <= length; j++) {
+    for (int j = 2; j <= length; ++j) {
       lf *= j;
     }
     long fact = 1;
     for (int count : counts) {
-      for (int k = 2; k <= count; k++) {
+      for (int k = 2; k <= count; ++k) {
         fact *= k;
       }
     }
@@ -106,7 +106,7 @@ public class DnaSequenceComplexityTest extends TestCase {
   public void testComplexityCalc() {
     final DnaSequenceComplexity sc = new DnaSequenceComplexity(12);
     final char[] seq = {'a', 'c', 'g', 't', 'a', 'c', 'g', 't', 'a', 'c', 'g', 't'};
-    for (int i = 0; i < seq.length; i++) {
+    for (int i = 0; i < seq.length; ++i) {
       seq[i] = 'a';
       final String s = new String(seq);
       final double c = sc.minComplexity(s);

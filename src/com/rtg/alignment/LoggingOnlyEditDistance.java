@@ -62,7 +62,7 @@ class LoggingOnlyEditDistance implements UnidirectionalEditDistance {
 
   @Override
   public int[] calculateEditDistance(byte[] read, int rlen, byte[] template, int zeroBasedStart, int maxScore, int maxShift, boolean cgLeft) {
-    mCount++;
+    ++mCount;
     if (mCount <= mMaxTimesToLog) {
       final CRC32 checksum = new CRC32();
       checksum.update(read, 0, rlen);

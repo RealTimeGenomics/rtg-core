@@ -29,7 +29,7 @@ public final class Timing {
     final double m1 = arith.prob2Poss(0.2);
     final double m2 = arith.prob2Poss(0.99);
     final double m3 = arith.prob2Poss(0.01);
-    for (long l = 0; l < iter; l++) {
+    for (long l = 0; l < iter; ++l) {
       final double y1 = arith.multiply(x, m1);
       final double y2 = arith.multiply(x, m2);
       final double y3 = arith.multiply(x, m3);
@@ -46,7 +46,7 @@ public final class Timing {
    * @param args command line arguments ignored.
    */
   public static void main(String[] args) {
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; ++i) {
       //time(IntegerPossibility.SINGLETON, System.err);
       //time(SimplePossibility.SINGLETON, System.err);
       //time(LogApproximatePossibility.SINGLETON, System.err);

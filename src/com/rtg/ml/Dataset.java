@@ -58,7 +58,7 @@ public class Dataset {
     mInstances.add(instance);
     if (instance.isPositive()) {
       mPosWeight += instance.weight();
-      mPosCount++;
+      ++mPosCount;
     } else {
       mNegWeight += instance.weight();
     }

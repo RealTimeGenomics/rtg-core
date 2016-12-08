@@ -79,14 +79,14 @@ public class CorrectingMutator {
   }
   static byte[] sequenceBasesToBytes(SequenceBases bases) {
     final byte[] b = new byte[bases.length()];
-    for (int i = 0; i < bases.length(); i++) {
+    for (int i = 0; i < bases.length(); ++i) {
       b[i] = bases.baseAt(i);
     }
     return b;
   }
   private static String sequenceBasesToString(SequenceBases bases) {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < bases.length(); i++) {
+    for (int i = 0; i < bases.length(); ++i) {
       sb.append(DnaUtils.getBase(bases.baseAt(i)));
     }
     return sb.toString();
@@ -176,13 +176,13 @@ public class CorrectingMutator {
 
     @Override
     public SequenceBases next() {
-      mIndex++;
+      ++mIndex;
       while (mIndex == mMutant.baseAt(mPosition)) {
-        mIndex++;
+        ++mIndex;
       }
       if (mIndex > T) {
         mIndex = A;
-        mPosition++;
+        ++mPosition;
       }
       final CorrectedRead corrected = new CorrectedRead(mMutant);
       corrected.correct(mPosition, mIndex);

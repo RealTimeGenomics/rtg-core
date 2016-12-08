@@ -93,7 +93,7 @@ public class GraphMap {
       if (graph.pathLength(pathId) != path.size()) {
         continue;
       }
-      for (int i = 0; i < path.size(); i++) {
+      for (int i = 0; i < path.size(); ++i) {
         final Long contig = path.get(i);
         if (contig != graph.pathContig(pathId, i) && !(palindromesEqual && contig == -graph.pathContig(pathId, i) && GraphAlignment.isPalindrome(contig, graph))) {
           continue pathsLoop;
@@ -115,7 +115,7 @@ public class GraphMap {
     }
     final AsyncReadPool readPool = new AsyncReadPool("ReadForInsertCalclation", paired);
     final List<InsertSizeRunnable> insertJobs = new ArrayList<>();
-    for (int i = 0; i < params.numberThreads(); i++) {
+    for (int i = 0; i < params.numberThreads(); ++i) {
       final GraphMap graphMap = new GraphMap(index, graph, null, new PathTracker(new PalindromeTracker(graph)));
       final InsertSizeRunnable run = new InsertSizeRunnable(graphMap, params.maxMismatches(), readPool.sources());
       insertJobs.add(run);
@@ -210,7 +210,7 @@ public class GraphMap {
         score = alignment.mScore;
         scoreCount = 1;
       } else if (alignment.mScore == score) {
-        scoreCount++;
+        ++scoreCount;
       }
     }
     if (scoreCount > 1) {
@@ -295,7 +295,7 @@ public class GraphMap {
     return null;
   }
   static void finalizeCounts(List<GraphMap> mappings, MutableGraph graph) {
-    for (long i = 1; i < graph.numberContigs() + 1; i++) {
+    for (long i = 1; i < graph.numberContigs() + 1; ++i) {
       final String readCount = graph.contigAttribute(i, GraphKmerAttribute.READ_COUNT);
       int count;
       if (readCount == null) {
@@ -312,7 +312,7 @@ public class GraphMap {
         graph.setContigAttribute(i, GraphKmerAttribute.READ_COUNT, "" + count);
       }
     }
-    for (long i = 1; i < graph.numberPaths() + 1; i++) {
+    for (long i = 1; i < graph.numberPaths() + 1; ++i) {
       final String readCount = graph.pathAttribute(i, GraphKmerAttribute.READ_COUNT);
       int count;
       if (readCount == null) {

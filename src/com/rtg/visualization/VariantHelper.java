@@ -62,7 +62,7 @@ final class VariantHelper {
           throw new NoTalkbackSlimException(sb.toString());
         }
         for (final String wanted : wantedSampleNames) {
-          for (int i = 0; i < sampleNames.size(); i++) {
+          for (int i = 0; i < sampleNames.size(); ++i) {
             if (wanted.equals(sampleNames.get(i))) {
               actualSamples.add(i);
               actualSampleNames.add(wanted);
@@ -80,7 +80,7 @@ final class VariantHelper {
         if (!region.overlaps(current)) {
           continue;
         }
-        for (int i = 0; i < actualSamples.size(); i++) {
+        for (int i = 0; i < actualSamples.size(); ++i) {
           final String sampleName = actualSampleNames.get(i);
           final int sampleIndex = VcfUtils.getSampleIndexOrDie(r.getHeader(), sampleName, input.getPath());
           // Skip non-calls

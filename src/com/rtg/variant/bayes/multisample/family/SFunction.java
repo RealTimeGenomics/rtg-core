@@ -36,18 +36,18 @@ public class SFunction extends IntegralAbstract {
 
     mForwardS = new WeightedLattice[mLength + 1];
     mForwardS[0] = init;
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       mForwardS[i + 1] = mForwardS[i].product(mChildS[i]); //TODO use sum if recessive
     }
 
     mReverseS = new WeightedLattice[mLength + 1];
     mReverseS[mLength] = DefaultWeightedLattice.identity(FastDiseasedFamilyPosterior.SINGLETON, FastDiseasedFamilyPosterior.BIT_SET);
-    for (int i = mLength - 1; i >= 0; i--) {
+    for (int i = mLength - 1; i >= 0; --i) {
       mReverseS[i] = mReverseS[i + 1].product(mChildS[i]);
     }
 
     mExcludeS = new WeightedLattice[mLength];
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       mExcludeS[i] = mForwardS[i].product(mReverseS[i + 1]);
     }
     assert globalIntegrity();

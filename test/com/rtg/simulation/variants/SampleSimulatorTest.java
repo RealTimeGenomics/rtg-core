@@ -98,7 +98,7 @@ public class SampleSimulatorTest extends TestCase {
       final byte[] buff = new byte[(int) srOut.maxLength()];
       /*
       System.out.println("-- Chromosomes for sample foo --");
-      for (int i = 0; i < srOut.numberSequences(); i++) {
+      for (int i = 0; i < srOut.numberSequences(); ++i) {
         int len = srOut.read(i, buff);
         System.out.println("seq: " + srOut.name(i));
         System.out.println(DnaUtils.bytesToSequenceIncCG(buff, 0, len));

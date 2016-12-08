@@ -85,7 +85,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
 
   List<ModelInterface<Description>> getNormalModel(Ploidy ploidy, double same) {
     final List<ModelInterface<Description>> models = new ArrayList<>();
-    for (int ref = 0; ref < 4; ref++) {
+    for (int ref = 0; ref < 4; ++ref) {
       final Hypotheses<Description> hyps = simpleHyps(same, ref, ploidy);
       models.add(new Model<>(hyps, new StatisticsSnp(hyps.description()), new NoAlleleBalance()));
     }
@@ -120,7 +120,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
    */
   protected final List<ModelInterface<D>> doReads(final int numReads, final int readNt) {
     final double[] qualities = new double[numReads];
-    for (int i = 0; i < numReads; i++) {
+    for (int i = 0; i < numReads; ++i) {
       qualities[i] = 0.05;
     }
     return doReads(readNt, qualities);
@@ -273,7 +273,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
   protected static <T extends Description> String dump(List<ModelInterface<T>> bayes) {
     final StringBuilder sb = new StringBuilder();
     sb.append("Hyp Post0 A C G T").append(LS);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       sb.append(bayes.get(0).name(i)).append(" ").append(formatExp(Math.exp(bayes.get(0).posteriorLn0(i))));
       sb.append(LS);
     }
@@ -320,7 +320,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
       getDefaultParams());
     Double lastCancerScore = confident.getNormalCancerScore();
     int i;
-    for (i = 1; i < 50; i++) {
+    for (i = 1; i < 50; ++i) {
       final Variant suspect = getVariant(
         getNormalIncremeter(Ploidy.DIPLOID, 0.9)
           .doReads(50, DNARangeAT.C, 0.0001)
@@ -350,7 +350,7 @@ public abstract class AbstractSomaticCallerTest<D extends Description> extends T
       getDefaultParams());
     Double lastCancerScore = confident.getNormalCancerScore();
     int i;
-    for (i = 1; i < 50; i++) {
+    for (i = 1; i < 50; ++i) {
       final Variant suspect = getVariant(
         getNormalIncremeter(Ploidy.DIPLOID, 0.9)
           .doReads(50, DNARangeAT.C, 0.0001)

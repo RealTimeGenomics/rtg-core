@@ -89,9 +89,9 @@ public class PacBioTest extends TestCase {
   private PacBio.HitMap mapHits(long[][] contigs, int[][] positions) {
     final GraphKmerAttribute graph = GraphMapCliTest.makeGraph(4, new String[]{}, new long[][]{});
     final List<List<ContigPosition>> lists = new ArrayList<>();
-    for (int i = 0; i < contigs.length; i++) {
+    for (int i = 0; i < contigs.length; ++i) {
       final List<ContigPosition> posList = new ArrayList<>();
-      for (int j = 0; j < contigs[i].length; j++) {
+      for (int j = 0; j < contigs[i].length; ++j) {
         posList.add(new ContigPosition(contigs[i][j], positions[i][j], graph));
       }
       lists.add(posList);
@@ -356,7 +356,7 @@ public class PacBioTest extends TestCase {
   }
 
   private void addEmptyHits(List<List<ContigPosition>> hits, int emptyCount) {
-    for (int i = 0; i < emptyCount; i++) {
+    for (int i = 0; i < emptyCount; ++i) {
       hits.add(Collections.<ContigPosition>emptyList());
     }
   }
@@ -407,7 +407,7 @@ public class PacBioTest extends TestCase {
     final byte[] contig = new byte[160];
     final byte[] read = new byte[160];
     final StringBuilder builder = new StringBuilder();
-    for (int i = 0; i < 160; i++) {
+    for (int i = 0; i < 160; ++i) {
       contig[i] = 1;
       read[i] = 2;
       builder.append("X");
@@ -417,7 +417,7 @@ public class PacBioTest extends TestCase {
     final StringBuilder readString = new StringBuilder();
     final StringBuilder contigString = new StringBuilder();
     final StringBuilder match = new StringBuilder();
-    for (int i = 0; i < 120; i++) {
+    for (int i = 0; i < 120; ++i) {
       contigString.append("A");
       readString.append("C");
       match.append("X");

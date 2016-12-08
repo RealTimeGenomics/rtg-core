@@ -59,10 +59,10 @@ public abstract class Matrix {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       sb.append("[").append(i).append("]");
       final int hi = isSymmetric() ? i : size() - 1;
-      for (int j = 0; j <= hi; j++) {
+      for (int j = 0; j <= hi; ++j) {
         sb.append("  ").append(Utils.realFormat(get(i, j), 4));
       }
       sb.append(System.lineSeparator());

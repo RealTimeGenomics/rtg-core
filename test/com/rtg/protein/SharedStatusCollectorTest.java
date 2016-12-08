@@ -116,7 +116,7 @@ public class SharedStatusCollectorTest extends TestCase {
         stp.execute(new IORunnable() {
           @Override
           public void run() {
-            for (int j = 0; j < 100; j++) {
+            for (int j = 0; j < 100; ++j) {
               ssc.setStatus(j, status);
               try {
               Thread.sleep(1);
@@ -127,7 +127,7 @@ public class SharedStatusCollectorTest extends TestCase {
         });
       }
       stp.terminate();
-      for (int i = 0; i < 100; i++) {
+      for (int i = 0; i < 100; ++i) {
         assertEquals(0x3f, ssc.getStatus(i));
       }
     } finally {

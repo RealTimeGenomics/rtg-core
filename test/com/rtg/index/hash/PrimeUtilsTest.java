@@ -21,7 +21,7 @@ public class PrimeUtilsTest extends TestCase {
   /** Make sure that each of the original primes is invertible. */
   public void testValid() {
     PrimeUtils.integrity();
-    for (int i = 1; i < 64; i++) {
+    for (int i = 1; i < 64; ++i) {
       final long x = (PrimeUtils.prime(i) * PrimeUtils.primeInverse(i)) & (((1L << i) - 1L));
       assertEquals(i + ":" + x, 1L, x);
     }

@@ -39,9 +39,9 @@ public final class GenotypeLikelihoodUtils {
     final int size = alleles.size() * (alleles.size() + 1) / 2;
     final double[] likelihoods = new double[size];
     double sum = arith.zero();
-    for (int j = 0; j < alleles.size(); j++) {
+    for (int j = 0; j < alleles.size(); ++j) {
       final String a = alleles.get(j);
-      for (int k = j; k < alleles.size(); k++) {
+      for (int k = j; k < alleles.size(); ++k) {
         final String b = alleles.get(k);
         // canonical ordering, see vcf spec
         final int pos = (k * (k + 1) / 2) + j;
@@ -54,7 +54,7 @@ public final class GenotypeLikelihoodUtils {
       }
     }
 
-    for (int i = 0; i < likelihoods.length; i++) {
+    for (int i = 0; i < likelihoods.length; ++i) {
       likelihoods[i] = arith.divide(likelihoods[i], sum) / MathUtils.LOG_10;
     }
     return likelihoods;
@@ -71,7 +71,7 @@ public final class GenotypeLikelihoodUtils {
     final PossibilityArithmetic arith = LogApproximatePossibility.SINGLETON;
     final double[] likelihoods = new double[alleles.size()];
     double sum = arith.zero();
-    for (int i = 0; i < alleles.size(); i++) {
+    for (int i = 0; i < alleles.size(); ++i) {
       final Double likelihood = genotypeLikelihoods.get(Collections.singleton(alleles.get(i)));
       if (likelihood == null) { // Can occur if variant splitting discovers a new VA
         return null;
@@ -79,7 +79,7 @@ public final class GenotypeLikelihoodUtils {
       likelihoods[i] = likelihood;
       sum = arith.add(sum, likelihoods[i]);
     }
-    for (int i = 0; i < alleles.size(); i++) {
+    for (int i = 0; i < alleles.size(); ++i) {
       likelihoods[i] = arith.divide(likelihoods[i], sum) / MathUtils.LOG_10;
     }
     return likelihoods;

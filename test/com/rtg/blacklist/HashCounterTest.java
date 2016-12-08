@@ -43,20 +43,20 @@ public class HashCounterTest extends TestCase {
 
     //have set of roughly 80% of length is unique hashes
     final long[] keys = new long[(int) (length * 100L / 80)];
-    for (int i = 0; i < keys.length; i++) {
+    for (int i = 0; i < keys.length; ++i) {
       keys[i] = BinaryMatrixTest.random(r, keyBits);
     }
 
     final long[] data = new long[length];
     //randomly fill
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       data[i] = keys[r.nextInt(keys.length)];
     }
 
     final int numThreads = 4;
     final SimpleThreadPool stp = new SimpleThreadPool(numThreads, "HashCounterTest", false);
     try {
-      for (int i = 0; i < numThreads; i++) {
+      for (int i = 0; i < numThreads; ++i) {
         final int threadNum = i;
         stp.execute(new IORunnable() {
           @Override

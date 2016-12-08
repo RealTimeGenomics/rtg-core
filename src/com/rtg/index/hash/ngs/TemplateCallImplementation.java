@@ -86,7 +86,7 @@ public class TemplateCallImplementation extends IntegralAbstract implements Temp
       public boolean found(final long readId) throws IOException {
         //System.err.println("adding readId=" + readId);
         //System.err.println("readid=" + readId + " " + mIS.toString());
-        mHitStatistics++;
+        ++mHitStatistics;
         mIS.add((int) readId);
         return true;
       }
@@ -187,7 +187,7 @@ public class TemplateCallImplementation extends IntegralAbstract implements Temp
           } else {
             frame = mRC ? "R" : "F";
           }
-          mProcessStatistics++;
+          ++mProcessStatistics;
           //System.err.println("calling process");
           final int score = mHashFunction.fastScore(readId);
           mOutputProcessor.process(mTemplateId, frame, readId, tzero, score, scoreIndel);
@@ -195,7 +195,7 @@ public class TemplateCallImplementation extends IntegralAbstract implements Temp
       }
     };
     int maxHashCount = mIndexes.get(0).maxHashCount();
-    for (int i = 1; i < mIndexes.size(); i++) {
+    for (int i = 1; i < mIndexes.size(); ++i) {
       maxHashCount = Math.max(maxHashCount, mIndexes.get(i).maxHashCount());
     }
     //System.err.println("windows=" + mHashFunction.numberWindows() + " maxHashCount=" + mmaxHashCount);

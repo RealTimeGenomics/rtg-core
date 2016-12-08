@@ -243,7 +243,7 @@ public final class ActionsHelper {
     /** @return the next action command. */
     public int next() {
       assert mPosition > 0;
-      mPosition--;
+      --mPosition;
       return currentCommand(mActions, mPosition);
     }
   }
@@ -265,7 +265,7 @@ public final class ActionsHelper {
     public int next() {
       assert mPosition < mActions[ACTIONS_LENGTH_INDEX];
       final int cmd = currentCommand(mActions, mPosition);
-      mPosition++; // different convention to the forward iterator
+      ++mPosition; // different convention to the forward iterator
       return cmd;
     }
   }
@@ -319,7 +319,7 @@ public final class ActionsHelper {
     }
     int matches = actionsCount(actions);
     final int lim = ACTIONS_START_INDEX + ((matches - 1) >> ACTIONS_PER_INT_SHIFT);
-    for (int k = ACTIONS_START_INDEX; k <= lim; k++) {
+    for (int k = ACTIONS_START_INDEX; k <= lim; ++k) {
       final int v = actions[k];
       matches -= pseudopopcount((v | (v >> 1) | (v >> 2) | (v >> 3)) & 0x11111111);
     }
@@ -341,7 +341,7 @@ public final class ActionsHelper {
     }
     final int matches = actionsCount(actions);
     final int lim = ACTIONS_START_INDEX + ((matches - 1) >> ACTIONS_PER_INT_SHIFT);
-    for (int k = ACTIONS_START_INDEX; k <= lim; k++) {
+    for (int k = ACTIONS_START_INDEX; k <= lim; ++k) {
       final int v = actions[k];
       if ((v & 0x88888888) != 0) {
         return true;
@@ -362,7 +362,7 @@ public final class ActionsHelper {
     int deletions = 0;
     if (actions.length > ACTIONS_START_INDEX) {
       final int lim = ACTIONS_START_INDEX + ((actionsCount(actions) - 1) >> ACTIONS_PER_INT_SHIFT);
-      for (int k = ACTIONS_START_INDEX; k <= lim; k++) {
+      for (int k = ACTIONS_START_INDEX; k <= lim; ++k) {
         final int v = actions[k] & 0x77777777;
         // Could actually do this popcount slightly faster since we only care about odd number bits are &
         final int delCmds = v & (v >> 1) & (~v >> 2) & (~v >> 3);
@@ -388,10 +388,10 @@ public final class ActionsHelper {
         case CG_GAP_IN_READ:
         case UNKNOWN_TEMPLATE:
         case UNKNOWN_READ:
-          ret++;
+          ++ret;
           break;
         case CG_OVERLAP_IN_READ:
-          ret--;
+          --ret;
           break;
         default:
       }
@@ -415,7 +415,7 @@ public final class ActionsHelper {
         case UNKNOWN_TEMPLATE:
         case UNKNOWN_READ:
         case SOFT_CLIP:
-          ret++;
+          ++ret;
           break;
         default:
       }
@@ -457,18 +457,18 @@ public final class ActionsHelper {
         case UNKNOWN_TEMPLATE:
         case CG_GAP_IN_READ:
         case DELETION_FROM_REFERENCE:
-          tempPos++;
+          ++tempPos;
           break;
         case CG_OVERLAP_IN_READ:
-          tempPos--;
+          --tempPos;
           break;
         default:
           break;
       }
 
       buf >>= ActionsHelper.BITS_PER_ACTION;
-      actionsLeftInThisInt--;
-      k--;
+      --actionsLeftInThisInt;
+      --k;
     }
     return actions[TEMPLATE_START_INDEX] + tempPos;
   }
@@ -485,7 +485,7 @@ public final class ActionsHelper {
     int insertions = 0;
     if (actions.length > ACTIONS_START_INDEX) {
       final int lim = ACTIONS_START_INDEX + ((actionsCount(actions) - 1) >> ACTIONS_PER_INT_SHIFT);
-      for (int k = ACTIONS_START_INDEX; k <= lim; k++) {
+      for (int k = ACTIONS_START_INDEX; k <= lim; ++k) {
         final int v = actions[k] & 0x77777777;
         // Could actually do this popcount slightly faster since we only care about odd number bits are &
         final int inserts = (~v >> 3) & (~v >> 2) & (v >> 1) & ~v;
@@ -521,8 +521,8 @@ public final class ActionsHelper {
         os.write(pbase(sequence, r++));
       }
       buf >>= BITS_PER_ACTION;
-      actionsLeftInThisInt--;
-      k--;
+      --actionsLeftInThisInt;
+      --k;
     }
   }
 
@@ -553,33 +553,33 @@ public final class ActionsHelper {
       switch (buf & SINGLE_ACTION_MASK) {
       case SAME:
         c = pbase(read, r++);
-        t++;
-        positive++;
+        ++t;
+        ++positive;
         break;
       case INSERTION_INTO_REFERENCE:
-        r++;
+        ++r;
         c = ' ';
         break;
       case DELETION_FROM_REFERENCE:
-        t++;
+        ++t;
         c = ' ';
         break;
       default: // MISMATCH
         final int aa = t >= 0 && t < template.length ? template[t] : Protein.X.ordinal();
         if (matrix.score(read[r], aa) > 0) {
           c = '+';
-          positive++;
+          ++positive;
         } else {
           c = ' ';
         }
-        t++;
-        r++;
+        ++t;
+        ++r;
         break;
       }
       os.write(c);
       buf >>= BITS_PER_ACTION;
-      actionsLeftInThisInt--;
-      k--;
+      --actionsLeftInThisInt;
+      --k;
     }
    return positive;
   }
@@ -615,8 +615,8 @@ public final class ActionsHelper {
         matches.append(TO_STRING_CHARACTERS[tmp]);
       }
       buf >>= ActionsHelper.BITS_PER_ACTION;
-      actionsLeftInThisInt--;
-      k--;
+      --actionsLeftInThisInt;
+      --k;
     }
     return matches.toString();
   }
@@ -639,10 +639,10 @@ public final class ActionsHelper {
     int i = 0;
     int actionsLeftInThisInt = (k & ActionsHelper.ACTIONS_COUNT_MASK) + 1;
     while (k >= 0) {
-      actionsLeftInThisInt--;
+      --actionsLeftInThisInt;
       buf |= charToAction(actions.charAt(i)) << (BITS_PER_ACTION * (ACTIONS_PER_INT - actionsLeftInThisInt - 1));
-      k--;
-      i++;
+      --k;
+      ++i;
       if (actionsLeftInThisInt == 0) {
         r[p--] = buf;
         buf = 0;
@@ -717,19 +717,19 @@ public final class ActionsHelper {
     } else {
       buf = workspace[workspaceEnd];
     }
-    for (int i = 0; i < prefix[ACTIONS_LENGTH_INDEX]; i++) {
-      actionsInWorkspaceInt--;
-      actionsInPrefixInt--;
+    for (int i = 0; i < prefix[ACTIONS_LENGTH_INDEX]; ++i) {
+      --actionsInWorkspaceInt;
+      --actionsInPrefixInt;
       buf |= (prefix[prefixIndex] >> (BITS_PER_ACTION * actionsInPrefixInt) & SINGLE_ACTION_MASK) << (BITS_PER_ACTION * actionsInWorkspaceInt);
       if (actionsInWorkspaceInt == 0) {
         workspace[workspaceEnd] = buf;
         buf = 0;
-        workspaceEnd++;
+        ++workspaceEnd;
         actionsInWorkspaceInt = ACTIONS_PER_INT;
       }
       if (actionsInPrefixInt == 0) {
         actionsInPrefixInt = ACTIONS_PER_INT;
-        prefixIndex++;
+        ++prefixIndex;
       }
     }
     workspace[workspaceEnd] = buf;
@@ -768,8 +768,8 @@ public final class ActionsHelper {
     } else {
       buf = workspace[workspaceEnd];
     }
-    for (int i = 0; i < count; i++) {
-      actionsLeftInThisInt--;
+    for (int i = 0; i < count; ++i) {
+      --actionsLeftInThisInt;
       buf |= type << (BITS_PER_ACTION * actionsLeftInThisInt);
       if (actionsLeftInThisInt == 0) {
         workspace[workspaceEnd++] = buf;
@@ -804,9 +804,9 @@ public final class ActionsHelper {
     int buf = 0;
     int actionsLeftInThisInt = (k & ActionsHelper.ACTIONS_COUNT_MASK) + 1;
     while (k >= 0) {
-      actionsLeftInThisInt--;
+      --actionsLeftInThisInt;
       buf |= acts[k] << (BITS_PER_ACTION * (ACTIONS_PER_INT - actionsLeftInThisInt - 1));
-      k--;
+      --k;
       if (actionsLeftInThisInt == 0) {
         workspace[p--] = buf;
         buf = 0;
@@ -826,9 +826,9 @@ public final class ActionsHelper {
    */
   public static void softClip(int[] actions, boolean front, int numToClip, int numToNoop) {
     int position = front ? ActionsHelper.actionsCount(actions) : 0;
-    for (int i = 0; i < numToClip + numToNoop; i++) {
+    for (int i = 0; i < numToClip + numToNoop; ++i) {
       if (front) {
-        position--;
+        --position;
       }
       final int arrayIndex = ACTIONS_START_INDEX + (position >> ACTIONS_PER_INT_SHIFT); //index of int in actions array to edit
       int buf = actions[arrayIndex];
@@ -841,7 +841,7 @@ public final class ActionsHelper {
       buf |= newValBits;
       actions[arrayIndex] = buf;
       if (!front) {
-        position++;
+        ++position;
       }
     }
   }

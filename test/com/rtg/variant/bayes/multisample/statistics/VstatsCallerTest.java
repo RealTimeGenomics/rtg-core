@@ -94,11 +94,11 @@ public class VstatsCallerTest extends TestCase {
     final File tempDir = FileUtils.createTempDir("vstats", "test");
     try {
       final VariantParams p = getOutputParams(tempDir);
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < 10; ++i) {
         list.get(0).increment(new EvidenceQ(hypotheses.description(), 3, 0, 0, 0.01, 0.1, true, false, false, false));
       }
       final VstatsCaller sc = new VstatsCaller(p);
-      for (int i = 0; i < 5; i++) {
+      for (int i = 0; i < 5; ++i) {
         assertNull(sc.makeCall("test", i, i + 1, new byte[] {0, 1, 2, 3, 4, 5}, list, new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, null, null)));
       }
       sc.close();
@@ -160,10 +160,10 @@ public class VstatsCallerTest extends TestCase {
   }
 
   private void updateModels(final MockHypotheses<Description> hypotheses, final List<ModelInterface<?>> listA, final List<ModelInterface<?>> listB) {
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       listA.get(0).increment(new EvidenceQ(hypotheses.description(), 3, 0, 0, 0.01, 0.1, true, false, false, false));
     }
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       listB.get(0).increment(new EvidenceQ(hypotheses.description(), 2, 0, 0, 0.01, 0.1, true, false, false, false));
     }
   }

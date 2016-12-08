@@ -39,7 +39,7 @@ public final class ReadIndexCoverageUtils {
   public static int[] findRejectedReads(final Index[] index, final int numReads, final int seqIdDivider) {
     final byte[] readsStatus = new byte[numReads];
     for (final Index anIndex : index) {
-      for (long i = 0; i < anIndex.numberEntries(); i++) {
+      for (long i = 0; i < anIndex.numberEntries(); ++i) {
         final long value = anIndex.getValue(i);
         final int seqId = (int) (value / seqIdDivider);
         readsStatus[seqId] = 1;
@@ -51,7 +51,7 @@ public final class ReadIndexCoverageUtils {
     }
     final int[] ret = new int[tot];
     int k = 0;
-    for (int i = 0; i < readsStatus.length; i++) {
+    for (int i = 0; i < readsStatus.length; ++i) {
       if (readsStatus[i] == 0) {
         ret[k++] = i;
       }

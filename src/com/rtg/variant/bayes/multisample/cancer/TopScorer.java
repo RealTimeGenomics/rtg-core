@@ -43,7 +43,7 @@ class TopScorer implements Scorer {
       while (--pos >= 0 && s > mScores[pos]) {
         // do nothing
       }
-      pos++;
+      ++pos;
       if (pos < mScores.length) {
         mLast = Math.min(mLast + 1, mScores.length);
         System.arraycopy(mScores, pos, mScores, pos + 1, mLast - pos - 1);

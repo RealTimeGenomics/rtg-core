@@ -56,16 +56,16 @@ final class CommonFormulas {
     final Code code = CommonFormulas.maxCode(uhyp, vhyp);
     final int size = a.size();
     final PossibilityArithmetic arith = eu.arithmetic();
-    for (int h = 0; h < size; h++) {
+    for (int h = 0; h < size; ++h) {
       double v = arith.zero();
-      for (int j = 0; j < usize; j++) {
+      for (int j = 0; j < usize; ++j) {
         final double euj = eu.p(j);
-        for (int k = 0; k < vsize; k++) {
+        for (int k = 0; k < vsize; ++k) {
           final double evk = ev.p(k);
           final double mjkh = arith.ln2Poss(m.probabilityLn(code, j, k, h));
           final double ee = arith.multiply(euj, evk);
           double p = arith.multiply(ee, mjkh);
-          for (int b = 0; b < c.length; b++) {
+          for (int b = 0; b < c.length; ++b) {
             if (b != aIndex) {
               p = arith.multiply(p, c[b][j][k]);
               //System.err.println("h=" + h + " j=" + j + " k=" + k + " v=" + String.format("%1.4f", arith.poss2Prob(p)));
@@ -98,7 +98,7 @@ final class CommonFormulas {
    */
   static Factor<?> forwardEGeneral(final int familyId, final Factor<?> a, final Factor<?> s, BContainer b) {
     Factor<?> ret = dot(a, s);
-    for (int i = 0; i < b.size(); i++) {
+    for (int i = 0; i < b.size(); ++i) {
       if (i != familyId) {
         ret = dot(ret, b.getB(i));
       }
@@ -108,7 +108,7 @@ final class CommonFormulas {
 
   static Factor<?> computeD(Factor<?> s, BContainer b) {
     Factor<?> d = s;
-    for (int i = 0; i < b.size(); i++) {
+    for (int i = 0; i < b.size(); ++i) {
       d = CommonFormulas.dot(d, b.getB(i));
     }
     return d;
@@ -135,10 +135,10 @@ final class CommonFormulas {
     final PossibilityArithmetic arith = d.arithmetic();
     final double[][] c;
     c = new double[fatherSize][motherSize];
-    for (int j = 0; j < fatherSize; j++) {
-      for (int k = 0; k < motherSize; k++) {
+    for (int j = 0; j < fatherSize; ++j) {
+      for (int k = 0; k < motherSize; ++k) {
         double v = arith.zero();
-        for (int h = 0; h < size; h++) {
+        for (int h = 0; h < size; ++h) {
           final double t = arith.multiply(d.p(h), arith.ln2Poss(m.probabilityLn(code, j, k, h)));
           v = arith.add(v, t);
         }
@@ -178,9 +178,9 @@ final class CommonFormulas {
     final PossibilityArithmetic arith = ev.arithmetic();
     assert ev.arithmetic() == eu.arithmetic();
     final MutableFactor<?> b = new MutableFactor<>(eu.hypotheses(), arith, usize);
-    for (int j = 0; j < usize; j++) {
+    for (int j = 0; j < usize; ++j) {
       double v = arith.zero();
-      for (int k = 0; k < size; k++) {
+      for (int k = 0; k < size; ++k) {
         double p = ev.p(k);
         for (double[][] aC : c) {
           if (father) {
@@ -211,7 +211,7 @@ final class CommonFormulas {
     //assert hyp == b.hypotheses();
     //final PossibilityArithmetic arith = hyp.arithmetic();
     //final MutableFactor<?> c = new MutableFactor<?>(hyp, a.size());
-    for (int h = 0; h < a.size(); h++) {
+    for (int h = 0; h < a.size(); ++h) {
       c.set(h, arith.multiply(a.p(h), b.p(h)));
     }
     return c;
@@ -236,7 +236,7 @@ final class CommonFormulas {
    */
   static <T extends HypothesesPrior<?>> Factor<?>[] initialA(List<ModelInterface<?>> models, HaploidDiploidHypotheses<T> hypotheses) {
     final Factor<?>[] as = new Factor<?>[models.size()];
-    for (int i = 0; i < models.size(); i++) {
+    for (int i = 0; i < models.size(); ++i) {
       as[i] = CommonFormulas.createMutableFactor(hypotheses.get(models.get(i)));
     }
     return as;
@@ -256,10 +256,10 @@ final class CommonFormulas {
    */
   static BContainer[] initialB(List<ModelInterface<?>> models, int[] bsize) {
     final BContainer[] bs = new BContainer[models.size()];
-    for (int i = 0; i < models.size(); i++) {
+    for (int i = 0; i < models.size(); ++i) {
       final Factor<?> model = models.get(i);
       final Factor<?>[] init = new Factor<?>[bsize[i]];
-      for (int j = 0; j < init.length; j++) {
+      for (int j = 0; j < init.length; ++j) {
         init[j] = getUnit(model);
       }
       bs[i] = new BContainer(init);
@@ -282,12 +282,12 @@ final class CommonFormulas {
     final MutableFactor<?> mhv = new MutableFactor<>(hyp, arith, size);
     final int ref = hyp.reference();
     double total = 0.0;
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       final String name = hyp.name(i);
       final double prob = params.getPriorDistr(name)[ref];
       total += prob;
     }
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       final String name = hyp.name(i);
       final double prob = params.getPriorDistr(name)[ref] / total;
       final double prior = arith.prob2Poss(prob);

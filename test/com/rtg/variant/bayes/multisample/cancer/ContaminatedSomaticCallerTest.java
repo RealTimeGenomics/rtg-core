@@ -44,7 +44,7 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
   @Override
   protected List<ModelInterface<Description>> getModel(Ploidy ploidy, double contamination, double same) {
     final List<ModelInterface<Description>> models = new ArrayList<>();
-    for (int ref = 0; ref < 4; ref++) {
+    for (int ref = 0; ref < 4; ++ref) {
       final Hypotheses<Description> hyps = simpleHyps(0.99, ref, ploidy);
       final HypothesesCancer<Hypotheses<Description>> hypc = new HypothesesCancer<>(hyps, LogPossibility.SINGLETON);
       models.add(new ModelCancerContamination<>(hypc, contamination, new StatisticsSnp(hyps.description()), new NoAlleleBalance()));
@@ -60,14 +60,14 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
     genomeRelationships.addRelationship(relationship);
     final VariantParams variantParams = new VariantParamsBuilder().callLevel(VariantOutputLevel.ALL).somaticParams(new SomaticParamsBuilder().lohPrior(0.1).includeGainOfReference(true).somaticRate(0.000165).create()).genomeRelationships(genomeRelationships).create();
     final ModelIncrementer<Description> incrementer = getIncrementer(Ploidy.DIPLOID, contamination, 0.999);
-    for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < readCounts[i]; j++) {
+    for (int i = 0; i < 4; ++i) {
+      for (int j = 0; j < readCounts[i]; ++j) {
         incrementer.doRead(DNA.values()[i + 1].ordinal() - 1, 0.005, 0.005);
       }
     }
     final ModelIncrementer<Description> normalIncremeter = getNormalIncremeter(Ploidy.DIPLOID, 0.999);
-    for (int i = 0; i < 4; i++) {
-      for (int j = 0; j < normalReadCounts[i]; j++) {
+    for (int i = 0; i < 4; ++i) {
+      for (int j = 0; j < normalReadCounts[i]; ++j) {
         normalIncremeter.doRead(DNA.values()[i + 1].ordinal() - 1, 0.05, 0.05);
       }
     }
@@ -93,7 +93,7 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
   }
 
   private void assertRange(List<Variant> variants, String normal, String cancer, int start, int end) {
-    for (int i = start; i < end; i++) {
+    for (int i = start; i < end; ++i) {
       final Variant v = variants.get(i);
       final String normalName = v.getSample(0).getName();
       final String tumorName = v.getSample(1).getName();
@@ -104,7 +104,7 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
 
   private void rangeTest(List<String> normal, List<String> tumor, List<Integer> breakpoints, List<Variant> variants) {
     int start = 0;
-    for (int i = 0; i < normal.size(); i++) {
+    for (int i = 0; i < normal.size(); ++i) {
       final int breakpoint = breakpoints.get(i);
       final String n = normal.get(i);
       final String t = tumor.get(i);
@@ -151,7 +151,7 @@ public class ContaminatedSomaticCallerTest extends AbstractSomaticCallerTest<Des
   }
   private List<Variant> variantRange(double contamination, int numReads) {
     final List<Variant> variants = new ArrayList<>();
-    for (int i = 0; i < numReads; i++) {
+    for (int i = 0; i < numReads; ++i) {
       variants.add(getVariant(contamination, new int[] {numReads - i, i, 0, 0}, new int[] {0, 0, 0, 0}));
     }
     return variants;

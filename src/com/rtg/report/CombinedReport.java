@@ -175,7 +175,7 @@ public class CombinedReport {
         sb.append(reportSummary(mapx, "Translated search report", "mapxReport" + fileNameCounter, "Mapping summary", "Mapping Results", "mapxResults" + fileNameSuffix, resultsFile));
       }
       sb.append("<br/>");
-      resultId++;
+      ++resultId;
     }
     return sb.toString();
   }
@@ -281,7 +281,7 @@ public class CombinedReport {
     for (File species : speciesDirs) {
       final String speciesFileName = "species" + (speciesDirs.size() > 1 ? i : "") + ".tsv";
       speciesReport.append(reportSummary(species, "Species Report", "speciesReport", "Diversity Metrics", "Species Results", speciesFileName, new File(species, SpeciesReport.SPECIES_TSV)));
-      i++;
+      ++i;
     }
     final HashMap<String, String> replacements = new HashMap<>();
     replacements.put("__MAP_REPORT__", mapReport.toString());
@@ -325,7 +325,7 @@ public class CombinedReport {
       makeOrThrow(output);
 
     }
-    for (int i = 1; i < args.length; i++) {
+    for (int i = 1; i < args.length; ++i) {
       reports.add(new File(args[i]));
     }
     final CombinedReport combined = new CombinedReport(reports, output);

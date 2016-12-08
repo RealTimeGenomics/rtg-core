@@ -49,7 +49,7 @@ public class NeighborJoining {
 
   /* Remove a given item from the distance matrix. */
   private static void remove(final int f, final ArrayList<BinaryTree> s, final ArrayList<ArrayList<Double>> d) {
-    for (int k = f + 1; k < d.size(); k++) {
+    for (int k = f + 1; k < d.size(); ++k) {
       d.get(k).remove(f);
     }
     s.remove(f);
@@ -81,16 +81,16 @@ public class NeighborJoining {
     final int length = matrix.length();
     //compute normalization factors
     final double[] norm = new double[length];
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       //be careful to deal with 0's on diagonal
       final double n = matrix.get(i, i);
       assert n >= 0;
       norm[i] = Math.sqrt(n == 0 ? 1 : n);
     }
     d = new ArrayList<>();
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       final ArrayList<Double> row = new ArrayList<>();
-      for (int j = 0; j < i; j++) {
+      for (int j = 0; j < i; ++j) {
         final double v = matrix.get(i, j) / (norm[i] * norm[j]);
         assert v >= 0.0 && !Double.isInfinite(v) && !Double.isNaN(v) : v;
         final double w = 1.0 / (1.0 + v);
@@ -120,9 +120,9 @@ public class NeighborJoining {
       assert d.size() == s.size() : "distance size=" + d.size() + " cf. names size=" + s.size();
       // Precompute column sums
       final double[] colSum = new double[d.size()];
-      for (int j = 0; j < d.size(); j++) {
+      for (int j = 0; j < d.size(); ++j) {
         double sum = 0;
-        for (int k = 0; k < d.size(); k++) {
+        for (int k = 0; k < d.size(); ++k) {
           sum += distance(j, k, d);
         }
         colSum[j] = sum;
@@ -134,8 +134,8 @@ public class NeighborJoining {
       int c = 0;
       int f = -1;
       int g = -1;
-      for (int k = 1; k < d.size(); k++) {
-        for (int j = 0; j < k; j++) {
+      for (int k = 1; k < d.size(); ++k) {
+        for (int j = 0; j < k; ++j) {
           final double q = r * distance(k, j, d) - colSum[k] - colSum[j];
           if (Double.doubleToRawLongBits(q) == Double.doubleToRawLongBits(best) && mRandom.nextInt(++c) == 0) {
             // Break ties fairly
@@ -164,7 +164,7 @@ public class NeighborJoining {
 
       // Compute distance of merged node to all other nodes
       final ArrayList<Double> newRow = new ArrayList<>();
-      for (int i = 0; i < d.size(); i++) {
+      for (int i = 0; i < d.size(); ++i) {
         if (i != f && i != g) {
           newRow.add(0.5 * (distance(f, i, d) - dfu + distance(g, i, d) - dgu));
         }

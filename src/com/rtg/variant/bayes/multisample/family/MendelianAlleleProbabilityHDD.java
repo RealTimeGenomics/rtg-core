@@ -53,11 +53,11 @@ public final class MendelianAlleleProbabilityHDD extends MendelianAlleleProbabil
   private static int init(double[][][][] lookup) {
     final double z = Double.NEGATIVE_INFINITY;
     int cnt = 0;
-    for (int i = 0; i < lookup.length; i++) {
-      for (int j = 0; j < lookup[i].length; j++) {
-        for (int k = 0; k < lookup[i][j].length; k++) {
-          for (int l = 0; l < lookup[i][j][k].length; l++) {
-            cnt++;
+    for (int i = 0; i < lookup.length; ++i) {
+      for (int j = 0; j < lookup[i].length; ++j) {
+        for (int k = 0; k < lookup[i][j].length; ++k) {
+          for (int l = 0; l < lookup[i][j][k].length; ++l) {
+            ++cnt;
             lookup[i][j][k][l] = z;
           }
         }

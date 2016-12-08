@@ -86,7 +86,7 @@ public class SubstituteCG {
 
   static String repeat(final String rep, final int n) {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       sb.append(rep);
     }
     return sb.toString();
@@ -117,7 +117,7 @@ public class SubstituteCG {
   private void substitutePrivate(final int error, final int soFar) throws IOException {
     //System.err.println("error=" + error + " soFar=" + soFar);
     if (error == 0 || soFar == mLength) {
-      for (int i = soFar; i < mLength; i++) {
+      for (int i = soFar; i < mLength; ++i) {
         mChars[i] = mString.charAt(i);
       }
       final ReadCallAccumulate rc = new ReadCallAccumulate();
@@ -128,7 +128,7 @@ public class SubstituteCG {
       hf.reset();
       final String mutant = new String(mChars);
       final String muttie = cgToTemplate(mutant, mGap, mOverlap);
-      for (int i = 0; i < muttie.length(); i++) {
+      for (int i = 0; i < muttie.length(); ++i) {
         AbstractSplitTest.encode(hf, muttie, i);
         hf.templateForward(0);
       }
@@ -136,13 +136,13 @@ public class SubstituteCG {
         mResults.append("R:" + mString + LS);
         mResults.append("T:" + muttie.substring(PADDING, muttie.length() - PADDING) + LS);
         mResults.append("  " + new String(mSubstitutions, 0, soFar) + LS);
-        mNotFound++;
+        ++mNotFound;
       }
-      mTotal++;
+      ++mTotal;
       return;
     }
     //make one substitution and as well the non-substitution case
-    for (int j = 1, c = 0; j < AbstractSplitTest.CHARS.length; j++) {
+    for (int j = 1, c = 0; j < AbstractSplitTest.CHARS.length; ++j) {
       mChars[soFar]  = AbstractSplitTest.CHARS[j];
       if (mChars[soFar] == mString.charAt(soFar)) {
         mSubstitutions[soFar] = ("" + (soFar % 10)).charAt(0);
@@ -152,7 +152,7 @@ public class SubstituteCG {
           mSubstitutions[soFar] = '.';
           substitutePrivate(error - 1, soFar + 1);
         }
-        c++;
+        ++c;
       }
     }
   }

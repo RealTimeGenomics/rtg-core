@@ -64,7 +64,7 @@ public class MultifileIteratorTest extends TestCase {
           final File ff = samFile(alignmentsDir, OUT_SAM + i);
           FileUtils.stringToFile(content, ff);
           files.add(ff);
-          i++;
+          ++i;
         }
         final RecordIterator<SAMRecord> smfi = getIterator(files);
         try {
@@ -72,7 +72,7 @@ public class MultifileIteratorTest extends TestCase {
           while (smfi.hasNext()) {
             final SAMRecord sr = smfi.next();
             assertTrue("readName: " + sr.getReadName() + " orderExpected: " + orderExpected[ii], sr.getReadName().equals(orderExpected[ii]));
-            ii++;
+            ++ii;
           }
           assertTrue(errExpected == null);
         } finally {

@@ -46,16 +46,16 @@ public class GapProbabilitiesScorer extends IntegralAbstract implements GapScore
    */
   GapProbabilitiesScorer(final double gapThreshold, final double[][] distribution, final double[] maxDistr) {
     mScoreDistribution = new double[distribution.length][];
-    for (int i = 0; i < distribution.length; i++) {
+    for (int i = 0; i < distribution.length; ++i) {
       final int length = distribution[i].length;
       mScoreDistribution[i] = new double[length];
-      for (int j = 0; j < length; j++) {
+      for (int j = 0; j < length; ++j) {
         mScoreDistribution[i][j] = logProb(distribution[i][j]);
       }
     }
 
     mScoreMaxDistribution = new double[mScoreDistribution.length];
-    for (int i = 0; i < mScoreDistribution.length; i++) {
+    for (int i = 0; i < mScoreDistribution.length; ++i) {
       mScoreMaxDistribution[i] = logProb(maxDistr[i]);
     }
 
@@ -114,9 +114,9 @@ public class GapProbabilitiesScorer extends IntegralAbstract implements GapScore
   @Override
   public int maxDelta() {
     int m = Integer.MIN_VALUE;
-    for (int is = 0; is < mScoreDistribution.length; is++) {
+    for (int is = 0; is < mScoreDistribution.length; ++is) {
       final int i = is;
-      for (int j = 0; j < mRowLength; j++) {
+      for (int j = 0; j < mRowLength; ++j) {
         final int delta = i - j;
         if (mScoreDistribution[is][j] > Double.NEGATIVE_INFINITY && delta > m) {
           m = delta;
@@ -133,9 +133,9 @@ public class GapProbabilitiesScorer extends IntegralAbstract implements GapScore
   @Override
   public int minDelta() {
     int m = Integer.MAX_VALUE;
-    for (int is = 0; is < mScoreDistribution.length; is++) {
+    for (int is = 0; is < mScoreDistribution.length; ++is) {
       final int i = is;
-      for (int j = mRowLength - 1; j >= 0; j--) {
+      for (int j = mRowLength - 1; j >= 0; --j) {
         final int delta = i - j;
         if (mScoreDistribution[is][j] > Double.NEGATIVE_INFINITY && delta < m) {
           m = delta;
@@ -153,12 +153,12 @@ public class GapProbabilitiesScorer extends IntegralAbstract implements GapScore
   @Override
   public void toString(final StringBuilder sb) {
     sb.append(INDEX_FORMAT.blanks()).append("  ");
-    for (int is = 0; is < mScoreDistribution.length; is++) {
+    for (int is = 0; is < mScoreDistribution.length; ++is) {
       final int i = is;
       sb.append("  [").append(INDEX_FORMAT.format(i)).append("]");
     }
     sb.append(StringUtils.LS);
-    for (int j = 0; j < mRowLength; j++) {
+    for (int j = 0; j < mRowLength; ++j) {
       sb.append("[").append(INDEX_FORMAT.format(j)).append("]");
       for (double[] aMScoreDistribution : mScoreDistribution) {
         final double sc = aMScoreDistribution[j];

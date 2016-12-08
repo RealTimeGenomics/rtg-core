@@ -109,7 +109,7 @@ public class PatternTest extends TestCase {
 
   public void testUnique() {
     final boolean[] exp = {false, true, true, false, true, false, false, false, true, false, false, false, false, false, false, false};
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; ++i) {
       checkUnique(i, exp[i]);
     }
   }
@@ -179,7 +179,7 @@ public class PatternTest extends TestCase {
 
   public void testEquals() {
     final Pattern[][] x = new Pattern[16][2];
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; ++i) {
       x[i][0] = new Pattern(i);
       x[i][1] = new Pattern(i);
     }

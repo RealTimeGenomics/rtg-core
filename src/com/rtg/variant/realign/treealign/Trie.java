@@ -102,7 +102,7 @@ public class Trie extends IntegralAbstract {
     }
     node.globalIntegrity();
     double sum = node.mStopProbability;
-    for (int i = 0; i < node.mChildren.length; i++) {
+    for (int i = 0; i < node.mChildren.length; ++i) {
       sum += globalIntegrity(node.mChildren[i]);
     }
     return sum;
@@ -145,7 +145,7 @@ public class Trie extends IntegralAbstract {
   }
 
   private void toString(final StringBuilder sb, final SubTrie node, final int indent) {
-    for (int i = 0; i < indent; i++) {
+    for (int i = 0; i < indent; ++i) {
       sb.append(INDENT);
     }
     if (node == null) {
@@ -161,7 +161,7 @@ public class Trie extends IntegralAbstract {
     final int cont = node.mTotalCount - node.mStopCount;
     assert cont >= 0;
     if (cont > 0) {
-      for (int i = 0; i < node.mChildren.length; i++) {
+      for (int i = 0; i < node.mChildren.length; ++i) {
         toString(sb, node.mChildren[i], indent + 1);
       }
     }

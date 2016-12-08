@@ -25,7 +25,7 @@ public class AlignmentEnvironmentGenomeTest extends TestCase {
     assertEquals(template.length - 3, aeg.subsequenceLength());
 
     final byte[] exp = {0, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 0};
-    for (int i = 0, j = -4; i < exp.length; i++, j++) {
+    for (int i = 0, j = -4; i < exp.length; ++i, ++j) {
       assertEquals(exp[i], aeg.base(j));
     }
   }

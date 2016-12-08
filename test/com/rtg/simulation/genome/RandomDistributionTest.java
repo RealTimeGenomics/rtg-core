@@ -31,10 +31,10 @@ public class RandomDistributionTest extends TestCase {
     final int[] distribution = {1, 2, 6, 4, 0, 9};
     final RandomDistribution dist = new RandomDistribution(distribution, rand);
     final int[] results = new int[distribution.length];
-    for (int i = 0; i < results.length; i++) {
+    for (int i = 0; i < results.length; ++i) {
       results[i] = 0;
     }
-    for (int i = 0; i < 1000000; i++) {
+    for (int i = 0; i < 1000000; ++i) {
       results[dist.nextValue()]++;
     }
     assertEquals(2, (double) results[1] / results[0], 0.1);
@@ -50,10 +50,10 @@ public class RandomDistributionTest extends TestCase {
     final int[] distribution = {0, 0, 0, 1};
     final RandomDistribution dist = new RandomDistribution(distribution, rand);
     final int[] results = new int[distribution.length];
-    for (int i = 0; i < results.length; i++) {
+    for (int i = 0; i < results.length; ++i) {
       results[i] = 0;
     }
-    for (int i = 0; i < 1000000; i++) {
+    for (int i = 0; i < 1000000; ++i) {
       results[dist.nextValue()]++;
     }
     assertEquals(0, results[0]);

@@ -142,7 +142,7 @@ public class DeNovoSampleSimulator {
       // Generate de novo variants (oblivious of any pre-existing variants)
       final List<PopulationVariantGenerator.PopulationVariant> deNovo = mGenerator.generatePopulation();
 
-      for (long i = 0; i < mReference.numberSequences(); i++) {
+      for (long i = 0; i < mReference.numberSequences(); ++i) {
         final ReferenceSequence refSeq = refG.sequence(mReference.name(i));
 
         final List<PopulationVariantGenerator.PopulationVariant> seqDeNovo = new LinkedList<>();
@@ -239,7 +239,7 @@ public class DeNovoSampleSimulator {
   private String addSamplesForDeNovo(final VcfRecord v, final int sampleId, final int ploidyCount, String refName) {
     final String sampleGt = ploidyCount == 1 ? "1" : mRandom.nextBoolean() ? "0|1" : "1|0";
     v.setNumberOfSamples(sampleId + 1);
-    for (int id = 0; id <= sampleId; id++) {
+    for (int id = 0; id <= sampleId; ++id) {
       final String gt;
       if (id != sampleId) {
         final ReferenceGenome sampleGenome = mOriginalSexes[id] == Sex.MALE ? mMaleGenome : mFemaleGenome;

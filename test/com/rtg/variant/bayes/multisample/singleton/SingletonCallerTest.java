@@ -72,7 +72,7 @@ public class SingletonCallerTest extends TestCase {
         .machineErrorName("illumina")
         .genomePriors(GenomePriorParams.builder().create())
         .create();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       list.get(0).increment(new EvidenceQ(hypotheses.description(), 3, 0, 0, 0.01, 0.1, true, false, false, false));
     }
     for (ModelInterface<?> modelInterface : list) {
@@ -98,7 +98,7 @@ public class SingletonCallerTest extends TestCase {
         .machineErrorName("illumina")
         .genomePriors(GenomePriorParams.builder().create())
         .create();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       list.get(0).increment(new EvidenceQ(hypotheses.description(), 3, 0, 0, 0.01, 0.1, true, false, false, false));
     }
     for (ModelInterface<?> modelInterface : list) {

@@ -31,7 +31,7 @@ public class MendelianAlleleProbabilityNHNDeNovoTest extends TestCase {
   //test there is no overlap between non de novo and de novo tables
   public void testOverlap() {
     final Code code = new CodeDiploid(4);
-    for (int i = 0; i < code.rangeSize(); i++) {
+    for (int i = 0; i < code.rangeSize(); ++i) {
       if (MendelianAlleleProbabilityNHN.SINGLETON_HN.probabilityLn(code, i, -1, -1) > Double.NEGATIVE_INFINITY) {
         assertEquals(Double.NEGATIVE_INFINITY, MendelianAlleleProbabilityNHNDeNovo.SINGLETON_HN.probabilityLn(code, i, -1, -1));
       }

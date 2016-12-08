@@ -39,12 +39,12 @@ public class ModelFactorTest extends TestCase {
     final Variable var = new Variable("G0", hypotheses.size());
     final Factor phi = new ModelFactor(var, model);
     final Map<Variable, Integer> map = new HashMap<>();
-    for (int bb = 0; bb < var.size(); bb++) {
+    for (int bb = 0; bb < var.size(); ++bb) {
       map.put(var, bb);
       assertEquals(model.p(bb), phi.p(map), 1e-10);
     }
     final DefaultFactor phi2 = DefaultFactor.asDefault(phi);
-    for (int bb = 0; bb < var.size(); bb++) {
+    for (int bb = 0; bb < var.size(); ++bb) {
       map.put(var, bb);
       assertEquals(model.p(bb), phi2.p(map), 1e-10);
     }

@@ -75,10 +75,10 @@ public class HwEstimatorTest extends AbstractEstimatorTest {
     mModels = new ArrayList<>();
 
     final MockModel<Description> model = new MockModel<>(diploid, new StatisticsSnp(diploid.description()), null);
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; ++i) {
       model.increment(new EvidenceQ(d, 1, 10, 10, 0.0, 0.1, true, true, true, false));
     }
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 7; ++i) {
       model.increment(new EvidenceQ(d, 0, 10, 10, 0.0, 0.1, true, true, true, false));
     }
     mModels.add(model);

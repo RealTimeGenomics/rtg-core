@@ -71,7 +71,7 @@ public class CigarParserModelTest extends TestCase {
           mPR.print("ref=" + ref);
           mPR.print(" nt=" + ev.read() + " q=" + probToScore(ev.error()));
           mPR.println(" r=" + probToScore(ev.mapError()));
-          mCount++;
+          ++mCount;
         }
       }
     }
@@ -84,7 +84,7 @@ public class CigarParserModelTest extends TestCase {
     public void match(int refPosition, int readBasesLeft, int readBasesRight, int readNt, int mapQ, int phred, int stateIndex) {
       mPR.println("ref=" + refPosition + " nt=" + readNt + " q="
           + phred + " r=" + mapQ);
-      mCount++;
+      ++mCount;
     }
 
     @Override

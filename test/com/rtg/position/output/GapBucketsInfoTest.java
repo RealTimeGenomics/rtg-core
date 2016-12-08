@@ -69,11 +69,11 @@ public class GapBucketsInfoTest extends GapBucketsTest {
     //detailed check of bucket
     int j = 0;
     for (int i24 = 0; i24 < 4 * 24; i24 += 24) {
-      for (int i8 = 0, k = 0; i8 < 24; i8 += 8, k++) {
-        for (int i = 0; i < 8; i++) {
+      for (int i8 = 0, k = 0; i8 < 24; i8 += 8, ++k) {
+        for (int i = 0; i < 8; ++i) {
           assertEquals(k + 7, bu.bucket(3, j, 0));
           assertEquals(9 - k, bu.bucket(3, 0, j + 1));
-          j++;
+          ++j;
         }
       }
     }

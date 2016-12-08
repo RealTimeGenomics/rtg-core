@@ -342,7 +342,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
     final long end = start + contig.length();
     contigExpand();
     mNt.extendBy(contig.length());
-    for (int i = 0; i < contig.length(); i++) {
+    for (int i = 0; i < contig.length(); ++i) {
       mNt.set(start + i, contig.nt(i));
     }
     mContigs.set(next, end);
@@ -401,7 +401,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
     mPathIndex.set(start, next);
     mPathIndexOffset.set(start, 0);
     mPathIndexPrev.set(start, -1);
-    for (int i = 0; i < path.length(); i++) {
+    for (int i = 0; i < path.length(); ++i) {
       final long index = start + i + 1;
       final long contig = path.contig(i);
       final long acontig = absContig(contig);
@@ -467,7 +467,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
     assert newGraph.numberContigs() == 0;
     final ExtensibleIndex transx = new LongChunks(numberContigs() + 1);
     long count = 1;
-    for (long l = 1; l <= numberContigs(); l++) {
+    for (long l = 1; l <= numberContigs(); ++l) {
       if (!contigDeleted(l)) {
         newGraph.addContig(contig(l));
         transx.set(l, count);
@@ -477,14 +477,14 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
             newGraph.setContigAttribute(count, attribute, value);
           }
         }
-        count++;
+        ++count;
       }
     }
-    for (long l = 1; l <= numberPaths(); l++) {
+    for (long l = 1; l <= numberPaths(); ++l) {
       if (!pathDeleted(l)) {
         final Path path = path(l);
         final long[] contigs = new long[path.length()];
-        for (int i = 0; i < contigs.length; i++) {
+        for (int i = 0; i < contigs.length; ++i) {
           final long contig = path.contig(i);
           assert contig != 0;
           final long newContig;
@@ -515,33 +515,33 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
     //for each entry in them.
     long last0 = 0;
     final long contigsLength = mContigs.length();
-    for (long l = 1; l < contigsLength; l++) {
+    for (long l = 1; l < contigsLength; ++l) {
       final long next = mContigs.get(l);
       Exam.assertTrue(next >= last0);
       last0 = next;
     }
 
-    for (long l = 0; l < mNt.length(); l++) {
+    for (long l = 0; l < mNt.length(); ++l) {
       final long nt = mNt.get(l);
       DNARange.RANGE.check(nt);
     }
 
     long last1 = 0;
     final long pathLength = mPath.length();
-    for (long l = 1; l < pathLength; l++) {
+    for (long l = 1; l < pathLength; ++l) {
       final long next = mPath.get(l);
       Exam.assertTrue(next >= last1);
       last1 = next;
     }
 
     final long pathIndexLength = mPathIndex.length();
-    for (long l = 0; l < mLastPath.length(); l++) {
+    for (long l = 0; l < mLastPath.length(); ++l) {
       final long index = mLastPath.get(l);
       Exam.assertTrue(l + ":" + index, index >= -1 && index < pathIndexLength);
     }
 
     long lastOffset = 2;
-    for (long l = 0; l < pathIndexLength; l++) {
+    for (long l = 0; l < pathIndexLength; ++l) {
       final long offset = mPathIndexOffset.get(l);
       final long index = mPathIndex.get(l);
 
@@ -557,7 +557,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
       lastOffset = offset;
     }
 
-    for (long l = 0; l < pathIndexLength; l++) {
+    for (long l = 0; l < pathIndexLength; ++l) {
       final long prev = mPathIndexPrev.get(l);
       if (prev != -1) {
         Exam.assertTrue(0 <= prev && prev < l);
@@ -566,7 +566,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
 
     //check linkages between indexes
     //lastPath and pathIndex have bidirectional pointers.
-    for (long l = 1; l < mLastPath.length(); l++) {
+    for (long l = 1; l < mLastPath.length(); ++l) {
       final long index = mLastPath.get(l);
       if (index == -1) {
         continue;
@@ -577,7 +577,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
     }
 
     //path and pathIndex have bidirectional pointers.
-    for (long l = 0; l < pathLength - 1; l++) {
+    for (long l = 0; l < pathLength - 1; ++l) {
       final long path = mPath.get(l);
       final long back = absContig(mPathIndex.get(path));
       Exam.assertEquals("" + l, l + 1, back);
@@ -586,7 +586,7 @@ public class GraphImplementation extends IntegralAbstract implements MutableGrap
     }
 
     //The chains of pathIndexPrev all point back at the same contig
-    for (long l = 1; l < mLastPath.length(); l++) {
+    for (long l = 1; l < mLastPath.length(); ++l) {
       long ix = mLastPath.get(l);
       while (ix != -1) {
         final long back = mPathIndex.get(ix);

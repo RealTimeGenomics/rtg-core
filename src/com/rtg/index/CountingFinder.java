@@ -20,7 +20,7 @@ class CountingFinder extends Finder {
 
   @Override
   public boolean found(long id) {
-    mCount++;
+    ++mCount;
     return true;
   }
 

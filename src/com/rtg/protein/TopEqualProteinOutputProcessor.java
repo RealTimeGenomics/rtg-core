@@ -61,14 +61,14 @@ public class TopEqualProteinOutputProcessor extends ProteinOutputProcessor {
   public void finish() throws IOException {
     if (this == mMaster) {
     closeChildren();
-    for (int l = 0; l < mTopEqual.numResults(); l++) {
+    for (int l = 0; l < mTopEqual.numResults(); ++l) {
       final int count = mTopEqual.resultCount(l);
       if (count > mTopN) {
         //exceeds counts
         mSharedStatusCollector.setStatus(l, SharedStatusCollector.EXCEEDS_N_THRESHOLD);
       }
       if (count > 0 && count <= mTopN) {
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; ++i) {
           super.writeResult(mTopEqual.result((long) l * mTopN + i));
         }
       }

@@ -40,7 +40,7 @@ public class ByteKmer extends AbstractKmer {
    */
   static byte[] toPacked(String s) {
     final byte[] packed = array(s.length());
-    for (int i = 0; i < s.length(); i++) {
+    for (int i = 0; i < s.length(); ++i) {
       final int base = DNA.valueOf(s.charAt(i)).ordinal() - 1 ;
       setPos(packed, i, base);
     }
@@ -60,7 +60,7 @@ public class ByteKmer extends AbstractKmer {
     final int size = end - start;
     final byte[] packed = array(size);
     //    System.err.println(packed.length);
-    for (int i = start; i < end; i++) {
+    for (int i = start; i < end; ++i) {
       final int base = b[i] - 1 ;
       setPos(packed, i - start, base);
     }
@@ -70,7 +70,7 @@ public class ByteKmer extends AbstractKmer {
   static byte[] toPacked(Contig contig, int start, int end) {
     final int size = end - start;
     final byte[] packed = array(size);
-    for (int i = start; i < end; i++) {
+    for (int i = start; i < end; ++i) {
       final int base = contig.nt(i) - 1;
       setPos(packed, i - start, base);
     }
@@ -150,7 +150,7 @@ public class ByteKmer extends AbstractKmer {
     final int size = length();
     final byte[] newBytes = new byte[mKmer.length];
     setPos(newBytes, size - 1, base);
-    for (int i = 0; i < size - 1; i++) {
+    for (int i = 0; i < size - 1; ++i) {
       setPos(newBytes, i, baseAt(i + 1));
     }
     setSizeBits(newBytes, size);
@@ -162,7 +162,7 @@ public class ByteKmer extends AbstractKmer {
     final byte base = (byte) (nt - 1);
     final int size = length();
     final byte[] newBytes = new byte[mKmer.length];
-    for (int i = 1; i < size; i++) {
+    for (int i = 1; i < size; ++i) {
       setPos(newBytes, i, baseAt(i - 1));
     }
     setPos(newBytes, 0, base);
@@ -177,7 +177,7 @@ public class ByteKmer extends AbstractKmer {
   @Override
   public Kmer minimalKmer() {
     boolean isMinimal = true;
-    for (int i = 0; i < length(); i++) {
+    for (int i = 0; i < length(); ++i) {
       final int val = baseAt(i);
       final int reverse = complement(baseAt(length() - i - 1));
       if (val < reverse) {
@@ -199,7 +199,7 @@ public class ByteKmer extends AbstractKmer {
   public Kmer reverse() {
     final byte[] b = new byte[mKmer.length];
     final int size = length();
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       setPos(b, i, 3 - getPos(mKmer, size - i - 1));
     }
     setSizeBits(b, size);

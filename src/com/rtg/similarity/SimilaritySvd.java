@@ -112,8 +112,8 @@ public class SimilaritySvd {
   }
 
   private void checkConsistent() {
-    for (int y = 0; y < mDim; y++) {
-      for (int x = 0; x < mDim; x++) {
+    for (int y = 0; y < mDim; ++y) {
+      for (int x = 0; x < mDim; ++x) {
         if (get(x, y) != get(y, x)) {
           throw new IllegalStateException("Value at (" + x + "," + y + ") = " + get(x, y) + " is not reflected: " + get(y, x));
         }
@@ -123,10 +123,10 @@ public class SimilaritySvd {
 
   private SimilaritySvd removeConstants() {
     final ArrayList<Integer> skiplist = new ArrayList<>();
-    for (int j = 0; j < mDim; j++) {
+    for (int j = 0; j < mDim; ++j) {
       boolean same = true;
       final long first = get(0, j);
-      for (int i = 0; i < mDim; i++) {
+      for (int i = 0; i < mDim; ++i) {
         if (get(i, j) != first) {
           same = false;
         }
@@ -144,17 +144,17 @@ public class SimilaritySvd {
     final SimilaritySvd reduced = new SimilaritySvd(mDim - skiplist.size());
 
     int redj = 0;
-    for (int j = 0; j < mDim; j++) {
+    for (int j = 0; j < mDim; ++j) {
       if (!skiplist.contains(j)) {
         int redi = 0;
-        for (int i = 0; i < mDim; i++) {
+        for (int i = 0; i < mDim; ++i) {
           if (!skiplist.contains(i)) {
             reduced.put(redi, redj, get(i, j));
-            redi++;
+            ++redi;
           }
         }
         reduced.putName(redj, getName(j));
-        redj++;
+        ++redj;
       }
     }
     return reduced;
@@ -180,8 +180,8 @@ public class SimilaritySvd {
 
     double t = 0.0;
     final double[] values = new double[n * n];
-    for (int j = 0; j < n; j++) {
-      for (int i = 0; i <= j; i++) {
+    for (int j = 0; j < n; ++j) {
+      for (int i = 0; i <= j; ++i) {
         final double d = mat.get(i, j) / (double) (mat.get(j, j) + mat.get(i, i) - mat.get(i, j));
         values[j * n + i] = d;
         if (d < 1.0) {
@@ -197,8 +197,8 @@ public class SimilaritySvd {
     // create N-by-N matrix that doesn't have full rank
     // normalized values - average values
     final Matrix matA = new Matrix(n, n);
-    for (int j = 0; j < n; j++) {
-      for (int i = 0; i <= j; i++) {
+    for (int j = 0; j < n; ++j) {
+      for (int i = 0; i <= j; ++i) {
         final double d = values[j * n + i] - ave;
         matA.set(i, j, d);
         matA.set(j, i, d);
@@ -211,9 +211,9 @@ public class SimilaritySvd {
     final Matrix matUk = s.getU().getMatrix(0, n - 1, 0, dimensions);
 
     final SvdRow[] res = new SvdRow[n];
-    for (int j = 0; j < n; j++) {
+    for (int j = 0; j < n; ++j) {
       final SvdRow sr = new SvdRow(dimensions, mat.getName(j));
-      for (int i = 0; i < dimensions; i++) {
+      for (int i = 0; i < dimensions; ++i) {
         sr.setValue(i, matUk.get(j, i));
       }
       res[j] = sr;
@@ -265,8 +265,8 @@ public class SimilaritySvd {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-    for (int j = 0; j < mDim; j++) {
-      for (int i = 0; i < mDim; i++) {
+    for (int j = 0; j < mDim; ++j) {
+      for (int i = 0; i < mDim; ++i) {
         sb.append(get(i, j)).append(StringUtils.TAB);
       }
       sb.append(getName(j)).append(StringUtils.LS);

@@ -36,7 +36,7 @@ class NullJointScorer implements MultisampleJointScorer {
   @Override
   public <D extends Description, T extends HypothesesPrior<D>> HypothesisScores getBestScores(List<ModelInterface<?>> models, PriorContainer<T> priorContainer) {
     final HypothesisScore[] calls = new HypothesisScore[models.size()];
-    for (int i = 0; i < models.size(); i++) {
+    for (int i = 0; i < models.size(); ++i) {
       final ModelInterface<?> model = models.get(i);
       final HypothesisScore call = model.best(priorContainer.getHypotheses().get(model));
       calls[i] = call;

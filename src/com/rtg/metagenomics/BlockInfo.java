@@ -65,7 +65,7 @@ public class BlockInfo extends IntegralAbstract {
     mGenomeLengths = genomeLengths;
     mN = genomeLengths.length;
     mGenomeLengthsVector = new Vector(mN);
-    for (int i = 0; i < genomeLengths.length; i++) {
+    for (int i = 0; i < genomeLengths.length; ++i) {
       mGenomeLengthsVector.incr(i, genomeLengths[i]);
     }
     mTaxonIds = mSpeciesMap == null ? null : mSpeciesMap.taxonIds();
@@ -131,14 +131,14 @@ public class BlockInfo extends IntegralAbstract {
     final StringBuilder sb = new StringBuilder();
     @SuppressWarnings("unchecked")
     final SortedMultiSet<Integer>[] counts = (SortedMultiSet<Integer>[]) new SortedMultiSet<?>[mTaxonIds.length];
-    for (int i = 0; i < counts.length; i++) {
+    for (int i = 0; i < counts.length; ++i) {
       counts[i] = new SortedMultiSet<>();
     }
     for (Frag mFrag : mFrags) {
       mFrag.count(counts);
     }
     sb.append("block ").append(mBlockId).append(LS);
-    for (int i = 0; i < counts.length; i++) {
+    for (int i = 0; i < counts.length; ++i) {
       sb.append(i).append(": ").append(mTaxonIds[i]).append(" {");
       final SortedMultiSet<Integer> cntSet = counts[i];
       for (final Entry<Integer, Integer> entry : cntSet.countMap().entrySet()) {

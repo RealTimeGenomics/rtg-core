@@ -19,7 +19,7 @@ import junit.framework.TestCase;
 public class LongUtilsTest extends TestCase {
 
   public void testLongMask() {
-    for (int i = 1; i < Long.SIZE; i++) {
+    for (int i = 1; i < Long.SIZE; ++i) {
       final long mask = LongUtils.longMask(i);
       assertTrue(i + "", 0 == (mask & (1L << i)));
     }
@@ -35,8 +35,8 @@ public class LongUtilsTest extends TestCase {
   }
 
   private void checkIsLessThanUnsigned(long[] ls) {
-    for (int i = 0; i < ls.length - 1; i++) {
-      for (int j = i + 1; j < ls.length; j++) {
+    for (int i = 0; i < ls.length - 1; ++i) {
+      for (int j = i + 1; j < ls.length; ++j) {
         assertTrue(LongUtils.isLessThanUnsigned(ls[i], ls[j]));
         assertFalse(LongUtils.isLessThanUnsigned(ls[j], ls[i]));
       }

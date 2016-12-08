@@ -111,7 +111,7 @@ public class PopulationCaller extends AbstractMultisampleCaller implements Multi
     } else {
       allCalls = new HypothesisScore[models.size()];
     }
-    for (int i = 0; i < allCalls.length; i++) {
+    for (int i = 0; i < allCalls.length; ++i) {
       if (allCalls[i] == null) {
         // Get singleton call
         final ModelInterface<?> model = models.get(i);
@@ -156,7 +156,7 @@ public class PopulationCaller extends AbstractMultisampleCaller implements Multi
         final VariantSample sample = createSample(hyp, score, models.get(sampleNumber), mParams);
         samples[sampleNumber] = sample;
       }
-      sampleNumber++;
+      ++sampleNumber;
     }
 
     return new ComparisonResult(calls.isInteresting(), samples, calls.getNonIdentityPosterior()); // qual will be negative if all samples are ref= calls

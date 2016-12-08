@@ -33,7 +33,7 @@ public final class SimulationUtils {
 
     final double[] thres = new double[dist.length];
     double currentThres = 0;
-    for (int i = 0; i < dist.length; i++) {
+    for (int i = 0; i < dist.length; ++i) {
       currentThres += dist[i];
       thres[i] = currentThres / sum;
     }
@@ -53,7 +53,7 @@ public final class SimulationUtils {
       len = -len - 1;
     }
     while (len < dist.length && dist[len] == 0.0) {
-      len++;
+      ++len;
     }
     return len;
   }

@@ -61,14 +61,14 @@ public final class IndexSimilarity extends IndexCompressed {
     }
     final SimilarityMatrix matrix = new SimilarityMatrix(numSequences);
     long lo = 0;
-    for (long p = 0; p < mInitialPositionLength - 2; p++) {
+    for (long p = 0; p < mInitialPositionLength - 2; ++p) {
       final long hi = mInitialPosition.get(p + 1);
       for (long i = lo; i < hi;) {
       final long hash = mHash.get(i);
       final int seq = (int) mValue.get(i);
       //System.err.println(" i=" + i + " seq=" + seq + " hash=" + hash);
       mSimilaritySorter.add(seq);
-      i++;
+      ++i;
       if (i >= mNumValues) {
         mSimilaritySorter.similarity(matrix);
         //System.err.println(mSimilaritySorter.toString());

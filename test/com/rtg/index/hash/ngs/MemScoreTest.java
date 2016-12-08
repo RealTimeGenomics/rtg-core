@@ -45,7 +45,7 @@ public class MemScoreTest extends TestCase {
   private static byte[] getRandom(final PortableRandom r, final int length) {
     final byte[] template = new byte[length];
     r.nextBytes(template);
-    for (int k = 0; k < template.length; k++) {
+    for (int k = 0; k < template.length; ++k) {
       template[k] &= 3;
     }
     return template;
@@ -62,7 +62,7 @@ public class MemScoreTest extends TestCase {
       assertTrue(score >= 0);
       assertTrue(score <= read.length);
       final byte[] rc = new byte[read.length];
-      for (int j = 0, i = read.length - 1; j < read.length; j++, i--) {
+      for (int j = 0, i = read.length - 1; j < read.length; ++j, --i) {
         rc[j] = DNA.complement(read[i]);
       }
       assertEquals(score, MemScore.score(template, 1 + tDelta, rc, read.length - rDelta , true));
@@ -71,12 +71,12 @@ public class MemScoreTest extends TestCase {
 
   public void testCycle() {
     final byte[] seq = new byte[50];
-    for (int k = 0; k < seq.length; k++) {
+    for (int k = 0; k < seq.length; ++k) {
       seq[k] = (byte) (1 + (k & 3));
     }
     assertEquals(0, MemScore.score(seq, 1, seq, 1, false));
     final byte[] seq1 = new byte[25];
-    for (int k = 0; k < seq1.length; k++) {
+    for (int k = 0; k < seq1.length; ++k) {
       seq1[k] = (byte) (1 + (k & 3));
     }
     assertEquals(0, MemScore.score(seq, 1, seq1, 1, false));
@@ -150,7 +150,7 @@ public class MemScoreTest extends TestCase {
   }
 
   public void testAll() {
-    for (int i = 1; i < 64; i++) {
+    for (int i = 1; i < 64; ++i) {
       check(i, (1L << i) - 1);
     }
     check(64, -1L);
@@ -227,7 +227,7 @@ public class MemScoreTest extends TestCase {
    *          0 011001
    */
   public void testIndel() {
-    for (int i = 6; i < 64; i++) {
+    for (int i = 6; i < 64; ++i) {
       final MemScore ms = new MemScore(i);
       //Exact actgac
       //      001100

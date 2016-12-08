@@ -28,7 +28,7 @@ public class SingleCounts extends IntegralAbstract {
    */
   public void increment(final double corr) {
     assert corr >= 0.0 && !Double.isInfinite(corr) && !Double.isNaN(corr);
-    mCount++;
+    ++mCount;
     mCorrection += corr;
   }
 

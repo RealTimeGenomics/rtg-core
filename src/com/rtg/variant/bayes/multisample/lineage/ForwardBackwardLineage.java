@@ -55,7 +55,7 @@ public class ForwardBackwardLineage {
     for (final ModelInterface<?> m : models) {
       mModel.add(new ModelFactor(new Variable("G" + k, m.hypotheses().size()), m));
       mHypotheses.add(m.hypotheses());
-      k++;
+      ++k;
     }
   }
 

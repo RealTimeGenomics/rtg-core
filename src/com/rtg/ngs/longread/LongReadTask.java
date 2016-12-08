@@ -130,7 +130,7 @@ public final class LongReadTask {
     indexParams = params.indexParams();
     final int ipBits = indexParams.initialPointerBits();
     final IndexQueues queues = new IndexQueues(numberThreads, indexParams.hashBits(), indexParams.size(), indexParams.valueBits(), ipBits);
-    for (int i = 0; i < numberThreads; i++) {
+    for (int i = 0; i < numberThreads; ++i) {
       final int start = ss.start(i);
       final int end = ss.start(i + 1);
       final HashingRegion region = new HashingRegion(start, end);

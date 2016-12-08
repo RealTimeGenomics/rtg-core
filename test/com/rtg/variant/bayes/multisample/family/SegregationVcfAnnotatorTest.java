@@ -33,7 +33,7 @@ public class SegregationVcfAnnotatorTest extends TestCase {
     final VcfHeader header = new VcfHeader();
     header.addSampleName("FATHER").addSampleName("MOTHER");
     final String[] childrenNames = new String[8];
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       final String sonName = "SON" + (i + 1);
       final String daughterName = "DAUGHTER" + (i + 1);
       header.addSampleName(sonName).addSampleName(daughterName);
@@ -85,7 +85,7 @@ public class SegregationVcfAnnotatorTest extends TestCase {
     final VcfHeader header = new VcfHeader();
     header.addSampleName("FATHER").addSampleName("MOTHER");
     final String[] childrenNames = new String[8];
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       final String sonName = "SON" + (i + 1);
       final String daughterName = "DAUGHTER" + (i + 1);
       header.addSampleName(sonName).addSampleName(daughterName);

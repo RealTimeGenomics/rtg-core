@@ -85,7 +85,7 @@ class ReadMappingRoc {
   public String getDistribution() {
     final StringBuilder sb = new StringBuilder();
     sb.append("Score\ttrue_positives\tfalse_positives\terror_rate").append(StringUtils.LS);
-    for (int i = 0; i <= getMaxScore(); i++) {
+    for (int i = 0; i <= getMaxScore(); ++i) {
       final double tpThis = getTp(i);
       final double fpThis = getFp(i);
       if (tpThis != 0 || fpThis != 0) {
@@ -107,7 +107,7 @@ class ReadMappingRoc {
     double tpCum = 0;
     double fpCum = 0;
     if (mAscending) {
-      for (int i = 0; i <= getMaxScore(); i++) {
+      for (int i = 0; i <= getMaxScore(); ++i) {
         final double tpThis = getTp(i);
         final double fpThis = getFp(i);
         if (tpThis != 0 || fpThis != 0) {
@@ -117,7 +117,7 @@ class ReadMappingRoc {
         }
       }
     } else {
-      for (int i = getMaxScore(); i >= 0; i--) {
+      for (int i = getMaxScore(); i >= 0; --i) {
         final double tpThis = getTp(i);
         final double fpThis = getFp(i);
         if (tpThis != 0 || fpThis != 0) {

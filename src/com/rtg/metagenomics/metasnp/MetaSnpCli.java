@@ -101,7 +101,7 @@ public class MetaSnpCli extends LoggedCli {
   static String[] betaFlagValues() {
     final EmIterate.BetaType[] values = EmIterate.BetaType.values();
     final String[] str = new String[values.length];
-    for (int i = 0; i < values.length; i++) {
+    for (int i = 0; i < values.length; ++i) {
       str[i] = values[i].toString().toLowerCase(Locale.getDefault());
     }
     return str;
@@ -123,8 +123,8 @@ public class MetaSnpCli extends LoggedCli {
     }
     final double[][] xi = new double[samples][strains];
     try {
-      for (int k = 0, i = 0; k < samples; k++) {
-        for (int j = 0; j < strains; j++, i++) {
+      for (int k = 0, i = 0; k < samples; ++k) {
+        for (int j = 0; j < strains; ++j, ++i) {
           final double v = Double.parseDouble(xis[i]);
           if (v <= 0 || Double.isInfinite(v)) {
             throw new NoTalkbackSlimException("Invalid xi value: " + v);
@@ -140,7 +140,7 @@ public class MetaSnpCli extends LoggedCli {
 
   static double[][] initXi(int samples, int strains, PossibilityArithmetic arith) {
     final double[][] xi = new double[samples][strains];
-    for (int i = 0; i < xi.length; i++) {
+    for (int i = 0; i < xi.length; ++i) {
       xi[i] = RandomWalkXiFinder.uniformDistribution(strains, arith);
     }
     return xi;
@@ -167,13 +167,13 @@ public class MetaSnpCli extends LoggedCli {
       final List<MetaSnpLine> lines = new ArrayList<>();
       MetaSnpLine line;
       while ((line = reader.nextLine()) != null) {
-        approxLength++;
+        ++approxLength;
         final int refAllele = line.getReferenceIndex();
         int nonRefCount = 0;
         int total = 0;
         final double[][] evidenceArray = new double[line.mCounts[0].length][line.mCounts.length];
-        for (int i = 0; i < evidenceArray.length; i++) {
-          for (int j = 0; j < evidenceArray[i].length; j++) {
+        for (int i = 0; i < evidenceArray.length; ++i) {
+          for (int j = 0; j < evidenceArray[i].length; ++j) {
             evidenceArray[i][j] = line.mCounts[j][i];
             if (j != refAllele) {
               nonRefCount += line.mCounts[j][i];
@@ -209,7 +209,7 @@ public class MetaSnpCli extends LoggedCli {
         try (FileOutputStream visualStream = new FileOutputStream(visual)) {
           outputVisualisation(ref, lines, evidence, result, visualStream);
         }
-        for (int i = 0; i < iterations.size(); i++) {
+        for (int i = 0; i < iterations.size(); ++i) {
           final File visualIt = new File(visual.getPath() + i);
           try (OutputStream visualStream = FileUtils.createOutputStream(visualIt)) {
             outputVisualisation(ref, lines, evidence, iterations.get(i), visualStream);
@@ -222,7 +222,7 @@ public class MetaSnpCli extends LoggedCli {
 
   static void writeXi(double[][] xi, PossibilityArithmetic arith, PrintStream xiOut, List<String> samples) {
     if (samples == null) {
-      for (int j = 0; j < xi.length; j++) {
+      for (int j = 0; j < xi.length; ++j) {
         xiOut.print("\tSample" + j);
       }
     } else {
@@ -231,7 +231,7 @@ public class MetaSnpCli extends LoggedCli {
       }
     }
     xiOut.println();
-    for (int i = 0; i < xi[0].length; i++) {
+    for (int i = 0; i < xi[0].length; ++i) {
       xiOut.print("Strain" + i);
       for (final double[] sample : xi) {
         final double value = sample[i];
@@ -242,17 +242,17 @@ public class MetaSnpCli extends LoggedCli {
   }
 
   static void outputVisualisation(List<Integer> refBytes, List<MetaSnpLine> lines, List<double[][]> evidence, EmIterate.EmResult result, OutputStream out) throws IOException {
-    for (int i = 0; i < refBytes.size(); i++) {
+    for (int i = 0; i < refBytes.size(); ++i) {
       final double[][] currentEvidence = evidence.get(i);
       final int[] currentAssignments = result.mAssignments.get(i).mCalls;
       final int[] totals = new int[currentEvidence.length];
       final int numAlleles = currentEvidence[0].length;
-      for (int sample = 0; sample < currentEvidence.length; sample++) {
-        for (byte allele = 0; allele < numAlleles; allele++) {
+      for (int sample = 0; sample < currentEvidence.length; ++sample) {
+        for (byte allele = 0; allele < numAlleles; ++allele) {
           totals[sample] += currentEvidence[sample][allele];
         }
       }
-      for (byte allele = 0; allele < numAlleles; allele++) {
+      for (byte allele = 0; allele < numAlleles; ++allele) {
         if (allele == refBytes.get(i)) {
           continue;
         }
@@ -270,11 +270,11 @@ public class MetaSnpCli extends LoggedCli {
         for (int currentAssignment : currentAssignments) {
           color <<= 1;
           if (currentAssignment == allele) {
-            color++;
+            ++color;
           }
         }
         final double[] coordinates = new double[currentEvidence.length];
-        for (int sample = 0; sample < currentEvidence.length; sample++) {
+        for (int sample = 0; sample < currentEvidence.length; ++sample) {
           coordinates[sample] = currentEvidence[sample][allele] / (double) totals[sample];
         }
         final StringBuilder output = new StringBuilder();
@@ -295,13 +295,13 @@ public class MetaSnpCli extends LoggedCli {
   static void writeVcf(List<Integer> refBytes, List<MetaSnpLine> lines, EmIterate.EmResult res, OutputStream out, PossibilityArithmetic arith) throws IOException {
     final VcfHeader header = new VcfHeader();
     header.addCommonHeader();
-    for (int i = 0; i < res.mAssignments.get(0).mCalls.length; i++) {
+    for (int i = 0; i < res.mAssignments.get(0).mCalls.length; ++i) {
       header.addSampleName("Strain" + i);
     }
     header.addInfoField(LIKE, MetaType.FLOAT, VcfNumber.DOT, "phred scaled likelihood of genotype assignments");
     header.addInfoField(SYNDROME, MetaType.STRING, VcfNumber.DOT, "packed representation of strain assignment");
     try (final VcfWriter writer = new DefaultVcfWriter(header, out)) {
-      for (int i = 0; i < lines.size(); i++) {
+      for (int i = 0; i < lines.size(); ++i) {
         final MetaSnpLine line = lines.get(i);
         final int[] assignments = res.mAssignments.get(i).mCalls;
         final int ref = refBytes.get(i);
@@ -316,7 +316,7 @@ public class MetaSnpCli extends LoggedCli {
         final double phred = PosteriorUtils.phredIfy(arith.poss2Ln(res.mAssignments.get(i).mLikelihood));
         record.setInfo("LIKE", "" + Utils.realFormat(phred, 3));
         record.setNumberOfSamples(assignments.length);
-        for (int alt = 1; alt < alts.size(); alt++) {
+        for (int alt = 1; alt < alts.size(); ++alt) {
           record.addAltCall(line.mAlleles[alts.get(alt)]);
         }
         final StringBuilder syndrome = new StringBuilder();

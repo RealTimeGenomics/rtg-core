@@ -32,7 +32,7 @@ public class MockHypotheses<D extends Description> extends HypothesesPrior<D> {
     super(description, arithmetic, haploid, reference);
     if (priors != null) {
       mPriors = new double[size()];
-      for (int i = 0; i < size(); i++) {
+      for (int i = 0; i < size(); ++i) {
         mPriors[i] = arithmetic.prob2Poss(priors[i]);
       }
     } else {

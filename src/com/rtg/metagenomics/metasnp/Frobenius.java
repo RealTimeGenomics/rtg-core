@@ -35,10 +35,10 @@ final class Frobenius {
     // to ordinary arithmetic
     assert a.length == b.length;
     final double[][] delta = new double[a.length][];
-    for (int k = 0; k < delta.length; k++) {
+    for (int k = 0; k < delta.length; ++k) {
       assert a[k].length == b[k].length;
       delta[k] = new double[a[k].length];
-      for (int j = 0; j < delta[k].length; j++) {
+      for (int j = 0; j < delta[k].length; ++j) {
         delta[k][j] = arith.poss2Prob(a[k][j]) - arith.poss2Prob(b[k][j]);
       }
     }

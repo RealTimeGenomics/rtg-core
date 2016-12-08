@@ -47,7 +47,7 @@ public class StatisticsDoubleTest extends AbstractStatisticsTest {
     sam.setReadString("CCCCC" + ins + "GGGGG");
     sam.setCigarString("5=" + length + "I5=");
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       sb.append('`');
     }
     return new AlignmentMatch(new VariantAlignmentRecord(sam), null, ins, FastaUtils.asciiToRawQuality(sb.toString()), 0, 0, length, mapq, fixedLeft, fixedRight);
@@ -60,10 +60,10 @@ public class StatisticsDoubleTest extends AbstractStatisticsTest {
   public void testTotals() throws Exception {
     Diagnostic.setLogStream();
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; ++i) {
       ml.add(match("A", 0));
     }
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       ml.add(match("G", 20));
     }
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);

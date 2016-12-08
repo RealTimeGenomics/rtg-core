@@ -131,7 +131,7 @@ public abstract class AbstractPairedEndOutputProcessorSyncTest extends AbstractP
     final SimpleThreadPool stp = new SimpleThreadPool(numThreads, "TestPairedEnd", true);
     final NgsParams params = getDefaultBuilder(tempDir, gzipResults, getOutputFilter(), null).numberThreads(numThreads).unknownsPenalty(9).create();
     try (OutputProcessor sync = getPairedEndOutputProcessorSync(params, null, true, true)) {
-      for (int i = 0; i < numThreads; i++) {
+      for (int i = 0; i < numThreads; ++i) {
         final long padding = params.calculateThreadPadding();
         final long start = i * MAX_COORD / numThreads;
         final long end = (i + 1) * MAX_COORD / numThreads;

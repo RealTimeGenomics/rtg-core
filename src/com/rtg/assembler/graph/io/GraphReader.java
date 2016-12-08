@@ -124,7 +124,7 @@ public final class GraphReader {
     if (parts.length < token.length) {
       throw new IOException(mHeader + ": expected " + token[0] + " line, saw: " + line);
     }
-    for (int k = 0; k < token.length; k++) {
+    for (int k = 0; k < token.length; ++k) {
       if (!parts[k].matches(token[k])) {
         throw new IOException(mHeader + ": malformed " + token[0] + " line, saw: " + line);
       }
@@ -276,7 +276,7 @@ public final class GraphReader {
     final Map<Long, Long> contigTranslationMap = new HashMap<>();
     int fileNumber = 0;
     while (true) {
-      fileNumber++;
+      ++fileNumber;
       final String fname = "contig." + fileNumber + ".fa";
       if (mGraphDirectory.childExists(fname)) {
         //final File f = new File(mGraphDirectory, fname);
@@ -319,7 +319,7 @@ public final class GraphReader {
       }
       final long[] translatedCids = new long[cids.length - 1];
       //System.err.println(Arrays.toString(translatedCids));
-      for (int k = 0; k < translatedCids.length; k++) {
+      for (int k = 0; k < translatedCids.length; ++k) {
         final String c = cids[k + 1];
         final long oldPid = Long.parseLong(c.charAt(0) == '+' ? c.substring(1) : c);
         assert oldPid != 0;
@@ -338,7 +338,7 @@ public final class GraphReader {
         }
       }
       final long pathId = graph.addPath(new PathArray(translatedCids));
-      for (int i = 2; i < pathSplit.length; i++) {
+      for (int i = 2; i < pathSplit.length; ++i) {
         final String kv = pathSplit[i];
         final int eq = kv.indexOf('=');
         if (eq >= 0) {
@@ -372,7 +372,7 @@ public final class GraphReader {
   private void readPaths(final MutableGraph graph, final Map<Long, Long> contigTranslationMap, final Map<String, String> md5sums) throws IOException {
     int fileNumber = 0;
     while (true) {
-      fileNumber++;
+      ++fileNumber;
       final String fname = "path." + fileNumber + mPathSuffix;
       if (mGraphDirectory.childExists(fname)) {
         readPaths(graph, contigTranslationMap, mGraphDirectory.child(fname).inputStream(), false, md5sums.get(fname));

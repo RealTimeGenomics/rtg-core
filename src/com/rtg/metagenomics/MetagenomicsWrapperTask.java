@@ -202,7 +202,7 @@ class MetagenomicsWrapperTask extends ParamsTask<MetaPipelineParams, NoStatistic
         mapxInput.add(rightFile);
       }
     }
-    for (int i = 0; i < mapxInput.size(); i++) {
+    for (int i = 0; i < mapxInput.size(); ++i) {
       final File mapxReads = mapxInput.get(i);
       final List<String> mapxFlags = new ArrayList<>();
       final File mapxOutput = new File(output, "mapx" + (i + 1));

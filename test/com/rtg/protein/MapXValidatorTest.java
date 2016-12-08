@@ -52,7 +52,7 @@ public class MapXValidatorTest extends AbstractCliTest {
   private static final String READS_FASTA_ONE_INDEL;
   static {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < READS_ONE_INDEL.length; i++) {
+    for (int i = 0; i < READS_ONE_INDEL.length; ++i) {
       sb.append(">testRead").append(i).append(LS).append(READS_ONE_INDEL[i]).append(LS);
     }
     READS_FASTA_ONE_INDEL = sb.toString();

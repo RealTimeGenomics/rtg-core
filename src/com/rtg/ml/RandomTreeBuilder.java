@@ -153,7 +153,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
         final double posNonMissing = dataset.totalPositiveWeight() - posCounts.get(null);
         final double negNonMissing = dataset.totalNegativeWeight() - negCounts.get(null);
         final int nonimalSize = dataset.getAttributes()[attribute].nominalSize();
-        for (int intKey = 0; intKey < nonimalSize; intKey++) {
+        for (int intKey = 0; intKey < nonimalSize; ++intKey) {
           final Double key = (double) intKey;
           final double numpos = posCounts.get(key);
           final double numneg = negCounts.get(key);
@@ -295,15 +295,15 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
    */
   static int[] getAttributes(PortableRandom seed, int total, int subsetSize) {
     final int[] available = new int[total];
-    for (int i = 0; i < available.length; i++) {
+    for (int i = 0; i < available.length; ++i) {
       available[i] = i;
     }
     final int[] result = new int[subsetSize];
     int max = total;
-    for (int i = 0; i < result.length; i++) {
+    for (int i = 0; i < result.length; ++i) {
       final int chosen = seed.nextInt(max);
       result[i] = available[chosen];
-      max--;
+      --max;
       available[chosen] = available[max];
     }
     return result;

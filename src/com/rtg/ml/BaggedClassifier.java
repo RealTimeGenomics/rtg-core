@@ -43,7 +43,7 @@ final class BaggedClassifier implements PredictClassifier {
     if (mCurrentVersion == 1) {
       final int length = dis.readInt();
       mClassifiers = new PredictClassifier[length];
-      for (int i = 0; i < mClassifiers.length; i++) {
+      for (int i = 0; i < mClassifiers.length; ++i) {
         mClassifiers[i] = MlPredictLoader.loadPredictClassifier(dis, data);
       }
     } else {
@@ -88,7 +88,7 @@ final class BaggedClassifier implements PredictClassifier {
   @Override
   public StringBuilder toString(StringBuilder out, String indent, Dataset data) {
     final String newIndent = indent + "  ";
-    for (int i = 0; i < mClassifiers.length; i++) {
+    for (int i = 0; i < mClassifiers.length; ++i) {
       out.append(indent).append("classifier [").append(i + 1).append("]").append(StringUtils.LS);
       mClassifiers[i].toString(out, newIndent, data);
     }

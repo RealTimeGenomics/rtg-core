@@ -146,12 +146,12 @@ public class ProteinMask extends ImplementHashFunction {
     assert masks.size() == mNumberMasks;
     final SingleMask[] ma = masks.toArray(new SingleMask[mNumberMasks]);
     mReadMasks = new ProteinExtractRead[mNumberMasks];
-    for (int i = 0; i < mNumberMasks; i++) {
+    for (int i = 0; i < mNumberMasks; ++i) {
       mReadMasks[i] = new ProteinExtractRead(ma[i], mReadCall, i);
     }
     //System.err.println("set masks HashFunction:" + System.identityHashCode(this) + " mTemplateCall:" + System.identityHashCode(mTemplateCall));
     mTemplateMasks = new ProteinExtractTemplate[mNumberMasks];
-    for (int i = 0; i < mNumberMasks; i++) {
+    for (int i = 0; i < mNumberMasks; ++i) {
       mTemplateMasks[i] = new ProteinExtractTemplate(ma[i], mTemplateCall, i);
     }
   }
@@ -194,7 +194,7 @@ public class ProteinMask extends ImplementHashFunction {
       //System.err.println("isValid=" + true);
       return;
     }
-    for (int i = 0; i < mNumberMasks; i++) {
+    for (int i = 0; i < mNumberMasks; ++i) {
       mTemplateMasks[i].templateCall(endPosition, vs);
     }
     mTemplateCall.done();
@@ -220,7 +220,7 @@ public class ProteinMask extends ImplementHashFunction {
     if (!isValid()) { // mSoFar < readLength()) {
       return;
     }
-    for (int i = 0; i < mNumberMasks; i++) {
+    for (int i = 0; i < mNumberMasks; ++i) {
       mReadMasks[i].readCall(readId, vs);
     }
   }
@@ -229,14 +229,14 @@ public class ProteinMask extends ImplementHashFunction {
   public void hashStep(final byte code) {
     int fwd = code;
     assert 0 <= code && code < (1 << PROTEIN_BITS);
-    for (int i = PROTEIN_BITS - 1; i >= 0; i--) {
+    for (int i = PROTEIN_BITS - 1; i >= 0; --i) {
       mValuesF[i] = (mValuesF[i] << 1) | (fwd & 1);
       fwd = fwd >>> 1;
     }
 
-    mSoFar++;
+    ++mSoFar;
 //    System.err.println("hashStep code=" + code);
-//    for (int i = 0; i < PROTEIN_BITS; i++) {
+//    for (int i = 0; i < PROTEIN_BITS; ++i) {
 //      System.err.println("mValuesF[" + i + "]=" + com.rtg.util.Utils.toBitsSep(mValuesF[i]));
 //    }
   }
@@ -254,7 +254,7 @@ public class ProteinMask extends ImplementHashFunction {
   boolean integrity(int soFar, long... vs) {
     Exam.assertEquals(soFar, mSoFar);
     Exam.assertEquals(vs.length, mValuesF.length);
-    for (int i = 0; i < mValuesF.length; i++) {
+    for (int i = 0; i < mValuesF.length; ++i) {
       Exam.assertEquals(vs[i], mValuesF[i]);
     }
     return true;
@@ -266,7 +266,7 @@ public class ProteinMask extends ImplementHashFunction {
     Exam.assertTrue(mNumberMasks > 0);
     Exam.assertTrue(mReadMasks != null && mReadMasks.length == mNumberMasks);
     Exam.assertTrue(mTemplateMasks == null ? "null" : "length=" + mTemplateMasks.length + " numberMasks=" + mNumberMasks, mTemplateMasks != null && mTemplateMasks.length == mNumberMasks);
-    for (int i = 0; i < mNumberMasks; i++) {
+    for (int i = 0; i < mNumberMasks; ++i) {
       Exam.assertTrue(mReadMasks[i] != null);
       Exam.assertTrue(mTemplateMasks[i] != null && mTemplateMasks[i].mTemplateCall == mTemplateCall);
     }
@@ -276,7 +276,7 @@ public class ProteinMask extends ImplementHashFunction {
   @Override
   public void reset() {
     mSoFar = 0;
-    for (int i = 0; i < PROTEIN_BITS; i++) {
+    for (int i = 0; i < PROTEIN_BITS; ++i) {
       mValuesF[i] = 0L;
     }
   }

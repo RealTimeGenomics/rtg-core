@@ -129,7 +129,7 @@ public abstract class BayesianSignal {
     int steppos = 0;
     double stepval = 0;
     boolean step = false;
-    for (int i = lo + 1; i < hi; i++) {
+    for (int i = lo + 1; i < hi; ++i) {
       final double current = a.get(i);
       if (constant && (Math.abs(current - constantval) > precision)) {
         constant = false;
@@ -176,7 +176,7 @@ public abstract class BayesianSignal {
     for (final DistrSam ds : pairs) {
       final Distribution di = ds.getA();
       signals[i] = di.getSignalLn(ds.getB(), columnLabel);
-      i++;
+      ++i;
     }
     if (mDebug) {
       try {

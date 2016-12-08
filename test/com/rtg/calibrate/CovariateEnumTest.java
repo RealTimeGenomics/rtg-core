@@ -40,7 +40,7 @@ public class CovariateEnumTest extends TestCase {
   public void testNormal() {
     final Covariate[] covs = CovariateEnum.getCovariates(Arrays.asList(CovariateEnum.SEQUENCE, CovariateEnum.READGROUP, CovariateEnum.ARM, CovariateEnum.ARM, CovariateEnum.BASEQUALITY), null);
     assertEquals(4, covs.length);
-    for (int i = 0; i < covs.length; i++) {
+    for (int i = 0; i < covs.length; ++i) {
       assertEquals(CovariateEnum.values()[i], covs[i].getType());
     }
   }

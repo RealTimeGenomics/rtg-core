@@ -97,7 +97,7 @@ public final class Skeleton extends IntegralAbstract {
           mValid = true;
           break;
         }
-        k++;
+        ++k;
       }
 
       integrity();
@@ -135,10 +135,10 @@ public final class Skeleton extends IntegralAbstract {
         boolean active = false;
         int start = 0;
         int count = 0;
-        for (int i = 0; true; i++) {
+        for (int i = 0; true; ++i) {
           final boolean set = i != mChunks && getBit(i);
           if (set) {
-            count++;
+            ++count;
           }
           if (set && !active) {
             active = true;
@@ -229,7 +229,7 @@ public final class Skeleton extends IntegralAbstract {
 
     for (final SingleMask mask : masks()) {
       long v = 0;
-      for (int i = 0; i < mask.size(); i++) {
+      for (int i = 0; i < mask.size(); ++i) {
         final Skel sk = mask.subSkeleton(i);
         if (sk != null) {
           final long bits = ((1L << sk.length()) - 1) << (sk.position() - sk.length() + 1);
@@ -310,7 +310,7 @@ public final class Skeleton extends IntegralAbstract {
       System.out.println("[" + j + "]");
       System.out.println(sm);
       System.out.println();
-      j++;
+      ++j;
     }
     System.out.println(sk.dumpMask());
   }

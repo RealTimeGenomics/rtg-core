@@ -107,9 +107,9 @@ public class GappedDistribution extends IntegralAbstract {
     mILength = stepSize * mMult + 1;
     mJLength = stepSize * (mMult + 1) + 1;
     mDistribution = new double[mILength][][];
-    for (int i = 0; i < mDistribution.length; i++) {
+    for (int i = 0; i < mDistribution.length; ++i) {
       mDistribution[i] = new double[mJLength][];
-      for (int j = 0; j < mDistribution[i].length; j++) {
+      for (int j = 0; j < mDistribution[i].length; ++j) {
         mDistribution[i][j] = new double[Offset.values().length];
       }
     }
@@ -129,8 +129,8 @@ public class GappedDistribution extends IntegralAbstract {
 
     //traverse the array diagonally - k == i + j
     final int kLength = mILength + mJLength - 1;
-    for (int k = 1; k < kLength; k++) {
-      for (int i = Math.max(0, k - mJLength + 1); i < Math.min(mILength, k + 1); i++) {
+    for (int k = 1; k < kLength; ++k) {
+      for (int i = Math.max(0, k - mJLength + 1); i < Math.min(mILength, k + 1); ++i) {
         final boolean boundary = i > 0 && (i % mStepSize) == 0;
         final int j = k - i;
         //System.err.println("k=" + k + " i=" + i + " j=" + j + " il=" + mILength + " jl=" + mJLength);
@@ -195,15 +195,15 @@ public class GappedDistribution extends IntegralAbstract {
     //System.err.println("ILength=" + mILength + " step=" + mStepSize + " isLen=" + isLen);
     //assert (isLen - 1) * mStep < mILength : "gap=" + mGap + " step=" + mStep + " isLen=" + isLen + " mILength=" + mILength;
     final double[][] probs = new double[mILength][];
-    for (int i = 0; i < probs.length; i++) {
+    for (int i = 0; i < probs.length; ++i) {
       probs[i] = new double[jlen];
     }
     //compute the threshold
     double max = 0.0;
     //System.err.println("j=[" + mGap + ".." + mJLength + ")");
     //System.err.println("i=[" + offset + ".." + mILength + "+" + mStepSize + ")");
-    for (int j = mGap + 1; j < mJLength; j++) {
-      for (int i = mGap + 1; i < mILength; i++) {
+    for (int j = mGap + 1; j < mJLength; ++j) {
+      for (int i = mGap + 1; i < mILength; ++i) {
         final double d = mDistribution[i][j][TOTAL.ordinal()];
         //System.err.println("  max=" + max + " d=" + d + " i=" + i + " j=" + j);
         if (d > max) {
@@ -214,8 +214,8 @@ public class GappedDistribution extends IntegralAbstract {
     }
     final double min = mDistribution[mGap][mGap][TOTAL.ordinal()];
     final double gapThreshold = max > min ? min : max;
-    for (int j = 0; j <= mGap; j++) {
-      for (int i = 0, is = 0; is < mILength; i++, is++) {
+    for (int j = 0; j <= mGap; ++j) {
+      for (int i = 0, is = 0; is < mILength; ++i, ++is) {
         final double d = mDistribution[i][j][TOTAL.ordinal()];
         probs[is][j] = d < gapThreshold ? 0.0 : d;
       }
@@ -223,9 +223,9 @@ public class GappedDistribution extends IntegralAbstract {
 
     //compute max probabilities for use with READ scoring
     final double[] maxd = new double[mILength];
-    for (int i = 0; i < mILength; i++) {
+    for (int i = 0; i < mILength; ++i) {
       double mx = 0.0;
-      for (int j = 0; j < mJLength; j++) {
+      for (int j = 0; j < mJLength; ++j) {
         final double d = mDistribution[i][j][TOTAL.ordinal()];
         if (d > mx) {
           mx = d;
@@ -245,8 +245,8 @@ public class GappedDistribution extends IntegralAbstract {
 
   @Override
   public void toString(final StringBuilder out) {
-    for (int i = mILength - 1; i >= 0; i--) {
-      for (int l = 0; l < Offset.values().length; l++) {
+    for (int i = mILength - 1; i >= 0; --i) {
+      for (int l = 0; l < Offset.values().length; ++l) {
         switch (l) {
         case 0: out.append("[").append(INDEX_FORMAT.format(i)).append("]=");
         break;
@@ -259,7 +259,7 @@ public class GappedDistribution extends IntegralAbstract {
         default: throw new IllegalStateException();
         }
         double total = 0.0;
-        for (int j = 0; j < mJLength; j++) {
+        for (int j = 0; j < mJLength; ++j) {
           out.append(PROB_FORMAT.format(mDistribution[i][j][l])).append(i == j ? "=" : " ");
           total += mDistribution[i][j][l];
         }

@@ -23,7 +23,7 @@ public class ProportionalRepeatFrequencyFilterMethodTest extends AbstractTest {
     final ProportionalRepeatFrequencyFilterMethod m = new ProportionalRepeatFrequencyFilterMethod(50, 100, 0);
     //discard half the hashes
     final SparseFrequencyHistogram sph = new SparseFrequencyHistogram();
-    for (int i = 1; i <= 10; i++) {
+    for (int i = 1; i <= 10; ++i) {
       sph.add(i, 10 / i);
     }
     m.internalInitializeProportional(sph, 100);

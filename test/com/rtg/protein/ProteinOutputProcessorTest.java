@@ -86,7 +86,7 @@ public class ProteinOutputProcessorTest extends TestCase {
     + "-62" + TB + "28.5" + TB + "5.8e-8" +  LS;
   static {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < READS_PERFECT.length; i++) {
+    for (int i = 0; i < READS_PERFECT.length; ++i) {
       sb.append(">testRead").append(i).append(LS).append(READS_PERFECT[i]).append(LS);
     }
     READS_FASTA_PERFECT = sb.toString();

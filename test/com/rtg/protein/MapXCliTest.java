@@ -133,12 +133,12 @@ public class MapXCliTest extends AbstractCliTest {
 
   static {
     StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < READS_ONE_INDEL.length; i++) {
+    for (int i = 0; i < READS_ONE_INDEL.length; ++i) {
       sb.append(">testRead").append(i).append(LS).append(READS_ONE_INDEL[i]).append(LS);
     }
     READS_FASTA_ONE_INDEL = sb.toString();
     sb = new StringBuilder();
-    for (int i = 0; i < READS_MULTI_SUB.length; i++) {
+    for (int i = 0; i < READS_MULTI_SUB.length; ++i) {
       sb.append(">testRead").append(i).append(LS).append(READS_MULTI_SUB[i]).append(LS);
     }
     READS_FASTA_MULTI_SUB = sb.toString();

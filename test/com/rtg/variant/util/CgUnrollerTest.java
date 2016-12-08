@@ -403,7 +403,7 @@ public class CgUnrollerTest extends TestCase {
     final String expRead = "TGGTCCTTCCCCGGCTGAATACTCCAGGTATGAGC";
     final CgUnroller.OrientedRead or = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), tmpl);
     assertEquals(expRead.length(), or.getRead().length);
-    for (int i = 0; i < expRead.length(); i++) {
+    for (int i = 0; i < expRead.length(); ++i) {
       assertEquals(expRead.charAt(i), DnaUtils.getBase(or.getRead()[i]));
     }
   }
@@ -585,11 +585,11 @@ public class CgUnrollerTest extends TestCase {
     final CgUnroller.OrientedRead or = CgUnroller.unrollCgRead(new VariantAlignmentRecord(rec), tmpl);
     assertNotNull(or);
     assertEquals(expRead.length(), or.getRead().length);
-    for (int i = 0; i < expRead.length(); i++) {
+    for (int i = 0; i < expRead.length(); ++i) {
       assertEquals(expRead.charAt(i), DnaUtils.getBase(or.getRead()[i]));
     }
     assertEquals(expQual.length(), or.getQuality().length);
-    for (int i = 0; i < expQual.length(); i++) {
+    for (int i = 0; i < expQual.length(); ++i) {
       assertEquals(expQual.charAt(i), FastaUtils.rawToAsciiQuality(or.getQuality()[i]));
     }
   }

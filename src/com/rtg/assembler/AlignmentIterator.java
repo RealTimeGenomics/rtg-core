@@ -73,7 +73,7 @@ class AlignmentIterator {
     final Set<GraphAlignment> alignments = new HashSet<>();
     final int windowSize = mIndex.windowSize();
     boolean hasHits = false;
-    for (int i = 0; i < read.length; i++) {
+    for (int i = 0; i < read.length; ++i) {
       final List<ContigPosition> positionHits = hits.get(i);
       if (positionHits.size() > GraphMap.MAX_HITS_PER_START_POSITION) {
         continue;

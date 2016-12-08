@@ -100,13 +100,13 @@ public class LookAheadTest extends TestCase {
     final LookAhead la = new LookAhead(10, 0);
     assertEquals(10, la.lookAhead());
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       la.increment(i);
       la.globalIntegrity();
     }
     check(la, 0, 10);
 
-    for (int i = 7, c = 9; i > 0; i--, c--) {
+    for (int i = 7, c = 9; i > 0; --i, --c) {
       la.decrement(i);
       check(la, 0, c);
     }
@@ -119,13 +119,13 @@ public class LookAheadTest extends TestCase {
     final LookAhead la = new LookAhead(10, 0);
     assertEquals(10, la.lookAhead());
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       la.increment(i);
       la.globalIntegrity();
     }
     check(la, 0, 10);
 
-    for (int i = 8, c = 9; i > 0; i--, c--) {
+    for (int i = 8, c = 9; i > 0; --i, --c) {
       la.decrement(i);
       check(la, 0, c);
     }
@@ -138,13 +138,13 @@ public class LookAheadTest extends TestCase {
     final LookAhead la = new LookAhead(10, 0);
     assertEquals(10, la.lookAhead());
 
-    for (int i = 0; i <= 10; i++) {
+    for (int i = 0; i <= 10; ++i) {
       la.increment(i);
       la.globalIntegrity();
     }
     check(la, 0, 11);
 
-    for (int i = 9, c = 10; i > 0; i--, c--) {
+    for (int i = 9, c = 10; i > 0; --i, --c) {
       la.decrement(i);
       check(la, 0, c);
     }

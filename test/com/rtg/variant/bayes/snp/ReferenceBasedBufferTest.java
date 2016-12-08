@@ -238,7 +238,7 @@ public class ReferenceBasedBufferTest extends TestCase {
     badFind(cb, -1, 1);
     badFind(cb, 0, 1);
 
-    for (int i = 1; i < 24; i++) {
+    for (int i = 1; i < 24; ++i) {
       final ModelInterface<Description> model = cb.step();
       if (template[i] >= 0) {
         assertNotNull("" + i, model);

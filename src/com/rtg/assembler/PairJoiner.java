@@ -60,7 +60,7 @@ public class PairJoiner {
       return Collections.emptySet();
     }
     Set<GraphAlignment> fromSet = fragmentAlignments.get(0);
-    for (int i = 1; i < fragmentAlignments.size(); i++) {
+    for (int i = 1; i < fragmentAlignments.size(); ++i) {
       final Set<GraphAlignment> toSet = fragmentAlignments.get(i);
       final Map<Long, Set<GraphAlignment>> matchMap = destinationMap(toSet, mGraph);
       final Set<GraphAlignment> joined = new HashSet<>();
@@ -147,7 +147,7 @@ public class PairJoiner {
   }
 
   private boolean checkPathAgrees(final GraphAlignment start, final GraphAlignment destination, final int startPos) {
-    for (int j = startPos, k = destination.contigs().size() - 1; j < start.contigs().size() && k >= 0; j++, k--) {
+    for (int j = startPos, k = destination.contigs().size() - 1; j < start.contigs().size() && k >= 0; ++j, --k) {
       final long forwardContig = start.contigs().get(j);
       final long reverseContig = destination.contigs().get(k);
       // Check match allowing for differing direction and presence of palindromes
@@ -165,7 +165,7 @@ public class PairJoiner {
     Set<PairChain> paths = new HashSet<>();
     paths.add(initial);
     // Resolve cross contig sloptigs
-    for (int i = 0; i < start.contigs().size() - 1; i++) {
+    for (int i = 0; i < start.contigs().size() - 1; ++i) {
       final long contig = start.contigs().get(i);
       final Set<GraphAlignment> destinations = toSet.get(contig);
       if (destinations != null) {
@@ -213,7 +213,7 @@ public class PairJoiner {
 
   private int slopSize(GraphAlignment start, int overlapContig, GraphAlignment destination) {
     int insert = mGraph.contigLength(destination.endContig()) - destination.endPosition() - 1;
-    for (int i = overlapContig; i < start.contigs().size() - 1; i++) {
+    for (int i = overlapContig; i < start.contigs().size() - 1; ++i) {
       insert -= mGraph.contigLength(start.contigs().get(i)) - mOverlap;
     }
     insert -= start.endPosition();

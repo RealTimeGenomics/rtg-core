@@ -102,7 +102,7 @@ public class AttributeExtractor {
   }
 
   private void initAttributes() {
-    for (int i = 0; i < mAttributes.length; i++) {
+    for (int i = 0; i < mAttributes.length; ++i) {
       mAttributes[i] = new Attribute(mAnnotations[i].getName(), getMlDataType(mAnnotations[i].getType()));
     }
   }
@@ -176,7 +176,7 @@ public class AttributeExtractor {
    */
   public double[] getInstance(VcfRecord record, int sampleNumber) {
     final double[] res = new double[mAnnotations.length];
-    for (int i = 0; i < res.length; i++) {
+    for (int i = 0; i < res.length; ++i) {
       try {
         res[i] = mAttributes[i].encodeValue(mAnnotations[i].getValue(record, sampleNumber));
       } catch (final NumberFormatException e) {
@@ -197,7 +197,7 @@ public class AttributeExtractor {
     final String[] nums = new String[mMissingValueCounts.length];
     int maxLengthNum = 0;
     int maxLengthName = 0;
-    for (int k = 0; k < nums.length; k++) {
+    for (int k = 0; k < nums.length; ++k) {
       nums[k] = String.valueOf(mMissingValueCounts[k]);
       if (nums[k].length() > maxLengthNum) {
         maxLengthNum = nums[k].length();
@@ -208,14 +208,14 @@ public class AttributeExtractor {
       }
     }
     final StringBuilder sb = new StringBuilder("Number of examples with missing values:").append(LS);
-    for (int k = 0; k < mAnnotations.length; k++) {
+    for (int k = 0; k < mAnnotations.length; ++k) {
       final Annotation att = mAnnotations[k];
       final String name = att.getName();
       sb.append("  ").append(name);
-      for (int j = name.length(); j <= maxLengthName; j++) {
+      for (int j = name.length(); j <= maxLengthName; ++j) {
         sb.append(" ");
       }
-      for (int j = nums[k].length(); j <= maxLengthNum; j++) {
+      for (int j = nums[k].length(); j <= maxLengthNum; ++j) {
         sb.append(" ");
       }
       sb.append(nums[k]).append(LS);
@@ -245,7 +245,7 @@ public class AttributeExtractor {
     final DataInputStream dis = new DataInputStream(is);
     final int numAnnotations = dis.readInt();
     final AttributeExtractor ae = new AttributeExtractor(numAnnotations);
-    for (int i = 0; i < numAnnotations; i++) {
+    for (int i = 0; i < numAnnotations; ++i) {
       ae.mAnnotations[i] = AnnotationLoader.load(dis);
     }
     ae.initAttributes();
@@ -373,7 +373,7 @@ public class AttributeExtractor {
 
           while (reader.hasNext()) {
             final double[] instance = ae.getInstance(reader.next(), sampleNumber);
-            for (int i = 0; i < instance.length; i++) {
+            for (int i = 0; i < instance.length; ++i) {
               if (i != 0) {
                 arffWriter.write(",");
               }

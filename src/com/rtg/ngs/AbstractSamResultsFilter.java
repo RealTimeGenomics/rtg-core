@@ -173,7 +173,7 @@ public abstract class AbstractSamResultsFilter {
         try (TempRecordReader recReader = new TempRecordReaderNio(FileUtils.createGzipInputStream(currentFile, false), fact)) {
           BinaryTempFileRecord rec;
           while ((rec = recReader.readRecord()) != null) {
-            inputRecords++;
+            ++inputRecords;
             final SAMRecord filteredRecord = filterRecord(samWriter, rec, template.names());
             if (filteredRecord != null) {
               if (cp != null) {
@@ -185,7 +185,7 @@ public abstract class AbstractSamResultsFilter {
               if (mMapReportData != null) {
                 mMapReportData.processRead(filteredRecord);
               }
-              outputRecords++;
+              ++outputRecords;
             }
           } //while
         }
@@ -242,7 +242,7 @@ public abstract class AbstractSamResultsFilter {
     }
     final int len = reader.read(readId, mReadBuffer);
     final StringBuilder res = new StringBuilder();
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < len; ++i) {
       res.append(DnaUtils.getBase(mReadBuffer[i]));
     }
     final String readString;
@@ -287,12 +287,12 @@ public abstract class AbstractSamResultsFilter {
       }
       mGQLength = discard;
       mQualStringLength = length - discard;
-      for (int i = 0; i < mGQLength; i++) {
+      for (int i = 0; i < mGQLength; ++i) {
         mGQBuffer[i] += FastaUtils.PHRED_LOWER_LIMIT_CHAR;
       }
     } else {
       final int length = reader.readQuality(readId, mQualBuffer);
-      for (int i = 0; i < length; i++) {
+      for (int i = 0; i < length; ++i) {
         mFlattenedQualBuffer[i] = mQualBuffer[reverse ? length - 1 - i : i];
       }
       mQualStringLength = length;

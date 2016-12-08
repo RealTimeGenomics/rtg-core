@@ -119,7 +119,7 @@ final class LowerBoundEstimator {
       if (b < 1 || b > 4) { // if it's an N or something weird reset
         return 0;
       } else { // otherwise count the bit and stream the hash
-        fill++;
+        ++fill;
         rolling = ((rolling << 2) + b - 1) & mArraySize;
         assert rolling <= mArraySize;
       }
@@ -131,7 +131,7 @@ final class LowerBoundEstimator {
           mOccurs[rolling]++;
         }
       }
-      templatePos++;
+      ++templatePos;
     }
 
     //    System.err.println("end of first; " + templatePos + "fill = " + fill);
@@ -154,7 +154,7 @@ final class LowerBoundEstimator {
       if (b < 1 || b > 4) { // if it's an N or something weird reset
         fill = 0;
       } else { // otherwise count the bit and stream the hash
-        fill++;
+        ++fill;
         rolling = ((rolling << 2) + b - 1) & mArraySize;
       }
 
@@ -173,7 +173,7 @@ final class LowerBoundEstimator {
         //        readfill = 0;
         //        readrolling = 0;
       } else { // otherwise count the bit and stream the hash
-        readfill++;
+        ++readfill;
         readrolling = ((readrolling << 2) + readb - 1) & mArraySize;
       }
 
@@ -208,10 +208,10 @@ final class LowerBoundEstimator {
         mWords[templateLast] = -1; // set the word to -1 in case we try and use it
       }
       if (templatePos < template.length) {
-        templatePos++;
+        ++templatePos;
       }
-      templateLast++;
-      readPos++;
+      ++templateLast;
+      ++readPos;
     }
     //int i = 0;
     for (final int element : mCount) {

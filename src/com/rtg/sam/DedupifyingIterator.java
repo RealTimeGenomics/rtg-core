@@ -136,7 +136,7 @@ public class DedupifyingIterator<T extends ReaderRecord<T> & MateInfo> implement
         if (rec.mRec.disambiguateDuplicate(r.mRec) < 0) {
           mItemsNew.replace(rec);
         }
-        mNumDeduped++;
+        ++mNumDeduped;
       } else {
         mItemsNew.add(rec, true);
       }

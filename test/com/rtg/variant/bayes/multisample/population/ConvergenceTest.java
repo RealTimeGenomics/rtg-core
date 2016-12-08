@@ -35,7 +35,7 @@ public class ConvergenceTest extends TestCase {
     final Hypotheses<?> hyp = new MockHypotheses<>(descr, SimplePossibility.SINGLETON, true, new double[] {0.25, 0.25, 0.25, 0.25}, 0);
     final Random random = new Random(43);
     final int[] counts = new int[4];
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; ++i) {
       final int r = Convergence.error(0.4, 1, hyp, random);
       //System.err.println("r=" + r);
       counts[r]++;
@@ -50,7 +50,7 @@ public class ConvergenceTest extends TestCase {
     final Hypotheses<?> hyp = new MockHypotheses<>(descr, SimplePossibility.SINGLETON, false, AbstractEstimatorTest.uniform(10), 0);
     final Random random = new Random(43);
     final int[] counts = new int[10];
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; ++i) {
       final int r = Convergence.choose(5, hyp, random);
       //System.err.println("r=" + r);
       counts[r]++;
@@ -64,7 +64,7 @@ public class ConvergenceTest extends TestCase {
     final double[] priors = {0.1, 0.2, 0.3, 0.4};
     final Random random = new Random(43);
     final int[] counts = new int[4];
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; ++i) {
       final int r = Convergence.sampleHaploid(priors, random);
       //System.err.println("r=" + r);
       counts[r]++;
@@ -79,7 +79,7 @@ public class ConvergenceTest extends TestCase {
     final Random random = new Random(43);
     final CodeDiploid code = new CodeDiploid(4);
     final int[] counts = new int[10];
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; ++i) {
       final int r = Convergence.sample(priors, code, random);
       //System.err.println("r=" + r);
       counts[r]++;

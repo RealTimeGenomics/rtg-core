@@ -228,7 +228,7 @@ public class SamSingleEndOutputProcessorTest extends AbstractTest {
     "temp files gzipped= ");
     //todo True / true
     try {
-      for (int i = 0; i < numThreads; i++) {
+      for (int i = 0; i < numThreads; ++i) {
         final long padding = params.calculateThreadPadding();
         final long start = i * MAX_COORD / numThreads;
         final long end = (i + 1) * MAX_COORD / numThreads;

@@ -81,7 +81,7 @@ public class EnvironmentHomopolymer extends EnvironmentDecorator {
     final StringBuilder sb = new StringBuilder();
     sb.append("Environment").append(LS);
     sb.append("Template ").append(absoluteTemplatePosition(0)).append("..").append(absoluteTemplatePosition(readLength() - 1)).append(LS);
-    for (int i = -maxShift(); i < readLength() + maxShift(); i++) {
+    for (int i = -maxShift(); i < readLength() + maxShift(); ++i) {
       final int j = absoluteTemplatePosition(i);
       if (j >= 0 && j < templateLength()) {
         sb.append("[").append(i).append("]").append(VALUE_CHARS[template(i)]).append(" ").append(templateStart(i)).append(" ").append(templateEnd(i)).append(LS);
@@ -89,7 +89,7 @@ public class EnvironmentHomopolymer extends EnvironmentDecorator {
     }
     sb.append("Read 0..").append(readLength()).append(LS);
     //System.err.println("readLength()=" + readLength());
-    for (int i = 0; i < readLength(); i++) {
+    for (int i = 0; i < readLength(); ++i) {
       sb.append("[").append(i).append("]").append(VALUE_CHARS[read(i)]).append(" ").append(Utils.realFormat(quality(i), 3)).append(" ").append(readStart(i)).append(" ").append(readEnd(i)).append(LS);
     }
     return sb.toString();

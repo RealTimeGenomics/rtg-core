@@ -29,7 +29,7 @@ public class UnitFactorTest extends TestCase {
     final Factor<?> factor = new UnitFactor<>(hyp, arith, hyp.size());
     assertTrue(hyp == factor.hypotheses());
     assertTrue(arith == factor.arithmetic());
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; ++i) {
       assertEquals(arith.one(), factor.p(i));
     }
 

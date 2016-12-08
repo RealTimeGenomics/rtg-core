@@ -71,7 +71,7 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
     final Factor<?>[] as = new Factor<?>[mFamily.size()];
     as[Family.FATHER_INDEX] = CommonFormulas.createMutableFactor(mFatherHypotheses);
     as[Family.MOTHER_INDEX] = CommonFormulas.createMutableFactor(mMotherHypotheses);
-    for (int i = 0; i < mChildren.size(); i++) {
+    for (int i = 0; i < mChildren.size(); ++i) {
       as[Family.FIRST_CHILD_INDEX + i] = null; //CommonFormulas.hypothesesToVector(mChildren.get(i).hypotheses()); //XXX poss not needed
     }
     return as;
@@ -88,7 +88,7 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
     bsize[Family.MOTHER_INDEX] = mFamily.getMotherDistinctMates();
     models.add(mFather);
     models.add(mMother);
-    for (int i = 0; i < mChildren.size(); i++) {
+    for (int i = 0; i < mChildren.size(); ++i) {
       models.add(mChildren.get(i));
       bsize[Family.FIRST_CHILD_INDEX + i] = 1;
     }
@@ -108,7 +108,7 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
     mFatherMarginal = CommonFormulas.computeQ(as[mSampleIds[Family.FATHER_INDEX]], fatherModelVector, bs[mSampleIds[Family.FATHER_INDEX]]);
     mMotherMarginal = CommonFormulas.computeQ(as[mSampleIds[Family.MOTHER_INDEX]], CommonFormulas.createMutableFactor(mMother), bs[mSampleIds[Family.MOTHER_INDEX]]);
     mChildMarginal = new Factor<?>[mChildren.size()];
-    for (int i = 0; i < mChildMarginal.length; i++) {
+    for (int i = 0; i < mChildMarginal.length; ++i) {
       mChildMarginal[i] = CommonFormulas.computeQ(as[mSampleIds[Family.FIRST_CHILD_INDEX + i]], CommonFormulas.createMutableFactor(mChildren.get(i)), bs[mSampleIds[Family.FIRST_CHILD_INDEX + i]]);
     }
   }
@@ -120,7 +120,7 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
     if (mChildMarginal == null) {
       mChildMarginal = new Factor<?>[mChildren.size()];
     }
-    for (int i = 0; i < mChildren.size(); i++) {
+    for (int i = 0; i < mChildren.size(); ++i) {
       mChildMarginal[i] = addVector(mChildMarginal[i], other.mChildMarginal[i]);
     }
   }
@@ -131,14 +131,14 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
     }
     final PossibilityArithmetic arithmetic = a.arithmetic();
     final MutableFactor<?> mutableFactor = new MutableFactor<>(a.hypotheses(), arithmetic, a.size());
-    for (int i = 0; i < a.size(); i++) {
+    for (int i = 0; i < a.size(); ++i) {
       mutableFactor.set(i, arithmetic.add(a.p(i), arithmetic.poss2Poss(b.p(i), b.arithmetic())));
     }
     return mutableFactor;
   }
   double[] factorToDoubles(Factor<?> fact) {
     final double[] res = new double[fact.size()];
-    for  (int i = 0; i < fact.size(); i++) {
+    for  (int i = 0; i < fact.size(); ++i) {
       res[i] = fact.p(i);
     }
     return res;
@@ -154,7 +154,7 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
     final HypothesisScore mother = mMotherMarginal.hypotheses().size() == 0 ? null : new HypothesisScore(new ArrayGenotypeMeasure(mArithmetic, factorToDoubles(mMotherMarginal), mMotherHypotheses));
     mBest.add(mother);
     boolean anyDenovo = false;
-    for (int i = 0; i < mChildren.size(); i++) {
+    for (int i = 0; i < mChildren.size(); ++i) {
       final HypothesisScore child = mChildMarginal[i].hypotheses().size() == 0 ? null : new HypothesisScore(new ArrayGenotypeMeasure(mArithmetic, factorToDoubles(mChildMarginal[i]), mChildren.get(i).hypotheses()));
       mBest.add(child);
       if (child != null) {
@@ -172,7 +172,7 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
     }
     double sumNips = 0.0;
     boolean equal = true;
-    for (int i = 0; i < mBest.size(); i++) {
+    for (int i = 0; i < mBest.size(); ++i) {
       final HypothesisScore best = mBest.get(i);
       if (best != null) {
         equal &= mReferenceHypothesis == best.hypothesis();
@@ -224,7 +224,7 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
   private double marginalSum(Factor<?> hypothesesVector) {
     final PossibilityArithmetic arithmetic = hypothesesVector.arithmetic();
     double sum = arithmetic.zero();
-    for (int i = 0; i < hypothesesVector.size(); i++) {
+    for (int i = 0; i < hypothesesVector.size(); ++i) {
       sum = arithmetic.add(sum, hypothesesVector.p(i));
     }
     return arithmetic.poss2Ln(sum);
@@ -286,7 +286,7 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
       final int childSize = mChildren.size();
       mD = new Factor<?>[childSize];
       mC = new double[childSize][][];
-      for (int a = 0; a < childSize; a++) {
+      for (int a = 0; a < childSize; ++a) {
         final ModelInterface<?> model = mChildren.get(a);
         final Factor<?> s = CommonFormulas.createMutableFactor(model);
         final BContainer b =  bs[mSampleIds[Family.FIRST_CHILD_INDEX + a]];
@@ -306,7 +306,7 @@ public class FamilyPosteriorFB extends AbstractFamilyPosterior {
     Factor<?>[] calculateA() {
       final int childSize = mChildren.size();
       final Factor<?>[] ret = new Factor<?>[childSize];
-      for (int a = 0; a < childSize; a++) {
+      for (int a = 0; a < childSize; ++a) {
         final ModelInterface<?> model = mChildren.get(a);
         final MendelianAlleleProbability m = mDenovoSubstitutionFactory.getMendelianAlleleProbability(mFatherPloidy, mMotherPloidy, model.hypotheses().ploidy(), mLogDenovoRefPrior, mLogDenovoNonrefPrior, model.reference());
         final Factor<?> av = CommonFormulas.forwardA(mFatherE, mMotherE, model.hypotheses(), a, mC, m);

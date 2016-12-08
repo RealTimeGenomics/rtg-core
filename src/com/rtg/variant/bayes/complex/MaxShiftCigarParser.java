@@ -32,7 +32,7 @@ public class MaxShiftCigarParser {
     int count = 0;
     int currentOffset = 0;
     boolean isFirstAction = true;
-    for (int i = 0; i < cigar.length(); i++) {
+    for (int i = 0; i < cigar.length(); ++i) {
       final char ch = cigar.charAt(i);
       if (Character.isDigit(ch)) {
         count = count * 10 + (ch - '0');

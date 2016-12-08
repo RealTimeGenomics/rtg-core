@@ -312,7 +312,7 @@ public class ActionsValidatorTest extends TestCase {
     // Now try perturbing each integer in the actions array,
     // and check that every change gives a false result from isValid.
     final int len = ActionsHelper.actionsCount(a0);
-    for (int i = 0; i <= ActionsHelper.ACTIONS_START_INDEX + (len - 1) / ActionsHelper.ACTIONS_PER_INT; i++) {
+    for (int i = 0; i <= ActionsHelper.ACTIONS_START_INDEX + (len - 1) / ActionsHelper.ACTIONS_PER_INT; ++i) {
       //System.err.println("\nPerturbing entry a0[" + i + "] = " + a0[i]);
       a0[i]--;
       assertFalse(validator.mErrorMsg, validator.isValid(a0, read, read.length, temp, rc, maxScore));

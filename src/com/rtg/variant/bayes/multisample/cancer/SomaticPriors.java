@@ -35,7 +35,7 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
     assert Exam.assertDistribution(priors);
     final double[] norm = new double[priors.length];
     double sum = 0.0;
-    for (int k = 0; k < priors.length; k++) {
+    for (int k = 0; k < priors.length; ++k) {
       if (k != ref) {
         final double d = priors[k] * mutation;
         norm[k] = d;
@@ -50,7 +50,7 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
     // Each row is normalized
     final double uniform = 1.0 / (size - 1);
     final double[][] initialPriors = new double[size][size];
-    for (int k = 0; k < size; k++) {
+    for (int k = 0; k < size; ++k) {
       Arrays.fill(initialPriors[k], uniform);
       initialPriors[k][k] = 0;
     }
@@ -114,9 +114,9 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
   }
 
   private void updateHaploid() {
-    for (int k = 0; k < mHypotheses.size(); k++) {
+    for (int k = 0; k < mHypotheses.size(); ++k) {
       final double[] mut = mutant(k);
-      for (int i = 0; i < mHypotheses.description().size(); i++) {
+      for (int i = 0; i < mHypotheses.description().size(); ++i) {
         update(k, i, mut[i]);
       }
     }
@@ -125,19 +125,19 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
   private void updateDiploid() {
     final int size = mHypotheses.description().size();
     final double[][] mut = new double[size][];
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       mut[i] = mutant(i);
     }
     final double notLoh = 1.0 - mLoh;
     final Code code = mHypotheses.code();
-    for (int k = 0; k < mHypotheses.size(); k++) {
+    for (int k = 0; k < mHypotheses.size(); ++k) {
       final int a = code.a(k);
       final int b = code.bc(k);
       final double[] mut0 = mut[a];
       final double[] mut1 = mut[b];
-      for (int i = 0; i < mHypotheses.description().size(); i++) {
+      for (int i = 0; i < mHypotheses.description().size(); ++i) {
         final double prob0 = mut0[i] * notLoh;
-        for (int j = 0; j < mHypotheses.description().size(); j++) {
+        for (int j = 0; j < mHypotheses.description().size(); ++j) {
           final double prob1 = mut1[j];
           final int k2 = code.code(i, j);
           update(k, k2, prob0 * prob1);
@@ -150,21 +150,21 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
     final double loh = mLoh * 0.5;
     final int size = mHypotheses.description().size();
     final double[][] mut = new double[size][];
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       mut[i] = mutant(i);
     }
     final Code code = mHypotheses.code();
-    for (int k = 0; k < mHypotheses.size(); k++) {
+    for (int k = 0; k < mHypotheses.size(); ++k) {
       final int c0 = code.a(k);
       final double[] mut0 = mut[c0];
-      for (int j = 0; j < mHypotheses.description().size(); j++) {
+      for (int j = 0; j < mHypotheses.description().size(); ++j) {
         final double prob = mut0[j];
         update(k, code.code(j, j), loh * prob);
       }
 
       final int c2 = code.bc(k);
       final double[] mut2 = mut[c2];
-      for (int j = 0; j < mHypotheses.description().size(); j++) {
+      for (int j = 0; j < mHypotheses.description().size(); ++j) {
         final double prob = mut2[j];
         update(k, code.code(j, j), loh * prob);
       }
@@ -192,10 +192,10 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
   public boolean globalIntegrity() {
     integrity();
     final int size = mHypotheses.description().size();
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       final double[] pr = mInitialPriors[i];
       Exam.assertEquals(size, pr.length);
-      for (int j = 0; j < size; j++) {
+      for (int j = 0; j < size; ++j) {
         final double pv = pr[j];
         Exam.assertTrue(0.0 <= pv && pv <= 1.0 && !Double.isNaN(pv));
       }

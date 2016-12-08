@@ -103,7 +103,7 @@ public class SampleSimulator {
 
     try (VcfWriter vcfOut = new DefaultVcfWriter(header, vcfOutFile, null, FileUtils.isGzipFilename(vcfOutFile), true)) {
       final ReferenceGenome refG = new ReferenceGenome(mReference, sex, mDefaultPloidy);
-      for (long i = 0; i < mReference.numberSequences(); i++) {
+      for (long i = 0; i < mReference.numberSequences(); ++i) {
         final ReferenceSequence refSeq = refG.sequence(mReference.name(i));
         mutateSequence(vcfPopFile, vcfOut, refSeq);
       }
@@ -135,14 +135,14 @@ public class SampleSimulator {
           final List<String> allFreqStr = v.getInfo().get(VcfUtils.INFO_ALLELE_FREQ);
           final double[] dist;
           if (allFreqStr == null) {
-            mDefaultAfCount++;
+            ++mDefaultAfCount;
             final double[] defaultDist = new double[v.getAltCalls().size() + 1];
             Arrays.fill(defaultDist, 1.0); // All alleles are equally likely
             dist = SimulationUtils.cumulativeDistribution(defaultDist);
           } else {
             dist = new double[allFreqStr.size() + 1];
             double ac = 0.0;
-            for (int i = 0; i < allFreqStr.size(); i++) {
+            for (int i = 0; i < allFreqStr.size(); ++i) {
               ac += Double.parseDouble(allFreqStr.get(i));
               dist[i] = ac;
             }
@@ -153,7 +153,7 @@ public class SampleSimulator {
           dist[dist.length - 1] = 1.0; //the reference consumes the rest of the distribution
 
           int variantEnd = lastVariantEnd; // Need to use separate variable while going through the ploidy loop, otherwise we won't make hom variants.
-          for (int i = 0; i < ploidyCount; i++) {
+          for (int i = 0; i < ploidyCount; ++i) {
             if (gt.length() != 0) {
               gt.append(VcfUtils.PHASED_SEPARATOR);
             }
@@ -196,7 +196,7 @@ public class SampleSimulator {
   }
 
   private static int chooseAllele(double[] dist, double d, int size) {
-    for (int j = 0; j < dist.length; j++) {
+    for (int j = 0; j < dist.length; ++j) {
       if (d < dist[j]) {
         if (j < size) {
           return j + 1;

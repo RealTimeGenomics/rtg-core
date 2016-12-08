@@ -119,7 +119,7 @@ public class NeighborJoiningTest extends TestCase {
     s.add("D");
     final int[] counts = new int[VALID.size()];
     //the result is non-deterministic - do enough to get a statistical result.
-    for (int k = 0; k < 100; k++) {
+    for (int k = 0; k < 100; ++k) {
       final NeighborJoining nj = new NeighborJoining(k * 1237L);
       final BinaryTree tree = nj.neighborJoin(s, buildList(d));
       assertNotNull(tree);
@@ -259,8 +259,8 @@ public class NeighborJoiningTest extends TestCase {
         {2, 2, 9},
         {2, 4, 2, 16}
     };
-    for (int i = 0; i < n.length; i++) {
-      for (int j = 0; j < n[i].length; j++) {
+    for (int i = 0; i < n.length; ++i) {
+      for (int j = 0; j < n[i].length; ++j) {
         ma.set(i, j, n[i][j]);
       }
     }
@@ -296,8 +296,8 @@ public class NeighborJoiningTest extends TestCase {
         {2, 2, 9},
         {2, 4, 2, 16}
     };
-    for (int i = 0; i < n.length; i++) {
-      for (int j = 0; j < n[i].length; j++) {
+    for (int i = 0; i < n.length; ++i) {
+      for (int j = 0; j < n[i].length; ++j) {
         ma.set(i, j, n[i][j]);
       }
     }
@@ -336,8 +336,8 @@ public class NeighborJoiningTest extends TestCase {
         {0, 2},
         {0, 0, 0},
     };
-    for (int i = 0; i < n.length; i++) {
-      for (int j = 0; j < n[i].length; j++) {
+    for (int i = 0; i < n.length; ++i) {
+      for (int j = 0; j < n[i].length; ++j) {
         ma.set(i, j, n[i][j]);
       }
     }
@@ -369,7 +369,7 @@ public class NeighborJoiningTest extends TestCase {
   static ArrayList<String> makeNames(final SequencesReader reader) throws IOException {
     final ArrayList<String> nodeNames;
     nodeNames = new ArrayList<>();
-    for (int i = 0; i < reader.numberSequences(); i++) {
+    for (int i = 0; i < reader.numberSequences(); ++i) {
       nodeNames.add(reader.name(i));
     }
     return nodeNames;

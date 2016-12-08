@@ -34,7 +34,7 @@ public class MutableFactor<D extends Description> extends AbstractFactor<D> {
   public MutableFactor(final Hypotheses<D> hypotheses, PossibilityArithmetic arith, final double[] values) {
     super(hypotheses, arith);
     mValues = new double[values.length];
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       mValues[i] = arith.prob2Poss(values[i]);
     }
   }
@@ -56,7 +56,7 @@ public class MutableFactor<D extends Description> extends AbstractFactor<D> {
    */
   public MutableFactor(final Factor<D> factor) {
     this(factor.hypotheses(), factor.arithmetic(), factor.size());
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       set(i, factor.p(i));
     }
   }

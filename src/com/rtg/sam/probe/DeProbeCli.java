@@ -149,7 +149,7 @@ public class DeProbeCli extends LoggedCli {
               currentSequence = record.getReferenceName();
             }
             if (record.getFirstOfPairFlag()) {
-              totalRecords++;
+              ++totalRecords;
               final int ih = MathUtils.unboxNatural(SamUtils.getNHOrIH(record));
               final boolean unique = 1 == ih || !record.getNotPrimaryAlignmentFlag();
               final boolean negative = record.getReadNegativeStrandFlag();
@@ -164,12 +164,12 @@ public class DeProbeCli extends LoggedCli {
               }
 
               if (!mapped) {
-                totalUnmappedReads++;
+                ++totalUnmappedReads;
               } else if (unique) {
                 addMapped(stripped, negative);
               } else {
                 // If not uniquely mapped, accumulate and delay addition to the stats until the end
-                totalAmbiguousRecords++;
+                ++totalAmbiguousRecords;
                 // Include rgid in tag to handle reads mapped as IDs rather than full names
                 final Object rgatt = record.getAttribute(SAMTagUtil.getSingleton().RG);
                 if (rgatt == null && !warnedNoReadGroup) {
@@ -213,7 +213,7 @@ public class DeProbeCli extends LoggedCli {
     final TextTable offsetSummary = new TextTable();
     offsetSummary.addHeaderRow("delta", "+", "-");
     offsetSummary.addSeparator();
-    for (int i = 0; i < posChecker.mPosDiffStats.length; i++) {
+    for (int i = 0; i < posChecker.mPosDiffStats.length; ++i) {
       offsetSummary.addRow(Integer.toString(i - tolerance), Integer.toString(posChecker.mPosDiffStats[i]), Integer.toString(negChecker.mPosDiffStats[tolerance * 2 - i]));
     }
     Diagnostic.userLog(offsetSummary.toString());
@@ -223,7 +223,7 @@ public class DeProbeCli extends LoggedCli {
     final TextTable cigarSummary = new TextTable();
     cigarSummary.addHeaderRow("strand", "length", "X", "I", "D", "S");
     cigarSummary.addSeparator();
-    for (int i = 0; i < PositionAndStrandChecker.MAX_OP_LEN; i++) {
+    for (int i = 0; i < PositionAndStrandChecker.MAX_OP_LEN; ++i) {
       addCigarRow(cigarSummary, "+", posChecker, i);
       addCigarRow(cigarSummary, "-", negChecker, i);
     }
@@ -263,19 +263,19 @@ public class DeProbeCli extends LoggedCli {
   }
 
   private void addMapped(boolean stripped, boolean negative) {
-    mTotalMappedReads++;
+    ++mTotalMappedReads;
     if (stripped) {
-      mTotalStrippedReads++;
+      ++mTotalStrippedReads;
     }
     if (negative) {
-      mTotalMappedNeg++;
+      ++mTotalMappedNeg;
       if (stripped) {
-        mTotalStrippedNeg++;
+        ++mTotalStrippedNeg;
       }
     } else {
-      mTotalMappedPos++;
+      ++mTotalMappedPos;
       if (stripped) {
-        mTotalStrippedPos++;
+        ++mTotalStrippedPos;
       }
     }
   }

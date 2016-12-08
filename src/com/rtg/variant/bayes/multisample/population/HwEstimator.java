@@ -62,7 +62,7 @@ public class HwEstimator implements Estimator {
     // initialise haploid counts to contain population allele counts when using population-priors. It is hard-to-impossible for complex calls.
     final DescriptionCounts dc = hypotheses.getDescriptionCounts();
     if (dc != null) {
-      for (int i = 0; i < haploidCounts.length; i++) {
+      for (int i = 0; i < haploidCounts.length; ++i) {
         haploidCounts[i] += dc.getCount(i);
       }
       haploidTotal += dc.getTotalCount();
@@ -70,7 +70,7 @@ public class HwEstimator implements Estimator {
 
     // TODO we should probably really only include calls from founders (and possibly half-founders), e.g. in order to exclude inherited de-novos from higher in the pedigree
     final Code code = hypotheses.diploid().code();
-    for (int i = 0; i < models.size(); i++) {
+    for (int i = 0; i < models.size(); ++i) {
       final ModelInterface<?> model = models.get(i);
       final HypothesisScore call = calls.getScores()[i];
       if (call == null) { // E.g. for Female on Y chromosome or call from disagreeing hypotheses
@@ -82,7 +82,7 @@ public class HwEstimator implements Estimator {
       final int best = call.hypothesis();
       if (model.haploid()) {
         haploidCounts[best]++;
-        haploidTotal++;
+        ++haploidTotal;
       } else {
         final int a = code.a(best);
         final int b = code.bc(best);
@@ -113,7 +113,7 @@ public class HwEstimator implements Estimator {
 
     //Compute new haploid priors.
     final double[] haploidProb = new double[haploidCounts.length];
-    for (int i = 0; i < haploidCounts.length; i++) {
+    for (int i = 0; i < haploidCounts.length; ++i) {
       haploidProb[i] = (haploidCounts[i] + laplaceCorrection * arith.poss2Prob(haploid.p(i))) / (haploidTotal + laplaceCorrection);
     }
     final double[] haploidPoss = VariantUtils.prob2Poss(haploidProb, arith);
@@ -123,7 +123,7 @@ public class HwEstimator implements Estimator {
     final int n = haploidTotal + 1;
     final int n2 = n * n;
     final double[] diploidProb = new double[diploid.size()];
-    for (int i = 0; i < diploidProb.length; i++) {
+    for (int i = 0; i < diploidProb.length; ++i) {
       final int a = code.a(i);
       final int b = code.bc(i);
 

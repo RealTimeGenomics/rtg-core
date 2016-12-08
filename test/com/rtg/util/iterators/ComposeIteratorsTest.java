@@ -38,7 +38,7 @@ public class ComposeIteratorsTest extends TestCase {
     lists.add(Arrays.asList(6, 7));
     //final Iterator<Integer> iterator = new ComposeIterators<>(lists.iterator(), trans);
     final Iterator<Integer> iterator = Transform.flatten(lists.iterator());
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; ++i) {
       assertTrue("" + i, iterator.hasNext());
       assertEquals(i, iterator.next().intValue());
 
@@ -54,7 +54,7 @@ public class ComposeIteratorsTest extends TestCase {
     lists.add(Arrays.asList(6, 7));
     //final Iterator<Integer> iterator = new ComposeIterators<>(lists.iterator(), trans);
     final Iterator<Integer> iterator = Transform.flatten(lists.iterator(), new Trans());
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; ++i) {
       assertTrue("" + i, iterator.hasNext());
       assertEquals(i, iterator.next().intValue());
 
@@ -80,7 +80,7 @@ public class ComposeIteratorsTest extends TestCase {
     lists.add(new ArrayList<Integer>());
     lists.add(Arrays.asList(0, 1, 2));
     final Iterator<Integer> iterator = Transform.flatten(lists.iterator(), new Trans());
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; ++i) {
       assertTrue("" + i, iterator.hasNext());
       assertEquals(i, iterator.next().intValue());
 

@@ -42,7 +42,7 @@ public abstract class AbstractGenotypeMeasure implements GenotypeMeasure {
     }
     double others = arithmetic().zero();
     final int reference = mHyp.reference();
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       if (i != best && i != reference) {
         others = arithmetic().add(others, measure(i));
       }
@@ -78,7 +78,7 @@ public abstract class AbstractGenotypeMeasure implements GenotypeMeasure {
       return Hypotheses.NO_HYPOTHESIS;
     }
     int best = 0;
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       if (arithmetic().gt(measure(i), measure(best))) {
         best = i;
       }
@@ -110,7 +110,7 @@ public abstract class AbstractGenotypeMeasure implements GenotypeMeasure {
     final StringBuilder sb = new StringBuilder();
     sb.append("AbstractGenotypeMeasure{").append("mBest=").append(mBest).append(" [");
     String join = "";
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       sb.append(join).append(hypotheses().name(i)).append("=").append(measure(i));
       join = ", ";
     }

@@ -174,9 +174,9 @@ public abstract class SamIteratorTask<P extends SingleMappedParams, S extends St
         while (iterator.hasNext()) {
           rec = iterator.next();
           if (validateRecord(rec) && processRecord(rec)) {
-            validRecords++;
+            ++validRecords;
           } else {
-            invalidRecords++;
+            ++invalidRecords;
             if (invalidRecords <= 5) {
               Diagnostic.warning(WarningType.SAM_BAD_FORMAT_WARNING1, rec.getSAMString().trim());
               Diagnostic.userLog("Invalid record: " + rec.getSAMString().trim());
@@ -202,7 +202,7 @@ public abstract class SamIteratorTask<P extends SingleMappedParams, S extends St
           final String refName = rec.getReferenceName();
           if (!refName.equals(lastTemplateName)) {
             if (lastTemplateName != null) {
-              templatesCompleted++;
+              ++templatesCompleted;
               Diagnostic.progress("Reference " + lastTemplateName + " completed (" + templatesCompleted + (outputTotalSequences ? "/" + mNumberTemplateSequences : "") + ")");
               templateNTCompleted += referenceLength;
             }
@@ -242,7 +242,7 @@ public abstract class SamIteratorTask<P extends SingleMappedParams, S extends St
         if (mTemplateName != null) {
           flush(mPreviousStart, mTemplateLength);
           finalPostFlush();
-          templatesCompleted++;
+          ++templatesCompleted;
           Diagnostic.progress("Reference " + mTemplateName + " completed (" + templatesCompleted + (outputTotalSequences ? "/" + mNumberTemplateSequences : "") + ")");
         }
         iterator.close();

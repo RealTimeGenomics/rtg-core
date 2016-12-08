@@ -126,7 +126,7 @@ public class SharedResources {
     SamUtils.addProgramRecord(header, pg);
     if (includeDictionary) {
       final int[] lengths = templateReader.sequenceLengths(0, templateReader.numberSequences());
-      for (int i = 0; i < lengths.length; i++) {
+      for (int i = 0; i < lengths.length; ++i) {
         final SAMSequenceRecord record = new SAMSequenceRecord(templateNames.name(i), lengths[i]);
         header.addSequence(record);
       }

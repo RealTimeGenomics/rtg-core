@@ -187,7 +187,7 @@ public final class AlleleCountsFileReader implements Closeable {
    */
   public AlleleCounts vcfRecordToAlleleCountLine(VcfRecord vcfRecord) {
     if (VcfRecord.MISSING.equals(vcfRecord.getRefCall())) {
-      mWarnings++;
+      ++mWarnings;
       if (mWarnings < 10) {
         Diagnostic.warning("Empty value in reference field not supported: " + vcfRecord.toString());
       }
@@ -209,7 +209,7 @@ public final class AlleleCountsFileReader implements Closeable {
         final ArrayList<String> acValue = info.get(AC_INFO_ID);
 
         if (anValue.size() != 1) {
-          mWarnings++;
+          ++mWarnings;
           if (mWarnings < 10) {
             Diagnostic.warning("INFO field " + AN_INFO_ID + " contains too many values: " + vcfRecord.toString());
           }
@@ -219,7 +219,7 @@ public final class AlleleCountsFileReader implements Closeable {
         try {
           totalAlleleNumber = Integer.parseInt(anValue.get(0));
         } catch (final NumberFormatException nfe) {
-          mWarnings++;
+          ++mWarnings;
           if (mWarnings < 10) {
             Diagnostic.warning("INFO field " + AN_INFO_ID + " not an integer: " + vcfRecord.toString());
           }
@@ -232,13 +232,13 @@ public final class AlleleCountsFileReader implements Closeable {
           Diagnostic.warning("Allele count field length not equal to number of alternate alleles, was " + acValue.size() + ", expected " + vcfRecord.getAltCalls().size());
           return null;
         }
-        for (int i = 0; i < acValue.size(); i++) {
+        for (int i = 0; i < acValue.size(); ++i) {
           try {
             final Integer thisAlleleCount = Integer.parseInt(acValue.get(i));
             countsMap.put(vcfRecord.getAltCalls().get(i), thisAlleleCount);
             totalAllelesSeen += thisAlleleCount;
           } catch (final NumberFormatException nfe) {
-            mWarnings++;
+            ++mWarnings;
             if (mWarnings < 10) {
               Diagnostic.warning("INFO field " + AC_INFO_ID + " contained a non-integer: " + vcfRecord.toString());
             }
@@ -260,7 +260,7 @@ public final class AlleleCountsFileReader implements Closeable {
     final Map<String, Integer> countsMap = new HashMap<>();
 
     final int[] counts = new int[vcfRecord.getAltCalls().size() + 1]; // +1 for the reference allele.
-    for (int i = 0; i < vcfRecord.getNumberOfSamples(); i++) {
+    for (int i = 0; i < vcfRecord.getNumberOfSamples(); ++i) {
       final String gt = vcfRecord.getFormat(VcfUtils.FORMAT_GENOTYPE).get(i);
       for (final int gti : VcfUtils.splitGt(gt)) {
         if (gti != -1) { // to ignore . alleles in GT like ./1 which is valid (e.g. on sex chromosome PAR regions, depending on representation).
@@ -273,7 +273,7 @@ public final class AlleleCountsFileReader implements Closeable {
     }
 
     countsMap.put(vcfRecord.getRefCall(), counts[0]);
-    for (int i = 0; i < vcfRecord.getAltCalls().size(); i++) {
+    for (int i = 0; i < vcfRecord.getAltCalls().size(); ++i) {
       final String allele = vcfRecord.getAltCalls().get(i);
       if (countsMap.containsKey(allele)) {
         duplicateAlleleWarning(allele, vcfRecord);
@@ -286,7 +286,7 @@ public final class AlleleCountsFileReader implements Closeable {
   }
 
   private synchronized void duplicateAlleleWarning(String allele, VcfRecord vcfRecord) {
-    mWarnings++;
+    ++mWarnings;
     if (mWarnings < 10) {
       Diagnostic.warning("Ignoring duplicate allele: " + allele + " in VCF record: " + vcfRecord.toString());
     }

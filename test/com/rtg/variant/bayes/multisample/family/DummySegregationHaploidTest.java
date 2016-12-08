@@ -59,7 +59,7 @@ public class DummySegregationHaploidTest extends TestCase {
     Exam.integrity(score);
 
     //Should have no effect
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       score.increment(code.code(x, x), true);
       Exam.integrity(score);
       score.increment(code.code(y, q), true);
@@ -99,7 +99,7 @@ public class DummySegregationHaploidTest extends TestCase {
     Exam.integrity(score);
 
     //Should have no effect
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       score.increment(code.code(x, y), true);
       Exam.integrity(score);
       score.increment(code.code(y, x), true);

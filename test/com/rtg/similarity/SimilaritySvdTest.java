@@ -82,11 +82,11 @@ public class SimilaritySvdTest extends TestCase {
               svd = new SimilaritySvd(parts.length - 1);
             } else {
               svd.putName(count - 1, parts[0]);
-              for (int i = 1; i < parts.length; i++) {
+              for (int i = 1; i < parts.length; ++i) {
                 svd.put(i - 1, count - 1, Integer.parseInt(parts[i]));
               }
             }
-            count++;
+            ++count;
           }
         }
       }
@@ -104,8 +104,8 @@ public class SimilaritySvdTest extends TestCase {
       assertEquals(30, svd.getSvdRowsLength());
 
       final StringBuilder sb = new StringBuilder();
-      for (int j = 0; j < svd.getSvdRowsLength(); j++) {
-        for (int i = 0; i < 3; i++) {
+      for (int j = 0; j < svd.getSvdRowsLength(); ++j) {
+        for (int i = 0; i < 3; ++i) {
           sb.append(svd.getSvdValue(j, i)).append(StringUtils.TAB);
         }
         sb.append(svd.getSvdName(j)).append(StringUtils.LS);
@@ -123,19 +123,19 @@ public class SimilaritySvdTest extends TestCase {
 
     int expected = 30;
     final int[] rowsleft = new int[30];
-    for (int i = 0; i < rowsleft.length; i++) {
+    for (int i = 0; i < rowsleft.length; ++i) {
       rowsleft[i] = i;
     }
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 20; ++i) {
       final int r = random.nextInt(expected);
       final int row = rowsleft[r];
       rowsleft[r] = rowsleft[expected - 1];
 
-      for (int j = 0; j < 30; j++) {
+      for (int j = 0; j < 30; ++j) {
         svd.put(row, j, 0);
         svd.put(j, row, 0);
       }
-      expected--;
+      --expected;
 
       svd.decompose(3);
       assertEquals("seed=" + seed + " row=" + row, 3, svd.getSvdDimension());
@@ -151,19 +151,19 @@ public class SimilaritySvdTest extends TestCase {
 
     int expected = 30;
     final int[] rowsleft = new int[30];
-    for (int i = 0; i < rowsleft.length; i++) {
+    for (int i = 0; i < rowsleft.length; ++i) {
       rowsleft[i] = i;
     }
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 20; ++i) {
       final int r = random.nextInt(expected);
       final int row = rowsleft[r];
       rowsleft[r] = rowsleft[expected - 1];
 
-      for (int j = 0; j < 30; j++) {
+      for (int j = 0; j < 30; ++j) {
         svd.put(row, j, 42);
         svd.put(j, row, 42);
       }
-      expected--;
+      --expected;
 
       svd.decompose(3);
       assertEquals("seed=" + seed + " row=" + row, 3, svd.getSvdDimension());

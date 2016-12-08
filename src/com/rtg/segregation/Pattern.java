@@ -85,10 +85,10 @@ public class Pattern extends IntegralAbstract {
   /** Fast lookup cache for the transformations to the patterns by a flip. */
   static final int[][] FLIP = new int[NUMBER_FLIPS][SIZE_SET];
   static {
-    for (int i = 0; i < NUMBER_FLIPS; i++) {
-      for (int j = 0; j < SIZE_SET; j++) {
+    for (int i = 0; i < NUMBER_FLIPS; ++i) {
+      for (int j = 0; j < SIZE_SET; ++j) {
         int t = 0;
-        for (int k = 0; k < NUMBER_BITS; k++) {
+        for (int k = 0; k < NUMBER_BITS; ++k) {
           t |= set(bit(j, k), FLIP_TABLE[i][k]);
         }
         FLIP[i][j] = t;
@@ -99,7 +99,7 @@ public class Pattern extends IntegralAbstract {
   /** Cache of Pattern objects given their integer values. */
   private static final Pattern[] PATTERNS = new Pattern[SIZE_SET];
   static {
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; ++i) {
       PATTERNS[i] = new Pattern(i);
     }
   }
@@ -340,7 +340,7 @@ public class Pattern extends IntegralAbstract {
     Exam.assertEquals(16, PATTERNS.length);
     Exam.assertEquals(4, FLIP_TABLE.length);
     Exam.assertEquals(4, FLIP.length);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       Exam.assertEquals(4, FLIP_TABLE[i].length);
       Exam.assertEquals(16, FLIP[i].length);
     }

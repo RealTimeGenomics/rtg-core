@@ -127,12 +127,12 @@ public final class Mask extends ImplementHashFunction {
     assert masks.size() == mNumberMasks;
     final SingleMask[] ma = masks.toArray(new SingleMask[mNumberMasks]);
     mReadMasks = new ExtractRead[mNumberMasks];
-    for (int i = 0; i < mNumberMasks; i++) {
+    for (int i = 0; i < mNumberMasks; ++i) {
       mReadMasks[i] = new ExtractRead(ma[i], mReadCall, i);
     }
     //System.err.println("set masks HashFunction:" + System.identityHashCode(this) + " mTemplateCall:" + System.identityHashCode(mTemplateCall));
     mTemplateMasks = new ExtractTemplate[mNumberMasks];
-    for (int i = 0; i < mNumberMasks; i++) {
+    for (int i = 0; i < mNumberMasks; ++i) {
       mTemplateMasks[i] = new ExtractTemplate(ma[i], mTemplateCall, i);
     }
   }
@@ -143,7 +143,7 @@ public final class Mask extends ImplementHashFunction {
       return;
     }
 
-    for (int i = 0; i < mNumberMasks; i++) {
+    for (int i = 0; i < mNumberMasks; ++i) {
       //System.err.println("readAll mask i=" + i);
       mReadMasks[i].readCall(readId, v0, v1);
     }
@@ -156,7 +156,7 @@ public final class Mask extends ImplementHashFunction {
       return;
     }
 
-    for (int i = 0; i < mNumberMasks; i++) {
+    for (int i = 0; i < mNumberMasks; ++i) {
       //System.err.println("templateAll mask i=" + i);
       mTemplateMasks[i].templateCall(endPosition, v0, v1);
     }
@@ -182,7 +182,7 @@ public final class Mask extends ImplementHashFunction {
     Exam.assertTrue(mNumberMasks > 0);
     Exam.assertTrue(mReadMasks != null && mReadMasks.length == mNumberMasks);
     Exam.assertTrue(mTemplateMasks == null ? "null" : "length=" + mTemplateMasks.length + " numberMasks=" + mNumberMasks, mTemplateMasks != null && mTemplateMasks.length == mNumberMasks);
-    for (int i = 0; i < mNumberMasks; i++) {
+    for (int i = 0; i < mNumberMasks; ++i) {
       Exam.assertTrue(mReadMasks[i] != null);
       Exam.assertTrue(mTemplateMasks[i] != null && mTemplateMasks[i].mTemplateCall == mTemplateCall);
     }

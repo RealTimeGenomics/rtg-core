@@ -71,7 +71,7 @@ public class SamValidatorTest extends TestCase {
     subunit.mTotalMatches = 5;
     subunit.mTotalMismatches = 6;
     subunit.mUnmappedRecords = 1;
-    for (int i = 0; i < subunit.mPairOrientations.length; i++) {
+    for (int i = 0; i < subunit.mPairOrientations.length; ++i) {
       subunit.mPairOrientations[i] = (i + 1) * 7;
     }
     subunit.mConsensus = 8;
@@ -91,7 +91,7 @@ public class SamValidatorTest extends TestCase {
     assertEquals(12, total.mTotalMismatches);
     assertEquals(2, total.mUnmappedRecords);
     assertEquals(4, total.mPairOrientations.length);
-    for (int i = 0; i < total.mPairOrientations.length; i++) {
+    for (int i = 0; i < total.mPairOrientations.length; ++i) {
       assertEquals((i + 1) * 7 * 2, total.mPairOrientations[i]);
     }
     assertEquals(16, total.mConsensus);
@@ -134,7 +134,7 @@ public class SamValidatorTest extends TestCase {
 
   private byte[] stringToDna(final String s) {
     final byte[] b = new byte[s.length()];
-    for (int i = 0; i < s.length(); i++) {
+    for (int i = 0; i < s.length(); ++i) {
       b[i] = (byte) DNA.valueOf(String.valueOf(s.charAt(i))).ordinal();
     }
     return b;

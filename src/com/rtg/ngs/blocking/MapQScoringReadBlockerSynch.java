@@ -37,7 +37,7 @@ public class MapQScoringReadBlockerSynch extends MapQScoringReadBlocker {
   public MapQScoringReadBlockerSynch(final int count, final int threshold, final String title) {
     super(count, threshold, title);
     mThreadLocks = new Object[NUMBER_OF_THREAD_LOCKS];
-    for (int i = 0; i < mThreadLocks.length; i++) {
+    for (int i = 0; i < mThreadLocks.length; ++i) {
       mThreadLocks[i] = new Object();
     }
   }

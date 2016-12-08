@@ -120,7 +120,7 @@ public class CnvProductTask extends ParamsTask<CnvProductParams, NoStatistics> {
       } else {
         currentStartCoverage[pos]++;
         mSumLengths += rec.getReadLength();
-        mRecordCount++;
+        ++mRecordCount;
       }
     }
     fillBucket(currentStartCoverage, ret, currentSequenceId);
@@ -132,10 +132,10 @@ public class CnvProductTask extends ParamsTask<CnvProductParams, NoStatistics> {
       return;
     }
     int bucketIndex = 0;
-    for (int i = 0, j = 0; i < startCoverage.length; i++, j++) {
+    for (int i = 0, j = 0; i < startCoverage.length; ++i, ++j) {
       if (j == mParams.bucketSize()) {
         j = 0;
-        bucketIndex++;
+        ++bucketIndex;
       }
       if (startCoverage[i] > 0) {
         buckets[sequenceId][bucketIndex] += mParams.filterStartPositions() ? 1 : startCoverage[i];

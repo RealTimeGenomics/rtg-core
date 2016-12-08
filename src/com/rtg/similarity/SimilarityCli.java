@@ -263,7 +263,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       final Taxonomy taxonomy = TaxonomyUtils.loadTaxonomy(reader);
       final PrereadNamesInterface names = reader.names();
       long seen = -1;
-      for (int k = 0; k < sdfIdToSimId.length; k++) {
+      for (int k = 0; k < sdfIdToSimId.length; ++k) {
         final int taxonId = seqNameToTaxonIdMap.get(names.name(k));
         sdfIdToSimId[k] = idMap.getId(taxonId);
         if (sdfIdToSimId[k] > seen) {
@@ -314,10 +314,10 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
           }
         }
       } else {
-        for (int i = 0; i < params.sequences().size(); i++) {
+        for (int i = 0; i < params.sequences().size(); ++i) {
           final Pair<String, List<SequenceParams>> pair = params.sequences().get(i);
           Diagnostic.progress("Input for index starting label \"" + pair.getA() +  "\" (" + (i + 1) + "/" + params.sequences().size() + ")");
-          for (int j = 0; j < pair.getB().size(); j++) {
+          for (int j = 0; j < pair.getB().size(); ++j) {
             Diagnostic.progress("Input for index label \"" + pair.getA() +  "\" starting directory (" + (j + 1) + "/" + pair.getB().size() + ")");
             final ISequenceParams seqParams = pair.getB().get(j);
             makeBuild(index, params.build(), i, null).execLoop(seqParams, buffer);
@@ -325,10 +325,10 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
           }
         }
         index.freeze();
-        for (int i = 0; i < params.sequences().size(); i++) {
+        for (int i = 0; i < params.sequences().size(); ++i) {
           final Pair<String, List<SequenceParams>> pair = params.sequences().get(i);
           Diagnostic.progress("Input for post-freeze index starting label \"" + pair.getA() +  "\" (" + (i + 1) + "/" + params.sequences().size() + ")");
-          for (int j = 0; j < pair.getB().size(); j++) {
+          for (int j = 0; j < pair.getB().size(); ++j) {
             Diagnostic.progress("Input for post-freeze index label \"" + pair.getA() +  "\" starting directory (" + (j + 1) + "/" + pair.getB().size() + ")");
             final ISequenceParams seqParams = pair.getB().get(j);
             makeBuild(index, params.build(), i, null).execLoop(seqParams, buffer);
@@ -451,7 +451,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
         names = makeNames(params.build().sequences().reader());
       } else {
         names = new ArrayList<>();
-        for (int i = 0; i < params.sequences().size(); i++) {
+        for (int i = 0; i < params.sequences().size(); ++i) {
           names.add(params.sequences().get(i).getA());
         }
       }
@@ -486,8 +486,8 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       // Do principle component analysis
       final OneShotTimer svdTimer = new OneShotTimer("Ph_SVD_out");
       final SimilaritySvd simMatrix = new SimilaritySvd(matrix.length());
-      for (int j = 0; j < matrix.length(); j++) {
-        for (int i = 0; i < matrix.length(); i++) {
+      for (int j = 0; j < matrix.length(); ++j) {
+        for (int i = 0; i < matrix.length(); ++i) {
           simMatrix.put(i, j, (long) matrix.get(i, j)); // matrix value are integers?
         }
         simMatrix.putName(j, names.get(j));
@@ -496,8 +496,8 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       svdTimer.stopLog();
 
       try {
-        for (int j = 0; j < simMatrix.getSvdRowsLength(); j++) {
-          for (int i = 0; i < simMatrix.getSvdDimension(); i++) {
+        for (int j = 0; j < simMatrix.getSvdRowsLength(); ++j) {
+          for (int i = 0; i < simMatrix.getSvdDimension(); ++i) {
             pcaOut.append(Utils.realFormat(simMatrix.getSvdValue(j, i), 4)).append(StringUtils.TAB);
           }
           pcaOut.append(simMatrix.getSvdName(j)).append(StringUtils.LS);
@@ -517,7 +517,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
   static ArrayList<String> makeNames(final SequencesReader reader) throws IOException {
     final ArrayList<String> nodeNames;
     nodeNames = new ArrayList<>();
-    for (int i = 0; i < reader.numberSequences(); i++) {
+    for (int i = 0; i < reader.numberSequences(); ++i) {
       nodeNames.add(reader.name(i));
     }
     return nodeNames;
@@ -595,13 +595,13 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
             if (numberErrorLines < 10) {
               Diagnostic.error(ErrorType.INFO_ERROR, "The specified SDF, \"" + currentFile.getPath() + "\", does not exist.");
             }
-            numberErrorLines++;
+            ++numberErrorLines;
             continue;
           } else if (!currentFile.isDirectory()) {
             if (numberErrorLines < 10) {
               Diagnostic.error(ErrorType.INFO_ERROR, "The specified file, \"" + currentFile.getPath() + "\", is not an SDF.");
             }
-            numberErrorLines++;
+            ++numberErrorLines;
             continue;
           }
           final List<SequenceParams> paramsList;

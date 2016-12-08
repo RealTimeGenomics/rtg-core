@@ -78,7 +78,7 @@ public class IndexSimple extends IndexBase {
       mHash.set(mInitialHashes, hash);
       mValue.set(mInitialHashes, value);
     }
-    mInitialHashes++;
+    ++mInitialHashes;
   }
 
   @Override
@@ -105,7 +105,7 @@ public class IndexSimple extends IndexBase {
     if (mHashVector != null) {
       final OneShotTimer bitv = new OneShotTimer("Index_bitVector");
       //set bit vector
-      for (long i = 0; i < mNumValues; i++) {
+      for (long i = 0; i < mNumValues; ++i) {
         final long hash = mHash.get(i);
         mHashVector.set(hash);
       }
@@ -131,32 +131,32 @@ public class IndexSimple extends IndexBase {
       assert key >= 0 && key < mInitialPositionLength - 1;
       if (key > lastKey && lastKey > 0) {
         //System.err.println("bucket 1 count=" + count);
-        mBucketCount0++;
+        ++mBucketCount0;
         assert count >= 1; // : "count=" + count + " i=" + i;
         mBucketCount1 += count;
         mBucketCount2 += count * count;
         count = 0;
       }
-      for (long j = lastKey + 1; j <= key; j++) {
+      for (long j = lastKey + 1; j <= key; ++j) {
         mInitialPosition.set(j, i);
       }
       lastKey = key;
       long l = 0;
       //TODO avoid calling mHash.getAsUnsignedLong(i) twice at end of this loop
       while (i < mNumValues && hash == mHash.get(i)) {
-        l++;
-        i++;
+        ++l;
+        ++i;
       }
       count += l;
     }
     if (count > 0) {
       //System.err.println("bucket 2 count=" + count);
-      mBucketCount0++;
+      ++mBucketCount0;
       assert count >= 1 : count;
       mBucketCount1 += count;
       mBucketCount2 += count * count;
     }
-    for (long j = lastKey + 1; j < mInitialPositionLength; j++) {
+    for (long j = lastKey + 1; j < mInitialPositionLength; ++j) {
       mInitialPosition.set(j, mNumValues);
     }
   }
@@ -170,15 +170,15 @@ public class IndexSimple extends IndexBase {
     for (long i = 0; i < mInitialHashes;) {
       final long hash = mHash.get(i);
       int freq = 1;
-      i++;
+      ++i;
       while (i < mInitialHashes && hash == mHash.get(i)) {
-        i++;
-        freq++;
+        ++i;
+        ++freq;
       }
       if (numUsed >= freqDist.length) {
         if (freqDist.length == MAX_FREQ_DIST_SIZE) {
           freqHist = SparseFrequencyHistogram.merge(freqHist, SparseFrequencyHistogram.fromIndividualFrequencies(freqDist, numUsed));
-          mergeCount++;
+          ++mergeCount;
           numUsed = 0;
         } else {
           int length = freqDist.length * 3 / 2;
@@ -191,7 +191,7 @@ public class IndexSimple extends IndexBase {
       freqDist[numUsed++] = freq;
     }
     freqHist = SparseFrequencyHistogram.merge(freqHist, SparseFrequencyHistogram.fromIndividualFrequencies(freqDist, numUsed));
-    mergeCount++;
+    ++mergeCount;
     Diagnostic.developerLog("IndexSimple " + mergeCount + " Frequency Histogram Merges");
     return freqHist;
   }
@@ -208,8 +208,8 @@ public class IndexSimple extends IndexBase {
       while (i < mInitialHashes && hash == mHash.get(i)) {
         mHash.set(k, hash);
         mValue.set(k, mValue.get(i));
-        k++;
-        i++;
+        ++k;
+        ++i;
       }
       final long nh = k - prevk;
       if (nh > mMaxRawHashCount) {
@@ -236,7 +236,7 @@ public class IndexSimple extends IndexBase {
         mHashCount1 += nh;
         mHashCount2 += nh * nh;
         mNumValues += nh;
-        mNumHashes++;
+        ++mNumHashes;
       }
     }
     mHashCount0 = mNumHashes;
@@ -260,13 +260,13 @@ public class IndexSimple extends IndexBase {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
-    mSearchCount++;
+    ++mSearchCount;
 
     if (!mHashVector.get(hash)) {
-      mBitVectorMissCount++;
+      ++mBitVectorMissCount;
       return;
     }
-    mBitVectorHitCount++;
+    ++mBitVectorHitCount;
 
     final long start = position(hash);
     final long compressedHash = compressHash(hash);
@@ -275,22 +275,22 @@ public class IndexSimple extends IndexBase {
     assert low <= high; // : "i=" + i + " low=" + low + " high=" + high;
     final long found = SearchUtils.binarySearch(mHash, low, high - 1, compressedHash);
     if (found < 0) {
-      mMissCount++;
+      ++mMissCount;
       return;
     }
-    mInitialHitCount++;
-    mFinalHitCount++;
+    ++mInitialHitCount;
+    ++mFinalHitCount;
     assert compressedHash == mHash.get(found) : found;
     assert hash == decompressHash(start, mHash.get(found)) : found;
     //System.out.println("found = " + found + " qkey=" + hash + " start=" + start + " skey=" + mHash.get(found));
     long i = found - 1;
     while (i >= low && mHash.get(i) == compressedHash) {
-      i--;
+      --i;
     }
     long j = i + 1;
     while (j < high && mHash.get(j) == compressedHash && finder.found(mValue.get(j))) {
-      mTotalFinds++;
-      j++;
+      ++mTotalFinds;
+      ++j;
     }
   }
 
@@ -299,7 +299,7 @@ public class IndexSimple extends IndexBase {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
-    for (long l = 0; l < mNumValues; l++) {
+    for (long l = 0; l < mNumValues; ++l) {
       final long hash = mHash.get(l);
       final long value = mValue.get(l);
       finder.found(hash, value);
@@ -323,19 +323,19 @@ public class IndexSimple extends IndexBase {
     if (mState != IndexState.FROZEN) {
       throw new IllegalStateException();
     }
-    mSearchCount++;
+    ++mSearchCount;
 
     if (!mHashVector.get(hash)) {
       //assert mInitialPosition.binarySearch(hash) < 0 : "hash=" + hash + LS + toString();
-      mBitVectorMissCount++;
+      ++mBitVectorMissCount;
       return -1;
     }
-    mBitVectorHitCount++;
+    ++mBitVectorHitCount;
     final long found = binarySearch(hash);
     if (found < 0) {
-      mMissCount++;
+      ++mMissCount;
     } else {
-      mInitialHitCount++;
+      ++mInitialHitCount;
     }
     //assert found < 0 || found >= 0 && found < mNumValues;
     return found;
@@ -353,9 +353,9 @@ public class IndexSimple extends IndexBase {
       return index;
     }
     while (true) {
-      index--;
+      --index;
       if (index < 0 || getHash(index) != hash) {
-        index++;
+        ++index;
         break;
       }
     }
@@ -424,7 +424,7 @@ public class IndexSimple extends IndexBase {
   @Override
   public boolean globalIntegrity() {
     integrity();
-    for (long l = 0; l < mNumHashes; l++) {
+    for (long l = 0; l < mNumHashes; ++l) {
       Exam.assertTrue(mHashBits == 64 || mHash.get(l) >>> mHashBits == 0);
     }
     if (mState == IndexState.FROZEN) {
@@ -433,13 +433,13 @@ public class IndexSimple extends IndexBase {
       //hashes sorted
       Exam.assertTrue(ArrayUtils.isSorted(mHash, mNumHashes));
       Exam.assertTrue(ArrayUtils.isSorted(mInitialPosition, 0, mInitialPositionLength));
-      for (long l = 0; l < mNumValues; l++) {
+      for (long l = 0; l < mNumValues; ++l) {
         Exam.assertTrue(mValue.get(l) >= 0);
       }
     } else {
       //testing before freezing, hash array will be unsorted
       //overflow, bitvector and initial pointer are unused
-      for (long l = 0; l < mInitialHashes; l++) {
+      for (long l = 0; l < mInitialHashes; ++l) {
         Exam.assertTrue(mValue.get(l) >= 0);
       }
     }

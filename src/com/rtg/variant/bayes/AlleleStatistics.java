@@ -49,7 +49,7 @@ public abstract class AlleleStatistics<T extends AlleleStatistics<T>> {
    * @param separator between entries
    */
   public final void output(StringBuilder sb, char separator) {
-    for (int i = 0; i < mDescription.size(); i++) {
+    for (int i = 0; i < mDescription.size(); ++i) {
       final long c = MathUtils.round(count(i));
       if (c == 0) {
         continue;
@@ -70,7 +70,7 @@ public abstract class AlleleStatistics<T extends AlleleStatistics<T>> {
   @Override
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < mDescription.size(); i++) {
+    for (int i = 0; i < mDescription.size(); ++i) {
       sb.append(" [").append(i).append("]  ");
       final long c = MathUtils.round(count(i));
       final String fc = Long.toString(c);

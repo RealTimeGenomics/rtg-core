@@ -165,7 +165,7 @@ public class SamResultsSansFilterTest extends AbstractNanoTest {
           mNano.check("srsf-unmated", contents, false);
 
           // now check that the listener has been updated correctly.
-          for (int read = 0; read < numReads; read++) {
+          for (int read = 0; read < numReads; ++read) {
             final int expect;
             switch (read) {
               case 1:

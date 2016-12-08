@@ -84,7 +84,7 @@ public class EvidenceComplexTest extends TestCase {
   }
 
   private static void checkPosterior(ModelInterface<?> m, Hyp... hyp) {
-    for (int i = 0 ; i < m.size(); i++) {
+    for (int i = 0 ; i < m.size(); ++i) {
       final String msg = i + ":" + m.name(i);
       //System.err.println(msg + ":" + m.posteriorLn(i));
       assertEquals(msg, hyp[i].getA(), m.name(i));
@@ -97,7 +97,7 @@ public class EvidenceComplexTest extends TestCase {
     final AlignmentMatch mTT = HypothesesComplexTest.match("TT", 5);
 
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 20; ++i) {
       ml.add(mA);
       ml.add(mTT);
     }
@@ -135,7 +135,7 @@ public class EvidenceComplexTest extends TestCase {
     final AlignmentMatch mA = HypothesesComplexTest.match("A", 20);
 
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-    for (int k = 0; k < 20; k++) {
+    for (int k = 0; k < 20; ++k) {
       ml.add(mA);
     }
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
@@ -262,7 +262,7 @@ public class EvidenceComplexTest extends TestCase {
   public void testErrorZeroWhenAllMatchIsSameAsReference() throws Exception {
     final AlignmentMatch mG = HypothesesComplexTest.match("G", 20);
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       ml.add(mG);
     }
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
@@ -305,7 +305,7 @@ public class EvidenceComplexTest extends TestCase {
     final AlignmentMatch mA = HypothesesComplexTest.match("A", 20);
     final AlignmentMatch mTT = HypothesesComplexTest.match("TT", 20);
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-    for (int k = 0; k < 20; k++) {
+    for (int k = 0; k < 20; ++k) {
       ml.add(mA);
       ml.add(mTT);
     }
@@ -337,7 +337,7 @@ public class EvidenceComplexTest extends TestCase {
     final AlignmentMatch mTT = HypothesesComplexTest.match("TTTTTTTTTT", 20);
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
     ml.add(mTT);
-    for (int k = 0; k < 20; k++) {
+    for (int k = 0; k < 20; ++k) {
       ml.add(mA);
     }
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);
@@ -382,10 +382,10 @@ public class EvidenceComplexTest extends TestCase {
   }
 
   public void testRandom() throws Exception {
-    for (int j = 0; j < 10; j++) {
+    for (int j = 0; j < 10; ++j) {
       final VariantParams vp = HypothesesComplexTest.getVariantParams(RANDOM.nextDouble() / 10.0, RANDOM.nextDouble() / 10.0, RANDOM.nextDouble() / 10.0);
       final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-      for (int k = 0; k < RANDOM.nextInt(500); k++) {
+      for (int k = 0; k < RANDOM.nextInt(500); ++k) {
         final AlignmentMatch rm = randomMatch();
         ml.add(rm);
       }
@@ -399,7 +399,7 @@ public class EvidenceComplexTest extends TestCase {
       }
       m.freeze();
       assertEquals(0, statistics.placedUnmappedCount());
-      for (int i = 0 ; i < m.size(); i++) {
+      for (int i = 0 ; i < m.size(); ++i) {
         assertFalse(Double.isInfinite(m.posteriorLn0(i)));
         assertFalse(Double.isNaN(m.posteriorLn0(i)));
       }
@@ -410,11 +410,11 @@ public class EvidenceComplexTest extends TestCase {
   public void testFromConvergence() throws InvalidParamsException, IOException {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; ++i) {
       ml.add(HypothesesComplexTest.matchi(20));
     }
     final AlignmentMatch cc = HypothesesComplexTest.match("AA", 20);
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 15; ++i) {
       ml.add(cc);
     }
     ml.add(HypothesesComplexTest.match("TGCTAA", 20));
@@ -445,11 +445,11 @@ public class EvidenceComplexTest extends TestCase {
   public void testFromConvergence2() throws InvalidParamsException, IOException {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; ++i) {
       ml.add(HypothesesComplexTest.matchi(20));
     }
     final AlignmentMatch cc = HypothesesComplexTest.match("AA", 20);
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 15; ++i) {
       ml.add(cc);
     }
     ml.add(HypothesesComplexTest.match("TGCTAA", 20));
@@ -480,7 +480,7 @@ public class EvidenceComplexTest extends TestCase {
   public void testBug() throws InvalidParamsException, IOException {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
 
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 9; ++i) {
       ml.add(HypothesesComplexTest.matchi(20));
     }
     ml.add(HypothesesComplexTest.match("TGATA", 20));
@@ -692,7 +692,7 @@ public class EvidenceComplexTest extends TestCase {
     final ModelInterface<?> m = getModel(hyp, statistics);
     m.increment(new EvidenceComplex(hyp, match, HypothesesComplexTest.COMPLEX_TEMPLATE, vp, getChooser()));
     m.freeze();
-    for (int i = 0 ; i < m.size(); i++) {
+    for (int i = 0 ; i < m.size(); ++i) {
       assertFalse(Double.isInfinite(m.posteriorLn0(i)));
       assertFalse(Double.isNaN(m.posteriorLn0(i)));
     }

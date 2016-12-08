@@ -52,7 +52,7 @@ public class DummyMateInfoReaderRecordTest extends TestCase {
   }
   public void test() {
     final SAMFileHeader header = new SAMFileHeader();
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; ++i) {
       header.addSequence(new SAMSequenceRecord("" + i, i + 20));
     }
     final SAMRecord sam1 = new SAMRecord(header);

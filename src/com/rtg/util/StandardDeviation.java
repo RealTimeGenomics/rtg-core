@@ -26,7 +26,7 @@ public class StandardDeviation {
    * @param value the value of the new sample
    */
   public void addSample(long value) {
-    mNumSamples++;
+    ++mNumSamples;
     mSum += value;
     mSumSquared += Math.pow(value, 2);
   }

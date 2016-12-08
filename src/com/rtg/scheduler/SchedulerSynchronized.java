@@ -50,7 +50,7 @@ public class SchedulerSynchronized<J extends JobId<J>> implements Scheduler<J>, 
     }
 
     int decrement() {
-      mRefCount--;
+      --mRefCount;
       assert mRefCount >= 0;
       return mRefCount;
     }
@@ -243,7 +243,7 @@ public class SchedulerSynchronized<J extends JobId<J>> implements Scheduler<J>, 
     assert Util.checkOrder(id, from, -1);
     final Result[] arguments = new Result[from.size()];
     final Iterator<J> it = from.iterator();
-    for (int i = 0; it.hasNext(); i++) {
+    for (int i = 0; it.hasNext(); ++i) {
       final J argid = it.next();
       final Result argv;
       if (argid == null) {

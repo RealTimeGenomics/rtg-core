@@ -36,7 +36,7 @@ public class ReadBlockerSyncTest extends ReadBlockerTest {
     assertEquals(1, b.getCount(0));
     b.reset(0);
     assertEquals(0, b.getCount(0));
-    for (int i = 0; i < 65535; i++) {
+    for (int i = 0; i < 65535; ++i) {
       b.increment(0);
     }
     final MemoryPrintStream ps = new MemoryPrintStream();

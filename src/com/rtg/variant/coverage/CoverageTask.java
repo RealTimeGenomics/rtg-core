@@ -94,7 +94,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
         sb.append(",");
       }
       sb.append(metaString);
-      stringsOutput++;
+      ++stringsOutput;
     }
     return sb.toString();
   }
@@ -212,7 +212,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
           }
 
           // get the next range
-          rangeIndex++;
+          ++rangeIndex;
           range = rangeIndex < ranges.size() ? ranges.get(rangeIndex) : null;
           mStatistics.setRange(sequenceName, range);
 
@@ -247,7 +247,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
           mStatistics.updateCoverageHistogram(nonSmoothCov, mReferenceSequenceIndex != null && base == DnaUtils.UNKNOWN_RESIDUE, minCoverage);
         }
         cl.step();
-        currentTemplatePosition++;
+        ++currentTemplatePosition;
       }
 
       recCounts.incrementCounts(mCircularBuffer);
@@ -295,9 +295,9 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     CoverageSmoothingWindow(int smoothWindowSize) throws IOException {
       mPos = mInfo.start();
       mSmoothWindowSize = smoothWindowSize;
-      for (int i = mPos; i < mPos + mSmoothWindowSize + 1 && i < mInfo.end(); i++) {
+      for (int i = mPos; i < mPos + mSmoothWindowSize + 1 && i < mInfo.end(); ++i) {
         mCoverageSum += getCoverageForPosition(i);
-        mNumInDaSum++;
+        ++mNumInDaSum;
       }
     }
     @Override
@@ -308,13 +308,13 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
     protected void step() throws IOException {
       if (mPos + mSmoothWindowSize + 1 < mInfo.end()) {
         mCoverageSum += getCoverageForPosition(mPos + mSmoothWindowSize + 1);
-        mNumInDaSum++;
+        ++mNumInDaSum;
       }
       if (mPos - mSmoothWindowSize >= mInfo.start()) {
         mCoverageSum -= getCoverageForPosition(mPos - mSmoothWindowSize);
-        mNumInDaSum--;
+        --mNumInDaSum;
       }
-      mPos++;
+      ++mPos;
     }
   }
 
@@ -406,7 +406,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
         mReferenceBytes = new byte[mInfo.chunkSize()];
         mParams.genome().reader().read(mReferenceSequenceIndex, mReferenceBytes, mChunkStart, mChunkEnd - mChunkStart);
       }
-      mChunkNumber++;
+      ++mChunkNumber;
       final Iterator<CoverageReaderRecord> it = mCircularBuffer.recordsOverlap(mChunkStart, mChunkEnd);
       while (it.hasNext()) {
         final CoverageReaderRecord crr = it.next();
@@ -418,7 +418,7 @@ public class CoverageTask extends ParamsTask<CoverageParams, CoverageStatistics>
   }
 
   private void addBitSet(int start, int ih, double multiplier, BitSet coverageBitSet) {
-    for (int j = 0; j < coverageBitSet.length(); j++) {
+    for (int j = 0; j < coverageBitSet.length(); ++j) {
       if (coverageBitSet.get(j)) {
         final int index = start + j - mChunkStart;
         if (index >= 0 && index < mChunkCov.length) {

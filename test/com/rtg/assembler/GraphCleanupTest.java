@@ -25,7 +25,7 @@ public class GraphCleanupTest extends TestCase {
     assertEquals(7, deleted);
     final boolean[]  isDeleted = {true, false, false, false, false, true, true, true, true, true, true};
     assertEquals(isDeleted.length, graph.numberContigs());
-    for (long i = 1; i <= graph.numberContigs(); i++) {
+    for (long i = 1; i <= graph.numberContigs(); ++i) {
       assertEquals(isDeleted[(int) i - 1], graph.contigDeleted(i));
     }
   }

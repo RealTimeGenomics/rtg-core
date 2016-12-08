@@ -60,7 +60,7 @@ public class StatisticsTest extends TestCase {
   public void test3() {
     final Statistics stats = new Statistics();
     long sum = 0L;
-    for (int i = 100; i >= 0; i--) {
+    for (int i = 100; i >= 0; --i) {
       sum += i;
       stats.addSample(i);
       //assertEquals(2.138, stats.standardDeviation(), 0.001);

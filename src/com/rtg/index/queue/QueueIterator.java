@@ -83,14 +83,14 @@ public class QueueIterator extends IntegralAbstract {
       step(mNext);
     }
     mHash = mMemory.get(mCurrent) | mRadixShifted;
-    mCurrent++;
+    ++mCurrent;
 
     if (mCurrent == mLast) {
       assert mNext >= 0;
       step(mNext);
     }
     mId = mMemory.get(mCurrent);
-    mCurrent++;
+    ++mCurrent;
     mOK = true;
     return true;
   }

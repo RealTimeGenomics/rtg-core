@@ -58,8 +58,8 @@ public class InExactHashFunctionTest extends AbstractHashFunctionTest {
     final InExactHashFunction hf = (InExactHashFunction) getHashFunction(windowSize, bits);
     hf.integrity();
     final Set<Long> al = new HashSet<>();
-    for (int i = 0; i < codes.length - windowSize; i++) {
-      for (int j = i; j < i + windowSize - 1; j++) {
+    for (int i = 0; i < codes.length - windowSize; ++i) {
+      for (int j = i; j < i + windowSize - 1; ++j) {
         hf.hashStep(codes[j]);
         hf.integrity();
       }

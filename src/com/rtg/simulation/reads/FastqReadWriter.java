@@ -86,13 +86,13 @@ public class FastqReadWriter implements ReadWriter {
     }
     writeSequence(mTotal + " " + name + " 2", data, qual, length);
     mExpectLeft = !mExpectLeft;
-    mTotal++;
+    ++mTotal;
   }
 
   @Override
   public void writeRead(String name, byte[] data, byte[] qual, int length) throws IOException {
     writeSequence(mTotal + " " + name, data, qual, length);
-    mTotal++;
+    ++mTotal;
   }
 
   private void writeSequence(String name, byte[] data, byte[] qual, int length) throws IOException {

@@ -182,7 +182,7 @@ public class GenomeSimulatorTest extends AbstractCliTest {
     assertEquals(100000, reader.maxLength());
     assertEquals(100000, reader.minLength());
     final long[] residueCounts = reader.residueCounts();
-    for (int i = 1; i < 5; i++) {
+    for (int i = 1; i < 5; ++i) {
       assertTrue(residueCounts[i] >= 24000);
       assertTrue(residueCounts[i] <= 26000);
     }

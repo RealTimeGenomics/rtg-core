@@ -135,10 +135,10 @@ public class ScoreMatrixCG extends ScoreMatrix {
     final int thisRowOffset = rowOffset(row);
     final int offset = thisRowOffset - rowOffset(row - 1);
 
-    for (int j = 0; j <= lastCol; j++) {
+    for (int j = 0; j <= lastCol; ++j) {
       // delete: we sum the probabilities over all gap sizes
       double del = mArith.zero();
-      for (int gapSize = gapStart; gapSize <= gapEnd; gapSize++) {
+      for (int gapSize = gapStart; gapSize <= gapEnd; ++gapSize) {
         final int prevCol = j - (gapSize - offset);
         if (0 <= prevCol && prevCol < mWidth) {
           final double from = calculateOpenDelete(row - 1, prevCol);
@@ -150,7 +150,7 @@ public class ScoreMatrixCG extends ScoreMatrix {
 
       // match or mismatch: we sum the probabilities over all gap sizes
       double mm = mArith.zero();
-      for (int gapSize = gapStart; gapSize <= gapEnd; gapSize++) {
+      for (int gapSize = gapStart; gapSize <= gapEnd; ++gapSize) {
         final int prevCol = j - (gapSize - offset) - 1;
         //        final byte te = mEnv.template(thisRowOffset + j);
         if (0 <= prevCol && prevCol < mWidth) {
@@ -215,7 +215,7 @@ public class ScoreMatrixCG extends ScoreMatrix {
   @Override
   public boolean integrity() {
     final boolean result = super.integrity();
-    for (int gap = 0; gap < 2; gap++) {
+    for (int gap = 0; gap < 2; ++gap) {
       // check that we don't have any columns with no numbers in them
       Exam.assertTrue(Math.abs(mParams.gapStart(gap)) < mEnv.maxShift());
       Exam.assertTrue(Math.abs(mParams.gapEnd(gap)) < mEnv.maxShift());

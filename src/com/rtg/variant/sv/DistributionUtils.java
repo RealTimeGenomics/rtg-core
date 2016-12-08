@@ -59,7 +59,7 @@ public final class DistributionUtils {
   static Distribution distribution1(final int lo, final int hi, final double rate, final double mean, final double stdDev) {
     final int diameter = hi - lo;
     final double[] distr = new double[diameter];
-    for (int i = 0; i < diameter; i++) {
+    for (int i = 0; i < diameter; ++i) {
       final int j = i + lo;
       final double diff = mean - j;
       final double x = diff / stdDev;
@@ -81,7 +81,7 @@ public final class DistributionUtils {
   static Distribution distribution2(final int lo, final int hi, final double rate, final double mean, final double stdDev) {
     final int diameter = hi - lo;
     final double[] distr = new double[diameter];
-    for (int i = 0; i < diameter; i++) {
+    for (int i = 0; i < diameter; ++i) {
       final int j = i + lo;
       final double diff = mean - j;
       final double x = -diff / stdDev;
@@ -100,7 +100,7 @@ public final class DistributionUtils {
     final int lo = b.lo();
     final int diameter = b.hi() - lo;
     final double[] distr = new double[diameter];
-    for (int i = 0; i < diameter; i++) {
+    for (int i = 0; i < diameter; ++i) {
       final double d = a - b.get(i + lo);
       final double e;
       if (d < 0.0) {
@@ -129,7 +129,7 @@ public final class DistributionUtils {
     final int hi = a.hi();
     final int diameter = hi - lo;
     final double[] distr = new double[diameter];
-    for (int i = lo; i < hi; i++) {
+    for (int i = lo; i < hi; ++i) {
       distr[i - lo] = a.get(i) + b;
     }
     return new DistributionArray(lo, distr);
@@ -148,7 +148,7 @@ public final class DistributionUtils {
     assert lo == b.lo();
     assert hi == b.hi() : hi + ":" + b.hi();
     final double[] distr = new double[diameter];
-    for (int i = lo; i < hi; i++) {
+    for (int i = lo; i < hi; ++i) {
       distr[i - lo] = a.get(i) + b.get(i);
     }
     return new DistributionArray(lo, distr);
@@ -167,7 +167,7 @@ public final class DistributionUtils {
     assert lo == b.lo();
     assert hi == b.hi();
     final double[] distr = new double[diameter];
-    for (int i = lo; i < hi; i++) {
+    for (int i = lo; i < hi; ++i) {
       distr[i - lo] = a.get(i) * b.get(i);
     }
     return new DistributionArray(lo, distr);

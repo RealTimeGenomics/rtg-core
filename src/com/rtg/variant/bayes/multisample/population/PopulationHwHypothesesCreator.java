@@ -100,7 +100,7 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
 
       while (acr.next()) {
         final AlleleCounts alleleCounts = acr.getCurrent();
-        totalCount++;
+        ++totalCount;
 
         final String referenceName = acr.getCurrentReference();
 
@@ -111,7 +111,7 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
 
         maxRefLength = Math.max(maxRefLength, alleleCounts.refLength());
         if (!validLength) {
-          skippedDueToLength++;
+          ++skippedDueToLength;
           continue;
         }
 
@@ -140,7 +140,7 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
 
           final HaploidDiploidHypotheses<HypothesesPrior<Description>> newHyp = createHapDipHypotheses(HypothesesNone.SINGLETON, mHaploid.defaultHypotheses(c.getReferenceIndex()), mDiploid.defaultHypotheses(c.getReferenceIndex()), c, hwEstimator);
 
-          loadedCount++;
+          ++loadedCount;
           final HashMap<Integer, HaploidDiploidHypotheses<HypothesesPrior<Description>>> current;
           if (mMap.containsKey(referenceName)) {
             current = mMap.get(referenceName);
@@ -166,7 +166,7 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
    */
   public static DescriptionCounts getDescriptionCounts(DescriptionComplex description, int reference) {
     final DescriptionCounts dc = new DescriptionCounts(description.size(), reference);
-    for (int i = 0; i < description.size(); i++) {
+    for (int i = 0; i < description.size(); ++i) {
       dc.increment(i, description.match(i).alleleCount());
     }
     return dc;
@@ -218,12 +218,12 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
     double total = 0;
     // First pass pull out the probabilities and total so we can normalize
     // If we know the priors are already normalized we can skip this step and maybe operate directly in possibility space
-    for (int i = 0; i < priorProb.length; i++) {
+    for (int i = 0; i < priorProb.length; ++i) {
       priorProb[i] = arith.poss2Prob(hypotheses.p(i));
       total += priorProb[i];
     }
     final double hapCorrection = novelty / (total - priorProb[reference]);
-    for (int i = 0; i < priorProb.length; i++) {
+    for (int i = 0; i < priorProb.length; ++i) {
       priorProb[i] = (i == reference) ? newRefProb : (hapCorrection * priorProb[i]);
     }
     return new HypothesesPrior<>(hypotheses.description(), arith, VariantUtils.prob2Poss(priorProb, arith), haploid, reference);
@@ -270,13 +270,13 @@ public class PopulationHwHypothesesCreator implements SiteSpecificPriors {
         } else { // within start to end so find bounds
           min = mid - 1;
           while (min >= 0 && list.get(min).position() >= start) {
-            min--;
+            --min;
           }
           max = mid + 1;
           while (max < list.size() && list.get(max).position() < end) {
-            max++;
+            ++max;
           }
-          for (int i = min + 1; i < max; i++) {
+          for (int i = min + 1; i < max; ++i) {
             acs.add(list.get(i));
           }
           return acs;

@@ -23,7 +23,7 @@ public class PacBioStatisticsTest extends TestCase {
 
   }
   void inc(PacBioStatistics stats, PacBioStatistics.Stat s, int amount) {
-    for (int i = 0; i < amount; i++) {
+    for (int i = 0; i < amount; ++i) {
       stats.increment(s);
     }
   }

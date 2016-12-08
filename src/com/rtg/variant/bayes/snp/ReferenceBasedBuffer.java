@@ -115,8 +115,8 @@ public class ReferenceBasedBuffer<D> extends IntegralAbstract {
     } else {
       res = make(mBase);
     }
-    mBase++;
-    mCurrent++;
+    ++mBase;
+    ++mCurrent;
     if (mCurrent == mBuffer.length) {
       mCurrent = 0;
     }
@@ -177,7 +177,7 @@ public class ReferenceBasedBuffer<D> extends IntegralAbstract {
   @Override
   public void toString(final StringBuilder sb) {
     sb.append("Buffer length=").append(mBuffer.length).append(" base=").append(mBase).append(" current=").append(mCurrent).append(LS);
-    for (int i = 0; i < mBuffer.length; i++) {
+    for (int i = 0; i < mBuffer.length; ++i) {
       if (i == mCurrent) {
         sb.append(">>>>").append(LS);
       }

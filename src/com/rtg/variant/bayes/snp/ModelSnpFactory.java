@@ -30,7 +30,7 @@ public class ModelSnpFactory extends ModelCommonFactory<Description, HypothesesS
   public ModelSnpFactory(final GenomePriorParams params, final boolean haploid, final AlleleBalanceProbability alleleBalance) {
     super(alleleBalance);
     mHypothesisUnknown = new HypothesesSnp(LogApproximatePossibility.SINGLETON, params, haploid, Hypotheses.NO_HYPOTHESIS);
-    for (int i = 0; i < DescriptionSnp.SINGLETON.size(); i++) {
+    for (int i = 0; i < DescriptionSnp.SINGLETON.size(); ++i) {
       mHypothesesCache.add(new HypothesesSnp(LogApproximatePossibility.SINGLETON, params, haploid, i));
     }
   }

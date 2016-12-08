@@ -24,7 +24,7 @@ public class DummySequenceComplexityTest extends TestCase {
       @Override
       protected byte[] encodeString(final String str) {
         final byte[] b = new byte[str.length()];
-        for (int i = 0; i < str.length(); i++) {
+        for (int i = 0; i < str.length(); ++i) {
           b[i] = (byte) str.charAt(i);
         }
         return b;
@@ -33,7 +33,7 @@ public class DummySequenceComplexityTest extends TestCase {
       @Override
       protected double complexity(final byte[] b, int offset) {
         final int[] c = new int[26];
-        for (int i = offset; i < b.length && i - offset < regionLength(); i++) {
+        for (int i = offset; i < b.length && i - offset < regionLength(); ++i) {
           c[b[i] - (byte) 'a']++;
         }
         double r = 0.0;
@@ -60,7 +60,7 @@ public class DummySequenceComplexityTest extends TestCase {
     } catch (IllegalArgumentException iae) {
       // expected
     }
-    for (int i = 1; i <= 20; i++) {
+    for (int i = 1; i <= 20; ++i) {
       create(i);
     }
   }

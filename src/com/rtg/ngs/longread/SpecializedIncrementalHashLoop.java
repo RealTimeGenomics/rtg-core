@@ -70,7 +70,7 @@ public class SpecializedIncrementalHashLoop extends SearchIncrementalHashLoop {
 
     final long maxSequenceEver = reader.numberSequences();
     long totalLength = 0;
-    for (long seq = startSequence; region.isInRange(seq) && seq < maxSequenceEver; seq++) {
+    for (long seq = startSequence; region.isInRange(seq) && seq < maxSequenceEver; ++seq) {
       ProgramState.checkAbort();
       //System.err.println("seq=" + seq + " " +  reader.currentSequenceId() + " " + reader.getClass());
       final int fullLength = reader.length(seq);
@@ -89,7 +89,7 @@ public class SpecializedIncrementalHashLoop extends SearchIncrementalHashLoop {
       next(seq, BidirectionalFrame.FORWARD);
       //System.err.println("limit=" + limit + " phase=" + phase + " length=" + length + " codeIncrement=" + codeIncrement);
       mFunction.reset();
-      for (int j = 0; j < length; j++) {
+      for (int j = 0; j < length; ++j) {
         //System.err.println("j=" + j);
         final byte b = BidirectionalFrame.FORWARD.code(byteBuffer, length, j);
         final int c = b - 1;

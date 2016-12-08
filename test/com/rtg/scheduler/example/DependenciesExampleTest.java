@@ -38,7 +38,7 @@ public class DependenciesExampleTest extends AbstractDependenciesTest<ExampleJob
     //System.err.println(allIds);
     final int numberChunks = 5;
     final JobType[] values = JobType.values();
-    for (int i = 0; i < numberChunks; i++) {
+    for (int i = 0; i < numberChunks; ++i) {
       for (final JobType ty : values) {
         assertTrue("i=" + i + " ty=" + ty, allIds.contains(new ExampleJobId(numberChunks, i, ty)));
       }
@@ -85,7 +85,7 @@ public class DependenciesExampleTest extends AbstractDependenciesTest<ExampleJob
     int i = 0;
     for (final Object frid : from) {
       assertTrue(id + ">" + from.toString(), exp[i].equals(frid));
-      i++;
+      ++i;
     }
   }
 }

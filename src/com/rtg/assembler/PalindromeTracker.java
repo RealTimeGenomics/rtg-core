@@ -22,7 +22,7 @@ import com.rtg.assembler.graph.Graph;
 public class PalindromeTracker {
   Set<Long> mSet = new HashSet<>();
   PalindromeTracker(Graph graph) {
-    for (long i = 1; i < graph.numberContigs() + 1; i++) {
+    for (long i = 1; i < graph.numberContigs() + 1; ++i) {
       if (graph.contigDeleted(i)) {
         continue;
       }

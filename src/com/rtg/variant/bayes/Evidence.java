@@ -53,7 +53,7 @@ public abstract class Evidence extends IntegralAbstract implements EvidenceInter
   public boolean globalIntegrity() {
     integrity();
     double sum = 0.0;
-    for (int i = 0; i < mDescription.size(); i++) {
+    for (int i = 0; i < mDescription.size(); ++i) {
       final double p = probability(i);
       Exam.assertTrue(0.0 <= p && p <= 1.0 && !Double.isNaN(p));
       sum += p;
@@ -71,7 +71,7 @@ public abstract class Evidence extends IntegralAbstract implements EvidenceInter
     sb.append(" notMap=").append(Utils.realFormat(mapError(), 3));
     sb.append(LS);
     final int pad = mDescription.maxLength();
-    for (int i = 0; i < mDescription.size(); i++) {
+    for (int i = 0; i < mDescription.size(); ++i) {
       sb.append(" ");
       sb.append(StringUtils.padLeft(mDescription.name(i), pad));
       sb.append(" ");

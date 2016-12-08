@@ -73,7 +73,7 @@ public class SuperCigarUnrollerTest extends TestCase {
 //
 //  private String getSpace(int key) {
 //    final StringBuilder sb = new StringBuilder();
-//    for (int i = 0; i < key; i++) {
+//    for (int i = 0; i < key; ++i) {
 //      sb.append(' ');
 //    }
 //    return sb.toString();

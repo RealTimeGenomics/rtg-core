@@ -326,7 +326,7 @@ public abstract class AbstractGappedRegionTest<T extends AbstractGappedRegion<T>
     assertEquals(hi, gr1.lastBucket());
     final long b = gr1.bucket();
     assertTrue(low <= b && b <= hi);
-    for (int i = -5; i < 3; i++) {
+    for (int i = -5; i < 3; ++i) {
       assertEquals("i=" + i + " b=" + b + " bi=" + gr1.bucket(i), b, gr1.bucket(i));
     }
     assertTrue(b != gr1.bucket(3));

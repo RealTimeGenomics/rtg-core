@@ -32,7 +32,7 @@ public class IteratorHelperTest extends TestCase {
 
     @Override
     protected void step() {
-      mIndex++;
+      ++mIndex;
     }
 
     @Override

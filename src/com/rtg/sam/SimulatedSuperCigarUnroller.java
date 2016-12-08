@@ -75,7 +75,7 @@ public class SimulatedSuperCigarUnroller extends SuperCigarParser {
   @Override
   protected byte getReadDelta(int pos) throws BadSuperCigarException {
     // We don't actually have a read delta so improvise
-    mReadDeltaPos--;
+    --mReadDeltaPos;
     final byte res;
     if (mIsReverse) {
       final int readPos = mSdfRead.length - mReadPos - 1;
@@ -85,7 +85,7 @@ public class SimulatedSuperCigarUnroller extends SuperCigarParser {
       res = DNA.complement(mSdfRead[readPos]);
       /*
       System.out.println(DnaUtils.bytesToSequenceIncCG(mSdfRead));
-      for (int i = 0; i < readPos; i++) {
+      for (int i = 0; i < readPos; ++i) {
         System.out.print(" ");
       }
         System.out.println("^");

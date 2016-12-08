@@ -63,7 +63,7 @@ public class RegionUtilsTest extends TestCase {
     assertFalse(r.isInRegion(10));
     assertFalse(r.isInRegion(Integer.MAX_VALUE));
     assertFalse(r.isInRegion(Integer.MIN_VALUE));
-    for (int i = 1; i < 10; i++) {
+    for (int i = 1; i < 10; ++i) {
       assertTrue(r.isInRegion(i));
     }
   }
@@ -159,17 +159,17 @@ public class RegionUtilsTest extends TestCase {
         assertEquals(5, map.size());
         Region r = map.get("seq1");
         assertNotNull(r);
-        for (int i = 0; i <= 3; i++) {
+        for (int i = 0; i <= 3; ++i) {
           assertFalse(r.isInRegion(i));
         }
-        for (int i = 4; i <= 6; i++) {
+        for (int i = 4; i <= 6; ++i) {
           assertTrue(r.isInRegion(i));
         }
-        for (int i = 7; i <= 13; i++) {
+        for (int i = 7; i <= 13; ++i) {
           assertFalse(r.isInRegion(i));
         }
         assertTrue(r.isInRegion(14));
-        for (int i = 15; i <= 20; i++) {
+        for (int i = 15; i <= 20; ++i) {
           assertFalse(r.isInRegion(i));
         }
         assertFalse(r.isInRegion(Integer.MAX_VALUE));
@@ -185,14 +185,14 @@ public class RegionUtilsTest extends TestCase {
         assertNotNull(r);
         assertFalse(r.isInRegion(0));
         assertTrue(r.isInRegion(1));
-        for (int i = 2; i <= 6; i++) {
+        for (int i = 2; i <= 6; ++i) {
           assertFalse(r.isInRegion(i));
         }
         assertFalse(r.isInRegion(Integer.MAX_VALUE));
         assertFalse(r.isInRegion(Integer.MIN_VALUE));
         r = map.get("seq4");
         assertNotNull(r);
-        for (int i = 1; i <= 4; i++) {
+        for (int i = 1; i <= 4; ++i) {
           assertFalse(r.isInRegion(i));
         }
         assertTrue(r.isInRegion(5));
@@ -215,68 +215,68 @@ public class RegionUtilsTest extends TestCase {
 
   public void testFindGermlineDeletesUnderMean() {
     Region r = RegionUtils.findGermlineDeletesUnderMean(new int[] {10, 10, 10, 0, 0, 10, 10, 10, 0, 0, 0}, 3.0, EmptyRegion.EMPTY_REGION, false);
-    for (int i = 1; i <= 3; i++) {
+    for (int i = 1; i <= 3; ++i) {
       assertFalse(r.isInRegion(i));
     }
-    for (int i = 4; i <= 5; i++) {
+    for (int i = 4; i <= 5; ++i) {
       assertTrue(r.isInRegion(i));
     }
-    for (int i = 6; i <= 8; i++) {
+    for (int i = 6; i <= 8; ++i) {
       assertFalse(r.isInRegion(i));
     }
-    for (int i = 9; i <= 11; i++) {
+    for (int i = 9; i <= 11; ++i) {
       assertTrue(r.isInRegion(i));
     }
     r = RegionUtils.findGermlineDeletesUnderMean(new int[] {3, 3, 1, 0, 0}, 3.0, EmptyRegion.EMPTY_REGION, false);
-    for (int i = 1; i <= 2; i++) {
+    for (int i = 1; i <= 2; ++i) {
       assertFalse(r.isInRegion(i));
     }
-    for (int i = 3; i <= 5; i++) {
+    for (int i = 3; i <= 5; ++i) {
       assertTrue(r.isInRegion(i));
     }
     r = RegionUtils.findGermlineDeletesUnderMean(new int[] {3, 3, 1, 1, 2}, 3.0, EmptyRegion.EMPTY_REGION, false);
-    for (int i = 1; i <= 5; i++) {
+    for (int i = 1; i <= 5; ++i) {
       assertFalse(r.isInRegion(i));
     }
   }
 
   public void testFindGermlineDeletesOverMean() {
     Region r = RegionUtils.findGermlineDeletesOverMean(new int[] {9, 9, 9, 9, 9, 100, 100, 5, 5, 5, 5, 5, 5, 5, 5, 100, 100, 100}, 3.0, EmptyRegion.EMPTY_REGION, false);
-    for (int i = 1; i <= 5; i++) {
+    for (int i = 1; i <= 5; ++i) {
       assertFalse(r.isInRegion(i));
     }
-    for (int i = 6; i <= 7; i++) {
+    for (int i = 6; i <= 7; ++i) {
       assertTrue(r.isInRegion(i));
     }
-    for (int i = 8; i <= 15; i++) {
+    for (int i = 8; i <= 15; ++i) {
       assertFalse(r.isInRegion(i));
     }
-    for (int i = 16; i <= 18; i++) {
+    for (int i = 16; i <= 18; ++i) {
       assertTrue(r.isInRegion(i));
     }
     assertFalse(r.isInRegion(19));
     r = RegionUtils.findGermlineDeletesOverMean(new int[] {9, 9, 9, 9, 9, 100, 100, 5, 5, 5, 5, 5, 5, 5, 5}, 3.0, EmptyRegion.EMPTY_REGION, false);
-    for (int i = 1; i <= 4; i++) {
+    for (int i = 1; i <= 4; ++i) {
       assertFalse(r.isInRegion(i));
     }
-    for (int i = 5; i <= 7; i++) {
+    for (int i = 5; i <= 7; ++i) {
       assertTrue(r.isInRegion(i));
     }
-    for (int i = 8; i <= 15; i++) {
+    for (int i = 8; i <= 15; ++i) {
       assertFalse(r.isInRegion(i));
     }
     r = RegionUtils.findGermlineDeletesOverMean(new int[] {3, 3, 1, 1, 2}, 3.0, EmptyRegion.EMPTY_REGION, false);
-    for (int i = 1; i <= 5; i++) {
+    for (int i = 1; i <= 5; ++i) {
       assertFalse(r.isInRegion(i));
     }
   }
 
   public void testNonEmptyIgnoreRegion() {
     final Region r = RegionUtils.findGermlineDeletesUnderMean(new int[] {10, 10, 10, 0, 0, 10, 10, 10, 0, 0, 0}, 3.0, new SimpleCnvRegion(6, 9), false);
-    for (int i = 1; i <= 8; i++) {
+    for (int i = 1; i <= 8; ++i) {
       assertFalse(r.isInRegion(i));
     }
-    for (int i = 9; i <= 11; i++) {
+    for (int i = 9; i <= 11; ++i) {
       assertTrue(r.isInRegion(i));
     }
   }

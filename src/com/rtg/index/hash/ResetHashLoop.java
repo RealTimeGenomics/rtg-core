@@ -75,7 +75,7 @@ public abstract class ResetHashLoop extends HashLoop {
     final long maxSequenceEver = reader.numberSequences();
     long totalLength = 0;
     //System.err.println("start=" + start + " end=" + end + " stepSize=" + stepSize + " step=" + step + " codeIncrement=" + codeIncrement);
-    for (long seq = startSequence; seq < maxSequenceEver && region.isInRange(seq); seq++) {
+    for (long seq = startSequence; seq < maxSequenceEver && region.isInRange(seq); ++seq) {
       //System.err.println("seq=" + seq);
       final int currentLength = reader.length(seq);
       final int startPos = region.getReferenceStart(seq, padding);
@@ -96,12 +96,12 @@ public abstract class ResetHashLoop extends HashLoop {
           final int phase = frame.phase();
           final int limit = limit0 - phase;
           boolean cont = false;
-          for (int j = 0, s = 0; j <= limit; j += step, s++) {
+          for (int j = 0, s = 0; j <= limit; j += step, ++s) {
             ProgramState.checkAbort();
             //System.err.println("j=" + j);
             mFunction.reset();
             long hash = 0L;
-            for (int kk = 0, k = j; kk < mWindowSize; kk++, k += codeIncrement) {
+            for (int kk = 0, k = j; kk < mWindowSize; ++kk, k += codeIncrement) {
               //System.err.println("kk=" + kk);
               final byte b = frame.code(byteBuffer, length, k);
               final int c = b - firstCode;
@@ -129,7 +129,7 @@ public abstract class ResetHashLoop extends HashLoop {
           end();
         }
 
-        internalId++;
+        ++internalId;
       }
       endSequence();
     }
@@ -139,7 +139,7 @@ public abstract class ResetHashLoop extends HashLoop {
   private long reverseHash(final byte[] byteBuffer, final Frame frame, final int j, final int codeIncrement, final int length, final int firstCode) {
     mFunction.reset();
     long hash = 0L;
-    for (int kk = 0, k = (j + mWindowSize - 1) * codeIncrement; kk < mWindowSize; kk++, k -= codeIncrement) {
+    for (int kk = 0, k = (j + mWindowSize - 1) * codeIncrement; kk < mWindowSize; ++kk, k -= codeIncrement) {
       final byte b = frame.code(byteBuffer, length, k);
       final int c = b - firstCode;
       hash = mFunction.hashStep((byte) (3 - c));

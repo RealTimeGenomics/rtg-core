@@ -257,7 +257,7 @@ public class SingleEndTempFileWriterTest extends TestCase {
         boolean result;
         w.setClipRegion(new HashingRegion(1, 2));
         result = w.alignmentResult(0, false, 1000);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; ++i) {
           result = w.alignmentResult(0, false, 1 + 4 * i);
         }
         assertTrue(result);
@@ -265,7 +265,7 @@ public class SingleEndTempFileWriterTest extends TestCase {
         result = w.alignmentResult(1, false, 1000);
         assertTrue(result);
         w.setClipRegion(new HashingRegion(0, 2));
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 10; ++i) {
           result = w.alignmentResult(0, false, 1 + 4 * i);
         }
         assertFalse(result);
@@ -333,10 +333,10 @@ public class SingleEndTempFileWriterTest extends TestCase {
     final File inDir = FileUtils.createTempDir("reads", "ngs", mDir);
 
     final StringBuilder reads3 = new StringBuilder();
-    for (int i = 1; i < 2051; i++) {
+    for (int i = 1; i < 2051; ++i) {
       reads3.append(">r").append(i).append(LS).append("cgt").append(TSTR).append(TSTR).append(TSTR).append(TSTR).append(TSTR);
     }
-    for (int i = 2051; i < 2100; i++) {
+    for (int i = 2051; i < 2100; ++i) {
       reads3.append(">r").append(i).append(LS).append(TSTR).append(TSTR).append(TSTR).append(TSTR).append(TSTR).append(TSTR);
     }
 
@@ -369,10 +369,10 @@ public class SingleEndTempFileWriterTest extends TestCase {
         w.initialiseAlignments(outStream, blocker);
 //        w.initialiseUnmapped(outUnmappedStream, false);
         w.nextTemplateId(0);
-        for (int i = 0; i < 2050; i++) {
+        for (int i = 0; i < 2050; ++i) {
           w.alignmentResultUnfiltered(i, false, 1);
         }
-        for (int i = 2050; i < 2099; i++) {
+        for (int i = 2050; i < 2099; ++i) {
           w.alignmentResultUnfiltered(i, false, 0);
         }
         listener.calculateStatistics(false, false);

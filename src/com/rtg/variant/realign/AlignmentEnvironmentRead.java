@@ -65,11 +65,11 @@ public final class AlignmentEnvironmentRead extends AbstractAlignmentEnvironment
     final byte[] quality = sam.getRecalibratedQuality();
     if (quality.length == 0) {
       final double qDef = VariantUtils.phredToProb(params.qDefault());
-      for (int i = 0; i < ret.length; i++) {
+      for (int i = 0; i < ret.length; ++i) {
         ret[i] = qDef;
       }
     } else {
-      for (int i = 0; i < ret.length; i++) {
+      for (int i = 0; i < ret.length; ++i) {
         ret[i] = VariantUtils.phredToProb(quality[i + clippedStart]);
       }
     }

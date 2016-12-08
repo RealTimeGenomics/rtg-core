@@ -65,7 +65,7 @@ public class PairedEndMapStatistics extends AbstractStatistics implements MapSta
    * Update the special both arms unmapped count.
    */
   public void incrementBothUnmapped() {
-    mBothUnmapped++;
+    ++mBothUnmapped;
   }
 
   private static String percentString(double num) {
@@ -93,15 +93,15 @@ public class PairedEndMapStatistics extends AbstractStatistics implements MapSta
     sb.append(ARM_HEADER).append(StringUtils.LS);
 
     final StringBuilder tsb = new StringBuilder();
-    for (int i = HEADER_LEFT.length(); i < formatLength; i++) {
+    for (int i = HEADER_LEFT.length(); i < formatLength; ++i) {
       tsb.append(" ");
     }
     tsb.append(HEADER_LEFT);
-    for (int i = HEADER_RIGHT.length(); i <= formatLength; i++) {
+    for (int i = HEADER_RIGHT.length(); i <= formatLength; ++i) {
       tsb.append(" ");
     }
     tsb.append(HEADER_RIGHT);
-    for (int i = HEADER_BOTH.length(); i <= formatLength; i++) {
+    for (int i = HEADER_BOTH.length(); i <= formatLength; ++i) {
       tsb.append(" ");
     }
     tsb.append(HEADER_BOTH);

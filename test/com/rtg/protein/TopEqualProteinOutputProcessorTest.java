@@ -113,7 +113,7 @@ public class TopEqualProteinOutputProcessorTest extends TestCase {
       final OutputProcessor p = OutputFilter.PROTEIN_TOPEQUAL.makeProcessor(params, null);
       try {
         assertTrue(p instanceof TopEqualProteinOutputProcessor);
-        for (int i = 0; i < 257; i++) {
+        for (int i = 0; i < 257; ++i) {
           p.process(0, "+1", 0, 0, 0, 0);
         }
         p.process(0, "+1", 8, 0, 0, 0);

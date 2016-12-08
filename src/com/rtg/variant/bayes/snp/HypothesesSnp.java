@@ -38,12 +38,12 @@ public final class HypothesesSnp extends HypothesesCommon<Description> {
 
   private void initPriors(final GenomePriorParams params, int ref) {
     double total = 0.0;
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       final String name = name(i);
       final double prob = params.getPriorDistr(name)[ref];
       total += prob;
     }
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       final String name = name(i);
       final double prob = params.getPriorDistr(name)[ref] / total;
       final double prior = arithmetic().prob2Poss(prob);
@@ -53,17 +53,17 @@ public final class HypothesesSnp extends HypothesesCommon<Description> {
 
   private void initPriors(final GenomePriorParams params) {
     double total = 0.0;
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       final String name = name(i);
-      for (int ref = 0; ref < DescriptionSnp.SINGLETON.size(); ref++) {
+      for (int ref = 0; ref < DescriptionSnp.SINGLETON.size(); ++ref) {
         final double prob = params.getPriorDistr(name)[ref];
         total += prob;
       }
     }
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       final String name = name(i);
       double prob = 0.0;
-      for (int ref = 0; ref < DescriptionSnp.SINGLETON.size(); ref++) {
+      for (int ref = 0; ref < DescriptionSnp.SINGLETON.size(); ++ref) {
         prob += params.getPriorDistr(name)[ref];
       }
       prob = prob / total;

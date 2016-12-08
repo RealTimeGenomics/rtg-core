@@ -87,7 +87,7 @@ class NoIndelsEditDistance implements UnidirectionalEditDistance {
       mMaxReadLengthSeen = rlen;
     }
 
-    for (int readPos = 0, tPos = zeroBasedStart; readPos < rlen && tPos < template.length; readPos++, tPos++) {
+    for (int readPos = 0, tPos = zeroBasedStart; readPos < rlen && tPos < template.length; ++readPos, ++tPos) {
       final byte t = template[tPos];
       final byte r = read[readPos];
       // Note: the multiplication ignores mismatches when one/both are UNKNOWN.
@@ -118,7 +118,7 @@ class NoIndelsEditDistance implements UnidirectionalEditDistance {
     } else {
       mWorkspace[ActionsHelper.TEMPLATE_START_INDEX] = zeroBasedStart + rlen; //add rlen because the actionshelper prepend "helpfully" alters the workspace start position as it goes
       int previousMismatchPos = rlen;  //initially say there was a mismatch at rlen
-      for (int i = mismatchIndex; i > 0; i--) { //if mismatchIndex is 0, then we haven't found any mismatches, so don't evaluate that.
+      for (int i = mismatchIndex; i > 0; --i) { //if mismatchIndex is 0, then we haven't found any mismatches, so don't evaluate that.
         final int thisMismatchPos = mMismatchPositions[i - 1];
         final int matchLengthToOutput = previousMismatchPos - thisMismatchPos - 1;
 

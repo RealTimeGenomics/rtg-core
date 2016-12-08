@@ -507,7 +507,7 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
       return false;
     }
     Boolean noCats = null;
-    for (int i = 0; i < getNumberOfSamples(); i++) {
+    for (int i = 0; i < getNumberOfSamples(); ++i) {
       if (getSample(i) == null || getSample(i).getName() == null) {
         if (noCats == null) {
           noCats = true;
@@ -548,7 +548,7 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
    * @return true if the first non null sample has a name or if all samples are null
    */
   public boolean hasCallNames() {
-    for (int i = 0; i < getNumberOfSamples(); i++) {
+    for (int i = 0; i < getNumberOfSamples(); ++i) {
       if (getSample(i) != null) {
         return getSample(i).getName() != null; //only need to check first non-null sample, if one BC is null they all will be.
       }

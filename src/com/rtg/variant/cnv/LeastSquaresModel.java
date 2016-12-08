@@ -77,7 +77,7 @@ public class LeastSquaresModel extends IntegralAbstract {
     }
     mSum[mNext] = mSum[mNext - 1] + value;
     mSum2[mNext] = mSum2[mNext - 1] + value * value;
-    mNext++;
+    ++mNext;
     //System.err.println("add next=" + mNext);
   }
 
@@ -139,7 +139,7 @@ public class LeastSquaresModel extends IntegralAbstract {
           : score(start, end) + splitPenalty(start, end) + mExtraPenalty;
       //System.err.println("scan start=" + start + " end=" + end + " best=" + best);
 
-      for (int i = start + mMinBlocks; i < end - mMinBlocks; i++) {
+      for (int i = start + mMinBlocks; i < end - mMinBlocks; ++i) {
         final double x1 = score(start, i);
         final double x2 = score(i, end);
         final double x = x1 + x2;
@@ -181,7 +181,7 @@ public class LeastSquaresModel extends IntegralAbstract {
   @Override
   public boolean globalIntegrity() {
     integrity();
-    for (int i = 1; i < mNext; i++) {
+    for (int i = 1; i < mNext; ++i) {
       Exam.assertTrue(mSum2[i] >= 0.0);
       Exam.assertTrue(mSum2[i] >= mSum2[i - 1]);
     }

@@ -28,12 +28,12 @@ class ComplicatedBeta implements ProbAlpha {
     mStrains = assignments.get(0).length;
     mStride = new int[mStrains];
     int possibilities = 1;
-    for (int i = 2; i <= mStrains + 1; i++) {
+    for (int i = 2; i <= mStrains + 1; ++i) {
       possibilities *= Math.min(i, AlphaSelector.MAX_VALUE + 1);
     }
     int stride = 1;
     // TODO potentially invert this stride array so that memory access pattern improves
-    for (int i = 0; i < mStrains; i++) {
+    for (int i = 0; i < mStrains; ++i) {
       stride *= Math.min(i + 1, AlphaSelector.MAX_VALUE + 1);
       mStride[i] = stride;
     }
@@ -41,7 +41,7 @@ class ComplicatedBeta implements ProbAlpha {
     //TODO This initialisation could be improved the laplace correction includes some entries that are inaccessible
     mTotal = length + init(mCounts, mStrains, mStride);
 
-    for (int position = 0; position < assignments.size(); position++) {
+    for (int position = 0; position < assignments.size(); ++position) {
       final int[] current = assignments.get(position);
       final int ref = refBytes.get(position);
       final int index = findIndex(ref, current);
@@ -59,8 +59,8 @@ class ComplicatedBeta implements ProbAlpha {
         assignment[currentIndex++] = 0;
       }
       int countIndex = 0;
-      totalCells++;
-      for (int i = 0; i < strides.length; i++) {
+      ++totalCells;
+      for (int i = 0; i < strides.length; ++i) {
         countIndex += assignment[i] * strides[i];
       }
       counts[countIndex]++;
@@ -75,12 +75,12 @@ class ComplicatedBeta implements ProbAlpha {
   private int findIndex(int ref, int[] assignment) {
     final int[] currentId = new int[mStrains];
     int index = 0;
-    for (int i = 0; i < assignment.length; i++) {
+    for (int i = 0; i < assignment.length; ++i) {
       int id = 0;
       if (assignment[i] == ref) {
         id = -1;
       } else {
-        for (int j = 0; j < i; j++) {
+        for (int j = 0; j < i; ++j) {
           if (assignment[i] == assignment[j]) {
             id = currentId[j] - 1;
             break;
@@ -108,7 +108,7 @@ class ComplicatedBeta implements ProbAlpha {
 
   public static int max(int[] arr, int limit) {
     int max = 0;
-    for (int i = 0; i < limit; i++) {
+    for (int i = 0; i < limit; ++i) {
       final int current = arr[i];
       max = Math.max(max, current);
     }
@@ -127,7 +127,7 @@ class ComplicatedBeta implements ProbAlpha {
         assignment[currentIndex++] = 0;
       }
       int countIndex = 0;
-      for (int i = 0; i < mStride.length; i++) {
+      for (int i = 0; i < mStride.length; ++i) {
         countIndex += assignment[i] * mStride[i];
       }
       sb.append(Arrays.toString(assignment));

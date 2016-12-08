@@ -259,7 +259,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
                 calls.add(variant);
               }
             }
-            pos++;
+            ++pos;
           }
         }
       }
@@ -271,7 +271,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
   // Sets the status of any positions within the interval to SKIP if they are contained within a no-call range entry (one without metadata)
   private static void addRangeStatuses(StatusInterval statusInterval, List<RangeList.RangeData<String>> ranges, int startIndex, int endPos) {
-    for (int rangeIndex = startIndex; rangeIndex < ranges.size(); rangeIndex++) {
+    for (int rangeIndex = startIndex; rangeIndex < ranges.size(); ++rangeIndex) {
       final RangeList.RangeData<String> range = ranges.get(rangeIndex);
       if (range.getStart() > endPos) {
         break;
@@ -283,7 +283,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
   }
 
   private void addInvalidRecord(ReaderRecord<?> record) {
-    mInvalidRecords++;
+    ++mInvalidRecords;
     if (mInvalidRecords <= 5) {
       Diagnostic.warning(WarningType.SAM_BAD_FORMAT_WARNING1, record.toString());
       Diagnostic.userLog("Invalid record: " + record.toString());

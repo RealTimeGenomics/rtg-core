@@ -190,7 +190,7 @@ public class DependenciesMultiSample extends IntegralAbstract implements Depende
       res = null;
     } else {
       res = new JobIdMultisample(mNumberChunks, mNext, JobType.INCR);
-      mNext++;
+      ++mNext;
     }
     return res;
   }

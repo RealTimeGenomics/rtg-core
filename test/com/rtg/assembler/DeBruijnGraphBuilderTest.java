@@ -182,7 +182,7 @@ public class DeBruijnGraphBuilderTest extends TestCase {
     final List<Long> contigIds = new ArrayList<>();
     contigIds.addAll(graph.keySet());
     Collections.sort(contigIds);
-    for (int i = 0; i < graph.size(); i++) {
+    for (int i = 0; i < graph.size(); ++i) {
       final ComparisonNode node = graph.get(contigIds.get(i));
       final long comparisonId = node.mComparison;
       final IntChunks start = node.mReverseComparison ? tipValues.getB() : tipValues.getA();
@@ -377,7 +377,7 @@ public class DeBruijnGraphBuilderTest extends TestCase {
 
   static String contigAsString(Contig c) {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < c.length(); i++) {
+    for (int i = 0; i < c.length(); ++i) {
       sb.append(DNA.valueChars()[c.nt(i)]);
     }
     return sb.toString();
@@ -385,7 +385,7 @@ public class DeBruijnGraphBuilderTest extends TestCase {
   static void compareGraph(Map<Long, ComparisonNode> expected, Graph graph) {
     //    assertEquals(expected.size(), graph.numberContigs());
     int foundCount = 0;
-    for (long i = 1; i <= graph.numberContigs(); i++) {
+    for (long i = 1; i <= graph.numberContigs(); ++i) {
       if (graph.contigDeleted(i)) {
         continue;
       }
@@ -399,7 +399,7 @@ public class DeBruijnGraphBuilderTest extends TestCase {
           }
           expectedNode.setComparison(i, sequence);
           found = true;
-          foundCount++;
+          ++foundCount;
         }
       }
       assertTrue("We weren't expecting to see: " + sequence, found);
@@ -489,7 +489,7 @@ public class DeBruijnGraphBuilderTest extends TestCase {
 
   private int check(final int[] hist) {
     final Histogram h = new Histogram();
-    for (int k = 0; k < hist.length; k++) {
+    for (int k = 0; k < hist.length; ++k) {
       h.increment(k, hist[k]);
     }
     return DeBruijnGraphBuilder.computeThreshold(h);

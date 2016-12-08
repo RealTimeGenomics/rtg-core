@@ -64,7 +64,7 @@ public class DefaultWeightedLatticeTest extends TestCase {
     final double[] longTest = new double[32];
     Arrays.fill(longTest, arith.zero());
     final String[] names = new String[32];
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < 32; ++i) {
       names[i] = "" + i;
     }
     try {

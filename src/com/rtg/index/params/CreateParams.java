@@ -133,7 +133,7 @@ public class CreateParams implements Integrity {
     }
     long bestBytes = Long.MAX_VALUE;
     int best = def;
-    for (int l = Math.min(def, hashBits); l >= 10 && hashBits - l <= 64; l--) {
+    for (int l = Math.min(def, hashBits); l >= 10 && hashBits - l <= 64; --l) {
       final long ipBytes = ip.bytes(1L << l);
       final long hashBytes;
       if (fanatical) {

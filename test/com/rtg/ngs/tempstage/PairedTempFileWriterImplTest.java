@@ -383,12 +383,12 @@ public class PairedTempFileWriterImplTest extends TestCase {
     final TempRecordReaderNio dis = new TempRecordReaderNio(new FileInputStream(out), new TempRecordReader.RecordFactory(true, false, false, false));
     try {
       BinaryTempFileRecord rec1;
-      for (int i = 6; i <= 15; i++) {
+      for (int i = 6; i <= 15; ++i) {
         rec1 = dis.readRecord();
         assertNotNull(rec1);
         checkRecord(rec1, 0, 67, 0, 1, "3=", i, i + 2, 0);
       }
-      for (int i = 6; i <= 15; i++) {
+      for (int i = 6; i <= 15; ++i) {
         rec1 = dis.readRecord();
         assertNotNull(rec1);
         checkRecord(rec1, 0, 131, 0, i, "3=", 1, -(i + 2), 0);
@@ -402,7 +402,7 @@ public class PairedTempFileWriterImplTest extends TestCase {
   private void pairResults3(final PairedTempFileWriterImpl w) throws IOException {
     w.nextTemplateId(0);
     final MatedHitInfo[] mhs = new MatedHitInfo[11];
-    for (int i = 0; i < mhs.length; i++) {
+    for (int i = 0; i < mhs.length; ++i) {
       final MatedHitInfo mh = new MatedHitInfo();
       if (w.pairResultLeft(populate(mh, 0, true, false, 0, false, i + 5))) {
         mhs[i] = mh;
@@ -543,12 +543,12 @@ public class PairedTempFileWriterImplTest extends TestCase {
       TempRecordReaderNio dis = new TempRecordReaderNio(new FileInputStream(out), new TempRecordReader.RecordFactory(true, false, false, false));
       try {
         BinaryTempFileRecord rec1;
-        for (int i = 6; i <= 15; i++) {
+        for (int i = 6; i <= 15; ++i) {
           rec1 = dis.readRecord();
           assertNotNull(rec1);
           checkRecord(rec1, 0, 67, 0, 1, "3=", i, i + 2, 0);
         }
-        for (int i = 6; i <= 15; i++) {
+        for (int i = 6; i <= 15; ++i) {
           rec1 = dis.readRecord();
           assertNotNull(rec1);
           checkRecord(rec1, 0, 131, 0, i, "3=", 1, -(i + 2), 0);
@@ -834,11 +834,11 @@ public class PairedTempFileWriterImplTest extends TestCase {
 
     final StringBuilder templateBuilder = new StringBuilder();
     templateBuilder.append(">t0").append(StringUtils.LS);
-    for (int i = 0; i < 1500; i++) {
+    for (int i = 0; i < 1500; ++i) {
       templateBuilder.append("a");
     }
     templateBuilder.append("tttaccccccccccccc");
-    for (int i = 0; i < 1500; i++) {
+    for (int i = 0; i < 1500; ++i) {
       templateBuilder.append("a");
     }
     ReaderTestUtils.getReaderDNA(templateBuilder.toString(), template, null).close();

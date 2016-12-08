@@ -223,7 +223,7 @@ public class ChiSquaredTest extends TestCase {
 
   public void testChiSquared() {
     int position = 0;
-    for (int degreesOfFreedom = 1; degreesOfFreedom <= 200; degreesOfFreedom++) {
+    for (int degreesOfFreedom = 1; degreesOfFreedom <= 200; ++degreesOfFreedom) {
       assertEquals("v=" + degreesOfFreedom + " p=0.005", CHI_TESTS[position++], ChiSquared.chi(degreesOfFreedom, 0.005), 1.0E-3);
       assertEquals("v=" + degreesOfFreedom + " p=0.01", CHI_TESTS[position++], ChiSquared.chi(degreesOfFreedom, 0.010), 1.0E-3);
       assertEquals("v=" + degreesOfFreedom + " p=0.1", CHI_TESTS[position++], ChiSquared.chi(degreesOfFreedom, 0.100), 1.0E-3);

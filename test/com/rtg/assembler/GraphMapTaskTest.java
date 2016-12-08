@@ -124,7 +124,7 @@ public class GraphMapTaskTest extends TestCase {
       ReaderTestUtils.createPairedReaderDNA(ReaderTestUtils.fasta("TCCCCTACT", "CCTACTA"), ReaderTestUtils.fasta("CTGCTGTAGTA", "CTGCTGTA"), reads2, new SdfId());
       // make single end long enough that it will time out if blocked
       final String[] singleEndStrings = new String[1049];
-      for (int i = 0; i < 1049; i++) {
+      for (int i = 0; i < 1049; ++i) {
         singleEndStrings[i] = "TCCCCTACT";
       }
       ReaderTestUtils.getDNADir(ReaderTestUtils.fasta(singleEndStrings), reads3);

@@ -171,7 +171,7 @@ class ProteinAlignmentResult implements Comparable<ProteinAlignmentResult> {
       double x = sc * Math.pow(0.1, exponent);
       x += 0.05; // rounding
       if (x > 10) {
-        exponent++;
+        ++exponent;
         x *= 0.1;
       }
       final int leadingDigit = (int) x;

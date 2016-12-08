@@ -24,7 +24,7 @@ public class SimpleRepeatMeasurerTest extends TestCase {
   static byte[] makeRepeat(String repeat, int length) {
     final byte[] result = new byte[length];
     final byte[] rbytes = DnaUtils.encodeString(repeat);
-    for (int i = 0; i < result.length; i++) {
+    for (int i = 0; i < result.length; ++i) {
       result[i] = rbytes[i % rbytes.length];
     }
     return result;

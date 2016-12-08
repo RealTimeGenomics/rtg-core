@@ -27,10 +27,10 @@ public final class EvidenceQFactory implements CachedEvidenceFactory {
   private static final EvidenceInterface[][][][] MEMO;
   static {
     MEMO = new EvidenceInterface[NUM_STATES][NUM_HYPOTHESIS][MAX_MAPQ][MAX_PHRED];
-    for (int s = 0; s < NUM_STATES; s++) {
-      for (int i = 0; i < NUM_HYPOTHESIS; i++) {
-        for (int j = 0; j < MAX_MAPQ; j++) {
-          for (int k = 0; k < MAX_PHRED; k++) {
+    for (int s = 0; s < NUM_STATES; ++s) {
+      for (int i = 0; i < NUM_HYPOTHESIS; ++i) {
+        for (int j = 0; j < MAX_MAPQ; ++j) {
+          for (int k = 0; k < MAX_PHRED; ++k) {
             final boolean isForward = s >= 3;
             final boolean isReadPaired = (s % 3) >= 1;
             final boolean isMated = (s % 3) == 2;
@@ -74,9 +74,9 @@ public final class EvidenceQFactory implements CachedEvidenceFactory {
       index += 3;
     }
     if (isReadPaired) {
-      index++;
+      ++index;
       if (isMated) {
-        index++;
+        ++index;
       }
     } else {
       assert !isMated;

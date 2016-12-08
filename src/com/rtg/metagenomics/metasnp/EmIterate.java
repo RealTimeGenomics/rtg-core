@@ -84,16 +84,16 @@ public final class EmIterate {
     assert ref.size() == assignments.size();
     assert length >= ref.size() && length > 0;
     final double[] beta = new double[assignments.get(0).length];
-    for (int pos = 0; pos < ref.size(); pos++) {
+    for (int pos = 0; pos < ref.size(); ++pos) {
       final int refNt = ref.get(pos);
       final int[] alpha = assignments.get(pos);
-      for (int strain = 0; strain < beta.length; strain++) {
+      for (int strain = 0; strain < beta.length; ++strain) {
         if (alpha[strain] != refNt) {
           beta[strain]++;
         }
       }
     }
-    for (int strain = 0; strain < beta.length; strain++) {
+    for (int strain = 0; strain < beta.length; ++strain) {
       beta[strain] /= length;
     }
     return beta;
@@ -135,14 +135,14 @@ public final class EmIterate {
     final RandomWalkXiFinder randomWalkXiFinder = new RandomWalkXiFinder(arith);
     final List<EmResult> results = new ArrayList<>();
     ProbAlpha pAlpha = getProbAlpha(BetaType.STATIC, ref, Collections.<int[]>emptyList(), 0, beta);
-    for (int emIterations = 0; !terminate.finished(emIterations, results); emIterations++) {
+    for (int emIterations = 0; !terminate.finished(emIterations, results); ++emIterations) {
       Diagnostic.progress("Starting Iteration: " + emIterations);
       assignments = new ArrayList<>();
       scores = new ArrayList<>();
       int percent = 0;
       int lastReport = 0;
       final double[][] outerTheta = AlphaSelector.computeThetaLookup(xi, arith, arith.prob2Poss(1 - error), arith.prob2Poss(error / 3));
-      for (int x = 0; x < evidence.size(); x++) {
+      for (int x = 0; x < evidence.size(); ++x) {
 
         final AlphaScore alphaScore =  AlphaSelector.alphaPosition(ref.get(x), pAlpha, evidence.get(x), outerTheta, arith, xi[0].length);
         scores.add(alphaScore);

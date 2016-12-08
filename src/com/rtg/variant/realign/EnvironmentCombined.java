@@ -90,9 +90,9 @@ public class EnvironmentCombined extends IntegralAbstract implements Environment
     sb.append("template after replace:").append(LS);
     final byte[] bs = new byte[templateLength()];
     int j = 0;
-    for (int i = -mReadStart; i < templateLength() - mReadStart; i++) {
+    for (int i = -mReadStart; i < templateLength() - mReadStart; ++i) {
       bs[j] = template(i);
-      j++;
+      ++j;
     }
     sb.append(DnaUtils.bytesToSequenceIncCG(bs));
     sb.append(LS);

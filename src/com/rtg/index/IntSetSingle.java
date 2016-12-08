@@ -60,12 +60,12 @@ public final class IntSetSingle extends IntSet {
     }
     mValues[mNext] = v;
     mBits.set(v);
-    mNext++;
+    ++mNext;
   }
 
   @Override
   public void iterateClear() throws IOException {
-    for (int i = 0; i < mNext; i++) {
+    for (int i = 0; i < mNext; ++i) {
       final int v = mValues[i];
       mBits.reset(v);
       call(v);
@@ -81,7 +81,7 @@ public final class IntSetSingle extends IntSet {
   @Override
   public void toString(final StringBuilder sb) {
     sb.append("IntSet ").append(mNext).append(StringUtils.LS);
-    for (int i = 0; i < mNext; i++) {
+    for (int i = 0; i < mNext; ++i) {
       sb.append(mValues[i]).append(" ");
     }
     sb.append(StringUtils.LS);
@@ -90,13 +90,13 @@ public final class IntSetSingle extends IntSet {
   @Override
   public boolean globalIntegrity() {
     integrity();
-    for (int i = 0; i < mNext; i++) {
+    for (int i = 0; i < mNext; ++i) {
       Exam.assertTrue(mBits.get(mValues[i]));
     }
     long total = 0;
-    for (int i = 0; i < mRange; i++) {
+    for (int i = 0; i < mRange; ++i) {
       if (mBits.get(i)) {
-        total++;
+        ++total;
       }
     }
     Exam.assertTrue(total == mNext);

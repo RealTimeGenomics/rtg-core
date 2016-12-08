@@ -123,7 +123,7 @@ public class Calibrator {
    */
   public static Map<String, Integer> getSequenceLengthMap(SequencesReader reader, ReferenceRegions regions) throws IOException {
     final Map<String, Integer> lengthMap = new HashMap<>();
-    for (int i = 0; i < reader.numberSequences(); i++) {
+    for (int i = 0; i < reader.numberSequences(); ++i) {
       lengthMap.put(reader.name(i), regions.coveredLength(reader.name(i)));
     }
     return lengthMap;
@@ -138,7 +138,7 @@ public class Calibrator {
    */
   public static Map<String, Integer> getNonNSequenceLengthMap(SequencesReader reader, RegionRestriction restriction) throws IOException {
     final Map<String, Integer> lengthMap = new HashMap<>();
-    for (int i = 0; i < reader.numberSequences(); i++) {
+    for (int i = 0; i < reader.numberSequences(); ++i) {
       final String name = reader.name(i);
       if (restriction != null && !name.equals(restriction.getSequenceName())) {
         continue;
@@ -152,7 +152,7 @@ public class Calibrator {
       reader.read(i, refNts);
       for (final byte b : refNts) {
         if (b == DnaUtils.UNKNOWN_RESIDUE) {
-          length--;
+          --length;
         }
       }
       Diagnostic.developerLog("Length of sequence " + name + " for calibration is " + length + " (" + refNts.length + " raw)");
@@ -171,7 +171,7 @@ public class Calibrator {
    */
   public static ReferenceRegions getNonNRegions(SequencesReader reader, RegionRestriction restriction) throws IOException {
     final ReferenceRegions r = new ReferenceRegions();
-    for (int i = 0; i < reader.numberSequences(); i++) {
+    for (int i = 0; i < reader.numberSequences(); ++i) {
       final String name = reader.name(i);
       if (restriction != null && !name.equals(restriction.getSequenceName())) {
         continue;
@@ -181,7 +181,7 @@ public class Calibrator {
       reader.read(i, refNts);
       int start = 0;
       int end = 0;
-      for (int i1 = 0; i1 < refNts.length; i1++) {
+      for (int i1 = 0; i1 < refNts.length; ++i1) {
         if (refNts[i1] != DnaUtils.UNKNOWN_RESIDUE) {
           end = i1 + 1;
         } else {
@@ -345,7 +345,7 @@ public class Calibrator {
           final int start = 1;
           final int end = names.length - NUM_STATS_COLUMNS;
           final Covariate[] ret = new Covariate[end - start];
-          for (int i = start; i < end; i++) {
+          for (int i = start; i < end; ++i) {
             final String[] cvsplit = names[i].split(":");
             final String cvname = cvsplit[0];
             final int length = cvsplit.length > 1 ? Integer.parseInt(cvsplit[1]) : 0;
@@ -400,7 +400,7 @@ public class Calibrator {
           if ((names.length - NUM_STATS_COLUMNS - 1) != mCovariates.length) {
             throw new NoTalkbackSlimException("calibration file \"" + path + "\" has mismatching covariates: " + line);
           }
-          for (int i = 0; i < mCovariates.length; i++) {
+          for (int i = 0; i < mCovariates.length; ++i) {
             final String[] nameParts = StringUtils.split(names[i + 1], ':');
             final String[] covNameParts = StringUtils.split(mCovariates[i].name(), ':');
             if (!nameParts[0].equals(covNameParts[0])) {
@@ -422,7 +422,7 @@ public class Calibrator {
         int i = 0;
         boolean mustResize = false;
         final int[] values = new int[mCovariates.length];
-        for (; i < mCovariates.length; i++) {
+        for (; i < mCovariates.length; ++i) {
           final int val = mCovariates[i].parse(field[i]);
           values[i] = val;
           mustResize |= mCovariates[i].sizeChanged();
@@ -455,14 +455,14 @@ public class Calibrator {
     if (mCovariates.length != cal.mCovariates.length) {
       throw new RuntimeException("Missing covariates");
     }
-    for (int k = 0; k < mCovariates.length; k++) {
+    for (int k = 0; k < mCovariates.length; ++k) {
       if (!getCovariate(k).name().equals(cal.getCovariate(k).name())) {
         throw new RuntimeException("Covariates mismatch");
       }
     }
     // Merge hypercubes
     assert mStats.length == cal.mStats.length;
-    for (int k = 0; k < mStats.length; k++) {
+    for (int k = 0; k < mStats.length; ++k) {
       if (mStats[k] != null) {
         if (cal.mStats[k] != null) {
           mStats[k].accumulate(cal.mStats[k]);
@@ -492,7 +492,7 @@ public class Calibrator {
    *         or -1 if the requested covariate is not in the hypercube.
    */
   public int getCovariateIndex(CovariateEnum ce) {
-    for (int i = 0; i < mCovariates.length; i++) {
+    for (int i = 0; i < mCovariates.length; ++i) {
       if (mCovariates[i].getType() == ce) {
         return i;
       }
@@ -504,7 +504,7 @@ public class Calibrator {
   private void expandStats() {
     final int start = mStats.length - 1;
     mStats = Arrays.copyOf(mStats, maxSize(mCovariates));
-    for (int i = start; i > 0; i--) {
+    for (int i = start; i > 0; --i) {
       if (mStats[i] != null) {
         final int newPos = mStats[i].getNewIndex(mCovariates);
         if (newPos != i) {
@@ -536,7 +536,7 @@ public class Calibrator {
   public CalibrationStats getSums(CovariateEnum covariate, String covariateValue) {
     int covNum = -1;
     int covVal = -1;
-    for (int i = 0; i < mCovariates.length; i++) {
+    for (int i = 0; i < mCovariates.length; ++i) {
       if (mCovariates[i].getType() == covariate) {
         covVal = mCovariates[i].parse(covariateValue);
         covNum = i;
@@ -577,7 +577,7 @@ public class Calibrator {
       values[covariateIndex] = query.mCovariateValues[covariateIndex];
       processStats(proc, query, values, position * size + query.mCovariateValues[covariateIndex], covariateIndex + 1);
     } else {
-      for (int i = 0; i < size; i++) {
+      for (int i = 0; i < size; ++i) {
         values[covariateIndex] = i;
         processStats(proc, query, values, position * size + i, covariateIndex + 1);
       }
@@ -643,7 +643,7 @@ public class Calibrator {
     int pos = 0;
     boolean mustResize = false;
     final int[] values = new int[mCovariates.length];
-    for (int i = 0; i < mCovariates.length; i++) {
+    for (int i = 0; i < mCovariates.length; ++i) {
       final Covariate var = mCovariates[i];
       final int val = var.value(mSamRec, currPos);
       values[i] = val;

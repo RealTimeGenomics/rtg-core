@@ -106,7 +106,7 @@ public class FamilyCaller extends AbstractMultisampleCaller implements Multisamp
       final int[] ids = family.getSampleIds();
       agreeing = setScore(scores, ids[Family.FATHER_INDEX], fp.bestFather());
       agreeing &= setScore(scores, ids[Family.MOTHER_INDEX], fp.bestMother());
-      for (int i = 0; i < family.numChildren(); i++) {
+      for (int i = 0; i < family.numChildren(); ++i) {
         agreeing &= setScore(scores, ids[Family.FIRST_CHILD_INDEX + i], fp.bestChild(i));
       }
       if (USE_FB_FALLBACK && !agreeing) {
@@ -142,7 +142,7 @@ public class FamilyCaller extends AbstractMultisampleCaller implements Multisamp
     }
 
     final VariantSample[] samples = new VariantSample[models.size()];
-    for (int i = 0; i < samples.length; i++) {
+    for (int i = 0; i < samples.length; ++i) {
       final HypothesisScore score = scores.getScores()[i];
       if (score != null && score.hypothesis() != -1) {
         final Hypotheses<?> childHypotheses = hypotheses.get(models.get(i));

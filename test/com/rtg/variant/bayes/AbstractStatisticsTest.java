@@ -243,11 +243,11 @@ public abstract class AbstractStatisticsTest extends TestCase {
     Diagnostic.setLogStream();
     final Hypotheses<DescriptionCommon> hy = new MockHypotheses(1, false);
     final Statistics<?> stat = getStatistics(hy.description());
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; ++i) {
       //mapq = 0
       stat.increment(di(0, 0, VariantUtils.phredToProb(0), true, true, true), 0);
     }
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       //mapq 20
       stat.increment(di(2, 0, VariantUtils.phredToProb(20), true, true, true), 0);
     }

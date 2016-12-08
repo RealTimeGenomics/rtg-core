@@ -190,7 +190,7 @@ public class GraphAligner {
         if (FIRST_BASE_MISMATCH_BAIL && contigPosition == currentContigPosition) {
           return null;
         }
-        mismatches++;
+        ++mismatches;
         if (mismatches + currentScore > mMaxMismatches.getValue(read.length)) {
           return null;
         }

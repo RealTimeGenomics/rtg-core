@@ -36,7 +36,7 @@ public final class FastFamilyPosterior extends FamilyPosterior {
     final double[] r = new double[children];
     final double[][] rh = new double[children][];
 
-    for (int i = 0; i < children; i++) {
+    for (int i = 0; i < children; ++i) {
       final ModelInterface<?> child = mChildren.get(i);
       final Hypotheses<?> childHyp = mHypotheses.get(child);
       // All the references should be the same, so just use the child's since we have it
@@ -44,7 +44,7 @@ public final class FastFamilyPosterior extends FamilyPosterior {
       rh[i] = new double[mChildren.get(i).size()];
       Arrays.fill(rh[i], Double.NEGATIVE_INFINITY);
       double ri = Double.NEGATIVE_INFINITY;
-      for (int j = 0; j < rh[i].length; j++) {
+      for (int j = 0; j < rh[i].length; ++j) {
         final double mendelian = map.probabilityLn(mMaximalCode, father, mother, j);
         rh[i][j] = child.posteriorLn0(j) + mendelian + contraryEvidenceAdjustment(father, mother, j);
         ri = VariantUtils.logSumApproximation(ri, rh[i][j]);
@@ -54,7 +54,7 @@ public final class FastFamilyPosterior extends FamilyPosterior {
 
     final double[] rForward = new double[children + 1];
     final double[] rReverse = new double[children + 1];
-    for (int i = 0; i < children; i++) {
+    for (int i = 0; i < children; ++i) {
       if (mChildren.get(i).size() > 0) {
         rForward[i + 1] = rForward[i] + r[i];
       } else {
@@ -62,7 +62,7 @@ public final class FastFamilyPosterior extends FamilyPosterior {
       }
     }
 
-    for (int i = 0; i < children; i++) {
+    for (int i = 0; i < children; ++i) {
       if (mChildren.get(children - i - 1).size() > 0) {
         rReverse[children - i - 1] = rReverse[children - i] + r[children - i - 1];
       } else {
@@ -79,7 +79,7 @@ public final class FastFamilyPosterior extends FamilyPosterior {
     if (!parentsNonIdentity(father, mother)) {
       // parents are both ref so compute the probability of all children being ref and add it to the identity marginal
       double ref = marginal;
-      for (int i = 0; i < children; i++) {
+      for (int i = 0; i < children; ++i) {
         if (rh[i].length > 0) {
           ref += rh[i][mChildren.get(i).reference()];
         }
@@ -100,9 +100,9 @@ public final class FastFamilyPosterior extends FamilyPosterior {
       mNonIdentity = VariantUtils.logSumApproximation(mNonIdentity, parentMarginal);
     }
 
-    for (int child = 0; child < children; child++) {
+    for (int child = 0; child < children; ++child) {
       final double[] childMarginals = mChildMarginal.get(child);
-      for (int i = 0; i < childMarginals.length; i++) {
+      for (int i = 0; i < childMarginals.length; ++i) {
         final double hypMarginal = marginal + rh[child][i] + rForward[child] + rReverse[child + 1];
 //        System.err.println("child: " + child + ", i: " + i + ", hypMarginal: " + hypMarginal);
         childMarginals[i] = VariantUtils.logSumApproximation(childMarginals[i], hypMarginal);

@@ -49,7 +49,7 @@ public class LargeKDeBruijnGraph extends AbstractKDeBruijnGraph {
         mLastHash = hash;
       }
       mFirst = false;
-      mCount++;
+      ++mCount;
     }
 
     void atEnd() {

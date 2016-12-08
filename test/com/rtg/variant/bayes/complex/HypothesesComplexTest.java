@@ -116,7 +116,7 @@ public class HypothesesComplexTest extends TestCase {
     sam.setReadString("CCCCC" + ins + "GGGGG");
     sam.setCigarString("5=" + length + "I5=");
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       sb.append('`');
     }
     return new AlignmentMatch(new VariantAlignmentRecord(sam), ins, sb.toString(), 0, 0, length, readMapq);
@@ -131,7 +131,7 @@ public class HypothesesComplexTest extends TestCase {
   void checkHypothesis(String id, HypothesesComplex complex) throws IOException {
     final StringBuilder sb = new StringBuilder();
     sb.append(complex.code().size()).append(StringUtils.LS);
-    for (int i = 0; i < complex.code().size(); i++) {
+    for (int i = 0; i < complex.code().size(); ++i) {
       sb.append("new Hyp(\"").append(complex.name(i)).append("\", ").append(Utils.realFormat(complex.p(i), 3)).append("),").append(StringUtils.LS);
     }
     mNano.check("HypothesesComplex-" + id, sb.toString());
@@ -189,7 +189,7 @@ public class HypothesesComplexTest extends TestCase {
     final AlignmentMatch mTT = match("TT", 20);
 
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-    for (int k = 0; k < 20; k++) {
+    for (int k = 0; k < 20; ++k) {
       ml.add(mA);
       ml.add(mTT);
     }
@@ -208,7 +208,7 @@ public class HypothesesComplexTest extends TestCase {
     //alternatives due to the way reads have mapped, then this situation where all reads agree with the template causes the
     //same "unable to call" situation. In real runs the complex caller should not be invoked in this situation.
     final ArrayList<Match> ml = new ArrayList<>();
-    for (int k = 0; k < 10; k++) {
+    for (int k = 0; k < 10; ++k) {
       ml.add(MATCH_I);
     }
     final GenomePriorParams vpb = new GenomePriorParamsBuilder()
@@ -233,7 +233,7 @@ public class HypothesesComplexTest extends TestCase {
     final AlignmentMatch mA = match("A", 20);
 
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-    for (int k = 0; k < 20; k++) {
+    for (int k = 0; k < 20; ++k) {
       ml.add(mA);
     }
     final VariantParams vp = getVariantParams(0.5, 0.5, 0.1);
@@ -247,7 +247,7 @@ public class HypothesesComplexTest extends TestCase {
     final AlignmentMatch mA = match("A", 20);
     final AlignmentMatch mTT = match("TT", 20);
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-    for (int k = 0; k < 20; k++) {
+    for (int k = 0; k < 20; ++k) {
       ml.add(mA);
       ml.add(mTT);
     }
@@ -290,10 +290,10 @@ public class HypothesesComplexTest extends TestCase {
   }
 
   public void testRandom() throws Exception {
-    for (int j = 0; j < 10; j++) {
+    for (int j = 0; j < 10; ++j) {
       final VariantParams vp = getVariantParams(RANDOM.nextDouble() / 10.0, RANDOM.nextDouble() / 10.0, RANDOM.nextDouble() / 10.0);
       final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-      for (int k = 0; k < RANDOM.nextInt(500); k++) {
+      for (int k = 0; k < RANDOM.nextInt(500); ++k) {
         final AlignmentMatch rm = randomMatch();
         ml.add(rm);
       }
@@ -301,7 +301,7 @@ public class HypothesesComplexTest extends TestCase {
       COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
       final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, false, vp);
 
-      for (int i = 0 ; i < dis.code().size(); i++) {
+      for (int i = 0 ; i < dis.code().size(); ++i) {
         assertFalse(Double.isInfinite(dis.p(i)));
         assertFalse(Double.isNaN(dis.p(i)));
       }
@@ -313,11 +313,11 @@ public class HypothesesComplexTest extends TestCase {
   public void testFromConvergence() throws InvalidParamsException, IOException {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; ++i) {
       ml.add(matchi(20));
     }
     final AlignmentMatch cc = match("AA", 20);
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 15; ++i) {
       ml.add(cc);
     }
     ml.add(match("TGCTAA", 20));
@@ -333,11 +333,11 @@ public class HypothesesComplexTest extends TestCase {
   public void testFromConvergence2() throws InvalidParamsException, IOException {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
 
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 8; ++i) {
       ml.add(matchi(20));
     }
     final AlignmentMatch cc = match("AA", 20);
-    for (int i = 0; i < 15; i++) {
+    for (int i = 0; i < 15; ++i) {
       ml.add(cc);
     }
     ml.add(match("TGCTAA", 20));
@@ -401,7 +401,7 @@ public class HypothesesComplexTest extends TestCase {
     final HypothesesComplex dis = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, false, vp);
     COMPLEX_TEMPLATE.setComplexContext(HypothesesComplex.createComplexDescription(ml, COMPLEX_TEMPLATE, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), SimplePossibility.SINGLETON);
     final HypothesesComplex dis2 = HypothesesComplex.makeComplexHypotheses(COMPLEX_TEMPLATE, false, vp);
-    for (int i = 0; i < dis.code().size(); i++) {
+    for (int i = 0; i < dis.code().size(); ++i) {
       assertEquals(Math.exp(dis.p(i)), dis2.p(i), 1e-11);
     }
   }
@@ -436,19 +436,19 @@ public class HypothesesComplexTest extends TestCase {
 
   private ArrayList<AlignmentMatch> createMatches(final String ref) {
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-    for (int i = 0; i <= 934; i++) {
+    for (int i = 0; i <= 934; ++i) {
       ml.add(match(ref, 40));
     }
-    for (int i = 0; i <= 6; i++) {
+    for (int i = 0; i <= 6; ++i) {
       ml.add(match("CCACTGTTGC", 40));
     }
-    for (int i = 0; i <= 5; i++) {
+    for (int i = 0; i <= 5; ++i) {
       ml.add(match("CCCACTGCTGC", 40));
     }
-    for (int i = 0; i <= 5; i++) {
+    for (int i = 0; i <= 5; ++i) {
       ml.add(match("CCCACTGTCGC", 40));
     }
-    for (int i = 0; i <= 5; i++) {
+    for (int i = 0; i <= 5; ++i) {
       ml.add(match("CCCCACTGTTGC", 40));
     }
     ml.add(match("CCCACTAGTTGC", 40));
@@ -504,64 +504,64 @@ public class HypothesesComplexTest extends TestCase {
   }
 
   private void hypothesisCut2ForLoops2(ArrayList<AlignmentMatch> ml) {
-    for (int i = 0; i <= 2; i++) {
+    for (int i = 0; i <= 2; ++i) {
       ml.add(match("CAAACCCCAAA", 40));
     }
-    for (int i = 0; i <= 2; i++) {
+    for (int i = 0; i <= 2; ++i) {
       ml.add(match("CAAACCCCAAG", 40));
     }
-    for (int i = 0; i <= 2; i++) {
+    for (int i = 0; i <= 2; ++i) {
       ml.add(match("CAAATCCAAA", 40));
     }
-    for (int i = 0; i <= 2; i++) {
+    for (int i = 0; i <= 2; ++i) {
       ml.add(match("CAAATCCCAAAA", 40));
     }
-    for (int i = 0; i <= 2; i++) {
+    for (int i = 0; i <= 2; ++i) {
       ml.add(match("CAAATCCCAAAG", 40));
     }
-    for (int i = 0; i <= 2; i++) {
+    for (int i = 0; i <= 2; ++i) {
       ml.add(match("CAAATCCCAATG", 40));
     }
-    for (int i = 0; i <= 2; i++) {
+    for (int i = 0; i <= 2; ++i) {
       ml.add(match("CAAATTCCAAA", 40));
     }
-    for (int i = 0; i <= 2; i++) {
+    for (int i = 0; i <= 2; ++i) {
       ml.add(match("CAAATTCCCAAA", 40));
     }
-    for (int i = 0; i <= 2; i++) {
+    for (int i = 0; i <= 2; ++i) {
       ml.add(match("CAAGTCCCAAG", 40));
     }
   }
 
   private void hypothesisCut2ForLoops1(String ref, ArrayList<AlignmentMatch> ml) {
-    for (int i = 0; i <= 592; i++) {
+    for (int i = 0; i <= 592; ++i) {
       ml.add(match(ref, 40));
     }
-    for (int i = 0; i <= 565; i++) {
+    for (int i = 0; i <= 565; ++i) {
       ml.add(match("CAAATCCCAAA", 40));
     }
-    for (int i = 0; i <= 13; i++) {
+    for (int i = 0; i <= 13; ++i) {
       ml.add(match("CAATCCCAAG", 40));
     }
-    for (int i = 0; i <= 8; i++) {
+    for (int i = 0; i <= 8; ++i) {
       ml.add(match("CAATCCCAAA", 40));
     }
-    for (int i = 0; i <= 7; i++) {
+    for (int i = 0; i <= 7; ++i) {
       ml.add(match("CAAATCCCCAAA", 40));
     }
-    for (int i = 0; i <= 4; i++) {
+    for (int i = 0; i <= 4; ++i) {
       ml.add(match("CAAATCCAAG", 40));
     }
-    for (int i = 0; i <= 3; i++) {
+    for (int i = 0; i <= 3; ++i) {
       ml.add(match("CAAATCCCGAG", 40));
     }
-    for (int i = 0; i <= 3; i++) {
+    for (int i = 0; i <= 3; ++i) {
       ml.add(match("CAAAATCCCAAA", 40));
     }
-    for (int i = 0; i <= 2; i++) {
+    for (int i = 0; i <= 2; ++i) {
       ml.add(match("ACAAATCCCAAA", 40));
     }
-    for (int i = 0; i <= 2; i++) {
+    for (int i = 0; i <= 2; ++i) {
       ml.add(match("CAAAATCCCAAG", 40));
     }
   }
@@ -616,7 +616,7 @@ public class HypothesesComplexTest extends TestCase {
 //    names.add("CCCCACTGTTGC");
 //    names.add("CTGTTGC");
 //
-//    for (int i = 0; i < dc.size(); i++) {
+//    for (int i = 0; i < dc.size(); ++i) {
 //      assertTrue(names.contains(dc.name(i)));
 //    }
 //  }
@@ -625,7 +625,7 @@ public class HypothesesComplexTest extends TestCase {
 //    final String ref = "CCCACTGTTGC";
 //
 //    final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-//    for (int i = 0; i < 100; i++) {
+//    for (int i = 0; i < 100; ++i) {
 //      ml.add(match(ref, 40));
 //    }
 //    ml.add(match("CCACTGTTGC", 40));
@@ -672,7 +672,7 @@ public class HypothesesComplexTest extends TestCase {
 //    names.add("CCCCACTGTTGC");
 //    names.add("CTGTTGC");
 //
-//    for (int i = 0; i < dc.size(); i++) {
+//    for (int i = 0; i < dc.size(); ++i) {
 //      assertTrue(names.contains(dc.name(i)));
 //    }
 //  }
@@ -685,7 +685,7 @@ public class HypothesesComplexTest extends TestCase {
 //    byte[] res = HypothesesComplex.refSeqFromAllele(cot, 1, 1, "T");
 //    assertNotNull(res);
 //    assertEquals(ref.length(), res.length);
-//    for (int i = 0; i < ref.length(); i++) {
+//    for (int i = 0; i < ref.length(); ++i) {
 //      if (i == 1) {
 //        assertEquals(DNA.getDNA('T'), res[i]);
 //      } else {
@@ -696,14 +696,14 @@ public class HypothesesComplexTest extends TestCase {
 //    res = HypothesesComplex.refSeqFromAllele(cot, 1, 1, "A");
 //    assertNotNull(res);
 //    assertEquals(ref.length(), res.length);
-//    for (int i = 0; i < ref.length(); i++) {
+//    for (int i = 0; i < ref.length(); ++i) {
 //      assertEquals(DNA.getDNA(ref.charAt(i)), res[i]);
 //    }
 //
 //    res = HypothesesComplex.refSeqFromAllele(cot, 1, 1, "AC");
 //    assertNotNull(res);
 //    assertEquals(ref.length() + 1, res.length);
-//    for (int i = 0; i < res.length; i++) {
+//    for (int i = 0; i < res.length; ++i) {
 //      if (i == 2) {
 //        assertEquals(DNA.getDNA('C'), res[i]);
 //      } else if (i < 2) {
@@ -716,7 +716,7 @@ public class HypothesesComplexTest extends TestCase {
 //    res = HypothesesComplex.refSeqFromAllele(cot, 1, 1, "");
 //    assertNotNull(res);
 //    assertEquals(ref.length() - 1, res.length);
-//    for (int i = 0; i < res.length; i++) {
+//    for (int i = 0; i < res.length; ++i) {
 //      if (i < 1) {
 //        assertEquals(DNA.getDNA(ref.charAt(i)), res[i]);
 //      } else {
@@ -751,7 +751,7 @@ public class HypothesesComplexTest extends TestCase {
 //    assertNotNull(description);
 //    assertEquals(4, description.size());
 //    final HashSet<String> names = new HashSet<>();
-//    for (int i = 0; i < description.size(); i++) {
+//    for (int i = 0; i < description.size(); ++i) {
 //      names.add(description.name(i));
 //    }
 //    assertEquals(description.size(), names.size());

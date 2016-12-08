@@ -47,7 +47,7 @@ class MutatorSingle extends IntegralAbstract {
   static String expandSpec(String spec) {
     final StringBuilder sb = new StringBuilder();
     int count = 0;
-    for (int s = 0; s < spec.length(); s++) {
+    for (int s = 0; s < spec.length(); ++s) {
       final char c = spec.charAt(s);
       if (c >= '0' && c <= '9') {
         count = count * 10 + c - '0';
@@ -55,7 +55,7 @@ class MutatorSingle extends IntegralAbstract {
         if (count == 0) {
           count = 1;
         }
-        for (int i = 0; i < count; i++) {
+        for (int i = 0; i < count; ++i) {
           sb.append(c);
         }
         count = 0;
@@ -74,22 +74,22 @@ class MutatorSingle extends IntegralAbstract {
     mSpecification = expandSpec(specification);
     int t = 0;
     int r = 0;
-    for (int s = 0; s < mSpecification.length(); s++) {
+    for (int s = 0; s < mSpecification.length(); ++s) {
       final char c = mSpecification.charAt(s);
       switch (c) {
         case 'X':
         case 'Y':
         case '=':
         case 'E':
-          t++;
-          r++;
+          ++t;
+          ++r;
           break;
         case 'I':
         case 'J':
-          r++;
+          ++r;
           break;
         case 'D':
-          t++;
+          ++t;
           break;
         default:
           throw new RuntimeException(mSpecification);
@@ -128,7 +128,7 @@ class MutatorSingle extends IntegralAbstract {
     final byte[] result = new byte[mSpecification.length()];
     int t = position;
     int r = 0;
-    for (int s = 0; s < mSpecification.length(); s++) {
+    for (int s = 0; s < mSpecification.length(); ++s) {
       assert 0 <= r && r <= result.length;
       assert position <= t && t <= template.length;
       final char c = mSpecification.charAt(s);
@@ -138,8 +138,8 @@ class MutatorSingle extends IntegralAbstract {
             return null;
           }
           result[r] = minus(random, template[t]);
-          t++;
-          r++;
+          ++t;
+          ++r;
           break;
         case 'Y':
           if (t >= template.length) {
@@ -151,12 +151,12 @@ class MutatorSingle extends IntegralAbstract {
           } else {
             result[r] = minus(random, tem, other[r]);
           }
-          t++;
-          r++;
+          ++t;
+          ++r;
           break;
         case 'I':
           result[r] = random(random);
-          r++;
+          ++r;
           break;
         case 'J':
           if (other == null) {
@@ -164,10 +164,10 @@ class MutatorSingle extends IntegralAbstract {
           } else {
             result[r] = minus(random, other[r]);
           }
-          r++;
+          ++r;
           break;
         case 'D':
-          t++;
+          ++t;
           break;
         case '=':
         case 'E':
@@ -175,8 +175,8 @@ class MutatorSingle extends IntegralAbstract {
             return null;
           }
           result[r] = template[t];
-          t++;
-          r++;
+          ++t;
+          ++r;
           break;
         default:
           throw new RuntimeException(mSpecification);

@@ -179,7 +179,7 @@ public final class ReadGroupStatsCalculator {
       if (stats.isValid()) {
         break;
       } else {
-        invalidCount++;
+        ++invalidCount;
         matedCount += stats.getMatedCount();
         Diagnostic.warning("Skipping read group with invalid values:" + StringUtils.LS + stats);
       }
@@ -235,7 +235,7 @@ public final class ReadGroupStatsCalculator {
       final String rgId = ReadGroupUtils.getReadGroup(record);
       final ReadGroupStats stats = mStats.get(rgId);
       if (stats == null) {
-        mNoReadGroupWarnings++;
+        ++mNoReadGroupWarnings;
         if (mNoReadGroupWarnings <= 5) {
           Diagnostic.warning("Skipping record with no RG id");
         }

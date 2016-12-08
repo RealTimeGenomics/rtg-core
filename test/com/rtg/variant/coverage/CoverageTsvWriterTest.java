@@ -27,13 +27,13 @@ public class CoverageTsvWriterTest extends TestCase {
     final CoverageTsvWriter cw = new CoverageTsvWriter(out.outputStream());
     cw.init();
     final CoverageState cs = new CoverageState("hello", new byte[] {1, 2, 3, 4}, true);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       cs.incrementIH(i, 1);
       cs.incrementIH(i, 2);
     }
     cs.incrementIH(2, 1);
     cs.incrementIH(1, 2);
-    for (int i = 1; i < 4; i++) {
+    for (int i = 1; i < 4; ++i) {
       cw.finalCoveragePosition("hello", i, cs.getIH1(i), cs.getIHgt1(i), cs.getScore(i));
     }
     final String actual = out.toString();

@@ -42,13 +42,13 @@ public class CommonFormulasTest extends TestCase {
 
   //  private void dumpM(final Code code, final MendelianAlleleProbability m) {
   //    final int range = 3;
-  //    for (int k = 0; k < range; k++) {
+  //    for (int k = 0; k < range; ++k) {
   //      System.out.print(k);
-  //      for (int h = 0; h < range; h++) {
+  //      for (int h = 0; h < range; ++h) {
   //        if (h != 0) {
   //          System.out.print(" ");
   //        }
-  //        for (int j = 0; j < range; j++) {
+  //        for (int j = 0; j < range; ++j) {
   //          final double t = Math.exp(m.probabilityLn(code, j, k, h));
   //          System.out.format(" %1.2f", t);
   //        }
@@ -64,10 +64,10 @@ public class CommonFormulasTest extends TestCase {
     final Code code = hyp.code();
     final int range = code.size();
     final double[][] dm = new double[range][range];
-    for (int j = 0; j < range; j++) {
-      for (int k = 0; k < range; k++) {
+    for (int j = 0; j < range; ++j) {
+      for (int k = 0; k < range; ++k) {
         double v = arith.zero();
-        for (int h = 0; h < range; h++) {
+        for (int h = 0; h < range; ++h) {
           final double t = arith.multiply(d.p(h), arith.ln2Poss(m.probabilityLn(code, j, k, h)));
           v = arith.add(v, t);
         }
@@ -214,7 +214,7 @@ public class CommonFormulasTest extends TestCase {
     MockModel(final Hypotheses<Description> hyp, final double[] posteriors) {
       super(hyp, new StatisticsSnp(hyp.description()), new NoAlleleBalance());
       assert posteriors.length == mPosteriors.length;
-      for (int i = 0; i < posteriors.length; i++) {
+      for (int i = 0; i < posteriors.length; ++i) {
         mPosteriors[i] = arithmetic().prob2Poss(posteriors[i]);
       }
     }

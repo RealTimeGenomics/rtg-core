@@ -39,7 +39,7 @@ public class SamAssistanceCgLegacy implements SamAssistance {
     final StringBuilder sb = new StringBuilder();
     int n = 0;
     int rPos = 0;
-    for (int i = 0; i < cigar.length(); i++) {
+    for (int i = 0; i < cigar.length(); ++i) {
       final char c = cigar.charAt(i);
       if (Character.isDigit(c)) {
         n = 10 * n + c - '0';
@@ -102,12 +102,12 @@ public class SamAssistanceCgLegacy implements SamAssistance {
     int overStart = res[0].length();
     for (int i = 0; i < overLapLength; ) {
       if (template.charAt(overStart - 1) != DisplayHelper.INSERT_CHAR) {
-        i++;
+        ++i;
       }
-      overStart--;
+      --overStart;
     }
     //System.err.println("readStart: " + readStart + " overstart was: " + length +  " now: " + overStart);
-    for (int i = 0, tPos = 0; i < overLapLength; tPos++) {
+    for (int i = 0, tPos = 0; i < overLapLength; ++tPos) {
       final String te = template.substring(overStart + tPos, overStart + tPos + 1).toUpperCase(Locale.getDefault());
       if (te.equals("" + DisplayHelper.INSERT_CHAR)) {
         continue;
@@ -120,7 +120,7 @@ public class SamAssistanceCgLegacy implements SamAssistance {
       } else {
         sb.append(SamUtils.CIGAR_MISMATCH);
       }
-      i++;
+      ++i;
     }
     final String overCigar = sb.toString() + cigars[1];
     final String overRead = gs.substring(overLapLength) + read.substring(overlapPos);

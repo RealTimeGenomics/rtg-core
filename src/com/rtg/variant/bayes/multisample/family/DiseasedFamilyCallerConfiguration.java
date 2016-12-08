@@ -72,7 +72,7 @@ public final class DiseasedFamilyCallerConfiguration extends AbstractJointCaller
       sexes[Family.MOTHER_INDEX] = genomeRelationships.getSex(motherName);
       Diagnostic.developerLog("First parent: " + fatherName + " sex: " + sexes[Family.FATHER_INDEX]);
       Diagnostic.developerLog("Second parent: " + motherName + " sex: " + sexes[Family.MOTHER_INDEX]);
-      for (int i = 0; i < childNames.size(); i++) {
+      for (int i = 0; i < childNames.size(); ++i) {
         final String childName = childNames.get(i);
         genomes[Family.FIRST_CHILD_INDEX + i] = childName;
         sexes[Family.FIRST_CHILD_INDEX + i] = genomeRelationships.getSex(childName);
@@ -97,7 +97,7 @@ public final class DiseasedFamilyCallerConfiguration extends AbstractJointCaller
       final ModelNoneFactory none = new ModelNoneFactory();
       final List<IndividualSampleFactory<?>> individualFactories = new ArrayList<>();
       final SexMemo sexMemo = Utils.createSexMemo(params);
-      for (int i = 0; i < genomes.length; i++) {
+      for (int i = 0; i < genomes.length; ++i) {
         individualFactories.add(new IndividualSampleFactory<>(params, chooser, haploid, diploid, none, sexes[i], sexMemo));
       }
       return new DiseasedFamilyCallerConfiguration(jointCaller, genomes, individualFactories, chooser, haploid, diploid, ssp);

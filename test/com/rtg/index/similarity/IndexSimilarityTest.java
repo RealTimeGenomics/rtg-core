@@ -51,7 +51,7 @@ public class IndexSimilarityTest extends TestCase {
    * Add the hashes and ids to the index.
    */
   private void add(final Index index, final long[] hashes, final int[] ids) {
-    for (int i = 0; i < hashes.length; i++) {
+    for (int i = 0; i < hashes.length; ++i) {
       //System.err.println(hashes[i] + ":" + ids[i]);
       index.add(hashes[i], ids[i]);
     }

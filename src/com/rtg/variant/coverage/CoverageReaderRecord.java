@@ -85,7 +85,7 @@ public class CoverageReaderRecord extends AbstractMateInfoReaderRecord<CoverageR
   @Override
   public int disambiguateDuplicate(CoverageReaderRecord rec) {
     final CompareHelper helper = new CompareHelper().compare(getStart(), rec.getStart()).compare(getCoverageBitSet().length(), rec.getCoverageBitSet().length());
-    for (int i = 0; helper.result() == 0 && i < getCoverageBitSet().length(); i++) {
+    for (int i = 0; helper.result() == 0 && i < getCoverageBitSet().length(); ++i) {
       helper.compare(getCoverageBitSet().get(i), rec.getCoverageBitSet().get(i));
     }
     return helper.result();
@@ -97,7 +97,7 @@ public class CoverageReaderRecord extends AbstractMateInfoReaderRecord<CoverageR
     if (!SamUtils.NO_CIGAR.equals(cigar)) {
       int tPos = 0;
       int n = 0;
-      for (int i = 0; i < cigar.length(); i++) {
+      for (int i = 0; i < cigar.length(); ++i) {
         final char c = cigar.charAt(i);
         if (Character.isDigit(c)) {
           n = 10 * n + c - '0';

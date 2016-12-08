@@ -39,7 +39,7 @@ public class ComplexitiesTest extends TestCase {
    */
   public static byte[] template(int length) {
     final byte[] res = new byte[length];
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       res[i] = (byte) (i % 5);
     }
     return res;
@@ -364,7 +364,7 @@ public class ComplexitiesTest extends TestCase {
   public void testStartDangling() {
     final Complexities complex = new Complexities(Collections.<Variant>emptyList(), "foo", 0, 50, 3, 5, template(50), true, null);
     complex.globalIntegrity();
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; ++i) {
       final LinkedList<ComplexRegion> regions = new LinkedList<>();
       final ComplexRegion complexRegion = new ComplexRegion("foo", i, i + 1, ComplexRegion.RegionType.INTERESTING);
       regions.add(complexRegion);
@@ -383,7 +383,7 @@ public class ComplexitiesTest extends TestCase {
   public void testEndDangling() {
     final Complexities complex = new Complexities(Collections.<Variant>emptyList(), "foo", 0, 50, 3, 5, template(30), true, null);
     complex.globalIntegrity();
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; ++i) {
       final LinkedList<ComplexRegion> regions = new LinkedList<>();
       final ComplexRegion complexRegion = new ComplexRegion("foo", 50 - i - 1, 50 - i, ComplexRegion.RegionType.INTERESTING);
       regions.add(complexRegion);
@@ -1141,7 +1141,7 @@ public class ComplexitiesTest extends TestCase {
     final SimpleThreadPool stp = new SimpleThreadPool(2, "mytp", true);
     try {
       //change number of iteration > 200,000 for problem to appear faster
-      for (int i = 0; i < 20; i++) {
+      for (int i = 0; i < 20; ++i) {
         final ArrayList<Variant> chunkA = new ArrayList<>();
         chunkA.add(TestUtils.createVariant(18));
         final Complexities regionsA = new Complexities(chunkA, "foo", 0, 20, 3, 15, template(30), true, null);

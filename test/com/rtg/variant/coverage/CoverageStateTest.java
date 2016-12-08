@@ -45,7 +45,7 @@ public class CoverageStateTest extends TestCase {
     cs.incrementIH(1, 2);
     assertEquals(1, cs.getIH1(1));
     assertEquals(1, cs.getIHgt1(1));
-    for (int k = 0; k < 10; k++) {
+    for (int k = 0; k < 10; ++k) {
       cs.incrementCoverage(2, 1);
       cs.incrementCoverage(2, 0.5);
       cs.incrementCoverage(2, 0.5);

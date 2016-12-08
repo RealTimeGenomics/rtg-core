@@ -62,7 +62,7 @@ public class ModelTest extends TestCase {
 
 
   public void testAmbiguity() {
-    for (int i = 0; i <= Model.AMBIGUITY_PHRED; i++) {
+    for (int i = 0; i <= Model.AMBIGUITY_PHRED; ++i) {
       assertTrue(VariantUtils.phredToProb(i) >= Model.AMBIGUITY_THRESHOLD);
     }
     assertEquals(VariantUtils.phredToProb(Model.AMBIGUITY_PHRED), Model.AMBIGUITY_THRESHOLD);
@@ -78,7 +78,7 @@ public class ModelTest extends TestCase {
     assertEquals(4, mo.size());
 
     mo.freeze();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertEquals(0.0, mo.posteriorLn0(i));
     }
     final VariantParams params0 = VariantParams.builder().create();
@@ -98,7 +98,7 @@ public class ModelTest extends TestCase {
     assertEquals(4, mo.size());
 
     mo.freeze();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertEquals(Math.log(post[i]), mo.posteriorLn0(i));
     }
 
@@ -131,7 +131,7 @@ public class ModelTest extends TestCase {
     mo.increment(di);
 
     mo.freeze();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertEquals(Math.log(prob[i]), mo.posteriorLn0(i));
     }
 
@@ -171,7 +171,7 @@ public class ModelTest extends TestCase {
     mo.increment(di);
 
     mo.freeze();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertEquals(Math.log(prob[i]), mo.posteriorLn0(i));
     }
 
@@ -203,7 +203,7 @@ public class ModelTest extends TestCase {
     mo.increment(di);
 
     mo.freeze();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertEquals(Math.log(prob[i]), mo.posteriorLn0(i));
     }
 
@@ -234,7 +234,7 @@ public class ModelTest extends TestCase {
     mo.increment(di);
 
     mo.freeze();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertEquals(Math.log(prob[i]), mo.posteriorLn0(i));
     }
 
@@ -257,7 +257,7 @@ public class ModelTest extends TestCase {
     mo.increment(di);
 
     mo.freeze();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertEquals(Math.log(prob[i] * prob[i]), mo.posteriorLn0(i));
     }
 
@@ -287,7 +287,7 @@ public class ModelTest extends TestCase {
     mo.increment(new MockEvidence(DescriptionSnp.SINGLETON, 0.51, prob, 1));
 
     mo.freeze();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       final double p = prob[i] * (1.0 - r) + r * 0.25;
       assertEquals(Math.log(p), mo.posteriorLn0(i));
     }
@@ -320,7 +320,7 @@ public class ModelTest extends TestCase {
     mo.increment(di1);
 
     mo.freeze();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       final double cube = prob[i] * prob[i] * prob[i];
       assertEquals(Math.log(cube), mo.posteriorLn0(i));
     }
@@ -342,7 +342,7 @@ public class ModelTest extends TestCase {
     mo.increment(di);
 
     mo.freeze();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertEquals(Math.log(prob[i]), mo.posteriorLn0(i));
     }
 
@@ -440,7 +440,7 @@ public class ModelTest extends TestCase {
     ba.integrity();
 
     final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 0, 0, 0, 0.1, 0.1, true, false, false, false);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       ba.increment(di);
     }
     ba.integrity();
@@ -455,7 +455,7 @@ public class ModelTest extends TestCase {
     ba.integrity();
 
     final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.1, 0.1, true, false, false, false);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       ba.increment(di);
     }
     ba.integrity();
@@ -482,7 +482,7 @@ public class ModelTest extends TestCase {
     ba.integrity();
 
     final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.1, 0.1, true, false, false, false);
-    for (int i = 0; i < evidenceCount; i++) {
+    for (int i = 0; i < evidenceCount; ++i) {
       ba.increment(di);
     }
     ba.integrity();
@@ -536,12 +536,12 @@ public class ModelTest extends TestCase {
     ba.integrity();
 
     final EvidenceInterface di = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.49, 0.1, true, false, false, false);
-    for (int i = 0; i < 9; i++) {
+    for (int i = 0; i < 9; ++i) {
       ba.increment(di);
     }
 
     final EvidenceInterface di1 = new EvidenceQ(OLD_DESCRIPTION, 1, 0, 0, 0.51, 0.1, true, false, false, false);
-    for (int i = 0; i < ihCount; i++) {
+    for (int i = 0; i < ihCount; ++i) {
       ba.increment(di1);
     }
 

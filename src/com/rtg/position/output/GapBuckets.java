@@ -115,7 +115,7 @@ public class GapBuckets<A> extends IntegralAbstract {
    * @return true iff all the buckets are empty.
    */
   boolean isEmpty() {
-    for (long i = 0; i < mBuckets.length(); i++) {
+    for (long i = 0; i < mBuckets.length(); ++i) {
       final A region = mBuckets.get(i);
       if (region != null) {
         return false;
@@ -155,7 +155,7 @@ public class GapBuckets<A> extends IntegralAbstract {
   public void toString(final StringBuilder sb) {
     mInfo.toString(sb);
     sb.append("buckets [").append(mBuckets.length()).append("]").append(StringUtils.LS);
-    for (long i = 0; i < mBuckets.length(); i++) {
+    for (long i = 0; i < mBuckets.length(); ++i) {
       final A a = mBuckets.get(i);
       if (a != null) {
         sb.append("[").append(i).append("] ").append(a.toString()).append(StringUtils.LS);

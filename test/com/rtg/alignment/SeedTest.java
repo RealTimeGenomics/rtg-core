@@ -34,7 +34,7 @@ public class SeedTest extends TestCase {
     assertEquals("11111111:00000000:00000000:11111111", Utils.toBitsSep(sd.next(0, (byte) 0)));
 
     int seed = 0;
-    for (byte b = 1; b <= 4; b++) {
+    for (byte b = 1; b <= 4; ++b) {
       seed = sd.next(seed, b);
       assertTrue(sd.isValid(seed));
     }

@@ -37,7 +37,7 @@ public class GraphIndex {
     mPositionDecoder = ContigPosition.buildDecoder(g);
     long totalHashes = 0;
     long totalLength = 0;
-    for (long i = 1; i <= g.numberContigs(); i++) {
+    for (long i = 1; i <= g.numberContigs(); ++i) {
       if (!g.contigDeleted(i)) {
         totalHashes += g.contigLength(i) / stepSize;
         totalLength += g.contigLength(i);
@@ -50,9 +50,9 @@ public class GraphIndex {
     mIndex = new IndexCompressed(create, new UnfilteredFilterMethod(), 1);
     mWordSize = wordSize;
     mBuildFunction = new ExactHashFunction(wordSize, 2);
-    for (int pass = 0; pass < 2; pass++) {
+    for (int pass = 0; pass < 2; ++pass) {
       int soFar = 0;
-      for (long i = 1; i <= g.numberContigs(); i++) {
+      for (long i = 1; i <= g.numberContigs(); ++i) {
         if (!g.contigDeleted(i)) {
           addHashes(g, i, stepSize, soFar);
           soFar +=  g.contigLength(i);
@@ -76,7 +76,7 @@ public class GraphIndex {
 
   private void addHashes(Graph graph, long contig, int stepSize, int soFar) {
     mBuildFunction.reset();
-    for (int i = 0; i < graph.contigLength(contig); i++) {
+    for (int i = 0; i < graph.contigLength(contig); ++i) {
       final byte code = (byte) (graph.nt(contig, i) - 1);
       if (code < 0) {
         mBuildFunction.reset();

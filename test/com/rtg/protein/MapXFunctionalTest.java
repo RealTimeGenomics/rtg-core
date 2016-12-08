@@ -69,7 +69,7 @@ public class MapXFunctionalTest extends TestCase {
   static {
     StringBuilder sb = new StringBuilder();
     long t0 = 0;
-    for (int i = 0; i < READS_PERFECT.length; i++) {
+    for (int i = 0; i < READS_PERFECT.length; ++i) {
       sb.append(">testRead").append(i).append(LS).append(READS_PERFECT[i]).append(LS);
       t0 += READS_PERFECT[i].length();
     }
@@ -78,7 +78,7 @@ public class MapXFunctionalTest extends TestCase {
 
     sb = new StringBuilder();
     long t1 = 0;
-    for (int i = 0; i < READS_ONE_SUB.length; i++) {
+    for (int i = 0; i < READS_ONE_SUB.length; ++i) {
       sb.append(">testRead").append(i).append(LS).append(READS_ONE_SUB[i]).append(LS);
       t1 += READS_ONE_SUB[i].length();
     }
@@ -86,7 +86,7 @@ public class MapXFunctionalTest extends TestCase {
     LENGTH_FASTA_ONE_SUB = t1;
 
     sb = new StringBuilder();
-    for (int i = 0; i < 23; i++) {
+    for (int i = 0; i < 23; ++i) {
       sb.append(">templateName").append(i).append(LS).append(MapXCliTest.TEMPLATE_PROTEIN).append(LS);
     }
     TEMPLATE_FASTA_2 = sb.toString();
@@ -459,7 +459,7 @@ public class MapXFunctionalTest extends TestCase {
     final String[] params = {"-a", "5", "-b", "1", "-w", "1", "-T", "1"};
     long length = 0;
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; ++i) {
       sb.append(READ_NAME + "-").append(i).append(LS).append(READ_BODY).append(LS);
       length += READ_BODY.length();
     }

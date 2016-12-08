@@ -170,7 +170,7 @@ public abstract class AbstractMulticoreFilterConcat {
     //    System.err.println("temp files: " + java.util.Arrays.toString(tempFiles));
     final Range[] regionRanges = groupRegions(tempFiles.length, numIntermediateFiles);
 
-    for (int i = 0; i < regionRanges.length; i++) {
+    for (int i = 0; i < regionRanges.length; ++i) {
       final File[] subFiles = new File[regionRanges[i].getLength()];
       System.arraycopy(tempFiles, regionRanges[i].getStart(), subFiles, 0, regionRanges[i].getLength());
       intermediate[i] = File.createTempFile("TEMP_FILTER_" + regionRanges[i].getStart() + "-" + regionRanges[i].getEnd() + "_", mParams.outputParams().bam() ? ".bam" : (".sam" + (samGzipIntFiles ? FileUtils.GZ_SUFFIX : "")), subFiles[0].getParentFile());
@@ -261,7 +261,7 @@ public abstract class AbstractMulticoreFilterConcat {
 
   static Range[] groupRegions(int numberOfRegions, int numIntermediateFiles) {
     final Range[] regionRanges = new Range[numIntermediateFiles];
-    for (int i = 0; i < numIntermediateFiles; i++) {
+    for (int i = 0; i < numIntermediateFiles; ++i) {
       final int start = i * numberOfRegions / numIntermediateFiles;
       final int end = Math.min((i + 1) * numberOfRegions / numIntermediateFiles, numberOfRegions);
       regionRanges[i] = new Range(start, end);

@@ -57,7 +57,7 @@ public final class VariantUtils {
 
   static {
     PHRED_PROB = new double[MAX_PHRED];
-    for (int i = 0; i < MAX_PHRED; i++) {
+    for (int i = 0; i < MAX_PHRED; ++i) {
       PHRED_PROB[i] = Math.pow(10.0, -i / 10.0);
     }
 
@@ -73,7 +73,7 @@ public final class VariantUtils {
       }
     }
     VALUES = new double[SIZE];
-    for (int i = START_INDEX; i <= lastIndex; i++) {
+    for (int i = START_INDEX; i <= lastIndex; ++i) {
       final double u1 = indexToDouble(i);
       final double u2 = indexToDouble(i + 1);
       final double u = (u1 + u2) / 2.0;
@@ -321,7 +321,7 @@ public final class VariantUtils {
     sb.append("quality curve: ");
     for (Arm arm : Arm.values()) {
       sb.append(arm).append("=");
-      for (byte q = 0; q < 64; q++) {
+      for (byte q = 0; q < 64; ++q) {
         sb.append(p.getScaledPhred(q, 0, arm)).append(",");
       }
       sb.append(StringUtils.LS);
@@ -332,7 +332,7 @@ public final class VariantUtils {
 
   private static String toString(double[] arr) {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < arr.length; i++) {
+    for (int i = 0; i < arr.length; ++i) {
       if (i != 0) {
         sb.append(", ");
       }
@@ -372,7 +372,7 @@ public final class VariantUtils {
     sb.append("quality_curve = ");
     for (Arm arm : Arm.values()) {
       sb.append(arm).append("=");
-      for (byte q = 0; q < 64; q++) {
+      for (byte q = 0; q < 64; ++q) {
         if (q != 0) {
           sb.append(", ");
         }
@@ -415,11 +415,11 @@ public final class VariantUtils {
     sb.append(StringUtils.LS);
 
     final HypothesesSnp h = new HypothesesSnp(SimplePossibility.SINGLETON, p, false, -1);
-    for (int i = 0; i < h.size(); i++) {
+    for (int i = 0; i < h.size(); ++i) {
       final String call = h.code().homozygous(i) ? h.description().name(i) : h.name(i);
       final String call2 = call.toLowerCase(Locale.ROOT).replace(VariantUtils.COLON, '_');
       final double[] dist = p.getPriorDistr(call);
-      for (int b = 0; b < 4; b++) {
+      for (int b = 0; b < 4; ++b) {
         sb.append(String.format(Locale.ROOT, "%s_%s = %.8f" + StringUtils.LS, Character.toLowerCase(DnaUtils.getBase(b + 1)), call2, dist[b]));
       }
       sb.append(StringUtils.LS);
@@ -468,7 +468,7 @@ public final class VariantUtils {
     for (final double poss : possibilities) {
       sum = arith.add(sum, poss);
     }
-    for (int i = 0; i < possibilities.length; i++) {
+    for (int i = 0; i < possibilities.length; ++i) {
       final double poss = arith.divide(possibilities[i], sum);
       normalPosses[i] = poss;
     }
@@ -483,7 +483,7 @@ public final class VariantUtils {
    */
   public static double[] prob2Poss(double[] probabilities, PossibilityArithmetic arith) {
     final double[] posses = new double[probabilities.length];
-    for (int i = 0; i < probabilities.length; i++) {
+    for (int i = 0; i < probabilities.length; ++i) {
       posses[i] = arith.prob2Poss(probabilities[i]);
     }
     return posses;

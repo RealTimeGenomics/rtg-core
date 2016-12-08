@@ -85,7 +85,7 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
         if (populate != null) {
           packet.add(populate);
         } else {
-          mInvalidRecords++;
+          ++mInvalidRecords;
           maybeWarn(next);
         }
         if (packet.size() >= mPacketSize || !hasNext) {

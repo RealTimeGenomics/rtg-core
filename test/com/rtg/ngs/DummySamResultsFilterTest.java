@@ -262,7 +262,7 @@ public class DummySamResultsFilterTest extends TestCase {
         assertTrue(TestUtils.sameLines(SAM_UNMATED_EXPECTED, TestUtils.stripSAMHeader(contents), false));
 
         // now check that the listener has been updated correctly.
-        for (int read = 0; read < numReads; read++) {
+        for (int read = 0; read < numReads; ++read) {
           final int expect;
           switch (read) {
             case 1:
@@ -325,7 +325,7 @@ public class DummySamResultsFilterTest extends TestCase {
       assertTrue(TestUtils.sameLines(SAM_UNMATED_EXPECTED, contents, false));
 
       // now check that the listener has been updated correctly.
-      for (int read = 0; read < numReads; read++) {
+      for (int read = 0; read < numReads; ++read) {
         final int expect;
         switch (read) {
           case 1:

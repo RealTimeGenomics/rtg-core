@@ -43,7 +43,7 @@ public class CoverageStatisticsTest extends AbstractNanoTest {
     cs.updateCoverageHistogram(1, false, 1);
     cs.updateCoverageHistogram(1, true, 1);
     cs.updateCoverageHistogram(1, true, 1);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       cs.updateCoverageHistogram(0, false, 1);
     }
 

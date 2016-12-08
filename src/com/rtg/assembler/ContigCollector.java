@@ -63,7 +63,7 @@ public class ContigCollector {
   }
 
   void collapse() {
-    for (long i = 1; i <= mGraph.numberContigs(); i++) {
+    for (long i = 1; i <= mGraph.numberContigs(); ++i) {
       if (!tipValueOk(i) || mGraph.contigDeleted(i)) {
         continue;
       }

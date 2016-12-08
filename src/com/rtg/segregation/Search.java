@@ -98,7 +98,7 @@ public class Search extends IntegralAbstract {
 
       boolean ok = false;
       final PatternArray pa = good.pattern();
-      for (int flip = 0; flip < Pattern.NUMBER_FLIPS; flip++) {
+      for (int flip = 0; flip < Pattern.NUMBER_FLIPS; ++flip) {
         final PatternArray fi = pa.flipIntersect(patterns, flip);
         if (fi == null) {
           continue;
@@ -125,7 +125,7 @@ public class Search extends IntegralAbstract {
       if (remaining > 1000 || next.score() > removeScore) {
         //System.err.println("##" + next.toString());
         it.remove();
-        remaining--;
+        --remaining;
       } else {
         break;
       }
@@ -161,7 +161,7 @@ public class Search extends IntegralAbstract {
     if (ni != null) {
       map.put(n0.key(), n0);
     }
-    mSearchContainderId++;
+    ++mSearchContainderId;
   }
 
   /**

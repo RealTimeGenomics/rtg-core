@@ -340,10 +340,10 @@ public class VariantSample {
     final Map<Set<String>, Double> result = new HashMap<>();
     final List<String> alleleList = new ArrayList<>(alleles);
     final Hypotheses<?> h = mMeasure.hypotheses();
-    for (int i = 0; i < alleleList.size(); i++) {
+    for (int i = 0; i < alleleList.size(); ++i) {
       final String a = alleleList.get(i);
       final int aIndex = h.description().indexOf(a);
-      for (int j = i; j < alleleList.size(); j++) {
+      for (int j = i; j < alleleList.size(); ++j) {
         final String b = alleleList.get(j);
         final int bIndex = h.description().indexOf(b);
         final double poss;
@@ -420,7 +420,7 @@ public class VariantSample {
    * @param copyTo value to copy to
    */
   public static void copy(VariantSample copyFrom, VariantSample copyTo) {
-    for (int i = 0; i < copyFrom.mInfo.length; i++) {
+    for (int i = 0; i < copyFrom.mInfo.length; ++i) {
       if (copyFrom.mInfo[i] != null) {
         copyTo.mInfo[i] = copyFrom.mInfo[i];
       }

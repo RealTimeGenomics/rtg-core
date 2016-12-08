@@ -106,7 +106,7 @@ public class CancerConvergenceTest extends TestCase {
     final VariantParams params = VariantParams.builder().callLevel(VariantOutputLevel.ALL).genomePriors(gp).create();
     final ModelCancerFactory mf = new ModelCancerFactory(params.genomePriors(), contamination, false, new NoAlleleBalance());
 
-    for (int j = 0; j < 100; j++) {
+    for (int j = 0; j < 100; ++j) {
       final byte[] ref = {(byte) (1 + r.nextInt(4))}; // random reference A, C, G, T
       final HypothesesSnp hypotheses = getHypotheses(ref[0] - 1);
       final HypothesesSnp hypothesesHaploid = getHypothesesHaploid(ref[0] - 1);
@@ -128,7 +128,7 @@ public class CancerConvergenceTest extends TestCase {
       // Random generation below is not perfect in the simulation of noise. It tries to make different nucleotides
       // based on selecting an allele and then changing that particular allele.
 
-      for (int k = 0; k < maxCoverage; k++) {
+      for (int k = 0; k < maxCoverage; ++k) {
         final boolean noise = r.nextDouble() < noiseLevel;
         final EvidenceInterface evidence = new EvidenceQ(DescriptionSnp.SINGLETON, noise ? randomNot(r, r.nextBoolean() ? normal1 : normal2) : r.nextBoolean() ? normal1 : normal2, 0, 0, MAPQ_PROB, PHREAD_PROB, true, false, false, false);
         normalModel.increment(evidence);
@@ -168,12 +168,12 @@ public class CancerConvergenceTest extends TestCase {
     final int[] correct01 = checkHeterozygousConvergenceWithNoise(0.1, 0);
     final int[] correct02 = checkHeterozygousConvergenceWithNoise(0.2, 0);
 
-    //    for (int k = 0; k < correct00.length; k++) {
+    //    for (int k = 0; k < correct00.length; ++k) {
     //      System.out.println(k + " " + correct00[k] + " " + correct01[k] + " " + correct02[k]);
     //    }
     // We have a curve showing how often we find the answer.  The following is essentially
     // a very crude hull under the curve.
-    for (int k = 7; k < correct00.length; k++) {
+    for (int k = 7; k < correct00.length; ++k) {
       assertTrue(correct00[k] >= k);
       assertTrue(correct01[k] >= k);
       assertTrue(correct02[k] + " >= " + (k - 3), correct02[k] >= k - 3);
@@ -185,12 +185,12 @@ public class CancerConvergenceTest extends TestCase {
     final int[] correct01 = checkHeterozygousConvergenceWithNoise(0.1, 0.3);
     final int[] correct02 = checkHeterozygousConvergenceWithNoise(0.2, 0.3);
 
-    //    for (int k = 0; k < correct00.length; k++) {
+    //    for (int k = 0; k < correct00.length; ++k) {
     //      System.out.println(k + " " + correct00[k] + " " + correct01[k] + " " + correct02[k]);
     //    }
     // We have a curve showing how often we find the answer.  The following is essentially
     // a very crude hull under the curve.
-    for (int k = 7; k < correct00.length; k++) {
+    for (int k = 7; k < correct00.length; ++k) {
       assertTrue(correct00[k] >= k);
       assertTrue(correct01[k] >= k);
       assertTrue(correct02[k] >= k - 20);
@@ -205,10 +205,10 @@ public class CancerConvergenceTest extends TestCase {
   //    for (final double contamination : new double[] {0, 0.25, 0.5, 0.75, 0.9}) {
   //      res.add(checkHeterozygousConvergenceWithNoise(error, contamination));
   //    }
-  //    for (int k = 0; k < res.get(0).length; k++) {
+  //    for (int k = 0; k < res.get(0).length; ++k) {
   //      final StringBuilder sb = new StringBuilder();
   //      sb.append(k);
-  //      for (int j = 0; j < res.size(); j++) {
+  //      for (int j = 0; j < res.size(); ++j) {
   //        sb.append(" ").append(res.get(j)[k]);
   //      }
   //      System.out.println(sb.toString());

@@ -48,7 +48,7 @@ public final class RealignParamsImplementation extends IntegralAbstract implemen
     }
     double wtdSum = 0.0;
     double sum = 0.0;
-    for (int i = 2; i < distr.length; i++) {
+    for (int i = 2; i < distr.length; ++i) {
       final double di = distr[i];
       final double dim = distr[i - 1];
       assert dim >= 0.0 && dim <= 1.0;
@@ -76,7 +76,7 @@ public final class RealignParamsImplementation extends IntegralAbstract implemen
    */
   static double mean(final double[] distr) {
     double sum = 0.0;
-    for (int i = 1; i < distr.length; i++) {
+    for (int i = 1; i < distr.length; ++i) {
       sum += i * distr[i];
     }
     assert 1.0 <= sum && sum <= (distr.length - 1) && !Double.isNaN(sum) : sum;
@@ -142,15 +142,15 @@ public final class RealignParamsImplementation extends IntegralAbstract implemen
     //System.err.println("logify " + whichGap + " in=" + Arrays.toString(probs));
     int start = 0;
     while (start < probs.length && probs[start] == 0.0) {
-      start++;
+      ++start;
       mGapStart[whichGap]++;
     }
     int end = probs.length - 1;
     while (end > start && probs[end] == 0.0) {
-      end--;
+      --end;
     }
     mGapDistributions[whichGap] = new double[end + 1 - start];
-    for (int i = start; i <= end; i++) {
+    for (int i = start; i <= end; ++i) {
       mGapDistributions[whichGap][i - start] = Math.log(probs[i]);
     }
     //System.err.println("logify " + whichGap + " out=" + Arrays.toString(mGapDistributions[whichGap]));
@@ -168,9 +168,9 @@ public final class RealignParamsImplementation extends IntegralAbstract implemen
    */
   public static double[][] gapDistributionPoss(final double[][] gapDistributions, final PossibilityArithmetic arith) {
     final double[][] gdp = new double[gapDistributions.length][];
-    for (int i = 0; i < gapDistributions.length; i++) {
+    for (int i = 0; i < gapDistributions.length; ++i) {
       gdp[i] = new double[gapDistributions[i].length];
-      for (int j = 0; j < gapDistributions[i].length; j++) {
+      for (int j = 0; j < gapDistributions[i].length; ++j) {
         gdp[i][j] = arith.ln2Poss(gapDistributions[i][j]);
       }
     }

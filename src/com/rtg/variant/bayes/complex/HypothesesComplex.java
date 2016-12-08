@@ -78,7 +78,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     final HypothesesComplex result = new HypothesesComplex(context.description(), context.arithmetic(), priors, haploid, context.refHyp());
 
     if (PRINT_HYP_DETAILS) {
-      for (int i = 0; i < result.size(); i++) {
+      for (int i = 0; i < result.size(); ++i) {
         final String ploidy = haploid ? "haploid" : "diploid";
         System.err.println("" + context.getSequenceName() + ":" + context.getStart() + "-" + context.getEnd() + " ploidy=" + ploidy + " hyp=" + result.name(i) + " prior=" + context.arithmetic().poss2Prob(result.p(i)));
       }
@@ -125,7 +125,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     final int refAllele = c.refTransitionIndex();
     final Code code =  new CodeDiploid(c.description().size());
     final double[] diploidPriors = new double[code.size()];
-    for (int i = 0; i < diploidPriors.length; i++) {
+    for (int i = 0; i < diploidPriors.length; ++i) {
       final int ca = code.a(i);
       final int cb = code.b(i);
       if (code.homozygous(i)) {
@@ -152,7 +152,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     final PossibilityArithmetic arithmetic = c.arithmetic();
     final Code code =  new CodeDiploid(c.description().size());
     final double[] diploidPriors = new double[code.size()];
-    for (int i = 0; i < diploidPriors.length; i++) {
+    for (int i = 0; i < diploidPriors.length; ++i) {
       final int ca = code.a(i);
       final int cb = code.b(i);
       if (code.homozygous(i)) {
@@ -180,12 +180,12 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     final double refFreq = 1.0 - altFreqInitial;
     final double altFreq = haploidPriors.length == 1 ? 1.0 : altFreqInitial / (haploidPriors.length - 1); // Distribute evenly among all alt alleles
     final double[] haploidFrequencies = new double[haploidPriors.length];
-    for (int i = 0; i < haploidFrequencies.length; i++) {
+    for (int i = 0; i < haploidFrequencies.length; ++i) {
       haploidFrequencies[i] = arithmetic.prob2Poss(i == c.refHyp() ? refFreq : altFreq);
     }
     final double hetBias = arithmetic.prob2Poss(PRIORS_HET_BIAS);
     final Code code = new CodeDiploid(c.description().size());
-    for (int i = 0; i < diploidPriors.length; i++) {
+    for (int i = 0; i < diploidPriors.length; ++i) {
       final int ca = code.a(i);
       final int cb = code.b(i);
       diploidPriors[i] = arithmetic.multiply(diploidPriors[i], arithmetic.multiply(haploidFrequencies[ca], haploidFrequencies[cb]));  // Probability of getting the combination of alleles (just from allele frequencies)
@@ -200,7 +200,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
     final double[] refTransitionPriorsLn = c.transitionProbsLn()[c.refTransitionIndex()];
     final PossibilityArithmetic arithmetic = c.arithmetic();
     double[] haploidPriors = new double[c.description().size()];
-    for (int i = 0; i < haploidPriors.length; i++) {
+    for (int i = 0; i < haploidPriors.length; ++i) {
       haploidPriors[i] = arithmetic.ln2Poss(refTransitionPriorsLn[i]);
     }
     haploidPriors = VariantUtils.normalisePossibilities(haploidPriors, arithmetic);
@@ -336,7 +336,7 @@ public class HypothesesComplex extends HypothesesPrior<DescriptionComplex> {
         } else {
           matchMap.put(m, 1);
         }
-        totalCoverage++;
+        ++totalCoverage;
       }
     }
 

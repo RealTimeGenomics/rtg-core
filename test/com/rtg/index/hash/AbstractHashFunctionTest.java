@@ -48,11 +48,11 @@ public abstract class AbstractHashFunctionTest extends TestCase {
     final HashFunction hf = getHashFunction(windowSize, bits);
     Exam.integrity(hf);
     final Set<Long> al = new HashSet<>();
-    for (int i = 0; i < windowSize; i++) {
+    for (int i = 0; i < windowSize; ++i) {
       hf.hashStep(codes[i]);
     }
     assertTrue(al.add((long) hf.hashCode()));
-    for (int i = windowSize; i < codes.length; i++) {
+    for (int i = windowSize; i < codes.length; ++i) {
       assertTrue(al.add(hf.hashStep(codes[i])));
     }
   }

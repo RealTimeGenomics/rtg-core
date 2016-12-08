@@ -165,7 +165,7 @@ public class CoverageStatistics extends AbstractStatistics {
     final Datum2D[] cumulativeCovData = new Point2D[data.size()];
     final Datum2D[] covData = new Point2D[data.size()];
 
-    for (int i = 0; i < data.size(); i++) {
+    for (int i = 0; i < data.size(); ++i) {
       final List<Double> datum = data.get(i);
 
       cumulativeCovData[i] = new Point2D(i, datum.get(2).floatValue()); //%age cumulative
@@ -202,7 +202,7 @@ public class CoverageStatistics extends AbstractStatistics {
     sb.append(LS);
 
     String leader = "";
-    for (int i = 0; i < data.size(); i++) {
+    for (int i = 0; i < data.size(); ++i) {
 
       final List<Double> datum = data.get(i);
       sb.append(leader);
@@ -228,7 +228,7 @@ public class CoverageStatistics extends AbstractStatistics {
     if (mHistogram != null) {
       int lastNonZero = 0;
       final double[] nums = new double[mHistogram.length];
-      for (int i = 0; i < mHistogram.length; i++) {
+      for (int i = 0; i < mHistogram.length; ++i) {
         final double percent = 100.0 * mHistogram[i] / mTotalBases;
 //        final String num = Utils.realFormat(percent, 2);
         nums[i] = percent;
@@ -238,7 +238,7 @@ public class CoverageStatistics extends AbstractStatistics {
       }
 
       long sum = 0;
-      for (int i = 0; i <= lastNonZero; i++) {
+      for (int i = 0; i <= lastNonZero; ++i) {
         final double cumulativeP = 100.0 * (mTotalBases - sum) / mTotalBases;
         sum += mHistogram[i];
         final List<Double> datum = new ArrayList<>();
@@ -253,7 +253,7 @@ public class CoverageStatistics extends AbstractStatistics {
 
   private void appendRow(TextTable table, Object... parts) {
     final String[] values = new String[parts.length];
-    for (int i = 0; i < parts.length; i++) {
+    for (int i = 0; i < parts.length; ++i) {
       values[i] = parts[i].toString();
     }
     table.addRow(values);
@@ -266,9 +266,9 @@ public class CoverageStatistics extends AbstractStatistics {
 
     private void update(double nonSmoothCov, int minimumCoverageForBreadth) {
       mTotalCoverage += nonSmoothCov;
-      mBases++;
+      ++mBases;
       if (nonSmoothCov >= minimumCoverageForBreadth) {
-        mBasesWithCoverage++;
+        ++mBasesWithCoverage;
       }
     }
   }
@@ -322,11 +322,11 @@ public class CoverageStatistics extends AbstractStatistics {
       }
       mHistogram[bucket]++;
 
-      mTotalBases++;
+      ++mTotalBases;
 
       if (currCoverage > 0) {
         if (currCoverage >= minimumCoverageForBreadth) {
-          mTotalCovered++;
+          ++mTotalCovered;
         }
         mTotalCoverage += currCoverage;
       }
@@ -348,7 +348,7 @@ public class CoverageStatistics extends AbstractStatistics {
   public Double fold80() {
     double sum = 0.0;
     if (mHistogram != null) {
-      for (int i = 0; i < mHistogram.length; i++) {
+      for (int i = 0; i < mHistogram.length; ++i) {
         final double cumulativeP = 100.0 * (mTotalBases - sum) / mTotalBases;
         sum += mHistogram[i];
 

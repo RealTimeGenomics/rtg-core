@@ -24,7 +24,7 @@ public final class MendelianAlleleProbabilityDiploidDeNovo extends MendelianAlle
   static final int CACHE_SIZE = 101;
   static final double[] CACHED_LOGS = new double[CACHE_SIZE];
   static {
-    for (int i = 1; i < CACHE_SIZE; i++) {
+    for (int i = 1; i < CACHE_SIZE; ++i) {
       CACHED_LOGS[i] = Math.log(i);
     }
   }
@@ -50,19 +50,19 @@ public final class MendelianAlleleProbabilityDiploidDeNovo extends MendelianAlle
     final MendelianAlleleProbabilityDiploid partner = (MendelianAlleleProbabilityDiploid) MendelianAlleleProbabilityDiploid.SINGLETON;
 
     // For all the parent allele combos
-    for (int i = 0; i < 2; i++) { // father a = 0, father b = i
+    for (int i = 0; i < 2; ++i) { // father a = 0, father b = i
 
-      for (int j = 0; j <= i + 1; j++) { // existing allele count + 1, mother a = 0,1,2
+      for (int j = 0; j <= i + 1; ++j) { // existing allele count + 1, mother a = 0,1,2
         final int mj = Math.max(i, j); // Track highest allele
 
-        for (int k = 0; k <= mj + 1; k++) { // mother b = 0,1,2,3
+        for (int k = 0; k <= mj + 1; ++k) { // mother b = 0,1,2,3
         final int mk = Math.max(mj, k);
 
           // Now calculate de novo prob for each child hypothesis
-          for (int l = 0; l <= mk + 1; l++) { // child a = 0,1,2,3,4
+          for (int l = 0; l <= mk + 1; ++l) { // child a = 0,1,2,3,4
             final int ml = Math.max(mk, l);
 
-            for (int m = 0; m <= ml + 1; m++) { // child a = 0,1,2,3,4,5
+            for (int m = 0; m <= ml + 1; ++m) { // child a = 0,1,2,3,4,5
 
               //System.err.print("father: 0/" + i + "  mother: " + j + "/" + k + "  child: " + l + "/" + m + "    ");
 
@@ -72,7 +72,7 @@ public final class MendelianAlleleProbabilityDiploidDeNovo extends MendelianAlle
 
                 // De novo child hypothesis.
                 double tot = 0;
-                for (int n = 0; n < 5; n++) { // child de novo a = 0,1,2,3,4, b = m
+                for (int n = 0; n < 5; ++n) { // child de novo a = 0,1,2,3,4, b = m
                   if (n != l) {
                     final double mendelian = partner.getLookup(i, j, k, n, m);
                     if (mendelian != Double.NEGATIVE_INFINITY) {
@@ -80,7 +80,7 @@ public final class MendelianAlleleProbabilityDiploidDeNovo extends MendelianAlle
                     }
                   }
                 }
-                for (int n = 0; n < 6; n++) { // child de novo a = l, b = 0,1,2,3,4,5
+                for (int n = 0; n < 6; ++n) { // child de novo a = l, b = 0,1,2,3,4,5
                   if (n != m) {
                     final double mendelian = partner.getLookup(i, j, k, l, n);
                     if (mendelian != Double.NEGATIVE_INFINITY) {
@@ -103,12 +103,12 @@ public final class MendelianAlleleProbabilityDiploidDeNovo extends MendelianAlle
   private static int init(double[][][][][] array) {
     final double z = Double.NEGATIVE_INFINITY;
     int cnt = 0;
-    for (int i = 0; i < array.length; i++) {
-      for (int j = 0; j < array[i].length; j++) {
-        for (int k = 0; k < array[i][j].length; k++) {
-          for (int l = 0; l < array[i][j][k].length; l++) {
-            for (int m = 0; m < array[i][j][k][l].length; m++) {
-              cnt++;
+    for (int i = 0; i < array.length; ++i) {
+      for (int j = 0; j < array[i].length; ++j) {
+        for (int k = 0; k < array[i][j].length; ++k) {
+          for (int l = 0; l < array[i][j][k].length; ++l) {
+            for (int m = 0; m < array[i][j][k][l].length; ++m) {
+              ++cnt;
               array[i][j][k][l][m] = z;
             }
           }

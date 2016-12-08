@@ -519,7 +519,7 @@ public class CreateParamsTest extends TestCase {
 
   //test that will work ok when using the extended interface in IndexCompressed
   public void testExtendedLoop() {
-    for (int i = 1; i <= 94; i++) {
+    for (int i = 1; i <= 94; ++i) {
       final CreateParams params = new CreateParams(Integer.MAX_VALUE, i, i, 0, true, true, true, false);
       params.integrity();
       assertEquals(Math.max(0, i - 30), params.hashCompressedBits());
@@ -528,7 +528,7 @@ public class CreateParamsTest extends TestCase {
 
   //test that will work ok when using the extended interface in IndexCompressed
   public void testExtendedLoop2() {
-    for (int i = 64; i <= 94; i++) {
+    for (int i = 64; i <= 94; ++i) {
       final CreateParams params = new CreateParams(Integer.MAX_VALUE, i, i, 0, true, false, true, true);
       params.integrity();
       assertEquals(Math.min(64, i - 10), params.hashCompressedBits());

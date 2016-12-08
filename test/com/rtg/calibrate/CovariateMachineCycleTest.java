@@ -54,7 +54,7 @@ public class CovariateMachineCycleTest extends TestCase {
 
   private byte[] id(final int n) {
     final byte[] q = new byte[n];
-    for (int k = 0; k < n; k++) {
+    for (int k = 0; k < n; ++k) {
       q[k] = (byte) k;
     }
     return q;
@@ -103,7 +103,7 @@ public class CovariateMachineCycleTest extends TestCase {
         assertEquals(0, stats.getDifferent());
         assertEquals(0, stats.getDeleted());
         assertEquals(0, stats.getInserted());
-        c++;
+        ++c;
       }
     }
     assertEquals(10, c);
@@ -154,7 +154,7 @@ public class CovariateMachineCycleTest extends TestCase {
         assertEquals(0, stats.getDifferent());
         assertEquals(0, stats.getDeleted());
         assertEquals(0, stats.getInserted());
-        c++;
+        ++c;
       }
     }
     assertEquals(10, c);
@@ -207,7 +207,7 @@ public class CovariateMachineCycleTest extends TestCase {
         assertEquals(0, stats.getDifferent());
         assertEquals(0, stats.getDeleted());
         assertEquals(0, stats.getInserted());
-        c++;
+        ++c;
       }
     }
     assertEquals(35, c);

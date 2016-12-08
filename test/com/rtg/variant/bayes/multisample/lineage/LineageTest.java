@@ -92,7 +92,7 @@ public class LineageTest extends TestCase {
     final String[] strings = new String[]{"C", "C", "A", "A", "A"};
     final VariantSample.DeNovoStatus[] status = {VariantSample.DeNovoStatus.UNSPECIFIED, VariantSample.DeNovoStatus.NOT_DE_NOVO, VariantSample.DeNovoStatus.IS_DE_NOVO, VariantSample.DeNovoStatus.NOT_DE_NOVO, VariantSample.DeNovoStatus.NOT_DE_NOVO};
     assertTrue(comparisonResult.isInteresting());
-    for (int i = 0; i < strings.length; i++) {
+    for (int i = 0; i < strings.length; ++i) {
       final String expected = strings[i];
       final VariantSample variantSample = comparisonResult.getSamples()[i];
       assertEquals("Sample: " + i, expected, variantSample.getName());

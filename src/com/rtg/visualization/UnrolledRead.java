@@ -72,7 +72,7 @@ class UnrolledRead {
    */
   String[] lines(int templateLenghtWithInserts) {
     final String[] results = new String[mList.size()];
-    for (int i = 0; i < mList.size(); i++) {
+    for (int i = 0; i < mList.size(); ++i) {
       final StringBuilder sb = new StringBuilder();
       final ReadLoc location = mList.get(i);
       //System.err.println("start=" + location.mStart + " end=" + location.mEnd);
@@ -85,7 +85,7 @@ class UnrolledRead {
   }
 
   void appendSpace(StringBuilder sb, int counts) {
-    for (int i = 0; i < counts; i++) {
+    for (int i = 0; i < counts; ++i) {
       sb.append(' ');
     }
   }

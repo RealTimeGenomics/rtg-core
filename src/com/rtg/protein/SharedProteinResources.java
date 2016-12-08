@@ -125,7 +125,7 @@ public class SharedProteinResources {
       // Convert to protein in situ
       final Frame frames = ProteinOutputProcessor.FRAMES_MAPPING[frame + 3];
       final int limit = (length - Math.abs(frame) + 1) / 3;
-      for (int j = 0, i = 0; j < limit; j++, i += 3) {
+      for (int j = 0, i = 0; j < limit; ++j, i += 3) {
         mWorkSpaceProtein[j] = frames.code(mWorkSpace, length, i);
       }
       return mWorkSpaceProtein;

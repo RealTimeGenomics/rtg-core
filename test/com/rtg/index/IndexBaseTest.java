@@ -21,7 +21,7 @@ public class IndexBaseTest extends IndexSimpleTest {
 
   private CommonIndex dynamic(final int[] x) {
     final CommonIndex a = com.rtg.util.array.intindex.IntCreate.createIndex(x.length);
-    for (int i = 0; i < x.length; i++) {
+    for (int i = 0; i < x.length; ++i) {
       a.set(i, x[i]);
     }
     return a;

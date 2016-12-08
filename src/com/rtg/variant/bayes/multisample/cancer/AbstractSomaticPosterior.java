@@ -74,9 +74,9 @@ public abstract class AbstractSomaticPosterior {
    */
   protected final void postConstruction() {
     // now calculate row/column/diagonal/non-diagonal sums.
-    for (int normal = 0; normal < mLength; normal++) {
+    for (int normal = 0; normal < mLength; ++normal) {
       assert mPosterior[normal].length == mLength;
-      for (int cancer = 0; cancer < mLength; cancer++) {
+      for (int cancer = 0; cancer < mLength; ++cancer) {
         final double p = mPosterior[normal][cancer];
         if (normal == cancer) {
           mEqual = logSum(mEqual, p);
@@ -94,10 +94,10 @@ public abstract class AbstractSomaticPosterior {
 
   protected void contraryEvidenceAdjustment(final Statistics<?> normalStats, final Statistics<?> cancerStats) {
     // Corresponds to R(H_c | H_n, E_c, E_n) in theory document
-    for (int normal = 0; normal < mLength; normal++) {
+    for (int normal = 0; normal < mLength; ++normal) {
       final int normalA = mHypotheses.code().a(normal);
       final int normalB = mHypotheses.code().bc(normal);
-      for (int cancer = 0; cancer < mLength; cancer++) {
+      for (int cancer = 0; cancer < mLength; ++cancer) {
         if (normal != cancer) { // No adjustment needed in case where hypotheses are the same
           final int cancerA = mHypotheses.code().a(cancer);
           final int cancerB = mHypotheses.code().bc(cancer);
@@ -124,7 +124,7 @@ public abstract class AbstractSomaticPosterior {
   private int findBest(double[] marginals) {
     double bestScore = Double.NEGATIVE_INFINITY;
     int besti = -1;
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       final double p = marginals[i];
       if (p > bestScore) {
         bestScore = p;
@@ -139,15 +139,15 @@ public abstract class AbstractSomaticPosterior {
     final StringBuilder sb = new StringBuilder();
     final FormatReal fmt = new FormatReal(4, 3);
     final int pad = mHypotheses.nameLength();
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       sb.append(StringUtils.padLeft(mHypotheses.name(i), pad));
-      for (int j = 0; j < mLength; j++) {
+      for (int j = 0; j < mLength; ++j) {
         sb.append(fmt.format(mPosterior[i][j]));
       }
       sb.append(fmt.format(mNormalMarginal[i])).append(LS);
     }
     sb.append(StringUtils.padLeft("", pad));
-    for (int j = 0; j < mLength; j++) {
+    for (int j = 0; j < mLength; ++j) {
       sb.append(fmt.format(mCancerMarginal[j]));
     }
     sb.append(LS);
@@ -178,8 +178,8 @@ public abstract class AbstractSomaticPosterior {
   protected double posteriorScore() {
     final double best = mPosterior[mBestNormal][mBestCancer];
     double others = Double.NEGATIVE_INFINITY;
-    for (int i = 0; i < mLength; i++) {
-      for (int j = 0; j < mLength; j++) {
+    for (int i = 0; i < mLength; ++i) {
+      for (int j = 0; j < mLength; ++j) {
         if (i != mBestNormal || j != mBestCancer) {
           final double pij = mPosterior[i][j];
           others = logSum(others, pij);

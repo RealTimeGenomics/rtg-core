@@ -42,7 +42,7 @@ public class FragTest extends TestCase {
     assertEquals(42, fr.multiplicity());
     @SuppressWarnings("unchecked")
     final SortedMultiSet<Integer>[] counts = (SortedMultiSet<Integer>[]) new SortedMultiSet<?>[43];
-    for (int i = 0; i < counts.length; i++) {
+    for (int i = 0; i < counts.length; ++i) {
       counts[i] = new SortedMultiSet<>();
     }
     fr.count(counts);
@@ -71,7 +71,7 @@ public class FragTest extends TestCase {
     assertEquals(-1, a[0]);
     assertEquals(1, a[1]);
     assertEquals(1, a[42]);
-    for (int i = 0; i < a.length; i++) {
+    for (int i = 0; i < a.length; ++i) {
       assertTrue(a[i] <= i);
     }
     //System.err.println(Arrays.toString(a));
@@ -109,10 +109,10 @@ public class FragTest extends TestCase {
 
   private void checkA(final int[] a, final int... b) {
     assertEquals(b.length, a.length);
-    for (int i = 0; i < a.length; i++) {
+    for (int i = 0; i < a.length; ++i) {
       assertEquals("" + i, a[i], b[i]);
     }
-    for (int i = 1; i < a.length; i++) {
+    for (int i = 1; i < a.length; ++i) {
       assertTrue("" + i, a[i] <= i);
     }
   }
@@ -202,8 +202,8 @@ public class FragTest extends TestCase {
     final MatrixSymmetric h1 = new MatrixSymmetric(44);
     final MatrixSymmetric h2 = new MatrixSymmetric(44);
     // Just a nonzero start position, symmetric
-    for (int k = 0; k < 44; k++) {
-      for (int j = 0; j <= k; j++) {
+    for (int k = 0; k < 44; ++k) {
+      for (int j = 0; j <= k; ++j) {
         h1.set(k, j, (0.5 + k + j) / (0.5 + k * j));
         h2.set(k, j, (0.5 + k + j) / (0.5 + k * j));
       }
@@ -211,8 +211,8 @@ public class FragTest extends TestCase {
     assertEquals(-Math.log(4.0), fr1.increment(r1, j1, h1));
     assertEquals(-Math.log(4.0), fr2.increment(r1, j1, h1));
     assertEquals(-2 * Math.log(4.0), fr3.increment(r1, j1, h2));
-    for (int k = 0; k < 44; k++) {
-      for (int j = 0; j < 44; j++) {
+    for (int k = 0; k < 44; ++k) {
+      for (int j = 0; j < 44; ++j) {
         assertEquals(h1.get(k, j), h2.get(k, j), 1e-6);
       }
     }

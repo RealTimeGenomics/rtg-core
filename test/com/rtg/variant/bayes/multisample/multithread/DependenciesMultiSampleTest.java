@@ -70,7 +70,7 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
     assertTrue(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.BED)));
     assertFalse(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.FILTER)));
     assertFalse(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.OUT)));
-    for (int i = 1; i < numberChunks; i++) {
+    for (int i = 1; i < numberChunks; ++i) {
       for (final JobType ty : values) {
         assertTrue("i=" + i + " ty=" + ty, allIds.contains(new JobIdMultisample(numberChunks, i, ty)));
       }
@@ -96,7 +96,7 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
     assertTrue(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.BED)));
     assertFalse(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.FILTER)));
     assertFalse(allIds.contains(new JobIdMultisample(numberChunks, 0, JobType.OUT)));
-    for (int i = 1; i <= lookAhead; i++) {
+    for (int i = 1; i <= lookAhead; ++i) {
       for (final JobType ty : values) {
         assertTrue("i=" + i + " ty=" + ty, allIds.contains(new JobIdMultisample(numberChunks, i, ty)));
       }
@@ -204,7 +204,7 @@ public class DependenciesMultiSampleTest extends AbstractDependenciesTest<JobIdM
     int i = 0;
     for (final Object frid : from) {
       assertTrue(id + ">" + from.toString(), eq(exp[i], frid));
-      i++;
+      ++i;
     }
   }
 

@@ -123,7 +123,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     }
     // For an extended region choose a prior that is the mean of the point priors in the region
     double s = 0;
-    for (int k = start; k < end; k++) {
+    for (int k = start; k < end; ++k) {
       s += getSomaticPrior(seqName, k);
     }
     return s / (end - start);
@@ -153,12 +153,12 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     // The theory really only covers the SNP cases, but here we just "make it work" for complex
     // cases as well.
     if (loh <= 0) {
-      mOneMinusEll++;
+      ++mOneMinusEll;
       if (normalPloidy == Ploidy.HAPLOID) {
         if (normal == cancer) {
-          mOneMinusMu++;
+          ++mOneMinusMu;
         } else {
-          mMu++;
+          ++mMu;
         }
       } else {
         if (normal == cancer) {
@@ -175,11 +175,11 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
       }
     } else {
       assert code.homozygous(cancer);
-      mEll++;
+      ++mEll;
       if (code.a(normal) == cancer || code.bc(normal) == cancer) {
-        mOneMinusMu++;
+        ++mOneMinusMu;
       } else {
-        mMu++;
+        ++mMu;
       }
     }
   }

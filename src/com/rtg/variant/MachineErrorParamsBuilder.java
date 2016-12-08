@@ -125,7 +125,7 @@ public class MachineErrorParamsBuilder {
         throw new InvalidParamsException(ErrorType.PRIOR_KEY_VALUE_INVALID, curve, MachineErrorParams.QCALIB_KEY, errors);
       }
       mQualityCurve = new int[nums.length];
-      for (int q = 0; q < nums.length; q++) {
+      for (int q = 0; q < nums.length; ++q) {
         mQualityCurve[q] = Integer.parseInt(nums[q]);
       }
       checkQualityCurve(mQualityCurve); // check the values

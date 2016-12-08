@@ -48,19 +48,19 @@ final class ComplexCnvRegion extends AbstractCnvRegion implements Integrity {
       mMiddle = null;
     } else {
       final ArrayList<SortedSet<AbstractCnvRegion>> sets = new ArrayList<>();
-      for (int i = 0; i < mLengthMid; i++) {
+      for (int i = 0; i < mLengthMid; ++i) {
         sets.add(new TreeSet<AbstractCnvRegion>());
       }
-      for (int i = 1; i < size - 1; i++) {
+      for (int i = 1; i < size - 1; ++i) {
         final AbstractCnvRegion reg = rega[i];
         final int bs = box(Math.max(reg.getStart(), getStart()));
         final int be = box(Math.min(reg.getEnd(), getEnd()));
-        for (int j = bs; j <= be; j++) {
+        for (int j = bs; j <= be; ++j) {
           sets.get(j).add(reg);
         }
       }
       mMiddle = new AbstractCnvRegion[mLengthMid];
-      for (int i = 0; i < mLengthMid; i++) {
+      for (int i = 0; i < mLengthMid; ++i) {
 
         final SortedSet<AbstractCnvRegion> set = sets.get(i);
         final int ss = set.size();
@@ -115,7 +115,7 @@ final class ComplexCnvRegion extends AbstractCnvRegion implements Integrity {
     sb.append(mFirst.toString());
     sb.append(StringUtils.LS);
     if (mMiddle != null) {
-      for (int i = 0; i < mMiddle.length; i++) {
+      for (int i = 0; i < mMiddle.length; ++i) {
         if (mMiddle[i] != null) {
           sb.append("[").append(i).append("]").append(StringUtils.LS);
           sb.append(mMiddle[i].toString());

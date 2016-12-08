@@ -51,7 +51,7 @@ public class FixedStepPopulationVariantGeneratorTest extends TestCase {
       assertFalse(Arrays.equals(var.mAlleles[0], var.mRef));
       assertEquals(0, var.getSequenceId());
       assertEquals(e * 10, var.getStart());
-      e++;
+      ++e;
     }
   }
   public void testFixedStepHetX() throws IOException {
@@ -67,7 +67,7 @@ public class FixedStepPopulationVariantGeneratorTest extends TestCase {
       assertTrue(!Arrays.equals(var.mAlleles[0], var.mAlleles[1]));
       assertEquals(0, var.getSequenceId());
       assertEquals(e * 10, var.getStart());
-      e++;
+      ++e;
     }
   }
   public void testFixedStepI() throws IOException {
@@ -83,7 +83,7 @@ public class FixedStepPopulationVariantGeneratorTest extends TestCase {
       assertFalse(Arrays.equals(var.mAlleles[0], var.mRef));
       assertEquals(0, var.getSequenceId());
       assertEquals((e + 1) * 10 - 1, var.getStart());
-      e++;
+      ++e;
     }
   }
 }

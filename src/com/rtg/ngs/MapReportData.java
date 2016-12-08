@@ -258,7 +258,7 @@ public final class MapReportData {
    */
   public boolean isPairedEnd() {
     for (DistributionType dt : PAIRED_BASE_TYPES) {
-      for (int i = 1; i < 4; i++) {
+      for (int i = 1; i < 4; ++i) {
         if (mHistograms.get(DistributionType.values()[dt.ordinal() + i]).getLength() > 0) {
           return true;
         }
@@ -410,7 +410,7 @@ public final class MapReportData {
       if (addSectionHeader) {
         out.append("#").append(dist.longName()).append(StringUtils.LS);
       }
-      for (int i = 0; i < histogram.getLength(); i++) {
+      for (int i = 0; i < histogram.getLength(); ++i) {
         final long value = histogram.getValue(i);
         if (value > 0) {
           out.append(dist.toString())

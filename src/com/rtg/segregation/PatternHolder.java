@@ -57,15 +57,15 @@ final class PatternHolder {
     assert !compatible(other);
     int minIncompatible = Integer.MAX_VALUE;
     String[] ret = null;
-    for (int i = 0; i < Pattern.NUMBER_FLIPS; i++) {
+    for (int i = 0; i < Pattern.NUMBER_FLIPS; ++i) {
       int incompatible = 0;
       final String[] compats = new String[mChP.length()];
-      for (int j = 0; j < mChP.length(); j++) {
+      for (int j = 0; j < mChP.length(); ++j) {
         if (j >= other.mChP.length()) {
           compats[j] = "N";
         } else if (Pattern.flipIntersect(mChP.index(j), other.mChP.index(j), i) == null) {
           compats[j] = "I";
-          incompatible++;
+          ++incompatible;
         } else {
           compats[j] = "C";
         }

@@ -34,7 +34,7 @@ public final class MismatchPositionFormatter {
     final int zeroBasedStart = ActionsHelper.zeroBasedTemplateStart(actions);
     final ActionsHelper.CommandIterator iter = rc ? ActionsHelper.iteratorReverse(actions) : ActionsHelper.iterator(actions);
     if (zeroBasedStart < 0) {
-      for (int i = zeroBasedStart; i < 0 && iter.hasNext(); i++) {
+      for (int i = zeroBasedStart; i < 0 && iter.hasNext(); ++i) {
         iter.next();
       }
     }
@@ -45,16 +45,16 @@ public final class MismatchPositionFormatter {
       final int action = iter.next();
       switch (action) {
         case ActionsHelper.SAME:
-          matchCount++;
+          ++matchCount;
           inDeletion = false;
-          templatePosition++;
+          ++templatePosition;
           break;
         case ActionsHelper.MISMATCH:
           mismatch.append(matchCount);
           matchCount = 0;
           mismatch.append(DnaUtils.getBase(template[templatePosition]));
           inDeletion = false;
-          templatePosition++;
+          ++templatePosition;
           break;
         case ActionsHelper.DELETION_FROM_REFERENCE:
           if (!inDeletion) {
@@ -64,10 +64,10 @@ public final class MismatchPositionFormatter {
           }
           mismatch.append(DnaUtils.getBase(template[templatePosition]));
           inDeletion = true;
-          templatePosition++;
+          ++templatePosition;
           break;
         case ActionsHelper.CG_GAP_IN_READ: // Probably not set up correctly
-          templatePosition++;
+          ++templatePosition;
           break;
         case ActionsHelper.CG_OVERLAP_IN_READ:
         case ActionsHelper.INSERTION_INTO_REFERENCE: // Ignore insertions on reference

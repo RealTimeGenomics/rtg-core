@@ -27,7 +27,7 @@ public class DescriptionDiseaseTest extends TestCase {
     final Description desc = new DescriptionDisease(desc0);
     assertEquals(5, desc.size());
     assertEquals("NONE", desc.name(0));
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertEquals(desc0.name(i), desc.name(i + 1));
     }
   }
@@ -39,7 +39,7 @@ public class DescriptionDiseaseTest extends TestCase {
     assertEquals(1, desc.minLength());
     assertEquals(2, desc.maxLength());
     assertEquals("NONE", desc.name(0));
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; ++i) {
       assertEquals(desc0.name(i), desc.name(i + 1));
     }
   }

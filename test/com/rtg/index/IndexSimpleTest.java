@@ -88,7 +88,7 @@ public class IndexSimpleTest extends AbstractIndexTest {
   };
 
   public final void testHashSize() {
-    for (int i = 1; i <= 64; i++) {
+    for (int i = 1; i <= 64; ++i) {
       final IndexBase hi = getIndex(1, i, 2);
       assertTrue(i + hi.infoString(), hi.infoString().contains(EXPECTED_MULTIPLIER[i - 1] + "\t1\tHash"));
     }

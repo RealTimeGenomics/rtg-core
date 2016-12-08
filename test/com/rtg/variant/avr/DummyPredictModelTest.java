@@ -67,7 +67,7 @@ public class DummyPredictModelTest extends AbstractPredictModelTest<DummyPredict
 
     @Override
     public void annotate(VcfRecord record) {
-      for (int s = 0; s < record.getNumberOfSamples(); s++) {
+      for (int s = 0; s < record.getNumberOfSamples(); ++s) {
         annotateSample(record, s);
       }
     }

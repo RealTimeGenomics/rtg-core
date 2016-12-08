@@ -56,7 +56,7 @@ public class IndexQueues extends IntegralAbstract {
     mRadixBits = radixBits(hashBits, ipBits);
     mLowerBits = hashBits - mRadixBits;
     Diagnostic.developerLog("Lower bits=" + mLowerBits + " radixBits=" + mRadixBits);
-    for (int i = 0; i < mQueues.length; i++) {
+    for (int i = 0; i < mQueues.length; ++i) {
       mQueues[i] = new IndexQueue(mLowerBits, mRadixBits, mRadixSize, valueBits);
     }
   }
@@ -94,7 +94,7 @@ public class IndexQueues extends IntegralAbstract {
     @Override
     public void run() {
       final OneShotTimer timer = new OneShotTimer("LR_BS_freeze_add_" + Thread.currentThread().getName().replace(" ", "_"));
-      for (int i = mStart; i < mEnd; i++) {
+      for (int i = mStart; i < mEnd; ++i) {
         for (final IndexQueue mQueue : mQueues) {
           final long radixShifted = ((long) i) << mLowerBits;
           final QueueIterator it = mQueue.iterator(i, radixShifted);
@@ -114,7 +114,7 @@ public class IndexQueues extends IntegralAbstract {
    */
   public void freeze(final Index index) {
     final OneShotTimer freezeCloseTimer = new OneShotTimer("LR_BS_freeze_close");
-    for (int i = 0; i < mNumberThreads; i++) {
+    for (int i = 0; i < mNumberThreads; ++i) {
       mQueues[i].close();
     }
     freezeCloseTimer.stopLog();
@@ -132,7 +132,7 @@ public class IndexQueues extends IntegralAbstract {
     final SizeSplit ss = new SizeSplit(1 << mRadixBits, mNumberThreads);
 
     final OneShotTimer freezeAddTimer = new OneShotTimer("LR_BS_freeze_add");
-    for (int i = 0; i < mNumberThreads; i++) {
+    for (int i = 0; i < mNumberThreads; ++i) {
       pool.execute(new FreezeThread(index, ss.start(i), ss.start(i + 1)));
     }
     try {

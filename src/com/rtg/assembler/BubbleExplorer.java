@@ -112,7 +112,7 @@ public class BubbleExplorer {
   Histogram popBubbles() {
     final Histogram h = new Histogram();
     final List<Long> mergeCandidates = new ArrayList<>();
-    for (long i = 1; i <= mGraph.numberContigs(); i++) {
+    for (long i = 1; i <= mGraph.numberContigs(); ++i) {
       mPathsIterator.set(i);
       if (links(true, mGraph, mPathsIterator).size() > 1) {
         mergeCandidates.add(i);
@@ -123,7 +123,7 @@ public class BubbleExplorer {
       }
     }
     final Set<Long> removed = new HashSet<>();
-    for (int i = 0; i < mergeCandidates.size(); i++) {
+    for (int i = 0; i < mergeCandidates.size(); ++i) {
       final long nodeId = mergeCandidates.get(i);
       if (removed.contains(nodeId)) {
         continue;

@@ -22,7 +22,7 @@ class TauImplementation {
 
   static double product(final Match match, final int matchStart, final String name, final int nameStart, final int nameEnd) {
     double prod = 1.0;
-    for (int n = nameStart, m = matchStart; n < nameEnd; n++, m++) {
+    for (int n = nameStart, m = matchStart; n < nameEnd; ++n, ++m) {
       final double q = match.baseError(m);
       final double s;
       if (q >= 0.75) { //allow for quality scores of 0 or 1 - prevent probability of 0
@@ -83,7 +83,7 @@ class TauImplementation {
   double taul(final Match match, final String name) {
     double sum = 0.0;
     final int l = name.length();
-    for (int r = 0; r <= l; r++) {
+    for (int r = 0; r <= l; ++r) {
       final String na = name.substring(0, r);
       final double tau = tau(match, na);
       sum += tau;
@@ -97,7 +97,7 @@ class TauImplementation {
   double taur(final Match match, final String name) {
     double sum = 0.0;
     final int l = name.length();
-    for (int r = 0; r <= l; r++) {
+    for (int r = 0; r <= l; ++r) {
       final String na = name.substring(r);
       final double tau = tau(match, na);
       sum += tau;
@@ -113,8 +113,8 @@ class TauImplementation {
     double sum = 0.0;
     final int l = name.length();
     final double res;
-    for (int r = 0; r <= l; r++) {
-      for (int s = r; s <= l; s++) {
+    for (int r = 0; r <= l; ++r) {
+      for (int s = r; s <= l; ++s) {
         final String na = name.substring(r, s);
         final double tau = tau(match, na);
         //System.err.println("m=" + match + " l=" + name + " na=" + na + " tau=" + tau + " wt=" + wt);
@@ -142,14 +142,14 @@ class TauImplementation {
     double sum = 0.0;
     if (l >= m) {
       // hypothesis is longer or equal to evidence
-      for (int d = 0; d <= m; d++) {
+      for (int d = 0; d <= m; ++d) {
         final double p = product(match, 0, name, 0, d) * product(match, d, name, d + l - m, l);
         sum += p;
       }
       corr = 1.0 / (m + 1);
     } else {
       // hypothesis is shorter than evidence
-      for (int d = 0; d <= l; d++) {
+      for (int d = 0; d <= l; ++d) {
         final double p = product(match, 0, name, 0, d) * product(match, m - (l - d), name, d, l);
         sum += p;
       }
@@ -178,7 +178,7 @@ class TauImplementation {
       throw new IndexOutOfBoundsException(String.valueOf(l));
     }
     double q = 0;
-    for (int m = 0; true; m++) {
+    for (int m = 0; true; ++m) {
       final double k = mKappa.kappa(m, l);
       final double delta = Math.pow(4.0, -m) * k * k;
       q += delta;

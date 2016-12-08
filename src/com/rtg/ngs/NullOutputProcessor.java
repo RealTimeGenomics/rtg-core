@@ -34,7 +34,7 @@ public class NullOutputProcessor implements OutputProcessor {
 
   @Override
   public void process(final long templateId, final String frame, final int readId, final int tStart, final int score, final int scoreIndel) {
-    mHitCount++;
+    ++mHitCount;
     /*
     System.out.println(""
                 + templateId + "\t"

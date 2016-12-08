@@ -66,7 +66,7 @@ public class DeltaImplementation extends Delta {
     //vertical inserts
     final int readStart = Math.max(0, index - width + 2);
     final int readEnd = Math.min(length, index + 1);
-    for (int readPos = readStart; readPos <= readEnd; readPos++) {
+    for (int readPos = readStart; readPos <= readEnd; ++readPos) {
       final double fwd = mForward.insert(readPos, index + 1 - readPos);
       final double rev = mReverse.insert(readPos, index + 1 - readPos);
       final double prod = mult(fwd, rev);
@@ -75,7 +75,7 @@ public class DeltaImplementation extends Delta {
 
     //horizontal at ends
     //left
-    for (int templatePos = index + 2; templatePos < width; templatePos++) {
+    for (int templatePos = index + 2; templatePos < width; ++templatePos) {
       final double fwdDel = mForward.delete(0, templatePos);
       final double revDel = mReverse.delete(0, templatePos);
       final double prodDel = mult(fwdDel, revDel);
@@ -87,7 +87,7 @@ public class DeltaImplementation extends Delta {
       sum = add(sum, prodMa);
     }
     //right
-    for (int templatePos = length; templatePos <= index; templatePos++) {
+    for (int templatePos = length; templatePos <= index; ++templatePos) {
       final double fwdDel = mForward.delete(length, templatePos - length);
       final double revDel = mReverse.delete(length, templatePos - length);
       final double prodDel = mult(fwdDel, revDel);
@@ -103,20 +103,20 @@ public class DeltaImplementation extends Delta {
 
     //System.err.println(" templatePosition=" + templatePosition + " index=" + index + " sum=" + sum);
     //sum the parts affected by the nucleotide changes
-    for (int readPos = readStart; readPos <= readEnd; readPos++) {
+    for (int readPos = readStart; readPos <= readEnd; ++readPos) {
       final double rev = mReverse.match(readPos, index + 1 - readPos);
       if (readPos == 0) {
         final double fwd = mForward.match(0, index + 1);
         final double prod = mult(fwd, rev);
         //System.err.println(" templatePosition=" + templatePosition + " readPos=" + readPos + " fwd=" + fwd + " rev=" + rev);
-        for (byte nt = 1; nt <= 4; nt++) {
+        for (byte nt = 1; nt <= 4; ++nt) {
           //System.err.println(" nt=" + nt + " prod=" + prod);
           mResult[nt - 1] = add(mResult[nt - 1], prod);
         }
       } else {
         final double fwd = mForward.calculateMatch(readPos - 1, index - (readPos - 1));
         //System.err.println(" templatePosition=" + templatePosition + " readPos=" + readPos + " fwd=" + fwd + " rev=" + rev);
-        for (byte nt = 1; nt <= 4; nt++) {
+        for (byte nt = 1; nt <= 4; ++nt) {
           final double matchEq = mForward.matchEqTe(readPos - 1, nt);
           final double prod = mult(fwd, mult(matchEq, rev));
           //System.err.println(" nt=" + nt + " matchEq=" + matchEq + " prod=" + prod);
@@ -124,10 +124,10 @@ public class DeltaImplementation extends Delta {
         }
       }
     }
-    //    for (int nt = 1; nt <= 4; nt++) {
+    //    for (int nt = 1; nt <= 4; ++nt) {
     //      System.err.println(" templatePosition=" + templatePosition + " result[" + (nt - 1) + "]=" + mResult[nt - 1]);
     //    }
-    for (int i = 0; i < mResult.length; i++) {
+    for (int i = 0; i < mResult.length; ++i) {
       mResult[i] = arithmetic().poss2Ln(mResult[i]);
     }
     return mResult;

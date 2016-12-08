@@ -114,7 +114,7 @@ public class ChrStats {
     int numSpecifiedSequences = 0;
     for (final ReferenceSequence seq : referenceGenome.sequences()) {
       if (seq.isSpecified() && seq.ploidy() == Ploidy.DIPLOID) {
-        numSpecifiedSequences++;
+        ++numSpecifiedSequences;
       }
     }
     return numSpecifiedSequences;
@@ -145,7 +145,7 @@ public class ChrStats {
         final double coverage = calibrator.expectedCoverage(seq.name(), sample);
         sumCoverage += coverage;
         sumCoverageSquares += coverage * coverage;
-        numSpecifiedSequences++;
+        ++numSpecifiedSequences;
       }
     }
     final double meanDip = sumCoverage / numSpecifiedSequences;
@@ -163,7 +163,7 @@ public class ChrStats {
     int totalCount = 0;
     for (final ReferenceSequence seq : referenceGenome.sequences()) {
       if (seq.isSpecified()) {
-        totalCount++;
+        ++totalCount;
         final boolean isAutosome = mSexMemo.isAutosome(seq.name());
         final double coverage = calibrator.expectedCoverage(seq.name(), sample);
         if (seq.ploidy() == Ploidy.DIPLOID) {
@@ -183,7 +183,7 @@ public class ChrStats {
           }
           if (abs > mMinDeviations) {
             status = INCONSISTENT;
-            strangeCount++;
+            ++strangeCount;
           }
           if (log) {
             Diagnostic.userLog(sample + " " + seq.name() + " observed-coverage=" + NF.format(coverage) + " z=" + NF.format(z) + "  (diploid coverage mean=" + NF.format(mean) + " stddev=" + NF.format(stddev) + ")" + status);
@@ -198,7 +198,7 @@ public class ChrStats {
           }
           if (abs > mMinDeviations) {
             status = INCONSISTENT;
-            strangeCount++;
+            ++strangeCount;
           }
           if (log) {
             Diagnostic.userLog(sample + " " + seq.name() + " observed-coverage=" + NF.format(coverage) + " z=" + NF.format(z) + "  (diploid coverage mean=" + NF.format(meanDip) + " stddev=" + NF.format(stddevDip) + ")" + status);

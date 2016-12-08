@@ -217,7 +217,7 @@ public abstract class ImplementHashFunction extends IntegralAbstract implements 
     mValuesR1 = mValuesR1 >>> 1;
     mValuesR1 |= cr2 << 63;
 
-    mSoFar++;
+    ++mSoFar;
     //System.err.println("hashStep code=" + code);
     //System.err.println("F0=" + com.rtg.util.Utils.toBitsSep(mValuesF0) + "\nF1=" + com.rtg.util.Utils.toBitsSep(mValuesF1));
     //System.err.println("R0=" + com.rtg.util.Utils.toBitsSep(mValuesR0) + "\nR1=" + com.rtg.util.Utils.toBitsSep(mValuesR1));
@@ -341,7 +341,7 @@ public abstract class ImplementHashFunction extends IntegralAbstract implements 
   static long bitFlip(final long a) {
     long ra = a;
     long na = 0;
-    for (int i = 0; i < 64; i++) {
+    for (int i = 0; i < 64; ++i) {
       na = (na << 1) | (1 - (ra & 1));
       ra = ra >> 1;
     }

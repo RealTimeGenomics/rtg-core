@@ -25,7 +25,7 @@ public class InExactHashFunction extends IntegralAbstract implements
   static {
     HASH_BLOCKS = new long[256];
     final PortableRandom r = new PortableRandom(1); // use same seed for deterministic behavior
-    for (int i = 0; i < 256; i++) {
+    for (int i = 0; i < 256; ++i) {
       HASH_BLOCKS[i] = r.nextLong();
     }
   }

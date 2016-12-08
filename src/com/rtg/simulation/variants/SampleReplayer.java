@@ -93,7 +93,7 @@ public class SampleReplayer {
     try (SdfWriter sdf = new SdfWriter(outputDir, Constants.MAX_FILE_SIZE, PrereadType.UNKNOWN, false, true, true, SequenceType.DNA)) {
       sdf.setCommandLine(CommandLine.getCommandLine());
       final ReferenceGenome rg = new ReferenceGenome(mReference, sex, ReferencePloidy.AUTO);
-      for (long i = 0; i < mReference.numberSequences(); i++) {
+      for (long i = 0; i < mReference.numberSequences(); ++i) {
         final ReferenceSequence refSeq = rg.sequence(mReference.name(i));
         final int count = refSeq.ploidy().count() >= 0 ? refSeq.ploidy().count() : 1; //effectively treats polyploid as haploid
         final String circleString = refSeq.isLinear() ? "linear" : "circular";
@@ -122,7 +122,7 @@ public class SampleReplayer {
 
   // Applies mutations to the specified sequence and writes to the SDF
   private void replaySequence(File sampleVcf, SdfWriter output, int count, long sequenceId, int sampleNum, VcfHeader header) throws IOException {
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; ++i) {
       final String name = mReference.name(sequenceId);
       output.startSequence(deriveName(name, i, count));
       try (VcfReader vcfReader = VcfReader.openVcfReader(sampleVcf, new RegionRestriction(name))) {

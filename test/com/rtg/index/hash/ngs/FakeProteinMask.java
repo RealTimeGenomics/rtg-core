@@ -32,17 +32,17 @@ class FakeProteinMask extends ProteinMask {
   @Override
   public void readAll(int readId, boolean reverse) {
     Assert.assertFalse(reverse);
-    mReadCalls++;
+    ++mReadCalls;
   }
 
   @Override
   public void templateForward(int endPosition) {
-    mTemplateCalls++;
+    ++mTemplateCalls;
   }
 
   @Override
   public NgsHashFunction threadClone(HashingRegion region) throws IOException {
-    mClones++;
+    ++mClones;
     return super.threadClone(region);
   }
 }

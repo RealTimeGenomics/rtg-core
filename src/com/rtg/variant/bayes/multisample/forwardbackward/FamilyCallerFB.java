@@ -75,7 +75,7 @@ public class FamilyCallerFB extends AbstractMultisampleCaller implements Multisa
     final HypothesisScore[] scores = new HypothesisScore[models.size()];
     final int numberIterations = 2;
     double sumNips = 0;
-    for (int oneloop = 0; oneloop < numberIterations; oneloop++) {
+    for (int oneloop = 0; oneloop < numberIterations; ++oneloop) {
       final FamilyPosteriorFB[] fps = new FamilyPosteriorFB[mFamilies.length];
       final Factor<?>[] as = CommonFormulas.initialA(models, priorContainer.getHypotheses());
       final Factor<?>[] asMendel = CommonFormulas.initialA(models, priorContainer.getHypotheses());
@@ -86,7 +86,7 @@ public class FamilyCallerFB extends AbstractMultisampleCaller implements Multisa
       assert bs != null;
       assert models.size() == bs.length;
       final MendelianAlleleProbabilityFactory fact = MendelianAlleleProbabilityFactory.COMBINED;
-      for (int familyIndex = mFamilies.length - 1; familyIndex >= 0; familyIndex--) {
+      for (int familyIndex = mFamilies.length - 1; familyIndex >= 0; --familyIndex) {
         final Family family = mFamilies[familyIndex];
         final FamilyPosteriorFB fp = new FamilyPosteriorFB(family, mParams.genomePriors(), models, priorContainer.getHypotheses(), fact);
         fps[familyIndex] = fp;
@@ -96,7 +96,7 @@ public class FamilyCallerFB extends AbstractMultisampleCaller implements Multisa
         bs[ids[Family.MOTHER_INDEX]].setB(family.getMotherFamilyId(), newBs[Family.MOTHER_INDEX]);
       }
 
-      for (int familyIndex = 0; familyIndex < mFamilies.length; familyIndex++) {
+      for (int familyIndex = 0; familyIndex < mFamilies.length; ++familyIndex) {
         final Family family = mFamilies[familyIndex];
         final FamilyPosteriorFB fp = fps[familyIndex]; // new FamilyPosteriorFB(family, mParams.genomePriors(), models, priorContainer.getHypotheses(), mParams.denovoPrior());
         final int[] ids = family.getSampleIds();
@@ -114,22 +114,22 @@ public class FamilyCallerFB extends AbstractMultisampleCaller implements Multisa
 
         // todo, this implementation does not have any correction for contrary evidence
 
-        for (int c = 0; c < family.numChildren(); c++) {
+        for (int c = 0; c < family.numChildren(); ++c) {
           as[ids[Family.FIRST_CHILD_INDEX + c]] = newAs[c]; //TODO should we update in the method itself?
         }
 
         //more denovo handling
-        for (int c = 0; c < family.numChildren(); c++) {
+        for (int c = 0; c < family.numChildren(); ++c) {
           asMendel[ids[Family.FIRST_CHILD_INDEX + c]] = asMendNew[c];
         }
-        for (int c = 0; c < family.numChildren(); c++) {
+        for (int c = 0; c < family.numChildren(); ++c) {
           asDenovo[ids[Family.FIRST_CHILD_INDEX + c]] = asDenovoNew[c];
         }
       }
 
       if (oneloop + 1 >= numberIterations) {
 //        System.err.print("FCFB :");
-        for (int familyIndex = 0; familyIndex < mFamilies.length; familyIndex++) {
+        for (int familyIndex = 0; familyIndex < mFamilies.length; ++familyIndex) {
           final Family family = mFamilies[familyIndex];
           final FamilyPosteriorFB fp = fps[familyIndex];
           final int[] ids = family.getSampleIds();
@@ -139,7 +139,7 @@ public class FamilyCallerFB extends AbstractMultisampleCaller implements Multisa
           mendelFamily.computeMarginals(asMendel, bs);
           denovoFamily.computeMarginals(asDenovo, bs);
           final double[] childDenovoPosteriors = new double[family.numChildren()];
-          for (int i = 0; i < family.numChildren(); i++) {
+          for (int i = 0; i < family.numChildren(); ++i) {
             childDenovoPosteriors[i] = denovoFamily.childMarginalSum(i) - mendelFamily.childMarginalSum(i);
           }
 
@@ -164,7 +164,7 @@ public class FamilyCallerFB extends AbstractMultisampleCaller implements Multisa
   private void setScores(HypothesisScore[] scores, Family family, FamilyPosteriorFB fp, int[] ids) {
     setScore(scores, ids[Family.FATHER_INDEX], fp.bestFather());
     setScore(scores, ids[Family.MOTHER_INDEX], fp.bestMother());
-    for (int i = 0; i < family.numChildren(); i++) {
+    for (int i = 0; i < family.numChildren(); ++i) {
       setScore(scores, ids[Family.FIRST_CHILD_INDEX + i], fp.bestChild(i));
     }
   }

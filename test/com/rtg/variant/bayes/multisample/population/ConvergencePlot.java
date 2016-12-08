@@ -81,7 +81,7 @@ public class ConvergencePlot {
 
   Convergence cleanConvergence() {
     final List<ModelInterface<?>> models = new ArrayList<>();
-    for (int i = 0; i < mSamples; i++) {
+    for (int i = 0; i < mSamples; ++i) {
       final HypothesesPrior<Description> hyp;
       if (mType == ChrType.AUTOSOMAL) {
         hyp = mDiploid;
@@ -104,7 +104,7 @@ public class ConvergencePlot {
    */
   void varyCoverage(final int maxCoverage) {
     final Convergence conv = cleanConvergence();
-    for (int i = 1; i <= maxCoverage; i++) {
+    for (int i = 1; i <= maxCoverage; ++i) {
       final SimulationResult iterate = conv.simulate();
       mOut.print(i + " " + iterate.totalIncorrect() + " ");
       final int[] incorrect = iterate.incorrect();
@@ -128,9 +128,9 @@ public class ConvergencePlot {
     final int iterations = (totalCalls + mSamples - 1) / mSamples;
     final int[] totals = new int[maxCoverage];
     double total = 0.0;
-    for (int i = 0; i < iterations; i++) {
+    for (int i = 0; i < iterations; ++i) {
       final Convergence conv = cleanConvergence();
-      for (int j = 1; j <= maxCoverage; j++) {
+      for (int j = 1; j <= maxCoverage; ++j) {
         final SimulationResult simres = conv.simulate();
         //System.err.println("i=" + i + " j=" + j + " incorr=" + simres.totalIncorrect());
         final int totalIncorrect = simres.totalIncorrect();
@@ -139,7 +139,7 @@ public class ConvergencePlot {
       }
     }
     final double n = iterations * mSamples;
-    for (int i = 0; i < maxCoverage; i++) {
+    for (int i = 0; i < maxCoverage; ++i) {
       final double d = totals[i] / n;
       mOut.println((i + 1) + " " + Utils.realFormat(d, 3));
     }
@@ -154,9 +154,9 @@ public class ConvergencePlot {
    */
   double expectedCoverage(final int maxCoverage, final int iterations) {
     double total = 0.0;
-    for (int i = 0; i < iterations; i++) {
+    for (int i = 0; i < iterations; ++i) {
       final Convergence conv = cleanConvergence();
-      for (int j = 1; j <= maxCoverage; j++) {
+      for (int j = 1; j <= maxCoverage; ++j) {
         final SimulationResult simRes = conv.simulate();
         total += simRes.totalIncorrect();
       }

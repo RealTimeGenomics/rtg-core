@@ -74,7 +74,7 @@ public final class MatedSamResultsFilter extends AbstractSamResultsFilter {
   /* for toprandom */
   void setTemplateNames(PrereadNamesInterface names) {
     mTemplateNames = new HashMap<>();
-    for (int i = 0; i < names.length(); i++) {
+    for (int i = 0; i < names.length(); ++i) {
       mTemplateNames.put(names.name(i), i);
     }
   }

@@ -71,7 +71,7 @@ public class ApplyReference {
         initialPrefix = "\\";
       }
       referencePosition = nextRefPos;
-      referencePosition++;
+      ++referencePosition;
     }
   }
   void tabbed(StringBuilder sb, String... vals) {
@@ -164,7 +164,7 @@ public class ApplyReference {
       while ((peeked = mMismatches.peek()) != null) {
         if (mReferencePosition - peeked > 100) {
           mMismatches.remove();
-          mMismatchCount++;
+          ++mMismatchCount;
         } else {
           break;
         }
@@ -274,7 +274,7 @@ public class ApplyReference {
       percentage = IntegerOrPercentage.valueOf(3);
     }
     final ApplyReference apply = new ApplyReference(graph, 18, 18, percentage);
-    for (int i = 0; i < reader.numberSequences(); i++) {
+    for (int i = 0; i < reader.numberSequences(); ++i) {
       apply.referenceSequence(reader.name(i), reader.read(i), System.out);
 
     }

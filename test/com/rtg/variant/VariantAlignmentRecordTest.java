@@ -244,7 +244,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final MachineErrorChooserInterface machineErrorChooserInterface = getMachineCycleCalibrator();
     final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
-    for (int i = 0; i < expected.length; i++) {
+    for (int i = 0; i < expected.length; ++i) {
       expected[i] = (byte) (i + (i > 4 ? 1 : 0));
     }
 
@@ -267,7 +267,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     final int overlapPosition = samReadLength - 1 - CgUtils.CG_OVERLAP_POSITION;
-    for (int i = 0; i < expected.length; i++) {
+    for (int i = 0; i < expected.length; ++i) {
       expected[i] = (byte) (CgUtils.CG_RAW_READ_LENGTH - i - (i > overlapPosition ? 1 : 0) - 1);
     }
 
@@ -289,7 +289,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final MachineErrorChooserInterface machineErrorChooserInterface = getMachineCycleCalibrator();
     final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
-    for (int i = 0; i < expected.length; i++) {
+    for (int i = 0; i < expected.length; ++i) {
       expected[i] = (byte) (i + (i > 4 ? 3 : 0));
     }
 
@@ -312,7 +312,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     final int overlapPosition = samReadLength - 1 - CgUtils.CG_OVERLAP_POSITION;
-    for (int i = 0; i < expected.length; i++) {
+    for (int i = 0; i < expected.length; ++i) {
       expected[i] = (byte) (CgUtils.CG_RAW_READ_LENGTH - i - (i > overlapPosition ? 3 : 0) - 1);
     }
 
@@ -335,7 +335,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     final int overlapPosition = samReadLength - 1 - CgUtils.CG_OVERLAP_POSITION;
-    for (int i = 0; i < expected.length; i++) {
+    for (int i = 0; i < expected.length; ++i) {
       expected[i] = (byte) (i + (i > overlapPosition ? 3 : 0));
     }
 
@@ -358,7 +358,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     final int overlapPosition = CgUtils.CG2_OVERLAP_POSITION;
-    for (int i = 0; i < expected.length; i++) {
+    for (int i = 0; i < expected.length; ++i) {
       expected[i] = (byte) (i + (i >= overlapPosition ? overlap : 0));
     }
 
@@ -380,7 +380,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     final int overlapPosition = CgUtils.CG2_OVERLAP_POSITION;
-    for (int i = 0; i < expected.length; i++) {
+    for (int i = 0; i < expected.length; ++i) {
       expected[i] = (byte) (i + (i >= overlapPosition ? overlap : 0));
     }
 
@@ -403,7 +403,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     final int overlapPosition = samReadLength - CgUtils.CG2_OVERLAP_POSITION;
-    for (int i = 0; i < expected.length; i++) {
+    for (int i = 0; i < expected.length; ++i) {
       expected[i] = (byte) (CgUtils.CG2_RAW_READ_LENGTH - 1 - (i + (i >= overlapPosition ? overlap : 0)));
     }
 
@@ -425,7 +425,7 @@ public class VariantAlignmentRecordTest extends TestCase {
     final VariantAlignmentRecord r = new VariantAlignmentRecord(rec, 0, machineErrorChooserInterface, 0);
     final byte[] expected = new byte[samReadLength];
     final int overlapPosition = samReadLength - CgUtils.CG2_OVERLAP_POSITION;
-    for (int i = 0; i < expected.length; i++) {
+    for (int i = 0; i < expected.length; ++i) {
       expected[i] = (byte) (CgUtils.CG2_RAW_READ_LENGTH - 1 - (i + (i >= overlapPosition ? overlap : 0)));
     }
 

@@ -85,7 +85,7 @@ public class ExactHashFunction extends IntegralAbstract implements HashFunction 
   @Override
   public long hashStep(final byte code) {
     assert mWindowBits == LONG_BITS || (code >= 0 && code < (1 << mBits)) : "window bits=" + mWindowBits + " bits=" + mBits + " code=" + code;
-    mSoFar++;
+    ++mSoFar;
     mHash = ((mHash << mBits) + code) & mWindowMask;
     assert mWindowBits == 64 || mHash >> mWindowBits == 0 : "hash=" + mHash + " windowBits=" + mWindowBits;
     if (mDualMode) {
@@ -123,13 +123,13 @@ public class ExactHashFunction extends IntegralAbstract implements HashFunction 
   public String hashToSeq(final long hash, final char[] codes) {
     final char[] chars = new char[mWindowSize];
     long h = hash;
-    for (int i = 0; i < mWindowSize; i++) {
+    for (int i = 0; i < mWindowSize; ++i) {
         final int x = (int) (h & mCodeMask);
         chars[mWindowSize - i - 1] = codes[x + 1];
         h = h >> mBits;
     }
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < mWindowSize; i++) {
+    for (int i = 0; i < mWindowSize; ++i) {
       sb.append(chars[i]);
     }
     return sb.toString();

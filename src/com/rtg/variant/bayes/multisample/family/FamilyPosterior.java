@@ -81,7 +81,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
     if (mHypothesesFatherSize == 0 && mHypothesesMotherSize == 0) {
       mBest.add(null); // father
       mBest.add(null); // mother
-      for (int i = 0; i < mChildren.size(); i++) {
+      for (int i = 0; i < mChildren.size(); ++i) {
         mBest.add(null);
       }
       mEqual = true;
@@ -116,7 +116,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
         bestList.add(father);
         final HypothesisScore mother = mMotherMarginal.length == 0 ? null : new HypothesisScore(new ArrayGenotypeMeasure(LogApproximatePossibility.SINGLETON, mMotherMarginal, mMother.hypotheses()));
         bestList.add(mother);
-        for (int i = 0; i < mChildren.size(); i++) {
+        for (int i = 0; i < mChildren.size(); ++i) {
           final ModelInterface<?> childModel = mChildren.get(i);
           final HypothesisScore best = mChildMarginal.get(i).length == 0 ? null
             : new HypothesisScore(new ArrayGenotypeMeasure(LogApproximatePossibility.SINGLETON, mChildMarginal.get(i), childModel.hypotheses()));
@@ -131,7 +131,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
       } while (anyDenovo && mChildDenovoMarginal == null);
       mBest.addAll(bestList);
       boolean equal = true;
-      for (int i = 0; i < mBest.size(); i++) {
+      for (int i = 0; i < mBest.size(); ++i) {
         final HypothesisScore best = mBest.get(i);
         if (best != null) {
           equal &= mReferenceHypothesis == best.hypothesis();
@@ -181,7 +181,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
     }
     final boolean motherNone = mMotherPloidy == Ploidy.NONE;
     final int motherIterations = motherNone ? 1 : mMotherHypotheses.size();
-    for (int i = 0; i < fatherIterations; i++) {
+    for (int i = 0; i < fatherIterations; ++i) {
       final double fatherpost;
       if (fatherNone) {
         fatherpost = 0;
@@ -189,7 +189,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
         fatherpost = mFather.posteriorLn0(i) + (isDefault ? 0 : mFatherHypotheses.arithmetic().poss2Ln(mFatherHypotheses.p(i)));
       }
       final int fatherHypothesis =  fatherNone ? MISSING_HYPOTHESIS : i;
-      for (int j = 0; j < motherIterations; j++) {
+      for (int j = 0; j < motherIterations; ++j) {
         final double marginal;
         final double motherpost;
         final int motherHypothesis =  motherNone ? MISSING_HYPOTHESIS : j;
@@ -221,7 +221,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
   private QuickSortDoubleIntProxy makeSortedHypLookup(HypothesesPrior<?> hypotheses, ModelInterface<?> model, boolean isDefault) {
     final double[] scores = new double[hypotheses.size()];
     final int[] hypLookup = new int[hypotheses.size()];
-    for (int i = 0; i < scores.length; i++) {
+    for (int i = 0; i < scores.length; ++i) {
       scores[i] = model.posteriorLn0(i) + (isDefault ? 0 : hypotheses.arithmetic().poss2Ln(hypotheses.p(i)));
       hypLookup[i] = i;
     }
@@ -276,13 +276,13 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
     final double[] moHypRem = Arrays.copyOf(motherPost, motherPost.length);
 
     int motherReferenceIndex = 0;
-    for (int i = 0; i < motherHyp.length; i++) {
+    for (int i = 0; i < motherHyp.length; ++i) {
       if (motherHyp[i] == mMotherHypotheses.reference()) {
         motherReferenceIndex = i;
       }
     }
     int fatherReferenceIndex = 0;
-    for (int i = 0; i < fatherHyp.length; i++) {
+    for (int i = 0; i < fatherHyp.length; ++i) {
       if (fatherHyp[i] == mFatherHypotheses.reference()) {
         fatherReferenceIndex = i;
       }
@@ -290,21 +290,21 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
     int iterations = 0;
 
     if (FIRST_HYP_FULLY) {
-      for (int i = 0; i < fatherHyp.length; i++) {
+      for (int i = 0; i < fatherHyp.length; ++i) {
         final int j = 0;
         computeParentMarginal(isDefault, ap, haploidSize, fatherPost[i], motherPost[j], fatherHyp[i], motherHyp[j]);
         faHypRem[i] = j == motherCum.length - 1 ? Double.NEGATIVE_INFINITY : fatherPost[i] + motherCum[j + 1];
         moHypRem[j] = i == fatherCum.length - 1 ? Double.NEGATIVE_INFINITY : motherPost[j] + fatherCum[i + 1];
         nextFather[i]++;
-        iterations++;
+        ++iterations;
       }
-      for (int j = 1; j < motherHyp.length; j++) {
+      for (int j = 1; j < motherHyp.length; ++j) {
         final int i = 0;
         computeParentMarginal(isDefault, ap, haploidSize, fatherPost[i], motherPost[j], fatherHyp[i], motherHyp[j]);
         faHypRem[i] = j == motherCum.length - 1 ? Double.NEGATIVE_INFINITY : fatherPost[i] + motherCum[j + 1];
         moHypRem[j] = i == fatherCum.length - 1 ? Double.NEGATIVE_INFINITY : motherPost[j] + fatherCum[i + 1];
         nextFather[i]++;
-        iterations++;
+        ++iterations;
       }
     }
     if (SQUARE_FIRST) {
@@ -312,13 +312,13 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
       // Compute a square in the most likely portion of the grid first without doing early termination checks
       final int fatherLimit = Math.min(Math.max(fatherReferenceIndex, 1), fatherPost.length); //XXX
       final int motherLimit = Math.min(Math.max(motherReferenceIndex, 1), motherPost.length); //XXX
-      for (int i = FIRST_HYP_FULLY ? 1 : 0; i <= fatherLimit; i++) {
-        for (int j = FIRST_HYP_FULLY ? 1 : 0; j <= motherLimit; j++) {
+      for (int i = FIRST_HYP_FULLY ? 1 : 0; i <= fatherLimit; ++i) {
+        for (int j = FIRST_HYP_FULLY ? 1 : 0; j <= motherLimit; ++j) {
           computeParentMarginal(isDefault, ap, haploidSize, fatherPost[i], motherPost[j], fatherHyp[i], motherHyp[j]);
           faHypRem[i] = j == motherCum.length - 1 ? Double.NEGATIVE_INFINITY : fatherPost[i] + motherCum[j + 1];
           moHypRem[j] = i == fatherCum.length - 1 ? Double.NEGATIVE_INFINITY : motherPost[j] + fatherCum[i + 1];
           nextFather[i]++;
-          iterations++;
+          ++iterations;
         }
       }
     }
@@ -336,7 +336,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
 
       faHypRem[fatherRow] = motherCol == motherCum.length - 1 ? Double.NEGATIVE_INFINITY : fatherPost[fatherRow] + motherCum[motherCol + 1];
       moHypRem[motherCol] = fatherRow == fatherCum.length - 1 ? Double.NEGATIVE_INFINITY : motherPost[motherCol] + fatherCum[fatherRow + 1];
-      iterations++;
+      ++iterations;
 
     }
 //    Diagnostic.developerLog("Broke after " + iterations + "/" + totalSize);
@@ -391,7 +391,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
     double bestFatherRemainder = Double.NEGATIVE_INFINITY;
     double fatherRemainder = Double.NEGATIVE_INFINITY;
     double fatherSum = Double.NEGATIVE_INFINITY;
-    for (int i = 0; i < hypothesisRemainders.length; i++) {
+    for (int i = 0; i < hypothesisRemainders.length; ++i) {
       final double aHypRem = hypothesisRemainders[i];
       final double fatherScore = marginals[hypothesisLookup[i]];
       if (fatherScore > bestFather) {
@@ -423,7 +423,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
     double refFatherRemainder = Double.NEGATIVE_INFINITY;
     double fatherRefRemainder = Double.NEGATIVE_INFINITY;
     double fatherRefSum = Double.NEGATIVE_INFINITY;
-    for (int i = 0; i < hypothesisRemainders.length; i++) {
+    for (int i = 0; i < hypothesisRemainders.length; ++i) {
       final double aHypRem = hypothesisRemainders[i];
       if (hypothesisLookup[i] == referenceHypothesis) {
         refFatherRemainder = aHypRem;
@@ -461,7 +461,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
 
   private double[] makeCumulative(double[] fatherPost) {
     final double[] fatherCum = Arrays.copyOf(fatherPost, fatherPost.length);
-    for (int i = fatherCum.length - 2; i >= 0; i--) {
+    for (int i = fatherCum.length - 2; i >= 0; --i) {
       fatherCum[i] = VariantUtils.logSumApproximation(fatherCum[i + 1], fatherCum[i]);
     }
     return fatherCum;
@@ -472,7 +472,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
   private int getNextFatherHyp(double[] fatherPost, double[] motherPost, int[] next) {
     int best = -1;
     double bestScore = Double.NEGATIVE_INFINITY;
-    for (int i = 0; i < fatherPost.length; i++) {
+    for (int i = 0; i < fatherPost.length; ++i) {
       final int j = next[i];
       if (j >= motherPost.length) {
         continue;
@@ -531,7 +531,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
       throw new RuntimeException("missing sequence from both parents");
     }
     boolean nonIdentity = parentsNonIdentity(father, mother);
-    for (int i = 0; !nonIdentity && i < children.size(); i++) {
+    for (int i = 0; !nonIdentity && i < children.size(); ++i) {
       final int child = children.get(i);
       if (child != MISSING_HYPOTHESIS && child != mReferenceHypothesis) {
         nonIdentity = true;
@@ -591,7 +591,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
         mMotherMarginal[mother] = VariantUtils.logSumApproximation(mMotherMarginal[mother], marginal);
       }
       result = marginal;
-      for (int i = 0; i < childHyps.size(); i++) {
+      for (int i = 0; i < childHyps.size(); ++i) {
         final double[] marginals = mChildMarginal.get(i);
         if (marginals.length > 0) {
           final int cat = childHyps.get(i);
@@ -623,7 +623,7 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
         childHyps.pop();
       } else {
 
-        for (int i = 0; i < childHypothesesSize; i++) {
+        for (int i = 0; i < childHypothesesSize; ++i) {
           final double prior = map.probabilityLn(mMaximalCode, father, mother, i);
           if (Double.isInfinite(prior)) {
             continue;

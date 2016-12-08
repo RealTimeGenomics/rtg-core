@@ -131,12 +131,12 @@ public class MultisampleUtilsTest extends TestCase {
     int hap = 0;
     int het = 0;
     final HashSet<String> haphypoact = new HashSet<>();
-    for (int i = 0; i < hc.size(); i++) {
+    for (int i = 0; i < hc.size(); ++i) {
       if (hc.code().homozygous(i)) {
-        hap++;
+        ++hap;
         haphypoact.add(hc.description().name(i));
       } else {
-        het++;
+        ++het;
       }
     }
     assertEquals(haphypoexp, haphypoact);
@@ -205,12 +205,12 @@ public class MultisampleUtilsTest extends TestCase {
     int hap = 0;
     int het = 0;
     final HashSet<String> haphypoact = new HashSet<>();
-    for (int i = 0; i < hc.size(); i++) {
+    for (int i = 0; i < hc.size(); ++i) {
       if (hc.code().homozygous(i)) {
-        hap++;
+        ++hap;
         haphypoact.add(hc.description().name(i));
       } else {
-        het++;
+        ++het;
       }
     }
     assertEquals(haphypoexp, haphypoact);

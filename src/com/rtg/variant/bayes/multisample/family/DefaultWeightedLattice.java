@@ -47,7 +47,7 @@ public class DefaultWeightedLattice extends WeightedLattice {
   //For testing only
   DefaultWeightedLattice(final PossibilityArithmetic arith, final BitSet bitSet, final double[] values) {
     this(arith, bitSet);
-    for (int i = 0; i < values.length; i++) {
+    for (int i = 0; i < values.length; ++i) {
       set(i, values[i]);
     }
   }
@@ -69,7 +69,7 @@ public class DefaultWeightedLattice extends WeightedLattice {
 
   @Override
   public void visit(Visitor visitor) {
-    for (int i = 0; i < mWeights.length; i++) {
+    for (int i = 0; i < mWeights.length; ++i) {
       final double w = mWeights[i];
       if (!mArith.isZero(w)) {
         visitor.value(i, w);
@@ -80,7 +80,7 @@ public class DefaultWeightedLattice extends WeightedLattice {
   @Override
   public boolean integrity() {
     Exam.assertEquals(1 << mBitSet.length(), mWeights.length);
-    for (int i = 0; i < mWeights.length; i++) {
+    for (int i = 0; i < mWeights.length; ++i) {
       Exam.assertTrue("[" + i + "]" + mWeights[i], mArith.isValidPoss(mWeights[i]));
     }
     return true;

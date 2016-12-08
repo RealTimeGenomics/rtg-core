@@ -23,7 +23,7 @@ public final class DistributionTestUtils {
   static int peak(Distribution di) {
     double max = Double.NEGATIVE_INFINITY;
     int p = Integer.MIN_VALUE;
-    for (int i = di.lo(); i < di.hi(); i++) {
+    for (int i = di.lo(); i < di.hi(); ++i) {
       if (di.get(i) > max) {
         max = di.get(i);
         p = i;
@@ -36,7 +36,7 @@ public final class DistributionTestUtils {
     final Signal sig = distr.getSignalLn(sa, "");
     double min = Double.POSITIVE_INFINITY;
     int mini = -1;
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 20; ++i) {
       final double v = sig.value(i);
       if (v < min) {
         min = v;

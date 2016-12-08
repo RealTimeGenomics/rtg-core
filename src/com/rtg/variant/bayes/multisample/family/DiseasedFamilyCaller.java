@@ -65,7 +65,7 @@ public class DiseasedFamilyCaller implements MultisampleJointCaller {
     final int fName = fatherBest.hypothesis();
     if (fatherBest.posterior() > POSTERIOR_THRESHOLD_NOT_INTERESTING) {
       boolean ok = true;
-      for (int k = 1; k < models.size(); k++) {
+      for (int k = 1; k < models.size(); ++k) {
         final HypothesisScore bc = models.get(k).best(hypotheses.get(models.get(k)));
         if (bc.hypothesis() != fName || bc.posterior() <= POSTERIOR_THRESHOLD_NOT_INTERESTING) {
           ok = false;
@@ -113,7 +113,7 @@ public class DiseasedFamilyCaller implements MultisampleJointCaller {
       samples[Family.FATHER_INDEX] = FamilyCaller.createSample(commonHypotheses, bf, fb, mParams);
       samples[Family.MOTHER_INDEX] = FamilyCaller.createSample(commonHypotheses, bm, mb, mParams);
 
-      for (int i = 0; i < models.size() - Family.FIRST_CHILD_INDEX; i++) {
+      for (int i = 0; i < models.size() - Family.FIRST_CHILD_INDEX; ++i) {
         final HypothesisScore child = fp.bestChild(i);
         samples[i + Family.FIRST_CHILD_INDEX] = FamilyCaller.createSample(commonHypotheses, child, models.get(i + Family.FIRST_CHILD_INDEX), mParams);
       }

@@ -155,19 +155,19 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
   //    final String ref = "CCCACTGTTGC";
   //
   //    final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-  //    for (int i = 0; i <= 934; i++) {
+  //    for (int i = 0; i <= 934; ++i) {
   //      ml.add(HypothesesComplexTest.match(ref, 40));
   //    }
-  //    for (int i = 0; i <= 6; i++) {
+  //    for (int i = 0; i <= 6; ++i) {
   //      ml.add(HypothesesComplexTest.match("CCACTGTTGC", 40));
   //    }
-  //    for (int i = 0; i <= 5; i++) {
+  //    for (int i = 0; i <= 5; ++i) {
   //      ml.add(HypothesesComplexTest.match("CCCACTGCTGC", 40));
   //    }
-  //    for (int i = 0; i <= 5; i++) {
+  //    for (int i = 0; i <= 5; ++i) {
   //      ml.add(HypothesesComplexTest.match("CCCACTGTCGC", 40));
   //    }
-  //    for (int i = 0; i <= 5; i++) {
+  //    for (int i = 0; i <= 5; ++i) {
   //      ml.add(HypothesesComplexTest.match("CCCCACTGTTGC", 40));
   //    }
   //    ml.add(HypothesesComplexTest.match("CCCACTAGTTGC", 40));
@@ -237,10 +237,10 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
   //    final String ref = "CCCACTGTTGC";
   //
   //    final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-  //    for (int i = 0; i <= 25; i++) {
+  //    for (int i = 0; i <= 25; ++i) {
   //      ml.add(HypothesesComplexTest.match(ref, 40));
   //    }
-  //    for (int i = 0; i <= 25; i++) {
+  //    for (int i = 0; i <= 25; ++i) {
   //      ml.add(HypothesesComplexTest.match("CCTACTGATGC", 40));
   //    }
   //
@@ -292,19 +292,19 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
   //    final String ref = "CCCACTGTTGC";
   //
   //    final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-  //    for (int i = 0; i <= 934; i++) {
+  //    for (int i = 0; i <= 934; ++i) {
   //      ml.add(HypothesesComplexTest.match(ref, 40));
   //    }
-  //    for (int i = 0; i <= 6; i++) {
+  //    for (int i = 0; i <= 6; ++i) {
   //      ml.add(HypothesesComplexTest.match("CCACTGTTGC", 40));
   //    }
-  //    for (int i = 0; i <= 5; i++) {
+  //    for (int i = 0; i <= 5; ++i) {
   //      ml.add(HypothesesComplexTest.match("CCCACTGCTGC", 40));
   //    }
-  //    for (int i = 0; i <= 5; i++) {
+  //    for (int i = 0; i <= 5; ++i) {
   //      ml.add(HypothesesComplexTest.match("CCCACTGTCGC", 40));
   //    }
-  //    for (int i = 0; i <= 5; i++) {
+  //    for (int i = 0; i <= 5; ++i) {
   //      ml.add(HypothesesComplexTest.match("CCCCACTGTTGC", 40));
   //    }
   //    ml.add(HypothesesComplexTest.match("CCCACTAGTTGC", 40));
@@ -351,19 +351,19 @@ public class PopulationHwHypothesesCreatorTest extends TestCase {
     final String ref = "CCCACTGTTGC";
 
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-    for (int i = 0; i <= 934; i++) {
+    for (int i = 0; i <= 934; ++i) {
       ml.add(HypothesesComplexTest.match(ref, 40));
     }
-    for (int i = 0; i <= 6; i++) {
+    for (int i = 0; i <= 6; ++i) {
       ml.add(HypothesesComplexTest.match("CCACTGTTGC", 40));
     }
-    for (int i = 0; i <= 5; i++) {
+    for (int i = 0; i <= 5; ++i) {
       ml.add(HypothesesComplexTest.match("CCCACTGCTGC", 40));
     }
-    for (int i = 0; i <= 5; i++) {
+    for (int i = 0; i <= 5; ++i) {
       ml.add(HypothesesComplexTest.match("CCCACTGTCGC", 40));
     }
-    for (int i = 0; i <= 5; i++) {
+    for (int i = 0; i <= 5; ++i) {
       ml.add(HypothesesComplexTest.match("CCCCACTGTTGC", 40));
     }
     ml.add(HypothesesComplexTest.match("CCCACTAGTTGC", 40));

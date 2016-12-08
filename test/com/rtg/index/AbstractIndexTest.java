@@ -102,7 +102,7 @@ public abstract class AbstractIndexTest extends TestCase {
    * Add the hashes and ids to the index.
    */
   protected void add(final IndexBase index, final long[] hashes, final int[] ids) {
-    for (int i = 0; i < hashes.length; i++) {
+    for (int i = 0; i < hashes.length; ++i) {
       index.add(hashes[i], ids[i]);
     }
   }
@@ -212,7 +212,7 @@ public abstract class AbstractIndexTest extends TestCase {
     final long[] hashes = new long[len];
     final PortableRandom rand = new PortableRandom(42);
     final int[] ids = new int[len];
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < len; ++i) {
       hashes[i] = rand.nextInt(Short.MAX_VALUE + 1);
       ids[i] = rand.nextInt(Integer.MAX_VALUE);
     }
@@ -228,14 +228,14 @@ public abstract class AbstractIndexTest extends TestCase {
     final long[] hpool = new long[poolLen];
     final int[] idpool = new int[poolLen];
     final PortableRandom rand = new PortableRandom(42);
-    for (int i = 0; i < poolLen; i++) {
+    for (int i = 0; i < poolLen; ++i) {
       hpool[i] = rand.nextInt(Short.MAX_VALUE + 1);
       idpool[i] = rand.nextInt(Integer.MAX_VALUE);
     }
     final int len = 1000;
     final long[] hashes = new long[len];
     final int[] ids = new int[len];
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < len; ++i) {
       hashes[i] = hpool[rand.nextInt(poolLen)];
       ids[i] = idpool[rand.nextInt(poolLen)];
     }
@@ -251,7 +251,7 @@ public abstract class AbstractIndexTest extends TestCase {
 
   private void checkDump(final boolean twoPass) {
     final IndexBase hi = getIndex(8L, 16, Integer.MAX_VALUE, twoPass);
-    for (int i = 0; i <= (twoPass ? 1 : 0); i++) {
+    for (int i = 0; i <= (twoPass ? 1 : 0); ++i) {
       hi.add(1, 1);
       hi.add(1, 1);
       hi.add(2, 2);
@@ -322,7 +322,7 @@ public abstract class AbstractIndexTest extends TestCase {
 
   private void checkThreshold0(final boolean twoPass) throws IOException {
     final IndexBase hi = getIndex(10L, 16, 2, twoPass);
-    for (int i = 0; i <= (twoPass ? 1 : 0); i++) {
+    for (int i = 0; i <= (twoPass ? 1 : 0); ++i) {
       hi.add(1, 1);
       hi.add(1, 2);
       hi.add(1, 3);
@@ -336,7 +336,7 @@ public abstract class AbstractIndexTest extends TestCase {
   }
   public void testMaxThreshold() throws IOException {
     final IndexBase hi = new IndexCompressed(new CreateParams(10L, 16, 16, 31, true, true, false, false), new ProportionalRepeatFrequencyFilterMethod(10, 3, 0), 1);
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 2; ++i) {
       hi.add(1, 1);
       hi.add(1, 2);
       hi.add(1, 3);
@@ -362,7 +362,7 @@ public abstract class AbstractIndexTest extends TestCase {
 
   public final void checkThreshold1(final boolean twoPass) throws IOException {
     final IndexBase hi = getIndex(10L, 16, 2, twoPass);
-    for (int i = 0; i <= (twoPass ? 1 : 0); i++) {
+    for (int i = 0; i <= (twoPass ? 1 : 0); ++i) {
       hi.add(0, 0);
       hi.add(1, 1);
       hi.add(1, 2);
@@ -400,7 +400,7 @@ public abstract class AbstractIndexTest extends TestCase {
 
   public final void checkThreshold2(final boolean twoPass) throws IOException {
     final IndexBase hi = getIndex(10L, 16, 2, twoPass);
-    for (int i = 0; i <= (twoPass ? 1 : 0); i++) {
+    for (int i = 0; i <= (twoPass ? 1 : 0); ++i) {
       hi.add(0, 0);
       hi.add(1, 1);
       hi.add(1, 2);
@@ -437,7 +437,7 @@ public abstract class AbstractIndexTest extends TestCase {
 
   public final void checkThreshold3(final boolean twoPass) throws IOException {
     final IndexBase hi = getIndex(10L, 16, 2, twoPass);
-    for (int i = 0; i <= (twoPass ? 1 : 0); i++) {
+    for (int i = 0; i <= (twoPass ? 1 : 0); ++i) {
       hi.add(0, 0);
       hi.add(1, 1);
       hi.add(1, 2);
@@ -477,7 +477,7 @@ public abstract class AbstractIndexTest extends TestCase {
 
   public final void checkThreshold4(final boolean twoPass) throws IOException {
     final IndexBase hi = getIndex(10L, 16, 2, twoPass);
-    for (int i = 0; i <= (twoPass ? 1 : 0); i++) {
+    for (int i = 0; i <= (twoPass ? 1 : 0); ++i) {
       hi.add(1, 1);
       hi.add(1, 2);
       hi.add(1, 3);
@@ -516,7 +516,7 @@ public abstract class AbstractIndexTest extends TestCase {
 
   public final void checkThresholdBug1(final boolean twoPass) throws IOException {
     final IndexBase hi = getIndex(10L, 16, 3, twoPass);
-    for (int i = 0; i <= (twoPass ? 1 : 0); i++) {
+    for (int i = 0; i <= (twoPass ? 1 : 0); ++i) {
       hi.add(1, 1);
       hi.add(1, 2);
       hi.add(1, 3);
@@ -593,7 +593,7 @@ public abstract class AbstractIndexTest extends TestCase {
    */
   protected void checkSearch(final IndexBase index, final long[] hashes, final int[] ids, final long[] missHashes, final boolean checkCount) throws IOException {
     final MapSet<Long, Long> ms = new MapSet<>();
-    for (int i = 0; i < hashes.length; i++) {
+    for (int i = 0; i < hashes.length; ++i) {
       ms.put(hashes[i], (long) ids[i]);
     }
     for (final long missHashe : missHashes) {
@@ -636,7 +636,7 @@ public abstract class AbstractIndexTest extends TestCase {
 
     //check search/getValue/getHash
     final MapSet<Long, Long> sv = new MapSet<>();
-    for (long l = 0; l < index.numberEntries(); l++) {
+    for (long l = 0; l < index.numberEntries(); ++l) {
       final long value = index.getValue(l);
       final long hash = index.getHash(l);
       sv.put(hash, value);

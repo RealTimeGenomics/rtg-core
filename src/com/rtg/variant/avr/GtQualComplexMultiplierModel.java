@@ -135,7 +135,7 @@ public class GtQualComplexMultiplierModel extends AbstractPredictModel {
     incrementCount(qualIndex + mGqMultipliers.length);
 
     // step over each sample updating GQ value
-    for (int s = 0; s < record.getNumberOfSamples(); s++) {
+    for (int s = 0; s < record.getNumberOfSamples(); ++s) {
       // is sample heterozygous
       final boolean heterozygous = VcfUtils.isHeterozygous(record, s);
 

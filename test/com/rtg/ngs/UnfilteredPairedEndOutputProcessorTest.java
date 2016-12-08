@@ -88,7 +88,7 @@ public class UnfilteredPairedEndOutputProcessorTest extends AbstractPairedEndOut
       final SimpleThreadPool stp = new SimpleThreadPool(numThreads, "TestUnmated", true);
       final NgsParams params = getDefaultBuilder(tempDir, false, OutputFilter.SAM_UNFILTERED, null).numberThreads(numThreads).create();
       try (UnfilteredPairedEndOutputProcessor sync = new UnfilteredPairedEndOutputProcessor(params, null, true)) {
-        for (int i = 0; i < numThreads; i++) {
+        for (int i = 0; i < numThreads; ++i) {
           final long padding = params.calculateThreadPadding();
           final long start = i * MAX_COORD / numThreads;
           final long end = (i + 1) * MAX_COORD / numThreads;

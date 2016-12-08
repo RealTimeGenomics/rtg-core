@@ -166,7 +166,7 @@ public class MapxRename extends AbstractCli {
   }
 
   private static void writeModifiedHeader(BufferedWriter writer, ArrayList<String> header) throws IOException {
-    for (int i = 0; i < header.size() - 1; i++) {
+    for (int i = 0; i < header.size() - 1; ++i) {
       writer.write(header.get(i));
       writer.newLine();
     }
@@ -206,7 +206,7 @@ public class MapxRename extends AbstractCli {
         // Set id column, num cols from the header line
         final String colHeader = header.get(header.size() - 1).substring(1);
         final String[] colHeadings = colHeader.split("\t");
-        for (int i = 0; i < colHeadings.length; i++) {
+        for (int i = 0; i < colHeadings.length; ++i) {
           if (colHeadings[i].equals("read-id")) {
             idColumn = i;
             break;
@@ -255,7 +255,7 @@ public class MapxRename extends AbstractCli {
     final int readId = Integer.parseInt(parts[id]);
     parts[id] = names.name(readId);
     final StringBuilder sb = new StringBuilder();
-    for (int k = 0; k < parts.length; k++) {
+    for (int k = 0; k < parts.length; ++k) {
       if (k != 0) {
         sb.append(sep);
       }

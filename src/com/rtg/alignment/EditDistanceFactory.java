@@ -216,7 +216,7 @@ public final class EditDistanceFactory {
     final int minscore = 1 + 2 * maxShiftFactor.calculateMaxShift(minReadLength);
     //    final int minscore = 1 + 2 * Math.min(MaxShiftUtils.calculateDefaultMaxShift(minReadLength), maxScore); // 100 long 10% = 10
 
-    for (int width = 3; width < 8; width++) {
+    for (int width = 3; width < 8; ++width) {
       final long hashtotal = (long) Math.pow(4, width); // e.g. for width=3 it's hashtotal == 64
       final long numhashes = minReadLength / width; // e.g. for 100 long and width = 3, then that's 33 hashes
 

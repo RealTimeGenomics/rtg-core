@@ -77,17 +77,17 @@ public final class IntSetWindow extends IntSet {
   @Override
   public void iterateClear() throws IOException {
     final int[] values = mValues[mFirst];
-    for (int i = 0; i < mNext[mFirst]; i++) {
+    for (int i = 0; i < mNext[mFirst]; ++i) {
       final int v = values[i];
       mBits.reset(v);
       call(v);
     }
     mNext[mFirst] = 0;
-    mFirst++;
+    ++mFirst;
     if (mFirst == mWindow) {
       mFirst = 0;
     }
-    mLast++;
+    ++mLast;
     if (mLast == mWindow) {
       mLast = 0;
     }
@@ -95,7 +95,7 @@ public final class IntSetWindow extends IntSet {
 
   @Override
   public void iterateClearAll() throws IOException {
-    for (int i = 0; i < mWindow; i++) {
+    for (int i = 0; i < mWindow; ++i) {
       iterateClear();
     }
   }
@@ -103,12 +103,12 @@ public final class IntSetWindow extends IntSet {
   @Override
   public void toString(final StringBuilder sb) {
     sb.append("IntSetWindow ").append(mWindow).append(StringUtils.LS);
-    for (int i = 0; i < mWindow; i++) {
+    for (int i = 0; i < mWindow; ++i) {
       final int j = mFirst + i;
       final int k = j >= mWindow ? j - mWindow : j;
       final int next = mNext[k];
       sb.append(next).append(": ");
-      for (int l = 0; l < next; l++) {
+      for (int l = 0; l < next; ++l) {
         sb.append(mValues[k][l]).append(" ");
       }
       sb.append(LS);
@@ -118,19 +118,19 @@ public final class IntSetWindow extends IntSet {
   @Override
   public boolean globalIntegrity() {
     integrity();
-    for (int i = 0; i < mWindow; i++) {
-      for (int j = 0; j < mNext[i]; j++) {
+    for (int i = 0; i < mWindow; ++i) {
+      for (int j = 0; j < mNext[i]; ++j) {
         Exam.assertTrue(mBits.get(mValues[i][j]));
       }
     }
     long totalv = 0;
-    for (int i = 0; i < mRange; i++) {
+    for (int i = 0; i < mRange; ++i) {
       if (mBits.get(i)) {
-        totalv++;
+        ++totalv;
       }
     }
     long totalr = 0;
-    for (int i = 0; i < mWindow; i++) {
+    for (int i = 0; i < mWindow; ++i) {
       totalr += mNext[i];
     }
     Exam.assertTrue(totalv == totalr);
@@ -142,7 +142,7 @@ public final class IntSetWindow extends IntSet {
     Exam.assertTrue(mRange >= 0);
     Exam.assertTrue(mCapacity >= 0);
     Exam.assertTrue(mValues.length == mWindow);
-    for (int i = 0; i < mWindow; i++) {
+    for (int i = 0; i < mWindow; ++i) {
       Exam.assertTrue(mNext[i] >= 0 && mNext[i] <= mCapacity);
       Exam.assertTrue(mValues[i].length == mCapacity);
     }

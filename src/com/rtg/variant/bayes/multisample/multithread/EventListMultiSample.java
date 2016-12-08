@@ -30,7 +30,7 @@ public class EventListMultiSample<C extends EnumTimeId<?>> extends IntegralAbstr
   private List<C>[] getList(int length) {
     @SuppressWarnings("unchecked")
     final List<C>[] list = (List<C>[]) new List<?>[length];
-    for (int i = 0; i < list.length; i++) {
+    for (int i = 0; i < list.length; ++i) {
       list[i] = new LinkedList<>();
     }
     return list;
@@ -57,8 +57,8 @@ public class EventListMultiSample<C extends EnumTimeId<?>> extends IntegralAbstr
   public C next(final LookAhead lookAhead) {
     int first = mFirst % mLength;
     while (mItems[first].size() == 0 && mFirst != mLast) {
-      mFirst++;
-      first++;
+      ++mFirst;
+      ++first;
       if (first == mLength) {
         first = 0;
       }
@@ -114,7 +114,7 @@ public class EventListMultiSample<C extends EnumTimeId<?>> extends IntegralAbstr
     final int newLength = newLength(mLength, target);
     //System.err.println("newLength=" + newLength);
     final List<C>[] newItems = getList(newLength);
-    for (int i = mFirst; i < mLast; i++) {
+    for (int i = mFirst; i < mLast; ++i) {
       final int x = i % mLength;
       final int y = i % newLength;
       newItems[y] = mItems[x];
@@ -144,7 +144,7 @@ public class EventListMultiSample<C extends EnumTimeId<?>> extends IntegralAbstr
   @Override
   public boolean globalIntegrity() {
     integrity();
-    for (int i = mFirst; i < mLast; i++) {
+    for (int i = mFirst; i < mLast; ++i) {
       for (final C id : mItems[i % mLength]) {
         Exam.assertEquals(i, id.time());
       }
@@ -152,19 +152,19 @@ public class EventListMultiSample<C extends EnumTimeId<?>> extends IntegralAbstr
     final int fi = mFirst % mLength;
     final int la = mLast % mLength;
     if (mFirst == mLast) {
-      for (int i = 0; i < mLength; i++) {
+      for (int i = 0; i < mLength; ++i) {
         check(i);
       }
     } else {
       if (fi < la) {
-        for (int i = 0; i < fi; i++) {
+        for (int i = 0; i < fi; ++i) {
           check(i);
         }
-        for (int i = la; i < mLength; i++) {
+        for (int i = la; i < mLength; ++i) {
           check(i);
         }
       } else {
-        for (int i = la; i < fi; i++) {
+        for (int i = la; i < fi; ++i) {
           check(i);
         }
       }

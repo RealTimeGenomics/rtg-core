@@ -45,19 +45,19 @@ public class StatisticsInt extends Statistics<AlleleStatisticsInt> {
     final double errorIncrement = r + (1.0 - r) * q;
 
     if (evidence.mapError() >= Model.AMBIGUITY_THRESHOLD) {
-      mAmbiguous++;
+      ++mAmbiguous;
     }
 
     if (evidence.isReadPaired()) {
       if (evidence.isMated()) {
-        mMatedCount++;
+        ++mMatedCount;
       } else {
-        mUnmatedCount++;
+        ++mUnmatedCount;
       }
     }
 
     mCounts.increment(evidence, bestHyp, errorIncrement);
-    mTotalCoverage++;
+    ++mTotalCoverage;
     mTotalError += errorIncrement;
   }
 

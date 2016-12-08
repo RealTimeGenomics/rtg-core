@@ -30,7 +30,7 @@ public class ReadCallImplementationTest extends TestCase {
   public final void testReadCall() {
     final ByteArrayOutputStream sb = new ByteArrayOutputStream();
     final Index[] indexes = new Index[3];
-    for (int i = 0; i < indexes.length; i++) {
+    for (int i = 0; i < indexes.length; ++i) {
       indexes[i] = new IndexMock(sb, i);
     }
     final ReadCallImplementation rci = new ReadCallImplementation(new IndexSet(indexes));

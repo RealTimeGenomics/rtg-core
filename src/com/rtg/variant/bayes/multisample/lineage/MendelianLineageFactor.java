@@ -145,9 +145,9 @@ public class MendelianLineageFactor extends AbstractFactor implements ToDefaultF
       factorSize *= s.size();
     }
     final double[] poss = new double[factorSize];
-    for (int deNovo = 0, k = 0; deNovo < mDeNovo.size(); deNovo++) {
-      for (int genotypeParent = 0; genotypeParent < mGenotypeParent.size(); genotypeParent++) {
-        for (int genotype = 0; genotype < mGenotype.size(); genotype++, k++) {
+    for (int deNovo = 0, k = 0; deNovo < mDeNovo.size(); ++deNovo) {
+      for (int genotypeParent = 0; genotypeParent < mGenotypeParent.size(); ++genotypeParent) {
+        for (int genotype = 0; genotype < mGenotype.size(); ++genotype, ++k) {
           poss[k] = arithmetic().prob2Poss(mMendelian.p(genotype, genotypeParent, deNovo));
         }
       }

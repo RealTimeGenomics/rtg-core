@@ -43,7 +43,7 @@ public class SignalDistributionLn extends IntegralAbstract implements Signal {
     mWindowHi = distr.hi();
     final int diameter = mWindowHi - mWindowLo;
     final double[] ln = new double[diameter];
-    for (int i = 0; i < diameter; i++) {
+    for (int i = 0; i < diameter; ++i) {
       ln[i] = -Math.log(distr.get(i + mWindowLo));
     }
     mDistribution = distr;
@@ -56,7 +56,7 @@ public class SignalDistributionLn extends IntegralAbstract implements Signal {
   public double value(int position) {
     double sum = 0;
     //System.err.println("value position=" + position);
-    for (int i = mWindowLo; i < mWindowHi; i++) {
+    for (int i = mWindowLo; i < mWindowHi; ++i) {
       final double count = mCounts.count(position, i);
       double s = mDistribution.get(i);
       if (count != 0) {

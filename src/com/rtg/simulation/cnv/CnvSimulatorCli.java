@@ -260,7 +260,7 @@ public final class CnvSimulatorCli extends LoggedCli {
       }
       regions[i] = new FixedRegion(settings[0], Integer.parseInt(settings[1]), Integer.parseInt(settings[2]),
           Integer.parseInt(settings[3]));
-      i++;
+      ++i;
     }
     return regions;
   }
@@ -271,7 +271,7 @@ public final class CnvSimulatorCli extends LoggedCli {
       return null;
     }
     try {
-      for (int i = 1; i < parts.length; i++) {
+      for (int i = 1; i < parts.length; ++i) {
         final int num = Integer.parseInt(parts[i]);
         if (num < 0) {
           return null;

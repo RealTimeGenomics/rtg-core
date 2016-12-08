@@ -59,11 +59,11 @@ public class ScoreMatrixCGReverse extends ScoreMatrixReverse {
     final int gapEnd = mParams.gapEnd(whichGap);
     final int offset = rowOffset(row + 1) - rowOffset(row);
 
-    for (int j = mWidth - 1; j >= 0; j--) {
+    for (int j = mWidth - 1; j >= 0; --j) {
       double dd = mArith.zero();
       double mm = mArith.zero();
       double ii = mArith.zero();
-      for (int gapSize = gapStart; gapSize <= gapEnd; gapSize++) {
+      for (int gapSize = gapStart; gapSize <= gapEnd; ++gapSize) {
         final int matchCol = j - offset + gapSize + 1;
         if (0 <= matchCol && matchCol < mWidth) {
           final double gapLn = gapFreqPoss(whichGap, gapSize);

@@ -37,7 +37,7 @@ public abstract class AbstractRealignTest extends TestCase {
     final double[] qualities = new double[read.length];
     qualities[0] = 0.1;
     qualities[1] = Math.pow(10.0, -15 / 10.0);
-    for (int i = 2; i < qualities.length; i++) {
+    for (int i = 2; i < qualities.length; ++i) {
       qualities[i] = 0.01;
     }
     final EnvironmentImplementation env = new EnvironmentImplementation(
@@ -126,7 +126,7 @@ public abstract class AbstractRealignTest extends TestCase {
     final StringBuilder sb = new StringBuilder();
     final EnvironmentImplementation env = getEnv(DnaUtils.encodeString(template), DnaUtils.encodeString(read));
     final Delta realign = getRealign(env);
-    for (int i = 0; i < template.length(); i++) {
+    for (int i = 0; i < template.length(); ++i) {
       final ProbabilityArray pr = new ProbabilityArray(realign.probabilitiesLn(i));
       sb.append("[").append(i).append("]");
       sb.append(pr);

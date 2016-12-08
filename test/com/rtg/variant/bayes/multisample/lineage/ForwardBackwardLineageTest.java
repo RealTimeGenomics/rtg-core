@@ -59,7 +59,7 @@ public class ForwardBackwardLineageTest extends TestCase {
   void checkFactor(Factor f, Variable v, double... values) {
     final Factor normal = DefaultFactor.asNormalized(f);
     assertEquals(values.length, v.size());
-    for (int i = 0; i < v.size(); i++) {
+    for (int i = 0; i < v.size(); ++i) {
       assertEquals(values[i], normal.p(Collections.singletonMap(v, i)), 1e-5);
     }
   }
@@ -80,7 +80,7 @@ public class ForwardBackwardLineageTest extends TestCase {
     assertNotNull(fb.posterior(1));
 
 //    System.err.println(fb.posterior(0));
-//    for (int k = 1; k < models.size(); k++) {
+//    for (int k = 1; k < models.size(); ++k) {
 //      System.err.println(DefaultFactor.asNormalized(fb.posteriorDeNovo(k)));
 //    }
     final Variable v0 = new Variable("G0", h.size());
@@ -110,7 +110,7 @@ public class ForwardBackwardLineageTest extends TestCase {
     assertNotNull(fb.posterior(1));
 
 //    System.err.println(fb.posterior(0));
-//    for (int k = 1; k < 5; k++) {
+//    for (int k = 1; k < 5; ++k) {
 //      System.err.println(DefaultFactor.asNormalized(fb.posteriorDeNovo(k)));
 //    }
   }
@@ -160,7 +160,7 @@ public class ForwardBackwardLineageTest extends TestCase {
     assertNotNull(fb.posterior(1));
 
 //    System.err.println(fb.posterior(0));
-//    for (int k = 1; k < 5; k++) {
+//    for (int k = 1; k < 5; ++k) {
 //      System.err.println(DefaultFactor.asNormalized(fb.posteriorDeNovo(k)));
 //    }
   }

@@ -43,10 +43,10 @@ public class MendelianAlleleProbabilityHDHDeNovoTest extends TestCase {
   //test symmetries and the two ways of accessing the table
   public void testLookupCode() {
     final Code code = new CodeDiploid(4);
-    for (int i = 0; i < code.rangeSize(); i++)  {
-      for (int j = 0; j < code.size(); j++)  {
+    for (int i = 0; i < code.rangeSize(); ++i)  {
+      for (int j = 0; j < code.size(); ++j)  {
         //System.err.println("i=" + i + " j=" + j);
-        for (int k = 0; k < code.rangeSize(); k++)  {
+        for (int k = 0; k < code.rangeSize(); ++k)  {
           final double exp = MendelianAlleleProbabilityHDHDeNovo.SINGLETON_HD.probabilityLn(code, i, j, k);
           assertEquals("f=" + code.a(i) + " m=" + code.a(j) + "/" + code.bc(j) + " c=" + code.a(k), exp, MendelianAlleleProbabilityHDHDeNovo.SINGLETON_DH.probabilityLn(code, j, i, k));
         }
@@ -57,9 +57,9 @@ public class MendelianAlleleProbabilityHDHDeNovoTest extends TestCase {
 //test there is no overlap between non de novo and de novo tables
   public void testOverlap() {
     final Code code = new CodeDiploid(4);
-    for (int i = 0; i < code.rangeSize(); i++) {
-      for (int j = 0; j < code.size(); j++) {
-        for (int k = 0; k < code.rangeSize(); k++) {
+    for (int i = 0; i < code.rangeSize(); ++i) {
+      for (int j = 0; j < code.size(); ++j) {
+        for (int k = 0; k < code.rangeSize(); ++k) {
           if (MendelianAlleleProbabilityHDH.SINGLETON_HD.probabilityLn(code, i, j, k) > Double.NEGATIVE_INFINITY) {
             assertEquals(Double.NEGATIVE_INFINITY, MendelianAlleleProbabilityHDHDeNovo.SINGLETON_HD.probabilityLn(code, i, j, k));
           }

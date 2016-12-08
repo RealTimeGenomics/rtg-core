@@ -103,7 +103,7 @@ public class IndexQueue extends IntegralAbstract implements Add {
     mRadix = 1 << mUpperBits;
     mQueueInfo = new long[mRadix << TOTAL_BITS];
 
-    for (int i = 0; i < mRadix; i++) {
+    for (int i = 0; i < mRadix; ++i) {
       final int j = i << TOTAL_BITS;
       final long ib = i * blockSize;
       final long st = ib + blockSize - 1;
@@ -198,7 +198,7 @@ public class IndexQueue extends IntegralAbstract implements Add {
    * Should be called before any iterators are returned.
    */
   void close() {
-    for (int i = 0; i < mRadix; i++) {
+    for (int i = 0; i < mRadix; ++i) {
       final int j = i << TOTAL_BITS;
       final long end = mQueueInfo[j + END];
       final long curr = mQueueInfo[j + CURR];
@@ -235,7 +235,7 @@ public class IndexQueue extends IntegralAbstract implements Add {
   public boolean globalIntegrity() {
     integrity();
     final long memLength = mMemory.length();
-    for (int i = 0; i < mRadix; i++) {
+    for (int i = 0; i < mRadix; ++i) {
       final int j = i << TOTAL_BITS;
       //System.err.println("i=" + i + " start=" + start);
       long st = mQueueInfo[j + START];

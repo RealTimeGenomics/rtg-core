@@ -46,7 +46,7 @@ public enum JobType {
     if (results.length != mNumberArgs) {
       return false;
     }
-    for (int i = 0; i < mNumberArgs; i++) {
+    for (int i = 0; i < mNumberArgs; ++i) {
       if (!validResult(results[i])) {
         return false;
       }

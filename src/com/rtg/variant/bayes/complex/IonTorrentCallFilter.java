@@ -40,7 +40,7 @@ public final class IonTorrentCallFilter {
     //    res.getRef();
     //    System.err.print("name=" + res.getName() + " ref=" + res.getRef() + " untrimmedRef=" + res.getUntrimmedRef());
     //    System.err.print(" position ref:" + template[res.getPosition()] + "start ref:" + template[res.getStart()] + "output ref:" + template[res.getOutputPosition()]);
-    //    for (int i = res.getStart(); i < res.getEnd(); i++) {
+    //    for (int i = res.getStart(); i < res.getEnd(); ++i) {
     //      System.err.print(template[res.getPosition()]);
     //    }
     //    System.err.println();
@@ -73,12 +73,12 @@ public final class IonTorrentCallFilter {
       return false;
     }
     final char ch0 = ref.length() > 0 ? ref.charAt(0) : call.charAt(0);
-    for (int i = 1; i < ref.length(); i++) {
+    for (int i = 1; i < ref.length(); ++i) {
       if (ref.charAt(i) != ch0) {
         return false;
       }
     }
-    for (int i = 0; i < call.length(); i++) {
+    for (int i = 0; i < call.length(); ++i) {
       if (call.charAt(i) != ch0) {
         return false;
       }
@@ -88,14 +88,14 @@ public final class IonTorrentCallFilter {
     final int nt0 = template[start];
     int i = start - 1;
     while (i >= 0 && nt0 == template[i]) {
-      i--;
-      incrementD++;
+      --i;
+      ++incrementD;
     }
     int incrementU = 0;
     int j = start + ref.length();
     while (j < template.length && nt0 == template[j]) {
-      j++;
-      incrementU++;
+      ++j;
+      ++incrementU;
     }
     final int increment = incrementD + incrementU;
     return ionFilter(nt0, ref.length() + increment, increment + call.length());

@@ -94,10 +94,10 @@ public class TopNProteinOutputProcessorTest extends TestCase {
       final NgsParams params = TopEqualProteinOutputProcessorTest.createParams(tmp2, ProteinOutputProcessorTest.READS_FASTA_PERFECT, ProteinOutputProcessorTest.TEMPLATE_FASTA, 250);
       final TopNProteinOutputProcessor p = new TopNProteinOutputProcessor(params, null);
       try {
-        for (int k = 0; k < 250; k++) {
+        for (int k = 0; k < 250; ++k) {
           p.writeResult(getProteinRes(0, -47));
         }
-        for (int k = 0; k < 251; k++) {
+        for (int k = 0; k < 251; ++k) {
           p.writeResult(getProteinRes(1, 47));
         }
       } finally {

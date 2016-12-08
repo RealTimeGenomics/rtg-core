@@ -37,7 +37,7 @@ public class SamAssistanceCg extends SuperCigarParser implements SamAssistance {
 
   private void resetSnippet() {
     mAviewDisplay.setLength(0);
-    for (int k = 0; k < mOldSpaces; k++) {
+    for (int k = 0; k < mOldSpaces; ++k) {
       mAviewDisplay.append(' ');
     }
   }
@@ -50,10 +50,10 @@ public class SamAssistanceCg extends SuperCigarParser implements SamAssistance {
       mSnippets.add(mAviewDisplay.toString());
       final int backShift = mLastTemplatePosition - p + 1;
       int extras = 0;
-      for (int k = 0; k < backShift; k++) {
+      for (int k = 0; k < backShift; ++k) {
         while (--mExpandedTemplatePosition >= 0
                && mExpandedTemplate.charAt(mExpandedTemplatePosition) == DisplayHelper.INSERT_CHAR) {
-          extras++;
+          ++extras;
         }
       }
       mOldSpaces = mAviewDisplay.length() - backShift - extras;
@@ -70,14 +70,14 @@ public class SamAssistanceCg extends SuperCigarParser implements SamAssistance {
       if (s == 0) {
         mAviewDisplay.append(DisplayHelper.INSERT_CHAR);
       } else {
-        s--;
+        --s;
       }
-      mExpandedTemplatePosition++;
+      ++mExpandedTemplatePosition;
     }
     mExpandedTemplatePosition += 1 - shift;
   }
   private void consumeInsert() {
-    mExpandedTemplatePosition++;
+    ++mExpandedTemplatePosition;
   }
 
   @Override

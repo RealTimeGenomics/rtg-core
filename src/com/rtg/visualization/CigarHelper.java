@@ -44,7 +44,7 @@ final class CigarHelper {
   static void locateInserts(final String cigar, final int offset, final int[] inserts) {
     int n = 0;
     int rPos = 0;
-    for (int i = 0; i < cigar.length(); i++) {
+    for (int i = 0; i < cigar.length(); ++i) {
       final char c = cigar.charAt(i);
       if (Character.isDigit(c)) {
         n = 10 * n + c - '0';
@@ -94,18 +94,18 @@ final class CigarHelper {
     Integer startPos = 0;
     int overlapSize;
     int totalProcessed = 0;
-    for (int i = 0; i < gc.length(); i++) {
+    for (int i = 0; i < gc.length(); ++i) {
       final char c = gc.charAt(i);
       if (Character.isDigit(c)) {
         n = 10 * n + c - '0';
       } else {
-        for (int j = 0; j < n; j++) {
-          totalProcessed++;
+        for (int j = 0; j < n; ++j) {
+          ++totalProcessed;
           switch (c) {
             case 'G' :
               overlapSize = n;
               // System.err.println("overSize=" + overlapSize + " n=" + n + " sb.length()=" + sb.length());
-              for (int k = overlapSize, m = 0; k > 0 ; k--, m++) {
+              for (int k = overlapSize, m = 0; k > 0 ; --k, ++m) {
                 if (totalProcessed > (rec.getReadLength() / 2)) {
                   sb.append(res.charAt(readPos++));
                 } else {
@@ -115,7 +115,7 @@ final class CigarHelper {
               //   System.err.println("kept in map = " + sb.toString() + "at pos = " + startPos);
               map.put(startPos, sb.toString());
               sb.setLength(0);
-              for (int k = overlapSize; k > 0 ; k--) {
+              for (int k = overlapSize; k > 0 ; --k) {
                 if (totalProcessed > (rec.getReadLength() / 2)) {
                   sb.append(gs.charAt(overlapSize - k));
                 } else {
@@ -128,10 +128,10 @@ final class CigarHelper {
             case 'S' :
               //    System.err.println("j = " + j + " readPos=" + readPos);
               if (res.charAt(readPos) == ' ') {
-                j--;
+                --j;
               }
               sb.append(res.charAt(readPos));
-              readPos++;
+              ++readPos;
               break;
             default :
               throw new IllegalArgumentException("unknown code " + c);
@@ -157,7 +157,7 @@ final class CigarHelper {
 
   //  private static String getPos(int key) {
   //    final StringBuilder sb = new StringBuilder();
-  //    for (int i = 0; i < key; i++) {
+  //    for (int i = 0; i < key; ++i) {
   //      sb.append(' ');
   //    }
   //    return sb.toString();
@@ -169,12 +169,12 @@ final class CigarHelper {
     int n = 0;
     int zeroBasedreadPos = 0;
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < cigar.length(); i++) {
+    for (int i = 0; i < cigar.length(); ++i) {
       final char c = cigar.charAt(i);
       if (Character.isDigit(c)) {
         n = 10 * n + c - '0';
       } else {
-        for (int j = 0; j < n; j++) {
+        for (int j = 0; j < n; ++j) {
           switch (c) {
             case SamUtils.CIGAR_SAME_OR_MISMATCH:
             case SamUtils.CIGAR_MISMATCH:
@@ -194,7 +194,7 @@ final class CigarHelper {
               sb.append(" ");
               break;
             case SamUtils.CIGAR_SOFT_CLIP:
-              zeroBasedreadPos++;
+              ++zeroBasedreadPos;
               break;
             case SamUtils.CIGAR_HARD_CLIP:
               break;

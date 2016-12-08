@@ -192,14 +192,14 @@ public class SvInterestingRegionExtractor implements Closeable {
         mCurrentRegionTotalScore = 0;
         mRegionChanges = 0;
       } else if (mCurrentMaxValuePos != maxValuePos) {
-        mRegionChanges++;
+        ++mRegionChanges;
       }
       mCurrentMaxValuePos = maxValuePos;
       final double thisMaxValue = values[maxValuePos];
       if (thisMaxValue > mCurrentRegionMaxScore) {
         mCurrentRegionMaxScore = thisMaxValue;
       }
-      mCurrentRegionPositions++;
+      ++mCurrentRegionPositions;
       mCurrentRegionTotalScore += thisMaxValue;
 
     } else {
@@ -255,7 +255,7 @@ public class SvInterestingRegionExtractor implements Closeable {
           }
           final String[] parts = line.split("\t");
           if (parts.length < 4) {
-            skipped++;
+            ++skipped;
             continue;
           }
           if (values == null) {
@@ -269,7 +269,7 @@ public class SvInterestingRegionExtractor implements Closeable {
 
           final Integer pos = Integer.parseInt(parts[1]);
           final Integer maxValueIndex = Integer.parseInt(parts[parts.length - 1]);
-          for (int i = 2; i < parts.length - 2; i++) {
+          for (int i = 2; i < parts.length - 2; ++i) {
             values[i - 2] = Double.parseDouble(parts[i]);
           }
           re.processValue(pos, values, maxValueIndex);

@@ -36,7 +36,7 @@ public final class EvidenceIndelFactory implements CachedEvidenceFactory {
   private EvidenceIndelFactory() {
     mGoodEvidence = new EvidenceIndel[EvidenceIndel.DISTINCT_READS];
     mBadEvidence = new EvidenceIndel[EvidenceIndel.DISTINCT_READS];
-    for (int i = 0; i < EvidenceIndel.DISTINCT_READS; i++) {
+    for (int i = 0; i < EvidenceIndel.DISTINCT_READS; ++i) {
       mGoodEvidence[i] = new EvidenceIndel(0, i, 0);
       mBadEvidence[i] = new EvidenceIndel(Model.AMBIGUITY_THRESHOLD, i, 0);
     }

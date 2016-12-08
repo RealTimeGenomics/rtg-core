@@ -74,7 +74,7 @@ public class ConsensusTest extends AbstractCliTest {
     Consensus.writeConsensus(2, 3, input, output);
     final MutableGraph result = (MutableGraph) GraphReader.read(output);
 //    System.err.println(graphString(result));
-    for (long i = 1; i <= 6; i++) {
+    for (long i = 1; i <= 6; ++i) {
       assertTrue(result.contigDeleted(i));
     }
     final Graph compact = GraphSorter.sortedGraph(result.compact());
@@ -115,7 +115,7 @@ public class ConsensusTest extends AbstractCliTest {
     long fact = 1;
     while (i > 1) {
       fact = fact * i;
-      i--;
+      --i;
     }
     return fact;
   }
@@ -130,7 +130,7 @@ public class ConsensusTest extends AbstractCliTest {
     final GraphSorter.NegativeMap translate = new GraphSorter.NegativeMap();
     final List<Long> unused = new ArrayList<>();
     final List<Long> order = new ArrayList<>();
-    for (long j = 1; j <= original.numberContigs(); j++) {
+    for (long j = 1; j <= original.numberContigs(); ++j) {
       unused.add(j);
     }
 
@@ -148,12 +148,12 @@ public class ConsensusTest extends AbstractCliTest {
     translate.put(unused.get(0), 1L);
 
     final GraphKmerAttribute current = new GraphKmerAttribute(original.contigOverlap(), original.contigAttributes(), original.pathAttributes());
-    for (int i = 0; i < original.numberContigs(); i++) {
+    for (int i = 0; i < original.numberContigs(); ++i) {
       current.addContig(original.contig(order.get(i)));
     }
-    for (long path = 1; path <= original.numberPaths(); path++) {
+    for (long path = 1; path <= original.numberPaths(); ++path) {
       final long[] contigs = new long[original.pathLength(path)];
-      for (int contig = 0; contig < original.pathLength(path); contig++) {
+      for (int contig = 0; contig < original.pathLength(path); ++contig) {
         contigs[contig] = translate.get(original.pathContig(path, contig));
       }
       current.addPath(new PathArray(contigs));
@@ -162,16 +162,16 @@ public class ConsensusTest extends AbstractCliTest {
   }
   private GraphKmerAttribute complement(GraphKmerAttribute original, long i) {
     final GraphKmerAttribute current = new GraphKmerAttribute(original.contigOverlap(), original.contigAttributes(), original.pathAttributes());
-    for (long contig = 1; contig <= original.numberContigs(); contig++) {
+    for (long contig = 1; contig <= original.numberContigs(); ++contig) {
       if (reversed(i, contig)) {
         current.addContig(original.contig(-contig));
       } else {
         current.addContig(original.contig(contig));
       }
     }
-    for (long path = 1; path <= original.numberPaths(); path++) {
+    for (long path = 1; path <= original.numberPaths(); ++path) {
       final long[] contigs = new long[original.pathLength(path)];
-      for (int contig = 0; contig < original.pathLength(path); contig++) {
+      for (int contig = 0; contig < original.pathLength(path); ++contig) {
         final long contigId = original.pathContig(path, contig);
         if (reversed(i, contigId)) {
           contigs[contig] = -contigId;
@@ -190,8 +190,8 @@ public class ConsensusTest extends AbstractCliTest {
     graph.addPathAttribute(GraphKmerAttribute.READ_COUNT, "r");
     final double pow = Math.pow(2, graph.numberContigs() + 1);
     final long fact = factorial(graph.numberContigs());
-    for (long i = 0; i < pow; i++) {
-      for (long j = 0; j < fact; j++) {
+    for (long i = 0; i < pow; ++i) {
+      for (long j = 0; j < fact; ++j) {
         final GraphKmerAttribute current = permutation(complement(graph, i), j);
         final SequencesReader reads = ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.fasta("TAACGAACCGGTCCAGTA", "TACTGGACCGGTTCGTTA"));
         final PathTracker pathTracker = new PathTracker(new PalindromeTracker(current));

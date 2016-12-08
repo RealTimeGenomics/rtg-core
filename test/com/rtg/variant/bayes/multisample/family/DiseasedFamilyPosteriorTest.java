@@ -202,7 +202,7 @@ public class DiseasedFamilyPosteriorTest extends TestCase {
     }
     @Override
     protected void initPriors(double[] priors) {
-      for (int i = 0; i < priors.length; i++) {
+      for (int i = 0; i < priors.length; ++i) {
         priors[i] = arithmetic().one();
       }
     }
@@ -215,7 +215,7 @@ public class DiseasedFamilyPosteriorTest extends TestCase {
     MockModel(final double[] posteriors) {
       super(HYPOTHESES0, new StatisticsInt(HYPOTHESES0.description()), new NoAlleleBalance());
       assert posteriors.length == mPosteriors.length;
-      for (int i = 0; i < posteriors.length; i++) {
+      for (int i = 0; i < posteriors.length; ++i) {
         mPosteriors[i] = arithmetic().prob2Poss(posteriors[i]);
       }
     }
@@ -225,7 +225,7 @@ public class DiseasedFamilyPosteriorTest extends TestCase {
     MockModelC(final double[] posteriors) {
       super(HYPOTHESES1, new StatisticsInt(HYPOTHESES1.description()), new NoAlleleBalance());
       assert posteriors.length == mPosteriors.length;
-      for (int i = 0; i < posteriors.length; i++) {
+      for (int i = 0; i < posteriors.length; ++i) {
         mPosteriors[i] = arithmetic().prob2Poss(posteriors[i]);
       }
     }

@@ -54,7 +54,7 @@ class SpeciesLineDeriv extends Line {
   @Override
   public double[] values(final double delta) {
     final Vector e = new Vector(mN);
-    for (int i = 0; i < mN; i++) {
+    for (int i = 0; i < mN; ++i) {
       e.set(i, Math.exp(mDelta.get(i) * delta));
     }
     final double v0 = MatrixUtils.multiply(e, mLRD);

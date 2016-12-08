@@ -46,7 +46,7 @@ public class GotohProteinEditDistanceTest extends TestCase {
 
   public static byte[] encodeProteins(final String str) {
     final byte[] b = new byte[str.length()];
-    for (int i = 0; i < str.length(); i++) {
+    for (int i = 0; i < str.length(); ++i) {
       b[i] = encodeProtein(str.charAt(i));
     }
     return b;

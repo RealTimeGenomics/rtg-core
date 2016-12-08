@@ -64,7 +64,7 @@ public class SampleReplayerTest extends TestCase {
       /*
       System.out.println("-- Ref --\n" + sref);
       System.out.println("-- Chromosomes for sample foo --");
-      for (int i = 0; i < srOut.numberSequences(); i++) {
+      for (int i = 0; i < srOut.numberSequences(); ++i) {
         int len = srOut.read(i, buff);
         System.out.println("seq: " + srOut.name(i));
         System.out.println(DnaUtils.bytesToSequenceIncCG(buff, 0, len));

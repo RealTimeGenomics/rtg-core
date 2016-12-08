@@ -26,7 +26,7 @@ public class HashCounter {
   private static final int BOUNCE_BITS = MathUtils.ceilPowerOf2Bits(BOUNCE_LIMIT);
   private static final int[] BOUNCE = new int[BOUNCE_LIMIT];
   static {
-    for (int i = 0; i < BOUNCE_LIMIT; i++) {
+    for (int i = 0; i < BOUNCE_LIMIT; ++i) {
       BOUNCE[i] = i * (i + 1) / 2;
     }
   }
@@ -131,7 +131,7 @@ public class HashCounter {
           }
         }
         //different hash
-        bounces++;
+        ++bounces;
         //reloop
       }
     }
@@ -164,7 +164,7 @@ public class HashCounter {
    */
   public boolean next() {
     while (mCurrentIndex + 1 < mLength) {
-      mCurrentIndex++;
+      ++mCurrentIndex;
       final long currentVal = mHashes.get(mCurrentIndex);
       if (currentVal != 0) {
         mCurrentCount = currentVal & mCountMask;

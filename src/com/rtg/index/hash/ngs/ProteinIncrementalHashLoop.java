@@ -109,7 +109,7 @@ public abstract class ProteinIncrementalHashLoop extends HashLoop {
 
     final long maxSequenceEver = reader.numberSequences();
     long totalLength = 0;
-    for (long seq = startSequence; region.isInRange(seq) && seq < maxSequenceEver; seq++) {
+    for (long seq = startSequence; region.isInRange(seq) && seq < maxSequenceEver; ++seq) {
       ProgramState.checkAbort();
       //System.err.println("seq=" + seq + " " +  reader.currentSequenceId() + " " + reader.getClass());
       final int fullLength = reader.length(seq);
@@ -157,7 +157,7 @@ public abstract class ProteinIncrementalHashLoop extends HashLoop {
           }
         } //window
         //System.out.println();
-        internalId++;
+        ++internalId;
         end();
       }
       //System.err.println("Finished loop");

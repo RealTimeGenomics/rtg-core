@@ -36,10 +36,10 @@ public final class MendelianAlleleProbabilityHDHDeNovo extends MendelianAllelePr
 
     // mother fixed (0)
 
-    for (int k = 0; k <= 1; k++) { // mother b = 0,1
+    for (int k = 0; k <= 1; ++k) { // mother b = 0,1
 
       // Now calculate de novo prob for each child hypothesis
-      for (int l = 0; l <= k + 1; l++) { // child a = 0,1,2
+      for (int l = 0; l <= k + 1; ++l) { // child a = 0,1,2
 
         //System.err.print("father: 0   mother: 0/" + k + "  child: " + l + "    ");
 
@@ -49,7 +49,7 @@ public final class MendelianAlleleProbabilityHDHDeNovo extends MendelianAllelePr
 
           // De novo child hypothesis.
           double tot = 0;
-          for (int n = 0; n < 3; n++) { // child de novo a = 0,1,2
+          for (int n = 0; n < 3; ++n) { // child de novo a = 0,1,2
             if (n != l) {
               final double mendelian = partner.getLookup(k, n);
               if (mendelian != Double.NEGATIVE_INFINITY) {
@@ -68,9 +68,9 @@ public final class MendelianAlleleProbabilityHDHDeNovo extends MendelianAllelePr
   private static int init(double[][] lookup) {
     final double z = Double.NEGATIVE_INFINITY;
     int cnt = 0;
-    for (int i = 0; i < lookup.length; i++) {
-      for (int j = 0; j < lookup[i].length; j++) {
-        cnt++;
+    for (int i = 0; i < lookup.length; ++i) {
+      for (int j = 0; j < lookup[i].length; ++j) {
+        ++cnt;
         lookup[i][j] = z;
       }
     }

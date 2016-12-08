@@ -39,7 +39,7 @@ public class FixedStepPopulationVariantGenerator extends PopulationVariantGenera
       if (cmp != 0) {
         return cmp;
       }
-      for (int i = 0; i < mVar.mAlleles[(int) index1].length; i++) {
+      for (int i = 0; i < mVar.mAlleles[(int) index1].length; ++i) {
         cmp = mVar.mAlleles[(int) index1][i] - mVar.mAlleles[(int) index2][i];
         if (cmp != 0) {
           return cmp;
@@ -71,7 +71,7 @@ public class FixedStepPopulationVariantGenerator extends PopulationVariantGenera
     int endColl = popVar.mAlleles.length - 1; // Inclusive index bounds for identical alleles
     int startColl = endColl;
     int length = popVar.mAlleles.length;
-    for (int i = endColl - 1; i >= 0; i--) {
+    for (int i = endColl - 1; i >= 0; --i) {
       if (Arrays.equals(popVar.mAlleles[endColl], popVar.mAlleles[i])) {
         startColl = i;
       } else {
@@ -82,12 +82,12 @@ public class FixedStepPopulationVariantGenerator extends PopulationVariantGenera
     }
     length -= collapsePart(popVar, endColl, startColl, length);
     // Remove == ref alleles
-    for (int i = length - 1; i >= 0; i--) {
+    for (int i = length - 1; i >= 0; --i) {
       if (Arrays.equals(popVar.mRef, popVar.mAlleles[i])) {
         System.arraycopy(popVar.mAlleles, i + 1, popVar.mAlleles, i, length - i - 1);
         // Don't need to adjust mDist numbers since they are absorbed into the implicit ref probability once removed
         System.arraycopy(popVar.mDistribution, i + 1, popVar.mDistribution, i, length - i - 1);
-        length--;
+        --length;
       }
     }
     // Truncate arrays
@@ -98,7 +98,7 @@ public class FixedStepPopulationVariantGenerator extends PopulationVariantGenera
   private static int collapsePart(PopulationVariant popVar, int endColl, int startColl, int length) {
     if (startColl != endColl) {
       System.arraycopy(popVar.mAlleles, endColl + 1, popVar.mAlleles, startColl + 1, length - endColl - 1);
-      for (int j = startColl + 1; j <= endColl; j++) {
+      for (int j = startColl + 1; j <= endColl; ++j) {
         popVar.mDistribution[startColl] += popVar.mDistribution[j]; // Collapse dist probabilities
       }
       System.arraycopy(popVar.mDistribution, endColl + 1, popVar.mDistribution, startColl + 1, length - endColl - 1);
@@ -144,7 +144,7 @@ public class FixedStepPopulationVariantGenerator extends PopulationVariantGenera
     public SequenceIdLocus nextVariantPosition() throws IOException {
       while (mSeq < mReader.numberSequences()) {
         if (mPos >= mReader.length(mSeq)) {
-          mSeq++;
+          ++mSeq;
           mPos = 0;
           continue;
         }

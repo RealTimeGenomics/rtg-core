@@ -96,7 +96,7 @@ public class SegregationChecker {
     final VcfHeader header = reader.getHeader();
     final Map<String, Integer> sampleIndexMap = new HashMap<>();
     mSampleNames = header.getSampleNames();
-    for (int i = 0; i < mSampleNames.size(); i++) {
+    for (int i = 0; i < mSampleNames.size(); ++i) {
       sampleIndexMap.put(mSampleNames.get(i), i);
     }
     mSampleFather = sampleIndexMap.get(father);
@@ -136,12 +136,12 @@ public class SegregationChecker {
     final GType father = new GType(gts.get(mSampleFather), mPloidyMap.get(new Pair<>(mSampleSex[0], rec.getSequenceName())).effectivePloidy(rec.getStart()));
     final GType mother = new GType(gts.get(mSampleMother), mPloidyMap.get(new Pair<>(mSampleSex[1], rec.getSequenceName())).effectivePloidy(rec.getStart()));
     int index = 0;
-    for (int i = 0; i < gts.size(); i++) {
+    for (int i = 0; i < gts.size(); ++i) {
       if (i == mSampleFather || i == mSampleMother) {
         continue;
       }
       children[index] = new GType(gts.get(i), mPloidyMap.get(new Pair<>(mSampleSex[index + 2], rec.getSequenceName())).effectivePloidy(rec.getStart()));
-      index++;
+      ++index;
     }
     return new FamilyGt(rec.getSequenceName(), rec.getStart(), father, mother, children, false);
   }
@@ -153,12 +153,12 @@ public class SegregationChecker {
     final GType father = new GType(fatherGtOverride == null ? gts.get(mSampleFather) : fatherGtOverride, mPloidyMap.get(new Pair<>(mSampleSex[0], rec.getSequenceName())).effectivePloidy(rec.getStart()));
     final GType mother = new GType(motherGtOverride == null ? gts.get(mSampleMother) : motherGtOverride, mPloidyMap.get(new Pair<>(mSampleSex[1], rec.getSequenceName())).effectivePloidy(rec.getStart()));
     int index = 0;
-    for (int i = 0; i < gts.size(); i++) {
+    for (int i = 0; i < gts.size(); ++i) {
       if (i == mSampleFather || i == mSampleMother) {
         continue;
       }
       children[index] = new GType(childGtOverride == null || childIndex != index ? gts.get(i) : childGtOverride, mPloidyMap.get(new Pair<>(mSampleSex[index + 2], rec.getSequenceName())).effectivePloidy(rec.getStart()));
-      index++;
+      ++index;
     }
     final FamilyGt family = new FamilyGt(rec.getSequenceName(), rec.getStart(), father, mother, children, false);
     return new PatternHolder(family.pattern(), false);
@@ -206,7 +206,7 @@ public class SegregationChecker {
         int countIncompat = 0;
         for (final String compat : incompat) {
           if ("I".equals(compat)) {
-            countIncompat++;
+            ++countIncompat;
           }
         }
         if (countIncompat < minIncompatible) {
@@ -220,16 +220,16 @@ public class SegregationChecker {
     final double[] groupDprSums = new double[4];
     final double[] groupDprAvgs = new double[4];
     int child = 0;
-    for (int i = 0; i < rec.getNumberOfSamples(); i++) {
+    for (int i = 0; i < rec.getNumberOfSamples(); ++i) {
       if (mSampleFather == i || mSampleMother == i) {
         continue;
       }
       final int childGroup = selectedPatternChildren.group(child);
       groupCounts[childGroup]++;
       groupDprSums[childGroup] += rec.getFormat(VcfFormatField.DPR.name()) == null ? 0.0 : Double.valueOf(rec.getFormat(VcfFormatField.DPR.name()).get(i));
-      child++;
+      ++child;
     }
-    for (int i = 0; i < groupCounts.length; i++) {
+    for (int i = 0; i < groupCounts.length; ++i) {
       if (groupCounts[i] > 0) {
         groupDprAvgs[i] = groupDprSums[i] / groupCounts[i];
       }
@@ -276,7 +276,7 @@ public class SegregationChecker {
         if (minIncompatible == 1) {
           int childIndex = -1;
           for (final String compat : selectedIncompatible) {
-            childIndex++;
+            ++childIndex;
             if ("I".equals(compat)) {
               break;
             }
@@ -294,14 +294,14 @@ public class SegregationChecker {
           }
           if (childAlts.size() == 1) {
             int sampleIndex = -1;
-            for (int i = 0; i < mSampleNames.size(); i++) {
-              sampleIndex++;
+            for (int i = 0; i < mSampleNames.size(); ++i) {
+              ++sampleIndex;
               if (i == mSampleFather || i == mSampleMother) {
                 continue;
               } else if (childIndex == 0) {
                 break;
               }
-              childIndex--;
+              --childIndex;
             }
             repairRecord(rec, repairedRecord, sampleIndex, childAlts.get(0), selectedPatternChildren);
           }
@@ -324,8 +324,8 @@ public class SegregationChecker {
 
   static Set<String> getPossibleGts(final int altSize) {
     final Set<String> possibleGts = new HashSet<>();
-    for (int i = 0; i < altSize; i++) {
-      for (int j = i; j < altSize; j++) {
+    for (int i = 0; i < altSize; ++i) {
+      for (int j = i; j < altSize; ++j) {
         possibleGts.add(i + "/" + j);
       }
     }
@@ -421,7 +421,7 @@ public class SegregationChecker {
     if (father.isSingleAllele() && mother.isSingleAllele()) {
       return;
     }
-    for (int i = 0, j = -1; i < mSampleNames.size(); i++) {
+    for (int i = 0, j = -1; i < mSampleNames.size(); ++i) {
       if (i == mSampleFather) {
         if (father.isSingleAllele()) {
           continue;
@@ -434,7 +434,7 @@ public class SegregationChecker {
         phaseSet(rec, i, labels.phaseMother(), curr);
       } else {
         //child
-        j++;
+        ++j;
         if (family.child(j).isSingleAllele()) {
           continue;
         }

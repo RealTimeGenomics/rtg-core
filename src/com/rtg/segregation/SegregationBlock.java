@@ -57,12 +57,12 @@ public class SegregationBlock extends IntegralAbstract {
     assert family.posn() > mEnd;
     assert mSeq.equals(family.seq());
     final PatternArray pattern = family.pattern();
-    for (int f = 0; f < Pattern.NUMBER_FLIPS; f++) {
+    for (int f = 0; f < Pattern.NUMBER_FLIPS; ++f) {
       final PatternArray pat = mPatterns.flipIntersect(pattern, f);
       if (pat != null) {
         mPatterns = pat;
         mEnd = family.posn();
-        mCount++;
+        ++mCount;
         return true;
       }
     }

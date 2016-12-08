@@ -58,7 +58,7 @@ public class FamilyCallerTest extends TestCase {
 
   private VariantOutputVcfFormatter makeFormatter(int numSamples) {
     final List<String> names = new ArrayList<>();
-    for (int i = 0; i < numSamples; i++) {
+    for (int i = 0; i < numSamples; ++i) {
       names.add("g" + i);
     }
     return new VariantOutputVcfFormatter(names.toArray(new String[names.size()]));
@@ -137,7 +137,7 @@ public class FamilyCallerTest extends TestCase {
   static List<ModelInterface<?>> buildFamily(GenomePriorParams params, final int refNt, String... members) {
     final Hypotheses<Description> hypotheses = new HypothesesSnp(SimplePossibility.SINGLETON, params, false, refNt - 1);
     final List<ModelInterface<?>> b = new ArrayList<>();
-    for (int i = 0; i < members.length; i++) {
+    for (int i = 0; i < members.length; ++i) {
       b.add(new Model<>(hypotheses, new StatisticsSnp(hypotheses.description()), new NoAlleleBalance()));
       increment(b.get(i), members[i]);
     }
@@ -148,7 +148,7 @@ public class FamilyCallerTest extends TestCase {
   }
 
   static void increment(ModelInterface<?> b, String s) {
-    for (int i = 0; i < s.length(); i++) {
+    for (int i = 0; i < s.length(); ++i) {
       final char val = s.charAt(i);
       b.increment(new EvidenceQ(DescriptionSnp.SINGLETON, DNA.valueOf(val).ordinal() - 1, 0, 0, 0.1, 0.1, true, false, false, false));
     }

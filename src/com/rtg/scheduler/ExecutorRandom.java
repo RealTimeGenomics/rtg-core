@@ -65,7 +65,7 @@ public class ExecutorRandom<J extends JobId<J>> implements Executor<J> {
         mTimes[mNextThread] = t1 - t0;
         mRunning[mNextThread] = next;
         mResults[mNextThread] = res;
-        mNextThread++;
+        ++mNextThread;
         if (mNextThread == mN) {
           send = true;
           choose();
@@ -84,7 +84,7 @@ public class ExecutorRandom<J extends JobId<J>> implements Executor<J> {
   private void choose() {
     assert mNextThread >= 1;
     final int choose = mRandom.nextInt(mNextThread);
-    mNextThread--;
+    --mNextThread;
     final Job<J> tempJob = mRunning[mNextThread];
     final Result tempRes = mResults[mNextThread];
     mRunning[mNextThread] = mRunning[choose];

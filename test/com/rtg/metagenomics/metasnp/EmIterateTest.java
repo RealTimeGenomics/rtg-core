@@ -48,7 +48,7 @@ public class EmIterateTest extends TestCase {
     assertEquals(0.66, arith.poss2Prob(xi[1][0]), 0.01);
     assertEquals(0.33, arith.poss2Prob(xi[1][1]), 0.01);
     final int[][] expected = {{2, 3}, {0, 3}, {0, 0}, {1, 3}};
-    for (int i = 0; i < result.mAssignments.size(); i++) {
+    for (int i = 0; i < result.mAssignments.size(); ++i) {
       assertTrue(Arrays.equals(expected[i], result.mAssignments.get(i).mCalls));
     }
   }
@@ -78,7 +78,7 @@ public class EmIterateTest extends TestCase {
     assertEquals(0.66, arith.poss2Prob(xi[1][0]), 0.01);
     assertEquals(0.33, arith.poss2Prob(xi[1][1]), 0.01);
     final int[][] expected = {{2, 3}, {0, 3}, {0, 0}, {1, 3}};
-    for (int i = 0; i < result.mAssignments.size(); i++) {
+    for (int i = 0; i < result.mAssignments.size(); ++i) {
       assertTrue(Arrays.equals(expected[i], result.mAssignments.get(i).mCalls));
     }
 

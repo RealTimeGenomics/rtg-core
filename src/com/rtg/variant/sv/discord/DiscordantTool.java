@@ -270,7 +270,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
         return true;
       }
       processConstraint(constraint, mReadSets, mTemplateName, mMaxGap, rec);
-      mTotalDiscordantRecords++;
+      ++mTotalDiscordantRecords;
     }
     flush(0, rec.getAlignmentStart());
     return true;

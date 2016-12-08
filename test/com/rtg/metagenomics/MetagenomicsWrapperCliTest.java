@@ -144,7 +144,7 @@ public class MetagenomicsWrapperCliTest extends AbstractCliTest {
         modules.add(command.get(0));
       }
       assertEquals(modules.toString(), expected.size(), commands.size());
-      for (int i = 0; i < expected.size(); i++) {
+      for (int i = 0; i < expected.size(); ++i) {
         assertEquals(expected.get(i), commands.get(i));
 
       }

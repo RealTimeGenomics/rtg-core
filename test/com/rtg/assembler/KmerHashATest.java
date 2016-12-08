@@ -34,12 +34,12 @@ public class KmerHashATest extends AbstractKmerTest {
 
   public void testKmerToHash() {
     final String nt0 = TEST_NT;
-    for (int j = 0; j < nt0.length(); j++) {
+    for (int j = 0; j < nt0.length(); ++j) {
       final String nt = nt0.substring(0, j);
       final Kmer k0 = new StringKmer(nt);
       final long[] hash = KmerHashA.kmerToHash(k0);
       final Kmer k = new KmerHashA(hash, nt.length());
-      for (int i = 0; i < nt.length(); i++) {
+      for (int i = 0; i < nt.length(); ++i) {
         assertEquals("j=" + j + " i=" + i + " : " + Arrays.toString(hash), nt.charAt(i), DnaUtils.getBase(k.nt(i)));
       }
     }
@@ -47,7 +47,7 @@ public class KmerHashATest extends AbstractKmerTest {
 
   public void testReverseHash() {
     final String nt0 = TEST_NT;
-    for (int j = 0; j < nt0.length(); j++) {
+    for (int j = 0; j < nt0.length(); ++j) {
       final String nt = nt0.substring(0, j);
       final Kmer k0 = new StringKmer(nt);
       final long[] hash = KmerHashA.kmerToHash(k0);
@@ -89,7 +89,7 @@ public class KmerHashATest extends AbstractKmerTest {
   private static final String LONG_KMER;
   static {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < 18; i++) {
+    for (int i = 0; i < 18; ++i) {
       sb.append("GACT");
     }
     LONG_KMER = sb.toString();

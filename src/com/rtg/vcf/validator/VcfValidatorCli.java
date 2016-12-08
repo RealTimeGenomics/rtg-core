@@ -110,15 +110,15 @@ public class VcfValidatorCli extends AbstractCli {
         final RuleSet<?> rule = mInfoRules.get(field.getId());
         if (rule == null) {
           err.println("VCF INFO field " + field.getId() + " not contained in the specified rule set.");
-          mNumberFieldsNotInRules++;
+          ++mNumberFieldsNotInRules;
         } else {
           if (rule.getMetaType() != field.getType()) {
             err.println("VCF INFO field " + field.getId() + " does not match the expected meta-data type.");
-            mismatchedHeaders++;
+            ++mismatchedHeaders;
           }
           if (rule.getVcfNumber().getNumberType() != field.getNumber().getNumberType() || rule.getVcfNumber().getNumber() != field.getNumber().getNumber()) {
             err.println("VCF INFO field " + field.getId() + " does not match the expected number of values.");
-            mismatchedHeaders++;
+            ++mismatchedHeaders;
           }
         }
       }
@@ -128,15 +128,15 @@ public class VcfValidatorCli extends AbstractCli {
         final RuleSet<?> rule = mFormatRules.get(field.getId());
         if (rule == null) {
           err.println("VCF FORMAT field " + field.getId() + " not contained in the specified rule set.");
-          mNumberFieldsNotInRules++;
+          ++mNumberFieldsNotInRules;
         } else {
           if (rule.getMetaType() != field.getType()) {
             err.println("VCF FORMAT field " + field.getId() + " does not match the expected meta-data type.");
-            mismatchedHeaders++;
+            ++mismatchedHeaders;
           }
           if (rule.getVcfNumber().getNumberType() != field.getNumber().getNumberType() || rule.getVcfNumber().getNumber() != field.getNumber().getNumber()) {
             err.println("VCF FORMAT field " + field.getId() + " does not match the expected number of values.");
-            mismatchedHeaders++;
+            ++mismatchedHeaders;
           }
         }
       }
@@ -160,14 +160,14 @@ public class VcfValidatorCli extends AbstractCli {
 //              }
             if (!"PASS".equals(filter) && !filters.containsKey(filter)) {
                warning(err, current, "VCF FILTER field + " + filter + " not present in the header.");
-               mNumberFieldsNotInHeader++;
+               ++mNumberFieldsNotInHeader;
             }
           }
         }
         for (String info : current.getInfo().keySet()) {
           if (!infos.containsKey(info)) {
             warning(err, current, "VCF INFO field " + info + " not present in the header.");
-            mNumberFieldsNotInHeader++;
+            ++mNumberFieldsNotInHeader;
           }
           final RuleSet<?> rule = mInfoRules.get(info);
           if (rule != null) {
@@ -181,7 +181,7 @@ public class VcfValidatorCli extends AbstractCli {
         for (String format : current.getFormats()) {
           if (!formats.containsKey(format)) {
             warning(err, current, "VCF FORMAT field " + format + " not present in the header.");
-            mNumberFieldsNotInHeader++;
+            ++mNumberFieldsNotInHeader;
           }
           final RuleSet<?> rule = mFormatRules.get(format);
           if (rule != null) {
@@ -201,7 +201,7 @@ public class VcfValidatorCli extends AbstractCli {
           }
           if (val == null || Double.isInfinite(val) || Double.isNaN(val)) {
             warning(err, current, "QUAL value is invalid.");
-            mNumberInvalidQualValues++;
+            ++mNumberInvalidQualValues;
           }
         }
         mPrintedRecord = false;
@@ -233,7 +233,7 @@ public class VcfValidatorCli extends AbstractCli {
   private void warning(PrintStream err, VcfRecord rec, String message) {
     if (!mPrintedRecord) {
       if (!mCountedRecord) {
-        mNumberInvalidRecords++;
+        ++mNumberInvalidRecords;
         mCountedRecord = true;
       }
       if (!mVerbose && mNumberInvalidRecords > MAX_RECORD_WARNINGS) {

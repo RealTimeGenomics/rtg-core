@@ -199,12 +199,12 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
         mLeftmostPriorityQueue.add(first);
       }
       if (mFilter.acceptRecord(next)) {
-        mOutputRecords++;
+        ++mOutputRecords;
         mNextRecordToReturn = next;
         hasNext = true;
         break;
       } else {
-        mFilteredRecords++;
+        ++mFilteredRecords;
       }
     }
     mTime += System.nanoTime() - start;

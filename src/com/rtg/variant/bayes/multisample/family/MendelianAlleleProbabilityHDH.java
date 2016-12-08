@@ -43,9 +43,9 @@ public final class MendelianAlleleProbabilityHDH extends MendelianAlleleProbabil
   private static int init(double[][] lookup) {
     final double z = Double.NEGATIVE_INFINITY;
     int cnt = 0;
-    for (int i = 0; i < lookup.length; i++) {
-      for (int j = 0; j < lookup[i].length; j++) {
-        cnt++;
+    for (int i = 0; i < lookup.length; ++i) {
+      for (int j = 0; j < lookup[i].length; ++j) {
+        ++cnt;
         lookup[i][j] = z;
       }
     }

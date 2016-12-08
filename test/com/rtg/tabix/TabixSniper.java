@@ -40,7 +40,7 @@ public final class TabixSniper {
     int num = args.length > 2 ? Integer.parseInt(args[2]) : 1;
     while (num > 0) {
       System.out.println(bclr.readLine());
-      num--;
+      --num;
     }
   }
 }

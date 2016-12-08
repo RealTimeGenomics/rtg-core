@@ -76,22 +76,22 @@ public class SoftClipperOmni implements EditDistance {
       switch (command) {
         case ActionsHelper.INSERTION_INTO_REFERENCE:
           softClipPos = pos;
-          mStartPositionOffset--;
+          --mStartPositionOffset;
           extend = true;
           break;
         case ActionsHelper.DELETION_FROM_REFERENCE:
           softClipPos = pos;
-          mDels++;
+          ++mDels;
           extend = true;
           break;
         default:
           if (extend && command != ActionsHelper.SAME) {
-            softClipPos++;
+            ++softClipPos;
           } else {
             extend = false;
           }
       }
-      pos++;
+      ++pos;
     }
 
     //if there's an indel continuing past the cutoff position, we'll need to soft clip that too.
@@ -101,14 +101,14 @@ public class SoftClipperOmni implements EditDistance {
         if (command != ActionsHelper.SAME) {
           switch (command) {
             case ActionsHelper.INSERTION_INTO_REFERENCE:
-              mStartPositionOffset--;
+              --mStartPositionOffset;
               break;
             case ActionsHelper.DELETION_FROM_REFERENCE:
-              mDels++;
+              ++mDels;
               break;
             default:
           }
-          softClipPos++;
+          ++softClipPos;
         } else {
           break;
         }

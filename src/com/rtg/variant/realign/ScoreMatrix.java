@@ -69,7 +69,7 @@ public class ScoreMatrix extends AbstractAllPaths {
   }
 
   protected final void calculateRow(final int i) {
-    for (int j = 0; j < mWidth; j++) {
+    for (int j = 0; j < mWidth; ++j) {
       setDelete(i, j, calculateDelete(i - 1, j + 1));
       matchIt(i, j);
       setInsert(i, j, calculateInsert(i, j - 1));
@@ -85,7 +85,7 @@ public class ScoreMatrix extends AbstractAllPaths {
    */
   protected final void calculateEnd() {
     double sumLn = mZeroPoss;
-    for (int j = mWidth - 1; j >= 0; j--) {
+    for (int j = mWidth - 1; j >= 0; --j) {
       // last insert row is all zero probabilities for most matrices, but is not initialised in the delta matrices
       // assert mInsert[endRow][j] == mZeroPoss;
       sumLn = mArith.add(sumLn, mArith.add(delete(mLength, j), match(mLength, j)));
@@ -97,7 +97,7 @@ public class ScoreMatrix extends AbstractAllPaths {
   protected void calculateProbabilities() {
     calculateInitialRow(0, mDeleteStartPoss, mMatchStartPoss);
     //insert in read and delete on template
-    for (int i = 1; i <= mLength; i++) {
+    for (int i = 1; i <= mLength; ++i) {
       calculateRow(i);
     }
     calculateEnd();

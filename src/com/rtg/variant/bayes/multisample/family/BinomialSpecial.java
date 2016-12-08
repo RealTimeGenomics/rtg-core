@@ -32,9 +32,9 @@ public final class BinomialSpecial {
   private static final double[][] PASCAL_LN = new double[A_LIMIT][LENGTH];
   static {
     PASCAL[0][0] = 1;
-    for (int i = 1; i < LENGTH; i++) {
+    for (int i = 1; i < LENGTH; ++i) {
       PASCAL[0][i] = 1;
-      for (int j = 1; j < A_LIMIT; j++) {
+      for (int j = 1; j < A_LIMIT; ++j) {
         PASCAL[j][i] = PASCAL[j - 1][i - 1] + PASCAL[j][i - 1];
         PASCAL_LN[j][i] = Math.log(PASCAL[j][i]);
       }

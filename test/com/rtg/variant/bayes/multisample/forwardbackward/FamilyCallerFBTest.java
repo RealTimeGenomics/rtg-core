@@ -66,7 +66,7 @@ public class FamilyCallerFBTest extends FamilyCallerTest {
         final HypothesisScores scores = getBestScores(models, priorCon);
 
         final VariantSample[] samples = new VariantSample[models.size()];
-        for (int i = 0; i < samples.length; i++) {
+        for (int i = 0; i < samples.length; ++i) {
           final HypothesisScore score = scores.getScores()[i];
           if (score != null && score.hypothesis() != -1) {
             final T childHypotheses = hypotheses.get(models.get(i));

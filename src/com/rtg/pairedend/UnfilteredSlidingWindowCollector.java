@@ -59,7 +59,7 @@ public class UnfilteredSlidingWindowCollector extends AbstractSlidingWindowColle
     //System.err.println("F2P: " + mCurrentTemplatePosition + " : " + newStart);
     while (mCurrentReferencePosition < newStart) {
       // set current to new start
-      mCurrentReferencePosition++;
+      ++mCurrentReferencePosition;
 
       final int windowIndex = windowPosition(mCurrentReferencePosition);
 
@@ -71,7 +71,7 @@ public class UnfilteredSlidingWindowCollector extends AbstractSlidingWindowColle
 
         //output all hits at this location that are ok due to mating (previously set by findNewMates)
         // - also checks if it's ok even if unmated.
-        for (int i = 0; i < mReadsWindowInUse[windowIndex]; i++) {
+        for (int i = 0; i < mReadsWindowInUse[windowIndex]; ++i) {
           final UnfilteredHitInfo hit = hits.get(i);
           if (hit.score() == -1) {
             //ask alignment writer to calculate edit distance & see if this hit passes unmated threshold

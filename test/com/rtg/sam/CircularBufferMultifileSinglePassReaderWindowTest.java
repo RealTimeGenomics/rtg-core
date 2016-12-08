@@ -141,7 +141,7 @@ public class CircularBufferMultifileSinglePassReaderWindowTest extends TestCase 
     try {
       it = ssrw.recordsOverlap(5000, 8000); // The overlap form of the same query should pick up a couple more than before
       checkStartCoords(it, false, EXPECTED_FIRST_OVERLAP_5K_8K);
-      for (int i = 0; i < EXPECTED_START_5K_8K_COMBINED.length; i++) {
+      for (int i = 0; i < EXPECTED_START_5K_8K_COMBINED.length; ++i) {
         assertTrue(it.hasNext());
         final ReaderRecord<?> srr = it.next();
         assertEquals(EXPECTED_START_5K_8K_COMBINED[i], srr.getStart() + 1);
@@ -344,7 +344,7 @@ public class CircularBufferMultifileSinglePassReaderWindowTest extends TestCase 
 
   //read and flush in all sorts of crazy ways
   public void testFlushPermute() throws Exception {
-    for (int n = 0; n < 20; n++) {
+    for (int n = 0; n < 20; ++n) {
       //System.err.println("n=" + n);
       final Pair<CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord>, RecordIterator<VariantAlignmentRecord>> bufferPair = getBuffer("readerWindowSmallGap", 180);
       final CircularBufferMultifileSinglePassReaderWindow<VariantAlignmentRecord> ssrw = bufferPair.getA();
@@ -411,7 +411,7 @@ public class CircularBufferMultifileSinglePassReaderWindowTest extends TestCase 
       int c = 0;
       for (final Iterator<VariantAlignmentRecord> it2 = buf.recordsOverlap(1, 1000); it2.hasNext();) {
         it2.next();
-        c++;
+        ++c;
       }
       assertEquals(8, c);
     } finally {

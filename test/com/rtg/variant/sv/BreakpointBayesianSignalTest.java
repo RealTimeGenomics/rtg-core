@@ -37,10 +37,10 @@ public class BreakpointBayesianSignalTest extends AbstractBayesianSignalTest {
     assert 0 < p1 && p1 < p2 && p2 < p3 && p3 < p4 && p4 < 2 * BREAK;
 
     //Left arms
-    for (int i = 0; i < p1; i++) {
+    for (int i = 0; i < p1; ++i) {
       sas.properLeft().increment(i, PROPER_RATE);
     }
-    for (int i = p1; i < p2; i++) {
+    for (int i = p1; i < p2; ++i) {
       final double del0 = BREAK - FRAGMENT_MEAN + MAX_ALIGNMENT - i;
       final double del1 = i - BREAK + FRAGMENT_MEAN - READ_LENGTH + MAX_ALIGNMENT;
       final double pr = PROPER_RATE * ChiSquared.normal(del0 / FRAGMENT_STD_DEV);
@@ -52,20 +52,20 @@ public class BreakpointBayesianSignalTest extends AbstractBayesianSignalTest {
       sas.discordantLeft().increment(i, di);
       sas.unmatedLeft().increment(i, un);
     }
-    for (int i = p2; i < p3; i++) {
+    for (int i = p2; i < p3; ++i) {
       sas.discordantLeft().increment(i, PROPER_RATE);
     }
     /*
-    for (int i = p3; i < p4; i++) {
+    for (int i = p3; i < p4; ++i) {
       //nothing - unmapped;
     }
     */
-    for (int i = p4; i < 2 * BREAK; i++) {
+    for (int i = p4; i < 2 * BREAK; ++i) {
       sas.properLeft().increment(i, PROPER_RATE);
     }
 
     //add the random rates
-    for (int i = 0; i < 2 * BREAK; i++) {
+    for (int i = 0; i < 2 * BREAK; ++i) {
       sas.properLeft().increment(i, PROPER_RANDOM_RATE);
       sas.discordantLeft().increment(i, DISCORDANT_RATE);
       sas.unmatedLeft().increment(i, UNMATED_RATE);

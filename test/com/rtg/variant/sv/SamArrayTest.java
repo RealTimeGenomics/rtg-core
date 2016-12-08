@@ -30,7 +30,7 @@ public class SamArrayTest extends AbstractSamCountsTest {
 
   public void testReverse() {
     final SamArray sa = new SamArray(5);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       sa.increment(i, i + 1);
     }
     assertEquals("[" + 5.0 + ", " + 5.0 + ", " + 4.0 + ", " + 3.0 + ", " + 2.0 + "]", sa.reverse(3, 0).toString());

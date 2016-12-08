@@ -133,7 +133,7 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
   @Override
   public AlleleStatisticsDouble remap(Description newDescription, int[] mapping) {
     final AlleleStatisticsDouble newCounts = new AlleleStatisticsDouble(newDescription);
-    for (int oldI = 0; oldI < mapping.length; oldI++) {
+    for (int oldI = 0; oldI < mapping.length; ++oldI) {
       final int newI = mapping[oldI];
       newCounts.mCountsForwards[newI] += mCountsForwards[oldI];
       newCounts.mCountsBackwards[newI] += mCountsBackwards[oldI];

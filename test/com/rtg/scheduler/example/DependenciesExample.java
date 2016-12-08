@@ -108,7 +108,7 @@ public class DependenciesExample extends IntegralAbstract implements Dependencie
     } else {
       res = new ExampleJobId(mNumberChunks, mNext, JobType.INCR);
     }
-    mNext++;
+    ++mNext;
     return res;
   }
 

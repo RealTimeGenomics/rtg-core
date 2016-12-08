@@ -39,7 +39,7 @@ public class PcrTemplateCallImplementationTest extends TestCase {
   public final void testClone() throws IOException, CloneNotSupportedException {
     final OutputStream sb = new ByteArrayOutputStream();
     final Index[] indexes = new Index[IX];
-    for (int i = 0; i < indexes.length; i++) {
+    for (int i = 0; i < indexes.length; ++i) {
       indexes[i] = new IndexMock(sb, i) {
           @Override
           public void search(final long hash, final Finder finder) throws IOException, IllegalStateException {
@@ -49,7 +49,7 @@ public class PcrTemplateCallImplementationTest extends TestCase {
     }
 
     final byte[] dist = new byte[8];
-    for (int i = 0; i < dist.length; i++) {
+    for (int i = 0; i < dist.length; ++i) {
       dist[i] = 4;
     }
     final IndexSet indexSet = new IndexSet(indexes);
@@ -68,10 +68,10 @@ public class PcrTemplateCallImplementationTest extends TestCase {
     tci.templateCall(0, 4, 2);
     tci.done();
     //System.err.println(Arrays.toString(dist));
-    for (int i = 0; i < IX; i++) {
+    for (int i = 0; i < IX; ++i) {
       assertEquals(2, dist[i]);
     }
-    for (int i = IX; i < 8; i++) {
+    for (int i = IX; i < 8; ++i) {
       assertEquals(4, dist[i]);
     }
   }
@@ -79,7 +79,7 @@ public class PcrTemplateCallImplementationTest extends TestCase {
   public final void test() throws IOException {
     final OutputStream sb = new ByteArrayOutputStream();
     final Index[] indexes = new Index[IX];
-    for (int i = 0; i < indexes.length; i++) {
+    for (int i = 0; i < indexes.length; ++i) {
       indexes[i] = new IndexMock(sb, i) {
           @Override
           public void search(final long hash, final Finder finder) throws IOException, IllegalStateException {
@@ -89,7 +89,7 @@ public class PcrTemplateCallImplementationTest extends TestCase {
     }
 
     final byte[] dist = new byte[8];
-    for (int i = 0; i < dist.length; i++) {
+    for (int i = 0; i < dist.length; ++i) {
       dist[i] = 4;
     }
     final IndexSet indexSet = new IndexSet(indexes);
@@ -105,10 +105,10 @@ public class PcrTemplateCallImplementationTest extends TestCase {
     tci.templateCall(0, 4, 2);
     tci.done();
     //System.err.println(Arrays.toString(dist));
-    for (int i = 0; i < IX; i++) {
+    for (int i = 0; i < IX; ++i) {
       assertEquals(2, dist[i]);
     }
-    for (int i = IX; i < 8; i++) {
+    for (int i = IX; i < 8; ++i) {
       assertEquals(4, dist[i]);
     }
     assertEquals("PcrTemplateCallImplementation", tci.toString());

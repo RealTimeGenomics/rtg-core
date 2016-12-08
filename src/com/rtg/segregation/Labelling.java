@@ -124,7 +124,7 @@ class Labelling extends IntegralAbstract {
     mChildIndex = new Integer[NUMBER_LABELS];
     mPhasedLabels = new GType[NUMBER_LABELS];
     mLabels = new GType[NUMBER_LABELS];
-    for (int i = 0; i < family.length(); i++) {
+    for (int i = 0; i < family.length(); ++i) {
       final Integer label = label(pattern, i);
       if (label == null) {
         continue;
@@ -138,7 +138,7 @@ class Labelling extends IntegralAbstract {
       }
     }
     //this needs to be done after the mLabels are constructed
-    for (int i = 0; i < NUMBER_LABELS; i++) {
+    for (int i = 0; i < NUMBER_LABELS; ++i) {
       final GType label = mLabels[i];
       if (label != null) {
         if (label.isSingleAllele()) {
@@ -159,7 +159,7 @@ class Labelling extends IntegralAbstract {
       return null;
     }
     final GType fatherAlt = new GType(father.b(), father.a(), father.ploidy());
-    for (int i = 0; i < NUMBER_LABELS; i++) {
+    for (int i = 0; i < NUMBER_LABELS; ++i) {
       final GType label = mPhasedLabels[i];
       if (label == null || label.ploidy() != Ploidy.DIPLOID) {
         continue;
@@ -186,7 +186,7 @@ class Labelling extends IntegralAbstract {
       return null;
     }
     final GType motherAlt = new GType(mother.b(), mother.a(), mother.ploidy());
-    for (int i = 0; i < NUMBER_LABELS; i++) {
+    for (int i = 0; i < NUMBER_LABELS; ++i) {
       final GType label = mPhasedLabels[i];
       if (label == null || label.ploidy() != Ploidy.DIPLOID) {
         continue;
@@ -246,7 +246,7 @@ class Labelling extends IntegralAbstract {
   @Override
   public boolean globalIntegrity() {
     integrity();
-    for (int i = 0; i < NUMBER_LABELS; i++) {
+    for (int i = 0; i < NUMBER_LABELS; ++i) {
       final GType label = mLabels[i];
       if (label == null) {
         Exam.assertTrue(mPhasedLabels[i] == null);

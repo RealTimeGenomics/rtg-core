@@ -35,24 +35,24 @@ public class DuplicateDonorBayesianSignalTest extends AbstractBayesianSignalTest
     assert 0 < p1 && p1 < p2 && p2 < p3 && p3 < 2 * BREAK;
 
     //Left arms
-    for (int i = 0; i < p1; i++) {
+    for (int i = 0; i < p1; ++i) {
       sas.properLeft().increment(i, PROPER_RATE);
     }
-    for (int i = p1; i < 2 * BREAK; i++) {
+    for (int i = p1; i < 2 * BREAK; ++i) {
       sas.properLeft().increment(i, 2 * PROPER_RATE);
       sas.unmatedLeft().increment(i, UNMATED_RATE);
       sas.discordantLeft().increment(i, DISCORDANT_RATE);
     }
 
     //Right arms
-    for (int i = 0; i < p1; i++) {
+    for (int i = 0; i < p1; ++i) {
       sas.properRight().increment(i, PROPER_RATE);
     }
-    for (int i = p1; i < p2; i++) {
+    for (int i = p1; i < p2; ++i) {
       sas.properRight().increment(i, PROPER_RATE);
       sas.discordantRight().increment(i, PROPER_RATE);
     }
-    for (int i = p2; i < p3; i++) {
+    for (int i = p2; i < p3; ++i) {
       final double delPr = i - BREAK - (FRAGMENT_MEAN - MAX_ALIGNMENT - READ_LENGTH);
       final double pr = PROPER_RATE * ChiSquared.normal(delPr / FRAGMENT_STD_DEV);
       final double delDi = FRAGMENT_MEAN - 2 * READ_LENGTH + MAX_ALIGNMENT - (i - BREAK);
@@ -64,12 +64,12 @@ public class DuplicateDonorBayesianSignalTest extends AbstractBayesianSignalTest
       sas.discordantRight().increment(i, di);
       sas.unmatedRight().increment(i, un);
     }
-    for (int i = p3; i < 2 * BREAK; i++) {
+    for (int i = p3; i < 2 * BREAK; ++i) {
       sas.properRight().increment(i, 2 * PROPER_RATE);
     }
 
     //add the random rates both arms
-    for (int i = 0; i < 2 * BREAK; i++) {
+    for (int i = 0; i < 2 * BREAK; ++i) {
       sas.properLeft().increment(i, PROPER_RANDOM_RATE);
       sas.properRight().increment(i, PROPER_RANDOM_RATE);
       sas.discordantLeft().increment(i, DISCORDANT_RATE);

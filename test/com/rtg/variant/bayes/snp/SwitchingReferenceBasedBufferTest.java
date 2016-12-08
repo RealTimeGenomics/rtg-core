@@ -66,7 +66,7 @@ public class SwitchingReferenceBasedBufferTest extends TestCase {
 
     assertEquals(10, cb.find(11));
 
-    for (int i = 1; i < 24; i++) {
+    for (int i = 1; i < 24; ++i) {
       final MockModel model = cb.step();
       assertNotNull("" + i, model);
       cb.globalIntegrity();

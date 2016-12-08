@@ -50,11 +50,11 @@ public class PatternArray extends IntegralAbstract {
   private static PatternDiff diff(PatternArray before, PatternArray after, boolean select, boolean flip) {
     int diffCount = 0;
     int which = -1;
-    for (int i = 0; i < after.length(); i++) {
+    for (int i = 0; i < after.length(); ++i) {
       final String sThis = after.index(i).sString(select);
       final String sThat = before.index(i).sString(select);
       if (!sThis.equals(sThat) ^ flip) {
-        diffCount++;
+        ++diffCount;
         which = i;
       }
     }
@@ -107,7 +107,7 @@ public class PatternArray extends IntegralAbstract {
     assert fa.length() == mo.length();
     //assert fa.matches("^[01]+$") && mo.matches("^[01]+$");
     final Pattern[] patterns = new Pattern[fa.length()];
-    for (int i = 0; i < fa.length(); i++) {
+    for (int i = 0; i < fa.length(); ++i) {
       patterns[i] = Pattern.stringToPattern(fa.charAt(i), mo.charAt(i));
     }
     mPatterns = patterns;
@@ -122,7 +122,7 @@ public class PatternArray extends IntegralAbstract {
   //For testing
   PatternArray(final int... q) {
     final Pattern[] p = new Pattern[q.length];
-    for (int i = 0; i < q.length; i++) {
+    for (int i = 0; i < q.length; ++i) {
       p[i] = new Pattern(q[i]);
     }
     mPatterns = p;
@@ -139,12 +139,12 @@ public class PatternArray extends IntegralAbstract {
    */
   Integer phaseCount(final boolean selectFa) {
     int cnt = 0;
-    for (int i = 0; i < length(); i++) {
+    for (int i = 0; i < length(); ++i) {
       final Pattern pat = index(i);
       final String str = selectFa ? pat.faString() : pat.moString();
       switch (str) {
         case "0":
-          cnt++;
+          ++cnt;
           break;
         case "1":
           //do nothing
@@ -166,7 +166,7 @@ public class PatternArray extends IntegralAbstract {
     for (Pattern mPattern : mPatterns) {
       final String faString = mPattern.faString();
       if (faString.equals("0")) {
-        cnt++;
+        ++cnt;
       }
     }
     return cnt;
@@ -180,7 +180,7 @@ public class PatternArray extends IntegralAbstract {
     for (Pattern mPattern : mPatterns) {
       final String moString = mPattern.moString();
       if (moString.equals("0")) {
-        cnt++;
+        ++cnt;
       }
     }
     return cnt;
@@ -234,7 +234,7 @@ public class PatternArray extends IntegralAbstract {
    */
   boolean compatible(final PatternArray pa) {
     assert mPatterns.length == pa.length();
-    for (int i = 0; i < Pattern.NUMBER_FLIPS; i++) {
+    for (int i = 0; i < Pattern.NUMBER_FLIPS; ++i) {
       if (compatible(pa, i)) {
         return true;
       }
@@ -245,7 +245,7 @@ public class PatternArray extends IntegralAbstract {
   private boolean compatible(final PatternArray pa, final int flip) {
     assert mPatterns.length == pa.length();
     final int length = Math.min(length(), pa.length());
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       if (Pattern.flipIntersect(mPatterns[i], pa.mPatterns[i], flip) == null) {
         return false;
       }
@@ -261,7 +261,7 @@ public class PatternArray extends IntegralAbstract {
   PatternArray flipIntersect(final PatternArray pa, final int flip) {
     assert length() == pa.length();
     final Pattern[] newPat = new Pattern[length()];
-    for (int i = 0; i < length(); i++) {
+    for (int i = 0; i < length(); ++i) {
       final Pattern flp = Pattern.flipIntersect(mPatterns[i], pa.mPatterns[i], flip);
       if (flp == null) {
         return null;
@@ -274,7 +274,7 @@ public class PatternArray extends IntegralAbstract {
   //Used as a utility in testing only
   PatternArray flip(final int flip) {
     final int[] newPat = new int[length()];
-    for (int i = 0; i < length(); i++) {
+    for (int i = 0; i < length(); ++i) {
       newPat[i] = mPatterns[i].flip(flip);
     }
     return new PatternArray(newPat);
@@ -294,7 +294,7 @@ public class PatternArray extends IntegralAbstract {
   private long signature(final int flip) {
     assert Pattern.NUMBER_BITS * length() <= Long.SIZE;
     long t = 0;
-    for (int i = 0; i < length(); i++) {
+    for (int i = 0; i < length(); ++i) {
       t = (t << Pattern.NUMBER_BITS) | mPatterns[i].flip(flip);
     }
     return t;
@@ -337,7 +337,7 @@ public class PatternArray extends IntegralAbstract {
       return;
     }
     mSignature = new long[Pattern.NUMBER_FLIPS];
-    for (int i = 0; i < Pattern.NUMBER_FLIPS; i++) {
+    for (int i = 0; i < Pattern.NUMBER_FLIPS; ++i) {
       mSignature[i] = signature(i);
     }
     Arrays.sort(mSignature);
@@ -364,7 +364,7 @@ public class PatternArray extends IntegralAbstract {
       Exam.assertEquals(Pattern.NUMBER_FLIPS, mSignature.length);
       final int n = length() * Pattern.NUMBER_BITS;
       final long mask = -1L << n;
-      for (int i = 0; i < Pattern.NUMBER_FLIPS; i++) {
+      for (int i = 0; i < Pattern.NUMBER_FLIPS; ++i) {
         Exam.assertEquals(0, mSignature[i] & mask);
       }
     }

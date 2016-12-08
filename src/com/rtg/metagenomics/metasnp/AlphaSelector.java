@@ -27,7 +27,7 @@ public final class AlphaSelector {
   private AlphaSelector() { }
 
   static void updateThetaMask(int[] masks, int strain, int base) {
-    for (int i = 0; i < masks.length; i++) {
+    for (int i = 0; i < masks.length; ++i) {
       masks[i] &= ~(1 << strain);
     }
     masks[base] |= 1 << strain;
@@ -54,7 +54,7 @@ public final class AlphaSelector {
     double bestEvidenceScore = arith.zero();
     double restScore = arith.zero();
     List<Integer> best = new ArrayList<>();
-    for (int i = 0; i < nStrains ; i++) {
+    for (int i = 0; i < nStrains ; ++i) {
       best.add(0);
     }
     final int[] thetaMask = new int[MAX_VALUE + 1];
@@ -70,9 +70,9 @@ public final class AlphaSelector {
       }
 
       double evidenceScore = arith.one();
-      for (int sampleIndex = 0; sampleIndex < reads.length; sampleIndex++) {
+      for (int sampleIndex = 0; sampleIndex < reads.length; ++sampleIndex) {
         final double[] sample = reads[sampleIndex];
-        for (int i = 0; i < sample.length; i++) {
+        for (int i = 0; i < sample.length; ++i) {
           evidenceScore = arith.multiply(evidenceScore, arith.pow(thetaLookup[sampleIndex][thetaMask[i]], sample[i]));
         }
       }
@@ -96,7 +96,7 @@ public final class AlphaSelector {
       }
     }
     final int[] res = new int[best.size()];
-    for (int i = 0; i < res.length; i++) {
+    for (int i = 0; i < res.length; ++i) {
       res[i] = best.get(i);
     }
     return new AlphaScore(arith.divide(bestScore, restScore), bestEvidenceScore, res);
@@ -113,13 +113,13 @@ public final class AlphaSelector {
   static double[][] computeThetaLookup(double[][] xi, PossibilityArithmetic arith, double notError, double thirdError) {
     final int combinations = 1 << xi[0].length;
     final double[][] thetaLookup = new double[xi.length][combinations];
-    for (int sample = 0; sample < xi.length; sample++) {
+    for (int sample = 0; sample < xi.length; ++sample) {
       final double[] x = xi[sample];
       final double[] theta = thetaLookup[sample];
       Arrays.fill(theta, arith.zero());
-      for (int comb = 0; comb < combinations; comb++) {
+      for (int comb = 0; comb < combinations; ++comb) {
         double oneMinus = arith.zero();
-        for (int strain = 0; strain < x.length; strain++) {
+        for (int strain = 0; strain < x.length; ++strain) {
           if ((comb & (1 << strain)) != 0) {
             theta[comb] = arith.add(theta[comb], x[strain]);
           } else {

@@ -79,20 +79,20 @@ public class UnknownBaseReadWriterTest extends TestCase {
     rw.writeLeftRead("asdf", in, new byte[8], 8);
     assertEquals(1, internal.mFrom);
     byte[] expected = {1, 0, 3, 4, 5, 0, 7, 0};
-    for (int i = 0; i < internal.mLastData.length; i++) {
+    for (int i = 0; i < internal.mLastData.length; ++i) {
       assertEquals(expected[i], internal.mLastData[i]);
     }
     rw.writeRightRead("asdf", in, new byte[8], 8);
     assertEquals(2, internal.mFrom);
     expected = new byte[] {1, 2, 0, 4, 0, 6, 7, 8};
-    for (int i = 0; i < internal.mLastData.length; i++) {
+    for (int i = 0; i < internal.mLastData.length; ++i) {
       assertEquals(expected[i], internal.mLastData[i]);
     }
     in = new byte[] {1, 2, 3, 4, 5, 6, 7, 8, 9};
     rw.writeRightRead("asdf", in, new byte[8], 9);
     assertEquals(2, internal.mFrom);
     expected = new byte[] {0, 2, 0, 4, 5, 0, 7, 0, 9};
-    for (int i = 0; i < internal.mLastData.length; i++) {
+    for (int i = 0; i < internal.mLastData.length; ++i) {
       assertEquals(expected[i], internal.mLastData[i]);
     }
   }
@@ -104,7 +104,7 @@ public class UnknownBaseReadWriterTest extends TestCase {
     rw.writeLeftRead("asdf", in, new byte[8], 8);
     assertEquals(1, internal.mFrom);
     final byte[] expected = {1, 0, 3, 4, 5, 6, 7, 0};
-    for (int i = 0; i < internal.mLastData.length; i++) {
+    for (int i = 0; i < internal.mLastData.length; ++i) {
       assertEquals(expected[i], internal.mLastData[i]);
     }
     assertEquals(79, rw.readsWritten());

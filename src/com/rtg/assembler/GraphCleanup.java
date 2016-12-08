@@ -86,7 +86,7 @@ public final class GraphCleanup {
     int deleted = 1;
     while (deleted > 0) {
       deleted = 0;
-      for (long i = 1; i <= mutable.numberContigs(); i++) {
+      for (long i = 1; i <= mutable.numberContigs(); ++i) {
         if (mutable.contigDeleted(i)) {
           continue;
         }
@@ -97,7 +97,7 @@ public final class GraphCleanup {
         final Set<Long> successors = MergeNodes.predecessors(mutable, -i);
         if (predecessors.size() == 0 || successors.size() == 0) {
           mutable.deleteContig(i);
-          deleted++;
+          ++deleted;
         }
         final Set<Long> combined = new HashSet<>();
         combined.addAll(predecessors);
@@ -108,7 +108,7 @@ public final class GraphCleanup {
           for (Long l : combined) {
             if (l == i) {
               mutable.deleteContig(i);
-              deleted++;
+              ++deleted;
             }
           }
         }

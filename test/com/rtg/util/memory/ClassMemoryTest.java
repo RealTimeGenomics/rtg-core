@@ -63,13 +63,13 @@ public class ClassMemoryTest extends TestCase {
 
     int fields = 0;
     for (final Iterator<Field> iter = info.getFieldIterator(); iter.hasNext(); ) {
-      fields++;
+      ++fields;
     }
     assertEquals(0, fields);
 
     int prims = 0;
     for (final Iterator<Field> iter = info.getNonprimitiveIterator(); iter.hasNext(); ) {
-      prims++;
+      ++prims;
     }
     assertEquals(0, prims);
 
@@ -119,14 +119,14 @@ public class ClassMemoryTest extends TestCase {
     int fields = 0;
     for (final Iterator<Field> iter = info.getFieldIterator(); iter.hasNext(); ) {
       iter.next();
-      fields++;
+      ++fields;
     }
     assertEquals(0, fields);
 
     int prims = 0;
     for (final Iterator<Field> iter = info.getNonprimitiveIterator(); iter.hasNext(); ) {
       iter.next();
-      prims++;
+      ++prims;
     }
     assertEquals(0, prims);
 
@@ -148,14 +148,14 @@ public class ClassMemoryTest extends TestCase {
     int fields = 0;
     for (final Iterator<Field> iter = info.getFieldIterator(); iter.hasNext(); ) {
       iter.next();
-      fields++;
+      ++fields;
     }
     assertEquals(1, fields);
 
     int prims = 0;
     for (final Iterator<Field> iter = info.getNonprimitiveIterator(); iter.hasNext(); ) {
       iter.next();
-      prims++;
+      ++prims;
     }
     assertEquals(0, prims);
 
@@ -177,14 +177,14 @@ public class ClassMemoryTest extends TestCase {
     int fields = 0;
     for (final Iterator<Field> iter = info.getFieldIterator(); iter.hasNext(); ) {
       iter.next();
-      fields++;
+      ++fields;
     }
     assertEquals(0, fields);
 
     int prims = 0;
     for (final Iterator<Field> iter = info.getNonprimitiveIterator(); iter.hasNext(); ) {
       iter.next();
-      prims++;
+      ++prims;
     }
     assertEquals(0, prims);
 

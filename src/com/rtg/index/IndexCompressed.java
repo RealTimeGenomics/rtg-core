@@ -110,7 +110,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
       //System.err.println(mInitialPosition.toString());
       long sum = 0;
       assert mInitialPosition.get(0) == 0 && mInitialPosition.get(1) == 0;
-      for (long i = 1; i < mInitialPositionLength; i++) {
+      for (long i = 1; i < mInitialPositionLength; ++i) {
         final long tmp = mInitialPosition.get(i);
         assert tmp >= 0;
         sum += tmp;
@@ -135,7 +135,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
       final long batchSize = (mInitialPositionLength - 2) / numThreads;
       if ((numThreads == 1) || (batchSize <= 1)) {
         // sort each segment of mHash (and mValue), rather than the whole array
-        for (long i = 0; i < mInitialPositionLength - 2; i++) {
+        for (long i = 0; i < mInitialPositionLength - 2; ++i) {
           final long lo = mInitialPosition.get(i);
           final long hi = mInitialPosition.get(i + 1);
           assert lo <= hi : "lo=" + lo + " hi=" + hi + " i=" + i;
@@ -144,7 +144,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
       } else {
         if (mHash.safeFromWordTearing()) {
           final SimpleThreadPool sp = new SimpleThreadPool(numThreads, "Building", true);
-          for (long i = 0; i < numThreads; i++) {
+          for (long i = 0; i < numThreads; ++i) {
             sp.execute(new SwapThread(batchSize * i, (i == numThreads - 1) ? (mInitialPositionLength - 2) : (batchSize * (i + 1)), swapper));
           }
           try {
@@ -170,14 +170,14 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
         //set bit vector
         // we loop through mInitialPosition to get upper bits of hash
         long low = 0;
-        for (long upper = 0; upper < mInitialPositionLength - 2; upper++) {
+        for (long upper = 0; upper < mInitialPositionLength - 2; ++upper) {
           final long hi = mInitialPosition.get(upper + 1);
           assert low <= hi;
           if (low < hi) {
             long lastHash = mHash.get(low);
             final long deh0 = mExcessBitsMask == 0 ? decompressHash(upper, lastHash) : decompressHashExtended(upper, lastHash)[0];
             mHashVector.set(deh0);
-            for (long i = low + 1; i < hi; i++) {
+            for (long i = low + 1; i < hi; ++i) {
               final long lower = mHash.get(i);
               if (lower == lastHash) {
                 continue;
@@ -215,7 +215,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
     @Override
     public void run() {
       //System.err.println("mt sort " + mStart + " to " + mEnd);
-      for (long i = mStart; i < mEnd; i++) {
+      for (long i = mStart; i < mEnd; ++i) {
         final long lo = mInitialPosition.get(i);
         final long hi = mInitialPosition.get(i + 1);
         assert lo <= hi : "mStart=" + mStart + " mEnd=" + mEnd + " lo=" + lo + " hi=" + hi + " i=" + i;
@@ -232,20 +232,20 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
     long mergeCount = 0;
     int numUsed = 0;
     long lo = 0;
-    for (long p = 0; p < mInitialPositionLength - 2; p++) {
+    for (long p = 0; p < mInitialPositionLength - 2; ++p) {
       final long hi = mInitialPosition.get(p + 1);
       for (long i = lo; i < hi;) {
         final long hash = mHash.get(i);
         int freq = 1;
-        i++;
+        ++i;
         while (i < hi && hash == mHash.get(i)) {
-          i++;
-          freq++;
+          ++i;
+          ++freq;
         }
         if (numUsed >= freqDist.length) {
           if (freqDist.length == MAX_FREQ_DIST_SIZE) {
             freqHist = SparseFrequencyHistogram.merge(freqHist, SparseFrequencyHistogram.fromIndividualFrequencies(freqDist, numUsed));
-            mergeCount++;
+            ++mergeCount;
             numUsed = 0;
           } else {
             int length = freqDist.length * 3 / 2;
@@ -260,7 +260,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
       lo = hi;
     }
     freqHist = SparseFrequencyHistogram.merge(freqHist, SparseFrequencyHistogram.fromIndividualFrequencies(freqDist, numUsed));
-    mergeCount++;
+    ++mergeCount;
     Diagnostic.developerLog("IndexCompressed " + mergeCount + " Frequency Histogram Merges");
     return freqHist;
   }
@@ -275,7 +275,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
     //System.err.println("compact");
     long prevk = 0;
     long lo = 0;
-    for (long p = 0; p < mInitialPositionLength - 2; p++) {
+    for (long p = 0; p < mInitialPositionLength - 2; ++p) {
       final long hi = mInitialPosition.get(p + 1);
       for (long i = lo; i < hi;) {
         long k = prevk;
@@ -284,8 +284,8 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
         while (i < hi && hash == mHash.get(i)) {
           mHash.set(k, hash);
           mValue.set(k, mValue.get(i));
-          k++;
-          i++;
+          ++k;
+          ++i;
         }
         final long nh = k - prevk;
         if (nh > mMaxRawHashCount) {
@@ -314,14 +314,14 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
           mHashCount1 += nh;
           mHashCount2 += nh * nh;
           mNumValues += nh;
-          mNumHashes++;
+          ++mNumHashes;
         }
       }
       lo = hi;
       mInitialPosition.set(p + 1, prevk);
       final long bucketCnt = prevk - mInitialPosition.get(p);
       if (bucketCnt > 0) {
-        mBucketCount0++;
+        ++mBucketCount0;
         mBucketCount1 += bucketCnt;
         mBucketCount2 += bucketCnt * bucketCnt;
       }
@@ -450,11 +450,11 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
     //System.out.println("found = " + found + " qkey=" + hash + " start=" + start + " skey=" + mHash.get(found));
     long i = found - 1;
     while (i >= low && mHash.get(i) == compressedHash) {
-      i--;
+      --i;
     }
     long j = i + 1;
     while (j < high && mHash.get(j) == compressedHash && finder.found(mValue.get(j))) {
-      j++;
+      ++j;
     }
   }
 
@@ -483,11 +483,11 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
     //System.out.println("found = " + found + " qkey=" + hash + " start=" + start + " skey=" + mHash.get(found));
     long i = found - 1;
     while (i >= low && mHash.get(i) == compressedHash) {
-      i--;
+      --i;
     }
     long j = i + 1;
     while (j < high && mHash.get(j) == compressedHash && finder.found(mValue.get(j))) {
-      j++;
+      ++j;
     }
   }
 
@@ -515,9 +515,9 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
       throw new IllegalStateException();
     }
     long lo = 0;
-    for (long p = 0; p < mInitialPositionLength - 2; p++) {
+    for (long p = 0; p < mInitialPositionLength - 2; ++p) {
       final long hi = mInitialPosition.get(p + 1);
-      for (long i = lo; i < hi; i++) {
+      for (long i = lo; i < hi; ++i) {
         final long hash0 = mHash.get(i);
         final long hash = decompressHash(p, hash0);
         final long value = mValue.get(i);
@@ -533,9 +533,9 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
       throw new IllegalStateException();
     }
     long lo = 0;
-    for (long p = 0; p < mInitialPositionLength - 2; p++) {
+    for (long p = 0; p < mInitialPositionLength - 2; ++p) {
       final long hi = mInitialPosition.get(p + 1);
-      for (long i = lo; i < hi; i++) {
+      for (long i = lo; i < hi; ++i) {
         final long hash0 = mHash.get(i);
         final long[] hash = decompressHashExtended(p, hash0);
         final long value = mValue.get(i);
@@ -574,9 +574,9 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
       return index;
     }
     while (true) {
-      index--;
+      --index;
       if (index < 0 || getHash(index) != hash) {
-        index++;
+        ++index;
         break;
       }
     }
@@ -611,9 +611,9 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
       return index;
     }
     while (true) {
-      index--;
+      --index;
       if (index < 0 || !Arrays.equals(getHashExtended(index), hash)) {
-        index++;
+        ++index;
         break;
       }
     }
@@ -658,14 +658,14 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
   public boolean globalIntegrity() {
     integrity();
     if (mHashBits < Long.SIZE) {
-      for (long l = 0; l < mNumHashes; l++) {
+      for (long l = 0; l < mNumHashes; ++l) {
         Exam.assertTrue(mHash.get(l) >>> mHashBits == 0);
       }
     }
     if (mState == IndexState.FROZEN) {
       //testing after freeze which includes sorting and construction of
       //overflow, bit vector and initial pointer array
-      for (long i = 1; i < mInitialPositionLength - 1; i++) {
+      for (long i = 1; i < mInitialPositionLength - 1; ++i) {
         final long lo = mInitialPosition.get(i - 1);
         final long hi = mInitialPosition.get(i);
         Exam.assertTrue(ArrayUtils.isSorted(mHash, lo, hi));
@@ -674,7 +674,7 @@ public class IndexCompressed extends IndexBase implements IndexExtended {
       //Initial position
       final long first = mInitialPosition.get(0);
       Exam.assertTrue("first=" + first, first >= 0 && first <= mNumHashes);
-      for (long i = 1; i < mInitialPositionLength; i++) {
+      for (long i = 1; i < mInitialPositionLength; ++i) {
         final long lo = mInitialPosition.get(i - 1);
         final long hi = mInitialPosition.get(i);
         Exam.assertTrue(lo <= hi);

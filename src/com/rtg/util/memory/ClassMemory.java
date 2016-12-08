@@ -225,7 +225,7 @@ public final class ClassMemory {
           throw new NoSuchElementException();
         }
         final Field res = mPrim ? mInfo.mFields[mIndex] : mInfo.mNonPrim[mIndex];
-        mIndex++;
+        ++mIndex;
         check();
         return res;
       }
@@ -387,14 +387,14 @@ public final class ClassMemory {
       for (final Field field : fields) {
         final int modifier = field.getModifiers();
         if (!Modifier.isStatic(modifier)) {
-          len++;
+          ++len;
           final int inc = MemoryUsage.refSize(field.getType());
           //System.err.println(i+":"+len+":"+total+":"+inc+":"+field);
           //System.err.println(classRef+":"+field+"+"+inc);
           total += inc;
           final Class<?> fieldType = field.getType();
           if (!fieldType.isPrimitive()) {
-            lenPrim++;
+            ++lenPrim;
           }
           getMemoryInfo(fieldType);
         }
@@ -408,10 +408,10 @@ public final class ClassMemory {
         if (!Modifier.isStatic(modifier)) {
           field.setAccessible(true);
           newFields[j] = field;
-          j++;
+          ++j;
           if (!field.getType().isPrimitive()) {
             nonPrim[k] = field;
-            k++;
+            ++k;
           }
         }
       }
@@ -432,10 +432,10 @@ public final class ClassMemory {
     boolean recursive = false;
     if (args[start].equals("-R")) {
       recursive = true;
-      start++;
+      ++start;
     }
 
-    for (int i = start; i < args.length; i++) {
+    for (int i = start; i < args.length; ++i) {
       System.out.println(args[i]);
       try {
         final Class<?> classRef = Class.forName(args[i]);

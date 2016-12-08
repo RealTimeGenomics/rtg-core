@@ -58,7 +58,7 @@ abstract class AbstractAlignmentWriterThread implements IORunnable {
       out.setClipRegion(region);
       Diagnostic.userLog(name + " starting, hits:" + mWorkload.mChunkStart + "-" + mWorkload.mChunkEnd);
       int templateId = -1;
-      for (long i = mWorkload.getChunkStart(); i > -1 && i < mResults.size() && i < mWorkload.getChunkEnd(); i++) {
+      for (long i = mWorkload.getChunkStart(); i > -1 && i < mResults.size() && i < mWorkload.getChunkEnd(); ++i) {
         if ((i & 0xFFFL) == 0) {
           ProgramState.checkAbort();
         }
@@ -142,11 +142,11 @@ abstract class AbstractAlignmentWriterThread implements IORunnable {
 
           long chunkStart = start;
           while (chunkStart > 0 && mRegion.isInPaddedRange(mResults.getTemplateId(chunkStart - 1), mResults.getPosition(chunkStart - 1)) == 0) {
-            chunkStart--;
+            --chunkStart;
           }
           long chunkEnd = end;
           while (chunkEnd < mResults.size() && mRegion.isInPaddedRange(mResults.getTemplateId(chunkEnd), mResults.getPosition(chunkEnd)) == 0) {
-            chunkEnd++;
+            ++chunkEnd;
           }
           mChunkStart = chunkStart;
           mChunkEnd = chunkEnd;

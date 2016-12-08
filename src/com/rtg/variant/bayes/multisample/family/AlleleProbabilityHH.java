@@ -32,8 +32,8 @@ public final class AlleleProbabilityHH  implements AlleleProbability {
    */
   static final double[][] LOOKUP = new double[2][3];
   static {
-    for (byte i = 0; i < 2; i++) {
-      for (int k = 0; k < 3; k++) {
+    for (byte i = 0; i < 2; ++i) {
+      for (int k = 0; k < 3; ++k) {
         setLookup(i, k);
       }
     }

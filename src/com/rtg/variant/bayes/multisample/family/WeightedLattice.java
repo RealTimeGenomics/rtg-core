@@ -136,7 +136,7 @@ public abstract class WeightedLattice extends IntegralAbstract {
           sb.append(", ");
         }
         sb.append(mBitSet.toString(set)).append(":").append(Utils.realFormat(mArith.poss2Ln(value), 3));
-        mCount++;
+        ++mCount;
       }
     };
     visit(v);

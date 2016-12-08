@@ -29,7 +29,7 @@ public class CodeCrossTest extends TestCase {
     assertEquals(16, tc.size());
     assertFalse(tc.valid(-1));
     assertFalse(tc.valid(16));
-    for (int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; ++i) {
       assertTrue(tc.valid(i));
     }
   }
@@ -57,7 +57,7 @@ public class CodeCrossTest extends TestCase {
   public void testCode2() {
     final Code tc = new CodeCross(4);
     assertEquals(4, tc.rangeSize());
-    for (int i = 0; i < tc.size(); i++) {
+    for (int i = 0; i < tc.size(); ++i) {
       final int a = tc.a(i);
       assertTrue(0 <= a && a < 4);
       final int b = tc.bc(i);
@@ -68,10 +68,10 @@ public class CodeCrossTest extends TestCase {
 
   public void testCode() {
     final Code tc = new CodeCross(3);
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; ++i) {
       assertEquals(i, tc.code(i));
       assertTrue(tc.homozygous(tc.code(i, i)));
-      for (int j = 0; j < 3; j++) {
+      for (int j = 0; j < 3; ++j) {
         if (i == j) {
           continue;
         }

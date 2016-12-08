@@ -44,7 +44,7 @@ public class CorrectingMutatorTest extends TestCase {
     int i = 0;
     for (CorrectingMutator.SequenceBases mutant : cm.getMutations(new CorrectingMutator.BaseRead(DnaUtils.encodeString(original)), start, end)) {
       assertEquals(mutations[i], mutant.toString().toLowerCase(Locale.getDefault()));
-      i++;
+      ++i;
     }
     assertEquals(mutations.length, i);
   }

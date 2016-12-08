@@ -51,7 +51,7 @@ public class MinimizerTest extends TestCase {
     assertEquals(1.0, solver.solveLine(new Quadratic(1.0, 1.0), 0.0), 1e-5);
     assertEquals(0.0, solver.solveLine(new Quadratic(0.0, 0.0), 0.0), 1e-5);
 
-    for (double k = 0; k < 10; k++) {
+    for (double k = 0; k < 10; ++k) {
       assertEquals(k, solver.solveLine(new Quadratic(0.0, k), 1e-10), 1e-5);
     }
   }

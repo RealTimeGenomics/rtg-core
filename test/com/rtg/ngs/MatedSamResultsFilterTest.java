@@ -346,7 +346,7 @@ public class MatedSamResultsFilterTest extends TestCase {
             FileUtils.byteArrayToFile(recordsIn, in1);
             final File outFile = File.createTempFile("out", ".gz", mainOut);
             try (OutputStream out = new FileOutputStream(outFile)) {
-              for (int k = 0; k < numReads; k++) {
+              for (int k = 0; k < numReads; ++k) {
                 blocker.increment(k, 50);
               }
               final MatedSamResultsFilter filter = new MatedSamResultsFilter(blocker, new ReadBlocker(numReads, 255), new ReadBlocker(numReads, 255), lr, rr, true, 0, readGroupId, false);
@@ -541,7 +541,7 @@ public class MatedSamResultsFilterTest extends TestCase {
         FileUtils.byteArrayToFile(input.toByteArray(), in1);
         final File outFile = File.createTempFile("out", ".gz", mainOut);
         try (OutputStream out = new FileOutputStream(outFile)) {
-          for (int k = 0; k < numReads; k++) {
+          for (int k = 0; k < numReads; ++k) {
             blocker.increment(k, 50);
           }
           final MatedSamResultsFilter filter = new MatedSamResultsFilter(blocker, new ReadBlocker(numReads, 255), new ReadBlocker(numReads, 255), lr, rr, true, 0, null, false);

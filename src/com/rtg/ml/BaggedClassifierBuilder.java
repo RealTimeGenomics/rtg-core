@@ -124,7 +124,7 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
     final Attribute[] attributes = dataset.getAttributes();
     final ContingencyTable[] attEvals = new ContingencyTable[attributes.length];
     if (mEvaluateImportances) {
-      for (int k = 0; k < attEvals.length; k++) {
+      for (int k = 0; k < attEvals.length; ++k) {
         attEvals[k] = new SimpleEvaluation();
       }
     }
@@ -136,7 +136,7 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
     final PortableRandom[] randoms = new PortableRandom[mNumTrees];
     final ContingencyTable totalEval = new SimpleEvaluation();
 
-    for (int i = 0; i < mNumTrees; i++) {
+    for (int i = 0; i < mNumTrees; ++i) {
       final int j = i;
 
       randoms[j] = new PortableRandom(random.nextLong() * (j + 1) + j); // Ugly split generator
@@ -158,7 +158,7 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
             evaluate(totalEval, subpredictors[j], testSet); // Holdout
           }
           if (mEvaluateImportances) {
-            for (int a = 0; a < attributes.length; a++) {
+            for (int a = 0; a < attributes.length; ++a) {
               final Dataset permuted = testSet.deepCopy();
               permuteAttribute(permuted.getInstances(), a, randoms[j]);
               evaluate(attEvals[a], subpredictors[j], permuted); // Importances
@@ -180,7 +180,7 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
     }
     if (mEvaluateImportances) {
       // Calculate attribute scores
-      for (int a = 0; a < attributes.length; a++) {
+      for (int a = 0; a < attributes.length; ++a) {
         final int extraCorrect = (int) (mOobEvaluation.correct() - attEvals[a].correct());
         Diagnostic.info("Attribute importance estimate for " + attributes[a].getName() + ": " + Utils.realFormat(100.0 * extraCorrect / mOobEvaluation.correct(), 4)
             + "% (" + extraCorrect + "/" + mOobEvaluation.correct() + ")");
@@ -198,7 +198,7 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
 
   /* Randomly permute the attribute across the given set of instances */
   private static void permuteAttribute(ArrayList<Instance> instances, int attribute, PortableRandom random) {
-    for (int i = instances.size() - 1; i > 0; i--) {
+    for (int i = instances.size() - 1; i > 0; --i) {
       final double[] current = instances.get(i).instance();
       final double[] target = instances.get(random.nextInt(i + 1)).instance();
 

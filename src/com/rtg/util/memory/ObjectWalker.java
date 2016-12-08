@@ -98,7 +98,7 @@ public class ObjectWalker {
       final int length = Array.getLength(obj);
       if (info.isArray()) {
         //but not primitive array
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < length; ++i) {
           walkInternal(Array.get(obj, i));
         }
       }

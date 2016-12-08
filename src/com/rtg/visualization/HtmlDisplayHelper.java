@@ -96,7 +96,7 @@ public class HtmlDisplayHelper extends DisplayHelper {
   @Override
   protected String escape(String text) {
     final StringBuilder sb = new StringBuilder();
-    for (int currpos = 0; currpos < text.length(); currpos++) {
+    for (int currpos = 0; currpos < text.length(); ++currpos) {
       final char c = text.charAt(currpos);
       if (c == TAG_START) {
         sb.append("&lt;");

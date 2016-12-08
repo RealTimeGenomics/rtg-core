@@ -83,7 +83,7 @@ public class ErrorMachine implements Machine {
 
       mParentMachine.processFragment("chimera" + mChimeraCount + '/', Integer.MIN_VALUE, mChimeraDataBuf, catLength);
 
-      mChimeraCount++;
+      ++mChimeraCount;
       mChimeraId = null;
       return;
     }

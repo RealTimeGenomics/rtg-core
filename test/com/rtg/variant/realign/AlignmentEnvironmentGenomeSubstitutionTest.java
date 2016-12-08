@@ -30,7 +30,7 @@ public class AlignmentEnvironmentGenomeSubstitutionTest extends TestCase {
     assertEquals(template.length + 2 - 3, aeg.subsequenceLength());
 
     final byte[] exp = {0, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 1, 3, 2, 1, 2, 3, 4, 1, 2, 3, 4, 0};
-    for (int i = 0, j = -4; i < exp.length; i++, j++) {
+    for (int i = 0, j = -4; i < exp.length; ++i, ++j) {
       assertEquals(exp[i], aeg.base(j));
     }
   }
@@ -43,7 +43,7 @@ public class AlignmentEnvironmentGenomeSubstitutionTest extends TestCase {
     assertEquals(template.length - 2 - 3, aeg.subsequenceLength());
 
     final byte[] exp = {0, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 2, 3, 4, 1, 2, 3, 4, 0};
-    for (int i = 0, j = -4; i < exp.length; i++, j++) {
+    for (int i = 0, j = -4; i < exp.length; ++i, ++j) {
       assertEquals(exp[i], aeg.base(j));
     }
   }
@@ -57,7 +57,7 @@ public class AlignmentEnvironmentGenomeSubstitutionTest extends TestCase {
     assertEquals(template.length - 2 - 3, aeg.subsequenceLength());
 
     final byte[] exp = {0, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 0};
-    for (int i = 0, j = -4; i < exp.length; i++, j++) {
+    for (int i = 0, j = -4; i < exp.length; ++i, ++j) {
       assertEquals(exp[i], aeg.base(j));
     }
   }
@@ -70,7 +70,7 @@ public class AlignmentEnvironmentGenomeSubstitutionTest extends TestCase {
     assertEquals(template.length - 2, aeg.subsequenceLength());
 
     final byte[] exp = {0, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 0};
-    for (int i = 0, j = -1; i < exp.length; i++, j++) {
+    for (int i = 0, j = -1; i < exp.length; ++i, ++j) {
       assertEquals("@" + i, exp[i], aeg.base(j));
     }
   }
@@ -83,7 +83,7 @@ public class AlignmentEnvironmentGenomeSubstitutionTest extends TestCase {
     assertEquals(template.length - 2, aeg.subsequenceLength());
 
     final byte[] exp = {0, 1, 2, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 0};
-    for (int i = 0, j = -1; i < exp.length; i++, j++) {
+    for (int i = 0, j = -1; i < exp.length; ++i, ++j) {
       assertEquals("@" + i, exp[i], aeg.base(j));
     }
   }
@@ -95,7 +95,7 @@ public class AlignmentEnvironmentGenomeSubstitutionTest extends TestCase {
     assertEquals(template.length - 2 - 3, aeg.subsequenceLength());
 
     final byte[] exp = {1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 0};
-    for (int i = 0, j = -1; i < exp.length; i++, j++) {
+    for (int i = 0, j = -1; i < exp.length; ++i, ++j) {
       assertEquals("@" + i, exp[i], aeg.base(j));
     }
   }

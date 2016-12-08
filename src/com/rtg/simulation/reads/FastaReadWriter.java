@@ -46,7 +46,7 @@ public class FastaReadWriter implements ReadWriter {
   @Override
   public void writeRead(String name, byte[] data, byte[] qual, int length) throws IOException {
     writeSequence(mTotal + " " + name, data, length);
-    mTotal++;
+    ++mTotal;
   }
 
   @Override
@@ -65,7 +65,7 @@ public class FastaReadWriter implements ReadWriter {
     }
     writeSequence(mTotal + " " + name + "/Right", data, length);
     mExpectLeft = !mExpectLeft;
-    mTotal++;
+    ++mTotal;
   }
 
   private void writeSequence(String name, byte[] data, int length) throws IOException {

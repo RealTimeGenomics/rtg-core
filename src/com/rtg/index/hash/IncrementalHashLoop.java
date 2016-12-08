@@ -76,7 +76,7 @@ public abstract class IncrementalHashLoop extends HashLoop {
     int internalId = (int) startSequence * frames.length;
     final long maxSequenceEver = reader.numberSequences();
     long totalLength = 0;
-    for (long seq = startSequence; region.isInRange(seq) && seq < maxSequenceEver; seq++) {
+    for (long seq = startSequence; region.isInRange(seq) && seq < maxSequenceEver; ++seq) {
       ProgramState.checkAbort();
       //System.err.println("seq=" + seq + " " +  reader.currentSequenceId() + " " + reader.getClass());
       final int currentLength = reader.length(seq);
@@ -125,7 +125,7 @@ public abstract class IncrementalHashLoop extends HashLoop {
           } //window
           end();
         }
-        internalId++;
+        ++internalId;
       }
       //System.err.println("Finished loop");
       endSequence();

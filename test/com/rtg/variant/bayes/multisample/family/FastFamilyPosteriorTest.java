@@ -63,7 +63,7 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
     models.add(father);
     models.add(mother);
     final List<String> children = new ArrayList<>();
-    for (int c = 0; c < numChildren; c++) {
+    for (int c = 0; c < numChildren; ++c) {
       models.add(getModel());
       children.add("c" + c);
     }
@@ -76,26 +76,26 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
     final int fc = 1 + r.nextInt(20);
     final int mc = 1 + r.nextInt(20);
     // Add reads for father
-    for (int i = 0; i < fc; i++) {
+    for (int i = 0; i < fc; ++i) {
       //incrementCats(father, new ProbabilityQ(r.nextBoolean() ? fa : fb, r.nextDouble()));
       father.increment(new EvidenceQ(DescriptionSnp.SINGLETON, r.nextBoolean() ? fa : fb, 0, 0, 0.1, r.nextDouble(), true, false, false, false));
     }
     father.freeze();
     // Add reads for mother
-    for (int i = 0; i < mc; i++) {
+    for (int i = 0; i < mc; ++i) {
       //incrementCats(mother, new ProbabilityQ(r.nextBoolean() ? ma : mb, r.nextDouble()));
       mother.increment(new EvidenceQ(DescriptionSnp.SINGLETON, r.nextBoolean() ? ma : mb, 0, 0, 0.1, r.nextDouble(), true, false, false, false));
     }
     mother.freeze();
     // Note: this always does Mendelian valid children
-    for (int i = 0; i < numChildren; i++) {
+    for (int i = 0; i < numChildren; ++i) {
       // Choose genotype of child
       final int ca = r.nextBoolean() ? fa : fb;
       final int cb = r.nextBoolean() ? ma : mb;
       final int cc = 1 + r.nextInt(20);
       // Add reads for child
       final ModelInterface<?> child = models.get(i + Family.FIRST_CHILD_INDEX);
-      for (int j = 0; j < cc; j++) {
+      for (int j = 0; j < cc; ++j) {
         //incrementCats(child, new ProbabilityQ(r.nextBoolean() ? ca : cb, r.nextDouble()));
         child.increment(new EvidenceQ(DescriptionSnp.SINGLETON, r.nextBoolean() ? ca : cb, 0, 0, 0.1, r.nextDouble(), true, false, false, false));
       }
@@ -112,7 +112,7 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
     assertEquals(fast.bestMother().hypothesis(), slow.bestMother().hypothesis());
     assertEquals(fast.bestMother().genotypeMeasure().bestPosterior(), slow.bestMother().genotypeMeasure().bestPosterior(), 1E-2);
 
-    for (int i = 0; i < numChildren; i++) {
+    for (int i = 0; i < numChildren; ++i) {
       final HypothesisScore f = fast.bestChild(i);
       final HypothesisScore s = slow.bestChild(i);
       assertEquals(f.hypothesis(), s.hypothesis());
@@ -122,7 +122,7 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
 
   public void testBradyBunch() throws Exception {
     final PortableRandom r = new PortableRandom(42);
-    for (int k = 0; k < 10; k++) {
+    for (int k = 0; k < 10; ++k) {
       checkRandom(r);
     }
   }
@@ -135,10 +135,10 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
     final String[] base = {"", "", "AAAAAAACCCCCC", "AC"};
     final AbstractFamilyPosterior first = makeFamily(base); //, "", "", "C", "", "", "A", "AAACCC");
     final double basePosterior = first.getNonIdentityPosterior();
-    for (int i = 1; i < 10; i++) {
+    for (int i = 1; i < 10; ++i) {
       final String[] next = new String[base.length + i];
       System.arraycopy(base, 0, next, 0, base.length);
-      for (int pos = base.length; pos < next.length; pos++) {
+      for (int pos = base.length; pos < next.length; ++pos) {
         next[pos] = "";
       }
       final AbstractFamilyPosterior incremental = makeFamily(next); //, "", "", "C", "", "", "A", "AAACCC");
@@ -155,10 +155,10 @@ public class FastFamilyPosteriorTest extends FamilyPosteriorTest {
     final String[] base = {"", "", "AAAAAAACCCCCC", "AC"};
     final AbstractFamilyPosterior first = makeFamily(base); //, "", "", "C", "", "", "A", "AAACCC");
     final double basePosterior = first.getNonIdentityPosterior();
-    for (int i = 1; i < 10; i++) {
+    for (int i = 1; i < 10; ++i) {
       final String[] next = new String[base.length + i];
       System.arraycopy(base, 0, next, 0, base.length);
-      for (int pos = base.length; pos < next.length; pos++) {
+      for (int pos = base.length; pos < next.length; ++pos) {
         next[pos] = "";
       }
       final AbstractFamilyPosterior incremental = makeFamily(next); //, "", "", "C", "", "", "A", "AAACCC");

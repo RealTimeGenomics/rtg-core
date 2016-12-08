@@ -160,14 +160,14 @@ public abstract class Delta extends IntegralAbstract implements DeltaInterface {
     final int rowEnd = mForward.rowOffset(length) + width;
     ScoreMatrix.printTemplateRow(sb, rowStart, rowEnd, mEnv, "Combined", FIELD_WIDTH);
     final double total = mForward.total();
-    for (int row = 0; row <= length; row++) {
+    for (int row = 0; row <= length; ++row) {
       sb.append(StringUtils.padBetween("[", 5, row + "]"));
       sb.append(row == 0 ? ' ' : dnaChars[mEnv.read(row - 1)]);
       // indent the row, so we line up with the template
-      for (int i = 0; i < mForward.rowOffset(row) - rowStart; i++) {
+      for (int i = 0; i < mForward.rowOffset(row) - rowStart; ++i) {
         sb.append(StringUtils.padLeft("|", 3 * FIELD_WIDTH + 1));
       }
-      for (int j = 0; j < width; j++) {
+      for (int j = 0; j < width; ++j) {
         final double ins = mArithmetic.divide(mArithmetic.multiply(mForward.insert(row, j), mReverse.insert(row, j)), total);
         sb.append(format(mArithmetic.poss2Prob(ins)));
         final double mat = mArithmetic.divide(mArithmetic.multiply(mForward.match(row, j),  mReverse.match(row, j)),  total);
@@ -205,14 +205,14 @@ public abstract class Delta extends IntegralAbstract implements DeltaInterface {
     final int rowEnd = fwd.rowOffset(length) + width;
     printTemplateRowTerse(sb, rowStart, rowEnd, env);
     final double total = fwd.total();
-    for (int row = 0; row <= length; row++) {
+    for (int row = 0; row <= length; ++row) {
       sb.append(StringUtils.padBetween("[", 5, row + "]"));
       sb.append(row == 0 ? ' ' : dnaChars[env.read(row - 1)]);
       // indent the row, so we line up with the template
-      for (int i = 0; i < fwd.rowOffset(row) - rowStart; i++) {
+      for (int i = 0; i < fwd.rowOffset(row) - rowStart; ++i) {
         sb.append("   |");
       }
-      for (int j = 0; j < width; j++) {
+      for (int j = 0; j < width; ++j) {
         final double ins = arith.divide(arith.multiply(fwd.insert(row, j), rev.insert(row, j)), total);
         sb.append(formatTerse(arith.poss2Prob(ins)));
         final double mat = arith.divide(arith.multiply(fwd.match(row, j),  rev.match(row, j)),  total);
@@ -230,7 +230,7 @@ public abstract class Delta extends IntegralAbstract implements DeltaInterface {
     // print the header row, showing the template.
     final char[] dnaChars = DNA.valueChars();
     sb.append(StringUtils.getSpaceString(9));
-    for (int pos = rowStart + 1; pos <= rowEnd; pos++) {
+    for (int pos = rowStart + 1; pos <= rowEnd; ++pos) {
       sb.append(dnaChars[env.template(pos)]);
       sb.append("   ");
     }
@@ -268,9 +268,9 @@ public abstract class Delta extends IntegralAbstract implements DeltaInterface {
     //horizontal cuts
     final int length = mForward.length();
     final int width = mForward.width();
-    for (int i = 0; i <= length; i++) {
+    for (int i = 0; i <= length; ++i) {
       double sum = mArithmetic.zero();
-      for (int j = 0; j < width; j++) {
+      for (int j = 0; j < width; ++j) {
         sum = add(sum, mult(mForward.delete(i, j), mReverse.delete(i, j)));
         sum = add(sum, mult(mForward.match(i, j), mReverse.match(i, j)));
       }
@@ -278,24 +278,24 @@ public abstract class Delta extends IntegralAbstract implements DeltaInterface {
     }
     //vertical cuts on the left
     //j = 0 is special case covered elsewhere - ignore it now
-    for (int j = 1; j < width; j++) {
+    for (int j = 1; j < width; ++j) {
       double sum = mArithmetic.zero();
-      for (int i = 0; i <= j; i++) {
+      for (int i = 0; i <= j; ++i) {
         final int k = j - i;
         sum = add(sum, mult(mForward.insert(i, k), mReverse.insert(i, k)));
         sum = add(sum, mult(mForward.match(i, k), mReverse.match(i, k)));
       }
       sum = add(sum, mult(mForward.delete(0, j), mReverse.delete(0, j)));
-      for (int i = j + 1; i < width; i++) {
+      for (int i = j + 1; i < width; ++i) {
         sum = add(sum, mult(mForward.delete(0, i), mReverse.delete(0, i)));
         sum = add(sum, mult(mForward.match(0, i), mReverse.match(0, i)));
       }
       Exam.assertEquals(total, mArithmetic.poss2Ln(sum), epsilon);
     }
     //vertical cut in the middle
-    for (int j = width, l = 1; j < length; j++, l++) {
+    for (int j = width, l = 1; j < length; ++j, ++l) {
       double sum = mult(mForward.delete(l, j - l), mReverse.delete(l, j - l));
-      for (int i = l; i < l + width; i++) {
+      for (int i = l; i < l + width; ++i) {
         final int k = j - i;
         //System.err.println("i=" + i + " l=" + l + " j=" + j + " k=" + k);
         sum = add(sum, mult(mForward.insert(i, k), mReverse.insert(i, k)));
@@ -304,15 +304,15 @@ public abstract class Delta extends IntegralAbstract implements DeltaInterface {
       Exam.assertEquals(total, mArithmetic.poss2Ln(sum), epsilon);
     }
     //vertical cuts on the right
-    for (int j = length; j < width + length - 1; j++) {
+    for (int j = length; j < width + length - 1; ++j) {
       double sum = mArithmetic.zero();
-      for (int i = j - width + 1; i < length; i++) {
+      for (int i = j - width + 1; i < length; ++i) {
         final int k = j - i;
         sum = add(sum, mult(mForward.insert(i, k), mReverse.insert(i, k)));
         sum = add(sum, mult(mForward.match(i, k), mReverse.match(i, k)));
       }
       final int l = length - 1;
-      for (int i = l; i < j; i++) {
+      for (int i = l; i < j; ++i) {
         final int k = i - l;
         sum = add(sum, mult(mForward.delete(l, k), mReverse.delete(l, k)));
         sum = add(sum, mult(mForward.match(l, k), mReverse.match(l, k)));
@@ -321,15 +321,15 @@ public abstract class Delta extends IntegralAbstract implements DeltaInterface {
     }
 
     //diagonal cuts
-    for (int j = width - 1; j < length; j++) {
+    for (int j = width - 1; j < length; ++j) {
       double sum = mArithmetic.zero();
-      for (int i = j - width + 1, l = j; i <= l; i++, l--) {
+      for (int i = j - width + 1, l = j; i <= l; ++i, --l) {
         final int k = l - i;
         sum = add(sum, mult(mForward.insert(i, k), mReverse.insert(i, k)));
         sum = add(sum, mult(mForward.match(i, k), mReverse.match(i, k)));
         sum = add(sum, mult(mForward.delete(i, k), mReverse.delete(i, k)));
       }
-      for (int i = j - width + 2, l = j; i <= l; i++, l--) {
+      for (int i = j - width + 2, l = j; i <= l; ++i, --l) {
         final int k = l - i;
         sum = add(sum, mult(mForward.match(i, k), mReverse.match(i, k)));
       }

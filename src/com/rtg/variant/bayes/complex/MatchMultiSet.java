@@ -52,7 +52,7 @@ public class MatchMultiSet extends IntegralAbstract {
       mMatchMap.put(hyp, count);
     }
     count.increment(corr);
-    mTotalCount++;
+    ++mTotalCount;
   }
 
   /**

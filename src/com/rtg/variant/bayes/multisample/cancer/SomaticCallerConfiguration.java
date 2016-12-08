@@ -212,7 +212,7 @@ public final class SomaticCallerConfiguration extends AbstractJointCallerConfigu
     final double[][] transitionProbsLn = cot.transitionProbsLn();
     final double[][] initialPriors = new double[cot.description().size()][];
     assert transitionProbsLn.length >= initialPriors.length; // transition matrix may have additional rows
-    for (int i = 0; i < initialPriors.length; i++) {
+    for (int i = 0; i < initialPriors.length; ++i) {
       initialPriors[i] = MathUtils.lnToNormaliedProb(transitionProbsLn[i]);
     }
     return initialPriors;

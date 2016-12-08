@@ -26,7 +26,7 @@ public class NormalizedFactor<D extends Description> implements Factor<D> {
     mFactor = factor;
     final PossibilityArithmetic arithmetic = factor.arithmetic();
     double sum = arithmetic.zero();
-    for (int k = 0; k < factor.size(); k++) {
+    for (int k = 0; k < factor.size(); ++k) {
       sum = arithmetic.add(sum, factor.p(k));
     }
     if (arithmetic.isZero(sum)) {

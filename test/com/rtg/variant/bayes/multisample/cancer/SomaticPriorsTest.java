@@ -186,7 +186,7 @@ public class SomaticPriorsTest extends TestCase {
     final double[] norm = SomaticPriors.mutationNormalize(mutation, ref, prior);
     assertEquals(len, norm.length);
     double sum = 0.0;
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < len; ++i) {
       final double no = norm[i];
       assertEquals(exp[i], no, 1e-7);
       assertTrue(!Double.isNaN(no) && !Double.isInfinite(no));
@@ -207,7 +207,7 @@ public class SomaticPriorsTest extends TestCase {
     final int n = hyp.size();
     assertEquals(n, q.length);
     //System.err.println(IntegralAbstract.toString(q));
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       assertEquals(n, q[i].length);
       Exam.assertDistribution(q[i]);
     }
@@ -229,7 +229,7 @@ public class SomaticPriorsTest extends TestCase {
     final double[][] q = SomaticPriors.makeQ(0.3, 0.0, hyp, initialPriors);
     assertEquals(n, q.length);
     //System.err.println(IntegralAbstract.toString(q));
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       assertEquals(n, q[i].length);
       Exam.assertDistribution(q[i]);
     }
@@ -248,10 +248,10 @@ public class SomaticPriorsTest extends TestCase {
   private void checkEquals(final double[][] act, final double[][] exp) {
     final int len = exp.length;
     assertEquals(len, act.length);
-    for (int i = 0; i < len; i++) {
+    for (int i = 0; i < len; ++i) {
       final int leni = exp[i].length;
       assertEquals(leni, act[i].length);
-      for (int j = 0; j < leni; j++) {
+      for (int j = 0; j < leni; ++j) {
         assertEquals(exp[i][j], act[i][j], 1e-3);
       }
     }

@@ -48,10 +48,10 @@ public class SubstituteIndel {
       hf.readAll(0, false);
       hf.reset();
       final String template = pref + templ + suff;
-      for (int i = 0; i + length <= template.length(); i++) {
+      for (int i = 0; i + length <= template.length(); ++i) {
         final String mutant = template.substring(i, i + length);
         final String muttie = cgGap > 0 ? SubstituteCG.cgToTemplate(mutant, cgGap, 0) : mutant;
-        for (int j = 0; j < muttie.length(); j++) {
+        for (int j = 0; j < muttie.length(); ++j) {
           AbstractSplitTest.encode(hf, muttie, j);
           hf.templateForward(0);
         }
@@ -89,7 +89,7 @@ public class SubstituteIndel {
     //System.err.println("error=" + error + " soFar=" + soFar);
     if (error == 0 || soFar == mLength || out == mLength) {
       int j = out;
-      for (int i = soFar; j < mLength || i < mLength; i++, j++) {
+      for (int i = soFar; j < mLength || i < mLength; ++i, ++j) {
         if (i >= mLength) {
           mChars[j] = 't';
         } else {
@@ -105,7 +105,7 @@ public class SubstituteIndel {
     mChars[out]  = AbstractSplitTest.CHARS[2];
     substitute(error - 1, soFar, out + 1);
     //make one substitution and as well the non-substitution case
-    for (int j = 1, c = 0; j < AbstractSplitTest.CHARS.length; j++) {
+    for (int j = 1, c = 0; j < AbstractSplitTest.CHARS.length; ++j) {
       mChars[out]  = AbstractSplitTest.CHARS[j];
       if (mChars[out] == mString.charAt(soFar)) {
         substitute(error, soFar + 1, out + 1);
@@ -113,7 +113,7 @@ public class SubstituteIndel {
         if (c == 0 && error > 0) {
           substitute(error - 1, soFar + 1, out + 1);
         }
-        c++;
+        ++c;
       }
     }
   }

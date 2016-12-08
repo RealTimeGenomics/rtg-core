@@ -45,10 +45,10 @@ public class SignalDistributionLnTest extends TestCase {
   public void testMin() {
     //distribution is a step 100 on left and 1 on right - actual signal has this distribution centered at 10
     final SamArray sa = new SamArray(20);
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       sa.increment(i, 100);
     }
-    for (int i = 10; i < 20; i++) {
+    for (int i = 10; i < 20; ++i) {
       sa.increment(i, 1);
     }
     final Distribution distr = new DistributionStep(-5, 5, -1, 100.0, 1.0);
@@ -63,7 +63,7 @@ public class SignalDistributionLnTest extends TestCase {
   public void testMinErf() {
     //distribution is an erf distribution on left and 1 on right - actual signal has this distribution centered at 10
     final SamArray sa = new SamArray(20);
-    for (int i = 0; i <= 4; i++) {
+    for (int i = 0; i <= 4; ++i) {
       sa.increment(i, 101);
     }
     sa.increment(6, 100);
@@ -77,7 +77,7 @@ public class SignalDistributionLnTest extends TestCase {
     sa.increment(13, 8);
     sa.increment(14, 3);
     sa.increment(15, 2);
-    for (int i = 16; i < 20; i++) {
+    for (int i = 16; i < 20; ++i) {
       sa.increment(i, 1);
     }
     final Distribution distr = DistributionUtils.add(DistributionUtils.distribution1(-3, 3, 100.0, 0.0, 2.0), 1.0);

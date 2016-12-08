@@ -87,18 +87,18 @@ public class AlignmentMatch extends Match implements Integrity {
       if (l == 0) { // Compute average of the bounding bases
         if (start > 0) {
           c += VariantUtils.phredToProb(qScore[start - 1]);
-          l++;
+          ++l;
         }
         if (start + length + 1 < qScore.length) {
           c += VariantUtils.phredToProb(qScore[start + length]);
-          l++;
+          ++l;
         }
         if (l == 0) { // Fall back to default
           c += VariantUtils.phredToProb(me == null ? qDefault : me.getScaledPhred((byte) qDefault, 0, Arm.LEFT));
-          l++;
+          ++l;
         }
       }
-      for (int k = 0; k < mBaseError.length; k++) {
+      for (int k = 0; k < mBaseError.length; ++k) {
         final int phred = qScore[k + start];
         assert 0 <= phred;
         mBaseError[k] = VariantUtils.phredToProb(phred);
@@ -110,7 +110,7 @@ public class AlignmentMatch extends Match implements Integrity {
     mFixedRight = fixedRight;
     mReadNt = new int[length];
     final StringBuilder sb = new StringBuilder();
-    for (int k = 0; k < length; k++) {
+    for (int k = 0; k < length; ++k) {
       final int v = DNA_RANGE.valueOf(readNt.charAt(k + start));
       mReadNt[k] = v;
       sb.append(DNA_RANGE.toString(v));

@@ -57,7 +57,7 @@ public class VcfDiscordantOutputFormatter {
   public VcfDiscordantOutputFormatter(SequencesReader genomeSequences) throws IOException {
     mTemplate = genomeSequences;
     final PrereadNamesInterface pni = genomeSequences.names();
-    for (long i = 0; i < pni.length(); i++) {
+    for (long i = 0; i < pni.length(); ++i) {
       mSequenceMap.put(genomeSequences.names().name(i), (int) i);
     }
   }

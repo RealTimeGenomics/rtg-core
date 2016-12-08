@@ -181,7 +181,7 @@ class CalibratorCigarParser extends SuperCigarParser {
       if (readNt != DnaUtils.UNKNOWN_RESIDUE) {
         mCalibrator.findStats(this).seenMnp(1);
       }
-      mMismatchCount++;
+      ++mMismatchCount;
     }
   }
 

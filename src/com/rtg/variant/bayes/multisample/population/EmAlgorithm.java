@@ -55,7 +55,7 @@ public class EmAlgorithm implements MultisampleJointScorer {
       separator = " | ";
     }
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < calls.length; i++) {
+    for (int i = 0; i < calls.length; ++i) {
       final int call = calls[i].hypothesis();
       sb.append(format.format(call));
       if (i % 10 == 9) {
@@ -99,7 +99,7 @@ public class EmAlgorithm implements MultisampleJointScorer {
       //System.err.println(callToString(mInitialDiploid.size(), next.calls()));
       //System.err.println(priorsToString(next.haploid()));
       //System.err.println(priorsToString(next.diploid()));
-      iterations++;
+      ++iterations;
       last = next;
       if (difference == 0) {
         break;

@@ -240,13 +240,13 @@ public class ReadGroupStats {
     mMaxAlignment = Math.max(mMaxAlignment, score);
   }
   void addUnmated() {
-    mUnmated++;
+    ++mUnmated;
   }
   void addProper() {
-    mProper++;
+    ++mProper;
   }
   void addDiscordant() {
-    mDiscordant++;
+    ++mDiscordant;
   }
   long getMatedCount() {
     return mProper;
@@ -485,7 +485,7 @@ public class ReadGroupStats {
    */
   public static void main(String[] args) throws Exception {
     final File[] files = new File[args.length];
-    for (int i = 0; i < args.length; i++) {
+    for (int i = 0; i < args.length; ++i) {
       files[i] = new File(args[i]);
     }
     loadReadGroupStats(null, files);

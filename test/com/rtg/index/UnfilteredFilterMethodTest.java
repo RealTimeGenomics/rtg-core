@@ -25,7 +25,7 @@ public class UnfilteredFilterMethodTest extends TestCase {
     final UnfilteredFilterMethod m = new UnfilteredFilterMethod();
     m.initialize(null);
     final Random r = new Random();
-    for (int i = 0; i < 50; i++) {
+    for (int i = 0; i < 50; ++i) {
       assertTrue(m.keepHash(r.nextLong(), r.nextLong()));
     }
   }

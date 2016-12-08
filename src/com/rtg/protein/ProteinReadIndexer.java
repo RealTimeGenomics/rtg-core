@@ -75,9 +75,9 @@ public final class ProteinReadIndexer {
       end = reader.numberSequences();
     }
     long totalLength = 0;
-    for (int pass = 1; pass <= (compressHashes ? 2 : 1); pass++) {
+    for (int pass = 1; pass <= (compressHashes ? 2 : 1); ++pass) {
       totalLength = 0; //only use the lengths from the last pass to avoid counting input more than once.
-      for (long i = start; i < end; i++) {
+      for (long i = start; i < end; ++i) {
         final long length = reader.length(i);
         final long bucket = buckets.bucket(length);
         if (bucket != -1) {
@@ -94,7 +94,7 @@ public final class ProteinReadIndexer {
             final ProteinNgsHashLoop hashLoop = pair.getHashLoop();
             final NgsHashFunction hashFunction = pair.getHashFunction();
             int readStartPosition = 0;
-            for (int j = 0; j < numChunks; j++) {
+            for (int j = 0; j < numChunks; ++j) {
               int readEndPosition = readStartPosition + metaChunkLength * 3;
               if (readEndPosition > length) {
                 readEndPosition = (int) length;

@@ -63,7 +63,7 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
    */
   public final void increment(final EvidenceInterface evidence, int reference) {
     if (evidence.isUnmapped()) {
-      mCountUnmapped++;
+      ++mCountUnmapped;
       return; // Don't increment any other stats for unmapped evidence
     }
 
@@ -74,7 +74,7 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
 
     // Used for short circuit detection, integer increments OK
     if (read != reference) {
-      mNonRefCount++;
+      ++mNonRefCount;
     }
 
     // Used for internally self-consistent stats calculations, so can be integer increments
@@ -242,7 +242,7 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
   }
 
   private static int getAlleleIndex(final String name, final Description des) {
-    for (int j = 0; j < des.size(); j++) {
+    for (int j = 0; j < des.size(); ++j) {
       if (name.equals(des.name(j))) {
         return j;
       }
@@ -254,8 +254,8 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
     final String[] split = StringUtils.split(names, VariantUtils.COLON);
     assert split.length == 2;
     Arrays.fill(alleleIndexes, -1);
-    for (int i = 0; i < split.length; i++) {
-      for (int j = 0; j < des.size(); j++) {
+    for (int i = 0; i < split.length; ++i) {
+      for (int j = 0; j < des.size(); ++j) {
         if (split[i].equals(des.name(j))) {
           alleleIndexes[i] = j;
         }

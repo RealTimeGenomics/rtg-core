@@ -126,7 +126,7 @@ public class GenomePriorParamsBuilder {
       sum += aFreq;
     }
     mAlleleProbabilityLn[0] = Double.NEGATIVE_INFINITY;
-    for (int i = 0; i < freq.length; i++) {
+    for (int i = 0; i < freq.length; ++i) {
       mAlleleProbabilityLn[i + 1] = Math.log(freq[i] / sum);
     }
   }
@@ -332,7 +332,7 @@ public class GenomePriorParamsBuilder {
     final String[] words = distrib.split(", *");
     final double[] result = new double[words.length + start];
     try {
-      for (int i = 0; i < words.length; i++) {
+      for (int i = 0; i < words.length; ++i) {
         result[i + start] = MachineErrorParamsBuilder.parseDouble(prior, words[i], key);
       }
       MachineErrorParamsBuilder.checkDistribution(result);
@@ -374,7 +374,7 @@ public class GenomePriorParamsBuilder {
    */
   public static double averageLength(final double[] dist) {
     double averageLength = 0.0;
-    for (int i = 0; i < dist.length; i++) {
+    for (int i = 0; i < dist.length; ++i) {
       averageLength += i * dist[i];
     }
     return averageLength;

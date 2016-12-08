@@ -30,7 +30,7 @@ public class FamilyGt extends IntegralAbstract {
 
   protected static PatternArray childPatterns(final GType fa, final GType mo, final GType[] ch) {
     final Pattern[] chp = new Pattern[ch.length];
-    for (int i = 0; i < ch.length; i++) {
+    for (int i = 0; i < ch.length; ++i) {
       chp[i] = new Pattern(fa, mo, ch[i]);
     }
     return new PatternArray(chp);
@@ -40,7 +40,7 @@ public class FamilyGt extends IntegralAbstract {
     final GType fa = new GType(strs[0], ploidyMap.get(new Pair<>(sexes[0], seq)).effectivePloidy(posn));
     final GType mo = new GType(strs[1], ploidyMap.get(new Pair<>(sexes[1], seq)).effectivePloidy(posn));
     final GType[] ch = new GType[strs.length - 2];
-    for (int i = 2; i < strs.length; i++) {
+    for (int i = 2; i < strs.length; ++i) {
       ch[i - 2] = new GType(strs[i], ploidyMap.get(new Pair<>(sexes[i], seq)).effectivePloidy(posn));
     }
     final boolean isXlike = fa.ploidy() == Ploidy.HAPLOID && mo.ploidy() == Ploidy.DIPLOID;

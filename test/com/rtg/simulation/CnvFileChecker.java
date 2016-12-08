@@ -70,7 +70,7 @@ public class CnvFileChecker {
       if (checkDataLine(lastLine, line)) {
         lastLine = line;
       }
-      count++;
+      ++count;
     }
   }
 

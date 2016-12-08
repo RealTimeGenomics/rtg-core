@@ -41,7 +41,7 @@ public class MapReportDataTest extends TestCase {
     final MapReportData mr = merger.createMapReportData();
     assertEquals("", mr.toString());
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       final MapReportData mr2 = merger.createMapReportData();
       assertEquals("", mr2.toString());
     }
@@ -58,7 +58,7 @@ public class MapReportDataTest extends TestCase {
   public void testSimpleReporter() {
     final MapReportData.Merger merger = new MapReportData.Merger();
     final MapReportData mr = merger.createMapReportData();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       final SAMRecord sr = new SAMRecord(null);
       sr.setFlags(0);
       sr.setAttribute("AS", i / 2);
@@ -68,14 +68,14 @@ public class MapReportDataTest extends TestCase {
     }
     final StringBuilder expected = new StringBuilder();
     expected.append("MAPC\t0\t10").append(StringUtils.LS);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       expected.append("AS\t").append(i).append("\t2").append(StringUtils.LS);
     }
     expected.append("RLEN\t0\t10").append(StringUtils.LS);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       expected.append("NH\t").append(i).append("\t2").append(StringUtils.LS);
     }
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       expected.append("NM\t").append(i).append("\t2").append(StringUtils.LS);
     }
     expected.append("ORI\t0\t10").append(StringUtils.LS);
@@ -83,7 +83,7 @@ public class MapReportDataTest extends TestCase {
 
     assertEquals(expected.toString(), mr.toString());
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       final MapReportData mr2 = merger.createMapReportData();
       assertEquals("", mr2.toString());
     }
@@ -101,7 +101,7 @@ public class MapReportDataTest extends TestCase {
   public void testSimpleReporter2() {
     final MapReportData.Merger merger = new MapReportData.Merger();
     final MapReportData mr = merger.createMapReportData();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       final SAMRecord sr = new SAMRecord(null);
       sr.setFlags(SamBamConstants.SAM_READ_IS_PAIRED);
       sr.setAttribute("AS", i / 2);
@@ -113,14 +113,14 @@ public class MapReportDataTest extends TestCase {
     final StringBuilder expected = new StringBuilder();
     expected.append("MAPC\t0\t10").append(StringUtils.LS);
     expected.append("MAPC\t2\t10").append(StringUtils.LS);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       expected.append("AS\t").append(i).append("\t2").append(StringUtils.LS);
     }
     expected.append("RLEN\t0\t10").append(StringUtils.LS);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       expected.append("NH\t").append(i).append("\t2").append(StringUtils.LS);
     }
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       expected.append("NM\t").append(i).append("\t2").append(StringUtils.LS);
     }
     expected.append("ORI\t0\t10").append(StringUtils.LS);
@@ -129,7 +129,7 @@ public class MapReportDataTest extends TestCase {
 
     assertEquals(expected.toString(), mr.toString());
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       final MapReportData mr2 = merger.createMapReportData();
       assertEquals("", mr2.toString());
     }
@@ -143,7 +143,7 @@ public class MapReportDataTest extends TestCase {
   public void testUnmappedReads() {
     final MapReportData.Merger merger = new MapReportData.Merger();
     final MapReportData mr = merger.createMapReportData();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       final SAMRecord sr = new SAMRecord(null);
       sr.setFlags(SamBamConstants.SAM_READ_IS_UNMAPPED);
       sr.setAttribute("AS", i / 2);
@@ -157,7 +157,7 @@ public class MapReportDataTest extends TestCase {
 
     assertEquals(expected.toString(), mr.toString());
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       final MapReportData mr2 = merger.createMapReportData();
       assertEquals("", mr2.toString());
     }
@@ -171,7 +171,7 @@ public class MapReportDataTest extends TestCase {
   public void testPairedReads() {
     final MapReportData.Merger merger = new MapReportData.Merger();
     final MapReportData mr = merger.createMapReportData();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       final SAMRecord sr = new SAMRecord(null);
       int flag = (i % 2 == 0) ? SamBamConstants.SAM_READ_IS_FIRST_IN_PAIR : SamBamConstants.SAM_READ_IS_SECOND_IN_PAIR;
       if (i % 2 == 0) {
@@ -201,7 +201,7 @@ public class MapReportDataTest extends TestCase {
 
     assertEquals(expected.toString(), mr.toString());
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       final MapReportData mr2 = merger.createMapReportData();
       assertEquals("", mr2.toString());
     }
@@ -215,7 +215,7 @@ public class MapReportDataTest extends TestCase {
 
   public void testMultipleReporters() {
     final MapReportData.Merger merger = new MapReportData.Merger();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       final MapReportData mr = merger.createMapReportData();
       final SAMRecord sr = new SAMRecord(null);
       sr.setFlags(SamBamConstants.SAM_READ_IS_MAPPED_IN_PROPER_PAIR | SamBamConstants.SAM_READ_IS_PAIRED);
@@ -231,13 +231,13 @@ public class MapReportDataTest extends TestCase {
     final StringBuilder expected = new StringBuilder();
     expected.append("MAPC\t0\t10").append(StringUtils.LS);
     expected.append("MAPC\t1\t10").append(StringUtils.LS);
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       expected.append("ASM\t").append(i).append("\t2").append(StringUtils.LS);
     }
     expected.append("RLENM\t4\t10").append(StringUtils.LS);
     expected.append("ORIM\t0\t10").append(StringUtils.LS);
     expected.append("MORI\t0\t6").append(StringUtils.LS);
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       if ((i % 3) != 0) {
         expected.append("FLEN\t").append(i + 42).append("\t1").append(StringUtils.LS);
       }
@@ -274,7 +274,7 @@ public class MapReportDataTest extends TestCase {
   }
 
   public static void createMapData(MapReportData.Merger merger) {
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       final MapReportData mr = merger.createMapReportData();
       final SAMRecord sr = new SAMRecord(null);
       sr.setFlags(SamBamConstants.SAM_READ_IS_MAPPED_IN_PROPER_PAIR);

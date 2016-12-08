@@ -52,8 +52,8 @@ public class MatrixTranspose extends Matrix {
   @Override
   public Jama.Matrix toJama() {
     final Jama.Matrix m = new Jama.Matrix(mMatrix.size(), mMatrix.size());
-    for (int i = 0; i < size(); i++) {
-      for (int j = 0; j < size(); j++) {
+    for (int i = 0; i < size(); ++i) {
+      for (int j = 0; j < size(); ++j) {
         m.set(i, j, get(i, j));
       }
     }

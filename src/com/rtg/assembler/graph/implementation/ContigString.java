@@ -28,7 +28,7 @@ public class ContigString extends IntegralAbstract implements Contig {
    */
   public ContigString(final String nt) {
     mNt = new byte[nt.length()];
-    for (int i = 0; i < nt.length(); i++) {
+    for (int i = 0; i < nt.length(); ++i) {
       mNt[i] = DNARange.RANGE.valueOf(nt.charAt(i));
     }
   }
@@ -64,7 +64,7 @@ public class ContigString extends IntegralAbstract implements Contig {
    */
   public static String contigSubString(Contig c, int start, int end) {
     final StringBuilder sb = new StringBuilder();
-    for (int i = start; i < end; i++) {
+    for (int i = start; i < end; ++i) {
       sb.append(DNA.valueChars()[c.nt(i)]);
     }
     return sb.toString();

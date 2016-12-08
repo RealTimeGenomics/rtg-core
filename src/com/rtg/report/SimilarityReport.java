@@ -149,7 +149,7 @@ public class SimilarityReport implements Report {
               final Heats h = new Heats(parts[0], numSamples);
               simMatrix.putName(row, parts[0]);
               heats.add(h);
-              for (int i = 1; i < parts.length; i++) {
+              for (int i = 1; i < parts.length; ++i) {
                 final int value = Integer.parseInt(parts[i]);
                 if (value < min) {
                   min = value;
@@ -161,7 +161,7 @@ public class SimilarityReport implements Report {
                 simMatrix.put(i - 1, row, value);
               }
             }
-            row++;
+            ++row;
           }
         }
       }
@@ -178,8 +178,8 @@ public class SimilarityReport implements Report {
       //  create plot
       final double[] mins = new double[3];
       final double[] maxs = new double[3];
-      for (int i = 0; i < simMatrix.getSvdRowsLength(); i++) {
-        for (int j = 0; j < 3; j++) {
+      for (int i = 0; i < simMatrix.getSvdRowsLength(); ++i) {
+        for (int j = 0; j < 3; ++j) {
           if (i == 0) {
             maxs[j] = mins[j] = simMatrix.getSvdValue(0, j);
           } else {
@@ -193,7 +193,7 @@ public class SimilarityReport implements Report {
           }
         }
       }
-      for (int j = 0; j < 3; j++) {
+      for (int j = 0; j < 3; ++j) {
         if (Double.doubleToLongBits(maxs[j]) == Double.doubleToLongBits(mins[j])) {
           maxs[j] += 1.0;
           mins[j] -= 1.0;
@@ -201,19 +201,19 @@ public class SimilarityReport implements Report {
       }
 
       final StringBuilder samples = new StringBuilder();
-      for (int i = 0; i < simMatrix.getSvdRowsLength(); i++) {
+      for (int i = 0; i < simMatrix.getSvdRowsLength(); ++i) {
         if (i > 0) {
           samples.append(", ");
         }
         samples.append("\"").append(simMatrix.getSvdName(i)).append("\"");
       }
       final StringBuilder data = new StringBuilder();
-      for (int i = 0; i < simMatrix.getSvdRowsLength(); i++) {
+      for (int i = 0; i < simMatrix.getSvdRowsLength(); ++i) {
         if (i > 0) {
           data.append(", ");
         }
         data.append("[");
-        for (int j = 0; j < 3; j++) {
+        for (int j = 0; j < 3; ++j) {
           final double v = (simMatrix.getSvdValue(i, j) - mins[j]) / (maxs[j] - mins[j]);
           data.append(String.format(Locale.ROOT, "%1.4f, ", v));
         }
@@ -222,7 +222,7 @@ public class SimilarityReport implements Report {
 
       final StringBuilder table = new StringBuilder();
       table.append("<table>").append(StringUtils.LS).append("<tr><th></th>");
-      for (int i = 0; i < numSamples; i++) {
+      for (int i = 0; i < numSamples; ++i) {
         final String name = heats.get(i).getName();
         final String truncName = ReportUtils.truncate(name, 8);
         table.append("<th><a title=\"").append(name).append("\">").append(truncName).append("</a></th>");
@@ -230,7 +230,7 @@ public class SimilarityReport implements Report {
       table.append("</tr>");
       for (Heats h : heats) {
         table.append("<tr>").append("<td>").append(h.getName()).append("</td>");
-        for (int i = 0; i < numSamples; i++) {
+        for (int i = 0; i < numSamples; ++i) {
           final String hex = String.format(Locale.ROOT, "%1$02x", 255 - (255 * (h.getValue(i) - min)) / (max - min > 0 ? max - min : 1));
           final String hex2 = String.format(Locale.ROOT, "%1$02x", 255 * (h.getValue(i) - min) / (max - min > 0 ? max - min : 1));
           table.append("<td style=\"background-color: #").append(hex).append(hex2)

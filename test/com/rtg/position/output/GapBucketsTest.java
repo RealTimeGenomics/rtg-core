@@ -58,9 +58,9 @@ public class GapBucketsTest extends TestCase {
    * Makes sure a wide range of values all map to different buckets.
    */
   private void checkBuckets(final int step, final GapBuckets<Object> bu, final int[] seqLengths, final int nFrames, final int gap, final int inc) {
-    for (int a = 0; a < step; a++) {
-      for (int s = 0; s < bu.numberSeqIds(); s++) {
-        for (int j = inc; j <= inc + gap; j++) {
+    for (int a = 0; a < step; ++a) {
+      for (int s = 0; s < bu.numberSeqIds(); ++s) {
+        for (int j = inc; j <= inc + gap; ++j) {
           long last = Long.MIN_VALUE;
           for (int i = a; i < a + seqLengths[s / nFrames]; i += step) {
             final long bucket = bu.bucket(s, i, j);
@@ -77,7 +77,7 @@ public class GapBucketsTest extends TestCase {
       }
     }
 
-    for (int s = 0; s < bu.numberSeqIds(); s++) {
+    for (int s = 0; s < bu.numberSeqIds(); ++s) {
       assertEquals(bu.firstBucket(s), bu.bucket(s, 0, 0));
       assertEquals(bu.lastBucket(s), bu.bucket(s, 0, 1));
     }

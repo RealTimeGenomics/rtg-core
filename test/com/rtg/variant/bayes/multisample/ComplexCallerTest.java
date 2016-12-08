@@ -194,7 +194,7 @@ public class ComplexCallerTest extends TestCase {
         @Override
         public ComplexRegion next() {
           if (mCount == 0) {
-            mCount++;
+            ++mCount;
             return new ComplexRegion("foo", 47, 53, RegionType.INTERESTING);
           }
           return null;

@@ -31,7 +31,7 @@ public class EvidenceQTest extends TestCase {
     final int max = 7;
     final CodeDiploid diploid = new CodeDiploid(max);
     final CodeHaploid haploid = new CodeHaploid(max);
-    for (int i = 0; i < max; i++) {
+    for (int i = 0; i < max; ++i) {
       assertTrue(diploid.homozygous(i));
       assertEquals(haploid.a(i), diploid.a(i));
     }
@@ -46,7 +46,7 @@ public class EvidenceQTest extends TestCase {
     check(dq, 1.0 - 0.1, 1);
     check(dq, 0.1 / 3.0, 2);
     check(dq, 0.1 / 3.0, 3);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertEquals(0.25, dq.pe());
     }
     assertEquals(0.1, dq.error());

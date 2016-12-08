@@ -46,7 +46,7 @@ public class SeedShifter extends IntegralAbstract {
     } else {
       nt = mNuc[mPosition];
     }
-    mPosition++;
+    ++mPosition;
     mValue = mSeed.next(mValue, nt);
     return mValue;
   }

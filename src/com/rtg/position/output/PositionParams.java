@@ -429,7 +429,7 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
       if (i < 0) {
         return l - 1;
       }
-      l++;
+      ++l;
     }
     return l;
   }

@@ -51,7 +51,7 @@ public class Mutator extends IntegralAbstract {
         break;
       case 2:
         int i = 0;
-        for (; i < split[0].length() && i < split[1].length(); i++) {
+        for (; i < split[0].length() && i < split[1].length(); ++i) {
           if (split[0].charAt(split[0].length() - 1 - i) == 'E' && split[1].charAt(split[1].length() - 1 - i) == 'E') {
             continue;
           }

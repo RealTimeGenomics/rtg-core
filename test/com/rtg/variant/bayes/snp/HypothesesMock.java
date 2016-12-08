@@ -49,7 +49,7 @@ public abstract class HypothesesMock<D extends Description> extends HypothesesPr
       mPriors = null;
     } else {
       mPriors = new double[size()];
-      for (int i = 0; i < size(); i++) {
+      for (int i = 0; i < size(); ++i) {
         mPriors[i] = arithmetic.prob2Poss(priors[i]);
       }
     }

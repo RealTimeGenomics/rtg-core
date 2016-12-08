@@ -192,7 +192,7 @@ public final class SamValidator {
         }
         continue;
       } catch (final RuntimeException e) {
-        mExceptionProblems++;
+        ++mExceptionProblems;
         if (mExceptionProblems < 100) {
           mErr.println(e.getMessage());
           continue;
@@ -397,7 +397,7 @@ public final class SamValidator {
       int maxCount = 0;
       int uniquelyMapped = 0;
       final TreeMap<Integer, Integer> countsByCount = new TreeMap<>();
-      for (int i = 0; i < countPerRead.length; i++) {
+      for (int i = 0; i < countPerRead.length; ++i) {
         final int count = countPerRead[i];
         final boolean paired = (!(singleEnded || pairedRead == null)) && pairedRead[i];
         if (!countsByCount.containsKey(count)) {
@@ -408,17 +408,17 @@ public final class SamValidator {
         }
 
         if (count > 0) {
-          nonZeroReads++;
+          ++nonZeroReads;
           if (count > maxCount) {
             maxCount = count;
           }
           if (singleEnded) {
             if (count == 1) {
-              uniquelyMapped++;
+              ++uniquelyMapped;
             }
           } else {
             if (count == 2 && paired) {
-              uniquelyMapped++;
+              ++uniquelyMapped;
             }
           }
         }
@@ -545,7 +545,7 @@ public final class SamValidator {
       return false;
     }
     if (record.getReadNegativeStrandFlag()) {
-      for (int i = 0; i < read.length; i++) {
+      for (int i = 0; i < read.length; ++i) {
         if (DnaUtils.getBase(DNA.complement(read[i])) != Character.toUpperCase((char) recordBytes[recordBytes.length - i - 1])) {
           return false;
         } else if (quality != null && i < recordQualities.length && quality[i] != recordQualities[recordBytes.length - i - 1]) {
@@ -553,7 +553,7 @@ public final class SamValidator {
         }
       }
     } else {
-      for (int i = 0; i < read.length; i++) {
+      for (int i = 0; i < read.length; ++i) {
         if (DnaUtils.getBase(read[i]) != Character.toUpperCase((char) recordBytes[i])) {
           return false;
         } else if (quality != null && i < recordQualities.length && quality[i] != recordQualities[i]) {
@@ -588,13 +588,13 @@ public final class SamValidator {
     int score = 0;
     boolean ignoreScore = false;
 
-    for (int i = 0; i < cigar.length(); i++) {
+    for (int i = 0; i < cigar.length(); ++i) {
       final char c = cigar.charAt(i);
       if (Character.isDigit(c)) {
         n = 10 * n + c - '0';
       } else {
         assert n > 0;
-        for (int j = 0; j < n; j++) {
+        for (int j = 0; j < n; ++j) {
           if (tPos >= template.length && c != SamUtils.CIGAR_SOFT_CLIP) {
             mErr.println("Template length exceeded but read does not indicate soft clipping, " + samRecord.toString());
             return -1;
@@ -611,16 +611,16 @@ public final class SamValidator {
               pileUp.add((char) nt, tPos);
             }
             if (nt == 'N' || refNt == 'N') { //if either are unknown
-              mismatches++;
+              ++mismatches;
               mCurrentVariables.mTotalMismatches++;
               score += mUnknownsPenalty;
             } else if (!(nt == refNt)) { // if nt are different
-              mismatches++;
+              ++mismatches;
               mCurrentVariables.mTotalMismatches++;
               score += mMismatchPenalty;
             }
-            tPos++;
-            rPos++;
+            ++tPos;
+            ++rPos;
           } else if (c == SamUtils.CIGAR_SAME) { //match
             if (rPos >= read.length) {
               mErr.println("Match went off end of read, " + samRecord.toString());
@@ -638,8 +638,8 @@ public final class SamValidator {
               mErr.println("Expected match " + (char) refNt + " was " + (char) nt + ", rpos=" + rPos + ", " + samRecord.toString());
               return -1;
             }
-            tPos++;
-            rPos++;
+            ++tPos;
+            ++rPos;
           } else if (c == SamUtils.CIGAR_MISMATCH) { //mismatch
             if (rPos >= read.length) {
               mErr.println("Match went off end of read, " + samRecord.toString());
@@ -661,27 +661,27 @@ public final class SamValidator {
               return -1;
             }
             mCurrentVariables.mTotalMismatches++;
-            mismatches++;
-            tPos++;
-            rPos++;
+            ++mismatches;
+            ++tPos;
+            ++rPos;
           } else if (c == SamUtils.CIGAR_DELETION_FROM_REF) {
-            tPos++;
-            mismatches++;
+            ++tPos;
+            ++mismatches;
             if (prevChar != SamUtils.CIGAR_DELETION_FROM_REF) {
               score += mGapOpenPenalty;
             }
             score += mGapExtendPenalty;
           } else if (c == SamUtils.CIGAR_GAP_IN_READ) { // skip used in CG reads
-            tPos++;
+            ++tPos;
           } else if (c == SamUtils.CIGAR_INSERTION_INTO_REF) {
-            mismatches++;
-            rPos++;
+            ++mismatches;
+            ++rPos;
             if (prevChar != SamUtils.CIGAR_INSERTION_INTO_REF) {
               score += mGapOpenPenalty;
             }
             score += mGapExtendPenalty;
           } else if (c == SamUtils.CIGAR_SOFT_CLIP) { // soft-clipping bases in read ignored for position
-            rPos++; // NM field does not count soft clip, hence don't increment mismatches
+            ++rPos; // NM field does not count soft clip, hence don't increment mismatches
             ignoreScore = true;
           } else {
             assert false;
@@ -724,12 +724,12 @@ public final class SamValidator {
     final StringBuilder sbRead = new StringBuilder();
     final StringBuilder sbMatches = new StringBuilder();
     final StringBuilder sbTemplate = new StringBuilder();
-    for (int i = 0; i < cigar.length(); i++) {
+    for (int i = 0; i < cigar.length(); ++i) {
       final char c = cigar.charAt(i);
       if (Character.isDigit(c)) {
         n = 10 * n + c - '0';
       } else {
-        for (int j = 0; j < n && tPos < sequence.length; j++) {
+        for (int j = 0; j < n && tPos < sequence.length; ++j) {
           switch (c) {
             case SamUtils.CIGAR_SAME_OR_MISMATCH: //match OR mismatch
             case SamUtils.CIGAR_SAME: //match
@@ -819,7 +819,7 @@ public final class SamValidator {
       mTotalMatches += individual.mTotalMatches;
       mTotalMismatches += individual.mTotalMismatches;
       mUnmappedRecords += individual.mUnmappedRecords;
-      for (int i = 0; i < mPairOrientations.length; i++) {
+      for (int i = 0; i < mPairOrientations.length; ++i) {
         mPairOrientations[i] += individual.mPairOrientations[i];
       }
       mConsensus += individual.mConsensus;

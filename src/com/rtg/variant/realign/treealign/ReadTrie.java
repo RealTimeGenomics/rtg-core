@@ -58,7 +58,7 @@ class ReadTrie extends IntegralAbstract {
       final SubTrie sub = new SubTrie(total, stop);
       parent[child] = sub;
       if (total > stop) {
-        for (int i = 0; i < sub.mChildren.length; i++) {
+        for (int i = 0; i < sub.mChildren.length; ++i) {
           read(sub.mChildren, i);
         }
       }

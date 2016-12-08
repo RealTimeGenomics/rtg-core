@@ -141,7 +141,7 @@ public class PopulationVariantGeneratorTest extends TestCase {
     };
     final List<PopulationVariant> list = dummyGenerator.generatePopulation();
     assertEquals(100, list.size());
-    for (int i = 0; i < 99; i++) {
+    for (int i = 0; i < 99; ++i) {
       assertTrue(list.get(i).getSequenceId() <= list.get(i + 1).getSequenceId());
       if (list.get(i).getSequenceId() == list.get(i + 1).getSequenceId()) {
         assertTrue(list.get(i).getStart() <= list.get(i + 1).getStart());
@@ -175,7 +175,7 @@ public class PopulationVariantGeneratorTest extends TestCase {
     final PopulationVariant variantA = new PopulationVariant(new SequenceIdLocusSimple(seq, start));
     variantA.mRef = DnaUtils.encodeString(ref);
     variantA.mAlleles = new byte[alleles.length][];
-    for (int i = 0; i < alleles.length; i++) {
+    for (int i = 0; i < alleles.length; ++i) {
       variantA.mAlleles[i] = DnaUtils.encodeString(alleles[i]);
     }
     return variantA;
@@ -209,7 +209,7 @@ public class PopulationVariantGeneratorTest extends TestCase {
     assertTrue(dummyGenerator.checkValid(makeVariant(2, 100, "CCCCC", "A"), vSet));
 
     assertTrue(dummyGenerator.checkValid(makeVariant(1, 131, "C", "A"), vSet));
-    for (int i = 132; i < 139; i++) {
+    for (int i = 132; i < 139; ++i) {
       assertFalse(dummyGenerator.checkValid(makeVariant(1, i, "C", "A"), vSet));
     }
     assertTrue(dummyGenerator.checkValid(makeVariant(1, 139, "C", "A"), vSet));

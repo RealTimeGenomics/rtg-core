@@ -24,7 +24,7 @@ public class SpeciesLineTest extends TestCase {
     assert counts.length == genomes.length;
     final int n = genomes.length;
     int cnt = 0;
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       cnt += counts[i];
     }
     return new Frag(genomes, counts, cnt, n, mult);

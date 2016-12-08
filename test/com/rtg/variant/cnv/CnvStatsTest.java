@@ -75,11 +75,11 @@ public class CnvStatsTest extends TestCase {
     final PrintStream cnvs = new PrintStream(output);
     final StringBuilder str = new StringBuilder();
     str.append(HEADER);
-    for (int seqCount = 0; seqCount < posLists.length; seqCount++) {
+    for (int seqCount = 0; seqCount < posLists.length; ++seqCount) {
       final String seqName = "SEQ" + (seqCount + 1);
       final int[] positions = posLists[seqCount];
       final int[] cns = cnLists[seqCount];
-      for (int j = 0; j < positions.length; j++) {
+      for (int j = 0; j < positions.length; ++j) {
         final int pos = positions[j];
         final int cn = cns[j];
         if (j + 1 < positions.length) {

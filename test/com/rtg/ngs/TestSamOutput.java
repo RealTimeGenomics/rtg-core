@@ -103,7 +103,7 @@ public final class TestSamOutput {
   private static SAMFileHeader createHeader(final boolean sorted) {
     final SAMFileHeader header = new SAMFileHeader();
     header.setSortOrder(sorted ? SAMFileHeader.SortOrder.coordinate : SAMFileHeader.SortOrder.unsorted);
-    for (int k = 0; k < HUMAN_NAMES.length; k++) {
+    for (int k = 0; k < HUMAN_NAMES.length; ++k) {
       final SAMSequenceRecord record = new SAMSequenceRecord(HUMAN_NAMES[k], HUMAN_LENGTHS[k]);
       header.addSequence(record);
     }
@@ -114,7 +114,7 @@ public final class TestSamOutput {
 
   private static String randomRead(final PortableRandom rnd, final int len) {
     final StringBuilder sb = new StringBuilder();
-    for (int k = 0; k < len; k++) {
+    for (int k = 0; k < len; ++k) {
       sb.append(BASES.charAt(rnd.nextInt(5)));
     }
     return sb.toString();
@@ -122,7 +122,7 @@ public final class TestSamOutput {
 
   private static byte[] randomQuality(final PortableRandom rnd, final int len) {
     final byte[] r = new byte[len];
-    for (int k = 0; k < r.length; k++) {
+    for (int k = 0; k < r.length; ++k) {
       r[k] =  (byte) rnd.nextInt(63);
     }
     return r;
@@ -198,7 +198,7 @@ public final class TestSamOutput {
     final PortableRandom r = new PortableRandom();
     final long initial = du("/tmp");
     final Timer t0 = new Timer("Adding");
-    for (int k = 0; k < records; k++) {
+    for (int k = 0; k < records; ++k) {
       t0.start();
       w.addAlignment(randomRecord(header, r, records)); // randomness will give some same id
       t0.stop();

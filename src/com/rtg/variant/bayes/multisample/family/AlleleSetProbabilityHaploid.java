@@ -36,9 +36,9 @@ public class AlleleSetProbabilityHaploid implements AlleleProbability {
    */
   static final double[][][] LOOKUP = new double[4][2][3];
   static {
-    for (byte i = 0; i < 4; i++) {
-      for (int k = 0; k < 2; k++) {
-        for (int l = 0; l < 3; l++) {
+    for (byte i = 0; i < 4; ++i) {
+      for (int k = 0; k < 2; ++k) {
+        for (int l = 0; l < 3; ++l) {
           setLookup(i, k, l);
         }
       }

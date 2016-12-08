@@ -32,13 +32,13 @@ public class ReadIndexCoverageUtilsTest extends TestCase {
     final int[] expected = {0, 1, 3, 6, 7, 8, 11, 12, 13, 14};
     final int[] res = ReadIndexCoverageUtils.findRejectedReads(new Index[] {index}, 15, 10);
     assertEquals(expected.length, res.length);
-    for (int i = 0; i < res.length; i++) {
+    for (int i = 0; i < res.length; ++i) {
       assertEquals(expected[i], res[i]);
     }
   }
 
   private static void fillIndex(Index index, long[] hashes, long[] values) {
-    for (int i = 0; i < hashes.length; i++) {
+    for (int i = 0; i < hashes.length; ++i) {
       index.add(hashes[i], values[i]);
     }
     index.freeze();

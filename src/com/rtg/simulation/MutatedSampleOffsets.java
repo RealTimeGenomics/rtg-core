@@ -58,12 +58,12 @@ public final class MutatedSampleOffsets {
     try (VcfReader reader = VcfReader.openVcfReader(phasedMutations, region)) {
       final Map<String, Integer> sampleIndexMap = new HashMap<>();
       final List<String> sampleNames = reader.getHeader().getSampleNames();
-      for (int i = 0; i < sampleNames.size(); i++) {
+      for (int i = 0; i < sampleNames.size(); ++i) {
         sampleIndexMap.put(sampleNames.get(i), i);
       }
       final MutatedSampleOffsets[] offsets = new MutatedSampleOffsets[samples.length];
       final int[] sampleIndexes = new int[samples.length];
-      for (int i = 0; i < offsets.length; i++) {
+      for (int i = 0; i < offsets.length; ++i) {
         offsets[i] = new MutatedSampleOffsets();
         sampleIndexes[i] = sampleIndexMap.get(samples[i]);
       }
@@ -81,7 +81,7 @@ public final class MutatedSampleOffsets {
           continue;
         }
         final List<String> gts = rec.getFormat(VcfUtils.FORMAT_GENOTYPE);
-        for (int i = 0; i < samples.length; i++) {
+        for (int i = 0; i < samples.length; ++i) {
           final String gt = gts.get(sampleIndexes[i]);
           if (VcfUtils.isMissingGt(gt)) {
             continue;

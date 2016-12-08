@@ -64,7 +64,7 @@ public class VariantOutputVcfFormatter {
       throw new IllegalArgumentException("Too many sample names");
     }
     mSampleColumns = new HashMap<>();
-    for (int i = 0; i < mSampleNames.length; i++) {
+    for (int i = 0; i < mSampleNames.length; ++i) {
       mSampleNames[i] = sampleNames[i];
       mSampleColumns.put(mSampleNames[i], i);
     }
@@ -290,7 +290,7 @@ public class VariantOutputVcfFormatter {
     final EnumSet<VcfFormatField> requiredFields = EnumSet.noneOf(VcfFormatField.class);
     for (final VcfFormatField format : mFormatFields) {
       if (format.isVcfAnnotator() == isVcfAnnotating) {
-        for (int i = 0; i < mSampleNames.length; i++) {
+        for (int i = 0; i < mSampleNames.length; ++i) {
           if (format.hasValue(rec, call, call.getSample(i), mSampleNames[i], mParams)) {
             requiredFields.add(format);
             break;
@@ -342,7 +342,7 @@ public class VariantOutputVcfFormatter {
    */
   public static boolean includePreviousNt(Variant call) {
     boolean includePreviousNt = false;
-    for (int i = 0; i < call.getNumberOfSamples(); i++) {
+    for (int i = 0; i < call.getNumberOfSamples(); ++i) {
       if (call.getSample(i) != null) {
         includePreviousNt |= includePreviousNt(call, call.getSample(i));
       }

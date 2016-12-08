@@ -36,7 +36,7 @@ public class HypothesesCancer<S extends Hypotheses<? extends Description>> exten
 
   private static Description makeCancerDescription(Hypotheses<? extends Description> hypotheses) {
     final String[] names = new String[hypotheses.size()];
-    for (int i = 0; i < hypotheses.size(); i++) {
+    for (int i = 0; i < hypotheses.size(); ++i) {
       names[i] = hypotheses.name(i);
     }
     return new DescriptionCommon(names);

@@ -59,7 +59,7 @@ public class MapReportTest extends AbstractReportTest {
       assertTrue(asString.contains("forward</td><td align=\"right\">10"));
       assertTrue(asString.contains("<strong>Command line: </strong>"));
 
-      for (int i = 0; i < 4; i++) {
+      for (int i = 0; i < 4; ++i) {
         assertTrue(asString.contains(i + "</td><td align=\"right\">2"));
       }
 

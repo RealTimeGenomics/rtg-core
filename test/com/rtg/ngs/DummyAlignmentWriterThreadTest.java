@@ -139,10 +139,10 @@ public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutpu
         "start id= 33");
 
       final MatchResult results4 = new MatchResult(20);
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < 10; ++i) {
         results4.addMatchResult(0, i, 0, false);
       }
-      for (int i = 10; i < 20; i++) {
+      for (int i = 10; i < 20; ++i) {
         results4.addMatchResult(1, i, 0, false);
       }
       //assertEquals("templateId=0 position=0 readId=0 reverse=" + Boolean.FALSE, results3[0].toString());
@@ -224,7 +224,7 @@ public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutpu
         final SequencesReader ref = params.searchParams().reader();
         final HashingRegion[] regions = HashingRegion.splitWorkload(ref, params.sex(), 0, ref.numberSequences(), params.numberThreads() * params.threadMultiplier(), HashingRegion.DEFAULT_MIN_CHUNK_SIZE, params.calculateThreadPadding());
         try (TopNPairedEndOutputProcessorSync sync = new TopNPairedEndOutputProcessorSync(params, null, true, true)) {
-          for (int i = 0; i < regions.length; i++) {
+          for (int i = 0; i < regions.length; ++i) {
             stp.execute(new SimpleProcess2(sync, regions[i], i));
           }
           stp.terminate();
@@ -301,11 +301,11 @@ public class DummyAlignmentWriterThreadTest extends TestCase { // PairedEndOutpu
 
   public void testThreadsGTResults() {
     assertEquals(new HashingRegion(0, 0, 1, 1, 0, 34), getRegion(100, 33, RESULTS, 0));
-    for (int i = 1; i < 9; i++) {
+    for (int i = 1; i < 9; ++i) {
       assertEquals(new HashingRegion(i, 1, i + 1, 1, 0, 34), getRegion(100, 33, RESULTS, i));
     }
     assertEquals(new HashingRegion(9, 1, 9, 34, 0, 34 + 33), getRegion(100, 33, RESULTS, 9));
-    for (int i = 10; i < 100; i++) {
+    for (int i = 10; i < 100; ++i) {
       assertEquals(HashingRegion.NONE, getRegion(100, 33, RESULTS, i));
     }
   }

@@ -102,7 +102,7 @@ public class PopulationMutatorPriors {
     mIndelLengthDist = SimulationUtils.cumulativeDistribution(mPriors.genomeIndelDistribution());
 
     final double[][] snpProbs = snpProbabilities();
-    for (int i = 0; i < mSnpThresholds.length; i++) {
+    for (int i = 0; i < mSnpThresholds.length; ++i) {
       mSnpThresholds[i] = SimulationUtils.cumulativeDistribution(snpProbs[i]);
     }
 
@@ -112,13 +112,13 @@ public class PopulationMutatorPriors {
 
   private double[][] snpProbabilities() {
     final double[][] probabilities = new double[4][];
-    for (int i = 0; i < probabilities.length; i++) {
+    for (int i = 0; i < probabilities.length; ++i) {
       probabilities[i] = new double[4];
     }
     final String[] calls = {"A", "C", "G", "T"}; // Just consider homozygous priors
-    for (int i = 0; i < calls.length; i++) {
+    for (int i = 0; i < calls.length; ++i) {
       final double[] probs = mPriors.getPriorDistr(calls[i]);
-      for (int j = 0; j < probs.length; j++) {
+      for (int j = 0; j < probs.length; ++j) {
         if (j != i) { // Do not allow any possibility of a base transitioning to itself
           probabilities[j][i] = probs[j];
         }
@@ -224,7 +224,7 @@ public class PopulationMutatorPriors {
     result[ref.length - 1] = chooseAltBase(random, ref[ref.length - 1]);
 
     // Fill in the middle of the MNP with randomly selected bases
-    for (int i = 1; i < ref.length - 1; i++) {
+    for (int i = 1; i < ref.length - 1; ++i) {
       result[i] = (byte) (random.nextInt(4) + 1);
     }
     return result;
@@ -256,7 +256,7 @@ public class PopulationMutatorPriors {
     sb.append("IndelLengthDist length ").append(mIndelLengthDist.length).append(StringUtils.LS);
     sb.append("IndelLengthDist: ").append(Arrays.toString(mIndelLengthDist)).append(StringUtils.LS);
     sb.append("SnpDists:").append(StringUtils.LS);
-    for (int i = 0; i < mSnpThresholds.length; i++) {
+    for (int i = 0; i < mSnpThresholds.length; ++i) {
       sb.append("SnpDists[").append(i + 1).append("]:").append(Arrays.toString(mSnpThresholds[i])).append(StringUtils.LS);
     }
 

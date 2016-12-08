@@ -51,7 +51,7 @@ public class SamValidatorCliTest extends AbstractCliTest {
   private String getSequence() {
     final StringBuilder sb = new StringBuilder(200);
     sb.append(">a\n");
-    for (int i = 0; i < 100; i++) {
+    for (int i = 0; i < 100; ++i) {
       sb.append("acgtacgatcagcatctgac");
     }
     sb.append("\n");

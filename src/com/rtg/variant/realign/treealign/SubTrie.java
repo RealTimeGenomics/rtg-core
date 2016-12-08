@@ -37,10 +37,10 @@ class SubTrie extends IntegralAbstract {
 
   void increment(final byte[] bytes, final int start, final int end) {
     assert !mFrozen;
-    mTotalCount++;
+    ++mTotalCount;
     final int child = start >= bytes.length ? 0 : bytes[start];
     if (start == end || child < 1 || child > 4) {
-      mStopCount++;
+      ++mStopCount;
       return;
     }
     Trie.increment(mChildren, child - 1, bytes, start + 1, end);
@@ -58,7 +58,7 @@ class SubTrie extends IntegralAbstract {
     if (this.mTotalCount != that.mTotalCount || this.mStopCount != that.mStopCount) {
       return false;
     }
-    for (int i = 0; i < mChildren.length; i++) {
+    for (int i = 0; i < mChildren.length; ++i) {
       final SubTrie thisCh = this.mChildren[i];
       final SubTrie thatCh = that.mChildren[i];
       if (thisCh == null && thatCh == null) {
@@ -83,7 +83,7 @@ class SubTrie extends IntegralAbstract {
   public boolean globalIntegrity() {
     integrity();
     int cnt = mStopCount;
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       final SubTrie child = mChildren[i];
       if (child != null) {
         cnt += child.mTotalCount;

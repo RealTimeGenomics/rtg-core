@@ -49,7 +49,7 @@ public class RandomizedExactHashFunctionTest extends AbstractHashFunctionTest {
    * possible bit length.
    */
   public void testHash() {
-    for (int i = 1; i < 64; i++) {
+    for (int i = 1; i < 64; ++i) {
       check(i, 1L);
       check(i, (1L << i) - 1L);
       check(i, ((1L << i) - 1L) / 3);
@@ -67,7 +67,7 @@ public class RandomizedExactHashFunctionTest extends AbstractHashFunctionTest {
     //System.err.println("check bits=" + bits + " hash=" + hash);
     final RandomizedExactHashFunction rh = new RandomizedExactHashFunction(bits, 1);
     long x = 0;
-    for (int i = 0; i < bits; i++) {
+    for (int i = 0; i < bits; ++i) {
       x = rh.hashStep((byte) (hash >> (bits - i - 1) & 1L));
     }
     if (bits == 64) {

@@ -48,7 +48,7 @@ public abstract class Combinator {
       return;
     }
     assert start < mSize;
-    for (int i = start; i <= mSize - left; i++) {
+    for (int i = start; i <= mSize - left; ++i) {
       mSet.set(i);
       comb(i + 1, left - 1);
       mSet.clear(i);

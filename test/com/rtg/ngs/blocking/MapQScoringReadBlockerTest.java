@@ -46,7 +46,7 @@ public class MapQScoringReadBlockerTest extends TestCase {
     assertEquals(37, lmq);
 
     assertEquals(0, srb.getCount2(0));
-    for (int i = 0; i < 40; i++) {  // Fire in some second best hits
+    for (int i = 0; i < 40; ++i) {  // Fire in some second best hits
       srb.increment(0, 5);
       final int mq = srb.getMapQ(0);
       //System.out.println("i=" + i + " mq " + mq);
@@ -54,7 +54,7 @@ public class MapQScoringReadBlockerTest extends TestCase {
       lmq = mq;
     }
     assertEquals(40, srb.getCount2(0));
-    for (int i = 0; i < 19; i++) { // Some more at the best score
+    for (int i = 0; i < 19; ++i) { // Some more at the best score
       srb.increment(0, 0);
     }
     assertEquals(0, srb.getMapQ(0)); // Multiple at best core gets mapq=0
@@ -65,7 +65,7 @@ public class MapQScoringReadBlockerTest extends TestCase {
   //srb.dumpRead(0);
     assertTrue(srb.isBlocked1(0, 0));
     assertFalse(srb.isBlocked2(0, 5));
-    for (int i = 0; i < 255; i++) {
+    for (int i = 0; i < 255; ++i) {
       srb.increment(0, 5);
     }
     //srb.dumpRead(0);
@@ -74,7 +74,7 @@ public class MapQScoringReadBlockerTest extends TestCase {
 
   public void testEdge() {
     final MapQScoringReadBlocker srb = new MapQScoringReadBlocker(1, 255);
-    for (int i = 0; i < 255; i++) {
+    for (int i = 0; i < 255; ++i) {
       srb.increment(0, 0);
     }
     //srb.dumpRead(0);
@@ -90,7 +90,7 @@ public class MapQScoringReadBlockerTest extends TestCase {
     for (int k = 1; k < 256; k <<= 1) {
       final int count = READ_ID1 + 1;
       final MapQScoringReadBlocker b = getScoringReadBlocker(count, k);
-      for (int j = 0; j <= k; j++) {
+      for (int j = 0; j <= k; ++j) {
         assertFalse(b.isBlocked1(READ_ID1, (byte) 1));
         assertFalse(b.isBlocked1(READ_ID0, (byte) 1));
         b.increment(READ_ID1, (byte) 1);
@@ -107,7 +107,7 @@ public class MapQScoringReadBlockerTest extends TestCase {
       assertFalse(b.isBlocked1(1, 0));
       assertFalse(b.isBlocked1(0, 0));
       b.increment(1, (byte) 0);
-      for (int j = 1; j <= k; j++) {
+      for (int j = 1; j <= k; ++j) {
         final int score = k * 2;
         assertTrue(b.isBlocked1(1, score));
         assertTrue(b.isBlocked1(0, score) == (score > 255));
@@ -130,7 +130,7 @@ public class MapQScoringReadBlockerTest extends TestCase {
     final MapQScoringReadBlocker b = getScoringReadBlocker(1, 10);
     for (int score = 512; score > 0; score >>= 1) {
       assertFalse(b.isBlocked1(0, 0));
-      for (int j = 0; j < 12; j++) {
+      for (int j = 0; j < 12; ++j) {
         //System.err.println("score=" + k + " j=" + j);
         assertTrue(b.isBlocked1(0, score) == ((j > 10) || (score > 255)));
         assertTrue(b.isBlocked2(0, score) == (score > 255));

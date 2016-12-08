@@ -59,8 +59,8 @@ public final class SimulatedReadNameParserFactory {
    */
   public static SimulatedReadNameParser[] getParsers(String exampleReadName, MutatedSampleOffsets... offsets) {
     final SimulatedReadNameParser[] parsers = new SimulatedReadNameParser[offsets.length];
-    for (int i = 0; i < exampleReadName.length(); i++) {
-      for (int j = 0; j < offsets.length; j++) {
+    for (int i = 0; i < exampleReadName.length(); ++i) {
+      for (int j = 0; j < offsets.length; ++j) {
         if (offsets[j] != null) {
           final SimulatedReadNameParser p = getParser(exampleReadName);
           if (p != null) {

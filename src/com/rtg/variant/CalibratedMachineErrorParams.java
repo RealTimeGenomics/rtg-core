@@ -176,19 +176,19 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     //Partition and shunt histograms into expected array sizes and orientation
     //each read must have 1 and only 1 gap of between 4 and 8 (incl) long
     long totalReads = 0;
-    for (int i = 4; i < gapHistogram.getLength(); i++) {
+    for (int i = 4; i < gapHistogram.getLength(); ++i) {
       totalReads += gapHistogram.getValue(i);
     }
 
     //gap distribution expected with index 0 being probability of gap length 4 and index 4 being gap length 8;
     final double[] gapDist = new double[5];
-    for (int i = 0; i < gapDist.length && 4 + i < gapHistogram.getLength(); i++) {
+    for (int i = 0; i < gapDist.length && 4 + i < gapHistogram.getLength(); ++i) {
       gapDist[i] = (double) gapHistogram.getValue(4 + i) / totalReads;
     }
 
     //each read must have 1 and only 1 gap of between 0 and 3 (incl) long, but we can't count those with 0 long gaps
     int totSmallGaps = 0;
-    for (int i = 0; i < gapHistogram.getLength() && i < 4; i++) {
+    for (int i = 0; i < gapHistogram.getLength() && i < 4; ++i) {
       totSmallGaps += gapHistogram.getValue(i);
     }
     if (totSmallGaps > totalReads) {
@@ -201,7 +201,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     //small gaps in slightly easier form of entry being probabilty of gap with length of its index
     double[] smallGapDist = new double[4];
     long totalSmall = 0;
-    for (int i = 1; i < smallGapDist.length && i < gapHistogram.getLength(); i++) {
+    for (int i = 1; i < smallGapDist.length && i < gapHistogram.getLength(); ++i) {
       smallGapDist[i] = (double) gapHistogram.getValue(i) / totalReads;
       totalSmall += gapHistogram.getValue(i);
     }
@@ -216,7 +216,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     if (overlapHistogram != null) {
       //each read must have 1 and only 1 overlap of between 0 and 4 (incl) long, again we can't keep track of 0 long whilst counting
       long totalOverlap = 0;
-      for (int i = 1; i < overlapHistogram.getLength(); i++) {
+      for (int i = 1; i < overlapHistogram.getLength(); ++i) {
         totalOverlap += overlapHistogram.getValue(i);
       }
       if (totalOverlap > totalReads) {
@@ -228,7 +228,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
 
       //machine error params expects overlap distribution in wierd form with index 0 referring to probabilty of gap of 4 long and index 4 referring to probability of gap of 0 long
       overlapDist = new double[5];
-      for (int i = 1; i < overlapHistogram.getLength(); i++) {
+      for (int i = 1; i < overlapHistogram.getLength(); ++i) {
         overlapDist[4 - i] = (double) overlapHistogram.getValue(i) / totalReads;
       }
       //again use total to infer number of 0 long overlaps
@@ -250,7 +250,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     if (overlapHistogram != null) {
       //each read must have 1 and only 1 overlap of between 0 and 7 (incl) long, again we can't keep track of 0 long whilst counting
       long totalOverlap = overlapHistogram.getLength(); // For Laplace estimator
-      for (int i = 1; i < overlapHistogram.getLength(); i++) {
+      for (int i = 1; i < overlapHistogram.getLength(); ++i) {
         totalOverlap += overlapHistogram.getValue(i);
       }
       if (overlapHistogram.getLength() > 8) {
@@ -259,7 +259,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
 
       //machine error params expects overlap distribution in wierd form with index 0 referring to probabilty of gap of 7 long and index 7 referring to probability of gap of 0 long
       overlapDist = new double[8];
-      for (int i = 0; i < overlapHistogram.getLength(); i++) {
+      for (int i = 0; i < overlapHistogram.getLength(); ++i) {
         overlapDist[7 - i] = (double) (overlapHistogram.getValue(i) + 1) / totalOverlap;
       }
     } else {
@@ -391,7 +391,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     }
     if (flags.isSet(DUMP_PARAMS)) {
       final Covariate rgc = c.getCovariate(c.getCovariateIndex(CovariateEnum.READGROUP));
-      for (int rgid = 0; rgid < rgc.size(); rgid++) {
+      for (int rgid = 0; rgid < rgc.size(); ++rgid) {
         System.out.println("##############################################");
         final String rgname = rgc.valueString(rgid);
         final CalibratedMachineErrorParams cme = new CalibratedMachineErrorParams(null, c, rgname);

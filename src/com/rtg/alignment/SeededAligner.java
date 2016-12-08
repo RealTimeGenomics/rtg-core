@@ -72,12 +72,12 @@ final class SeededAligner implements UnidirectionalEditDistance {
    * @param nullOnLowComplexity true if this should return null for any alignments which trigger the low complexity filter. This is more accurate, but knocks out lots of alignments.
    */
   SeededAligner(NgsParams ngsParams, boolean nullOnLowComplexity) {
-    for (int i = 0; i < mSeeds.length; i++) {
+    for (int i = 0; i < mSeeds.length; ++i) {
       mSeeds[i] = new SeedPositions();
     }
     mEDCounts = new int[10][];
     mEDScores = new int[10][];
-    for (int i = 0; i < mEDCounts.length; i++) {
+    for (int i = 0; i < mEDCounts.length; ++i) {
       mEDCounts[i] = new int[10];
       mEDScores[i] = new int[10];
     }
@@ -97,16 +97,16 @@ final class SeededAligner implements UnidirectionalEditDistance {
   //TODO: evaluate possible better low complexity values/algorithm
   private void initLowComplexityArray() {
     final int[] count = new int[4];
-    for (int i = 0; i <= 15; i++) {
-      for (int j = 0; j <= 15; j++) {
-        for (int k = 0; k <= 15; k++) {
-          for (int l = 0; l <= 15; l++) {
+    for (int i = 0; i <= 15; ++i) {
+      for (int j = 0; j <= 15; ++j) {
+        for (int k = 0; k <= 15; ++k) {
+          for (int l = 0; l <= 15; ++l) {
             count[0] = i;
             count[1] = j;
             count[2] = k;
             count[3] = l;
-            for (int m = 0; m < 3; m++) {
-              for (int n = m + 1; n < 4; n++) {
+            for (int m = 0; m < 3; ++m) {
+              for (int n = m + 1; n < 4; ++n) {
                 if (count[m] < count[n]) {
                   final int tmp = count[m];
                   count[m] = count[n];
@@ -146,7 +146,7 @@ final class SeededAligner implements UnidirectionalEditDistance {
         mPos[index] = REPEAT;
         return;
       }
-      index++;
+      ++index;
       if (index >= mIndex.length) {
         index = 0;
       }
@@ -166,7 +166,7 @@ final class SeededAligner implements UnidirectionalEditDistance {
     // System.err.println("find: " + value);
     int index = (int) (value & mHashtableSize);
     while ((mIndex[index] != -1) && (mIndex[index] != value)) {
-      index++;
+      ++index;
       if (index >= mIndex.length) {
         index = 0;
       }
@@ -208,7 +208,7 @@ final class SeededAligner implements UnidirectionalEditDistance {
    */
   @Override
   public int[] calculateEditDistance(byte[] read, int rlen, byte[] template, int zeroBasedStart, int maxScore, int maxShift, boolean cgLeft) {
-    mCalls++;
+    ++mCalls;
     if (mWorkspace != null) {
       mWorkspace[ActionsHelper.ACTIONS_LENGTH_INDEX] = 0;
       mWorkspace[ActionsHelper.ALIGNMENT_SCORE_INDEX] = 0;
@@ -243,14 +243,14 @@ final class SeededAligner implements UnidirectionalEditDistance {
     // now check the original read
     int fill = 0;
     long rolling = 0;
-    for (int i = 0; i < rlen; i++) {
+    for (int i = 0; i < rlen; ++i) {
       final byte b = read[i];
       if (b < 1 || b > 4) {
         fill = 0;
         rolling = 0;
         insameseed = false;
       } else {
-        fill++;
+        ++fill;
         rolling = (((rolling << 2) + b - 1)) & MAXHASHVALUE;
       }
       // if we have enough bits for lookup, then lookup...
@@ -284,7 +284,7 @@ final class SeededAligner implements UnidirectionalEditDistance {
           mSeeds[mNumSeeds].mY2 = mSeeds[mNumSeeds].mY1 + NTHASHSIZE;
           mSeeds[mNumSeeds].mType = state;
           insameseed = true;
-          mNumSeeds++;
+          ++mNumSeeds;
           if (mNumSeeds >= mSeeds.length) { // far too many seeds
             return null;
           }
@@ -346,7 +346,7 @@ final class SeededAligner implements UnidirectionalEditDistance {
     long rolling = 0;
     final int end = Math.min(zeroBasedStart + rlen, template.length);
     final int[] hist = new int[5];
-    for (int i = Math.max(0, zeroBasedStart); i < end; i++) { // only iterate across the template
+    for (int i = Math.max(0, zeroBasedStart); i < end; ++i) { // only iterate across the template
       final byte b = template[i];
       if (b < 1 || b > 4) { // if it's an N or something weird reset
         fill = 0;
@@ -359,7 +359,7 @@ final class SeededAligner implements UnidirectionalEditDistance {
           }
         }
         hist[b]++;
-        fill++;
+        ++fill;
         rolling = (((rolling << 2) + b - 1)) & MAXHASHVALUE;
       }
       if (fill >= NTHASHSIZE) { // if we have enough bits for hashing, then store
@@ -436,7 +436,7 @@ final class SeededAligner implements UnidirectionalEditDistance {
     }
 
     // then the middle seeds
-    for (int i = mNumSeeds - 1; i >= 1; i--) {
+    for (int i = mNumSeeds - 1; i >= 1; --i) {
       // first add the seed
       ActionsHelper.prepend(mWorkspace, mSeeds[i].mX2 - mSeeds[i].mX1, ActionsHelper.SAME, 0);
       // then add the gap
@@ -539,14 +539,14 @@ final class SeededAligner implements UnidirectionalEditDistance {
 
   private int numCovered() {
     int num = 0;
-    for (int k = 0; k < mNumSeeds; k++) {
+    for (int k = 0; k < mNumSeeds; ++k) {
       num += mSeeds[k].mX2 - mSeeds[k].mX1;
     }
     return num;
   }
 
   private void deleteSeed(final int i) {
-    for (int k = i; k < mNumSeeds - 1; k++) {
+    for (int k = i; k < mNumSeeds - 1; ++k) {
       mSeeds[k].mX1 = mSeeds[k + 1].mX1;
       mSeeds[k].mX2 = mSeeds[k + 1].mX2;
       mSeeds[k].mY1 = mSeeds[k + 1].mY1;
@@ -557,7 +557,7 @@ final class SeededAligner implements UnidirectionalEditDistance {
     mSeeds[mNumSeeds].mX2 = -99999999;
     mSeeds[mNumSeeds].mY1 = -99999999;
     mSeeds[mNumSeeds].mY2 = -99999999;
-    mNumSeeds--;
+    --mNumSeeds;
   }
 
   /**
@@ -571,7 +571,7 @@ final class SeededAligner implements UnidirectionalEditDistance {
     // truncate seeds which overlap within a small offset of the diagonal, or if they overlap perfectly
     // then delete the big crazy overlaps
 
-    for (int i = 0; i < mNumSeeds - 1; i++) {
+    for (int i = 0; i < mNumSeeds - 1; ++i) {
       if ((mSeeds[i].mX2 > mSeeds[i + 1].mX1) || (mSeeds[i].mY2 > mSeeds[i + 1].mY1)) {
 //        System.err.println("iY " + mSeeds[i].mY1 + "->" + mSeeds[i].mY2);
 //        System.err.println("iX " + mSeeds[i].mX1 + "->" + mSeeds[i].mX2);
@@ -598,23 +598,23 @@ final class SeededAligner implements UnidirectionalEditDistance {
     boolean deleted;
     do {
       deleted = false;
-      for (int i = 0; i < mNumSeeds - 1; i++) {
+      for (int i = 0; i < mNumSeeds - 1; ++i) {
         if ((mSeeds[i].mX2 > mSeeds[i + 1].mX1) || (mSeeds[i].mY2 > mSeeds[i + 1].mY1)) {
 
           // delete both
           deleteSeed(i + 1);
           deleteSeed(i);
-          i--;
+          --i;
           deleted = true;
         }
       }
     } while (deleted);
     // then clean up little overhangs
-    for (int i = 0; i < mNumSeeds; i++) {
+    for (int i = 0; i < mNumSeeds; ++i) {
       if ((mSeeds[i].mX1 == mSeeds[i].mX2) && (mSeeds[i].mY1 == mSeeds[i].mY2)) {
         // null seed
         deleteSeed(i);
-        i--;
+        --i;
       }
     }
   }
@@ -644,26 +644,26 @@ final class SeededAligner implements UnidirectionalEditDistance {
     final StringBuilder sb = new StringBuilder();
     sb.append("SeededAligner stats").append(StringUtils.LS);
     sb.append("  calls: ").append(mCalls).append(StringUtils.LS);
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       final int realval = i * 10;
       final String correction = String.format("%6d", realval);
       sb.append(correction).append(" ");
     }
     sb.append(StringUtils.LS); // for the table
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       sb.append("------");
     }
     sb.append(StringUtils.LS); // for the table
-    for (int j = 0; j < 10; j++) {
-      for (int i = 0; i < 10; i++) {
+    for (int j = 0; j < 10; ++j) {
+      for (int i = 0; i < 10; ++i) {
         final String correction = String.format("%6d", mEDCounts[j][i]);
         sb.append(correction).append(" ");
       }
       sb.append(StringUtils.LS);
     }
     sb.append(StringUtils.LS); // for the table
-    for (int j = 0; j < 10; j++) {
-      for (int i = 0; i < 10; i++) {
+    for (int j = 0; j < 10; ++j) {
+      for (int i = 0; i < 10; ++i) {
         final int num =  mEDCounts[j][i] > 0 ? mEDScores[j][i] / mEDCounts[j][i] : 0;
         final String correction = String.format("%6d", num);
         sb.append(correction).append(" ");

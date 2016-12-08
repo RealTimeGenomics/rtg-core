@@ -25,7 +25,7 @@ public class SimulationUtilsTest extends TestCase {
 
     final double[] expected = {0.125, 0.25, 0.375, 0.875, 1.0};
     assertEquals(expected.length, cumDist.length);
-    for (int i = 0; i < expected.length; i++) {
+    for (int i = 0; i < expected.length; ++i) {
       assertEquals(expected[i], cumDist[i], 0.000001);
     }
 

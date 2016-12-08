@@ -127,7 +127,7 @@ final class ComplexCaller {
           //need to output an identity call at this position
           final VariantLocus locus = new VariantLocus(refName, startOfRegion, endOfRegion, DnaUtils.bytesToSequenceIncCG(template, startOfRegion, endOfRegion - startOfRegion), VariantUtils.getPreviousRefNt(template, startOfRegion));
           final VariantSample[] samples = new VariantSample[numSamples];
-          for (int i = 0; i < numSamples; i++) {
+          for (int i = 0; i < numSamples; ++i) {
             samples[i] = new VariantSample(Ploidy.NONE);
           }
           variant = new Variant(locus, samples);
@@ -160,7 +160,7 @@ final class ComplexCaller {
       if (mParams.callLevel() == VariantOutputLevel.ALL) {
         calls.add(makeDummyCall(cot, VariantFilter.COVERAGE.mask(), mParams.maxCoverageBypass().thresholdTotal(refName)));
       }
-      mExcessCoverageCount++;
+      ++mExcessCoverageCount;
       region.setType(RegionType.OVERCOVERAGE);
       return null;
     }
@@ -175,7 +175,7 @@ final class ComplexCaller {
       if (mParams.callLevel() == VariantOutputLevel.ALL) {
         calls.add(makeDummyCall(cot, VariantFilter.COVERAGE.mask(), matches.size()));
       }
-      mExcessCoverageCount++;
+      ++mExcessCoverageCount;
       region.setType(RegionType.OVERCOVERAGE);
       return null;
     }
@@ -184,7 +184,7 @@ final class ComplexCaller {
       if (mParams.callLevel() == VariantOutputLevel.ALL) {
         calls.add(makeDummyCall(cot, 0, matches.size()));
       }
-      mNoHypothesesCount++;
+      ++mNoHypothesesCount;
       region.setType(RegionType.NO_HYPOTHESES);
       return null;
     }
@@ -197,7 +197,7 @@ final class ComplexCaller {
       if (mParams.callLevel() == VariantOutputLevel.ALL) {
         calls.add(makeDummyCall(cot, 0, matches.size()));
       }
-      mNoHypothesesCount++;
+      ++mNoHypothesesCount;
       region.setType(RegionType.NO_HYPOTHESES);
       return null;
     }
@@ -206,7 +206,7 @@ final class ComplexCaller {
       if (mParams.callLevel() == VariantOutputLevel.ALL) {
         calls.add(makeDummyCall(cot, 0, matches.size()));
       }
-      mExcessHypothesesCount++;
+      ++mExcessHypothesesCount;
       region.setType(RegionType.TOO_MANY_HYPOTHESES);
       return null;
     }
@@ -217,7 +217,7 @@ final class ComplexCaller {
       if (mParams.callLevel() == VariantOutputLevel.ALL) {
         calls.add(makeDummyCall(cot, 0, matches.size()));
       }
-      mExcessHypothesesCount++;
+      ++mExcessHypothesesCount;
       region.setType(RegionType.TOO_MANY_HYPOTHESES);
       return null;
     }
@@ -251,7 +251,7 @@ final class ComplexCaller {
   private Variant makeDummyCall(ComplexTemplate cot, int filterMask, int numMatches) {
     final int numSamples = mConfig.numberOfGenomes();
     final VariantSample[] samples = new VariantSample[numSamples];
-    for (int k = 0; k < numSamples; k++) {
+    for (int k = 0; k < numSamples; ++k) {
       //SAI: matches.size() here is possibly wrong for multisample cases, but
       //I don't think it is very important, we only output these with --all mode
       //and these aren't really proper "calls" anyway.

@@ -26,7 +26,7 @@ public class GraphMapStatistics extends AbstractStatistics {
   static class Counter {
     long mCount = 0;
     public void increment() {
-      mCount++;
+      ++mCount;
     }
     public long getCount() {
       return mCount;

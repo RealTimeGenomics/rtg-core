@@ -51,7 +51,7 @@ public class IlluminaPairedEndMachineTest extends TestCase {
     int qsummatch = 0;
     int qsummismatch = 0;
     final int n = 1000;
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; ++i) {
       final byte correctCallQuality = m.getCorrectCallQuality((byte) 1);
       final byte missCallQuality = m.getMissCallQuality();
       //System.err.println(String.format(" = %2d  X %2d  %b", correctCallQuality, missCallQuality, correctCallQuality > missCallQuality));

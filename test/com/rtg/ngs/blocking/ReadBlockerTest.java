@@ -31,7 +31,7 @@ public class ReadBlockerTest extends TestCase {
       Diagnostic.setLogStream(ls);
       for (int k = 1; k < 65536; k <<= 1) {
         final ReadBlocker b = getReadBlocker(2, k);
-        for (int j = 0; j < k; j++) {
+        for (int j = 0; j < k; ++j) {
           assertFalse(b.isBlocked(1));
           assertFalse(b.isBlocked(0));
           b.increment(1);
@@ -62,7 +62,7 @@ public class ReadBlockerTest extends TestCase {
     assertEquals(1, b.getCount(0));
     b.reset(0);
     assertEquals(0, b.getCount(0));
-    for (int i = 0; i < 65535; i++) {
+    for (int i = 0; i < 65535; ++i) {
       assertEquals(i, b.getCount(0));
       b.increment(0);
     }

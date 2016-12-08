@@ -67,14 +67,14 @@ public class BitSetTest extends TestCase {
   //32 entries - special case for bit handling
   public void test32() {
     final String[] s = new String[32];
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < 32; ++i) {
       s[i] = "" + i;
     }
     final BitSet bs = new BitSet(s);
     bs.integrity();
     assertEquals(32, bs.length());
     assertEquals("empty", bs.toString(0));
-    for (int i = 0; i < 32; i++) {
+    for (int i = 0; i < 32; ++i) {
       assertEquals(s[i], bs.toString(1 << i));
     }
 

@@ -27,7 +27,7 @@ public final class TopEqualProteinImplementation {
 
   static {
     THREAD_LOCKS = new Object[NUMBER_OF_THREAD_LOCKS];
-    for (int i = 0; i < THREAD_LOCKS.length; i++) {
+    for (int i = 0; i < THREAD_LOCKS.length; ++i) {
       THREAD_LOCKS[i] = new Object();
     }
   }
@@ -50,7 +50,7 @@ public final class TopEqualProteinImplementation {
     mResultCount = new byte[numberSequences];
     mResults = ObjectCreate.createIndex(totalRecords);
     //mResults = new ProteinAlignmentResult[(int) totalRecords];
-    for (int l = 0; l < numberSequences; l++) {
+    for (int l = 0; l < numberSequences; ++l) {
       mBestAlignScore[l] = Short.MAX_VALUE;
     }
   }
@@ -58,7 +58,7 @@ public final class TopEqualProteinImplementation {
   boolean contains(int templateId, int templateStart, int readId, int readAndFrame) {
     synchronized (THREAD_LOCKS[synchId(readId)]) {
       final int count = resultCount(readId) > mTopN ? mTopN : resultCount(readId);
-      for (long i = (long) readId * mTopN; i < (long) readId * mTopN + count; i++) {
+      for (long i = (long) readId * mTopN; i < (long) readId * mTopN + count; ++i) {
         if (mResults.get(i).equals(templateId, templateStart, readAndFrame)) {
           return true;
         }

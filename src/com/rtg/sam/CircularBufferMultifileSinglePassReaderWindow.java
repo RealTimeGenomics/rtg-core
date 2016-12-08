@@ -145,13 +145,13 @@ public class CircularBufferMultifileSinglePassReaderWindow<T extends ReaderRecor
     if (mSingleRecordStash != null && mSingleRecordStash.getStart() < binEnd) {
       mSingleRecordStash = null;
     }
-    for (int i = mFirstStart; i < binEnd; i++) {
+    for (int i = mFirstStart; i < binEnd; ++i) {
       final int ix = i % mBuffer.length;
       mBuffer[ix] = null;
       mDepth[ix] = 0;
       mMaxLengths[ix] = 0;
     }
-    for (int i = newStart; i < overlapEnd; i++) {
+    for (int i = newStart; i < overlapEnd; ++i) {
       final int ix = i % mBuffer.length;
       mMinimumStart[ix] = 0;
     }
@@ -229,7 +229,7 @@ public class CircularBufferMultifileSinglePassReaderWindow<T extends ReaderRecor
     final int[] newMaxLenths = new int[resize];
     final int[] newMinimumStart = new int[resize];
     //copy the buffers
-    for (int i = mFirstStart; i < mLastEnd; i++) {
+    for (int i = mFirstStart; i < mLastEnd; ++i) {
       final int j = i % mBuffer.length;
       final int k = i % resize;
       newBuffer[k] = mBuffer[j];
@@ -237,7 +237,7 @@ public class CircularBufferMultifileSinglePassReaderWindow<T extends ReaderRecor
       newMaxLenths[k] = mMaxLengths[j];
     }
 
-    for (int i = mFirstPosition; i < mLastEnd; i++) {
+    for (int i = mFirstPosition; i < mLastEnd; ++i) {
       final int j = i % mBuffer.length;
       final int k = i % resize;
       newMinimumStart[k] = mMinimumStart[j];
@@ -278,7 +278,7 @@ public class CircularBufferMultifileSinglePassReaderWindow<T extends ReaderRecor
         mBuffer[index] = mPopulator.overflow(start, mMaxLengths[index]);
         mDroppedRecords += mDepthLimit;
       } else {
-        mDroppedRecords++;
+        ++mDroppedRecords;
         if (length > mBuffer[index].getLength()) {
           // Update discard region to be maximum length observed
           mBuffer[index] = mPopulator.overflow(start, length);
@@ -292,7 +292,7 @@ public class CircularBufferMultifileSinglePassReaderWindow<T extends ReaderRecor
     }
 
     // Update overlap information
-    for (int delta = 0, i = start; delta < length; delta++, i++) {
+    for (int delta = 0, i = start; delta < length; ++delta, ++i) {
       if (i >= mFirstPosition) {
         final int ix = i % mBuffer.length;
         mMinimumStart[ix] = Math.min(-delta, mMinimumStart[ix]);
@@ -320,7 +320,7 @@ public class CircularBufferMultifileSinglePassReaderWindow<T extends ReaderRecor
     final int startIx0 = start % mBuffer.length;
     final int correctedStart = start + mMinimumStart[startIx0]; // Adjust by offset for overlap
     assert correctedStart >= mFirstStart;
-    for (int i = correctedStart; i < correctedEnd; i++) {
+    for (int i = correctedStart; i < correctedEnd; ++i) {
       final int ix = i % mBuffer.length;
       @SuppressWarnings("unchecked")
       T rec = (T) mBuffer[ix];

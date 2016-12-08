@@ -164,7 +164,7 @@ public class MemoryUsage {
       if (bytes < 0) {
         throw new IllegalArgumentException();
       }
-      mCount++;
+      ++mCount;
       mTotal += bytes;
     }
 
@@ -179,7 +179,7 @@ public class MemoryUsage {
       if (bytes < 0) {
         throw new IllegalArgumentException();
       }
-      mCount++;
+      ++mCount;
       mTotal += bytes;
       if (mDepth <= 1) {
         mReturn += returned;
@@ -198,12 +198,12 @@ public class MemoryUsage {
 
     /** Increase recursion depth by one. */
     void push() {
-      mDepth++;
+      ++mDepth;
     }
 
     /** Decrease recursion depth by one. */
     void pop() {
-      mDepth--;
+      --mDepth;
       if (mDepth < 0) {
         throw new IllegalStateException("Too many pops in memory calculation.");
       }
@@ -274,7 +274,7 @@ public class MemoryUsage {
         bytes = roundUp(ARRAY_SIZE + length * arraySize);
         if (info.isArray()) {
           //but not primitive array
-          for (int i = 0; i < length; i++) {
+          for (int i = 0; i < length; ++i) {
             final Object inst = Array.get(obj, i);
             returnSize += memSize(inst);
           }

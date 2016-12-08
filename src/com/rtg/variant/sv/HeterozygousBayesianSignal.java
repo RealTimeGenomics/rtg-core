@@ -42,7 +42,7 @@ public class HeterozygousBayesianSignal extends BayesianSignal {
     assert lo == b.lo();
     assert hi == b.hi() : hi + ":" + b.hi();
     final double[] distr = new double[diameter];
-    for (int i = lo; i < hi; i++) {
+    for (int i = lo; i < hi; ++i) {
       distr[i - lo] = (a.get(i) + b.get(i)) / 2;
     }
     return new DistributionArray(lo, distr);

@@ -110,7 +110,7 @@ public class ReadBlocker implements Closeable {
       }
       Diagnostic.developerLog("Statistics of " + mTitle);
       long sum = 0;
-      for (int k = 0; k < MAX_COUNT + 1; k++) {
+      for (int k = 0; k < MAX_COUNT + 1; ++k) {
         if (h[k] > 0) {
           sum += h[k];
           final String c = k == MAX_COUNT ? ">= " + MAX_COUNT : String.valueOf(k);

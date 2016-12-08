@@ -42,7 +42,7 @@ public class ConstraintCache {
 
   static ConstraintCollector reverse(ConstraintCollector forward) {
     final ConstraintCollector reverse = new ConstraintCollector(forward.mContigB, forward.mContigA);
-    for (int i = 0; i < forward.mConstraint.size(); i++) {
+    for (int i = 0; i < forward.mConstraint.size(); ++i) {
       reverse.mConstraint.add(forward.mConstraint.get(i));
     }
     return reverse;
@@ -54,7 +54,7 @@ public class ConstraintCache {
       for (Map.Entry<Pair<Long, Long>, ConstraintCollector> entry : cache.mCache.entrySet()) {
         final Pair<Long, Long> key = entry.getKey();
         final ConstraintCollector value = entry.getValue();
-        for (int i = 0; i < value.mConstraint.size(); i++) {
+        for (int i = 0; i < value.mConstraint.size(); ++i) {
           combined.addConstraint(key.getA(), key.getB(), 0, 0, value.mConstraint.get(i));
         }
       }

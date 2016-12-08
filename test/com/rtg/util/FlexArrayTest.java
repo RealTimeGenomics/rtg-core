@@ -68,7 +68,7 @@ public class FlexArrayTest extends TestCase {
     final Integer[] ia = intArr.toArray(new Integer[arrLength]);
     assertEquals(index + 1, ia.length);
     assertEquals(5, ia[index].intValue());
-    for (int i = 0; i < index + 1; i++) {
+    for (int i = 0; i < index + 1; ++i) {
       if (i == index) {
         continue;
       }

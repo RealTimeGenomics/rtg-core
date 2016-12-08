@@ -28,7 +28,7 @@ public class ProbAlphaSimpleBeta implements ProbAlpha {
   @Override
   public double pAlpha(int referenceAllele, int[] strainVariants) {
     double prob = 1;
-    for (int i = 0; i < strainVariants.length; i++) {
+    for (int i = 0; i < strainVariants.length; ++i) {
       final Integer assignment = strainVariants[i];
       prob *= assignment == referenceAllele ?  1 - mBeta[i] : mBeta[i];
     }

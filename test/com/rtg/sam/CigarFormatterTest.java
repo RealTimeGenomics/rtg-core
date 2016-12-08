@@ -28,7 +28,7 @@ public class CigarFormatterTest extends TestCase {
   // test different CG overlap sizes
   public void testActionsCgNewOverlap() {
     //tattttcgcaggacttattttaatt.....ctcaaacgct
-    for (int overlap = 0; overlap <= 4; overlap++) {
+    for (int overlap = 0; overlap <= 4; ++overlap) {
       final String os = "BBBB".substring(4 - overlap);
       final String cigar = CigarFormatter.actionsToCigar(ActionsHelper.build("=====" + os + "====================NNNNN==========", 0, 0), false, 40, false, true);
       assertEquals((25 - overlap) + "=5N10=", cigar);

@@ -22,7 +22,7 @@ public class CodeHaploidTest extends TestCase {
     final Code tc = new CodeHaploid(4);
     assertEquals(4, tc.rangeSize());
     assertEquals(4, tc.size());
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertTrue(tc.homozygous(i));
       assertEquals(tc.a(i), tc.bc(i));
     }
@@ -32,7 +32,7 @@ public class CodeHaploidTest extends TestCase {
     final Code tc = new CodeHaploid(4);
     assertFalse(tc.valid(-1));
     assertFalse(tc.valid(4));
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertTrue(tc.valid(i));
       assertEquals(i, tc.a(i));
       assertEquals(i, tc.code(i));

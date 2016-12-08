@@ -57,7 +57,7 @@ public abstract class AbstractSplitTest extends AbstractNanoTest {
   };
 
   public static void encode(final NgsHashFunction hf, final String dna) {
-    for (int i = 0; i < dna.length(); i++) {
+    for (int i = 0; i < dna.length(); ++i) {
       encode(hf, dna, i);
     }
   }

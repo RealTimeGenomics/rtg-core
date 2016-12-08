@@ -49,8 +49,8 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
     final double globalErrorRate = (double) totalMismatches / (double) totalEverything;
     /* do you want to interpolate from qualities out of the observer ranges per position? */
     final long qualityCalibrationMinEvidence = GlobalFlags.getIntegerValue(CoreGlobalFlags.QUALITY_CALIBRATION_MIN_EVIDENCE);
-    for (int i = 0; i < baseQualSize; i++) {
-      for (int j = 0; j < readPosSize; j++) {
+    for (int i = 0; i < baseQualSize; ++i) {
+      for (int j = 0; j < readPosSize; ++j) {
         if (proc.getTotals()[i][j] < qualityCalibrationMinEvidence) {
           // Save it for interpolation
           mCurve[i][j] = -1;
@@ -64,15 +64,15 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
     // First work out read position independent quality levels to be used as defaults
     final int[] qualityMismatches = new int[mCurve.length];
     final int[] qualityTotals = new int[mCurve.length];
-    for (int i = 0; i < qualityMismatches.length; i++) {
-      for (int j = 0; j < proc.getTotals()[i].length; j++) {
+    for (int i = 0; i < qualityMismatches.length; ++i) {
+      for (int j = 0; j < proc.getTotals()[i].length; ++j) {
         qualityMismatches[i] += proc.getMismatches()[i][j];
         qualityTotals[i] += proc.getTotals()[i][j];
       }
     }
 
     final int[] qualityDefaults = new int[mCurve.length];
-    for (int i = 0; i < qualityDefaults.length; i++) {
+    for (int i = 0; i < qualityDefaults.length; ++i) {
       if (qualityTotals[i] < qualityCalibrationMinEvidence) {
         qualityDefaults[i] = -1;
       } else {
@@ -92,7 +92,7 @@ class BaseQualityMachineCyclePhredScaler implements PhredScaler {
     // Now we have defaults for the ends of curves we can interpolate within the read position curve set.
     // At each read position we'll draw a straight line between present quality values we have a rate for.
     // Use the global quality default array for ends...
-    for (int j = 0; j < readPosSize; j++) {
+    for (int j = 0; j < readPosSize; ++j) {
       final Interpolate2dArray interpolate2DArray = Interpolate2dArray.column(mCurve, j);
       interpolate2DArray.fill(qualityDefaults);
       interpolate2DArray.interpolate();

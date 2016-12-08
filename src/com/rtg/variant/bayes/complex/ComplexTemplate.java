@@ -124,7 +124,7 @@ public class ComplexTemplate extends SequenceNameLocusSimple {
     final int length = end - start;
     mReplaceBytes = new byte[length];
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0, j = start; i < length; i++, j++) {
+    for (int i = 0, j = start; i < length; ++i, ++j) {
       final byte b = mTemplate[j];
       mReplaceBytes[i] = b;
       sb.append(DnaUtils.getBase(b));
@@ -133,7 +133,7 @@ public class ComplexTemplate extends SequenceNameLocusSimple {
   }
 
   private static int findReferenceAllele(DescriptionComplex description, String reference) {
-    for (int i1 = 0; i1 < description.size(); i1++) {
+    for (int i1 = 0; i1 < description.size(); ++i1) {
       if (description.name(i1).equals(reference)) {
         return i1;
       }
@@ -187,7 +187,7 @@ public class ComplexTemplate extends SequenceNameLocusSimple {
     // Build up all alignment environments that we will need
     final List<AlignmentEnvironment> envs = new ArrayList<>(); // All alleles to which we will perform alignment (description first,
     final List<Integer> lengths = new ArrayList<>();
-    for (int i = 0; i < description().size(); i++) {
+    for (int i = 0; i < description().size(); ++i) {
       final AlignmentEnvironment env;
       final int len;
       if (i == refHyp()) {
@@ -214,10 +214,10 @@ public class ComplexTemplate extends SequenceNameLocusSimple {
 
     // Compute all-paths transition matrix
     final double[][] transitionProbsLn = new double[envs.size()][description().size()];
-    for (int i = 0; i < envs.size(); i++) {
+    for (int i = 0; i < envs.size(); ++i) {
       final AlignmentEnvironment aei = envs.get(i);
       final int iLen = lengths.get(i);
-      for (int j = 0; j < description().size(); j++) {
+      for (int j = 0; j < description().size(); ++j) {
         final AlignmentEnvironment aej = envs.get(j);
         final int jLen = lengths.get(j);
         final int alignStart = e0Hx - (jLen + iLen) / 2;

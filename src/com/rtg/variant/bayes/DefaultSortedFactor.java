@@ -50,7 +50,7 @@ public class DefaultSortedFactor<D extends Description> implements SortedFactor<
   private static Integer[] sort(final Factor<?> factor) {
     // Set up identity map
     final Integer[] rankToCode = new Integer[factor.size()];
-    for (int k = 0; k < rankToCode.length; k++) {
+    for (int k = 0; k < rankToCode.length; ++k) {
       rankToCode[k] = k;
     }
     // Sort with respect to factor

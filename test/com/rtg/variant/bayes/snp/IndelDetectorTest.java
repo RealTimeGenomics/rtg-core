@@ -41,7 +41,7 @@ public class IndelDetectorTest extends TestCase {
 
   private void check(final int nonTrivial) {
     final IndelDetector dis = new IndelDetector();
-    for (int i = 0; i < nonTrivial; i++) {
+    for (int i = 0; i < nonTrivial; ++i) {
       dis.increment(new EvidenceIndel(0.0, 0, 0));
     }
 
@@ -52,13 +52,13 @@ public class IndelDetectorTest extends TestCase {
     final IndelDetector dis = new IndelDetector();
     final double fraction = 0.05;
 
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       dis.increment(null);
       dis.increment(new EvidenceIndel(0.0, 0, 0));
     }
     assertEquals(2, dis.minIndelCount(fraction)); //10
 
-    for (int i = 0; i < 89; i++) {
+    for (int i = 0; i < 89; ++i) {
       dis.increment(null);
       dis.increment(new EvidenceIndel(0.0, 0, 0));
     }
@@ -68,7 +68,7 @@ public class IndelDetectorTest extends TestCase {
     assertEquals(2, dis.minIndelCount(0));  //100
     assertEquals(5, dis.minIndelCount(fraction));
 
-    for (int i = 0; i < 72; i++) {
+    for (int i = 0; i < 72; ++i) {
       dis.increment(null);
       dis.increment(new EvidenceIndel(0.0, 0, 0));
     }

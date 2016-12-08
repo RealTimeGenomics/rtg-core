@@ -211,7 +211,7 @@ public class ChildSampleSimulator {
     mStats.onlySamples(sample);
     try (VcfWriter vcfOut = new DefaultVcfWriter(header, vcfOutFile, null, FileUtils.isGzipFilename(vcfOutFile), true)) {
       final ReferenceGenome refG = new ReferenceGenome(mReference, sex, mDefaultPloidy);
-      for (long i = 0; i < mReference.numberSequences(); i++) {
+      for (long i = 0; i < mReference.numberSequences(); ++i) {
         final ReferenceSequence refSeq = refG.sequence(mReference.name(i));
         mutateSequence(vcfPopFile, vcfOut, refSeq, mReference.length(i));
       }

@@ -56,9 +56,9 @@ interface Interpolate {
   default void interpolate() {
     boolean foundFirstValue = false;
     int prev = minPos() - 1;
-    for (int i = minPos(); inBounds(i); i++) {
+    for (int i = minPos(); inBounds(i); ++i) {
       if (!isMissing(i)) {
-        for (int gap = prev + 1; gap < i; gap++) {
+        for (int gap = prev + 1; gap < i; ++gap) {
           if (foundFirstValue) {
             final int gapSize = i - prev;
             final int gapValue = getValue(i) - getValue(prev);
@@ -74,7 +74,7 @@ interface Interpolate {
   }
 
   default void fill(int[] values) {
-    for (int i = minPos(); inBounds(i); i++) {
+    for (int i = minPos(); inBounds(i); ++i) {
       if (getValue(i) < 0) {
         setValue(i, values[i]);
       }

@@ -47,7 +47,7 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
     double lnP = 0; // i.e. p = 1
     double dp = 0;
     final AlleleStatistics<?> counts = statistics.counts();
-    for (int k = 0; k < p.length; k++) {
+    for (int k = 0; k < p.length; ++k) {
       if (p[k] > 0) { // Avoid infinity arising from p = 0 situation
         final double c = counts.count(k) - counts.error(k);
         if (c > 0) {
@@ -76,7 +76,7 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
     double lnP = 0; // i.e. p = 1
     double dp = 0;
     final AlleleStatistics<?> counts = statistics.counts();
-    for (int k = 0; k < p.length; k++) {
+    for (int k = 0; k < p.length; ++k) {
       if (p[k] > 0) { // Avoid infinity arising from p = 0 situation
         final double c = counts.count(k) - counts.error(k);
         dp += c;
@@ -106,9 +106,9 @@ class SomaticPosteriorContaminated extends AbstractSomaticPosterior {
     assert cancer instanceof ModelCancerContamination;
     assert !cancer.haploid(); // The cancer model is a cross-product of normal x cancer hypotheses
     final Code code = cancer.hypotheses().code();
-    for (int i = 0; i < mPosterior.length; i++) {
+    for (int i = 0; i < mPosterior.length; ++i) {
       final double pi = hypotheses.arithmetic().poss2Ln(hypotheses.p(i)) + normal.posteriorLn0(i);
-      for (int j = 0; j < mPosterior.length; j++) {
+      for (int j = 0; j < mPosterior.length; ++j) {
         final int k = code.code(i, j); // code point for normal(i) x cancer(j)
         assert k >= 0 && k < code.size() : k + " " + code.size();
         final double pj = cancer.posteriorLn0(k);

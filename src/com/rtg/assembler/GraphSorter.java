@@ -41,7 +41,7 @@ final class GraphSorter {
       final Contig forward = g.contig(contigId);
       final Contig reverse = g.contig(-contigId);
       boolean forwardIsSmaller = true;
-      for (int i = 0; i < limit; i++) {
+      for (int i = 0; i < limit; ++i) {
         if (forward.nt(i) > reverse.nt(i)) {
           forwardIsSmaller = false;
           break;
@@ -63,7 +63,7 @@ final class GraphSorter {
     @Override
     public int compareTo(OriginalContig o) {
       final int limit = Math.min(o.mContig.length(), mContig.length());
-      for (int i = 0; i < limit; i++) {
+      for (int i = 0; i < limit; ++i) {
         final int compare = Byte.compare(mContig.nt(i), o.mContig.nt(i));
         if (compare != 0) {
           return compare;
@@ -95,7 +95,7 @@ final class GraphSorter {
 
       final long[] translated = new long[original.length()];
       final long[] reverseTranslated = new long[original.length()];
-      for (int i = 0; i < limit; i++) {
+      for (int i = 0; i < limit; ++i) {
         final long contig = translate.get(original.contig(i));
         translated[i] = contig;
         reverseTranslated[limit - i - 1] = -contig;
@@ -104,7 +104,7 @@ final class GraphSorter {
       final Path reverse = new PathArray(reverseTranslated);
 
       boolean forwardIsSmaller = true;
-      for (int i = 0; i < limit; i++) {
+      for (int i = 0; i < limit; ++i) {
         if (forward.contig(i) > reverse.contig(i)) {
           forwardIsSmaller = false;
           break;
@@ -126,7 +126,7 @@ final class GraphSorter {
     @Override
     public int compareTo(TranslatedPath o) {
       final int limit = Math.min(o.mPath.length(), mPath.length());
-      for (int i = 0; i < limit; i++) {
+      for (int i = 0; i < limit; ++i) {
         final int compare = Long.compare(mPath.contig(i), o.mPath.contig(i));
         if (compare != 0) {
           return compare;
@@ -180,7 +180,7 @@ final class GraphSorter {
   static Graph sortedGraph(Graph unsorted) {
     final GraphKmerAttribute sorted = new GraphKmerAttribute(unsorted.contigOverlap(), unsorted.contigAttributes(), unsorted.pathAttributes());
     final List<OriginalContig> sortMe = new ArrayList<>();
-    for (long i = 1; i <= unsorted.numberContigs(); i++) {
+    for (long i = 1; i <= unsorted.numberContigs(); ++i) {
       if (!unsorted.contigDeleted(i)) {
         sortMe.add(new OriginalContig(unsorted, i));
       }
@@ -198,7 +198,7 @@ final class GraphSorter {
       translations.put(contig.mOriginalId, newId);
     }
     final List<TranslatedPath> paths = new ArrayList<>();
-    for (int i = 1; i <= unsorted.numberPaths(); i++) {
+    for (int i = 1; i <= unsorted.numberPaths(); ++i) {
       if (!unsorted.pathDeleted(i)) {
         paths.add(new TranslatedPath(unsorted, i, translations));
       }

@@ -66,7 +66,7 @@ public class LocalOrderingTest extends TestCase {
     int i = 0;
     for (final Object frid : from) {
       assertTrue(id + ">" + from.toString(), exp[i].equals(frid));
-      i++;
+      ++i;
     }
   }
 

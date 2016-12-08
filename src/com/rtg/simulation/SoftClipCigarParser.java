@@ -57,13 +57,13 @@ public class SoftClipCigarParser {
 
     if (alignCigarChar == SamUtils.CIGAR_SOFT_CLIP) {
       final int softClipLength = mAlignedCigarState.getCurrentActionLength();
-      for (int i = 0; i < softClipLength; i++) {
+      for (int i = 0; i < softClipLength; ++i) {
         //count up the indels in the soft clipping region
         if (genCigarChar == SamUtils.CIGAR_DELETION_FROM_REF) {
-          indelOffset--;
-          i--; //we don't consume a soft clip for this case, hence the i--
+          --indelOffset;
+          --i; //we don't consume a soft clip for this case, hence the i--
         } else if (genCigarChar == SamUtils.CIGAR_INSERTION_INTO_REF) {
-          indelOffset++;
+          ++indelOffset;
           alignCigarChar = mAlignedCigarState.getAction();  //skip over soft clip
         } else {  //currently the only other type of action we generate is MNP or same.
           alignCigarChar = mAlignedCigarState.getAction();  //skip over soft clip
@@ -148,20 +148,20 @@ public class SoftClipCigarParser {
       if (mCurrentAction != (char) -1) {
         //deal with the previous action
         if (mCurrentAction == SamUtils.CIGAR_SAME || mCurrentAction == SamUtils.CIGAR_MISMATCH || mCurrentAction == SamUtils.CIGAR_SAME_OR_MISMATCH) {
-          mReadPos++;
-          mTemplatePos++;
+          ++mReadPos;
+          ++mTemplatePos;
         } else if (mCurrentAction == SamUtils.CIGAR_DELETION_FROM_REF) {
-          mTemplatePos++;
+          ++mTemplatePos;
         } else if (mCurrentAction == SamUtils.CIGAR_INSERTION_INTO_REF) {
-          mReadPos++;
+          ++mReadPos;
         } else if (mCurrentAction == SamUtils.CIGAR_SOFT_CLIP) {
-          mReadPos++;
+          ++mReadPos;
         } else if (mCurrentAction == SamUtils.CIGAR_GAP_IN_READ) {
-          mTemplatePos++;
+          ++mTemplatePos;
         } else {
           Diagnostic.developerLog("Unchecked action in getAction: " + mCurrentAction);
         }
-        mCurrentActionRemaining--;
+        --mCurrentActionRemaining;
       }
 
       //get a new action if necessary
@@ -183,7 +183,7 @@ public class SoftClipCigarParser {
         int mCigarCount = 0;
         while (mCigarPos < mCigar.length()) {
           final char ch = mCigar.charAt(mCigarPos);
-          mCigarPos++;
+          ++mCigarPos;
           if (ch >= '0' && ch <= '9') {
             mCigarCount = mCigarCount * 10 + (ch - '0');
           } else {  //once we've found a non-numerical, break out

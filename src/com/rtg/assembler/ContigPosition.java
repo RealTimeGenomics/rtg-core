@@ -24,7 +24,7 @@ class ContigPosition {
   static TreeMap<Long, Long> buildDecoder(Graph graph) {
     final TreeMap<Long, Long> positionDecoder = new TreeMap<>();
     long total = 0;
-    for (long i = 1; i <= graph.numberContigs(); i++) {
+    for (long i = 1; i <= graph.numberContigs(); ++i) {
       if (!graph.contigDeleted(i)) {
         positionDecoder.put(total, i);
         total += graph.contigLength(i);
@@ -52,7 +52,7 @@ class ContigPosition {
 
   long encode() {
     long total = 0;
-    for (long i = 1; i < mContigId; i++) {
+    for (long i = 1; i < mContigId; ++i) {
       if (!mGraph.contigDeleted(i)) {
         total += mGraph.contigLength(i);
       }

@@ -30,7 +30,7 @@ public class SimplePossibilityTest extends AbstractPossibilityTest {
     final PossibilityArithmetic arith = arithmetic();
     double v = arith.one();
     final double m = arith.prob2Poss(0.0001);
-    for (int i = 0; i < 77; i++) {
+    for (int i = 0; i < 77; ++i) {
       v = arith.multiply(v, m);
       if (arith.underflow(v)) {
         //System.err.println(i);

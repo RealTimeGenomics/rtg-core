@@ -66,7 +66,7 @@ public class ProteinMaskTest extends TestCase {
 
   public static void encode(final NgsHashFunction hf, final String protein) {
     final Protein[] aa = Protein.values();
-    for (int i = 0; i < protein.length(); i++) {
+    for (int i = 0; i < protein.length(); ++i) {
       boolean found = false;
       for (Protein anAa : aa) {
         if (anAa.name().charAt(0) == protein.charAt(i)) {

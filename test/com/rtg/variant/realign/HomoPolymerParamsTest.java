@@ -117,9 +117,9 @@ public class HomoPolymerParamsTest extends TestCase {
     final double[][][] tr = HomoPolymerParams.transitions(SimplePossibility.SINGLETON, new int[][][] {{{1, 1}, {0, 1}}, {null, {1}}}, false);
     assertEquals(4, tr.length);
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       sb.append("nt:").append(i).append(LS);
-      for (int t = 0; t < tr[i].length; t++) {
+      for (int t = 0; t < tr[i].length; ++t) {
         sb.append("  t=").append(t).append(LS);
         sb.append("  ").append(Utils.realFormat(tr[i][t], 3)).append(LS);
       }
@@ -156,9 +156,9 @@ public class HomoPolymerParamsTest extends TestCase {
     final double[][][] tr = HomoPolymerParams.transitions(SimplePossibility.SINGLETON, new int[][][] {{{1, 1}, {0, 1}}, {null, {1}}}, true);
     assertEquals(4, tr.length);
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       sb.append("nt:").append(i).append(LS);
-      for (int t = 0; t < tr[i].length; t++) {
+      for (int t = 0; t < tr[i].length; ++t) {
         sb.append("  t=").append(t).append(LS);
         sb.append("  ").append(Utils.realFormat(tr[i][t], 3)).append(LS);
       }
@@ -206,11 +206,11 @@ public class HomoPolymerParamsTest extends TestCase {
     assertEquals(1, hpp.minTemplateRepeat());
 
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       sb.append("nt:").append(i).append(LS);
-      for (int t = 1; t <= 3; t++) {
+      for (int t = 1; t <= 3; ++t) {
         sb.append("  t=").append(t).append(LS);
-        for (int r = 1; r <= 3; r++) {
+        for (int r = 1; r <= 3; ++r) {
           sb.append("  ").append(Utils.realFormat(hpp.transition(i, t, r), 3)).append(":").append(Utils.realFormat(hpp.transitionC(i, t, r), 3));
         }
         sb.append(LS);

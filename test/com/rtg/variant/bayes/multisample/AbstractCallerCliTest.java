@@ -50,7 +50,7 @@ public abstract class AbstractCallerCliTest extends AbstractCliTest {
 
   private String spaces(final int indent) {
     final StringBuilder sb = new StringBuilder();
-    for (int k = 0; k < indent; k++) {
+    for (int k = 0; k < indent; ++k) {
       sb.append(' ');
     }
     return sb.toString();

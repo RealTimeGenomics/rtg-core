@@ -103,7 +103,7 @@ public final class TaxStatsCli extends AbstractCli {
         throw new NoTalkbackSlimException("SDF does not have sequence names");
       }
       final PrereadNamesInterface names = reader.names();
-      for (long i = 0; i < reader.numberSequences(); i++) {
+      for (long i = 0; i < reader.numberSequences(); ++i) {
         sdfSequences.add(names.name(i));
       }
       mTaxonomy = TaxonomyUtils.loadTaxonomy(reader);
@@ -123,17 +123,17 @@ public final class TaxStatsCli extends AbstractCli {
         final String rank = current.getRank();
         final boolean isNoRank = "no rank".equals(rank);
         if (current.isLeaf() && !lookupIds.contains(current.getId())) {
-          leafNodesWithNoSequences++;
+          ++leafNodesWithNoSequences;
         }
         if (!current.isLeaf() && lookupIds.contains(current.getId())) {
-          internalSequences++;
+          ++internalSequences;
           notLeafNodeIds.put(current.getId(), current.numChildren());
         }
         if (isNoRank) {
           if (current.isLeaf()) {
-            leafNoRank++;
+            ++leafNoRank;
           } else {
-            internalNoRank++;
+            ++internalNoRank;
           }
         }
         mRankCounts.add(rank);
@@ -145,13 +145,13 @@ public final class TaxStatsCli extends AbstractCli {
       for (final Integer id : lookupIds) {
         final TaxonNode current = mTaxonomy.get(id);
         if (current == null) {
-          mLookupNotInTaxonomyCount++;
+          ++mLookupNotInTaxonomyCount;
         } else {
           if (!current.isLeaf()) {
-            mLookupInternalCount++;
+            ++mLookupInternalCount;
           }
           if ("no rank".equals(current.getRank())) {
-            mLookupNoRankCount++;
+            ++mLookupNoRankCount;
           }
         }
       }
@@ -161,7 +161,7 @@ public final class TaxStatsCli extends AbstractCli {
       for (final String lookup : lookupSequences) {
         if (!sdfSequences.contains(lookup)) {
           seqs.add(lookup);
-          numberSequencesMissing++;
+          ++numberSequencesMissing;
         }
       }
       printList(seqs, " sequences in the taxonomy lookup file are not in the SDF", "Sequences in the taxonomy lookup file that are not in SDF:", err);
@@ -170,7 +170,7 @@ public final class TaxStatsCli extends AbstractCli {
       for (final String seq : sdfSequences) {
         if (!lookupSequences.contains(seq)) {
           seqs.add(seq);
-          numberSequencesMissing++;
+          ++numberSequencesMissing;
         }
       }
       printList(seqs, " sequences in the SDF are not in the taxonomy lookup file", "Sequences in the SDF that are not in taxonomy lookup file:", err);

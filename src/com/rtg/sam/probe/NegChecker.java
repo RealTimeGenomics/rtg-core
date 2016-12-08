@@ -63,7 +63,7 @@ class NegChecker extends PositionAndStrandChecker {
     int refEnd = record.getAlignmentEnd();
     final List<CigarElement> newCigarElements = new ArrayList<>();
     final List<CigarElement> cigarElements = record.getCigar().getCigarElements();
-    for (int i = cigarElements.size() - 1; i >= 0; i--) {
+    for (int i = cigarElements.size() - 1; i >= 0; --i) {
       final CigarElement e = cigarElements.get(i);
       final CigarOperator operator = e.getOperator();
       if (alignmentEnd < refEnd) {

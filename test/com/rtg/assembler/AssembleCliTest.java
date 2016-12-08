@@ -160,7 +160,7 @@ public class AssembleCliTest extends AbstractParamsCliTest<AssembleParams> {
     final File tmpDir = FileHelper.createTempDirectory();
     try {
       final StringBuilder sb = new StringBuilder();
-      for (int k = 0; k < 750; k++) {
+      for (int k = 0; k < 750; ++k) {
         sb.append('A');
       }
       final File reads = ReaderTestUtils.getDNADir(">a" + StringUtils.LS + sb.toString() + StringUtils.LS);
@@ -182,7 +182,7 @@ public class AssembleCliTest extends AbstractParamsCliTest<AssembleParams> {
     final File tmpDir = FileHelper.createTempDirectory();
     try {
       final StringBuilder sb = new StringBuilder();
-      for (int k = 0; k < 750; k++) {
+      for (int k = 0; k < 750; ++k) {
         sb.append('A');
       }
       final String fasta = ">a" + StringUtils.LS + sb.toString() + StringUtils.LS;

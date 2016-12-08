@@ -86,7 +86,7 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
         int count = 0;
         while (it.hasNext()) {
           it.next();
-          count++;
+          ++count;
         }
         assertEquals(expectedCount, count);
         assertEquals(expectedFiltered, it.getFilteredRecordsCount());
@@ -118,7 +118,7 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
       sam1.append(SAM_HEAD1);
       sam2.append(SAM_HEAD1);
       sam3.append(SAM_HEAD1);
-      for (int i = 1; i < 21; i++) {
+      for (int i = 1; i < 21; ++i) {
         sam1.append("readA").append(i).append(String.format(SAM_TAIL, i));
         sam2.append("readB").append(i).append(String.format(SAM_TAIL, i));
         sam3.append("readC").append(i).append(String.format(SAM_TAIL, i));
@@ -132,7 +132,7 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
         final File ff = new File(mDir, "alignments" + j + ".sam");
         FileUtils.stringToFile(content, ff);
         files.add(ff);
-        j++;
+        ++j;
       }
       try {
         final SingletonPopulatorFactory<SAMRecord> pf = new SingletonPopulatorFactory<>(new SamRecordPopulator());
@@ -158,9 +158,9 @@ public class ThreadedMultifileIteratorTest extends MultifileIteratorTest {
     Diagnostic.setLogStream(TestUtils.getNullPrintStream());
     try {
       final ArrayList<File> files = new ArrayList<>();
-      for (int j = 0; j < 10; j++) {
+      for (int j = 0; j < 10; ++j) {
         final StringBuilder sam = new StringBuilder(SAM_HEAD1);
-        for (int i = 1; i < 21; i++) {
+        for (int i = 1; i < 21; ++i) {
           sam.append("readA").append(i).append(String.format(SAM_TAIL, i));
         }
         final File ffsam = new File(mDir, "alignments" + j + ".sam");

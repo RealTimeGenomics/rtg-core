@@ -203,10 +203,10 @@ public class CnvRegion {
     }
     int num = 0;
     if (!mOutputDelete) {
-      num++;
+      ++num;
     }
     if (!mTwinDelete) {
-      num++;
+      ++num;
     }
     num += mNumCopies;
     return num;

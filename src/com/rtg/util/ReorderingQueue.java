@@ -93,7 +93,7 @@ public abstract class ReorderingQueue<T> implements AutoCloseable {
     if (mLastWrittenRecord == null
         || getPosition(mLastWrittenRecord) < getPosition(record)) { // Must be < not <= here to ensure we can still detect duplicates.
       if (!mRecordSet.add(record)) {
-        mDuplicates++;
+        ++mDuplicates;
         ret = false;
       } else {
         ret = true;

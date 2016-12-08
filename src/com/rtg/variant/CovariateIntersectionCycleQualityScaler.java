@@ -52,8 +52,8 @@ class CovariateIntersectionCycleQualityScaler implements PhredScaler {
     final long[] cycleErrors = new long[readPosSize];
     final long[] qualityTotals = new long[baseQualSize];
     final long[] cycleTotals = new long[readPosSize];
-    for (int i = 0; i < baseQualSize; i++) {
-      for (int j = 0; j < readPosSize; j++) {
+    for (int i = 0; i < baseQualSize; ++i) {
+      for (int j = 0; j < readPosSize; ++j) {
         qualityTotals[i] += proc.getTotals()[i][j];
         qualityErrors[i] += proc.getMismatches()[i][j];
         cycleTotals[j] += proc.getTotals()[i][j];
@@ -63,8 +63,8 @@ class CovariateIntersectionCycleQualityScaler implements PhredScaler {
 
     mCurve = new int[baseQualSize][readPosSize];
     final long qualityCalibrationMinEvidence = GlobalFlags.getIntegerValue(CoreGlobalFlags.QUALITY_CALIBRATION_MIN_EVIDENCE);
-    for (int i = 0; i < baseQualSize; i++) {
-      for (int j = 0; j < readPosSize; j++) {
+    for (int i = 0; i < baseQualSize; ++i) {
+      for (int j = 0; j < readPosSize; ++j) {
         if (proc.getMismatches()[i][j] < qualityCalibrationMinEvidence) {
           // Save it for interpolation
           mCurve[i][j] = -1;
@@ -74,8 +74,8 @@ class CovariateIntersectionCycleQualityScaler implements PhredScaler {
       }
     }
 
-    for (int i = 0; i < baseQualSize; i++) {
-      for (int j = 0; j < readPosSize; j++) {
+    for (int i = 0; i < baseQualSize; ++i) {
+      for (int j = 0; j < readPosSize; ++j) {
         if (mCurve[i][j] == -1 && qualityErrors[i] > qualityCalibrationMinEvidence && cycleErrors[j] > qualityCalibrationMinEvidence) {
           final int qualityAdjust = CalibratedMachineErrorParams.countsToEmpiricalQuality(qualityErrors[i], qualityTotals[i], globalErrorRate) - globalPhred;
           final int positionAdjust = CalibratedMachineErrorParams.countsToEmpiricalQuality(cycleErrors[j], cycleTotals[j], globalErrorRate) - globalPhred;
@@ -88,7 +88,7 @@ class CovariateIntersectionCycleQualityScaler implements PhredScaler {
     //Interpolation phase
     // First work out read position independent quality levels to be used as defaults
     final int[] qualityDefaults = new int[mCurve.length];
-    for (int i = 0; i < qualityDefaults.length; i++) {
+    for (int i = 0; i < qualityDefaults.length; ++i) {
       if (qualityTotals[i] < qualityCalibrationMinEvidence) {
         qualityDefaults[i] = -1;
       } else {
@@ -108,7 +108,7 @@ class CovariateIntersectionCycleQualityScaler implements PhredScaler {
     // Now we have defaults for the ends of curves we can interpolate within the read position curve set.
     // At each read position we'll draw a straight line between present quality values we have a rate for.
     // Use the global quality default array for ends...
-    for (int j = 0; j < readPosSize; j++) {
+    for (int j = 0; j < readPosSize; ++j) {
       final Interpolate2dArray interpolate2DArray = Interpolate2dArray.column(mCurve, j);
       interpolate2DArray.fill(qualityDefaults);
       interpolate2DArray.interpolate();

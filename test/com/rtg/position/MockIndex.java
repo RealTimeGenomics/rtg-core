@@ -49,7 +49,7 @@ public class MockIndex extends IntegralAbstract implements Index {
   @Override
   public void add(final long hash, final long id) {
     try {
-      mInitialHashes++;
+      ++mInitialHashes;
       mOut.append(String.valueOf(id)).append(StringUtils.LS);
     } catch (final IOException e) {
       throw new RuntimeException(e);
@@ -73,7 +73,7 @@ public class MockIndex extends IntegralAbstract implements Index {
 
   @Override
   public void freeze() {
-    mTimesFrozen++;
+    ++mTimesFrozen;
   }
 
   public int getTimesFrozen() {
@@ -128,7 +128,7 @@ public class MockIndex extends IntegralAbstract implements Index {
   @Override
   public int count(final long hash) {
     final int res = mCounts[mI % mCounts.length];
-    mI++;
+    ++mI;
     return res;
   }
 

@@ -342,12 +342,12 @@ public class ReadSimEvalCliTest extends AbstractCliTest {
         final MemoryPrintStream diag = new MemoryPrintStream();
         Diagnostic.setLogStream(diag.printStream());
         try {
-          for (int i = 0; i < 12; i++) {
+          for (int i = 0; i < 12; ++i) {
             rec.setReadName("read0/" + i + "/1/chr1/4730076/R/4.");
             rma.processRecord(rec, recordslw);
           }
 
-          for (int i = 0; i < 10; i++) {
+          for (int i = 0; i < 10; ++i) {
             assertTrue(diag.toString().contains("Unable to parse soft clip length in cigar: 999999999999999S2=2X of read read0/" + i + "/1/chr1/4730076/R/4."));
           }
           assertTrue(diag.toString().contains("Further messages about soft clip length parsing errors will be suppressed."));

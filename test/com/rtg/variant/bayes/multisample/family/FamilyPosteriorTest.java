@@ -98,7 +98,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
 
     // 10 A reads for father, mother and child
     final EvidenceQ evidence = new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0, 0, 0.1, 0.1, true, false, false, false);
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       father.increment(evidence);
       mother.increment(evidence);
       child.increment(evidence);
@@ -137,12 +137,12 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
     final ModelInterface<?> child = getModel();
 
     // 10 A reads for father
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       father.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0, 0, 0.1, 0.1, true, false, false, false));
     }
 
     // 5 A reads and 5 C reads for mother and child
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       mother.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0, 0, 0.1, 0.1, true, false, false, false));
       mother.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 1, 0, 0, 0.1, 0.1, true, false, false, false));
       child.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0, 0, 0.1, 0.1, true, false, false, false));
@@ -175,7 +175,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
     final String[] children = new String[members.length - 2];
     System.arraycopy(members, 2, children, 0, children.length);
     final String[] childnames = new String[children.length];
-    for (int i = 0; i < childnames.length; i++) {
+    for (int i = 0; i < childnames.length; ++i) {
       childnames[i] = "c" + i;
     }
     final Family family = FamilyCallerTest.makeFamily(FATHER, MOTHER, childnames);
@@ -230,7 +230,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
     final AbstractFamilyPosterior second = makeFamily("AAAAA", "GGGGG", "AAGGG");
     final List<HypothesisScore> firstBest = bests(first);
     final List<HypothesisScore> secondBest = bests(second);
-    for (int i = 0; i < firstBest.size(); i++) {
+    for (int i = 0; i < firstBest.size(); ++i) {
       assertTrue(firstBest.get(i).nonIdentityPosterior() < secondBest.get(i).nonIdentityPosterior());
     }
   }
@@ -274,7 +274,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
     final List<HypothesisScore> firstBest = bests(first);
     final List<HypothesisScore> secondBest = bests(second);
     assertEquals(higher.length, firstBest.size());
-    for (int i = 0; i < firstBest.size(); i++) {
+    for (int i = 0; i < firstBest.size(); ++i) {
       final double firstScore = firstBest.get(i).nonIdentityPosterior();
       final double secondScore = secondBest.get(i).nonIdentityPosterior();
       if (higher[i]) {
@@ -289,7 +289,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
     final ArrayList<HypothesisScore> b = new ArrayList<>();
     b.add(fp.bestFather());
     b.add(fp.bestMother());
-    for (int i = 0; i < fp.mChildren.size(); i++) {
+    for (int i = 0; i < fp.mChildren.size(); ++i) {
       b.add(fp.bestChild(i));
     }
     return b;
@@ -308,13 +308,13 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
     final ModelInterface<?> child2 = getModel();
 
     // 10 A reads for father and child2
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       father.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0, 0, 0.1, 0.1, true, false, false, false));
       child2.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0, 0, 0.1, 0.1, true, false, false, false));
     }
 
     // 5 A reads and 5 C reads for mother and child
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       mother.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0, 0, 0.1, 0.1, true, false, false, false));
       mother.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 1, 0, 0, 0.1, 0.1, true, false, false, false));
       child.increment(new EvidenceQ(DescriptionSnp.SINGLETON, 0, 0, 0, 0.1, 0.1, true, false, false, false));
@@ -356,7 +356,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
     final ModelInterface<?> child2 = getModel();
     // 10 A reads and 10 C reads for father and child1
     // 10 C reads and 10 G reads for mother and child2
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       father.increment(new EvidenceQ(DescriptionSnp.SINGLETON, A, 0, 0, 0.1, 0.1, true, false, false, false));
       father.increment(new EvidenceQ(DescriptionSnp.SINGLETON, C, 0, 0, 0.1, 0.1, true, false, false, false));
 
@@ -401,11 +401,11 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
 
   private ModelInterface<?> createModel(int aCount, int cCount) {
     final ModelInterface<?> childModel = getModel();
-    for (int i = 0; i < aCount; i++) {
+    for (int i = 0; i < aCount; ++i) {
       childModel.increment(new EvidenceQ(DescriptionSnp.SINGLETON, A, 0, 0, 0.1, 0.2, true, false, false, false));
     }
 
-    for (int i = 0; i < cCount; i++) {
+    for (int i = 0; i < cCount; ++i) {
       childModel.increment(new EvidenceQ(DescriptionSnp.SINGLETON, C, 0, 0, 0.1, 0.2, true, false, false, false));
     }
     childModel.freeze();
@@ -421,7 +421,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
     final ModelInterface<?> father = getModel();
     final ModelInterface<?> mother = getModel();
     final ModelInterface<?> child = getModel();
-    for (int i = 0; i < readCount; i++) {
+    for (int i = 0; i < readCount; ++i) {
       father.increment(new EvidenceQ(DescriptionSnp.SINGLETON, A, 0, 0, 0.1, 0.2, true, false, false, false));
 
       mother.increment(new EvidenceQ(DescriptionSnp.SINGLETON, C, 0, 0, 0.1, 0.2, true, false, false, false));
@@ -432,7 +432,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
 
 
     // with family calling should be able to do this with fewer C reads
-    for (int i = 0; i < callThreshold / 5; i++) {
+    for (int i = 0; i < callThreshold / 5; ++i) {
       child.increment(new EvidenceQ(DescriptionSnp.SINGLETON, C, 0, 0, 0.1, 0.2, true, false, false, false));
     }
 
@@ -467,7 +467,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
     final ModelInterface<?> father = getModel();
     final ModelInterface<?> mother = getModel();
     final ModelInterface<?> child = getModel();
-    for (int i = 0; i < readCount; i++) {
+    for (int i = 0; i < readCount; ++i) {
       father.increment(new EvidenceQ(DescriptionSnp.SINGLETON, A, 0, 0, 0.1, 0.2, true, false, false, false));
 
       mother.increment(new EvidenceQ(DescriptionSnp.SINGLETON, A, 0, 0, 0.1, 0.2, true, false, false, false));
@@ -477,7 +477,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
 
 
     // with family calling should be able to do this with fewer C reads
-    for (int i = 0; i < callThreshold; i++) {
+    for (int i = 0; i < callThreshold; ++i) {
       mother.increment(new EvidenceQ(DescriptionSnp.SINGLETON, C, 0, 0, 0.1, 0.2, true, false, false, false));
     }
 
@@ -512,7 +512,7 @@ public class FamilyPosteriorTest extends AbstractFamilyPosteriorTest {
       if (!v.getSample(0).getName().equals("A:A")) {
         break;
       }
-      callThreshold++;
+      ++callThreshold;
     }
     return callThreshold;
   }

@@ -45,7 +45,7 @@ public class ReadPairSource454 extends ReadPairSource {
   List<byte[]> nextFragments() throws IOException {
     final List<byte[]> fragments = super.nextFragments();
     if (fragments != null) {
-      for (int i = startFlipArm(); i < fragments.size(); i++) {
+      for (int i = startFlipArm(); i < fragments.size(); ++i) {
         DNA.reverseComplementInPlace(fragments.get(i));
       }
     }

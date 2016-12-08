@@ -51,7 +51,7 @@ public class LowKDeBruijnGraph extends AbstractKDeBruijnGraph {
         mLastHash = hash;
       }
       mFirst = false;
-      mCount++;
+      ++mCount;
     }
 
     void atEnd() {

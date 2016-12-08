@@ -54,7 +54,7 @@ public class SamAssistanceSimple implements SamAssistance {
     int tPos = readStart;
     //assert template.charAt(tPos) != '_';
     boolean isFirstAction = true; //this is so we can deal properly with inserts at the start of reads... although it's sure to be broken for reads that start with inserts that aren't at the start of the template.
-    for (int i = 0; i < cigar.length(); i++) {
+    for (int i = 0; i < cigar.length(); ++i) {
       final char c = cigar.charAt(i);
       if (Character.isDigit(c)) {
         n = 10 * n + c - '0';
@@ -74,7 +74,7 @@ public class SamAssistanceSimple implements SamAssistance {
               isFirstAction = false;
             }
             // assert template.charAt(tPos) == '_' : tPos;
-            for (int k = 0; k < n; k++) {
+            for (int k = 0; k < n; ++k) {
               sb.append(read.charAt(rPos + k));
             }
             rPos += n;
@@ -83,10 +83,10 @@ public class SamAssistanceSimple implements SamAssistance {
           }
           if (template.charAt(tPos) == DisplayHelper.INSERT_CHAR) {
             sb.append(DisplayHelper.INSERT_CHAR);
-            tPos++;
+            ++tPos;
             continue;
           }
-          j++;
+          ++j;
 
           switch (c) {
             case SamUtils.CIGAR_SAME:
@@ -107,8 +107,8 @@ public class SamAssistanceSimple implements SamAssistance {
               } else {
                 sb.append(read.charAt(rPos));
               }
-              rPos++;
-              tPos++;
+              ++rPos;
+              ++tPos;
               break;
             case SamUtils.CIGAR_DELETION_FROM_REF:
               if (isFirstAction) {
@@ -128,7 +128,7 @@ public class SamAssistanceSimple implements SamAssistance {
               } else {
                 sb.append("-");
               }
-              tPos++;
+              ++tPos;
               break;
             case SamUtils.CIGAR_GAP_IN_READ:
               if (isFirstAction) {
@@ -136,7 +136,7 @@ public class SamAssistanceSimple implements SamAssistance {
                 isFirstAction = false;
               }
               sb.append(" ");
-              tPos++;
+              ++tPos;
               break;
             case SamUtils.CIGAR_SOFT_CLIP:
               if (displaySoftClip) {
@@ -148,7 +148,7 @@ public class SamAssistanceSimple implements SamAssistance {
                   sb.append(Character.toLowerCase(read.charAt(rPos)));
                 }
               }
-              rPos++;
+              ++rPos;
               //soft clip doesn't really count as a first action!
               break;
             case SamUtils.CIGAR_HARD_CLIP:

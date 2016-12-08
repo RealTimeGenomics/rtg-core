@@ -25,8 +25,8 @@ public class VariantAlleleTriggerTest extends TestCase {
   static final DescriptionCommon DESCRIPTION = new DescriptionCommon("X", "Y", "Z");
 
   void evidence(AlleleStatisticsInt stats, int[] counts) {
-    for (int read = 0; read < counts.length; read++) {
-      for (int count = 0; count < counts[read]; count++) {
+    for (int read = 0; read < counts.length; ++read) {
+      for (int count = 0; count < counts[read]; ++count) {
         stats.increment(new EvidenceQ(stats.getDescription(), read, 0.1, 0.1, true, true, true, true), read, 0.1);
       }
     }

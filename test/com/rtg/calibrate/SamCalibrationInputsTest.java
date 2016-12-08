@@ -36,7 +36,7 @@ public class SamCalibrationInputsTest extends TestCase {
       sbCalibration.append("[");
       final File existingCalFile = new File(tempDir, "samfile0.sam.gz" + Recalibrate.EXTENSION);
       inputFiles.add(existingCalFile);
-      for (int i = 0; i < 10; i++) {
+      for (int i = 0; i < 10; ++i) {
         final File samFile = new File(tempDir, "samfile" + i  + ".sam.gz");
         final File calFile = new File(samFile.getPath() + Recalibrate.EXTENSION);
         final File bamFile = new File(tempDir, "bamfile" + i + ".bam");

@@ -61,7 +61,7 @@ public class GenomeFragmenter {
     mSelectionDistributions = selectionProb;
     mSequenceLengths = new int[sdfs.length][];
     mSequenceCounts = new int[sdfs.length][];
-    for (int i = 0; i < mReaders.length; i++) {
+    for (int i = 0; i < mReaders.length; ++i) {
       mSequenceLengths[i] = mReaders[i].sequenceLengths(0, (int) mReaders[i].numberSequences());
       mSequenceCounts[i] = new int[mSequenceLengths[i].length];
     }
@@ -69,7 +69,7 @@ public class GenomeFragmenter {
     mWorkspace = new byte[1000];
     mMachine = null;
     mRefGenome = new ReferenceGenome[sdfs.length];
-    for (int k = 0; k < mRefGenome.length; k++) {
+    for (int k = 0; k < mRefGenome.length; ++k) {
       // Used to determine circular status when constructing fragments -- hopefully sex and ploidy independent
       mRefGenome[k] = new ReferenceGenome(sdfs[k], Sex.EITHER, ReferencePloidy.AUTO);
     }
@@ -80,7 +80,7 @@ public class GenomeFragmenter {
   }
   static SequenceDistribution[] defaultDistributions(SequencesReader[] sdfs) throws IOException {
     final SequenceDistribution[] result = new SequenceDistribution[sdfs.length];
-    for (int i = 0; i < result.length; i++) {
+    for (int i = 0; i < result.length; ++i) {
       result[i] = SequenceDistribution.defaultDistribution(sdfs[i]);
     }
     return result;
@@ -121,9 +121,9 @@ public class GenomeFragmenter {
   private boolean checkNs(int fragLength) {
     final int maxNsAllowed = mAllowNs ? fragLength / 10 : 0;
     int numNs = 0;
-    for (int k = 0; k < fragLength; k++) {
+    for (int k = 0; k < fragLength; ++k) {
       if (mByteBuffer[k] == (byte) DNA.N.ordinal()) {
-        numNs++;
+        ++numNs;
       }
     }
     return numNs <= maxNsAllowed;
@@ -145,7 +145,7 @@ public class GenomeFragmenter {
     final double mid = (mMaxFragmentSize + mMinFragmentSize) * 0.5 + 0.5;
     final double width = (mMaxFragmentSize - mMinFragmentSize) * 0.25; // 2 std devs per side
     int fragLength = 0;
-    for (int x = 0; x < NUMBER_TRIES; x++) {
+    for (int x = 0; x < NUMBER_TRIES; ++x) {
       fragLength = (int) (mLengthRandom.nextGaussian() * width + mid);
       if ((fragLength >= mMinFragmentSize) && (fragLength <= mMaxFragmentSize)) {
         break;
@@ -159,7 +159,7 @@ public class GenomeFragmenter {
         mByteBuffer = new byte[fragLength];
         mWorkspace = new byte[fragLength];
       }
-      for (int x = 0; x < NUMBER_TRIES; x++) {
+      for (int x = 0; x < NUMBER_TRIES; ++x) {
         // Randomly pick a reader
         final int readerId = mPositionRandom.nextInt(mSequenceLengths.length);
 
@@ -228,7 +228,7 @@ public class GenomeFragmenter {
   private void makeWarning(String message) {
     if (mWarnCount < MAX_WARNINGS) {
       Diagnostic.warning(message);
-      mWarnCount++;
+      ++mWarnCount;
       if (mWarnCount == MAX_WARNINGS) {
         Diagnostic.warning("Subsequent warnings of this type will not be shown.");
       }
@@ -243,16 +243,16 @@ public class GenomeFragmenter {
     final StringBuilder sb = new StringBuilder();
     //final double[][] fractions = new double[mSequenceCounts.length][];
     int totalFrags = 0;
-    for (int i = 0; i < mSequenceCounts.length; i++) {
+    for (int i = 0; i < mSequenceCounts.length; ++i) {
       //fractions[i] = new double[mSequenceCounts[i].length];
-      for (int j = 0; j < mSequenceCounts[i].length; j++) {
+      for (int j = 0; j < mSequenceCounts[i].length; ++j) {
         //fractions[i][j] = (double) mSequenceCounts[i][j] / mSequenceLengths[i][j];
         totalFrags += mSequenceCounts[i][j];
       }
     }
     sb.append("#name").append("\t").append("fragment_count").append("\t").append("fraction_dna").append("\t").append("seq_length").append(StringUtils.LS);
-    for (int i = 0; i < mSequenceCounts.length; i++) {
-      for (int j = 0; j < mSequenceCounts[i].length; j++) {
+    for (int i = 0; i < mSequenceCounts.length; ++i) {
+      for (int j = 0; j < mSequenceCounts[i].length; ++j) {
         final double fractionDna = (double) mSequenceCounts[i][j] / totalFrags;
         sb.append(mReaders[i].name(j)).append("\t").append(mSequenceCounts[i][j]).append("\t").append(String.format(Locale.ROOT, "%1.8g", fractionDna))
                 .append("\t").append(String.format("%d", mSequenceLengths[i][j])).append(StringUtils.LS);

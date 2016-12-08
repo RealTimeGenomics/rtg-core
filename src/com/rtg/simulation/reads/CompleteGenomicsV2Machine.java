@@ -73,7 +73,7 @@ public class CompleteGenomicsV2Machine extends CompleteGenomicsMachine {
         startFrom = CgUtils.CG2_RAW_READ_LENGTH + MAX_DELETE;
       }
     }
-    for (int x = 0; x < NUMBER_TRIES; x++) {
+    for (int x = 0; x < NUMBER_TRIES; ++x) {
       resetCigar();
       int refPos = readBases(startFrom, data, leftArm ? length : startFrom + 1, direction, CgUtils.CG2_OVERLAP_POSITION);
       final int overlap = generateOverlapLength();

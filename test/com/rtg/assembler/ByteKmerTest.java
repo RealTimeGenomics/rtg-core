@@ -53,7 +53,7 @@ public class ByteKmerTest extends AbstractKmerTest {
     ByteKmer.setPos(bytes, 19, 2);
     assertEquals(2, ByteKmer.getPos(bytes, 19));
 
-    for (int i = 0; i < 20; i++) {
+    for (int i = 0; i < 20; ++i) {
       ByteKmer.setPos(bytes, i, 3);
     }
     ByteKmer.setPos(bytes, 19, 0);

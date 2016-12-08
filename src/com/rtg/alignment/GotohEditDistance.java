@@ -196,7 +196,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
     // Set the top row to all zeroes.
     final int startScore = mFixedStart ? LARGE_SCORE : ZERO_SCORE;
     final int endPenalty = Math.min(mTemplatePositionOffset + maxShift + grayWidth + 2, cols); //the last position to calculate on the top row
-    for (int c = 0; c < endPenalty; c++) {    //+2: 1 for the fence, and one for column 0
+    for (int c = 0; c < endPenalty; ++c) {    //+2: 1 for the fence, and one for column 0
       setScores(c, 0, startScore, startScore, startScore + mGapOpenPenalty);
     }
     if (mFixedStart) {
@@ -204,7 +204,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
       setScores(mTemplatePositionOffset, 0, ZERO_SCORE + mGapOpenPenalty, ZERO_SCORE, ZERO_SCORE + mGapOpenPenalty);
       // propagate the insert-at-start-of-read penalties along the top row.
       // TODO: do this for non-fixed start as well?  Merge with above loop?
-      for (int c = mTemplatePositionOffset + 1; c < cols; c++) {
+      for (int c = mTemplatePositionOffset + 1; c < cols; ++c) {
         setInsertScore(c, 0, getInsert(c - 1, 0) + mGapExtendPenalty);
       }
     }
@@ -212,7 +212,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
     final int insert = getInsert(0, 0);
     int delete = getDelete(0, 0);
     setInsertScore(0, 0, insert + mGapOpenPenalty + mGapExtendPenalty); // TODO: why both?  Should be just mGapOpenPenalty? Should already be set above?
-    for (int r = 1; r < Math.min(rows, maxShift + grayWidth * 2); r++) {
+    for (int r = 1; r < Math.min(rows, maxShift + grayWidth * 2); ++r) {
       delete += mGapExtendPenalty;
       setScores(0, r, LARGE_SCORE, LARGE_SCORE, delete);
     }
@@ -286,7 +286,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
     boolean earlyBailOut = false;
     int refPos;
     int terminationColumn = Integer.MAX_VALUE;
-    for (refPos = 1; refPos <= bLength; refPos++) {
+    for (refPos = 1; refPos <= bLength; ++refPos) {
 //      final int thisColumn = refPos * mRows; // hoist this multiplication out of the inner loop
 
       final int origin = refPos - mTemplatePositionOffset;
@@ -311,7 +311,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
       }
 
       int colMinScore = Integer.MAX_VALUE;
-      for (int readPos = minReadPos; readPos <= maxReadPos; readPos++) {
+      for (int readPos = minReadPos; readPos <= maxReadPos; ++readPos) {
         // Compute costs from three possible movement directions
         final int dc = diagonalCost(bb, read, readStartPos + readPos);
         final long leftScores = getScores(refPos - 1, readPos);
@@ -344,7 +344,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
       }
       //System.err.println("refPos=" + refPos + " rlen=" + rlen + " maxReadPos=" + maxReadPos + " minReadPos=" + minReadPos);
     }
-    refPos--; // Stay at last column evaluated
+    --refPos; // Stay at last column evaluated
     if (mFixedEnd) {
       // override the above min score by one of the three scores at the fixed end position.
       mMinScoreReadPos = rlen;
@@ -402,7 +402,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
     mMinScoreReadPos = rlen;
     final int refDiagEndPos = mTemplatePositionOffset + rlen;    //end point if no indels
     final int startPos = Math.min(Math.min(bLength, refDiagEndPos + maxShift + grayWidth), terminationColumn);
-    for (int i = startPos; i >= refDiagEndPos - maxShift - grayWidth && i >= 0; i--) {
+    for (int i = startPos; i >= refDiagEndPos - maxShift - grayWidth && i >= 0; --i) {
       final long bottomScores = getScores(i, rlen);
       final boolean closerThanCurrentBest = Math.abs(mMinScoreTemplatePos - refDiagEndPos) > Math.abs(i - refDiagEndPos);
 
@@ -447,7 +447,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
 
       cellScore = getInsert(rightScores);
       evaluateCellScore(cellScore, i, refPos, closerThanCurrentBest);
-      i--;
+      --i;
     }
   }
 
@@ -511,8 +511,8 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
         } else {
           command = ActionsHelper.MISMATCH;
         }
-        readPos--;
-        refPos--;
+        --readPos;
+        --refPos;
         // now update our current costs
         diagCost = getDistance(refPos, readPos);
         delCost = getDelete(refPos, readPos);
@@ -525,7 +525,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
 //        if (indelDisallowed(readPos, readEndPos, mustIndel)) {
 //          return false;
 //        }
-        refPos--;
+        --refPos;
         // now update our current costs
         final int oldMinCost = minCost;
         diagCost = getDistance(refPos, readPos);
@@ -543,7 +543,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
 //        if (indelDisallowed(readPos, readEndPos, mustIndel)) {
 //          return false;
 //        }
-        readPos--;
+        --readPos;
         // now update our current costs
         final int oldMinCost = minCost;
         diagCost = getDistance(refPos, readPos);
@@ -577,7 +577,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
     }
 
     if (!validResult) {
-      mOffsetTooBig++;
+      ++mOffsetTooBig;
     } else {
       if (maxOffset >= mMaxOffsetHistogram.length) {
         mMaxOffsetHistogram[mMaxOffsetHistogram.length - 1]++;
@@ -616,7 +616,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
     // Setup the path matrix.
     // Each cell [t,r] in path is 0 or a command ('=', 'S', 'D', 'I').
     final char[][] path = new char[mCols][];
-    for (int i = 0; i < mCols; i++) {
+    for (int i = 0; i < mCols; ++i) {
       path[i] = new char[mRows];
     }
     final ActionsHelper.CommandIterator iter = ActionsHelper.iterator(mWorkspace);
@@ -631,27 +631,27 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
       final int cmd = iter.next();
       switch (cmd) {
       case ActionsHelper.INSERTION_INTO_REFERENCE:
-        rPos++;
+        ++rPos;
         path[tPos][rPos] = 'I';
         break;
       case ActionsHelper.DELETION_FROM_REFERENCE:
-        tPos++;
+        ++tPos;
         path[tPos][rPos] = 'D';
         break;
       case ActionsHelper.SAME:
-        rPos++;
-        tPos++;
+        ++rPos;
+        ++tPos;
         path[tPos][rPos] = '=';
         break;
       default:
-        rPos++;
-        tPos++;
+        ++rPos;
+        ++tPos;
         path[tPos][rPos] = 'S';
         break;
       }
     }
     System.out.print("             |");
-    for (int refPos = 1; refPos < mCols; refPos++) {
+    for (int refPos = 1; refPos < mCols; ++refPos) {
       System.out.print("     ");
       System.out.print(refPos == mTemplatePositionOffset + 1 ? "(" : " ");
       System.out.print(residue(template, refPos - 1 + mZeroBasedStart - mTemplatePositionOffset));
@@ -659,9 +659,9 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
       System.out.print("   |");
     }
     System.out.println();
-    for (int readPos = 0; readPos < mRows; readPos++) {
+    for (int readPos = 0; readPos < mRows; ++readPos) {
       System.out.print(residue(read, mReadStartPos + readPos - 1) + "|");
-      for (int refPos = 0; refPos < mCols; refPos++) {
+      for (int refPos = 0; refPos < mCols; ++refPos) {
         if (Math.abs(readPos - (refPos - mTemplatePositionOffset)) > maxShift + grayWidth + 1) {
           System.out.print("  -,  -,  -|");
         } else {
@@ -742,7 +742,7 @@ public class GotohEditDistance implements UnidirectionalEditDistance {
 
     final StringBuilder sb = new StringBuilder();
     sb.append("Maximum offset Histogram").append(StringUtils.LS);
-    for (int i = mMaxOffsetHistogram.length - 1; i >= 0; i--) {
+    for (int i = mMaxOffsetHistogram.length - 1; i >= 0; --i) {
       if (mMaxOffsetHistogram[i] > 0) {
         sb.append(i).append(" = ").append(mMaxOffsetHistogram[i]).append(StringUtils.LS);
       }

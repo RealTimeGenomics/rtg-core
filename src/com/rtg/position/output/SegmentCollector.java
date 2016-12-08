@@ -56,7 +56,7 @@ public class SegmentCollector extends IntegralAbstract {
     final long v = pack(seqId, posn);
     assert v >= 0;
     mValues[mSize] = v;
-    mSize++;
+    ++mSize;
   }
 
   /**
@@ -82,7 +82,7 @@ public class SegmentCollector extends IntegralAbstract {
         }
         //values exhausted write old
         write(oldS.get(j), free, searchPosition);
-        j++;
+        ++j;
         continue;
       }
       final long v = mValues[i];
@@ -93,7 +93,7 @@ public class SegmentCollector extends IntegralAbstract {
         //after all values
         //create new segment and move to new
         create(seqId, posn, newS, free);
-        i++;
+        ++i;
         continue;
       }
       final Segment seg = oldS.get(j);
@@ -101,20 +101,20 @@ public class SegmentCollector extends IntegralAbstract {
         //extend old and move to new
         seg.extend(posn);
         newS.add(seg);
-        i++;
-        j++;
+        ++i;
+        ++j;
         continue;
       }
       if (seqId < seg.seqId() || (seqId == seg.seqId() && posStep < seg.end())) {
         //v < old
         //create new segment and move to new
         create(seqId, posn, newS, free);
-        i++;
+        ++i;
         continue;
       }
       // v > old
       write(seg, free, searchPosition);
-      j++;
+      ++j;
       continue;
     }
     oldS.clear();
@@ -176,7 +176,7 @@ public class SegmentCollector extends IntegralAbstract {
   @Override
   public boolean globalIntegrity() {
     integrity();
-    for (int i = 0; i < mSize; i++) {
+    for (int i = 0; i < mSize; ++i) {
       final int seqId = seqId(mValues[i]);
       Exam.assertTrue(seqId >= 0);
       final int posn = position(mValues[i]);

@@ -66,11 +66,11 @@ public final class MetaSnpLine {
     }
     try {
       final double[][] counts = new double[4][];
-      for (int i = 0; i < counts.length; i++) {
+      for (int i = 0; i < counts.length; ++i) {
         final String count = fields[3 + i];
         final String[] samples = StringUtils.split(count, ',');
         counts[i] = new double[samples.length];
-        for (int j = 0; j < samples.length; j++) {
+        for (int j = 0; j < samples.length; ++j) {
           counts[i][j] = Double.parseDouble(samples[j]);
         }
       }
@@ -87,11 +87,11 @@ public final class MetaSnpLine {
     final List<String> alts = rec.getAltCalls();
     final String[] alleles = new String[alts.size() + 1];
     alleles[0] = rec.getRefCall();
-    for (int k = 1; k < alleles.length; k++) {
+    for (int k = 1; k < alleles.length; ++k) {
       alleles[k] = alts.get(k - 1);
     }
     final double[][] counts = new double[alleles.length][rec.getNumberOfSamples()];
-    for (int j = 0; j < rec.getNumberOfSamples(); j++) {
+    for (int j = 0; j < rec.getNumberOfSamples(); ++j) {
       String ade = rec.getSampleString(j, ADE);
       if (ade == null) {
         ade = rec.getSampleString(j, AD);
@@ -106,7 +106,7 @@ public final class MetaSnpLine {
       if (perAllele.length != alleles.length) {
         throw new NoTalkbackSlimException("Expected " + alleles.length + " entries in AD(E) field of " + rec);
       }
-      for (int k = 0; k < perAllele.length; k++) {
+      for (int k = 0; k < perAllele.length; ++k) {
         try {
           counts[k][j] = Double.parseDouble(perAllele[k]);
         } catch (final NumberFormatException e) {

@@ -100,7 +100,7 @@ public class AlphaSelectorTest extends TestCase {
         , {{0, 0, 3, 7}, {0, 0, 10, 1}, {0, 0, 4, 6}}
         , {{0, 0, 3, 7}, {0, 0, 9, 1}, {0, 0, 5, 6}}
     };
-    for (int i = 0; i < betterReads.length; i++) {
+    for (int i = 0; i < betterReads.length; ++i) {
       final double score = getAlphaScore(xi, worseReads[i]).mLikelihood;
       assertTrue("Not worse: " + Arrays.deepToString(worseReads[i]), score < initialScore);
     }

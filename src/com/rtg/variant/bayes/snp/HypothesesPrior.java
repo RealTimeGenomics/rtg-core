@@ -97,7 +97,7 @@ public class HypothesesPrior<D extends Description> extends Hypotheses<D> implem
     final int hypPad = nameLength() + 1;
     final StringBuilder sb = new StringBuilder();
     sb.append("Hypotheses").append(StringUtils.LS);
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       sb.append(StringUtils.padLeft(name(i), hypPad));
       final double prior = arithmetic().poss2Ln(p(i));
       sb.append(" ").append(StringUtils.padLeft(Utils.realFormat(prior, 3), 7));

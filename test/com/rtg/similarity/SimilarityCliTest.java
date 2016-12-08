@@ -145,7 +145,7 @@ public class SimilarityCliTest extends AbstractCliTest {
     int count = 0;
     for (final String str : args0) {
       if (str != null) {
-        count++;
+        ++count;
       }
     }
     final String[] args = new String[count];
@@ -153,7 +153,7 @@ public class SimilarityCliTest extends AbstractCliTest {
     for (final String str : args0) {
       if (str != null) {
         args[i] = str;
-        i++;
+        ++i;
       }
     }
     return args;
@@ -775,7 +775,7 @@ public class SimilarityCliTest extends AbstractCliTest {
       TestUtils.containsAll(error, "The input list file contained no target files.");
       assertTrue(inputList.delete());
       StringBuilder inputListBuilder = new StringBuilder();
-      for (int i = 0; i < 11; i++) {
+      for (int i = 0; i < 11; ++i) {
         inputListBuilder.append(i).append(" ").append(inputList.getPath()).append(LS);
       }
       FileUtils.stringToFile(inputListBuilder.toString(), inputList);
@@ -789,7 +789,7 @@ public class SimilarityCliTest extends AbstractCliTest {
       assertTrue(inputList.delete());
       final File nonExistant = new File(tempDir, "nonExistant");
       inputListBuilder = new StringBuilder();
-      for (int i = 0; i < 12; i++) {
+      for (int i = 0; i < 12; ++i) {
         inputListBuilder.append(i).append(" ").append(nonExistant.getPath()).append(LS);
       }
       FileUtils.stringToFile(inputListBuilder.toString(), inputList);

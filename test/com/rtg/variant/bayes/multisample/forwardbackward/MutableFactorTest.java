@@ -31,14 +31,14 @@ public class MutableFactorTest extends TestCase {
     final MutableFactor<?> mhv = new MutableFactor<>(hyp, arith, hyp.size());
     assertTrue(mhv.hypotheses() == hyp);
     assertTrue(mhv.arithmetic() == arith);
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; ++i) {
       assertEquals(arith.zero(), mhv.p(i));
     }
 
     mhv.set(0, arith.prob2Poss(0.1));
     mhv.set(2, arith.prob2Poss(0.3));
     final double[] values = {0.1, 0.0, 0.3};
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; ++i) {
       assertEquals(values[i], arith.poss2Prob(mhv.p(i)));
     }
     try {

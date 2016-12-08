@@ -54,18 +54,18 @@ public class TopNProteinOutputProcessor extends ProteinOutputProcessor {
     if (this == mMaster) {
       closeChildren();
 
-      for (int l = 0; l < mTopn.numResults(); l++) {
+      for (int l = 0; l < mTopn.numResults(); ++l) {
         final int count = mTopn.resultCount(l);
         final int score = mTopn.edgeScore(l);
         int edgeCount = mTopn.edgeScoreCount(l);
         boolean written = false;
-        for (long i = 0, j = (long) l * mN; i < count; i++, j++) {
+        for (long i = 0, j = (long) l * mN; i < count; ++i, ++j) {
           final ProteinAlignmentResult res = mTopn.result(j);
           if (res.alignmentScore() < score) {
             super.writeResult(res);
             written = true;
           } else if (mN - i >= edgeCount) {
-            edgeCount--;
+            --edgeCount;
             written = true;
             super.writeResult(res);
           }

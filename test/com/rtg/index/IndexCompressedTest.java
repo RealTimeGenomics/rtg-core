@@ -162,7 +162,7 @@ public class IndexCompressedTest extends AbstractIndexTest {
         , 192, 1, 4, 18, 73, 37, 105, 88, 96, 61, 13
     };
     try {
-      for (int add = 0; add < 2; add++) {
+      for (int add = 0; add < 2; ++add) {
         for (long hash : hashes) {
           countIndex.add(hash, 0L);
         }
@@ -175,7 +175,7 @@ public class IndexCompressedTest extends AbstractIndexTest {
     }
   }
   public final void testAssemblyNonDeterminism() throws IOException {
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       final CreateParams params = new CreateParams(51, 8, 8, 3, true, true, false, false);
       final IndexExtended countIndex = new IndexCompressed(params, new UnfilteredFilterMethod(), 4);
 
@@ -183,7 +183,7 @@ public class IndexCompressedTest extends AbstractIndexTest {
           , 48, 192, 1, 4, 19, 77, 53, 104, 88, 96, 61, 48, 192, 1, 4, 18, 73, 37, 105, 88, 96, 61, 48
           , 192, 1, 4, 18, 73, 37, 105, 88, 96, 61, 13
       };
-      for (int add = 0; add < 2; add++) {
+      for (int add = 0; add < 2; ++add) {
         for (long hash : hashes) {
           countIndex.add(hash, 0L);
         }

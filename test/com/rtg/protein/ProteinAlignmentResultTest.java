@@ -66,7 +66,7 @@ public class ProteinAlignmentResultTest extends TestCase {
       final Frame frames = TranslatedFrame.FORWARD1;
       final int plen = (rlen - Math.abs(genomeFrame) + 1) / 3;
       final byte[] p = new byte[plen];
-      for (int j = 0, i = 0; j < plen; j++, i += 3) {
+      for (int j = 0, i = 0; j < plen; ++j, i += 3) {
         p[j] = frames.code(b, rlen, i);
       }
       final int[] r = ed.calculateEditDistance(p, plen, t, 0, false, Integer.MAX_VALUE, MaxShiftUtils.calculateDefaultMaxShift(plen), true);

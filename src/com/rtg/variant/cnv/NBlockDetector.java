@@ -48,7 +48,7 @@ public final class NBlockDetector {
   public static void detectNs(SequencesReader sequence, int blockSize, OutputStream output) throws IOException {
     if (sequence.type() == SequenceType.DNA) {
       final byte[] buf = new byte[(int) sequence.maxLength()];
-      for (long i = 0; i < sequence.numberSequences(); i++) {
+      for (long i = 0; i < sequence.numberSequences(); ++i) {
         final int length = sequence.read(i, buf);
         detectNs(sequence.name(i), buf, 0, length, blockSize, output);
       }
@@ -70,7 +70,7 @@ public final class NBlockDetector {
   public static void detectNs(String name, byte[] seq, int start, int end, int blockSize, OutputStream output) throws IOException {
     int nStart = 0;
     boolean nRegion = false;
-    for (int i = start; i < end; i++) {
+    for (int i = start; i < end; ++i) {
       final boolean n = seq[i] <= MAX_UNKNOWN;
       if (!nRegion && n) {
         nStart = i;

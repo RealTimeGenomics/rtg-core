@@ -40,7 +40,7 @@ public class BinarySplitterTest extends TestCase {
 
   private static final int MIN_VERSION = 1;
   public void testLoadVersionX() throws IOException {
-    for (int i = MIN_VERSION; i <= BinarySplitter.SERIAL_VERSION; i++) {
+    for (int i = MIN_VERSION; i <= BinarySplitter.SERIAL_VERSION; ++i) {
       checkLoadVersion(i);
     }
   }

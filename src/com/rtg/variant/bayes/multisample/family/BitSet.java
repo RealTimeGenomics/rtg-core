@@ -58,7 +58,7 @@ public class BitSet extends IntegralAbstract {
           sb.append(":");
         }
         sb.append(mNames[value]);
-        mCount++;
+        ++mCount;
       }
 
     };
@@ -123,7 +123,7 @@ public class BitSet extends IntegralAbstract {
       if ((t & 1) != 0) {
         visitor.visit(i);
       }
-      i++;
+      ++i;
       t = t >>> 1;
     }
   }
@@ -137,7 +137,7 @@ public class BitSet extends IntegralAbstract {
   public boolean integrity() {
     Exam.assertTrue(0 < mLength && mLength <= Integer.SIZE);
     Exam.assertEquals(mNames.length, mLength);
-    for (int i = 0; i < mLength; i++) {
+    for (int i = 0; i < mLength; ++i) {
       Exam.assertFalse(mNames[i].trim().equals(""));
       final int t = 1 << i;
       Exam.assertTrue((mMask & t) != 0);

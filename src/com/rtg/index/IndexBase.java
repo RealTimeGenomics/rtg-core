@@ -455,7 +455,7 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
     if (len > 0) {
       sb.append(LS);
       sb.append("\tHash" + "\tValue").append(LS);
-      for (long i = 0; i < len; i++) {
+      for (long i = 0; i < len; ++i) {
         sb.append("[").append(i).append("]\t");
         sb.append(mHash.get(i)).append("\t");
         sb.append(mValue.get(i)).append(LS);
@@ -493,11 +493,11 @@ public abstract class IndexBase extends IntegralAbstract implements Index {
       throw new RuntimeException();
     }
     out.println("Index InitialPosition");
-    for (long i = 0; i < mInitialPosition.length(); i++) {
+    for (long i = 0; i < mInitialPosition.length(); ++i) {
       out.println("[" + i + "]" + "  " + mInitialPosition.get(i));
     }
     out.println("Index Hash  Values");
-    for (long i = 0; i < mNumValues; i++) {
+    for (long i = 0; i < mNumValues; ++i) {
       out.println("[" + i + "]" + "  " + mHash.get(i) + "  " + mValue.get(i));
     }
   }

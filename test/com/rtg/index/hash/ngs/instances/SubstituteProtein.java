@@ -63,7 +63,7 @@ public class SubstituteProtein {
   private void substitutePrivate(final int error, final int soFar) throws IOException {
     //System.err.println("error=" + error + " soFar=" + soFar);
     if (error == 0 || soFar == mLength) {
-      for (int i = soFar; i < mLength; i++) {
+      for (int i = soFar; i < mLength; ++i) {
         mChars[i] = mString.charAt(i);
       }
       final ReadCallAccumulate rc = new ReadCallAccumulate();
@@ -83,7 +83,7 @@ public class SubstituteProtein {
       return;
     }
     //make one substitution and as well the non-substitution case
-    for (int j = 1, c = 0; j < ProteinMaskTest.charsLength(); j++) {
+    for (int j = 1, c = 0; j < ProteinMaskTest.charsLength(); ++j) {
       mChars[soFar]  = ProteinMaskTest.getChar(j);
       if (mChars[soFar] == mString.charAt(soFar)) {
         mSubstitutions[soFar] = ("" + (soFar % 10)).charAt(0);
@@ -93,7 +93,7 @@ public class SubstituteProtein {
           mSubstitutions[soFar] = '.';
           substitutePrivate(error - 1, soFar + 1);
         }
-        c++;
+        ++c;
       }
     }
   }

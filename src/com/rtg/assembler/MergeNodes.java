@@ -121,7 +121,7 @@ public class MergeNodes {
 
   static List<Long> getPath(Graph graph, long pathId) {
     final ArrayList<Long> path = new ArrayList<>();
-    for (int i = 0; i < graph.pathLength(pathId); i++) {
+    for (int i = 0; i < graph.pathLength(pathId); ++i) {
       path.add(graph.pathContig(pathId, i));
     }
     return path;
@@ -135,7 +135,7 @@ public class MergeNodes {
     if (overlapSize > 0) {
       newPath.add(newNode);
     }
-    for (int existingPos = overlapSize; existingPos < existingPath.size(); existingPos++) {
+    for (int existingPos = overlapSize; existingPos < existingPath.size(); ++existingPos) {
       final boolean match = internalMatch(existingPos, mergedNodes, existingPath, graph);
       if (match) {
         newPath.add(newNode);
@@ -155,7 +155,7 @@ public class MergeNodes {
   }
 
   private static boolean palindromeSubMatch(Graph graph, List<Long> mergedSub, List<Long> existingSub) {
-    for (int i = 0; i < mergedSub.size(); i++) {
+    for (int i = 0; i < mergedSub.size(); ++i) {
       final long merged = mergedSub.get(i);
       final long existing = existingSub.get(i);
       if (merged == existing) {
@@ -171,7 +171,7 @@ public class MergeNodes {
 
 
   static int longestStartOverlap(List<Long> mergedNodes, List<Long> existingPath, Graph graph) {
-    for (int i = 0; i < mergedNodes.size(); i++) {
+    for (int i = 0; i < mergedNodes.size(); ++i) {
       final int length = Math.min(mergedNodes.size() - i, existingPath.size());
       if (palindromeSubMatch(graph, mergedNodes.subList(i, i + length), existingPath.subList(0, length))) {
         return length;
@@ -181,7 +181,7 @@ public class MergeNodes {
   }
 
   void simplifyGraph() {
-    for (long i = 1; i <= mGraph.numberContigs(); i++) {
+    for (long i = 1; i <= mGraph.numberContigs(); ++i) {
       if (!mGraph.contigDeleted(i)) {
         simplifyContig(i);
       }
@@ -201,7 +201,7 @@ public class MergeNodes {
         final List<Long> unambiguous = FilterPaths.unambiguousPath(current, -successor, mGraph, mThreshold);
         int i = unambiguous.size() - 1;
         while (i > 0 && !(hasUniquePredecessor(unambiguous.get(i)) && isUnambiguous(unambiguous, i))) {
-          i--;
+          --i;
         }
         if (i > 0 && !GraphAlignment.isPalindrome(current, mGraph)) {
           final List<Long> mergeable = unambiguous.subList(0, i + 1);
@@ -248,7 +248,7 @@ public class MergeNodes {
       hadLinks.add(hasLinks(contig));
     }
     mergeNodes(mGraph, mOverlap, contigs);
-    for (int i = 0; i < hadLinks.size(); i++) {
+    for (int i = 0; i < hadLinks.size(); ++i) {
       final long current = contigs.get(i);
       if (hadLinks.get(i) && !hasLinks(current)) {
         mGraph.deleteContig(current);

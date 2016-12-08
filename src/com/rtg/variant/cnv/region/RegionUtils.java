@@ -105,7 +105,7 @@ public final class RegionUtils {
     if (reader.type() == SequenceType.DNA) {
       final Map<String, Region> map = new HashMap<>();
       final byte[] buf = new byte[(int) reader.maxLength()];
-      for (long i = 0; i < reader.numberSequences(); i++) {
+      for (long i = 0; i < reader.numberSequences(); ++i) {
         final int length = reader.read(i, buf);
         map.put(reader.name(i), detectNs(buf, 0, length, blockSize));
       }
@@ -119,7 +119,7 @@ public final class RegionUtils {
     final SortedSet<AbstractCnvRegion> set = new TreeSet<>();
     int nStart = 0;
     boolean nRegion = false;
-    for (int i = start; i < end; i++) {
+    for (int i = start; i < end; ++i) {
       final boolean n = seq[i] <= MAX_UNKNOWN;
       if (!nRegion && n) {
         nStart = i;
@@ -221,7 +221,7 @@ public final class RegionUtils {
         }
       }
       lsm.add((double) bucket);
-      blocks++;
+      ++blocks;
     }
     if (state == State.IN) {
       try {

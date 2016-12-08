@@ -65,7 +65,7 @@ public final class ChiSquared {
    */
   static double p1eval(final double x, final double[] p) {
     double a = x + p[0];
-    for (int i = 1; i < p.length; i++) {
+    for (int i = 1; i < p.length; ++i) {
       a *= x;
       a += p[i];
     }
@@ -292,7 +292,7 @@ public final class ChiSquared {
     double c = 1;
     double ans = 1;
     do {
-      r++;
+      ++r;
       c *= x / r;
       ans += c;
     } while (c / ans > MACHINE_PRECISION);
@@ -402,7 +402,7 @@ public final class ChiSquared {
         ch -= (1.0 - Math.exp(a + g + 0.5 * ch + c * LN2) * p2 / p1) / t;
       } while (Math.abs(q / ch - 1.0) > 0.01);
     }
-    for (int i = 0; i < 7; i++) {
+    for (int i = 0; i < 7; ++i) {
       final double q = ch;
       final double p1 = 0.5 * ch;
       final double p2 = p - incompletegamma(xx, p1);

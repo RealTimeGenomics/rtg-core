@@ -48,9 +48,9 @@ class KmerHashA extends AbstractKmer {
     final long[] hash = new long[length];
     for (int i = 0, j = length - 1; i < kmer.length();) {
       hash[j] = (hash[j] << 2) | (kmer.nt(i) - 1);
-      i++;
+      ++i;
       if (i % NT_IN_LONG == excess) {
-        j--;
+        --j;
       }
     }
     return hash;
@@ -58,7 +58,7 @@ class KmerHashA extends AbstractKmer {
 
   //  static long[] min(final long[] a, final long[] b) {
   //    assert a.length == b.length;
-  //    for (int i = 0; i < a.length; i++) {
+  //    for (int i = 0; i < a.length; ++i) {
   //      final long la = a[i];
   //      final long lb = b[i];
   //      if (la < lb) {
@@ -96,7 +96,7 @@ class KmerHashA extends AbstractKmer {
     final int length = mHash.length;
     final long[] succ = new long[length];
     int carry = nt - 1;
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       final long l = mHash[i];
       final int next = (int) (l >>> (Long.SIZE - 2));
       succ[i] = (l << 2) | carry;
@@ -116,7 +116,7 @@ class KmerHashA extends AbstractKmer {
     final long hi = ((long) (nt - 1)) << (mLastBits - 2);
     final long lo = l0 >>> 2;
     pred[length - 1] = hi | lo;
-    for (int i = length - 2; i >= 0; i--) {
+    for (int i = length - 2; i >= 0; --i) {
       final long l = mHash[i];
       final long ca = carry << (Long.SIZE - 2); //because of this shift we dont need to mask carry
       pred[i] = ca | l >>> 2;
@@ -127,7 +127,7 @@ class KmerHashA extends AbstractKmer {
 
   static boolean isLessThanUnsigned(long[] n1, long[] n2) {
     assert n1.length == n2.length;
-    for (int k = 0; k < n1.length; k++) {
+    for (int k = 0; k < n1.length; ++k) {
       if (n1[k] != n2[k]) {
         return LongUtils.isLessThanUnsigned(n1[k], n2[k]);
       }
@@ -173,7 +173,7 @@ class KmerHashA extends AbstractKmer {
         f = mHash[++j];
       }
       if (i % NT_IN_LONG == excess) {
-        k--;
+        --k;
       }
     }
     return reverse;

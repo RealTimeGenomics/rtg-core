@@ -107,7 +107,7 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
     mTotalTimeTaken = new long[editDistances.length];
 
     mStats = new int[editDistances.length][];
-    for (int i = 0; i < mStats.length; i++) {
+    for (int i = 0; i < mStats.length; ++i) {
       mStats[i] = new int[RESULT_EVENTS];
     }
     mMaxIntActions = new int[12];
@@ -189,7 +189,7 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
           + DnaUtils.bytesToSequenceIncCG(read));
     }
     int[] result = null;
-    for (int ed = 0; ed < mEds.length; ed++) {
+    for (int ed = 0; ed < mEds.length; ++ed) {
       final long starttime = System.nanoTime();
       mResult[ed] = mEds[ed].calculateEditDistance(read, rlen, template, zeroBasedStart, maxScore, maxShift, cgLeft);
       mTimeTaken[ed] = System.nanoTime() - starttime;
@@ -205,7 +205,7 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
   public int[] calculateEditDistanceFixedBoth(byte[] read, int readStartPos, int readEndPos, byte[] template,
       int templateStartPos, int templateEndPos, int maxScore, int maxShift) {
     int[] result = null;
-    for (int ed = 0; ed < mEds.length; ed++) {
+    for (int ed = 0; ed < mEds.length; ++ed) {
       final long starttime = System.nanoTime();
       mResult[ed] = mEds[ed].calculateEditDistanceFixedBoth(read, readStartPos, readEndPos, template, templateStartPos, templateEndPos, maxScore, maxShift);
       mTimeTaken[ed] = System.nanoTime() - starttime;
@@ -221,7 +221,7 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
   public int[] calculateEditDistanceFixedEnd(byte[] read, int readStartPos, int readEndPos, byte[] template,
       int templateExpectedStartPos, int templateEndPos, int maxScore, int maxShift) {
     int[] result = null;
-    for (int ed = 0; ed < mEds.length; ed++) {
+    for (int ed = 0; ed < mEds.length; ++ed) {
       final long starttime = System.nanoTime();
       mResult[ed] = mEds[ed].calculateEditDistanceFixedEnd(read, readStartPos, readEndPos, template, templateExpectedStartPos, templateEndPos,
           maxScore, maxShift);
@@ -238,7 +238,7 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
   public int[] calculateEditDistanceFixedStart(byte[] read, int readStartPos, int readEndPos, byte[] template,
       int templateStartPos, int maxScore, int maxShift) {
     int[] result = null;
-    for (int ed = 0; ed < mEds.length; ed++) {
+    for (int ed = 0; ed < mEds.length; ++ed) {
       final long starttime = System.nanoTime();
       mResult[ed] = mEds[ed].calculateEditDistanceFixedStart(read, readStartPos, readEndPos, template, templateStartPos, maxScore, maxShift);
       mTimeTaken[ed] = System.nanoTime() - starttime;
@@ -266,7 +266,7 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
 
     final int lastScore = last == null ? 1000000 : last[ActionsHelper.ALIGNMENT_SCORE_INDEX]; //last aligner's score for the alignment
     boolean error = false;
-    for (int ed = 0; ed < mEds.length; ed++) {
+    for (int ed = 0; ed < mEds.length; ++ed) {
       mTotalTimeTaken[ed] += mTimeTaken[ed];
       timesLine.append("\t").append(mTimeTaken[ed] / 1000);
       final int[] actions = mResult[ed];
@@ -328,7 +328,7 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
       final String space = StringUtils.getSpaceString(CONTEXT);
       System.out.println("\tread:\t" + space + DnaUtils.bytesToSequenceIncCG(read, 0, rlen));
       System.out.println("\ttmpl:\t" + DnaUtils.bytesToSequenceIncCG(template, zeroBasedStart - CONTEXT, rlen + 2 * CONTEXT));
-      for (int ed = 0; ed < mEds.length; ed++) {
+      for (int ed = 0; ed < mEds.length; ++ed) {
         final int[] actions = mResult[ed];
         if (actions != null && actions[ActionsHelper.ALIGNMENT_SCORE_INDEX] != Integer.MAX_VALUE) {
           final String name = getName(ed).substring(0, 6);
@@ -353,7 +353,7 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
   @Override
   public void logStats() {
     int totalReads = 0;
-    for (int event = 0; event < RESULT_EVENTS; event++) {
+    for (int event = 0; event < RESULT_EVENTS; ++event) {
       totalReads += mStats[0][event];
     }
     final StringBuilder sb = new StringBuilder();
@@ -362,14 +362,14 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
     sb.append(" maxScore: ").append(mTotalMaxScore / totalReads);
     sb.append(StringUtils.LS);
     sb.append("ED#\tNull#\tMaxOk\tMaxBad\tTooLow\tCorrect\tTooHigh\tTotal\tAvUsecs").append(StringUtils.LS);
-    for (int ed = 0; ed < mEds.length; ed++) {
+    for (int ed = 0; ed < mEds.length; ++ed) {
       if (getName(ed).length() > 6) { //for obfuscater
         sb.append(getName(ed).substring(0, 6));
       } else {
         sb.append(getName(ed));
       }
       int total = 0;
-      for (int event = 0; event < RESULT_EVENTS; event++) {
+      for (int event = 0; event < RESULT_EVENTS; ++event) {
         sb.append("\t");
         sb.append(mStats[ed][event]);
         total += mStats[ed][event];
@@ -427,7 +427,7 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
       String line;
       int lineNum = 0;
       while ((line = input.readLine()) != null) {
-        lineNum++;
+        ++lineNum;
         if (line.startsWith("#")) {
           continue;
         }
@@ -439,7 +439,7 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
         final byte[] tmpl = DnaUtils.encodeString(words[2]);
         final int startPos = Integer.parseInt(words[3]);
         mReadName = String.valueOf(lineNum);
-        for (int pos = startPos - mShift; pos <= startPos + mShift; pos++) {
+        for (int pos = startPos - mShift; pos <= startPos + mShift; ++pos) {
           calculateEditDistance(read, read.length, tmpl, pos, maxScore, mMaxShiftFactor.calculateMaxShift(read.length), true);
         }
       }

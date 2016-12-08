@@ -114,7 +114,7 @@ public class GraphAlignment {
   static boolean isPalindrome(long contigId, Graph graph) {
     final Contig contig = graph.contig(contigId);
     final Contig reverse = graph.contig(-contigId);
-    for (int i = 0; i * 2 < contig.length(); i++) {
+    for (int i = 0; i * 2 < contig.length(); ++i) {
       if (contig.nt(i) != reverse.nt(i)) {
         return false;
       }
@@ -143,7 +143,7 @@ public class GraphAlignment {
     if (contigs().size() != that.contigs().size()) {
       return false;
     }
-    for (int i = 0; i < contigs().size(); i++) {
+    for (int i = 0; i < contigs().size(); ++i) {
       final long thisContig = contigs().get(i);
       final long thatContig = that.contigs().get(i);
       if (thisContig == thatContig) {

@@ -74,7 +74,7 @@ public class Convergence {
   static int sampleHaploid(double[] distr, Random random) {
     final double rand = random.nextDouble();
     double soFar = 0.0;
-    for (int i = 0; i < distr.length; i++) {
+    for (int i = 0; i < distr.length; ++i) {
       soFar += distr[i];
       if (soFar >= rand) {
         return i;
@@ -86,7 +86,7 @@ public class Convergence {
   static double[] distr(HypothesesPrior<?> hyp) {
     final double[] distr = new double[hyp.size()];
     final PossibilityArithmetic arith = hyp.arithmetic();
-    for (int i = 0; i < hyp.size(); i++) {
+    for (int i = 0; i < hyp.size(); ++i) {
       distr[i] = arith.poss2Prob(hyp.p(i));
     }
     return distr;
@@ -103,7 +103,7 @@ public class Convergence {
     SimulationResult(int[] incorrect) {
       mIncorrect = incorrect;
       int total = 0;
-      for (int i = 0; i < incorrect.length; i++) {
+      for (int i = 0; i < incorrect.length; ++i) {
         total += mIncorrect[i];
       }
       mTotalIncorrect = total;
@@ -164,7 +164,7 @@ public class Convergence {
     mModels = models;
     mRandom = random;
     mSample = new int[models.size()];
-    for (int i = 0; i < models.size(); i++) {
+    for (int i = 0; i < models.size(); ++i) {
       final ModelInterface<?> model = models.get(i);
       final int sample;
       if (model.haploid()) {
@@ -178,7 +178,7 @@ public class Convergence {
   }
 
   SimulationResult simulate() {
-    for (int i = 0; i < mModels.size(); i++) {
+    for (int i = 0; i < mModels.size(); ++i) {
       final ModelInterface<?> model = mModels.get(i);
       final Hypotheses<?> hyp = model.hypotheses();
       final int read0 = choose(mSample[i], hyp, mRandom);
@@ -190,7 +190,7 @@ public class Convergence {
     models.stream().forEach(ModelInterface::freeze);
     final HypothesisScores popCalls = mPopulation.getBestScores(models, new PriorContainer<>(new HaploidDiploidHypotheses<>(HypothesesNone.SINGLETON, mHaploid, mDiploid), null));
     final int[] incorrect = new int[mDiploid.size()];
-    for (int i = 0; i < mModels.size(); i++) {
+    for (int i = 0; i < mModels.size(); ++i) {
       final int sample = mSample[i];
       if (popCalls.getScores()[i].hypothesis() != sample) {
         incorrect[sample]++;

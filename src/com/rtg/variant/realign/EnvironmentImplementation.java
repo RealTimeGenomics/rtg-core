@@ -100,7 +100,7 @@ public class EnvironmentImplementation extends IntegralAbstract implements Envir
     sb.append("Environment").append(LS);
     final int end = readLength()  + maxShift();
     sb.append("Template [").append(absoluteTemplatePosition(0)).append("..").append(absoluteTemplatePosition(readLength())).append(")").append(LS);
-    for (int i = -maxShift(); i < end; i++) {
+    for (int i = -maxShift(); i < end; ++i) {
       final String indicator = i < 0 ? "-" : i >= readLength() ? "+" : " ";
       final int j = absoluteTemplatePosition(i);
       if (j >= 0 && j < templateLength()) {
@@ -108,7 +108,7 @@ public class EnvironmentImplementation extends IntegralAbstract implements Envir
       }
     }
     sb.append("Read").append(LS);
-    for (int i = 0; i < readLength(); i++) {
+    for (int i = 0; i < readLength(); ++i) {
       sb.append("[").append(i).append("]").append(VALUE_CHARS[read(i)]).append(" ").append(Utils.realFormat(quality(i), 3)).append(LS);
     }
   }

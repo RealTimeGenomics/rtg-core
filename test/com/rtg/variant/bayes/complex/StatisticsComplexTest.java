@@ -42,7 +42,7 @@ public class StatisticsComplexTest extends TestCase {
     sam.setReadString("CCCCC" + ins + "GGGGG");
     sam.setCigarString("5=" + length + "I5=");
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < length; i++) {
+    for (int i = 0; i < length; ++i) {
       sb.append('`');
     }
     return new AlignmentMatch(new VariantAlignmentRecord(sam), null, ins, FastaUtils.asciiToRawQuality(sb.toString()), 0, 0, length, mapq, fixedLeft, fixedRight);
@@ -84,7 +84,7 @@ public class StatisticsComplexTest extends TestCase {
     sam.setReadString((fixedLeft ? "CCCCC" : "") + bases + (fixedRight ? "GGGGG" : ""));
     sam.setCigarString((fixedLeft ? "5=" : "") + partialCigar + (fixedRight ? "5=" : ""));
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < sam.getReadString().length(); i++) {
+    for (int i = 0; i < sam.getReadString().length(); ++i) {
       sb.append('`');
     }
     final int start = fixedLeft ? 5 : 0;
@@ -98,7 +98,7 @@ public class StatisticsComplexTest extends TestCase {
     comtem.setComplexContext(HypothesesComplex.createComplexDescription(Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), comtem, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
     final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(comtem, true, vp);
     final StatisticsComplex stat = new StatisticsComplex(hyp.description(), comtem.getLength());
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       stat.increment(new EvidenceComplex(hyp, partialMatch("AA", "2=", 5, true, false), comtem, vp, EvidenceComplexTest.getChooser()), 0);
     }
     assertEquals(2.000, stat.coverage(), 1e-3);
@@ -111,7 +111,7 @@ public class StatisticsComplexTest extends TestCase {
     comtem.setComplexContext(HypothesesComplex.createComplexDescription(Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), comtem, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
     final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(comtem, true, vp);
     final StatisticsComplex stat = new StatisticsComplex(hyp.description(), comtem.getLength());
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       stat.increment(new EvidenceComplex(hyp, partialMatch("AA", "2=", 5, false, true), comtem, vp, EvidenceComplexTest.getChooser()), 0);
     }
     assertEquals(2.000, stat.coverage(), 1e-3);
@@ -124,7 +124,7 @@ public class StatisticsComplexTest extends TestCase {
     comtem.setComplexContext(HypothesesComplex.createComplexDescription(Arrays.asList(partialMatch("AAAAAAAAAA", "10=", 5, true, true)), comtem, null, vp.pruneHypotheses(), vp.maxComplexHypotheses()), LogPossibility.SINGLETON);
     final HypothesesComplex hyp = HypothesesComplex.makeComplexHypotheses(comtem, true, vp);
     final StatisticsComplex stat = new StatisticsComplex(hyp.description(), comtem.getLength());
-    for (int i = 0; i < 12; i++) {
+    for (int i = 0; i < 12; ++i) {
       stat.increment(new EvidenceComplex(hyp, partialMatch("AA", "2=", 5, true, false), comtem, vp, EvidenceComplexTest.getChooser()), 0);
     }
     assertEquals(2.400, stat.exactCoverage(), 1e-3);
@@ -157,10 +157,10 @@ public class StatisticsComplexTest extends TestCase {
   public void testCoverage() throws Exception {
     Diagnostic.setLogStream();
     final ArrayList<AlignmentMatch> ml = new ArrayList<>();
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 3; ++i) {
       ml.add(match("AAA", 0));
     }
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       ml.add(match("GGG", 20));
     }
     final VariantParams vp = HypothesesComplexTest.getVariantParams(0.5, 0.5, 0.1);

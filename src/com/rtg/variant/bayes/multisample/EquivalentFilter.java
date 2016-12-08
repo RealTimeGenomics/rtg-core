@@ -93,7 +93,7 @@ public class EquivalentFilter {
       return false;
     }
     boolean nonRef = false;
-    for (int i = 0; i < lastComplex.getNumberOfSamples(); i++) {
+    for (int i = 0; i < lastComplex.getNumberOfSamples(); ++i) {
       final VariantSample ls = lastComplex.getSample(i);
       final VariantSample cs = current.getSample(i);
       if ((ls == null) != (cs == null)) { // This can happen for male model on Y chromosome spanning PAR region boundary. Not equivalent

@@ -82,11 +82,11 @@ public class SequenceGenerator {
         return false;
       }
       mSequenceData = new byte[mLengths[mSequenceNumber]];
-      for (int i = 0; i < mSequenceData.length; i++) {
+      for (int i = 0; i < mSequenceData.length; ++i) {
         mSequenceData[i] = (byte) getRandomResidue().ordinal();
       }
 
-      mSequenceNumber++;
+      ++mSequenceNumber;
       mMinLength = Math.min(mMinLength, currentLength());
       mMaxLength = Math.max(mMaxLength, currentLength());
       return true;

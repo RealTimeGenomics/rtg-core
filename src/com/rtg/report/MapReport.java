@@ -160,7 +160,7 @@ public class MapReport extends MapSummaryReport {
         }
       }
       if (inputDirs.length > 1) {
-        for (int i = 0; i < inputDirs.length; i++) {
+        for (int i = 0; i < inputDirs.length; ++i) {
           body.append(reportSummary(helper, new File(inputDirs[i], CommonFlags.SUMMARY_FILE), i));
         }
       }
@@ -189,7 +189,7 @@ public class MapReport extends MapSummaryReport {
 
   private Histogram[] getHistogramsForTypes(MapReportData reporter, DistributionType... dt) {
     final Histogram[] hists = new Histogram[dt.length];
-    for (int i = 0; i < dt.length; i++) {
+    for (int i = 0; i < dt.length; ++i) {
       hists[i] = reporter.getHistogram(dt[i]);
     }
     return hists;
@@ -201,7 +201,7 @@ public class MapReport extends MapSummaryReport {
     }
     final boolean isPaired = FileUtils.fileToString(summaryFile).contains("mated");
     final Histogram[] grams = new Histogram[isPaired ? 2 : 1];
-    for (int i = 0; i < grams.length; i++) {
+    for (int i = 0; i < grams.length; ++i) {
       grams[i] = new Histogram();
     }
     final StringBuilder summaryText = new StringBuilder();
@@ -218,7 +218,7 @@ public class MapReport extends MapSummaryReport {
           if (parts.length == numParts) {
             final String title = parts[numParts - 1];
             if (title.startsWith("ma") || title.startsWith("un")) {
-              for (int i = 0; i < grams.length; i++) {
+              for (int i = 0; i < grams.length; ++i) {
                 grams[i].increment(titles.size(), Long.parseLong(parts[i]));
               }
               final String[] tParts = title.split("\\s+");
@@ -363,9 +363,9 @@ public class MapReport extends MapSummaryReport {
       assert grams.length > 0 && grams.length <= 2;
       int min = Integer.MAX_VALUE;
       int max = 0;
-      for (int j = 0; j < grams.length; j++) {
+      for (int j = 0; j < grams.length; ++j) {
         final Histogram gram = grams[j];
-        for (int i = 0; i < gram.getLength(); i++) {
+        for (int i = 0; i < gram.getLength(); ++i) {
           final long val = gram.getValue(i);
           if (val != 0) {
             Values vals = mMap.get(i);
@@ -419,7 +419,7 @@ public class MapReport extends MapSummaryReport {
           sb.append(e.getKey());
         }
         sb.append("</td>");
-        for (int i = 0; i < mSize; i++) {
+        for (int i = 0; i < mSize; ++i) {
           sb.append("<td align=\"right\">");
           sb.append(e.getValue().getValue(i));
           sb.append("</td>");
@@ -471,7 +471,7 @@ public class MapReport extends MapSummaryReport {
     void toGraphImage(File output, PlotType type) throws IOException {
       final Plot2D[] plot = new Plot2D[mSize];
       final Datum2D[][] data = new Datum2D[mSize][];
-      for (int i = 0; i < mSize; i++) {
+      for (int i = 0; i < mSize; ++i) {
         plot[i] = getPlot(type);
         plot[i].setColor(COLORS[i]);
         plot[i].setTitle(KEY_TITLES[i]);
@@ -479,10 +479,10 @@ public class MapReport extends MapSummaryReport {
       }
       int j = 0;
       for (Entry<Integer, Values> e : mMap.entrySet()) {
-        for (int i = 0; i < mSize; i++) {
+        for (int i = 0; i < mSize; ++i) {
           data[i][j] = getDatum(type, i, e.getKey(), e.getValue().getValue(i));
         }
-        j++;
+        ++j;
       }
 
       final Graph2D graph = new Graph2D();
@@ -513,14 +513,14 @@ public class MapReport extends MapSummaryReport {
       } else {
         graph.setShowKey(false);
       }
-      for (int i = 0; i < mSize; i++) {
+      for (int i = 0; i < mSize; ++i) {
         plot[i].setData(data[i]);
         graph.addPlot(plot[i]);
       }
       if (mTitles != null) {
         final TextPlot2D tPlot = new TextPlot2D();
         final TextPoint2D[] titles = new TextPoint2D[mTitles.length];
-        for (int i = 0; i < mTitles.length; i++) {
+        for (int i = 0; i < mTitles.length; ++i) {
           titles[i] = new TextPoint2D(i, 0, mTitles[i]);
         }
         tPlot.setData(titles);

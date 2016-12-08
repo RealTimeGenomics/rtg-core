@@ -62,7 +62,7 @@ public final class Utils {
     int cnt = 0;
     for (final boolean boo : mark) {
       if (boo) {
-        cnt++;
+        ++cnt;
       }
     }
     return cnt;
@@ -85,7 +85,7 @@ public final class Utils {
     int cnt = 0;
     for (final boolean boo : mark) {
       if (boo) {
-        cnt++;
+        ++cnt;
       }
     }
     return cnt;
@@ -110,7 +110,7 @@ public final class Utils {
     int cnt = 0;
     for (final boolean boo : mark) {
       if (boo) {
-        cnt++;
+        ++cnt;
       }
     }
     return cnt;
@@ -137,7 +137,7 @@ public final class Utils {
     int cnt = 0;
     for (final boolean boo : mark) {
       if (boo) {
-        cnt++;
+        ++cnt;
       }
     }
     return cnt;
@@ -153,13 +153,13 @@ public final class Utils {
     int inOutput = 0;
     for (String member : family.getMembers()) {
       if (outputGenomes.contains(member)) {
-        inOutput++;
+        ++inOutput;
       }
     }
     int childrenInOutput = 0;
     for (String member : family.getChildren()) {
       if (outputGenomes.contains(member)) {
-        childrenInOutput++;
+        ++childrenInOutput;
       }
     }
     return inOutput > 1 && childrenInOutput > 0;
@@ -204,7 +204,7 @@ public final class Utils {
       final Double aa = b.statistics().ambiguityRatio();
       if (aa != null) {
         ambig += aa;
-        acount++;
+        ++acount;
       }
     }
     //    System.err.println("" + " ambig/models.size()=" + (ambig/models.size()) );

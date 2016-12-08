@@ -81,7 +81,7 @@ public class DefaultOutputProcessorSynch implements OutputProcessor {
 
     Collections.sort(mChildren, new DefaultOutputProcessorComparator());
     final File[] outputFiles = new File[mChildren.size()];
-    for (int i = 0; i < outputFiles.length; i++) {
+    for (int i = 0; i < outputFiles.length; ++i) {
       outputFiles[i] = mChildren.get(i).getFile();
     }
     if (mParams.outputParams().mergeMatchResults()) {
@@ -100,7 +100,7 @@ public class DefaultOutputProcessorSynch implements OutputProcessor {
   }
 
   static void deleteTemp(final File inputDir, final int size) {
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       final File file = new File(inputDir, THREAD_FILE_NAME + i);
       if (!file.delete()) {
         Diagnostic.warning("Failed to delete temporary file: " + file.getPath());
@@ -118,7 +118,7 @@ public class DefaultOutputProcessorSynch implements OutputProcessor {
         int len;
         while ((len = inStream.read(buf, 0, buf.length)) > 0) {
           if (skipLine) {
-            for (int i = 0; i < len; i++) {
+            for (int i = 0; i < len; ++i) {
               if (buf[i] == (byte) '\n') {
                 out.write(buf, i + 1, len - i - 1);
                 skipLine = false;

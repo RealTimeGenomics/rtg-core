@@ -177,7 +177,7 @@ public final class NgsHashLoopImplTest extends TestCase {
 
     @Override
     public void hashStep() {
-      mSoFar++;
+      ++mSoFar;
     }
 
     @Override
@@ -233,7 +233,7 @@ public final class NgsHashLoopImplTest extends TestCase {
     }
     @Override
     public NgsHashFunction threadClone(final HashingRegion region) {
-      mClones++;
+      ++mClones;
       try {
         return (HashFunctionMock) super.clone();
       } catch (final CloneNotSupportedException e) {

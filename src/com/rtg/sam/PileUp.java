@@ -48,17 +48,17 @@ public class PileUp {
       mC[position]++;
       break;
     case 'n':
-      mNCount++;
+      ++mNCount;
       break;
     default:
       break;
     }
-    mCount++;
+    ++mCount;
   }
 
   long consensus() {
     long c = mNCount;
-    for (int i = 0; i < mTemplateLength; i++) {
+    for (int i = 0; i < mTemplateLength; ++i) {
       c += Math.max(mA[i], Math.max(mG[i], Math.max(mT[i], mC[i])));
     }
 

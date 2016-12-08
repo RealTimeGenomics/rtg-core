@@ -50,7 +50,7 @@ public class DnaSequenceComplexity extends AbstractSequenceComplexity {
     final int end = Math.min(sequence.length, offset + regionLength());
     final int length = end - offset;
 
-    for (int i = offset; i < end; i++) {
+    for (int i = offset; i < end; ++i) {
       baseCounts[sequence[i]]++;
     }
     double logOfNFactorials = 0.0;

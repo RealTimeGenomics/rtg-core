@@ -131,7 +131,7 @@ public class SingleEndTempFileWriter extends AbstractTempFileWriter {
     }
 
     if (matchActions[ActionsHelper.ALIGNMENT_SCORE_INDEX] <= maxScore) {
-      mMaxScorePassed++;
+      ++mMaxScorePassed;
       mListener.addStatus(readId, ReadStatusTracker.UNMATED_ALIGN_SCORE_FIRST);
       final MapQScoringReadBlocker blocker = mUnmatedBlocker;
       if (!blocker.isBlocked2(readId, matchActions[ActionsHelper.ALIGNMENT_SCORE_INDEX])) {
@@ -151,7 +151,7 @@ public class SingleEndTempFileWriter extends AbstractTempFileWriter {
         return true;
       }
     } else {
-      mMaxScoreFailed++;
+      ++mMaxScoreFailed;
     }
     return false;
   }
@@ -180,7 +180,7 @@ public class SingleEndTempFileWriter extends AbstractTempFileWriter {
     final int maxMismatches = mMatedMaxMismatches.getValue(size);
     final int maxScore = maxMismatches * mSubstitutionPenalty;
     if (matchActions[ActionsHelper.ALIGNMENT_SCORE_INDEX] <= maxScore) {
-      mMaxScorePassed++;
+      ++mMaxScorePassed;
       mListener.addStatus(readId, MAPPED);
       mListener.addStatus(readId, ReadStatusTracker.UNMATED_ALIGN_SCORE_FIRST);
       final AlignmentResult matchResult = new AlignmentResult(read, matchActions, mTemplate);
@@ -191,7 +191,7 @@ public class SingleEndTempFileWriter extends AbstractTempFileWriter {
       mBinarizableRecordWriter.addAlignmentHandleDuplicates(record);
       return record;
     } else {
-      mMaxScoreFailed++;
+      ++mMaxScoreFailed;
       return null;
     }
   }

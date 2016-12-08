@@ -162,7 +162,7 @@ public class ReadStatusTracker implements ReadStatusListener {
 
   protected void calculateStatistics(boolean pairedEnd, boolean allhits) {
     if (mStatistics != null) {
-      for (int r = 0; r < mReadIdStatus.length; r++) {
+      for (int r = 0; r < mReadIdStatus.length; ++r) {
         final int mappingStatus = mReadIdStatus[r] & MAPPING_STATUS_MASK;
         final int status = mReadIdStatus[r];
         boolean leftNoHit = false;
@@ -349,7 +349,7 @@ public class ReadStatusTracker implements ReadStatusListener {
    */
   void preProcessUnMappedStatistics(boolean paired) {
     Diagnostic.progress("UnmappedPreprocess: Starting 1 Jobs");
-    for (int i = 0; i < mReadIdStatus.length; i++) {
+    for (int i = 0; i < mReadIdStatus.length; ++i) {
       if (paired) {
         final boolean leftUnmapped = (mReadIdStatus[i] & (MATED_FIRST | UNMATED_FIRST)) == 0;
         final boolean rightUnmapped = (mReadIdStatus[i] & (MATED_SECOND | UNMATED_SECOND)) == 0;

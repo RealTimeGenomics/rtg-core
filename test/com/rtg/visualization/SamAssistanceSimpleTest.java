@@ -110,7 +110,7 @@ public class SamAssistanceSimpleTest extends TestCase {
   static String insertString(final int[] inserts) {
     final StringBuilder sb = new StringBuilder();
     for (int insert : inserts) {
-      for (int j = 0; j < insert; j++) {
+      for (int j = 0; j < insert; ++j) {
         sb.append("_");
       }
       sb.append("X");

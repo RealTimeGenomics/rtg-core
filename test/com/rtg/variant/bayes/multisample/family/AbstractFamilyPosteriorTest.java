@@ -104,14 +104,14 @@ public abstract class AbstractFamilyPosteriorTest extends TestCase {
     public MockModel(final Hypotheses<Description> hyp, final double[] posteriors) {
       super(hyp, new StatisticsSnp(hyp.description()), new NoAlleleBalance());
       assert posteriors.length == mPosteriors.length;
-      for (int i = 0; i < posteriors.length; i++) {
+      for (int i = 0; i < posteriors.length; ++i) {
         mPosteriors[i] = arithmetic().prob2Poss(posteriors[i]);
       }
     }
 
     public MockModel(final Hypotheses<Description> hyp) {
       super(hyp, new StatisticsSnp(hyp.description()), new NoAlleleBalance());
-      for (int i = 0; i < mPosteriors.length; i++) {
+      for (int i = 0; i < mPosteriors.length; ++i) {
         mPosteriors[i] = hyp.arithmetic().one();
       }
     }
@@ -124,7 +124,7 @@ public abstract class AbstractFamilyPosteriorTest extends TestCase {
     pedigree.addGenome(FATHER, GenomeRelationships.SEX_MALE);
     pedigree.addGenome(MOTHER, GenomeRelationships.SEX_FEMALE);
     final String[] childNames = new String[children.length];
-    for (int i = 0; i < children.length; i++) {
+    for (int i = 0; i < children.length; ++i) {
       final String child = "c" + i;
       childNames[i] = child;
       pedigree.addGenome(child, children[i]);

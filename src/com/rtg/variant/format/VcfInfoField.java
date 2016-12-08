@@ -122,7 +122,7 @@ public enum VcfInfoField {
     private Pair<Integer, Boolean> getCoverage(Variant call) {
       int coverage = 0;
       boolean hasCoverage = false;
-      for (int i = 0; i < call.getNumberOfSamples(); i++) {
+      for (int i = 0; i < call.getNumberOfSamples(); ++i) {
         if (call.getSample(i) != null && call.getSample(i).getCoverage() != null) {
           coverage += call.getSample(i).getCoverage();
           hasCoverage = true;

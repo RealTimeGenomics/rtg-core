@@ -211,7 +211,7 @@ public class BuildSearchParams extends ModuleParams implements Integrity {
     } else {
       long ret = 0;
       for (Pair<String, List<SequenceParams>> mSequenceParam : mSequenceParams) {
-        for (int j = 0; j < mSequenceParam.getB().size(); j++) {
+        for (int j = 0; j < mSequenceParam.getB().size(); ++j) {
           ret = Math.max(ret, mSequenceParam.getB().get(j).maxLength());
         }
       }

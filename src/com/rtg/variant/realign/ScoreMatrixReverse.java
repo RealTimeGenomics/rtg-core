@@ -69,7 +69,7 @@ public class ScoreMatrixReverse extends AbstractAllPaths {
   }
 
   protected void calculateRow(final int i) {
-    for (int j = mWidth - 1; j >= 0; j--) {
+    for (int j = mWidth - 1; j >= 0; --j) {
       final double ma = matchEq(i, j);
       setDelete(i, j,  calculateDelete(i, j, ma));
       setMatch(i, j,  calculateMatch(i, j, ma));
@@ -82,7 +82,7 @@ public class ScoreMatrixReverse extends AbstractAllPaths {
    */
   protected void calculateEnd() {
     double sumLn = mArith.zero();
-    for (int j = 0; j < mWidth; j++) {
+    for (int j = 0; j < mWidth; ++j) {
       // final insert row is all zero probabilities for most matrices, but is not initialised in the delta matrices
       // assert mInsert[0][j] == Double.NEGATIVE_INFINITY;
       final double m1 = mArith.multiply(delete(0, j), mDeleteStartPoss);
@@ -96,7 +96,7 @@ public class ScoreMatrixReverse extends AbstractAllPaths {
   protected void calculateProbabilities() {
     final double one = mArith.one();
     calculateInitialRow(mLength, one, one);
-    for (int i = mLength - 1; i >= 0; i--) {
+    for (int i = mLength - 1; i >= 0; --i) {
       calculateRow(i);
     }
     calculateEnd();

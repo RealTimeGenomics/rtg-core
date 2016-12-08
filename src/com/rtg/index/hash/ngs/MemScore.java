@@ -48,28 +48,28 @@ public class MemScore extends IntegralAbstract {
 
     if (reverseComplement) {
       // match rightwards along read
-      for (int k = roffset, j = toffset; k < read.length; k++, j--) {
+      for (int k = roffset, j = toffset; k < read.length; ++k, --j) {
         if (j < 0 || template[j] != DNA.complement(read[k])) {
-          mismatchCount++;
+          ++mismatchCount;
         }
       }
       // match leftwards along read
-      for (int k = roffset - 1, j = toffset + 1; k >= 0; k--, j++) {
+      for (int k = roffset - 1, j = toffset + 1; k >= 0; --k, ++j) {
         if (j >= template.length || template[j] != DNA.complement(read[k])) {
-          mismatchCount++;
+          ++mismatchCount;
         }
       }
     } else {
       // match rightwards along read
-      for (int k = roffset, j = toffset; k < read.length; k++, j++) {
+      for (int k = roffset, j = toffset; k < read.length; ++k, ++j) {
         if (j >= template.length || template[j] != read[k]) {
-          mismatchCount++;
+          ++mismatchCount;
         }
       }
       // match leftwards along read
-      for (int k = roffset - 1, j = toffset - 1; k >= 0; k--, j--) {
+      for (int k = roffset - 1, j = toffset - 1; k >= 0; --k, --j) {
         if (j < 0 || template[j] != read[k]) {
-          mismatchCount++;
+          ++mismatchCount;
         }
       }
     }
@@ -152,10 +152,10 @@ public class MemScore extends IntegralAbstract {
   @Override
   public boolean integrity() {
     Exam.assertTrue(mReadLength >= 1 && mReadLength <= 64);
-    for (int i = 0; i < mReadLength; i++) {
+    for (int i = 0; i < mReadLength; ++i) {
       Exam.assertTrue("i=" + i + " readLength=" + mReadLength, (mMask & (1L << i)) != 0);
     }
-    for (int i = mReadLength; i < 64; i++) {
+    for (int i = mReadLength; i < 64; ++i) {
       Exam.assertTrue((mMask & (1L << i)) == 0);
     }
     return true;

@@ -62,13 +62,13 @@ public class SegmentOutput extends AbstractPositionOutput implements SegmentWrit
     mCurrentCollection = new SegmentCollection(params.hashCountThreshold());
     mCollections = new SegmentCollection[mStepSize];
     mPositions = new int[mStepSize];
-    for (int i = 0; i < mCollections.length; i++) {
+    for (int i = 0; i < mCollections.length; ++i) {
       mCollections[i] = new SegmentCollection(params.hashCountThreshold());
       mPositions[i] = NULL;
     }
     final int free = mThreshold * (mStepSize + 1);
     mFree = new SegmentCollection(free);
-    for (int i = 0; i < free; i++) {
+    for (int i = 0; i < free; ++i) {
       mFree.add(new Segment());
     }
     integrity();
@@ -97,7 +97,7 @@ public class SegmentOutput extends AbstractPositionOutput implements SegmentWrit
       //assert delta > 0 : mSearchPosition + ":" + position;
       final int end = delta > mStepSize ? mSearchPosition + mStepSize + 1 : position;
       //System.err.println("SO.setPosition mSearchPosition=" + mSearchPosition + " delta=" + delta + " end=" + end);
-      for (int i = mSearchPosition + 1, index = i % mStepSize; i < end; i++, index++) {
+      for (int i = mSearchPosition + 1, index = i % mStepSize; i < end; ++i, ++index) {
         if (index == mStepSize) {
           index = 0;
         }
@@ -129,7 +129,7 @@ public class SegmentOutput extends AbstractPositionOutput implements SegmentWrit
   public void endQuery() throws IOException {
     //System.err.println("SO.endQuery");
     //try and keep the outputs in order
-    for (int i = mSearchPosition + 1, index = i % mStepSize; i < mSearchPosition + mStepSize + 1; i++, index++) {
+    for (int i = mSearchPosition + 1, index = i % mStepSize; i < mSearchPosition + mStepSize + 1; ++i, ++index) {
       if (index == mStepSize) {
         index = 0;
       }
@@ -186,7 +186,7 @@ public class SegmentOutput extends AbstractPositionOutput implements SegmentWrit
   public boolean globalIntegrity() {
     integrity();
     int sum = 0;
-    for (int i = 0; i < mCollections.length; i++) {
+    for (int i = 0; i < mCollections.length; ++i) {
       final SegmentCollection coll = mCollections[i];
       coll.globalIntegrity();
       sum += coll.size();
@@ -218,14 +218,14 @@ public class SegmentOutput extends AbstractPositionOutput implements SegmentWrit
     Exam.assertTrue(mThreshold > 0);
     if (mSearchSeqId == NULL || mSearchFrame == null) {
       Exam.assertEquals(NULL, mIndexPosition);
-      for (int i = 0; i < mStepSize; i++) {
+      for (int i = 0; i < mStepSize; ++i) {
         Exam.assertEquals(NULL, mPositions[i]);
         Exam.assertEquals(0, mCollections[i].size());
       }
     } else {
       Exam.assertTrue(mIndexPosition >= 0 && mIndexPosition < mStepSize);
       Exam.assertTrue(mSearchPosition == NULL || mSearchPosition % mStepSize == mIndexPosition);
-      for (int i = 0; i < mStepSize; i++) {
+      for (int i = 0; i < mStepSize; ++i) {
         Exam.assertEquals(NULL == mPositions[i], 0 == mCollections[i].size());
       }
     }
@@ -239,7 +239,7 @@ public class SegmentOutput extends AbstractPositionOutput implements SegmentWrit
         throw new NullPointerException();
       } else {
         Exam.assertTrue(mStepSize == mCollections.length);
-        for (int i = 0; i < mCollections.length; i++) {
+        for (int i = 0; i < mCollections.length; ++i) {
           Exam.assertTrue(mCollections[i] != null);
           Exam.assertTrue(mPositions[i] >= NULL);
         }

@@ -85,7 +85,7 @@ public class CompleteGenomicsV1Machine extends CompleteGenomicsMachine {
       direction = -1;
       startFrom = length - 1;
     }
-    for (int x = 0; x < NUMBER_TRIES; x++) {
+    for (int x = 0; x < NUMBER_TRIES; ++x) {
       resetCigar();
       int refPos = readBases(startFrom, data, length, direction, 5);
       final int overlap = generateOverlapLength();

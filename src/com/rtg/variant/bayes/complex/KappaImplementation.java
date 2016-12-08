@@ -95,7 +95,7 @@ public class KappaImplementation  extends AbstractKappa {
     assert Exam.assertDistribution(insDistribution);
     assert insEventRate > 0.0 && insEventRate < 1.0 && !Double.isNaN(insEventRate) : insEventRate;
 
-    for (int i = 1; i < insDistribution.length; i++) {
+    for (int i = 1; i < insDistribution.length; ++i) {
       final double d = insEventRate * insDistribution[i];
       assert d >= 0.0 && !Double.isNaN(d) && d <= 1.0;
       kappaMap.put(i, d);
@@ -105,7 +105,7 @@ public class KappaImplementation  extends AbstractKappa {
   private void putKappaDelta(final double delEventRate, final double[] delDistribution, final Map<Integer, Double> kappaMap) {
     assert Exam.assertDistribution(delDistribution);
     assert delEventRate > 0.0 && delEventRate < 1.0 && !Double.isNaN(delEventRate) : delEventRate;
-    for (int i = 1; i < delDistribution.length; i++) {
+    for (int i = 1; i < delDistribution.length; ++i) {
       final double d = delEventRate * delDistribution[i];
       assert d >= 0.0 && !Double.isNaN(d) && d <= 1.0;
       kappaMap.put(-i, d);
@@ -115,7 +115,7 @@ public class KappaImplementation  extends AbstractKappa {
   static double[] createCumuPi(final double[] kappa) {
     final double[] cumu = new double[kappa.length];
     double c = 0.0;
-    for (int i = kappa.length - 1; i >= 0; i--) {
+    for (int i = kappa.length - 1; i >= 0; --i) {
       c += kappa[i];
       cumu[i] = c;
     }
@@ -128,7 +128,7 @@ public class KappaImplementation  extends AbstractKappa {
     for (final Map.Entry<Integer, Double> e : kappaMap.entrySet()) {
       final double d = e.getValue();
       pi[k] = d;
-      k++;
+      ++k;
     }
     return pi;
   }
@@ -178,15 +178,15 @@ public class KappaImplementation  extends AbstractKappa {
     sb.append(" m\\l");
     final FormatInteger fi = new FormatInteger(10);
     final int hi = mPi.length - mLo + 1;
-    for (int l = 0; l <= hi; l++) {
+    for (int l = 0; l <= hi; ++l) {
       sb.append(fi.format(l));
     }
     sb.append(LS);
     final FormatInteger fm = new FormatInteger(4);
     final FormatReal fk = new FormatReal(1, 6);
-    for (int m = 0; m <= hi; m++) {
+    for (int m = 0; m <= hi; ++m) {
       sb.append(fm.format(m));
-      for (int l = 0; l <= hi; l++) {
+      for (int l = 0; l <= hi; ++l) {
         sb.append("  ").append(fk.format(kappa(m, l)));
       }
       sb.append(LS);
@@ -197,11 +197,11 @@ public class KappaImplementation  extends AbstractKappa {
   public boolean globalIntegrity() {
     integrity();
     final int lhi = mPi.length + mLo + 3;
-    for (int l = 0; l <= lhi; l++) {
+    for (int l = 0; l <= lhi; ++l) {
       double sumk = 0.0;
 
       final int hi = mPi.length + mLo + l;
-      for (int m = 0; m < hi; m++) {
+      for (int m = 0; m < hi; ++m) {
         sumk += kappa(m, l);
       }
       final double t = kappa(hi, l) / (1.0 - mIndelDecay);

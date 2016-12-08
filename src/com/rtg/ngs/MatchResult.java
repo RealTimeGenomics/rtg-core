@@ -63,7 +63,7 @@ final class MatchResult {
     mReverse.set(mCount, reverse ? 1 : 0);
     mTemplateId.setInt(mCount, templateId);
     mPosition.setInt(mCount, position);
-    mCount++;
+    ++mCount;
   }
 
   private void ensureCapacity() {
@@ -122,7 +122,7 @@ final class MatchResult {
 
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       sb.append("templateId: ").append(mTemplateId.getInt(i)).append(" position: ").append(mPosition.getInt(i)).append(" encodedReadId: ").append(mEncodedReadId.getInt(i)).append(" reverse: ").append(mReverse.get(i) > 0).append(StringUtils.LS);
     }
     return sb.toString();

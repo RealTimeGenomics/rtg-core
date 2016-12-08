@@ -43,7 +43,7 @@ public class GenotypeLikelihoodUtilsTest extends TestCase {
   public double[] convert(double... vals) {
     final PossibilityArithmetic arith = LogPossibility.SINGLETON;
     final double[] result = new double[vals.length];
-    for (int i = 0; i < result.length; i++) {
+    for (int i = 0; i < result.length; ++i) {
       result[i] = arith.prob2Poss(vals[i]) / MathUtils.LOG_10;
     }
     return result;
@@ -53,7 +53,7 @@ public class GenotypeLikelihoodUtilsTest extends TestCase {
     if (a.length != b.length) {
       fail(failMsg);
     }
-    for (int i = 0; i < a.length; i++) {
+    for (int i = 0; i < a.length; ++i) {
       assertEquals(failMsg, a[i], b[i], tolerance);
     }
   }

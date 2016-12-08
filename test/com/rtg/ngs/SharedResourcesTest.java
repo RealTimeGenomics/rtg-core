@@ -94,7 +94,7 @@ public class SharedResourcesTest extends TestCase {
     try {
       final File leftFile = new File(topLevel, "left");
       final StringBuilder elevenReads = new StringBuilder();
-      for (int i = 0; i < 11; i++) {
+      for (int i = 0; i < 11; ++i) {
         elevenReads.append(">testLeft-").append(i).append("\nacgt\n");
       }
       ReaderTestUtils.getReaderDNA(elevenReads.toString(), leftFile, null);

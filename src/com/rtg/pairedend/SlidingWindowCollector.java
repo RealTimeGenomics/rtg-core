@@ -65,7 +65,7 @@ public class SlidingWindowCollector extends AbstractSlidingWindowCollector<HitIn
     final ArrayList<MatedHitInfo>[] matedReadsWindow = (ArrayList<MatedHitInfo>[]) new ArrayList<?>[mWindowSize];
     mMatedReadsWindow = matedReadsWindow;
     mMatedReadsWindowInUse = new int[mWindowSize];
-    for (int i = 0; i < mWindowSize; i++) {
+    for (int i = 0; i < mWindowSize; ++i) {
       mMatedReadsWindow[i] = new ArrayList<>();
     }
 
@@ -90,7 +90,7 @@ public class SlidingWindowCollector extends AbstractSlidingWindowCollector<HitIn
   private MatedHitInfo getMatedHitInfo(int i) {
     final MatedHitInfo ret;
     if (mMatedReadsWindowInUse[i] == getMaxHitsPerPosition() - 1) {
-      mMaxMatedHitsExceededCount++;
+      ++mMaxMatedHitsExceededCount;
       if (mMaxMatedHitsExceededCount < 5) {
         Diagnostic.userLog("Max mated hits per position exceeded at template: " + mReferenceId + " templateStart: " + (mReadsWindow[i].size() > 0 ? "" + mReadsWindow[i].get(0).mTemplateStart : "unknown"));
       }
@@ -142,13 +142,13 @@ public class SlidingWindowCollector extends AbstractSlidingWindowCollector<HitIn
           return false;
         }
       }
-      mMatingCount++;
+      ++mMatingCount;
     }
     return true;
   }
 
   private void outputExistingMates(final ArrayList<MatedHitInfo> hits, int size) throws IOException {
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       final MatedHitInfo hit = hits.get(i);
       // prior mapping - just output
 //      System.err.println("Right Mating: " + hit + " <==> ");
@@ -163,7 +163,7 @@ public class SlidingWindowCollector extends AbstractSlidingWindowCollector<HitIn
 //    System.err.println("F2P: " + mCurrentReferencePosition + " : " + newStart);
     while (mCurrentReferencePosition < newStart) {
       // set current to new start
-      mCurrentReferencePosition++;
+      ++mCurrentReferencePosition;
 
       final int windowIndex = windowPosition(mCurrentReferencePosition);
 //      System.err.println("flushing position " + mCurrentReferencePosition);

@@ -319,7 +319,7 @@ public class ScoreMatrixTest extends AbstractNanoTest {
       for (PossibilityArithmetic arith : new PossibilityArithmetic[]{LogPossibility.SINGLETON, LogApproximatePossibility.SINGLETON, SimplePossibility.SINGLETON}) {
         final long time0 = System.nanoTime();
         ScoreMatrix sm1 = null;
-        for (int i = 0; i < repeat; i++) {
+        for (int i = 0; i < repeat; ++i) {
           sm1 = new ScoreMatrix(arith, new MockRealignParams());
           sm1.setEnv(env);
         }

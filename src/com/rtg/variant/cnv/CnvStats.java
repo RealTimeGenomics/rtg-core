@@ -212,7 +212,7 @@ public class CnvStats {
         current.mPositionEnd = next.mPositionEnd;
         list.remove(i + 1);
       } else {
-        i++;
+        ++i;
       }
     }
   }
@@ -263,19 +263,19 @@ public class CnvStats {
       mCorrectOut.write("correct: " + name + TB + genPos.getPos() + " ~ " + detPos.getPos() + "    means gen-det " + genPos.mRegion.mMean
           + " - " + detPos.mRegion.mMean + StringUtils.LS);
     }
-    mNumCorrect++;
+    ++mNumCorrect;
   }
   private void falseNegative(final String name, final RegionPosition genPos) throws IOException {
     if (mFalseNegativeOut != null) {
       mFalseNegativeOut.write("false negative: " + name + TB + genPos.getPos() + "    mean " + genPos.mRegion.mMean + StringUtils.LS);
     }
-    mNumFalseNegative++;
+    ++mNumFalseNegative;
   }
   private void falsePositive(final String name, final RegionPosition detPos) throws IOException {
     if (mFalsePositiveOut != null) {
       mFalsePositiveOut.write("false positive: " + name + TB + detPos.getPos() + "    mean " + detPos.mRegion.mMean + StringUtils.LS);
     }
-    mNumFalsePositive++;
+    ++mNumFalsePositive;
   }
 
   boolean closeEnough(final int genPos, final int detPos) {

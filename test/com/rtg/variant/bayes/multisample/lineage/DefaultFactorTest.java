@@ -46,9 +46,9 @@ public class DefaultFactorTest extends TestCase {
     final double[] p = {1, 2, 3, 4, 5, 6};
     final DefaultFactor phi = new DefaultFactor(SimplePossibility.SINGLETON, scopePhi1, p);
     final Map<Variable, Integer> map = new HashMap<>();
-    for (int bb = 0, k = 0; bb < b.size(); bb++) {
+    for (int bb = 0, k = 0; bb < b.size(); ++bb) {
       map.put(b, bb);
-      for (int aa = 0; aa < a.size(); aa++, k++) {
+      for (int aa = 0; aa < a.size(); ++aa, ++k) {
         map.put(a, aa);
         assertEquals(p[k], phi.p(map), 1e-10);
       }
@@ -81,11 +81,11 @@ public class DefaultFactorTest extends TestCase {
     assertEquals(SimplePossibility.SINGLETON, psi.arithmetic());
     final double[] expected = {0.5, 1, 1.5, 1, 1.25, 1.5, 0.125, 0.25, 0.375, 0.5, 0.625, 0.75};
     final Map<Variable, Integer> map = new HashMap<>();
-    for (int cc = 0, k = 0; cc < c.size(); cc++) {
+    for (int cc = 0, k = 0; cc < c.size(); ++cc) {
       map.put(c, cc);
-      for (int bb = 0; bb < b.size(); bb++) {
+      for (int bb = 0; bb < b.size(); ++bb) {
         map.put(b, bb);
-        for (int aa = 0; aa < a.size(); aa++, k++) {
+        for (int aa = 0; aa < a.size(); ++aa, ++k) {
           map.put(a, aa);
           assertEquals("a=" + aa + " b=" + bb + " c=" + cc, expected[k], psi.p(map), 1e-10);
         }
@@ -121,7 +121,7 @@ public class DefaultFactorTest extends TestCase {
     final Factor psi = phi.marginal(Collections.singleton(a));
     final Map<Variable, Integer> map = new HashMap<>();
     final double[] expected = {5, 7, 9};
-    for (int aa = 0, k = 0; aa < a.size(); aa++, k++) {
+    for (int aa = 0, k = 0; aa < a.size(); ++aa, ++k) {
       map.put(a, aa);
       assertEquals(expected[k], psi.p(map), 1e-10);
     }
@@ -135,9 +135,9 @@ public class DefaultFactorTest extends TestCase {
     final DefaultFactor phi = new DefaultFactor(SimplePossibility.SINGLETON, scopePhi1, p);
     final Factor psi = phi.marginal(new HashSet<>(scopePhi1));
     final Map<Variable, Integer> map = new HashMap<>();
-    for (int bb = 0, k = 0; bb < b.size(); bb++) {
+    for (int bb = 0, k = 0; bb < b.size(); ++bb) {
       map.put(b, bb);
-      for (int aa = 0; aa < a.size(); aa++, k++) {
+      for (int aa = 0; aa < a.size(); ++aa, ++k) {
         map.put(a, aa);
         assertEquals(p[k], psi.p(map), 1e-10);
       }
@@ -174,9 +174,9 @@ public class DefaultFactorTest extends TestCase {
     for (PossibilityArithmetic arith : new PossibilityArithmetic[] {SimplePossibility.SINGLETON, LogPossibility.SINGLETON}) {
       final DefaultFactor phi = DefaultFactor.unit(arith, scope);
       final Map<Variable, Integer> map = new HashMap<>();
-      for (int bb = 0; bb < b.size(); bb++) {
+      for (int bb = 0; bb < b.size(); ++bb) {
         map.put(b, bb);
-        for (int aa = 0; aa < a.size(); aa++) {
+        for (int aa = 0; aa < a.size(); ++aa) {
           map.put(a, aa);
           assertEquals(arith.one(), phi.p(map), 1e-10);
         }

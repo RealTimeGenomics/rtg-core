@@ -70,7 +70,7 @@ public class CountAssemblyEnds extends AbstractCli {
 
   static void showEnds(PrintStream print, Graph graph) {
     final GraphTraversions t = new GraphTraversions(graph);
-    for (long i = 1; i <= graph.numberContigs(); i++) {
+    for (long i = 1; i <= graph.numberContigs(); ++i) {
       if (graph.contigDeleted(i)) {
         continue;
       }

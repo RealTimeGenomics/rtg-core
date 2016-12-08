@@ -74,7 +74,7 @@ public class CumulativeSamCounts extends IntegralAbstract implements SamCounts {
   private void copyTo(int index) {
     final double tot = mCounts[mLastIncrement % mCounts.length];
     while (mLastIncrement <= index)   {
-      mLastIncrement++;
+      ++mLastIncrement;
       mCounts[mLastIncrement % mCounts.length] = tot;
     }
   }
@@ -111,7 +111,7 @@ public class CumulativeSamCounts extends IntegralAbstract implements SamCounts {
 
     // Update calculation from last point
     while (mLnLastUpdated < (mLastIncrement - 1)) {
-      mLnLastUpdated++;
+      ++mLnLastUpdated;
       updateLogTerm(mLnLastUpdated);
     }
     updateLogTerm(mLastIncrement); // Recalculate at this point in case more has been added since last time

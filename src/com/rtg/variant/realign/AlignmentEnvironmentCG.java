@@ -53,11 +53,11 @@ public class AlignmentEnvironmentCG extends AbstractAlignmentEnvironment {
     final byte[] qChar = orient.getQuality();
     if (qChar == null) {
       final double qDef = VariantUtils.phredToProb(params.qDefault());
-      for (int i = 0; i < len; i++) {
+      for (int i = 0; i < len; ++i) {
         mQuality[i] = qDef;
       }
     } else {
-      for (int i = 0; i < len; i++) {
+      for (int i = 0; i < len; ++i) {
         mQuality[i] = VariantUtils.phredToProb(qChar[i]);
       }
     }

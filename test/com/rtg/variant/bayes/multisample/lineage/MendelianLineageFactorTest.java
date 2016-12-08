@@ -49,11 +49,11 @@ public class MendelianLineageFactorTest extends TestCase {
     assertEquals(0.1 / 3, m.p(map), 1e-10);
 
     /*
-    for (int parent = 0; parent < gp.size(); parent++) {
+    for (int parent = 0; parent < gp.size(); ++parent) {
       map.put(gp, parent);
-      for (int child = 0; child < g.size(); child++) {
+      for (int child = 0; child < g.size(); ++child) {
         map.put(g, child);
-        for (int denovo = 0; denovo < n.size(); denovo++) {
+        for (int denovo = 0; denovo < n.size(); ++denovo) {
           map.put(n, denovo);
           System.out.println(parent + " " + child + " " + denovo + " " + m.p(map));
         }
@@ -152,11 +152,11 @@ public class MendelianLineageFactorTest extends TestCase {
     assertEquals(y, m.p(map), 1e-10);
 
     /*
-    for (int parent = 0; parent < gp.size(); parent++) {
+    for (int parent = 0; parent < gp.size(); ++parent) {
       map.put(gp, parent);
-      for (int child = 0; child < g.size(); child++) {
+      for (int child = 0; child < g.size(); ++child) {
         map.put(g, child);
-        for (int denovo = 0; denovo < n.size(); denovo++) {
+        for (int denovo = 0; denovo < n.size(); ++denovo) {
           map.put(n, denovo);
           System.out.println(hyp.code().a(parent) + ":" + hyp.code().bc(parent) + " " + hyp.code().a(child) + ":" + hyp.code().bc(child) + " " + denovo + " " + m.p(map));
         }
@@ -174,11 +174,11 @@ public class MendelianLineageFactorTest extends TestCase {
     final MendelianLineageFactor m = new MendelianLineageFactor(arith, g, gp, n, zeta, hyp, hyp);
     final Map<Variable, Integer> map = new HashMap<>();
     final DefaultFactor def = m.asDefault();
-    for (int i = 0; i < g.size(); i++) {
+    for (int i = 0; i < g.size(); ++i) {
       map.put(g, i);
-      for (int j = 0; j < gp.size(); j++) {
+      for (int j = 0; j < gp.size(); ++j) {
         map.put(gp, j);
-        for (int k = 0; k < n.size(); k++) {
+        for (int k = 0; k < n.size(); ++k) {
           map.put(n, k);
           assertEquals(m.p(map), def.p(map));
         }

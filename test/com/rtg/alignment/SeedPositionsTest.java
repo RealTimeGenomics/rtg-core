@@ -38,7 +38,7 @@ public class SeedPositionsTest extends TestCase {
 
   private SeedPositions[] getSeeds() {
     final SeedPositions[] seeds = new SeedPositions[3];
-    for (int i = 0; i < seeds.length; i++) {
+    for (int i = 0; i < seeds.length; ++i) {
       seeds[i] = new SeedPositions();
       seeds[i].mType = 0;
       final int start = i * i;

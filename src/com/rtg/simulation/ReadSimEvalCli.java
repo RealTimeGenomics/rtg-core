@@ -179,7 +179,7 @@ public class ReadSimEvalCli extends LoggedCli {
       Diagnostic.warning("Encountered mappings against a template for which we cannot determine correct location.");
       mHaveWarnedTemplateMismatchInSam = true;
     }
-    mIgnoredAbsentTemplate++;
+    ++mIgnoredAbsentTemplate;
   }
 
   private static final Pattern SOFT_CLIP_CIGAR_START_PATTERN = Pattern.compile("^([0-9]+)S([0-9]+).*");
@@ -235,11 +235,11 @@ public class ReadSimEvalCli extends LoggedCli {
     }
     if (mParser.isChimera()) {
 //      System.err.println("Chimera mapped: " + rec.getSAMString());
-      mChimeras++;
+      ++mChimeras;
       return;
     } else if (mParser.isDuplicate()) {
 //      System.err.println("Dupe mapped: " + rec.getSAMString());
-      mDupes++;
+      ++mDupes;
     }
     final SdfId mappingRefGuid = getTemplateGuid(rec.getHeader());
     if (!mappingRefGuid.available()) {
@@ -339,13 +339,13 @@ public class ReadSimEvalCli extends LoggedCli {
           recordsOut.write(itr.header().getTextHeader());
         }
         while (itr.hasNext()) {
-          totalRecords++;
+          ++totalRecords;
           if (totalRecords % 1000000 == 0) {
             Diagnostic.progress("Processed " + totalRecords + " SAM records");
           }
           final SAMRecord rec = itr.next();
           if (rec.getReadUnmappedFlag()) {
-            unmappedRecords++;
+            ++unmappedRecords;
           } else {
             processRecord(rec, recordsOut);
           }
@@ -466,12 +466,12 @@ public class ReadSimEvalCli extends LoggedCli {
     long mappedReads = 0;
     long unmappedReads = 0;
 
-    for (int i = 0; i < mLeftStats.length(); i++) {
+    for (int i = 0; i < mLeftStats.length(); ++i) {
       updateStats(mLeftStats, i, stats);
       if (mLeftStats.isMapped(i)) {
-        mappedReads++;
+        ++mappedReads;
       } else {
-        unmappedReads++;
+        ++unmappedReads;
       }
     }
     if (mIgnoredAbsentTemplate > 0) {
@@ -507,14 +507,14 @@ public class ReadSimEvalCli extends LoggedCli {
     long mated = 0;
     long unmated = 0;
 
-    for (int i = 0; i < mLeftStats.length(); i++) {
+    for (int i = 0; i < mLeftStats.length(); ++i) {
       updateStats(mLeftStats, i, leftStats);
       updateStats(mRightStats, i, rightStats);
       if (mLeftStats.isMapped(i) || mRightStats.isMapped(i)) {
         if (mRightStats.isMated(i)) {
-          mated++;
+          ++mated;
         } else {
-          unmated++;
+          ++unmated;
         }
       }
     }

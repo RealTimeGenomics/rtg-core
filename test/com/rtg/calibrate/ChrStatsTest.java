@@ -47,7 +47,7 @@ public class ChrStatsTest extends TestCase {
 
       final Calibrator c = CalibratedPerSequenceThresholdTest.getCalibrator("com/rtg/calibrate/resources/test.calibration");
       final Map<String, Integer> lengths = new HashMap<>();
-      for (int k = 0; k < 9; k++) {
+      for (int k = 0; k < 9; ++k) {
         lengths.put("seq" + k, 10000);
       }
       c.setSequenceLengths(lengths);

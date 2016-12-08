@@ -49,8 +49,8 @@ public class MatrixSimple extends Matrix {
 
   @Override
   public boolean isSymmetric() {
-    for (int i = 0; i < size(); i++) {
-      for (int j = 0; j < i; j++) {
+    for (int i = 0; i < size(); ++i) {
+      for (int j = 0; j < i; ++j) {
         if (get(i, j) != get(j, i)) {
           return false;
         }

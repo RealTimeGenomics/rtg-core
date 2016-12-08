@@ -159,7 +159,7 @@ public class CnvSimulator {
     mLengthCnvedPerSeq = new long[(int) mNumberSequences];
     mTotalCnvedCount = 0;
     mTotalCnvedLength = 0;
-    for (int i = 0; i < mInput.numberSequences(); i++) {
+    for (int i = 0; i < mInput.numberSequences(); ++i) {
       mSequenceNames[i] = mInput.name(i);
     }
   }
@@ -218,12 +218,12 @@ public class CnvSimulator {
   private FixedRegion[][] generatedSortedRegionLists(final FixedRegion[] fixedRegions, final int numberSequences) {
     @SuppressWarnings("unchecked")
     final ArrayList<FixedRegion>[] list = (ArrayList<FixedRegion>[]) new ArrayList<?>[numberSequences];
-    for (int i = 0; i < list.length; i++) {
+    for (int i = 0; i < list.length; ++i) {
       list[i] = new ArrayList<>();
     }
     for (final FixedRegion region : fixedRegions) {
       boolean found = false;
-      for (int i = 0; i < list.length; i++) {
+      for (int i = 0; i < list.length; ++i) {
         if (mSequenceNames[i].equals(region.mSequenceName)) {
           found = true;
           list[i].add(region);
@@ -235,9 +235,9 @@ public class CnvSimulator {
       }
     }
     final FixedRegion[][] sorted = new FixedRegion[numberSequences][];
-    for (int i = 0; i < numberSequences; i++) {
+    for (int i = 0; i < numberSequences; ++i) {
       sorted[i] = new FixedRegion[list[i].size()];
-      for (int j = 0; j < list[i].size(); j++) {
+      for (int j = 0; j < list[i].size(); ++j) {
         sorted[i][j] = list[i].get(j);
       }
       Arrays.sort(sorted[i], getFixedRegionComparator());
@@ -249,7 +249,7 @@ public class CnvSimulator {
     long currentSequenceStart = 0;
     int currentBPIndex = 0;
     long lastBreakPoint = 0;
-    for (int i = 0; i < mNumberSequences; i++) {
+    for (int i = 0; i < mNumberSequences; ++i) {
       final ArrayList<CnvRegion> list = new ArrayList<>();
       while (currentBPIndex < mBreakPoints.length
           && mBreakPoints[currentBPIndex] - currentSequenceStart < mSequenceLengths[i]) {
@@ -261,7 +261,7 @@ public class CnvSimulator {
         list.add(region);
 
         lastBreakPoint = mBreakPoints[currentBPIndex];
-        currentBPIndex++;
+        ++currentBPIndex;
       }
       final int start = (int) (lastBreakPoint - currentSequenceStart);
       // add last region but not end region
@@ -275,7 +275,7 @@ public class CnvSimulator {
   }
 
   protected void taskbGenerateCnvRegionsObjects(final FixedRegion[][] fixedRegions) {
-    for (int i = 0; i < mInput.numberSequences(); i++) {
+    for (int i = 0; i < mInput.numberSequences(); ++i) {
       final ArrayList<CnvRegion> list = new ArrayList<>();
       //      mInput.seek(i);
       //      final String seqName = mInput.currentName();
@@ -287,7 +287,7 @@ public class CnvSimulator {
           list.add(startRegion);
         }
 
-        for (int j = 0; j < fixedRegions[i].length; j++) {
+        for (int j = 0; j < fixedRegions[i].length; ++j) {
           final FixedRegion currentFixed = fixedRegions[i][j];
           if ((int) currentFixed.mStartPosNullBased >= mSequenceLengths[i]) {
             throw new InvalidParamsException(ErrorType.INVALID_PARAMETER, "CNV start too large " + (currentFixed.mStartPosNullBased + 1)
@@ -321,7 +321,7 @@ public class CnvSimulator {
 
           // prepare copies
           if (currentFixed.mCopyNumber > 2) {
-            for (int k = 2; k < currentFixed.mCopyNumber; k++) {
+            for (int k = 2; k < currentFixed.mCopyNumber; ++k) {
               goalRegion.addCopy(regionCnved);
             }
           }
@@ -337,7 +337,7 @@ public class CnvSimulator {
   }
 
   private void addCountStatistics(final CnvRegion regionCnved) {
-    mTotalCnvedCount++;
+    ++mTotalCnvedCount;
     mTotalCnvedLength += regionCnved.mLength;
     mCountsPerSeq[regionCnved.mSequenceId]++;
     mLengthCnvedPerSeq[regionCnved.mSequenceId] += regionCnved.mLength;
@@ -352,7 +352,7 @@ public class CnvSimulator {
     do {
       mTries = 0;
       do {
-        mTries++;
+        ++mTries;
         final RegionDummy randomPick = mRegionDummyList.get(mRandom.nextInt(mRegionDummyList.size()));
         pickedRegion = mRegionSequences.get(randomPick.mSequenceId).get(randomPick.mRegionPos);
         if (mTries > 1000) {
@@ -373,10 +373,10 @@ public class CnvSimulator {
 
   protected void taskePrepareCopying() {
     // prepare copying
-    for (int i = 0; i < mRegionSequences.size(); i++) {
-      for (int j = 0; j < mRegionSequences.get(i).size(); j++) {
+    for (int i = 0; i < mRegionSequences.size(); ++i) {
+      for (int j = 0; j < mRegionSequences.get(i).size(); ++j) {
         final CnvRegion currentRegion = mRegionSequences.get(i).get(j);
-        for (int k = 0; k < currentRegion.mNumCopies; k++) {
+        for (int k = 0; k < currentRegion.mNumCopies; ++k) {
           final int destinationId;
           if (mRandom.nextBoolean()) {
             // copied to same sequence
@@ -391,7 +391,7 @@ public class CnvSimulator {
           if (currentRegion.mNumCopies - k > 1) {
             // enough for 2 copies
             if (mRandom.nextBoolean()) {
-              k++;
+              ++k;
               isHetero = true;
             }
           }
@@ -411,7 +411,7 @@ public class CnvSimulator {
         for (final RegionDummy regDummy : mRegionDummyList) {
           final CnvRegion region = mRegionSequences.get(regDummy.mSequenceId).get(regDummy.mRegionPos);
           if (!region.isUnpickable(mSequenceLengths, false, minLength)) {
-            possNum++;
+            ++possNum;
           }
         }
         throw new NoTalkbackSlimException("Cannot find enough regions for " + mSetCountCnved + " CNV regions; "
@@ -427,17 +427,17 @@ public class CnvSimulator {
    * Output bases to both genomes, copies region according to number of copies selected
    */
   private void taskfOutputToGenomeSdfs() throws IOException {
-    for (int i = 0; i < mNumberSequences; i++) {
+    for (int i = 0; i < mNumberSequences; ++i) {
       final byte[] genomeSeq = new byte[mInput.length(i)];
       mInput.read(i, genomeSeq);
       //System.err.println("seek "+ i);
       mOutput.startSequence(mSequenceNames[i]);
       mTwin.startSequence(mSequenceNames[i]);
-      for (int j = 0; j < mRegionSequences.get(i).size(); j++) {
+      for (int j = 0; j < mRegionSequences.get(i).size(); ++j) {
         final CnvRegion currentRegion = mRegionSequences.get(i).get(j);
 
         // copy other regions before region
-        for (int k = 0; k < currentRegion.mCopies.size(); k++) {
+        for (int k = 0; k < currentRegion.mCopies.size(); ++k) {
           final byte[] copyDnas = currentRegion.getCopy(k, mInput);
           final boolean bothStrands = currentRegion.getBothStrands(k);
           if (mRandom.nextBoolean()) {
@@ -479,11 +479,11 @@ public class CnvSimulator {
    * accumulate non CNV regions together, must happen after writing to genome SDFs
    */
   protected void taskgAccumulateNonCnvRegions() {
-    for (int i = 0; i < mInput.numberSequences(); i++) {
+    for (int i = 0; i < mInput.numberSequences(); ++i) {
       // don't swallow end break point -> size - 1
       //System.err.println("numBP " + mRegionSequences.get(i).size());
       int sizeWithoutEnd = mRegionSequences.get(i).size() - 1;
-      for (int j = 0; j < sizeWithoutEnd; j++) {
+      for (int j = 0; j < sizeWithoutEnd; ++j) {
         final CnvRegion currentRegion = mRegionSequences.get(i).get(j);
         if (currentRegion.mIsCnved) {
           continue;
@@ -510,8 +510,8 @@ public class CnvSimulator {
   private void outputBreakPointsToInfoFile() throws IOException {
     try (OutputStream cnvOutput = mCnvOutput) {
       cnvOutput.write(headerLines().getBytes());
-      for (int i = 0; i < mRegionSequences.size(); i++) {
-        for (int j = 0; j < mRegionSequences.get(i).size(); j++) {
+      for (int i = 0; i < mRegionSequences.size(); ++i) {
+        for (int j = 0; j < mRegionSequences.get(i).size(); ++j) {
           final CnvRegion currentRegion = mRegionSequences.get(i).get(j);
           //System.err.println(currentRegion.toString());
           // write info file about generated CNV
@@ -542,7 +542,7 @@ public class CnvSimulator {
 
     foStream.write(StringUtils.LS.getBytes());
 
-    for (int i = 0; i < mNumberSequences; i++) {
+    for (int i = 0; i < mNumberSequences; ++i) {
       //System.err.println("nts[" + i + "]: " + mLengthPerSeq[i]);
       foStream.write(("Sequence" + TB + i + TB + "length" + TB + mSequenceLengths[i] + TB
           + "CNV-count" + TB + mCountsPerSeq[i] + TB + "CNV-percent" + TB
@@ -580,7 +580,7 @@ public class CnvSimulator {
 
   private void outputHistogram(final OutputStream out, final int[] histo) throws IOException {
     out.write(("range of nt-length    : count" + StringUtils.LS).getBytes());
-    for (int i = 0; i < histo.length; i++) {
+    for (int i = 0; i < histo.length; ++i) {
       out.write((HISTOGRAM_TEXT[i] + histo[i] + StringUtils.LS).getBytes());
     }
   }
@@ -604,7 +604,7 @@ public class CnvSimulator {
   static int chooseFromAccumDistribution(final double rand, final double[] thresholds) {
     int index = 0;
     while (thresholds[index] < rand) {
-      index++;
+      ++index;
     }
     return index;
   }
@@ -641,7 +641,7 @@ public class CnvSimulator {
     //System.err.println("sequence length=" + seq.length + " pos=" + pos + " length=" + length);
     assert pos + length <= seq.length;
     final byte[] arr = new byte[length];
-    for (int i = pos, j = 0; i < pos + length; i++, j++) {
+    for (int i = pos, j = 0; i < pos + length; ++i, ++j) {
       arr[j] = seq[i];
     }
     return arr;
@@ -676,7 +676,7 @@ public class CnvSimulator {
     }
     final long[] results = new long[bps.size()];
     long position = 0;
-    for (int i = 0; i < results.length; i++) {
+    for (int i = 0; i < results.length; ++i) {
       position += bps.get(i);
       results[i] = position;
     }
@@ -701,7 +701,7 @@ public class CnvSimulator {
     for (final long bp : mBreakPoints) {
       line.append(bp).append(StringUtils.LS);
     }
-    for (int i = 0; i < mRegionSequences.size(); i++) {
+    for (int i = 0; i < mRegionSequences.size(); ++i) {
       line.append("Sequence ").append(i).append(" No. regions ").append(mRegionSequences.get(i).size()).append(StringUtils.LS);
     }
     if (mPriors != null) {

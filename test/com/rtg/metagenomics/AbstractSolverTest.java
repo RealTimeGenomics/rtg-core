@@ -79,7 +79,7 @@ public abstract class AbstractSolverTest extends TestCase {
     assertEquals(0.5, solver.solveLine(new StraightLine(-0.5, 1), 0.0, 1.0, 0.01), 1e-5);
     assertEquals(0.5, solver.solveLine(new StraightLine(-0.5, 1), 0.01), 1e-5);
 
-    for (double k = 0; k < 10; k++) {
+    for (double k = 0; k < 10; ++k) {
       assertEquals(k, solver.solveLine(new StraightLine(-k, 1.0), 1e-10), 1e-5);
     }
   }
@@ -87,7 +87,7 @@ public abstract class AbstractSolverTest extends TestCase {
 
   public void testLinearSmall() {
     final AbstractSolver solver = getSolver();
-    for (double k = 0; k < 10; k++) {
+    for (double k = 0; k < 10; ++k) {
       assertEquals(k, solver.solveLine(new StraightLine(-k, 0.5 / (k + 1)), 1e-10), 1e-5);
     }
   }
@@ -287,7 +287,7 @@ public abstract class AbstractSolverTest extends TestCase {
       } else {
         double px = x(0);
         double py = y(0);
-        for (int i = 1; i < size(); i++) {
+        for (int i = 1; i < size(); ++i) {
           final double x = x(i);
           final double y = y(i);
           if (delta <= x) {

@@ -47,7 +47,7 @@ public class TrainTestSplit {
 
     // Choose subsetSize instances from d, poke into split.mTrain
     final Dataset train = new Dataset(input.getAttributes());
-    for (int i = 0; i < subsetSize; i++) {
+    for (int i = 0; i < subsetSize; ++i) {
       final int index = seed.nextInt(size);
       train.addInstance(input.getInstances().get(index));
       used[index] = true;
@@ -55,7 +55,7 @@ public class TrainTestSplit {
 
     // Put any instances not used for training into split.mTest
     final Dataset test = new Dataset(input.getAttributes());
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       if (!used[i]) {
         test.addInstance(input.getInstances().get(i));
       }

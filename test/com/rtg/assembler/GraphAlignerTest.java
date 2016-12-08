@@ -111,7 +111,7 @@ public class GraphAlignerTest extends TestCase {
 
     final Set<GraphAlignment> expected = makeSet(makeAlignment(Arrays.asList(2L, -1L), 1, 3, 0, graph));
     final byte[] read = DnaUtils.encodeString("TGGGCTTG");
-    for (int i = 0; i < read.length; i++) {
+    for (int i = 0; i < read.length; ++i) {
       if (i < 6) {
         checkAlignment(graph, expected, read, i, new ContigPosition(2, i + 1, graph));
       }
@@ -202,7 +202,7 @@ public class GraphAlignerTest extends TestCase {
     int reverseEnd = graph.contigLength(reverse.contigs().get(reverse.contigs().size() - 1)) - reverse.endPosition() - 1;
     assertEquals(forward.startPosition(), reverseEnd);
     assertEquals(forward.endPosition(), reverseStart);
-    for (int i = 0; i < forward.contigs().size(); i++) {
+    for (int i = 0; i < forward.contigs().size(); ++i) {
       long forwardId = forward.contigs().get(i);
       long reverseId = -reverse.contigs().get(reverse.contigs().size() - i - 1);
       assertEquals(forwardId, reverseId);
@@ -223,7 +223,7 @@ public class GraphAlignerTest extends TestCase {
   }
   public void testHighOverlap() {
     final long[][] paths = new long[4][];
-    for (int i = 0; i < paths.length; i++) {
+    for (int i = 0; i < paths.length; ++i) {
       paths[i] = new long[] {i + 1, i + 2};
     }
     final Graph graph = GraphMapCliTest.makeGraph(4, new String[]{"GTAAT", "TAATC", "AATCT", "ATCTT", "TCTTGAGA"}, paths);

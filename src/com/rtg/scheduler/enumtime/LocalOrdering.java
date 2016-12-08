@@ -28,9 +28,9 @@ public class LocalOrdering<E extends Enum<E>> extends IntegralAbstract {
   //Floyd Warshall
   static void transitiveClosure(boolean[][] matrix) {
     final int n = matrix.length;
-    for (int k = 0; k < n; k++) {
-      for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++) {
+    for (int k = 0; k < n; ++k) {
+      for (int i = 0; i < n; ++i) {
+        for (int j = 0; j < n; ++j) {
           matrix[i][j] |= matrix[i][k] & matrix[k][j];
         }
       }
@@ -57,10 +57,10 @@ public class LocalOrdering<E extends Enum<E>> extends IntegralAbstract {
     mFrom = getArray(length);
     mBefore = new boolean[length][length];
 
-    for (int i = 0; i < mTo.length; i++) {
+    for (int i = 0; i < mTo.length; ++i) {
       mTo[i] = new HashSet<>();
     }
-    for (int i = 0; i < mFrom.length; i++) {
+    for (int i = 0; i < mFrom.length; ++i) {
       mFrom[i] = new LinkedHashSet<>();
     }
   }
@@ -138,7 +138,7 @@ public class LocalOrdering<E extends Enum<E>> extends IntegralAbstract {
   public boolean globalIntegrity() {
     integrity();
     if (mFrozen) {
-      for (int i = 0; i < mBefore.length; i++) {
+      for (int i = 0; i < mBefore.length; ++i) {
         Exam.assertFalse(mBefore[i][i]);
       }
     }

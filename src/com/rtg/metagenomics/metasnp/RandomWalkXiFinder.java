@@ -46,7 +46,7 @@ public class RandomWalkXiFinder {
     for (final double v : p) {
       t = arith.add(t, v);
     }
-    for (int k = 0; k < p.length; k++) {
+    for (int k = 0; k < p.length; ++k) {
       p[k] = arith.divide(p[k], t);
     }
   }
@@ -74,12 +74,12 @@ public class RandomWalkXiFinder {
     final Iterator<int[]> alphaIterator = alpha.iterator();
     for (final double[][] cnt : count) {
       final int[] a = alphaIterator.next();
-      for (int allele = 0; allele < cnt[sample].length; allele++) {
+      for (int allele = 0; allele < cnt[sample].length; ++allele) {
         int index = 0;
-        for (int k = numStrains - 1; k >= 0; k--) {
+        for (int k = numStrains - 1; k >= 0; --k) {
           index <<= 1;
           if (a[k] == allele) {
-            index++;
+            ++index;
           }
         }
         powers[index] += cnt[sample][allele];
@@ -99,7 +99,7 @@ public class RandomWalkXiFinder {
     Arrays.fill(sums, mArith.zero());
     int j = 1;
     for (final double x : xi) {
-      for (int i = 0; i < j; i++) {
+      for (int i = 0; i < j; ++i) {
         sums[j + i] = mArith.add(sums[i], x);
       }
       j <<= 1;
@@ -128,18 +128,18 @@ public class RandomWalkXiFinder {
     double best = mArith.zero();
     double[] bestXi = null;
     
-    for (int monteCarloIteration = 0; monteCarloIteration < MONTE_CARLO_ITERATIONS; monteCarloIteration++) {
+    for (int monteCarloIteration = 0; monteCarloIteration < MONTE_CARLO_ITERATIONS; ++monteCarloIteration) {
       // Start from a uniform assignment.  It should be possible to get a
       // better initial estimate.  There did not appear to be any advantage
       // starting from a random distribution.
       double[] xi = uniformDistribution(numStrains, mArith);
 
       // Hill climbing by random perturbation of current solution.
-      for (int hillClimbIteration = 0; hillClimbIteration < ITERATIONS; hillClimbIteration++) {
+      for (int hillClimbIteration = 0; hillClimbIteration < ITERATIONS; ++hillClimbIteration) {
         final double[] newXi = perturb(xi);
         final double[] xiSums = allSums(newXi);
         double p = mArith.one();
-        for (int j = 1; j < xiSums.length; j++) {
+        for (int j = 1; j < xiSums.length; ++j) {
           if (mArith.gt(xiSums[j],  mArith.zero())) {
             final double r = mArith.pow(xiSums[j], powers[j]);
             p = mArith.multiply(p, r);
@@ -174,7 +174,7 @@ public class RandomWalkXiFinder {
     // John's theory says we can maximize each sample independently during this step.
     final double[][] res = new double[evidence.get(0).length][];
     double p = mArith.one();
-    for (int sample = 0; sample < evidence.get(0).length; sample++) {
+    for (int sample = 0; sample < evidence.get(0).length; ++sample) {
       final XiScore xi = maximizeSingleSample(alpha, evidence, sample);
       res[sample] = xi.mXi;
       p = mArith.multiply(p, xi.mScore);

@@ -52,7 +52,7 @@ public class SegmentCollection extends IntegralAbstract {
     assert segment != null;
 //    assert mSize == 0 || segment.compareTo(mSegments[mSize - 1]) > 0 || segment.isEmpty() : segment + ":" + mSegments[mSize - 1];
     mSegments[mSize] = segment;
-    mSize++;
+    ++mSize;
   }
 
   /**
@@ -71,7 +71,7 @@ public class SegmentCollection extends IntegralAbstract {
    * Remove all <code>Segment</code>s.
    */
   public void clear() {
-    for (int i = 0; i < mSize; i++) {
+    for (int i = 0; i < mSize; ++i) {
       mSegments[i] = null;
     }
     mSize = 0;
@@ -85,7 +85,7 @@ public class SegmentCollection extends IntegralAbstract {
    * @throws IOException if error writing output.
    */
   public void flush(final SegmentWriter out, final SegmentCollection free, final int searchPosition) throws IOException {
-    for (int i = 0; i < mSize; i++) {
+    for (int i = 0; i < mSize; ++i) {
       final Segment seg = mSegments[i];
       out.write(seg, searchPosition);
       seg.clear();
@@ -104,7 +104,7 @@ public class SegmentCollection extends IntegralAbstract {
     if (mSize == 0) {
       return null;
     }
-    mSize--;
+    --mSize;
     final Segment res = mSegments[mSize];
     mSegments[mSize] = null;
     return res;
@@ -113,7 +113,7 @@ public class SegmentCollection extends IntegralAbstract {
   @Override
   public void toString(final StringBuilder sb) {
     sb.append("SegmentCollection [").append(mSize).append("]").append(StringUtils.LS);
-    for (int i = 0; i < mSize; i++) {
+    for (int i = 0; i < mSize; ++i) {
       sb.append("[").append(i).append("] ").append(mSegments[i].toString()).append(StringUtils.LS);
     }
   }
@@ -121,13 +121,13 @@ public class SegmentCollection extends IntegralAbstract {
   @Override
   public boolean globalIntegrity() {
     integrity();
-    for (int i = 0; i < mSize; i++) {
+    for (int i = 0; i < mSize; ++i) {
       Exam.assertTrue(mSegments[i] != null);
       if (i > 0) {
         Exam.assertEquals(mSegments[i].isEmpty(), mSegments[i - 1].isEmpty());
       }
     }
-    for (int i = mSize; i < mSegments.length; i++) {
+    for (int i = mSize; i < mSegments.length; ++i) {
       Exam.assertTrue(mSegments[i] == null);
     }
     return true;

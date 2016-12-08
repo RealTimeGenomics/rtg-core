@@ -33,20 +33,20 @@ public class SortedMultiSetTest extends TestCase {
     assertEquals("{0=2}", set.countMap().toString());
     assertEquals(2, set.get(0));
 
-    for (int i = 1; i < 10; i++) {
+    for (int i = 1; i < 10; ++i) {
       set.add(i);
     }
     final String exp10 = "[ 0->2, 1->1, 2->1, 3->1, 4->1, 5->1, 6->1, 7->1, 8->1, 9->1";
     assertEquals(exp10 + "]", set.toString());
     assertEquals(2, set.get(0));
-    for (int i = 1; i < 10; i++) {
+    for (int i = 1; i < 10; ++i) {
       assertEquals(1, set.get(i));
     }
 
     set.add(12);
     assertEquals(exp10 + StringUtils.LS + ", 12->1"  + StringUtils.LS + "]", set.toString());
     assertEquals(2, set.get(0));
-    for (int i = 1; i < 10; i++) {
+    for (int i = 1; i < 10; ++i) {
       assertEquals(1, set.get(i));
     }
     assertEquals(0, set.get(11));

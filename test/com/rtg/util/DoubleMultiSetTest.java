@@ -30,20 +30,20 @@ public class DoubleMultiSetTest extends TestCase {
     assertEquals("[ 0->2.0]", set.toString());
     assertEquals(2.0, set.get(0));
 
-    for (int i = 1; i < 10; i++) {
+    for (int i = 1; i < 10; ++i) {
       set.add(i);
     }
     final String exp10 = "[ 0->2.0, 1->1.0, 2->1.0, 3->1.0, 4->1.0, 5->1.0, 6->1.0, 7->1.0, 8->1.0, 9->1.0";
     assertEquals(exp10 + "]", set.toString());
     assertEquals(2.0, set.get(0));
-    for (int i = 1; i < 10; i++) {
+    for (int i = 1; i < 10; ++i) {
       assertEquals((double) 1, set.get(i));
     }
 
     set.add(12);
     assertEquals(exp10 + StringUtils.LS + ", 12->1.0"  + StringUtils.LS + "]", set.toString());
     assertEquals(2.0, set.get(0));
-    for (int i = 1; i < 10; i++) {
+    for (int i = 1; i < 10; ++i) {
       assertEquals((double) 1, set.get(i));
     }
     assertEquals(0.0, set.get(11));

@@ -128,7 +128,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
     final ArrayList<T>[] readsWindow = (ArrayList<T>[]) new ArrayList<?>[mWindowSize];
     mReadsWindow = readsWindow;
     mReadsWindowInUse = new int[mWindowSize];
-    for (int i = 0; i < mWindowSize; i++) {
+    for (int i = 0; i < mWindowSize; ++i) {
       mReadsWindow[i] = new ArrayList<>();
     }
 
@@ -181,7 +181,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
   private T getHitInfo(int i) {
     final T ret;
     if (mReadsWindowInUse[i] == getMaxHitsPerPosition()) {
-      mMaxHitsExceededCount++;
+      ++mMaxHitsExceededCount;
       if (mMaxHitsExceededCount < 5) {
         Diagnostic.developerLog("Max hits per position exceeded at template: " + mReferenceId + " templateStart: " + (mReadsWindow[i].size() > 0 ? "" + mReadsWindow[i].get(0).mTemplateStart : "unknown"));
       }
@@ -275,7 +275,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
         }
         if (same) {
           returnHitInfo(windPos); // Return it to the pool
-          mDuplicateCount++;
+          ++mDuplicateCount;
         } else {
           if (list.prev() != null) {
             list.prev().insertHit(hit);
@@ -290,7 +290,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
         }
       }
     }
-    mHitCount++;
+    ++mHitCount;
   }
 
   private boolean same(T first, T second) {
@@ -317,7 +317,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
       mCurrentReferencePosition = DONT_KNOW_YET;
     }
 
-    mReferenceCount++;
+    ++mReferenceCount;
     mReferenceId = templateId;
 
     // pass next template call along
@@ -331,7 +331,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
   void findNewMates(final ArrayList<T> hits, int size) throws IOException {
 
     nextHit:
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       final T hit = hits.get(i);
       //      boolean mated = hit.getLeftReads() != null;
 
@@ -345,10 +345,10 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
       int thisSideCount = 0;
       while (thisSide != null) {
         if (thisSide.readId() == hit.readId() && thisSide.first() == hit.first()) {
-          thisSideCount++;
+          ++thisSideCount;
         }
         if (thisSideCount > mReadOverloadLimit) {
-          mLeftOverloadCount++;
+          ++mLeftOverloadCount;
           continue nextHit;
         }
         thisSide = thisSide.next();
@@ -380,13 +380,13 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
           assert mMaxFragmentLength == mWindowSize - (mWindowSize - mMaxFragmentLength);
           if (fragmentLength >= mMinFragmentLength && fragmentLength <= mMaxFragmentLength) {  // only process if length is within specified fragment bounds
             assert hit.isPair(mate);
-            pairCount++;
+            ++pairCount;
             if (pairCount <= mReadOverloadLimit) {
               if (!checkPair(hit, mate)) {
                 break;
               }
             } else {
-              mRightOverloadCount++;
+              ++mRightOverloadCount;
               break;
             }
           }
@@ -432,7 +432,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
    */
   void clearHits(final ArrayList<T> hits, int size) {
     final int count = hits.size();
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       final T hit = hits.get(i);
       final long readId = hit.readId();
       final int hash = readHash(readId, hit.first());
@@ -468,7 +468,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
    */
   private void removeHits(final ArrayList<T> hits, int size) {
     final int count = hits.size();
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       final T hit = hits.get(i);
       final long readId = hit.readId();
       final int hash = readHash(readId, hit.first());
@@ -535,7 +535,7 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
     }
     stats.setProperty("template_lengths_total", Long.toString(mReferenceLengthTotal));
 
-    for (int i = 0; i < mRightPairCounts.length; i++) {
+    for (int i = 0; i < mRightPairCounts.length; ++i) {
       if (mRightPairCounts[i] != 0) {
         Diagnostic.developerLog("Reads with " + i + " potential right side candidates: " + mRightPairCounts[i] + " effective alignments: " + (i * 2 * mRightPairCounts[i]));
       }
@@ -557,10 +557,10 @@ public abstract class AbstractSlidingWindowCollector<T extends AbstractHitInfo<T
   public boolean integrity() {
     assert mReadsLookupMask == mReadsLookup.length - 1;
     // check contents of arrays/hashmaps are consistent
-    for (int i = 0; i < mReadsWindow.length; i++) {
+    for (int i = 0; i < mReadsWindow.length; ++i) {
       final ArrayList<T> hits = mReadsWindow[i];
       assert hits != null;
-      for (int j = 0; j < mReadsWindowInUse[i]; j++) {
+      for (int j = 0; j < mReadsWindowInUse[i]; ++j) {
         final T hit = hits.get(j);
         assert hit != null;
         final int hash = readHash(hit.readId(), hit.first());

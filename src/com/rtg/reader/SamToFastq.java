@@ -143,7 +143,7 @@ public class SamToFastq extends AbstractCli {
         if (samSequence != null) {
           if (!samSequence.getReadName().equals(mLastName)) {
             if (mLastName != null && !mFragDone) {
-              mBadPairs++;
+              ++mBadPairs;
               if (mBadPairs < MAX_WARNINGS) {
                 Diagnostic.warning("No pair found for sequence: " + mLastName);
               } else if (mBadPairs == MAX_WARNINGS) {
@@ -157,16 +157,16 @@ public class SamToFastq extends AbstractCli {
               mLastFragSide = FragSide.LAST_OF_FRAGMENT;
             }
             placePairedRecord(samSequence);
-            mValidRecords++;
+            ++mValidRecords;
             mFragDone = false;
           } else if (!mFragDone && samSequence.getFirstOfPairFlag() != (mLastFragSide == FragSide.FIRST_OF_FRAGMENT)) {
               placePairedRecord(samSequence);
-              mValidRecords++;
-              mValidRecordPairs++;
+              ++mValidRecords;
+              ++mValidRecordPairs;
               mFragDone = true;
               done = true;
           } else {
-            mSkippedRecords++;
+            ++mSkippedRecords;
           }
         } else {
           break;

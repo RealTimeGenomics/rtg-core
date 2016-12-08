@@ -101,7 +101,7 @@ public class BinaryTree {
   }
 
   private void newick(final int indent, final Appendable out) throws IOException {
-    for (int k = 0; k < indent; k++) {
+    for (int k = 0; k < indent; ++k) {
       out.append(' ');
     }
     if (mLeft == null) {
@@ -117,7 +117,7 @@ public class BinaryTree {
       out.append(':');
       out.append(NF.format(mRightDistance));
       out.append(StringUtils.LS);
-      for (int k = 0; k < indent; k++) {
+      for (int k = 0; k < indent; ++k) {
         out.append(' ');
       }
       out.append(")");
@@ -137,7 +137,7 @@ public class BinaryTree {
 
   private String spaces(final int indent) {
     final StringBuilder sb = new StringBuilder();
-    for (int k = 0; k < indent; k++) {
+    for (int k = 0; k < indent; ++k) {
       sb.append(' ');
     }
     return sb.toString();

@@ -222,13 +222,13 @@ public class NgsTaskFunctionalTest extends TestCase {
     }
     final String actual = out.toString();
     //System.err.println(actual);
-    for (int i = 0; i < exp.length; i++) {
+    for (int i = 0; i < exp.length; ++i) {
       final String str = exp[i];
       if (!actual.contains(str)) {
         fail("String not found:" + i + LS + str + LS + actual);
       }
     }
-    for (int i = 0; i < nex.length; i++) {
+    for (int i = 0; i < nex.length; ++i) {
       final String str = nex[i];
       if (actual.contains(str)) {
         fail("String found:" + i + LS + str + LS + actual);
@@ -506,7 +506,7 @@ public class NgsTaskFunctionalTest extends TestCase {
 
   private static String reverseComplement(final String nt) {
     final StringBuilder sb = new StringBuilder();
-    for (int j = nt.length() - 1; j >= 0; j--) {
+    for (int j = nt.length() - 1; j >= 0; --j) {
       final char c = nt.charAt(j);
       final char d;
       switch (c) {
@@ -623,7 +623,7 @@ public class NgsTaskFunctionalTest extends TestCase {
 
   static String makeReads(final String str, final int repeat) {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < repeat; i++) {
+    for (int i = 0; i < repeat; ++i) {
       sb.append(str.replace("@", "" + i));
     }
     return sb.toString();

@@ -46,7 +46,7 @@ public class EmResultTest extends TestCase {
 
   HypothesisScore[] scores(final int...hyp) {
     final HypothesisScore[] calls = new HypothesisScore[hyp.length];
-    for (int i = 0; i < hyp.length; i++) {
+    for (int i = 0; i < hyp.length; ++i) {
       calls[i] = new HypothesisScore(new MockGenotypeMeasure(0, hyp[i], 0.0, 0));
     }
     return calls;

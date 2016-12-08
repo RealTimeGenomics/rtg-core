@@ -81,7 +81,7 @@ public class HomoPolymerParams extends IntegralAbstract {
       }
       final int t = Integer.parseInt(split[1]);
       final int[] cnt = new int[split.length - 2];
-      for (int r = 0; r < cnt.length; r++) {
+      for (int r = 0; r < cnt.length; ++r) {
         cnt[r] = Integer.parseInt(split[r + 2]);
       }
       temp[tag].set(t, cnt);
@@ -112,7 +112,7 @@ public class HomoPolymerParams extends IntegralAbstract {
 
   private static double[][] transitions(final PossibilityArithmetic arithmetic, final int[][] counts, final boolean complement) {
     final double[][] res = new double[counts.length][];
-    for (int i = 0; i < counts.length; i++) {
+    for (int i = 0; i < counts.length; ++i) {
       res[i] = transitions(arithmetic, counts[i], complement);
     }
     return res;
@@ -137,7 +137,7 @@ public class HomoPolymerParams extends IntegralAbstract {
       return new double[0];
     }
     final double[] res = new double[counts.length];
-    for (int i = 0; i < counts.length; i++) {
+    for (int i = 0; i < counts.length; ++i) {
       final double tr = counts[i] / (double) total;
       final double t = complement ? 1.0 - tr : tr;
       res[i] = arithmetic.prob2Poss(t);
@@ -233,12 +233,12 @@ public class HomoPolymerParams extends IntegralAbstract {
   @Override
   public boolean globalIntegrity() {
     integrity();
-    for (int nt = 0; nt < 4; nt++) {
+    for (int nt = 0; nt < 4; ++nt) {
       Exam.assertEquals(mTransitions[nt].length, mTransitionsC[nt].length);
-      for (int t = 0; t < mTransitions[nt].length; t++) {
+      for (int t = 0; t < mTransitions[nt].length; ++t) {
         Exam.assertEquals(mTransitions[nt][t].length, mTransitionsC[nt][t].length);
         double total = 0.0;
-        for (int r = 0; r < mTransitions[nt][t].length; r++) {
+        for (int r = 0; r < mTransitions[nt][t].length; ++r) {
           final double v = mTransitions[nt][t][r];
           total = mArithmetic.add(total, v);
           Exam.assertTrue(mArithmetic.isValidPoss(v));

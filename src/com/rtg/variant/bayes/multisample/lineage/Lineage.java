@@ -146,7 +146,7 @@ public final class Lineage extends AbstractMultisampleCaller {
     mDenovoPriors = denovoPriors;
     mCoverageVariables = coverage ? new Variable[max + 1] : null;
     if (coverage) {
-      for (int k = 0; k < mCoverageVariables.length; k++) {
+      for (int k = 0; k < mCoverageVariables.length; ++k) {
         mCoverageVariables[k] = new Variable("C" + k, MAX_COPY_NUMBER + 1);
       }
     }
@@ -199,7 +199,7 @@ public final class Lineage extends AbstractMultisampleCaller {
   protected <D extends Description, T extends HypothesesPrior<D>> ComparisonResult makeSamples(List<ModelInterface<?>> models, HaploidDiploidHypotheses<T> hypotheses) {
     // todo Coverage
     final Factor[] rootFactors = new Factor[models.size()];
-    for (int i = 0; i < models.size(); i++) {
+    for (int i = 0; i < models.size(); ++i) {
       if (isRoot(i)) {
         final T h = hypotheses.get(models.get(i));
         rootFactors[i] = new ModelFactor(new Variable("G" + i, h.size()), h);
@@ -208,7 +208,7 @@ public final class Lineage extends AbstractMultisampleCaller {
     final ForwardBackwardLineage fb = new ForwardBackwardLineage(models.get(0).arithmetic(), this, rootFactors, models);
     final VariantSample[] samples = new VariantSample[models.size()];
     boolean interesting = false;
-    for (int k = 0; k < models.size(); k++) {
+    for (int k = 0; k < models.size(); ++k) {
       final Double deNovoScore;
       final VariantSample.DeNovoStatus deNovo;
       if (isRoot(k)) {

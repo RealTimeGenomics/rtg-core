@@ -71,7 +71,7 @@ public abstract class AbstractSequenceComplexity implements SequenceComplexity {
   @Override
   public final double minComplexity(byte[] sequence) {
     double res = -1.0;
-    for (int i = 0; i < Math.max(1, sequence.length - mRegionLength); i++) {
+    for (int i = 0; i < Math.max(1, sequence.length - mRegionLength); ++i) {
       final double c = complexity(sequence, i);
       if (res == -1.0 || c < res) {
         res = c;
@@ -100,7 +100,7 @@ public abstract class AbstractSequenceComplexity implements SequenceComplexity {
   @Override
   public final double maxComplexity(byte[] sequence) {
     double res = -1.0;
-    for (int i = 0; i < Math.max(1, sequence.length - mRegionLength); i++) {
+    for (int i = 0; i < Math.max(1, sequence.length - mRegionLength); ++i) {
       final double c = complexity(sequence, i);
       if (c > res) {
         res = c;

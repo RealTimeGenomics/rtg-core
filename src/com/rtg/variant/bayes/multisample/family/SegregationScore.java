@@ -45,7 +45,7 @@ public class SegregationScore extends IntegralAbstract implements ISegregationSc
 
     mLookup = MendelianAlleleProbabilityDiploid.LOOKUP[fa1][mo0][mo1];
     mCounts = new int[mLookup.length][];
-    for (int i = 0; i < mCounts.length; i++) {
+    for (int i = 0; i < mCounts.length; ++i) {
       mCounts[i] = new int[mLookup[i].length];
     }
   }
@@ -62,15 +62,15 @@ public class SegregationScore extends IntegralAbstract implements ISegregationSc
       return;
     }
     mCounts[ch0][ch1]++;
-    mTotal++;
+    ++mTotal;
   }
 
   @Override
   public double lnProbability() {
     double lnp = 0.0;
     lnp += MathUtils.logFactorial(mTotal);
-    for (int i = 0; i < mCounts.length; i++) {
-      for (int j = 0; j < mCounts[i].length; j++) {
+    for (int i = 0; i < mCounts.length; ++i) {
+      for (int j = 0; j < mCounts[i].length; ++j) {
         final int count = mCounts[i][j];
         if (count > 0) {
           lnp -= MathUtils.logFactorial(count);

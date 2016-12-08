@@ -93,7 +93,7 @@ public class KronaSpeciesReportWriter {
     }
 
     xmlWriter.writeCharacters(StringUtils.LS);
-    for (int i = 0; i < indentLevel; i++) {
+    for (int i = 0; i < indentLevel; ++i) {
       xmlWriter.writeCharacters("  ");
     }
     xmlWriter.writeStartElement("node");

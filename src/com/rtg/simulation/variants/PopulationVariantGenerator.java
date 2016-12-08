@@ -84,7 +84,7 @@ public abstract class PopulationVariantGenerator {
         rec.addAltCall(DnaUtils.bytesToSequenceIncCG(mAllele));
       }
       final String[] mAFStr = new String[mDistribution.length];
-      for (int i = 0; i < mDistribution.length; i++) {
+      for (int i = 0; i < mDistribution.length; ++i) {
         mAFStr[i] = f.format(mDistribution[i]);
       }
       rec.addInfo(VcfUtils.INFO_ALLELE_FREQ, mAFStr);
@@ -187,7 +187,7 @@ public abstract class PopulationVariantGenerator {
   }
 
   private static boolean validNs(PopulationVariant var) {
-    for (int i = 0; i < var.mRef.length; i++) {
+    for (int i = 0; i < var.mRef.length; ++i) {
       if (var.mRef[i] != DNA.N.ordinal()) {
         return true;
       }

@@ -49,7 +49,7 @@ public class ModelFactor extends AbstractFactor implements ToDefaultFactor {
   @Override
   public DefaultFactor asDefault() {
     final double[] poss = new double[mVar.size()];
-    for (int i = 0; i < mVar.size(); i++) {
+    for (int i = 0; i < mVar.size(); ++i) {
       poss[i] = mUnderlyingFactor.p(i);
     }
     return new DefaultFactor(mUnderlyingFactor.arithmetic(), Collections.singletonList(mVar), poss);

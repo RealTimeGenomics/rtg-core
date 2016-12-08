@@ -34,7 +34,7 @@ public abstract class AbstractAlleleStatisticsTest<T extends AlleleStatistics<T>
 
   public void test() {
     final T cn = getAlleleStatistics(DescriptionSnp.SINGLETON);
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       assertEquals(0.0, cn.count(i));
       assertEquals(0.0, cn.error(i));
     }
@@ -134,10 +134,10 @@ public abstract class AbstractAlleleStatisticsTest<T extends AlleleStatistics<T>
     final T cn = getAlleleStatistics(DescriptionSnp.SINGLETON);
     final Random r = new Random();
     //System.err.println(cn.toString());
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       incrementAlleleStatistics(cn, diStrand(0, 2, 0.0, r.nextBoolean()));
     }
-    for (int i = 0; i < 6; i++) {
+    for (int i = 0; i < 6; ++i) {
       incrementAlleleStatistics(cn, diStrand(1, 2, 0.0, r.nextBoolean()));
     }
     assertEquals(2.1715, cn.alleleBalance(0, 1), 0.0001);
@@ -151,21 +151,21 @@ public abstract class AbstractAlleleStatisticsTest<T extends AlleleStatistics<T>
     //System.err.println(cn.toString());
     int mated = 0;
     int unmated = 0;
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       incrementAlleleStatistics(cn, diPaired(0, 2, 0.0, true));
-      mated++;
+      ++mated;
     }
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       incrementAlleleStatistics(cn, diPaired(0, 2, 0.0, false));
-      unmated++;
+      ++unmated;
     }
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       incrementAlleleStatistics(cn, diPaired(1, 2, 0.0, true));
-      mated++;
+      ++mated;
     }
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i < 11; ++i) {
       incrementAlleleStatistics(cn, diPaired(1, 2, 0.0, false));
-      unmated++;
+      ++unmated;
     }
     final double prob = (double) unmated / (mated + unmated);
     assertEquals(5.2115, cn.unmatedBias(0, prob), 0.0001);
@@ -174,16 +174,16 @@ public abstract class AbstractAlleleStatisticsTest<T extends AlleleStatistics<T>
   public void testStrandBias() {
     final T cn = getAlleleStatistics(DescriptionSnp.SINGLETON);
     //System.err.println(cn.toString());
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 10; ++i) {
       incrementAlleleStatistics(cn, diStrand(0, 2, 0.0, true));
     }
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < 5; ++i) {
       incrementAlleleStatistics(cn, diStrand(0, 2, 0.0, false));
     }
-    for (int i = 0; i < 4; i++) {
+    for (int i = 0; i < 4; ++i) {
       incrementAlleleStatistics(cn, diStrand(1, 2, 0.0, true));
     }
-    for (int i = 0; i < 11; i++) {
+    for (int i = 0; i < 11; ++i) {
       incrementAlleleStatistics(cn, diStrand(1, 2, 0.0, false));
     }
     assertEquals(3.6191, cn.strandBias(0), 0.0001);

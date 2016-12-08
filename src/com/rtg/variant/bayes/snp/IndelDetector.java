@@ -44,25 +44,25 @@ public class IndelDetector implements EvidenceAcceptor {
   @Override
   public void increment(EvidenceInterface evidence) {
     if (evidence == null) {
-      mNonIndelCount++;
+      ++mNonIndelCount;
     } else {
       assert evidence instanceof EvidenceIndel;
       if (evidence.mapError() < Model.AMBIGUITY_THRESHOLD) {
         switch (evidence.read()) {
           case EvidenceIndel.INSERT:
-            mNonTrivialInsertCount++;
+            ++mNonTrivialInsertCount;
             mIndelLength = Math.max(((EvidenceIndel) evidence).maxOperationLength(), mIndelLength);
             break;
           case EvidenceIndel.DELETE:
-            mNonTrivialDeletionCount++;
+            ++mNonTrivialDeletionCount;
             mIndelLength = Math.max(((EvidenceIndel) evidence).maxOperationLength(), mIndelLength);
             break;
           case EvidenceIndel.SOFT_CLIP_LEFT:
-            mSoftClipLeftCount++;
+            ++mSoftClipLeftCount;
             mSoftClipLength = Math.max(((EvidenceIndel) evidence).maxOperationLength(), mSoftClipLength);
             break;
           case EvidenceIndel.SOFT_CLIP_RIGHT:
-            mSoftClipRightCount++;
+            ++mSoftClipRightCount;
             mSoftClipLength = Math.max(((EvidenceIndel) evidence).maxOperationLength(), mSoftClipLength);
             break;
           default:

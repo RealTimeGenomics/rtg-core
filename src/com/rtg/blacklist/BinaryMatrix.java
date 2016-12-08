@@ -35,8 +35,8 @@ public class BinaryMatrix {
     mK = k;
     mMatrix = new long[k];
     mMatrixT = new long[k];
-    for (int i = 0; i < k; i++) {
-      for (int j = 0; j < k; j++) {
+    for (int i = 0; i < k; ++i) {
+      for (int j = 0; j < k; ++j) {
         if (r.nextBoolean()) {
           mMatrix[i] |= 1L << j;
           mMatrixT[j] |= 1L << i;
@@ -54,9 +54,9 @@ public class BinaryMatrix {
   private void transpose() {
     if (mMatrixT == null) {
       mMatrixT = new long[mK];
-      for (int i = 0; i < mK; i++) {
+      for (int i = 0; i < mK; ++i) {
         long v = 0;
-        for (int j = mK - 1; j >= 0; j--) {
+        for (int j = mK - 1; j >= 0; --j) {
           v <<= 1;
           v |= get(j, i);
         }
@@ -77,7 +77,7 @@ public class BinaryMatrix {
       if (b.invert() != null) {
         return b;
       }
-      seed++;
+      ++seed;
     }
     throw new RuntimeException("Unable to create invertible matrix for size: " + k);
   }
@@ -90,7 +90,7 @@ public class BinaryMatrix {
   public long times(final long val) {
     // Direct multiplication but with bit twiddling
     //    long res = 0;
-    //    for (int i = 0; i < mK; i++) {
+    //    for (int i = 0; i < mK; ++i) {
     //      final long tmp = mMatrix[i] & val;
     //      res |= (Long.bitCount(tmp) & 1L) << i;
     //    }
@@ -123,7 +123,7 @@ public class BinaryMatrix {
   private static BinaryMatrix identity(int k) {
     final long[] m = new long[k];
     long j = 1;
-    for (int i = 0; i < k; i++, j <<= 1) {
+    for (int i = 0; i < k; ++i, j <<= 1) {
       m[i] = j;
     }
     return new BinaryMatrix(m);
@@ -136,10 +136,10 @@ public class BinaryMatrix {
   public BinaryMatrix invert() {
     final BinaryMatrix a = new BinaryMatrix(Arrays.copyOf(mMatrix, mMatrix.length));
     final BinaryMatrix b = identity(mK);
-    for (int k = 0; k < mK; k++) {
+    for (int k = 0; k < mK; ++k) {
       // Find first non-zero entry in kth column
       int j;
-      for (j = k; j < mK; j++) {
+      for (j = k; j < mK; ++j) {
         if (0 != a.get(j, k)) {
           break;
         }
@@ -153,7 +153,7 @@ public class BinaryMatrix {
         b.swapRows(j, k);
       }
       // Add multiples of kth row to lower rows to zero entries
-      for (int i = k + 1; i < mK; i++) {
+      for (int i = k + 1; i < mK; ++i) {
         final long u = a.get(i, k);
         if (u != 0) {
           a.mMatrix[i] ^= a.mMatrix[k];
@@ -162,8 +162,8 @@ public class BinaryMatrix {
       }
     }
     // Now do the Jordan step
-    for (int k = mK - 1; k > 0; k--) {
-      for (int j = k - 1; j >= 0; j--) {
+    for (int k = mK - 1; k > 0; --k) {
+      for (int j = k - 1; j >= 0; --j) {
         final long u = a.get(j, k);
         if (u != 0) {
           a.mMatrix[j] ^= a.mMatrix[k];
@@ -181,7 +181,7 @@ public class BinaryMatrix {
    */
   public String toString() {
     final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < mK; i++) {
+    for (int i = 0; i < mK; ++i) {
       final String binString = Long.toBinaryString(mMatrix[i]);
       final String paddedString = binString.length() < mK ? String.format("%0" + (mK - binString.length()) + "d%s", 0, binString) : binString;
       sb.append(paddedString).append("\n");

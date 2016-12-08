@@ -30,7 +30,7 @@ class SpeciesLineLinear extends Line {
     //System.err.println("mL=" + mL);
     mFrags = blockInfo.getFrags();
     mC = new double[mFrags.length];
-    for (int i = 0; i < mFrags.length; i++) {
+    for (int i = 0; i < mFrags.length; ++i) {
       final Frag frag = mFrags[i];
       final double d = frag.sum(delta);
       final double m = frag.sum(r);
@@ -43,7 +43,7 @@ class SpeciesLineLinear extends Line {
   @Override
   public double value(final double delta) {
     double v0 = 0.0;
-    for (int i = 0; i < mFrags.length; i++) {
+    for (int i = 0; i < mFrags.length; ++i) {
       final double c = mC[i];
       final int mult = mFrags[i].multiplicity();
       v0 += mult / (c + delta);

@@ -537,7 +537,7 @@ public class CnvSimulatorTest extends TestCase {
     int copyNumber = 0;
     int totalLength = 0;
     int lastPosition = 0;
-    for (int i = 3; i < lines.length; i++) {
+    for (int i = 3; i < lines.length; ++i) {
       final String[] parts = lines[i].split(TB);
       totalLength += (Integer.parseInt(parts[1]) - lastPosition) * copyNumber;
       lastPosition = Integer.parseInt(parts[1]);

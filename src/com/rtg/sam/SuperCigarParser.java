@@ -243,7 +243,7 @@ public class SuperCigarParser {
     }
     /* The current cigar action count */
     int cigarCount = 0;
-    for (int i = 0; i < mCigar.length(); i++) {
+    for (int i = 0; i < mCigar.length(); ++i) {
       final char ch = mCigar.charAt(i);
       if (ch >= '0' && ch <= '9') {
         cigarCount = cigarCount * 10 + (ch - '0');
@@ -293,7 +293,7 @@ public class SuperCigarParser {
    * @throws BadSuperCigarException on bad cigar or read delta
    */
   protected void doChunk(char ch, int count) throws BadSuperCigarException {
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < count; ++i) {
       mOperationLength = count;
       final int templateNt = templateNt();
       mTemplateToReadPos[mTemplatePos & TABLE_MASK] = mReadPos;
@@ -301,7 +301,7 @@ public class SuperCigarParser {
         case SamUtils.CIGAR_UNMAPPED:
           doUnmapped();
           advanceTemplate(true);
-          mReadPos++;
+          ++mReadPos;
           break;
         case SamUtils.CIGAR_SAME:
           int readNt = mRead == null ? templateNt : getReadDelta(-1);
@@ -312,12 +312,12 @@ public class SuperCigarParser {
 
           doEquality(readNt, templateNt);
           advanceTemplate(true);
-          mReadPos++;
+          ++mReadPos;
           break;
         case SamUtils.CIGAR_MISMATCH:
           doSubstitution(getReadDelta(mReadDeltaPos), templateNt);
-          mReadDeltaPos++;
-          mReadPos++;
+          ++mReadDeltaPos;
+          ++mReadPos;
           advanceTemplate(true);
           break;
         case SamUtils.CIGAR_SAME_OR_MISMATCH:
@@ -331,11 +331,11 @@ public class SuperCigarParser {
           assert readDeltaNt >= DNA.N.ordinal() && readDeltaNt <= DNA.T.ordinal() : "ReadDelta out of 0-4 range: " + readDeltaNt; //make sure we're dealing with everything in the same number space.
           if (N_CODE != readDeltaNt && N_CODE != templateNt && readDeltaNt != templateNt) {
             doSubstitution(readDeltaNt, templateNt);
-            mReadDeltaPos++;
+            ++mReadDeltaPos;
           } else {
             doEquality(readDeltaNt, templateNt);
           }
-          mReadPos++;
+          ++mReadPos;
           advanceTemplate(true);
           break;
         case SamUtils.CIGAR_DELETION_FROM_REF:
@@ -344,8 +344,8 @@ public class SuperCigarParser {
           break;
         case SamUtils.CIGAR_INSERTION_INTO_REF:
           doReadOnly(getReadDelta(mReadDeltaPos)); // out of bounds here means readDelta is too short.
-          mReadDeltaPos++;
-          mReadPos++;
+          ++mReadDeltaPos;
+          ++mReadPos;
           break;
         case SamUtils.CIGAR_GAP_IN_READ:
           doTemplateSkip(templateNt);
@@ -366,8 +366,8 @@ public class SuperCigarParser {
           break;
         case SamUtils.CIGAR_SOFT_CLIP:
           doReadSoftClip(getReadDelta(mReadDeltaPos));
-          mReadDeltaPos++;
-          mReadPos++;
+          ++mReadDeltaPos;
+          ++mReadPos;
           if (mTemplatePos > mTemplateStart) {  //this only advances the template for soft clips that aren't at the start of the read. Advancing for other cases is purely for super cigar backstep operations.
             advanceTemplate(true);
           }
@@ -382,12 +382,12 @@ public class SuperCigarParser {
         case SuperCigar.UNKNOWN_READ:
           doUnknownOnRead();
           advanceTemplate(true);
-          mReadPos++;
+          ++mReadPos;
           break;
         case SuperCigar.UNKNOWN_TEMPLATE:
           doUnknownOnTemplate(getReadDelta(mReadDeltaPos), templateNt);
-          mReadDeltaPos++;
-          mReadPos++;
+          ++mReadDeltaPos;
+          ++mReadPos;
           advanceTemplate(true);
           break;
         default:

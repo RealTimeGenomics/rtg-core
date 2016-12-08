@@ -87,12 +87,12 @@ public final class SuperCigar {
         prevAction = action;
         count = 1;
       } else {
-        count++;
+        ++count;
       }
       if (prevAction != ActionsHelper.CG_OVERLAP_IN_READ) {
-        pos++;
+        ++pos;
       } else {
-        pos--;
+        --pos;
       }
     }
     updateCigar(sb, prevAction, count, pos <= 0 || pos > templateLength);
@@ -121,15 +121,15 @@ public final class SuperCigar {
       if (action == ActionsHelper.MISMATCH || action == ActionsHelper.INSERTION_INTO_REFERENCE || action == ActionsHelper.UNKNOWN_TEMPLATE
           || (action != ActionsHelper.CG_OVERLAP_IN_READ && action != ActionsHelper.CG_GAP_IN_READ && (pos < 0 || pos >= templateLength))) {
         sb.append(DnaUtils.getBase(read[readPos]));
-        readPos++;
-        pos++;
+        ++readPos;
+        ++pos;
       } else if (action == ActionsHelper.SAME || action == ActionsHelper.UNKNOWN_READ) {  //read is known
-        readPos++;
-        pos++;
+        ++readPos;
+        ++pos;
       } else  if (action == ActionsHelper.CG_GAP_IN_READ) {
-        pos++;
+        ++pos;
       } else if (action == ActionsHelper.CG_OVERLAP_IN_READ) {
-        pos--;
+        --pos;
       }
     }
     assert readPos == read.length;

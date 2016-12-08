@@ -51,7 +51,7 @@ public class VariantAlleleTrigger {
     double vac = 0;
     int va = -1;
 //    boolean tied = false;
-    for (int i = 0; i < description.size(); i++) {
+    for (int i = 0; i < description.size(); ++i) {
       final double count = ac.count(i) - ac.error(i);
       tot += count;
       //System.err.println("a = " + i + " (" + description.name(i) + ") ac = " + count);

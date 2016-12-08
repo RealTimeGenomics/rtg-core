@@ -90,10 +90,10 @@ public class IndelMatcherTest extends TestCase {
   private static void match(IndelMatcher m, int start, int[] counts, EvidenceIndel evid) {
     int pos = start;
     for (int count : counts) {
-      for (int i = 0; i < count; i++) {
+      for (int i = 0; i < count; ++i) {
         m.match(pos, evid);
       }
-      pos++;
+      ++pos;
     }
   }
 }

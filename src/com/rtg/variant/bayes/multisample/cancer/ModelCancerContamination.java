@@ -68,7 +68,7 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
   private double[] oneDprob(final EvidenceInterface evidence) {
     final Code code = mSubHypotheses.code();
     final double[] probs = new double[mSubHypotheses.size()];
-    for (int i = 0; i < probs.length; i++) {
+    for (int i = 0; i < probs.length; ++i) {
       final double a = Math.max(0, evidence.probability(code.a(i)));
       final double b = Math.max(0, evidence.probability(code.bc(i)));
       probs[i] = 0.5 * (a + b);
@@ -92,7 +92,7 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
     final double pE = evidence.pe();
     final double pEr = r * pE;
     final Code code = hypotheses().code();
-    for (int i = 0; i < size(); i++) {
+    for (int i = 0; i < size(); ++i) {
       final int a = code.a(i);
       final int b = code.bc(i);
       // The cross-product is normal x cancer
@@ -117,9 +117,9 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
     sb.append(LS);
     final int pad = hypotheses().nameLength();
     final int size = ((HypothesesCancer) hypotheses()).subHypotheses().size();
-    for (int i = 0; i < size; i++) {
+    for (int i = 0; i < size; ++i) {
       sb.append(StringUtils.padLeft(hypotheses().name(i), pad));
-      for (int j = 0; j < size; j++) {
+      for (int j = 0; j < size; ++j) {
         final int k = hypotheses().code().code(i, j);
         sb.append(fmt.format(arithmetic().poss2Ln(mPosteriors[k])));
       }

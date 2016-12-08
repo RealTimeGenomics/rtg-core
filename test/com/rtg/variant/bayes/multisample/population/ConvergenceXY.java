@@ -40,7 +40,7 @@ public final class ConvergenceXY<D extends DescriptionCommon> {
     System.out.println("p   Null    HW");
     final double errorRate = 0.01;
     final int range = 10;
-    for (int i = 0; i <= range; i++) {
+    for (int i = 0; i <= range; ++i) {
       final double p = (double) i / range;
       System.out.print(Utils.realFormat(p, 3));
       final double nullAvg = itEstimators(sampless, errorRate, type, new NullEstimator(), p);

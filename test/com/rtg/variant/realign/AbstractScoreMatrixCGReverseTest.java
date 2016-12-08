@@ -93,7 +93,7 @@ public abstract class AbstractScoreMatrixCGReverseTest extends AbstractNanoTest 
       final int w = 2 * maxShift + 1;  // width
       assertEquals(w, score.mWidth);
       final int last = score.mLength;
-      for (int col = 0; col < w; col++) {
+      for (int col = 0; col < w; ++col) {
         assertEquals(0.0, score.arithmetic().poss2Ln(score.delete(last, col)));
         assertEquals(0.0, score.arithmetic().poss2Ln(score.match(last, col)));
         assertEquals(Double.NEGATIVE_INFINITY, score.arithmetic().poss2Ln(score.insert(last, col)));

@@ -42,7 +42,7 @@ public class AviewVariant {
     final boolean hasPreviousNt = VcfUtils.hasRedundantFirstNucleotide(rec);
     final String[] alleleStrings = VcfUtils.getAlleleStrings(rec, hasPreviousNt);
     mPrediction = new byte[VcfUtils.isHomozygousAlt(rec, sampleNo) ? 1 : 2][];
-    for (int i = 0; i < mPrediction.length; i++) {
+    for (int i = 0; i < mPrediction.length; ++i) {
       final int alleleId = gtArray[i];
       mPrediction[i] = DnaUtils.encodeString(alleleId == -1 ? "N" : alleleStrings[alleleId]);
     }

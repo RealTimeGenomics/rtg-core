@@ -254,7 +254,7 @@ public final class GraphToPlot extends LoggedCli {
         final int overlapCount = overlappingReadCount(path, graph);
         out.print("{simpleCount: " + simpleCount  + ", overlapCount: " + overlapCount + ", contigs: [");
         String joinPath = "";
-        for (int i = 0; i < graph.pathLength(path); i++)  {
+        for (int i = 0; i < graph.pathLength(path); ++i)  {
           out.print(joinPath);
           out.print(graph.pathContig(path, i));
           joinPath = ", ";
@@ -274,12 +274,12 @@ public final class GraphToPlot extends LoggedCli {
     for (Node node : nodes) {
       translated.put(node.mContigId, i);
       out.println(node.output(i));
-      i++;
+      ++i;
     }
 
     final Set<Link> links = new TreeSet<>();
     for (long pathId : paths) {
-      for (int j = 1; j < graph.pathLength(pathId); j++)  {
+      for (int j = 1; j < graph.pathLength(pathId); ++j)  {
         final long first = graph.pathContig(pathId, j - 1);
         final long second = graph.pathContig(pathId, j);
         Link link = null;
@@ -305,7 +305,7 @@ public final class GraphToPlot extends LoggedCli {
 
   static int overlappingReadCount(long pathId, Graph graph) {
     final long[] path = new long[graph.pathLength(pathId)];
-    for (int i = 0; i < path.length; i++) {
+    for (int i = 0; i < path.length; ++i) {
       path[i] = graph.pathContig(pathId, i);
     }
     return overlappingReadCount(graph, path);
@@ -319,7 +319,7 @@ public final class GraphToPlot extends LoggedCli {
       if (graph.pathLength(current) - index < contigs.length) {
         continue;
       }
-      for (int i = 0; i < contigs.length; i++) {
+      for (int i = 0; i < contigs.length; ++i) {
         if (graph.pathContig(current, index + i) != contigs[i]) {
           continue pathLoop;
         }
@@ -350,7 +350,7 @@ public final class GraphToPlot extends LoggedCli {
     long pathId;
     while ((pathId = iterator.nextPathId()) != 0) {
       final int index = iterator.contigIndex();
-      for (int j = 0; j < graph.pathLength(pathId); j++) {
+      for (int j = 0; j < graph.pathLength(pathId); ++j) {
         if (j == index + 1 || j == index - 1) {
           next.add(new Node(graph.pathContig(pathId, j), graph));
         }
@@ -368,7 +368,7 @@ public final class GraphToPlot extends LoggedCli {
     startNode.mShape = "box";
     current.add(startNode);
     nodes.add(startNode);
-    for (int i = 0; i < depth; i++) {
+    for (int i = 0; i < depth; ++i) {
       for (Node step : current) {
         for (Node linkedContig : nextNodes(step.mContigId, graph)) {
           final Node reverse = new Node(-linkedContig.mContigId, graph);
@@ -386,7 +386,7 @@ public final class GraphToPlot extends LoggedCli {
       long pathId;
       while ((pathId = iterator.nextPathId()) != 0) {
         final int index = iterator.contigIndex();
-        for (int j = 0; j < graph.pathLength(pathId); j++) {
+        for (int j = 0; j < graph.pathLength(pathId); ++j) {
           if (j == index + 1 || j == index - 1) {
             final Node linkedContig = new Node(graph.pathContig(pathId, j), graph);
             final Node reverse = new Node(-graph.pathContig(pathId, j), graph);

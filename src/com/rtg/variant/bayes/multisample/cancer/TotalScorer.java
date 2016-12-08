@@ -23,7 +23,7 @@ class TotalScorer implements Scorer {
   @Override
   public void add(final Double score, final int refCount, final int altCount) {
     if (score != null) {
-      mCount++;
+      ++mCount;
       mRefCount += refCount;
       mAltCount += altCount;
     }

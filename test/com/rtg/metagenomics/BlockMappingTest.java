@@ -50,17 +50,17 @@ public class BlockMappingTest extends TestCase {
 
   private void checkA(final int[] a, final int... b) {
     assertEquals(b.length, a.length);
-    for (int i = 0; i < a.length; i++) {
+    for (int i = 0; i < a.length; ++i) {
       assertEquals("" + i, a[i], b[i]);
     }
-    for (int i = 1; i < a.length; i++) {
+    for (int i = 1; i < a.length; ++i) {
       assertTrue("" + i, a[i] <= i);
     }
   }
 
   private void check(final int[] a, final int... b) {
     assertEquals(b.length, a.length);
-    for (int i = 0; i < a.length; i++) {
+    for (int i = 0; i < a.length; ++i) {
       assertEquals("" + i, a[i], b[i]);
     }
   }

@@ -108,7 +108,7 @@ public final class ObjectWalkerTest extends TestCase {
     @Override
     protected void visitObject(final Stack<Object> path, final Object value) {
       // super.visitObject(path, value);  // Uncomment for trace on system err
-      mCounter++;
+      ++mCounter;
     }
   }
 }

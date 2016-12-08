@@ -68,8 +68,8 @@ public class SimpleRepeatMeasurer implements RepeatMeasurer {
     final int clippedPositionA = Math.max(positionA, 0);
     int repeatTotal = 0;
     //StringBuilder sb = new StringBuilder();
-    for (int repeatStart = clippedPositionA; repeatStart < positionB; repeatStart++) {
-      for (int simpleLength = 1; simpleLength <= mMaxMerLength; simpleLength++) {
+    for (int repeatStart = clippedPositionA; repeatStart < positionB; ++repeatStart) {
+      for (int simpleLength = 1; simpleLength <= mMaxMerLength; ++simpleLength) {
         // work out the potential repeat unit
         if (mReferenceNts.length > repeatStart + simpleLength) {
           int repeatPosition = repeatStart + simpleLength;
@@ -122,7 +122,7 @@ public class SimpleRepeatMeasurer implements RepeatMeasurer {
    */
   protected int mismatchPosition(int repeatStart, int simpleLength, int repeatPosition) {
     int i;
-    for (i = 0; i < simpleLength && repeatPosition + i < mReferenceNts.length; i++) {
+    for (i = 0; i < simpleLength && repeatPosition + i < mReferenceNts.length; ++i) {
       if (mReferenceNts[repeatStart + i] != mReferenceNts[repeatPosition + i]) {
         return i;
       }
