@@ -259,19 +259,11 @@ public class VcfValidatorCli extends AbstractCli {
       if (parts.length != 3) {
         throw new IOException("Invalid property name: " + property);
       }
-      Map<String, String> properties;
+      final Map<String, String> properties;
       if ("INFO".equals(parts[0])) {
-        properties = infoDefinitions.get(parts[1]);
-        if (properties == null) {
-          properties = new HashMap<>();
-          infoDefinitions.put(parts[1], properties);
-        }
+        properties = infoDefinitions.computeIfAbsent(parts[1], k -> new HashMap<>());
       } else if ("FORMAT".equals(parts[0])) {
-        properties = formatDefinitions.get(parts[1]);
-        if (properties == null) {
-          properties = new HashMap<>();
-          formatDefinitions.put(parts[1], properties);
-        }
+        properties = formatDefinitions.computeIfAbsent(parts[1], k -> new HashMap<>());
       } else {
         throw new IOException("Invalid field type: " + parts[0]);
       }
