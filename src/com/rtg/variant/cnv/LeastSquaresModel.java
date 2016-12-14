@@ -25,7 +25,7 @@ public class LeastSquaresModel extends IntegralAbstract {
   private static final double SPLIT_CONSTANT = 0.5 * (Math.log(2 * Math.PI) + 1.0);
 
   private final String mSeqName;
-  private final LSMOutput[] mOut;
+  private final LsmOutput[] mOut;
   private final double mExtraPenalty;
   private final int mMinBlocks;
   //private final double mCorrection;
@@ -46,7 +46,7 @@ public class LeastSquaresModel extends IntegralAbstract {
    * @param out where to write output
    */
   public LeastSquaresModel(final String seqName, final int minBlocks, final double correction, final double extraPenalty,
-      final boolean extraPenaltyOff, final LSMOutput... out) {
+      final boolean extraPenaltyOff, final LsmOutput... out) {
     mSeqName = seqName;
     mExtraPenalty = extraPenalty;
     mExtraPenaltyOff = extraPenaltyOff;
@@ -152,7 +152,7 @@ public class LeastSquaresModel extends IntegralAbstract {
     }
     if (bestPosition == 0) {
       //no split is better write this region
-      for (final LSMOutput element : mOut) {
+      for (final LsmOutput element : mOut) {
         final double sum = mSum[end - 1] - mSum[start - 1];
         final double sum2 = mSum2[end - 1] - mSum2[start - 1];
         element.out(mSeqName, start, end, sum, sum2);
@@ -168,7 +168,7 @@ public class LeastSquaresModel extends IntegralAbstract {
    * @throws IOException IO Exceptions occur sometimes
    */
   public void close() throws IOException {
-    for (final LSMOutput out : mOut) {
+    for (final LsmOutput out : mOut) {
       out.close();
     }
   }

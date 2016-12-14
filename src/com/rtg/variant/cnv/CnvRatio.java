@@ -73,7 +73,7 @@ public final class CnvRatio {
 
   private State mState;
 
-  private LSMOutput mSimpleOut;
+  private LsmOutput mSimpleOut;
 
   private OutputStream mRatio;
 

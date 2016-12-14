@@ -15,15 +15,15 @@ import java.io.IOException;
 
 /**
  */
-public interface LSMOutput {
+public interface LsmOutput {
 
   /**
    * Perform an output action for each fitted region.
    * @param id current sequence id.
    * @param start start position within the sequence.
    * @param end end position within the sequence.
-   * @param sum sigma_i=start^end x_i
-   * @param sum2 sigma_i=start^end x_i^2
+   * @param sum <code>sigma_i=start^end x_i</code>
+   * @param sum2 <code>sigma_i=start^end x_i^2</code>
    * @throws IOException IO Exceptions happen sometimes
    */
   void out(final String id, final int start, final int end, final double sum, final double sum2) throws IOException;

@@ -23,7 +23,7 @@ import com.rtg.mode.DNA;
 import com.rtg.mode.SequenceType;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.array.ArrayUtils;
-import com.rtg.variant.cnv.LSMOutput;
+import com.rtg.variant.cnv.LsmOutput;
 import com.rtg.variant.cnv.LeastSquaresModel;
 
 /**
@@ -158,7 +158,7 @@ public final class RegionUtils {
   public static Region findGermlineDeletesUnderMean(int[] bucketCounts, double factor, Region ignore, boolean penaltyOn) {
     final double meandiv = ArrayUtils.sum(bucketCounts) / (double) bucketCounts.length / factor;
     final SortedSet<AbstractCnvRegion> set = new TreeSet<>();
-    final LeastSquaresModel lsm = new LeastSquaresModel("", 2, 1, 3.0, penaltyOn, new LSMOutput() {
+    final LeastSquaresModel lsm = new LeastSquaresModel("", 2, 1, 3.0, penaltyOn, new LsmOutput() {
       @Override
       public void close() { }
       @Override
@@ -183,7 +183,7 @@ public final class RegionUtils {
   public static Region findGermlineDeletesOverMean(int[] bucketCounts, double factor, Region ignore, boolean penaltyOn) {
     final double meanmul = factor * (ArrayUtils.sum(bucketCounts) / (double) bucketCounts.length);
     final SortedSet<AbstractCnvRegion> set = new TreeSet<>();
-    final LeastSquaresModel lsm = new LeastSquaresModel("", 2, 1, 3.0, penaltyOn, new LSMOutput() {
+    final LeastSquaresModel lsm = new LeastSquaresModel("", 2, 1, 3.0, penaltyOn, new LsmOutput() {
       @Override
       public void close() { }
       @Override

@@ -22,7 +22,7 @@ import com.rtg.util.integrity.IntegralAbstract;
 
 /**
  */
-public class SimpleOutput extends IntegralAbstract implements LSMOutput {
+public class SimpleOutput extends IntegralAbstract implements LsmOutput {
 
   private static final byte[] CNV = "cnv".getBytes();
   private static final byte[] LSB = StringUtils.LS.getBytes();
