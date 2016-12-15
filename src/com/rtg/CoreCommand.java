@@ -63,7 +63,6 @@ import com.rtg.variant.bayes.multisample.lineage.LineageCli;
 import com.rtg.variant.bayes.multisample.population.PopulationCli;
 import com.rtg.variant.bayes.multisample.singleton.SingletonCli;
 import com.rtg.variant.cnv.CnvProductCli;
-import com.rtg.variant.cnv.CnvStatsCli;
 import com.rtg.variant.coverage.CoverageCli;
 import com.rtg.variant.sv.SvToolCli;
 import com.rtg.variant.sv.UnmatedAugmenterCli;
@@ -206,9 +205,6 @@ public final class CoreCommand {
   /** Generate a copy of a genome with a bunch of CNV mutations */
   static final Command CNVSIM = new Command(new CnvSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.ALPHA);
 
-  /** Evaluates CNV calling accuracy on simulated CNV data */
-  static final Command CNVSIMEVAL = new Command(new CnvStatsCli(), CommandCategory.SIMULATE, ReleaseLevel.ALPHA);
-
   /** Classic searching with positions, also supports gaps */
   static final Command AVIEW = new Command(new Aview(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
@@ -308,7 +304,7 @@ public final class CoreCommand {
     GENOMESIM,                                           // Reference simulation
     CGSIM, READSIM, READSIMEVAL,                         // Read simulation
     POPSIM, SAMPLESIM, CHILDSIM, DENOVOSIM, SAMPLEREPLAY, // Variant simulation
-    CNVSIM, CNVSIMEVAL,                                  // Structural variant simulation
+    CNVSIM,                                  // Structural variant simulation
 
     // Utility
     ToolsCommand.BGZIP, ToolsCommand.INDEX, ToolsCommand.EXTRACT, AVIEW,                        // General purpose
