@@ -13,9 +13,12 @@ package com.rtg.variant.cnv.preprocess;
 
 import java.util.Arrays;
 
+import com.reeltwo.jumble.annotations.TestClass;
+
 /**
  * Holds a column of numeric data.
  */
+@TestClass("com.rtg.variant.cnv.preprocess.IntColumnTest")
 public class NumericColumn extends Column {
 
   private double[] mData = new double[100];

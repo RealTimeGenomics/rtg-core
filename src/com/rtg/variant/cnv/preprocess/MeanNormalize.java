@@ -30,14 +30,13 @@ class MeanNormalize implements DatasetProcessor {
     if (dataset.size() == 0) {
       return;
     }
-
     final NumericColumn in = dataset.asNumeric(mCol);
     computeMean(dataset);
     final double[] values = new double[in.size()];
     for (int i = 0; i < in.size(); ++i) {
       values[i] = in.get(i) / mMean;
     }
-    final NumericColumn out = dataset.addColumn(new NumericColumn(prefix() + "_" + dataset.columnName(mCol)));
+    final NumericColumn out = dataset.addColumn(new NumericColumn(prefix() + "(" + dataset.columnName(mCol) + ")"));
     out.set(values);
   }
 

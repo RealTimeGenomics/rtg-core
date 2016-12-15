@@ -25,13 +25,16 @@ public enum CnaType {
   /** Not a copy number alteration */
   NONE;
 
+  static final String INFO_SVTYPE = "SVTYPE";
+  static final String INFO_END = "END";
+
   /**
    * Determines the type of copy number alteration of a VCF record
    * @param rec the record
    * @return the determined copy number alteration type
    */
   public static CnaType valueOf(VcfRecord rec) {
-    final ArrayList<String> svTypes = rec.getInfo().get(CnvEvalCli.INFO_SVTYPE);
+    final ArrayList<String> svTypes = rec.getInfo().get(INFO_SVTYPE);
     if (svTypes == null || svTypes.size() != 1) {
       return CnaType.NONE;
     }

@@ -9,14 +9,24 @@
  * code you accept the terms of that license agreement and any amendments to those terms that may
  * be made from time to time by Real Time Genomics Limited.
  */
+
 package com.rtg.variant.cnv.preprocess;
 
-/**
- * Holds a column of numeric data.
- */
-class StringColumn extends ObjectColumn<String> {
+import junit.framework.TestCase;
 
-  StringColumn(String name) {
-    super(name);
+/**
+ * Tests the corresponding class.
+ */
+public class AddLogTest extends TestCase {
+
+  public void test() {
+    final IntColumn col = new IntColumn("x");
+    col.add(8);
+    final RegionDataset ds = new RegionDataset(new String[0]);
+    ds.addColumn(col);
+    new AddLog(0).process(ds);
+    assertEquals(2, ds.columns());
+    assertEquals("log2(x)", ds.getColumns().get(1).getName());
+    assertEquals("3.00000", ds.getColumns().get(1).toString(0));
   }
 }

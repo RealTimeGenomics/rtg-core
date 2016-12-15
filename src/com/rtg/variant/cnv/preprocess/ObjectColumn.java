@@ -14,9 +14,12 @@ package com.rtg.variant.cnv.preprocess;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import com.reeltwo.jumble.annotations.TestClass;
+
 /**
  * Holds a column of numeric data.
  */
+@TestClass("com.rtg.variant.cnv.preprocess.StringColumnTest")
 public abstract class ObjectColumn<T> extends Column {
 
   private ArrayList<T> mData = new ArrayList<>();

@@ -41,7 +41,7 @@ public class MedianNormalize implements DatasetProcessor {
     for (int i = 0; i < in.size(); ++i) {
       values[i] = in.get(i) / mMedian;
     }
-    final NumericColumn out = dataset.addColumn(new NumericColumn(prefix() + "_" + dataset.columnName(mCol)));
+    final NumericColumn out = dataset.addColumn(new NumericColumn(prefix() + "(" + dataset.columnName(mCol) + ")"));
     out.set(values);
   }
 
@@ -50,7 +50,7 @@ public class MedianNormalize implements DatasetProcessor {
   }
 
   protected String prefix() {
-    return "mednorm";
+    return "mediannorm";
   }
 
   protected double median() {

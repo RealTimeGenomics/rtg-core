@@ -9,14 +9,20 @@
  * code you accept the terms of that license agreement and any amendments to those terms that may
  * be made from time to time by Real Time Genomics Limited.
  */
-package com.rtg.variant.cnv.preprocess;
+
+package com.rtg.variant.cnv.segment;
+
+import com.rtg.util.TestUtils;
+
+import junit.framework.TestCase;
 
 /**
- * Holds a column of numeric data.
+ * Tests the corresponding class.
  */
-class StringColumn extends ObjectColumn<String> {
+public class CnaTypeTest extends TestCase {
 
-  StringColumn(String name) {
-    super(name);
+  public void test() {
+    TestUtils.testEnum(CnaType.class, "[DEL, DUP, NONE]");
   }
+
 }

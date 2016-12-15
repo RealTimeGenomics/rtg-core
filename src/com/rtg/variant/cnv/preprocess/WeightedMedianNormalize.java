@@ -31,7 +31,7 @@ public class WeightedMedianNormalize extends MedianNormalize {
 
   @Override
   protected String prefix() {
-    return "weightedmednorm";
+    return "weightedmediannorm";
   }
 
 }

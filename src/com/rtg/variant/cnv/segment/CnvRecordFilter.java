@@ -45,7 +45,7 @@ public class CnvRecordFilter implements VcfFilter {
     if (status != CnaType.DEL && status != CnaType.DUP) { // Non SV or not a DEL/DUP
       return false;
     }
-    final Integer end = VcfUtils.getIntegerInfoFieldFromRecord(rec, CnvEvalCli.INFO_END);
+    final Integer end = VcfUtils.getIntegerInfoFieldFromRecord(rec, CnaType.INFO_END);
     if (end == null) {
       Diagnostic.warning("Skipping SV record without a defined END: " + rec.toString());
       return false;
