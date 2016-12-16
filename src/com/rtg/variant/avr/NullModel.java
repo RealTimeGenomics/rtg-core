@@ -39,7 +39,7 @@ public class NullModel extends AbstractPredictModel {
    * @throws IOException if an error occurs loading from stream
    */
   public NullModel(final InputStream is) throws IOException {
-    super(is);
+    super();
     load(is);
   }
 

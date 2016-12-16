@@ -66,7 +66,6 @@ public class GtQualComplexMultiplierModel extends AbstractPredictModel {
    * @throws IOException if an error occurs loading from stream
    */
   public GtQualComplexMultiplierModel(InputStream is) throws IOException {
-    super(is);
     load(is);
   }
 
