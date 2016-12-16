@@ -45,6 +45,7 @@ public class PredictCli extends AbstractCli {
   protected static final String INPUT_FLAG = "input";
   protected static final String OUTPUT_FLAG = "output";
   protected static final String SAMPLE_FLAG = "sample";
+  protected static final String FIELD_FLAG = "Xvcf-score-field";
 
   @Override
   public String moduleName() {
@@ -74,6 +75,7 @@ public class PredictCli extends AbstractCli {
     CommonFlags.initMinAvrScore(mFlags);
 
     mFlags.registerOptional('s', SAMPLE_FLAG, String.class, STRING, "if set, only re-score the specified samples (Default is to re-score all samples)").setCategory(CommonFlagCategories.UTILITY).setMaxCount(Integer.MAX_VALUE);
+    mFlags.registerOptional(FIELD_FLAG, String.class, STRING, "the name of the VCF FORMAT field in which to store the computed score").setCategory(CommonFlagCategories.UTILITY);
     mFlags.setValidator(new Validator() {
       @Override
       public boolean isValid(CFlags flags) {
@@ -94,6 +96,9 @@ public class PredictCli extends AbstractCli {
     }
     final ModelFactory fact = new ModelFactory(modelFile, threshold);
     final AbstractPredictModel model = fact.getModel();
+    if (mFlags.isSet(FIELD_FLAG)) {
+      model.setField((String) mFlags.getValue(FIELD_FLAG));
+    }
     final File vcf = (File) mFlags.getValue(INPUT_FLAG);
 
     try (final VcfReader posReader = VcfReader.openVcfReader(vcf)) {

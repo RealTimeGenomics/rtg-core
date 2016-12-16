@@ -31,7 +31,7 @@ public class DummyPredictModelTest extends AbstractPredictModelTest<DummyPredict
     String mData = null;
 
     public DummyPredictModel(InputStream is) throws IOException {
-      super(is);
+      super();
       try (final InputStreamReader isr = new InputStreamReader(is)) {
         final char[] buff = new char[1000];
         final int n = isr.read(buff);

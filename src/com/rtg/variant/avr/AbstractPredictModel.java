@@ -13,7 +13,6 @@
 package com.rtg.variant.avr;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.rtg.vcf.VcfAnnotator;
@@ -30,31 +29,7 @@ public abstract class AbstractPredictModel implements VcfAnnotator {
   /** Constant used to denote AVR scores in VCF output. */
   public static final String AVR = "AVR";
 
-  private final String mField;
-
-  /**
-   * Create a new predict model from the contents of the given input stream.
-   * @param is input stream to read from
-   */
-  public AbstractPredictModel(InputStream is) {
-    this(is, AVR);
-  }
-
-  /**
-   * Create a new predict model from the contents of the given input stream, and write scores to the given field.
-   * @param is input stream to read from.
-   * @param field VCF field name to write score to.
-   */
-  public AbstractPredictModel(InputStream is, String field) {
-    mField = field;
-  }
-
-  /**
-   * Constructor used for building model from scratch with model builder mechanism.
-   */
-  AbstractPredictModel() {
-    mField = AVR;
-  }
+  private String mField = AVR;
 
   /**
    * Process the given VCF record through the model annotating the record with a new score value.
@@ -99,5 +74,13 @@ public abstract class AbstractPredictModel implements VcfAnnotator {
    */
   String getField() {
     return mField;
+  }
+
+  /**
+   * Set the name of the field where the score is stored
+   * @param field the field name
+   */
+  void setField(String field) {
+    mField = field;
   }
 }

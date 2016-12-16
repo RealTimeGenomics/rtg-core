@@ -57,10 +57,8 @@ public class MlAvrPredictModel extends AbstractPredictModel {
    * @throws IOException if error occurs loading model
    */
   public MlAvrPredictModel(InputStream is, double threshold) throws IOException {
-    super(is);
     load(is);
     mPredictionThreshold = threshold;
-    mFilterName = "AVR" + threshold;
     assert mClassifier != null;
     assert mAttributeExtractor != null;
   }
@@ -139,7 +137,7 @@ public class MlAvrPredictModel extends AbstractPredictModel {
         throw new NoTalkbackSlimException("The input VCF header is missing required fields:" + StringUtils.LS + ihe.getMessage());
       }
     }
-
+    mFilterName = "AVR" + mPredictionThreshold;
     if (mPredictionThreshold > 0) {
       header.ensureContains(new FilterField(mFilterName, "AVR score below " + mPredictionThreshold));
     }
