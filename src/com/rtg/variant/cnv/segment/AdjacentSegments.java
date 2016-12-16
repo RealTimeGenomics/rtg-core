@@ -13,7 +13,7 @@
 package com.rtg.variant.cnv.segment;
 
 /**
- * Hold a pair of adjacent segments and thier score.
+ * Hold a pair of adjacent segments and their score.
  */
 class AdjacentSegments {
   private final double mScore;

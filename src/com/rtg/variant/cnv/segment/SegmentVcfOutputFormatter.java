@@ -51,7 +51,7 @@ public class SegmentVcfOutputFormatter {
   static final String FORMAT_RD = "RD";
   static final String FORMAT_RDR = "RDR";
   static final String FORMAT_LOGR = "LR";
-  /** The FORMAT field we use to store an overal quality score */
+  /** The FORMAT field we use to store an overall quality score */
   public static final String FORMAT_SQS = "SQS";
 
   private static final String ALT_DEL_BR = "<" + ALT_DEL + ">";

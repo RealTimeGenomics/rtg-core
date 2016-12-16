@@ -27,7 +27,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.text.NumberFormat;
 
-import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.bed.BedRecord;
 import com.rtg.bed.BedUtils;
 import com.rtg.bed.BedWriter;
@@ -62,7 +61,6 @@ import com.rtg.vcf.VcfWriter;
 /**
  * Provide segmentation entry point.
  */
-@TestClass("com.rtg.variant.cnv.region.SegmentChainTest")
 public class SegmentCli extends LoggedCli {
 
   private static final String ALEPH_FLAG = "aleph";

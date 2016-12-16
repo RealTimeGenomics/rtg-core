@@ -31,7 +31,7 @@ import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.util.intervals.SequenceNameLocusSimple;
 
 /**
- * Holds RangeTuples, grouped by chromosome
+ * Holds regions grouped by chromosome
  */
 public class RegionDataset {
 
@@ -261,7 +261,7 @@ public class RegionDataset {
   /**
    * Gets a column of data, ensuring that it is numeric. If this column has not previously been
    * accessed as numeric data, it is parsed, replacing the original unparsed column. Any
-   * unparseable values are treated as Double.NaN
+   * unparsable values are treated as Double.NaN
    * @param col the column to get
    * @return the numeric column
    */
