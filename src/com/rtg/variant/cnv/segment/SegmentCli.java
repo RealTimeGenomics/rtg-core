@@ -26,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.text.NumberFormat;
+import java.util.Collections;
 
 import com.rtg.bed.BedRecord;
 import com.rtg.bed.BedUtils;
@@ -182,7 +183,7 @@ public class SegmentCli extends LoggedCli {
 
     Diagnostic.userLog("Loading case");
     final File caseFile = (File) mFlags.getValue(CASE_FLAG);
-    final RegionDataset caseData = RegionDataset.readFromBed(caseFile);
+    final RegionDataset caseData = RegionDataset.readFromBed(caseFile, Collections.singletonList(new NumericColumn(coverageColumnName)));
     if (caseData.columnId(coverageColumnName) == -1) {
       throw new NoTalkbackSlimException("Could not find column named " + coverageColumnName + " in " + caseFile);
     }
@@ -193,7 +194,7 @@ public class SegmentCli extends LoggedCli {
 
     Diagnostic.userLog("Loading control");
     final File controlFile = (File) mFlags.getValue(CONTROL_FLAG);
-    final RegionDataset controlData = RegionDataset.readFromBed(controlFile);
+    final RegionDataset controlData = RegionDataset.readFromBed(controlFile, Collections.singletonList(new NumericColumn(coverageColumnName)));
     if (controlData.columnId(coverageColumnName) == -1) {
       throw new NoTalkbackSlimException("Could not find column named " + coverageColumnName + " in " + controlData);
     }

@@ -15,7 +15,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -36,26 +35,66 @@ import com.rtg.util.intervals.SequenceNameLocusSimple;
 public class RegionDataset {
 
   /**
-   * Reads a dataset from a BED file
+   * Reads a dataset from a BED file importing all columns
    * @param file the bed file
    * @return the dataset
    * @throws IOException if there was a problem reading the input
    */
   public static RegionDataset readFromBed(File file) throws IOException {
+    return readFromBed(file, (String[]) null);
+
+  }
+  /**
+   * Reads a dataset from a BED file
+   * @param file the bed file
+   * @param desiredColumns restrict columns loaded to these ones.
+   * @return the dataset
+   * @throws IOException if there was a problem reading the input
+   */
+  public static RegionDataset readFromBed(File file, String[] desiredColumns) throws IOException {
     try (BedReader br = BedReader.openBedReader(null, file, 0)) {
-      final RegionDataset dataset = new RegionDataset(getColumnNames(br.getHeader()));
-      while (br.hasNext()) {
-        final BedRecord rec = br.next();
-        if (dataset.size() == 0 && rec.getAnnotations().length > dataset.columns()) {
-          for (int i = 0; i < rec.getAnnotations().length; ++i) {
-            dataset.addColumn();
-          }
-        }
-        dataset.add(rec.getSequenceName(), rec.getStart(), rec.getEnd(), rec.getAnnotations());
-      }
+      final String[] columnNames = getColumnNames(br.getHeader());
+      final RegionDataset dataset = new RegionDataset(columnNames, desiredColumns == null ? columnNames : desiredColumns);
+      loadBedRecords(br, dataset, desiredColumns == null);
       Diagnostic.userLog("Read dataset containing " + dataset.size() + " regions and " + dataset.columns() + " columns from " + file);
       dataset.integrity();
       return dataset;
+    }
+  }
+
+  /**
+   * Reads a dataset from a BED file
+   * @param file the bed file
+   * @param desiredColumns restrict column loading to the provided columns
+   * @return the dataset
+   * @throws IOException if there was a problem reading the input
+   */
+  public static RegionDataset readFromBed(File file, List<Column> desiredColumns) throws IOException {
+    try (BedReader br = BedReader.openBedReader(null, file, 0)) {
+      final List<String> columnNames = Arrays.asList(getColumnNames(br.getHeader()));
+      final RegionDataset dataset = new RegionDataset(desiredColumns, columnNames);
+      loadBedRecords(br, dataset, desiredColumns == null);
+      Diagnostic.userLog("Read dataset containing " + dataset.size() + " regions and " + dataset.columns() + " columns from " + file);
+      dataset.integrity();
+      return dataset;
+    }
+  }
+
+  private static void loadBedRecords(BedReader br, RegionDataset dataset, boolean addNewColumns) throws IOException {
+    String sequenceName = null;
+    while (br.hasNext()) {
+      final BedRecord rec = br.next();
+      if (addNewColumns && dataset.size() == 0 && rec.getAnnotations().length > dataset.columns()) {
+        for (int i = 0; i < rec.getAnnotations().length; ++i) {
+          dataset.addColumn();
+        }
+      }
+      final String newSequence = rec.getSequenceName();
+      if (sequenceName == null || !sequenceName.equals(newSequence)) {
+        sequenceName = newSequence;
+        Diagnostic.userLog("Reading data for sequence " + sequenceName);
+      }
+      dataset.add(sequenceName, rec.getStart(), rec.getEnd(), rec.getAnnotations());
     }
   }
 
@@ -79,15 +118,32 @@ public class RegionDataset {
 
   private RegionColumn mRegions;
   private final ArrayList<Column> mColumns = new ArrayList<>();
+  private final int[] mColumnIndexes;
 
 
   RegionDataset(String[] columnNames) {
-    mRegions = new RegionColumn("region");
-    for (final String columnName : columnNames) {
-      mColumns.add(new StringColumn(columnName));
-    }
+    this(columnNames, columnNames);
   }
 
+  RegionDataset(String[] columnNames, String[] desiredColumns) {
+    this(Arrays.stream(desiredColumns).map(StringColumn::new).collect(Collectors.toList()), Arrays.asList(columnNames));
+  }
+
+  private static int[] buildColumnIndex(List<String> desiredColumns, List<String> headerNames) {
+    final int[] columnIndexes = new int[desiredColumns.size()];
+    int i = 0;
+    for (final String columnName : desiredColumns) {
+      columnIndexes[i++] = headerNames.indexOf(columnName);
+    }
+    return columnIndexes;
+  }
+
+  RegionDataset(List<Column> desiredColumns, List<String> headerColumns) {
+    mRegions = new RegionColumn("region");
+    mColumns.addAll(desiredColumns);
+    final List<String> desiredNames = desiredColumns.stream().map(Column::getName).collect(Collectors.toList());
+    mColumnIndexes = buildColumnIndex(desiredNames, headerColumns);
+  }
   /**
    * @return the number of rows in the dataset
    */
@@ -102,7 +158,7 @@ public class RegionDataset {
     return mColumns.size();
   }
 
-  Collection<String> getColumnNames() {
+  List<String> getColumnNames() {
     return mColumns.stream().map(Column::getName).collect(Collectors.toCollection(ArrayList::new));
   }
 
@@ -171,8 +227,10 @@ public class RegionDataset {
    */
   public void add(String sequenceName, int start, int end, double... value) {
     mRegions.add(new SequenceNameLocusSimple(sequenceName, start, end));
-    for (int i = 0; i < value.length; ++i) {
-      asNumeric(i).add(value[i]);
+    for (int i = 0; i < mColumnIndexes.length; ++i) {
+      if (mColumnIndexes[i] < value.length) {
+        asNumeric(i).add(value[mColumnIndexes[i]]);
+      }
     }
   }
 
@@ -185,8 +243,10 @@ public class RegionDataset {
    */
   public void add(String sequenceName, int start, int end, String... value) {
     mRegions.add(new SequenceNameLocusSimple(sequenceName, start, end));
-    for (int i = 0; i < value.length; ++i) {
-      column(i).add(value[i]);
+    for (int i = 0; i < mColumnIndexes.length; ++i) {
+      if (mColumnIndexes[i] < value.length) {
+        column(i).add(value[mColumnIndexes[i]]);
+      }
     }
   }
 

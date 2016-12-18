@@ -12,6 +12,7 @@
 
 package com.rtg.variant.cnv.preprocess;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import junit.framework.TestCase;
@@ -57,5 +58,16 @@ public class RegionDatasetTest extends TestCase {
       assertEquals(d.columnName(i), d2.columnName(i));
     }
     assertEquals(2, d2.size());
+  }
+
+  public void testRestrictedColumns() {
+    final String[] desiredColumns = {"second-data"};
+    final RegionDataset d = new RegionDataset(new String[] {"numeric-data", "second-data"}, desiredColumns);
+    d.add("chr", 1, 2, 10, 110);
+    d.add("chr", 3, 4, "12", "130");
+
+    final NumericColumn dc = d.asNumeric(0);
+    assertEquals(240.0, dc.sum());
+    assertEquals(Arrays.asList(desiredColumns), d.getColumnNames());
   }
 }

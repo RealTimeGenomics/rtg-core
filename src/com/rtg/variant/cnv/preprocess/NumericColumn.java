@@ -25,7 +25,11 @@ public class NumericColumn extends Column {
   private int mSize = 0;
   protected final String mFormat;
 
-  NumericColumn(String name) {
+  /**
+   * Construct a column with the default format
+   * @param name name of the column
+   */
+  public NumericColumn(String name) {
     this(name, "%g");
   }
 
