@@ -11,9 +11,12 @@
  */
 package com.rtg.variant.cnv.preprocess;
 
+import com.reeltwo.jumble.annotations.TestClass;
+
 /**
  * Holds a column of data
  */
+@TestClass("com.rtg.variant.cnv.preprocess.StringColumnTest")
 public abstract class Column implements Cloneable {
 
   private String mName;
