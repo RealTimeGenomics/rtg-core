@@ -161,10 +161,10 @@ public class RecalibrateCli extends AbstractCli {
     }
     try (Recalibrate r = new Recalibrate(template, regions)) {
       final File mergeFile = (File) mFlags.getValue(MERGE_FLAG);
+      final int threads = CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG));
       if (mergeFile == null) {
-        r.doRecalibrate(fileCollection, cs, mFlags.isSet(FORCE_FLAG));
+        r.doRecalibrate(fileCollection, cs, threads, mFlags.isSet(FORCE_FLAG));
       } else {
-        final int threads = CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG));
         r.doMergeRecalibrate(mergeFile, fileCollection, cs, threads, mFlags.isSet(FORCE_FLAG), true);
       }
     }
