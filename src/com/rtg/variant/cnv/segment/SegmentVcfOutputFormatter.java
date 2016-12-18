@@ -104,9 +104,9 @@ public class SegmentVcfOutputFormatter {
     //header.addInfoField(INFO_GENE, MetaType.STRING, VcfNumber.ONE, "Bin names");
 
     VcfFormatField.GT.updateHeader(header);
-    header.addFormatField(FORMAT_SQS, MetaType.FLOAT, VcfNumber.ONE, "Seqment Quality Score");
-    header.addFormatField(FORMAT_RDR, MetaType.FLOAT, VcfNumber.ONE, "Mean Normalized RD Ratio with respect to control");
-    header.addFormatField(FORMAT_LOGR, MetaType.FLOAT, VcfNumber.ONE, "Log2 of RD Ratio with respect to control");
+    header.addFormatField(FORMAT_SQS, MetaType.FLOAT, VcfNumber.ONE, "Seqment quality score");
+    header.addFormatField(FORMAT_RDR, MetaType.FLOAT, VcfNumber.ONE, "Mean normalized RD ratio with respect to control");
+    header.addFormatField(FORMAT_LOGR, MetaType.FLOAT, VcfNumber.ONE, "Log2 of RD ratio with respect to control");
 
     // XXX additional fields require more control over the input than we currently have:
     //header.addFormatField(FORMAT_RD, MetaType.FLOAT, VcfNumber.ONE, "Mean Normalized Read Depth");
