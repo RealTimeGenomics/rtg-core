@@ -12,6 +12,9 @@
 
 package com.rtg.variant.cnv.segment;
 
+import java.io.File;
+import java.io.IOException;
+
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
 
@@ -26,6 +29,34 @@ public class SegmentCliTest extends AbstractCliTest {
   }
 
   public void testHelp() {
-    checkHelp();
+    checkHelp("Segments depth of coverage data to identify regions of consistent copy number.",
+      "BED file supplying per-region coverage data for the sample",
+      "BED file supplying per-region coverage data for control sample",
+      "directory for output",
+      "SDF containing reference genome",
+      "weighting factor for inter-segment distances during energy scoring",
+      "weighting factor for intra-segment distances during energy scoring",
+      "segmentation sensitivity"
+      );
   }
+
+  public void testErrors() throws IOException {
+    final File emptyFile = File.createTempFile("test", ".vcf");
+    try {
+      String res = checkHandleFlagsErr();
+      final String exp = getCFlags().getUsageHeader();
+      assertTrue(res.contains(exp));
+      assertTrue(res.contains("Error: You must provide values for --case FILE -o DIR -t SDF"));
+      res = checkHandleFlagsErr("-o", "test-foo-out", "-t", "test-sdf", "--case", emptyFile.getPath());
+      assertTrue(res.contains(exp));
+      assertTrue(res.contains("Error: One of --Xcolumn or --control must be set"));
+      res = checkHandleFlagsErr("-o", "test-foo-out", "-t", "test-sdf", "--case", emptyFile.getPath(), "--control", emptyFile.getPath(), "--limit", "0");
+      System.out.println(res);
+      assertTrue(res.contains(exp));
+      assertTrue(res.contains("Error: The value for --limit must be at least 1"));
+    } finally {
+      assertTrue(emptyFile.delete());
+    }
+  }
+
 }

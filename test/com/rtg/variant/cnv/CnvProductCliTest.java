@@ -43,7 +43,6 @@ public class CnvProductCliTest extends AbstractCliTest {
     assertTrue(res.contains("You must provide a value for"));
     res = checkHandleFlagsErr("-i", new File("__googg").getPath());
     assertTrue(res.contains(exp));
-    assertTrue(res.contains(exp));
     assertTrue(res.contains("You must provide a value for"));
   }
 
