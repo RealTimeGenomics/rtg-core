@@ -51,7 +51,6 @@ public class SegmentCliTest extends AbstractCliTest {
       assertTrue(res.contains(exp));
       assertTrue(res.contains("Error: One of --Xcolumn or --control must be set"));
       res = checkHandleFlagsErr("-o", "test-foo-out", "-t", "test-sdf", "--case", emptyFile.getPath(), "--control", emptyFile.getPath(), "--limit", "0");
-      System.out.println(res);
       assertTrue(res.contains(exp));
       assertTrue(res.contains("Error: The value for --limit must be at least 1"));
     } finally {
