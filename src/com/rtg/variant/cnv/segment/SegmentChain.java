@@ -20,13 +20,11 @@ import java.util.TreeSet;
 public class SegmentChain extends ArrayList<Segment> {
 
   private final SegmentScorer mScorer;
-  private final boolean mVerbose;
   private final double mBeta;
 
-  SegmentChain(final SegmentScorer scorer, final double beta, final boolean verbose) {
+  SegmentChain(final SegmentScorer scorer, final double beta) {
     mScorer = scorer;
     mBeta = beta;
-    mVerbose = verbose;
   }
 
   private final TreeSet<AdjacentSegments> mPriorityQueue = new TreeSet<>((a, b) -> {
@@ -99,9 +97,7 @@ public class SegmentChain extends ArrayList<Segment> {
         final Segment next = get(pos + 1);
         mPriorityQueue.add(new AdjacentSegments(mScorer.score(mergedSegment, next), mergedSegment, next));
       }
-      if (mVerbose) {
-        System.out.println("[" + pos + "](" + a.bins() + ")(" + b.bins() + ")[" + (size() - 1) + "]  gain " + mScorer.score(a, b));
-      }
+      //System.out.println("[" + pos + "](" + a.bins() + ")(" + b.bins() + ")[" + (size() - 1) + "]  gain " + mScorer.score(a, b));
     }
   }
 

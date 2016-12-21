@@ -20,7 +20,7 @@ import junit.framework.TestCase;
 public class SegmentChainTest extends TestCase {
 
   public void testNiceClean() {
-    final SegmentChain sc = new SegmentChain(new EnergySegmentScorer(0, 0), 0.5, false);
+    final SegmentChain sc = new SegmentChain(new EnergySegmentScorer(0, 0), 0.5);
     sc.add(new Segment(0, 1, 100, 0.0));
     sc.add(new Segment(1, 2, 100, 0.0));
     sc.add(new Segment(2, 3, 100, 0.0));
@@ -38,7 +38,7 @@ public class SegmentChainTest extends TestCase {
   }
 
   public void testMiddleEnergy() {
-    final SegmentChain sc = new SegmentChain(new EnergySegmentScorer(0, 0), Double.POSITIVE_INFINITY, false);
+    final SegmentChain sc = new SegmentChain(new EnergySegmentScorer(0, 0), Double.POSITIVE_INFINITY);
     for (int k = 0; k < 10; ++k) {
       sc.add(new Segment(k, k + 1, 1, 0.0));
     }

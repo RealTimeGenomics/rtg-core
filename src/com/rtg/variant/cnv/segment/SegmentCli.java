@@ -20,7 +20,6 @@ import static com.rtg.launcher.CommonFlags.STRING;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
-import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,7 +66,7 @@ public class SegmentCli extends LoggedCli {
   private static final String ALEPH_FLAG = "aleph";
   private static final String ALPHA_FLAG = "alpha";
   private static final String BETA_FLAG = "beta";
-  private static final String LIMIT_FLAG = "limit";
+  private static final String LIMIT_FLAG = "Xlimit";
 
   private static final String MIN_LOGR_FLAG = "min-logr";
   private static final String MIN_BINS_FLAG = "min-bins";
@@ -75,12 +74,11 @@ public class SegmentCli extends LoggedCli {
   private static final String CASE_FLAG = "case";
   private static final String CONTROL_FLAG = "control";
 
-  private static final String REPORT_FLAG = "report";
+  private static final String REPORT_FLAG = "report-regions";
 
   private static final String COLUMN_FLAG = "Xcolumn";
-  private static final String VERBOSE_FLAG = "Xverbose";
   private static final String GCBINS_FLAG = "Xgcbins";
-  private static final String MIN_COV_FLAG = "Xmin-coverage";
+  private static final String MIN_COV_FLAG = "min-coverage";
   private static final String COV_COLUMN_NAME = "Xcolumn-name";
 
   private static final String DEFAULT_COLUMN_NAME = "coverage";
@@ -118,9 +116,9 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerOptional(REPORT_FLAG, File.class, FILE, "BED file supplying regions to report CNV interactions with").setCategory(INPUT_OUTPUT);
     //mFlags.registerRequired(PON_FLAG, File.class, FILE, "BED file supplying panel of normals data").setCategory(INPUT_OUTPUT);
 
-    mFlags.registerOptional(ALEPH_FLAG, Double.class, FLOAT, "weighting factor for inter-segment distances during energy scoring", 0.001).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(ALEPH_FLAG, Double.class, FLOAT, "weighting factor for inter-segment distances during energy scoring", 0.0).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(ALPHA_FLAG, Double.class, FLOAT, "weighting factor for intra-segment distances during energy scoring", 0.001).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(BETA_FLAG, Double.class, FLOAT, "segmentation sensitivity factor", Double.POSITIVE_INFINITY).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(BETA_FLAG, Double.class, FLOAT, "segmentation sensitivity factor", 0.5).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(LIMIT_FLAG, Integer.class, INT, "lower bound on the number of segments to be produced", 1).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(MIN_COV_FLAG, Integer.class, INT, "minimum coverage required for a bin to be included in segmentation", 200).setCategory(SENSITIVITY_TUNING);
 
@@ -128,7 +126,6 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerOptional('r', MIN_LOGR_FLAG, Double.class, FLOAT, "minimum (absolute) log ratio required for copy number alteration to be called", 0.2).setCategory(REPORTING);
 
     mFlags.registerOptional('c', COLUMN_FLAG, Integer.class, INT, "just run segmentation directly on the specified data column from the case file, ignoring control data", 0).setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional('v', VERBOSE_FLAG, "generate extra informational output").setCategory(UTILITY);
     mFlags.registerOptional(GCBINS_FLAG, Integer.class, INT, "number of bins when applying GC correction", 10).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(COV_COLUMN_NAME, String.class, STRING, "name of the coverage column in input data", DEFAULT_COLUMN_NAME).setCategory(SENSITIVITY_TUNING);
     mFlags.setValidator(flags -> CommonFlags.validateOutputDirectory(flags)
@@ -267,7 +264,7 @@ public class SegmentCli extends LoggedCli {
     final int limit = (Integer) mFlags.getValue(LIMIT_FLAG);
     final int minBins = (Integer) mFlags.getValue(MIN_BINS_FLAG);
     final SegmentScorer scorer = new EnergySegmentScorer((Double) mFlags.getValue(ALPHA_FLAG), (Double) mFlags.getValue(ALEPH_FLAG));
-    final SegmentChain sg = new SegmentChain(scorer, (Double) mFlags.getValue(BETA_FLAG), mFlags.isSet(VERBOSE_FLAG));
+    final SegmentChain sg = new SegmentChain(scorer, (Double) mFlags.getValue(BETA_FLAG));
     final double refThreshold = (Double) mFlags.getValue(MIN_LOGR_FLAG);
 
     final boolean gzip = !mFlags.isSet(CommonFlags.NO_GZIP);

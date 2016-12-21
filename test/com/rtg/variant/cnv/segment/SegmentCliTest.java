@@ -50,9 +50,9 @@ public class SegmentCliTest extends AbstractCliTest {
       res = checkHandleFlagsErr("-o", "test-foo-out", "-t", "test-sdf", "--case", emptyFile.getPath());
       assertTrue(res.contains(exp));
       assertTrue(res.contains("Error: One of --Xcolumn or --control must be set"));
-      res = checkHandleFlagsErr("-o", "test-foo-out", "-t", "test-sdf", "--case", emptyFile.getPath(), "--control", emptyFile.getPath(), "--limit", "0");
+      res = checkHandleFlagsErr("-o", "test-foo-out", "-t", "test-sdf", "--case", emptyFile.getPath(), "--control", emptyFile.getPath(), "--Xlimit", "0");
       assertTrue(res.contains(exp));
-      assertTrue(res.contains("Error: The value for --limit must be at least 1"));
+      assertTrue(res.contains("Error: The value for --Xlimit must be at least 1"));
     } finally {
       assertTrue(emptyFile.delete());
     }
