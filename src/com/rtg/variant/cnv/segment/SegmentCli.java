@@ -25,10 +25,8 @@ import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.text.NumberFormat;
 import java.util.Collections;
 
-import com.rtg.bed.BedRecord;
 import com.rtg.bed.BedUtils;
 import com.rtg.bed.BedWriter;
 import com.rtg.launcher.CommonFlags;
@@ -85,18 +83,11 @@ public class SegmentCli extends LoggedCli {
   private static final String MIN_COV_FLAG = "Xmin-coverage";
   private static final String COV_COLUMN_NAME = "Xcolumn-name";
 
-  private static final NumberFormat NF = NumberFormat.getNumberInstance();
   private static final String DEFAULT_COLUMN_NAME = "coverage";
-
-  static {
-    NF.setMinimumFractionDigits(2);
-    NF.setMaximumFractionDigits(2);
-  }
 
   private final MultiSet<CnaType> mStatusCounts = new MultiSet<>();
   private SegmentVcfOutputFormatter mFormatter = null;
   private SequencesReader mReference = null;
-  private BedWriter mBedOut = null;
   private VcfWriter mVcfOut = null;
   private RegionDataset mDataset;
   private int mDataCol;
@@ -285,15 +276,12 @@ public class SegmentCli extends LoggedCli {
     //final PerGeneCnvStatus p = new PerGeneCnvStatus(SamRangeUtils.createBedReferenceRanges(geneBed), threshold);
 
     final File vcfFile = VcfUtils.getZippedVcfFileName(gzip, new File(outputDirectory(), "segments.vcf"));
-    final File bedFile = FileUtils.getZippedFileName(gzip, new File(outputDirectory(), "segments.bed"));
 
     final NumericColumn c = mDataset.asNumeric(mDataCol);
     final RegionColumn regions = mDataset.regions();
     mFormatter = new SegmentVcfOutputFormatter(mReference, refThreshold, minBins);
-    try (final VcfWriter vw = new AsyncVcfWriter(new DefaultVcfWriter(mFormatter.header(), vcfFile, null, gzip, index));
-         final BedWriter bedOut = new BedWriter(FileUtils.createOutputStream(bedFile, gzip))) {
+    try (final VcfWriter vw = new AsyncVcfWriter(new DefaultVcfWriter(mFormatter.header(), vcfFile, null, gzip, index))) {
       mVcfOut = vw;
-      mBedOut = bedOut;
       double prevMidPoint = -1;
       String prevSeq = null;
 
@@ -326,9 +314,6 @@ public class SegmentCli extends LoggedCli {
 
     // TODO Write this out as summary.txt
     Diagnostic.userLog("Wrote " + mStatusCounts.totalCount() + " segments (" + mStatusCounts.get(CnaType.DEL) + " deletions, " + mStatusCounts.get(CnaType.DUP) + " duplications)");
-    if (gzip && index) {
-      BedUtils.createBedTabixIndex(bedFile);
-    }
     if (mReporter != null) {
       Diagnostic.userLog("Writing summary report");
       mReporter.report(vcfFile, FileUtils.getZippedFileName(gzip, new File(outputDirectory(), "summary.bed")));
@@ -339,7 +324,6 @@ public class SegmentCli extends LoggedCli {
     sg.collapse(limit);
     for (int i = 0; i < sg.size(); ++i) {
       final Segment s = sg.get(i);
-      mBedOut.write(new BedRecord(seqName, s.getStart(), s.getEnd(), NF.format(s.mean())));
       final VcfRecord record = mFormatter.vcfRecord(seqName, s, i + 1 < sg.size() ? sg.get(i + 1) : null);
       mStatusCounts.add(CnaType.valueOf(record));
       mVcfOut.write(record);
