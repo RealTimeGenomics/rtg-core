@@ -24,6 +24,7 @@ import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Collections;
 
 import com.rtg.bed.BedUtils;
@@ -35,6 +36,7 @@ import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.sam.SamRangeUtils;
 import com.rtg.util.MathUtils;
 import com.rtg.util.MultiSet;
+import com.rtg.util.TextTable;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
@@ -113,8 +115,7 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, SDF, "SDF containing reference genome").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired(CASE_FLAG, File.class, FILE, "BED file supplying per-region coverage data for the sample").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(CONTROL_FLAG, File.class, FILE, "BED file supplying per-region coverage data for control sample").setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional(REPORT_FLAG, File.class, FILE, "BED file supplying regions to report CNV interactions with").setCategory(INPUT_OUTPUT);
-    //mFlags.registerRequired(PON_FLAG, File.class, FILE, "BED file supplying panel of normals data").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional(REPORT_FLAG, File.class, FILE, "BED file supplying gene-scale regions to report CNV interactions with").setCategory(INPUT_OUTPUT);
 
     mFlags.registerOptional(ALEPH_FLAG, Double.class, FLOAT, "weighting factor for inter-segment distances during energy scoring", 0.0).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(ALPHA_FLAG, Double.class, FLOAT, "weighting factor for intra-segment distances during energy scoring", 0.001).setCategory(SENSITIVITY_TUNING);
@@ -135,6 +136,7 @@ public class SegmentCli extends LoggedCli {
       && flags.checkInRange(GCBINS_FLAG, 0, Integer.MAX_VALUE)
       && CommonFlags.validateInputFile(flags, CASE_FLAG)
       && CommonFlags.validateInputFile(flags, CONTROL_FLAG)
+      && CommonFlags.validateInputFile(flags, REPORT_FLAG)
       && flags.checkInRange(LIMIT_FLAG, 1, Integer.MAX_VALUE)
       && flags.checkXor(COLUMN_FLAG, CONTROL_FLAG /*, PON_FLAG */)
     );
@@ -270,8 +272,6 @@ public class SegmentCli extends LoggedCli {
     final boolean gzip = !mFlags.isSet(CommonFlags.NO_GZIP);
     final boolean index = !mFlags.isSet(CommonFlags.NO_INDEX);
 
-    //final PerGeneCnvStatus p = new PerGeneCnvStatus(SamRangeUtils.createBedReferenceRanges(geneBed), threshold);
-
     final File vcfFile = VcfUtils.getZippedVcfFileName(gzip, new File(outputDirectory(), "segments.vcf"));
 
     final NumericColumn c = mDataset.asNumeric(mDataCol);
@@ -309,11 +309,26 @@ public class SegmentCli extends LoggedCli {
       }
     }
 
-    // TODO Write this out as summary.txt
-    Diagnostic.userLog("Wrote " + mStatusCounts.totalCount() + " segments (" + mStatusCounts.get(CnaType.DEL) + " deletions, " + mStatusCounts.get(CnaType.DUP) + " duplications)");
     if (mReporter != null) {
-      Diagnostic.userLog("Writing summary report");
+      Diagnostic.userLog("Writing region report");
       mReporter.report(vcfFile, FileUtils.getZippedFileName(gzip, new File(outputDirectory(), "summary.bed")));
+    }
+
+    writeSummary();
+  }
+
+  private void writeSummary() throws IOException {
+    final TextTable summary = new TextTable(1, 0, TextTable.Align.RIGHT);
+
+    summary.setAlignment(TextTable.Align.LEFT);
+    summary.addRow("Total Segments:", "" + mStatusCounts.totalCount());
+    summary.addRow("Deletions:", "" + mStatusCounts.get(CnaType.DEL));
+    summary.addRow("Duplications:", "" + mStatusCounts.get(CnaType.DUP));
+
+    Diagnostic.userLog("SEGMENTATION SUMMARY");
+    Diagnostic.userLog(summary.toString());
+    try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(new File(outputDirectory(), CommonFlags.SUMMARY_FILE), false), FileUtils.getStdoutAsOutputStream()))) {
+      summaryOut.print(summary);
     }
   }
 

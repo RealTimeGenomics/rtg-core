@@ -133,7 +133,7 @@ class CnvSummaryReport {
 
     // Write the BED summary
     try (BedWriter bw = new BedWriter(FileUtils.createOutputStream(output))) {
-      bw.writeComment("crom\tstart\tend\tgene\tstatus\tsegments");
+      bw.writeComment("chrom\tstart\tend\tname\tstatus\tsegments");
       for (BedRecord r : recs) {
         bw.write(r);
       }
