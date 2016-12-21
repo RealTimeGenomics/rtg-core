@@ -35,11 +35,13 @@ import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
+import com.rtg.sam.SamRangeUtils;
 import com.rtg.util.MathUtils;
 import com.rtg.util.MultiSet;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LogStream;
@@ -75,6 +77,8 @@ public class SegmentCli extends LoggedCli {
   private static final String CASE_FLAG = "case";
   private static final String CONTROL_FLAG = "control";
 
+  private static final String REPORT_FLAG = "report";
+
   private static final String COLUMN_FLAG = "Xcolumn";
   private static final String VERBOSE_FLAG = "Xverbose";
   private static final String GCBINS_FLAG = "Xgcbins";
@@ -96,6 +100,7 @@ public class SegmentCli extends LoggedCli {
   private VcfWriter mVcfOut = null;
   private RegionDataset mDataset;
   private int mDataCol;
+  private CnvSummaryReport mReporter = null;
 
 
   @Override
@@ -119,6 +124,7 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, SDF, "SDF containing reference genome").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired(CASE_FLAG, File.class, FILE, "BED file supplying per-region coverage data for the sample").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(CONTROL_FLAG, File.class, FILE, "BED file supplying per-region coverage data for control sample").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional(REPORT_FLAG, File.class, FILE, "BED file supplying regions to report CNV interactions with").setCategory(INPUT_OUTPUT);
     //mFlags.registerRequired(PON_FLAG, File.class, FILE, "BED file supplying panel of normals data").setCategory(INPUT_OUTPUT);
 
     mFlags.registerOptional(ALEPH_FLAG, Double.class, FLOAT, "weighting factor for inter-segment distances during energy scoring", 0.001).setCategory(SENSITIVITY_TUNING);
@@ -157,6 +163,11 @@ public class SegmentCli extends LoggedCli {
 
     try (final SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReader((File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG))) {
       mReference = sr;
+
+      if (mFlags.isSet(REPORT_FLAG)) {
+        final ReferenceRanges<String> reportRegions = SamRangeUtils.createBedReferenceRanges((File) mFlags.getValue(REPORT_FLAG));
+        mReporter = new CnvSummaryReport(reportRegions);
+      }
 
       if (mFlags.isSet(COLUMN_FLAG)) {
         final File caseFile = (File) mFlags.getValue(CASE_FLAG);
@@ -271,6 +282,8 @@ public class SegmentCli extends LoggedCli {
     final boolean gzip = !mFlags.isSet(CommonFlags.NO_GZIP);
     final boolean index = !mFlags.isSet(CommonFlags.NO_INDEX);
 
+    //final PerGeneCnvStatus p = new PerGeneCnvStatus(SamRangeUtils.createBedReferenceRanges(geneBed), threshold);
+
     final File vcfFile = VcfUtils.getZippedVcfFileName(gzip, new File(outputDirectory(), "segments.vcf"));
     final File bedFile = FileUtils.getZippedFileName(gzip, new File(outputDirectory(), "segments.bed"));
 
@@ -312,9 +325,13 @@ public class SegmentCli extends LoggedCli {
     }
 
     // TODO Write this out as summary.txt
-    Diagnostic.info("Wrote " + mStatusCounts.totalCount() + " segments (" + mStatusCounts.get(CnaType.DEL) + " deletions, " + mStatusCounts.get(CnaType.DUP) + " duplications)");
+    Diagnostic.userLog("Wrote " + mStatusCounts.totalCount() + " segments (" + mStatusCounts.get(CnaType.DEL) + " deletions, " + mStatusCounts.get(CnaType.DUP) + " duplications)");
     if (gzip && index) {
       BedUtils.createBedTabixIndex(bedFile);
+    }
+    if (mReporter != null) {
+      Diagnostic.userLog("Writing summary report");
+      mReporter.report(vcfFile, FileUtils.getZippedFileName(gzip, new File(outputDirectory(), "summary.bed")));
     }
   }
 
