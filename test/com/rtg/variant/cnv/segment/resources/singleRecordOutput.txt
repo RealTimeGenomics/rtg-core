@@ -1,0 +1,2 @@
+#chrom	start	end	name	status	segments
+19	4580	4690	one	Amplification	Full,DUP,1.54,19:1001-8999;
