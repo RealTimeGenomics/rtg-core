@@ -14,7 +14,7 @@ package com.rtg.variant.cnv.segment;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.After;
 import org.junit.Before;
@@ -53,7 +53,7 @@ public class CnvSummaryReportTest {
       final File vcfFile = FileHelper.resourceToFile("com/rtg/variant/cnv/segment/resources/singleRecord.vcf", new File(temp, "singleRecord.vcf"));
       final File output = new File(temp, "out");
       final ReferenceRanges<String> regions = new ReferenceRanges<>(true);
-      final RangeList<String> range = new RangeList<String>(new RangeList.RangeData<String>(4580, 4690, Arrays.asList("one")));
+      final RangeList<String> range = new RangeList<>(new RangeList.RangeData<>(4580, 4690, Collections.singletonList("one")));
       regions.put("19", range);
       final CnvSummaryReport cnvSummaryReport = new CnvSummaryReport(regions, 0.1);
       cnvSummaryReport.report(vcfFile, output);
