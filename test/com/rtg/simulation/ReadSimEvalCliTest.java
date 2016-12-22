@@ -66,7 +66,7 @@ public class ReadSimEvalCliTest extends AbstractCliTest {
 
       final MainResult res = checkMainInit("--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose", "--score-histogram");
 
-      TestUtils.containsAll(res.err(), "No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + LS,
+      TestUtils.containsAll(res.err(),
           "No template map present in reads SDF. Cannot verify evaluation is against correct template." + LS,
           "Missing template SDF ID in SAM header. Cannot verify evaluation is against correct template." + LS
             );
@@ -131,7 +131,6 @@ public class ReadSimEvalCliTest extends AbstractCliTest {
 
       final MainResult res = checkMainInit("--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose", "--score-histogram", "--mapq-histogram");
 
-      assertTrue(res.err().contains("No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + LS));
       TestUtils.containsAll(res.out(),
             "Total SAM records = 3",
             "Total pairs = 3",
@@ -216,7 +215,6 @@ public class ReadSimEvalCliTest extends AbstractCliTest {
       FileHelper.stringToGzFile(SAM_PAIRED2.replaceAll(" ", "\t"), sam);
 
       final MainResult res = checkMainInit("--output", rseDir.getPath(), "--reads", reads.getPath(), sam.getPath(), "--verbose");
-      assertTrue(res.err().contains("No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + LS));
       //System.err.println(bos.toString());
       TestUtils.containsAll(res.out(),
         "Total SAM records = 6",

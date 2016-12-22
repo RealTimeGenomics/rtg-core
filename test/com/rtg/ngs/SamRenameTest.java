@@ -21,7 +21,6 @@ import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.intervals.LongRange;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CommandLine;
@@ -29,7 +28,7 @@ import com.rtg.util.diagnostic.CliDiagnosticListener;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.DiagnosticListener;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.util.diagnostic.SlimException;
+import com.rtg.util.intervals.LongRange;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
@@ -58,15 +57,12 @@ public class SamRenameTest extends AbstractCliTest {
    * @throws IOException if an IO error occurs
    */
   public void testFlags() throws IOException {
-    final File tempDir = FileHelper.createTempDirectory();
-    try {
+    try (TestDirectory tempDir = new TestDirectory("samrename")) {
       final File samfile = new File(tempDir, "somesamfile");
       //      final File renamedfile = new File(tempDir, "renamedfile");
       //      final File readsdir = new File(tempDir, "detected");
       checkMainInitBadFlags();
       checkMainInitBadFlags(samfile.getAbsolutePath());
-    } finally {
-      assertTrue(FileHelper.deleteAll(tempDir));
     }
   }
 
@@ -105,82 +101,51 @@ public class SamRenameTest extends AbstractCliTest {
 
   // commandline errors
   public void testCliError2() throws InvalidParamsException, IOException {
-    final File readsDir = FileUtils.createTempDir("samrenametest", "reads");
-    try {
+    try (TestDirectory readsDir = new TestDirectory("samrename")) {
       ReaderTestUtils.getReaderDNA(">r1" + LS + "acgt", readsDir, null).close();
       checkParamsError(new String[] {"notexists", "-i", readsDir.getPath()}, "Input file \"notexists\" doesn't exist");
-    } finally {
-      assertTrue(FileHelper.deleteAll(readsDir));
     }
   }
 
   // commandline errors
   public void testCliError3() throws InvalidParamsException, IOException {
-    final File readsDir = FileUtils.createTempDir("samrenametest", "reads");
-    ReaderTestUtils.getReaderDNA(">r1" + LS + "acgt", readsDir, null).close();
-    final File tempDir = FileUtils.createTempDir("samrenametest", "checkparamserror");
-    try {
+    try (TestDirectory dir = new TestDirectory("samrename")) {
+      final File readsDir = FileUtils.createTempDir("samrenametest", "reads", dir);
+      ReaderTestUtils.getReaderDNA(">r1" + LS + "acgt", readsDir, null).close();
+      final File tempDir = FileUtils.createTempDir("samrenametest", "checkparamserror", dir);
       final File map = new File(tempDir, "map");
       FileUtils.stringToFile(SAM, map);
       final File mapRename = new File(tempDir, "map_rename");
-      checkMainInitWarn(map.getPath(), "-i", readsDir.getPath(),
-                        "-o", mapRename.getPath(), "--no-gzip");
+      checkMainInitOk(map.getPath(), "-i", readsDir.getPath(), "-o", mapRename.getPath(), "--no-gzip");
       assertTrue(mapRename.exists());
-    } finally {
-      assertTrue(FileHelper.deleteAll(readsDir));
-      assertTrue(FileHelper.deleteAll(tempDir));
-    }
-  }
-
-  // commandline errors
-  public void testCliError3b() throws InvalidParamsException, IOException {
-    final File readsDir = FileUtils.createTempDir("samrenametest", "reads");
-    ReaderTestUtils.getReaderDNA(">r1" + LS + "acgt", readsDir, null).close();
-    final File tempDir = FileUtils.createTempDir("samrenametest", "checkparamserror");
-    try {
-      final File map = new File(tempDir, "map");
-      FileUtils.stringToFile(SAM, map);
-      final File mapRename = new File(tempDir, "map_rename");
-      checkMainInitWarn(map.getPath(), "-i", readsDir.getPath(),
-                        "--output", mapRename.getPath(), "--no-gzip");
-      assertTrue(mapRename.exists());
-    } finally {
-      assertTrue(FileHelper.deleteAll(readsDir));
-      assertTrue(FileHelper.deleteAll(tempDir));
     }
   }
 
   public void testCliError4() throws InvalidParamsException, IOException {
-    final File readsDir = FileUtils.createTempDir("samrenametest", "reads");
-    ReaderTestUtils.getReaderDNA(">r1" + LS + "acgt", readsDir, null).close();
-    final File tempDir = FileUtils.createTempDir("samrenametest", "checkparamserror");
-    try {
+    try (TestDirectory dir = new TestDirectory("samrename")) {
+      final File readsDir = FileUtils.createTempDir("samrenametest", "reads", dir);
+      ReaderTestUtils.getReaderDNA(">r1" + LS + "acgt", readsDir, null).close();
+      final File tempDir = FileUtils.createTempDir("samrenametest", "checkparamserror", dir);
       final File map = new File(tempDir, "map.sam");
       FileUtils.stringToFile(SAM, map);
-      checkMainInitWarn(map.getPath(), "-i", readsDir.getPath(), "--no-gzip");
+      checkMainInitOk(map.getPath(), "-i", readsDir.getPath(), "--no-gzip");
       final File mapRename = new File(tempDir, "map_rename.sam");
       assertTrue(mapRename.exists());
       TestUtils.containsAll(FileUtils.fileToString(mapRename), "@PG\tID:rtg");
-    } finally {
-      assertTrue(FileHelper.deleteAll(readsDir));
-      assertTrue(FileHelper.deleteAll(tempDir));
     }
   }
 
   public void testCliError4Gzipped() throws InvalidParamsException, IOException {
-    final File readsDir = FileUtils.createTempDir("samrenametest", "reads");
-    ReaderTestUtils.getReaderDNA(">r1" + LS + "acgt", readsDir, null).close();
-    final File tempDir = FileUtils.createTempDir("samrenametest", "checkparamserror");
-    try {
+    try (TestDirectory dir = new TestDirectory("samrename")) {
+      final File readsDir = FileUtils.createTempDir("samrenametest", "reads", dir);
+      ReaderTestUtils.getReaderDNA(">r1" + LS + "acgt", readsDir, null).close();
+      final File tempDir = FileUtils.createTempDir("samrenametest", "checkparamserror", dir);
       final File map = new File(tempDir, "map.sam.gz");
       FileHelper.stringToGzFile(SAM, map);
 
-      checkMainInitWarn(map.getPath(), "-i", readsDir.getPath());
+      checkMainInitOk(map.getPath(), "-i", readsDir.getPath());
       final File mapRename = new File(tempDir, "map_rename.sam.gz");
       assertTrue(mapRename.exists());
-    } finally {
-      assertTrue(FileHelper.deleteAll(readsDir));
-      assertTrue(FileHelper.deleteAll(tempDir));
     }
   }
 
@@ -205,7 +170,7 @@ public class SamRenameTest extends AbstractCliTest {
     + "r1" + TB + "0" + TB + "g1" + TB + "11" + TB + "255" + TB + "8M" + TB + "*" + TB + "0" + TB + "0" + TB + "TTCAGCTA" + TB + "*" + TB + "AS:i:1" + "\n"
     ;
 
-  private void checkSdfId(File dir, File readsDir, String expOut, String expErr, boolean succeed, SdfId samSdf) throws IOException {
+  private void checkSdfId(File dir, File readsDir, String expOut, String expErr, SdfId samSdf) throws IOException {
     CommandLine.clearCommandArgs();
     final String commentHeader = !samSdf.available() ? "" : "@CO\tREAD-SDF-ID:" + samSdf + "\n";
 
@@ -218,25 +183,11 @@ public class SamRenameTest extends AbstractCliTest {
       final File inSam = new File(dir, "inSam.sam");
       FileUtils.stringToFile(SAM2_HEAD + commentHeader + SAM2_DATA, inSam);
       final SamRename sr = new SamRename();
-      try {
-        sr.renameSam(readsDir, inSam, outSam, LongRange.NONE);
-        if (!succeed) {
-          fail("shouldn't have passed");
-        }
-        final String outSamStr = FileUtils.fileToString(outSam);
-        assertEquals(SAM2_HEAD + commentHeader + SAM2_DATA_EXP, outSamStr.replaceAll("@PG\t[^\\n]*\\n", ""));
-        assertTrue(outSamStr.contains("@PG\tID:rtg"));
-        assertTrue(outSamStr.contains("CL:Internal"));
-      } catch (final SlimException e) {
-        e.printErrorNoLog();
-        if (succeed) {
-          fail("expected to pass");
-        }
-      } catch (final RuntimeException e) {
-        if (succeed) {
-          fail("expected to pass");
-        }
-      }
+      sr.renameSam(readsDir, inSam, outSam, LongRange.NONE);
+      final String outSamStr = FileUtils.fileToString(outSam);
+      assertEquals(SAM2_HEAD + commentHeader + SAM2_DATA_EXP, outSamStr.replaceAll("@PG\t[^\\n]*\\n", ""));
+      assertTrue(outSamStr.contains("@PG\tID:rtg"));
+      assertTrue(outSamStr.contains("CL:Internal"));
     } finally {
       Diagnostic.removeListener(dl);
     }
@@ -245,48 +196,20 @@ public class SamRenameTest extends AbstractCliTest {
   }
 
   public void testSdfIdCheck() throws IOException {
-    final File dir = FileUtils.createTempDir("samrename", "sdfidcheck");
-    try {
+    try (TestDirectory dir = new TestDirectory("samrename")) {
       final File readsDir = new File(dir, "reads");
-      final SequencesReader reader = ReaderTestUtils.getReaderDNA(">r1" + LS + "acgt", readsDir, null);
-      try {
+      try (SequencesReader reader = ReaderTestUtils.getReaderDNA(">r1" + LS + "acgt", readsDir, null)) {
         final SdfId sdfId = reader.getSdfId();
-        checkSdfId(dir, readsDir, "", "", true, sdfId);
-      } finally {
-        reader.close();
+        checkSdfId(dir, readsDir, "", "", sdfId);
       }
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
     }
   }
 
   public void testSdfIdCheckWrong() throws IOException {
-    final File dir = FileUtils.createTempDir("samrename", "sdfidcheck");
-    try {
+    try (TestDirectory dir = new TestDirectory("samrename")) {
       final File readsDir = new File(dir, "reads");
-      final SequencesReader reader = ReaderTestUtils.getReaderDNA(">r1" + LS + "acgt", readsDir, null);
-      try {
-        checkSdfId(dir, readsDir, "", "Error: SDF-ID of given SDF does not match SDF used during mapping." + LS, false, new SdfId());
-      } finally {
-        reader.close();
-      }
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
-    }
-  }
-
-  public void testSdfIdCheckUnknown() throws IOException {
-    final File dir = FileUtils.createTempDir("samrename", "sdfidcheck");
-    try {
-      final File readsDir = new File(dir, "reads");
-      final SequencesReader reader = ReaderTestUtils.getReaderDNA(">r1" + LS + "acgt", readsDir, null);
-      try {
-        checkSdfId(dir, readsDir, "", "No READ-SDF-ID found in SAM header, unable to verify read-id correctness." + LS, true, new SdfId(0));
-      } finally {
-        reader.close();
-      }
-    } finally {
-      assertTrue(FileHelper.deleteAll(dir));
+      ReaderTestUtils.getReaderDNA(">r1" + LS + "acgt", readsDir, null);
+      checkSdfId(dir, readsDir, "", "Current reads SDF-ID does not match SDF-ID of reads used during mapping." + LS, new SdfId());
     }
   }
 
