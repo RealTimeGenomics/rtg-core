@@ -13,6 +13,8 @@ package com.rtg.sam;
 
 import java.util.List;
 
+import com.rtg.util.diagnostic.Diagnostic;
+
 import htsjdk.samtools.Cigar;
 import htsjdk.samtools.CigarElement;
 import htsjdk.samtools.CigarOperator;
@@ -34,6 +36,9 @@ public final class ExtraSoftClip {
    * @return true if record was modified
    */
   public static boolean addSoftClip(SAMRecord record) {
+    if (record.getReadUnmappedFlag()) {
+      return false;
+    }
     if (record.getReadNegativeStrandFlag()) {
       return checkNeg(record);
     } else {
@@ -78,8 +83,17 @@ public final class ExtraSoftClip {
           mmCount += e.getLength();
           break;
         default:
+          if (l > 0 && matchCount <= MIN_ANCHOR) {
+            Diagnostic.developerLog("Unhandled neg record " + matchCount + " -- " + record.getSAMString());
+          }
           return false;
       }
+    }
+    if (matchCount <= MIN_ANCHOR) {
+      //System.err.println("Setting record to unmapped with insufficient matches " + matchCount + " -- "  + record.getSAMString());
+      record.setReadUnmappedFlag(true);
+      record.setCigarString("*");
+      return true;
     }
     return false;
   }
@@ -121,8 +135,17 @@ public final class ExtraSoftClip {
           mmCount += e.getLength();
           break;
         default:
+          if (l < cigarElements.size() - 1 && matchCount <= MIN_ANCHOR) {
+            Diagnostic.developerLog("Unhandled pos record " + matchCount + " -- "  + record.getSAMString());
+          }
           return false;
       }
+    }
+    if (matchCount <= MIN_ANCHOR) {
+      //System.err.println("Setting record to unmapped with insufficient matches " + matchCount + " -- "  + record.getSAMString());
+      record.setReadUnmappedFlag(true);
+      record.setCigarString("*");
+      return true;
     }
     return false;
   }

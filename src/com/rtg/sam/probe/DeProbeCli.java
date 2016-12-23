@@ -27,6 +27,7 @@ import com.rtg.bed.BedRecord;
 import com.rtg.launcher.CommandLineFiles;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
+import com.rtg.sam.ExtraSoftClip;
 import com.rtg.sam.RecordIterator;
 import com.rtg.sam.SamFilterParams;
 import com.rtg.sam.SamOutput;
@@ -64,6 +65,8 @@ public class DeProbeCli extends LoggedCli {
 
   private static final String PROBE_BED = "probe-bed";
   private static final String TOLERANCE_FLAG = "tolerance";
+  private static final String EXTRA_SOFT_CLIP_FLAG = "extra-soft-clip";
+
   static final String ALIGNMENT_FILE_NAME = "alignments_deprobed.bam";
   static final String PROBE_OFFSET_TABLE_FILE = "probe_offsets.tsv";
   static final String CIGAR_OP_TABLE_FILE = "cigar_ops.tsv";
@@ -105,6 +108,7 @@ public class DeProbeCli extends LoggedCli {
     CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired('b', PROBE_BED, File.class, "FILE", "BED file specifying each probe location and strand").setCategory(INPUT_OUTPUT);
     flags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "start position tolerance for probe matching", 3).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(EXTRA_SOFT_CLIP_FLAG, "if set, add extra soft-clipping where mismatches occur at the end of reads").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
   }
@@ -117,6 +121,7 @@ public class DeProbeCli extends LoggedCli {
   @Override
   protected int mainExec(OutputStream out, LogStream log) throws IOException {
     final int tolerance = (Integer) mFlags.getValue(TOLERANCE_FLAG);
+    final boolean extraSoftClip = mFlags.isSet(EXTRA_SOFT_CLIP_FLAG);
     final Collection<File> inputFiles = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, null, CommandLineFiles.EXISTS, CommandLineFiles.NOT_DIRECTORY).getFileList(mFlags);
     final PosChecker posChecker = new PosChecker(tolerance);
     final NegChecker negChecker = new NegChecker(tolerance);
@@ -129,6 +134,9 @@ public class DeProbeCli extends LoggedCli {
     mTotalStrippedPos = 0;
     mTotalStrippedNeg = 0;
     mTotalStrippedReads = 0;
+
+    int totalRecords12 = 0;
+    int softClippedRecords12 = 0;
 
     boolean warnedNoReadGroup = false;
     long totalUnmappedReads = 0;
@@ -186,7 +194,22 @@ public class DeProbeCli extends LoggedCli {
                 }
               }
             }
+
+            if (extraSoftClip) {
+              totalRecords12++;
+              if (ExtraSoftClip.addSoftClip(record)) {
+                softClippedRecords12++;
+              }
+              if (totalRecords12 % 1000000 == 0) {
+                Diagnostic.developerLog(String.format("Records: %d Soft-clipped: %d (%.2f%%)", totalRecords12, softClippedRecords12, 100.0 * softClippedRecords12 / totalRecords12));
+              }
+            }
+
             writer.addRecord(record);
+          }
+
+          if (extraSoftClip) {
+            Diagnostic.developerLog(String.format("Records: %d Soft-clipped: %d (%.2f%%)", totalRecords12, softClippedRecords12, 100.0 * softClippedRecords12 / totalRecords12));
           }
           if (writer.getDuplicateCount() > 0) {
             Diagnostic.warning(writer.getDuplicateCount() + " duplicate records were dropped during output.");
@@ -197,6 +220,8 @@ public class DeProbeCli extends LoggedCli {
     }
 
     final long totalReads = mTotalMappedReads + totalUnmappedReads + ambiguousReads.size();
+    Diagnostic.userLog("Total R1+R2 records: " + totalRecords12);
+    Diagnostic.userLog("Total R1+R2 records soft-clipped: " + softClippedRecords12);
     Diagnostic.userLog("Total R1 records: " + totalRecords);
     Diagnostic.userLog("Total R1 reads: " + totalReads);
     Diagnostic.userLog("Total R1 unmapped reads (records): " + totalUnmappedReads);

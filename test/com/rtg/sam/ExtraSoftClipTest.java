@@ -27,11 +27,13 @@ public class ExtraSoftClipTest extends TestCase {
     check("AAAAAAAAAAAACGTCGATG", "1X15=3X1=", "1S15=3X1=", false, 11);
     check("AAAAAAAAAAAACGTCGATG", "2=4I10=1X3=", "6S10=1X3=", false, 16);
     check("AAAAAAAAAAAACGTCGATG", "2=4D14=1X3=", "2S14=1X3=", false, 12);
-    //check("AAAAAAAAAAAACGTCGATG", "15X1=4X", "20S", false); // ??
     check("AAAAAAAAAAAACGTCGATG", "20=", "20=", true, 10);
     check("AAAAAAAAAAAACGTCGATG", "5=1X10=1X3=", "5=1X10=1X3=", true, 10);
     check("AAAAAAAAAAAACGTCGATG", "5=1X10=2X2=", "5=1X10=4S", true, 10);
     check("AAAAAAAAAAAACGTCGATG", "5=1X12=2X", "5=1X12=2S", true, 10);
+
+    check("AAAAAAAAAAAACGTCGATG", "15X1=4X", "*", true, 10);
+    check("AAAAAAAAAAAACGTCGATG", "15X1=4X", "*", false, 10);
   }
 
   private void check(String readString, String cigarString, String expReadString, boolean pos, int newStart) {
@@ -43,7 +45,9 @@ public class ExtraSoftClipTest extends TestCase {
     samRecord.setAlignmentStart(10);
     ExtraSoftClip.addSoftClip(samRecord);
     assertEquals(expReadString, samRecord.getCigarString());
-    assertEquals(readString.length(), samRecord.getCigar().getReadLength());
+    if (!samRecord.getReadUnmappedFlag()) {
+      assertEquals(readString.length(), samRecord.getCigar().getReadLength());
+    }
     assertEquals(newStart, samRecord.getAlignmentStart());
   }
 
