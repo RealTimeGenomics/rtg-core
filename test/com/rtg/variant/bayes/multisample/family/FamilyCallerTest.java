@@ -20,6 +20,7 @@ import java.util.List;
 import com.rtg.mode.DNA;
 import com.rtg.relation.Family;
 import com.rtg.relation.GenomeRelationships;
+import com.rtg.relation.PedigreeException;
 import com.rtg.util.test.NanoRegression;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.GenomePriorParamsBuilder;
@@ -105,7 +106,11 @@ public class FamilyCallerTest extends TestCase {
       pedigree.addParentChild(mother, child);
     }
     //System.err.println(pedigree);
-    return new Family(pedigree, father, mother, children);
+    try {
+      return new Family(pedigree, father, mother, children);
+    } catch (PedigreeException e) {
+      throw new RuntimeException(e); // Unpossible
+    }
   }
 
   public void testComparison() throws Exception {

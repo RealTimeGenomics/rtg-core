@@ -18,6 +18,7 @@ import java.util.Set;
 
 import com.rtg.relation.Family;
 import com.rtg.relation.GenomeRelationships;
+import com.rtg.relation.PedigreeException;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.test.NanoRegression;
 import com.rtg.variant.GenomePriorParams;
@@ -172,7 +173,7 @@ public class FamilyCallerFBTest extends FamilyCallerTest {
 
       Attempt to test pedigree calling on Y chromosome
    */
-  public void testPedigreeHaploidNoneHaploid() throws InvalidParamsException {
+  public void testPedigreeHaploidNoneHaploid() throws InvalidParamsException, PedigreeException {
     final GenomePriorParams priors = new GenomePriorParamsBuilder().denovoRef(0.01).denovoNonRef(0.00001).create();
 
     final GenomeRelationships pedigree = new GenomeRelationships();

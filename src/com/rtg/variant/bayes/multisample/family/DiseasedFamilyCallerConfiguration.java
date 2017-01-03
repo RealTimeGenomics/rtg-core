@@ -22,12 +22,12 @@ import com.rtg.reference.Sex;
 import com.rtg.reference.SexMemo;
 import com.rtg.relation.Family;
 import com.rtg.relation.GenomeRelationships;
+import com.rtg.relation.PedigreeException;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantParams;
-import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
 import com.rtg.variant.bayes.multisample.IndividualSampleFactory;
 import com.rtg.variant.bayes.multisample.JointCallerConfigurator;
@@ -40,6 +40,7 @@ import com.rtg.variant.bayes.snp.ModelSnpFactory;
 import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
+import com.rtg.vcf.VariantStatistics;
 
 /**
  */
@@ -55,7 +56,12 @@ public final class DiseasedFamilyCallerConfiguration extends AbstractJointCaller
       Diagnostic.userLog("Using disease caller");
 
       final GenomeRelationships genomeRelationships = params.genomeRelationships();
-      final Family family = Family.getFamily(genomeRelationships);
+      final Family family;
+      try {
+        family = Family.getFamily(genomeRelationships);
+      } catch (PedigreeException e) {
+        throw new NoTalkbackSlimException(e.getMessage());
+      }
       final String fatherName = family.getFather();
       final String motherName = family.getMother();
       final String[] genomes = new String[family.getChildren().length + Family.FIRST_CHILD_INDEX];

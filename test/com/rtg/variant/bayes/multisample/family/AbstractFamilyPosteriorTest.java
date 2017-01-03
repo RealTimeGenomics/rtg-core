@@ -19,6 +19,7 @@ import java.util.List;
 
 import com.rtg.relation.Family;
 import com.rtg.relation.GenomeRelationships;
+import com.rtg.relation.PedigreeException;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.GenomePriorParamsBuilder;
@@ -132,7 +133,11 @@ public abstract class AbstractFamilyPosteriorTest extends TestCase {
       pedigree.addParentChild(MOTHER, child);
     }
     //System.err.println(pedigree);
-    return new Family(pedigree, FATHER, MOTHER, childNames);
+    try {
+      return new Family(pedigree, FATHER, MOTHER, childNames);
+    } catch (PedigreeException e) {
+      throw new RuntimeException(e); // Unpossible
+    }
   }
 
 

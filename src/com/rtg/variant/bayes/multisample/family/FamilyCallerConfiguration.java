@@ -23,6 +23,7 @@ import com.rtg.reference.SexMemo;
 import com.rtg.relation.ChildFamilyLookup;
 import com.rtg.relation.Family;
 import com.rtg.relation.GenomeRelationships;
+import com.rtg.relation.PedigreeException;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
@@ -76,7 +77,7 @@ public final class FamilyCallerConfiguration extends AbstractJointCallerConfigur
             throw new NoTalkbackSlimException("The sex of child " + child + " was not specified");
           }
         }
-      } catch (IllegalArgumentException e) {
+      } catch (PedigreeException e) {
         throw new NoTalkbackSlimException("There was a problem with the family pedigree: " + e.getMessage());
       }
       Diagnostic.developerLog(family.toString());

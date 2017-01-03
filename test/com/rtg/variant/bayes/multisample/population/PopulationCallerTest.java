@@ -437,7 +437,7 @@ public class PopulationCallerTest extends TestCase {
            S1 D1 S2     S3 D2
       Attempt to test pedigree calling on Y chromosome
    */
-  public void testPedigreeHaploidNoneHaploid2() throws InvalidParamsException {
+  public void testPedigreeHaploidNoneHaploid2() throws InvalidParamsException, PedigreeException {
     final GenomePriorParams priors = new GenomePriorParamsBuilder().denovoRef(0.01).denovoNonRef(0.00001).create();
 
     final GenomeRelationships pedigree = new GenomeRelationships();

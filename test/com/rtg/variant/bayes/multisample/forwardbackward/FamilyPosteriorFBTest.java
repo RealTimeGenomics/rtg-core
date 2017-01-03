@@ -19,6 +19,7 @@ import java.util.List;
 
 import com.rtg.relation.Family;
 import com.rtg.relation.GenomeRelationships;
+import com.rtg.relation.PedigreeException;
 import com.rtg.variant.GenomePriorParams;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.Factor;
@@ -84,7 +85,7 @@ public class FamilyPosteriorFBTest extends AbstractFamilyPosteriorTest {
   }
 
   //all autosomes daughter
-  public void testDiploidDiploidDiploidHalfSib() {
+  public void testDiploidDiploidDiploidHalfSib() throws PedigreeException {
     final GenomePriorParams priors = getGenomePriorParams();
     final PossibilityArithmetic arith = SimplePossibility.SINGLETON;
     final Description desc = new DescriptionCommon("A", "C");

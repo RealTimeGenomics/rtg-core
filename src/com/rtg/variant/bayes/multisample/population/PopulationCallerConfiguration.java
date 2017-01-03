@@ -55,9 +55,6 @@ import com.rtg.vcf.VcfAnnotator;
  */
 public final class PopulationCallerConfiguration extends AbstractJointCallerConfiguration {
 
-  /** Use families identified within the pedigree */
-  private static final boolean USE_PEDIGREE = true; //Boolean.valueOf(System.getProperty("rtg.population-pedigree", "true"));
-
   /**
    * The factory for this caller.
    */
@@ -122,7 +119,7 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
       MultisampleJointScorer familyCaller = null;
       Family[] famArray = null;
       final List<VcfAnnotator> annot = new ArrayList<>();
-      if (USE_PEDIGREE) {
+      try {
         // Only include families where at least two members are in the output genomes, at least one of which is a child
         final Set<Family> initialFamilies = Family.getFamilies(genomeRelationships, false, null);
         final Set<Family> families = new LinkedHashSet<>();
@@ -149,16 +146,13 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
           }
           Diagnostic.userLog("Identified " + families.size() + " usable families");
           Diagnostic.userLog("Families: " + StringUtils.LS + families);
-          final List<Family> orderedFamilies;
-          try {
-            orderedFamilies = MultiFamilyOrdering.orderFamiliesAndSetMates(families);
-          } catch (PedigreeException e) {
-            throw new NoTalkbackSlimException("The supplied pedigree can not be used: " + e.getMessage());
-          }
+          final List<Family> orderedFamilies = MultiFamilyOrdering.orderFamiliesAndSetMates(families);
           famArray = orderedFamilies.toArray(new Family[orderedFamilies.size()]);
           familyCaller = newParams.usePropagatingPriors() ? new FamilyCallerFB(newParams, famArray) : new FamilyCaller(newParams, famArray);
           annot.add(new ChildPhasingVcfAnnotator(orderedFamilies));
         }
+      } catch (PedigreeException e) {
+        throw new NoTalkbackSlimException("There was a problem with the supplied pedigree: " + e.getMessage());
       }
       final PopulationCaller popCaller = new PopulationCaller(newParams, familyCaller);
       final List<IndividualSampleFactory<?>> individualFactories = new ArrayList<>();
