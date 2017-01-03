@@ -234,6 +234,30 @@ public class DeProbeCli extends LoggedCli {
       addMapped(s.stripped(), s.negative());
     }
 
+    reportOffsetSummary(posChecker, negChecker, tolerance);
+    reportCigarSummary(posChecker, negChecker);
+    reportProbeSummary(posChecker, negChecker);
+    reportOnTargetSummary(out, totalReads);
+    return 0;
+  }
+
+  private void reportOnTargetSummary(OutputStream out, long totalReads) throws IOException {
+    Diagnostic.userLog("ON TARGET RATES");
+    final TextTable onTargetSummary = new TextTable();
+    onTargetSummary.addHeaderRow("group", "total", "mapped", "on target", "fraction of total", "fraction of mapped");
+    onTargetSummary.addSeparator();
+    onTargetSummary.addRow("Reads", Long.toString(totalReads), Long.toString(mTotalMappedReads), Long.toString(mTotalStrippedReads),
+      String.format("%.4f", (double) mTotalStrippedReads / (double) totalReads),
+      String.format("%.4f", (double) mTotalStrippedReads / (double) mTotalMappedReads));
+    Diagnostic.userLog(onTargetSummary.toString());
+    FileUtils.stringToFile(onTargetSummary.getAsTsv(), new File(outputDirectory(), ON_TARGET_SUMMARY_FILE));
+
+    try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(new File(outputDirectory(), CommonFlags.SUMMARY_FILE), false), out))) {
+      summaryOut.println(onTargetSummary);
+    }
+  }
+
+  private void reportOffsetSummary(PosChecker posChecker, NegChecker negChecker, int tolerance) throws IOException {
     Diagnostic.userLog("PROBE OFFSETS");
     final TextTable offsetSummary = new TextTable();
     offsetSummary.addHeaderRow("delta", "+", "-");
@@ -243,7 +267,9 @@ public class DeProbeCli extends LoggedCli {
     }
     Diagnostic.userLog(offsetSummary.toString());
     FileUtils.stringToFile(offsetSummary.getAsTsv(), new File(outputDirectory(), PROBE_OFFSET_TABLE_FILE));
+  }
 
+  private void reportCigarSummary(PosChecker posChecker, NegChecker negChecker) throws IOException {
     Diagnostic.userLog("CIGAR OPERATIONS WITHIN PROBE");
     final TextTable cigarSummary = new TextTable();
     cigarSummary.addHeaderRow("strand", "length", "X", "I", "D", "S");
@@ -254,7 +280,9 @@ public class DeProbeCli extends LoggedCli {
     }
     Diagnostic.userLog(cigarSummary.toString());
     FileUtils.stringToFile(cigarSummary.getAsTsv(), new File(outputDirectory(), CIGAR_OP_TABLE_FILE));
+  }
 
+  private void reportProbeSummary(PosChecker posChecker, NegChecker negChecker) throws IOException {
     final long totalstripped = mTotalStrippedPos + mTotalStrippedNeg;
     final long total = mTotalMappedPos + mTotalMappedNeg;
     final TextTable summary = new TextTable();
@@ -270,21 +298,6 @@ public class DeProbeCli extends LoggedCli {
       String.format("%.4f", (double) totalstripped / total),
       String.format("%.1f", (double) (posChecker.mBasesTrimmed + negChecker.mBasesTrimmed) / totalstripped));
     FileUtils.stringToFile(summary.getAsTsv(), new File(outputDirectory(), PROBE_SUMMARY_FILE));
-
-    Diagnostic.userLog("ON TARGET RATES");
-    final TextTable onTargetSummary = new TextTable();
-    onTargetSummary.addHeaderRow("group", "total", "mapped", "on target", "fraction of total", "fraction of mapped");
-    onTargetSummary.addSeparator();
-    onTargetSummary.addRow("Reads", Long.toString(totalReads), Long.toString(mTotalMappedReads), Long.toString(mTotalStrippedReads),
-      String.format("%.4f", (double) mTotalStrippedReads / (double) totalReads),
-      String.format("%.4f", (double) mTotalStrippedReads / (double) mTotalMappedReads));
-    Diagnostic.userLog(onTargetSummary.toString());
-    FileUtils.stringToFile(onTargetSummary.getAsTsv(), new File(outputDirectory(), ON_TARGET_SUMMARY_FILE));
-
-    try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(new File(outputDirectory(), CommonFlags.SUMMARY_FILE), false), out))) {
-      summaryOut.println(onTargetSummary);
-    }
-    return 0;
   }
 
   private void addMapped(boolean stripped, boolean negative) {
