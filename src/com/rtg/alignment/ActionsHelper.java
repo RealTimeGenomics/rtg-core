@@ -31,18 +31,18 @@ import com.rtg.sam.SuperCigar;
  * </ul>
  * These 4-bit actions have the following meanings:
  * <pre>
- * Name                   Char     readPos     templatePos
- * -------------------    ----     -------     -----------
- * SAME                   =        r++         t++
- * MISMATCH           X        r++         t++
- * DELETION_FROM_REFERENCE    D        no change   t++
- * INSERTION_INTO_REFERENCE     I        r++         no change
- * CG_GAP_IN_READ         N        no change   t++
- * CG_OVERLAP_IN_READ     B        no change   t--
- * UNKNOWN_TEMPLATE       T        r++         t++
- * UNKNOWN_READ           R        r++         t++
- * SOFT_CLIP              S        r++   no change
- * NOOP                            no change   no change
+ * Name                     Char     readPos     templatePos
+ * -------------------      ----     -------     -----------
+ * SAME                     =        r++         t++
+ * MISMATCH                 X        r++         t++
+ * DELETION_FROM_REFERENCE  D        no change   t++
+ * INSERTION_INTO_REFERENCE I        r++         no change
+ * CG_GAP_IN_READ           N        no change   t++
+ * CG_OVERLAP_IN_READ       B        no change   t--
+ * UNKNOWN_TEMPLATE         T        r++         t++
+ * UNKNOWN_READ             R        r++         t++
+ * SOFT_CLIP                S        r++         no change
+ * NOOP                              no change   no change
  * </pre>
  */
 public final class ActionsHelper {
