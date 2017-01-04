@@ -332,6 +332,7 @@ public class RamMapFunctionalTest extends TestCase {
                                                   "-t", template.getPath(),
                                                   "-o", out.getPath(),
                                                   "--all-hits",
+                                                  "--soft-clip-distance", "0",
                                                   "--" + MapFlags.SAM_FLAG,
                                                   "--" + MapFlags.DONT_UNIFY_FLAG,
                                                   "--" + MapFlags.UNKNOWNS_PENALTY_FLAG, "0",
