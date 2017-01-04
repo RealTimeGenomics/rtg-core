@@ -11,6 +11,17 @@
  */
 package com.rtg.alignment;
 
+import static com.rtg.alignment.ActionsHelper.CG_GAP_IN_READ;
+import static com.rtg.alignment.ActionsHelper.CG_OVERLAP_IN_READ;
+import static com.rtg.alignment.ActionsHelper.DELETION_FROM_REFERENCE;
+import static com.rtg.alignment.ActionsHelper.INSERTION_INTO_REFERENCE;
+import static com.rtg.alignment.ActionsHelper.MISMATCH;
+import static com.rtg.alignment.ActionsHelper.NOOP;
+import static com.rtg.alignment.ActionsHelper.SAME;
+import static com.rtg.alignment.ActionsHelper.SOFT_CLIP;
+import static com.rtg.alignment.ActionsHelper.UNKNOWN_READ;
+import static com.rtg.alignment.ActionsHelper.UNKNOWN_TEMPLATE;
+
 import com.reeltwo.jumble.annotations.JumbleIgnore;
 import com.rtg.mode.DnaUtils;
 import com.rtg.ngs.tempstage.BinaryTempFileRecord;
@@ -75,30 +86,30 @@ public class AlignmentResult {
     int cgOverlapSize = 0;
     while (iter.hasNext()) {
       final int action = iter.next();
-      if (cgOverlapSize > 0 && action != ActionsHelper.CG_OVERLAP_IN_READ) {
+      if (cgOverlapSize > 0 && action != CG_OVERLAP_IN_READ) {
         // start/continue skipping over cgOverlapSize nucleotides of the TEMPLATE after the overlap.
-        if (action != ActionsHelper.INSERTION_INTO_REFERENCE) {
+        if (action != INSERTION_INTO_REFERENCE) {
           --cgOverlapSize; // count down in template positions
         }
-        if (action != ActionsHelper.DELETION_FROM_REFERENCE && action != ActionsHelper.CG_GAP_IN_READ) {
+        if (action != DELETION_FROM_REFERENCE && action != CG_GAP_IN_READ) {
           readPos += direction;
         }
         continue;
       }
       switch (action) {
-        case ActionsHelper.SAME:
-        case ActionsHelper.INSERTION_INTO_REFERENCE:
-        case ActionsHelper.MISMATCH:
-        case ActionsHelper.UNKNOWN_TEMPLATE:
-        case ActionsHelper.UNKNOWN_READ:
+        case SAME:
+        case INSERTION_INTO_REFERENCE:
+        case MISMATCH:
+        case UNKNOWN_TEMPLATE:
+        case UNKNOWN_READ:
           sbRead.append(DnaUtils.getBase(mRead[readPos]));
           readPos += direction;
           break;
-        case ActionsHelper.CG_OVERLAP_IN_READ:
+        case CG_OVERLAP_IN_READ:
           ++cgOverlapSize;
           break;
-        case ActionsHelper.CG_GAP_IN_READ:
-        case ActionsHelper.DELETION_FROM_REFERENCE:
+        case CG_GAP_IN_READ:
+        case DELETION_FROM_REFERENCE:
           break;
         default:
           throw new RuntimeException("Illegal actions array: " + ActionsHelper.toString(mActions));
@@ -118,8 +129,8 @@ public class AlignmentResult {
       int r = 0;
       while (iter.hasNext()) {
         switch (iter.next()) {
-          case ActionsHelper.DELETION_FROM_REFERENCE:
-          case ActionsHelper.NOOP:
+          case DELETION_FROM_REFERENCE:
+          case NOOP:
             break;
           default: // SAME, MISMATCH, INSERT, SOFTCLIP
             sbRead.append(DnaUtils.getBase(mRead[r++]));
@@ -191,35 +202,56 @@ public class AlignmentResult {
     return mReferenceId;
   }
 
-  /** @return a simple count of the number of mismatches */
+  /** @return a simple count of the number of mismatches within aligned bases (i.e. excluding off-template or clipped) */
   protected int mismatches() {
-    final ActionsHelper.CommandIterator iter = ActionsHelper.iterator(mActions);
+    final ActionsHelper.CommandIterator iter = mIsReverse ? ActionsHelper.iteratorReverse(mActions) : ActionsHelper.iterator(mActions);
     int mismatches = 0;
-    // Handle hard-clipping on the left in the case of off template match
     int tempPos = getStart();
-    int readPos = 0;
 
+    while (iter.hasNext() && tempPos < 0) {
+      final int action = iter.next();
+      switch (action) {
+        case SAME:
+        case MISMATCH:
+        case UNKNOWN_TEMPLATE:
+        case UNKNOWN_READ:
+        case DELETION_FROM_REFERENCE:
+        case CG_GAP_IN_READ:
+          ++tempPos;
+          break;
+        case INSERTION_INTO_REFERENCE:
+        case SOFT_CLIP:
+          break;
+        case CG_OVERLAP_IN_READ:
+          --tempPos;
+          break;
+        default:
+      }
+    }
     while (iter.hasNext() && tempPos < mTemplate.length) {
       final int action = iter.next();
-      if (action == ActionsHelper.DELETION_FROM_REFERENCE || action == ActionsHelper.MISMATCH || action == ActionsHelper.INSERTION_INTO_REFERENCE) {
+      if (action == DELETION_FROM_REFERENCE || action == MISMATCH || action == INSERTION_INTO_REFERENCE) {
         ++mismatches;
       }
-      if (action != ActionsHelper.INSERTION_INTO_REFERENCE) {
-        ++tempPos;
-      }
-      if (action != ActionsHelper.DELETION_FROM_REFERENCE) {
-        ++readPos;
+      switch (action) {
+        case SAME:
+        case MISMATCH:
+        case UNKNOWN_TEMPLATE:
+        case UNKNOWN_READ:
+        case DELETION_FROM_REFERENCE:
+        case CG_GAP_IN_READ:
+          ++tempPos;
+          break;
+        case INSERTION_INTO_REFERENCE:
+        case SOFT_CLIP:
+          break;
+        case CG_OVERLAP_IN_READ:
+          --tempPos;
+          break;
+        default:
       }
     }
-    if (readPos < mRead.length) {
-      //need to count possible overlap region chars in the soft clipping region
-      while (iter.hasNext()) {
-        final int action = iter.next();
-        if (action != ActionsHelper.INSERTION_INTO_REFERENCE) {
-          ++mismatches;
-        }
-      }
-    }
+
     return mismatches;
   }
 

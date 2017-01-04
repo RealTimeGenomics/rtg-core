@@ -36,50 +36,41 @@ public class AlignmentResultTest extends TestCase {
   public void testMismatches() {
     AlignmentResult ar = new AlignmentResult(DnaUtils.encodeString("acgtacgta"), ActionsHelper.build("=========", 0, 0), DnaUtils.encodeString("acgtacgta"));
     assertEquals(0, ar.mismatches());
-    assertEquals("ACGTACGTA", ar.readString());
-    ar.setIdentifyingInfo(false, true);
-    assertEquals("ACGTACGTA", ar.readString());
 
     ar = new AlignmentResult(DnaUtils.encodeString("acgtacgta"), ActionsHelper.build("X=======X", 0, 0), DnaUtils.encodeString("atgttcgta"));
     assertEquals(2, ar.mismatches());
 
     ar = new AlignmentResult(DnaUtils.encodeString("acgtacgta"), ActionsHelper.build("=X==X====", 0, 0), DnaUtils.encodeString("atgttcgta"));
     assertEquals(2, ar.mismatches());
-    assertEquals("ACGTACGTA", ar.readString());
-    ar.setIdentifyingInfo(false, true);
-    assertEquals("ACGTACGTA", ar.readString());
 
     ar = new AlignmentResult(DnaUtils.encodeString("acgcgta"), ActionsHelper.build("===DD====", 0, 3), DnaUtils.encodeString("acgtacgta"));
     assertEquals(2, ar.mismatches());
-    assertEquals("ACGCGTA", ar.readString());
-    ar.setIdentifyingInfo(false, true);
-    assertEquals("ACGCGTA", ar.readString());
 
     ar = new AlignmentResult(DnaUtils.encodeString("acgcgta"), ActionsHelper.build("===DD====", 0, 3), DnaUtils.encodeString("acgt"));
-    assertEquals(6, ar.mismatches());
-    assertEquals("ACGCGTA", ar.readString());
+    assertEquals(1, ar.mismatches());
 
     ar = new AlignmentResult(DnaUtils.encodeString("acgcgta"), ActionsHelper.build("===DD====", 0, 3), DnaUtils.encodeString("acgtacgt"));
-    assertEquals(3, ar.mismatches());
-    assertEquals("ACGCGTA", ar.readString());
-
-    ar = new AlignmentResult(DnaUtils.encodeString("acgcgta"), ActionsHelper.build("===DD====", 0, 3), DnaUtils.encodeString("acgtacgt"));
-    assertEquals(3, ar.mismatches());
-    assertEquals("ACGCGTA", ar.readString());
+    assertEquals(2, ar.mismatches());
 
     ar = new AlignmentResult(DnaUtils.encodeString("acgtacgta"), ActionsHelper.build("===II====", 0, 3), DnaUtils.encodeString("acgcgta"));
     assertEquals(2, ar.mismatches());
-    assertEquals("ACGTACGTA", ar.readString());
-    ar.setIdentifyingInfo(false, true);
-    assertEquals("ACGTACGTA", ar.readString());
 
     ar = new AlignmentResult(DnaUtils.encodeString("acgtacgta"), ActionsHelper.build("===II====", 0, 3), DnaUtils.encodeString("acg"));
-    assertEquals(4, ar.mismatches());
-    assertEquals("ACGTACGTA", ar.readString());
+    assertEquals(0, ar.mismatches());
 
     ar = new AlignmentResult(DnaUtils.encodeString("acgtacgta"), ActionsHelper.build("===II====", 0, 3), DnaUtils.encodeString("acgcgt"));
-    assertEquals(3, ar.mismatches());
-    assertEquals("ACGTACGTA", ar.readString());
+    assertEquals(2, ar.mismatches());
+  }
+
+  public void testMismatchesSoftClip() {
+    AlignmentResult ar = new AlignmentResult(DnaUtils.encodeString("acgtacgta"), ActionsHelper.build("=========", 0, 0), DnaUtils.encodeString("acg"));
+    assertEquals(0, ar.mismatches());
+    ar = new AlignmentResult(DnaUtils.encodeString("acgtacgta"), ActionsHelper.build("SSSSSS=X=", 0, 0), DnaUtils.encodeString("gca"));
+    assertEquals(1, ar.mismatches());
+    ar = new AlignmentResult(DnaUtils.encodeString("acgtacgta"), ActionsHelper.build("SSSSSS=X=", 0, 0), DnaUtils.encodeString("gcatttttt"));
+    assertEquals(1, ar.mismatches());
+    ar = new AlignmentResult(DnaUtils.encodeString("acgtacgta"), ActionsHelper.build("=X=SSSSSS", 0, 0), DnaUtils.encodeString("aag"));
+    assertEquals(1, ar.mismatches());
   }
 
   public void testReadString() {
