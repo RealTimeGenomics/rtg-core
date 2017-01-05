@@ -18,7 +18,7 @@ import junit.framework.TestCase;
 public class SoftClipperOmniTest extends TestCase {
 
   public void testStartInsertClip() {
-    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5);
+    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5, 0);
     int[] soft = clipper.softClipActions(ActionsHelper.build("==========", 0, 0), false);
     assertEquals(0, ActionsHelper.zeroBasedTemplateStart(soft));
     assertEquals("==========", ActionsHelper.toString(soft));
@@ -54,7 +54,7 @@ public class SoftClipperOmniTest extends TestCase {
   }
 
   public void testStartDelClip() {
-    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5);
+    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5, 0);
     int[] soft = clipper.softClipActions(ActionsHelper.build("==D=======", 0, 2), false);
                                                    //         ----  new start is *3*
     assertEquals(3, ActionsHelper.zeroBasedTemplateStart(soft));
@@ -82,7 +82,7 @@ public class SoftClipperOmniTest extends TestCase {
   }
 
   public void testEndInsertClip() {
-    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5);
+    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5, 0);
     int[] soft = clipper.softClipActions(ActionsHelper.build("=======I==", 0, 2), false);
     assertEquals(0, ActionsHelper.zeroBasedTemplateStart(soft));
     assertEquals("=======SSS", ActionsHelper.toString(soft));
@@ -105,7 +105,7 @@ public class SoftClipperOmniTest extends TestCase {
   }
 
   public void testEndInsertClipRc() {
-    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5);
+    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5, -1);
     int[] soft = clipper.softClipActions(ActionsHelper.build("=======I==", 0, 2), true);
     assertEquals(2, ActionsHelper.zeroBasedTemplateStart(soft));
     assertEquals("=======SSS", ActionsHelper.toString(soft));
@@ -128,7 +128,7 @@ public class SoftClipperOmniTest extends TestCase {
   }
 
   public void testEndDelClip() {
-    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5);
+    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5, 0);
     int[] soft = clipper.softClipActions(ActionsHelper.build("=======D==", 0, 2), false);
     assertEquals(0, ActionsHelper.zeroBasedTemplateStart(soft));
 
@@ -157,7 +157,7 @@ public class SoftClipperOmniTest extends TestCase {
       }
       @Override
       public void logStats() { }
-    }, 0);
+    }, 0, 0);
 
     final int[] actions = ed.calculateEditDistance(null, 10, null, 0, false, 90, 10, false);
     assertEquals(4, ActionsHelper.zeroBasedTemplateStart(actions));
@@ -170,7 +170,7 @@ public class SoftClipperOmniTest extends TestCase {
       }
       @Override
       public void logStats() { }
-    }, 3);
+    }, 3, 0);
 
     final int[] actions2 = ed2.calculateEditDistance(null, 10, null, 0, false, 90, 10, false);
     assertEquals(4, ActionsHelper.zeroBasedTemplateStart(actions2));
@@ -186,7 +186,7 @@ public class SoftClipperOmniTest extends TestCase {
       }
       @Override
       public void logStats() { }
-    }, 5);
+    }, 5, 0);
 
     final int[] actions = ed.calculateEditDistance(null, 101, null, 0, false, 90, 10, false);
     assertEquals(0, ActionsHelper.zeroBasedTemplateStart(actions));
@@ -201,7 +201,7 @@ public class SoftClipperOmniTest extends TestCase {
       }
       @Override
       public void logStats() { }
-    }, 5);
+    }, 5, 0);
 
     final int[] actions = ed.calculateEditDistance(null, 101, null, 1, true, 90, 10, false);
 
@@ -210,7 +210,7 @@ public class SoftClipperOmniTest extends TestCase {
   }
 
   public void testBothEnds() {
-    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5);
+    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5, 0);
     int[] soft = clipper.softClipActions(ActionsHelper.build("==I==============I==", 0, 0), false);
     assertEquals("SSS==============SSS", ActionsHelper.toString(soft));
     assertEquals(2, ActionsHelper.zeroBasedTemplateStart(soft));
@@ -221,7 +221,7 @@ public class SoftClipperOmniTest extends TestCase {
   }
 
   public void testClipExtension() {
-    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5);
+    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5, 0);
     int[] soft = clipper.softClipActions(ActionsHelper.build("===IXXXXX=====", 0, 0), false);
     assertEquals("SSSSSSSSS=====", ActionsHelper.toString(soft));
     assertEquals(8, ActionsHelper.zeroBasedTemplateStart(soft));
@@ -245,5 +245,57 @@ public class SoftClipperOmniTest extends TestCase {
     soft = clipper.softClipActions(ActionsHelper.build("=IXXXXXDXX=====", 0, 0), false);
     assertEquals("SSSSSSSSS=====", ActionsHelper.toString(soft));
     assertEquals(9, ActionsHelper.zeroBasedTemplateStart(soft));
+  }
+
+  public void testClipMismatch() {
+    final SoftClipperOmni clipper = new SoftClipperOmni(null, 0, 3);
+    int[] soft = clipper.softClipActions(ActionsHelper.build("==============", 0, 0), false);
+    assertEquals("==============", ActionsHelper.toString(soft));
+    assertEquals(0, ActionsHelper.zeroBasedTemplateStart(soft));
+
+    // First mismatch before enough anchoring bases seen
+    soft = clipper.softClipActions(ActionsHelper.build("=XXXXXXXX=====", 0, 0), false);
+    assertEquals("SSSSSSSSS=====", ActionsHelper.toString(soft));
+    assertEquals(9, ActionsHelper.zeroBasedTemplateStart(soft));
+
+    // First mismatch before enough anchoring bases seen
+    soft = clipper.softClipActions(ActionsHelper.build("==XXXXXXX=====", 0, 0), false);
+    assertEquals("SSSSSSSSS=====", ActionsHelper.toString(soft));
+    assertEquals(9, ActionsHelper.zeroBasedTemplateStart(soft));
+
+    // First mismatch only after enough anchoring bases seen
+    soft = clipper.softClipActions(ActionsHelper.build("===XXXXXX=====", 0, 0), false);
+    assertEquals("===XXXXXX=====", ActionsHelper.toString(soft));
+    assertEquals(0, ActionsHelper.zeroBasedTemplateStart(soft));
+
+    soft = clipper.softClipActions(ActionsHelper.build("==X=X=========", 0, 0), false);
+    assertEquals("SSS=X=========", ActionsHelper.toString(soft));
+    assertEquals(3, ActionsHelper.zeroBasedTemplateStart(soft));
+
+    soft = clipper.softClipActions(ActionsHelper.build("==XIIII=======", 0, 0), false);
+    assertEquals("SSSSSSS=======", ActionsHelper.toString(soft));
+    assertEquals(3, ActionsHelper.zeroBasedTemplateStart(soft));
+
+    soft = clipper.softClipActions(ActionsHelper.build("==XDDDD=======", 0, 0), false);
+    assertEquals("SSS=======", ActionsHelper.toString(soft));
+    assertEquals(7, ActionsHelper.zeroBasedTemplateStart(soft));
+
+    soft = clipper.softClipActions(ActionsHelper.build("X==", 0, 0), false);
+    assertEquals("SSS", ActionsHelper.toString(soft));
+    assertEquals(0, ActionsHelper.zeroBasedTemplateStart(soft));
+
+    soft = clipper.softClipActions(ActionsHelper.build("==X", 0, 0), false);
+    assertEquals("==S", ActionsHelper.toString(soft));
+    assertEquals(0, ActionsHelper.zeroBasedTemplateStart(soft));
+  }
+
+  public void testClipMinMatch() {
+    final SoftClipperOmni clipper = new SoftClipperOmni(null, 5, 5, 5);
+    final int[] actions = ActionsHelper.build("X=IIIIIIIIIIIIIIII=X", 0, 0);
+    assertEquals(0, ActionsHelper.alignmentScore(actions));
+    final int[] soft = clipper.softClipActions(actions, false);
+    assertEquals("S=SSSSSSSSSSSSSSSSSS", ActionsHelper.toString(soft));
+    assertEquals(1, ActionsHelper.zeroBasedTemplateStart(soft));
+    assertEquals(Integer.MAX_VALUE, ActionsHelper.alignmentScore(soft));
   }
 }

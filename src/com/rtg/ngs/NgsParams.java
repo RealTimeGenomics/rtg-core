@@ -75,7 +75,9 @@ public class NgsParams extends ModuleParams implements Integrity {
   private final int mGapExtendPenalty;
   private final int mSubstitutionPenalty;
   private final int mUnknownsPenalty;
-  private final int mSoftClipDistance;
+  private final int mIndelSoftClipDistance;
+  private final int mMismatchSoftClipDistance;
+  private final int mMinMatches;
   private final MaxShiftFactor mAlignerBandWidthFactor;
   private final AlignerMode mAlignerMode;
   private final String mSingleIndelPenalties;
@@ -124,7 +126,9 @@ public class NgsParams extends ModuleParams implements Integrity {
     mGapExtendPenalty = builder.mGapExtendPenalty;
     mSubstitutionPenalty = builder.mSubstitutionPenalty;
     mUnknownsPenalty = builder.mUnknownsPenalty;
-    mSoftClipDistance = builder.mSoftClipDistance;
+    mIndelSoftClipDistance = builder.mIndelSoftClipDistance;
+    mMismatchSoftClipDistance = builder.mMismatchSoftClipDistance;
+    mMinMatches = builder.mMinMatches;
     mAlignerBandWidthFactor = builder.mAlignerBandWidthFactor;
     mAlignerMode = builder.mAlignerMode;
     mSingleIndelPenalties = builder.mSingleIndelPenalties;
@@ -394,9 +398,19 @@ public class NgsParams extends ModuleParams implements Integrity {
     return mUnknownsPenalty;
   }
 
-  /** @return the number of bases from the edge of alignments to inspect for indels, and soft clip if present */
-  public int softClipDistance() {
-    return mSoftClipDistance;
+  /** @return the number of bases from the edge of alignments within which an indel will trigger soft clipping */
+  public int indelSoftClipDistance() {
+    return mIndelSoftClipDistance;
+  }
+
+  /** @return the number of bases from the edge of alignments within which a mismatch will trigger soft clipping */
+  public int mismatchSoftClipDistance() {
+    return mMismatchSoftClipDistance;
+  }
+
+  /** @return the minimum number of matches that must be present for an alignment to be retained */
+  public int minMatches() {
+    return mMinMatches;
   }
 
   /** @return the maximum shift factor used during alignment */
@@ -480,7 +494,7 @@ public class NgsParams extends ModuleParams implements Integrity {
         + (buildSecondParams() == null ? "" : " second={" + buildSecondParams() + "}" + linePrefix)
         + " search={" + searchParams() + "}"
         + " penalties(s,o,p)={" + substitutionPenalty() + "," + gapOpenPenalty() + "," + gapExtendPenalty() + "}"
-        + " softClipDistance=" + softClipDistance()
+        + " softClipDistance=" + indelSoftClipDistance()
         + " alignerMode=" + alignerMode()
         + com.rtg.util.StringUtils.LS;
   }
@@ -668,7 +682,7 @@ public class NgsParams extends ModuleParams implements Integrity {
     .gapExtendPenalty(gapExtendPenalty())
     .substitutionPenalty(substitutionPenalty())
     .unknownsPenalty(unknownsPenalty())
-    .softClipDistance(softClipDistance())
+    .indelSoftClipDistance(indelSoftClipDistance())
     .alignerBandWidthFactor(alignerBandWidthFactor())
     .alignerMode(alignerMode())
     .singleIndelPenalties(singleIndelPenalties());

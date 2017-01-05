@@ -129,13 +129,13 @@ public final class EditDistanceFactory {
     }
     if (USE_SINGLE_INDEL_SEEDED_ONLY) {
       Diagnostic.developerLog("Using SingleIndelSeededEditDistance: maxReadLength=" + maxReadLength);
-      return new SoftClipperOmni(new RcEditDistance(new UnidirectionalPrioritisedEditDistance(new SingleIndelSeededEditDistance(ngsParams, maxReadLength))), ngsParams.softClipDistance());
+      return new SoftClipperOmni(new RcEditDistance(new UnidirectionalPrioritisedEditDistance(new SingleIndelSeededEditDistance(ngsParams, maxReadLength))), ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches());
     } else if (USE_GOTOH_ONLY) {
       Diagnostic.developerLog("Using Gotoh only");
-      return new SoftClipperOmni(new RcEditDistance(new GotohEditDistance(ngsParams)), ngsParams.softClipDistance());
+      return new SoftClipperOmni(new RcEditDistance(new GotohEditDistance(ngsParams)), ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches());
     } else if (effectiveChain == AlignerMode.TABLE) {
       Diagnostic.developerLog("Using SingleIndelEditDistance (TABLE): maxReadLength=" + maxReadLength);
-      return new SoftClipperOmni(new RcEditDistance(new UnidirectionalPrioritisedEditDistance(new SingleIndelEditDistance(ngsParams, maxReadLength))), ngsParams.softClipDistance());
+      return new SoftClipperOmni(new RcEditDistance(new UnidirectionalPrioritisedEditDistance(new SingleIndelEditDistance(ngsParams, maxReadLength))), ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches());
     }
     // General case
 
@@ -181,12 +181,14 @@ public final class EditDistanceFactory {
 
       return new SoftClipperOmni(new RcEditDistance(
           new UnidirectionalPrioritisedEditDistance(fwd.toArray(new UnidirectionalEditDistance[fwd.size()])),
-          new UnidirectionalPrioritisedEditDistance(rev.toArray(new UnidirectionalEditDistance[rev.size()]))), ngsParams.softClipDistance());
+          new UnidirectionalPrioritisedEditDistance(rev.toArray(new UnidirectionalEditDistance[rev.size()]))),
+        ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches());
     }
 
     return new SoftClipperOmni(new RcEditDistance(new UnidirectionalPrioritisedEditDistance(
       new NoIndelsEditDistance(ngsParams),
-        new GotohEditDistance(ngsParams))), ngsParams.softClipDistance());
+      new GotohEditDistance(ngsParams))),
+      ngsParams.indelSoftClipDistance(), ngsParams.mismatchSoftClipDistance(), ngsParams.minMatches());
   }
 
   private static CgGotohEditDistance createCgGotohEditDistance(int unknownsPenalty, int readLength) {

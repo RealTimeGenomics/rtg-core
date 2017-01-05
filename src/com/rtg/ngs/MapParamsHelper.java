@@ -33,6 +33,8 @@ import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.DefaultReaderParams;
 import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.SequenceParams;
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.AlternatingSequencesWriter;
 import com.rtg.reader.DataSourceDescription;
@@ -690,8 +692,11 @@ public final class MapParamsHelper {
     ngsParamsBuilder.gapExtendPenalty((Integer) flags.getValue(MapFlags.GAP_EXTEND_PENALTY_FLAG));
     ngsParamsBuilder.substitutionPenalty((Integer) flags.getValue(MapFlags.MISMATCH_PENALTY_FLAG));
     ngsParamsBuilder.unknownsPenalty((Integer) flags.getValue(MapFlags.UNKNOWNS_PENALTY_FLAG));
-    ngsParamsBuilder.softClipDistance((Integer) flags.getValue(MapFlags.SOFT_CLIP_DISTANCE_FLAG));
+    ngsParamsBuilder.indelSoftClipDistance((Integer) flags.getValue(MapFlags.SOFT_CLIP_DISTANCE_FLAG));
     ngsParamsBuilder.alignerBandWidthFactor(new MaxShiftFactor((Double) flags.getValue(MapFlags.ALIGNER_BAND_WIDTH_FACTOR_FLAG)));
+
+    ngsParamsBuilder.mismatchSoftClipDistance(GlobalFlags.getIntegerValue(CoreGlobalFlags.EDIT_DIST_MISMATCH_SOFT_CLIP));
+    ngsParamsBuilder.minMatches(GlobalFlags.getIntegerValue(CoreGlobalFlags.EDIT_DIST_MIN_MATCHES));
     return ngsParamsBuilder;
   }
 }

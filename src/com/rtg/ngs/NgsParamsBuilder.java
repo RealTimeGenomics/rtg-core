@@ -65,7 +65,9 @@ public class NgsParamsBuilder extends ModuleParamsBuilder<NgsParamsBuilder> {
   int mGapExtendPenalty = EditDistanceFactory.DEFAULT_GAP_EXTEND_PENALTY;
   int mSubstitutionPenalty = EditDistanceFactory.DEFAULT_SUBSTITUTION_PENALTY;
   int mUnknownsPenalty = EditDistanceFactory.DEFAULT_UNKNOWNS_PENALTY;
-  int mSoftClipDistance = 0;
+  int mIndelSoftClipDistance = 0;
+  int mMismatchSoftClipDistance = 0;
+  int mMinMatches = 0;
   MaxShiftFactor mAlignerBandWidthFactor = new MaxShiftFactor(0.5);
   AlignerMode mAlignerMode = AlignerMode.AUTO;
   String mSingleIndelPenalties = EditDistanceFactory.DEFAULT_SINGLE_INDEL_TABLE;
@@ -405,11 +407,29 @@ public class NgsParamsBuilder extends ModuleParamsBuilder<NgsParamsBuilder> {
   }
 
   /**
-   * @param value soft clip alignments if indels occur VALUE bp from either end
+   * @param value soft clip alignments if an indel occurs VALUE bp from either end
    * @return this builder, so calls can be chained
    */
-  public NgsParamsBuilder softClipDistance(int value) {
-    mSoftClipDistance = value;
+  public NgsParamsBuilder indelSoftClipDistance(int value) {
+    mIndelSoftClipDistance = value;
+    return self();
+  }
+
+  /**
+   * @param value soft clip alignments if a mismatch occurs VALUE bp from either end
+   * @return this builder, so calls can be chained
+   */
+  public NgsParamsBuilder mismatchSoftClipDistance(int value) {
+    mMismatchSoftClipDistance = value;
+    return self();
+  }
+
+  /**
+   * @param value the minimum number of matches that must be present after soft clipping for an alignment to be retained.
+   * @return this builder, so calls can be chained
+   */
+  public NgsParamsBuilder minMatches(int value) {
+    mMinMatches = value;
     return self();
   }
 

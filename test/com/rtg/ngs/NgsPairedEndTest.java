@@ -19,8 +19,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Collections;
 
-import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.launcher.AbstractNanoTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.launcher.SequenceParams;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.Arm;
 import com.rtg.reader.PrereadArm;
@@ -29,32 +31,30 @@ import com.rtg.reader.SdfId;
 import com.rtg.reference.ReferenceGenome;
 import com.rtg.usage.UsageMetric;
 import com.rtg.util.TestUtils;
+import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-import com.rtg.util.test.NanoRegression;
-
-import junit.framework.TestCase;
 
 /**
  * Tests of Ngs paired end capability.
  */
-public class NgsPairedEndTest extends TestCase {
+public class NgsPairedEndTest extends AbstractNanoTest {
 
   protected File mDir;
 
   @Override
-  public void setUp() throws Exception {
-    Diagnostic.setLogStream();
+  public void setUp() throws IOException {
+    super.setUp();
     mDir = FileHelper.createTempDirectory();
   }
 
   @Override
-  public void tearDown() {
+  public void tearDown() throws IOException {
     assertTrue(FileHelper.deleteAll(mDir));
     mDir = null;
+    super.tearDown();
   }
 
   private static final String READ_FIRST = ""
@@ -72,9 +72,7 @@ public class NgsPairedEndTest extends TestCase {
 
   //One correctly mated pair - end to end test.
   public void test() throws Exception {
-    Diagnostic.setLogStream();
     final int w = 4, a = 0, b = 0, c = 1;
-    final boolean cgl = false;
     checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestPairedEndParams(READ_FIRST, READ_SECOND, GENOME, FileHelper.resourceToString("com/rtg/ngs/resources/ngspe.txt"),
             0, 12, 8L)
@@ -82,9 +80,7 @@ public class NgsPairedEndTest extends TestCase {
   }
 
   public void testStatistics() throws Exception {
-    Diagnostic.setLogStream();
     final int w = 4, a = 0, b = 0, c = 1;
-    final boolean cgl = false;
     final NgsMaskParams maskP = new NgsMaskParamsGeneral(w, a, b, c);
     final NgsTestUtils.TestPairedEndParams testP = new NgsTestUtils.TestPairedEndParams(READ_FIRST, READ_SECOND, GENOME, FileHelper.resourceToString("com/rtg/ngs/resources/ngspe.txt"), 0, 12, 8L);
     final ByteArrayOutputStream matedOut = new ByteArrayOutputStream();
@@ -114,9 +110,7 @@ public class NgsPairedEndTest extends TestCase {
 
   //Test minInsertSize
   public void testMin() throws Exception {
-    Diagnostic.setLogStream();
     final int w = 4, a = 0, b = 0, c = 1;
-    final boolean cgl = false;
     checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestPairedEndParams(READ_FIRST, READ_SECOND, GENOME, "", 9, 11, 8L)
         );
@@ -124,9 +118,7 @@ public class NgsPairedEndTest extends TestCase {
 
   //Test maxInsertSize
   public void testMax() throws Exception {
-    Diagnostic.setLogStream();
     final int w = 4, a = 0, b = 0, c = 1;
-    final boolean cgl = false;
     checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestPairedEndParams(READ_FIRST, READ_SECOND, GENOME, "", 0, 8, 8L)
         );
@@ -139,9 +131,7 @@ public class NgsPairedEndTest extends TestCase {
 
   //One correctly mated pair - end to end test - reversed from previous test.
   public void testReverse() throws Exception {
-    Diagnostic.setLogStream();
     final int w = 4, a = 0, b = 0, c = 1;
-    final boolean cgl = false;
     checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestPairedEndParams(READ_FIRST, READ_SECOND, GENOME_REVERSE, FileHelper.resourceToString("com/rtg/ngs/resources/ngspe_rev.txt"),
             0,
@@ -156,9 +146,7 @@ public class NgsPairedEndTest extends TestCase {
 
   //One correctly mated pair - end to end test - sided from previous test.
   public void testSide() throws Exception {
-    Diagnostic.setLogStream();
     final int w = 4, a = 0, b = 0, c = 1;
-    final boolean cgl = false;
     checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestPairedEndParams(READ_FIRST, READ_SECOND, GENOME_SIDE, FileHelper.resourceToString("com/rtg/ngs/resources/ngspe_side.txt"),
             0,
@@ -181,9 +169,7 @@ public class NgsPairedEndTest extends TestCase {
 
   //One correctly mated pair - end to end test.
   public void testWithNs() throws Exception {
-    Diagnostic.setLogStream();
     final int w = 4, a = 0, b = 0, c = 1;
-    final boolean cgl = false;
     checkPairedEnd(new NgsMaskParamsGeneral(w, a, b, c),
         new NgsTestUtils.TestPairedEndParams(READ_LEFT_WITHNS, READ_RIGHT_WITHNS, GENOME_FOR_WITHNS, FileHelper.resourceToString("com/rtg/ngs/resources/ngspe_ns.txt"),
             0, 12, 8L)
@@ -224,15 +210,13 @@ public class NgsPairedEndTest extends TestCase {
       FileHelper.resourceToFile("com/rtg/ngs/resources/svprep-left.fasta", leftReads);
       FileHelper.resourceToFile("com/rtg/ngs/resources/svprep-right.fasta", rightReads);
       Diagnostic.setLogStream();
-      final String[] args = {"-o", outDir.toString()
-          , "-l", leftReads.toString()
-          , "-r", rightReads.toString()
-          , "--format", "fasta"
-          , "-t", template.toString()
-          , "--sam"
-          , "--sam-rg", "@RG\\tPL:ILLUMINA\\tSM:FOO\\tID:BAR"
-      };
-      checkSvPrepInternal(id, additionalArgs, args, outDir);
+      checkSvPrepInternal(id, outDir, additionalArgs, "-o", outDir.toString()
+        , "-l", leftReads.toString()
+        , "-r", rightReads.toString()
+        , "--format", "fasta"
+        , "-t", template.toString()
+        , "--sam"
+        , "--sam-rg", "@RG\\tPL:ILLUMINA\\tSM:FOO\\tID:BAR");
     }
   }
   private void checkSvPrepSdf(String id, String[] additionalArgs) throws IOException {
@@ -244,38 +228,21 @@ public class NgsPairedEndTest extends TestCase {
       final File template = new File(dir, "template");
       final File outDir = new File(dir, "outPutDir");
       ReaderTestUtils.getDNADir(FileHelper.resourceToString("com/rtg/ngs/resources/svprep-template.fasta"), template);
-      Diagnostic.setLogStream();
-      final String[] args = {"-o", outDir.toString()
-          , "-i", reads.toString()
-          , "-t", template.toString()
-          , "--sam"
-          , "--sam-rg", "@RG\\tPL:ILLUMINA\\tSM:FOO\\tID:BAR"
-      };
-      checkSvPrepInternal(id, additionalArgs, args, outDir);
+      checkSvPrepInternal(id, outDir, additionalArgs, "-o", outDir.toString()
+        , "-i", reads.toString()
+        , "-t", template.toString()
+        , "--sam"
+        , "--sam-rg", "@RG\\tPL:ILLUMINA\\tSM:FOO\\tID:BAR");
     }
   }
 
-  private void checkSvPrepInternal(String id, String[] additionalArgs, String[] args, File outDir) throws IOException {
-    final NanoRegression r = new NanoRegression(this.getClass());
-    try {
-      final String[] finalArgs = new String[args.length + additionalArgs.length];
-      System.arraycopy(args, 0, finalArgs, 0, args.length);
-      System.arraycopy(additionalArgs, 0, finalArgs, args.length, additionalArgs.length);
-      final MemoryPrintStream err = new MemoryPrintStream();
-      try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-        GlobalFlags.resetAccessedStatus();
-        new MapCli().mainInit(finalArgs, out, err.printStream());
-        if (err.toString().length() > 0) {
-          System.err.println(err.toString());
-        }
+  private void checkSvPrepInternal(String id, File outDir, String[] additionalArgs, String... args) throws IOException {
+    final MainResult r = MainResult.run(new MapCli(), Utils.append(args, additionalArgs));
+    assertEquals(r.err(), 0, r.rc());
 
-        final String full = FileHelper.gzFileToString(new File(outDir, NgsOutputParams.ALIGNMENTS_SAM_FILE_NAME + ".gz"));
-        final String actual = TestUtils.stripSAMHeader(full);
-        r.check(id, actual);
-      }
-    } finally {
-      r.finish();
-    }
+    final String full = FileHelper.gzFileToString(new File(outDir, NgsOutputParams.ALIGNMENTS_SAM_FILE_NAME + ".gz"));
+    final String actual = TestUtils.stripSAMHeader(full);
+    mNano.check(id, actual);
   }
 
   /** the better getParams */
@@ -351,39 +318,25 @@ public class NgsPairedEndTest extends TestCase {
     ;
 
   public void testNoSexWithReferenceRelatedBug1596() throws IOException {
-    final File testDir = FileUtils.createTempDir("junit", "test");
-    try {
-      final NanoRegression r = new NanoRegression(this.getClass());
-      try {
-        final File left = FileHelper.stringToGzFile(READ_FIRST, new File(testDir, "left.fa.gz"));
-        final File right = FileHelper.stringToGzFile(READ_SECOND, new File(testDir, "right.fa.gz"));
-        try (TestDirectory sdf = new TestDirectory("referencetest1")) {
-          ReaderTestUtils.getReaderDNA(GENOME5, sdf, null).close();
-          FileUtils.stringToFile(REFERENCE, new File(sdf, ReferenceGenome.REFERENCE_FILE));
-          //System.out.println(Arrays.toString(sdf.listFiles()));
-          final MemoryPrintStream err = new MemoryPrintStream();
-          try (ByteArrayOutputStream out = new ByteArrayOutputStream()) {
-            final File outDir = new File(testDir, "out");
-            GlobalFlags.resetAccessedStatus();
-            new MapCli().mainInit(new String[] {"-t", sdf.getPath(), "-l", left.getPath(), "-r", right.getPath(),
-              "--format", "fasta", "-w", "4", "-c", "1", "-a", "0", "-b", "0", "--sam",
-              "--sam-rg", "@RG\\tID:READGROUP1\\tSM:BACT_SAMPLE\\tPL:ILLUMINA", "-o", outDir.getPath()}, out, err.printStream());
-            if (err.toString().length() > 0) {
-              System.err.println(err.toString());
-            }
-            //System.out.println(Arrays.toString(outDir.listFiles()));
-            final String log = FileUtils.fileToString(new File(outDir, "map.log"));
-            assertFalse(log, log.contains("tarting check"));
-            final String full = FileHelper.gzFileToString(new File(outDir, NgsOutputParams.ALIGNMENTS_SAM_FILE_NAME + ".gz"));
-            final String actual = TestUtils.stripSAMHeader(full);
-            r.check("no-sex-ref.sam", actual);
-          }
-        }
-      } finally {
-        r.finish();
-      }
-    } finally {
-      FileHelper.deleteAll(testDir);
+    try (final TestDirectory testDir = new TestDirectory()) {
+      final File left = FileHelper.stringToGzFile(READ_FIRST, new File(testDir, "left.fa.gz"));
+      final File right = FileHelper.stringToGzFile(READ_SECOND, new File(testDir, "right.fa.gz"));
+      final File sdf = ReaderTestUtils.getDNASubDir(GENOME5, testDir);
+      FileUtils.stringToFile(REFERENCE, new File(sdf, ReferenceGenome.REFERENCE_FILE));
+      //System.out.println(Arrays.toString(sdf.listFiles()));
+      final File outDir = new File(testDir, "out");
+      final MainResult r = MainResult.run(new MapCli(), "-t", sdf.getPath(), "-l", left.getPath(), "-r", right.getPath(),
+        "--format", "fasta", "-w", "4", "-c", "1", "-a", "0", "-b", "0", "--sam",
+        "--sam-rg", "@RG\\tID:READGROUP1\\tSM:BACT_SAMPLE\\tPL:ILLUMINA", "-o", outDir.getPath(),
+        "--XX" + CoreGlobalFlags.EDIT_DIST_MIN_MATCHES, "0");
+      assertEquals(r.err(), 0, r.rc());
+
+      //System.out.println(Arrays.toString(outDir.listFiles()));
+      final String log = FileUtils.fileToString(new File(outDir, "map.log"));
+      assertFalse(log, log.contains("tarting check"));
+      final String full = FileHelper.gzFileToString(new File(outDir, NgsOutputParams.ALIGNMENTS_SAM_FILE_NAME + ".gz"));
+      final String actual = TestUtils.stripSAMHeader(full);
+      mNano.check("no-sex-ref.sam", actual);
     }
   }
 }

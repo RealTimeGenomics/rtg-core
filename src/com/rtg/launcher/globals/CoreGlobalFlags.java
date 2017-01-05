@@ -17,7 +17,7 @@ import com.reeltwo.jumble.annotations.JumbleIgnore;
 import com.rtg.util.cli.Flag;
 
 /**
- * Experimental flags for public release
+ * Experimental flags for rtg core release
  */
 @JumbleIgnore
 public class CoreGlobalFlags extends GlobalFlagsInitializer {
@@ -40,6 +40,11 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
   public static final String EDIT_DIST_INDEL_TABLE_FLAG = "com.rtg.alignment.SingleIndelEditDistance.penalties-file";
   /** True to log alignment score histogram */
   public static final String EDIT_DIST_LOG_AS_HISTOGRAM_FLAG = "com.rtg.alignment.UnidirectionalPrioritisedEditDistance.log-as-histo";
+  /** Number of bases from alignment ends within which a mismatch will trigger soft-clipping */
+  public static final String EDIT_DIST_MISMATCH_SOFT_CLIP = "com.rtg.alignment.soft-clip-mismatch-distance";
+  /** Minimum number of post-soft-clip matches required in order to keep an alignment */
+  public static final String EDIT_DIST_MIN_MATCHES = "com.rtg.alignment.min-matches";
+
   /** Dump alignment stats upon closing a temp file writer */
   public static final String TEMP_FILES_DUMP_ALIGN_STATS_FLAG = "com.rtg.ngs.tempstage.AbstractTempFileWriter.dump-alignment-stats";
   /** keep temporary files from mapping run instead of deleting them */
@@ -127,26 +132,24 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
     registerFlag(SPECIES_TERMINATION_TARGET_FLAG, Double.class, 0.01);
     registerFlag(SIMILARITY_PCA_FLAG, Boolean.class, true);
 
-
-    //Edit distance factory
+    // Alignment (incl all-paths)
     registerFlag(EDIT_DIST_LOGGING_AMOUNT_FLAG, Integer.class, 0);
     registerFlag(EDIT_DIST_HEURISTIC_ALIGNERS_FLAG, Boolean.class, true);
     registerFlag(EDIT_DIST_GOTOH_ONLY_FLAG);
     registerFlag(EDIT_DIST_SINGLE_INDEL_SEEDED_ONLY_FLAG);
     registerFlag(EDIT_DIST_INDEL_TABLE_FLAG, String.class, "");
     registerFlag(EDIT_DIST_LOG_AS_HISTOGRAM_FLAG);
-
+    registerFlag(EDIT_DIST_MISMATCH_SOFT_CLIP, Integer.class, 0);
+    registerFlag(EDIT_DIST_MIN_MATCHES, Integer.class, 5);
+    registerFlag(DEFAULT_INDEL_LENGTH_FLAG, Integer.class, 7);
 
     registerFlag(TEMP_FILES_DUMP_ALIGN_STATS_FLAG);
     registerFlag(MAP_KEEP_TEMPORARY_FILES);
     registerFlag(SLIDING_WINDOW_MAX_HITS_PER_POS_FLAG, Integer.class, 0);
     registerFlag(SLIDING_WINDOW_MAX_HITS_PER_READ_FLAG, Integer.class, 0);
 
-    //SAM
+    // SAM
     registerFlag(SAM_ALLOW_FALLBACK_FOR_NON_INDEXED_REGIONS);
-
-    // Aligners / all-paths
-    registerFlag(DEFAULT_INDEL_LENGTH_FLAG, Integer.class, 7);
 
     registerFlag(ASSEMBLER_MAX_HITS_PER_START_POS_FLAG, Integer.class, 5);
     registerFlag(ASSEMBLER_INSERT_DEVIATIONS_FLAG, Integer.class, 4);

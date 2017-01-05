@@ -19,7 +19,9 @@ import java.io.PrintStream;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
 import com.rtg.launcher.AbstractNanoTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.launcher.SequenceParams.SequenceParamsBuilder;
+import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.mode.DnaUtils;
 import com.rtg.mode.SequenceMode;
 import com.rtg.ngs.MapCli;
@@ -335,15 +337,15 @@ public class LongReadTaskTest extends AbstractNanoTest {
       final File reads = ReaderTestUtils.getDNADir(OFFEDGE_READS, new File(dir, "reads_sdf"));
       final File outdir = new File(dir, "outdir");
       final MemoryPrintStream mps = new MemoryPrintStream();
-      final int code = new MapCli().mainInit(new String[] {"-i", reads.getPath(), "-t", reference.getPath(), "-o", outdir.getPath(), "-Z", "--sam", "--read-names", "--unknowns-penalty", "0", "--aligner-mode", "general"}, mps.outputStream(), mps.printStream());
-      assertEquals(mps.toString(), 0, code);
+      MainResult r = MainResult.run(new MapCli(), "-i", reads.getPath(), "-t", reference.getPath(), "-o", outdir.getPath(), "-Z", "--sam", "--read-names", "--unknowns-penalty", "0", "--aligner-mode", "general", "--soft-clip-distance", "0", "--XX" + CoreGlobalFlags.EDIT_DIST_MISMATCH_SOFT_CLIP, "0");
+      assertEquals(r.err(), 0, r.rc());
       mNano.check("testOffEdge2.txt", TestUtils.stripSAMHeader(FileUtils.fileToString(new File(outdir, "alignments.sam"))));
       final File readsPaired = new File(dir, "reads_paired");
       ReaderTestUtils.createPairedReaderDNA(OFFEDGE_READS_1, OFFEDGE_READS_2, readsPaired, null);
       final File outdirPaired = new File(dir, "outdir_paired");
       mps.reset();
-      final int codePaired = new MapCli().mainInit(new String[] {"-i", readsPaired.getPath(), "-t", reference.getPath(), "-o", outdirPaired.getPath(), "-Z", "--sam", "--read-names", "--unknowns-penalty", "0", "--aligner-mode", "general"}, mps.outputStream(), mps.printStream());
-      assertEquals(mps.toString(), 0, codePaired);
+      r = MainResult.run(new MapCli(), "-i", readsPaired.getPath(), "-t", reference.getPath(), "-o", outdirPaired.getPath(), "-Z", "--sam", "--read-names", "--unknowns-penalty", "0", "--aligner-mode", "general", "--soft-clip-distance", "0", "--XX" + CoreGlobalFlags.EDIT_DIST_MISMATCH_SOFT_CLIP, "0");
+      assertEquals(r.err(), 0, r.rc());
       mNano.check("testOffEdge2paired.txt", TestUtils.stripSAMHeader(FileUtils.fileToString(new File(outdirPaired, "alignments.sam"))));
     }
   }

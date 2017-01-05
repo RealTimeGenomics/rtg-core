@@ -12,12 +12,17 @@
 package com.rtg.alignment;
 
 /**
+ * Performs soft-clipping of an alignment.
+ * If an indel occurs within N bases of the end of the alignment, it will be clipped.
+ * If mismatches occur within M bases of the end of the alignment, it it will be clipped.
+ * If the post-clipping alignment has fewer than O matches, return poorest alignment score.
  */
 public class SoftClipperOmni implements EditDistance {
 
-  private final int mClipIndelsXFromEnd;
-
   private final EditDistance mEd;
+  private final int mMinMatches;
+  private final int mClipIndelsXFromEnd;
+  private final int mClipMismatchesXFromEnd;
 
   private final ActionsHelper.CommandIterator mForwardIterator;
   private final ActionsHelper.CommandIterator mReverseIterator;
@@ -25,42 +30,61 @@ public class SoftClipperOmni implements EditDistance {
   private int mStartPositionOffset;
   private int mDels;
 
+
   /**
-   * Create an edit distance wrapper which soft clips indels near the ends of alignments.
+   * Create an edit distance wrapper which soft clips indels and mismatches near the ends of alignments.
    * @param ed an edit distance implementation to wrap
    * @param clipIndelsXFromEnd the number of bases from each end of an alignment to check for indels
+   * @param clipMismatchesXFromEnd the number of bases from each end of an alignment to check for mismatches to soft-clip
    */
-  public SoftClipperOmni(EditDistance ed, int clipIndelsXFromEnd) {
+  public SoftClipperOmni(EditDistance ed, int clipIndelsXFromEnd, int clipMismatchesXFromEnd) {
+    this(ed, clipIndelsXFromEnd, clipMismatchesXFromEnd, 0);
+  }
+
+  /**
+   * Create an edit distance wrapper which soft clips indels and mismatches near the ends of alignments.
+   * @param ed an edit distance implementation to wrap
+   * @param clipIndelsXFromEnd the number of bases from each end of an alignment to check for indels
+   * @param clipMismatchesXFromEnd the number of bases from each end of an alignment to check for mismatches to soft-clip
+   * @param minMatches the minimum number of matches required in a post-clipped alignment for the alignment to be retained
+   */
+  public SoftClipperOmni(EditDistance ed, int clipIndelsXFromEnd, int clipMismatchesXFromEnd, int minMatches) {
     mEd = ed;
     mClipIndelsXFromEnd = clipIndelsXFromEnd;
+    mClipMismatchesXFromEnd = clipMismatchesXFromEnd;
+    mMinMatches = minMatches;
     mForwardIterator = new ActionsHelper.CommandIterator();
     mReverseIterator = new ActionsHelper.CommandIteratorReverse();
   }
 
   int[] softClipActions(int[] actions, boolean rc) {
-    mReverseIterator.setActions(actions);
-    int softClips = numSoftClips(mReverseIterator);
-    if (softClips > 0) {
-      ActionsHelper.softClip(actions, false, softClips - mDels, mDels);
-      if (rc) {
-        ActionsHelper.setZeroBasedTemplateStart(actions, ActionsHelper.zeroBasedTemplateStart(actions) + softClips + mStartPositionOffset);
+    if (mClipIndelsXFromEnd > 0 || mClipMismatchesXFromEnd > 0) {
+      mReverseIterator.setActions(actions);
+      int softClips = numSoftClips(mReverseIterator);
+      if (softClips > 0) {
+        ActionsHelper.softClip(actions, false, softClips - mDels, mDels);
+        if (rc) {
+          ActionsHelper.setZeroBasedTemplateStart(actions, ActionsHelper.zeroBasedTemplateStart(actions) + softClips + mStartPositionOffset);
+        }
+      }
+
+      mForwardIterator.setActions(actions);
+      softClips = numSoftClips(mForwardIterator);
+      if (softClips > 0) {
+        ActionsHelper.softClip(actions, true, softClips - mDels, mDels);
+        if (!rc) {
+          ActionsHelper.setZeroBasedTemplateStart(actions, ActionsHelper.zeroBasedTemplateStart(actions) + softClips + mStartPositionOffset);
+        }
       }
     }
-
-    mForwardIterator.setActions(actions);
-    softClips = numSoftClips(mForwardIterator);
-    if (softClips > 0) {
-      ActionsHelper.softClip(actions, true, softClips - mDels, mDels);
-      if (!rc) {
-        ActionsHelper.setZeroBasedTemplateStart(actions, ActionsHelper.zeroBasedTemplateStart(actions) + softClips + mStartPositionOffset);
-      }
+    if (mMinMatches > 0 && ActionsHelper.matchCount(actions) < mMinMatches) {
+      actions[ActionsHelper.ALIGNMENT_SCORE_INDEX] = Integer.MAX_VALUE;
     }
-
     return actions;
   }
 
   /**
-   * Detects INDELs within <code>mClipIndelsXFromEnd</code> of the "start" of an actions command iterator.
+   * Determines how many bases to soft clip from the "start" of an actions command iterator.
    * Also sets <code>mStartPositionOffset</code> to a value which can be added to the start position to account for this.
    * @param it a <code>CommandIterator</code> to iterate across.
    * @return the number of actions which are to be soft clipped.
@@ -71,30 +95,41 @@ public class SoftClipperOmni implements EditDistance {
     mStartPositionOffset = 0;
     mDels = 0;
     boolean extend = false;
-    while (it.hasNext() && pos < mClipIndelsXFromEnd) {
+    int anchor = 0;
+    final int maxScan = Math.max(mClipIndelsXFromEnd, mClipMismatchesXFromEnd);
+    while (it.hasNext() && pos < maxScan) {
       final int command = it.next();
       switch (command) {
         case ActionsHelper.INSERTION_INTO_REFERENCE:
-          softClipPos = pos;
           --mStartPositionOffset;
-          extend = true;
+          if (extend || pos < mClipIndelsXFromEnd) {
+            softClipPos = pos;
+            extend = true;
+          }
           break;
         case ActionsHelper.DELETION_FROM_REFERENCE:
-          softClipPos = pos;
           ++mDels;
-          extend = true;
+          if (extend || pos < mClipIndelsXFromEnd) {
+            softClipPos = pos;
+            extend = true;
+          }
+          break;
+        case ActionsHelper.SAME:
+          ++anchor;
+          extend = false;
           break;
         default:
-          if (extend && command != ActionsHelper.SAME) {
+          if (extend) {
             ++softClipPos;
-          } else {
-            extend = false;
+          } else if (command == ActionsHelper.MISMATCH && anchor < mClipMismatchesXFromEnd) {
+            softClipPos = pos;
+            extend = true;
           }
       }
       ++pos;
     }
 
-    //if there's an indel continuing past the cutoff position, we'll need to soft clip that too.
+    // Triggered, now extend the soft clipping up to the next match if need be
     if (extend) {
       while (it.hasNext()) {
         final int command = it.next();
@@ -120,7 +155,7 @@ public class SoftClipperOmni implements EditDistance {
   @Override
   public int[] calculateEditDistance(byte[] read, int rlen, byte[] template, int zeroBasedStart, boolean rc, int maxScore, int maxShift, boolean cgLeft) {
     final int[] res = mEd.calculateEditDistance(read, rlen, template, zeroBasedStart, rc, maxScore, maxShift, cgLeft);
-    if (mClipIndelsXFromEnd <= 0 || res == null || res[ActionsHelper.ALIGNMENT_SCORE_INDEX] == Integer.MAX_VALUE) {
+    if (res == null || res[ActionsHelper.ALIGNMENT_SCORE_INDEX] == Integer.MAX_VALUE) {
       return res;
     }
     return softClipActions(res, rc);

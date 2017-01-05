@@ -485,7 +485,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
     final NgsParamsBuilder b = new NgsParamsBuilder();
 
     assertEquals(0.5, b.mAlignerBandWidthFactor.getFactor(), 0.001);
-    assertEquals(0, b.mSoftClipDistance);
+    assertEquals(0, b.mIndelSoftClipDistance);
     assertEquals(9, b.mSubstitutionPenalty);
     assertEquals(19, b.mGapOpenPenalty);
     assertEquals(1, b.mGapExtendPenalty);
@@ -493,7 +493,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
     assertEquals(b, MapParamsHelper.populateAlignerPenaltiesParams(b, flags));
 
     assertEquals(0.5, b.mAlignerBandWidthFactor.getFactor(), 0.001);
-    assertEquals(9, b.mSoftClipDistance);
+    assertEquals(9, b.mIndelSoftClipDistance);
     assertEquals(7, b.mSubstitutionPenalty);
     assertEquals(2, b.mGapOpenPenalty);
     assertEquals(3, b.mGapExtendPenalty);
@@ -508,7 +508,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
 
     assertNotNull(b.mAlignerBandWidthFactor);
     assertEquals(0.66, b.mAlignerBandWidthFactor.getFactor(), 0.001);
-    assertEquals(9, b.mSoftClipDistance);
+    assertEquals(9, b.mIndelSoftClipDistance);
     assertEquals(7, b.mSubstitutionPenalty);
     assertEquals(2, b.mGapOpenPenalty);
     assertEquals(3, b.mGapExtendPenalty);
