@@ -17,6 +17,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.io.UncheckedIOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ import java.util.List;
 
 import com.rtg.bed.BedReader;
 import com.rtg.bed.BedRecord;
+import com.rtg.bed.BedWriter;
 import com.rtg.launcher.CommandLineFiles;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
@@ -36,6 +38,7 @@ import com.rtg.sam.SamRecordPopulator;
 import com.rtg.sam.SamUtils;
 import com.rtg.sam.SmartSamWriter;
 import com.rtg.sam.ThreadedMultifileIterator;
+import com.rtg.util.Counter;
 import com.rtg.util.MathUtils;
 import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.TextTable;
@@ -72,10 +75,13 @@ public class DeProbeCli extends LoggedCli {
   static final String CIGAR_OP_TABLE_FILE = "cigar_ops.tsv";
   static final String PROBE_SUMMARY_FILE = "probe_summary.tsv";
   static final String ON_TARGET_SUMMARY_FILE = "on_target.tsv";
+  static final String COUNTS_SUFFIX = "_strand_probe_counts.bed.gz";
+  static final String POS_COUNTS_NAME = "positive" + COUNTS_SUFFIX;
+  static final String NEG_COUNTS_NAME = "negative" + COUNTS_SUFFIX;
 
 
-  private ReferenceRanges<String> mPosRanges;
-  private ReferenceRanges<String> mNegRanges;
+  private ReferenceRanges<ProbeCounter> mPosRanges;
+  private ReferenceRanges<ProbeCounter> mNegRanges;
   private long mTotalMappedReads;
   private long mTotalMappedPos;
   private long mTotalMappedNeg;
@@ -238,7 +244,15 @@ public class DeProbeCli extends LoggedCli {
     reportCigarSummary(posChecker, negChecker);
     reportProbeSummary(posChecker, negChecker);
     reportOnTargetSummary(out, totalReads);
+    writeStrandFile(new File(outputDirectory(), POS_COUNTS_NAME), mPosRanges);
+    writeStrandFile(new File(outputDirectory(), NEG_COUNTS_NAME), mNegRanges);
     return 0;
+  }
+
+  private void writeStrandFile(File file, ReferenceRanges<ProbeCounter> posRanges) throws IOException {
+    try (OutputStream posFile = FileUtils.createOutputStream(file, true)) {
+      writeProbeCounts(posFile, posRanges);
+    }
   }
 
   private void reportOnTargetSummary(OutputStream out, long totalReads) throws IOException {
@@ -299,6 +313,36 @@ public class DeProbeCli extends LoggedCli {
       String.format("%.1f", (double) (posChecker.mBasesTrimmed + negChecker.mBasesTrimmed) / totalstripped));
     FileUtils.stringToFile(summary.getAsTsv(), new File(outputDirectory(), PROBE_SUMMARY_FILE));
   }
+  private void writeProbeCounts(OutputStream output, ReferenceRanges<ProbeCounter> posRanges) throws IOException {
+    try (BedWriter bedWriter = new BedWriter(output)) {
+      for (String sequenceName : posRanges.sequenceNames()) {
+        final RangeList<ProbeCounter> rangeList = posRanges.get(sequenceName);
+        rangeList.getRangeList().stream().map(RangeList.RangeData::getOriginalRanges).flatMap(Collection::stream).forEach(
+          data -> {
+            try {
+              bedWriter.write(toBedRecord(sequenceName, data));
+            } catch (IOException e) {
+              throw new UncheckedIOException(e);
+            }
+          }
+        );
+      }
+    } catch (UncheckedIOException e) {
+      throw e.getCause();
+    }
+  }
+
+  BedRecord toBedRecord(String sequenceName, RangeList.RangeData<ProbeCounter> data) {
+    final ProbeCounter counter = data.getMeta().get(0);
+    final List<String> annotations = counter.getAnnotations();
+    final String[] annotationArray = new String[annotations.size() + 1];
+    int i = 0;
+    for (String annotation : annotations) {
+      annotationArray[i++] = annotation;
+    }
+    annotationArray[i] = Integer.toString(counter.count());
+    return new BedRecord(sequenceName, data.getStart(), data.getEnd(), annotationArray);
+  }
 
   private void addMapped(boolean stripped, boolean negative) {
     ++mTotalMappedReads;
@@ -318,6 +362,18 @@ public class DeProbeCli extends LoggedCli {
     }
   }
 
+  private static class ProbeCounter extends Counter {
+    private final List<String> mAnnotations;
+
+    ProbeCounter(List<String> annotations) {
+      this.mAnnotations = annotations;
+    }
+
+    public List<String> getAnnotations() {
+      return mAnnotations;
+    }
+  }
+
 
   private void addCigarRow(TextTable ctype, String strand, PositionAndStrandChecker checker, int i) {
     final String len = Integer.toString(i + 1) + (i == PositionAndStrandChecker.MAX_OP_LEN - 1 ? "+" : "");
@@ -325,12 +381,12 @@ public class DeProbeCli extends LoggedCli {
   }
 
   private void loadProbeBed(File bedFile) throws IOException {
-    final ReferenceRanges.Accumulator<String> posRangesAccum = new ReferenceRanges.Accumulator<>();
-    final ReferenceRanges.Accumulator<String> negRangesAccum = new ReferenceRanges.Accumulator<>();
+    final ReferenceRanges.Accumulator<ProbeCounter> posRangesAccum = new ReferenceRanges.Accumulator<>();
+    final ReferenceRanges.Accumulator<ProbeCounter> negRangesAccum = new ReferenceRanges.Accumulator<>();
     try (BedReader bedReader = BedReader.openBedReader(null, bedFile, 3)) {
       while (bedReader.hasNext()) {
         final BedRecord record = bedReader.next();
-        final RangeList.RangeData<String> rangeData = new RangeList.RangeData<>(record.getStart(), record.getEnd(), Arrays.asList(record.getAnnotations()));
+        final RangeList.RangeData<ProbeCounter> rangeData = new RangeList.RangeData<>(record.getStart(), record.getEnd(), new ProbeCounter(Arrays.asList(record.getAnnotations())));
         if ("+".equals(record.getAnnotations()[2])) {
           posRangesAccum.addRangeData(record.getSequenceName(), rangeData);
         } else if ("-".equals(record.getAnnotations()[2])) {
@@ -344,17 +400,19 @@ public class DeProbeCli extends LoggedCli {
     mNegRanges = negRangesAccum.getReferenceRanges();
   }
 
-  private static boolean checkList(RangeList<String> list, SAMRecord record, SAMRecord mate, int tolerance, PositionAndStrandChecker checker) {
+  private static boolean checkList(RangeList<ProbeCounter> list, SAMRecord record, SAMRecord mate, int tolerance, PositionAndStrandChecker checker) {
     if (list == null) {
       return false;
     }
     int index = checker.getStartDataIndex(record, list);
-    RangeList.RangeData<String> data = list.getFullRangeList().get(index);
+    RangeList.RangeData<ProbeCounter> data = list.getFullRangeList().get(index);
     while (recordOverlap(record, data, tolerance)) {
-      final List<String> metas = data.getMeta();
-      if (metas != null && metas.size() >= 3) {
+      if (data != null
+        && data.getMeta() != null
+        && data.getMeta().get(0).getAnnotations().size() >= 3) {
         if (checker.check(record, data)) {
           checker.stripRecord(record, mate, data);
+          data.getMeta().get(0).increment();
           return true;
         }
       }
@@ -367,7 +425,7 @@ public class DeProbeCli extends LoggedCli {
     return false;
   }
 
-  private static boolean recordOverlap(SAMRecord rec, RangeList.RangeData<String> data, int tolerance) {
+  private static <T> boolean recordOverlap(SAMRecord rec, RangeList.RangeData<T> data, int tolerance) {
     if (data == null) {
       return false;
     }

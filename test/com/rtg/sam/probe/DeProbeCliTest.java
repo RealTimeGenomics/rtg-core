@@ -47,6 +47,8 @@ public class DeProbeCliTest extends AbstractCliTest {
       mNano.check("expected.out.txt", FileUtils.fileToString(new File(output, CommonFlags.SUMMARY_FILE)));
       mNano.check("expected.out.txt", result.out());
       mNano.check("expected.summary.tsv", FileUtils.fileToString(new File(output, DeProbeCli.PROBE_SUMMARY_FILE)));
+      mNano.check("positive_strand_probe_counts.bed", FileHelper.zipFileToString(new File(output, DeProbeCli.POS_COUNTS_NAME)));
+      mNano.check("negative_strand_probe_counts.bed", FileHelper.zipFileToString(new File(output, DeProbeCli.NEG_COUNTS_NAME)));
     }
   }
 

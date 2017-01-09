@@ -40,11 +40,11 @@ abstract class PositionAndStrandChecker {
     mDeletionStats = new int[MAX_OP_LEN];
   }
 
-  abstract boolean check(SAMRecord record, RangeList.RangeData<String> data);
+  abstract boolean check(SAMRecord record, RangeList.RangeData<?> data);
 
-  abstract int getStartDataIndex(SAMRecord record, RangeList<String> list);
+  abstract int getStartDataIndex(SAMRecord record, RangeList<?> list);
 
-  abstract void stripRecord(SAMRecord record, SAMRecord mate, RangeList.RangeData<String> data);
+  abstract void stripRecord(SAMRecord record, SAMRecord mate, RangeList.RangeData<?> data);
 
   protected void updateStrippedStats(CigarOperator operator, int consume) {
     final int statIndex = consume > MAX_OP_LEN ? MAX_OP_LEN - 1 : consume - 1;

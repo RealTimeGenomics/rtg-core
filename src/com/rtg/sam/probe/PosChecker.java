@@ -32,7 +32,7 @@ class PosChecker extends PositionAndStrandChecker {
   }
 
   @Override
-  public boolean check(SAMRecord record, RangeList.RangeData<String> data) {
+  public boolean check(SAMRecord record, RangeList.RangeData<?> data) {
     final int alignmentStart = record.getAlignmentStart() - 1;
     if (!record.getReadNegativeStrandFlag()) {
       if (data.getStart() > alignmentStart - mTolerance && data.getStart() < alignmentStart + mTolerance) {
@@ -44,13 +44,13 @@ class PosChecker extends PositionAndStrandChecker {
   }
 
   @Override
-  public int getStartDataIndex(SAMRecord record, RangeList<String> list) {
+  public int getStartDataIndex(SAMRecord record, RangeList<?> list) {
     final int alignmentStart = record.getAlignmentStart() - 1;
     return list.findFullRangeIndex(alignmentStart - mTolerance);
   }
 
   @Override
-  void stripRecord(SAMRecord record, SAMRecord mate, RangeList.RangeData<String> data) {
+  void stripRecord(SAMRecord record, SAMRecord mate, RangeList.RangeData<?> data) {
     final int diff = record.getAlignmentStart() - 1 - data.getStart();
     mPosDiffStats[mTolerance + diff]++;
     setAlignmentStart(record, mate, data.getEnd());
