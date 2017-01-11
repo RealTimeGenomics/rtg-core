@@ -25,8 +25,8 @@ import com.rtg.util.intervals.SequenceNameLocus;
  */
 public class AddGc implements DatasetProcessor {
 
-  static final String GC_NAME = "gc";
-  static final String PCT_GC_NAME = "%gc";
+  static final String GC_NAME = "gc_content_abs";
+  static final String PCT_GC_NAME = "gc_content_rel";
 
   private static final int N_BYTE = DNA.N.ordinal();
   private static final int C_BYTE = DNA.C.ordinal();

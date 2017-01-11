@@ -31,4 +31,14 @@ public class MedianNormalizeTest extends TestCase {
     assertEquals("mediannorm(x)", ds.getColumns().get(1).getName());
     assertEquals("1.00000", ds.getColumns().get(1).toString(0));
   }
+
+  public void testName() {
+    final IntColumn col = new IntColumn("x");
+    col.add(8);
+    final RegionDataset ds = new RegionDataset(new String[0]);
+    ds.regions().add("1:42+1");
+    ds.addColumn(col);
+    new MedianNormalize(0, "med").process(ds);
+    assertEquals("med", ds.getColumns().get(1).getName());
+  }
 }

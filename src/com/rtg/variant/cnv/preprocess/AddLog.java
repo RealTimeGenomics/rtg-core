@@ -19,19 +19,30 @@ import com.rtg.util.MathUtils;
 public class AddLog implements DatasetProcessor {
 
   protected final int mCol;
+  private final String mColName;
+
+  /**
+   * Constructor
+   * @param col index of the column to operate on
+   * @param colName the name of the new column
+   */
+  public AddLog(int col, String colName) {
+    mCol = col;
+    mColName = colName;
+  }
 
   /**
    * Constructor
    * @param col index of the column to operate on
    */
   public AddLog(int col) {
-    mCol = col;
+    this(col, null);
   }
 
   @Override
   public void process(RegionDataset dataset) {
     final NumericColumn in = dataset.asNumeric(mCol);
-    final NumericColumn out = dataset.addColumn(new NumericColumn("log2(" + dataset.columnName(mCol) + ")"));
+    final NumericColumn out = dataset.addColumn(new NumericColumn(mColName == null ? "log2(" + dataset.columnName(mCol) + ")" : mColName));
     final double[] values = new double[in.size()];
     for (int i = 0; i < in.size(); ++i) {
       values[i] = Math.log(in.get(i)) / MathUtils.LOG_2;

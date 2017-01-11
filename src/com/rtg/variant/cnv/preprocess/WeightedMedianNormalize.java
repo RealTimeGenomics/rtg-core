@@ -19,6 +19,15 @@ public class WeightedMedianNormalize extends MedianNormalize {
   /**
    * Constructor
    * @param col index of the column to operate on
+   * @param colName the name of the new column
+   */
+  public WeightedMedianNormalize(int col, String colName) {
+    super(col, colName);
+  }
+
+  /**
+   * Constructor
+   * @param col index of the column to operate on
    */
   public WeightedMedianNormalize(int col) {
     super(col);

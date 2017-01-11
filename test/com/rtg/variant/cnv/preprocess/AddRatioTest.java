@@ -28,9 +28,9 @@ public class AddRatioTest extends TestCase {
     assertEquals(2, ds.columns());
     assertEquals("x/x", ds.getColumns().get(1).getName());
     assertEquals("1.00000", ds.getColumns().get(1).toString(0));
-    new AddRatio(0, 1).process(ds);
+    new AddRatio(0, 1, "ratio").process(ds);
     assertEquals(3, ds.columns());
-    assertEquals("x/x/x", ds.getColumns().get(2).getName());
+    assertEquals("ratio", ds.getColumns().get(2).getName());
     assertEquals("8.00000", ds.getColumns().get(2).toString(0));
   }
 }

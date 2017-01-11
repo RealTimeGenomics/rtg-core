@@ -190,7 +190,7 @@ public class SegmentCli extends LoggedCli {
     }
     //caseData.getColumns().removeIf((Column col) -> !col.getName().equals(COVERAGE_COLUMN_NAME));
     int caseCoverageCol = caseData.columnId(coverageColumnName);
-    caseData.column(caseCoverageCol).setName("case_coverage");
+    caseData.column(caseCoverageCol).setName("case_cover_raw");
 
 
     Diagnostic.userLog("Loading control");
@@ -206,7 +206,7 @@ public class SegmentCli extends LoggedCli {
     new SimpleJoin(controlData, "control").process(caseData);
     RegionDataset filtered = caseData;
     int controlCoverageCol = filtered.columns() - 1;
-    filtered.column(controlCoverageCol).setName("control_coverage");
+    filtered.column(controlCoverageCol).setName("ctrl_cover_raw");
 
 
     // Min coverage filters
@@ -223,22 +223,22 @@ public class SegmentCli extends LoggedCli {
       Diagnostic.userLog("Computing per-region GC values");
       new AddGc(mReference).process(filtered);
       Diagnostic.userLog("Applying GC correction using " + gcbins + " bins");
-      new GcNormalize(caseCoverageCol, gcbins).process(filtered);
+      new GcNormalize(caseCoverageCol, gcbins, "case_cover_gcnorm").process(filtered);
       caseCoverageCol = filtered.columns() - 1;
-      new GcNormalize(controlCoverageCol, gcbins).process(filtered);
+      new GcNormalize(controlCoverageCol, gcbins, "ctrl_cover_gcnorm").process(filtered);
       controlCoverageCol = filtered.columns() - 1;
     }
 
     Diagnostic.userLog("Applying weighted median normalization");
-    new WeightedMedianNormalize(caseCoverageCol).process(filtered);
+    new WeightedMedianNormalize(caseCoverageCol, "case_cover_wmednorm").process(filtered);
     caseCoverageCol = filtered.columns() - 1;
-    new WeightedMedianNormalize(controlCoverageCol).process(filtered);
+    new WeightedMedianNormalize(controlCoverageCol, "ctrl_cover_wmednorm").process(filtered);
     controlCoverageCol = filtered.columns() - 1;
 
     Diagnostic.userLog("Computing ratio");
     checkNonZero(filtered, caseCoverageCol);
     checkNonZero(filtered, controlCoverageCol);
-    new AddRatio(caseCoverageCol, controlCoverageCol).process(filtered);
+    new AddRatio(caseCoverageCol, controlCoverageCol, "ratio_wmednorm").process(filtered);
 
     // Log
     Diagnostic.userLog("Computing log");

@@ -25,6 +25,20 @@ public class GcNormalize implements DatasetProcessor {
   private final int mBins;
   private final double mInterval;
   private final int mCol;
+  private final String mColName;
+
+  /**
+   * Constructor
+   * @param col index of the column to operate on
+   * @param bins number of bins to use
+   * @param colName name to use for the new column
+   */
+  public GcNormalize(int col, int bins, String colName) {
+    mCol = col;
+    mBins = bins;
+    mInterval = 1.0 / mBins;
+    mColName = colName;
+  }
 
   /**
    * Constructor
@@ -32,9 +46,7 @@ public class GcNormalize implements DatasetProcessor {
    * @param bins number of bins to use
    */
   public GcNormalize(int col, int bins) {
-    mCol = col;
-    mBins = bins;
-    mInterval = 1.0 / mBins;
+    this(col, bins, null);
   }
 
   private int bin(double gc) {
@@ -54,7 +66,7 @@ public class GcNormalize implements DatasetProcessor {
     }
     final NumericColumn gc = dataset.asNumeric(gcCol);
     final NumericColumn in = dataset.asNumeric(mCol);
-    final NumericColumn out = dataset.addColumn(new NumericColumn("gcnorm(" + dataset.columnName(mCol) + ")"));
+    final NumericColumn out = dataset.addColumn(new NumericColumn(mColName == null ? "gcnorm(" + dataset.columnName(mCol) + ")" : mColName));
 
     final double median = in.median();
 

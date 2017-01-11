@@ -30,7 +30,7 @@ public class AddGcTest extends TestCase {
     ds.regions().add("sequence 2:123-456");
     new AddGc(new ArraySequencesReader(StringUtils.repeat("A", 1000), StringUtils.repeat("G", 1000), StringUtils.repeat("AG", 500))).process(ds);
     assertEquals(2, ds.columns());
-    assertEquals("%gc", ds.getColumns().get(1).getName());
+    assertEquals("gc_content_rel", ds.getColumns().get(1).getName());
     assertEquals("0.00000", ds.getColumns().get(1).toString(0));
     assertEquals("1.00000", ds.getColumns().get(1).toString(1));
     assertEquals("0.500000", ds.getColumns().get(1).toString(2));

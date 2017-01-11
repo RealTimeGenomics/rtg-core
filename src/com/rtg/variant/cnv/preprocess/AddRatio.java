@@ -18,6 +18,19 @@ public class AddRatio implements DatasetProcessor {
 
   protected final int mNumCol;
   protected final int mDenomCol;
+  private final String mColName;
+
+  /**
+   * Constructor
+   * @param num index of the column to  use as numerator
+   * @param denom index of the column to use as denominator
+   * @param colName the name of the new column
+   */
+  public AddRatio(int num, int denom, String colName) {
+    mNumCol = num;
+    mDenomCol = denom;
+    mColName = colName;
+  }
 
   /**
    * Constructor
@@ -25,8 +38,7 @@ public class AddRatio implements DatasetProcessor {
    * @param denom index of the column to use as denominator
    */
   public AddRatio(int num, int denom) {
-    mNumCol = num;
-    mDenomCol = denom;
+    this(num, denom, null);
   }
 
   @Override
@@ -34,7 +46,7 @@ public class AddRatio implements DatasetProcessor {
     final NumericColumn num = dataset.asNumeric(mNumCol);
     final NumericColumn denom = dataset.asNumeric(mDenomCol);
     assert num.size() == denom.size();
-    final NumericColumn out = dataset.addColumn(new NumericColumn(dataset.columnName(mNumCol) + "/" + dataset.columnName(mDenomCol)));
+    final NumericColumn out = dataset.addColumn(new NumericColumn(mColName == null ? dataset.columnName(mNumCol) + "/" + dataset.columnName(mDenomCol) : mColName));
     final double[] values = new double[num.size()];
     for (int i = 0; i < num.size(); ++i) {
       values[i] = num.get(i) / denom.get(i);
