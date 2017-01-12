@@ -242,7 +242,7 @@ public class SegmentCli extends LoggedCli {
 
     // Log
     Diagnostic.userLog("Computing log");
-    new AddLog(filtered.columns() - 1).process(filtered);
+    new AddLog(filtered.columns() - 1, "ratio_wmednorm_log2").process(filtered);
 
     mDataset = filtered;
     mDataCol = mDataset.columns() - 1;
