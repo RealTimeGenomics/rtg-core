@@ -24,11 +24,11 @@ import com.rtg.launcher.ParamsCli;
 import com.rtg.sam.SamFilterOptions;
 import com.rtg.util.IORunnable;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
+import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.variant.sv.discord.DiscordantToolCli;
 
 /**
@@ -44,17 +44,9 @@ public class SvPatternsCli extends ParamsCli<BreakpointPatternParams> {
   private static class PatternsValidator implements Validator {
     @Override
     public boolean isValid(CFlags flags) {
-      if (!CommonFlags.validateOutputDirectory(flags)) {
-        return false;
-      }
-      if (!CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)) {
-        return false;
-      }
-      if (flags.isSet(CommonFlags.RESTRICTION_FLAG) && !RegionRestriction.validateRegion((String) flags.getValue(CommonFlags.RESTRICTION_FLAG))) {
-        flags.error("Invalid region specification");
-        return false;
-      }
-      return true;
+      return CommonFlags.validateOutputDirectory(flags)
+      && CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)
+      && CommonFlags.validateRegion(flags);
     }
   }
 

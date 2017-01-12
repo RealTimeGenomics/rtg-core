@@ -11,6 +11,11 @@
  */
 package com.rtg.calibrate;
 
+import static com.rtg.launcher.CommonFlags.BED_REGIONS_FLAG;
+import static com.rtg.launcher.CommonFlags.FILE;
+import static com.rtg.launcher.CommonFlags.INPUT_LIST_FLAG;
+import static com.rtg.launcher.CommonFlags.SDF;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -62,38 +67,30 @@ public class RecalibrateCli extends AbstractCli {
     mFlags.registerExtendedHelp();
     mFlags.setDescription("Creates quality calibration files for all supplied SAM/BAM files.");
     CommonFlagCategories.setCategories(mFlags);
-
-    mFlags.setValidator(flags -> {
-      if (!CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)) {
-        return false;
-      }
-      if (!checkBedFileFlag(flags)) {
-        return false;
-      }
-      if (!CommonFlags.validateTemplate(flags)) {
-        return false;
-      }
-      return true;
-    });
-    final Flag inFlag = mFlags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
+    final Flag inFlag = mFlags.registerRequired(File.class, FILE, "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(CommonFlagCategories.INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
     CommonFlags.initNoMaxFile(mFlags);
     CommonFlags.initThreadsFlag(mFlags);
-    final Flag listFlag = mFlags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, "SDF", "SDF containing reference genome against which reads were aligned").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag listFlag = mFlags.registerOptional('I', INPUT_LIST_FLAG, File.class, FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, SDF, "SDF containing reference genome against which reads were aligned").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerOptional('f', FORCE_FLAG, "force overwriting of calibration files").setCategory(CommonFlagCategories.UTILITY);
-    mFlags.registerOptional('m', MERGE_FLAG, File.class, "file", "merge records and calibration files").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerOptional('m', MERGE_FLAG, File.class, FILE, "if set, merge records and calibration files to this output file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     bedFileFlag(mFlags);
     // These next two will probably get included into map
-    mFlags.registerOptional(EXCLUDE_VCF_FLAG, File.class, "FILE", "VCF containing sites of known variants to exclude from calibration").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    mFlags.registerOptional(EXCLUDE_BED_FLAG, File.class, "FILE", "BED containing regions to exclude from calibration").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    mFlags.registerOptional(EXCLUDE_VCF_FLAG, File.class, FILE, "VCF containing sites of known variants to exclude from calibration").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    mFlags.registerOptional(EXCLUDE_BED_FLAG, File.class, FILE, "BED containing regions to exclude from calibration").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
 
     final Flag covariates = mFlags.registerOptional('c', COVARIATE_FLAG, CovariateEnum.class, "COVARIATE", "covariates to recalibrate on").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     covariates.setMaxCount(Integer.MAX_VALUE).enableCsv();
     mFlags.addRequiredSet(inFlag);
     mFlags.addRequiredSet(listFlag);
+
+    mFlags.setValidator(flags -> CommonFlags.checkFileList(flags, INPUT_LIST_FLAG, null, Integer.MAX_VALUE)
+      && CommonFlags.validateInputFile(flags, EXCLUDE_BED_FLAG, EXCLUDE_VCF_FLAG, BED_REGIONS_FLAG)
+      && (!flags.isSet(MERGE_FLAG) || flags.isSet(FORCE_FLAG) || CommonFlags.validateOutputFile(flags, (File) flags.getValue(MERGE_FLAG)))
+      && CommonFlags.validateTemplate(flags));
   }
 
   /**
@@ -101,31 +98,12 @@ public class RecalibrateCli extends AbstractCli {
    * @param flags flags object to add bed file to
    */
   public static void bedFileFlag(CFlags flags) {
-    flags.registerOptional(CommonFlags.BED_REGIONS_FLAG, File.class, "FILE", "restrict calibration to mappings falling within the supplied BED regions").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-  }
-
-  /**
-   * Check the bed file flag for file existence.
-   * @param flags the flags to check.
-   * @return true if there is nothing wrong, false otherwise.
-   */
-  public static boolean checkBedFileFlag(CFlags flags) {
-    if (flags.isSet(CommonFlags.BED_REGIONS_FLAG)) {
-      final File bedFile = (File) flags.getValue(CommonFlags.BED_REGIONS_FLAG);
-      if (!bedFile.exists()) {
-        flags.setParseMessage("The specified BED file, \"" + bedFile.getPath() + "\", does not exist.");
-        return false;
-      } else if (bedFile.isDirectory()) {
-        flags.setParseMessage("The specified BED file, \"" + bedFile.getPath() + "\", is a directory.");
-        return false;
-      }
-    }
-    return true;
+    flags.registerOptional(BED_REGIONS_FLAG, File.class, FILE, "restrict calibration to mappings falling within the supplied BED regions").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
   }
 
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
-    final List<File> fileCollection = InputFileUtils.removeRedundantPaths(CommonFlags.getFileList(mFlags, CommonFlags.INPUT_LIST_FLAG, null, false));
+    final List<File> fileCollection = InputFileUtils.removeRedundantPaths(CommonFlags.getFileList(mFlags, INPUT_LIST_FLAG, null, false));
     final List<CovariateEnum> cs;
     if (mFlags.isSet(COVARIATE_FLAG)) {
       final List<Object> vals = mFlags.getValues(COVARIATE_FLAG);
@@ -136,7 +114,7 @@ public class RecalibrateCli extends AbstractCli {
     final File templateSdf = (File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG);
     final SequencesReader template = SequencesReaderFactory.createDefaultSequencesReader(templateSdf);
     SdfUtils.validateNoDuplicates(template, false);
-    ReferenceRegions regions = mFlags.isSet(CommonFlags.BED_REGIONS_FLAG) ? BedUtils.regions((File) mFlags.getValue(CommonFlags.BED_REGIONS_FLAG)) : null;
+    ReferenceRegions regions = mFlags.isSet(BED_REGIONS_FLAG) ? BedUtils.regions((File) mFlags.getValue(BED_REGIONS_FLAG)) : null;
     if (regions == null && (mFlags.isSet(EXCLUDE_VCF_FLAG) || mFlags.isSet(EXCLUDE_BED_FLAG))) {
       Diagnostic.userLog("Getting reference non-N regions");
       regions = Calibrator.getNonNRegions(template, null);

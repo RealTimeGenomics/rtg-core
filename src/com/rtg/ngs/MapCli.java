@@ -241,7 +241,7 @@ public class MapCli extends ParamsCli<NgsParams>  {
       if (!MapFlags.validateSexTemplateReference(flags)) {
         return false;
       }
-      if (!RecalibrateCli.checkBedFileFlag(flags)) {
+      if (!CommonFlags.validateInputFile(flags, CommonFlags.BED_REGIONS_FLAG)) {
         return false;
       }
       return true;

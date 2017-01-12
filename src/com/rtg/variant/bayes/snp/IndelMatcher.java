@@ -12,8 +12,8 @@
 package com.rtg.variant.bayes.snp;
 
 
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantLocus;
@@ -54,7 +54,7 @@ public class IndelMatcher extends EvidenceMatcher<IndelDetector> {
       }
       if (DUMP_INDEL_SIGNAL) {
         if (indelDetector.nonTrivialDeletionCount() > 1 || indelDetector.nonTrivialInsertCount() > 1 || indelDetector.softClipLeftCount() > 1 || indelDetector.softClipRightCount() > 1) {
-          Diagnostic.developerLog(String.format("INDEL-SIGNAL\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d", refName, startPos, newEnd, indelDetector.nonTrivialInsertCount(), indelDetector.nonTrivialDeletionCount(), indelDetector.softClipLeftCount(), indelDetector.softClipRightCount(), indelDetector.maxIndelLength(), indelDetector.maxSoftClipLength()));
+          Diagnostic.developerLog(String.format("INDEL-SIGNAL\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d", refName, startPos, newEnd, indelDetector.totalCount(), indelDetector.nonTrivialInsertCount(), indelDetector.nonTrivialDeletionCount(), indelDetector.softClipLeftCount(), indelDetector.softClipRightCount(), indelDetector.maxIndelLength(), indelDetector.maxSoftClipLength()));
         }
       }
       if (indelDetector.nonTrivialInsertCount() >= minIndelCount || indelDetector.nonTrivialDeletionCount() >= minIndelCount) {

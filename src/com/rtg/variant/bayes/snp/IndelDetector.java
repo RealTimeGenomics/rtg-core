@@ -120,4 +120,7 @@ public class IndelDetector implements EvidenceAcceptor {
     return Math.max(TRIVIAL_INDEL_COUNT, (int) (mNonIndelCount * fraction));
   }
 
+  int totalCount() {
+    return mNonIndelCount + mNonTrivialInsertCount + mNonTrivialDeletionCount + mSoftClipLeftCount + mSoftClipRightCount;
+  }
 }
