@@ -18,8 +18,8 @@ import com.rtg.calibrate.CalibrationStats;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Covariate;
 import com.rtg.calibrate.CovariateEnum;
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.ngs.Arm;
 import com.rtg.util.Histogram;
 import com.rtg.util.MathUtils;
@@ -394,7 +394,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
       for (int rgid = 0; rgid < rgc.size(); ++rgid) {
         System.out.println("##############################################");
         final String rgname = rgc.valueString(rgid);
-        final CalibratedMachineErrorParams cme = new CalibratedMachineErrorParams(null, c, rgname);
+        final CalibratedMachineErrorParams cme = new CalibratedMachineErrorParams(MachineType.ILLUMINA_PE, c, rgname);
         System.out.println("# Machine errors for read group: " + rgname);
         System.out.println(VariantUtils.toMachineErrorProperties(cme));
       }
