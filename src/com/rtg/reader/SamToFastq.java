@@ -73,7 +73,7 @@ public class SamToFastq extends AbstractCli {
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
     final List<File> files = new CommandLineFiles(CommonFlags.INPUT_LIST_FLAG, INPUT_FLAG).getFileList(mFlags);
-    final CollatedDataSource ds = new CollatedDataSource(new FileStreamIterator(files, null), true, false, null);
+    final CollatedDataSource ds = new CollatedDataSource(new FileStreamIterator(files), true, false, null);
 
     final BaseFile baseOutFile = FastqUtils.baseFile((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), !mFlags.isSet(CommonFlags.NO_GZIP));
     final File outLeftName = baseOutFile.suffixedFile("_1");

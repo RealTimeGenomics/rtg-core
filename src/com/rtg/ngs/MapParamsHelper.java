@@ -494,7 +494,7 @@ public final class MapParamsHelper {
             ngsParamsBuilder.buildSecondParams(sp[1]);
           }
         } else {
-          final FutureTask<SequenceParams> leftTask = new FutureTask<>(new SequenceParamsCallableFasta(build, format, buildRegion, buildSecond != null ? PrereadArm.LEFT : null, names, suffixes, useQuality, readsMode));
+          final FutureTask<SequenceParams> leftTask = new FutureTask<>(new SequenceParamsCallableFasta(build, format, buildRegion, buildSecond != null ? PrereadArm.LEFT : PrereadArm.UNKNOWN, names, suffixes, useQuality, readsMode));
           executor.execute(leftTask);
           FutureTask<SequenceParams> rightTask = null;
           if (buildSecond != null) {
