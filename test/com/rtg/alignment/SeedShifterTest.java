@@ -21,7 +21,7 @@ import junit.framework.TestCase;
 public class SeedShifterTest extends TestCase {
 
   public void test() {
-    final SeedShifter ss = new SeedShifter(new Seed(3), new byte[] {1, 2, 3, 0, 1, 2, 3}, -2);
+    final SeedShifter ss = new SeedShifter(new Seed(3), new byte[] {1, 2, 3, 0, 1, 2, 3}, 7, -2);
     ss.integrity();
     assertEquals("position=-2 value=11111100:00000000:00000000:00111111", ss.toString());
     assertFalse(ss.isValid());

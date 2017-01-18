@@ -16,22 +16,26 @@ import com.rtg.util.Utils;
 import com.rtg.util.integrity.IntegralAbstract;
 
 /**
+ * Generates a succession of seeds from a sequence of DNA.
  */
 public class SeedShifter extends IntegralAbstract {
 
   private final Seed mSeed;
-  private final byte[] mNuc;
+  private final byte[] mBases;
+  private final int mLength;
   private int mPosition;
   private int mValue;
 
   /**
    * @param seed used for calculating next seed.
-   * @param nuc array of nucleotides (assumed to be embedded in Ns before 0 and after length).
+   * @param bases array of nucleotides (assumed to be embedded in Ns before 0 and after length).
+   * @param length number of nucleotides in <code>bases</code> that are in use
    * @param start position in DNA - may be negative or greater than length.
    */
-  SeedShifter(Seed seed, byte[] nuc, int start) {
+  SeedShifter(Seed seed, byte[] bases, int length, int start) {
     mSeed = seed;
-    mNuc = nuc;
+    mBases = bases;
+    mLength = length;
     mPosition = start;
     mValue = mSeed.init();
   }
@@ -41,10 +45,10 @@ public class SeedShifter extends IntegralAbstract {
    */
   public int next() {
     final byte nt;
-    if (mPosition < 0 || mPosition >= mNuc.length) {
+    if (mPosition < 0 || mPosition >= mLength) {
       nt = 0;
     } else {
-      nt = mNuc[mPosition];
+      nt = mBases[mPosition];
     }
     ++mPosition;
     mValue = mSeed.next(mValue, nt);

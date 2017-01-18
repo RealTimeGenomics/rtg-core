@@ -23,7 +23,7 @@ import com.rtg.util.integrity.IntegralAbstract;
 public class Seed extends IntegralAbstract {
 
   private final int mSize;
-  private final int mMask;
+  private final int mMask; // Lower bits store the seed; upper bits store valid status (has an N been seen within the last mSize bases)
 
   /**
    * @param seedSize number of nucleotides in a seed.

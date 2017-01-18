@@ -67,7 +67,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
   public SingleIndelSeededEditDistance(final NgsParams ngsParams, final int seedSize, final int deltaThreshold, final int diffThreshold, boolean findDiagonal, int maxReadLength) { //XXX put these int values into params
     super(ngsParams, maxReadLength);
     mSeed = new Seed(seedSize);
-    mSeedInfo = new short[4 * mDiagonal.length]; // TODO related to seed length?! explodes if > 5
+    mSeedInfo = new short[SEED_LENGTH * (1 << mSeed.size() * 2)];
     mDelta = new int[0];
     mDeltaThreshold = deltaThreshold;
     mDiffThreshold = diffThreshold * mSubstitutionPenalty;
@@ -90,18 +90,9 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
    * @param maxReadLength maximum read length in data set
    */
   public SingleIndelSeededEditDistance(NgsParams ngsParams, boolean useGotoh, int seedSize, int deltaThreshold, int diffThreshold, int maxReadLength) {
-    super(ngsParams, maxReadLength);
+    this(ngsParams, seedSize, deltaThreshold, diffThreshold, true, maxReadLength);
     mSied = new SingleIndelEditDistance(ngsParams, maxReadLength);
     mGotoh = useGotoh ? new GotohEditDistance(ngsParams) : null;
-
-    mSeed = new Seed(seedSize);
-    mSeedInfo = new short[4 * mDiagonal.length]; //TODO related to seed length?! explodes if > 5
-    mDelta = new int[0];
-    mDeltaThreshold = deltaThreshold;
-    mDiffThreshold = diffThreshold * mSubstitutionPenalty;
-    mIndelOpenPenalty = ngsParams.gapOpenPenalty();
-    mIndelExtendPenalty = ngsParams.gapExtendPenalty();
-    mFindDiagonal = true;
   }
 
   /**
@@ -137,7 +128,7 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
     mMaxScore = maxScore;
     mMaxShift = maxShift;
     mDeltaLength = 2 * mMaxShift + 1;
-    if (mDeltaLength > mDelta.length) {
+    if (mDelta.length < (mDeltaLength + 2)) {
       mDelta = new int[mDeltaLength + 2];
     }
     int zeroBasedStart = initialZeroBasedStart;
@@ -354,9 +345,9 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
     Arrays.fill(mDelta, 0);
     Arrays.fill(mSeedInfo, (short) 0);
     //initialize seeds
-    final SeedShifter rSeed = new SeedShifter(mSeed, read, 0);
-    final SeedShifter sSeed = new SeedShifter(mSeed, read, -mDeltaLength - 1);
-    final SeedShifter tSeed = new SeedShifter(mSeed, template, zeroBasedStart - mMaxShift - 1);
+    final SeedShifter rSeed = new SeedShifter(mSeed, read, rLen, 0);
+    final SeedShifter sSeed = new SeedShifter(mSeed, read, rLen, -mDeltaLength - 1);
+    final SeedShifter tSeed = new SeedShifter(mSeed, template, template.length, zeroBasedStart - mMaxShift - 1);
 
     for (int i = 0; i <= rLen + mDeltaLength; ++i) {
       final int r = rSeed.next();
