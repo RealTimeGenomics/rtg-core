@@ -15,7 +15,6 @@ package com.rtg.alignment;
 import static com.rtg.util.StringUtils.LS;
 
 import java.io.File;
-import java.util.Random;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -26,24 +25,13 @@ import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
+import com.rtg.util.test.RandomDna;
 
 
 /**
  */
 public class SingleIndelEditDistanceTest  extends AbstractUnidirectionalEditDistanceTest {
 
-  private static final String[] DNA_STRINGS = new String[]{"A", "C", "G", "T"};
-
-  private static String randomDNA(final long seed, final int length) {
-    final Random rand = new Random(seed);
-    final StringBuilder sb = new StringBuilder();
-    for (int i = 0; i < length; ++i) {
-      final int dna = rand.nextInt(4);
-      final String dnac = DNA_STRINGS[dna];
-      sb.append(dnac);
-    }
-    return sb.toString();
-  }
   @Override
   protected UnidirectionalEditDistance getEditDistanceInstance(int gapOpenPenalty, int gapExtendPenalty, int substitutionPenalty, int unknownsPenalty) {
         final NgsParams params = new NgsParamsBuilder().gapOpenPenalty(gapOpenPenalty).gapExtendPenalty(gapExtendPenalty).substitutionPenalty(substitutionPenalty).unknownsPenalty(unknownsPenalty).singleIndelPenalties(null).create();
@@ -148,11 +136,11 @@ public class SingleIndelEditDistanceTest  extends AbstractUnidirectionalEditDist
     //    final String tins = "AAAA" + StringUtils.repeat("C", i) + "GTAT";
     //    final int[] actions = make("AAAAGTAT", tins, 0, exp0, ed);
     //    final String exp = "====" + StringUtils.repeat("D", i) + "====";
-    final String a = randomDNA(42, 20);
-    final String b = randomDNA(101, 70);
+    final String a = RandomDna.random(20, 42);
+    final String b = RandomDna.random(70, 101);
     final String c = StringUtils.repeat("C", i);
-    final String d = randomDNA(301, 30);
-    final String e = randomDNA(21, 20);
+    final String d = RandomDna.random(30, 301);
+    final String e = RandomDna.random(20, 21);
 
     final String read = b + d;
     final String template = a + b + c + d + e;
@@ -213,11 +201,11 @@ public class SingleIndelEditDistanceTest  extends AbstractUnidirectionalEditDist
   }
 
   private void checkForwardNegativeLong(final SingleIndelEditDistance ed, int i, final String exp0) {
-    final String a = randomDNA(42, 20);
-    final String b = randomDNA(103, 70 - i);
+    final String a = RandomDna.random(20, 42);
+    final String b = RandomDna.random(70 - i, 103);
     final String c = StringUtils.repeat("C", i);
-    final String d = randomDNA(307, 30);
-    final String e = randomDNA(71, 20);
+    final String d = RandomDna.random(30, 307);
+    final String e = RandomDna.random(20, 71);
 
     final String read = b + c + d;
     final String template = a + b + d + e;
@@ -290,11 +278,11 @@ public class SingleIndelEditDistanceTest  extends AbstractUnidirectionalEditDist
   }
 
   private void checkReverseNegative(int i, final String exp0, final SingleIndelEditDistance ed) {
-    final String a = randomDNA(41, 20);
-    final String b = randomDNA(503, 50);
+    final String a = RandomDna.random(20, 41);
+    final String b = RandomDna.random(50, 503);
     final String c = StringUtils.repeat("C", i);
-    final String d = randomDNA(707, 50);
-    final String e = randomDNA(61, 20);
+    final String d = RandomDna.random(50, 707);
+    final String e = RandomDna.random(20, 61);
     //    final String a = "";
     //    final String b = sub(15 - i);
     //    final String c = StringUtils.repeat("C", i);
