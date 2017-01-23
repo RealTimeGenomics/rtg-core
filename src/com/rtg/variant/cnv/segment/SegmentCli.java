@@ -350,13 +350,4 @@ public class SegmentCli extends LoggedCli {
       }
     }
   }
-
-
-  /**
-   * Direct entry point
-   * @param args arguments
-   */
-  public static void main(final String[] args) {
-    new SegmentCli().mainExit(args);
-  }
 }
