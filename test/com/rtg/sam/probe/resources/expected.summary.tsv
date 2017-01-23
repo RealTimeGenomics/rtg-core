@@ -1,4 +1,4 @@
 #strand	alignments	stripped	fraction	nt/read
-+	3	3	1.0000	43.3
--	3	3	1.0000	40.0
-Both	6	6	1.0000	41.7
++	10	9	0.9000	43.3
+-	9	9	1.0000	40.0
+Both	19	18	0.9474	41.7

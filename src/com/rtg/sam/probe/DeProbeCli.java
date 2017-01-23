@@ -429,13 +429,13 @@ public class DeProbeCli extends LoggedCli {
     if (data == null) {
       return false;
     }
-    final int dataMin;
+    final int dataMin; // 0-based inclusive start
     if (data.getStart() - tolerance > data.getStart()) {
       dataMin = Integer.MIN_VALUE;
     } else {
       dataMin = data.getStart() - tolerance;
     }
-    final int dataMax;
+    final int dataMax; // 0-based exclusive end
     if (data.getEnd() + tolerance < data.getEnd()) {
       dataMax = Integer.MAX_VALUE;
     } else {
@@ -446,7 +446,7 @@ public class DeProbeCli extends LoggedCli {
       return true;
     }
     final int alignmentEnd = rec.getAlignmentEnd();
-    if (alignmentEnd > dataMin && alignmentEnd < dataMax) {
+    if (alignmentEnd > dataMin && alignmentEnd <= dataMax) {
       return true;
     }
     return false;

@@ -47,7 +47,7 @@ class NegChecker extends PositionAndStrandChecker {
 
   @Override
   public int getStartDataIndex(SAMRecord record, RangeList<?> list) {
-    return list.findFullRangeIndex(record.getAlignmentEnd() - mTolerance);
+    return list.findFullRangeIndex(record.getAlignmentEnd() - 1 - mTolerance);
   }
 
   @Override
