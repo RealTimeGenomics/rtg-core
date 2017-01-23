@@ -76,7 +76,7 @@ public class SegmentCli extends LoggedCli {
   private static final String CASE_FLAG = "case";
   private static final String CONTROL_FLAG = "control";
 
-  private static final String REPORT_FLAG = "report-regions";
+  private static final String SUMMARY_FLAG = "summary-regions";
 
   private static final String COLUMN_FLAG = "Xcolumn";
   private static final String GCBINS_FLAG = "Xgcbins";
@@ -115,7 +115,7 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, SDF, "SDF containing reference genome").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired(CASE_FLAG, File.class, FILE, "BED file supplying per-region coverage data for the sample").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(CONTROL_FLAG, File.class, FILE, "BED file supplying per-region coverage data for control sample").setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional(REPORT_FLAG, File.class, FILE, "BED file supplying gene-scale regions to report CNV interactions with").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional(SUMMARY_FLAG, File.class, FILE, "BED file supplying gene-scale regions to report CNV interactions with").setCategory(INPUT_OUTPUT);
 
     mFlags.registerOptional(ALEPH_FLAG, Double.class, FLOAT, "weighting factor for inter-segment distances during energy scoring", 0.0).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(ALPHA_FLAG, Double.class, FLOAT, "weighting factor for intra-segment distances during energy scoring", 0.001).setCategory(SENSITIVITY_TUNING);
@@ -136,7 +136,7 @@ public class SegmentCli extends LoggedCli {
       && flags.checkInRange(GCBINS_FLAG, 0, Integer.MAX_VALUE)
       && CommonFlags.validateInputFile(flags, CASE_FLAG)
       && CommonFlags.validateInputFile(flags, CONTROL_FLAG)
-      && CommonFlags.validateInputFile(flags, REPORT_FLAG)
+      && CommonFlags.validateInputFile(flags, SUMMARY_FLAG)
       && flags.checkInRange(LIMIT_FLAG, 1, Integer.MAX_VALUE)
       && flags.checkXor(COLUMN_FLAG, CONTROL_FLAG /*, PON_FLAG */)
     );
@@ -154,8 +154,8 @@ public class SegmentCli extends LoggedCli {
     try (final SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReader((File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG))) {
       mReference = sr;
 
-      if (mFlags.isSet(REPORT_FLAG)) {
-        final ReferenceRanges<String> reportRegions = SamRangeUtils.createBedReferenceRanges((File) mFlags.getValue(REPORT_FLAG));
+      if (mFlags.isSet(SUMMARY_FLAG)) {
+        final ReferenceRanges<String> reportRegions = SamRangeUtils.createBedReferenceRanges((File) mFlags.getValue(SUMMARY_FLAG));
         mReporter = new CnvSummaryReport(reportRegions);
       }
 
