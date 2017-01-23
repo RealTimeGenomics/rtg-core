@@ -37,7 +37,7 @@ class NegChecker extends PositionAndStrandChecker {
   public boolean check(SAMRecord record, RangeList.RangeData<?> data) {
     if (record.getReadNegativeStrandFlag()) {
       final int alignmentEnd = record.getAlignmentEnd();
-      if (data.getEnd() > alignmentEnd - mTolerance && data.getEnd() < alignmentEnd + mTolerance) {
+      if (data.getEnd() >= alignmentEnd - mTolerance && data.getEnd() <= alignmentEnd + mTolerance) {
 //                    System.err.println(record.getSAMString() + "strip back to: " + data.getStart() + " (" + data.getStart() + " : " + data.getEnd() + ")");
         return true;
       }

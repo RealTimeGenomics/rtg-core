@@ -35,7 +35,7 @@ class PosChecker extends PositionAndStrandChecker {
   public boolean check(SAMRecord record, RangeList.RangeData<?> data) {
     final int alignmentStart = record.getAlignmentStart() - 1;
     if (!record.getReadNegativeStrandFlag()) {
-      if (data.getStart() > alignmentStart - mTolerance && data.getStart() < alignmentStart + mTolerance) {
+      if (data.getStart() >= alignmentStart - mTolerance && data.getStart() <= alignmentStart + mTolerance) {
 //                    System.err.println(record.getSAMString() + " strip forward to: " + data.getEnd() + " (" + data.getStart() + " : " + data.getEnd() + ")");
         return true;
       }
