@@ -1,3 +1,4 @@
+#chrom	start	end	name	score	strand	count
 seq	700	750	probe_name_1	741	+	3
 seq	4000	4030	probe_name_5	576	+	3
 seq	5000	5050	probe_name_6	880	+	3

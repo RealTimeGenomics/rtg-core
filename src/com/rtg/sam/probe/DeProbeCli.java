@@ -113,7 +113,7 @@ public class DeProbeCli extends LoggedCli {
     final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing coordinate-sorted alignments").setCategory(INPUT_OUTPUT);
     CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired('b', PROBE_BED, File.class, "FILE", "BED file specifying each probe location and strand").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "start position tolerance for probe matching", 3).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "start position tolerance for probe matching", 5).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(EXTRA_SOFT_CLIP_FLAG, "if set, add extra soft-clipping where mismatches occur at the end of reads").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
@@ -315,6 +315,7 @@ public class DeProbeCli extends LoggedCli {
   }
   private void writeProbeCounts(OutputStream output, ReferenceRanges<ProbeCounter> posRanges) throws IOException {
     try (BedWriter bedWriter = new BedWriter(output)) {
+      bedWriter.writeComment("chrom\tstart\tend\tname\tscore\tstrand\tcount");
       for (String sequenceName : posRanges.sequenceNames()) {
         final RangeList<ProbeCounter> rangeList = posRanges.get(sequenceName);
         rangeList.getRangeList().stream().map(RangeList.RangeData::getOriginalRanges).flatMap(Collection::stream).forEach(
