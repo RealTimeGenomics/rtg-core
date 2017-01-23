@@ -315,6 +315,7 @@ public class DeProbeCli extends LoggedCli {
   }
   private void writeProbeCounts(OutputStream output, ReferenceRanges<ProbeCounter> posRanges) throws IOException {
     try (BedWriter bedWriter = new BedWriter(output)) {
+      bedWriter.writeComment("chrom\tstart\tend\tname\tscore\tstrand\tcount");
       for (String sequenceName : posRanges.sequenceNames()) {
         final RangeList<ProbeCounter> rangeList = posRanges.get(sequenceName);
         rangeList.getRangeList().stream().map(RangeList.RangeData::getOriginalRanges).flatMap(Collection::stream).forEach(
