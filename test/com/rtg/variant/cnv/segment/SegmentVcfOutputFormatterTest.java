@@ -42,7 +42,7 @@ public class SegmentVcfOutputFormatterTest extends TestCase {
       "##INFO=<ID=CIPOS,Number=2,Type=Integer,Description=\"Confidence interval around POS for imprecise variants\">",
       "##INFO=<ID=CIEND,Number=2,Type=Integer,Description=\"Confidence interval around END for imprecise variants\">",
       "##FORMAT=<ID=GT,Number=1,Type=String,Description=\"Genotype\">",
-      "#FORMAT=<ID=SQS,Number=1,Type=Float,Description=\"Seqment quality score\">",
+      "#FORMAT=<ID=SQS,Number=1,Type=Float,Description=\"Segment quality score\">",
       "##FORMAT=<ID=RDR,Number=1,Type=Float,Description=\"Mean normalized RD ratio with respect to control\">",
       "##FORMAT=<ID=LR,Number=1,Type=Float,Description=\"Log2 of RD ratio with respect to control\">",
       "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE"
