@@ -252,7 +252,7 @@ public class SegmentCli extends LoggedCli {
   private void writeDataset() throws IOException {
     final boolean gzip = !mFlags.isSet(CommonFlags.NO_GZIP);
     final boolean index = !mFlags.isSet(CommonFlags.NO_INDEX);
-    final File bedFile = FileUtils.getZippedFileName(gzip, new File(outputDirectory(), "region-data.bed"));
+    final File bedFile = FileUtils.getZippedFileName(gzip, new File(outputDirectory(), "unsegmented.bed"));
     try (final BedWriter bw = new BedWriter(FileUtils.createOutputStream(bedFile, gzip))) {
       mDataset.write(bw);
     }
