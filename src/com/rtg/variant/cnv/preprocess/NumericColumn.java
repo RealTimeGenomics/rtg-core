@@ -73,7 +73,11 @@ public class NumericColumn extends Column {
     add(value);
   }
 
-  void add(double value) {
+  /**
+   * Append the specified value to this column.
+   * @param value value to append
+   */
+  public void add(double value) {
     if (mSize == mData.length) {
       mData = Arrays.copyOf(mData, (int) (1 + mSize * 1.3));
     }

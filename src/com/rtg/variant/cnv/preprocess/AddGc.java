@@ -37,7 +37,7 @@ public class AddGc implements DatasetProcessor {
 
   /**
    * Constructor
-   * @param reader supplying reference base information
+   * @param reader reader supplying reference base information
    * @throws IOException if there is a problem reading the reference data
    */
   public AddGc(SequencesReader reader) throws IOException {

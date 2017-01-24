@@ -80,11 +80,11 @@ public class SegmentCli extends LoggedCli {
   private static final String SUMMARY_FLAG = "summary-regions";
 
   private static final String COLUMN_FLAG = "Xcolumn";
-  private static final String GCBINS_FLAG = "Xgcbins";
+  static final String GCBINS_FLAG = "Xgcbins";
   private static final String MIN_COV_FLAG = "min-coverage";
-  private static final String COV_COLUMN_NAME = "Xcolumn-name";
+  static final String COV_COLUMN_NAME = "Xcolumn-name";
 
-  private static final String DEFAULT_COLUMN_NAME = "coverage";
+  static final String DEFAULT_COLUMN_NAME = "coverage";
 
   private final MultiSet<CnaType> mStatusCounts = new MultiSet<>();
   private SegmentVcfOutputFormatter mFormatter = null;

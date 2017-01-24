@@ -64,6 +64,7 @@ import com.rtg.variant.bayes.multisample.population.PopulationCli;
 import com.rtg.variant.bayes.multisample.singleton.SingletonCli;
 import com.rtg.variant.cnv.CnvProductCli;
 import com.rtg.variant.cnv.segment.SegmentCli;
+import com.rtg.variant.cnv.segment.CnvPonBuildCli;
 import com.rtg.variant.coverage.CoverageCli;
 import com.rtg.variant.sv.SvToolCli;
 import com.rtg.variant.sv.UnmatedAugmenterCli;
@@ -157,6 +158,9 @@ public final class CoreCommand {
 
   /** Runs CNV segmentation. */
   static final Command SEGMENT = new Command(new SegmentCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
+
+  /** Runs CNV panel building. */
+  static final Command SVPANELBUILD = new Command(new CnvPonBuildCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);
 
   /** Runs stand alone re-calibration */
   static final Command CALIBRATE = new Command(new RecalibrateCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
@@ -294,7 +298,7 @@ public final class CoreCommand {
     SINGLETON, MULTI_FAMILY, MULTI_SOMATIC, MULTI_POPULATION, TUMOR_ONLY,
     MULTI_LINEAGE,
     AVRBUILD, AVRPREDICT,
-    CNV, SEGMENT,
+    CNV, SEGMENT, SVPANELBUILD,
 
     // Metagenomics
     SPECIES, SIMILARITY, METASNP,

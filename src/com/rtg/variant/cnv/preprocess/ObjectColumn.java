@@ -17,7 +17,7 @@ import java.util.Collection;
 import com.reeltwo.jumble.annotations.TestClass;
 
 /**
- * Holds a column of numeric data.
+ * Holds a column of data.
  */
 @TestClass("com.rtg.variant.cnv.preprocess.StringColumnTest")
 public abstract class ObjectColumn<T> extends Column {

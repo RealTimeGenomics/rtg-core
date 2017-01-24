@@ -96,6 +96,8 @@ public class CoreCommandTest extends TestCase {
     assertEquals(1, CoreCommand.SINGLETON.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.READSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CNVSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SEGMENT.mainInit(new String[0], baos, ps));
+    assertEquals(1, CoreCommand.SVPANELBUILD.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.READSIMEVAL.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.ASSEMBLE.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.ADDPACBIO.mainInit(new String[0], baos, ps));

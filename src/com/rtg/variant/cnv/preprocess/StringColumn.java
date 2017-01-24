@@ -14,9 +14,13 @@ package com.rtg.variant.cnv.preprocess;
 /**
  * Holds a column of numeric data.
  */
-class StringColumn extends ObjectColumn<String> {
+public class StringColumn extends ObjectColumn<String> {
 
-  StringColumn(String name) {
+  /**
+   * A string column.
+   * @param name name of the column
+   */
+  public StringColumn(String name) {
     super(name);
   }
 }
