@@ -40,7 +40,7 @@ public class CompleteGenomicsV1MachineTest extends AbstractMachineTest {
   public void test() throws IOException, InvalidParamsException {
     final CompleteGenomicsMachine m = (CompleteGenomicsMachine) getMachine(42);
     final MemoryPrintStream out = new MemoryPrintStream();
-    final FastaReadWriter w = new FastaReadWriter(out.printStream());
+    final FastaReadWriter w = new FastaReadWriter(out.lineWriter());
     m.setReadWriter(w);
     final byte[] frag = new byte[500];
     Arrays.fill(frag, (byte) 1);

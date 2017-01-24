@@ -12,8 +12,9 @@
 package com.rtg.simulation.reads;
 
 import java.io.IOException;
+import java.io.Writer;
 
-import com.rtg.mode.DnaUtils;
+import com.rtg.reader.FastaWriter;
 import com.rtg.reader.SdfId;
 
 /**
@@ -21,7 +22,7 @@ import com.rtg.reader.SdfId;
  */
 public class FastaReadWriter implements ReadWriter {
 
-  private final Appendable mAppend;
+  private final FastaWriter mAppend;
   private int mTotal = 0;
   private boolean mExpectLeft = true;
 
@@ -29,8 +30,8 @@ public class FastaReadWriter implements ReadWriter {
    * Constructor
    * @param append destination for output
    */
-  public FastaReadWriter(Appendable append) {
-    mAppend = append;
+  public FastaReadWriter(Writer append) {
+    mAppend = new FastaWriter(append, 0);
   }
 
   @Override
@@ -69,11 +70,7 @@ public class FastaReadWriter implements ReadWriter {
   }
 
   private void writeSequence(String name, byte[] data, int length) throws IOException {
-    mAppend.append(">");
-    mAppend.append(name);
-    mAppend.append("\n");
-    mAppend.append(DnaUtils.bytesToSequenceIncCG(data, 0, length));
-    mAppend.append("\n");
+    mAppend.write(name, data, null, length);
   }
 
   @Override

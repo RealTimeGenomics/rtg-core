@@ -30,7 +30,7 @@ public class IlluminaSingleEndMachineTest extends DummyIlluminaMachineTest {
   public void test() throws Exception {
     final IlluminaSingleEndMachine m = (IlluminaSingleEndMachine) getMachine(42);
     final MemoryPrintStream out = new MemoryPrintStream();
-    final FastaReadWriter w = new FastaReadWriter(out.printStream()) {
+    final FastaReadWriter w = new FastaReadWriter(out.lineWriter()) {
         @Override
         public void writeRead(String name, byte[] data, byte[] qual, int length) throws IOException {
           super.writeRead(name, data, qual, length);

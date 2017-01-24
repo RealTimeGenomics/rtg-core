@@ -11,6 +11,7 @@
  */
 package com.rtg.simulation.reads;
 
+import com.rtg.util.StringUtils;
 import com.rtg.util.io.MemoryPrintStream;
 
 import junit.framework.TestCase;
@@ -22,11 +23,11 @@ public class FastaReadWriterTest extends TestCase {
 
   public void test() throws Exception {
     final MemoryPrintStream out = new MemoryPrintStream();
-    final FastaReadWriter f = new FastaReadWriter(out.printStream());
+    final FastaReadWriter f = new FastaReadWriter(out.lineWriter());
     f.writeRead("foo", new byte[] {0, 1, 2, 3, 4}, new byte[] {20, 20, 20, 20, 20}, 5);
     f.writeLeftRead("foo", new byte[] {0, 1, 2, 3, 4}, new byte[] {20, 20, 20, 20, 20}, 5);
     f.writeRightRead("foo", new byte[] {0, 1, 2, 3, 4}, new byte[] {20, 20, 20, 20, 20}, 5);
-    assertEquals(">0 foo\nNACGT\n>1 foo/Left\nNACGT\n>1 foo/Right\nNACGT\n", out.toString());
+    assertEquals(">0 foo" + StringUtils.LS + "NACGT" + StringUtils.LS + ">1 foo/Left" + StringUtils.LS + "NACGT" + StringUtils.LS + ">1 foo/Right" + StringUtils.LS + "NACGT" + StringUtils.LS + "", out.toString());
     assertEquals(2, f.readsWritten());
   }
 

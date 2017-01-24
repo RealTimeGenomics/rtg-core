@@ -11,24 +11,24 @@
  */
 package com.rtg.simulation.reads;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Writer;
 
-import com.rtg.mode.DnaUtils;
-import com.rtg.reader.FastaUtils;
+import com.rtg.reader.FastqWriter;
 import com.rtg.reader.SdfId;
-import com.rtg.util.io.LineWriter;
+import com.rtg.reader.SequenceWriter;
 
 /**
  * FASTQ style read simulator output
  */
 public class FastqReadWriter implements ReadWriter {
 
-  private Appendable mAppend;
-  private final LineWriter mAppendLeft;
-  private final LineWriter mAppendRight;
+  private SequenceWriter mAppend;
+  private final SequenceWriter mAppendLeft;
+  private final SequenceWriter mAppendRight;
   private int mTotal = 0;
   private boolean mExpectLeft = true;
 
@@ -36,8 +36,8 @@ public class FastqReadWriter implements ReadWriter {
    * Constructor
    * @param append destination for output
    */
-  public FastqReadWriter(Appendable append) {
-    mAppend = append;
+  public FastqReadWriter(Writer append) {
+    mAppend = new FastqWriter(append, 0, (byte) 0);
     mAppendLeft = null;
     mAppendRight = null;
   }
@@ -50,8 +50,8 @@ public class FastqReadWriter implements ReadWriter {
   public FastqReadWriter(File fastqBaseFileName) throws IOException {
     final String fpath = fastqBaseFileName.getPath();
     final String base = fpath.substring(0, fpath.length() - 3);
-    mAppendLeft = new LineWriter(new FileWriter(base + "_1.fq"));
-    mAppendRight = new LineWriter(new FileWriter(base + "_2.fq"));
+    mAppendLeft = new FastqWriter(new FileWriter(base + "_1.fq"), 0, (byte) 0);
+    mAppendRight = new FastqWriter(new FileWriter(base + "_2.fq"), 0, (byte) 0);
   }
 
   @Override
@@ -96,22 +96,13 @@ public class FastqReadWriter implements ReadWriter {
   }
 
   private void writeSequence(String name, byte[] data, byte[] qual, int length) throws IOException {
-    mAppend.append("@");
-    mAppend.append(name);
-    mAppend.append("\n");
-    mAppend.append(DnaUtils.bytesToSequenceIncCG(data, 0, length));
-    mAppend.append("\n");
-    mAppend.append("+");
-    //mAppend.append(name);
-    mAppend.append("\n");
-    mAppend.append(FastaUtils.rawToAsciiString(qual, 0, length));
-    mAppend.append("\n");
+    mAppend.write(name, data, qual, length);
   }
 
   @Override
   @SuppressWarnings("try")
   public void close() throws IOException {
-    try (Writer ignored = mAppendLeft; Writer ignored2 = mAppendRight) {
+    try (Closeable ignored = mAppendLeft; Closeable ignored2 = mAppendRight) {
       // we want the sexy closing side effects
     }
   }

@@ -92,7 +92,7 @@ public class DummyMachineTest extends TestCase {
   public void test() throws Exception {
     final AbstractMachine m = getMachine();
     final MemoryPrintStream out = new MemoryPrintStream();
-    final FastaReadWriter w = new FastaReadWriter(out.printStream());
+    final FastaReadWriter w = new FastaReadWriter(out.lineWriter());
     m.setReadWriter(w);
     m.mWorkspace = new int[10];
     m.mReadBytes = new byte[10];

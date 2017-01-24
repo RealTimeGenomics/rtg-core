@@ -39,7 +39,7 @@ public class DummyIlluminaMachineTest extends AbstractMachineTest {
   public void test() throws Exception {
     final AbstractIlluminaMachine m = (IlluminaSingleEndMachine) getMachine(42);
     final MemoryPrintStream out = new MemoryPrintStream();
-    final FastaReadWriter w = new FastaReadWriter(out.printStream());
+    final FastaReadWriter w = new FastaReadWriter(out.lineWriter());
     m.setReadWriter(w);
     final byte[] frag = {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
 

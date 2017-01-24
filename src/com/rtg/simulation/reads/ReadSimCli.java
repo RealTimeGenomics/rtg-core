@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -278,7 +279,7 @@ public class ReadSimCli extends LoggedCli {
     if (f.getName().endsWith(".fq")) {
       return new FastqReadWriter(f);
     } else if ("-".equals(f.getName())) {
-      return new FastqReadWriter(System.out);
+      return new FastqReadWriter(new OutputStreamWriter(System.out));
     } else {
       final SdfReadWriter rw = new SdfReadWriter(f, m.isPaired(), m.prereadType(), !mFlags.isSet(NO_NAMES), !mFlags.isSet(NO_QUAL));
       rw.setComment((String) mFlags.getValue(COMMENT));

@@ -40,7 +40,7 @@ public class FourFiveFourPairedEndMachineTest extends AbstractMachineTest {
   public void test() throws Exception {
     final FourFiveFourPairedEndMachine m = (FourFiveFourPairedEndMachine) getMachine(47);
     final MemoryPrintStream out = new MemoryPrintStream();
-    final FastaReadWriter w = new FastaReadWriter(out.printStream());
+    final FastaReadWriter w = new FastaReadWriter(out.lineWriter());
     m.setReadWriter(w);
     m.setMinPairSize(3);
     m.setMaxPairSize(7);

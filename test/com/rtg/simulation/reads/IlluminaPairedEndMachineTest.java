@@ -23,7 +23,7 @@ public class IlluminaPairedEndMachineTest extends TestCase {
   public void testProcessFragment() throws Exception {
     final IlluminaPairedEndMachine m = new IlluminaPairedEndMachine(42);
     final MemoryPrintStream out = new MemoryPrintStream();
-    final FastaReadWriter w = new FastaReadWriter(out.printStream());
+    final FastaReadWriter w = new FastaReadWriter(out.lineWriter());
     m.setReadWriter(w);
     assertTrue(m.isPaired());
     m.setLeftReadLength(5);
@@ -36,7 +36,7 @@ public class IlluminaPairedEndMachineTest extends TestCase {
   public void testProcessFragmentReadThrough() throws Exception {
     final IlluminaPairedEndMachine m = new IlluminaPairedEndMachine(42);
     final MemoryPrintStream out = new MemoryPrintStream();
-    final FastaReadWriter w = new FastaReadWriter(out.printStream());
+    final FastaReadWriter w = new FastaReadWriter(out.lineWriter());
     m.setReadWriter(w);
     m.setLeftReadLength(55);
     m.setRightReadLength(55);

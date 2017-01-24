@@ -42,7 +42,7 @@ public class FourFiveFourSingleEndMachineTest extends AbstractMachineTest {
   public void test() throws Exception {
     final FourFiveFourSingleEndMachine m = (FourFiveFourSingleEndMachine) getMachine(47);
     final MemoryPrintStream out = new MemoryPrintStream();
-    final FastaReadWriter w = new FastaReadWriter(out.printStream());
+    final FastaReadWriter w = new FastaReadWriter(out.lineWriter());
     m.setReadWriter(w);
     m.setMinSize(3);
     m.setMaxSize(7);
