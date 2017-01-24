@@ -25,6 +25,7 @@ import com.rtg.bed.BedWriter;
 import com.rtg.util.QuickSort;
 import com.rtg.util.QuickSortDoubleIntProxy;
 import com.rtg.util.StringUtils;
+import com.rtg.util.array.ArrayUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.SequenceNameLocus;
 import com.rtg.util.intervals.SequenceNameLocusSimple;
@@ -41,25 +42,15 @@ public class RegionDataset {
    * @throws IOException if there was a problem reading the input
    */
   public static RegionDataset readFromBed(File file) throws IOException {
-    return readFromBed(file, (String[]) null);
-
-  }
-  /**
-   * Reads a dataset from a BED file
-   * @param file the bed file
-   * @param desiredColumns restrict columns loaded to these ones.
-   * @return the dataset
-   * @throws IOException if there was a problem reading the input
-   */
-  public static RegionDataset readFromBed(File file, String[] desiredColumns) throws IOException {
     try (BedReader br = BedReader.openBedReader(null, file, 0)) {
       final String[] columnNames = getColumnNames(br.getHeader());
-      final RegionDataset dataset = new RegionDataset(columnNames, desiredColumns == null ? columnNames : desiredColumns);
-      loadBedRecords(br, dataset, desiredColumns == null);
+      final RegionDataset dataset = new RegionDataset(columnNames);
+      loadBedRecords(br, dataset, true /* add new columns */);
       Diagnostic.userLog("Read dataset containing " + dataset.size() + " regions and " + dataset.columns() + " columns from " + file);
       dataset.integrity();
       return dataset;
     }
+
   }
 
   /**
@@ -85,6 +76,7 @@ public class RegionDataset {
     while (br.hasNext()) {
       final BedRecord rec = br.next();
       if (addNewColumns && dataset.size() == 0 && rec.getAnnotations().length > dataset.columns()) {
+        dataset.identityIndex(rec.getAnnotations().length);
         for (int i = 0; i < rec.getAnnotations().length; ++i) {
           dataset.addColumn();
         }
@@ -118,7 +110,7 @@ public class RegionDataset {
 
   private RegionColumn mRegions;
   private final ArrayList<Column> mColumns = new ArrayList<>();
-  private final int[] mColumnIndexes;
+  private int[] mColumnIndexes;
 
 
   RegionDataset(String[] columnNames) {
@@ -144,6 +136,11 @@ public class RegionDataset {
     final List<String> desiredNames = desiredColumns.stream().map(Column::getName).collect(Collectors.toList());
     mColumnIndexes = buildColumnIndex(desiredNames, headerColumns);
   }
+
+  private void identityIndex(int length) {
+    mColumnIndexes = ArrayUtils.identity(length);
+  }
+
   /**
    * @return the number of rows in the dataset
    */
@@ -190,7 +187,13 @@ public class RegionDataset {
     return addColumn(new StringColumn("col_" + columns()));
   }
 
-  <T extends Column> T addColumn(T column) {
+  /**
+   * Add the specified column
+   * @param column column to add
+   * @param <T> type of the column
+   * @return the added column
+   */
+  public <T extends Column> T addColumn(T column) {
     mColumns.add(column);
     return column;
   }
