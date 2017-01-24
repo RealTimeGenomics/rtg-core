@@ -48,7 +48,6 @@ public class SegmentVcfOutputFormatter {
   // Our own fields
   private static final String INFO_BC = "BC";
 
-  static final String FORMAT_RD = "RD";
   static final String FORMAT_RDR = "RDR";
   static final String FORMAT_LOGR = "LR";
   /** The FORMAT field we use to store an overall quality score */
@@ -62,6 +61,7 @@ public class SegmentVcfOutputFormatter {
   private final double mThreshold;
   private final Map<String, Integer> mSequenceMap = new HashMap<>();
   private final int mMinBins;
+  private final String mSampleName;
 
 
   private String mCurrentSequenceName;
@@ -73,12 +73,14 @@ public class SegmentVcfOutputFormatter {
    * @param genomeSequences reader for template
    * @param threshold applied to log ratio beyond which a copy number alteration is output
    * @param minBins minimum number of bins before a copy number alteration is called
+   * @param sampleName the name to use for the sample column
    * @throws IOException if error
    */
-  public SegmentVcfOutputFormatter(SequencesReader genomeSequences, double threshold, int minBins) throws IOException {
+  public SegmentVcfOutputFormatter(SequencesReader genomeSequences, double threshold, int minBins, String sampleName) throws IOException {
     mTemplate = genomeSequences;
     mThreshold = threshold;
     mMinBins = minBins;
+    mSampleName = sampleName;
     final PrereadNamesInterface pni = genomeSequences.names();
     for (long i = 0; i < pni.length(); ++i) {
       mSequenceMap.put(genomeSequences.names().name(i), (int) i);
@@ -112,7 +114,7 @@ public class SegmentVcfOutputFormatter {
     //header.addFormatField(FORMAT_RD, MetaType.FLOAT, VcfNumber.ONE, "Mean Normalized Read Depth");
     //header.addFormatField(FORMAT_LEVEL, MetaType.FLOAT, VcfNumber.ONE, "Amplification/Deletion level (e.g. RDR * ploidy)");
 
-    header.addSampleName("SAMPLE"); // XXX support multiple samples and a control?
+    header.addSampleName(mSampleName);
 
     return header;
   }

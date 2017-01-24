@@ -75,6 +75,7 @@ public class SegmentCli extends LoggedCli {
 
   private static final String CASE_FLAG = "case";
   private static final String CONTROL_FLAG = "control";
+  private static final String SAMPLE_FLAG = "sample";
 
   private static final String SUMMARY_FLAG = "summary-regions";
 
@@ -125,6 +126,7 @@ public class SegmentCli extends LoggedCli {
 
     mFlags.registerOptional(MIN_BINS_FLAG, Integer.class, INT, "minimum number of bins required for copy number alteration to be called", 1).setCategory(REPORTING);
     mFlags.registerOptional('r', MIN_LOGR_FLAG, Double.class, FLOAT, "minimum (absolute) log ratio required for copy number alteration to be called", 0.2).setCategory(REPORTING);
+    mFlags.registerOptional('s', SAMPLE_FLAG, String.class, STRING, "sample name to associate with the case sample", "SAMPLE").setCategory(REPORTING);
 
     mFlags.registerOptional('c', COLUMN_FLAG, Integer.class, INT, "just run segmentation directly on the specified data column from the case file, ignoring control data", 0).setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(GCBINS_FLAG, Integer.class, INT, "number of bins when applying GC correction", 10).setCategory(SENSITIVITY_TUNING);
@@ -276,7 +278,7 @@ public class SegmentCli extends LoggedCli {
 
     final NumericColumn c = mDataset.asNumeric(mDataCol);
     final RegionColumn regions = mDataset.regions();
-    mFormatter = new SegmentVcfOutputFormatter(mReference, refThreshold, minBins);
+    mFormatter = new SegmentVcfOutputFormatter(mReference, refThreshold, minBins, (String) mFlags.getValue(SAMPLE_FLAG));
     try (final VcfWriter vw = new AsyncVcfWriter(new DefaultVcfWriter(mFormatter.header(), vcfFile, null, gzip, index))) {
       mVcfOut = vw;
       double prevMidPoint = -1;
