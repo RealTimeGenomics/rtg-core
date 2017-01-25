@@ -20,6 +20,7 @@ import com.rtg.launcher.AbstractCliTest;
 import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.StringUtils;
+import com.rtg.util.TestUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
@@ -57,13 +58,13 @@ public class CnvPonBuildCliTest extends AbstractCliTest {
       final File coverage = FileHelper.resourceToFile("com/rtg/variant/cnv/segment/resources/coverage.bed", new File(dir, "coverage.bed"));
       final File output = new File(dir, "panel.bed");
       // Slightly G rich reference so G+C normalization actually does something
-      final String ref = ">1" + System.getProperty("line.separator") + StringUtils.repeat("ACGGT", 25000 / "ACGGT".length());
+      final String ref = ">1\n" + StringUtils.repeat("ACGGT", 25000 / "ACGGT".length());
       final File sdf = new File(dir, "sdf");
       ReaderTestUtils.getDNADir(ref, sdf);
       final MainResult result = checkMainInit("-Z", "-o", output.getPath(), "-t", sdf.getPath(), coverage.getPath());
       final String actual = StringUtils.grepMinusV(FileHelper.fileToString(output), "^#");
       mNano.check("expected.panel.bed", actual);
-      mNano.check("expected.out.txt", result.out().replaceAll("/[^ ]*/", ""));
+      TestUtils.containsAll(result.out(), "Normalizing and G+C correcting", "coverage.bed");
     }
   }
 
