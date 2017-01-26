@@ -710,7 +710,13 @@ public final class MapParamsHelper {
     }
   }
 
-  static NgsParamsBuilder populateAlignerPenaltiesParams(NgsParamsBuilder ngsParamsBuilder, CFlags flags) {
+  /**
+   * Read aligner penalty flags into the {@link NgsParamsBuilder}
+   * @param ngsParamsBuilder the builder
+   * @param flags the flags containing settings
+   * @return the builder for call chaining
+   */
+  public static NgsParamsBuilder populateAlignerPenaltiesParams(NgsParamsBuilder ngsParamsBuilder, CFlags flags) {
     ngsParamsBuilder.gapOpenPenalty((Integer) flags.getValue(MapFlags.GAP_OPEN_PENALTY_FLAG));
     ngsParamsBuilder.gapExtendPenalty((Integer) flags.getValue(MapFlags.GAP_EXTEND_PENALTY_FLAG));
     ngsParamsBuilder.substitutionPenalty((Integer) flags.getValue(MapFlags.MISMATCH_PENALTY_FLAG));
