@@ -79,14 +79,11 @@ public class SamToFastq extends AbstractCli {
     final File outLeftName = baseOutFile.suffixedFile("_1");
     final File outRightName = baseOutFile.suffixedFile("_2");
     boolean left = true;
-    try (OutputStreamWriter outLeft = new OutputStreamWriter(FileUtils.createOutputStream(outLeftName, baseOutFile.isGzip()))) {
-      try (OutputStreamWriter outRight = new OutputStreamWriter(FileUtils.createOutputStream(outRightName, baseOutFile.isGzip()))) {
+    try (FastqWriter outLeft = new FastqWriter(new OutputStreamWriter(FileUtils.createOutputStream(outLeftName, baseOutFile.isGzip())))) {
+      try (FastqWriter outRight = new FastqWriter(new OutputStreamWriter(FileUtils.createOutputStream(outRightName, baseOutFile.isGzip())))) {
         while (ds.nextSequence()) {
-          if (left) {
-            FastqUtils.writeFastqSequence(outLeft, ds.name(), ds.sequenceData(), ds.qualityData());
-          } else {
-            FastqUtils.writeFastqSequence(outRight, ds.name(), ds.sequenceData(), ds.qualityData());
-          }
+          final FastqWriter w = left ? outLeft : outRight;
+          w.write(ds.name(), ds.sequenceData(), ds.qualityData(), ds.currentLength());
           left = !left;
         }
         try (OutputStreamWriter writer = new OutputStreamWriter(out)) {
