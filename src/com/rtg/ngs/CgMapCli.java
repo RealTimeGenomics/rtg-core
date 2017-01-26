@@ -244,7 +244,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     final File reads = (File) mFlags.getValue(CommonFlags.READS_FLAG);
     final LongRange buildReaderRestriction = CommonFlags.getReaderRestriction(mFlags);
     try {
-      if (FormatCli.getFormat(mFlags, true) == InputFormat.SDF) {
+      if (FormatCli.getFormat(mFlags, false) == InputFormat.SDF) {
         ngsParamBuilder.buildFirstParams(SequenceParams.builder().directory(ReaderUtils.getLeftEnd(reads)).mode(SequenceMode.UNIDIRECTIONAL).useMemReader(true).readerRestriction(buildReaderRestriction).create());
         ngsParamBuilder.buildSecondParams(SequenceParams.builder().directory(ReaderUtils.getRightEnd(reads)).mode(SequenceMode.UNIDIRECTIONAL).useMemReader(true).readerRestriction(buildReaderRestriction).create());
 

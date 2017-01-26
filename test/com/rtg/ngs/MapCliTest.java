@@ -74,7 +74,7 @@ public class MapCliTest extends AbstractCliTest {
       checkHandleFlagsErr("-i", mainOut.getPath(), "-t", template.getPath(), "-o", out.getPath(), "-l", left.getPath(), "-r", right.getPath());
       checkHandleFlagsErr("-t", template.getPath(), "-o", out.getPath(), "-l", left.getPath(), "-r", right.getPath());
       checkHandleFlagsOut("-t", template.getPath(), "-o", out.getPath(), "-l", left.getPath(), "-r", right.getPath(), "-F", "fasta"); //we don't validate file integrity in flag handling
-      checkHandleFlagsErr("-t", template.getPath(), "-o", out.getPath(), "-l", left.getPath(), "-r", right.getPath(), "-F", "fastq");
+      checkHandleFlagsOut("-t", template.getPath(), "-o", out.getPath(), "-l", left.getPath(), "-r", right.getPath(), "-F", "fastq");
       checkHandleFlagsErr("-t", template.getPath(), "-o", out.getPath(), "-l", left.getPath(), "-r", right.getPath(), "-F", "fastq", "-q", "bobo");
       checkHandleFlagsOut("-t", template.getPath(), "-o", out.getPath(), "-l", left.getPath(), "-r", right.getPath(), "-F", "fastq", "-q", "sanger");
       checkHandleFlagsOut("-t", template.getPath(), "-o", out.getPath(), "-l", left.getPath(), "-r", right.getPath(), "-F", "fastq", "-q", "solexa");

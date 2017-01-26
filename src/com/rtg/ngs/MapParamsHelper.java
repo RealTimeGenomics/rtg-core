@@ -219,7 +219,7 @@ public final class MapParamsHelper {
   }
 
   static boolean isPaired(CFlags flags) {
-    final InputFormat inFormat = FormatCli.getFormat(flags, true);
+    final InputFormat inFormat = FormatCli.getFormat(flags, false);
     final boolean paired;
     if (inFormat == InputFormat.SDF) {
       final File reads = (File) flags.getValue(CommonFlags.READS_FLAG);
