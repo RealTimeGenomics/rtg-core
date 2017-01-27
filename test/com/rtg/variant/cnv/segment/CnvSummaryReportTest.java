@@ -20,6 +20,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.ReferenceRanges;
@@ -57,7 +58,7 @@ public class CnvSummaryReportTest {
       regions.put("19", range);
       final CnvSummaryReport cnvSummaryReport = new CnvSummaryReport(regions, 0.1);
       cnvSummaryReport.report(vcfFile, output);
-      mNano.check("singleRecordOutput.txt", FileHelper.fileToString(output));
+      mNano.check("singleRecordOutput.txt", StringUtils.grepMinusV(FileHelper.fileToString(output), "^#[^c]"));
     }
   }
 

@@ -25,7 +25,10 @@ import java.util.TreeMap;
 import com.rtg.bed.BedRecord;
 import com.rtg.bed.BedWriter;
 import com.rtg.sam.SamRangeUtils;
+import com.rtg.util.Environment;
 import com.rtg.util.MultiMap;
+import com.rtg.util.Utils;
+import com.rtg.util.cli.CommandLine;
 import com.rtg.util.intervals.RangeList;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.intervals.SequenceNameLocus;
@@ -61,6 +64,8 @@ class CnvSummaryReport {
     }
   }
 
+  private static final String VERSION_STRING = "#Version " + Environment.getVersion();
+  private static final String CNV_SUMMARY_OUTPUT_VERSION = "v1.1";
 
   private final ReferenceRanges<String> mRegions;
   private final Map<String, SequenceNameLocus> mByName = new TreeMap<>();
@@ -87,6 +92,14 @@ class CnvSummaryReport {
       }
     }
     mThreshold = threshold;
+  }
+
+  private void writeBedHeader(final BedWriter bw) throws IOException {
+    bw.writeln(VERSION_STRING + ", CNV panel BED output " + CNV_SUMMARY_OUTPUT_VERSION);
+    if (CommandLine.getCommandLine() != null) {
+      bw.writeComment("CL\t" + CommandLine.getCommandLine());
+    }
+    bw.writeComment("RUN-ID\t" + CommandLine.getRunId());
   }
 
   /**
@@ -133,11 +146,16 @@ class CnvSummaryReport {
 
     // Write the BED summary
     try (BedWriter bw = new BedWriter(FileUtils.createOutputStream(output))) {
-      bw.writeComment("chrom\tstart\tend\tname\tstatus\tsegments");
+      writeBedHeader(bw);
+      bw.writeComment("chrom\tstart\tend\tname\tstatus\tRDR\tLR\tSQS\tsegments");
       for (BedRecord r : recs) {
         bw.write(r);
       }
     }
+  }
+
+  private String scoreAsString(final double lr) {
+    return Double.isNaN(lr) ? "" : Utils.realFormat(lr, 4);
   }
 
   private ArrayList<BedRecord> summarizeAsBed(MultiMap<String, GeneStatus> geneStatus) {
@@ -145,20 +163,28 @@ class CnvSummaryReport {
     for (Map.Entry<String, SequenceNameLocus> gene : mByName.entrySet()) {
       final String name = gene.getKey();
       final Collection<GeneStatus> alterations = geneStatus.get(name);
+      final double lr;
       final SequenceNameLocus region = gene.getValue();
       final String status;
       final StringBuilder segments = new StringBuilder();
       if (alterations == null) {
         status = "No Alteration";
+        lr = Double.NaN;
       } else {
         final boolean gain = alterations.stream().anyMatch(cna -> cna.mType == CnaType.DUP);
         final boolean loss = alterations.stream().anyMatch(cna -> cna.mType == CnaType.DEL);
         status = gain ? loss ? "Mixed" : "Amplification" : "Deletion";
+        double min = Double.POSITIVE_INFINITY;
         for (GeneStatus alteration : alterations) {
+          if (Math.abs(alteration.mLogR) < Math.abs(min)) {
+            min = alteration.mLogR;
+          }
           segments.append(alteration).append("; ");
         }
+        lr = min;
       }
-      recs.add(new BedRecord(region.getSequenceName(), region.getStart(), region.getEnd(), name, status, segments.toString()));
+      recs.add(new BedRecord(region.getSequenceName(), region.getStart(), region.getEnd(), name, status,
+        scoreAsString(SegmentVcfOutputFormatter.rdr(lr)), scoreAsString(lr), scoreAsString(SegmentVcfOutputFormatter.sqs(lr)), segments.toString()));
     }
     return recs;
   }

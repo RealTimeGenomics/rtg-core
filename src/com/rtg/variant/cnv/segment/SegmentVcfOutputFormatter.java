@@ -156,10 +156,18 @@ public class SegmentVcfOutputFormatter {
     rec.setNumberOfSamples(1);
     rec.addFormatAndSample(FORMAT_GENOTYPE, altered ? "1" : "0");
     rec.addFormatAndSample(FORMAT_LOGR, Utils.realFormat(s.mean(), 4));
-    rec.addFormatAndSample(FORMAT_RDR, Utils.realFormat(Math.pow(2, s.mean()), 4));
-    rec.addFormatAndSample(FORMAT_SQS, Utils.realFormat(Math.abs(s.mean()), 4)); // For now, just use abs of LogR as proxy for quality
+    rec.addFormatAndSample(FORMAT_RDR, Utils.realFormat(rdr(s.mean()), 4));
+    rec.addFormatAndSample(FORMAT_SQS, Utils.realFormat(sqs(s.mean()), 4)); // For now, just use abs of LogR as proxy for quality
 
     return rec;
+  }
+
+  static double rdr(final double lr) {
+    return Math.pow(2, lr);
+  }
+
+  static double sqs(final double lr) {
+    return Math.abs(lr);
   }
 
   private String getRefBase(String refName, int pos) throws IOException {

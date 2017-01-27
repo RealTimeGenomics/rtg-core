@@ -96,9 +96,9 @@ public class CnvPonBuildCli extends AbstractCli {
   private void writeBedHeader(final BedWriter bw) throws IOException {
     bw.writeln(VERSION_STRING + ", CNV panel BED output " + CNV_PON_OUTPUT_VERSION);
     if (CommandLine.getCommandLine() != null) {
-      bw.writeln("#CL\t" + CommandLine.getCommandLine());
+      bw.writeComment("CL\t" + CommandLine.getCommandLine());
     }
-    bw.writeComment("#RUN-ID\t" + CommandLine.getRunId());
+    bw.writeComment("RUN-ID\t" + CommandLine.getRunId());
   }
 
   @Override
