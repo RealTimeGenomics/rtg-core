@@ -325,8 +325,8 @@ public abstract class AbstractCallerCliTest extends AbstractCliTest {
   }
 
   public void testThreads() throws InvalidParamsException, IOException, UnindexableDataException {
-    final VariantParams params = params("-T", "13", "--Xio-threads", "7");
-    assertEquals(13, params.execThreads());
+    final VariantParams params = params("-T", "10", "--Xio-threads", "7");
+    assertEquals(10, params.execThreads());
     assertEquals(7, params.ioThreads());
   }
 }

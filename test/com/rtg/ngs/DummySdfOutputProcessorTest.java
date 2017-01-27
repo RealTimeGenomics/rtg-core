@@ -15,15 +15,14 @@ import java.io.File;
 import java.io.IOException;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.reader.IndexFile;
 import com.rtg.reader.PrereadNamesInterface;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.Sdf2Fasta;
-import com.rtg.util.StringUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.test.FileHelper;
@@ -70,15 +69,15 @@ public class DummySdfOutputProcessorTest extends TestCase {
     GlobalFlags.resetAccessedStatus();
   }
 
-  static final String TEMPLATE = ">t" + StringUtils.LS + "tgcaagacaagagggcctcc" + StringUtils.LS;
+  static final String TEMPLATE = ">t\n" + "tgcaagacaagagggcctcc\n";
   static final String TEMP_LEFT = "TGCAAGACAAGAGGGCCTCC";
   static final String TEMP_RIGHT = "GGAGGCCCTCTTGTCTTGCA";
-  static final String READ_LEFT = ">r" + StringUtils.LS + TEMP_LEFT + StringUtils.LS
-                                + ">r1" + StringUtils.LS + TEMP_LEFT + StringUtils.LS
-                                + ">r2" + StringUtils.LS + TEMP_LEFT + StringUtils.LS;
-  static final String READ_RIGHT = ">r" + StringUtils.LS + TEMP_RIGHT + StringUtils.LS
-                                 + ">r1" + StringUtils.LS + TEMP_RIGHT + StringUtils.LS
-                                 + ">r2" + StringUtils.LS + TEMP_RIGHT + StringUtils.LS;
+  static final String READ_LEFT = ">r\n" + TEMP_LEFT + "\n"
+                                + ">r1\n" + TEMP_LEFT + "\n"
+                                + ">r2\n" + TEMP_LEFT + "\n";
+  static final String READ_RIGHT = ">r\n" + TEMP_RIGHT + "\n"
+                                 + ">r1\n" + TEMP_RIGHT + "\n"
+                                 + ">r2\n" + TEMP_RIGHT + "\n";
 
   public void testSDFOutput() throws Exception {
     final File tmpDir = FileUtils.createTempDir("tmp", "dir");
@@ -121,15 +120,15 @@ public class DummySdfOutputProcessorTest extends TestCase {
       final int rc = new Sdf2Fasta().mainInit(new String[] {"-i", alignmentsSdf.getPath(), "-o", new File(hitsDir, "outfa").getPath(), "-Z"}, mps.outputStream(), mps.printStream());
       assertEquals(mps.toString(), 0, rc);
 
-      assertEquals(">r1" + StringUtils.LS + TEMP_LEFT + StringUtils.LS
-                  + ">r2" + StringUtils.LS + TEMP_LEFT + StringUtils.LS, FileUtils.fileToString(new File(hitsDir, "outfa_1.fasta")));
-      assertEquals(">r1" + StringUtils.LS + TEMP_RIGHT + StringUtils.LS
-                  + ">r2" + StringUtils.LS + TEMP_RIGHT + StringUtils.LS, FileUtils.fileToString(new File(hitsDir, "outfa_2.fasta")));
+      assertEquals(">r1\n" + TEMP_LEFT + "\n"
+                  + ">r2\n" + TEMP_LEFT + "\n", FileUtils.fileToString(new File(hitsDir, "outfa_1.fasta")));
+      assertEquals(">r1\n" + TEMP_RIGHT + "\n"
+                  + ">r2\n" + TEMP_RIGHT + "\n", FileUtils.fileToString(new File(hitsDir, "outfa_2.fasta")));
 
       assertEquals(mps.toString(), 0, new Sdf2Fasta().mainInit(new String[] {"-i", new File(hitsDir, "unmapped.sdf").getPath(), "-o", new File(hitsDir, "unmappedfa").getPath(), "-Z"}, mps.outputStream(), mps.printStream()));
 
-      assertEquals(">r" + StringUtils.LS + TEMP_LEFT + StringUtils.LS, FileUtils.fileToString(new File(hitsDir, "unmappedfa_1.fasta")));
-      assertEquals(">r" + StringUtils.LS + TEMP_RIGHT + StringUtils.LS, FileUtils.fileToString(new File(hitsDir, "unmappedfa_2.fasta")));
+      assertEquals(">r\n" + TEMP_LEFT + "\n", FileUtils.fileToString(new File(hitsDir, "unmappedfa_1.fasta")));
+      assertEquals(">r\n" + TEMP_RIGHT + "\n", FileUtils.fileToString(new File(hitsDir, "unmappedfa_2.fasta")));
 
       //test the sdf ids are the same -_-
       mps.reset();

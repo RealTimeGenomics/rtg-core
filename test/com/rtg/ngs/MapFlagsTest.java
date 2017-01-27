@@ -226,7 +226,7 @@ public class MapFlagsTest extends TestCase {
       assertFalse(CommonFlags.validateThreads(flags));
       flags.setFlags("-T", Integer.toString(Integer.MAX_VALUE));
       assertFalse(CommonFlags.validateThreads(flags));
-      flags.setFlags("-T", "20");
+      flags.setFlags("-T", "10");
       assertTrue(CommonFlags.validateThreads(flags));
     } finally {
       Diagnostic.setLogStream();

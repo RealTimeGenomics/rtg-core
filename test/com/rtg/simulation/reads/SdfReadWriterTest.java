@@ -17,7 +17,6 @@ import java.io.File;
 import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.Sdf2Fasta;
-import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.test.AbstractTempFileHandler;
@@ -50,8 +49,8 @@ public class SdfReadWriterTest extends AbstractTempFileHandler {
     assertEquals(1, w.readsWritten());
     final File fasta = new File(mTempDir, "f.fasta.gz");
     assertEquals(0, new Sdf2Fasta().mainInit(new String[]{"-i", sdf.getPath(), "-o", fasta.getPath()}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream()));
-    assertEquals(">0 read" + StringUtils.LS + "ACGT" + StringUtils.LS, FileHelper.gzFileToString(new File(mTempDir, "f_1.fasta.gz")));
-    assertEquals(">0 read" + StringUtils.LS + "ACGT" + StringUtils.LS, FileHelper.gzFileToString(new File(mTempDir, "f_2.fasta.gz")));
+    assertEquals(">0 read\n" + "ACGT\n", FileHelper.gzFileToString(new File(mTempDir, "f_1.fasta.gz")));
+    assertEquals(">0 read\n" + "ACGT\n", FileHelper.gzFileToString(new File(mTempDir, "f_2.fasta.gz")));
   }
 
   public void testSingle() throws Exception {
@@ -74,6 +73,6 @@ public class SdfReadWriterTest extends AbstractTempFileHandler {
     assertEquals(1, w.readsWritten());
     final File fasta = new File(mTempDir, "f.fasta.gz");
     assertEquals(0, new Sdf2Fasta().mainInit(new String[] {"-i", sdf.getPath(), "-o", fasta.getPath()}, TestUtils.getNullOutputStream(), TestUtils.getNullPrintStream()));
-    assertEquals(">0 read" + StringUtils.LS + "ACGT" + StringUtils.LS, FileHelper.gzFileToString(new File(mTempDir, "f.fasta.gz")));
+    assertEquals(">0 read\n" + "ACGT\n", FileHelper.gzFileToString(new File(mTempDir, "f.fasta.gz")));
   }
 }

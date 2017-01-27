@@ -24,7 +24,6 @@ import com.rtg.reader.Sdf2Fasta;
 import com.rtg.reader.SdfId;
 import com.rtg.usage.UsageMetric;
 import com.rtg.util.InvalidParamsException;
-import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
@@ -122,29 +121,29 @@ public class MapFCliTest extends AbstractCliTest {
   }
 
   static final String TEMPLATE_STR = "acacactgcaagacaagagggcctcccacagcactctcagcccacactggtcgggggccaaagggg";
-  static final String TEMPLATE = ">t" + StringUtils.LS + TEMPLATE_STR + StringUtils.LS;
+  static final String TEMPLATE = ">t\n" + TEMPLATE_STR + "\n";
   static final String LEFT_READ_AS2 =  "ACACACTGCAAGCAAGAGGGCCTCCC";            //starts at 0
   static final String RIGHT_READ_AS0 = "CCCCTTTGGCCCCCGACCAGTGTGGGCTGA";        //starts at 36
   static final String LEFT_READ_AS6 =  "ACACACTGCGGTCTGAGAGGGCCTCCCAC";
   static final String RIGHT_READ_AS8 = "CCCCTTTTTAAAAAGAGCAGTGTGGGCTGA";
   static final String LEFT_READ_AS11 = "CTGCAACTGTTCTAAAGCTCCCACAGCACTCT";      //starts at tpos 5
   static final String RIGHT_READ_AS11 = "AGAGTGCTGTGGGAGCTTTAGAACAGTTGCAG";
-  static final String READ_LEFT = ">r0" + StringUtils.LS + LEFT_READ_AS2 + StringUtils.LS
-      + ">r1" + StringUtils.LS + LEFT_READ_AS6 + StringUtils.LS
-      + ">r2 a" + StringUtils.LS + LEFT_READ_AS6 + StringUtils.LS
-      + ">r3" + StringUtils.LS + LEFT_READ_AS2 + StringUtils.LS
-      + ">r4 b" + StringUtils.LS + LEFT_READ_AS6 + StringUtils.LS
-      + ">r5" + StringUtils.LS + LEFT_READ_AS11 + StringUtils.LS
-      + ">r6 c" + StringUtils.LS + LEFT_READ_AS2 + StringUtils.LS
-      + ">r7" + StringUtils.LS + LEFT_READ_AS11 + StringUtils.LS;
-  static final String READ_RIGHT = ">r0" + StringUtils.LS + RIGHT_READ_AS0 + StringUtils.LS
-      + ">r1" + StringUtils.LS + RIGHT_READ_AS0 + StringUtils.LS
-      + ">r2 a" + StringUtils.LS + RIGHT_READ_AS8 + StringUtils.LS
-      + ">r3" + StringUtils.LS + RIGHT_READ_AS8 + StringUtils.LS
-      + ">r4 b" + StringUtils.LS + RIGHT_READ_AS11 + StringUtils.LS
-      + ">r5" + StringUtils.LS + RIGHT_READ_AS8 + StringUtils.LS
-      + ">r6 c" + StringUtils.LS + RIGHT_READ_AS11 + StringUtils.LS
-      + ">r7" + StringUtils.LS + RIGHT_READ_AS0 + StringUtils.LS;
+  static final String READ_LEFT = ">r0\n" + LEFT_READ_AS2 + "\n"
+      + ">r1\n" + LEFT_READ_AS6 + "\n"
+      + ">r2 a\n" + LEFT_READ_AS6 + "\n"
+      + ">r3\n" + LEFT_READ_AS2 + "\n"
+      + ">r4 b\n" + LEFT_READ_AS6 + "\n"
+      + ">r5\n" + LEFT_READ_AS11 + "\n"
+      + ">r6 c\n" + LEFT_READ_AS2 + "\n"
+      + ">r7\n" + LEFT_READ_AS11 + "\n";
+  static final String READ_RIGHT = ">r0\n" + RIGHT_READ_AS0 + "\n"
+      + ">r1\n" + RIGHT_READ_AS0 + "\n"
+      + ">r2 a\n" + RIGHT_READ_AS8 + "\n"
+      + ">r3\n" + RIGHT_READ_AS8 + "\n"
+      + ">r4 b\n" + RIGHT_READ_AS11 + "\n"
+      + ">r5\n" + RIGHT_READ_AS8 + "\n"
+      + ">r6 c\n" + RIGHT_READ_AS11 + "\n"
+      + ">r7\n" + RIGHT_READ_AS0 + "\n";
 
 
   public void testEndToEnd() throws Exception {
@@ -185,26 +184,26 @@ public class MapFCliTest extends AbstractCliTest {
       MainResult res = MainResult.run(new Sdf2Fasta(), "-i", new File(out, "alignments.sdf").toString(), "-o", new File(out, "outfa").toString(), "-Z");
       assertEquals(res.err(), 0, res.rc());
 
-      assertEquals(">r0" + StringUtils.LS + LEFT_READ_AS2 + StringUtils.LS
-        + ">r1" + StringUtils.LS + LEFT_READ_AS6 + StringUtils.LS
-        + ">r2 a" + StringUtils.LS + LEFT_READ_AS6 + StringUtils.LS
-        + ">r3" + StringUtils.LS + LEFT_READ_AS2 + StringUtils.LS
-        + ">r4 b" + StringUtils.LS + LEFT_READ_AS6 + StringUtils.LS
-        + ">r6 c" + StringUtils.LS + LEFT_READ_AS2 + StringUtils.LS
-        + ">r7" + StringUtils.LS + LEFT_READ_AS11 + StringUtils.LS, FileUtils.fileToString(new File(out, "outfa_1.fasta")));
-      assertEquals(">r0" + StringUtils.LS + RIGHT_READ_AS0 + StringUtils.LS
-        + ">r1" + StringUtils.LS + RIGHT_READ_AS0 + StringUtils.LS
-        + ">r2 a" + StringUtils.LS + RIGHT_READ_AS8 + StringUtils.LS
-        + ">r3" + StringUtils.LS + RIGHT_READ_AS8 + StringUtils.LS
-        + ">r4 b" + StringUtils.LS + RIGHT_READ_AS11 + StringUtils.LS
-        + ">r6 c" + StringUtils.LS + RIGHT_READ_AS11 + StringUtils.LS
-        + ">r7" + StringUtils.LS + RIGHT_READ_AS0 + StringUtils.LS, FileUtils.fileToString(new File(out, "outfa_2.fasta")));
+      assertEquals(">r0\n" + LEFT_READ_AS2 + "\n"
+        + ">r1\n" + LEFT_READ_AS6 + "\n"
+        + ">r2 a\n" + LEFT_READ_AS6 + "\n"
+        + ">r3\n" + LEFT_READ_AS2 + "\n"
+        + ">r4 b\n" + LEFT_READ_AS6 + "\n"
+        + ">r6 c\n" + LEFT_READ_AS2 + "\n"
+        + ">r7\n" + LEFT_READ_AS11 + "\n", FileUtils.fileToString(new File(out, "outfa_1.fasta")));
+      assertEquals(">r0\n" + RIGHT_READ_AS0 + "\n"
+        + ">r1\n" + RIGHT_READ_AS0 + "\n"
+        + ">r2 a\n" + RIGHT_READ_AS8 + "\n"
+        + ">r3\n" + RIGHT_READ_AS8 + "\n"
+        + ">r4 b\n" + RIGHT_READ_AS11 + "\n"
+        + ">r6 c\n" + RIGHT_READ_AS11 + "\n"
+        + ">r7\n" + RIGHT_READ_AS0 + "\n", FileUtils.fileToString(new File(out, "outfa_2.fasta")));
 
       res = MainResult.run(new Sdf2Fasta(), "-i", new File(out, "unmapped.sdf").toString(), "-o", new File(out, "unmappedfa").toString(), "-Z");
       assertEquals(res.err(), 0, res.rc());
 
-      assertEquals(">r5" + StringUtils.LS + LEFT_READ_AS11 + StringUtils.LS, FileUtils.fileToString(new File(out, "unmappedfa_1.fasta")));
-      assertEquals(">r5" + StringUtils.LS + RIGHT_READ_AS8 + StringUtils.LS, FileUtils.fileToString(new File(out, "unmappedfa_2.fasta")));
+      assertEquals(">r5\n" + LEFT_READ_AS11 + "\n", FileUtils.fileToString(new File(out, "unmappedfa_1.fasta")));
+      assertEquals(">r5\n" + RIGHT_READ_AS8 + "\n", FileUtils.fileToString(new File(out, "unmappedfa_2.fasta")));
     }
   }
 }
