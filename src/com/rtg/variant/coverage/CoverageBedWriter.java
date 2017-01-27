@@ -65,9 +65,9 @@ public class CoverageBedWriter extends CoverageProcessor {
       mOut.writeln(VERSION_STRING + ", Coverage BED output " + COVERAGE_OUTPUT_VERSION);
     }
     if (CommandLine.getCommandLine() != null) {
-      mOut.writeln("#CL" + TB + CommandLine.getCommandLine());
+      mOut.writeComment("CL" + TB + CommandLine.getCommandLine());
     }
-    mOut.writeComment("#RUN-ID" + TB + CommandLine.getRunId());
+    mOut.writeComment("RUN-ID" + TB + CommandLine.getRunId());
     if (mParams.bedgraphOutput()) {
       mOut.writeln("#sequence\tstart\tend\tcoverage");
       mOut.writeln("track type=bedGraph name=coverage");
