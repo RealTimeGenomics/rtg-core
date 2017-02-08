@@ -14,6 +14,7 @@ package com.rtg.variant.cnv.preprocess;
 import java.util.Arrays;
 
 import com.reeltwo.jumble.annotations.TestClass;
+import com.rtg.util.MathUtils;
 
 /**
  * Holds a column of numeric data.
@@ -133,15 +134,6 @@ public class NumericColumn extends Column {
   }
 
   double median() {
-    final double[] values = getValues();
-    Arrays.sort(values);
-    final double median;
-    if (values.length % 2 == 0) {
-      median = (values[values.length / 2] + values[values.length / 2 - 1]) / 2;
-    } else {
-      median = values[values.length / 2];
-    }
-    return median;
+    return MathUtils.median(getValues());
   }
-
 }

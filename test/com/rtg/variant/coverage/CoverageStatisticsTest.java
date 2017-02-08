@@ -49,9 +49,10 @@ public class CoverageStatisticsTest extends AbstractNanoTest {
 
     cs.setRange("seq", null);
     final String exp = "Coverage per region:" + LS
-                         + "   depth  breadth  covered  size         name" + LS
-                         + "  0.3750   0.3750        3     8         blah" + LS
-                         + "  0.3750   0.3750        3     8  all regions" + LS;
+      + "   depth  breadth  covered  size         name" + LS
+      + "  0.3750   0.3750        3     8         blah" + LS
+      + "  0.3750   0.3750        3     8  all regions" + LS + LS
+      + "Median depth: 0.4" + LS;
     assertEquals(exp, cs.getStatistics());
   }
 

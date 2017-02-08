@@ -115,12 +115,15 @@ public class CoverageStatistics extends AbstractStatistics {
     } else {
       sb.append("#depth\tbreadth\tcovered\tsize\tname").append(LS);
     }
+    final double[] cov = new double[mCoverageNames.size()];
+    int k = 0;
     for (final String name : mCoverageNames) {
       final int size = mTotalLengthPerName.get(name);
       final double coverage = mTotalCoveragePerName.get(name);
       final int baseCount = mCoveredLengthPerName.get(name);
       final double breadth = baseCount / (double) size;
       final double depth = coverage / size;
+      cov[k++] = depth;
 
       if (!summary || mCoverageNames.size() < 100) {  // show up to 99 labels in summary, otherwise only output the total line.
         if (summary) {
@@ -140,9 +143,15 @@ public class CoverageStatistics extends AbstractStatistics {
                      /*Utils.realFormat(nonNTotalDepth, DP), Utils.realFormat(nonNTotalBreadth, DP), mNonNTotalCovered, mNonNTotalBaseCount,*/ "all regions");
       table.toString(sb);
       final Double fold80 = fold80();
-      if (fold80 != null) {
+      final double median = MathUtils.median(cov);
+      if (fold80 != null || !Double.isNaN(median)) {
         sb.append(LS);
+      }
+      if (fold80 != null) {
         sb.append("Fold-80 Penalty: ").append(String.format("%.2f", fold80)).append(LS);
+      }
+      if (!Double.isNaN(median)) {
+        sb.append("Median depth: ").append(String.format("%.1f", median)).append(LS);
       }
     } else {
       sb.append(Utils.realFormat(totalDepth, DP)).append('\t').append(Utils.realFormat(totalBreadth, DP)).append('\t')

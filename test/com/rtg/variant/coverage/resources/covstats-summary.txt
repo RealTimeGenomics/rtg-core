@@ -6,3 +6,5 @@ Coverage per region:
   1.7692   1.0000       26    26  simulatedSequence2:18-43
   1.8000   0.7333       22    30  simulatedSequence2:64-94
   1.9294   0.9059       77    85               all regions
+
+Median depth: 2.0
