@@ -27,4 +27,12 @@ public class NegCheckerTest extends TestCase {
     assertEquals("AGGTTT", rec.getReadString());
     assertEquals("1=1X1=1X2=", rec.getCigarString());
   }
+
+  public void testTrimAllProbe() {
+    final NegChecker neg = new NegChecker(10);
+    final SAMRecord rec = PosCheckerTest.createRecord("AGGTTTGG", "1=1X1=1X3=1X");
+    neg.setAlignmentEnd(rec, null, 990);
+    assertEquals("*", rec.getReadString());
+    assertEquals("*", rec.getCigarString());
+  }
 }

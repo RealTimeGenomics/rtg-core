@@ -39,4 +39,12 @@ public class PosCheckerTest extends TestCase {
     assertEquals("GTTTGG", rec.getReadString());
     assertEquals("1=1X1=1X1=1X", rec.getCigarString());
   }
+
+  public void testTrimAllProbe() {
+    final PosChecker pos = new PosChecker(10);
+    final SAMRecord rec = createRecord("AGGTTTGG", "1=1X1=1X1=1X1=1X");
+    pos.setAlignmentStart(rec, null, 2002);
+    assertEquals("*", rec.getReadString());
+    assertEquals("*", rec.getCigarString());
+  }
 }
