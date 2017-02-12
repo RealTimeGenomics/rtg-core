@@ -111,6 +111,8 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
   public static final String READ_THROUGH = "com.rtg.simulation.reads.read-through";
   /** If set, assume fragments are from OS-Seq sequencing, with this minimum size (e.g. probe length) */
   public static final String OS_SEQ_FRAGMENTS = "com.rtg.simulation.reads.os-seq-fragments";
+  /** Number of DP when displaying coverage levels */
+  public static final String COVERAGE_DP = "com.rtg.coverage.depth-of-coverage-dp";
 
   CoreGlobalFlags(List<Flag> flags) {
     super(flags);
@@ -173,6 +175,8 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
     registerFlag(QUALITY_CALIBRATION_COVARIATE_INTERSECTION, Boolean.class, false);
     registerFlag(TUMOR_ALLELE_BALANCE, String.class, "binomial");
 
+
+    registerFlag(COVERAGE_DP, Integer.class, 2);
 
     // AVR, training on missing instances increases time and experience indicates is a bad idea
     // when there are lots of missing values.

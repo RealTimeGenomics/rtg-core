@@ -1,10 +1,10 @@
 Coverage per region:
-   depth  breadth  covered  size                      name
-  2.0000   1.0000        7     7  simulatedSequence1:41-47
-  2.1111   1.0000        9     9                      blah
-  2.4118   1.0000       17    17                       feh
-  1.7692   1.0000       26    26  simulatedSequence2:18-43
-  1.8000   0.7333       22    30  simulatedSequence2:64-94
-  1.9294   0.9059       77    85               all regions
+  depth  breadth  covered  size                      name
+   2.00   1.0000        7     7  simulatedSequence1:41-47
+   2.11   1.0000        9     9                      blah
+   2.41   1.0000       17    17                       feh
+   1.77   1.0000       26    26  simulatedSequence2:18-43
+   1.80   0.7333       22    30  simulatedSequence2:64-94
+   1.93   0.9059       77    85               all regions
 
-Median depth: 2.0
+Median depth: 2.00

@@ -11,8 +11,6 @@
  */
 package com.rtg.variant.coverage;
 
-import static com.rtg.util.StringUtils.LS;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -38,22 +36,17 @@ public class CoverageStatisticsTest extends AbstractNanoTest {
     final RangeList<String> rangesearch = new RangeList<>(ranges);
     cs.setRange("seq", rangesearch.getRangeList().get(0));
 
-    cs.updateCoverageHistogram(1, false, 1);
-    cs.updateCoverageHistogram(1, false, 1);
-    cs.updateCoverageHistogram(1, false, 1);
-    cs.updateCoverageHistogram(1, true, 1);
-    cs.updateCoverageHistogram(1, true, 1);
+    cs.updateCoverageHistogram(10, false, 1);
+    cs.updateCoverageHistogram(10, false, 1);
+    cs.updateCoverageHistogram(10, false, 1);
+    cs.updateCoverageHistogram(10, true, 1);
+    cs.updateCoverageHistogram(10, true, 1);
     for (int i = 0; i < 5; ++i) {
       cs.updateCoverageHistogram(0, false, 1);
     }
 
     cs.setRange("seq", null);
-    final String exp = "Coverage per region:" + LS
-      + "   depth  breadth  covered  size         name" + LS
-      + "  0.3750   0.3750        3     8         blah" + LS
-      + "  0.3750   0.3750        3     8  all regions" + LS + LS
-      + "Median depth: 0.4" + LS;
-    assertEquals(exp, cs.getStatistics());
+    mNano.check("covstats-add-median.txt", cs.getStatistics());
   }
 
   public void testBedRegions() throws Exception {

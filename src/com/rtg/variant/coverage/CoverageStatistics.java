@@ -35,6 +35,8 @@ import com.reeltwo.plot.PointPlot2D;
 import com.reeltwo.plot.renderer.GraphicsRenderer;
 import com.reeltwo.plot.ui.ImageWriter;
 import com.rtg.launcher.AbstractStatistics;
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.report.VelocityReportUtils;
 import com.rtg.util.DoubleMultiSet;
 import com.rtg.util.HtmlReportHelper;
@@ -53,6 +55,9 @@ import com.rtg.util.io.FileUtils;
 public class CoverageStatistics extends AbstractStatistics {
 
   private static final int BUCKET_SIZE = Integer.getInteger("rtg.coverage.bucketsize", 1);
+
+  private static final int BREADTH_DP = 4; // This is a fraction, so several DP is appropriate
+  private static final int COVERAGE_DP = GlobalFlags.getIntegerValue(CoreGlobalFlags.COVERAGE_DP);
 
   private static final String COVERAGE_PNG_NAME = "coverage.png";
   private static final String CUMULATIVE_COVERAGE_PNG_NAME = "cumulative_coverage.png";
@@ -87,8 +92,6 @@ public class CoverageStatistics extends AbstractStatistics {
   /** the total coverage across all regions, with overlaps being flattened. */
   private double mTotalCoverage;
 
-  //Decimal places for depth and breadth columns
-  private static final int DP = 4;
   private CoverageBedWriter mCoverageWriter;
 
   /**
@@ -127,9 +130,9 @@ public class CoverageStatistics extends AbstractStatistics {
 
       if (!summary || mCoverageNames.size() < 100) {  // show up to 99 labels in summary, otherwise only output the total line.
         if (summary) {
-          appendRow(table, Utils.realFormat(depth, DP), Utils.realFormat(breadth, DP), baseCount, size, name);
+          appendRow(table, Utils.realFormat(depth, COVERAGE_DP), Utils.realFormat(breadth, BREADTH_DP), baseCount, size, name);
         } else {
-          sb.append(Utils.realFormat(depth, DP)).append('\t').append(Utils.realFormat(breadth, DP)).append('\t')
+          sb.append(Utils.realFormat(depth, COVERAGE_DP)).append('\t').append(Utils.realFormat(breadth, BREADTH_DP)).append('\t')
                   .append(baseCount).append('\t').append(size).append('\t')
                   .append(name).append(LS);
         }
@@ -139,7 +142,7 @@ public class CoverageStatistics extends AbstractStatistics {
     final double totalBreadth = mTotalBases == 0 ? 0.0 : mTotalCovered / (double) mTotalBases;
 
     if (summary) {
-      appendRow(table, Utils.realFormat(totalDepth, DP), Utils.realFormat(totalBreadth, DP), mTotalCovered, mTotalBases,
+      appendRow(table, Utils.realFormat(totalDepth, COVERAGE_DP), Utils.realFormat(totalBreadth, BREADTH_DP), mTotalCovered, mTotalBases,
                      /*Utils.realFormat(nonNTotalDepth, DP), Utils.realFormat(nonNTotalBreadth, DP), mNonNTotalCovered, mNonNTotalBaseCount,*/ "all regions");
       table.toString(sb);
       final Double fold80 = fold80();
@@ -148,13 +151,13 @@ public class CoverageStatistics extends AbstractStatistics {
         sb.append(LS);
       }
       if (fold80 != null) {
-        sb.append("Fold-80 Penalty: ").append(String.format("%.2f", fold80)).append(LS);
+        sb.append("Fold-80 Penalty: ").append(Utils.realFormat(fold80, 2)).append(LS);
       }
       if (!Double.isNaN(median)) {
-        sb.append("Median depth: ").append(String.format("%.1f", median)).append(LS);
+        sb.append("Median depth: ").append(Utils.realFormat(median, COVERAGE_DP)).append(LS);
       }
     } else {
-      sb.append(Utils.realFormat(totalDepth, DP)).append('\t').append(Utils.realFormat(totalBreadth, DP)).append('\t')
+      sb.append(Utils.realFormat(totalDepth, COVERAGE_DP)).append('\t').append(Utils.realFormat(totalBreadth, BREADTH_DP)).append('\t')
               .append(mTotalCovered).append('\t').append(mTotalBases).append('\t')
               .append("all regions").append(LS);
     }
@@ -296,7 +299,7 @@ public class CoverageStatistics extends AbstractStatistics {
         final String name = origRange.getMeta().get(0);
         if (mCoverageWriter != null) {
           mCoverageWriter.setRegionLabel(name);
-          mCoverageWriter.finalCoverageRegion(sequenceName, origRange.getStart(), origRange.getEnd(), (int) MathUtils.round(stats.mTotalCoverage / stats.mBases));
+          mCoverageWriter.finalCoverageRegion(sequenceName, origRange.getStart(), origRange.getEnd(), stats.mTotalCoverage / stats.mBases);
         }
         mTotalCoveragePerName.add(name, stats.mTotalCoverage);
         mTotalLengthPerName.add(name, stats.mBases);

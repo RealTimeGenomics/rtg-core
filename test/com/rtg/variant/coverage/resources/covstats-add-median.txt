@@ -1,0 +1,6 @@
+Coverage per region:
+  depth  breadth  covered  size         name
+   3.75   0.3750        3     8         blah
+   3.75   0.3750        3     8  all regions
+
+Median depth: 3.75

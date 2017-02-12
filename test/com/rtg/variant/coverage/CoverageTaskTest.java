@@ -62,21 +62,21 @@ public class CoverageTaskTest extends AbstractCliTest {
     final String[] args0 = {
         "-s", "0", "-Z"
     };
-    checkBed(REF_SEQS, SAM1, args0, "1", "", 0, false, null);
+    checkBed(REF_SEQS, SAM1, args0, "1", "", 0, false, false);
   }
 
   public void test1smooth1() throws Exception {
     final String[] args0 = {
         "-s", "1", "-Z"
     };
-    checkBed(REF_SEQS, SAM1, args0, "1-smooth1", "", 0, false, null);
+    checkBed(REF_SEQS, SAM1, args0, "1-smooth1", "", 0, false, false);
   }
 
   public void test1RC() throws Exception {
     final String[] args0 = {
         "-s", "0"
     };
-    checkBed(REF_SEQS, SAM3, args0, "1", "", 0, true, null);
+    checkBed(REF_SEQS, SAM3, args0, "1", "", 0, true, false);
   }
 
   private static final String SAM_CIGAR1 = SAMHEADER1
@@ -89,7 +89,7 @@ public class CoverageTaskTest extends AbstractCliTest {
     final String[] args0 = {
         "-s", "0"
     };
-    checkBed(REF_SEQS, SAM_CIGAR1, args0, "2", "", 0, true, null);
+    checkBed(REF_SEQS, SAM_CIGAR1, args0, "2", "", 0, true, false);
   }
 
   /** Test some fancy cigars. */
@@ -97,7 +97,7 @@ public class CoverageTaskTest extends AbstractCliTest {
     final String[] args0 = {
         "-s", "1"
     };
-    checkBed(REF_SEQS, SAM_CIGAR1, args0, "2-smooth1", "", 0, true, null);
+    checkBed(REF_SEQS, SAM_CIGAR1, args0, "2-smooth1", "", 0, true, false);
   }
 
   /** Test some fancy cigars. */
@@ -105,38 +105,38 @@ public class CoverageTaskTest extends AbstractCliTest {
     final String[] args0 = {
         "-s", "2"
     };
-    checkBed(REF_SEQS, SAM_CIGAR1, args0, "2-smooth2", "", 0, true, null);
+    checkBed(REF_SEQS, SAM_CIGAR1, args0, "2-smooth2", "", 0, true, false);
   }
 
   /** Test multiple sequences */
   public void test3() throws Exception {
     final String[] args0 = {"-Z", "-s", "0"};
-    checkBed(REF_SEQS_M, SAM_M, args0, "3", "", 0, false, null);
+    checkBed(REF_SEQS_M, SAM_M, args0, "3", "", 0, false, false);
   }
 
   /** Test multiple sequences */
   public void test3WithRegion() throws Exception {
     final String[] args0 = {"-Z", "-s", "0", "--region", "g2:6+2"};
-    checkBed(REF_SEQS_M, SAM_M, args0, "3region", "", 0, false, null);
+    checkBed(REF_SEQS_M, SAM_M, args0, "3region", "", 0, false, false);
   }
 
   public void test3WithBadRegion() throws Exception {
     final String[] args0 = {"-Z", "-s", "0", "--region", "notanactualregion"};
-    check(REF_SEQS_M, SAM_M, args0, null, new String[] {"notanactualregion", "not found"}, null, 1, false, null, null, false, null);
+    check(REF_SEQS_M, SAM_M, args0, null, new String[] {"notanactualregion", "not found"}, null, 1, false, null, false, false, null);
   }
 
   public void testIHFilter2() throws Exception {
     final String[] args0 = {
         "-c", "1", "-s", "0"
     };
-    checkBed(REF_SEQS, SAM9, args0, "5", "", 0, true, null);
+    checkBed(REF_SEQS, SAM9, args0, "5", "", 0, true, false);
   }
 
   public void testIHValidation() throws Exception {
     final String[] args0 = {
         "-c", "1"
     };
-    checkBed(REF_SEQS, SAM10, args0, null, "", "4 records skipped due to input filtering criteria", 0, true, null, null);
+    checkBed(REF_SEQS, SAM10, args0, null, "", "4 records skipped due to input filtering criteria", 0, true, null, false);
   }
 
 
@@ -145,7 +145,7 @@ public class CoverageTaskTest extends AbstractCliTest {
    */
   public void testIHfraction() throws Exception {
     final String[] args0 = {"-s", "0"};
-    checkBed(REF_SEQS, SAM9, args0, "5IHfraction", "", 0, true, null);
+    checkBed(REF_SEQS, SAM9, args0, "5IHfraction", "", 0, true, false);
   }
 
   public void test3Multifile() throws Exception {
@@ -166,7 +166,7 @@ public class CoverageTaskTest extends AbstractCliTest {
     final String[] args0 = {
         "-c", "1"
     };
-    checkBed(REF_SEQS, SAM9, args0, null, "", "4 records skipped due to input filtering criteria", 0, true, null, null);
+    checkBed(REF_SEQS, SAM9, args0, null, "", "4 records skipped due to input filtering criteria", 0, true, null, false);
   }
 
   private static final String REF_SEQS_STATS = ""
@@ -187,30 +187,29 @@ public class CoverageTaskTest extends AbstractCliTest {
 
   public void testStats() throws Exception {
     final String[] args0 = {"-Z", "-s", "0"};
-    final String expected = FileHelper.resourceToString("com/rtg/variant/coverage/resources/coveragetasktestStatsOut.txt");
-    check(REF_SEQS_STATS, SAM_M2, args0, "Stats", new String[]{""}, "", 0, false, null, new String[]{expected.replaceAll("\n|\r\n", LS)}, false, "LevelsStatsOut");
+    check(REF_SEQS_STATS, SAM_M2, args0, "Stats", new String[]{""}, "", 0, false, null, true, false, "LevelsStatsOut");
   }
 
   public void testThreads() throws Exception {
     //This is to check when you have specified 1 thread, we do not use ThreaderSamMultifileIterator
     final String[] args0 = {"-Z", "-T", "1"};
-    checkBed(REF_SEQS, SAM9, args0, null, "", "", 0, true, null, null);
+    checkBed(REF_SEQS, SAM9, args0, null, "", "", 0, true, null, false);
 
     final String[] args1 = {"-Z", "-T", "2"};
-    checkBed(REF_SEQS, SAM9, args1, null, "", "", 0, true, null, null);
+    checkBed(REF_SEQS, SAM9, args1, null, "", "", 0, true, null, false);
   }
 
-  private void checkBed(String refSeq, String sam, String[] args0, String expFile, String errorMsg, int errCode, boolean gzip, String[] outString) throws Exception {
-    check(refSeq, sam, args0, expFile, new String[] {errorMsg}, "", errCode, gzip, null, outString, false, null);
+  private void checkBed(String refSeq, String sam, String[] args0, String expFile, String errorMsg, int errCode, boolean gzip, boolean checkOut) throws Exception {
+    check(refSeq, sam, args0, expFile, new String[] {errorMsg}, "", errCode, gzip, null, checkOut, false, null);
   }
 
   private void checkBed(String refSeq, String sam, String[] args0, String expFile,
-      String errorMsg, String logMsg, int errCode, boolean gzip, String[] erlines, String[] outString) throws Exception {
-    check(refSeq, sam, args0, expFile, new String[]{errorMsg}, logMsg, errCode, gzip, erlines, outString, false, null);
+      String errorMsg, String logMsg, int errCode, boolean gzip, String[] erlines, boolean checkOut) throws Exception {
+    check(refSeq, sam, args0, expFile, new String[]{errorMsg}, logMsg, errCode, gzip, erlines, checkOut, false, null);
   }
 
   private void check(String refSeq, String sam, String[] args0, String expFile, String[] errorMsgs, String logMsg,
-                     int errCode, boolean gzip, String[] erlines, String[] outString, boolean tsv, String levelExp) throws Exception {
+                     int errCode, boolean gzip, String[] erlines, boolean checkOut, boolean tsv, String levelExp) throws Exception {
     Diagnostic.setLogStream();
     try (final TestDirectory tmpDir = new TestDirectory()) {
       final File output = new File(tmpDir, "output_dir");
@@ -230,8 +229,8 @@ public class CoverageTaskTest extends AbstractCliTest {
       final MainResult res = MainResult.run(getCli(), Utils.append(coverageArgs, args0));
       assertEquals(res.err(), errCode, res.rc());
       //System.err.println("out\n" + out.toString() + "end out");
-      if (outString != null) {
-        TestUtils.containsAll(res.out(), outString);
+      if (checkOut) {
+        mNano.check("coveragetasktest-out.txt", res.out());
       }
       //System.err.println(errStr);
       TestUtils.containsAll(res.err(), errorMsgs);
@@ -320,7 +319,7 @@ public class CoverageTaskTest extends AbstractCliTest {
     + "2" + TAB +   "0" + TAB + "g1" + TAB +  "5" + TAB + "255" + TAB + "8M" + TAB + "*" + TAB + "0" + TAB + "0" + TAB + "CGACTGTT" + TAB + "````````" + TAB + "AS:i:1" + TAB + "IH:i:1" + TAB + "NH:i:2" + LS
     ;
   public void testNHandIH() throws Exception {
-    check(REF_SEQS, SAM_IH1_NH2, new String[] {"-s", "0"}, "ih1nh2", new String[] {}, "", 0, true, null, null, false, null);
+    check(REF_SEQS, SAM_IH1_NH2, new String[] {"-s", "0"}, "ih1nh2", new String[] {}, "", 0, true, null, false, false, null);
   }
 
   /** Paired-end variant of SAM1 **/
@@ -334,7 +333,7 @@ public class CoverageTaskTest extends AbstractCliTest {
     ;
   public void testNH5andIH2() throws Exception {
     //this should give exactly same results as testNHandIH, as we doubled the coverage and Ih = 1 => ih = 2
-    check(REF_SEQS, SAM_IH2_NH5, new String[] {"-s", "0"}, "ih1nh2", new String[] {}, "", 0, true, null, null, false, null);
+    check(REF_SEQS, SAM_IH2_NH5, new String[] {"-s", "0"}, "ih1nh2", new String[] {}, "", 0, true, null, false, false, null);
   }
 
   private static final String SAM_HEADER_CLIP = ""

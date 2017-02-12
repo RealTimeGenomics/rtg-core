@@ -61,6 +61,6 @@ public abstract class CoverageProcessor implements Closeable {
    * @param coverage coverage for the region
    * @throws IOException because it might do some output
    */
-  public void finalCoverageRegion(String name, int start, int end, int coverage) throws IOException { }
+  public void finalCoverageRegion(String name, int start, int end, double coverage) throws IOException { }
 
 }

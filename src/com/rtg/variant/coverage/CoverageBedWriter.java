@@ -20,6 +20,9 @@ import java.util.List;
 
 import com.rtg.bed.BedRecord;
 import com.rtg.bed.BedWriter;
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
+import com.rtg.util.Utils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.intervals.IntervalComparator;
 
@@ -27,6 +30,8 @@ import com.rtg.util.intervals.IntervalComparator;
  * Handles BED and BEDGRAPH output formats
  */
 public class CoverageBedWriter extends CoverageProcessor {
+
+  private static final int COVERAGE_DP = GlobalFlags.getIntegerValue(CoreGlobalFlags.COVERAGE_DP);
 
   static final String DEFAULT_LABEL = "coverage";
 
@@ -77,12 +82,12 @@ public class CoverageBedWriter extends CoverageProcessor {
   }
 
   @Override
-  public void finalCoverageRegion(String name, int start, int end, int coverage) throws IOException {
+  public void finalCoverageRegion(String name, int start, int end, double coverage) throws IOException {
     final BedRecord rec;
     if (mParams.bedgraphOutput()) {
-      rec = new BedRecord(name, start, end, Integer.toString(coverage));
+      rec = new BedRecord(name, start, end, Utils.realFormat(coverage, COVERAGE_DP));
     } else {
-      rec = new BedRecord(name, start, end, mBedLabel, Integer.toString(coverage));
+      rec = new BedRecord(name, start, end, mBedLabel, Utils.realFormat(coverage, COVERAGE_DP));
     }
     if (mSort) {
       if (!name.equals(mLastSequenceName)) {

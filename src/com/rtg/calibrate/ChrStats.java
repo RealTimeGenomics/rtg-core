@@ -12,9 +12,10 @@
 package com.rtg.calibrate;
 
 import java.io.IOException;
-import java.text.NumberFormat;
 import java.util.Set;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reference.Ploidy;
 import com.rtg.reference.ReferenceGenome;
@@ -36,6 +37,8 @@ public class ChrStats {
   static final double DEFAULT_MIN_DEVIATIONS = 10;
   private static final String INCONSISTENT = " ** INCONSISTENT **";
   private static final String SEX_INCONSISTENT = " ** SEX INCONSISTENT **";
+
+  private static final int COVERAGE_DP = GlobalFlags.getIntegerValue(CoreGlobalFlags.COVERAGE_DP);
 
   /** Hold the result of a chromosome statistics check. */
   public static final class ChrStatsResult {
@@ -62,13 +65,6 @@ public class ChrStats {
     public Sex getObservedSex() {
       return mObservedSex;
     }
-  }
-
-
-  static final NumberFormat NF = NumberFormat.getInstance();
-  static {
-    NF.setMaximumFractionDigits(2);
-    NF.setMinimumFractionDigits(2);
   }
 
   private final SexMemo mSexMemo;
@@ -186,7 +182,7 @@ public class ChrStats {
             ++strangeCount;
           }
           if (log) {
-            Diagnostic.userLog(sample + " " + seq.name() + " observed-coverage=" + NF.format(coverage) + " z=" + NF.format(z) + "  (diploid coverage mean=" + NF.format(mean) + " stddev=" + NF.format(stddev) + ")" + status);
+            Diagnostic.userLog(sample + " " + seq.name() + " observed-coverage=" + Utils.realFormat(coverage, COVERAGE_DP) + " z=" + Utils.realFormat(z, 2) + "  (diploid coverage mean=" + Utils.realFormat(mean, COVERAGE_DP) + " stddev=" + Utils.realFormat(stddev, COVERAGE_DP) + ")" + status);
           }
         } else if (seq.ploidy() == Ploidy.HAPLOID) {
           final double z = (2 * coverage - meanDip) / stddevDip;
@@ -201,7 +197,7 @@ public class ChrStats {
             ++strangeCount;
           }
           if (log) {
-            Diagnostic.userLog(sample + " " + seq.name() + " observed-coverage=" + NF.format(coverage) + " z=" + NF.format(z) + "  (diploid coverage mean=" + NF.format(meanDip) + " stddev=" + NF.format(stddevDip) + ")" + status);
+            Diagnostic.userLog(sample + " " + seq.name() + " observed-coverage=" + Utils.realFormat(coverage, COVERAGE_DP) + " z=" + Utils.realFormat(z, 2) + "  (diploid coverage mean=" + Utils.realFormat(meanDip, COVERAGE_DP) + " stddev=" + Utils.realFormat(stddevDip, COVERAGE_DP) + ")" + status);
           }
         }
       }
@@ -266,7 +262,7 @@ public class ChrStats {
       table.addRow(sample, sexString(sex), "", "", "", "(no calibration information)");
     } else {
       final String countMessage = " (" + res.mStrangeCount + " of " + res.mTotalCount + " sequences have unexpected coverage level)";
-      table.addRow(sample, sexString(sex), Boolean.toString(res.mIsSexConsistent), res.mIsSexConsistent ? "" : sexString(res.mObservedSex), Utils.realFormat(res.mMeanDipCoverage, 2), res.mStrangeCount > 0 ? countMessage : "");
+      table.addRow(sample, sexString(sex), Boolean.toString(res.mIsSexConsistent), res.mIsSexConsistent ? "" : sexString(res.mObservedSex), Utils.realFormat(res.mMeanDipCoverage, COVERAGE_DP), res.mStrangeCount > 0 ? countMessage : "");
     }
   }
 
