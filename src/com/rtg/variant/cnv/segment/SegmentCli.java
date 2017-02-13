@@ -81,7 +81,8 @@ public class SegmentCli extends LoggedCli {
 
   private static final String COLUMN_FLAG = "Xcolumn";
   static final String GCBINS_FLAG = "Xgcbins";
-  private static final String MIN_COV_FLAG = "min-coverage";
+  private static final String MIN_CASE_COV_FLAG = "min-case-coverage";
+  private static final String MIN_CTRL_COV_FLAG = "min-ctrl-coverage";
   static final String COV_COLUMN_NAME = "Xcolumn-name";
 
   static final String DEFAULT_COLUMN_NAME = "coverage";
@@ -122,7 +123,8 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerOptional(ALPHA_FLAG, Double.class, FLOAT, "weighting factor for intra-segment distances during energy scoring", 0.001).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(BETA_FLAG, Double.class, FLOAT, "segmentation sensitivity factor", 0.5).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(LIMIT_FLAG, Integer.class, INT, "lower bound on the number of segments to be produced", 1).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(MIN_COV_FLAG, Integer.class, INT, "minimum coverage required for a bin to be included in segmentation", 200).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(MIN_CASE_COV_FLAG, Integer.class, INT, "minimum case coverage required for a bin to be included in segmentation", 5).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(MIN_CTRL_COV_FLAG, Integer.class, INT, "minimum control coverage required for a bin to be included in segmentation", 300).setCategory(SENSITIVITY_TUNING);
 
     mFlags.registerOptional(MIN_BINS_FLAG, Integer.class, INT, "minimum number of bins required for copy number alteration to be called", 1).setCategory(REPORTING);
     mFlags.registerOptional('r', MIN_LOGR_FLAG, Double.class, FLOAT, "minimum (absolute) log ratio required for copy number alteration to be called", 0.2).setCategory(REPORTING);
@@ -134,7 +136,8 @@ public class SegmentCli extends LoggedCli {
     mFlags.setValidator(flags -> CommonFlags.validateOutputDirectory(flags)
       && flags.checkInRange(MIN_LOGR_FLAG, 0, Double.MAX_VALUE)
       && flags.checkInRange(COLUMN_FLAG, 0, Integer.MAX_VALUE)
-      && flags.checkInRange(MIN_COV_FLAG, 0, Integer.MAX_VALUE)
+      && flags.checkInRange(MIN_CASE_COV_FLAG, 0, Integer.MAX_VALUE)
+      && flags.checkInRange(MIN_CTRL_COV_FLAG, 0, Integer.MAX_VALUE)
       && flags.checkInRange(GCBINS_FLAG, 0, Integer.MAX_VALUE)
       && CommonFlags.validateInputFile(flags, CASE_FLAG)
       && CommonFlags.validateInputFile(flags, CONTROL_FLAG)
@@ -180,7 +183,8 @@ public class SegmentCli extends LoggedCli {
 
   // Input datasets are both coverage output, construct data based on (log) ratio with control
   private void computeCaseControlDataset() throws IOException {
-    final int minCoverage = (Integer) mFlags.getValue(MIN_COV_FLAG);
+    final int minCaseCoverage = (Integer) mFlags.getValue(MIN_CASE_COV_FLAG);
+    final int minCtrlCoverage = (Integer) mFlags.getValue(MIN_CTRL_COV_FLAG);
     final int gcbins = (Integer) mFlags.getValue(GCBINS_FLAG);
     final String coverageColumnName = (String) mFlags.getValue(COV_COLUMN_NAME);
 
@@ -213,13 +217,13 @@ public class SegmentCli extends LoggedCli {
 
     // Min coverage filters
     final NumericColumn cc1 = filtered.asNumeric(controlCoverageCol);
-    filtered = filtered.filter(row -> cc1.get(row) >= minCoverage);
-    Diagnostic.userLog("Filtered with minimum control coverage " + minCoverage + ", dataset has " + filtered.size() + " rows");
+    filtered = filtered.filter(row -> cc1.get(row) >= minCtrlCoverage);
+    Diagnostic.userLog("Filtered with minimum control coverage " + minCtrlCoverage + ", dataset has " + filtered.size() + " rows");
 
     // TODO deal with deletions properly
     final NumericColumn cc2 = filtered.asNumeric(caseCoverageCol);
-    filtered = filtered.filter(row -> cc2.get(row) >= minCoverage);
-    Diagnostic.userLog("Filtered with minimum case coverage " + minCoverage + ", dataset has " + filtered.size() + " rows");
+    filtered = filtered.filter(row -> cc2.get(row) >= minCaseCoverage);
+    Diagnostic.userLog("Filtered with minimum case coverage " + minCaseCoverage + ", dataset has " + filtered.size() + " rows");
 
     if (gcbins > 1) {
       Diagnostic.userLog("Computing per-region GC values");
