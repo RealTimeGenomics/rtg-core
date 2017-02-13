@@ -188,7 +188,6 @@ class CnvSummaryReport {
           // Track the best overlap for reporting a final gene-level score
           final long overlap = lengthOfOverlap(gene.getValue(), alteration.mSpan);
           if (overlap >= bestOverlap) {
-            bestOverlap = overlap;
             if (overlap == bestOverlap) {
               // If tied for length, choose the least modified call
               final double absBest = Math.abs(best);
@@ -197,6 +196,7 @@ class CnvSummaryReport {
                 best = alteration.mLogR;
               }
             } else {
+              bestOverlap = overlap;
               best = alteration.mLogR;
             }
           }
