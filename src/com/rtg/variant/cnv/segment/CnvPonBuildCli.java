@@ -34,9 +34,11 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
 import com.rtg.variant.cnv.preprocess.AddGc;
+import com.rtg.variant.cnv.preprocess.Column;
 import com.rtg.variant.cnv.preprocess.GcNormalize;
 import com.rtg.variant.cnv.preprocess.NumericColumn;
 import com.rtg.variant.cnv.preprocess.RegionDataset;
+import com.rtg.variant.cnv.preprocess.SimpleJoin;
 import com.rtg.variant.cnv.preprocess.StringColumn;
 import com.rtg.variant.cnv.preprocess.WeightedMedianNormalize;
 
@@ -47,6 +49,9 @@ public class CnvPonBuildCli extends AbstractCli {
 
   private static final String VERSION_STRING = "#Version " + Environment.getVersion();
   private static final String CNV_PON_OUTPUT_VERSION = "v1.1";
+
+  // Name of the input column containing region name
+  static final String LABEL_COLUMN = "label";
 
   private SequencesReader mReference = null;
 
@@ -77,17 +82,20 @@ public class CnvPonBuildCli extends AbstractCli {
     );
   }
 
-  private NumericColumn normalize(final File coverageFile, final AddGc gcCorrector, final int gcbins) throws IOException {
+  private NumericColumn normalize(final File coverageFile, final boolean gcCorrect, final int gcbins, RegionDataset typicalSample) throws IOException {
     Diagnostic.info("Normalizing and G+C correcting " + coverageFile);
     final String coverageColumnName = (String) mFlags.getValue(SegmentCli.COV_COLUMN_NAME);
     final RegionDataset coverageData = RegionDataset.readFromBed(coverageFile, Collections.singletonList(new NumericColumn(coverageColumnName)));
+    if (typicalSample.size() != coverageData.size()) {
+      throw new NoTalkbackSlimException("Number of regions in " + coverageFile + " does not match a previous input file");
+    }
     if (coverageData.columnId(coverageColumnName) == -1) {
       throw new NoTalkbackSlimException("Could not find column named " + coverageColumnName + " in " + coverageFile);
     }
     new WeightedMedianNormalize(coverageData.columnId(coverageColumnName)).process(coverageData);
     final int normCovCol = coverageData.columns() - 1;
-    if (gcCorrector != null) {
-      new AddGc(mReference).process(coverageData);
+    if (gcCorrect) {
+      new SimpleJoin(typicalSample, "").process(coverageData); // Join in pre-computed GC content columns
       new GcNormalize(normCovCol, gcbins).process(coverageData);
     }
     return coverageData.asNumeric(coverageData.columns() - 1);
@@ -107,17 +115,19 @@ public class CnvPonBuildCli extends AbstractCli {
       mReference = sr;
       final int gcbins = (Integer) mFlags.getValue(SegmentCli.GCBINS_FLAG);
       final AddGc gcCorrector = gcbins > 1 ? new AddGc(mReference) : null;
-      final RegionDataset typicalSample = RegionDataset.readFromBed((File) mFlags.getAnonymousValue(0), Collections.singletonList(new StringColumn("label")));
+      final RegionDataset typicalSample = RegionDataset.readFromBed((File) mFlags.getAnonymousValue(0), Collections.singletonList(new StringColumn(LABEL_COLUMN)));
+      if (gcCorrector != null) {
+        Diagnostic.info("Computing per-region G+C content");
+        gcCorrector.process(typicalSample);
+      }
       final double[] sum = new double[typicalSample.size()];
       for (final Object coverageFile : mFlags.getAnonymousValues(0)) {
-        final NumericColumn covData = normalize((File) coverageFile, gcCorrector, gcbins);
-        if (sum.length != covData.size()) {
-          throw new NoTalkbackSlimException("Number of regions in " + coverageFile + " does not match a previous input file");
-        }
+        final NumericColumn covData = normalize((File) coverageFile, gcCorrector != null, gcbins, typicalSample);
         for (int k = 0; k < sum.length; ++k) {
           sum[k] += covData.get(k);
         }
       }
+      typicalSample.getColumns().removeIf((Column col) -> !col.getName().equals(LABEL_COLUMN));
       final int n = mFlags.getAnonymousValues(0).size();
       final NumericColumn col = new NumericColumn("normalized-coverage");
       for (final double v : sum) {
