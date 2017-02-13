@@ -25,15 +25,18 @@ import com.rtg.vcf.header.VcfHeader;
 public class CnvRecordFilter implements VcfFilter {
 
   private final Collection<String> mChrs;
+  private final boolean mFilterOverlap;
   private String mLastSeq = null;
   private int mLastEnd = 0;
 
   /**
    * Constructor
    * @param chrs the set of chromosomes of interest
+   * @param filterOverlap true if only the first of overlapping variants should be kept
    */
-  public CnvRecordFilter(Collection<String> chrs) {
+  public CnvRecordFilter(Collection<String> chrs, boolean filterOverlap) {
     mChrs = chrs;
+    mFilterOverlap = filterOverlap;
   }
 
   @Override
@@ -50,7 +53,7 @@ public class CnvRecordFilter implements VcfFilter {
       Diagnostic.warning("Skipping SV record without a defined END: " + rec.toString());
       return false;
     }
-    if (rec.getSequenceName().equals(mLastSeq) && rec.getStart() + 1 < mLastEnd) { // Maybe it's OK to keep?
+    if (mFilterOverlap && rec.getSequenceName().equals(mLastSeq) && rec.getStart() + 1 < mLastEnd) { // Maybe it's OK to keep?
       Diagnostic.warning("Skipping SV record that overlaps a previous SV variant: " + rec);
       return false;
     }

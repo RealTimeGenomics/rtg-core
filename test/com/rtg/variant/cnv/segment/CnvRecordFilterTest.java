@@ -25,7 +25,7 @@ public class CnvRecordFilterTest extends TestCase {
 
   public void test() {
     Diagnostic.setLogStream();
-    final CnvRecordFilter f = new CnvRecordFilter(Collections.singletonList("pretend"));
+    final CnvRecordFilter f = new CnvRecordFilter(Collections.singletonList("pretend"), true);
     final VcfRecord record = new VcfRecord("pretend", 42, "A");
     assertFalse(f.accept(record));
     record.addInfo(CnaType.INFO_END, "42");

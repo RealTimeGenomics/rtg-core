@@ -95,7 +95,7 @@ class CnvSummaryReport {
   }
 
   private void writeBedHeader(final BedWriter bw) throws IOException {
-    bw.writeln(VERSION_STRING + ", CNV panel BED output " + CNV_SUMMARY_OUTPUT_VERSION);
+    bw.writeln(VERSION_STRING + ", CNV summary BED output " + CNV_SUMMARY_OUTPUT_VERSION);
     if (CommandLine.getCommandLine() != null) {
       bw.writeComment("CL\t" + CommandLine.getCommandLine());
     }
@@ -113,7 +113,7 @@ class CnvSummaryReport {
     final List<VcfFilter> svFilt = new ArrayList<>();
     svFilt.add(new AssertVcfSorted());
     svFilt.add(new PassOnlyFilter());
-    svFilt.add(new CnvRecordFilter(mRegions.sequenceNames()));
+    svFilt.add(new CnvRecordFilter(mRegions.sequenceNames(), false));
     try (VcfIterator vr = new VcfFilterIterator(VcfReader.openVcfReader(vcfFile),  svFilt)) {
       while (vr.hasNext()) {
         final VcfRecord rec = vr.next();
