@@ -17,6 +17,7 @@ import java.io.IOException;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.util.TestUtils;
 
 /**
  * Tests the corresponding class.
@@ -49,7 +50,7 @@ public class SegmentCliTest extends AbstractCliTest {
       assertTrue(res.contains("Error: You must provide values for --case FILE -o DIR -t SDF"));
       res = checkHandleFlagsErr("-o", "test-foo-out", "-t", "test-sdf", "--case", emptyFile.getPath());
       assertTrue(res.contains(exp));
-      assertTrue(res.contains("Error: One of --Xcolumn or --control must be set"));
+      TestUtils.containsAll(res, "Error: One of --Xcolumn or --control or --panel must be set");
       res = checkHandleFlagsErr("-o", "test-foo-out", "-t", "test-sdf", "--case", emptyFile.getPath(), "--control", emptyFile.getPath(), "--Xlimit", "0");
       assertTrue(res.contains(exp));
       assertTrue(res.contains("Error: The value for --Xlimit must be at least 1"));

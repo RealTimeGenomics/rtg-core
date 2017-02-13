@@ -20,6 +20,7 @@ import static com.rtg.launcher.CommonFlags.STRING;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
+import static com.rtg.variant.cnv.segment.CnvPonBuildCli.NORMALIZED_COVERAGE_COLUMN;
 
 import java.io.File;
 import java.io.IOException;
@@ -75,6 +76,7 @@ public class SegmentCli extends LoggedCli {
 
   private static final String CASE_FLAG = "case";
   private static final String CONTROL_FLAG = "control";
+  private static final String PANEL_FLAG = "panel";
   private static final String SAMPLE_FLAG = "sample";
 
   private static final String SUMMARY_FLAG = "summary-regions";
@@ -117,14 +119,15 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, SDF, "SDF containing reference genome").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired(CASE_FLAG, File.class, FILE, "BED file supplying per-region coverage data for the sample").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(CONTROL_FLAG, File.class, FILE, "BED file supplying per-region coverage data for control sample").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional(PANEL_FLAG, File.class, FILE, "BED file supplying per-region panel normalized coverage data").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(SUMMARY_FLAG, File.class, FILE, "BED file supplying gene-scale regions to report CNV interactions with").setCategory(INPUT_OUTPUT);
 
     mFlags.registerOptional(ALEPH_FLAG, Double.class, FLOAT, "weighting factor for inter-segment distances during energy scoring", 0.0).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(ALPHA_FLAG, Double.class, FLOAT, "weighting factor for intra-segment distances during energy scoring", 0.001).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(BETA_FLAG, Double.class, FLOAT, "segmentation sensitivity factor", 0.5).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(LIMIT_FLAG, Integer.class, INT, "lower bound on the number of segments to be produced", 1).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(MIN_CASE_COV_FLAG, Integer.class, INT, "minimum case coverage required for a bin to be included in segmentation", 5).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(MIN_CTRL_COV_FLAG, Integer.class, INT, "minimum control coverage required for a bin to be included in segmentation", 300).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(MIN_CASE_COV_FLAG, Double.class, FLOAT, "minimum case coverage required for a bin to be included in segmentation", 5.0).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(MIN_CTRL_COV_FLAG, Double.class, FLOAT, "minimum control coverage required for a bin to be included in segmentation", 300.0).setCategory(SENSITIVITY_TUNING);
 
     mFlags.registerOptional(MIN_BINS_FLAG, Integer.class, INT, "minimum number of bins required for copy number alteration to be called", 1).setCategory(REPORTING);
     mFlags.registerOptional('r', MIN_LOGR_FLAG, Double.class, FLOAT, "minimum (absolute) log ratio required for copy number alteration to be called", 0.2).setCategory(REPORTING);
@@ -136,14 +139,14 @@ public class SegmentCli extends LoggedCli {
     mFlags.setValidator(flags -> CommonFlags.validateOutputDirectory(flags)
       && flags.checkInRange(MIN_LOGR_FLAG, 0, Double.MAX_VALUE)
       && flags.checkInRange(COLUMN_FLAG, 0, Integer.MAX_VALUE)
-      && flags.checkInRange(MIN_CASE_COV_FLAG, 0, Integer.MAX_VALUE)
-      && flags.checkInRange(MIN_CTRL_COV_FLAG, 0, Integer.MAX_VALUE)
+      && flags.checkInRange(MIN_CASE_COV_FLAG, 0, Double.MAX_VALUE)
+      && flags.checkInRange(MIN_CTRL_COV_FLAG, 0, Double.MAX_VALUE)
       && flags.checkInRange(GCBINS_FLAG, 0, Integer.MAX_VALUE)
       && CommonFlags.validateInputFile(flags, CASE_FLAG)
       && CommonFlags.validateInputFile(flags, CONTROL_FLAG)
       && CommonFlags.validateInputFile(flags, SUMMARY_FLAG)
       && flags.checkInRange(LIMIT_FLAG, 1, Integer.MAX_VALUE)
-      && flags.checkXor(COLUMN_FLAG, CONTROL_FLAG /*, PON_FLAG */)
+      && flags.checkXor(COLUMN_FLAG, CONTROL_FLAG, PANEL_FLAG)
     );
   }
 
@@ -170,6 +173,8 @@ public class SegmentCli extends LoggedCli {
         mDataCol = (Integer) mFlags.getValue(COLUMN_FLAG);
         Diagnostic.userLog("Using pre-computed column " + mDataCol + " for segmentation");
 
+      } else if (mFlags.isSet(PANEL_FLAG)) {
+        computeCasePanelDataset();
       } else /*if (mFlags.isSet(CONTROL_FLAG))*/ {
         computeCaseControlDataset();
       }
@@ -183,8 +188,8 @@ public class SegmentCli extends LoggedCli {
 
   // Input datasets are both coverage output, construct data based on (log) ratio with control
   private void computeCaseControlDataset() throws IOException {
-    final int minCaseCoverage = (Integer) mFlags.getValue(MIN_CASE_COV_FLAG);
-    final int minCtrlCoverage = (Integer) mFlags.getValue(MIN_CTRL_COV_FLAG);
+    final double minCaseCoverage = (Double) mFlags.getValue(MIN_CASE_COV_FLAG);
+    final double minCtrlCoverage = (Double) mFlags.getValue(MIN_CTRL_COV_FLAG);
     final int gcbins = (Integer) mFlags.getValue(GCBINS_FLAG);
     final String coverageColumnName = (String) mFlags.getValue(COV_COLUMN_NAME);
 
@@ -254,6 +259,76 @@ public class SegmentCli extends LoggedCli {
     mDataCol = mDataset.columns() - 1;
   }
 
+
+  private void computeCasePanelDataset() throws IOException {
+    final double minCaseCoverage = (Double) mFlags.getValue(MIN_CASE_COV_FLAG);
+    final double minPanelCoverage = (Double) mFlags.getValue(MIN_CTRL_COV_FLAG); // Slight abuse of semantics
+    final int gcbins = (Integer) mFlags.getValue(GCBINS_FLAG);
+    final String coverageColumnName = (String) mFlags.getValue(COV_COLUMN_NAME);
+
+    Diagnostic.userLog("Loading case");
+    final File caseFile = (File) mFlags.getValue(CASE_FLAG);
+    final RegionDataset caseData = RegionDataset.readFromBed(caseFile, Collections.singletonList(new NumericColumn(coverageColumnName)));
+    if (caseData.columnId(coverageColumnName) == -1) {
+      throw new NoTalkbackSlimException("Could not find column named " + coverageColumnName + " in " + caseFile);
+    }
+    //caseData.getColumns().removeIf((Column col) -> !col.getName().equals(COVERAGE_COLUMN_NAME));
+    int caseCoverageCol = caseData.columnId(coverageColumnName);
+    caseData.column(caseCoverageCol).setName("case_cover_raw");
+
+
+    Diagnostic.userLog("Loading panel file");
+    final File panelFile = (File) mFlags.getValue(PANEL_FLAG);
+    final RegionDataset panelData = RegionDataset.readFromBed(panelFile, Collections.singletonList(new NumericColumn(NORMALIZED_COVERAGE_COLUMN)));
+    if (panelData.columnId(NORMALIZED_COVERAGE_COLUMN) == -1) {
+      throw new NoTalkbackSlimException("Could not find column named " + NORMALIZED_COVERAGE_COLUMN + " in " + panelData);
+    }
+    panelData.getColumns().removeIf((Column col) -> !col.getName().equals(NORMALIZED_COVERAGE_COLUMN));
+
+
+    Diagnostic.userLog("Joining");
+    new SimpleJoin(panelData, "panel").process(caseData);
+    RegionDataset filtered = caseData;
+    final int panelCoverageCol = filtered.columns() - 1;
+    filtered.column(panelCoverageCol).setName("pon_cover_wmednorm");
+    Diagnostic.userLog("Joined dataset has " + filtered.size() + " rows");
+
+    // Min coverage filters
+    final NumericColumn cc1 = filtered.asNumeric(panelCoverageCol);
+    filtered = filtered.filter(row -> cc1.get(row) >= minPanelCoverage);
+    Diagnostic.userLog("Filtered with minimum panel coverage " + minPanelCoverage + ", dataset has " + filtered.size() + " rows");
+
+    // TODO deal with deletions properly
+    final NumericColumn cc2 = filtered.asNumeric(caseCoverageCol);
+    filtered = filtered.filter(row -> cc2.get(row) >= minCaseCoverage);
+    Diagnostic.userLog("Filtered with minimum case coverage " + minCaseCoverage + ", dataset has " + filtered.size() + " rows");
+
+    if (gcbins > 1) {
+      Diagnostic.userLog("Computing per-region GC values");
+      new AddGc(mReference).process(filtered);
+      Diagnostic.userLog("Applying GC correction using " + gcbins + " bins");
+      new GcNormalize(caseCoverageCol, gcbins, "case_cover_gcnorm").process(filtered);
+      caseCoverageCol = filtered.columns() - 1;
+      // Panel is already gc normalized
+    }
+
+    Diagnostic.userLog("Applying weighted median normalization");
+    new WeightedMedianNormalize(caseCoverageCol, "case_cover_wmednorm").process(filtered);
+    caseCoverageCol = filtered.columns() - 1;
+    // Panel is already median normalized
+
+    Diagnostic.userLog("Computing ratio");
+    checkNonZero(filtered, caseCoverageCol);
+    checkNonZero(filtered, panelCoverageCol);
+    new AddRatio(caseCoverageCol, panelCoverageCol, "ratio_wmednorm").process(filtered);
+
+    // Log
+    Diagnostic.userLog("Computing log");
+    new AddLog(filtered.columns() - 1, "ratio_wmednorm_log2").process(filtered);
+
+    mDataset = filtered;
+    mDataCol = mDataset.columns() - 1;
+  }
 
   private void writeDataset() throws IOException {
     final boolean gzip = !mFlags.isSet(CommonFlags.NO_GZIP);

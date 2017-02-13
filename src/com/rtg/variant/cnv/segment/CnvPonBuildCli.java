@@ -52,6 +52,8 @@ public class CnvPonBuildCli extends AbstractCli {
 
   // Name of the input column containing region name
   static final String LABEL_COLUMN = "label";
+  // Name of the output column containing normalized coverage profile
+  static final String NORMALIZED_COVERAGE_COLUMN = "normalized-coverage";
 
   private SequencesReader mReference = null;
 
@@ -89,15 +91,15 @@ public class CnvPonBuildCli extends AbstractCli {
     if (typicalSample.size() != coverageData.size()) {
       throw new NoTalkbackSlimException("Number of regions in " + coverageFile + " does not match a previous input file");
     }
-    if (coverageData.columnId(coverageColumnName) == -1) {
+    final int covCol = coverageData.columnId(coverageColumnName);
+    if (covCol == -1) {
       throw new NoTalkbackSlimException("Could not find column named " + coverageColumnName + " in " + coverageFile);
     }
-    new WeightedMedianNormalize(coverageData.columnId(coverageColumnName)).process(coverageData);
-    final int normCovCol = coverageData.columns() - 1;
     if (gcCorrect) {
       new SimpleJoin(typicalSample, "").process(coverageData); // Join in pre-computed GC content columns
-      new GcNormalize(normCovCol, gcbins).process(coverageData);
+      new GcNormalize(covCol, gcbins).process(coverageData);
     }
+    new WeightedMedianNormalize(coverageData.columns() - 1).process(coverageData);
     return coverageData.asNumeric(coverageData.columns() - 1);
   }
 
@@ -129,7 +131,7 @@ public class CnvPonBuildCli extends AbstractCli {
       }
       typicalSample.getColumns().removeIf((Column col) -> !col.getName().equals(LABEL_COLUMN));
       final int n = mFlags.getAnonymousValues(0).size();
-      final NumericColumn col = new NumericColumn("normalized-coverage");
+      final NumericColumn col = new NumericColumn(NORMALIZED_COVERAGE_COLUMN);
       for (final double v : sum) {
         col.add(v / n);
       }
