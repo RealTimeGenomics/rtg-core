@@ -50,7 +50,7 @@ public class CnvRecordFilter implements VcfFilter {
       Diagnostic.warning("Skipping SV record without a defined END: " + rec.toString());
       return false;
     }
-    if (rec.getSequenceName().equals(mLastSeq) && rec.getStart() < mLastEnd) { // Maybe it's OK to keep?
+    if (rec.getSequenceName().equals(mLastSeq) && rec.getStart() + 1 < mLastEnd) { // Maybe it's OK to keep?
       Diagnostic.warning("Skipping SV record that overlaps a previous SV variant: " + rec);
       return false;
     }

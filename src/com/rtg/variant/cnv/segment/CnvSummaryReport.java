@@ -145,7 +145,7 @@ class CnvSummaryReport {
     //recs.sort(SequenceNameLocusComparator.SINGLETON);
 
     // Write the BED summary
-    try (BedWriter bw = new BedWriter(FileUtils.createOutputStream(output))) {
+    try (final BedWriter bw = new BedWriter(FileUtils.createOutputStream(output))) {
       writeBedHeader(bw);
       bw.writeComment("chrom\tstart\tend\tname\tstatus\tRDR\tLR\tSQS\tsegments");
       for (BedRecord r : recs) {
@@ -156,6 +156,12 @@ class CnvSummaryReport {
 
   private String scoreAsString(final double lr) {
     return Double.isNaN(lr) ? "" : Utils.realFormat(lr, 4);
+  }
+
+  private long lengthOfOverlap(final SequenceNameLocus gene, final SequenceNameLocus call) {
+    final long left = Math.max(gene.getStart(), call.getStart());
+    final long right = Math.min(gene.getEnd(), call.getEnd());
+    return right - left;
   }
 
   private ArrayList<BedRecord> summarizeAsBed(MultiMap<String, GeneStatus> geneStatus) {
@@ -174,14 +180,28 @@ class CnvSummaryReport {
         final boolean gain = alterations.stream().anyMatch(cna -> cna.mType == CnaType.DUP);
         final boolean loss = alterations.stream().anyMatch(cna -> cna.mType == CnaType.DEL);
         status = gain ? loss ? "Mixed" : "Amplification" : "Deletion";
-        double min = Double.POSITIVE_INFINITY;
-        for (GeneStatus alteration : alterations) {
-          if (Math.abs(alteration.mLogR) < Math.abs(min)) {
-            min = alteration.mLogR;
-          }
+        double best = Double.POSITIVE_INFINITY;
+        long bestOverlap = 0;
+        for (final GeneStatus alteration : alterations) {
+          // Report each call overlapping the gene
           segments.append(alteration).append("; ");
+          // Track the best overlap for reporting a final gene-level score
+          final long overlap = lengthOfOverlap(gene.getValue(), alteration.mSpan);
+          if (overlap >= bestOverlap) {
+            bestOverlap = overlap;
+            if (overlap == bestOverlap) {
+              // If tied for length, choose the least modified call
+              final double absBest = Math.abs(best);
+              final double absCall = Math.abs(alteration.mLogR);
+              if (absCall < absBest) {
+                best = alteration.mLogR;
+              }
+            } else {
+              best = alteration.mLogR;
+            }
+          }
         }
-        lr = min;
+        lr = best;
       }
       recs.add(new BedRecord(region.getSequenceName(), region.getStart(), region.getEnd(), name, status,
         scoreAsString(SegmentVcfOutputFormatter.rdr(lr)), scoreAsString(lr), scoreAsString(SegmentVcfOutputFormatter.sqs(lr)), segments.toString()));
