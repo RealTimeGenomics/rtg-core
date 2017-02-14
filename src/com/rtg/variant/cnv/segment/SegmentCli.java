@@ -84,7 +84,7 @@ public class SegmentCli extends LoggedCli {
   private static final String COLUMN_FLAG = "Xcolumn";
   static final String GCBINS_FLAG = "Xgcbins";
   private static final String MIN_CASE_COV_FLAG = "min-case-coverage";
-  private static final String MIN_CTRL_COV_FLAG = "min-ctrl-coverage";
+  private static final String MIN_CTRL_COV_FLAG = "min-control-coverage";
   static final String COV_COLUMN_NAME = "Xcolumn-name";
 
   static final String DEFAULT_COLUMN_NAME = "coverage";
