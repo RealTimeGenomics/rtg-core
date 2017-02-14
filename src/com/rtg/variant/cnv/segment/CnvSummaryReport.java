@@ -52,15 +52,19 @@ class CnvSummaryReport {
     final CnaType mType;
     final boolean mPartial;
     final double mLogR;
-    final SequenceNameLocus mSpan;
-    GeneStatus(CnaType type, double logR, boolean partial, SequenceNameLocus span) {
+    final SequenceNameLocus mSpan;    // Tight span
+    final SequenceNameLocus mExtent;  // Maximum span allowed by associated confidence interval
+    GeneStatus(CnaType type, double logR, boolean partial, SequenceNameLocus span, SequenceNameLocus extent) {
       mType = type;
       mLogR = logR;
       mPartial = partial;
       mSpan = span;
+      mExtent = extent;
     }
+
+    @Override
     public String toString() {
-      return (mPartial ? "Partial" : "Full") + "," + mType.name() + "," + mLogR + "," + mSpan;
+      return mType.name() + "," + mLogR + "," + mSpan;
     }
   }
 
@@ -132,7 +136,11 @@ class CnvSummaryReport {
             final double logR = VcfUtils.getDoubleFormatFieldFromRecord(rec, 0, FORMAT_LOGR);
             if (Math.abs(logR) >= mThreshold) {
               final boolean partial = gene.getStart() < start || gene.getEnd() > end;
-              geneStatus.put(gene.getMeta().get(0), new GeneStatus(status, logR, partial, new SequenceNameLocusSimple(chr, start, end)));
+              final int[] cipos = VcfUtils.getConfidenceInterval(rec, VcfUtils.CONFIDENCE_INTERVAL_POS);
+              final int[] ciend = VcfUtils.getConfidenceInterval(rec, VcfUtils.CONFIDENCE_INTERVAL_END);
+              geneStatus.put(gene.getMeta().get(0), new GeneStatus(status, logR, partial,
+                new SequenceNameLocusSimple(chr, start, end),
+                new SequenceNameLocusSimple(chr, start + (cipos == null ? 0 : cipos[0]), end + (ciend == null ? 0 : ciend[1]))));
             }
           }
         }
@@ -142,13 +150,11 @@ class CnvSummaryReport {
     // Create gene summary lines as BED records
     final ArrayList<BedRecord> recs = summarizeAsBed(geneStatus);
 
-    //recs.sort(SequenceNameLocusComparator.SINGLETON);
-
     // Write the BED summary
     try (final BedWriter bw = new BedWriter(FileUtils.createOutputStream(output))) {
       writeBedHeader(bw);
-      bw.writeComment("chrom\tstart\tend\tname\tstatus\tRDR\tLR\tSQS\tsegments");
-      for (BedRecord r : recs) {
+      bw.writeComment("chrom\tstart\tend\tname\textent\tstatus\tRDR\tLR\tSQS\tsegments");
+      for (final BedRecord r : recs) {
         bw.write(r);
       }
     }
@@ -158,10 +164,30 @@ class CnvSummaryReport {
     return Double.isNaN(lr) ? "" : Utils.realFormat(lr, 4);
   }
 
-  private long lengthOfOverlap(final SequenceNameLocus gene, final SequenceNameLocus call) {
-    final long left = Math.max(gene.getStart(), call.getStart());
-    final long right = Math.min(gene.getEnd(), call.getEnd());
+  private int lengthOfOverlap(final SequenceNameLocus gene, final SequenceNameLocus call) {
+    final int left = Math.max(gene.getStart(), call.getStart());
+    final int right = Math.min(gene.getEnd(), call.getEnd());
     return right - left;
+  }
+
+  private boolean isFullExtent(final SequenceNameLocus gene, final Collection<GeneStatus> alterations) {
+    // Assumes alterations are sorted by overall chromosome position
+    int pos = gene.getStart();
+    CnaType type = null;
+    for (final GeneStatus alteration : alterations) {
+      if (type == null) {
+        type = alteration.mType;
+      } else if (type != alteration.mType) {
+        return false; // Mixed DUP/DEL
+      }
+      final int start = alteration.mExtent.getStart();
+      final int end = alteration.mExtent.getEnd();
+      if (start > pos) {
+        return false; // There is a gap
+      }
+      pos = end;
+    }
+    return pos >= gene.getEnd();
   }
 
   private ArrayList<BedRecord> summarizeAsBed(MultiMap<String, GeneStatus> geneStatus) {
@@ -171,14 +197,17 @@ class CnvSummaryReport {
       final Collection<GeneStatus> alterations = geneStatus.get(name);
       final double lr;
       final SequenceNameLocus region = gene.getValue();
+      final String extent;
       final String status;
       final StringBuilder segments = new StringBuilder();
       if (alterations == null) {
+        extent = "Full";
         status = "No Alteration";
         lr = Double.NaN;
       } else {
         final boolean gain = alterations.stream().anyMatch(cna -> cna.mType == CnaType.DUP);
         final boolean loss = alterations.stream().anyMatch(cna -> cna.mType == CnaType.DEL);
+        extent = isFullExtent(region, alterations) ? "Full" : "Partial";
         status = gain ? loss ? "Mixed" : "Amplification" : "Deletion";
         double best = Double.POSITIVE_INFINITY;
         long bestOverlap = 0;
@@ -203,7 +232,7 @@ class CnvSummaryReport {
         }
         lr = best;
       }
-      recs.add(new BedRecord(region.getSequenceName(), region.getStart(), region.getEnd(), name, status,
+      recs.add(new BedRecord(region.getSequenceName(), region.getStart(), region.getEnd(), name, extent, status,
         scoreAsString(SegmentVcfOutputFormatter.rdr(lr)), scoreAsString(lr), scoreAsString(SegmentVcfOutputFormatter.sqs(lr)), segments.toString()));
     }
     return recs;
