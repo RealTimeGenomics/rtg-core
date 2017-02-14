@@ -30,6 +30,7 @@ import com.rtg.launcher.CommandLineFiles;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
 import com.rtg.sam.ExtraSoftClip;
+import com.rtg.sam.MinLengthFilter;
 import com.rtg.sam.RecordIterator;
 import com.rtg.sam.SamFilterParams;
 import com.rtg.sam.SamOutput;
@@ -78,6 +79,7 @@ public class DeProbeCli extends LoggedCli {
   static final String COUNTS_SUFFIX = "_strand_probe_counts.bed.gz";
   static final String POS_COUNTS_NAME = "positive" + COUNTS_SUFFIX;
   static final String NEG_COUNTS_NAME = "negative" + COUNTS_SUFFIX;
+  static final String MIN_READ_LENGTH = "min-read-length";
 
 
   private ReferenceRanges<ProbeCounter> mPosRanges;
@@ -115,6 +117,7 @@ public class DeProbeCli extends LoggedCli {
     flags.registerRequired('b', PROBE_BED, File.class, "FILE", "BED file specifying each probe location and strand").setCategory(INPUT_OUTPUT);
     flags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "start position tolerance for probe matching", 5).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(EXTRA_SOFT_CLIP_FLAG, "if set, add extra soft-clipping where mismatches occur at the end of reads").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(MIN_READ_LENGTH, Integer.class, CommonFlags.INT, "filter out reads shorter than this", 0).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
   }
@@ -133,6 +136,7 @@ public class DeProbeCli extends LoggedCli {
     final NegChecker negChecker = new NegChecker(tolerance);
     final File bedFile = (File) mFlags.getValue(PROBE_BED);
     final int threads = CommonFlags.parseIOThreads(null); // Just use the default
+    final int minBases = (int) mFlags.getValue(MIN_READ_LENGTH);
 
     mTotalMappedReads = 0;
     mTotalMappedPos = 0;
@@ -143,6 +147,7 @@ public class DeProbeCli extends LoggedCli {
 
     int totalRecords12 = 0;
     int softClippedRecords12 = 0;
+    int shortReads = 0;
 
     boolean warnedNoReadGroup = false;
     long totalUnmappedReads = 0;
@@ -200,23 +205,23 @@ public class DeProbeCli extends LoggedCli {
                 }
               }
             }
+            totalRecords12++;
+            if (minBases > 0 && MinLengthFilter.filterShortReads(record, minBases)) {
+                shortReads++;
+            }
 
-            if (extraSoftClip) {
-              totalRecords12++;
-              if (ExtraSoftClip.addSoftClip(record)) {
+            if (extraSoftClip &&  ExtraSoftClip.addSoftClip(record)) {
                 softClippedRecords12++;
-              }
-              if (totalRecords12 % 1000000 == 0) {
-                Diagnostic.developerLog(String.format("Records: %d Soft-clipped: %d (%.2f%%)", totalRecords12, softClippedRecords12, 100.0 * softClippedRecords12 / totalRecords12));
-              }
+            }
+
+            if (totalRecords12 % 1000000 == 0) {
+              logStats(extraSoftClip, minBases, totalRecords12, softClippedRecords12, shortReads);
             }
 
             writer.addRecord(record);
           }
 
-          if (extraSoftClip) {
-            Diagnostic.developerLog(String.format("Records: %d Soft-clipped: %d (%.2f%%)", totalRecords12, softClippedRecords12, 100.0 * softClippedRecords12 / totalRecords12));
-          }
+          logStats(extraSoftClip, minBases, totalRecords12, softClippedRecords12, shortReads);
           if (writer.getDuplicateCount() > 0) {
             Diagnostic.warning(writer.getDuplicateCount() + " duplicate records were dropped during output.");
           }
@@ -247,6 +252,19 @@ public class DeProbeCli extends LoggedCli {
     writeStrandFile(new File(outputDirectory(), POS_COUNTS_NAME), mPosRanges);
     writeStrandFile(new File(outputDirectory(), NEG_COUNTS_NAME), mNegRanges);
     return 0;
+  }
+
+  private void logStats(boolean extraSoftClip, int minBases, int totalRecords12, int softClippedRecords12, int shortReads) {
+    if (extraSoftClip || minBases > 0) {
+      final StringBuilder logString = new StringBuilder();
+      if (minBases > 0) {
+        logString.append(String.format(", Short reads: %d (%.2f%%)", shortReads, 100.0 * shortReads / totalRecords12));
+      }
+      if (extraSoftClip) {
+        logString.append(String.format(", Soft-clipped reads: %d (%.2f%%)", softClippedRecords12, 100.0 * softClippedRecords12 / totalRecords12));
+      }
+      Diagnostic.developerLog(String.format("Records: %d", totalRecords12) + logString.toString());
+    }
   }
 
   private void writeStrandFile(File file, ReferenceRanges<ProbeCounter> posRanges) throws IOException {

@@ -114,9 +114,9 @@ public class SingleIndelSeededEditDistance extends SingleIndelEditDistance {
     //System.err.println("rLen=" + rLen + " template.length=" + template.length + " zeroBasedStart=" + zeroBasedStart + " maxScore=" + maxScore + " maxShift=" + maxShift);
     assert rLen <= mDiagonal.length;
     // Quick idiocy checks first to avoid string construction cost
-    if (initialZeroBasedStart < 0 || initialZeroBasedStart + rLen > template.length) {    //if read mapped off template at either end, just delegate to next in chain
-      return null;
-    }
+//    if (initialZeroBasedStart < 0 || initialZeroBasedStart + rLen > template.length) {    //if read mapped off template at either end, just delegate to next in chain
+//      return null;
+//    }
     mRead = read;
     mTemplate = template;
 
