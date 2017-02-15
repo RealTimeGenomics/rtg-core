@@ -11,6 +11,7 @@
  */
 package com.rtg.sam.probe;
 
+import static com.rtg.launcher.CommonFlags.MIN_READ_LENGTH;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 
 import java.io.File;
@@ -79,7 +80,6 @@ public class DeProbeCli extends LoggedCli {
   static final String COUNTS_SUFFIX = "_strand_probe_counts.bed.gz";
   static final String POS_COUNTS_NAME = "positive" + COUNTS_SUFFIX;
   static final String NEG_COUNTS_NAME = "negative" + COUNTS_SUFFIX;
-  static final String MIN_READ_LENGTH = "min-read-length";
 
 
   private ReferenceRanges<ProbeCounter> mPosRanges;
@@ -117,7 +117,7 @@ public class DeProbeCli extends LoggedCli {
     flags.registerRequired('b', PROBE_BED, File.class, "FILE", "BED file specifying each probe location and strand").setCategory(INPUT_OUTPUT);
     flags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "start position tolerance for probe matching", 5).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(EXTRA_SOFT_CLIP_FLAG, "if set, add extra soft-clipping where mismatches occur at the end of reads").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(MIN_READ_LENGTH, Integer.class, CommonFlags.INT, "filter out reads shorter than this", 0).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    CommonFlags.initMinReadLength(flags);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
   }
