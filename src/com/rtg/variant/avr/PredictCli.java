@@ -24,10 +24,8 @@ import java.util.List;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
-import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
-import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.AsyncVcfWriter;
@@ -45,7 +43,7 @@ public class PredictCli extends AbstractCli {
   protected static final String INPUT_FLAG = "input";
   protected static final String OUTPUT_FLAG = "output";
   protected static final String SAMPLE_FLAG = "sample";
-  protected static final String FIELD_FLAG = "Xvcf-score-field";
+  protected static final String FIELD_FLAG = "vcf-score-field";
 
   @Override
   public String moduleName() {
@@ -74,17 +72,11 @@ public class PredictCli extends AbstractCli {
 
     CommonFlags.initMinAvrScore(mFlags);
 
-    mFlags.registerOptional('s', SAMPLE_FLAG, String.class, STRING, "if set, only re-score the specified samples (Default is to re-score all samples)").setCategory(CommonFlagCategories.UTILITY).setMaxCount(Integer.MAX_VALUE);
-    mFlags.registerOptional(FIELD_FLAG, String.class, STRING, "the name of the VCF FORMAT field in which to store the computed score").setCategory(CommonFlagCategories.UTILITY);
-    mFlags.setValidator(new Validator() {
-      @Override
-      public boolean isValid(CFlags flags) {
-        if (!CommonFlags.validateOutputFile(flags, VcfUtils.getZippedVcfFileName(!flags.isSet(NO_GZIP), (File) flags.getValue(OUTPUT_FLAG)))) {
-          return false;
-        }
-        return true;
-      }
-    });
+    mFlags.registerOptional('s', SAMPLE_FLAG, String.class, STRING, "if set, only re-score the specified samples (Default is to re-score all samples)").setCategory(CommonFlagCategories.REPORTING).setMaxCount(Integer.MAX_VALUE);
+    mFlags.registerOptional('f', FIELD_FLAG, String.class, STRING, "the name of the VCF FORMAT field in which to store the computed score", AbstractPredictModel.AVR).setCategory(CommonFlagCategories.REPORTING);
+    mFlags.setValidator(flags ->
+      CommonFlags.validateOutputFile(flags, VcfUtils.getZippedVcfFileName(!flags.isSet(NO_GZIP), (File) flags.getValue(OUTPUT_FLAG)))
+    );
   }
 
   @Override
@@ -96,9 +88,7 @@ public class PredictCli extends AbstractCli {
     }
     final ModelFactory fact = new ModelFactory(modelFile, threshold);
     final AbstractPredictModel model = fact.getModel();
-    if (mFlags.isSet(FIELD_FLAG)) {
-      model.setField((String) mFlags.getValue(FIELD_FLAG));
-    }
+    model.setField((String) mFlags.getValue(FIELD_FLAG));
     final File vcf = (File) mFlags.getValue(INPUT_FLAG);
 
     try (final VcfReader posReader = VcfReader.openVcfReader(vcf)) {
