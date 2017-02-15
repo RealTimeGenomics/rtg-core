@@ -50,14 +50,12 @@ class CnvSummaryReport {
 
   static class GeneStatus {
     final CnaType mType;
-    final boolean mPartial;
     final double mLogR;
     final SequenceNameLocus mSpan;    // Tight span
     final SequenceNameLocus mExtent;  // Maximum span allowed by associated confidence interval
-    GeneStatus(CnaType type, double logR, boolean partial, SequenceNameLocus span, SequenceNameLocus extent) {
+    GeneStatus(CnaType type, double logR, SequenceNameLocus span, SequenceNameLocus extent) {
       mType = type;
       mLogR = logR;
-      mPartial = partial;
       mSpan = span;
       mExtent = extent;
     }
@@ -138,7 +136,7 @@ class CnvSummaryReport {
               final boolean partial = gene.getStart() < start || gene.getEnd() > end;
               final int[] cipos = VcfUtils.getConfidenceInterval(rec, VcfUtils.CONFIDENCE_INTERVAL_POS);
               final int[] ciend = VcfUtils.getConfidenceInterval(rec, VcfUtils.CONFIDENCE_INTERVAL_END);
-              geneStatus.put(gene.getMeta().get(0), new GeneStatus(status, logR, partial,
+              geneStatus.put(gene.getMeta().get(0), new GeneStatus(status, logR,
                 new SequenceNameLocusSimple(chr, start, end),
                 new SequenceNameLocusSimple(chr, start + (cipos == null ? 0 : cipos[0]), end + (ciend == null ? 0 : ciend[1]))));
             }
