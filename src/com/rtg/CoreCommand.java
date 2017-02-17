@@ -251,13 +251,13 @@ public final class CoreCommand {
   static final Command SNPINTERSECT = new Command(new SnpIntersection(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
 
   /** NCBI Taxonomy reader */
-  static final Command NCBI2TAX = new Command(new NcbiTaxDumpReaderCli(), CommandCategory.UTILITY, ReleaseLevel.BETA);
+  static final Command NCBI2TAX = new Command(new NcbiTaxDumpReaderCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Taxonomy manipulation */
-  static final Command TAXFILTER = new Command(new TaxFilterCli(), CommandCategory.UTILITY, ReleaseLevel.BETA);
+  static final Command TAXFILTER = new Command(new TaxFilterCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Taxonomy verifier */
-  static final Command TAXSTATS = new Command(new TaxStatsCli(), CommandCategory.UTILITY, ReleaseLevel.BETA);
+  static final Command TAXSTATS = new Command(new TaxStatsCli(), CommandCategory.UTILITY, ReleaseLevel.GA);
 
   /** Search for family phasing using segregation analysis */
   static final Command PHASINGSEARCH = new Command(new SegregationVcfSearch(), CommandCategory.UTILITY, ReleaseLevel.ALPHA);
