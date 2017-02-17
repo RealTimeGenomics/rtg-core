@@ -24,7 +24,6 @@ import java.util.TreeMap;
 
 import com.rtg.bed.BedRecord;
 import com.rtg.bed.BedWriter;
-import com.rtg.sam.SamRangeUtils;
 import com.rtg.util.Environment;
 import com.rtg.util.MultiMap;
 import com.rtg.util.Utils;
@@ -71,13 +70,14 @@ class CnvSummaryReport {
 
   private final ReferenceRanges<String> mRegions;
   private final Map<String, SequenceNameLocus> mByName = new TreeMap<>();
+  private final boolean mAlterationsOnly;
   private final double mThreshold;
 
   CnvSummaryReport(ReferenceRanges<String> regions) {
-    this(regions, 0);
+    this(regions, 0, true);
   }
 
-  CnvSummaryReport(ReferenceRanges<String> regions, double threshold) {
+  CnvSummaryReport(ReferenceRanges<String> regions, double threshold, boolean alterationsOnly) {
     mRegions = regions;
     // Fill in sorted list of gene names
     for (String chr : regions.sequenceNames()) {
@@ -94,6 +94,7 @@ class CnvSummaryReport {
       }
     }
     mThreshold = threshold;
+    mAlterationsOnly = alterationsOnly;
   }
 
   private void writeBedHeader(final BedWriter bw) throws IOException {
@@ -133,7 +134,6 @@ class CnvSummaryReport {
           if (gene.getMeta() != null) {
             final double logR = VcfUtils.getDoubleFormatFieldFromRecord(rec, 0, FORMAT_LOGR);
             if (Math.abs(logR) >= mThreshold) {
-              final boolean partial = gene.getStart() < start || gene.getEnd() > end;
               final int[] cipos = VcfUtils.getConfidenceInterval(rec, VcfUtils.CONFIDENCE_INTERVAL_POS);
               final int[] ciend = VcfUtils.getConfidenceInterval(rec, VcfUtils.CONFIDENCE_INTERVAL_END);
               geneStatus.put(gene.getMeta().get(0), new GeneStatus(status, logR,
@@ -193,6 +193,9 @@ class CnvSummaryReport {
     for (Map.Entry<String, SequenceNameLocus> gene : mByName.entrySet()) {
       final String name = gene.getKey();
       final Collection<GeneStatus> alterations = geneStatus.get(name);
+      if (mAlterationsOnly && alterations == null) {
+        continue;
+      }
       final double lr;
       final SequenceNameLocus region = gene.getValue();
       final String extent;
@@ -234,19 +237,5 @@ class CnvSummaryReport {
         scoreAsString(SegmentVcfOutputFormatter.rdr(lr)), scoreAsString(lr), scoreAsString(SegmentVcfOutputFormatter.sqs(lr)), segments.toString()));
     }
     return recs;
-  }
-
-
-  /**
-   * Direct entry point
-   * @param args arguments
-   * @throws IOException if the wheels fall off
-   */
-  public static void main(final String[] args) throws IOException {
-    final File geneBed = new File(args[0]);
-    final File vcfFile = new File(args[1]);
-    final double threshold = Double.parseDouble(args[2]);
-    final CnvSummaryReport p = new CnvSummaryReport(SamRangeUtils.createBedReferenceRanges(geneBed), threshold);
-    p.report(vcfFile, new File("-"));
   }
 }

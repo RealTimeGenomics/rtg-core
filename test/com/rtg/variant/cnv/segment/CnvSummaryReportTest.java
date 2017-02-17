@@ -56,7 +56,7 @@ public class CnvSummaryReportTest {
       final ReferenceRanges<String> regions = new ReferenceRanges<>(true);
       final RangeList<String> range = new RangeList<>(new RangeList.RangeData<>(4580, 4690, Collections.singletonList("one")));
       regions.put("19", range);
-      final CnvSummaryReport cnvSummaryReport = new CnvSummaryReport(regions, 0.1);
+      final CnvSummaryReport cnvSummaryReport = new CnvSummaryReport(regions);
       cnvSummaryReport.report(vcfFile, output);
       mNano.check("singleRecordOutput.txt", StringUtils.grepMinusV(FileHelper.fileToString(output), "^#[^c]"));
     }
