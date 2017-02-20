@@ -281,6 +281,7 @@ public final class CoreCommand {
   private static final Command[] DISPLAY_ORDER = {
     // Formatting
     ToolsCommand.FORMAT, CG2SDF, ToolsCommand.SDF2FASTA, ToolsCommand.SDF2FASTQ, ToolsCommand.SDF2SAM, SDF2QUALA, SDF2CG,
+    ToolsCommand.FASTQTRIM,
 
     // Mapping
     MAP, MAPF, CGMAP,
