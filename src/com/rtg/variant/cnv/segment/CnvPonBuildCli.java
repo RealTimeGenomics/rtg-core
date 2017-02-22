@@ -55,8 +55,6 @@ public class CnvPonBuildCli extends AbstractCli {
   // Name of the output column containing normalized coverage profile
   static final String NORMALIZED_COVERAGE_COLUMN = "normalized-coverage";
 
-  private SequencesReader mReference = null;
-
   @Override
   public String moduleName() {
     return "cnvponbuild";
@@ -114,9 +112,8 @@ public class CnvPonBuildCli extends AbstractCli {
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
     try (final SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReader((File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG))) {
-      mReference = sr;
       final int gcbins = (Integer) mFlags.getValue(SegmentCli.GCBINS_FLAG);
-      final AddGc gcCorrector = gcbins > 1 ? new AddGc(mReference) : null;
+      final AddGc gcCorrector = gcbins > 1 ? new AddGc(sr) : null;
       final RegionDataset typicalSample = RegionDataset.readFromBed((File) mFlags.getAnonymousValue(0), Collections.singletonList(new StringColumn(LABEL_COLUMN)));
       if (gcCorrector != null) {
         Diagnostic.info("Computing per-region G+C content");
