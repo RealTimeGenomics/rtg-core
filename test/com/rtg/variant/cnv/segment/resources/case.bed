@@ -1,0 +1,19 @@
+#Version RTG Core 2016-12-23 / Core fe80ae5 (2016-12-23), Coverage BED output v1.1
+#sequence	start	end	label	coverage
+simulatedSequence1	1752	2757	Mex01	2000
+simulatedSequence1	2822	3835	Mex02	2000
+simulatedSequence1	3933	4944	Mex03	2000
+simulatedSequence1	4969	5980	Mex04	6
+simulatedSequence1	6289	6298	Mex05	6
+simulatedSequence1	6335	6352	Mex06	6
+simulatedSequence1	6355	6540	Mex07a	2000
+simulatedSequence1	6655	6740	Mex07b	2000
+simulatedSequence1	6755	6940	Mex07c	2000
+simulatedSequence1	6955	7540	Mex07d	2000
+simulatedSequence1	7543	7654	Mex08	2000
+simulatedSequence1	7704	8015	Mex09a	2000
+simulatedSequence1	8104	8155	Mex09b	2000
+simulatedSequence1	8204	8295	Mex09c	2000
+simulatedSequence1	8304	8415	Mex09d	2000
+simulatedSequence1	8428	8444	Mex10	6000
+simulatedSequence1	8602	9219	Mex11	6000

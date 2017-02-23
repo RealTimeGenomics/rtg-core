@@ -17,7 +17,13 @@ import java.io.IOException;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.launcher.MainResult;
+import com.rtg.reader.ReaderTestUtils;
+import com.rtg.reader.SdfId;
 import com.rtg.util.TestUtils;
+import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
+import com.rtg.util.test.FileHelper;
 
 /**
  * Tests the corresponding class.
@@ -68,5 +74,23 @@ public class SegmentCliTest extends AbstractCliTest {
 
   public void testDesc() {
     assertEquals("segment depth of coverage data to identify copy number alterations", getCli().description());
+  }
+
+  public void testSimpleOperation() throws IOException {
+    try (final TestDirectory dir = new TestDirectory()) {
+      final File reference = new File(dir, "reference");
+      ReaderTestUtils.getReaderDNA(mNano.loadReference("ref.fa"), reference, new SdfId(0));
+
+      final File control = FileHelper.resourceToFile("com/rtg/variant/cnv/segment/resources/control.bed", new File(dir, "control.bed"));
+      final File sample = FileHelper.resourceToFile("com/rtg/variant/cnv/segment/resources/case.bed", new File(dir, "case.bed"));
+      final File output = new File(dir, "output");
+
+      // gc correction does not work well here because the regions are small, so turn it off
+      final MainResult result = checkMainInit("-t", reference.getPath(), "-o", output.getPath(), "--control", control.getPath(), "--case", sample.getPath(), "--sample", "foo", "-Z", "--beta", "0.1", "--Xgcbins", "0");
+      mNano.check("expected.unsegmented.bed", FileUtils.fileToString(new File(output, "unsegmented.bed")));
+      mNano.check("expected.segments.vcf", TestUtils.sanitizeVcfHeader(FileUtils.fileToString(new File(output, "segments.vcf"))));
+      mNano.check("expected.summary.txt", FileUtils.fileToString(new File(output, "summary.txt")));
+      mNano.check("expected.out.txt", result.out());
+    }
   }
 }
