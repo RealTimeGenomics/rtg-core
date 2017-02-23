@@ -37,7 +37,14 @@ public class SegmentCliTest extends AbstractCliTest {
       "SDF containing reference genome",
       "weighting factor for inter-segment distances during energy scoring",
       "weighting factor for intra-segment distances during energy scoring",
-      "segmentation sensitivity"
+      "segmentation sensitivity",
+      "Sensitivity Tuning",
+      "Reporting",
+      "Utility",
+      "File Input/Output",
+      "--no-gzip",
+      "--no-index",
+      "--help"
       );
   }
 
@@ -59,4 +66,7 @@ public class SegmentCliTest extends AbstractCliTest {
     }
   }
 
+  public void testDesc() {
+    assertEquals("segment depth of coverage data to identify copy number alterations", getCli().description());
+  }
 }
