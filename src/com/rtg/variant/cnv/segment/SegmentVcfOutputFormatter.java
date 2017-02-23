@@ -21,7 +21,6 @@ import java.util.Map;
 import com.rtg.mode.DnaUtils;
 import com.rtg.reader.PrereadNamesInterface;
 import com.rtg.reader.SequencesReader;
-import com.rtg.util.MathUtils;
 import com.rtg.util.Utils;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.vcf.VcfRecord;
@@ -119,45 +118,50 @@ public class SegmentVcfOutputFormatter {
     return header;
   }
 
-  VcfRecord vcfRecord(String seqName, Segment s, Segment next) throws IOException {
+  VcfRecord vcfRecord(String seqName, Segment prev, Segment current, Segment next) throws IOException {
     // Spec says SV records are given the position BEFORE the SV.
-    final int refPosition = Math.max(s.getStart() - 1, 0);
+    final int refPosition = Math.max(current.getStart() - 1, 0);
     final String ref = getRefBase(seqName, refPosition);
     final VcfRecord rec = new VcfRecord(seqName, refPosition, ref);
 
     // Classify the segment as gain or loss
     boolean altered = false;
-    if (s.bins() >= mMinBins) {
-      if (s.mean() >= mThreshold) {
+    if (current.bins() >= mMinBins) {
+      if (current.mean() >= mThreshold) {
         altered = true;
         rec.addAltCall(ALT_DUP_BR);
         rec.setInfo(INFO_SVTYPE, ALT_DUP);
-      } else if (s.mean() <= -mThreshold) {
+      } else if (current.mean() <= -mThreshold) {
         altered = true;
         rec.addAltCall(ALT_DEL_BR);
         rec.setInfo(INFO_SVTYPE, ALT_DEL);
       }
     }
 
-    rec.setInfo(INFO_END, "" + (s.getEnd() + 1));
+    rec.setInfo(INFO_END, "" + (current.getEnd() + 1));
     rec.setInfo(INFO_IMPRECISE);
-    final String cipos = "" + MathUtils.round(s.distanceToPrevious() == 0 ? (double) -s.getStart() : -s.distanceToPrevious() - s.firstBinLength() / 2.0)
+    // For CIPOS and CIEND, we extend outward to the closest neighboring segment boundary (or the edge of the reference sequence)
+    // For the inward side, we go to half of the bin length
+    // Thus the extended CI span of one segment will overlap that of the next.
+    final int pend = prev == null ? 0 : prev.getEnd();
+    final String cipos = "" + (pend - current.getStart())
       + ","
-      + (s.firstBinLength() / 2);
+      + (current.firstBinLength() / 2);
     rec.setInfo(INFO_CIPOS, cipos);
 
-    final String ciend = "" + MathUtils.round((double) -s.lastBinLength() / 2.0)
+    final int nstart = next == null ? mCurrentSequenceLength : next.getStart();
+    final String ciend = "" + (-current.lastBinLength() / 2)
       + ","
-      + MathUtils.round(next == null ? (double) mCurrentSequenceLength - s.getEnd() : next.distanceToPrevious() - s.firstBinLength() / 2.0);
+      + (nstart - current.getEnd());
     rec.setInfo(INFO_CIEND, ciend);
 
-    rec.setInfo(INFO_BC, "" + s.bins());
+    rec.setInfo(INFO_BC, "" + current.bins());
 
     rec.setNumberOfSamples(1);
     rec.addFormatAndSample(FORMAT_GENOTYPE, altered ? "1" : "0");
-    rec.addFormatAndSample(FORMAT_LOGR, Utils.realFormat(s.mean(), 4));
-    rec.addFormatAndSample(FORMAT_RDR, Utils.realFormat(rdr(s.mean()), 4));
-    rec.addFormatAndSample(FORMAT_SQS, Utils.realFormat(sqs(s.mean()), 4)); // For now, just use abs of LogR as proxy for quality
+    rec.addFormatAndSample(FORMAT_LOGR, Utils.realFormat(current.mean(), 4));
+    rec.addFormatAndSample(FORMAT_RDR, Utils.realFormat(rdr(current.mean()), 4));
+    rec.addFormatAndSample(FORMAT_SQS, Utils.realFormat(sqs(current.mean()), 4)); // For now, just use abs of LogR as proxy for quality
 
     return rec;
   }

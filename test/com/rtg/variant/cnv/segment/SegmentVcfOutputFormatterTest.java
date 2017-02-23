@@ -14,17 +14,15 @@ package com.rtg.variant.cnv.segment;
 
 import java.io.IOException;
 
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.reader.ArraySequencesReader;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
-import com.rtg.vcf.VcfRecord;
-
-import junit.framework.TestCase;
 
 /**
  * Test the corresponding class.
  */
-public class SegmentVcfOutputFormatterTest extends TestCase {
+public class SegmentVcfOutputFormatterTest extends AbstractNanoTest {
 
   public void test() throws IOException {
     final SegmentVcfOutputFormatter formatter = new SegmentVcfOutputFormatter(new ArraySequencesReader(StringUtils.repeat("A", 1000), StringUtils.repeat("G", 1000), StringUtils.repeat("AG", 500)), 0.0, 1, "SAMPLE");
@@ -47,7 +45,9 @@ public class SegmentVcfOutputFormatterTest extends TestCase {
       "##FORMAT=<ID=LR,Number=1,Type=Float,Description=\"Log2 of RD ratio with respect to control\">",
       "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\tSAMPLE"
       );
-    final VcfRecord vcfRecord = formatter.vcfRecord("sequence 1", new Segment(1, 42, 43.0, 44.0), new Segment(60, 70, 80.0, 20.0));
-    assertEquals("sequence 1\t1\t.\tG\t<DUP>\t.\t.\tSVTYPE=DUP;END=43;IMPRECISE;CIPOS=-64,20;CIEND=-20,0;BC=1\tGT:LR:RDR:SQS\t1:43.0000:8796093022208.0000:43.0000", vcfRecord.toString());
+    final StringBuilder sb = new StringBuilder();
+    sb.append(formatter.vcfRecord("sequence 1", null, new Segment(1, 42, 4.3, 0), new Segment(60, 70, 8.0, 48.0))).append('\n');
+    sb.append(formatter.vcfRecord("sequence 1", new Segment(1, 42, 4.3, 0), new Segment(60, 70, 8.0, 48.0), null)).append('\n');
+    mNano.check("svof-example.txt", sb.toString());
   }
 }

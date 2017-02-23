@@ -418,8 +418,10 @@ public class SegmentCli extends LoggedCli {
   private void processSequence(final String seqName, final SegmentChain sg, final int limit) throws IOException {
     sg.collapse(limit);
     for (int i = 0; i < sg.size(); ++i) {
-      final Segment s = sg.get(i);
-      final VcfRecord record = mFormatter.vcfRecord(seqName, s, i + 1 < sg.size() ? sg.get(i + 1) : null);
+      final VcfRecord record = mFormatter.vcfRecord(seqName,
+        i == 0 ? null : sg.get(i - 1),
+        sg.get(i),
+        i + 1 < sg.size() ? sg.get(i + 1) : null);
       mStatusCounts.add(CnaType.valueOf(record));
       mVcfOut.write(record);
     }
