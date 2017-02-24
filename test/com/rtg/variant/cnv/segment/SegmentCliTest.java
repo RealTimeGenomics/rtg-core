@@ -93,4 +93,22 @@ public class SegmentCliTest extends AbstractCliTest {
       mNano.check("expected.out.txt", result.out());
     }
   }
+
+  public void testPanelOperation() throws IOException {
+    try (final TestDirectory dir = new TestDirectory()) {
+      final File reference = new File(dir, "reference");
+      ReaderTestUtils.getReaderDNA(mNano.loadReference("ref.fa"), reference, new SdfId(0));
+
+      final File panel = FileHelper.resourceToFile("com/rtg/variant/cnv/segment/resources/panel.bed", new File(dir, "panel.bed"));
+      final File sample = FileHelper.resourceToFile("com/rtg/variant/cnv/segment/resources/case.bed", new File(dir, "case.bed"));
+      final File output = new File(dir, "output");
+
+      // gc correction does not work well here because the regions are small, so turn it off
+      final MainResult result = MainResult.run(getCli(), "-t", reference.getPath(), "-o", output.getPath(), "--panel", panel.getPath(), "--case", sample.getPath(), "--sample", "foo", "-Z", "--beta", "0.1", "--Xgcbins", "0", "--min-control-coverage", "0.001");
+      mNano.check("expected.unsegmented-panel.bed", FileUtils.fileToString(new File(output, "unsegmented.bed")));
+      mNano.check("expected.segments-panel.vcf", TestUtils.sanitizeVcfHeader(FileUtils.fileToString(new File(output, "segments.vcf"))));
+      mNano.check("expected.summary-panel.txt", FileUtils.fileToString(new File(output, "summary.txt")));
+      mNano.check("expected.out-panel.txt", result.out());
+    }
+  }
 }
