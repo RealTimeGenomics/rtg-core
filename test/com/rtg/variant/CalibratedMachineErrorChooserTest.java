@@ -17,7 +17,7 @@ import java.io.IOException;
 
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Covariate;
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 import com.rtg.sam.ReadGroupUtils;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.diagnostic.Diagnostic;

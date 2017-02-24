@@ -19,7 +19,7 @@ import java.io.PrintStream;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.ngs.MapStatistics;
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 import com.rtg.ngs.MapStatisticsField;
 import com.rtg.ngs.NgsFilterParams;
 import com.rtg.ngs.NgsOutputParams;

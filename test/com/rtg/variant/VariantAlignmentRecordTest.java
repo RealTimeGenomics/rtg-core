@@ -14,7 +14,7 @@ package com.rtg.variant;
 import java.util.Arrays;
 
 import com.rtg.mode.DnaUtils;
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 import com.rtg.reader.CgUtils;
 import com.rtg.reader.FastaUtils;
 import com.rtg.sam.ReadGroupUtils;

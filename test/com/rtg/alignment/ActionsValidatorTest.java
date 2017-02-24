@@ -14,10 +14,10 @@ package com.rtg.alignment;
 import java.io.IOException;
 
 import com.rtg.mode.DnaUtils;
+import com.rtg.mode.Protein;
 import com.rtg.mode.ProteinScoringMatrix;
 import com.rtg.ngs.NgsParams;
 import com.rtg.ngs.NgsParamsBuilder;
-import com.rtg.protein.GotohProteinEditDistanceTest;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.MaxShiftFactor;
 import com.rtg.util.StringUtils;
@@ -297,8 +297,8 @@ public class ActionsValidatorTest extends TestCase {
       editDist = EditDistanceFactory.createProteinEditDistance(matrix);
       validator = new ActionsValidator(matrix);
       // encode as Protein
-      read = GotohProteinEditDistanceTest.encodeProteins(readString);
-      temp = GotohProteinEditDistanceTest.encodeProteins(templateString);
+      read = Protein.encodeProteins(readString);
+      temp = Protein.encodeProteins(templateString);
       msf = new MaxShiftFactor(0.7);
     }
     int[] a0 = editDist.calculateEditDistance(read, read.length, temp, 0, rc, maxScore, msf.calculateMaxShift(read.length), true);

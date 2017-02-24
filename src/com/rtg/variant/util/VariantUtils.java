@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.Locale;
 
 import com.rtg.mode.DnaUtils;
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 import com.rtg.sam.MateInfo;
 import com.rtg.util.MathUtils;
 import com.rtg.util.StringUtils;

@@ -23,6 +23,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.machine.MachineType;
 import com.rtg.variant.realign.RealignParams;
+import com.rtg.variant.realign.RealignParamsImplementation;
 import com.rtg.variant.util.VariantUtils;
 
 import htsjdk.samtools.SAMFileHeader;
@@ -34,6 +35,7 @@ import htsjdk.samtools.SAMReadGroupRecord;
 public class ReadGroupMachineErrorChooser implements MachineErrorChooserInterface {
 
   private final Map<String, MachineErrorParams> mMachineErrors = new HashMap<>();
+  private final Map<String, RealignParams> mRealignParams = new HashMap<>();
 
   /**
    * Constructor
@@ -57,7 +59,9 @@ public class ReadGroupMachineErrorChooser implements MachineErrorChooserInterfac
       if (fPlatform != null) {
         final MachineType mt = ReadGroupUtils.platformToMachineType(record, record.getPredictedMedianInsertSize() != null);
         if (mt != null) {
-          mMachineErrors.put(record.getId(), MachineErrorParams.builder(mt.priors()).create());
+          final MachineErrorParams me = MachineErrorParams.builder(mt.priors()).create();
+          mMachineErrors.put(record.getId(), me);
+          mRealignParams.put(record.getId(), new RealignParamsImplementation(me));
         } else {
           throw new NoTalkbackSlimException("Read group: " + record.getId() + " has unrecognized platform. Unable to determine machine error rate. Try explicitly specifying machine type");
         }
@@ -83,8 +87,17 @@ public class ReadGroupMachineErrorChooser implements MachineErrorChooserInterfac
   }
 
   @Override
-  public RealignParams realignParams(SAMReadGroupRecord rg, boolean readPaired) {
-    return machineErrors(rg, readPaired).realignParams();
+  public RealignParams realignParams(SAMReadGroupRecord rgr, boolean readPaired) {
+    final String rg = rgr == null ? null : rgr.getId();
+    if (rg == null) {
+      throw new NoTalkbackSlimException("Sam record had no read group attribute, but header read groups were supplied.");
+    }
+
+    final RealignParams rp = mRealignParams.get(rg);
+    if (rp == null) {
+      throw new NoTalkbackSlimException("Sam record referenced read group \"" + rg + "\" which was not found in the header.");
+    }
+    return rp;
   }
 
   @Override

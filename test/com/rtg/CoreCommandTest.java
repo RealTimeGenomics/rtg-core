@@ -49,7 +49,7 @@ public class CoreCommandTest extends TestCase {
     assertEquals(0, CoreCommand.HELP.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CG2SDF.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CGMAP.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.CGSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.CGSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CNV.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CALIBRATE.mainInit(new String[0], baos, ps));
     assertEquals(1, ToolsCommand.MENDELIAN.mainInit(new String[0], baos, ps));
@@ -57,7 +57,7 @@ public class CoreCommandTest extends TestCase {
     assertEquals(1, CoreCommand.COVERAGE.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CHRSTATS.mainInit(new String[0], baos, ps));
     assertEquals(1, ToolsCommand.FORMAT.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.GENOMESIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.GENOMESIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.MAPX.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.COMPOSITIONMETA.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.FUNCTIONALMETA.mainInit(new String[0], baos, ps));
@@ -66,7 +66,7 @@ public class CoreCommandTest extends TestCase {
     assertEquals(1, CoreCommand.SIMILARITY.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.MAP.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.MAPF.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.READSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.READSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SAM2BAM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SAMRENAME.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SAMMERGE.mainInit(new String[0], baos, ps));
@@ -87,14 +87,14 @@ public class CoreCommandTest extends TestCase {
     assertEquals(1, CoreCommand.TAXSTATS.mainInit(new String[0], baos, ps));
     assertEquals(1, ToolsCommand.VCFSTATS.mainInit(new String[0], baos, ps));
     assertEquals(1, ToolsCommand.VCFMERGE.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.POPSIM.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SAMPLESIM.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.CHILDSIM.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.DENOVOSIM.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.SAMPLEREPLAY.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.POPSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.SAMPLESIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.CHILDSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.DENOVOSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.SAMPLEREPLAY.mainInit(new String[0], baos, ps));
     assertEquals(1, ToolsCommand.VCFEVAL.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SINGLETON.mainInit(new String[0], baos, ps));
-    assertEquals(1, CoreCommand.READSIM.mainInit(new String[0], baos, ps));
+    assertEquals(1, ToolsCommand.READSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CNVSIM.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.SEGMENT.mainInit(new String[0], baos, ps));
     assertEquals(1, CoreCommand.CNVSUMMARY.mainInit(new String[0], baos, ps));

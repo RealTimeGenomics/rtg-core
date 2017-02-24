@@ -11,9 +11,9 @@
  */
 package com.rtg.protein;
 
-import com.rtg.alignment.ActionsHelper;
 import com.rtg.alignment.EditDistance;
 import com.rtg.alignment.GotohEditDistance;
+import com.rtg.mode.Protein;
 import com.rtg.mode.ProteinScoringMatrix;
 
 /**
@@ -67,7 +67,7 @@ public class GotohProteinEditDistance extends GotohEditDistance implements EditD
    */
   @Override
   protected char residue(final byte[] a, final int pos) {
-    return (char) ActionsHelper.pbase(a, pos);
+    return (char) Protein.pbase(a, pos);
   }
 
 }

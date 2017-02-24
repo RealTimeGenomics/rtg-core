@@ -33,11 +33,11 @@ import com.rtg.mode.DnaUtils;
 public final class SuperCigar {
 
   /** Super CIGAR value for OVERLAP IN READ */
-  public static final char OVERLAP_IN_READ = 'B';
+  public static final char OVERLAP_IN_READ = SamUtils.CIGAR_OVERLAP_IN_READ;
   /** Super CIGAR value for UNKNOWN IN TEMPLATE */
-  public static final char UNKNOWN_TEMPLATE = 'T';
+  public static final char UNKNOWN_TEMPLATE = SamUtils.CIGAR_UNKNOWN_TEMPLATE;
   /** Super CIGAR value for UNKNOWN IN READ - note if both template AND read are unknown, you should use this value. */
-  public static final char UNKNOWN_READ = 'R';
+  public static final char UNKNOWN_READ = SamUtils.CIGAR_UNKNOWN_READ;
 
   private SuperCigar() {
   }

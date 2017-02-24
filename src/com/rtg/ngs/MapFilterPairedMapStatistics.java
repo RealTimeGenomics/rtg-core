@@ -15,6 +15,7 @@ import static com.rtg.ngs.MapStatisticsField.TOTAL_READS;
 
 import java.io.File;
 
+import com.rtg.reader.Arm;
 import com.rtg.util.StringUtils;
 
 /**

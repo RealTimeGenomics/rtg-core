@@ -12,7 +12,7 @@
 
 package com.rtg.variant;
 
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 
 import junit.framework.TestCase;
 

@@ -13,6 +13,7 @@ package com.rtg.ngs;
 
 
 import com.rtg.pairedend.ReadStatusListener;
+import com.rtg.reader.Arm;
 import com.rtg.util.License;
 import com.rtg.util.diagnostic.Diagnostic;
 

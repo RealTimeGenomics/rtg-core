@@ -15,7 +15,7 @@ import com.rtg.calibrate.CalibrationStats;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
 import com.rtg.calibrate.StatsProcessor;
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 
 
 /**

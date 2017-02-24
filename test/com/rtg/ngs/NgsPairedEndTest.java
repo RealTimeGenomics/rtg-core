@@ -22,6 +22,7 @@ import java.util.Collections;
 import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
+import com.rtg.reader.Arm;
 import com.rtg.reader.PrereadArm;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;

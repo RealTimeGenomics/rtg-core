@@ -15,7 +15,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 import com.rtg.ngs.MapStatisticsField;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;

@@ -40,18 +40,6 @@ public class GotohProteinEditDistanceTest extends TestCase {
     Diagnostic.setLogStream();
   }
 
-  public static byte encodeProtein(final char c) {
-    return (byte) Protein.valueOf(String.valueOf(c)).ordinal();
-  }
-
-  public static byte[] encodeProteins(final String str) {
-    final byte[] b = new byte[str.length()];
-    for (int i = 0; i < str.length(); ++i) {
-      b[i] = encodeProtein(str.charAt(i));
-    }
-    return b;
-  }
-
   private static String[] writeIgnore(final ProteinAlignmentResult res) throws IOException {
     final ByteArrayOutputStream bos = new ByteArrayOutputStream();
     try {
@@ -67,8 +55,8 @@ public class GotohProteinEditDistanceTest extends TestCase {
   }
 
   private void check(final String a, final String b, final String read, final String template, final String match, final int distance) throws InvalidParamsException, IOException {
-    final byte[] s1 = encodeProteins(a.toUpperCase(Locale.getDefault()));
-    final byte[] s2 = encodeProteins(b.toUpperCase(Locale.getDefault()));
+    final byte[] s1 = Protein.encodeProteins(a.toUpperCase(Locale.getDefault()));
+    final byte[] s2 = Protein.encodeProteins(b.toUpperCase(Locale.getDefault()));
     final EditDistance f = getED(new ProteinScoringMatrix());
     final int[] r = f.calculateEditDistance(s1, s1.length, s2, 0, false, Integer.MAX_VALUE, 7, true);
     final SharedProteinResources resx = new SharedProteinResources(new ProteinScoringMatrix(), singleSequence(s2), singleSequence(s1), false);
@@ -106,7 +94,7 @@ public class GotohProteinEditDistanceTest extends TestCase {
   private int proteinExactMatchScore(final String s) {
     int score = 0;
     final Blosum62 matrix = Blosum62.SINGLETON;
-    for (final byte b : encodeProteins(s.replace("+", "").replace(" ", "").replace("-", "").toUpperCase(Locale.getDefault()))) {
+    for (final byte b : Protein.encodeProteins(s.replace("+", "").replace(" ", "").replace("-", "").toUpperCase(Locale.getDefault()))) {
       score -= matrix.score(b, b);
     }
     return score;

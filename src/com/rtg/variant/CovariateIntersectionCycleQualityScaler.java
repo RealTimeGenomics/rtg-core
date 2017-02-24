@@ -15,7 +15,7 @@ import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.CovariateEnum;
 import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.globals.CoreGlobalFlags;
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 
 
 /**

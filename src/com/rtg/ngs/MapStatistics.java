@@ -12,6 +12,7 @@
 package com.rtg.ngs;
 
 import com.rtg.launcher.Statistics;
+import com.rtg.reader.Arm;
 
 /**
  */

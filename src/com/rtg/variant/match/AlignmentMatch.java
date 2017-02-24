@@ -11,7 +11,7 @@
  */
 package com.rtg.variant.match;
 
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 import com.rtg.reader.FastaUtils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.Integrity;

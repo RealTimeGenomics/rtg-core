@@ -16,7 +16,7 @@ import java.io.OutputStream;
 
 import com.rtg.mode.TranslatedFrame;
 import com.rtg.ngs.MapStatistics;
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 import com.rtg.ngs.MapStatisticsField;
 import com.rtg.reader.PrereadNamesInterface;
 import com.rtg.util.StringUtils;

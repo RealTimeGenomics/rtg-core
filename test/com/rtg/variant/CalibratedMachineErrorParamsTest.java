@@ -22,7 +22,7 @@ import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Covariate;
 import com.rtg.calibrate.CovariateBaseQuality;
 import com.rtg.calibrate.CovariateEnum;
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 import com.rtg.util.Histogram;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.machine.MachineType;

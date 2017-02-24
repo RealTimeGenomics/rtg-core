@@ -15,7 +15,7 @@ import static com.rtg.util.StringUtils.LS;
 
 import java.io.ByteArrayOutputStream;
 
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 import com.rtg.ngs.MapStatisticsField;
 import com.rtg.util.IORunnable;
 import com.rtg.util.SimpleThreadPool;

@@ -18,11 +18,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.sam.ReadGroupUtils;
 import com.rtg.util.InvalidParamsException;
+import com.rtg.util.Pair;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.machine.MachineType;
 import com.rtg.variant.realign.RealignParams;
+import com.rtg.variant.realign.RealignParamsImplementation;
 import com.rtg.variant.util.VariantUtils;
 
 import htsjdk.samtools.SAMReadGroupRecord;
@@ -53,7 +55,7 @@ public class CalibratedMachineErrorChooser implements MachineErrorChooserInterfa
 
   private final Calibrator mCalibrator;
 
-  private final Map<String, AbstractMachineErrorParams> mReadGroupMachineErrorParams;
+  private final Map<String, Pair<AbstractMachineErrorParams, RealignParams>> mReadGroupMachineErrorParams;
 
   /**
    * Constructor
@@ -64,15 +66,15 @@ public class CalibratedMachineErrorChooser implements MachineErrorChooserInterfa
     mReadGroupMachineErrorParams = new ConcurrentHashMap<>();
   }
 
-  @Override
-  public AbstractMachineErrorParams machineErrors(SAMReadGroupRecord rg, boolean readPaired) {
+  private Pair<AbstractMachineErrorParams, RealignParams> lookup(SAMReadGroupRecord rg, boolean readPaired) {
     if (rg == null) {
       throw new NoTalkbackSlimException("Read group required in SAM file");
     }
     final String rgId = rg.getId();
-    AbstractMachineErrorParams cal = mReadGroupMachineErrorParams.get(rgId);
-    if (cal == null) {
+    Pair<AbstractMachineErrorParams, RealignParams> cr = mReadGroupMachineErrorParams.get(rgId);
+    if (cr == null) {
       final MachineType mt = ReadGroupUtils.platformToMachineType(rg, readPaired);
+      final AbstractMachineErrorParams cal;
       if (mt == MachineType.COMPLETE_GENOMICS && CG_BYPASS_HACK) {
         Diagnostic.developerLog("CG calibration bypass enabled, using default CG errors");
         cal = getDefaultCompleteParams(mt);
@@ -80,14 +82,20 @@ public class CalibratedMachineErrorChooser implements MachineErrorChooserInterfa
         cal = new CalibratedMachineErrorParams(mt, mCalibrator, rgId);
       }
       Diagnostic.developerLog("Machine errors for read group: " + rgId + StringUtils.LS + VariantUtils.dumpMachineErrors(cal));
-      mReadGroupMachineErrorParams.put(rgId, cal);
+      cr = new Pair<>(cal, new RealignParamsImplementation(cal));
+      mReadGroupMachineErrorParams.put(rgId, cr);
     }
-    return cal;
+    return cr;
+  }
+
+  @Override
+  public AbstractMachineErrorParams machineErrors(SAMReadGroupRecord rg, boolean readPaired) {
+    return lookup(rg, readPaired).getA();
   }
 
   @Override
   public RealignParams realignParams(SAMReadGroupRecord rg, boolean readPaired) {
-    return machineErrors(rg, readPaired).realignParams();
+    return lookup(rg, readPaired).getB();
   }
 
   @Override

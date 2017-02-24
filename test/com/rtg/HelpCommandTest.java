@@ -68,7 +68,7 @@ public class HelpCommandTest extends TestCase {
     final PrintStream ps = new PrintStream(bos);
     System.setErr(ps);
     try {
-      HelpCommand.outputUnlicensedModule(CoreCommand.GENOMESIM);
+      HelpCommand.outputUnlicensedModule(ToolsCommand.GENOMESIM);
       fail();
     } catch (RuntimeException e) {
       //expected

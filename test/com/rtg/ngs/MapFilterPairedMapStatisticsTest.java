@@ -11,6 +11,7 @@
  */
 package com.rtg.ngs;
 
+import com.rtg.reader.Arm;
 import com.rtg.util.TestUtils;
 
 import junit.framework.TestCase;

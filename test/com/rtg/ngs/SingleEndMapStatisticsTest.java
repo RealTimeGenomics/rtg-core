@@ -14,6 +14,7 @@ package com.rtg.ngs;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 
+import com.rtg.reader.Arm;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 

@@ -20,6 +20,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.machine.MachineType;
 import com.rtg.variant.realign.RealignParams;
+import com.rtg.variant.realign.RealignParamsImplementation;
 import com.rtg.variant.util.VariantUtils;
 
 import htsjdk.samtools.SAMReadGroupRecord;
@@ -30,6 +31,7 @@ import htsjdk.samtools.SAMReadGroupRecord;
 public class DefaultMachineErrorChooser implements MachineErrorChooserInterface {
 
   private final MachineErrorParams mMachineError;
+  private final RealignParams mRealignParams;
   private String mPlatform = null;
   private boolean mWarned;
 
@@ -45,6 +47,7 @@ public class DefaultMachineErrorChooser implements MachineErrorChooserInterface 
    */
   public DefaultMachineErrorChooser(final MachineErrorParams machineError) {
     mMachineError = machineError;
+    mRealignParams = new RealignParamsImplementation(mMachineError);
     Diagnostic.developerLog("Machine errors for all read groups: " + StringUtils.LS + VariantUtils.dumpMachineErrors(mMachineError));
   }
 
@@ -55,6 +58,7 @@ public class DefaultMachineErrorChooser implements MachineErrorChooserInterface 
   public DefaultMachineErrorChooser(final String errorName) throws IOException {
     try {
       mMachineError = MachineErrorParams.builder(errorName).create();
+      mRealignParams = new RealignParamsImplementation(mMachineError);
       Diagnostic.developerLog("Machine errors for all read groups: " + errorName + StringUtils.LS + VariantUtils.dumpMachineErrors(mMachineError));
     } catch (final InvalidParamsException e) {
       throw new NoTalkbackSlimException(e.getMessage());
@@ -85,7 +89,7 @@ public class DefaultMachineErrorChooser implements MachineErrorChooserInterface 
 
   @Override
   public RealignParams realignParams(SAMReadGroupRecord rg, boolean readPaired) {
-    return machineErrors(rg, readPaired).realignParams();
+    return mRealignParams;
   }
 
   @Override

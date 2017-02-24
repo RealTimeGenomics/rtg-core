@@ -20,15 +20,13 @@ import com.rtg.calibrate.Covariate;
 import com.rtg.calibrate.CovariateEnum;
 import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.launcher.globals.GlobalFlags;
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 import com.rtg.util.Histogram;
 import com.rtg.util.MathUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.machine.MachineType;
-import com.rtg.variant.realign.RealignParams;
-import com.rtg.variant.realign.RealignParamsImplementation;
 import com.rtg.variant.util.VariantUtils;
 
 /**
@@ -56,8 +54,6 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
   private final double mDelEventRate;
   private final double mInsEventRate;
   private final double mMnpEventRate;
-
-  private final RealignParams mRealignParams;
 
   /**
    * Constructor
@@ -124,7 +120,6 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     mDelEventRate = mDelBaseRate / GenomePriorParamsBuilder.averageLength(mErrorDelDist);
 
     mScaler = getScaler(calibrator, readGroupId);
-    mRealignParams = new RealignParamsImplementation(this);
   }
 
   private static PhredScaler getScaler(Calibrator cal, String readGroup) {
@@ -353,11 +348,6 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
   @Override
   protected int[] qualityCurve() {
     throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public RealignParams realignParams() {
-    return mRealignParams;
   }
 
   private static final String DUMP_MERGED = "dump-merged";

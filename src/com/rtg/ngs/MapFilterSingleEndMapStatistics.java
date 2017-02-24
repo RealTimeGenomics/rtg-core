@@ -13,6 +13,7 @@ package com.rtg.ngs;
 
 import java.io.File;
 
+import com.rtg.reader.Arm;
 import com.rtg.util.StringUtils;
 
 /**

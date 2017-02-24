@@ -17,7 +17,7 @@ import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 import com.rtg.reader.CgUtils;
 import com.rtg.reader.FastaUtils;
 import com.rtg.sam.MateInfo;

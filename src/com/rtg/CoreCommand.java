@@ -41,14 +41,6 @@ import com.rtg.segregation.SegregationVcfSearch;
 import com.rtg.similarity.SimilarityCli;
 import com.rtg.simulation.ReadSimEvalCli;
 import com.rtg.simulation.cnv.CnvSimulatorCli;
-import com.rtg.simulation.genome.GenomeSimulator;
-import com.rtg.simulation.reads.CgSimCli;
-import com.rtg.simulation.reads.ReadSimCli;
-import com.rtg.simulation.variants.ChildSampleSimulatorCli;
-import com.rtg.simulation.variants.DeNovoSampleSimulatorCli;
-import com.rtg.simulation.variants.PriorPopulationVariantGeneratorCli;
-import com.rtg.simulation.variants.SampleReplayerCli;
-import com.rtg.simulation.variants.SampleSimulatorCli;
 import com.rtg.taxonomy.NcbiTaxDumpReaderCli;
 import com.rtg.taxonomy.TaxFilterCli;
 import com.rtg.taxonomy.TaxStatsCli;
@@ -187,32 +179,9 @@ public final class CoreCommand {
   /** Metagenomics composition + functional pipeline wrapper scripting module */
   static final Command METAGENOMICS = new Command(new MetagenomicsWrapperCli(), CommandCategory.PIPELINES, ReleaseLevel.BETA);
 
-  /** Generate simulated reads */
-  static final Command GENOMESIM = new Command(new GenomeSimulator(), CommandCategory.SIMULATE, ReleaseLevel.GA);
-
-  /** Generate Complete Genomics style simulated reads */
-  static final Command CGSIM = new Command(new CgSimCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
-
-  /** Generate simulated reads */
-  static final Command READSIM = new Command(new ReadSimCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
-
   /** Evaluate read mappings and produce ROC. */
   static final Command READSIMEVAL = new Command(new ReadSimEvalCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
 
-  /** Generate a VCF containing population variants for a reference */
-  static final Command POPSIM = new Command(new PriorPopulationVariantGeneratorCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
-
-  /** Generate a VCF containing a generated genotype for a new sample according to allele frequencies */
-  static final Command SAMPLESIM = new Command(new SampleSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
-
-  /** Generate a VCF containing a generated child genotype for a new sample from two parents */
-  static final Command CHILDSIM = new Command(new ChildSampleSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
-
-  /** Generate a VCF containing a derived genotype containing de novo variants */
-  static final Command DENOVOSIM = new Command(new DeNovoSampleSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
-
-  /** Generate a genome SDF corresponding to a genotype contained in a VCF file */
-  static final Command SAMPLEREPLAY = new Command(new SampleReplayerCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
 
   /** Generate a copy of a genome with a bunch of CNV mutations */
   static final Command CNVSIM = new Command(new CnvSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.ALPHA);
@@ -314,9 +283,9 @@ public final class CoreCommand {
     METAGENOMICS,
 
     // Simulation
-    GENOMESIM,                                           // Reference simulation
-    CGSIM, READSIM, READSIMEVAL,                         // Read simulation
-    POPSIM, SAMPLESIM, CHILDSIM, DENOVOSIM, SAMPLEREPLAY, // Variant simulation
+    ToolsCommand.GENOMESIM,                                           // Reference simulation
+    ToolsCommand.CGSIM, ToolsCommand.READSIM, READSIMEVAL,                         // Read simulation
+    ToolsCommand.POPSIM, ToolsCommand.SAMPLESIM, ToolsCommand.CHILDSIM, ToolsCommand.DENOVOSIM, ToolsCommand.SAMPLEREPLAY, // Variant simulation
     CNVSIM,                                  // Structural variant simulation
 
     // Utility

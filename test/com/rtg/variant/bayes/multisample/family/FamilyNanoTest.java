@@ -13,18 +13,17 @@
 package com.rtg.variant.bayes.multisample.family;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 
 import com.rtg.launcher.AbstractNanoTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
@@ -103,11 +102,9 @@ public class FamilyNanoTest extends AbstractNanoTest {
         args = baseArgs;
       }
 
-      final MemoryPrintStream ps = new MemoryPrintStream();
-
       final FamilyCli cli = new FamilyCli();
-      final int code = cli.mainInit(args, new ByteArrayOutputStream(), ps.printStream());
-      assertEquals(ps.toString(), 0, code);
+      final MainResult r = MainResult.run(cli, args);
+      assertEquals(r.err(), 0, r.rc());
 
       final String result = FileUtils.fileToString(new File(out, "snps.vcf"));
       final String actualFixed = TestUtils.stripVcfHeader(result);
@@ -149,10 +146,8 @@ public class FamilyNanoTest extends AbstractNanoTest {
           "--region", "GL000220.1",
           "--Xignore-incompatible-sam-headers" //bams are annoying to clean up, the input contains sequence dictionary entries not in the reference :(
       };
-      final FamilyCli cli = new FamilyCli();
-      final MemoryPrintStream ps = new MemoryPrintStream();
-      final int code = cli.mainInit(args, ps.outputStream(), ps.printStream());
-      assertEquals(ps.toString(), 0, code);
+      final MainResult r = MainResult.run(new FamilyCli(), args);
+      assertEquals(r.err(), 0, r.rc());
     }
     //}
   }

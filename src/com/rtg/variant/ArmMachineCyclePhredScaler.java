@@ -12,7 +12,7 @@
 
 package com.rtg.variant;
 
-import com.rtg.ngs.Arm;
+import com.rtg.reader.Arm;
 
 /**
  * Delegate phred scaling to separte quality scalers for each arm.
