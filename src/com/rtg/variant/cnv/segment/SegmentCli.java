@@ -96,6 +96,7 @@ public class SegmentCli extends LoggedCli {
   private RegionDataset mDataset;
   private int mDataCol;
   private CnvSummaryReport mReporter = null;
+  private OutputStream mOut;
 
 
   @Override
@@ -159,6 +160,7 @@ public class SegmentCli extends LoggedCli {
   @Override
   protected int mainExec(OutputStream out, LogStream logStream) throws IOException {
 
+    mOut = out;
     try (final SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReader((File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG))) {
       mReference = sr;
 
@@ -408,7 +410,7 @@ public class SegmentCli extends LoggedCli {
 
     Diagnostic.userLog("SEGMENTATION SUMMARY");
     Diagnostic.userLog(summary.toString());
-    try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(new File(outputDirectory(), CommonFlags.SUMMARY_FILE), false), FileUtils.getStdoutAsOutputStream()))) {
+    try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(new File(outputDirectory(), CommonFlags.SUMMARY_FILE), false), mOut))) {
       summaryOut.print(summary);
     }
   }

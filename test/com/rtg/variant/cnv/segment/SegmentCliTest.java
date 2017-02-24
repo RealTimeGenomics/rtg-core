@@ -86,7 +86,7 @@ public class SegmentCliTest extends AbstractCliTest {
       final File output = new File(dir, "output");
 
       // gc correction does not work well here because the regions are small, so turn it off
-      final MainResult result = checkMainInit("-t", reference.getPath(), "-o", output.getPath(), "--control", control.getPath(), "--case", sample.getPath(), "--sample", "foo", "-Z", "--beta", "0.1", "--Xgcbins", "0");
+      final MainResult result = MainResult.run(getCli(), "-t", reference.getPath(), "-o", output.getPath(), "--control", control.getPath(), "--case", sample.getPath(), "--sample", "foo", "-Z", "--beta", "0.1", "--Xgcbins", "0");
       mNano.check("expected.unsegmented.bed", FileUtils.fileToString(new File(output, "unsegmented.bed")));
       mNano.check("expected.segments.vcf", TestUtils.sanitizeVcfHeader(FileUtils.fileToString(new File(output, "segments.vcf"))));
       mNano.check("expected.summary.txt", FileUtils.fileToString(new File(output, "summary.txt")));
