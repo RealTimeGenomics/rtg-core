@@ -58,10 +58,6 @@ public class NativeZooma {
   public native int buildIndex(String indexFile, String templateFasta, String include, String exclude, int word, int step);
 
   /**
-   */
-
-
-  /**
    * Map paired-end reads
    * @param indexFilename filename for reference index
    * @param leftFasta file name of left arm FASTQ

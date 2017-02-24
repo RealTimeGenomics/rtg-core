@@ -16,9 +16,11 @@ import java.io.IOException;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
-import com.rtg.util.test.RandomDna;
+import com.rtg.util.SpawnJvm;
+import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
+import com.rtg.util.test.RandomDna;
 
 /**
  */
@@ -29,19 +31,34 @@ public class ZoomaNativeBuildIndexCliTest extends AbstractCliTest {
     return new ZoomaNativeBuildIndexCli();
   }
 
-  public void test() throws IOException {
-    if (NativeZooma.isEnabled()) {
-      try (TestDirectory dir = new TestDirectory()) {
-        final String reference = RandomDna.random(1000);
-        final File referenceFile = new File(dir, "reference.fasta");
-        final File indexFile = new File(dir, "reference.bin");
-        FileUtils.stringToFile(">reference\n" + reference + "\n", referenceFile);
+  // called by main() in the spawned JVM
+  private void runActualTest() throws IOException {
+    setUp();
+    try (final TestDirectory dir = new TestDirectory()) {
+      final String reference = RandomDna.random(1000);
+      final File referenceFile = new File(dir, "reference.fasta");
+      final File indexFile = new File(dir, "reference.bin");
+      FileUtils.stringToFile(">reference\n" + reference + "\n", referenceFile);
+      checkMainInitOk("-i", referenceFile.toString(), "-o", indexFile.toString());
+    }
+  }
 
-        checkMainInitOk("-i", referenceFile.toString(), "-o", indexFile.toString());
-      }
+  // invoked by spawn in test() method
+  public static void main(final String[] args) throws IOException {
+    new ZoomaNativeBuildIndexCliTest().runActualTest();
+  }
+
+  public void test() throws IOException, InterruptedException {
+    if (NativeZooma.isEnabled()) {
+      final Process p = SpawnJvm.spawn(ZoomaNativeBuildIndexCliTest.class.getName());
+      final String out = FileUtils.streamToString(p.getErrorStream());
+      TestUtils.containsAll(out, "max nucleotides to hash: 1000", "saveindex time");
+      assertEquals("", FileUtils.streamToString(p.getInputStream()));
+      p.getOutputStream().close();
+      p.getInputStream().close();
+      p.getErrorStream().close();
     } else {
-      // fail(); //
-      System.err.println("skipping zbuild test (no native lib)");
+      System.err.println("skipping zooma test (no native lib)");
     }
   }
 }
