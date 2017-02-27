@@ -36,7 +36,6 @@
   <union id="core.jar-src">
     <fileset dir="${core.src.dir}">
       <include name="com/**/*.properties"/>
-      <include name="com/rtg/simulation/variants/*.txt"/>
       <include name="com/rtg/report/resources/*"/>
       <include name="com/rtg/metagenomics/krona/resources/krona-2.0.js" />
       <include name="com/rtg/metagenomics/krona/resources/hidden.png" />
