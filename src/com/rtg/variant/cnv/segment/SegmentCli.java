@@ -177,7 +177,7 @@ public class SegmentCli extends LoggedCli {
 
       } else if (mFlags.isSet(PANEL_FLAG)) {
         computeCasePanelDataset();
-      } else /*if (mFlags.isSet(CONTROL_FLAG))*/ {
+      } else {
         computeCaseControlDataset();
       }
 
@@ -201,7 +201,6 @@ public class SegmentCli extends LoggedCli {
     if (caseData.columnId(coverageColumnName) == -1) {
       throw new NoTalkbackSlimException("Could not find column named " + coverageColumnName + " in " + caseFile);
     }
-    //caseData.getColumns().removeIf((Column col) -> !col.getName().equals(COVERAGE_COLUMN_NAME));
     int caseCoverageCol = caseData.columnId(coverageColumnName);
     caseData.column(caseCoverageCol).setName("case_cover_raw");
 
@@ -227,7 +226,6 @@ public class SegmentCli extends LoggedCli {
     filtered = filtered.filter(row -> cc1.get(row) >= minCtrlCoverage);
     Diagnostic.userLog("Filtered with minimum control coverage " + minCtrlCoverage + ", dataset has " + filtered.size() + " rows");
 
-    // TODO deal with deletions properly
     final NumericColumn cc2 = filtered.asNumeric(caseCoverageCol);
     filtered = filtered.filter(row -> cc2.get(row) >= minCaseCoverage);
     Diagnostic.userLog("Filtered with minimum case coverage " + minCaseCoverage + ", dataset has " + filtered.size() + " rows");
@@ -274,7 +272,7 @@ public class SegmentCli extends LoggedCli {
     if (caseData.columnId(coverageColumnName) == -1) {
       throw new NoTalkbackSlimException("Could not find column named " + coverageColumnName + " in " + caseFile);
     }
-    //caseData.getColumns().removeIf((Column col) -> !col.getName().equals(COVERAGE_COLUMN_NAME));
+
     int caseCoverageCol = caseData.columnId(coverageColumnName);
     caseData.column(caseCoverageCol).setName("case_cover_raw");
 
