@@ -33,7 +33,7 @@ public enum CnaType {
    * @param rec the record
    * @return the determined copy number alteration type
    */
-  public static CnaType valueOf(VcfRecord rec) {
+  public static CnaType valueOf(final VcfRecord rec) {
     final ArrayList<String> svTypes = rec.getInfo().get(INFO_SVTYPE);
     if (svTypes == null || svTypes.size() != 1) {
       return CnaType.NONE;

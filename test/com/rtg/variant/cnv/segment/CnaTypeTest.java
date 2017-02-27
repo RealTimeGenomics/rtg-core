@@ -13,6 +13,7 @@
 package com.rtg.variant.cnv.segment;
 
 import com.rtg.util.TestUtils;
+import com.rtg.vcf.VcfRecord;
 
 import junit.framework.TestCase;
 
@@ -23,6 +24,20 @@ public class CnaTypeTest extends TestCase {
 
   public void test() {
     TestUtils.testEnum(CnaType.class, "[DEL, DUP, NONE]");
+    assertEquals("SVTYPE", CnaType.INFO_SVTYPE);
+    assertEquals("END", CnaType.INFO_END);
   }
 
+  public void testFromVcf() {
+    final VcfRecord rec = new VcfRecord("seq1", 42, "A");
+    assertEquals(CnaType.NONE, CnaType.valueOf(rec));
+    rec.addInfo("SVTYPE", "DUP");
+    assertEquals(CnaType.DUP, CnaType.valueOf(rec));
+    final VcfRecord rec2 = new VcfRecord("seq1", 42, "A");
+    rec2.addInfo("SVTYPE", "DEL");
+    assertEquals(CnaType.DEL, CnaType.valueOf(rec2));
+    final VcfRecord rec3 = new VcfRecord("seq1", 42, "A");
+    rec3.addInfo("SVTYPE", "FOO");
+    assertEquals(CnaType.NONE, CnaType.valueOf(rec3));
+  }
 }
