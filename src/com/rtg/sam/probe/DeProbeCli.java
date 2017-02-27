@@ -116,7 +116,7 @@ public class DeProbeCli extends LoggedCli {
     CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired('b', PROBE_BED, File.class, "FILE", "BED file specifying each probe location and strand").setCategory(INPUT_OUTPUT);
     flags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "start position tolerance for probe matching", 5).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(EXTRA_SOFT_CLIP_FLAG, "if set, add extra soft-clipping where mismatches occur at the end of reads").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(EXTRA_SOFT_CLIP_FLAG, "if set, add extra soft-clipping where mismatches occur at the end of reads").setCategory(CommonFlagCategories.FILTERING);
     CommonFlags.initMinReadLength(flags);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
