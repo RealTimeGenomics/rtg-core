@@ -113,4 +113,26 @@ public class SegmentCliTest extends AbstractCliTest {
       mNano.check("expected.out-panel.txt", result.out());
     }
   }
+
+  public void testGcBiasOperation() throws IOException {
+    // This is not the best test because the bins available in this small test are rather
+    // unpopulated, but it does at least exercise some of the GC code.
+    try (final TestDirectory dir = new TestDirectory()) {
+      final File reference = new File(dir, "reference");
+      ReaderTestUtils.getReaderDNA(mNano.loadReference("ref.fa"), reference, new SdfId(0));
+
+      final File control = FileHelper.resourceToFile("com/rtg/variant/cnv/segment/resources/control.bed", new File(dir, "control.bed"));
+      final File sample = FileHelper.resourceToFile("com/rtg/variant/cnv/segment/resources/case.bed", new File(dir, "case.bed"));
+      final File output = new File(dir, "output");
+
+      // gc correction does not work well here because the regions are small, so turn it off
+      final MainResult result = MainResult.run(getCli(), "-t", reference.getPath(), "-o", output.getPath(), "--control", control.getPath(), "--case", sample.getPath(), "--sample", "foo", "-Z", "--beta", "0.1", "--Xgcbins", "2");
+      assertEquals(0, result.rc());
+      mNano.check("expected.unsegmented-gc.bed", FileUtils.fileToString(new File(output, "unsegmented.bed")));
+      mNano.check("expected.segments-gc.vcf", TestUtils.sanitizeVcfHeader(FileUtils.fileToString(new File(output, "segments.vcf"))));
+      mNano.check("expected.summary-gc.txt", FileUtils.fileToString(new File(output, "summary.txt")));
+      mNano.check("expected.out-gc.txt", result.out());
+    }
+  }
+
 }

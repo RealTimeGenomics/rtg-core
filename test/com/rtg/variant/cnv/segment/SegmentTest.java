@@ -28,13 +28,17 @@ public class SegmentTest extends TestCase {
     assertEquals(0.0, s.meanDistanceBetween());
     assertEquals(42, s.getStart());
     assertEquals(43, s.getEnd());
-    final Segment m = s.merge(new Segment(43, 44, 50, 1));
+    final Segment m = s.merge(new Segment(43, 45, 50, 1));
     assertEquals(2, m.bins());
     assertEquals(150.0, m.sum());
     assertEquals(12500.0, m.sumSquares());
     assertEquals(75.0, m.mean());
     assertEquals(1.0, m.meanDistanceBetween());
     assertEquals(42, m.getStart());
-    assertEquals(44, m.getEnd());
+    assertEquals(45, m.getEnd());
+    assertEquals("2", m.toString());
+    assertEquals(1.0, m.distanceToPrevious());
+    assertEquals(1, m.firstBinLength());
+    assertEquals(2, m.lastBinLength());
   }
 }

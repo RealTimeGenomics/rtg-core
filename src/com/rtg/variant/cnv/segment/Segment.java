@@ -24,7 +24,7 @@ class Segment extends Range {
   private final double mDistanceToPrevious; // Note this is the distance between midpoints
   private final int mFirstBinLength;
   private final int mLastBinLength;
-  private final double mSumDistanceBetween; // d of VEGAWES, mSumDistanceBetween / mBins is mean distance between bins within this segment
+  private final double mSumDistanceBetween; // mSumDistanceBetween / mBins is mean distance between bins within this segment
 
   private Segment(int start, int end, double sum, double sumSquares, long bins, int firstBinLength, int lastBinLength, double distanceToPrevious, double distanceBetween) {
     super(start, end);
