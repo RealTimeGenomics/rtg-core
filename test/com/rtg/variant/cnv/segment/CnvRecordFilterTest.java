@@ -26,6 +26,7 @@ public class CnvRecordFilterTest extends TestCase {
   public void test() {
     Diagnostic.setLogStream();
     final CnvRecordFilter f = new CnvRecordFilter(Collections.singletonList("pretend"), true);
+    f.setHeader(null);
     final VcfRecord record = new VcfRecord("pretend", 42, "A");
     assertFalse(f.accept(record));
     record.addInfo(CnaType.INFO_END, "42");
@@ -33,6 +34,27 @@ public class CnvRecordFilterTest extends TestCase {
     record.addInfo(CnaType.INFO_SVTYPE, CnaType.DEL.toString());
     assertTrue(f.accept(record));
     final VcfRecord record2 = new VcfRecord("pretend2", 42, "A");
+    record2.addInfo(CnaType.INFO_END, "42");
+    record2.addInfo(CnaType.INFO_SVTYPE, CnaType.DEL.toString());
+    assertFalse(f.accept(record2));
+  }
+
+  public void testNoEnd() {
+    Diagnostic.setLogStream();
+    final CnvRecordFilter f = new CnvRecordFilter(Collections.singletonList("pretend"), true);
+    final VcfRecord record = new VcfRecord("pretend", 42, "A");
+    record.addInfo(CnaType.INFO_SVTYPE, CnaType.DEL.toString());
+    assertFalse(f.accept(record));
+  }
+
+  public void testOverlap() {
+    Diagnostic.setLogStream();
+    final CnvRecordFilter f = new CnvRecordFilter(Collections.singletonList("pretend"), true);
+    final VcfRecord record = new VcfRecord("pretend", 42, "A");
+    record.addInfo(CnaType.INFO_END, "48");
+    record.addInfo(CnaType.INFO_SVTYPE, CnaType.DEL.toString());
+    assertTrue(f.accept(record));
+    final VcfRecord record2 = new VcfRecord("pretend", 42, "A");
     record2.addInfo(CnaType.INFO_END, "42");
     record2.addInfo(CnaType.INFO_SVTYPE, CnaType.DEL.toString());
     assertFalse(f.accept(record2));

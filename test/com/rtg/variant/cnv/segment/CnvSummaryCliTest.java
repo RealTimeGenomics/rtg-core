@@ -12,11 +12,17 @@
 
 package com.rtg.variant.cnv.segment;
 
+import java.io.File;
 import java.io.IOException;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
+import com.rtg.launcher.MainResult;
+import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
+import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
+import com.rtg.util.test.FileHelper;
 
 /**
  * Tests the corresponding class.
@@ -32,6 +38,8 @@ public class CnvSummaryCliTest extends AbstractCliTest {
     checkHelp("intersection of CNVs",
       "VCF file containing CNV",
       "BED output file",
+      "BED file supplying gene-scale",
+      "also report no alteration regions",
       "do not gzip the output"
       );
   }
@@ -41,6 +49,18 @@ public class CnvSummaryCliTest extends AbstractCliTest {
     final String exp = getCFlags().getUsageHeader();
     assertTrue(res.contains(exp));
     TestUtils.containsAll(res, "Error: You must provide values for -i FILE -o FILE --summary-regions");
+  }
+
+  public void testActualRun() throws IOException {
+    try (final TestDirectory dir = new TestDirectory()) {
+      final File vcf = FileHelper.resourceToFile("com/rtg/variant/cnv/segment/resources/my.vcf", new File(dir, "my.vcf"));
+      final File regions = FileHelper.resourceToFile("com/rtg/variant/cnv/segment/resources/regions.bed", new File(dir, "regions.bed"));
+      final File output = new File(dir, "output.bed");
+      final MainResult result = MainResult.run(getCli(), "-i", vcf.getPath(), "-o", output.getPath(), "--summary-regions", regions.getPath(), "-Z");
+      mNano.check("expected.summary.bed", StringUtils.grepMinusV(FileUtils.fileToString(output), "^#"));
+      mNano.check("expected.sum-out.txt", result.out());
+    }
+
   }
 
 }
