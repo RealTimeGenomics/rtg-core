@@ -57,6 +57,7 @@ public class CnvSummaryCliTest extends AbstractCliTest {
       final File regions = FileHelper.resourceToFile("com/rtg/variant/cnv/segment/resources/regions.bed", new File(dir, "regions.bed"));
       final File output = new File(dir, "output.bed");
       final MainResult result = MainResult.run(getCli(), "-i", vcf.getPath(), "-o", output.getPath(), "--summary-regions", regions.getPath(), "-Z");
+      assertEquals(0, result.rc());
       mNano.check("expected.summary.bed", StringUtils.grepMinusV(FileUtils.fileToString(output), "^#"));
       mNano.check("expected.sum-out.txt", result.out());
     }
