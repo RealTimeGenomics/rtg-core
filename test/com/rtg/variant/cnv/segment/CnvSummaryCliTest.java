@@ -40,6 +40,8 @@ public class CnvSummaryCliTest extends AbstractCliTest {
       "BED output file",
       "BED file supplying gene-scale",
       "also report no alteration regions",
+      "Reporting",
+      "File Input/Output",
       "do not gzip the output"
       );
   }
