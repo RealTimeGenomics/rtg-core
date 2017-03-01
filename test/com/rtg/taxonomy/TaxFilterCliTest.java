@@ -90,7 +90,7 @@ public class TaxFilterCliTest extends AbstractCliTest {
     }
   }
 
-  public void testSubtree() throws Exception {
+  public void testSubTree() throws Exception {
     try (TestDirectory dir = new TestDirectory()) {
       final File subtreeids = new File(dir, "subtree.txt");
       FileHelper.resourceToFile("com/rtg/taxonomy/resources/ids_subtree.txt", subtreeids);
