@@ -35,6 +35,8 @@ public class SegmentChainTest extends TestCase {
     final Segment b = sc.get(1);
     assertEquals(3, b.bins());
     assertEquals(1.0, b.mean(), 1e-8);
+    sc.clear();
+    assertEquals(0, sc.size());
   }
 
   public void testMiddleEnergy() {
