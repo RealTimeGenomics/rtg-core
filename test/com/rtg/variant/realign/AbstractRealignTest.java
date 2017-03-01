@@ -26,7 +26,7 @@ public abstract class AbstractRealignTest extends TestCase {
   static final byte[] READ = DnaUtils.encodeString(ScoreMatrixTest.READ);
   static final byte[] TEMPLATE = DnaUtils.encodeString(ScoreMatrixTest.TEMPLATE);
 
-  protected abstract Delta getRealign(final Environment env, final RealignParams params);
+  protected abstract Delta getRealign(Environment env, RealignParams params);
 
   protected Delta getRealign(final EnvironmentImplementation env) {
     final RealignParams params = new MockRealignParams();

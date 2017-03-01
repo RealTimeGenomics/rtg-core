@@ -71,7 +71,7 @@ class AlleleStatReader implements AutoCloseable, MetaSnpReader {
     String str;
     do {
       str = mReader.readLine();
-    } while(str != null && str.startsWith("#"));
+    } while (str != null && str.startsWith("#"));
 
     if (str == null) {
       return null;

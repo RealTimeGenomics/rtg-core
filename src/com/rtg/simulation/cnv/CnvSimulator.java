@@ -367,8 +367,7 @@ public class CnvSimulator {
       pickedRegion.initializeAsCnved(mRandom);
 
       addCountStatistics(pickedRegion);
-    } while(mTotalCnvedCount < mSetCountCnved && mTotalCnvedLength < mSetCnvedSequenceLength);
-
+    } while (mTotalCnvedCount < mSetCountCnved && mTotalCnvedLength < mSetCnvedSequenceLength);
   }
 
   protected void taskePrepareCopying() {

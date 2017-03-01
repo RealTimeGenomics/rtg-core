@@ -59,13 +59,13 @@ public abstract class AbstractKappa extends IntegralAbstract {
    * @param i position in pi (often computed as m - l)
    * @return the value of pi.
    */
-  abstract double pi(final int i);
+  abstract double pi(int i);
 
   /**
    * Return the cumulative sum of pi (from l to positive infinity).
    * @param i position in <code>piSum</code>.
    * @return the value of sum from i (inclusive) to infinity..
    */
-  abstract double piSum(final int i);
+  abstract double piSum(int i);
 
 }
