@@ -15,6 +15,7 @@ package com.rtg.reader;
 import static org.junit.Assert.assertEquals;
 
 import java.io.StringWriter;
+import java.util.Arrays;
 
 import org.junit.Test;
 
@@ -34,4 +35,19 @@ public class AsyncFastqPairWriterTest {
     assertEquals("@foo\nTTTT\n+\naaaa\n", rightOut.toString());
   }
 
+  @Test
+  public void testAccept() {
+    final StringWriter leftOut = new StringWriter();
+    final StringWriter rightOut = new StringWriter();
+    final FastqWriter left = new FastqWriter(leftOut);
+    final FastqWriter right = new FastqWriter(rightOut);
+    try (final AsyncFastqPairWriter writer = new AsyncFastqPairWriter(left, right)) {
+      writer.accept(Arrays.asList(
+        new FastqPair(FastqSequenceTest.getFastq("foo", "ACGT"), FastqSequenceTest.getFastq("foo", "TTTT")),
+        new FastqPair(FastqSequenceTest.getFastq("bar", "CCCC"), FastqSequenceTest.getFastq("bar", "TTAA"))
+      ));
+    }
+    assertEquals("@foo\nACGT\n+\naaaa\n@bar\nCCCC\n+\naaaa\n", leftOut.toString());
+    assertEquals("@foo\nTTTT\n+\naaaa\n@bar\nTTAA\n+\naaaa\n", rightOut.toString());
+  }
 }
