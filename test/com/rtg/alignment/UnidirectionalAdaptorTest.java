@@ -50,7 +50,7 @@ public class UnidirectionalAdaptorTest {
   @Test
   public void adaptorTest() {
     final UnidirectionalAdaptor unidirectionalAdaptor = new UnidirectionalAdaptor(new MockUnidirectionalEditDistance());
-    assertArrayEquals( new int[] {1, 2, 3}, unidirectionalAdaptor.calculateEditDistance(new byte[0], 0, new byte[0], 0, false, 0, 0, false));
+    assertArrayEquals(new int[] {1, 2, 3}, unidirectionalAdaptor.calculateEditDistance(new byte[0], 0, new byte[0], 0, false, 0, 0, false));
   }
 
 }
