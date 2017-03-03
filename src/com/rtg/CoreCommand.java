@@ -28,6 +28,7 @@ import com.rtg.ngs.SamRename;
 import com.rtg.protein.MapXCli;
 import com.rtg.protein.MapxRename;
 import com.rtg.reader.Cg2Sdf;
+import com.rtg.reader.PairedEndTrimCli;
 import com.rtg.reader.SamToFastq;
 import com.rtg.reader.Sdf2Cg;
 import com.rtg.reader.Sdf2Quala;
@@ -79,6 +80,9 @@ public final class CoreCommand {
 
   /** For converting SDF formatted complete genomics reads back into CG TSV format */
   static final Command SDF2CG = new Command(new Sdf2Cg(), CommandCategory.FORMAT, ReleaseLevel.BETA);
+
+  /** Trimming of paired-end reads in FASTQ based on overlap */
+  static final Command PETRIM = new Command(new PairedEndTrimCli(), CommandCategory.FORMAT, ReleaseLevel.ALPHA);
 
   /** For converting RtgCore's data format into FASTA/QUALA format */
   static final Command SDF2QUALA = new Command(new Sdf2Quala(), CommandCategory.FORMAT, ReleaseLevel.ALPHA);
@@ -182,7 +186,6 @@ public final class CoreCommand {
   /** Evaluate read mappings and produce ROC. */
   static final Command READSIMEVAL = new Command(new ReadSimEvalCli(), CommandCategory.SIMULATE, ReleaseLevel.GA);
 
-
   /** Generate a copy of a genome with a bunch of CNV mutations */
   static final Command CNVSIM = new Command(new CnvSimulatorCli(), CommandCategory.SIMULATE, ReleaseLevel.ALPHA);
 
@@ -250,7 +253,8 @@ public final class CoreCommand {
   private static final Command[] DISPLAY_ORDER = {
     // Formatting
     ToolsCommand.FORMAT, CG2SDF, ToolsCommand.SDF2FASTA, ToolsCommand.SDF2FASTQ, ToolsCommand.SDF2SAM, SDF2QUALA, SDF2CG,
-    ToolsCommand.FASTQTRIM,
+    ToolsCommand.FASTQTRIM, PETRIM,
+
 
     // Mapping
     MAP, MAPF, CGMAP,
