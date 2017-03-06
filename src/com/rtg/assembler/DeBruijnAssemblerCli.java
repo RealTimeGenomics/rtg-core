@@ -154,11 +154,11 @@ public class DeBruijnAssemblerCli extends ParamsCli<DeBruijnParams> {
     initCommonFlags(flags);
     flags.registerOptional('s', XSTRING_KMER, "use string based kmers").setCategory(SENSITIVITY_TUNING);
     CommonFlagCategories.setCategories(flags);
-    final Flag inFlag = flags.registerRequired(File.class, "file", "SDF directories containing sequences to assemble");
+    final Flag<File> inFlag = flags.registerRequired(File.class, "file", "SDF directories containing sequences to assemble");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SDF directories (1 per line) containing sequences to assemble").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SDF directories (1 per line) containing sequences to assemble").setCategory(INPUT_OUTPUT);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
   }

@@ -108,7 +108,7 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
   /** Number of DP when displaying coverage levels */
   public static final String COVERAGE_DP = "com.rtg.coverage.depth-of-coverage-dp";
 
-  CoreGlobalFlags(List<Flag> flags) {
+  CoreGlobalFlags(List<Flag<?>> flags) {
     super(flags);
   }
 

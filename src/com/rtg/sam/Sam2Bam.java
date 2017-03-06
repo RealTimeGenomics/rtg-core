@@ -69,7 +69,7 @@ public class Sam2Bam extends AbstractCli {
     CommonFlagCategories.setCategories(flags);
     flags.setDescription("Produces an indexed BAM file from coordinate-sorted SAM/BAM files.");
     CommonFlags.initForce(flags);
-    final Flag inFlag = flags.registerRequired(File.class, FILE, "SAM/BAM format files containing mapped reads");
+    final Flag<File> inFlag = flags.registerRequired(File.class, FILE, "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(1);
     inFlag.setMaxCount(Integer.MAX_VALUE);

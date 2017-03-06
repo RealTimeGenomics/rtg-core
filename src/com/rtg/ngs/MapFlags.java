@@ -131,9 +131,6 @@ public final class MapFlags {
   static final String SINGLE_INDEL_PENALTIES_FLAG = "Xsingle-indel-penalties";
 
   static void initMapFlags(CFlags flags) {
-    flags.getFlag(CommonFlags.INDELS_FLAG).setParameterDefault(1);
-    flags.getFlag(SUBSTITUTIONS_FLAG).setParameterDefault(1);
-
     flags.registerOptional('e', MAX_ALIGNMENT_MISMATCHES, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches for mappings in single-end mode (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_MATED_MISMATCH_THRESHOLD)).setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional('E', UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches for mappings of unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_UNMATED_MISMATCH_THRESHOLD)).setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches for mappings across mated results, alias for --" + MAX_ALIGNMENT_MISMATCHES + " (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_MATED_MISMATCH_THRESHOLD)).setCategory(CommonFlagCategories.REPORTING);
@@ -170,7 +167,7 @@ public final class MapFlags {
     flags.registerOptional(MapFlags.UNKNOWNS_PENALTY_FLAG, Integer.class, CommonFlags.INT, "penalty for unknown nucleotides during alignment", EditDistanceFactory.DEFAULT_UNKNOWNS_PENALTY).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(MapFlags.SOFT_CLIP_DISTANCE_FLAG, Integer.class, CommonFlags.INT, "soft clip alignments if indels occur INT bp from either end", 5).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
 
-    flags.register(new Flag(null, MapFlags.ALIGNER_BAND_WIDTH_FACTOR_FLAG, "aligner indel band width scaling factor, fraction of read length allowed as an indel", 0, 1, Double.class, CommonFlags.FLOAT, 0.5, CommonFlagCategories.SENSITIVITY_TUNING));
+    flags.register(new Flag<>(null, MapFlags.ALIGNER_BAND_WIDTH_FACTOR_FLAG, "aligner indel band width scaling factor, fraction of read length allowed as an indel", 0, 1, Double.class, CommonFlags.FLOAT, 0.5, CommonFlagCategories.SENSITIVITY_TUNING));
   }
 
   /**
@@ -178,7 +175,7 @@ public final class MapFlags {
    * @param flags flags to set
    */
   public static void initInputOutputFlags(CFlags flags) {
-    final Flag input = flags.registerOptional('i', CommonFlags.READS_FLAG, File.class, CommonFlags.SDF_OR_FILE, "input read set").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> input = flags.registerOptional('i', CommonFlags.READS_FLAG, File.class, CommonFlags.SDF_OR_FILE, "input read set").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     CommonFlags.initOutputDirFlag(flags);
     initTemplateFlag(flags);
 
@@ -202,15 +199,15 @@ public final class MapFlags {
    */
   public static void initInputFormatFlags(CFlags flags) {
     //mapx already has a -f flag
-    final Flag formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", FormatCli.SDF_FORMAT).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<String> formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", FormatCli.SDF_FORMAT).setCategory(CommonFlagCategories.INPUT_OUTPUT);
     formatFlag.setParameterRange(FORMAT_OPTIONS);
     CommonFlags.initQualityFormatFlag(flags);
   }
 
   static void initPairedEndFormatFlags(CFlags flags)  {
     //IO format flags specific to paired end
-    final Flag inputL = flags.registerOptional('l', FormatCli.LEFT_FILE_FLAG, File.class, "FILE", "left input file for FASTA/FASTQ paired end reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    final Flag inputR = flags.registerOptional('r', FormatCli.RIGHT_FILE_FLAG, File.class, "FILE", "right input file for FASTA/FASTQ paired end reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> inputL = flags.registerOptional('l', FormatCli.LEFT_FILE_FLAG, File.class, "FILE", "left input file for FASTA/FASTQ paired end reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> inputR = flags.registerOptional('r', FormatCli.RIGHT_FILE_FLAG, File.class, "FILE", "right input file for FASTA/FASTQ paired end reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     flags.addRequiredSet(inputL, inputR);
   }
 
@@ -527,8 +524,8 @@ public final class MapFlags {
    * @param flags flags to add to
    */
   public static void initMaskFlagsOnly(CFlags flags) {
-    flags.registerOptional('a', SUBSTITUTIONS_FLAG, Integer.class, CommonFlags.INT, "guaranteed minimum number of substitutions which will be detected").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional('b', CommonFlags.INDELS_FLAG, Integer.class, CommonFlags.INT, "guaranteed minimum number of indels which will be detected").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional('a', SUBSTITUTIONS_FLAG, Integer.class, CommonFlags.INT, "guaranteed minimum number of substitutions which will be detected", 1).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional('b', CommonFlags.INDELS_FLAG, Integer.class, CommonFlags.INT, "guaranteed minimum number of indels which will be detected", 1).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional('c', INDEL_LENGTH_FLAG, Integer.class, CommonFlags.INT, "guaranteed number of positions that will be detected in a single indel", 1).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
   }
 

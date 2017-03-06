@@ -81,10 +81,10 @@ class AviewParams {
     flags.registerRequired('t', REFERENCE, File.class, "SDF", "reference SDF").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     flags.registerOptional('r', READS_SDF, File.class, "SDF", "read SDF (only needed to indicate correctness of simulated read mappings)")
         .setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    final Flag in = flags.registerRequired(File.class, "FILE", "alignment SAM/BAM files").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> in = flags.registerRequired(File.class, "FILE", "alignment SAM/BAM files").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     in.setMinCount(0);
     in.setMaxCount(Integer.MAX_VALUE);
-    final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line)").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line)").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     flags.registerOptional('b', BASELINE_VCF, File.class, "FILE", "VCF file containing baseline variants").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     flags.registerOptional('c', CALLS_VCF, File.class, "FILE", "VCF file containing called variants").setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.INPUT_OUTPUT);
     flags.registerOptional('B', BEDS, File.class, "FILE", "BED file containing regions to overlay").setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.INPUT_OUTPUT);
@@ -222,7 +222,7 @@ class AviewParams {
 
  private static File[] getFiles(CFlags flags, String flagName) {
     final ArrayList<File> list = new ArrayList<>();
-    final Collection<Object> files;
+    final Collection<?> files;
     if (ALIGNMENTS.equals(flagName)) {
       files = flags.getAnonymousValues(0);
     } else {
@@ -287,9 +287,9 @@ class AviewParams {
    }
 
    final ArrayList<File> tracks = new ArrayList<>();
-   final Flag callFlag = flags.getFlag(CALLS_VCF);
-   final Flag bedFlag = flags.getFlag(BEDS);
-   for (final FlagValue flag : flags.getReceivedValues()) {
+   final Flag<?> callFlag = flags.getFlag(CALLS_VCF);
+   final Flag<?> bedFlag = flags.getFlag(BEDS);
+   for (final FlagValue<?> flag : flags.getReceivedValues()) {
      if (flag.getFlag() == bedFlag || flag.getFlag() == callFlag) {
        tracks.add((File) flag.getValue());
      }

@@ -76,7 +76,7 @@ public class CnvPonBuildCli extends AbstractCli {
     mFlags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, CommonFlags.FILE, "BED output file").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(SegmentCli.GCBINS_FLAG, Integer.class, CommonFlags.INT, "number of bins when applying GC correction", 10).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(SegmentCli.COV_COLUMN_NAME, String.class, CommonFlags.STRING, "name of the coverage column in input data", SegmentCli.DEFAULT_COLUMN_NAME).setCategory(SENSITIVITY_TUNING);
-    final Flag covFlag = mFlags.registerRequired(File.class, CommonFlags.FILE, "coverage BED file").setCategory(INPUT_OUTPUT);
+    final Flag<File> covFlag = mFlags.registerRequired(File.class, CommonFlags.FILE, "coverage BED file").setCategory(INPUT_OUTPUT);
     covFlag.setMaxCount(Integer.MAX_VALUE);
     mFlags.setValidator(flags -> flags.checkInRange(SegmentCli.GCBINS_FLAG, 0, Integer.MAX_VALUE)
     );

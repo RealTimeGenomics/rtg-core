@@ -55,8 +55,8 @@ public class SamToFastq extends AbstractCli {
   private static void initFlags(CFlags flags) {
     CommonFlagCategories.setCategories(flags);
     flags.registerExtendedHelp();
-    final Flag input = flags.registerOptional('i', INPUT_FLAG, File.class, CommonFlags.FILE, "input file to convert to fastq").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    final Flag inputList = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "List of input file tos convert to fastq").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> input = flags.registerOptional('i', INPUT_FLAG, File.class, CommonFlags.FILE, "input file to convert to fastq").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> inputList = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "List of input file tos convert to fastq").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, CommonFlags.FILE, "output file base name").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     flags.registerOptional('Z', CommonFlags.NO_GZIP, "Do not gzip output").setCategory(CommonFlagCategories.UTILITY);
     flags.addRequiredSet(input);

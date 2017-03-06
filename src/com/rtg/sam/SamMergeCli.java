@@ -80,11 +80,11 @@ public class SamMergeCli extends AbstractCli {
     mFlags.setDescription("Merges and filters coordinate-sorted SAM/BAM files.");
     mFlags.registerOptional('t', CommonFlags.TEMPLATE_FLAG, File.class, "SDF", "SDF containing reference used to decode CRAM input").setCategory(INPUT_OUTPUT);
     CommonFlagCategories.setCategories(mFlags);
-    final Flag inFlag = mFlags.registerRequired(File.class, "FILE", "SAM/BAM format files containing coordinate-sorted reads");
+    final Flag<File> inFlag = mFlags.registerRequired(File.class, "FILE", "SAM/BAM format files containing coordinate-sorted reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag listFlag = mFlags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = mFlags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional('o', OUTPUT_FLAG, File.class, "FILE", "name for output SAM/BAM file. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(LEGACY_CIGARS, "if set, use legacy cigars in output").setCategory(UTILITY);
     mFlags.registerOptional(X_ALTERNATE_SAM_HEADER, File.class, "FILE", "treat all SAM records as having the supplied header").setCategory(UTILITY);

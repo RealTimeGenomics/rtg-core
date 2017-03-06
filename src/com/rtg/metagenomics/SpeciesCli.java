@@ -162,7 +162,7 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
     flags.registerOptional('c', MIN_CONFIDENCE_VALUE, Double.class, "FLOAT", "species below this confidence value will not be reported", 10.0).setCategory(REPORTING);
 
     CommonFlags.initThreadsFlag(flags);
-    final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     flags.registerOptional(X_VERBOSE, "turn on output of convergence information").setCategory(UTILITY);
     flags.registerOptional(X_STD_DEV_GRAPH, "output graph across 1 standard deviation").setCategory(INPUT_OUTPUT);
     //You should never filter in IH (it is expected that there will be hits on multiple bacterial species)
@@ -171,7 +171,7 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
     SamFilterOptions.registerMaxASUnmatedFlag(flags, 'u');
     SamFilterOptions.registerExcludeMatedFlag(flags);
     SamFilterOptions.registerExcludeUnmatedFlag(flags);
-    final Flag inFlag = flags.registerRequired(File.class, "FILE", "SAM/BAM format files containing mapped reads");
+    final Flag<File> inFlag = flags.registerRequired(File.class, "FILE", "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);

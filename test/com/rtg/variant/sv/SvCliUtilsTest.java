@@ -60,7 +60,7 @@ public class SvCliUtilsTest extends TestCase {
         , "-Z,", "--no-gzip", "do not gzip the output"
         , "-T,", "--threads=INT", "number of threads (Default is the number of available cores)"
         );
-    final Flag regionFlag = flags.getFlag("region");
+    final Flag<?> regionFlag = flags.getFlag("region");
     assertNull(regionFlag.getChar());
   }
 

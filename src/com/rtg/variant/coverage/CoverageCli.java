@@ -138,11 +138,11 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     mFlags.setDescription("Measures and reports coverage depth of read alignments across a reference.");
     CommonFlagCategories.setCategories(mFlags);
     mFlags.setValidator(new CoverageValidator());
-    final Flag inFlag = mFlags.registerRequired(File.class, "FILE", "SAM/BAM format files containing mapped reads");
+    final Flag<File> inFlag = mFlags.registerRequired(File.class, "FILE", "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag listFlag = mFlags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = mFlags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     CommonFlags.initOutputDirFlag(mFlags);
     mFlags.registerOptional('t', TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the reads have been mapped against").setCategory(INPUT_OUTPUT);
     CommonFlags.initNoGzip(mFlags);

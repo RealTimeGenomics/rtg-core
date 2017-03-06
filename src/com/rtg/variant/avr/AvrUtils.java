@@ -44,7 +44,7 @@ public final class AvrUtils {
    * @param anonymous if true, register the flag as an anonymous flag
    * @return the newly registered flag
    */
-  public static Flag initAvrModel(final CFlags flags, boolean anonymous) {
+  public static Flag<File> initAvrModel(final CFlags flags, boolean anonymous) {
     return initAvrModel(flags, anonymous, MODEL_DEFAULT);
   }
 
@@ -56,7 +56,7 @@ public final class AvrUtils {
    * @param defaultModel specify the name of the model to be used as a default value
    * @return the newly registered flag
    */
-  public static Flag initAvrModel(final CFlags flags, boolean anonymous, String defaultModel) {
+  public static Flag<File> initAvrModel(final CFlags flags, boolean anonymous, String defaultModel) {
     String description = "name of AVR model to use when scoring variants";
     File defaultModelFile = null;
     final String modelDirName = Environment.getEnvironmentMap().get(ENVIRONMENT_MODELS_DIR);
@@ -76,7 +76,7 @@ public final class AvrUtils {
         }
       }
     }
-    final Flag modelFlag = anonymous
+    final Flag<File> modelFlag = anonymous
         ? flags.registerRequired(File.class, "MODEL", description).setCategory(CommonFlagCategories.REPORTING)
         : flags.registerOptional(AVR_MODEL_FILE_FLAG, File.class, "MODEL", description).setCategory(CommonFlagCategories.REPORTING);
     if (!anonymous && defaultModelFile != null) {
@@ -106,7 +106,7 @@ public final class AvrUtils {
       }
     }
 
-    final Flag flag = anonymous ? flags.getAnonymousFlag(0) : flags.getFlag(AVR_MODEL_FILE_FLAG);
+    final Flag<?> flag = anonymous ? flags.getAnonymousFlag(0) : flags.getFlag(AVR_MODEL_FILE_FLAG);
     if (flag == null) {
       return null;
     }

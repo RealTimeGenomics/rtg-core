@@ -263,11 +263,11 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
    * @param flags object to add flag to
    */
   public static void addSamFileFlags(CFlags flags) {
-    final Flag inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
+    final Flag<File> inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
   }

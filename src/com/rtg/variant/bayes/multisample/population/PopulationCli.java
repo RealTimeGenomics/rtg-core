@@ -90,11 +90,11 @@ public class PopulationCli extends AbstractMultisampleCli {
     CommonFlags.initMinAvrScore(flags);
     flags.setDescription("Performs a multiple sample variant analysis of many, potentially related, genomes.");
     flags.setValidator(new MultisampleValidator());
-    final Flag inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads")
+    final Flag<File> inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads")
         .setCategory(INPUT_OUTPUT)
         .setMinCount(0)
         .setMaxCount(Integer.MAX_VALUE);
-    final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     flags.registerRequired('p', PEDIGREE_FLAG, File.class, "file", "genome relationships PED file").setCategory(INPUT_OUTPUT);
     flags.registerOptional(IMPUTE_FLAG, String.class, "STRING", "name of sample absent from mappings to impute genotype for")
     .setCategory(REPORTING)

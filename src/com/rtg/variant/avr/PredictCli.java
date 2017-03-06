@@ -65,7 +65,7 @@ public class PredictCli extends AbstractCli {
     CommonFlags.initForce(mFlags);
     mFlags.registerRequired('i', INPUT_FLAG, File.class, FILE, "input VCF file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerRequired('o', OUTPUT_FLAG, File.class, FILE, "output VCF file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    final Flag avrFlag = AvrUtils.initAvrModel(mFlags, false);
+    final Flag<File> avrFlag = AvrUtils.initAvrModel(mFlags, false);
     if (avrFlag.getParameterDefault() == null) {
       avrFlag.setMinCount(1); // Make required if no default available
     }
@@ -96,7 +96,7 @@ public class PredictCli extends AbstractCli {
       header.addRunInfo();
       model.updateHeader(header);
 
-      final List<Object> samplesList = mFlags.getValues(SAMPLE_FLAG);
+      final List<?> samplesList = mFlags.getValues(SAMPLE_FLAG);
       final int[] samples = new int[samplesList.size()];
       for (int i = 0; i < samples.length; ++i) {
         final Integer sampleIndex = header.getSampleIndex((String) samplesList.get(i));

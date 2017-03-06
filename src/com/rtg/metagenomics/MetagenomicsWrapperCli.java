@@ -174,23 +174,23 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
     flags.registerExtendedHelp();
     flags.setDescription("Runs the metagenomic composition and functional pipelines. The pipelines consist of read filtering, read alignment then species composition, and protein searching.");
     CommonFlags.initOutputDirFlag(flags);
-    final Flag input = flags.registerOptional(INPUT, File.class, CommonFlags.SDF_OR_FILE, "input SDF or single end fastq input").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    final Flag left = flags.registerOptional(INPUT_LEFT, File.class, "FILE", "left arm of paired end FASTQ input").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    final Flag right = flags.registerOptional(INPUT_RIGHT, File.class, "FILE", "right arm of paired end FASTQ input").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> input = flags.registerOptional(INPUT, File.class, CommonFlags.SDF_OR_FILE, "input SDF or single end fastq input").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> left = flags.registerOptional(INPUT_LEFT, File.class, "FILE", "left arm of paired end FASTQ input").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> right = flags.registerOptional(INPUT_RIGHT, File.class, "FILE", "right arm of paired end FASTQ input").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     flags.registerOptional(PLATFORM, Platform.class, "STRING", "platform of the input data", Platform.ILLUMINA).setCategory(CommonFlagCategories.INPUT_OUTPUT);
     final String referencesDir = Environment.getEnvironmentMap().get(ENVIRONMENT_REFERENCES_DIR);
-    final Flag filterFlag = flags.registerOptional(FILTER, File.class, "SDF", "filter reference sequence").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> filterFlag = flags.registerOptional(FILTER, File.class, "SDF", "filter reference sequence").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     if (referencesDir != null) {
       filterFlag.setParameterDefault(new File(referencesDir, FILTER_REFERENCE_DEFAULT));
     }
     if (species) {
-      final Flag speciesFlag = flags.registerOptional(SPECIES, File.class, "SDF", "SDF containing reference sequences").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+      final Flag<File> speciesFlag = flags.registerOptional(SPECIES, File.class, "SDF", "SDF containing reference sequences").setCategory(CommonFlagCategories.INPUT_OUTPUT);
       if (referencesDir != null) {
         speciesFlag.setParameterDefault(new File(referencesDir, SPECIES_REFERENCE_DEFAULT));
       }
     }
     if (protein) {
-      final Flag proteinFlag = flags.registerOptional(PROTEIN, File.class, "SDF", "SDF containing protein database").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+      final Flag<File> proteinFlag = flags.registerOptional(PROTEIN, File.class, "SDF", "SDF containing protein database").setCategory(CommonFlagCategories.INPUT_OUTPUT);
       if (referencesDir != null) {
         proteinFlag.setParameterDefault(new File(referencesDir, PROTEIN_REFERENCE_DEFAULT));
       }

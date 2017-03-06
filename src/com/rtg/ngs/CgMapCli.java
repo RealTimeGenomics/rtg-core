@@ -168,7 +168,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, "SDF", "SDF containing template to map against").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(MapFlags.NO_INMEMORY_TEMPLATE, "do not load the template in memory").setCategory(UTILITY);
 
-    final Flag maskFlag = mFlags.registerRequired(MASK_FLAG, String.class, "string", "read indexing method").setCategory(SENSITIVITY_TUNING);
+    final Flag<String> maskFlag = mFlags.registerRequired(MASK_FLAG, String.class, "string", "read indexing method").setCategory(SENSITIVITY_TUNING);
     if (License.isDeveloper()) {
       maskFlag.setParameterRange(new String[]{
         "cg1", "cg1-fast", "cg2",
@@ -189,7 +189,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     mFlags.registerOptional(TEMP_DIR, File.class, "DIR", "directory used for temporary files (Defaults to output directory)").setCategory(UTILITY);
 
     mFlags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "maximum number of top equal results output per read", 5).setCategory(REPORTING);
-    final Flag format = mFlags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "format of read data", FormatCli.SDF_FORMAT).setCategory(INPUT_OUTPUT);
+    final Flag<String> format = mFlags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "format of read data", FormatCli.SDF_FORMAT).setCategory(INPUT_OUTPUT);
     format.setParameterRange(new String[] {FormatCli.SDF_FORMAT, FormatCli.TSV_FORMAT});
     mFlags.registerOptional(LEGACY_CIGARS, "use legacy cigars in output").setCategory(UTILITY);
 

@@ -226,7 +226,7 @@ public class MapXCliTest extends AbstractCliTest {
     flags.registerOptional(CommonFlags.EXCLUDE_FLAG, BuildCommon.RESOURCE.getString("EXCLUDE_DESC")).setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(MapFlags.TOPN_RESULTS_FLAG, Integer.class, CommonFlags.INT, "set the number of results per read for topn. Allowed values are between 1 and 255", 5).setCategory(REPORTING);
     flags.registerOptional('P', MapXCli.MIN_IDENTITY_FLAG, Integer.class, "int", "minimum percent identity at output", 60).setCategory(REPORTING);
-    final Flag filter = flags.registerOptional('f', CommonFlags.OUTPUT_FILTER_FLAG, String.class, "name", "output filter", "topn");
+    final Flag<String> filter = flags.registerOptional('f', CommonFlags.OUTPUT_FILTER_FLAG, String.class, "name", "output filter", "topn");
     filter.setParameterRange(MapXCli.FILTERS.keySet());
     flags.registerOptional('E', MapXCli.MAX_ESCORE_FLAG, Double.class, "float", "maximum e-score at output", 10.0).setCategory(REPORTING);
     flags.registerOptional('B', MapXCli.MIN_BITSCORE_FLAG, Double.class, "float", "minimum bit score at output").setCategory(REPORTING);

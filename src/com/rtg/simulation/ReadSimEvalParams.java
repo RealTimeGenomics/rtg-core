@@ -81,7 +81,7 @@ final class ReadSimEvalParams {
     flags.registerExtendedHelp();
     flags.registerRequired('r', READ_SDF, File.class, "SDF", "SDF containing reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     CommonFlags.initOutputDirFlag(flags);
-    final Flag inFlag = flags.registerRequired(File.class, FILE, "SAM/BAM format files");
+    final Flag<File> inFlag = flags.registerRequired(File.class, FILE, "SAM/BAM format files");
     inFlag.setMinCount(1);
     inFlag.setMaxCount(Integer.MAX_VALUE);
     inFlag.setPsuedoMinMaxRangeString(1, Constants.MAX_OPEN_FILES);

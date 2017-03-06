@@ -350,16 +350,16 @@ public class MapXCli extends ParamsCli<NgsParams> {
     CommonFlags.initOutputDirFlag(flags);
 
     // No Paired End input for MapX
-    final Flag formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", FormatCli.SDF_FORMAT).setCategory(INPUT_OUTPUT);
+    final Flag<String> formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", FormatCli.SDF_FORMAT).setCategory(INPUT_OUTPUT);
     formatFlag.setParameterRange(new String[] {FormatCli.SDF_FORMAT, FormatCli.FASTA_FORMAT, FormatCli.FASTQ_FORMAT, FormatCli.SAM_SE_FORMAT});
 
-    final Flag filter = flags.registerOptional('f', CommonFlags.OUTPUT_FILTER_FLAG, String.class, "STRING", "output filter", "topn");
+    final Flag<String> filter = flags.registerOptional('f', CommonFlags.OUTPUT_FILTER_FLAG, String.class, "STRING", "output filter", "topn");
     filter.setCategory(REPORTING);
     filter.setParameterRange(FILTERS.keySet());
     flags.registerOptional(XDONT_MERGE_ALIGNMENT_RESULTS, "does not concat alignment files").setCategory(UTILITY);
     flags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "maximum number of topn/topequals results output per read",
       DEFAULT_TOP_N).setCategory(REPORTING);
-    final Flag matrix = flags.registerOptional(MATRIX_FLAG, String.class, "string", "name of the scoring matrix used during alignment", "blosum62");
+    final Flag<String> matrix = flags.registerOptional(MATRIX_FLAG, String.class, "string", "name of the scoring matrix used during alignment", "blosum62");
     matrix.setCategory(SENSITIVITY_TUNING);
     matrix.setParameterRange(MATRICES);
     flags.registerOptional(PRE_FILTER_ALGORITHM, Integer.class, "int", "pre-filter algorithm", -3).setCategory(SENSITIVITY_TUNING);

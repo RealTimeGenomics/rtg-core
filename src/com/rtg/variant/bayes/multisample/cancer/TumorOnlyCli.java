@@ -80,6 +80,7 @@ public class TumorOnlyCli extends SomaticCli {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   void initLocalFlags(CFlags flags) {
     initFlags(flags);
     AvrUtils.initAvrModel(flags, false, SOMATIC_MODEL_DEFAULT);
@@ -87,7 +88,7 @@ public class TumorOnlyCli extends SomaticCli {
     commonSomaticFlags(flags);
     flags.setDescription("Performs a somatic variant analysis on a mixed tumor sample.");
     flags.registerRequired(SAMPLE_FLAG, String.class, "string", "sample identifier used in read groups for tumor sample").setCategory(INPUT_OUTPUT);
-    final Flag contamination = flags.getFlag(CONTAMINATION_FLAG);
+    final Flag<Double> contamination = (Flag<Double>) flags.getFlag(CONTAMINATION_FLAG);
     contamination.setParameterDefault(0.75);
     requiredSet(flags);
     flags.setValidator(new MultigenomeValidator());

@@ -67,13 +67,13 @@ public class RecalibrateCli extends AbstractCli {
     mFlags.registerExtendedHelp();
     mFlags.setDescription("Creates quality calibration files for all supplied SAM/BAM files.");
     CommonFlagCategories.setCategories(mFlags);
-    final Flag inFlag = mFlags.registerRequired(File.class, FILE, "SAM/BAM format files containing mapped reads");
+    final Flag<File> inFlag = mFlags.registerRequired(File.class, FILE, "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(CommonFlagCategories.INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
     CommonFlags.initNoMaxFile(mFlags);
     CommonFlags.initThreadsFlag(mFlags);
-    final Flag listFlag = mFlags.registerOptional('I', INPUT_LIST_FLAG, File.class, FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> listFlag = mFlags.registerOptional('I', INPUT_LIST_FLAG, File.class, FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, SDF, "SDF containing reference genome against which reads were aligned").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerOptional('f', FORCE_FLAG, "force overwriting of calibration files").setCategory(CommonFlagCategories.UTILITY);
     mFlags.registerOptional('m', MERGE_FLAG, File.class, FILE, "if set, merge records and calibration files to this output file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
@@ -82,7 +82,7 @@ public class RecalibrateCli extends AbstractCli {
     mFlags.registerOptional(EXCLUDE_VCF_FLAG, File.class, FILE, "VCF containing sites of known variants to exclude from calibration").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     mFlags.registerOptional(EXCLUDE_BED_FLAG, File.class, FILE, "BED containing regions to exclude from calibration").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
 
-    final Flag covariates = mFlags.registerOptional('c', COVARIATE_FLAG, CovariateEnum.class, "COVARIATE", "covariates to recalibrate on").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    final Flag<CovariateEnum> covariates = mFlags.registerOptional('c', COVARIATE_FLAG, CovariateEnum.class, "COVARIATE", "covariates to recalibrate on").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     covariates.setMaxCount(Integer.MAX_VALUE).enableCsv();
     mFlags.addRequiredSet(inFlag);
     mFlags.addRequiredSet(listFlag);
@@ -106,7 +106,7 @@ public class RecalibrateCli extends AbstractCli {
     final List<File> fileCollection = InputFileUtils.removeRedundantPaths(CommonFlags.getFileList(mFlags, INPUT_LIST_FLAG, null, false));
     final List<CovariateEnum> cs;
     if (mFlags.isSet(COVARIATE_FLAG)) {
-      final List<Object> vals = mFlags.getValues(COVARIATE_FLAG);
+      final List<?> vals = mFlags.getValues(COVARIATE_FLAG);
       cs = vals.stream().map(o -> (CovariateEnum) o).collect(Collectors.toList());
     } else {
       cs = CovariateEnum.DEFAULT_COVARIATES;

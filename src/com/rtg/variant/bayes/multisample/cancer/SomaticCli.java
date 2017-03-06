@@ -138,7 +138,7 @@ public class SomaticCli extends AbstractMultisampleCli {
     flags.registerOptional('G', INCLUDE_GAIN_OF_REFERENCE, "include gain of reference somatic calls in output VCF").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(USE_SOMATIC_ALLELIC_FRACTION, "if set, incorporate the expected somatic allelic fraction in scoring").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(CONTAMINATION_BASIS_FLAG, Integer.class, "int", "number of examples to use in computing the contamination estimate", DEFAULT_CONTAMINATION_BASIS).setCategory(SENSITIVITY_TUNING);
-    final Flag inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
+    final Flag<File> inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);

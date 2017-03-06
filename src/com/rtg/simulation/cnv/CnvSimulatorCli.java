@@ -164,7 +164,7 @@ public final class CnvSimulatorCli extends LoggedCli {
     mFlags.registerOptional('n', CNV_COUNT, Integer.class, "INT", "number of regions generated with CNV effects on").setCategory(UTILITY);
     mFlags.registerOptional('N', CNV_PERCENT, Integer.class, "INT", "approximate minimum percent of template region generated with CNV effects on", 10).setCategory(UTILITY);
     CommonFlags.initNoGzip(mFlags);
-    Flag flag = mFlags.registerOptional('C', SET_CNV, String.class, "string", "set one CNV; sequence-name:start:end:copy-number");
+    Flag<String> flag = mFlags.registerOptional('C', SET_CNV, String.class, "string", "set one CNV; sequence-name:start:end:copy-number");
     flag.setMaxCount(Integer.MAX_VALUE);
     flag.setCategory(UTILITY);
     flag = mFlags.registerOptional('L', SET_CNV_LENGTH, String.class, "string", "set fixed CNV length with max bounds for derivation; length:max-derivation");
@@ -250,7 +250,7 @@ public final class CnvSimulatorCli extends LoggedCli {
     return zipSuff ? new File(mappingFile.getAbsolutePath() + FileUtils.GZ_SUFFIX) : mappingFile;
   }
 
-  private FixedRegion[] getRegionArray(Collection<Object> arrayList) {
+  private FixedRegion[] getRegionArray(Collection<?> arrayList) {
     final FixedRegion[] regions = new FixedRegion[arrayList.size()];
     int i = 0;
     for (final Object reg : arrayList) {

@@ -91,11 +91,11 @@ public final class MapParamsHelper {
       throw new InvalidParamsException("Step size (" + ngsParamsBuilder.mStepSize + ") must be less than or equal to max read length (" + maxReadLength + ")");
     }
 
-    final Flag alignerChain = flags.getFlag(MapFlags.ALIGNER_MODE_FLAG);
+    final Flag<?> alignerChain = flags.getFlag(MapFlags.ALIGNER_MODE_FLAG);
     if (alignerChain != null) {
       ngsParamsBuilder.alignerMode((AlignerMode) alignerChain.getValue());
     }
-    final Flag singleIndelPenalties = flags.getFlag(MapFlags.SINGLE_INDEL_PENALTIES_FLAG);
+    final Flag<?> singleIndelPenalties = flags.getFlag(MapFlags.SINGLE_INDEL_PENALTIES_FLAG);
     if (singleIndelPenalties != null) {
       ngsParamsBuilder.singleIndelPenalties((String) singleIndelPenalties.getValue());
     }

@@ -104,11 +104,11 @@ public class SvPatternsCli extends ParamsCli<BreakpointPatternParams> {
     flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
     CommonFlagCategories.setCategories(flags);
     SamFilterOptions.registerRestrictionFlag(flags);
-    final Flag inFlag = flags.registerRequired(File.class, "file", "VCF format files of discordant breakpoints");
+    final Flag<File> inFlag = flags.registerRequired(File.class, "file", "VCF format files of discordant breakpoints");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of VCF format files (1 per line) of discordant breakpoints").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of VCF format files (1 per line) of discordant breakpoints").setCategory(INPUT_OUTPUT);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
     flags.registerOptional(MAX_FRAGMENT_LENGTH, Integer.class, "INT", "how far from the breakpoint to look ahead for inversions", BreakpointPatternParams.DEFAULT_FRAGMENT_LENGTH).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);

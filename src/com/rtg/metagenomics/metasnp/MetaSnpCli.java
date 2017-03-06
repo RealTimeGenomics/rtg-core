@@ -93,7 +93,7 @@ public class MetaSnpCli extends LoggedCli {
     mFlags.registerOptional('v', VISUALISATION, "produce visualisation files");
     mFlags.registerOptional('i', ITERATIONS, Integer.class, "INT", "number of iterations to attempt convergence", 10);
     mFlags.registerOptional(XI_PRIORS, String.class, "FLOAT...", "initial values for the xi matrix");
-    final Flag betaType = mFlags.registerOptional(BETA, String.class, "string", "hypothesis probability method", "reestimate");
+    final Flag<String> betaType = mFlags.registerOptional(BETA, String.class, "string", "hypothesis probability method", "reestimate");
     betaType.setParameterRange(betaFlagValues());
     mFlags.setValidator(new Validator());
   }

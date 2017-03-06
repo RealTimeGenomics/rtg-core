@@ -82,11 +82,11 @@ public class VstatsCli extends AbstractMultisampleCli {
     initFlags(flags);
     flags.setDescription("Calls sequence variants, such as single nucleotide polymorphisms (SNPs), multi-nucleotide polymorphisms (MNPs) and Indels, from a set of alignments reported in genome-sorted SAM/BAM position.");
     flags.setValidator(new SingletonValidator());
-    final Flag inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
+    final Flag<File> inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
     inFlag.setMinCount(0);
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(PLOIDY_FLAG, ReferencePloidy.class, "string", "ploidy to use", ReferencePloidy.AUTO).setCategory(SENSITIVITY_TUNING);
 
     SamFilterOptions.registerMaxHitsFlag(flags, SamFilterOptions.NO_SINGLE_LETTER);

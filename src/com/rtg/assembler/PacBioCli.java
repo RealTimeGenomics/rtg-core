@@ -79,11 +79,11 @@ public class PacBioCli extends ParamsCli<PacBioParams> {
     CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired('g', GraphMapCli.GRAPH_FLAG, File.class, "Dir", "graph of the assembly to map against").setCategory(INPUT_OUTPUT);
     flags.registerOptional(TRIM, "before mapping remove any short disconnected sequences from the graph").setCategory(INPUT_OUTPUT);
-    final Flag inFlag = flags.registerRequired(File.class, "dir", "SDF directories containing reads to map");
+    final Flag<File> inFlag = flags.registerRequired(File.class, "dir", "SDF directories containing reads to map");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SDF directories (1 per line) containing sequences to assemble").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SDF directories (1 per line) containing sequences to assemble").setCategory(INPUT_OUTPUT);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
     flags.setValidator(new PacBioValidator());
