@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. Real Time Genomics Limited.
+ * Copyright (c) 2017. Real Time Genomics Limited.
  *
  * Use of this source code is bound by the Real Time Genomics Limited Software Licence Agreement
  * for Academic Non-commercial Research Purposes only.
@@ -108,8 +108,8 @@ public class PairedEndTrimCli extends AbstractCli {
       return CommonFlags.validateInputFile(flags, LEFT)
         && CommonFlags.validateInputFile(flags, RIGHT)
         && flags.checkInRange(BATCH_SIZE, 1, Integer.MAX_VALUE)
-        && flags.checkInRange(MIN_OVERLAP, 0, Integer.MAX_VALUE)
-        && flags.checkInRange(MIN_IDENTITY, 100, Integer.MAX_VALUE)
+        && flags.checkInRange(MIN_OVERLAP, 1, Integer.MAX_VALUE)
+        && flags.checkInRange(MIN_IDENTITY, 1, 100)
         && flags.checkInRange(PROBE_LENGTH, 0, Integer.MAX_VALUE);
     }
   }

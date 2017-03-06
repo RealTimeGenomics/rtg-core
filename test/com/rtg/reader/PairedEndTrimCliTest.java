@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2016. Real Time Genomics Limited.
+ * Copyright (c) 2017. Real Time Genomics Limited.
  *
  * Use of this source code is bound by the Real Time Genomics Limited Software Licence Agreement
  * for Academic Non-commercial Research Purposes only.
@@ -61,12 +61,20 @@ public class PairedEndTrimCliTest extends AbstractCliTest {
       final File[] files = {
         new File(tmp, "foo"),
         new File(tmp, "bar"),
-        new File(tmp, "baz"),
+        new File(tmp, "bazout.fastq.gz"),
       };
       for (File f : files) {
         assertTrue(f.createNewFile());
       }
-      checkHandleFlags("-l", files[0].getPath(), "-r", files[1].getPath(), "-o", files[2].getPath());
+
+      assertParseMessage("must be in the range [1, 100]", "--min-overlap-identity", "101", "-l", files[0].getPath(), "-r", files[1].getPath(), "-o", files[2].getPath());
+      assertParseMessage("must be at least 1", "--min-overlap-length", "0", "-l", files[0].getPath(), "-r", files[1].getPath(), "-o", files[2].getPath());
+      assertParseMessage("must be at least 1", "--Xbatch-size", "0", "-l", files[0].getPath(), "-r", files[1].getPath(), "-o", files[2].getPath());
+      assertParseMessage("must be at least 0", "--probe-length", "-1", "-l", files[0].getPath(), "-r", files[1].getPath(), "-o", files[2].getPath());
+      assertParseMessage("non-interleaved paired-end data to stdout is not supported", "-l", files[0].getPath(), "-r", files[1].getPath(), "-o", "-");
+      checkHandleFlags("-l", files[0].getPath(), "-r", files[1].getPath(), "--interleave", "-o", files[2].getPath());
+      assertParseMessage("already exists", "-l", files[0].getPath(), "-r", files[1].getPath(), "--interleave", "-o", files[2].getPath());
+      checkHandleFlags("-l", files[0].getPath(), "-r", files[1].getPath(), "--interleave", "-o", files[2].getPath(), "--Xforce");
     }
   }
 
