@@ -60,14 +60,15 @@ public class CnvSimulatorCliTest extends AbstractCliTest {
    */
   public final void testGetCFlags() {
     checkHelp(
-        "input",
-        "output",
-        "output file with CNV information",
-        "print help on command-line flag usage",
-        "approximate minimum percent of template region generated with CNV effects on",
-        "number of regions generated with CNV effects on",
-        "seed for the random number generator",
-    "secondary output SDF");
+      "input",
+      "output",
+      "output file with CNV information",
+      "print help on command-line flag usage",
+      "approximate minimum percent of template region generated with CNV effects on",
+      "number of regions generated with CNV effects on",
+      "seed for the random number generator",
+      "secondary output SDF"
+    );
   }
 
   public void testFlags() throws IOException {
@@ -84,7 +85,7 @@ public class CnvSimulatorCliTest extends AbstractCliTest {
     try {
       assertEquals(1, new CnvSimulatorCli().mainInit(new String[0], NULL_STREAM, NULL_PRINTSTREAM));
       assertEquals(1, new CnvSimulatorCli().mainInit(new String[] {"-i", in.getPath()}, NULL_STREAM, NULL_PRINTSTREAM));
-      assertEquals(1, new CnvSimulatorCli().mainInit(new String[] {"-i", in.getPath(), "-o", out.getPath(), "-O", twin.getPath(), "-s", cnvsfile.getPath()}, NULL_STREAM, NULL_PRINTSTREAM));
+      assertEquals(0, new CnvSimulatorCli().mainInit(new String[] {"-i", in.getPath(), "-o", out.getPath(), "-O", twin.getPath(), "-s", cnvsfile.getPath()}, NULL_STREAM, NULL_PRINTSTREAM));
       } finally {
       assertTrue(FileHelper.deleteAll(in));
       assertTrue(!out.exists() || FileHelper.deleteAll(out));

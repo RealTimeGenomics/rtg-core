@@ -126,18 +126,7 @@ public final class CnvSimulatorCli extends LoggedCli {
           return false;
         }
       }
-      if (flags.isSet(CNV_PERCENT)) {
-        final double p = (double) flags.getValue(CNV_PERCENT);
-        if (p < 0) {
-          flags.setParseMessage("Percentage of CNV region must be positive");
-          return false;
-        }
-        if (p >= 100) {
-          flags.setParseMessage("Percentage of CNV region should be smaller 100");
-          return false;
-        }
-      }
-      return true;
+      return flags.checkInRange(CNV_PERCENT, 0, true, 100.0, false);
     }
   }
 
@@ -162,7 +151,7 @@ public final class CnvSimulatorCli extends LoggedCli {
     mFlags.registerRequired('s', CNV_FILE, File.class, "FILE", "output file with CNV information").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional('p', PRIORS_FLAG, String.class, "string", "selects a properties file specifying the CNV priors. Either a file name or one of ", "cnv-default").setCategory(UTILITY);
     mFlags.registerOptional('n', CNV_COUNT, Integer.class, "INT", "number of regions generated with CNV effects on").setCategory(UTILITY);
-    mFlags.registerOptional('N', CNV_PERCENT, Integer.class, "INT", "approximate minimum percent of template region generated with CNV effects on", 10).setCategory(UTILITY);
+    mFlags.registerOptional('N', CNV_PERCENT, Double.class, "FLOAT", "approximate minimum percent of template region generated with CNV effects on", 10.0).setCategory(UTILITY);
     CommonFlags.initNoGzip(mFlags);
     Flag<String> flag = mFlags.registerOptional('C', SET_CNV, String.class, "string", "set one CNV; sequence-name:start:end:copy-number");
     flag.setMaxCount(Integer.MAX_VALUE);
