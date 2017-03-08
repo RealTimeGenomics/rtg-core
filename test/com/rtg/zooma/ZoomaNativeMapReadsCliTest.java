@@ -42,7 +42,7 @@ public class ZoomaNativeMapReadsCliTest extends AbstractCliTest {
   }
 
   static String fastqize(String name, String seq) {
-    return "@" + name + StringUtils.LS + seq + StringUtils.LS + "+" + name + StringUtils.LS + StringUtils.getCharString('5', seq.length()) + StringUtils.LS;
+    return "@" + name + StringUtils.LS + seq + StringUtils.LS + "+" + name + StringUtils.LS + StringUtils.repeat('5', seq.length()) + StringUtils.LS;
   }
 
   // Inhale a small sam or bam file into a string
