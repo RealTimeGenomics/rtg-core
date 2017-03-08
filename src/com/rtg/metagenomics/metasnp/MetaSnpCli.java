@@ -338,12 +338,12 @@ public class MetaSnpCli extends LoggedCli {
       }
       final int strains = (Integer) flags.getValue(STRAINS);
       if (strains < 2) {
-        flags.setParseMessage("it makes no sense to run this with less than 2 strains");
+        flags.setParseMessage("It makes no sense to run this with less than 2 strains");
         return false;
       }
       final File f = (File) flags.getAnonymousValue(0);
       if (!f.exists()) {
-        flags.setParseMessage("the file '" + f + "' doesn't exist");
+        flags.setParseMessage("The file '" + f + "' doesn't exist");
         return false;
       }
       final double error = (Double) flags.getValue(ERROR_RATE);

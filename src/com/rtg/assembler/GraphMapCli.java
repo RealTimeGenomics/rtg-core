@@ -191,13 +191,13 @@ public class GraphMapCli extends ParamsCli<GraphMapParams> {
         return false;
       }
       if (flags.isSet(ALIGNMENTS) && ((File) flags.getValue(ALIGNMENTS)).exists()) {
-        flags.error("specified alignment file already exists");
+        flags.setParseMessage("Specified alignment file already exists");
         return false;
       }
-      if (ensurePositive(flags, MapFlags.WORDSIZE_FLAG)) {
+      if (!flags.checkInRange(MapFlags.WORDSIZE_FLAG, 1, Integer.MAX_VALUE)) {
         return false;
       }
-      if (ensurePositive(flags, MapFlags.STEP_FLAG)) {
+      if (!flags.checkInRange(MapFlags.STEP_FLAG, 1, Integer.MAX_VALUE)) {
         return false;
       }
       final IntegerOrPercentage maxMatedScore = (IntegerOrPercentage) flags.getValue(MISMATCHES);
@@ -206,24 +206,16 @@ public class GraphMapCli extends ParamsCli<GraphMapParams> {
         return false;
       }
       if (flags.isSet(MAX_INSERT) ^ flags.isSet(MIN_INSERT)) {
-        flags.error("you must supply both --" + MAX_INSERT + " and --" + MIN_INSERT + " if you supply one");
+        flags.setParseMessage("You must supply both --" + MAX_INSERT + " and --" + MIN_INSERT + " if you supply one");
         return false;
       }
       if (flags.isSet(MAX_INSERT) && flags.isSet(MIN_INSERT) && (Integer) flags.getValue(MAX_INSERT) < (Integer) flags.getValue(MIN_INSERT)) {
-          flags.error("--" + MAX_INSERT + " should be larger than --" + MIN_INSERT);
+          flags.setParseMessage("--" + MAX_INSERT + " should be larger than --" + MIN_INSERT);
           return false;
       }
 
       return CommonFlags.validateThreads(flags);
     }
-
-  }
-  static boolean ensurePositive(CFlags flags, String flag) {
-    if (!((Integer) flags.getValue(flag) > 0)) {
-      flags.error("--" + flag + " should be positive");
-      return true;
-    }
-    return false;
   }
 
   private static MutableGraph loadGraph(StoreDirectory graphFile) throws IOException {

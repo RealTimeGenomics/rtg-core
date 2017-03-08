@@ -65,10 +65,10 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
       if (flags.isSet(RELABEL_SPECIES_FLAG)) {
         final File referenceMap = (File) flags.getValue(RELABEL_SPECIES_FLAG);
         if (!referenceMap.exists()) {
-          flags.setParseMessage("given input file \"" + referenceMap.getPath() + "\" for --" + RELABEL_SPECIES_FLAG + " does not exist");
+          flags.setParseMessage("Given input file \"" + referenceMap.getPath() + "\" for --" + RELABEL_SPECIES_FLAG + " does not exist");
           return false;
         } else if (referenceMap.isDirectory()) {
-          flags.setParseMessage("given input file \"" + referenceMap.getPath() + "\" for --" + RELABEL_SPECIES_FLAG + " is a directory, must be a file");
+          flags.setParseMessage("Given input file \"" + referenceMap.getPath() + "\" for --" + RELABEL_SPECIES_FLAG + " is a directory, must be a file");
           return false;
         }
       }

@@ -104,7 +104,7 @@ public class ExtractPath extends AbstractCli {
 
   protected static void initFlagsLocal(CFlags flags) {
     flags.registerExtendedHelp();
-    flags.setDescription("Outputs the sequence pertaining to the specified path");
+    flags.setDescription("Outputs the sequence pertaining to the specified path.");
     flags.registerRequired(File.class, "DIR", "input graph directory");
     flags.registerRequired('p', PATH, Long.class, "INT", "path that will be traced through the graph and output");
     flags.registerRequired('k', KMER_SIZE, Integer.class, "INT", "size of the kmer the graph was constructed with");

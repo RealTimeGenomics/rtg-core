@@ -21,6 +21,7 @@ import com.rtg.launcher.AbstractCliTest;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.sam.SharedSamConstants;
 import com.rtg.tabix.TabixIndexer;
+import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
@@ -56,25 +57,25 @@ public class TumorOnlyCliTest extends AbstractCliTest {
       ReaderTestUtils.getDNADir(">g1\nacgtacgtacgtacgtacgt", template);
       final File outDir = new File(tmpDir, "out");
       String err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", outDir.getPath(), "--sample", "test");
-      assertTrue(err, err.contains("Error: The specified SDF, \"" + outDir.getPath() + "\", does not exist."));
+      TestUtils.containsAllUnwrapped(err, "Error: The specified SDF, \"" + outDir.getPath() + "\", does not exist.");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), in.getPath());
-      assertTrue(err, err.contains("--sample"));
+      TestUtils.containsAllUnwrapped(err, "--sample");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--sex", "male", "--sample", "bar", in.getPath());
-      assertTrue(err, err.contains("Sex-specific processing was specified but " + template.getPath() + " is missing a 'reference.txt'"));
+      TestUtils.containsAllUnwrapped(err, "Sex-specific processing was specified but " + template.getPath() + " is missing a 'reference.txt'");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--somatic", "1", "--sample", "bar", in.getPath());
-      assertTrue(err, err.contains("--somatic must be in the range (0.0, 1.0)"));
+      TestUtils.containsAllUnwrapped(err, "--somatic must be in the range (0.0, 1.0)");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--somatic", "0", "--sample", "bar", in.getPath());
-      assertTrue(err, err.contains("--somatic must be in the range (0.0, 1.0)"));
+      TestUtils.containsAllUnwrapped(err, "--somatic must be in the range (0.0, 1.0)");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "-0.5", "--sample", "bar", in.getPath());
-      assertTrue(err, err.contains("--loh must be in the range [0.0, 1.0]"));
+      TestUtils.containsAllUnwrapped(err, "--loh must be in the range [0.0, 1.0]");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "1.5", "--sample", "bar", in.getPath());
-      assertTrue(err, err.contains("--loh must be in the range [0.0, 1.0]"));
+      TestUtils.containsAllUnwrapped(err, "--loh must be in the range [0.0, 1.0]");
 
       checkHandleFlagsOut("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "0", "--sample", "bar", in.getPath());
       checkHandleFlagsOut("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "1", "--sample", "bar", in.getPath());

@@ -58,14 +58,8 @@ public class PopulationCli extends AbstractMultisampleCli {
   static class MultisampleValidator implements Validator {
     @Override
     public boolean isValid(final CFlags flags) {
-      if (!AbstractMultisampleCli.validateCommonOptions(flags)) {
-        return false;
-      }
-      if (flags.isSet(MAX_EM_ITERATIONS_FLAG) && ((Integer) flags.getValue(MAX_EM_ITERATIONS_FLAG) < 0)) {
-        flags.error("Invalid value for maximum number of EM iterations, minimum is 0");
-        return false;
-      }
-      return true;
+      return AbstractMultisampleCli.validateCommonOptions(flags)
+        && flags.checkInRange(MAX_EM_ITERATIONS_FLAG, 0, Integer.MAX_VALUE);
     }
   }
 

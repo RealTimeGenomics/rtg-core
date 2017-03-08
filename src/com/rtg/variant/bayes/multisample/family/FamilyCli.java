@@ -56,17 +56,17 @@ public class FamilyCli extends AbstractMultisampleCli {
       }
       if (flags.isSet(PEDIGREE_FLAG)) {
         if (flags.isSet(FATHER_FLAG) || flags.isSet(MOTHER_FLAG) || flags.isSet(SON_FLAG) || flags.isSet(DAUGHTER_FLAG)) {
-          flags.error(MISMATCHED_PARAMS_ERROR1);
+          flags.setParseMessage(MISMATCHED_PARAMS_ERROR1);
           return false;
         }
       } else if (!flags.isSet(FATHER_FLAG) || !flags.isSet(MOTHER_FLAG) || !(flags.isSet(SON_FLAG) || flags.isSet(DAUGHTER_FLAG))) {
-        flags.error(MISMATCHED_PARAMS_ERROR2);
+        flags.setParseMessage(MISMATCHED_PARAMS_ERROR2);
         return false;
       } else {
         final String father = (String) flags.getValue(FATHER_FLAG);
         final String mother = (String) flags.getValue(MOTHER_FLAG);
         if (father.equals(mother)) {
-          flags.error("Father and mother must be different samples");
+          flags.setParseMessage("Father and mother must be different samples");
           return false;
         } else {
           final Set<String> sons = new HashSet<>();
@@ -74,7 +74,7 @@ public class FamilyCli extends AbstractMultisampleCli {
           if (flags.isSet(SON_FLAG)) {
             for (final Object son : flags.getValues(SON_FLAG)) {
               if (!sons.add((String) son)) {
-                flags.error("Individual sons must be different sample to other sons");
+                flags.setParseMessage("Individual sons must be different sample to other sons");
                 return false;
               }
             }
@@ -82,23 +82,23 @@ public class FamilyCli extends AbstractMultisampleCli {
           if (flags.isSet(DAUGHTER_FLAG)) {
             for (final Object daughter : flags.getValues(DAUGHTER_FLAG)) {
               if (!daughters.add((String) daughter)) {
-                flags.error("Individual daughters must be different sample to other daughters");
+                flags.setParseMessage("Individual daughters must be different sample to other daughters");
                 return false;
               }
             }
           }
           if (sons.contains(father) || sons.contains(mother)) {
-            flags.error("Son must be different sample to mother and father");
+            flags.setParseMessage("Son must be different sample to mother and father");
             return false;
           } else if (daughters.contains(father) || daughters.contains(mother)) {
-            flags.error("Daughter must be different sample to mother and father");
+            flags.setParseMessage("Daughter must be different sample to mother and father");
             return false;
           } else {
             final Set<String> combined = new HashSet<>();
             combined.addAll(sons);
             combined.addAll(daughters);
             if (combined.size() != sons.size() + daughters.size()) {
-              flags.error("Son and daughter samples must be different");
+              flags.setParseMessage("Son and daughter samples must be different");
               return false;
             }
           }

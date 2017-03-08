@@ -181,24 +181,24 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     // circular buffer used in the reading of SAM record.
     final Integer chunkSize = (Integer) flags.getValue(X_CHUNKING_FLAG);
     if (chunkSize < 1000) {
-      flags.error("Invalid chunk size, minimum chunking size is 1000");
+      flags.setParseMessage("Invalid chunk size, minimum chunking size is 1000");
       return false;
     }
     final Integer lookahead = (Integer) flags.getValue(X_LOOKAHEAD_FLAG);
     if (lookahead < 2) {
-      flags.error("Invalid lookahead value, minimum is 2");
+      flags.setParseMessage("Invalid lookahead value, minimum is 2");
       return false;
     }
     if (flags.isSet(X_THREADING_ENVIRONMENT)) {
       final String val = (String) flags.getValue(X_THREADING_ENVIRONMENT);
       if (!val.equalsIgnoreCase("simple") && !val.equalsIgnoreCase("single") && !val.equalsIgnoreCase("parallel") && !val.toLowerCase(Locale.getDefault()).startsWith("random")) {
-        flags.error("Unknown value " + val + " for --" + X_THREADING_ENVIRONMENT);
+        flags.setParseMessage("Unknown value " + val + " for --" + X_THREADING_ENVIRONMENT);
         return false;
       }
       if (val.toLowerCase(Locale.getDefault()).startsWith("random")) {
         final String[] split = val.split("=");
         if (split.length != 2) {
-          flags.error("A valid seed is required for random threading environment");
+          flags.setParseMessage("A valid seed is required for random threading environment");
           return false;
         }
         boolean valid = true;
@@ -208,22 +208,22 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
           valid = false;
         }
         if (!valid) {
-          flags.error("A valid seed is required for random threading environment");
+          flags.setParseMessage("A valid seed is required for random threading environment");
           return false;
         }
       }
     }
     if (flags.isSet(FILTER_DEPTH_FLAG) && flags.isSet(FILTER_DEPTH_MULTIPLIER_FLAG)) {
-      flags.error("Only one of --" + FILTER_DEPTH_FLAG + " or --" + FILTER_DEPTH_MULTIPLIER_FLAG + " can be set");
+      flags.setParseMessage("Only one of --" + FILTER_DEPTH_FLAG + " or --" + FILTER_DEPTH_MULTIPLIER_FLAG + " can be set");
       return false;
     }
     if (flags.isSet(COVERAGE_BYPASS_FLAG) && flags.isSet(COVERAGE_BYPASS_MULTIPLIER_FLAG)) {
-      flags.error("Only one of --" + COVERAGE_BYPASS_FLAG + " or --" + COVERAGE_BYPASS_MULTIPLIER_FLAG + " can be set");
+      flags.setParseMessage("Only one of --" + COVERAGE_BYPASS_FLAG + " or --" + COVERAGE_BYPASS_MULTIPLIER_FLAG + " can be set");
       return false;
     }
     if ((flags.isSet(FILTER_DEPTH_FLAG) && flags.isSet(COVERAGE_BYPASS_MULTIPLIER_FLAG))
         || (flags.isSet(FILTER_DEPTH_MULTIPLIER_FLAG) && flags.isSet(COVERAGE_BYPASS_FLAG))) {
-      flags.error("Cannot mix ratio based and fixed coverage thresholding");
+      flags.setParseMessage("Cannot mix ratio based and fixed coverage thresholding");
       return false;
     }
     if (flags.isSet(FILTER_DEPTH_FLAG)) {
@@ -239,7 +239,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     if (flags.isSet(POPULATION_PRIORS)) {
       final File f = (File) flags.getValue(POPULATION_PRIORS);
       if (!f.exists()) {
-        flags.error("Given file for flag --" + POPULATION_PRIORS + " " + f.getPath() + " does not exist");
+        flags.setParseMessage("Given file for flag --" + POPULATION_PRIORS + " " + f.getPath() + " does not exist");
         return false;
       }
     }

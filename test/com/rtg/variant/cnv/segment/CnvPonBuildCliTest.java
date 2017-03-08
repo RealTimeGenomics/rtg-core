@@ -47,10 +47,7 @@ public class CnvPonBuildCliTest extends AbstractCliTest {
   }
 
   public void testErrors() throws IOException {
-    final String res = checkHandleFlagsErr();
-    final String exp = getCFlags().getUsageHeader();
-    assertTrue(res.contains(exp));
-    assertTrue(res.contains("Error: You must provide values for -o FILE -t SDF FILE+"));
+    TestUtils.containsAll(checkHandleFlagsErr(), "Error: You must provide values for -o FILE -t SDF FILE+");
   }
 
   public void testValid() throws IOException {

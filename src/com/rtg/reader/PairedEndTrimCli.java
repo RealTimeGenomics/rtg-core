@@ -36,6 +36,7 @@ import com.rtg.launcher.CommonFlags;
 import com.rtg.ngs.MapFlags;
 import com.rtg.ngs.MapParamsHelper;
 import com.rtg.ngs.NgsParams;
+import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
@@ -62,7 +63,7 @@ public class PairedEndTrimCli extends AbstractCli {
 
   @Override
   protected void initFlags() {
-    mFlags.setDescription(description());
+    mFlags.setDescription(StringUtils.sentencify(description()));
     initFlags(mFlags);
   }
 

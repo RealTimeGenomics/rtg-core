@@ -134,14 +134,14 @@ class AviewParams {
           return false;
         }
         if (flags.isSet(SORT_READS) && flags.isSet(SORT_READGROUP)) {
-          flags.setParseMessage("only one of --" + SORT_READS + ", or --" + SORT_READGROUP + " must be set.");
+          flags.setParseMessage("Only one of --" + SORT_READS + ", or --" + SORT_READGROUP + " must be set.");
           return false;
         }
         final String region = (String) flags.getValue(REGION);
         try {
           new RegionRestriction(region);
         } catch (IllegalArgumentException e) {
-          flags.setParseMessage("invalid --" + REGION + " specification " + region);
+          flags.setParseMessage("Invalid --" + REGION + " specification " + region);
           return false;
         }
         final int variance = (Integer) flags.getValue(XMAPPING_TOLERANCE);

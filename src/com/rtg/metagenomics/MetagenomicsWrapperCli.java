@@ -78,17 +78,17 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
       if (flags.isSet(INPUT_LEFT) || flags.isSet(INPUT_RIGHT)) {
         ++inputCount;
         if (!flags.isSet(INPUT_LEFT) || !flags.isSet(INPUT_RIGHT)) {
-          flags.error("You must provide both --" + INPUT_LEFT + " and --" + INPUT_RIGHT + " or use --" + INPUT);
+          flags.setParseMessage("You must provide both --" + INPUT_LEFT + " and --" + INPUT_RIGHT + " or use --" + INPUT);
           valid = false;
         } else {
           final File left = (File) flags.getValue(INPUT_LEFT);
           final File right = (File) flags.getValue(INPUT_RIGHT);
           if (!left.isFile()) {
-            flags.error("--" + INPUT_LEFT + " should be a file");
+            flags.setParseMessage("--" + INPUT_LEFT + " should be a file");
             valid = false;
           }
           if (!right.isFile()) {
-            flags.error("--" + INPUT_RIGHT + " should be a file");
+            flags.setParseMessage("--" + INPUT_RIGHT + " should be a file");
             valid = false;
           }
         }
@@ -97,16 +97,16 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
         ++inputCount;
         final File illumina = (File) flags.getValue(INPUT);
         if (!illumina.exists() || (!illumina.isDirectory() && !illumina.isFile())) {
-          flags.error("--" + INPUT + " file doesn't exist: " + illumina.getPath());
+          flags.setParseMessage("--" + INPUT + " file doesn't exist: " + illumina.getPath());
           valid = false;
         }
       }
       if (inputCount < 1) {
-        flags.error("Some read data is required (use --" + INPUT + "/--" + INPUT_LEFT + "/--" + INPUT_RIGHT + ")");
+        flags.setParseMessage("Some read data is required (use --" + INPUT + "/--" + INPUT_LEFT + "/--" + INPUT_RIGHT + ")");
         valid = false;
       }
       if (inputCount > 1) {
-        flags.error("Too many read datasets supplied. Provide one of formatted SDF, a single end fastq or left and right paired fastq files");
+        flags.setParseMessage("Too many read datasets supplied. Provide one of formatted SDF, a single end fastq or left and right paired fastq files");
         valid = false;
       }
       final File filterSdf = (File) flags.getValue(FILTER);
@@ -115,7 +115,7 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
           valid = false;
         }
       } else {
-        flags.error("Filter reference required (use --" + FILTER + ")");
+        flags.setParseMessage("Filter reference required (use --" + FILTER + ")");
         valid = false;
       }
       if (flags.getFlag(SPECIES) != null) {
@@ -125,7 +125,7 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
             valid = false;
           }
         } else {
-          flags.error("Species reference required (use --" + SPECIES + ")");
+          flags.setParseMessage("Species reference required (use --" + SPECIES + ")");
           valid = false;
         }
       }
@@ -138,17 +138,17 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
             try {
               try (SequencesReader r = SequencesReaderFactory.createDefaultSequencesReader(proteinSdf)) {
                 if (r.type() != SequenceType.PROTEIN) {
-                  flags.error("Protein database should be an SDF containing formatted protein data");
+                  flags.setParseMessage("Protein database should be an SDF containing formatted protein data");
                   valid = false;
                 }
               }
             } catch (IOException e) {
-              flags.error("Invalid protein database.");
+              flags.setParseMessage("Invalid protein database.");
               valid = false;
             }
           }
         } else {
-          flags.error("Protein reference required (use --" + PROTEIN + ")");
+          flags.setParseMessage("Protein reference required (use --" + PROTEIN + ")");
           valid = false;
         }
       }

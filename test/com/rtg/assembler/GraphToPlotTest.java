@@ -35,7 +35,7 @@ public class GraphToPlotTest extends AbstractCliTest {
 
   public void testHelp() {
     checkHelp("rtg graph2plot"
-        , "Produces graphs of the contigs in the specified graph directory"
+        , "Produces graphs of the contigs contained in the specified graph directory"
         , "input graph directory"
         , "-o,", "--output"
         , "-w", "--width", "maximum distance from the initial node within the .dot"
@@ -54,7 +54,7 @@ public class GraphToPlotTest extends AbstractCliTest {
 
       final File inFile = new File(tmpDir, "in");
       final File outFile = new File(tmpDir, "out");
-      TestUtils.containsAllUnwrapped(checkHandleFlagsErr(inFile.toString(), "-o", outFile.toString(), "-s", "4"), "input file should be a directory in the RTG graph file format");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr(inFile.toString(), "-o", outFile.toString(), "-s", "4"), "Input file should be a directory in the RTG graph file format");
       assertTrue(tmpDir.list().length == 0);
 
       assertTrue(inFile.mkdir());

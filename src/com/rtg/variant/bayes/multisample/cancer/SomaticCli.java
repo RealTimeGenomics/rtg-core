@@ -80,18 +80,18 @@ public class SomaticCli extends AbstractMultisampleCli {
       }
       if (flags.isSet(PEDIGREE_FLAG)) {
         if (flags.isSet(DERIVED_FLAG) || flags.isSet(ORIGINAL_FLAG) || flags.isSet(CONTAMINATION_FLAG)) {
-          flags.error(MISMATCHED_PARAMS_ERROR1);
+          flags.setParseMessage(MISMATCHED_PARAMS_ERROR1);
           return false;
         }
       } else {
         if (!flags.isSet(DERIVED_FLAG) || !flags.isSet(ORIGINAL_FLAG) || !flags.isSet(CONTAMINATION_FLAG)) {
-          flags.error(MISMATCHED_PARAMS_ERROR2);
+          flags.setParseMessage(MISMATCHED_PARAMS_ERROR2);
           return false;
         }
         final String original = (String) flags.getValue(ORIGINAL_FLAG);
         final String derived = (String) flags.getValue(DERIVED_FLAG);
         if (original.equals(derived)) {
-          flags.error("Original and derived must be different samples");
+          flags.setParseMessage("Original and derived must be different samples");
           return false;
         }
       }

@@ -25,6 +25,7 @@ import com.rtg.launcher.ParamsCli;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.util.StringUtils;
+import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
@@ -58,23 +59,23 @@ public class AssembleCliTest extends AbstractParamsCliTest<AssembleParams> {
           checkHandleFlagsErr();
           final File output = new File(tmpDir, "bar");
           String err = checkHandleFlagsErr("-o", output.toString(), reads.toString());
-          assertTrue(err, err.contains("You must provide a value for -k INT"));
+          TestUtils.containsAllUnwrapped(err, "You must provide a value for -k INT");
           err = checkHandleFlagsErr(reads.toString(), "-g", graph.toString(), "-k", "30");
-          assertTrue(err, err.contains("You must provide a value for -o DIR"));
+          TestUtils.containsAllUnwrapped(err, "You must provide a value for -o DIR");
 
           err = checkHandleFlagsErr("-o", output.toString(), reads.toString(), "-g", graph.toString(), "-w", "-1", "-k", "30", "--consensus-reads", "10");
-          assertTrue(err, err.contains("--word should be positive"));
+          TestUtils.containsAllUnwrapped(err, "--word", "must be at least 1");
           err = checkHandleFlagsErr("-o", output.toString(), reads.toString(), "-g", graph.toString(), "-s", "-1", "-k", "30", "--consensus-reads", "10");
-          assertTrue(err, err.contains("--step should be positive"));
+          TestUtils.containsAllUnwrapped(err, "--step", "must be at least 1");
 
           err = checkHandleFlagsErr("-o", output.toString(), reads.toString(), "-g", graph.toString(), "-k", "-30", "--consensus-reads", "10");
-          assertTrue(err, err.contains("--kmer-size should be positive"));
+          TestUtils.containsAllUnwrapped(err, "--kmer-size", "must be at least 1");
 
           err = checkHandleFlagsErr("-o", output.toString(), reads.toString(), "-g", graph.toString(), "-k", "30", "-a", "-1", "--consensus-reads", "10");
-          assertTrue(err, err.contains("The specified flag \"--mismatches\" has invalid value \"-1\""));
+          TestUtils.containsAllUnwrapped(err, "The specified flag \"--mismatches\" has invalid value \"-1\"");
 
           err = checkHandleFlagsErr("-o", output.toString(), reads.toString(), "-g", graph.toString(), "-k", "30", "-m", "15", "-M", "10", "--consensus-reads", "10");
-          assertTrue(err, err.contains("--max-insert should be larger than --min-insert"));
+          TestUtils.containsAllUnwrapped(err, "--max-insert should be larger than --min-insert");
 
           checkHandleFlags("-o", output.toString(), reads.toString(), "-g", graph.toString(), "-k", "30", "-a", "10%");
           checkHandleFlags("-o", output.toString(), reads.toString(), "-g", graph.toString(), "-k", "30");

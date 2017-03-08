@@ -20,6 +20,7 @@ import com.rtg.launcher.AbstractCliTest;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.sam.SharedSamConstants;
 import com.rtg.tabix.TabixIndexer;
+import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
@@ -61,49 +62,49 @@ public class SomaticCliTest extends AbstractCliTest {
       ReaderTestUtils.getDNADir(">g1\nacgtacgtacgtacgtacgt", template);
       final File outDir = new File(tmpDir, "out");
       String err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", outDir.getPath());
-      assertTrue(err, err.contains("Error: The specified SDF, \"" + outDir.getPath() + "\", does not exist."));
+      TestUtils.containsAllUnwrapped(err, "Error: The specified SDF, \"" + outDir.getPath() + "\", does not exist.");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--original", "blah", in.getPath());
-      assertTrue(err, err.contains("All of --derived, --original, and --contamination must be specified"));
+      TestUtils.containsAllUnwrapped(err, "All of --derived, --original, and --contamination must be specified");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--derived", "blah", in.getPath());
-      assertTrue(err, err.contains("All of --derived, --original, and --contamination must be specified"));
+      TestUtils.containsAllUnwrapped(err, "All of --derived, --original, and --contamination must be specified");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--contamination", "0.5", in.getPath());
-      assertTrue(err, err.contains("All of --derived, --original, and --contamination must be specified"));
+      TestUtils.containsAllUnwrapped(err, "All of --derived, --original, and --contamination must be specified");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--original", "blah", in.getPath(), "-r", tmpFile.getPath());
-      assertTrue(err, err.contains("Cannot use --Xpedigree in conjunction with --derived, --original, or --contamination"));
+      TestUtils.containsAllUnwrapped(err, "Cannot use --Xpedigree in conjunction with --derived, --original, or --contamination");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--derived", "blah", in.getPath(), "-r", tmpFile.getPath());
-      assertTrue(err, err.contains("Cannot use --Xpedigree in conjunction with --derived, --original, or --contamination"));
+      TestUtils.containsAllUnwrapped(err, "Cannot use --Xpedigree in conjunction with --derived, --original, or --contamination");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--contamination", "0.5", in.getPath(), "-r", tmpFile.getPath());
-      assertTrue(err, err.contains("Cannot use --Xpedigree in conjunction with --derived, --original, or --contamination"));
+      TestUtils.containsAllUnwrapped(err, "Cannot use --Xpedigree in conjunction with --derived, --original, or --contamination");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--sex", "male", "--original", "blah", "--derived", "blah", "--contamination", "0.5", in.getPath());
-      assertTrue(err, err.contains("Original and derived must be different samples"));
+      TestUtils.containsAllUnwrapped(err, "Original and derived must be different samples");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--sex", "male", "--original", "foo", "--derived", "bar", "--contamination", "0.5", in.getPath());
-      assertTrue(err, err.contains("Sex-specific processing was specified but " + template.getPath() + " is missing a 'reference.txt'"));
+      TestUtils.containsAllUnwrapped(err, "Sex-specific processing was specified but " + template.getPath() + " is missing a 'reference.txt'");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--somatic", "1", "--original", "foo", "--derived", "bar", "--contamination", "0.5", in.getPath());
-      assertTrue(err, err.contains("--somatic must be in the range (0.0, 1.0)"));
+      TestUtils.containsAllUnwrapped(err, "--somatic must be in the range (0.0, 1.0)");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--somatic", "0", "--original", "foo", "--derived", "bar", "--contamination", "0.5", in.getPath());
-      assertTrue(err, err.contains("--somatic must be in the range (0.0, 1.0)"));
+      TestUtils.containsAllUnwrapped(err, "--somatic must be in the range (0.0, 1.0)");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "-0.5", "--original", "foo", "--derived", "bar", "--contamination", "0.5", in.getPath());
-      assertTrue(err, err.contains("--loh must be in the range [0.0, 1.0]"));
+      TestUtils.containsAllUnwrapped(err, "--loh must be in the range [0.0, 1.0]");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "1.5", "--original", "foo", "--derived", "bar", "--contamination", "0.5", in.getPath());
-      assertTrue(err, err.contains("--loh must be in the range [0.0, 1.0]"));
+      TestUtils.containsAllUnwrapped(err, "--loh must be in the range [0.0, 1.0]");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--contamination", "-0.5", "--original", "foo", "--derived", "bar", in.getPath());
-      assertTrue(err, err.contains("--contamination must be in the range [0.0, 1.0)"));
+      TestUtils.containsAllUnwrapped(err, "--contamination must be in the range [0.0, 1.0)");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--contamination", "1.5", "--original", "foo", "--derived", "bar", in.getPath());
-      assertTrue(err, err.contains("--contamination must be in the range [0.0, 1.0)"));
+      TestUtils.containsAllUnwrapped(err, "--contamination must be in the range [0.0, 1.0)");
 
 
       checkHandleFlagsOut("-o", outDir.getPath(), "-t", template.getPath(), "--loh", "0", "--original", "foo", "--derived", "bar", "--contamination", "0.5", in.getPath());

@@ -60,7 +60,7 @@ public class CorrectReadsCli extends LoggedCli {
     initFlagsLocal(mFlags);
   }
   static void initFlagsLocal(CFlags flags) {
-    flags.setDescription("attempt to correct read errors by locating low frequency kmers and mutating them into high frequency ones");
+    flags.setDescription("Attempt to correct read errors by locating low frequency kmers and mutating them into high frequency ones.");
     flags.registerExtendedHelp();
     CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired('i', INPUT, File.class, "SDF", "read SDF to correct");

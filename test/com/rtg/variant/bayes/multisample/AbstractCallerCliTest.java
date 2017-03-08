@@ -274,7 +274,7 @@ public abstract class AbstractCallerCliTest extends AbstractCliTest {
         final int res = getCli().mainInit(args, new ByteArrayOutputStream(), err.printStream());
         assertEquals(1, res);
         final String e = err.toString();
-        assertTrue(e, e.startsWith("Sex-specific processing was specified but"));
+        assertTrue(e, e.contains("Sex-specific processing was specified but"));
       }
     } finally {
       assertTrue(FileHelper.deleteAll(f));

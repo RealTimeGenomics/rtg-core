@@ -58,14 +58,10 @@ public class SegmentCliTest extends AbstractCliTest {
     final File emptyFile = File.createTempFile("test", ".vcf");
     try {
       String res = checkHandleFlagsErr();
-      final String exp = getCFlags().getUsageHeader();
-      assertTrue(res.contains(exp));
       assertTrue(res.contains("Error: You must provide values for --case FILE -o DIR -t SDF"));
       res = checkHandleFlagsErr("-o", "test-foo-out", "-t", "test-sdf", "--case", emptyFile.getPath());
-      assertTrue(res.contains(exp));
       TestUtils.containsAll(res, "Error: One of --Xcolumn or --control or --panel must be set");
       res = checkHandleFlagsErr("-o", "test-foo-out", "-t", "test-sdf", "--case", emptyFile.getPath(), "--control", emptyFile.getPath(), "--Xlimit", "0");
-      assertTrue(res.contains(exp));
       assertTrue(res.contains("Error: The value for --Xlimit must be at least 1"));
     } finally {
       assertTrue(emptyFile.delete());

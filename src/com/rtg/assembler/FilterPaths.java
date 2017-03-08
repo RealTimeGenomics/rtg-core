@@ -103,7 +103,7 @@ public class FilterPaths extends LoggedCli {
       }
       final File input = (File) flags.getAnonymousValue(0);
       if (!(input.exists() && input.isDirectory())) {
-        flags.error("input file should be a directory in the RTG graph file format");
+        flags.setParseMessage("Input file should be a directory in the RTG graph file format");
         return false;
       }
       return true;

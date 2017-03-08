@@ -204,7 +204,7 @@ public final class GraphToPlot extends LoggedCli {
   }
   protected static void initFlagsLocal(CFlags flags) {
     flags.registerExtendedHelp();
-    flags.setDescription("Produces graphs of the contigs in the specified graph directory");
+    flags.setDescription("Produces graphs of the contigs contained in the specified graph directory.");
     CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired(File.class, "DIR", "input graph directory");
     flags.registerRequired('s', START, Long.class, "INT", "produce a .dot file for nodes around this one");
@@ -230,7 +230,7 @@ public final class GraphToPlot extends LoggedCli {
       }
       final File input = (File) flags.getAnonymousValue(0);
       if (!(input.exists() && input.isDirectory())) {
-        flags.error("input file should be a directory in the RTG graph file format");
+        flags.setParseMessage("Input file should be a directory in the RTG graph file format");
         return false;
       }
       return true;

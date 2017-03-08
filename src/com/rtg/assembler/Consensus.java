@@ -83,14 +83,13 @@ public class Consensus extends LoggedCli {
   @Override
   protected void initFlags() {
     initFlagsLocal(mFlags);
-
   }
 
   static void initCommonFlags(CFlags flags) {
     flags.registerOptional(CONSENSUS_READS, Integer.class, "Int", "number of reads necessary to form consensus along a path", 0).setCategory(SENSITIVITY_TUNING);
   }
   protected static void initFlagsLocal(CFlags flags) {
-    flags.setDescription("Attempts to reduce the complexity of a graph by removing invalid paths");
+    flags.setDescription("Attempts to reduce the complexity of a graph by removing invalid paths.");
     flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
     CommonFlags.initOutputDirFlag(flags);
@@ -108,7 +107,7 @@ public class Consensus extends LoggedCli {
       }
       final File input = (File) flags.getAnonymousValue(0);
       if (!(input.exists() && input.isDirectory())) {
-        flags.error("input file should be a directory in the RTG graph file format");
+        flags.setParseMessage("Input file should be a directory in the RTG graph file format");
         return false;
       }
       return true;

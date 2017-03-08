@@ -108,13 +108,13 @@ public class AssembleCli extends ParamsCli<AssembleParams> {
         files.addAll(CommonFlags.getFileList(flags, GraphMapCli.INPUT_LIST_FLAG_454, GraphMapCli.FOUR_FIVE_FOUR, true));
         if (flags.isSet(START_READ_ID) || flags.isSet(END_READ_ID)) {
           if (files.size() != 1) {
-            flags.error("Can only specify read range with a single input set of reads");
+            flags.setParseMessage("Can only specify read range with a single input set of reads");
             return false;
           }
         }
         if (!flags.isSet(GraphMapCli.GRAPH_FLAG)) {
           if (files.size() == 0) {
-            flags.error("You must supply at least one input read set or a pre-built graph");
+            flags.setParseMessage("You must supply at least one input read set or a pre-built graph");
             return false;
           }
           long totalSequences = 0;
@@ -127,21 +127,21 @@ public class AssembleCli extends ParamsCli<AssembleParams> {
             }
           }
           if (totalSequences == 0) {
-            flags.error("No reads in supplied input files");
+            flags.setParseMessage("No reads in supplied input files");
             return false;
           }
         }
       } catch (IOException e) {
-        flags.error("Couldn't read the file list");
+        flags.setParseMessage("Couldn't read the file list");
         return false;
       }
-      if (GraphMapCli.ensurePositive(flags, MapFlags.WORDSIZE_FLAG)) {
+      if (!flags.checkInRange(MapFlags.WORDSIZE_FLAG, 1, Integer.MAX_VALUE)) {
         return false;
       }
-      if (GraphMapCli.ensurePositive(flags, MapFlags.STEP_FLAG)) {
+      if (!flags.checkInRange(MapFlags.STEP_FLAG, 1, Integer.MAX_VALUE)) {
         return false;
       }
-      if (GraphMapCli.ensurePositive(flags, KMER_SIZE)) {
+      if (!flags.checkInRange(KMER_SIZE, 1, Integer.MAX_VALUE)) {
         return false;
       }
       final IntegerOrPercentage maxMatedScore = (IntegerOrPercentage) flags.getValue(MISMATCHES);
@@ -150,21 +150,21 @@ public class AssembleCli extends ParamsCli<AssembleParams> {
         return false;
       }
       if (flags.isSet(MAX_INSERT) ^ flags.isSet(MIN_INSERT)) {
-        flags.error("you must supply both --" + MAX_INSERT + " and --" + MIN_INSERT + " if you supply one");
+        flags.setParseMessage("You must supply both --" + MAX_INSERT + " and --" + MIN_INSERT + " if you supply one");
         return false;
       }
       if (flags.isSet(MAX_INSERT) && (Integer) flags.getValue(MAX_INSERT) < (Integer) flags.getValue(MIN_INSERT)) {
-        flags.error("--" + MAX_INSERT + " should be larger than --" + MIN_INSERT);
+        flags.setParseMessage("--" + MAX_INSERT + " should be larger than --" + MIN_INSERT);
         return false;
       }
       if ((Integer) flags.getValue(KMER_SIZE) < 1) {
-        flags.error("--" + KMER_SIZE + " should be positive");
+        flags.setParseMessage("--" + KMER_SIZE + " should be positive");
         return false;
       }
       if (flags.isSet(DIPLOID_RATIO)) {
         final double ratio = (Double) flags.getValue(DIPLOID_RATIO);
         if (ratio > 1 || ratio < 0) {
-          flags.error("--" + DIPLOID_RATIO + " should be between 0 and 1");
+          flags.setParseMessage("--" + DIPLOID_RATIO + " should be between 0 and 1");
         }
       }
       if (!CommonFlags.validateStartEnd(flags, START_READ_ID, END_READ_ID)) {

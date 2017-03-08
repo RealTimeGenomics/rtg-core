@@ -70,22 +70,22 @@ public class GraphMapCliTest extends AbstractParamsCliTest<GraphMapParams> {
           checkHandleFlagsErr();
           final File output = new File(tmpDir, "bar");
           String err = checkHandleFlagsErr("-o", output.toString(), reads.toString());
-          assertTrue(err, err.contains("You must provide a value for -g DIR"));
+          TestUtils.containsAll(err, "You must provide a value for -g DIR");
           err = checkHandleFlagsErr("-o", output.toString(), "-g", graph.toString());
-          assertTrue(err, err.contains("No input files specified"));
+          TestUtils.containsAll(err, "No input files specified");
           err = checkHandleFlagsErr(reads.toString(), "-g", graph.toString());
-          assertTrue(err, err.contains("You must provide a value for -o DIR"));
+          TestUtils.containsAll(err, "You must provide a value for -o DIR");
 
           err = checkHandleFlagsErr("-o", output.toString(), reads.toString(), "-g", graph.toString(), "-w", "-1");
-          assertTrue(err, err.contains("--word should be positive"));
+          TestUtils.containsAll(err, "--word", "at least 1");
           err = checkHandleFlagsErr("-o", output.toString(), reads.toString(), "-g", graph.toString(), "-s", "-1");
-          assertTrue(err, err.contains("--step should be positive"));
+          TestUtils.containsAll(err, "--step", "at least 1");
 
           err = checkHandleFlagsErr("-o", output.toString(), reads.toString(), "-g", graph.toString(), "-a", "-1");
-          assertTrue(err, err.contains("The specified flag \"--mismatches\" has invalid value \"-1\""));
+          TestUtils.containsAll(err, "The specified flag \"--mismatches\" has invalid value \"-1\"");
 
           err = checkHandleFlagsErr("-o", output.toString(), reads.toString(), "-g", graph.toString(), "-m", "15", "-M", "10");
-          assertTrue(err, err.contains("--max-insert should be larger than --min-insert"));
+          TestUtils.containsAll(err, "--max-insert should be larger than --min-insert");
 
           checkHandleFlags("-o", output.toString(), reads.toString(), "-g", graph.toString(), "-a", "10%");
           checkHandleFlags("-o", output.toString(), reads.toString(), "-g", graph.toString());

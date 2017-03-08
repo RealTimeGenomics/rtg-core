@@ -118,7 +118,7 @@ final class ReadSimEvalParams {
         if (flags.isSet(MUTATIONS_VCF)) {
           final File mutations = (File) flags.getValue(MUTATIONS_VCF);
           if (!(mutations.exists() && mutations.isFile())) {
-            flags.setParseMessage("mutations VCF file doesn't exist");
+            flags.setParseMessage("Mutations VCF file doesn't exist");
             return false;
           }
         }

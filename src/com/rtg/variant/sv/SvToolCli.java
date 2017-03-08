@@ -61,7 +61,7 @@ public class SvToolCli extends ParamsCli<SvToolParams> {
         return false;
       }
       if ((Integer) flags.getValue(FINE_STEP) > (Integer) flags.getValue(MapFlags.STEP_FLAG)) {
-        flags.error("Parameter \"" + FINE_STEP + "\" should be smaller than or equal to parameter \"" + MapFlags.STEP_FLAG + "\"");
+        flags.setParseMessage("Parameter \"" + FINE_STEP + "\" should be smaller than or equal to parameter \"" + MapFlags.STEP_FLAG + "\"");
         return false;
       }
       return true;

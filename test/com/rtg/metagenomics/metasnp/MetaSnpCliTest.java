@@ -40,9 +40,9 @@ public class MetaSnpCliTest extends AbstractCliTest {
       final File inputFile = new File(dir, "input");
       final String input = inputFile.getPath();
       TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-s", "2", input, "-o", new File(dir, "output").getPath()), "You must provide a value for -m");
-      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-m", "15", "-s", "2", input, "-o", new File(dir, "output").getPath()), "the file '" + input + "' doesn't exist");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-m", "15", "-s", "2", input, "-o", new File(dir, "output").getPath()), "The file '" + input + "' doesn't exist");
       assertTrue(inputFile.createNewFile());
-      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-m", "15", "-s", "1", input, "-o", new File(dir, "output").getPath()), "it makes no sense to run this with less than 2 strains");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-m", "15", "-s", "1", input, "-o", new File(dir, "output").getPath()), "It makes no sense to run this with less than 2 strains");
       checkHandleFlags("-m", "15", "-s", "2", input, "-o", new File(dir, "output").getPath());
     }
   }
