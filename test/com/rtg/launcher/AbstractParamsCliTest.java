@@ -15,7 +15,6 @@ import java.io.IOException;
 
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.Params;
-import com.rtg.util.TestUtils;
 
 
 /**
@@ -43,7 +42,7 @@ public abstract class AbstractParamsCliTest<P extends Params> extends AbstractCl
   }
 
   protected P checkMakeParamsOut(String... args) throws InvalidParamsException, IOException {
-    assertTrue(mCli.handleFlags(args, TestUtils.getNullPrintStream(), TestUtils.getNullPrintStream()));
+    checkHandleFlagsOut(args);
     return mParamsCli.makeParams();
   }
 }

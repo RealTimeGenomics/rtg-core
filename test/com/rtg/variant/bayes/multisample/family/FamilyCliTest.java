@@ -83,55 +83,55 @@ public class FamilyCliTest extends AbstractParamsCliTest<VariantParams> {
       ReaderTestUtils.getDNADir(">g1\nacgtacgtacgtacgtacgt", template);
       final File outDir = new File(tmpDir, "out");
       String err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", outDir.getPath());
-      assertTrue(err, err.contains("Error: The specified SDF, \"" + outDir.getPath() + "\", does not exist."));
+      TestUtils.containsAllUnwrapped(err, "Error: The specified SDF, \"" + outDir.getPath() + "\", does not exist.");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--father", "blah", in.getPath());
-      assertTrue(err, err.contains("Must set --father and --mother flags and at least one of --son or --daughter flags"));
+      TestUtils.containsAllUnwrapped(err, "Must set --father and --mother flags and at least one of --son or --daughter flags");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--mother", "blah", in.getPath());
-      assertTrue(err, err.contains("Must set --father and --mother flags and at least one of --son or --daughter flags"));
+      TestUtils.containsAllUnwrapped(err, "Must set --father and --mother flags and at least one of --son or --daughter flags");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--son", "blah", in.getPath());
-      assertTrue(err, err.contains("Must set --father and --mother flags and at least one of --son or --daughter flags"));
+      TestUtils.containsAllUnwrapped(err, "Must set --father and --mother flags and at least one of --son or --daughter flags");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--daughter", "blah", in.getPath());
-      assertTrue(err, err.contains("Must set --father and --mother flags and at least one of --son or --daughter flags"));
+      TestUtils.containsAllUnwrapped(err, "Must set --father and --mother flags and at least one of --son or --daughter flags");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--father", "blah", in.getPath(), "-p", tmpFile.getPath());
-      assertTrue(err, err.contains("Cannot use --pedigree in conjunction with --father, --mother, --son, and --daughter flags"));
+      TestUtils.containsAllUnwrapped(err, "Cannot use --pedigree in conjunction with --father, --mother, --son, and --daughter flags");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--mother", "blah", in.getPath(), "-p", tmpFile.getPath());
-      assertTrue(err, err.contains("Cannot use --pedigree in conjunction with --father, --mother, --son, and --daughter flags"));
+      TestUtils.containsAllUnwrapped(err, "Cannot use --pedigree in conjunction with --father, --mother, --son, and --daughter flags");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--son", "blah", in.getPath(), "-p", tmpFile.getPath());
-      assertTrue(err, err.contains("Cannot use --pedigree in conjunction with --father, --mother, --son, and --daughter flags"));
+      TestUtils.containsAllUnwrapped(err, "Cannot use --pedigree in conjunction with --father, --mother, --son, and --daughter flags");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--daughter", "blah", in.getPath(), "-p", tmpFile.getPath());
-      assertTrue(err, err.contains("Cannot use --pedigree in conjunction with --father, --mother, --son, and --daughter flags"));
+      TestUtils.containsAllUnwrapped(err, "Cannot use --pedigree in conjunction with --father, --mother, --son, and --daughter flags");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--father", "blah", "--mother", "blah", "--son", "foo", in.getPath());
-      assertTrue(err, err.contains("Father and mother must be different samples"));
+      TestUtils.containsAllUnwrapped(err, "Father and mother must be different samples");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--father", "blah", "--mother", "foo", "--son", "blah", in.getPath());
-      assertTrue(err, err.contains("Son must be different sample to mother and father"));
+      TestUtils.containsAllUnwrapped(err, "Son must be different sample to mother and father");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--father", "foo", "--mother", "blah", "--son", "blah", in.getPath());
-      assertTrue(err, err.contains("Son must be different sample to mother and father"));
+      TestUtils.containsAllUnwrapped(err, "Son must be different sample to mother and father");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--father", "blah", "--mother", "foo", "--daughter", "blah", in.getPath());
-      assertTrue(err, err.contains("Daughter must be different sample to mother and father"));
+      TestUtils.containsAllUnwrapped(err, "Daughter must be different sample to mother and father");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--father", "foo", "--mother", "blah", "--daughter", "blah", in.getPath());
-      assertTrue(err, err.contains("Daughter must be different sample to mother and father"));
+      TestUtils.containsAllUnwrapped(err, "Daughter must be different sample to mother and father");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--father", "foo", "--mother", "bar", "--son", "blah", "--son", "blah", in.getPath());
-      assertTrue(err, err.contains("Individual sons must be different sample to other sons"));
+      TestUtils.containsAllUnwrapped(err, "Individual sons must be different sample to other sons");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--father", "foo", "--mother", "bar", "--daughter", "blah", "--daughter", "blah", in.getPath());
-      assertTrue(err, err.contains("Individual daughters must be different sample to other daughters"));
+      TestUtils.containsAllUnwrapped(err, "Individual daughters must be different sample to other daughters");
 
       err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--father", "foo", "--mother", "bar", "--son", "blah", "--daughter", "blah", in.getPath());
-      assertTrue(err, err.contains("Son and daughter samples must be different"));
+      TestUtils.containsAllUnwrapped(err, "Son and daughter samples must be different");
 
       checkHandleFlagsOut("-o", outDir.getPath(), "-t", template.getPath(), "--father", "foo", "--mother", "bar", "--son", "doe", "--daughter", "ray", in.getPath());
 
@@ -140,7 +140,7 @@ public class FamilyCliTest extends AbstractParamsCliTest<VariantParams> {
       new TabixIndexer(in2, new File(tmpDir, "alignments2.sam.gz.tbi")).saveSamIndex();
 
       err = checkMainInitBadFlags("-o", outDir.getPath(), "-t", template.getPath(), "-p", tmpFile.getPath(), in2.getPath());
-      assertTrue(err, err.contains("should contain exactly 6"));
+      TestUtils.containsAllUnwrapped(err, "should contain exactly 6");
 
       checkMainInitOk("-o", outDir.getPath(), "-t", template.getPath(), "-p", tmpFile2.getPath(), in.getPath(), in.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
     } finally {
