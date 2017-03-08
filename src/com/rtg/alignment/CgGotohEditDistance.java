@@ -454,7 +454,7 @@ public class CgGotohEditDistance extends IntegralAbstract implements Unidirectio
   public static String extend(final String first, final int length, final String last) {
     final int len = first.length() + last.length();
     if (len < length) {
-      return first + StringUtils.getSpaceString(length - len) + last;
+      return first + StringUtils.spaces(length - len) + last;
     } else {
       return first + last;
     }

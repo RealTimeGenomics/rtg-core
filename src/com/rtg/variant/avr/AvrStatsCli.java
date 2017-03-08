@@ -91,12 +91,12 @@ public class AvrStatsCli extends AbstractCli {
       for (Pair<String, String> field : mProperties) {
         maxLen = Math.max(maxLen, field.getA().length());
       }
-      lw.writeln("Location" + StringUtils.getSpaceString(maxLen - 8) + ": " + modelFile.toString());
+      lw.writeln("Location" + StringUtils.spaces(maxLen - 8) + ": " + modelFile.toString());
       for (Pair<String, String> field : mProperties) {
         final String label = field.getA();
         final String value = props.getProperty(field.getB());
         if (value != null && value.length() > 0) {
-          lw.writeln(field.getA() + StringUtils.getSpaceString(maxLen - label.length()) + ": " + value);
+          lw.writeln(field.getA() + StringUtils.spaces(maxLen - label.length()) + ": " + value);
         }
       }
       lw.writeln();

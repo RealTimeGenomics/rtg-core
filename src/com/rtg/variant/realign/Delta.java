@@ -229,7 +229,7 @@ public abstract class Delta extends IntegralAbstract implements DeltaInterface {
   static void printTemplateRowTerse(final StringBuilder sb, final int rowStart, final int rowEnd, final Environment env) {
     // print the header row, showing the template.
     final char[] dnaChars = DNA.valueChars();
-    sb.append(StringUtils.getSpaceString(9));
+    sb.append(StringUtils.spaces(9));
     for (int pos = rowStart + 1; pos <= rowEnd; ++pos) {
       sb.append(dnaChars[env.template(pos)]);
       sb.append("   ");

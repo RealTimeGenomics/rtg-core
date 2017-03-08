@@ -160,9 +160,9 @@ class PairAligner {
   protected void dumpAlignment(FastqSequence r1, FastqSequence r2, int[] actions) {
     final int pos = actions[ActionsHelper.TEMPLATE_START_INDEX];
     final int pad = Math.max(0, -pos);
-    System.err.println(StringUtils.getSpaceString(pad + pos) + ActionsHelper.toString(actions));
-    System.err.println(StringUtils.getSpaceString(pad) + DnaUtils.bytesToSequenceIncCG(r1.getBases()));
-    System.err.println(StringUtils.getSpaceString(pad + pos) + DnaUtils.bytesToSequenceIncCG(r2.getBases()));
+    System.err.println(StringUtils.spaces(pad + pos) + ActionsHelper.toString(actions));
+    System.err.println(StringUtils.spaces(pad) + DnaUtils.bytesToSequenceIncCG(r1.getBases()));
+    System.err.println(StringUtils.spaces(pad + pos) + DnaUtils.bytesToSequenceIncCG(r2.getBases()));
   }
 
   public PairAlignmentStats getStats() {

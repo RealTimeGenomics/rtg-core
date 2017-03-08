@@ -325,7 +325,7 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
       System.out.println(timesLine.toString());
     }
     if (mErrorDetails && error) {
-      final String space = StringUtils.getSpaceString(CONTEXT);
+      final String space = StringUtils.spaces(CONTEXT);
       System.out.println("\tread:\t" + space + DnaUtils.bytesToSequenceIncCG(read, 0, rlen));
       System.out.println("\ttmpl:\t" + DnaUtils.bytesToSequenceIncCG(template, zeroBasedStart - CONTEXT, rlen + 2 * CONTEXT));
       for (int ed = 0; ed < mEds.length; ++ed) {

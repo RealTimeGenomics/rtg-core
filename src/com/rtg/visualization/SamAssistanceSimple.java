@@ -70,7 +70,7 @@ public class SamAssistanceSimple implements SamAssistance {
             if (!isFirstAction) {
               tPos += n;
             } else {
-              sb.append(StringUtils.getSpaceString(readStart - n));
+              sb.append(StringUtils.spaces(readStart - n));
               isFirstAction = false;
             }
             // assert template.charAt(tPos) == '_' : tPos;
@@ -93,7 +93,7 @@ public class SamAssistanceSimple implements SamAssistance {
             case SamUtils.CIGAR_SAME_OR_MISMATCH:
             case SamUtils.CIGAR_MISMATCH:
               if (isFirstAction) {
-                sb.append(StringUtils.getSpaceString(readStart));
+                sb.append(StringUtils.spaces(readStart));
                 isFirstAction = false;
               }
               final char readChar = Character.toLowerCase(read.charAt(rPos));
@@ -112,7 +112,7 @@ public class SamAssistanceSimple implements SamAssistance {
               break;
             case SamUtils.CIGAR_DELETION_FROM_REF:
               if (isFirstAction) {
-                sb.append(StringUtils.getSpaceString(readStart));
+                sb.append(StringUtils.spaces(readStart));
                 isFirstAction = false;
               }
               if (PRETTY_DELETES) {
@@ -132,7 +132,7 @@ public class SamAssistanceSimple implements SamAssistance {
               break;
             case SamUtils.CIGAR_GAP_IN_READ:
               if (isFirstAction) {
-                sb.append(StringUtils.getSpaceString(readStart));
+                sb.append(StringUtils.spaces(readStart));
                 isFirstAction = false;
               }
               sb.append(" ");
@@ -142,7 +142,7 @@ public class SamAssistanceSimple implements SamAssistance {
               if (displaySoftClip) {
                 if (readStart - n + rPos >= 0) {
                   if (isFirstAction) {
-                    sb.append(StringUtils.getSpaceString(readStart - n + rPos));
+                    sb.append(StringUtils.spaces(readStart - n + rPos));
                     isFirstAction = false;
                   }
                   sb.append(Character.toLowerCase(read.charAt(rPos)));

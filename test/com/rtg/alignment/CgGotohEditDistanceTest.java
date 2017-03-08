@@ -732,7 +732,7 @@ public class CgGotohEditDistanceTest extends AbstractNanoTest {
         final StringBuilder sb = new StringBuilder(actsRight);
         sb.reverse();
         if (diff != 0) {
-          System.out.println("read=" + StringUtils.getSpaceString(readStart + 1) + read);
+          System.out.println("read=" + StringUtils.spaces(readStart + 1) + read);
           System.out.println("tmpl=" + tmpl.substring(0, readStart) + " " + tmpl.substring(readStart, readEnd) + " " + tmpl.substring(readEnd));
           System.out.println("" + actsLeft + " " + leftScore + " " + rightScore + " " + sb.toString() + "  last mutation: " + mut + " age=" + age);
         }
