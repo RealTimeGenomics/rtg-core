@@ -15,7 +15,6 @@ import static com.rtg.launcher.CommonFlags.FILE;
 import static com.rtg.launcher.CommonFlags.FLOAT;
 import static com.rtg.launcher.CommonFlags.INT;
 import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
-import static com.rtg.launcher.CommonFlags.SDF;
 import static com.rtg.launcher.CommonFlags.STRING;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
@@ -39,6 +38,7 @@ import com.rtg.util.MathUtils;
 import com.rtg.util.MultiSet;
 import com.rtg.util.TextTable;
 import com.rtg.util.cli.CommonFlagCategories;
+import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.ReferenceRanges;
@@ -117,10 +117,10 @@ public class SegmentCli extends LoggedCli {
     CommonFlags.initOutputDirFlag(mFlags);
     CommonFlags.initNoGzip(mFlags);
     CommonFlags.initIndexFlags(mFlags);
-    mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, SDF, "SDF containing reference genome").setCategory(INPUT_OUTPUT);
+    CommonFlags.initReferenceTemplate(mFlags, true);
     mFlags.registerRequired(CASE_FLAG, File.class, FILE, "BED file supplying per-region coverage data for the sample").setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional(CONTROL_FLAG, File.class, FILE, "BED file supplying per-region coverage data for control sample").setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional(PANEL_FLAG, File.class, FILE, "BED file supplying per-region panel normalized coverage data").setCategory(INPUT_OUTPUT);
+    final Flag<?> controlFlag = mFlags.registerOptional(CONTROL_FLAG, File.class, FILE, "BED file supplying per-region coverage data for control sample").setCategory(INPUT_OUTPUT);
+    final Flag<?> panelFlag = mFlags.registerOptional(PANEL_FLAG, File.class, FILE, "BED file supplying per-region panel normalized coverage data").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(SUMMARY_FLAG, File.class, FILE, "BED file supplying gene-scale regions to report CNV interactions with").setCategory(INPUT_OUTPUT);
 
     mFlags.registerOptional(ALEPH_FLAG, Double.class, FLOAT, "weighting factor for inter-segment distances during energy scoring", 0.0).setCategory(SENSITIVITY_TUNING);
@@ -137,6 +137,8 @@ public class SegmentCli extends LoggedCli {
     mFlags.registerOptional('c', COLUMN_FLAG, Integer.class, INT, "just run segmentation directly on the specified data column from the case file, ignoring control data", 0).setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(GCBINS_FLAG, Integer.class, INT, "number of bins when applying GC correction", 10).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(COV_COLUMN_NAME, String.class, STRING, "name of the coverage column in input data", DEFAULT_COLUMN_NAME).setCategory(SENSITIVITY_TUNING);
+    mFlags.addRequiredSet(controlFlag);
+    mFlags.addRequiredSet(panelFlag);
     mFlags.setValidator(flags -> CommonFlags.validateOutputDirectory(flags)
       && flags.checkInRange(MIN_LOGR_FLAG, 0, Double.MAX_VALUE)
       && flags.checkInRange(COLUMN_FLAG, 0, Integer.MAX_VALUE)

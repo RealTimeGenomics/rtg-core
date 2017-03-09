@@ -39,7 +39,6 @@ public final class SamValidatorCli extends AbstractCli {
 
   private static final String MODULE_NAME = "samstats";
   private static final String PER_FILE_STATS = "per-file";
-  private static final String TEMPLATE_DIR = "template";
   private static final String READS_DIR = "reads";
   private static final String VALIDATE_FLAG = "validate";
   private static final String CONSENSUS_FLAG = "consensus";
@@ -73,7 +72,7 @@ public final class SamValidatorCli extends AbstractCli {
     flags.registerExtendedHelp();
     flags.setDescription("Prints alignment statistics from the contents of the output SAM/BAM file.");
     CommonFlagCategories.setCategories(flags);
-    flags.registerRequired('t', TEMPLATE_DIR, File.class, "SDF", "template SDF").setCategory(INPUT_OUTPUT);
+    CommonFlags.initReferenceTemplate(flags, true);
     final Flag<File> input = flags.registerRequired(File.class, "FILE", "SAM/BAM result file (must contain read-ids not read names)").setCategory(INPUT_OUTPUT);
     input.setMinCount(0).setMaxCount(Integer.MAX_VALUE);
     final Flag<File> inputList = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
@@ -100,7 +99,7 @@ public final class SamValidatorCli extends AbstractCli {
       if (!CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)) {
         return false;
       }
-      if (!CommonFlags.validateSDF(flags, TEMPLATE_DIR)
+      if (!CommonFlags.validateSDF(flags, CommonFlags.TEMPLATE_FLAG)
         || (flags.isSet(READS_DIR) && !CommonFlags.validateSDF(flags, READS_DIR))) {
         return false;
       }
@@ -120,7 +119,7 @@ public final class SamValidatorCli extends AbstractCli {
     final CFlags flags = mFlags;
 
     final Collection<File> inputFiles = CommonFlags.getFileList(mFlags, CommonFlags.INPUT_LIST_FLAG, null, false);
-    final File template = (File) flags.getValue(TEMPLATE_DIR);
+    final File template = (File) flags.getValue(CommonFlags.TEMPLATE_FLAG);
     final boolean validate = flags.isSet(VALIDATE_FLAG);
     final boolean showConsensus = flags.isSet(CONSENSUS_FLAG);
     final boolean printHistograms = flags.isSet(DISTRIBUTIONS_FLAG);

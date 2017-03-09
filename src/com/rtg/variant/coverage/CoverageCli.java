@@ -42,7 +42,6 @@ import com.rtg.util.diagnostic.ErrorType;
  */
 public class CoverageCli extends ParamsCli<CoverageParams> {
 
-  private static final String TEMPLATE_FLAG = "template";
   private static final String SMOOTHING_LEVEL_FLAG = "smoothing";
   private static final String ERROR_RATES_FLAG = "Xerror-rates";
   private static final String BEDGRAPH_FLAG = "bedgraph";
@@ -62,8 +61,8 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
         return false;
       }
 
-      if (flags.isSet(TEMPLATE_FLAG)) {
-        final String genomePath = flags.getFlag(TEMPLATE_FLAG).getValue().toString();
+      if (flags.isSet(CommonFlags.TEMPLATE_FLAG)) {
+        final String genomePath = flags.getFlag(CommonFlags.TEMPLATE_FLAG).getValue().toString();
         final File genome = new File(genomePath);
         if (!genome.exists()) {
           Diagnostic.error(ErrorType.INFO_ERROR, "The specified SDF, \"" + genome.getPath() + "\", does not exist.");
@@ -144,7 +143,7 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     inFlag.setMaxCount(Integer.MAX_VALUE);
     final Flag<File> listFlag = mFlags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     CommonFlags.initOutputDirFlag(mFlags);
-    mFlags.registerOptional('t', TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the reads have been mapped against").setCategory(INPUT_OUTPUT);
+    CommonFlags.initReferenceTemplate(mFlags, false);
     CommonFlags.initNoGzip(mFlags);
     mFlags.registerOptional(PER_BASE_FLAG, "if set, output per-base counts in TSV format (suppresses BED file output)").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(PER_REGION_FLAG, "if set, output BED/BEDGRAPH entries per-region rather than every coverage level change").setCategory(INPUT_OUTPUT);
@@ -177,8 +176,8 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
     builder.name(mFlags.getName());
     final OutputParams outParams = new OutputParams((File) mFlags.getValue(CommonFlags.OUTPUT_FLAG), mFlags.isSet(BuildCommon.PROGRESS_FLAG), !mFlags.isSet(NO_GZIP));
     builder.outputParams(outParams);
-    if (mFlags.isSet(TEMPLATE_FLAG)) {
-      builder.genome(SequenceParams.builder().directory((File) mFlags.getValue(TEMPLATE_FLAG)).mode(SequenceMode.UNIDIRECTIONAL).create().readerParams());
+    if (mFlags.isSet(CommonFlags.TEMPLATE_FLAG)) {
+      builder.genome(SequenceParams.builder().directory((File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG)).mode(SequenceMode.UNIDIRECTIONAL).create().readerParams());
     }
     final Collection<File> inputFiles = CommonFlags.getFileList(mFlags, CommonFlags.INPUT_LIST_FLAG, null, false);
     Diagnostic.userLog("Input SAM files: " + inputFiles);

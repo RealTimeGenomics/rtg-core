@@ -70,7 +70,6 @@ public class SegregationVcfSearch extends AbstractCli {
 
   private static final String MODULE_NAME = "phasingsearch";
 
-  protected static final String TEMPLATE_FLAG = "template";
   private static final String VCF_FLAG = "vcf";
   private static final String OUTPUT_FLAG = "output";
   private static final String OUTPUT_REGIONS_FLAG = "regions-output";
@@ -106,7 +105,7 @@ public class SegregationVcfSearch extends AbstractCli {
 
     mFlags.setDescription("Analyze a VCF to produce phasing segregation information. VCF must only contain samples for the parents and the children of those parents.");
 
-    mFlags.registerRequired('t', TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the reads have been mapped against").setCategory(INPUT_OUTPUT);
+    CommonFlags.initReferenceTemplate(mFlags, true);
     mFlags.registerRequired(VCF_FLAG, File.class, CommonFlags.FILE, "input VCF file to be analyzed").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired(OUTPUT_FLAG, File.class, CommonFlags.FILE, "output text file containing block and crossover information").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired(OUTPUT_REGIONS_FLAG, File.class, CommonFlags.FILE, "output BED file to contain regions of phasing segregation information").setCategory(INPUT_OUTPUT);
@@ -124,7 +123,7 @@ public class SegregationVcfSearch extends AbstractCli {
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
     mNewPenalty = mFlags.isSet(NEW_PENALTY_FLAG) ? (int) mFlags.getValue(NEW_PENALTY_FLAG) : Search.DEFAULT_NEW_PENALTY;
     mXoPenalty = mFlags.isSet(XO_PENALTY_FLAG) ? (int) mFlags.getValue(XO_PENALTY_FLAG) : Search.DEFAULT_XO_PENALTY;
-    final File genomeFile = (File) mFlags.getValue(TEMPLATE_FLAG);
+    final File genomeFile = (File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG);
     try (final SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReader(genomeFile)) {
       mPloidyMap = constructPloidyMap(sr);
     }

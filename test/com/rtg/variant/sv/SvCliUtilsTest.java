@@ -51,7 +51,7 @@ public class SvCliUtilsTest extends TestCase {
         , "--readgroup-labels=FILE", "file containing read group relabel mappings (1 per line)"
         , "-r,", "--readgroup-stats=FILE", "text file containing read group stats. May be specified 0 or more times"
         , "-R,", "--readgroup-stats-list-file=FILE", "file containing list of read group stats files (1 per line)"
-        , "-t,", "--template=SDF", "SDF of the reference genome the reads have been mapped against"
+        , "-t,", "--template=SDF", "reference genome"
         , "FILE+", "SAM/BAM format files containing mapped reads. May be specified 0 or more times"
         , "-m,", "--max-as-mated=INT", "if set, ignore mated SAM records with an alignment score (AS attribute) that exceeds this value"
         , "-u,", "--max-as-unmated=INT", "if set, ignore unmated SAM records with an alignment score (AS attribute) that exceeds this value"

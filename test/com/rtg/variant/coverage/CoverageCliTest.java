@@ -107,7 +107,7 @@ public class CoverageCliTest extends AbstractCliTest {
             , "Measures and reports coverage depth of read alignments across a reference."
             , "SAM/BAM format files containing mapped reads"
             , "-o,", "--output=DIR", "directory for output"
-            , "-t,", "--template=SDF", "SDF of the reference genome the reads have been mapped against"
+            , "-t,", "--template=SDF", "reference genome"
             , "-I,", "--input-list-file=FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads"
             , "\\0, --exclude-mated", "exclude all mated SAM records"
             , "\\0, --exclude-unmated", "exclude all unmated SAM records"

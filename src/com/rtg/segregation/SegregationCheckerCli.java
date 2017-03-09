@@ -52,7 +52,6 @@ public class SegregationCheckerCli extends AbstractCli {
 
   private static final String MODULE_NAME = "phasingeval";
 
-  private static final String TEMPLATE_FLAG = "template";
   private static final String BED_FLAG = "bed";
   private static final String VCF_FLAG = "vcf";
   private static final String FATHER_FLAG = "father";
@@ -76,7 +75,7 @@ public class SegregationCheckerCli extends AbstractCli {
     CommonFlagCategories.setCategories(mFlags);
     mFlags.setDescription("Annotate a VCF with phasing segregation information from a BED file.");
 
-    mFlags.registerRequired('t', TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the reads have been mapped against").setCategory(INPUT_OUTPUT);
+    CommonFlags.initReferenceTemplate(mFlags, true);
     mFlags.registerRequired(VCF_FLAG, File.class, CommonFlags.FILE, "input VCF file to be annotated").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired(BED_FLAG, File.class, CommonFlags.FILE, "input BED file containing regions of phasing segregation information").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "output VCF file containing new annotations").setCategory(INPUT_OUTPUT);
@@ -92,7 +91,7 @@ public class SegregationCheckerCli extends AbstractCli {
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
     final Map<String, RangeList<PatternHolder>> patterns = loadBed();
-    final File genomeFile = (File) mFlags.getValue(TEMPLATE_FLAG);
+    final File genomeFile = (File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG);
     final Map<Pair<Sex, String>, ReferenceSequence> ploidyMap;
     try (final SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReader(genomeFile)) {
       ploidyMap = SegregationVcfSearch.constructPloidyMap(sr);

@@ -56,7 +56,7 @@ public class TumorOnlyCli extends SomaticCli {
       if (!AbstractMultisampleCli.validateCommonOptions(flags)) {
         return false;
       }
-      if (Sex.EITHER != flags.getValue(SEX_FLAG) && !CommonFlags.validateSexTemplateReference(flags, SEX_FLAG, null, TEMPLATE_FLAG)) {
+      if (Sex.EITHER != flags.getValue(SEX_FLAG) && !CommonFlags.validateSexTemplateReference(flags, SEX_FLAG, null, CommonFlags.TEMPLATE_FLAG)) {
         return false;
       }
       if (!flags.checkInRange(SOMATIC_FLAG, 0.0, false, 1.0, false)
@@ -86,7 +86,7 @@ public class TumorOnlyCli extends SomaticCli {
     AvrUtils.initAvrModel(flags, false, SOMATIC_MODEL_DEFAULT);
     CommonFlags.initMinAvrScore(flags);
     commonSomaticFlags(flags);
-    flags.setDescription("Performs a somatic variant analysis on a mixed tumor sample.");
+    flags.setDescription("Performs a somatic variant analysis on a mixed tumor sample where no separate normal sample is available.");
     flags.registerRequired(SAMPLE_FLAG, String.class, "string", "sample identifier used in read groups for tumor sample").setCategory(INPUT_OUTPUT);
     final Flag<Double> contamination = (Flag<Double>) flags.getFlag(CONTAMINATION_FLAG);
     contamination.setParameterDefault(0.75);

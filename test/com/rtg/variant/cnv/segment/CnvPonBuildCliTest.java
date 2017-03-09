@@ -35,9 +35,9 @@ public class CnvPonBuildCliTest extends AbstractCliTest {
   }
 
   public void testHelp() {
-    checkHelp("Construct a normalized coverage sample from a panel of coverage outputs.",
+    checkHelp("Construct a normalized coverage sample",
       "BED output file",
-      "SDF containing reference genome",
+      "reference genome",
       "coverage BED file. Must be specified 1 or more times",
       "do not gzip the output",
       "do not produce indexes for output files",

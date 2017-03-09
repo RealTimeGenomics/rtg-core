@@ -40,7 +40,7 @@ public class SegmentCliTest extends AbstractCliTest {
       "BED file supplying per-region coverage data for the sample",
       "BED file supplying per-region coverage data for control sample",
       "directory for output",
-      "SDF containing reference genome",
+      "reference genome",
       "weighting factor for inter-segment distances during energy scoring",
       "weighting factor for intra-segment distances during energy scoring",
       "segmentation sensitivity",

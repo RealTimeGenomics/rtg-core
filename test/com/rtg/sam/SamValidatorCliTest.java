@@ -63,7 +63,7 @@ public class SamValidatorCliTest extends AbstractCliTest {
         , "Prints alignment statistics from the contents of the output SAM/BAM file."
         , "-I,", "--input-list-file=FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads"
         , "-r,", "--reads=SDF", "reads SDF"
-        , "-t,", "--template=SDF", "template SDF"
+        , "-t,", "--template=SDF", "reference genome"
         , "FILE+", "SAM/BAM result file (must contain read-ids not read names). May be specified 0 or more times"
         , "--consensus", "record consensus data. Requires roughly 5 times template length of RAM"
         , "-D,", "--distributions", "display distributions of insert sizes, alignment scores and read hits"

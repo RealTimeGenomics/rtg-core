@@ -43,8 +43,8 @@ import com.rtg.sam.ThreadedMultifileIterator;
 import com.rtg.util.Counter;
 import com.rtg.util.MathUtils;
 import com.rtg.util.SingletonPopulatorFactory;
+import com.rtg.util.StringUtils;
 import com.rtg.util.TextTable;
-import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -104,22 +104,19 @@ public class DeProbeCli extends LoggedCli {
 
   @Override
   protected void initFlags() {
-    initFlags(mFlags);
-  }
-
-  private static void initFlags(CFlags flags) {
-    flags.registerExtendedHelp();
-    CommonFlagCategories.setCategories(flags);
-    final Flag<File> inFlag = flags.registerRequired(File.class, "FILE", "SAM/BAM format files containing coordinate-sorted alignments")
+    mFlags.registerExtendedHelp();
+    mFlags.setDescription(StringUtils.sentencify(description()));
+    CommonFlagCategories.setCategories(mFlags);
+    final Flag<File> inFlag = mFlags.registerRequired(File.class, "FILE", "SAM/BAM format files containing coordinate-sorted alignments")
       .setCategory(INPUT_OUTPUT).setMinCount(0).setMaxCount(Integer.MAX_VALUE);
-    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing coordinate-sorted alignments").setCategory(INPUT_OUTPUT);
-    CommonFlags.initOutputDirFlag(flags);
-    flags.registerRequired('b', PROBE_BED, File.class, "FILE", "BED file specifying each probe location and strand").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "start position tolerance for probe matching", 5).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(EXTRA_SOFT_CLIP_FLAG, "if set, add extra soft-clipping where mismatches occur at the end of reads").setCategory(CommonFlagCategories.FILTERING);
-    CommonFlags.initMinReadLength(flags);
-    flags.addRequiredSet(inFlag);
-    flags.addRequiredSet(listFlag);
+    final Flag<File> listFlag = mFlags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing coordinate-sorted alignments").setCategory(INPUT_OUTPUT);
+    CommonFlags.initOutputDirFlag(mFlags);
+    mFlags.registerRequired('b', PROBE_BED, File.class, "FILE", "BED file specifying each probe location and strand").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional(TOLERANCE_FLAG, Integer.class, CommonFlags.INT, "start position tolerance for probe matching", 5).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    mFlags.registerOptional(EXTRA_SOFT_CLIP_FLAG, "if set, add extra soft-clipping where mismatches occur at the end of reads").setCategory(CommonFlagCategories.FILTERING);
+    CommonFlags.initMinReadLength(mFlags);
+    mFlags.addRequiredSet(inFlag);
+    mFlags.addRequiredSet(listFlag);
   }
 
   @Override

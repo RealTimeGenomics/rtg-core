@@ -80,7 +80,7 @@ public final class SvCliUtils {
   public static void initCommonFlags(CFlags flags) {
     flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
-    flags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF of the reference genome the reads have been mapped against").setCategory(INPUT_OUTPUT);
+    CommonFlags.initReferenceTemplate(flags, true);
     final Flag<File> inFlag = flags.registerRequired(File.class, "FILE", "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);

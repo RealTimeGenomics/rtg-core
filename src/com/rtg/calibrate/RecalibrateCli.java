@@ -14,7 +14,6 @@ package com.rtg.calibrate;
 import static com.rtg.launcher.CommonFlags.BED_REGIONS_FLAG;
 import static com.rtg.launcher.CommonFlags.FILE;
 import static com.rtg.launcher.CommonFlags.INPUT_LIST_FLAG;
-import static com.rtg.launcher.CommonFlags.SDF;
 
 import java.io.File;
 import java.io.IOException;
@@ -74,7 +73,7 @@ public class RecalibrateCli extends AbstractCli {
     CommonFlags.initNoMaxFile(mFlags);
     CommonFlags.initThreadsFlag(mFlags);
     final Flag<File> listFlag = mFlags.registerOptional('I', INPUT_LIST_FLAG, File.class, FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, SDF, "SDF containing reference genome against which reads were aligned").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    CommonFlags.initReferenceTemplate(mFlags, true);
     mFlags.registerOptional('f', FORCE_FLAG, "force overwriting of calibration files").setCategory(CommonFlagCategories.UTILITY);
     mFlags.registerOptional('m', MERGE_FLAG, File.class, FILE, "if set, merge records and calibration files to this output file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     bedFileFlag(mFlags);

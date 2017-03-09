@@ -71,7 +71,7 @@ public class VstatsCli extends AbstractMultisampleCli {
       if (!AbstractMultisampleCli.validateCommonOptions(flags)) {
         return false;
       }
-      if (Sex.EITHER != flags.getValue(SEX_FLAG) && !CommonFlags.validateSexTemplateReference(flags, SEX_FLAG, null, TEMPLATE_FLAG)) {
+      if (Sex.EITHER != flags.getValue(SEX_FLAG) && !CommonFlags.validateSexTemplateReference(flags, SEX_FLAG, null, CommonFlags.TEMPLATE_FLAG)) {
         return false;
       }
       return true;

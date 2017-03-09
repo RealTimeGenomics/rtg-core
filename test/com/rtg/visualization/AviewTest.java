@@ -142,7 +142,7 @@ public class AviewTest extends AbstractCliTest {
 
   public final void testInitFlags() {
     checkHelp("alignment SAM/BAM files",
-        "reference SDF",
+        "reference genome",
         "print reference line every N lines",
         "called variants",
         "baseline variants",

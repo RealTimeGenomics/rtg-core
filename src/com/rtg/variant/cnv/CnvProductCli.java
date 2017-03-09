@@ -50,7 +50,6 @@ public class CnvProductCli extends ParamsCli<CnvProductParams> {
   static final String INPUT_TEST_FLAG = "test-file";
   static final String INPUT_BASELINE_LIST_FLAG = "base-list-file";
   static final String INPUT_TEST_LIST_FLAG = "test-list-file";
-  private static final String TEMPLATE_FLAG = "template";
   static final String ALLOW_MULTIPLE_ALIGNMENTS_PER_START_INDEX_FLAG = "Xallow-duplicate-start";
   static final String MAGIC_FLAG = "Xmagic-constant";
   static final String DIV_FACT_FLAG = "Xdivision-factor";
@@ -68,8 +67,8 @@ public class CnvProductCli extends ParamsCli<CnvProductParams> {
         flags.setParseMessage("The bucket-size flag should be positive.");
         return false;
       }
-      if (flags.isSet(TEMPLATE_FLAG)) {
-        final String genomePath = flags.getFlag(TEMPLATE_FLAG).getValue().toString();
+      if (flags.isSet(CommonFlags.TEMPLATE_FLAG)) {
+        final String genomePath = flags.getFlag(CommonFlags.TEMPLATE_FLAG).getValue().toString();
         final File genome = new File(genomePath);
         if (!genome.exists()) {
           Diagnostic.error(ErrorType.INFO_ERROR, "The specified SDF, \"" + genome.getPath() + "\", does not exist.");
@@ -145,7 +144,7 @@ public class CnvProductCli extends ParamsCli<CnvProductParams> {
     CommonFlags.initNoMaxFile(mFlags);
     final Flag<File> listFlag1 = mFlags.registerOptional('I', INPUT_BASELINE_LIST_FLAG, File.class, "FILE", "file containing list of SAM/BAM format files (1 per line) containing mapped reads for baseline").setCategory(INPUT_OUTPUT);
     final Flag<File> listFlag2 = mFlags.registerOptional('J', INPUT_TEST_LIST_FLAG, File.class, "FILE", "file containing list of SAM/BAM format files (1 per line) containing mapped reads for test").setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional('t', TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the reads have been mapped against").setCategory(INPUT_OUTPUT);
+    CommonFlags.initReferenceTemplate(mFlags, false);
     mFlags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
     mFlags.registerOptional('b', BUCKET_SIZE_FLAG, Integer.class, "INT", "size of the buckets in the genome", 100).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(ALLOW_MULTIPLE_ALIGNMENTS_PER_START_INDEX_FLAG, "Count alignments starting at the same position individually").setCategory(SENSITIVITY_TUNING);
@@ -187,8 +186,8 @@ public class CnvProductCli extends ParamsCli<CnvProductParams> {
     builder.multiplicationFactor((Double) mFlags.getValue(MUL_FACT_FLAG));
     builder.extraPenaltyOff(mFlags.isSet(EXTRA_PENALTY_OFF));
     builder.ignoreIncompatibleSamHeaders(mFlags.isSet(X_IGNORE_SAM_HEADER_INCOMPATIBILITY));
-    if (mFlags.isSet(TEMPLATE_FLAG)) {
-      builder.genome(SequenceParams.builder().directory((File) mFlags.getValue(TEMPLATE_FLAG)).mode(SequenceMode.UNIDIRECTIONAL).create().readerParams());
+    if (mFlags.isSet(CommonFlags.TEMPLATE_FLAG)) {
+      builder.genome(SequenceParams.builder().directory((File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG)).mode(SequenceMode.UNIDIRECTIONAL).create().readerParams());
     }
     builder.threads(CommonFlags.parseIOThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)));
     final CnvProductParams localParams = builder.filterParams(SamFilterOptions.makeFilterParamsBuilder(mFlags).excludeUnmapped(true).excludeUnplaced(true).create()).create();

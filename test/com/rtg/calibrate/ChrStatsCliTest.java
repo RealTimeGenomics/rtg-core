@@ -70,7 +70,7 @@ public class ChrStatsCliTest extends AbstractCliTest {
       , "-t SDF -I FILE"
       , "Check expected chromosome coverage levels from mapping calibration files."
       , "File Input/Output"
-      , "-t,", "--template=SDF", "SDF containing reference genome"
+      , "-t,", "--template=SDF", "reference genome"
       , "-I,", "--input-list-file=FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads"
       , "-p,", "--pedigree=FILE", "genome relationships PED file"
       , "--sex=SEX", "sex setting that the individual was mapped as"

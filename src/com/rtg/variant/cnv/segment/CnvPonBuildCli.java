@@ -68,11 +68,11 @@ public class CnvPonBuildCli extends AbstractCli {
   @Override
   protected void initFlags() {
     mFlags.registerExtendedHelp();
-    mFlags.setDescription("Construct a normalized coverage sample from a panel of coverage outputs.");
+    mFlags.setDescription("Construct a normalized coverage sample from a panel of coverage outputs, for use during segmentation.");
     CommonFlagCategories.setCategories(mFlags);
     CommonFlags.initNoGzip(mFlags);
     CommonFlags.initIndexFlags(mFlags);
-    mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing reference genome").setCategory(INPUT_OUTPUT);
+    CommonFlags.initReferenceTemplate(mFlags, true);
     mFlags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, CommonFlags.FILE, "BED output file").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(SegmentCli.GCBINS_FLAG, Integer.class, CommonFlags.INT, "number of bins when applying GC correction", 10).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(SegmentCli.COV_COLUMN_NAME, String.class, CommonFlags.STRING, "name of the coverage column in input data", SegmentCli.DEFAULT_COLUMN_NAME).setCategory(SENSITIVITY_TUNING);

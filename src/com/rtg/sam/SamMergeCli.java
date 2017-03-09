@@ -78,7 +78,7 @@ public class SamMergeCli extends AbstractCli {
   protected void initFlags() {
     mFlags.registerExtendedHelp();
     mFlags.setDescription("Merges and filters coordinate-sorted SAM/BAM files.");
-    mFlags.registerOptional('t', CommonFlags.TEMPLATE_FLAG, File.class, "SDF", "SDF containing reference used to decode CRAM input").setCategory(INPUT_OUTPUT);
+    CommonFlags.initReferenceTemplate(mFlags, CommonFlags.TEMPLATE_FLAG, false, " to use when decoding CRAM input");
     CommonFlagCategories.setCategories(mFlags);
     final Flag<File> inFlag = mFlags.registerRequired(File.class, "FILE", "SAM/BAM format files containing coordinate-sorted reads");
     inFlag.setCategory(INPUT_OUTPUT);

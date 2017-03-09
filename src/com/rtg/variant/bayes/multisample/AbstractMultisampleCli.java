@@ -97,7 +97,6 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
   private static final String R_DEFAULT_FLAG = "rdefault-mated";
   private static final String UNMATED_R_DEFAULT_FLAG = "rdefault-unmated";
   private static final String SNPS_ONLY_FLAG = "snps-only";
-  protected static final String TEMPLATE_FLAG = "template";
   private static final String POPULATION_PRIORS = "population-priors";
   protected static final String MIN_VARIANT_ALLELIC_DEPTH = "min-variant-allelic-depth";
   protected static final String MIN_VARIANT_ALLELIC_FRACTION = "min-variant-allelic-fraction";
@@ -284,7 +283,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
     flags.registerOptional(NO_CALIBRATION, "if set, ignore mapping calibration files").setCategory(UTILITY);
-    flags.registerRequired('t', TEMPLATE_FLAG, File.class, "SDF", "SDF of the reference genome the reads have been mapped against").setCategory(INPUT_OUTPUT);
+    CommonFlags.initReferenceTemplate(flags, true);
     CommonFlags.initOutputDirFlag(flags);
     CommonFlags.initNoGzip(flags);
     CommonFlags.initThreadsFlag(flags);
@@ -451,7 +450,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     }
 
     // From here on pretty much needs the genome reader to be loaded
-    final File genomeFile = (File) mFlags.getValue(TEMPLATE_FLAG);
+    final File genomeFile = (File) mFlags.getValue(CommonFlags.TEMPLATE_FLAG);
     SdfUtils.validateHasNames(genomeFile);
     final SequenceParams genomeParams = SequenceParams.builder().directory(genomeFile).mode(SequenceMode.UNIDIRECTIONAL).create();
     try {

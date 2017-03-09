@@ -95,7 +95,7 @@ public class SomaticCli extends AbstractMultisampleCli {
           return false;
         }
       }
-      if (Sex.EITHER != flags.getValue(SEX_FLAG) && !CommonFlags.validateSexTemplateReference(flags, SEX_FLAG, null, TEMPLATE_FLAG)) {
+      if (Sex.EITHER != flags.getValue(SEX_FLAG) && !CommonFlags.validateSexTemplateReference(flags, SEX_FLAG, null, CommonFlags.TEMPLATE_FLAG)) {
         return false;
       }
       if (!flags.checkInRange(SOMATIC_FLAG, 0.0, false, 1.0, false)

@@ -38,7 +38,6 @@ import com.rtg.util.intervals.RegionRestriction;
 class AviewParams {
 
   static final String BASELINE_VCF = "baseline";
-  static final String REFERENCE = "template";
   static final String CALLS_VCF = "calls";
   static final String BEDS = "bed";
   static final String ALIGNMENTS = "alignments";
@@ -78,7 +77,7 @@ class AviewParams {
     CommonFlagCategories.setCategories(flags);
 
     // Input sources
-    flags.registerRequired('t', REFERENCE, File.class, "SDF", "reference SDF").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    CommonFlags.initReferenceTemplate(flags, true);
     flags.registerOptional('r', READS_SDF, File.class, "SDF", "read SDF (only needed to indicate correctness of simulated read mappings)")
         .setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.INPUT_OUTPUT);
     final Flag<File> in = flags.registerRequired(File.class, "FILE", "alignment SAM/BAM files").setCategory(CommonFlagCategories.INPUT_OUTPUT);
@@ -240,7 +239,7 @@ class AviewParams {
    File[] list = new File[fileList.size()];
    list = fileList.toArray(list);
    builder.alignments(list)
-     .reference((File) flags.getValue(REFERENCE))
+     .reference((File) flags.getValue(CommonFlags.TEMPLATE_FLAG))
      .region(flags.getValue(REGION).toString())
      .headerLineRepeat((Integer) flags.getValue(PRINT_REFERENCE_LINE))
      .displayDots(!flags.isSet(NO_DOTS))
