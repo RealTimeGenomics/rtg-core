@@ -53,7 +53,7 @@ public class DefaultReaderParams extends ReaderParams implements Integrity {
   private LongRange mAdjustedRegion;
 
   /**
-   * @param sequenceDir directory containing preread sequences.
+   * @param sequenceDir directory containing sequences.
    * @param mode the sequence mode.
    * @param readerRestriction a region specifying the subset of the SDF to load
    * @param parent parent, can be null

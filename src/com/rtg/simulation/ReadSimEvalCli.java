@@ -617,11 +617,11 @@ public class ReadSimEvalCli extends LoggedCli {
 
   String leftName(long readNum) throws IOException {
     if (mLeftNames == null) {
-      final File preread = mParams.isPaired() ? ReaderUtils.getLeftEnd(mParams.readDirectory()) : mParams.readDirectory();
-      mLeftNames = new Names(preread, LongRange.NONE);
-      final IndexFile index = new IndexFile(preread);
+      final File sdf = mParams.isPaired() ? ReaderUtils.getLeftEnd(mParams.readDirectory()) : mParams.readDirectory();
+      mLeftNames = new Names(sdf, LongRange.NONE);
+      final IndexFile index = new IndexFile(sdf);
       if (index.hasSequenceNameSuffixes()) {
-        mLeftSuffixes = new Names(preread, LongRange.NONE, true);
+        mLeftSuffixes = new Names(sdf, LongRange.NONE, true);
       }
     }
     final String name;
@@ -635,11 +635,11 @@ public class ReadSimEvalCli extends LoggedCli {
 
   String rightName(long readNum) throws IOException {
     if (mRightNames == null) {
-      final File preread = mParams.isPaired() ? ReaderUtils.getRightEnd(mParams.readDirectory()) : mParams.readDirectory();
-      mRightNames = new Names(preread, LongRange.NONE);
-      final IndexFile index = new IndexFile(preread);
+      final File sdf = mParams.isPaired() ? ReaderUtils.getRightEnd(mParams.readDirectory()) : mParams.readDirectory();
+      mRightNames = new Names(sdf, LongRange.NONE);
+      final IndexFile index = new IndexFile(sdf);
       if (index.hasSequenceNameSuffixes()) {
-        mRightSuffixes = new Names(preread, LongRange.NONE, true);
+        mRightSuffixes = new Names(sdf, LongRange.NONE, true);
       }
     }
     final String name;
