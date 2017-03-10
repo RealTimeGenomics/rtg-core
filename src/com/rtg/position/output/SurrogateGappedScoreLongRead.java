@@ -13,7 +13,7 @@ package com.rtg.position.output;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.mode.Frame;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 
 /**
  * Surrogate for <code>GappedScoreRegion</code>.
@@ -41,7 +41,7 @@ class SurrogateGappedScoreLongRead implements SurrogateRegion {
   }
 
   @Override
-  public boolean write(final Appendable out, final PrereadNamesInterface subjectNames, final PrereadNamesInterface queryNames) {
+  public boolean write(final Appendable out, final NamesInterface subjectNames, final NamesInterface queryNames) {
     throw new UnsupportedOperationException();
   }
 

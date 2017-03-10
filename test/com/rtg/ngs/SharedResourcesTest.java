@@ -20,8 +20,8 @@ import java.util.Arrays;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.ngs.blocking.MapQScoringReadBlockerSynch;
+import com.rtg.reader.Names;
 import com.rtg.reader.PrereadArm;
-import com.rtg.reader.PrereadNames;
 import com.rtg.reader.ReadHelper;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesReader;
@@ -57,7 +57,7 @@ public class SharedResourcesTest extends TestCase {
       final SequencesReader ref = ReaderTestUtils.getReaderDNA(">testRef\nacct", refFile, null, true);
 
       final MapQScoringReadBlocker srb = new MapQScoringReadBlocker(1, 2);
-      final PrereadNames names = new PrereadNames(refFile, LongRange.NONE);
+      final Names names = new Names(refFile, LongRange.NONE);
       final SharedResources sr = new SharedResources(left, right, ref, srb, names, SharedResources.createHeader(ref, names, left, null, Sex.EITHER, true), null);
       assertTrue(srb == sr.getBlocker());
       assertTrue(sr.isPairedEnd());

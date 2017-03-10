@@ -13,7 +13,7 @@ package com.rtg.position.output;
 
 import java.io.IOException;
 
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 
 /**
  * Interface defining a surrogate object capable of printing a result.
@@ -31,7 +31,7 @@ public interface SurrogateRegion {
    * result exceeding any score threshold)
    * @throws IOException if an IO error occurs
    */
-  boolean write(final Appendable out, final PrereadNamesInterface subjectNames, final PrereadNamesInterface queryNames) throws IOException;
+  boolean write(final Appendable out, final NamesInterface subjectNames, final NamesInterface queryNames) throws IOException;
 
   /**
    * Write the header in the result

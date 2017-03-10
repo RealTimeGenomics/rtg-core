@@ -25,7 +25,7 @@ import com.rtg.ngs.tempstage.TempRecordReader;
 import com.rtg.ngs.tempstage.TempRecordReaderNio;
 import com.rtg.reader.CgUtils;
 import com.rtg.reader.FastaUtils;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.ReadGroupUtils;
 import com.rtg.sam.SamBamConstants;
@@ -58,7 +58,7 @@ import htsjdk.samtools.SAMRecord;
  */
 public abstract class AbstractSamResultsFilter {
 
-  protected PrereadNamesInterface mNames;
+  protected NamesInterface mNames;
 
   private boolean mWriteHeader = true;
   private boolean mBamOutput = false;
@@ -229,7 +229,7 @@ public abstract class AbstractSamResultsFilter {
     return diff / 1000000;
   }
 
-  protected String processReadName(PrereadNamesInterface names, int readId, boolean paired) {
+  protected String processReadName(NamesInterface names, int readId, boolean paired) {
     if (names == null) {
       return Long.toString(readId + mReadIdOffset);
     }
@@ -306,7 +306,7 @@ public abstract class AbstractSamResultsFilter {
    * @param names read name set
    *
    */
-  public void setReadNames(PrereadNamesInterface names) {
+  public void setReadNames(NamesInterface names) {
     mNames = names;
   }
 
@@ -370,5 +370,5 @@ public abstract class AbstractSamResultsFilter {
   }
   protected abstract String getName();
 
-  protected abstract SAMRecord filterRecord(SAMFileWriter samWriter, BinaryTempFileRecord rec, PrereadNamesInterface templateNames) throws IOException;
+  protected abstract SAMRecord filterRecord(SAMFileWriter samWriter, BinaryTempFileRecord rec, NamesInterface templateNames) throws IOException;
 }

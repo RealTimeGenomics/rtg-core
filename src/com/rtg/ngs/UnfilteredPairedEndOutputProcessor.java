@@ -30,7 +30,7 @@ import com.rtg.ngs.blocking.ReadBlockerSync;
 import com.rtg.ngs.tempstage.UnfilteredTempFileWriter;
 import com.rtg.pairedend.ReadStatusListener;
 import com.rtg.pairedend.UnfilteredSlidingWindowCollector;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.util.NullStreamUtils;
 import com.rtg.util.Pair;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -104,7 +104,7 @@ public class UnfilteredPairedEndOutputProcessor extends AbstractSdfOutputProcess
   }
 
   @Override
-  protected FilterConcatIntermediateFiles filterConcatNonMated(MapQScoringReadBlocker blockerLeft, MapQScoringReadBlocker blockerRight, File[] tempFiles, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, PrereadNamesInterface templateNames, File outFile) {
+  protected FilterConcatIntermediateFiles filterConcatNonMated(MapQScoringReadBlocker blockerLeft, MapQScoringReadBlocker blockerRight, File[] tempFiles, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, NamesInterface templateNames, File outFile) {
     throw new UnsupportedOperationException("Unpossible");
   }
 

@@ -18,7 +18,7 @@ import com.rtg.mode.TranslatedFrame;
 import com.rtg.ngs.MapStatistics;
 import com.rtg.reader.Arm;
 import com.rtg.ngs.MapStatisticsField;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.util.StringUtils;
 
 /**
@@ -99,7 +99,7 @@ public class SharedStatusCollector {
     mReadCacheProtein[r] = protein;
   }
 
-  void writeUnmapped(final OutputStream unmapped, PrereadNamesInterface readsNames, long readIdOffset) throws IOException {
+  void writeUnmapped(final OutputStream unmapped, NamesInterface readsNames, long readIdOffset) throws IOException {
     for (int i = 0; i < mReadsStatus.length; ++i) {
       final byte status = mReadsStatus[i];
       if ((status & RESULT_WRITTEN) == RESULT_WRITTEN) {

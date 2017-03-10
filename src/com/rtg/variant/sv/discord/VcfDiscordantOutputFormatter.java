@@ -18,7 +18,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import com.rtg.mode.DNA;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.SequencesReader;
 import com.rtg.vcf.VcfRecord;
 import com.rtg.vcf.VcfUtils;
@@ -56,7 +56,7 @@ public class VcfDiscordantOutputFormatter {
    */
   public VcfDiscordantOutputFormatter(SequencesReader genomeSequences) throws IOException {
     mTemplate = genomeSequences;
-    final PrereadNamesInterface pni = genomeSequences.names();
+    final NamesInterface pni = genomeSequences.names();
     for (long i = 0; i < pni.length(); ++i) {
       mSequenceMap.put(genomeSequences.names().name(i), (int) i);
     }

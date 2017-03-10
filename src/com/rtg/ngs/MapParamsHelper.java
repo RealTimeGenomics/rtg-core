@@ -41,13 +41,13 @@ import com.rtg.reader.InputFormat;
 import com.rtg.reader.PrereadArm;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.ReaderUtils;
-import com.rtg.reader.RightSimplePrereadNames;
+import com.rtg.reader.RightSimpleNames;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SdfUtils;
 import com.rtg.reader.SequenceDataSource;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesWriter;
-import com.rtg.reader.SimplePrereadNames;
+import com.rtg.reader.SimpleNames;
 import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.sam.SamCommandHelper;
@@ -481,8 +481,8 @@ public final class MapParamsHelper {
       executor.execute(templateTask);
 
       try {
-        final SimplePrereadNames names = nameParams.includeNames() ? new SimplePrereadNames() : null;
-        final SimplePrereadNames suffixes = nameParams.includeFullNames() ? new SimplePrereadNames() : null;
+        final SimpleNames names = nameParams.includeNames() ? new SimpleNames() : null;
+        final SimpleNames suffixes = nameParams.includeFullNames() ? new SimpleNames() : null;
 
         if (format == InputFormat.SAM_PE || format == InputFormat.SAM_SE) {
           final FutureTask<SequenceParams[]> samTask = new FutureTask<>(new SequenceParamsCallableSam(build, format, buildRegion, names, suffixes, useQuality, readsMode, samParams));
@@ -498,8 +498,8 @@ public final class MapParamsHelper {
           executor.execute(leftTask);
           FutureTask<SequenceParams> rightTask = null;
           if (buildSecond != null) {
-            final RightSimplePrereadNames rNames = names == null ? null : new RightSimplePrereadNames(names);
-            final RightSimplePrereadNames rSuffixes = suffixes == null ? null : new RightSimplePrereadNames(suffixes);
+            final RightSimpleNames rNames = names == null ? null : new RightSimpleNames(names);
+            final RightSimpleNames rSuffixes = suffixes == null ? null : new RightSimpleNames(suffixes);
             rightTask = new FutureTask<>(new SequenceParamsCallableFasta(buildSecond, format, buildRegion, PrereadArm.RIGHT, rNames, rSuffixes, useQuality, readsMode));
             executor.execute(rightTask);
           }
@@ -633,13 +633,13 @@ public final class MapParamsHelper {
     private final boolean mUseMemReader;
     private final InputFormat mInputFormat;
     private final LongRange mReaderRestriction;
-    private final SimplePrereadNames mNames;
-    private final SimplePrereadNames mSuffixes;
+    private final SimpleNames mNames;
+    private final SimpleNames mSuffixes;
     private final PrereadArm mArm;
     private final SequenceMode mMode;
     private final boolean mUseQuality;
 
-    SequenceParamsCallableFasta(File build, InputFormat format, LongRange readerRestriction, PrereadArm arm, SimplePrereadNames names, SimplePrereadNames suffixes, boolean useQuality, SequenceMode mode) { // C'tor for reads
+    SequenceParamsCallableFasta(File build, InputFormat format, LongRange readerRestriction, PrereadArm arm, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode) { // C'tor for reads
 
       mBuild = build;
       mUseMemReader = true;
@@ -667,13 +667,13 @@ public final class MapParamsHelper {
     private final boolean mUseMemReader;
     private final InputFormat mInputFormat;
     private final LongRange mReaderRestriction;
-    private final SimplePrereadNames mNames;
-    private final SimplePrereadNames mSuffixes;
+    private final SimpleNames mNames;
+    private final SimpleNames mSuffixes;
     private final SequenceMode mMode;
     private final boolean mUseQuality;
     private final SamSequenceReaderParams mSamParams;
 
-    SequenceParamsCallableSam(File build, InputFormat format, LongRange readerRestriction, SimplePrereadNames names, SimplePrereadNames suffixes, boolean useQuality, SequenceMode mode, SamSequenceReaderParams samParams) { // C'tor for reads
+    SequenceParamsCallableSam(File build, InputFormat format, LongRange readerRestriction, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode, SamSequenceReaderParams samParams) { // C'tor for reads
       mBuild = build;
       mUseMemReader = true;
       mReaderRestriction = readerRestriction;

@@ -16,7 +16,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import com.rtg.alignment.ActionsHelper;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 
 /**
  * Hold a single protein alignment result.
@@ -186,7 +186,7 @@ class ProteinAlignmentResult implements Comparable<ProteinAlignmentResult> {
   }
 
   private void writeTemplateName(final OutputStream os) throws IOException {
-    final PrereadNamesInterface tnames = mResources.templateNames();
+    final NamesInterface tnames = mResources.templateNames();
     if (tnames != null) {
       tnames.writeName(os, mTemplateId);
     } else {
@@ -195,7 +195,7 @@ class ProteinAlignmentResult implements Comparable<ProteinAlignmentResult> {
   }
 
   private void writeReadName(OutputStream os, int readId) throws IOException  {
-    final PrereadNamesInterface rnames = mResources.readNames();
+    final NamesInterface rnames = mResources.readNames();
     if (rnames != null) {
       rnames.writeName(os, readId);
     } else {

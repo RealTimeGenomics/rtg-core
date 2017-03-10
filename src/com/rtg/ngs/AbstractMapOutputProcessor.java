@@ -36,7 +36,7 @@ import com.rtg.ngs.blocking.MapQScoringReadBlockerSynch;
 import com.rtg.ngs.tempstage.AbstractTempFileWriter;
 import com.rtg.ngs.tempstage.PairedTempFileWriterImpl;
 import com.rtg.ngs.tempstage.SingleEndTempFileWriter;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.sam.SamFilterParams;
 import com.rtg.sam.SamMerger;
 import com.rtg.sam.SamUtils;
@@ -94,7 +94,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
     mRegions = new ArrayList<>();
   }
 
-  protected abstract FilterConcatIntermediateFiles filterConcatNonMated(MapQScoringReadBlocker blockerLeft, MapQScoringReadBlocker blockerRight, File[] tempFiles, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, PrereadNamesInterface templateNames, File outFile) throws IOException;
+  protected abstract FilterConcatIntermediateFiles filterConcatNonMated(MapQScoringReadBlocker blockerLeft, MapQScoringReadBlocker blockerRight, File[] tempFiles, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, NamesInterface templateNames, File outFile) throws IOException;
 
   private static final class FileAndStream {
     private final File mFile;
@@ -420,7 +420,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
       Diagnostic.userLog("Merging alignment results");
     }
     final SingleEndTopRandomImplementation.HitRecord[] hitsToKeep;
-    final PrereadNamesInterface templateNames;
+    final NamesInterface templateNames;
     if (mParams.useTopRandom()) {
       hitsToKeep = mSharedResources.getSingleEndTopRandom().getRecords();
       templateNames = mSharedResources.names();

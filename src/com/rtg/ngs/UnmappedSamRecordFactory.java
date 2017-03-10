@@ -16,7 +16,7 @@ import java.io.IOException;
 
 import com.reeltwo.jumble.annotations.TestClass;
 import com.rtg.mode.DnaUtils;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.ReadHelper;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reference.ReferenceGenome;
@@ -37,7 +37,7 @@ public class UnmappedSamRecordFactory implements Closeable {
   private final SharedResources mSharedResources;
   SequencesReader mReader1;
   SequencesReader mReader2;
-  private final PrereadNamesInterface mNames;
+  private final NamesInterface mNames;
   private final LongRange mReadRange;
   private final SAMReadGroupRecord mReadGroupRecord;
 
@@ -79,7 +79,7 @@ public class UnmappedSamRecordFactory implements Closeable {
    * @param readId internal read id
    * @return the read name
    */
-  static String extractReadName(boolean paired, LongRange readRange, PrereadNamesInterface names, int readId) {
+  static String extractReadName(boolean paired, LongRange readRange, NamesInterface names, int readId) {
     if (names == null) {
       final long offset = Math.max(readRange.getStart(), 0);
       return String.valueOf(readId + offset);

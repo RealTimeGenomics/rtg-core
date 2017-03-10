@@ -24,7 +24,7 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 
 import com.rtg.launcher.AbstractCli;
-import com.rtg.reader.PrereadNames;
+import com.rtg.reader.Names;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
@@ -132,7 +132,7 @@ public class MapxRename extends AbstractCli {
     }
 
     try (SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(sdfReads)) {
-      renameFile(infile, outfile, new PrereadNames(sdfReads, LongRange.NONE), sr.getSdfId());
+      renameFile(infile, outfile, new Names(sdfReads, LongRange.NONE), sr.getSdfId());
     }
     out.write(("Rename complete." + StringUtils.LS).getBytes());
     return 0;
@@ -196,7 +196,7 @@ public class MapxRename extends AbstractCli {
     }
   }
 
-  private static void renameFile(final File resultsFile, final File renamedFile, PrereadNames names, SdfId sdfId) throws IOException {
+  private static void renameFile(final File resultsFile, final File renamedFile, Names names, SdfId sdfId) throws IOException {
     int idColumn = -1;
     try (BufferedReader read = new BufferedReader(new InputStreamReader(FileUtils.createInputStream(resultsFile, false)))) {
       final OutputStream baseOutStream = FileUtils.createOutputStream(renamedFile, FileUtils.isGzipFilename(renamedFile), false);
@@ -250,7 +250,7 @@ public class MapxRename extends AbstractCli {
     }
   }
 
-  private static String replaceIdWithName(final String[] parts, final int id, final char sep, PrereadNames names) {
+  private static String replaceIdWithName(final String[] parts, final int id, final char sep, Names names) {
     final String line;
     final int readId = Integer.parseInt(parts[id]);
     parts[id] = names.name(readId);

@@ -19,7 +19,7 @@ import com.rtg.ngs.PairedTopRandomImplementation.HitRecord;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.ngs.blocking.ReadBlocker;
 import com.rtg.ngs.tempstage.BinaryTempFileRecord;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.SamBamConstants;
 import com.rtg.sam.SamUtils;
@@ -72,7 +72,7 @@ public final class MatedSamResultsFilter extends AbstractSamResultsFilter {
   }
 
   /* for toprandom */
-  void setTemplateNames(PrereadNamesInterface names) {
+  void setTemplateNames(NamesInterface names) {
     mTemplateNames = new HashMap<>();
     for (int i = 0; i < names.length(); ++i) {
       mTemplateNames.put(names.name(i), i);
@@ -85,7 +85,7 @@ public final class MatedSamResultsFilter extends AbstractSamResultsFilter {
   }
 
   @Override
-  protected SAMRecord filterRecord(SAMFileWriter samWriter, BinaryTempFileRecord rec, PrereadNamesInterface templateNames) throws IOException {
+  protected SAMRecord filterRecord(SAMFileWriter samWriter, BinaryTempFileRecord rec, NamesInterface templateNames) throws IOException {
     assert rec.isReadPaired();
     final int readId = rec.getReadId();
     final int flag = rec.getSamFlags() & 0xff;

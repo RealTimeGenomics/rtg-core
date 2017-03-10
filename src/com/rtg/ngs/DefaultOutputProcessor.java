@@ -22,7 +22,7 @@ import java.io.Writer;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
 import com.rtg.launcher.HashingRegion;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 
 
 /**
@@ -35,7 +35,7 @@ public class DefaultOutputProcessor implements OutputProcessor {
 
   private OutputStreamWriter mOut;
   private final NgsParams mParam;
-  private final PrereadNamesInterface mNames;
+  private final NamesInterface mNames;
   private boolean mHeaderWritten = false;
   private final File mFile;
   private final HashingRegion mRegion;
@@ -63,7 +63,7 @@ public class DefaultOutputProcessor implements OutputProcessor {
    * @param region the region this processor is dealing with
    * @param output the file this processor is outputting to
    */
-  public DefaultOutputProcessor(final OutputStream stream, PrereadNamesInterface names, HashingRegion region, File output) {
+  public DefaultOutputProcessor(final OutputStream stream, NamesInterface names, HashingRegion region, File output) {
     mOut = new OutputStreamWriter(stream);
     mNames = names;
     mParam = null;

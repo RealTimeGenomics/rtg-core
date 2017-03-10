@@ -29,7 +29,7 @@ import com.rtg.ngs.tempstage.TempRecordWriterNio;
 import com.rtg.pairedend.ReadStatusListener;
 import com.rtg.reader.MockArraySequencesReader;
 import com.rtg.reader.MockSequencesReader;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
@@ -82,7 +82,7 @@ public class DummySamResultsFilterTest extends TestCase {
     }
 
     @Override
-    protected SAMRecord filterRecord(SAMFileWriter samWriter, BinaryTempFileRecord rec, PrereadNamesInterface templateNames) {
+    protected SAMRecord filterRecord(SAMFileWriter samWriter, BinaryTempFileRecord rec, NamesInterface templateNames) {
       final int readId = rec.getReadId();
       final int flag = rec.getSamFlags() & 0xff;
       //assert (flag & SamBamRecord.SAM_READ_IS_PAIRED) == 0;

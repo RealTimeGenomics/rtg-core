@@ -15,7 +15,7 @@ import java.io.IOException;
 
 import com.rtg.ngs.tempstage.BinaryTempFileRecord;
 import com.rtg.pairedend.ReadStatusListener;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.SamBamConstants;
@@ -56,7 +56,7 @@ public final class SamResultsSansFilter extends AbstractSamResultsFilter {
   }
 
   @Override
-  protected SAMRecord filterRecord(SAMFileWriter samWriter, BinaryTempFileRecord rec, PrereadNamesInterface templateNames) throws IOException {
+  protected SAMRecord filterRecord(SAMFileWriter samWriter, BinaryTempFileRecord rec, NamesInterface templateNames) throws IOException {
     final int readId = rec.getReadId();
     final int flag = rec.getSamFlags() & 0xff;
     //assert (flag & SamBamConstants.SAM_READ_IS_PAIRED) != 0;

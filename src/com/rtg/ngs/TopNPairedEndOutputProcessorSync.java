@@ -30,7 +30,7 @@ import com.rtg.ngs.blocking.ReadBlockerSync;
 import com.rtg.ngs.tempstage.PairedTempFileWriterImpl;
 import com.rtg.pairedend.ReadStatusListener;
 import com.rtg.pairedend.SlidingWindowCollector;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.PrereadType;
 import com.rtg.sam.RecordIterator;
 import com.rtg.sam.SamUtils;
@@ -221,7 +221,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
   }
 
   @Override
-  protected FilterConcatIntermediateFiles filterConcatNonMated(MapQScoringReadBlocker blockerLeft, MapQScoringReadBlocker blockerRight, File[] tempFiles, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, PrereadNamesInterface templateNames, File outFile) throws IOException {
+  protected FilterConcatIntermediateFiles filterConcatNonMated(MapQScoringReadBlocker blockerLeft, MapQScoringReadBlocker blockerRight, File[] tempFiles, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, NamesInterface templateNames, File outFile) throws IOException {
     preProcessUnMatedStatistics(mUnmappedTracker, blockerLeft, blockerRight, mFreqBlockerLeft, mFreqBlockerRight);
     return new UnmatedMulticoreFilterConcat(mParams, blockerLeft, blockerRight, mFreqBlockerLeft, mFreqBlockerRight, hitsToKeep, templateNames, mAugmenterMerger, mStatsMerger, mReportMerger)
             .filterConcat(tempFiles, outFile, mSharedResources.getHeader(), mParams.outputParams());
@@ -280,12 +280,12 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     final MapQScoringReadBlocker mXaBlocker;
     final ReadBlocker mFreqBlockerLeft;
     final ReadBlocker mFreqBlockerRight;
-    final PrereadNamesInterface mTemplateNames;
+    final NamesInterface mTemplateNames;
     final PairedTopRandomImplementation.HitRecord[] mHitsToKeep;
     final ReadGroupStatsCalculator.Merger mStatsMerger;
     final MapReportData.Merger mReportMerger;
 
-    MatedMulticoreFilterConcat(NgsParams params, MapQScoringReadBlocker xaBlocker, ReadBlocker freqBlockerLeft, ReadBlocker freqBlockerRight, PrereadNamesInterface templateNames, PairedTopRandomImplementation.HitRecord[] hitsToKeep, ReadGroupStatsCalculator.Merger statsMerger, MapReportData.Merger reportMerger) {
+    MatedMulticoreFilterConcat(NgsParams params, MapQScoringReadBlocker xaBlocker, ReadBlocker freqBlockerLeft, ReadBlocker freqBlockerRight, NamesInterface templateNames, PairedTopRandomImplementation.HitRecord[] hitsToKeep, ReadGroupStatsCalculator.Merger statsMerger, MapReportData.Merger reportMerger) {
       super(params, "Mated");
       mXaBlocker = new MapQScoringReadBlocker(xaBlocker);    // Read-only from here, so no need for synchronization
       mFreqBlockerLeft = new ReadBlocker(freqBlockerLeft);   // Read-only from here, so no need for synchronization
@@ -327,12 +327,12 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     final ReadBlocker mFreqBlockerLeft;
     final ReadBlocker mFreqBlockerRight;
     final SingleEndTopRandomImplementation.HitRecord[] mHitsToKeep;
-    final PrereadNamesInterface mTemplateNames;
+    final NamesInterface mTemplateNames;
     final UnmatedAugmenter.Merger mAugmenterMerger;
     final ReadGroupStatsCalculator.Merger mStatsMerger;
     final MapReportData.Merger mReportMerger;
 
-    UnmatedMulticoreFilterConcat(NgsParams params, MapQScoringReadBlocker asBlockerLeft, MapQScoringReadBlocker asBlockerRight, ReadBlocker freqBlockerLeft, ReadBlocker freqBlockerRight, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, PrereadNamesInterface templateNames, UnmatedAugmenter.Merger augmenterMerger, ReadGroupStatsCalculator.Merger statsMerger, MapReportData.Merger reportMerger) {
+    UnmatedMulticoreFilterConcat(NgsParams params, MapQScoringReadBlocker asBlockerLeft, MapQScoringReadBlocker asBlockerRight, ReadBlocker freqBlockerLeft, ReadBlocker freqBlockerRight, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, NamesInterface templateNames, UnmatedAugmenter.Merger augmenterMerger, ReadGroupStatsCalculator.Merger statsMerger, MapReportData.Merger reportMerger) {
       super(params, "Unmated");
       mAsBlockerLeft = new MapQScoringReadBlocker(asBlockerLeft);    // Read-only from here, so no need for synchronization
       mAsBlockerRight = new MapQScoringReadBlocker(asBlockerRight);  // Read-only from here, so no need for synchronization

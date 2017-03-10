@@ -21,7 +21,7 @@ import java.io.PrintStream;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
-import com.rtg.reader.PrereadNames;
+import com.rtg.reader.Names;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
@@ -207,14 +207,14 @@ public class SamRename extends AbstractCli {
         if (!sr.hasNames()) {
           throw new NoTalkbackSlimException("SDF does not contain names, cannot rename");
         }
-        rename = new Renamer(new PrereadNames(ReaderUtils.getLeftEnd(sdfReads), reg2), new PrereadNames(ReaderUtils.getRightEnd(sdfReads), reg2), sr.getSdfId(), reg2);
+        rename = new Renamer(new Names(ReaderUtils.getLeftEnd(sdfReads), reg2), new Names(ReaderUtils.getRightEnd(sdfReads), reg2), sr.getSdfId(), reg2);
       }
     } else {
       try (SequencesReader sr = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(sdfReads)) {
         if (!sr.hasNames()) {
           throw new NoTalkbackSlimException("SDF does not contain names, cannot rename");
         }
-        rename = new Renamer(new PrereadNames(sdfReads, reg2), sr.getSdfId(), reg2);
+        rename = new Renamer(new Names(sdfReads, reg2), sr.getSdfId(), reg2);
       }
     }
     rename.renameSamFile(sortTempDir, outFile, inFile);
@@ -222,13 +222,13 @@ public class SamRename extends AbstractCli {
 
   private static class Renamer {
 
-    private final PrereadNames mNames;
-    private final PrereadNames mNamesLeft;
-    private final PrereadNames mNamesRight;
+    private final Names mNames;
+    private final Names mNamesLeft;
+    private final Names mNamesRight;
     private final SdfId mSdfId;
     private final LongRange mRegion;
 
-    Renamer(PrereadNames names, SdfId sdfId, LongRange region) {
+    Renamer(Names names, SdfId sdfId, LongRange region) {
       mNames = names;
       mNamesLeft = null;
       mNamesRight = null;
@@ -236,7 +236,7 @@ public class SamRename extends AbstractCli {
       mRegion = region;
     }
 
-    Renamer(PrereadNames namesLeft, PrereadNames namesRight, SdfId sdfId, LongRange region) {
+    Renamer(Names namesLeft, Names namesRight, SdfId sdfId, LongRange region) {
       mNames = null;
       mNamesLeft = namesLeft;
       mNamesRight = namesRight;

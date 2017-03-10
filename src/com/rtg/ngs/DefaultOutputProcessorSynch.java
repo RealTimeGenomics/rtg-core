@@ -23,7 +23,7 @@ import java.util.List;
 
 import com.rtg.index.hash.ngs.OutputProcessor;
 import com.rtg.launcher.HashingRegion;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
 
@@ -39,7 +39,7 @@ public class DefaultOutputProcessorSynch implements OutputProcessor {
   public static final String THREAD_FILE_NAME = "mapSubOutput_";
 
   private final NgsParams mParams;
-  private final PrereadNamesInterface mNames;
+  private final NamesInterface mNames;
   private final List<DefaultOutputProcessor> mChildren;
 
   /**

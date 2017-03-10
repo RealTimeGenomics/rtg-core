@@ -20,7 +20,7 @@ import com.rtg.launcher.SequenceParams;
 import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.reader.IndexFile;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.Sdf2Fasta;
 import com.rtg.util.io.FileUtils;
@@ -58,7 +58,7 @@ public class DummySdfOutputProcessorTest extends TestCase {
     }
 
     @Override
-    protected FilterConcatIntermediateFiles filterConcatNonMated(MapQScoringReadBlocker blockerLeft, MapQScoringReadBlocker blockerRight, File[] tempFiles, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, PrereadNamesInterface templateNames, File outFile) {
+    protected FilterConcatIntermediateFiles filterConcatNonMated(MapQScoringReadBlocker blockerLeft, MapQScoringReadBlocker blockerRight, File[] tempFiles, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, NamesInterface templateNames, File outFile) {
       throw new UnsupportedOperationException();
     }
   }

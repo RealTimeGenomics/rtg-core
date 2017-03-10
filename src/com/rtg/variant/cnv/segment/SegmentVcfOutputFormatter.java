@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.rtg.mode.DnaUtils;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.Utils;
 import com.rtg.variant.format.VcfFormatField;
@@ -80,7 +80,7 @@ public class SegmentVcfOutputFormatter {
     mThreshold = threshold;
     mMinBins = minBins;
     mSampleName = sampleName;
-    final PrereadNamesInterface pni = genomeSequences.names();
+    final NamesInterface pni = genomeSequences.names();
     for (long i = 0; i < pni.length(); ++i) {
       mSequenceMap.put(genomeSequences.names().name(i), (int) i);
     }

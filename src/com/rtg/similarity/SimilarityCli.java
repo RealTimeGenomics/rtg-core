@@ -56,7 +56,7 @@ import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.mode.ProgramMode;
 import com.rtg.ngs.MapFlags;
 import com.rtg.reader.IndexFile;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
@@ -261,7 +261,7 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
       final IncrementalIdMap idMap = new IncrementalIdMap();
       final Map<String, Integer> seqNameToTaxonIdMap = TaxonomyUtils.loadTaxonomyMapping(reader);
       final Taxonomy taxonomy = TaxonomyUtils.loadTaxonomy(reader);
-      final PrereadNamesInterface names = reader.names();
+      final NamesInterface names = reader.names();
       long seen = -1;
       for (int k = 0; k < sdfIdToSimId.length; ++k) {
         final int taxonId = seqNameToTaxonIdMap.get(names.name(k));

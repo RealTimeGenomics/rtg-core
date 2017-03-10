@@ -16,7 +16,7 @@ import static com.rtg.util.StringUtils.LS;
 import java.io.IOException;
 
 import com.rtg.mode.Frame;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 
 /**
  * Surrogate for <code>GappedRegion</code>.
@@ -53,7 +53,7 @@ class SurrogateGappedRegion implements SurrogateRegion {
   }
 
   @Override
-  public boolean write(final Appendable out, final PrereadNamesInterface subjectNames, final PrereadNamesInterface queryNames) throws IOException {
+  public boolean write(final Appendable out, final NamesInterface subjectNames, final NamesInterface queryNames) throws IOException {
     final Frame subjectFrame = mSubjectFrames[mBuildSeqId % mNumberFrames];
     final long sequenceId = mBuildSeqId / mNumberFrames;
     final String queryId = queryNames == null ? Long.toString(queryId()) : queryNames.name(queryId());

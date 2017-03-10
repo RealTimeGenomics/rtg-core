@@ -39,7 +39,7 @@ import com.rtg.launcher.ReaderParams;
 import com.rtg.metagenomics.krona.KronaSpeciesNode;
 import com.rtg.metagenomics.krona.KronaSpeciesReportWriter;
 import com.rtg.metagenomics.matrix.Vector;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.sam.SamReadingContext;
@@ -129,7 +129,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
   static SpeciesMap getSpeciesMap(Map<String, Integer> sequenceMap, SequencesReader sr, Taxonomy taxonomy) throws IOException {
     final SpeciesMap speciesMap = new SpeciesMap();
     // Preload species map to ensure names in correct order
-    final PrereadNamesInterface names = sr.names();
+    final NamesInterface names = sr.names();
     for (int k = 0; k < names.length(); ++k) {
       final String name = names.name(k);
       final Integer taxonId = sequenceMap.get(name);
@@ -254,7 +254,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
       mTaxonomy = baseTaxonomy.subset(mSequenceMap.values());
 
       // ensure all sequences accounted for
-      final PrereadNamesInterface names = sr.names();
+      final NamesInterface names = sr.names();
       for (int k = 0; k < names.length(); ++k) {
         final String name = names.name(k);
         if (!mSequenceMap.containsKey(name)) {

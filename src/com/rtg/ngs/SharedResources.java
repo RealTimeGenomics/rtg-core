@@ -15,7 +15,7 @@ import java.io.IOException;
 
 import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.ngs.blocking.MapQScoringReadBlockerSynch;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reference.Sex;
@@ -53,7 +53,7 @@ public class SharedResources {
 
     assert params.outputParams() != null;
     final MapQScoringReadBlocker blocker = new MapQScoringReadBlockerSynch((int) srFirst.numberSequences(), params.outputParams().maxTopResults());
-    final PrereadNamesInterface templateNames = params.searchParams().reader().names();
+    final NamesInterface templateNames = params.searchParams().reader().names();
     final SAMFileHeader header = createHeader(srTemplate, templateNames, srFirst, params.outputParams().readGroup(), params.sex(), true);
     final SAMFileHeader header2 = createHeader(srTemplate, templateNames, srFirst, params.outputParams().readGroup(), params.sex(), false);
     final SharedResources sr = new SharedResources(srFirst, srSecond, srTemplate, blocker, templateNames, header, header2);
@@ -88,13 +88,13 @@ public class SharedResources {
   private final SequencesReader mSecondReader;
   private final SequencesReader mTemplateReader;
   private final MapQScoringReadBlocker mBlocker;
-  private final PrereadNamesInterface mTemplateNames;
+  private final NamesInterface mTemplateNames;
   private final SAMFileHeader mFileHeader;
   private PairedTopRandomImplementation mPairedEndTopRandom = null;
   private SingleEndTopRandomImplementation mSingleEndTopRandom = null;
 
   SharedResources(SequencesReader first, SequencesReader second, SequencesReader template,
-      MapQScoringReadBlocker blocker, PrereadNamesInterface templateNames, SAMFileHeader header, SAMFileHeader headerNoDict) {
+                  MapQScoringReadBlocker blocker, NamesInterface templateNames, SAMFileHeader header, SAMFileHeader headerNoDict) {
     mFirstReader = first;
     mSecondReader = second;
     mTemplateReader = template;
@@ -105,7 +105,7 @@ public class SharedResources {
     mFileHeader = header;
   }
 
-  protected static SAMFileHeader createHeader(SequencesReader templateReader, PrereadNamesInterface templateNames, SequencesReader leftReader, SAMReadGroupRecord readGroupRecord, Sex sex, boolean includeDictionary) throws IOException {
+  protected static SAMFileHeader createHeader(SequencesReader templateReader, NamesInterface templateNames, SequencesReader leftReader, SAMReadGroupRecord readGroupRecord, Sex sex, boolean includeDictionary) throws IOException {
     final SAMFileHeader header = new SAMFileHeader();
     header.setSortOrder(SAMFileHeader.SortOrder.coordinate);
     final SAMProgramRecord pg = new SAMProgramRecord(Constants.APPLICATION_NAME);
@@ -176,7 +176,7 @@ public class SharedResources {
    * Return the names of all template sequences.
    * @return template names
    */
-  public PrereadNamesInterface names() {
+  public NamesInterface names() {
     return mTemplateNames;
   }
 

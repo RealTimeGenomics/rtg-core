@@ -28,7 +28,7 @@ import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
-import com.rtg.reader.PrereadNames;
+import com.rtg.reader.Names;
 import com.rtg.reader.SdfUtils;
 import com.rtg.reader.SdfWriter;
 import com.rtg.reader.SequencesReader;
@@ -252,7 +252,7 @@ public class VcfReplayerCli extends AbstractCli {
   }
 
   private ArrayList<String> loadNames(SequencesReader reader) throws IOException {
-    final PrereadNames names = new PrereadNames(reader.path(), LongRange.NONE);
+    final Names names = new Names(reader.path(), LongRange.NONE);
     final ArrayList<String> list = new ArrayList<>();
     for (int i = 0; i < reader.numberSequences(); ++i) {
       list.add(names.name(i));

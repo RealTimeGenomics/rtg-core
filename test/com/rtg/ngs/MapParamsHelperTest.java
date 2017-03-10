@@ -29,7 +29,7 @@ import com.rtg.reader.PrereadArm;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SamBamSequenceDataSourceTest;
 import com.rtg.reader.SdfId;
-import com.rtg.reader.SimplePrereadNames;
+import com.rtg.reader.SimpleNames;
 import com.rtg.reference.Sex;
 import com.rtg.sam.SamCommandHelper;
 import com.rtg.util.IntegerOrPercentage;
@@ -432,7 +432,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
       String inputSequence = SamBamSequenceDataSourceTest.SAM_HEADER + String.format(SamBamSequenceDataSourceTest.SAM_LINE_SINGLE, SAM_NL, "read0", "ACTG", "5555");
       FileUtils.stringToFile(inputSequence, input);
 
-      final SequenceParamsCallableSam sps = new MapParamsHelper.SequenceParamsCallableSam(input, InputFormat.SAM_SE, LongRange.NONE,  null, new SimplePrereadNames(), true, SequenceMode.UNIDIRECTIONAL, new SamSequenceReaderParams(false, false));
+      final SequenceParamsCallableSam sps = new MapParamsHelper.SequenceParamsCallableSam(input, InputFormat.SAM_SE, LongRange.NONE,  null, new SimpleNames(), true, SequenceMode.UNIDIRECTIONAL, new SamSequenceReaderParams(false, false));
       final SequenceParams[] sp = sps.call();
       assertEquals(2, sp.length);
       assertNull(sp[1]);
@@ -450,7 +450,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
       inputSequence = SamBamSequenceDataSourceTest.SAM_HEADER + String.format(SamBamSequenceDataSourceTest.SAM_LINE_LEFT, SAM_NL, "read0", "ACTG", "5555")
                                                               + String.format(SamBamSequenceDataSourceTest.SAM_LINE_RIGHT, SAM_NL, "read0", "GTCA", "6666");
       FileUtils.stringToFile(inputSequence, input);
-      final SequenceParamsCallableSam sps2 = new MapParamsHelper.SequenceParamsCallableSam(input, InputFormat.SAM_PE, LongRange.NONE,  null, new SimplePrereadNames(), true, SequenceMode.UNIDIRECTIONAL, new SamSequenceReaderParams(false, false));
+      final SequenceParamsCallableSam sps2 = new MapParamsHelper.SequenceParamsCallableSam(input, InputFormat.SAM_PE, LongRange.NONE,  null, new SimpleNames(), true, SequenceMode.UNIDIRECTIONAL, new SamSequenceReaderParams(false, false));
       final SequenceParams[] sp2 = sps2.call();
       assertNotNull(sp2[0]);
       assertNotNull(sp2[1]);

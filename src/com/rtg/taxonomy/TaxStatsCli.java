@@ -26,7 +26,7 @@ import java.util.TreeMap;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.util.Counter;
@@ -102,7 +102,7 @@ public final class TaxStatsCli extends AbstractCli {
       if (!reader.hasNames()) {
         throw new NoTalkbackSlimException("SDF does not have sequence names");
       }
-      final PrereadNamesInterface names = reader.names();
+      final NamesInterface names = reader.names();
       for (long i = 0; i < reader.numberSequences(); ++i) {
         sdfSequences.add(names.name(i));
       }

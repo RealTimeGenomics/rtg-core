@@ -26,7 +26,7 @@ import com.rtg.ngs.blocking.MapQScoringReadBlocker;
 import com.rtg.ngs.blocking.ReadBlocker;
 import com.rtg.ngs.blocking.ReadBlockerSync;
 import com.rtg.pairedend.ReadStatusListener;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.sam.BamIndexer;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
@@ -136,7 +136,7 @@ public class SamSingleEndOutputProcessor extends AbstractMapOutputProcessor {
   }
 
   @Override
-  protected FilterConcatIntermediateFiles filterConcatNonMated(MapQScoringReadBlocker blockerLeft, MapQScoringReadBlocker blockerRight, File[] tempFiles, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, PrereadNamesInterface templateNames, File outFile) throws IOException {
+  protected FilterConcatIntermediateFiles filterConcatNonMated(MapQScoringReadBlocker blockerLeft, MapQScoringReadBlocker blockerRight, File[] tempFiles, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, NamesInterface templateNames, File outFile) throws IOException {
     return new SingleEndMulticoreFilterConcat(mParams, mUnmappedTracker, blockerLeft, mFreqBlocker, hitsToKeep, templateNames, mReportMerger).filterConcat(tempFiles, outFile, mSharedResources.getHeader(), mParams.outputParams());
   }
 
@@ -196,11 +196,11 @@ public class SamSingleEndOutputProcessor extends AbstractMapOutputProcessor {
     final ReadBlocker mFreqBlocker;
     final long mReadIdOffset;
     final SingleEndTopRandomImplementation.HitRecord[] mHitsToKeep;
-    final PrereadNamesInterface mTemplateNames;
+    final NamesInterface mTemplateNames;
     final ReadStatusListener mListener;
     final MapReportData.Merger mReportMerger;
 
-    SingleEndMulticoreFilterConcat(NgsParams params, ReadStatusListener listener, MapQScoringReadBlocker asBlocker, ReadBlocker freqBlocker, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, PrereadNamesInterface templateNames, MapReportData.Merger reportMerger) {
+    SingleEndMulticoreFilterConcat(NgsParams params, ReadStatusListener listener, MapQScoringReadBlocker asBlocker, ReadBlocker freqBlocker, SingleEndTopRandomImplementation.HitRecord[] hitsToKeep, NamesInterface templateNames, MapReportData.Merger reportMerger) {
       super(params);
       mListener = listener;
       mAsBlocker = asBlocker;

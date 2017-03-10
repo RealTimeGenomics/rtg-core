@@ -27,8 +27,8 @@ import java.util.regex.Pattern;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
 import com.rtg.reader.IndexFile;
-import com.rtg.reader.PrereadNames;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.Names;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
@@ -94,10 +94,10 @@ public class ReadSimEvalCli extends LoggedCli {
   private SimulatedReadNameParser mParser = null;
   private SdfId[] mTemplateMap = null;
   private SdfId mOriginalReference = null;
-  private PrereadNamesInterface mLeftNames = null;
-  private PrereadNamesInterface mRightNames = null;
-  private PrereadNamesInterface mLeftSuffixes = null;
-  private PrereadNamesInterface mRightSuffixes = null;
+  private NamesInterface mLeftNames = null;
+  private NamesInterface mRightNames = null;
+  private NamesInterface mLeftSuffixes = null;
+  private NamesInterface mRightSuffixes = null;
   private ReadSimEvalParams mParams = null;
 
   ReadSimEvalStatistics mLeftStats;
@@ -618,10 +618,10 @@ public class ReadSimEvalCli extends LoggedCli {
   String leftName(long readNum) throws IOException {
     if (mLeftNames == null) {
       final File preread = mParams.isPaired() ? ReaderUtils.getLeftEnd(mParams.readDirectory()) : mParams.readDirectory();
-      mLeftNames = new PrereadNames(preread, LongRange.NONE);
+      mLeftNames = new Names(preread, LongRange.NONE);
       final IndexFile index = new IndexFile(preread);
       if (index.hasSequenceNameSuffixes()) {
-        mLeftSuffixes = new PrereadNames(preread, LongRange.NONE, true);
+        mLeftSuffixes = new Names(preread, LongRange.NONE, true);
       }
     }
     final String name;
@@ -636,10 +636,10 @@ public class ReadSimEvalCli extends LoggedCli {
   String rightName(long readNum) throws IOException {
     if (mRightNames == null) {
       final File preread = mParams.isPaired() ? ReaderUtils.getRightEnd(mParams.readDirectory()) : mParams.readDirectory();
-      mRightNames = new PrereadNames(preread, LongRange.NONE);
+      mRightNames = new Names(preread, LongRange.NONE);
       final IndexFile index = new IndexFile(preread);
       if (index.hasSequenceNameSuffixes()) {
-        mRightSuffixes = new PrereadNames(preread, LongRange.NONE, true);
+        mRightSuffixes = new Names(preread, LongRange.NONE, true);
       }
     }
     final String name;

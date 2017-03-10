@@ -16,7 +16,7 @@ import java.io.IOException;
 import com.rtg.mode.Frame;
 import com.rtg.mode.ProteinScoringMatrix;
 import com.rtg.mode.SequenceType;
-import com.rtg.reader.PrereadNamesInterface;
+import com.rtg.reader.NamesInterface;
 import com.rtg.reader.SequencesReader;
 
 /**
@@ -32,8 +32,8 @@ public class SharedProteinResources {
   private final byte[] mWorkSpaceProtein;
 
 
-  private final PrereadNamesInterface mTemplateNames;
-  private final PrereadNamesInterface mReadNames;
+  private final NamesInterface mTemplateNames;
+  private final NamesInterface mReadNames;
 
   SharedProteinResources(final ProteinScoringMatrix matrix, final SequencesReader template, final SequencesReader query, boolean readNames) throws IOException {
     mProteinScoringMatrix = matrix;
@@ -82,11 +82,11 @@ public class SharedProteinResources {
     }
   }
 
-  PrereadNamesInterface templateNames() {
+  NamesInterface templateNames() {
     return mTemplateNames;
   }
 
-  PrereadNamesInterface readNames() {
+  NamesInterface readNames() {
     return mReadNames;
   }
 
