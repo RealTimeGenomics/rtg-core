@@ -37,8 +37,8 @@ public class FastqPairIteratorTest {
 
   @Test
   public void full() {
-      final FastqSequenceDataSource leftSource = new FastqSequenceDataSource(Collections.singletonList(new ByteArrayInputStream(LEFT_FASTQ.getBytes())), FastqSequenceDataSource.FastQScoreType.SOLEXA);
-    final FastqSequenceDataSource rightSource = new FastqSequenceDataSource(Collections.singletonList(new ByteArrayInputStream(RIGHT_FASTQ.getBytes())), FastqSequenceDataSource.FastQScoreType.SOLEXA);
+      final FastqSequenceDataSource leftSource = new FastqSequenceDataSource(Collections.singletonList(new ByteArrayInputStream(LEFT_FASTQ.getBytes())), QualityFormat.SOLEXA);
+    final FastqSequenceDataSource rightSource = new FastqSequenceDataSource(Collections.singletonList(new ByteArrayInputStream(RIGHT_FASTQ.getBytes())), QualityFormat.SOLEXA);
       final FastqPairIterator fastqIterator = new FastqPairIterator(new FastqIterator(leftSource), new FastqIterator(rightSource));
       assertTrue(fastqIterator.hasNext());
       FastqPair pair = fastqIterator.next();
@@ -54,7 +54,7 @@ public class FastqPairIteratorTest {
 
   FastqIterator emptyFastqIterator() {
 
-    final FastqSequenceDataSource fastqSequenceDataSource = new FastqSequenceDataSource(Collections.singletonList(new ByteArrayInputStream(new byte[0])), FastqSequenceDataSource.FastQScoreType.SOLEXA);
+    final FastqSequenceDataSource fastqSequenceDataSource = new FastqSequenceDataSource(Collections.singletonList(new ByteArrayInputStream(new byte[0])), QualityFormat.SOLEXA);
     return new FastqIterator(fastqSequenceDataSource);
   }
 

@@ -35,9 +35,9 @@ import com.rtg.launcher.ISequenceParams;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.reader.AlternatingSequencesWriter;
+import com.rtg.reader.DataSourceDescription;
 import com.rtg.reader.FormatCli;
 import com.rtg.reader.IndexFile;
-import com.rtg.reader.InputFormat;
 import com.rtg.reader.PrereadArm;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.ReaderUtils;
@@ -48,6 +48,7 @@ import com.rtg.reader.SequenceDataSource;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesWriter;
 import com.rtg.reader.SimpleNames;
+import com.rtg.reader.SourceFormat;
 import com.rtg.reference.Sex;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.sam.SamCommandHelper;
@@ -219,13 +220,13 @@ public final class MapParamsHelper {
   }
 
   static boolean isPaired(CFlags flags) {
-    final InputFormat inFormat = FormatCli.getFormat(flags, false);
+    final DataSourceDescription inputDesc = FormatCli.getFormat(flags, false);
     final boolean paired;
-    if (inFormat == InputFormat.SDF) {
+    if (inputDesc.getSourceFormat() == SourceFormat.SDF) {
       final File reads = (File) flags.getValue(CommonFlags.READS_FLAG);
       paired = ReaderUtils.isPairedEndDirectory(reads);
     } else {
-      paired = !flags.isSet(CommonFlags.READS_FLAG) || inFormat.isPairedSam();
+      paired = !flags.isSet(CommonFlags.READS_FLAG) || inputDesc.isInterleaved();
     }
     return paired;
   }
@@ -285,33 +286,33 @@ public final class MapParamsHelper {
    * @throws IOException when other stuff goes wrong
    */
   public static boolean initReaders(NgsParamsBuilder ngsParamsBuilder, CFlags flags, NameParams nameParams, boolean useQuality, SequenceMode templateMode, SequenceMode readsMode, SamSequenceReaderParams samParams) throws InvalidParamsException, IOException {
-    final InputFormat inFormat = FormatCli.getFormat(flags, useQuality);
+    final DataSourceDescription inputDesc = FormatCli.getFormat(flags, useQuality);
     final File reads = (File) flags.getValue(CommonFlags.READS_FLAG);
     final boolean paired = MapParamsHelper.isPaired(flags);
     if (!paired) {
-      if (inFormat == InputFormat.SDF) {
+      if (inputDesc.getSourceFormat() == SourceFormat.SDF) {
         makeSequenceParamsMulti(ngsParamsBuilder, flags, reads, null, nameParams, templateMode, readsMode);
       } else {
-        makeOnTheFlySequenceParamsMulti(ngsParamsBuilder, flags, inFormat, reads, null, nameParams, useQuality, templateMode, readsMode, samParams);
+        makeOnTheFlySequenceParamsMulti(ngsParamsBuilder, flags, inputDesc, reads, null, nameParams, useQuality, templateMode, readsMode, samParams);
       }
       final ISequenceParams params = ngsParamsBuilder.buildFirstParams();
       if (params.reader().getPrereadType() == PrereadType.CG) {
         throw new InvalidParamsException(ErrorType.IS_A_CG_SDF, reads.getPath());
       }
     } else {
-      if (inFormat == InputFormat.SDF) {
+      if (inputDesc.getSourceFormat() == SourceFormat.SDF) {
         final File left = ReaderUtils.getLeftEnd(reads);
         final File right = ReaderUtils.getRightEnd(reads);
         makeSequenceParamsMulti(ngsParamsBuilder, flags, left, right, nameParams, templateMode, readsMode);
-      } else if (inFormat.isPairedSam()) {
-        makeOnTheFlySequenceParamsMulti(ngsParamsBuilder, flags, inFormat, reads, null, nameParams, useQuality, templateMode, readsMode, samParams);
+      } else if (inputDesc.isInterleaved()) {
+        makeOnTheFlySequenceParamsMulti(ngsParamsBuilder, flags, inputDesc, reads, null, nameParams, useQuality, templateMode, readsMode, samParams);
       } else {
         final File leftFile = (File) flags.getValue(FormatCli.LEFT_FILE_FLAG);
         final File rightFile = (File) flags.getValue(FormatCli.RIGHT_FILE_FLAG);
         if (InputFileUtils.checkIdenticalPaths(leftFile, rightFile)) {
           throw new InvalidParamsException("Paths given for --" + FormatCli.LEFT_FILE_FLAG + " and --" + FormatCli.RIGHT_FILE_FLAG + " are the same file.");
         }
-        makeOnTheFlySequenceParamsMulti(ngsParamsBuilder, flags, inFormat, leftFile, rightFile, nameParams, useQuality, templateMode, readsMode, samParams);
+        makeOnTheFlySequenceParamsMulti(ngsParamsBuilder, flags, inputDesc, leftFile, rightFile, nameParams, useQuality, templateMode, readsMode, samParams);
       }
       final ISequenceParams leftParams = ngsParamsBuilder.buildFirstParams();
       final ISequenceParams rightParams = ngsParamsBuilder.buildSecondParams();
@@ -472,7 +473,7 @@ public final class MapParamsHelper {
    * Loads template and reads (left and right if paired end) in parallel.
    * @throws IOException if an IO problem occurs.
    */
-  private static void makeOnTheFlySequenceParamsMulti(NgsParamsBuilder ngsParamsBuilder, CFlags flags, InputFormat format, File build, File buildSecond, NameParams nameParams, boolean useQuality, SequenceMode templateMode, SequenceMode readsMode, SamSequenceReaderParams samParams) throws InvalidParamsException, IOException {
+  private static void makeOnTheFlySequenceParamsMulti(NgsParamsBuilder ngsParamsBuilder, CFlags flags, DataSourceDescription desc, File build, File buildSecond, NameParams nameParams, boolean useQuality, SequenceMode templateMode, SequenceMode readsMode, SamSequenceReaderParams samParams) throws InvalidParamsException, IOException {
     final FutureTask<SequenceParams> templateTask = getTemplateFutureTask(ngsParamsBuilder, flags, nameParams.includeFullNames(), templateMode);
     final LongRange buildRegion = CommonFlags.getReaderRestriction(flags);
     final ExecutorService executor = Executors.newFixedThreadPool(3);
@@ -484,8 +485,8 @@ public final class MapParamsHelper {
         final SimpleNames names = nameParams.includeNames() ? new SimpleNames() : null;
         final SimpleNames suffixes = nameParams.includeFullNames() ? new SimpleNames() : null;
 
-        if (format == InputFormat.SAM_PE || format == InputFormat.SAM_SE) {
-          final FutureTask<SequenceParams[]> samTask = new FutureTask<>(new SequenceParamsCallableSam(build, format, buildRegion, names, suffixes, useQuality, readsMode, samParams));
+        if (desc.getSourceFormat() == SourceFormat.SAM) {
+          final FutureTask<SequenceParams[]> samTask = new FutureTask<>(new SequenceParamsCallableSam(build, desc, buildRegion, names, suffixes, useQuality, readsMode, samParams));
           executor.execute(samTask);
           final SequenceParams[] sp = samTask.get();
           assert sp.length == 2;
@@ -494,13 +495,13 @@ public final class MapParamsHelper {
             ngsParamsBuilder.buildSecondParams(sp[1]);
           }
         } else {
-          final FutureTask<SequenceParams> leftTask = new FutureTask<>(new SequenceParamsCallableFasta(build, format, buildRegion, buildSecond != null ? PrereadArm.LEFT : PrereadArm.UNKNOWN, names, suffixes, useQuality, readsMode));
+          final FutureTask<SequenceParams> leftTask = new FutureTask<>(new SequenceParamsCallableFasta(build, desc, buildRegion, buildSecond != null ? PrereadArm.LEFT : PrereadArm.UNKNOWN, names, suffixes, useQuality, readsMode));
           executor.execute(leftTask);
           FutureTask<SequenceParams> rightTask = null;
           if (buildSecond != null) {
             final RightSimpleNames rNames = names == null ? null : new RightSimpleNames(names);
             final RightSimpleNames rSuffixes = suffixes == null ? null : new RightSimpleNames(suffixes);
-            rightTask = new FutureTask<>(new SequenceParamsCallableFasta(buildSecond, format, buildRegion, PrereadArm.RIGHT, rNames, rSuffixes, useQuality, readsMode));
+            rightTask = new FutureTask<>(new SequenceParamsCallableFasta(buildSecond, desc, buildRegion, PrereadArm.RIGHT, rNames, rSuffixes, useQuality, readsMode));
             executor.execute(rightTask);
           }
           ngsParamsBuilder.buildFirstParams(leftTask.get());
@@ -631,7 +632,7 @@ public final class MapParamsHelper {
   static final class SequenceParamsCallableFasta implements Callable<SequenceParams> {
     private final File mBuild;
     private final boolean mUseMemReader;
-    private final InputFormat mInputFormat;
+    private final DataSourceDescription mInputDescription;
     private final LongRange mReaderRestriction;
     private final SimpleNames mNames;
     private final SimpleNames mSuffixes;
@@ -639,12 +640,12 @@ public final class MapParamsHelper {
     private final SequenceMode mMode;
     private final boolean mUseQuality;
 
-    SequenceParamsCallableFasta(File build, InputFormat format, LongRange readerRestriction, PrereadArm arm, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode) { // C'tor for reads
-
+    SequenceParamsCallableFasta(File build, DataSourceDescription desc, LongRange readerRestriction, PrereadArm arm, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode) {
+      // C'tor for reads
       mBuild = build;
       mUseMemReader = true;
       mReaderRestriction = readerRestriction;
-      mInputFormat = format;
+      mInputDescription = desc;
       mNames = names;
       mSuffixes = suffixes;
       mArm = arm;
@@ -654,7 +655,7 @@ public final class MapParamsHelper {
 
     @Override
     public SequenceParams call() throws IOException {
-      final SequenceDataSource ds = FormatCli.getDnaDataSource(Arrays.asList(mBuild), mInputFormat, mArm, false, false, null, false);
+      final SequenceDataSource ds = FormatCli.getDnaDataSource(Arrays.asList(mBuild), mInputDescription, mArm, false, false, null, false);
       final SequencesWriter sw = new SequencesWriter(ds, null, PrereadType.UNKNOWN, true);
       sw.setSdfId(new SdfId(0));
       final SequencesReader reader = sw.processSequencesInMemory(mBuild, mUseQuality, mNames, mSuffixes,  mReaderRestriction);
@@ -665,7 +666,7 @@ public final class MapParamsHelper {
   static final class SequenceParamsCallableSam implements Callable<SequenceParams[]> {
     private final File mBuild;
     private final boolean mUseMemReader;
-    private final InputFormat mInputFormat;
+    private final DataSourceDescription mInputFormat;
     private final LongRange mReaderRestriction;
     private final SimpleNames mNames;
     private final SimpleNames mSuffixes;
@@ -673,11 +674,11 @@ public final class MapParamsHelper {
     private final boolean mUseQuality;
     private final SamSequenceReaderParams mSamParams;
 
-    SequenceParamsCallableSam(File build, InputFormat format, LongRange readerRestriction, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode, SamSequenceReaderParams samParams) { // C'tor for reads
+    SequenceParamsCallableSam(File build, DataSourceDescription desc, LongRange readerRestriction, SimpleNames names, SimpleNames suffixes, boolean useQuality, SequenceMode mode, SamSequenceReaderParams samParams) { // C'tor for reads
       mBuild = build;
       mUseMemReader = true;
       mReaderRestriction = readerRestriction;
-      mInputFormat = format;
+      mInputFormat = desc;
       mNames = names;
       mSuffixes = suffixes;
       mMode = mode;
@@ -689,7 +690,7 @@ public final class MapParamsHelper {
     public SequenceParams[] call() throws Exception {
       final SequenceDataSource ds = FormatCli.getDnaDataSource(Arrays.asList(mBuild), mInputFormat, null, mSamParams.unorderedLoad(), mSamParams.flattenPairs(), null, false);
       final SequencesReader[] readers;
-      if (mInputFormat == InputFormat.SAM_PE) {
+      if (mInputFormat.isInterleaved()) {
         final AlternatingSequencesWriter asw = new AlternatingSequencesWriter(ds, null, PrereadType.UNKNOWN, true);
         asw.setSdfId(new SdfId(0));
         asw.setCheckDuplicateNames(true);

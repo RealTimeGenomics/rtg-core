@@ -42,11 +42,11 @@ import com.rtg.reader.AlternatingSequencesWriter;
 import com.rtg.reader.CgUtils;
 import com.rtg.reader.CompressedMemorySequencesReader;
 import com.rtg.reader.FormatCli;
-import com.rtg.reader.InputFormat;
 import com.rtg.reader.PrereadType;
 import com.rtg.reader.ReaderUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SdfUtils;
+import com.rtg.reader.SourceFormat;
 import com.rtg.reader.TsvSequenceDataSource;
 import com.rtg.reference.Sex;
 import com.rtg.sam.ReadGroupUtils;
@@ -244,7 +244,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     final File reads = (File) mFlags.getValue(CommonFlags.READS_FLAG);
     final LongRange buildReaderRestriction = CommonFlags.getReaderRestriction(mFlags);
     try {
-      if (FormatCli.getFormat(mFlags, false) == InputFormat.SDF) {
+      if (FormatCli.getFormat(mFlags, false).getSourceFormat() == SourceFormat.SDF) {
         ngsParamBuilder.buildFirstParams(SequenceParams.builder().directory(ReaderUtils.getLeftEnd(reads)).mode(SequenceMode.UNIDIRECTIONAL).useMemReader(true).readerRestriction(buildReaderRestriction).create());
         ngsParamBuilder.buildSecondParams(SequenceParams.builder().directory(ReaderUtils.getRightEnd(reads)).mode(SequenceMode.UNIDIRECTIONAL).useMemReader(true).readerRestriction(buildReaderRestriction).create());
 

@@ -122,7 +122,7 @@ public class PairedEndTrimCli extends AbstractCli {
     final boolean interleavePaired = mFlags.isSet(INTERLEAVE);
     final int batchSize = (Integer) mFlags.getValue(BATCH_SIZE);
     final PairAlignmentStats stats = new PairAlignmentStats();
-    final FastqSequenceDataSource.FastQScoreType encoding = FastqTrim.qualityFlagToFastQScoreType((String) mFlags.getValue(QUALITY_FLAG));
+    final QualityFormat encoding = FastqTrim.qualityFlagToFastQScoreType((String) mFlags.getValue(QUALITY_FLAG));
     // All trimming and aligning is done in separate threads from reading
     final int threads = CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG));
     try (final SequenceDataSource r1fq = new FastqSequenceDataSource(Collections.singletonList(FileUtils.createInputStream((File) mFlags.getValue(LEFT), true)), encoding);
