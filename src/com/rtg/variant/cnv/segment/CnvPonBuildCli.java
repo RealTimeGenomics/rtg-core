@@ -11,6 +11,11 @@
  */
 package com.rtg.variant.cnv.segment;
 
+import static com.rtg.launcher.CommonFlags.FILE;
+import static com.rtg.launcher.CommonFlags.INT;
+import static com.rtg.launcher.CommonFlags.NO_GZIP;
+import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
+import static com.rtg.launcher.CommonFlags.STRING;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
 
@@ -70,15 +75,17 @@ public class CnvPonBuildCli extends AbstractCli {
     mFlags.registerExtendedHelp();
     mFlags.setDescription("Construct a normalized coverage sample from a panel of coverage outputs, for use during segmentation.");
     CommonFlagCategories.setCategories(mFlags);
+    CommonFlags.initForce(mFlags);
     CommonFlags.initNoGzip(mFlags);
     CommonFlags.initIndexFlags(mFlags);
     CommonFlags.initReferenceTemplate(mFlags, true);
-    mFlags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, CommonFlags.FILE, "BED output file").setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional(SegmentCli.GCBINS_FLAG, Integer.class, CommonFlags.INT, "number of bins when applying GC correction", 10).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(SegmentCli.COV_COLUMN_NAME, String.class, CommonFlags.STRING, "name of the coverage column in input data", SegmentCli.DEFAULT_COLUMN_NAME).setCategory(SENSITIVITY_TUNING);
-    final Flag<File> covFlag = mFlags.registerRequired(File.class, CommonFlags.FILE, "coverage BED file").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, FILE, "BED output file").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional(SegmentCli.GCBINS_FLAG, Integer.class, INT, "number of bins when applying GC correction", 10).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(SegmentCli.COV_COLUMN_NAME, String.class, STRING, "name of the coverage column in input data", SegmentCli.DEFAULT_COLUMN_NAME).setCategory(SENSITIVITY_TUNING);
+    final Flag<File> covFlag = mFlags.registerRequired(File.class, FILE, "coverage BED file").setCategory(INPUT_OUTPUT);
     covFlag.setMaxCount(Integer.MAX_VALUE);
     mFlags.setValidator(flags -> flags.checkInRange(SegmentCli.GCBINS_FLAG, 0, Integer.MAX_VALUE)
+      && CommonFlags.validateOutputFile(flags, FileUtils.getOutputFileName((File) flags.getValue(OUTPUT_FLAG), !flags.isSet(NO_GZIP), BedUtils.BED_SUFFIX))
     );
   }
 
@@ -133,8 +140,8 @@ public class CnvPonBuildCli extends AbstractCli {
         col.add(v / n);
       }
       typicalSample.addColumn(col);
-      final boolean gzip = !mFlags.isSet(CommonFlags.NO_GZIP);
-      final File bedFile = FileUtils.getZippedFileName(gzip, (File) mFlags.getValue(CommonFlags.OUTPUT_FLAG));
+      final boolean gzip = !mFlags.isSet(NO_GZIP);
+      final File bedFile = FileUtils.getOutputFileName((File) mFlags.getValue(OUTPUT_FLAG), gzip, BedUtils.BED_SUFFIX);
       try (final BedWriter bw = new BedWriter(FileUtils.createOutputStream(bedFile, gzip))) {
         writeBedHeader(bw);
         typicalSample.write(bw);

@@ -23,10 +23,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+import com.rtg.bed.BedRangeLoader;
 import com.rtg.bed.BedUtils;
+import com.rtg.bed.NamedBedRangeLoader;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
-import com.rtg.sam.SamRangeUtils;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.io.FileUtils;
@@ -52,7 +53,7 @@ public class CnvSummaryCli extends AbstractCli {
   @Override
   protected void initFlags() {
     mFlags.registerExtendedHelp();
-    mFlags.setDescription("Summarize intersection of CNVs with regions of interest.");
+    mFlags.setDescription("Summarize the intersection of CNVs with regions of interest.");
     CommonFlagCategories.setCategories(mFlags);
     mFlags.registerRequired('i', INPUT_FLAG, File.class, FILE, "VCF file containing CNV variants to be summarized. Use '-' to read from standard input").setCategory(INPUT_OUTPUT);
     mFlags.registerRequired('o', OUTPUT_FLAG, File.class, FILE, "BED output file. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
@@ -61,7 +62,8 @@ public class CnvSummaryCli extends AbstractCli {
     CommonFlags.initForce(mFlags);
     CommonFlags.initNoGzip(mFlags);
 
-    mFlags.setValidator(flags -> CommonFlags.validateInputFile(flags, SUMMARY_FLAG)
+    mFlags.setValidator(flags -> CommonFlags.validateInputFile(flags, INPUT_FLAG)
+      && CommonFlags.validateInputFile(flags, SUMMARY_FLAG)
       && CommonFlags.validateOutputFile(flags, FileUtils.getOutputFileName((File) flags.getValue(OUTPUT_FLAG), !flags.isSet(NO_GZIP), BedUtils.BED_SUFFIX))
     );
   }
@@ -71,7 +73,7 @@ public class CnvSummaryCli extends AbstractCli {
     final boolean gzip = !mFlags.isSet(NO_GZIP);
     final File vcfFile = (File) mFlags.getValue(INPUT_FLAG);
     final File outFile = (File) mFlags.getValue(OUTPUT_FLAG);
-    final ReferenceRanges<String> reportRegions = SamRangeUtils.createBedReferenceRanges((File) mFlags.getValue(SUMMARY_FLAG));
+    final ReferenceRanges<String> reportRegions = BedRangeLoader.getReferenceRanges(new NamedBedRangeLoader(), (File) mFlags.getValue(SUMMARY_FLAG));
     final CnvSummaryReport reporter = new CnvSummaryReport(reportRegions, 0, !mFlags.isSet(ALL_FLAG));
     reporter.report(vcfFile, FileUtils.getOutputFileName(outFile, gzip, BedUtils.BED_SUFFIX));
     return 0;

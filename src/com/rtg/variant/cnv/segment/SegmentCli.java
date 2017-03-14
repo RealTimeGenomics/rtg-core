@@ -27,13 +27,14 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.Collections;
 
+import com.rtg.bed.BedRangeLoader;
 import com.rtg.bed.BedUtils;
 import com.rtg.bed.BedWriter;
+import com.rtg.bed.NamedBedRangeLoader;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
-import com.rtg.sam.SamRangeUtils;
 import com.rtg.util.MathUtils;
 import com.rtg.util.MultiSet;
 import com.rtg.util.TextTable;
@@ -167,7 +168,7 @@ public class SegmentCli extends LoggedCli {
       mReference = sr;
 
       if (mFlags.isSet(SUMMARY_FLAG)) {
-        final ReferenceRanges<String> reportRegions = SamRangeUtils.createBedReferenceRanges((File) mFlags.getValue(SUMMARY_FLAG));
+        final ReferenceRanges<String> reportRegions = BedRangeLoader.getReferenceRanges(new NamedBedRangeLoader(), (File) mFlags.getValue(SUMMARY_FLAG));
         mReporter = new CnvSummaryReport(reportRegions);
       }
 
