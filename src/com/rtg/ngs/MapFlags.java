@@ -16,7 +16,6 @@ import java.util.Locale;
 
 import com.rtg.alignment.AlignerMode;
 import com.rtg.alignment.EditDistanceFactory;
-import com.rtg.launcher.BuildCommon;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.HashingRegion;
 import com.rtg.reader.FormatCli;
@@ -73,8 +72,6 @@ public final class MapFlags {
   public static final String SUBSTITUTIONS_FLAG = "substitutions";
   /** word size flag */
   public static final String WORDSIZE_FLAG = "word";
-  /** Repeat frequency flag. */
-  public static final String REPEAT_FREQUENCY_FLAG = "repeat-freq";
   /** Blacklist threshold flag */
   public static final String BLACKLIST_THRESHOLD = "blacklist-threshold";
   /** Maximum repeat frequency */
@@ -135,11 +132,11 @@ public final class MapFlags {
     flags.registerOptional('E', UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches for mappings of unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_UNMATED_MISMATCH_THRESHOLD)).setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches for mappings across mated results, alias for --" + MAX_ALIGNMENT_MISMATCHES + " (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_MATED_MISMATCH_THRESHOLD)).setCategory(CommonFlagCategories.REPORTING);
 
-    flags.registerOptional(CommonFlags.TEMP_DIR, File.class, "DIR", "directory used for temporary files (Defaults to output directory)").setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(CommonFlags.TEMP_DIR, File.class, CommonFlags.DIR, "directory used for temporary files (Defaults to output directory)").setCategory(CommonFlagCategories.UTILITY);
 
     flags.registerOptional(LEGACY_CIGARS, "use legacy cigars in output").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(OUTPUT_READ_NAMES_FLAG, "use read name in output instead of read id (Uses more RAM)").setCategory(CommonFlagCategories.UTILITY);
-    flags.registerOptional(ALIGNER_MODE_FLAG, AlignerMode.class, "STRING", "pick the aligner to use", AlignerMode.AUTO).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(ALIGNER_MODE_FLAG, AlignerMode.class, CommonFlags.STRING, "pick the aligner to use", AlignerMode.AUTO).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(SINGLE_INDEL_PENALTIES_FLAG, String.class, "STRING|FILE", "single indel penalty file", EditDistanceFactory.DEFAULT_SINGLE_INDEL_TABLE).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
 
     //--X flags
@@ -151,7 +148,7 @@ public final class MapFlags {
     flags.registerOptional(NO_INMEMORY_TEMPLATE, "do not load the template in memory").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(FORCE_LONG_FLAG, "force the use of long read mode").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of sample", null).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(MapFlags.PEDIGREE_FLAG, File.class, "file", "genome relationships pedigree containing sex of sample").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(MapFlags.PEDIGREE_FLAG, File.class, CommonFlags.FILE, "genome relationships pedigree containing sex of sample").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
 
     CommonFlags.initReadRange(flags);
   }
@@ -188,7 +185,7 @@ public final class MapFlags {
    * @param flags shared flags
    */
   public static void initMapIOFlags(CFlags flags) {
-    flags.registerRequired('i', CommonFlags.READS_FLAG, File.class, CommonFlags.SDF, BuildCommon.RESOURCE.getString("READS_DESC")).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerRequired('i', CommonFlags.READS_FLAG, File.class, CommonFlags.SDF, "SDF containing reads to map").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     initTemplateFlag(flags);
     CommonFlags.initOutputDirFlag(flags);
   }
@@ -206,8 +203,8 @@ public final class MapFlags {
 
   static void initPairedEndFormatFlags(CFlags flags)  {
     //IO format flags specific to paired end
-    final Flag<File> inputL = flags.registerOptional('l', FormatCli.LEFT_FILE_FLAG, File.class, "FILE", "left input file for FASTA/FASTQ paired end reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    final Flag<File> inputR = flags.registerOptional('r', FormatCli.RIGHT_FILE_FLAG, File.class, "FILE", "right input file for FASTA/FASTQ paired end reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> inputL = flags.registerOptional('l', FormatCli.LEFT_FILE_FLAG, File.class, CommonFlags.FILE, "left input file for FASTA/FASTQ paired end reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> inputR = flags.registerOptional('r', FormatCli.RIGHT_FILE_FLAG, File.class, CommonFlags.FILE, "right input file for FASTA/FASTQ paired end reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     flags.addRequiredSet(inputL, inputR);
   }
 
@@ -475,10 +472,10 @@ public final class MapFlags {
    * @param maxRepeat value to set default max repeat frequency
    */
   public static void initSharedFlagsOnly(CFlags flags, IntegerOrPercentage repeat, int minRepeat, int maxRepeat) {
-    flags.registerOptional(REPEAT_FREQUENCY_FLAG, IntegerOrPercentage.class, CommonFlags.INT, BuildCommon.RESOURCE.getString("REPEAT_FREQUENCY_DESC"), repeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(CommonFlags.REPEAT_FREQUENCY_FLAG, IntegerOrPercentage.class, CommonFlags.INT, "maximum repeat frequency", repeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(BLACKLIST_THRESHOLD, Integer.class, CommonFlags.INT, "filter k-mers that occur more than this many times in the reference using a blacklist").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(MAX_REPEAT_FREQUENCY_FLAG, Integer.class, CommonFlags.INT, BuildCommon.RESOURCE.getString("MAX_REPEAT_FREQUENCY_DESC"), maxRepeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(MIN_REPEAT_FREQUENCY_FLAG, Integer.class, CommonFlags.INT, BuildCommon.RESOURCE.getString("MIN_REPEAT_FREQUENCY_DESC"), minRepeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(MAX_REPEAT_FREQUENCY_FLAG, Integer.class, CommonFlags.INT, "upper limit for repeat frequency when using the proportional repeat frequency setting", maxRepeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(MIN_REPEAT_FREQUENCY_FLAG, Integer.class, CommonFlags.INT, "lower limit for repeat frequency when using the proportional repeat frequency setting", minRepeat).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     CommonFlags.initNoGzip(flags);
     flags.registerOptional(PARALLEL_UNMATED_PROCESSING_FLAG, Boolean.class, CommonFlags.BOOL, "run unmated processing in parallel with mated processing", Boolean.FALSE).setCategory(CommonFlagCategories.UTILITY);
     CommonFlags.initThreadsFlag(flags);
@@ -534,8 +531,8 @@ public final class MapFlags {
    * @param flags shared flags
    */
   public static void initFragmentSizeFlags(final CFlags flags) {
-    flags.registerOptional('M', CommonFlags.MAX_FRAGMENT_SIZE, Integer.class, "INT", "maximum permitted fragment size when mating paired reads", 1000).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional('m', CommonFlags.MIN_FRAGMENT_SIZE, Integer.class, "INT", "minimum permitted fragment size when mating paired reads", 0).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional('M', CommonFlags.MAX_FRAGMENT_SIZE, Integer.class, CommonFlags.INT, "maximum permitted fragment size when mating paired reads", 1000).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional('m', CommonFlags.MIN_FRAGMENT_SIZE, Integer.class, CommonFlags.INT, "minimum permitted fragment size when mating paired reads", 0).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
   }
 
   /**
@@ -543,7 +540,7 @@ public final class MapFlags {
    * @param flags shared flags
    */
   public static void initPairedEndFlags(final CFlags flags) {
-    flags.registerOptional('d', CommonFlags.PAIR_ORIENTATION_FLAG, MachineOrientation.class, "STRING", "orientation for proper pairs", MachineOrientation.ANY).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional('d', CommonFlags.PAIR_ORIENTATION_FLAG, MachineOrientation.class, CommonFlags.STRING, "orientation for proper pairs", MachineOrientation.ANY).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     initFragmentSizeFlags(flags);
   }
 
@@ -553,8 +550,8 @@ public final class MapFlags {
    * @return <code>true</code> if all okay <code>false</code> otherwise
    */
   public static boolean checkRepeatFrequency(CFlags flags) {
-    if (flags.isSet(REPEAT_FREQUENCY_FLAG)) {
-      if (!flags.checkInRange(REPEAT_FREQUENCY_FLAG, 1, 100000)) {
+    if (flags.isSet(CommonFlags.REPEAT_FREQUENCY_FLAG)) {
+      if (!flags.checkInRange(CommonFlags.REPEAT_FREQUENCY_FLAG, 1, 100000)) {
         return false;
       }
     }
@@ -567,23 +564,23 @@ public final class MapFlags {
    * @return <code>true</code> if all okay <code>false</code> otherwise
    */
   public static boolean checkPercentRepeatFrequency(CFlags flags) {
-    if (flags.isSet(REPEAT_FREQUENCY_FLAG)) {
-      final IntegerOrPercentage repeat = (IntegerOrPercentage) flags.getValue(REPEAT_FREQUENCY_FLAG);
+    if (flags.isSet(CommonFlags.REPEAT_FREQUENCY_FLAG)) {
+      final IntegerOrPercentage repeat = (IntegerOrPercentage) flags.getValue(CommonFlags.REPEAT_FREQUENCY_FLAG);
       if (repeat.isPercentage()) {
         if (repeat.getValue(100) < 0) {
-          Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + REPEAT_FREQUENCY_FLAG, repeat + "", "0%");
+          Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + CommonFlags.REPEAT_FREQUENCY_FLAG, repeat + "", "0%");
           return false;
         } else if (repeat.getValue(100) > 100) {
-          Diagnostic.error(ErrorType.INVALID_MAX_INTEGER_FLAG_VALUE, "--" + REPEAT_FREQUENCY_FLAG, repeat + "", "100%");
+          Diagnostic.error(ErrorType.INVALID_MAX_INTEGER_FLAG_VALUE, "--" + CommonFlags.REPEAT_FREQUENCY_FLAG, repeat + "", "100%");
           return false;
         }
       } else {
         if (repeat.getValue(100) < 1) {
-          Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + REPEAT_FREQUENCY_FLAG, repeat + "", 1 + "");
+          Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + CommonFlags.REPEAT_FREQUENCY_FLAG, repeat + "", 1 + "");
           return false;
         }
         if (repeat.getValue(100) > 100000) {
-          Diagnostic.error(ErrorType.INVALID_MAX_INTEGER_FLAG_VALUE, "--" + REPEAT_FREQUENCY_FLAG, repeat + "", 100000 + "");
+          Diagnostic.error(ErrorType.INVALID_MAX_INTEGER_FLAG_VALUE, "--" + CommonFlags.REPEAT_FREQUENCY_FLAG, repeat + "", 100000 + "");
           return false;
         }
       }
@@ -603,13 +600,13 @@ public final class MapFlags {
    * @return <code>true</code> if all okay <code>false</code> otherwise
    */
   public static boolean checkBlacklistThreshold(CFlags flags) {
-    if (!flags.checkNand(BLACKLIST_THRESHOLD, REPEAT_FREQUENCY_FLAG)) {
+    if (!flags.checkNand(BLACKLIST_THRESHOLD, CommonFlags.REPEAT_FREQUENCY_FLAG)) {
       return false;
     }
     if (flags.isSet(BLACKLIST_THRESHOLD)) {
       final int val = (Integer) flags.getValue(BLACKLIST_THRESHOLD);
       if (val < 0) {
-        Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + REPEAT_FREQUENCY_FLAG, val + "", "0");
+        Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + CommonFlags.REPEAT_FREQUENCY_FLAG, val + "", "0");
         return false;
       }
     }

@@ -11,7 +11,6 @@
  */
 package com.rtg.metagenomics;
 
-import static com.rtg.launcher.BuildCommon.RESOURCE;
 import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
@@ -154,15 +153,15 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
     flags.setDescription("Calculates a species distribution from a metagenomic sample.");
     flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
-    flags.registerRequired('o', OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
-    flags.registerRequired('t', TEMPLATE_FLAG, File.class, "SDF", "SDF containing the genomes").setCategory(INPUT_OUTPUT);
-    flags.registerOptional('r', RELABEL_SPECIES_FLAG, File.class, "FILE", "file containing list of species name to reference name mappings (1 mapping per line format: [reference short name][tab][species])").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(X_ITERATIONS_FLAG, Integer.class, "INT", "minimum number of iterations multiplied by the block size", 1).setCategory(SENSITIVITY_TUNING);
+    flags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.DIR, "directory for output").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('t', TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing the genomes").setCategory(INPUT_OUTPUT);
+    flags.registerOptional('r', RELABEL_SPECIES_FLAG, File.class, CommonFlags.FILE, "file containing list of species name to reference name mappings (1 mapping per line format: [reference short name][tab][species])").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(X_ITERATIONS_FLAG, Integer.class, CommonFlags.INT, "minimum number of iterations multiplied by the block size", 1).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(PRINT_ALL, "print non present species in the output file").setCategory(REPORTING);
-    flags.registerOptional('c', MIN_CONFIDENCE_VALUE, Double.class, "FLOAT", "species below this confidence value will not be reported", 10.0).setCategory(REPORTING);
+    flags.registerOptional('c', MIN_CONFIDENCE_VALUE, Double.class, CommonFlags.FLOAT, "species below this confidence value will not be reported", 10.0).setCategory(REPORTING);
 
     CommonFlags.initThreadsFlag(flags);
-    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     flags.registerOptional(X_VERBOSE, "turn on output of convergence information").setCategory(UTILITY);
     flags.registerOptional(X_STD_DEV_GRAPH, "output graph across 1 standard deviation").setCategory(INPUT_OUTPUT);
     //You should never filter in IH (it is expected that there will be hits on multiple bacterial species)
@@ -171,7 +170,7 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
     SamFilterOptions.registerMaxASUnmatedFlag(flags, 'u');
     SamFilterOptions.registerExcludeMatedFlag(flags);
     SamFilterOptions.registerExcludeUnmatedFlag(flags);
-    final Flag<File> inFlag = flags.registerRequired(File.class, "FILE", "SAM/BAM format files containing mapped reads");
+    final Flag<File> inFlag = flags.registerRequired(File.class, CommonFlags.FILE, "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);

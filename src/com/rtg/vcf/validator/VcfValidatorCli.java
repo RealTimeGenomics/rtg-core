@@ -24,6 +24,7 @@ import java.util.Map.Entry;
 import java.util.Properties;
 
 import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.util.Resources;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TextTable;
@@ -87,8 +88,8 @@ public class VcfValidatorCli extends AbstractCli {
     mFlags.setDescription("Validates the contents of a VCF file conform to expected value ranges.");
     CommonFlagCategories.setCategories(mFlags);
     mFlags.registerExtendedHelp();
-    mFlags.registerRequired(File.class, "FILE", "VCF format file to be validated").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerOptional(XRULES, File.class, "FILE", "File defining rules for validation of VCF input").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerRequired(File.class, CommonFlags.FILE, "VCF format file to be validated").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerOptional(XRULES, File.class, CommonFlags.FILE, "File defining rules for validation of VCF input").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerOptional(XVERBOSE, "Set to output all failed records to error output instead of the first " + MAX_RECORD_WARNINGS).setCategory(CommonFlagCategories.REPORTING);
   }
 

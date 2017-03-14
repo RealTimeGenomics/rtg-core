@@ -63,9 +63,9 @@ public class CorrectReadsCli extends LoggedCli {
     flags.setDescription("Attempt to correct read errors by locating low frequency kmers and mutating them into high frequency ones.");
     flags.registerExtendedHelp();
     CommonFlags.initOutputDirFlag(flags);
-    flags.registerRequired('i', INPUT, File.class, "SDF", "read SDF to correct");
-    flags.registerRequired('k', DeBruijnAssemblerCli.KMER_SIZE, Integer.class, "INT", "size of kmer to use in correction");
-    flags.registerOptional('c', THRESHOLD, Integer.class, "INT", "override the calculated frequency threshold");
+    flags.registerRequired('i', INPUT, File.class, CommonFlags.SDF, "read SDF to correct");
+    flags.registerRequired('k', DeBruijnAssemblerCli.KMER_SIZE, Integer.class, CommonFlags.INT, "size of kmer to use in correction");
+    flags.registerOptional('c', THRESHOLD, Integer.class, CommonFlags.INT, "override the calculated frequency threshold");
   }
 
   /**

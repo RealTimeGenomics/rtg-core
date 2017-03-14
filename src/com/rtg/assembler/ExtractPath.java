@@ -22,6 +22,7 @@ import com.rtg.assembler.graph.Graph;
 import com.rtg.assembler.graph.implementation.ContigString;
 import com.rtg.assembler.graph.io.GraphReader;
 import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.store.StoreDirProxy;
 
@@ -105,11 +106,11 @@ public class ExtractPath extends AbstractCli {
   protected static void initFlagsLocal(CFlags flags) {
     flags.registerExtendedHelp();
     flags.setDescription("Outputs the sequence pertaining to the specified path.");
-    flags.registerRequired(File.class, "DIR", "input graph directory");
-    flags.registerRequired('p', PATH, Long.class, "INT", "path that will be traced through the graph and output");
-    flags.registerRequired('k', KMER_SIZE, Integer.class, "INT", "size of the kmer the graph was constructed with");
-    flags.registerOptional('s', START, Integer.class, "INT", "trim the first sequence up to this position");
-    flags.registerOptional('e', END, Integer.class, "INT", "trim the final sequence at this position");
+    flags.registerRequired(File.class, CommonFlags.DIR, "input graph directory");
+    flags.registerRequired('p', PATH, Long.class, CommonFlags.INT, "path that will be traced through the graph and output");
+    flags.registerRequired('k', KMER_SIZE, Integer.class, CommonFlags.INT, "size of the kmer the graph was constructed with");
+    flags.registerOptional('s', START, Integer.class, CommonFlags.INT, "trim the first sequence up to this position");
+    flags.registerOptional('e', END, Integer.class, CommonFlags.INT, "trim the final sequence at this position");
   }
 
   /**

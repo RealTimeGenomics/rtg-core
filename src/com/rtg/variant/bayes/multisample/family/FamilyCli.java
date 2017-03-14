@@ -129,17 +129,17 @@ public class FamilyCli extends AbstractMultisampleCli {
     CommonFlags.initMinAvrScore(flags);
     flags.setDescription("Performs a combined mendelian family variant analysis.");
     flags.setValidator(new FamilyValidator());
-    final Flag<File> inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
+    final Flag<File> inFlag = flags.registerRequired(File.class, CommonFlags.FILE, "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
 
-    final Flag<File> pedFlag = flags.registerOptional('p', PEDIGREE_FLAG, File.class, "file", "genome relationships PED file, if not specifying family via --" + FATHER_FLAG + ", --" + MOTHER_FLAG + ", etc").setCategory(INPUT_OUTPUT);
-    final Flag<String> fatherFlag = flags.registerOptional(FATHER_FLAG, String.class, "string", "sample identifier used in read groups for father sample").setCategory(INPUT_OUTPUT);
-    final Flag<String> motherFlag = flags.registerOptional(MOTHER_FLAG, String.class, "string", "sample identifier used in read groups for for mother sample").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(SON_FLAG, String.class, "string", "sample identifier used in read groups for a son sample").setMaxCount(Integer.MAX_VALUE).setCategory(INPUT_OUTPUT);
-    flags.registerOptional(DAUGHTER_FLAG, String.class, "string", "sample identifier used in read groups for a daughter sample").setMaxCount(Integer.MAX_VALUE).setCategory(INPUT_OUTPUT);
+    final Flag<File> pedFlag = flags.registerOptional('p', PEDIGREE_FLAG, File.class, CommonFlags.FILE, "genome relationships PED file, if not specifying family via --" + FATHER_FLAG + ", --" + MOTHER_FLAG + ", etc").setCategory(INPUT_OUTPUT);
+    final Flag<String> fatherFlag = flags.registerOptional(FATHER_FLAG, String.class, CommonFlags.STRING, "sample identifier used in read groups for father sample").setCategory(INPUT_OUTPUT);
+    final Flag<String> motherFlag = flags.registerOptional(MOTHER_FLAG, String.class, CommonFlags.STRING, "sample identifier used in read groups for for mother sample").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(SON_FLAG, String.class, CommonFlags.STRING, "sample identifier used in read groups for a son sample").setMaxCount(Integer.MAX_VALUE).setCategory(INPUT_OUTPUT);
+    flags.registerOptional(DAUGHTER_FLAG, String.class, CommonFlags.STRING, "sample identifier used in read groups for a daughter sample").setMaxCount(Integer.MAX_VALUE).setCategory(INPUT_OUTPUT);
     registerComplexPruningFlags(flags, true);
     flags.addRequiredSet(fatherFlag, motherFlag, inFlag);
     flags.addRequiredSet(fatherFlag, motherFlag, listFlag);

@@ -56,13 +56,13 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
 
   @Override
   protected void initFlags() {
-    mFlags.registerOptional('t', INDEX_FLAG, File.class, "FILE", "reference index file", new File("zooma.index.bin"));
-    mFlags.registerRequired('l', LEFT_FLAG, File.class, "FILE", "left input file for FASTQ paired end data");
-    mFlags.registerRequired('r', RIGHT_FLAG, File.class, "FILE", "right input file for FASTQ paired end data");
+    mFlags.registerOptional('t', INDEX_FLAG, File.class, CommonFlags.FILE, "reference index file", new File("zooma.index.bin"));
+    mFlags.registerRequired('l', LEFT_FLAG, File.class, CommonFlags.FILE, "left input file for FASTQ paired end data");
+    mFlags.registerRequired('r', RIGHT_FLAG, File.class, CommonFlags.FILE, "right input file for FASTQ paired end data");
     CommonFlags.initOutputDirFlag(mFlags);
     mFlags.registerOptional('Q', NO_QUICK_FLAG, "do not build and use the \"quick cache\"");
     mFlags.registerOptional('N', NO_CACHE_FLAG, "do not build and use the \"cache\"");
-    mFlags.registerOptional('k', OUTPUT_CHUNK_FLAG, Integer.class, "INT", "number of reads per chunk", 100000);
+    mFlags.registerOptional('k', OUTPUT_CHUNK_FLAG, Integer.class, CommonFlags.INT, "number of reads per chunk", 100000);
     mFlags.registerOptional('e', E_SCORE, Integer.class, CommonFlags.INT, "alignment score threshold per arm (2*e for mates)", 10);
     mFlags.registerOptional('s', STEP, Integer.class, CommonFlags.INT, "set the search step size (The w value from inside the index)");
     mFlags.registerOptional('c', INPUT_CACHE, Integer.class, CommonFlags.INT, "input cache in GB");

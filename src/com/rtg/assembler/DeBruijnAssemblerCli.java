@@ -142,9 +142,9 @@ public class DeBruijnAssemblerCli extends ParamsCli<DeBruijnParams> {
 
   protected static void initCommonFlags(CFlags flags) {
     CommonFlags.initOutputDirFlag(flags);
-    flags.registerRequired('k', KMER_SIZE, Integer.class, "int", "kmer length to build graph nodes from").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('c', MIN_HASH_FREQUENCY, Integer.class, "int", "set minimum kmer frequency to retain, or -1 for automatic threshold", -1).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(DIPLOID_RATIO, Double.class, "float", "avoid merging bubbles where the ratio of kmers on the branches is below this", 0.0).setCategory(SENSITIVITY_TUNING);
+    flags.registerRequired('k', KMER_SIZE, Integer.class, CommonFlags.INT, "kmer length to build graph nodes from").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('c', MIN_HASH_FREQUENCY, Integer.class, CommonFlags.INT, "set minimum kmer frequency to retain, or -1 for automatic threshold", -1).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(DIPLOID_RATIO, Double.class, CommonFlags.FLOAT, "avoid merging bubbles where the ratio of kmers on the branches is below this", 0.0).setCategory(SENSITIVITY_TUNING);
     CommonFlags.initReadRange(flags);
   }
 
@@ -154,11 +154,11 @@ public class DeBruijnAssemblerCli extends ParamsCli<DeBruijnParams> {
     initCommonFlags(flags);
     flags.registerOptional('s', XSTRING_KMER, "use string based kmers").setCategory(SENSITIVITY_TUNING);
     CommonFlagCategories.setCategories(flags);
-    final Flag<File> inFlag = flags.registerRequired(File.class, "file", "SDF directories containing sequences to assemble");
+    final Flag<File> inFlag = flags.registerRequired(File.class, CommonFlags.FILE, "SDF directories containing sequences to assemble");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SDF directories (1 per line) containing sequences to assemble").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SDF directories (1 per line) containing sequences to assemble").setCategory(INPUT_OUTPUT);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
   }

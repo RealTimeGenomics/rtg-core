@@ -206,9 +206,9 @@ public final class GraphToPlot extends LoggedCli {
     flags.registerExtendedHelp();
     flags.setDescription("Produces graphs of the contigs contained in the specified graph directory.");
     CommonFlags.initOutputDirFlag(flags);
-    flags.registerRequired(File.class, "DIR", "input graph directory");
-    flags.registerRequired('s', START, Long.class, "INT", "produce a .dot file for nodes around this one");
-    flags.registerOptional('w', WIDTH, Integer.class, "INT", "maximum distance from the initial node within the .dot", 5);
+    flags.registerRequired(File.class, CommonFlags.DIR, "input graph directory");
+    flags.registerRequired('s', START, Long.class, CommonFlags.INT, "produce a .dot file for nodes around this one");
+    flags.registerOptional('w', WIDTH, Integer.class, CommonFlags.INT, "maximum distance from the initial node within the .dot", 5);
     flags.setValidator(new Valid());
   }
 

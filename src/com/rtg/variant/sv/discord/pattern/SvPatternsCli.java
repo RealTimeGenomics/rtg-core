@@ -12,7 +12,6 @@
 
 package com.rtg.variant.sv.discord.pattern;
 
-import static com.rtg.launcher.BuildCommon.RESOURCE;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 
 import java.io.File;
@@ -101,19 +100,19 @@ public class SvPatternsCli extends ParamsCli<BreakpointPatternParams> {
 
   protected static void initLocalFlags(CFlags flags) {
     flags.setValidator(new PatternsValidator());
-    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
+    CommonFlags.initOutputDirFlag(flags);
     CommonFlagCategories.setCategories(flags);
     SamFilterOptions.registerRestrictionFlag(flags);
-    final Flag<File> inFlag = flags.registerRequired(File.class, "file", "VCF format files of discordant breakpoints");
+    final Flag<File> inFlag = flags.registerRequired(File.class, CommonFlags.FILE, "VCF format files of discordant breakpoints");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of VCF format files (1 per line) of discordant breakpoints").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of VCF format files (1 per line) of discordant breakpoints").setCategory(INPUT_OUTPUT);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
-    flags.registerOptional(MAX_FRAGMENT_LENGTH, Integer.class, "INT", "how far from the breakpoint to look ahead for inversions", BreakpointPatternParams.DEFAULT_FRAGMENT_LENGTH).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(MAX_SAME_DISTANCE, Integer.class, "INT", "how far apart can breakpoints be yet still be considered the same place", BreakpointPatternParams.DEFAULT_SAME_DISTANCE).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(DiscordantToolCli.MIN_BREAKPOINT_DEPTH, Integer.class, "INT", DiscordantToolCli.MIN_SUPPORT_DESCRIPTION, DiscordantToolCli.DEFAULT_MIN_DEPTH).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(MAX_FRAGMENT_LENGTH, Integer.class, CommonFlags.INT, "how far from the breakpoint to look ahead for inversions", BreakpointPatternParams.DEFAULT_FRAGMENT_LENGTH).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(MAX_SAME_DISTANCE, Integer.class, CommonFlags.INT, "how far apart can breakpoints be yet still be considered the same place", BreakpointPatternParams.DEFAULT_SAME_DISTANCE).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(DiscordantToolCli.MIN_BREAKPOINT_DEPTH, Integer.class, CommonFlags.INT, DiscordantToolCli.MIN_SUPPORT_DESCRIPTION, DiscordantToolCli.DEFAULT_MIN_DEPTH).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
   }
 
   /**

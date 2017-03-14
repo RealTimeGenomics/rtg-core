@@ -55,7 +55,7 @@ import com.rtg.variant.bayes.multisample.family.FamilyCli;
 import com.rtg.variant.bayes.multisample.lineage.LineageCli;
 import com.rtg.variant.bayes.multisample.population.PopulationCli;
 import com.rtg.variant.bayes.multisample.singleton.SingletonCli;
-import com.rtg.variant.cnv.CnvProductCli;
+import com.rtg.variant.cnv.CnvCli;
 import com.rtg.variant.cnv.segment.CnvPonBuildCli;
 import com.rtg.variant.cnv.segment.CnvSummaryCli;
 import com.rtg.variant.cnv.segment.SegmentCli;
@@ -151,7 +151,7 @@ public final class CoreCommand {
   static final Command AVRPREDICT = new Command(new PredictCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
   /** Runs CNV calling */
-  static final Command CNV = new Command(new CnvProductCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
+  static final Command CNV = new Command(new CnvCli(), CommandCategory.VARIANT, ReleaseLevel.GA);
 
   /** Runs CNV segmentation. */
   static final Command SEGMENT = new Command(new SegmentCli(), CommandCategory.VARIANT, ReleaseLevel.ALPHA);

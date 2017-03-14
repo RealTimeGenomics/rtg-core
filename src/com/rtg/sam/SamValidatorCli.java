@@ -73,10 +73,10 @@ public final class SamValidatorCli extends AbstractCli {
     flags.setDescription("Prints alignment statistics from the contents of the output SAM/BAM file.");
     CommonFlagCategories.setCategories(flags);
     CommonFlags.initReferenceTemplate(flags, true);
-    final Flag<File> input = flags.registerRequired(File.class, "FILE", "SAM/BAM result file (must contain read-ids not read names)").setCategory(INPUT_OUTPUT);
+    final Flag<File> input = flags.registerRequired(File.class, CommonFlags.FILE, "SAM/BAM result file (must contain read-ids not read names)").setCategory(INPUT_OUTPUT);
     input.setMinCount(0).setMaxCount(Integer.MAX_VALUE);
-    final Flag<File> inputList = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
-    flags.registerOptional('r', READS_DIR, File.class, "SDF", "reads SDF").setCategory(INPUT_OUTPUT);
+    final Flag<File> inputList = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    flags.registerOptional('r', READS_DIR, File.class, CommonFlags.SDF, "reads SDF").setCategory(INPUT_OUTPUT);
     flags.registerOptional(VALIDATE_FLAG, "validate mapping of read to reference. Tests matching of bases according to CIGAR format").setCategory(REPORTING);
     flags.registerOptional(CONSENSUS_FLAG, "record consensus data. Requires roughly 5 times template length of RAM").setCategory(REPORTING);
     flags.registerOptional('D', DISTRIBUTIONS_FLAG, "display distributions of insert sizes, alignment scores and read hits").setCategory(REPORTING);

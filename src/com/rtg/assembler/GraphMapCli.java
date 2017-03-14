@@ -111,25 +111,25 @@ public class GraphMapCli extends ParamsCli<GraphMapParams> {
 
   protected static void initCommonFlags(CFlags flags) {
     CommonFlags.initThreadsFlag(flags);
-    flags.registerOptional('w', MapFlags.WORDSIZE_FLAG, Integer.class, "int", "word size", 18).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('s', MapFlags.STEP_FLAG, Integer.class, "int", "step size", 18).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('a', MISMATCHES, IntegerOrPercentage.class, "int", "number of bases that may mismatch in an alignment or percentage of read that may mismatch", new IntegerOrPercentage(0)).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('m', MIN_INSERT, Integer.class, "int", "minimum insert size between fragments").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('M', MAX_INSERT, Integer.class, "int", "maximum insert size between fragments").setCategory(SENSITIVITY_TUNING);
-    final Flag<File> reads454 = flags.registerOptional('f', FOUR_FIVE_FOUR, File.class, "Dir", "SDF containing 454 reads").setCategory(INPUT_OUTPUT);
-    final Flag<File> listFlag454 = flags.registerOptional('F', INPUT_LIST_FLAG_454, File.class, "FILE", "file containing a list of SDF directories (1 per line) containing 454 sequences to assemble").setCategory(INPUT_OUTPUT);
+    flags.registerOptional('w', MapFlags.WORDSIZE_FLAG, Integer.class, CommonFlags.INT, "word size", 18).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('s', MapFlags.STEP_FLAG, Integer.class, CommonFlags.INT, "step size", 18).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('a', MISMATCHES, IntegerOrPercentage.class, CommonFlags.INT, "number of bases that may mismatch in an alignment or percentage of read that may mismatch", new IntegerOrPercentage(0)).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('m', MIN_INSERT, Integer.class, CommonFlags.INT, "minimum insert size between fragments").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('M', MAX_INSERT, Integer.class, CommonFlags.INT, "maximum insert size between fragments").setCategory(SENSITIVITY_TUNING);
+    final Flag<File> reads454 = flags.registerOptional('f', FOUR_FIVE_FOUR, File.class, CommonFlags.SDF, "SDF containing 454 reads").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag454 = flags.registerOptional('F', INPUT_LIST_FLAG_454, File.class, CommonFlags.FILE, "file containing a list of SDF directories (1 per line) containing 454 sequences to assemble").setCategory(INPUT_OUTPUT);
     reads454.setMinCount(0);
     reads454.setMaxCount(Integer.MAX_VALUE);
-    final Flag<File> readsMatePair = flags.registerOptional('j', MATE_PAIR, File.class, "Dir", "SDF containing mate pair reads").setCategory(INPUT_OUTPUT);
-    final Flag<File> listFlagMatePair = flags.registerOptional('J', INPUT_LIST_FLAG_MATE_PAIR, File.class, "FILE", "file containing a list of SDF directories (1 per line) containing mate pair sequences to assemble").setCategory(INPUT_OUTPUT);
+    final Flag<File> readsMatePair = flags.registerOptional('j', MATE_PAIR, File.class, CommonFlags.SDF, "SDF containing mate pair reads").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlagMatePair = flags.registerOptional('J', INPUT_LIST_FLAG_MATE_PAIR, File.class, CommonFlags.FILE, "file containing a list of SDF directories (1 per line) containing mate pair sequences to assemble").setCategory(INPUT_OUTPUT);
     readsMatePair.setMinCount(0);
     readsMatePair.setMaxCount(Integer.MAX_VALUE);
     CommonFlagCategories.setCategories(flags);
-    final Flag<File> inFlag = flags.registerRequired(File.class, "dir", "SDF directories containing reads to map");
+    final Flag<File> inFlag = flags.registerRequired(File.class, CommonFlags.SDF, "SDF directories containing reads to map");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SDF directories (1 per line) containing sequences to assemble").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SDF directories (1 per line) containing sequences to assemble").setCategory(INPUT_OUTPUT);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
     flags.addRequiredSet(reads454);
@@ -144,7 +144,7 @@ public class GraphMapCli extends ParamsCli<GraphMapParams> {
     initCommonFlags(flags);
     CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired('g', GRAPH_FLAG, File.class, "Dir", "graph of the assembly to map against").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(ALIGNMENTS, File.class, "file", "alignments will be written to this file").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(ALIGNMENTS, File.class, CommonFlags.FILE, "alignments will be written to this file").setCategory(INPUT_OUTPUT);
   }
 
   /**

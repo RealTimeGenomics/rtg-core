@@ -11,7 +11,6 @@
  */
 package com.rtg.variant.cnv;
 
-import static com.rtg.launcher.BuildCommon.RESOURCE;
 import static com.rtg.launcher.CommonFlags.NO_GZIP;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
@@ -41,9 +40,9 @@ import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.variant.cnv.CnvProductParams.CnvProductParamsBuilder;
 
 /**
- * CLI class for CNV product
+ * Main class for CNV product
  */
-public class CnvProductCli extends ParamsCli<CnvProductParams> {
+public class CnvCli extends ParamsCli<CnvProductParams> {
 
   static final String BUCKET_SIZE_FLAG = "bucket-size";
   static final String INPUT_BASELINE_FLAG = "base-file";
@@ -131,26 +130,26 @@ public class CnvProductCli extends ParamsCli<CnvProductParams> {
     CommonFlagCategories.setCategories(mFlags);
     mFlags.setValidator(new CnvProductValidator());
     mFlags.setName(applicationName() + " " + moduleName());
-    final Flag<File> inFlag = mFlags.registerOptional('i', INPUT_BASELINE_FLAG, File.class, "FILE", "SAM/BAM format files containing mapped reads for baseline");
+    final Flag<File> inFlag = mFlags.registerOptional('i', INPUT_BASELINE_FLAG, File.class, CommonFlags.FILE, "SAM/BAM format files containing mapped reads for baseline");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
     inFlag.setPsuedoMinMaxRangeString(0, Constants.MAX_OPEN_FILES);
-    final Flag<File> inFlag2 = mFlags.registerOptional('j', INPUT_TEST_FLAG, File.class, "FILE", "SAM/BAM format files containing mapped reads for test");
+    final Flag<File> inFlag2 = mFlags.registerOptional('j', INPUT_TEST_FLAG, File.class, CommonFlags.FILE, "SAM/BAM format files containing mapped reads for test");
     inFlag2.setCategory(INPUT_OUTPUT);
     inFlag2.setMinCount(0);
     inFlag2.setMaxCount(Integer.MAX_VALUE);
     inFlag2.setPsuedoMinMaxRangeString(0, Constants.MAX_OPEN_FILES);
     CommonFlags.initNoMaxFile(mFlags);
-    final Flag<File> listFlag1 = mFlags.registerOptional('I', INPUT_BASELINE_LIST_FLAG, File.class, "FILE", "file containing list of SAM/BAM format files (1 per line) containing mapped reads for baseline").setCategory(INPUT_OUTPUT);
-    final Flag<File> listFlag2 = mFlags.registerOptional('J', INPUT_TEST_LIST_FLAG, File.class, "FILE", "file containing list of SAM/BAM format files (1 per line) containing mapped reads for test").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag1 = mFlags.registerOptional('I', INPUT_BASELINE_LIST_FLAG, File.class, CommonFlags.FILE, "file containing list of SAM/BAM format files (1 per line) containing mapped reads for baseline").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag2 = mFlags.registerOptional('J', INPUT_TEST_LIST_FLAG, File.class, CommonFlags.FILE, "file containing list of SAM/BAM format files (1 per line) containing mapped reads for test").setCategory(INPUT_OUTPUT);
     CommonFlags.initReferenceTemplate(mFlags, false);
-    mFlags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional('b', BUCKET_SIZE_FLAG, Integer.class, "INT", "size of the buckets in the genome", 100).setCategory(SENSITIVITY_TUNING);
+    CommonFlags.initOutputDirFlag(mFlags);
+    mFlags.registerOptional('b', BUCKET_SIZE_FLAG, Integer.class, CommonFlags.INT, "size of the buckets in the genome", 100).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(ALLOW_MULTIPLE_ALIGNMENTS_PER_START_INDEX_FLAG, "Count alignments starting at the same position individually").setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(MAGIC_FLAG, Double.class, "FLOAT", "Magic constant", 1.0).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(DIV_FACT_FLAG, Double.class, "FLOAT", "Division factor to use for calculating germline deletes", 3.0).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(MUL_FACT_FLAG, Double.class, "FLOAT", "Multiplication factor to use for calculating germline deletes", 3.0).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(MAGIC_FLAG, Double.class, CommonFlags.FLOAT, "Magic constant", 1.0).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(DIV_FACT_FLAG, Double.class, CommonFlags.FLOAT, "Division factor to use for calculating germline deletes", 3.0).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(MUL_FACT_FLAG, Double.class, CommonFlags.FLOAT, "Multiplication factor to use for calculating germline deletes", 3.0).setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(EXTRA_PENALTY_OFF, "Switch off extra penalty").setCategory(UTILITY);
     mFlags.registerOptional(X_IGNORE_SAM_HEADER_INCOMPATIBILITY, "ignore incompatible SAM headers when merging SAM results").setCategory(UTILITY);
     CommonFlags.initThreadsFlag(mFlags);

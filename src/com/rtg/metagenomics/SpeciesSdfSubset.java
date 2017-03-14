@@ -82,9 +82,9 @@ public final class SpeciesSdfSubset extends LoggedCli {
   protected void initFlags() {
     CommonFlagCategories.setCategories(mFlags);
     mFlags.setDescription("Extracts a subset of sequences from one SDF and outputs them to another SDF.");
-    mFlags.registerRequired('i', INPUT_FLAG, File.class, "SDF", "input SDF").setCategory(INPUT_OUTPUT);
-    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, "SDF", "output SDF").setCategory(INPUT_OUTPUT);
-    mFlags.registerRequired('t', TAXONOMY_FILE_FLAG, File.class, "FILE", "file containing taxonomy").setCategory(FILTERING);
+    mFlags.registerRequired('i', INPUT_FLAG, File.class, CommonFlags.SDF, "input SDF").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.SDF, "output SDF").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired('t', TAXONOMY_FILE_FLAG, File.class, CommonFlags.FILE, "file containing taxonomy").setCategory(FILTERING);
     mFlags.setValidator(VALIDATOR);
   }
 

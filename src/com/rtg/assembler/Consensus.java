@@ -95,7 +95,7 @@ public class Consensus extends LoggedCli {
     CommonFlags.initOutputDirFlag(flags);
     initCommonFlags(flags);
     flags.registerRequired('k', KMER_SIZE, Integer.class, "Int", "size of kmer used to build the graph").setCategory(SENSITIVITY_TUNING);
-    flags.registerRequired(File.class, "DIR", "input graph directory").setCategory(INPUT_OUTPUT);
+    flags.registerRequired(File.class, CommonFlags.DIR, "input graph directory").setCategory(INPUT_OUTPUT);
     flags.setValidator(new Valid());
   }
 

@@ -219,11 +219,11 @@ public class SvInterestingRegionExtractor implements Closeable {
 
 
   private static void initFlags(CFlags flags) {
-    flags.registerRequired('i', "input", File.class, "FILE", "SV file to process").setCategory(INPUT_OUTPUT);
-    flags.registerOptional('o', CommonFlags.OUTPUT_FLAG, File.class, "FILE", "output BED file").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('i', "input", File.class, CommonFlags.FILE, "SV file to process").setCategory(INPUT_OUTPUT);
+    flags.registerOptional('o', CommonFlags.OUTPUT_FLAG, File.class, CommonFlags.FILE, "output BED file").setCategory(INPUT_OUTPUT);
 
     //set length of normal region which must be present after a breakpoint (for merging close regions)
-    flags.registerOptional('m', "merge-regions", Integer.class, "INT", "number of windows which regions must be apart to be considered separate").setCategory(CommonFlagCategories.FILTERING);
+    flags.registerOptional('m', "merge-regions", Integer.class, CommonFlags.INT, "number of windows which regions must be apart to be considered separate").setCategory(CommonFlagCategories.FILTERING);
   }
 
   /**

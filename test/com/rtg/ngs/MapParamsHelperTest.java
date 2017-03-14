@@ -71,7 +71,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
       MapFlags.initSharedFlagsOnly(flags);
       CommonFlags.initReadRange(flags);
       MapFlags.initStepSize(flags);
-      flags.registerOptional(MapFlags.THREAD_MULTIPLIER, Integer.class, "INT", "").setCategory(CommonFlagCategories.UTILITY);
+      flags.registerOptional(MapFlags.THREAD_MULTIPLIER, Integer.class, CommonFlags.INT, "").setCategory(CommonFlagCategories.UTILITY);
       MapFlags.initReadFreqFlag(flags, 3);
 
       ReaderTestUtils.createPairedReaderDNA(">s" + StringUtils.LS + "AGT", ">s" + StringUtils.LS + "TGA", tmpDir, new SdfId(5L));
@@ -81,7 +81,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
                             "-t", r.getPath(),
                             "-o", tmpDir.getPath(),
                             "--" + MapFlags.THREAD_MULTIPLIER, "3",
-                            "--" + MapFlags.REPEAT_FREQUENCY_FLAG, "33%",
+                            "--" + CommonFlags.REPEAT_FREQUENCY_FLAG, "33%",
                             "--" + CommonFlags.END_READ_ID, "2");
 
       err.reset();
@@ -93,7 +93,7 @@ public class MapParamsHelperTest extends AbstractCliTest {
                             "-o", tmpDir.getPath(),
                             "--" + MapFlags.THREAD_MULTIPLIER, "1",
                             "--" + CommonFlags.THREADS_FLAG, "1",
-                            "--" + MapFlags.REPEAT_FREQUENCY_FLAG, "33%",
+                            "--" + CommonFlags.REPEAT_FREQUENCY_FLAG, "33%",
                             "--" + CommonFlags.END_READ_ID, "3");
       assertEquals(3, MapParamsHelper.populateCommonMapParams(npb, flags, 8, 2, false, false));
       assertEquals(2, err.toString().split("The end sequence id \"3\" is out of range, it must be from \"1\" to \"1\". Defaulting end to \"1\"").length - 1);

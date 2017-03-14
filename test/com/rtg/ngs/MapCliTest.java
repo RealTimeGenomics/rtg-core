@@ -169,7 +169,7 @@ public class MapCliTest extends AbstractCliTest {
 
     final CFlags flags = new CFlags();
     flags.registerOptional(MapFlags.TOPN_RESULTS_FLAG, Integer.class, CommonFlags.INT, "").setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, CommonFlags.INT, "").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(MapFlags.XSCORE_INDEL, Integer.class, CommonFlags.INT, "").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(MapFlags.MAX_ALIGNMENT_MISMATCHES, IntegerOrPercentage.class, CommonFlags.INT, "").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(MapFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "").setCategory(CommonFlagCategories.REPORTING);

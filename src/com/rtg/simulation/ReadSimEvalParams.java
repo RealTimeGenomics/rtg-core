@@ -79,7 +79,7 @@ final class ReadSimEvalParams {
   static void initFlags(final CFlags flags) {
     CommonFlagCategories.setCategories(flags);
     flags.registerExtendedHelp();
-    flags.registerRequired('r', READ_SDF, File.class, "SDF", "SDF containing reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerRequired('r', READ_SDF, File.class, CommonFlags.SDF, "SDF containing reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     CommonFlags.initOutputDirFlag(flags);
     final Flag<File> inFlag = flags.registerRequired(File.class, FILE, "SAM/BAM format files");
     inFlag.setMinCount(1);
@@ -88,11 +88,11 @@ final class ReadSimEvalParams {
     inFlag.setCategory(CommonFlagCategories.INPUT_OUTPUT);
     CommonFlags.initNoMaxFile(flags);
     flags.registerOptional('M', MUTATIONS_VCF, File.class, FILE, "VCF file containing genomic mutations to be compensated for").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerOptional('S', SAMPLE, String.class, "string", "name of the sample to use from the mutation VCF file, will default to using the first sample in the file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerOptional('v', VARIANCE, Integer.class, "int", "variation allowed in start position", 0).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional('g', GAP_OPENING, Integer.class, "int", "gap opening penalty", 2).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    //flags.registerOptional('e', GAP_EXTENTION, Integer.class, "int", "gap extention penalty", (Integer) 1).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional('m', MISMATCH, Integer.class, "int", "mismatch penalty", 1).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional('S', SAMPLE, String.class, CommonFlags.STRING, "name of the sample to use from the mutation VCF file, will default to using the first sample in the file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerOptional('v', VARIANCE, Integer.class, CommonFlags.INT, "variation allowed in start position", 0).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional('g', GAP_OPENING, Integer.class, CommonFlags.INT, "gap opening penalty", 2).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    //flags.registerOptional('e', GAP_EXTENTION, Integer.class, CommonFlags.INT, "gap extention penalty", (Integer) 1).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional('m', MISMATCH, Integer.class, CommonFlags.INT, "mismatch penalty", 1).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     SamFilterOptions.registerMinMapQFlag(flags);
     SamFilterOptions.registerMaxASMatedFlag(flags, SamFilterOptions.NO_SINGLE_LETTER);
     SamFilterOptions.registerMaxASUnmatedFlag(flags, SamFilterOptions.NO_SINGLE_LETTER);

@@ -25,11 +25,11 @@ import com.rtg.util.io.TestDirectory;
 /**
  * Test class
  */
-public class CnvProductCliTest extends AbstractCliTest {
+public class CnvCliTest extends AbstractCliTest {
 
   @Override
   protected AbstractCli getCli() {
-    return new CnvProductCli();
+    return new CnvCli();
   }
 
   private File prepareTemplate(final File dir) throws IOException {
@@ -93,7 +93,7 @@ public class CnvProductCliTest extends AbstractCliTest {
           "--Xallow-duplicate-start"
       };
       assertEquals("", checkHandleFlagsOut(args));
-      final CnvProductParams params = ((CnvProductCli) mCli).makeParams();
+      final CnvProductParams params = ((CnvCli) mCli).makeParams();
       assertEquals(10, params.bucketSize());
       assertEquals(1, params.filterParams().maxAlignmentCount());
       assertEquals(new IntegerOrPercentage(2), params.filterParams().maxMatedAlignmentScore());
@@ -121,8 +121,8 @@ public class CnvProductCliTest extends AbstractCliTest {
           "-o", new File(dir, "output").getPath(),
       };
       assertEquals("", checkHandleFlagsOut(args));
-      assertEquals(100, getCFlags().getValue(CnvProductCli.BUCKET_SIZE_FLAG));
-      final CnvProductCli cli = (CnvProductCli) mCli;
+      assertEquals(100, getCFlags().getValue(CnvCli.BUCKET_SIZE_FLAG));
+      final CnvCli cli = (CnvCli) mCli;
       assertTrue(cli.task(cli.makeParams(), TestUtils.getNullOutputStream()) instanceof CnvProductTask);
       assertEquals(new File(dir, "output"), cli.outputDirectory());
     }

@@ -11,8 +11,6 @@
  */
 package com.rtg.ngs;
 
-import static com.rtg.launcher.BuildCommon.RESOURCE;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
@@ -115,14 +113,14 @@ public class MapFlagsTest extends TestCase {
 
   public void testNegativeRepeatFreq() {
     final CFlags flags = new CFlags();
-    flags.registerOptional('r', MapFlags.REPEAT_FREQUENCY_FLAG, Integer.class, "int", RESOURCE.getString("REPEAT_FREQUENCY_DESC"), 1000);
+    CommonFlags.initRepeatFrequencyFlag(flags);
     flags.setFlags("-r", "-1");
     assertFalse(MapFlags.checkRepeatFrequency(flags));
-    TestUtils.containsAll(flags.getParseMessage(), "--" + MapFlags.REPEAT_FREQUENCY_FLAG + " must be in the range [1");
+    TestUtils.containsAll(flags.getParseMessage(), "--" + CommonFlags.REPEAT_FREQUENCY_FLAG + " must be in the range [1");
 
     flags.setFlags("-r", "0");
     assertFalse(MapFlags.checkRepeatFrequency(flags));
-    TestUtils.containsAll(flags.getParseMessage(), "--" + MapFlags.REPEAT_FREQUENCY_FLAG + " must be in the range [1");
+    TestUtils.containsAll(flags.getParseMessage(), "--" + CommonFlags.REPEAT_FREQUENCY_FLAG + " must be in the range [1");
   }
 
 
@@ -130,27 +128,27 @@ public class MapFlagsTest extends TestCase {
     final MockEventListener ev = new MockEventListener();
     Diagnostic.addListener(ev);
     final CFlags flags = new CFlags();
-    flags.registerOptional('r', MapFlags.REPEAT_FREQUENCY_FLAG, IntegerOrPercentage.class, "int", RESOURCE.getString("REPEAT_FREQUENCY_DESC"), new IntegerOrPercentage(20));
+    flags.registerOptional('r', CommonFlags.REPEAT_FREQUENCY_FLAG, IntegerOrPercentage.class, CommonFlags.INT, "maximum repeat frequency", new IntegerOrPercentage(20));
     try {
       flags.setFlags("-r", "-1");
       assertFalse(MapFlags.checkPercentRepeatFrequency(flags));
-      assertTrue(ev.compareErrorMessage("Error: The specified flag \"--" + MapFlags.REPEAT_FREQUENCY_FLAG + "\" has invalid value \"" + -1 + "\". It should be greater than or equal to \"1\"."));
+      assertTrue(ev.compareErrorMessage("Error: The specified flag \"--" + CommonFlags.REPEAT_FREQUENCY_FLAG + "\" has invalid value \"" + -1 + "\". It should be greater than or equal to \"1\"."));
 
       flags.setFlags("-r", "0");
       assertFalse(MapFlags.checkPercentRepeatFrequency(flags));
-      assertTrue(ev.compareErrorMessage("Error: The specified flag \"--" + MapFlags.REPEAT_FREQUENCY_FLAG + "\" has invalid value \"" + 0 + "\". It should be greater than or equal to \"1\"."));
+      assertTrue(ev.compareErrorMessage("Error: The specified flag \"--" + CommonFlags.REPEAT_FREQUENCY_FLAG + "\" has invalid value \"" + 0 + "\". It should be greater than or equal to \"1\"."));
 
       flags.setFlags("-r", "100001");
       assertFalse(MapFlags.checkPercentRepeatFrequency(flags));
-      assertTrue(ev.compareErrorMessage("Error: The specified flag \"--" + MapFlags.REPEAT_FREQUENCY_FLAG + "\" has invalid value \"" + 100001 + "\". It should be less than or equal to \"100000\"."));
+      assertTrue(ev.compareErrorMessage("Error: The specified flag \"--" + CommonFlags.REPEAT_FREQUENCY_FLAG + "\" has invalid value \"" + 100001 + "\". It should be less than or equal to \"100000\"."));
 
       flags.setFlags("-r", "-1%");
       assertFalse(MapFlags.checkPercentRepeatFrequency(flags));
-      assertTrue(ev.compareErrorMessage("Error: The specified flag \"--" + MapFlags.REPEAT_FREQUENCY_FLAG + "\" has invalid value \"" + -1 + "%\". It should be greater than or equal to \"0%\"."));
+      assertTrue(ev.compareErrorMessage("Error: The specified flag \"--" + CommonFlags.REPEAT_FREQUENCY_FLAG + "\" has invalid value \"" + -1 + "%\". It should be greater than or equal to \"0%\"."));
 
       flags.setFlags("-r", "101%");
       assertFalse(MapFlags.checkPercentRepeatFrequency(flags));
-      assertTrue(ev.compareErrorMessage("Error: The specified flag \"--" + MapFlags.REPEAT_FREQUENCY_FLAG + "\" has invalid value \"" + 101 + "%\". It should be less than or equal to \"100%\"."));
+      assertTrue(ev.compareErrorMessage("Error: The specified flag \"--" + CommonFlags.REPEAT_FREQUENCY_FLAG + "\" has invalid value \"" + 101 + "%\". It should be less than or equal to \"100%\"."));
 
       flags.setFlags("-r", "1");
       assertTrue(MapFlags.checkPercentRepeatFrequency(flags));
@@ -262,7 +260,7 @@ public class MapFlagsTest extends TestCase {
 
     TestUtils.containsAll(flags.getUsageString(),
       "-s", "step size (Default is word size)",
-      RESOURCE.getString("REPEAT_FREQUENCY_DESC"),
+      "maximum repeat frequency",
       "-T", "number of threads",
       "-Z", "do not gzip the output"
     );

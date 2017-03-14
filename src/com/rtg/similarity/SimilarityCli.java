@@ -11,7 +11,6 @@
  */
 package com.rtg.similarity;
 
-import static com.rtg.launcher.BuildCommon.RESOURCE;
 import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.ngs.MapFlags.STEP_FLAG;
 import static com.rtg.ngs.MapFlags.WORDSIZE_FLAG;
@@ -186,12 +185,12 @@ public final class SimilarityCli extends ParamsCli<BuildSearchParams> {
     flags.setDescription("Produces a similarity matrix and nearest neighbor tree from the input sequences or reads.");
     CommonFlagCategories.setCategories(flags);
     CommonFlags.initOutputDirFlag(flags);
-    final Flag<File> inFlag = flags.registerOptional('i', INPUT_FLAG, File.class, "SDF", RESOURCE.getString("SUBJECT_DESC")).setCategory(INPUT_OUTPUT);
-    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a labeled list of SDF files (1 label and file per line format:[label][space][file])").setCategory(INPUT_OUTPUT);
+    final Flag<File> inFlag = flags.registerOptional('i', INPUT_FLAG, File.class, CommonFlags.SDF, "SDF containing subject dataset").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a labeled list of SDF files (1 label and file per line format:[label][space][file])").setCategory(INPUT_OUTPUT);
     MapFlags.initWordSize(flags, "word size (Default is " + DEFAULT_WORD_SIZE + ")");
     MapFlags.initStepSize(flags, "step size (Default is " + DEFAULT_STEP_SIZE + ")");
     flags.registerOptional(UNIQUE_WORDS, "count only unique words").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(MAX_READS_FLAG, Integer.class, "INT", "maximum number of reads to use from each input SDF").setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(MAX_READS_FLAG, Integer.class, CommonFlags.INT, "maximum number of reads to use from each input SDF").setCategory(CommonFlagCategories.UTILITY);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
   }

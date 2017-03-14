@@ -29,6 +29,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.TreeSet;
 
+import com.rtg.launcher.CommonFlags;
 import com.rtg.ml.Attribute;
 import com.rtg.ml.Dataset;
 import com.rtg.ml.MlDataType;
@@ -277,16 +278,16 @@ public class AttributeExtractor {
     final CFlags flags = new CFlags();
     CommonFlagCategories.setCategories(flags);
     flags.setDescription("Generate");
-    flags.registerRequired('i', "input", File.class, "FILE", "input VCF file to read from").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerRequired('o', "output", File.class, "FILE", "output ARFF file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerOptional("info-annotations", String.class, "STRING", "comma separated list of info attributes").setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional("format-annotations", String.class, "STRING", "comma separated list of format attributes").setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional("sample", String.class, "STRING", "the name of the sample to select (required when using multi-sample VCF files)").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerRequired('i', "input", File.class, CommonFlags.FILE, "input VCF file to read from").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerRequired('o', "output", File.class, CommonFlags.FILE, "output ARFF file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerOptional("info-annotations", String.class, CommonFlags.STRING, "comma separated list of info attributes").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional("format-annotations", String.class, CommonFlags.STRING, "comma separated list of format attributes").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional("sample", String.class, CommonFlags.STRING, "the name of the sample to select (required when using multi-sample VCF files)").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     final List<String> derivedRange = new ArrayList<>();
     for (final DerivedAnnotations derived : DerivedAnnotations.singleValueAnnotations()) {
       derivedRange.add(derived.toString());
     }
-    flags.registerOptional("derived-annotations", String.class, "STRING", "derived fields to use in model").setParameterRange(derivedRange).setMaxCount(Integer.MAX_VALUE).enableCsv().setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional("derived-annotations", String.class, CommonFlags.STRING, "derived fields to use in model").setParameterRange(derivedRange).setMaxCount(Integer.MAX_VALUE).enableCsv().setCategory(CommonFlagCategories.REPORTING);
     if (!flags.setFlags(args)) {
       return;
     }

@@ -83,17 +83,17 @@ public class MetaSnpCli extends LoggedCli {
   protected void initFlags() {
     mFlags.registerExtendedHelp();
     CommonFlags.initOutputDirFlag(mFlags);
-    mFlags.registerRequired(File.class, "FILE", "allele stats file");
-    mFlags.registerRequired('s', STRAINS, Integer.class, "INT", "number of strains");
-    mFlags.registerOptional('e', ERROR_RATE, Double.class, "FLOAT", "read/mapping error rate", 0.01);
-    mFlags.registerRequired('m', MIN_FREQ_FLAG, Integer.class, "INT", "minimum allele frequency");
-    mFlags.registerOptional('M', MAX_FREQ_FLAG, Integer.class, "INT", "maximum allele frequency");
-    mFlags.registerOptional(MAX_TOTAL_COVERAGE, Integer.class, "INT", "maximum coverage threshold");
-    mFlags.registerOptional(MIN_TOTAL_COVERAGE, Integer.class, "INT", "minimum coverage threshold");
+    mFlags.registerRequired(File.class, CommonFlags.FILE, "allele stats file");
+    mFlags.registerRequired('s', STRAINS, Integer.class, CommonFlags.INT, "number of strains");
+    mFlags.registerOptional('e', ERROR_RATE, Double.class, CommonFlags.FLOAT, "read/mapping error rate", 0.01);
+    mFlags.registerRequired('m', MIN_FREQ_FLAG, Integer.class, CommonFlags.INT, "minimum allele frequency");
+    mFlags.registerOptional('M', MAX_FREQ_FLAG, Integer.class, CommonFlags.INT, "maximum allele frequency");
+    mFlags.registerOptional(MAX_TOTAL_COVERAGE, Integer.class, CommonFlags.INT, "maximum coverage threshold");
+    mFlags.registerOptional(MIN_TOTAL_COVERAGE, Integer.class, CommonFlags.INT, "minimum coverage threshold");
     mFlags.registerOptional('v', VISUALISATION, "produce visualisation files");
-    mFlags.registerOptional('i', ITERATIONS, Integer.class, "INT", "number of iterations to attempt convergence", 10);
+    mFlags.registerOptional('i', ITERATIONS, Integer.class, CommonFlags.INT, "number of iterations to attempt convergence", 10);
     mFlags.registerOptional(XI_PRIORS, String.class, "FLOAT...", "initial values for the xi matrix");
-    final Flag<String> betaType = mFlags.registerOptional(BETA, String.class, "string", "hypothesis probability method", "reestimate");
+    final Flag<String> betaType = mFlags.registerOptional(BETA, String.class, CommonFlags.STRING, "hypothesis probability method", "reestimate");
     betaType.setParameterRange(betaFlagValues());
     mFlags.setValidator(new Validator());
   }

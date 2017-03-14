@@ -87,7 +87,7 @@ public class TumorOnlyCli extends SomaticCli {
     CommonFlags.initMinAvrScore(flags);
     commonSomaticFlags(flags);
     flags.setDescription("Performs a somatic variant analysis on a mixed tumor sample where no separate normal sample is available.");
-    flags.registerRequired(SAMPLE_FLAG, String.class, "string", "sample identifier used in read groups for tumor sample").setCategory(INPUT_OUTPUT);
+    flags.registerRequired(SAMPLE_FLAG, String.class, CommonFlags.STRING, "sample identifier used in read groups for tumor sample").setCategory(INPUT_OUTPUT);
     final Flag<Double> contamination = (Flag<Double>) flags.getFlag(CONTAMINATION_FLAG);
     contamination.setParameterDefault(0.75);
     requiredSet(flags);

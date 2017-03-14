@@ -145,21 +145,21 @@ public final class CnvSimulatorCli extends LoggedCli {
     mFlags.registerExtendedHelp();
     mFlags.setDescription("Creates copy number variation between two simulated genomes, one the baseline and the other the sample to be tested.");
     CommonFlagCategories.setCategories(mFlags);
-    mFlags.registerRequired('i', INPUT_DIRECTORY, File.class, "SDF", "SDF containing input genome").setCategory(INPUT_OUTPUT);
-    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, "SDF", "name for genome output SDF").setCategory(INPUT_OUTPUT);
-    mFlags.registerRequired('O', TWIN_DIRECTORY, File.class, "SDF", "name for secondary output SDF").setCategory(INPUT_OUTPUT);
-    mFlags.registerRequired('s', CNV_FILE, File.class, "FILE", "output file with CNV information").setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional('p', PRIORS_FLAG, String.class, "string", "selects a properties file specifying the CNV priors. Either a file name or one of ", "cnv-default").setCategory(UTILITY);
-    mFlags.registerOptional('n', CNV_COUNT, Integer.class, "INT", "number of regions generated with CNV effects on").setCategory(UTILITY);
-    mFlags.registerOptional('N', CNV_PERCENT, Double.class, "FLOAT", "approximate minimum percent of template region generated with CNV effects on", 10.0).setCategory(UTILITY);
+    mFlags.registerRequired('i', INPUT_DIRECTORY, File.class, CommonFlags.SDF, "SDF containing input genome").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.SDF, "name for genome output SDF").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired('O', TWIN_DIRECTORY, File.class, CommonFlags.SDF, "name for secondary output SDF").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired('s', CNV_FILE, File.class, CommonFlags.FILE, "output file with CNV information").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional('p', PRIORS_FLAG, String.class, CommonFlags.STRING, "selects a properties file specifying the CNV priors. Either a file name or one of ", "cnv-default").setCategory(UTILITY);
+    mFlags.registerOptional('n', CNV_COUNT, Integer.class, CommonFlags.INT, "number of regions generated with CNV effects on").setCategory(UTILITY);
+    mFlags.registerOptional('N', CNV_PERCENT, Double.class, CommonFlags.FLOAT, "approximate minimum percent of template region generated with CNV effects on", 10.0).setCategory(UTILITY);
     CommonFlags.initNoGzip(mFlags);
-    Flag<String> flag = mFlags.registerOptional('C', SET_CNV, String.class, "string", "set one CNV; sequence-name:start:end:copy-number");
+    Flag<String> flag = mFlags.registerOptional('C', SET_CNV, String.class, CommonFlags.STRING, "set one CNV; sequence-name:start:end:copy-number");
     flag.setMaxCount(Integer.MAX_VALUE);
     flag.setCategory(UTILITY);
-    flag = mFlags.registerOptional('L', SET_CNV_LENGTH, String.class, "string", "set fixed CNV length with max bounds for derivation; length:max-derivation");
+    flag = mFlags.registerOptional('L', SET_CNV_LENGTH, String.class, CommonFlags.STRING, "set fixed CNV length with max bounds for derivation; length:max-derivation");
     flag.setMaxCount(Integer.MAX_VALUE);
     flag.setCategory(UTILITY);
-    mFlags.registerOptional(SEED, Integer.class, "INT", "seed for the random number generator").setCategory(UTILITY);
+    mFlags.registerOptional(SEED, Integer.class, CommonFlags.INT, "seed for the random number generator").setCategory(UTILITY);
     mFlags.setValidator(new GenomeMutatorValidator());
   }
 

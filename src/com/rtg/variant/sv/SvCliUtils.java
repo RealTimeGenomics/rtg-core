@@ -12,7 +12,6 @@
 
 package com.rtg.variant.sv;
 
-import static com.rtg.launcher.BuildCommon.RESOURCE;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 
 import java.io.File;
@@ -81,17 +80,17 @@ public final class SvCliUtils {
     flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
     CommonFlags.initReferenceTemplate(flags, true);
-    final Flag<File> inFlag = flags.registerRequired(File.class, "FILE", "SAM/BAM format files containing mapped reads");
+    final Flag<File> inFlag = flags.registerRequired(File.class, CommonFlags.FILE, "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('o', CommonFlags.OUTPUT_FLAG, File.class, "DIR", RESOURCE.getString("OUTPUT_DESC")).setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    CommonFlags.initOutputDirFlag(flags);
     CommonFlags.initNoGzip(flags);
-    final Flag<File> rgstats = flags.registerOptional('r', RG_STATS_FILE, File.class, "FILE", "text file containing read group stats").setCategory(INPUT_OUTPUT);
+    final Flag<File> rgstats = flags.registerOptional('r', RG_STATS_FILE, File.class, CommonFlags.FILE, "text file containing read group stats").setCategory(INPUT_OUTPUT);
     rgstats.setMinCount(0);
     rgstats.setMaxCount(Integer.MAX_VALUE);
-    final Flag<File> rgListFlag = flags.registerOptional('R', RG_STATS_LIST_FLAG, File.class, "FILE", "file containing list of read group stats files (1 per line)").setCategory(INPUT_OUTPUT);
+    final Flag<File> rgListFlag = flags.registerOptional('R', RG_STATS_LIST_FLAG, File.class, CommonFlags.FILE, "file containing list of read group stats files (1 per line)").setCategory(INPUT_OUTPUT);
     CommonFlags.initThreadsFlag(flags);
     SamFilterOptions.registerMaxASMatedFlag(flags, 'm');
     SamFilterOptions.registerMaxASUnmatedFlag(flags, 'u');
@@ -105,7 +104,7 @@ public final class SvCliUtils {
    * @param flags the flags to initialise
    */
   public static void initRelabelFlag(CFlags flags) {
-    flags.registerOptional(RELABEL_FLAG, File.class, "FILE", "file containing read group relabel mappings (1 per line)").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(RELABEL_FLAG, File.class, CommonFlags.FILE, "file containing read group relabel mappings (1 per line)").setCategory(INPUT_OUTPUT);
   }
 
   /**

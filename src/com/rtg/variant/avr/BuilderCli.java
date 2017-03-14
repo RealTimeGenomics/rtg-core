@@ -71,23 +71,23 @@ public class BuilderCli extends AbstractCli {
     mFlags.registerExtendedHelp();
     mFlags.setDescription("Create an AVR model from positive and negative training examples.");
 
-    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, "FILE", "output AVR model").setCategory(INPUT_OUTPUT);
-    mFlags.registerRequired('p', POSITIVE_VCF_FLAG, File.class, "FILE", "VCF file containing positive training examples").setCategory(INPUT_OUTPUT).setMaxCount(Integer.MAX_VALUE);
-    mFlags.registerRequired('n', NEGATIVE_VCF_FLAG, File.class, "FILE", "VCF file containing negative training examples").setCategory(INPUT_OUTPUT).setMaxCount(Integer.MAX_VALUE);
+    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "output AVR model").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired('p', POSITIVE_VCF_FLAG, File.class, CommonFlags.FILE, "VCF file containing positive training examples").setCategory(INPUT_OUTPUT).setMaxCount(Integer.MAX_VALUE);
+    mFlags.registerRequired('n', NEGATIVE_VCF_FLAG, File.class, CommonFlags.FILE, "VCF file containing negative training examples").setCategory(INPUT_OUTPUT).setMaxCount(Integer.MAX_VALUE);
 
-    mFlags.registerOptional('s', SAMPLE_FLAG, String.class, "STRING", "the name of the sample to select (required when using multi-sample VCF files)").setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(INFO_ANNOTATIONS_FLAG, String.class, "STRING", "INFO fields to use in model").setCategory(SENSITIVITY_TUNING).setMaxCount(Integer.MAX_VALUE).enableCsv();
-    mFlags.registerOptional(FORMAT_ANNOTATIONS_FLAG, String.class, "STRING", "FORMAT fields to use in model").setCategory(SENSITIVITY_TUNING).setMaxCount(Integer.MAX_VALUE).enableCsv();
+    mFlags.registerOptional('s', SAMPLE_FLAG, String.class, CommonFlags.STRING, "the name of the sample to select (required when using multi-sample VCF files)").setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(INFO_ANNOTATIONS_FLAG, String.class, CommonFlags.STRING, "INFO fields to use in model").setCategory(SENSITIVITY_TUNING).setMaxCount(Integer.MAX_VALUE).enableCsv();
+    mFlags.registerOptional(FORMAT_ANNOTATIONS_FLAG, String.class, CommonFlags.STRING, "FORMAT fields to use in model").setCategory(SENSITIVITY_TUNING).setMaxCount(Integer.MAX_VALUE).enableCsv();
     mFlags.registerOptional(QUAL_ANNOTATION_FLAG, "if set, use QUAL annotation in model").setCategory(SENSITIVITY_TUNING);
     final List<String> derivedRange = new ArrayList<>();
     for (final DerivedAnnotations derived : DerivedAnnotations.singleValueAnnotations()) {
       derivedRange.add(derived.toString());
     }
-    mFlags.registerOptional(DERIVED_ANNOTATIONS_FLAG, String.class, "STRING", "derived fields to use in model").setParameterRange(derivedRange).setMaxCount(Integer.MAX_VALUE).enableCsv().setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(DERIVED_ANNOTATIONS_FLAG, String.class, CommonFlags.STRING, "derived fields to use in model").setParameterRange(derivedRange).setMaxCount(Integer.MAX_VALUE).enableCsv().setCategory(SENSITIVITY_TUNING);
 
     mFlags.registerOptional(X_MODEL_PARAMS_FLAG, File.class, "PROPERTIES", "property file containing model parameters").setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(X_POS_WEIGHT, Double.class, "FLOAT", "weight to assign to positive training examples", 1.0).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(X_NEG_WEIGHT, Double.class, "FLOAT", "weight to assign to negative training examples", 1.0).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(X_POS_WEIGHT, Double.class, CommonFlags.FLOAT, "weight to assign to positive training examples", 1.0).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(X_NEG_WEIGHT, Double.class, CommonFlags.FLOAT, "weight to assign to negative training examples", 1.0).setCategory(SENSITIVITY_TUNING);
 
     CommonFlags.initThreadsFlag(mFlags);
     mFlags.registerOptional(X_MODEL_TYPE_FLAG, ModelType.class, "TYPE", "specify the type of AVR model to build", ModelType.ML).setCategory(UTILITY);

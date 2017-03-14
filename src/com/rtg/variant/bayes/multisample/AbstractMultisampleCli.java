@@ -262,11 +262,11 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
    * @param flags object to add flag to
    */
   public static void addSamFileFlags(CFlags flags) {
-    final Flag<File> inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
+    final Flag<File> inFlag = flags.registerRequired(File.class, CommonFlags.FILE, "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     flags.addRequiredSet(inFlag);
     flags.addRequiredSet(listFlag);
   }
@@ -292,62 +292,62 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     SamFilterOptions.registerRestrictionFlag(flags);
     SamFilterOptions.registerBedRestrictionFlag(flags);
     SamFilterOptions.registerKeepDuplicatesFlag(flags);
-    flags.registerOptional('q', X_Q_DEFAULT_FLAG, Integer.class, "int", "for reads that have no quality information use this as the default quality (in Phred format from 0 to 63)", 20).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('m', MACHINE_ERRORS_FLAG, String.class, "string", "if set, force sequencer machine settings. Allowed values are [default, illumina, ls454_se, ls454_pe, complete, iontorrent]").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(R_DEFAULT_FLAG, Integer.class, "int", "for mated reads that have no mapping quality supplied use this as the default quality (in Phred format from 0 to 63)", 20).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(UNMATED_R_DEFAULT_FLAG, Integer.class, "int", "for unmated reads that have no mapping quality supplied use this as the default quality (in Phred format from 0 to 63)", 20).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(POPULATION_PRIORS, File.class, "file", "if set, use the VCF file to generate population based site-specific priors").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(COVERAGE_BYPASS_FLAG, Integer.class, "int", "skip calling in sites with per sample read depth exceeding this value", DEFAULT_COVERAGE_CUTOFF).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(COVERAGE_BYPASS_MULTIPLIER_FLAG, Double.class, "float", "skip calling in sites with combined depth exceeding multiplier * average combined coverage determined from calibration", defaultCoverageCutoffMultiplier()).setCategory(SENSITIVITY_TUNING); //set a coverage threshold for use with the average coverage determined by calibration files. The threshold will be the average coverage + (multiplier * square root of average coverage)
+    flags.registerOptional('q', X_Q_DEFAULT_FLAG, Integer.class, CommonFlags.INT, "for reads that have no quality information use this as the default quality (in Phred format from 0 to 63)", 20).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('m', MACHINE_ERRORS_FLAG, String.class, CommonFlags.STRING, "if set, force sequencer machine settings. Allowed values are [default, illumina, ls454_se, ls454_pe, complete, iontorrent]").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(R_DEFAULT_FLAG, Integer.class, CommonFlags.INT, "for mated reads that have no mapping quality supplied use this as the default quality (in Phred format from 0 to 63)", 20).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(UNMATED_R_DEFAULT_FLAG, Integer.class, CommonFlags.INT, "for unmated reads that have no mapping quality supplied use this as the default quality (in Phred format from 0 to 63)", 20).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(POPULATION_PRIORS, File.class, CommonFlags.FILE, "if set, use the VCF file to generate population based site-specific priors").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(COVERAGE_BYPASS_FLAG, Integer.class, CommonFlags.INT, "skip calling in sites with per sample read depth exceeding this value", DEFAULT_COVERAGE_CUTOFF).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(COVERAGE_BYPASS_MULTIPLIER_FLAG, Double.class, CommonFlags.FLOAT, "skip calling in sites with combined depth exceeding multiplier * average combined coverage determined from calibration", defaultCoverageCutoffMultiplier()).setCategory(SENSITIVITY_TUNING); //set a coverage threshold for use with the average coverage determined by calibration files. The threshold will be the average coverage + (multiplier * square root of average coverage)
     flags.registerOptional(USE_ALLELIC_FRACTION, "if set, incorporate the expected allelic fraction in scoring").setCategory(SENSITIVITY_TUNING);
 
     flags.registerOptional(SNPS_ONLY_FLAG, "if set, will output simple SNPs only").setCategory(REPORTING);
     flags.registerOptional('a', ALL_FLAG, "write variant calls covering every position irrespective of thresholds").setCategory(REPORTING);
-    flags.registerOptional(FILTER_AMBIGUITY_FLAG, IntegerOrPercentage.class, "int", "threshold for ambiguity filter applied to output variants").setCategory(REPORTING);
-    flags.registerOptional(FILTER_DEPTH_FLAG, Integer.class, "int", "apply a fixed depth of coverage filter to output variants").setCategory(REPORTING);
-    flags.registerOptional(FILTER_DEPTH_MULTIPLIER_FLAG, Double.class, "float", "apply a ratio based depth filter. The filter will be multiplier * average coverage determined from calibration files").setCategory(REPORTING); //set a coverage threshold for use with the average coverage determined by calibration files. The threshold will be the average coverage + (multiplier * square root of average coverage)
-    flags.registerOptional(BED_FILTER_FLAG, File.class, "FILE", "apply a position based filter, retaining only variants that fall in these BED regions").setCategory(REPORTING);
-    flags.registerOptional(MIN_BASE_QUALITY_FLAG, Integer.class, "int", "phred scaled quality score, read bases below this quality will be treated as unknowns", 0).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(FILTER_AMBIGUITY_FLAG, IntegerOrPercentage.class, CommonFlags.INT, "threshold for ambiguity filter applied to output variants").setCategory(REPORTING);
+    flags.registerOptional(FILTER_DEPTH_FLAG, Integer.class, CommonFlags.INT, "apply a fixed depth of coverage filter to output variants").setCategory(REPORTING);
+    flags.registerOptional(FILTER_DEPTH_MULTIPLIER_FLAG, Double.class, CommonFlags.FLOAT, "apply a ratio based depth filter. The filter will be multiplier * average coverage determined from calibration files").setCategory(REPORTING); //set a coverage threshold for use with the average coverage determined by calibration files. The threshold will be the average coverage + (multiplier * square root of average coverage)
+    flags.registerOptional(BED_FILTER_FLAG, File.class, CommonFlags.FILE, "apply a position based filter, retaining only variants that fall in these BED regions").setCategory(REPORTING);
+    flags.registerOptional(MIN_BASE_QUALITY_FLAG, Integer.class, CommonFlags.INT, "phred scaled quality score, read bases below this quality will be treated as unknowns", 0).setCategory(SENSITIVITY_TUNING);
 
     flags.registerOptional(X_ALT_MULTIPLIER_FLAG, "determine coverage thresholds using avg_cov + multiplier * sqrt(avg_cov)").setCategory(REPORTING); /* old multiplier * avg_cov instead of as */
 
-    flags.registerOptional(X_PRIORS_FLAG, String.class, "string", "selects a properties file specifying the priors. Either a file name or one of [human]", "human").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_PRIORS_FLAG, String.class, CommonFlags.STRING, "selects a properties file specifying the priors. Either a file name or one of [human]", "human").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_IGNORE_QUALITIES_FLAG, "if set, will ignore quality scores associated with reads and use the default instead").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_INDEL_TRIGGER_FRACTION_FLAG, Double.class, "int", "if set, fraction of evidence at a position that must be indel to trigger complex calling", 0.05).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_CHUNKING_FLAG, Integer.class, "int", "number of nucleotide positions considered per chunk", 1000).setCategory(UTILITY);
-    flags.registerOptional(X_LOOKAHEAD_FLAG, Integer.class, "int", "number of chunks to prefetch", 2).setCategory(UTILITY);
+    flags.registerOptional(X_INDEL_TRIGGER_FRACTION_FLAG, Double.class, CommonFlags.INT, "if set, fraction of evidence at a position that must be indel to trigger complex calling", 0.05).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_CHUNKING_FLAG, Integer.class, CommonFlags.INT, "number of nucleotide positions considered per chunk", 1000).setCategory(UTILITY);
+    flags.registerOptional(X_LOOKAHEAD_FLAG, Integer.class, CommonFlags.INT, "number of chunks to prefetch", 2).setCategory(UTILITY);
     flags.registerOptional(X_VCF_RP, "include RTG posterior in VCF output").setCategory(REPORTING);
-    flags.registerOptional(X_HYPER_COMPLEX_LENGTH_FLAG, Integer.class, "int", "the length beyond which complex regions are considered hyper complex", Integer.MAX_VALUE).setCategory(SENSITIVITY_TUNING);
-    // flags.registerOptional(X_INTERESTING_THRESHOLD_FLAG, Double.class, "float", "posterior threshold below which an identity call is considered interesting", Double.valueOf(1.0 / VariantUtils.LOG_10)).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_INTERESTING_SEPARATION_FLAG, Integer.class, "int", "the maximum distance over which two interesting calls will be considered part of the same complex region", 4).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_HYPER_COMPLEX_LENGTH_FLAG, Integer.class, CommonFlags.INT, "the length beyond which complex regions are considered hyper complex", Integer.MAX_VALUE).setCategory(SENSITIVITY_TUNING);
+    // flags.registerOptional(X_INTERESTING_THRESHOLD_FLAG, Double.class, CommonFlags.FLOAT, "posterior threshold below which an identity call is considered interesting", Double.valueOf(1.0 / VariantUtils.LOG_10)).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_INTERESTING_SEPARATION_FLAG, Integer.class, CommonFlags.INT, "the maximum distance over which two interesting calls will be considered part of the same complex region", 4).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_SIMPLE_REPEAT_EXTENSION, Boolean.class, CommonFlags.BOOL, "extend complex regions over DNA simple repeats", Boolean.TRUE).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_R_IGNORE_FLAG, "if set any supplied read qualities will be ignored and the defaults used").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_R_MAX_FLAG, Integer.class, "int", "for mated reads this is the maximum value that the read quality can have", 255).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_UNMATED_R_MAX_FLAG, Integer.class, "int", "for unmated reads this is the maximum value that the read quality can have", 255).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_THREADING_ENVIRONMENT, String.class, "string", "threading environment to be used. One of [single, random=seed, parallel]", "parallel").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_IO_THREADS, Integer.class, "int", "number of threads to use for IO (Default is the number of available cores)").setCategory(UTILITY);
+    flags.registerOptional(X_R_MAX_FLAG, Integer.class, CommonFlags.INT, "for mated reads this is the maximum value that the read quality can have", 255).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_UNMATED_R_MAX_FLAG, Integer.class, CommonFlags.INT, "for unmated reads this is the maximum value that the read quality can have", 255).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_THREADING_ENVIRONMENT, String.class, CommonFlags.STRING, "threading environment to be used. One of [single, random=seed, parallel]", "parallel").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_IO_THREADS, Integer.class, CommonFlags.INT, "number of threads to use for IO (Default is the number of available cores)").setCategory(UTILITY);
     flags.registerOptional(X_NO_COMPLEX_CALLS_FLAG, "turn off attempting calls in complex region").setCategory(INPUT_OUTPUT);
     flags.registerOptional(X_NO_TRIM_SPLIT, "disable trimming and splitting").setCategory(REPORTING);
     flags.registerOptional(X_IGNORE_SAM_HEADER_INCOMPATIBILITY, "ignore incompatible SAM headers when merging SAM results").setCategory(UTILITY);
-    flags.registerOptional(X_ALTERNATE_SAM_HEADER, File.class, "FILE", "treat all SAM records as having the supplied header").setCategory(UTILITY);
-    flags.registerOptional(X_CONTRARY_FLAG, Double.class, "float", "probability used to penalize contrary evidence in somatic calls", 0.01).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_ALTERNATE_SAM_HEADER, File.class, CommonFlags.FILE, "treat all SAM records as having the supplied header").setCategory(UTILITY);
+    flags.registerOptional(X_CONTRARY_FLAG, Double.class, CommonFlags.FLOAT, "probability used to penalize contrary evidence in somatic calls", 0.01).setCategory(SENSITIVITY_TUNING);
 
     //Extra INFO / FORMAT fields
-    flags.registerOptional(X_INFO_ANNOTATION_FLAG, VcfInfoField.class, "string", "additional VCF INFO fields").setCategory(REPORTING)
+    flags.registerOptional(X_INFO_ANNOTATION_FLAG, VcfInfoField.class, CommonFlags.STRING, "additional VCF INFO fields").setCategory(REPORTING)
         .setParameterRange(new String[] {VcfInfoField.IC.name(), VcfInfoField.EP.name(), VcfInfoField.LAL.name(), VcfInfoField.QD.name(), VcfInfoField.NAA.name(), VcfInfoField.AN.name(), VcfInfoField.AC.name(), VcfInfoField.RTRM.name(), VcfInfoField.RSPLT.name(), VcfInfoField.SGP.name()}).setMaxCount(Integer.MAX_VALUE).enableCsv();
-    flags.registerOptional(X_FORMAT_ANNOTATION_FLAG, VcfFormatField.class, "string", "additional VCF FORMAT fields").setCategory(REPORTING)
+    flags.registerOptional(X_FORMAT_ANNOTATION_FLAG, VcfFormatField.class, CommonFlags.STRING, "additional VCF FORMAT fields").setCategory(REPORTING)
         .setParameterRange(new String[] {VcfFormatField.GQD.name(), VcfFormatField.ZY.name(), VcfFormatField.PD.name()}).setMaxCount(Integer.MAX_VALUE).enableCsv();
 
-    flags.registerOptional(X_ALLELE_BALANCE_PROBABILITY, AlleleBalanceFactor.class, "string", "method for calculating allele balance", AlleleBalanceFactor.NONE).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(X_EXPECTED_ALLELIC_FRACTION, Double.class, "float", "expected germline heterozygous alternate allele fraction", 0.5).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_ALLELE_BALANCE_PROBABILITY, AlleleBalanceFactor.class, CommonFlags.STRING, "method for calculating allele balance", AlleleBalanceFactor.NONE).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(X_EXPECTED_ALLELIC_FRACTION, Double.class, CommonFlags.FLOAT, "expected germline heterozygous alternate allele fraction", 0.5).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_EXPAND_COMPLEX_READ_QUERIES, Boolean.class, CommonFlags.BOOL, "expand queries for reads by one base either side of a complex region", false).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_COMPLEX_USE_SOFT_CLIP, Boolean.class, CommonFlags.BOOL, "use soft clipped bases in evidence for complex calls", true).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_FORCE_COMPLEX_REGION, String.class, CommonFlags.STRING, "Force a complex region over specified range").setCategory(UTILITY);
   }
 
   protected void registerAllelicTriggers(CFlags flags) {
-    flags.registerOptional(MIN_VARIANT_ALLELIC_DEPTH, Double.class, "float", "if set, also output sites that meet this minimum quality-adjusted alternate allelic depth").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(MIN_VARIANT_ALLELIC_FRACTION, Double.class, "float", "if set, also output sites that meet this minimum quality-adjusted alternate allelic fraction").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(MIN_VARIANT_ALLELIC_DEPTH, Double.class, CommonFlags.FLOAT, "if set, also output sites that meet this minimum quality-adjusted alternate allelic depth").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(MIN_VARIANT_ALLELIC_FRACTION, Double.class, CommonFlags.FLOAT, "if set, also output sites that meet this minimum quality-adjusted alternate allelic fraction").setCategory(SENSITIVITY_TUNING);
   }
 
   /**

@@ -128,17 +128,17 @@ public class SomaticCli extends AbstractMultisampleCli {
     return 25;
   }
   void commonSomaticFlags(CFlags flags) {
-    flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(CONTAMINATION_FLAG, Double.class, "float", "estimated fraction of contamination in derived sample").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(REVERSE_CONTAMINATION_FLAG, Double.class, "float", "estimated fraction of derived sample in original sample", 0.0).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(CONTAMINATION_FLAG, Double.class, CommonFlags.FLOAT, "estimated fraction of contamination in derived sample").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(REVERSE_CONTAMINATION_FLAG, Double.class, CommonFlags.FLOAT, "estimated fraction of derived sample in original sample", 0.0).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(SEX_FLAG, Sex.class, "sex", "sex of individual", Sex.EITHER).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('s', SOMATIC_FLAG, Double.class, "float", "default prior probability of a somatic SNP mutation in the derived sample", 1e-6).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(SOMATIC_PRIORS_FLAG, File.class, "file", "if set, use the BED file to generate site specific somatic priors").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(LOH_FLAG, Double.class, "float", "prior probability that a loss of heterozygosity event has occurred", 0.0).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('s', SOMATIC_FLAG, Double.class, CommonFlags.FLOAT, "default prior probability of a somatic SNP mutation in the derived sample", 1e-6).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(SOMATIC_PRIORS_FLAG, File.class, CommonFlags.FILE, "if set, use the BED file to generate site specific somatic priors").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(LOH_FLAG, Double.class, CommonFlags.FLOAT, "prior probability that a loss of heterozygosity event has occurred", 0.0).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('G', INCLUDE_GAIN_OF_REFERENCE, "include gain of reference somatic calls in output VCF").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(USE_SOMATIC_ALLELIC_FRACTION, "if set, incorporate the expected somatic allelic fraction in scoring").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(CONTAMINATION_BASIS_FLAG, Integer.class, "int", "number of examples to use in computing the contamination estimate", DEFAULT_CONTAMINATION_BASIS).setCategory(SENSITIVITY_TUNING);
-    final Flag<File> inFlag = flags.registerRequired(File.class, "file", "SAM/BAM format files containing mapped reads");
+    flags.registerOptional(CONTAMINATION_BASIS_FLAG, Integer.class, CommonFlags.INT, "number of examples to use in computing the contamination estimate", DEFAULT_CONTAMINATION_BASIS).setCategory(SENSITIVITY_TUNING);
+    final Flag<File> inFlag = flags.registerRequired(File.class, CommonFlags.FILE, "SAM/BAM format files containing mapped reads");
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
@@ -151,10 +151,10 @@ public class SomaticCli extends AbstractMultisampleCli {
     AvrUtils.initAvrModel(flags, false, SOMATIC_MODEL_DEFAULT);
     CommonFlags.initMinAvrScore(flags);
     commonSomaticFlags(flags);
-    flags.registerOptional(DERIVED_FLAG, String.class, "string", "sample identifier used in read groups for derived sample").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(ORIGINAL_FLAG, String.class, "string", "sample identifier used in read groups for original sample").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(DERIVED_FLAG, String.class, CommonFlags.STRING, "sample identifier used in read groups for derived sample").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(ORIGINAL_FLAG, String.class, CommonFlags.STRING, "sample identifier used in read groups for original sample").setCategory(INPUT_OUTPUT);
     flags.registerOptional(INCLUDE_GERMLINE_FLAG, "include germline variants in output VCF").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('r', PEDIGREE_FLAG, File.class, "file", "relationships file").setCategory(INPUT_OUTPUT);
+    flags.registerOptional('r', PEDIGREE_FLAG, File.class, CommonFlags.FILE, "relationships file").setCategory(INPUT_OUTPUT);
     flags.setDescription("Performs a somatic variant analysis.");
     flags.setValidator(new MultigenomeValidator());
     requiredSet(flags);

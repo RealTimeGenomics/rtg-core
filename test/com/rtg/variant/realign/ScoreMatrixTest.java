@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import com.rtg.launcher.AbstractNanoTest;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.mode.DNA;
 import com.rtg.mode.DnaUtils;
 import com.rtg.util.MathUtils;
@@ -289,10 +290,10 @@ public class ScoreMatrixTest extends AbstractNanoTest {
     + "  " + f.getName() + " --ppm [...] | pnmscale 5 - | display -\n");
     f.registerOptional('t', TEMPLATE_FLAG, String.class, "DNA", "template bases", "AACCGGTTAACCGGTTTTTTGACTGACTGACGAGTACATGCTGCAGCGTAGCG");
     f.registerOptional('r', READ_FLAG, String.class, "DNA", "read bases",                "TAggCGGTTTTT GACTGACTcACGAtTtCATGCTGCAGaGT");
-    f.registerOptional('q', QUALITY_FLAG, Integer.class, "INT", "default phread quality score", 20);
-    f.registerOptional('s', START_FLAG, Integer.class, "INT", "start position of read", 7);
-    f.registerOptional('m', MAXSHIFT_FLAG, Integer.class, "INT", "maxshift", 7);
-    f.registerOptional('i', ITERATE_FLAG, Integer.class, "INT", "perform timing comparison using this many iterations");
+    f.registerOptional('q', QUALITY_FLAG, Integer.class, CommonFlags.INT, "default phread quality score", 20);
+    f.registerOptional('s', START_FLAG, Integer.class, CommonFlags.INT, "start position of read", 7);
+    f.registerOptional('m', MAXSHIFT_FLAG, Integer.class, CommonFlags.INT, "maxshift", 7);
+    f.registerOptional('i', ITERATE_FLAG, Integer.class, CommonFlags.INT, "perform timing comparison using this many iterations");
     f.registerOptional('p', PPM_FLAG, "Output as PPM image");
     f.registerOptional('a', ASCII_FLAG, "Output as ascii matrix");
     if (!f.setFlags(args)) {

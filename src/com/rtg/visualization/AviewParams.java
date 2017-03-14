@@ -78,25 +78,25 @@ class AviewParams {
 
     // Input sources
     CommonFlags.initReferenceTemplate(flags, true);
-    flags.registerOptional('r', READS_SDF, File.class, "SDF", "read SDF (only needed to indicate correctness of simulated read mappings)")
+    flags.registerOptional('r', READS_SDF, File.class, CommonFlags.SDF, "read SDF (only needed to indicate correctness of simulated read mappings)")
         .setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    final Flag<File> in = flags.registerRequired(File.class, "FILE", "alignment SAM/BAM files").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> in = flags.registerRequired(File.class, CommonFlags.FILE, "alignment SAM/BAM files").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     in.setMinCount(0);
     in.setMaxCount(Integer.MAX_VALUE);
-    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, "FILE", "file containing a list of SAM/BAM format files (1 per line)").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerOptional('b', BASELINE_VCF, File.class, "FILE", "VCF file containing baseline variants").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerOptional('c', CALLS_VCF, File.class, "FILE", "VCF file containing called variants").setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerOptional('B', BEDS, File.class, "FILE", "BED file containing regions to overlay").setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SAM/BAM format files (1 per line)").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerOptional('b', BASELINE_VCF, File.class, CommonFlags.FILE, "VCF file containing baseline variants").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerOptional('c', CALLS_VCF, File.class, CommonFlags.FILE, "VCF file containing called variants").setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    flags.registerOptional('B', BEDS, File.class, CommonFlags.FILE, "BED file containing regions to overlay").setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.INPUT_OUTPUT);
 
     // Filtering options
-    flags.registerOptional(SAMPLE, String.class, "STRING", "specify name of sample to select").setMaxCount(Integer.MAX_VALUE).enableCsv().setCategory(CommonFlagCategories.FILTERING);
-    flags.registerRequired(REGION, String.class, "STRING", "the region of interest to display. The format is one of <sequence_name>, <sequence_name>:start-end or <sequence_name>:start+length").setCategory(CommonFlagCategories.FILTERING);
-    flags.registerOptional('p', PADDING, Integer.class, "INT", "padding around region of interest (Default is to automatically determine padding to avoid read truncation)").setCategory(CommonFlagCategories.FILTERING);
+    flags.registerOptional(SAMPLE, String.class, CommonFlags.STRING, "specify name of sample to select").setMaxCount(Integer.MAX_VALUE).enableCsv().setCategory(CommonFlagCategories.FILTERING);
+    flags.registerRequired(REGION, String.class, CommonFlags.STRING, "the region of interest to display. The format is one of <sequence_name>, <sequence_name>:start-end or <sequence_name>:start+length").setCategory(CommonFlagCategories.FILTERING);
+    flags.registerOptional('p', PADDING, Integer.class, CommonFlags.INT, "padding around region of interest (Default is to automatically determine padding to avoid read truncation)").setCategory(CommonFlagCategories.FILTERING);
 
-    flags.registerOptional(MAX_MATED_ALIGNMENT_SCORE, Integer.class, "INT", "if set, ignore mated SAM records with an alignment score (AS attribute) that exceeds this value").setCategory(CommonFlagCategories.FILTERING);
-    flags.registerOptional(MAX_UNMATED_ALIGNMENT_SCORE, Integer.class, "INT", "if set, ignore unmated SAM records with an alignment score (AS attribute) that exceeds this value").setCategory(CommonFlagCategories.FILTERING);
-    flags.registerOptional(MAX_IH_SCORE, Integer.class, "INT", "if set, ignore SAM records with a number of hits (NH attribute) that exceeds this value").setCategory(CommonFlagCategories.FILTERING);
-    flags.registerOptional(MIN_MAPQ_SCORE, Integer.class, "INT", "if set, ignore SAM records with a MAPQ score less than this value").setCategory(CommonFlagCategories.FILTERING);
+    flags.registerOptional(MAX_MATED_ALIGNMENT_SCORE, Integer.class, CommonFlags.INT, "if set, ignore mated SAM records with an alignment score (AS attribute) that exceeds this value").setCategory(CommonFlagCategories.FILTERING);
+    flags.registerOptional(MAX_UNMATED_ALIGNMENT_SCORE, Integer.class, CommonFlags.INT, "if set, ignore unmated SAM records with an alignment score (AS attribute) that exceeds this value").setCategory(CommonFlagCategories.FILTERING);
+    flags.registerOptional(MAX_IH_SCORE, Integer.class, CommonFlags.INT, "if set, ignore SAM records with a number of hits (NH attribute) that exceeds this value").setCategory(CommonFlagCategories.FILTERING);
+    flags.registerOptional(MIN_MAPQ_SCORE, Integer.class, CommonFlags.INT, "if set, ignore SAM records with a MAPQ score less than this value").setCategory(CommonFlagCategories.FILTERING);
 
     // What to display and how
     flags.registerOptional(PRINT_CIGARS, "print alignment cigars").setCategory(CommonFlagCategories.REPORTING);
@@ -111,15 +111,15 @@ class AviewParams {
     flags.registerOptional(NO_COLOR, "do not use colors").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(NO_BASE_COLORS, "do not use base-colors").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(HTML, "output as HTML").setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(PRINT_REFERENCE_LINE, Integer.class, "INT", "print reference line every N lines", 0).setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional(PROJECT_TRACK, Integer.class, "INT", "if set, project highlighting for the specified track down through reads (Default projects the union of tracks)").setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(PRINT_REFERENCE_LINE, Integer.class, CommonFlags.INT, "print reference line every N lines", 0).setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional(PROJECT_TRACK, Integer.class, CommonFlags.INT, "if set, project highlighting for the specified track down through reads (Default projects the union of tracks)").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(SORT_READS, "sort reads on start position").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(SORT_READGROUP, "sort reads first on read group and then on start position").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(UNFLATTEN, "display unflattened CGI reads when present").setCategory(CommonFlagCategories.REPORTING);
 
     // Random extras
-    flags.registerOptional(XMAPPING_TOLERANCE, Integer.class, "INT", "variation allowed in start position when determining correctness of simulated read mapping", 0).setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional('U', UNMAPPED_SAM, File.class, "FILE", "unmapped SAM file (only for simulated data)")
+    flags.registerOptional(XMAPPING_TOLERANCE, Integer.class, CommonFlags.INT, "variation allowed in start position when determining correctness of simulated read mapping", 0).setCategory(CommonFlagCategories.REPORTING);
+    flags.registerOptional('U', UNMAPPED_SAM, File.class, CommonFlags.FILE, "unmapped SAM file (only for simulated data)")
         .setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.REPORTING);
 
     flags.addRequiredSet(in);

@@ -70,9 +70,9 @@ public class PairedEndTrimCli extends AbstractCli {
   static void initFlags(CFlags flags) {
     flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
-    flags.registerRequired('l', LEFT, File.class, "FILE", "left input FASTQ file (AKA R1)").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('r', RIGHT, File.class, "FILE", "right input FASTQ file (AKA R2)").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('o', OUTPUT_FLAG, File.class, "FILE", "output filename prefix. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('l', LEFT, File.class, CommonFlags.FILE, "left input FASTQ file (AKA R1)").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('r', RIGHT, File.class, CommonFlags.FILE, "right input FASTQ file (AKA R2)").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "output filename prefix. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
     CommonFlags.initQualityFormatFlag(flags);
     CommonFlags.initThreadsFlag(flags);
     MapFlags.initAlignerPenaltyFlags(flags);

@@ -165,10 +165,10 @@ public class CgMapCli extends ParamsCli<NgsParams> {
 
     mFlags.registerRequired('i', CommonFlags.READS_FLAG, File.class, "SDF|FILE", "the Complete Genomics read set").setCategory(INPUT_OUTPUT);
     CommonFlags.initOutputDirFlag(mFlags);
-    mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, "SDF", "SDF containing template to map against").setCategory(INPUT_OUTPUT);
+    mFlags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing template to map against").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional(MapFlags.NO_INMEMORY_TEMPLATE, "do not load the template in memory").setCategory(UTILITY);
 
-    final Flag<String> maskFlag = mFlags.registerRequired(MASK_FLAG, String.class, "string", "read indexing method").setCategory(SENSITIVITY_TUNING);
+    final Flag<String> maskFlag = mFlags.registerRequired(MASK_FLAG, String.class, CommonFlags.STRING, "read indexing method").setCategory(SENSITIVITY_TUNING);
     if (License.isDeveloper()) {
       maskFlag.setParameterRange(new String[]{
         "cg1", "cg1-fast", "cg2",
@@ -181,14 +181,14 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     MapFlags.initPairedEndFlags(mFlags);
     MapFlags.initSharedFlagsOnly(mFlags, IntegerOrPercentage.valueOf("95%"), 1, 1000);
 
-    mFlags.registerOptional('e', MapFlags.MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, "INT", "maximum mismatches allowed for mated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_MATED_MISMATCH_THRESHOLD)).setCategory(REPORTING);
-    mFlags.registerOptional('E', MapFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, "INT", "maximum mismatches allowed for unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_UNMATED_MISMATCH_THRESHOLD)).setCategory(REPORTING);
+    mFlags.registerOptional('e', MapFlags.MATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches allowed for mated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_MATED_MISMATCH_THRESHOLD)).setCategory(REPORTING);
+    mFlags.registerOptional('E', MapFlags.UNMATED_MISMATCH_THRESHOLD, IntegerOrPercentage.class, CommonFlags.INT, "maximum mismatches allowed for unmated results (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf(NgsFilterParams.MAX_UNMATED_MISMATCH_THRESHOLD)).setCategory(REPORTING);
     mFlags.registerOptional(MapFlags.NO_UNMATED, "do not report unmated").setCategory(UTILITY);
     mFlags.registerOptional(MapFlags.NO_UNMAPPED, "do not report unmapped").setCategory(UTILITY);
 
-    mFlags.registerOptional(TEMP_DIR, File.class, "DIR", "directory used for temporary files (Defaults to output directory)").setCategory(UTILITY);
+    mFlags.registerOptional(TEMP_DIR, File.class, CommonFlags.DIR, "directory used for temporary files (Defaults to output directory)").setCategory(UTILITY);
 
-    mFlags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "maximum number of top equal results output per read", 5).setCategory(REPORTING);
+    mFlags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, CommonFlags.INT, "maximum number of top equal results output per read", 5).setCategory(REPORTING);
     final Flag<String> format = mFlags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "format of read data", FormatCli.SDF_FORMAT).setCategory(INPUT_OUTPUT);
     format.setParameterRange(new String[] {FormatCli.SDF_FORMAT, FormatCli.TSV_FORMAT});
     mFlags.registerOptional(LEGACY_CIGARS, "use legacy cigars in output").setCategory(UTILITY);
@@ -200,14 +200,14 @@ public class CgMapCli extends ParamsCli<NgsParams> {
     //--X flags
     MapFlags.initReadFreqFlag(mFlags, 65535); //disable read frequency blocking
     mFlags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary SAM files", true).setCategory(REPORTING);
-    mFlags.registerOptional(MapFlags.XSCORE_INDEL, Integer.class, "INT", "maximum score indel threshold", MapFlags.MAX_SCORE).setCategory(REPORTING);
-    mFlags.registerOptional(MAX_TOPN_RESULTS, Integer.class, "INT", "sets the number of results per read for topn. Allowed values are between 1 and 255", 5).setCategory(REPORTING);
-    mFlags.registerOptional(XINTSET_WINDOW, Integer.class, "INT", "windows for int set", 1).setCategory(UTILITY);
+    mFlags.registerOptional(MapFlags.XSCORE_INDEL, Integer.class, CommonFlags.INT, "maximum score indel threshold", MapFlags.MAX_SCORE).setCategory(REPORTING);
+    mFlags.registerOptional(MAX_TOPN_RESULTS, Integer.class, CommonFlags.INT, "sets the number of results per read for topn. Allowed values are between 1 and 255", 5).setCategory(REPORTING);
+    mFlags.registerOptional(XINTSET_WINDOW, Integer.class, CommonFlags.INT, "windows for int set", 1).setCategory(UTILITY);
     mFlags.registerOptional(COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", true).setCategory(UTILITY);
     mFlags.registerOptional(OUTPUT_UNFILTERED, "output all alignments meeting thresholds instead of applying mating and N limits").setCategory(REPORTING);
     mFlags.registerOptional(MapFlags.N_AS_MISMATCH, "treat unknowns as mismatches").setCategory(SENSITIVITY_TUNING);
     mFlags.registerOptional(MapFlags.SEX_FLAG, Sex.class, "sex", "sex of individual", null).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional(MapFlags.PEDIGREE_FLAG, File.class, "file", "genome relationships pedigree containing sex of sample").setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional(MapFlags.PEDIGREE_FLAG, File.class, CommonFlags.FILE, "genome relationships pedigree containing sex of sample").setCategory(SENSITIVITY_TUNING);
     MapFlags.initSamOutputFlag(mFlags);
     MapFlags.initDontUnifyFlag(mFlags);
     MapFlags.initNoCalibrationFlag(mFlags);

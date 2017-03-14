@@ -21,6 +21,7 @@ import com.rtg.assembler.graph.Graph;
 import com.rtg.assembler.graph.GraphFactory;
 import com.rtg.assembler.graph.io.GraphReader;
 import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.store.StoreDirProxy;
 
@@ -55,7 +56,7 @@ public class CountAssemblyEnds extends AbstractCli {
 
   protected static void initFlagsLocal(CFlags flags) {
     flags.registerExtendedHelp();
-    flags.registerRequired(File.class, "DIR", "input graph directory");
+    flags.registerRequired(File.class, CommonFlags.DIR, "input graph directory");
   }
 
   @Override

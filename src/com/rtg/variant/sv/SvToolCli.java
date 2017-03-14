@@ -85,12 +85,12 @@ public class SvToolCli extends ParamsCli<SvToolParams> {
     mFlags.setDescription("Analyses SAM records to determine the location of structural variants.");
     mFlags.setValidator(new SvToolValidator());
     mFlags.registerOptional(SV_SIMPLE, "if set, also output simple signals").setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional('b', BIN_SIZE, Integer.class, "INT", "bin size used by simple signals", 10).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional('s', MapFlags.STEP_FLAG, Integer.class, "INT", "step size", 100).setCategory(SENSITIVITY_TUNING);
-    mFlags.registerOptional('f', FINE_STEP, Integer.class, "INT", "step size in interesting regions", 10).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional('b', BIN_SIZE, Integer.class, CommonFlags.INT, "bin size used by simple signals", 10).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional('s', MapFlags.STEP_FLAG, Integer.class, CommonFlags.INT, "step size", 100).setCategory(SENSITIVITY_TUNING);
+    mFlags.registerOptional('f', FINE_STEP, Integer.class, CommonFlags.INT, "step size in interesting regions", 10).setCategory(SENSITIVITY_TUNING);
     //X flags
     mFlags.registerOptional(HETEROZYGOUS_FLAG, "if set, also include heterozygous bayesian models").setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional(CORRECTIONS_FLAG, File.class, "FILE", "file containing per position corrections").setCategory(INPUT_OUTPUT);
+    mFlags.registerOptional(CORRECTIONS_FLAG, File.class, CommonFlags.FILE, "file containing per position corrections").setCategory(INPUT_OUTPUT);
   }
 
   @Override

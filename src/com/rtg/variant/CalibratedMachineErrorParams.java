@@ -18,6 +18,7 @@ import com.rtg.calibrate.CalibrationStats;
 import com.rtg.calibrate.Calibrator;
 import com.rtg.calibrate.Covariate;
 import com.rtg.calibrate.CovariateEnum;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.reader.Arm;
@@ -362,7 +363,7 @@ public class CalibratedMachineErrorParams extends AbstractMachineErrorParams {
     final CFlags flags = new CFlags();
     flags.registerOptional(DUMP_MERGED, "if set, output merged calibration file");
     flags.registerOptional(DUMP_PARAMS, "if set, output machine error params");
-    flags.registerRequired(File.class, "FILE", "SAM file containing unmapped reads to attempt to rescue").setMaxCount(Integer.MAX_VALUE);
+    flags.registerRequired(File.class, CommonFlags.FILE, "SAM file containing unmapped reads to attempt to rescue").setMaxCount(Integer.MAX_VALUE);
     flags.setFlags(args);
     Diagnostic.setLogStream();
     Covariate[] covariates = null;

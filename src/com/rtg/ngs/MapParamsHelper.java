@@ -122,7 +122,7 @@ public final class MapParamsHelper {
       throw new InvalidParamsException(ErrorType.BLACKLIST_LONG_READ_ONLY);
     }
 
-    final boolean forceRepeat = flags.isSet(MapFlags.REPEAT_FREQUENCY_FLAG)
+    final boolean forceRepeat = flags.isSet(CommonFlags.REPEAT_FREQUENCY_FLAG)
       || flags.isSet(MapFlags.MAX_REPEAT_FREQUENCY_FLAG)
       || flags.isSet(MapFlags.MIN_REPEAT_FREQUENCY_FLAG);
 
@@ -151,7 +151,7 @@ public final class MapParamsHelper {
    * @param builder the builder
    */
   public static void populateProportionalRepeat(CFlags flags, NgsParamsBuilder builder) {
-    final IntegerOrPercentage repeat = (IntegerOrPercentage) flags.getValue(MapFlags.REPEAT_FREQUENCY_FLAG);
+    final IntegerOrPercentage repeat = (IntegerOrPercentage) flags.getValue(CommonFlags.REPEAT_FREQUENCY_FLAG);
     if (repeat.isPercentage()) {
       final int maxHC = (flags.getFlag(MapFlags.MAX_REPEAT_FREQUENCY_FLAG) != null) ? (Integer) flags.getValue(MapFlags.MAX_REPEAT_FREQUENCY_FLAG) : 1000;
       final int minHC = (flags.getFlag(MapFlags.MIN_REPEAT_FREQUENCY_FLAG) != null) ? (Integer) flags.getValue(MapFlags.MIN_REPEAT_FREQUENCY_FLAG) : 1;

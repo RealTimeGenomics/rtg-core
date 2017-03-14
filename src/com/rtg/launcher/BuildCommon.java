@@ -12,9 +12,6 @@
 package com.rtg.launcher;
 
 
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 /**
  * Common static information and methods for the various build programs.
  */
@@ -22,23 +19,14 @@ public final class BuildCommon {
 
   private BuildCommon() { }
 
-  /** Properties file with all non-logged strings used in the system. */
-  static final String BUILDCOMMON_RESOURCE_BUNDLE = "com.rtg.launcher.BuildCommon";
-  /** Internationalized messages. */
-  public static final ResourceBundle RESOURCE = ResourceBundle.getBundle(BUILDCOMMON_RESOURCE_BUNDLE, Locale.getDefault());
-
-
-
   /** Query flag. */
-  public static final String QUERY_FLAG = RESOURCE.getString("QUERY_FLAG");
+  public static final String QUERY_FLAG = "query";
   /** Subject flag. */
-  public static final String SUBJECT_FLAG = RESOURCE.getString("SUBJECT_FLAG");
+  public static final String SUBJECT_FLAG = "subject";
   /** Program mode flag. */
-  public static final String PROGRAM_MODE_FLAG = RESOURCE.getString("PROGRAM_MODE_FLAG");
-  /** Maximum allowed gap. */
-  public static final String MAXGAP_FLAG = RESOURCE.getString("MAXGAP_FLAG");
+  public static final String PROGRAM_MODE_FLAG = "program";
   /** Progress flag. */
-  public static final String PROGRESS_FLAG = RESOURCE.getString("PROGRESS_FLAG");
+  public static final String PROGRESS_FLAG = "progress";
 
 }
 

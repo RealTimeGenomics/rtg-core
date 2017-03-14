@@ -80,11 +80,11 @@ public class DiscordantToolCli extends ParamsCli<DiscordantToolParams> {
     flags.setDescription("Analyses SAM records to determine the location of breakends.");
     flags.setValidator(new DiscordantToolValidator());
     SamFilterOptions.registerMaxHitsFlag(flags, 'c');
-    flags.registerOptional('s', MIN_BREAKPOINT_DEPTH, Integer.class, "INT", MIN_SUPPORT_DESCRIPTION, DEFAULT_MIN_DEPTH).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('s', MIN_BREAKPOINT_DEPTH, Integer.class, CommonFlags.INT, MIN_SUPPORT_DESCRIPTION, DEFAULT_MIN_DEPTH).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(INTERSECTIONS, "only include breakends with internally consistent supporting reads").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(BED, "produce output in BED format in addition to VCF").setCategory(INPUT_OUTPUT);
-//    flags.registerOptional(AbstractMultisampleCli.MAX_AMBIGUITY, IntegerOrPercentage.class, "int", "threshold for ambiguity above which calls are not made").setCategory(SENSITIVITY_TUNING);
-//    flags.registerOptional(AbstractMultisampleCli.MAX_COVERAGE_FLAG, Integer.class, "int", "if set, will only output variants where coverage is less than this amount").setCategory(SENSITIVITY_TUNING);
+//    flags.registerOptional(AbstractMultisampleCli.MAX_AMBIGUITY, IntegerOrPercentage.class, CommonFlags.INT, "threshold for ambiguity above which calls are not made").setCategory(SENSITIVITY_TUNING);
+//    flags.registerOptional(AbstractMultisampleCli.MAX_COVERAGE_FLAG, Integer.class, CommonFlags.INT, "if set, will only output variants where coverage is less than this amount").setCategory(SENSITIVITY_TUNING);
     //X flags
     flags.registerOptional(XDEBUG, "produce debug output in addition to VCF").setCategory(INPUT_OUTPUT);
   }

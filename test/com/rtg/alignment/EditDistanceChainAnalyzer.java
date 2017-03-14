@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 
+import com.rtg.launcher.CommonFlags;
 import com.rtg.mode.DnaUtils;
 import com.rtg.ngs.NgsParams;
 import com.rtg.ngs.NgsParamsBuilder;
@@ -473,9 +474,9 @@ public class EditDistanceChainAnalyzer extends TestCase implements Unidirectiona
     flags.registerOptional(ALL_STATS, "show detailed statistics from all aligners");
     flags.registerOptional(ALL_READS, "show all aligner scores for each read");
     flags.registerOptional(ERROR_DETAILS, "print the read, template and alignments of all erroneous alignment results");
-    flags.registerOptional(MAX_SHIFT, Integer.class, "INT", "try all start positions from start-delta...start+delta", 0);
+    flags.registerOptional(MAX_SHIFT, Integer.class, CommonFlags.INT, "try all start positions from start-delta...start+delta", 0);
     flags.registerOptional(MAX_SCORE, String.class, "INT_OR_PERCENT", "the maximum score that aligners are allowed to return", "5%");
-//    flags.registerOptional("MAX_RECORDS", Integer.class, "INT", "Max records to test");
+//    flags.registerOptional("MAX_RECORDS", Integer.class, CommonFlags.INT, "Max records to test");
   }
 
   /**

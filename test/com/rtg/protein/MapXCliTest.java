@@ -23,7 +23,6 @@ import java.util.Set;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
-import com.rtg.launcher.BuildCommon;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.mode.DnaUtils;
 import com.rtg.mode.SequenceMode;
@@ -156,7 +155,7 @@ public class MapXCliTest extends AbstractCliTest {
       CFlags flags = getCFlags();
       assertEquals("blosum62", flags.getValue(MapXCli.MATRIX_FLAG));
       assertEquals(IntegerOrPercentage.valueOf("30%"), flags.getValue(MapXCli.MAX_ALIGNMENT_SCORE));
-      assertEquals(IntegerOrPercentage.valueOf("95%"), flags.getValue(MapFlags.REPEAT_FREQUENCY_FLAG));
+      assertEquals(IntegerOrPercentage.valueOf("95%"), flags.getValue(CommonFlags.REPEAT_FREQUENCY_FLAG));
       assertEquals(1, flags.getValue(MapXCli.GAP_LENGTH_FLAG));
 
       checkHandleFlagsOut("-t", template.getPath(), "-i", reads.getPath(), "-a", "1", "-b", "1", "-o", output.getPath(), "-w", "4", "-T", "1");
@@ -221,16 +220,16 @@ public class MapXCliTest extends AbstractCliTest {
 
     final CFlags flags = new CFlags("blah", TestUtils.getNullPrintStream(), TestUtils.getNullPrintStream());
     flags.registerOptional('e', MapXCli.MAX_ALIGNMENT_SCORE, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score at output (as absolute value or percentage of read length)", IntegerOrPercentage.valueOf("10%")).setCategory(REPORTING);
-    flags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "maximum number of top equal results output per read", 5).setCategory(REPORTING);
+    flags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, CommonFlags.INT, "maximum number of top equal results output per read", 5).setCategory(REPORTING);
     flags.registerOptional(MapFlags.XSCORE_INDEL, Integer.class, CommonFlags.INT, "set max score indel for topn threshold", MapFlags.MAX_SCORE).setCategory(REPORTING); //7 was used for illumina mappings
-    flags.registerOptional(CommonFlags.EXCLUDE_FLAG, BuildCommon.RESOURCE.getString("EXCLUDE_DESC")).setCategory(CommonFlagCategories.UTILITY);
+    flags.registerOptional(CommonFlags.EXCLUDE_FLAG, "any results with an E-value larger than the specified value are suppressed in the output").setCategory(CommonFlagCategories.UTILITY);
     flags.registerOptional(MapFlags.TOPN_RESULTS_FLAG, Integer.class, CommonFlags.INT, "set the number of results per read for topn. Allowed values are between 1 and 255", 5).setCategory(REPORTING);
-    flags.registerOptional('P', MapXCli.MIN_IDENTITY_FLAG, Integer.class, "int", "minimum percent identity at output", 60).setCategory(REPORTING);
+    flags.registerOptional('P', MapXCli.MIN_IDENTITY_FLAG, Integer.class, CommonFlags.INT, "minimum percent identity at output", 60).setCategory(REPORTING);
     final Flag<String> filter = flags.registerOptional('f', CommonFlags.OUTPUT_FILTER_FLAG, String.class, "name", "output filter", "topn");
     filter.setParameterRange(MapXCli.FILTERS.keySet());
-    flags.registerOptional('E', MapXCli.MAX_ESCORE_FLAG, Double.class, "float", "maximum e-score at output", 10.0).setCategory(REPORTING);
-    flags.registerOptional('B', MapXCli.MIN_BITSCORE_FLAG, Double.class, "float", "minimum bit score at output").setCategory(REPORTING);
-    flags.registerOptional(MapXCli.PRE_FILTER_ALGORITHM, Integer.class, "int", "pre-filter algorithm", -3).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('E', MapXCli.MAX_ESCORE_FLAG, Double.class, CommonFlags.FLOAT, "maximum e-score at output", 10.0).setCategory(REPORTING);
+    flags.registerOptional('B', MapXCli.MIN_BITSCORE_FLAG, Double.class, CommonFlags.FLOAT, "minimum bit score at output").setCategory(REPORTING);
+    flags.registerOptional(MapXCli.PRE_FILTER_ALGORITHM, Integer.class, CommonFlags.INT, "pre-filter algorithm", -3).setCategory(SENSITIVITY_TUNING);
 
 
     final NgsFilterParamsBuilder nfpb = new NgsFilterParams.NgsFilterParamsBuilder();

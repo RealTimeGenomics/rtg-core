@@ -15,7 +15,6 @@ package com.rtg.assembler;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.UUID;
 
 import com.rtg.assembler.graph.MutableGraph;
 import com.rtg.assembler.graph.implementation.GraphKmerAttribute;
@@ -48,7 +47,7 @@ public class PacBioCliTest extends AbstractParamsCliTest<PacBioParams> {
       final File reads = ReaderTestUtils.getDNADir(">a" + StringUtils.LS + "ACGTACGTACGTACGTACGTACGTACGTAC" + StringUtils.LS);
       assertTrue(graph.mkdir());
       try {
-        GraphWriter.write(builtGraph, new StoreDirProxy(graph), "monkey", Collections.<UUID>emptySet());
+        GraphWriter.write(builtGraph, new StoreDirProxy(graph), "monkey", Collections.emptySet());
 
         try {
           final File fileList = new File(tmpDir, "fileList");
@@ -69,7 +68,7 @@ public class PacBioCliTest extends AbstractParamsCliTest<PacBioParams> {
 
           final File inputGraph =  new File(tmpDir, "graph");
           assertTrue(inputGraph.mkdir());
-          GraphWriter.write(new GraphKmerAttribute(29), new StoreDirProxy(inputGraph), "foo" , Collections.<UUID>emptySet());
+          GraphWriter.write(new GraphKmerAttribute(29), new StoreDirProxy(inputGraph), "foo" , Collections.emptySet());
           final CFlags flags =  new CFlags("foo", TestUtils.getNullPrintStream(), TestUtils.getNullPrintStream());
           PacBioCli.initLocalFlags(flags);
           flags.setFlags("-o", output.toString(), "-g", inputGraph.toString(), "-I", fileList.toString());
@@ -89,8 +88,9 @@ public class PacBioCliTest extends AbstractParamsCliTest<PacBioParams> {
       FileHelper.deleteAll(tmpDir);
     }
   }
+
   public void testHelp() {
-    checkHelp("addpacbio [OPTION]... -g DIR -o DIR DIR+",
+    checkHelp("addpacbio [OPTION]... -g DIR -o DIR SDF+",
         "-I, --input-list-file=FILE ", "file containing a list of SDF directories",
         "-g, --graph=DIR ", "graph of the assembly to map against",
         "SDF directories containing reads to map"

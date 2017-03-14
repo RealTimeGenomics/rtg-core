@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
 
+import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.LoggedCli;
 import com.rtg.sam.BamIndexer;
 import com.rtg.sam.SamUtils;
@@ -64,9 +65,9 @@ public class UnmatedAugmenterCli extends LoggedCli {
     mFlags.setDescription("Prepares SAM files for use with sv module, by finding mate position/frame information for discordant matings and generates the read group statistics. This command is not needed with RTG mappings unless automatic svprep was disabled.");
     CommonFlagCategories.setCategories(mFlags);
     mFlags.registerExtendedHelp();
-    mFlags.registerOptional('s', OUTPUT_SUFFIX_FLAG, String.class, "STRING", "suffix for output file of each input file", ".augmented").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerOptional('s', OUTPUT_SUFFIX_FLAG, String.class, CommonFlags.STRING, "suffix for output file of each input file", ".augmented").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerOptional('k', KEEP_ORIG_FLAG, "keep original file and create augmented file using suffix").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerRequired(File.class, "DIR", "directory containing SAM/BAM format files").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerRequired(File.class, CommonFlags.DIR, "directory containing SAM/BAM format files").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.setValidator(new UnmatedAugmenterValidator());
   }
 

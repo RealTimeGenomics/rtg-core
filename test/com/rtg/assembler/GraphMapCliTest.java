@@ -37,7 +37,7 @@ import com.rtg.util.test.FileHelper;
  */
 public class GraphMapCliTest extends AbstractParamsCliTest<GraphMapParams> {
   public static GraphKmerAttribute makeGraph(int contigOverlap, String[] contigs, long[][] paths) {
-    return makeGraph(contigOverlap, contigs, paths, Collections.<String, String>emptyMap(), Collections.<String, String>emptyMap());
+    return makeGraph(contigOverlap, contigs, paths, Collections.emptyMap(), Collections.emptyMap());
   }
   public static GraphKmerAttribute makeGraph(int contigOverlap, String[] contigs, long[][] paths, Map<String, String> contigAttributes, Map<String, String> pathAttributes) {
     final GraphKmerAttribute graph = new GraphKmerAttribute(contigOverlap, contigAttributes, pathAttributes);
@@ -61,7 +61,7 @@ public class GraphMapCliTest extends AbstractParamsCliTest<GraphMapParams> {
       final File reads = ReaderTestUtils.getDNADir(">a" + StringUtils.LS + "ACGTACGTACGTACGTACGTACGTACGTAC" + StringUtils.LS);
       assertTrue(graph.mkdir());
       try {
-        GraphWriter.write(builtGraph, new StoreDirProxy(graph), "monkey", Collections.<UUID>emptySet());
+        GraphWriter.write(builtGraph, new StoreDirProxy(graph), "monkey", Collections.emptySet());
 
         try {
           final File fileList = new File(tmpDir, "fileList");
@@ -120,7 +120,7 @@ public class GraphMapCliTest extends AbstractParamsCliTest<GraphMapParams> {
   }
 
   public void testInitParams() {
-    checkHelp("graphmap [OPTION]... -g DIR -o DIR DIR+",
+    checkHelp("graphmap [OPTION]... -g DIR -o DIR SDF+",
         "-g DIR -o DIR -I FILE",
         "-g, --graph=DIR ", "graph of the assembly to map against",
         "-w, --word=INT", "word size",

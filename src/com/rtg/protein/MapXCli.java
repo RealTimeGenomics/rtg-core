@@ -11,7 +11,6 @@
  */
 package com.rtg.protein;
 
-import static com.rtg.launcher.BuildCommon.RESOURCE;
 import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.launcher.CommonFlags.READS_FLAG;
 import static com.rtg.launcher.CommonFlags.TEMPLATE_FLAG;
@@ -346,40 +345,40 @@ public class MapXCli extends ParamsCli<NgsParams> {
     flags.setDescription("Searches translated read data sets of defined length (e.g. 100 bp reads) against protein databases or translated nucleotide sequences.");
     CommonFlagCategories.setCategories(flags);
     flags.registerRequired('i', READS_FLAG, File.class, "SDF|FILE", "query read sequences").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('t', TEMPLATE_FLAG, File.class, "SDF", "SDF containing database to search").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('t', TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing database to search").setCategory(INPUT_OUTPUT);
     CommonFlags.initOutputDirFlag(flags);
 
     // No Paired End input for MapX
     final Flag<String> formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", FormatCli.SDF_FORMAT).setCategory(INPUT_OUTPUT);
     formatFlag.setParameterRange(new String[] {FormatCli.SDF_FORMAT, FormatCli.FASTA_FORMAT, FormatCli.FASTQ_FORMAT, FormatCli.SAM_SE_FORMAT});
 
-    final Flag<String> filter = flags.registerOptional('f', CommonFlags.OUTPUT_FILTER_FLAG, String.class, "STRING", "output filter", "topn");
+    final Flag<String> filter = flags.registerOptional('f', CommonFlags.OUTPUT_FILTER_FLAG, String.class, CommonFlags.STRING, "output filter", "topn");
     filter.setCategory(REPORTING);
     filter.setParameterRange(FILTERS.keySet());
     flags.registerOptional(XDONT_MERGE_ALIGNMENT_RESULTS, "does not concat alignment files").setCategory(UTILITY);
-    flags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, "int", "maximum number of topn/topequals results output per read",
+    flags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, CommonFlags.INT, "maximum number of topn/topequals results output per read",
       DEFAULT_TOP_N).setCategory(REPORTING);
-    final Flag<String> matrix = flags.registerOptional(MATRIX_FLAG, String.class, "string", "name of the scoring matrix used during alignment", "blosum62");
+    final Flag<String> matrix = flags.registerOptional(MATRIX_FLAG, String.class, CommonFlags.STRING, "name of the scoring matrix used during alignment", "blosum62");
     matrix.setCategory(SENSITIVITY_TUNING);
     matrix.setParameterRange(MATRICES);
-    flags.registerOptional(PRE_FILTER_ALGORITHM, Integer.class, "int", "pre-filter algorithm", -3).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(PRE_FILTER_MIN_SCORE, Integer.class, "int", "pre-filter minimum score").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(PRE_FILTER_MIN_OVERLAP, Integer.class, "int", "pre-filter minimum overlap").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('P', MIN_IDENTITY_FLAG, Integer.class, "int", "minimum percent identity at output", 60).setCategory(REPORTING);
-    flags.registerOptional('E', MAX_ESCORE_FLAG, Double.class, "float", "maximum e-score at output", 10.0).setCategory(REPORTING);
-    flags.registerOptional('B', MIN_BITSCORE_FLAG, Double.class, "float", "minimum bit score at output").setCategory(REPORTING);
+    flags.registerOptional(PRE_FILTER_ALGORITHM, Integer.class, CommonFlags.INT, "pre-filter algorithm", -3).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(PRE_FILTER_MIN_SCORE, Integer.class, CommonFlags.INT, "pre-filter minimum score").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(PRE_FILTER_MIN_OVERLAP, Integer.class, CommonFlags.INT, "pre-filter minimum overlap").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('P', MIN_IDENTITY_FLAG, Integer.class, CommonFlags.INT, "minimum percent identity at output", 60).setCategory(REPORTING);
+    flags.registerOptional('E', MAX_ESCORE_FLAG, Double.class, CommonFlags.FLOAT, "maximum e-score at output", 10.0).setCategory(REPORTING);
+    flags.registerOptional('B', MIN_BITSCORE_FLAG, Double.class, CommonFlags.FLOAT, "minimum bit score at output").setCategory(REPORTING);
     flags.registerOptional(COMPRESS_HASHES_FLAG, Boolean.class, "BOOL", "compress hashes in indexes", true).setCategory(UTILITY);
-    flags.registerOptional(TEMP_DIR, File.class, "DIR", "directory used for temporary files (Defaults to output directory)").setCategory(UTILITY);
+    flags.registerOptional(TEMP_DIR, File.class, CommonFlags.DIR, "directory used for temporary files (Defaults to output directory)").setCategory(UTILITY);
     flags.registerOptional(TEMP_FILES_COMPRESSED, Boolean.class, "BOOL", "gzip temporary files", true).setCategory(UTILITY);
     flags.registerOptional(MapFlags.NO_UNMAPPED, "do not output unmapped reads").setCategory(UTILITY);
-    flags.registerOptional('w', WORDSIZE_FLAG, Integer.class, "int", "word size", 7).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('a', MISMATCHES_FLAG, Integer.class, "INT", "guaranteed minimum number of identical mismatches which will be detected", 1).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('b', GAPS_FLAG, Integer.class, "INT", "guaranteed minimum number of gaps which will be detected (if this is larger than the minimum number of mismatches then the minimum number of mismatches is increased to the same value)", 0).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional('c', GAP_LENGTH_FLAG, Integer.class, "INT", "guaranteed number of positions that will be detected in a single gap", 1).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('w', WORDSIZE_FLAG, Integer.class, CommonFlags.INT, "word size", 7).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('a', MISMATCHES_FLAG, Integer.class, CommonFlags.INT, "guaranteed minimum number of identical mismatches which will be detected", 1).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('b', GAPS_FLAG, Integer.class, CommonFlags.INT, "guaranteed minimum number of gaps which will be detected (if this is larger than the minimum number of mismatches then the minimum number of mismatches is increased to the same value)", 0).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('c', GAP_LENGTH_FLAG, Integer.class, CommonFlags.INT, "guaranteed number of positions that will be detected in a single gap", 1).setCategory(SENSITIVITY_TUNING);
     CommonFlags.initThreadsFlag(mFlags);
     CommonFlags.initNoGzip(flags);
-    flags.registerOptional('e', MAX_ALIGNMENT_SCORE, IntegerOrPercentage.class, "INT", "maximum alignment score at output (as absolute value or percentage of read length in protein space)", IntegerOrPercentage.valueOf("30%")).setCategory(REPORTING);
-    flags.registerOptional(MapFlags.REPEAT_FREQUENCY_FLAG, IntegerOrPercentage.class, "INT", RESOURCE.getString("REPEAT_FREQUENCY_DESC"), IntegerOrPercentage.valueOf("95%")).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('e', MAX_ALIGNMENT_SCORE, IntegerOrPercentage.class, CommonFlags.INT, "maximum alignment score at output (as absolute value or percentage of read length in protein space)", IntegerOrPercentage.valueOf("30%")).setCategory(REPORTING);
+    flags.registerOptional(CommonFlags.REPEAT_FREQUENCY_FLAG, IntegerOrPercentage.class, CommonFlags.INT, "maximum repeat frequency", IntegerOrPercentage.valueOf("95%")).setCategory(SENSITIVITY_TUNING);
 
     flags.registerOptional(OUTPUT_READ_NAMES_FLAG, "use read name in output instead of read id (Uses more RAM)").setCategory(UTILITY);
     flags.registerOptional(SUPPRESS_PROTEIN_OUTPUT_FLAG, "suppress output of sequence protein information").setCategory(UTILITY);
@@ -387,10 +386,10 @@ public class MapXCli extends ParamsCli<NgsParams> {
     flags.registerOptional(READ_CACHE_FLAG, "enable protein read cache").setCategory(UTILITY);
 
     flags.registerOptional(UNFILTERED_FLAG, "output all alignments meeting thresholds instead of applying topn/topequals N limits").setCategory(REPORTING);
-    flags.registerOptional(MIN_READ_LENGTH, Long.class, "INT", "minimum read length in nucleotides. Shorter reads will be ignored. (Defaults to 3 * (w + a + 1))").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(MIN_READ_LENGTH, Long.class, CommonFlags.INT, "minimum read length in nucleotides. Shorter reads will be ignored. (Defaults to 3 * (w + a + 1))").setCategory(SENSITIVITY_TUNING);
 
-    flags.registerOptional(XMETA_CHUNK_LENGTH, Integer.class, "INT", "how large to make long read meta chunks. (Defaults to " + ProteinReadIndexer.DEFAULT_META_CHUNK_LENGTH + ")").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(XMETA_CHUNK_OVERLAP, Integer.class, "INT", "how much overlap to have in long read meta chunks. (Defaults to meta chunk length / 2)").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(XMETA_CHUNK_LENGTH, Integer.class, CommonFlags.INT, "how large to make long read meta chunks. (Defaults to " + ProteinReadIndexer.DEFAULT_META_CHUNK_LENGTH + ")").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(XMETA_CHUNK_OVERLAP, Integer.class, CommonFlags.INT, "how much overlap to have in long read meta chunks. (Defaults to meta chunk length / 2)").setCategory(SENSITIVITY_TUNING);
 
     CommonFlags.initReadRange(mFlags);
 

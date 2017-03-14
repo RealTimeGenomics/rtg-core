@@ -91,7 +91,7 @@ public class FilterPaths extends LoggedCli {
     CommonFlags.initOutputDirFlag(flags);
     initCommonFlags(flags);
     flags.registerOptional('d', INCLUDE_DELETED, "set if you should output nodes that are deleted").setCategory(INPUT_OUTPUT);
-    flags.registerRequired(File.class, "DIR", "input graph directory").setCategory(INPUT_OUTPUT);
+    flags.registerRequired(File.class, CommonFlags.DIR, "input graph directory").setCategory(INPUT_OUTPUT);
     flags.setValidator(new Valid());
   }
 

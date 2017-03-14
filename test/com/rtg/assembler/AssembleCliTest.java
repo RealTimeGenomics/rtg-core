@@ -50,7 +50,7 @@ public class AssembleCliTest extends AbstractParamsCliTest<AssembleParams> {
       final File reads = ReaderTestUtils.getDNADir(">a" + StringUtils.LS + "ACGTACGTACGTACGTACGTACGTACGTAC" + StringUtils.LS);
       assertTrue(graph.mkdir());
       try {
-        GraphWriter.write(builtGraph, new StoreDirProxy(graph), "monkey", Collections.<UUID>emptySet());
+        GraphWriter.write(builtGraph, new StoreDirProxy(graph), "monkey", Collections.emptySet());
 
         try {
           final File fileList = new File(tmpDir, "fileList");
@@ -132,9 +132,9 @@ public class AssembleCliTest extends AbstractParamsCliTest<AssembleParams> {
   }
 
   public void testInitParams() {
-    checkHelp("assemble [OPTION]... -k INT -o DIR DIR+",
+    checkHelp("assemble [OPTION]... -k INT -o DIR SDF+",
         "-k INT -o DIR -I FILE",
-        "-k INT -o DIR -f DIR",
+        "-k INT -o DIR -f SDF",
         "-k INT -o DIR -F FILE",
         "--consensus-reads",
         "-g, --graph=DIR ", "graph of the assembly to map against",
