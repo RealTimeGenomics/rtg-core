@@ -7,4 +7,5 @@ Coverage per region:
    1.80   0.7333       22    30  simulatedSequence2:64-94
    1.93   0.9059       77    85               all regions
 
+Fold-80 Penalty: 1.14
 Median depth: 2.00

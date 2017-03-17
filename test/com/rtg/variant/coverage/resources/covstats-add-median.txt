@@ -3,4 +3,5 @@ Coverage per region:
    3.75   0.3750        3     8         blah
    3.75   0.3750        3     8  all regions
 
+Fold-80 Penalty: 11.72
 Median depth: 3.75

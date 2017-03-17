@@ -358,19 +358,23 @@ public class CoverageStatistics extends AbstractStatistics {
    * @return the fold 80 penalty, or null if it could not be calculated.
    */
   public Double fold80() {
-    double sum = 0.0;
-    if (mHistogram != null) {
-      for (int i = 0; i < mHistogram.length; ++i) {
-        final double cumulativeP = 100.0 * (mTotalBases - sum) / mTotalBases;
-        sum += mHistogram[i];
+    return fold80(mTotalBases, mTotalCoverage, mHistogram);
+  }
 
-        if (cumulativeP <= 80.0 + 1e-10) {
-          if (MathUtils.approxEquals(cumulativeP, 80.0, 1e-1)) {
-            final int pct20Cov = i * BUCKET_SIZE;
-            return mTotalCoverage / mTotalBases / pct20Cov;
-          }
-          break;
+  protected static Double fold80(long totalBases, double totalCoverage, long[] histogram) {
+    double sum = 0.0;
+    if (histogram != null) {
+      double lastCumulativePct = 100.0;
+      for (int i = 0; i < histogram.length; ++i) {
+        final double cumulativePct = 100.0 * (totalBases - sum) / totalBases;
+        if (cumulativePct <= 80.0) {
+          assert lastCumulativePct > 80.0;
+          final double frac = (80 - cumulativePct) / (lastCumulativePct - cumulativePct);
+          final double pct20Cov = (i - frac) * BUCKET_SIZE;
+          return totalCoverage / totalBases / pct20Cov;
         }
+        sum += histogram[i];
+        lastCumulativePct = cumulativePct;
       }
     }
     return null;
