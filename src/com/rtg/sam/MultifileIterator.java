@@ -19,7 +19,6 @@ import java.util.Queue;
 
 import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.launcher.globals.GlobalFlags;
-import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
@@ -76,7 +75,7 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
         final RecordIterator<SAMRecord> adaptor;    // Initial source of (possibly region-restricted) SAMRecords
         try {
           final boolean streamOk = context.referenceRanges() == null || context.referenceRanges().allAvailable();
-          if (file.isFile() && (!FALLBACK || streamOk || isIndexed(file))) {
+          if (file.isFile() && (!FALLBACK || streamOk || SamUtils.isIndexed(file))) {
             adaptor = new SamClosedFileReader(file, context.referenceRanges(), context.reference(), context.header());
           } else { // Fall back to SamFileAndRecord for non-file (i.e. pipes)
             Diagnostic.userLog("Using fallback for non-file or non-indexed SAM source: " + file.toString());
@@ -106,14 +105,6 @@ public class MultifileIterator implements RecordIterator<SAMRecord> {
 
     mTotalRawInputLength = totalFileLength; // so we can report MB/s at the end
     mHeader = context.header();
-  }
-
-  static boolean isIndexed(File file) throws IOException {
-    if (SamUtils.isBAMFile(file)) {
-      return BamIndexer.indexFileName(file).exists() || BamIndexer.secondaryIndexFileName(file).exists();
-    } else {
-      return TabixIndexer.indexFileName(file).exists();
-    }
   }
 
   @Override
