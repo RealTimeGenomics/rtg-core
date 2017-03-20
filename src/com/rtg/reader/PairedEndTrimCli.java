@@ -17,6 +17,7 @@ import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.launcher.CommonFlags.QUALITY_FLAG;
 import static com.rtg.reader.FastqTrim.BATCH_SIZE;
 import static com.rtg.reader.Sdf2Fasta.INTERLEAVE;
+import static com.rtg.sam.SamFilterOptions.SUBSAMPLE_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.FILTERING;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
@@ -113,6 +114,7 @@ public class PairedEndTrimCli extends AbstractCli {
         && flags.checkInRange(BATCH_SIZE, 1, Integer.MAX_VALUE)
         && flags.checkInRange(MIN_OVERLAP, 1, Integer.MAX_VALUE)
         && flags.checkInRange(MIN_IDENTITY, 1, 100)
+        && flags.checkInRange(SUBSAMPLE_FLAG, 0.0, 1.0)
         && flags.checkInRange(PROBE_LENGTH, 0, Integer.MAX_VALUE);
     }
   }
