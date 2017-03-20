@@ -166,7 +166,7 @@ public final class Lineage extends AbstractMultisampleCaller {
 
   Set<Integer> children(final int node) {
     final Set<Integer> children = mLineageGraph.get(node);
-    return children == null ? Collections.<Integer>emptySet() : children;
+    return children == null ? Collections.emptySet() : children;
   }
 
   LineageLookup lineageLookup() {
