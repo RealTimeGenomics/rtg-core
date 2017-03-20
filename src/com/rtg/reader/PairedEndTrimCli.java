@@ -36,6 +36,7 @@ import com.rtg.launcher.CommonFlags;
 import com.rtg.ngs.MapFlags;
 import com.rtg.ngs.MapParamsHelper;
 import com.rtg.ngs.NgsParams;
+import com.rtg.sam.SamFilterOptions;
 import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
@@ -76,6 +77,7 @@ public class PairedEndTrimCli extends AbstractCli {
     CommonFlags.initQualityFormatFlag(flags);
     CommonFlags.initThreadsFlag(flags);
     MapFlags.initAlignerPenaltyFlags(flags);
+    SamFilterOptions.registerSubsampleFlags(flags);
     flags.registerOptional(MIN_OVERLAP, Integer.class, CommonFlags.INT, "minimum number of bases in overlap for overlap trimming", 25).setCategory(FILTERING);
     flags.registerOptional(MIN_IDENTITY, Integer.class, CommonFlags.INT, "minimum overlap identity required for overlap trimming", 90).setCategory(FILTERING);
     flags.registerOptional(INTERLEAVE, "interleave paired data into a single output file. Default is to split to separate output files").setCategory(UTILITY);
@@ -148,7 +150,7 @@ public class PairedEndTrimCli extends AbstractCli {
         final BatchReorderingWriter<FastqPair> batchWriter = new BatchReorderingWriter<>(w);
         final Function<Batch<FastqPair>, Runnable> listRunnableFunction = batch -> new PairAlignmentProcessor(stats, batchWriter, batch, getPairAligner());
         final BatchProcessor<FastqPair> fastqPairBatchProcessor = new BatchProcessor<>(listRunnableFunction, threads, batchSize);
-        fastqPairBatchProcessor.process(new FastqPairIterator(new FastqIterator(r1fq), new FastqIterator(r2fq)));
+        fastqPairBatchProcessor.process(FastqTrim.maybeSubsample(mFlags, new FastqPairIterator(new FastqIterator(r1fq), new FastqIterator(r2fq))));
       }
       t.stop(stats.mTotal);
       t.log();
