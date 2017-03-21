@@ -14,16 +14,15 @@ package com.rtg.variant.bayes.multisample.lineage;
 import static com.rtg.util.StringUtils.LS;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 
 import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.sam.SharedSamConstants;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.StringUtils;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
@@ -76,6 +75,7 @@ public class LineageCliTest extends PopulationCliTest {
   public void testNanoThreeSamples() throws Exception {
     check("ref.fasta", "threeSample.sam", "threeSample.ped", "threeSample_expected.txt");
   }
+
   void check(String ref, String sam, String ped, String expected) throws Exception {
     try (TestDirectory tmp = new TestDirectory()) {
       final File reference = new File(tmp, "template");
@@ -87,20 +87,12 @@ public class LineageCliTest extends PopulationCliTest {
       final File samFile = createSam(samContents, tmp, "lineage");
       final File output = new File(tmp, "output");
 
-      final LineageCli cli = new LineageCli();
-      final String[] args = {
-          "--output", output.toString()
-          , "--pedigree", pedigree.toString()
-          , "--template", reference.toString()
-          , samFile.toString()
-          , "--" + AbstractMultisampleCli.NO_CALIBRATION
-      };
-      final MemoryPrintStream ps = new MemoryPrintStream();
-      final int code = cli.mainInit(args, new ByteArrayOutputStream(), ps.printStream());
-      if (code != 0 || !"".equals(ps.toString())) {
-        fail(ps.toString());
-      }
-
+      final MainResult res = MainResult.run(new LineageCli(), "--output", output.toString()
+        , "--pedigree", pedigree.toString()
+        , "--template", reference.toString()
+        , samFile.toString()
+        , "--" + AbstractMultisampleCli.NO_CALIBRATION);
+      assertEquals(res.err(), 0, res.rc());
       final String result = StringUtils.grepMinusV(FileHelper.zipFileToString(new File(output, "snps.vcf.gz")), "^#");
       mNano.check(expected, result);
     }
