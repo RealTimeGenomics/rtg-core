@@ -34,13 +34,21 @@ class PairAligner {
   private final int mMinOverlap;
   private final int mMinIdentity;
   private final PairAlignmentStats mStats = new PairAlignmentStats();
-  private final int mProbeLength;
+  private final int mR1ProbeLength;
+  private final int mR2ProbeLength;
+  private final boolean mVerbose;
 
-  PairAligner(EditDistance ed, int minOverlap, int minIdentity, int probeLength) {
+  PairAligner(EditDistance ed, int minOverlap, int minIdentity, int r1ProbeLength, int r2ProbeLength) {
+    this(ed, minOverlap, minIdentity, r1ProbeLength, r2ProbeLength, false);
+  }
+
+  PairAligner(EditDistance ed, int minOverlap, int minIdentity, int r1ProbeLength, int r2ProbeLength, boolean verbose) {
     mEd = ed;
     mMinOverlap = minOverlap;
     mMinIdentity = minIdentity;
-    mProbeLength = probeLength;
+    mR1ProbeLength = r1ProbeLength;
+    mR2ProbeLength = r2ProbeLength;
+    mVerbose = verbose;
   }
 
   void processReads(List<FastqPair> pairs) {
@@ -125,26 +133,29 @@ class PairAligner {
       //dumpAlignment(template, read, actions);
       if (overlap >= Math.min(0.8 * maxLength, mMinOverlap) && ident >= mMinIdentity) {
 
-//        dumpAlignment(template, read, actions);
+        if (mVerbose) {
+          dumpAlignment(template, read, actions);
+        }
 
-        doTrimAndRecordStats(template, read, firstReadBaseWithinTemplate, lastTemplateBaseWithinRead, firstTemplateBaseWithinRead);
+        doTrimAndRecordStats(template, read, firstTemplateBaseWithinRead, lastTemplateBaseWithinRead, firstReadBaseWithinTemplate, lastReadBaseWithinTemplate);
       } else {
         mStats.mPoorAlignment++;
       }
     }
   }
 
-  private void doTrimAndRecordStats(FastqSequence r1, FastqSequence r2, int overlapStartWithinR2, int overlapEndWithinR1, int overlapStartWithinR1) {
+  private void doTrimAndRecordStats(FastqSequence r1, FastqSequence r2, int overlapStartWithinR1, int overlapEndWithinR1, int overlapStartWithinR2, int overlapEndWithinR2) {
+    final int r2ProbeTrimAmount = mR1ProbeLength - overlapStartWithinR1;
+    final int r1ProbeTrimAmount = overlapEndWithinR2 - (r2.length() - mR2ProbeLength);
     if (overlapStartWithinR2 > 0) {
-      // Read-through has occurred, remove the r2 bases
-      final int trimAmount = overlapStartWithinR2 + mProbeLength;
+      // Read-through past start of R1 has occurred, remove the r2 bases
+      final int trimAmount = overlapStartWithinR2 + mR1ProbeLength;
       r2.trim(new FirstBasesReadTrimmer(trimAmount));
       mStats.mReadThroughOnR2++;
-    } else if (overlapStartWithinR1 < mProbeLength) {
-      // Large overlap but R2 probably contains probe bases.
-      final int trimAmount = mProbeLength - overlapStartWithinR1;
-      r2.trim(new FirstBasesReadTrimmer(trimAmount));
-      mStats.mMajorOverlap++;
+    } else if (r2ProbeTrimAmount > 0) {
+      // Large overlap into R1 read start area, remove R2 bases.
+      r2.trim(new FirstBasesReadTrimmer(r2ProbeTrimAmount));
+      mStats.mReadIntoR1Probe++;
     } else {
       // Regular read overlap -- perhaps remove bases off the longest side
       mStats.mPartialOverlap++;
@@ -154,15 +165,42 @@ class PairAligner {
       mStats.mReadThroughOnR1++;
       final int numBases = r1.length() - overlapEndWithinR1 - 1;
       r1.trim(new LastBasesReadTrimmer(numBases));
+    } else if (r1ProbeTrimAmount > 0) {
+      // Large overlap into R2 read start area, remove R1 bases.
+      r1.trim(new LastBasesReadTrimmer(r1ProbeTrimAmount));
+      mStats.mReadIntoR2Probe++;
     }
+  }
+
+  private int countLeadingInsertions(int[] actions) {
+    final ActionsHelper.CommandIterator ci = new ActionsHelper.CommandIterator();
+    ci.setActions(actions);
+    int count = 0;
+    while (ci.hasNext()) {
+      switch (ci.next()) {
+        case SAME:
+        case MISMATCH:
+        case UNKNOWN_TEMPLATE:
+        case UNKNOWN_READ:
+        case DELETION_FROM_REFERENCE:
+          return count;
+        case INSERTION_INTO_REFERENCE:
+          count++;
+          break;
+        default:
+          throw new RuntimeException("Unhandled action encountered in alignment: " + ActionsHelper.toString(actions));
+      }
+    }
+    return count;
   }
 
   protected void dumpAlignment(FastqSequence r1, FastqSequence r2, int[] actions) {
     final int pos = actions[ActionsHelper.TEMPLATE_START_INDEX];
     final int pad = Math.max(0, -pos);
-    System.err.println(StringUtils.spaces(pad + pos) + ActionsHelper.toString(actions));
-    System.err.println(StringUtils.spaces(pad) + DnaUtils.bytesToSequenceIncCG(r1.getBases()));
-    System.err.println(StringUtils.spaces(pad + pos) + DnaUtils.bytesToSequenceIncCG(r2.getBases()));
+    System.err.println("R1: " + StringUtils.spaces(pad + countLeadingInsertions(actions)) + DnaUtils.bytesToSequenceIncCG(r1.getBases()));
+    System.err.println("AL: " + StringUtils.spaces(pad + pos) + ActionsHelper.toString(actions));
+    System.err.println("R2: " + StringUtils.spaces(pad + pos) + DnaUtils.bytesToSequenceIncCG(r2.getBases()));
+    System.err.println();
   }
 
   public PairAlignmentStats getStats() {

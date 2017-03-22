@@ -57,7 +57,7 @@ public class PairAlignmentProcessorTest {
       + fasta("r2", "AACTTTCGT");
     assertEquals(expectedR1, r1Sb.toString());
     assertEquals(expectedR2, r2Sb.toString());
-    assertEquals(1, stats.mMajorOverlap);
+    assertEquals(1, stats.mReadIntoR1Probe);
     assertEquals(1, stats.mReadThroughOnR1);
     assertEquals(1, stats.mReadThroughOnR2);
     assertEquals(2, stats.mTotal);
@@ -77,6 +77,6 @@ public class PairAlignmentProcessorTest {
     final NgsParams ngsParams = new NgsParamsBuilder().create();
     return new PairAligner(
       new UnidirectionalAdaptor(new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 2, 2, maxReadLength)),
-      5, 90, 4);
+      5, 90, 4, 0);
   }
 }

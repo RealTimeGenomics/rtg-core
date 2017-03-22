@@ -60,7 +60,10 @@ public class PairedEndTrimCli extends AbstractCli {
   private static final String MIN_IDENTITY = "min-overlap-identity";
   private static final String MIN_OVERLAP = "min-overlap-length";
 
-  private static final String PROBE_LENGTH = "probe-length";
+  private static final String LEFT_PROBE_LENGTH = "left-probe-length";
+  private static final String RIGHT_PROBE_LENGTH = "right-probe-length";
+
+  private static final String VERBOSE = "Xverbose";
 
 
   @Override
@@ -82,8 +85,10 @@ public class PairedEndTrimCli extends AbstractCli {
     flags.registerOptional(MIN_OVERLAP, Integer.class, CommonFlags.INT, "minimum number of bases in overlap for overlap trimming", 25).setCategory(FILTERING);
     flags.registerOptional(MIN_IDENTITY, Integer.class, CommonFlags.INT, "minimum overlap identity required for overlap trimming", 90).setCategory(FILTERING);
     flags.registerOptional(INTERLEAVE, "interleave paired data into a single output file. Default is to split to separate output files").setCategory(UTILITY);
-    flags.registerOptional(PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R1 starts with probes this long, and remove R2 bases that overlap into this", 37).setCategory(FILTERING);
+    flags.registerOptional(LEFT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R1 starts with probes this long, and remove R2 bases that overlap into this", 37).setCategory(FILTERING);
+    flags.registerOptional(RIGHT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R2 starts with probes this long, and remove R1 bases that overlap into this", 0).setCategory(FILTERING);
     flags.registerOptional(BATCH_SIZE, Integer.class, CommonFlags.INT, "number of pairs to process per batch", 100000).setCategory(FILTERING);
+    flags.registerOptional(VERBOSE, "dump read alignment information to stderr").setCategory(UTILITY);
     CommonFlags.initNoGzip(flags);
 
     flags.setValidator(new FlagsValidator());
@@ -115,7 +120,8 @@ public class PairedEndTrimCli extends AbstractCli {
         && flags.checkInRange(MIN_OVERLAP, 1, Integer.MAX_VALUE)
         && flags.checkInRange(MIN_IDENTITY, 1, 100)
         && flags.checkInRange(SUBSAMPLE_FLAG, 0.0, 1.0)
-        && flags.checkInRange(PROBE_LENGTH, 0, Integer.MAX_VALUE);
+        && flags.checkInRange(LEFT_PROBE_LENGTH, 0, Integer.MAX_VALUE)
+        && flags.checkInRange(RIGHT_PROBE_LENGTH, 0, Integer.MAX_VALUE);
     }
   }
 
@@ -167,7 +173,7 @@ public class PairedEndTrimCli extends AbstractCli {
     final NgsParams ngsParams = MapParamsHelper.populateAlignerPenaltiesParams(NgsParams.builder(), mFlags).singleIndelPenalties(null).create();
     return new PairAligner(
       new UnidirectionalAdaptor(new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 2, 2, maxReadLength)),
-      (Integer) mFlags.getValue(MIN_OVERLAP), (Integer) mFlags.getValue(MIN_IDENTITY), (Integer) mFlags.getValue(PROBE_LENGTH));
+      (Integer) mFlags.getValue(MIN_OVERLAP), (Integer) mFlags.getValue(MIN_IDENTITY), (Integer) mFlags.getValue(LEFT_PROBE_LENGTH), (Integer) mFlags.getValue(RIGHT_PROBE_LENGTH), mFlags.isSet(VERBOSE));
   }
 
   @Override

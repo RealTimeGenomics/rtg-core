@@ -26,14 +26,16 @@ public class PairAlignmentStatsTest {
     final PairAlignmentStats second = new PairAlignmentStats();
     first.mReadThroughOnR1 = 10;
     first.mReadThroughOnR2 = 20;
-    first.mMajorOverlap = 30;
+    first.mReadIntoR1Probe = 30;
+    first.mReadIntoR2Probe = 10;
     first.mPartialOverlap = 40;
     first.mNoAlignment = 50;
     first.mPoorAlignment = 60;
     first.mTotal = 70;
     second.mReadThroughOnR1 = 100;
     second.mReadThroughOnR2 = 200;
-    second.mMajorOverlap = 300;
+    second.mReadIntoR1Probe = 300;
+    second.mReadIntoR2Probe = 100;
     second.mPartialOverlap = 400;
     second.mNoAlignment = 500;
     second.mPoorAlignment = 600;
@@ -44,7 +46,8 @@ public class PairAlignmentStatsTest {
 
     assertEquals(110, accumulator.mReadThroughOnR1);
     assertEquals(220, accumulator.mReadThroughOnR2);
-    assertEquals(330, accumulator.mMajorOverlap);
+    assertEquals(330, accumulator.mReadIntoR1Probe);
+    assertEquals(110, accumulator.mReadIntoR2Probe);
     assertEquals(440, accumulator.mPartialOverlap);
     assertEquals(550, accumulator.mNoAlignment);
     assertEquals(660, accumulator.mPoorAlignment);

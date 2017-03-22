@@ -21,7 +21,8 @@ import com.rtg.util.diagnostic.Diagnostic;
 class PairAlignmentStats {
   protected int mReadThroughOnR2;
   protected int mReadThroughOnR1;
-  protected int mMajorOverlap;
+  protected int mReadIntoR1Probe;
+  protected int mReadIntoR2Probe;
   protected int mPartialOverlap;
   protected int mNoAlignment;
   protected int mPoorAlignment;
@@ -30,7 +31,8 @@ class PairAlignmentStats {
   protected void accumulate(PairAlignmentStats other) {
     mReadThroughOnR1 += other.mReadThroughOnR1;
     mReadThroughOnR2 += other.mReadThroughOnR2;
-    mMajorOverlap += other.mMajorOverlap;
+    mReadIntoR1Probe += other.mReadIntoR1Probe;
+    mReadIntoR2Probe += other.mReadIntoR2Probe;
     mPartialOverlap += other.mPartialOverlap;
     mNoAlignment += other.mNoAlignment;
     mPoorAlignment += other.mPoorAlignment;
@@ -43,7 +45,8 @@ class PairAlignmentStats {
       + " No-alignment: " + perc(mNoAlignment, mTotal)
       + " Poor-alignment: " + perc(mPoorAlignment, mTotal)
       + " Partial-overlap: " + perc(mPartialOverlap, mTotal)
-      + " Major-overlap: " + perc(mMajorOverlap, mTotal)
+      + " Read-into-R1-probe: " + perc(mReadIntoR1Probe, mTotal)
+      + " Read-into-R2-probe: " + perc(mReadIntoR2Probe, mTotal)
       + " Read-through-on-R1: " + perc(mReadThroughOnR1, mTotal)
       + " Read-through-on-R2: " + perc(mReadThroughOnR2, mTotal));
   }
