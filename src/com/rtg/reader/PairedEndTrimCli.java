@@ -193,6 +193,6 @@ public class PairedEndTrimCli extends AbstractCli {
 
   @Override
   public String description() {
-    return "aligns read arms against each other and trims based on the alignment";
+    return "trim paired-end read FASTQ files based on read arm alignment overlap";
   }
 }
