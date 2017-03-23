@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
 import java.util.Collections;
+import java.util.concurrent.FutureTask;
 import java.util.function.Function;
 
 import com.rtg.alignment.SingleIndelSeededEditDistance;
@@ -156,7 +157,7 @@ public class PairedEndTrimCli extends AbstractCli {
       }
       try (final AsyncFastqPairWriter w = new AsyncFastqPairWriter(left, right)) {
         final BatchReorderingWriter<FastqPair> batchWriter = new BatchReorderingWriter<>(w);
-        final Function<Batch<FastqPair>, Runnable> listRunnableFunction = batch -> new PairAlignmentProcessor(stats, batchWriter, batch, getPairAligner());
+        final Function<Batch<FastqPair>, FutureTask<?>> listRunnableFunction = batch -> new FutureTask<>(new PairAlignmentProcessor(stats, batchWriter, batch, getPairAligner()), null);
         final BatchProcessor<FastqPair> fastqPairBatchProcessor = new BatchProcessor<>(listRunnableFunction, threads, batchSize);
         fastqPairBatchProcessor.process(FastqTrim.maybeSubsample(mFlags, new FastqPairIterator(new FastqIterator(r1fq), new FastqIterator(r2fq))));
       }
