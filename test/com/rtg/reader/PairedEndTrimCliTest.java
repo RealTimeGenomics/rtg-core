@@ -43,9 +43,9 @@ public class PairedEndTrimCliTest extends AbstractCliTest {
       , "--mismatch-penalty=INT", "penalty for a mismatch during alignment (Default is 9)"
     , "--soft-clip-distance=INT", "soft clip alignments if indels occur INT bp from either end (Default is 5)"
       , "--unknowns-penalty=INT", "penalty for unknown nucleotides during alignment (Default is 5)"
-    , "--min-overlap-identity=INT", "minimum overlap identity required for overlap trimming (Default is 90)"
-    , "--min-overlap-length=INT", "minimum number of bases in overlap for overlap trimming (Default is 25)"
-    , "--left-probe-length=INT", "remove R2 bases that overlap"
+    , "--min-identity=INT", "minimum percent identity in overlap"
+    , "--min-overlap-length=INT", "minimum number of bases in overlap"
+    , "--left-probe-length=INT", "trim R2 bases that overlap"
       , "--interleave", "interleave paired data into a single output file. Default is to split to separate output files"
     );
     checkExtendedHelp("rtg petrim",
@@ -67,7 +67,7 @@ public class PairedEndTrimCliTest extends AbstractCliTest {
         assertTrue(f.createNewFile());
       }
 
-      assertParseMessage("must be in the range [1, 100]", "--min-overlap-identity", "101", "-l", files[0].getPath(), "-r", files[1].getPath(), "-o", files[2].getPath());
+      assertParseMessage("must be in the range [1, 100]", "--min-identity", "101", "-l", files[0].getPath(), "-r", files[1].getPath(), "-o", files[2].getPath());
       assertParseMessage("must be at least 1", "--min-overlap-length", "0", "-l", files[0].getPath(), "-r", files[1].getPath(), "-o", files[2].getPath());
       assertParseMessage("must be at least 1", "--Xbatch-size", "0", "-l", files[0].getPath(), "-r", files[1].getPath(), "-o", files[2].getPath());
       assertParseMessage("must be at least 0", "--left-probe-length", "-1", "-l", files[0].getPath(), "-r", files[1].getPath(), "-o", files[2].getPath());

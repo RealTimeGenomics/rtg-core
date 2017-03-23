@@ -20,6 +20,7 @@ import static com.rtg.reader.Sdf2Fasta.INTERLEAVE;
 import static com.rtg.sam.SamFilterOptions.SUBSAMPLE_FLAG;
 import static com.rtg.util.cli.CommonFlagCategories.FILTERING;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
+import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
 import static com.rtg.util.cli.CommonFlagCategories.UTILITY;
 
 import java.io.File;
@@ -58,7 +59,9 @@ public class PairedEndTrimCli extends AbstractCli {
   private static final String RIGHT = "right";
   private static final String LEFT = "left";
 
-  private static final String MIN_IDENTITY = "min-overlap-identity";
+  private static final String MIDPOINT_TRIM = "midpoint-trim";
+
+  private static final String MIN_IDENTITY = "min-identity";
   private static final String MIN_OVERLAP = "min-overlap-length";
 
   private static final String LEFT_PROBE_LENGTH = "left-probe-length";
@@ -80,15 +83,19 @@ public class PairedEndTrimCli extends AbstractCli {
     flags.registerRequired('r', RIGHT, File.class, CommonFlags.FILE, "right input FASTQ file (AKA R2)").setCategory(INPUT_OUTPUT);
     flags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "output filename prefix. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
     CommonFlags.initQualityFormatFlag(flags);
-    CommonFlags.initThreadsFlag(flags);
     MapFlags.initAlignerPenaltyFlags(flags);
-    SamFilterOptions.registerSubsampleFlags(flags);
-    flags.registerOptional(MIN_OVERLAP, Integer.class, CommonFlags.INT, "minimum number of bases in overlap for overlap trimming", 25).setCategory(FILTERING);
-    flags.registerOptional(MIN_IDENTITY, Integer.class, CommonFlags.INT, "minimum overlap identity required for overlap trimming", 90).setCategory(FILTERING);
+
+    flags.registerOptional('L', MIN_OVERLAP, Integer.class, CommonFlags.INT, "minimum number of bases in overlap to trigger overlap trimming", 25).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional('P', MIN_IDENTITY, Integer.class, CommonFlags.INT, "minimum percent identity in overlap to trigger overlap trimming", 90).setCategory(SENSITIVITY_TUNING);
+
+    flags.registerOptional('m', MIDPOINT_TRIM, "if set, trim both reads to midpoint of overlap region").setCategory(FILTERING);
+    flags.registerOptional(LEFT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R1 starts with probes this long, and trim R2 bases that overlap into this", 0).setCategory(FILTERING);
+    flags.registerOptional(RIGHT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R2 starts with probes this long, and trim R1 bases that overlap into this", 0).setCategory(FILTERING);
+
     flags.registerOptional(INTERLEAVE, "interleave paired data into a single output file. Default is to split to separate output files").setCategory(UTILITY);
-    flags.registerOptional(LEFT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R1 starts with probes this long, and remove R2 bases that overlap into this", 0).setCategory(FILTERING);
-    flags.registerOptional(RIGHT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R2 starts with probes this long, and remove R1 bases that overlap into this", 0).setCategory(FILTERING);
-    flags.registerOptional(BATCH_SIZE, Integer.class, CommonFlags.INT, "number of pairs to process per batch", 10000).setCategory(FILTERING);
+    CommonFlags.initThreadsFlag(flags);
+    SamFilterOptions.registerSubsampleFlags(flags);
+    flags.registerOptional(BATCH_SIZE, Integer.class, CommonFlags.INT, "number of pairs to process per batch", 10000).setCategory(UTILITY);
     flags.registerOptional(VERBOSE, "dump read alignment information to stderr").setCategory(UTILITY);
     CommonFlags.initNoGzip(flags);
 
@@ -135,7 +142,7 @@ public class PairedEndTrimCli extends AbstractCli {
     final PairAlignmentStats stats = new PairAlignmentStats();
     final QualityFormat encoding = FastqTrim.qualityFlagToFastQScoreType((String) mFlags.getValue(QUALITY_FLAG));
     // All trimming and aligning is done in separate threads from reading
-    final int threads = CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG));
+    final int threads = mFlags.isSet(VERBOSE) ? 1 : CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG));
     try (final SequenceDataSource r1fq = new FastqSequenceDataSource(Collections.singletonList(FileUtils.createInputStream((File) mFlags.getValue(LEFT), true)), encoding);
          final SequenceDataSource r2fq = new FastqSequenceDataSource(Collections.singletonList(FileUtils.createInputStream((File) mFlags.getValue(RIGHT), true)), encoding)) {
 
@@ -174,7 +181,9 @@ public class PairedEndTrimCli extends AbstractCli {
     final NgsParams ngsParams = MapParamsHelper.populateAlignerPenaltiesParams(NgsParams.builder(), mFlags).singleIndelPenalties(null).create();
     return new PairAligner(
       new UnidirectionalAdaptor(new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 2, 2, maxReadLength)),
-      (Integer) mFlags.getValue(MIN_OVERLAP), (Integer) mFlags.getValue(MIN_IDENTITY), (Integer) mFlags.getValue(LEFT_PROBE_LENGTH), (Integer) mFlags.getValue(RIGHT_PROBE_LENGTH), mFlags.isSet(VERBOSE));
+      (Integer) mFlags.getValue(MIN_OVERLAP), (Integer) mFlags.getValue(MIN_IDENTITY),
+      (Integer) mFlags.getValue(LEFT_PROBE_LENGTH), (Integer) mFlags.getValue(RIGHT_PROBE_LENGTH),
+      mFlags.isSet(MIDPOINT_TRIM), mFlags.isSet(VERBOSE));
   }
 
   @Override

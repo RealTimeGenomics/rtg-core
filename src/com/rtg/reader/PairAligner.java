@@ -37,17 +37,15 @@ class PairAligner {
   private final int mR1ProbeLength;
   private final int mR2ProbeLength;
   private final boolean mVerbose;
+  private final boolean mTrimMid;
 
-  PairAligner(EditDistance ed, int minOverlap, int minIdentity, int r1ProbeLength, int r2ProbeLength) {
-    this(ed, minOverlap, minIdentity, r1ProbeLength, r2ProbeLength, false);
-  }
-
-  PairAligner(EditDistance ed, int minOverlap, int minIdentity, int r1ProbeLength, int r2ProbeLength, boolean verbose) {
+  PairAligner(EditDistance ed, int minOverlap, int minIdentity, int r1ProbeLength, int r2ProbeLength, boolean trimMid, boolean verbose) {
     mEd = ed;
     mMinOverlap = minOverlap;
     mMinIdentity = minIdentity;
     mR1ProbeLength = r1ProbeLength;
     mR2ProbeLength = r2ProbeLength;
+    mTrimMid = trimMid;
     mVerbose = verbose;
   }
 
@@ -134,19 +132,20 @@ class PairAligner {
       if (overlap >= Math.min(0.8 * maxLength, mMinOverlap) && ident >= mMinIdentity) {
 
         if (mVerbose) {
-          dumpAlignment(template, read, actions);
+          dumpAlignment(" IN-", template, read, actions);
         }
 
-        doTrimAndRecordStats(template, read, firstTemplateBaseWithinRead, lastTemplateBaseWithinRead, firstReadBaseWithinTemplate, lastReadBaseWithinTemplate);
+        doTrimAndRecordStats(template, read, actions, firstTemplateBaseWithinRead, lastTemplateBaseWithinRead, firstReadBaseWithinTemplate, lastReadBaseWithinTemplate);
       } else {
         mStats.mPoorAlignment++;
       }
     }
   }
 
-  private void doTrimAndRecordStats(FastqSequence r1, FastqSequence r2, int overlapStartWithinR1, int overlapEndWithinR1, int overlapStartWithinR2, int overlapEndWithinR2) {
+  private void doTrimAndRecordStats(FastqSequence r1, FastqSequence r2, int[] actions, int overlapStartWithinR1, int overlapEndWithinR1, int overlapStartWithinR2, int overlapEndWithinR2) {
+    final int r2Length = r2.length();
     final int r2ProbeTrimAmount = mR1ProbeLength - overlapStartWithinR1;
-    final int r1ProbeTrimAmount = overlapEndWithinR2 - (r2.length() - mR2ProbeLength);
+    final int r1ProbeTrimAmount = overlapEndWithinR2 - (r2Length - mR2ProbeLength);
     if (overlapStartWithinR2 > 0) {
       // Read-through past start of R1 has occurred, remove the r2 bases
       final int trimAmount = overlapStartWithinR2 + mR1ProbeLength;
@@ -163,12 +162,36 @@ class PairAligner {
     if (overlapEndWithinR1 < r1.length() - 1) {
       // Trim readthrough on the r1.
       mStats.mReadThroughOnR1++;
-      final int numBases = r1.length() - overlapEndWithinR1 - 1;
+      final int numBases = r1.length() - overlapEndWithinR1 - 1 + mR2ProbeLength;
       r1.trim(new LastBasesReadTrimmer(numBases));
     } else if (r1ProbeTrimAmount > 0) {
       // Large overlap into R2 read start area, remove R1 bases.
       r1.trim(new LastBasesReadTrimmer(r1ProbeTrimAmount));
       mStats.mReadIntoR2Probe++;
+    }
+    if (mVerbose) {
+      dumpAlignment("INT-", r1, r2, actions, 0, r2Length - r2.length());
+    }
+
+    if (mTrimMid) {
+      // Trim both sides to the midpoint of remaining overlap
+      final int overlapR1Len = overlapEndWithinR1 - overlapStartWithinR1 + 1;
+      final int newOverlapR2Len = overlapEndWithinR2 - Math.max(overlapStartWithinR2, r2Length - r2.length()) + 1;
+      final int newOverlapR1Len = Math.min(overlapEndWithinR1, r1.length() - 1) - overlapStartWithinR1 + 1;
+      //System.err.println("Overlap initial: R1=" + overlapR1Len + " R2=" + overlapR2Len + " remaining: R1=" + newOverlapR1Len + " R2=" + newOverlapR2Len);
+      final int totalOverlap = (newOverlapR1Len + newOverlapR2Len) - overlapR1Len;
+      int midTrim = totalOverlap / 2;
+      if (midTrim > 0) {
+        r1.trim(new LastBasesReadTrimmer(midTrim));
+        if (midTrim * 2 < totalOverlap) {
+          midTrim++;
+        }
+        r2.trim(new FirstBasesReadTrimmer(midTrim));
+      }
+    }
+    if (mVerbose) {
+      dumpAlignment("OUT-", r1, r2, actions, 0, r2Length - r2.length());
+      System.err.println();
     }
   }
 
@@ -194,13 +217,16 @@ class PairAligner {
     return count;
   }
 
-  protected void dumpAlignment(FastqSequence r1, FastqSequence r2, int[] actions) {
+  protected void dumpAlignment(String prefix, FastqSequence r1, FastqSequence r2, int[] actions) {
+    dumpAlignment(prefix, r1, r2, actions, 0, 0);
+  }
+
+  protected void dumpAlignment(String prefix, FastqSequence r1, FastqSequence r2, int[] actions, int r1Pad, int r2Pad) {
     final int pos = actions[ActionsHelper.TEMPLATE_START_INDEX];
     final int pad = Math.max(0, -pos);
-    System.err.println("R1: " + StringUtils.spaces(pad + countLeadingInsertions(actions)) + DnaUtils.bytesToSequenceIncCG(r1.getBases()));
-    System.err.println("AL: " + StringUtils.spaces(pad + pos) + ActionsHelper.toString(actions));
-    System.err.println("R2: " + StringUtils.spaces(pad + pos) + DnaUtils.bytesToSequenceIncCG(r2.getBases()));
-    System.err.println();
+    System.err.println(prefix + "R1: " + StringUtils.spaces(r1Pad + pad + countLeadingInsertions(actions)) + DnaUtils.bytesToSequenceIncCG(r1.getBases()));
+    System.err.println(prefix + "AL: " + StringUtils.spaces(pad + pos) + ActionsHelper.toString(actions));
+    System.err.println(prefix + "R2: " + StringUtils.spaces(r2Pad + pad + pos) + DnaUtils.bytesToSequenceIncCG(r2.getBases()));
   }
 
   public PairAlignmentStats getStats() {
