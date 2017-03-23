@@ -49,7 +49,7 @@ public class PairedEndTrimCliTest extends AbstractCliTest {
       , "--interleave", "interleave paired data into a single output file. Default is to split to separate output files"
     );
     checkExtendedHelp("rtg petrim",
-      "--Xbatch-size=INT",  "number of pairs to process per batch (Default is 100000)"
+      "--Xbatch-size=INT",  "number of pairs to process per batch"
     );
   }
 

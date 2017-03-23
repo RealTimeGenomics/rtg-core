@@ -86,9 +86,9 @@ public class PairedEndTrimCli extends AbstractCli {
     flags.registerOptional(MIN_OVERLAP, Integer.class, CommonFlags.INT, "minimum number of bases in overlap for overlap trimming", 25).setCategory(FILTERING);
     flags.registerOptional(MIN_IDENTITY, Integer.class, CommonFlags.INT, "minimum overlap identity required for overlap trimming", 90).setCategory(FILTERING);
     flags.registerOptional(INTERLEAVE, "interleave paired data into a single output file. Default is to split to separate output files").setCategory(UTILITY);
-    flags.registerOptional(LEFT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R1 starts with probes this long, and remove R2 bases that overlap into this", 37).setCategory(FILTERING);
+    flags.registerOptional(LEFT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R1 starts with probes this long, and remove R2 bases that overlap into this", 0).setCategory(FILTERING);
     flags.registerOptional(RIGHT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R2 starts with probes this long, and remove R1 bases that overlap into this", 0).setCategory(FILTERING);
-    flags.registerOptional(BATCH_SIZE, Integer.class, CommonFlags.INT, "number of pairs to process per batch", 100000).setCategory(FILTERING);
+    flags.registerOptional(BATCH_SIZE, Integer.class, CommonFlags.INT, "number of pairs to process per batch", 10000).setCategory(FILTERING);
     flags.registerOptional(VERBOSE, "dump read alignment information to stderr").setCategory(UTILITY);
     CommonFlags.initNoGzip(flags);
 
