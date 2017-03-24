@@ -24,6 +24,7 @@ import com.rtg.sam.SharedSamConstants;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.io.FileUtils;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.variant.VariantParams;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
@@ -54,17 +55,25 @@ public class PopulationCliTest extends AbstractParamsCliTest<VariantParams> {
   }
 
   public void testValidator() throws Exception {
-    final File tmpDir = FileHelper.createTempDirectory();
-    final File tmpFile = FileUtils.stringToFile("original-derived TEST cancer contamination=0.13", FileHelper.createTempFile());
-    final File tmpFile2 = FileUtils.stringToFile("0\tfather\t0\t0\t1\t0\n0\tmother\t0\t0\t2\t0\n0\tchild\tfather\tmother\t1\t0\n", FileHelper.createTempFile());
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory()) {
+      final File tmpFile = FileUtils.stringToFile("original-derived TEST cancer contamination=0.13", FileHelper.createTempFile(tmpDir));
+      final File tmpFile2 = FileUtils.stringToFile("0\tfather\t0\t0\t1\t0\n0\tmother\t0\t0\t2\t0\n0\tchild\tfather\tmother\t1\t0\n", FileHelper.createTempFile(tmpDir));
       checkValidator(tmpDir, tmpFile, tmpFile2, SharedSamConstants.SAM_FAMILY);
-
-    } finally {
-      FileHelper.deleteAll(tmpDir);
-      FileHelper.deleteAll(tmpFile);
-      FileHelper.deleteAll(tmpFile2);
+      checkReferenceWarning(tmpDir, tmpFile2);
     }
+  }
+
+  private void checkReferenceWarning(File tmpDir, File tmpFile2) throws Exception {
+      final File in = new File(tmpDir, "alignments.sam.gz");
+      FileHelper.stringToGzFile(SharedSamConstants.SAM_FAMILY, in);
+      new TabixIndexer(in, new File(tmpDir, "alignments.sam.gz.tbi")).saveSamIndex();
+
+      final File template = new File(tmpDir, "template");
+      ReaderTestUtils.getDNADir(">g1\nacgtacgtacgtacgtacgt", template);
+      final File outDir = new File(tmpDir, "out");
+
+      final String err = checkMainInitWarn("-o", outDir.getPath(), "-t", template.getPath(), "--pedigree", tmpFile2.getPath(), in.getPath(), in.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
+      assertTrue(err, err.contains("assuming autosomal inheritance"));
   }
 
   public void checkValidator(File tmpDir, File tmpFile, File tmpFile2, String sam) throws IOException, UnindexableDataException {
@@ -100,8 +109,7 @@ public class PopulationCliTest extends AbstractParamsCliTest<VariantParams> {
     err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--pedigree", tmpFile.getPath(), in.getPath(), "--min-avr-score", "-0.1");
     assertTrue(err, err.contains("--min-avr-score must be in the range [0.0, 1.0]"));
 
-    err = checkMainInitWarn("-o", outDir.getPath(), "-t", template.getPath(), "--pedigree", tmpFile2.getPath(), in.getPath(), in.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
-    assertTrue(err, err.contains("assuming autosomal inheritance"));
+    checkHandleFlagsOut("-o", outDir.getPath(), "-t", template.getPath(), "--pedigree", tmpFile2.getPath(), in.getPath(), in.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
   }
 
   @Override
