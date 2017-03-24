@@ -142,7 +142,8 @@ public class FamilyCliTest extends AbstractParamsCliTest<VariantParams> {
       err = checkMainInitBadFlags("-o", outDir.getPath(), "-t", template.getPath(), "-p", tmpFile.getPath(), in2.getPath());
       TestUtils.containsAllUnwrapped(err, "should contain exactly 6");
 
-      checkMainInitOk("-o", outDir.getPath(), "-t", template.getPath(), "-p", tmpFile2.getPath(), in.getPath(), in.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
+      err = checkMainInitWarn("-o", outDir.getPath(), "-t", template.getPath(), "-p", tmpFile2.getPath(), in.getPath(), in.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
+      assertTrue(err, err.contains("assuming autosomal inheritance"));
     } finally {
       FileHelper.deleteAll(tmpDir);
       FileHelper.deleteAll(tmpFile);

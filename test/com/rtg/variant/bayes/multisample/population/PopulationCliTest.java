@@ -100,7 +100,8 @@ public class PopulationCliTest extends AbstractParamsCliTest<VariantParams> {
     err = checkHandleFlagsErr("-o", outDir.getPath(), "-t", template.getPath(), "--pedigree", tmpFile.getPath(), in.getPath(), "--min-avr-score", "-0.1");
     assertTrue(err, err.contains("--min-avr-score must be in the range [0.0, 1.0]"));
 
-    checkMainInitOk("-o", outDir.getPath(), "-t", template.getPath(), "--pedigree", tmpFile2.getPath(), in.getPath(), in.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
+    err = checkMainInitWarn("-o", outDir.getPath(), "-t", template.getPath(), "--pedigree", tmpFile2.getPath(), in.getPath(), in.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION);
+    assertTrue(err, err.contains("assuming autosomal inheritance"));
   }
 
   @Override

@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
 
+import com.rtg.reference.ReferenceGenome;
 import com.rtg.reference.Sex;
 import com.rtg.reference.SexMemo;
 import com.rtg.relation.ChildFamilyLookup;
@@ -29,7 +30,6 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.MachineErrorChooserInterface;
 import com.rtg.variant.VariantParams;
-import com.rtg.vcf.VariantStatistics;
 import com.rtg.variant.bayes.complex.DenovoChecker;
 import com.rtg.variant.bayes.complex.MendelianDenovoChecker;
 import com.rtg.variant.bayes.multisample.AbstractJointCallerConfiguration;
@@ -45,6 +45,7 @@ import com.rtg.variant.format.VariantOutputVcfFormatter;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
 import com.rtg.vcf.ChildPhasingVcfAnnotator;
+import com.rtg.vcf.VariantStatistics;
 
 /**
  */
@@ -109,6 +110,9 @@ public final class FamilyCallerConfiguration extends AbstractJointCallerConfigur
       // Set sample ids
       family.setSampleIds(calledGenomes);
 
+      if (!ReferenceGenome.hasReferenceFile(params.genome().reader())) {
+        Diagnostic.warning("The reference SDF does not contain reference.txt configuration, assuming autosomal inheritance (calling on sex chromosomes will not be correct). For more information, see the user manual.");
+      }
 
       final MachineErrorChooserInterface chooser = MultisampleUtils.chooser(params);
       final PopulationHwHypothesesCreator ssp;

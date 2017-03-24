@@ -19,6 +19,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.rtg.reference.ReferenceGenome;
 import com.rtg.reference.SexMemo;
 import com.rtg.relation.ChildFamilyLookup;
 import com.rtg.relation.Family;
@@ -132,6 +133,10 @@ public final class PopulationCallerConfiguration extends AbstractJointCallerConf
         }
 
         if (families.size() > 0) {
+          if (!ReferenceGenome.hasReferenceFile(params.genome().reader())) { // This isn't such a problem when no families are involved
+            Diagnostic.warning("The reference SDF does not contain reference.txt configuration, assuming autosomal inheritance (calling on sex chromosomes will not be correct). For more information, see the user manual.");
+          }
+
           // Ensure all family members are in called genomes
           for (Family family : families) {
             for (String member : family.getMembers()) {
