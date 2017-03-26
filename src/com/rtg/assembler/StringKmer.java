@@ -17,8 +17,7 @@ import com.rtg.assembler.graph.implementation.ContigString;
 import com.rtg.mode.DNA;
 
 /**
- *         Date: 27/04/12
- *         Time: 2:04 PM
+ * String representation of a <code>k-mer</code>.
  */
 class StringKmer extends AbstractKmer {
   final String mCode;
@@ -77,7 +76,6 @@ class StringKmer extends AbstractKmer {
   }
 
   static KmerFactory factory() {
-    //Diagnostic.userLog("Using string kmer factory");
     return new Factory();
   }
 

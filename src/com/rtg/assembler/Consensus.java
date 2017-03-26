@@ -131,7 +131,7 @@ public class Consensus extends LoggedCli {
     sourceIds.add(GraphReader.getUUID(graphDir));
     final Map<String, String> combined = new HashMap<>();
     combined.put(COMBINED, COMBINED_DESCRIPTION);
-    final Graph graph = GraphReader.read(GraphFactory.KMER, graphDir, combined, Collections.<String, String>emptyMap());
+    final Graph graph = GraphReader.read(GraphFactory.KMER, graphDir, combined, Collections.emptyMap());
     final GraphKmerAttribute mutable = (GraphKmerAttribute) graph;
 
     buildConsensus(kmerSize, threshold, mutable);

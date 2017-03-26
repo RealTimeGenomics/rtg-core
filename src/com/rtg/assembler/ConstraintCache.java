@@ -89,11 +89,6 @@ public class ConstraintCache {
     addSingle(constraint.mContigB, constraint);
   }
   void addSingle(long id, ConstraintCollector constraint) {
-    List<ConstraintCollector> list =  mIndex.get(id);
-    if (list == null) {
-      list = new ArrayList<>();
-      mIndex.put(id, list);
-    }
-    list.add(constraint);
+    mIndex.computeIfAbsent(id, k -> new ArrayList<>()).add(constraint);
   }
 }

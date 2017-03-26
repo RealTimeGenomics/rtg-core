@@ -19,7 +19,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.UUID;
 
 import com.rtg.assembler.graph.Graph;
 import com.rtg.assembler.graph.GraphFactory;
@@ -111,9 +110,9 @@ final class AssembleTask extends ParamsTask<AssembleParams, GraphMapStatistics> 
       throw new NoTalkbackSlimException(ErrorType.DIRECTORY_NOT_CREATED, deletes.getPath());
     }
     if (withDeleted) {
-      GraphWriter.writeWithDeleted(g, new StoreDirProxy(deletes), CommandLine.getCommandLine(), Collections.<UUID>emptySet());
+      GraphWriter.writeWithDeleted(g, new StoreDirProxy(deletes), CommandLine.getCommandLine(), Collections.emptySet());
     } else {
-      GraphWriter.write(g, new StoreDirProxy(deletes), CommandLine.getCommandLine(), Collections.<UUID>emptySet());
+      GraphWriter.write(g, new StoreDirProxy(deletes), CommandLine.getCommandLine(), Collections.emptySet());
     }
 
   }

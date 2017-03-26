@@ -98,7 +98,7 @@ public class DeBruijnAssemblerTask extends ParamsTask<DeBruijnParams, NoStatisti
     final HashSet<UUID> uuids = new HashSet<>();
     writeContigs(graph, new File(outputDir, "popped"), uuids);
     outputTimer.stopLog();
-    final GraphKmerAttribute newGraph = new GraphKmerAttribute(kmerSize - 1, Collections.<String, String>emptyMap(), Collections.<String, String>emptyMap());
+    final GraphKmerAttribute newGraph = new GraphKmerAttribute(kmerSize - 1, Collections.emptyMap(), Collections.emptyMap());
     graph.compact(newGraph);
     return newGraph;
   }

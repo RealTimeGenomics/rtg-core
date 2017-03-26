@@ -29,7 +29,6 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.UUID;
 
 import com.rtg.alignment.ActionsHelper;
 import com.rtg.assembler.graph.Graph;
@@ -228,7 +227,7 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
       }
       wholeReadPaths.add(path);
     }
-    Collections.sort(wholeReadPaths, new ScoreComparator());
+    wholeReadPaths.sort(new ScoreComparator());
     if (wholeReadPaths.size() > 0) {
       final PacBioPath bestPath = wholeReadPaths.get(0);
       if ((wholeReadPaths.size() == 1 || wholeReadPaths.get(1).score() > bestPath.score()) && !bestPath.mIsDupe) {
@@ -253,7 +252,7 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
       }
     }
     final Graph sortedGraph = GraphSorter.sortedGraph(g);
-    GraphWriter.write(sortedGraph, new StoreDirProxy(mParams.directory()), "pac_bio_map", Collections.<UUID>emptySet());
+    GraphWriter.write(sortedGraph, new StoreDirProxy(mParams.directory()), "pac_bio_map", Collections.emptySet());
   }
 
   static class ScoreComparator implements Comparator<PacBioPath>, Serializable {
@@ -264,12 +263,7 @@ public final class PacBio extends ParamsTask<PacBioParams, PacBioStatistics> {
   }
 
   private static List<PacBioPath> getOrAdd(Map<Long, List<PacBioPath>> pathMap, long contig) {
-    List<PacBioPath> newPathList = pathMap.get(contig);
-    if (newPathList == null) {
-      newPathList = new ArrayList<>();
-      pathMap.put(contig, newPathList);
-    }
-    return newPathList;
+    return pathMap.computeIfAbsent(contig, k -> new ArrayList<>());
   }
 
   static List<PartialAlignment> alignHits(final HitMap hits, final MutableGraph graph, final byte[] read) {
