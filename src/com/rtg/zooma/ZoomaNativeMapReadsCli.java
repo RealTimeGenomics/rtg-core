@@ -70,7 +70,7 @@ public class ZoomaNativeMapReadsCli extends AbstractCli {
     SamCommandHelper.initSamRg(mFlags);
     MapFlags.initFragmentSizeFlags(mFlags);
     CommonFlags.initThreadsFlag(mFlags);
-    mFlags.setValidator(flags -> (!mFlags.isSet(SamCommandHelper.SAM_RG) || SamCommandHelper.validateSamRg(flags)) && MapFlags.validateMinMaxFragmentSize(flags));
+    mFlags.setValidator(flags -> SamCommandHelper.validateSamRg(flags) && MapFlags.validateMinMaxFragmentSize(flags));
   }
 
   @Override

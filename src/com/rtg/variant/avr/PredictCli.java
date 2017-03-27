@@ -63,8 +63,8 @@ public class PredictCli extends AbstractCli {
     CommonFlags.initNoGzip(mFlags);
     CommonFlags.initIndexFlags(mFlags);
     CommonFlags.initForce(mFlags);
-    mFlags.registerRequired('i', INPUT_FLAG, File.class, FILE, "input VCF file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, FILE, "output VCF file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerRequired('i', INPUT_FLAG, File.class, FILE, "input VCF file containing variants to score. Use '-' to read from standard input").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerRequired('o', OUTPUT_FLAG, File.class, FILE, "output VCF file. Use '-' to write to standard output").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     final Flag<File> avrFlag = AvrUtils.initAvrModel(mFlags, false);
     if (avrFlag.getParameterDefault() == null) {
       avrFlag.setMinCount(1); // Make required if no default available
@@ -75,7 +75,8 @@ public class PredictCli extends AbstractCli {
     mFlags.registerOptional('s', SAMPLE_FLAG, String.class, STRING, "if set, only re-score the specified samples (Default is to re-score all samples)").setCategory(CommonFlagCategories.REPORTING).setMaxCount(Integer.MAX_VALUE);
     mFlags.registerOptional('f', FIELD_FLAG, String.class, STRING, "the name of the VCF FORMAT field in which to store the computed score", AbstractPredictModel.AVR).setCategory(CommonFlagCategories.REPORTING);
     mFlags.setValidator(flags ->
-      CommonFlags.validateOutputFile(flags, VcfUtils.getZippedVcfFileName(!flags.isSet(NO_GZIP), (File) flags.getValue(OUTPUT_FLAG)))
+      CommonFlags.validateInputFile(flags, INPUT_FLAG)
+      && CommonFlags.validateOutputFile(flags, VcfUtils.getZippedVcfFileName(!flags.isSet(NO_GZIP), (File) flags.getValue(OUTPUT_FLAG)))
     );
   }
 

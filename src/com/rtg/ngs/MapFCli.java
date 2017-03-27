@@ -111,8 +111,7 @@ public class MapFCli extends ParamsCli<NgsParams> {
           return false;
         }
       }
-      final boolean rgOk = !flags.isSet(SamCommandHelper.SAM_RG) || SamCommandHelper.validateSamRg(flags);
-      return validateInputOutput(flags) && validateParams(flags) && rgOk;
+      return validateInputOutput(flags) && validateParams(flags) && SamCommandHelper.validateSamRg(flags);
     }
     private boolean validateParams(final CFlags flags) {
       return MapFlags.validateMapParams(flags);

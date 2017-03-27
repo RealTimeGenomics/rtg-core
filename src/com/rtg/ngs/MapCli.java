@@ -215,40 +215,15 @@ public class MapCli extends ParamsCli<NgsParams>  {
   static class MapFlagsValidator implements Validator  {
     @Override
     public boolean isValid(final CFlags flags) {
-      return flags.checkNand(MapCli.TOP_RANDOM, MapFlags.OUTPUT_UNFILTERED) && validateInputOutput(flags) && validateParams(flags);
-    }
-
-    private boolean validateParams(final CFlags flags) {
-      return MapFlags.validateMapParams(flags) && validateRamMapParams(flags);
-    }
-
-    private boolean validateInputOutput(final CFlags flags) {
-      return MapFlags.validateMapInputOutputParams(flags) && validateRamMapInputOutputParams(flags);
-    }
-
-    private static boolean validateRamMapParams(CFlags flags) {
-      if (!flags.checkInRange(MapFlags.TOPN_RESULTS_FLAG, 1, 255)) {
-        return false;
-      }
-      if (!flags.checkInRange(MapFlags.MAX_TOP_RESULTS_FLAG, 1, 65535)) {
-        return false;
-      }
-      if (flags.isSet(MapFlags.XSCORE_INDEL)) {
-        if (!flags.checkInRange(MapFlags.XSCORE_INDEL, 0, MapFlags.MAX_SCORE)) {
-          return false;
-        }
-      }
-      if (!MapFlags.validateSexTemplateReference(flags)) {
-        return false;
-      }
-      if (!CommonFlags.validateInputFile(flags, CommonFlags.BED_REGIONS_FLAG)) {
-        return false;
-      }
-      return true;
-    }
-
-    private static boolean validateRamMapInputOutputParams(CFlags flags) {
-      return !(flags.isSet(SamCommandHelper.SAM_RG) && !SamCommandHelper.validateSamRg(flags));
+      return flags.checkNand(MapCli.TOP_RANDOM, MapFlags.OUTPUT_UNFILTERED)
+        && MapFlags.validateMapInputOutputParams(flags)
+        && SamCommandHelper.validateSamRg(flags)
+        && MapFlags.validateMapParams(flags)
+        && flags.checkInRange(MapFlags.TOPN_RESULTS_FLAG, 1, 255)
+        && flags.checkInRange(MapFlags.MAX_TOP_RESULTS_FLAG, 1, 65535)
+        && flags.checkInRange(MapFlags.XSCORE_INDEL, 0, MapFlags.MAX_SCORE)
+        && MapFlags.validateSexTemplateReference(flags)
+        && CommonFlags.validateInputFile(flags, CommonFlags.BED_REGIONS_FLAG);
     }
 
   }

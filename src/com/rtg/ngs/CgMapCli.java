@@ -113,46 +113,21 @@ public class CgMapCli extends ParamsCli<NgsParams> {
         Diagnostic.error(ErrorType.NOT_A_PAIRED_END_SDF, inputFile.getPath());
         return false;
       }
-
-      if (!MapFlags.validateSexTemplateReference(flags)) {
-        return false;
-      }
-
-      if (flags.isSet(MapFlags.XSCORE_INDEL)) {
-        if (!flags.checkInRange(MapFlags.XSCORE_INDEL, 0, MapFlags.MAX_SCORE)) {
-          return false;
-        }
-      }
-      if (!MapFlags.validateMinMaxFragmentSize(flags)) {
-        return false;
-      }
-
-      if (flags.isSet(SamCommandHelper.SAM_RG) && !SamCommandHelper.validateSamRg(flags)) {
-        return false;
-      }
-
-      if (!MapFlags.checkPercentRepeatFrequency(flags)) {
-        return false;
-      }
       final String mask = flags.getValue(MASK_FLAG).toString();
       if (!FactoryUtil.checkMaskExists(mask)) {
         Diagnostic.error(ErrorType.INVALID_MASK, mask);
         return false;
       }
-      if (!CommonFlags.validateThreads(flags)) {
-        return false;
-      }
-      if (!flags.checkInRange(MapFlags.MAX_TOP_RESULTS_FLAG, 1, 255)) {
-        return false;
-      }
-      if (flags.isSet(MapFlags.BAM_FLAG) && flags.isSet(CommonFlags.NO_GZIP)) {
-        flags.setParseMessage("Can only specify --" + CommonFlags.NO_GZIP + " when not using BAM output");
-        return false;
-      }
-      if (!CommonFlags.validateInputFile(flags, CommonFlags.BED_REGIONS_FLAG)) {
-        return false;
-      }
-      return true;
+
+      return MapFlags.validateSexTemplateReference(flags)
+      && flags.checkInRange(MapFlags.XSCORE_INDEL, 0, MapFlags.MAX_SCORE)
+      && MapFlags.validateMinMaxFragmentSize(flags)
+      && SamCommandHelper.validateSamRg(flags)
+      && MapFlags.checkPercentRepeatFrequency(flags)
+      && CommonFlags.validateThreads(flags)
+      && flags.checkInRange(MapFlags.MAX_TOP_RESULTS_FLAG, 1, 255)
+      && flags.checkNand(MapFlags.BAM_FLAG, CommonFlags.NO_GZIP)
+      && CommonFlags.validateInputFile(flags, CommonFlags.BED_REGIONS_FLAG);
     }
   }
 
