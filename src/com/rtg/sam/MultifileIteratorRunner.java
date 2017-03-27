@@ -97,14 +97,14 @@ final class MultifileIteratorRunner<T> implements RecordIterator<T>, IORunnable,
             break;
           }
         }
-      } catch (final RuntimeException e) {
+      } catch (final Throwable t) {
         synchronized (this) {
           mVolIsFinished = true;
           notifyAll();
         }
         mRecords.setHasNext(false);
         //close();
-        throw e;
+        throw t;
       }
     }
     synchronized (this) {
