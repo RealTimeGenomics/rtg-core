@@ -222,6 +222,7 @@ public class DeProbeCli extends LoggedCli {
           if (writer.getDuplicateCount() > 0) {
             Diagnostic.warning(writer.getDuplicateCount() + " duplicate records were dropped during output.");
           }
+          Diagnostic.userLog("Reordering buffer used capacity of " + writer.getMaxCapacityUsed() + " records");
           Diagnostic.progress("Closing SAM writer");
         }
       }
