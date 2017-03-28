@@ -133,7 +133,7 @@ public abstract class ReorderingQueue<T> implements AutoCloseable {
     return mDuplicates;
   }
 
-  private void flush() throws IOException {
+  protected void flush() throws IOException {
     for (final T rec : mRecordSet) {
       flushRecord(rec);
     }
