@@ -19,6 +19,7 @@ import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
 import com.rtg.util.TestUtils;
 import com.rtg.util.io.TestDirectory;
+import com.rtg.util.test.FileHelper;
 
 /**
  */
@@ -82,4 +83,28 @@ public class PairedEndTrimCliTest extends AbstractCliTest {
     TestUtils.containsAll(checkHandleFlagsErr(strings), expected);
   }
 
+  public void testEndToEnd() throws IOException {
+    try (TestDirectory dir = new TestDirectory("petrim")) {
+      final File left = new File(dir, "reads50_R1.gz");
+      final File right = new File(dir, "reads50_R2.gz");
+      FileHelper.resourceToGzFile("com/rtg/reader/resources/reads50_R1.fastq", left);
+      FileHelper.resourceToGzFile("com/rtg/reader/resources/reads50_R2.fastq", right);
+
+      final File out1 = new File(dir, "readsout1.fastq");
+      checkMainInitOk("-l", left.toString(), "-r", right.toString(), "-o", out1.toString(), "--interleave", "-Z", "--left-probe-length=30", "--right-probe-length=30");
+      mNano.check("petrim-e2e-probes.fastq", FileHelper.fileToString(out1));
+
+      final File out2 = new File(dir, "readsout2.fastq");
+      checkMainInitOk("-l", left.toString(), "-r", right.toString(), "-o", out2.toString(), "--interleave", "-Z", "--left-probe-length=30", "--right-probe-length=30", "--min-read-length=30");
+      mNano.check("petrim-e2e-min-length.fastq", FileHelper.fileToString(out2));
+
+      final File out3 = new File(dir, "readsout3.fastq");
+      checkMainInitOk("-l", left.toString(), "-r", right.toString(), "-o", out3.toString(), "--interleave", "-Z", "--left-probe-length=30", "--right-probe-length=30", "--min-read-length=30", "--discard-empty-pairs");
+      mNano.check("petrim-e2e-drop-pairs.fastq", FileHelper.fileToString(out3));
+
+      final File out4 = new File(dir, "readsout4.fastq");
+      checkMainInitOk("-l", left.toString(), "-r", right.toString(), "-o", out4.toString(), "--interleave", "-Z", "--left-probe-length=30", "--right-probe-length=30", "--min-read-length=30", "--discard-empty-reads");
+      mNano.check("petrim-e2e-drop-reads.fastq", FileHelper.fileToString(out4));
+    }
+  }
 }

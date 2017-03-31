@@ -181,7 +181,7 @@ public class PairAlignerTest {
       .create();
     return new PairAligner(
       new UnidirectionalAdaptor(new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 80, 80, maxReadLength)),
-      25, 90, probeLength, 0, false, false);
+      25, 90, probeLength, 0, 0, false, false);
   }
 
 

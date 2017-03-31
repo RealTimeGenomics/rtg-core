@@ -77,6 +77,6 @@ public class PairAlignmentProcessorTest {
     final NgsParams ngsParams = new NgsParamsBuilder().create();
     return new PairAligner(
       new UnidirectionalAdaptor(new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 2, 2, maxReadLength)),
-      5, 90, 4, 0, false, false);
+      5, 90, 4, 0, 0, false, false);
   }
 }

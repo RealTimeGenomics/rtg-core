@@ -12,6 +12,7 @@
 
 package com.rtg.reader;
 
+import static com.rtg.launcher.CommonFlags.MIN_READ_LENGTH;
 import static com.rtg.launcher.CommonFlags.NO_GZIP;
 import static com.rtg.launcher.CommonFlags.OUTPUT_FLAG;
 import static com.rtg.launcher.CommonFlags.QUALITY_FLAG;
@@ -31,6 +32,7 @@ import java.io.PrintStream;
 import java.util.Collections;
 import java.util.concurrent.FutureTask;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import com.rtg.alignment.SingleIndelSeededEditDistance;
 import com.rtg.alignment.UnidirectionalAdaptor;
@@ -67,6 +69,9 @@ public class PairedEndTrimCli extends AbstractCli {
   private static final String LEFT_PROBE_LENGTH = "left-probe-length";
   private static final String RIGHT_PROBE_LENGTH = "right-probe-length";
 
+  private static final String DISCARD_EMPTY_READS = "discard-empty-reads";
+  private static final String DISCARD_EMPTY_PAIRS = "discard-empty-pairs";
+
   private static final String VERBOSE = "Xverbose";
 
 
@@ -84,13 +89,15 @@ public class PairedEndTrimCli extends AbstractCli {
     flags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "output filename prefix. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
     CommonFlags.initQualityFormatFlag(flags);
     MapFlags.initAlignerPenaltyFlags(flags);
-
+    CommonFlags.initMinReadLength(flags);
     flags.registerOptional('L', MIN_OVERLAP, Integer.class, CommonFlags.INT, "minimum number of bases in overlap to trigger overlap trimming", 25).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('P', MIN_IDENTITY, Integer.class, CommonFlags.INT, "minimum percent identity in overlap to trigger overlap trimming", 90).setCategory(SENSITIVITY_TUNING);
 
     flags.registerOptional('m', MIDPOINT_TRIM, "if set, trim both reads to midpoint of overlap region").setCategory(FILTERING);
     flags.registerOptional(LEFT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R1 starts with probes this long, and trim R2 bases that overlap into this", 0).setCategory(FILTERING);
     flags.registerOptional(RIGHT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R2 starts with probes this long, and trim R1 bases that overlap into this", 0).setCategory(FILTERING);
+    flags.registerOptional(DISCARD_EMPTY_PAIRS, "if set, discard pairs where both reads have zero length (after any trimming)").setCategory(FILTERING);
+    flags.registerOptional(DISCARD_EMPTY_READS, "if set, discard pairs where either read has zero length (after any trimming)").setCategory(FILTERING);
 
     flags.registerOptional(INTERLEAVE, "interleave paired data into a single output file. Default is to split to separate output files").setCategory(UTILITY);
     CommonFlags.initThreadsFlag(flags);
@@ -128,8 +135,10 @@ public class PairedEndTrimCli extends AbstractCli {
         && flags.checkInRange(MIN_OVERLAP, 1, Integer.MAX_VALUE)
         && flags.checkInRange(MIN_IDENTITY, 1, 100)
         && flags.checkInRange(SUBSAMPLE_FLAG, 0.0, 1.0)
+        && flags.checkInRange(MIN_READ_LENGTH, 0, Integer.MAX_VALUE)
         && flags.checkInRange(LEFT_PROBE_LENGTH, 0, Integer.MAX_VALUE)
-        && flags.checkInRange(RIGHT_PROBE_LENGTH, 0, Integer.MAX_VALUE);
+        && flags.checkInRange(RIGHT_PROBE_LENGTH, 0, Integer.MAX_VALUE)
+        && flags.checkNand(DISCARD_EMPTY_PAIRS, DISCARD_EMPTY_READS);
     }
   }
 
@@ -162,7 +171,15 @@ public class PairedEndTrimCli extends AbstractCli {
         left = new FastqWriter(new OutputStreamWriter(FileUtils.createOutputStream(baseFile, "_1")));
         right = new FastqWriter(new OutputStreamWriter(FileUtils.createOutputStream(baseFile, "_2")));
       }
-      try (final AsyncFastqPairWriter w = new AsyncFastqPairWriter(left, right)) {
+      final Predicate<FastqPair> p;
+      if (mFlags.isSet(DISCARD_EMPTY_READS)) {
+        p = o -> o.r1().length() != 0 && o.r2().length() != 0;
+      } else if (mFlags.isSet(DISCARD_EMPTY_PAIRS)) {
+        p = o -> o.r1().length() != 0 || o.r2().length() != 0;
+      } else {
+        p = o -> true;
+      }
+      try (final AsyncFastqPairWriter w = new AsyncFastqPairWriter(left, right, p)) {
         final BatchReorderingWriter<FastqPair> batchWriter = new BatchReorderingWriter<>(w);
         final Function<Batch<FastqPair>, FutureTask<?>> listRunnableFunction = batch -> new FutureTask<>(new PairAlignmentProcessor(stats, batchWriter, batch, getPairAligner()), null);
         final BatchProcessor<FastqPair> fastqPairBatchProcessor = new BatchProcessor<>(listRunnableFunction, threads, batchSize);
@@ -183,7 +200,7 @@ public class PairedEndTrimCli extends AbstractCli {
       new UnidirectionalAdaptor(new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 2, 2, maxReadLength)),
       (Integer) mFlags.getValue(MIN_OVERLAP), (Integer) mFlags.getValue(MIN_IDENTITY),
       (Integer) mFlags.getValue(LEFT_PROBE_LENGTH), (Integer) mFlags.getValue(RIGHT_PROBE_LENGTH),
-      mFlags.isSet(MIDPOINT_TRIM), mFlags.isSet(VERBOSE));
+      (Integer) mFlags.getValue(MIN_READ_LENGTH), mFlags.isSet(MIDPOINT_TRIM), mFlags.isSet(VERBOSE));
   }
 
   @Override

@@ -33,18 +33,20 @@ class PairAligner {
   private final EditDistance mEd;
   private final int mMinOverlap;
   private final int mMinIdentity;
+  private final ReadTrimmer mLengthTrimmer;
   private final PairAlignmentStats mStats = new PairAlignmentStats();
   private final int mR1ProbeLength;
   private final int mR2ProbeLength;
   private final boolean mVerbose;
   private final boolean mTrimMid;
 
-  PairAligner(EditDistance ed, int minOverlap, int minIdentity, int r1ProbeLength, int r2ProbeLength, boolean trimMid, boolean verbose) {
+  PairAligner(EditDistance ed, int minOverlap, int minIdentity, int r1ProbeLength, int r2ProbeLength, Integer minLength, boolean trimMid, boolean verbose) {
     mEd = ed;
     mMinOverlap = minOverlap;
     mMinIdentity = minIdentity;
     mR1ProbeLength = r1ProbeLength;
     mR2ProbeLength = r2ProbeLength;
+    mLengthTrimmer = minLength > 0 ? new MinLengthReadTrimmer(minLength) : new NullReadTrimmer();
     mTrimMid = trimMid;
     mVerbose = verbose;
   }
@@ -63,6 +65,9 @@ class PairAligner {
 
     // Look for high-identity alignment
     alignReads(pair.r1(), pair.r2());
+
+    pair.r1().trim(mLengthTrimmer);
+    pair.r2().trim(mLengthTrimmer);
 
     // Re-reverse R2 back to original order
     pair.r2().rc();

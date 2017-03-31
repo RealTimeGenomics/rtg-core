@@ -14,6 +14,7 @@ package com.rtg.reader;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.function.Predicate;
 
 import htsjdk.samtools.util.RuntimeIOException;
 
@@ -21,13 +22,28 @@ import htsjdk.samtools.util.RuntimeIOException;
  * Chunk writer for {@code FastqPair}
  */
 class AsyncFastqPairWriter extends AbstractAsyncChunkWriter<FastqPair> {
+
   private final FastqWriter mLeft;
   private final FastqWriter mRight;
+  private final Predicate<FastqPair> mAccept;
+
 
   AsyncFastqPairWriter(FastqWriter r1, FastqWriter r2) {
+    this(r1, r2, o -> true);
+  }
+
+  AsyncFastqPairWriter(FastqWriter r1, FastqWriter r2, Predicate<FastqPair> accept) {
     super(10000);
     mLeft = r1;
     mRight = r2;
+    mAccept = accept;
+  }
+
+  @Override
+  public void write(FastqPair pair) {
+    if (mAccept.test(pair)) {
+      super.write(pair);
+    }
   }
 
   @Override
