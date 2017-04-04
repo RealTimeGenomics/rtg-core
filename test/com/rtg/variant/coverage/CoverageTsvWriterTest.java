@@ -26,16 +26,9 @@ public class CoverageTsvWriterTest extends TestCase {
     final MemoryPrintStream out = new MemoryPrintStream();
     final CoverageTsvWriter cw = new CoverageTsvWriter(out.outputStream());
     cw.init();
-    final CoverageState cs = new CoverageState("hello", new byte[] {1, 2, 3, 4}, true);
-    for (int i = 0; i < 4; ++i) {
-      cs.incrementIH(i, 1);
-      cs.incrementIH(i, 2);
-    }
-    cs.incrementIH(2, 1);
-    cs.incrementIH(1, 2);
-    for (int i = 1; i < 4; ++i) {
-      cw.finalCoveragePosition("hello", i, cs.getIH1(i), cs.getIHgt1(i), cs.getScore(i));
-    }
+    cw.finalCoveragePosition("hello", 1, 1, 2, 2.0);
+    cw.finalCoveragePosition("hello", 2, 2, 1, 2.5);
+    cw.finalCoveragePosition("hello", 3, 1, 1, 1.5);
     final String actual = out.toString();
     TestUtils.containsAll(actual,
         CoverageBedWriter.VERSION_STRING,
