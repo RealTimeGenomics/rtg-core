@@ -157,20 +157,7 @@ public class DeProbeCli extends LoggedCli {
       loadProbeBed(bedFile);
       final File outputFile = new File(outputDirectory(), ALIGNMENT_FILE_NAME);
       try (SamOutput samOutput = SamOutput.getSamOutput(outputFile, out, reader.header(), !mFlags.isSet(CommonFlags.NO_GZIP), true, null)) {
-        try (SmartSamWriter writer = new SmartSamWriter(samOutput.getWriter()) {
-          @Override
-          public boolean addRecord(SAMRecord r) throws IOException {
-            if (r.getReferenceIndex() == SAMRecord.NO_ALIGNMENT_REFERENCE_INDEX) {
-              if (mLastWrittenRecord != null) {
-                flush();
-              }
-              flushRecord(r);
-              return true;
-            } else {
-              return super.addRecord(r);
-            }
-          }
-        }) {
+        try (SmartSamWriter writer = new SmartSamWriter(samOutput.getWriter())) {
           while (reader.hasNext()) {
             final SAMRecord record = reader.next();
             if (!record.getReferenceName().equals(currentSequence)) {
