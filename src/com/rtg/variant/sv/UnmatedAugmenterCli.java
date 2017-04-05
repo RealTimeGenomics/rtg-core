@@ -12,10 +12,13 @@
 
 package com.rtg.variant.sv;
 
+import static com.rtg.launcher.CommonFlags.FORCE;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Locale;
 
 import com.rtg.launcher.CommonFlags;
@@ -26,7 +29,6 @@ import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
-import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
@@ -39,6 +41,7 @@ public class UnmatedAugmenterCli extends LoggedCli {
 
   static final String KEEP_ORIG_FLAG = "Xkeep-original";
   static final String OUTPUT_SUFFIX_FLAG = "Xoutput-suffix";
+  static final String NO_AUGMENT = "no-augment";
 
   @Override
   public String moduleName() {
@@ -65,89 +68,111 @@ public class UnmatedAugmenterCli extends LoggedCli {
     mFlags.setDescription("Prepares SAM files for use with sv module, by finding mate position/frame information for discordant matings and generates the read group statistics. This command is not needed with RTG mappings unless automatic svprep was disabled.");
     CommonFlagCategories.setCategories(mFlags);
     mFlags.registerExtendedHelp();
+    CommonFlags.initForce(mFlags);
     mFlags.registerOptional('s', OUTPUT_SUFFIX_FLAG, String.class, CommonFlags.STRING, "suffix for output file of each input file", ".augmented").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerOptional('k', KEEP_ORIG_FLAG, "keep original file and create augmented file using suffix").setCategory(CommonFlagCategories.INPUT_OUTPUT);
+    mFlags.registerOptional(NO_AUGMENT, "if set, only compute read group statistics").setCategory(CommonFlagCategories.UTILITY);
     mFlags.registerRequired(File.class, CommonFlags.DIR, "directory containing SAM/BAM format files").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    mFlags.setValidator(new UnmatedAugmenterValidator());
+    mFlags.setValidator(flags -> checkInputDirectory(flags) && flags.checkIf(OUTPUT_SUFFIX_FLAG, KEEP_ORIG_FLAG));
   }
 
-  static class SamBamGzMatedUnmatedFileFilter implements FileFilter {
+  private static boolean checkInputDirectory(CFlags flags) {
+    final File dir = (File) flags.getAnonymousValue(0);
+    if (!dir.isDirectory()) {
+      flags.setParseMessage("A directory name was expected, but \"" + dir.getPath() + "\" is not a directory.");
+      return false;
+    }
+    return true;
+  }
+
+  static class AlignmentsFileFilter implements FileFilter {
     @Override
     public boolean accept(File pathname) {
       final String fname = pathname.getName().toLowerCase(Locale.ROOT);
-      return fname.matches(".*?mated\\.sam(.gz)?") || fname.matches(".*?mated\\.bam");
+      return fname.matches(".*\\.sam(.gz)?") || fname.matches(".*\\.bam");
     }
   }
-
-  static class SamBamGzUnmappedFileFilter implements FileFilter {
+  static class MatedFileFilter implements FileFilter {
     @Override
     public boolean accept(File pathname) {
       final String fname = pathname.getName().toLowerCase(Locale.ROOT);
-      return fname.matches(".*?unmapped\\.sam(.gz)?") || fname.matches(".*?unmapped\\.bam");
+      return fname.matches("mated\\.sam(.gz)?") || fname.matches("mated\\.bam");
     }
+  }
+  static class UnmatedFileFilter implements FileFilter {
+    @Override
+    public boolean accept(File pathname) {
+      final String fname = pathname.getName().toLowerCase(Locale.ROOT);
+      return fname.matches("unmated\\.sam(.gz)?") || fname.matches("unmated\\.bam");
+    }
+  }
+  static class UnmappedFileFilter implements FileFilter {
+    @Override
+    public boolean accept(File pathname) {
+      final String fname = pathname.getName().toLowerCase(Locale.ROOT);
+      return fname.matches("unmapped\\.sam(.gz)?") || fname.matches("unmapped\\.bam");
+    }
+  }
+
+  private File getFile(File dir, FileFilter filter, String label) throws IOException {
+    final File[] files = FileUtils.listFiles(dir, filter);
+    if (files.length > 1) {
+      throw new NoTalkbackSlimException("Multiple " + label + " files found!");
+    }
+    return files.length == 0 ? null : files[0];
   }
 
   @Override
   protected int mainExec(OutputStream out, LogStream log) throws IOException {
     final File dir = outputDirectory();
-    final File[] files = dir.listFiles(new SamBamGzMatedUnmatedFileFilter());
-    if (files == null) {
-      throw new IOException("Invalid directory.");
-    } else if (files.length == 0) {
-      Diagnostic.warning("Read group statistics calculation requires properly mated data");
-      return 0;
+    final File matedFile = getFile(dir, new MatedFileFilter(), "mated");
+    final File unmatedFile = getFile(dir, new UnmatedFileFilter(), "unmated");
+    final File unmappedFile = getFile(dir, new UnmappedFileFilter(), "unmapped");
+    final File[] alignmentsFiles = FileUtils.listFiles(dir, new AlignmentsFileFilter());
+    if (matedFile == null && unmatedFile == null && alignmentsFiles.length == 0) {
+      throw new NoTalkbackSlimException("Could not find any alignments files to process");
     }
-
-    final File[] unmappedFiles = dir.listFiles(new SamBamGzUnmappedFileFilter());
-    if (unmappedFiles == null) {
-      throw new IOException("Invalid directory.");
-    }
-
-    File matedFile = null;
-    File unmatedFile = null;
-
-    for (File file : files) {
-      if (file.getName().contains("unmated")) {
-        if (unmatedFile != null) {
-          Diagnostic.error("Multiple unmated files detected, aborting.");
-          return 1;
-        } else {
-          unmatedFile = file;
-        }
-      } else {
-        if (matedFile != null) {
-          Diagnostic.error("Multiple mated files detected, aborting.");
-          return 1;
-        } else {
-          matedFile = file;
-        }
-      }
-    }
-
-    final File unmappedFile;
-    if (unmappedFiles.length > 1) {
-      Diagnostic.error("Multiple unmapped files found, aborting.");
-      return 1;
-    } else if (unmappedFiles.length == 1) {
-      unmappedFile = unmappedFiles[0];
-    } else {
-      unmappedFile = null;
-    }
-
-    if (matedFile == null) {
-      Diagnostic.error("Unmapped file processing requires a mated file.");
-      return 1;
-    }
-    if (unmatedFile == null) {
-      Diagnostic.error("Unmapped file processing requires an unmated file.");
-      return 1;
+    if (matedFile == null ^ unmatedFile == null) {
+      throw new NoTalkbackSlimException("Could not find both mated and unmated alignments files.");
     }
 
     try (OutputStream rgOut = FileUtils.createOutputStream(new File(dir, UnmatedAugmenter.DEFAULT_RGSTATS_FILENAME), false)) {
-      performAugmentation(matedFile, unmatedFile, unmappedFile, !mFlags.isSet(KEEP_ORIG_FLAG), true, (String) mFlags.getValue(OUTPUT_SUFFIX_FLAG), rgOut);
+      if (mFlags.isSet(NO_AUGMENT)) {
+        new ReadGroupStatsCalculator().calculate(Arrays.asList(alignmentsFiles), rgOut);
+      } else if (matedFile != null && unmatedFile != null) {
+        augmentSplitFiles(matedFile, unmatedFile, unmappedFile, !mFlags.isSet(KEEP_ORIG_FLAG), mFlags.isSet(FORCE), (String) mFlags.getValue(OUTPUT_SUFFIX_FLAG), rgOut);
+      } else {
+        augmentMergedFiles(alignmentsFiles, !mFlags.isSet(KEEP_ORIG_FLAG), mFlags.isSet(FORCE), (String) mFlags.getValue(OUTPUT_SUFFIX_FLAG), rgOut);
+      }
     }
     return 0;
   }
+
+  /**
+   * Augments self-contained alignment files with potential mate information
+   * @param files files containing mated/unmated/unmapped alignments
+   * @param rename rename result file over top of original
+   * @param force overwrite any files that match output file name derived from input and suffix. Ignored when rename set to true.
+   * @param suffix suffix to add to filename appears before optional <code>.sam[.gz]</code>.
+   * @param readGroupStatsOut stream to write out read group stats
+   * @throws IOException they happen maybe
+   */
+  static void augmentMergedFiles(File[] files, boolean rename, boolean force, String suffix, OutputStream readGroupStatsOut) throws IOException {
+    final ReadGroupStatsCalculator outer = new ReadGroupStatsCalculator();
+
+    for (File file : files) {
+      final ReadGroupStatsCalculator calc = new ReadGroupStatsCalculator();
+      final UnmatedAugmenter augmenter = new UnmatedAugmenter();
+      final File output = getOutputFile(file, rename, force, suffix);
+      augmenter.augmentMixed(file, output, calc);
+      renameAndReindex(file, output, rename);
+      Diagnostic.userLog("Agumented " + augmenter.mAugmentedUnmated + " unmated and " + augmenter.mAugmentedUnmapped + " unmapped records");
+      outer.merge(calc);
+    }
+
+    outer.writeReadGroupStats(readGroupStatsOut);
+  }
+
 
   /**
    * Augments the files with potential mate information
@@ -160,47 +185,39 @@ public class UnmatedAugmenterCli extends LoggedCli {
    * @param readGroupStatsOut stream to write out read group stats
    * @throws IOException they happen maybe
    */
-  static void performAugmentation(File matedFile, File unmatedFile, File unmappedFile, boolean rename, boolean force, String suffix, OutputStream readGroupStatsOut) throws IOException {
-    final ReadGroupStatsCalculator calc = readGroupStatsOut == null ? null : new ReadGroupStatsCalculator();
-    if (matedFile != null && calc != null) {
-      UnmatedAugmenter.populateReadGroupStats(matedFile, calc);
-    }
-    if (unmatedFile != null) {
-      augment(unmatedFile, unmappedFile, rename, force, suffix, calc);
-    }
-    if (calc != null) {
-      calc.dumpReadGroups(readGroupStatsOut);
-    }
-  }
+  static void augmentSplitFiles(File matedFile, File unmatedFile, File unmappedFile, boolean rename, boolean force, String suffix, OutputStream readGroupStatsOut) throws IOException {
+    final ReadGroupStatsCalculator calc = new ReadGroupStatsCalculator();
+    calc.addFile(matedFile);
 
-  private static void augment(File unmatedFile, File unmappedFile, boolean rename, boolean force, String suffix, ReadGroupStatsCalculator calc) throws IOException {
     final File output = getOutputFile(unmatedFile, rename, force, suffix);
     final UnmatedAugmenter augmenter = new UnmatedAugmenter();
-    augmenter.augmentUnmated(unmatedFile, output, FileUtils.isGzipFilename(unmatedFile), calc);
+    augmenter.augmentUnmated(unmatedFile, output, calc);
+    renameAndReindex(unmatedFile, output, rename);
 
     if (unmappedFile != null) {
       final File outputUnmapped = getOutputFile(unmappedFile, rename, force, suffix);
-      augmenter.augmentUnmapped(unmappedFile, outputUnmapped, FileUtils.isGzipFilename(outputUnmapped), calc);
+      augmenter.augmentUnmapped(unmappedFile, outputUnmapped, calc);
       renameAndReindex(unmappedFile, outputUnmapped, rename);
     }
 
-    renameAndReindex(unmatedFile, output, rename);
+    Diagnostic.userLog("Agumented " + augmenter.mAugmentedUnmated + " unmated and " + augmenter.mAugmentedUnmapped + " unmapped records");
+    calc.writeReadGroupStats(readGroupStatsOut);
   }
 
-  private static void renameAndReindex(File f, File output, boolean rename) throws IOException {
+  private static void renameAndReindex(File dest, File src, boolean rename) throws IOException {
     final File finalFile;
     if (rename) {
-      if (!(f.canWrite() && f.delete() && output.renameTo(f))) {
-        throw new NoTalkbackSlimException("Unable to rename file: \"" + output.getPath() + "\" to: \"" + f.getPath() + "\"");
+      if (!(dest.canWrite() && dest.delete() && src.renameTo(dest))) {
+        throw new NoTalkbackSlimException("Unable to rename file: \"" + src.getPath() + "\" to: \"" + dest.getPath() + "\"");
       }
-      finalFile = f;
+      finalFile = dest;
     } else {
-      finalFile = output;
+      finalFile = src;
     }
 
     //recreate index if it exists
     File indexFile;
-    if (SamUtils.isBAMFile(f)) {
+    if (SamUtils.isBAMFile(finalFile)) {
       indexFile = BamIndexer.indexFileName(finalFile);
       if (!indexFile.exists()) {
         indexFile = BamIndexer.secondaryIndexFileName(finalFile);
@@ -231,9 +248,6 @@ public class UnmatedAugmenterCli extends LoggedCli {
   }
 
   static File getOutputFile(File f, boolean rename, boolean force, String suffix) throws IOException {
-    if (suffix == null) {
-      throw new NullPointerException("suffix cannot be null");
-    }
     final String name = f.getName().replaceAll("^(.*?)(\\.[bs]am(\\.gz)?)?$", "$1" + suffix + "$2");
     File ret = new File(f.getParentFile(), name);
     if (rename && ret.exists()) {
@@ -244,20 +258,4 @@ public class UnmatedAugmenterCli extends LoggedCli {
     return ret;
   }
 
-  private static class UnmatedAugmenterValidator implements Validator {
-
-    @Override
-    public boolean isValid(CFlags flags) {
-      final File dir = (File) flags.getAnonymousValue(0);
-      if (!dir.isDirectory()) {
-        flags.setParseMessage("A directory name was expected, but \"" + dir.getPath() + "\" is not a directory.");
-        return false;
-      }
-      if (flags.isSet(OUTPUT_SUFFIX_FLAG) && !flags.isSet(KEEP_ORIG_FLAG)) {
-        flags.setParseMessage("Cannot set: --" + OUTPUT_SUFFIX_FLAG + " without: --" + KEEP_ORIG_FLAG);
-        return false;
-      }
-      return true;
-    }
-  }
 }

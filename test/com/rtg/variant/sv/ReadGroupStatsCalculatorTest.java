@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.rtg.AbstractTest;
 import com.rtg.util.NullStreamUtils;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
@@ -24,13 +25,12 @@ import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
-
-import junit.framework.TestCase;
 
 /**
  */
-public class ReadGroupStatsCalculatorTest extends TestCase {
+public class ReadGroupStatsCalculatorTest extends AbstractTest {
 
   /** a SAM file string */
   public static final String RG_SAM = ""
@@ -65,9 +65,7 @@ public class ReadGroupStatsCalculatorTest extends TestCase {
     ;
 
   public void testReadGroupStatsCalculator() throws IOException {
-    Diagnostic.setLogStream();
-    final File tempDir = FileUtils.createTempDir("readgroup", "test");
-    try {
+    try (final TestDirectory tempDir = new TestDirectory("readgroup")) {
       final File samFile = FileUtils.stringToFile(RG_SAM, new File(tempDir, "rg.sam"));
       final List<File> files = new ArrayList<>();
       files.add(samFile);
@@ -77,7 +75,7 @@ public class ReadGroupStatsCalculatorTest extends TestCase {
       Diagnostic.setLogStream(err.printStream());
       calculator.calculate(files, out.outputStream());
       //System.err.println(out.toString());
-      //System.err.println(err.toString());
+      System.err.println(err.toString());
       TestUtils.containsAll(out.toString(),
           "#CL",
           "#Version",
@@ -85,13 +83,11 @@ public class ReadGroupStatsCalculatorTest extends TestCase {
           "boo_pe\t"
           );
       TestUtils.containsAll(err.toString(),
+          "Accumulating read group statistics",
           "Skipping record with no RG id",
           "Skipped 6 records with no RG id"
           );
-      assertEquals(err.toString(), 6, err.toString().split(StringUtils.LS).length);
-    } finally {
-      Diagnostic.setLogStream();
-      assertTrue(FileHelper.deleteAll(tempDir));
+      assertEquals(err.toString(), 7, err.toString().split(StringUtils.LS).length);
     }
   }
 
@@ -106,9 +102,7 @@ public class ReadGroupStatsCalculatorTest extends TestCase {
     ;
 
   public void testReadGroupStatsCalculatorNoReadGroups() throws IOException {
-    Diagnostic.setLogStream();
-    final File tempDir = FileUtils.createTempDir("readgroup", "test");
-    try {
+    try (final TestDirectory tempDir = new TestDirectory("readgroup")) {
       final File samFile = FileHelper.stringToGzFile(NO_RG_SAM, new File(tempDir, "rg.sam.gz"));
       final List<File> files = new ArrayList<>();
       files.add(samFile);
@@ -122,9 +116,6 @@ public class ReadGroupStatsCalculatorTest extends TestCase {
       } catch (NoTalkbackSlimException e) {
         // Expected
       }
-    } finally {
-      Diagnostic.setLogStream();
-      assertTrue(FileHelper.deleteAll(tempDir));
     }
   }
 
@@ -135,9 +126,7 @@ public class ReadGroupStatsCalculatorTest extends TestCase {
     ;
 
   public void testNonPairedSam() throws IOException {
-    Diagnostic.setLogStream();
-    final File tempDir = FileUtils.createTempDir("readgroup", "test");
-    try {
+    try (final TestDirectory tempDir = new TestDirectory("readgroup")) {
       final File samFile = FileHelper.stringToGzFile(UNPAIRED_SAM, new File(tempDir, "rg.sam.gz"));
       final List<File> files = new ArrayList<>();
       files.add(samFile);
@@ -151,16 +140,11 @@ public class ReadGroupStatsCalculatorTest extends TestCase {
         e.logException();
         assertTrue(err.toString().contains(e.getMessage()));
       }
-    } finally {
-      Diagnostic.setLogStream();
-      assertTrue(FileHelper.deleteAll(tempDir));
     }
   }
 
   public void testMerge() throws IOException {
-    Diagnostic.setLogStream();
-    final File tempDir = FileUtils.createTempDir("readgroup", "test");
-    try {
+    try (final TestDirectory tempDir = new TestDirectory("readgroup")) {
       final File samFile = FileUtils.stringToFile(RG_SAM, new File(tempDir, "rg.sam"));
       final List<File> files = new ArrayList<>();
       files.add(samFile);
@@ -181,7 +165,7 @@ public class ReadGroupStatsCalculatorTest extends TestCase {
           "Skipping record with no RG id",
           "Skipped 6 records with no RG id"
           );
-      assertEquals(err.toString(), 6, err.toString().split(StringUtils.LS).length);
+      assertEquals(err.toString(), 7, err.toString().split(StringUtils.LS).length);
 
       final ReadGroupStatsCalculator calculator2 = new ReadGroupStatsCalculator();
       calculator2.merge(calculator);
@@ -205,18 +189,12 @@ public class ReadGroupStatsCalculatorTest extends TestCase {
       assertEquals(rgs1.fragmentMean(), rgs2.fragmentMean());
       assertTrue(rgs1.fragmentStdDev() > rgs2.fragmentStdDev());
       assertEquals(41.59901, rgs2.fragmentStdDev(), 0.00001);
-
-    } finally {
-      Diagnostic.setLogStream();
-      assertTrue(FileHelper.deleteAll(tempDir));
     }
   }
 
   public void testBlend() throws IOException {
     final ReadGroupStatsCalculator.Merger merger = new ReadGroupStatsCalculator.Merger();
-    Diagnostic.setLogStream();
-    final File tempDir = FileUtils.createTempDir("readgroup", "test");
-    try {
+    try (final TestDirectory tempDir = new TestDirectory("readgroup")) {
       final File samFile = FileUtils.stringToFile(RG_SAM, new File(tempDir, "rg.sam"));
       final List<File> files = new ArrayList<>();
       files.add(samFile);
@@ -237,7 +215,7 @@ public class ReadGroupStatsCalculatorTest extends TestCase {
           "Skipping record with no RG id",
           "Skipped 6 records with no RG id"
           );
-      assertEquals(err.toString(), 6, err.toString().split(StringUtils.LS).length);
+      assertEquals(err.toString(), 7, err.toString().split(StringUtils.LS).length);
 
       ReadGroupStatsCalculator calcBlend = merger.blend();
       final ReadGroupStats rgs1 = calculator.getStats("boo_pe");
@@ -263,10 +241,6 @@ public class ReadGroupStatsCalculatorTest extends TestCase {
       assertEquals(rgs1.fragmentMean(), rgs2.fragmentMean());
       assertTrue(rgs1.fragmentStdDev() > rgs2.fragmentStdDev());
       assertEquals(41.59901, rgs2.fragmentStdDev(), 0.00001);
-
-    } finally {
-      Diagnostic.setLogStream();
-      assertTrue(FileHelper.deleteAll(tempDir));
     }
   }
 }

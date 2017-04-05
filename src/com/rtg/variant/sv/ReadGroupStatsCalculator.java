@@ -33,16 +33,11 @@ import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.util.io.FileUtils;
 
-import htsjdk.samtools.SAMException;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
 import htsjdk.samtools.SAMSequenceRecord;
-import htsjdk.samtools.SamReader;
-import htsjdk.samtools.util.RuntimeEOFException;
-import htsjdk.samtools.util.RuntimeIOException;
 
 /**
  * Scans mapping results to calculate per-read group insert size
@@ -82,7 +77,6 @@ public final class ReadGroupStatsCalculator {
         rgsc.merge(irgsc);
       }
       rgsc.calculate();
-      // TODO Clear mCalculators
       return rgsc;
     }
 
@@ -108,15 +102,7 @@ public final class ReadGroupStatsCalculator {
    */
   public void merge(ReadGroupStatsCalculator rgsc) {
     for (Entry<String, ReadGroupStats> entry : rgsc.mStats.entrySet()) {
-      ReadGroupStats rgs = mStats.get(entry.getKey());
-      if (rgs == null) {
-        rgs = new ReadGroupStats(entry.getKey(), entry.getValue().getTotalReference());
-        mStats.put(entry.getKey(), rgs);
-      }
-//      System.err.println("merge entry: " + entry.getKey() + " : " + entry.getValue().countsString());
-//      System.err.println("merge: before: " + rgs.countsString());
-      rgs.add(entry.getValue());
-//      System.err.println("merge: after: " + rgs.countsString());
+      mStats.computeIfAbsent(entry.getKey(), rgId -> new ReadGroupStats(rgId, entry.getValue().getTotalReference())).add(entry.getValue());
     }
   }
 
@@ -126,20 +112,21 @@ public final class ReadGroupStatsCalculator {
    * @param header the SAM file header to create the map from
    */
   public void setupReadGroups(SAMFileHeader header) {
+    final long refTotal = getRefTotal(header);
+    for (final SAMReadGroupRecord rec : header.getReadGroups()) {
+      mStats.computeIfAbsent(rec.getReadGroupId(), rgId -> new ReadGroupStats(rgId, refTotal));
+    }
+    if (mStats.size() == 0) {
+      Diagnostic.warning("No read groups specified in SAM headers");
+    }
+  }
+
+  private long getRefTotal(SAMFileHeader header) {
     long refTotal = 0;
     for (final SAMSequenceRecord rec : header.getSequenceDictionary().getSequences()) {
       refTotal += rec.getSequenceLength();
     }
-    for (final SAMReadGroupRecord rec : header.getReadGroups()) {
-      final String rgId = rec.getReadGroupId();
-      final ReadGroupStats stats = mStats.get(rgId);
-      if (stats == null) {
-        mStats.put(rgId, new ReadGroupStats(rgId, refTotal));
-      }
-    }
-    if (mStats.size() == 0) {
-      throw new NoTalkbackSlimException("No read groups specified in SAM headers");
-    }
+    return refTotal;
   }
 
   /**
@@ -171,7 +158,7 @@ public final class ReadGroupStatsCalculator {
    * @param out output destination stream
    * @throws IOException when an IO exception occurs
    */
-  public void dumpReadGroups(OutputStream out) throws IOException {
+  public void writeReadGroupStats(OutputStream out) throws IOException {
     long invalidCount = 0;
     long matedCount = 0;
     for (final ReadGroupStats stats : mStats.values()) {
@@ -206,20 +193,8 @@ public final class ReadGroupStatsCalculator {
     }
   }
 
-  private void populateStats(File file, SamReader reader) throws IOException {
-    try (RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(file.getPath(), reader)) {
-      while (it.hasNext()) {
-        final SAMRecord r = it.next();
-        addRecord(r);
-      }
-      if (mNoReadGroupWarnings > 0) {
-        Diagnostic.warning("Skipped " + mNoReadGroupWarnings + " records with no RG id");
-      }
-    }
-  }
-
   /**
-   * Add a single record.
+   * Add statistics from a single record.
    * @param record the SAM record
    */
   public void addRecord(SAMRecord record) {
@@ -258,11 +233,30 @@ public final class ReadGroupStatsCalculator {
   }
 
   /**
+   * Add information from all records in the specified file
+   * @param file the SAM file
+   * @throws IOException if there was a problem reading the SAM data
+   */
+  public void addFile(File file) throws IOException {
+    Diagnostic.userLog("Accumulating read group statistics for: " + file);
+    mNoReadGroupWarnings = 0;
+    try (RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(file.getPath(), SamUtils.makeSamReader(file), true)) {
+      setupReadGroups(it.header());
+      while (it.hasNext()) {
+        addRecord(it.next());
+      }
+      if (mNoReadGroupWarnings > 0) {
+        Diagnostic.warning("Skipped " + mNoReadGroupWarnings + " records with no RG id in: " + file);
+      }
+    }
+  }
+
+  /**
    * Calculates gap size between SAM records
    * @param record SAM record
    * @return gap size
    */
-  public static int calculateGapSize(SAMRecord record) {
+  private static int calculateGapSize(SAMRecord record) {
     if (record.getMateAlignmentStart() > record.getAlignmentStart()) {
       return record.getMateAlignmentStart() - record.getAlignmentEnd();
     } else {
@@ -270,29 +264,11 @@ public final class ReadGroupStatsCalculator {
     }
   }
 
-  /**
-   * Performs the statistics calculation
-   * @param files list of files to process
-   * @param out output stream for standard output
-   * @throws IOException when an IO error occurs
-   */
-  public void calculate(Collection<File> files, OutputStream out) throws IOException {
+  void calculate(Collection<File> files, OutputStream out) throws IOException {
     for (final File f : files) {
-      processFile(f);
+      addFile(f);
     }
-    dumpReadGroups(out);
+    writeReadGroupStats(out);
   }
 
-  private void processFile(File file) throws IOException {
-    try (SamReader reader = SamUtils.makeSamReader(FileUtils.createInputStream(file, false))) {
-      setupReadGroups(reader.getFileHeader());
-      populateStats(file, reader);
-    } catch (final SAMException e) {
-      if (e instanceof RuntimeIOException
-          || e instanceof RuntimeEOFException) {
-        throw new IOException(e.getMessage(), e);
-      }
-      throw new NoTalkbackSlimException(e, ErrorType.SAM_BAD_FORMAT_NO_FILE, e.getMessage());
-    }
-  }
 }

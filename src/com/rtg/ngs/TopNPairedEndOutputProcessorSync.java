@@ -194,7 +194,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
 
     if (mStatsMerger != null) {
       try (OutputStream rgOut = FileUtils.createOutputStream(mParams.outputParams().resultStreamHandler().file(UnmatedAugmenter.DEFAULT_RGSTATS_FILENAME), false)) {
-        mStatsMerger.blend().dumpReadGroups(rgOut);
+        mStatsMerger.blend().writeReadGroupStats(rgOut);
       }
     }
     mUnmappedTracker.calculateStatistics(true, false);

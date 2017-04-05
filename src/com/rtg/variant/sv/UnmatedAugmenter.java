@@ -97,10 +97,37 @@ public final class UnmatedAugmenter {
     }
   }
 
+  // Contains minimal mate alignment information
+  private static class CutRecord {
+    final int mRefIndex;
+    final int mAlignStart;
+    final int mAlignEnd;
+    final boolean mReverse;
+    final int mAlignmentScore;
+
+    CutRecord(SAMRecord r) {
+      mRefIndex = r.getReferenceIndex();
+      mAlignStart = r.getAlignmentStart();
+      mAlignEnd = r.getAlignmentEnd();
+      mReverse = r.getReadNegativeStrandFlag();
+      mAlignmentScore = as(r);
+    }
+
+    private static int as(SAMRecord rec) {
+      final Integer ii = rec.getIntegerAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE);
+      if (ii == null) {
+        return Integer.MIN_VALUE;
+      }
+      return ii;
+    }
+  }
 
   private final HashMap<String, CutRecord> mLeftSide;
   private final HashMap<String, CutRecord> mRightSide;
   private final HashMap<String, MachineType> mRgMachineTypes;
+
+  int mAugmentedUnmated = 0;
+  int mAugmentedUnmapped = 0;
 
   /**
    * Constructor
@@ -120,26 +147,17 @@ public final class UnmatedAugmenter {
     mLeftSide.putAll(other.mLeftSide);
     mRightSide.putAll(other.mRightSide);
     mRgMachineTypes.putAll(other.mRgMachineTypes);
+    mAugmentedUnmapped += other.mAugmentedUnmapped;
+    mAugmentedUnmated += other.mAugmentedUnmated;
     return this;
   }
 
-  private void populateMaps(File file) throws IOException {
-    try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(file, false))) {
-      try (RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(file.getPath(), reader)) {
-        while (it.hasNext()) {
-          processRecord(it.next());
-        }
-      }
-    }
-  }
-
   /**
-   * Process the given SAM record, will be added to internal hash maps if it is a unique unmated mapping.
+   * Add record to internal hash maps used for augmenting if it is a unique unmated mapping without existing mate position information.
    * @param record SAM record to process.
    */
-  public void processRecord(SAMRecord record) {
-    final Integer nh = SamUtils.getNHOrIH(record);
-    if (record.getReadPairedFlag() && !record.getProperPairFlag() && nh != null && nh == 1) {
+  public void addRecord(SAMRecord record) {
+    if (isAugmentableUnmated(record)) {
       if (record.getFirstOfPairFlag()) {
         mLeftSide.put(record.getReadName(), new CutRecord(record));
       } else {
@@ -148,31 +166,41 @@ public final class UnmatedAugmenter {
     }
   }
 
-  private static int as(SAMRecord rec) {
-    final Integer ii = rec.getIntegerAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE);
-    if (ii == null) {
-      return Integer.MIN_VALUE;
+  private boolean isAugmentableUnmated(SAMRecord record) {
+    if (!record.getReadPairedFlag() || record.getReadUnmappedFlag() || record.getProperPairFlag() || record.getMateReferenceIndex() != SAMRecord.NO_ALIGNMENT_REFERENCE_INDEX) {
+      return false;
     }
-    return ii;
+    final Integer nh = SamUtils.getNHOrIH(record);
+    return nh != null && nh == 1;
   }
 
-  private static class CutRecord {
-    final int mRefIndex;
-    final int mAlignStart;
-    final int mAlignEnd;
-    final boolean mReverse;
-    final int mAlignmentScore;
-
-    CutRecord(SAMRecord r) {
-      mRefIndex = r.getReferenceIndex();
-      mAlignStart = r.getAlignmentStart();
-      mAlignEnd = r.getAlignmentEnd();
-      mReverse = r.getReadNegativeStrandFlag();
-      mAlignmentScore = as(r);
+  /**
+   * Adds machine type from a read group header line.
+   * @param srgr read group record to get machine type from.
+   */
+  public void addMachineType(SAMReadGroupRecord srgr) {
+    final MachineType mt = ReadGroupUtils.platformToMachineType(srgr, true);
+    if (mt == null) {
+      throw new NoTalkbackSlimException("Read group " + srgr.getId() + " does not contain a recognized platform");
+    } else if (mt.orientation() == null) {
+      throw new NoTalkbackSlimException("Platform " + srgr.getPlatform() + " is not supported (unknown expected read orientation)");
     }
+    final String rgId = srgr.getReadGroupId();
+    mRgMachineTypes.put(rgId, mt);
   }
 
-  private SAMFileHeader constructHeader(SamReader reader, boolean processMachineTypes) {
+  SAMFileWriter makeWriter(SamReader reader, OutputStream outStream, boolean presorted) {
+    final SAMFileHeader header = constructHeader(reader);
+    final SAMFileWriter writer;
+    if (reader.type() == SamReader.Type.BAM_TYPE) {
+      writer = new SAMFileWriterFactory().makeBAMWriter(header, presorted, outStream, true);
+    } else {
+      writer = new SAMFileWriterFactory().makeSAMWriter(header, presorted, outStream);
+    }
+    return writer;
+  }
+
+  private SAMFileHeader constructHeader(SamReader reader) {
     final SAMFileHeader header = reader.getFileHeader();
     final SAMProgramRecord pg = new SAMProgramRecord(Constants.APPLICATION_NAME);
     pg.setProgramVersion(Environment.getVersion());
@@ -183,60 +211,46 @@ public final class UnmatedAugmenter {
     }
     SamUtils.addProgramRecord(header, pg);
 
-    if (processMachineTypes) {
-      for (final SAMReadGroupRecord srgr : header.getReadGroups()) {
-        addMachineType(srgr);
-      }
-    }
     return header;
   }
 
   /**
-   * Adds machine type from a read group header line.
-   * @param srgr read group record to get machine type from.
-   */
-  public void addMachineType(SAMReadGroupRecord srgr) {
-    final MachineType mt = ReadGroupUtils.platformToMachineType(srgr, true);
-    if (mt == null) {
-      throw new NoTalkbackSlimException("Read group with platform specified required");
-    } else if (mt.orientation() == null) {
-      throw new NoTalkbackSlimException("Unsupported platform: " + srgr.getPlatform());
-    }
-    final String rgId = srgr.getReadGroupId();
-    mRgMachineTypes.put(rgId, mt);
-  }
-
-  private SAMFileWriter makeWriter(SamReader reader, OutputStream outStream, boolean processMachineTypes, boolean presorted) {
-    final SAMFileHeader header = constructHeader(reader, processMachineTypes);
-    final SAMFileWriter writer;
-    if (reader.type() == SamReader.Type.BAM_TYPE) {
-      writer = new SAMFileWriterFactory().makeBAMWriter(header, presorted, outStream, true);
-    } else {
-      writer = new SAMFileWriterFactory().makeSAMWriter(header, presorted, outStream);
-    }
-    return writer;
-  }
-
-  /**
-   * Performs the augmentation. Not reentrant.
-   * @param unmappedFile SAM/BAM file to augment
-   * @param outputUnmappedFile SAM/BAM file to output.
-   * @param zipInput whether input is SAM and <code>gzipped</code>
-   * @param calc statistics calculator to feed records through. <code>null</code> to ignore
+   * Augments a file containing only unmated alignment. Not reentrant.
+   * @param file SAM/BAM file to augment
+   * @param output SAM/BAM file to output.
+   * @param calc statistics calculator to feed records through.
    * @throws IOException when an IO error occurs
    */
-  public void augmentUnmapped(File unmappedFile, File outputUnmappedFile, boolean zipInput, ReadGroupStatsCalculator calc) throws IOException {
-    calc.calculate();
-    try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(unmappedFile, false))) {
-      try (OutputStream outStream = FileUtils.createOutputStream(outputUnmappedFile, zipInput)) {
-        try (SAMFileWriter writer = makeWriter(reader, outStream, true, false)) {
-          final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(unmappedFile.getPath(), reader, true);
+  void augmentMixed(File file, File output, ReadGroupStatsCalculator calc) throws IOException {
+    // First pass, collect mated stats and augmentable unmated info
+    try (RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(file.getPath(), SamUtils.makeSamReader(file), true)) {
+      calc.setupReadGroups(it.header());
+      while (it.hasNext()) {
+        final SAMRecord record = it.next();
+        if (record.getProperPairFlag()) {
+          calc.addRecord(record);
+        }
+        addRecord(record);
+      }
+    }
+
+    calc.calculate(); // Ensure insert size stats have been computed
+
+    // Second pass, augment unmated records (and collect their stats) and unmapped records
+    try (final SamReader reader = SamUtils.makeSamReader(file)) {
+      try (RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(file.getPath(), reader, true)) {
+        try (SAMFileWriter writer = makeWriter(reader, FileUtils.createOutputStream(output, FileUtils.isGzipFilename(file) || reader.type() == SamReader.Type.BAM_TYPE), true)) {
           while (it.hasNext()) {
-            final SAMRecord r = it.next();
-
-            updateUnmappedRecord(r, calc, null);
-
-            writer.addAlignment(r);
+            final SAMRecord record = it.next();
+            if (!record.getProperPairFlag()) {
+              if (record.getReadUnmappedFlag()) {
+                updateUnmappedRecord(record, calc, null);
+              } else {
+                updateUnmatedRecord(record);
+                calc.addRecord(record);
+              }
+            }
+            writer.addAlignment(record);
           }
         }
       }
@@ -244,11 +258,98 @@ public final class UnmatedAugmenter {
   }
 
   /**
+   * Augments a file containing only unmated alignment. Not reentrant.
+   * @param unmatedFile SAM/BAM file to augment
+   * @param unmatedOutputFile SAM/BAM file to output.
+   * @param calc statistics calculator to feed records through.
+   * @throws IOException when an IO error occurs
+   */
+  public void augmentUnmated(File unmatedFile, File unmatedOutputFile, ReadGroupStatsCalculator calc) throws IOException {
+    try (SamReader reader1 = SamUtils.makeSamReader(FileUtils.createFileInputStream(unmatedFile, false))) {
+      calc.setupReadGroups(reader1.getFileHeader());
+      try (RecordIterator<SAMRecord> it1 = new SkipInvalidRecordsIterator(unmatedFile.getPath(), reader1)) {
+        while (it1.hasNext()) {
+          addRecord(it1.next());
+        }
+      }
+    }
+    try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(unmatedFile, false))) {
+      try (SAMFileWriter writer = makeWriter(reader, FileUtils.createOutputStream(unmatedOutputFile, FileUtils.isGzipFilename(unmatedFile) || reader.type() == SamReader.Type.BAM_TYPE), true)) {
+        //assume any warnings from input are reported the first time we processed so set Skipping iterator to silent mode.
+        final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(unmatedFile.getPath(), reader, true);
+        while (it.hasNext()) {
+          final SAMRecord r = it.next();
+          updateUnmatedRecord(r);
+          calc.addRecord(r);
+          writer.addAlignment(r);
+        }
+      }
+    }
+  }
+
+  /**
+   * Augments a file containing unmapped alignments. Not reentrant.
+   * @param unmappedFile SAM/BAM file to augment
+   * @param outputUnmappedFile SAM/BAM file to output.
+   * @param calc statistics calculator to feed records through. <code>null</code> to ignore
+   * @throws IOException when an IO error occurs
+   */
+  public void augmentUnmapped(File unmappedFile, File outputUnmappedFile, ReadGroupStatsCalculator calc) throws IOException {
+    calc.calculate();
+    try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(unmappedFile, false))) {
+      for (final SAMReadGroupRecord srgr : reader.getFileHeader().getReadGroups()) {
+        addMachineType(srgr); // Not re-entrant
+      }
+      try (SAMFileWriter writer = makeWriter(reader, FileUtils.createOutputStream(outputUnmappedFile), false)) {
+        final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(unmappedFile.getPath(), reader, true);
+        while (it.hasNext()) {
+          final SAMRecord r = it.next();
+          if (r.getReadUnmappedFlag()) {
+            updateUnmappedRecord(r, calc, null);
+          }
+          writer.addAlignment(r);
+        }
+      }
+    }
+  }
+
+  /**
+   * Update pair mapping information on an unmated SAM record based on the mapped location of it's mate..
+   * @param record record to update.
+   */
+  public void updateUnmatedRecord(SAMRecord record) {
+    if (isAugmentableUnmated(record)) {
+      final CutRecord pair;
+      if (record.getFirstOfPairFlag()) {
+        pair = mRightSide.get(record.getReadName());
+      } else {
+        pair = mLeftSide.get(record.getReadName());
+      }
+      if (pair != null) { //NOTE: pair is only put in map if nh == 1
+        mAugmentedUnmated++;
+        record.setMateReferenceIndex(pair.mRefIndex);
+        record.setMateAlignmentStart(pair.mAlignStart);
+        record.setMateNegativeStrandFlag(pair.mReverse);
+        record.setMateUnmappedFlag(false);
+        final int as = pair.mAlignmentScore;
+        if (as >= 0) {
+          record.setAttribute(SamUtils.ATTRIBUTE_MATE_ALIGNMENT_SCORE, as);
+        }
+        record.setAttribute(SamUtils.ATTRIBUTE_MATE_END, pair.mAlignEnd);
+        if (pair.mRefIndex == record.getReferenceIndex()) {
+          final int tlen = InsertHelper.tlen(record.getFirstOfPairFlag(), record.getAlignmentStart(), record.getAlignmentEnd() - record.getAlignmentStart() + 1, pair.mAlignStart, pair.mAlignEnd - pair.mAlignStart + 1);
+          record.setInferredInsertSize(tlen);
+        } else {
+          record.setInferredInsertSize(0);
+        }
+      }
+    }
+  }
+  /**
    * Updates an unmapped record with pair mapping information.
-   * Assumes calc.calculate() has been called prior to this message.
    * @param record SAM record to update
-   * @param calc a read group statistics calculator
-   * @param referenceGenome reference genome for reference, or null if unknown
+   * @param calc a read group statistics calculator upon which calc.calculate() has been called.
+   * @param referenceGenome reference genome for reference, or null if unknown or PAR region support is not required
    */
   public void updateUnmappedRecord(SAMRecord record, ReadGroupStatsCalculator calc, ReferenceGenome referenceGenome) {
     assert record.getReadUnmappedFlag();
@@ -259,6 +360,7 @@ public final class UnmatedAugmenter {
       mate = mLeftSide.get(record.getReadName());
     }
     if (mate != null) { //other side was mapped NOTE: mate only in map if nh==1
+      mAugmentedUnmapped++;
       record.setMateReferenceIndex(mate.mRefIndex);
       record.setMateAlignmentStart(mate.mAlignStart);
       record.setMateNegativeStrandFlag(mate.mReverse);
@@ -313,7 +415,7 @@ public final class UnmatedAugmenter {
           }
           final int refLength = record.getHeader().getSequence(record.getReferenceIndex()).getSequenceLength();
           if (referenceGenome != null) {
-            //get ReferenceSequence and check if we are in the duplicated par region
+            // If our projected position is in the duplicated PAR region, port to the canonical location
             final ReferenceSequence rs = referenceGenome.sequence(record.getReferenceName());
             if (rs.hasDuplicates()) {
               for (Pair<RegionRestriction, RegionRestriction> dup : rs.duplicates()) {
@@ -330,93 +432,4 @@ public final class UnmatedAugmenter {
     }
   }
 
-  /**
-   * Updates read group statistics with information from a mated SAM file.
-   * @param matedFile mated SAM or BAM file
-   * @param calc ReadGroupStatsCalculator object to update
-   * @throws IOException in an error occurs while reading file
-   */
-  public static void populateReadGroupStats(File matedFile, ReadGroupStatsCalculator calc) throws IOException {
-    try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(matedFile, false))) {
-      calc.setupReadGroups(reader.getFileHeader());
-
-      //assume any warnings from input are reported the first time we processed so set Skipping iterator to silent mode.
-      final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(matedFile.getPath(), reader, true);
-      while (it.hasNext()) {
-        final SAMRecord r = it.next();
-        calc.addRecord(r);
-      }
-    }
-  }
-
-  /**
-   * Performs the augmentation. Not reentrant.
-   * @param unmatedFile SAM/BAM file to augment
-   * @param unmatedOutputFile SAM/BAM file to output.
-   * @param zipInput whether input is SAM and <code>gzipped</code>
-   * @param calc statistics calculator to feed records through. <code>null</code> to ignore
-   * @throws IOException when an IO error occurs
-   */
-  public void augmentUnmated(File unmatedFile, File unmatedOutputFile, boolean zipInput, ReadGroupStatsCalculator calc) throws IOException {
-    populateMaps(unmatedFile);
-    try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(unmatedFile, false))) {
-      if (calc != null) {
-        calc.setupReadGroups(reader.getFileHeader());
-      }
-
-      try (SAMFileWriter writer = makeWriter(reader, FileUtils.createOutputStream(unmatedOutputFile, zipInput || reader.type() == SamReader.Type.BAM_TYPE), false, true)) {
-
-        //assume any warnings from input are reported the first time we processed so set Skipping iterator to silent mode.
-        final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(unmatedFile.getPath(), reader, true);
-        while (it.hasNext()) {
-          final SAMRecord r = it.next();
-
-          updateUnmatedRecord(r);
-
-          if (calc != null) {
-            calc.addRecord(r);
-          }
-          writer.addAlignment(r);
-        }
-      }
-    }
-  }
-
-  /**
-   * Update pair mapping information on an unmated SAM record.
-   * @param record record to update.
-   */
-  public void updateUnmatedRecord(SAMRecord record) {
-    if (!record.getReadUnmappedFlag()) {
-      final Integer nh = SamUtils.getNHOrIH(record);
-      if (nh == null) {
-        throw new NoTalkbackSlimException("No NH or IH value in mapped record: " + record);
-      }
-      if (nh == 1 && record.getReadPairedFlag() && !record.getProperPairFlag()) {
-        final CutRecord pair;
-        if (record.getFirstOfPairFlag()) {
-          pair = mRightSide.get(record.getReadName());
-        } else {
-          pair = mLeftSide.get(record.getReadName());
-        }
-        if (pair != null) { //NOTE: pair is only put in map if nh == 1
-          record.setMateReferenceIndex(pair.mRefIndex);
-          record.setMateAlignmentStart(pair.mAlignStart);
-          record.setMateNegativeStrandFlag(pair.mReverse);
-          record.setMateUnmappedFlag(false);
-          final int as = pair.mAlignmentScore;
-          if (as >= 0) {
-            record.setAttribute(SamUtils.ATTRIBUTE_MATE_ALIGNMENT_SCORE, as);
-          }
-          record.setAttribute(SamUtils.ATTRIBUTE_MATE_END, pair.mAlignEnd);
-          if (pair.mRefIndex == record.getReferenceIndex()) {
-            final int tlen = InsertHelper.tlen(record.getFirstOfPairFlag(), record.getAlignmentStart(), record.getAlignmentEnd() - record.getAlignmentStart() + 1, pair.mAlignStart, pair.mAlignEnd - pair.mAlignStart + 1);
-            record.setInferredInsertSize(tlen);
-          } else {
-            record.setInferredInsertSize(0);
-          }
-        }
-      }
-    }
-  }
 }

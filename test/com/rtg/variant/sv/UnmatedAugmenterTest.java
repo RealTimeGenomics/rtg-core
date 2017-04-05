@@ -36,7 +36,7 @@ public class UnmatedAugmenterTest extends AbstractNanoTest {
       final File out = new File(temp, "out.sam");
       FileHelper.resourceToFile("com/rtg/sam/resources/unmated.sam", in);
       final UnmatedAugmenter un = new UnmatedAugmenter();
-      un.augmentUnmated(in, out, false, null);
+      un.augmentUnmated(in, out, new ReadGroupStatsCalculator());
       final String outStr = FileUtils.fileToString(out);
       final String outStrNoPg = StringUtils.grepMinusV(outStr, "^@PG");
       mNano.check("augmented.sam", outStrNoPg);
@@ -49,7 +49,7 @@ public class UnmatedAugmenterTest extends AbstractNanoTest {
       final File out = new File(temp, "out.sam.gz");
       FileHelper.resourceToGzFile("com/rtg/sam/resources/unmated.sam", in);
       final UnmatedAugmenter un = new UnmatedAugmenter();
-      un.augmentUnmated(in, out, true, null);
+      un.augmentUnmated(in, out, new ReadGroupStatsCalculator());
       final String outStr = FileHelper.gzFileToString(out);
       final String outStrNoPg = outStr.replaceAll("@PG.*\n", "");
       mNano.check("augmented.sam", outStrNoPg);
@@ -70,9 +70,9 @@ public class UnmatedAugmenterTest extends AbstractNanoTest {
 
       final UnmatedAugmenter un = new UnmatedAugmenter();
       final ReadGroupStatsCalculator calc = new ReadGroupStatsCalculator();
-      UnmatedAugmenter.populateReadGroupStats(mated, calc);
-      un.augmentUnmated(unmated, outunmated, false, calc);
-      un.augmentUnmapped(unmapped, outunmapped, false, calc);
+      calc.addFile(mated);
+      un.augmentUnmated(unmated, outunmated, calc);
+      un.augmentUnmapped(unmapped, outunmapped, calc);
       final String outUnmappedStr = FileUtils.fileToString(outunmapped);
       final String outStrNoPg = StringUtils.grepMinusV(outUnmappedStr, "^@PG");
       mNano.check("mergeunmapped-aug.sam", outStrNoPg);
@@ -113,13 +113,13 @@ public class UnmatedAugmenterTest extends AbstractNanoTest {
     final SAMRecord sr3 = createSAMRecord(header, "98275", 137, 5108);
     final UnmatedAugmenter.Merger merger = new UnmatedAugmenter.Merger();
     final UnmatedAugmenter ua1 = merger.createUnmatedAugmenter();
-    ua1.processRecord(sr1a);
-    ua1.processRecord(sr2b);
+    ua1.addRecord(sr1a);
+    ua1.addRecord(sr2b);
     final UnmatedAugmenter ua2 = merger.createUnmatedAugmenter();
-    ua2.processRecord(sr2a);
-    ua2.processRecord(sr1b);
-    ua2.processRecord(sr1a);
-    ua2.processRecord(sr3);
+    ua2.addRecord(sr2a);
+    ua2.addRecord(sr1b);
+    ua2.addRecord(sr1a);
+    ua2.addRecord(sr3);
 
     final UnmatedAugmenter uaBlend = merger.blend();
     assertEquals(uaBlend, merger.blend());

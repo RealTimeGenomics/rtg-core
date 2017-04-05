@@ -194,7 +194,7 @@ public final class UnmatedSamResultsFilter extends AbstractSamResultsFilter {
 
       // add to unmated augmenter
       if (mAugmenter != null) {
-        mAugmenter.processRecord(record);
+        mAugmenter.addRecord(record);
       }
 
       return record;

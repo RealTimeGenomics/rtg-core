@@ -168,11 +168,11 @@ public class SamRename extends AbstractCli {
     renameSam(sdfReads, infile, outfile, region);
     if (index) {
       try {
-        if (outfile.getName().endsWith(".bam")) {
-          final File indexFile =  new File(outfile.getParentFile(), outfile.getName() + BamIndexer.BAM_INDEX_EXTENSION);
+        if (SamUtils.isBAMFile(outfile)) {
+          final File indexFile =  BamIndexer.indexFileName(outfile);
           BamIndexer.saveBamIndex(outfile, indexFile);
         } else if (FileUtils.isGzipFilename(outfile)) {
-          final File indexFile =  new File(outfile.getParentFile(), outfile.getName() + TabixIndexer.TABIX_EXTENSION);
+          final File indexFile = TabixIndexer.indexFileName(outfile);
           new TabixIndexer(outfile, indexFile).saveSamIndex();
         }
       } catch (final UnindexableDataException e) {

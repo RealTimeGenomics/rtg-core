@@ -111,37 +111,34 @@ public class UnmatedAugmenterCliTest extends AbstractCliTest {
   public void testAugmentMated() throws IOException {
     final MemoryPrintStream rgOut = new MemoryPrintStream();
     FileHelper.resourceToFile("com/rtg/sam/resources/mated.sam", mExistsSam);
-    UnmatedAugmenterCli.performAugmentation(mExistsSam, null, null, true, false, "fooaug", rgOut.outputStream());
-    final String exp = FileHelper.resourceToString("com/rtg/sam/resources/mated.sam");
-    final String res = FileUtils.fileToString(mExistsSam);
+    FileHelper.resourceToFile("com/rtg/sam/resources/unmated.sam", mExistsSamGz);
+    UnmatedAugmenterCli.augmentSplitFiles(mExistsSam, mExistsSamGz, null, true, false, "fooaug", rgOut.outputStream());
 
-    final String expNoPg = exp.replaceAll("@PG.*\n", "");
+    final String res = FileUtils.fileToString(mExistsSam);
+    assertFalse(res.contains("@PG\tID:rtg"));
+    final String expNoPg = FileHelper.resourceToString("com/rtg/sam/resources/mated.sam").replaceAll("@PG.*\n", "");
     final String outStrNoPg = res.replaceAll("@PG.*\n", "");
     assertEquals(expNoPg, outStrNoPg);
-    assertFalse(res.contains("@PG\tID:rtg"));
     TestUtils.containsAll(rgOut.toString(),
           "#CL",
           "#Version",
           ReadGroupStats.countsHeader(),
           "rg1\t"
           );
+
+    assertEquals(TestUtils.stripSAMHeader(FileHelper.resourceToString("com/rtg/sam/resources/augmented.sam")),
+      TestUtils.stripSAMHeader(FileHelper.gzFileToString(mExistsSamGz)));
   }
 
-  public void testAugmentAsUnmated() throws IOException {
-    FileHelper.resourceToFile("com/rtg/sam/resources/unmated.sam", mExistsSam);
-    UnmatedAugmenterCli.performAugmentation(null, mExistsSam, null, true, false, "fooaug", null);
-    final String exp = FileHelper.resourceToString("com/rtg/sam/resources/augmented.sam");
-    final String res = FileUtils.fileToString(mExistsSam);
-
-    final String expNoPg = TestUtils.stripSAMHeader(exp);
-    final String outStrNoPg = TestUtils.stripSAMHeader(res);
-    assertEquals(expNoPg, outStrNoPg);
-  }
+  static final String EMPTY_SAM = ""
+    + "@HD\tVN:1.0\tSO:coordinate" + StringUtils.LS
+    + "@SQ\tSN:simulatedSequence1\tLN:400" + StringUtils.LS;
 
   public void testReadGroupStats() throws IOException {
     final MemoryPrintStream rgOut = new MemoryPrintStream();
     FileUtils.stringToFile(ReadGroupStatsCalculatorTest.RG_SAM, mExistsSam);
-    UnmatedAugmenterCli.performAugmentation(mExistsSam, null, null, true, false, "fooaug", rgOut.outputStream());
+    FileHelper.stringToGzFile(EMPTY_SAM, mExistsSamGz);
+    UnmatedAugmenterCli.augmentSplitFiles(mExistsSam, mExistsSamGz, null, true, false, "fooaug", rgOut.outputStream());
     //flagrantly copied from ReadGroupStatsCalculatorTest
     TestUtils.containsAll(rgOut.toString(),
           "#CL",
@@ -152,13 +149,14 @@ public class UnmatedAugmenterCliTest extends AbstractCliTest {
   }
 
   public void testAugmentFail() throws IOException {
-    FileHelper.resourceToFile("com/rtg/sam/resources/unmated.sam", mExistsSam);
+    FileHelper.resourceToFile("com/rtg/sam/resources/mated.sam", mExistsSam);
+    FileHelper.resourceToGzFile("com/rtg/sam/resources/unmated.sam", mExistsSamGz);
     assertTrue(mExistsSam.setReadOnly());
     try {
       try {
-        UnmatedAugmenterCli.performAugmentation(mExistsSam, null, null, true, false, ".fooaug", null);
+        UnmatedAugmenterCli.augmentSplitFiles(mExistsSam, mExistsSamGz, null, true, false, ".fooaug", new MemoryPrintStream().outputStream());
       } catch (final NoTalkbackSlimException e) {
-        assertTrue(e.getMessage().contains("rename"));
+        assertTrue(e.getMessage(), e.getMessage().contains("rename"));
         assertTrue(e.getMessage().contains(mExistsSam.getName()));
         assertTrue(e.getMessage().contains("mated.fooaug.sam"));
       }
@@ -167,15 +165,24 @@ public class UnmatedAugmenterCliTest extends AbstractCliTest {
     }
   }
 
-  public void testFileFilter() throws IOException {
+  public void testFileFilters() throws IOException {
+    assertTrue(new File(mDir, "mated.bam").createNewFile());
+    assertTrue(new File(mDir, "unmapped.bam").createNewFile());
 
-    final File existsBamGz = new File(mDir, "mated.bam");
-    assertTrue(existsBamGz.createNewFile());
-
-    final File[] files = mDir.listFiles(new UnmatedAugmenterCli.SamBamGzMatedUnmatedFileFilter());
+    File[] files = mDir.listFiles(new UnmatedAugmenterCli.MatedFileFilter());
     assertNotNull(files);
-    assertEquals(3, files.length);
-    TestUtils.containsAll(Arrays.toString(files), "unmated.sam.gz", "mated.sam", "mated.bam");
+    assertEquals(2, files.length);
+    TestUtils.containsAll(Arrays.toString(files), "mated.sam", "mated.bam");
+
+    files = mDir.listFiles(new UnmatedAugmenterCli.UnmatedFileFilter());
+    assertNotNull(files);
+    assertEquals(1, files.length);
+    TestUtils.containsAll(Arrays.toString(files), "unmated.sam.gz");
+
+    files = mDir.listFiles(new UnmatedAugmenterCli.UnmappedFileFilter());
+    assertNotNull(files);
+    assertEquals(1, files.length);
+    TestUtils.containsAll(Arrays.toString(files), "unmapped.bam");
   }
 
   public final void testInitFlags() {
