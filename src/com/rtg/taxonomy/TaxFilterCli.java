@@ -91,16 +91,22 @@ public class TaxFilterCli extends AbstractCli {
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
     final File inputFile = (File) mFlags.getValue(INPUT_FLAG);
+    final File outFile = (File) mFlags.getValue(OUTPUT_FLAG);
     final boolean sdf = inputFile.isDirectory();
-    final File taxFile = sdf ? new File(inputFile, TaxonomyUtils.TAXONOMY_FILE) : inputFile;
-
-    if (!taxFile.exists()) {
-      throw new NoTalkbackSlimException("Input taxonomy does not exist: " + taxFile);
-    } else if (!taxFile.isFile()) {
-      throw new NoTalkbackSlimException("Input taxonomy is not a file: " + taxFile);
-    }
-    if (!sdf) {
+    final File taxFile;
+    if (sdf) {
+      if (FileUtils.isStdio(outFile)) {
+        throw new NoTalkbackSlimException("Cannot write to stdout when input is a SDF.");
+      }
+      taxFile = new File(inputFile, TaxonomyUtils.TAXONOMY_FILE);
+      if (!taxFile.exists()) {
+        throw new NoTalkbackSlimException("Input taxonomy file does not exist: " + taxFile);
+      } else if (!taxFile.isFile()) {
+        throw new NoTalkbackSlimException("Input taxonomy file is not a file: " + taxFile);
+      }
+    } else {
       checkSdfOnlyFlags(REMOVE_SEQUENCES_FLAG, PRUNE_INTERNAL_SEQUENCES_FLAG, PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG);
+      taxFile = inputFile;
     }
 
     //err.print("Reading taxonomy from " + taxFile + "...");
@@ -136,7 +142,6 @@ public class TaxFilterCli extends AbstractCli {
       doRemoval(tax, (File) mFlags.getValue(REMOVE_FLAG));
     }
 
-    final File outFile = (File) mFlags.getValue(OUTPUT_FLAG);
     if (sdf) {
       final File inMappingFile = new File(inputFile, TaxonomyUtils.TAXONOMY_TO_SEQUENCE_FILE);
       if (!inMappingFile.isFile()) {
@@ -163,7 +168,7 @@ public class TaxFilterCli extends AbstractCli {
 
       writeSdf(inputFile, outFile, tax, newLookup, sequenceLookupMap);
     } else {
-      try (Writer outWriter = new OutputStreamWriter(new FileOutputStream(outFile))) {
+      try (Writer outWriter = new OutputStreamWriter(FileUtils.createOutputStream(outFile))) {
         tax.write(outWriter);
       }
     }

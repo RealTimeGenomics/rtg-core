@@ -12,7 +12,6 @@
 package com.rtg.simulation;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintStream;
 import java.io.Reader;
@@ -31,16 +30,6 @@ public class CnvFileChecker {
   public CnvFileChecker(PrintStream err, Reader in) {
     mErr = err;
     mLin = new LineNumberReader(in);
-  }
-
-  /**
-   * Checks CNV output file for correctness and consistency
-   * @param args command line arguments ignored
-   * @throws IOException whenever
-   */
-  public static void main(final String[] args) throws IOException {
-    final Reader in = new InputStreamReader(System.in);
-    new CnvFileChecker(System.err, in).check();
   }
 
   /**
