@@ -17,10 +17,10 @@ import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintStream;
@@ -37,11 +37,10 @@ import com.rtg.reader.SequencesIterator;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.util.Constants;
-import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
-import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.LineWriter;
 
 /**
@@ -57,27 +56,6 @@ public class TaxFilterCli extends AbstractCli {
   private static final String RENAME_NORANK_FLAG = "rename-norank";
   private static final String PRUNE_INTERNAL_SEQUENCES_FLAG = "prune-internal-sequences";
   private static final String PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG = "prune-below-internal-sequences";
-
-  static class TaxonomyFlagValidator implements Validator {
-    /**
-     * Checks if flags are good
-     * @param flags the flags
-     * @return true if good
-     */
-    @Override
-    public boolean isValid(final CFlags flags) {
-      if (!flags.checkOr(SUBSET_FLAG, SUBTREE_FLAG,
-        REMOVE_FLAG, REMOVE_SEQUENCES_FLAG,
-        RENAME_NORANK_FLAG,
-        PRUNE_INTERNAL_SEQUENCES_FLAG, PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG)) {
-        return false;
-      }
-      if (!flags.checkNand(PRUNE_INTERNAL_SEQUENCES_FLAG, PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG)) {
-        return false;
-      }
-      return true;
-    }
-  }
 
   @Override
   public String moduleName() {
@@ -103,7 +81,11 @@ public class TaxFilterCli extends AbstractCli {
     mFlags.registerOptional('p', PRUNE_INTERNAL_SEQUENCES_FLAG, "when filtering an SDF, exclude sequence data from non-leaf output nodes").setCategory(FILTERING);
     mFlags.registerOptional('P', PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG, "when filtering an SDF, remove nodes below the first containing sequence data").setCategory(FILTERING);
     mFlags.registerOptional(RENAME_NORANK_FLAG, File.class, CommonFlags.FILE, "assign a rank to \"no rank\" nodes from file containing id/rank pairs").setCategory(FILTERING);
-    mFlags.setValidator(new TaxonomyFlagValidator());
+    mFlags.setValidator(flags -> flags.checkOr(SUBSET_FLAG, SUBTREE_FLAG,
+      REMOVE_FLAG, REMOVE_SEQUENCES_FLAG,
+      RENAME_NORANK_FLAG,
+      PRUNE_INTERNAL_SEQUENCES_FLAG, PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG)
+      && flags.checkNand(PRUNE_INTERNAL_SEQUENCES_FLAG, PRUNE_BELOW_INTERNAL_SEQUENCES_FLAG));
   }
 
   @Override
@@ -123,7 +105,7 @@ public class TaxFilterCli extends AbstractCli {
 
     //err.print("Reading taxonomy from " + taxFile + "...");
     final Taxonomy fullTax = new Taxonomy();
-    try (FileInputStream fis = new FileInputStream(taxFile)) {
+    try (InputStream fis = FileUtils.createInputStream(taxFile, false)) {
       fullTax.read(fis);
     }
     //err.println(tax.size());

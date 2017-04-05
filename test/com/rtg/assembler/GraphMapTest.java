@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import com.rtg.AbstractTest;
 import com.rtg.assembler.graph.Graph;
 import com.rtg.assembler.graph.MutableGraph;
 import com.rtg.assembler.graph.implementation.ContigString;
@@ -33,32 +34,30 @@ import com.rtg.mode.DnaUtils;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SequencesReader;
 import com.rtg.util.IntegerOrPercentage;
+import com.rtg.util.NormalDistribution;
 import com.rtg.util.NullStreamUtils;
 import com.rtg.util.SimpleThreadPool;
-import com.rtg.util.StandardDeviation;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.store.StoreDirString;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.TestCase;
-
 /**
  */
-public class GraphMapTest extends TestCase {
+public class GraphMapTest extends AbstractTest {
 
   private File mDir;
 
   @Override
   public void setUp() throws IOException {
-    Diagnostic.setLogStream();
+    super.setUp();
     mDir = FileHelper.createTempDirectory();
   }
 
   @Override
-  public void tearDown() {
-    Diagnostic.setLogStream();
+  public void tearDown() throws IOException {
+    super.tearDown();
     assertTrue(FileHelper.deleteAll(mDir));
     mDir = null;
   }
@@ -341,60 +340,50 @@ public class GraphMapTest extends TestCase {
     final Map<String, String> readCount = new HashMap<>();
     readCount.put(GraphKmerAttribute.READ_COUNT, "count of reads");
     final MutableGraph graph = GraphMapCliTest.makeGraph(3, new String[]{"ACAACAC", "CGGGGT", "TCCCCTACTACAGCAG"}, new long[][]{{1, 2}, {2, 3}}, readCount, readCount);
-    final File tmp = FileHelper.createTempDirectory();
-    try {
-      final MemoryPrintStream mps =  new MemoryPrintStream();
-      Diagnostic.setLogStream(mps.printStream());
-      final SequencesReader left = ReaderTestUtils.getReaderDnaMemory(">left" + LS + "ACAACA" + LS);
-      final SequencesReader right = ReaderTestUtils.getReaderDnaMemory(">right" + LS + "CTGCTGTAGTAGGGGA" + LS);
-      final ReadPairSource source = new ReadPairSource(left, right);
-      source.setMinInsertSize(0);
-      source.setMaxInsertSize(20);
-      final GraphMap hits = new GraphMap(new GraphIndex(graph, 4, 4), graph, new PairConstraintWriter(mps.printStream()), new PathTracker(new PalindromeTracker(graph)));
-      final SimpleThreadPool pool = new SimpleThreadPool(1, "AlignmentIteratorTest", true);
-      final AsyncReadSource readSource = new AsyncReadSource(source, "testAlignmentIterator");
-      pool.execute(readSource);
-      hits.mapReads(readSource, new IntegerOrPercentage(0));
-      TestUtils.containsAll(hits.getStatistics().getStatistics(),
-          "1 Paired"
-          , "0 Too many paths"
-          , "0 Too many pairings"
-      );
-      pool.terminate();
+    final MemoryPrintStream mps =  new MemoryPrintStream();
+    Diagnostic.setLogStream(mps.printStream());
+    final SequencesReader left = ReaderTestUtils.getReaderDnaMemory(">left" + LS + "ACAACA" + LS);
+    final SequencesReader right = ReaderTestUtils.getReaderDnaMemory(">right" + LS + "CTGCTGTAGTAGGGGA" + LS);
+    final ReadPairSource source = new ReadPairSource(left, right);
+    source.setMinInsertSize(0);
+    source.setMaxInsertSize(20);
+    final GraphMap hits = new GraphMap(new GraphIndex(graph, 4, 4), graph, new PairConstraintWriter(mps.printStream()), new PathTracker(new PalindromeTracker(graph)));
+    final SimpleThreadPool pool = new SimpleThreadPool(1, "AlignmentIteratorTest", true);
+    final AsyncReadSource readSource = new AsyncReadSource(source, "testAlignmentIterator");
+    pool.execute(readSource);
+    hits.mapReads(readSource, new IntegerOrPercentage(0));
+    TestUtils.containsAll(hits.getStatistics().getStatistics(),
+      "1 Paired"
+      , "0 Too many paths"
+      , "0 Too many pairings"
+    );
+    pool.terminate();
 //      assertEquals("0\tP3\t0\t15" + StringUtils.LS, alignments.toString());
-    } finally {
-      FileHelper.deleteAll(tmp);
-    }
   }
 
   public void testPairedTooManyPathsAndProgress() throws IOException {
     final Map<String, String> readCount = new HashMap<>();
     readCount.put(GraphKmerAttribute.READ_COUNT, "count of reads");
     final MutableGraph graph = GraphMapCliTest.makeGraph(1, new String[]{"CCA", "AAA", "ATT", "ATA"}, new long[][]{{1, 2}, {2, 3}, {2, 2}, {1, 4}, {4, 3}, {2, 4}, {4, 2}}, readCount, readCount);
-    final File tmp = FileHelper.createTempDirectory();
-    try {
-      final MemoryPrintStream mps =  new MemoryPrintStream();
-      Diagnostic.setLogStream(mps.printStream());
-      final SequencesReader left = ReaderTestUtils.getReaderDnaMemory(">left" + LS + "CCA" + LS);
-      final SequencesReader right = ReaderTestUtils.getReaderDnaMemory(">right" + LS + "ATT" + LS);
-      final ReadPairSource source = new ReadPairSource(left, right);
-      source.setMinInsertSize(5000);
-      source.setMaxInsertSize(20000);
-      final GraphMap hits = new GraphMap(new GraphIndex(graph, 3, 3), graph, new PairConstraintWriter(NullStreamUtils.getNullPrintStream()), new PathTracker(new PalindromeTracker(graph)));
-      final SimpleThreadPool pool = new SimpleThreadPool(1, "AlignmentIteratorTest", true);
-      final AsyncReadSource readSource = new AsyncReadSource(source, "testAlignmentIterator");
-      pool.execute(readSource);
-      hits.mapReads(readSource, new IntegerOrPercentage(0));
-      TestUtils.containsAll(hits.getStatistics().getStatistics(),
-          "0 Paired"
-        , "0 Too many paths"
-        , "1 Too many pairings"
-        , "0 Equivalent alignments skipped"
-          );
-      pool.terminate();
-    } finally {
-      FileHelper.deleteAll(tmp);
-    }
+    final MemoryPrintStream mps =  new MemoryPrintStream();
+    Diagnostic.setLogStream(mps.printStream());
+    final SequencesReader left = ReaderTestUtils.getReaderDnaMemory(">left" + LS + "CCA" + LS);
+    final SequencesReader right = ReaderTestUtils.getReaderDnaMemory(">right" + LS + "ATT" + LS);
+    final ReadPairSource source = new ReadPairSource(left, right);
+    source.setMinInsertSize(5000);
+    source.setMaxInsertSize(20000);
+    final GraphMap hits = new GraphMap(new GraphIndex(graph, 3, 3), graph, new PairConstraintWriter(NullStreamUtils.getNullPrintStream()), new PathTracker(new PalindromeTracker(graph)));
+    final SimpleThreadPool pool = new SimpleThreadPool(1, "AlignmentIteratorTest", true);
+    final AsyncReadSource readSource = new AsyncReadSource(source, "testAlignmentIterator");
+    pool.execute(readSource);
+    hits.mapReads(readSource, new IntegerOrPercentage(0));
+    TestUtils.containsAll(hits.getStatistics().getStatistics(),
+      "0 Paired"
+      , "0 Too many paths"
+      , "1 Too many pairings"
+      , "0 Equivalent alignments skipped"
+    );
+    pool.terminate();
   }
 
   public void testEquivalentAlignments() throws IOException {
@@ -420,23 +409,18 @@ public class GraphMapTest extends TestCase {
     final Map<String, String> readCount = new HashMap<>();
     readCount.put(GraphKmerAttribute.READ_COUNT, "count of reads");
     final MutableGraph graph = GraphMapCliTest.makeGraph(3, new String[]{"ACAACAC", "CGGGGT", "TCCCCTACTACAGCAG"}, new long[][]{{1, 2}, {2, 3}}, readCount, readCount);
-    final File tmp = FileHelper.createTempDirectory();
-    try {
-      final MemoryPrintStream mps =  new MemoryPrintStream();
-      Diagnostic.setLogStream(mps.printStream());
-      final SequencesReader left = ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.fasta("TCCCCTACT", "CCTACTA"));
-      final SequencesReader right = ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.fasta("CTGCTGTAGTA", "CTGCTGTA"));
-      final ReadPairSource source = new ReadPairSource(left, right);
-      final GraphMap hits = new GraphMap(new GraphIndex(graph, 4, 4), graph, new PairConstraintWriter(mps.printStream()), new PathTracker(new PalindromeTracker(graph)));
-      final SimpleThreadPool pool = new SimpleThreadPool(1, "AlignmentIteratorTest", true);
-      final AsyncReadSource readSource = new AsyncReadSource(source, "testAlignmentIterator");
-      pool.execute(readSource);
-      pool.terminate();
-      final StandardDeviation dev = hits.calculateInserts(readSource, new IntegerOrPercentage(0));
-      assertEquals(-2.0, dev.mean());
-      assertEquals(1.0, dev.standardDeviation());
-    } finally {
-      FileHelper.deleteAll(tmp);
-    }
+    final MemoryPrintStream mps =  new MemoryPrintStream();
+    Diagnostic.setLogStream(mps.printStream());
+    final SequencesReader left = ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.fasta("TCCCCTACT", "CCTACTA"));
+    final SequencesReader right = ReaderTestUtils.getReaderDnaMemory(ReaderTestUtils.fasta("CTGCTGTAGTA", "CTGCTGTA"));
+    final ReadPairSource source = new ReadPairSource(left, right);
+    final GraphMap hits = new GraphMap(new GraphIndex(graph, 4, 4), graph, new PairConstraintWriter(mps.printStream()), new PathTracker(new PalindromeTracker(graph)));
+    final SimpleThreadPool pool = new SimpleThreadPool(1, "AlignmentIteratorTest", true);
+    final AsyncReadSource readSource = new AsyncReadSource(source, "testAlignmentIterator");
+    pool.execute(readSource);
+    pool.terminate();
+    final NormalDistribution dev = hits.calculateInserts(readSource, new IntegerOrPercentage(0));
+    assertEquals(-2.0, dev.mean());
+    assertEquals(1.4, dev.stdDev(), 0.1);
   }
 }

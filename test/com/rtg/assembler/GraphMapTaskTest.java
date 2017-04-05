@@ -25,7 +25,7 @@ import com.rtg.reader.SdfId;
 import com.rtg.util.TestUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.MemoryPrintStream;
-import com.rtg.util.test.FileHelper;
+import com.rtg.util.io.TestDirectory;
 
 import junit.framework.TestCase;
 
@@ -33,8 +33,7 @@ import junit.framework.TestCase;
  */
 public class GraphMapTaskTest extends TestCase {
   public void testReadHitsTask() throws IOException {
-    final File tmpDir = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory()) {
       final File reads = new File(tmpDir, "reads");
       final File graph = new File(tmpDir, "graph");
       assertTrue(graph.mkdir());
@@ -65,13 +64,10 @@ public class GraphMapTaskTest extends TestCase {
       } finally {
         Diagnostic.setLogStream();
       }
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
   public void testReadHitsTask454() throws IOException {
-    final File tmpDir = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory()) {
       final File reads = new File(tmpDir, "reads");
       final File graph = new File(tmpDir, "graph");
       assertTrue(graph.mkdir());
@@ -101,13 +97,11 @@ public class GraphMapTaskTest extends TestCase {
       } finally {
         Diagnostic.setLogStream();
       }
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
+
   public void testReadHitsTaskCalculateInsert() throws IOException {
-    final File tmpDir = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory()) {
       final Map<String, String> readCount = new HashMap<>();
       readCount.put(GraphKmerAttribute.READ_COUNT, "count of reads");
       final MutableGraph g = GraphMapCliTest.makeGraph(4, new String[]{"ACAACAC", "CGGGGT", "TCCCCTACTACAGCAG"}, new long[][]{{1, 2}, {2, 3}}, readCount, readCount);
@@ -144,14 +138,12 @@ public class GraphMapTaskTest extends TestCase {
         TestUtils.containsAll(mps.toString()
             , "4 Paired end reads"
             , "4 Successfully paired"
-            , "Min Insert: -6"
-            , "Max Insert: 2"
+            , "Min Insert: -8"
+            , "Max Insert: 4"
         );
       } finally {
         Diagnostic.setLogStream();
       }
-    } finally {
-      FileHelper.deleteAll(tmpDir);
     }
   }
 }

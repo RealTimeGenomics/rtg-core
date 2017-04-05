@@ -23,15 +23,15 @@ import com.rtg.assembler.graph.Graph;
 import com.rtg.assembler.graph.MutableGraph;
 import com.rtg.assembler.graph.PathsIterator;
 import com.rtg.assembler.graph.implementation.GraphKmerAttribute;
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.util.Histogram;
 import com.rtg.util.IORunnable;
 import com.rtg.util.IntegerOrPercentage;
 import com.rtg.util.MathUtils;
+import com.rtg.util.NormalDistribution;
 import com.rtg.util.ProgramState;
 import com.rtg.util.SimpleThreadPool;
-import com.rtg.util.StandardDeviation;
 import com.rtg.util.Utils;
 import com.rtg.util.array.intindex.IntChunks;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -124,17 +124,18 @@ public class GraphMap {
     pool.terminate();
     readPool.terminate();
     for (final ReadPairSource reader : paired) {
-      final List<StandardDeviation> deviations = new ArrayList<>();
+      final List<NormalDistribution> deviations = new ArrayList<>();
       for (InsertSizeRunnable job : insertJobs) {
-        final StandardDeviation e = job.mDeviationMap.get(reader);
+        final NormalDistribution e = job.mDeviationMap.get(reader);
         deviations.add(e);
         Diagnostic.developerLog(e.toString());
       }
-      final StandardDeviation combined = StandardDeviation.combine(deviations);
+      final NormalDistribution combined = new NormalDistribution();
+      combined.add(deviations);
       Diagnostic.info("Insert size distribution: " + combined.toString());
-      reader.setMinInsertSize((int) MathUtils.round(combined.mean() - combined.standardDeviation() * INSERT_DEVIATIONS));
+      reader.setMinInsertSize((int) MathUtils.round(combined.mean() - combined.stdDev() * INSERT_DEVIATIONS));
       Diagnostic.info("Min Insert: " + reader.minInsertSize());
-      reader.setMaxInsertSize((int) MathUtils.round(combined.mean() + combined.standardDeviation() * INSERT_DEVIATIONS));
+      reader.setMaxInsertSize((int) MathUtils.round(combined.mean() + combined.stdDev() * INSERT_DEVIATIONS));
       Diagnostic.info("Max Insert: " + reader.maxInsertSize());
     }
   }
@@ -264,11 +265,11 @@ public class GraphMap {
    * @throws IOException when reading the input data
    * @return the distribution calculated for the insert sizes
    */
-  public StandardDeviation calculateInserts(AsyncReadSource reader, IntegerOrPercentage mismatches) throws IOException {
+  public NormalDistribution calculateInserts(AsyncReadSource reader, IntegerOrPercentage mismatches) throws IOException {
     assert reader.getNumberFragments() > 1;
     final GraphAligner aligner = reader.aligner(mGraph, mismatches, new NullTraversions());
     final AlignmentIterator it = new AlignmentIterator(reader, mGraph, aligner, mIndex, new GraphMapStatistics(null));
-    final StandardDeviation stdDev = new StandardDeviation();
+    final NormalDistribution stdDev = new NormalDistribution();
     while (it.hasNext()) {
       final AlignmentIterator.ReadAlignment alignment = it.next();
       final List<Set<GraphAlignment>> fragmentAlignments = alignment.mFragments;
@@ -280,7 +281,7 @@ public class GraphMap {
           final GraphAlignment rightAlignment = setToVal(rightSet);
           if (leftAlignment.contigs().size() == 1 && rightAlignment.contigs().size() == 1 && leftAlignment.startContig() == -rightAlignment.startContig()) {
             final long insert = mGraph.contigLength(rightAlignment.startContig()) - rightAlignment.endPosition() - 1 - leftAlignment.endPosition();
-            stdDev.addSample(insert);
+            stdDev.add(insert);
           }
         }
       }
@@ -358,7 +359,7 @@ public class GraphMap {
     final GraphMap mMapper;
     final IntegerOrPercentage mMismatches;
     final List<AsyncReadSource> mReaders;
-    final Map<ReadPairSource, StandardDeviation> mDeviationMap = new HashMap<>();
+    final Map<ReadPairSource, NormalDistribution> mDeviationMap = new HashMap<>();
 
     InsertSizeRunnable(GraphMap mapper, IntegerOrPercentage mismatches, List<AsyncReadSource> reader) {
       mMapper = mapper;
@@ -373,7 +374,7 @@ public class GraphMap {
         if (reader.getNumberFragments() > 1) {
           mDeviationMap.put(reader.underlying(), mMapper.calculateInserts(reader, mMismatches));
         } else {
-          mDeviationMap.put(reader.underlying(), new StandardDeviation());
+          mDeviationMap.put(reader.underlying(), new NormalDistribution());
         }
         Diagnostic.developerLog("Finished insertSize run for reader " + readerId++);
       }

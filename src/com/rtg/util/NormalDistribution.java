@@ -13,6 +13,8 @@
 package com.rtg.util;
 
 
+import java.util.List;
+
 /**
  * Encapsulates parameters of a <code>NormalDistribution</code> over the integers.
  */
@@ -40,6 +42,16 @@ public class NormalDistribution {
   }
 
   /**
+   * Combine a number of distributions into one
+   * @param dists the distributions to combine
+   */
+  public void add(List<NormalDistribution> dists) {
+    for (final NormalDistribution deviation : dists) {
+      add(deviation);
+    }
+  }
+
+  /**
    * Merge a normal distribution into this one.
    * @param dist the other distribution
    */
@@ -53,10 +65,10 @@ public class NormalDistribution {
    * Add a new data point to this distribution.
    * @param value the value
    */
-  public void add(int value) {
+  public void add(long value) {
     ++mCount;
     mSum += value;
-    mSum2 += value * value;
+    mSum2 += Math.pow(value, 2);
   }
 
   /**
@@ -85,7 +97,7 @@ public class NormalDistribution {
    */
   public double mean() {
     if (mCount < 1) {
-      throw new IllegalStateException("Count is not positive");
+      return 0.0;
     }
     return mSum / mCount;
   }
@@ -95,9 +107,15 @@ public class NormalDistribution {
    */
   public double stdDev() {
     if (mCount <= 1) {
-      throw new IllegalStateException("Count is not greater than one");
+      return 0.0;
     }
     return Math.sqrt((mSum2 - mSum * mean()) / (mCount - 1));
   }
+
+  @Override
+  public String toString() {
+    return mCount + "\t" + mean() + "\t" + stdDev() + "\t" + mSum + "\t" + mSum2;
+  }
+
 }
 
