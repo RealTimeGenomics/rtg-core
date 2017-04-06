@@ -38,6 +38,7 @@ public final class SpeciesParams extends SingleMappedParams {
     boolean mVerbose;
     boolean mPrintAll;
     double mMinConfidence;
+    IdentifierCreator mIdentifierCreator;
 
     @Override
     protected SpeciesParamsBuilder self() {
@@ -93,6 +94,15 @@ public final class SpeciesParams extends SingleMappedParams {
     }
 
     /**
+     * @param identifierCreator class to create identifiers
+     * @return this builder, so calls can be chained.
+     */
+    public SpeciesParamsBuilder identifierCreator(final IdentifierCreator identifierCreator) {
+      mIdentifierCreator = identifierCreator;
+      return self();
+    }
+
+    /**
      * Creates a <code>SpeciesParams</code> using the current builder
      * configuration.
      * @return the new <code>SpeciesParams</code>
@@ -107,6 +117,7 @@ public final class SpeciesParams extends SingleMappedParams {
   private final File mReferenceMap;
   private final boolean mPrintAll;
   private final double mMinConfidence;
+  private final IdentifierCreator mIdentifierCreator;
 
   private SpeciesParams(final SpeciesParamsBuilder builder) {
     super(builder);
@@ -115,6 +126,7 @@ public final class SpeciesParams extends SingleMappedParams {
     mReferenceMap = builder.mReferenceMap;
     mPrintAll = builder.mPrintAll;
     mMinConfidence = builder.mMinConfidence;
+    mIdentifierCreator = builder.mIdentifierCreator;
   }
 
   /**
@@ -162,6 +174,13 @@ public final class SpeciesParams extends SingleMappedParams {
    */
   public double minConfidence() {
     return mMinConfidence;
+  }
+
+  /**
+   * @return class for creating identifiers.
+   */
+  public IdentifierCreator identifierCreator() {
+    return mIdentifierCreator;
   }
 
   @Override

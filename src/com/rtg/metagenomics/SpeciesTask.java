@@ -151,7 +151,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     int nextId = 2;
     final Map<String, Long> namemap = ReaderUtils.getSequenceNameMap(sr);
     if (referenceMap != null) {
-      try (BufferedReader inputList = new BufferedReader(new FileReader(referenceMap))) {
+      try (final BufferedReader inputList = new BufferedReader(new FileReader(referenceMap))) {
         String line;
         while ((line = inputList.readLine()) != null) {
           if (line.charAt(0) == SpeciesCli.COMMENT_CHAR) {
@@ -352,6 +352,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     double mappedSpec = 0.0;
     double mappedReads = 0.0;
     double unmappedReads = 0.0;
+    final IdentifierCreator identifierCreator = mParams.identifierCreator();
     final SamReadingContext context = new SamReadingContext(mParams.mapped(), 1, mParams.filterParams(), SamUtils.getUberHeader(sr, mParams.mapped()), null); // XXX add CRAM support?
     try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
       while (it.hasNext()) {
@@ -363,7 +364,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
           unmappedReads += 1.0;
         } else {
           mappedReads += mappedIncr;
-          final String readId = rec.getReadName();
+          final String readId = identifierCreator.getIdentifier(rec.getReadName(), rec.getReadBases(), rec.getReadNegativeStrandFlag());
           final String sequenceName = rec.getReferenceName();
           final Integer taxonId = mSequenceMap.get(sequenceName);
           if (taxonId == null) {
@@ -391,11 +392,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
               Diagnostic.developerLog("Starting: " + sequenceName);
             }
             final Integer speciesId = mSpeciesMap.id(taxonId);
-            ArrayList<Integer> hitList = mHits.get(readId);
-            if (hitList == null) {
-              hitList = new ArrayList<>();
-              mHits.put(readId, hitList);
-            }
+            final ArrayList<Integer> hitList = mHits.computeIfAbsent(readId, k -> new ArrayList<>());
             hitList.add(speciesId);
             mSpeciesWithHits.add(speciesId);
             final int len = rec.getReadLength();

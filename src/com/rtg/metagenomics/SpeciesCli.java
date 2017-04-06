@@ -41,26 +41,20 @@ import com.rtg.util.diagnostic.Diagnostic;
  */
 public class SpeciesCli extends ParamsCli<SpeciesParams> {
 
-  private static final String PRINT_ALL = "print-all";
-  private static final String MIN_CONFIDENCE_VALUE = "min-confidence";
-
   static final char COMMENT_CHAR = '#';
   /** Command line flag for the species genome database */
   public static final String TEMPLATE_FLAG = "genomes";
+  private static final String PRINT_ALL_FLAG = "print-all";
+  private static final String MIN_CONFIDENCE_VALUE_FLAG = "min-confidence";
   private static final String RELABEL_SPECIES_FLAG = "relabel-species-file";
-  private static final String X_ITERATIONS_FLAG = "Xiterations";
-  private static final String X_STD_DEV_GRAPH = "Xstddev-graph";
-  private static final String X_VERBOSE = "Xverbose";
+  private static final String ITERATIONS_FLAG = "Xiterations";
+  private static final String STD_DEV_GRAPH_FLAG = "Xstddev-graph";
+  private static final String VERBOSE_FLAG = "Xverbose";
+  private static final String NAMESPACE_FLAG = "Xexpand-names";
 
   private static class SpeciesFlagsValidator implements Validator {
     @Override
     public boolean isValid(final CFlags flags) {
-      if (!CommonFlags.validateOutputDirectory(flags)) {
-        return false;
-      }
-      if (!CommonFlags.validateSDF(flags, TEMPLATE_FLAG)) {
-        return false;
-      }
       if (flags.isSet(RELABEL_SPECIES_FLAG)) {
         final File referenceMap = (File) flags.getValue(RELABEL_SPECIES_FLAG);
         if (!referenceMap.exists()) {
@@ -71,26 +65,12 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
           return false;
         }
       }
-
-      final double minConfidence = (double) flags.getValue(MIN_CONFIDENCE_VALUE);
-      if (minConfidence < 0.0) {
-        flags.setParseMessage("The specified flag --" + MIN_CONFIDENCE_VALUE + " has invalid value " + minConfidence + ". It should be greater than or equal to 0.0.");
-        return false;
-      }
-
-      if (!CommonFlags.validateThreads(flags)) {
-        return false;
-      }
-
-      if (!CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Constants.MAX_OPEN_FILES)) {
-        return false;
-      }
-
-      if (!SamFilterOptions.validateFilterFlags(flags, false)) {
-        return false;
-      }
-
-      return true;
+      return CommonFlags.validateThreads(flags)
+        && CommonFlags.validateSDF(flags, TEMPLATE_FLAG)
+        && CommonFlags.validateOutputDirectory(flags)
+        && flags.checkInRange(MIN_CONFIDENCE_VALUE_FLAG, 0.0, Double.MAX_VALUE)
+        && CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Constants.MAX_OPEN_FILES)
+        && SamFilterOptions.validateFilterFlags(flags, false);
     }
   }
 
@@ -112,20 +92,21 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
     final OutputParams outParams = new OutputParams(output, false, false);
     final File genomes = (File) mFlags.getValue(TEMPLATE_FLAG);
     final SequenceParams genomesParams = SequenceParams.builder().directory(genomes).create();
-    final int minIter = (Integer) mFlags.getValue(X_ITERATIONS_FLAG);
+    final int minIter = (Integer) mFlags.getValue(ITERATIONS_FLAG);
     final File referenceMap = mFlags.isSet(RELABEL_SPECIES_FLAG) ? (File) mFlags.getValue(RELABEL_SPECIES_FLAG) : null;
-    final double minConfidence = (Double) mFlags.getValue(MIN_CONFIDENCE_VALUE);
+    final double minConfidence = (Double) mFlags.getValue(MIN_CONFIDENCE_VALUE_FLAG);
     return SpeciesParams.builder()
       .outputParams(outParams)
       .mapped(inputFiles)
       .filterParams(SamFilterOptions.makeFilterParamsBuilder(mFlags).create())
       .genome(genomesParams.readerParams())
       .minIter(minIter)
-      .verbose(mFlags.isSet(X_VERBOSE))
+      .verbose(mFlags.isSet(VERBOSE_FLAG))
       .referenceMap(referenceMap)
-      .printAll(mFlags.isSet(PRINT_ALL))
+      .printAll(mFlags.isSet(PRINT_ALL_FLAG))
       .execThreads(CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)))
       .minConfidence(minConfidence)
+      .identifierCreator(mFlags.isSet(NAMESPACE_FLAG) ? new HashingIdentifierCreator() : new DefaultIdentifierCreator())
       .create();
   }
 
@@ -156,14 +137,15 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
     flags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.DIR, "directory for output").setCategory(INPUT_OUTPUT);
     flags.registerRequired('t', TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing the genomes").setCategory(INPUT_OUTPUT);
     flags.registerOptional('r', RELABEL_SPECIES_FLAG, File.class, CommonFlags.FILE, "file containing list of species name to reference name mappings (1 mapping per line format: [reference short name][tab][species])").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(X_ITERATIONS_FLAG, Integer.class, CommonFlags.INT, "minimum number of iterations multiplied by the block size", 1).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(PRINT_ALL, "print non present species in the output file").setCategory(REPORTING);
-    flags.registerOptional('c', MIN_CONFIDENCE_VALUE, Double.class, CommonFlags.FLOAT, "species below this confidence value will not be reported", 10.0).setCategory(REPORTING);
+    flags.registerOptional(ITERATIONS_FLAG, Integer.class, CommonFlags.INT, "minimum number of iterations multiplied by the block size", 1).setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(PRINT_ALL_FLAG, "print non present species in the output file").setCategory(REPORTING);
+    flags.registerOptional('c', MIN_CONFIDENCE_VALUE_FLAG, Double.class, CommonFlags.FLOAT, "species below this confidence value will not be reported", 10.0).setCategory(REPORTING);
+    flags.registerOptional(NAMESPACE_FLAG, "do not assume that sequence names are unique across input files").setCategory(UTILITY);
 
     CommonFlags.initThreadsFlag(flags);
     final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(X_VERBOSE, "turn on output of convergence information").setCategory(UTILITY);
-    flags.registerOptional(X_STD_DEV_GRAPH, "output graph across 1 standard deviation").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(VERBOSE_FLAG, "turn on output of convergence information").setCategory(UTILITY);
+    flags.registerOptional(STD_DEV_GRAPH_FLAG, "output graph across 1 standard deviation").setCategory(INPUT_OUTPUT);
     //You should never filter in IH (it is expected that there will be hits on multiple bacterial species)
     //SamFilterOptions.registerMaxHitsFlag(flags, 'c');
     SamFilterOptions.registerMaxASMatedFlag(flags, 'm');
