@@ -68,6 +68,7 @@ public class UnmatedAugmenterTest extends AbstractNanoTest {
       FileHelper.resourceToFile("com/rtg/sam/resources/mergeunmated.sam", unmated);
       FileHelper.resourceToFile("com/rtg/sam/resources/mergeunmapped.sam.gz", unmapped);
 
+
       final UnmatedAugmenter un = new UnmatedAugmenter();
       final ReadGroupStatsCalculator calc = new ReadGroupStatsCalculator();
       calc.addFile(mated);
@@ -76,6 +77,19 @@ public class UnmatedAugmenterTest extends AbstractNanoTest {
       final String outUnmappedStr = FileUtils.fileToString(outunmapped);
       final String outStrNoPg = StringUtils.grepMinusV(outUnmappedStr, "^@PG");
       mNano.check("mergeunmapped-aug.sam", outStrNoPg);
+    }
+  }
+
+  public void testAugmentingMixed() throws Exception {
+    try (TestDirectory temp = new TestDirectory()) {
+      final File alignments = new File(temp, "alignments.sam.gz");
+      final File outalignments = new File(temp, "outalignments.sam.gz");
+      FileHelper.resourceToFile("com/rtg/sam/resources/mergecombined.sam.gz", alignments);
+      final ReadGroupStatsCalculator calc = new ReadGroupStatsCalculator();
+      new UnmatedAugmenter().augmentMixed(alignments, outalignments, calc);
+      final String outUnmappedStr = FileHelper.gzFileToString(outalignments);
+      final String outStrNoPg = StringUtils.grepMinusV(outUnmappedStr, "^@PG");
+      mNano.check("mergecombined-aug.sam", outStrNoPg);
     }
   }
 

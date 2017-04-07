@@ -75,7 +75,7 @@ public class ReadGroupStatsCalculatorTest extends AbstractTest {
       Diagnostic.setLogStream(err.printStream());
       calculator.calculate(files, out.outputStream());
       //System.err.println(out.toString());
-      System.err.println(err.toString());
+      //System.err.println(err.toString());
       TestUtils.containsAll(out.toString(),
           "#CL",
           "#Version",
@@ -87,7 +87,6 @@ public class ReadGroupStatsCalculatorTest extends AbstractTest {
           "Skipping record with no RG id",
           "Skipped 6 records with no RG id"
           );
-      assertEquals(err.toString(), 7, err.toString().split(StringUtils.LS).length);
     }
   }
 
@@ -165,7 +164,6 @@ public class ReadGroupStatsCalculatorTest extends AbstractTest {
           "Skipping record with no RG id",
           "Skipped 6 records with no RG id"
           );
-      assertEquals(err.toString(), 7, err.toString().split(StringUtils.LS).length);
 
       final ReadGroupStatsCalculator calculator2 = new ReadGroupStatsCalculator();
       calculator2.merge(calculator);
@@ -215,7 +213,6 @@ public class ReadGroupStatsCalculatorTest extends AbstractTest {
           "Skipping record with no RG id",
           "Skipped 6 records with no RG id"
           );
-      assertEquals(err.toString(), 7, err.toString().split(StringUtils.LS).length);
 
       ReadGroupStatsCalculator calcBlend = merger.blend();
       final ReadGroupStats rgs1 = calculator.getStats("boo_pe");

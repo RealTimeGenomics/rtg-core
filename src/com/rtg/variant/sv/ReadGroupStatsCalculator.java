@@ -25,9 +25,11 @@ import java.util.Map.Entry;
 
 import com.rtg.sam.ReadGroupUtils;
 import com.rtg.sam.RecordIterator;
+import com.rtg.sam.SamRecordPopulator;
 import com.rtg.sam.SamUtils;
-import com.rtg.sam.SkipInvalidRecordsIterator;
+import com.rtg.sam.ThreadedMultifileIterator;
 import com.rtg.util.Environment;
+import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -240,7 +242,7 @@ public final class ReadGroupStatsCalculator {
   public void addFile(File file) throws IOException {
     Diagnostic.userLog("Accumulating read group statistics for: " + file);
     mNoReadGroupWarnings = 0;
-    try (RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(file.getPath(), SamUtils.makeSamReader(file), true)) {
+    try (RecordIterator<SAMRecord> it = new ThreadedMultifileIterator<>(Collections.singletonList(file), new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
       setupReadGroups(it.header());
       while (it.hasNext()) {
         addRecord(it.next());

@@ -27,11 +27,13 @@ import com.rtg.reference.ReferenceGenome;
 import com.rtg.reference.ReferenceSequence;
 import com.rtg.sam.ReadGroupUtils;
 import com.rtg.sam.RecordIterator;
+import com.rtg.sam.SamRecordPopulator;
 import com.rtg.sam.SamUtils;
-import com.rtg.sam.SkipInvalidRecordsIterator;
+import com.rtg.sam.ThreadedMultifileIterator;
 import com.rtg.util.Constants;
 import com.rtg.util.Environment;
 import com.rtg.util.Pair;
+import com.rtg.util.SingletonPopulatorFactory;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.RegionRestriction;
@@ -189,19 +191,7 @@ public final class UnmatedAugmenter {
     mRgMachineTypes.put(rgId, mt);
   }
 
-  SAMFileWriter makeWriter(SamReader reader, OutputStream outStream, boolean presorted) {
-    final SAMFileHeader header = constructHeader(reader);
-    final SAMFileWriter writer;
-    if (reader.type() == SamReader.Type.BAM_TYPE) {
-      writer = new SAMFileWriterFactory().makeBAMWriter(header, presorted, outStream, true);
-    } else {
-      writer = new SAMFileWriterFactory().makeSAMWriter(header, presorted, outStream);
-    }
-    return writer;
-  }
-
-  private SAMFileHeader constructHeader(SamReader reader) {
-    final SAMFileHeader header = reader.getFileHeader();
+  SAMFileWriter makeWriter(SAMFileHeader header, SamReader.Type type, OutputStream outStream, boolean presorted) {
     final SAMProgramRecord pg = new SAMProgramRecord(Constants.APPLICATION_NAME);
     pg.setProgramVersion(Environment.getVersion());
     if (CommandLine.getCommandLine() != null) {
@@ -211,7 +201,13 @@ public final class UnmatedAugmenter {
     }
     SamUtils.addProgramRecord(header, pg);
 
-    return header;
+    final SAMFileWriter writer;
+    if (type == SamReader.Type.BAM_TYPE) {
+      writer = new SAMFileWriterFactory().makeBAMWriter(header, presorted, outStream, true);
+    } else {
+      writer = new SAMFileWriterFactory().makeSAMWriter(header, presorted, outStream);
+    }
+    return writer;
   }
 
   /**
@@ -223,8 +219,8 @@ public final class UnmatedAugmenter {
    */
   void augmentMixed(File file, File output, ReadGroupStatsCalculator calc) throws IOException {
     // First pass, collect mated stats and augmentable unmated info
-    try (RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(file.getPath(), SamUtils.makeSamReader(file), true)) {
-      calc.setupReadGroups(it.header());
+    try (RecordIterator<SAMRecord> it = new ThreadedMultifileIterator<>(Collections.singletonList(file), new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
+      setupReadGroups(it.header(), calc);
       while (it.hasNext()) {
         final SAMRecord record = it.next();
         if (record.getProperPairFlag()) {
@@ -236,47 +232,43 @@ public final class UnmatedAugmenter {
 
     calc.calculate(); // Ensure insert size stats have been computed
 
-    // Second pass, augment unmated records (and collect their stats) and unmapped records
-    try (final SamReader reader = SamUtils.makeSamReader(file)) {
-      try (RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(file.getPath(), reader, true)) {
-        try (SAMFileWriter writer = makeWriter(reader, FileUtils.createOutputStream(output, FileUtils.isGzipFilename(file) || reader.type() == SamReader.Type.BAM_TYPE), true)) {
-          while (it.hasNext()) {
-            final SAMRecord record = it.next();
-            if (!record.getProperPairFlag()) {
-              if (record.getReadUnmappedFlag()) {
-                updateUnmappedRecord(record, calc, null);
-              } else {
-                updateUnmatedRecord(record);
-                calc.addRecord(record);
-              }
+    // Second pass, augment unmated records (and collect their stats) and augment unmapped records (requires re-sorting)
+    try (RecordIterator<SAMRecord> it = new ThreadedMultifileIterator<>(Collections.singletonList(file), new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
+      try (SAMFileWriter writer = makeWriter(it.header(), SamUtils.getSamType(file), FileUtils.createOutputStream(output, FileUtils.isGzipFilename(file) || SamUtils.getSamType(file) == SamReader.Type.BAM_TYPE), false)) {
+        while (it.hasNext()) {
+          final SAMRecord record = it.next();
+          if (!record.getProperPairFlag()) {
+            if (record.getReadUnmappedFlag()) {
+              updateUnmappedRecord(record, calc, null);
+            } else {
+              updateUnmatedRecord(record);
+              calc.addRecord(record);
             }
-            writer.addAlignment(record);
           }
+          writer.addAlignment(record);
         }
       }
     }
   }
 
   /**
-   * Augments a file containing only unmated alignment. Not reentrant.
+   * Augments a file containing only unmated alignments. Not reentrant.
    * @param unmatedFile SAM/BAM file to augment
    * @param unmatedOutputFile SAM/BAM file to output.
    * @param calc statistics calculator to feed records through.
    * @throws IOException when an IO error occurs
    */
   public void augmentUnmated(File unmatedFile, File unmatedOutputFile, ReadGroupStatsCalculator calc) throws IOException {
-    try (SamReader reader1 = SamUtils.makeSamReader(FileUtils.createFileInputStream(unmatedFile, false))) {
-      calc.setupReadGroups(reader1.getFileHeader());
-      try (RecordIterator<SAMRecord> it1 = new SkipInvalidRecordsIterator(unmatedFile.getPath(), reader1)) {
-        while (it1.hasNext()) {
-          addRecord(it1.next());
-        }
+    // First pass, collect augmentable unmated info
+    try (RecordIterator<SAMRecord> it1 = new ThreadedMultifileIterator<>(Collections.singletonList(unmatedFile), new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
+      setupReadGroups(it1.header(), calc);
+      while (it1.hasNext()) {
+        addRecord(it1.next());
       }
     }
-    try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(unmatedFile, false))) {
-      try (SAMFileWriter writer = makeWriter(reader, FileUtils.createOutputStream(unmatedOutputFile, FileUtils.isGzipFilename(unmatedFile) || reader.type() == SamReader.Type.BAM_TYPE), true)) {
-        //assume any warnings from input are reported the first time we processed so set Skipping iterator to silent mode.
-        final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(unmatedFile.getPath(), reader, true);
+    // Second pass, augment unmated records (and collect their stats)
+    try (RecordIterator<SAMRecord> it = new ThreadedMultifileIterator<>(Collections.singletonList(unmatedFile), new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
+      try (SAMFileWriter writer = makeWriter(it.header(), SamUtils.getSamType(unmatedFile), FileUtils.createOutputStream(unmatedOutputFile, FileUtils.isGzipFilename(unmatedFile) || SamUtils.getSamType(unmatedFile) == SamReader.Type.BAM_TYPE), true)) {
         while (it.hasNext()) {
           final SAMRecord r = it.next();
           updateUnmatedRecord(r);
@@ -284,6 +276,13 @@ public final class UnmatedAugmenter {
           writer.addAlignment(r);
         }
       }
+    }
+  }
+
+  private void setupReadGroups(SAMFileHeader header, ReadGroupStatsCalculator calc) {
+    calc.setupReadGroups(header);
+    for (final SAMReadGroupRecord srgr : header.getReadGroups()) {
+      addMachineType(srgr);
     }
   }
 
@@ -296,12 +295,9 @@ public final class UnmatedAugmenter {
    */
   public void augmentUnmapped(File unmappedFile, File outputUnmappedFile, ReadGroupStatsCalculator calc) throws IOException {
     calc.calculate();
-    try (SamReader reader = SamUtils.makeSamReader(FileUtils.createFileInputStream(unmappedFile, false))) {
-      for (final SAMReadGroupRecord srgr : reader.getFileHeader().getReadGroups()) {
-        addMachineType(srgr); // Not re-entrant
-      }
-      try (SAMFileWriter writer = makeWriter(reader, FileUtils.createOutputStream(outputUnmappedFile), false)) {
-        final RecordIterator<SAMRecord> it = new SkipInvalidRecordsIterator(unmappedFile.getPath(), reader, true);
+    // Augment the unmapped records (requires resorting)
+    try (RecordIterator<SAMRecord> it = new ThreadedMultifileIterator<>(Collections.singletonList(unmappedFile), new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
+      try (SAMFileWriter writer = makeWriter(it.header(), SamUtils.getSamType(unmappedFile), FileUtils.createOutputStream(outputUnmappedFile), false)) {
         while (it.hasNext()) {
           final SAMRecord r = it.next();
           if (r.getReadUnmappedFlag()) {
