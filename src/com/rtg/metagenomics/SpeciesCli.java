@@ -50,7 +50,7 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
   private static final String ITERATIONS_FLAG = "Xiterations";
   private static final String STD_DEV_GRAPH_FLAG = "Xstddev-graph";
   private static final String VERBOSE_FLAG = "Xverbose";
-  private static final String NAMESPACE_FLAG = "Xexpand-names";
+  private static final String NAMESPACE_FLAG = "Xsimple-names";
 
   private static class SpeciesFlagsValidator implements Validator {
     @Override
@@ -106,7 +106,7 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
       .printAll(mFlags.isSet(PRINT_ALL_FLAG))
       .execThreads(CommonFlags.parseThreads((Integer) mFlags.getValue(CommonFlags.THREADS_FLAG)))
       .minConfidence(minConfidence)
-      .identifierCreator(mFlags.isSet(NAMESPACE_FLAG) ? new HashingIdentifierCreator() : new DefaultIdentifierCreator())
+      .identifierCreator(mFlags.isSet(NAMESPACE_FLAG) ? new DefaultIdentifierCreator() : new HashingIdentifierCreator())
       .create();
   }
 
@@ -140,7 +140,7 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
     flags.registerOptional(ITERATIONS_FLAG, Integer.class, CommonFlags.INT, "minimum number of iterations multiplied by the block size", 1).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(PRINT_ALL_FLAG, "print non present species in the output file").setCategory(REPORTING);
     flags.registerOptional('c', MIN_CONFIDENCE_VALUE_FLAG, Double.class, CommonFlags.FLOAT, "species below this confidence value will not be reported", 10.0).setCategory(REPORTING);
-    flags.registerOptional(NAMESPACE_FLAG, "do not assume that sequence names are unique across input files").setCategory(UTILITY);
+    flags.registerOptional(NAMESPACE_FLAG, "use only the read name to identify sequences").setCategory(UTILITY);
 
     CommonFlags.initThreadsFlag(flags);
     final Flag<File> listFlag = flags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
