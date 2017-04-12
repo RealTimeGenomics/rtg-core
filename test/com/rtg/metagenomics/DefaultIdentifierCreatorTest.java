@@ -26,7 +26,7 @@ public class DefaultIdentifierCreatorTest extends TestCase {
     final byte[] bases = DnaUtils.encodeString(read);
     final byte[] rc = DnaUtils.encodeString(DnaUtils.reverseComplement(read));
     final DefaultIdentifierCreator creator = new DefaultIdentifierCreator();
-    assertEquals("read", creator.getIdentifier("read", bases, false));
-    assertEquals("read", creator.getIdentifier("read", rc, true));
+    assertEquals(3496342, creator.getIdentifier("read", bases, false));
+    assertEquals(3496342, creator.getIdentifier("read", rc, true));
   }
 }

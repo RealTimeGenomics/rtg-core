@@ -49,7 +49,7 @@ public class HashingIdentifierCreator implements IdentifierCreator {
   }
 
   @Override
-  public String getIdentifier(final String readName, final byte[] readBases, final boolean rc) {
-    return readName + Long.toHexString(rc ? irvineHashRC(readBases) : irvineHash(readBases));
+  public long getIdentifier(final String readName, final byte[] readBases, final boolean rc) {
+    return readName.hashCode() ^ (rc ? irvineHashRC(readBases) : irvineHash(readBases));
   }
 }

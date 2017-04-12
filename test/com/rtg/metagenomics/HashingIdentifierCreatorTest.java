@@ -27,7 +27,7 @@ public class HashingIdentifierCreatorTest extends TestCase {
     final byte[] rc = DnaUtils.reverseComplement(read).getBytes();
     assertEquals(HashingIdentifierCreator.irvineHash(bases), HashingIdentifierCreator.irvineHashRC(rc));
     final HashingIdentifierCreator creator = new HashingIdentifierCreator();
-    assertEquals("readdf1000b99724ceaf", creator.getIdentifier("read", bases, false));
-    assertEquals("readdf1000b99724ceaf", creator.getIdentifier("read", rc, true));
+    assertEquals(-2373396206520789191L, creator.getIdentifier("read", bases, false));
+    assertEquals(-2373396206520789191L, creator.getIdentifier("read", rc, true));
   }
 }

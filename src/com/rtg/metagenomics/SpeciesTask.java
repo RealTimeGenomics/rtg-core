@@ -108,7 +108,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
   private static final String NUM_FORMAT_CONFIDENCE = "%1.2g";
 
   protected final Map<String, Integer> mSequenceMap = new HashMap<>();
-  private final Map<String, ArrayList<Integer>> mHits = new HashMap<>();
+  private final Map<Long, ArrayList<Integer>> mHits = new HashMap<>();
   private final Set<Integer> mSpeciesWithHits = new HashSet<>();
 
   //TODO get rid of these protected declarations - this is not a civilized way to test things
@@ -364,7 +364,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
           unmappedReads += 1.0;
         } else {
           mappedReads += mappedIncr;
-          final String readId = identifierCreator.getIdentifier(rec.getReadName(), rec.getReadBases(), rec.getReadNegativeStrandFlag());
+          final long readId = identifierCreator.getIdentifier(rec.getReadName(), rec.getReadBases(), rec.getReadNegativeStrandFlag());
           final String sequenceName = rec.getReferenceName();
           final Integer taxonId = mSequenceMap.get(sequenceName);
           if (taxonId == null) {
@@ -491,24 +491,21 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
             for (int j = 0; j < mInBlock.length; ++j) {
               if (mInBlock[j]) {
                 final int nodeId = j;
-                final Runnable run = new Runnable() {
-                  @Override
-                  public void run() {
-                    final Species psp = new Species(mMembersOf, mCurrentBlock); // Species is not thread-safe, so make a new one
-                    final IdSet idSet = new IdSet(mMembersOf[nodeId]);
-                    final Double v = mKnownSolutions.get(idSet);
-                    if (v == null) {
-                      final double l = subBlockResults.getL();
-                      final String name = mTaxonomy.get(mSpeciesMap.taxonId(nodeId)).getName();
-                      Diagnostic.developerLog("B:" + mCurrentBlockId + " Doing p-value estimation for node " + nodeId + " " + name + " base L= " + l);
-                      final double newL = psp.solveFixed(initialR, mMembersOf[nodeId], 2, l);
-                      final double ll = newL - l;
-                      Diagnostic.developerLog("B:" + mCurrentBlockId + " L0:" + l + " L':" + newL);
-                      subBlockResults.getLikelihoods().set(nodeId, ll);
-                      mKnownSolutions.put(idSet, ll);
-                    } else {
-                      subBlockResults.getLikelihoods().set(nodeId, v);
-                    }
+                final Runnable run = () -> {
+                  final Species psp = new Species(mMembersOf, mCurrentBlock); // Species is not thread-safe, so make a new one
+                  final IdSet idSet = new IdSet(mMembersOf[nodeId]);
+                  final Double v = mKnownSolutions.get(idSet);
+                  if (v == null) {
+                    final double l = subBlockResults.getL();
+                    final String name = mTaxonomy.get(mSpeciesMap.taxonId(nodeId)).getName();
+                    Diagnostic.developerLog("B:" + mCurrentBlockId + " Doing p-value estimation for node " + nodeId + " " + name + " base L= " + l);
+                    final double newL = psp.solveFixed(initialR, mMembersOf[nodeId], 2, l);
+                    final double ll = newL - l;
+                    Diagnostic.developerLog("B:" + mCurrentBlockId + " L0:" + l + " L':" + newL);
+                    subBlockResults.getLikelihoods().set(nodeId, ll);
+                    mKnownSolutions.put(idSet, ll);
+                  } else {
+                    subBlockResults.getLikelihoods().set(nodeId, v);
                   }
                 };
                 pFutures.add(pvalueExecutor.submit(run));

@@ -24,5 +24,5 @@ public interface IdentifierCreator {
    * @param rc sequence data is in reverse complement
    * @return identifier
    */
-  String getIdentifier(final String readName, final byte[] readBases, final boolean rc);
+  long getIdentifier(final String readName, final byte[] readBases, final boolean rc);
 }

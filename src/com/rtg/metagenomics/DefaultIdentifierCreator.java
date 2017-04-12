@@ -16,7 +16,7 @@ package com.rtg.metagenomics;
  */
 public class DefaultIdentifierCreator implements IdentifierCreator {
   @Override
-  public String getIdentifier(final String readName, final byte[] readBases, final boolean rc) {
-    return readName;
+  public long getIdentifier(final String readName, final byte[] readBases, final boolean rc) {
+    return readName.hashCode();
   }
 }
