@@ -264,7 +264,6 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
         }
       }
     }
-    //TODO move to the output task so come out in sequence
     mPP.updateProgress(chunkInfo.percent(end));
     return maxReadLen;
   }
