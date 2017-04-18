@@ -12,6 +12,7 @@
 package com.rtg.variant.sv.discord;
 
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
+import static com.rtg.util.cli.CommonFlagCategories.REPORTING;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
 
 import java.io.File;
@@ -25,8 +26,6 @@ import com.rtg.sam.SamFilterOptions;
 import com.rtg.util.IORunnable;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
-import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.variant.sv.SvCliUtils;
 import com.rtg.variant.sv.SvCliUtils.SvValidator;
 import com.rtg.variant.sv.discord.DiscordantToolParams.DiscordantToolParamsBuilder;
@@ -35,28 +34,20 @@ import com.rtg.variant.sv.discord.DiscordantToolParams.DiscordantToolParamsBuild
  */
 public class DiscordantToolCli extends ParamsCli<DiscordantToolParams> {
 
-  private static final String XDEBUG = "Xdebug-output";
-  private static final String BED = "bed";
   /** Flag name for minimum support */
-  public static final String MIN_BREAKPOINT_DEPTH = "min-support";
-  private static final String INTERSECTIONS = "consistent-only";
-  /** Default value for <code>MIN_BREAKPOINT_DEPTH</code> */
-  public static final Integer DEFAULT_MIN_DEPTH = 3;
-  /** Description of min-support flag */
-  public static final String MIN_SUPPORT_DESCRIPTION = "minimum number of supporting reads for a breakend";
+  public static final String MIN_SUPPORT_FLAG = "min-support";
+  private static final String INTERSECTIONS_FLAG = "consistent-only";
+  private static final String BED_FLAG = "bed";
+  private static final String BAM_FLAG = "Xbam-output";
+  private static final String DEBUG_FLAG = "Xdebug-output";
+  private static final String MULTISAMPLE_FLAG = "Xmultisample";
 
   private static class DiscordantToolValidator extends SvValidator {
 
     @Override
     public boolean isValid(final CFlags flags) {
-      if (!super.isValid(flags)) {
-        return false;
-      }
-      if ((Integer) flags.getValue(MIN_BREAKPOINT_DEPTH) < 1) {
-        Diagnostic.error(ErrorType.EXPECTED_POSITIVE, MIN_BREAKPOINT_DEPTH);
-        return false;
-      }
-      return true;
+      return super.isValid(flags)
+        && flags.checkInRange(MIN_SUPPORT_FLAG, 1, Integer.MAX_VALUE);
     }
   }
 
@@ -80,13 +71,21 @@ public class DiscordantToolCli extends ParamsCli<DiscordantToolParams> {
     flags.setDescription("Analyses SAM records to determine the location of breakends.");
     flags.setValidator(new DiscordantToolValidator());
     SamFilterOptions.registerMaxHitsFlag(flags, 'c');
-    flags.registerOptional('s', MIN_BREAKPOINT_DEPTH, Integer.class, CommonFlags.INT, MIN_SUPPORT_DESCRIPTION, DEFAULT_MIN_DEPTH).setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(INTERSECTIONS, "only include breakends with internally consistent supporting reads").setCategory(SENSITIVITY_TUNING);
-    flags.registerOptional(BED, "produce output in BED format in addition to VCF").setCategory(INPUT_OUTPUT);
-//    flags.registerOptional(AbstractMultisampleCli.MAX_AMBIGUITY, IntegerOrPercentage.class, CommonFlags.INT, "threshold for ambiguity above which calls are not made").setCategory(SENSITIVITY_TUNING);
-//    flags.registerOptional(AbstractMultisampleCli.MAX_COVERAGE_FLAG, Integer.class, CommonFlags.INT, "if set, will only output variants where coverage is less than this amount").setCategory(SENSITIVITY_TUNING);
-    //X flags
-    flags.registerOptional(XDEBUG, "produce debug output in addition to VCF").setCategory(INPUT_OUTPUT);
+    registerMinSupport(flags);
+    flags.registerOptional(INTERSECTIONS_FLAG, "only include breakends with internally consistent supporting reads").setCategory(SENSITIVITY_TUNING);
+    flags.registerOptional(BED_FLAG, "produce output in BED format in addition to VCF").setCategory(INPUT_OUTPUT);
+
+    flags.registerOptional(BAM_FLAG, DiscordantTool.BamType.class, CommonFlags.STRING, "produce BAM output containing clusters of discordant alignments", DiscordantTool.BamType.NONE).setCategory(REPORTING);
+    flags.registerOptional(DEBUG_FLAG, "produce debug output in addition to VCF").setCategory(INPUT_OUTPUT);
+    flags.registerOptional(MULTISAMPLE_FLAG, "allow running on pooled data from multiple samples").setCategory(INPUT_OUTPUT);
+  }
+
+  /**
+   * Registers a flag for the minimum number of reads that must support the breakend
+   * @param flags flags to register with
+   */
+  public static void registerMinSupport(CFlags flags) {
+    flags.registerOptional('s', MIN_SUPPORT_FLAG, Integer.class, CommonFlags.INT, "minimum number of supporting reads for a breakend", 3).setCategory(SENSITIVITY_TUNING);
   }
 
   @Override
@@ -98,12 +97,12 @@ public class DiscordantToolCli extends ParamsCli<DiscordantToolParams> {
     final DiscordantToolParamsBuilder builder = DiscordantToolParams.builder();
     SvCliUtils.populateCommonParams(builder, SequenceParams.builder().useMemReader(false), flags);
 
-    return builder.bedOutput(flags.isSet(BED))
-        .minBreakpointDepth((Integer) flags.getValue(MIN_BREAKPOINT_DEPTH))
-//        .maxCoverage((Integer) flags.getValue(AbstractMultisampleCli.MAX_COVERAGE_FLAG))
-//        .maxAmbiguity(flags.isSet(AbstractMultisampleCli.MAX_AMBIGUITY) ? (((IntegerOrPercentage) flags.getValue(AbstractMultisampleCli.MAX_AMBIGUITY)).getValue(100) / 100.0) : null)
-        .intersectionOnly(flags.isSet(INTERSECTIONS))
-        .debugOutput(flags.isSet(XDEBUG))
+    return builder.bedOutput(flags.isSet(BED_FLAG))
+        .minBreakpointDepth((Integer) flags.getValue(MIN_SUPPORT_FLAG))
+        .intersectionOnly(flags.isSet(INTERSECTIONS_FLAG))
+        .debugOutput(flags.isSet(DEBUG_FLAG))
+        .allowMultisample(flags.isSet(MULTISAMPLE_FLAG))
+        .bamOutput((DiscordantTool.BamType) flags.getValue(BAM_FLAG))
         .create();
   }
 
@@ -116,11 +115,4 @@ public class DiscordantToolCli extends ParamsCli<DiscordantToolParams> {
   protected IORunnable task(final DiscordantToolParams params, final OutputStream out) throws IOException {
     return new DiscordantTool(params, out);
   }
-  /**
-   * @param args command line arguments
-   */
-  public static void main(String[] args) {
-    new DiscordantToolCli().mainExit(args);
-  }
-
 }

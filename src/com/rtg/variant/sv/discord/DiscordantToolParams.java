@@ -36,10 +36,9 @@ public final class DiscordantToolParams extends SvParams {
     boolean mOutputTabixIndex = true;
     boolean mDebugOutput = false;
     boolean mBedOutput = false;
-    boolean mIntersectionOnly;
-//    Double mMaxAmbiguity;
-//    Integer mMaxCoverage;
-
+    boolean mMultisample = false;
+    boolean mIntersectionOnly = false;
+    DiscordantTool.BamType mBamOutput = DiscordantTool.BamType.NONE;
     int mMinBreakpointDepth;
 
     @Override
@@ -95,26 +94,23 @@ public final class DiscordantToolParams extends SvParams {
       return self();
     }
 
-//    /**
-//     * Sets the maximum proportion of ambiguous reads allowed
-//     *
-//     * @param ambiguity highest ambiguity allowed in output
-//     * @return this builder, so calls can be chained.
-//     */
-//    public DiscordantToolParamsBuilder maxAmbiguity(Double ambiguity) {
-//      mMaxAmbiguity = ambiguity;
-//      return self();
-//    }
-//    /**
-//     * Sets the maximum coverage allowed at breakpoints
-//     *
-//     * @param coverage highest coverage allowed in output
-//     * @return this builder, so calls can be chained.
-//     */
-//    public DiscordantToolParamsBuilder maxCoverage(Integer coverage) {
-//      mMaxCoverage = coverage;
-//      return self();
-//    }
+    /**
+     * @param multisample true if data from multiple samples can be provided
+     * @return this builder, so calls can be chained.
+     */
+    public DiscordantToolParamsBuilder allowMultisample(boolean multisample) {
+      mMultisample = multisample;
+      return this;
+    }
+
+    /**
+     * @param output the type of BAM output to produce
+     * @return this builder, so calls can be chained.
+     */
+    public DiscordantToolParamsBuilder bamOutput(DiscordantTool.BamType output) {
+      mBamOutput = output;
+      return this;
+    }
 
     /**
      * Creates a <code>SVToolsParams</code> using the current builder
@@ -130,10 +126,9 @@ public final class DiscordantToolParams extends SvParams {
   private final boolean mOutputTabixIndex;
   private final boolean mDebugOutput;
   private final boolean mBedOutput;
+  private final boolean mMultisample;
   private final boolean mIntersectionOnly;
-//  private final Double mMaxAmbiguity;
-//  private final Integer mMaxCoverage;
-
+  private final DiscordantTool.BamType mBamOutput;
   private final int mMinBreakpointDepth;
 
   /**
@@ -146,8 +141,8 @@ public final class DiscordantToolParams extends SvParams {
     mBedOutput = builder.mBedOutput;
     mIntersectionOnly = builder.mIntersectionOnly;
     mMinBreakpointDepth = builder.mMinBreakpointDepth;
-//    mMaxAmbiguity = builder.mMaxAmbiguity;
-//    mMaxCoverage = builder.mMaxCoverage;
+    mMultisample = builder.mMultisample;
+    mBamOutput = builder.mBamOutput;
   }
 
 
@@ -164,6 +159,20 @@ public final class DiscordantToolParams extends SvParams {
    */
   public boolean debugOutput() {
     return mDebugOutput;
+  }
+
+  /**
+   * @return true if multiple samples are permitted
+   */
+  public boolean multisample() {
+    return mMultisample;
+  }
+
+  /**
+   * @return what type of BAM to output
+   */
+  public DiscordantTool.BamType bamOutput() {
+    return mBamOutput;
   }
 
   /**
@@ -192,7 +201,14 @@ public final class DiscordantToolParams extends SvParams {
   public String toString() {
     final String pref = "    ";
     final StringBuilder sb = new StringBuilder();
-    sb.append("DiscordantToolParams" + " mapped-reads=").append(mapped().toString()).append(" output-tabix-index=").append(mOutputTabixIndex).append(" debug-output=").append(mDebugOutput).append(" bed-output=").append(mBedOutput).append(" intersection-only=").append(mIntersectionOnly).append(" min-breakpoint-depth=").append(mMinBreakpointDepth).append(LS);
+    sb.append("DiscordantToolParams")
+      .append(" mapped-reads=").append(mapped().toString())
+      .append(" output-tabix-index=").append(mOutputTabixIndex)
+      .append(" debug-output=").append(mDebugOutput)
+      .append(" bed-output=").append(mBedOutput)
+      .append(" bam-output=").append(mBamOutput)
+      .append(" intersection-only=").append(mIntersectionOnly)
+      .append(" min-breakpoint-depth=").append(mMinBreakpointDepth).append(LS);
     sb.append(filterParams().toString()).append(LS);
     if (genome() != null) {
       sb.append(pref).append(genome().toString());

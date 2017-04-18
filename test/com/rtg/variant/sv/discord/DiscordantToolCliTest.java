@@ -22,6 +22,7 @@ import com.rtg.launcher.AbstractCliTest;
 import com.rtg.reader.DefaultSequencesReader;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.InvalidParamsException;
+import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
@@ -36,15 +37,14 @@ public class DiscordantToolCliTest extends AbstractCliTest {
   }
 
   public void testFlagValidator() throws IOException {
-    String str = checkHandleFlagsErr("-t", "genome-name", "-o", "output", "-r", "blah.txt", "blah.txt");
-    assertTrue(str, str.contains("The specified SDF, \"genome-name\", does not exist."));
+    TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-t", "genome-name", "-o", "output", "-r", "blah.txt", "blah.txt"),
+      "The specified SDF, \"genome-name\", does not exist.");
     try (final TestDirectory tempDir = new TestDirectory()) {
       final File f = new File(tempDir, "blah.txt");
       assertTrue(f.createNewFile());
-      str = checkHandleFlagsErr("-t", tempDir.getPath(), "-o", "randomdir_output", "-r", f.getPath(), f.getPath(), "-s", "0");
-      assertTrue(str, str.contains("Expected a positive integer for parameter \"min-support\"."));
-      str = checkHandleFlagsOut("-t", tempDir.getPath(), "-o", "randomdir_output", "-r",  f.getPath(), f.getPath());
-      assertEquals("", str);
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-t", tempDir.getPath(), "-o", "randomdir_output", "-r", f.getPath(), f.getPath(), "-s", "0"),
+        "--min-support", "must be at least 1");
+      checkHandleFlagsOut("-t", tempDir.getPath(), "-o", "randomdir_output", "-r",  f.getPath(), f.getPath());
     }
   }
 
@@ -73,11 +73,7 @@ public class DiscordantToolCliTest extends AbstractCliTest {
         , "--consistent-only", "only include breakends with internally consistent supporting reads"
         , "-s,", "--min-support=INT", "minimum number of supporting reads for a breakend (Default is 3)"
         , "-c,", "--max-hits=INT", "if set, ignore SAM records with an alignment count that exceeds this value"
-//        , "--max-coverage=INT", "if set, will only output variants where coverage is less than this amount"
-//        , "--max-ambiguity=INT", "threshold for ambiguity above which calls are not made"
         );
-    checkExtendedHelp("rtg discord"
-        , "--Xdebug-output", "produce debug output in addition to VCF"
-        );
+    checkExtendedHelp("rtg discord", "--Xdebug-output", "produce debug output in addition to VCF", "--Xmultisample");
   }
 }

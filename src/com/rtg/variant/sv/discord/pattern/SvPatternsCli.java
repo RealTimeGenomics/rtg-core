@@ -80,8 +80,8 @@ public class SvPatternsCli extends ParamsCli<BreakpointPatternParams> {
     if (flags.isSet(MAX_SAME_DISTANCE)) {
       builder.sameDistance((Integer) flags.getValue(MAX_SAME_DISTANCE));
     }
-    if (flags.isSet(DiscordantToolCli.MIN_BREAKPOINT_DEPTH)) {
-      builder.setMinDepth((Integer) flags.getValue(DiscordantToolCli.MIN_BREAKPOINT_DEPTH));
+    if (flags.isSet(DiscordantToolCli.MIN_SUPPORT_FLAG)) {
+      builder.setMinDepth((Integer) flags.getValue(DiscordantToolCli.MIN_SUPPORT_FLAG));
     }
     return builder.directory((File) flags.getValue(CommonFlags.OUTPUT_FLAG))
         .files(CommonFlags.getFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, false))
@@ -112,7 +112,7 @@ public class SvPatternsCli extends ParamsCli<BreakpointPatternParams> {
     flags.addRequiredSet(listFlag);
     flags.registerOptional(MAX_FRAGMENT_LENGTH, Integer.class, CommonFlags.INT, "how far from the breakpoint to look ahead for inversions", BreakpointPatternParams.DEFAULT_FRAGMENT_LENGTH).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(MAX_SAME_DISTANCE, Integer.class, CommonFlags.INT, "how far apart can breakpoints be yet still be considered the same place", BreakpointPatternParams.DEFAULT_SAME_DISTANCE).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(DiscordantToolCli.MIN_BREAKPOINT_DEPTH, Integer.class, CommonFlags.INT, DiscordantToolCli.MIN_SUPPORT_DESCRIPTION, DiscordantToolCli.DEFAULT_MIN_DEPTH).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    DiscordantToolCli.registerMinSupport(flags);
   }
 
   /**

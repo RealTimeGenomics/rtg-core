@@ -20,7 +20,6 @@ import java.util.List;
 import com.rtg.launcher.ModuleParams;
 import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.test.params.ParamsNoField;
-import com.rtg.variant.sv.discord.DiscordantToolCli;
 
 /**
  *         Date: 14/03/12
@@ -28,9 +27,12 @@ import com.rtg.variant.sv.discord.DiscordantToolCli;
  */
 public final class BreakpointPatternParams extends ModuleParams {
   /** Default value for same distance */
-  public static final int DEFAULT_SAME_DISTANCE = 50;
+  static final int DEFAULT_SAME_DISTANCE = 50;
   /** Default value for fragment length */
-  public static final int DEFAULT_FRAGMENT_LENGTH = 500;
+  static final int DEFAULT_FRAGMENT_LENGTH = 500;
+  /** Default value for minimum support */
+  static final Integer DEFAULT_MIN_DEPTH = 3;
+
   private final  RegionRestriction mRegion;
   private final List<File> mFiles;
   private final File mDirectory;
@@ -127,7 +129,7 @@ public final class BreakpointPatternParams extends ModuleParams {
     private File mDirectory;
     private int mSameDistance = DEFAULT_SAME_DISTANCE;
     private int mFragmentLength = DEFAULT_FRAGMENT_LENGTH;
-    private int mMinDepth = DiscordantToolCli.DEFAULT_MIN_DEPTH;
+    private int mMinDepth = DEFAULT_MIN_DEPTH;
 
     /**
      * @param files the VCF files to examine for patterns

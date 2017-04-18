@@ -17,11 +17,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -47,23 +49,30 @@ import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMRecord;
 
 /**
+ * Primary task that process SAM records to identify putative structural variant break ends.
  */
 public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, DiscordantToolStatistics> {
-  private static final String DISCORD_RECORDS_BAM = "discord.records.bam";
-  static final String INDIVIDUAL = "individual";
-  static final String NONE = "none";
-  static final String DUMP_RECORDS = NONE; //System.getProperty("discord.dump.records", NONE);
+
+  /** Specifies what type of BAM output to produce */
+  public enum BamType {
+    /** Do not write BAM */
+    NONE,
+    /** Write one BAM file per discordant read set */
+    PER_CLUSTER,
+    /** Write one BAM file containing all discordant read sets */
+    COMBINED
+  }
 
   static final String OUTPUT_FILENAME = "discordant_pairs.vcf";
   static final String DEBUG_FILENAME = "debug_discordant_pairs.txt";
   static final String BED_FILENAME = "discordant_pairs.bed";
+  static final String BAM_FILENAME_PREFIX = "discordant";
   static final String DT_OUTPUT_VERSION = "1";
 
 
   private int mMaxGap;
   protected final SortedSet<DiscordantReadSet> mReadSets = new TreeSet<>(new DiscordantReadSet.FlushPositionComparator());
 
-  private String mSampleName;
   final Map<String, MachineOrientation> mMachineOrientations = new HashMap<>();
 
   private final VcfDiscordantOutputFormatter mFormatter;
@@ -71,6 +80,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
   private final BedDiscordantOutputFormatter mBedFormatter;
   private ReorderingDebugOutput mDebugReordering;
   private final TreeSet<DiscordantReadSet> mOutputBuffer = new TreeSet<>(new BreakpointPositionComparator());
+  private final BamType mBamType;
 
   private OutputStream mOut = null;
   private OutputStream mDebugOutput = null;
@@ -80,20 +90,21 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
 
   private SAMFileHeader mSamHeader = null;
   private long mTotalDiscordantRecords = 0;
-  private SAMFileWriter mBamDumpWriter = null; //used for system property discord.dump.records
-  private File mBamDump = null;
+  private SAMFileWriter mBamWriter = null;
+  private File mBamFile = null;
 
   protected DiscordantTool(DiscordantToolParams params, OutputStream defaultOutput) throws IOException {
     super(params, defaultOutput, new DiscordantToolStatistics(params.directory()), params.filterParams());
+    mBamType = params.bamOutput();
     mFormatter = new VcfDiscordantOutputFormatter(mGenomeSequences);
-    mBedFormatter = params.bedOutput() ? new BedDiscordantOutputFormatter() : null;
-    mDebugFormatter =  params.debugOutput() ? new DebugDiscordantOutputFormatter() : null;
+    mBedFormatter = new BedDiscordantOutputFormatter();
+    mDebugFormatter =  new DebugDiscordantOutputFormatter();
   }
 
-  BreakpointConstraint getConstraint(DiscordantReadSet rs) {
+  private BreakpointConstraint getConstraint(DiscordantReadSet rs) {
     return rs.getIntersection() == null ? rs.getUnion() : rs.getIntersection();
   }
-  int readSetPosition(DiscordantReadSet rs) {
+  private int readSetPosition(DiscordantReadSet rs) {
     final BreakpointConstraint bc = getConstraint(rs);
     return Math.min(mTemplateLength, Math.max(0, bc.position().position()));
   }
@@ -105,13 +116,17 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       mBedWriter.close();
     }
     mVcfWriter.close();
-    Diagnostic.developerLog(DEBUG_FILENAME);
-    if (mBamDumpWriter != null) {
-      mBamDumpWriter.close();
+    closeAndIndexBam();
+  }
+
+  private void closeAndIndexBam() throws IOException {
+    if (mBamWriter != null) {
+      mBamWriter.close();
+      mBamWriter = null;
       try {
-        BamIndexer.saveBamIndex(mBamDump, new File(mBamDump.getParent(), mBamDump.getName() + BamIndexer.BAM_INDEX_EXTENSION));
+        BamIndexer.saveBamIndex(mBamFile, new File(mBamFile.getParent(), mBamFile.getName() + BamIndexer.BAM_INDEX_EXTENSION));
       } catch (final UnindexableDataException e) {
-        Diagnostic.warning("Cannot produce index for: " + mBamDump + ": " + e.getMessage());
+        Diagnostic.warning("Cannot produce index for: " + mBamFile + ": " + e.getMessage());
       }
     }
   }
@@ -142,56 +157,24 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
     return res;
   }
 
-  void flush(DiscordantReadSet drs) {
+  private void flush(DiscordantReadSet drs) {
     if (drs.getCounts() >= mParams.minBreakpointDepth() && (!mParams.intersectionOnly() || drs.getIntersection() != null)) {
       mOutputBuffer.add(drs);
     }
   }
-  void output() throws IOException {
+  private void output() throws IOException {
     while (!mOutputBuffer.isEmpty()) {
       final DiscordantReadSet first = mOutputBuffer.pollFirst();
       writeReadSet(first, -1, -1);
     }
   }
 
-  void writeReadSet(DiscordantReadSet drs, int coverage, double ambiguous) throws IOException {
-    if (mParams.debugOutput() || !DUMP_RECORDS.equals(NONE)) {
-      final String debugRep = mDebugFormatter.format(drs);
-      if (mParams.debugOutput()) {
-        mDebugReordering.addRecord(drs);
-      }
-      //mDebugOutput.write(StringUtils.LS.getBytes());
-      if (!DUMP_RECORDS.equals(NONE)) {
-        final SAMFileHeader header = mSamHeader.clone();
-        header.setSortOrder(SAMFileHeader.SortOrder.coordinate);
-        header.addComment(debugRep.trim());
-        final SAMFileWriter sw;
-        final File bamoutput;
-        if (DUMP_RECORDS.equals(INDIVIDUAL)) {
-          bamoutput = mParams.file(drs.getSequenceName() + ":" + drs.unionPosition() + ".bam");
-          sw = new SAMFileWriterFactory().makeBAMWriter(header, false, FileUtils.createOutputStream(bamoutput, false, false), false);
-        } else {
-          bamoutput = null;
-          if (mBamDumpWriter == null) {
-            mBamDump = mParams.file(DISCORD_RECORDS_BAM);
-            mBamDumpWriter = new SAMFileWriterFactory().makeBAMWriter(header, false, FileUtils.createOutputStream(mBamDump, false, false), false);
-          }
-          sw = mBamDumpWriter;
-        }
-
-        // Output to uncompressed SAM so we can load into IGV without indexing?
-        for (final SAMRecord rec : drs.getRecords()) {
-          sw.addAlignment(rec);
-        }
-        if (DUMP_RECORDS.equals(INDIVIDUAL)) {
-          sw.close();
-          try {
-            BamIndexer.saveBamIndex(bamoutput, new File(bamoutput.getParent(), bamoutput.getName() + BamIndexer.BAM_INDEX_EXTENSION));
-          } catch (final UnindexableDataException e) {
-            Diagnostic.warning("Cannot produce index for: " + bamoutput + ": " + e.getMessage());
-          }
-        }
-      }
+  private void writeReadSet(DiscordantReadSet drs, int coverage, double ambiguous) throws IOException {
+    if (mParams.debugOutput()) {
+      mDebugReordering.addRecord(drs);
+    }
+    if (mBamType != BamType.NONE) {
+      writeReadSetBam(drs);
     }
     final VcfRecord rec = mFormatter.vcfRecord(drs, coverage, ambiguous);
     mVcfWriter.addRecord(rec);
@@ -201,32 +184,43 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
     }
   }
 
+  private void writeReadSetBam(DiscordantReadSet drs) throws IOException {
+    if (mBamType == BamType.PER_CLUSTER && mBamWriter != null) {
+      closeAndIndexBam();
+    }
+    if (mBamWriter == null) {
+      final SAMFileHeader header = mSamHeader.clone();
+      header.setSortOrder(SAMFileHeader.SortOrder.coordinate);
+      if (mBamType == BamType.PER_CLUSTER) {
+        header.addComment(mDebugFormatter.format(drs).trim());
+        mBamFile = mParams.file(BAM_FILENAME_PREFIX + "." + drs.getSequenceName() + ":" + drs.unionPosition() + SamUtils.BAM_SUFFIX);
+      } else {
+        mBamFile = mParams.file(BAM_FILENAME_PREFIX + SamUtils.BAM_SUFFIX);
+      }
+      mBamWriter = new SAMFileWriterFactory().makeBAMWriter(header, false, FileUtils.createOutputStream(mBamFile), false);
+    }
+    for (final SAMRecord rec : drs.getRecords()) {
+      mBamWriter.addAlignment(rec);
+    }
+  }
+
   @Override
   public void init(SAMFileHeader header) throws IOException {
-    if (header.getReadGroups() == null || header.getReadGroups().size() == 0) {
-      throw new NoTalkbackSlimException("Read group header is not present in the SAM file");
-    }
     mSamHeader = header;
     int maxGap = 0;
-    boolean first = true;
+
+    final Set<String> sampleNames = new HashSet<>();
+    if (header.getReadGroups() == null || header.getReadGroups().size() == 0) {
+      throw new NoTalkbackSlimException("SAM input does not contain read groups");
+    }
     for (final SAMReadGroupRecord srgr : header.getReadGroups()) {
       if (srgr.getPlatform() == null) {
-        throw new NoTalkbackSlimException("Platform in Read Group header " + srgr.getReadGroupId() + " was not present");
+        throw new NoTalkbackSlimException("Read group does not contain a platform field: " + srgr.getSAMString());
       }
-      if (first) {
-        first = false;
-        mSampleName = srgr.getSample();
-        assert mSampleName != null;
+      if (srgr.getSample() == null) {
+        throw new NoTalkbackSlimException("Read group does not contain a sample field: " + srgr.getSAMString());
       }
-      if (mSampleName != null && !mSampleName.equals(srgr.getSample())) {
-        throw new NoTalkbackSlimException("Sample name does not match " + mSampleName + ", " + srgr.getSample());
-      }
-      final ReadGroupStats rgs = mParams.readGroupStatistics().get(srgr.getId());
-      if (rgs == null) {
-        throw new NoTalkbackSlimException("Read Group " + srgr.getId() + " did not have corresponding rgstats data supplied");
-      }
-      final int gap = BreakpointConstraint.gapMax(rgs);
-      maxGap = Math.max(maxGap, gap);
+      sampleNames.add(srgr.getSample());
       final String platform = srgr.getPlatform().toUpperCase(Locale.ROOT);
       if (MachineType.ILLUMINA_PE.compatiblePlatform(platform)) {
         mMachineOrientations.put(srgr.getId(), MachineType.ILLUMINA_PE.orientation());
@@ -235,9 +229,18 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       } else if (MachineType.COMPLETE_GENOMICS_2.compatiblePlatform(platform)) {
         mMachineOrientations.put(srgr.getId(), MachineType.COMPLETE_GENOMICS_2.orientation());
       } else {
-        throw new NoTalkbackSlimException("Unsupported Platform: " + srgr.getPlatform());
+        throw new NoTalkbackSlimException("Unsupported platform: " + srgr.getPlatform());
       }
+      final ReadGroupStats rgs = mParams.readGroupStatistics().get(srgr.getId());
+      if (rgs == null) {
+        throw new NoTalkbackSlimException("Read group " + srgr.getId() + " did not have corresponding rgstats data supplied");
+      }
+      maxGap = Math.max(maxGap, BreakpointConstraint.gapMax(rgs));
     }
+    if (!mParams.multisample() && sampleNames.size() > 1) {
+      throw new NoTalkbackSlimException("Input read groups contain multiple samples: " + sampleNames.toString());
+    }
+    final String vcfSample = sampleNames.size() == 1 ? sampleNames.iterator().next() : "SAMPLE";
     mMaxGap = maxGap;
     if (mDebugOutput != null) {
       mDebugOutput.write(mDebugFormatter.header().getBytes());
@@ -247,7 +250,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       mBedOutput.write(mBedFormatter.header().getBytes()); // Maybe move this into the bedwriter
       mBedWriter = new SmartBedWriter(mBedOutput);
     }
-    mVcfWriter = new SmartVcfWriter(mOut, mFormatter.header(header, mSampleName, false, false));
+    mVcfWriter = new SmartVcfWriter(mOut, mFormatter.header(header, vcfSample, false, false));
   }
 
   @Override
@@ -262,14 +265,18 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
     }
     final Integer nh = SamUtils.getNHOrIH(rec);
     if (nh == null || nh < 2)  {
-      final String id = rec.getReadGroup().getId();
+      final SAMReadGroupRecord rg = rec.getReadGroup();
+      if (rg == null) {
+        throw new NoTalkbackSlimException("Input SAM record did not contain a read group: " + rec.getSAMString());
+      }
+      final String id = rg.getId();
       final MachineOrientation mo = mMachineOrientations.get(id);
       final ReadGroupStats rgs = mParams.readGroupStatistics().get(id);
       final BreakpointConstraint constraint = new BreakpointConstraint(rec, mo, rgs);
       if (constraint.isConcordant()) {
         return true;
       }
-      processConstraint(constraint, mReadSets, mTemplateName, mMaxGap, rec);
+      processConstraint(constraint, mReadSets, mTemplateName, mMaxGap, mBamType == BamType.NONE ? null : rec);
       ++mTotalDiscordantRecords;
     }
     flush(0, rec.getAlignmentStart());
@@ -300,7 +307,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
         newDrs.addAll(over);
       }
     }
-    if (!DUMP_RECORDS.equals(NONE)) {
+    if (record != null) {
       newDrs.add(record);
     }
     readSets.add(newDrs);

@@ -25,14 +25,12 @@ import htsjdk.samtools.SAMRecord;
  */
 class DiscordantReadSet {
 
-
-  final String mSequenceName;
+  private final String mSequenceName;
   private final int mMaxVariation;
+  private final List<BreakpointConstraint> mConstraints = new LinkedList<>();
+  private final LinkedList<SAMRecord> mRecords = new LinkedList<>();
   private BreakpointConstraint mIntersection;
   private BreakpointConstraint mUnion;
-  final List<BreakpointConstraint> mConstraints = new LinkedList<>();
-
-  final LinkedList<SAMRecord> mRecords = !DiscordantTool.DUMP_RECORDS.equals(DiscordantTool.NONE) ? new LinkedList<SAMRecord>() : null;
 
   /**
    * @param referenceName name of sequence.
@@ -108,10 +106,6 @@ class DiscordantReadSet {
    * @param drs set of geometries to be added.
    */
   void addAll(DiscordantReadSet drs) {
-    //TODO make more efficient
-    //    for (final BreakpointConstraint bg : drs.mConstraints) {
-    //      add(bg);
-    //    }
     if (mIntersection != null) {
       if (drs.mIntersection == null) {
         mIntersection = null;
@@ -129,7 +123,7 @@ class DiscordantReadSet {
     final StringBuilder sb = new StringBuilder();
     sb.append("DiscordantReadSet:").append(StringUtils.LS);
     sb.append("union=").append(mUnion).append(StringUtils.LS);
-    sb.append("intersection=").append(mIntersection == null ? null : mIntersection).append(StringUtils.LS);
+    sb.append("intersection=").append(mIntersection).append(StringUtils.LS);
     sb.append("constraints count=").append(mConstraints.size());
     sb.append(StringUtils.LS);
     for (final AbstractBreakpointGeometry bg : mConstraints) {
@@ -177,7 +171,7 @@ class DiscordantReadSet {
   }
 
   void add(SAMRecord record) {
-    if (record != null && mRecords != null) {
+    if (mRecords != null) {
       mRecords.add(record);
     }
   }

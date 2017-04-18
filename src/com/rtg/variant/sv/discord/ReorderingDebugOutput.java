@@ -21,9 +21,7 @@ import com.rtg.util.diagnostic.Diagnostic;
 /**
  * Reorders the debug output of the discordant tool since it may be generated in an order that doesn't match desired
  * output order. Duplicate records will be removed
-*         Date: 1/03/12
-*         Time: 2:30 PM
-*/
+ */
 class ReorderingDebugOutput extends ReorderingQueue<DiscordantReadSet> {
 
   private final OutputStream mDebug;

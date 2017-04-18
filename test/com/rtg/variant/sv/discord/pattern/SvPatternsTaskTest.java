@@ -18,64 +18,51 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+import com.rtg.AbstractTest;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.io.MemoryPrintStream;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 import com.rtg.vcf.header.VcfHeader;
 
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMSequenceRecord;
 
-import junit.framework.TestCase;
-
-/**
- *         Date: 19/03/12
- *         Time: 10:10 AM
- */
-public class SvPatternsTaskTest extends TestCase {
+public class SvPatternsTaskTest extends AbstractTest {
 
   public void testEnd2End() throws IOException, UnindexableDataException {
-    CommandLine.setCommandArgs("foo", "bar", "baz");
-    try {
+    try (final TestDirectory tmpDir = new TestDirectory()) {
       final SAMFileHeader samHeader = new SAMFileHeader();
       samHeader.addSequence(new SAMSequenceRecord("s1", 1000));
       samHeader.addSequence(new SAMSequenceRecord("s2", 1000));
       final VcfHeader vcfHeader = new VcfHeader();
       vcfHeader.addContigFields(samHeader);
 
-      final File tmpDir = FileHelper.createTempDirectory();
-      try {
-        final File vcfFile = new File(tmpDir, "input.vcf.gz");
-        FileHelper.resourceToFile("com/rtg/variant/sv/discord/pattern/resources/discordant_pairs.vcf.gz", vcfFile);
-        final TabixIndexer tabixIndexer = new TabixIndexer(vcfFile, new File(vcfFile.getPath() + TabixIndexer.TABIX_EXTENSION));
-        tabixIndexer.saveVcfIndex();
-        final File output = new File(tmpDir, "output");
-        assertTrue(output.mkdir());
-        final BreakpointPatternParams params = BreakpointPatternParams.builder().directory(output).files(Arrays.asList(vcfFile)).create();
-        final MemoryPrintStream mps = new MemoryPrintStream();
-        final SvPatternsTask task = new SvPatternsTask(params, mps.outputStream());
-        task.exec();
-        assertTrue(output.isDirectory());
-        final File bedFile = new File(output, "sv_patterns.bed.gz");
-        assertTrue(bedFile.isFile());
-        assertTrue(new File(output, "sv_patterns.bed.gz.tbi").isFile());
-        final String results = FileHelper.gzFileToString(bedFile);
-        TestUtils.containsAll(results,
-            "#CL\tfoo bar baz"
-            , "#Version"
-            , "SV Patterns output 0.1"
-            , "#sequence\tstart\tend\tdescription\tcount" + LS
-        );
-
-
-      } finally {
-        FileHelper.deleteAll(tmpDir);
-      }
-    } finally {
-      CommandLine.clearCommandArgs();
+      final File vcfFile = new File(tmpDir, "input.vcf.gz");
+      FileHelper.resourceToFile("com/rtg/variant/sv/discord/pattern/resources/discordant_pairs.vcf.gz", vcfFile);
+      final TabixIndexer tabixIndexer = new TabixIndexer(vcfFile, new File(vcfFile.getPath() + TabixIndexer.TABIX_EXTENSION));
+      tabixIndexer.saveVcfIndex();
+      final File output = new File(tmpDir, "output");
+      assertTrue(output.mkdir());
+      CommandLine.setCommandArgs("foo", "bar", "baz");
+      final BreakpointPatternParams params = BreakpointPatternParams.builder().directory(output).files(Arrays.asList(vcfFile)).create();
+      final MemoryPrintStream mps = new MemoryPrintStream();
+      final SvPatternsTask task = new SvPatternsTask(params, mps.outputStream());
+      task.exec();
+      assertTrue(output.isDirectory());
+      final File bedFile = new File(output, "sv_patterns.bed.gz");
+      assertTrue(bedFile.isFile());
+      assertTrue(new File(output, "sv_patterns.bed.gz.tbi").isFile());
+      final String results = FileHelper.gzFileToString(bedFile);
+      TestUtils.containsAll(results,
+        "#CL\tfoo bar baz"
+        , "#Version"
+        , "SV Patterns output 0.1"
+        , "#sequence\tstart\tend\tdescription\tcount" + LS
+      );
     }
   }
 
