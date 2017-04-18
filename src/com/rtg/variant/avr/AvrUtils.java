@@ -118,7 +118,7 @@ public final class AvrUtils {
         return avrModel;
       } else {
         if (modelsDirFile != null) {
-          avrModel = new File(modelsDirFile, avrModel.getName());
+          avrModel = new File(modelsDirFile, avrModel.getPath());
         }
         if (!avrModel.exists()) {
           throw new InvalidParamsException("The specified AVR model could not be found: " + flag.getValue());
