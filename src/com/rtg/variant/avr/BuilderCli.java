@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.CommonFlags;
+import com.rtg.launcher.LoggedCli;
 import com.rtg.util.ThreadAware;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
@@ -107,6 +108,7 @@ public class BuilderCli extends AbstractCli {
   @Override
   protected int mainExec(OutputStream out, PrintStream err) throws IOException {
 
+    final long startMillis = System.currentTimeMillis();
     final File outFile = (File) mFlags.getValue(OUTPUT_FLAG);
     final String[] infoAttributes = getStrings(INFO_ANNOTATIONS_FLAG);
     final String[] formatAttributes = getStrings(FORMAT_ANNOTATIONS_FLAG);
@@ -160,10 +162,12 @@ public class BuilderCli extends AbstractCli {
       throw new NoTalkbackSlimException(iae.getMessage());
     }
 
-    if (mFlags.isSet(X_DUMP_MODEL_FLAG)) {
-      System.out.println(builder.getModel().toString());
+    try (final PrintStream ps = new PrintStream(out)) {
+      if (mFlags.isSet(X_DUMP_MODEL_FLAG)) {
+        ps.println(builder.getModel().toString());
+      }
+      ps.println(LoggedCli.getDuration(startMillis, true));
     }
-
     return 0;
   }
 
