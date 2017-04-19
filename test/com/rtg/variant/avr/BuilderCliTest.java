@@ -77,7 +77,7 @@ public class BuilderCliTest extends AbstractCliTest {
       final File props = new File(dir, "props.txt");
       FileHelper.resourceToFile("com/rtg/variant/avr/resources/gtcomplex.props", props);
 
-      checkMainInitOk("-o", avr.getPath(), "-n", negVcf.getPath(), "-p", posVcf.getPath(), "--qual-annotation", "--Xmodel-type", "gt_complex", "--Xmodel-params", props.getPath());
+      checkMainInitOk("-o", avr.getPath(), "-n", negVcf.getPath(), "-p", posVcf.getPath(), "--qual-annotation", "--Xmodel-type", "gt-complex", "--Xmodel-params", props.getPath());
 
       mf = new ModelFactory(avr, 0.0);
       assertTrue(mf.getModel() instanceof GtQualComplexMultiplierModel);
@@ -96,10 +96,10 @@ public class BuilderCliTest extends AbstractCliTest {
         "multiplier.qual.complex\t0.5"
       );
 
-      String error = checkMainInitBadFlags("-o", avr.getPath(), "-n", negVcf.getPath(), "-p", posVcf.getPath(), "--Xmodel-type", "gt_complex", "--Xmodel-params", props.getPath(), "--derived-annotations", "NOTDERIVED");
+      String error = checkMainInitBadFlags("-o", avr.getPath(), "-n", negVcf.getPath(), "-p", posVcf.getPath(), "--Xmodel-type", "gt-complex", "--Xmodel-params", props.getPath(), "--derived-annotations", "NOTDERIVED");
       TestUtils.containsAll(error, "Invalid value \"NOTDERIVED\" for flag --derived-annotations");
 
-      error = checkMainInitBadFlags("-o", avr.getPath(), "-n", negVcf.getPath(), "-p", posVcf.getPath(), "--qual-annotation", "--Xmodel-type", "gt_complex", "--Xmodel-params", props.getPath(), "--sample", "SAMPLE");
+      error = checkMainInitBadFlags("-o", avr.getPath(), "-n", negVcf.getPath(), "-p", posVcf.getPath(), "--qual-annotation", "--Xmodel-type", "gt-complex", "--Xmodel-params", props.getPath(), "--sample", "SAMPLE");
       TestUtils.containsAll(error, "Sample name not found in VCF file: SAMPLE : " + posVcf.getPath());
 
       final File fakeVcf = new File(dir, "fake.vcf");
