@@ -49,9 +49,11 @@ import htsjdk.samtools.SAMSequenceRecord;
  */
 public final class ReadGroupStatsCalculator {
 
-  static final String VERSION = "rgstats v1.2";
+  static final String VERSION = "rgstats v1.3";
 
   private static final String VERSION_HEADER = "#Version\t" + Environment.getVersion() + ", " + VERSION + StringUtils.LS;
+
+  private static final String SCORE_ATTRIBUTE = SamUtils.ATTRIBUTE_NUM_MISMATCHES;
 
   /**
    * Handles merging of multiple stats accumulation runs.
@@ -165,6 +167,7 @@ public final class ReadGroupStatsCalculator {
     long matedCount = 0;
     for (final ReadGroupStats stats : mStats.values()) {
       stats.calculate();
+      Diagnostic.userLog(stats.toString());
       if (stats.isValid()) {
         break;
       } else {
@@ -200,7 +203,7 @@ public final class ReadGroupStatsCalculator {
    * @param record the SAM record
    */
   public void addRecord(SAMRecord record) {
-    if (record.getReadUnmappedFlag() || !record.getReadPairedFlag()) {
+    if (!record.getReadPairedFlag() || record.getReadUnmappedFlag() || record.getNotPrimaryAlignmentFlag() || record.isSecondaryOrSupplementary()) {
       return;
     }
     Integer nh = SamUtils.getNHOrIH(record);
@@ -217,12 +220,17 @@ public final class ReadGroupStatsCalculator {
           Diagnostic.warning("Skipping record with no RG id");
         }
       } else {
-        stats.addScore(record.getIntegerAttribute("AS"));
+        final Integer score = record.getIntegerAttribute(SCORE_ATTRIBUTE);
+        if (score != null) {
+          stats.addScore(score);
+        }
         stats.addLength(record.getReadLength());
         if (record.getProperPairFlag()) {
           stats.addProper();
-          stats.addFragmentSize(Math.abs(record.getInferredInsertSize()));
-          stats.addGapSize(calculateGapSize(record));
+          final int tlen = Math.abs(record.getInferredInsertSize());
+          final int gap = calculateGapSize(record);
+          stats.addFragmentSize(tlen);
+          stats.addGapSize(gap);
         } else {
           if (record.getMateUnmappedFlag()) {
             stats.addUnmated();

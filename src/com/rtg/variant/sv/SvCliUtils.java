@@ -23,12 +23,15 @@ import com.rtg.launcher.BuildCommon;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.OutputParams;
 import com.rtg.launcher.SequenceParams.SequenceParamsBuilder;
+import com.rtg.sam.SamBamConstants;
 import com.rtg.sam.SamFilterOptions;
 import com.rtg.util.InvalidParamsException;
+import com.rtg.util.Utils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
 import com.rtg.util.cli.Validator;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.variant.sv.SvParams.SvParamsBuilder;
 
@@ -121,7 +124,10 @@ public final class SvCliUtils {
            .outputParams(new OutputParams((File) flags.getValue(CommonFlags.OUTPUT_FLAG), flags.isSet(BuildCommon.PROGRESS_FLAG), !flags.isSet(CommonFlags.NO_GZIP)))
            .ioThreads(CommonFlags.parseIOThreads((Integer) flags.getValue(CommonFlags.THREADS_FLAG)))
            .mapped(CommonFlags.getFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, false))
-           .filterParams(SamFilterOptions.makeFilterParamsBuilder(flags).excludeUnmapped(true).excludeUnplaced(true).create());
+           .filterParams(SamFilterOptions.makeFilterParamsBuilder(flags)
+             .requireSetFlags(SamBamConstants.SAM_READ_IS_PAIRED)
+             .requireUnsetFlags(SamBamConstants.SAM_READ_IS_UNMAPPED | SamBamConstants.SAM_SECONDARY_ALIGNMENT | SamBamConstants.SAM_SUPPLEMENTARY_ALIGNMENT)
+             .excludeUnplaced(true).create());
 
     populateReadGroupStats(builder, flags);
   }
@@ -149,8 +155,17 @@ public final class SvCliUtils {
       } else if (e.fragmentStdDev() == 0.0 || e.gapStdDev() == 0.0 || e.properRate() == 0.0 || e.properRandomRate() == 0.0 || e.discordantRate() == 0.0 || e.unmatedRate() == 0.0) {
         throw new NoTalkbackSlimException("Statistics for read group: " + e.id() + " must be greater than 0.0");
       }
+      warnStatistic(e.id(), "mean read length", e.meanLength());
+      warnStatistic(e.id(), "fragment length mean", e.fragmentMean());
+      warnStatistic(e.id(), "gap mean", e.gapMean());
     }
     builder.readGroupStatistics(readGroupStats);
+  }
+
+  private static void warnStatistic(String id, String msg, double x) {
+    if (x > 10000.0) {
+      Diagnostic.warning("Read group " + id + " statistics " + msg + " (" + Utils.realFormat(x, 2) + ") seems quite large!");
+    }
   }
 
 }
