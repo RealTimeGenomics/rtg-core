@@ -117,6 +117,11 @@ public class DeProbeCli extends LoggedCli {
     CommonFlags.initMinReadLength(mFlags);
     mFlags.addRequiredSet(inFlag);
     mFlags.addRequiredSet(listFlag);
+
+    mFlags.setValidator(flags -> CommonFlags.validateOutputDirectory(flags)
+      && CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)
+      && CommonFlags.validateInputFile(flags, PROBE_BED)
+      && flags.checkInRange(TOLERANCE_FLAG, 0, Integer.MAX_VALUE));
   }
 
   @Override

@@ -20,6 +20,7 @@ import com.rtg.launcher.AbstractCliTest;
 import com.rtg.launcher.CommonFlags;
 import com.rtg.launcher.MainResult;
 import com.rtg.sam.SamUtils;
+import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
@@ -31,6 +32,18 @@ public class DeProbeCliTest extends AbstractCliTest {
   @Override
   protected AbstractCli getCli() {
     return new DeProbeCli();
+  }
+
+  public void testValidator() throws IOException {
+    try (TestDirectory dir = new TestDirectory()) {
+      final File probes = FileHelper.resourceToFile("com/rtg/sam/probe/resources/probes.bed", new File(dir, "probes.bed"));
+      final File alignments = FileHelper.resourceToFile("com/rtg/sam/probe/resources/alignments.sam", new File(dir, "alignments.sam"));
+      final File output = new File(dir, "output");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", output.getPath(), "-b", probes.getPath(), "--tolerance", "3"), "input files");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr(alignments.getPath(), "-o", output.getPath(), "-b", output.getPath(), "--tolerance", "3"), "--probe-bed", "does not exist");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr(alignments.getPath(), "-o", output.getPath(), "-b", probes.getPath(), "--tolerance", "-3"), "--tolerance", "at least 0");
+      checkHandleFlagsOut(alignments.getPath(), "-o", output.getPath(), "-b", probes.getPath(), "--tolerance", "3");
+    }
   }
 
   public void test() throws IOException {
