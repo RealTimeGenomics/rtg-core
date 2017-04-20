@@ -25,12 +25,12 @@ import com.rtg.util.Utils;
 public final class BinaryTreeClassifier implements PredictClassifier {
 
   static final int SERIAL_VERSION = 1;
+
   final BinarySplitter mDirector;
   final PredictClassifier mLeft;
   final PredictClassifier mRight;
   final double mLeftFraction;
   final double mRightFraction;
-  final int mCurrentVersion;
 
   /**
    * Constructs a binary tree. When the split criterion cannot decide which subtree to delegate to, a weighted sum is returned.
@@ -51,7 +51,6 @@ public final class BinaryTreeClassifier implements PredictClassifier {
     mRight = right;
     mLeftFraction = leftFraction;
     mRightFraction = 1.0 - leftFraction;
-    mCurrentVersion = SERIAL_VERSION;
   }
 
   /**
@@ -61,15 +60,15 @@ public final class BinaryTreeClassifier implements PredictClassifier {
    * @throws IOException if an IO error occurs
    */
   public BinaryTreeClassifier(DataInputStream dis, Dataset data) throws IOException {
-    mCurrentVersion = dis.readInt();
-    if (mCurrentVersion == 1) {
+    final int version = dis.readInt();
+    if (version == 1) {
       mDirector = new BinarySplitter(dis, data);
       mLeft = MlPredictLoader.loadPredictClassifier(dis, data);
       mRight = MlPredictLoader.loadPredictClassifier(dis, data);
       mLeftFraction = dis.readDouble();
       mRightFraction = dis.readDouble();
     } else {
-      throw new IOException("Unsupported tree version: " + mCurrentVersion);
+      throw new IOException("Unsupported tree version: " + version);
     }
   }
 

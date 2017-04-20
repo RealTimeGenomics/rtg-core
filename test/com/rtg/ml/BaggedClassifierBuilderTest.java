@@ -80,7 +80,6 @@ public class BaggedClassifierBuilderTest extends AbstractBuildClassifierTest {
       final int type = dis.readInt();
       assertEquals(MlPredictLoader.MlPredictType.BAGGED.ordinal(), type);
       final BaggedClassifier bs = new BaggedClassifier(dis, null);
-      assertEquals(version, bs.mCurrentVersion);
       final StringBuilder str = bs.toString(new StringBuilder(), "", null);
       final String s = str.toString();
       assertTrue(s.contains("12/57") && s.contains("99/112") && s.contains("808/809"));

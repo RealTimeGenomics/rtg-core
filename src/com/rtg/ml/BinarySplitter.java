@@ -26,7 +26,7 @@ import com.rtg.util.Utils;
 @TestClass(value = {"com.rtg.ml.BinaryTreeClassifierTest", "com.rtg.ml.BinarySplitterTest"})
 public final class BinarySplitter {
 
-  static final int SERIAL_VERSION = 1;
+  static final int SERIAL_VERSION = 2;
 
   /**
    * Encapsulates the directions that can be taken after a split
@@ -40,12 +40,12 @@ public final class BinarySplitter {
     MISSING
   }
 
-  final int mCurrentVersion;
   private final String mName;
   private final int mAttributeIndex;
   private final MlDataType mSplitValueDataType;
   private final double mSplitValue;
   private final boolean mNumeric;
+  private final boolean mSplitMissing;
 
   /**
    * Constructor
@@ -55,15 +55,12 @@ public final class BinarySplitter {
    * @param splitValueDataType data type of {@code splitValue}
    */
   public BinarySplitter(String name, int attribute, double splitValue, MlDataType splitValueDataType) {
-    if (Attribute.isMissingValue(splitValue)) {
-      throw new NullPointerException("Split value cannot be null");
-    }
     mName = name;
     mAttributeIndex = attribute;
     mSplitValueDataType = splitValueDataType;
     mSplitValue = splitValue;
+    mSplitMissing = Attribute.isMissingValue(splitValue);
     mNumeric = splitValueDataType.isNumeric();
-    mCurrentVersion = SERIAL_VERSION;
   }
 
   /**
@@ -72,19 +69,38 @@ public final class BinarySplitter {
    * @throws IOException if an IO error occurs, or a newer version is attempted to be read
    */
   public BinarySplitter(DataInputStream dis, Dataset data) throws IOException {
-    mCurrentVersion = dis.readInt();
-    if (mCurrentVersion == 1) {
+    final int version = dis.readInt();
+
+    if (version == 1) {
       mName = dis.readUTF();
       mAttributeIndex = dis.readInt();
       final int type = dis.readInt();
       if (type >= MlDataType.values().length || type < 0) {
-        throw new IOException("Learning attribute out of range. Could the model be corrupt?");
+        throw new IOException("Learning attribute out of range, model may be corrupt or created with a later version of RTG.");
       }
       mSplitValueDataType = MlDataType.values()[type];
       mSplitValue = data.getAttributes()[mAttributeIndex].encodeValue(mSplitValueDataType.load(dis));
+      mSplitMissing = false;
       mNumeric = dis.readBoolean();
+
+    } else if (version == 2) {
+      mAttributeIndex = dis.readInt();
+      mName = data.getAttributes()[mAttributeIndex].getName();
+      final int type = dis.readInt();
+      if (type >= MlDataType.values().length || type < 0) {
+        throw new IOException("Learning attribute out of range, model may be corrupt or created with a later version of RTG.");
+      }
+      mSplitValueDataType = MlDataType.values()[type];
+      mSplitMissing = dis.readBoolean();
+      if (mSplitMissing) {
+        mSplitValue = Double.NaN;
+      } else {
+        mSplitValue = data.getAttributes()[mAttributeIndex].encodeValue(mSplitValueDataType.load(dis));
+      }
+      mNumeric = mSplitValueDataType.isNumeric();
+
     } else {
-      throw new IOException("Unsupported version");
+      throw new IOException("Unsupported binary split version, model may be corrupt or created with a later version of RTG.");
     }
   }
 
@@ -95,12 +111,44 @@ public final class BinarySplitter {
    * @throws IOException if an IO error occurs
    */
   public void save(DataOutputStream dos, Dataset data) throws IOException {
-    dos.writeInt(SERIAL_VERSION);
-    dos.writeUTF(mName);
+    save(dos, data, SERIAL_VERSION);
+  }
+
+  void save(DataOutputStream dos, Dataset data, int version) throws IOException {
+    switch (version) {
+      case 1:
+        saveV1(dos, data);
+        break;
+      case 2:
+        saveV2(dos, data);
+        break;
+      default:
+        throw new IOException("Can not save as version " + version);
+    }
+  }
+
+  void saveV1(DataOutputStream dos, Dataset data) throws IOException {
+    if (mSplitMissing) {
+      throw new IOException("Cannot save split-on-missing in version 1");
+    }
+    final Attribute attribute = data.getAttributes()[mAttributeIndex];
+    dos.writeInt(1);
+    dos.writeUTF(attribute.getName());
     dos.writeInt(mAttributeIndex);
     dos.writeInt(mSplitValueDataType.ordinal());
-    mSplitValueDataType.save(data.getAttributes()[mAttributeIndex].decodeValue(mSplitValue), dos);
+    mSplitValueDataType.save(attribute.decodeValue(mSplitValue), dos);
     dos.writeBoolean(mNumeric);
+  }
+
+  void saveV2(DataOutputStream dos, Dataset data) throws IOException {
+    final Attribute attribute = data.getAttributes()[mAttributeIndex];
+    dos.writeInt(2);
+    dos.writeInt(mAttributeIndex);
+    dos.writeInt(mSplitValueDataType.ordinal());
+    dos.writeBoolean(mSplitMissing);
+    if (!mSplitMissing) {
+      mSplitValueDataType.save(attribute.decodeValue(mSplitValue), dos);
+    }
   }
 
   /**
@@ -114,7 +162,9 @@ public final class BinarySplitter {
   }
 
   Direction split(double splitValue) {
-    if (Attribute.isMissingValue(splitValue)) {
+    if (mSplitMissing) {
+      return Attribute.isMissingValue(splitValue) ? Direction.LEFT : Direction.RIGHT;
+    } else if (Attribute.isMissingValue(splitValue)) {
       return Direction.MISSING;
     } else if (mNumeric) { // Numeric
       try {
@@ -132,7 +182,7 @@ public final class BinarySplitter {
 
   @Override
   public int hashCode() {
-    return Utils.pairHashContinuous(mName.hashCode(), mAttributeIndex, Double.valueOf(mSplitValue).hashCode(), mSplitValueDataType.hashCode(), Boolean.valueOf(mNumeric).hashCode());
+    return Utils.pairHashContinuous(mName.hashCode(), mAttributeIndex, mSplitMissing ? 42 : Double.valueOf(mSplitValue).hashCode(), mSplitValueDataType.hashCode(), Boolean.valueOf(mNumeric).hashCode());
   }
 
   @Override
@@ -141,9 +191,11 @@ public final class BinarySplitter {
       return false;
     }
     final BinarySplitter obj1 = (BinarySplitter) obj;
-    return mName.equals(obj1.mName) && mAttributeIndex == obj1.mAttributeIndex
-            && mSplitValue == obj1.mSplitValue && mSplitValueDataType == obj1.mSplitValueDataType
-            && mNumeric == obj1.mNumeric;
+    return mName.equals(obj1.mName)
+      && mAttributeIndex == obj1.mAttributeIndex
+      && mSplitValueDataType == obj1.mSplitValueDataType
+      && mNumeric == obj1.mNumeric
+      && (mSplitValue == obj1.mSplitValue || (mSplitMissing && obj1.mSplitMissing));
   }
 
   /**
@@ -152,10 +204,13 @@ public final class BinarySplitter {
    */
   public String toString(Dataset data) {
     final StringBuilder out = new StringBuilder();
-    if (mNumeric) {
-      out.append("split: ").append(mName).append(" <= ").append(data.getAttributes()[mAttributeIndex].decodeValue(mSplitValue));
+    out.append("split: ").append(data.getAttributes()[mAttributeIndex].getName());
+    if (mSplitMissing) {
+      out.append(" == missing");
+    } else if (mNumeric) {
+      out.append(" <= ").append(data.getAttributes()[mAttributeIndex].decodeValue(mSplitValue));
     } else {
-      out.append("split: ").append(mName).append(" == ").append(data.getAttributes()[mAttributeIndex].decodeValue(mSplitValue));
+      out.append(" == ").append(data.getAttributes()[mAttributeIndex].decodeValue(mSplitValue));
     }
     return out.toString();
   }

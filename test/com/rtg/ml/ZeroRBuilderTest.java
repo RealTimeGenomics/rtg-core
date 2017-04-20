@@ -54,7 +54,6 @@ public class ZeroRBuilderTest extends AbstractBuildClassifierTest {
       final int type = dis.readInt();
       assertEquals(MlPredictLoader.MlPredictType.ZERO_R.ordinal(), type);
       final ZeroRBuilder.ZeroRClassifier bs = new ZeroRBuilder.ZeroRClassifier(dis);
-      assertEquals(version, bs.mCurrentVersion);
       final StringBuilder str = bs.toString(new StringBuilder(), "", null);
       final String s = str.toString();
       assertTrue(s.contains("808/1007"));

@@ -83,7 +83,6 @@ public class BinaryTreeClassifierTest extends TestCase {
       final int type = dis.readInt();
       assertEquals(MlPredictLoader.MlPredictType.BINARY_TREE.ordinal(), type);
       final BinaryTreeClassifier bs = new BinaryTreeClassifier(dis, BinarySplitterTest.createTestDataset());
-      assertEquals(version, bs.mCurrentVersion);
       final StringBuilder str = bs.toString(new StringBuilder(), "", BinarySplitterTest.createTestDataset());
       final String s = str.toString();
       assertTrue(s.contains("54/97") && s.contains("90/190"));

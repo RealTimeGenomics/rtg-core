@@ -31,23 +31,21 @@ final class BaggedClassifier implements PredictClassifier {
   static final int SERIAL_VERSION = 1;
 
   private final PredictClassifier[] mClassifiers;
-  final int mCurrentVersion;
 
   BaggedClassifier(PredictClassifier... classifiers) {
     mClassifiers = classifiers;
-    mCurrentVersion = SERIAL_VERSION;
   }
 
   BaggedClassifier(DataInputStream dis, Dataset data) throws IOException {
-    mCurrentVersion = dis.readInt();
-    if (mCurrentVersion == 1) {
+    final int version = dis.readInt();
+    if (version == 1) {
       final int length = dis.readInt();
       mClassifiers = new PredictClassifier[length];
       for (int i = 0; i < mClassifiers.length; ++i) {
         mClassifiers[i] = MlPredictLoader.loadPredictClassifier(dis, data);
       }
     } else {
-      throw new IOException("Unsupported bag version: " + mCurrentVersion);
+      throw new IOException("Unsupported bag version: " + version);
     }
     //System.out.println(this.toString(new StringBuilder(), "").toString());
   }

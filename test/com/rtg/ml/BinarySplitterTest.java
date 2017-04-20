@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.rtg.util.Resources;
+import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 
@@ -28,11 +29,26 @@ import junit.framework.TestCase;
  */
 public class BinarySplitterTest extends TestCase {
 
+  private static final double SPLIT_VALUE_1 = 3213.6534;
+  private static final double SPLIT_VALUE_2 = 3431.3322;
+
   public void testSaveLoad() throws IOException {
     final BinarySplitter bs = new BinarySplitter("random", 0, 44.44, MlDataType.DOUBLE);
     final MemoryPrintStream mps = new MemoryPrintStream();
     final DataOutputStream dos = new DataOutputStream(mps.outputStream());
     final Dataset data = new Dataset(new Attribute("random", MlDataType.DOUBLE));
+    assertEquals("split: random <= 44.44", bs.toString(data));
+    bs.save(dos, data);
+    final BinarySplitter bs2 = new BinarySplitter(new DataInputStream(new ByteArrayInputStream(mps.toByteArray())), data);
+    assertEquals(bs, bs2);
+  }
+
+  public void testSaveLoadMissing() throws IOException {
+    final BinarySplitter bs = new BinarySplitter("random", 0, Double.NaN, MlDataType.DOUBLE);
+    final MemoryPrintStream mps = new MemoryPrintStream();
+    final DataOutputStream dos = new DataOutputStream(mps.outputStream());
+    final Dataset data = new Dataset(new Attribute("random", MlDataType.DOUBLE));
+    assertEquals("split: random == missing", bs.toString(data));
     bs.save(dos, data);
     final BinarySplitter bs2 = new BinarySplitter(new DataInputStream(new ByteArrayInputStream(mps.toByteArray())), data);
     assertEquals(bs, bs2);
@@ -46,12 +62,16 @@ public class BinarySplitterTest extends TestCase {
   }
 
   private void checkLoadVersion(int version) throws IOException {
+    final Dataset ds = createTestDataset();
     final InputStream is = Resources.getResourceAsStream("com/rtg/ml/resources/testBinarySplitterVersion_" + version);
     try (final DataInputStream dis = new DataInputStream(is)) {
-      final BinarySplitter bs = new BinarySplitter(dis, createTestDataset());
-      assertEquals(version, bs.mCurrentVersion);
-      final String str = bs.toString(createTestDataset());
-      assertTrue(str.contains("num6ers") && str.contains("3213.6534"));
+      BinarySplitter bs = new BinarySplitter(dis, ds);
+      //assertEquals(version, bs.mCurrentVersion);
+      TestUtils.containsAll(bs.toString(ds), "num6ers", String.valueOf(SPLIT_VALUE_1));
+
+      bs = new BinarySplitter(dis, ds);
+      //assertEquals(version, bs.mCurrentVersion);
+      TestUtils.containsAll(bs.toString(ds), "num6ers", String.valueOf(SPLIT_VALUE_2));
     }
   }
 
@@ -59,8 +79,11 @@ public class BinarySplitterTest extends TestCase {
     return new Dataset(new Attribute("string with spaces and num6ers.", MlDataType.DOUBLE));
   }
   static BinarySplitter createTestSplitter() {
+    return createTestSplitter(SPLIT_VALUE_1);
+  }
+  static BinarySplitter createTestSplitter(double splitValue) {
     final Dataset testDataset = createTestDataset();
-    return new BinarySplitter(testDataset.getAttributes()[0].getName(), 0, 3213.6534, testDataset.getAttributes()[0].getDataType());
+    return new BinarySplitter(testDataset.getAttributes()[0].getName(), 0, splitValue, testDataset.getAttributes()[0].getDataType());
   }
 
   /**
@@ -71,8 +94,10 @@ public class BinarySplitterTest extends TestCase {
   public static void main(String[] args) throws IOException {
     final File dir = new File(args[0]);
     final File output = new File(dir, "testBinarySplitterVersion_" + BinarySplitter.SERIAL_VERSION);
+    final Dataset ds = createTestDataset();
     try (DataOutputStream dos = new DataOutputStream(FileUtils.createOutputStream(output))) {
-      createTestSplitter().save(dos, createTestDataset());
+      createTestSplitter(SPLIT_VALUE_1).save(dos, ds);
+      createTestSplitter(SPLIT_VALUE_2).save(dos, ds);
     }
   }
 }

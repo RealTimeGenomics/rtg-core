@@ -34,9 +34,9 @@ public class ZeroRBuilder implements BuildClassifier {
   public static final class ZeroRClassifier implements PredictClassifier {
     static final double MINIMUM_WEIGHT = 1e-10;
     static final int SERIAL_VERSION = 1;
+
     private final double mProb;
     private final String mDesc;
-    final int mCurrentVersion;
 
     /**
      * @param prob weight to give to positive
@@ -44,7 +44,6 @@ public class ZeroRBuilder implements BuildClassifier {
     public ZeroRClassifier(double prob) {
       mProb = prob;
       mDesc = "" + prob;
-      mCurrentVersion = SERIAL_VERSION;
     }
 
     /**
@@ -56,8 +55,7 @@ public class ZeroRBuilder implements BuildClassifier {
         throw new IllegalArgumentException("0R undefined on no examples");
       }
       mProb = pos / (pos + neg);
-      mDesc = "" + mProb + " (" + pos + "/" + (pos + neg) + ")";
-      mCurrentVersion = SERIAL_VERSION;
+      mDesc = Utils.realFormat(mProb, 4) + " (" + Utils.realFormat(pos, 1) + "/" + Utils.realFormat(pos + neg, 1) + ")";
     }
 
     /**
@@ -65,12 +63,12 @@ public class ZeroRBuilder implements BuildClassifier {
      * @throws IOException if an IO error occurs
      */
     public ZeroRClassifier(DataInputStream dis) throws IOException {
-      mCurrentVersion = dis.readInt();
-      if (mCurrentVersion == 1) {
+      final int version = dis.readInt();
+      if (version == 1) {
         mProb = dis.readDouble();
         mDesc = dis.readUTF();
       } else {
-        throw new IOException("Unsupported 0R version: " + mCurrentVersion);
+        throw new IOException("Unsupported 0R version: " + version);
       }
     }
 

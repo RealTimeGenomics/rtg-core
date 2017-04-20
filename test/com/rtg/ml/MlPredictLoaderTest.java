@@ -15,6 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import com.rtg.util.TestUtils;
 import com.rtg.util.io.MemoryPrintStream;
 
 import junit.framework.TestCase;
@@ -52,14 +53,14 @@ public class MlPredictLoaderTest extends TestCase {
       checkCorruptLoad(1, (byte) -1);
       fail();
     } catch (IOException e) {
-      assertEquals("Prediction type out of range. Could the model be corrupt?", e.getMessage());
+      TestUtils.containsAll(e.getMessage(), "Prediction type out of range");
 
     }
     try {
-      checkCorruptLoad(24, (byte) -1);
+      checkCorruptLoad(BinarySplitter.SERIAL_VERSION == 1 ? 24 : 18, (byte) -1);
       fail();
     } catch (IOException e) {
-      assertEquals("Learning attribute out of range. Could the model be corrupt?", e.getMessage());
+      TestUtils.containsAll(e.getMessage(), "Learning attribute out of range");
     }
   }
   public void checkCorruptLoad(int pos, byte value) throws IOException {
