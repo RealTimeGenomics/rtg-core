@@ -30,18 +30,22 @@ import java.util.ArrayList;
 import java.util.Properties;
 
 import com.rtg.launcher.AbstractCli;
+import com.rtg.launcher.CommonFlags;
 import com.rtg.util.Pair;
 import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.io.LineWriter;
+import com.rtg.util.memory.MemoryUsage;
 
 /**
  */
 public class AvrStatsCli extends AbstractCli {
 
-  private static final String XDUMP_MODEL = "Xdump-model";
-  private static final String XDUMP_PROPERTIES = "Xdump-properties";
+  private static final String DUMP_MODEL_FLAG = "Xdump-model";
+  private static final String DUMP_PROPERTIES_FLAG = "Xdump-properties";
+  private static final String DUMP_MEMORY_FLAG = "Xdump-memory";
+  private static final String UPGRADE_MODEL_FLAG = "Xupgrade-model";
 
   @Override
   public String moduleName() {
@@ -58,8 +62,10 @@ public class AvrStatsCli extends AbstractCli {
     CommonFlagCategories.setCategories(mFlags);
     mFlags.registerExtendedHelp();
     mFlags.setDescription("Print statistics that describe an AVR model.");
-    mFlags.registerOptional(XDUMP_PROPERTIES, "if set, output the raw model properties").setCategory(CommonFlagCategories.UTILITY);
-    mFlags.registerOptional(XDUMP_MODEL, "if set, output a verbose representation of the model").setCategory(CommonFlagCategories.UTILITY);
+    mFlags.registerOptional(DUMP_PROPERTIES_FLAG, "if set, output the raw model properties").setCategory(CommonFlagCategories.UTILITY);
+    mFlags.registerOptional(DUMP_MODEL_FLAG, "if set, output a verbose representation of the model").setCategory(CommonFlagCategories.UTILITY);
+    mFlags.registerOptional(DUMP_MEMORY_FLAG, "if set, output model memory usage").setCategory(CommonFlagCategories.UTILITY);
+    mFlags.registerOptional(UPGRADE_MODEL_FLAG, File.class, CommonFlags.FILE, "if set, re-save the model (to upgrade model version)").setCategory(CommonFlagCategories.UTILITY);
 
     AvrUtils.initAvrModel(mFlags, true);
   }
@@ -101,7 +107,7 @@ public class AvrStatsCli extends AbstractCli {
       }
       lw.writeln();
 
-      if (mFlags.isSet(XDUMP_PROPERTIES)) {
+      if (mFlags.isSet(DUMP_PROPERTIES_FLAG)) {
         lw.writeln("Properties:");
         for (String property : props.stringPropertyNames()) {
           lw.writeln(property + "=" + props.getProperty(property));
@@ -109,10 +115,20 @@ public class AvrStatsCli extends AbstractCli {
         lw.writeln();
       }
 
-      if (mFlags.isSet(XDUMP_MODEL)) {
+      if (mFlags.isSet(DUMP_MODEL_FLAG)) {
         lw.writeln("Full Model:");
         lw.writeln(fact.getModel().toString());
         lw.writeln();
+      }
+
+      if (mFlags.isSet(DUMP_MEMORY_FLAG)) {
+        lw.writeln(new MemoryUsage(fact.getModel()).toString());
+      }
+
+      if (mFlags.isSet(UPGRADE_MODEL_FLAG)) {
+        final File outFile = (File) mFlags.getValue(UPGRADE_MODEL_FLAG);
+        lw.writeln("Writing Model To: " + outFile);
+        AbstractModelBuilder.save(outFile, fact.getModelProperties(), fact.getModel());
       }
     }
     return 0;

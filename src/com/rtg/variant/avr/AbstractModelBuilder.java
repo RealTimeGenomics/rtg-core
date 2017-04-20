@@ -148,7 +148,7 @@ public abstract class AbstractModelBuilder<T extends AbstractPredictModel> {
     if (mProperties.getProperty(MODEL_PROPERTY_TYPE) == null) {
       throw new IllegalStateException();
     }
-    return new Properties(mProperties);
+    return mProperties;
   }
 
   /**
@@ -166,17 +166,20 @@ public abstract class AbstractModelBuilder<T extends AbstractPredictModel> {
    * @throws IOException if a problem occurs while writing the file
    */
   public void save(File avrFile) throws IOException {
+    save(avrFile, mProperties, getModel());
+  }
+
+  static <U extends AbstractPredictModel> void save(File avrFile, Properties properties, U model) throws IOException {
     try (final ZipOutputStream zout = new ZipOutputStream(new FileOutputStream(avrFile))) {
       zout.setLevel(9); // maximum compression
 
       // save properties
       zout.putNextEntry(new ZipEntry(MODEL_PROPERTIES_FILE_NAME));
-      mProperties.store(zout, MODEL_PROPERTIES_COMMENT);
+      properties.store(zout, MODEL_PROPERTIES_COMMENT);
 
       // save model
       zout.putNextEntry(new ZipEntry(MODEL_FILE_NAME));
-      getModel().save(zout);
+      model.save(zout);
     }
   }
-
 }

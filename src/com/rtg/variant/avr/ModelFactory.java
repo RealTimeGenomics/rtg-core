@@ -122,6 +122,6 @@ public class ModelFactory {
   }
 
   public Properties getModelProperties() {
-    return new Properties(mProperties);
+    return mProperties;
   }
 }
