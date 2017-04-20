@@ -87,6 +87,11 @@ public class Dataset {
     return mNegWeight;
   }
 
+  /** @return the total weight of all instances in the dataset */
+  public double totalWeight() {
+    return totalNegativeWeight() + totalPositiveWeight();
+  }
+
   /** @return the total number of positive instances in the dataset (ignoring weight) */
   public long totalPositives() {
     return mPosCount;

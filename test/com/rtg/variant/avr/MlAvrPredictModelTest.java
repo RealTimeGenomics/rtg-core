@@ -102,7 +102,7 @@ public class MlAvrPredictModelTest extends AbstractPredictModelTest<MlAvrPredict
       //System.err.println(record.toString());
       assertTrue(record.toString().contains(apm.getField()));
       assertEquals(1.0, Double.valueOf(record.getFormat(apm.getField()).get(0)), 0.001);
-      assertEquals(0.7, Double.valueOf(record.getFormat(apm.getField()).get(1)), 0.001);
+      assertEquals(0.5127, Double.valueOf(record.getFormat(apm.getField()).get(1)), 0.001);
       assertEquals(1.0, Double.valueOf(record.getFormat(apm.getField()).get(2)), 0.001);
       assertEquals(0.0, Double.valueOf(record.getFormat(apm.getField()).get(3)), 0.001);
 

@@ -190,14 +190,14 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
         return new ZeroRBuilder.ZeroRClassifier(dataset.totalPositiveWeight(), dataset.totalNegativeWeight());
       }
 
-      final double leftSize = leftData.size();
+      final double leftSize = leftData.totalWeight();
       final PredictClassifier left = buildSubtree(random, leftData, currentDepth + 1);
       // leftData can now be gc
       final Dataset rightData = new Dataset(dataset.getAttributes());
 
       filterInstances(bestDirector, dataset, null, rightData);
       final PredictClassifier right = buildSubtree(random, rightData, currentDepth + 1);
-      final double leftFraction = leftSize / (leftSize + rightData.size());
+      final double leftFraction = leftSize / (leftSize + rightData.totalWeight());
       return new BinaryTreeClassifier(bestDirector, left, right,  leftFraction);
     }
   }
