@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.rtg.util.Resources;
+import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 
@@ -30,12 +31,12 @@ public class BinaryTreeClassifierTest extends TestCase {
 
   public void testTreePredictorManual() {
     final BinaryTreeClassifier node2 = new BinaryTreeClassifier(new BinarySplitter("att1", 1, 1.0, MlDataType.BOOLEAN),
-        new ZeroRBuilder.ZeroRClassifier(0.7),
-        new ZeroRBuilder.ZeroRClassifier(1.0),
+        new ZeroRBuilder.ZeroRClassifier(7, 3),
+        new ZeroRBuilder.ZeroRClassifier(10, 0),
         0.2
     );
     final BinaryTreeClassifier classifier = new BinaryTreeClassifier(new BinarySplitter("att0", 0, Math.PI, MlDataType.DOUBLE),
-        new ZeroRBuilder.ZeroRClassifier(0.9),
+        new ZeroRBuilder.ZeroRClassifier(9, 1),
         node2,
         0.3
     );
@@ -85,7 +86,7 @@ public class BinaryTreeClassifierTest extends TestCase {
       final BinaryTreeClassifier bs = new BinaryTreeClassifier(dis, BinarySplitterTest.createTestDataset());
       final StringBuilder str = bs.toString(new StringBuilder(), "", BinarySplitterTest.createTestDataset());
       final String s = str.toString();
-      assertTrue(s.contains("54/97") && s.contains("90/190"));
+      TestUtils.containsAll(s, "0R: 0.556", "0R: 0.473");
     }
   }
 

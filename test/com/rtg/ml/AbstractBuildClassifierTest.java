@@ -13,14 +13,13 @@ package com.rtg.ml;
 
 import java.util.Properties;
 
+import com.rtg.AbstractTest;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.ThreadAware;
 
-import junit.framework.TestCase;
-
 /**
  */
-public abstract class AbstractBuildClassifierTest extends TestCase {
+public abstract class AbstractBuildClassifierTest extends AbstractTest {
 
   abstract BuildClassifier makeClassifier();
 

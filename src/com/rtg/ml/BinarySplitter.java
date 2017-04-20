@@ -72,8 +72,9 @@ public final class BinarySplitter {
     final int version = dis.readInt();
 
     if (version == 1) {
-      mName = dis.readUTF();
+      dis.readUTF(); // Ignored, instead get name from dataset and attribute index
       mAttributeIndex = dis.readInt();
+      mName = data.getAttributes()[mAttributeIndex].getName();
       final int type = dis.readInt();
       if (type >= MlDataType.values().length || type < 0) {
         throw new IOException("Learning attribute out of range, model may be corrupt or created with a later version of RTG.");

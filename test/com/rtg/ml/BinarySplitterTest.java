@@ -66,11 +66,9 @@ public class BinarySplitterTest extends TestCase {
     final InputStream is = Resources.getResourceAsStream("com/rtg/ml/resources/testBinarySplitterVersion_" + version);
     try (final DataInputStream dis = new DataInputStream(is)) {
       BinarySplitter bs = new BinarySplitter(dis, ds);
-      //assertEquals(version, bs.mCurrentVersion);
       TestUtils.containsAll(bs.toString(ds), "num6ers", String.valueOf(SPLIT_VALUE_1));
 
       bs = new BinarySplitter(dis, ds);
-      //assertEquals(version, bs.mCurrentVersion);
       TestUtils.containsAll(bs.toString(ds), "num6ers", String.valueOf(SPLIT_VALUE_2));
     }
   }

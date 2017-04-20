@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.rtg.util.Resources;
+import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 
@@ -51,17 +52,21 @@ public class ZeroRBuilderTest extends AbstractBuildClassifierTest {
   private void checkLoadVersion(int version) throws IOException {
     final InputStream is = Resources.getResourceAsStream("com/rtg/ml/resources/testZeroRVersion_" + version);
     try (final DataInputStream dis = new DataInputStream(is)) {
-      final int type = dis.readInt();
-      assertEquals(MlPredictLoader.MlPredictType.ZERO_R.ordinal(), type);
-      final ZeroRBuilder.ZeroRClassifier bs = new ZeroRBuilder.ZeroRClassifier(dis);
-      final StringBuilder str = bs.toString(new StringBuilder(), "", null);
-      final String s = str.toString();
-      assertTrue(s.contains("808/1007"));
+      assertEquals(MlPredictLoader.MlPredictType.ZERO_R.ordinal(), dis.readInt());
+      ZeroRBuilder.ZeroRClassifier bs = new ZeroRBuilder.ZeroRClassifier(dis);
+      TestUtils.containsAll(bs.toString(), "0R: 0.802");
+
+      assertEquals(MlPredictLoader.MlPredictType.ZERO_R.ordinal(), dis.readInt());
+      bs = new ZeroRBuilder.ZeroRClassifier(dis);
+      TestUtils.containsAll(bs.toString(), "0R: 0.191");
     }
   }
 
   private static ZeroRBuilder.ZeroRClassifier createTestZeroR() {
     return new ZeroRBuilder.ZeroRClassifier(808, 199);
+  }
+  private static ZeroRBuilder.ZeroRClassifier createTestZeroR2() {
+    return new ZeroRBuilder.ZeroRClassifier(19, 80);
   }
 
   public void testBadArgs() {
@@ -83,6 +88,7 @@ public class ZeroRBuilderTest extends AbstractBuildClassifierTest {
     final File output = new File(dir, "testZeroRVersion_" + ZeroRBuilder.ZeroRClassifier.SERIAL_VERSION);
     try (DataOutputStream dos = new DataOutputStream(FileUtils.createOutputStream(output))) {
       createTestZeroR().save(dos, null);
+      createTestZeroR2().save(dos, null);
     }
   }
 

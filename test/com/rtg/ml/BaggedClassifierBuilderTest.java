@@ -20,6 +20,7 @@ import java.io.InputStream;
 
 import com.rtg.util.PortableRandom;
 import com.rtg.util.Resources;
+import com.rtg.util.TestUtils;
 import com.rtg.util.io.FileUtils;
 import com.rtg.util.io.MemoryPrintStream;
 
@@ -82,7 +83,7 @@ public class BaggedClassifierBuilderTest extends AbstractBuildClassifierTest {
       final BaggedClassifier bs = new BaggedClassifier(dis, null);
       final StringBuilder str = bs.toString(new StringBuilder(), "", null);
       final String s = str.toString();
-      assertTrue(s.contains("12/57") && s.contains("99/112") && s.contains("808/809"));
+      TestUtils.containsAll(s, "classifier [1]", "0R: 0.210", "0R: 0.883", "0R: 0.998");
     }
   }
 
