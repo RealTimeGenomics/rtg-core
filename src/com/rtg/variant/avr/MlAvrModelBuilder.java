@@ -115,6 +115,7 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
     final Dataset dataset = ae.getDataset();
     boolean reweight = true;
     for (VcfDataset vcfDataset : vcfDatasets) {
+      Diagnostic.userLog("Loading " + vcfDataset);
       reweight &= vcfDataset.isReweight();
       try (final VcfReader reader = VcfReader.openVcfReader(vcfDataset.getVcfFile())) {
         try {
@@ -132,6 +133,7 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
     // instances equal to the total weight of negative instances.  We
     // only don't do it, if the user explicitly set some other weight.
     if (reweight) {
+      Diagnostic.userLog("Reweighting dataset");
       dataset.reweight();
     }
 
@@ -153,6 +155,7 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
     if (classifierBuilder instanceof ThreadAware) {
       ((ThreadAware) classifierBuilder).setNumberOfThreads(getNumberOfThreads());
     }
+    Diagnostic.userLog("Starting build");
     classifierBuilder.build(dataset);
 
     // create predict model
@@ -160,6 +163,7 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
     Diagnostic.info("Score for example with all values missing: " + Utils.realFormat(mlClassifier.predict(getMissingValuesInstance(annotations.size())), 2));
     mModel = new MlAvrPredictModel(mlClassifier);
     mModel.setAttributeExtractor(ae);
+    Diagnostic.userLog("Finished build");
   }
 
   @Override

@@ -52,11 +52,15 @@ public class TrainTestSplitTest extends TestCase {
   }
 
   public static void nukeData(Dataset data, double errorRate) {
+    nukeData(data, errorRate, errorRate, Double.NaN);
+  }
+
+  public static void nukeData(Dataset data, double posErrorRate, double negErrorRate, double newValue) {
     final PortableRandom rand = new PortableRandom(42);
     for (Instance inst : data.getInstances()) {
       for (int i = 0; i < inst.instance().length; ++i) {
-        if (rand.nextDouble() < errorRate) {
-          inst.instance()[i] = Double.NaN;
+        if (rand.nextDouble() < (inst.isPositive() ? posErrorRate : negErrorRate)) {
+          inst.instance()[i] = newValue;
         }
       }
     }

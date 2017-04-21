@@ -59,4 +59,14 @@ public class VcfDataset {
   public double getInstanceWeight() {
     return mInstanceWeight;
   }
+
+  @Override
+  public String toString() {
+    return "VcfDataset "
+      + (mIsPositive ? "POS" : "NEG")
+      + " reweight=" + mReweight
+      + " sample=" + mSampleNum
+      + " weight=" + mInstanceWeight
+      + " " + mVcfFile;
+  }
 }

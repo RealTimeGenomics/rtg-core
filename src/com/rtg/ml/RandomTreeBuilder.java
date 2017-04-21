@@ -13,16 +13,14 @@ package com.rtg.ml;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Properties;
 
-import com.rtg.launcher.globals.GlobalFlags;
-import com.rtg.launcher.globals.CoreGlobalFlags;
 import com.rtg.ml.ZeroRBuilder.ZeroRClassifier;
 import com.rtg.util.DoubleMultiSet;
 import com.rtg.util.PortableRandom;
 import com.rtg.util.Seedable;
+import com.rtg.util.array.ArrayUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 
 /**
@@ -40,6 +38,14 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
   public static final String PROP_MIN_INSTANCES = PROP_PREFIX + "min-instances";
   /** Property to set the number of attributes to consider at each node */
   public static final String PROP_NUM_ATTRIBUTES = PROP_PREFIX + "num-attributes";
+  /** Property to set additional split cost */
+  public static final String PROP_SPLIT_COST = PROP_PREFIX + "split-cost";
+  /** Property to set whether instances with missing values should be sent down both subtrees */
+  public static final String PROP_PROPAGATE_MISSING = PROP_PREFIX + "propagate-missing";
+  /** Property to set whether to use new entropy calculation which includes missing values */
+  public static final String PROP_ENTROPY_MISSING = PROP_PREFIX + "entropy-missing";
+  /** Property to set whether to consider a split point that uses a missing vs non-missing distinction */
+  public static final String PROP_SPLIT_MISSING = PROP_PREFIX + "split-missing";
   /** Property to set the random number seed */
   public static final String PROP_SEED = PROP_PREFIX + "seed";
 
@@ -50,9 +56,16 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
   private int mMinInstances = 10;
   /** Number of attributes used at each node. 0 means log base 2 (num attributes) + 1 */
   private int mNumAttributes = 0;
+  /** Optional additional cost to splitting */
+  private double mSplitCost = 0;
   /** Random number seed */
   private int mSeed = 42;
-
+  /** Send instances with missing values down both subtrees */
+  private boolean mPropagateMissing = false;
+  /** Use entropy calculation which includes missing values */
+  private boolean mEntropyMissing = false;
+  /** Consider a missing vs non-missing split */
+  private boolean mSplitMissing = false;
 
   private PredictClassifier mClassifier = null;
   private int mActualNumAttributes = 0;
@@ -61,6 +74,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
   public void build(Dataset dataset) {
     final PortableRandom random = new PortableRandom(mSeed);
     mActualNumAttributes = (mNumAttributes == 0) ? (int) (Math.log(dataset.getAttributes().length) / Math.log(2) + 1) : mNumAttributes;
+    Diagnostic.userLog(toString());
     mClassifier = buildSubtree(random, dataset, 0);
   }
 
@@ -71,7 +85,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
 
   private PredictClassifier buildSubtree(PortableRandom random, Dataset dataset, int currentDepth) {
 
-    if ((dataset.size() < mMinInstances)
+    if ((dataset.totalWeight() < mMinInstances)
         || (mMaxDepth > 0 && currentDepth >= mMaxDepth)
         || (dataset.totalPositiveWeight() == 0)
         || (dataset.totalNegativeWeight() == 0)) {
@@ -83,7 +97,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
     final double[][] priorDist = new double[2][2];
     priorDist[OUT][POS] = dataset.totalPositiveWeight();
     priorDist[OUT][NEG] = dataset.totalNegativeWeight();
-    double bestEntropy = entropy(priorDist);
+    double bestEntropy = entropy(priorDist) - mSplitCost;
     //final long seed = random.getSeed();
     for (int attribute : getAttributes(random, dataset.getAttributes().length, mActualNumAttributes)) {
       // Evaluate each attribute for best split point
@@ -96,15 +110,21 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
         for (Instance inst : dataset.getInstances()) {
           if (!Attribute.isMissingValue(inst.instance()[attribute])) {
             sorted.add(inst);
-            if (inst.isPositive()) {
-              dist[OUT][POS] += inst.weight();
-            } else {
-              dist[OUT][NEG] += inst.weight();
-            }
+            dist[OUT][inst.isPositive() ? POS : NEG] += inst.weight();
           }
         }
-        final AttributeComparator comp = new AttributeComparator(attribute);
-        Collections.sort(sorted, comp);
+        final double missingPos = dataset.totalPositiveWeight() - dist[OUT][POS];
+        final double missingNeg = dataset.totalNegativeWeight() - dist[OUT][NEG];
+        if (mSplitMissing) {
+          assert mEntropyMissing;
+          final double entropy = entropy(dist) + entropy(missingPos, missingNeg);
+          if (entropy < bestEntropy) {
+            bestDirector = new BinarySplitter(dataset.getAttributes()[attribute].getName(), attribute, Double.NaN, dataType);
+            bestEntropy = entropy;
+          }
+        }
+
+        sorted.sort(new AttributeComparator(attribute));
 
         // Scan through and find the best numeric split point
         double prevValue = Double.NaN;
@@ -112,7 +132,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
           final double currentValue = inst.instance()[attribute];
           if (!Attribute.isMissingValue(prevValue) && prevValue != currentValue) {
             // Evaluate gain
-            final double entropy = entropy(dist);
+            final double entropy = mEntropyMissing ? entropy(dist, missingPos, missingNeg) : entropy(dist);
             if (entropy < bestEntropy) {
               final double splitPoint = getSplitPoint(dataType, prevValue, currentValue);
               bestDirector = new BinarySplitter(dataset.getAttributes()[attribute].getName(), attribute, splitPoint, dataType);
@@ -145,13 +165,19 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
             negCounts.add(Attribute.isMissingValue(attValue) ? null : attValue, inst.weight());
           }
         }
-//        final HashSet<Double> values = new HashSet<>();
-//        values.addAll(posCounts.keySet());
-//        values.addAll(negCounts.keySet());
         final double[][] dist = new double[2][2];
-        // TODO is this the right thing to do with missing values
-        final double posNonMissing = dataset.totalPositiveWeight() - posCounts.get(null);
-        final double negNonMissing = dataset.totalNegativeWeight() - negCounts.get(null);
+        final double missingPos = posCounts.get(null);
+        final double missingNeg = negCounts.get(null);
+        if (mSplitMissing) {
+          assert mEntropyMissing;
+          final double entropy = entropy(dist) + entropy(missingPos, missingNeg);
+          if (entropy < bestEntropy) {
+            bestDirector = new BinarySplitter(dataset.getAttributes()[attribute].getName(), attribute, Double.NaN, dataType);
+            bestEntropy = entropy;
+          }
+        }
+        final double posNonMissing = dataset.totalPositiveWeight() - missingPos;
+        final double negNonMissing = dataset.totalNegativeWeight() - missingNeg;
         final int nonimalSize = dataset.getAttributes()[attribute].nominalSize();
         for (int intKey = 0; intKey < nonimalSize; ++intKey) {
           final Double key = (double) intKey;
@@ -162,7 +188,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
           dist[OUT][POS] = posNonMissing - numpos;
           dist[OUT][NEG] = negNonMissing - numneg;
 
-          final double entropy = entropy(dist);
+          final double entropy = mEntropyMissing ? entropy(dist, missingPos, missingNeg) : entropy(dist);
           if (entropy < bestEntropy) {
             bestDirector = new BinarySplitter(dataset.getAttributes()[attribute].getName(), attribute, key, dataType);
             bestEntropy = entropy;
@@ -173,14 +199,11 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
 
     // Recurse for the chosen split point, or stop if no information gain
     if (bestDirector == null) {
-      //System.out.println(dataset.totalPositives() + " " + dataset.totalNegatives() + " " + dataset.total());
       return new ZeroRBuilder.ZeroRClassifier(dataset.totalPositiveWeight(), dataset.totalNegativeWeight());
+
     } else {
-
-      final Dataset leftData = new Dataset(dataset.getAttributes());
-
-      final double minWeight = filterInstances(bestDirector, dataset, leftData, null);
-
+      Dataset subData = new Dataset(dataset.getAttributes());
+      final double minWeight = filterInstances(bestDirector, dataset, subData, null);
       // If all instances ever get filtered into the same branch then something has gone
       // wrong with the split point selection.  Ideally this should not happen, but
       // perhaps could with some combination of missing values.  In this situation
@@ -189,15 +212,14 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
         Diagnostic.userLog("Unexpected empty branch during tree construction, using 0R instead of branching");
         return new ZeroRBuilder.ZeroRClassifier(dataset.totalPositiveWeight(), dataset.totalNegativeWeight());
       }
+      final double leftSize = subData.totalWeight();
+      final PredictClassifier left = buildSubtree(random, subData, currentDepth + 1);
 
-      final double leftSize = leftData.totalWeight();
-      final PredictClassifier left = buildSubtree(random, leftData, currentDepth + 1);
-      // leftData can now be gc
-      final Dataset rightData = new Dataset(dataset.getAttributes());
+      subData = new Dataset(dataset.getAttributes());
+      filterInstances(bestDirector, dataset, null, subData);
+      final PredictClassifier right = buildSubtree(random, subData, currentDepth + 1);
 
-      filterInstances(bestDirector, dataset, null, rightData);
-      final PredictClassifier right = buildSubtree(random, rightData, currentDepth + 1);
-      final double leftFraction = leftSize / (leftSize + rightData.totalWeight());
+      final double leftFraction = leftSize / (leftSize + subData.totalWeight());
       return new BinaryTreeClassifier(bestDirector, left, right,  leftFraction);
     }
   }
@@ -249,7 +271,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
         break;
       case MISSING:
       default:
-        if (GlobalFlags.getBooleanValue(CoreGlobalFlags.AVR_TRAIN_ON_MISSING_VALUES)) {
+        if (mPropagateMissing) {
           // Send instances with missing values down both branches with half weight
           final double halfWeight = 0.5 * inst.weight();
           leftWeight += halfWeight;
@@ -267,11 +289,26 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
     return Math.min(leftWeight, rightWeight);
   }
 
-  static double entropy(double[][] dist) {
-    return entropy(dist[IN][POS], dist[IN][NEG]) + entropy(dist[OUT][POS], dist[OUT][NEG]);
+  private static double entropy(double[][] dist) {
+    return entropy(dist, 0, 0);
   }
 
-  static double entropy(double pos, double neg) {
+  private static double entropy(double[][] dist, double missingPos, double missingNeg) {
+    final double fraction = in(dist) / total(dist);
+    return entropy(dist[IN][POS] + fraction * missingPos, dist[IN][NEG] + fraction * missingNeg)
+      + entropy(dist[OUT][POS] + (1 - fraction) * missingPos, dist[OUT][NEG] + (1 - fraction) * missingNeg);
+  }
+
+  private static double in(double[][] dist) {
+    return ArrayUtils.sum(dist[IN]);
+  }
+  private static double out(double[][] dist) {
+    return ArrayUtils.sum(dist[OUT]);
+  }
+  private static double total(double[][] dist) {
+    return in(dist) + out(dist);
+  }
+  private static double entropy(double pos, double neg) {
     final double tot = pos + neg;
     if (tot <= 0) {
       return 0;
@@ -279,7 +316,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
     return -(lnFunc(pos) + lnFunc(neg) - lnFunc(tot));
   }
 
-  static double lnFunc(double p) {
+  private static double lnFunc(double p) {
     if (p <= 0) {
       return 0;
     }
@@ -321,14 +358,31 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
     if (mNumAttributes < 0) {
       throw new IllegalArgumentException("Number of attributes can not be negative");
     }
-    mMinInstances = Integer.parseInt(props.getProperty(PROP_MIN_INSTANCES, String.valueOf(10)));
+    mMinInstances = Integer.parseInt(props.getProperty(PROP_MIN_INSTANCES, "10"));
     if (mMinInstances <= 0) {
       throw new IllegalArgumentException("Minimum number of instances must be greater than 1");
     }
-    mMaxDepth = Integer.parseInt(props.getProperty(PROP_MAX_DEPTH, String.valueOf(10)));
+    mMaxDepth = Integer.parseInt(props.getProperty(PROP_MAX_DEPTH, "10"));
     if (mMaxDepth < 0) {
       throw new IllegalArgumentException("Maximum tree depth cannot be negative");
     }
+    mSplitCost = Double.parseDouble(props.getProperty(PROP_SPLIT_COST, "0"));
+    mEntropyMissing = Boolean.valueOf(props.getProperty(PROP_ENTROPY_MISSING, Boolean.FALSE.toString()));
+    mPropagateMissing = Boolean.valueOf(props.getProperty(PROP_PROPAGATE_MISSING, Boolean.FALSE.toString()));
+    mSplitMissing = Boolean.valueOf(props.getProperty(PROP_SPLIT_MISSING, Boolean.FALSE.toString()));
+  }
+
+  @Override
+  public String toString() {
+    return "RandomTreeBuilder:"
+      + " " + PROP_SEED + "=" + mSeed
+      + " " + PROP_NUM_ATTRIBUTES + "=" + mNumAttributes
+      + " " + PROP_MIN_INSTANCES + "=" + mMinInstances
+      + " " + PROP_MAX_DEPTH + "=" + mMaxDepth
+      + " " + PROP_SPLIT_COST + "=" + mSplitCost
+      + " " + PROP_ENTROPY_MISSING + "=" + mEntropyMissing
+      + " " + PROP_PROPAGATE_MISSING + "=" + mPropagateMissing
+      + " " + PROP_SPLIT_MISSING + "=" + mSplitMissing;
   }
 
   @Override

@@ -95,8 +95,6 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
   public static final String QUALITY_CALIBRATION_COVARIATE_INTERSECTION = "com.rtg.variant.quality-calibration-covariate-intersection";
   /** Use Dirichlet rather than multinomial allele balance calculation. */
   public static final String TUMOR_ALLELE_BALANCE = "com.rtg.variant.bayes.multisample.cancer.allele-balance-type";
-  /** Should the random tree builder push missing values down during the build process. */
-  public static final String AVR_TRAIN_ON_MISSING_VALUES = "com.rtg.ml.train-on-missing";
   /** Allow prediction to continue even if the VCF does not declare all the attributes of the model. */
   public static final String AVR_ALLOW_UNDECLARED_ATTRIBUTES = "com.rtg.avr.allow-undeclared";
   /** Level of BAM compression to use during recalibration (probably also works for SAM merge). */
@@ -172,9 +170,6 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
 
     registerFlag(COVERAGE_DP, Integer.class, 2);
 
-    // AVR, training on missing instances increases time and experience indicates is a bad idea
-    // when there are lots of missing values.
-    registerFlag(AVR_TRAIN_ON_MISSING_VALUES, Boolean.class, false);
     registerFlag(AVR_ALLOW_UNDECLARED_ATTRIBUTES, Boolean.class, false);
 
     //Aview

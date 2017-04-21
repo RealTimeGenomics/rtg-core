@@ -11,6 +11,8 @@
  */
 package com.rtg.ml;
 
+import java.util.Properties;
+
 import com.rtg.util.PortableRandom;
 
 /**
@@ -46,19 +48,58 @@ public class RandomTreeBuilderTest extends AbstractBuildClassifierTest {
   }
 
   public void testCircleTree() {
+    final Dataset data = TrainTestSplitTest.makeCircleDataset(new PortableRandom(42), 300, 600);
+    final Dataset testdata = TrainTestSplitTest.makeCircleDataset(new PortableRandom(92), 300, 600);
+    TrainTestSplitTest.nukeData(testdata, 0.35, 0.15, Double.NaN);
+    //TrainTestSplitTest.nukeData(testdata, 0.35, 0.15, 10);
+    final Properties props = new Properties();
+
     final BuildClassifier b = makeClassifier();
+    b.setProperties(props);
+    buildAndEval(b, data, testdata, 0.89);
+    //assertEquals(0.987, eval.accuracy(), 0.01);
 
-    final Dataset data = TrainTestSplitTest.makeCircleDataset(new PortableRandom(42), 100, 200);
-    TrainTestSplitTest.nukeData(data, 0.3);
-    b.build(data);
+    TrainTestSplitTest.nukeData(data, 0.35, 0.15, Double.NaN);
+    config(b, "false", "false", "false");
+    buildAndEval(b, data, testdata, 0.87);
+    //assertEquals(0.8433, eval.accuracy(), 0.01);
 
-    final PredictClassifier p = b.getClassifier();
+    config(b, "true", "false", "false");
+    buildAndEval(b, data, testdata, 0.84);
+    //assertEquals(0.8433, eval.accuracy(), 0.01);
 
-    //System.err.println(p.toString(new StringBuilder(), ""));
+    config(b, "true", "false", "true");
+    buildAndEval(b, data, testdata, 0.84);
+    //assertEquals(0.8433, eval.accuracy(), 0.01);
 
+    config(b, "true", "true", "false");
+    buildAndEval(b, data, testdata, 0.79);
+    //assertEquals(0.8433, eval.accuracy(), 0.01);
+
+    config(b, "true", "true", "true");
+    buildAndEval(b, data, testdata, 0.85);
+    //assertEquals(0.8433, eval.accuracy(), 0.01);
+
+  }
+
+  private void config(BuildClassifier b, String ent, String prop, String split) {
+    final Properties props = new Properties();
+    props.setProperty(RandomTreeBuilder.PROP_ENTROPY_MISSING, ent);
+    props.setProperty(RandomTreeBuilder.PROP_PROPAGATE_MISSING, prop);
+    props.setProperty(RandomTreeBuilder.PROP_SPLIT_MISSING, split);
+    b.setProperties(props);
+  }
+
+  private void buildAndEval(BuildClassifier builder, Dataset traindata, Dataset testdata, double expect) {
+    builder.build(traindata);
+    final PredictClassifier p = builder.getClassifier();
     final SimpleEvaluation eval = new SimpleEvaluation();
-    eval.evaluate(p, data);
-    assertEquals(0.8433, eval.accuracy(), 0.01);
+    eval.evaluate(p, testdata);
+    //System.err.println("\n" + builder.toString());
+    //System.err.print(p.toString(new StringBuilder(), "", data));
+    //System.err.println("Nodes in tree: " + TestUtils.splitLines(p.toString(new StringBuilder(), "", traindata).toString()).length);
+    //System.err.println("Accuracy: " + eval.accuracy());
+    assertEquals(expect, eval.accuracy(), 0.01);
   }
 
   public void testSplitPointDoubleAveraging() {

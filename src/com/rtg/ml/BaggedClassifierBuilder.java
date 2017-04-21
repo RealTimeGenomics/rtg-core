@@ -96,6 +96,17 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
   }
 
   @Override
+  public String toString() {
+    return "BaggedClassifierBuilder:"
+      + " " + PROP_SEED + "=" + mSeed
+      + " " + PROP_SUBCLASSIFIER + "=" + mBuilderType
+      + " " + PROP_NUMTREES + "=" + mNumTrees
+      + " " + PROP_SUBSET_FRACTION + "=" + mSubsetProportion
+      + " " + PROP_EVALUATE_IMPORTANCES + "=" + mEvaluateImportances
+      + " " + PROP_EVALUATE_OOB + "=" + mEvaluateOob;
+  }
+
+  @Override
   public void setNumberOfThreads(int n) {
     mNumThreads = n;
   }
@@ -117,7 +128,7 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
 
   @Override
   public void build(final Dataset dataset) {
-
+    Diagnostic.userLog(toString());
     final int numInsts = dataset.size();
     final int subsetInst = (int) (numInsts * mSubsetProportion);
     final PortableRandom random = new PortableRandom(mSeed);
@@ -149,8 +160,11 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
         @Override
         public void run() {
           // Building
+          Diagnostic.developerLog("Starting bag build " + j);
           final TrainTestSplit subset = TrainTestSplit.sampleWithReplacement(dataset, subsetInst, randoms[j]);
+          Diagnostic.developerLog("Starting bag model build " + j);
           subbuilders[j].build(subset.mTrain);
+          Diagnostic.developerLog("Finished bag model build " + j);
           subpredictors[j] = subbuilders[j].getClassifier();
           // Evaluating
           final Dataset testSet = subset.mTest;
@@ -164,6 +178,7 @@ public class BaggedClassifierBuilder implements BuildClassifier, ThreadAware, Se
               evaluate(attEvals[a], subpredictors[j], permuted); // Importances
             }
           }
+          Diagnostic.developerLog("Finished bag build " + j);
         }
       });
     }
