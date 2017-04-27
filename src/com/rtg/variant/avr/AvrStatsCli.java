@@ -72,7 +72,6 @@ public class AvrStatsCli extends AbstractCli {
 
   private final ArrayList<Pair<String, String>> mProperties = new ArrayList<>();
   {
-    mProperties.add(new Pair<>("Parameters", MODEL_PROPERTY_COMMAND_LINE));
     mProperties.add(new Pair<>("Date built", MODEL_PROPERTY_DATE));
     mProperties.add(new Pair<>("AVR Version", MODEL_AVR_VERSION));
     mProperties.add(new Pair<>("AVR-ID", MODEL_PROPERTY_MODEL_ID));
@@ -81,6 +80,7 @@ public class AvrStatsCli extends AbstractCli {
     mProperties.add(new Pair<>("INFO fields", MODEL_PROPERTY_INFO_ANNOTATIONS));
     mProperties.add(new Pair<>("FORMAT fields", MODEL_PROPERTY_FORMAT_ANNOTATIONS));
     mProperties.add(new Pair<>("Derived fields", MODEL_PROPERTY_DERIVED_ANNOTATIONS));
+    mProperties.add(new Pair<>("Parameters", MODEL_PROPERTY_COMMAND_LINE));
   }
 
   @Override

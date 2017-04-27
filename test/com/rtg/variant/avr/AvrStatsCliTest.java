@@ -35,7 +35,7 @@ public class AvrStatsCliTest extends AbstractCliTest {
       final MemoryPrintStream mps = new MemoryPrintStream();
       final int code = new AvrStatsCli().mainInit(new String[] {model.getPath()}, mps.outputStream(), mps.printStream());
       assertEquals(mps.toString(), 0, code);
-      mNano.check("stats", StringUtils.grepMinusV(mps.toString(), "Location"));
+      mNano.check("avrstats.txt", StringUtils.grepMinusV(mps.toString(), "Location"));
     }
   }
 
