@@ -55,7 +55,7 @@ public class BaggedClassifierBuilderTest extends AbstractBuildClassifierTest {
 
     final SimpleEvaluation eval = new SimpleEvaluation();
     eval.evaluate(p, data);
-    assertEquals(0.84, eval.accuracy(), 0.01);
+    assertEquals(0.94, eval.accuracy(), 0.01);
   }
 
   public void testSaveLoadPredict() throws IOException {

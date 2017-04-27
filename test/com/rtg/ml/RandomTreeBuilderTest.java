@@ -57,29 +57,28 @@ public class RandomTreeBuilderTest extends AbstractBuildClassifierTest {
     final BuildClassifier b = makeClassifier();
     b.setProperties(props);
     buildAndEval(b, data, testdata, 0.89);
-    //assertEquals(0.987, eval.accuracy(), 0.01);
 
     data.injectErrors(0.35, 0.15, Double.NaN);
     config(b, "false", "false", "false");
     buildAndEval(b, data, testdata, 0.87);
-    //assertEquals(0.8433, eval.accuracy(), 0.01);
 
     config(b, "true", "false", "false");
     buildAndEval(b, data, testdata, 0.84);
-    //assertEquals(0.8433, eval.accuracy(), 0.01);
 
     config(b, "true", "false", "true");
     buildAndEval(b, data, testdata, 0.84);
-    //assertEquals(0.8433, eval.accuracy(), 0.01);
 
-    config(b, "true", "true", "false");
+    config(b, "true", "both", "false");
     buildAndEval(b, data, testdata, 0.79);
-    //assertEquals(0.8433, eval.accuracy(), 0.01);
 
-    config(b, "true", "true", "true");
+    config(b, "true", "both", "true");
     buildAndEval(b, data, testdata, 0.85);
-    //assertEquals(0.8433, eval.accuracy(), 0.01);
 
+    config(b, "true", "random", "false");
+    buildAndEval(b, data, testdata, 0.82);
+
+    config(b, "true", "random", "true");
+    buildAndEval(b, data, testdata, 0.88);
   }
 
   private void config(BuildClassifier b, String ent, String prop, String split) {
