@@ -113,7 +113,9 @@ public final class BinaryTreeClassifier implements PredictClassifier {
 
   @Override
   public StringBuilder toString(StringBuilder out, String indent, Dataset data) {
-    out.append(indent).append(mDirector.toString(data)).append(StringUtils.LS);
+    out.append(indent).append(mDirector.toString(data))
+      //.append(" (").append(Utils.realFormat(100.0 * mLeftFraction, 1)).append("%)")
+      .append(StringUtils.LS);
     final String newIndent = indent + "  ";
     mLeft.toString(out, newIndent, data);
     mRight.toString(out, newIndent, data);

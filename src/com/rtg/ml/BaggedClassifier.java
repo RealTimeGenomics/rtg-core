@@ -28,6 +28,9 @@ import com.rtg.util.Utils;
 @TestClass("com.rtg.ml.BaggedClassifierBuilderTest")
 final class BaggedClassifier implements PredictClassifier {
 
+  // Allows loading a model with a large number of sub-classifiers and saving a version containing only the first N sub-classifiers
+  private static final int CLASSIFIER_SAVE_LIMIT = Integer.parseInt(System.getProperty("bagging.save-limit", Integer.toString(Integer.MAX_VALUE)));
+
   static final int SERIAL_VERSION = 1;
 
   private final PredictClassifier[] mClassifiers;
@@ -47,16 +50,16 @@ final class BaggedClassifier implements PredictClassifier {
     } else {
       throw new IOException("Unsupported bag version: " + version);
     }
-    //System.out.println(this.toString(new StringBuilder(), "").toString());
   }
 
   @Override
   public void save(DataOutputStream dos, Dataset data) throws IOException {
     dos.writeInt(MlPredictLoader.MlPredictType.BAGGED.ordinal()); //tell loader which type to load
     dos.writeInt(SERIAL_VERSION);
-    dos.writeInt(mClassifiers.length);
-    for (PredictClassifier mClassifier : mClassifiers) {
-      mClassifier.save(dos, data);
+    final int length = Math.min(mClassifiers.length, CLASSIFIER_SAVE_LIMIT);
+    dos.writeInt(length);
+    for (int i = 0; i < length; i++) {
+      mClassifiers[i].save(dos, data);
     }
   }
 

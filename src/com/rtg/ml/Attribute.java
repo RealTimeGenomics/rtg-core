@@ -143,6 +143,9 @@ public class Attribute {
     }
   }
   private static class StringEncoder implements ValueEncoder {
+    // Note that a particular mapping of String value -> encoded value is transient and depends on the order in which
+    // values are encoded.
+    // In serialized models we store unencoded values and the mapping is repopulated during deserialization.
     final HashMap<String, Integer> mValues = new HashMap<>();
     final ArrayList<String> mDecoder = new ArrayList<>();
     @Override
