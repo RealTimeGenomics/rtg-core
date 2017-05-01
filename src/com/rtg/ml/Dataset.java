@@ -13,6 +13,8 @@ package com.rtg.ml;
 
 import java.util.ArrayList;
 
+import com.rtg.util.PortableRandom;
+
 /**
  * Encapsulate a dataset suitable for training a two-class classifier.
  *
@@ -120,4 +122,57 @@ public class Dataset {
       }
     }
   }
+
+  /**
+   * Randomly replace values within the dataset with the missing value
+   * @param errorRate the probability of setting a value to missing
+   */
+  public void injectMissing(double errorRate) {
+    injectMissing(errorRate, errorRate);
+  }
+
+  /**
+   * Randomly replace values within the dataset with the missing value
+   * @param posErrorRate the probability of setting a value to missing for positive instances
+   * @param negErrorRate the probability of setting a value to missing for negative instances
+   */
+  public void injectMissing(double posErrorRate, double negErrorRate) {
+    injectErrors(posErrorRate, negErrorRate, Double.NaN);
+  }
+
+  /**
+   * Randomly replace values within the dataset with the specified value
+   * @param posErrorRate the probability of setting a value to missing for positive instances
+   * @param negErrorRate the probability of setting a value to missing for negative instances
+   * @param newValue the value to inject
+   */
+  public void injectErrors(double posErrorRate, double negErrorRate, double newValue) {
+    final PortableRandom rand = new PortableRandom(42);
+    final int numAtts = getAttributes().length;
+    for (Instance inst : getInstances()) {
+      for (int i = 0; i < numAtts; ++i) {
+        if (rand.nextDouble() < (inst.isPositive() ? posErrorRate : negErrorRate)) {
+          inst.instance()[i] = newValue;
+        }
+      }
+    }
+  }
+
+  /**
+   * Get a count of the number of missing values for each attribute
+   * @return the counts for each attribute
+   */
+  public long[] missingValueCounts() {
+    final int numAtts = getAttributes().length;
+    final long[] counts = new long[numAtts];
+    for (Instance inst : getInstances()) {
+      for (int attribute = 0; attribute < numAtts; attribute++) {
+        if (Attribute.isMissingValue(inst.instance()[attribute])) {
+          counts[attribute]++;
+        }
+      }
+    }
+    return counts;
+  }
+
 }

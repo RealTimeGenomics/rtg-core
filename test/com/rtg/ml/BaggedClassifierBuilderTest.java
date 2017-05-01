@@ -46,7 +46,7 @@ public class BaggedClassifierBuilderTest extends AbstractBuildClassifierTest {
     final BuildClassifier b = makeClassifier();
 
     final Dataset data = TrainTestSplitTest.makeCircleDataset(new PortableRandom(42), 100, 200);
-    TrainTestSplitTest.nukeData(data, 0.3);
+    data.injectMissing(0.3);
     b.build(data);
 
     final PredictClassifier p = b.getClassifier();

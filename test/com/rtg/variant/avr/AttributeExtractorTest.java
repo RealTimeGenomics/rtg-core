@@ -225,7 +225,7 @@ public class AttributeExtractorTest extends TestCase {
             + "  INFO-RCE   0" + LS
             + "  INFO-XRX   0" + LS
             + "  QUAL       0" + LS
-            , ae.missingValuesReport());
+            , ae.missingValuesReport(ds));
       }
     }
   }

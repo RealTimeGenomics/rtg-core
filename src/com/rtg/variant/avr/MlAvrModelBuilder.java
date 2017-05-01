@@ -45,6 +45,9 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
   /** Name of the configuration parameter that determines the type of ML model to build */
   public static final String PARAMETER_ML_MODEL_TYPE = "avr.subclassifier";
 
+  /** If set, inject noise at the specified rate */
+  public static final String PARAMETER_ML_INJECT_NOISE = "avr.inject-noise";
+
   private int mNumThreads = 1;
 
   /**
@@ -137,12 +140,18 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
       dataset.reweight();
     }
 
+    final Double errorRate = Double.valueOf(mParameters.getProperty(PARAMETER_ML_INJECT_NOISE, "-1"));
+    if (errorRate > 0.0) {
+      Diagnostic.userLog("Injecting noise at rate " + errorRate);
+      dataset.injectMissing(errorRate);
+    }
+
     Diagnostic.info("Total number of examples: " + dataset.size());
     Diagnostic.info("Total number of positive examples: " + dataset.totalPositives());
     Diagnostic.info("Total number of negative examples: " + dataset.totalNegatives());
     Diagnostic.info("Total weight of positive examples: " + Utils.realFormat(dataset.totalPositiveWeight(), 2));
     Diagnostic.info("Total weight of negative examples: " + Utils.realFormat(dataset.totalNegativeWeight(), 2));
-    Diagnostic.info(ae.missingValuesReport());
+    Diagnostic.info(ae.missingValuesReport(dataset));
 
     // train ML model
     final String builderType = mParameters.getProperty(PARAMETER_ML_MODEL_TYPE, BuilderFactory.BuilderType.BAGGED.name());

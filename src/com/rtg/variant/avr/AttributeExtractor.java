@@ -33,6 +33,7 @@ import com.rtg.launcher.CommonFlags;
 import com.rtg.ml.Attribute;
 import com.rtg.ml.Dataset;
 import com.rtg.ml.MlDataType;
+import com.rtg.util.TextTable;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
@@ -64,13 +65,11 @@ public class AttributeExtractor {
   }
 
   private final Annotation[] mAnnotations;
-  private final transient long[] mMissingValueCounts;
   private final Attribute[] mAttributes;
 
   private AttributeExtractor(int numAnnotations) {
     assert numAnnotations > 0;
     mAnnotations = new Annotation[numAnnotations];
-    mMissingValueCounts = new long[numAnnotations];
     mAttributes = new Attribute[numAnnotations];
   }
 
@@ -97,7 +96,6 @@ public class AttributeExtractor {
     }
 
     mAnnotations = set.toArray(new Annotation[set.size()]);
-    mMissingValueCounts = new long[mAnnotations.length];
     mAttributes = new Attribute[mAnnotations.length];
     initAttributes();
   }
@@ -126,25 +124,6 @@ public class AttributeExtractor {
       throw new IncompatibleHeaderException(exceptionMessages.toString());
     }
   }
-
-  /*
-  protected static boolean isTypeCompatible(MetaType mt, AvrDataType type) {
-    switch (mt) {
-      case INTEGER:
-        return type == AvrDataType.INTEGER;
-      case FLOAT:
-        return type == Avr;
-      case STRING:
-        return type == String.class || (type != null && type.isEnum());
-      case CHARACTER:
-        return type == String.class;
-      case FLAG:
-        return type == Boolean.class;
-      default:
-        return false;
-    }
-  }
-  */
 
   /**
    * Returns empty dataset that complies with the attributes.
@@ -183,45 +162,24 @@ public class AttributeExtractor {
       } catch (final NumberFormatException e) {
         throw new NoTalkbackSlimException("Problem parsing a number in a VCF record:\n" + record.toString() + "\n" + e.getMessage());
       }
-      if (Double.isNaN(res[i])) {
-        mMissingValueCounts[i]++;
-      }
     }
     return res;
   }
 
   /**
    * Return a summary of the number of missing values.
+   * @param data the input dataset
    * @return missing values summary
    */
-  public String missingValuesReport() {
-    final String[] nums = new String[mMissingValueCounts.length];
-    int maxLengthNum = 0;
-    int maxLengthName = 0;
-    for (int k = 0; k < nums.length; ++k) {
-      nums[k] = String.valueOf(mMissingValueCounts[k]);
-      if (nums[k].length() > maxLengthNum) {
-        maxLengthNum = nums[k].length();
-      }
-      final int nameLength = mAnnotations[k].getName().length();
-      if (nameLength > maxLengthName) {
-        maxLengthName = nameLength;
-      }
+  public String missingValuesReport(Dataset data) {
+    final long[] counts = data.missingValueCounts();
+    final int numAtts = data.getAttributes().length;
+    final TextTable t = new TextTable(2, 2, TextTable.Align.RIGHT);
+    t.setAlignment(TextTable.Align.LEFT, TextTable.Align.RIGHT);
+    for (int k = 0; k < numAtts; ++k) {
+      t.addRow(mAnnotations[k].getName(), String.valueOf(counts[k]));
     }
-    final StringBuilder sb = new StringBuilder("Number of examples with missing values:").append(LS);
-    for (int k = 0; k < mAnnotations.length; ++k) {
-      final Annotation att = mAnnotations[k];
-      final String name = att.getName();
-      sb.append("  ").append(name);
-      for (int j = name.length(); j <= maxLengthName; ++j) {
-        sb.append(" ");
-      }
-      for (int j = nums[k].length(); j <= maxLengthNum; ++j) {
-        sb.append(" ");
-      }
-      sb.append(nums[k]).append(LS);
-    }
-    return sb.toString();
+    return "Number of examples with missing values:" + LS + t.toString();
   }
 
   @Override

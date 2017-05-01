@@ -50,7 +50,7 @@ public class RandomTreeBuilderTest extends AbstractBuildClassifierTest {
   public void testCircleTree() {
     final Dataset data = TrainTestSplitTest.makeCircleDataset(new PortableRandom(42), 300, 600);
     final Dataset testdata = TrainTestSplitTest.makeCircleDataset(new PortableRandom(92), 300, 600);
-    TrainTestSplitTest.nukeData(testdata, 0.35, 0.15, Double.NaN);
+    testdata.injectErrors(0.35, 0.15, Double.NaN);
     //TrainTestSplitTest.nukeData(testdata, 0.35, 0.15, 10);
     final Properties props = new Properties();
 
@@ -59,7 +59,7 @@ public class RandomTreeBuilderTest extends AbstractBuildClassifierTest {
     buildAndEval(b, data, testdata, 0.89);
     //assertEquals(0.987, eval.accuracy(), 0.01);
 
-    TrainTestSplitTest.nukeData(data, 0.35, 0.15, Double.NaN);
+    data.injectErrors(0.35, 0.15, Double.NaN);
     config(b, "false", "false", "false");
     buildAndEval(b, data, testdata, 0.87);
     //assertEquals(0.8433, eval.accuracy(), 0.01);
