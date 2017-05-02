@@ -81,7 +81,6 @@ final class ReadSimEvalParams {
     final Flag<File> inFlag = flags.registerRequired(File.class, FILE, "SAM/BAM format files");
     inFlag.setMinCount(1);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    inFlag.setPsuedoMinMaxRangeString(1, Constants.MAX_OPEN_FILES);
     inFlag.setCategory(CommonFlagCategories.INPUT_OUTPUT);
     CommonFlags.initNoMaxFile(flags);
     flags.registerOptional('M', MUTATIONS_VCF, File.class, FILE, "VCF file containing genomic mutations to be compensated for").setCategory(CommonFlagCategories.INPUT_OUTPUT);

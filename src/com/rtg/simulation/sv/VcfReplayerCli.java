@@ -34,7 +34,6 @@ import com.rtg.reader.SdfWriter;
 import com.rtg.reader.SequencesReader;
 import com.rtg.reader.SequencesReaderFactory;
 import com.rtg.util.cli.CFlags;
-import com.rtg.util.cli.Validator;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.LongRange;
@@ -263,20 +262,11 @@ public class VcfReplayerCli extends AbstractCli {
   static void getFlags(CFlags flags) {
     flags.registerExtendedHelp();
     CommonFlags.initOutputDirFlag(flags);
-    flags.registerRequired('t', CommonFlags.TEMPLATE_FLAG, File.class, CommonFlags.SDF, "template SDF");
+    CommonFlags.initReferenceTemplate(flags, true);
     flags.registerRequired('v', REPLAY, File.class, CommonFlags.FILE, "VCF file to replay");
-    flags.setValidator(new Validator() {
-
-      @Override
-      public boolean isValid(CFlags flags) {
-        if (!CommonFlags.validateOutputDirectory(flags)
-          || !CommonFlags.validateInputFile(flags, REPLAY)
-          || !CommonFlags.validateTemplate(flags)) {
-          return false;
-        }
-        return true;
-      }
-    });
+    flags.setValidator(flags1 -> CommonFlags.validateOutputDirectory(flags1)
+        && CommonFlags.validateInputFile(flags1, REPLAY)
+        && CommonFlags.validateTemplate(flags1));
   }
 
   @Override

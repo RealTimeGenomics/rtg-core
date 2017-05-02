@@ -27,7 +27,6 @@ import com.rtg.launcher.OutputParams;
 import com.rtg.launcher.ParamsCli;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.sam.SamFilterOptions;
-import com.rtg.util.Constants;
 import com.rtg.util.IORunnable;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
@@ -69,7 +68,7 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
         && CommonFlags.validateSDF(flags, TEMPLATE_FLAG)
         && CommonFlags.validateOutputDirectory(flags)
         && flags.checkInRange(MIN_CONFIDENCE_VALUE_FLAG, 0.0, Double.MAX_VALUE)
-        && CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Constants.MAX_OPEN_FILES)
+        && CommonFlags.checkFileList(flags, CommonFlags.INPUT_LIST_FLAG, null, Integer.MAX_VALUE)
         && SamFilterOptions.validateFilterFlags(flags, false);
     }
   }

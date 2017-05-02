@@ -55,7 +55,8 @@ public class MapFCliTest extends AbstractCliTest {
         "number of available cores",
         "word size",
         "template",
-        "Filters reads for contaminant sequences by mapping them against the contaminant template. It outputs two SDF files, one containing the input reads that map to the template and one that contains those that do not."
+        "Filters reads for contaminant sequences by mapping them against the contaminant reference.",
+        "It outputs two SDF files, one containing the input reads that map to the reference and one containing those that do not."
         );
   }
 

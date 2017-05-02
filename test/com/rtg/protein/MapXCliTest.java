@@ -78,7 +78,7 @@ public class MapXCliTest extends AbstractCliTest {
     assertEquals("mapx", mCli.moduleName());
     checkHelp("directory for output",
         "query read sequences",
-        "SDF containing database to search",
+        "SDF containing protein database to search",
         "guaranteed number of positions",
         "guaranteed minimum number of gaps",
         "scoring matrix",

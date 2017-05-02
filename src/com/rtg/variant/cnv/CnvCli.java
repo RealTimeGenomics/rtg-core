@@ -28,7 +28,6 @@ import com.rtg.launcher.ParamsCli;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.mode.SequenceMode;
 import com.rtg.sam.SamFilterOptions;
-import com.rtg.util.Constants;
 import com.rtg.util.IORunnable;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
@@ -94,10 +93,10 @@ public class CnvCli extends ParamsCli<CnvProductParams> {
         return false;
       }
 
-      if (!CommonFlags.checkFileList(flags, INPUT_BASELINE_LIST_FLAG, INPUT_BASELINE_FLAG, Constants.MAX_OPEN_FILES)) {
+      if (!CommonFlags.checkFileList(flags, INPUT_BASELINE_LIST_FLAG, INPUT_BASELINE_FLAG, Integer.MAX_VALUE)) {
         return false;
       }
-      if (!CommonFlags.checkFileList(flags, INPUT_TEST_LIST_FLAG, INPUT_TEST_FLAG, Constants.MAX_OPEN_FILES)) {
+      if (!CommonFlags.checkFileList(flags, INPUT_TEST_LIST_FLAG, INPUT_TEST_FLAG, Integer.MAX_VALUE)) {
         return false;
       }
 
@@ -134,12 +133,10 @@ public class CnvCli extends ParamsCli<CnvProductParams> {
     inFlag.setCategory(INPUT_OUTPUT);
     inFlag.setMinCount(0);
     inFlag.setMaxCount(Integer.MAX_VALUE);
-    inFlag.setPsuedoMinMaxRangeString(0, Constants.MAX_OPEN_FILES);
     final Flag<File> inFlag2 = mFlags.registerOptional('j', INPUT_TEST_FLAG, File.class, CommonFlags.FILE, "SAM/BAM format files containing mapped reads for test");
     inFlag2.setCategory(INPUT_OUTPUT);
     inFlag2.setMinCount(0);
     inFlag2.setMaxCount(Integer.MAX_VALUE);
-    inFlag2.setPsuedoMinMaxRangeString(0, Constants.MAX_OPEN_FILES);
     CommonFlags.initNoMaxFile(mFlags);
     final Flag<File> listFlag1 = mFlags.registerOptional('I', INPUT_BASELINE_LIST_FLAG, File.class, CommonFlags.FILE, "file containing list of SAM/BAM format files (1 per line) containing mapped reads for baseline").setCategory(INPUT_OUTPUT);
     final Flag<File> listFlag2 = mFlags.registerOptional('J', INPUT_TEST_LIST_FLAG, File.class, CommonFlags.FILE, "file containing list of SAM/BAM format files (1 per line) containing mapped reads for test").setCategory(INPUT_OUTPUT);

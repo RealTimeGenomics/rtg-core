@@ -345,7 +345,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
     flags.setDescription("Searches translated read data sets of defined length (e.g. 100 bp reads) against protein databases or translated nucleotide sequences.");
     CommonFlagCategories.setCategories(flags);
     flags.registerRequired('i', READS_FLAG, File.class, "SDF|FILE", "query read sequences").setCategory(INPUT_OUTPUT);
-    flags.registerRequired('t', TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing database to search").setCategory(INPUT_OUTPUT);
+    flags.registerRequired('t', TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing protein database to search").setCategory(INPUT_OUTPUT);
     CommonFlags.initOutputDirFlag(flags);
 
     // No Paired End input for MapX

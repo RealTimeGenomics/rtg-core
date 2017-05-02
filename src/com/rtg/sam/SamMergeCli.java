@@ -86,7 +86,7 @@ public class SamMergeCli extends AbstractCli {
     inFlag.setMaxCount(Integer.MAX_VALUE);
     final Flag<File> listFlag = mFlags.registerOptional('I', CommonFlags.INPUT_LIST_FLAG, File.class, CommonFlags.FILE, "file containing a list of SAM/BAM format files (1 per line) containing mapped reads").setCategory(INPUT_OUTPUT);
     mFlags.registerOptional('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "name for output SAM/BAM file. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
-    mFlags.registerOptional(LEGACY_CIGARS, "if set, use legacy cigars in output").setCategory(UTILITY);
+    mFlags.registerOptional(LEGACY_CIGARS, "if set, produce legacy cigars (using M rather than X or =) in output").setCategory(UTILITY);
     mFlags.registerOptional(X_ALTERNATE_SAM_HEADER, File.class, CommonFlags.FILE, "treat all SAM records as having the supplied header").setCategory(UTILITY);
     SamFilterOptions.registerSubsampleFlags(mFlags);
     SamFilterOptions.registerMaskFlags(mFlags);

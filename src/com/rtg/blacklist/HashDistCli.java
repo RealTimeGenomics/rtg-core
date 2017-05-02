@@ -93,7 +93,7 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
     flags.registerOptional('s', MapFlags.STEP_FLAG, Integer.class, CommonFlags.INT, "step size", 1).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(MAX_COUNT_FLAG, Integer.class, CommonFlags.INT, "soft minimum for hash count (i.e. will record exact counts of at least this value)", 500).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(BLACKLIST_THRESHOLD_FLAG, Integer.class, CommonFlags.INT, "if set, output a blacklist containing all k-mer hashes with counts exceeding this value").setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
-    flags.registerOptional(HASHMAP_SIZE_FACTOR, Double.class, CommonFlags.FLOAT, "multiplier for the minimum size of the hashmap", 1.0).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
+    flags.registerOptional(HASHMAP_SIZE_FACTOR, Double.class, CommonFlags.FLOAT, "multiplier for the minimum size of the hash map", 1.0).setCategory(CommonFlagCategories.SENSITIVITY_TUNING);
     flags.registerOptional(INSTALL_BLACKLIST, "install the blacklist into the SDF for use during mapping").setCategory(CommonFlagCategories.UTILITY);
     flags.setValidator(new HashToolsCliValidator());
   }
