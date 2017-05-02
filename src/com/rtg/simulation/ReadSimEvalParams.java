@@ -28,9 +28,6 @@ import com.rtg.util.InvalidParamsException;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Flag;
-import com.rtg.util.cli.Validator;
-import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.io.FileUtils;
 import com.rtg.vcf.VcfReader;
 
@@ -105,35 +102,11 @@ final class ReadSimEvalParams {
     flags.registerOptional(SCORE_HISTOGRAM, "output histogram of read alignment/generated scores").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(MAPQ_HISTOGRAM, "output histogram of MAPQ scores").setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional(MAPQ_ROC, "output ROC table with respect to MAPQ scores").setCategory(CommonFlagCategories.REPORTING);
-    flags.setValidator(new Validator() {
-
-      @Override
-      public boolean isValid(CFlags flags) {
-        if (!CommonFlags.validateOutputDirectory(flags)) {
-          return false;
-        }
-        if (!CommonFlags.checkFileList(flags, null, null, Constants.MAX_OPEN_FILES)) {
-          return false;
-        }
-        if (flags.isSet(MUTATIONS_VCF)) {
-          final File mutations = (File) flags.getValue(MUTATIONS_VCF);
-          if (!(mutations.exists() && mutations.isFile())) {
-            flags.setParseMessage("Mutations VCF file doesn't exist");
-            return false;
-          }
-        }
-        if (flags.isSet(SAMPLE) && !flags.isSet(MUTATIONS_VCF)) {
-          flags.setParseMessage("--" + SAMPLE + " can only be set when using --" + MUTATIONS_VCF);
-          return false;
-        }
-        final int variance = (Integer) flags.getValue(VARIANCE);
-        if (variance < 0) {
-          Diagnostic.error(ErrorType.INVALID_MIN_INTEGER_FLAG_VALUE, "--" + VARIANCE, variance + "", "0");
-          return false;
-        }
-        return true;
-      }
-    });
+    flags.setValidator(flags1 -> CommonFlags.validateOutputDirectory(flags1)
+      && CommonFlags.checkFileList(flags1, null, null, Constants.MAX_OPEN_FILES)
+      && CommonFlags.validateInputFile(flags1, MUTATIONS_VCF)
+      && flags1.checkIf(SAMPLE, MUTATIONS_VCF)
+      && flags1.checkInRange(VARIANCE, 0, Integer.MAX_VALUE));
   }
 
 

@@ -98,7 +98,7 @@ public class MapReport extends MapSummaryReport {
         final MapReportData reportData = new MapReportData();
         final List<File> samFiles = Arrays.asList(FileUtils.listFiles(inputDir, new SamBamFilter()));
         if (samFiles.size() > 0) {
-          final SamReadingContext context = new SamReadingContext(samFiles, 1, mFilter, SamUtils.getUberHeader(null, samFiles), null); // XXX Add CRAM support?
+          final SamReadingContext context = new SamReadingContext(samFiles, 1, mFilter, SamUtils.getUberHeader(null, samFiles), null); // No need for a reference here unless we allow map to directly output CRAM
           try (final RecordIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
             while (it.hasNext()) {
               final SAMRecord next = it.next();

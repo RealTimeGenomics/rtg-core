@@ -109,10 +109,6 @@ public class SegmentVcfOutputFormatter {
     header.addFormatField(FORMAT_RDR, MetaType.FLOAT, VcfNumber.ONE, "Mean normalized RD ratio with respect to control");
     header.addFormatField(FORMAT_LOGR, MetaType.FLOAT, VcfNumber.ONE, "Log2 of RD ratio with respect to control");
 
-    // XXX additional fields require more control over the input than we currently have:
-    //header.addFormatField(FORMAT_RD, MetaType.FLOAT, VcfNumber.ONE, "Mean Normalized Read Depth");
-    //header.addFormatField(FORMAT_LEVEL, MetaType.FLOAT, VcfNumber.ONE, "Amplification/Deletion level (e.g. RDR * ploidy)");
-
     header.addSampleName(mSampleName);
 
     return header;

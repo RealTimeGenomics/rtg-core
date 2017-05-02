@@ -353,7 +353,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
     double mappedReads = 0.0;
     double unmappedReads = 0.0;
     final IdentifierCreator identifierCreator = mParams.identifierCreator();
-    final SamReadingContext context = new SamReadingContext(mParams.mapped(), 1, mParams.filterParams(), SamUtils.getUberHeader(sr, mParams.mapped()), null); // XXX add CRAM support?
+    final SamReadingContext context = new SamReadingContext(mParams.mapped(), 1, mParams.filterParams(), SamUtils.getUberHeader(sr, mParams.mapped()), sr);
     try (final ThreadedMultifileIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
       while (it.hasNext()) {
         ++usageStats;

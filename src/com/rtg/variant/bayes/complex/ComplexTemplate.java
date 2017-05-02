@@ -51,7 +51,7 @@ public class ComplexTemplate extends SequenceNameLocusSimple {
    * instead of becoming approximately 40% slower due to the optimisations removed to allow
    * both locations to use the same code.
    *
-   * TODO: THIS WAS TRUE WITH JAVA 6 -- EVALUATE IF STILL NEEDED
+   * TODO: THIS WAS TRUE WITH JAVA 6, 7, and 8 -- EVALUATE IF STILL NEEDED
    */
   /*******************START BLOCK******************/
   private static final boolean HOTSPOT_HACK = GlobalFlags.getBooleanValue(CoreGlobalFlags.COMPLEX_CALLER_HOTSPOT_HACK);

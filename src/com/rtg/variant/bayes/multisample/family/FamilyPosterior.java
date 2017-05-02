@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Stack;
 
 import com.reeltwo.jumble.annotations.TestClass;
-import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.reference.Ploidy;
 import com.rtg.relation.Family;
 import com.rtg.util.QuickSort;
@@ -310,8 +310,8 @@ public class FamilyPosterior extends AbstractFamilyPosterior {
     if (SQUARE_FIRST) {
       // Optimization.
       // Compute a square in the most likely portion of the grid first without doing early termination checks
-      final int fatherLimit = Math.min(Math.max(fatherReferenceIndex, 1), fatherPost.length); //XXX
-      final int motherLimit = Math.min(Math.max(motherReferenceIndex, 1), motherPost.length); //XXX
+      final int fatherLimit = Math.min(Math.max(fatherReferenceIndex, 1), fatherPost.length);
+      final int motherLimit = Math.min(Math.max(motherReferenceIndex, 1), motherPost.length);
       for (int i = FIRST_HYP_FULLY ? 1 : 0; i <= fatherLimit; ++i) {
         for (int j = FIRST_HYP_FULLY ? 1 : 0; j <= motherLimit; ++j) {
           computeParentMarginal(isDefault, ap, haploidSize, fatherPost[i], motherPost[j], fatherHyp[i], motherHyp[j]);

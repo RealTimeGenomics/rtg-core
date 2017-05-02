@@ -142,7 +142,6 @@ public class IndexSimple extends IndexBase {
       }
       lastKey = key;
       long l = 0;
-      //TODO avoid calling mHash.getAsUnsignedLong(i) twice at end of this loop
       while (i < mNumValues && hash == mHash.get(i)) {
         ++l;
         ++i;

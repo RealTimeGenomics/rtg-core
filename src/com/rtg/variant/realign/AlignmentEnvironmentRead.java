@@ -53,7 +53,6 @@ public final class AlignmentEnvironmentRead extends AbstractAlignmentEnvironment
   }
 
   private static byte[] alignmentRecordToRead(VariantAlignmentRecord sam) {
-    //XXX maybe check whether we can pass this directly instead of copying.
     return sam.getRead();
   }
   private static byte[] alignmentRecordToRead(VariantAlignmentRecord sam, int clippedStart, int clippedEnd) {
