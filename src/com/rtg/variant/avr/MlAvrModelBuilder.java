@@ -35,7 +35,6 @@ import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.header.FormatField;
 import com.rtg.vcf.header.InfoField;
 import com.rtg.vcf.header.VcfHeader;
-import com.rtg.vcf.header.VcfHeaderMerge;
 
 /**
  * A machine learning model builder.
@@ -70,28 +69,34 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
 
   @Override
   public void build(VcfDataset... vcfDatasets) throws IOException {
-    // create a merged header from all input sets
-    VcfHeader mergedHeader = null;
+
+    // Extract available annotation information from headers
+    final Map<String, InfoField> infos = new HashMap<>();
+    final Map<String, FormatField> formats = new HashMap<>();
     for (VcfDataset vcfDataset : vcfDatasets) {
       try (final VcfReader reader = VcfReader.openVcfReader(vcfDataset.getVcfFile())) {
-        mergedHeader = (mergedHeader == null)
-            ? reader.getHeader()
-            : VcfHeaderMerge.mergeHeaders(mergedHeader, reader.getHeader(), null);
+        final VcfHeader header = reader.getHeader();
+        assert header != null;
+        for (final InfoField field : header.getInfoLines()) {
+          final String fieldId = field.getId();
+          final InfoField existing = infos.get(fieldId);
+          if (existing != null && !field.equals(existing)) {
+            throw new NoTalkbackSlimException("Info field " + fieldId + " has different definitions in different input VCFs");
+          }
+          infos.put(fieldId, field);
+        }
+        for (final FormatField field : header.getFormatLines()) {
+          final String fieldId = field.getId();
+          final FormatField existing = formats.get(fieldId);
+          if (existing != null && !field.equals(existing)) {
+            throw new NoTalkbackSlimException("Format field " + fieldId + " has different definitions in different input VCFs");
+          }
+          formats.put(field.getId(), field);
+        }
       }
     }
 
-    // Extract available annotation information from the merged header
-    final Map<String, InfoField> infos = new HashMap<>();
-    final Map<String, FormatField> formats = new HashMap<>();
-    assert mergedHeader != null;
-    for (InfoField field : mergedHeader.getInfoLines()) {
-      infos.put(field.getId(), field);
-    }
-    for (FormatField field : mergedHeader.getFormatLines()) {
-      formats.put(field.getId(), field);
-    }
-
-    // get annotation fields
+    // Get annotation fields
     final List<Annotation> annotations = new ArrayList<>();
     if (mUseQualAttribute) {
       annotations.add(new QualAnnotation());
@@ -112,7 +117,7 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
       annotations.add(new DerivedAnnotation(attr.toUpperCase(Locale.getDefault())));
     }
 
-    // create a Dataset from the pos/neg examples
+    // Create a Dataset from the pos/neg examples
     final AttributeExtractor ae = new AttributeExtractor(annotations.toArray(new Annotation[annotations.size()]));
 
     final Dataset dataset = ae.getDataset();
