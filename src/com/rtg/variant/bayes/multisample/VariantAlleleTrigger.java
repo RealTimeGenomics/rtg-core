@@ -26,7 +26,7 @@ public class VariantAlleleTrigger {
    * Create a trigger with the specified thresholds.
    * If both thresholds are zero then no check will be made.
    * @param depth Require that variant alleles occur more than {@code depth} (error-adjusted) times. Should be &gt;= 0
-   * @param fraction  require that the variant makes up at least this fraction of total evidence. Should be between 0.0 and 0.1.
+   * @param fraction  require that the variant makes up at least this fraction of total evidence. Should be between 0.0 and 1.0.
    */
   public VariantAlleleTrigger(double depth, double fraction) {
     assert fraction >= 0.0 && fraction <= 1.0;
