@@ -1,6 +1,6 @@
 # RTG Core Non-commercial
 
-Copyright (c) 2016 Real Time Genomics Ltd
+Copyright (c) 2017 Real Time Genomics Ltd
 
 This software is provided under the Real Time Genomics Ltd Software
 Licence Agreement for Academic Non-commercial Research Purposes
@@ -67,8 +67,10 @@ the instructions below to build from this repository.
 
 ## Support
 
-A PDF user manual is included in the installation or can be
-[viewed online](installer/resources/core/RTGOperationsManual.pdf).
+A user manual is included within the installation in both PDF and HTML
+versions. These may also be viewed
+online ([HTML](https://cdn.rawgit.com/RealTimeGenomics/rtg-core/master/installer/resources/core/RTGOperationsManual/index.html),
+[PDF](https://cdn.rawgit.com/RealTimeGenomics/rtg-core/master/installer/resources/core/RTGOperationsManual.pdf)).
 
 You can use the commands in RTG Core to format your own reference
 datasets, or download common
