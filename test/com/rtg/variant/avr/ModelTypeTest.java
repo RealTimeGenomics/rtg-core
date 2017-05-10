@@ -20,6 +20,6 @@ import junit.framework.TestCase;
  */
 public class ModelTypeTest extends TestCase {
   public void testValues() {
-    TestUtils.testEnum(ModelType.class, "[NULL, GT_COMPLEX, ML]");
+    TestUtils.testEnum(ModelType.class, "[NULL, GT_COMPLEX, ML, ARFF]");
   }
 }

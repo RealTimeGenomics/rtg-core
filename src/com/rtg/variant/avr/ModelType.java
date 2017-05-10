@@ -27,5 +27,9 @@ public enum ModelType {
   /**
    * Machine Learning - bagged forest model.
    */
-  ML
+  ML,
+  /**
+   * ARFF - saves training data in ARFF format
+   */
+  ARFF
 }

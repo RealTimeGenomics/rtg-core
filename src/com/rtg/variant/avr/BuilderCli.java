@@ -123,6 +123,9 @@ public class BuilderCli extends AbstractCli {
       case GT_COMPLEX:
         builder = new GtQualComplexMultiplierModelBuilder(formatAttributes, infoAttributes, derivedAttributes);
         break;
+      case ARFF:
+        builder = new ArffDatasetWriter(formatAttributes, infoAttributes, derivedAttributes);
+        break;
       case NULL:
         builder = new NullModelBuilder(formatAttributes, infoAttributes, derivedAttributes);
         break;

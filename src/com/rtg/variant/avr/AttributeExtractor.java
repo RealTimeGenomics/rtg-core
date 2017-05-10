@@ -16,36 +16,21 @@ import static com.rtg.util.StringUtils.LS;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import com.rtg.launcher.CommonFlags;
 import com.rtg.ml.Attribute;
 import com.rtg.ml.Dataset;
 import com.rtg.ml.MlDataType;
 import com.rtg.util.TextTable;
-import com.rtg.util.cli.CFlags;
-import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
-import com.rtg.util.io.LineWriter;
-import com.rtg.vcf.VcfReader;
 import com.rtg.vcf.VcfRecord;
-import com.rtg.vcf.annotation.DerivedAnnotations;
-import com.rtg.vcf.header.FormatField;
-import com.rtg.vcf.header.InfoField;
 import com.rtg.vcf.header.MetaType;
 import com.rtg.vcf.header.VcfHeader;
 
@@ -241,128 +226,6 @@ public class AttributeExtractor {
     }
   }
 
-  /**
-   * @param args command line arguments
-   * @throws Exception when an exception occurs
-   */
-  public static void main(String[] args) throws Exception {
-    final CFlags flags = new CFlags();
-    CommonFlagCategories.setCategories(flags);
-    flags.setDescription("Generate");
-    flags.registerRequired('i', "input", File.class, CommonFlags.FILE, "input VCF file to read from").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerRequired('o', "output", File.class, CommonFlags.FILE, "output ARFF file").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    flags.registerOptional("info-annotations", String.class, CommonFlags.STRING, "comma separated list of info attributes").setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional("format-annotations", String.class, CommonFlags.STRING, "comma separated list of format attributes").setCategory(CommonFlagCategories.REPORTING);
-    flags.registerOptional("sample", String.class, CommonFlags.STRING, "the name of the sample to select (required when using multi-sample VCF files)").setCategory(CommonFlagCategories.INPUT_OUTPUT);
-    final List<String> derivedRange = new ArrayList<>();
-    for (final DerivedAnnotations derived : DerivedAnnotations.singleValueAnnotations()) {
-      derivedRange.add(derived.toString());
-    }
-    flags.registerOptional("derived-annotations", String.class, CommonFlags.STRING, "derived fields to use in model").setParameterRange(derivedRange).setMaxCount(Integer.MAX_VALUE).enableCsv().setCategory(CommonFlagCategories.REPORTING);
-    if (!flags.setFlags(args)) {
-      return;
-    }
-
-    final File vcfFile = (File) flags.getValue("input");
-    final File output = (File) flags.getValue("output");
-
-    final String[] infoAnnos = flags.isSet("info-annotations") ? ((String) flags.getValue("info-annotations")).split(",") : new String[0];
-    final String[] formatAnnos = flags.isSet("format-annotations") ? ((String) flags.getValue("format-annotations")).split(",") : new String[0];
-    final String[] derivedAnnos;
-    if (flags.isSet("derived-annotations")) {
-      final List<String> derived = new ArrayList<>();
-      for (final Object field : flags.getValues("derived-annotations")) {
-        derived.add(field.toString());
-      }
-      derivedAnnos = derived.toArray(new String[derived.size()]);
-    } else {
-      derivedAnnos = new String[0];
-    }
-
-    final String sampleName = (String) flags.getValue("sample");
-
-    try {
-      try (final VcfReader reader = VcfReader.openVcfReader(vcfFile)) {
-        final List<Annotation> annotations = new ArrayList<>();
-
-        final VcfHeader header = reader.getHeader();
-
-        int sampleNumber = 0;
-        if (header.getSampleNames().size() > 1 || sampleName != null) {
-          final Integer sn = header.getSampleIndex(sampleName);
-          if (sn == null) {
-            if (sampleName == null) {
-              throw new NoTalkbackSlimException("Need to specify a sample name for a multi-sample VCF file.");
-            } else {
-              throw new NoTalkbackSlimException("Sample name not found in VCF file: " + sampleName);
-            }
-          }
-          sampleNumber = sn;
-        }
-
-        final Map<String, InfoField> infos = new HashMap<>();
-        for (InfoField field : header.getInfoLines()) {
-          infos.put(field.getId(), field);
-        }
-        final Map<String, FormatField> formats = new HashMap<>();
-        for (FormatField field : header.getFormatLines()) {
-          formats.put(field.getId(), field);
-        }
-
-        annotations.add(new QualAnnotation());
-        for (String anno : infoAnnos) {
-          final InfoField field = infos.get(anno);
-          if (field == null) {
-            throw new IncompatibleHeaderException("INFO annotation not in VCF file: " + anno);
-          }
-          annotations.add(new InfoAnnotation(anno, getCompatibleType(field.getType())));
-        }
-        for (String anno : formatAnnos) {
-          final FormatField field = formats.get(anno);
-          if (field == null) {
-            throw new IncompatibleHeaderException("FORMAT annotation not in VCF file: " + anno);
-          }
-          annotations.add(new FormatAnnotation(anno, getCompatibleType(field.getType())));
-        }
-        for (String anno : derivedAnnos) {
-          annotations.add(new DerivedAnnotation(anno.toUpperCase(Locale.getDefault())));
-        }
-
-        final Annotation[] annotationsNorm = AttributeExtractor.normalizeAnnotations(annotations);
-        final Attribute[] attributes = AttributeExtractor.createAttributes(annotationsNorm);
-        final AttributeExtractor ae = new AttributeExtractor(annotationsNorm, attributes);
-        ae.checkHeader(header);
-
-        try (final LineWriter arffWriter = new LineWriter(new FileWriter(output))) {
-          arffWriter.writeln("@relation '" + vcfFile.getPath() + "'");
-          arffWriter.writeln("");
-
-          for (Annotation anno : annotations) {
-            arffWriter.writeln(getArffAttributeText(anno));
-          }
-
-          arffWriter.writeln("");
-          arffWriter.writeln("@data");
-          arffWriter.writeln("");
-
-          while (reader.hasNext()) {
-            final double[] instance = ae.getInstance(reader.next(), sampleNumber);
-            for (int i = 0; i < instance.length; ++i) {
-              if (i != 0) {
-                arffWriter.write(",");
-              }
-              arffWriter.write(getValueAsArffString(instance[i]));
-            }
-            arffWriter.writeln("");
-          }
-          arffWriter.flush();
-        }
-      }
-    } catch (IncompatibleHeaderException ihe) {
-      System.err.println(ihe.getMessage());
-    }
-  }
-
   protected static AnnotationDataType getCompatibleType(MetaType mt) {
     switch (mt) {
       case INTEGER:
@@ -379,21 +242,4 @@ public class AttributeExtractor {
     }
   }
 
-  protected static String getArffAttributeText(Annotation annotation) {
-    final StringBuilder sb = new StringBuilder("@attribute ");
-    sb.append(annotation.getName());
-    if (annotation.getType() == AnnotationDataType.INTEGER
-        || annotation.getType() == AnnotationDataType.DOUBLE) {
-      sb.append(" numeric");
-    } else if (annotation.getType() == AnnotationDataType.BOOLEAN) {
-      sb.append(" {").append(Boolean.TRUE.toString()).append(",").append(Boolean.FALSE.toString()).append("}");
-    } else {
-      sb.append(" string");
-    }
-    return sb.toString();
-  }
-
-  protected static String getValueAsArffString(Object value) {
-    return value == null ? "?" : value.toString(); //.replace(',', '_');
-  }
 }

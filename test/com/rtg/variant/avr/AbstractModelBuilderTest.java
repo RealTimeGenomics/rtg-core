@@ -16,14 +16,14 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 
-import com.rtg.AbstractTest;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
 /**
  *
  */
-public abstract class AbstractModelBuilderTest<T extends AbstractModelBuilder<?>> extends AbstractTest {
+public abstract class AbstractModelBuilderTest<T extends AbstractModelBuilder<?>> extends AbstractNanoTest {
   abstract T getModelBuilder(String[] formatAttributes, String[] infoAttributes, String[] derivedAttributes);
 
   ModelFactory getModelFactory(File file) throws IOException {

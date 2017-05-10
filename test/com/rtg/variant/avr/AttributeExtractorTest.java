@@ -238,19 +238,6 @@ public class AttributeExtractorTest extends TestCase {
     assertEquals(AnnotationDataType.STRING, AttributeExtractor.getCompatibleType(MetaType.STRING));
   }
 
-  public void testGetArffAttributeText() {
-    assertEquals("@attribute FORMAT-XXX numeric", AttributeExtractor.getArffAttributeText(new FormatAnnotation("XXX", AnnotationDataType.INTEGER)));
-    assertEquals("@attribute INFO-YYY {" + Boolean.TRUE + "," + Boolean.FALSE + "}", AttributeExtractor.getArffAttributeText(new InfoAnnotation("YYY", AnnotationDataType.BOOLEAN)));
-    assertEquals("@attribute FORMAT-XXX numeric", AttributeExtractor.getArffAttributeText(new FormatAnnotation("XXX", AnnotationDataType.DOUBLE)));
-    assertEquals("@attribute FORMAT-XXX string", AttributeExtractor.getArffAttributeText(new FormatAnnotation("XXX", AnnotationDataType.STRING)));
-  }
-
-  public void testGetValueAsArffString() {
-    assertEquals("?", AttributeExtractor.getValueAsArffString(null));
-    assertEquals("2.1", AttributeExtractor.getValueAsArffString(2.1));
-    assertEquals("abc", AttributeExtractor.getValueAsArffString("abc"));
-  }
-
   public void testGetMlDataType() {
     assertEquals(MlDataType.STRING, AttributeExtractor.getMlDataType(AnnotationDataType.STRING));
     assertEquals(MlDataType.DOUBLE, AttributeExtractor.getMlDataType(AnnotationDataType.DOUBLE));
