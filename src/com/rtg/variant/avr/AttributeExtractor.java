@@ -72,7 +72,8 @@ public class AttributeExtractor {
 
   /**
    * Constructs an attribute extractor for the given set of annotations and corresponding attributes.
-   * @param annotations annotations to process
+   * @param annotations annotations responsible for extracting field values
+   * @param attributes attributes responsible for translating field values into encoded representation
    */
   AttributeExtractor(Annotation[] annotations, Attribute[] attributes) {
     assert annotations.length == attributes.length;
@@ -80,7 +81,7 @@ public class AttributeExtractor {
     mAttributes = attributes;
   }
 
-  // Assumes no need to re-use attributes across extractors
+  // Used during testing, assumes no need to re-use attributes across extractors
   AttributeExtractor(Annotation... annotations) {
     this(annotations, createAttributes(annotations));
   }

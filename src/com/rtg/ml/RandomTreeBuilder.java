@@ -113,7 +113,8 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
     //final long seed = random.getSeed();
     for (int attribute : getAttributes(random, dataset.getAttributes().length, mActualNumAttributes)) {
       // Evaluate each attribute for best split point
-      final MlDataType dataType = dataset.getAttributes()[attribute].getDataType();
+      final Attribute att = dataset.getAttributes()[attribute];
+      final MlDataType dataType = att.getDataType();
       if (dataType.isNumeric()) {
 
         // Create set of instances with non-missing attribute value, and initial counts
@@ -131,7 +132,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
           assert mEntropyMissing;
           final double entropy = entropy(dist) + entropy(missingPos, missingNeg);
           if (entropy < bestEntropy) {
-            bestDirector = new BinarySplitter(dataset.getAttributes()[attribute].getName(), attribute, Double.NaN, dataType);
+            bestDirector = new BinarySplitter(att.getName(), attribute, Double.NaN, dataType);
             bestEntropy = entropy;
           }
         }
@@ -147,7 +148,7 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
             final double entropy = mEntropyMissing ? entropy(dist, missingPos, missingNeg) : entropy(dist);
             if (entropy < bestEntropy) {
               final double splitPoint = getSplitPoint(dataType, prevValue, currentValue);
-              bestDirector = new BinarySplitter(dataset.getAttributes()[attribute].getName(), attribute, splitPoint, dataType);
+              bestDirector = new BinarySplitter(att.getName(), attribute, splitPoint, dataType);
               bestFrac = in(dist) / total(dist);
 
               assert BinarySplitter.Direction.LEFT == bestDirector.split(prevValue);
@@ -186,13 +187,14 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
           assert mEntropyMissing;
           final double entropy = entropy(dist) + entropy(missingPos, missingNeg);
           if (entropy < bestEntropy) {
-            bestDirector = new BinarySplitter(dataset.getAttributes()[attribute].getName(), attribute, Double.NaN, dataType);
+            bestDirector = new BinarySplitter(att.getName(), attribute, Double.NaN, dataType);
             bestEntropy = entropy;
           }
         }
         final double posNonMissing = dataset.totalPositiveWeight() - missingPos;
         final double negNonMissing = dataset.totalNegativeWeight() - missingNeg;
-        final int nonimalSize = dataset.getAttributes()[attribute].nominalSize();
+        final int nonimalSize = att.nominalSize();
+        double bestKey = Double.NaN;
         for (int intKey = 0; intKey < nonimalSize; ++intKey) {
           final Double key = (double) intKey;
           final double numpos = posCounts.get(key);
@@ -203,10 +205,12 @@ public class RandomTreeBuilder implements BuildClassifier, Seedable {
           dist[OUT][NEG] = negNonMissing - numneg;
 
           final double entropy = mEntropyMissing ? entropy(dist, missingPos, missingNeg) : entropy(dist);
-          if (entropy < bestEntropy) {
-            bestDirector = new BinarySplitter(dataset.getAttributes()[attribute].getName(), attribute, key, dataType);
+          if ((entropy < bestEntropy)
+            || (entropy == bestEntropy && !Double.isNaN(bestKey) && att.compare(key, bestKey) < 0)) {
+            bestDirector = new BinarySplitter(att.getName(), attribute, key, dataType);
             bestFrac = in(dist) / total(dist);
             bestEntropy = entropy;
+            bestKey = key;
           }
         }
       }

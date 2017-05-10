@@ -25,6 +25,7 @@ import com.rtg.ml.BuilderFactory;
 import com.rtg.ml.Dataset;
 import com.rtg.ml.Instance;
 import com.rtg.ml.PredictClassifier;
+import com.rtg.util.SimpleThreadPool;
 import com.rtg.util.StringUtils;
 import com.rtg.util.ThreadAware;
 import com.rtg.util.Utils;
@@ -97,27 +98,43 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
 
   // Create a Dataset from the pos/neg examples
   protected Dataset extractDataset(Attribute[] attributes, VcfDataset... vcfDatasets) throws IOException {
-    final Dataset dataset = new Dataset(attributes);
-    boolean reweight = true;
+    final SimpleThreadPool stp = new SimpleThreadPool(getNumberOfThreads(), "dataset-build", false);
+    final Map<VcfDataset, Dataset> datasets = new HashMap<>();
     for (final VcfDataset vcfDataset : vcfDatasets) {
-      reweight &= vcfDataset.isReweight();
-      Diagnostic.userLog("Loading " + vcfDataset);
-      try (final VcfReader reader = VcfReader.openVcfReader(vcfDataset.getVcfFile())) {
-        final AttributeExtractor ae = new AttributeExtractor(createAnnotations(), attributes);
-        try {
-          ae.checkHeader(reader.getHeader()); // Not re-entrant - extractors cache pedigree etc.
-        } catch (IncompatibleHeaderException ihe) {
-          throw new NoTalkbackSlimException("The input VCF header is missing required fields:" + StringUtils.LS + ihe.getMessage());
+      stp.execute(() -> {
+        Diagnostic.userLog("Loading " + vcfDataset);
+        try (final VcfReader reader = VcfReader.openVcfReader(vcfDataset.getVcfFile())) {
+          final AttributeExtractor ae = new AttributeExtractor(createAnnotations(), attributes);
+          try {
+            ae.checkHeader(reader.getHeader());
+          } catch (IncompatibleHeaderException ihe) {
+            throw new NoTalkbackSlimException("The input VCF header is missing required fields:" + StringUtils.LS + ihe.getMessage());
+          }
+          final Dataset dataset = new Dataset(attributes);
+          while (reader.hasNext()) {
+            dataset.addInstance(new Instance(ae.getInstance(reader.next(), vcfDataset.getSampleNum()), vcfDataset.isPositive(), vcfDataset.getInstanceWeight()));
+          }
+          synchronized (datasets) {
+            datasets.put(vcfDataset, dataset);
+          }
+          Diagnostic.userLog("Finished " + vcfDataset);
         }
-        while (reader.hasNext()) {
-          dataset.addInstance(new Instance(ae.getInstance(reader.next(), vcfDataset.getSampleNum()), vcfDataset.isPositive(), vcfDataset.getInstanceWeight()));
-        }
-      }
+      });
+    }
+    stp.terminate();
+    Diagnostic.userLog("Merging datasets");
+    final Dataset dataset = new Dataset(attributes);
+    for (final VcfDataset vcfDataset : vcfDatasets) {
+      dataset.addDataset(datasets.get(vcfDataset));
     }
 
     // Most of the time we want to make the total weight of the positive
     // instances equal to the total weight of negative instances.  We
     // only don't do it, if the user explicitly set some other weight.
+    boolean reweight = true;
+    for (final VcfDataset vcfDataset : vcfDatasets) {
+      reweight &= vcfDataset.isReweight();
+    }
     if (reweight) {
       Diagnostic.userLog("Reweighting dataset");
       dataset.reweight();

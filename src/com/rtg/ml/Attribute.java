@@ -18,7 +18,7 @@ import java.util.HashMap;
  * Encapsulate an attribute.
  *
  */
-public class Attribute {
+public final class Attribute {
 
   private final String mName;
   private final MlDataType mDataType;
@@ -103,11 +103,30 @@ public class Attribute {
     return mEncoder.nominalSize();
   }
 
+  /**
+   * Return an ordered comparison over the underlying values. This may be a relatively expensive
+   * operation if internal decoding is required.
+   * @param a1 first value to compare
+   * @param a2 second value to compare
+   * @return integer indicating ordering
+   */
+  public int compare(double a1, double a2) {
+    if (a1 == a2) {
+      return 0;
+    }
+    if (Attribute.isMissingValue(a1)) {
+      return -1;
+    } else if (Attribute.isMissingValue(a2)) {
+      return 1;
+    }
+    return mEncoder.compare(a1, a2);
+  }
 
   private interface ValueEncoder {
     double encode(Object value);
     Object decode(double value);
     int nominalSize();
+    int compare(double value1, double value2);
   }
   private static final class IntEncoder implements ValueEncoder {
     @Override
@@ -119,6 +138,11 @@ public class Attribute {
     @Override
     public Object decode(double value) {
       return (int) value;
+    }
+
+    @Override
+    public int compare(double a1, double a2) {
+      return Double.compare(a1, a2);
     }
 
     @Override
@@ -138,6 +162,11 @@ public class Attribute {
     }
 
     @Override
+    public int compare(double a1, double a2) {
+      return Double.compare(a1, a2);
+    }
+
+    @Override
     public int nominalSize() {
       throw new UnsupportedOperationException("Not implemented yet");
     }
@@ -150,7 +179,7 @@ public class Attribute {
     private final ArrayList<String> mDecoder = new ArrayList<>();
 
     @Override
-    public double encode(Object value) {
+    public synchronized double encode(Object value) {
       final String strVal = (String) value;
       Integer encoded = mValues.get(strVal);
       if (encoded == null) {
@@ -162,14 +191,21 @@ public class Attribute {
     }
 
     @Override
-    public Object decode(double value) {
+    public synchronized Object decode(double value) {
       final int index = (int) value;
       return mDecoder.get(index);
     }
 
     @Override
-    public int nominalSize() {
+    public synchronized int nominalSize() {
       return mDecoder.size();
+    }
+
+    @Override
+    public int compare(double a1, double a2) {
+      @SuppressWarnings(value = {"unchecked", "rawtypes"})
+      final int result = ((Comparable) decode(a1)).compareTo(decode(a2));
+      return result;
     }
   }
   private static final class BooleanEncoder implements ValueEncoder {
@@ -181,6 +217,11 @@ public class Attribute {
     @Override
     public Object decode(double value) {
       return value > 0.0;
+    }
+
+    @Override
+    public int compare(double a1, double a2) {
+      return Double.compare(a1, a2);
     }
 
     @Override
