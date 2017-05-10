@@ -116,7 +116,7 @@ public class PairedEndTrimCli extends AbstractCli {
       final boolean gzip = !flags.isSet(NO_GZIP);
       final BaseFile baseFile = FastqUtils.baseFile(baseOutput, gzip);
       if (flags.isSet(INTERLEAVE)) {
-        if (!CommonFlags.validateOutputFile(flags, baseFile.suffixedFile(""))) {
+        if (!CommonFlags.validateOutputFile(flags, baseFile.file())) {
           return false;
         }
 
