@@ -66,11 +66,26 @@ public class Dataset {
     }
   }
 
+  /**
+   * Add all the training instances from another dataset. The dataset must share the exact same attributes.
+   * @param dataset the dataset to add
+   */
+  public void addDataset(Dataset dataset) {
+    if (mAttr != dataset.mAttr) {
+      throw new IllegalArgumentException("Can only add datasets that share the same attributes");
+    }
+    mPosCount += dataset.mPosCount;
+    mPosWeight += dataset.mPosWeight;
+    mNegWeight += dataset.mNegWeight;
+    mInstances.ensureCapacity(mInstances.size() + dataset.size());
+    mInstances.addAll(dataset.mInstances);
+  }
+
   public Attribute[] getAttributes() {
     return mAttr;
   }
 
-  ArrayList<Instance> getInstances() {
+  public ArrayList<Instance> getInstances() {
     return mInstances;
   }
 

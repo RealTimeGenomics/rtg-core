@@ -64,7 +64,7 @@ public class AttributeExtractorTest extends TestCase {
         annotations.add(new FormatAnnotation("GT", AnnotationDataType.STRING));
         annotations.add(new FormatAnnotation("AB", AnnotationDataType.DOUBLE));
         annotations.add(new FormatAnnotation("DP", AnnotationDataType.INTEGER));
-        AttributeExtractor ae = new AttributeExtractor(annotations.toArray(new Annotation[annotations.size()]));
+        AttributeExtractor ae = new AttributeExtractor(AttributeExtractor.normalizeAnnotations(annotations));
         try {
           ae.checkHeader(reader.getHeader());
         } catch (IncompatibleHeaderException ihe) {
@@ -79,7 +79,7 @@ public class AttributeExtractorTest extends TestCase {
         annotations.add(new FormatAnnotation("DEF", AnnotationDataType.INTEGER));
         annotations.add(new FormatAnnotation("RS", AnnotationDataType.STRING));
         annotations.add(new FormatAnnotation("BAD3", AnnotationDataType.DOUBLE));
-        ae = new AttributeExtractor(annotations.toArray(new Annotation[annotations.size()]));
+        ae = new AttributeExtractor(AttributeExtractor.normalizeAnnotations(annotations));
         try {
           ae.checkHeader(reader.getHeader());
           fail("Failed to get exception with invalid header");
@@ -115,7 +115,7 @@ public class AttributeExtractorTest extends TestCase {
         annotations.add(new FormatAnnotation("GT", AnnotationDataType.STRING));
         annotations.add(new FormatAnnotation("AB", AnnotationDataType.DOUBLE));
         annotations.add(new FormatAnnotation("DP", AnnotationDataType.INTEGER));
-        final AttributeExtractor ae = new AttributeExtractor(annotations.toArray(new Annotation[annotations.size()]));
+        final AttributeExtractor ae = new AttributeExtractor(AttributeExtractor.normalizeAnnotations(annotations));
         try {
           ae.checkHeader(reader.getHeader());
         } catch (IncompatibleHeaderException ihe) {
@@ -163,7 +163,7 @@ public class AttributeExtractorTest extends TestCase {
         annotations.add(new FormatAnnotation("GT", AnnotationDataType.STRING));
         annotations.add(new FormatAnnotation("AB", AnnotationDataType.DOUBLE));
         annotations.add(new FormatAnnotation("DP", AnnotationDataType.INTEGER));
-        final AttributeExtractor ae = new AttributeExtractor(annotations.toArray(new Annotation[annotations.size()]));
+        final AttributeExtractor ae = new AttributeExtractor(AttributeExtractor.normalizeAnnotations(annotations));
         try {
           ae.checkHeader(reader.getHeader());
         } catch (IncompatibleHeaderException ihe) {

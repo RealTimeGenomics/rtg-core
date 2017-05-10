@@ -22,11 +22,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import com.rtg.launcher.CommonFlags;
@@ -67,43 +70,47 @@ public class AttributeExtractor {
   private final Annotation[] mAnnotations;
   private final Attribute[] mAttributes;
 
-  private AttributeExtractor(int numAnnotations) {
-    assert numAnnotations > 0;
-    mAnnotations = new Annotation[numAnnotations];
-    mAttributes = new Attribute[numAnnotations];
-  }
-
   /**
-   * Constructs an attribute extractor for the given set of annotations.
+   * Constructs an attribute extractor for the given set of annotations and corresponding attributes.
    * @param annotations annotations to process
    */
-  public AttributeExtractor(Annotation... annotations) {
-    assert annotations.length > 0;
-    final TreeSet<Annotation> set = new TreeSet<>(new Comparator<Annotation>() {
-      @Override
-      public int compare(Annotation o1, Annotation o2) {
-        return o1.getName().compareTo(o2.getName());
-      }
-    });
-    for (Annotation att : annotations) {
-      if (att == null) {
-        throw new NullPointerException("null attribute given");
-      }
-      if (set.contains(att)) {
-        throw new IllegalArgumentException("Duplicate attribute: " + att.getName());
-      }
-      set.add(att);
-    }
-
-    mAnnotations = set.toArray(new Annotation[set.size()]);
-    mAttributes = new Attribute[mAnnotations.length];
-    initAttributes();
+  AttributeExtractor(Annotation[] annotations, Attribute[] attributes) {
+    assert annotations.length == attributes.length;
+    mAnnotations = annotations;
+    mAttributes = attributes;
   }
 
-  private void initAttributes() {
-    for (int i = 0; i < mAttributes.length; ++i) {
-      mAttributes[i] = new Attribute(mAnnotations[i].getName(), getMlDataType(mAnnotations[i].getType()));
+  // Assumes no need to re-use attributes across extractors
+  AttributeExtractor(Annotation... annotations) {
+    this(annotations, createAttributes(annotations));
+  }
+
+  static Annotation[] normalizeAnnotations(Collection<Annotation> annotations) {
+    return normalizeAnnotations(annotations.toArray(new Annotation[annotations.size()]));
+  }
+
+  static Annotation[] normalizeAnnotations(Annotation[] annotations) {
+    assert annotations.length > 0;
+    final SortedSet<Annotation> set = new TreeSet<>(Comparator.comparing(Annotation::getName));
+    for (Annotation ann : annotations) {
+      if (ann == null) {
+        throw new NullPointerException("null annotation given");
+      }
+      if (set.contains(ann)) {
+        throw new IllegalArgumentException("Duplicate annotation: " + ann.getName());
+      }
+      set.add(ann);
     }
+
+    return set.toArray(new Annotation[set.size()]);
+  }
+
+  static Attribute[] createAttributes(Annotation[] annotations) {
+    final Attribute[] attributes = new Attribute[annotations.length];
+    for (int i = 0; i < attributes.length; ++i) {
+      attributes[i] = new Attribute(annotations[i].getName(), getMlDataType(annotations[i].getType()));
+    }
+    return attributes;
   }
 
   /**
@@ -166,6 +173,12 @@ public class AttributeExtractor {
     return res;
   }
 
+  double[] getMissingValuesInstance() {
+    final double[] nullInstance = new double[mAnnotations.length];
+    Arrays.fill(nullInstance, Double.NaN);
+    return nullInstance;
+  }
+
   /**
    * Return a summary of the number of missing values.
    * @param data the input dataset
@@ -203,12 +216,11 @@ public class AttributeExtractor {
   public static AttributeExtractor load(InputStream is) throws IOException {
     final DataInputStream dis = new DataInputStream(is);
     final int numAnnotations = dis.readInt();
-    final AttributeExtractor ae = new AttributeExtractor(numAnnotations);
+    final Annotation[] annotations = new Annotation[numAnnotations];
     for (int i = 0; i < numAnnotations; ++i) {
-      ae.mAnnotations[i] = AnnotationLoader.load(dis);
+      annotations[i] = AnnotationLoader.load(dis);
     }
-    ae.initAttributes();
-    return ae;
+    return new AttributeExtractor(annotations, createAttributes(annotations));
   }
 
   /**
@@ -315,7 +327,9 @@ public class AttributeExtractor {
           annotations.add(new DerivedAnnotation(anno.toUpperCase(Locale.getDefault())));
         }
 
-        final AttributeExtractor ae = new AttributeExtractor(annotations.toArray(new Annotation[annotations.size()]));
+        final Annotation[] annotationsNorm = AttributeExtractor.normalizeAnnotations(annotations);
+        final Attribute[] attributes = AttributeExtractor.createAttributes(annotationsNorm);
+        final AttributeExtractor ae = new AttributeExtractor(annotationsNorm, attributes);
         ae.checkHeader(header);
 
         try (final LineWriter arffWriter = new LineWriter(new FileWriter(output))) {

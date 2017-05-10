@@ -109,7 +109,7 @@ public class Attribute {
     Object decode(double value);
     int nominalSize();
   }
-  private static class IntEncoder implements ValueEncoder {
+  private static final class IntEncoder implements ValueEncoder {
     @Override
     public double encode(Object value) {
 
@@ -126,7 +126,7 @@ public class Attribute {
       throw new UnsupportedOperationException("Not implemented yet");
     }
   }
-  private static class DoubleEncoder implements ValueEncoder {
+  private static final class DoubleEncoder implements ValueEncoder {
     @Override
     public double encode(Object value) {
       return (Double) value;
@@ -142,7 +142,7 @@ public class Attribute {
       throw new UnsupportedOperationException("Not implemented yet");
     }
   }
-  private static class StringEncoder implements ValueEncoder {
+  private static final class StringEncoder implements ValueEncoder {
     // Note that a particular mapping of String value -> encoded value is transient and depends on the order in which
     // values are encoded.
     // In serialized models we store unencoded values and the mapping is repopulated during deserialization.
@@ -172,7 +172,7 @@ public class Attribute {
       return mDecoder.size();
     }
   }
-  private static class BooleanEncoder implements ValueEncoder {
+  private static final class BooleanEncoder implements ValueEncoder {
     @Override
     public double encode(Object value) {
       return ((Boolean) value) ? 1.0 : 0.0;

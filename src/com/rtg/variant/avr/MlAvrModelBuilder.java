@@ -14,12 +14,12 @@ package com.rtg.variant.avr;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.rtg.ml.Attribute;
 import com.rtg.ml.BuildClassifier;
 import com.rtg.ml.BuilderFactory;
 import com.rtg.ml.Dataset;
@@ -36,8 +36,9 @@ import com.rtg.vcf.header.FormatField;
 import com.rtg.vcf.header.InfoField;
 import com.rtg.vcf.header.VcfHeader;
 
+
 /**
- * A machine learning model builder.
+ * A machine learning model builder, bridges between the VCF world and ML package.
  */
 public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> implements ThreadAware {
 
@@ -48,6 +49,8 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
   public static final String PARAMETER_ML_INJECT_NOISE = "avr.inject-noise";
 
   private int mNumThreads = 1;
+  private Map<String, InfoField> mCurrentInfos;
+  private Map<String, FormatField> mCurrentFormats;
 
   /**
    * Create a Machine Learning AVR model by extracting values from the given attribute fields.
@@ -61,73 +64,48 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
 
   }
 
-  private double[] getMissingValuesInstance(final int size) {
-    final double[] nullInstance = new double[size];
-    Arrays.fill(nullInstance, Double.NaN);
-    return nullInstance;
-  }
-
   @Override
   public void build(VcfDataset... vcfDatasets) throws IOException {
 
-    // Extract available annotation information from headers
-    final Map<String, InfoField> infos = new HashMap<>();
-    final Map<String, FormatField> formats = new HashMap<>();
-    for (VcfDataset vcfDataset : vcfDatasets) {
-      try (final VcfReader reader = VcfReader.openVcfReader(vcfDataset.getVcfFile())) {
-        final VcfHeader header = reader.getHeader();
-        assert header != null;
-        for (final InfoField field : header.getInfoLines()) {
-          final String fieldId = field.getId();
-          final InfoField existing = infos.get(fieldId);
-          if (existing != null && !field.equals(existing)) {
-            throw new NoTalkbackSlimException("Info field " + fieldId + " has different definitions in different input VCFs");
-          }
-          infos.put(fieldId, field);
-        }
-        for (final FormatField field : header.getFormatLines()) {
-          final String fieldId = field.getId();
-          final FormatField existing = formats.get(fieldId);
-          if (existing != null && !field.equals(existing)) {
-            throw new NoTalkbackSlimException("Format field " + fieldId + " has different definitions in different input VCFs");
-          }
-          formats.put(field.getId(), field);
-        }
-      }
-    }
+    scanVcfHeaders(vcfDatasets);
+    final Annotation[] annotations = createAnnotations();
+    final Attribute[] attributes = AttributeExtractor.createAttributes(annotations);
+    final Dataset dataset = extractDataset(attributes, vcfDatasets);
 
-    // Get annotation fields
-    final List<Annotation> annotations = new ArrayList<>();
-    if (mUseQualAttribute) {
-      annotations.add(new QualAnnotation());
+    // train ML model
+    final String builderType = mParameters.getProperty(PARAMETER_ML_MODEL_TYPE, BuilderFactory.BuilderType.BAGGED.name());
+    final BuildClassifier classifierBuilder;
+    try {
+      classifierBuilder = BuilderFactory.create(builderType, mParameters);
+    } catch (IllegalArgumentException iae) {
+      throw new NoTalkbackSlimException(iae.getMessage());
     }
-    for (String attr : mInfoAttributes) {
-      if (!infos.containsKey(attr)) {
-        throw new NoTalkbackSlimException("Unknown INFO field: " + attr);
-      }
-      annotations.add(new InfoAnnotation(attr, AttributeExtractor.getCompatibleType(infos.get(attr).getType())));
+    if (classifierBuilder instanceof ThreadAware) {
+      ((ThreadAware) classifierBuilder).setNumberOfThreads(getNumberOfThreads());
     }
-    for (String attr : mFormatAttributes) {
-      if (!formats.containsKey(attr)) {
-        throw new NoTalkbackSlimException("Unknown FORMAT field: " + attr);
-      }
-      annotations.add(new FormatAnnotation(attr, AttributeExtractor.getCompatibleType(formats.get(attr).getType())));
-    }
-    for (String attr : mDerivedAttributes) {
-      annotations.add(new DerivedAnnotation(attr.toUpperCase(Locale.getDefault())));
-    }
+    Diagnostic.userLog("Starting build");
+    classifierBuilder.build(dataset);
 
-    // Create a Dataset from the pos/neg examples
-    final AttributeExtractor ae = new AttributeExtractor(annotations.toArray(new Annotation[annotations.size()]));
+    // create predict model
+    final PredictClassifier mlClassifier = classifierBuilder.getClassifier();
+    final AttributeExtractor ae = new AttributeExtractor(annotations, attributes);
+    Diagnostic.info("Score for example with all values missing: " + Utils.realFormat(mlClassifier.predict(ae.getMissingValuesInstance()), 2));
+    mModel = new MlAvrPredictModel(mlClassifier);
+    mModel.setAttributeExtractor(ae);
+    Diagnostic.userLog("Finished build");
+  }
 
-    final Dataset dataset = ae.getDataset();
+  // Create a Dataset from the pos/neg examples
+  protected Dataset extractDataset(Attribute[] attributes, VcfDataset... vcfDatasets) throws IOException {
+    final Dataset dataset = new Dataset(attributes);
     boolean reweight = true;
-    for (VcfDataset vcfDataset : vcfDatasets) {
-      Diagnostic.userLog("Loading " + vcfDataset);
+    for (final VcfDataset vcfDataset : vcfDatasets) {
       reweight &= vcfDataset.isReweight();
+      Diagnostic.userLog("Loading " + vcfDataset);
       try (final VcfReader reader = VcfReader.openVcfReader(vcfDataset.getVcfFile())) {
+        final AttributeExtractor ae = new AttributeExtractor(createAnnotations(), attributes);
         try {
-          ae.checkHeader(reader.getHeader());
+          ae.checkHeader(reader.getHeader()); // Not re-entrant - extractors cache pedigree etc.
         } catch (IncompatibleHeaderException ihe) {
           throw new NoTalkbackSlimException("The input VCF header is missing required fields:" + StringUtils.LS + ihe.getMessage());
         }
@@ -156,28 +134,61 @@ public class MlAvrModelBuilder extends AbstractModelBuilder<MlAvrPredictModel> i
     Diagnostic.info("Total number of negative examples: " + dataset.totalNegatives());
     Diagnostic.info("Total weight of positive examples: " + Utils.realFormat(dataset.totalPositiveWeight(), 2));
     Diagnostic.info("Total weight of negative examples: " + Utils.realFormat(dataset.totalNegativeWeight(), 2));
-    Diagnostic.info(ae.missingValuesReport(dataset));
+    Diagnostic.info(new AttributeExtractor(createAnnotations(), attributes).missingValuesReport(dataset));
+    return dataset;
+  }
 
-    // train ML model
-    final String builderType = mParameters.getProperty(PARAMETER_ML_MODEL_TYPE, BuilderFactory.BuilderType.BAGGED.name());
-    final BuildClassifier classifierBuilder;
-    try {
-      classifierBuilder = BuilderFactory.create(builderType, mParameters);
-    } catch (IllegalArgumentException iae) {
-      throw new NoTalkbackSlimException(iae.getMessage());
+  protected void scanVcfHeaders(VcfDataset... vcfDatasets) throws IOException {
+    // Extract available annotation information from headers
+    mCurrentInfos = new HashMap<>();
+    mCurrentFormats = new HashMap<>();
+    for (VcfDataset vcfDataset : vcfDatasets) {
+      try (final VcfReader reader = VcfReader.openVcfReader(vcfDataset.getVcfFile())) {
+        final VcfHeader header = reader.getHeader();
+        assert header != null;
+        for (final InfoField field : header.getInfoLines()) {
+          final String fieldId = field.getId();
+          final InfoField existing = mCurrentInfos.get(fieldId);
+          if (existing != null && !field.equals(existing)) {
+            throw new NoTalkbackSlimException("Info field " + fieldId + " has different definitions in different input VCFs");
+          }
+          mCurrentInfos.put(fieldId, field);
+        }
+        for (final FormatField field : header.getFormatLines()) {
+          final String fieldId = field.getId();
+          final FormatField existing = mCurrentFormats.get(fieldId);
+          if (existing != null && !field.equals(existing)) {
+            throw new NoTalkbackSlimException("Format field " + fieldId + " has different definitions in different input VCFs");
+          }
+          mCurrentFormats.put(field.getId(), field);
+        }
+      }
     }
-    if (classifierBuilder instanceof ThreadAware) {
-      ((ThreadAware) classifierBuilder).setNumberOfThreads(getNumberOfThreads());
-    }
-    Diagnostic.userLog("Starting build");
-    classifierBuilder.build(dataset);
+  }
 
-    // create predict model
-    final PredictClassifier mlClassifier = classifierBuilder.getClassifier();
-    Diagnostic.info("Score for example with all values missing: " + Utils.realFormat(mlClassifier.predict(getMissingValuesInstance(annotations.size())), 2));
-    mModel = new MlAvrPredictModel(mlClassifier);
-    mModel.setAttributeExtractor(ae);
-    Diagnostic.userLog("Finished build");
+  // Create a new set of annotation according to current configuration.
+  protected Annotation[] createAnnotations() {
+    final List<Annotation> annotations = new ArrayList<>();
+    if (mUseQualAttribute) {
+      annotations.add(new QualAnnotation());
+    }
+    for (String attr : mInfoAttributes) {
+      if (!mCurrentInfos.containsKey(attr)) {
+        throw new NoTalkbackSlimException("Unknown INFO field: " + attr);
+      }
+      annotations.add(new InfoAnnotation(attr, AttributeExtractor.getCompatibleType(mCurrentInfos.get(attr).getType())));
+    }
+    for (String attr : mFormatAttributes) {
+      if (!mCurrentFormats.containsKey(attr)) {
+        throw new NoTalkbackSlimException("Unknown FORMAT field: " + attr);
+      }
+      annotations.add(new FormatAnnotation(attr, AttributeExtractor.getCompatibleType(mCurrentFormats.get(attr).getType())));
+    }
+    for (String attr : mDerivedAttributes) {
+      annotations.add(new DerivedAnnotation(attr.toUpperCase(Locale.getDefault())));
+    }
+
+    return AttributeExtractor.normalizeAnnotations(annotations);
   }
 
   @Override
