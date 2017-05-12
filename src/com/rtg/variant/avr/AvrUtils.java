@@ -33,7 +33,7 @@ public final class AvrUtils {
   public static final String AVR_MODEL_FILE_FLAG = "avr-model";
 
   // Default AVR model name looked for within the above dir
-  private static final String MODEL_DEFAULT = "illumina-exome.avr";
+  private static final String MODEL_DEFAULT = "illumina-wgs.avr";
   // Name to explicitly specify no AVR model to be used
   private static final String AVR_NONE_NAME = "none";
 
