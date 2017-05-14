@@ -15,7 +15,7 @@ import java.io.File;
 
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractCliTest;
-import com.rtg.util.StringUtils;
+import com.rtg.util.TestUtils;
 import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
@@ -37,7 +37,7 @@ public class PredictCliTest extends AbstractCliTest {
       final MemoryPrintStream mps = new MemoryPrintStream();
       final int code = new PredictCli().mainInit(new String[] {"--avr-model", model.getPath(), "-i", vcf.getPath(), "-o", output.getPath()}, mps.outputStream(), mps.printStream());
       assertEquals(mps.toString(), 0, code);
-      mNano.check("predict.vcf", StringUtils.grepMinusV(FileHelper.gzFileToString(output), "##RUN-ID"));
+      mNano.check("predict.vcf", TestUtils.sanitizeVcfHeader(FileHelper.gzFileToString(output)));
     }
   }
 
@@ -49,7 +49,7 @@ public class PredictCliTest extends AbstractCliTest {
       final MemoryPrintStream mps = new MemoryPrintStream();
       final int code = new PredictCli().mainInit(new String[] {"-s", "NA12892", "--avr-model", model.getPath(), "-i", vcf.getPath(), "-o", output.getPath()}, mps.outputStream(), mps.printStream());
       assertEquals(mps.toString(), 0, code);
-      mNano.check("predictSample.vcf", StringUtils.grepMinusV(FileHelper.gzFileToString(output), "##RUN-ID"));
+      mNano.check("predictSample.vcf", TestUtils.sanitizeVcfHeader(FileHelper.gzFileToString(output)));
     }
   }
 }

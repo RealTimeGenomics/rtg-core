@@ -17,14 +17,15 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.util.EnumSet;
 
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.reference.Ploidy;
 import com.rtg.relation.GenomeRelationships;
 import com.rtg.relation.RelationshipsFileParser;
 import com.rtg.util.MathUtils;
+import com.rtg.util.TestUtils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.MemoryPrintStream;
-import com.rtg.util.test.NanoRegression;
 import com.rtg.variant.StaticThreshold;
 import com.rtg.variant.Variant;
 import com.rtg.variant.Variant.VariantFilter;
@@ -39,32 +40,12 @@ import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMReadGroupRecord;
 import htsjdk.samtools.SAMSequenceDictionary;
 import htsjdk.samtools.SAMSequenceRecord;
-import junit.framework.TestCase;
 
 /**
  */
-public class VariantOutputVcfFormatterTest extends TestCase {
+public class VariantOutputVcfFormatterTest extends AbstractNanoTest {
 
   private static final String TAB = "\t";
-
-  private NanoRegression mNano = null;
-
-  @Override
-  public void tearDown() throws Exception {
-    CommandLine.clearCommandArgs();
-    Diagnostic.setLogStream();
-    try {
-      mNano.finish();
-    } finally {
-      mNano = null;
-    }
-  }
-
-  @Override
-  public void setUp() {
-    Diagnostic.setLogStream();
-    mNano = new NanoRegression(this.getClass(), false);
-  }
 
   public static VariantSample createSample(Ploidy diploid, String name, boolean identity, Double posterior, VariantSample.DeNovoStatus deNovo, Double deNovoPosterior) {
     return createSample(diploid, name, identity, posterior, deNovo, deNovoPosterior, null);
@@ -106,8 +87,8 @@ public class VariantOutputVcfFormatterTest extends TestCase {
 
         formatter.writeHeader(mps.outputStream(), params, null);
 
-        final String header = mps.toString().replaceAll("##source=.*", "##source=").replaceAll("##RUN-ID=.*", "##RUN-ID=").replaceAll("##fileDate=20.*", "##fileDate=20");
-        mNano.check("vovf-single-header1.vcf", header);
+        final String header = mps.toString();
+        mNano.check("vovf-single-header1.vcf", TestUtils.sanitizeVcfHeader(header));
       }
     }
   }
@@ -398,8 +379,9 @@ public class VariantOutputVcfFormatterTest extends TestCase {
 
       formatter.writeHeader(mps.outputStream(), params, samHeader);
 
-      final String header = mps.toString().replaceAll("##source=.*", "##source=").replaceAll("##RUN-ID=.*", "##RUN-ID=").replaceAll("##fileDate=20.*", "##fileDate=20");
-      mNano.check("vovf-multi-header1.vcf", header);
+      final String header = mps.toString();
+      TestUtils.containsAll(header, "yo --ho ho");
+      mNano.check("vovf-multi-header1.vcf", TestUtils.sanitizeVcfHeader(header));
 
       mps.reset();
 
@@ -632,8 +614,8 @@ public class VariantOutputVcfFormatterTest extends TestCase {
       formatter.addExtraFormatFields(EnumSet.of(VcfFormatField.RQ, VcfFormatField.DN, VcfFormatField.DNP));
       formatter.writeHeader(mps.outputStream(), params, samHeader);
 
-      final String header = mps.toString().replaceAll("##source=.*", "##source=").replaceAll("##RUN-ID=.*", "##RUN-ID=").replaceAll("##fileDate=20.*", "##fileDate=20");
-      mNano.check("vovf-disease-header1.vcf", header);
+      final String header = mps.toString();
+      mNano.check("vovf-disease-header1.vcf", TestUtils.sanitizeVcfHeader(header));
     }
   }
 

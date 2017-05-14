@@ -1,4 +1,9 @@
 ##fileformat=VCFv4.1
+##fileDate=[...]
+##source=[...]
+##CL=[...]
+##TEMPLATE-SDF-ID=[...]
+##reference=[...]
 ##contig=<ID=simulatedSequence1,length=10000>
 ##ALT=<ID=DEL,Description="Deletion">
 ##ALT=<ID=DUP,Description="Duplication">

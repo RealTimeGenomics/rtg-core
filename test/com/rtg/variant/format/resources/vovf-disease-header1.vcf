@@ -1,8 +1,7 @@
 ##fileformat=VCFv4.1
-##fileDate=20
-##source=
-##CL=yo --ho ho
-##RUN-ID=
+##fileDate=[...]
+##source=[...]
+##CL=[...]
 ##diseased=FATHER,CHILD
 ##contig=<ID=chr10,length=100000,as=some_assembly_needed,md5=some_hash_string,species=timelord>
 ##FILTER=<ID=OC,Description="Coverage threshold exceeded">

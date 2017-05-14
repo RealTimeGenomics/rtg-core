@@ -1,4 +1,9 @@
 ##fileformat=VCFv4.1
+##fileDate=[...]
+##source=[...]
+##CL=[...]
+##TEMPLATE-SDF-ID=[...]
+##reference=[...]
 ##contig=<ID=s1,length=5000>
 ##FILTER=<ID=OC,Description="Coverage threshold exceeded">
 ##FILTER=<ID=RC,Description="RTG variant is a complex region">

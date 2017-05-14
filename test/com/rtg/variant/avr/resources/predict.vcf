@@ -1,6 +1,5 @@
 ##fileformat=VCFv4.1
-##fileDate=20130124
-##CL=null
+##fileDate=[...]
 ##FILTER=<ID=OC,Description="Coverage threshold exceeded">
 ##FILTER=<ID=a10.0,Description="Ambiguity exceeded 10.0">
 ##FILTER=<ID=RC,Description="RTG variant is a complex region">
