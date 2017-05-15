@@ -80,7 +80,7 @@ public class PairedEndTrimCliTest extends AbstractCliTest {
   }
 
   private void assertParseMessage(String expected, String... strings) {
-    TestUtils.containsAll(checkHandleFlagsErr(strings), expected);
+    TestUtils.containsAllUnwrapped(checkHandleFlagsErr(strings), expected);
   }
 
   public void testEndToEnd() throws IOException {
