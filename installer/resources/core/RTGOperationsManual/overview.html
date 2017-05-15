@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Overview &#8212; RTG Core Operations Manual v3.7</title>
+    <title>Overview &#8212; RTG Core Operations Manual v3.8</title>
     
     <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,17 +15,19 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/bizstyle.js"></script>
-    <link rel="top" title="RTG Core Operations Manual v3.7" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="RTG Command Reference" href="rtg_command_reference.html" />
     <link rel="prev" title="Table Of Contents" href="index.html" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -46,7 +48,7 @@
         <li class="right" >
           <a href="index.html" title="Table Of Contents"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.7</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.8</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -111,7 +113,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/overview.txt"
+      <li><a href="_sources/overview.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -201,10 +203,10 @@ Time Genomics technical support.</li>
 <li><strong>Data Center Deployment</strong> &#8211; RTG software supports typical data
 center standards for enterprise deployment. RTG provides automated
 installation and supports industry standard operating environments
-and data processing systems to help maintain TCO objectives in
-enterprise data centers. The RTG software can be run in compute
-clusters of varying sizes, and commands take advantage of multi-core
-processors by default.</li>
+and data processing systems to help maintain total cost of ownership
+objectives in enterprise data centers. The RTG software can be run in
+compute clusters of varying sizes, and commands take advantage of
+multi-core processors by default.</li>
 </ul>
 <div class="admonition seealso">
 <p class="first admonition-title">See also</p>
@@ -249,7 +251,7 @@ specified number of substitutions and indels</li>
 <p class="first admonition-title">See also</p>
 <p>For detailed information about sequence search and
 alignment functionality, refer to <a class="reference internal" href="rtg_command_reference.html#map"><span class="std std-ref">Command Reference, map</span></a>.</p>
-<p class="last">For more information about the RTG integrated software pipeline, refer to <a class="reference internal" href="product_usage_wrapper.html#baseline-product-usage"><span class="std std-ref">RTG product usage - baseline progressions</span></a></p>
+<p class="last">For more information about the RTG integrated software pipeline, refer to <a class="reference internal" href="product_usage.html#baseline-product-usage"><span class="std std-ref">RTG product usage - baseline progressions</span></a></p>
 </div>
 <div class="section" id="data-formatting">
 <h3>Data formatting<a class="headerlink" href="#data-formatting" title="Permalink to this headline">¶</a></h3>
@@ -490,7 +492,7 @@ variant calling (<code class="docutils literal"><span class="pre">snps.vcf</span
 (<code class="docutils literal"><span class="pre">cnv.ratio</span></code>) and alignment coverage depth (<code class="docutils literal"><span class="pre">coverage.bed</span></code>).</p>
 <div class="section" id="sequence-variation-snps-indels-and-complex-variants">
 <h3>Sequence variation (SNPs, indels and complex variants)<a class="headerlink" href="#sequence-variation-snps-indels-and-complex-variants" title="Permalink to this headline">¶</a></h3>
-<p>The <code class="docutils literal"><span class="pre">snp</span></code> command uses Bayesian probability to identify and locate
+<p>The <code class="docutils literal"><span class="pre">snp</span></code> command uses a Bayesian probability model to identify and locate
 single and multiple nucleotide polymorphisms (SNPs and MNPs), indels,
 and complex sequence variants. The command uses standard BAM format
 files as input and reports computed posterior scores, base calls,
@@ -507,15 +509,15 @@ consensus SNP and MNP calls on a diploid organism at every position
 and complex variants of 1-50 bp (depending on input alignments).</p>
 <p>At each position in the reference, a base pair determination is made
 based on statistical analysis of the accumulated read alignments,
-including any adjustments to priors and quality scores. The resulting
+in accordance with any priors and quality scores. The resulting
 predictions and accompanying statistics are reported in industry
 standard VCF format.</p>
-<p>The <code class="docutils literal"><span class="pre">snps.vcf</span></code> output file displays each variant called with confidence.
+<p>The <code class="docutils literal"><span class="pre">snps.vcf</span></code> output file reports all the called variants.
 The location and type of the call, the base pairs (reference and
-called), and a confidence score are standard output in the <code class="docutils literal"><span class="pre">snps.vcf</span></code>
-output file. Additional support statistics in the output describe read
-alignment evidence that can be used to evaluate confidence in the called
-SNPs. Results may be filtered (post variant calling) by posterior
+called), and a confidence score are present in the <code class="docutils literal"><span class="pre">snps.vcf</span></code>
+output file. Additional ancillary statistics in the output describe read
+alignment evidence that can be used to further evaluate confidence in the variant.
+Results may be filtered (post variant calling) by posterior
 scores, coverage depth, or indels, and filtered report results may be
 integrated with the SNP calls themselves.</p>
 <div class="admonition seealso">
@@ -551,17 +553,18 @@ high-ambiguity, and equivalent calls. It is not guaranteed that the
 resulting calls will always be Mendelian across the entire family, as
 <em>de novo</em> mutations are also identified and are automatically annotated
 in the output VCF.</p>
-<p>The <code class="docutils literal"><span class="pre">population</span></code> command extends calling to multiple samples, which may
-or may not be related according to a supplied pedigree. Mendelian
+<p>The <code class="docutils literal"><span class="pre">population</span></code> command extends calling to multiple samples, which
+may or may not be related according to a supplied pedigree. Mendelian
 constraints are employed where appropriate, and in cases where many
-unrelated samples are being called, an iterative EM algorithm updates
-Bayesian priors to give improved accuracy compared to calling samples
-individually with the <code class="docutils literal"><span class="pre">snp</span></code> command.</p>
+unrelated samples are being called, an iterative
+expectation-maximization algorithm updates Bayesian priors to give
+improved accuracy compared to calling samples individually with the
+<code class="docutils literal"><span class="pre">snp</span></code> command.</p>
 </div>
 <div class="section" id="somatic-sequence-variation">
 <h3>Somatic sequence variation<a class="headerlink" href="#somatic-sequence-variation" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">somatic</span></code> command uses Bayesian analysis to identify putative cancer
-explanations in a cancerous sample. As with the snp command, it can
+explanations in a tumor sample. As with the snp command, it can
 identify SNPs, MNPs, indels, and complex sequence variants. It operates
 on two samples, an original sample (assumed to be non-cancerous) and a
 derived cancerous sample. The derived sample may be a mixture of
@@ -702,7 +705,7 @@ specification online at:
 <a class="reference external" href="https://samtools.github.io/hts-specs/VCFv4.1.pdf">https://samtools.github.io/hts-specs/VCFv4.1.pdf</a></p>
 </div>
 <p>RTG employs several extensions within the standard VCF format; be sure
-to review the VCF format information in <a class="reference internal" href="appendix.html#vcf-output-file-description"><span class="std std-ref">VCF output file description</span></a>
+to review the VCF format information in <a class="reference internal" href="appendix.html#small-variant-vcf-output-file-description"><span class="std std-ref">Small-variant VCF output file description</span></a>
 of the <em>Appendix</em> to this guide for a complete list of all extensions
 and differences.</p>
 <div class="admonition seealso">
@@ -890,7 +893,7 @@ like to customize settings on a per-machine basis, copy <code class="docutils li
 <code class="docutils literal"><span class="pre">/etc/rtg.cfg</span></code>, editing per-machine settings appropriately (requires
 root privileges).  An alternative that does not require root
 privileges is to copy <code class="docutils literal"><span class="pre">rtg.cfg</span></code> to <code class="docutils literal"><span class="pre">rtg.HOSTNAME.cfg</span></code>, editing
-per-machine settings appropriately, where HOSTNAME is the short host
+per-machine settings appropriately, where <code class="docutils literal"><span class="pre">HOSTNAME</span></code> is the short host
 name output by the command <code class="docutils literal"><span class="pre">hostname</span> <span class="pre">-s</span></code></p>
 </li>
 </ul>
@@ -936,7 +939,7 @@ editing scripts, see <a class="reference internal" href="administration.html#adm
 <h2>Technical assistance and support<a class="headerlink" href="#technical-assistance-and-support" title="Permalink to this headline">¶</a></h2>
 <p>For assistance with any technical or conceptual issue that may arise
 during use of the RTG product, contact Real Time Genomics Technical
-Support via email at <a class="reference external" href="mailto:support&#37;&#52;&#48;realtimegenomics&#46;com">support<span>&#64;</span>realtimegenomics<span>&#46;</span>com</a></p>
+Support via email at <code class="docutils literal"><span class="pre">support&#64;realtimegenomics.com</span></code></p>
 <p>In addition, a discussion group is available at:
 <a class="reference external" href="https://groups.google.com/a/realtimegenomics.com/forum/#!forum/rtg-users">https://groups.google.com/a/realtimegenomics.com/forum/#!forum/rtg-users</a></p>
 <p>A low-traffic announcements-only group is available at:
@@ -962,12 +965,12 @@ Support via email at <a class="reference external" href="mailto:support&#37;&#52
         <li class="right" >
           <a href="index.html" title="Table Of Contents"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.7</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.8</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2016, Real Time Genomics.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+        &#169; Copyright 2017, Real Time Genomics.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>

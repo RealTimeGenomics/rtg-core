@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Table Of Contents &#8212; RTG Core Operations Manual v3.7</title>
+    <title>Table Of Contents &#8212; RTG Core Operations Manual v3.8</title>
     
     <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,17 +15,19 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/bizstyle.js"></script>
-    <link rel="top" title="RTG Core Operations Manual v3.7" href="#" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Overview" href="overview.html" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <!--[if lt IE 9]>
@@ -42,7 +44,7 @@
         <li class="right" >
           <a href="overview.html" title="Overview"
              accesskey="N">next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">RTG Core Operations Manual v3.7</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">RTG Core Operations Manual v3.8</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -56,7 +58,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/index.txt"
+      <li><a href="_sources/index.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -126,6 +128,8 @@
 <li class="toctree-l3"><a class="reference internal" href="rtg_command_reference.html#sdf2fasta">sdf2fasta</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rtg_command_reference.html#sdf2fastq">sdf2fastq</a></li>
 <li class="toctree-l3"><a class="reference internal" href="rtg_command_reference.html#sdf2sam">sdf2sam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rtg_command_reference.html#fastqtrim">fastqtrim</a></li>
+<li class="toctree-l3"><a class="reference internal" href="rtg_command_reference.html#petrim">petrim</a></li>
 </ul>
 </li>
 <li class="toctree-l2"><a class="reference internal" href="rtg_command_reference.html#read-mapping-commands">Read Mapping Commands</a><ul>
@@ -220,99 +224,78 @@
 </li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="product_usage_wrapper.html">RTG product usage - baseline progressions</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#rtg-mapping-and-sequence-variant-detection">RTG mapping and sequence variant detection</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-1-format-reference-data">Task 1 - Format reference data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-2-format-read-data">Task 2 - Format read data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-3-map-reads-to-the-reference-genome">Task 3 - Map reads to the reference genome</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-4-view-evaluate-mapping-performance">Task 4 - View &amp; evaluate mapping performance</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-5-generate-and-review-coverage-information">Task 5 - Generate and review coverage information</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-6-call-sequence-variants">Task 6 - Call sequence variants</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-7-report-copy-number-variation-statistics">Task 7 - Report copy number variation statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="product_usage.html">RTG product usage - baseline progressions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="product_usage.html#human-read-mapping-and-sequence-variant-detection">Human read mapping and sequence variant detection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-1-format-reference-data">Task 1 - Format reference data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-2-prepare-sex-pedigree-information">Task 2 - Prepare sex/pedigree information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-3-format-read-data">Task 3 - Format read data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-4-map-reads-to-the-reference-genome">Task 4 - Map reads to the reference genome</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-5-view-and-evaluate-mapping-performance">Task 5 - View and evaluate mapping performance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-6-generate-and-review-coverage-information">Task 6 - Generate and review coverage information</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-7-call-sequence-variants-single-sample">Task 7 - Call sequence variants (single sample)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-8-call-sequence-variants-single-family">Task 8 - Call sequence variants (single family)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-9-call-population-sequence-variants">Task 9 - Call population sequence variants</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#modifications-to-support-complete-genomics-inc-reads">Modifications to support Complete Genomics, Inc reads</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-2-format-read-data-complete-genomics">Task 2 - Format read data (Complete Genomics)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-3-map-reads-to-the-reference-genome-complete-genomics">Task 3 - Map reads to the reference genome (Complete Genomics)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="product_usage.html#create-and-use-population-priors-in-variant-calling">Create and use population priors in variant calling</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-1-produce-population-priors-file">Task 1 - Produce population priors file</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-2-run-variant-calling-using-population-priors">Task 2 - Run variant calling using population priors</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#modifications-to-support-processing-exome-sequencing">Modifications to support processing exome sequencing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#modifications-to-support-variant-calling-with-multiple-platforms">Modifications to support variant calling with multiple platforms</a></li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#modifications-to-support-sex-aware-mapping-and-variant-calling">Modifications to support sex-aware mapping and variant calling</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-1-format-reference-data-with-reference-txt">Task 1 - Format reference data with reference.txt</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-3-map-reads-to-the-reference-genome-with-sex-information">Task 3 - Map reads to the reference genome with sex information</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-6-call-sequence-variants-with-sex-information">Task 6 - Call sequence variants with sex information</a></li>
+<li class="toctree-l2"><a class="reference internal" href="product_usage.html#somatic-variant-detection-in-cancer">Somatic variant detection in cancer</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-1-format-reference-data-somatic">Task 1 - Format reference data (Somatic)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-2-format-read-data-somatic">Task 2 - Format read data (Somatic)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-3-map-tumor-and-normal-sample-reads-against-the-reference-genome">Task 3 - Map tumor and normal sample reads against the reference genome</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-4-call-somatic-variants">Task 4 - Call somatic variants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#using-site-specific-somatic-priors">Using site-specific somatic priors</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#modifications-to-support-joint-family-variant-calling">Modifications to support joint family variant calling</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-3-map-reads-to-the-reference-genome-family-calling">Task 3 - Map reads to the reference genome (family calling)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-6-call-sequence-variants-with-family-settings">Task 6 - Call sequence variants with family settings</a></li>
+<li class="toctree-l2"><a class="reference internal" href="product_usage.html#avr-scoring-using-hapmap-for-model-building">AVR scoring using HAPMAP for model building</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-1-create-training-data">Task 1 - Create training data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-2-build-and-check-avr-model">Task 2 - Build and check AVR model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-3-use-avr-model">Task 3 - Use AVR model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-4-install-avr-model">Task 4 - Install AVR model</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#modifications-to-support-joint-population-variant-calling">Modifications to support joint population variant calling</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-3-map-reads-to-the-reference-genome-population-calling">Task 3 – Map reads to the reference genome (population calling)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-6-call-population-sequence-variants">Task 6 - Call population sequence variants</a></li>
+<li class="toctree-l2"><a class="reference internal" href="product_usage.html#rtg-structural-variant-detection">RTG structural variant detection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-1-prepare-read-group-statistics-files">Task 1 - Prepare Read-group statistics files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-2-find-structural-variants-with-sv">Task 2 - Find structural variants with sv</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-3-find-structural-variants-with-discord">Task 3 - Find structural variants with discord</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-4-report-copy-number-variation-statistics">Task 4 - Report copy number variation statistics</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#create-and-use-population-priors-in-variant-calling">Create and use population priors in variant calling</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-1-produce-population-priors-file">Task 1 - Produce population priors file</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-2-run-variant-calling-using-population-priors">Task 2 - Run variant calling using population priors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="product_usage.html#ion-torrent-bacterial-mapping-and-sequence-variant-detection">Ion Torrent bacterial mapping and sequence variant detection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-1-format-bacterial-reference-data-ion-torrent">Task 1 - Format bacterial reference data (Ion Torrent)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-2-format-read-data-ion-torrent">Task 2 - Format read data (Ion Torrent)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-3-map-ion-torrent-reads-to-the-reference-genome">Task 3 - Map Ion Torrent reads to the reference genome</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-4-call-sequence-variants-in-haploid-mode">Task 4 - Call sequence variants in haploid mode</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#somatic-variant-detection-in-cancer">Somatic variant detection in cancer</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-1-format-reference-data-somatic">Task 1 - Format reference data (Somatic)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-2-format-read-data-somatic">Task 2 - Format read data (Somatic)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-3-map-tumor-and-normal-sample-reads-against-the-reference-genome">Task 3 - Map tumor and normal sample reads against the reference genome</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-4-call-somatic-variants">Task 4 - Call somatic variants</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#using-site-specific-somatic-priors">Using site-specific somatic priors</a></li>
+<li class="toctree-l2"><a class="reference internal" href="product_usage.html#rtg-contaminant-filtering">RTG contaminant filtering</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-1-format-reference-data-contaminant-filtering">Task 1 - Format reference data (contaminant filtering)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-2-format-read-data-contaminant-filtering">Task 2 - Format read data (contaminant filtering)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-3-run-contamination-filter">Task 3 - Run contamination filter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-4-manage-filtered-reads">Task 4 - Manage filtered reads</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#avr-scoring-using-hapmap-for-model-building">AVR scoring using HAPMAP for model building</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-1-create-training-data">Task 1 - Create training data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-2-build-and-check-avr-model">Task 2 - Build and check AVR model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-3-use-avr-model">Task 3 - Use AVR model</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-4-install-avr-model">Task 4 - Install AVR model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="product_usage.html#rtg-translated-protein-searching">RTG translated protein searching</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-1-format-protein-data-set">Task 1 - Format protein data set</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-2-format-dna-read-set">Task 2 - Format DNA read set</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-3-search-against-protein-data-set">Task 3 - Search against protein data set</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#rtg-structural-variant-detection">RTG structural variant detection</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-1-format-reference-and-read-data">Task 1 - Format reference and read data</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-2-map-reads-against-a-reference-genome">Task 2 - Map reads against a reference genome</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-4-find-structural-variants-with-sv">Task 4 - Find structural variants with sv</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-5-find-structural-variants-with-discord">Task 5 - Find structural variants with discord</a></li>
+<li class="toctree-l2"><a class="reference internal" href="product_usage.html#rtg-species-frequency-estimation">RTG species frequency estimation</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-1-format-reference-data-species">Task 1 - Format reference data (species)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-2-format-read-data-species">Task 2 - Format read data (species)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-3-run-contamination-filter-optional">Task 3 - Run contamination filter (optional)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-4-map-metagenomic-reads-against-bacterial-database">Task 4 - Map metagenomic reads against bacterial database</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-5-run-species-estimator">Task 5 - Run species estimator</a></li>
 </ul>
 </li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#ion-torrent-bacterial-mapping-and-sequence-variant-detection">Ion Torrent bacterial mapping and sequence variant detection</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-1-format-bacterial-reference-data-ion-torrent">Task 1 - Format bacterial reference data (Ion Torrent)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-2-format-read-data-ion-torrent">Task 2 - Format read data (Ion Torrent)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-3-map-ion-torrent-reads-to-the-reference-genome">Task 3 - Map Ion Torrent reads to the reference genome</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-4-call-sequence-variants-in-haploid-mode">Task 4 - Call sequence variants in haploid mode</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#rtg-contaminant-filtering">RTG contaminant filtering</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-1-format-reference-data-contaminant-filtering">Task 1 - Format reference data (contaminant filtering)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-2-format-read-data-contaminant-filtering">Task 2 - Format read data (contaminant filtering)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-3-run-contamination-filter">Task 3 - Run contamination filter</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-4-manage-filtered-reads">Task 4 - Manage filtered reads</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#rtg-translated-protein-searching">RTG translated protein searching</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-1-format-protein-data-set">Task 1 - Format protein data set</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-2-format-dna-read-set">Task 2 - Format DNA read set</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-3-search-against-protein-data-set">Task 3 - Search against protein data set</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#rtg-species-frequency-estimation">RTG species frequency estimation</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-1-format-reference-data-species">Task 1 - Format reference data (species)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-2-format-read-data-species">Task 2 - Format read data (species)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-3-run-contamination-filter-optional">Task 3 - Run contamination filter (optional)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-4-map-metagenomic-reads-against-bacterial-database">Task 4 - Map metagenomic reads against bacterial database</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-5-run-species-estimator">Task 5 - Run species estimator</a></li>
-</ul>
-</li>
-<li class="toctree-l2"><a class="reference internal" href="product_usage_wrapper.html#rtg-sample-similarity">RTG sample similarity</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-1-prepare-read-sets">Task 1 - Prepare read sets</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-2-generate-read-set-name-map">Task 2 - Generate read set name map</a></li>
-<li class="toctree-l3"><a class="reference internal" href="product_usage_wrapper.html#task-3-run-similarity-tool">Task 3 - Run similarity tool</a></li>
+<li class="toctree-l2"><a class="reference internal" href="product_usage.html#rtg-sample-similarity">RTG sample similarity</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-1-prepare-read-sets">Task 1 - Prepare read sets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-2-generate-read-set-name-map">Task 2 - Generate read set name map</a></li>
+<li class="toctree-l3"><a class="reference internal" href="product_usage.html#task-3-run-similarity-tool">Task 3 - Run similarity tool</a></li>
 </ul>
 </li>
 </ul>
@@ -348,7 +331,7 @@
 <li class="toctree-l2"><a class="reference internal" href="appendix.html#rtg-output-results-file-descriptions">RTG output results file descriptions</a><ul>
 <li class="toctree-l3"><a class="reference internal" href="appendix.html#sam-bam-file-extensions-rtg-map-command-output">SAM/BAM file extensions (RTG map command output)</a></li>
 <li class="toctree-l3"><a class="reference internal" href="appendix.html#sam-bam-file-extensions-rtg-cgmap-command-output">SAM/BAM file extensions (RTG cgmap command output)</a></li>
-<li class="toctree-l3"><a class="reference internal" href="appendix.html#vcf-output-file-description">VCF output file description</a></li>
+<li class="toctree-l3"><a class="reference internal" href="appendix.html#small-variant-vcf-output-file-description">Small-variant VCF output file description</a></li>
 <li class="toctree-l3"><a class="reference internal" href="appendix.html#regions-bed-output-file-description">Regions BED output file description</a></li>
 <li class="toctree-l3"><a class="reference internal" href="appendix.html#sv-command-output-file-descriptions">SV command output file descriptions</a></li>
 <li class="toctree-l3"><a class="reference internal" href="appendix.html#discord-command-output-file-descriptions">Discord command output file descriptions</a></li>
@@ -389,12 +372,12 @@
         <li class="right" >
           <a href="overview.html" title="Overview"
              >next</a> |</li>
-        <li class="nav-item nav-item-0"><a href="#">RTG Core Operations Manual v3.7</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="#">RTG Core Operations Manual v3.8</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2016, Real Time Genomics.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+        &#169; Copyright 2017, Real Time Genomics.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>

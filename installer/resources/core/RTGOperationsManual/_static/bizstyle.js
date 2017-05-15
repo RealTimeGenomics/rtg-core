@@ -36,6 +36,6 @@ $(window).resize(function(){
         $("li.nav-item-0 a").text("Top");
     }
     else {
-        $("li.nav-item-0 a").text("RTG Core Operations Manual v3.7");
+        $("li.nav-item-0 a").text("RTG Core Operations Manual v3.8");
     }
 });

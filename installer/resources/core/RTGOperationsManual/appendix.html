@@ -7,7 +7,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     
-    <title>Appendix &#8212; RTG Core Operations Manual v3.7</title>
+    <title>Appendix &#8212; RTG Core Operations Manual v3.8</title>
     
     <link rel="stylesheet" href="_static/bizstyle.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
@@ -15,17 +15,19 @@
     <script type="text/javascript">
       var DOCUMENTATION_OPTIONS = {
         URL_ROOT:    './',
-        VERSION:     '3.7',
+        VERSION:     '3.8',
         COLLAPSE_INDEX: false,
         FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
       };
     </script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
     <script type="text/javascript" src="_static/bizstyle.js"></script>
-    <link rel="top" title="RTG Core Operations Manual v3.7" href="index.html" />
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
     <link rel="prev" title="Administration &amp; Capacity Planning" href="administration.html" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <!--[if lt IE 9]>
@@ -42,7 +44,7 @@
         <li class="right" >
           <a href="administration.html" title="Administration &amp; Capacity Planning"
              accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.7</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.8</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
@@ -70,7 +72,7 @@
 <li><a class="reference internal" href="#rtg-output-results-file-descriptions">RTG output results file descriptions</a><ul>
 <li><a class="reference internal" href="#sam-bam-file-extensions-rtg-map-command-output">SAM/BAM file extensions (RTG map command output)</a></li>
 <li><a class="reference internal" href="#sam-bam-file-extensions-rtg-cgmap-command-output">SAM/BAM file extensions (RTG cgmap command output)</a></li>
-<li><a class="reference internal" href="#vcf-output-file-description">VCF output file description</a></li>
+<li><a class="reference internal" href="#small-variant-vcf-output-file-description">Small-variant VCF output file description</a></li>
 <li><a class="reference internal" href="#regions-bed-output-file-description">Regions BED output file description</a></li>
 <li><a class="reference internal" href="#sv-command-output-file-descriptions">SV command output file descriptions</a></li>
 <li><a class="reference internal" href="#discord-command-output-file-descriptions">Discord command output file descriptions</a></li>
@@ -114,7 +116,7 @@
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
-      <li><a href="_sources/appendix.txt"
+      <li><a href="_sources/appendix.rst.txt"
             rel="nofollow">Show Source</a></li>
     </ul>
    </div>
@@ -182,7 +184,7 @@ continuing an insertion or deletion).</p>
 <p>By default the penalty for matching an unknown nucleotide (n) in the
 read or reference is 5, however this can be overridden using the
 <code class="docutils literal"><span class="pre">--unknowns-penalty</span></code> flag. Note that regardless of the penalty for
-unknown nucleotides the CIGAR will always indicate unkown bases as
+unknown nucleotides the CIGAR will always indicate unknown bases as
 mismatches. Occasionally, alignments may go outside the limits of the
 reference (that is, off the left or right ends of the reference). Such
 virtual bases are considered as unknown nucleotides.</p>
@@ -207,14 +209,14 @@ records.</p>
 <table class="docutils footnote" frame="void" id="c1" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Levenshtein, VI.(1966) Binary codes capable of correcting deletions,
-insertions and reversal. Soviet Physics Dokaldy, 6:707-710.</td></tr>
+<tr><td class="label"><a class="fn-backref" href="#id1">[1]</a></td><td>Levenshtein, V. I.(1966) Binary codes capable of correcting deletions,
+insertions and reversal. Soviet Physics Doklady, 6:707-710.</td></tr>
 </tbody>
 </table>
 <table class="docutils footnote" frame="void" id="c2" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Needleman, SB and Wunsch, CD. (1970) A general method applicable to
+<tr><td class="label"><a class="fn-backref" href="#id2">[2]</a></td><td>Needleman, S. B and Wunsch, C. D. (1970) A general method applicable to
 the search for similarities in the amino acid sequence of two
 proteins. Journal of Molecular Biology, 48:443-453</td></tr>
 </tbody>
@@ -222,7 +224,7 @@ proteins. Journal of Molecular Biology, 48:443-453</td></tr>
 <table class="docutils footnote" frame="void" id="c3" rules="none">
 <colgroup><col class="label" /><col /></colgroup>
 <tbody valign="top">
-<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>Smith, TF and Waterman, MS. (1981) Identification of common molecular
+<tr><td class="label"><a class="fn-backref" href="#id3">[3]</a></td><td>Smith, T. F. and Waterman, M. S. (1981) Identification of common molecular
 subsequences. Journal of Molecular Biology. 147:195-197.</td></tr>
 </tbody>
 </table>
@@ -278,12 +280,12 @@ group information stored in it during formatting.</p>
 </div>
 <div class="section" id="rtg-reference-file-format">
 <h2>RTG reference file format<a class="headerlink" href="#rtg-reference-file-format" title="Permalink to this headline">¶</a></h2>
-<p>Additional information about the structure of a reference genome can be
-provided for RTG mapping and variant calling by creating a
-<code class="docutils literal"><span class="pre">reference.txt</span></code> file in the reference genome’s SDF directory. This
-file specifies information about the structure of the chromosomes in the
-reference genome including sex information.</p>
-<p>The <code class="docutils literal"><span class="pre">format</span></code> command will automatically identify several common human
+<p>Many RTG commands can make use of additional information about the
+structure of a reference genome, such as expected ploidy, sex
+chromosomes, location of PAR regions, etc.  When appropriate, this
+information may be stored inside a reference genome&#8217;s SDF directory in a
+file called <code class="docutils literal"><span class="pre">reference.txt</span></code>.</p>
+<p>The <code class="docutils literal"><span class="pre">format</span></code> command will automatically identify several common
 reference genomes during formatting and will create a <code class="docutils literal"><span class="pre">reference.txt</span></code>
 in the resulting SDF.  However, for non-human reference genomes, or less
 common human reference genomes, a pre-built reference configuration file
@@ -563,7 +565,8 @@ organism.</p>
 <div class="section" id="pedigree-ped-input-file-format">
 <h2>Pedigree PED input file format<a class="headerlink" href="#pedigree-ped-input-file-format" title="Permalink to this headline">¶</a></h2>
 <p>The PED file format is a white space (tab or space) delimited ASCII
-file. It has exactly six required columns in the following order.</p>
+file. Lines starting with <code class="docutils literal"><span class="pre">#</span></code> are ignored. It has exactly six required
+columns in the following order.</p>
 <table border="1" class="docutils">
 <colgroup>
 <col width="10%" />
@@ -641,9 +644,9 @@ for files from third party sources or RTG command output where the
 </div>
 <div class="section" id="rtg-output-results-file-descriptions">
 <h2>RTG output results file descriptions<a class="headerlink" href="#rtg-output-results-file-descriptions" title="Permalink to this headline">¶</a></h2>
-<p>RTG software produces output results in standard formats that may be
-extended for the unique requirements of a particular data analysis
-function.</p>
+<p>RTG software produces output results in standard formats that may
+contain additional information for the unique requirements of a
+particular data analysis function.</p>
 <p>Several of the RTG commands that output results to a directory also
 output a simple summary report of the results of the command in HTML
 format. The report file for these commands will be called <code class="docutils literal"><span class="pre">index.html</span></code>
@@ -885,8 +888,8 @@ the backstep is used in this case to reconstruct part of the outside
 five nucleotides the overlap quality characters still correspond to the
 inside nucleotides.</p>
 </div>
-<div class="section" id="vcf-output-file-description">
-<h3>VCF output file description<a class="headerlink" href="#vcf-output-file-description" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="small-variant-vcf-output-file-description">
+<h3>Small-variant VCF output file description<a class="headerlink" href="#small-variant-vcf-output-file-description" title="Permalink to this headline">¶</a></h3>
 <p>The <code class="docutils literal"><span class="pre">snp</span></code>, <code class="docutils literal"><span class="pre">family</span></code>, <code class="docutils literal"><span class="pre">somatic</span></code> and <code class="docutils literal"><span class="pre">population</span></code> commands call single
 nucleotide polymorphisms (SNPs), multiple nucleotide polymorphisms
 (MNPs), and indels for a single individual, a family of individuals or a
@@ -907,12 +910,6 @@ called), and a confidence score are standard output in the <code class="docutils
 output file. Additional support statistics in the output describe read
 alignment evidence that can be used to evaluate confidence in the called
 variants.</p>
-<p>The <code class="docutils literal"><span class="pre">QUAL</span></code> column in the <code class="docutils literal"><span class="pre">snps.vcf</span></code> file has slightly different meaning
-for each of the commands. For the <code class="docutils literal"><span class="pre">snp</span></code> command it represents the phred
-scaled probability the sample is not identical to the reference. For the
-<code class="docutils literal"><span class="pre">family</span></code> and <code class="docutils literal"><span class="pre">population</span></code> commands it represents the phred scaled
-posterior probability that at least one sample is not identical to the
-reference.</p>
 <p>The commands also produce a <code class="docutils literal"><span class="pre">summary.txt</span></code> file which has simple counts
 of the variants detected and some ratios which can be used as a quick
 indication of SNP calling performance.</p>
@@ -953,6 +950,16 @@ chr1      44502  .     T        C           6.0    PASS    .       GT:DP:RE:AR:G
 chr1      44533  .     G        A           13.7   PASS    .       GT:DP:RE:AR:GQ:RS   1/1:6:0.421:0.000:13.7:A,6,0.421
 chr1      202801 .     A        G           15.8   PASS    .       GT:DP:RE:AR:GQ:RS   0/1:66:30.544:0.000:15.8:A,50,24.508,C,1,0.502,G,13,4.529,T,2,1.004
 </pre></div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The VCF specification defines the semantics of the <code class="docutils literal"><span class="pre">QUAL</span></code>
+column differently for records that contain any <code class="docutils literal"><span class="pre">ALT</span></code> alleles from
+those which do not, and that the <code class="docutils literal"><span class="pre">QUAL</span></code> column is also defined as a
+score applying across the set of all samples in the VCF. Thus for
+multi-sample calling commands such as <code class="docutils literal"><span class="pre">family</span></code>, <code class="docutils literal"><span class="pre">population</span></code>,
+<code class="docutils literal"><span class="pre">somatic</span></code>, etc, the <code class="docutils literal"><span class="pre">QUAL</span></code> score is not necessarily an indication
+of the of quality the call of any particular sample.</p>
 </div>
 <p>RTG adds custom fields to the VCF format to better account for some of
 its unique variant calling features, described in the tables below.</p>
@@ -1030,19 +1037,22 @@ its unique variant calling features, described in the tables below.</p>
 <tr class="row-odd"><td><code class="docutils literal"><span class="pre">RCE</span></code></td>
 <td>Indicates the variant is the same as one or more other variants within a homopolymer or repeat region.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">CT=&lt;value&gt;</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">NREF</span></code></td>
+<td>Indicates the variant is called at a site where the reference is unknown, and so some other scores that require exact knowledge of the reference may not be produced.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">CT=&lt;value&gt;</span></code></td>
 <td>The maximum coverage threshold that was applied when the given variant has been filtered for being over the coverage threshold.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">AC</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">AC</span></code></td>
 <td>The standard VCF allele count in genotypes field. For each ALT allele, in the same order as listed, the count of the allele in the genotypes.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">AN</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">AN</span></code></td>
 <td>The standard VCF total number of alleles in called genotypes field.</td>
 </tr>
 </tbody>
 </table>
 <p>Table : RTG VCF file FORMAT fields</p>
-<table border="1" class="docutils">
+<table border="1" class="longtable docutils">
 <colgroup>
 <col width="2%" />
 <col width="98%" />
@@ -1062,69 +1072,94 @@ its unique variant calling features, described in the tables below.</p>
 <tr class="row-even"><td><code class="docutils literal"><span class="pre">DPR</span></code></td>
 <td>The ratio of read depth to the expected read depth.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">RE</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">VA</span></code></td>
+<td>The allele index (using same numbering as the <code class="docutils literal"><span class="pre">GT</span></code> field) of the most frequent non-REF allele. This allele may not necessarily be part of the genotype that was actually called.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">RE</span></code></td>
 <td>The total error across bases of the reads at the SNP location. This is a corrective factor calculated from the r and q read mapping quality scores that adjusts the level of confidence higher or lower relative to read depth.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">AR</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">AR</span></code></td>
 <td>The ratio of reads contributing to the variant that are considered to be ambiguous to uniquely mapped reads.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">RQ</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">RQ</span></code></td>
 <td>The Phred scaled posterior probability that the sample is not identical to the reference.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">GQ</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">GQ</span></code></td>
 <td>The standard VCF format genotype quality field. This is the Phred scaled posterior score of the call. It is not necessarily the same as the <code class="docutils literal"><span class="pre">QUAL</span></code> column score.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">DN</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">DN</span></code></td>
 <td>Indicates with a value of <code class="docutils literal"><span class="pre">Y</span></code> if the call for this sample is a putative <code class="docutils literal"><span class="pre">de</span> <span class="pre">novo</span></code> mutation, or <code class="docutils literal"><span class="pre">N</span></code> to indicate that the sample is not a <code class="docutils literal"><span class="pre">de</span> <span class="pre">novo</span></code> mutation. Note that even in cases when the <code class="docutils literal"><span class="pre">GT</span></code> of the sample and the parents would otherwise seem to indicate a <code class="docutils literal"><span class="pre">de</span> <span class="pre">novo</span></code> mutation, this field may be set to <code class="docutils literal"><span class="pre">N</span></code> when the variant caller has assigned a sufficiently low score to the likelihood that a <code class="docutils literal"><span class="pre">de</span> <span class="pre">novo</span></code> event has occurred.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">DNP</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">DNP</span></code></td>
 <td>The Phred scaled probability that the call for this sample is due to a <code class="docutils literal"><span class="pre">de</span> <span class="pre">novo</span></code> mutation.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">COC</span></code></td>
-<td><p class="first">The count of evidence that is considered contrary to the call made for this sample.</p>
-<p>For example, in a normal-cancer somatic call of 0/0 -&gt; 1/0, the <code class="docutils literal"><span class="pre">COC</span></code> value is the count of the somatic (1) allele in the normal sample.</p>
-<p class="last">Usually a high <code class="docutils literal"><span class="pre">COC</span></code> value indicates an unreliable call.</p>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">OCOC</span></code></td>
+<td><p class="first">The count of evidence that is considered contrary to the call made for this sample, observed in the original sample.</p>
+<p>For example, in a normal-cancer somatic call of 0/0 -&gt; 1/0, the <code class="docutils literal"><span class="pre">OCOC</span></code> value is the count of the somatic (1) allele in the normal sample.</p>
+<p class="last">Usually a high <code class="docutils literal"><span class="pre">OCOC</span></code> value indicates an unreliable call.</p>
 </td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">COF</span></code></td>
-<td><p class="first">The fraction of evidence that is considered contrary to the call made for this sample.</p>
-<p>For example, in a somatic call of 0/0 -&gt; 1/0, the <code class="docutils literal"><span class="pre">COF</span></code> value is the fraction of the somatic (1) allele in the normal sample.</p>
-<p>The <code class="docutils literal"><span class="pre">COF</span></code> and <code class="docutils literal"><span class="pre">COC</span></code> attributes are also applicable to <code class="docutils literal"><span class="pre">de</span> <span class="pre">novo</span></code> calls, where the evidence of the parents for the <code class="docutils literal"><span class="pre">de</span> <span class="pre">novo</span></code> allele is considered contrary.</p>
-<p class="last">Usually a high <code class="docutils literal"><span class="pre">COF</span></code> value indicates an unreliable call.</p>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">OCOF</span></code></td>
+<td><p class="first">The fraction of evidence that is considered contrary to the call made for this sample, observed in the original sample.</p>
+<p>For example, in a somatic call of 0/0 -&gt; 1/0, the <code class="docutils literal"><span class="pre">OCOF</span></code> value is the fraction of the somatic (1) allele in the normal sample.</p>
+<p>The <code class="docutils literal"><span class="pre">OCOF</span></code> and <code class="docutils literal"><span class="pre">OCOC</span></code> attributes are also applicable to <code class="docutils literal"><span class="pre">de</span> <span class="pre">novo</span></code> calls, where the evidence in the parents for the <code class="docutils literal"><span class="pre">de</span> <span class="pre">novo</span></code> allele is considered contrary.</p>
+<p class="last">Usually a high <code class="docutils literal"><span class="pre">OCOF</span></code> value indicates an unreliable call.</p>
 </td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">ABP</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">DCOC</span></code></td>
+<td><p class="first">The count of evidence that is considered contrary to the call made for this sample, observed in the derived sample.</p>
+<p>For example, in a normal-cancer somatic call of 0/1 -&gt; 2/0, the <code class="docutils literal"><span class="pre">DCOC</span></code> value is the count of the germline (1) allele in the somatic sample.</p>
+<p class="last">In cases of high sample purity, a high <code class="docutils literal"><span class="pre">DCOC</span></code> value may indicate an unreliable call.</p>
+</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">DCOF</span></code></td>
+<td><p class="first">The fraction of evidence that is considered contrary to the call made for this sample, observed in the derived sample.</p>
+<p>For example, in a somatic call of 0/1 -&gt; 2/0, the <code class="docutils literal"><span class="pre">DCOF</span></code> value is the fraction of the germline (1) allele in the somatic sample.</p>
+<p>The <code class="docutils literal"><span class="pre">DCOF</span></code> and <code class="docutils literal"><span class="pre">DCOC</span></code> attributes are also applicable to pedigree aware calls, where the evidence of non-inherited parental alleles in the child is considered contrary.</p>
+<p class="last">In cases of high sample purity, a high <code class="docutils literal"><span class="pre">DCOF</span></code> value may indicate an unreliable call.</p>
+</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">ABP</span></code></td>
 <td>The Phred scaled probability that allele imbalance is present in the call.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">SBP</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">SBP</span></code></td>
 <td>The Phred scaled probability that strand bias is present in the call.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">RPB</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">RPB</span></code></td>
 <td>The Phred scaled probability that read position bias is present in the call.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">PPB</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">PPB</span></code></td>
 <td>The Phred scaled probability that bias in the proportion of alignments that are properly paired is present in the call.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">PUR</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">PUR</span></code></td>
 <td>The ratio of placed unmapped reads to mapped reads.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">RS</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">RS</span></code></td>
 <td>Statistical information about the evidence for the prediction which consists of a variable number of groups of three fields, each separated by commas. The three fields are allele, count, and the sum of probability error (computed from the Phred quality). The sum of counts should equal DP and the sum of the errors should equal <code class="docutils literal"><span class="pre">RE</span></code>.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">DH</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">DH</span></code></td>
 <td>An alternative disagreeing hypothesis in the same format as the genotype field. This can occur when a sample intersects multiple families in a pedigree when doing population calling.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">AD</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">AD</span></code></td>
 <td>The allelic depths for the reference and alternate alleles in the order listed.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">SSC</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">ADE</span></code></td>
+<td>The allelic depths for the reference and alternate alleles in the order listed, after adjusting for poor base quality and mapping quality.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">AQ</span></code></td>
+<td>The sum of the quality of evidence (including base quality and mapping quality) for the reference and alternate alleles in the order listed.</td>
+</tr>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">SSC</span></code></td>
 <td>The score for the somatic mutation specified by the <code class="docutils literal"><span class="pre">GT</span></code> field.</td>
 </tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">SS</span></code></td>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">SS</span></code></td>
 <td>The somatic status of the genotype for this sample. A value of 0 indicates none or wild type, a value of 1 indicates a germline variant, and a value of 2 indicates a somatic variant.</td>
 </tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">GL</span></code></td>
+<tr class="row-even"><td><code class="docutils literal"><span class="pre">GL</span></code></td>
 <td>The log10 scaled likelihoods for all possible genotypes given the set of alleles defined in the <code class="docutils literal"><span class="pre">REF</span></code> and <code class="docutils literal"><span class="pre">ALT</span></code> fields as defined in the VCF specifications.</td>
+</tr>
+<tr class="row-odd"><td><code class="docutils literal"><span class="pre">VAF</span></code></td>
+<td>When a <code class="docutils literal"><span class="pre">VA</span></code> attribute is present, the <code class="docutils literal"><span class="pre">VAF</span></code> field contains the estimated variant allelic fraction of that alternate allele.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal"><span class="pre">AVR</span></code></td>
 <td>The adaptive variant rescoring value. It is a value between 0 and 1 that represents the probability that the variant for the sample is correct.</td>
@@ -1177,7 +1212,7 @@ relationships and genome mixtures using headers like the following:</p>
 </div>
 <div class="section" id="regions-bed-output-file-description">
 <h3>Regions BED output file description<a class="headerlink" href="#regions-bed-output-file-description" title="Permalink to this headline">¶</a></h3>
-<p>The <code class="docutils literal"><span class="pre">snp</span></code>, <code class="docutils literal"><span class="pre">family</span></code> and <code class="docutils literal"><span class="pre">somatic</span></code> commands all output a BED file
+<p>The <code class="docutils literal"><span class="pre">snp</span></code>, <code class="docutils literal"><span class="pre">family</span></code>, <code class="docutils literal"><span class="pre">population</span></code> and <code class="docutils literal"><span class="pre">somatic</span></code> commands all output a BED file
 containing regions that were considered to be complex.</p>
 <p>The following sample <code class="docutils literal"><span class="pre">regions.bed</span></code> file is an example of the output
 produced by an RTG variant calling run. Each line in a <code class="docutils literal"><span class="pre">regions.bed</span></code>
@@ -1430,7 +1465,7 @@ chr1  121  12.0000  0.0000  1.0000  0.0000  0.0000  0.0000  0.0000  13.0000  0.0
 </div>
 <div class="section" id="discord-command-output-file-descriptions">
 <h3>Discord command output file descriptions<a class="headerlink" href="#discord-command-output-file-descriptions" title="Permalink to this headline">¶</a></h3>
-<p>The discord command uses clusters of discordant reads to find possible
+<p>The <code class="docutils literal"><span class="pre">discord</span></code> command uses clusters of discordant reads to find possible
 locations for structural variant breakends. The breakends are output in
 a VCF file called <code class="docutils literal"><span class="pre">discord_pairs.vcf.gz</span></code> using the <code class="docutils literal"><span class="pre">ALT</span></code> and <code class="docutils literal"><span class="pre">INFO</span></code>
 fields as defined in the VCF specification.</p>
@@ -1539,23 +1574,24 @@ same average read depth.</p>
 <div class="highlight-text"><div class="highlight"><pre><span></span>#Version v2.3.2 build 5c2ee18 (2011-10-05), Coverage BED output v1.0
 #CL     coverage -o coverage-hslo-18-u -t hst1 hslo-18-u/alignments.bam
 #RUN-ID c0561a1d-fb3b-4062-96ca-cad2cc3c476a
-chr1      0       4       coverage        2
-chr1      4       13      coverage        3
-chr1      13      22      coverage        4
-chr1      22      29      coverage        5
-chr1      29      38      coverage        6
-chr1      38      45      coverage        7
-chr1      45      53      coverage        8
-chr1      53      64      coverage        9
-chr1      64      80      coverage        10
-chr1      80      128     coverage        11
-chr1      128     137     coverage        10
-chr1      137     157     coverage        11
-chr1      157     164     coverage        12
-chr1      164     169     coverage        13
-chr1      169     174     coverage        14
-chr1      174     177     coverage        15
-chr1      177     181     coverage        16
+#sequence start   end     label           coverage
+chr1      0       4       chr1        2
+chr1      4       13      chr1        3
+chr1      13      22      chr1        4
+chr1      22      29      chr1        5
+chr1      29      38      chr1        6
+chr1      38      45      chr1        7
+chr1      45      53      chr1        8
+chr1      53      64      chr1        9
+chr1      64      80      chr1        10
+chr1      80      128     chr1        11
+chr1      128     137     chr1        10
+chr1      137     157     chr1        11
+chr1      157     164     chr1        12
+chr1      164     169     chr1        13
+chr1      169     174     chr1        14
+chr1      174     177     chr1        15
+chr1      177     181     chr1        16
 </pre></div>
 </div>
 <p>The columns in the example are in BED file order:</p>
@@ -1563,10 +1599,14 @@ chr1      177     181     coverage        16
 <li>Chromosome name</li>
 <li>Start position in chromosome</li>
 <li>End position in chromosome</li>
-<li>Name or label of the feature, always &#8220;coverage&#8221;</li>
+<li>Name or label of the feature, this is generally the name of the chromosome or name of any BED features overlapping the coverage region</li>
 <li>Depth of coverage for the range specified</li>
 </ol>
-<p>When the <code class="docutils literal"><span class="pre">--bedgraph</span></code> flag is set when running the coverage command will
+<p>When the <code class="docutils literal"><span class="pre">--per-region</span></code> flag is set, the <code class="docutils literal"><span class="pre">coverage</span></code> command will alter
+the criteria for outputting a BED record. Rather than defining regions
+having the same level of coverage, a BED record will be produced for
+each input BED region, containing the average coverage over that region.</p>
+<p>When the <code class="docutils literal"><span class="pre">--bedgraph</span></code> flag is set, the <code class="docutils literal"><span class="pre">coverage</span></code> command will
 produce a BEDGRAPH format file with the regions calculated in the same
 way as for BED format output.</p>
 <p>The following is an example of the BEDGRAPH output from the <code class="docutils literal"><span class="pre">coverage</span></code>
@@ -1604,7 +1644,7 @@ chr1      177     181     16
 <p>When the <code class="docutils literal"><span class="pre">--per-base</span></code> flag is set when running the <code class="docutils literal"><span class="pre">coverage</span></code> command
 will produce a tab separated value file with the coverage information
 for each individual base in the reference.</p>
-<p>The following is an example of the TSV output from the coverage command:</p>
+<p>The following is an example of the TSV output from the <code class="docutils literal"><span class="pre">coverage</span></code> command:</p>
 <div class="highlight-text"><div class="highlight"><pre><span></span>#Version v2.3.2 build 5c2ee18 (2011-10-05), Coverage output v1.0
 #CL  coverage -o coverage-hslo-18-u-per-base -t hst1 hslo-18-u/alignments.bam --per-base
 #RUN-ID 7798b1a5-2159-48e6-976e-86b4f8e98fa6
@@ -1653,18 +1693,18 @@ chr1            9               2               1                 2.50
 <p>The <code class="docutils literal"><span class="pre">coverage</span></code> command produces a <code class="docutils literal"><span class="pre">stats.tsv</span></code> file with coverage
 statistics for each chromosome in the reference and the reference as a
 whole. The following is an example file:</p>
-<div class="highlight-text"><div class="highlight"><pre><span></span>#depth        breadth covered size    non-N-depth     non-N-breadth   non-N-covered   non-N-size      name
-28.3238       0.9998  23766   23770   28.3238 0.9998  23766   23770   chr1
-28.0013       0.9997  41447   41459   28.0013 0.9997  41447   41459   chr2
-28.3151       0.9994  24930   24946   28.3151 0.9994  24930   24946   chr3
-28.4955       0.9999  87734   87741   28.4955 0.9999  87734   87741   chr4
-28.3822       0.9999  32600   32604   28.3822 0.9999  32600   32604   chr5
-28.7159       0.9999  55042   55047   28.7159 0.9999  55042   55047   chr6
-28.1109       0.9998  34887   34894   28.1109 0.9998  34887   34894   chr7
-28.3305       0.9999  50025   50032   28.3305 0.9999  50025   50032   chr8
-28.2229       0.9998  49627   49639   28.2229 0.9998  49627   49639   chr9
-28.3817       0.9999  15912   15914   28.3817 0.9999  15912   15914   chr10
-28.3569       0.9998  415970  416046  28.3569 0.9998  415970  416046  all sequences
+<div class="highlight-text"><div class="highlight"><pre><span></span>#depth        breadth covered size    name
+28.3238       0.9998  23766   23770   chr1
+28.0013       0.9997  41447   41459   chr2
+28.3151       0.9994  24930   24946   chr3
+28.4955       0.9999  87734   87741   chr4
+28.3822       0.9999  32600   32604   chr5
+28.7159       0.9999  55042   55047   chr6
+28.1109       0.9998  34887   34894   chr7
+28.3305       0.9999  50025   50032   chr8
+28.2229       0.9998  49627   49639   chr9
+28.3817       0.9999  15912   15914   chr10
+28.3569       0.9998  415970  416046  all sequences
 </pre></div>
 </div>
 <p>Table : STATS.TSV column descriptions</p>
@@ -1680,34 +1720,25 @@ whole. The following is an example file:</p>
 </thead>
 <tbody valign="top">
 <tr class="row-even"><td><code class="docutils literal"><span class="pre">depth</span></code></td>
-<td>The average depth of coverage for the chromosome where each base position is calculated as the sum of one divided by the IH of each read alignment which covers the position.</td>
+<td>The average depth of coverage for the region where each base position is calculated as the sum of one divided by the IH of each read alignment which covers the position.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal"><span class="pre">breadth</span></code></td>
-<td>The fraction of the chromosome base positions which have a depth of one or greater.</td>
+<td>The fraction of the non-N region base positions which have a depth of one or greater.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal"><span class="pre">covered</span></code></td>
-<td>The number of bases in the chromosome which have a depth of one or greater.</td>
+<td>The number of non-N bases in the region which have a depth of one or greater.</td>
 </tr>
 <tr class="row-odd"><td><code class="docutils literal"><span class="pre">size</span></code></td>
-<td>The number of bases in the chromosome.</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">non-n-depth</span></code></td>
-<td>The same as for depth except only for bases in the chromosome which are not unknowns (N).</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">non-n-breadth</span></code></td>
-<td>The same as for breadth except only for bases in the chromosome which are not unknowns (N).</td>
-</tr>
-<tr class="row-even"><td><code class="docutils literal"><span class="pre">non-n-covered</span></code></td>
-<td>The same as for covered except only for bases in the chromosome which are not unknowns (N).</td>
-</tr>
-<tr class="row-odd"><td><code class="docutils literal"><span class="pre">non-n-size</span></code></td>
-<td>The same as for size except only for bases in the chromosome which are not unknowns (N).</td>
+<td>The number of non-N bases in the region.</td>
 </tr>
 <tr class="row-even"><td><code class="docutils literal"><span class="pre">name</span></code></td>
-<td>The name of the chromosome, or &#8220;all sequences&#8221; for the entire reference.</td>
+<td>The name of the region, or &#8220;all sequences&#8221; for the entire reference.</td>
 </tr>
 </tbody>
 </table>
+<p>For whole-genome coverage runs, the region names are each of the
+chromosomes. For exome data, or other targeted sequencing where a BED
+file was provided, the region names are obtained from the BED file.</p>
 <p>The <code class="docutils literal"><span class="pre">coverage</span></code> command produces a <code class="docutils literal"><span class="pre">levels.tsv</span></code> file with some statistics
 about the coverage levels. The following is the start of an example
 file:</p>
@@ -2148,7 +2179,7 @@ on different size server nodes, a full read mapping and alignment run
 can be split into smaller jobs running in parallel on multiple servers.</p>
 <p><strong>How it works</strong></p>
 <p>With read mapping, very large numbers of reads may be aligned to a
-single reference genome. For example, 35x coverage of the human genome
+single reference genome. For example, 35 fold coverage of the human genome
 with 2×36 base pair data requires processing of 1,500 million reads.
 Fortunately, multiple alignment files can be easily combined with other
 alignment files if the reference is held constant. Thus, the problem can
@@ -2249,7 +2280,7 @@ No-JRE:
 
   The no-JRE distribution does not include a Java Runtime Environment
   and instead uses the system-installed Java.  Ensure that at the
-  command line you can enter &#39;java -version&#39; and that this command
+  command line you can enter &quot;java -version&quot; and that this command
   reports a java version of 1.7 or higher before proceeding with the
   steps below. This may require setting your PATH environment variable
   to include the location of an appropriate version of java.
@@ -2263,7 +2294,7 @@ Linux/MacOS X:
   distribution directory.
 
   In a terminal, cd to the installation directory and test for success
-  by entering &#39;./rtg version&#39;
+  by entering &quot;./rtg version&quot;
 
   On MacOS X, depending on your operating system version and
   configuration regarding unsigned applications, you may encounter the
@@ -2279,14 +2310,14 @@ Linux/MacOS X:
   The first time rtg is executed you will be prompted with some
   questions to customize your installation. Follow the prompts.
 
-  Enter &#39;./rtg help&#39; for a list of rtg commands.  Help for any individual
-  command is available using the --help flag, e.g.: &#39;./rtg format --help&#39;
+  Enter &quot;./rtg help&quot; for a list of rtg commands.  Help for any individual
+  command is available using the --help flag, e.g.: &quot;./rtg format --help&quot;
 
   By default, RTG software scripts establish a memory space of 90% of
   the available RAM - this is automatically calculated.  One may
   override this limit in the rtg.cfg settings file or on a per-run
   basis by supplying RTG_MEM as an environment variable or as the
-  first program argument, e.g.: &#39;./rtg RTG_MEM=48g map&#39;
+  first program argument, e.g.: &quot;./rtg RTG_MEM=48g map&quot;
 
   [OPTIONAL] If you will be running rtg on multiple machines and would
   like to customize settings on a per-machine basis, copy
@@ -2304,12 +2335,12 @@ Windows:
   copy the license file from Real Time Genomics into the RTG
   distribution directory.
 
-  Test for success by entering &#39;rtg version&#39; at the command line.  The
+  Test for success by entering &quot;rtg version&quot; at the command line.  The
   first time rtg is executed you will be prompted with some
   questions to customize your installation. Follow the prompts.
 
-  Enter &#39;rtg help&#39; for a list of rtg commands.  Help for any individual
-  command is available using the --help flag, e.g.: &#39;rtg format --help&#39;
+  Enter &quot;rtg help&quot; for a list of rtg commands.  Help for any individual
+  command is available using the --help flag, e.g.: &quot;rtg format --help&quot;
 
   By default, RTG software scripts establish a memory space of 90% of
   the available RAM - this is automatically calculated.  One may
@@ -2438,8 +2469,8 @@ You should have received a copy of the GNU General Public License version
 Inc., 51 Franklin St, Fifth Floor, Boston, MA 02110-1301 USA.
 
 Please contact Oracle, 500 Oracle Parkway, Redwood Shores, CA 94065 USA
-or visit www.oracle.com if you need additional information or have any
-questions.
+or visit http://www.oracle.com if you need additional information or have
+any questions.
 
 -------------------------
 
@@ -2498,7 +2529,7 @@ processes, products, or parts thereof, described herein, without
 notice. While every effort has been made to make this guide as complete
 and accurate as possible as of the publication date, no warranty of
 fitness is implied.</p>
-<p>© 2016 Real Time Genomics All rights reserved.</p>
+<p>© 2017 Real Time Genomics All rights reserved.</p>
 <p>Illumina, Solexa, Complete Genomics, Ion Torrent, Roche, ABI, Life
 Technologies, and PacBio are registered trademarks and all other brands
 referenced in this document are the property of their respective owners.</p>
@@ -2520,12 +2551,12 @@ referenced in this document are the property of their respective owners.</p>
         <li class="right" >
           <a href="administration.html" title="Administration &amp; Capacity Planning"
              >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.7</a> &#187;</li> 
+        <li class="nav-item nav-item-0"><a href="index.html">RTG Core Operations Manual v3.8</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2016, Real Time Genomics.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.4.6.
+        &#169; Copyright 2017, Real Time Genomics.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.5.3.
     </div>
   </body>
 </html>
