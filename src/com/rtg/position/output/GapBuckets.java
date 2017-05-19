@@ -164,7 +164,7 @@ public class GapBuckets<A> extends IntegralAbstract {
   }
 
   @Override
-  public boolean globalIntegrity() {
+  public final boolean globalIntegrity() {
     integrity();
     mInfo.globalIntegrity();
     return true;

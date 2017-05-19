@@ -39,7 +39,7 @@ public final class GapBucketsInfo extends IntegralAbstract {
 
   private final int mBits;
 
-  private final int mLength;
+  private final long mLength;
 
   private final long mBucketMask;
 
@@ -114,11 +114,11 @@ public final class GapBucketsInfo extends IntegralAbstract {
     }
 
     mBucketTotal = tot;
-    final long gappedLength = gap * (maxRepeat * 8L);
+    final long gappedLength = 8L * gap * maxRepeat;
     final long targetLength = Math.min(Math.max(0, tot - 1), gappedLength);
     //make length of array a power of 2 so can do a mask rather than the much more expensive mod
     mBits = MathUtils.ceilPowerOf2Bits(targetLength);
-    mLength = 1 << mBits;
+    mLength = 1L << mBits;
     mBucketMask = mLength - 1;
     final String msg = "size of bucket array:" + mLength + " bits=" + mBits + " target length=" + targetLength + " gapped length=" + gappedLength + " tot=" + tot;
     //System.err.println(msg);
@@ -134,7 +134,7 @@ public final class GapBucketsInfo extends IntegralAbstract {
    * mapped to this smaller value.
    * @return the number of buckets to be allocated.
    */
-  int length() {
+  long length() {
     return mLength;
   }
 
