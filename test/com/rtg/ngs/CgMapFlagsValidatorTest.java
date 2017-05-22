@@ -88,7 +88,7 @@ public class CgMapFlagsValidatorTest extends AbstractCliTest {
 
       TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-i", testfile.toString(), "-t", template.toString(), "-o", out.toString(), "--mask", "cg1"), "The specified file, \"" + testfile.toString() + "\", is not an SDF");
       TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-i", mainOut.toString(), "-t", testfile.toString(), "-o", out.toString(), "--mask", "cg1"), "The specified file, \"" + testfile.toString() + "\", is not an SDF");
-      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-i", cgleft.toString(), "-t", template.toString(), "-o", out.toString(), "--mask", "cg1"), "Inputfile not in paired end format.");
+      TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-i", cgleft.toString(), "-t", template.toString(), "-o", out.toString(), "--mask", "cg1"), "Input file not in paired end format.");
 
       checkHandleFlagsOut("-i", mainOut.toString(), "-t", template.toString(), "-o", out.toString(), "--mask", "cg1");
     } finally {

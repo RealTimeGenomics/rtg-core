@@ -412,7 +412,7 @@ public class SvToolTask extends SamIteratorTask<SvToolParams, NoStatistics> {
       }
       final Long templateId = mTemplateNameMap.get(refName);
       if (templateId == null) {
-        throw new NoTalkbackSlimException(ErrorType.WRONG_REFERENCE);
+        throw new NoTalkbackSlimException("Wrong reference sequences supplied for the given mappings.");
       }
       final int templateLength = getSequenceLength(mGenomeSequences, mTemplateNameMap, refName);
       final String restrictionTemplate = mParams.filterParams().restrictionTemplate();
