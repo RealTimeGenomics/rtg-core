@@ -74,6 +74,8 @@ public final class AvrUtils {
             defaultModelFile = new File(defaultModel);
           }
         }
+      } else {
+        throw new InvalidParamsException("Invalid installation - the AVR models directory cannot be found or is not a directory: " + modelDirName);
       }
     }
     final Flag<File> modelFlag = anonymous
@@ -102,7 +104,7 @@ public final class AvrUtils {
     if (modelDirName != null) {
       modelsDirFile = new File(modelDirName);
       if (!modelsDirFile.exists() || !modelsDirFile.isDirectory()) {
-        throw new InvalidParamsException("The AVR models directory cannot be found or is not a directory: " + modelDirName);
+        throw new InvalidParamsException("Invalid installation - the AVR models directory cannot be found or is not a directory: " + modelDirName);
       }
     }
 

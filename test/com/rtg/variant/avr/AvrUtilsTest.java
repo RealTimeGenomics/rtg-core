@@ -45,7 +45,7 @@ public class AvrUtilsTest extends AbstractTest {
           fail();
         } catch (final InvalidParamsException e) {
           assertFalse(f.exists());
-          assertEquals("The AVR models directory cannot be found or is not a directory: " + f.getPath(), e.getMessage());
+          TestUtils.containsAllUnwrapped(e.getMessage(), "AVR models directory cannot be found or is not a directory: " + f.getPath());
         }
         assertTrue(f.createNewFile());
         try {
@@ -54,7 +54,7 @@ public class AvrUtilsTest extends AbstractTest {
           fail();
         } catch (final InvalidParamsException e) {
           assertTrue(f.exists());
-          assertEquals("The AVR models directory cannot be found or is not a directory: " + f.getPath(), e.getMessage());
+          TestUtils.containsAllUnwrapped(e.getMessage(), "AVR models directory cannot be found or is not a directory: " + f.getPath());
         }
       } finally {
         if (oldAvrModels == null) {
