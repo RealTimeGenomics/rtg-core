@@ -228,10 +228,10 @@ pause
 
 cat<<EOF
 
-The generated VCF contains variants with allele frequencies
+The generated VCF contains variants with allele frequency
 annotations that can be used to simulate a member of the population.
 The types of variants and frequencies are based off variants from the
-1000 Genomes Project.  We can pull out some example variants using rtg
+1000 Genomes Project.  We can examine some example variants using rtg
 extract.  The extract command can be used with any SAM/BAM/BED/VCF
 file that has been coordinate-sorted, block-compressed and indexed
 according to standard NGS practise.  RTG commands automatically index
@@ -342,7 +342,7 @@ sequencing of the sample genomes, using RTG readsim.  We will simulate
 (since our sample genome SDFs include two copies of each diploid
 chromosome, we instruct the readsim command to use coverage 10).  One
 of the samples will be generated at a lower coverage.  The simulated
-reads included sequencer errors according to the selected machine
+reads include sequencer errors according to the selected machine
 type, but in this case we will increase the error rates in order to
 make the mapping and variant calling harder.  The results of read
 simulation will be stored in an SDF containing the reads for each
@@ -626,7 +626,7 @@ filter thresholds, by demonstrating the trade-off between sensitivity
 and precision with respect to a filter threshold.  The default is to
 analyse using the FORMAT GQ field, but when you run vcfeval, you can
 specify the --vcf-score-field option to use a different attribute
-(such as QUAL, or AVR)
+(such as QUAL or AVR)
 
 The RTG rocplot command allows ROC plots for multiple ROC data files
 to be viewed using either an interactive gui, or via creation of a
