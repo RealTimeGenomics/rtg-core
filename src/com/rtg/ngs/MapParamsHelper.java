@@ -60,16 +60,12 @@ import com.rtg.util.cli.Flag;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.ListenerType;
-import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.intervals.LongRange;
+import com.rtg.util.io.IOUtils;
 import com.rtg.util.io.InputFileUtils;
 import com.rtg.util.machine.MachineType;
 
-import htsjdk.samtools.FileTruncatedException;
-import htsjdk.samtools.SAMException;
 import htsjdk.samtools.SAMReadGroupRecord;
-import htsjdk.samtools.util.RuntimeEOFException;
-import htsjdk.samtools.util.RuntimeIOException;
 
 /**
  * Populate parameter objects for Map commands
@@ -439,21 +435,7 @@ public final class MapParamsHelper {
         }
         ngsParamsBuilder.searchParams(templateTask.get());
       } catch (final ExecutionException ie) {
-        if (ie.getCause() instanceof NoTalkbackSlimException) {
-          throw (NoTalkbackSlimException) ie.getCause();
-        } else if (ie.getCause() instanceof IOException) {
-          throw (IOException) ie.getCause();
-        } else if (ie.getCause() instanceof SAMException) {
-          if (ie.getCause() instanceof RuntimeIOException
-                  || ie.getCause() instanceof RuntimeEOFException
-                  || ie.getCause() instanceof FileTruncatedException) {
-            throw new IOException(ie.getCause().getMessage(), ie.getCause());
-          }
-          throw new NoTalkbackSlimException(ie.getCause(), ErrorType.SAM_BAD_FORMAT_NO_FILE, ie.getCause().getMessage());
-        } else if (ie.getCause() instanceof Error) {
-          throw (Error) ie.getCause();
-        }
-        throw new RuntimeException(ie.getCause());
+        IOUtils.rethrow(ie.getCause());
       } catch (final InterruptedException ie) {
         throw new InvalidParamsException(ErrorType.INFO_ERROR, "Interrupted while loading datasets.");
       }
@@ -511,21 +493,7 @@ public final class MapParamsHelper {
         }
         ngsParamsBuilder.searchParams(templateTask.get());
       } catch (final ExecutionException ie) {
-        if (ie.getCause() instanceof NoTalkbackSlimException) {
-          throw (NoTalkbackSlimException) ie.getCause();
-        } else if (ie.getCause() instanceof IOException) {
-          throw (IOException) ie.getCause();
-        } else if (ie.getCause() instanceof SAMException) {
-          if (ie.getCause() instanceof RuntimeIOException
-                  || ie.getCause() instanceof RuntimeEOFException
-                  || ie.getCause() instanceof FileTruncatedException) {
-            throw new IOException(ie.getCause().getMessage(), ie.getCause());
-          }
-          throw new NoTalkbackSlimException(ie.getCause(), ErrorType.SAM_BAD_FORMAT_NO_FILE, ie.getCause().getMessage());
-        } else if (ie.getCause() instanceof Error) {
-          throw (Error) ie.getCause();
-        }
-        throw new RuntimeException(ie.getCause());
+        IOUtils.rethrow(ie.getCause());
       } catch (final InterruptedException ie) {
         throw new InvalidParamsException(ErrorType.INFO_ERROR, "Interrupted while loading datasets.");
       }
