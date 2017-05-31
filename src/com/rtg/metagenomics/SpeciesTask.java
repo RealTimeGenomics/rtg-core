@@ -62,6 +62,7 @@ import com.rtg.util.Utils;
 import com.rtg.util.cli.CommandLine;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
+import com.rtg.util.io.IOUtils;
 import com.rtg.util.io.LineWriter;
 
 import htsjdk.samtools.SAMRecord;
@@ -516,14 +517,7 @@ class SpeciesTask extends ParamsTask<SpeciesParams, SpeciesStatistics> {
               try {
                 f.get();
               } catch (final ExecutionException ie) {
-                if (ie.getCause() instanceof NoTalkbackSlimException) {
-                  throw (NoTalkbackSlimException) ie.getCause();
-                } else if (ie.getCause() instanceof IOException) {
-                  throw (IOException) ie.getCause();
-                } else if (ie.getCause() instanceof Error) {
-                  throw (Error) ie.getCause();
-                }
-                throw new RuntimeException(ie.getCause());
+                IOUtils.rethrow(ie.getCause());
               } catch (final InterruptedException ie) {
                 throw new NoTalkbackSlimException("Interrupted while calculating p-values.");
               }
