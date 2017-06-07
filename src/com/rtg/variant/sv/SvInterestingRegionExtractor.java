@@ -245,7 +245,7 @@ public class SvInterestingRegionExtractor implements Closeable {
     final boolean gzipOutput = output != null && FileUtils.isGzipFilename(output);
 
     int skipped = 0;
-    try (SvInterestingRegionExtractor re = new SvInterestingRegionExtractor(output != null ? FileUtils.createOutputStream(output, gzipOutput, false) : FileUtils.getStdoutAsOutputStream(), merge)) {
+    try (SvInterestingRegionExtractor re = new SvInterestingRegionExtractor(output != null ? FileUtils.createOutputStream(output) : FileUtils.getStdoutAsOutputStream(), merge)) {
       try (BufferedReader br = new BufferedReader(new InputStreamReader(FileUtils.createInputStream(input, false)))) {
         String line;
         double[] values = null;

@@ -121,7 +121,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     final File dir = mParams.outputParams().directory();
     createDir(dir);
     final File out = TopNPairedEndOutputProcessorSync.determineTempFile(mParams, currentChild);
-    final OutputStream outStream = FileUtils.createOutputStream(out, true, false);
+    final OutputStream outStream = FileUtils.createOutputStream(out, true);
 
     final PairedTempFileWriterImpl sam = new PairedTempFileWriterImpl(mParams,  mUnmappedTracker, mSharedResources);
     sam.initialiseMated(outStream);
@@ -193,7 +193,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     }
 
     if (mStatsMerger != null) {
-      try (OutputStream rgOut = FileUtils.createOutputStream(mParams.outputParams().resultStreamHandler().file(UnmatedAugmenter.DEFAULT_RGSTATS_FILENAME), false)) {
+      try (OutputStream rgOut = FileUtils.createOutputStream(mParams.outputParams().resultStreamHandler().file(UnmatedAugmenter.DEFAULT_RGSTATS_FILENAME))) {
         mStatsMerger.blend().writeReadGroupStats(rgOut);
       }
     }
@@ -372,7 +372,7 @@ public class TopNPairedEndOutputProcessorSync extends AbstractMapOutputProcessor
     protected OutputWrapper createStreams(int numThreads, File[] intermediate, File[] intermediateIndexes, boolean samGzipIntFiles, boolean createIndex, int i) throws IOException {
       //Don't want to index files yet due to need to post-process intermediate files.
       if (mAugmenterMerger != null) {
-        return new OutputWrapper(FileUtils.createOutputStream(intermediate[i], samGzipIntFiles, false, samGzipIntFiles && (i == numThreads - 1)), null);
+        return new OutputWrapper(FileUtils.createOutputStream(intermediate[i], samGzipIntFiles, samGzipIntFiles && (i == numThreads - 1)), null);
       }
       return super.createStreams(numThreads, intermediate, intermediateIndexes, samGzipIntFiles, createIndex, i);
     }

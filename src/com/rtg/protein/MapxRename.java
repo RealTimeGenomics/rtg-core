@@ -200,7 +200,7 @@ public class MapxRename extends AbstractCli {
   private static void renameFile(final File resultsFile, final File renamedFile, Names names, SdfId sdfId) throws IOException {
     int idColumn = -1;
     try (BufferedReader read = new BufferedReader(new InputStreamReader(FileUtils.createInputStream(resultsFile, false)))) {
-      final OutputStream baseOutStream = FileUtils.createOutputStream(renamedFile, FileUtils.isGzipFilename(renamedFile), false);
+      final OutputStream baseOutStream = FileUtils.createOutputStream(renamedFile);
       try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(baseOutStream))) {
         final ArrayList<String> header = readHeader(read);
 

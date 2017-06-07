@@ -69,7 +69,7 @@ public class SingleEndSamResultsFilterTest extends TestCase {
   }
 
   public void writeTempFile(File out) throws IOException {
-    final TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true, false));
+    final TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true));
     try {
       final BinaryTempFileRecord bar = new BinaryTempFileRecord(false, false, false, false);
 

@@ -289,7 +289,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
         unmappedOutFile = File.createTempFile("TEMP_UNMAPPED_" + tag + "_", ".bam", mParams.outputParams().tempFilesDirectory());
       }
       //we override picards bam constructor to allow us to provide the block gzip for the unmapped file
-      unmappedOut = new FileAndStream(unmappedOutFile, FileUtils.createOutputStream(unmappedOutFile, true, false, true));
+      unmappedOut = new FileAndStream(unmappedOutFile, FileUtils.createOutputStream(unmappedOutFile, true, true));
     } else if (!suppressSam) {
       final File unmappedOutFile;
       if (isFinalUnmapped) {
@@ -299,7 +299,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
       } else {
         unmappedOutFile = File.createTempFile("TEMP_UNMAPPED_" + tag + "_", SamUtils.SAM_SUFFIX + (mParams.outputParams().isCompressOutput() ? FileUtils.GZ_SUFFIX : ""), mParams.outputParams().tempFilesDirectory());
       }
-      unmappedOut = new FileAndStream(unmappedOutFile, FileUtils.createOutputStream(unmappedOutFile, mParams.outputParams().isCompressOutput(), false, mParams.outputParams().isCompressOutput()));
+      unmappedOut = new FileAndStream(unmappedOutFile, FileUtils.createOutputStream(unmappedOutFile, mParams.outputParams().isCompressOutput(), mParams.outputParams().isCompressOutput()));
     } else {
       unmappedOut = new FileAndStream(null, NullStreamUtils.getNullOutputStream()); //XXX why are we creating SAMRecords to be thrown away?
     }
@@ -395,7 +395,7 @@ public abstract class AbstractMapOutputProcessor implements OutputProcessor {
     final ChunkPair[] chunks = findChunkBoundaries(regions, results);
     for (int i = 0; i < tempFiles.length; ++i) {
       tempFiles[i] = mParams.outputParams().resultStreamHandler().tempFile(namePrefix + i + FileUtils.GZ_SUFFIX);
-      final OutputStream stream = FileUtils.createOutputStream(tempFiles[i], true, false);
+      final OutputStream stream = FileUtils.createOutputStream(tempFiles[i], true);
 
       if (paired) {
         final PairedTempFileWriterImpl sw = new PairedTempFileWriterImpl(mParams,  mUnmappedTracker, mSharedResources);

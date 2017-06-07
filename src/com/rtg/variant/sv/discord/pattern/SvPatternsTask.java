@@ -189,7 +189,7 @@ public class SvPatternsTask extends ParamsTask<BreakpointPatternParams, NoStatis
   @Override
   protected void exec() throws IOException {
     final File bedFile = new File(mParams.directory(), FILE_NAME + FileUtils.GZ_SUFFIX);
-    setOutput(FileUtils.createOutputStream(bedFile, true));
+    setOutput(FileUtils.createOutputStream(bedFile));
     try {
       writeHeader(mOutput);
       final RegionRestriction region = mParams.region();

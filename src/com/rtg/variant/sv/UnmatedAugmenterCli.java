@@ -136,7 +136,7 @@ public class UnmatedAugmenterCli extends LoggedCli {
       throw new NoTalkbackSlimException("Could not find both mated and unmated alignments files.");
     }
 
-    try (OutputStream rgOut = FileUtils.createOutputStream(new File(dir, UnmatedAugmenter.DEFAULT_RGSTATS_FILENAME), false)) {
+    try (OutputStream rgOut = FileUtils.createOutputStream(new File(dir, UnmatedAugmenter.DEFAULT_RGSTATS_FILENAME))) {
       if (mFlags.isSet(NO_AUGMENT)) {
         new ReadGroupStatsCalculator().calculate(Arrays.asList(alignmentsFiles), rgOut);
       } else if (matedFile != null && unmatedFile != null) {

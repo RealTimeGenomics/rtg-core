@@ -150,7 +150,7 @@ public class DefaultOutputProcessorSynch implements OutputProcessor {
     createDir(dir);
     final File outputFile = new File(dir, THREAD_FILE_NAME + current);
     //System.err.println("out=" + outputFile.getAbsolutePath());
-    final OutputStream stream = FileUtils.createOutputStream(outputFile, true, false);
+    final OutputStream stream = FileUtils.createOutputStream(outputFile, true);
     final DefaultOutputProcessor child = new DefaultOutputProcessor(stream, mNames, region, outputFile);
     mChildren.add(child);
     if (region != HashingRegion.NONE) {

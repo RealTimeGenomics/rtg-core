@@ -79,7 +79,7 @@ public class PairedTempFileWriterImplTest extends TestCase {
 
   public PairedTempFileWriterImpl createPairedWriter(final NgsParams param, final File outputFile, boolean writeHeader) throws IOException {
     final PairedTempFileWriterImpl impl = new PairedTempFileWriterImpl(param, new UselessStatusIdListener(), SharedResources.generateSharedResources(param));
-    impl.initialiseMated(FileUtils.createOutputStream(outputFile, false, false));
+    impl.initialiseMated(FileUtils.createOutputStream(outputFile, false));
     return impl;
   }
 
@@ -923,7 +923,7 @@ public class PairedTempFileWriterImplTest extends TestCase {
           return super.calculateEditDistance(read, length, start, rc, maxMismatches, first, readId);
         }
       };
-      w.initialiseMated(FileUtils.createOutputStream(out, false, false));
+      w.initialiseMated(FileUtils.createOutputStream(out, false));
       try {
         w.nextTemplateId(0);
         final MatedHitInfo mhi = new MatedHitInfo();

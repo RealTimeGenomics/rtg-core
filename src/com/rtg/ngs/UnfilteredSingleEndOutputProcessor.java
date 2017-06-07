@@ -138,7 +138,7 @@ public class UnfilteredSingleEndOutputProcessor extends AbstractSdfOutputProcess
     final File out = TopNPairedEndOutputProcessorSync.determineTempFile(mParams, currentChild);
     final OutputStream outStream;
     if (mOutputSam) {
-      outStream = FileUtils.createOutputStream(out, true, false);
+      outStream = FileUtils.createOutputStream(out, true);
     } else {
       outStream = NullStreamUtils.getNullOutputStream();
     }

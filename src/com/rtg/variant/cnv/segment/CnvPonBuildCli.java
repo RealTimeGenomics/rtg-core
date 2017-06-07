@@ -142,7 +142,7 @@ public class CnvPonBuildCli extends AbstractCli {
       typicalSample.addColumn(col);
       final boolean gzip = !mFlags.isSet(NO_GZIP);
       final File bedFile = FileUtils.getOutputFileName((File) mFlags.getValue(OUTPUT_FLAG), gzip, BedUtils.BED_SUFFIX);
-      try (final BedWriter bw = new BedWriter(FileUtils.createOutputStream(bedFile, gzip))) {
+      try (final BedWriter bw = new BedWriter(FileUtils.createOutputStream(bedFile))) {
         writeBedHeader(bw);
         typicalSample.write(bw);
       }

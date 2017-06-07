@@ -132,7 +132,7 @@ public class SegregationVcfSearch extends AbstractCli {
     mSearch = new Search(mNewPenalty, mXoPenalty);
     try (final PrintStream outStream = new PrintStream(FileUtils.getZippedFileName(gzip, (File) mFlags.getValue(OUTPUT_FLAG)))) {
       mOut = outStream;
-      try (final BedWriter bedOut = new BedWriter(FileUtils.createOutputStream(bedFile, gzip))) {
+      try (final BedWriter bedOut = new BedWriter(FileUtils.createOutputStream(bedFile))) {
         mBed = bedOut;
 
         try (final VcfReader reader = VcfReader.openVcfReader((File) mFlags.getValue(VCF_FLAG))) {

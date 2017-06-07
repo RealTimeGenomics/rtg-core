@@ -44,7 +44,7 @@ import htsjdk.samtools.SAMSequenceRecord;
 public class SamResultsSansFilterTest extends AbstractNanoTest {
 
   public void writeTempFile(File out) throws IOException {
-    try (TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true, false))) {
+    try (TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true))) {
       final BinaryTempFileRecord bar = new BinaryTempFileRecord(true, false, false, true);
 
 //  + "1\t65\t0\t28833\t20\t4M5M\t=\t0\t0\tAGCT\t<<<<\tNM:i:1\tAS:i:3\n"

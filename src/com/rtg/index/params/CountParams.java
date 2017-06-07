@@ -76,7 +76,7 @@ public class CountParams extends ObjectParams implements OutputDirParams, Integr
       throw new IOException("Unable to create directory \"" + directory().getPath() + "\"");
     }
     final File filename = file(mZip ? name + FileUtils.GZ_SUFFIX : name);
-    return FileUtils.createOutputStream(filename, mZip, false);
+    return FileUtils.createOutputStream(filename);
   }
 
   /**

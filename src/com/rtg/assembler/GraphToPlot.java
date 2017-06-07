@@ -190,8 +190,8 @@ public final class GraphToPlot extends LoggedCli {
     final int width = (Integer) mFlags.getValue(WIDTH);
     final long start = (Long) mFlags.getValue(START);
 
-    try (final PrintStream graphStream = new PrintStream(FileUtils.createOutputStream(dotOutput, false));
-        final PrintStream pathStream = new PrintStream(FileUtils.createOutputStream(pathOutput, false))) {
+    try (final PrintStream graphStream = new PrintStream(FileUtils.createOutputStream(dotOutput));
+        final PrintStream pathStream = new PrintStream(FileUtils.createOutputStream(pathOutput))) {
       writeDotFile(graph, graphStream, pathStream, width, start);
     }
     return 0;

@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import com.rtg.util.ResultStreamHandler;
-import com.rtg.util.io.FileUtils;
 
 /**
  * Handles result streams
@@ -31,7 +30,7 @@ public class NgsResultStreamHandler extends ResultStreamHandler {
    * @param zip whether to zip output
    */
   public NgsResultStreamHandler(File outDir, boolean zip) {
-    super(outDir, null, zip, FileUtils.GZ_SUFFIX);
+    super(outDir, null, zip);
   }
 
   /**
@@ -41,7 +40,7 @@ public class NgsResultStreamHandler extends ResultStreamHandler {
    * @param zip whether to zip output
    */
   public NgsResultStreamHandler(File outDir, File tempFilesDir, boolean zip) {
-    super(outDir, tempFilesDir, zip, FileUtils.GZ_SUFFIX);
+    super(outDir, tempFilesDir, zip);
   }
 
   /**

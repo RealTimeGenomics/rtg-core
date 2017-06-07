@@ -484,7 +484,7 @@ public class PositionParams extends ObjectParams implements OutputDirParams, Int
     if (!outputDir().exists() && !outputDir().mkdirs()) {
       throw new FileNotFoundException();
     }
-    return FileUtils.createOutputStream(new File(outputDir(), name), mOutputParams.zip(), false);
+    return FileUtils.createOutputStream(new File(outputDir(), name));
   }
 
   @Override

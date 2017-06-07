@@ -188,7 +188,7 @@ public class DummySamResultsFilterTest extends TestCase {
   }
 
   public void writeTempFile(File out) throws IOException {
-    try (TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true, false))) {
+    try (TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true))) {
       final BinaryTempFileRecord bar = new BinaryTempFileRecord(true, false, false, false);
 
       bar.setAlignmentScore(3);

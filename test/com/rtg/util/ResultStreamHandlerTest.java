@@ -43,11 +43,11 @@ public class ResultStreamHandlerTest extends TestCase {
    * Test of file method, of class ResultStreamHandler.
    */
   public void testFile() {
-    final ResultStreamHandler rshz = new ResultStreamHandler(mDir, true, ".gzip");
+    final ResultStreamHandler rshz = new ResultStreamHandler(mDir, true);
     final File fz = rshz.file("fooblarg");
     final File expz = new File(mDir, "fooblarg");
     assertEquals(expz.getPath(), fz.getPath());
-    final ResultStreamHandler rsh = new ResultStreamHandler(mDir, false, ".gzip");
+    final ResultStreamHandler rsh = new ResultStreamHandler(mDir, false);
     final File f = rsh.file("fooblarg");
     final File exp = new File(mDir, "fooblarg");
     assertEquals(exp.getPath(), f.getPath());
@@ -59,13 +59,13 @@ public class ResultStreamHandlerTest extends TestCase {
    */
   public void testCreateFileStream() throws IOException {
     final String apples = "apples";
-    final ResultStreamHandler rshz = new ResultStreamHandler(mDir, true, ".gzip");
-    final File expz = new File(mDir, "foo.gzip");
+    final ResultStreamHandler rshz = new ResultStreamHandler(mDir, true);
+    final File expz = new File(mDir, "foo.gz");
     try (OutputStream fooz = rshz.createFileStream("foo")) {
       fooz.write(apples.getBytes());
     }
     assertEquals(apples, FileHelper.gzFileToString(expz));
-    final ResultStreamHandler rsh = new ResultStreamHandler(mDir, false, ".gzip");
+    final ResultStreamHandler rsh = new ResultStreamHandler(mDir, false);
     final File exp = new File(mDir, "foo");
     try (OutputStream foo = rsh.createFileStream("foo")) {
       foo.write(apples.getBytes());
@@ -76,7 +76,7 @@ public class ResultStreamHandlerTest extends TestCase {
 
   public void testError() throws IOException {
     assertTrue(mDir.createNewFile());
-    final ResultStreamHandler rshz = new ResultStreamHandler(mDir, true, ".gzip");
+    final ResultStreamHandler rshz = new ResultStreamHandler(mDir, true);
     try {
       rshz.createFileStream("whatever");
       fail();

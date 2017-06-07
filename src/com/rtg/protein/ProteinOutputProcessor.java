@@ -201,7 +201,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
       final boolean compressed = params.outputParams().isCompressOutput();
       final File outDir = mParams.outputParams().directory();
       mOutFile = new File(outDir, compressed ? TABULAR_ALIGNMENTS + FileUtils.GZ_SUFFIX : TABULAR_ALIGNMENTS);
-      mOut = FileUtils.createOutputStream(mOutFile, compressed, false);
+      mOut = FileUtils.createOutputStream(mOutFile);
       writeAlignmentHeader(mOut);
       mChildren = new ArrayList<>();
       assert mRead.numberSequences() <= Integer.MAX_VALUE;
@@ -221,7 +221,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
           throw new IOException("Could not create temporary directory: " + tempDir.getPath());
         }
         mOutFile = params.outputParams().resultStreamHandler().tempFile(name + (mParams.outputParams().isCompressOutput() ? FileUtils.GZ_SUFFIX : ""));
-        mOut = FileUtils.createOutputStream(mOutFile, mParams.outputParams().isCompressOutput(), false);
+        mOut = FileUtils.createOutputStream(mOutFile);
         if (childId == 0) {
           writeAlignmentHeader(mOut);
         }
@@ -489,7 +489,7 @@ public abstract class ProteinOutputProcessor implements OutputProcessor {
     if (mParams.outputParams().outputUnmapped()) {
       final boolean compressed = mParams.outputParams().isCompressOutput();
       final File outDir = mParams.outputParams().directory();
-      try (OutputStream unmapped = FileUtils.createOutputStream(new File(outDir, compressed ? UNMAPPED_FILE + FileUtils.GZ_SUFFIX : UNMAPPED_FILE), compressed, false)) {
+      try (OutputStream unmapped = FileUtils.createOutputStream(new File(outDir, compressed ? UNMAPPED_FILE + FileUtils.GZ_SUFFIX : UNMAPPED_FILE))) {
         writeUnmappedHeader(unmapped);
         final long idOffset = Math.max(mParams.buildFirstParams().readerRestriction().getStart(), 0);
         mSharedStatusCollector.writeUnmapped(unmapped, mParams.outputParams().outputReadNames() ? mParams.buildFirstParams().reader().names() : null, idOffset);

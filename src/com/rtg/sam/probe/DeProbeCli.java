@@ -271,7 +271,7 @@ public class DeProbeCli extends LoggedCli {
   }
 
   private void writeStrandFile(File file, ReferenceRanges<ProbeCounter> posRanges) throws IOException {
-    try (OutputStream posFile = FileUtils.createOutputStream(file, true)) {
+    try (OutputStream posFile = FileUtils.createOutputStream(file)) {
       writeProbeCounts(posFile, posRanges);
     }
   }
@@ -287,7 +287,7 @@ public class DeProbeCli extends LoggedCli {
     Diagnostic.userLog(onTargetSummary.toString());
     FileUtils.stringToFile(onTargetSummary.getAsTsv(), new File(outputDirectory(), ON_TARGET_SUMMARY_FILE));
 
-    try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(new File(outputDirectory(), CommonFlags.SUMMARY_FILE), false), out))) {
+    try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(new File(outputDirectory(), CommonFlags.SUMMARY_FILE)), out))) {
       summaryOut.println(onTargetSummary);
     }
   }

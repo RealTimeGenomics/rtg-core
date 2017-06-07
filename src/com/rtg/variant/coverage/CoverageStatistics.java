@@ -384,13 +384,13 @@ public class CoverageStatistics extends AbstractStatistics {
   public void generateReport() throws IOException {
     final HtmlReportHelper hrh = getReportHelper();
 
-    try (OutputStream statsFile = FileUtils.createOutputStream(new File(hrh.getBaseDir(), STATS_TSV_NAME), false)) {
+    try (OutputStream statsFile = FileUtils.createOutputStream(new File(hrh.getBaseDir(), STATS_TSV_NAME))) {
       statsFile.write(getStatistics(false).getBytes());
     }
 
     final List<List<Double>> levelsData = coverageLevels();
 
-    try (OutputStream levelsOs = FileUtils.createOutputStream(new File(hrh.getBaseDir(), LEVELS_TSV_NAME), false)) {
+    try (OutputStream levelsOs = FileUtils.createOutputStream(new File(hrh.getBaseDir(), LEVELS_TSV_NAME))) {
       writeLevels(levelsData, levelsOs);
     }
 

@@ -62,7 +62,7 @@ public class UnmatedSamResultsFilterTest extends AbstractNanoTest {
   }
 
   public void writeTempFile(File out) throws IOException {
-    try (TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true, false))) {
+    try (TempRecordWriter trw = new TempRecordWriterNio(FileUtils.createOutputStream(out, true))) {
       final BinaryTempFileRecord bar = new BinaryTempFileRecord(true, false, false, false);
 
 //  + "3\t129\t0\t28734\t30\t35M\t=\t0\t0\tACCT\t<<<<\tMF:i:18\tAS:i:0\n"

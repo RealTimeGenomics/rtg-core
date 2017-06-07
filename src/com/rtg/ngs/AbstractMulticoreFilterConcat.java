@@ -122,7 +122,7 @@ public abstract class AbstractMulticoreFilterConcat {
       final IndexingStreamCreator.IndexRunner indexRunner = new IndexingStreamCreator.IndexRunner(pipeToIndexIn, indexOut, indexer, i == 0, (int) mParams.searchParams().numberSequences(), dataFile.toString());
       outWrapper = new OutputWrapper(intStream, indexRunner);
     } else {
-      outWrapper = new OutputWrapper(FileUtils.createOutputStream(dataFile, samGzipIntFiles, false, samGzipIntFiles && (i == numThreads - 1)), null);
+      outWrapper = new OutputWrapper(FileUtils.createOutputStream(dataFile, samGzipIntFiles, samGzipIntFiles && (i == numThreads - 1)), null);
     }
     return outWrapper;
   }
@@ -183,7 +183,7 @@ public abstract class AbstractMulticoreFilterConcat {
       final OutputStream intCalStream;
       if (calibrate) {
         intermediateCal[i] = new File(intermediate[i].getParent(), intermediate[i].getName() + Recalibrate.EXTENSION);
-        intCalStream = FileUtils.createOutputStream(intermediateCal[i], false, false);
+        intCalStream = FileUtils.createOutputStream(intermediateCal[i], false);
       } else {
         intCalStream = null;
       }

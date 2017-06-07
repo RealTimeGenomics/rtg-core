@@ -101,7 +101,7 @@ public abstract class AbstractPairedEndOutputProcessorTest extends AbstractNanoT
 
     final PairedTempFileWriterImpl mSamWriter = new PairedTempFileWriterImpl(param, mUnmappedTracker, sharedResources);
     assertTrue(param.outputParams().directory().mkdir());
-    mSamWriter.initialiseMated(FileUtils.createOutputStream(tempFile, param.compressOutput(), false));
+    mSamWriter.initialiseMated(FileUtils.createOutputStream(tempFile, param.compressOutput()));
     final int max = param.maxFragmentLength();
     final int min = param.minFragmentLength();
 

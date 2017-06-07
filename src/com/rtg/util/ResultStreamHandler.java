@@ -27,30 +27,26 @@ public class ResultStreamHandler implements Serializable {
   /** If this is null, use <code>mDir</code> instead. */
   private final File mTempFilesDir;
   private final boolean mZip;
-  private final String mZipSuffix;
 
   /**
    * Constructor.
    * @param dir directory files are to be created in
    * @param tempFilesDir directory where intermediate files will be created
    * @param zip whether files should be compressed
-   * @param zipSuffix suffix to use on compressed files
    */
-  public ResultStreamHandler(File dir, File tempFilesDir, boolean zip, String zipSuffix) {
+  public ResultStreamHandler(File dir, File tempFilesDir, boolean zip) {
     mDir = dir;
     mTempFilesDir = tempFilesDir;
     mZip = zip;
-    mZipSuffix = zipSuffix;
   }
 
   /**
    * Constructor.
    * @param dir directory files are to be created in
    * @param zip whether files should be compressed
-   * @param zipSuffix suffix to use on compressed files
    */
-  public ResultStreamHandler(File dir, boolean zip, String zipSuffix) {
-    this(dir, null, zip, zipSuffix);
+  public ResultStreamHandler(File dir, boolean zip) {
+    this(dir, null, zip);
   }
 
   /**
@@ -100,6 +96,6 @@ public class ResultStreamHandler implements Serializable {
     if (!mDir.exists() && !mDir.mkdirs()) {
       throw new IOException("Unable to create output file directory: " + mDir.getPath());
     }
-    return FileUtils.createOutputStream(file(mZip ? name + mZipSuffix : name), mZip, false);
+    return FileUtils.createOutputStream(file(mZip ? name + FileUtils.GZ_SUFFIX : name));
   }
 }

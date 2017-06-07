@@ -192,7 +192,7 @@ public final class CnvSimulatorCli extends LoggedCli {
     final boolean gzip = !flags.isSet(NO_GZIP);
 
     try {
-      try (OutputStream mappingOutput = FileUtils.createOutputStream(getMappingFile(flags, gzip), gzip, false); SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(input)) {
+      try (OutputStream mappingOutput = FileUtils.createOutputStream(getMappingFile(flags, gzip)); SequencesReader dsr = SequencesReaderFactory.createDefaultSequencesReaderCheckEmpty(input)) {
         final PrereadType pType = dsr.getPrereadType();
 
         try (SdfWriter output = new SdfWriter(outputDirectory, Constants.MAX_FILE_SIZE, pType, false, true, !flags.isSet(NO_GZIP), dsr.type());

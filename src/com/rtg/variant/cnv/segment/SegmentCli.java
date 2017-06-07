@@ -337,7 +337,7 @@ public class SegmentCli extends LoggedCli {
     final boolean gzip = !mFlags.isSet(CommonFlags.NO_GZIP);
     final boolean index = !mFlags.isSet(CommonFlags.NO_INDEX);
     final File bedFile = FileUtils.getZippedFileName(gzip, new File(outputDirectory(), "unsegmented.bed"));
-    try (final BedWriter bw = new BedWriter(FileUtils.createOutputStream(bedFile, gzip))) {
+    try (final BedWriter bw = new BedWriter(FileUtils.createOutputStream(bedFile))) {
       mDataset.write(bw);
     }
     if (gzip && index) {
@@ -411,7 +411,7 @@ public class SegmentCli extends LoggedCli {
 
     Diagnostic.userLog("SEGMENTATION SUMMARY");
     Diagnostic.userLog(summary.toString());
-    try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(new File(outputDirectory(), CommonFlags.SUMMARY_FILE), false), mOut))) {
+    try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(new File(outputDirectory(), CommonFlags.SUMMARY_FILE)), mOut))) {
       summaryOut.print(summary);
     }
   }

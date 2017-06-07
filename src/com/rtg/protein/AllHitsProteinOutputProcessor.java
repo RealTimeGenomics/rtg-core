@@ -25,7 +25,6 @@ import com.rtg.ngs.NgsParams;
 import com.rtg.util.TsvUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.GzipAsynchOutputStream;
 
 /**
  * Thread safe implementation of All Hits output processor for protein
@@ -68,30 +67,19 @@ public class AllHitsProteinOutputProcessor extends ProteinOutputProcessor {
         close();  // needs to release open file, because silly master opens output file even when multithreaded (due to subclasses)
         final boolean gztemp = mParams.outputParams().isCompressOutput();
         final boolean quickcat = mParams.outputParams().isCompressOutput() == gztemp; // If both, we can avoid decompress/recompress during final cat
-        OutputStream out = null;
         final ArrayList<File> alignmentFileList = new ArrayList<>();
-        try {
-          for (final ProteinOutputProcessor child : mChildren) {
-            alignmentFileList.add(child.mOutFile);
-          }
-          final File[] files = alignmentFileList.toArray(new File[alignmentFileList.size()]);
-          if (quickcat) {
-            FileUtils.catInSync(mOutFile, false, files);
-          } else {
-            if (mParams.outputParams().isCompressOutput()) {
-              out = new GzipAsynchOutputStream(mOutFile);
-            } else {
-              out = FileUtils.createOutputStream(mOutFile, false, false);
-            }
+        for (final ProteinOutputProcessor child : mChildren) {
+          alignmentFileList.add(child.mOutFile);
+        }
+        final File[] files = alignmentFileList.toArray(new File[alignmentFileList.size()]);
+        if (quickcat) {
+          FileUtils.catInSync(mOutFile, false, files);
+        } else {
+          try (OutputStream out = FileUtils.createOutputStream(mOutFile)) {
             TsvUtils.tsvCat(gztemp, out, files);
           }
-        } finally {
-          if (out != null) {
-            out.flush();
-            out.close();
-          }
-          cleanup(mParams, alignmentFileList);
         }
+        cleanup(mParams, alignmentFileList);
       }
     } else {
       flushTemplateHits();

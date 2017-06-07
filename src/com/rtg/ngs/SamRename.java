@@ -252,7 +252,7 @@ public class SamRename extends AbstractCli {
         final SAMFileHeader header = read.getFileHeader();
         SamUtils.checkReadsGuid(header, mSdfId);
         SamUtils.addProgramRecord(header);
-        try (OutputStream baseOutStream = FileUtils.createOutputStream(outFile, FileUtils.isGzipFilename(outFile), false)) {
+        try (OutputStream baseOutStream = FileUtils.createOutputStream(outFile)) {
           final SAMFileWriterFactory fact = new SAMFileWriterFactory();
           fact.setMaxRecordsInRam(5000000);
           fact.setTempDirectory(sortTempDir);
