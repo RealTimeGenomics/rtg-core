@@ -139,7 +139,6 @@ public class GraphMapCli extends ParamsCli<GraphMapParams> {
   }
 
   protected static void initLocalFlags(CFlags flags) {
-    flags.registerExtendedHelp();
     flags.setValidator(new GraphMapValidator());
     initCommonFlags(flags);
     CommonFlags.initOutputDirFlag(flags);

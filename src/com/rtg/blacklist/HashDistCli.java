@@ -83,7 +83,6 @@ public class HashDistCli extends ParamsCli<HashDistParams> {
   }
 
   private static void initFlags(CFlags flags) {
-    flags.registerExtendedHelp();
     flags.setDescription("Counts the number of times k-mers occur in an SDF and produces a histogram. Optionally creates a blacklist of highly occurring hashes that can be used to increase mapping speed");
     CommonFlagCategories.setCategories(flags);
     CommonFlags.initOutputDirFlag(flags);

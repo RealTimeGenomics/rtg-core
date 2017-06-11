@@ -112,7 +112,6 @@ public class SegmentCli extends LoggedCli {
 
   @Override
   protected void initFlags() {
-    mFlags.registerExtendedHelp();
     mFlags.setDescription("Segments depth of coverage data to identify regions of consistent copy number.");
     CommonFlagCategories.setCategories(mFlags);
     CommonFlags.initOutputDirFlag(mFlags);

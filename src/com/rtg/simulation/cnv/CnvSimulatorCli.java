@@ -142,7 +142,6 @@ public final class CnvSimulatorCli extends LoggedCli {
 
   @Override
   protected void initFlags() {
-    mFlags.registerExtendedHelp();
     mFlags.setDescription("Creates copy number variation between two simulated genomes, one the baseline and the other the sample to be tested.");
     CommonFlagCategories.setCategories(mFlags);
     mFlags.registerRequired('i', INPUT_DIRECTORY, File.class, CommonFlags.SDF, "SDF containing input genome").setCategory(INPUT_OUTPUT);

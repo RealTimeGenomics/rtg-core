@@ -104,7 +104,6 @@ public class DeProbeCli extends LoggedCli {
 
   @Override
   protected void initFlags() {
-    mFlags.registerExtendedHelp();
     mFlags.setDescription(StringUtils.sentencify(description()));
     CommonFlagCategories.setCategories(mFlags);
     final Flag<File> inFlag = mFlags.registerRequired(File.class, CommonFlags.FILE, "SAM/BAM format files containing coordinate-sorted alignments")

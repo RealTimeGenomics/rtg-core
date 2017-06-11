@@ -80,7 +80,6 @@ public class MapFCli extends ParamsCli<NgsParams> {
   }
 
   protected static void initFlags(CFlags flags) {
-    flags.registerExtendedHelp();
     flags.setDescription("Filters reads for contaminant sequences by mapping them against the contaminant reference. It outputs two SDF files, one containing the input reads that map to the reference and one containing those that do not.");
     CommonFlagCategories.setCategories(flags);
     flags.setValidator(new MapfFlagsValidator());

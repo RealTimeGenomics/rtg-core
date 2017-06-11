@@ -75,7 +75,6 @@ final class ReadSimEvalParams {
 
   static void initFlags(final CFlags flags) {
     CommonFlagCategories.setCategories(flags);
-    flags.registerExtendedHelp();
     flags.registerRequired('r', READ_SDF, File.class, CommonFlags.SDF, "SDF containing reads").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     CommonFlags.initOutputDirFlag(flags);
     final Flag<File> inFlag = flags.registerRequired(File.class, FILE, "SAM/BAM format files");

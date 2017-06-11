@@ -74,7 +74,6 @@ public final class TaxStatsCli extends AbstractCli {
   @Override
   protected void initFlags() {
     CommonFlagCategories.setCategories(mFlags);
-    mFlags.registerExtendedHelp();
     mFlags.setDescription("Summarize and perform a verification of a taxonomy within an SDF.");
     mFlags.registerRequired(File.class, CommonFlags.SDF, "SDF to verify taxonomy for").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerOptional(SHOW_DETAILS_FLAG, "list details of sequences attached to internal nodes of the taxonomy").setCategory(CommonFlagCategories.REPORTING);

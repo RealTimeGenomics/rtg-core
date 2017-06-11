@@ -73,13 +73,12 @@ class AviewParams {
 
 
   static void initFlags(CFlags flags) {
-    flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
 
     // Input sources
     CommonFlags.initReferenceTemplate(flags, true);
     flags.registerOptional('r', READS_SDF, File.class, CommonFlags.SDF, "read SDF (only needed to indicate correctness of simulated read mappings)")
-        .setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.INPUT_OUTPUT);
+      .setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.INPUT_OUTPUT);
     final Flag<File> in = flags.registerRequired(File.class, CommonFlags.FILE, "alignment SAM/BAM files").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     in.setMinCount(0);
     in.setMaxCount(Integer.MAX_VALUE);
@@ -120,7 +119,7 @@ class AviewParams {
     // Random extras
     flags.registerOptional(XMAPPING_TOLERANCE, Integer.class, CommonFlags.INT, "variation allowed in start position when determining correctness of simulated read mapping", 0).setCategory(CommonFlagCategories.REPORTING);
     flags.registerOptional('U', UNMAPPED_SAM, File.class, CommonFlags.FILE, "unmapped SAM file (only for simulated data)")
-        .setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.REPORTING);
+      .setMaxCount(Integer.MAX_VALUE).setCategory(CommonFlagCategories.REPORTING);
 
     flags.addRequiredSet(in);
     flags.addRequiredSet(listFlag);

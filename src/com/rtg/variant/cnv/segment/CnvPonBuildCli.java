@@ -72,7 +72,6 @@ public class CnvPonBuildCli extends AbstractCli {
 
   @Override
   protected void initFlags() {
-    mFlags.registerExtendedHelp();
     mFlags.setDescription("Construct a normalized coverage sample from a panel of coverage outputs, for use during segmentation.");
     CommonFlagCategories.setCategories(mFlags);
     CommonFlags.initForce(mFlags);

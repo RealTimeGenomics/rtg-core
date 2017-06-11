@@ -69,7 +69,6 @@ public class BuilderCli extends AbstractCli {
   @Override
   protected void initFlags() {
     CommonFlagCategories.setCategories(mFlags);
-    mFlags.registerExtendedHelp();
     mFlags.setDescription("Create an AVR model from positive and negative training examples.");
 
     mFlags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "output AVR model").setCategory(INPUT_OUTPUT);

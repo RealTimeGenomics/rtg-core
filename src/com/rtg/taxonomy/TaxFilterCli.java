@@ -69,7 +69,6 @@ public class TaxFilterCli extends AbstractCli {
 
   @Override
   protected void initFlags() {
-    mFlags.registerExtendedHelp();
     mFlags.setDescription("Reference taxonomy filtering.");
     CommonFlagCategories.setCategories(mFlags);
     mFlags.registerRequired('i', INPUT_FLAG, File.class, CommonFlags.FILE, "taxonomy input. May be either a taxonomy TSV file or an SDF containing taxonomy information").setCategory(INPUT_OUTPUT);

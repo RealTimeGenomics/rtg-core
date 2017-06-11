@@ -124,7 +124,6 @@ public class CnvCli extends ParamsCli<CnvProductParams> {
 
   @Override
   protected void initFlags() {
-    mFlags.registerExtendedHelp();
     mFlags.setDescription("Identifies copy number variation statistics and reports in a BED format file.");
     CommonFlagCategories.setCategories(mFlags);
     mFlags.setValidator(new CnvProductValidator());

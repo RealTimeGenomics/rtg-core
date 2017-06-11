@@ -63,7 +63,6 @@ public class RecalibrateCli extends AbstractCli {
 
   @Override
   protected void initFlags() {
-    mFlags.registerExtendedHelp();
     mFlags.setDescription("Creates quality calibration files for all supplied SAM/BAM files.");
     CommonFlagCategories.setCategories(mFlags);
     final Flag<File> inFlag = mFlags.registerRequired(File.class, FILE, "SAM/BAM format files containing mapped reads");

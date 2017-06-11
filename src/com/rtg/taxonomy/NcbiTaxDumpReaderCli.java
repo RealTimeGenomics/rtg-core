@@ -145,7 +145,6 @@ public class NcbiTaxDumpReaderCli extends AbstractCli {
 
   @Override
   protected void initFlags() {
-    mFlags.registerExtendedHelp();
     mFlags.registerRequired(File.class, CommonFlags.DIR, "NCBI taxdump directory.").setCategory(INPUT_OUTPUT);
     mFlags.setDescription("To convert the NCBI taxonomy into an RTG taxonomy, try:\n\n"
       + "  wget ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz\n"

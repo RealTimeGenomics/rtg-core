@@ -133,7 +133,6 @@ public class CoverageCli extends ParamsCli<CoverageParams> {
 
   @Override
   protected void initFlags() {
-    mFlags.registerExtendedHelp();
     mFlags.setDescription("Measures and reports coverage depth of read alignments across a reference.");
     CommonFlagCategories.setCategories(mFlags);
     mFlags.setValidator(new CoverageValidator());

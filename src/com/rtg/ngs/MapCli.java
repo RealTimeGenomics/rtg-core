@@ -58,7 +58,6 @@ public class MapCli extends ParamsCli<NgsParams>  {
   }
 
   private static void initFlags(CFlags flags) {
-    flags.registerExtendedHelp();
     flags.setDescription("Aligns sequence reads onto a reference template, creating an alignments file in the Sequence Alignment/Map (SAM) format.");
     CommonFlagCategories.setCategories(flags);
     flags.setValidator(new MapFlagsValidator());

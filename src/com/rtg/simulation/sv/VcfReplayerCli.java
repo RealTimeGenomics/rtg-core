@@ -260,13 +260,12 @@ public class VcfReplayerCli extends AbstractCli {
   }
 
   static void getFlags(CFlags flags) {
-    flags.registerExtendedHelp();
     CommonFlags.initOutputDirFlag(flags);
     CommonFlags.initReferenceTemplate(flags, true);
     flags.registerRequired('v', REPLAY, File.class, CommonFlags.FILE, "VCF file to replay");
     flags.setValidator(flags1 -> CommonFlags.validateOutputDirectory(flags1)
-        && CommonFlags.validateInputFile(flags1, REPLAY)
-        && CommonFlags.validateTemplate(flags1));
+      && CommonFlags.validateInputFile(flags1, REPLAY)
+      && CommonFlags.validateTemplate(flags1));
   }
 
   @Override

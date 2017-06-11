@@ -87,7 +87,6 @@ public class VcfValidatorCli extends AbstractCli {
   protected void initFlags() {
     mFlags.setDescription("Validates the contents of a VCF file conform to expected value ranges.");
     CommonFlagCategories.setCategories(mFlags);
-    mFlags.registerExtendedHelp();
     mFlags.registerRequired(File.class, CommonFlags.FILE, "VCF format file to be validated").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerOptional(XRULES, File.class, CommonFlags.FILE, "File defining rules for validation of VCF input").setCategory(CommonFlagCategories.INPUT_OUTPUT);
     mFlags.registerOptional(XVERBOSE, "Set to output all failed records to error output instead of the first " + MAX_RECORD_WARNINGS).setCategory(CommonFlagCategories.REPORTING);

@@ -171,7 +171,6 @@ public class MetagenomicsWrapperCli extends ParamsCli<MetaPipelineParams> {
 
   protected static void initFlags(CFlags flags, boolean species, boolean protein) {
     CommonFlagCategories.setCategories(flags);
-    flags.registerExtendedHelp();
     flags.setDescription("Runs the metagenomic composition and functional pipelines. The pipelines consist of read filtering, read alignment then species composition, and protein searching.");
     CommonFlags.initOutputDirFlag(flags);
     final Flag<File> input = flags.registerOptional(INPUT, File.class, CommonFlags.SDF_OR_FILE, "input SDF or single end fastq input").setCategory(CommonFlagCategories.INPUT_OUTPUT);

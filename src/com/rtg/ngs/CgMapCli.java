@@ -133,7 +133,6 @@ public class CgMapCli extends ParamsCli<NgsParams> {
 
   @Override
   protected void initFlags() {
-    mFlags.registerExtendedHelp();
     mFlags.setDescription("Aligns Complete Genomics sequence reads onto a reference template, creating an alignments file in the Sequence Alignment/Map (SAM) format.");
     CommonFlagCategories.setCategories(mFlags);
     mFlags.setValidator(VALIDATOR);
@@ -165,7 +164,7 @@ public class CgMapCli extends ParamsCli<NgsParams> {
 
     mFlags.registerOptional('n', MapFlags.MAX_TOP_RESULTS_FLAG, Integer.class, CommonFlags.INT, "maximum number of top equal results output per read", 5).setCategory(REPORTING);
     final Flag<String> format = mFlags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "format of read data", FormatCli.SDF_FORMAT).setCategory(INPUT_OUTPUT);
-    format.setParameterRange(new String[] {FormatCli.SDF_FORMAT, FormatCli.TSV_FORMAT});
+    format.setParameterRange(new String[]{FormatCli.SDF_FORMAT, FormatCli.TSV_FORMAT});
     mFlags.registerOptional(LEGACY_CIGARS, "use legacy cigars in output").setCategory(UTILITY);
 
     CommonFlags.initReadRange(mFlags);

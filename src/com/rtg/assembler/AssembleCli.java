@@ -79,7 +79,6 @@ public class AssembleCli extends ParamsCli<AssembleParams> {
 
   protected static void initLocalFlags(CFlags flags) {
     CommonFlagCategories.setCategories(flags);
-    flags.registerExtendedHelp();
     flags.setValidator(new AssembleFlagsValidator());
     DeBruijnAssemblerCli.initCommonFlags(flags);
     GraphMapCli.initCommonFlags(flags);

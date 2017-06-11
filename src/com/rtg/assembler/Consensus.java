@@ -90,7 +90,6 @@ public class Consensus extends LoggedCli {
   }
   protected static void initFlagsLocal(CFlags flags) {
     flags.setDescription("Attempts to reduce the complexity of a graph by removing invalid paths.");
-    flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
     CommonFlags.initOutputDirFlag(flags);
     initCommonFlags(flags);

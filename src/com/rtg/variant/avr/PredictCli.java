@@ -57,7 +57,6 @@ public class PredictCli extends AbstractCli {
 
   @Override
   protected void initFlags() {
-    mFlags.registerExtendedHelp();
     mFlags.setDescription("Use an AVR model to re-score variants in a VCF file.");
     CommonFlagCategories.setCategories(mFlags);
     CommonFlags.initNoGzip(mFlags);
@@ -76,7 +75,7 @@ public class PredictCli extends AbstractCli {
     mFlags.registerOptional('f', FIELD_FLAG, String.class, STRING, "the name of the VCF FORMAT field in which to store the computed score", AbstractPredictModel.AVR).setCategory(CommonFlagCategories.REPORTING);
     mFlags.setValidator(flags ->
       CommonFlags.validateInputFile(flags, INPUT_FLAG)
-      && CommonFlags.validateOutputFile(flags, VcfUtils.getZippedVcfFileName(!flags.isSet(NO_GZIP), (File) flags.getValue(OUTPUT_FLAG)))
+        && CommonFlags.validateOutputFile(flags, VcfUtils.getZippedVcfFileName(!flags.isSet(NO_GZIP), (File) flags.getValue(OUTPUT_FLAG)))
     );
   }
 

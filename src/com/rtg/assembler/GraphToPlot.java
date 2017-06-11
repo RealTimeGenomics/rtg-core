@@ -203,7 +203,6 @@ public final class GraphToPlot extends LoggedCli {
 
   }
   protected static void initFlagsLocal(CFlags flags) {
-    flags.registerExtendedHelp();
     flags.setDescription("Produces graphs of the contigs contained in the specified graph directory.");
     CommonFlags.initOutputDirFlag(flags);
     flags.registerRequired(File.class, CommonFlags.DIR, "input graph directory");

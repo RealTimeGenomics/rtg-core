@@ -149,7 +149,6 @@ public class DeBruijnAssemblerCli extends ParamsCli<DeBruijnParams> {
   }
 
   protected static void initLocalFlags(CFlags flags) {
-    flags.registerExtendedHelp();
     flags.setValidator(new DeBruijnValidator());
     initCommonFlags(flags);
     flags.registerOptional('s', XSTRING_KMER, "use string based kmers").setCategory(SENSITIVITY_TUNING);

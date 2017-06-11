@@ -131,7 +131,6 @@ public class SpeciesCli extends ParamsCli<SpeciesParams> {
   public static void initFlagsLocal(CFlags flags) {
     flags.setValidator(new SpeciesFlagsValidator());
     flags.setDescription("Calculates a species distribution from a metagenomic sample.");
-    flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
     flags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.DIR, "directory for output").setCategory(INPUT_OUTPUT);
     flags.registerRequired('t', TEMPLATE_FLAG, File.class, CommonFlags.SDF, "SDF containing the genomes").setCategory(INPUT_OUTPUT);

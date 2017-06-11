@@ -65,7 +65,6 @@ public class Sam2Bam extends AbstractCli {
 
   // Separated out from above method for ease of testing
   static void initFlags(CFlags flags) {
-    flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
     flags.setDescription("Produces an indexed BAM file from coordinate-sorted SAM/BAM files.");
     CommonFlags.initForce(flags);

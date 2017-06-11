@@ -69,7 +69,6 @@ public final class SamValidatorCli extends AbstractCli {
    * @param flags flags object to set up
    */
   protected void initFlags(final CFlags flags) {
-    flags.registerExtendedHelp();
     flags.setDescription("Prints alignment statistics from the contents of the output SAM/BAM file.");
     CommonFlagCategories.setCategories(flags);
     CommonFlags.initReferenceTemplate(flags, true);

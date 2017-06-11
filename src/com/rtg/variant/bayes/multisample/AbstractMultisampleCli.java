@@ -280,7 +280,6 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
    * @param flags flags to initialise
    */
   public void initFlags(CFlags flags) {
-    flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
     flags.registerOptional(NO_CALIBRATION, "if set, ignore mapping calibration files").setCategory(UTILITY);
     CommonFlags.initReferenceTemplate(flags, true);
@@ -334,9 +333,9 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
 
     //Extra INFO / FORMAT fields
     flags.registerOptional(X_INFO_ANNOTATION_FLAG, VcfInfoField.class, CommonFlags.STRING, "additional VCF INFO fields").setCategory(REPORTING)
-        .setParameterRange(new String[] {VcfInfoField.IC.name(), VcfInfoField.EP.name(), VcfInfoField.LAL.name(), VcfInfoField.QD.name(), VcfInfoField.NAA.name(), VcfInfoField.AN.name(), VcfInfoField.AC.name(), VcfInfoField.RTRM.name(), VcfInfoField.RSPLT.name(), VcfInfoField.SGP.name()}).setMaxCount(Integer.MAX_VALUE).enableCsv();
+      .setParameterRange(new String[]{VcfInfoField.IC.name(), VcfInfoField.EP.name(), VcfInfoField.LAL.name(), VcfInfoField.QD.name(), VcfInfoField.NAA.name(), VcfInfoField.AN.name(), VcfInfoField.AC.name(), VcfInfoField.RTRM.name(), VcfInfoField.RSPLT.name(), VcfInfoField.SGP.name()}).setMaxCount(Integer.MAX_VALUE).enableCsv();
     flags.registerOptional(X_FORMAT_ANNOTATION_FLAG, VcfFormatField.class, CommonFlags.STRING, "additional VCF FORMAT fields").setCategory(REPORTING)
-        .setParameterRange(new String[] {VcfFormatField.GQD.name(), VcfFormatField.ZY.name(), VcfFormatField.PD.name()}).setMaxCount(Integer.MAX_VALUE).enableCsv();
+      .setParameterRange(new String[]{VcfFormatField.GQD.name(), VcfFormatField.ZY.name(), VcfFormatField.PD.name()}).setMaxCount(Integer.MAX_VALUE).enableCsv();
 
     flags.registerOptional(X_ALLELE_BALANCE_PROBABILITY, AlleleBalanceFactor.class, CommonFlags.STRING, "method for calculating allele balance", AlleleBalanceFactor.NONE).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_EXPECTED_ALLELIC_FRACTION, Double.class, CommonFlags.FLOAT, "expected germline heterozygous alternate allele fraction", 0.5).setCategory(SENSITIVITY_TUNING);

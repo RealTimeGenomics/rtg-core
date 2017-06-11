@@ -60,7 +60,6 @@ public class AvrStatsCli extends AbstractCli {
   @Override
   protected void initFlags() {
     CommonFlagCategories.setCategories(mFlags);
-    mFlags.registerExtendedHelp();
     mFlags.setDescription("Print statistics that describe an AVR model.");
     mFlags.registerOptional(DUMP_PROPERTIES_FLAG, "if set, output the raw model properties").setCategory(CommonFlagCategories.UTILITY);
     mFlags.registerOptional(DUMP_MODEL_FLAG, "if set, output a verbose representation of the model").setCategory(CommonFlagCategories.UTILITY);

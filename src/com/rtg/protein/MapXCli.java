@@ -341,7 +341,6 @@ public class MapXCli extends ParamsCli<NgsParams> {
   }
 
   private void initFlags(final CFlags flags) {
-    flags.registerExtendedHelp();
     flags.setDescription("Searches translated read data sets of defined length (e.g. 100 bp reads) against protein databases or translated nucleotide sequences.");
     CommonFlagCategories.setCategories(flags);
     flags.registerRequired('i', READS_FLAG, File.class, "SDF|FILE", "query read sequences").setCategory(INPUT_OUTPUT);
@@ -350,7 +349,7 @@ public class MapXCli extends ParamsCli<NgsParams> {
 
     // No Paired End input for MapX
     final Flag<String> formatFlag = flags.registerOptional('F', FormatCli.FORMAT_FLAG, String.class, "FORMAT", "input format for reads", FormatCli.SDF_FORMAT).setCategory(INPUT_OUTPUT);
-    formatFlag.setParameterRange(new String[] {FormatCli.SDF_FORMAT, FormatCli.FASTA_FORMAT, FormatCli.FASTQ_FORMAT, FormatCli.SAM_SE_FORMAT});
+    formatFlag.setParameterRange(new String[]{FormatCli.SDF_FORMAT, FormatCli.FASTA_FORMAT, FormatCli.FASTQ_FORMAT, FormatCli.SAM_SE_FORMAT});
 
     final Flag<String> filter = flags.registerOptional('f', CommonFlags.OUTPUT_FILTER_FLAG, String.class, CommonFlags.STRING, "output filter", "topn");
     filter.setCategory(REPORTING);

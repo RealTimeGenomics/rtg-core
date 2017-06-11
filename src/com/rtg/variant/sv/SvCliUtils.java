@@ -80,7 +80,6 @@ public final class SvCliUtils {
    * @param flags the flags to initialise
    */
   public static void initCommonFlags(CFlags flags) {
-    flags.registerExtendedHelp();
     CommonFlagCategories.setCategories(flags);
     CommonFlags.initReferenceTemplate(flags, true);
     final Flag<File> inFlag = flags.registerRequired(File.class, CommonFlags.FILE, "SAM/BAM format files containing mapped reads");

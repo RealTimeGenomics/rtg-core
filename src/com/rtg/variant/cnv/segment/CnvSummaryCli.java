@@ -52,7 +52,6 @@ public class CnvSummaryCli extends AbstractCli {
 
   @Override
   protected void initFlags() {
-    mFlags.registerExtendedHelp();
     mFlags.setDescription("Summarize the intersection of CNVs with regions of interest.");
     CommonFlagCategories.setCategories(mFlags);
     mFlags.registerRequired('i', INPUT_FLAG, File.class, FILE, "VCF file containing CNV variants to be summarized. Use '-' to read from standard input").setCategory(INPUT_OUTPUT);

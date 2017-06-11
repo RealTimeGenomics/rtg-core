@@ -104,7 +104,6 @@ public class ExtractPath extends AbstractCli {
   }
 
   protected static void initFlagsLocal(CFlags flags) {
-    flags.registerExtendedHelp();
     flags.setDescription("Outputs the sequence pertaining to the specified path.");
     flags.registerRequired(File.class, CommonFlags.DIR, "input graph directory");
     flags.registerRequired('p', PATH, Long.class, CommonFlags.INT, "path that will be traced through the graph and output");
