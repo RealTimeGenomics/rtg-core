@@ -116,6 +116,9 @@ class DiscordantReadSet {
     mUnion = mUnion.union(drs.mUnion);
     assert mUnion != null;
     mConstraints.addAll(drs.mConstraints);
+    if (mRecords != null) {
+      mRecords.addAll(drs.mRecords);
+    }
   }
 
   @Override

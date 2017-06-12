@@ -730,11 +730,7 @@ public class Calibrator {
     final Integer inh = SamUtils.getNHOrIH(sam);
     final int nh = inh == null ? 1 : inh;
     mNhHistogram.increment(nh);
-    if (nh > 1) {
-      return;
-    }
-    final int mapq = sam.getMappingQuality();
-    if (mapq == 0) {
+    if (!SamUtils.uniquelyMapped(sam)) {
       return;
     }
     getParser().setTemplateStart(zeroBasedStart);

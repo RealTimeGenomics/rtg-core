@@ -18,11 +18,11 @@ import static com.rtg.util.StringUtils.FS;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
-import com.rtg.util.Resources;
+import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
@@ -31,70 +31,35 @@ import com.rtg.util.io.SimpleArchive;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.FileHelper;
 
-import junit.framework.TestCase;
-
 /**
  */
-public class SvToolTaskTest extends TestCase {
+public class SvToolTaskTest extends AbstractNanoTest {
 
   public void testUnsortedReadStats() throws IOException {
-    check(REF_SEQS, SAM_UNSORTED, "RG1\t200000\t56893\t1991255\t69693925\t55590\t22261070\t9022416526\t55590\t22261070\t9022416526\t5\t55590\t236\t1067", new String[] {}, null, new String[] {"is not sorted in coordinate order."}, "", 1, true, null);
+    check(REF_SEQS, SAM_UNSORTED, "RG1\t200000\t56893\t1991255\t69693925\t55590\t22261070\t9022416526\t55590\t22261070\t9022416526\t5\t55590\t236\t1067", new String[] {"is not sorted in coordinate order."}, 1);
   }
 
-  protected static void check(String refSeq, String sam, String readStats, String[] args0, String expFile,
-      String[] errorMsgs, String logMsg, int errCode, boolean gzip, String[] erlines) throws IOException {
-    final File output = FileUtils.createTempDir("testcheck", "sv_out");
-    FileHelper.deleteAll(output);
-    final File input = FileUtils.createTempDir("testcheck", "sv_in");
-    try {
+  public void testMakeParams() throws IOException, InvalidParamsException {
+    check(REF_SEQS, SAM_UNSORTED, "RG1\t200000\t56893\t1991255\t69693925\t55590\t22261070\t9022416526\t55590\t22261070\t9022416526\t5\t55590\t236\t1067", new String[] {"is not sorted in coordinate order."}, 1);
+  }
+
+  protected void check(String refSeq, String sam, String readStats,
+                       String[] errorMsgs, int errCode) throws IOException {
+    try (TestDirectory tdir = new TestDirectory("svtooltask")) {
+
+      final File output = new File(tdir, "sv_out");
+      final File input = FileUtils.createTempDir("testcheck", "sv_in", tdir);
       FileUtils.stringToFile(sam, new File(input, OUT_SAM));
       final File readStatsFile = new File(input, "readstats");
       FileUtils.stringToFile(readStats, readStatsFile);
       final String outn = output.getPath();
       final String inn = input.getPath();
-      final File templ = ReaderTestUtils.getDNADir(refSeq);
-      try {
-        final MainResult res = MainResult.run(new SvToolCli(), "-t", templ.getPath(), "-o", outn, "-r", readStatsFile.toString(), inn + FS + OUT_SAM, "-s", "1", "-f", "1", "--simple-signals");
-        //System.err.println("err\n" + errStr);
-        assertEquals("Error" + res.err(), errCode, res.rc());
-        //System.err.println(errStr);
-        TestUtils.containsAll(res.err(), errorMsgs);
-        final String lout = FileUtils.fileToString(new File(outn, "sv.log"));
-        if (logMsg != null && !logMsg.equals("")) {
-          assertTrue(lout.contains(logMsg));
-        }
-        if ((errorMsgs.length == 0 || (errorMsgs.length == 1 && errorMsgs[0].equals(""))) && expFile != null) {
-          checkFile(output, SvToolParams.NAME_SIMPLE, gzip, expFile);
-          checkFile(output, SvToolParams.NAME_BAYESIAN, gzip, expFile + "_bayes");
-        }
-        if (erlines != null) {
-          // check sequencer.errors output file
-          final File sefile = new File(output, "sequencer.errors");
-          final String result = FileUtils.fileToString(sefile);
-          TestUtils.containsAll(result, erlines);
-        }
-      } finally {
-        FileHelper.deleteAll(templ);
-      }
-    } finally {
-      FileHelper.deleteAll(output);
-      FileHelper.deleteAll(input);
-    }
-  }
-
-  static void checkFile(File output, String fileName, boolean gzip, String expFile) throws IOException {
-    final File file = new File(output, fileName + (gzip ? ".gz" : ""));
-    final String result = gzip ? FileHelper.gzFileToString(file) : FileUtils.fileToString(file);
-    //System.out.println(SvToolParams.NAME + ".txt" + " contains:\n" + result);
-    final String res = "com/rtg/variant/sv/resources/svtasktest" + expFile + ".txt";
-
-    final InputStream stream = Resources.getResourceAsStream(res);
-    assertNotNull("Cant find:" + res, stream);
-    try {
-      final String expected = FileUtils.streamToString(stream);
-      assertTrue(TestUtils.startLines(expected.replaceAll("\t", " "), result.replaceAll("\t", " "), false));
-    } finally {
-      stream.close();
+      final File templ = ReaderTestUtils.getDNASubDir(refSeq, tdir);
+      final MainResult res = MainResult.run(new SvToolCli(), "-t", templ.getPath(), "-o", outn, "-r", readStatsFile.toString(), inn + FS + OUT_SAM, "-s", "1", "-f", "1", "--simple-signals");
+      //System.err.println("err\n" + errStr);
+      assertEquals("Error" + res.err(), errCode, res.rc());
+      //System.err.println(errStr);
+      TestUtils.containsAll(res.err(), errorMsgs);
     }
   }
 
@@ -142,33 +107,11 @@ public class SvToolTaskTest extends TestCase {
       assertEquals(res.err(), 0, res.rc());
 
       final String bayes = StringUtils.grep(FileHelper.gzFileToString(new File(output, "sv_bayesian.tsv.gz")), "^[^#]");
-
-      final File expBayesFile = FileHelper.resourceToFile("com/rtg/variant/sv/resources/smallsvBayesExp.txt.gz", new File(tempDir, "expBayes.txt.gz"));
-      final String expBayes = StringUtils.grep(FileHelper.gzFileToString(expBayesFile), "^[^#]");
-      assertEquals(expBayes, bayes);
-
+      mNano.check("small_sv_bayes.bed", bayes);
       final String interesting = FileHelper.gzFileToString(new File(output, "sv_interesting.bed.gz"));
-
-      TestUtils.containsAll(interesting,
-                            "#chr\tstart\tend\tareas\tmaxscore\taverage",
-                            "simulatedSequence1\t47400\t47694\t3\t1.0889\t0.3722",
-                            "simulatedSequence1\t49712\t52717\t5\t2.5766\t1.1907",
-                            "simulatedSequence1\t52747\t52758\t1\t0.0000\t-0.0721",
-                            "simulatedSequence1\t52766\t52767\t1\t0.0000\t-0.0630",
-                            "simulatedSequence1\t52769\t52789\t1\t0.1322\t0.1099",
-                            "simulatedSequence1\t52793\t52807\t1\t0.0000\t-0.0258",
-                            "simulatedSequence1\t52810\t53134\t1\t1.8786\t1.1216",
-                            "simulatedSequence1\t55032\t55119\t1\t0.4204\t0.0312",
-                            "simulatedSequence1\t55190\t55246\t1\t0.1123\t-0.0294",
-                            "simulatedSequence1\t55779\t56265\t4\t7.5133\t1.7407",
-                            "simulatedSequence1\t58291\t99999\t1\t1.7161\t0.5013"
-                            );
-
+      mNano.check("small_sv_interesting.bed", interesting);
       final String simple = StringUtils.grep(FileHelper.gzFileToString(new File(output, "sv_simple.tsv.gz")), "^[^#]");
-
-      final File expSimpleFile = FileHelper.resourceToFile("com/rtg/variant/sv/resources/smallsvSimpleExp.txt.gz", new File(tempDir, "expSimple.txt.gz"));
-      final String expSimple = StringUtils.grep(FileHelper.gzFileToString(expSimpleFile), "^[^#]");
-      assertEquals(expSimple, simple);
+      mNano.check("small_sv_simple.txt", simple);
     }
 
   }

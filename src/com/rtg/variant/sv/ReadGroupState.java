@@ -164,12 +164,7 @@ public class ReadGroupState {
 
   boolean update(SAMRecord rec) {
     final int start = rec.getAlignmentStart() - 1; // zero-based, inclusive
-    Integer nh = SamUtils.getNHOrIH(rec);
-    if (nh == null) {
-      //already should have warned in svprep
-      nh = 1;
-    }
-    if (nh > 1) {
+    if (!SamUtils.uniquelyMapped(rec)) {
       mAmbiguousCoverage.increment(start);
       return true;
     }

@@ -12,6 +12,8 @@
 package com.rtg.variant.sv.discord;
 
 import com.reeltwo.jumble.annotations.TestClass;
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.sam.SamUtils;
 import com.rtg.util.MathUtils;
 import com.rtg.util.Utils;
@@ -38,8 +40,18 @@ import htsjdk.samtools.SAMRecord;
  */
 @TestClass({"com.rtg.variant.sv.discord.BreakpointConstraintTest", "com.rtg.variant.sv.discord.FlipTest"})
 public final class BreakpointConstraint extends AbstractBreakpointGeometry {
-  /** Maximum number of standard deviations */
-  private static final int MAX_FRAGMENT_MULTIPLIER = 4;
+
+  /** The number of standard deviations delineating concordant vs discordant fragment lengths */
+  private static final double DISCORDANT_NUM_STD_DEV = GlobalFlags.getDoubleValue(CoreGlobalFlags.SV_DISCORDANT_STD_DEV);
+
+  /**
+   * Get the amount of deviation from the mean considered concordant
+   * @param rgs read group statistics.
+   * @return the concordant deviation.
+   */
+  static double concordantDeviation(ReadGroupStats rgs) {
+    return DISCORDANT_NUM_STD_DEV * rgs.fragmentStdDev();
+  }
 
   /**
    * Get the minimum gap between first and second read.
@@ -47,7 +59,7 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
    * @return the minimum gap.
    */
   static int gapMin(ReadGroupStats rgs) {
-    return Math.max(0, (int) (rgs.gapMean() - MAX_FRAGMENT_MULTIPLIER * rgs.gapStdDev() + .5));
+    return Math.max(0, (int) (rgs.gapMean() - concordantDeviation(rgs) + .5));
   }
 
   /**
@@ -56,7 +68,7 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
    * @return the maximum gap.
    */
   static int gapMax(ReadGroupStats rgs) {
-    return (int) (rgs.gapMean() + MAX_FRAGMENT_MULTIPLIER * rgs.gapStdDev() + .5);
+    return (int) (rgs.gapMean() + concordantDeviation(rgs) + .5);
   }
 
 
@@ -75,7 +87,7 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
     //this(makeGeometry(rec, mo, rgs), rgs.gapMean(), rgs.gapStdDev());
     mProxy = makeGeometry(rec, mo, rgs);
     mMeanR = r(mProxy.getX(), mProxy.getY()) + rgs.gapMean();
-    mStdDeviation = rgs.gapStdDev();
+    mStdDeviation = rgs.fragmentStdDev();
     assert getR() < mMeanR && mMeanR < getS() : this.toString();
     assert globalIntegrity();
   }
@@ -114,37 +126,32 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
     return me;
   }
 
-  private static int as(SAMRecord rec) {
-    final Integer ii = rec.getIntegerAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE);
+
+  private static int overlap(SAMRecord rec, int readLength) {
+    final Integer ii = rec.getIntegerAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES);
     if (ii == null) {
-      //default case when AS not supplied
-      return 0;
+      //default case when attributes not supplied
+      return fixedOverlap(readLength);
     }
     return ii;
   }
 
-  private static int mateAs(SAMRecord rec) {
-    final Integer ii = rec.getIntegerAttribute(SamUtils.ATTRIBUTE_MATE_ALIGNMENT_SCORE);
-    if (ii == null) {
-      //default case when AS not supplied
-      return 0;
-    }
-    return ii;
+  private static int fixedOverlap(int readLength) {
+    return readLength * ReadGroupStats.ALIGNMENT_IGNORED_FRACTION / 100;
   }
-
 
   static BreakpointGeometry makeGeometry(SAMRecord rec, MachineOrientation mo, ReadGroupStats rgs) {
     final Orientation orientation = Orientation.orientation(rec, mo);
-    final int as = as(rec);
-    final int mateAs = mateAs(rec);
     final int start = rec.getAlignmentStart();
     final int end = rec.getAlignmentEnd();
     final int mateStart = rec.getMateAlignmentStart();
     final int mateEnd = mateEnd(rec);
-    final int x = orientation.getX() == +1 ?  end + 1 - as : start - 1 + as;
+    final int breakpointOverlap = overlap(rec, end - start);
+    final int mateBreakpointOverlap = fixedOverlap(mateEnd - mateStart);
+    final int x = orientation.getX() == +1 ?  end + 1 - breakpointOverlap : start - 1 + breakpointOverlap;
     final String xName = rec.getReferenceName();
     final String yName = rec.getMateReferenceName();
-    final int y = orientation.getY() == +1 ?  mateEnd + 1 - mateAs : mateStart - 1 + mateAs;
+    final int y = orientation.getY() == +1 ?  mateEnd + 1 - mateBreakpointOverlap : mateStart - 1 + mateBreakpointOverlap;
     final int max = gapMax(rgs);
     final int min = gapMin(rgs);
     assert min < rgs.gapMean() && rgs.gapMean() < max;

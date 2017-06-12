@@ -29,7 +29,7 @@ public class FlipTest extends TestCase {
       mMean = mean;
     }
     @Override
-    public double gapStdDev() {
+    public double fragmentStdDev() {
       return Math.PI;
     }
     @Override

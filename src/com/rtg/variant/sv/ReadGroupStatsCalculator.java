@@ -53,8 +53,6 @@ public final class ReadGroupStatsCalculator {
 
   private static final String VERSION_HEADER = "#Version\t" + Environment.getVersion() + ", " + VERSION + StringUtils.LS;
 
-  private static final String SCORE_ATTRIBUTE = SamUtils.ATTRIBUTE_NUM_MISMATCHES;
-
   /**
    * Handles merging of multiple stats accumulation runs.
    */
@@ -206,12 +204,7 @@ public final class ReadGroupStatsCalculator {
     if (!record.getReadPairedFlag() || record.getReadUnmappedFlag() || record.getNotPrimaryAlignmentFlag() || record.isSecondaryOrSupplementary()) {
       return;
     }
-    Integer nh = SamUtils.getNHOrIH(record);
-    if (nh == null) {
-      //already should have warned in svprep
-      nh = 1;
-    }
-    if (nh == 1) {
+    if (SamUtils.uniquelyMapped(record)) {
       final String rgId = ReadGroupUtils.getReadGroup(record);
       final ReadGroupStats stats = mStats.get(rgId);
       if (stats == null) {
@@ -220,7 +213,7 @@ public final class ReadGroupStatsCalculator {
           Diagnostic.warning("Skipping record with no RG id");
         }
       } else {
-        final Integer score = record.getIntegerAttribute(SCORE_ATTRIBUTE);
+        final Integer score = record.getIntegerAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES);
         if (score != null) {
           stats.addScore(score);
         }
@@ -267,6 +260,7 @@ public final class ReadGroupStatsCalculator {
    * @return gap size
    */
   private static int calculateGapSize(SAMRecord record) {
+    // XXX What does this do when the two reads overlap
     if (record.getMateAlignmentStart() > record.getAlignmentStart()) {
       return record.getMateAlignmentStart() - record.getAlignmentEnd();
     } else {

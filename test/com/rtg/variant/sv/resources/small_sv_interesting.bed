@@ -1,0 +1,12 @@
+#chr	start	end	areas	maxscore	average
+simulatedSequence1	47400	47694	3	1.0889	0.3722
+simulatedSequence1	49712	52717	5	2.5766	1.1907
+simulatedSequence1	52747	52758	1	0.0000	-0.0721
+simulatedSequence1	52766	52767	1	0.0000	-0.0630
+simulatedSequence1	52769	52789	1	0.1322	0.1099
+simulatedSequence1	52793	52807	1	0.0000	-0.0258
+simulatedSequence1	52810	53134	1	1.8786	1.1216
+simulatedSequence1	55032	55119	1	0.4204	0.0312
+simulatedSequence1	55190	55246	1	0.1123	-0.0294
+simulatedSequence1	55779	56265	4	7.5133	1.7407
+simulatedSequence1	58291	99999	1	1.7161	0.5013

@@ -24,23 +24,21 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.launcher.OutputParams;
 import com.rtg.launcher.SequenceParams;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.util.InvalidParamsException;
 import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
-import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.test.FileHelper;
+import com.rtg.util.io.TestDirectory;
 import com.rtg.variant.sv.ReadGroupStats;
 import com.rtg.variant.sv.discord.DiscordantToolParams.DiscordantToolParamsBuilder;
 
-import junit.framework.TestCase;
-
 /**
  */
-public class DiscordantToolTest extends TestCase {
+public class DiscordantToolTest extends AbstractNanoTest {
   private static final String TAB = "\t";
 
   protected DiscordantToolParams makeParams(File ref, File input, File output, int minDepth, boolean intersectionOnly) throws InvalidParamsException {
@@ -86,16 +84,8 @@ public class DiscordantToolTest extends TestCase {
       + ">g2" + LS + "catgcagtcatactgactgtcatgcagtcatactgactgtcatgcagtcatactgactgtgctgtgtttgttgggtgggtttcgtcaaacacccacaaaatgtgttgtgacgtagatattagatagaagagtat" + LS
       + ">g3" + LS + "catgcagtcatactgactgtcatgcagtcatactgactgtcatgcagtcatactgactgtgctgtgtttgttgggtgggtttcgtcaaacacccacaaaatgtgttgtgacgtagatattagatagaagagtat" + LS;
 
-  static final String EXP_OUT = ""
-      + "2 g1 17 88 g2 14 -57 34 74 g1 18 87 g2 13 -56 34 74" + LS
-      + "1 g1 18 -52 g1 22 92 34 74 g1 18 -52 g1 22 92 34 74" + LS
-      + "1 g1 19 89 g1 15 -55 34 74 g1 19 89 g1 15 -55 34 74" + LS
-      + "2 g2 17 -54 g1 20 91 34 74 g2 16 -53 g1 21 90 34 74"
-      ;
-  public void endToEnd(int minDepth, String expected, String sam, boolean intersectionOnly) throws Exception {
-    Diagnostic.setLogStream();
-    final File dir = FileHelper.createTempDirectory();
-    try {
+  public void endToEnd(String label, int minDepth, String sam, boolean intersectionOnly) throws Exception {
+    try (final TestDirectory dir = new TestDirectory()) {
       final File seq = new File(dir, "ref.sdf");
       ReaderTestUtils.getDNADir(REF, seq);
       final File input = new File(dir, "input.sam");
@@ -109,19 +99,15 @@ public class DiscordantToolTest extends TestCase {
       assertTrue(simple.exists());
 
       final String noheader = StringUtils.grep(FileUtils.fileToString(simple), "^[^#]").trim().replace(TAB, " ");
-      //final String vcf = StringUtils.grep(FileUtils.fileToString(new File(output, DiscordantTool.OUTPUT_FILENAME)), "^[^#]").trim().replace(TAB, " ");
-      //System.err.println(vcf);
-      assertEquals(expected, noheader);
-    } finally {
-      FileHelper.deleteAll(dir);
+      mNano.check(label, noheader);
     }
   }
   public void testEndToEnd() throws Exception {
-    endToEnd(1, EXP_OUT, SAM, false);
+    endToEnd("end-to-end.txt", 1, SAM, false);
   }
 
   public void testDepthCutoff() throws Exception {
-    endToEnd(2, StringUtils.grep(EXP_OUT, "^2").trim(), SAM, false);
+    endToEnd("depth-2.txt", 2, SAM, false);
   }
 
   static final String SAM_HEADER = ""
@@ -142,14 +128,9 @@ public class DiscordantToolTest extends TestCase {
       + "a6" + TAB + "97" + TAB + "g1" + TAB +  "70" + TAB + "255" + TAB + "9=" + TAB + "g3" + TAB + "84" + TAB + "1" + TAB + "cgtagagag" + TAB + "`````````" + TAB + "AS:i:0" + TAB + "RG:Z:RG1" + LS
       ;
 
-  static final String NULL_INTERSECT_OUT = ""
-      + "5 g1 13 149 g2 83 -57 26 74" + LS
-      + "1 g1 19 89 g1 15 -55 34 74 g1 19 89 g1 15 -55 34 74" + LS // a2
-      + "1 g1 79 149 g3 83 13 26 66 g1 79 149 g3 83 13 26 66" //a6
-      ;
   public void testNullIntersection() throws Exception {
-    endToEnd(0, NULL_INTERSECT_OUT, NULL_INTERSECT_SAM, false);
-    endToEnd(0,  StringUtils.grepMinusV(NULL_INTERSECT_OUT, "g2").trim(), NULL_INTERSECT_SAM.trim(), true);
+    endToEnd("null-intersection-false.txt", 0, NULL_INTERSECT_SAM, false);
+    endToEnd("null-intersection-true.txt", 0, NULL_INTERSECT_SAM.trim(), true);
   }
 
   static final String FLUSH_SAM = ""
@@ -187,8 +168,7 @@ public class DiscordantToolTest extends TestCase {
       + ">g2" + LS + "catgcagtcatactgactgtcatgcagtcatactgactgtcatgcagtcatactgactgtcatgcagtcatactgactgtcatgcagtcatactgactgtcatactgactgtcatgcagtcatactgactgt" + LS;
 
   public void testFlushing() throws Exception {
-    final File dir = FileHelper.createTempDirectory();
-    try {
+    try (final TestDirectory dir = new TestDirectory()) {
       final File seq = new File(dir, "ref.sdf");
       ReaderTestUtils.getDNADir(REF_FLUSH, seq);
       final File input = new File(dir, "input.sam");
@@ -207,8 +187,6 @@ public class DiscordantToolTest extends TestCase {
           , "Flushing: g2[-1:132], sizeBefore=1 sizeAfter=0"
           , "Flushing: g2[0:-1], sizeBefore=0 sizeAfter=0"
           );
-    } finally {
-      FileHelper.deleteAll(dir);
     }
   }
 

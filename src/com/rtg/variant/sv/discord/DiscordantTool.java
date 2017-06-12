@@ -13,8 +13,10 @@ package com.rtg.variant.sv.discord;
 
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,12 +29,15 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.sam.BamIndexer;
 import com.rtg.sam.SamIteratorTask;
 import com.rtg.sam.SamUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.CompareHelper;
+import com.rtg.util.MathUtils;
 import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.diagnostic.Timer;
@@ -69,6 +74,12 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
   static final String BAM_FILENAME_PREFIX = "discordant";
   static final String DT_OUTPUT_VERSION = "1";
 
+  // If set, debug mode will also output a separate debug file for every new discordant read.
+  // This allows plotting breakpoint constraint evolution.
+  // Warning, this buffers all read sets, so only use for smallish regions.
+  private static final boolean DEBUG_PER_RECORD = GlobalFlags.isSet(CoreGlobalFlags.SV_DISCORD_DEBUG_PER_RECORD);
+
+  private final List<DiscordantReadSet> mWritten = DEBUG_PER_RECORD ? new ArrayList<>() : null;
 
   private int mMaxGap;
   protected final SortedSet<DiscordantReadSet> mReadSets = new TreeSet<>(new DiscordantReadSet.FlushPositionComparator());
@@ -173,6 +184,9 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
     if (mParams.debugOutput()) {
       mDebugReordering.addRecord(drs);
     }
+    if (DEBUG_PER_RECORD) {
+      mWritten.add(drs); // Buffers forever, only use on small datasets
+    }
     if (mBamType != BamType.NONE) {
       writeReadSetBam(drs);
     }
@@ -202,12 +216,13 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
     for (final SAMRecord rec : drs.getRecords()) {
       mBamWriter.addAlignment(rec);
     }
+    drs.getRecords().clear();
   }
 
   @Override
   public void init(SAMFileHeader header) throws IOException {
     mSamHeader = header;
-    int maxGap = 0;
+    int maxMaxGap = 0;
 
     final Set<String> sampleNames = new HashSet<>();
     if (header.getReadGroups() == null || header.getReadGroups().size() == 0) {
@@ -235,13 +250,17 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       if (rgs == null) {
         throw new NoTalkbackSlimException("Read group " + srgr.getId() + " did not have corresponding rgstats data supplied");
       }
-      maxGap = Math.max(maxGap, BreakpointConstraint.gapMax(rgs));
+      final double dev = BreakpointConstraint.concordantDeviation(rgs);
+      Diagnostic.userLog("Read group " + srgr.getId() + " concordant deviation +/-" + MathUtils.round(dev)
+        + ", fragment (" + Math.max(0, (int) (rgs.fragmentMean() - dev)) + "," + (int) (rgs.fragmentMean() + dev) + ")"
+        + ", gap (" + Math.max(0, (int) (rgs.gapMean() - dev)) + "," + (int) (rgs.gapMean() + dev) + ")");
+      maxMaxGap = Math.max(maxMaxGap, BreakpointConstraint.gapMax(rgs));
     }
     if (!mParams.multisample() && sampleNames.size() > 1) {
       throw new NoTalkbackSlimException("Input read groups contain multiple samples: " + sampleNames.toString());
     }
     final String vcfSample = sampleNames.size() == 1 ? sampleNames.iterator().next() : "SAMPLE";
-    mMaxGap = maxGap;
+    mMaxGap = maxMaxGap;
     if (mDebugOutput != null) {
       mDebugOutput.write(mDebugFormatter.header().getBytes());
       mDebugReordering = new ReorderingDebugOutput(mDebugFormatter, mDebugOutput, 5 * mMaxGap);
@@ -263,8 +282,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
     if (rec.getMateUnmappedFlag() || "*".equals(rec.getMateReferenceName())) {
       return true;
     }
-    final Integer nh = SamUtils.getNHOrIH(rec);
-    if (nh == null || nh < 2)  {
+    if (SamUtils.uniquelyMapped(rec)) {
       final SAMReadGroupRecord rg = rec.getReadGroup();
       if (rg == null) {
         throw new NoTalkbackSlimException("Input SAM record did not contain a read group: " + rec.getSAMString());
@@ -278,9 +296,26 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       }
       processConstraint(constraint, mReadSets, mTemplateName, mMaxGap, mBamType == BamType.NONE ? null : rec);
       ++mTotalDiscordantRecords;
+      if (DEBUG_PER_RECORD) {
+        dumpAllReadSets();
+      }
     }
     flush(0, rec.getAlignmentStart());
     return true;
+  }
+
+  private void dumpAllReadSets() throws IOException {
+    try (OutputStream debugOutput = new FileOutputStream(mParams.file("debug_discordant_pairs_" + mTotalDiscordantRecords + ".txt"))) {
+      debugOutput.write(mDebugFormatter.header().getBytes());
+      try (final ReorderingDebugOutput r = new ReorderingDebugOutput(mDebugFormatter, debugOutput, 5 * mMaxGap)) {
+        for (DiscordantReadSet drs : mWritten) {
+          r.addRecord(drs);
+        }
+        for (DiscordantReadSet drs : mReadSets) {
+          r.addRecord(drs);
+        }
+      }
+    }
   }
 
   static void processConstraint(final BreakpointConstraint constraint, final SortedSet<DiscordantReadSet> readSets, final String templateName, final int maxGap, SAMRecord record) {
@@ -293,7 +328,6 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
         overlap.add(drs);
       }
     }
-
     final DiscordantReadSet newDrs;
     final int size = overlap.size();
     if (size == 0) {

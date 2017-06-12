@@ -126,7 +126,7 @@ public final class SvCliUtils {
            .filterParams(SamFilterOptions.makeFilterParamsBuilder(flags)
              .requireSetFlags(SamBamConstants.SAM_READ_IS_PAIRED)
              .requireUnsetFlags(SamBamConstants.SAM_READ_IS_UNMAPPED | SamBamConstants.SAM_SECONDARY_ALIGNMENT | SamBamConstants.SAM_SUPPLEMENTARY_ALIGNMENT)
-             .excludeUnplaced(true).create());
+             .excludeDuplicates(true).excludeUnplaced(true).create());
 
     populateReadGroupStats(builder, flags);
   }

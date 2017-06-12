@@ -95,6 +95,16 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
   public static final String QUALITY_CALIBRATION_COVARIATE_INTERSECTION = "com.rtg.variant.quality-calibration-covariate-intersection";
   /** Use Dirichlet rather than multinomial allele balance calculation. */
   public static final String TUMOR_ALLELE_BALANCE = "com.rtg.variant.bayes.multisample.cancer.allele-balance-type";
+
+  /** The percentage of the read length that may have been erroneously aligned across a breakpoint due to alignment penalties. */
+  public static final String SV_ALIGNMENT_END_IGNORED_FRACTION = "com.rtg.variant.sv.alignment-ignore-end-fraction";
+  /** The number of standard deviations delineating concordant vs discordant fragment lengths. */
+  public static final String SV_DISCORDANT_STD_DEV = "com.rtg.variant.sv.discord-std-dev";
+  /** If set, just issue a warning when invalid read group stats version is encountered. */
+  public static final String SV_IGNORE_RGSTATS_VERSION = "com.rtg.variant.sv.ignore-rgstats-version";
+  /** If set, debugging mode also outputs a separate file for every new discordant record */
+  public static final String SV_DISCORD_DEBUG_PER_RECORD = "com.rtg.variant.sv.discord-debug-per-record";
+
   /** Allow prediction to continue even if the VCF does not declare all the attributes of the model. */
   public static final String AVR_ALLOW_UNDECLARED_ATTRIBUTES = "com.rtg.avr.allow-undeclared";
   /** Level of BAM compression to use during recalibration (probably also works for SAM merge). */
@@ -167,6 +177,11 @@ public class CoreGlobalFlags extends GlobalFlagsInitializer {
     registerFlag(QUALITY_CALIBRATION_COVARIATE_INTERSECTION, Boolean.class, false);
     registerFlag(TUMOR_ALLELE_BALANCE, String.class, "binomial");
 
+    // Structural variation
+    registerFlag(SV_ALIGNMENT_END_IGNORED_FRACTION, Integer.class, 8);
+    registerFlag(SV_DISCORDANT_STD_DEV, Double.class, 4.0);
+    registerFlag(SV_IGNORE_RGSTATS_VERSION);
+    registerFlag(SV_DISCORD_DEBUG_PER_RECORD);
 
     registerFlag(COVERAGE_DP, Integer.class, 2);
 

@@ -20,6 +20,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.rtg.launcher.globals.CoreGlobalFlags;
+import com.rtg.launcher.globals.GlobalFlags;
 import com.rtg.util.NormalDistribution;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
@@ -30,6 +32,14 @@ import com.rtg.util.diagnostic.NoTalkbackSlimException;
  *
  */
 public class ReadGroupStats {
+
+  /**
+   * Assume this percentage of the read length may have been erroneously aligned across a breakpoint due to alignment penalties.
+   * Actual number varies according to alignment penalties and propensity for soft-clipping the dirty ends of alignments.
+   */
+  public static final int ALIGNMENT_IGNORED_FRACTION = GlobalFlags.getIntegerValue(CoreGlobalFlags.SV_ALIGNMENT_END_IGNORED_FRACTION);
+
+  private static final boolean RGSTATS_IGNORE_VERSION = GlobalFlags.isSet(CoreGlobalFlags.SV_IGNORE_RGSTATS_VERSION);
 
   private static final double TINY = 0.0000001;
 
@@ -82,7 +92,11 @@ public class ReadGroupStats {
           if (line.length() > 0) {
             if (line.startsWith("#")) {
               if (line.startsWith("#Version") && !line.contains(ReadGroupStatsCalculator.VERSION)) {
-                throw new NoTalkbackSlimException("Unsupported rgstats version: " + line + " - rerun svprep");
+                if (RGSTATS_IGNORE_VERSION) {
+                  Diagnostic.warning("Unsupported rgstats version: " + line + " - rerun svprep");
+                } else {
+                  throw new NoTalkbackSlimException("Unsupported rgstats version: " + line + " - rerun svprep");
+                }
               }
             } else {
               try {
@@ -126,10 +140,6 @@ public class ReadGroupStats {
   private long mDiscordant = 0;
   private long mUnmated = 0;
 
-  // XXX Assume 8 percent of the read length may have been erroneously aligned across a breakpoint due to alignment penalties.
-  // This should really be passed in somewhere. We used to assume that mAlignmentStartIgnored == mMaxAlignment, but since our
-  // alignment penalties have changed, this is no longer true.
-  private static final int ALIGNMENT_START_IGNORED_FRACTION = 8;
 
   // Derived from counts stored above
   private double mMeanLength;
@@ -303,7 +313,7 @@ public class ReadGroupStats {
       mProperRandomRate = mDiscordantRate * mUnmatedRate;
       // TODO we think this should be better:
       //mProperRandomRate = mDiscordantRate * (2 * mGapStdDev / mTotalReference);
-      mAlignmentStartIgnored = (int) (mMeanLength * ALIGNMENT_START_IGNORED_FRACTION / 100);
+      mAlignmentStartIgnored = (int) (mMeanLength * ALIGNMENT_IGNORED_FRACTION / 100);
     }
   }
 

@@ -11,9 +11,6 @@
  */
 package com.rtg.variant.sv;
 
-import static com.rtg.sam.SharedSamConstants.REF_SEQS;
-import static com.rtg.sam.SharedSamConstants.SAM_UNSORTED;
-
 import java.io.File;
 import java.io.IOException;
 
@@ -66,10 +63,6 @@ public class SvToolCliTest extends AbstractCliTest {
       TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", rg.getPath(), aln.getPath(), "-f", "0"), "Expected a positive integer for parameter \"fine-step\"");
       TestUtils.containsAllUnwrapped(checkHandleFlagsErr("-o", out.getPath(), "-t", gen.getPath(), "-r", rg.getPath(), aln.getPath(), "-s", "1"), "Parameter \"fine-step\" should be smaller than or equal to parameter \"step\"");
     }
-  }
-
-  public void testMakeParams() throws IOException, InvalidParamsException {
-    SvToolTaskTest.check(REF_SEQS, SAM_UNSORTED, "RG1\t200000\t56893\t1991255\t69693925\t55590\t22261070\t9022416526\t55590\t22261070\t9022416526\t5\t55590\t236\t1067", new String[] {}, null, new String[] {"is not sorted in coordinate order."}, "", 1, true, null);
   }
 
   public void testInitParams() {

@@ -319,20 +319,13 @@ public class VariantUtilsTest extends TestCase {
     assertEquals(VariantUtils.phredFromN(2), VariantUtils.readScoreFromAlignmentRecord(new VariantAlignmentRecord(sam), params));
   }
 
-  private static final double PHRED_SCALE = -10.0 / Math.log(10.0);
-
-  private static int phredCheck(final int n) {
-    final double x = -1.0 / n;
-    final long phred = (int) MathUtils.round(PHRED_SCALE * Math.log1p(x));
-    if (phred > 63) {
-      return 63;
-    }
-    return (int) phred;
+  private static int phredFromNFull(final int n) {
+    return (int) Math.min(63, MathUtils.round(MathUtils.phred(1.0 - 1.0 / n)));
   }
 
   private void checkPhred(final int phred, final int n) {
     assertEquals(phred, VariantUtils.phredFromN(n));
-    assertEquals(phredCheck(n), VariantUtils.phredFromN(n));
+    assertEquals(phredFromNFull(n), VariantUtils.phredFromN(n));
   }
 
   public void testPhred() {

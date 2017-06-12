@@ -32,7 +32,7 @@ public class BreakpointConstraintTest extends TestCase {
       mMean = mean;
     }
     @Override
-    public double gapStdDev() {
+    public double fragmentStdDev() {
       return STD_DEV;
     }
     @Override
@@ -813,7 +813,7 @@ public class BreakpointConstraintTest extends TestCase {
     assertEquals(31, makeMateEnd(20, 30).getY());
   }
 
-  private static BreakpointConstraint makeAS(final boolean first, final Integer as, final Integer mateAS, boolean xUp, boolean yUp) {
+  private static BreakpointConstraint makeConstraint(final boolean first, final Integer nm, boolean xUp, boolean yUp) {
     final ReadGroupStats rgs = new MockReadGroupStats(10.0);
     final MockSam rec = new MockSam();
     rec.setReferenceName("x");
@@ -823,11 +823,8 @@ public class BreakpointConstraintTest extends TestCase {
     rec.setMateReferenceName("y");
     rec.setMateAlignmentStart(20);
     rec.setAttribute(SamUtils.ATTRIBUTE_MATE_END, 30);
-    if (as != null) {
-      rec.setAttribute(SamUtils.ATTRIBUTE_ALIGNMENT_SCORE, as);
-    }
-    if (mateAS != null) {
-      rec.setAttribute(SamUtils.ATTRIBUTE_MATE_ALIGNMENT_SCORE, mateAS);
+    if (nm != null) {
+      rec.setAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES, nm);
     }
     rec.setFirstOfPairFlag(first);
     rec.setReadNegativeStrandFlag(!xUp);
@@ -839,56 +836,56 @@ public class BreakpointConstraintTest extends TestCase {
   }
 
   public void testAs() {
-    final BreakpointConstraint bc = makeAS(true, null, null, false, true);
+    final BreakpointConstraint bc = makeConstraint(true, null, false, true);
     assertEquals(9, bc.getX());
     assertEquals(31, bc.getY());
-    final BreakpointConstraint bf = makeAS(false, null, null, false, true);
+    final BreakpointConstraint bf = makeConstraint(false, null, false, true);
     assertEquals(9, bf.getX());
     assertEquals(31, bf.getY());
   }
 
   public void testAs0() {
-    final BreakpointConstraint bc = makeAS(true, 0, 0, false, true);
+    final BreakpointConstraint bc = makeConstraint(true, 0, false, true);
     assertEquals(9, bc.getX());
     assertEquals(31, bc.getY());
-    final BreakpointConstraint bf = makeAS(false, 0, 0, false, true);
+    final BreakpointConstraint bf = makeConstraint(false, 0, false, true);
     assertEquals(9, bf.getX());
     assertEquals(31, bf.getY());
   }
 
   public void testAs13UU() {
-    final BreakpointConstraint bc = makeAS(true, 1, 3, true, true);
+    final BreakpointConstraint bc = makeConstraint(true, 1, true, true);
     assertEquals(17, bc.getX());
-    assertEquals(28, bc.getY());
-    final BreakpointConstraint bf = makeAS(false, 1, 3, true, true);
-    assertEquals(28, bf.getY());
+    assertEquals(31, bc.getY());
+    final BreakpointConstraint bf = makeConstraint(false, 1, true, true);
+    assertEquals(31, bf.getY());
     assertEquals(17, bf.getX());
   }
 
   public void testAs13UD() {
-    final BreakpointConstraint bc = makeAS(true, 1, 3, true, false);
+    final BreakpointConstraint bc = makeConstraint(true, 1, true, false);
     assertEquals(17, bc.getX());
-    assertEquals(22, bc.getY());
-    final BreakpointConstraint bf = makeAS(false, 1, 3, true, false);
-    assertEquals(22, bf.getY());
+    assertEquals(19, bc.getY());
+    final BreakpointConstraint bf = makeConstraint(false, 1, true, false);
+    assertEquals(19, bf.getY());
     assertEquals(17, bf.getX());
   }
 
   public void testAs13DU() {
-    final BreakpointConstraint bc = makeAS(true, 1, 3, false, true);
+    final BreakpointConstraint bc = makeConstraint(true, 1, false, true);
     assertEquals(10, bc.getX());
-    assertEquals(28, bc.getY());
-    final BreakpointConstraint bf = makeAS(false, 1, 3, false, true);
-    assertEquals(28, bf.getY());
+    assertEquals(31, bc.getY());
+    final BreakpointConstraint bf = makeConstraint(false, 1, false, true);
+    assertEquals(31, bf.getY());
     assertEquals(10, bf.getX());
   }
 
   public void testAs13DD() {
-    final BreakpointConstraint bc = makeAS(true, 1, 3, false, false);
+    final BreakpointConstraint bc = makeConstraint(true, 1, false, false);
     assertEquals(10, bc.getX());
-    assertEquals(22, bc.getY());
-    final BreakpointConstraint bf = makeAS(false, 1, 3, false, false);
-    assertEquals(22, bf.getY());
+    assertEquals(19, bc.getY());
+    final BreakpointConstraint bf = makeConstraint(false, 1, false, false);
+    assertEquals(19, bf.getY());
     assertEquals(10, bf.getX());
   }
 }
