@@ -18,7 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import com.rtg.AbstractTest;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.tabix.UnindexableDataException;
 import com.rtg.util.TestUtils;
@@ -31,7 +31,7 @@ import com.rtg.vcf.header.VcfHeader;
 import htsjdk.samtools.SAMFileHeader;
 import htsjdk.samtools.SAMSequenceRecord;
 
-public class SvPatternsTaskTest extends AbstractTest {
+public class SvPatternsTaskTest extends AbstractNanoTest {
 
   public void testEnd2End() throws IOException, UnindexableDataException {
     try (final TestDirectory tmpDir = new TestDirectory()) {
@@ -57,23 +57,11 @@ public class SvPatternsTaskTest extends AbstractTest {
       assertTrue(bedFile.isFile());
       assertTrue(new File(output, "sv_patterns.bed.gz.tbi").isFile());
       final String results = FileHelper.gzFileToString(bedFile);
-      TestUtils.containsAll(results,
-        "#CL\tfoo bar baz"
-        , "#Version"
-        , "SV Patterns output 0.1"
-        , "#sequence\tstart\tend\tdescription\tcount" + LS
-      );
+      TestUtils.containsAll(results, "SV Patterns output 0.1");
+      mNano.check("sv_patterns.bed", results.replaceAll("#Version.*\n", "#Version[...]\n"));
     }
   }
 
-  static final String[] EXPECTED_BREAKPOINTS = {
-      "VcfBreakpoint: simulatedSequence1 50000 simulatedSequence1 53016 true true"
-      , "VcfBreakpoint: simulatedSequence1 50003 simulatedSequence1 53013 false false"
-      , "VcfBreakpoint: simulatedSequence1 53016 simulatedSequence1 50000 true true"
-      , "VcfBreakpoint: simulatedSequence1 53013 simulatedSequence2 50003 false false"
-      , "VcfBreakpoint: simulatedSequence2 53016 simulatedSequence1 50000 true true"
-      , "VcfBreakpoint: simulatedSequence2 53015 simulatedSequence2 50000 true true"
-  };
   public void testLoad() throws IOException {
     final File tmpDir = FileHelper.createTempDirectory();
     try {
@@ -84,12 +72,11 @@ public class SvPatternsTaskTest extends AbstractTest {
       final MemoryPrintStream mps = new MemoryPrintStream();
       final SvPatternsTask task = new SvPatternsTask(params, mps.outputStream());
       final BreakpointStore store = task.loadBreakpoints(null, Arrays.asList(vcfFile));
-      int i = 0;
+      final StringBuilder sb = new StringBuilder();
       for (VcfBreakpoint b : store) {
-        assertEquals(EXPECTED_BREAKPOINTS[i], b.toString());
-        ++i;
+        sb.append(b.toString()).append(LS);
       }
-      assertEquals(6, i);
+      mNano.check("sv_load.txt", sb.toString());
 
     } finally {
       FileHelper.deleteAll(tmpDir);
@@ -104,7 +91,7 @@ public class SvPatternsTaskTest extends AbstractTest {
     final BreakpointStore store = new BreakpointStore();
     store.add(new VcfBreakpoint("a", 10, "a", 5000, true, false, 0));
     final String results = processStore(store);
-    assertEquals(tab("a 10 5000 deletion 0" + LS), results);
+    assertEquals(tab("a 11 5000 deletion 0" + LS), results);
   }
 
   public void testOverlapDelete() throws IOException {
@@ -112,7 +99,7 @@ public class SvPatternsTaskTest extends AbstractTest {
     store.add(new VcfBreakpoint("a", 10, "a", 5000, true, false, 0));
     store.add(new VcfBreakpoint("a", 400, "a", 5000, true, false, 2));
     final String results = processStore(store);
-    assertEquals(tab("a 400 5000 deletion 2" + LS), results);
+    assertEquals(tab("a 401 5000 deletion 2" + LS), results);
 
   }
 
@@ -176,7 +163,9 @@ public class SvPatternsTaskTest extends AbstractTest {
     final MemoryPrintStream bedFile = new MemoryPrintStream();
     final SvPatternsTask task = new SvPatternsTask(params, stdOut.outputStream());
     task.setOutput(bedFile.outputStream());
-    task.processStore(store);
+    for (VcfBreakpoint breakpoint : store) {
+      task.analyseBreakpoint(breakpoint, store);
+    }
     task.close();
     return bedFile.toString();
   }

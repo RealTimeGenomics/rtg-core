@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.TreeSet;
 
 import com.rtg.util.AutoAddMap;
+import com.rtg.util.StringUtils;
 
 /**
 *         Date: 16/03/12
@@ -59,6 +60,12 @@ class BreakpointStore implements Iterable<VcfBreakpoint> {
   @Override
   public Iterator<VcfBreakpoint> iterator() {
     return new StoreIterator(mMap);
+  }
+  @Override
+  public String toString() {
+    final StringBuilder sb = new StringBuilder();
+    forEach(b-> sb.append(b.toString()).append(StringUtils.LS));
+    return sb.toString();
   }
   private static class StoreIterator implements Iterator<VcfBreakpoint> {
     Iterator<RemoteMap> mChromosome;

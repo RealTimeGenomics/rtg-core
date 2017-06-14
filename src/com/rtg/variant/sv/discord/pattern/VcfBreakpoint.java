@@ -17,43 +17,19 @@ import java.util.Collection;
 import com.rtg.util.CompareHelper;
 import com.rtg.util.Utils;
 import com.rtg.vcf.VcfRecord;
+import com.rtg.vcf.VcfUtils;
 
 /**
  * After reading breakpoints in from a VCF file abstract out the information we actually care about
- *         Date: 16/03/12
- *         Time: 10:16 AM
  */
 public class VcfBreakpoint implements Comparable<VcfBreakpoint> {
+
   private final String mLocalChr;
   private final int mLocalPos;
-  private final String mRemoteChr;
-  private final int mRemotePos;
-  private final boolean mLocalDirection;
-  private final boolean mRemoteDirection;
+
+  private final BreakpointAlt mBreakpointAlt;
+
   private final int mDepth;
-
-  public boolean isLocalUp() {
-    return mLocalDirection;
-  }
-  public boolean isRemoteUp() {
-    return mRemoteDirection;
-  }
-
-  public int getRemotePos() {
-    return mRemotePos;
-  }
-
-  public String getLocalChr() {
-    return mLocalChr;
-  }
-
-  public int getLocalPos() {
-    return mLocalPos;
-  }
-
-  public String getRemoteChr() {
-    return mRemoteChr;
-  }
 
   /**
    * Create a breakpoint from a VCF record
@@ -62,9 +38,36 @@ public class VcfBreakpoint implements Comparable<VcfBreakpoint> {
   public VcfBreakpoint(VcfRecord record) {
     this(record, new BreakpointAlt(record.getAltCalls().get(0)));
   }
-  static int countDepth(VcfRecord record) {
+
+  VcfBreakpoint(VcfRecord record, BreakpointAlt alt) {
+    mLocalChr = record.getSequenceName();
+    mLocalPos = record.getStart();
+    mBreakpointAlt = alt;
+    mDepth = countDepth(record);
+    assert record.getRefCall().length() == 1 : "We only handle breakends with single-base reference span";
+    assert record.getRefCall().length() == alt.getRefSubstitution().length() : "We only handle breakends with same substitution length as reference span";
+  }
+
+  /**
+   * Create a breakpoint without a VCF record
+   * @param localChr which reference sequence is the local end of the breakpoint in
+   * @param localPos position within the reference sequence of the local end
+   * @param remoteChr which reference sequence is the remote end of the breakpoint in
+   * @param remotePos position within the reference sequence of the remote end
+   * @param localUp which direction is the local breakpoint
+   * @param remoteUp which direction is the remote breakpoint
+   * @param depth number of reads spanning the breakpoint
+   */
+  public VcfBreakpoint(String localChr, int localPos, String remoteChr, int remotePos, boolean localUp, boolean remoteUp, int depth) {
+    mLocalChr = localChr;
+    mLocalPos = localPos;
+    mBreakpointAlt = new BreakpointAlt("N", localUp, remoteChr, remotePos, remoteUp);
+    mDepth = depth;
+  }
+
+  private static int countDepth(VcfRecord record) {
     int depth = 0;
-    final Collection<String> depths = record.getInfo().get("DP");
+    final Collection<String> depths = record.getInfo().get(VcfUtils.INFO_COMBINED_DEPTH);
     if (depths != null) {
       for (String str : depths) {
         depth += Integer.parseInt(str);
@@ -72,29 +75,31 @@ public class VcfBreakpoint implements Comparable<VcfBreakpoint> {
     }
     return depth;
   }
-  VcfBreakpoint(VcfRecord record, BreakpointAlt alt) {
-    this(record.getSequenceName(), record.getOneBasedStart(), alt.getRemoteChr(), alt.getRemotePos(), alt.isLocalUp(), alt.isRemoteUp(), countDepth(record));
 
+  public String getLocalChr() {
+    return mLocalChr;
+  }
+  public int getLocalPos() {
+    return mLocalPos;
+  }
+  public boolean isLocalUp() {
+    return mBreakpointAlt.isLocalUp();
+  }
+  public boolean isRemoteUp() {
+    return mBreakpointAlt.isRemoteUp();
+  }
+  public int getRemotePos() {
+    return mBreakpointAlt.getRemotePos();
+  }
+  public String getRemoteChr() {
+    return mBreakpointAlt.getRemoteChr();
   }
 
   /**
-   * Create a breakpoint without a VCF record
-   * @param localChr which reference sequence is the local end of the breakpoint in
-   * @param localPos position within the reference sequence of the local end, 1-based
-   * @param remoteChr which reference sequence is the remote end of the breakpoint in
-   * @param remotePos position within the reference sequence of the remote end
-   * @param localDirection which direction is the local breakpoint
-   * @param remoteDirection which direction is the remote breakpoint
-   * @param depth number of reads spanning the breakpoint
+   * @return the number of reads contributing to this breakpoint
    */
-  public VcfBreakpoint(String localChr, int localPos, String remoteChr, int remotePos, boolean localDirection, boolean remoteDirection, int depth) {
-    mRemoteChr = remoteChr;
-    mLocalPos = localPos;
-    mRemotePos = remotePos;
-    mLocalChr = localChr;
-    mLocalDirection = localDirection;
-    mRemoteDirection = remoteDirection;
-    mDepth = depth;
+  public int getDepth() {
+    return mDepth;
   }
 
   @Override
@@ -102,10 +107,10 @@ public class VcfBreakpoint implements Comparable<VcfBreakpoint> {
     return new CompareHelper()
         .compare(mLocalChr, o.mLocalChr)
         .compare(mLocalPos, o.mLocalPos)
-        .compare(mRemoteChr, o.mRemoteChr)
-        .compare(mRemotePos, o.mRemotePos)
-        .compare(mLocalDirection, o.mLocalDirection)
-        .compare(mRemoteDirection, o.mRemoteDirection)
+        .compare(getRemoteChr(), o.getRemoteChr())
+        .compare(getRemotePos(), o.getRemotePos())
+        .compare(isLocalUp(), o.isLocalUp())
+        .compare(isRemoteUp(), o.isRemoteUp())
         .result();
   }
 
@@ -116,18 +121,12 @@ public class VcfBreakpoint implements Comparable<VcfBreakpoint> {
 
   @Override
   public int hashCode() {
-    return Utils.hash(new Object[]{mLocalChr, mLocalPos, mRemoteChr, mRemotePos, mLocalDirection, mRemoteDirection});
+    return Utils.hash(new Object[]{mLocalChr, mLocalPos, getRemoteChr(), getRemotePos(), isLocalUp(), isRemoteUp()});
   }
 
   @Override
   public String toString() {
-    return "VcfBreakpoint: " + mLocalChr + " " + mLocalPos + " " + mRemoteChr + " " + mRemotePos + " " + mLocalDirection + " " + mRemoteDirection;
+    return "VcfBreakpoint: " + mLocalChr + " " + mLocalPos + " " + mBreakpointAlt;
   }
 
-  /**
-   * @return the number of reads contributing to this breakpoint
-   */
-  public int getDepth() {
-    return mDepth;
-  }
 }

@@ -26,8 +26,7 @@ import com.rtg.util.CompareHelper;
 import com.rtg.variant.sv.discord.DiscordBedRecord;
 
 /**
- *         Date: 20/03/12
- *         Time: 11:23 AM
+ * Takes a set of deletion records and returns a non-overlapping subset.
  */
 public class DeletionOverlapFilter implements Iterable<DiscordBedRecord> {
 
@@ -51,7 +50,7 @@ public class DeletionOverlapFilter implements Iterable<DiscordBedRecord> {
 
   @Override
   public Iterator<DiscordBedRecord> iterator() {
-    return nonOverlapping().iterator();  //To change body of implemented methods use File | Settings | File Templates.
+    return nonOverlapping().iterator();
   }
 
   /**
@@ -69,8 +68,7 @@ public class DeletionOverlapFilter implements Iterable<DiscordBedRecord> {
       start.addAll(chrRecords);
       end.addAll(chrRecords);
       while (size.size() > 0) {
-        final DiscordBedRecord current = size.first();
-        size.remove(current);
+        final DiscordBedRecord current = size.pollFirst();
 
         final Set<DiscordBedRecord> tmp = new HashSet<>();
         tmp.addAll(startSet(start, current));

@@ -119,6 +119,7 @@ public class ReadGroupStats {
     }
     for (final ReadGroupStats stats : rgStats.values()) {
       stats.calculate();
+      Diagnostic.userLog("read-group\tread-mean\tfrag-mean\tfrag-stdev\tgap-mean\tgap-stdev\tmax-nm\tproper\tproper-rand\tdiscord\tunmated");
       Diagnostic.userLog(stats.toString());
       if (stats.detectOverflow()) {
         throw new NoTalkbackSlimException("Overflow detected in read group statistics calculation for read group: " + stats.id());

@@ -14,40 +14,61 @@ package com.rtg.variant.sv.discord.pattern;
 
 /**
  * Class that works out what kind of breakpoint a VCF alt record represents
-*         Date: 15/03/12
-*         Time: 3:29 PM
-*/
+ */
 class BreakpointAlt {
-  final boolean mLocalUp;
-  final boolean mRemoteUp;
-  final String mRemoteChr;
-  final int mRemotePos; // 1-based
+
   private static final char UP_BRACKET = ']';
   private static final char DOWN_BRACKET = '[';
 
+  final boolean mLocalUp;
+  final boolean mRemoteUp;
+  final String mRemoteChr;
+  final int mRemotePos;
+  final String mRefSubs;
+
   BreakpointAlt(String alt) {
-    final int tmpPos;
     final int bracketPos;
     final char bracket;
-//    System.err.println(alt.indexOf(UP_BRACKET));
+    int tmpPos;
     if ((tmpPos = alt.indexOf(UP_BRACKET)) > -1) {
-      mRemoteUp = true;
       bracket = UP_BRACKET;
       bracketPos = tmpPos;
-    } else {
+      mRemoteUp = true;
+    } else if ((tmpPos = alt.indexOf(DOWN_BRACKET)) > -1) {
       bracket = DOWN_BRACKET;
-      bracketPos = alt.indexOf(DOWN_BRACKET);
+      bracketPos = tmpPos;
       mRemoteUp = false;
+    } else {
+      throw new IllegalArgumentException("Invalid break end specification: " + alt);
     }
-//    System.err.println("" + " bracketPos=" + bracketPos + " bracket=" + bracket );
-    mLocalUp  = !(bracketPos == 0);
-    final String remoteString = alt.substring(bracketPos + 1, alt.indexOf(bracket, bracketPos + 1));
-    mRemoteChr = remoteString.substring(0, remoteString.indexOf(':'));
-    mRemotePos = Integer.parseInt(remoteString.substring(remoteString.indexOf(':') + 1));
+    mLocalUp = bracketPos != 0;
+    final int nextBracketPos = alt.indexOf(bracket, bracketPos + 1);
+    if (nextBracketPos == -1) {
+      throw new IllegalArgumentException("Invalid break end specification: " + alt);
+    }
+    final String remoteString = alt.substring(bracketPos + 1, nextBracketPos);
+    final int colonPos = remoteString.indexOf(':');
+    if (colonPos == -1) {
+      throw new IllegalArgumentException("Invalid break end specification: " + alt);
+    }
+    mRemoteChr = remoteString.substring(0, colonPos);
+    if (mRemoteChr.indexOf('<') != -1) {
+      throw new IllegalArgumentException("Contig break ends are not supported: " + alt); // e.g. "C[<ctg1>:7["
+    }
+    mRemotePos = Integer.parseInt(remoteString.substring(colonPos + 1)) - 1; // to 0-based
+    mRefSubs = mLocalUp ? alt.substring(0, bracketPos) : alt.substring(nextBracketPos + 1);
+  }
+
+  BreakpointAlt(String refSubs, boolean localUp, String remoteChr, int remotePos, boolean remoteUp) {
+    mRefSubs = refSubs;
+    mLocalUp = localUp;
+    mRemoteChr = remoteChr;
+    mRemotePos = remotePos;
+    mRemoteUp = remoteUp;
   }
 
   /**
-   * @return True if the remote part of the breakpoint is orientation up see {@link com.rtg.variant.sv.discord.Orientation}
+   * @return true if the remote part of the breakpoint is orientation up see {@link com.rtg.variant.sv.discord.Orientation}
    */
   public boolean isRemoteUp() {
     return mRemoteUp;
@@ -68,10 +89,25 @@ class BreakpointAlt {
   }
 
   /**
-   * @return True if the local part of the breakpoint is orientation up see {@link com.rtg.variant.sv.discord.Orientation}
+   * @return true if the local part of the breakpoint is orientation up see {@link com.rtg.variant.sv.discord.Orientation}
    */
   public boolean isLocalUp() {
     return mLocalUp;
+  }
+
+  /**
+   * @return the bases that substitute for the reference bases
+   */
+  public String getRefSubstitution() {
+    return mRefSubs;
+  }
+
+  @Override
+  public String toString() {
+    final char bracket = mRemoteUp ? UP_BRACKET : DOWN_BRACKET;
+    return mLocalUp
+      ? mRefSubs + bracket + mRemoteChr + ":" + (mRemotePos + 1) + bracket
+      : bracket + mRemoteChr + ":" + (mRemotePos + 1) + bracket + mRefSubs ;
   }
 
 }

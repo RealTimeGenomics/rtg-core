@@ -290,14 +290,19 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       final String id = rg.getId();
       final MachineOrientation mo = mMachineOrientations.get(id);
       final ReadGroupStats rgs = mParams.readGroupStatistics().get(id);
-      final BreakpointConstraint constraint = new BreakpointConstraint(rec, mo, rgs, mParams.overlapFraction());
-      if (constraint.isConcordant()) {
-        return true;
-      }
-      processConstraint(constraint, mReadSets, mTemplateName, mMaxGap, mBamType == BamType.NONE ? null : rec);
-      ++mTotalDiscordantRecords;
-      if (DEBUG_PER_RECORD) {
-        dumpAllReadSets();
+
+      // BWA sometimes likes to align tiny fractions of a read (e.g. a 20-mer homopolymer), which are often bollocks.
+      // Let's require at least a third of the read bases to be aligned.
+      if ((rec.getAlignmentEnd() - rec.getAlignmentStart()) >= rgs.meanLength() / 3) {
+
+        final BreakpointConstraint constraint = new BreakpointConstraint(rec, mo, rgs, mParams.overlapFraction());
+        if (!constraint.isConcordant()) {
+          processConstraint(constraint, mReadSets, mTemplateName, mMaxGap, mBamType == BamType.NONE ? null : rec);
+          ++mTotalDiscordantRecords;
+          if (DEBUG_PER_RECORD) {
+            dumpAllReadSets();
+          }
+        }
       }
     }
     flush(0, rec.getAlignmentStart());

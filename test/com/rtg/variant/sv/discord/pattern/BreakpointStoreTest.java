@@ -17,10 +17,6 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
-/**
- *         Date: 16/03/12
- *         Time: 10:12 AM
- */
 public class BreakpointStoreTest extends TestCase {
   public void testAdding() {
     final BreakpointStore bs = new BreakpointStore();
@@ -31,18 +27,18 @@ public class BreakpointStoreTest extends TestCase {
     bs.add(new VcfBreakpoint("foo", 22, "foo", 100, false, false, 0));
     final Iterator<VcfBreakpoint> it = bs.iterator();
     VcfBreakpoint b = it.next();
-    assertEquals("VcfBreakpoint: bar 100 foo 20 false false", b.toString());
+    assertEquals("VcfBreakpoint: bar 100 [foo:21[N", b.toString());
     b = it.next();
-    assertEquals("VcfBreakpoint: foo 20 bar 100 false false", b.toString());
+    assertEquals("VcfBreakpoint: foo 20 [bar:101[N", b.toString());
     b = it.next();
-    assertEquals("VcfBreakpoint: foo 22 bar 100 false false", b.toString());
+    assertEquals("VcfBreakpoint: foo 22 [bar:101[N", b.toString());
     b = it.next();
-    assertEquals("VcfBreakpoint: foo 22 foo 100 false false", b.toString());
+    assertEquals("VcfBreakpoint: foo 22 [foo:101[N", b.toString());
     b = it.next();
-    assertEquals("VcfBreakpoint: foo 22 foo 101 false false", b.toString());
+    assertEquals("VcfBreakpoint: foo 22 [foo:102[N", b.toString());
     assertFalse(it.hasNext());
     b = bs.getMap().get("foo").get("bar").first();
-    assertEquals("VcfBreakpoint: foo 20 bar 100 false false", b.toString());
+    assertEquals("VcfBreakpoint: foo 20 [bar:101[N", b.toString());
     final List<String> names = bs.getChromosomes();
     assertEquals(2, names.size());
     assertEquals("bar", names.get(0));

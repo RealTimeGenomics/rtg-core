@@ -1,0 +1,6 @@
+VcfBreakpoint: simulatedSequence1 49999 C]simulatedSequence1:53016]
+VcfBreakpoint: simulatedSequence1 50002 [simulatedSequence1:53013[G
+VcfBreakpoint: simulatedSequence1 53015 T]simulatedSequence1:50000]
+VcfBreakpoint: simulatedSequence1 53012 [simulatedSequence2:50003[C
+VcfBreakpoint: simulatedSequence2 53015 T]simulatedSequence1:50000]
+VcfBreakpoint: simulatedSequence2 53014 T]simulatedSequence2:50000]

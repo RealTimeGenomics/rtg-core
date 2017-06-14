@@ -23,14 +23,16 @@ public class BreakpointAltTest extends TestCase {
     assertEquals(remotePos, b.getRemotePos());
     assertEquals(localUp, b.isLocalUp());
     assertEquals(remoteUp, b.isRemoteUp());
+    assertEquals("A", b.getRefSubstitution());
+    assertEquals(orig, b.toString());
   }
-  public void testBreakpointAlt() {
-    check("A[foo:221[", "foo", 221, true, false);
-    check("A]foo:221]", "foo", 221, true, true);
-    check("[foo:221[A", "foo", 221, false, false);
-    check("]foo:221]A", "foo", 221, false, true);
-    check("]foo:261]A", "foo", 261, false, true);
-    check("]bar:261]A", "bar", 261, false, true);
 
+  public void testBreakpointAlt() {
+    check("A[foo:221[", "foo", 220, true, false);
+    check("A]foo:221]", "foo", 220, true, true);
+    check("[foo:221[A", "foo", 220, false, false);
+    check("]foo:221]A", "foo", 220, false, true);
+    check("]foo:261]A", "foo", 260, false, true);
+    check("]bar:261]A", "bar", 260, false, true);
   }
 }

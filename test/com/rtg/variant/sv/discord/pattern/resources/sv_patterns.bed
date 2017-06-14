@@ -1,0 +1,5 @@
+#Version[...]
+#CL	foo bar baz
+#sequence	start	end	description	count
+simulatedSequence1	49999	50002	inserted_copy:simulatedSequence1:53015-53012	22
+simulatedSequence1	49999	53015	inversion	22

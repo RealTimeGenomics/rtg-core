@@ -38,12 +38,12 @@ public class SmartBedWriter extends ReorderingQueue<DiscordBedRecord> {
     public int compare(DiscordBedRecord o1, DiscordBedRecord o2) {
       int res = o1.getSequenceName().compareTo(o2.getSequenceName());
       if (res == 0) {
-        if (o1.getStart() > o2.getStart()) {
-          res = 1;
-        } else if (o1.getStart() < o2.getStart()) {
-          res = -1;
-        } else {
-          res = Integer.compare(System.identityHashCode(o1), System.identityHashCode(o2)); // Ensure that none get clobbered
+        res = Integer.compare(o1.getStart(), o2.getStart());
+        if (res == 0) {
+          res = Integer.compare(o1.getEnd(), o2.getEnd());
+          if (res == 0) {
+            res = Integer.compare(System.identityHashCode(o1), System.identityHashCode(o2)); // Ensure that none get clobbered
+          }
         }
       }
       return res;
