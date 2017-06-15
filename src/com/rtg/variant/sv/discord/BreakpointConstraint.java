@@ -84,8 +84,18 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
    * @param rgs statistics for gap length etc.
    */
   BreakpointConstraint(SAMRecord rec, MachineOrientation mo, ReadGroupStats rgs) {
+    this(rec, mo, rgs, 0);
+  }
+
+  /**
+   * @param rec SAM record for one end of a paired read.
+   * @param mo orientation expected by the machine technology.
+   * @param rgs statistics for gap length etc.
+   * @param overlapFraction fraction of read length to assume can overlap the break point
+   */
+  BreakpointConstraint(SAMRecord rec, MachineOrientation mo, ReadGroupStats rgs, double overlapFraction) {
     //this(makeGeometry(rec, mo, rgs), rgs.gapMean(), rgs.gapStdDev());
-    mProxy = makeGeometry(rec, mo, rgs);
+    mProxy = makeGeometry(rec, mo, rgs, overlapFraction);
     mMeanR = r(mProxy.getX(), mProxy.getY()) + rgs.gapMean();
     mStdDeviation = rgs.fragmentStdDev();
     assert getR() < mMeanR && mMeanR < getS() : this.toString();
@@ -116,42 +126,43 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
     return gnu(getX(), y(r, getX())) + gnu(x(r, getY()), getY());
   }
 
+  // Get probable mate alignment end (0-based exclusive)
   static int mateEnd(SAMRecord rec) {
     final Integer me = rec.getIntegerAttribute(SamUtils.ATTRIBUTE_MATE_END);
     if (me == null) {
       // Default assume the mate spans as much template as the read itself does (i.e. similar length and alignment characteristics)
-      final int length = rec.getAlignmentEnd() - rec.getAlignmentStart();
-      return rec.getMateAlignmentStart() + length;
+      final int length = rec.getAlignmentEnd() - (rec.getAlignmentStart() - 1);
+      return (rec.getMateAlignmentStart() - 1) + length;
     }
     return me;
   }
 
 
-  private static int overlap(SAMRecord rec, int readLength) {
+  private static int overlap(SAMRecord rec, int readLength, double overlapFraction) {
     final Integer ii = rec.getIntegerAttribute(SamUtils.ATTRIBUTE_NUM_MISMATCHES);
     if (ii == null) {
       //default case when attributes not supplied
-      return fixedOverlap(readLength);
+      return fixedOverlap(readLength, overlapFraction);
     }
     return ii;
   }
 
-  private static int fixedOverlap(int readLength) {
-    return readLength * ReadGroupStats.ALIGNMENT_IGNORED_FRACTION / 100;
+  private static int fixedOverlap(int readLength, double overlapFraction) {
+    return (int) (readLength * overlapFraction);
   }
 
-  static BreakpointGeometry makeGeometry(SAMRecord rec, MachineOrientation mo, ReadGroupStats rgs) {
+  static BreakpointGeometry makeGeometry(SAMRecord rec, MachineOrientation mo, ReadGroupStats rgs, double overlapFraction) {
     final Orientation orientation = Orientation.orientation(rec, mo);
-    final int start = rec.getAlignmentStart();
-    final int end = rec.getAlignmentEnd();
-    final int mateStart = rec.getMateAlignmentStart();
+    final int start = rec.getAlignmentStart() - 1; // To 0-based
+    final int end = rec.getAlignmentEnd(); // 1-based inclusive == 0-based exclusive
+    final int mateStart = rec.getMateAlignmentStart() - 1;
     final int mateEnd = mateEnd(rec);
-    final int breakpointOverlap = overlap(rec, end - start);
-    final int mateBreakpointOverlap = fixedOverlap(mateEnd - mateStart);
-    final int x = orientation.getX() == +1 ?  end + 1 - breakpointOverlap : start - 1 + breakpointOverlap;
+    final int breakpointOverlap = overlap(rec, end - start, overlapFraction);
+    final int mateBreakpointOverlap = fixedOverlap(mateEnd - mateStart, overlapFraction);
+    final int x = orientation.getX() == +1 ?  end - breakpointOverlap : start + breakpointOverlap;
     final String xName = rec.getReferenceName();
     final String yName = rec.getMateReferenceName();
-    final int y = orientation.getY() == +1 ?  mateEnd + 1 - mateBreakpointOverlap : mateStart - 1 + mateBreakpointOverlap;
+    final int y = orientation.getY() == +1 ?  mateEnd - mateBreakpointOverlap : mateStart + mateBreakpointOverlap;
     final int max = gapMax(rgs);
     final int min = gapMin(rgs);
     assert min < rgs.gapMean() && rgs.gapMean() < max;
@@ -269,7 +280,7 @@ public final class BreakpointConstraint extends AbstractBreakpointGeometry {
     if (getOrientation() == Orientation.UU || getOrientation() == Orientation.DD) {
       return false;
     }
-    return getR() <= 1 && getS() >= 1;
+    return getR() <= 0 && 0 <= getS();
   }
 
   @Override

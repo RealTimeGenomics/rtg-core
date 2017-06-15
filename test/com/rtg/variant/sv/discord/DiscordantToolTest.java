@@ -49,6 +49,7 @@ public class DiscordantToolTest extends AbstractNanoTest {
     final boolean gzip = false;
     final OutputParams outParams = new OutputParams(output, false, gzip);
     builder.outputParams(outParams);
+    builder.overlapFraction(0);
 //    builder.maxAmbiguity(ambiguity);
 //    builder.maxCoverage(coverage);
 
@@ -66,16 +67,16 @@ public class DiscordantToolTest extends AbstractNanoTest {
   }
 
   static final String SAM = ""
-      + "@HD" + TAB + "VN:1.0" + TAB + "SO:coordinate" + LS
-      + "@SQ" + TAB + "SN:g1" + TAB + "LN:20" + LS
-      + "@SQ" + TAB + "SN:g2" + TAB + "LN:20" + LS
-      + "@RG" + TAB + "ID:RG1" + TAB + "PL:ILLUMINA" + TAB + "SM:bar" + LS
-      + "a0" + TAB + "97" + TAB + "g1" + TAB +  "4" + TAB + "255" + TAB + "3=2I13=" + TAB + "g2" + TAB + "14" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
-      + "a1" + TAB + "97" + TAB + "g1" + TAB +  "5" + TAB + "255" + TAB + "3=2I13=" + TAB + "g2" + TAB + "15" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
-      + "a2" + TAB + "97" + TAB + "g1" + TAB +  "6" + TAB + "255" + TAB + "3=2I13=" + TAB + "g1" + TAB + "16" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
-      + "b2" + TAB + "145" + TAB + "g1" + TAB +  "16" + TAB + "255" + TAB + "12=2I4=" + TAB + "g1" + TAB + "6" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
-      + "b0" + TAB + "145" + TAB + "g2" + TAB +  "14" + TAB + "255" + TAB + "12=2I4=" + TAB + "g1" + TAB + "4" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
-      + "b1" + TAB + "145" + TAB + "g2" + TAB +  "15" + TAB + "255" + TAB + "12=2I4=" + TAB + "g1" + TAB + "5" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
+      + "@HD VN:1.0 SO:coordinate" + LS
+      + "@SQ SN:g1 LN:20" + LS
+      + "@SQ SN:g2 LN:20" + LS
+      + "@RG ID:RG1 PL:ILLUMINA SM:bar" + LS
+      + "a0 97 g1 4 255 3=2I13= g2 14 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
+      + "a1 97 g1 5 255 3=2I13= g2 15 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
+      + "a2 97 g1 6 255 3=2I13= g1 16 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
+      + "b2 145 g1 16 255 12=2I4= g1 6 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
+      + "b0 145 g2 14 255 12=2I4= g1 4 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
+      + "b1 145 g2 15 255 12=2I4= g1 5 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
       ;
 
   static final String REF = ""
@@ -89,7 +90,7 @@ public class DiscordantToolTest extends AbstractNanoTest {
       final File seq = new File(dir, "ref.sdf");
       ReaderTestUtils.getDNADir(REF, seq);
       final File input = new File(dir, "input.sam");
-      FileUtils.stringToFile(sam, input);
+      FileUtils.stringToFile(sam.replaceAll(" ", TAB), input);
       final File output = new File(dir, "output");
       final DiscordantToolParams p = makeParams(seq, input, output, minDepth, intersectionOnly);
       final DiscordantTool dt = new DiscordantTool(p, TestUtils.getNullOutputStream());
@@ -111,21 +112,21 @@ public class DiscordantToolTest extends AbstractNanoTest {
   }
 
   static final String SAM_HEADER = ""
-      + "@HD" + TAB + "VN:1.0" + TAB + "SO:coordinate" + LS
-      + "@SQ" + TAB + "SN:g1" + TAB + "LN:133" + LS
-      + "@SQ" + TAB + "SN:g2" + TAB + "LN:133" + LS
-      + "@SQ" + TAB + "SN:g3" + TAB + "LN:133" + LS
-      + "@RG" + TAB + "ID:RG1" + TAB + "PL:ILLUMINA" + TAB + "SM:bar" + LS;
+      + "@HD VN:1.0 SO:coordinate" + LS
+      + "@SQ SN:g1 LN:133" + LS
+      + "@SQ SN:g2 LN:133" + LS
+      + "@SQ SN:g3 LN:133" + LS
+      + "@RG ID:RG1 PL:ILLUMINA SM:bar" + LS;
   static final String NULL_INTERSECT_SAM = ""
       + SAM_HEADER
-      + "a0" + TAB + "97" + TAB + "g1" + TAB +  "4" + TAB + "255" + TAB + "9=" + TAB + "g2" + TAB + "14" + TAB + "1" + TAB + "cgtagagag" + TAB + "`````````" + TAB + "AS:i:0" + TAB + "RG:Z:RG1" + LS
-      + "a1" + TAB + "97" + TAB + "g1" + TAB +  "5" + TAB + "255" + TAB + "3=2I13=" + TAB + "g2" + TAB + "15" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
-      + "a2" + TAB + "97" + TAB + "g1" + TAB +  "6" + TAB + "255" + TAB + "3=2I13=" + TAB + "g1" + TAB + "16" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
-//      + "a0b" + TAB + "97" + TAB + "g1" + TAB +  "30" + TAB + "255" + TAB + "9=" + TAB + "g2" + TAB + "44" + TAB + "1" + TAB + "cgtagagag" + TAB + "`````````" + TAB + "AS:i:0" + TAB + "RG:Z:RG1" + LS
-      + "a3" + TAB + "97" + TAB + "g1" + TAB +  "50" + TAB + "255" + TAB + "9=" + TAB + "g2" + TAB + "64" + TAB + "1" + TAB + "cgtagagag" + TAB + "`````````" + TAB + "AS:i:0" + TAB + "RG:Z:RG1" + LS
-      + "a4" + TAB + "97" + TAB + "g1" + TAB +  "60" + TAB + "255" + TAB + "9=" + TAB + "g2" + TAB + "74" + TAB + "1" + TAB + "cgtagagag" + TAB + "`````````" + TAB + "AS:i:0" + TAB + "RG:Z:RG1" + LS
-      + "a5" + TAB + "97" + TAB + "g1" + TAB +  "70" + TAB + "255" + TAB + "9=" + TAB + "g2" + TAB + "84" + TAB + "1" + TAB + "cgtagagag" + TAB + "`````````" + TAB + "AS:i:0" + TAB + "RG:Z:RG1" + LS
-      + "a6" + TAB + "97" + TAB + "g1" + TAB +  "70" + TAB + "255" + TAB + "9=" + TAB + "g3" + TAB + "84" + TAB + "1" + TAB + "cgtagagag" + TAB + "`````````" + TAB + "AS:i:0" + TAB + "RG:Z:RG1" + LS
+      + "a0 97 g1 4 255 9= g2 14 1 cgtagagag ````````` AS:i:0 RG:Z:RG1" + LS
+      + "a1 97 g1 5 255 3=2I13= g2 15 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
+      + "a2 97 g1 6 255 3=2I13= g1 16 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
+//      + "a0b 97 g1 30 255 9= g2 44 1 cgtagagag ````````` AS:i:0 RG:Z:RG1" + LS
+      + "a3 97 g1 50 255 9= g2 64 1 cgtagagag ````````` AS:i:0 RG:Z:RG1" + LS
+      + "a4 97 g1 60 255 9= g2 74 1 cgtagagag ````````` AS:i:0 RG:Z:RG1" + LS
+      + "a5 97 g1 70 255 9= g2 84 1 cgtagagag ````````` AS:i:0 RG:Z:RG1" + LS
+      + "a6 97 g1 70 255 9= g3 84 1 cgtagagag ````````` AS:i:0 RG:Z:RG1" + LS
       ;
 
   public void testNullIntersection() throws Exception {
@@ -134,17 +135,17 @@ public class DiscordantToolTest extends AbstractNanoTest {
   }
 
   static final String FLUSH_SAM = ""
-      + "@HD" + TAB + "VN:1.0" + TAB + "SO:coordinate" + LS
-      + "@SQ" + TAB + "SN:g1" + TAB + "LN:100" + LS
-      + "@SQ" + TAB + "SN:g2" + TAB + "LN:100" + LS
-      + "@RG" + TAB + "ID:RG1" + TAB + "PL:ILLUMINA" + TAB + "SM:bar" + LS
-      + "a0" + TAB + "97" + TAB + "g1" + TAB +  "4" + TAB + "255" + TAB + "3=2I13=" + TAB + "g2" + TAB + "14" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
-      + "a1" + TAB + "97" + TAB + "g1" + TAB +  "5" + TAB + "255" + TAB + "3=2I13=" + TAB + "g2" + TAB + "15" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
-      + "a2" + TAB + "97" + TAB + "g1" + TAB +  "6" + TAB + "255" + TAB + "3=2I13=" + TAB + "g1" + TAB + "16" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
-      + "b2" + TAB + "145" + TAB + "g1" + TAB +  "16" + TAB + "255" + TAB + "12=2I4=" + TAB + "g1" + TAB + "6" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
-      + "a4" + TAB + "97" + TAB + "g1" + TAB +  "70" + TAB + "255" + TAB + "3=2I13=" + TAB + "g1" + TAB + "16" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
-      + "b0" + TAB + "145" + TAB + "g2" + TAB +  "14" + TAB + "255" + TAB + "12=2I4=" + TAB + "g1" + TAB + "4" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
-      + "b1" + TAB + "145" + TAB + "g2" + TAB +  "15" + TAB + "255" + TAB + "12=2I4=" + TAB + "g1" + TAB + "5" + TAB + "1" + TAB + "cgtagagagagagatgct" + TAB + "``````````````````" + TAB + "AS:i:3" + TAB + "RG:Z:RG1" + LS
+      + "@HD VN:1.0 SO:coordinate" + LS
+      + "@SQ SN:g1 LN:100" + LS
+      + "@SQ SN:g2 LN:100" + LS
+      + "@RG ID:RG1 PL:ILLUMINA SM:bar" + LS
+      + "a0 97 g1 4 255 3=2I13= g2 14 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
+      + "a1 97 g1 5 255 3=2I13= g2 15 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
+      + "a2 97 g1 6 255 3=2I13= g1 16 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
+      + "b2 145 g1 16 255 12=2I4= g1 6 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
+      + "a4 97 g1 70 255 3=2I13= g1 16 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
+      + "b0 145 g2 14 255 12=2I4= g1 4 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
+      + "b1 145 g2 15 255 12=2I4= g1 5 1 cgtagagagagagatgct `````````````````` AS:i:3 RG:Z:RG1" + LS
       ;
 
   static class FlushCheck extends DiscordantTool {
@@ -172,7 +173,7 @@ public class DiscordantToolTest extends AbstractNanoTest {
       final File seq = new File(dir, "ref.sdf");
       ReaderTestUtils.getDNADir(REF_FLUSH, seq);
       final File input = new File(dir, "input.sam");
-      FileUtils.stringToFile(FLUSH_SAM, input);
+      FileUtils.stringToFile(FLUSH_SAM.replaceAll(" ", TAB), input);
       final File output = new File(dir, "output");
       final DiscordantToolParams p = makeParams(seq, input, output, 1, false);
       final FlushCheck dt = new FlushCheck(p, TestUtils.getNullOutputStream());

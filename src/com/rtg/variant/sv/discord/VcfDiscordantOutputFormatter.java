@@ -76,16 +76,19 @@ public class VcfDiscordantOutputFormatter {
     final boolean unionOnly = readset.getIntersection() == null;
     final BreakpointConstraint geo = unionOnly ? readset.getUnion() : readset.getIntersection();
     final BreakpointPosition pos = geo.position();
-    //Use Math.max(x, 0) to fix records that go before the start of the reference
-    final int refPosition = Math.max(pos.position(), 0);
-    final String cipos = "" + (pos.lo() - refPosition) + "," + (pos.hi() - refPosition);
+    final int ory = geo.getOrientation().getY();
+    final int orx = geo.getOrientation().getX();
+    // Adjust ref pos include anchoring base for "local up" breakends
+    // Use Math.max(x, 0) to handle breakends positioned before the start of the reference
+    final int refAdjust = orx == +1 ? 1 : 0;
+    final int refPosition = Math.max(pos.position() - refAdjust, 1 - refAdjust);
+    final String cipos = "" + (pos.lo() - refPosition - refAdjust) + "," + (pos.hi() - refPosition - refAdjust);
     final String ref = getRef(geo.getXName(), refPosition);
     final VcfRecord rec = new VcfRecord(geo.getXName(), refPosition, ref);
     rec.setId(VcfRecord.MISSING);
     final String alt;
 
     final String bracket;
-    final int ory = geo.getOrientation().getY();
     if (ory == +1) {
       bracket = "]";
     } else {
@@ -93,7 +96,6 @@ public class VcfDiscordantOutputFormatter {
       bracket = "[";
     }
     final String alt0 = bracket + geo.getYName() + ":" + (Math.max(pos.positionAlt(), 0) + 1) + bracket;
-    final int orx = geo.getOrientation().getX();
     if (orx == +1) {
       alt = ref + alt0;
     } else {

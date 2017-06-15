@@ -41,10 +41,11 @@ public class FlipTest extends TestCase {
   private abstract static class TestConstructor {
 
     protected static final MachineOrientation MO = MachineOrientation.FR;
-    protected static final int START_FIRST = 42;
     protected static final int LENGTH = 7;
+    protected static final int START_FIRST = 42; // These constants are 0-based
     protected static final int START_SECOND = 256;
-    protected static final int START_END_EX = START_FIRST + LENGTH;
+    protected static final int END_FIRST_EXCL = START_FIRST + LENGTH;
+    protected static final int END_SECOND_EXCL = START_SECOND + LENGTH;
     protected static final ReadGroupStats RGS = new MockReadGroupStats(100);
     protected static final int MAX_GAP = BreakpointConstraint.gapMax(RGS);
     protected static final int MIN_GAP = BreakpointConstraint.gapMin(RGS);
@@ -55,9 +56,9 @@ public class FlipTest extends TestCase {
       assertEquals(113, MAX_GAP);
       assertEquals(87, MIN_GAP);
       final MockSam recFirst = new MockSam();
-      recFirst.setAlignmentStart(START_FIRST);
-      recFirst.setAlignmentEnd(START_END_EX - 1);
-      recFirst.setMateAlignmentStart(START_SECOND);
+      recFirst.setAlignmentStart(START_FIRST + 1); // Various +1's here and below since htsjdk is 1-based
+      recFirst.setAlignmentEnd(END_FIRST_EXCL - 1 + 1);  // And their alignmentEnd is inclusive
+      recFirst.setMateAlignmentStart(START_SECOND + 1);
       recFirst.setFlags(firstFlag);
       mBcFirst = new BreakpointConstraint(recFirst, MO, RGS);
       mBcFirst.integrity();
@@ -65,9 +66,9 @@ public class FlipTest extends TestCase {
       checkFirst();
 
       final MockSam recSecond = new MockSam();
-      recSecond.setAlignmentStart(START_SECOND);
-      recSecond.setAlignmentEnd(START_SECOND + LENGTH - 1);
-      recSecond.setMateAlignmentStart(START_FIRST);
+      recSecond.setAlignmentStart(START_SECOND + 1);
+      recSecond.setAlignmentEnd(END_SECOND_EXCL - 1 + 1);
+      recSecond.setMateAlignmentStart(START_FIRST + 1);
       recSecond.setFlags(OrientationTest.flip(firstFlag));
       final BreakpointConstraint bcSecond = new BreakpointConstraint(recSecond, MO, RGS);
       assertEquals(mBcFirst, bcSecond);
@@ -81,12 +82,12 @@ public class FlipTest extends TestCase {
       @Override
       void checkFirst() {
         assertEquals(Orientation.UU, mBcFirst.getOrientation());
-        assertEquals(START_END_EX, mBcFirst.getX());
-        assertEquals(START_SECOND + LENGTH, mBcFirst.getY());
-        assertEquals(START_END_EX + MAX_GAP, mBcFirst.getZ());
-        assertEquals(START_SECOND + LENGTH + MAX_GAP, mBcFirst.getW());
-        assertEquals(START_END_EX + START_SECOND + LENGTH + MIN_GAP, mBcFirst.getR());
-        assertEquals(START_END_EX + START_SECOND + LENGTH + MAX_GAP, mBcFirst.getS());
+        assertEquals(END_FIRST_EXCL, mBcFirst.getX());
+        assertEquals(END_SECOND_EXCL, mBcFirst.getY());
+        assertEquals(END_FIRST_EXCL + MAX_GAP, mBcFirst.getZ());
+        assertEquals(END_SECOND_EXCL + MAX_GAP, mBcFirst.getW());
+        assertEquals(END_FIRST_EXCL + END_SECOND_EXCL + MIN_GAP, mBcFirst.getR());
+        assertEquals(END_FIRST_EXCL + END_SECOND_EXCL + MAX_GAP, mBcFirst.getS());
       }
     };
   }
@@ -97,12 +98,12 @@ public class FlipTest extends TestCase {
       @Override
       void checkFirst() {
         assertEquals(Orientation.UD, mBcFirst.getOrientation());
-        assertEquals(START_END_EX, mBcFirst.getX());
-        assertEquals(START_SECOND - 1, mBcFirst.getY());
-        assertEquals(START_END_EX + MAX_GAP, mBcFirst.getZ());
-        assertEquals(START_SECOND - 1 - MAX_GAP, mBcFirst.getW());
-        assertEquals(START_END_EX - (START_SECOND - 1) + MIN_GAP, mBcFirst.getR());
-        assertEquals(START_END_EX - (START_SECOND - 1) + MAX_GAP, mBcFirst.getS());
+        assertEquals(END_FIRST_EXCL, mBcFirst.getX());
+        assertEquals(START_SECOND, mBcFirst.getY());
+        assertEquals(END_FIRST_EXCL + MAX_GAP, mBcFirst.getZ());
+        assertEquals(START_SECOND - MAX_GAP, mBcFirst.getW());
+        assertEquals(END_FIRST_EXCL - START_SECOND + MIN_GAP, mBcFirst.getR());
+        assertEquals(END_FIRST_EXCL - START_SECOND + MAX_GAP, mBcFirst.getS());
       }
     };
   }
@@ -113,12 +114,12 @@ public class FlipTest extends TestCase {
       @Override
       void checkFirst() {
         assertEquals(Orientation.DD, mBcFirst.getOrientation());
-        assertEquals(START_FIRST - 1, mBcFirst.getX());
-        assertEquals(START_SECOND - 1, mBcFirst.getY());
-        assertEquals(START_FIRST - 1 - MAX_GAP, mBcFirst.getZ());
-        assertEquals(START_SECOND - 1 - MAX_GAP, mBcFirst.getW());
-        assertEquals(-START_FIRST + 1 - START_SECOND + 1 + MIN_GAP, mBcFirst.getR());
-        assertEquals(-START_FIRST + 1 - START_SECOND + 1 + MAX_GAP, mBcFirst.getS());
+        assertEquals(START_FIRST, mBcFirst.getX());
+        assertEquals(START_SECOND, mBcFirst.getY());
+        assertEquals(START_FIRST - MAX_GAP, mBcFirst.getZ());
+        assertEquals(START_SECOND - MAX_GAP, mBcFirst.getW());
+        assertEquals(-START_FIRST - START_SECOND + MIN_GAP, mBcFirst.getR());
+        assertEquals(-START_FIRST - START_SECOND + MAX_GAP, mBcFirst.getS());
       }
     };
   }
@@ -129,12 +130,12 @@ public class FlipTest extends TestCase {
       @Override
       void checkFirst() {
         assertEquals(Orientation.DU, mBcFirst.getOrientation());
-        assertEquals(START_FIRST - 1, mBcFirst.getX());
-        assertEquals(START_SECOND + LENGTH, mBcFirst.getY());
-        assertEquals(START_FIRST - 1 - MAX_GAP, mBcFirst.getZ());
-        assertEquals(START_SECOND + LENGTH + MAX_GAP, mBcFirst.getW());
-        assertEquals(-START_FIRST + 1 + START_SECOND + LENGTH + MIN_GAP, mBcFirst.getR());
-        assertEquals(-START_FIRST + 1 + START_SECOND + LENGTH + MAX_GAP, mBcFirst.getS());
+        assertEquals(START_FIRST, mBcFirst.getX());
+        assertEquals(END_SECOND_EXCL, mBcFirst.getY());
+        assertEquals(START_FIRST - MAX_GAP, mBcFirst.getZ());
+        assertEquals(END_SECOND_EXCL + MAX_GAP, mBcFirst.getW());
+        assertEquals(-START_FIRST + END_SECOND_EXCL + MIN_GAP, mBcFirst.getR());
+        assertEquals(-START_FIRST + END_SECOND_EXCL + MAX_GAP, mBcFirst.getS());
       }
     };
   }

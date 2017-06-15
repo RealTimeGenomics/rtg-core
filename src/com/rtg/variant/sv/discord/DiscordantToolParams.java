@@ -40,6 +40,7 @@ public final class DiscordantToolParams extends SvParams {
     boolean mIntersectionOnly = false;
     DiscordantTool.BamType mBamOutput = DiscordantTool.BamType.NONE;
     int mMinBreakpointDepth;
+    double mOverlapFraction = 0;
 
     @Override
     protected DiscordantToolParamsBuilder self() {
@@ -72,6 +73,17 @@ public final class DiscordantToolParams extends SvParams {
      */
     public DiscordantToolParamsBuilder bedOutput(final boolean bed) {
       mBedOutput = bed;
+      return self();
+    }
+
+    /**
+     * Assume this fraction of the read length may have been erroneously aligned across a breakpoint due to alignment penalties.
+     * Actual number varies according to alignment penalties and propensity for soft-clipping the dirty ends of alignments.
+     * @param overlapFraction the fraction of read length to assume may overlap a break end
+     * @return this builder, so calls can be chained.
+     */
+    public DiscordantToolParamsBuilder overlapFraction(double overlapFraction) {
+      mOverlapFraction = overlapFraction;
       return self();
     }
 
@@ -130,6 +142,8 @@ public final class DiscordantToolParams extends SvParams {
   private final boolean mIntersectionOnly;
   private final DiscordantTool.BamType mBamOutput;
   private final int mMinBreakpointDepth;
+  private final double mOverlapFraction;
+
 
   /**
    * @param builder the builder object.
@@ -141,6 +155,7 @@ public final class DiscordantToolParams extends SvParams {
     mBedOutput = builder.mBedOutput;
     mIntersectionOnly = builder.mIntersectionOnly;
     mMinBreakpointDepth = builder.mMinBreakpointDepth;
+    mOverlapFraction = builder.mOverlapFraction;
     mMultisample = builder.mMultisample;
     mBamOutput = builder.mBamOutput;
   }
@@ -197,6 +212,13 @@ public final class DiscordantToolParams extends SvParams {
     return mMinBreakpointDepth;
   }
 
+  /**
+   * @return the fraction of the read length that may have been erroneously aligned across a breakpoint due to alignment penalties.
+   */
+  public double overlapFraction() {
+    return mOverlapFraction;
+  }
+
   @Override
   public String toString() {
     final String pref = "    ";
@@ -208,7 +230,8 @@ public final class DiscordantToolParams extends SvParams {
       .append(" bed-output=").append(mBedOutput)
       .append(" bam-output=").append(mBamOutput)
       .append(" intersection-only=").append(mIntersectionOnly)
-      .append(" min-breakpoint-depth=").append(mMinBreakpointDepth).append(LS);
+      .append(" min-breakpoint-depth=").append(mMinBreakpointDepth)
+      .append(" overlap-fraction=").append(mOverlapFraction).append(LS);
     sb.append(filterParams().toString()).append(LS);
     if (genome() != null) {
       sb.append(pref).append(genome().toString());

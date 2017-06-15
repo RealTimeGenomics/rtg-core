@@ -290,7 +290,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
       final String id = rg.getId();
       final MachineOrientation mo = mMachineOrientations.get(id);
       final ReadGroupStats rgs = mParams.readGroupStatistics().get(id);
-      final BreakpointConstraint constraint = new BreakpointConstraint(rec, mo, rgs);
+      final BreakpointConstraint constraint = new BreakpointConstraint(rec, mo, rgs, mParams.overlapFraction());
       if (constraint.isConcordant()) {
         return true;
       }
@@ -361,7 +361,7 @@ public class DiscordantTool extends SamIteratorTask<DiscordantToolParams, Discor
             Diagnostic.userLog(mTotalDiscordantRecords + " discordant records.");
           }
         } finally {
-          if (mDebugOutput != null) {
+          if (mDebugReordering != null) {
             mDebugReordering.close();
           }
         }

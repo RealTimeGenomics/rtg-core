@@ -18,22 +18,15 @@ import static com.rtg.util.StringUtils.TAB;
 import java.io.File;
 import java.io.IOException;
 
+import com.rtg.AbstractTest;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.reader.SdfId;
 import com.rtg.reader.SequencesReader;
-import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.util.io.FileUtils;
-import com.rtg.util.test.FileHelper;
-
-import junit.framework.TestCase;
+import com.rtg.util.io.TestDirectory;
 
 /**
  */
-public class VcfDiscordantOutputFormatterTest extends TestCase {
-
-  public VcfDiscordantOutputFormatterTest(String name) {
-    super(name);
-  }
+public class VcfDiscordantOutputFormatterTest extends AbstractTest {
 
   private static final String REF = ">f" + LS
   //1234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890
@@ -48,19 +41,17 @@ public class VcfDiscordantOutputFormatterTest extends TestCase {
   + LS;
 
   public void test() throws IOException {
-    Diagnostic.setLogStream();
-    final File t = FileUtils.createTempDir("vcfdescord", "test");
-    try {
+    try (final TestDirectory t = new TestDirectory("vcfdiscord")) {
       try (SequencesReader templateReader = ReaderTestUtils.getReaderDNA(REF, new File(t, "ref"), new SdfId())) {
         final BreakpointConstraint bg = new BreakpointConstraint(new BreakpointGeometry(Orientation.UU, "f", "s", 42, 50, 142, 150, 190, 198), 0, 10.0);
         final DiscordantReadSet drs = new DiscordantReadSet("f", 60, bg);
         assertEquals(42, drs.unionPosition());
         assertEquals(102, drs.flushPosition());
         final String exp = "f" + TAB
-          + "46" + TAB
+          + "45" + TAB
           + "." + TAB
-          + "G" + TAB
-          + "G]s:146]" + TAB
+          + "T" + TAB
+          + "T]s:146]" + TAB
           + "." + TAB
           + "PASS" + TAB
           + "IMPRECISE;SVTYPE=BND;DP=1;CIPOS=-3,3;CV=0;AR=0.0" + TAB //TODO check CIPOS
@@ -68,15 +59,11 @@ public class VcfDiscordantOutputFormatterTest extends TestCase {
           + "1/1";
         assertEquals(exp, new VcfDiscordantOutputFormatter(templateReader).vcfRecord(drs, 0, 0.0).toString());
       }
-    } finally {
-      assertTrue(FileHelper.deleteAll(t));
     }
   }
 
   public void testNegative() throws IOException {
-    Diagnostic.setLogStream();
-    final File t = FileUtils.createTempDir("vcfdescord", "test");
-    try {
+    try (final TestDirectory t = new TestDirectory("vcfdiscord")) {
       try (SequencesReader templateReader = ReaderTestUtils.getReaderDNA(REF, new File(t, "ref"), new SdfId())) {
 
         final BreakpointConstraint bg = new BreakpointConstraint(new BreakpointGeometry(Orientation.UD, "f", "f", -20, 2, 3, -40, -23, 42), 0, 10.0); //new BreakpointConstraint(new BreakpointGeometry(Orientation.UU, "f", "s", 42, 50, 142, 150, 190, 198), 0, 10.0);
@@ -90,20 +77,16 @@ public class VcfDiscordantOutputFormatterTest extends TestCase {
           + "A[f:1[" + TAB
           + "." + TAB
           + "PASS" + TAB
-          + "IMPRECISE;SVTYPE=BND;DP=1;CIPOS=-20,2;CV=0;AR=0.0" + TAB //TODO check CIPOS
+          + "IMPRECISE;SVTYPE=BND;DP=1;CIPOS=-21,1;CV=0;AR=0.0" + TAB //TODO check CIPOS
           + "GT" + TAB
           + "1/1";
         assertEquals(exp, new VcfDiscordantOutputFormatter(templateReader).vcfRecord(drs, 0, 0.0).toString());
       }
-    } finally {
-      assertTrue(FileHelper.deleteAll(t));
     }
   }
 
   public void testInconsistent() throws IOException {
-    Diagnostic.setLogStream();
-    final File t = FileUtils.createTempDir("vcfdiscord", "test");
-    try {
+    try (final TestDirectory t = new TestDirectory("vcfdiscord")) {
       try (SequencesReader templateReader = ReaderTestUtils.getReaderDNA(REF, new File(t, "ref"), new SdfId())) {
         final BreakpointConstraint bg = new BreakpointConstraint(new BreakpointGeometry(Orientation.UU, "f", "s", 42, 50, 142, 150, 190, 198), 0, 10.0);
         final DiscordantReadSet drs = new DiscordantReadSet("f", 60, bg);
@@ -113,10 +96,10 @@ public class VcfDiscordantOutputFormatterTest extends TestCase {
         assertEquals(42, drs.unionPosition());
         assertEquals(102, drs.flushPosition());
         final String exp = "f" + TAB
-          + "46" + TAB
+          + "45" + TAB
           + "." + TAB
-          + "G" + TAB
-          + "G]s:146]" + TAB
+          + "T" + TAB
+          + "T]s:146]" + TAB
           + "." + TAB
           + "INCONSISTENT" + TAB
           + "IMPRECISE;SVTYPE=BND;DP=2;CIPOS=-3,3;CV=0;AR=0.0" + TAB //TODO check CIPOS
@@ -124,8 +107,6 @@ public class VcfDiscordantOutputFormatterTest extends TestCase {
           + "1/1";
         assertEquals(exp, new VcfDiscordantOutputFormatter(templateReader).vcfRecord(drs, 0, 0.0).toString());
       }
-    } finally {
-      assertTrue(FileHelper.deleteAll(t));
     }
   }
 
