@@ -107,11 +107,7 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
     return mErrors[index];
   }
 
-  /**
-   * Get the accumulated phred quality for the specified index.
-   * @param index whose value to get.
-   * @return the accumulated quality.
-   */
+  @Override
   public double qa(final int index) {
     return mQualityProduct[index];
   }

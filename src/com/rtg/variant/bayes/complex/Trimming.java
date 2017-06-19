@@ -193,7 +193,7 @@ public final class Trimming {
   }
 
   private static Variant getVariant(Variant original, int start, int end, VariantAlleleTrigger variantAlleleTrigger, VariantLocus newLocus) {
-    final VariantSample[] newSamples1;
+    final VariantSample[] newSamples;
     if (original.getNumberOfSamples() > 0) {
       //trim description
       Description oldDescription = DescriptionNone.SINGLETON;
@@ -216,11 +216,10 @@ public final class Trimming {
       }
 
       final Description newDescription = new DescriptionCommon(alleles.keySet().toArray(new String[alleles.size()]));
-      newSamples1 = createVariants(original, start, end, newDescription, alleleMap, newLocus.getRefNts(), variantAlleleTrigger);
+      newSamples = createVariants(original, start, end, newDescription, alleleMap, newLocus.getRefNts(), variantAlleleTrigger);
     } else {
-      newSamples1 = new VariantSample[0];
+      newSamples = new VariantSample[0];
     }
-    final VariantSample[] newSamples = newSamples1;
     final Variant result = new Variant(newLocus, newSamples);
     Variant.copy(original, result);
     result.setPossibleCause(createVariantName(start, end, original.getPossibleCause()));
