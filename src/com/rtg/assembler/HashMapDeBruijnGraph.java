@@ -22,7 +22,6 @@ import java.util.Set;
 import com.rtg.util.diagnostic.ErrorType;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.iterators.IteratorHelper;
-import com.rtg.util.memory.MemoryUsage;
 
 /**
  */
@@ -38,7 +37,7 @@ public class HashMapDeBruijnGraph implements Iterable<Kmer>, DeBruijnGraph {
 
   @Override
   public long bytes() {
-    return MemoryUsage.size(mDeBruijnGraph);
+    return 0; // Size estimate not available
   }
 
   private static class ComplementHashMap extends HashMap<Kmer, DeBruijnNode> {

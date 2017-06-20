@@ -59,10 +59,10 @@ public class SeparateClassLoaderTest extends TestCase {
     assertTrue(normal instanceof AbstractClass);
     assertTrue(normal instanceof ImplClass);
     final SeparateClassLoader loader = new SeparateClassLoader(ImplClass.class, AbstractClass.class);
-    final IFace separate = (IFace) loader.loadClass(ImplClass.class.getName()).newInstance();
+    final IFace separate = (IFace) loader.loadClass(ImplClass.class.getName()).getConstructor().newInstance();
     assertFalse(separate instanceof AbstractClass);
     assertFalse(separate instanceof ImplClass);
-    final IFace separate2 = (IFace) loader.loadClass(ImplClass.class.getName()).newInstance();
+    final IFace separate2 = (IFace) loader.loadClass(ImplClass.class.getName()).getConstructor().newInstance();
     assertFalse(separate2 instanceof AbstractClass);
     assertFalse(separate2 instanceof ImplClass);
     assertEquals("foooooo", normal.methodA());
