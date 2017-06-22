@@ -262,7 +262,8 @@ public class RamMapFunctionalTest extends AbstractNanoTest {
         "--" + MapFlags.SAM_FLAG,
         "--" + MapFlags.DONT_UNIFY_FLAG,
         "--" + MapFlags.UNKNOWNS_PENALTY_FLAG, "0",
-        "--" + MapFlags.ALIGNER_MODE_FLAG, "general");
+        "--" + MapFlags.ALIGNER_MODE_FLAG, "general",
+        "--XX" + CoreGlobalFlags.EDIT_DIST_MISMATCH_SOFT_CLIP, "2");
       assertEquals(r.err(), 0, r.rc());
 
       final String sam = FileHelper.gzFileToString(new File(out, "alignments.sam.gz"));
