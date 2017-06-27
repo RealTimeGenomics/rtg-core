@@ -28,7 +28,7 @@ class EnergySegmentScorer implements SegmentScorer {
     final double m = a.mean() - b.mean();
     final double al = a.bins();
     final double bl = b.bins();
-    // SAI: Original algorithm has log(|d_1-d_2|), I added 1+ to avoid potential singularity
+    // Original algorithm has log(|d_1-d_2|), 1+ to avoid potential singularity
     return (al * bl / (al + bl)) * m * m
       + mAlpha * Math.log(1 + Math.abs(a.meanDistanceBetween() - b.meanDistanceBetween()))
       + mAleph * Math.log(1 + b.distanceToPrevious());

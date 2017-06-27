@@ -318,7 +318,6 @@ public class AlignmentResultTest extends TestCase {
     final AlignmentResult mate = new AlignmentResult(getSequence("ACGT"), ActionsHelper.build("", 12, 2), getSequence(SAM_SEQ));
     mate.mReferenceId = 0;
     mate.setIdentifyingInfo(false, true);
-    // SAI: The ISIZE below may be wrong if we are supposed to use the inferred start of 1
     runSAMPairedEnd(mate, -2, "F", "0#163#7#1#*#3S7=5N25=#=#13#40#*#*#AS:i:1#NM:i:0", false);
   }
 
@@ -345,7 +344,6 @@ public class AlignmentResultTest extends TestCase {
     assertEquals(30, alignment2.getMatchCount());
     assertEquals(1, alignment2.getDeletionsFromReadCount());
     assertFalse(alignment2.isReverse());
-//    assertEquals(3, alignment2.mismatches());
     assertEquals("TAGACAAATGTTACAAGACCACAGGAGGGGAA", alignment2.readString());
 
     final String cigar2 = alignment2.getCigarString(false, false);
@@ -370,9 +368,7 @@ public class AlignmentResultTest extends TestCase {
     assertEquals(actions, alignment2.getActionsString());
     assertEquals(30, alignment2.getMatchCount());
     assertEquals(1, alignment2.getDeletionsFromReadCount());
-//    assertEquals(1, alignment2.getSubstitutionsCount());
     assertTrue(alignment2.isReverse());
-//    assertEquals(3, alignment2.mismatches());
     assertEquals("TAGACAAATGTTACAAGACCACAGGAGGGGAA", alignment2.readString());
 
     final String cigar2 = alignment2.getCigarString(true, false);
@@ -388,25 +384,20 @@ public class AlignmentResultTest extends TestCase {
     ar2.setIdentifyingInfo(false, true);
     ar2.setRemainingOutput(-2, 0);
 
-    //assertEquals(0, ar1.compareTo(ar2));
     assertTrue(ar1.equals(ar2));
 
     ar2.setIdentifyingInfo(false, false);
-    //assertTrue(ar1.compareTo(ar2) > 0);
     assertFalse(ar1.equals(ar2));
 
     ar2.setIdentifyingInfo(false, true);
     ar2.setRemainingOutput(-2, 1);
-    //assertTrue(ar1.compareTo(ar2) < 0);
     assertFalse(ar1.equals(ar2));
 
     final AlignmentResult ar3 = new AlignmentResult(new byte[0], ActionsHelper.build("", 2, 3), new byte[0]);
     ar3.setIdentifyingInfo(false, true);
     ar3.setRemainingOutput(-2, 0);
 
-    //assertTrue(ar1.compareTo(ar3) < 0);
     assertFalse(ar1.equals(ar3));
-
     assertNotNull(ar1);
   }
 
