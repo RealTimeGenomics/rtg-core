@@ -83,8 +83,7 @@ public class VariantTest extends TestCase {
     final Variant v = new Variant(new VariantLocus("foo", 1, 2), new VariantSample(Ploidy.DIPLOID));
     final Variant v2 = new Variant(new VariantLocus("foo", 1, 2), VariantFilter.COVERAGE.mask(), new VariantSample(Ploidy.DIPLOID));
     v2.setIndel(0);
-
-    TestUtils.testOrder(new Variant[] {v2, v}, true);
+    TestUtils.testOrder(new Variant[] {v2, v}, false);
   }
 
   public void testCopy() {

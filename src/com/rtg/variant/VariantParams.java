@@ -33,6 +33,7 @@ import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.test.params.ParamsNoField;
 import com.rtg.variant.bayes.AlleleBalanceProbability;
+import com.rtg.variant.bayes.multisample.TrimSplitType;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
 
@@ -90,7 +91,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final ThreadingEnvironment mThreadingEnvironment;
   private final Long mThreadingEnvironmentSeed;
   private final boolean mPruneHypotheses;
-  private final boolean mEnableTrimSplit;
+  private final TrimSplitType mTrimSplit;
   private final File mPopulationPriorFile;
   private final int mMaxEmIterations;
   private final int mMaxComplexHypotheses;
@@ -154,7 +155,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     mThreadingEnvironmentSeed = builder.mThreadingEnvironmentSeed;
     mPruneHypotheses = builder.mPruneHypotheses;
     mIndelTriggerFraction = builder.mIndelTriggerFraction;
-    mEnableTrimSplit = builder.mEnableTrimSplit;
+    mTrimSplit = builder.mTrimSplit;
     mAvrModelFile = builder.mAvrModelFile;
     mMinAvrScore = builder.mMinAvrScore;
     mUberHeader = builder.mUberHeader;
@@ -499,8 +500,8 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   /**
    * @return enable trimming and splitting
    */
-  public boolean enableTrimSplit() {
-    return mEnableTrimSplit;
+  public TrimSplitType trimSplit() {
+    return mTrimSplit;
   }
 
   /**
@@ -702,7 +703,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     .threadingEnvironment(mThreadingEnvironment)
     .threadingEnvironmentSeed(mThreadingEnvironmentSeed)
     .ploidy(mPloidy)
-    .enableTrimSplit(mEnableTrimSplit)
+    .trimSplit(mTrimSplit)
     .genomeRelationships(mGenomeRelationships)
     .noDiseasePrior(mNoDiseasePrior)
     .ionTorrent(mIonTorrent)
@@ -751,42 +752,42 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
     }
     sb.append(" q_default=").append(mQDefault)
       .append(" mated_read_default=").append(mMatedReadDefault)
-      .append(" unmated_read_default=").append(mUnmatedReadDefault).append(LS);
-    sb.append(" mated_read_max=").append(mMatedReadMax)
+      .append(" unmated_read_default=").append(mUnmatedReadDefault).append(LS)
+      .append(" mated_read_max=").append(mMatedReadMax)
       .append(" unmated_read_max=").append(mUnmatedReadMax)
-      .append(" ignore_map_qualities=").append(mIgnoreReadQualities).append(LS);
-    sb.append(" hypercomplex_length=").append(mHyperComplexLength)
-      .append(" non_identity_posterior=").append(nonidentityPosterior()).append(LS);
-    sb.append(" machine=").append(mMachineErrorName)
+      .append(" ignore_map_qualities=").append(mIgnoreReadQualities).append(LS)
+      .append(" hypercomplex_length=").append(mHyperComplexLength)
+      .append(" non_identity_posterior=").append(nonidentityPosterior()).append(LS)
+      .append(" machine=").append(mMachineErrorName)
       .append(" vcf_rp=").append(mVcfRp)
-      .append(" output_index=").append(mOutputIndex).append(LS);
-    sb.append(" call_level=").append(mCallLevel)
+      .append(" output_index=").append(mOutputIndex).append(LS)
+      .append(" call_level=").append(mCallLevel)
       .append(" indels=").append(mOutputNonSnps)
-      .append(" no_complex_calls=").append(mNoComplexCalls).append(LS);
-    sb.append(" interesting_threshold=").append(Utils.realFormat(mInterestingThreshold, 4)).append(LS);
-    sb.append(" interesting_separation=").append(mInterestingSeparation).append(LS);
-    sb.append(" indel_trigger_fraction=").append(mIndelTriggerFraction).append(LS)
+      .append(" no_complex_calls=").append(mNoComplexCalls).append(LS)
+      .append(" interesting_threshold=").append(Utils.realFormat(mInterestingThreshold, 4)).append(LS)
+      .append(" interesting_separation=").append(mInterestingSeparation).append(LS)
+      .append(" indel_trigger_fraction=").append(mIndelTriggerFraction).append(LS)
       .append(" max_coverage_filter=").append(mMaxCoverageFilter).append(LS)
-      .append(" max_coverage_bypass=").append(mMaxCoverageBypass).append(LS);
-    sb.append(" ignore_quality_scores=").append(mIgnoreQualityScores).append(LS);
-    sb.append(" max_ambiguity=").append(mMaxAmbiguity).append(LS);
-    sb.append(" sex=").append(mSex).append(LS);
-    sb.append(" ploidy=").append(mPloidy).append(LS);
-    sb.append(" chunk_size=").append(mChunkSize)
+      .append(" max_coverage_bypass=").append(mMaxCoverageBypass).append(LS)
+      .append(" ignore_quality_scores=").append(mIgnoreQualityScores).append(LS)
+      .append(" max_ambiguity=").append(mMaxAmbiguity).append(LS)
+      .append(" sex=").append(mSex).append(LS)
+      .append(" ploidy=").append(mPloidy).append(LS)
+      .append(" chunk_size=").append(mChunkSize)
       .append(" lookahead=").append(mLookAhead)
-      .append(" max_read_length=").append(mMaxReadLength).append(LS);
-    sb.append(" threading_environment=").append(mThreadingEnvironment)
-      .append(" treading_environment_seed=").append(mThreadingEnvironmentSeed).append(LS);
-    sb.append(" exec_threads=").append(execThreads())
-      .append(" io_threads=").append(ioThreads()).append(LS);
-    sb.append(" hyper_complex_threshold=").append(mHyperComplexLength).append(LS);
-    sb.append(" ionTorrent=").append(mIonTorrent)
+      .append(" max_read_length=").append(mMaxReadLength).append(LS)
+      .append(" threading_environment=").append(mThreadingEnvironment)
+      .append(" treading_environment_seed=").append(mThreadingEnvironmentSeed).append(LS)
+      .append(" exec_threads=").append(execThreads())
+      .append(" io_threads=").append(ioThreads()).append(LS)
+      .append(" hyper_complex_threshold=").append(mHyperComplexLength).append(LS)
+      .append(" ionTorrent=").append(mIonTorrent)  //note currently writing IonTorrent out here is pointless as it is modified after this is printed.
       .append(" prune_hypothesis=").append(mPruneHypotheses)
-      .append(" enable_trim_split=").append(mEnableTrimSplit).append(LS);  //note currently writing IonTorrent out here is pointless as it is modified after this is printed.
-    sb.append(" no_disease_prior=").append(noDiseasePrior()).append(LS);
-    sb.append(" Relationships:").append(genomeRelationships()).append(LS);
-    sb.append(" max_em_iterations=").append(mMaxEmIterations).append(LS);
-    sb.append(" genome_connectivity=").append(mGenomeConnectivity == null ? "null" : mGenomeConnectivity.toString()).append(LS);
+      .append(" trim_split=").append(mTrimSplit).append(LS)
+      .append(" no_disease_prior=").append(noDiseasePrior()).append(LS)
+      .append(" Relationships:").append(genomeRelationships()).append(LS)
+      .append(" max_em_iterations=").append(mMaxEmIterations).append(LS)
+      .append(" genome_connectivity=").append(mGenomeConnectivity == null ? "null" : mGenomeConnectivity.toString()).append(LS);
     if (mPopulationPriorFile != null) {
       sb.append(" Population prior=").append(mPopulationPriorFile.getPath()).append(LS);
     }

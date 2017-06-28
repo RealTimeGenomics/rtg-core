@@ -137,7 +137,7 @@ public abstract class Statistics<T extends AlleleStatistics<T>> implements Clone
   }
 
   /**
-   * Replaces Allele statistics on this instance with one remapping the
+   * Replaces allele statistics on this instance with one remapping the
    * description into a new description according to specified description mappings.
    * @param newDescription the new description
    * @param mapping a mapping array. counts for old description <code>i</code> should

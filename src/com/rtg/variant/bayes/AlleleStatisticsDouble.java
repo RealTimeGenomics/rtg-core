@@ -131,6 +131,7 @@ public class AlleleStatisticsDouble extends AlleleStatistics<AlleleStatisticsDou
     final AlleleStatisticsDouble newCounts = new AlleleStatisticsDouble(newDescription);
     for (int oldI = 0; oldI < mapping.length; ++oldI) {
       final int newI = mapping[oldI];
+      //System.out.println("remap " + oldI + " (" + count(oldI) + ") -> " + newDescription.name(newI));
       newCounts.mCountsForwards[newI] += mCountsForwards[oldI];
       newCounts.mCountsBackwards[newI] += mCountsBackwards[oldI];
       newCounts.mCountsMated[newI] += mCountsMated[oldI];

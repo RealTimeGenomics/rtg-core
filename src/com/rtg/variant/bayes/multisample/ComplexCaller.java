@@ -139,7 +139,7 @@ final class ComplexCaller {
         }
         if (variant != null) {
           variant.setComplexScored();
-          if (variant.hasCallNames()) {
+          if (variant.isOrdinaryCall()) {
             calls.add(variant);
           } else {
             copyFailedCalls(complexities, calls, startOfRegion, endOfRegion, mParams); //mark the calls as hyper complex and copy over the originals in complex call list

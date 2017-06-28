@@ -73,4 +73,9 @@ public class DescriptionComplex extends Description {
   public int maxLength() {
     return mMaxLength;
   }
+
+  @Override
+  public String toString() {
+    return mNames.toString();
+  }
 }

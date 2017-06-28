@@ -68,8 +68,12 @@ import com.rtg.variant.VariantParamsBuilder;
 import com.rtg.variant.avr.ModelFactory;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.ModelInterface;
+import com.rtg.variant.bayes.complex.AligningDecomposer;
+import com.rtg.variant.bayes.complex.Decomposer;
+import com.rtg.variant.bayes.complex.DoNothingDecomposer;
 import com.rtg.variant.bayes.complex.IonTorrentCallFilter;
-import com.rtg.variant.bayes.complex.Trimming;
+import com.rtg.variant.bayes.complex.Splitter;
+import com.rtg.variant.bayes.complex.Trimmer;
 import com.rtg.variant.bayes.multisample.multithread.DependenciesMultiSample;
 import com.rtg.variant.bayes.multisample.multithread.EventListMultiSample;
 import com.rtg.variant.bayes.multisample.multithread.JobIdMultisample;
@@ -114,6 +118,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
   private List<SAMSequenceRecord> mSequences;
   private ReferenceRegions mBedFilterRegions;
   private ParallelProgress mPP = null;
+  private Decomposer mDecomposer = null;
 
   private final JointCallerConfigurator<V> mConfigurator;
 
@@ -586,13 +591,10 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
   }
 
   private List<Variant> trimSplit(List<Variant> merged) {
-    if (!mParams.enableTrimSplit()) {
-      return merged;
-    }
     final List<Variant> calls = new ArrayList<>();
     for (Variant variant : merged) {
-      if (variant.hasCallNames()) {
-        calls.addAll(Trimming.trimSplit(mParams, variant, mConfig.getDenovoChecker()));
+      if (variant.isOrdinaryCall()) {
+        calls.addAll(mDecomposer.decompose(variant));
       } else {
         calls.add(variant);
       }
@@ -712,6 +714,8 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     Diagnostic.userLog(mWrapper.getOutputRecordsCount() + " records processed");
   }
 
+
+
   void init() throws IOException {
     boolean detectedIonTorrent = false;
     for (final SAMReadGroupRecord readGroup : mParams.uberHeader().getReadGroups()) {
@@ -732,6 +736,19 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
     }
 
     mConfig = mConfigurator.getConfig(mParams, mStatistics);
+    final VariantAlleleTrigger variantAlleleTrigger = new VariantAlleleTrigger(mParams.minVariantAllelicDepth(), mParams.minVariantAllelicFraction());
+    final TrimSplitType trimSplitType = mParams.trimSplit();
+    if (trimSplitType == TrimSplitType.NONE || mParams.callLevel() == VariantOutputLevel.ALL) {
+      mDecomposer = new DoNothingDecomposer();
+    } else if (trimSplitType == TrimSplitType.TRIM || mParams.ionTorrent()) {
+      // XXX I'm not sure why we do trimming only for ion torrent -- perhaps this could now use our ordinary trim/split
+      mDecomposer = new Trimmer(variantAlleleTrigger);
+    } else if (trimSplitType == TrimSplitType.STANDARD) {
+      mDecomposer = new Splitter(mConfig.getDenovoChecker(), variantAlleleTrigger);
+    } else {
+      assert trimSplitType == TrimSplitType.ALIGN;
+      mDecomposer = new AligningDecomposer(mConfig.getDenovoChecker(), variantAlleleTrigger);
+    }
     mAnnotators.addAll(mConfig.getVcfAnnotators());
     // AVR annotator comes last because it wants to use other annotations
     if (mParams.avrModelFile() != null) {

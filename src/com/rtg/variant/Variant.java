@@ -15,7 +15,6 @@ package com.rtg.variant;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.rtg.util.Utils;
 import com.rtg.util.integrity.Exam;
 import com.rtg.util.integrity.IntegralAbstract;
 import com.rtg.variant.bayes.Code;
@@ -73,7 +72,7 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
     /** Soft clip occurs at leftmost end of read (aligned against reference) */
     LEFT,
     /** Soft clip occurs at rightmost end of read (aligned against reference) */
-    RIGHT;
+    RIGHT
   }
 
   private final VariantLocus mLocus;
@@ -428,7 +427,7 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
   }
 
   /**
-   * Method to copy all non final fields from one object to another.
+   * Method to copy all non-final fields from one variant to another.
    * @param copyFrom values to copy from
    * @param copyTo value to copy to
    */
@@ -491,7 +490,7 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
 
   @Override
   public int hashCode() {
-    return Utils.pairHash(getLocus().getStart(), getTypeString().hashCode());
+    return getLocus().getStart();
   }
 
   /**
@@ -532,22 +531,11 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
     return getLocus().getEnd() - getLocus().getStart() == 1;
   }
 
-  /** @return type of this variant. */
-  String getTypeString() {
-    if (isIndel()) {
-      return "INDEL";
-    } else if (isSoftClip()) {
-      return "SOFTCLIP";
-    } else {
-      return "SNP";
-    }
-  }
-
   /**
-   * Check that calls have names
-   * @return true if the first non null sample has a name or if all samples are null
+   * Check that calls have genotypes
+   * @return true if the first non-null sample has a name or if all samples are null
    */
-  public boolean hasCallNames() {
+  public boolean isOrdinaryCall() {
     for (int i = 0; i < getNumberOfSamples(); ++i) {
       if (getSample(i) != null) {
         return getSample(i).getName() != null; //only need to check first non-null sample, if one BC is null they all will be.
@@ -576,7 +564,7 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
       maxLen = 1;
     }
     Exam.assertTrue(getLocus().getEnd() >= getLocus().getStart() + minLen);
-    Exam.assertTrue("end=" + getLocus().getEnd() + " start=" + getLocus().getStart() + " max=" + maxLen + " type=" + getTypeString(), getLocus().getEnd() <= getLocus().getStart() + maxLen);
+    Exam.assertTrue("end=" + getLocus().getEnd() + " start=" + getLocus().getStart() + " max=" + maxLen, getLocus().getEnd() <= getLocus().getStart() + maxLen);
     return true;
   }
 }

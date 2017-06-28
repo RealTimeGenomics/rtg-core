@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2014. Real Time Genomics Limited.
+ * Copyright (c) 2017. Real Time Genomics Limited.
  *
  * Use of this source code is bound by the Real Time Genomics Limited Software Licence Agreement
  * for Academic Non-commercial Research Purposes only.
@@ -25,11 +25,8 @@ import com.rtg.relation.Family;
 import com.rtg.relation.LineageLookup;
 import com.rtg.util.StringUtils;
 import com.rtg.util.diagnostic.Diagnostic;
-import com.rtg.variant.StaticThreshold;
 import com.rtg.variant.Variant;
-import com.rtg.variant.Variant.VariantFilter;
 import com.rtg.variant.VariantLocus;
-import com.rtg.variant.VariantParams;
 import com.rtg.variant.VariantSample;
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.multisample.VariantAlleleTrigger;
@@ -43,8 +40,63 @@ import junit.framework.TestCase;
 
 /**
  */
-public class TrimmingTest extends TestCase {
-  static final VariantAlleleTrigger TRIGGER = new VariantAlleleTrigger(0, 0.0);
+public abstract class AbstractDecomposerTest extends TestCase {
+
+  static Variant createVariant(final String ref, final String allele1, final String allele2) {
+    final boolean hetero = allele2 != null;
+    final boolean isIdentity = ref.equals(allele1) && (!hetero || ref.equals(allele2));
+    final String name = allele1 + (hetero ? ":" + allele2 : "");
+    final VariantSample sample = VariantOutputVcfFormatterTest.createSample(Ploidy.DIPLOID, name, isIdentity, 30.5, VariantSample.DeNovoStatus.UNSPECIFIED, null);
+    final String[] alleles = isIdentity ? new String[] {ref} : hetero ? new String[] {ref, allele1, allele2} : new String[] {ref, allele1};
+    sample.setStats(new StatisticsComplex(new DescriptionCommon(alleles), 1));
+    return new Variant(new VariantLocus("chr", 0, ref.length(), ref, 'N'), sample);
+  }
+
+  static VariantSample getVariantSample(Ploidy diploid, String sequence, boolean b, Double score, VariantSample.DeNovoStatus isDeNovo, Double deNovoPosterior, Description desc) {
+    final VariantSample vs = VariantOutputVcfFormatterTest.createSample(diploid, sequence, b, score, isDeNovo, deNovoPosterior);
+    vs.setStats(new StatisticsSnp(desc));
+    return vs;
+  }
+
+  static DescriptionCommon getDescription(final String... names) {
+    final HashSet<String> allelesSet = new HashSet<>();
+    for (final String name : names) {
+      allelesSet.addAll(Arrays.asList(StringUtils.split(name, VariantUtils.COLON)));
+    }
+    return new DescriptionCommon(allelesSet.toArray(new String[allelesSet.size()]));
+  }
+
+  static void checkDenovoCorrect(List<Variant> variants, int[] expectedPositions, String[] expectedParentA, String[] expectedParentB, String[] expectedChild, VariantSample.DeNovoStatus[] expectedDenovo) {
+    for (int i = 0; i < variants.size(); ++i) {
+      final Variant res = variants.get(i);
+      assertEquals(expectedPositions[i], res.getLocus().getStart());
+      assertEquals(res.getLocus().getStart() + 1, res.getLocus().getEnd());
+      if (expectedParentA[i] != null) {
+        assertEquals(expectedParentA[i], res.getSample(0).getName());
+      } else {
+        assertNull(res.getSample(0));
+      }
+      if (expectedParentB[i] != null) {
+        assertEquals(expectedParentB[i], res.getSample(1).getName());
+      } else {
+        assertNull(res.getSample(1));
+      }
+      assertEquals(expectedChild[i], res.getSample(2).getName());
+      assertEquals(expectedDenovo[i], res.getSample(2).isDeNovo());
+    }
+  }
+
+  static void increment(DescriptionCommon description, StatisticsComplex stats, int read, int count) {
+    for (int i = 0; i < count; ++i) {
+      stats.increment(new EvidenceQ(description, read, 2, 2, 0.1, 0.1, true, true, true, false), 0);
+    }
+  }
+
+  public abstract Decomposer getDecomposer();
+
+  public abstract Decomposer getDecomposer(DenovoChecker denovoChecker);
+
+  public abstract Decomposer getDecomposer(VariantAlleleTrigger variantAlleleTrigger);
 
   public void testSplitHomozygous() {
     final String a = "GTCCTAACT";
@@ -57,7 +109,7 @@ public class TrimmingTest extends TestCase {
     likelihoods.put(Collections.singleton(b), Math.log(0.4));
     v.getSample(0).setGenotypeLikelihoods(likelihoods);
 
-    final List<Variant> list = Trimming.split(v, null, TRIGGER);
+    final List<Variant> list = getDecomposer().decompose(v);
     assertEquals(3, list.size());
     final Variant first = list.get(0);
     assertEquals("CT", first.getSample(0).getName());
@@ -108,7 +160,7 @@ public class TrimmingTest extends TestCase {
     likelihoods.put(VariantSample.pairSet(b, c), Math.log(0.345));
     v.getSample(0).setGenotypeLikelihoods(likelihoods);
 
-    final List<Variant> list = Trimming.split(v, null, TRIGGER);
+    final List<Variant> list = getDecomposer().decompose(v);
     assertEquals(3, list.size());
     final Variant first = list.get(0);
     assertEquals("CT:TC", first.getSample(0).getName());
@@ -147,66 +199,14 @@ public class TrimmingTest extends TestCase {
     assertEquals(2, third.getSplitId());
   }
 
-  public void testNonSplit() {
-    //homozygous identity
-    final Variant v = createVariant("GTCCTAACT", "GTCCTAACT", null);
-    final List<Variant> list = Trimming.split(v, null, TRIGGER);
-    assertEquals(v, list.get(0));
-
-    //heterozygous identity
-    final Variant v2 = createVariant("GTCCTAACT", "GTCCTAACT", "GTCCTAACT");
-    final List<Variant> list2 = Trimming.split(v2, null, TRIGGER);
-    assertEquals(v2, list2.get(0));
-
-    //homozygous different lengths
-    final Variant v3 = createVariant("GTCCTAACT", "GTCCTAAT", null);
-    final List<Variant> list3 = Trimming.split(v3, null, TRIGGER);
-    assertEquals(v3, list3.get(0));
-
-    //heterozygous different lengths
-    final Variant v4 = createVariant("GTCCTAACT", "GTCCTAA", "GTCCTAACTAA");
-    final List<Variant> list4 = Trimming.split(v4, null, TRIGGER);
-    assertEquals(v4, list4.get(0));
-  }
-
-  public void testPrevNt() {
-    Diagnostic.setLogStream();
-    final VariantParams p = VariantParams.builder().create();
-    final VariantLocus locus = new VariantLocus("blah", 0, 3, "cgt", 'N');
-    final VariantSample vs = getVariantSample(Ploidy.DIPLOID, "cgtgt", false, null, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0, getDescription("cgtgt", locus.getRefNts()));
-    final Variant v = new Variant(locus, vs);
-    final List<Variant> list = Trimming.trimSplit(p, v, null);
-    assertEquals(1, list.size());
-    final VariantLocus newLocus = list.get(0).getLocus();
-    assertEquals("gt", list.get(0).getSample(0).getName());
-    assertEquals('c', newLocus.getPreviousRefNt());
-    assertEquals("", newLocus.getRefNts());
-    assertEquals(1, newLocus.getStart());
-  }
-
-  static VariantSample getVariantSample(Ploidy diploid, String cgtgt, boolean b, Double score, VariantSample.DeNovoStatus isDeNovo, Double deNovoPosterior, Description desc) {
-    final VariantSample vs = VariantOutputVcfFormatterTest.createSample(diploid, cgtgt, b, score, isDeNovo, deNovoPosterior);
-    vs.setStats(new StatisticsSnp(desc));
-    return vs;
-  }
-
-  static DescriptionCommon getDescription(String... names) {
-    final HashSet<String> allelesSet = new HashSet<>();
-    for (String name : names) {
-      allelesSet.addAll(Arrays.asList(StringUtils.split(name, VariantUtils.COLON)));
-    }
-    return new DescriptionCommon(allelesSet.toArray(new String[allelesSet.size()]));
-  }
-
   public void testSplitTrim() {
-    final VariantParams p = VariantParams.builder().outputNonSnps(false).create();
     final VariantLocus locus = new VariantLocus("blah", 1, 8, "ACTACAG", '?');
     final VariantSample vs = getVariantSample(Ploidy.DIPLOID, "AGTACAG:AGTACAG", false, null, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0, getDescription(locus.getRefNts(), "AGTACAG:AGTACAG"));
     vs.setCoverage(10);
     vs.setCoverageCorrection(1.0);
     final Variant v = new Variant(locus, vs);
     v.setNonIdentityPosterior(2.3);
-    final List<Variant> list = Trimming.trimSplit(p, v, null);
+    final List<Variant> list = getDecomposer().decompose(v);
     assertEquals(1, list.size());
     final Variant variant = list.get(0);
     assertEquals('A', variant.getLocus().getPreviousRefNt());
@@ -215,7 +215,6 @@ public class TrimmingTest extends TestCase {
   }
 
   public void testSplitWithSomaticCause() {
-    final VariantParams p = VariantParams.builder().outputNonSnps(false).create();
     final VariantLocus locus = new VariantLocus("blah", 1, 4, "AGT", '?');
     final VariantSample normal = getVariantSample(Ploidy.DIPLOID, "CGA:CGA", false, null, VariantSample.DeNovoStatus.UNSPECIFIED, null, getDescription(locus.getRefNts(), "CGA:CGT"));
     normal.setCoverage(10);
@@ -225,8 +224,7 @@ public class TrimmingTest extends TestCase {
     cancer.setCoverageCorrection(1.0);
     final Variant v = new Variant(locus, normal, cancer);
     v.setNonIdentityPosterior(2.3);
-    final LineageDenovoChecker checker = new LineageDenovoChecker(new LineageLookup(-1, 0));
-    final List<Variant> list = Trimming.trimSplit(p, v, checker);
+    final List<Variant> list = getDecomposer(new LineageDenovoChecker(new LineageLookup(-1, 0))).decompose(v);
     assertEquals(2, list.size());
     assertEquals(VariantSample.DeNovoStatus.NOT_DE_NOVO, list.get(0).getSample(1).isDeNovo());
     assertEquals(10.0, list.get(1).getSample(1).getDeNovoPosterior());
@@ -235,53 +233,42 @@ public class TrimmingTest extends TestCase {
 
   public void testOverCoverageGetsSet() {
     Diagnostic.setLogStream();
-    final VariantParams p = VariantParams.builder().maxCoverageFilter(new StaticThreshold(2)).create();
     final VariantLocus locus = new VariantLocus("blah", 0, 5, "cgtgt", 'N');
     final VariantSample vs = getVariantSample(Ploidy.DIPLOID, "cgt", false, null, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0, getDescription(locus.getRefNts(), "cgt"));
     vs.setCoverage(3);
     vs.setCoverageCorrection(0.000);
     final Variant v = new Variant(locus, vs);
-    v.addFilter(VariantFilter.COVERAGE);
-    final List<Variant> list = Trimming.trimSplit(p, v, null);
+    v.addFilter(Variant.VariantFilter.COVERAGE);
+    final List<Variant> list = getDecomposer().decompose(v);
     assertEquals(1, list.size());
     final Variant variant = list.get(0);
-    assertTrue(variant.isFiltered(VariantFilter.COVERAGE));
+    assertTrue(variant.isFiltered(Variant.VariantFilter.COVERAGE));
   }
 
-  private static Variant createVariant(String ref, String cat1, String cat2) {
-    final boolean hetero = cat2 != null;
-    final boolean isIdentity = ref.equals(cat1) && (!hetero || ref.equals(cat2));
-    final String name = cat1 + (hetero ? ":" + cat2 : "");
-    final VariantSample sample = VariantOutputVcfFormatterTest.createSample(Ploidy.DIPLOID, name, isIdentity, 30.5, VariantSample.DeNovoStatus.UNSPECIFIED, null);
-    final String[] alleles = isIdentity ? new String[] {ref} : hetero ? new String[] {ref, cat1, cat2} : new String[] {ref, cat1};
-    sample.setStats(new StatisticsComplex(new DescriptionCommon(alleles), 1));
-    return new Variant(new VariantLocus("chr", 0, ref.length(), ref, 'N'), sample);
-  }
-
-  public void testTrimIdentity() {
-    //should not trim identity calls
-    final Variant v = createVariant("ACC", "ACC", null);
-    assertEquals(v, Trimming.trim(v, TRIGGER));
-
-    final Variant v2 = createVariant("ACC", "ACC", "ACC");
-    assertEquals(v2, Trimming.trim(v2, TRIGGER));
+  public void testPrevNt() {
+    final VariantLocus locus = new VariantLocus("blah", 0, 3, "CGT", 'N');
+    final VariantSample vs = getVariantSample(Ploidy.DIPLOID, "CGTGT", false, null, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0, getDescription("CGTGT", locus.getRefNts()));
+    final Variant v = new Variant(locus, vs);
+    final List<Variant> list = getDecomposer().decompose(v);
+    assertEquals(1, list.size());
+    final VariantLocus newLocus = list.get(0).getLocus();
+    assertEquals("GT", list.get(0).getSample(0).getName());
+    assertEquals('C', newLocus.getPreviousRefNt());
+    assertEquals("", newLocus.getRefNts());
+    assertEquals(1, newLocus.getStart());
   }
 
   public void testTrimSimpleSnps() {
-    //homozygous
-    //                               0123456789
-    final Variant v = createVariant("ACGTCTGTCT", "ACCTCTGTCT", null);
-    final Variant trim = Trimming.trim(v, TRIGGER);
+    // homozygous
+    final Variant trim = getDecomposer().decompose(createVariant("ACGTCTGTCT", "ACCTCTGTCT", null)).get(0);
     assertEquals('C', trim.getLocus().getPreviousRefNt());
     assertEquals("G", trim.getLocus().getRefNts());
     assertEquals(2, trim.getLocus().getStart());
     assertEquals(3, trim.getLocus().getEnd());
     assertEquals("C", trim.getSample(0).getName());
 
-    //heterozygous
-    //                                0123456789
-    final Variant v2 = createVariant("ACGTCTGTCT", "ACCTCTGTCT", "ACGTCTGTCT");
-    final Variant trim2 = Trimming.trim(v2, TRIGGER);
+    // heterozygous
+    final Variant trim2 = getDecomposer().decompose(createVariant("ACGTCTGTCT", "ACCTCTGTCT", "ACGTCTGTCT")).get(0);
     assertEquals('C', trim2.getLocus().getPreviousRefNt());
     assertEquals("G", trim2.getLocus().getRefNts());
     assertEquals(2, trim2.getLocus().getStart());
@@ -290,79 +277,46 @@ public class TrimmingTest extends TestCase {
   }
 
   public void testTrimDelete() {
-    //homozygous delete
-    //                                               0123456789
-    final Variant vHomozygousDelete = createVariant("ACGTCTGTCT", "ACGTCTGT", null);
-    final Variant trim = Trimming.trim(vHomozygousDelete, TRIGGER);
+    // homozygous delete
+    final Variant trim = getDecomposer().decompose(createVariant("ACGTCTGTCT", "ACGTCTGT", null)).get(0);
     assertEquals('G', trim.getLocus().getPreviousRefNt());
     assertEquals("TC", trim.getLocus().getRefNts());
     assertEquals(7, trim.getLocus().getStart());
     assertEquals(9, trim.getLocus().getEnd());
     assertEquals("", trim.getSample(0).getName());
 
-    //heterozygous deletes
-    final Variant vHeterozygousDelete = createVariant("ACGTCTGTCT", "ACGTCTGT", "ACGTCTG");
-    final Variant trim2 = Trimming.trim(vHeterozygousDelete, TRIGGER);
+    // heterozygous deletes
+    final Variant trim2 = getDecomposer().decompose(createVariant("ACGTCTGTCT", "ACGTCTGT", "ACGTCTG")).get(0);
     assertEquals('G', trim2.getLocus().getPreviousRefNt());
     assertEquals("TCT", trim2.getLocus().getRefNts());
     assertEquals(7, trim2.getLocus().getStart());
     assertEquals(10, trim2.getLocus().getEnd());
     assertEquals("T:", trim2.getSample(0).getName());
 
-  //heterozygous deletes
-    final Variant vHeterozygousDelete2 = createVariant("ACGTCTGTCT", "ACGTCTG", "ACGTCTGT");
-    final Variant trim3 = Trimming.trim(vHeterozygousDelete2, TRIGGER);
+    // heterozygous deletes
+    final Variant trim3 = getDecomposer().decompose(createVariant("ACGTCTGTCT", "ACGTCTG", "ACGTCTGT")).get(0);
     assertEquals('G', trim3.getLocus().getPreviousRefNt());
     assertEquals("TCT", trim3.getLocus().getRefNts());
     assertEquals(":T", trim3.getSample(0).getName());
   }
 
-  public void testTrimInsert() {
-    //homozygous
-    //                                               0123456789
-    final Variant vHomozygousInsert = createVariant("ACGTCTGTCT", "ACGTTTCTGTCT", null);
-    final Variant trim = Trimming.trim(vHomozygousInsert, TRIGGER);
+  public void testTrimInsertHomo() {
+    final Variant trim = getDecomposer().decompose(createVariant("ACGTCTGTCT", "ACGTTTCTGTCT", null)).get(0);
+    assertEquals("TT", trim.getSample(0).getName());
     assertEquals('G', trim.getLocus().getPreviousRefNt());
     assertEquals("", trim.getLocus().getRefNts());
     assertEquals(3, trim.getLocus().getStart());
     assertEquals(3, trim.getLocus().getEnd());
-    assertEquals("TT", trim.getSample(0).getName());
+  }
 
-    //heterozygous
-    //                                               0123456789
-    final Variant vHeterozyygousInsert = createVariant("ACGTCTGTCT", "ACGTTTCTGTCT", "ACGTCCCTGTCT");
-    final Variant trim2 = Trimming.trim(vHeterozyygousInsert, TRIGGER);
+  public void testTrimInsertHetero() {
+    final List<Variant> decomposed = getDecomposer().decompose(createVariant("ACGTCTGTCT", "ACGTTTCTGTCT", "ACGTCCCTGTCT"));
+    final Variant trim2 = decomposed.get(0);
+    assertEquals("TT:CC", trim2.getSample(0).getName());
     assertEquals('T', trim2.getLocus().getPreviousRefNt());
     assertEquals("", trim2.getLocus().getRefNts());
     assertEquals(4, trim2.getLocus().getStart());
     assertEquals(4, trim2.getLocus().getEnd());
-    assertEquals("TT:CC", trim2.getSample(0).getName());
-  }
-
-  public void testTrimComplex() {
-  //homozygous
-    //                                               0123456789
-    final Variant vHomozygousIndel = createVariant("ACGTCTGTCT", "ACGTTTCTGGCT", null);
-    final Variant trim = Trimming.trim(vHomozygousIndel, TRIGGER);
-    assertEquals('T', trim.getLocus().getPreviousRefNt());
-    assertEquals("CTGT", trim.getLocus().getRefNts());
-    assertEquals(4, trim.getLocus().getStart());
-    assertEquals(8, trim.getLocus().getEnd());
-    assertEquals("TTCTGG", trim.getSample(0).getName());
-
-    //heterozygous
-    // 01|234567---8|9
-    // AC|GTCTAT---C|T
-    // AC|--CTATTTTC|T
-    // AC|GTCTA----G|T
-    //                                                  0123456789
-    final Variant vHeterozyygousIndel = createVariant("ACGTCTATCT", "ACCTATTTTCT", "ACGTCTAGT");
-    final Variant trim2 = Trimming.trim(vHeterozyygousIndel, TRIGGER);
-    assertEquals('C', trim2.getLocus().getPreviousRefNt());
-    assertEquals("GTCTATC", trim2.getLocus().getRefNts());
-    assertEquals(2, trim2.getLocus().getStart());
-    assertEquals(9, trim2.getLocus().getEnd());
-    assertEquals("CTATTTTC:GTCTAG", trim2.getSample(0).getName());
   }
 
   public void testTrimComplexMultisample() {
@@ -372,7 +326,7 @@ public class TrimmingTest extends TestCase {
     final VariantSample sample2 = getVariantSample(Ploidy.DIPLOID, "ACGTCTGTCT:ACGTTTT", false, 30.5, VariantSample.DeNovoStatus.UNSPECIFIED, null, description);
     final VariantSample sample3 = getVariantSample(Ploidy.DIPLOID, "ACGTCTCT", false, 30.5, VariantSample.DeNovoStatus.UNSPECIFIED, null, description);
     final Variant v = new Variant(locus, sample1, sample2, sample3);
-    final Variant trim = Trimming.trim(v, TRIGGER);
+    final Variant trim = getDecomposer().decompose(v).get(0);
     assertEquals('T', trim.getLocus().getPreviousRefNt());
     assertEquals("CCCC", trim.getLocus().getRefNts());
     assertEquals(4, trim.getLocus().getStart());
@@ -386,7 +340,7 @@ public class TrimmingTest extends TestCase {
     final VariantLocus locus = new VariantLocus("chr", 0, "ACGTCCCCT".length(), "ACGTCCCCT", 'N');
     final VariantSample sample1 = getVariantSample(Ploidy.DIPLOID, "ACGTCTGTCT", false, 30.5, VariantSample.DeNovoStatus.UNSPECIFIED, null, getDescription(locus.getRefNts(), "ACGTCTGTCT"));
     final Variant v = new Variant(locus, sample1, null, null);
-    final Variant trim = Trimming.trim(v, TRIGGER);
+    final Variant trim = getDecomposer().decompose(v).get(0);
     assertEquals('C', trim.getLocus().getPreviousRefNt());
     assertEquals("CC", trim.getLocus().getRefNts());
     assertEquals(5, trim.getLocus().getStart());
@@ -398,7 +352,7 @@ public class TrimmingTest extends TestCase {
     //homozygous
     //
     final Variant vHomozygousIndel = createVariant("TA", "TAA", null);
-    final Variant trim = Trimming.trim(vHomozygousIndel, TRIGGER);
+    final Variant trim = getDecomposer().decompose(vHomozygousIndel).get(0);
     assertEquals('T', trim.getLocus().getPreviousRefNt());
     assertEquals("", trim.getLocus().getRefNts());
     assertEquals(1, trim.getLocus().getStart());
@@ -408,7 +362,7 @@ public class TrimmingTest extends TestCase {
     //heterozygous
     // AC|GTCTA----G|T
     final Variant vHeterozyygousIndel = createVariant("TA", "TAA", "TA");
-    final Variant trim2 = Trimming.trim(vHeterozyygousIndel, TRIGGER);
+    final Variant trim2 = getDecomposer().decompose(vHeterozyygousIndel).get(0);
     assertEquals('T', trim2.getLocus().getPreviousRefNt());
     assertEquals("", trim2.getLocus().getRefNts());
     assertEquals(1, trim2.getLocus().getStart());
@@ -418,15 +372,12 @@ public class TrimmingTest extends TestCase {
 
   public void testDenovoCorrect() {
     final VariantLocus locus = new VariantLocus("chr", 0, "TTTT".length(), "TTTT", 'N');
-    final DescriptionCommon description = TrimmingTest.getDescription(locus.getRefNts(), "TTTT:TTTC", "TTTT:TCTC");
+    final DescriptionCommon description = AligningDecomposerTest.getDescription(locus.getRefNts(), "TTTT:TTTC", "TTTT:TCTC");
     final VariantSample vsDad = getVariantSample(Ploidy.DIPLOID, "TTTT:TTTC", false, 5.0, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0, description);
     final VariantSample vsMum = getVariantSample(Ploidy.DIPLOID, "TTTT:TTTC", false, 5.0, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0, description);
     final VariantSample vsJimmy = getVariantSample(Ploidy.DIPLOID, "TTTT:TCTC", false, 5.0, VariantSample.DeNovoStatus.IS_DE_NOVO, null, description);
     final Variant v = new Variant(locus, vsDad, vsMum, vsJimmy);
-    final Family fam = new Family("father", "mother", "child");
-    final ChildFamilyLookup familyLookup = new ChildFamilyLookup(3, fam);
-    final MendelianDenovoChecker denovoCorrector = new MendelianDenovoChecker(familyLookup);
-    final List<Variant> variants = Trimming.split(v, denovoCorrector, TRIGGER);
+    final List<Variant> variants = getDecomposer(new MendelianDenovoChecker(new ChildFamilyLookup(3, new Family("father", "mother", "child")))).decompose(v);
     final int[] expectedPositions = {1, 3};
     final String[] expectedParentA = {"T:T", "T:C"};
     final String[] expectedParentB = {"T:T", "T:C"};
@@ -442,10 +393,7 @@ public class TrimmingTest extends TestCase {
     final VariantSample vsMum = getVariantSample(Ploidy.DIPLOID, "TTTT:TTTC", false, 5.0, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0, description);
     final VariantSample vsJimmy = getVariantSample(Ploidy.HAPLOID, "TCTC", false, 5.0, VariantSample.DeNovoStatus.IS_DE_NOVO, null, description);
     final Variant v = new Variant(locus, vsDad, vsMum, vsJimmy);
-    final Family fam = new Family("father", "mother", "child");
-    final ChildFamilyLookup familyLookup = new ChildFamilyLookup(3, fam);
-    final MendelianDenovoChecker denovoCorrector = new MendelianDenovoChecker(familyLookup);
-    final List<Variant> variants = Trimming.split(v, denovoCorrector, TRIGGER);
+    final List<Variant> variants = getDecomposer(new MendelianDenovoChecker(new ChildFamilyLookup(3, new Family("father", "mother", "child")))).decompose(v);
     final int[] expectedPositions = {1, 3};
     final String[] expectedParentA = {"T", "T"};
     final String[] expectedParentB = {"T:T", "T:C"};
@@ -458,13 +406,9 @@ public class TrimmingTest extends TestCase {
     final VariantLocus locus = new VariantLocus("chr", 0, "TTTT".length(), "TTTT", 'N');
     final DescriptionCommon description = getDescription(locus.getRefNts(), "TTTC", "TCTC");
     final VariantSample vsDad = getVariantSample(Ploidy.HAPLOID, "TTTC", false, 5.0, VariantSample.DeNovoStatus.NOT_DE_NOVO, 0.0, description);
-    //final VariantSample vsMum = null; // new VariantSample(Ploidy.NONE, VariantSample.DeNovoStatus.UNSPECIFIED, null);
     final VariantSample vsJimmy = getVariantSample(Ploidy.HAPLOID, "TCTC", false, 5.0, VariantSample.DeNovoStatus.IS_DE_NOVO, null, description);
     final Variant v = new Variant(locus, vsDad, null, vsJimmy);
-    final Family fam = new Family("father", "mother", "child");
-    final ChildFamilyLookup familyLookup = new ChildFamilyLookup(3, fam);
-    final MendelianDenovoChecker denovoCorrector = new MendelianDenovoChecker(familyLookup);
-    final List<Variant> variants = Trimming.split(v, denovoCorrector, TRIGGER);
+    final List<Variant> variants = getDecomposer(new MendelianDenovoChecker(new ChildFamilyLookup(3, new Family("father", "mother", "child")))).decompose(v);
     final int[] expectedPositions = {1, 3};
     final String[] expectedParentA = {"T", "C"};
     final String[] expectedParentB = {null, null};
@@ -473,24 +417,31 @@ public class TrimmingTest extends TestCase {
     checkDenovoCorrect(variants, expectedPositions, expectedParentA, expectedParentB, expectedChild, expectedDenovo);
   }
 
-  private void checkDenovoCorrect(List<Variant> variants, int[] expectedPositions, String[] expectedParentA, String[] expectedParentB, String[] expectedChild, VariantSample.DeNovoStatus[] expectedDenovo) {
-    for (int i = 0; i < variants.size(); ++i) {
-      final Variant res = variants.get(i);
-      assertEquals(expectedPositions[i], res.getLocus().getStart());
-      assertEquals(res.getLocus().getStart() + 1, res.getLocus().getEnd());
-      if (expectedParentA[i] != null) {
-        assertEquals(expectedParentA[i], res.getSample(0).getName());
-      } else {
-        assertNull(res.getSample(0));
-      }
-      if (expectedParentB[i] != null) {
-        assertEquals(expectedParentB[i], res.getSample(1).getName());
-      } else {
-        assertNull(res.getSample(1));
-      }
-      assertEquals(expectedChild[i], res.getSample(2).getName());
-      assertEquals(expectedDenovo[i], res.getSample(2).isDeNovo());
-    }
+  public void testVariantAlleleNearHomozygous() {
+    final String name = "TAG:TAA";
+    final String ref = "AAA";
+    final String cat1 = "TAA";
+    final String cat2 = "TAG";
+    final VariantSample sample = VariantOutputVcfFormatterTest.createSample(Ploidy.DIPLOID, name, false, 30.5, VariantSample.DeNovoStatus.UNSPECIFIED, null);
+    final DescriptionCommon description = new DescriptionCommon(ref, cat1, cat2);
+    final StatisticsComplex stats = new StatisticsComplex(description, 1);
+
+    increment(description, stats, 0, 4);
+    increment(description, stats, 1, 3);
+    increment(description, stats, 2, 2);
+
+    sample.setStats(stats);
+    final Variant v = new Variant(new VariantLocus("chr", 0, ref.length(), ref, 'N'), sample);
+    final VariantSample sample1 = v.getSample(0);
+    sample1.setVariantAllele("TAG");
+
+    final List<Variant> splits = getDecomposer(new VariantAlleleTrigger(1, 0.1)).decompose(v);
+    final VariantSample s0 = splits.get(0).getSample(0);
+    assertEquals("T:T", s0.getName());
+    assertEquals("T", s0.getVariantAllele());
+    final VariantSample s1 = splits.get(1).getSample(0);
+    assertEquals("G:A", s1.getName());
+    assertEquals("G", s1.getVariantAllele());
   }
 
   public void testVariantAlleleCrossedSteams() {
@@ -513,65 +464,8 @@ public class TrimmingTest extends TestCase {
     final VariantSample sample1 = v.getSample(0);
     sample1.setVariantAllele("TAA");
 
-    final List<Variant> splits = Trimming.split(v, null, new VariantAlleleTrigger(1, 0.1));
+    final List<Variant> splits = getDecomposer(new VariantAlleleTrigger(1, 0.1)).decompose(v);
     assertEquals("T", splits.get(0).getSample(0).getVariantAllele());
     assertEquals("G", splits.get(1).getSample(0).getVariantAllele());
-  }
-
-  public void testVariantAlleleNearHomozygous() {
-    final String name = "TAG:TAA";
-    final boolean isIdentity = false;
-    final String ref = "AAA";
-    final String cat1 = "TAA";
-    final String cat2 = "TAG";
-    final VariantSample sample = VariantOutputVcfFormatterTest.createSample(Ploidy.DIPLOID, name, isIdentity, 30.5, VariantSample.DeNovoStatus.UNSPECIFIED, null);
-    final String[] alleles = isIdentity ? new String[] {ref} : new String[] {ref, cat1, cat2};
-    final DescriptionCommon description = new DescriptionCommon(alleles);
-    final StatisticsComplex stats = new StatisticsComplex(description, 1);
-
-    increment(description, stats, 0, 4);
-    increment(description, stats, 1, 3);
-    increment(description, stats, 2, 2);
-
-    sample.setStats(stats);
-    final Variant v = new Variant(new VariantLocus("chr", 0, ref.length(), ref, 'N'), sample);
-    final VariantSample sample1 = v.getSample(0);
-    sample1.setVariantAllele("TAG");
-
-    final List<Variant> splits = Trimming.split(v, null, new VariantAlleleTrigger(1, 0.1));
-    assertEquals("T", splits.get(0).getSample(0).getVariantAllele());
-    assertEquals("G", splits.get(1).getSample(0).getVariantAllele());
-  }
-
-  private void increment(DescriptionCommon description, StatisticsComplex stats, int read, int count) {
-    for (int i = 0; i < count; ++i) {
-      stats.increment(new EvidenceQ(description, read, 2, 2, 0.1, 0.1, true, true, true, false), 0);
-    }
-  }
-
-  public void testVariantAlleleTrimOnly() {
-    // There was a bug where the common descriptions weren't combined during trimming. This resulted in a VA = ref if
-    // the third description outnumbered the variant here.
-    final String name = "TAA:AAA";
-    final boolean isIdentity = false;
-    final String ref = "AAA";
-    final String cat1 = "TAA";
-    final String cat2 = "AAC";
-    final VariantSample sample = VariantOutputVcfFormatterTest.createSample(Ploidy.DIPLOID, name, isIdentity, 30.5, VariantSample.DeNovoStatus.UNSPECIFIED, null);
-    final String[] alleles = isIdentity ? new String[] {ref} : new String[] {ref, cat1, cat2};
-    final DescriptionCommon description = new DescriptionCommon(alleles);
-    final StatisticsComplex stats = new StatisticsComplex(description, 1);
-
-    increment(description, stats, 0, 8);
-    increment(description, stats, 1, 4);
-    increment(description, stats, 2, 5);
-
-    sample.setStats(stats);
-    final Variant v = new Variant(new VariantLocus("chr", 0, ref.length(), ref, 'N'), sample);
-    final VariantSample sample1 = v.getSample(0);
-    sample1.setVariantAllele("TAA");
-
-    final Variant split = Trimming.trim(v, new VariantAlleleTrigger(1, 0.1));
-    assertEquals("T", split.getSample(0).getVariantAllele());
   }
 }

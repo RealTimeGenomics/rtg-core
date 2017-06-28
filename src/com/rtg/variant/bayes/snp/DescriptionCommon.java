@@ -12,6 +12,8 @@
 
 package com.rtg.variant.bayes.snp;
 
+import java.util.Arrays;
+
 import com.rtg.variant.bayes.Description;
 
 /**
@@ -69,4 +71,8 @@ public class DescriptionCommon extends Description {
     return mMaxLength;
   }
 
+  @Override
+  public String toString() {
+    return Arrays.toString(mNames);
+  }
 }

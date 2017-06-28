@@ -427,6 +427,6 @@ public class VariantSample {
     }
     copyTo.setVariantAllele(copyFrom.getVariantAllele());
     copyTo.setGenotypeLikelihoods(copyFrom.getGenotypeLikelihoods());
-    copyTo.setStats(copyFrom.getStats());
+    copyTo.setStats((Statistics<?>) copyFrom.getStats().copy());
   }
 }
