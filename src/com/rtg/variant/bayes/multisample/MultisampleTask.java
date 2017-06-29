@@ -593,7 +593,7 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
   private List<Variant> trimSplit(List<Variant> merged) {
     final List<Variant> calls = new ArrayList<>();
     for (Variant variant : merged) {
-      if (variant.isOrdinaryCall()) {
+      if (variant.isOrdinaryCall() && variant.isComplexScored()) {
         calls.addAll(mDecomposer.decompose(variant));
       } else {
         calls.add(variant);
