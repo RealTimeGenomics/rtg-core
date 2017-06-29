@@ -13,7 +13,6 @@
 package com.rtg.variant.bayes.multisample.population;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -21,6 +20,7 @@ import java.io.Writer;
 import java.util.Properties;
 
 import com.rtg.launcher.AbstractNanoTest;
+import com.rtg.launcher.MainResult;
 import com.rtg.reader.ReaderTestUtils;
 import com.rtg.tabix.TabixIndexer;
 import com.rtg.util.InvalidParamsException;
@@ -29,7 +29,6 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.TestUtils;
 import com.rtg.util.Utils;
 import com.rtg.util.io.FileUtils;
-import com.rtg.util.io.MemoryPrintStream;
 import com.rtg.util.io.TestDirectory;
 import com.rtg.util.test.BgzipFileHelper;
 import com.rtg.util.test.FileHelper;
@@ -127,16 +126,13 @@ public class PopulationNanoTest extends AbstractNanoTest {
    * @throws Exception when IO explodes
    */
   public static void check(NanoRegression nano, final String template, final String samString, final String ped, final String expectedPrefix, String[] extraArgs, int metric, boolean bed) throws Exception {
-    //Diagnostic.setLogStream(System.err);
-    final File tmp = FileUtils.createTempDir("familynano", "tests");
-    try {
+    try (TestDirectory tmp = new TestDirectory("populationnano")) {
       final File templateDir = new File(tmp, "template");
       ReaderTestUtils.getDNADir(template, templateDir);
       final File relationsFile = new File(tmp, "family.ped");
       final File out = new File(tmp, "output");
       FileUtils.stringToFile(ped, relationsFile);
       final File sam = createIndexedSamFile(samString, tmp, "total");
-
 
       final String[] baseArgs = {
           "-t", templateDir.getPath(),
@@ -154,18 +150,13 @@ public class PopulationNanoTest extends AbstractNanoTest {
         args = baseArgs;
       }
 
-      final MemoryPrintStream ps = new MemoryPrintStream();
-
       final PopulationCli cli = new PopulationCli();
-      final int code = cli.mainInit(args, new ByteArrayOutputStream(), ps.printStream());
-      assertEquals(ps.toString(), 0, code);
+      final MainResult r = MainResult.run(cli, args);
+      assertEquals(r.err(), 0, r.rc());
 
       final String result = FileUtils.fileToString(new File(out, "snps.vcf"));
       final String actualFixed = TestUtils.stripVcfHeader(result);
 
-      //System.err.println(actualFixed);
-      //final String expectedFinal = FileHelper.resourceToString("com/rtg/variant/bayes/multisample/cancer/resources/somaticnanotest" + expectedPrefix + ".vcf").replaceAll("\r", "");
-      //assertEquals(expectedFinal, actualFixed.replaceAll("\r", ""));
       nano.check("populationnanotest-" + expectedPrefix + ".vcf", actualFixed, false);
       final String usageLog = cli.usageLog();
       //System.err.println(usageLog);
@@ -174,8 +165,6 @@ public class PopulationNanoTest extends AbstractNanoTest {
         final String actualBedFixed = FileUtils.fileToString(new File(out, "regions.bed"));
         nano.check("populationnanotest-" + expectedPrefix + ".bed", actualBedFixed, false);
       }
-    } finally {
-      assertTrue(FileHelper.deleteAll(tmp));
     }
   }
 
