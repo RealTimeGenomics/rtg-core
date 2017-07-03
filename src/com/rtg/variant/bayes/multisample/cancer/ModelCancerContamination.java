@@ -116,7 +116,7 @@ public class ModelCancerContamination<S extends Hypotheses<? extends Description
     sb.append(" contamination=").append(fmt.format(mContamination));
     sb.append(LS);
     final int pad = hypotheses().nameLength();
-    final int size = ((HypothesesCancer) hypotheses()).subHypotheses().size();
+    final int size = ((HypothesesCancer<?>) hypotheses()).subHypotheses().size();
     for (int i = 0; i < size; ++i) {
       sb.append(StringUtils.padLeft(hypotheses().name(i), pad));
       for (int j = 0; j < size; ++j) {

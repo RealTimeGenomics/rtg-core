@@ -189,7 +189,7 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
   }
 
   @Override
-  public boolean globalIntegrity() {
+  public final boolean globalIntegrity() {
     integrity();
     final int size = mHypotheses.description().size();
     for (int i = 0; i < size; ++i) {
@@ -204,7 +204,7 @@ abstract class SomaticPriors<D extends Description> extends IntegralAbstract {
   }
 
   @Override
-  public boolean integrity() {
+  public final boolean integrity() {
     Exam.assertTrue(0.0 <= mMutation && mMutation <= 1.0 && !Double.isNaN(mMutation));
     final int size = mHypotheses.description().size();
     Exam.assertEquals(size, mInitialPriors.length);

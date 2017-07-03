@@ -211,7 +211,7 @@ public abstract class AbstractSomaticCaller extends IntegralAbstract implements 
     final int va = mVariantAlleleTrigger.getVariantAllele(ac, description, refAllele);
 
     final boolean triggersVa = va != -1;
-    if ((sameCall && hypotheses.reference() == bestNormal && ratio >= mIdentityInterestingThreshold)  // Call was same for both samples and equal to the reference
+    if (sameCall && hypotheses.reference() == bestNormal && ratio >= mIdentityInterestingThreshold  // Call was same for both samples and equal to the reference
       && !(triggersVa || (mParams.callLevel() == VariantOutputLevel.ALL))) {
       // We don't need to output any record here.
       return null;

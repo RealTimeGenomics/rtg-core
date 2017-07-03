@@ -28,6 +28,7 @@ import com.rtg.variant.avr.AvrUtils;
 import com.rtg.variant.bayes.multisample.AbstractMultisampleCli;
 
 /**
+ * Somatic calling entry point for calling with a single sample.
  */
 public class TumorOnlyCli extends SomaticCli {
   private static final String ORIGINAL_NAME = "normal";

@@ -42,7 +42,7 @@ import com.rtg.variant.bayes.multisample.MultisampleTask;
 import com.rtg.variant.format.VcfFormatField;
 
 /**
- * Somatic caller
+ * Somatic caller entry point.
  */
 public class SomaticCli extends AbstractMultisampleCli {
 
