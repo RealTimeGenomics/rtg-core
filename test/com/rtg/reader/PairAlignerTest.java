@@ -14,19 +14,21 @@ package com.rtg.reader;
 
 import static com.rtg.mode.DnaUtils.reverseComplement;
 
+import java.io.IOException;
+
 import org.junit.Assert;
-import org.junit.Test;
 
 import com.rtg.alignment.SingleIndelSeededEditDistance;
 import com.rtg.alignment.UnidirectionalAdaptor;
+import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.ngs.MapParamsHelper;
 import com.rtg.ngs.NgsParams;
 import com.rtg.util.cli.CFlags;
 
 /**
  */
-public class PairAlignerTest {
-  @Test
+public class PairAlignerTest extends AbstractNanoTest {
+
   public void testAlignmentOverlappingNoReadThrough() {
     final PairAligner pairAligner = getPairAligner(0);
     final String leftString =  "ACGATGACGTAGATGTGTACCGTTATATGC";
@@ -41,7 +43,6 @@ public class PairAlignerTest {
     return ">" + name + "\n" + read.replaceAll("-", "") + "\n";
   }
 
-  @Test
   public void testAlignmentTrimSingleBaseFromR1() {
     final PairAligner pairAligner = getPairAligner(0);
     final String leftString =  "ACGATGACGTAGATGTGTACCGTTATATGCCCTG";
@@ -53,7 +54,6 @@ public class PairAlignerTest {
     Assert.assertEquals(fasta("right", reverseComplement(rightString)), right.toFasta());
   }
 
-  @Test
   public void testAlignmentTrimSingleBaseFromR2() {
     final PairAligner pairAligner = getPairAligner(0);
     final String leftString =  "-ACGATGACGTAGATGTGTACCGTTATATGCC";
@@ -65,7 +65,6 @@ public class PairAlignerTest {
     Assert.assertEquals(fasta("right", reverseComplement(rightString.substring(1))), right.toFasta());
   }
 
-  @Test
   public void testAlignmentOverlappingReadThroughBothEnds() {
     final PairAligner pairAligner = getPairAligner(0);
     final String prefix = "GCCG";
@@ -80,7 +79,6 @@ public class PairAlignerTest {
     Assert.assertEquals(fasta("right", reverseComplement(middle)), right.toFasta());
   }
 
-  @Test
   public void testAlignmentOverlappingReadThroughBothEndsLongerR2() {
     final PairAligner pairAligner = getPairAligner(0);
     final String prefix = "CGCCG";
@@ -95,7 +93,6 @@ public class PairAlignerTest {
     Assert.assertEquals(fasta("right", reverseComplement(middle)), right.toFasta());
   }
 
-  @Test
   public void testAlignmentOverlappingReadThroughBothEndsShorterR2() {
     final PairAligner pairAligner = getPairAligner(0);
     final String prefix = "CGCCG";
@@ -109,7 +106,7 @@ public class PairAlignerTest {
     Assert.assertEquals(fasta("left", middle), left.toFasta());
     Assert.assertEquals(fasta("right", reverseComplement(middle)), right.toFasta());
   }
-  @Test
+
   public void testAlignmentOverlappingReadThroughR1LongerR1() {
     final PairAligner pairAligner = getPairAligner(0);
     final String prefix = "ACCGCCG";
@@ -124,7 +121,7 @@ public class PairAlignerTest {
     Assert.assertEquals(fasta("left", prefix + middle), left.toFasta());
     Assert.assertEquals(fasta("right", reverseComplement(middle)), right.toFasta());
   }
-  @Test
+
   public void testAlignmentOverlappingReadThroughR2LongerR2() {
     final PairAligner pairAligner = getPairAligner(0);
     final String prefix = "ACCGCCG";
@@ -140,22 +137,22 @@ public class PairAlignerTest {
     Assert.assertEquals(fasta("right", reverseComplement(middle + suffix)), right.toFasta());
   }
 
-  @Test
   public void testAlignmentOverlappingReadThroughBothEndsMismatches() {
-    final PairAligner pairAligner = getPairAligner(0);
+    final PairAligner pairAligner = getPairAligner(0, PairAligner.MismatchType.PICK_BEST);
     final String prefix = "GCCG";
-    final String middle =         "ACGATGACGTAGA-T-GTGT-A-CCGTTATATGC";
-    final String middleMismatch = "ACGATGACGTAGA-C-GTGT-T-CCGTTATATGC";
+    final String middle =          "ACGATGACGTAGA-T-GTGT-A-CCGTTATATGC";
+    final String middleMismatch =  "ACGATGACGTAGA-C-GTGT-T-CCGTTATATGC";
+    final String middleMismatch2 = "ACGATGACGTAGA-T-GTGT-A-CCGTTATATGC";
     final String suffix = "AGAT";
     final String leftString = middle + suffix;
     final String rightString = prefix + middleMismatch;
-    final FastqSequence left = FastqSequenceTest.getFastq("left", leftString);
-    final FastqSequence right = FastqSequenceTest.getFastq("right", reverseComplement(rightString));
+    final FastqSequence left = FastqSequenceTest.getFastq("left", leftString, 40);
+    final FastqSequence right = FastqSequenceTest.getFastq("right", reverseComplement(rightString), 30);
     pairAligner.processReads(new FastqPair(left, right));
     Assert.assertEquals(fasta("left", middle), left.toFasta());
-    Assert.assertEquals(fasta("right", reverseComplement(middleMismatch)), right.toFasta());
+    Assert.assertEquals(fasta("right", reverseComplement(middleMismatch2)), right.toFasta());
   }
-  @Test
+
   public void testAlignmentOverlappingReadThroughBothEndsInsertsInR2() {
     final PairAligner pairAligner = getPairAligner(0);
     final String prefix = "GCCG";
@@ -172,6 +169,10 @@ public class PairAlignerTest {
   }
 
   private PairAligner getPairAligner(int probeLength) {
+    return getPairAligner(probeLength, PairAligner.MismatchType.NONE);
+  }
+
+  private PairAligner getPairAligner(int probeLength, PairAligner.MismatchType t) {
     final int maxReadLength = 300;
     final int seedLength = 5;
     final CFlags flags = new CFlags();
@@ -181,11 +182,10 @@ public class PairAlignerTest {
       .create();
     return new PairAligner(
       new UnidirectionalAdaptor(new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 80, 80, maxReadLength)),
-      25, 90, probeLength, 0, 0, false, false);
+      25, 90, probeLength, 0, 0, false, t, false);
   }
 
 
-  @Test
   public void testRealWorld() {
     // Observed in MI000843
     final PairAligner pairAligner = getPairAligner(0);
@@ -201,7 +201,6 @@ public class PairAlignerTest {
     Assert.assertEquals(fasta("right", reverseComplement(expectedRight)), right.toFasta());
   }
 
-  @Test
   public void testRealWorld2() {
     // Observed in MI000843
     final PairAligner pairAligner = getPairAligner(0);
@@ -209,7 +208,6 @@ public class PairAlignerTest {
     final String rightString =
       "ACAAAAACAACAAAAAAACCTGTAGTTAAACAAAAAAGAGGACGTAACATGAATTGGAGCGTGTAATTTAATTTTGTTTTAACAGTCTGTAACAGAAACGATAAAAAAATAAAAGAAAGGAAGAGCACAAGTATGAAAAACAATAACACA";
     final String expectedLeft = leftString;
-    // Expect to trim first 40 bases of right read
     final String expectedRight = rightString;
     final FastqSequence left = FastqSequenceTest.getFastq("left", leftString);
     final FastqSequence right = FastqSequenceTest.getFastq("right", rightString);
@@ -218,14 +216,12 @@ public class PairAlignerTest {
     Assert.assertEquals(fasta("right", expectedRight), right.toFasta());
   }
 
-  @Test
   public void testRealProbeOverlap() {
     // Observed in MI000843
     final PairAligner pairAligner = getPairAligner(37);
     final String leftString = "GTCTGTGGGATCTGGTACAGTTTTGTAAATTCATCTGGATAATTTTCTACCCAGTTCCAAAATGCCTATAAATAAAGAACCACATGTCTTTACAGTGATTTTTTGTAATACAGTAAATAAAATGTCACAA";
     final String rightString = "AAGTTTGTGACATTTTATTTACTGTATTACAAAAAATCACTGTAAAGACATGTGGTTCTTTATTTATAGGCATTTTGGAACTGGGTAGAAAATTATCCAGATGAATTTACAAAACTGTACCAGATCCCAC";
     final String expectedLeft = leftString;
-    // Expect to trim first 40 bases of right read
     final String expectedRight = rightString.substring(0, rightString.length() - 33);
     final FastqSequence left = FastqSequenceTest.getFastq("left", leftString);
     final FastqSequence right = FastqSequenceTest.getFastq("right", rightString);
@@ -234,29 +230,40 @@ public class PairAlignerTest {
     Assert.assertEquals(fasta("right", expectedRight), right.toFasta());
   }
 
-
-  @Test
-  public void testDeletion() {
-    final PairAligner pairAligner = getPairAligner(0);
-    //                          0123456789012345678901234
-    final String leftString =  "ATGATAGATAAATCAAAGAAGCTGC";
+  public void testDeletionZeroPhred() throws IOException {
+    final PairAligner pairAligner = getPairAligner(0, PairAligner.MismatchType.ZERO_PHRED);
+    //                          0123456789012345678901234567890123456
+    final String leftString =  "ATGATAGATAAATCAAAGAAGCTGCTATAGGCGGTGGCTACC";
     //                          012345678--------90123456
-    final String rightString = "ATGATAGAT--------GAAGCTGC";
-    // Expect to trim first 40 bases of right read
-    final FastqSequence left = FastqSequenceTest.getFastq("left", leftString);
-    final FastqSequence right = FastqSequenceTest.getFastq("right", reverseComplement(rightString));
+    final String rightString = "ATGATAGATAA----AAGAAGCTGCTATAGGCGGTGGCTACC";
+    final FastqSequence left = FastqSequenceTest.getFastq("left", leftString, leftString.length());
+    final FastqSequence right = FastqSequenceTest.getFastq("right", reverseComplement(rightString), leftString.length());
 
     // Make sure this is treated as an deletion
     Assert.assertTrue(left.length() > right.length());
-
     pairAligner.processReads(new FastqPair(left, right));
-
-
+    mNano.check("pair-aligner-zero-phred-del.fq", left.toFastq() + right.toFastq());
     Assert.assertEquals(fasta("left", leftString), left.toFasta());
     Assert.assertEquals(fasta("right", reverseComplement(rightString)), right.toFasta());
   }
 
-  @Test
+  public void testInsertionZeroPhred() throws IOException {
+    final PairAligner pairAligner = getPairAligner(0, PairAligner.MismatchType.ZERO_PHRED);
+    final String prefix = "";
+    final String middle =       "ACGATGACGTAGATGT--GTACCGTTATATGC";
+    final String middleInsert = "ACGATGACGTAGATGTGGGTACCGTTATATGC";
+    final String suffix = "";
+    final String leftString = middle + suffix;
+    final String rightString = prefix + middleInsert;
+    final FastqSequence left = FastqSequenceTest.getFastq("left", leftString, leftString.length());
+    final FastqSequence right = FastqSequenceTest.getFastq("right", reverseComplement(rightString), rightString.length());
+    pairAligner.processReads(new FastqPair(left, right));
+    mNano.check("pair-aligner-zero-phred-ins.fq", left.toFastq() + right.toFastq());
+    Assert.assertEquals(fasta("left", middle), left.toFasta());
+    Assert.assertEquals(fasta("right", reverseComplement(middleInsert)), right.toFasta());
+  }
+
+
   public void testInsertion() {
     final PairAligner pairAligner = getPairAligner(0);
     final String middle = "TGAGATTACGAT---GATAGATAAATCAAA";
@@ -265,7 +272,6 @@ public class PairAlignerTest {
     final String prefix = "ACC";
     final String middleInserted = "TGAGATTACGATGGGGATAGATAAATCAAA";
     final String rightString = prefix + middleInserted;
-    // Expect to trim first 40 bases of right read
     final FastqSequence left = FastqSequenceTest.getFastq("left", leftString);
     final FastqSequence right = FastqSequenceTest.getFastq("right", reverseComplement(rightString));
 
@@ -278,12 +284,10 @@ public class PairAlignerTest {
     Assert.assertEquals(fasta("right", reverseComplement(middleInserted)), right.toFasta());
   }
 
-  @Test
   public void testFullyTrimmedR1() {
     final PairAligner pairAligner = getPairAligner(30);
     final String leftString = "GCCTGTAACCTAGAAATGGGACAGA";
     final String rightString = "GTCCCATTTCTAGGTTACAGGCAGA";
-    // Expect to trim first 40 bases of right read
     final FastqSequence left = FastqSequenceTest.getFastq("left", leftString);
     final FastqSequence right = FastqSequenceTest.getFastq("right", rightString);
 

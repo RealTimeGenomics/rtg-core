@@ -74,6 +74,8 @@ public class PairedEndTrimCli extends AbstractCli {
   private static final String DISCARD_EMPTY_READS = "discard-empty-reads";
   private static final String DISCARD_EMPTY_PAIRS = "discard-empty-pairs";
 
+  private static final String MISMATCH_HANDLING = "Xmismatch-adjustment";
+
   private static final String VERBOSE = "Xverbose";
 
 
@@ -95,6 +97,7 @@ public class PairedEndTrimCli extends AbstractCli {
     flags.registerOptional('L', MIN_OVERLAP, Integer.class, CommonFlags.INT, "minimum number of bases in overlap to trigger overlap trimming", 25).setCategory(SENSITIVITY_TUNING);
     flags.registerOptional('P', MIN_IDENTITY, Integer.class, CommonFlags.INT, "minimum percent identity in overlap to trigger overlap trimming", 90).setCategory(SENSITIVITY_TUNING);
 
+    flags.registerOptional(MISMATCH_HANDLING, PairAligner.MismatchType.class, CommonFlags.STRING, "method used to alter bases/qualities at mismatches within overlap region", PairAligner.MismatchType.NONE).setCategory(FILTERING);
     flags.registerOptional('m', MIDPOINT_TRIM, "if set, trim both reads to midpoint of overlap region").setCategory(FILTERING);
     flags.registerOptional(LEFT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R1 starts with probes this long, and trim R2 bases that overlap into this", 0).setCategory(FILTERING);
     flags.registerOptional(RIGHT_PROBE_LENGTH, Integer.class, CommonFlags.INT, "assume R2 starts with probes this long, and trim R1 bases that overlap into this", 0).setCategory(FILTERING);
@@ -215,7 +218,10 @@ public class PairedEndTrimCli extends AbstractCli {
       new UnidirectionalAdaptor(new SingleIndelSeededEditDistance(ngsParams, false, seedLength, 2, 2, maxReadLength)),
       (Integer) mFlags.getValue(MIN_OVERLAP), (Integer) mFlags.getValue(MIN_IDENTITY),
       (Integer) mFlags.getValue(LEFT_PROBE_LENGTH), (Integer) mFlags.getValue(RIGHT_PROBE_LENGTH),
-      (Integer) mFlags.getValue(MIN_READ_LENGTH), mFlags.isSet(MIDPOINT_TRIM), mFlags.isSet(VERBOSE));
+      (Integer) mFlags.getValue(MIN_READ_LENGTH),
+      mFlags.isSet(MIDPOINT_TRIM),
+      (PairAligner.MismatchType) mFlags.getValue(MISMATCH_HANDLING),
+      mFlags.isSet(VERBOSE));
   }
 
   @Override

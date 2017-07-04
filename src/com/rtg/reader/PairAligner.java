@@ -30,6 +30,90 @@ import com.rtg.util.diagnostic.Diagnostic;
 /**
  */
 class PairAligner {
+
+  /**
+   * Select the behaviour when encountering a mismatch/indel within the overlap region
+   */
+  public enum MismatchType {
+    /** Do nothing */
+    NONE {
+      @Override
+      void apply(FastqSequence r1, FastqSequence r2, int[] actions) { }
+    },
+
+    /** Set the base quality of non-matching bases to zero */
+    ZERO_PHRED {
+      @Override
+      void doMismatch(FastqSequence r1, FastqSequence r2, int r1Pos, int r2Pos) {
+        r1.getQualities()[r1Pos] = 0;
+        r2.getQualities()[r2Pos] = 0;
+      }
+      @Override
+      void doIndel(FastqSequence r, int rPos) {
+        r.getQualities()[rPos] = 0;
+      }
+    },
+
+    /** Select the base with the highest reported quality, takes no action with indels */
+    PICK_BEST {
+      @Override
+      void doMismatch(FastqSequence r1, FastqSequence r2, int r1Pos, int r2Pos) {
+        final byte tq = r1.getQualities()[r1Pos];
+        final byte rq = r2.getQualities()[r2Pos];
+        if (tq > rq) {
+          r2.getBases()[r2Pos] = r1.getBases()[r1Pos];
+          r2.getQualities()[r2Pos] = tq;
+        } else if (tq < rq) {
+          r1.getBases()[r1Pos] = r2.getBases()[r2Pos];
+          r1.getQualities()[r1Pos] = rq;
+        }
+      }
+    };
+
+    void apply(FastqSequence r1, FastqSequence r2, int[] actions) {
+      int r1Pos = actions[ActionsHelper.TEMPLATE_START_INDEX];
+      int r2Pos = 0;
+      final ActionsHelper.CommandIterator ci = new ActionsHelper.CommandIterator();
+      ci.setActions(actions);
+      while (ci.hasNext()) {
+        switch (ci.next()) {
+          case SAME:
+          case UNKNOWN_TEMPLATE:
+          case UNKNOWN_READ:
+            r1Pos++;
+            r2Pos++;
+            break;
+          case MISMATCH:
+            if (r1Pos >= 0 && r1Pos < r1.length()
+              && r2Pos >= 0 && r2Pos < r2.length()) {
+              doMismatch(r1, r2, r1Pos, r2Pos);
+            }
+            r1Pos++;
+            r2Pos++;
+            break;
+          case INSERTION_INTO_REFERENCE:
+            if (r1Pos >= 0 && r1Pos < r1.length()
+              && r2Pos >= 0 && r2Pos < r2.length()) {
+              doIndel(r2, r2Pos);
+            }
+            r2Pos++;
+            break;
+          case DELETION_FROM_REFERENCE:
+            if (r1Pos >= 0 && r1Pos < r1.length()
+              && r2Pos >= 0 && r2Pos < r2.length()) {
+              doIndel(r1, r1Pos);
+            }
+            r1Pos++;
+            break;
+          default:
+            throw new RuntimeException("Unhandled action encountered in alignment: " + ActionsHelper.toString(actions));
+        }
+      }
+    }
+    void doMismatch(FastqSequence r1, FastqSequence r2, int r1Pos, int r2Pos) { }
+    void doIndel(FastqSequence r, int rPos) { }
+  }
+
   private final EditDistance mEd;
   private final int mMinOverlap;
   private final int mMinIdentity;
@@ -39,14 +123,16 @@ class PairAligner {
   private final int mR2ProbeLength;
   private final boolean mVerbose;
   private final boolean mTrimMid;
+  private final MismatchType mMismatch;
 
-  PairAligner(EditDistance ed, int minOverlap, int minIdentity, int r1ProbeLength, int r2ProbeLength, Integer minLength, boolean trimMid, boolean verbose) {
+  PairAligner(EditDistance ed, int minOverlap, int minIdentity, int r1ProbeLength, int r2ProbeLength, int minLength, boolean trimMid, MismatchType mismatch, boolean verbose) {
     mEd = ed;
     mMinOverlap = minOverlap;
     mMinIdentity = minIdentity;
     mR1ProbeLength = r1ProbeLength;
     mR2ProbeLength = r2ProbeLength;
     mLengthTrimmer = minLength > 0 ? new MinLengthReadTrimmer(minLength) : new NullReadTrimmer();
+    mMismatch = mismatch;
     mTrimMid = trimMid;
     mVerbose = verbose;
   }
@@ -73,20 +159,20 @@ class PairAligner {
     pair.r2().rc();
   }
 
-  void alignReads(FastqSequence template, FastqSequence read) {
+  void alignReads(FastqSequence r1, FastqSequence r2) {
     // Start talking in alignment speak.
     // Template is the R1
     // Read is the R2
     mStats.mTotal++;
-    final int maxLength = Math.max(template.length(), read.length());
-    final int[] actions = mEd.calculateEditDistance(read.getBases(), read.length(), template.getBases(), 0, false, Integer.MAX_VALUE, maxLength + 1, false);
+    final int maxLength = Math.max(r1.length(), r2.length());
+    final int[] actions = mEd.calculateEditDistance(r2.getBases(), r2.length(), r1.getBases(), 0, false, Integer.MAX_VALUE, maxLength + 1, false);
     if (actions == null) {
       mStats.mNoAlignment++;
     } else {
 
       int mcount = 0;
-      int templatePos = actions[ActionsHelper.TEMPLATE_START_INDEX];
-      int readPos = 0;
+      int r1Pos = actions[ActionsHelper.TEMPLATE_START_INDEX];
+      int r2Pos = 0;
       int lastReadBaseWithinTemplate = 0;
       int firstReadBaseWithinTemplate = -1;
       int lastTemplateBaseWithinRead = 0;
@@ -96,28 +182,28 @@ class PairAligner {
       while (ci.hasNext()) {
         switch (ci.next()) {
           case SAME:
-            if (templatePos >= 0 && templatePos < template.length()
-              && readPos >= 0 && readPos < read.length()) {
-              lastReadBaseWithinTemplate = readPos;
-              lastTemplateBaseWithinRead = templatePos;
-              firstReadBaseWithinTemplate = firstReadBaseWithinTemplate == -1 ? readPos : firstReadBaseWithinTemplate;
-              firstTemplateBaseWithinRead = firstTemplateBaseWithinRead == -1 ? templatePos : firstTemplateBaseWithinRead;
+            if (r1Pos >= 0 && r1Pos < r1.length()
+              && r2Pos >= 0 && r2Pos < r2.length()) {
+              lastReadBaseWithinTemplate = r2Pos;
+              lastTemplateBaseWithinRead = r1Pos;
+              firstReadBaseWithinTemplate = firstReadBaseWithinTemplate == -1 ? r2Pos : firstReadBaseWithinTemplate;
+              firstTemplateBaseWithinRead = firstTemplateBaseWithinRead == -1 ? r1Pos : firstTemplateBaseWithinRead;
             }
             mcount++;
-            templatePos++;
-            readPos++;
+            r1Pos++;
+            r2Pos++;
             break;
           case MISMATCH:
           case UNKNOWN_TEMPLATE:
           case UNKNOWN_READ:
-            templatePos++;
-            readPos++;
+            r1Pos++;
+            r2Pos++;
             break;
           case INSERTION_INTO_REFERENCE:
-            readPos++;
+            r2Pos++;
             break;
           case DELETION_FROM_REFERENCE:
-            templatePos++;
+            r1Pos++;
             break;
           default:
             throw new RuntimeException("Unhandled action encountered in alignment: " + ActionsHelper.toString(actions));
@@ -130,7 +216,7 @@ class PairAligner {
       //System.out.println("Alignment score: " + score + " at " + pos + " with overlap " + overlap + " identity " + ident);
       //dumpAlignment(template, read, actions);
       if (overlap >= Math.min(0.8 * maxLength, mMinOverlap) && ident >= mMinIdentity) {
-        doTrimAndRecordStats(template, read, actions, firstTemplateBaseWithinRead, lastTemplateBaseWithinRead, firstReadBaseWithinTemplate, lastReadBaseWithinTemplate);
+        doTrimAndRecordStats(r1, r2, actions, firstTemplateBaseWithinRead, lastTemplateBaseWithinRead, firstReadBaseWithinTemplate, lastReadBaseWithinTemplate);
       } else {
         mStats.mPoorAlignment++;
       }
@@ -141,6 +227,9 @@ class PairAligner {
     if (mVerbose) {
       dumpAlignment(" IN-", r1, r2, actions);
     }
+
+    mMismatch.apply(r1, r2, actions);
+
     final int r2Length = r2.length();
     mStats.mOverlapping++;
     mStats.mFragLengths.increment(overlapEndWithinR1 + (r2Length - overlapEndWithinR2));
@@ -193,26 +282,59 @@ class PairAligner {
     }
   }
 
-  private int countLeadingInsertions(int[] actions) {
+  private String bytesToSequence(int[] actions, byte[] bases, boolean ref, int skipStart) {
+    final StringBuilder sb = new StringBuilder();
+    int refPos = actions[ActionsHelper.TEMPLATE_START_INDEX];
+    int readPos = 0;
+    if (ref && refPos > 0) {
+      sb.append(DnaUtils.bytesToSequenceIncCG(bases, 0, refPos));
+    }
+
+    readPos += ref ? 0 : -skipStart;
+    refPos += ref ? -skipStart : 0;
+
     final ActionsHelper.CommandIterator ci = new ActionsHelper.CommandIterator();
     ci.setActions(actions);
-    int count = 0;
     while (ci.hasNext()) {
       switch (ci.next()) {
         case SAME:
         case MISMATCH:
         case UNKNOWN_TEMPLATE:
         case UNKNOWN_READ:
+          if (ref) {
+            sb.append(base(bases, refPos));
+          } else {
+            sb.append(base(bases, readPos));
+          }
+          refPos++;
+          readPos++;
+          break;
         case DELETION_FROM_REFERENCE:
-          return count;
+          sb.append(ref ? base(bases, refPos) : ' ');
+          refPos++;
+          break;
         case INSERTION_INTO_REFERENCE:
-          count++;
+          sb.append(!ref ? base(bases, readPos) : ' ');
+          readPos++;
           break;
         default:
           throw new RuntimeException("Unhandled action encountered in alignment: " + ActionsHelper.toString(actions));
       }
     }
-    return count;
+
+    readPos += ref ? 0 : skipStart;
+    refPos += ref ? skipStart : 0;
+
+    if (ref && refPos < bases.length) {
+      sb.append(DnaUtils.bytesToSequenceIncCG(bases, refPos, bases.length - refPos));
+    } else if (!ref && readPos < bases.length) {
+      throw new IllegalStateException("Not all read bases consumed by actions");
+    }
+    return sb.toString();
+  }
+
+  private static char base(final byte[] a, final int p) {
+    return p >= 0 && p < a.length ? DnaUtils.getBase(a[p]) : ' ';
   }
 
   protected void dumpAlignment(String prefix, FastqSequence r1, FastqSequence r2, int[] actions) {
@@ -221,10 +343,13 @@ class PairAligner {
 
   protected void dumpAlignment(String prefix, FastqSequence r1, FastqSequence r2, int[] actions, int r1Pad, int r2Pad) {
     final int pos = actions[ActionsHelper.TEMPLATE_START_INDEX];
-    final int pad = Math.max(0, -pos);
-    System.err.println(prefix + "R1: " + StringUtils.spaces(r1Pad + pad + countLeadingInsertions(actions)) + DnaUtils.bytesToSequenceIncCG(r1.getBases()));
-    System.err.println(prefix + "AL: " + StringUtils.spaces(pad + pos) + ActionsHelper.toString(actions));
-    System.err.println(prefix + "R2: " + StringUtils.spaces(r2Pad + pad + pos) + DnaUtils.bytesToSequenceIncCG(r2.getBases()));
+    final int extraRef = pos > 0 ? pos : 0;
+    final String r1Str = bytesToSequence(actions, r1.getBases(), true, r1Pad);
+    final String r2Str = bytesToSequence(actions, r2.getBases(), false, r2Pad);
+    final String actionStr = ActionsHelper.toString(actions);
+    System.err.println(prefix + "R1: " + r1Str);
+    System.err.println(prefix + "AL: " + StringUtils.spaces(extraRef) + actionStr);
+    System.err.println(prefix + "R2: " + StringUtils.spaces(extraRef) + r2Str);
   }
 
   public PairAlignmentStats getStats() {
