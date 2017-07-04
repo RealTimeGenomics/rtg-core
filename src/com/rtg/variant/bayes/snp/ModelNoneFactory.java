@@ -18,6 +18,7 @@ import com.rtg.variant.bayes.ModelInterface;
 import com.rtg.variant.bayes.ModelNone;
 
 /**
+ * Factory for constructing models where there are no hypotheses.
  */
 public class ModelNoneFactory implements ModelFactory<Description, HypothesesNone<Description>> {
 

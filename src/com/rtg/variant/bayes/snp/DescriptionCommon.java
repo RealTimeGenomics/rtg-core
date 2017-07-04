@@ -17,7 +17,7 @@ import java.util.Arrays;
 import com.rtg.variant.bayes.Description;
 
 /**
- * Provides an array-backed set of hypothesis names
+ * Provides an array-backed set of hypothesis names.
  */
 public class DescriptionCommon extends Description {
 

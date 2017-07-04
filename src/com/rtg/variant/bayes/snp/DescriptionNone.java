@@ -16,9 +16,9 @@ import java.util.Collections;
 
 import com.rtg.variant.bayes.Description;
 import com.rtg.variant.bayes.complex.DescriptionComplex;
-import com.rtg.variant.match.Match;
 
 /**
+ * A description type to be used with a sample not having a genotype at a particular locus.
  */
 public final class DescriptionNone extends DescriptionComplex {
 
@@ -32,7 +32,7 @@ public final class DescriptionNone extends DescriptionComplex {
    * Make one.
    */
   private DescriptionNone() {
-    super(Collections.<Match>emptyList());
+    super(Collections.emptyList());
   }
 
   @Override

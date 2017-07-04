@@ -19,7 +19,6 @@ import com.rtg.variant.bayes.Model;
 /**
  * This class essentially just counts the number of indels seen at a particular point, in order
  * to contribute toward triggering the complex caller.
- *
  */
 public class IndelDetector implements EvidenceAcceptor {
 
@@ -34,12 +33,6 @@ public class IndelDetector implements EvidenceAcceptor {
 
   private int mIndelLength;
   private int mSoftClipLength;
-
-  /**
-   * Constructor
-   */
-  public IndelDetector() {
-  }
 
   @Override
   public void increment(EvidenceInterface evidence) {

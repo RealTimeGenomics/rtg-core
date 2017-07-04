@@ -19,6 +19,7 @@ import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
+ * Hypotheses for a situation where there are no hypotheses.
  */
 public final class HypothesesNone<D extends Description> extends HypothesesPrior<D> {
 

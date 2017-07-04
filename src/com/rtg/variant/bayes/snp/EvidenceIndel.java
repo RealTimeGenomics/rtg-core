@@ -15,6 +15,7 @@ package com.rtg.variant.bayes.snp;
 import com.rtg.variant.bayes.EvidenceInterface;
 
 /**
+ * Evidence for an indel event.
  */
 public final class EvidenceIndel implements EvidenceInterface {
 

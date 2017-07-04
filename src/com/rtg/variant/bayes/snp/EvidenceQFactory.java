@@ -16,6 +16,7 @@ import com.rtg.variant.bayes.EvidenceInterface;
 import com.rtg.variant.util.VariantUtils;
 
 /**
+ * Factory for evidence objects with specified quality.
  */
 public final class EvidenceQFactory implements CachedEvidenceFactory {
 

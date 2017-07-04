@@ -18,6 +18,7 @@ import com.rtg.variant.bayes.EvidenceInterface;
 import com.rtg.variant.bayes.Model;
 
 /**
+ * Factory for indel evidence objects.
  */
 public final class EvidenceIndelFactory implements CachedEvidenceFactory {
 

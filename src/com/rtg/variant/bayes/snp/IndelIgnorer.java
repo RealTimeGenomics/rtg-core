@@ -15,6 +15,7 @@ package com.rtg.variant.bayes.snp;
 import com.rtg.variant.bayes.EvidenceInterface;
 
 /**
+ * An {@code IndelDetector} that ignores all indels.
  */
 public class IndelIgnorer extends IndelDetector {
   @Override

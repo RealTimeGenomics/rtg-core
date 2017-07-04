@@ -21,7 +21,7 @@ import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
- * Generates a distribution from a primary prediction and a q value.
+ * Generates a distribution from a primary prediction and a quality value.
  */
 public final class EvidenceQ extends Evidence {
 

@@ -13,7 +13,7 @@
 package com.rtg.variant.bayes.snp;
 
 /**
- * Provide names for SNP hypotheses
+ * Provide names for SNP hypotheses.
  */
 public final class DescriptionSnp extends DescriptionCommon {
 

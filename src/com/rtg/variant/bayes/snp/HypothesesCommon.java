@@ -17,7 +17,7 @@ import com.rtg.variant.bayes.Description;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
- * Provides hypotheses with priors initialized from GenomePriorParams
+ * Provides hypotheses with priors initialized from {@code }GenomePriorParams}.
  * @param <D> class of description.
  */
 @TestClass("com.rtg.variant.bayes.snp.HypothesesSnpTest")

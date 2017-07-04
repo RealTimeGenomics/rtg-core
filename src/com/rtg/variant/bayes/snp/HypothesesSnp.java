@@ -17,7 +17,7 @@ import com.rtg.variant.bayes.Description;
 import com.rtg.variant.util.arithmetic.PossibilityArithmetic;
 
 /**
- * Encapsulates the space of SNP hypotheses
+ * Encapsulates the space of SNP hypotheses.
  */
 public final class HypothesesSnp extends HypothesesCommon<Description> {
 
