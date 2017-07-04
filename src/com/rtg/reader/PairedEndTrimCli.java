@@ -19,6 +19,7 @@ import static com.rtg.launcher.CommonFlags.QUALITY_FLAG;
 import static com.rtg.reader.FastqTrim.BATCH_SIZE;
 import static com.rtg.reader.Sdf2Fasta.INTERLEAVE;
 import static com.rtg.sam.SamFilterOptions.SUBSAMPLE_FLAG;
+import static com.rtg.util.StringUtils.LS;
 import static com.rtg.util.cli.CommonFlagCategories.FILTERING;
 import static com.rtg.util.cli.CommonFlagCategories.INPUT_OUTPUT;
 import static com.rtg.util.cli.CommonFlagCategories.SENSITIVITY_TUNING;
@@ -46,6 +47,7 @@ import com.rtg.util.StringUtils;
 import com.rtg.util.cli.CFlags;
 import com.rtg.util.cli.CommonFlagCategories;
 import com.rtg.util.cli.Validator;
+import com.rtg.util.diagnostic.Diagnostic;
 import com.rtg.util.diagnostic.NoTalkbackSlimException;
 import com.rtg.util.diagnostic.Timer;
 import com.rtg.util.io.BaseFile;
@@ -86,6 +88,7 @@ public class PairedEndTrimCli extends AbstractCli {
     flags.registerRequired('l', LEFT, File.class, CommonFlags.FILE, "left input FASTQ file (AKA R1)").setCategory(INPUT_OUTPUT);
     flags.registerRequired('r', RIGHT, File.class, CommonFlags.FILE, "right input FASTQ file (AKA R2)").setCategory(INPUT_OUTPUT);
     flags.registerRequired('o', OUTPUT_FLAG, File.class, CommonFlags.FILE, "output filename prefix. Use '-' to write to standard output").setCategory(INPUT_OUTPUT);
+    CommonFlags.initForce(flags);
     CommonFlags.initQualityFormatFlag(flags);
     MapFlags.initAlignerPenaltyFlags(flags);
     CommonFlags.initMinReadLength(flags);
@@ -186,7 +189,20 @@ public class PairedEndTrimCli extends AbstractCli {
       }
       t.stop(stats.mTotal);
       t.log();
-      stats.printSummary();
+      final String overlapDist = "#overlap-length\tcount" + LS + stats.mOverlapDist.getAsTsv(false);
+      final String fragDist = "#fragment-length\tcount" + LS + stats.mFragLengths.getAsTsv(false);
+      Diagnostic.developerLog("Overlap Distribution" + LS + overlapDist);
+      Diagnostic.developerLog("Fragment Length Distribution" + LS + fragDist);
+      Diagnostic.userLog(stats.printSummary());
+      if (!FileUtils.isStdio(baseOutput)) {
+        final BaseFile txtBase = FileUtils.getBaseFile(baseFile.getBaseFile(), false, ".txt");
+        try (PrintStream summaryOut = new PrintStream(FileUtils.createTeedOutputStream(FileUtils.createOutputStream(txtBase.suffixedFile(".summary")), out))) {
+          summaryOut.println(stats.printSummary());
+        }
+        final BaseFile tsvBase = FileUtils.getBaseFile(baseFile.getBaseFile(), gzip, ".tsv");
+        FileUtils.stringToFile(overlapDist, tsvBase.suffixedFile(".overlap-lengths"));
+        FileUtils.stringToFile(fragDist, tsvBase.suffixedFile(".fragment-lengths"));
+      }
     }
     return 0;
   }

@@ -93,6 +93,9 @@ public class PairedEndTrimCliTest extends AbstractCliTest {
       final File out1 = new File(dir, "readsout1.fastq");
       checkMainInitOk("-l", left.toString(), "-r", right.toString(), "-o", out1.toString(), "--interleave", "-Z", "--left-probe-length=30", "--right-probe-length=30");
       mNano.check("petrim-e2e-probes.fastq", FileHelper.fileToString(out1));
+      mNano.check("petrim-e2e-probes.summary.txt", FileHelper.fileToString(new File(dir, "readsout1.summary.txt")));
+      mNano.check("petrim-e2e-probes.overlap-lengths.tsv", FileHelper.fileToString(new File(dir, "readsout1.overlap-lengths.tsv")));
+      mNano.check("petrim-e2e-probes.fragment-lengths.tsv", FileHelper.fileToString(new File(dir, "readsout1.fragment-lengths.tsv")));
 
       final File out2 = new File(dir, "readsout2.fastq");
       checkMainInitOk("-l", left.toString(), "-r", right.toString(), "-o", out2.toString(), "--interleave", "-Z", "--left-probe-length=30", "--right-probe-length=30", "--min-read-length=30");

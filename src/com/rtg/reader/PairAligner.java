@@ -128,18 +128,8 @@ class PairAligner {
         lastTemplateBaseWithinRead - firstTemplateBaseWithinRead) + 1; // End is not exclusive
       final int ident = overlap == 0 ? 0 : mcount * 100 / overlap;
       //System.out.println("Alignment score: " + score + " at " + pos + " with overlap " + overlap + " identity " + ident);
-//      System.err.println("firstTemplateBaseWithinRead=" + firstTemplateBaseWithinRead);
-//      System.err.println("lastTemplateBaseWithinRead=" + lastTemplateBaseWithinRead);
-//      System.err.println("firstReadBaseWithinTemplate=" + firstReadBaseWithinTemplate);
-//      System.err.println("lastReadBaseWithinTemplate=" + lastReadBaseWithinTemplate);
-
       //dumpAlignment(template, read, actions);
       if (overlap >= Math.min(0.8 * maxLength, mMinOverlap) && ident >= mMinIdentity) {
-
-        if (mVerbose) {
-          dumpAlignment(" IN-", template, read, actions);
-        }
-
         doTrimAndRecordStats(template, read, actions, firstTemplateBaseWithinRead, lastTemplateBaseWithinRead, firstReadBaseWithinTemplate, lastReadBaseWithinTemplate);
       } else {
         mStats.mPoorAlignment++;
@@ -148,37 +138,40 @@ class PairAligner {
   }
 
   private void doTrimAndRecordStats(FastqSequence r1, FastqSequence r2, int[] actions, int overlapStartWithinR1, int overlapEndWithinR1, int overlapStartWithinR2, int overlapEndWithinR2) {
+    if (mVerbose) {
+      dumpAlignment(" IN-", r1, r2, actions);
+    }
     final int r2Length = r2.length();
+    mStats.mOverlapping++;
+    mStats.mFragLengths.increment(overlapEndWithinR1 + (r2Length - overlapEndWithinR2));
+    mStats.mOverlapDist.increment(overlapEndWithinR1 - overlapStartWithinR1);
     final int r2ProbeTrimAmount = mR1ProbeLength - overlapStartWithinR1;
     final int r1ProbeTrimAmount = overlapEndWithinR2 - (r2Length - mR2ProbeLength);
     if (overlapStartWithinR2 > 0) {
       // Read-through past start of R1 has occurred, remove the r2 bases
       final int trimAmount = overlapStartWithinR2 + mR1ProbeLength;
       r2.trim(new FirstBasesReadTrimmer(trimAmount));
-      mStats.mReadThroughOnR2++;
+      mStats.mR2ReadThrough++;
     } else if (r2ProbeTrimAmount > 0) {
       // Large overlap into R1 read start area, remove R2 bases.
       r2.trim(new FirstBasesReadTrimmer(r2ProbeTrimAmount));
-      mStats.mReadIntoR1Probe++;
-    } else {
-      // Regular read overlap -- perhaps remove bases off the longest side
-      mStats.mPartialOverlap++;
+      mStats.mR2ReadIntoR1Probe++;
     }
     if (overlapEndWithinR1 < r1.length() - 1) {
-      // Trim readthrough on the r1.
-      mStats.mReadThroughOnR1++;
+      // R1 read through past R2 start, trim the extra r1 bases.
+      mStats.mR1ReadThrough++;
       final int numBases = r1.length() - overlapEndWithinR1 - 1 + mR2ProbeLength;
       r1.trim(new LastBasesReadTrimmer(numBases));
     } else if (r1ProbeTrimAmount > 0) {
       // Large overlap into R2 read start area, remove R1 bases.
       r1.trim(new LastBasesReadTrimmer(r1ProbeTrimAmount));
-      mStats.mReadIntoR2Probe++;
-    }
-    if (mVerbose) {
-      dumpAlignment("INT-", r1, r2, actions, 0, r2Length - r2.length());
+      mStats.mR1ReadIntoR2Probe++;
     }
 
     if (mTrimMid) {
+      if (mVerbose) {
+        dumpAlignment("INT-", r1, r2, actions, 0, r2Length - r2.length());
+      }
       // Trim both sides to the midpoint of remaining overlap
       final int overlapR1Len = overlapEndWithinR1 - overlapStartWithinR1 + 1;
       final int newOverlapR2Len = overlapEndWithinR2 - Math.max(overlapStartWithinR2, r2Length - r2.length()) + 1;

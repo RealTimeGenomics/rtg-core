@@ -57,9 +57,9 @@ public class PairAlignmentProcessorTest {
       + fasta("r2", "AACTTTCGT");
     assertEquals(expectedR1, r1Sb.toString());
     assertEquals(expectedR2, r2Sb.toString());
-    assertEquals(1, stats.mReadIntoR1Probe);
-    assertEquals(1, stats.mReadThroughOnR1);
-    assertEquals(1, stats.mReadThroughOnR2);
+    assertEquals(1, stats.mR2ReadIntoR1Probe);
+    assertEquals(1, stats.mR1ReadThrough);
+    assertEquals(1, stats.mR2ReadThrough);
     assertEquals(2, stats.mTotal);
   }
   private String fasta(String name, String sequence) {

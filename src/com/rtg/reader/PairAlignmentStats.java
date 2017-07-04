@@ -12,6 +12,8 @@
 
 package com.rtg.reader;
 
+import com.rtg.util.Histogram;
+import com.rtg.util.TextTable;
 import com.rtg.util.Utils;
 import com.rtg.util.diagnostic.Diagnostic;
 
@@ -19,39 +21,57 @@ import com.rtg.util.diagnostic.Diagnostic;
  * Pair-alignment stats
  */
 class PairAlignmentStats {
-  protected int mReadThroughOnR2;
-  protected int mReadThroughOnR1;
-  protected int mReadIntoR1Probe;
-  protected int mReadIntoR2Probe;
-  protected int mPartialOverlap;
+  protected int mR2ReadThrough;
+  protected int mR1ReadThrough;
+  protected int mR2ReadIntoR1Probe;
+  protected int mR1ReadIntoR2Probe;
+  protected int mOverlapping;
   protected int mNoAlignment;
   protected int mPoorAlignment;
   protected int mTotal;
+  protected Histogram mFragLengths = new Histogram();
+  protected Histogram mOverlapDist = new Histogram();
 
   protected void accumulate(PairAlignmentStats other) {
-    mReadThroughOnR1 += other.mReadThroughOnR1;
-    mReadThroughOnR2 += other.mReadThroughOnR2;
-    mReadIntoR1Probe += other.mReadIntoR1Probe;
-    mReadIntoR2Probe += other.mReadIntoR2Probe;
-    mPartialOverlap += other.mPartialOverlap;
+    mR1ReadThrough += other.mR1ReadThrough;
+    mR2ReadThrough += other.mR2ReadThrough;
+    mR2ReadIntoR1Probe += other.mR2ReadIntoR1Probe;
+    mR1ReadIntoR2Probe += other.mR1ReadIntoR2Probe;
+    mOverlapping += other.mOverlapping;
     mNoAlignment += other.mNoAlignment;
     mPoorAlignment += other.mPoorAlignment;
     mTotal += other.mTotal;
-    printSummary();
+    mFragLengths.addHistogram(other.mFragLengths);
+    mOverlapDist.addHistogram(other.mOverlapDist);
+    Diagnostic.userLog(toString());
   }
 
-  protected void printSummary() {
-    Diagnostic.userLog("Reads: " + mTotal
-      + " No-alignment: " + perc(mNoAlignment, mTotal)
-      + " Poor-alignment: " + perc(mPoorAlignment, mTotal)
-      + " Partial-overlap: " + perc(mPartialOverlap, mTotal)
-      + " Read-into-R1-probe: " + perc(mReadIntoR1Probe, mTotal)
-      + " Read-into-R2-probe: " + perc(mReadIntoR2Probe, mTotal)
-      + " Read-through-on-R1: " + perc(mReadThroughOnR1, mTotal)
-      + " Read-through-on-R2: " + perc(mReadThroughOnR2, mTotal));
+  protected String printSummary() {
+    final TextTable t = new TextTable();
+    t.addRow("Total pairs", String.valueOf(mTotal), "");
+    t.addRow("No alignment", String.valueOf(mNoAlignment), perc(mNoAlignment, mTotal));
+    t.addRow("Poor alignment", String.valueOf(mPoorAlignment), perc(mPoorAlignment, mTotal));
+    t.addRow("Overlapping", String.valueOf(mOverlapping), perc(mOverlapping, mTotal));
+    t.addRow("R1 read through", String.valueOf(mR1ReadThrough), perc(mR1ReadThrough, mTotal));
+    t.addRow("R2 read through", String.valueOf(mR2ReadThrough), perc(mR2ReadThrough, mTotal));
+    t.addRow("R1 read into R2 probe", String.valueOf(mR1ReadIntoR2Probe), perc(mR1ReadIntoR2Probe, mTotal));
+    t.addRow("R2 read into R1 probe", String.valueOf(mR2ReadIntoR1Probe), perc(mR2ReadIntoR1Probe, mTotal));
+    return t.toString();
+  }
+
+  @Override
+  public String toString() {
+    return "Reads: " + mTotal
+      + " No-alignment: " + mNoAlignment
+      + " Poor-alignment: " + mPoorAlignment
+      + " Overlapping: " + mOverlapping
+      + " R1-read-through: " + mR1ReadThrough
+      + " R2-read-through: " + mR2ReadThrough
+      + " R1-read-into-R2-probe: " + mR1ReadIntoR2Probe
+      + " R2-read-into-R1-probe: " + mR2ReadIntoR1Probe;
   }
 
   private String perc(int num, int total) {
-    return Utils.realFormat(100.0 * num / total, 3);
+    return "" + Utils.realFormat(100.0 * num / total, 2) + "%";
   }
 }
