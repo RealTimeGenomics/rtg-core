@@ -22,7 +22,7 @@ import com.rtg.variant.VariantSample;
 import com.rtg.variant.util.VariantUtils;
 
 /**
- * De novo checker that supports cell lineage de novo checking
+ * De novo checker that supports cell lineage de novo checking.
  */
 public class LineageDenovoChecker implements DenovoChecker {
 

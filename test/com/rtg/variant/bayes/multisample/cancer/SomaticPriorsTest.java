@@ -217,7 +217,7 @@ public class SomaticPriorsTest extends TestCase {
 
   public void testDiploid() throws InvalidParamsException, IOException {
     final DescriptionCommon desc = new DescriptionCommon("", "A", "AA");
-    final Hypotheses<DescriptionCommon> hyp = new MockHypotheses<>(desc, SimplePossibility.SINGLETON, false, new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, 0); //new HypothesesComplex(LogPossibility.SINGLETON, false, ml, cot, vp, new InsertionPrior(vp.priors()));
+    final Hypotheses<DescriptionCommon> hyp = new MockHypotheses<>(desc, SimplePossibility.SINGLETON, false, new double[] {0.0, 0.0, 0.0, 0.0, 0.0, 0.0}, 0);
     //System.err.println(hyp.haploid());
     //System.err.println(hyp);
     final int n = hyp.size();

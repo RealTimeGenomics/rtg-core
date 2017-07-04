@@ -20,13 +20,14 @@ import com.rtg.variant.VariantSample;
 import com.rtg.variant.util.VariantUtils;
 
 /**
- * Checks for de novo calls in mendelian inheritance scenarios
+ * Checks for de novo calls in mendelian inheritance scenarios.
  */
 public class MendelianDenovoChecker implements DenovoChecker {
   final ChildFamilyLookup mLookup;
 
   /**
    * Constructor
+   *
    * @param lookup family lookup table
    */
   public MendelianDenovoChecker(ChildFamilyLookup lookup) {
@@ -70,14 +71,14 @@ public class MendelianDenovoChecker implements DenovoChecker {
       return hasAllele(childCall[0], parentACall) && hasAllele(childCall[0], parentBCall);
     } else {
       //one allele from each parent
-      return     (hasAllele(childCall[0], parentACall) && hasAllele(childCall[1], parentBCall))
-                 || (hasAllele(childCall[0], parentBCall) && hasAllele(childCall[1], parentACall));
+      return (hasAllele(childCall[0], parentACall) && hasAllele(childCall[1], parentBCall))
+        || (hasAllele(childCall[0], parentBCall) && hasAllele(childCall[1], parentACall));
     }
   }
 
   private static boolean hasAllele(String s, String[] parentCall) {
     boolean hasAllele = false;
-    for (String allele : parentCall) {
+    for (final String allele : parentCall) {
       if (s.equals(allele)) {
         hasAllele = true;
       }

@@ -11,25 +11,25 @@
  */
 package com.rtg.variant.bayes.complex;
 
+import static com.rtg.util.StringUtils.LS;
+
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 import com.rtg.util.Utils;
-import com.rtg.util.integrity.IntegralAbstract;
 import com.rtg.variant.match.Match;
 
 /**
  * Holds a multiset with counts for each match.
- *
  */
-public class MatchMultiSet extends IntegralAbstract {
+public class MatchMultiSet {
 
   private final Map<String, SingleCounts> mMatchMap = new TreeMap<>();
   private long mTotalCount = 0;
 
   /**
-   * construct an empty set
+   * Construct an empty set.
    */
   public MatchMultiSet() { }
 
@@ -108,7 +108,8 @@ public class MatchMultiSet extends IntegralAbstract {
   }
 
   @Override
-  public void toString(final StringBuilder sb) {
+  public String toString() {
+    final StringBuilder sb = new StringBuilder();
     sb.append("[ MatchMultiSet size=").append(size()).append(LS);
     for (final Map.Entry<String, SingleCounts> entry : mMatchMap.entrySet()) {
       final String name = entry.getKey();
@@ -116,11 +117,6 @@ public class MatchMultiSet extends IntegralAbstract {
       sb.append(name).append(" > ").append(count.toString()).append(LS);
     }
     sb.append("]").append(LS);
+    return sb.toString();
   }
-
-  @Override
-  public boolean integrity() {
-    return true;
-  }
-
 }

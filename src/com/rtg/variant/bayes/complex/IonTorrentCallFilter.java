@@ -18,6 +18,7 @@ import com.rtg.variant.Variant;
 import com.rtg.variant.util.VariantUtils;
 
 /**
+ * Filter out calls exhibiting probably homopolymer problems.
  */
 public final class IonTorrentCallFilter {
 
@@ -34,17 +35,6 @@ public final class IonTorrentCallFilter {
     if (!useFilter) {
       return false;
     }
-    //    res.getName();
-    //    res.getRef();
-    //    res.getUntrimmedRef();
-    //    res.getRef();
-    //    System.err.print("name=" + res.getName() + " ref=" + res.getRef() + " untrimmedRef=" + res.getUntrimmedRef());
-    //    System.err.print(" position ref:" + template[res.getPosition()] + "start ref:" + template[res.getStart()] + "output ref:" + template[res.getOutputPosition()]);
-    //    for (int i = res.getStart(); i < res.getEnd(); ++i) {
-    //      System.err.print(template[res.getPosition()]);
-    //    }
-    //    System.err.println();
-    //    res.getBestCat().name();
 
     final String ref = res.getLocus().getRefNts();
     final String name = res.getSample(0).getName();

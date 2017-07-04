@@ -29,19 +29,11 @@ public final class ScoreInterfaceMemo implements ScoreInterfaceMemoInterface {
 
   @Override
   public AllPaths getScoreInterface(final RealignParams params) {
-    AllPaths s;
+    final AllPaths s;
     if (params.machineType() != null && params.machineType().isCG() && EvidenceComplex.CG_ALLPATHS) {
-      s = mCacheCG.get(params);
-      if (s == null) {
-        s = new ScoreFastUnderflowCG(params);
-        mCacheCG.put(params, s);
-      }
+      s = mCacheCG.computeIfAbsent(params, ScoreFastUnderflowCG::new);
     } else {
-      s = mCache.get(params);
-      if (s == null) {
-        s = new ScoreFastUnderflow(params);
-        mCache.put(params, s);
-      }
+      s = mCache.computeIfAbsent(params, ScoreFastUnderflow::new);
     }
     return s;
   }

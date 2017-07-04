@@ -26,7 +26,6 @@ public class MatchMultiSetTest extends TestCase {
 
   public void test() {
     final MatchMultiSet mms = new MatchMultiSet();
-    mms.integrity();
     final String exp = ""
       + "[ MatchMultiSet size=0" + LS
       + "]" + LS
@@ -41,7 +40,6 @@ public class MatchMultiSetTest extends TestCase {
 
   public void test1() {
     final MatchMultiSet mms = new MatchMultiSet("");
-    mms.integrity();
     final String exp = ""
       + "[ MatchMultiSet size=1" + LS
       + " > 0:0.000" + LS
@@ -58,7 +56,6 @@ public class MatchMultiSetTest extends TestCase {
 
   public void test2() {
     final MatchMultiSet mms = new MatchMultiSet("");
-    mms.integrity();
     mms.add(new AlignmentMatch(null, "", null, 20, 0, 0, 20), 0.01);
     mms.add(new AlignmentMatch(null, "ACTG", null, 20, 0, 4, 20), 0.02);
     final String exp = ""
@@ -84,7 +81,6 @@ public class MatchMultiSetTest extends TestCase {
 
   public void test2lc() {
     final MatchMultiSet mms = new MatchMultiSet("");
-    mms.integrity();
     mms.add(new AlignmentMatch(null, "", null, 20, 0, 0, 20), 0.01);
     mms.add(new AlignmentMatch(null, "ACTG", null, 20, 0, 4, 20), 0.02);
     final String exp = ""
