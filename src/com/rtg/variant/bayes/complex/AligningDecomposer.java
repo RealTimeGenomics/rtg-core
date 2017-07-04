@@ -22,6 +22,7 @@ import java.util.Set;
 
 import com.rtg.alignment.SplitAlleles;
 import com.rtg.util.Pair;
+import com.rtg.util.StringUtils;
 import com.rtg.variant.Variant;
 import com.rtg.variant.VariantLocus;
 import com.rtg.variant.VariantSample;
@@ -62,14 +63,14 @@ public class AligningDecomposer extends AbstractDecomposer {
   }
 
   // XXX These should be recomputed directly from the measure, in order to include alleles not called in the originalLikelihoods
-  private static Map<Set<String>, Double> newGenotypeLikelihoods(final VariantSample sample, final SplitAlleles splitter, final String[] alleles) {
+  private static Map<Set<String>, Double> newGenotypeLikelihoods(final VariantSample sample, final SplitAlleles splitter, final String[] alleles, final int leftClip) {
     final Map<Set<String>, Double> newMap = new HashMap<>();
     final Map<Set<String>, Double> originalLikelihoods = sample.getGenotypeLikelihoods();
     if (originalLikelihoods != null) {
       for (final Map.Entry<Set<String>, Double> entry : originalLikelihoods.entrySet()) {
         final Set<String> newSet = new HashSet<>();
         for (final String s : entry.getKey()) {
-          newSet.add(alleles[splitter.getColumnIndex(s)]);
+          newSet.add(alleles[splitter.getColumnIndex(s)].substring(leftClip));
         }
         final Double v = newMap.get(newSet);
         final double existing = v == null ? LogApproximatePossibility.SINGLETON.zero() : v;
@@ -81,17 +82,17 @@ public class AligningDecomposer extends AbstractDecomposer {
     }
   }
 
-  private static String createVariantGenotype(final SplitAlleles splitter, final String[] part, final String oldGenotype) {
+  private static String createVariantGenotype(final SplitAlleles splitter, final String[] part, final String oldGenotype, final int leftClip) {
     if (oldGenotype == null) {
       return oldGenotype;
     }
     final int colon = oldGenotype.indexOf(VariantUtils.COLON);
     if (colon >= 0) {
-      final String allele1 = part[splitter.getColumnIndex(oldGenotype.substring(0, colon))];
-      final String allele2 = part[splitter.getColumnIndex(oldGenotype.substring(colon + 1))];
+      final String allele1 = part[splitter.getColumnIndex(oldGenotype.substring(0, colon))].substring(leftClip);
+      final String allele2 = part[splitter.getColumnIndex(oldGenotype.substring(colon + 1))].substring(leftClip);
       return allele1 + VariantUtils.COLON + allele2;
     } else {
-      return part[splitter.getColumnIndex(oldGenotype)];
+      return part[splitter.getColumnIndex(oldGenotype)].substring(leftClip);
     }
   }
 
@@ -104,7 +105,7 @@ public class AligningDecomposer extends AbstractDecomposer {
     return -1;
   }
 
-  private Pair<String[], int[]> getAlleleMap(final Description oldDescription, final String[] originalAlleles, final String[] extraDescriptionAlleles, final List<List<Pair<Integer, String[]>>> partitions, final int slice) {
+  private Pair<String[], int[]> getAlleleMap(final Description oldDescription, final String[] originalAlleles, final String[] extraDescriptionAlleles, final List<List<Pair<Integer, String[]>>> partitions, final int slice, final int leftClip) {
     final Pair<Integer, String[]> part = partitions.get(0).get(slice);
     final String[] alleles = part.getB();
     assert originalAlleles.length == alleles.length;
@@ -118,7 +119,7 @@ public class AligningDecomposer extends AbstractDecomposer {
       final int j = findIfPresent(originalAlleles, a);
       if (j >= 0) {
         // This description allele is reference or one of the alleles uses in the call
-        alleleMap[k] = uniqueAlleles.computeIfAbsent(alleles[j], k1 -> uniqueAlleles.size());
+        alleleMap[k] = uniqueAlleles.computeIfAbsent(alleles[j].substring(leftClip), k1 -> uniqueAlleles.size());
       }
     }
     // Deal with remaining description alleles
@@ -138,12 +139,14 @@ public class AligningDecomposer extends AbstractDecomposer {
             // Found a piece of the partition at the same offset as the main partition
             final String[] b = p.getB();
             final String remapPart = b[b.length - 1]; // Extra allele is the last column
-            // Look it up in the output alleles
-            final Integer outId = uniqueAlleles.get(remapPart);
-            if (outId != null) {
-              alleleMap[k] = outId;
-              found = true;
-              break;
+            if (remapPart.length() >= leftClip) {
+              // Look it up in the output alleles
+              final Integer outId = uniqueAlleles.get(remapPart.substring(leftClip));
+              if (outId != null) {
+                alleleMap[k] = outId;
+                found = true;
+                break;
+              }
             }
           }
         }
@@ -157,7 +160,7 @@ public class AligningDecomposer extends AbstractDecomposer {
     return new Pair<>(newUniqueAlleles, alleleMap);
   }
 
-  private VariantSample[] createVariantSamples(final Variant original, final SplitAlleles splitter, final String[] extraDescriptionAlleles, final List<List<Pair<Integer, String[]>>> partitions, final int slice) {
+  private VariantSample[] createVariantSamples(final Variant original, final SplitAlleles splitter, final String[] extraDescriptionAlleles, final List<List<Pair<Integer, String[]>>> partitions, final int slice, final int leftClip) {
     final VariantSample[] newSamples = new VariantSample[original.getNumberOfSamples()];
     final String[] originalAlleles = extractAlleles(original);
     for (int k = 0; k < newSamples.length; ++k) {
@@ -166,39 +169,48 @@ public class AligningDecomposer extends AbstractDecomposer {
         newSamples[k] = null;
       } else {
         final Pair<Integer, String[]> part = partitions.get(0).get(slice);
-        final String newGenotype = createVariantGenotype(splitter, part.getB(), sample.getName());
+        final String newGenotype = createVariantGenotype(splitter, part.getB(), sample.getName(), leftClip);
         newSamples[k] = new VariantSample(sample.getPloidy(), newGenotype, sample.isIdentity(), sample.getMeasure(), sample.isDeNovo(), sample.getDeNovoPosterior());
         VariantSample.copy(sample, newSamples[k]);
         // Update counts to correspond to the new description
         final Description oldDescription = original.getSample(k).getStats().counts().getDescription();
-        final Pair<String[], int[]> alleleMap = getAlleleMap(oldDescription, originalAlleles, extraDescriptionAlleles, partitions, slice);
+        final Pair<String[], int[]> alleleMap = getAlleleMap(oldDescription, originalAlleles, extraDescriptionAlleles, partitions, slice, leftClip);
         final Description d = newSamples[k].getStats().counts().getDescription() instanceof DescriptionNone ? DescriptionNone.SINGLETON : new DescriptionCommon(alleleMap.getA());
         newSamples[k].getStats().remapAlleleStatistics(d, alleleMap.getB());
-        newSamples[k].setVariantAllele(findVariantAllele(newSamples[k], part.getB()[0], mVariantAlleleTrigger));
-        newSamples[k].setGenotypeLikelihoods(newGenotypeLikelihoods(sample, splitter, part.getB()));
+        final String va = findVariantAllele(newSamples[k], part.getB()[0], mVariantAlleleTrigger);
+        newSamples[k].setVariantAllele(va == null ? null : va.substring(leftClip));
+        newSamples[k].setGenotypeLikelihoods(newGenotypeLikelihoods(sample, splitter, part.getB(), leftClip));
       }
     }
     return newSamples;
   }
 
-  private void updatePossibleCause(final Variant original, final Variant result, final SplitAlleles splitter, final String[] alleles) {
+  private void updatePossibleCause(final Variant original, final Variant result, final SplitAlleles splitter, final String[] alleles, final int leftClip) {
     final String possibleCause = original.getPossibleCause();
-    result.setPossibleCause(possibleCause == null ? null : alleles[splitter.getColumnIndex(possibleCause)]);
+    result.setPossibleCause(possibleCause == null ? null : alleles[splitter.getColumnIndex(possibleCause)].substring(leftClip));
   }
 
   private Variant createVariant(final Variant original, final SplitAlleles splitter, final String[] extraDescriptionAlleles, final List<List<Pair<Integer, String[]>>> partitions, final int slice, final int splitId) {
+    // Get all the alleles (including reference) that are in this partition.
+    // Determine the length of any common prefix (this can happen if they are
+    // different lengths and depending on penalties etc. during alignment).
+    // Determine the new locus represented by (the possibly clipped) alleles.
+    // Construct new variant samples (i.e. genotypes) for each sample and
+    // update the VAF allele (possible cause).  Update the de novo status
+    // for each sample.
     final Pair<Integer, String[]> part = partitions.get(0).get(slice);
-    final int offset = part.getA();
     final String[] alleles = part.getB();
+    final int leftClip = StringUtils.longestPrefix(alleles);
     final VariantLocus locus = original.getLocus();
+    final int offset = part.getA() + leftClip;
     final int start = locus.getStart() + offset;
-    final String newRef = alleles[SplitAlleles.REFERENCE_COLUMN_INDEX];
+    final String newRef = alleles[SplitAlleles.REFERENCE_COLUMN_INDEX].substring(leftClip);
     final int end = start + newRef.length();
     final VariantLocus newLocus = new VariantLocus(locus.getSequenceName(), start, end, newRef, getAnchorBase(locus, offset));
-    final VariantSample[] newSamples = createVariantSamples(original, splitter, extraDescriptionAlleles, partitions, slice);
+    final VariantSample[] newSamples = createVariantSamples(original, splitter, extraDescriptionAlleles, partitions, slice, leftClip);
     final Variant decomposedVariant = new Variant(newLocus, newSamples);
     Variant.copy(original, decomposedVariant);
-    updatePossibleCause(original, decomposedVariant, splitter, alleles);
+    updatePossibleCause(original, decomposedVariant, splitter, alleles, leftClip);
     decomposedVariant.setSplitId(splitId);
     return mDenovoChecker != null ? denovoCorrect(mDenovoChecker, decomposedVariant) : decomposedVariant;
   }
