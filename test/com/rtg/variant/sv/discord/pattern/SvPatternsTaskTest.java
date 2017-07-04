@@ -16,7 +16,7 @@ import static com.rtg.util.StringUtils.LS;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.Collections;
 
 import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.tabix.TabixIndexer;
@@ -48,7 +48,7 @@ public class SvPatternsTaskTest extends AbstractNanoTest {
       final File output = new File(tmpDir, "output");
       assertTrue(output.mkdir());
       CommandLine.setCommandArgs("foo", "bar", "baz");
-      final BreakpointPatternParams params = BreakpointPatternParams.builder().directory(output).files(Arrays.asList(vcfFile)).create();
+      final BreakpointPatternParams params = BreakpointPatternParams.builder().directory(output).files(Collections.singletonList(vcfFile)).create();
       final MemoryPrintStream mps = new MemoryPrintStream();
       final SvPatternsTask task = new SvPatternsTask(params, mps.outputStream());
       task.exec();
@@ -58,7 +58,7 @@ public class SvPatternsTaskTest extends AbstractNanoTest {
       assertTrue(new File(output, "sv_patterns.bed.gz.tbi").isFile());
       final String results = FileHelper.gzFileToString(bedFile);
       TestUtils.containsAll(results, "SV Patterns output 0.1");
-      mNano.check("sv_patterns.bed", results.replaceAll("#Version.*\n", "#Version[...]\n"));
+      mNano.check("sv_patterns.bed", results.replaceAll("#Version.*(\r)?\n", "#Version[...]\n"));
     }
   }
 
@@ -68,10 +68,10 @@ public class SvPatternsTaskTest extends AbstractNanoTest {
       final File vcfFile = new File(tmpDir, "input.vcf.gz");
       // This file contains a few records that ought to be filtered as well as the ones from {@code EXPECTED_BREAKPOINTS}
       FileHelper.resourceToFile("com/rtg/variant/sv/discord/pattern/resources/discordant_pairs.vcf.gz", vcfFile);
-      final BreakpointPatternParams params = BreakpointPatternParams.builder().files(Arrays.asList(vcfFile)).create();
+      final BreakpointPatternParams params = BreakpointPatternParams.builder().files(Collections.singletonList(vcfFile)).create();
       final MemoryPrintStream mps = new MemoryPrintStream();
       final SvPatternsTask task = new SvPatternsTask(params, mps.outputStream());
-      final BreakpointStore store = task.loadBreakpoints(null, Arrays.asList(vcfFile));
+      final BreakpointStore store = task.loadBreakpoints(null, Collections.singletonList(vcfFile));
       final StringBuilder sb = new StringBuilder();
       for (VcfBreakpoint b : store) {
         sb.append(b.toString()).append(LS);
