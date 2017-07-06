@@ -20,7 +20,7 @@ import com.rtg.variant.bayes.multisample.VariantAlleleTrigger;
 /**
  * A decomposer that only does trimming.
  */
-public final class Trimmer extends Splitter {
+public final class Trimmer extends AbstractDecomposer {
 
   /**
    * Construct a new trimmer.
@@ -32,6 +32,6 @@ public final class Trimmer extends Splitter {
 
   @Override
   public List<Variant> decompose(final Variant original) {
-    return Collections.singletonList(trim(original, mVariantAlleleTrigger));
+    return Collections.singletonList(SimpleDecomposer.trim(original, mVariantAlleleTrigger));
   }
 }

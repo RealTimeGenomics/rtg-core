@@ -326,7 +326,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     flags.registerOptional(X_THREADING_ENVIRONMENT, String.class, CommonFlags.STRING, "threading environment to be used. One of [single, random=seed, parallel]", "parallel").setCategory(SENSITIVITY_TUNING);
     flags.registerOptional(X_IO_THREADS, Integer.class, CommonFlags.INT, "number of threads to use for IO (Default is the number of available cores)").setCategory(UTILITY);
     flags.registerOptional(X_NO_COMPLEX_CALLS_FLAG, "turn off attempting calls in complex region").setCategory(INPUT_OUTPUT);
-    flags.registerOptional(X_TRIM_SPLIT_FLAG, TrimSplitType.class, CommonFlags.STRING, "type of trimming and splitting", TrimSplitType.STANDARD).setCategory(REPORTING);
+    flags.registerOptional(X_TRIM_SPLIT_FLAG, DecomposerType.class, CommonFlags.STRING, "type of normalization/decomposition applied to haplotype calls", DecomposerType.ALIGN).setCategory(REPORTING);
     flags.registerOptional(X_IGNORE_SAM_HEADER_INCOMPATIBILITY, "ignore incompatible SAM headers when merging SAM results").setCategory(UTILITY);
     flags.registerOptional(X_ALTERNATE_SAM_HEADER, File.class, CommonFlags.FILE, "treat all SAM records as having the supplied header").setCategory(UTILITY);
     flags.registerOptional(X_CONTRARY_FLAG, Double.class, CommonFlags.FLOAT, "probability used to penalize contrary evidence in somatic calls", 0.01).setCategory(SENSITIVITY_TUNING);
@@ -381,7 +381,7 @@ public abstract class AbstractMultisampleCli extends ParamsCli<VariantParams> {
     builder.outputIndex(!mFlags.isSet(CommonFlags.NO_INDEX));
     builder.noComplexCalls(mFlags.isSet(X_NO_COMPLEX_CALLS_FLAG));
     builder.outputNonSnps(!mFlags.isSet(SNPS_ONLY_FLAG));
-    builder.trimSplit((TrimSplitType) mFlags.getValue(X_TRIM_SPLIT_FLAG));
+    builder.trimSplit((DecomposerType) mFlags.getValue(X_TRIM_SPLIT_FLAG));
     builder.vcfRp(mFlags.isSet(X_VCF_RP));
     builder.avrModelFile(AvrUtils.getAvrModel(mFlags, false));
     builder.ignoreQualityScores(mFlags.isSet(X_IGNORE_QUALITIES_FLAG));

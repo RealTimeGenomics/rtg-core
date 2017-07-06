@@ -37,15 +37,12 @@ import static com.rtg.util.StringUtils.LS;
 import static com.rtg.util.StringUtils.TAB;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.rtg.RtgCore;
 import com.rtg.launcher.AbstractCli;
 import com.rtg.launcher.AbstractNanoTest;
 import com.rtg.launcher.MainResult;
@@ -235,7 +232,7 @@ public class VariantNanoTest extends AbstractNanoTest {
       if (refFile != null) {
         FileUtils.stringToFile(refFile, new File(templ, "reference.txt"));
       }
-      final String[] alignArgs = {"snp", "-t", templ.getPath(),
+      final String[] alignArgs = {"-t", templ.getPath(),
         "-o", outn, "--Xpriors", "testhumanprior", "-Z", "--Xinteresting-separation",
         Integer.toString(intSeparation), inn + FS + OUT_SAM + ".gz", "--" + AbstractMultisampleCli.NO_CALIBRATION
       };
@@ -253,26 +250,14 @@ public class VariantNanoTest extends AbstractNanoTest {
       } else {
         args = argsv;
       }
-      final ByteArrayOutputStream out = new ByteArrayOutputStream();
-      final ByteArrayOutputStream berr = new ByteArrayOutputStream();
-      final String errStr;
-      final int intMain;
-      final PrintStream err = new PrintStream(berr);
-      //System.err.println(Arrays.toString(args));
-      try {
-        intMain = new RtgCore().intMain(args, out, err);
-      } finally {
-        err.flush();
-        err.close();
-      }
-      errStr = berr.toString();
-      assertEquals(errStr, errCode, intMain);
+      final MainResult r = MainResult.run(new SingletonCli(), args);
+      assertEquals(r.err(), errCode, r.rc());
       // assertEquals("", out.toString()); Now outputting stats
       //          System.err.println(errStr);
       if (errorMsg != null) {
-        TestUtils.containsAll(errStr, errorMsg);
+        TestUtils.containsAll(r.err(), errorMsg);
       } else {
-        assertEquals(errStr, 0, errStr.length());
+        assertEquals(r.err(), 0, r.err().length());
       }
       if (logMsg != null && !logMsg.equals("")) {
         final String lout = FileUtils.fileToString(new File(outn, "snp.log"));
@@ -308,7 +293,6 @@ public class VariantNanoTest extends AbstractNanoTest {
       if (!templ.mkdir()) {
         throw new IOException("Whut, couldn't make test directory");
       }
-      final String errorMsg = "";
       final File sam1 = new File(input, "sam1.sam.gz");
       VariantTestUtils.bgzipAndIndex(maps1, sam1);
       final File sam2 = new File(input, "sam2.sam.gz");
@@ -318,23 +302,14 @@ public class VariantNanoTest extends AbstractNanoTest {
 
       final String outn = output.getPath();
       ReaderTestUtils.getDNADir(refSeq, templ);
-      final String[] alignArgs = {"snp", "-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-m", "default", "--keep-duplicates", "-Z", sam1.getPath(), sam2.getPath(), sam3.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION};
+      final String[] alignArgs = {"-t", templ.getPath(), "-o", outn, "--Xpriors", "testhumanprior", "-m", "default", "--keep-duplicates", "-Z", sam1.getPath(), sam2.getPath(), sam3.getPath(), "--" + AbstractMultisampleCli.NO_CALIBRATION};
       final String[] args = Utils.append(alignArgs, args0);
-      final ByteArrayOutputStream out = new ByteArrayOutputStream();
-      final ByteArrayOutputStream berr = new ByteArrayOutputStream();
-      //System.err.println(outn);
-      try (PrintStream err = new PrintStream(berr)) {
-        assertEquals(berr.toString() + " " + out.toString(), 0, new RtgCore().intMain(args, out, err));
-        // assertEquals("", out.toString());
-        err.flush();
-      }
-      // assertTrue(berr.toString().contains(errorMsg));
-      //System.err.println(berr.toString());
-      if (errorMsg.equals("")) {
-        final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
-        final String actualFixed = TestUtils.sanitizeVcfHeader(result);
-        mNano.check("variantnanotest" + expNum + ".vcf", actualFixed, false);
-      }
+      final MainResult r = MainResult.run(new SingletonCli(), args);
+      assertEquals(r.err(), 0, r.rc());
+
+      final String result = FileUtils.fileToString(new File(output, VariantParams.VCF_OUT_SUFFIX));
+      final String actualFixed = TestUtils.sanitizeVcfHeader(result);
+      mNano.check("variantnanotest" + expNum + ".vcf", actualFixed, false);
     }
   }
 

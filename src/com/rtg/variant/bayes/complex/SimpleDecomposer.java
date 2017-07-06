@@ -34,7 +34,7 @@ import com.rtg.variant.util.arithmetic.LogApproximatePossibility;
 /**
  * Set of utilities to deal with trimming of hypotheses from the complex caller.
  */
-public class Splitter extends AbstractDecomposer {
+public class SimpleDecomposer extends AbstractDecomposer {
 
   private static VariantLocus createLocus(final Variant original, final int leftClip, final int rightClip) {
     final VariantLocus locus = original.getLocus();
@@ -192,11 +192,11 @@ public class Splitter extends AbstractDecomposer {
    * @param denovoChecker method for correcting de novo flags
    * @param variantAlleleTrigger method for handling variant alleles
    */
-  public Splitter(DenovoChecker denovoChecker, VariantAlleleTrigger variantAlleleTrigger) {
+  public SimpleDecomposer(DenovoChecker denovoChecker, VariantAlleleTrigger variantAlleleTrigger) {
     super(denovoChecker, variantAlleleTrigger);
   }
 
-  Splitter() {
+  SimpleDecomposer() {
     this(null, new VariantAlleleTrigger(0, 0));
   }
 

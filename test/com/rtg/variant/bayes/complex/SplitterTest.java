@@ -29,17 +29,17 @@ public class SplitterTest extends AbstractDecomposerTest {
 
   @Override
   public Decomposer getDecomposer() {
-    return new Splitter();
+    return new SimpleDecomposer();
   }
 
   @Override
   public Decomposer getDecomposer(final DenovoChecker denovoChecker) {
-    return new Splitter(denovoChecker, TRIGGER);
+    return new SimpleDecomposer(denovoChecker, TRIGGER);
   }
 
   @Override
   public Decomposer getDecomposer(final VariantAlleleTrigger variantAlleleTrigger) {
-    return new Splitter(null, variantAlleleTrigger);
+    return new SimpleDecomposer(null, variantAlleleTrigger);
   }
 
   public void testReference() {
@@ -89,17 +89,17 @@ public class SplitterTest extends AbstractDecomposerTest {
   public void testTrimIdentity() {
     //should not trim identity calls
     final Variant v = createVariant("ACC", "ACC", null);
-    assertEquals(v, Splitter.trim(v, TRIGGER));
+    assertEquals(v, SimpleDecomposer.trim(v, TRIGGER));
 
     final Variant v2 = createVariant("ACC", "ACC", "ACC");
-    assertEquals(v2, Splitter.trim(v2, TRIGGER));
+    assertEquals(v2, SimpleDecomposer.trim(v2, TRIGGER));
   }
 
   public void testTrimInsert() {
     //homozygous
     //                                               0123456789
     final Variant vHomozygousInsert = createVariant("ACGTCTGTCT", "ACGTTTCTGTCT", null);
-    final Variant trim = Splitter.trim(vHomozygousInsert, TRIGGER);
+    final Variant trim = SimpleDecomposer.trim(vHomozygousInsert, TRIGGER);
     assertEquals('G', trim.getLocus().getPreviousRefNt());
     assertEquals("", trim.getLocus().getRefNts());
     assertEquals(3, trim.getLocus().getStart());
@@ -109,7 +109,7 @@ public class SplitterTest extends AbstractDecomposerTest {
     //heterozygous
     //                                               0123456789
     final Variant vHeterozyygousInsert = createVariant("ACGTCTGTCT", "ACGTTTCTGTCT", "ACGTCCCTGTCT");
-    final Variant trim2 = Splitter.trim(vHeterozyygousInsert, TRIGGER);
+    final Variant trim2 = SimpleDecomposer.trim(vHeterozyygousInsert, TRIGGER);
     assertEquals('T', trim2.getLocus().getPreviousRefNt());
     assertEquals("", trim2.getLocus().getRefNts());
     assertEquals(4, trim2.getLocus().getStart());
@@ -121,7 +121,7 @@ public class SplitterTest extends AbstractDecomposerTest {
   //homozygous
     //                                               0123456789
     final Variant vHomozygousIndel = createVariant("ACGTCTGTCT", "ACGTTTCTGGCT", null);
-    final Variant trim = Splitter.trim(vHomozygousIndel, TRIGGER);
+    final Variant trim = SimpleDecomposer.trim(vHomozygousIndel, TRIGGER);
     assertEquals('T', trim.getLocus().getPreviousRefNt());
     assertEquals("CTGT", trim.getLocus().getRefNts());
     assertEquals(4, trim.getLocus().getStart());
@@ -135,7 +135,7 @@ public class SplitterTest extends AbstractDecomposerTest {
     // AC|GTCTA----G|T
     //                                                  0123456789
     final Variant vHeterozyygousIndel = createVariant("ACGTCTATCT", "ACCTATTTTCT", "ACGTCTAGT");
-    final Variant trim2 = Splitter.trim(vHeterozyygousIndel, TRIGGER);
+    final Variant trim2 = SimpleDecomposer.trim(vHeterozyygousIndel, TRIGGER);
     assertEquals('C', trim2.getLocus().getPreviousRefNt());
     assertEquals("GTCTATC", trim2.getLocus().getRefNts());
     assertEquals(2, trim2.getLocus().getStart());
@@ -165,7 +165,7 @@ public class SplitterTest extends AbstractDecomposerTest {
     final VariantSample sample1 = v.getSample(0);
     sample1.setVariantAllele("TAA");
 
-    final Variant split = Splitter.trim(v, new VariantAlleleTrigger(1, 0.1));
+    final Variant split = SimpleDecomposer.trim(v, new VariantAlleleTrigger(1, 0.1));
     assertEquals("T", split.getSample(0).getVariantAllele());
   }
 }

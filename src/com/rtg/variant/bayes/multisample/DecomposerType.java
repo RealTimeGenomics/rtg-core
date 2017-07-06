@@ -15,13 +15,13 @@ package com.rtg.variant.bayes.multisample;
 /**
  * Types of trimming and splitting.
  */
-public enum TrimSplitType {
+public enum DecomposerType {
   /** Do not trim or split. */
   NONE,
-  /** The original trimming and splitting algorithm. */
-  STANDARD,
   /** Only do trimming. */
   TRIM,
+  /** The original trimming and splitting algorithm. */
+  TRIMSPLIT,
   /** Alignment based trimming and splitting. */
   ALIGN
 }

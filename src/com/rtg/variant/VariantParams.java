@@ -33,7 +33,7 @@ import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.util.test.params.ParamsNoField;
 import com.rtg.variant.bayes.AlleleBalanceProbability;
-import com.rtg.variant.bayes.multisample.TrimSplitType;
+import com.rtg.variant.bayes.multisample.DecomposerType;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
 
@@ -91,7 +91,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   private final ThreadingEnvironment mThreadingEnvironment;
   private final Long mThreadingEnvironmentSeed;
   private final boolean mPruneHypotheses;
-  private final TrimSplitType mTrimSplit;
+  private final DecomposerType mTrimSplit;
   private final File mPopulationPriorFile;
   private final int mMaxEmIterations;
   private final int mMaxComplexHypotheses;
@@ -500,7 +500,7 @@ public final class VariantParams extends SingleMappedParams implements VariantOu
   /**
    * @return enable trimming and splitting
    */
-  public TrimSplitType trimSplit() {
+  public DecomposerType trimSplit() {
     return mTrimSplit;
   }
 

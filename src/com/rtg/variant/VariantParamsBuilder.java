@@ -31,7 +31,7 @@ import com.rtg.util.intervals.ReferenceRanges;
 import com.rtg.util.intervals.RegionRestriction;
 import com.rtg.variant.bayes.AlleleBalanceProbability;
 import com.rtg.variant.bayes.NoAlleleBalance;
-import com.rtg.variant.bayes.multisample.TrimSplitType;
+import com.rtg.variant.bayes.multisample.DecomposerType;
 import com.rtg.variant.format.VcfFormatField;
 import com.rtg.variant.format.VcfInfoField;
 
@@ -81,7 +81,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
   Long mThreadingEnvironmentSeed = null;
   boolean mPruneHypotheses = false;
   double mIndelTriggerFraction = 0;
-  TrimSplitType mTrimSplit = TrimSplitType.NONE;
+  DecomposerType mTrimSplit = DecomposerType.NONE;
   boolean mUsePropagatingPriors = false;
 
   boolean mExpandComplexReadQueries = false;
@@ -508,7 +508,7 @@ public final class VariantParamsBuilder extends SingleMappedParamsBuilder<Varian
    * @param value true if flag is enabled, false otherwise
    * @return this builder, so calls can be chained.
    */
-  public VariantParamsBuilder trimSplit(TrimSplitType value) {
+  public VariantParamsBuilder trimSplit(DecomposerType value) {
     mTrimSplit = value;
     return self();
   }

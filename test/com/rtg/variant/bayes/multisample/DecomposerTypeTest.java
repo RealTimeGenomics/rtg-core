@@ -18,8 +18,8 @@ import junit.framework.TestCase;
 
 /**
  */
-public class TrimSplitTypeTest extends TestCase {
+public class DecomposerTypeTest extends TestCase {
   public void test() {
-    TestUtils.testEnum(TrimSplitType.class, "[NONE, STANDARD, TRIM, ALIGN]");
+    TestUtils.testEnum(DecomposerType.class, "[NONE, TRIM, TRIMSPLIT, ALIGN]");
   }
 }

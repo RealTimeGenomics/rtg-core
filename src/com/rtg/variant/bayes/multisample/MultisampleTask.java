@@ -72,7 +72,7 @@ import com.rtg.variant.bayes.complex.AligningDecomposer;
 import com.rtg.variant.bayes.complex.Decomposer;
 import com.rtg.variant.bayes.complex.DoNothingDecomposer;
 import com.rtg.variant.bayes.complex.IonTorrentCallFilter;
-import com.rtg.variant.bayes.complex.Splitter;
+import com.rtg.variant.bayes.complex.SimpleDecomposer;
 import com.rtg.variant.bayes.complex.Trimmer;
 import com.rtg.variant.bayes.multisample.multithread.DependenciesMultiSample;
 import com.rtg.variant.bayes.multisample.multithread.EventListMultiSample;
@@ -737,16 +737,16 @@ public class MultisampleTask<V extends VariantStatistics> extends ParamsTask<Var
 
     mConfig = mConfigurator.getConfig(mParams, mStatistics);
     final VariantAlleleTrigger variantAlleleTrigger = new VariantAlleleTrigger(mParams.minVariantAllelicDepth(), mParams.minVariantAllelicFraction());
-    final TrimSplitType trimSplitType = mParams.trimSplit();
-    if (trimSplitType == TrimSplitType.NONE || mParams.callLevel() == VariantOutputLevel.ALL) {
+    final DecomposerType trimSplitType = mParams.trimSplit();
+    if (trimSplitType == DecomposerType.NONE || mParams.callLevel() == VariantOutputLevel.ALL) {
       mDecomposer = new DoNothingDecomposer();
-    } else if (trimSplitType == TrimSplitType.TRIM || mParams.ionTorrent()) {
+    } else if (trimSplitType == DecomposerType.TRIM || mParams.ionTorrent()) {
       // XXX I'm not sure why we do trimming only for ion torrent -- perhaps this could now use our ordinary trim/split
       mDecomposer = new Trimmer(variantAlleleTrigger);
-    } else if (trimSplitType == TrimSplitType.STANDARD) {
-      mDecomposer = new Splitter(mConfig.getDenovoChecker(), variantAlleleTrigger);
+    } else if (trimSplitType == DecomposerType.TRIMSPLIT) {
+      mDecomposer = new SimpleDecomposer(mConfig.getDenovoChecker(), variantAlleleTrigger);
     } else {
-      assert trimSplitType == TrimSplitType.ALIGN;
+      assert trimSplitType == DecomposerType.ALIGN;
       mDecomposer = new AligningDecomposer(mConfig.getDenovoChecker(), variantAlleleTrigger);
     }
     mAnnotators.addAll(mConfig.getVcfAnnotators());
