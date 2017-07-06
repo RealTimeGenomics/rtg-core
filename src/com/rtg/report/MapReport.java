@@ -83,7 +83,15 @@ public class MapReport extends MapSummaryReport {
   private final SamFilterParams mFilter;
 
   /**
-   * Constructor for map report
+   * Constructor for map report from existing data
+   */
+  public MapReport() {
+    super();
+    mFilter = null;
+  }
+
+  /**
+   * Constructor for map report, allowing for report data regeneration
    * @param params the SAM filtering parameters (for other tools input SAM)
    */
   public MapReport(SamFilterParams params) {
@@ -95,17 +103,22 @@ public class MapReport extends MapSummaryReport {
     for (final File inputDir : inputDirs) {
       final File reportFile = new File(inputDir, MapReportData.MAP_REPORT_FILE_NAME);
       if (!(reportFile.exists() && checkVersion(reportFile))) {
+        Diagnostic.userLog("Generating report data file " + reportFile + " from SAM files.");
         final MapReportData reportData = new MapReportData();
         final List<File> samFiles = Arrays.asList(FileUtils.listFiles(inputDir, new SamBamFilter()));
         if (samFiles.size() > 0) {
-          final SamReadingContext context = new SamReadingContext(samFiles, 1, mFilter, SamUtils.getUberHeader(null, samFiles), null); // No need for a reference here unless we allow map to directly output CRAM
-          try (final RecordIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
-            while (it.hasNext()) {
-              final SAMRecord next = it.next();
-              reportData.processRead(next);
-            }
-            if (it.getFilteredRecordsCount() + it.getInvalidRecordsCount() > 0) {
-              Diagnostic.warning(it.getFilteredRecordsCount() + it.getInvalidRecordsCount() + " SAM records ignored due to filters");
+          if (mFilter == null) {
+            throw new NoTalkbackSlimException("Report data needs to be (re)generated, but this has not been enabled");
+          } else {
+            final SamReadingContext context = new SamReadingContext(samFiles, 1, mFilter, SamUtils.getUberHeader(null, samFiles), null); // No need for a reference here unless we allow map to directly output CRAM
+            try (final RecordIterator<SAMRecord> it = new ThreadedMultifileIterator<>(context, new SingletonPopulatorFactory<>(new SamRecordPopulator()))) {
+              while (it.hasNext()) {
+                final SAMRecord next = it.next();
+                reportData.processRead(next);
+              }
+              if (it.getFilteredRecordsCount() + it.getInvalidRecordsCount() > 0) {
+                Diagnostic.warning(it.getFilteredRecordsCount() + it.getInvalidRecordsCount() + " SAM records ignored due to filters");
+              }
             }
           }
         }
@@ -132,9 +145,9 @@ public class MapReport extends MapSummaryReport {
         throw new NoTalkbackSlimException("No compatible report data file: " + reportFile);
       }
     }
-    final MapReportData reporter;
-    reporter = merger.blendReportData();
+    final MapReportData reporter = merger.blendReportData();
     setCommandLines(reporter.getCommandLines());
+    reporter.write(new File(helper.getBaseDir(), MapReportData.MAP_REPORT_FILE_NAME));
 
     super.reportContent(helper, body, inputDirs);
 

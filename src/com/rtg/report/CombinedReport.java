@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.rtg.protein.ProteinOutputProcessor;
-import com.rtg.sam.SamFilterParams;
 import com.rtg.util.Environment;
 import com.rtg.util.HtmlReportHelper;
 import com.rtg.util.Resources;
@@ -243,7 +242,7 @@ public class CombinedReport {
       copyFile(helper.getReportFile(), destinationReport.getReportFile());
       copyDirRecursive(helper.getResourcesDir(), destinationReport.getResourcesDir());
     } else {
-      final MapReport mapReport = new MapReport(new SamFilterParams.SamFilterParamsBuilder().create());
+      final MapReport mapReport = new MapReport();
       mapReport.generateReport(ReportType.HTML, new File[] {map}, mapReport1);
     }
     return mapReport1;
