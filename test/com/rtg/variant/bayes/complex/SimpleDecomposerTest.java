@@ -23,7 +23,7 @@ import com.rtg.variant.format.VariantOutputVcfFormatterTest;
 
 /**
  */
-public class SplitterTest extends AbstractDecomposerTest {
+public class SimpleDecomposerTest extends AbstractDecomposerTest {
 
   static final VariantAlleleTrigger TRIGGER = new VariantAlleleTrigger(0, 0.0);
 

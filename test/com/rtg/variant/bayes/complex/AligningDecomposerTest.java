@@ -28,7 +28,7 @@ public class AligningDecomposerTest extends AbstractDecomposerTest {
 
   @Override
   public Decomposer getDecomposer(final DenovoChecker denovoChecker) {
-    return new AligningDecomposer(denovoChecker, SplitterTest.TRIGGER);
+    return new AligningDecomposer(denovoChecker, SimpleDecomposerTest.TRIGGER);
   }
 
   @Override

@@ -22,7 +22,7 @@ import junit.framework.TestCase;
 public class TrimmerTest extends TestCase {
 
   Decomposer getDecomposer() {
-    return new Trimmer(SplitterTest.TRIGGER);
+    return new Trimmer(SimpleDecomposerTest.TRIGGER);
   }
 
   public void testTrimSimpleSnps() {
