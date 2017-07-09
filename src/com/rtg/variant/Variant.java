@@ -523,6 +523,9 @@ public class Variant extends IntegralAbstract implements Comparable<Variant> {
       if (len == 3 && name.charAt(1) != VariantUtils.COLON) {
         return false;
       }
+      if (len == 1 && name.charAt(0) == VariantUtils.COLON) {
+        return false;
+      }
     }
     if (noCats) {
       return true;
